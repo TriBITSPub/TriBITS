@@ -53,10 +53,17 @@
 # ************************************************************************
 # @HEADER
 
-set(CTEST_PROJECT_NAME "TrilinosDriver")
-set(CTEST_NIGHTLY_START_TIME "06:01:00 UTC")
-
-set(CTEST_DROP_METHOD "http")
-set(CTEST_DROP_SITE "testing.sandia.gov")
-set(CTEST_DROP_LOCATION "/cdash/submit.php?project=TrilinosDriver")
-set(CTEST_DROP_SITE_CDASH TRUE)
+# Get the directory containing the file currently being processed. 
+#
+# This is equivalent to getting the value of CMAKE_CURRENT_LIST_DIR in
+# cmake versions greater than 2.8.4, but we provide this wrapper macro
+# for compatibility. If called outside of a function or macro, this
+# will return the directory of the calling file. If called within a
+# function or macro, this will return the directory containing the
+# caller.
+FUNCTION(GET_CURRENT_LIST_DIR output_variable)
+  IF(NOT DEFINED CMAKE_CURRENT_LIST_DIR)
+    GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+  ENDIF()
+  SET(${output_variable} "${CMAKE_CURRENT_LIST_DIR}" PARENT_SCOPE)
+ENDFUNCTION()
