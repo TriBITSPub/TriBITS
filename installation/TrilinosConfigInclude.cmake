@@ -53,50 +53,29 @@
 # ************************************************************************
 # @HEADER
 
-# File names for TriBITS system
-
-SET(${PROJECT_NAME}_PACKAGES_FILE_NAME ${PROJECT_NAME}Packages.cmake)
-
-SET(${PROJECT_NAME}_TPLS_FILE_NAME ${PROJECT_NAME}TPLs.cmake)
-
-SET(${PROJECT_NAME}_EXTRA_EXTERNAL_REPOS_FILE_NAME ExtraExternalRepositories.cmake)
-
-SET(${PROJECT_NAME}_EXTRA_PACKAGES_FILE_NAME Extra${PROJECT_NAME}Packages.cmake)
-
-SET(${PROJECT_NAME}_EXTRA_TPLS_FILE_NAME Extra${PROJECT_NAME}TPLs.cmake)
-
-SET(${PROJECT_NAME}_TRIBITS_PROJECT_CALLBACKS_FILE
-  ${PROJECT_NAME}TribitsProjectCallbacks.cmake)
-
-# Directories relative to the TriBITS base directory
-
-SET(TRIBITS_PYTHON_SCRIPTS_DIR "python")
-
-SET(TRIBITS_CMAKE_UTILS_DIR "utils")
-
-SET(TRIBITS_CMAKE_PACKAGE_ARCH_DIR "package_arch")
-
-SET(TRIBITS_CMAKE_INSTALLATION_FILES_DIR "installation")
-
-SET(TRIBITS_MOCK_TRILINOS_DIR "package_arch/UnitTests/MockTrilinos")
-
-# Files and directories related to the specific project
-
-SET(${PROJECT_NAME}_PACKAGE_DEPS_XML_FILE_NAME ${PROJECT_NAME}PackageDependencies.xml)
-
-SET(${PROJECT_NAME}_CDASH_SUBPROJECT_DEPS_XML_FILE_NAME CDashSubprojectDependencies.xml)
-
-SET(${PROJECT_NAME}_PACKAGE_DEPS_TABLE_HTML_FILE_NAME ${PROJECT_NAME}PackageDependenciesTable.html)
-
-SET(${PROJECT_NAME}_PACKAGE_DEPS_FILES_DIR "cmake/dependencies")
-
-# Other stuff
-
-IF(WIN32)
-  #Apparently FIND_PROGRAM looks for an exact match of the file name.
-  #So even though "git clone ..." is valid to use on windows we need to give the
-  #full name of the command we want to run.
-  SET(GIT_NAME git.cmd)
-ELSE()
-  SET(GIT_NAME git)
-ENDIF()
+GET_FILENAME_COMPONENT(_Trilinos_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+GET_FILENAME_COMPONENT(_Trilinos_PREFIX "${_Trilinos_DIR}" PATH)
+SET(Trilinos_DIR "${_Trilinos_PREFIX}/lib/cmake/Trilinos")
+MESSAGE(WARNING "TrilinosConfig.cmake has moved.  "
+  "It now exists at a location under the installation prefix where the "
+  "find_package command looks by default (<prefix>/lib/cmake/Trilinos).  "
+  "This compatibility file exists at the old location (<prefix>/include) "
+  "to present this message and load the file from its new location."
+  "\n"
+  "The find_package() call that loaded this file did so because its "
+  "cached result variable, Trilinos_DIR, is set to\n"
+  "  ${_Trilinos_DIR}\n"
+  "I'm locally setting Trilinos_DIR to\n"
+  "  ${Trilinos_DIR}\n"
+  "and loading TrilinosConfig.cmake from its new location.  "
+  "One may suppress this warning by setting the above value in the cache.  "
+  "However, the application needs modification permanently fix the issue.  "
+  "The find_package() call that loaded this file may have the form\n"
+  "  find_package(Trilinos REQUIRED PATHS \${TRILINOS_PATH}/include)\n"
+  "Change it to the form\n"
+  "  set(CMAKE_PREFIX_PATH \${TRILINOS_PATH} \${CMAKE_PREFIX_PATH})\n"
+  "  find_package(Trilinos REQUIRED)\n"
+  "to find TrilinosConfig.cmake in its new location in future builds "
+  "while still honoring the TRILINOS_PATH option for this application."
+  )
+INCLUDE(${Trilinos_DIR}/TrilinosConfig.cmake)
