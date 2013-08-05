@@ -38,39 +38,8 @@
 # @HEADER
 
 
-#
-# CMake script file to generate an xml dependencies file for PROJECT_NAME
-#
-# This script is designed to be run as:
-#
-#   $ cmake -P -DPACKAGE_NAME=<packageName> [options] \
-#       SOME_BASE_DIR/TribitsDumpDepsXmlScript.cmake
-#
+INCLUDE(TribitsListHelpers)
 
-# A) Echo input options (must be specified with -D arguments to CMake command)
-
-MESSAGE("PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}")
-SET(PROJECT_NAME_FILE "${PROJECT_SOURCE_DIR}/ProjectName.cmake")
-INCLUDE("${PROJECT_NAME_FILE}")
-
-MESSAGE("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
-MESSAGE("${PROJECT_NAME}_EXTRA_REPOSITORIES = ${${PROJECT_NAME}_EXTRA_REPOSITORIES}")
-MESSAGE("${PROJECT_NAME}_OUTPUT_FULL_DEPENDENCY_FILES_IN_DIR = ${${PROJECT_NAME}_OUTPUT_FULL_DEPENDENCY_FILES_IN_DIR}")
-# Get the utility CMake code that can determine the dependencies
-
-SET( CMAKE_MODULE_PATH
-  "${${PROJECT_NAME}_TRIBITS_DIR}/utils"
-  "${${PROJECT_NAME}_TRIBITS_DIR}/package_arch"
+SET( extraRepoOnePackageThreeSubpackages_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
+  extraRepoOnePackageThreeSubpackages   .     PS
   )
-
-INCLUDE(TribitsGlobalMacros)
-
-# Generate the dependencies file
-
-SET(${PROJECT_NAME}_ASSERT_MISSING_PACKAGES FALSE)
-SET(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
-SET(${PROJECT_NAME}_OUTPUT_DEPENDENCY_FILES FALSE)
-TRIBITS_READ_IN_NATIVE_REPOSITORIES()
-  SET(${PROJECT_NAME}_ALL_REPOSITORIES ${${PROJECT_NAME}_NATIVE_REPOSITORIES}
-    ${${PROJECT_NAME}_EXTRA_REPOSITORIES})
-TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()
