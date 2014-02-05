@@ -1,0 +1,70 @@
+\documentclass[10pt]{article}
+%\documentclass[10pt,twocolumn]{article}
+
+\pagestyle{empty}
+
+\usepackage[margin=1.0in]{geometry}
+
+\usepackage{paralist}
+
+\usepackage{natbib}
+\setlength{\bibsep}{0.0cm}
+
+\input{rab_commands}
+
+\raggedright
+
+\title{
+TriBITS Overview \\
+Tribal Build, Integration, and Test System
+}
+
+\author{Roscoe A. Bartlett, Oak Ridge National Laboratory}
+
+\date{??/??/???}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+The Tribal Build, Integration, and Test System, or TriBITS, is a framework built on top of the open-source CMake set of tools designed to handle large software development projects involving multiple independent development teams and multiple source repositories.  TriBITS defines a complete agile software development, testing, and deployment process consistent with modern software development best practicies.  This paper provides an overview of TriBITS that describes it roots, what problems it is designed to address, and then describes the major archetectural design and major features of the system.  
+
+\end{abstract}
+
+\tableofcontents
+
+%
+\section{Introduction}
+%
+
+Developing, testing, and deploying complex computational software involving multiple compiled languages developed by multiple distrubuted teams of developers that must be deployed on many different platforms on an aggressive schedule is a daunting endeavor.  While the modern software engineering (SE) community has made great strides in developing principles, processes and best practicies to manage such projects (e.g.\ agile methods \cite{CodeComplete2nd04, AgileSoftwareDevelopment, ContinuousIntegration07, XP2, TDD}), it takes non-trivial tools to effectively implement such processes.  In addition, the just the mechanics of configuring, building, and installing complex compiled multi-language software on a variety of platforms is very challanging.  Today's computational software must be able to be run on platforms ranging from basic Linux workstations and Microsoft Windows machines to the largest bleeding-edge massively parallel super computers.
+
+TriBITS is an attempt to create an organized framework built on the Kitware CMake tools to address all of these challanges across a potentially large number of semi-independent development efforts while still allowing for seamless integration and deployment for large stacks of software.  On the low end, TriBITS can be used to quickly develop a small independent software product with all the bells and whistles of agile software development including continuous integration \cite{XP2, ContinuousIntegration07}.  On the high end, TriBITS can be used as a meta-build system to integrate several smaller semi-independent TriBITS-enabled software projects.
+
+%
+\subsection{Background}
+%
+
+Continuous integration \cite{ContinuousIntegration07} is a foundational principle for algile software development and can greatly improve the productivity of the development team.
+
+%
+\subsection{Why CMake?}
+%
+
+%
+\subsection{\large Why TriBITS?}
+%
+
+Points:
+* TriBITS tries not to replace CMake and CTest.
+
+
+
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
