@@ -1,7 +1,8 @@
 *~
-*.aux
-*.log
-*.bbl
-*.blg
-*.pdf
-*.toc
+TribitsOVerview.aux
+TribitsOVerview.log
+TribitsOVerview.bbl
+TribitsOVerview.blg
+TribitsOVerview.pdf
+TribitsOVerview.toc
+TribitsOVerview.out
