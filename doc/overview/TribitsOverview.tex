@@ -4,11 +4,14 @@
 \pagestyle{empty}
 
 \usepackage[margin=1.0in]{geometry}
-
 \usepackage{paralist}
+\usepackage{verbatim}
+\newtheorem{listing}{Listing}
 
 \usepackage{natbib}
 \setlength{\bibsep}{0.0cm}
+
+\usepackage{hyperref}
 
 \input{rab_commands}
 
@@ -101,28 +104,40 @@ A drawback of CMake over autotools is that every client that needs to build and 
 
 So if CMake so many advantages and featuers over autotools and may other alternatives, then why not just use raw CMake for every project?  While the built-in features that one gets with just the strightforward raw usage of CMake (as mentioned in Section~\ref{sec:why_cmake}) are signficiant, there are several problems and shortcomings with using only raw CMake commands in a large project.  TriBITS is designed to address these problems and shortcomings, at least as they relate to the projects where TriBITS has been used.
 
-At is most basic, TriBITS provides a framework for CMake-based projects that leverages all the advantages/features of raw CMake, CTest, CPack, CDash, but in addition provides the following:
+At is most basic, TriBITS provides a framework for CMake-based projects that leverages all the advantages/features of raw CMake, CTest, CPack, CDash, but in addition provides the following (in relative order of significance):
 
 \begin{compactitem}
 \item Provides a set of wrappers CMake functions and macros to reduce boiler plate CMake code and enforces consistancy across the entire project.
-\item Provides a subproject dependency architecture (i.e. packages with required and optional dependencies).
+\item Provides a subproject dependency and namespacing architecture (i.e. packages with required and optional dependencies and namespaced CMake target and test names).
 \item Provides additional tools to enabled better and more efficient agile software development and deployment processes.
+\item Adds basic additional functionality missing in raw CMake.
+\item Change default CMake behavior when neccesary and beneficial to the project.
 \end{compactitem}
 
 ToDo: Given examples of these to drive the point home!
 
-To see the potential problems and shortcoming of just using raw CMake, consider a simple CMakeLists.txt file that builds and installs a library from a set of C++ sources and then creates a user exectuable and a set of unit test exectuables and tests:
+To see the potential problems and shortcoming of just using raw CMake, consider a simple CMakeLists.txt file that builds and installs a library from a set of C++ sources and then creates a user exectuable and a set of unit test exectuables and tests shown in Listing~\ref{listing:RawHelloWorld}.
 
-\begin{verbatim}
+\begin{listing}: Example raw CMakeLists.txt file
+\label{listing:RawHelloWorld}
+{\small
+\verbatiminput{../examples/RawHelloWorld/hello_world/CMakeLists.txt}
+}
+\end{listing}
+
+Looking at the raw CMake code in Listing~\ref{listing:RawHelloWorld}, it is pretty clear what it is doing, even if one is not familar with CMake.  A large project will have hundreds if not thousands of CMakeLists.txt files like this that define various libraries, executables, and tests, lots of tests (if it is good software).  So what is wrong with this raw CMake code?  If one appraoches this from a basic software coding perspective (see \cite{CodeComplete2nd04}), there are several problems with the CMakeLists.txt code.  First, there is a lot of duplication of the same information.  For example, it duplicates the names of the library name \ttt{hello\_world\_lib} four times just in this very short file.  With duplication comes the opportunity to mispell names, etc.  Also, when you define a test and set a regex to check the output, you have to list the test name twice.  Again, more duplication.  Another problem is that while the library name \ttt{hello\_world\_lib} and the executable name \ttt{hello\_world} are likely pretty well namespaced, the target names for the tests \ttt{test} and \ttt{unit\_tests} are not.  If another directory uses the same test names, they will clash which is an error.  While CMake varibles are namespace based on \ttt{ADD\_SUBDIRECTORY()} structure, the targets and tests that are created are not!  The problem is that CMake provides no namespacing facility!
+
+Another set of problems with raw CMake code like in Listing~\ref{listing:RawHelloWorld} relate to needed to change global behaviors for a large projects.  For example, if executable-only installation mode needs to be added where only the created execuables and supporting scripts are installed and not the header files and libraries?  In order to support that, the raw CMakeLists.txt file would need to be modifed to put in conditioinal \ttt{INSTALL()} commands based on a CMake varible set by the user.  Adding this feature would mean updating hundreds if not thousands of CMakeLists.txt files in a large project.  Like this there are several other project-wide polcies and features that one would like the ability to add without having to manually modify hundreds if not thousands of CMakeLists.txt files.
+
+What the above example raw CMakeList.txt file in Listing~\ref{listing:RawHelloWorld} and the above discussion tries to demonstrate is that for many large projects using raw CMake commands has a number of disadvantages.  That is where TriBITS comes in.  The equivarent TriBITS CMakeLists.txt file for the raw CMakeLists.txt file in Listing~\ref{listing:RawHelloWorld} is given in Listing-???.
 
 
 
-\end{verbatim}
+
 
 
 Problems with this raw makefile in a large CMake project:
-* The target name for the test executables ??? and ??? must be unique across the entire project.  Names like 'test' and 'unit_tests' are very likely to confict with test names in other directories in a large project.
-* On Windows, CMake puts on the *.exe extention and you have to know that when defining the tests.
+* The target name for the test executables ??? and ??? must be unique across the entire project.  Names like 'test' and 'unit\_tests' are very likely to confict with test names in other directories in a large project.
 * The library name ??? and executable names ??? are duplicated multiple times making maintanance more difficult if the name changes and increasing the change of mistakes.
 
 

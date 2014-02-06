@@ -19,7 +19,9 @@ PDFFIG := $(patsubst %.fig, %.pdf, $(XFIG))
 
 BASE_NAME = TribitsOverview
 EXTRA_FILES = \
-  references.bib
+  Makefile \
+  references.bib \
+  ../examples/RawHelloWorld/hello_world/CMakeLists.txt
 
 all: $(BASE_NAME).pdf
 
