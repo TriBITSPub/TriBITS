@@ -21,7 +21,8 @@ BASE_NAME = TribitsOverview
 EXTRA_FILES = \
   Makefile \
   references.bib \
-  ../examples/RawHelloWorld/hello_world/CMakeLists.txt
+  ../examples/RawHelloWorld/hello_world/CMakeLists.txt \
+  ../examples/TribitsHelloWorld/hello_world/CMakeLists.txt
 
 all: $(BASE_NAME).pdf
 
