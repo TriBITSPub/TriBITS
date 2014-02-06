@@ -29,7 +29,7 @@ Tribal Build, Integration, and Test System
 
 \begin{abstract}
 
-The Tribal Build, Integration, and Test System, or TriBITS, is a framework built on top of the open-source CMake set of tools designed to handle large software development projects involving multiple independent development teams and multiple source repositories.  TriBITS defines a complete agile software development, testing, and deployment process consistent with modern software development best practicies.  This paper provides an overview of TriBITS that describes it roots, what problems it is designed to address, and then describes the major archetectural design and major features of the system.  
+The Tribal Build, Integration, and Test System, or TriBITS, is a framework built on top of the open-source CMake set of tools designed to handle large software development projects involving multiple independent development teams and multiple source repositories.  TriBITS defines a complete agile software development, testing, and deployment system supporting process consistent with modern software development best practicies.  This paper provides an overview of TriBITS that describes it roots, what problems it is designed to address, and then describes the major archetectural design and major features of the system.  After reading, the reader should have a fairly good idea what TriBITS is, that it is not, what the advantages and disadvantages are, and what a project that uses TriBITS looks like.
 
 \end{abstract}
 
@@ -39,26 +39,143 @@ The Tribal Build, Integration, and Test System, or TriBITS, is a framework built
 \section{Introduction}
 %
 
-Developing, testing, and deploying complex computational software involving multiple compiled languages developed by multiple distrubuted teams of developers that must be deployed on many different platforms on an aggressive schedule is a daunting endeavor.  While the modern software engineering (SE) community has made great strides in developing principles, processes and best practicies to manage such projects (e.g.\ agile methods \cite{CodeComplete2nd04, AgileSoftwareDevelopment, ContinuousIntegration07, XP2, TDD}), it takes non-trivial tools to effectively implement such processes.  In addition, the just the mechanics of configuring, building, and installing complex compiled multi-language software on a variety of platforms is very challanging.  Today's computational software must be able to be run on platforms ranging from basic Linux workstations and Microsoft Windows machines to the largest bleeding-edge massively parallel super computers.
+Developing, testing, and deploying complex computational software involving multiple compiled languages developed by multiple distrubuted teams of developers that must be deployed on many different platforms on an aggressive schedule is a daunting endeavor.  While the modern software engineering (SE) community has made great strides in developing principles, processes and best practicies to manage such projects (e.g.\ agile methods \cite{CodeComplete2nd04, AgileSoftwareDevelopment, ContinuousIntegration07, XP2, TDD}), it takes non-trivial tools to effectively implement such processes.  In addition, just the mechanics of configuring, building, and installing complex compiled multi-language software on a variety of platforms is very challanging.  Today's computational software must be able to be run on platforms ranging from basic Linux workstations and Microsoft Windows machines to the largest bleeding-edge massively parallel super computers.
 
-TriBITS is an attempt to create an organized framework built on the Kitware CMake tools to address all of these challanges across a potentially large number of semi-independent development efforts while still allowing for seamless integration and deployment for large stacks of software.  On the low end, TriBITS can be used to quickly develop a small independent software product with all the bells and whistles of agile software development including continuous integration \cite{XP2, ContinuousIntegration07}.  On the high end, TriBITS can be used as a meta-build system to integrate several smaller semi-independent TriBITS-enabled software projects.
+TriBITS is an attempt to create an organized framework built on the Kitware CMake tools to address many of these challanges across a potentially large number of semi-independent development efforts while still allowing for seamless integration and deployment for large stacks of related software.  On the low end, TriBITS can be used to quickly develop a small independent software product with all the bells and whistles of agile software development including pre- and post-test continuous integration \cite{XP2, ContinuousIntegration07}.  On the high end, TriBITS can be used as a meta-build system to integrate several smaller semi-independent TriBITS-enabled software projects.  In addition, TriBITS directly supports the customized modern Lean/Agile research to production lifecycle processes defined in \cite{TribitsLifecycleModel, TribitsLifecycleModel_eScience2012}.
 
-%
-\subsection{Background}
-%
+The scope of TriBITS and the material in this paper is the development and deployment of software written in multi-language compiled lanuages, primarily C, C++ (93, 03, 11), and Fortran (77, 90, 95, 2003, 2008) which use MPI and various local threading approaches to achieve parallel computation.  Creating an effective development and deployment system for these types of software projects and languages is difficult.
 
-Continuous integration \cite{ContinuousIntegration07} is a foundational principle for algile software development and can greatly improve the productivity of the development team.
+ToDo:
+* Discuss the history of TriBITS
+* Mention the CASL project and how it is using TriBITS
+* Mention the other projects using TriBITS
 
 %
 \subsection{Why CMake?}
+\label{sec:why_cmake}
 %
 
+Many different build and test tools have been created and are avaiable in the open-source community.  Many computational projects just use raw Make or GNU Make and devise their own add on scripts to drive configuration, building, and testing.  For simple projects that don't need to be very portable and only need to run on Linux, writing raw makefiles is attractive.  However, for example, raw makefiles will not automatically rebuild objects files, libraries and executables when C and C++ header-files change.  Another popular set of tools used in the computational community are the so-called GNU autotools which are comprised of autoconf, automake, and related programs.  Using autotools over raw (GNU) Make offers several advantages but these tools were never designed to manage the development and deployment of large complex software projects.  We have worked with projects that have extensive experience using raw makefiles, autotools, and other home-grown tools based on these (e.g.\ \cite{Trilinos}).  There are other build and test systems as well but we will not mention those here (this paper is not meant to be an exhaustive literature review of build and test tools).  We only mention raw makefiles and GNU autotools because in our observation, these are the most popular approaches currently in use on these types of software projects.
+
+Then there was CMake.  What is CMake and what does it offer for these types of complex mixed-lanauge software projects?  When CMake is installed (which just requires a basic C++ compiler and little else to get the key functionality), it actually provides the following tools:
+
+\begin{compactitem}
+\item\textit{\textbf{CMake}}: Portable configuration and build manager that includes a complete scripting language for configuring and building software libraries and executables that leverages native build systems and IDEs (e.g. cmake can generate project files for Make, Ninja, MS Visual Studio, Eclipse, and XCode).
+\item\textit{\textbf{CTest}}: Executable to handle running tests in the shell and reporting results to CDash.
+\item\textit{\textbf{CPack}}: Cross-platform software packaging tool, with installer support for all systems currently supported by CMake.
+\end{compactitem}
+
+In addition, a complementary build/test dashboard implementation that is well integrated with CMake and CTest is provided by Kitare that can be installed separately:
+
+\begin{compactitem}
+\item\textit{\textbf{CDash}}: build and test reporting dashboard built on PHP, CSS, XSL, MySQL, and Apache HTTPD
+\end{compactitem}
+
+When the Trilinos project was first considering adopting CMake, a detailed evaluation was performed \cite{TrilinosCMakeEvaluation08} comparing its usage to the existing customized Trilinos autotools system which included a home-grown perl-based test execution harness and dashboard.  As found as part of that evaluation and the through years of usage by the Trilinos and related projects, we have found that the major (but by no means not all of the) advantages/capabilities of CMake and CTest over autotools and the existing Trilinos perl-based test harness were:
+
+\begin{compactitem}
+\item Simplified build system and easier build and test maintenance.
+\item Improved mechanism for extending capabilities using simple, fast CMake scripting lanaguage (as compared to M4 in autotools).
+\item Built-in support for all major C, C++, and Fortran compilers.
+\item Automatactic built-in full dependency tracking of every kind possible on all platforms (i.e. header to object, object to library, library to executable, and any build system changes).
+\item Faster configure times (e.g.\ from minutes with autotools to seconds with CMake).
+\item Built-in support for shared libraries on a variety of platforms and complers.
+\item Built-in support for MS Windows (i.e. generates Visual Studio projects, Windows installers, etc.).
+\item Support for cross-compiling (i.e.\ build on compile nodes but run on a compute nodes).
+\item Built-in automatic depencency tracking for Fortran 90+ module files and object files to allow parallel Fortran compilation and linking.
+\item Built-in support for portable determination of C/C++/Fortran mixed-langauge bindings.
+\item Parallel running and scheduling of tests and test time-outs (i.e. run 1000 test executabes each using different numbers of cores effectively on 16 processes keeping all 16 processes busy).
+\item Memory testing with Valgrind and purify that is backed up by Kitware and a large development community.
+\item  Line coverage testing that is backed up by Kitware and a large development community.
+\item Better integration between the test system and the build system (e.g. natural and flexible specification based on what builds, platform consideraitons, etc.).
+\item Leverages open-source tools maintained and used by a large community.
+\end{compactitem}
+
+While there are other build and test systems with significant advantages of raw makefiles and autotools that have been developed, the CMake set of tools is more widely used and its usage is growing in computational science projects.  There is safety is numbers and the decision to adopt CMake for Trilinos has generally been considered to be a very positive development in the project and has allowed for the scalable growth of Trilinos in every way.
+
+A drawback of CMake over autotools is that every client that needs to build and install software on a given system to to have the minimum a compable version of CMake installed first.  (Raw makefiles, autotools, and CMake all require a recent version of Make installed on a Unix/Linux system.)  Kitwware provides free downloads of binary installers for CMake for a variety of platforms and CMake is easy to configure and install from source with just a C++ compiler.  In general, we have found CMake to be much easier to configure and install on a given platform than to subsequently configure, build, and install any project that uses cmake.  Therefore, we have found the additional overhead of having to install CMake is in the noise compared to installing the target software.
+
 %
-\subsection{\large Why TriBITS?}
+\subsection{Why TriBITS?}
 %
 
-Points:
+So if CMake so many advantages and featuers over autotools and may other alternatives, then why not just use raw CMake for every project?  While the built-in features that one gets with just the strightforward raw usage of CMake (as mentioned in Section~\ref{sec:why_cmake}) are signficiant, there are several problems and shortcomings with using only raw CMake commands in a large project.  TriBITS is designed to address these problems and shortcomings, at least as they relate to the projects where TriBITS has been used.
+
+At is most basic, TriBITS provides a framework for CMake-based projects that leverages all the advantages/features of raw CMake, CTest, CPack, CDash, but in addition provides the following:
+
+\begin{compactitem}
+\item Provides a set of wrappers CMake functions and macros to reduce boiler plate CMake code and enforces consistancy across the entire project.
+\item Provides a subproject dependency architecture (i.e. packages with required and optional dependencies).
+\item Provides additional tools to enabled better and more efficient agile software development and deployment processes.
+\end{compactitem}
+
+ToDo: Given examples of these to drive the point home!
+
+To see the potential problems and shortcoming of just using raw CMake, consider a simple CMakeLists.txt file that builds and installs a library from a set of C++ sources and then creates a user exectuable and a set of unit test exectuables and tests:
+
+\begin{verbatim}
+
+
+
+\end{verbatim}
+
+
+Problems with this raw makefile in a large CMake project:
+* The target name for the test executables ??? and ??? must be unique across the entire project.  Names like 'test' and 'unit_tests' are very likely to confict with test names in other directories in a large project.
+* On Windows, CMake puts on the *.exe extention and you have to know that when defining the tests.
+* The library name ??? and executable names ??? are duplicated multiple times making maintanance more difficult if the name changes and increasing the change of mistakes.
+
+
+
+
+First off, CMake provides a set of commands for defining libraries, executbles, creating files on command, etc. but these commands can be used in inconsistent ways in a large project and related projects which can cause problems.  A large project needs to apply a set of consistent policies across the entire project and if raw CMake commands are used, adding a new policy 
+
+* Why not just raw CMake?
+  - Lots of boiler plate code
+  - Forces consistency and consistent policys
+  - No standard for archetecture of larger projects (enabling and disabling pieces in consistent way)
+  - inconsisent import of TPLs (i.e. ``Pakages'' in native CMake speak).
+
 * TriBITS tries not to replace CMake and CTest.
+
+%
+\subsection{Overview of TriBITS Requirements, Architecture and Design Principles}
+%
+
+Requirements for TriBITS:
+* 
+* 100\% automatic correct handling of dependencies for C and C++ header files to object files, libraries, and executables.
+* Direct support for all major platforms including Linux, MS Windows,  all major super computers and every significant system in between.
+* 
+
+
+
+
+%
+\subsection{TriBITS Package Dependency Handling}
+%
+
+* Packages, subpackages, and TPLs
+* Enabling upstream and downstream packages and tests
+
+%
+\subsection{Example TriBITS Projects}
+%
+
+
+
+%
+\subsection{TriBITS Project Development Workflow}
+%
+
+
+%
+\subsection{TriBITS Testing and Integration}
+%
+
+* Show diagram of differnet test categories
+* Describe checkin-test.py
+
 
 
 
