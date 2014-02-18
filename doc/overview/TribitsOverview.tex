@@ -32,7 +32,7 @@ TriBITS Overview \\[1.5ex]
 
 \begin{abstract}
 
-The Tribal Build, Integrate, and Test System (TriBITS) is a framework built on top of the open-source CMake set of tools designed to handle large software development projects involving multiple independent development teams and multiple source repositories.  TriBITS defines a complete agile software development, testing, and deployment system supporting processes consistent with modern agile software development best practicies.  This paper provides an overview of TriBITS that describes its roots, what problems and types of projects it is designed to address, and then describes the major archetectural design and features of the system.  This presentation should provide the reader with a fairly good idea what TriBITS is, that it is not, what the advantages and disadvantages are, and what projects using TriBITS look like.
+The Tribal Build, Integrate, and Test System (TriBITS) is a framework built on top of the open-source CMake set of tools designed to handle large software development projects involving multiple independent development teams and multiple source repositories.  TriBITS also defines a complete software development, testing, and deployment system supporting processes consistent with modern agile software development best practicies.  This paper provides an overview of TriBITS that describes its roots, what problems and types of projects it is designed to address, and then describes the major archetectural design and features of the system.  This presentation should provide the reader with a fairly good idea what TriBITS is, that it is not, what the advantages and disadvantages are, and what projects that use TriBITS look like.
 
 \end{abstract}
 
@@ -44,7 +44,7 @@ The Tribal Build, Integrate, and Test System (TriBITS) is a framework built on t
 
 Developing, testing, and deploying complex computational software involving multiple compiled languages developed by multiple distrubuted teams of developers that must be deployed on many different platforms on an aggressive schedule is a daunting endeavor.  While the modern software engineering (SE) community has made great strides in developing principles, processes and best practicies to manage such projects (e.g.\ agile methods \cite{CodeComplete2nd04, AgileSoftwareDevelopment, ContinuousIntegration07, XP2, TDD}), it takes non-trivial tools to effectively implement such processes.  In addition, just the mechanics of configuring, building, and installing complex compiled multi-language software on a variety of platforms is very challanging.  Today's computational software must be able to be run on platforms ranging from basic Linux workstations and Microsoft Windows machines to the largest bleeding-edge massively parallel super computers.
 
-TriBITS is an attempt to create an organized framework built on the Kitware CMake tools to address many of these challanges across a potentially large number of semi-independent development efforts while still allowing for seamless integration and deployment for large stacks of related software.  On the low end, TriBITS can be used to quickly develop a small independent software product with all the bells and whistles of agile software development including pre- and post-test continuous integration \cite{XP2, ContinuousIntegration07}.  On the high end, TriBITS can be used as a meta-build system to integrate several smaller semi-independent TriBITS-enabled software projects.  In addition, TriBITS directly supports the customized modern Lean/Agile research to production lifecycle processes defined in \cite{TribitsLifecycleModel, TribitsLifecycleModel_eScience2012}.
+TriBITS is an attempt to create an organized framework built on the Kitware CMake tools to address many of these challanges across a potentially large number of semi-independent development efforts while still allowing for seamless integration and deployment for large stacks of related software.  On the low end, TriBITS can be used to quickly develop a small independent software product with all the bells and whistles of agile software development including pre- and post-test continuous integration \cite{XP2, ContinuousIntegration07}.  On the high end, TriBITS can be used as a meta-build system to integrate several smaller semi-independent TriBITS-enabled software projects.  In addition, TriBITS directly supports the customized modern Lean/Agile research-to-production TriBITS lifecycle processes defined in \cite{TribitsLifecycleModel, TribitsLifecycleModel_eScience2012}.
 
 The scope of TriBITS and the material in this paper is the development and deployment of software written in multi-language compiled lanuages, primarily C, C++ (93, 03, 11), and Fortran (77, 90, 95, 2003, 2008) which use MPI and various local threading approaches to achieve parallel computation.  Creating an effective development and deployment system for these types of software projects and languages is difficult.
 
@@ -58,7 +58,7 @@ ToDo:
 \label{sec:why_cmake}
 %
 
-Many different build and test tools have been created and are avaiable in the open-source community.  Many computational projects just use raw Make or GNU Make and devise their own add on scripts to drive configuration, building, and testing.  For simple projects that don't need to be very portable and only need to run on Linux, writing raw makefiles is attractive.  However, for example, raw makefiles will not automatically rebuild objects files, libraries and executables when C and C++ header-files change.  Another popular set of tools used in the computational community are the so-called GNU autotools which are comprised of autoconf, automake, and related programs.  Using autotools over raw (GNU) Make offers several advantages but these tools were never designed to manage the development and deployment of large complex software projects.  We have worked with projects that have extensive experience using raw makefiles, autotools, and other home-grown tools based on these (e.g.\ \cite{Trilinos}).  There are other build and test systems as well but we will not mention those here (this paper is not meant to be an exhaustive literature review of build and test tools).  We only mention raw makefiles and GNU autotools because in our observation, these are the most popular approaches currently in use on these types of software projects.
+Many different build and test tools have been created and are avaiable in the open-source community.  Many computational projects just use raw Make or GNU Make and devise their own add-on scripts to drive configuration, building, and testing.  For simple projects that don't need to be very portable and only need to run on Linux, writing raw makefiles is attractive.  However, for example, raw makefiles will not automatically rebuild objects files, libraries and executables when C and C++ header-files change and they will not build Fortran files in the correct order given module dependenices.  Another popular set of tools used in the computational community are the so-called GNU autotools which are comprised of autoconf, automake, and related programs.  Using autotools over raw (GNU) Make offers several advantages but these tools were never designed to manage the development and deployment of large complex software projects.  We have worked with projects that have extensive experience using raw makefiles, autotools, and other home-grown tools based on these (e.g.\ \cite{Trilinos}).  There are other build and test systems as well but we will not mention those here (this paper is not meant to be an exhaustive literature review of build and test tools).  We only mention raw makefiles and GNU autotools because in our observation, these are the most popular approaches currently in use on computational software projects.
 
 Then there was CMake.  What is CMake and what does it offer for these types of complex mixed-lanauge software projects?  When CMake is installed (which just requires a basic C++ compiler and little else to get the key functionality), it actually provides the following tools:
 
@@ -68,13 +68,9 @@ Then there was CMake.  What is CMake and what does it offer for these types of c
 \item\textit{\textbf{CPack}}: Cross-platform software packaging tool, with installer support for all systems currently supported by CMake.
 \end{compactitem}
 
-In addition, a complementary build/test dashboard implementation that is well integrated with CMake and CTest is provided by Kitare that can be installed separately:
+In addition, \textit{\textbf{CDash}} is a complementaory open-source build and test reporting dashboard provided by Kitware built on PHP, CSS, XSL, MySQL, and Apache HTTPD.
 
-\begin{compactitem}
-\item\textit{\textbf{CDash}}: build and test reporting dashboard built on PHP, CSS, XSL, MySQL, and Apache HTTPD
-\end{compactitem}
-
-When the Trilinos project was first considering adopting CMake, a detailed evaluation was performed \cite{TrilinosCMakeEvaluation08} comparing its usage to the existing customized Trilinos autotools system which included a home-grown perl-based test execution harness and dashboard.  As found as part of that evaluation and the through years of usage by the Trilinos and related projects, we have found that the major (but by no means not all of the) advantages/capabilities of CMake and CTest over autotools and the existing Trilinos perl-based test harness were:
+When the Trilinos project was first considering adopting CMake, a detailed evaluation was performed \cite{TrilinosCMakeEvaluation08} comparing its usage to the existing customized Trilinos autotools system which included a home-grown perl-based test harness and dashboard.  Through that evaluation and the through years of usage by the Trilinos and related projects, we have found that the major (but by no means all of the) advantages/capabilities of CMake and CTest over autotools and the existing Trilinos perl-based test harness were:
 
 \begin{compactitem}
 \item Simplified build system and easier build and test maintenance.
@@ -88,15 +84,17 @@ When the Trilinos project was first considering adopting CMake, a detailed evalu
 \item Built-in automatic depencency tracking for Fortran 90+ module files and object files to allow parallel Fortran compilation and linking.
 \item Built-in support for portable determination of C/C++/Fortran mixed-langauge bindings.
 \item Parallel running and scheduling of tests and test time-outs (i.e. run 1000 test executabes each using different numbers of cores effectively on 16 processes keeping all 16 processes busy).
-\item Memory testing with Valgrind and purify that is backed up by Kitware and a large development community.
-\item  Line coverage testing that is backed up by Kitware and a large development community.
-\item Better integration between the test system and the build system (e.g. natural and flexible specification based on what builds, platform consideraitons, etc.).
-\item Leverages open-source tools maintained and used by a large community.
+\item Built-in support for memory testing and reporting with Valgrind.
+\item Built-in support for line coverage testing and reporting using gcov and bulls-eye.
+\item Better integration between the test system and the build system (e.g. natural and flexible test specification based on configuration settings, platform consideraitons, etc.).
+\item Leverages open-source tools maintained and used by a large community and supported by a profession software development company (Kitware).
 \end{compactitem}
 
-While there are other build and test systems with significant advantages of raw makefiles and autotools that have been developed, the CMake set of tools is more widely used and its usage is growing in computational science projects.  There is safety is numbers and the decision to adopt CMake for Trilinos has generally been considered to be a very positive development in the project and has allowed for the scalable growth of Trilinos in every way.
+While there are other build and test systems with significant capabilities and advantages over raw makefiles and autotools that have been developed, the CMake set of tools is more widely used and its usage is growing in the CSE community.  There is safety in numbers and the decision to adopt CMake for Trilinos has generally been considered to be a very positive development in the project and has allowed for the scalable growth of Trilinos in every way.
 
-A drawback of CMake over autotools is that every client that needs to build and install software on a given system to to have the minimum a compable version of CMake installed first.  (Raw makefiles, autotools, and CMake all require a recent version of Make installed on a Unix/Linux system.)  Kitwware provides free downloads of binary installers for CMake for a variety of platforms and CMake is easy to configure and install from source with just a C++ compiler.  In general, we have found CMake to be much easier to configure and install on a given platform than to subsequently configure, build, and install any project that uses cmake.  Therefore, we have found the additional overhead of having to install CMake is in the noise compared to installing the target software.
+\textbf{Finished editing up to here 2/14/2014!}
+
+One drawback of CMake over autotools is that every client that needs to build and install software on a given system to to have the minimum a compable version of CMake installed first.  (Raw makefiles, autotools, and CMake all require a recent version of Make installed on a Unix/Linux system.)  Kitwware provides free downloads of binary installers for CMake for a variety of platforms and CMake is easy to configure and install from source with just a C++ compiler.  In general, we have found CMake to be much easier to configure and install on a given platform than to subsequently configure, build, and install any project that uses cmake.  Therefore, we have found the additional overhead of having to install CMake is in the noise compared to installing the target software.
 
 %
 \subsection{Why TriBITS?}
@@ -180,6 +178,16 @@ ToDo:
 
 
 %
+\subsection{TriBITS Support for Multiple Source Respositories and Distributed Development Groups}
+%
+
+
+%
+\section{Agile Software Development Process Support}
+%
+
+
+%
 \subsection{TriBITS Project Development Workflow}
 %
 
@@ -190,11 +198,6 @@ ToDo:
 
 * Show diagram of differnet test categories
 * Describe checkin-test.py
-
-
-%
-\subsection{TriBITS Support for Multiple Source Respositories and Distributed Development Groups}
-%
 
 
 %
