@@ -1,34 +1,41 @@
-\documentclass[10pt]{article}
-%\documentclass[10pt,twocolumn]{article}
+\documentclass[note]{TechNote}
 
-\pagestyle{empty}
-
-\usepackage[margin=1.0in]{geometry}
+%\usepackage[margin=1.0in]{geometry}
 \usepackage{paralist}
 \usepackage{verbatim}
 \newtheorem{listing}{Listing}
 
-\usepackage{natbib}
-\setlength{\bibsep}{0.0cm}
+%\usepackage{natbib}
+%\setlength{\bibsep}{0.0cm}
 
 \usepackage{hyperref}
+\input{draftwatermark}
 
 \input{rab_commands}
 
 \raggedright
 
-\title{
-TriBITS Overview \\[1.5ex]
-\large The Tribal Build, Integrate, and Test System
-}
-
-\author{Roscoe A. Bartlett, Oak Ridge National Laboratory}
-
-\date{??/??/???}
-
+%%---------------------------------------------------------------------------%%
+%% BEGIN DOCUMENT
+%%---------------------------------------------------------------------------%%
 \begin{document}
 
-\maketitle
+%\refno{???}
+\subject{
+\Huge \center TriBITS Overview \\[1.5ex]
+\large \center The Tribal Build, Integrate, and Test System
+}
+
+%-------HEADING
+%\groupname{???}
+\from{Roscoe A. Bartlett}
+%\date{??/??/???}
+\date{\today}
+%-------HEADING
+
+%\maketitle
+
+\opening
 
 \begin{abstract}
 
@@ -36,7 +43,10 @@ The Tribal Build, Integrate, and Test System (TriBITS) is a framework built on t
 
 \end{abstract}
 
-\tableofcontents
+\memotoc
+%\tableofcontents
+
+\setlength{\parskip}{1.2ex}
 
 %
 \section{Introduction}
@@ -142,23 +152,45 @@ At the same time, these TriBITS macros provide a hook for adding additional feat
 \item ???
 \end{compactitem}
 
-Without having a set of basic wrapper macros around raw CMake commands, it is impossible to consistently add these types of features or enforce policies cross a large CMake project.
+Without having a set of basic wrapper macros around raw CMake commands, it is impossible to consistently add these types of features or enforce policies across a large CMake project.
+
+%
+\subsection{What about CMake ExternalProject?}
+%
+
+TriBITS is not the only set of macros that have been built on top of raw CMake to enable the building and installing of large pieces of developed software.  In particular, there is the standard CMake ExteranlProject module that provides a set of macros and functions that use CMake's custom command and custom targert features to streamline the aquisition (download, SVN checkout, etc.), configure, build, and install of bits of external software (which will be refered to as third-party libraries (TPLs) here).  This is used to create a ``Super Build'' of a set of possibily related TPL software (i.e. one TPL may depend on one or more of the other TPLs).  Each TPL can use any build system and the primary development task in setting up a super-build is get the various exteranl TPL build systems to use a consistent set of compilers, compiler options, and common TPL dependencies.  In this type of system, there is little advantage to having each TPL use CMake as their native build system as all of this info has to be passed to the inner builds just as one has to for an autotools TPL build, for example.  With CMake ExternalProject, the entire configure and build of one TPL must be complete before the configure and build of a downstream TPL that uses it begins.  All of the steps of the acquisition, confguration, building, and installing take place at build time in the outer CMake super-build.
+
+Because of the nature of CMake ExternalProject and the way it is typically used, it can be through more of a meta-build and deployment system for pre-developed software and is of little help in setting up and developing on CMake projects.
+
+What differentates TriBITS is that it provides an architecture for the developed CMake projects themselves that scales to large CMake projects.  TriBITS provides a development environment with all the bells and whistles of a CMake project including complete dependency tracking from between any library, executable, object file, etc.  Suffice to say that TriBITS and CMake ExternalProject are mostly complementary frameworks that have a little (but not a lot) overlap.  More could be said to compare and contrast TriBITS and CMake ExternalProject but that is beyond the scope of this paper.
 
 Now that basic background on CMake and TriBITS has been presented and a basic value statement for TriBITS has been stated, the remainder of this paper seeks to provide more details about how TriBITS projects are layed out, and what various features are offered by TriBITS.
 
 %
-\section{Overview of the TirBITS system}
+\section{Overview of the TriBITS system}
 %
+
+First and foremost, TriBITS defines an archetecture for single (large) CMake projects.  In such a project, there is a single 'cmake' configure step, followed by a single build step (e.g. 'make') followed by a single test suite invocation ('ctest').  In the following subsections, the requirements for TriBITS are described
 
 %
 \subsection{TriBITS Requirements, Architecture and Design Principles}
 %
 
-Requirements for TriBITS:
-* 
-* 100\% automatic correct handling of dependencies for C and C++ header files to object files, libraries, and executables.
-* Direct support for all major platforms including Linux, MS Windows,  all major super computers and every significant system in between.
-* 
+The most important requirement for TriBITS when it was first designed to support Trilinos was to support the Trilinos concept of a \textbf{package} and support required and optional dependencies between Trilinos packages.  Prior to CMake and TriBITS, it was difficult to maintain the dependency structure for packages in Trilinos.  The primary goal was to provide explicit support for defining and managing Trilinos packages and to make a ``package'' a first-class citizen in the build, test, and deployment system.
+
+Beyond requirements that CMake automatically satisfies, the primary extra requirements for TriBITS are:
+\begin{compactitem}
+\item Make it exceedingly easy to write CMakeLists.txt files for new packages and to define libraries, tests, and examples in those packages.
+\item Automatically provide uniformity of how things are done and allow changes to logic and functionality that apply to all  packages without having to touch each individual package CMakeLists.txt files.
+\item While aggregating as much common functionality as possible to the the TriBITS system and top-level project files, allow individual packages (and users) to refine the logic globally and on a package-by-package (or finer-grained) basis if needed.
+\item Provide 100\% automatic intra-package dependencies handling.  This helps to avoid mistakes, avoid duplication, and robustifies a number of important features.
+\item Avoid duplication of all kinds as much as possible.  This is just a fundamental software maintenance issue.  Raw CMakeList.txt files have a lot of duplication.
+\item The build system should be able to reproduce 100\% update-to-date output by simply rebuilding a given target (i.e. typing 'make').  Endeavor to provide 100\% correct dependency management in all situations (e.g. coping test input files to binary directory so tests can run).
+\item Where there is a tradeoff between extra complexity at the global framework level verses at the package level, always prefer greater complexity at the framework level where solid software engineering design principles can be applied to manage the complexity and spare package developers.
+\item Provide built-in automated support for as many beneficial software engineering practices a possible.  This includes proper and complete pre-checkin testing when synchronous continuous integration is being performed.
+\end{compactitem}
+
+These requirements were explicitly listed at the very beginning of the design of TriBITS way back in 2008 before the the precursor for TriBITS was first desgined.  TriBITS supports many more features than these 
 
 %
 \subsection{TriBITS Package Dependency Handling}
@@ -206,10 +238,12 @@ ToDo: Fill in!
 
 There are, however, a few disadvantages to using TriBITS over raw CMake that must be calked.  First, using these encapsulating scripts, one can almost forget they are using CMake and can even avoid leaning CMake basics.  This becomes a problem one needs to do something slightly outside of the normal 99\% use case coverged by basic TriBITS usage.
 
+%%---------------------------------------------------------------------------%%
+%% BIBLIOGRAPHY STUFF
 
-
-
-\bibliographystyle{plain}
+\bibliographystyle{rnotes}
 \bibliography{references}
 
+\closing
+\caution
 \end{document}
