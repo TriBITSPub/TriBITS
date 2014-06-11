@@ -159,7 +159,7 @@ Without having a set of basic wrapper macros/functions around raw CMake commands
 \label{sec:what_about_cmake_externalproject}
 %
 
-TriBITS is not the only set of macros/functions that has been built on top of raw CMake to enable the building and installing of large pieces of developed software.  In particular, there is the standard CMake ExteranlProject module that provides a set of macros and functions that use CMake's custom command and custom target features to streamline the acquisition (download, SVN checkout, etc.), configure, build, test, and install of bits of external software (which will be referred to here as third-party libraries (TPLs)).  This is used to create a ``Super Build'' of a set of possibly related TPL software (i.e. one TPL may depend on one or more of the other TPLs).  Each TPL can use any build system and the primary development task in setting up a super-build is to get the various external TPL build systems to use a consistent set of compilers, compiler options, and common TPL dependencies.  In this type of system, there is little advantage to having each TPL use CMake as their native build system as all of this info has to be passed to the inner builds just as one has to for an autotools TPL build, for example.  With CMake ExternalProject, the entire configure and build of one TPL must be complete before the configure and build of downstream TPLs that uses it can begin.  All of the steps of the acquisition, configuration, building, and installing take place at build time in the outer CMake super-build.
+TriBITS is not the only set of macros/functions that has been built on top of raw CMake to enable the building and installing of large pieces of developed software.  In particular, there is the standard CMake ExternalProject module that provides a set of macros and functions that use CMake's custom command and custom target features to streamline the acquisition (download, SVN checkout, etc.), configure, build, test, and install of bits of external software (which will be referred to here as third-party libraries (TPLs)).  This is used to create a ``Super Build'' of a set of possibly related TPL software (i.e. one TPL may depend on one or more of the other TPLs).  Each TPL can use any build system and the primary development task in setting up a super-build is to get the various external TPL build systems to use a consistent set of compilers, compiler options, and common TPL dependencies.  In this type of system, there is little advantage to having each TPL use CMake as their native build system as all of this info has to be passed to the inner builds just as one has to for an autotools TPL build, for example.  With CMake ExternalProject, the entire configure and build of one TPL must be complete before the configure and build of downstream TPLs that uses it can begin.  All of the steps of the acquisition, configuration, building, and installing take place at build time in the outer CMake super-build.
 
 Because of the nature of CMake ExternalProject and the way it is typically used, it can be viewed more as meta-build and deployment system for pre-developed software and is not as attractive to use to develop on an aggregate set of related software projects that use CMake as their build/test system.
 
@@ -171,7 +171,7 @@ Now that basic background on CMake and TriBITS has been presented and a basic va
 \section{Overview of the TriBITS system}
 %
 
-First and foremost, TriBITS defines an architecture and framework for single (large) CMake projects.  In such a project, there is a single 'cmake' configure step, followed by a single build step (e.g. 'make') followed by a single test suite invocation ('ctest').  In the following subsections, the requirements for TriBITS are described.  ToDo: Finish summary of subsections.
+First and foremost, TriBITS defines an architecture and framework for single (large, partitioned) CMake projects.  In such a project, there is a single 'cmake' configure step, followed by a single build step (e.g. 'make') followed by a single test suite invocation ('ctest').  In the following subsections, the requirements for TriBITS are described.  ToDo: Finish summary of subsections.
 
 %
 \subsection{TriBITS Requirements, Architecture and Design Principles}
@@ -196,10 +196,58 @@ These requirements were explicitly listed at the very beginning of the design of
 \textbf{ToDo: Edited up to here on 5/20/2014!}
 
 %
-\subsection{TriBITS Package Dependency Handling}
+\subsection{Partitioning of TriBITS into Core and Extended Functionality}
 %
 
+TriBITS is divided into a few different bits of functionality that can be adopted incrementally (or not at all).  With each part, additional functionality is provided but at the cost of additional external dependencies and less flexibility.  TriBITS is divided into the follow major pieces, listed in order of increasing functionality and dependency:
+
+\begin{compactitem}
+\item\textit{TriBITS Core}: Basic CMake package-based architecture, configure, build, test, install, distribution support, etc.  This part only depends on raw CMake with no other dependencies (i.e. no Python or git dependence).
+\item\textit{TriBITS Basic Continuous Integration Support}: Consists of the checkin-test.py script which requires Python 2.4+ and git 1.7.0.4+.
+\item\textit{TriBITS Automated Package-based CTest/CDash Testing}: Additional CMake/CTest and python code to support the creation of \ttt{ctest -S} scripts that do package-by-package configure/build/test, submissions, and display on CDash.
+\end{compactitem}
+
+ToDo: Show figure of the different parts of TriBITS and how the depend on each other and what they depend on externally.
+
+These different pieces of TriBITS are shown in Figure ??? and are described in a little more detail below and some parts are described in even more detail in following sections.  One can depend-on/extract/snapshot only the parts of TriBITS that are desired for a given TriBITS project or repository.  The extended TriBITS functionality is only applicable to a full TriBITS project, not to individual TriBITS Repositories or Packages.  The partitions of TriBITS are described in more detail below.
+
+\textbf{\textit{TriBITS Core}} is set of CMake modules which is used to construct CMake projects and provides the basic package-based architecture.  This is used to configure, build, test, install, and deploy software that uses TriBITS/CMake.  This part of TriBITS only depends on raw CMake/CTest and is the only part that is used by customers of the software in installation and deployment.  This is the first part of TriBITS that every project has to adopt in order to use any part of the TriBITS system.  This is the part of TriBITS that allows for the seamless configuration, build, and testing of different integrated (but independent) software development efforts.  However, this basic framework does not assume any software development process at all or make any assumptions about the version control tools or processes used.  There should only be small learning curve to apply this framework for a smaller, simpler CMake project compared to just using raw CMake/CTest.   This ``core'' part of TriBITS is described in more detail in Section~\ref{sec:tribits_core}.
+
+In addition to the core package-based TriBITS framework (i.e. ``TriBITS Core'') described in Section~\ref{sec:tribits_core}, TriBITS also provides additional extended functionality that is needed to flesh out a fully functional Agile software development process or to support sophisticated multi-group, multi-repository integration processes.  These different pieces can be adopted in phases or not at all.  The usage of each additional piece requires extra external dependencies (e.g. Python 2.4+, git 1.7.0.4+, etc.), imposes more assumptions on the software development process or tools (e.g. assumes all VC repos use git), and involves an additional learning curve to use correctly.  Each of these additional pieces (or feature sets) of TriBITS are described briefly below and some in some more detail in later sections.
+
+\textbf{\textit{TriBITS Basic Continuous Integration Support}} is essentially provided in a single python script called \ttt{checkin-test.py} (and a set of python modules that it uses).  The \ttt{checkin-test.py} script implements robust pre-push continuous integration and can be used to implement light-weight post-push continuous integration and nightly testing processes that rely on email notifications.  Almost every software development project that uses TriBITS should consider using the \ttt{checkin-test.py} tool to implement pre-push CI testing for the project.  At the  high end, the \ttt{checkin-test.py} tool has all the functionality needed to implement sophisticated multi-repository integration processes that take only minutes-to-hours to set up and maintain (verses weeks-to-months of developer time to set up and support integration processes for arbitrary software projects).    The \ttt{checkin-test.py} tool requires that Python 2.4+ and git 1.7.0.4+ be installed on the system and it requires all of the VC repos to use git (or be snapshotted into git repos).
+
+\textbf{\textit{TriBITS Automated Package-based CTest/CDash Testing}} support exploits the package-based architecture of a TriBITS CMake project to provide incremental testing for a large project with targeted regression email addresses and CDash display on a package-by-package basis.   This extra functionality requires Python 2.4+ and is implemented in the CMake/CTest function \ttt{TRIBITS\_CTEST\_DRIVER()}. It also requires, of course, the setup of a CDash server (where CDash has a number of external dependencies such as MySQL, PHP, etc.).  However, a project that uses TriBITS can just use raw CTest and CDash to test the project as whole that but does not take advantage of the package-based architecture.  ToDo: Put link to later section on the CTest/CDash server.
+
+%
+\section{TriBITS Core}
+\label{sec:tribits_core}
+%
+
+The ``Core'' of TriBITS is set of CMake modules which provides a basic package-based architecture for a CMake project.  This is used to configure, build, test, install, and deploy software that uses TriBITS/CMake.  The basic architectural components for a TriBITS project are:
+
+\begin{compactitem}
+
+\item\textbf{\textit{TriBITS Package}}: A collection of related software that typically includes one or more source files built into one or more libraries and/or executables and has associated tests to help define and protect the functionality provided.
+
+\item\textbf{\textit{TriBITS TPL}}: The specification for a particular external dependency that is required or can be used in one or more \textit{TriBITS Packages}.  A TPL (Third Party Library) typically provides a list of libraries or a list include directories for header files but can also be manifested in other ways as well.
+
+\item\textbf{\textit{TriBITS Repository}}: A collection of one or more \textit{TriBITS Packages} and zero or more \texttt{TriBITS TPL} specifications referenced in those packages.
+
+\item\textbf{\textit{TriBITS Project}}: A collection of one or more \textit{TriBITS Repositories} and \textit{TriBITS Packages} which constitutes a complete CMake ``PROJECT`` defining software which can be directly configured with \ttt{cmake} and then be built, tested, installed,  etc.
+
+\end{compactitem}
+
+Many TriBITS CMake projects like Trilinos only involve a single TriBITS Repository.  More complex multi-repository TriBITS projects like CASL VERA are described in Section ???  Every TriBITS project must define at least one package and most TriBITS projects have at least one (perhaps optional) external dependency such as a library like BLAS or LAPACK and therefore will specify at least one TriBITS TPL.
+
+%
+\subsection{TriBITS Package Architecture and Dependency Handling}
+%
+
+
+
 * Packages, subpackages, and TPLs
+* Use ReducedMockTrilinos as the example for dependency handling.
 * Enabling upstream and downstream packages and tests
 
 %
@@ -214,19 +262,24 @@ ToDo:
 \subsection{TriBITS Support for Multiple Source Repositories and Distributed Development Groups}
 %
 
+%
+\section{Extended TriBITS}
+%
 
 %
-\section{Agile Software Development Process Support}
+\subsection{Agile Software Development Process Support}
+%
+
+In addition to the ``core'' of TriBITS which provides the basic CMake project package-based architecture, TriBITS also includes a number of tools to support Agile software development. 
+
+
+%
+\subsection{TriBITS Testing and Integration}
 %
 
 
 %
 \subsection{TriBITS Project Development Workflow}
-%
-
-
-%
-\subsection{TriBITS Testing and Integration}
 %
 
 * Show diagram of different test categories
@@ -239,7 +292,7 @@ ToDo:
 
 ToDo: Fill in!
 
-There are, however, a few disadvantages to using TriBITS over raw CMake that must be considered.  First, using the encapsulating TriBITS functions, one can almost forget that one is using CMake and can even avoid leaning CMake basics.  This becomes a problem when one needs to do something slightly outside of the normal 99\% use case covered by the basic brain-dead usage of TriBITS.  Second, TriBITS, as a framework, ...
+There are, however, a few disadvantages to using TriBITS over raw CMake that must be considered.  First, using the encapsulating TriBITS functions, one can almost forget that one is using CMake and can even avoid leaning CMake basics.  This becomes a problem when one needs to do something slightly outside of the normal 99\% use case covered by the basic brain-dead usage of TriBITS.  Second, TriBITS, as a framework, provides a lot of functionality at low cost for the supported use cases but inherently limits flexibility.  This restricted flexibility is an advantage when it one tries to integrate large collections of independently developed software.  However, if a project is not going to be integrated with other TriBITS-based software, some of the lack of flexibility can be a hindrance.  Also, if a project is going to stay small and the needs of the project are well served by raw CMake/CTest/CPack, then the extra dependency on TriBITS may not be worth the added functionality.  TriBITS is really designed to construct large CMake projects and manage the integration between multiple independent by related CMake projects.
 
 %%---------------------------------------------------------------------------%%
 %% BIBLIOGRAPHY STUFF
@@ -250,3 +303,8 @@ There are, however, a few disadvantages to using TriBITS over raw CMake that mus
 \closing
 \caution
 \end{document}
+
+% LocalWords:  CMake Kitware lifecycle Fortran Trilinos CASL MPACT TriBITS ORNL
+% LocalWords:  executables autotools Valgrind CDash makefiles CTest CPack CSE
+% LocalWords:  scalable subproject namespacing namespaced CMakeLists namespace
+% LocalWords:  ExternalProject CMake's SVN TPLs TPL robustifies snapshotted
