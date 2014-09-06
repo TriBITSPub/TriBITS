@@ -262,9 +262,13 @@ TRIBITS_ADD_ADVANCED_TEST(
   OVERALL_NUM_MPI_PROCS 1
   )
 
-IF (WIN23 AND NOT CYGWIN)
+IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+  # cmake -E compare_files only gives return != 0 if the files don't compare.
+  # It gives no diff output.
   SET(DIFF_COMMAND_STUFF "${CMAKE_COMMAND}" ARGS -E compare_files)
 ELSE()
+  # Diff gives output of the diff so it is better to use if we have it.
+  # Otherwise, I need to write a portable diff (using a CMake -P script).
   SET(DIFF_COMMAND_STUFF diff ARGS)
 ENDIF()
 
@@ -304,7 +308,7 @@ TRIBITS_ADD_ADVANCED_TEST(
       ../GenericDriver/cmnd_3_args_1_overall_working_directory_working_directory_console.out
       cmnd_3_args_1_overall_working_directory_working_directory_console.gold.out
     WORKING_DIRECTORY Gold
-  TEST_2 CMND ${DIFF_COMMAND_STUFF}
+  TEST_2 CMND ${DIFF_COMMAND_STUFF}  # Contains the ARGS part
     GenericDriver/cmnd_3_args_1_overall_working_directory_working_directory_console.out
     Gold/cmnd_3_args_1_overall_working_directory_working_directory_console.gold.out
   OVERALL_NUM_MPI_PROCS 1
