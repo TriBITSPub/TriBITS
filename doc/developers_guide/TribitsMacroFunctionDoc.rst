@@ -2561,10 +2561,10 @@ expensive package sorting algorithm and makes it easy to flag packages with
 circular dependencies or misspelling of package names.
 
 NOTE: For some rare use cases, the package directory ``<pkgi_dir>`` is
-allowed to be speicfied as an absolute directory but this absolute directory
+allowed to be specified as an absolute directory but this absolute directory
 must be a subdirectory of the project source base directory given by
 `PROJECT_SOURCE_DIR`_.  If not, ``MESSAGE(FATAL_ERROR ...)`` is called and
-processing stopes immediately.
+processing stops immediately.
 
 NOTE: This macro just sets the variable::
 
