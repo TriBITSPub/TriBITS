@@ -807,24 +807,6 @@ FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES)
   # Custom code in configuration file.
   SET(PROJECT_CONFIG_CODE "")
 
-  # Export targets from the install tree.
-  GET_PROPERTY(HAS_INSTALL_TARGETS GLOBAL PROPERTY ${PROJECT_NAME}_HAS_INSTALL_TARGETS)
-  IF(HAS_INSTALL_TARGETS)
-    #    INSTALL(
-    #      EXPORT ${PROJECT_NAME}
-    #      DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PROJECT_NAME}"
-    #      FILE ${PROJECT_NAME}Targets.cmake
-    #      )
-    # Import the targets in applications.
-    SET(PROJECT_CONFIG_CODE "${PROJECT_CONFIG_CODE}
-# Import ${PROJECT_NAME} targets
-IF(NOT ${PROJECT_NAME}_TARGETS_IMPORTED)
-  SET(${PROJECT_NAME}_TARGETS_IMPORTED 1)
-  INCLUDE(\"\${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}Targets.cmake\")
-ENDIF()
-")
-  ENDIF()
-
   # Appending the logic to include each package's config file.
   SET(LOAD_CODE "# Load configurations from enabled packages\n")
   FOREACH(TRIBITS_PACKAGE ${FULL_PACKAGE_SET})
