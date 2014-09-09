@@ -127,38 +127,38 @@ ENDFUNCTION()
 # The arguments are:
 #
 #   ``PACKAGE_NAME <pakageName>``
-#  
+#
 #     Gives the name of the TriBITS package for which the export files should
 #     be created.
-#  
+#
 #   ``EXPORT_FILE_VAR_PREFIX <exportFileVarPrefix>``
-#  
+#
 #     If specified, then all of the variables in the generated export files
 #     will be prefixed with ``<exportFileVarPrefix>_`` instead of
 #     ``<pakageName>_``.
-#  
+#
 #   ``WRITE_CMAKE_CONFIG_FILE <cmakeConfigFileFullPath>``
-#  
+#
 #     If specified, then the package's (``<packageName>``) cmake configure
 #     export file for use by external CMake client projects will be created as
 #     the file ``<cmakeConfigFileFullPath>``.  NOTE: the argument should be
 #     the full path!
-#  
+#
 #   ``WRITE_EXPORT_MAKLEFILE <exportMakefileFileFullPath>``
-#  
+#
 #     If specified, then the package's (``<packageName>``) export makefile for
 #     use by external Makefile client projects will be created in the file
 #     <exportMakefileFileFullPath>.  NOTE: the argument should be the full
 #     path!
-#  
+#
 #   ``WRITE_INSTALL_CMAKE_CONFIG_FILE``
-#  
+#
 #     If specified, then the package's (``<packageName>``) install cmake
 #     configured export file will be installed in to the install tree as well.
 #     The name and location of this file is hard-coded.
-#  
+#
 #   ``WRITE_INSTALL_EXPORT_MAKLEFILE``
-#  
+#
 #     If specified, then the package's (``<packageName>``) install export
 #     makefile to be installed into the install tree as well.  The name and
 #     location of this file is hard-coded.
@@ -355,7 +355,7 @@ FUNCTION(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES)
   #We will use the complete list of supported tpls for the project
   #to help us create a properly ordered list of tpls.
   IF (FULL_TPL_SET)
-    SET(ORDERED_FULL_TPL_SET ${FULL_TPL_SET}) 
+    SET(ORDERED_FULL_TPL_SET ${FULL_TPL_SET})
     TRIBITS_SORT_LIST_ACCORDING_TO_MASTER_LIST("${${PROJECT_NAME}_REVERSE_TPLS}"
       ORDERED_FULL_TPL_SET)
   ENDIF()
@@ -407,7 +407,7 @@ FUNCTION(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES)
 
     # Custom code in configuration file.
     SET(PACKAGE_CONFIG_CODE "")
-  
+
     # Import build tree targets into applications.
     IF(FULL_LIBRARY_SET)
       SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
@@ -434,7 +434,7 @@ ENDIF()
 
   #
   # G) Create the export makefile for the build tree
-  # 
+  #
   # This is the equivalent of the cmake version only slightly changed so that
   # it can be directly imported into a Makefile.
   #
@@ -558,7 +558,7 @@ ENDFUNCTION()
 #
 # The INSTALL() commands must be in a different subroutine or CMake will not
 # allow you to call the rountine, even if you if() it out!
-# 
+#
 
 FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES_INSTALL_TARGETS PACKAGE_NAME)
 
