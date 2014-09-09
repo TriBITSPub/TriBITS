@@ -1,6 +1,8 @@
 language: c++
 install:
-  - cmake .
+  - mkdir build
+  - cd build/
+  - cmake ../
   - make
 script:
   - ctest
