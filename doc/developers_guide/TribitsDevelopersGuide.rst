@@ -3,6 +3,10 @@ TriBITS Developers Guide and Reference
 =======================================
 
 :Author: Roscoe A. Bartlett (bartlettra@ornl.gov)
+:Date: |date|
+:Version: TriBITS Development at |date|
+
+.. |date| date::
 
 :Abstract: This document describes the usage of TriBITS to build, test, and deploy complex software.  The primary audience are those individuals who develop on a software project which uses TriBITS.  The overall structure of a TriBITS project is described including all of the various project- and package-specific files that TriBITS requires or can use and how and what order these files are processed.  It also contains detailed reference information on all of the various TriBITS macros and functions directly used in TriBITS project CMake files.  Many other topics of interest to a TriBITS project developer and architect are discussed as well.
 
