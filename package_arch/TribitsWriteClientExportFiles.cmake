@@ -496,6 +496,9 @@ ENDIF()"
   #     <install dir>/<lib path>/cmake/<package name>/.
   # The relative path to the installation dir is hence k*(../) + ../../, where
   # k is the number of components in <lib path>. Extract those here.
+  # This doesn't work if ${${PROJECT_NAME}_INSTALL_LIB_DIR} contains "./" or
+  # "../" components, but really, it never did. All of this should actually be
+  # handled by CMake's CONFIGURE_PACKAGE_CONFIG_FILE().
   STRING(REPLACE "/" ";" PATH_LIST ${${PROJECT_NAME}_INSTALL_LIB_DIR})
   SET(RELATIVE_PATH "../..")
   FOREACH(PATH ${PATH_LIST})
@@ -817,8 +820,20 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
   # directories using the installed config file. This is to deal with
   # installers that allow relocation of the install tree at *install*
   # time.
-  SET(${PROJECT_NAME}_CONFIG_INCLUDE_DIRS "\${CMAKE_CURRENT_LIST_DIR}/../../../${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
-  SET(${PROJECT_NAME}_CONFIG_LIBRARY_DIRS "\${CMAKE_CURRENT_LIST_DIR}/../../../${${PROJECT_NAME}_INSTALL_LIB_DIR}")
+  # The export files are typically installed in
+  #     <install dir>/<lib path>/cmake/<package name>/.
+  # The relative path to the installation dir is hence k*(../) + ../../, where
+  # k is the number of components in <lib path>. Extract those here.
+  # This doesn't work if ${${PROJECT_NAME}_INSTALL_LIB_DIR} contains "./" or
+  # "../" components, but really, it never did. All of this should actually be
+  # handled by CMake's CONFIGURE_PACKAGE_CONFIG_FILE().
+  STRING(REPLACE "/" ";" PATH_LIST ${${PROJECT_NAME}_INSTALL_LIB_DIR})
+  SET(RELATIVE_PATH "../..")
+  FOREACH(PATH ${PATH_LIST})
+    SET(RELATIVE_PATH "${RELATIVE_PATH}/..")
+  ENDFOREACH()
+  SET(${PROJECT_NAME}_CONFIG_INCLUDE_DIRS "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
+  SET(${PROJECT_NAME}_CONFIG_LIBRARY_DIRS "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_LIB_DIR}")
 
   # Write the specification of the rpath if necessary. This is only needed if we're building shared libraries.
   IF(BUILD_SHARED_LIBS)
