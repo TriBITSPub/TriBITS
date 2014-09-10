@@ -301,7 +301,7 @@ FUNCTION(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES)
   ENDFOREACH()
 
   # Must prepend the current package and its libraries itself so that we get
-  # its TPLs libraries. However, if the current pacakge has no native
+  # its TPLs libraries. However, if the current package has no native
   # libraries (yet), then there is no point in listing the package or its
   # TPLs.  Why would a package list TPLs (with actual libraries) if itself
   # does not have libraries to export?  Note, this does not affect internal
@@ -742,9 +742,10 @@ FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES)
   #  ENDIF()
 
   # Appending the logic to include each package's config file.
-  SET(LOAD_CODE "# Load configurations from enabled packages\n")
+  SET(LOAD_CODE "# Load configurations from enabled packages")
   FOREACH(TRIBITS_PACKAGE ${FULL_PACKAGE_SET})
-    SET(LOAD_CODE "${LOAD_CODE}include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")\n")
+    SET(LOAD_CODE "${LOAD_CODE}
+include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
   ENDFOREACH()
   SET(PROJECT_CONFIG_CODE "${PROJECT_CONFIG_CODE}\n${LOAD_CODE}")
 
@@ -808,9 +809,10 @@ FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES)
   SET(PROJECT_CONFIG_CODE "")
 
   # Appending the logic to include each package's config file.
-  SET(LOAD_CODE "# Load configurations from enabled packages\n")
+  SET(LOAD_CODE "# Load configurations from enabled packages")
   FOREACH(TRIBITS_PACKAGE ${FULL_PACKAGE_SET})
-    SET(LOAD_CODE "${LOAD_CODE}include(\"\${CMAKE_CURRENT_LIST_DIR}/../${TRIBITS_PACKAGE}/${TRIBITS_PACKAGE}Config.cmake\")\n")
+    SET(LOAD_CODE "${LOAD_CODE}
+include(\"\${CMAKE_CURRENT_LIST_DIR}/../${TRIBITS_PACKAGE}/${TRIBITS_PACKAGE}Config.cmake\")")
   ENDFOREACH()
   SET(PROJECT_CONFIG_CODE "${PROJECT_CONFIG_CODE}\n${LOAD_CODE}")
 
