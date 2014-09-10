@@ -510,13 +510,6 @@ ENDIF()"
   # Custom code in configuration file.
   SET(PACKAGE_CONFIG_CODE "")
 
-  # Include the subpackage configurations
-  FOREACH(SUBPACKAGE ${${PACKAGE_NAME}_SUBPACKAGES})
-    SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
-INCLUDE(\"\${CMAKE_CURRENT_LIST_DIR}/../${PACKAGE_NAME}${SUBPACKAGE}/${PACKAGE_NAME}${SUBPACKAGE}Config.cmake\")"
-)
-  ENDFOREACH()
-
   IF(${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES)
     SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
 # Include configuration of dependent packages")
