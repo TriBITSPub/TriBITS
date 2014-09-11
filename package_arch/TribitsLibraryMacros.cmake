@@ -660,16 +660,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
     GLOBAL_SET(${PACKAGE_NAME}_LIBRARY_DIRS ${LIBRARY_DIRS_CURRENT})
     GLOBAL_SET(${PACKAGE_NAME}_LIBRARIES    ${${PACKAGE_NAME}_INSTALLATION_LIBRARIES})
 
-  ENDIF() #instalation testing mode
-
-  # Install the export files
-  # TODO move this to a more appropriate place
-  INSTALL(
-    EXPORT ${PACKAGE_NAME}
-    DESTINATION
-    "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PACKAGE_NAME}"
-    FILE ${PACKAGE_NAME}Targets.cmake
-    )
+  ENDIF() #installation testing mode
 
   IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
     PRINT_VAR(${PACKAGE_NAME}_INCLUDE_DIRS)
