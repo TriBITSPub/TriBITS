@@ -464,7 +464,15 @@ FUNCTION(TRIBITS_TPL_DECLARE_LIBRARIES TPL_NAME)
         " is used to look for the given headers first but is just a suggestion."
         " This variable, however, is the final value and will not be touched."
         )
-      
+
+      # Always take the full REALPATH of TPLS. Relocatability is not an issue
+      # here.
+      GET_FILENAME_COMPONENT(
+        TPL_${TPL_NAME}_INCLUDE_DIRS
+        ${TPL_${TPL_NAME}_INCLUDE_DIRS}
+        REALPATH
+        )
+
       ADVANCED_SET(TPL_${TPL_NAME}_INCLUDE_DIRS ${INCLUDES_FOUND}
         CACHE PATH ${DOCSTR})
         
