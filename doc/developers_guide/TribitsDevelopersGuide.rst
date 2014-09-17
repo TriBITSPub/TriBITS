@@ -571,7 +571,7 @@ units are:
 
 * **TriBITS Meta-Project**: A `TriBITS Project`_ that contains no native
   `TriBITS packages`_ or `TriBITS TPLs`_ but is composed out packages from
-  other other `TriBITS Repositories`_.
+  other `TriBITS Repositories`_.
 
 In this document, dependencies are described as either being *upstream* or
 *downstream/forward* defined as:
@@ -1379,6 +1379,40 @@ are processed:
     name like ``RepoX_SOURCE_DIR``.  This makes such CMake code independent of
     where the various TriBITS repos are in relation to each other or the
     Project.
+
+The following project-level local varaibles can be defined by the project or
+the user to help define the what packages from the repository
+``${REPOSITORY_NAME}`` contribute to the primary meta-project packages (PMPP):
+
+  .. _${REPOSITORY_NAME}_NO_PRIMARY_META_PROJECT_PACKAGES:
+
+  ``${REPOSITORY_NAME}_NO_PRIMARY_META_PROJECT_PACKAGES``
+
+    If set to ``TRUE``, then the package's in the the TriBITS repository are
+    not considered to be part of the primary meta-project packages.  This
+    affects what packages get enabled by default when enabling all packages
+    with setting ``${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON`` and what tests and
+    examples get enabled by default when setting
+    ``${PROJECT_NAME}_ENABLE_TESTS=ON``.  See `TriBITS Dependency Handling
+    Behaviors`_ for more details.
+
+  .. _${REPOSITORY_NAME}_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT:
+
+  ``${REPOSITORY_NAME}_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT``
+
+     When the above variable is set to ``TRUE``, this variable is read by
+     TriBITS to find the list of TriBITS packages selected packages in the
+     repository ``${REPOSITORY_NAME}`` which are considered to be part of the
+     set of the project's primary meta-project package when the above variable
+     is set to ``ON``.  NOTE: It is not necessary to list all of the
+     subpackages in a given parent package.  Only the parent package need be
+     listed and it will be equivalent to listing all of the subpackages.  See
+     `TriBITS Dependency Handling Behaviors`_ for more details.
+
+The above primary meta-project variables should be set in the meta-project's
+`<projectDir>/ProjectName.cmake`_ file so that they will be set in all
+situations.
+
 
 TriBITS Package
 +++++++++++++++
@@ -3406,7 +3440,17 @@ In more detail, these rules/behaviors are:
     will result in the enable of all ``PT`` SE packages when
     ``${PROJECT_NAME}_SECONDARY_TESTED_CODE=OFF`` and all ``PT`` and ``ST`` SE
     packages when ``${PROJECT_NAME}_SECONDARY_TESTED_CODE=ON``.  For an
-    example, see `Enable all packages`_.
+    example, see `Enable all packages`_.  When the project is a meta-project,
+    this will only enable the project's primary meta-project packages (PMPP).
+    That is, a package will only be enabled due to
+    ``${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON`` when its parent repository does
+    not have `${REPOSITORY_NAME}_NO_PRIMARY_META_PROJECT_PACKAGES`_ set to
+    ``TRUE``.  However, if::
+
+       ${REPOSITORY_NAME}_NO_PRIMARY_META_PROJECT_PACKAGES=TRUE
+
+    then the SE package may be enabled if it (or its parent package) is listed
+    in `${REPOSITORY_NAME}_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT`_.
 
 .. _<Project>_ENABLE_TESTS only enables explicitly enabled SE package tests:
 
@@ -3417,7 +3461,11 @@ In more detail, these rules/behaviors are:
     ``Trilinos_ENABLE_TESTS=ON`` will only result in the enable of tests for
     ``RTOp``, not ``Teuchos`` (even through TriBITS will enable ``Teuchos``
     because it is a required dependency of ``RTOp``).  See an example, see
-    `Explicit enable of a package and its tests`_.
+    `Explicit enable of a package and its tests`_.  When the project is a
+    meta-project, this will only enable tests for the project's primary
+    meta-project packages (PMPP).  The uses the same logic as for
+    ``${PROJECT_NAME}_ENABLE_ALL_PACKAGES``, see
+    `<Project>_ENABLE_ALL_PACKAGES enables all PT (cond. ST) SE packages`_.
 
 .. _If no SE packages are enabled, nothing will get built:
 
