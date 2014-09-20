@@ -1627,8 +1627,6 @@ class test_checkin_test(unittest.TestCase):
       (getFinalPullOutputFileName(""), "final eg pull and rebase passed\n"),
       (getFinalCommitBodyFileName(""),
          getAutomatedStatusSummaryHeaderKeyStr()+"\n"
-         +"Enabled Packages: Teuchos\n" \
-         +"Enabled all Forward Packages\n" \
          ),
       ("MPI_DEBUG/do-configure.base",
        "\-DTPL_ENABLE_Pthread:BOOL=OFF\n"\
@@ -2079,7 +2077,6 @@ class test_checkin_test(unittest.TestCase):
       +"  => Enabling .Teko.!\n" \
       +"Teko of type ST is being excluded because it is not in the valid list of package types .PT.\n" \
       +"Trilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos\n" \
-      +"Enabled Packages: Teuchos, Teko\n" \
       ,
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
@@ -2120,7 +2117,6 @@ class test_checkin_test(unittest.TestCase):
       +"commitFinal.preCopyrightTrilinos.out\n" \
       +"push.preCopyrightTrilinos.out\n" \
       +"Push passed!\n" \
-      +"Enabled Packages: Teuchos, Teko\n" \
       +"DID PUSH: Trilinos:\n" \
       +"REQUESTED ACTIONS: PASSED\n" \
       ,
