@@ -230,14 +230,22 @@ def run_driver(ctestSourceDirectory, projectRepoBaseDir):
     os.chdir(tddDashboardRootDir)
     if verbose: "\nNew PWD = '"+os.getcwd()+"'"
 
-    ctestExe = install_ctest(tddDashboardRootDir, tribitsDir)
+    tddUseSystemCTest = False
+    if "TRIBITS_TDD_USE_SYSTEM_CTEST" in os.environ \
+      and os.environ["TRIBITS_TDD_USE_SYSTEM_CTEST"] == "1" \
+      :
+      tddUseSystemCTest = True
+    print "tddUseSystemCTest =", tddUseSystemCTest
+
+    if tddUseSystemCTest:
+      ctestExe = getCmndOutput("which ctest", True, False)
+    else:
+      ctestExe = install_ctest(tddDashboardRootDir, tribitsDir)
 
     print "\nctestExe = '" + ctestExe + "'"
     if not os.path.exists(ctestExe):
       print "error: ctest does not exist after installation..."
       sys.exit(3)
-
-    sys.exit(1) # ToDo: Take this out!
 
     # Escape any spaces in the path of the ctest exe. This has to be done
     # here instead of where we set the ctestExe the first time because
