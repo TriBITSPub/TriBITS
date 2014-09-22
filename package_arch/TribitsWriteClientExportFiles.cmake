@@ -81,6 +81,29 @@ FUNCTION(TRIBITS_LIBRARY_LIST_TO_STRING LIST PREFIX OUTPUT_STRING)
   SET(${OUTPUT_STRING} ${LIST_STRING} PARENT_SCOPE)
 ENDFUNCTION()
 
+#
+# CMAKE_CURRENT_LIST_DIR is not defined in CMake versions < 2.8.3, but the
+# Trilinos writes paths that use the value of that variable to this file.
+# Make sure it is available at *find_package* time. Note that all variable
+# references in the code snippet are escaped. This is to keep them from
+# being evaluated until they are actually in the install tree. This is
+# done to handle movable install trees.
+#
+# This function defines the variable
+# DEFINE_CMAKE_CURRENT_LIST_DIR_CODE_CODE_SNIPPET in the caller's scope
+# as a string that can be referenced from CONFIGURE_FILE input files
+# to ensure that the CMAKE_CURRENT_LIST_DIR will be defined on the installation
+# target machine, even if it has an older version of cmake.
+#
+FUNCTION(TRIBITS_SET_DEFINE_CMAKE_CURRENT_LIST_DIR_CODE_SNIPPET)
+  SET(DEFINE_CMAKE_CURRENT_LIST_DIR_CODE_SNIPPET "
+IF (NOT DEFINED CMAKE_CURRENT_LIST_DIR)
+  GET_FILENAME_COMPONENT(_THIS_SCRIPT_PATH \${CMAKE_CURRENT_LIST_FILE} PATH)
+  SET(CMAKE_CURRENT_LIST_DIR \${_THIS_SCRIPT_PATH})
+ENDIF()
+"
+  PARENT_SCOPE )
+ENDFUNCTION()
 
 #
 # @FUNCTION: TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES()
@@ -159,6 +182,8 @@ FUNCTION(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES)
   IF (TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP)
     MESSAGE("\nTRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES(${ARGN})")
   ENDIF()
+
+  TRIBITS_SET_DEFINE_CMAKE_CURRENT_LIST_DIR_CODE_SNIPPET()
 
   #
   # A) Process the command-line arguments
@@ -614,10 +639,13 @@ ENDFUNCTION()
 
 FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES)
 
+  TRIBITS_SET_DEFINE_CMAKE_CURRENT_LIST_DIR_CODE_SNIPPET()
+
   # Reversing the package list so that libraries will be produced in order of
   # most dependent to least dependent.
   SET(PACKAGE_LIST ${${PROJECT_NAME}_SE_PACKAGES})
   LIST(REVERSE PACKAGE_LIST)
+
 
   # Loop over all packages to determine which were enabled. Then build a list
   # of all their libraries/includes in the proper order for linking

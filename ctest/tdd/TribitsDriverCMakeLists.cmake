@@ -49,6 +49,12 @@
 # through the environment.
 get_filename_component(TD_BASE_DIR ${CMAKE_BINARY_DIR} PATH)
 
+# CMake versions greater than 2.8.4 have CMAKE_CURRENT_LIST_DIR. Make
+# sure it's defined.
+if( NOT DEFINED CMAKE_CURRENT_LIST_DIR )
+  get_filename_component( CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH )
+endif()
+
 # Locate the TriBITS dependencies.
 IF (NOT TRIBITS_ROOT)
   get_filename_component(TRIBITS_ROOT "${CMAKE_CURRENT_LIST_DIR}/../..")

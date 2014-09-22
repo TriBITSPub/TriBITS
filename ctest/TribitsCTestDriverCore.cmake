@@ -49,9 +49,7 @@ MESSAGE("*******************************")
 MESSAGE("")
 
 
-# Have to set the min CMake version so that we don't have processing errors
-# before we can read in TriBITS constants file that has the official version.
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.7.0 FATAL_ERROR)
 
 #
 # Get the basic variables that define the project and the build
@@ -76,6 +74,7 @@ ENDIF()
 IF (NOT TRIBITS_PROJECT_ROOT)
   # Fall back on the default convention, in which this file is located at: 
   #   <root>/cmake/tribits/ctest.
+  GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
   SET(TRIBITS_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../..")
 ENDIF()
 GET_FILENAME_COMPONENT(TRIBITS_PROJECT_ROOT "${TRIBITS_PROJECT_ROOT}" ABSOLUTE)
@@ -733,8 +732,10 @@ MACRO(CTEST_SUBMIT)
   # failed submits:
   #
   SET(retry_args "")
-  SET(retry_args RETRY_COUNT 25 RETRY_DELAY 120)
-  MESSAGE("info: using retry_args='${retry_args}' for _ctest_submit call")
+  IF("${CMAKE_VERSION}" VERSION_GREATER "2.8.2")
+    SET(retry_args RETRY_COUNT 25 RETRY_DELAY 120)
+    MESSAGE("info: using retry_args='${retry_args}' for _ctest_submit call")
+  ENDIF()
 
   # Call the original CTEST_SUBMIT and pay attention to its RETURN_VALUE:
   #

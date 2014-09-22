@@ -44,6 +44,10 @@ MESSAGE(
  "\n***\n"
  )
 
+# Ge the directly where this file lives in the TriBITS tree.  We use this
+# to figure out where everything in in the TriBITS directory tree.
+get_filename_component(CMAKE_CURRENT_LIST_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
 # Get the Tribits base directory
 SET(TRIBITS_ROOT "${CMAKE_CURRENT_LIST_DIR}/../..")
 GET_FILENAME_COMPONENT(TRIBITS_ROOT "${TRIBITS_ROOT}" ABSOLUTE)
