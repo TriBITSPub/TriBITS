@@ -37,7 +37,6 @@
 # ************************************************************************
 # @HEADER
 
-INCLUDE(GetCurrentListDir)
 INCLUDE(ParseVariableArguments)
 INCLUDE(SetDefaultAndFromEnv)
 
@@ -46,11 +45,6 @@ SET_DEFAULT_AND_FROM_ENV(TDD_FORCE_INNER_CMAKE_INSTALL 1)
 
 # Set if the inner CMake installs are performed or not
 SET_DEFAULT_AND_FROM_ENV(TRIBITS_TDD_USE_SYSTEM_CTEST 0)
-
-# Get this value outside of any functions so it will be the path to
-# *this* file and not the path to the file calling any of these
-# functions.
-GET_CURRENT_LIST_DIR(THIS_SCRIPT_DIR)
 
 #
 # Placeholder for any global setup necessary on all machines...
@@ -183,7 +177,7 @@ function(TRIBITS_DRIVER_ADD_DASHBOARD testname scriptname)
     -D scriptname=${scriptname}
     -D TD_BASE_DIR=${TD_BASE_DIR}
     -D testname=${testname}
-    -P ${THIS_SCRIPT_DIR}/LocateCTestAndRunScript.cmake
+    -P ${CMAKE_CURRENT_LIST_DIR}/LocateCTestAndRunScript.cmake
     )
 
   # This test that runs the dashboard depends on the test that installs its
