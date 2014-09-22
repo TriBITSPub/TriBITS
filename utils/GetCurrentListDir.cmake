@@ -37,57 +37,17 @@
 # ************************************************************************
 # @HEADER
 
-# This file gets included in the base-level CMakeLists.txt file to define
-# Fortran name mangling.
-
-IF (${PROJECT_NAME}_ENABLE_Fortran)
-  INCLUDE(FortranMangling)
-  FORTRAN_MANGLING()
-
-  # Verify the selected combination of Fortran and C++ compilers.
-  IF("${CMAKE_VERSION}" VERSION_GREATER 2.7.20090824 AND NOT ${PROJECT_NAME}_SKIP_FORTRANCINTERFACE_VERIFY_TEST)
-    INCLUDE(FortranCInterface)
-    FortranCInterface_VERIFY(CXX)
+# Get the directory containing the file currently being processed. 
+#
+# This is equivalent to getting the value of CMAKE_CURRENT_LIST_DIR in
+# cmake versions greater than 2.8.4, but we provide this wrapper macro
+# for compatibility. If called outside of a function or macro, this
+# will return the directory of the calling file. If called within a
+# function or macro, this will return the directory containing the
+# caller.
+FUNCTION(GET_CURRENT_LIST_DIR output_variable)
+  IF(NOT DEFINED CMAKE_CURRENT_LIST_DIR)
+    GET_FILENAME_COMPONENT(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
   ENDIF()
-ENDIF()
-
-IF (FC_FUNC_DEFAULT)
-
-  SET(F77_FUNC_DEFAULT ${FC_FUNC_DEFAULT})
-  SET(F77_FUNC__DEFAULT ${FC_FUNC__DEFAULT})
-  # 2008/10/26: rabartl: ToDo: Above, we need to write
-  # a different function to find out the right BLAS
-  # name mangling automatically.  Given what the above
-  # FORTRAN_MANGLING() function does, this should not
-  # be too hard.
-
-ELSE()
- 
-  IF(CYGWIN)
-    SET(F77_FUNC_DEFAULT "(name,NAME) name ## _" )
-    SET(F77_FUNC__DEFAULT "(name,NAME) name ## __" )
-  ELSEIF(WIN32)
-    SET(F77_FUNC_DEFAULT "(name,NAME) name ## _" )
-    SET(F77_FUNC__DEFAULT "(name,NAME) NAME")
-  ELSEIF(UNIX AND NOT APPLE)
-    SET(F77_FUNC_DEFAULT "(name,NAME) name ## _" )
-    #SET(F77_FUNC__DEFAULT "(name,NAME) name ## __" )
-    SET(F77_FUNC__DEFAULT "(name,NAME) name ## _" )
-  ELSEIF(APPLE)
-    SET(F77_FUNC_DEFAULT "(name,NAME) name ## _" )
-    SET(F77_FUNC__DEFAULT "(name,NAME) name ## __" )
-  ELSE()
-    MESSAGE(FATAL_ERROR "Error, could not determine fortran name mangling!")
-  ENDIF()
-
-ENDIF()
-
-# Set options so that users can change these!
-
-SET(F77_FUNC ${F77_FUNC_DEFAULT} CACHE STRING
-  "Name mangling used to call Fortran 77 functions with no underscores in the name")
-SET(F77_FUNC_ ${F77_FUNC__DEFAULT} CACHE STRING
-  "Name mangling used to call Fortran 77 functions with at least one underscore in the name")
-
-MARK_AS_ADVANCED(F77_FUNC)
-MARK_AS_ADVANCED(F77_FUNC_)
+  SET(${output_variable} "${CMAKE_CURRENT_LIST_DIR}" PARENT_SCOPE)
+ENDFUNCTION()

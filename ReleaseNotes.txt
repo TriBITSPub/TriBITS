@@ -3,10 +3,6 @@
 Release Notes for TriBITS
 ----------------------------------------
 
-2014/09/22:
-
-(*) Changed minimum version of CMake from 2.7 to 2.8.11.
-
 2014/09/21:
 
 (*) Added support for the env var TRIBITS_TDD_USE_SYSTEM_CTEST so that if
