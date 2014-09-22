@@ -2209,6 +2209,14 @@ def checkinTest(baseDir, inOptions, configuration={}):
       commitEmailBodyExtra = ""
       shortCommitEmailBodyExtra = ""
 
+      (cmakePkgOptions, enabledPackagesList) = \
+        getEnablesLists(inOptions, allValidPackageTypesList, False, False,
+        tribitsGitRepos, baseTestDir, False)
+
+      enableStatsListStr = getEnableStatusList(inOptions, enabledPackagesList)
+      commitEmailBodyExtra += enableStatsListStr
+      shortCommitEmailBodyExtra += enableStatsListStr
+
       commitEmailBodyExtra += \
         "\nBuild test results:" \
         "\n-------------------\n"
