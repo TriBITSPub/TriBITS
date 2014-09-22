@@ -774,7 +774,7 @@ version of CMake required by TriBITS is given at in `Getting set up to use
 CMake`_) .  For example, the ``VERA/CMakeLists.txt`` file lists as its first
 line::
 
-  SET(VERA_TRIBITS_CMAKE_MINIMUM_REQUIRED 2.8.5)
+  SET(VERA_TRIBITS_CMAKE_MINIMUM_REQUIRED 2.8.11)
   CMAKE_MINIMUM_REQUIRED(VERSION ${VERA_TRIBITS_CMAKE_MINIMUM_REQUIRED})
 
 .. _<projectDir>/CTestConfig.cmake:
@@ -4346,7 +4346,7 @@ Test Test Category         ``BASIC``           (`Test Test Category BASIC`_)
 
 Typically a TriBITS project will define a "standard development environment"
 which is comprised of a standard compiler (e.g. GCC 4.6.1), TPL versions
-(e.g. OpenMPI 1.4.2, Boost 4.9, etc.), and other tools (e.g. cmake 2.8.5, git
+(e.g. OpenMPI 1.4.2, Boost 4.9, etc.), and other tools (e.g. cmake 2.8.11, git
 1.8.2, etc.).  This standard development environment is expected to be used to
 test changes to the project's code before any push.  By using a standard
 development environment, if the code builds and all the tests pass for the
@@ -5380,18 +5380,14 @@ installation of CMake (which typically includes the executables ``cmake``,
 ``ctest``, and ``cpack``).  Great effort has been expended to implement all of
 the core functionality of TriBITS just using raw CMake.  That means that
 anyone who needs to configure, build, and install software that uses TriBITS
-just needs a compatible CMake implementation.  TriBITS is purposefully
-maintained to work with older versions of CMake (as well as newer versions).
-At the time of this writing, the minimum required version of CMake needed to
-use TriBITS is CMake 2.8.1 (released in March 2010, see `CMake Release Wiki
-<http://www.cmake.org/Wiki/CMake_Released_Versions>`_).  CMake is becoming
-iniquitous enough that many clients will already have a current-enough version
-of CMake installed by default on their systems and will therefore not need to
-download or install any extra software when building and installing a project
-that uses TriBITS (assuming the necessary compilers etc. required by the
-project are also installed).  If a current-enough version of CMake is not
-installed on a given system, it is easy to download the source code and all it
-needs is a basic C++ compiler to build and install.
+just needs a compatible CMake implementation.  CMake is becoming iniquitous
+enough that many clients will already have a current-enough version of CMake
+installed by default on their systems and will therefore not need to download
+or install any extra software when building and installing a project that uses
+TriBITS (assuming the necessary compilers etc. required by the project are
+also installed).  If a current-enough version of CMake is not installed on a
+given system, it is easy to download the source code and all it needs is a
+basic C++ compiler to build and install.
 
 However, note that a specific TriBITS project is free to use any newer CMake
 features it wants and therefore these projects will require newer versions of
@@ -7253,4 +7249,4 @@ snapshotting`_.
 
 .. Common references to raw CMake commands:
 
-.. _CONFIGURE_FILE(): http://www.cmake.org/cmake/help/v2.8.5/cmake.html#command:configure_file
+.. _CONFIGURE_FILE(): http://www.cmake.org/cmake/help/v2.8.11/cmake.html#command:configure_file
