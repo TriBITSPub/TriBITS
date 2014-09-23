@@ -49,7 +49,7 @@ MESSAGE("*******************************")
 MESSAGE("")
 
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.7.0 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11 FATAL_ERROR)
 
 #
 # Get the basic variables that define the project and the build
@@ -732,10 +732,8 @@ MACRO(CTEST_SUBMIT)
   # failed submits:
   #
   SET(retry_args "")
-  IF("${CMAKE_VERSION}" VERSION_GREATER "2.8.2")
-    SET(retry_args RETRY_COUNT 25 RETRY_DELAY 120)
-    MESSAGE("info: using retry_args='${retry_args}' for _ctest_submit call")
-  ENDIF()
+  SET(retry_args RETRY_COUNT 25 RETRY_DELAY 120)
+  MESSAGE("info: using retry_args='${retry_args}' for _ctest_submit call")
 
   # Call the original CTEST_SUBMIT and pay attention to its RETURN_VALUE:
   #
