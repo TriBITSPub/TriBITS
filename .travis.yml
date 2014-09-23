@@ -2,7 +2,8 @@ language: c++
 before_install:
   - sudo apt-get install gfortran
 install:
-  - sudo ./python/download-cmake.py
+  - sudo ./python/download-cmake.py --install-dir=/usr/local/cmake-2.8.11
+  - export PATH=/usr/local/cmake-2.8.11/bin:$PATH
   - mkdir build
   - cd build/
   - cmake ../
