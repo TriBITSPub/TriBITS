@@ -263,6 +263,15 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
   SET(${PROJECT_NAME}_ENABLE_DEBUG ${${PROJECT_NAME}_ENABLE_DEBUG_DEFAULT} CACHE BOOL
     "Enable debug checking for ${PROJECT_NAME} packages.  Off by default unless CMAKE_BUILD_TYPE=\"DEBUG\"." )
 
+  IF (${PROJECT_NAME}_ENABLE_DEBUG)
+    SET(${PROJECT_NAME}_ENABLE_CONFIGURE_DEBUG_DEFAULT ON)
+  ELSE()
+    SET(${PROJECT_NAME}_ENABLE_CONFIGURE_DEBUG_DEFAULT OFF)
+  ENDIF()
+  SET(${PROJECT_NAME}_ENABLE_CONFIGURE_DEBUG 
+    ${${PROJECT_NAME}_ENABLE_CONFIGURE_DEBUG_DEFAULT} CACHE BOOL
+    "Enable debug checking of the process which finds errors in the project's CMake files (off by default unless ${PROJECT_NAME}_ENABLE_DEBUG=ON)." )
+
   SET(${PROJECT_NAME}_ENABLE_TEUCHOS_TIME_MONITOR ON
     CACHE BOOL
     "Enable support for Teuchos Time Monitors in all Trilinos packages that support it."
@@ -1406,7 +1415,7 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
   ENDFOREACH()
 
   #
-  # D) Process list of list of packages, TPLs, etc.
+  # D) Process listS of packages, TPLs, etc.
   #
 
   #
@@ -1420,7 +1429,7 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
     TIMER_GET_RAW_SECONDS(SET_UP_DEPENDENCIES_TIME_STOP_SECONDS)
     TIMER_PRINT_REL_TIME(${SET_UP_DEPENDENCIES_TIME_START_SECONDS}
       ${SET_UP_DEPENDENCIES_TIME_STOP_SECONDS}
-      "\nTotal time to read in and process all (native and extra) package dependencies")
+      "\nTotal time to read in and process all package dependencies")
   ENDIF()
 
   #
@@ -2048,7 +2057,6 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
     # downstream packages that might not even be enabled.  To support this,
     # allow this.
     LIST(GET ${PROJECT_NAME}_PACKAGE_DIRS ${PACKAGE_IDX} PACKAGE_DIR)
-    SET(${TRIBITS_PACKAGE}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE_DIR})
     #PRINT_VAR(${TRIBITS_PACKAGE}_SOURCE_DIR)
  
     TRIBITS_DETERMINE_IF_PROCESS_PACKAGE(${TRIBITS_PACKAGE}
