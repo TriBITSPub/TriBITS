@@ -219,12 +219,19 @@ ENDFUNCTION()
 # This is needed by the export system to determine what libraries are 
 # needed and for informational purposes for dependent projects.
 #
+# This function as currently implemented appears to have complexity of at
+# least:
+#
+#   O(num_dep_pkgs * num_se_pkgs * num_dep_pkgs)
+#
+# And the function is claled num_se_pkgs times so the overall complexity for
+# calling this funtion is approximately:
+#
+#     O(num_se_pkgs^2 * av_num_dep_pkgs^2).
+#
 FUNCTION(TRIBITS_SET_FULL_DEP_PACKAGES PACKAGE_NAME)
 
   IF(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES)
-    #message("{")
-    LIST(FIND ${PROJECT_NAME}_SE_PACKAGES ${PACKAGE_NAME} PACKAGE_VALUE)
-    #message("Entering TRIBITS_SET_FULL_DEP_PACKAGES for package '${PACKAGE_NAME}'(${PACKAGE_VALUE})")
 
     LIST(APPEND PACKAGE_FULL_DEPS_LIST ${${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES}
       ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES} )
@@ -242,34 +249,44 @@ FUNCTION(TRIBITS_SET_FULL_DEP_PACKAGES PACKAGE_NAME)
     SET(ORDERED_PACKAGE_FULL_DEPS_LIST)
 
     FOREACH(DEP_PACKAGE ${PACKAGE_FULL_DEPS_LIST})
+
       LIST(FIND ${PROJECT_NAME}_SE_PACKAGES ${DEP_PACKAGE} DEP_PACKAGE_VALUE)
+
       #message("inserting package ${DEP_PACKAGE}(${DEP_PACKAGE_VALUE}) into full dep list for ${PACKAGE_NAME}")
       SET(SORTED_INDEX 0)
       SET(INSERTED_DEP_PACKAGE FALSE)
+
       FOREACH(SORTED_PACKAGE ${ORDERED_PACKAGE_FULL_DEPS_LIST})
+
         LIST(FIND ${PROJECT_NAME}_SE_PACKAGES ${SORTED_PACKAGE} SORTED_PACKAGE_VALUE)
+
         IF(${DEP_PACKAGE_VALUE} GREATER ${SORTED_PACKAGE_VALUE})
           #message("inserted package ${DEP_PACKAGE} at index ${SORTED_INDEX}")
           LIST(INSERT ORDERED_PACKAGE_FULL_DEPS_LIST ${SORTED_INDEX} ${DEP_PACKAGE})
           SET(INSERTED_DEP_PACKAGE TRUE)
           BREAK()
         ENDIF()
+
         MATH(EXPR SORTED_INDEX ${SORTED_INDEX}+1)
+
       ENDFOREACH()
+
       IF(NOT INSERTED_DEP_PACKAGE)
-        #message("inserted package ${DEP_PACKAGE} at the end of the list (index = ${SORTED_INDEX})")
         LIST(APPEND ORDERED_PACKAGE_FULL_DEPS_LIST ${DEP_PACKAGE})
       ENDIF()    
+
     ENDFOREACH()
 
-    #message("Full lib package dependencies for package        ${PACKAGE_NAME} = '${PACKAGE_FULL_DEPS_LIST}'")
-    #message("Full sorted lib package dependencies for package ${PACKAGE_NAME} = '${ORDERED_PACKAGE_FULL_DEPS_LIST}'")
     GLOBAL_SET(${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES ${ORDERED_PACKAGE_FULL_DEPS_LIST})
 
-    #message("Leaving TRIBITS_SET_FULL_DEP_PACKAGES for package '${PACKAGE_NAME}'")
-    #message("}\n")
+    IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      PRINT_VAR(${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES)
+    ENDIF()
+
   ENDIF()
+
 ENDFUNCTION()
+
 
 #
 # Macro that helps to set up forward package dependency lists
