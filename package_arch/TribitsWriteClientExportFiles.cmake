@@ -97,10 +97,11 @@ ENDFUNCTION()
 #
 FUNCTION(TRIBITS_SET_DEFINE_CMAKE_CURRENT_LIST_DIR_CODE_SNIPPET)
   SET(DEFINE_CMAKE_CURRENT_LIST_DIR_CODE_SNIPPET "
-IF (NOT DEFINED CMAKE_CURRENT_LIST_DIR)
-  GET_FILENAME_COMPONENT(_THIS_SCRIPT_PATH \${CMAKE_CURRENT_LIST_FILE} PATH)
-  SET(CMAKE_CURRENT_LIST_DIR \${_THIS_SCRIPT_PATH})
+# Include guard
+IF (${PACKAGE_NAME}_INCLUDED)
+  RETURN()
 ENDIF()
+SET(${PACKAGE_NAME}_INCLUDED TRUE)
 "
   PARENT_SCOPE )
 ENDFUNCTION()
@@ -240,6 +241,7 @@ FUNCTION(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES)
     PRINT_VAR(${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES)
   ENDIF()
 
+
   FOREACH(TRIBITS_PACKAGE ${${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES})
 
     LIST(FIND ${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES ${TRIBITS_PACKAGE}
@@ -301,7 +303,7 @@ FUNCTION(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES)
   ENDFOREACH()
 
   # Must prepend the current package and its libraries itself so that we get
-  # its TPLs libraries. However, if the current pacakge has no native
+  # its TPLs libraries. However, if the current package has no native
   # libraries (yet), then there is no point in listing the package or its
   # TPLs.  Why would a package list TPLs (with actual libraries) if itself
   # does not have libraries to export?  Note, this does not affect internal
@@ -404,19 +406,21 @@ FUNCTION(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES)
   #
 
   IF (PARSE_WRITE_CMAKE_CONFIG_FILE)
-
     # Custom code in configuration file.
     SET(PACKAGE_CONFIG_CODE "")
 
-    # Import build tree targets into applications.
-    IF(FULL_LIBRARY_SET)
+    # Include configurations of dependent packages
+    FOREACH(DEP_PACKAGE ${${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES})
       SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
-# Import ${PROJECT_NAME} targets
-IF(NOT ${PROJECT_NAME}_TARGETS_IMPORTED)
-  SET(${PROJECT_NAME}_TARGETS_IMPORTED 1)
-  INCLUDE(\"${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake\")
-ENDIF()
-"
+INCLUDE(\"\${CMAKE_CURRENT_LIST_DIR}/../${DEP_PACKAGE}/${DEP_PACKAGE}Config.cmake)"
+)
+    ENDFOREACH()
+
+    # Import build tree targets into applications.
+    IF(${TRIBITS_PACKAGE}_HAS_NATIVE_LIBRARIES)
+      SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
+# Import ${PACKAGE_NAME} targets
+INCLUDE(\"${PROJECT_BINARY_DIR}/${PACKAGE_NAME}Targets.cmake\")"
       )
     ENDIF()
 
@@ -504,16 +508,26 @@ ENDIF()
   # Custom code in configuration file.
   SET(PACKAGE_CONFIG_CODE "")
 
+  IF(${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES)
+    SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
+# Include configuration of dependent packages")
+  ENDIF()
+  FOREACH(DEP_PACKAGE ${${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES})
+    SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
+INCLUDE(\"\${CMAKE_CURRENT_LIST_DIR}/../${DEP_PACKAGE}/${DEP_PACKAGE}Config.cmake\")"
+)
+  ENDFOREACH()
+  IF(${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES)
+    SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}\n")
+  ENDIF()
+
   # Import install tree targets into applications.
   GET_PROPERTY(HAS_INSTALL_TARGETS GLOBAL PROPERTY ${PACKAGE_NAME}_HAS_INSTALL_TARGETS)
   IF(HAS_INSTALL_TARGETS)
     SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
-# Import ${PROJECT_NAME} targets
-IF(NOT ${PROJECT_NAME}_TARGETS_IMPORTED)
-  SET(${PROJECT_NAME}_TARGETS_IMPORTED 1)
-  INCLUDE(\"\${CMAKE_CURRENT_LIST_DIR}/../${PROJECT_NAME}/${PROJECT_NAME}Targets.cmake\")
-ENDIF()
-")
+# Import ${PACKAGE_NAME} targets
+INCLUDE(\"\${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}Targets.cmake\")"
+)
   ENDIF()
 
   # Write the specification of the rpath if necessary. This is only needed if we're building shared libraries.
@@ -572,6 +586,13 @@ FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES_INSTALL_TARGETS PACKAGE_NAME)
       RENAME ${PACKAGE_NAME}Config.cmake
       )
 
+    IF(${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES)
+      INSTALL(
+        EXPORT ${PACKAGE_NAME}
+        DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PACKAGE_NAME}"
+        FILE ${PACKAGE_NAME}Targets.cmake
+        )
+    ENDIF()
   ENDIF()
 
   IF(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES)
@@ -582,7 +603,6 @@ FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES_INSTALL_TARGETS PACKAGE_NAME)
       RENAME Makefile.export.${PACKAGE_NAME}
       )
   ENDIF()
-
 
 ENDFUNCTION()
 
@@ -716,32 +736,33 @@ FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES)
   # Custom code in configuration file.
   SET(PROJECT_CONFIG_CODE "")
 
-  # Export targets from the build tree.
-  IF(FULL_LIBRARY_SET)
-    LIST(SORT FULL_LIBRARY_SET)
-    LIST(REMOVE_DUPLICATES FULL_LIBRARY_SET)
-    SET(FULL_LIBRARY_TARGET_SET)
-    FOREACH(LIB_ELE ${FULL_LIBRARY_SET})
-      IF (TARGET ${LIB_ELE})
-        LIST(APPEND FULL_LIBRARY_TARGET_SET ${LIB_ELE})
-      ENDIF()
-    ENDFOREACH()
-    EXPORT(TARGETS ${FULL_LIBRARY_TARGET_SET} FILE
-      "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake")
-    # Import the targets in applications.
-    SET(PROJECT_CONFIG_CODE "${PROJECT_CONFIG_CODE}
-# Import ${PROJECT_NAME} targets
-IF(NOT ${PROJECT_NAME}_TARGETS_IMPORTED)
-  SET(${PROJECT_NAME}_TARGETS_IMPORTED 1)
-  INCLUDE(\"${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake\")
-ENDIF()
-")
-  ENDIF()
+  #  # Export targets from the build tree.
+  #  IF(FULL_LIBRARY_SET)
+  #    LIST(SORT FULL_LIBRARY_SET)
+  #    LIST(REMOVE_DUPLICATES FULL_LIBRARY_SET)
+  #    SET(FULL_LIBRARY_TARGET_SET)
+  #    FOREACH(LIB_ELE ${FULL_LIBRARY_SET})
+  #      IF (TARGET ${LIB_ELE})
+  #        LIST(APPEND FULL_LIBRARY_TARGET_SET ${LIB_ELE})
+  #      ENDIF()
+  #    ENDFOREACH()
+  #    EXPORT(TARGETS ${FULL_LIBRARY_TARGET_SET} FILE
+  #      "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake")
+  #    # Import the targets in applications.
+  #    SET(PROJECT_CONFIG_CODE "${PROJECT_CONFIG_CODE}
+  ## Import ${PROJECT_NAME} targets
+  #IF(NOT ${PROJECT_NAME}_TARGETS_IMPORTED)
+  #  SET(${PROJECT_NAME}_TARGETS_IMPORTED 1)
+  #  INCLUDE(\"${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake\")
+  #ENDIF()
+  #")
+  #  ENDIF()
 
   # Appending the logic to include each package's config file.
-  SET(LOAD_CODE "# Load configurations from enabled packages\n")
+  SET(LOAD_CODE "# Load configurations from enabled packages")
   FOREACH(TRIBITS_PACKAGE ${FULL_PACKAGE_SET})
-    SET(LOAD_CODE "${LOAD_CODE}include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")\n")
+    SET(LOAD_CODE "${LOAD_CODE}
+include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
   ENDFOREACH()
   SET(PROJECT_CONFIG_CODE "${PROJECT_CONFIG_CODE}\n${LOAD_CODE}")
 
@@ -816,28 +837,11 @@ ENDIF()
   # Custom code in configuration file.
   SET(PROJECT_CONFIG_CODE "")
 
-  # Export targets from the install tree.
-  GET_PROPERTY(HAS_INSTALL_TARGETS GLOBAL PROPERTY ${PROJECT_NAME}_HAS_INSTALL_TARGETS)
-  IF(HAS_INSTALL_TARGETS)
-    INSTALL(
-      EXPORT ${PROJECT_NAME}
-      DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PROJECT_NAME}"
-      FILE ${PROJECT_NAME}Targets.cmake
-      )
-    # Import the targets in applications.
-    SET(PROJECT_CONFIG_CODE "${PROJECT_CONFIG_CODE}
-# Import ${PROJECT_NAME} targets
-IF(NOT ${PROJECT_NAME}_TARGETS_IMPORTED)
-  SET(${PROJECT_NAME}_TARGETS_IMPORTED 1)
-  INCLUDE(\"\${CMAKE_CURRENT_LIST_DIR}/${PROJECT_NAME}Targets.cmake\")
-ENDIF()
-")
-  ENDIF()
-
   # Appending the logic to include each package's config file.
-  SET(LOAD_CODE "# Load configurations from enabled packages\n")
+  SET(LOAD_CODE "# Load configurations from enabled packages")
   FOREACH(TRIBITS_PACKAGE ${FULL_PACKAGE_SET})
-    SET(LOAD_CODE "${LOAD_CODE}include(\"\${CMAKE_CURRENT_LIST_DIR}/../${TRIBITS_PACKAGE}/${TRIBITS_PACKAGE}Config.cmake\")\n")
+    SET(LOAD_CODE "${LOAD_CODE}
+include(\"\${CMAKE_CURRENT_LIST_DIR}/../${TRIBITS_PACKAGE}/${TRIBITS_PACKAGE}Config.cmake\")")
   ENDFOREACH()
   SET(PROJECT_CONFIG_CODE "${PROJECT_CONFIG_CODE}\n${LOAD_CODE}")
 
