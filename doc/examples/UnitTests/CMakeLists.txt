@@ -192,6 +192,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
       -DTribitsExProj_TRACE_FILE_PROCESSING=ON
       -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
       -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
@@ -289,6 +291,8 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_TESTS=ON
+        -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
+        -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
         "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
