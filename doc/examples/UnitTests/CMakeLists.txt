@@ -83,7 +83,7 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
       "Built target hello_world_lib"
       "Built target hello_world"
       "Built target unit_tests"
-  TEST_2 CMND ${CMAKE_CTEST_COMMAND}
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     PASS_REGULAR_EXPRESSION_ALL
       ": test .*  Passed"
       ": unit_test .*  Passed"
@@ -109,7 +109,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
       "Built target hello_world_lib"
       "Built target hello_world"
       "Built target HelloWorld_unit_tests"
-  TEST_2 CMND ${CMAKE_CTEST_COMMAND}
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     PASS_REGULAR_EXPRESSION_ALL
       ": HelloWorld_hello_world .*  Passed"
       ": HelloWorld_unit_tests .*  Passed"
@@ -245,7 +245,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
       "Built target pws_a"
       "Built target pws_b"
       "Built target pws_c"
-  TEST_2 CMND ${CMAKE_CTEST_COMMAND}
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
       "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
@@ -387,7 +387,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "Built target pws_a"
         "Built target pws_b"
         "Built target pws_c"
-    TEST_2 CMND ${CMAKE_CTEST_COMMAND}
+    TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       MESSAGE "Run all the tests with raw 'ctest'"
       PASS_REGULAR_EXPRESSION_ALL
         "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
@@ -423,7 +423,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
     ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Built target simplecxx"
-  TEST_2 CMND ${CMAKE_CTEST_COMMAND}
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
       "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
@@ -468,7 +468,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   TEST_2 CMND make ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Built target WrapExternal_run_external_func"
-  TEST_3 CMND ${CMAKE_CTEST_COMMAND}
+  TEST_3 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     PASS_REGULAR_EXPRESSION_ALL
       "WrapExternal_run_external_func${TEST_MPI_1_SUFFIX} .* Passed"
       "100% tests passed, 0 tests failed out of 1"
