@@ -125,8 +125,8 @@ FUNCTION(UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_BEFORE_LIBS)
 
   UNITTEST_FILE_REGEX("${GENERATED_EXPORT_CONFIG}"
     REGEX_STRINGS
-      "IF .RTOp_INCLUDED."
-      "SET.RTOp_INCLUDED TRUE."
+      "IF .RTOp1_CONFIG_INCLUDED."
+      "SET.RTOp1_CONFIG_INCLUDED TRUE."
       "SET.RTOp1_INCLUDE_DIRS .teuchos/core/include.teuchos/numeric/include.."
       "SET.RTOp1_LIBRARY_DIRS .teuchos/core/src.teuchos/numeric/src.."
       "SET.RTOp1_LIBRARIES .teuchoscore.teuchosnumeric.."
@@ -203,8 +203,8 @@ FUNCTION(UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_AFTER_LIBS)
 
   UNITTEST_FILE_REGEX("${GENERATED_EXPORT_CONFIG}"
     REGEX_STRINGS
-      "IF .RTOp_INCLUDED."
-      "SET.RTOp_INCLUDED TRUE."
+      "IF .RTOp2_CONFIG_INCLUDED."
+      "SET.RTOp2_CONFIG_INCLUDED TRUE."
       "SET.RTOp2_INCLUDE_DIRS .rtop/include.teuchos/core/include.teuchos/numeric/include.."
       "SET.RTOp2_LIBRARY_DIRS .rtop/src.teuchos/core/src.teuchos/numeric/src.."
       "SET.RTOp2_LIBRARIES .rtop.teuchoscore.teuchosnumeric.."
