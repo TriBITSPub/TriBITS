@@ -493,37 +493,39 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
       "Generating external_func/libexternal_func.a"
       "Linking CXX executable WrapExternal_run_external_func.exe"
 
-  TEST_8 CMND ${CMAKE_COMMAND}
+  TEST_8 CMND sleep ARGS 1s 
+     MESSAGE "Sleep for 1 sec for systems were time stamps are only accurate to 1 sec"
+  TEST_9 CMND ${CMAKE_COMMAND}
      ARGS  -DSimpleCxx_ENABLE_DEBUG=ON  TribitsExampleProject
      MESSAGE "Recofigure changing the debug mode to trigger rebuild"
     PASS_REGULAR_EXPRESSION_ALL
       "The upstream SE package binary file ./src/SimpleCxx_config.h is more recent than this package's binary file ./WrapExternal_run_external_func.exe"
       "Blowing away WrapExternal build dir external_func/ so it will build from scratch"
-  TEST_9 CMND make ARGS ${CTEST_BUILD_FLAGS}
+  TEST_10 CMND make ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Generating external_func/libexternal_func.a"
       "Linking CXX executable WrapExternal_run_external_func.exe"
 
-  TEST_10 CMND sleep ARGS 1s 
+  TEST_11 CMND sleep ARGS 1s 
      MESSAGE "Sleep for 1 sec for systems were time stamps are only accurate to 1 sec"
-  TEST_11 CMND touch
+  TEST_12 CMND touch
      ARGS TribitsExampleProject/packages/wrap_external/external_func/configure.py
      MESSAGE "Test that changing the external file will trigger rebuild"
-  TEST_12 CMND ${CMAKE_COMMAND} ARGS TribitsExampleProject
+  TEST_13 CMND ${CMAKE_COMMAND} ARGS TribitsExampleProject
      MESSAGE "Recofigure with changes external file"
     PASS_REGULAR_EXPRESSION_ALL
       "The this package's source file ./external_func/configure.py is more recent than this package's binary file ./WrapExternal_run_external_func.exe"
       "Blowing away WrapExternal build dir external_func/ so it will build from scratch"
-  TEST_13 CMND make ARGS ${CTEST_BUILD_FLAGS}
+  TEST_14 CMND make ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Generating external_func/libexternal_func.a"
       "Linking CXX executable WrapExternal_run_external_func.exe"
 
-  TEST_14 CMND ${CMAKE_COMMAND} ARGS TribitsExampleProject
+  TEST_15 CMND ${CMAKE_COMMAND} ARGS TribitsExampleProject
      MESSAGE "Recofigure with no changes that will not do anything"
     PASS_REGULAR_EXPRESSION_ALL
       "This package's most recent binary file ./WrapExternal_run_external_func.exe is more recent than its upstream SE package source or binary files or this package's source files"
-  TEST_15 CMND make ARGS ${CTEST_BUILD_FLAGS}
+  TEST_16 CMND make ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Built target build_external_func"
       "Built target WrapExternal_run_external_func"
