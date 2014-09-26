@@ -437,8 +437,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   CATEGORIES CONTINUOUS
 
   TEST_0 CMND cp
-    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
-      .
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject .
 
   TEST_1 CMND ${CMAKE_COMMAND}
     ARGS
@@ -529,5 +528,54 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
     PASS_REGULAR_EXPRESSION_ALL
       "Built target build_external_func"
       "Built target WrapExternal_run_external_func"
+
+  )
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  CATEGORIES CONTINUOUS
+
+  TEST_0
+    MESSSAGE "Do a verbose configure and check that the packages coupling variables are correct."
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_DEBUG=OFF
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_VERBOSE_CONFIGURE=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx PackageWithSubpackages WrapExternal 3"
+      "Final set of enabled SE packages:  SimpleCxx PackageWithSubpackagesSubpackageA PackageWithSubpackagesSubpackageB PackageWithSubpackagesSubpackageC PackageWithSubpackages WrapExternal 6"
+
+      "SimpleCxx_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src'"
+      "SimpleCxx_LIBRARY_DIRS='.+/packages/simple_cxx/src'"
+      "SimpleCxx_LIBRARIES='simplecxx'"
+
+      "PackageWithSubpackagesSubpackageA_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TribitsExampleProject/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src'"
+      "PackageWithSubpackagesSubpackageA_LIBRARY_DIRS='.+/packages/package_with_subpackages/A..+/packages/simple_cxx/src'"
+      "PackageWithSubpackagesSubpackageA_LIBRARIES='pws_a'"
+
+      "PackageWithSubpackagesSubpackageB_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TribitsExampleProject/packages/package_with_subpackages/B..+/TribitsExampleProject/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src'"
+      "PackageWithSubpackagesSubpackageB_LIBRARY_DIRS='.+/packages/package_with_subpackages/B..+/packages/package_with_subpackages/A..+/packages/simple_cxx/src'"
+      "PackageWithSubpackagesSubpackageB_LIBRARIES='pws_b'"
+
+      "PackageWithSubpackagesSubpackageC_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TribitsExampleProject/packages/package_with_subpackages/C..+/TribitsExampleProject/packages/package_with_subpackages/B..+/TribitsExampleProject/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src'"
+      "PackageWithSubpackagesSubpackageC_LIBRARY_DIRS='.+/packages/package_with_subpackages/C..+/packages/package_with_subpackages/B..+/packages/package_with_subpackages/A..+/packages/simple_cxx/src'"
+      "PackageWithSubpackagesSubpackageC_LIBRARIES='pws_c'"
+
+      "PackageWithSubpackages_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TribitsExampleProject/packages/package_with_subpackages/C..+/TribitsExampleProject/packages/package_with_subpackages/B..+/TribitsExampleProject/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TribitsExampleProject/packages/package_with_subpackages/B..+/TribitsExampleProject/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TribitsExampleProject/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src'"
+      "PackageWithSubpackages_LIBRARY_DIRS='.+/packages/package_with_subpackages/C..+/packages/package_with_subpackages/B..+/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/packages/package_with_subpackages/B..+/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/packages/package_with_subpackages/A..+/packages/simple_cxx/src'"
+      "PackageWithSubpackages_LIBRARIES='pws_c.pws_b.pws_a'"
+
+      "WrapExternal_INCLUDE_DIRS='.+/packages/wrap_external/external_func'"
+      "WrapExternal_LIBRARY_DIRS=''"
+      "WrapExternal_LIBRARIES='external_func.pws_c'"
 
   )
