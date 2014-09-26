@@ -659,13 +659,12 @@ ENDMACRO()
 #   ${PACKAGE_NAME}_LIBRARY_DIRS
 #   ${PACKAGE_NAME}_LIBRARIES
 #   ${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES
-#   ${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES
+#   ${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES
 #   ${PARENT_PACKAGE_NAME}_LIB_TARGETS
 #   ${PARENT_PACKAGE_NAME}_ALL_TARGETS
 #
 # without carefully studying the documentation in README.DEPENENCIES and then
 # carefully studying all of the code and issues that modify these variables!
 #
-# ToDo: Write some good unit tests that pin down the behavior of all of all
-# of this!
+# ToDo: Write some good unit tests that pin down the behavior of all of this!
 #

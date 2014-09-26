@@ -407,17 +407,12 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
     -DTrilinos_VERBOSE_CONFIGURE:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Teuchos_FULL_EXPORT_DEP_PACKAGES=''"
-    "RTOp_FULL_EXPORT_DEP_PACKAGES='Teuchos'"
-    "Epetra_FULL_EXPORT_DEP_PACKAGES=''"
-    "Triutils_FULL_EXPORT_DEP_PACKAGES='Epetra'"
-    "EpetraExt_FULL_EXPORT_DEP_PACKAGES='Triutils.Epetra.Teuchos'"
-    "ThyraCoreLibs_FULL_EXPORT_DEP_PACKAGES='RTOp.Teuchos'"
-    "ThyraGoodStuff_FULL_EXPORT_DEP_PACKAGES='ThyraCoreLibs.RTOp.Teuchos'"
-    "ThyraCrazyStuff_FULL_EXPORT_DEP_PACKAGES='ThyraGoodStuff.ThyraCoreLibs.RTOp.Teuchos'"
-    "ThyraEpetra_FULL_EXPORT_DEP_PACKAGES='ThyraCoreLibs.Epetra.RTOp.Teuchos'"
-    "ThyraEpetraExt_FULL_EXPORT_DEP_PACKAGES='ThyraEpetra.ThyraCoreLibs.EpetraExt.Triutils.Epetra.RTOp.Teuchos'"
-    "Thyra_FULL_EXPORT_DEP_PACKAGES='ThyraEpetraExt.ThyraEpetra.ThyraCrazyStuff.ThyraGoodStuff.ThyraCoreLibs.EpetraExt.Triutils.Epetra.RTOp.Teuchos'"
+    "Teuchos_FULL_ENABLED_DEP_PACKAGES=''"
+    "RTOp_FULL_ENABLED_DEP_PACKAGES='Teuchos'"
+    "Epetra_FULL_ENABLED_DEP_PACKAGES=''"
+    "ThyraCoreLibs_FULL_ENABLED_DEP_PACKAGES='RTOp.Teuchos'"
+    "ThyraEpetra_FULL_ENABLED_DEP_PACKAGES='ThyraCoreLibs.Epetra.RTOp.Teuchos'"
+    "Thyra_FULL_ENABLED_DEP_PACKAGES='ThyraEpetra.ThyraCoreLibs.Epetra.RTOp.Teuchos'"
   )
 
 
