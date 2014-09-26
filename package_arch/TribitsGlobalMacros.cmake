@@ -1238,10 +1238,11 @@ FUNCTION(TRIBITS_GENERATE_REPO_VERSION_OUTPUT_AND_FILE_AND_INSTALL)
 
 ENDFUNCTION()
 
-#
-# Read in ${PROJECT_NAME} packages and TPLs, process dependencies, write XML files
-#
 
+#
+# Read in ${PROJECT_NAME} packages and TPLs, process dependencies, write XML
+# files
+#
 MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
 
   # Set to empty
