@@ -475,12 +475,15 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   TEST_4 CMND sleep ARGS 1s 
      MESSAGE "Sleep for 1 sec for systems were time stamps are only accurate to 1 sec"
   TEST_5 CMND touch
-     ARGS TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp
+     ARGS TribitsExampleProject/packages/package_with_subpackages/A/A.cpp
      MESSAGE "Test that changing upstream source will trigger rebuild"
   TEST_6 CMND ${CMAKE_COMMAND} ARGS TribitsExampleProject
+      -DWrapExternal_SHOW_MOST_RECENT_FILES=TRUE
      MESSAGE "Recofigure with changed upstream source"
     PASS_REGULAR_EXPRESSION_ALL
-      "The upstream SE package source file ./src/SimpleCxx_HelloWorld.cpp is more recent than this package's binary file ./WrapExternal_run_external_func.exe"
+      "Most recent file in ./packages/package_with_subpackages/ is ./A/A.cpp"
+      "Overall most recent modified file is in ./packages/package_with_subpackages/ and is ./A/A.cpp"
+      "The upstream SE package source file ./A/A.cpp is more recent than this package's binary file ./WrapExternal_run_external_func.exe"
       "Blowing away WrapExternal build dir external_func/ so it will build from scratch"
   TEST_7 CMND make ARGS ${CTEST_BUILD_FLAGS}
     MESSAGE "Rebuild only exteranl_func"
@@ -495,7 +498,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   TEST_8 CMND sleep ARGS 1s 
      MESSAGE "Sleep for 1 sec for systems were time stamps are only accurate to 1 sec"
   TEST_9 CMND ${CMAKE_COMMAND}
-     ARGS  -DSimpleCxx_ENABLE_DEBUG=ON  TribitsExampleProject
+     ARGS  -DSimpleCxx_ENABLE_DEBUG=ON  -DWrapExternal_SHOW_MOST_RECENT_FILES=FALSE
+       TribitsExampleProject
      MESSAGE "Recofigure changing the debug mode to trigger rebuild"
     PASS_REGULAR_EXPRESSION_ALL
       "The upstream SE package binary file ./src/SimpleCxx_config.h is more recent than this package's binary file ./WrapExternal_run_external_func.exe"
