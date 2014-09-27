@@ -2159,7 +2159,7 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
           TIMER_GET_RAW_SECONDS(PROCESS_ETI_STOP_SECONDS)
           TIMER_PRINT_REL_TIME(${PROCESS_ETI_START_SECONDS}
             ${PROCESS_ETI_STOP_SECONDS}
-            "Time to process ETI support for package ${PACKAGE_NAME}")
+            "-- Time to process ETI support for package ${PACKAGE_NAME}")
         ENDIF()
       ENDFOREACH()
     ENDIF()
