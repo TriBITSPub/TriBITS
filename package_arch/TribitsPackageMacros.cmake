@@ -631,8 +631,6 @@ MACRO(TRIBITS_PROCESS_SUBPACKAGES)
       LIST(GET ${PARENT_PACKAGE_NAME}_SUBPACKAGE_DIRS ${SUBPACKAGE_IDX} SUBPACKAGE_DIR)
       #PRINT_VAR(SUBPACKAGE_DIR)
 
-      DUAL_SCOPE_SET(${SUBPACKAGE_FULLNAME}_SOURCE_DIR
-        ${${PARENT_PACKAGE_NAME}_SOURCE_DIR}/${SUBPACKAGE_DIR})
       DUAL_SCOPE_SET(${SUBPACKAGE_FULLNAME}_BINARY_DIR
         ${${PARENT_PACKAGE_NAME}_BINARY_DIR}/${SUBPACKAGE_DIR})
 
@@ -661,13 +659,12 @@ ENDMACRO()
 #   ${PACKAGE_NAME}_LIBRARY_DIRS
 #   ${PACKAGE_NAME}_LIBRARIES
 #   ${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES
-#   ${PACKAGE_NAME}_FULL_EXPORT_DEP_PACKAGES
+#   ${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES
 #   ${PARENT_PACKAGE_NAME}_LIB_TARGETS
 #   ${PARENT_PACKAGE_NAME}_ALL_TARGETS
 #
 # without carefully studying the documentation in README.DEPENENCIES and then
 # carefully studying all of the code and issues that modify these variables!
 #
-# ToDo: Write some good unit tests that pin down the behavior of all of all
-# of this!
+# ToDo: Write some good unit tests that pin down the behavior of all of this!
 #
