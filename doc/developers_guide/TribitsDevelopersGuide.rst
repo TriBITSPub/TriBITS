@@ -1637,8 +1637,8 @@ are being processed:
 
   ``PACKAGE_SOURCE_DIR``
 
-    The absolute path to the package's base source directory.  This is set
-    automatically by TriBITS in the macro `TRIBITS_PACKAGE()`_.
+    The absolute path to the package's base source directory.    This is
+    set automatically by TriBITS in the macro `TRIBITS_PACKAGE()`_.
 
   ``PACKAGE_BINARY_DIR``
 
@@ -1662,8 +1662,9 @@ defined:
     example in other packages, refer to this by the raw name like
     ``PackageX_SOURCE_DIR``.  This makes such CMake code independent of where
     the package is in relation to other packages.  NOTE: This variable is
-    defined for all declared packages, independent of whether they are enabled
-    or not!
+    defined for all declared packages that exist, independent of whether they
+    are enabled or not.  This varible is set as soon as it is known if the
+    given package exists or not.
 
   ``${PACKAGE_NAME}_BINARY_DIR``
 
