@@ -1321,6 +1321,39 @@ NOTE: This requires that you are running on a Linux/Unix system that has the
 stanard command 'date'.  CMake does not have built-in timing functions so you
 have to query the system.
 
+Generating export files
+-----------------------
+
+The project <Project> can generate export files for external CMake projects or
+external Makefile projects.  These export files provide the lists of
+libraries, include directories, compilers and compiler options, etc.
+
+To configure to generate CMake export files for the project, configure with::
+
+   -D <Project>_ENABLE_INSTALL_CMAKE_CONFIG_FILES:BOOL=ON
+
+This will generate the file ``<Project>Config.cmake`` for the project and the
+files ``<Package>Config.cmake`` for each enabled package in the build tree.
+In addition, this will install versions of these files into the install tree.
+
+To confiugre Makefile export files, configure with::
+
+   -D <Project>_ENABLE_EXPORT_MAKEFILES:BOOL=ON
+
+which will generate the file ``Makefile.export.<Project>`` for the project and
+the files ``Makefile.export.<Package>`` for each enabled package in the build
+tree.  In addition, this will install versions of these files into the install tree.
+
+The list of export files generated can be reduced by specifying the exact
+list of packages the files are requested for with::
+
+  -D <Project>_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES="<pkg0>;<pkg1>"
+
+NOTES:
+* Only enabled packages will have their export files generated.
+* One would only want to limit the export files generated for very large
+projects where the cost my be high for doing so.
+
 
 Generating a project repo version file
 --------------------------------------

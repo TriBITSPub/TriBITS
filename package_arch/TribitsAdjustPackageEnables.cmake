@@ -2382,17 +2382,62 @@ ENDFUNCTION()
 
 
 #
-# Macro that creates enable-only dependency data-structures
+# Function that creates enable-only dependency data-structures
 #
-MACRO(TRIBITS_SET_UP_ENABLED_ONLY_DEPENDENCIES)
+FUNCTION(TRIBITS_SET_UP_ENABLED_ONLY_DEPENDENCIES)
 
-  MESSAGE("\nSetting up enabled-only dependency data-structure for better performance ...\n")
-
-  FOREACH(TRIBITS_SE_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
-    TRIBITS_PACKAGE_SET_FULL_ENABLED_DEP_PACKAGES(${TRIBITS_SE_PACKAGE})
-    IF (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
-      PRINT_NONEMPTY_VAR_WITH_SPACES(${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES)
+  SET(GENERATE_EXPORT_DEPENDENCIES ${${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES})
+  SET(LAST_EXPORT_SE_PACKAGE)
+  
+  IF (GENERATE_EXPORT_DEPENDENCIES
+      AND ${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
+    )
+    # Find the last enabled SE package for which an export file is requested.
+    SET(LAST_SE_PKG_IDX -1)
+    SET(LAST_SE_PKG)
+    FOREACH(SE_PKG ${${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES})
+      #PRINT_VAR(SE_PKG)
+      SET(SE_PKG_IDX ${${SE_PKG}_SE_PKG_IDX})
+      #PRINT_VAR(SE_PKG_IDX)
+      IF (SE_PKG_IDX)
+        # The listed package is enabled so we will consider it
+        IF (SE_PKG_IDX GREATER ${LAST_SE_PKG_IDX})
+          SET(LAST_SE_PKG_IDX ${SE_PKG_IDX})
+          SET(LAST_SE_PKG ${SE_PKG})
+         #PRINT_VAR(LAST_SE_PKG_IDX)
+         #PRINT_VAR(LAST_SE_PKG)
+        ENDIF()
+      ENDIF()
+    ENDFOREACH()
+    IF (LAST_SE_PKG)
+      # At least one listed package was enabled
+      SET(LAST_EXPORT_SE_PACKAGE ${LAST_SE_PKG})
+    ELSE()
+      # None of the listed packages were enabled so don't bother generating
+      # any export dependencies
+      SET(GENERATE_EXPORT_DEPENDENCIES FALSE)
     ENDIF()
-  ENDFOREACH()
 
-ENDMACRO()
+  ENDIF()
+
+  IF (GENERATE_EXPORT_DEPENDENCIES)
+
+    IF (LAST_EXPORT_SE_PACKAGE)
+      MESSAGE("\nSetting up export dependencies up through ${LAST_EXPORT_SE_PACKAGE} ...\n")
+    ELSE()
+      MESSAGE("\nSetting up export dependencies for all enabled SE packages ...\n")
+    ENDIF()  
+ 
+    FOREACH(TRIBITS_SE_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
+      TRIBITS_PACKAGE_SET_FULL_ENABLED_DEP_PACKAGES(${TRIBITS_SE_PACKAGE})
+      IF (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
+        PRINT_NONEMPTY_VAR_WITH_SPACES(${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES)
+      ENDIF()
+      IF ("${LAST_EXPORT_SE_PACKAGE}" STREQUAL ${TRIBITS_SE_PACKAGE})
+        BREAK()
+      ENDIF()
+    ENDFOREACH()
+
+  ENDIF()
+
+ENDFUNCTION()
