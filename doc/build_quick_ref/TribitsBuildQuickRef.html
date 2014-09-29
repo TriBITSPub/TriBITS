@@ -349,11 +349,11 @@ ul.auto-toc {
 <li><a class="reference internal" href="#basic-configuration" id="id10">4.2&nbsp;&nbsp;&nbsp;Basic configuration</a></li>
 <li><a class="reference internal" href="#selecting-the-list-of-packages-to-enable" id="id11">4.3&nbsp;&nbsp;&nbsp;Selecting the list of packages to enable</a><ul class="auto-toc">
 <li><a class="reference internal" href="#determine-the-list-of-packages-that-can-be-enabled" id="id12">4.3.1&nbsp;&nbsp;&nbsp;Determine the list of packages that can be enabled</a></li>
-<li><a class="reference internal" href="#enable-a-set-of-packages" id="id13">4.3.2&nbsp;&nbsp;&nbsp;Enable a set of packages</a></li>
-<li><a class="reference internal" href="#enable-to-test-all-effects-of-changing-a-given-package-s" id="id14">4.3.3&nbsp;&nbsp;&nbsp;Enable to test all effects of changing a given package(s)</a></li>
-<li><a class="reference internal" href="#enable-all-packages-with-tests-and-examples" id="id15">4.3.4&nbsp;&nbsp;&nbsp;Enable all packages with tests and examples</a></li>
-<li><a class="reference internal" href="#disable-a-package-and-all-its-dependencies" id="id16">4.3.5&nbsp;&nbsp;&nbsp;Disable a package and all its dependencies</a></li>
-<li><a class="reference internal" href="#print-package-dependencies" id="id17">4.3.6&nbsp;&nbsp;&nbsp;Print package dependencies</a></li>
+<li><a class="reference internal" href="#print-package-dependencies" id="id13">4.3.2&nbsp;&nbsp;&nbsp;Print package dependencies</a></li>
+<li><a class="reference internal" href="#enable-a-set-of-packages" id="id14">4.3.3&nbsp;&nbsp;&nbsp;Enable a set of packages</a></li>
+<li><a class="reference internal" href="#enable-to-test-all-effects-of-changing-a-given-package-s" id="id15">4.3.4&nbsp;&nbsp;&nbsp;Enable to test all effects of changing a given package(s)</a></li>
+<li><a class="reference internal" href="#enable-all-packages-with-tests-and-examples" id="id16">4.3.5&nbsp;&nbsp;&nbsp;Enable all packages with tests and examples</a></li>
+<li><a class="reference internal" href="#disable-a-package-and-all-its-dependencies" id="id17">4.3.6&nbsp;&nbsp;&nbsp;Disable a package and all its dependencies</a></li>
 <li><a class="reference internal" href="#remove-all-package-enables-in-the-cache" id="id18">4.3.7&nbsp;&nbsp;&nbsp;Remove all package enables in the cache</a></li>
 </ul>
 </li>
@@ -604,6 +604,7 @@ Enable/Disable Logic</a> and <a class="reference external" href="../developers_g
 <p>See the following use cases:</p>
 <ul class="simple">
 <li><a class="reference internal" href="#determine-the-list-of-packages-that-can-be-enabled">Determine the list of packages that can be enabled</a></li>
+<li><a class="reference internal" href="#print-package-dependencies">Print package dependencies</a></li>
 <li><a class="reference internal" href="#enable-a-set-of-packages">Enable a set of packages</a></li>
 <li><a class="reference internal" href="#enable-to-test-all-effects-of-changing-a-given-package-s">Enable to test all effects of changing a given package(s)</a></li>
 <li><a class="reference internal" href="#enable-all-packages-with-tests-and-examples">Enable all packages with tests and examples</a></li>
@@ -614,7 +615,7 @@ Enable/Disable Logic</a> and <a class="reference external" href="../developers_g
 <h3><a class="toc-backref" href="#id12">4.3.1&nbsp;&nbsp;&nbsp;Determine the list of packages that can be enabled</a></h3>
 <p>In order to see the list of available &lt;Project&gt; SE Packages to enable, just
 run a basic CMake configure, enabling nothing, and then grep the output to see
-what packages are avaiable to enable.  The full set of defined packages is
+what packages are available to enable.  The full set of defined packages is
 contained the lines starting with <tt class="docutils literal">'Final set of enabled SE packages'</tt> and
 <tt class="docutils literal">'Final set of <span class="pre">non-enabled</span> SE packages'</tt>.  If no SE packages are enabled by
 default (which is base behavior), the full list of packages will be listed on
@@ -624,11 +625,32 @@ full list of defined packages, run:</p>
 ./do-configure 2&gt;&amp;1 | grep &quot;Final set of .*enabled SE packages&quot;
 </pre>
 <p>Any of the packages shown on those lines can potentially be enabled using <tt class="docutils literal"><span class="pre">-D</span>
-<span class="pre">&lt;Project&gt;_ENABLE_&lt;TRIBITS_PACKAGE&gt;:BOOL=ON</span></tt> (unless they are forcabily
-disabled for some reason, see the CMake ouptut for package disable warnings).</p>
+<span class="pre">&lt;Project&gt;_ENABLE_&lt;TRIBITS_PACKAGE&gt;:BOOL=ON</span></tt> (unless they are set to disabled
+for some reason, see the CMake output for package disable warnings).</p>
+<p>Another way to see the full list of SE packages that can be enabled is to
+configure with <a class="reference internal" href="#project-dump-package-dependencies">&lt;Project&gt;_DUMP_PACKAGE_DEPENDENCIES</a> = <tt class="docutils literal">ON</tt> and then grep
+for <tt class="docutils literal">&lt;Project&gt;_SE_PACKAGES</tt> using, for example:</p>
+<pre class="literal-block">
+./do-configure 2&gt;&amp;1 | grep &quot;&lt;Project&gt;_SE_PACKAGES: &quot;
+</pre>
+</div>
+<div class="section" id="print-package-dependencies">
+<span id="project-dump-package-dependencies"></span><h3><a class="toc-backref" href="#id13">4.3.2&nbsp;&nbsp;&nbsp;Print package dependencies</a></h3>
+<p>The set of package dependencies in a project will be printed in the <tt class="docutils literal">cmake</tt>
+STDOUT by setting:</p>
+<pre class="literal-block">
+-D &lt;Project&gt;_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+</pre>
+<p>This will print the basic backward dependencies for each SE package.  To also
+see the direct forward dependencies for each SE package, also include:</p>
+<pre class="literal-block">
+-D &lt;Project&gt;_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+</pre>
+<p>Both of these variables are automatically enabled when
+<a class="reference internal" href="#project-verbose-configure">&lt;Project&gt;_VERBOSE_CONFIGURE</a> = <tt class="docutils literal">ON</tt>.</p>
 </div>
 <div class="section" id="enable-a-set-of-packages">
-<h3><a class="toc-backref" href="#id13">4.3.2&nbsp;&nbsp;&nbsp;Enable a set of packages</a></h3>
+<h3><a class="toc-backref" href="#id14">4.3.3&nbsp;&nbsp;&nbsp;Enable a set of packages</a></h3>
 <p>To enable an SE package <tt class="docutils literal">&lt;TRIBITS_PACKAGE&gt;</tt> (and optionally also its tests
 and examples), configure with:</p>
 <pre class="literal-block">
@@ -653,7 +675,7 @@ optional &quot;can use&quot; upstream dependent packages are enabled with
 disabled either explicitly or implicitly.</p>
 </div>
 <div class="section" id="enable-to-test-all-effects-of-changing-a-given-package-s">
-<h3><a class="toc-backref" href="#id14">4.3.3&nbsp;&nbsp;&nbsp;Enable to test all effects of changing a given package(s)</a></h3>
+<h3><a class="toc-backref" href="#id15">4.3.4&nbsp;&nbsp;&nbsp;Enable to test all effects of changing a given package(s)</a></h3>
 <p>To enable an SE package <tt class="docutils literal">&lt;TRIBITS_PACKAGE&gt;</tt> to test it and all of its
 down-stream packages, configure with:</p>
 <pre class="literal-block">
@@ -668,7 +690,7 @@ depend on <tt class="docutils literal">&lt;TRIBITS_PACKAGE&gt;</tt> in this case
 pre-push testing.</p>
 </div>
 <div class="section" id="enable-all-packages-with-tests-and-examples">
-<h3><a class="toc-backref" href="#id15">4.3.4&nbsp;&nbsp;&nbsp;Enable all packages with tests and examples</a></h3>
+<h3><a class="toc-backref" href="#id16">4.3.5&nbsp;&nbsp;&nbsp;Enable all packages with tests and examples</a></h3>
 <p>To enable all SE packages (and optionally also their tests and examples), add
 the configure options:</p>
 <pre class="literal-block">
@@ -690,7 +712,7 @@ Dependencies and Enable/Disable Logic</a> and <a class="reference external" href
 Behaviors</a> for details.</p>
 </div>
 <div class="section" id="disable-a-package-and-all-its-dependencies">
-<h3><a class="toc-backref" href="#id16">4.3.5&nbsp;&nbsp;&nbsp;Disable a package and all its dependencies</a></h3>
+<h3><a class="toc-backref" href="#id17">4.3.6&nbsp;&nbsp;&nbsp;Disable a package and all its dependencies</a></h3>
 <p>To disable an SE package and all of the packages that depend on it, add the
 configure options:</p>
 <pre class="literal-block">
@@ -717,14 +739,6 @@ downstream package, then the configure will error out if
 <tt class="docutils literal">&lt;Project&gt;_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=OFF</tt>.  Otherwise, a WARNING
 will be printed and the downstream package will be disabled and configuration
 will continue.</p>
-</div>
-<div class="section" id="print-package-dependencies">
-<h3><a class="toc-backref" href="#id17">4.3.6&nbsp;&nbsp;&nbsp;Print package dependencies</a></h3>
-<p>The set of package dependenices in a project will be printed in the <tt class="docutils literal">cmake</tt>
-STDOUT by setting:</p>
-<pre class="literal-block">
--D &lt;Project&gt;_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
-</pre>
 </div>
 <div class="section" id="remove-all-package-enables-in-the-cache">
 <h3><a class="toc-backref" href="#id18">4.3.7&nbsp;&nbsp;&nbsp;Remove all package enables in the cache</a></h3>
@@ -1335,9 +1349,9 @@ just grep out the lines starting with <tt class="docutils literal"><span class="
 helpful in debugging configure problems without generating too much extra
 output.</p>
 <p>Note that <a class="reference internal" href="#project-trace-file-processing">&lt;Project&gt;_TRACE_FILE_PROCESSING</a> is set to <tt class="docutils literal">ON</tt> automatically
-when <tt class="docutils literal">&lt;Project&gt;_VERBOSE_CONFIGURE:BOOL=ON</tt>.</p>
+when <a class="reference internal" href="#project-verbose-configure">&lt;Project&gt;_VERBOSE_CONFIGURE</a>  = <tt class="docutils literal">ON</tt>.</p>
 </blockquote>
-<ol class="loweralpha simple" start="2">
+<ol class="loweralpha simple" id="project-verbose-configure" start="2">
 <li><strong>Getting verbose output from TriBITS configure:</strong></li>
 </ol>
 <blockquote>
