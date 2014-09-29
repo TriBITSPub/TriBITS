@@ -9,6 +9,7 @@ include_files_to_remove = [
   "TribitsAddTest",
   "TribitsCopyFilesToBinaryDir",
   "TribitsLibraryMacros",
+  "TribitsListHelpers",
   "TribitsPackageMacros",
   "TribitsSubPackageMacros",
   "TribitsTplDeclareLibraries"
