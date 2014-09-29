@@ -1560,6 +1560,10 @@ MACRO(TRIBITS_PROCESS_ENABLED_TPLS)
     TIMER_GET_RAW_SECONDS(CONFIGURE_TPLS_TIME_START_SECONDS)
   ENDIF()
 
+  # Include here so it does not need to be included in each individual
+  # FindTPL<TPLNAME>.cmake file over and over.
+  INCLUDE(TribitsTplDeclareLibraries)
+
   FOREACH(TPL_NAME ${${PROJECT_NAME}_TPLS})
     IF (TPL_ENABLE_${TPL_NAME})
       MESSAGE(STATUS "Processing enabled TPL: ${TPL_NAME}")
@@ -2070,6 +2074,8 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
   # they are enabled or if any of their subpackages are enabled.
   #
 
+  # Include these here so they don't need to be included in each package's
+  # CMakeLists.txt files.
   INCLUDE(TribitsPackageMacros)
   INCLUDE(TribitsSubPackageMacros)
   INCLUDE(AddSubdirectories)
