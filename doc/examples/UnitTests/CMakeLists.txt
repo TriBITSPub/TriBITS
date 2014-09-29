@@ -68,7 +68,6 @@ ENDIF()
 TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  CATEGORIES CONTINUOUS
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
       ${COMMON_ENV_ARGS_PASSTHROUGH}
@@ -94,7 +93,6 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  CATEGORIES CONTINUOUS
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
       ${COMMON_ENV_ARGS_PASSTHROUGH}
@@ -121,7 +119,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  CATEGORIES CONTINUOUS
 
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -180,10 +177,9 @@ ENDIF()
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  CATEGORIES CONTINUOUS
 
   TEST_0 CMND ${CMAKE_COMMAND}
-    MESSAGE "Do the initial configure"
+    MESSAGE "Do the initial configure (and test a lot of things at once"
     ARGS
       ${COMMON_ENV_ARGS_PASSTHROUGH}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
@@ -193,6 +189,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
       -DTribitsExProj_TRACE_FILE_PROCESSING=ON
       -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
       -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
+      -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
       -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DCMAKE_INSTALL_PREFIX=install
@@ -200,6 +197,21 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
     PASS_REGULAR_EXPRESSION_ALL
       "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
       "Warning: Setting TribitsExProj_ENABLE_MixedLanguage=OFF because "
+      "Printing package dependencies ..."
+      "-- TribitsExProj_PACKAGES: SimpleCxx MixedLanguage PackageWithSubpackages WrapExternal"
+      "-- TribitsExProj_SE_PACKAGES: SimpleCxx MixedLanguage PackageWithSubpackagesSubpackageA PackageWithSubpackagesSubpackageB PackageWithSubpackagesSubpackageC PackageWithSubpackages WrapExternal"
+      "-- SimpleCxx: No dependencies!"
+      "-- MixedLanguage: No dependencies!"
+      "-- PackageWithSubpackagesSubpackageA_LIB_REQUIRED_DEP_PACKAGES: SimpleCxx"
+      "-- PackageWithSubpackagesSubpackageB_LIB_REQUIRED_DEP_PACKAGES: PackageWithSubpackagesSubpackageA"
+      "-- PackageWithSubpackagesSubpackageC_LIB_REQUIRED_DEP_PACKAGES: PackageWithSubpackagesSubpackageB"
+      "-- PackageWithSubpackages_LIB_REQUIRED_DEP_PACKAGES: PackageWithSubpackagesSubpackageA PackageWithSubpackagesSubpackageB PackageWithSubpackagesSubpackageC"
+      "-- WrapExternal_LIB_REQUIRED_DEP_PACKAGES: PackageWithSubpackages"
+      "-- SimpleCxx: No library dependencies!"
+      "-- PackageWithSubpackagesSubpackageA_FULL_ENABLED_DEP_PACKAGES: SimpleCxx"
+      "-- PackageWithSubpackagesSubpackageB_FULL_ENABLED_DEP_PACKAGES: PackageWithSubpackagesSubpackageA SimpleCxx"
+      "-- PackageWithSubpackagesSubpackageC_FULL_ENABLED_DEP_PACKAGES: PackageWithSubpackagesSubpackageB PackageWithSubpackagesSubpackageA SimpleCxx"
+      "-- PackageWithSubpackages_FULL_ENABLED_DEP_PACKAGES: PackageWithSubpackagesSubpackageC PackageWithSubpackagesSubpackageB PackageWithSubpackagesSubpackageA SimpleCxx"
       "Explicitly enabled packages on input .by user.:  0"
       "Explicitly disabled packages on input .by user or by default.:  MixedLanguage WrapExternal 2"
       "Enabling all SE packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
@@ -353,7 +365,6 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
   TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
-    CATEGORIES CONTINUOUS
     TEST_0 CMND ${CMAKE_COMMAND}
       MESSAGE "Do the initial configure"
       ARGS
@@ -403,7 +414,6 @@ ENDIF()
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  CATEGORIES CONTINUOUS
   TEST_0 CMND ${CMAKE_COMMAND}
     MESSAGE "Do the initial configure"
     ARGS
@@ -434,7 +444,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  CATEGORIES CONTINUOUS
 
   TEST_0 CMND cp
     ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject .
