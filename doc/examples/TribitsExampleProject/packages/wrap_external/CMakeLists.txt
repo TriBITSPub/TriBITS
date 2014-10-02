@@ -147,7 +147,6 @@ IF (${PACKAGE_NAME}_ENABLE_TESTS)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(run_external_func
     SOURCES run_external_func.cpp
-    DEPLIBS external_func
     PASS_REGULAR_EXPRESSION "external_func A no_deps"
     NUM_MPI_PROCS 1
     )
