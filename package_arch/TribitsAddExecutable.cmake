@@ -384,11 +384,11 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
     IF (${DEPLIB}_INCLUDE_DIRS)
       LIST(APPEND PARSE_TESTONLYLIBS ${DEPLIB})
       MESSAGE(WARNING "WARNING: TESTONLY lib '${DEPLIB}' being passed through"
-        " DEPLIBS must be passed through TESTONLYLIB!  DEPLIBS is depreciated!")
+        " DEPLIBS must be passed through TESTONLYLIB!  DEPLIBS is deprecated!")
     ELSE()
       LIST(APPEND PARSE_IMPORTEDLIBS ${DEPLIB})
       MESSAGE(WARNING "WARNING: non-TESTONLY lib '${DEPLIB}' being passed through"
-        " DEPLIBS must be passed through IMPORTEDLIBS!  DEPLIBS is depreciated!")
+        " DEPLIBS must be passed through IMPORTEDLIBS!  DEPLIBS is deprecated!")
     ENDIF()
   ENDFOREACH()
 
