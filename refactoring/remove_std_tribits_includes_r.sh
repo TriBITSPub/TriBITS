@@ -10,6 +10,12 @@ echo
 find . -name CMakeLists.txt -exec $_SCRIPT_DIR/remove_std_tribits_includes.py {} {} \;
 
 echo
+echo "Replacing all standard TriBITS includes in CMakeLists.tribits files ..."
+echo
+
+find . -name CMakeLists.tribits -exec $_SCRIPT_DIR/remove_std_tribits_includes.py {} {} \;
+
+echo
 echo "Replacing all standard TriBITS includes in *.cmake files ..."
 echo
 
