@@ -494,7 +494,8 @@ Usage::
     [HOSTTYPE <hosttype0> <hosttype1> ...]
     [XHOSTTYPE <hosttype0> <hosttype1> ...]
     [DIRECTORY <dir>]
-    [DEPLIBS <lib0> <lib1> ...]
+    [TESTONLYLIBS <lib0> <lib1> ...]
+    [IMPORTEDLIBS <lib0> <lib1> ...]
     [COMM [serial] [mpi]]
     [LINKER_LANGUAGE (C|CXX|Fortran)]
     [DEFINES -D<define0> -D<define1> ...]
@@ -582,20 +583,16 @@ Usage::
     The list of host types for which **not** to enable the test (see
     `TRIBITS_ADD_TEST()`_).
 
-  ``DEPLIBS <lib0> <lib1> ...``
+  ``TESTONLYLIBS <lib0> <lib1> ...``
 
     Specifies extra libraries that will be linked to the executable using
     ``TARGET_LINK_LIBRARY()``.  Note that regular libraries (i.e. not
     ``TESTONLY``) defined in the current SE package or any upstream SE
-    packages do **NOT** need to be listed!  TriBITS automatically links non
+    packages can *NOT* be listed!  TriBITS automatically links non
     ``TESTONLY`` libraries in this package and upstream packages to the
     executable.  The only libraries that should be listed in this argument
-    are either ``TESTONLY`` libraries, or other libraries that are built
-    external from this CMake project and are not provided through a proper
-    `TriBITS TPL`_.  The latter usage of passing in external libraries is
-    not recommended.  External libraries should be handled as declared
-    `TriBITS TPLs`_.  For a ``TESTONLY`` library, the include directories
-    will automatically be added using::
+    are either ``TESTONLY`` libraries.  The include directories for each
+    test-only library will automatically be added using::
 
       INCLUDE_DIRECTORIES(${<libi>_INCLUDE_DIRS})
 
@@ -605,7 +602,16 @@ Usage::
 
     Therefore, to link to a defined ``TESTONLY`` library in any upstream
     enabled package, one just needs to pass in the library name through
-    ``DEPLIBS ... <libi> ...`` and that is it!
+    ``TESTONLYLIBS ... <libi> ...`` and that is it!
+
+  ``IMPORTEDLIBS <lib0> <lib1> ...``
+
+    Specifies extra libraries that will be linked to the executable using
+    ``TARGET_LINK_LIBRARY()``.  This can only be used for libraries that are
+    built external from this CMake project and are not provided through a
+    proper `TriBITS TPL`_.  The latter usage of passing in external
+    libraries is not recommended.  External libraries should be handled as
+    declared `TriBITS TPLs`_.
 
   ``COMM [serial] [mpi]``
 

@@ -6,7 +6,7 @@
 <meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title>TriBITS Developers Guide and Reference</title>
 <meta name="author" content="Roscoe A. Bartlett (bartlettra&#64;ornl.gov)" />
-<meta name="date" content="2014-09-29" />
+<meta name="date" content="2014-10-03" />
 <style type="text/css">
 
 /*
@@ -315,9 +315,9 @@ ul.auto-toc {
 <tr><th class="docinfo-name">Author:</th>
 <td>Roscoe A. Bartlett (<a class="reference external" href="mailto:bartlettra&#64;ornl.gov">bartlettra&#64;ornl.gov</a>)</td></tr>
 <tr><th class="docinfo-name">Date:</th>
-<td>2014-09-29</td></tr>
+<td>2014-10-03</td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>TriBITS Development at 2014-09-29</td></tr>
+<td>TriBITS Development at 2014-10-03</td></tr>
 </tbody>
 </table>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1696,7 +1696,7 @@ TRIBITS_REPOSITORY_DEFINE_PACKAGES(
   SimpleCxx               packages/simple_cxx                 PT
   MixedLanguage           packages/mixed_language             PT
   PackageWithSubpackages  packages/package_with_subpackages   PT
-  WrapExternal            packages/wrap_external              PT
+  WrapExternal            packages/wrap_external              ST
   )
 
 TRIBITS_DISABLE_PACKAGE_ON_PLATFORMS(WrapExternal Windows)
@@ -1877,9 +1877,7 @@ MACRO(TRIBITS_REPOSITORY_SETUP_EXTRA_OPTIONS)
   ASSERT_DEFINED(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES)
   ASSERT_DEFINED(${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
 
-  IF (${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES OR 
-    ${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES
-    )
+  IF (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
     MESSAGE(
       &quot;\n***&quot;
       &quot;\n*** Warning: Setting ${PROJECT_NAME}_ENABLE_WrapExternal=OFF&quot;
@@ -2093,8 +2091,8 @@ TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(
 TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(
   SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS
     SubpackageA   A   PT  REQUIRED
-    SubpackageB   B   PT  REQUIRED
-    SubpackageC   C   PT  REQUIRED
+    SubpackageB   B   ST  OPTIONAL
+    SubpackageC   C   ST  OPTIONAL
   )
 
 </pre>
@@ -2473,7 +2471,9 @@ simple example is for the example package <tt class="docutils literal">Subpackag
 <p>which is:</p>
 <pre class="literal-block">
 TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(
-  LIB_REQUIRED_PACKAGES PackageWithSubpackagesSubpackageA
+  LIB_REQUIRED_PACKAGES SimpleCxx
+  LIB_OPTIONAL_PACKAGES PackageWithSubpackagesSubpackageA
+  TEST_OPTIONAL_PACKAGES MixedLanguage
   )
 
 </pre>
@@ -3293,7 +3293,7 @@ TRIBITS_REPOSITORY_DEFINE_PACKAGES(
   SimpleCxx               packages/simple_cxx                 PT
   MixedLanguage           packages/mixed_language             PT
   PackageWithSubpackages  packages/package_with_subpackages   PT
-  WrapExternal            packages/wrap_external              PT
+  WrapExternal            packages/wrap_external              ST
   )
 
 TRIBITS_DISABLE_PACKAGE_ON_PLATFORMS(WrapExternal Windows)
@@ -3324,8 +3324,8 @@ TribitsExampleProject/packages/package_with_subpackages/cmake/Dependencies.cmake
 TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(
   SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS
     SubpackageA   A   PT  REQUIRED
-    SubpackageB   B   PT  REQUIRED
-    SubpackageC   C   PT  REQUIRED
+    SubpackageB   B   ST  OPTIONAL
+    SubpackageC   C   ST  OPTIONAL
   )
 
 </pre>
@@ -8068,7 +8068,8 @@ TRIBITS_ADD_EXECUTABLE(
   [HOSTTYPE &lt;hosttype0&gt; &lt;hosttype1&gt; ...]
   [XHOSTTYPE &lt;hosttype0&gt; &lt;hosttype1&gt; ...]
   [DIRECTORY &lt;dir&gt;]
-  [DEPLIBS &lt;lib0&gt; &lt;lib1&gt; ...]
+  [TESTONLYLIBS &lt;lib0&gt; &lt;lib1&gt; ...]
+  [IMPORTEDLIBS &lt;lib0&gt; &lt;lib1&gt; ...]
   [COMM [serial] [mpi]]
   [LINKER_LANGUAGE (C|CXX|Fortran)]
   [DEFINES -D&lt;define0&gt; -D&lt;define1&gt; ...]
@@ -8143,20 +8144,16 @@ The list of host types for which to enable the test (see
 <blockquote>
 The list of host types for which <strong>not</strong> to enable the test (see
 <a class="reference internal" href="#tribits-add-test">TRIBITS_ADD_TEST()</a>).</blockquote>
-<p><tt class="docutils literal">DEPLIBS &lt;lib0&gt; &lt;lib1&gt; ...</tt></p>
+<p><tt class="docutils literal">TESTONLYLIBS &lt;lib0&gt; &lt;lib1&gt; ...</tt></p>
 <blockquote>
 <p>Specifies extra libraries that will be linked to the executable using
 <tt class="docutils literal">TARGET_LINK_LIBRARY()</tt>.  Note that regular libraries (i.e. not
 <tt class="docutils literal">TESTONLY</tt>) defined in the current SE package or any upstream SE
-packages do <strong>NOT</strong> need to be listed!  TriBITS automatically links non
+packages can <em>NOT</em> be listed!  TriBITS automatically links non
 <tt class="docutils literal">TESTONLY</tt> libraries in this package and upstream packages to the
 executable.  The only libraries that should be listed in this argument
-are either <tt class="docutils literal">TESTONLY</tt> libraries, or other libraries that are built
-external from this CMake project and are not provided through a proper
-<a class="reference internal" href="#tribits-tpl">TriBITS TPL</a>.  The latter usage of passing in external libraries is
-not recommended.  External libraries should be handled as declared
-<a class="reference internal" href="#tribits-tpls">TriBITS TPLs</a>.  For a <tt class="docutils literal">TESTONLY</tt> library, the include directories
-will automatically be added using:</p>
+are either <tt class="docutils literal">TESTONLY</tt> libraries.  The include directories for each
+test-only library will automatically be added using:</p>
 <pre class="literal-block">
 INCLUDE_DIRECTORIES(${&lt;libi&gt;_INCLUDE_DIRS})
 </pre>
@@ -8166,8 +8163,16 @@ TRIBITS_ADD_LIBRARY(&lt;libi&gt; ... TESTONLY ...)
 </pre>
 <p>Therefore, to link to a defined <tt class="docutils literal">TESTONLY</tt> library in any upstream
 enabled package, one just needs to pass in the library name through
-<tt class="docutils literal">DEPLIBS ... &lt;libi&gt; ...</tt> and that is it!</p>
+<tt class="docutils literal">TESTONLYLIBS ... &lt;libi&gt; ...</tt> and that is it!</p>
 </blockquote>
+<p><tt class="docutils literal">IMPORTEDLIBS &lt;lib0&gt; &lt;lib1&gt; ...</tt></p>
+<blockquote>
+Specifies extra libraries that will be linked to the executable using
+<tt class="docutils literal">TARGET_LINK_LIBRARY()</tt>.  This can only be used for libraries that are
+built external from this CMake project and are not provided through a
+proper <a class="reference internal" href="#tribits-tpl">TriBITS TPL</a>.  The latter usage of passing in external
+libraries is not recommended.  External libraries should be handled as
+declared <a class="reference internal" href="#tribits-tpls">TriBITS TPLs</a>.</blockquote>
 <p><tt class="docutils literal">COMM [serial] [mpi]</tt></p>
 <blockquote>
 If specified, selects if the test will be added in serial and/or MPI
