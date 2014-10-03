@@ -187,7 +187,9 @@ INCLUDE(ParseVariableArguments)
 #     built external from this CMake project and are not provided through a
 #     proper `TriBITS TPL`_.  The latter usage of passing in external
 #     libraries is not recommended.  External libraries should be handled as
-#     declared `TriBITS TPLs`_.
+#     declared `TriBITS TPLs`_.  So far, the only case where ``IMPORTEDLIBS``
+#     has been shown to be necessary is to pass in the standard C math library
+#     ``m``.  In every other case, a TriBITS TPL should be used instead.
 #
 #   ``COMM [serial] [mpi]``
 #

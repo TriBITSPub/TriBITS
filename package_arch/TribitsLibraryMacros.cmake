@@ -269,14 +269,12 @@ ENDFUNCTION()
 #     List of dependent libraries built externally from this TriBITS CMake
 #     project.  These libraries are passed into
 #     ``TARGET_LINK_LIBRARIES(<libName> ...)`` so that CMake knows about the
-#     dependency.  These libraries are added to the
-#     ``${PACKAGE_NAME}_LIBRARIES`` variable so that downstream SE packages
-#     will also pick up these libraries and these libraries will show up in
-#     the generated ``Makefile.export.${PACKAGE_NAME}`` and
-#     ``${PACKAGE_NAME}Config.cmake`` files (if they are generated).  However,
-#     note that external libraries are often better handled as `TriBITS
-#     TPLs`_.  A well constructed TriBITS package and library should never
-#     have to use this option!
+#     dependency.  However, note that external libraries are often better
+#     handled as `TriBITS TPLs`_.  A well constructed TriBITS package and
+#     library should never have to use this option!  So far, the only case
+#     where ``IMPORTEDLIBS`` has been shown to be necessary is to pass in the
+#     standard C math library ``m``.  In every other case, a TriBITS TPL
+#     should be used instead.
 #
 #   ``TESTONLY``
 #
