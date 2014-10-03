@@ -378,10 +378,6 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
      ${${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES_DEFAULT} CACHE BOOL
     "Generate packages dependency data-structures needed for dependency export files." )
 
-  ADVANCED_SET(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
-    "" CACHE STRING
-    "If specified, then export files will only be generated for the listed packages.")
-
   # ${PROJECT_NAME}_ELEVATE_SS_TO_PS is depreciated!
   IF (${PROJECT_NAME}_ELEVATE_SS_TO_PS_DEFAULT)
     IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
