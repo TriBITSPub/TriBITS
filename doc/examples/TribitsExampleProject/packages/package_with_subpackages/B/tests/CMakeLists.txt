@@ -24,6 +24,8 @@ IF (${PACKAGE_NAME}_ENABLE_MixedLanguage)
   TRIBITS_ADD_EXECUTABLE_AND_TEST( test_of_b_mixed_lang
     SOURCES b_mixed_lang_test.cpp
     TESTONLYLIBS b_mixed_lang
+    #DEPLIBS pws_b
+    #IMPORTEDLIBS pws_b
     NUM_MPI_PROCS 1
     PASS_REGULAR_EXPRESSION 
       "B Mixed Language"
