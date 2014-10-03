@@ -179,7 +179,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
   OVERALL_NUM_MPI_PROCS 1
 
   TEST_0 CMND ${CMAKE_COMMAND}
-    MESSAGE "Do the initial configure (and test a lot of things at once"
+    MESSAGE "Do the initial configure (and test a lot of things at once)"
     ARGS
       ${COMMON_ENV_ARGS_PASSTHROUGH}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
@@ -357,7 +357,74 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
       "Only in .*/TribitsExampleProject: .gitignore"
       "Only in .*/TribitsExampleProject/packages: mixed_language"
       "Only in .*/TribitsExampleProject/packages: wrap_external"
+
   )
+
+
+IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
+
+  TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran_ConfigTiming
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+  
+    TEST_0 CMND ${CMAKE_COMMAND}
+      MESSAGE "Do the initial configure with basic configure timing"
+      ARGS
+        ${COMMON_ENV_ARGS_PASSTHROUGH}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=OFF
+        -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+        -DTribitsExProj_ENABLE_TESTS=ON
+        -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
+        -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
+        -DTribitsExProj_ENABLE_CONFIGURE_TIMING=ON
+        ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      PASS_REGULAR_EXPRESSION_ALL
+        "Total time to read in and process all package dependencies: "
+        "Total time to adjust package and TPL enables: "
+        "Total time to probe and setup the environment: "
+        "Total time to configure enabled TPLs: "
+        "Total time to configure enabled packages: "
+        "Total time to set up for CPack packaging: "
+        "Total time to configure TribitsExProj: "
+        "Final set of enabled packages:  SimpleCxx PackageWithSubpackages 2"
+        "Final set of enabled SE packages:  SimpleCxx PackageWithSubpackagesSubpackageA PackageWithSubpackagesSubpackageB PackageWithSubpackagesSubpackageC PackageWithSubpackages 5"
+  
+    TEST_1 CMND ${CMAKE_COMMAND}
+      MESSAGE "Reconfigure to test out timing of all packages"
+      ARGS
+        -DTribitsExProj_ENABLE_PACKAGE_CONFIGURE_TIMING=ON
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "Total time to read in and process all package dependencies: "
+        "Total time to adjust package and TPL enables: "
+        "Total time to probe and setup the environment: "
+        "Total time to configure enabled TPLs: "
+        "-- Total time to configure package SimpleCxx: "
+        "-- Total time to configure package PackageWithSubpackages: "
+        "Total time to configure enabled packages: "
+        "Total time to set up for CPack packaging: "
+        "Total time to configure TribitsExProj: "
+  
+    TEST_2 CMND ${CMAKE_COMMAND}
+      MESSAGE "Reconfigure to test out timing of just one package"
+      ARGS
+        -DTribitsExProj_ENABLE_PACKAGE_CONFIGURE_TIMING=OFF
+        -DSimpleCxx_PACKAGE_CONFIGURE_TIMING=ON
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "Total time to read in and process all package dependencies: "
+        "Total time to adjust package and TPL enables: "
+        "Total time to probe and setup the environment: "
+        "Total time to configure enabled TPLs: "
+        "-- Total time to configure package SimpleCxx: "
+        "Total time to configure enabled packages: "
+        "Total time to set up for CPack packaging: "
+        "Total time to configure TribitsExProj: "
+  
+    )
+
+ENDIF()
 
 
 ASSERT_DEFINED(${PROJECT_NAME}_ENABLE_Fortran)
