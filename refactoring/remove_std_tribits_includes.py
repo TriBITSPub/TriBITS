@@ -16,6 +16,7 @@ include_files_to_remove = [
   ]
 
 import sys
+import os
 
 file_in = sys.argv[1]
 file_out = sys .argv[2]
@@ -23,6 +24,10 @@ file_out = sys .argv[2]
 if file_in.find("/tribits/") != -1 or file_in.find("/TriBITS/") != -1:
   # Don't replace in a TriBITS system file
   sys.exit(0)
+
+if os.path.islink(file_in):
+       print "Ignoring soft link: ", file_in
+       sys.exit(0)
 
 file_in_str = open(file_in, 'r').read()
 file_out_str = ""
