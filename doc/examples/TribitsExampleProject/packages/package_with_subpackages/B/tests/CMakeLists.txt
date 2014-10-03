@@ -15,14 +15,11 @@ TRIBITS_ADD_ADVANCED_TEST( test_of_b
       "B deps are:${EXPECTED_B_DEPS}"
   )
 
+# Create a test-only lib
+ADD_SUBDIRECTORY(testlib)
+
 ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_MixedLanguage)
 IF (${PACKAGE_NAME}_ENABLE_MixedLanguage)
-
-  TRIBITS_ADD_LIBRARY( b_mixed_lang
-     HEADERS b_mixed_lang.hpp
-     SOURCES b_mixed_lang.cpp
-     TESTONLY
-     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST( test_of_b_mixed_lang
     SOURCES b_mixed_lang_test.cpp
