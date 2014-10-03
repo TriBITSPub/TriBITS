@@ -1504,8 +1504,12 @@ FUNCTION(UNITEST_TRIBITS_ADD_ADVANCED_TEST_PROPERTIES)
     )
   UNITTEST_COMPARE_CONST(
     TRIBITS_SET_TEST_PROPERTIES_INPUT
-    "PackageA_PackageAddAdvancedTest_basic_cmnd_1_args_0;PROPERTY;REQUIRED_FILES;someCmnd;PackageA_PackageAddAdvancedTest_basic_cmnd_1_args_0;APPEND;PROPERTY;LABELS;PackageA_PackageAddAdvancedTest_basic_cmnd_1_args_0;PROPERTIES;PROCESSORS;1;PackageA_PackageAddAdvancedTest_basic_cmnd_1_args_0;PROPERTIES;PASS_REGULAR_EXPRESSION;OVERALL FINAL RESULT: TEST PASSED"
+    "PackageA_PackageAddAdvancedTest_basic_cmnd_1_args_0;PROPERTY;REQUIRED_FILES;someCmnd;PackageA_PackageAddAdvancedTest_basic_cmnd_1_args_0;APPEND;PROPERTY;LABELS;PackageA_PackageAddAdvancedTest_basic_cmnd_1_args_0;PROPERTIES;PROCESSORS;1;PackageA_PackageAddAdvancedTest_basic_cmnd_1_args_0;PROPERTIES;PASS_REGULAR_EXPRESSION;OVERALL_FINAL_RESULT: TEST PASSED"
     )
+  # NOTE: Above, in unit test mode, TRIBITS_ADD_ADVANCED_TEST() changes is
+  # final pass expression so as to not match the outer run of
+  # TRIBITS_ADD_ADVANCED_TEST() that looks for it.  Otherwise, the outer
+  # TRIBITS_ADD_ADVANCED_TEST() always thinks these unit tests pass!
 
   MESSAGE("Test setting non-integer TIMEOUT with no scaling (not even defined)")
   TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
@@ -2019,4 +2023,4 @@ MESSAGE("*** Determine final result of all unit tests")
 MESSAGE("***\n")
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(232)
+UNITTEST_FINAL_RESULT(233)
