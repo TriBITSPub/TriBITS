@@ -362,7 +362,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
 
 ASSERT_DEFINED(${PROJECT_NAME}_ENABLE_Fortran)
 IF (${PROJECT_NAME}_ENABLE_Fortran)
-  TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT
+  TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0 CMND ${CMAKE_COMMAND}
@@ -372,6 +372,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_TESTS=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
         -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
         -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
@@ -388,7 +389,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "Final set of non-enabled packages:  WrapExternal 1"
         "Configuring done"
         "Generating done"
-        "Build files have been written to: .*doc/examples/UnitTests/TriBITS_TribitsExampleProject_ALL_PT"
+        "Build files have been written to: .*doc/examples/UnitTests/TriBITS_TribitsExampleProject_ALL_ST"
     TEST_1 CMND make
       MESSAGE "Build the default 'all' target using raw 'make'"
       ARGS ${CTEST_BUILD_FLAGS}
@@ -405,8 +406,9 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "MixedLanguage_RayTracerTests${TEST_MPI_1_SUFFIX} .* Passed"
         "PackageWithSubpackagesSubpackageA_test_of_a .* Passed"
         "PackageWithSubpackagesSubpackageB_test_of_b .* Passed"
+        "PackageWithSubpackagesSubpackageB_test_of_b_mixed_lang .* Passed"
         "PackageWithSubpackagesSubpackageC_test_of_c .* Passed"
-        "100% tests passed, 0 tests failed out of 5"
+        "100% tests passed, 0 tests failed out of 6"
     )
 ENDIF()
 
