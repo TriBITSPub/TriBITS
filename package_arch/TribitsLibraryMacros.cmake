@@ -500,7 +500,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
         ENDIF()
         INCLUDE_DIRECTORIES(${${PREFIXED_LIB}_INCLUDE_DIRS})
       ELSEIF (NOT PARSE_TESTONLY AND LIB_TESTONLY) # LIB_IN_SE_PKG=TRUE/FASLE 
-        MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPLIBS is a TESTONLY lib"
+        MESSAGE(WARNING "WARNING: '${LIB}' in DEPLIBS is a TESTONLY lib"
           " and it is illegal to link to this non-TESTONLY library '${LIBRARY_NAME}'."
           "  Such usage is deprecated (and this warning will soon become an error)!"
           "  If this is a regular library in this SE package or in an dependent upstream SE"
@@ -510,18 +510,18 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
           " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
         # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code 
       ELSEIF (NOT LIB_IN_SE_PKG AND TARGET ${PREFIXED_LIB} ) # PARSE_TESTONLY=TRUE/FALSE
-        MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPSLIBS is not"
+        MESSAGE(WARNING "WARNING: '${LIB}' in DEPSLIBS is not"
           " a lib in this SE package but is a library defined in the current"
           " cmake project!  Such usage is  deprecated (and"
           " will result in a configure error soon).  If this is a library in"
           " a dependent upstream SE package, then simply remove it from this list."
           "  TriBITS automatically links in libraries in upstream SE packages."
-          "  If you remove '${PREFIXED_LIB}' from DEPLIBS and your code does"
+          "  If you remove '${LIB}' from DEPLIBS and your code does"
           " not link, then you need to add a new SE package dependency to"
           " this SE package's dependencies file"
           " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
       ELSEIF (NOT LIB_IN_SE_PKG AND NOT TARGET ${PREFIXED_LIB} )
-        MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPSLIBS is not"
+        MESSAGE(WARNING "WARNING: '${LIB}' in DEPSLIBS is not"
           " a lib defined in the current cmake project!  Such usage is  deprecated (and"
           " will result in a configure error soon).  If this is an external"
           " lib you are trying to link in, it should likely be handled as a TriBITS"
@@ -546,22 +546,22 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
 
     FOREACH(IMPORTEDLIB ${PARSE_IMPORTEDLIBS})
       SET(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${IMPORTEDLIB}")
-      LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${IMPORTEDLIB} FOUND_IDX)
+      LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${PREFIXED_LIB} FOUND_IDX)
       IF (${PREFIXED_LIB}_INCLUDE_DIRS)
-        MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in IMPORTEDLIBS is a TESTONLY lib"
+        MESSAGE(WARNING "WARNING: '${IMPORTEDLIB}' in IMPORTEDLIBS is a TESTONLY lib"
           " and it is illegal to pass in through IMPORTEDLIBS!"
           "  Such usage is deprecated (and this warning will soon become an error)!"
-          "  Should '${PREFIXED_LIB}' instead be passed through DEPLIBS?")
+          "  Should '${IMPORTEDLIB}' instead be passed through DEPLIBS?")
         # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code 
       ELSEIF (FOUND_IDX GREATER -1)
         MESSAGE(WARNING "WARNING: Lib '${IMPORTEDLIB}' in IMPORTEDLIBS is in"
         " this SE package and is *not* an external lib!"
         "  TriBITS takes care of linking against libs the current"
         " SE package automatically.  Please remove it from IMPORTEDLIBS!")
-      ELSEIF (TARGET ${IMPORTEDLIB})
+      ELSEIF (TARGET ${PREFIXED_LIB})
         MESSAGE(WARNING "WARNING: Lib '${IMPORTEDLIB}' being passed through"
         " IMPORTEDLIBS is *not* an external library but instead is a library"
-        " define in this CMake project!"
+        " defined in this CMake project!"
         "  TriBITS takes care of linking against libraries in dependent upstream"
         " SE packages.  If you want to link to a library in an upstream SE"
         " package then add the SE package name to the appropriate category"

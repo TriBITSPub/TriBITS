@@ -359,9 +359,9 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
   ENDIF()
 
   # Assert that TESTONLYLIBS only contains TESTONLY libs!
-  FOREACH(TESTONLYLIB_IN ${PARSE_TESTONLYLIBS})
-    SET(TESTONLYLIB "${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}${TESTONLYLIB_IN}")
-    IF (NOT ${TESTONLYLIB}_INCLUDE_DIRS)
+  FOREACH(TESTONLYLIB ${PARSE_TESTONLYLIBS})
+    SET(PREFIXED_LIB "${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}${TESTONLYLIB}")
+    IF (NOT ${PREFIXED_LIB}_INCLUDE_DIRS)
       MESSAGE(FATAL_ERROR "ERROR: '${TESTONLYLIB}' in TESTONLYLIBS not a TESTONLY lib!"
         "  If this a regular library in this SE package or in an dependent upstream SE"
         " package then TriBITS will link automatically to it.  If you remove this and it"
@@ -380,44 +380,45 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
   # Assert that IMPORTEDLIBS are not TESTONLY libs are not regular package
   # libs!
   FOREACH(IMPORTEDLIB ${PARSE_IMPORTEDLIBS})
-    IF (${LIBRARY_NAME_PREFIX}${IMPORTEDLIB}_INCLUDE_DIRS)
+    SET(PREFIXED_LIB "${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}${IMPORTEDLIB}")
+    IF (${PREFIXED_LIB}_INCLUDE_DIRS)
       MESSAGE(FATAL_ERROR "ERROR: Lib '${IMPORTEDLIB}' being passed through"
       " IMPORTEDLIBS is not allowed to be a TESTONLY lib!"
       "  Use TESTONLYLIBS instead!" )
     ENDIF()
-    LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${IMPORTEDLIB} FOUND_IDX)
+    LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${PREFIXED_LIB} FOUND_IDX)
     IF (NOT FOUND_IDX EQUAL -1)
       MESSAGE(FATAL_ERROR "ERROR: Lib '${IMPORTEDLIB}' in IMPORTEDLIBS is in"
       " this SE package and is *not* an external lib!"
       "  TriBITS takes care of linking against libs the current"
-      " SE package automatically.  Please remove it from IMPORTEDLIBS!")
-    ELSEIF (TARGET ${IMPORTEDLIB})
+      " SE package automatically.  Please remove '${IMPORTEDLIB}' from IMPORTEDLIBS!")
+    ELSEIF (TARGET ${PREFIXED_LIB})
       MESSAGE(FATAL_ERROR "ERROR: Lib '${IMPORTEDLIB}' being passed through"
       " IMPORTEDLIBS is *not* an external library but instead is a library"
       " define in this CMake project!"
       "  TriBITS takes care of linking against libraries in dependent upstream"
       " SE packages.  If you want to link to a library in an upstream SE"
       " package then add the the SE package name to the approciate argument in"
-      " the argument in the TRIBITS_PACKAGE_DEFINE_DEPENDENCIES() in this"
-      " SE package's dependencies file"
+      " in this SE package's dependencies file"
       " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
     ENDIF()
   ENDFOREACH()
 
   # Convert from old DEPLIBS to TESTONLYLIBS and IMPORTEDLIBS
   FOREACH(DEPLIB ${PARSE_DEPLIBS})
-    IF (${DEPLIB}_INCLUDE_DIRS)
-      LIST(APPEND PARSE_TESTONLYLIBS ${DEPLIB})
+    SET(PREFIXED_LIB "${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}${DEPLIB}")
+    IF (${PREFIXED_LIB}_INCLUDE_DIRS)
       MESSAGE(WARNING "WARNING: Passing TESTONLY '${DEPLIB}' through DEPLIBS"
         " is deprecated!  Instead, please pass through TESTONLYLIBS instead!"
         "  DEPLIBS is deprecated!")
+      LIST(APPEND PARSE_TESTONLYLIBS ${DEPLIB})
     ELSE()
-      LIST(APPEND PARSE_IMPORTEDLIBS ${DEPLIB})
       MESSAGE(WARNING "WARNING: Passing non-TESTONLY '${DEPLIB}' through"
         " DEPLIBS is deprecated!  Instead, pass through IMPORTEDLIBS!"
         "  DEPLIBS is deprecated!"
         "  Please note that only external libs are allowed to be passed through"
         " IMPORTEDLIBS.")
+      LIST(APPEND PARSE_IMPORTEDLIBS ${DEPLIB})
     ENDIF()
   ENDFOREACH()
 
