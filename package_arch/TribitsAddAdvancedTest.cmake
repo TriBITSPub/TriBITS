@@ -363,7 +363,7 @@ INCLUDE(PrintVar)
 #
 # By default, the overall test will be assumed to pass if it prints::
 #
-#   "OVERALL FINAL RESULT: TEST PASSED"
+#   "OVERALL FINAL RESULT: TEST PASSED (${PACKAGE_NAME}_<testName>)"
 #
 # However, this can be changed by setting one of the following optional arguments:
 #
@@ -769,6 +769,8 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
   APPEND_STRING_VAR( TEST_SCRIPT_STR
     "\n"
+    "SET(TEST_NAME ${TEST_NAME})\n"
+    "\n"
     "SET(NUM_CMNDS ${NUM_CMNDS})\n"
     "\n"
     "SET(OVERALL_WORKING_DIRECTORY \"${PARSE_OVERALL_WORKING_DIRECTORY}\")\n"
@@ -846,16 +848,9 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       TRIBITS_SET_TESTS_PROPERTIES( ${TEST_NAME} PROPERTIES
         FAIL_REGULAR_EXPRESSION "${PARSE_FINAL_FAIL_REGULAR_EXPRESSION}" )
     ELSE()
-      IF (TRIBITS_ADD_TEST_ADD_TEST_UNITTEST)
-        # If we are unit testing, we have to change this so that the outer
-        # test that runs this does not pass because it finds the string in the
-        # output!
-        SET(PASS_REGULAR_EXPRESSION "OVERALL_FINAL_RESULT: TEST PASSED")
-      ELSE()
-        SET(PASS_REGULAR_EXPRESSION "OVERALL FINAL RESULT: TEST PASSED")
-      ENDIF()
       TRIBITS_SET_TESTS_PROPERTIES( ${TEST_NAME} PROPERTIES
-        PASS_REGULAR_EXPRESSION "${PASS_REGULAR_EXPRESSION}" )
+        PASS_REGULAR_EXPRESSION
+        "OVERALL FINAL RESULT: TEST PASSED .${TEST_NAME}." )
     ENDIF()
     
     IF (PARSE_TIMEOUT)
