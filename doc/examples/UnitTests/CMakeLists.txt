@@ -482,7 +482,8 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "PackageWithSubpackagesSubpackageB_test_of_b .* Passed"
         "PackageWithSubpackagesSubpackageB_test_of_b_mixed_lang .* Passed"
         "PackageWithSubpackagesSubpackageC_test_of_c .* Passed"
-        "100% tests passed, 0 tests failed out of 6"
+        "PackageWithSubpackagesSubpackageC_test_of_c_b_mixed_lang .* Passed"
+        "100% tests passed, 0 tests failed out of 7"
     )
 
 
@@ -627,6 +628,18 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
       PASS_REGULAR_EXPRESSION_ALL
         "WARNING: 'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
         "packages/package_with_subpackages/C/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    TEST_11
+      MESSAGE "Show deprecated warning when passing m through DEPLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_M_DEPLIBS_ERROR=ON
+        -DSPKC_SHOW_TESTONLY_IMPORTEDLIBS_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: 'm' in DEPSLIBS is not a lib defined in the current cmake "
+        "packages/package_with_subpackages/B/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 

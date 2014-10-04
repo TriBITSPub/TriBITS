@@ -521,7 +521,13 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
           " this SE package's dependencies file"
           " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
       ELSEIF (NOT LIB_IN_SE_PKG AND NOT TARGET ${PREFIXED_LIB} )
-        # ToDo: Create a warning for this case as well!
+        MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPSLIBS is not"
+          " a lib defined in the current cmake project!  Such usage is  deprecated (and"
+          " will result in a configure error soon).  If this is an external"
+          " lib you are trying to link in, it should likely be handled as a TriBITS"
+          " TPL.  Otherwise, it should be passed in through IMPORTEDLIBS.  However,"
+          " the only case we have found where IMPORTEDLIBS had to be used instead of"
+          " through a proper TriBITS TPL is the C math library 'm'.")
       ELSE()
         MESSAGE(WARNING "WARNING: The case PARSE_TESTONLY=${PARSE_TESTONLY},"
           " LIB_IN_SE_PKG=${LIB_IN_SE_PKG}, LIB_TESTONLY=${LIB_TESTONLY}, has"
