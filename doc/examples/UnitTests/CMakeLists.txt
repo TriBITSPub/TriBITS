@@ -576,7 +576,6 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_TESTS=ON
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-        #-DTribitsExProj_LIBRARY_NAME_PREFIX=tep_
         ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
         "Final set of enabled packages:  SimpleCxx MixedLanguage PackageWithSubpackages 3"
@@ -723,6 +722,173 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    )
+
+
+  TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+
+    TEST_0 
+      MESSAGE "Do the initial configure to get the package enables"
+        " and the  env probe in place."
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${COMMON_ENV_ARGS_PASSTHROUGH}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=ON
+        -DTribitsExProj_ENABLE_WrapExternal=OFF
+        -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+        -DTribitsExProj_ENABLE_TESTS=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj_LIBRARY_NAME_PREFIX=tep_
+        ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      PASS_REGULAR_EXPRESSION_ALL
+        "Final set of enabled packages:  SimpleCxx MixedLanguage PackageWithSubpackages 3"
+        "Final set of enabled SE packages:  SimpleCxx MixedLanguage PackageWithSubpackagesSubpackageA PackageWithSubpackagesSubpackageB PackageWithSubpackagesSubpackageC PackageWithSubpackages 6"
+        "Configuring done"
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
+
+    #
+    # Testing pasing libs to TRIBITS_ADD_LIBRARY()
+    #
+
+    TEST_1
+      MESSAGE "Show deprecated warning when trying to link lib from upstream SE package."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=ON
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: 'simplecxx' in DEPSLIBS is not a lib in this SE package"
+        "packages/package_with_subpackages/B/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
+
+    TEST_2
+      MESSAGE "Show deprecated warning when passing a lib from this SE package through IMPORTEDLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
+        -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this SE package "
+        "packages/package_with_subpackages/B/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
+
+    TEST_3
+      MESSAGE "Show deprecated warning when passing a lib from upstream"
+        " SE package through IMPORTEDLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
+        -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
+        "TribitsExampleProject/packages/package_with_subpackages/B/cmake/Dependencies.cmake"
+        "packages/package_with_subpackages/B/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
+
+    TEST_4
+      MESSAGE "Show deprecated warning when passing a TESTONLY lib through DEPLBIS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKC_SHOW_TESTONLY_DEPLBIS_ERROR=ON
+        -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: 'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
+        "TribitsExampleProject/packages/package_with_subpackages/C/cmake/Dependencies.cmake"
+        "packages/package_with_subpackages/C/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
+
+    TEST_5
+      MESSAGE "Show deprecated warning when passing a TESTONLY lib through IMPORTEDLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKC_SHOW_TESTONLY_IMPORTEDLIBS_ERROR=ON
+        -DSPKC_SHOW_TESTONLY_DEPLBIS_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: 'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
+        "packages/package_with_subpackages/C/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
+
+    TEST_6
+      MESSAGE "Show deprecated warning when passing m through DEPLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_M_DEPLIBS_ERROR=ON
+        -DSPKC_SHOW_TESTONLY_IMPORTEDLIBS_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: 'm' in DEPSLIBS is not a lib defined in the current cmake "
+        "packages/package_with_subpackages/B/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
+
+    #
+    # Testing pasing libs to TRIBITS_ADD_EXECUTABLE()
+    #
+
+    TEST_7
+      MESSAGE "Show error when trying to link an INSTALLABLE exec against a TESTONLY lib."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_TESTONLY_INSTALLABLE_ERROR=ON
+        -DSPKB_SHOW_M_DEPLIBS_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "ERROR: TESTONLY lib 'b_mixed_lang' not allowed with INSTALLABLE executable"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+        "Configuring incomplete, errors occurred!"
+
+    TEST_8
+      MESSAGE "Show error when trying to link against non-TESTONLY lib."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=ON
+        -DSPKB_SHOW_TESTONLY_INSTALLABLE_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        " ERROR: 'simplecxx' in TESTONLYLIBS not a TESTONLY lib"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+        "Configuring incomplete, errors occurred!"
+
+    TEST_9
+      MESSAGE "Show error when trying to link SE package lib using TESTONLYLIBS"
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=ON
+        -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this SE package"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+        "Configuring incomplete, errors occurred!"
+
+    TEST_10
+      MESSAGE "Show deprecated warning when trying to link TESTONLY lib using DEBLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_TESTONLY_DEBLIBS_WARNING=ON
+        -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: Passing TESTONLY 'b_mixed_lang' through DEPLIBS is deprecated"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
+
+    TEST_11
+      MESSAGE "Show deprecated warning when trying to link non-TESTONLY lib using DEBLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_NONTESTONLY_DEBLIBS_WARNING=ON
+        -DSPKB_SHOW_TESTONLY_DEBLIBS_WARNING=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: Passing non-TESTONLY 'pws_b' through DEPLIBS is deprecated"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
     )
 
