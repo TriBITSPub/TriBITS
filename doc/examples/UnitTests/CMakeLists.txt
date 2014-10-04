@@ -228,8 +228,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "-- PackageWithSubpackagesSubpackageB_LIB_REQUIRED_DEP_PACKAGES: SimpleCxx"
       "-- PackageWithSubpackagesSubpackageB_LIB_OPTIONAL_DEP_PACKAGES: PackageWithSubpackagesSubpackageA"
       "-- PackageWithSubpackagesSubpackageB_TEST_OPTIONAL_DEP_PACKAGES: MixedLanguage"
-      "-- PackageWithSubpackagesSubpackageC_LIB_REQUIRED_DEP_PACKAGES: PackageWithSubpackagesSubpackageA"
-      "-- PackageWithSubpackagesSubpackageC_LIB_OPTIONAL_DEP_PACKAGES: PackageWithSubpackagesSubpackageB"
+      "-- PackageWithSubpackagesSubpackageC_LIB_REQUIRED_DEP_PACKAGES: PackageWithSubpackagesSubpackageA PackageWithSubpackagesSubpackageB"
       "-- PackageWithSubpackages_LIB_REQUIRED_DEP_PACKAGES: PackageWithSubpackagesSubpackageA"
       "-- PackageWithSubpackages_LIB_OPTIONAL_DEP_PACKAGES: PackageWithSubpackagesSubpackageB PackageWithSubpackagesSubpackageC"
       "-- WrapExternal_LIB_REQUIRED_DEP_PACKAGES: PackageWithSubpackagesSubpackageA"
@@ -291,7 +290,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "PackageWithSubpackagesSubpackageA_test_of_a .* Passed"
       "PackageWithSubpackagesSubpackageB_test_of_b .* Passed"
       "PackageWithSubpackagesSubpackageC_test_of_c .* Passed"
-      "100% tests passed, 0 tests failed out of 4"
+      "PackageWithSubpackagesSubpackageC_test_of_c_util.* Passed" 
+      "100% tests passed, 0 tests failed out of 5"
 
   TEST_3 CMND make ARGS install ${CTEST_BUILD_FLAGS}
     MESSAGE "Build 'install' target using raw 'make'"
@@ -501,9 +501,10 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "PackageWithSubpackagesSubpackageA_test_of_a .* Passed"
         "PackageWithSubpackagesSubpackageB_test_of_b .* Passed"
         "PackageWithSubpackagesSubpackageB_test_of_b_mixed_lang.* Passed"
+        "PackageWithSubpackagesSubpackageC_test_of_c_util.* Passed" 
         "PackageWithSubpackagesSubpackageC_test_of_c .* Passed"
         "PackageWithSubpackagesSubpackageC_test_of_c_b_mixed_lang.* Passed"
-        "100% tests passed, 0 tests failed out of 7"
+        "100% tests passed, 0 tests failed out of 8"
     )
 
 
@@ -554,9 +555,10 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "PackageWithSubpackagesSubpackageA_test_of_a .* Passed"
         "PackageWithSubpackagesSubpackageB_test_of_b .* Passed"
         "PackageWithSubpackagesSubpackageB_test_of_b_mixed_lang.* Passed"
+        "PackageWithSubpackagesSubpackageC_test_of_c_util.* Passed" 
         "PackageWithSubpackagesSubpackageC_test_of_c .* Passed"
         "PackageWithSubpackagesSubpackageC_test_of_c_b_mixed_lang.* Passed"
-        "100% tests passed, 0 tests failed out of 7"
+        "100% tests passed, 0 tests failed out of 8"
     )
 
 
@@ -1063,12 +1065,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
       "PackageWithSubpackagesSubpackageB_LIBRARY_DIRS='.+/packages/package_with_subpackages/B..+/packages/package_with_subpackages/A..+/packages/simple_cxx/src'"
       "PackageWithSubpackagesSubpackageB_LIBRARIES='pws_b'"
 
-      "PackageWithSubpackagesSubpackageC_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TribitsExampleProject/packages/package_with_subpackages/C..+/TribitsExampleProject/packages/package_with_subpackages/B..+/TribitsExampleProject/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src'"
-      "PackageWithSubpackagesSubpackageC_LIBRARY_DIRS='.+/packages/package_with_subpackages/C..+/packages/package_with_subpackages/B..+/packages/package_with_subpackages/A..+/packages/simple_cxx/src'"
+      "PackageWithSubpackagesSubpackageC_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/package_with_subpackages/B/src..+/TribitsExampleProject/packages/package_with_subpackages/B/src..+/TribitsExampleProject/packages/package_with_subpackages/A..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src..+/TribitsExampleProject/packages/package_with_subpackages/C'"
+      "PackageWithSubpackagesSubpackageC_LIBRARY_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/package_with_subpackages/B/src..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/package_with_subpackages/A..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/package_with_subpackages/C'"
       "PackageWithSubpackagesSubpackageC_LIBRARIES='pws_c'"
 
-      "PackageWithSubpackages_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TribitsExampleProject/packages/package_with_subpackages/C..+/TribitsExampleProject/packages/package_with_subpackages/B..+/TribitsExampleProject/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TribitsExampleProject/packages/package_with_subpackages/B..+/TribitsExampleProject/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TribitsExampleProject/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src'"
-      "PackageWithSubpackages_LIBRARY_DIRS='.+/packages/package_with_subpackages/C..+/packages/package_with_subpackages/B..+/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/packages/package_with_subpackages/B..+/packages/package_with_subpackages/A..+/packages/simple_cxx/src..+/packages/package_with_subpackages/A..+/packages/simple_cxx/src'"
+      "PackageWithSubpackages_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/package_with_subpackages/B/src..+/TribitsExampleProject/packages/package_with_subpackages/B/src..+/TribitsExampleProject/packages/package_with_subpackages/A..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src..+/TribitsExampleProject/packages/simple_cxx/src..+/TribitsExampleProject/packages/package_with_subpackages/C'"
+      "PackageWithSubpackages_LIBRARY_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/package_with_subpackages/B/src..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/package_with_subpackages/A..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src..+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/package_with_subpackages/C'"
       "PackageWithSubpackages_LIBRARIES='pws_c.pws_b.pws_a'"
 
       "WrapExternal_INCLUDE_DIRS='.+/packages/wrap_external/external_func'"
