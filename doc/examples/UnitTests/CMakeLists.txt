@@ -643,7 +643,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
       MESSAGE "Show deprecated warning when passing a TESTONLY lib through IMPORTEDLIBS."
       CMND ${CMAKE_COMMAND}
       ARGS -DSPKC_SHOW_TESTONLY_IMPORTEDLIBS_ERROR=ON
-        -DSPKC_SHOW_TESTONLY_DEPLBIS_ERROR=O
+        -DSPKC_SHOW_TESTONLY_DEPLBIS_ERROR=
         .
       PASS_REGULAR_EXPRESSION_ALL
         "WARNING: 'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
@@ -671,6 +671,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
       MESSAGE "Show error when trying to link an INSTALLABLE exec against a TESTONLY lib."
       CMND ${CMAKE_COMMAND}
       ARGS -DSPKB_SHOW_TESTONLY_INSTALLABLE_ERROR=ON
+        -DSPKB_SHOW_M_DEPLIBS_ERROR=
         .
       PASS_REGULAR_EXPRESSION_ALL
         "ERROR: TESTONLY lib 'b_mixed_lang' not allowed with INSTALLABLE executable"
@@ -681,7 +682,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
       MESSAGE "Show error when trying to link against non-TESTONLY lib."
       CMND ${CMAKE_COMMAND}
       ARGS -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=ON
-        -DSPKB_SHOW_M_DEPLIBS_ERROR=
+        -DSPKB_SHOW_TESTONLY_INSTALLABLE_ERROR=
         .
       PASS_REGULAR_EXPRESSION_ALL
         " ERROR: 'simplecxx' in TESTONLYLIBS not a TESTONLY lib"
