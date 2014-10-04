@@ -482,10 +482,26 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
       APPEND_SET(LINK_LIBS ${PREFIXED_DEPLIBS})
     ENDIF()
 
-    IF (PARSE_IMPORTEDLIBS)
-      # ToDo: Assert that these are truly external libs.
-      APPEND_SET(LINK_LIBS ${PARSE_IMPORTEDLIBS})
-    ENDIF()
+    FOREACH(IMPORTEDLIB ${PARSE_IMPORTEDLIBS})
+      LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${IMPORTEDLIB} FOUND_IDX)
+      IF (FOUND_IDX GREATER -1)
+        MESSAGE(WARNING "WARNING: Lib '${IMPORTEDLIB}' in IMPORTEDLIBS is in"
+        " this SE package and is *not* an external lib!"
+        "  TriBITS takes care of linking against libs the current"
+        " SE package automatically.  Please remove it from IMPORTEDLIBS!")
+      ELSEIF (TARGET ${IMPORTEDLIB})
+        MESSAGE(WARNING "WARNING: Lib '${IMPORTEDLIB}' being passed through"
+        " IMPORTEDLIBS is *not* an external library but instead is a library"
+        " define in this CMake project!"
+        "  TriBITS takes care of linking against libraries in dependent upstream"
+        " SE packages.  If you want to link to a library in an upstream SE"
+        " package then add the SE package name to the appropriate category"
+        " in this SE package's depencencies file: "
+        " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
+      ENDIF()
+      # ToDo: Assert that this is not a test-only lib
+      LIST(APPEND LINK_LIBS ${IMPORTEDLIB})
+    ENDFOREACH()
 
     IF (ADD_DEP_PACKAGE_AND_TPL_LIBS)
 

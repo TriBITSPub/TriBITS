@@ -362,8 +362,9 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
       MESSAGE(FATAL_ERROR "ERROR: '${TESTONLYLIB}' in TESTONLYLIBS not a TESTONLY lib!"
         "  If this a regular library in this SE package or in an dependent upstream SE"
         " package then TriBITS will link automatically to it.  If you remove this and it"
-        " does not link, then you need to add a new SE package dependency to your"
-        " SE package's cmake/Dependencies.cmake file.")
+        " does not link, then you need to add a new SE package dependency to"
+        " the SE package's dependencies file"
+        " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
     ELSEIF(PARSE_INSTALLABLE)
       MESSAGE(FATAL_ERROR "ERROR: TESTONLY lib '${TESTONLYLIB}' not allowed with"
         " INSTALLABLE executable!  An INSTALLABLE executable can only depend on"
@@ -384,16 +385,19 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
     LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${IMPORTEDLIB} FOUND_IDX)
     IF (NOT FOUND_IDX EQUAL -1)
       MESSAGE(FATAL_ERROR "ERROR: Lib '${IMPORTEDLIB}' in IMPORTEDLIBS is in"
-      " this SE package!  TriBITS takes care of linking against libs the current"
+      " this SE package and is *not* an external lib!"
+      "  TriBITS takes care of linking against libs the current"
       " SE package automatically.  Please remove it from IMPORTEDLIBS!")
     ELSEIF (TARGET ${IMPORTEDLIB})
       MESSAGE(FATAL_ERROR "ERROR: Lib '${IMPORTEDLIB}' being passed through"
-      " IMPORTEDLIBS is not allowed to be any library created in this CMake project!"
+      " IMPORTEDLIBS is *not* an external library but instead is a library"
+      " define in this CMake project!"
       "  TriBITS takes care of linking against libraries in dependent upstream"
       " SE packages.  If you want to link to a library in an upstream SE"
       " package then add the the SE package name to the approciate argument in"
       " the argument in the TRIBITS_PACKAGE_DEFINE_DEPENDENCIES() in this"
-      " SE package's cmake/Dependencies.cmake file!")
+      " SE package's dependencies file"
+      " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
     ENDIF()
   ENDFOREACH()
 
