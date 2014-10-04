@@ -1,15 +1,6 @@
 TRIBITS_SUBPACKAGE(SubpackageC)
 
-# Define these vars (one at a time) in your input cach to see invalid usage
-# checking and the errors and warnings printed!
-IF (SPKC_SHOW_TESTONLY_DEPLBIS_ERROR)
-  SET(TAL_EXTRALIB_ARGS DEPLIBS b_mixed_lang)
-ENDIF()
-IF (SPKC_SHOW_TESTONLY_IMPORTEDLIBS_ERROR)
-  SET(TAL_EXTRALIB_ARGS IMPORTEDLIBS b_mixed_lang)
-ENDIF()
-PRINT_NONEMPTY_VAR(TAL_EXTRALIB_ARGS)
-
+INCLUDE(${CMAKE_CURRENT_LIST_DIR}/ShowLibErrors.cmake)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 TRIBITS_ADD_LIBRARY(pws_c
