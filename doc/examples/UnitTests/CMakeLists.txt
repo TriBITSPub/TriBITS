@@ -500,9 +500,9 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "MixedLanguage_RayTracerTests${TEST_MPI_1_SUFFIX} .* Passed"
         "PackageWithSubpackagesSubpackageA_test_of_a .* Passed"
         "PackageWithSubpackagesSubpackageB_test_of_b .* Passed"
-        "PackageWithSubpackagesSubpackageB_test_of_b_mixed_lang .* Passed"
+        "PackageWithSubpackagesSubpackageB_test_of_b_mixed_lang.* Passed"
         "PackageWithSubpackagesSubpackageC_test_of_c .* Passed"
-        "PackageWithSubpackagesSubpackageC_test_of_c_b_mixed_lang .* Passed"
+        "PackageWithSubpackagesSubpackageC_test_of_c_b_mixed_lang.* Passed"
         "100% tests passed, 0 tests failed out of 7"
     )
 
@@ -553,9 +553,9 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "MixedLanguage_RayTracerTests${TEST_MPI_1_SUFFIX} .* Passed"
         "PackageWithSubpackagesSubpackageA_test_of_a .* Passed"
         "PackageWithSubpackagesSubpackageB_test_of_b .* Passed"
-        "PackageWithSubpackagesSubpackageB_test_of_b_mixed_lang .* Passed"
+        "PackageWithSubpackagesSubpackageB_test_of_b_mixed_lang.* Passed"
         "PackageWithSubpackagesSubpackageC_test_of_c .* Passed"
-        "PackageWithSubpackagesSubpackageC_test_of_c_b_mixed_lang .* Passed"
+        "PackageWithSubpackagesSubpackageC_test_of_c_b_mixed_lang.* Passed"
         "100% tests passed, 0 tests failed out of 7"
     )
 
