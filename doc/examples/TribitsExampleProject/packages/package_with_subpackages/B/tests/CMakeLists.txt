@@ -1,8 +1,15 @@
-# Create a test-only lib
-ADD_SUBDIRECTORY(testlib)
+#
+# Create a test executable b_test that only depends on package's man libs
+#
 
-# Create a test executable
 TRIBITS_ADD_EXECUTABLE( b_test SOURCES b_test.cpp )
+
+#
+# Create a test-only b_mixed_lang lib which uses the optional test dependent
+# MixedLang package
+#
+
+ADD_SUBDIRECTORY(testlib)
 
 #
 # Test b_test
@@ -30,24 +37,7 @@ TRIBITS_ADD_ADVANCED_TEST( test_of_b
 ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_MixedLanguage)
 IF (${PACKAGE_NAME}_ENABLE_MixedLanguage)
 
-  # Define these vars (one at a time) in your input cach to see invalid usage
-  # checking and the errors and warnings printed!
-  IF (SPKB_SHOW_TESTONLY_INSTALLABLE_ERROR)
-    SET(TAEAT_EXTRALIB_ARGS INSTALLABLE)
-  ENDIF()
-  IF (SPKB_SHOW_NON_TESTONLY_LIB_ERROR)
-    SET(TAEAT_EXTRALIB_ARGS simplecxx)
-  ENDIF()
-  IF (SPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR)
-    SET(TAEAT_EXTRALIB_ARGS IMPORTEDLIBS pws_b)
-  ENDIF()
-  IF (SPKB_SHOW_TESTONLY_DEBLIBS_WARNING) # Deprecated
-    SET(TAEAT_EXTRALIB_ARGS  DEPLIBS b_mixed_lang)
-  ENDIF()
-  IF (SPKB_SHOW_NONTESTONLY_DEBLIBS_WARNING) # Deprecated
-    SET(TAEAT_EXTRALIB_ARGS  DEPLIBS pws_b)
-  ENDIF()
-  PRINT_VAR(TAEAT_EXTRALIB_ARGS)
+  INCLUDE(${CMAKE_CURRENT_LIST_DIR}/ShowLibErrors.cmake)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST( test_of_b_mixed_lang
     SOURCES b_mixed_lang_test.cpp
