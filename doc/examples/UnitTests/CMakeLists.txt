@@ -433,6 +433,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
 
 ASSERT_DEFINED(${PROJECT_NAME}_ENABLE_Fortran)
 IF (${PROJECT_NAME}_ENABLE_Fortran)
+
+
   TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -441,6 +443,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
       ARGS
         ${COMMON_ENV_ARGS_PASSTHROUGH}
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=ON
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_TESTS=ON
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
@@ -481,6 +484,91 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "PackageWithSubpackagesSubpackageC_test_of_c .* Passed"
         "100% tests passed, 0 tests failed out of 6"
     )
+
+
+  TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+
+    TEST_0 
+      MESSAGE "Do the initial configure to get the env probe in place."
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${COMMON_ENV_ARGS_PASSTHROUGH}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=ON
+        -DTribitsExProj_ENABLE_WrapExternal=OFF
+        -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+        -DTribitsExProj_ENABLE_TESTS=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      PASS_REGULAR_EXPRESSION_ALL
+        "Final set of enabled packages:  SimpleCxx MixedLanguage PackageWithSubpackages 3"
+        "Final set of enabled SE packages:  SimpleCxx MixedLanguage PackageWithSubpackagesSubpackageA PackageWithSubpackagesSubpackageB PackageWithSubpackagesSubpackageC PackageWithSubpackages 6"
+        "Configuring done"
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    TEST_1 
+      MESSAGE "Show error when trying to link an INSTALLABLE exec against a TESTONLY lib."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_TESTONLY_INSTALLABLE_ERROR=ON
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "ERROR: TESTONLY lib 'b_mixed_lang' not allowed with INSTALLABLE executable"
+        "Configuring incomplete, errors occurred!"
+
+    TEST_2 
+      MESSAGE "Show error when trying to link against non-TESTONLY lib."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=ON -DSPKB_SHOW_TESTONLY_INSTALLABLE_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        " ERROR: 'simplecxx' in TESTONLYLIBS not a TESTONLY lib"
+        "Configuring incomplete, errors occurred!"
+
+    TEST_3
+      MESSAGE "Show error when trying to link SE package lib using TESTONLYLIBS"
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=ON -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this SE package"
+        "Configuring incomplete, errors occurred!"
+
+    TEST_4
+      MESSAGE "Show deprecated warning when trying to link TESTONLY lib using DEBLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_TESTONLY_DEBLIBS_WARNING=ON -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: Passing TESTONLY 'b_mixed_lang' through DEPLIBS is deprecated"
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    TEST_5
+      MESSAGE "Show deprecated warning when trying to link non-TESTONLY lib using DEBLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_NONTESTONLY_DEBLIBS_WARNING=ON -DSPKB_SHOW_TESTONLY_DEBLIBS_WARNING=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: Passing non-TESTONLY 'pws_b' through DEPLIBS is deprecated"
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    TEST_6
+      MESSAGE "Show deprecated warning when trying to link lib from upstream SE package."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=ON -DSPKB_SHOW_NONTESTONLY_DEBLIBS_WARNING=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: 'simplecxx' in DEPSLIBS is not a lib in this SE package"
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    )
+
+
 ENDIF()
 
 
