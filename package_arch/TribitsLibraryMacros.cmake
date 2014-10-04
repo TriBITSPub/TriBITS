@@ -418,7 +418,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
     SET_PROPERTY(DIRECTORY  APPEND  PROPERTY  PACKAGE_LIBRARY_DIRS
       ${${PACKAGE_NAME}_LIBRARY_DIRS})
 
-    # Local varaible to hold all of the libraries that will be directly linked
+    # Local variable to hold all of the libraries that will be directly linked
     # to this library.
     SET(LINK_LIBS)
 
@@ -432,6 +432,9 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
     ENDIF()
 
     #
+    # Add the DEPLIBS to the LINK_LIBS, assert correct usage of DEPLIBS, and
+    # see if we need to link in the upstream SE package and TPL libs.
+    #
     # We only want to link to the upstream dependent SE package and TPL
     # libraries if needed.  We only need to link to these upstream dependent
     # libraries when this is the first library being created for this SE
@@ -442,58 +445,98 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
     #
     # We also need to make special considerations for test libraries since
     # things need to be handled a little bit differently (but not much).  In the
-    # case of test libaries, we need to also pull the test-only dependencies.
+    # case of test libraries, we need to also pull the test-only dependencies.
     # In this case, we will always assume that we will add in the test
     # libraries.
+    #
+    # ToDo: Turn the below deprecated WARNING messages to FATAL_ERROR once we
+    # give enough time for people to clean up their codes.
     #
 
     SET(ADD_DEP_PACKAGE_AND_TPL_LIBS TRUE)
 
-    IF (PARSE_DEPLIBS)
-      SET(PREFIXED_DEPLIBS)
-      FOREACH(LIB ${PARSE_DEPLIBS})
-        SET(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${LIB}")
-        LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${PREFIXED_LIB} FOUND_IDX)
-        IF (FOUND_IDX GREATER -1)
-          # This is in this SE package and therefore will be linked to the lib
-          # being defined here.
-          IF (PARSE_TESTONLY)
-            # This is a TESTONLY library and TESTONLY libraries always have to
-            # link their upstream dependencies.
-          ELSE()
-            # The library being created here is dependent on another of this
-            # package's libraries so there is no need to add in this package's
-            # dependent package and TPL libraries.
-            SET(ADD_DEP_PACKAGE_AND_TPL_LIBS FALSE)
-          ENDIF()
-        ELSEIF (${PREFIXED_LIB}_INCLUDE_DIRS AND NOT PARSE_TESTONLY)
-          MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPLIBS is a TESTONLY lib"
-            " and it is illegal to link to this non-TESTONLY library '${LIBRARY_NAME}'."
-            "  Such usage is deprecated (and this warning will soon become an error)!"
-            "  If this is a regular library in this SE package or in an dependent upstream SE"
-            " package then TriBITS will link automatically to it.  If you remove this and it"
-            " does not link, then you need to add a new SE package dependency to"
-            " this SE package's dependencies file"
-            " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
-          # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code 
-        ELSE()
-          MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPSLIBS is not"
-            " a lib in this SE package!  Such usage is  deprecated (and"
-            " will result in a configure error soon).  If this is a library in"
-            " a dependent upstream SE package, then simply remove it from this list."
-            "  TriBITS automatically links in libraries in upstream SE packages."
-            "  If you remove '${PREFIXED_LIB}' from DEPLIBS and your code does"
-            " not link, then you need to add the SE package that owns '${PREFIXED_LIB}'"
-            " to the cmake/Dependencies.cmake file for this SE package ${PACKAGE_NAME}." 
-            "  If this is an external library, then pass it in through IMPORTEDLIBS"
-            " (but the usage of IMPORTEDLIBS should be extremely rare, use a"
-            " TriBITS TPL instead).")
-          # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code 
+    SET(PREFIXED_DEPLIBS)
+
+    FOREACH(LIB ${PARSE_DEPLIBS})
+
+      SET(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${LIB}")
+
+      # LIB_IN_SE_PKG?
+      LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${PREFIXED_LIB} FOUND_IDX)
+      IF (FOUND_IDX GREATER -1)
+        SET(LIB_IN_SE_PKG TRUE)
+      ELSE()
+        SET(LIB_IN_SE_PKG FALSE)
+      ENDIF()
+
+      # PREFIXED_LIB_IS_TESTONLY?
+      IF (${PREFIXED_LIB}_INCLUDE_DIRS)
+        SET(LIB_TESTONLY TRUE)
+      ELSE()
+        SET(LIB_TESTONLY FALSE)
+      ENDIF()
+
+      # Check for valid usage (sorted by most common to least common)
+      IF (NOT PARSE_TESTONLY AND LIB_IN_SE_PKG AND NOT LIB_TESTONLY)
+        # The library being created here is a regular library and is
+        # dependent on a regular (non-TESTONLY) lib.  This is valid usage of
+        # DEPLIBS.  Also, there is no need to link this new lib the SE
+        # package's upstream dependent SE package and TPL libraries.
+        SET(ADD_DEP_PACKAGE_AND_TPL_LIBS FALSE)
+      ELSEIF (PARSE_TESTONLY AND LIB_IN_SE_PKG AND NOT LIB_TESTONLY)
+        # The library being created here is TESTONLY library and is
+        # dependent on a regular (non-TESTONLY) lib.  This is valid usage of
+        # DEPLIBS.  In the case of test-only libraries, we always link in
+        # the upstream libs.
+      ELSEIF (PARSE_TESTONLY AND LIB_TESTONLY) # LIB_IN_SE_PKG=TRUE/FASLE The
+        # library being created here is TESTONLY library and is dependent on
+        # another TESTONLY library.  This is valid usage of DEPLIBS.  In this
+        # case we just hope that this SE package correctly specified a TEST
+        # dependency on the upstream SE package that owns this upstream
+        # TESTONLY library.
+        IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+          MESSAGE("-- "
+            "Adding include directories for TESTONLY ${PREFIXED_LIB}_INCLUDE_DIRS ...")
         ENDIF()
-        LIST(APPEND PREFIXED_DEPLIBS "${LIBRARY_NAME_PREFIX}${LIB}")
-      ENDFOREACH()
-      APPEND_SET(LINK_LIBS ${PREFIXED_DEPLIBS})
-    ENDIF()
+        INCLUDE_DIRECTORIES(${${PREFIXED_LIB}_INCLUDE_DIRS})
+      ELSEIF (NOT PARSE_TESTONLY AND LIB_TESTONLY) # LIB_IN_SE_PKG=TRUE/FASLE 
+        MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPLIBS is a TESTONLY lib"
+          " and it is illegal to link to this non-TESTONLY library '${LIBRARY_NAME}'."
+          "  Such usage is deprecated (and this warning will soon become an error)!"
+          "  If this is a regular library in this SE package or in an dependent upstream SE"
+          " package then TriBITS will link automatically to it.  If you remove this and it"
+          " does not link, then you need to add a new SE package dependency to"
+          " this SE package's dependencies file"
+          " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
+        # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code 
+      ELSEIF (NOT LIB_IN_SE_PKG AND TARGET ${PREFIXED_LIB} ) # PARSE_TESTONLY=TRUE/FALSE
+        MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPSLIBS is not"
+          " a lib in this SE package but is a library defined in the current"
+          " cmake project!  Such usage is  deprecated (and"
+          " will result in a configure error soon).  If this is a library in"
+          " a dependent upstream SE package, then simply remove it from this list."
+          "  TriBITS automatically links in libraries in upstream SE packages."
+          "  If you remove '${PREFIXED_LIB}' from DEPLIBS and your code does"
+          " not link, then you need to add a new SE package dependency to"
+          " this SE package's dependencies file"
+          " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
+      ELSEIF (NOT LIB_IN_SE_PKG AND NOT TARGET ${PREFIXED_LIB} )
+        # ToDo: Create a warning for this case as well!
+      ELSE()
+        MESSAGE(WARNING "WARNING: The case PARSE_TESTONLY=${PARSE_TESTONLY},"
+          " LIB_IN_SE_PKG=${LIB_IN_SE_PKG}, LIB_TESTONLY=${LIB_TESTONLY}, has"
+          " not yet been handled!")
+      ENDIF()
+
+      LIST(APPEND PREFIXED_DEPLIBS "${LIBRARY_NAME_PREFIX}${LIB}")
+
+    ENDFOREACH()
+
+    APPEND_SET(LINK_LIBS ${PREFIXED_DEPLIBS})
+
+    #
+    # Check IMPORTEDLIBS
+    #
 
     FOREACH(IMPORTEDLIB ${PARSE_IMPORTEDLIBS})
       SET(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${IMPORTEDLIB}")
@@ -522,6 +565,10 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
       # ToDo: Assert that this is not a test-only lib
       LIST(APPEND LINK_LIBS ${IMPORTEDLIB})
     ENDFOREACH()
+
+    #
+    # Add the dependent SE package and TPL libs
+    #
 
     IF (ADD_DEP_PACKAGE_AND_TPL_LIBS)
 
@@ -585,6 +632,10 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
 
     PREPEND_GLOBAL_SET(${PARENT_PACKAGE_NAME}_LIB_TARGETS ${LIBRARY_NAME})
     PREPEND_GLOBAL_SET(${PARENT_PACKAGE_NAME}_ALL_TARGETS ${LIBRARY_NAME})
+
+    IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      MESSAGE("${LIBRARY_NAME}_LINK_LIBS='${LINK_LIBS}'")
+    ENDIF()
 
     TARGET_LINK_LIBRARIES(${LIBRARY_NAME}  ${LINK_LIBS})
 
@@ -674,6 +725,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
           " directories and libraries! ...")
       ENDIF()
 
+      LIST(REMOVE_DUPLICATES INCLUDE_DIRS_CURRENT)
       GLOBAL_SET(${LIBRARY_NAME}_INCLUDE_DIRS ${INCLUDE_DIRS_CURRENT})
 
       IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
@@ -682,6 +734,10 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
 
     ENDIF()
   ENDIF() #if not in installation testing mode
+
+  #
+  # Adjust for installation testing
+  #
 
   IF (${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING)
 
@@ -708,10 +764,15 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
 
   ENDIF() #installation testing mode
 
+  #
+  # Print the updates to the linkage variables
+  #
+
   IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
     PRINT_VAR(${PACKAGE_NAME}_INCLUDE_DIRS)
     PRINT_VAR(${PACKAGE_NAME}_LIBRARY_DIRS)
     PRINT_VAR(${PACKAGE_NAME}_LIBRARIES)
   ENDIF()
+
 
 ENDFUNCTION()
