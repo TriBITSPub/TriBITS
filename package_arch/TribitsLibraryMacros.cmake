@@ -457,12 +457,25 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
         IF (FOUND_IDX GREATER -1)
           # This is in this SE package and therefore will be linked to the lib
           # being defined here.
-          IF (NOT PARSE_TESTONLY)
+          IF (PARSE_TESTONLY)
+            # This is a TESTONLY library and TESTONLY libraries always have to
+            # link their upstream dependencies.
+          ELSE()
             # The library being created here is dependent on another of this
             # package's libraries so there is no need to add in this package's
             # dependent package and TPL libraries.
             SET(ADD_DEP_PACKAGE_AND_TPL_LIBS FALSE)
           ENDIF()
+        ELSEIF (${PREFIXED_LIB}_INCLUDE_DIRS AND NOT PARSE_TESTONLY)
+          MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPLIBS is a TESTONLY lib"
+            " and it is illegal to link to this non-TESTONLY library '${LIBRARY_NAME}'."
+            "  Such usage is deprecated (and this warning will soon become an error)!"
+            "  If this is a regular library in this SE package or in an dependent upstream SE"
+            " package then TriBITS will link automatically to it.  If you remove this and it"
+            " does not link, then you need to add a new SE package dependency to"
+            " this SE package's dependencies file"
+            " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
+          # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code 
         ELSE()
           MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPSLIBS is not"
             " a lib in this SE package!  Such usage is  deprecated (and"
@@ -475,7 +488,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
             "  If this is an external library, then pass it in through IMPORTEDLIBS"
             " (but the usage of IMPORTEDLIBS should be extremely rare, use a"
             " TriBITS TPL instead).")
-          # ToDo: Turn the above to FATAL_ERROR after some time.
+          # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code 
         ENDIF()
         LIST(APPEND PREFIXED_DEPLIBS "${LIBRARY_NAME_PREFIX}${LIB}")
       ENDFOREACH()
@@ -483,8 +496,15 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
     ENDIF()
 
     FOREACH(IMPORTEDLIB ${PARSE_IMPORTEDLIBS})
+      SET(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${IMPORTEDLIB}")
       LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${IMPORTEDLIB} FOUND_IDX)
-      IF (FOUND_IDX GREATER -1)
+      IF (${PREFIXED_LIB}_INCLUDE_DIRS)
+        MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in IMPORTEDLIBS is a TESTONLY lib"
+          " and it is illegal to pass in through IMPORTEDLIBS!"
+          "  Such usage is deprecated (and this warning will soon become an error)!"
+          "  Should '${PREFIXED_LIB}' instead be passed through DEPLIBS?")
+        # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code 
+      ELSEIF (FOUND_IDX GREATER -1)
         MESSAGE(WARNING "WARNING: Lib '${IMPORTEDLIB}' in IMPORTEDLIBS is in"
         " this SE package and is *not* an external lib!"
         "  TriBITS takes care of linking against libs the current"

@@ -363,7 +363,7 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
         "  If this a regular library in this SE package or in an dependent upstream SE"
         " package then TriBITS will link automatically to it.  If you remove this and it"
         " does not link, then you need to add a new SE package dependency to"
-        " the SE package's dependencies file"
+        " this SE package's dependencies file"
         " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
     ELSEIF(PARSE_INSTALLABLE)
       MESSAGE(FATAL_ERROR "ERROR: TESTONLY lib '${TESTONLYLIB}' not allowed with"
