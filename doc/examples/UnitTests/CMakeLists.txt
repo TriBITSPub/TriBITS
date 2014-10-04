@@ -509,6 +509,10 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
+    #
+    # Testing pasing libs to TRIBITS_ADD_EXECUTABLE()
+    #
+
     TEST_1 
       MESSAGE "Show error when trying to link an INSTALLABLE exec against a TESTONLY lib."
       CMND ${CMAKE_COMMAND}
@@ -516,6 +520,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         .
       PASS_REGULAR_EXPRESSION_ALL
         "ERROR: TESTONLY lib 'b_mixed_lang' not allowed with INSTALLABLE executable"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
         "Configuring incomplete, errors occurred!"
 
     TEST_2 
@@ -525,6 +530,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         .
       PASS_REGULAR_EXPRESSION_ALL
         " ERROR: 'simplecxx' in TESTONLYLIBS not a TESTONLY lib"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
         "Configuring incomplete, errors occurred!"
 
     TEST_3
@@ -534,6 +540,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         .
       PASS_REGULAR_EXPRESSION_ALL
         "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this SE package"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
         "Configuring incomplete, errors occurred!"
 
     TEST_4
@@ -543,6 +550,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         .
       PASS_REGULAR_EXPRESSION_ALL
         "WARNING: Passing TESTONLY 'b_mixed_lang' through DEPLIBS is deprecated"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -553,8 +561,13 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         .
       PASS_REGULAR_EXPRESSION_ALL
         "WARNING: Passing non-TESTONLY 'pws_b' through DEPLIBS is deprecated"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    #
+    # Testing pasing libs to TRIBITS_ADD_LIBRARY()
+    #
 
     TEST_6
       MESSAGE "Show deprecated warning when trying to link lib from upstream SE package."
@@ -563,8 +576,36 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         .
       PASS_REGULAR_EXPRESSION_ALL
         "WARNING: 'simplecxx' in DEPSLIBS is not a lib in this SE package"
+        "packages/package_with_subpackages/B/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    TEST_7
+      MESSAGE "Show deprecated warning when passing a lib from this SE package through IMPORTEDLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this SE package "
+        "packages/package_with_subpackages/B/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    TEST_8
+      MESSAGE "ToDo: Show deprecated warning when passing a lib from upstream SE package through IMPORTEDLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
+        "TribitsExampleProject/packages/package_with_subpackages/B/cmake/Dependencies.cmake"
+        "packages/package_with_subpackages/B/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    # ToDo: Show deprecated warning when passing a TESTONLY lib through DEPLBIS.
+
+    # ToDo: Show deprecated warning when passing a TESTONLY lib through IMPORTEDLIBS.
 
     )
 
