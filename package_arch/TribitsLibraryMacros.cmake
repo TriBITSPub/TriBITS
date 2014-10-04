@@ -431,25 +431,14 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
       MESSAGE("-- " "IMPORTEDLIBS = ${PARSE_IMPORTEDLIBS}")
     ENDIF()
 
-    # Prepend DEPLIBS with LIBRARY_NAME_PREFIX.
-    IF (PARSE_DEPLIBS)
-      SET(PREFIXED_DEPLIBS)
-      FOREACH(LIB ${PARSE_DEPLIBS})
-        LIST(APPEND PREFIXED_DEPLIBS "${LIBRARY_NAME_PREFIX}${LIB}")
-      ENDFOREACH()
-      APPEND_SET(LINK_LIBS ${PREFIXED_DEPLIBS})
-    ENDIF()
-    IF (PARSE_IMPORTEDLIBS)
-      APPEND_SET(LINK_LIBS ${PARSE_IMPORTEDLIBS})
-    ENDIF()
-
     #
-    # We only want to link to the dependent package and TPL libraries when we need
-    # to.  We only need to link to these dependent libraries when this is the first
-    # library being created for this package or if this library does not depend
-    # on other libraries created for this package.  Otherwise, we don't need to
-    # add the include directories or link libraries because a dependent lib
-    # specified in PARSE_DEPLIBS already has everything that we need.
+    # We only want to link to the upstream dependent SE package and TPL
+    # libraries if needed.  We only need to link to these upstream dependent
+    # libraries when this is the first library being created for this SE
+    # package or if this library does not depend on other libraries created
+    # for this package.  Otherwise, we don't need to add the include
+    # directories or link libraries because a dependent lib specified in
+    # PARSE_DEPLIBS already has everything that we need.
     #
     # We also need to make special considerations for test libraries since
     # things need to be handled a little bit differently (but not much).  In the
@@ -460,23 +449,49 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
 
     SET(ADD_DEP_PACKAGE_AND_TPL_LIBS TRUE)
 
-    IF (PARSE_DEPLIBS AND NOT PARSE_TESTONLY)
-      FOREACH(DEPLIB ${PARSE_DEPLIBS})
-        LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${DEPLIB} DEPLIB_IDX)
-        IF (NOT DEPLIB_IDX EQUAL -1)
-          # The library being created here is dependent on another of this
-          # package's libraries so there is no need to add in this package's
-          # dependent package and TPL libraries.
-          SET(ADD_DEP_PACKAGE_AND_TPL_LIBS FALSE)
+    IF (PARSE_DEPLIBS)
+      SET(PREFIXED_DEPLIBS)
+      FOREACH(LIB ${PARSE_DEPLIBS})
+        SET(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${LIB}")
+        LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${PREFIXED_LIB} FOUND_IDX)
+        IF (FOUND_IDX GREATER -1)
+          # This is in this SE package and therefore will be linked to the lib
+          # being defined here.
+          IF (NOT PARSE_TESTONLY)
+            # The library being created here is dependent on another of this
+            # package's libraries so there is no need to add in this package's
+            # dependent package and TPL libraries.
+            SET(ADD_DEP_PACKAGE_AND_TPL_LIBS FALSE)
+          ENDIF()
+        ELSE()
+          MESSAGE(WARNING "WARNING: '${PREFIXED_LIB}' in DEPSLIBS is not"
+            " a lib in this SE package!  Such usage is  deprecated (and"
+            " will result in a configure error soon).  If this is a library in"
+            " a dependent upstream SE package, then simply remove it from this list."
+            "  TriBITS automatically links in libraries in upstream SE packages."
+            "  If you remove '${PREFIXED_LIB}' from DEPLIBS and your code does"
+            " not link, then you need to add the SE package that owns '${PREFIXED_LIB}'"
+            " to the cmake/Dependencies.cmake file for this SE package ${PACKAGE_NAME}." 
+            "  If this is an external library, then pass it in through IMPORTEDLIBS"
+            " (but the usage of IMPORTEDLIBS should be extremely rare, use a"
+            " TriBITS TPL instead).")
+          # ToDo: Turn the above to FATAL_ERROR after some time.
         ENDIF()
+        LIST(APPEND PREFIXED_DEPLIBS "${LIBRARY_NAME_PREFIX}${LIB}")
       ENDFOREACH()
-    ELSE()
-      # If there are no dependent libs passed in, then this library can not
-      # possiblly depend on the package's other libraries so we must link to
-      # the dependent libraries in dependent libraries and TPLs.
+      APPEND_SET(LINK_LIBS ${PREFIXED_DEPLIBS})
+    ENDIF()
+
+    IF (PARSE_IMPORTEDLIBS)
+      # ToDo: Assert that these are truly external libs.
+      APPEND_SET(LINK_LIBS ${PARSE_IMPORTEDLIBS})
     ENDIF()
 
     IF (ADD_DEP_PACKAGE_AND_TPL_LIBS)
+
+      # If there are no dependent libs passed in, then this library can not
+      # possibly depend on the package's other libraries so we must link to
+      # the dependent libraries in dependent libraries and TPLs.
 
       IF (NOT PARSE_TESTONLY)
         SET(LIB_OR_TEST_ARG LIB)

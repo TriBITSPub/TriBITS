@@ -355,42 +355,62 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
       SET (EXE_SOURCES ${EXE_SOURCES} ${SOURCE_FILE})
     ENDFOREACH( )
   ENDIF()
- 
-  IF (${PROJECT_NAME}_ENABLE_CONFIGURE_DEBUG)
 
-    # Assert that TESTONLYLIBS only contains TESTONLY libs!
-    FOREACH(TESTONLYLIB ${PARSE_TESTONLYLIBS})
-      IF (NOT ${TESTONLYLIB}_INCLUDE_DIRS)
-        MESSAGE(FATAL_ERROR "ERROR: TESTONLY lib '$TESTONLYLIB}' being passed through"
-        " TESTONLYLIBS is NOT a test-only lib!")
-      ENDIF()
-    ENDFOREACH()
+  # Assert that TESTONLYLIBS only contains TESTONLY libs!
+  FOREACH(TESTONLYLIB ${PARSE_TESTONLYLIBS})
+    IF (NOT ${TESTONLYLIB}_INCLUDE_DIRS)
+      MESSAGE(FATAL_ERROR "ERROR: '${TESTONLYLIB}' in TESTONLYLIBS not a TESTONLY lib!"
+        "  If this a regular library in this SE package or in an dependent upstream SE"
+        " package then TriBITS will link automatically to it.  If you remove this and it"
+        " does not link, then you need to add a new SE package dependency to your"
+        " SE package's cmake/Dependencies.cmake file.")
+    ELSEIF(PARSE_INSTALLABLE)
+      MESSAGE(FATAL_ERROR "ERROR: TESTONLY lib '${TESTONLYLIB}' not allowed with"
+        " INSTALLABLE executable!  An INSTALLABLE executable can only depend on"
+        " non-TESTONLY libraries!  Otherwise, when shared libs are used, and"
+        " TESTONLY library would not be installed and the installed executable"
+        " would be unusable!" )
+    ENDIF()
+  ENDFOREACH()
   
-    # Assert that IMPORTEDLIBS are not TESTONLY libs are not regular package
-    # libs!
-    FOREACH(IMPORTEDLIB ${PARSE_IMPORTEDLIBS})
-      IF (${IMPORTEDLIB}_INCLUDE_DIRS)
-        MESSAGE(FATAL_ERROR "ERROR: IMPORTED lib '$IMPORTEDLIB}' being passed through"
-        " IMPORTEDLIBS is not allowed to be a TESTONLY lib!")
-      ENDIF()
-      LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${IMPORTEDLIB} FOUND_IDX)
-      IF (NOT FOUND_IDX EQUAL -1)
-        MESSAGE(FATAL_ERROR "ERROR: IMPORTED lib '$IMPORTEDLIB}' being passed through"
-        " IMPORTEDLIBS is not allowed to be one of the package's own libs!")
-      ENDIF()
-    ENDFOREACH()
-  ENDIF()
+  # Assert that IMPORTEDLIBS are not TESTONLY libs are not regular package
+  # libs!
+  FOREACH(IMPORTEDLIB ${PARSE_IMPORTEDLIBS})
+    IF (${IMPORTEDLIB}_INCLUDE_DIRS)
+      MESSAGE(FATAL_ERROR "ERROR: Lib '${IMPORTEDLIB}' being passed through"
+      " IMPORTEDLIBS is not allowed to be a TESTONLY lib!"
+      "  Use TESTONLYLIBS instead!" )
+    ENDIF()
+    LIST(FIND ${PACKAGE_NAME}_LIBRARIES ${IMPORTEDLIB} FOUND_IDX)
+    IF (NOT FOUND_IDX EQUAL -1)
+      MESSAGE(FATAL_ERROR "ERROR: Lib '${IMPORTEDLIB}' in IMPORTEDLIBS is in"
+      " this SE package!  TriBITS takes care of linking against libs the current"
+      " SE package automatically.  Please remove it from IMPORTEDLIBS!")
+    ELSEIF (TARGET ${IMPORTEDLIB})
+      MESSAGE(FATAL_ERROR "ERROR: Lib '${IMPORTEDLIB}' being passed through"
+      " IMPORTEDLIBS is not allowed to be any library created in this CMake project!"
+      "  TriBITS takes care of linking against libraries in dependent upstream"
+      " SE packages.  If you want to link to a library in an upstream SE"
+      " package then add the the SE package name to the approciate argument in"
+      " the argument in the TRIBITS_PACKAGE_DEFINE_DEPENDENCIES() in this"
+      " SE package's cmake/Dependencies.cmake file!")
+    ENDIF()
+  ENDFOREACH()
 
   # Convert from old DEPLIBS to TESTONLYLIBS and IMPORTEDLIBS
   FOREACH(DEPLIB ${PARSE_DEPLIBS})
     IF (${DEPLIB}_INCLUDE_DIRS)
       LIST(APPEND PARSE_TESTONLYLIBS ${DEPLIB})
-      MESSAGE(WARNING "WARNING: TESTONLY lib '${DEPLIB}' being passed through"
-        " DEPLIBS must be passed through TESTONLYLIB!  DEPLIBS is deprecated!")
+      MESSAGE(WARNING "WARNING: Passing TESTONLY '${DEPLIB}' through DEPLIBS"
+        " is deprecated!  Instead, please pass through TESTONLYLIBS instead!"
+        "  DEPLIBS is deprecated!")
     ELSE()
       LIST(APPEND PARSE_IMPORTEDLIBS ${DEPLIB})
-      MESSAGE(WARNING "WARNING: non-TESTONLY lib '${DEPLIB}' being passed through"
-        " DEPLIBS must be passed through IMPORTEDLIBS!  DEPLIBS is deprecated!")
+      MESSAGE(WARNING "WARNING: Passing non-TESTONLY '${DEPLIB}' through"
+        " DEPLIBS is deprecated!  Instead, pass through IMPORTEDLIBS!"
+        "  DEPLIBS is deprecated!"
+        "  Please note that only external libs are allowed to be passed through"
+        " IMPORTEDLIBS.")
     ENDIF()
   ENDFOREACH()
 
