@@ -592,9 +592,11 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
     TEST_8
-      MESSAGE "ToDo: Show deprecated warning when passing a lib from upstream SE package through IMPORTEDLIBS."
+      MESSAGE "Show deprecated warning when passing a lib from upstream"
+        " SE package through IMPORTEDLIBS."
       CMND ${CMAKE_COMMAND}
-      ARGS -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
+      ARGS -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
+        -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
         .
       PASS_REGULAR_EXPRESSION_ALL
         "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
@@ -603,9 +605,30 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
-    # ToDo: Show deprecated warning when passing a TESTONLY lib through DEPLBIS.
+    TEST_9
+      MESSAGE "Show deprecated warning when passing a TESTONLY lib through DEPLBIS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKC_SHOW_TESTONLY_DEPLBIS_ERROR=ON
+        -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: 'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
+        "TribitsExampleProject/packages/package_with_subpackages/C/cmake/Dependencies.cmake"
+        "packages/package_with_subpackages/C/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
-    # ToDo: Show deprecated warning when passing a TESTONLY lib through IMPORTEDLIBS.
+    TEST_10
+      MESSAGE "Show deprecated warning when passing a TESTONLY lib through IMPORTEDLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKC_SHOW_TESTONLY_IMPORTEDLIBS_ERROR=ON
+        -DSPKC_SHOW_TESTONLY_DEPLBIS_ERROR=O
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: 'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
+        "packages/package_with_subpackages/C/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
     )
 
