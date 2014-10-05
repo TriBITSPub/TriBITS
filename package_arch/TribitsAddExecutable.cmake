@@ -397,11 +397,11 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
     ELSEIF (TARGET ${PREFIXED_LIB})
       MESSAGE(FATAL_ERROR "ERROR: Lib '${IMPORTEDLIB}' being passed through"
       " IMPORTEDLIBS is *not* an external library but instead is a library"
-      " define in this CMake project!"
+      " defined in this CMake project!"
       "  TriBITS takes care of linking against libraries in dependent upstream"
       " SE packages.  If you want to link to a library in an upstream SE"
-      " package then add the the SE package name to the approciate argument in"
-      " in this SE package's dependencies file"
+      " package then add the SE package name for that library to the appropriate"
+      " list in this SE package's dependencies file"
       " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
     ENDIF()
   ENDFOREACH()
@@ -416,13 +416,13 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
       LIST(APPEND PARSE_TESTONLYLIBS ${DEPLIB})
     ELSEIF (TARGET ${PREFIXED_LIB})
       MESSAGE(WARNING "WARNING: Passing non-TESTONLY lib '${DEPLIB}' through DEPLIBS"
-      " is deprecated.  The library '${DEPLIB}' appears to be a"
-      " library defined in this CMake project!"
+      " is deprecated!  The library '${DEPLIB}' appears to be a"
+      " library defined in this CMake project."
       "  TriBITS takes care of linking against libraries in dependent upstream"
       " SE packages.  Therefore, please remove '${DEPLIB}' from this list."
-      "   If you want to link to a library in an upstream SE"
-      " package then add the SE package name to the appropriate category"
-      " in this SE package's depencencies file: "
+      "   If you want to link to a library from an upstream SE"
+      " package, then add the SE package name to the appropriate category"
+      " in this SE package's dependencies file: "
       " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
     ELSE()
       MESSAGE(WARNING "WARNING: Passing external lib '${DEPLIB}' through"
@@ -449,7 +449,7 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
   ENDIF()
 
   IF(${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    MESSAGE("TRIBITS_ADD_EXECUTABLE: ADD_EXECTUABLE(${EXE_BINARY_NAME} ${EXE_SOURCES})")
+    MESSAGE("TRIBITS_ADD_EXECUTABLE: ADD_EXECUTABLE(${EXE_BINARY_NAME} ${EXE_SOURCES})")
   ENDIF()
   ADD_EXECUTABLE(${EXE_BINARY_NAME} ${EXE_SOURCES})
   APPEND_GLOBAL_SET(${PARENT_PACKAGE_NAME}_ALL_TARGETS ${EXE_BINARY_NAME})
