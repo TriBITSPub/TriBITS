@@ -522,7 +522,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
           " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
       ELSEIF (NOT LIB_IN_SE_PKG AND NOT TARGET ${PREFIXED_LIB} )
         MESSAGE(WARNING "WARNING: '${LIB}' in DEPSLIBS is not"
-          " a lib defined in the current cmake project!  Such usage is  deprecated (and"
+          " a lib defined in the current cmake project!  Such usage is deprecated (and"
           " will result in a configure error soon).  If this is an external"
           " lib you are trying to link in, it should likely be handled as a TriBITS"
           " TPL.  Otherwise, it should be passed in through IMPORTEDLIBS.  However,"
