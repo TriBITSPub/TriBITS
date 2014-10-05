@@ -708,7 +708,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=
         .
       PASS_REGULAR_EXPRESSION_ALL
-        "WARNING: Passing TESTONLY 'b_mixed_lang' through DEPLIBS is deprecated"
+        "WARNING: Passing TESTONLY lib 'b_mixed_lang' through DEPLIBS is deprecated"
         "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -720,7 +720,19 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DSPKB_SHOW_TESTONLY_DEBLIBS_WARNING=
         .
       PASS_REGULAR_EXPRESSION_ALL
-        "WARNING: Passing non-TESTONLY 'pws_b' through DEPLIBS is deprecated"
+        "WARNING: Passing non-TESTONLY lib 'pws_b' through DEPLIBS is deprecated"
+        "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+        "Generating done"
+        "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
+
+    TEST_12
+      MESSAGE "Show deprecated warning when trying to link external lib using DEBLIBS."
+      CMND ${CMAKE_COMMAND}
+      ARGS -DSPKB_SHOW_EXTERNAL_DEBLIBS_WARNING=ON
+        -DSPKB_SHOW_NONTESTONLY_DEBLIBS_WARNING=
+        .
+      PASS_REGULAR_EXPRESSION_ALL
+        "WARNING: Passing external lib 'm' through DEPLIBS is deprecated"
         "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -875,7 +887,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=
         .
       PASS_REGULAR_EXPRESSION_ALL
-        "WARNING: Passing TESTONLY 'b_mixed_lang' through DEPLIBS is deprecated"
+        "WARNING: Passing TESTONLY lib 'b_mixed_lang' through DEPLIBS is deprecated"
         "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
@@ -887,7 +899,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DSPKB_SHOW_TESTONLY_DEBLIBS_WARNING=
         .
       PASS_REGULAR_EXPRESSION_ALL
-        "WARNING: Passing non-TESTONLY 'pws_b' through DEPLIBS is deprecated"
+        "WARNING: Passing non-TESTONLY lib 'pws_b' through DEPLIBS is deprecated"
         "packages/package_with_subpackages/B/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
         "Generating done"
         "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
