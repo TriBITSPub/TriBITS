@@ -161,14 +161,15 @@ INCLUDE(ParseVariableArguments)
 #
 #   ``TESTONLYLIBS <lib0> <lib1> ...``
 #
-#     Specifies extra libraries that will be linked to the executable using
-#     ``TARGET_LINK_LIBRARY()``.  Note that regular libraries (i.e. not
-#     ``TESTONLY``) defined in the current SE package or any upstream SE
-#     packages can *NOT* be listed!  TriBITS automatically links non
-#     ``TESTONLY`` libraries in this package and upstream packages to the
-#     executable.  The only libraries that should be listed in this argument
-#     are either ``TESTONLY`` libraries.  The include directories for each
-#     test-only library will automatically be added using::
+#     Specifies extra test-only libraries defined in this CMake project that
+#     will be linked to the executable using ``TARGET_LINK_LIBRARY()``.  Note
+#     that regular libraries (i.e. not ``TESTONLY``) defined in the current SE
+#     package or any upstream SE packages can *NOT* be listed!  TriBITS
+#     automatically links non ``TESTONLY`` libraries in this package and
+#     upstream packages to the executable.  The only libraries that should be
+#     listed in this argument are either ``TESTONLY`` libraries.  The include
+#     directories for each test-only library will automatically be added
+#     using::
 #
 #       INCLUDE_DIRECTORIES(${<libi>_INCLUDE_DIRS})
 #
@@ -182,14 +183,15 @@ INCLUDE(ParseVariableArguments)
 #
 #   ``IMPORTEDLIBS <lib0> <lib1> ...``
 #
-#     Specifies extra libraries that will be linked to the executable using
-#     ``TARGET_LINK_LIBRARY()``.  This can only be used for libraries that are
-#     built external from this CMake project and are not provided through a
-#     proper `TriBITS TPL`_.  The latter usage of passing in external
-#     libraries is not recommended.  External libraries should be handled as
-#     declared `TriBITS TPLs`_.  So far, the only case where ``IMPORTEDLIBS``
-#     has been shown to be necessary is to pass in the standard C math library
-#     ``m``.  In every other case, a TriBITS TPL should be used instead.
+#     Specifies extra external libraries that will be linked to the executable
+#     using ``TARGET_LINK_LIBRARY()``.  This can only be used for libraries
+#     that are built external from this CMake project and are not provided
+#     through a proper `TriBITS TPL`_.  The latter usage of passing in
+#     external libraries is not recommended.  External libraries should be
+#     handled as declared `TriBITS TPLs`_.  So far, the only case where
+#     ``IMPORTEDLIBS`` has been shown to be necessary is to pass in the
+#     standard C math library ``m``.  In every other case, a TriBITS TPL
+#     should be used instead.
 #
 #   ``COMM [serial] [mpi]``
 #
