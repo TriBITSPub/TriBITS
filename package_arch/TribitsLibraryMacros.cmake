@@ -256,13 +256,13 @@ ENDFUNCTION()
 #     List of dependent libraries that are built in the current SE package
 #     that this library is dependent on.  These libraries are passed into
 #     ``TARGET_LINK_LIBRARIES(<libName> ...)`` so that CMake knows about the
-#     dependency structure of the libraries within the package.  **NOTE:** One
-#     must **not** list libraries in other upstream `TriBITS SE Packages`_ or
-#     libraries built externally from this TriBITS CMake project.  The TriBITS
-#     system automatically handles linking to libraries in upstream TriBITS SE
-#     packages.  External libraries need to be listed in the ``IMPORTEDLIBS``
-#     argument instead if they are not already specified automatically using a
-#     `TriBITS TPL`_.
+#     dependency structure of the libraries within this SE package.  **NOTE:**
+#     One must **not** list libraries in other upstream `TriBITS SE Packages`_
+#     or libraries built externally from this TriBITS CMake project in
+#     ``DEPLIBS``.  The TriBITS system automatically handles linking to
+#     libraries in upstream TriBITS SE packages.  External libraries need to
+#     be listed in the ``IMPORTEDLIBS`` argument instead if they are not
+#     already specified automatically using a `TriBITS TPL`_.
 #
 #   ``IMPORTEDLIBS <ideplib0> <ideplib1> ...``
 #
