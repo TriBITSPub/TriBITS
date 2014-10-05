@@ -415,7 +415,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         "Total time to set up for CPack packaging: "
         "Total time to configure TribitsExProj: "
         "Final set of enabled packages:  SimpleCxx PackageWithSubpackages 2"
-        "Final set of enabled SE packages:  SimpleCxx PackageWithSubpackagesSubpackageA PackageWithSubpackagesSubpackageB PackageWithSubpackagesSubpackageC PackageWithSubpackages 5"
+        "Final set of enabled SE packages:  SimpleCxx PackageWithSubpackagesSubpackageA PackageWithSubpackages 3"
   
     TEST_1 CMND ${CMAKE_COMMAND}
       MESSAGE "Reconfigure to test out timing of all packages"
