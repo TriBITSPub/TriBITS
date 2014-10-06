@@ -45,7 +45,7 @@ INCLUDE(GlobalSet)
 # Sets the following outputs on success:
 #
 #  FC_FN_CASE
-#    "UPPER" if names are translated to upper-case, 
+#    "UPPER" if names are translated to upper-case,
 #    "LOWER" otherwise.
 #
 #  FC_FN_UNDERSCORE
@@ -209,7 +209,7 @@ ENDFUNCTION()
 ## FC_FN_STRINGARG is set to PAIRED.  If the lengths are appended
 ## to the call, e.g. foo({'b','a','r'}, 1.0, 3), FC_FN_STRINGARG
 ## is set to TRAILING.
-## 
+##
 ## This macro does not currently check for older Cray and VMS
 ## conventions that require conversion functions.  It also assumes
 ## that the length is passed as the "natural" size type, C's size_t.
