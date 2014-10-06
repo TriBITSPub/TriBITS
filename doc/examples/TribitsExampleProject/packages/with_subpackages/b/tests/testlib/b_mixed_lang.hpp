@@ -1,6 +1,6 @@
 #include <string>
 
-namespace PackageWithSubpackages {
+namespace WithSubpackages {
 
 std::string b_mixed_lang();
 

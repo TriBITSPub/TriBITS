@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace PackageWithSubpackages {
+namespace WithSubpackages {
 
 std::string getC();
 

@@ -1,7 +1,7 @@
 #
 # A) Define the subpackage
 #
-TRIBITS_SUBPACKAGE(SubpackageA)
+TRIBITS_SUBPACKAGE(A)
 
 #
 # B) Set up subpackage-specific options

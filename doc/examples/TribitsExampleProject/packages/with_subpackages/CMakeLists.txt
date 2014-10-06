@@ -2,7 +2,7 @@
 # A) Forward declare the package so that certain options are also defined for
 # subpackages
 #
-TRIBITS_PACKAGE_DECL(PackageWithSubpackages)
+TRIBITS_PACKAGE_DECL(WithSubpackages)
 
 #
 # B) Define the common options for the package first so they can be used by

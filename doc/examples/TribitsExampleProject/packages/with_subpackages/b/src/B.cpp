@@ -1,20 +1,20 @@
 #include "B.hpp"
 
-#ifdef HAVE_PACKAGEWITHSUBPACKAGESSUBPACKAGEB_PACKAGEWITHSUBPACKAGESSUBPACKAGEA
+#ifdef HAVE_WITHSUBPACKAGESB_WITHSUBPACKAGESA
 #  include "A.hpp"
 #endif
 
 #include "SimpleCxx_HelloWorld.hpp"
 
 
-std::string PackageWithSubpackages::getB() {
+std::string WithSubpackages::getB() {
   return std::string("B");
 }
 
 
-std::string PackageWithSubpackages::depsB() {
+std::string WithSubpackages::depsB() {
   std::string B_deps;
-#ifdef HAVE_PACKAGEWITHSUBPACKAGESSUBPACKAGEB_PACKAGEWITHSUBPACKAGESSUBPACKAGEA
+#ifdef HAVE_WITHSUBPACKAGESB_WITHSUBPACKAGESA
   B_deps += (std::string("A ") + depsA() + std::string(" "));
 #endif
   B_deps += SimpleCxx::deps();

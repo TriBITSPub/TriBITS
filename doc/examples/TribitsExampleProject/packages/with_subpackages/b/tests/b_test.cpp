@@ -4,7 +4,7 @@
 #include "B.hpp"
 
 int main() {
-  using namespace PackageWithSubpackages;
+  using namespace WithSubpackages;
   std::string label_B = getB();
   std::string deps_B  = depsB();
   std::cout << "B label is: " << label_B << std::endl;

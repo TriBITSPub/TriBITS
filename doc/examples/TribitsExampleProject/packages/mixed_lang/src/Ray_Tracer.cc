@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <numeric>
 
-#include "MixedLanguage_config.h"
+#include "MixedLang_config.h"
 #include "Ray_Tracer.hh"
 
 //---------------------------------------------------------------------------//

@@ -2,10 +2,10 @@
 
 #include "SimpleCxx_HelloWorld.hpp"
 
-std::string PackageWithSubpackages::getA() {
+std::string WithSubpackages::getA() {
   return std::string("A");
 }
 
-std::string PackageWithSubpackages::depsA() {
+std::string WithSubpackages::depsA() {
   return SimpleCxx::deps();
 }

@@ -7,8 +7,8 @@ int main()
 {
   std::cout
     << "Called c_util: "
-    << PackageWithSubpackages::depsB() << " "
-    << PackageWithSubpackages::depsA()
+    << WithSubpackages::depsB() << " "
+    << WithSubpackages::depsA()
     << "\n";  
   return 0;
 }

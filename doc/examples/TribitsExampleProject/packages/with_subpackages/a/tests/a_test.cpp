@@ -3,7 +3,7 @@
 
 #include "A.hpp"
 
-using namespace PackageWithSubpackages;
+using namespace WithSubpackages;
 
 int main() {
   std::string label_A = getA();

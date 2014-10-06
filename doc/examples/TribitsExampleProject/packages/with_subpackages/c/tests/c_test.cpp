@@ -6,7 +6,7 @@
 #include "B.hpp"
 #include "C.hpp"
 
-using namespace PackageWithSubpackages;
+using namespace WithSubpackages;
 
 int main() {
   std::string label_A = getA();
