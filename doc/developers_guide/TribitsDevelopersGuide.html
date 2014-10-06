@@ -642,7 +642,7 @@ lower-level roles.</p>
 <p id="tribits-project-users"><span id="tribits-project-user"></span>The first role is that of a <strong>TriBITS Project User</strong> who only needs to be able
 to configure, build, and test a project that uses TriBITS as its build system.
 A person acting in this role needs to know little about CMake other than
-basics about how to run the <tt class="docutils literal">cmake</tt> and <tt class="docutils literal">ctest</tt> exectuables, how to set
+basics about how to run the <tt class="docutils literal">cmake</tt> and <tt class="docutils literal">ctest</tt> executables, how to set
 CMake cache variables, and the basics of building software by typing <tt class="docutils literal">make</tt>
 and running tests with <tt class="docutils literal">ctest</tt>.  The proper reference for a TriBITS Project
 User is the <a class="reference internal" href="#project-specific-build-quick-reference">Project-Specific Build Quick Reference</a>.  The <a class="reference external" href="../overview/TribitsOverview.pdf">TriBITS
@@ -653,7 +653,7 @@ anything else described in this current document except for <a class="reference 
 Dependencies and Enable/Disable Logic</a>.</p>
 <p id="tribits-project-developers"><span id="tribits-project-developer"></span>A <strong>TriBITS Project Developer</strong> is someone who contributes to a software
 project that uses TriBITS.  They will add source files, libraries and
-exectuables, test executables and define tests run with <tt class="docutils literal">ctest</tt>.  They have
+executables , test executables and define tests run with <tt class="docutils literal">ctest</tt>.  They have
 to configure and build the project code in order to be able to develop and run
 tests and therefore this role includes all of the necessary knowledge and
 functions of a TriBITS Project User.  A casual TriBITS Project Developer
@@ -1506,7 +1506,7 @@ MACRO(TRIBITS_PROJECT_DEFINE_PACKAGING)
     TRIBITS_COPY_INSTALLER_RESOURCE(TribitsExProj_LICENSE
       &quot;${TribitsExProj_SOURCE_DIR}/LICENSE&quot;
       &quot;${TribitsExProj_BINARY_DIR}/LICENSE.txt&quot;)
-  
+
     SET(CPACK_PACKAGE_DESCRIPTION &quot;TribitsExampleProject just shows you how to use TriBITS.&quot;)
     SET(CPACK_PACKAGE_FILE_NAME &quot;tribitsexproj-setup-${TribitsExProj_VERSION}&quot;)
     SET(CPACK_PACKAGE_INSTALL_DIRECTORY &quot;TribitsExProj ${TribitsExProj_VERSION}&quot;)
@@ -1519,7 +1519,7 @@ MACRO(TRIBITS_PROJECT_DEFINE_PACKAGING)
     SET(${PROJECT_NAME}_CPACK_SOURCE_GENERATOR_DEFAULT &quot;TGZ;TBZ2&quot;)
     SET(CPACK_SOURCE_FILE_NAME &quot;tribitsexproj-source-${TribitsExProj_VERSION}&quot;)
     SET(CPACK_COMPONENTS_ALL ${TribitsExProj_PACKAGES} Unspecified)
-  
+
 ENDMACRO()
 
 </pre>
@@ -1922,7 +1922,7 @@ MACRO(TRIBITS_REPOSITORY_DEFINE_PACKAGING)
   APPEND_SET(CPACK_SOURCE_IGNORE_FILES
     &quot;${${REPOSITORY_NAME}_SOURCE_DIR}/cmake/ctest/&quot;
     )
-  
+
 ENDMACRO()
 
 </pre>
@@ -2491,7 +2491,7 @@ for a subpackage must be listed in its own <tt class="docutils literal">Dependen
 example, the <tt class="docutils literal">WithSubpackages</tt> subpackage <tt class="docutils literal">A</tt> depends on
 the <tt class="docutils literal">SimpleCxx</tt> package and is declared as such as shown in:</p>
 <blockquote>
-<a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>/<tt class="docutils literal">packages/with_subpackages/a/cmake/Dependneices.cmake</tt></blockquote>
+<a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>/<tt class="docutils literal">packages/with_subpackages/a/cmake/Dependencies.cmake</tt></blockquote>
 <p>which is:</p>
 <pre class="literal-block">
 TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(
@@ -2654,7 +2654,7 @@ INCLUDE(TribitsTplDeclareLibraries)
 
 TRIBITS_TPL_DECLARE_LIBRARIES( PETSC
   REQUIRED_HEADERS petsc.h
-  REQUIRED_LIBS_NAMES petsc 
+  REQUIRED_LIBS_NAMES petsc
   )
 
 </pre>
@@ -3393,7 +3393,7 @@ TRIBITS_REPOSITORY_DEFINE_PACKAGES(
   TrilinosFramework   cmake                           PT
   Teuchos             packages/teuchos                PT
   RTOp                packages/rtop                   PT
-  Epetra              packages/epetra                 PT 
+  Epetra              packages/epetra                 PT
   Zoltan              packages/zoltan                 PT
   Shards              packages/shards                 PT
   Triutils            packages/triutils               PT
@@ -3486,7 +3486,7 @@ tribits/package_arch/UnitTests/ReducedMockTrilinos/PackagesList.cmake
 TRIBITS_REPOSITORY_DEFINE_PACKAGES(
   Teuchos             packages/teuchos                PT
   RTOp                packages/rtop                   PT
-  Epetra              packages/epetra                 PT 
+  Epetra              packages/epetra                 PT
   Triutils            packages/triutils               ST
   EpetraExt           packages/epetraext              ST
   Thyra               packages/thyra                  PT
@@ -3600,7 +3600,7 @@ this project is defined in the file <tt class="docutils literal">ReducedMockTril
 TRIBITS_REPOSITORY_DEFINE_PACKAGES(
   Teuchos             packages/teuchos                PT
   RTOp                packages/rtop                   PT
-  Epetra              packages/epetra                 PT 
+  Epetra              packages/epetra                 PT
   Triutils            packages/triutils               ST
   EpetraExt           packages/epetraext              ST
   Thyra               packages/thyra                  PT
@@ -8306,7 +8306,7 @@ through <tt class="docutils literal">ARGS</tt>.  For more flexibility, just use
 <p>Usage:</p>
 <pre class="literal-block">
 TRIBITS_ADD_LIBRARY(
-  &lt;libName&gt;
+  &lt;libBaseName&gt;
   [HEADERS &lt;h0&gt; &lt;h1&gt; ...]
   [NOINSTALLHEADERS &lt;nih0&gt; &lt;hih1&gt; ...]
   [SOURCES &lt;src0&gt; &lt;src1&gt; ...]
@@ -8315,6 +8315,7 @@ TRIBITS_ADD_LIBRARY(
   [TESTONLY]
   [NO_INSTALL_LIB_OR_HEADERS]
   [CUDALIBRARY]
+  [ADDED_LIB_TARGET_NAME_OUT &lt;libTargetName&gt;]
   )
 </pre>
 <p><em>Sections:</em></p>
@@ -8327,14 +8328,22 @@ TRIBITS_ADD_LIBRARY(
 </ul>
 <p id="formal-arguments-tribits-add-library"><strong>Formal Arguments (TRIBITS_ADD_LIBRARY())</strong></p>
 <blockquote>
-<p><tt class="docutils literal">&lt;libName&gt;</tt></p>
+<p><tt class="docutils literal">&lt;libBaseName&gt;</tt></p>
 <blockquote>
-Required name of the library.  This is the name passed to
-<tt class="docutils literal"><span class="pre">ADD_LIBRARY(&lt;libName&gt;</span> <span class="pre">...)</span></tt>.  The name is <em>not</em> prefixed by the
-package name.  CMake will of course add any standard prefix or post-fix
-to the library file name appropriate for the platform and if this is a
-static or shared library build (see documentation for the built-in CMake
-command <tt class="docutils literal">ADD_LIBRARY()</tt>.</blockquote>
+<p>Required base name of the library.  The name of the actual libray name
+will be prefixed by <tt class="docutils literal"><span class="pre">${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}</span></tt> to
+produce:</p>
+<pre class="literal-block">
+&lt;libTargetName&gt; = ${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}&lt;libBaseName&gt;
+</pre>
+<p>This is the name passed to <tt class="docutils literal"><span class="pre">ADD_LIBRARY(&lt;libTargetName&gt;</span> <span class="pre">...)</span></tt>.  The
+name is <em>not</em> prefixed by the package name.  CMake will of course add
+any standard prefix or post-fix to the library file name appropriate for
+the platform and if this is a static or shared library build (e.g. on
+Linux prefix = <tt class="docutils literal">'lib'</tt>, postfix = <tt class="docutils literal">'.so'</tt> for shared lib and postfix
+= <tt class="docutils literal">'.a'</tt> static lib) (see documentation for the built-in CMake command
+<tt class="docutils literal">ADD_LIBRARY()</tt>.</p>
+</blockquote>
 <p><tt class="docutils literal">HEADERS &lt;h0&gt; &lt;h1&gt; ...</tt></p>
 <blockquote>
 List of public header files for using this library.  By default, these
@@ -8361,11 +8370,11 @@ extension (see CMake documentation for <tt class="docutils literal">ADD_LIBRARY(
 <blockquote>
 List of dependent libraries that are built in the current SE package
 that this library is dependent on.  These libraries are passed into
-<tt class="docutils literal"><span class="pre">TARGET_LINK_LIBRARIES(&lt;libName&gt;</span> <span class="pre">...)</span></tt> so that CMake knows about the
-dependency structure of the libraries within this SE package.  <strong>NOTE:</strong>
-One must <strong>not</strong> list libraries in other upstream <a class="reference internal" href="#tribits-se-packages">TriBITS SE Packages</a>
-or libraries built externally from this TriBITS CMake project in
-<tt class="docutils literal">DEPLIBS</tt>.  The TriBITS system automatically handles linking to
+<tt class="docutils literal"><span class="pre">TARGET_LINK_LIBRARIES(&lt;libTargetName&gt;</span> <span class="pre">...)</span></tt> so that CMake knows about
+the dependency structure of the libraries within this SE package.
+<strong>NOTE:</strong> One must <strong>not</strong> list libraries in other upstream <a class="reference internal" href="#tribits-se-packages">TriBITS SE
+Packages</a> or libraries built externally from this TriBITS CMake project
+in <tt class="docutils literal">DEPLIBS</tt>.  The TriBITS system automatically handles linking to
 libraries in upstream TriBITS SE packages.  External libraries need to
 be listed in the <tt class="docutils literal">IMPORTEDLIBS</tt> argument instead if they are not
 already specified automatically using a <a class="reference internal" href="#tribits-tpl">TriBITS TPL</a>.</blockquote>
@@ -8373,8 +8382,8 @@ already specified automatically using a <a class="reference internal" href="#tri
 <blockquote>
 List of dependent libraries built externally from this TriBITS CMake
 project.  These libraries are passed into
-<tt class="docutils literal"><span class="pre">TARGET_LINK_LIBRARIES(&lt;libName&gt;</span> <span class="pre">...)</span></tt> so that CMake knows about the
-dependency.  However, note that external libraries are often better
+<tt class="docutils literal"><span class="pre">TARGET_LINK_LIBRARIES(&lt;libTargetName&gt;</span> <span class="pre">...)</span></tt> so that CMake knows about
+the dependency.  However, note that external libraries are often better
 handled as <a class="reference internal" href="#tribits-tpls">TriBITS TPLs</a>.  A well constructed TriBITS package and
 library should never have to use this option!  So far, the only case
 where <tt class="docutils literal">IMPORTEDLIBS</tt> has been shown to be necessary is to pass in the
@@ -8382,16 +8391,16 @@ standard C math library <tt class="docutils literal">m</tt>.  In every other cas
 should be used instead.</blockquote>
 <p><tt class="docutils literal">TESTONLY</tt></p>
 <blockquote>
-If passed in, then <tt class="docutils literal">&lt;libName&gt;</tt> will <strong>not</strong> be added to
+If passed in, then <tt class="docutils literal">&lt;libTargetName&gt;</tt> will <strong>not</strong> be added to
 <tt class="docutils literal">${PACKAGE_NAME}_LIBRARIES</tt> and an install target for the library will
 not be added.  In this case, the current include directories will be set
-in the global variable <tt class="docutils literal">&lt;libName&gt;_INCLUDE_DIR</tt> which will be used in
-<a class="reference internal" href="#tribits-add-executable">TRIBITS_ADD_EXECUTABLE()</a> when a test-only library is linked in
-through its <tt class="docutils literal">DEPLIBS</tt> argument.</blockquote>
+in the global variable <tt class="docutils literal">&lt;libTargetName&gt;_INCLUDE_DIR</tt> which will be
+used in <a class="reference internal" href="#tribits-add-executable">TRIBITS_ADD_EXECUTABLE()</a> when a test-only library is linked
+in through its <tt class="docutils literal">DEPLIBS</tt> argument.</blockquote>
 <p><tt class="docutils literal">NO_INSTALL_LIB_OR_HEADERS</tt></p>
 <blockquote>
 If specified, then no install targets will be added for the library
-<tt class="docutils literal">&lt;libName&gt;</tt> or the header files listed in <tt class="docutils literal">HEADERS</tt>.</blockquote>
+<tt class="docutils literal">&lt;libTargetName&gt;</tt> or the header files listed in <tt class="docutils literal">HEADERS</tt>.</blockquote>
 <p><tt class="docutils literal">CUDALIBRARY</tt></p>
 <blockquote>
 If specified then <tt class="docutils literal">CUDA_ADD_LIBRARY()</tt> is used instead of
@@ -8402,6 +8411,13 @@ TPLs</a>).  For this option to work, this SE package must have an enabled
 direct or indirect dependency on the TriBITS CUDA TPL or a
 configure-time error may occur about not knowing about
 <tt class="docutils literal">CUDA_ALL_LIBRARY()</tt>.</blockquote>
+<p><tt class="docutils literal">ADDED_LIB_TARGET_NAME_OUT &lt;libTargetName&gt;</tt></p>
+<blockquote>
+If specified, then on output the variable <tt class="docutils literal">&lt;libTargetName&gt;</tt> will be
+set with the name of the library passed to <tt class="docutils literal">ADD_LIBRARY()</tt>.  Having
+this name allows the calling <tt class="docutils literal">CMakeLists.txt</tt> file access and set
+additional target propeties (see <a class="reference internal" href="#additional-library-and-source-file-properties-tribits-add-library">Additional Library and Source File
+Properties (TRIBITS_ADD_LIBRARY())</a>).</blockquote>
 </blockquote>
 <p id="include-directories-tribits-add-library"><strong>Include Directories (TRIBITS_ADD_LIBRARY())</strong></p>
 <p>Any base directories for the header files listed in the arguments
@@ -8412,7 +8428,7 @@ directories <tt class="docutils literal">${PACKAGE_NAME}_INCLUDE_DIRS</tt> which
 downstream SE packages..</p>
 <p id="install-targets-tribits-add-library"><strong>Install Targets (TRIBITS_ADD_LIBRARY())</strong></p>
 <p>By default, an install target for the library is created using
-<tt class="docutils literal">INSTALL(TARGETS &lt;libName&gt; <span class="pre">...)</span></tt> to install into the directory
+<tt class="docutils literal">INSTALL(TARGETS &lt;libTargetName&gt; <span class="pre">...)</span></tt> to install into the directory
 <tt class="docutils literal"><span class="pre">${CMAKE_INSTALL_PREFIX}/lib/</span></tt> (actual install directory is given by
 <tt class="docutils literal">${PROJECT}_INSTALL_LIB_DIR</tt>, see <a class="reference external" href="../build_quick_ref/TribitsBuildQuickRef.html#setting-the-install-prefix-at-configure-time">Setting the install prefix at configure
 time</a>).  However, this install target will not get created if
@@ -8429,11 +8445,11 @@ actual install directory is given by
 configure time</a>).  Note that an install target will <em>not</em> get created for
 the headers listed in <tt class="docutils literal">NOINSTALLHEADERS</tt>.</p>
 <p id="additional-library-and-source-file-properties-tribits-add-library"><strong>Additional Library and Source File Properties (TRIBITS_ADD_LIBRARY())</strong></p>
-<p>Once <tt class="docutils literal"><span class="pre">ADD_LIBRARY(&lt;libName&gt;</span> ... &lt;src0&gt; &lt;src1&gt; <span class="pre">...)</span></tt> is called, one can set
-and change properties on the <tt class="docutils literal">&lt;libName&gt;</tt> library target using the built-in
-CMake command <tt class="docutils literal">SET_TARGET_PROPERTIES()</tt> as well as set and change
-properties on any of the source files listed in <tt class="docutils literal">SOURCES</tt> using the
-built-in CMake command <tt class="docutils literal">SET_SOURCE_FILE_PROPERTIES()</tt> just like in any
+<p>Once <tt class="docutils literal"><span class="pre">ADD_LIBRARY(&lt;libTargetName&gt;</span> ... &lt;src0&gt; &lt;src1&gt; <span class="pre">...)</span></tt> is called, one
+can set and change properties on the <tt class="docutils literal">&lt;libTargetName&gt;</tt> library target
+using the built-in CMake command <tt class="docutils literal">SET_TARGET_PROPERTIES()</tt> as well as set
+and change properties on any of the source files listed in <tt class="docutils literal">SOURCES</tt> using
+the built-in CMake command <tt class="docutils literal">SET_SOURCE_FILE_PROPERTIES()</tt> just like in any
 CMake project.</p>
 <p id="miscellaneous-notes-tribits-add-library"><strong>Miscellaneous Notes (TRIBITS_ADD_LIBRARY())</strong></p>
 <p><strong>WARNING:</strong> Do <strong>NOT</strong> use the built-in CMake command <tt class="docutils literal">ADD_DEFINITIONS()</tt>
@@ -12261,7 +12277,7 @@ Options:
 <!-- Common references to the TribitsLifecycleModel document -->
 <!-- Other common references -->
 <!-- Common references to raw CMake commands: -->
-<!-- LocalWords:  TribitsOverview TribitsLifecycleModel Lifecycle -->
+<!-- LocalWords:  TribitsOverview TribitsLifecycleModel Lifecycle CMakeLists -->
 <!-- LocalWords:  TriBITS Subpackage subpackage Subpackages subpackages TPL TPLs Kitware -->
 <!-- LocalWords:  CMake cmake CTest ctest CDash CPack WithSubpackages WithSubpackagesA -->
 <!-- LocalWords:  WithSubpackagesB WithSubpackagesC executables FOREACH ENDFOREACH -->
