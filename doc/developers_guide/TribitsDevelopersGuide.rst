@@ -104,7 +104,7 @@ lower-level roles.
 The first role is that of a **TriBITS Project User** who only needs to be able
 to configure, build, and test a project that uses TriBITS as its build system.
 A person acting in this role needs to know little about CMake other than
-basics about how to run the ``cmake`` and ``ctest`` exectuables, how to set
+basics about how to run the ``cmake`` and ``ctest`` executables, how to set
 CMake cache variables, and the basics of building software by typing ``make``
 and running tests with ``ctest``.  The proper reference for a TriBITS Project
 User is the `Project-Specific Build Quick Reference`_.  The `TriBITS
@@ -119,7 +119,7 @@ Dependencies and Enable/Disable Logic`_.
 
 A **TriBITS Project Developer** is someone who contributes to a software
 project that uses TriBITS.  They will add source files, libraries and
-exectuables, test executables and define tests run with ``ctest``.  They have
+executables , test executables and define tests run with ``ctest``.  They have
 to configure and build the project code in order to be able to develop and run
 tests and therefore this role includes all of the necessary knowledge and
 functions of a TriBITS Project User.  A casual TriBITS Project Developer
@@ -1914,7 +1914,7 @@ for a subpackage must be listed in its own ``Dependencies.cmake`` file.  For
 example, the ``WithSubpackages`` subpackage ``A`` depends on
 the ``SimpleCxx`` package and is declared as such as shown in:
 
-  `TribitsExampleProject`_/``packages/with_subpackages/a/cmake/Dependneices.cmake``
+  `TribitsExampleProject`_/``packages/with_subpackages/a/cmake/Dependencies.cmake``
 
 which is:
 
@@ -7253,7 +7253,7 @@ snapshotting`_.
 
 .. _CONFIGURE_FILE(): http://www.cmake.org/cmake/help/v2.8.11/cmake.html#command:configure_file
 
-..  LocalWords:  TribitsOverview TribitsLifecycleModel Lifecycle
+..  LocalWords:  TribitsOverview TribitsLifecycleModel Lifecycle CMakeLists
 ..  LocalWords:  TriBITS Subpackage subpackage Subpackages subpackages TPL TPLs Kitware
 ..  LocalWords:  CMake cmake CTest ctest CDash CPack WithSubpackages WithSubpackagesA
 ..  LocalWords:  WithSubpackagesB WithSubpackagesC executables FOREACH ENDFOREACH
