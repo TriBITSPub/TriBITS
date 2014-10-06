@@ -381,7 +381,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
 
   PARSE_ARGUMENTS(
     PARSE #prefix
-    "HEADERS;NOINSTALLHEADERS;SOURCES;DEPLIBS;IMPORTEDLIBS;DEFINES" # Lists
+    "HEADERS;NOINSTALLHEADERS;SOURCES;DEPLIBS;IMPORTEDLIBS;DEFINES;ADDED_LIB_TARGET_NAME_OUT" # Lists
     "TESTONLY;NO_INSTALL_LIB_OR_HEADERS;CUDALIBRARY" #Options
     ${ARGN} # Remaining arguments passed in
     )
@@ -391,6 +391,14 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
   ENDIF()
   IF(PARSE_SOURCES)
     LIST(REMOVE_DUPLICATES PARSE_SOURCES)
+  ENDIF()
+
+  # Set to nothing
+  IF(PARSE_ADDED_LIB_TARGET_NAME_OUT)
+    SET(
+      ${PARSE_ADDED_LIB_TARGET_NAME_OUT}
+      PARENT_SCOPE
+      )
   ENDIF()
 
   # ToDo: Deprecate and remove the usage of DEFINES!  People should be putting
@@ -499,7 +507,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
             "Adding include directories for TESTONLY ${PREFIXED_LIB}_INCLUDE_DIRS ...")
         ENDIF()
         INCLUDE_DIRECTORIES(${${PREFIXED_LIB}_INCLUDE_DIRS})
-      ELSEIF (NOT PARSE_TESTONLY AND LIB_TESTONLY) # LIB_IN_SE_PKG=TRUE/FASLE 
+      ELSEIF (NOT PARSE_TESTONLY AND LIB_TESTONLY) # LIB_IN_SE_PKG=TRUE/FASLE
         MESSAGE(WARNING "WARNING: '${LIB}' in DEPLIBS is a TESTONLY lib"
           " and it is illegal to link to this non-TESTONLY library '${LIBRARY_NAME}'."
           "  Such usage is deprecated (and this warning will soon become an error)!"
@@ -508,7 +516,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
           " does not link, then you need to add a new SE package dependency to"
           " this SE package's dependencies file"
           " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
-        # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code 
+        # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code
       ELSEIF (NOT LIB_IN_SE_PKG AND TARGET ${PREFIXED_LIB} ) # PARSE_TESTONLY=TRUE/FALSE
         MESSAGE(WARNING "WARNING: '${LIB}' in DEPSLIBS is not"
           " a lib in this SE package but is a library defined in the current"
@@ -552,7 +560,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
           " and it is illegal to pass in through IMPORTEDLIBS!"
           "  Such usage is deprecated (and this warning will soon become an error)!"
           "  Should '${IMPORTEDLIB}' instead be passed through DEPLIBS?")
-        # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code 
+        # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code
       ELSEIF (FOUND_IDX GREATER -1)
         MESSAGE(WARNING "WARNING: Lib '${IMPORTEDLIB}' in IMPORTEDLIBS is in"
         " this SE package and is *not* an external lib!"
@@ -622,19 +630,41 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
     ENDIF()
 
     IF (NOT PARSE_CUDALIBRARY)
-      ADD_LIBRARY(${LIBRARY_NAME} ${PARSE_HEADERS} ${PARSE_NOINSTALLHEADERS}
-        ${PARSE_SOURCES})
+      ADD_LIBRARY(
+        ${LIBRARY_NAME}
+        ${PARSE_HEADERS}
+        ${PARSE_NOINSTALLHEADERS}
+        ${PARSE_SOURCES}
+        )
     ELSE()
-      CUDA_ADD_LIBRARY(${LIBRARY_NAME} ${PARSE_HEADERS} ${PARSE_NOINSTALLHEADERS}
-        ${PARSE_SOURCES})
+      CUDA_ADD_LIBRARY(
+        ${LIBRARY_NAME}
+        ${PARSE_HEADERS}
+        ${PARSE_NOINSTALLHEADERS}
+        ${PARSE_SOURCES}
+        )
     ENDIF()
 
-    SET_PROPERTY(TARGET ${LIBRARY_NAME} APPEND PROPERTY
-      LABELS ${PACKAGE_NAME}Libs ${PARENT_PACKAGE_NAME}Libs)
+    IF(PARSE_ADDED_LIB_TARGET_NAME_OUT)
+      # Return the library name
+      SET(
+        ${PARSE_ADDED_LIB_TARGET_NAME_OUT} ${LIBRARY_NAME}
+        PARENT_SCOPE
+        )
+    ENDIF()
 
-    SET_TARGET_PROPERTIES(${LIBRARY_NAME} PROPERTIES
+    SET_PROPERTY(
+      TARGET ${LIBRARY_NAME}
+      APPEND PROPERTY
+      LABELS ${PACKAGE_NAME}Libs ${PARENT_PACKAGE_NAME}Libs
+      )
+
+    SET_TARGET_PROPERTIES(
+      ${LIBRARY_NAME}
+      PROPERTIES
       VERSION ${${PROJECT_NAME}_VERSION}
-      SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION})
+      SOVERSION ${${PROJECT_NAME}_MAJOR_VERSION}
+      )
 
     PREPEND_GLOBAL_SET(${PARENT_PACKAGE_NAME}_LIB_TARGETS ${LIBRARY_NAME})
     PREPEND_GLOBAL_SET(${PARENT_PACKAGE_NAME}_ALL_TARGETS ${LIBRARY_NAME})
@@ -779,6 +809,5 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
     PRINT_VAR(${PACKAGE_NAME}_LIBRARY_DIRS)
     PRINT_VAR(${PACKAGE_NAME}_LIBRARIES)
   ENDIF()
-
 
 ENDFUNCTION()
