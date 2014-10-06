@@ -194,7 +194,7 @@ ENDFUNCTION()
 # Usage::
 #
 #   TRIBITS_ADD_LIBRARY(
-#     <libName>
+#     <libBaseName>
 #     [HEADERS <h0> <h1> ...]
 #     [NOINSTALLHEADERS <nih0> <hih1> ...]
 #     [SOURCES <src0> <src1> ...]
@@ -203,6 +203,7 @@ ENDFUNCTION()
 #     [TESTONLY]
 #     [NO_INSTALL_LIB_OR_HEADERS]
 #     [CUDALIBRARY]
+#     [ADDED_LIB_TARGET_NAME_OUT <libTargetName>]
 #     )
 #
 # *Sections:*
@@ -217,14 +218,21 @@ ENDFUNCTION()
 #
 # **Formal Arguments (TRIBITS_ADD_LIBRARY())**
 #
-#   ``<libName>``
+#   ``<libBaseName>``
 #
-#     Required name of the library.  This is the name passed to
-#     ``ADD_LIBRARY(<libName> ...)``.  The name is *not* prefixed by the
-#     package name.  CMake will of course add any standard prefix or post-fix
-#     to the library file name appropriate for the platform and if this is a
-#     static or shared library build (see documentation for the built-in CMake
-#     command ``ADD_LIBRARY()``.
+#     Required base name of the library.  The name of the actual libray name
+#     will be prefixed by ``${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}`` to
+#     produce::
+#     
+#       <libTargetName> = ${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}<libBaseName>
+#
+#     This is the name passed to ``ADD_LIBRARY(<libTargetName> ...)``.  The
+#     name is *not* prefixed by the package name.  CMake will of course add
+#     any standard prefix or post-fix to the library file name appropriate for
+#     the platform and if this is a static or shared library build (e.g. on
+#     Linux prefix = ``'lib'``, postfix = ``'.so'`` for shared lib and postfix
+#     = ``'.a'`` static lib) (see documentation for the built-in CMake command
+#     ``ADD_LIBRARY()``.
 #
 #   ``HEADERS <h0> <h1> ...``
 #
@@ -255,11 +263,11 @@ ENDFUNCTION()
 #
 #     List of dependent libraries that are built in the current SE package
 #     that this library is dependent on.  These libraries are passed into
-#     ``TARGET_LINK_LIBRARIES(<libName> ...)`` so that CMake knows about the
-#     dependency structure of the libraries within this SE package.  **NOTE:**
-#     One must **not** list libraries in other upstream `TriBITS SE Packages`_
-#     or libraries built externally from this TriBITS CMake project in
-#     ``DEPLIBS``.  The TriBITS system automatically handles linking to
+#     ``TARGET_LINK_LIBRARIES(<libTargetName> ...)`` so that CMake knows about
+#     the dependency structure of the libraries within this SE package.
+#     **NOTE:** One must **not** list libraries in other upstream `TriBITS SE
+#     Packages`_ or libraries built externally from this TriBITS CMake project
+#     in ``DEPLIBS``.  The TriBITS system automatically handles linking to
 #     libraries in upstream TriBITS SE packages.  External libraries need to
 #     be listed in the ``IMPORTEDLIBS`` argument instead if they are not
 #     already specified automatically using a `TriBITS TPL`_.
@@ -268,8 +276,8 @@ ENDFUNCTION()
 #
 #     List of dependent libraries built externally from this TriBITS CMake
 #     project.  These libraries are passed into
-#     ``TARGET_LINK_LIBRARIES(<libName> ...)`` so that CMake knows about the
-#     dependency.  However, note that external libraries are often better
+#     ``TARGET_LINK_LIBRARIES(<libTargetName> ...)`` so that CMake knows about
+#     the dependency.  However, note that external libraries are often better
 #     handled as `TriBITS TPLs`_.  A well constructed TriBITS package and
 #     library should never have to use this option!  So far, the only case
 #     where ``IMPORTEDLIBS`` has been shown to be necessary is to pass in the
@@ -278,17 +286,17 @@ ENDFUNCTION()
 #
 #   ``TESTONLY``
 #
-#     If passed in, then ``<libName>`` will **not** be added to
+#     If passed in, then ``<libTargetName>`` will **not** be added to
 #     ``${PACKAGE_NAME}_LIBRARIES`` and an install target for the library will
 #     not be added.  In this case, the current include directories will be set
-#     in the global variable ``<libName>_INCLUDE_DIR`` which will be used in
-#     `TRIBITS_ADD_EXECUTABLE()`_ when a test-only library is linked in
-#     through its ``DEPLIBS`` argument.
+#     in the global variable ``<libTargetName>_INCLUDE_DIR`` which will be
+#     used in `TRIBITS_ADD_EXECUTABLE()`_ when a test-only library is linked
+#     in through its ``DEPLIBS`` argument.
 #
 #   ``NO_INSTALL_LIB_OR_HEADERS``
 #
 #     If specified, then no install targets will be added for the library
-#     ``<libName>`` or the header files listed in ``HEADERS``.
+#     ``<libTargetName>`` or the header files listed in ``HEADERS``.
 #
 #   ``CUDALIBRARY``
 #
@@ -300,6 +308,14 @@ ENDFUNCTION()
 #     direct or indirect dependency on the TriBITS CUDA TPL or a
 #     configure-time error may occur about not knowing about
 #     ``CUDA_ALL_LIBRARY()``.
+#
+#   ``ADDED_LIB_TARGET_NAME_OUT <libTargetName>``
+#
+#     If specified, then on output the variable ``<libTargetName>`` will be
+#     set with the name of the library passed to ``ADD_LIBRARY()``.  Having
+#     this name allows the calling ``CMakeLists.txt`` file access and set
+#     additional target propeties (see `Additional Library and Source File
+#     Properties (TRIBITS_ADD_LIBRARY())`_).
 #
 # .. _Include Directories (TRIBITS_ADD_LIBRARY()):
 #
@@ -317,7 +333,7 @@ ENDFUNCTION()
 # **Install Targets (TRIBITS_ADD_LIBRARY())**
 #
 # By default, an install target for the library is created using
-# ``INSTALL(TARGETS <libName> ...)`` to install into the directory
+# ``INSTALL(TARGETS <libTargetName> ...)`` to install into the directory
 # ``${CMAKE_INSTALL_PREFIX}/lib/`` (actual install directory is given by
 # ``${PROJECT}_INSTALL_LIB_DIR``, see `Setting the install prefix at configure
 # time`_).  However, this install target will not get created if
@@ -339,11 +355,11 @@ ENDFUNCTION()
 #
 # **Additional Library and Source File Properties (TRIBITS_ADD_LIBRARY())**
 #
-# Once ``ADD_LIBRARY(<libName> ... <src0> <src1> ...)`` is called, one can set
-# and change properties on the ``<libName>`` library target using the built-in
-# CMake command ``SET_TARGET_PROPERTIES()`` as well as set and change
-# properties on any of the source files listed in ``SOURCES`` using the
-# built-in CMake command ``SET_SOURCE_FILE_PROPERTIES()`` just like in any
+# Once ``ADD_LIBRARY(<libTargetName> ... <src0> <src1> ...)`` is called, one
+# can set and change properties on the ``<libTargetName>`` library target
+# using the built-in CMake command ``SET_TARGET_PROPERTIES()`` as well as set
+# and change properties on any of the source files listed in ``SOURCES`` using
+# the built-in CMake command ``SET_SOURCE_FILE_PROPERTIES()`` just like in any
 # CMake project.
 #
 # .. _Miscellaneous Notes (TRIBITS_ADD_LIBRARY()):
@@ -642,7 +658,6 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
     ENDIF()
 
     IF(PARSE_ADDED_LIB_TARGET_NAME_OUT)
-      # Return the library name
       SET(${PARSE_ADDED_LIB_TARGET_NAME_OUT} ${LIBRARY_NAME} PARENT_SCOPE)
     ENDIF()
 
