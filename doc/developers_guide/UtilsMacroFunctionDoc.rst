@@ -309,7 +309,7 @@ Join a set of strings into a single string using a join string.
 
 Usage::
 
-  JOIN(<outputStrVar> "<sepStr>" <quoteElements> 
+  JOIN(<outputStrVar> "<sepStr>" <quoteElements>
     "<string0>" "<string1>" ...)
 
 Arguments:
@@ -768,7 +768,7 @@ blocks of CMake code like::
 This will print something like::
 
   REAL_EXPENSIVE() time: 0m5.235s
-  
+
 UNITTEST_COMPARE_CONST()
 ++++++++++++++++++++++++
 
