@@ -4,5 +4,5 @@
 
 int main() 
 {
-  std::cout << PackageWithSubpackages::c_b_mixed_lang() << "\n";
+  std::cout << WithSubpackages::c_b_mixed_lang() << "\n";
 }

@@ -27,8 +27,8 @@ TRIBITS_ADD_ADVANCED_TEST( test_of_c
 # Define a test-only lib and two tests that use it.
 #
 
-ASSERT_DEFINED(PackageWithSubpackagesSubpackageB_ENABLE_MixedLanguage)
-IF (PackageWithSubpackagesSubpackageB_ENABLE_MixedLanguage)
+ASSERT_DEFINED(WithSubpackagesB_ENABLE_MixedLang)
+IF (WithSubpackagesB_ENABLE_MixedLang)
 
   TRIBITS_ADD_LIBRARY( c_b_mixed_lang
     TESTONLY

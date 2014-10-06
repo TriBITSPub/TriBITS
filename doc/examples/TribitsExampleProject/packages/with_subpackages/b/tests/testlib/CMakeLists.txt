@@ -3,8 +3,8 @@
 # MixedLang package
 #
 
-ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_MixedLanguage)
-IF (${PACKAGE_NAME}_ENABLE_MixedLanguage)
+ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_MixedLang)
+IF (${PACKAGE_NAME}_ENABLE_MixedLang)
 
   INCLUDE(${CMAKE_CURRENT_LIST_DIR}/ShowLibErrors.cmake)
 

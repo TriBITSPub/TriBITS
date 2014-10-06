@@ -16,8 +16,8 @@ ADD_SUBDIRECTORY(testlib)
 #
 
 SET(EXPECTED_B_DEPS)
-ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_PackageWithSubpackagesSubpackageA)
-IF(${PACKAGE_NAME}_ENABLE_PackageWithSubpackagesSubpackageA)
+ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_WithSubpackagesA)
+IF(${PACKAGE_NAME}_ENABLE_WithSubpackagesA)
   SET(EXPECTED_B_DEPS "${EXPECTED_B_DEPS} A no_deps")
 ENDIF()
 SET(EXPECTED_B_DEPS "${EXPECTED_B_DEPS} no_deps")
@@ -34,8 +34,8 @@ TRIBITS_ADD_ADVANCED_TEST( test_of_b
 # Define an test involving the optional dependent MixedLang package
 # 
 
-ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_MixedLanguage)
-IF (${PACKAGE_NAME}_ENABLE_MixedLanguage)
+ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_MixedLang)
+IF (${PACKAGE_NAME}_ENABLE_MixedLang)
 
   INCLUDE(${CMAKE_CURRENT_LIST_DIR}/ShowLibErrors.cmake)
 
