@@ -2,6 +2,8 @@
 TriBITS: Tribal Build, Integrate, and Test System
 =================================================
 
+[![Build Status](https://travis-ci.org/TriBITSPub/TriBITS.svg?branch=master)](https://travis-ci.org/TriBITSPub/TriBITS)
+
 The Tribal Build, Integrate, and Test System (TriBITS) is a framework designed
 to handle large software development projects involving multiple independent
 development teams and multiple source repositories which is built on top of
