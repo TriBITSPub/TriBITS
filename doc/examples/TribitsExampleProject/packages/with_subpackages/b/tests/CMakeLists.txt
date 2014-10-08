@@ -2,7 +2,16 @@
 # Create a test executable b_test that only depends on package's man libs
 #
 
-TRIBITS_ADD_EXECUTABLE( b_test SOURCES b_test.cpp )
+TRIBITS_ADD_EXECUTABLE( b_test SOURCES b_test.cpp
+  ADDED_EXE_TARGET_NAME_OUT b_test_TARGET_NAME )
+
+IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+  PRINT_VAR(b_test_TARGET_NAME)
+ENDIF()
+
+# Example of setting a property.
+SET_TARGET_PROPERTIES(${b_test_TARGET_NAME}
+  PROPERTIES LINKER_LANGUAGE CXX )
 
 #
 # Create a test-only b_mixed_lang lib which uses the optional test dependent
@@ -28,7 +37,19 @@ TRIBITS_ADD_ADVANCED_TEST( test_of_b
     PASS_REGULAR_EXPRESSION_ALL 
       "B label is: B"
       "B deps are:${EXPECTED_B_DEPS}"
+  ADDED_TEST_NAME_OUT  test_of_b_TEST_NAME
   )
+
+IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+  PRINT_VAR(test_of_b_TEST_NAME)
+ENDIF()
+
+# Example of changing CTest property on advanced test
+IF (test_of_b_TEST_NAME)
+  SET_TESTS_PROPERTIES( ${test_of_b_TEST_NAME}
+    PROPERTIES  TIMEOUT  3.0 )
+  # NOTE: You don't have to set the TIMEOUT.
+ENDIF()
 
 #
 # Define an test involving the optional dependent MixedLang package
