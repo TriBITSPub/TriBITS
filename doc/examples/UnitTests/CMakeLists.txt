@@ -1156,4 +1156,43 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
       "WrapExternal_LIBRARY_DIRS=''"
       "WrapExternal_LIBRARIES='external_func.pws_a'"
 
+      "pws_b_TARGET_NAME='pws_b'"
+      "b_test_TARGET_NAME='WithSubpackagesB_b_test'"
+      "test_of_b_TEST_NAME='WithSubpackagesB_test_of_b'"
+      "c_util_TEST_NAME='WithSubpackagesC_test_of_c_util'"
   )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_WrapExternal_VerboseConfigure
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  CATEGORIES CONTINUOUS
+
+  TEST_0
+    MESSSAGE "Do a verbose configure and check that the packages coupling variables are correct."
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=ON
+      -DTribitsExProj_ENABLE_DEBUG=OFF
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_VERBOSE_CONFIGURE=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      # ToDo Fill in more checks for libs, variables, etc. 
+      "pws_b_TARGET_NAME='pws_b'"
+      "b_test_TARGET_NAME='WithSubpackagesB_b_test'"
+      "test_of_b_TEST_NAME='WithSubpackagesB_test_of_b'"
+      "c_util_TEST_NAME='WithSubpackagesC_test_of_c_util'"
+      "test_of_c_b_mixed_lang_TARGET_NAME='WithSubpackagesC_test_of_c_b_mixed_lang'"
+      "test_of_c_b_mixed_lang_TEST_NAME='WithSubpackagesC_test_of_c_b_mixed_lang'"
+
+  )
+
