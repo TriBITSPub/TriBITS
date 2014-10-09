@@ -556,7 +556,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
       ARGS ${CTEST_BUILD_FLAGS}
       PASS_REGULAR_EXPRESSION_ALL
         "Built target simplecxx"
-        "Built target mixedlanguage"
+        "Built target mixedlang"
         "Built target pws_a"
         "Built target pws_b"
         "Built target pws_c"
@@ -610,7 +610,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
       ARGS ${CTEST_BUILD_FLAGS}
       PASS_REGULAR_EXPRESSION_ALL
         "Built target tep_simplecxx"
-        "Built target tep_mixedlanguage"
+        "Built target tep_mixedlang"
         "Built target tep_pws_a"
         "Built target tep_pws_b"
         "Built target tep_pws_c"
@@ -1063,7 +1063,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
     MESSAGE "Rebuild only exteranl_func"
     PASS_REGULAR_EXPRESSION_ALL
       "Built target simplecxx"
-      "Built target mixedlanguage"
+      "Built target mixedlang"
       "Built target pws_a"
       "Generating external_func/libexternal_func.a"
       "Linking CXX executable WrapExternal_run_external_func.exe"
