@@ -983,12 +983,28 @@ a) **Trace file processing during configure:**
 
 b) **Getting verbose output from TriBITS configure:**
 
-  ::
+  To do a complete debug dump for the TriBITS configure process, use::
 
     -D <Project>_VERBOSE_CONFIGURE:BOOL=ON
 
   This produces a *lot* of output but can be very useful when debugging
   configuration problems.
+
+  To just dump the package and TPL dependencies, use::
+
+    -D <Project>_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+
+  To just dump the link libraries for each library and executable created,
+  use::
+
+    -D <Project>_DUMP_LINK_LIBS:BOOL=ON
+
+  Of course ``<Project>_DUMP_PACKAGE_DEPENDENCIES`` and
+  ``<Project>_DUMP_LINK_LIBS`` can be used together.  Also, note that
+  ``<Project>_DUMP_PACKAGE_DEPENDENCIES`` and ``<Project>_DUMP_LINK_LIBS``
+  both default t ``ON`` when ``<Project>_VERBOSE_CONFIGURE=ON`` on the first
+  configure.
+ 
 
 c) **Getting verbose output from the makefile:**
 
