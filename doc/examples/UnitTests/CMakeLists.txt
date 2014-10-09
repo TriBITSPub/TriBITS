@@ -1111,7 +1111,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  CATEGORIES CONTINUOUS
 
   TEST_0
     MESSSAGE "Do a verbose configure and check that the packages coupling variables are correct."
@@ -1159,7 +1158,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
       "pws_b_TARGET_NAME='pws_b'"
       "b_test_TARGET_NAME='WithSubpackagesB_b_test'"
       "test_of_b_TEST_NAME='WithSubpackagesB_test_of_b'"
-      "c_util_TEST_NAME='WithSubpackagesC_test_of_c_util'"
+      "c_util_TEST_NAME='WithSubpackagesC_test_of_c_util${TEST_MPI_1_SUFFIX}'"
 
       "-- simplecxx:LINK_LIBS=''"
       "-- HelloWorldTests:LINK_LIBS='simplecxx'"
@@ -1178,7 +1177,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_WrapExternal_VerboseConfigure
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  CATEGORIES CONTINUOUS
 
   TEST_0
     MESSSAGE "Do a verbose configure and check that the packages coupling variables are correct."
@@ -1204,9 +1202,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_WrapExternal_VerboseConfigu
       "-- pws_b_TARGET_NAME='pws_b'"
       "-- b_test_TARGET_NAME='WithSubpackagesB_b_test'"
       "-- test_of_b_TEST_NAME='WithSubpackagesB_test_of_b'"
-      "-- c_util_TEST_NAME='WithSubpackagesC_test_of_c_util'"
+      "-- c_util_TEST_NAME='WithSubpackagesC_test_of_c_util${TEST_MPI_1_SUFFIX}'"
       "-- test_of_c_b_mixed_lang_TARGET_NAME='WithSubpackagesC_test_of_c_b_mixed_lang'"
-      "-- test_of_c_b_mixed_lang_TEST_NAME='WithSubpackagesC_test_of_c_b_mixed_lang'"
+      "-- test_of_c_b_mixed_lang_TEST_NAME='WithSubpackagesC_test_of_c_b_mixed_lang${TEST_MPI_1_SUFFIX}'"
 
       "-- simplecxx:LINK_LIBS=''"
       "-- HelloWorldTests:LINK_LIBS='simplecxx'"
