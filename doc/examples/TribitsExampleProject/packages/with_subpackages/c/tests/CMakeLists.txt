@@ -9,9 +9,7 @@ TRIBITS_ADD_TEST( c_util
   ADDED_TESTS_NAMES_OUT  c_util_TEST_NAME
   )
 
-IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-  PRINT_VAR(c_util_TEST_NAME)
-ENDIF()
+TRIBITS_VERBOSE_PRINT_VAR(c_util_TEST_NAME)
 
 # Example of how to set properties on added test
 IF (c_util_TEST_NAME)
@@ -63,10 +61,8 @@ IF (WithSubpackagesB_ENABLE_MixedLang AND
     ADDED_TESTS_NAMES_OUT  test_of_c_b_mixed_lang_TEST_NAME
     )
 
-  IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    PRINT_VAR(test_of_c_b_mixed_lang_TARGET_NAME)
-    PRINT_VAR(test_of_c_b_mixed_lang_TEST_NAME)
-  ENDIF()
+  TRIBITS_VERBOSE_PRINT_VAR(test_of_c_b_mixed_lang_TARGET_NAME)
+  TRIBITS_VERBOSE_PRINT_VAR(test_of_c_b_mixed_lang_TEST_NAME)
 
   # Example on how to set exe target properties.
   SET_TARGET_PROPERTIES( ${test_of_c_b_mixed_lang_TARGET_NAME}
