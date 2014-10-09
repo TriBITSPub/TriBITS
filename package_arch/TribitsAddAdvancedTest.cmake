@@ -61,6 +61,7 @@ INCLUDE(PrintVar)
 #     [TEST_N (EXEC <execTargetN> | CMND <cmndExecN>) ...]
 #     [OVERALL_WORKING_DIRECTORY (<overallWorkingDir> | TEST_NAME)]
 #     [FAIL_FAST]
+#     [RUN_SERIAL]
 #     [KEYWORDS <keyword1> <keyword2> ...]
 #     [COMM [serial] [mpi]]
 #     [OVERALL_NUM_MPI_PROCS <overallNumProcs>]
