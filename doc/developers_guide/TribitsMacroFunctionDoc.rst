@@ -301,14 +301,17 @@ also be defined to pass based on:
   ``PASS_REGULAR_EXPRESSION "<regex>"``
 
     If specified, the test command will be assumed to pass if it matches the
-    given regular expression.  Otherwise, it is assumed to fail.
+    given regular expression.  Otherwise, it is assumed to fail.  TIPS:
+    Replace ';' with '[;]' or CMake will interpretet this as a array eleemnt
+    boundary.  To match '.', use '[.]'.
 
   ``PASS_REGULAR_EXPRESSION_ALL "<regex1>" "<regex2>" ... "<regexn>"``
 
     If specified, the test command will be assumed to pass if the output
     matches all of the provided regular expressions.  Note that this is not
     a capability of raw ctest and represents an extension provided by
-    TriBITS.
+    TriBITS.  NOTE: It is critical that you replace ';' with '[;]' or CMake
+    will interpretet this as a array eleemnt boundary.
 
   ``FAIL_REGULAR_EXPRESSION "<regex>"``
 
@@ -1267,7 +1270,9 @@ Usage::
     regular expressions ``<regex0>``, ``<regex1>`` etc. match the output
     send to stdout.  Otherwise, the test will fail.  This is set using the
     built-in CTest property ``PASS_REGULAR_EXPRESSION``.  Consult standard
-    CMake documentation for full behavior.
+    CMake documentation for full behavior.  TIPS: Replace ';' with '[;]' or
+    CMake will interpretet this as a array eleemnt boundary.  To match '.',
+    use '[.]'.
 
   ``FAIL_REGULAR_EXPRESSION "<regex0>;<regex1>;..."``
 
@@ -1275,7 +1280,8 @@ Usage::
     expressions ``<regex0>``, ``<regex1>`` etc. match the output send to
     stdout.  Otherwise, the test will pass.  This is set using the built-in
     CTest property ``FAIL_REGULAR_EXPRESSION``.  Consult standard CMake
-    documentation for full behavior.
+    documentation for full behavior (and see above tips for
+    ``PASS_REGULAR_EXPRESSION``).
 
   ``WILL_FAIL``
 
@@ -2930,6 +2936,23 @@ are intended for the user to set and/or use:
     variable is set before calling this function, then no libraries are
     searched for and this variable will be assumed to have the correct list
     of libraries to link to.
+
+TRIBITS_VERBOSE_PRINT_VAR()
++++++++++++++++++++++++++++
+
+print a variable giving its name then value if
+``${PROJECT_NAME}_VERBOSE_CONFIGURE=TRUE``.
+
+Usage::
+
+  TRIBITS_VERBOSE_PRINT_VAR(<varName>)
+
+This prints::
+
+  MESSAGE("-- " "${VARIBLE_NAME}='${${VARIBLE_NAME}}'")
+
+The variable ``<varName>`` can be defined or undefined or empty.  This uses
+an explicit "-- " line prefix so that it prints nice even on Windows CMake.
 
 TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES()
 ++++++++++++++++++++++++++++++++++++++++++++++++++++

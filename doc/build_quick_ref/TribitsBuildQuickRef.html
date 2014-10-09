@@ -6,7 +6,7 @@
 <meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title>Generic TriBITS Project, Build, Test, and Install Quick Reference Guide</title>
 <meta name="author" content="Roscoe A. Bartlett" />
-<meta name="date" content="2014-10-08" />
+<meta name="date" content="2014-10-09" />
 <style type="text/css">
 
 /*
@@ -317,9 +317,9 @@ ul.auto-toc {
 <tr><th class="docinfo-name">Contact:</th>
 <td><a class="first last reference external" href="mailto:bartlett.roscoe&#64;gmail.com">bartlett.roscoe&#64;gmail.com</a></td></tr>
 <tr><th class="docinfo-name">Date:</th>
-<td>2014-10-08</td></tr>
+<td>2014-10-09</td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>TriBITS Development at 2014-10-08</td></tr>
+<td>TriBITS Development at 2014-10-09</td></tr>
 </tbody>
 </table>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1355,11 +1355,26 @@ when <a class="reference internal" href="#project-verbose-configure">&lt;Project
 <li><strong>Getting verbose output from TriBITS configure:</strong></li>
 </ol>
 <blockquote>
+<p>To do a complete debug dump for the TriBITS configure process, use:</p>
 <pre class="literal-block">
 -D &lt;Project&gt;_VERBOSE_CONFIGURE:BOOL=ON
 </pre>
 <p>This produces a <em>lot</em> of output but can be very useful when debugging
 configuration problems.</p>
+<p>To just dump the package and TPL dependencies, use:</p>
+<pre class="literal-block">
+-D &lt;Project&gt;_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+</pre>
+<p>To just dump the link libraries for each library and executable created,
+use:</p>
+<pre class="literal-block">
+-D &lt;Project&gt;_DUMP_LINK_LIBS:BOOL=ON
+</pre>
+<p>Of course <tt class="docutils literal">&lt;Project&gt;_DUMP_PACKAGE_DEPENDENCIES</tt> and
+<tt class="docutils literal">&lt;Project&gt;_DUMP_LINK_LIBS</tt> can be used together.  Also, note that
+<tt class="docutils literal">&lt;Project&gt;_DUMP_PACKAGE_DEPENDENCIES</tt> and <tt class="docutils literal">&lt;Project&gt;_DUMP_LINK_LIBS</tt>
+both default t <tt class="docutils literal">ON</tt> when <tt class="docutils literal">&lt;Project&gt;_VERBOSE_CONFIGURE=ON</tt> on the first
+configure.</p>
 </blockquote>
 <ol class="loweralpha simple" start="3">
 <li><strong>Getting verbose output from the makefile:</strong></li>
