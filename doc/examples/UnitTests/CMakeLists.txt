@@ -1160,6 +1160,18 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
       "b_test_TARGET_NAME='WithSubpackagesB_b_test'"
       "test_of_b_TEST_NAME='WithSubpackagesB_test_of_b'"
       "c_util_TEST_NAME='WithSubpackagesC_test_of_c_util'"
+
+      "-- simplecxx:LINK_LIBS=''"
+      "-- HelloWorldTests:LINK_LIBS='simplecxx'"
+      "-- pws_a:LINK_LIBS='simplecxx'"
+      "-- a_test:LINK_LIBS='pws_a'"
+      "-- pws_b:LINK_LIBS='pws_a[;]simplecxx'"
+      "-- b_test:LINK_LIBS='pws_b'"
+      "-- c_util:LINK_LIBS='pws_b[;]pws_a'"
+      "-- pws_c:LINK_LIBS='pws_b[;]pws_a'"
+      "-- c_test:LINK_LIBS='pws_c'"
+      "-- run_external_func:LINK_LIBS='external_func[;]pws_a'"
+
   )
 
 
@@ -1186,13 +1198,32 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_WrapExternal_VerboseConfigu
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+
       # ToDo Fill in more checks for libs, variables, etc. 
-      "pws_b_TARGET_NAME='pws_b'"
-      "b_test_TARGET_NAME='WithSubpackagesB_b_test'"
-      "test_of_b_TEST_NAME='WithSubpackagesB_test_of_b'"
-      "c_util_TEST_NAME='WithSubpackagesC_test_of_c_util'"
-      "test_of_c_b_mixed_lang_TARGET_NAME='WithSubpackagesC_test_of_c_b_mixed_lang'"
-      "test_of_c_b_mixed_lang_TEST_NAME='WithSubpackagesC_test_of_c_b_mixed_lang'"
+
+      "-- pws_b_TARGET_NAME='pws_b'"
+      "-- b_test_TARGET_NAME='WithSubpackagesB_b_test'"
+      "-- test_of_b_TEST_NAME='WithSubpackagesB_test_of_b'"
+      "-- c_util_TEST_NAME='WithSubpackagesC_test_of_c_util'"
+      "-- test_of_c_b_mixed_lang_TARGET_NAME='WithSubpackagesC_test_of_c_b_mixed_lang'"
+      "-- test_of_c_b_mixed_lang_TEST_NAME='WithSubpackagesC_test_of_c_b_mixed_lang'"
+
+      "-- simplecxx:LINK_LIBS=''"
+      "-- HelloWorldTests:LINK_LIBS='simplecxx'"
+      "-- mixedlang:LINK_LIBS=''"
+      "-- RayTracerTests:LINK_LIBS='mixedlang'"
+      "-- pws_a:LINK_LIBS='simplecxx'"
+      "-- a_test:LINK_LIBS='pws_a'"
+      "-- pws_b:LINK_LIBS='pws_a[;]simplecxx'"
+      "-- b_test:LINK_LIBS='pws_b[;]mixedlang'"
+      "-- b_mixed_lang:LINK_LIBS='pws_b[;]mixedlang'"
+      "-- test_of_b_mixed_lang:LINK_LIBS='b_mixed_lang[;]pws_b[;]mixedlang'"
+      "-- c_util:LINK_LIBS='pws_b[;]pws_a'"
+      "-- pws_c:LINK_LIBS='pws_b[;]pws_a'"
+      "-- c_test:LINK_LIBS='pws_c'"
+      "-- c_b_mixed_lang:LINK_LIBS='pws_c[;]b_mixed_lang'"
+      "-- test_of_c_b_mixed_lang:LINK_LIBS='c_b_mixed_lang[;]pws_c'"
+      "-- run_external_func:LINK_LIBS='external_func[;]pws_a'"
 
   )
 
