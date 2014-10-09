@@ -42,7 +42,6 @@ ADD_SUBDIRECTORY(CTestScriptsUnitTests)
 ADD_SUBDIRECTORY(DependencyUnitTests)
 
 
-INCLUDE(TribitsAddAdvancedTest)
 
 
 ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_MPI)
