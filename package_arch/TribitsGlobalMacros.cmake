@@ -47,6 +47,7 @@ INCLUDE(TribitsSetupMPI)
 INCLUDE(TribitsTestCategories)
 INCLUDE(TribitsGeneralMacros)
 INCLUDE(TribitsAddTestHelpers)
+INCLUDE(TribitsVerbosePrintVar)
 
 INCLUDE(TribitsAddOptionAndDefine)
 INCLUDE(AdvancedOption)
