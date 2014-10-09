@@ -277,7 +277,9 @@ INCLUDE(TribitsAddTestHelpers)
 #     regular expressions ``<regex0>``, ``<regex1>`` etc. match the output
 #     send to stdout.  Otherwise, the test will fail.  This is set using the
 #     built-in CTest property ``PASS_REGULAR_EXPRESSION``.  Consult standard
-#     CMake documentation for full behavior.
+#     CMake documentation for full behavior.  TIPS: Replace ';' with '[;]' or
+#     CMake will interpretet this as a array eleemnt boundary.  To match '.',
+#     use '[.]'.
 #
 #   ``FAIL_REGULAR_EXPRESSION "<regex0>;<regex1>;..."``
 #
@@ -285,7 +287,8 @@ INCLUDE(TribitsAddTestHelpers)
 #     expressions ``<regex0>``, ``<regex1>`` etc. match the output send to
 #     stdout.  Otherwise, the test will pass.  This is set using the built-in
 #     CTest property ``FAIL_REGULAR_EXPRESSION``.  Consult standard CMake
-#     documentation for full behavior.
+#     documentation for full behavior (and see above tips for
+#     ``PASS_REGULAR_EXPRESSION``).
 #
 #   ``WILL_FAIL``
 #
