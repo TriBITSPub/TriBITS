@@ -1,0 +1,3 @@
+TRIBITS_TPL_DECLARE_LIBRARIES( HeaderOnlyTpl
+  REQUIRED_HEADERS  HeaderOnlyTpl_stuff.hpp
+  )
