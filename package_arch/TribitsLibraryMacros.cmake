@@ -600,7 +600,30 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
     ENDFOREACH()
 
     #
-    # Add the dependent SE package and TPL libs
+    # Link in the upstream TEST SE package and TPL libs
+    #
+    # We link these before those in the LIB SE package and TPL libs because
+    # the TEST dependencies tend to be higher in the dependency tree.  It
+    # should not really matter but it looks better on the link line.
+    #
+
+    IF (PARSE_TESTONLY)
+
+      IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+        MESSAGE("-- " "Pulling in header and libraries dependencies"
+          " for TEST dependencies ...")
+      ENDIF()
+
+      TRIBITS_SORT_AND_APPEND_PACKAGE_INCLUDE_AND_LINK_DIRS_AND_LIBS(
+        ${PACKAGE_NAME}  TEST  LINK_LIBS)
+
+      TRIBITS_SORT_AND_APPEND_TPL_INCLUDE_AND_LINK_DIRS_AND_LIBS(
+        ${PACKAGE_NAME}  TEST  LINK_LIBS)
+
+    ENDIF()
+
+    #
+    # Add the dependent LIB SE package and TPL libs
     #
 
     IF (ADD_DEP_PACKAGE_AND_TPL_LIBS)
@@ -629,25 +652,6 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
 
       TRIBITS_SORT_AND_APPEND_TPL_INCLUDE_AND_LINK_DIRS_AND_LIBS(
         ${PACKAGE_NAME}  LIB  LINK_LIBS)
-
-    ENDIF()
-
-    #
-    # Link in the upstream TEST dependnent libs
-    #
-
-    IF (PARSE_TESTONLY)
-
-      IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        MESSAGE("-- " "Pulling in header and libraries dependencies"
-          " for TEST dependencies ...")
-      ENDIF()
-
-      TRIBITS_SORT_AND_APPEND_PACKAGE_INCLUDE_AND_LINK_DIRS_AND_LIBS(
-        ${PACKAGE_NAME}  TEST  LINK_LIBS)
-
-      TRIBITS_SORT_AND_APPEND_TPL_INCLUDE_AND_LINK_DIRS_AND_LIBS(
-        ${PACKAGE_NAME}  TEST  LINK_LIBS)
 
     ENDIF()
 
