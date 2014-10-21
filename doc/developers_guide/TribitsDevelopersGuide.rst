@@ -6714,6 +6714,7 @@ a given TriBITS project are:
 * `${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION`_
 * `${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES`_
 * `${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS`_
+* `${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME`_
 * `${PROJECT_NAME}_TEST_CATEGORIES`_
 * `${PROJECT_NAME}_USE_GNUINSTALLDIRS`_
 * `MPI_EXEC_MAX_NUMPROCS`_
@@ -6955,6 +6956,25 @@ These options are described below.
   then it makes sense to set the default to::
   
     SET(${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS_DEFAULT OFF)
+
+.. _${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME:
+
+**${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME**
+
+  The cache variable ``${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME``
+  determines if the start and end date/time for each advanced test (i.e. added
+  with `TRIBITS_ADD_ADVANCED_TEST()`_) is printed or not with each test.  The
+  TriBITS default is ``OFF`` but a TriBITS project can change this default by
+  setting::
+
+    SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME_DEFAULT ON)
+
+  The implementation of this feature currently uses ``EXECUTE_PROCESS(date)``
+  and therefore will only on Linux/Unix/Mac systems and not Windows systems.
+
+  NOTE: In a future version of CTest, this option may turn on start and end
+  date/time for regular tests added with `TRIBITS_ADD_TEST()`_ (which uses a
+  raw command with ``ADD_TEST()``).
 
 .. _${PROJECT_NAME}_TEST_CATEGORIES:
 .. _${PROJECT_NAME}_TEST_CATEGORIES_DEFAULT:

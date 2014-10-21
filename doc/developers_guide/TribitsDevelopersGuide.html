@@ -7368,6 +7368,7 @@ a given TriBITS project are:</p>
 <li><a class="reference internal" href="#project-name-exclude-disabled-subpackages-from-distribution">${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION</a></li>
 <li><a class="reference internal" href="#project-name-generate-export-file-dependencies">${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES</a></li>
 <li><a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a></li>
+<li><a class="reference internal" href="#project-name-show-test-start-end-date-time">${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME</a></li>
 <li><a class="reference internal" href="#project-name-test-categories">${PROJECT_NAME}_TEST_CATEGORIES</a></li>
 <li><a class="reference internal" href="#project-name-use-gnuinstalldirs">${PROJECT_NAME}_USE_GNUINSTALLDIRS</a></li>
 <li><a class="reference internal" href="#mpi-exec-max-numprocs">MPI_EXEC_MAX_NUMPROCS</a></li>
@@ -7580,6 +7581,22 @@ then it makes sense to set the default to:</p>
 <pre class="literal-block">
 SET(${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS_DEFAULT OFF)
 </pre>
+</blockquote>
+<p id="project-name-show-test-start-end-date-time"><strong>${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME</strong></p>
+<blockquote>
+<p>The cache variable <tt class="docutils literal">${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME</tt>
+determines if the start and end date/time for each advanced test (i.e. added
+with <a class="reference internal" href="#tribits-add-advanced-test">TRIBITS_ADD_ADVANCED_TEST()</a>) is printed or not with each test.  The
+TriBITS default is <tt class="docutils literal">OFF</tt> but a TriBITS project can change this default by
+setting:</p>
+<pre class="literal-block">
+SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME_DEFAULT ON)
+</pre>
+<p>The implementation of this feature currently uses <tt class="docutils literal">EXECUTE_PROCESS(date)</tt>
+and therefore will only on Linux/Unix/Mac systems and not Windows systems.</p>
+<p>NOTE: In a future version of CTest, this option may turn on start and end
+date/time for regular tests added with <a class="reference internal" href="#tribits-add-test">TRIBITS_ADD_TEST()</a> (which uses a
+raw command with <tt class="docutils literal">ADD_TEST()</tt>).</p>
 </blockquote>
 <p id="project-name-test-categories-default"><span id="project-name-test-categories"></span><strong>${PROJECT_NAME}_TEST_CATEGORIES</strong></p>
 <blockquote>
