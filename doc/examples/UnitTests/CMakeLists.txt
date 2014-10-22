@@ -251,9 +251,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Final set of non-enabled packages:  MixedLang WrapExternal 2"
       "Processing enabled TPL: HeaderOnlyTpl"
       "-- File Trace: TPL        INCLUDE    .+/TribitsExampleProject/cmake/tpls/FindTPLHeaderOnlyTpl.cmake"
-      "--     Found HeaderOnlyTpl TPL header: .+/doc/examples/tpls/HeaderOnlyTpl/HeaderOnlyTpl_stuff.hpp"
-      "--   Found HeaderOnlyTpl TPL header path: .+/doc/examples/tpls/HeaderOnlyTpl"
-      "--   TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
+      "--   Found TPL 'HeaderOnlyTpl' header file '.+/doc/examples/tpls/HeaderOnlyTpl/HeaderOnlyTpl_stuff.hpp'"
+      "-- Found TPL 'HeaderOnlyTpl' header path '.+/doc/examples/tpls/HeaderOnlyTpl'"
+      "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
       "Performing Test HAVE_SIMPLECXX___INT64"
       "Configuring done"
       "Generating done"
@@ -1143,7 +1143,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
       "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
 
       "HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
-      "  TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
+      "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
 
       "SimpleCxx_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/doc/examples/tpls/HeaderOnlyTpl'"
       "SimpleCxx_LIBRARY_DIRS='.+/packages/simple_cxx/src'"
@@ -1323,7 +1323,80 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_Fail
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Do the initial configure with a bad TPL find path"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_SimpleCxx=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      #-DTribitsExProj_VERBOSE_CONFIGURE=ON
+      -DHeaderOnlyTpl_INCLUDE_DIRS=/path_does_not_exist
+      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Processing enabled TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+      "-- Must find all headers in header sets .HeaderOnlyTpl_stuff.hpp."
+      "-- Searching in HeaderOnlyTpl_INCLUDE_DIRS='/path_does_not_exist'"
+      "-- Searching for headers in set .HeaderOnlyTpl_stuff.hpp."
+      "-- TIP: If the TPL 'HeaderOnlyTpl' is on your system then you can set:"
+      "-DHeaderOnlyTpl_INCLUDE_DIRS='<dir0>[;]<dir1>[;]...'"
+      "-DTPL_HeaderOnlyTpl_INCLUDE_DIRS='<dir0>[;]<dir1>[;]...'"
+      "-- ERROR: Failed finding all of the parts of TPL 'HeaderOnlyTpl' .see above., Aborting!"
+      "TIP: One way to get past the configure failure for the"
+      "TIP: One way to get past the configure failure for the"
+      "TPL 'HeaderOnlyTpl' is to simply disable it with:"
+      "  -DTPL_ENABLE_HeaderOnlyTpl=OFF"
+      "which will disable it and will recursively disable all of the"
+      "downstream packages that have required dependencies on it, including"
+      "the package 'SimpleCxx' which triggered its enable."
+      "When you reconfigure, just grep the cmake stdout for 'HeaderOnlyTpl'"
+      "and then follow the disables that occur as a result to see what impact"
+      "this TPL disable has on the configuration of TribitsExProj."
+      "CMake Error at .+/TribitsGlobalMacros.cmake:[0-9]+ .MESSAGE.:"
+      "  ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
+      "Call Stack .most recent call first.:"
+      "-- Configuring incomplete, errors occurred!"
+  )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
 
+  TEST_0
+    MESSAGE "Do the initial configure with a bad TPL find path"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_SimpleCxx=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      #-DTribitsExProj_VERBOSE_CONFIGURE=ON
+      -DTPL_ENABLE_HeaderOnlyTpl=ON
+      -DHeaderOnlyTpl_INCLUDE_DIRS=/path_does_not_exist
+      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+      "TIP: Even though the TPL 'HeaderOnlyTpl' was explicitly enabled in input,"
+      "it can be disabled with:"
+      "  -DTPL_ENABLE_HeaderOnlyTpl=OFF"
+      "which will disable it and will recursively disable all of the"
+      "downstream packages that have required dependencies on it."
+      "When you reconfigure, just grep the cmake stdout for 'HeaderOnlyTpl'"
+      "and then follow the disables that occur as a result to see what impact" 
+      "this TPL disable has on the configuration of TribitsExProj."
+      "-- ERROR: Failed finding all of the parts of TPL 'HeaderOnlyTpl' .see above., Aborting!"
+      "CMake Error at .+/TribitsGlobalMacros.cmake:[0-9]+ .MESSAGE.:"
+      "  ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
+      "Call Stack .most recent call first.:"
+      "-- Configuring incomplete, errors occurred!"
+  )
 
+# ToDo: Add test for tentatively enabled HeaderOnlyTpl TPL and assert behavior ...
