@@ -48,6 +48,7 @@ INCLUDE(TribitsTestCategories)
 INCLUDE(TribitsGeneralMacros)
 INCLUDE(TribitsAddTestHelpers)
 INCLUDE(TribitsVerbosePrintVar)
+INCLUDE(TribitsProcessEnabledTpl)
 
 # Standard TriBITS utilities includes
 INCLUDE(TribitsAddOptionAndDefine)
@@ -1619,69 +1620,7 @@ MACRO(TRIBITS_PROCESS_ENABLED_TPLS)
 
   FOREACH(TPL_NAME ${${PROJECT_NAME}_TPLS})
     IF (TPL_ENABLE_${TPL_NAME})
-      # Setup the processing string
-      SET(PROCESSING_MSG_STRING "Processing enabled TPL: ${TPL_NAME} (")
-      IF (TPL_${TPL_NAME}_ENABLING_PKG)
-        APPEND_STRING_VAR(PROCESSING_MSG_STRING
-          "enabled by ${TPL_${TPL_NAME}_ENABLING_PKG}," )
-      ELSE()
-        APPEND_STRING_VAR(PROCESSING_MSG_STRING
-          "enabled explicitly," )
-      ENDIF()
-        APPEND_STRING_VAR(PROCESSING_MSG_STRING 
-          " disable with -DTPL_ENABLE_${TPL_NAME}=OFF)" )
-      # Print the processing header
-      MESSAGE("${PROCESSING_MSG_STRING}")
-      IF (NOT ${PROJECT_NAME}_TRACE_DEPENDENCY_HANDLING_ONLY)
-        IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-          PRINT_VAR(${TPL_NAME}_FINDMOD)
-        ENDIF()
-        IF (IS_ABSOLUTE ${${TPL_NAME}_FINDMOD})
-          #MESSAGE("${${TPL_NAME}_FINDMOD} is absolute!")
-          SET(CURRENT_TPL_PATH "${${TPL_NAME}_FINDMOD}")
-        ELSE()
-          #MESSAGE("${${TPL_NAME}_FINDMOD} is *NOT* absolute!")
-          SET(CURRENT_TPL_PATH "${PROJECT_SOURCE_DIR}/${${TPL_NAME}_FINDMOD}")
-        ENDIF()
-        #PRINT_VAR(CURRENT_TPL_PATH)
-        TRIBITS_TRACE_FILE_PROCESSING(TPL  INCLUDE  "${CURRENT_TPL_PATH}")
-        INCLUDE("${CURRENT_TPL_PATH}")
-        IF (TPL_${TPL_NAME}_NOT_FOUND)
-          IF (TPL_${TPL_NAME}_ENABLING_PKG)
-            MESSAGE(
-              "TIP: One way to get past the configure failure for the\n"
-              "TPL '${TPL_NAME}' is to simply disable it with:\n"
-              "\n"
-              "  -DTPL_ENABLE_${TPL_NAME}=OFF\n"
-              "\n"
-              "which will disable it and will recursively disable all of the\n"
-              "downstream packages that have required dependencies on it, including\n"
-              "the package '${TPL_${TPL_NAME}_ENABLING_PKG}' which triggered its enable.\n"
-              "When you reconfigure, just grep the cmake stdout for '${TPL_NAME}'\n"
-              "and then follow the disables that occur as a result to see what impact\n"
-              "this TPL disable has on the configuration of ${PROJECT_NAME}.\n"
-              )
-	  ELSE()
-            MESSAGE(
-              "TIP: Even though the TPL '${TPL_NAME}' was explicitly enabled in input,\n"
-              "it can be disabled with:\n"
-              "\n"
-              "  -DTPL_ENABLE_${TPL_NAME}=OFF\n"
-              "\n"
-              "which will disable it and will recursively disable all of the\n"
-              "downstream packages that have required dependencies on it.\n"
-              "When you reconfigure, just grep the cmake stdout for '${TPL_NAME}'\n"
-              "and then follow the disables that occur as a result to see what impact\n"
-              "this TPL disable has on the configuration of ${PROJECT_NAME}.\n"
-              )
-          ENDIF()
-          MESSAGE(FATAL_ERROR
-            "ERROR: TPL_${TPL_NAME}_NOT_FOUND=${TPL_${TPL_NAME}_NOT_FOUND}, aborting!")
-        ENDIF()
-        ASSERT_DEFINED(TPL_${TPL_NAME}_INCLUDE_DIRS)
-        ASSERT_DEFINED(TPL_${TPL_NAME}_LIBRARIES)
-        ASSERT_DEFINED(TPL_${TPL_NAME}_LIBRARY_DIRS)
-      ENDIF()
+      TRIBITS_PROCESS_ENABLED_TPL(${TPL_NAME})
     ENDIF()
   ENDFOREACH()
 
