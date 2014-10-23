@@ -37,7 +37,7 @@
 # ************************************************************************
 # @HEADER
 
-
+# Standard TriBITS system includes
 INCLUDE(TribitsConstants)
 INCLUDE(TribitsProcessExtraRepositoriesList)
 INCLUDE(TribitsProcessPackagesAndDirsLists)
@@ -49,6 +49,7 @@ INCLUDE(TribitsGeneralMacros)
 INCLUDE(TribitsAddTestHelpers)
 INCLUDE(TribitsVerbosePrintVar)
 
+# Standard TriBITS utilities includes
 INCLUDE(TribitsAddOptionAndDefine)
 INCLUDE(AdvancedOption)
 INCLUDE(AdvancedSet)
@@ -64,7 +65,15 @@ INCLUDE(RemoveGlobalDuplicates)
 INCLUDE(Split)
 INCLUDE(TimingUtils)
 
+# Standard CMake includes
 INCLUDE(CheckIncludeFileCXX)
+
+# Include here so it does not need to be included in each individual
+# FindTPL<TPLNAME>.cmake file over and over.
+INCLUDE(TribitsTplFindIncludeDirsAndLibraries)
+INCLUDE(TribitsTplDeclareLibraries) # Deprecated
+# ABOVE: We need to include TribitsTplDeclareLibraries.cmake until all client
+# projects stop using it.
 
 
 #
@@ -1607,10 +1616,6 @@ MACRO(TRIBITS_PROCESS_ENABLED_TPLS)
   IF (${PROJECT_NAME}_ENABLE_CONFIGURE_TIMING)
     TIMER_GET_RAW_SECONDS(CONFIGURE_TPLS_TIME_START_SECONDS)
   ENDIF()
-
-  # Include here so it does not need to be included in each individual
-  # FindTPL<TPLNAME>.cmake file over and over.
-  INCLUDE(TribitsTplDeclareLibraries)
 
   FOREACH(TPL_NAME ${${PROJECT_NAME}_TPLS})
     IF (TPL_ENABLE_${TPL_NAME})
