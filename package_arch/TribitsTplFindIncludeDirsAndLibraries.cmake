@@ -301,16 +301,19 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
     IF (NOT TPL_${TPL_NAME}_LIBRARIES)
 
       IF (PARSE_MUST_FIND_ALL_LIBS)
-        MESSAGE("-- Must find all libraries in \"${PARSE_REQUIRED_LIBS_NAMES}\"")
+        MESSAGE("-- Must find at least one lib in each of the"
+          " lib sets \"${PARSE_REQUIRED_LIBS_NAMES}\"")
       ENDIF()
 
       IF (${TPL_NAME}_LIBRARY_DIRS)
-        MESSAGE( "-- Searching in ${TPL_NAME}_LIBRARY_DIRS='${${TPL_NAME}_LIBRARY_DIRS}'")
+        MESSAGE( "-- Searching for libs in ${TPL_NAME}_LIBRARY_DIRS='${${TPL_NAME}_LIBRARY_DIRS}'")
       ENDIF()
 
       SET(LIBRARIES_FOUND)
 
       FOREACH(LIBNAME_SET ${${TPL_NAME}_LIBRARY_NAMES})
+
+        MESSAGE("-- Searching for a lib in the set \"${LIBNAME_SET}\":")
 
         IF (TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES_VERBOSE)
           PRINT_VAR(LIBNAME_SET)
@@ -323,7 +326,7 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
 
         FOREACH(LIBNAME ${LIBNAME_LIST})
 
-          MESSAGE("-- Searching for library '${LIBNAME}' ...")
+          MESSAGE("--   Searching for lib '${LIBNAME}' ...")
 
           IF (${TPL_NAME}_LIBRARY_DIRS)
             SET(PATHS_ARG PATHS ${${TPL_NAME}_LIBRARY_DIRS})
@@ -344,7 +347,7 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
           ENDIF()
 
           IF (_${TPL_NAME}_${LIBNAME}_LIBRARY)
-            MESSAGE("--   Found ${TPL_NAME} TPL library: ${_${TPL_NAME}_${LIBNAME}_LIBRARY}")
+            MESSAGE("--     Found lib '${_${TPL_NAME}_${LIBNAME}_LIBRARY}'")
             SET(LIBNAME_SET_LIB ${_${TPL_NAME}_${LIBNAME}_LIBRARY})
             BREAK()
           ENDIF()
@@ -353,25 +356,12 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
 
         IF (NOT LIBNAME_SET_LIB)
           MESSAGE(
-            "-- ERROR: Did not find any library in the set \"${LIBNAME_SET}\""
+            "-- ERROR: Did not find a lib in the lib set \"${LIBNAME_SET}\""
              " for the TPL '${TPL_NAME}'!")
-          MESSAGE("\n"
-            "-- TIP: If the TPL '${TPL_NAME}' is on your system then you can set:\n"
-            "\n"
-            "     -D${TPL_NAME}_LIBRARY_DIRS='<dir0>;<dir1>;...'\n"
-            "\n"
-            "   to point to the directories where these libraries may be found.\n"
-            "   Or, just set:\n"
-            "\n"
-            "     -DTPL_${TPL_NAME}_LIBRARIES='<path-to-libs0>;<path-to-libs1>;...'\n"
-            "\n"
-            "   to point to the full paths for the libraries which will\n"
-            "   bypass any search for libraries and these libraries will be used without\n"
-            "   question in the build.  (But this will result in a build-time error\n"
-            "   obviously if all all of the necssary symbols are not found.)\n")
-
           IF (PARSE_MUST_FIND_ALL_LIBS)
-            TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES_HANDLE_FAIL()
+	    SET(_${TPL_NAME}_ENABLE_SUCCESS FALSE)
+          ELSE()
+            BREAK()
           ENDIF()
         ENDIF()
 
@@ -389,11 +379,19 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
       ADVANCED_SET( TPL_${TPL_NAME}_LIBRARIES ${LIBRARIES_FOUND}
         CACHE FILEPATH ${DOCSTR} )
 
-      IF (NOT TPL_${TPL_NAME}_LIBRARIES)
+      IF (NOT TPL_${TPL_NAME}_LIBRARIES OR NOT _${TPL_NAME}_ENABLE_SUCCESS)
         MESSAGE(
-          "-- WARNING: Could not find the ${TPL_NAME} Library!  Please manually set"
-          " ${TPL_NAME}_LIBRARY_DIRS and/or ${TPL_NAME}_LIBRARY_NAMES or just"
-          " TPL_${TPL_NAME}_LIBRARIES to point to the ${TPL_NAME} libraries!")
+          "-- ERROR: Could not find the libraries for the TPL '${TPL_NAME}'!")
+        MESSAGE(
+          "-- TIP: If the TPL '${TPL_NAME}' is on your system then you can set:\n"
+          "     -D${TPL_NAME}_LIBRARY_DIRS='<dir0>;<dir1>;...'\n"
+          "   to point to the directories where these libraries may be found.\n"
+          "   Or, just set:\n"
+          "     -DTPL_${TPL_NAME}_LIBRARIES='<path-to-libs0>;<path-to-libs1>;...'\n"
+          "   to point to the full paths for the libraries which will\n"
+          "   bypass any search for libraries and these libraries will be used without\n"
+          "   question in the build.  (But this will result in a build-time error\n"
+          "   obviously if all all of the necssary symbols are not found.)")
         TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES_HANDLE_FAIL()
       ENDIF()
 
@@ -419,7 +417,8 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
     IF (NOT TPL_${TPL_NAME}_INCLUDE_DIRS)
 
       IF (PARSE_MUST_FIND_ALL_HEADERS)
-        MESSAGE("-- Must find all headers in header sets \"${PARSE_REQUIRED_HEADERS}\"")
+        MESSAGE("-- Must find at least one header in each of the"
+          " header sets \"${PARSE_REQUIRED_HEADERS}\"")
       ENDIF()
 
       IF (${TPL_NAME}_INCLUDE_DIRS)
@@ -428,15 +427,15 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
 
       FOREACH(INCLUDE_FILE_SET ${PARSE_REQUIRED_HEADERS})
 
-        IF (PARSE_MUST_FIND_ALL_HEADERS)
-          MESSAGE("-- Searching for headers in set \"${INCLUDE_FILE_SET}\"")
-        ENDIF()
+        MESSAGE("-- Searching for a header file in the set \"${INCLUDE_FILE_SET}\":")
 
         SET(INCLUDE_FILE_LIST ${INCLUDE_FILE_SET})
         SEPARATE_ARGUMENTS(INCLUDE_FILE_LIST)
         SET(INCLUDE_FILE_SET_PATH) # Start out as empty list
 
         FOREACH(INCLUDE_FILE ${INCLUDE_FILE_LIST})
+
+          MESSAGE("--   Searching for header '${INCLUDE_FILE}' ...")
 
           IF (TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES_VERBOSE)
             PRINT_VAR(INCLUDE_FILE)
@@ -456,38 +455,19 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
           ENDIF()
 
           IF(_${TPL_NAME}_${INCLUDE_FILE}_PATH)
-            MESSAGE( "--   Found TPL '${TPL_NAME}' header file '${_${TPL_NAME}_${INCLUDE_FILE}_PATH}/${INCLUDE_FILE}'")
+            MESSAGE( "--     Found header '${_${TPL_NAME}_${INCLUDE_FILE}_PATH}/${INCLUDE_FILE}'")
             APPEND_SET(INCLUDE_FILE_SET_PATH ${_${TPL_NAME}_${INCLUDE_FILE}_PATH})
-            IF(NOT PARSE_MUST_FIND_ALL_HEADERS)
-              BREAK()
-            ENDIF()
-          ELSE()
-            MESSAGE("-- ERROR: Did not find TPL '${TPL_NAME}' header '${INCLUDE_FILE}'!")
-            IF (PARSE_MUST_FIND_ALL_HEADERS)
-              SET(_${TPL_NAME}_ENABLE_SUCCESS FALSE)
-              BREAK()
-            ENDIF()
+            BREAK()
           ENDIF()
 
         ENDFOREACH()
 
-        IF(NOT _${TPL_NAME}_ENABLE_SUCCESS)
-          MESSAGE("\n"
-            "-- TIP: If the TPL '${TPL_NAME}' is on your system then you can set:\n"
-            "\n"
-            "     -D${TPL_NAME}_INCLUDE_DIRS='<dir0>;<dir1>;...'\n"
-            "\n"
-            "   to point to directories where these header files may be found.\n"
-            "   Or, just set:\n"
-            "\n"
-            "     -DTPL_${TPL_NAME}_INCLUDE_DIRS='<dir0>;<dir1>;...'\n"
-            "\n"
-            "   to point to the include directories which will bypass any search for\n"
-            "   header files and these include directories will be used without\n"
-            "   question in the build.  (But this will result in a build-time error\n"
-            "   obviously if the necessary header files are not found in these\n"
-            "   include directories.)\n")
-          TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES_HANDLE_FAIL()
+        IF(NOT INCLUDE_FILE_SET_PATH)
+          MESSAGE("-- ERROR: Could not find a header file in"
+            " the set \"${INCLUDE_FILE_SET}\"")
+          IF(PARSE_MUST_FIND_ALL_HEADERS)
+            SET(_${TPL_NAME}_ENABLE_SUCCESS FALSE)
+          ENDIF()
         ENDIF()
 
         APPEND_SET(INCLUDES_FOUND ${INCLUDE_FILE_SET_PATH})
@@ -509,14 +489,34 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
       ADVANCED_SET(TPL_${TPL_NAME}_INCLUDE_DIRS ${INCLUDES_FOUND}
         CACHE PATH ${DOCSTR})
 
+      IF (NOT TPL_${TPL_NAME}_INCLUDE_DIRS OR NOT _${TPL_NAME}_ENABLE_SUCCESS)
+        MESSAGE(
+          "-- ERROR: Could not find the include directories for TPL '${TPL_NAME}'!")
+        MESSAGE(
+          "-- TIP: If the TPL '${TPL_NAME}' is on your system then you can set:\n"
+          "     -D${TPL_NAME}_INCLUDE_DIRS='<dir0>;<dir1>;...'\n"
+          "   to point to directories where these header files may be found.\n"
+          "   Or, just set:\n"
+          "     -DTPL_${TPL_NAME}_INCLUDE_DIRS='<dir0>;<dir1>;...'\n"
+          "   to point to the include directories which will bypass any search for\n"
+          "   header files and these include directories will be used without\n"
+          "   question in the build.  (But this will result in a build-time error\n"
+          "   obviously if the necessary header files are not found in these\n"
+          "   include directories.)")
+        TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES_HANDLE_FAIL()
+      ENDIF()
+
       IF (TPL_${TPL_NAME}_INCLUDE_DIRS)
-        MESSAGE("-- Found TPL '${TPL_NAME}' header path '${TPL_${TPL_NAME}_INCLUDE_DIRS}'")
+        MESSAGE("-- Found TPL '${TPL_NAME}' include dirs '${TPL_${TPL_NAME}_INCLUDE_DIRS}'")
       ENDIF()
     ELSE()
 
       # TPL_${TPL_NAME}_INCLUDE_DIRS is already in the cache so leave it alone!
 
     ENDIF()
+
+    # Print the final value to be used *always*
+    MESSAGE("-- TPL_${TPL_NAME}_INCLUDE_DIRS='${TPL_${TPL_NAME}_INCLUDE_DIRS}'")
 
   ELSE()
 
@@ -529,9 +529,6 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
     ENDIF()
 
   ENDIF()
-
-  # Print the final value to be used *always*
-  MESSAGE("-- TPL_${TPL_NAME}_INCLUDE_DIRS='${TPL_${TPL_NAME}_INCLUDE_DIRS}'")
 
   # Set library directories to null always.  We do this because
   # the package support code expects this variable and it is used
