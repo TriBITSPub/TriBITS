@@ -190,8 +190,10 @@ ASSERT_DEFINED(TPL_ENABLE_MPI)
 IF (TPL_ENABLE_MPI)
   SET(TPL_MPI_FILE_TRACE
     "-- File Trace: TPL        INCLUDE    .*/tpls/FindTPLMPI.cmake")
+  SET(FINAL_ENABLED_TPLS "MPI HeaderOnlyTpl 2")
 ELSE()
   SET(TPL_MPI_FILE_TRACE "")
+  SET(FINAL_ENABLED_TPLS "HeaderOnlyTpl 1")
 ENDIF()
 
 
@@ -247,7 +249,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Setting TPL_ENABLE_HeaderOnlyTpl=ON because it is required by the enabled package SimpleCxx" 
       "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
       "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 5"
-      "Final set of enabled TPLs:  HeaderOnlyTpl 1"
+      "Final set of enabled TPLs:  ${FINAL_ENABLED_TPLS}"
       "Final set of non-enabled packages:  MixedLang WrapExternal 2"
       "Processing enabled TPL: HeaderOnlyTpl"
       "-- File Trace: TPL        INCLUDE    .+/TribitsExampleProject/cmake/tpls/FindTPLHeaderOnlyTpl.cmake"
