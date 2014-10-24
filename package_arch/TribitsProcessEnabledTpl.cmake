@@ -88,7 +88,7 @@ FUNCTION(TRIBITS_PROCESS_ENABLED_TPL  TPL_NAME)
     INCLUDE("${CURRENT_TPL_PATH}")
 
     # Address failed find of the TPL
-    IF (TPL_${TPL_NAME}_NOT_FOUND)
+    IF (TPL_${TPL_NAME}_NOT_FOUND AND NOT TPL_TENTATIVE_ENABLE_${TPL_NAME})
       IF (TPL_${TPL_NAME}_ENABLING_PKG)
         MESSAGE(
           "TIP: One way to get past the configure failure for the\n"

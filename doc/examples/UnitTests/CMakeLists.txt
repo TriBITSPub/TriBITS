@@ -1349,7 +1349,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_Fail
       "-DTPL_HeaderOnlyTpl_INCLUDE_DIRS='<dir0>[;]<dir1>[;]...'"
       "-- ERROR: Failed finding all of the parts of TPL 'HeaderOnlyTpl' .see above., Aborting!"
       "TIP: One way to get past the configure failure for the"
-      "TIP: One way to get past the configure failure for the"
       "TPL 'HeaderOnlyTpl' is to simply disable it with:"
       "  -DTPL_ENABLE_HeaderOnlyTpl=OFF"
       "which will disable it and will recursively disable all of the"
