@@ -37,18 +37,21 @@
 # ************************************************************************
 # @HEADER
 
-IF (NOT TribitsTplFindIncludeDirsAndLibraries_INCLUDED)
-  SET(TribitsTplFindIncludeDirsAndLibraries_INCLUDED TRUE)
+IF (TribitsTplFindIncludeDirsAndLibraries_INCLUDED)
   RETURN()
+ELSE()
+  SET(TribitsTplFindIncludeDirsAndLibraries_INCLUDED TRUE)
 ENDIF()
 
-INCLUDE(MultilineSet)
-INCLUDE(GlobalSet)
+INCLUDE(AdvancedSet)
 INCLUDE(AppendSet)
 INCLUDE(AssertDefined)
-INCLUDE(SetNotFound)
 INCLUDE(DualScopeSet)
+INCLUDE(GlobalNullSet)
+INCLUDE(GlobalSet)
+INCLUDE(MultilineSet)
 INCLUDE(ParseVariableArguments)
+INCLUDE(SetNotFound)
 
 
 #
