@@ -322,12 +322,15 @@ def runSysCmndInterface(cmnd, outFile=None, rtnOutput=False, environment=None, \
     if rtnOutput:
       if getStdErr:
         child = subprocess.Popen(cmnd, shell=True, stdout=subprocess.PIPE,
-          stderr = subprocess.STDOUT, env=environment).stdout
+          stderr = subprocess.STDOUT, env=environment)
       else:
         child = subprocess.Popen(cmnd, shell=True, stdout=subprocess.PIPE,
-          env=environment).stdout
-      data = child.read()
-      rtnCode = child.close()
+          env=environment)
+      data = child.stdout.read()
+      #print "data = '"+str(data)+"'"
+      child.wait()
+      rtnCode = child.returncode
+      #print "rtnCode = '"+str(rtnCode)+"'"
       rtnObject = (data, rtnCode)
     else:
       outFileHandle = None
