@@ -41,19 +41,21 @@
 # Unit testing code for gitdist #
 #################################
 
-from GeneralScriptSupport import *
+import GeneralScriptSupport
 import unittest
+import os
 import sys
 import imp
+import shutil
 
 
-utilsDir = getScriptBaseDir()+"/utils"
-tribitsDir = os.path.abspath(getScriptBaseDir()+"/..")
+utilsDir = GeneralScriptSupport.getScriptBaseDir()+"/utils"
+tribitsDir = os.path.abspath(GeneralScriptSupport.getScriptBaseDir()+"/..")
 commonToolsGitDir = tribitsDir+"/common_tools/git"
 #print "commonToolsGitDir = ", commonToolsGitDir
 
 sys.path = [commonToolsGitDir] + sys.path
-print "sys.path =", sys.path
+#print "sys.path =", sys.path
 from gitdist import *
 
 
@@ -132,8 +134,9 @@ gitdistPathMock = gitdistPathNoColor+" --dist-use-git=mockgit --dist-no-opt"
 mockProjectDir = tribitsDir+"/package_arch/UnitTests/MockTrilinos"
 unitTestDataDir = tribitsDir+"/python/UnitTests"
 
-testBaseDir = os.getcwd()
+tempMockProjectDir = "MockProjectDir"
 
+testBaseDir = os.getcwd()
 
 
 def getCmndOutputInMockProjectDir(cmnd):
@@ -141,6 +144,15 @@ def getCmndOutputInMockProjectDir(cmnd):
   cmndOut = getCmndOutput(cmnd)
   os.chdir(testBaseDir)
   return cmndOut
+
+
+def createAndMoveIntoTestDir(testDir):
+  if os.path.exists(testDir): shutil.rmtree(testDir)
+  os.mkdir(testDir)
+  os.chdir(testDir)
+  if not os.path.exists(tempMockProjectDir): os.mkdir(tempMockProjectDir)
+  os.chdir(tempMockProjectDir)
+  return os.path.join(testBaseDir, testDir, tempMockProjectDir)
 
 
 class test_gitdist(unittest.TestCase):
@@ -161,7 +173,7 @@ class test_gitdist(unittest.TestCase):
     cmndOutList = cmndOut.split("\n")
     cmndOutFirstLine = cmndOutList[0] 
     cmndOutFirstLineAfterComma = cmndOutFirstLine.split(":")[1].strip() 
-    cmndOutFirstLineAfterComma_expected = "gitdist [gitdist options] [OPTIONS]"
+    cmndOutFirstLineAfterComma_expected = "gitdist [gitdist arguments] [git arguments]"
     self.assertEqual(cmndOutFirstLineAfterComma, cmndOutFirstLineAfterComma_expected)
 
 
@@ -178,6 +190,73 @@ class test_gitdist(unittest.TestCase):
       "['mockgit', 'log', 'HEAD', '-1']\n"
     self.assertEqual(cmndOut, cmndOut_expected)
 
+
+  def test_dot_gitdist(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("gitdist_dot_gitdist")
+
+      os.mkdir("ExtraRepo1")
+      os.makedirs("Path/To/ExtraRepo2")
+      os.mkdir("ExtraRepo3")
+
+      # Make sure .gitdist.default is found and read correctly
+      open(".gitdist.default", "w").write(
+        "ExtraRepo1\n" \
+        "Path/To/ExtraRepo2\n" \
+        "MissingExtraRep\n" \
+        "ExtraRepo3\n"
+        )
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status",
+        workingDir=testDir)
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo1\n" \
+        "['mockgit', 'status']\n\n" \
+        "*** Git Repo: Path/To/ExtraRepo2\n" \
+        "['mockgit', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo3\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(cmndOut, cmndOut_expected)
+      # NOTE: Above ensures that all of the paths are read correctly and that
+      # missing paths (MissingExtraRepo) are ignored.
+
+      # Make sure that .gitdist overrides .gitdist.default
+      open(".gitdist", "w").write(
+        "ExtraRepo1\n" \
+        "ExtraRepo3\n"
+        )
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status",
+        workingDir=testDir)
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo1\n" \
+        "['mockgit', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo3\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(cmndOut, cmndOut_expected)
+
+      # Make sure that --dist-extra-repos overrides all files
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPathMock+" --dist-extra-repos=ExtraRepo1,Path/To/ExtraRepo2 status",
+        workingDir=testDir)
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo1\n" \
+        "['mockgit', 'status']\n\n" \
+        "*** Git Repo: Path/To/ExtraRepo2\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(cmndOut, cmndOut_expected)
+
+    finally:
+      os.chdir(testBaseDir)
+    
 
   def test_log_args_extra_repo_1(self):
     cmndOut = getCmndOutputInMockProjectDir(
