@@ -2,7 +2,8 @@
 
 usageHelp = r"""gitdist [gitdist arguments] [git arguments]
 
-Run git recursively over extra repos
+Run git recursively over extra repos and some extra tools for multi-repository
+git projects.
 
 Instead of typing:
 
@@ -54,6 +55,10 @@ This script has no dependencies other than standard python 2.4 packages so it
 can be copied to anywhere and used.
 
 TIPS:
+
+ - To process only changed repos w.r.t. their tracking branch, run
+   'gitdist --dist-mod-only [git arguments]'.  For example, to see
+   the status of only changed repos use 'gitdist --dist-mod-only status'.
 
  - Use 'gitdist --no-pager <command> ...' to get the full output from
    all extra repos in one contiguous stream which can then be piped
@@ -142,6 +147,15 @@ script will stop.
 Note that this Python script only depends on the Python 2.4+ standard modules
 'sys', 'os', 'subprocess', 'commands', and 're'. Also, it requires some
 compatible version of 'git' at the very minimum as well of course.
+
+COMPARISONS TO GIT SUBMODULE:
+
+The purpose and functioning of gitdist has a lot in common with the build-in
+git submodule command.  While git submodule is well suited for pulling in
+externally developed git repos, it is not well suited for managing the
+co-development of multiple git repos.  A more detailed discussion of different
+approaches to managing the development and integration of multiple git repos,
+see the TriBITS Developers Guide.
 """
 
 import sys
@@ -213,9 +227,9 @@ def getCommandlineOps():
   #
   # A) Define the native gitdist command-line arguments
   #
-  
+
   clp = OptionParser(usage=usageHelp)
-  
+
   helpArgName = "--help"
   withGitArgName = "--dist-use-git"
   extraRepoArgName = "--dist-extra-repos"
@@ -226,10 +240,12 @@ def getCommandlineOps():
   noColorArgName = "--dist-no-color"
   debugArgName = "--dist-debug"
   noOptName = "--dist-no-opt"
-  
+  modifiedOnly = "--dist-mod-only"
+
   nativeArgNames = [ helpArgName, withGitArgName, \
     extraRepoArgName, notExtraRepoArgName, notBaseRepoArgName, \
-    versionFileName, versionFile2Name, noColorArgName, debugArgName, noOptName ]
+    versionFileName, versionFile2Name, noColorArgName, debugArgName, noOptName, \
+    modifiedOnly ]
 
   # Find a default git to use
 
@@ -238,13 +254,13 @@ def getCommandlineOps():
   defaultGit = "git" # Try system git
   if not commandExists(defaultGit):
     defaultGit = "" # Give up and make the user specify
-  
+
   clp.add_option(
     withGitArgName, dest="useGit", type="string",
     default=defaultGit,
     help="The (path) to the git executable to use for each git repo command (default='"+defaultGit+"')"
     )
-  
+
   clp.add_option(
     extraRepoArgName, dest="extraRepos", type="string",
     default="",
@@ -252,36 +268,36 @@ def getCommandlineOps():
     +"  If the list is empty, it will look for a file called .gitdist to"
     +" get the list of extra repos separated by newlines."
     )
-  
+
   clp.add_option(
     notExtraRepoArgName, dest="notExtraRepos", type="string",
     default="",
     help="Comma separated list of extra repos to *not* forward git commands to."
     +"  This removes any repos from being processed that would otherwise be."
     )
-  
+
   clp.add_option(
     notBaseRepoArgName, dest="processBaseRepo", action="store_false",
     help="If set, don't pass the git command on to the base git repo.",
     default=True )
-  
+
   clp.add_option(
     versionFileName, dest="versionFile", type="string",
     default="",
     help="Path to a file contains a list of extra repo directories and git versions (replaces _VERSION_)."
     )
-  
+
   clp.add_option(
     versionFile2Name, dest="versionFile2", type="string",
     default="",
     help="Path to a second file contains a list of extra repo directories and git versions (replaces _VERSION2_)."
     )
-  
+
   clp.add_option(
     noColorArgName, dest="useColor", action="store_false",
     help="If set, don't use color in the output for gitdist (better for output to a file).",
     default=True )
-  
+
   clp.add_option(
     debugArgName, dest="debug", action="store_true",
     help="If set, then debugging info is printed.",
@@ -291,15 +307,27 @@ def getCommandlineOps():
     noOptName, dest="noOpt", action="store_true",
     help="If set, then no git commands will be run but instead will just be printed.",
     default=False )
-  
+
+  clp.add_option(
+    modifiedOnly, dest="modifiedOnly", action="store_true",
+    help="If set, then the listed git command will be only be run and output for the" \
+      " repo will only be produced if the command 'git diff --name-only ^<tracking-branch>'"
+      " returns non-empty output where <tracking-branch> is returned" \
+      " from 'rev-parse --abbrev-ref --symbolic-full-name @{u}'.  In order words," \
+      " if a git repo is unchanged w.r.t. its tracking branch, then the git command is" \
+      " skipped for that repo.  If a repo does not have a tracking branch, then the repo will" \
+      " be skipped as well.  Therefore, be careful to first run with dist-local-stat to see the" \
+      " status of each local repo to know which repos don't have tracking branches.",
+    default=False )
+
   #
   # B) Pull the native commandline arguments out of the commandline
   #
-  
+
   argv = sys.argv[1:]
   nativeArgs = []
   otherArgs = []
-  
+
   for arg in argv:
     #print "\narg = '"+arg+"'"
     matchedNativeArg = False
@@ -317,10 +345,10 @@ def getCommandlineOps():
       otherArgs.append(arg)
     #print "\nnativeArgs =", nativeArgs
     #print "otherArgs =", otherArgs
-  
+
   #print "\nnativeArgs =", nativeArgs
   #print "otherArgs =", otherArgs
-  
+
   (options, args) = clp.parse_args(nativeArgs)
 
   # Check for valid usage
@@ -336,7 +364,7 @@ def getCommandlineOps():
     sys.exit(2)
 
   # Get the list of extra repos
-  
+
   if options.extraRepos:
     extraReposFullList = options.extraRepos.split(",")
   else:
@@ -371,7 +399,7 @@ def requoteCmndLineArgsIntoArray(inArgs):
       newArg = arg
     else:
       newArg = splitArg[0]+"="+'='.join(splitArg[1:])
-    #print "\nnewArg =", newArg                                                                           
+    #print "\nnewArg =", newArg
     argsArray.append(newArg)
   return argsArray
 
@@ -379,7 +407,7 @@ def requoteCmndLineArgsIntoArray(inArgs):
 # Get a data-structure for a set of repos from a string
 def getRepoVersionDictFromRepoVersionFileString(repoVersionFileStr):
   repoVersionFileStrList = repoVersionFileStr.split("\n")
-  repoVersionDict = {}  
+  repoVersionDict = {}
   i = 0
   while i < len(repoVersionFileStrList):
     #print "i = ", i
@@ -430,7 +458,7 @@ def replaceRepoVersionInCmndLineArg(cmndLineArg, verToken, repoDirName, repoSha1
   if repoSha1:
     newCmndLineArg = re.sub(verToken, repoSha1, cmndLineArg)
     return newCmndLineArg
-  return cmndLineArg  
+  return cmndLineArg
 
 
 def replaceRepoVersionInCmndLineArgs(cmndLineArgsArray, repoDirName, \
@@ -464,12 +492,34 @@ def runRepoCmnd(options, cmndLineArgsArray, repoDirName, baseDir, \
   runCmnd(options, egCmndArray)
 
 
-# Determine if the repos should be processed or not
-def shouldWeProcessExtraRepo(options, extraRepo, notExtraReposList):
+# Determine if the extra repo should be processed or not
+def repoExistsAndNotExcluded(options, extraRepo, notExtraReposList):
   if not os.path.isdir(extraRepo): return False
   if extraRepo in notExtraReposList: return False
   return True
- 
+
+
+# Get the tracking branch for a repo
+def getTrackingBranch(options):
+  trackingBranch = getCmndOutput(
+    options.useGit + " rev-parse --abbrev-ref --symbolic-full-name @{u}"
+    ).strip()
+  if trackingBranch.find("error:") == -1:
+    return trackingBranch
+  return ""
+
+
+# Determine if the repo has any changes w.r.t. tracking branch?
+def repoHasLocalChanges(options, trackingBranch):
+  if not trackingBranch:
+    return False
+  gitDiffOutput = getCmndOutput(
+    options.useGit + " diff --name-only ^"+trackingBranch
+    ).strip()
+  if gitDiffOutput:
+    return True
+  return False
+
 
 #
 # Run the script
@@ -482,42 +532,76 @@ if __name__ == '__main__':
   # Get the repo version files
   repoVersionDict = getRepoVersionDictFromRepoVersionFile(options.versionFile)
   repoVersionDict2 = getRepoVersionDictFromRepoVersionFile(options.versionFile2)
-  
+
   # Reform the commandline arguments correctly
   #print "otherArgs =", otherArgs
   cmndLineArgsArray = requoteCmndLineArgsIntoArray(otherArgs)
-  
+
   # Get the reference base directory
   baseDir = os.getcwd()
-  
+
   if options.debug:
     print "*** Using git:", options.useGit
-  
-  # Get the name of the base repo  
+
+  # Get the name of the base repo
   baseDirArray = baseDir.split("/")
   baseRepoName = baseDirArray[-1]
 
-  if options.processBaseRepo:
-    print "" 
+  # See if we should process the base repo or not
+  processBaseRepo = True
+  if not options.processBaseRepo:
+    processBaseRepo = False
+  else:
+    # See if we should process based on --dist-mod-only
+    if options.modifiedOnly:
+      trackingBranch = getTrackingBranch(options)
+      if not repoHasLocalChanges(options, trackingBranch):
+        processBaseRepo = False
+
+  # Process the base git repo
+  if processBaseRepo:
+    print ""
     print "*** Base Git Repo: "+addColorToRepoDir(options.useColor, baseRepoName)
+    if options.debug:
+      print "*** Tracking branch for git repo '"+baseRepoName+"' = '"+trackingBranch+"'"
     sys.stdout.flush()
     runRepoCmnd(options, cmndLineArgsArray, baseRepoName, baseDir,
       repoVersionDict, repoVersionDict2)
-  
+
   for extraRepo in extraReposFullList:
-    if shouldWeProcessExtraRepo(options, extraRepo, notExtraReposList):
-      print "" 
+
+    processThisExtraRepo = True
+
+    if not repoExistsAndNotExcluded(options, extraRepo, notExtraReposList):
+      processThisExtraRepo = False
+
+    if processThisExtraRepo:
+
+      # Move into the extra repo
+      if options.debug:
+        print "\n*** Changing to directory "+extraRepo,
+      os.chdir(extraRepo)
+
+      # See if we should process based on --dist-mod-only
+      if options.modifiedOnly:
+        trackingBranch = getTrackingBranch(options)
+        if not repoHasLocalChanges(options, trackingBranch):
+          processThisExtraRepo = False
+
+    if processThisExtraRepo:
+
+      print ""
       print "*** Git Repo: "+addColorToRepoDir(options.useColor, extraRepo)
       sys.stdout.flush()
       if options.debug:
-        print "*** Changing to directory "+extraRepo
-      os.chdir(extraRepo)
+        print "*** Tracking branch for git repo '"+extraRepo+"' = '"+trackingBranch+"'"
       runRepoCmnd(options, cmndLineArgsArray, extraRepo, baseDir, \
         repoVersionDict, repoVersionDict2)
       if options.debug:
         print "*** Changing to directory "+baseDir
-      os.chdir(baseDir)
-  
+
+    os.chdir(baseDir)
+
   print ""
   sys.stdout.flush()
-  
+
