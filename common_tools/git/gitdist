@@ -1,38 +1,57 @@
 #!/usr/bin/env python
 
-usageHelp = r"""gitdist [gitdist options] [OPTIONS]
+usageHelp = r"""gitdist [gitdist arguments] [git arguments]
 
 Run git recursively over extra repos
 
-Instead of typing
+Instead of typing:
 
-   $ git [OPTIONS]
+  $ git [git arguments]
 
 type:
 
-  $ gitdist [gitdist options] [OPTIONS]
+  $ gitdist [gitdist options] [git arguments]
 
-This will distribute git options across all git repos listed, including the
+This will distribute git commands across all git repos listed, including the
 base git repo.  The options in [gitdist options] are prefixed with '--dist-'
-and are are pulled out before running git on the underlying executable.  See
---help to see the gitdist options.
+and are are pulled out off before passing the remaining arguments in [git
+arguments] to all the git repos.  See --help to see the [gitdist options].
 
-If --dist-extra-repos="", then the list of extra repos will be read from the
-file .gitdist.  The format of this file is to have one repo name per line as
-in:
+For example, consider the following git repos with other git repos cloned
+under it:
 
-   Repo1
-   Repo2
-   Repo3
-   ...
+  SomeBaseRepo/
+    .git/
+    ExtraRepo1/
+      .git/
+    ExtraRep2/
+      .git/
 
-NOTE: If any extra repository does not exist, then it will be ignored and no
-output will be produced.  Therefore, be careful to manually verify that the
-script recognizes the repositories that you list.  The best way to do that is
-to type 'gitdist status'.
+The gitdist command is run in the base git repo 'SomeBaseRepo' and the git
+commands are run on it as well as the git repos 'ExtraRepo1' and 'ExtraRepo2'.
 
-NOTE: This script has no dependencies other than standard linux packagse so it
-can be copied and moved anywhere and used.
+The set of repos processed is determined by the argument --dist-extra-repos or
+the files .gitdist or .gitdist.default.  If --dist-extra-repos="", then the
+list of extra repos will be read from the file '.gitdist' in the current
+working directory.  If the file '.gitdist' does not exist, then the list of
+extra repos will be read from the file '.gitdist.default in' the current
+working directory.  The format of this files '.gitdist' and '.gitdist.default'
+is to have one repo directory/name per line as in:
+
+  ExtraRepo1
+  ExtraRepo2
+  ...
+
+where each repo is the relative path to the repo under the base git repo
+(e.g. under 'SomeBaseRepo/').  The file .gitdist.default is meant to be
+committed to the base git repo so that gitdist is ready to use right away.
+
+If an extra repository does not exist, then it will be ignored.  Therefore, be
+careful to manually verify that the script recognizes the repositories that
+you list.  The best way to do that is to type 'gitdist status'.
+
+This script has no dependencies other than standard python 2.4 packages so it
+can be copied to anywhere and used.
 
 TIPS:
 
@@ -50,8 +69,8 @@ TIPS:
 
  - To exclude processing either the base git repo and/or other git repos
    listed in .gitdist, pass in --dist-not-base-repo and/or
-   --dist-not-extra-repos=RepoX,RepoZ,...  The provides complete control over
-   what git repos the given command is run on.
+   --dist-not-extra-repos=RepoX,RepoZ,...  This provides complete control over
+   what git repos the given git command is run.
 
 REPO VERSION FILES:
 
@@ -79,12 +98,12 @@ Each repository entry can have a summary message or not (i.e. use two or three
 lines per repo in the file).  A compatible repo version file can be generated
 with this script using, for example, using:
 
-   $ gitdist --dist-no-color log -1 --pretty=format:"%h [%ad] <%ae>%n%s" \
+  $ gitdist --dist-no-color log -1 --pretty=format:"%h [%ad] <%ae>%n%s" \
     | grep -v "^$" &> RepoVersion.txt
 
 using three lines per repo, or just:
 
-   $ gitdist --dist-no-color log -1 --pretty=format:"%h [%ad] <%ae>" \
+  $ gitdist --dist-no-color log -1 --pretty=format:"%h [%ad] <%ae>" \
     | grep -v "^$" &> RepoVersion.txt
 
 using two lines per repo in the output file.
@@ -321,8 +340,13 @@ def getCommandlineOps():
   if options.extraRepos:
     extraReposFullList = options.extraRepos.split(",")
   else:
-    gitdistfile = ".gitdist"
-    if os.path.exists(gitdistfile):
+    if os.path.exists(".gitdist"):
+      gitdistfile = ".gitdist"
+    elif os.path.exists(".gitdist.default"):
+      gitdistfile = ".gitdist.default"
+    else:
+      gitdistfile = None
+    if gitdistfile:
       extraReposFullList = open(gitdistfile, 'r').read().split()
     else:
       extraReposFullList = []
