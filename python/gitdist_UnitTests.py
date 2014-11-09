@@ -328,6 +328,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo0/remote_branch0\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: file1\n" \
@@ -342,6 +345,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo1/remote_branch1\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
@@ -351,6 +357,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo2/remote_branch2\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
@@ -386,6 +395,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo0/remote_branch0\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
@@ -395,6 +407,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo1/remote_branch1\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: file1\n" \
@@ -409,6 +424,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo2/remote_branch2\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
@@ -442,6 +460,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo0/remote_branch0\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: file1\n" \
@@ -456,6 +477,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 128\n" \
         "MOCK_PROGRAM_OUTPUT: error: No upstream branch found for ''\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         )
 
       # Make sure that --dist-extra-repos overrides all files
@@ -487,6 +511,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo0/remote_branch0\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: file1\n" \
@@ -498,6 +525,9 @@ class test_gitdist(unittest.TestCase):
         )
 
       open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 128\n" \
         "MOCK_PROGRAM_OUTPUT: fatal: No upstream configured for branch 'dummy'\n" \

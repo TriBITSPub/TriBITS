@@ -516,6 +516,11 @@ def getTrackingBranch(options):
 
 # Determine if the repo has any changes w.r.t. tracking branch?
 def repoHasLocalChanges(options, trackingBranch):
+  statusOutput = getCmndOutput(
+    options.useGit + " status --porcelain"
+    ).strip()
+  if statusOutput:
+    return True
   if not trackingBranch:
     return False
   gitDiffOutput = getCmndOutput(
