@@ -176,6 +176,27 @@ class test_mockprogram(unittest.TestCase):
       os.chdir(testBaseDir)
 
 
+  def test_call_1_multiline_out(self):
+    testDir = createAndMoveIntoTestDir("call_1_multiline_out")
+    try:
+      open('.mockprogram_inout.txt', 'w').write(
+        "MOCK_PROGRAM_INPUT: some input\n" \
+        "MOCK_PROGRAM_RETURN: 11\n" \
+        "MOCK_PROGRAM_OUTPUT: some output\n" \
+        "another line of ouput\n" \
+        "last ouptut line\n"
+        )
+      (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
+        mockProgramPath+" some input", rtnOutput=True)
+      expected_output = "some output\nanother line of ouput\nlast ouptut line\n"
+      self.assertEqual(output, expected_output)
+      self.assertEqual(errorCode, 11)
+      remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
+      self.assertEqual(remainingMockFileStr, "")
+    finally:
+      os.chdir(testBaseDir)
+
+
   def test_call_2(self):
     testDir = createAndMoveIntoTestDir("call_2")
     try:
@@ -190,6 +211,35 @@ class test_mockprogram(unittest.TestCase):
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 1", rtnOutput=True)
       expected_output = "some output 1\n"
+      self.assertEqual(output, expected_output)
+      self.assertEqual(errorCode, 13)
+      (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
+        mockProgramPath+" some input 2", rtnOutput=True)
+      expected_output = "some output 2\n"
+      self.assertEqual(output, expected_output)
+      self.assertEqual(errorCode, 15)
+      remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
+      self.assertEqual(remainingMockFileStr, "")
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_call_2_multiline_output_1(self):
+    testDir = createAndMoveIntoTestDir("call_2_multiline_output_1")
+    try:
+      open('.mockprogram_inout.txt', 'w').write(
+        "MOCK_PROGRAM_INPUT: some input 1\n" \
+        "MOCK_PROGRAM_RETURN: 13\n" \
+        "MOCK_PROGRAM_OUTPUT: some output 1\n" \
+        "another line of ouput\n" \
+        "last ouptut line\n"
+        "MOCK_PROGRAM_INPUT: some input 2\n" \
+        "MOCK_PROGRAM_RETURN: 15\n" \
+        "MOCK_PROGRAM_OUTPUT: some output 2\n" \
+        )
+      (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
+        mockProgramPath+" some input 1", rtnOutput=True)
+      expected_output = "some output 1\nanother line of ouput\nlast ouptut line\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 13)
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(

@@ -92,13 +92,15 @@ if len(mockprogramInoutArray) > 3:
   for line in mockprogramInoutArray[3:]:
     if line.find("MOCK_PROGRAM_INPUT:") == 0:
       break
-    outputStr = "\n"+line
+    outputStr = outputStr+"\n"+line
+    numLinesOuput = numLinesOuput + 1
 print outputStr
 
 # Write the remaining lines back into the file
-if len(mockprogramInoutArray) > 3:
+lineLineIndex = 2 + numLinesOuput
+if len(mockprogramInoutArray) > lineLineIndex:
   open('.mockprogram_inout.txt', 'w').write(
-    ('\n'.join(mockprogramInoutArray[3:]))+"\n" )
+    ('\n'.join(mockprogramInoutArray[lineLineIndex:]))+"\n" )
 else:
   open('.mockprogram_inout.txt', 'w').write("")
 
