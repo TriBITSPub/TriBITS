@@ -49,7 +49,9 @@ import imp
 import shutil
 
 pythonDir = os.path.abspath(GeneralScriptSupport.getScriptBaseDir())
+print "DEBUG: pythonDir = '"+pythonDir+"'"
 mockProgramPath = pythonDir+"/mockprogram.py"
+print "DEBUG: mockProgramPath = '"+mockProgramPath+"'"
 
 testBaseDir = os.getcwd()
 
