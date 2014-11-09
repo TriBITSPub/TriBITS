@@ -50,7 +50,6 @@ import shutil
 
 
 pythonDir = os.path.abspath(GeneralScriptSupport.getScriptBaseDir())
-print "DEBUG: pythonDir = '"+pythonDir+"'"
 utilsDir = pythonDir+"/utils"
 tribitsDir = os.path.abspath(pythonDir+"/..")
 commonToolsGitDir = tribitsDir+"/common_tools/git"
@@ -132,7 +131,6 @@ gitdistPath = commonToolsGitDir+"/gitdist"
 gitdistPathNoColor = gitdistPath+" --dist-no-color"
 gitdistPathMock = gitdistPathNoColor+" --dist-use-git=mockgit --dist-no-opt"
 mockGitPath = pythonDir+"/mockprogram.py"
-print "DEBUG: mockGitPath = '"+mockGitPath+"'"
 
 mockProjectDir = tribitsDir+"/package_arch/UnitTests/MockTrilinos"
 unitTestDataDir = tribitsDir+"/python/UnitTests"
