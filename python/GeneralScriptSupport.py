@@ -402,7 +402,7 @@ def getCmndOutput(cmnd, stripTrailingSpaces=False, throwOnError=True, workingDir
     getStdErr=getStdErr)
   if err:
     if throwOnError:
-      raise RuntimeError, '%s failed w/ exit code %d' % (cmnd, err)
+      raise RuntimeError, '%s failed w/ exit code %d:\n\n%s' % (cmnd, err, data)
   if stripTrailingSpaces:
     return data.rstrip()
   return data

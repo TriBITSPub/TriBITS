@@ -145,23 +145,22 @@ super-set of those processed by this script or an error will occur and the
 script will stop.
 
 Note that this Python script only depends on the Python 2.4+ standard modules
-'sys', 'os', 'subprocess', 'commands', and 're'. Also, it requires some
-compatible version of 'git' at the very minimum as well of course.
+'sys', 'os', 'subprocess', and 're'. Also, it requires some compatible version
+of 'git' at the very minimum as well of course.
 
 COMPARISONS TO GIT SUBMODULE:
 
 The purpose and functioning of gitdist has a lot in common with the build-in
 git submodule command.  While git submodule is well suited for pulling in
-externally developed git repos, it is not well suited for managing the
-co-development of multiple git repos.  A more detailed discussion of different
-approaches to managing the development and integration of multiple git repos,
-see the TriBITS Developers Guide.
+externally developed git repos, git submodules are not well suited for
+managing the co-development of multiple git repos.  A more detailed discussion
+of different approaches to managing the development and integration of
+multiple git repos, see the TriBITS Developers Guide.
 """
 
 import sys
 import os
 import subprocess
-import commands
 import re
 
 from optparse import OptionParser
@@ -173,8 +172,14 @@ from optparse import OptionParser
 
 
 # Get output from command
-def getCmndOutput(cmnd):
-  return commands.getstatusoutput(cmnd)[1]
+def getCmndOutput(cmnd, rtnCode=False):
+  child = subprocess.Popen(cmnd, shell=True, stdout=subprocess.PIPE,
+    stderr = subprocess.STDOUT)
+  output = child.stdout.read()
+  child.wait()
+  if rtnCode:
+    return (output, child.returncode)
+  return output
 
 
 # Run a command and syncronize the output
@@ -193,7 +198,7 @@ def runCmnd(options, cmnd):
 
 # Determine if a command exists:
 def commandExists(cmnd):
-  whichCmnd = getCmndOutput("which "+cmnd)
+  whichCmnd = getCmndOutput("which "+cmnd).strip()
   #print "whichCmnd =", whichCmnd
   if os.path.exists(whichCmnd):
     return True
@@ -501,11 +506,11 @@ def repoExistsAndNotExcluded(options, extraRepo, notExtraReposList):
 
 # Get the tracking branch for a repo
 def getTrackingBranch(options):
-  trackingBranch = getCmndOutput(
-    options.useGit + " rev-parse --abbrev-ref --symbolic-full-name @{u}"
-    ).strip()
-  if trackingBranch.find("error:") == -1:
-    return trackingBranch
+  (trackingBranch, rtnCode) = getCmndOutput(
+    options.useGit + " rev-parse --abbrev-ref --symbolic-full-name @{u}",
+    rtnCode=True )
+  if rtnCode == 0:
+    return trackingBranch.strip()
   return ""
 
 
