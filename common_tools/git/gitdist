@@ -505,6 +505,16 @@ def repoExistsAndNotExcluded(options, extraRepo, notExtraReposList):
 
 
 # Get the tracking branch for a repo
+def getLocalBranch(options):
+  (branch, rtnCode) = getCmndOutput(
+    options.useGit + " rev-parse --abbrev-ref HEAD",
+    rtnCode=True )
+  if rtnCode == 0:
+    return branch.strip()
+  return ""
+
+
+# Get the tracking branch for a repo
 def getTrackingBranch(options):
   (trackingBranch, rtnCode) = getCmndOutput(
     options.useGit + " rev-parse --abbrev-ref --symbolic-full-name @{u}",
@@ -512,6 +522,66 @@ def getTrackingBranch(options):
   if rtnCode == 0:
     return trackingBranch.strip()
   return ""
+
+
+# Get number of commits wr.t.t tracking branch
+def getNumCommitsWrtTrackingBranch(options, trackingBranch):
+  if trackingBranch == "":
+    return ""
+  (numCommits, rtnCode) = getCmndOutput(
+    options.useGit + " rev-list --count HEAD ^origin_repo/remote_branch",
+    rtnCode=True )
+  if rtnCode == 0:
+    return numCommits.strip()
+  return ""
+
+
+# Get the number of modified
+def getNumModifiedAndUntracked(options):
+  (rawStatusOutput, rtnCode) = getCmndOutput(
+    options.useGit + " status --porcelain", rtnCode=True )
+  if rtnCode == 0:
+    numModified = 0
+    numUntracked = 0
+    for line in rawStatusOutput.split("\n"):
+      if line.find(" M ") == 0 or line.find("M  ") == 0:
+        numModified += 1
+      elif line.find("??") == 0:
+        numUntracked += 1
+    return (str(numModified), str(numUntracked))
+  return ("", "")
+
+
+#
+# Get the repo statistics
+#
+
+class RepoStatsStruct:
+
+  def __init__(self, branch, trackingBranch, numCommits, numModified, numUntracked):
+    self.branch = branch
+    self.trackingBranch = trackingBranch
+    self.numCommits = numCommits
+    self.numModified = numModified
+    self.numUntracked = numUntracked
+
+  def __str__(self):
+    return "{" \
+     "branch='"+self.branch+"'," \
+     " trackingBranch='"+self.trackingBranch+"'," \
+     " numCommits='"+self.numCommits+"'," \
+     " numModified='"+self.numModified+"'," \
+     " numUntracked='"+self.numUntracked+"'" \
+     "}"
+
+
+def getRepoStats(options):
+  branch = getLocalBranch(options)
+  trackingBranch = getTrackingBranch(options)
+  numCommits = getNumCommitsWrtTrackingBranch(options, trackingBranch)
+  (numModified, numUntracked) = getNumModifiedAndUntracked(options)
+  return RepoStatsStruct(branch, trackingBranch,
+   numCommits, numModified, numUntracked)
 
 
 # Determine if the repo has any changes w.r.t. tracking branch?

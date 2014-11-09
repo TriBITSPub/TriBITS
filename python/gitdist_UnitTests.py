@@ -60,8 +60,137 @@ from gitdist import *
 
 
 #
-# Test data
+# Utility functions for testing
 #
+
+
+gitdistPath = commonToolsGitDir+"/gitdist"
+gitdistPathNoColor = gitdistPath+" --dist-no-color"
+gitdistPathMock = gitdistPathNoColor+" --dist-use-git=mockgit --dist-no-opt"
+mockGitPath = pythonDir+"/mockprogram.py"
+
+mockProjectDir = tribitsDir+"/package_arch/UnitTests/MockTrilinos"
+unitTestDataDir = tribitsDir+"/python/UnitTests"
+
+tempMockProjectDir = "MockProjectDir"
+
+testBaseDir = os.getcwd()
+
+
+def getCmndOutputInMockProjectDir(cmnd):
+  os.chdir(mockProjectDir)
+  cmndOut = getCmndOutput(cmnd)
+  os.chdir(testBaseDir)
+  return cmndOut
+
+
+def createAndMoveIntoTestDir(testDir):
+  if os.path.exists(testDir): shutil.rmtree(testDir)
+  os.mkdir(testDir)
+  os.chdir(testDir)
+  if not os.path.exists(tempMockProjectDir): os.mkdir(tempMockProjectDir)
+  os.chdir(tempMockProjectDir)
+  return os.path.join(testBaseDir, testDir, tempMockProjectDir)
+
+
+class GitDistOptions:
+
+  def __init__(self, useGit):
+    self.useGit = useGit
+
+
+#
+# Unit tests for functions in gitdist
+#
+
+
+class test_gitdist_getRepoStats(unittest.TestCase):
+
+
+  def test_no_change(self):
+    try:
+      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_no_change")
+      open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch\n" \
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
+        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo/remote_branch\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
+        )
+      options = GitDistOptions(mockGitPath)
+      repoStats = getRepoStats(options)
+      repoStats_expected = "{branch='local_branch'," \
+        " trackingBranch='origin_repo/remote_branch', numCommits='0'," \
+        " numModified='0', numUntracked='0'}" 
+      self.assertEqual(str(repoStats), repoStats_expected)
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_all_changed_detached_head(self):
+    try:
+      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed")
+      open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: HEAD\n" \
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+        "MOCK_PROGRAM_RETURN: 22\n" \
+        "MOCK_PROGRAM_OUTPUT: fatal: blah blahh blah\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+        " M file2\n" \
+        "?? file3\n" \
+        "?? file4\n" \
+        "?? file5\n" \
+        )
+      options = GitDistOptions(mockGitPath)
+      repoStats = getRepoStats(options)
+      repoStats_expected = "{branch='HEAD'," \
+        " trackingBranch='', numCommits=''," \
+        " numModified='2', numUntracked='3'}" 
+      self.assertEqual(str(repoStats), repoStats_expected)
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_all_changed(self):
+    try:
+      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed")
+      open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch\n" \
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
+        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo/remote_branch\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: 1\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+        " M file2\n" \
+        "?? file3\n" \
+        "?? file4\n" \
+        "?? file5\n" \
+        )
+      options = GitDistOptions(mockGitPath)
+      repoStats = getRepoStats(options)
+      repoStats_expected = "{branch='local_branch'," \
+        " trackingBranch='origin_repo/remote_branch', numCommits='1'," \
+        " numModified='2', numUntracked='3'}" 
+      self.assertEqual(str(repoStats), repoStats_expected)
+    finally:
+      os.chdir(testBaseDir)
 
 
 repoVersionFile_withSummary_1 = """*** Base Git Repo: MockTrilinos
@@ -82,11 +211,6 @@ sha1_2 [Fri Aug 30 09:55:07 2013 -0400] <author_2@ornl.gov>
 *** Git Repo: extraRepoOnePackageThreeSubpackages
 sha1_3 [Thu Dec 1 23:34:06 2011 -0500] <author_3@ornl.gov>
 """
-
-
-#
-# Unit tests for functions in gitdist
-#
 
 
 class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase):
@@ -125,35 +249,6 @@ class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase
 
 #
 # Test entire script gitdist#
-
-
-gitdistPath = commonToolsGitDir+"/gitdist"
-gitdistPathNoColor = gitdistPath+" --dist-no-color"
-gitdistPathMock = gitdistPathNoColor+" --dist-use-git=mockgit --dist-no-opt"
-mockGitPath = pythonDir+"/mockprogram.py"
-
-mockProjectDir = tribitsDir+"/package_arch/UnitTests/MockTrilinos"
-unitTestDataDir = tribitsDir+"/python/UnitTests"
-
-tempMockProjectDir = "MockProjectDir"
-
-testBaseDir = os.getcwd()
-
-
-def getCmndOutputInMockProjectDir(cmnd):
-  os.chdir(mockProjectDir)
-  cmndOut = getCmndOutput(cmnd)
-  os.chdir(testBaseDir)
-  return cmndOut
-
-
-def createAndMoveIntoTestDir(testDir):
-  if os.path.exists(testDir): shutil.rmtree(testDir)
-  os.mkdir(testDir)
-  os.chdir(testDir)
-  if not os.path.exists(tempMockProjectDir): os.mkdir(tempMockProjectDir)
-  os.chdir(tempMockProjectDir)
-  return os.path.join(testBaseDir, testDir, tempMockProjectDir)
 
 
 class test_gitdist(unittest.TestCase):
