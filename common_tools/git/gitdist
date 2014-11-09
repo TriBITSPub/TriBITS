@@ -356,6 +356,10 @@ def getCommandlineOps():
 
   (options, args) = clp.parse_args(nativeArgs)
 
+  debugFromEnv = os.environ.get("GITDIST_DEBUG_OVERRIDE")
+  if debugFromEnv:
+    options.debug = True
+
   # Check for valid usage
 
   if len(otherArgs) == 0:
@@ -529,7 +533,7 @@ def getNumCommitsWrtTrackingBranch(options, trackingBranch):
   if trackingBranch == "":
     return ""
   (numCommits, rtnCode) = getCmndOutput(
-    options.useGit + " rev-list --count HEAD ^origin_repo/remote_branch",
+    options.useGit + " rev-list --count HEAD ^"+trackingBranch,
     rtnCode=True )
   if rtnCode == 0:
     return numCommits.strip()
@@ -574,6 +578,23 @@ class RepoStatsStruct:
      " numUntracked='"+self.numUntracked+"'" \
      "}"
 
+  def numCommitsInt(self):
+    if self.numCommits == '': return 0
+    return int(self.numCommits)
+
+  def numModifiedInt(self):
+    if self.numModified == '': return 0
+    return int(self.numModified)
+
+  def numUntrackedInt(self):
+    if self.numUntracked == '': return 0
+    return int(self.numUntracked)
+
+  def hasLocalChanges(self):
+    if self.numCommitsInt()+self.numModifiedInt()+self.numUntrackedInt() > 0:
+      return True
+    return False
+
 
 def getRepoStats(options):
   branch = getLocalBranch(options)
@@ -582,23 +603,6 @@ def getRepoStats(options):
   (numModified, numUntracked) = getNumModifiedAndUntracked(options)
   return RepoStatsStruct(branch, trackingBranch,
    numCommits, numModified, numUntracked)
-
-
-# Determine if the repo has any changes w.r.t. tracking branch?
-def repoHasLocalChanges(options, trackingBranch):
-  statusOutput = getCmndOutput(
-    options.useGit + " status --porcelain"
-    ).strip()
-  if statusOutput:
-    return True
-  if not trackingBranch:
-    return False
-  gitDiffOutput = getCmndOutput(
-    options.useGit + " diff --name-only ^"+trackingBranch
-    ).strip()
-  if gitDiffOutput:
-    return True
-  return False
 
 
 #
@@ -627,54 +631,55 @@ if __name__ == '__main__':
   baseDirArray = baseDir.split("/")
   baseRepoName = baseDirArray[-1]
 
+  # Compute base repo stats
+  if options.modifiedOnly: baseRepoStats = getRepoStats(options)
+  else: baseRepoStats = None
+
   # See if we should process the base repo or not
   processBaseRepo = True
   if not options.processBaseRepo:
     processBaseRepo = False
-  else:
-    # See if we should process based on --dist-mod-only
-    if options.modifiedOnly:
-      trackingBranch = getTrackingBranch(options)
-      if not repoHasLocalChanges(options, trackingBranch):
-        processBaseRepo = False
+  elif options.modifiedOnly and not baseRepoStats.hasLocalChanges():
+    processBaseRepo = False
 
   # Process the base git repo
   if processBaseRepo:
     print ""
     print "*** Base Git Repo: "+addColorToRepoDir(options.useColor, baseRepoName)
     if options.debug:
-      print "*** Tracking branch for git repo '"+baseRepoName+"' = '"+trackingBranch+"'"
+      print "*** Tracking branch for git repo" \
+        " '"+baseRepoName+"' = '"+baseRepoStats.trackingBranch+"'"
     sys.stdout.flush()
     runRepoCmnd(options, cmndLineArgsArray, baseRepoName, baseDir,
       repoVersionDict, repoVersionDict2)
 
   for extraRepo in extraReposFullList:
 
+    # Determine if we should process this extra repo
     processThisExtraRepo = True
-
     if not repoExistsAndNotExcluded(options, extraRepo, notExtraReposList):
       processThisExtraRepo = False
-
     if processThisExtraRepo:
-
-      # Move into the extra repo
+      # cd into extrarepo dir
       if options.debug:
         print "\n*** Changing to directory "+extraRepo,
       os.chdir(extraRepo)
-
+      # Get repo stats
+      if options.modifiedOnly: extraRepoStats = getRepoStats(options)
+      else: extraRepoStats = None
       # See if we should process based on --dist-mod-only
-      if options.modifiedOnly:
-        trackingBranch = getTrackingBranch(options)
-        if not repoHasLocalChanges(options, trackingBranch):
-          processThisExtraRepo = False
+      if options.modifiedOnly and not extraRepoStats.hasLocalChanges():
+         processThisExtraRepo = False
 
+    # Process the extra repo
     if processThisExtraRepo:
 
       print ""
       print "*** Git Repo: "+addColorToRepoDir(options.useColor, extraRepo)
       sys.stdout.flush()
       if options.debug:
-        print "*** Tracking branch for git repo '"+extraRepo+"' = '"+trackingBranch+"'"
+        print "*** Tracking branch for git repo" \
+         " '"+extraRepo+"' = '"+extraRepoStats.trackingBranch+"'"
       runRepoCmnd(options, cmndLineArgsArray, extraRepo, baseDir, \
         repoVersionDict, repoVersionDict2)
       if options.debug:

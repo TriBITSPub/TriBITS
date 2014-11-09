@@ -134,9 +134,38 @@ class test_gitdist_getRepoStats(unittest.TestCase):
       os.chdir(testBaseDir)
 
 
+  def test_all_changed_no_tracking_branch(self):
+    try:
+      testDir = createAndMoveIntoTestDir(
+        "gitdist_getRepoStats_all_changed_no_tracking_branch")
+      open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch\n" \
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+        "MOCK_PROGRAM_RETURN: 55\n" \
+        "MOCK_PROGRAM_OUTPUT: error: blah blahh blah\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+        " M file2\n" \
+        " M file3\n" \
+        "?? file4\n" \
+        "?? file5\n" \
+        )
+      options = GitDistOptions(mockGitPath)
+      repoStats = getRepoStats(options)
+      repoStats_expected = "{branch='local_branch'," \
+        " trackingBranch='', numCommits=''," \
+        " numModified='3', numUntracked='2'}" 
+      self.assertEqual(str(repoStats), repoStats_expected)
+    finally:
+      os.chdir(testBaseDir)
+
+
   def test_all_changed_detached_head(self):
     try:
-      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed")
+      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_detached_head")
       open(".mockprogram_inout.txt", "w").write(
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
@@ -420,42 +449,50 @@ class test_gitdist(unittest.TestCase):
       os.mkdir("ExtraRepo2")
 
       open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: 3\n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: file1\n" \
-        "file2\n"
+        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
         "MOCK_PROGRAM_INPUT: status\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: On branch local_branch\n" \
-        "Your branch is ahead of 'origin_repo/remote_branch' by 3 commits.\n" \
+        "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
+        "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
         )
 
       open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo1/remote_branch1\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo1/remote_branch1\n" \
+        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
         )
 
       open("ExtraRepo2/.mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo2/remote_branch2\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo2/remote_branch2\n" \
+        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
         )
@@ -467,8 +504,8 @@ class test_gitdist(unittest.TestCase):
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
-        "On branch local_branch\n" \
-        "Your branch is ahead of 'origin_repo/remote_branch' by 3 commits.\n\n\n"
+        "On branch local_branch0\n" \
+        "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n\n\n"
       self.assertEqual(cmndOut, cmndOut_expected)
 
     finally:
@@ -487,42 +524,50 @@ class test_gitdist(unittest.TestCase):
       os.mkdir("ExtraRepo2")
 
       open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo0/remote_branch0\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
         )
 
       open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
+        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo1/remote_branch1\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: 1\n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo1/remote_branch1\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: file1\n" \
-        "file2\n"
         "MOCK_PROGRAM_INPUT: status\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
-        "Your branch is ahead of 'origin_repo1/remote1_branch' by 1 commits.\n" \
+        "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n" \
         )
 
       open("ExtraRepo2/.mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo2/remote_branch2\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo2/remote_branch2\n" \
+        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
         )
@@ -534,41 +579,46 @@ class test_gitdist(unittest.TestCase):
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Git Repo: ExtraRepo1\nOn branch local_branch1\n" \
-        "Your branch is ahead of 'origin_repo1/remote1_branch' by 1 commits.\n\n\n"
+        "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n\n\n"
       self.assertEqual(cmndOut, cmndOut_expected)
 
     finally:
       os.chdir(testBaseDir)
 
 
-  def test_dist_mod_only_1_extrarepo1_not_tracking_branch_error(self):
+  def test_dist_mod_only_1_extrarepo1_not_tracking_branch(self):
     os.chdir(testBaseDir)
     try:
 
       # Create a mock git meta-project
 
-      testDir = createAndMoveIntoTestDir("dist_mod_only_1_extrarepo1_not_tracking_branch_error")
+      testDir = createAndMoveIntoTestDir("dist_mod_only_1_extrarepo1_not_tracking_branch")
 
       os.mkdir("ExtraRepo1")
 
       open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: 3\n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: file1\n" \
-        "file2\n"
+        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
         "MOCK_PROGRAM_INPUT: status\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: On branch local_branch\n" \
-        "Your branch is ahead of 'origin_repo/remote_branch' by 3 commits.\n" \
+        "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
+        "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
         )
 
       open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 128\n" \
         "MOCK_PROGRAM_OUTPUT: error: No upstream branch found for ''\n" \
@@ -584,48 +634,53 @@ class test_gitdist(unittest.TestCase):
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
-        "On branch local_branch\n" \
-        "Your branch is ahead of 'origin_repo/remote_branch' by 3 commits.\n\n\n"
+        "On branch local_branch0\n" \
+        "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n\n\n"
       self.assertEqual(cmndOut, cmndOut_expected)
 
     finally:
       os.chdir(testBaseDir)
 
 
-  def test_dist_mod_only_1_extrarepo1_not_tracking_branch_fatal(self):
+  def test_dist_mod_only_1_extrarepo1_not_tracking_branch_with_mods(self):
     os.chdir(testBaseDir)
     try:
 
       # Create a mock git meta-project
 
-      testDir = createAndMoveIntoTestDir("dist_mod_only_1_extrarepo1_not_tracking_branch_fatal")
+      testDir = createAndMoveIntoTestDir("dist_mod_only_1_extrarepo1_not_tracking_branch_with_mods")
 
       os.mkdir("ExtraRepo1")
 
       open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: 0\n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: diff --name-only ^origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: file1\n" \
-        "file2\n"
-        "MOCK_PROGRAM_INPUT: status\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: On branch local_branch\n" \
-        "Your branch is ahead of 'origin_repo/remote_branch' by 3 commits.\n" \
         )
 
       open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 128\n" \
-        "MOCK_PROGRAM_OUTPUT: fatal: No upstream configured for branch 'dummy'\n" \
+        "MOCK_PROGRAM_OUTPUT: error: No upstream branch found for ''\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+        "MOCK_PROGRAM_INPUT: status\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
+        "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n" \
         )
 
       # Make sure that --dist-extra-repos overrides all files
@@ -634,9 +689,9 @@ class test_gitdist(unittest.TestCase):
           +" --dist-mod-only --dist-extra-repos=ExtraRepo1,ExtraRepo2 status",
         workingDir=testDir)
       cmndOut_expected = \
-        "\n*** Base Git Repo: MockProjectDir\n" \
-        "On branch local_branch\n" \
-        "Your branch is ahead of 'origin_repo/remote_branch' by 3 commits.\n\n\n"
+        "\n*** Git Repo: ExtraRepo1\n" \
+        "On branch local_branch1\n" \
+        "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n\n\n"
       self.assertEqual(cmndOut, cmndOut_expected)
 
     finally:
