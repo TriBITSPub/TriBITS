@@ -337,6 +337,64 @@ sha1_3 [Thu Dec 1 23:34:06 2011 -0500] <author_3@ornl.gov>
 """
 
 
+def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
+
+  open(".mockprogram_inout.txt", "w").write(
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+    "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo0/remote_branch0\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: 3\n" \
+    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+    " M file2\n" \
+    "?? file2\n" \
+    "MOCK_PROGRAM_INPUT: status\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
+    "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
+    )
+
+  open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
+    "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo1/remote_branch1\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: 22\n" \
+    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: ?? file1\n" \
+    "MOCK_PROGRAM_INPUT: status\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
+    "Your branch is ahead of 'origin_repo1/remote_branch1' by 22 commits.\n" \
+    )
+
+  open("ExtraRepo2/.mockprogram_inout.txt", "w").write(
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
+    "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo2/remote_branch2\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: 0\n" \
+    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: \n" \
+    )
+
+
 class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase):
 
 
@@ -383,9 +441,10 @@ class test_gitdist(unittest.TestCase):
 
 
   def test_default(self):
-    cmndOut = getCmndOutput(gitdistPathNoColor)
+    (cmndOut, errOut) = getCmndOutput(gitdistPathNoColor, rtnCode=True)
     cmndOut_expected = "Must specify git command. See 'git --help' for options.\n"
     self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(errOut, 1)
 
 
   def test_help(self):
@@ -398,9 +457,11 @@ class test_gitdist(unittest.TestCase):
 
 
   def test_noEgGit(self):
-    cmndOut = getCmndOutput(gitdistPathNoColor+" --dist-use-git= log")
+    (cmndOut, errOut) = getCmndOutput(gitdistPathNoColor+" --dist-use-git= log",
+      rtnCode=True)
     cmndOut_expected = "Can't find git, please set --dist-use-git\n"
     self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(errOut, 1)
 
 
   def test_log_args(self):
@@ -592,7 +653,6 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_OUTPUT: \n" \
         )
 
-      # Make sure that --dist-extra-repos overrides all files
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
           +" --dist-mod-only --dist-extra-repos=ExtraRepo1,ExtraRepo2 status",
@@ -667,7 +727,6 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_OUTPUT: \n" \
         )
 
-      # Make sure that --dist-extra-repos overrides all files
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
           +" --dist-mod-only --dist-extra-repos=ExtraRepo1,ExtraRepo2 status",
@@ -722,7 +781,6 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_OUTPUT: \n" \
         )
 
-      # Make sure that --dist-extra-repos overrides all files
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
           +" --dist-mod-only --dist-extra-repos=ExtraRepo1,ExtraRepo2 status",
@@ -895,6 +953,137 @@ class test_gitdist(unittest.TestCase):
       "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'sha1_2_2..sha1_2']\n\n"
     self.assertEqual(cmndOut, cmndOut_expected)
   # The above test ensures that it repalces the SHA1s for in the same cmndline args
+
+
+  def test_dist_repo_status_all(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_all")
+
+      os.mkdir("ExtraRepo1")
+      os.mkdir("ExtraRepo2")
+
+      writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0()
+
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
+          +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 dist-repo-status",
+        workingDir=testDir)
+      #print cmndOut
+      cmndOut_expected = \
+        "-----------------------------------------------------------------------------------------\n" \
+        "| ID | Repo Dir              | Branch        | Tracking Branch             | C  | M | ? |\n" \
+        "|----|-----------------------|---------------|-----------------------------|----|---|---|\n" \
+        "|  0 | MockProjectDir (Base) | local_branch0 | origin_repo0/remote_branch0 |  3 | 2 | 1 |\n" \
+        "|  1 | ExtraRepo1            | local_branch1 | origin_repo1/remote_branch1 | 22 |   | 1 |\n" \
+        "|  2 | ExtraRepo2            | local_branch2 | origin_repo2/remote_branch2 |    |   |   |\n" \
+        "-----------------------------------------------------------------------------------------\n" \
+        "\n" \
+        "(tip: to see a legend, pass in --dist-legend.)\n"
+      self.assertEqual(cmndOut, cmndOut_expected)
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_dist_repo_status_mod_only(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only")
+
+      os.mkdir("ExtraRepo1")
+      os.mkdir("ExtraRepo2")
+
+      writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0()
+
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
+          +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only dist-repo-status",
+        workingDir=testDir)
+      #print cmndOut
+      cmndOut_expected = \
+        "-----------------------------------------------------------------------------------------\n" \
+        "| ID | Repo Dir              | Branch        | Tracking Branch             | C  | M | ? |\n" \
+        "|----|-----------------------|---------------|-----------------------------|----|---|---|\n" \
+        "|  0 | MockProjectDir (Base) | local_branch0 | origin_repo0/remote_branch0 |  3 | 2 | 1 |\n" \
+        "|  1 | ExtraRepo1            | local_branch1 | origin_repo1/remote_branch1 | 22 |   | 1 |\n" \
+        "-----------------------------------------------------------------------------------------\n" \
+        "\n" \
+        "(tip: to see a legend, pass in --dist-legend.)\n"
+      self.assertEqual(cmndOut, cmndOut_expected)
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_dist_repo_status_mod_only_legend(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_legend")
+
+      os.mkdir("ExtraRepo1")
+      os.mkdir("ExtraRepo2")
+
+      writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0()
+
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
+          +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only" \
+          +" --dist-legend dist-repo-status",
+        workingDir=testDir)
+      #print "+++++++++\n"+cmndOut+"+++++++\n"
+      cmndOut_expected = \
+        "-----------------------------------------------------------------------------------------\n" \
+        "| ID | Repo Dir              | Branch        | Tracking Branch             | C  | M | ? |\n" \
+        "|----|-----------------------|---------------|-----------------------------|----|---|---|\n" \
+        "|  0 | MockProjectDir (Base) | local_branch0 | origin_repo0/remote_branch0 |  3 | 2 | 1 |\n" \
+        "|  1 | ExtraRepo1            | local_branch1 | origin_repo1/remote_branch1 | 22 |   | 1 |\n" \
+        "-----------------------------------------------------------------------------------------\n" \
+        "\n" \
+        "Legend:\n" \
+        "* ID: Repository ID, zero based (order git commands are run)\n" \
+        "* Repo Dir: Relative to base repo (base repo shown first with '(Base)')\n" \
+        "* Branch: current branch (or detached HEAD)\n" \
+        "* Tracking Branch: Tracking branch (or empty if no tracking branch)\n" \
+        "* C: number local commits w.r.t. tracking branch (empty if zero)\n" \
+        "* M: number of tracked modified (uncommitted) files (empty if zero)\n" \
+        "* ?: number of untracked, non-ignored files (empty if zero)\n\n"
+      self.assertEqual(cmndOut, cmndOut_expected)
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_dist_repo_status_extra_args_fail(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("dist_repo_status_extra_args_fail")
+
+      (cmndOut, errOut) = getCmndOutput(
+        gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
+          +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only" \
+          +" --dist-legend dist-repo-status --name-status",
+        rtnCode=True)
+      #print cmndOut
+      cmndOut_expected = \
+        "Error, passing in extra git commands/args ='--name-status' with special comamnd 'dist-repo-status is not allowed!\n"
+      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(errOut, 1)
+
+    finally:
+      os.chdir(testBaseDir)
 
 
 if __name__ == '__main__':
