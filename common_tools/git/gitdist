@@ -1,6 +1,18 @@
 #!/usr/bin/env python
 
+
+distRepoStatusLegend = r"""Legend:
+* ID: Repository ID, zero based (order git commands are run)
+* Repo Dir: Relative to base repo (base repo shown first with '(Base)')
+* Branch: current branch (or detached HEAD)
+* Tracking Branch: Tracking branch (or empty if no tracking branch)
+* C: number local commits w.r.t. tracking branch (empty if zero)
+* M: number of tracked modified (uncommitted) files (empty if zero)
+* ?: number of untracked, non-ignored files (empty if zero)
+"""
+
 usageHelp = r"""gitdist [gitdist arguments] [git arguments]
+       gitdist [gitdist arguments] dist-repo-status
 
 Run git recursively over extra repos and some extra tools for multi-repository
 git projects.
@@ -21,14 +33,14 @@ arguments] to all the git repos.  See --help to see the [gitdist options].
 For example, consider the following git repos with other git repos cloned
 under it:
 
-  SomeBaseRepo/
+  BaseRepo/
     .git/
     ExtraRepo1/
       .git/
     ExtraRep2/
       .git/
 
-The gitdist command is run in the base git repo 'SomeBaseRepo' and the git
+The gitdist command is run in the base git repo 'BaseRepo' and the git
 commands are run on it as well as the git repos 'ExtraRepo1' and 'ExtraRepo2'.
 
 The set of repos processed is determined by the argument --dist-extra-repos or
@@ -44,8 +56,8 @@ is to have one repo directory/name per line as in:
   ...
 
 where each repo is the relative path to the repo under the base git repo
-(e.g. under 'SomeBaseRepo/').  The file .gitdist.default is meant to be
-committed to the base git repo so that gitdist is ready to use right away.
+(e.g. under 'BaseRepo/').  The file .gitdist.default is meant to be committed
+to the base git repo so that gitdist is ready to use right away.
 
 If an extra repository does not exist, then it will be ignored.  Therefore, be
 careful to manually verify that the script recognizes the repositories that
@@ -55,6 +67,9 @@ This script has no dependencies other than standard python 2.4 packages so it
 can be copied to anywhere and used.
 
 TIPS:
+
+ - To see the status of all repos in a compact way, use the speical
+   'dist-repo-status' command (see below).
 
  - To process only changed repos w.r.t. their tracking branch, run
    'gitdist --dist-mod-only [git arguments]'.  For example, to see
@@ -77,6 +92,28 @@ TIPS:
    --dist-not-extra-repos=RepoX,RepoZ,...  This provides complete control over
    what git repos the given git command is run.
 
+SUMMARY OF REPO STATUS:
+
+This script supports the special command 'dist-repo-status' which prints a
+nice table showing the current status of all the repos.  For example, for the
+repos shown above:
+
+  $ gitdist dist-repo-status
+
+prints a table like:
+
+  ----------------------------------------------------------------
+  | ID | Repo Dir        | Branch | Tracking Branch | C | M  | ? |
+  |----|-----------------|--------|-----------------|---|----|---|
+  |  0 | BaseRepo (Base) | dummy  |                 |   |  0 | 0 |
+  |  1 | ExtraRepo1      | master | origin/master   | 1 |  2 | 0 |
+  |  2 | ExtraRepo2      | HEAD   |                 |   | 25 | 4 |
+  ----------------------------------------------------------------
+
+If the option --dist-legend is passed in, it will print the legend:
+
+"""+distRepoStatusLegend+\
+r"""
 REPO VERSION FILES:
 
 This script also supports the options --dist-version-file=<versionFile> and
@@ -87,7 +124,7 @@ a compatible set of versions of the repos.
 The format of these repo version files is a follows:
 
 -----------------------------------------------------
-*** Base Git Repo: SomeBaseRepo
+*** Base Git Repo: BaseRepo
 e102e27 [Mon Sep 23 11:34:59 2013 -0400] <author1@someurl.com>
 First summary message
 *** Git Repo: ExtraRepo1
@@ -179,6 +216,14 @@ def getTableField(field, width, just):
 
 
 # Format an ASCII table from a set of fields
+#
+# The format is of tableData is:
+#
+#   [ { "label":"<label0>:, "align":"<align0>, "fields":[<fld00>, ... ]}, 
+#     { "label":"<label1>:, "align":"<align1>, "fields":[<fld10>, ... ]},
+#     ...
+#     ]
+#
 def createAsciiTable(tableData):
 
   asciiTable = ""
@@ -309,12 +354,16 @@ def getCommandlineOps():
   noColorArgName = "--dist-no-color"
   debugArgName = "--dist-debug"
   noOptName = "--dist-no-opt"
-  modifiedOnly = "--dist-mod-only"
+  modifiedOnlyName = "--dist-mod-only"
+  legendName = "--dist-legend"
 
   nativeArgNames = [ helpArgName, withGitArgName, \
     extraRepoArgName, notExtraRepoArgName, notBaseRepoArgName, \
     versionFileName, versionFile2Name, noColorArgName, debugArgName, noOptName, \
-    modifiedOnly ]
+    modifiedOnlyName, legendName ]
+
+  distRepoStatus = "dist-repo-status"
+  nativeCmndNames = [ distRepoStatus ]
 
   # Find a default git to use
 
@@ -378,7 +427,7 @@ def getCommandlineOps():
     default=False )
 
   clp.add_option(
-    modifiedOnly, dest="modifiedOnly", action="store_true",
+    modifiedOnlyName, dest="modifiedOnly", action="store_true",
     help="If set, then the listed git command will be only be run and output for the" \
       " repo will only be produced if the command 'git diff --name-only ^<tracking-branch>'"
       " returns non-empty output where <tracking-branch> is returned" \
@@ -389,12 +438,19 @@ def getCommandlineOps():
       " status of each local repo to know which repos don't have tracking branches.",
     default=False )
 
+  clp.add_option(
+    legendName, dest="printLegend", action="store_true",
+    help="If set, then a legend will be printed below the repo summary table"\
+      " for the special dist-repo-status command.  Only applicable with dist-repo-status.",
+    default=False )
+
   #
   # B) Pull the native commandline arguments out of the commandline
   #
 
   argv = sys.argv[1:]
   nativeArgs = []
+  nativeCmnds = []
   otherArgs = []
 
   for arg in argv:
@@ -409,14 +465,30 @@ def getCommandlineOps():
         nativeArgs.append(arg)
         matchedNativeArg = True
         break
-    if not matchedNativeArg:
+    matchedNativeCmnd = False
+    for nativeCmndName in nativeCmndNames:
+      if arg == nativeCmndName:
+        #print "\nMatches native cmnd!"
+        nativeCmnds.append(nativeCmndName)
+        matchedNativeCmnd = True
+        break
+    if not (matchedNativeArg or matchedNativeCmnd):
       #print "\nDoes *not* match native arg!"
       otherArgs.append(arg)
     #print "\nnativeArgs =", nativeArgs
     #print "otherArgs =", otherArgs
 
   #print "\nnativeArgs =", nativeArgs
+  #print "nativeCmnds =", nativeCmnds
   #print "otherArgs =", otherArgs
+
+  if len(nativeCmnds) == 0:
+    nativeCmnd = None
+  elif len(nativeCmnds) == 1:
+    nativeCmnd = nativeCmnds[0]
+  elif len(nativeCmnds) > 1:
+    raise Exception("Error: Can't have more than one dist-xxx command "+\
+      " but was passed in "+str(nativeCmnds))
 
   (options, args) = clp.parse_args(nativeArgs)
 
@@ -426,7 +498,7 @@ def getCommandlineOps():
 
   # Check for valid usage
 
-  if len(otherArgs) == 0:
+  if not nativeCmnd and len(otherArgs) == 0:
     print addColorToErrorMsg(options.useColor,
       "Must specify git command. See 'git --help' for options.")
     sys.exit(1)
@@ -434,7 +506,7 @@ def getCommandlineOps():
   if not options.useGit:
     print addColorToErrorMsg(options.useColor,
       "Can't find git, please set --dist-use-git")
-    sys.exit(2)
+    sys.exit(1)
 
   # Get the list of extra repos
 
@@ -459,7 +531,8 @@ def getCommandlineOps():
   else:
     notExtraReposFullList = []
 
-  return (options, otherArgs, extraReposFullList, notExtraReposFullList)
+  return (options, nativeCmnd, otherArgs, extraReposFullList,
+    notExtraReposFullList)
 
 
 # Requote commandline arguments into an array
@@ -669,13 +742,58 @@ def getRepoStats(options):
    numCommits, numModified, numUntracked)
 
 
+def convertZeroStrToEmpty(strIn):
+  if strIn == "0":
+    return ""
+  return strIn
+
+
+class RepoStatTable:
+  
+  def __init__(self):
+    self.tableData = [
+      { "label" : "ID", "align" : "R", "fields" : [] },
+      { "label" : "Repo Dir", "align" : "L", "fields" : [] },
+      { "label" : "Branch", "align":"L", "fields" : [] },
+      { "label" : "Tracking Branch", "align":"L", "fields" : [] },
+      { "label" : "C", "align":"R", "fields" : [] },
+      { "label" : "M", "align":"R", "fields" : [] },
+      { "label" : "?", "align":"R", "fields" : [] },
+      ]
+    self.ID = 0
+
+  def insertRepoStat(self, repoDir, repoStat):
+    self.tableData[0]["fields"].append(str(self.ID))
+    self.tableData[1]["fields"].append(repoDir)
+    self.tableData[2]["fields"].append(repoStat.branch)
+    self.tableData[3]["fields"].append(repoStat.trackingBranch)
+    self.tableData[4]["fields"].append(convertZeroStrToEmpty(repoStat.numCommits))
+    self.tableData[5]["fields"].append(convertZeroStrToEmpty(repoStat.numModified))
+    self.tableData[6]["fields"].append(convertZeroStrToEmpty(repoStat.numUntracked))
+    self.ID += 1
+
+  def getTableData(self):
+    return self.tableData
+
+
 #
 # Run the script
 #
 
 if __name__ == '__main__':
 
-  (options, otherArgs, extraReposFullList, notExtraReposList) = getCommandlineOps()
+  (options, nativeCmnd, otherArgs, extraReposFullList, notExtraReposList) = \
+    getCommandlineOps()
+
+  if nativeCmnd == "dist-repo-status":
+    distRepoStatus = True
+    if len(otherArgs) > 0:
+      print "Error, passing in extra git commands/args =" \
+        "'"+" ".join(otherArgs)+"' with special comamnd 'dist-repo-status" \
+        " is not allowed!"
+      sys.exit(1)
+  else:
+    distRepoStatus = False
 
   # Get the repo version files
   repoVersionDict = getRepoVersionDictFromRepoVersionFile(options.versionFile)
@@ -695,9 +813,13 @@ if __name__ == '__main__':
   baseDirArray = baseDir.split("/")
   baseRepoName = baseDirArray[-1]
 
+  repoStatTable = RepoStatTable()
+
   # Compute base repo stats
-  if options.modifiedOnly: baseRepoStats = getRepoStats(options)
-  else: baseRepoStats = None
+  if options.modifiedOnly or distRepoStatus:
+    baseRepoStats = getRepoStats(options)
+  else:
+    baseRepoStats = None
 
   # See if we should process the base repo or not
   processBaseRepo = True
@@ -708,14 +830,17 @@ if __name__ == '__main__':
 
   # Process the base git repo
   if processBaseRepo:
-    print ""
-    print "*** Base Git Repo: "+addColorToRepoDir(options.useColor, baseRepoName)
-    if options.debug:
-      print "*** Tracking branch for git repo" \
-        " '"+baseRepoName+"' = '"+baseRepoStats.trackingBranch+"'"
-    sys.stdout.flush()
-    runRepoCmnd(options, cmndLineArgsArray, baseRepoName, baseDir,
-      repoVersionDict, repoVersionDict2)
+    if distRepoStatus:
+      repoStatTable.insertRepoStat(baseRepoName+" (Base)", baseRepoStats)
+    else:
+      print ""
+      print "*** Base Git Repo: "+addColorToRepoDir(options.useColor, baseRepoName)
+      if options.debug:
+        print "*** Tracking branch for git repo" \
+          " '"+baseRepoName+"' = '"+baseRepoStats.trackingBranch+"'"
+      sys.stdout.flush()
+      runRepoCmnd(options, cmndLineArgsArray, baseRepoName, baseDir,
+        repoVersionDict, repoVersionDict2)
 
   for extraRepo in extraReposFullList:
 
@@ -729,28 +854,41 @@ if __name__ == '__main__':
         print "\n*** Changing to directory "+extraRepo,
       os.chdir(extraRepo)
       # Get repo stats
-      if options.modifiedOnly: extraRepoStats = getRepoStats(options)
-      else: extraRepoStats = None
+      if options.modifiedOnly or distRepoStatus:
+        extraRepoStats = getRepoStats(options)
+      else:
+        extraRepoStats = None
       # See if we should process based on --dist-mod-only
       if options.modifiedOnly and not extraRepoStats.hasLocalChanges():
          processThisExtraRepo = False
 
     # Process the extra repo
     if processThisExtraRepo:
-
-      print ""
-      print "*** Git Repo: "+addColorToRepoDir(options.useColor, extraRepo)
-      sys.stdout.flush()
-      if options.debug:
-        print "*** Tracking branch for git repo" \
-         " '"+extraRepo+"' = '"+extraRepoStats.trackingBranch+"'"
-      runRepoCmnd(options, cmndLineArgsArray, extraRepo, baseDir, \
-        repoVersionDict, repoVersionDict2)
-      if options.debug:
-        print "*** Changing to directory "+baseDir
+      if distRepoStatus:
+        repoStatTable.insertRepoStat(extraRepo, extraRepoStats)
+        processThisExtraRepo = False
+      else:
+        print ""
+        print "*** Git Repo: "+addColorToRepoDir(options.useColor, extraRepo)
+        sys.stdout.flush()
+        if options.debug:
+          print "*** Tracking branch for git repo" \
+           " '"+extraRepo+"' = '"+extraRepoStats.trackingBranch+"'"
+        runRepoCmnd(options, cmndLineArgsArray, extraRepo, baseDir, \
+          repoVersionDict, repoVersionDict2)
+        if options.debug:
+          print "*** Changing to directory "+baseDir
 
     os.chdir(baseDir)
 
-  print ""
+  if distRepoStatus:
+    print createAsciiTable(repoStatTable.getTableData())
+    if options.printLegend:
+      print distRepoStatusLegend
+    else:
+      print "(tip: to see a legend, pass in --dist-legend.)" 
+  else:
+    print ""
+
   sys.stdout.flush()
 
