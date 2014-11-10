@@ -100,6 +100,101 @@ class GitDistOptions:
 
 
 #
+# Unit tests for createAsciiTable
+#
+
+
+class test_createAsciiTable(unittest.TestCase):
+
+
+  def test_full_table(self):
+    tableData = [
+      { "label" : "ID", "align" : "R",
+        "fields" : ["0", "1", "2"] },
+      { "label" : "Repo Dir", "align" : "L",
+         "fields" : ["Base: BaseRepo", "ExtraRepo1", "Path/To/ExtraRepo2" ] },
+      { "label":"Branch", "align":"L",
+        "fields" : ["dummy", "master", "HEAD" ] },
+      { "label" : "Tracking Branch", "align":"L",
+        "fields" : ["", "origin/master", "" ] },
+      { "label" : "C", "align":"R", "fields" : ["", "1", "" ] },
+      { "label" : "M", "align":"R", "fields" : ["0", "2", "25" ] },
+      { "label" : "?", "align":"R", "fields" : ["0", "0", "4" ] },
+      ]
+    asciiTable = createAsciiTable(tableData)
+    #print asciiTable
+    asciiTable_expected = \
+      "-------------------------------------------------------------------\n" \
+      "| ID | Repo Dir           | Branch | Tracking Branch | C | M  | ? |\n" \
+      "|----|--------------------|--------|-----------------|---|----|---|\n" \
+      "|  0 | Base: BaseRepo     | dummy  |                 |   |  0 | 0 |\n" \
+      "|  1 | ExtraRepo1         | master | origin/master   | 1 |  2 | 0 |\n" \
+      "|  2 | Path/To/ExtraRepo2 | HEAD   |                 |   | 25 | 4 |\n" \
+      "-------------------------------------------------------------------\n"
+    self.assertEqual(asciiTable, asciiTable_expected)
+
+
+  def test_no_rows(self):
+    tableData = [
+      { "label" : "ID", "align" : "R",
+        "fields" : [] },
+      { "label" : "Repo Dir", "align" : "L",
+         "fields" : [] },
+      { "label":"Branch", "align":"L",
+        "fields" : [] },
+      { "label" : "Tracking Branch", "align":"L",
+        "fields" : [] },
+      { "label" : "C", "align":"R", "fields" : [] },
+      { "label" : "M", "align":"R", "fields" : [] },
+      { "label" : "?", "align":"R", "fields" : [] },
+      ]
+    asciiTable = createAsciiTable(tableData)
+    #print asciiTable
+    asciiTable_expected = \
+      "--------------------------------------------------------\n" \
+      "| ID | Repo Dir | Branch | Tracking Branch | C | M | ? |\n" \
+      "|----|----------|--------|-----------------|---|---|---|\n" \
+      "--------------------------------------------------------\n"
+    self.assertEqual(asciiTable, asciiTable_expected)
+
+
+  def test_one_row(self):
+    tableData = [
+      { "label" : "ID", "align" : "R",
+        "fields" : ["0"] },
+      { "label" : "Repo Dir", "align" : "L",
+         "fields" : ["Base: BaseRepo"] },
+      { "label":"Branch", "align":"L",
+        "fields" : ["dummy"] },
+      { "label" : "Tracking Branch", "align":"L",
+        "fields" : ["origin/master"] },
+      { "label" : "C", "align":"R", "fields" : ["24"] },
+      { "label" : "M", "align":"R", "fields" : ["25"] },
+      { "label" : "?", "align":"R", "fields" : ["4"] },
+      ]
+    asciiTable = createAsciiTable(tableData)
+    #print asciiTable
+    asciiTable_expected = \
+      "----------------------------------------------------------------\n" \
+      "| ID | Repo Dir       | Branch | Tracking Branch | C  | M  | ? |\n" \
+      "|----|----------------|--------|-----------------|----|----|---|\n" \
+      "|  0 | Base: BaseRepo | dummy  | origin/master   | 24 | 25 | 4 |\n" \
+      "----------------------------------------------------------------\n"
+    self.assertEqual(asciiTable, asciiTable_expected)
+
+
+  def test_row_mismatch(self):
+    tableData = [
+      { "label" : "ID", "align" : "R",
+        "fields" : ["0", "1"] },
+      { "label" : "Repo Dir", "align" : "L",
+         "fields" : ["Base: BaseRepo"] },
+      ]
+    #createAsciiTable(tableData)
+    self.assertRaises(Exception, createAsciiTable, tableData)
+
+
+#
 # Unit tests for functions in gitdist
 #
 
