@@ -167,7 +167,71 @@ from optparse import OptionParser
 
 
 #
-# Helper functions
+# Format an ASCII table
+#
+
+
+# Fill in a field
+def getTableField(field, width, just):
+  if just == "R":
+    return " "+field.rjust(width)+" |"
+  return " "+field.ljust(width)+" |"
+
+
+# Format an ASCII table from a set of fields
+def createAsciiTable(tableData):
+
+  asciiTable = ""
+
+  # Table size
+  numFields = len(tableData)
+  numRows = len(tableData[0]["fields"])
+
+  # a) Get the max field width for each column.
+  fullTableWidth = 1  # The left '|'
+  tableFieldWidth = []
+  for fieldDict in tableData:
+    label = fieldDict["label"]
+    maxFieldWidth = len(label)
+    if len(fieldDict["fields"]) != numRows:
+      raise Exception("Error: column '"+label+"' numfields = " + \
+        str(len(fieldDict["fields"])) + " != numRows = "+str(numRows)+"\n" )
+    for field in fieldDict["fields"]:
+      fieldWidth = len(field)
+      if fieldWidth > maxFieldWidth: maxFieldWidth = fieldWidth 
+    fullTableWidth += (maxFieldWidth + 3) # begin " ", end " ", '|'
+    tableFieldWidth.append(maxFieldWidth)
+
+  # b) Write the header of the table (always left-align the colume labels)
+  asciiTable += ('-'*fullTableWidth)+"\n"
+  asciiTable += "|"
+  fieldIdx = 0
+  for fieldDict in tableData:
+    asciiTable += getTableField(fieldDict["label"], tableFieldWidth[fieldIdx], "L")
+    fieldIdx += 1
+  asciiTable += "\n"
+  asciiTable += "|"
+  for field_i in range(numFields):
+    asciiTable += ('-'*(tableFieldWidth[field_i]+2))+"|"
+    fieldIdx += 1
+  asciiTable += "\n"
+
+  # c) Write each row of the table
+  for row_i in range(numRows):
+    asciiTable += "|"
+    field_i = 0
+    for fieldDict in tableData:
+      asciiTable += getTableField(fieldDict["fields"][row_i],
+        tableFieldWidth[field_i], fieldDict["align"] )
+      field_i += 1
+    asciiTable += "\n"
+  asciiTable += ('-'*fullTableWidth)+"\n"
+  
+  return asciiTable
+
+
+#
+# Helper functions for gitdist
 #
 
 
