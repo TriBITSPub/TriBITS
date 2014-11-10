@@ -212,9 +212,9 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
-        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo/remote_branch\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo/remote_branch\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
@@ -286,9 +286,9 @@ class test_gitdist_getRepoStats(unittest.TestCase):
       os.chdir(testBaseDir)
 
 
-  def test_all_changed(self):
+  def test_all_changed_1_author(self):
     try:
-      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed")
+      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_1_author")
       open(".mockprogram_inout.txt", "w").write(
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
@@ -296,9 +296,9 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
-        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo/remote_branch\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo/remote_branch\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 1\n" \
+        "MOCK_PROGRAM_OUTPUT: 1 some author\n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: M  file1\n" \
@@ -311,6 +311,39 @@ class test_gitdist_getRepoStats(unittest.TestCase):
       repoStats = getRepoStats(options)
       repoStats_expected = "{branch='local_branch'," \
         " trackingBranch='origin_repo/remote_branch', numCommits='1'," \
+        " numModified='2', numUntracked='3'}" 
+      self.assertEqual(str(repoStats), repoStats_expected)
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_all_changed_3_authors(self):
+    try:
+      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_3_authors")
+      open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch\n" \
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo/remote_branch\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: 1 some author1\n" \
+        "2 some author2\n" \
+        "3 some author2\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+        " M file2\n" \
+        "?? file3\n" \
+        "?? file4\n" \
+        "?? file5\n" \
+        )
+      options = GitDistOptions(mockGitPath)
+      repoStats = getRepoStats(options)
+      repoStats_expected = "{branch='local_branch'," \
+        " trackingBranch='origin_repo/remote_branch', numCommits='6'," \
         " numModified='2', numUntracked='3'}" 
       self.assertEqual(str(repoStats), repoStats_expected)
     finally:
@@ -346,9 +379,9 @@ def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
     "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
     "MOCK_PROGRAM_RETURN: 0\n" \
     "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-    "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo0/remote_branch0\n" \
+    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
     "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: 3\n" \
+    "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
     "MOCK_PROGRAM_INPUT: status --porcelain\n" \
     "MOCK_PROGRAM_RETURN: 0\n" \
     "MOCK_PROGRAM_OUTPUT: M  file1\n" \
@@ -367,9 +400,9 @@ def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
     "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
     "MOCK_PROGRAM_RETURN: 0\n" \
     "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
-    "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo1/remote_branch1\n" \
+    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
     "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: 22\n" \
+    "MOCK_PROGRAM_OUTPUT: 22 some author\n" \
     "MOCK_PROGRAM_INPUT: status --porcelain\n" \
     "MOCK_PROGRAM_RETURN: 0\n" \
     "MOCK_PROGRAM_OUTPUT: ?? file1\n" \
@@ -386,9 +419,9 @@ def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
     "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
     "MOCK_PROGRAM_RETURN: 0\n" \
     "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
-    "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo2/remote_branch2\n" \
+    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
     "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: \n" \
     "MOCK_PROGRAM_INPUT: status --porcelain\n" \
     "MOCK_PROGRAM_RETURN: 0\n" \
     "MOCK_PROGRAM_OUTPUT: \n" \
@@ -611,9 +644,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 3\n" \
+        "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: M  file1\n" \
@@ -630,9 +663,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
-        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo1/remote_branch1\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
@@ -645,9 +678,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
-        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo2/remote_branch2\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
@@ -685,9 +718,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
@@ -700,9 +733,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
-        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo1/remote_branch1\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 1\n" \
+        "MOCK_PROGRAM_OUTPUT: 1 some author\n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
@@ -719,9 +752,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
-        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo2/remote_branch2\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \
@@ -757,9 +790,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 3\n" \
+        "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: M  file1\n" \
@@ -812,9 +845,9 @@ class test_gitdist(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_INPUT: rev-list --count HEAD ^origin_repo0/remote_branch0\n" \
+        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: \n" \

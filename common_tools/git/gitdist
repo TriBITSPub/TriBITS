@@ -663,18 +663,33 @@ def getTrackingBranch(options):
   if rtnCode == 0:
     return trackingBranch.strip()
   return ""
+  # Above, if the command failed, there is likely no tracking branch.
+  # However, this could fail for other reasons so it is a little dangerous to
+  # just fail and return "" but I don't know of another way to do this.
 
 
-# Get number of commits wr.t.t tracking branch
+# Get number of commits as a str wr.t.t tracking branch
 def getNumCommitsWrtTrackingBranch(options, trackingBranch):
   if trackingBranch == "":
     return ""
-  (numCommits, rtnCode) = getCmndOutput(
-    options.useGit + " rev-list --count HEAD ^"+trackingBranch,
-    rtnCode=True )
-  if rtnCode == 0:
-    return numCommits.strip()
-  return ""
+  (summaryLines, rtnCode) = getCmndOutput(
+    options.useGit + " shortlog -s HEAD ^"+trackingBranch, rtnCode=True )
+  if rtnCode != 0:
+    raise Exception(summaryLines)
+  numCommits = 0
+  summaryLines = summaryLines.strip()
+  if summaryLines:
+    for summaryLine in summaryLines.split("\n"):
+      #print "summaryLine = '"+summaryLine+"'"
+      numAuthorCommits = int(summaryLine.strip().split(" ")[0].strip())
+      #print "numAuthorCommits =", numAuthorCommits
+      numCommits += numAuthorCommits
+  return str(numCommits)
+  # NOTE: Above, we would like to use 'git ref-list --count' but that is not
+  # supported in older versions of git (at least not in 1.7.0.4).  Using 'git
+  # shortlog -s' will return just one line per author so this is not likley to
+  # return a lot of data and the cost of the python code to process this
+  # should be insignificant compared to the process execution command.
 
 
 # Get the number of modified
