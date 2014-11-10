@@ -298,7 +298,7 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
         "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo/remote_branch\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 1 some author\n" \
+        "MOCK_PROGRAM_OUTPUT: 1\tsome author\n" \
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: M  file1\n" \

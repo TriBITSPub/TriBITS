@@ -681,7 +681,7 @@ def getNumCommitsWrtTrackingBranch(options, trackingBranch):
   if summaryLines:
     for summaryLine in summaryLines.split("\n"):
       #print "summaryLine = '"+summaryLine+"'"
-      numAuthorCommits = int(summaryLine.strip().split(" ")[0].strip())
+      numAuthorCommits = int(summaryLine.strip().split()[0].strip())
       #print "numAuthorCommits =", numAuthorCommits
       numCommits += numAuthorCommits
   return str(numCommits)
