@@ -6,7 +6,7 @@
 <meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title>TriBITS Developers Guide and Reference</title>
 <meta name="author" content="Roscoe A. Bartlett (bartlettra&#64;ornl.gov)" />
-<meta name="date" content="2014-11-10" />
+<meta name="date" content="2014-11-11" />
 <style type="text/css">
 
 /*
@@ -315,9 +315,9 @@ ul.auto-toc {
 <tr><th class="docinfo-name">Author:</th>
 <td>Roscoe A. Bartlett (<a class="reference external" href="mailto:bartlettra&#64;ornl.gov">bartlettra&#64;ornl.gov</a>)</td></tr>
 <tr><th class="docinfo-name">Date:</th>
-<td>2014-11-10</td></tr>
+<td>2014-11-11</td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>TriBITS Development at 2014-11-10</td></tr>
+<td>TriBITS Development at 2014-11-11</td></tr>
 </tbody>
 </table>
 <table class="docutils field-list" frame="void" rules="none">
@@ -1919,10 +1919,11 @@ this file exists, then it defines extra CPack-related options that are
 specific to this TriBITS Repository.  This file must define the macro
 <tt class="docutils literal">TRIBITS_REPOSITORY_DEFINE_PACKAGING()</tt> which is called by TriBITS.  This
 file is processed as the top project-level scope so any local variables set
-have project-wide effect.  This file is processed before the project's
-<a class="reference internal" href="#projectdir-cmake-callbackdefineprojectpackaging-cmake">&lt;projectDir&gt;/cmake/CallbackDefineProjectPackaging.cmake</a> file so any options
-defined in this can be overridden by the project.  This file typically just
-sets extra excludes to remove files from the tarball.  The file:</p>
+have project-wide effect.  This file is processed after the project's
+<a class="reference internal" href="#projectdir-cmake-callbackdefineprojectpackaging-cmake">&lt;projectDir&gt;/cmake/CallbackDefineProjectPackaging.cmake</a> file so any project
+CPACK varaibles are defined for the repository-level options and commands are
+created.  This file typically just sets extra excludes to remove files from
+the tarball.  The file:</p>
 <blockquote>
 <a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>/<tt class="docutils literal">cmake/CallbackDefineRepositoryPackaging.cmake</tt></blockquote>
 <p>provides a good example which is:</p>
@@ -2846,14 +2847,14 @@ through the call to <a class="reference internal" href="#id2">TRIBITS_PROJECT()<
 <div class="line">* <tt class="docutils literal">ADD_SUBDIRECTORY(</tt> <a class="reference internal" href="#packagedir-spkgdir-cmakelists-txt">&lt;packageDir&gt;/&lt;spkgDir&gt;/CMakeLists.txt</a> <tt class="docutils literal">)</tt></div>
 </div>
 </div>
-<div class="line">15) For each <tt class="docutils literal">&lt;repoDir&gt;</tt> in all defined TriBITS repositories:</div>
+<div class="line">16) <tt class="docutils literal">INCLUDE(</tt> <a class="reference internal" href="#projectdir-cmake-callbackdefineprojectpackaging-cmake">&lt;projectDir&gt;/cmake/CallbackDefineProjectPackaging.cmake</a> <tt class="docutils literal">)</tt></div>
+<div class="line-block">
+<div class="line">* Call <tt class="docutils literal">TRIBITS_PROJECT_DEFINE_PACKAGING()</tt></div>
+</div>
+<div class="line">16) For each <tt class="docutils literal">&lt;repoDir&gt;</tt> in all defined TriBITS repositories:</div>
 <div class="line-block">
 <div class="line">* <tt class="docutils literal">INCLUDE(</tt> <a class="reference internal" href="#repodir-cmake-callbackdefinerepositorypackaging-cmake">&lt;repoDir&gt;/cmake/CallbackDefineRepositoryPackaging.cmake</a> <tt class="docutils literal">)</tt></div>
 <div class="line">* Call <tt class="docutils literal">TRIBITS_REPOSITORY_DEFINE_PACKAGING()</tt></div>
-</div>
-<div class="line">17) <tt class="docutils literal">INCLUDE(</tt> <a class="reference internal" href="#projectdir-cmake-callbackdefineprojectpackaging-cmake">&lt;projectDir&gt;/cmake/CallbackDefineProjectPackaging.cmake</a> <tt class="docutils literal">)</tt></div>
-<div class="line-block">
-<div class="line">* Call <tt class="docutils literal">TRIBITS_PROJECT_DEFINE_PACKAGING()</tt></div>
 </div>
 </div>
 </div>
@@ -2982,8 +2983,8 @@ $ cmake \
 -- File Trace: PACKAGE    ADD_SUBDIR [...]/packages/with_subpackages/b/tests/CMakeLists.txt
 -- File Trace: PACKAGE    ADD_SUBDIR [...]/packages/with_subpackages/c/CMakeLists.txt
 -- File Trace: PACKAGE    ADD_SUBDIR [...]/packages/with_subpackages/c/tests/CMakeLists.txt
--- File Trace: REPOSITORY INCLUDE    [...]/cmake/CallbackDefineRepositoryPackaging.cmake
 -- File Trace: PROJECT    INCLUDE    [...]/cmake/CallbackDefineProjectPackaging.cmake
+-- File Trace: REPOSITORY INCLUDE    [...]/cmake/CallbackDefineRepositoryPackaging.cmake
 </pre>
 <p>However, every file that TriBITS processes is not printed in this file trace
 if it should be obvious that the file is being processed.  For example, the
