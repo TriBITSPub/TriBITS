@@ -2367,12 +2367,11 @@ MACRO(TRIBITS_SETUP_PACKAGING_AND_DISTRIBUTION)
 
   ENDFOREACH()
 
-  # Add excludes for git VC files/dirs
+  # Add excludes for VC files/dirs
   SET(CPACK_SOURCE_IGNORE_FILES
     ${CPACK_SOURCE_IGNORE_FILES}
     /[.]git/
     [.]gitignore$
-    [.]egdist$
     )
 
   # Print the set of excluded files
