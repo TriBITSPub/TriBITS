@@ -246,8 +246,12 @@ FUNCTION(DRIVE_ADVANCED_TEST)
 
       IF (SHOW_START_END_DATE_TIME AND NOT SHOW_COMMANDS_ONLY)
         TIMER_GET_RAW_SECONDS(TEST_CMND_END)
-        TIMER_PRINT_REL_TIME(${TEST_CMND_START} ${TEST_CMND_END}
-           "TEST_${CMND_IDX}: Time")
+        IF (TEST_CMND_START AND TEST_CMND_END)
+          TIMER_PRINT_REL_TIME(${TEST_CMND_START} ${TEST_CMND_END}
+             "TEST_${CMND_IDX}: Time")
+        ELSE()
+          MESSAGE("ERROR: Note able to return test times! Is 'date' in your path?")
+        ENDIF()
         SET(TEST_CMND_START ${TEST_CMND_END})
       ENDIF()
 
@@ -261,8 +265,12 @@ FUNCTION(DRIVE_ADVANCED_TEST)
 
     IF (SHOW_START_END_DATE_TIME)
       PRINT_CURRENT_DATE_TIME("Ending at:")
-      TIMER_PRINT_REL_TIME(${TEST_OVERALL_START} ${TEST_CMND_END}
-        "OVERALL TEST TIME")
+      IF (TEST_OVERALL_START AND TEST_CMND_END)
+        TIMER_PRINT_REL_TIME(${TEST_OVERALL_START} ${TEST_CMND_END}
+          "OVERALL TEST TIME")
+      ELSE()
+        MESSAGE("ERROR: Note able to return test times! Is 'date' in your path?")
+      ENDIF()
       MESSAGE("")
     ENDIF()
 
