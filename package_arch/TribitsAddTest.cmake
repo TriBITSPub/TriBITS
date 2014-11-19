@@ -581,10 +581,11 @@ INCLUDE(TribitsAddTestHelpers)
 #
 # **Debugging and Examining Test Generation (TRIBITS_ADD_TEST())**
 #
-# In order to see what tests are getting added and to debug some issues in
-# test creation, one can set the cache variable
-# ``${PROJECT_NAME}_VERBOSE_CONFIGURE=ON``.  This will result in the printout
-# of some information about the test getting added or not.
+# In order to see what tests get added and if not then why, configure with
+# ``${PROJECT_NAME}_TRACE_ADD_TEST=ON``.  That will print one line per show
+# that the test got added and if not then why the test was not added (i.e. due
+# to ``COMM``, ``NUM_MPI_PROCS``, ``CATEGORIES``, ``HOST``, ``XHOST``,
+# ``HOSTTYPE``, or ``XHOSTTYPE``).
 #
 # Also, CMake writes a file ``CTestTestfile.cmake`` in the current binary
 # directory which contains all of the added tests and test properties that are
@@ -617,8 +618,9 @@ FUNCTION(TRIBITS_ADD_TEST EXE_NAME)
     MESSAGE("TRIBITS_ADD_TEST: ${EXE_NAME} ${ARGN}")
   ENDIF()
 
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT "")
+  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
   GLOBAL_SET(TRIBITS_SET_TEST_PROPERTIES_INPUT)
+  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
 
   #
   # A) Parse the input arguments
@@ -666,6 +668,31 @@ FUNCTION(TRIBITS_ADD_TEST EXE_NAME)
   SET(ADDED_TESTS_NAMES_OUT)
 
   #
+  # Get test name
+  #
+
+
+  # If requested create a modifier for the name that will be inserted between
+  # the package name and the given name or exe_name for the test
+  SET(DIRECTORY_NAME "")
+  IF(PARSE_ADD_DIR_TO_NAME)
+    TRIBITS_CREATE_NAME_FROM_CURRENT_SOURCE_DIRECTORY(DIRECTORY_NAME)
+    SET(DIRECTORY_NAME "${DIRECTORY_NAME}_")
+  ENDIF()
+
+  #MESSAGE("TRIBITS_ADD_TEST: ${EXE_NAME}: EXE_BINARY_NAME = ${EXE_BINARY_NAME}")
+
+  IF (PARSE_NAME)
+    SET(TEST_NAME "${DIRECTORY_NAME}${PARSE_NAME}")
+  ELSEIF (PARSE_NAME_POSTFIX)
+    SET(TEST_NAME "${DIRECTORY_NAME}${EXE_NAME}_${PARSE_NAME_POSTFIX}")
+  ELSE()
+    SET(TEST_NAME "${DIRECTORY_NAME}${EXE_NAME}")
+  ENDIF()
+
+  SET(TEST_NAME "${PACKAGE_NAME}_${TEST_NAME}")
+
+  #
   # B) Add or don't add tests based on a number of criteria
   #
 
@@ -691,24 +718,6 @@ FUNCTION(TRIBITS_ADD_TEST EXE_NAME)
     ${PARSE_NOEXESUFFIX}
     ${PARSE_ADD_DIR_TO_NAME} EXE_BINARY_NAME
     )
-
-  # If requested create a modifier for the name that will be inserted between
-  # the package name and the given name or exe_name for the test
-  SET(DIRECTORY_NAME "")
-  IF(PARSE_ADD_DIR_TO_NAME)
-    TRIBITS_CREATE_NAME_FROM_CURRENT_SOURCE_DIRECTORY(DIRECTORY_NAME)
-    SET(DIRECTORY_NAME "${DIRECTORY_NAME}_")
-  ENDIF()
-
-  #MESSAGE("TRIBITS_ADD_TEST: ${EXE_NAME}: EXE_BINARY_NAME = ${EXE_BINARY_NAME}")
-
-  IF (PARSE_NAME)
-    SET(TEST_NAME "${DIRECTORY_NAME}${PARSE_NAME}")
-  ELSEIF (PARSE_NAME_POSTFIX)
-    SET(TEST_NAME "${DIRECTORY_NAME}${EXE_NAME}_${PARSE_NAME_POSTFIX}")
-  ELSE()
-    SET(TEST_NAME "${DIRECTORY_NAME}${EXE_NAME}")
-  ENDIF()
 
   TRIBITS_ADD_TEST_ADJUST_DIRECTORY( ${EXE_BINARY_NAME} "${PARSE_DIRECTORY}"
     EXECUTABLE_PATH)

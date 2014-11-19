@@ -3,6 +3,11 @@
 Release Notes for TriBITS
 ----------------------------------------
 
+2014/11/19:
+
+(*) Added ${PROJECT_NAME}_TRACE_ADD_TEST: Now you can a single line print if a
+test got added or not and if not then why.
+
 2014/09/22:
 
 (*) Changed minimum version of CMake from 2.7 to 2.8.11.

@@ -505,10 +505,11 @@ INCLUDE(PrintVar)
 #
 # **Debugging and Examining Test Generation (TRIBITS_ADD_ADVANCED_TEST())**
 #
-# In order to see if the test gets added and to debug some issues in test
-# creation, one can set the cache variable
-# ``${PROJECT_NAME}_VERBOSE_CONFIGURE=ON``.  This will result in the printout
-# of some information about the test getting added or not.
+# In order to see what tests get added and if not then why, configure with
+# ``${PROJECT_NAME}_TRACE_ADD_TEST=ON``.  That will print one line per show
+# that the test got added and if not then why the test was not added (i.e. due
+# to ``COMM``, ``OVERALL_NUM_MPI_PROCS``, ``NUM_MPI_PROCS``, ``CATEGORIES``,
+# ``HOST``, ``XHOST``, ``HOSTTYPE``, or ``XHOSTTYPE``).
 #
 # Likely the best way to debugging test generation using this function is to
 # examine the generated file ``<testName>.cmake`` in the current binary
@@ -522,6 +523,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
   ENDIF()
 
   GLOBAL_SET(TRIBITS_SET_TEST_PROPERTIES_INPUT)
+  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
 
   IF (PACKAGE_NAME)
     SET(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_IN})
@@ -862,6 +864,10 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       ADD_TEST( ${TEST_NAME}
         ${CMAKE_COMMAND} "-DTEST_CONFIG=\${CTEST_CONFIGURATION_TYPE}"
         -P "${TEST_SCRIPT_FILE}")
+    ENDIF()
+
+    IF (${PROJECT_NAME}_TRACE_ADD_TEST)
+      MESSAGE_WRAPPER("-- ${TEST_NAME}: Added test!")
     ENDIF()
 
     IF(PARSE_ADDED_TEST_NAME_OUT)

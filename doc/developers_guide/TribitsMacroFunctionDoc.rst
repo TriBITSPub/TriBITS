@@ -464,10 +464,11 @@ that shows up in ``ctest -N`` when running the test.
 
 **Debugging and Examining Test Generation (TRIBITS_ADD_ADVANCED_TEST())**
 
-In order to see if the test gets added and to debug some issues in test
-creation, one can set the cache variable
-``${PROJECT_NAME}_VERBOSE_CONFIGURE=ON``.  This will result in the printout
-of some information about the test getting added or not.
+In order to see what tests get added and if not then why, configure with
+``${PROJECT_NAME}_TRACE_ADD_TEST=ON``.  That will print one line per show
+that the test got added and if not then why the test was not added (i.e. due
+to ``COMM``, ``OVERALL_NUM_MPI_PROCS``, ``NUM_MPI_PROCS``, ``CATEGORIES``,
+``HOST``, ``XHOST``, ``HOSTTYPE``, or ``XHOSTTYPE``).
 
 Likely the best way to debugging test generation using this function is to
 examine the generated file ``<testName>.cmake`` in the current binary
@@ -1587,10 +1588,11 @@ per process, one would call::
 
 **Debugging and Examining Test Generation (TRIBITS_ADD_TEST())**
 
-In order to see what tests are getting added and to debug some issues in
-test creation, one can set the cache variable
-``${PROJECT_NAME}_VERBOSE_CONFIGURE=ON``.  This will result in the printout
-of some information about the test getting added or not.
+In order to see what tests get added and if not then why, configure with
+``${PROJECT_NAME}_TRACE_ADD_TEST=ON``.  That will print one line per show
+that the test got added and if not then why the test was not added (i.e. due
+to ``COMM``, ``NUM_MPI_PROCS``, ``CATEGORIES``, ``HOST``, ``XHOST``,
+``HOSTTYPE``, or ``XHOSTTYPE``).
 
 Also, CMake writes a file ``CTestTestfile.cmake`` in the current binary
 directory which contains all of the added tests and test properties that are
