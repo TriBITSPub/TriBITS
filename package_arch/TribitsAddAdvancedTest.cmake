@@ -175,18 +175,19 @@ INCLUDE(PrintVar)
 #   ``OVERALL_NUM_MPI_PROCS <overallNumProcs>``
 #
 #     If specified, gives the default number of MPI processes that each
-#     executable command runs on.  If ``<numProcs>`` is greater than
+#     executable command runs on.  If ``<overallNumProcs>`` is greater than
 #     ``${MPI_EXEC_MAX_NUMPROCS}`` then the test will be excluded.  If not
 #     specified, then the default number of processes for an MPI build will be
 #     ``${MPI_EXEC_DEFAULT_NUMPROCS}``.  For serial builds, this argument is
-#     ignored.  This also results in the test property ``PROCESSORS`` being
-#     set to ``<overallNumProcs>`` (see `Running multiple tests at the same
-#     time (TRIBITS_ADD_ADVANCED_TEST())`_).  **WARNING!** If just running a
-#     serial script or other command, then the property ``PROCESSORS`` will
-#     still get set to ``${MPI_EXEC_DEFAULT_NUMPROCS}`` so in order to avoid
-#     CTest unnecessarily resolving ``${MPI_EXEC_DEFAULT_NUMPROCS}`` processes
-#     for a serial non-MPI test, then one must explicitly pass in
-#     ``MPI_EXEC_DEFAULT_NUMPROCS 1``!
+#     ignored.  For MPI builds with all ``TEST_<IDX> CMND`` blocks,
+#     ``<overallNumProcs>`` is used to set the property ``PROCESSORS``. (see
+#     `Running multiple tests at the same time
+#     (TRIBITS_ADD_ADVANCED_TEST())`_).  **WARNING!** If just running a serial
+#     script or other command, then the property ``PROCESSORS`` will still get
+#     set to ``${OVERALL_NUM_MPI_PROCS}`` so in order to avoid CTest
+#     unnecessarily reserving ``${OVERALL_NUM_MPI_PROCS}`` processes for a
+#     serial non-MPI test, then one must leave off ``OVERALL_NUM_MPI_PROCS``
+#     or explicitly pass in ``MPI_EXEC_DEFAULT_NUMPROCS 1``!
 #
 #   ``CATEGORIES <category0> <category1> ...``
 #
@@ -620,6 +621,12 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
   SET(NUM_CMNDS 0)
   SET(TEST_EXE_LIST "")
 
+  IF (PARSE_OVERALL_NUM_MPI_PROCS)
+    SET(TOTAL_NUM_PROCESSORS_USED ${PARSE_OVERALL_NUM_MPI_PROCS})
+  ELSE()
+    SET(TOTAL_NUM_PROCESSORS_USED 1)
+  ENDIF()
+
   FOREACH( TEST_CMND_IDX RANGE ${MAX_NUM_TEST_CMND_IDX} )
 
     IF (NOT PARSE_TEST_${TEST_CMND_IDX} )
@@ -677,11 +684,9 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       TRIBITS_ADD_TEST_GET_NUM_PROCS_USED("${PARSE_NUM_MPI_PROCS}"
         ${NUM_MPI_PROC_VAR_NAME}  NUM_PROCS_USED)
       IF (NUM_PROCS_USED LESS 0)
-        IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-          MESSAGE(STATUS "Skipping adding test because NUM_MPI_PROCS ${PARSE_NUM_MPI_PROCS}"
-            " is out of range.")
-        ENDIF()
         SET(ADD_THE_TEST FALSE)
+      ELSEIF (NUM_PROCS_USED  GREATER  TOTAL_NUM_PROCESSORS_USED)
+        SET(TOTAL_NUM_PROCESSORS_USED ${NUM_PROCS_USED})
       ENDIF()
 
       IF(ADD_THE_TEST)
@@ -698,14 +703,6 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       IF (NOT PARSE_CMND_LEN EQUAL 1)
         MESSAGE(SEND_ERROR "Error, TEST_${TEST_CMND_IDX} CMND = '${PARSE_CMND}'"
           " must be a single command.  To add arguments use ARGS <arg1> <arg2> ...." )
-      ENDIF()
-
-      #This allows us to check if a test is requesting more than MPI_EXEC_MAX_NUMPROCS
-      TRIBITS_ADD_TEST_GET_NUM_PROCS_USED("${PARSE_OVERALL_NUM_MPI_PROCS}"
-        "OVERALL_NUM_MPI_PROCS" NUM_PROCS_USED)
-
-      IF (NUM_PROCS_USED LESS 0)
-        SET(ADD_THE_TEST FALSE)
       ENDIF()
 
       IF(ADD_THE_TEST)
@@ -890,9 +887,9 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
     #This if clause will set the number of PROCESSORS to reserve during testing
     #to the number requested for the test.
-    IF(NUM_PROCS_USED)
+    IF(TOTAL_NUM_PROCESSORS_USED)
       TRIBITS_SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES
-        PROCESSORS "${NUM_PROCS_USED}")
+        PROCESSORS "${TOTAL_NUM_PROCESSORS_USED}")
     ENDIF()
 
     IF (PARSE_FINAL_PASS_REGULAR_EXPRESSION)
