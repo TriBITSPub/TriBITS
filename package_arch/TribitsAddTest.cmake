@@ -58,6 +58,7 @@ INCLUDE(TribitsAddTestHelpers)
 #         POSTFIX_AND_ARGS_1 ... ]
 #     [COMM [serial] [mpi]]
 #     [NUM_MPI_PROCS <numProcs>]
+#     [NUM_TOTAL_CORES_USED <numTotalCoresUsed>]
 #     [CATEGORIES <category0>  <category1> ...]
 #     [HOST <host0> <host1> ...]
 #     [XHOST <host0> <host1> ...]
@@ -207,6 +208,22 @@ INCLUDE(TribitsAddTestHelpers)
 #     ignored.  This will also be set as the built-in test property
 #     ``PROCESSORS`` to tell CTest how many processes this test will use (see
 #     `Running multiple tests at the same time (TRIBITS_ADD_TEST())`_).
+#
+#   ``NUM_TOTAL_CORES_USED <numTotalCoresUsed>``
+#
+#     If specified, gives the total number of processes used reported to CTest
+#     as the built-in CTest ``PROCESSORS`` property.  If this is not
+#     specified, then ``PROCESSORS`` is set to ``${NUM_MPI_PROCESSORS}``.
+#     This argument is used for test scripts/executables that use more cores
+#     then ``${NUM_MPI_PROCS}`` and its only purpose is to inform CTest and
+#     TriBITS of the maximum number of cores that are used by the underlying
+#     test executable/script.  Instead, the argument ``NUM_MPI_PROCS`` must be
+#     used instead.  When specified, ``<numTotalCoresUsed>`` is compared
+#     against ``${MPI_EXEC_MAX_NUMPROCS}`` and if greater, then the test will
+#     not be added.  Otherwise, the only purpose for this argument is to set
+#     the CTest property ``PROCESSORS`` so that CTest knows how to best
+#     schedule the test w.r.t. other tests on a given number of available
+#     processes.
 #
 #   ``CATEGORIES <category0> <category1> ...``
 #
@@ -489,7 +506,7 @@ INCLUDE(TribitsAddTestHelpers)
 # the outer ``CMakeLists.txt`` file after the call to ``TRIBITS_ADD_TEST()``.
 #
 # If tests are added, then the names of those tests will be returned in the
-# varible ``ADDED_TESTS_NAMES_OUT <testsNames>``.  This can be used, for
+# variable ``ADDED_TESTS_NAMES_OUT <testsNames>``.  This can be used, for
 # example, to override the ``PROCESSORS`` property for the tests with::
 #
 #   TRIBITS_ADD_TEST( someTest ...
@@ -503,7 +520,7 @@ INCLUDE(TribitsAddTestHelpers)
 # where the test writes a log file ``someTest.log`` that we want to submit to
 # CDash also.
 #
-# This appraoch will work no matter what TriBITS names the individual test(s)
+# This approach will work no matter what TriBITS names the individual test(s)
 # or whether the test(s) are added or not (depending on other arguments like
 # ``COMM``, ``XHOST``, etc.).
 #
@@ -639,7 +656,7 @@ FUNCTION(TRIBITS_ADD_TEST EXE_NAME)
      #prefix
      PARSE
      #lists
-     "DIRECTORY;KEYWORDS;COMM;NUM_MPI_PROCS;ARGS;${POSTFIX_AND_ARGS_LIST};NAME;NAME_POSTFIX;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;PASS_REGULAR_EXPRESSION;FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TESTS_NAMES_OUT"
+     "DIRECTORY;KEYWORDS;COMM;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;ARGS;${POSTFIX_AND_ARGS_LIST};NAME;NAME_POSTFIX;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;PASS_REGULAR_EXPRESSION;FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TESTS_NAMES_OUT"
      #options
      "NOEXEPREFIX;NOEXESUFFIX;STANDARD_PASS_OUTPUT;WILL_FAIL;ADD_DIR_TO_NAME;RUN_SERIAL"
      ${ARGN}
@@ -735,9 +752,32 @@ FUNCTION(TRIBITS_ADD_TEST EXE_NAME)
   # E) Get the MPI options
   #
 
-  TRIBITS_ADD_TEST_GET_NUM_PROCS_USED("${PARSE_NUM_MPI_PROCS}" NUM_PROCS_USED)
+  TRIBITS_ADD_TEST_GET_NUM_PROCS_USED("${PARSE_NUM_MPI_PROCS}"
+    "NUM_MPI_PROCS" NUM_PROCS_USED)
   IF (NUM_PROCS_USED LESS 0)
     SET(ADD_MPI_TEST FALSE)
+  ENDIF()
+
+  IF (TPL_ENABLE_MPI)
+    SET(MPI_NAME_POSTFIX "_MPI_${NUM_PROCS_USED}")
+  ELSE()
+    SET(MPI_NAME_POSTFIX "")
+  ENDIF()
+
+  IF (PARSE_NUM_TOTAL_CORES_USED  AND  NUM_PROCS_USED  GREATER  -1)
+    IF (PARSE_NUM_TOTAL_CORES_USED GREATER MPI_EXEC_MAX_NUMPROCS)
+      SET(ADD_MPI_TEST FALSE)
+      MESSAGE_WRAPPER(
+        "-- ${TEST_NAME}${MPI_NAME_POSTFIX}: NOT added because NUM_TOTAL_CORES_USED='${PARSE_NUM_TOTAL_CORES_USED}' > MPI_EXEC_MAX_NUMPROCS='${MPI_EXEC_MAX_NUMPROCS}'!"
+        )
+    ENDIF()
+    IF (NUM_PROCS_USED  GREATER  PARSE_NUM_TOTAL_CORES_USED)
+      MESSAGE_WRAPPER(
+        FATAL_ERROR
+        "ERROR: ${TEST_NAME}${MPI_NAME_POSTFIX}: NUM_MPI_PROCS='${NUM_PROCS_USED}' > NUM_TOTAL_CORES_USED='${PARSE_NUM_TOTAL_CORES_USED}' not allowed!"
+        )
+      SET(ADD_MPI_TEST FALSE) # For unit test mode!
+    ENDIF()
   ENDIF()
 
   #
@@ -746,12 +786,6 @@ FUNCTION(TRIBITS_ADD_TEST EXE_NAME)
 
   IF (NOT ADD_SERIAL_TEST AND NOT ADD_MPI_TEST)
     RETURN()
-  ENDIF()
-
-  IF (TPL_ENABLE_MPI)
-    SET(MPI_NAME_POSTFIX "_MPI_${NUM_PROCS_USED}")
-  ELSE()
-    SET(MPI_NAME_POSTFIX "")
   ENDIF()
 
   IF (PARSE_ARGS)

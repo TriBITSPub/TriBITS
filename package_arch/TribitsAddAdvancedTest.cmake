@@ -250,7 +250,7 @@ INCLUDE(PrintVar)
 #     the `TRIBITS_ADD_TEST()`_ function (see `Determining the Executable or
 #     Command to Run (TRIBITS_ADD_TEST())`_).  If this is an MPI build, then
 #     the executable will be run with MPI using ``NUM_MPI_PROCS <numProcs>``
-#     or ``OVERALL_NUM_MPI_PROCS <overallNumProcs>`` (if ``NUM_MPI_PROCS`` is
+#     (or ``OVERALL_NUM_MPI_PROCS <overallNumProcs>`` if ``NUM_MPI_PROCS`` is
 #     not set for this test case).  If the maximum number of MPI processes
 #     allowed is less than this number of MPI processes, then the test will
 #     *not* be run.  Note that ``EXEC <exeRootName>`` when ``NOEXEPREFIX`` and
@@ -626,6 +626,10 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       BREAK()
     ENDIF()
 
+    IF (NOT  ADD_THE_TEST)
+      BREAK()
+    ENDIF()
+
     MATH( EXPR NUM_CMNDS ${NUM_CMNDS}+1 )
 
     # Parse the test command case
@@ -664,10 +668,14 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       TRIBITS_ADD_TEST_ADJUST_DIRECTORY( ${EXE_BINARY_NAME} "${PARSE_DIRECTORY}"
         EXECUTABLE_PATH)
 
-      IF (NOT PARSE_NUM_MPI_PROCS)
+      IF (PARSE_NUM_MPI_PROCS)
+        SET(NUM_MPI_PROC_VAR_NAME "NUM_MPI_PROCS")
+      ELSE()
         SET(PARSE_NUM_MPI_PROCS ${PARSE_OVERALL_NUM_MPI_PROCS})
+        SET(NUM_MPI_PROC_VAR_NAME "OVERALL_NUM_MPI_PROCS")
       ENDIF()
-      TRIBITS_ADD_TEST_GET_NUM_PROCS_USED("${PARSE_NUM_MPI_PROCS}" NUM_PROCS_USED)
+      TRIBITS_ADD_TEST_GET_NUM_PROCS_USED("${PARSE_NUM_MPI_PROCS}"
+        ${NUM_MPI_PROC_VAR_NAME}  NUM_PROCS_USED)
       IF (NUM_PROCS_USED LESS 0)
         IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
           MESSAGE(STATUS "Skipping adding test because NUM_MPI_PROCS ${PARSE_NUM_MPI_PROCS}"
@@ -693,13 +701,10 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       ENDIF()
 
       #This allows us to check if a test is requesting more than MPI_EXEC_MAX_NUMPROCS
-      TRIBITS_ADD_TEST_GET_NUM_PROCS_USED("${PARSE_OVERALL_NUM_MPI_PROCS}" NUM_PROCS_USED)
+      TRIBITS_ADD_TEST_GET_NUM_PROCS_USED("${PARSE_OVERALL_NUM_MPI_PROCS}"
+        "OVERALL_NUM_MPI_PROCS" NUM_PROCS_USED)
 
       IF (NUM_PROCS_USED LESS 0)
-        IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-          MESSAGE(STATUS "Skipping adding test because OVERALL_NUM_MPI_PROCS ${PARSE_OVERALL_NUM_MPI_PROCS}"
-            " is out of range.")
-        ENDIF()
         SET(ADD_THE_TEST FALSE)
       ENDIF()
 
@@ -800,63 +805,63 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
   # ToDo: Verify that TEST_${MAX_NUM_TEST_CMND_IDX}+1 does *not* exist!
 
-  IF (PARSE_OVERALL_WORKING_DIRECTORY)
-    IF ("${PARSE_OVERALL_WORKING_DIRECTORY}" STREQUAL "TEST_NAME")
-      SET(PARSE_OVERALL_WORKING_DIRECTORY ${TEST_NAME})
-    ENDIF()
-  ENDIF()
-
-  APPEND_STRING_VAR( TEST_SCRIPT_STR
-    "\n"
-    "SET(TEST_NAME ${TEST_NAME})\n"
-    "\n"
-    "SET(NUM_CMNDS ${NUM_CMNDS})\n"
-    "\n"
-    "SET(OVERALL_WORKING_DIRECTORY \"${PARSE_OVERALL_WORKING_DIRECTORY}\")\n"
-    "\n"
-    "SET(FAIL_FAST ${PARSE_FAIL_FAST})\n"
-    "\n"
-    "SET(SHOW_START_END_DATE_TIME ${${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME})\n"
-    "\n"
-    "#\n"
-    "# Test invocation\n"
-    "#\n"
-    "\n"
-    "SET(CMAKE_MODULE_PATH ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_UTILS_DIR})\n"
-    "\n"
-    "INCLUDE(DriveAdvancedTest)\n"
-    "\n"
-    "DRIVE_ADVANCED_TEST()\n"
-    )
-
-  IF (TRIBITS_ADD_ADVANCED_TEST_UNITTEST)
-    GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS ${NUM_CMNDS})
-  ENDIF()
-
-  IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    PRINT_VAR(TEST_SCRIPT_STR)
-  ENDIF()
-
-  # Write the script file
-
-  SET(TEST_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.cmake")
-
-  IF (ADD_THE_TEST AND NOT TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT)
-
-    IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      MESSAGE("\nWriting file \"${TEST_SCRIPT_FILE}\" ...")
-    ENDIF()
-
-    FILE( WRITE "${TEST_SCRIPT_FILE}"
-      "${TEST_SCRIPT_STR}" )
-
-  ENDIF()
-
   #
   # F) Set the CTest test to run the new script
   #
 
   IF (ADD_THE_TEST)
+
+    IF (PARSE_OVERALL_WORKING_DIRECTORY)
+      IF ("${PARSE_OVERALL_WORKING_DIRECTORY}" STREQUAL "TEST_NAME")
+        SET(PARSE_OVERALL_WORKING_DIRECTORY ${TEST_NAME})
+      ENDIF()
+    ENDIF()
+  
+    APPEND_STRING_VAR( TEST_SCRIPT_STR
+      "\n"
+      "SET(TEST_NAME ${TEST_NAME})\n"
+      "\n"
+      "SET(NUM_CMNDS ${NUM_CMNDS})\n"
+      "\n"
+      "SET(OVERALL_WORKING_DIRECTORY \"${PARSE_OVERALL_WORKING_DIRECTORY}\")\n"
+      "\n"
+      "SET(FAIL_FAST ${PARSE_FAIL_FAST})\n"
+      "\n"
+      "SET(SHOW_START_END_DATE_TIME ${${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME})\n"
+      "\n"
+      "#\n"
+      "# Test invocation\n"
+      "#\n"
+      "\n"
+      "SET(CMAKE_MODULE_PATH ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_UTILS_DIR})\n"
+      "\n"
+      "INCLUDE(DriveAdvancedTest)\n"
+      "\n"
+      "DRIVE_ADVANCED_TEST()\n"
+      )
+  
+    IF (TRIBITS_ADD_ADVANCED_TEST_UNITTEST)
+      GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS ${NUM_CMNDS})
+    ENDIF()
+  
+    IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      PRINT_VAR(TEST_SCRIPT_STR)
+    ENDIF()
+  
+    # Write the script file
+  
+    SET(TEST_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.cmake")
+  
+    IF (NOT TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT)
+  
+      IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+        MESSAGE("\nWriting file \"${TEST_SCRIPT_FILE}\" ...")
+      ENDIF()
+  
+      FILE( WRITE "${TEST_SCRIPT_FILE}"
+        "${TEST_SCRIPT_STR}" )
+  
+    ENDIF()
 
     IF(NOT TRIBITS_ADD_TEST_ADD_TEST_UNITTEST)
       # Tell CTest to run our script for this test.  Pass the test-type
@@ -911,6 +916,8 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       TRIBITS_SET_TEST_PROPERTY(${TEST_NAME} PROPERTY ENVIRONMENT ${PARSE_ENVIRONMENT})
     ENDIF()
 
+  ELSE()
+    GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
   ENDIF()
 
 ENDFUNCTION()
