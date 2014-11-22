@@ -65,6 +65,7 @@ INCLUDE(PrintVar)
 #     [KEYWORDS <keyword1> <keyword2> ...]
 #     [COMM [serial] [mpi]]
 #     [OVERALL_NUM_MPI_PROCS <overallNumProcs>]
+#     [OVERALL_NUM_TOTAL_CORES_USED <overallNumTotalCoresUsed>]
 #     [CATEGORIES <category0> <category1> ...]
 #     [HOST <host0> <host1> ...]
 #     [XHOST <host0> <host1> ...]
@@ -97,6 +98,7 @@ INCLUDE(PrintVar)
 #      [MESSAGE "<message>"]
 #      [WORKING_DIRECTORY <workingDir>]
 #      [NUM_MPI_PROCS <numProcs>]
+#      [NUM_TOTAL_CORES_USED <numTotalCoresUsed>]
 #      [OUTPUT_FILE <outputFile>]
 #      [NO_ECHO_OUTPUT]]
 #      [PASS_ANY
@@ -188,6 +190,10 @@ INCLUDE(PrintVar)
 #     unnecessarily reserving ``${OVERALL_NUM_MPI_PROCS}`` processes for a
 #     serial non-MPI test, then one must leave off ``OVERALL_NUM_MPI_PROCS``
 #     or explicitly pass in ``MPI_EXEC_DEFAULT_NUMPROCS 1``!
+#
+#   ``OVERALL_NUM_TOTAL_CORES_USED <overallNumTotalCoresUsed>``
+#
+#     Used for ``NUM_TOTAL_CORES_USED`` if missing in a ``TEST_<IDX>`` block.
 #
 #   ``CATEGORIES <category0> <category1> ...``
 #
@@ -319,6 +325,23 @@ INCLUDE(PrintVar)
 #     If specified, then ``<numProcs>`` is the number of processors used for
 #     MPI executables.  If not specified, this will default to
 #     ``<overallNumProcs>`` from ``OVERALL_NUM_MPI_PROCS <overallNumProcs>``.
+#
+#   ``NUM_TOTAL_CORES_USED <numTotalCoresUsed>``
+#
+#     If specified, gives the total number of processes used by this
+#     command/executable.  If this is missing, but ``NUM_MPI_PROCS
+#     <numProcs>`` is specified, then ``<numProcs>`` is used instead.  If
+#     ``NUM_TOTAL_CORES_USED`` is missing BUT ``OVERALL_NUM_TOTAL_CORES_USED
+#     <overallNumTotalCoresUsed>`` is, then ``<overallNumTotalCoresUsed>`` is
+#     used for ``<numTotalCoresUsed>``.  This argument is used for test
+#     scripts/executables that use more cores than MPI processes
+#     (i.e. ``<numProcs>``) and its only purpose is to inform CTest and
+#     TriBITS of the maximum number of cores that are used by the underlying
+#     test executable/script.  When ``<numTotalCoresUsed>`` is greater than
+#     ``${MPI_EXEC_MAX_NUMPROCS}``, then the test will not be added.
+#     Otherwise, the CTest property ``PROCESSORS`` is set to the max over all
+#     ``<numTotalCoresUsed>`` so that CTest knows how to best schedule the
+#     test w.r.t. other tests on a given number of available processes.
 #
 #   ``OUTPUT_FILE <outputFile>``
 #
@@ -488,10 +511,12 @@ INCLUDE(PrintVar)
 # **Runnning multiple tests at the same time (TRIBITS_ADD_ADVANCED_TEST())**
 #
 # Just as with `TRIBITS_ADD_TEST()`_, setting ``NUM_MPI_PROCS <numProcs>`` or
-# ``OVERALL_NUM_MPI_PROCS <numOverallProcs>`` will set the ``PROCESSORS``
-# CTest property to allow CTest to schedule and run mutiple tests at the same
-# time when ``'ctest -j<N>'`` is used (see `Running multiple tests at the same
-# time (TRIBITS_ADD_TEST())`_).
+# ``OVERALL_NUM_MPI_PROCS <numOverallProcs>`` or ``NUM_TOTAL_CORES_USED
+# <numTotalCoresUsed>`` or ``OVERALL_NUM_TOTAL_CORES_USED
+# <overallNumTotalCoresUsed>`` will set the ``PROCESSORS`` CTest property to
+# allow CTest to schedule and run mutiple tests at the same time when ``'ctest
+# -j<N>'`` is used (see `Running multiple tests at the same time
+# (TRIBITS_ADD_TEST())`_).
 #
 # .. _Disabling Tests Externally (TRIBITS_ADD_ADVANCED_TEST()):
 #
@@ -550,7 +575,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
      #prefix
      PARSE
      #lists
-     "${TEST_IDX_LIST};OVERALL_WORKING_DIRECTORY;KEYWORDS;COMM;OVERALL_NUM_MPI_PROCS;FINAL_PASS_REGULAR_EXPRESSION;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;FINAL_FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TEST_NAME_OUT"
+     "${TEST_IDX_LIST};OVERALL_WORKING_DIRECTORY;KEYWORDS;COMM;OVERALL_NUM_MPI_PROCS;OVERALL_NUM_TOTAL_CORES_USED;FINAL_PASS_REGULAR_EXPRESSION;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;FINAL_FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TEST_NAME_OUT"
      #options
      "FAIL_FAST;RUN_SERIAL"
      ${ARGN}
@@ -621,13 +646,25 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
   SET(NUM_CMNDS 0)
   SET(TEST_EXE_LIST "")
 
+  IF (PARSE_OVERALL_NUM_MPI_PROCS  AND  PARSE_OVERALL_NUM_TOTAL_CORES_USED)
+    IF (PARSE_OVERALL_NUM_MPI_PROCS  GREATER  PARSE_OVERALL_NUM_TOTAL_CORES_USED)
+      MESSAGE_WRAPPER(FATAL_ERROR
+        "ERROR: ${TEST_NAME}: OVERALL_NUM_MPI_PROCS='${PARSE_OVERALL_NUM_MPI_PROCS}' > OVERALL_NUM_TOTAL_CORES_USED='${PARSE_OVERALL_NUM_TOTAL_CORES_USED}' not allowed!")
+      RETURN()
+    ENDIF()
+  ENDIF()
+
+  # ToDo: Assert that OVERALL_NUM_TOTAL_CORES_USED >= OVERALL_NUM_MPI_PROCS
+
   IF (PARSE_OVERALL_NUM_MPI_PROCS)
     SET(MAX_NUM_MPI_PROCS_USED ${PARSE_OVERALL_NUM_MPI_PROCS})
-    SET(TOTAL_NUM_CORES_USED ${PARSE_OVERALL_NUM_MPI_PROCS})
+    SET(MAX_NUM_PROCESSORS_USED ${PARSE_OVERALL_NUM_MPI_PROCS})
   ELSE()
     SET(MAX_NUM_MPI_PROCS_USED ${PARSE_OVERALL_NUM_MPI_PROCS})
-    SET(TOTAL_NUM_CORES_USED 1)
+    SET(MAX_NUM_PROCESSORS_USED 1)
   ENDIF()
+
+  SET(HAS_AT_LEAST_ONE_EXEC FALSE)
 
   FOREACH( TEST_CMND_IDX RANGE ${MAX_NUM_TEST_CMND_IDX} )
 
@@ -649,7 +686,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
        #prefix
        PARSE
        #lists
-       "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION"
+       "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION"
        #options
        "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ADD_DIR_TO_NAME"
        ${PARSE_TEST_${TEST_CMND_IDX}}
@@ -664,6 +701,8 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
     #ENDIF()
 
     IF (PARSE_EXEC)
+
+      SET(HAS_AT_LEAST_ONE_EXEC TRUE)
 
       LIST( LENGTH PARSE_EXEC PARSE_EXEC_LEN )
       IF (NOT PARSE_EXEC_LEN EQUAL 1)
@@ -685,18 +724,32 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       ENDIF()
 
       TRIBITS_ADD_TEST_GET_NUM_PROCS_USED("${PARSE_NUM_MPI_PROCS}"
-        ${NUM_MPI_PROC_VAR_NAME}  NUM_PROCS_USED)
+        "${NUM_MPI_PROC_VAR_NAME}"  NUM_PROCS_USED  NUM_PROCS_USED_NAME)
 
       IF (NUM_PROCS_USED LESS 0)
         SET(ADD_THE_TEST FALSE)
+      ELSEIF (NUM_PROCS_USED  GREATER  MAX_NUM_MPI_PROCS_USED)
+        SET(MAX_NUM_MPI_PROCS_USED  ${NUM_PROCS_USED})
       ENDIF()
 
-      IF (NUM_PROCS_USED  GREATER  TOTAL_NUM_CORES_USED)
-        SET(TOTAL_NUM_CORES_USED ${NUM_PROCS_USED})
+      IF (PARSE_NUM_TOTAL_CORES_USED)
+        SET(NUM_TOTAL_CORES_USED  ${PARSE_NUM_TOTAL_CORES_USED})
+        SET(NUM_TOTAL_CORES_USED_NAME  "NUM_TOTAL_CORES_USED")
+      ELSE()
+        SET(NUM_TOTAL_CORES_USED  ${PARSE_OVERALL_NUM_TOTAL_CORES_USED})
+        SET(NUM_TOTAL_CORES_USED_NAME  "OVERALL_NUM_TOTAL_CORES_USED")
       ENDIF()
 
-      IF (NUM_PROCS_USED  GREATER  MAX_NUM_MPI_PROCS_USED)
-        SET(MAX_NUM_MPI_PROCS_USED ${NUM_PROCS_USED})
+      TRIBITS_ADD_TEST_GET_NUM_TOTAL_CORES_USED("${TEST_NAME}${MPI_NAME_POSTFIX}"
+        "${NUM_TOTAL_CORES_USED}"  "${NUM_TOTAL_CORES_USED_NAME}"
+        "${NUM_PROCS_USED}"  "${NUM_PROCS_USED_NAME}"
+        NUM_TOTAL_CORES_USED  SKIP_TEST)
+      IF (SKIP_TEST)
+        SET(ADD_THE_TEST FALSE)
+      ENDIF()
+
+      IF (NUM_TOTAL_CORES_USED  GREATER  MAX_NUM_PROCESSORS_USED)
+        SET(MAX_NUM_PROCESSORS_USED  ${NUM_TOTAL_CORES_USED})
       ENDIF()
 
       IF(ADD_THE_TEST)
@@ -713,6 +766,26 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       IF (NOT PARSE_CMND_LEN EQUAL 1)
         MESSAGE(SEND_ERROR "Error, TEST_${TEST_CMND_IDX} CMND = '${PARSE_CMND}'"
           " must be a single command.  To add arguments use ARGS <arg1> <arg2> ...." )
+      ENDIF()
+
+      IF (PARSE_NUM_TOTAL_CORES_USED)
+        SET(NUM_TOTAL_CORES_USED  ${PARSE_NUM_TOTAL_CORES_USED})
+        SET(NUM_TOTAL_CORES_USED_NAME  "NUM_TOTAL_CORES_USED")
+      ELSE()
+        SET(NUM_TOTAL_CORES_USED  ${PARSE_OVERALL_NUM_TOTAL_CORES_USED})
+        SET(NUM_TOTAL_CORES_USED_NAME  "OVERALL_NUM_TOTAL_CORES_USED")
+      ENDIF()
+
+      TRIBITS_ADD_TEST_GET_NUM_TOTAL_CORES_USED("${TEST_NAME}${MPI_NAME_POSTFIX}"
+        "${NUM_TOTAL_CORES_USED}"  "${NUM_TOTAL_CORES_USED_NAME}"
+        "1"  "DUMMY_NUM_MPI_PROCS"  # Never be printed
+        NUM_TOTAL_CORES_USED  SKIP_TEST)
+      IF (SKIP_TEST)
+        SET(ADD_THE_TEST FALSE)
+      ENDIF()
+
+      IF (NUM_TOTAL_CORES_USED  GREATER  MAX_NUM_PROCESSORS_USED)
+        SET(MAX_NUM_PROCESSORS_USED  ${NUM_TOTAL_CORES_USED})
       ENDIF()
 
       IF(ADD_THE_TEST)
@@ -893,9 +966,9 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
     #This if clause will set the number of PROCESSORS to reserve during testing
     #to the number requested for the test.
-    IF(TOTAL_NUM_CORES_USED)
+    IF(MAX_NUM_PROCESSORS_USED)
       TRIBITS_SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES
-        PROCESSORS "${TOTAL_NUM_CORES_USED}")
+        PROCESSORS "${MAX_NUM_PROCESSORS_USED}")
     ENDIF()
 
     IF (PARSE_FINAL_PASS_REGULAR_EXPRESSION)
@@ -914,8 +987,14 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
     TRIBITS_PRIVATE_ADD_TEST_SET_ENVIRONMENT(${TEST_NAME})
 
+    IF (TPL_ENABLE_MPI AND HAS_AT_LEAST_ONE_EXEC)
+      SET(MAX_NUM_MPI_PROCS_USED_TO_PRINT  ${MAX_NUM_MPI_PROCS_USED})
+    ELSE()
+      SET(MAX_NUM_MPI_PROCS_USED_TO_PRINT "")
+    ENDIF()
+
     TRIBITS_PRIVATE_ADD_TEST_PRINT_ADDED(${TEST_NAME}
-      "${MAX_NUM_MPI_PROCS_USED}"  "${TOTAL_NUM_CORES_USED}"
+      "${MAX_NUM_MPI_PROCS_USED_TO_PRINT}"  "${MAX_NUM_PROCESSORS_USED}"
       "${TIMEOUT_USED}" )
   ELSE()
     GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
