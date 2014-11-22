@@ -3,10 +3,11 @@
 Release Notes for TriBITS
 ----------------------------------------
 
-2014/11/19:
+2014/11/22:
 
 (*) Added ${PROJECT_NAME}_TRACE_ADD_TEST: Now you can a single line print if a
-test got added or not and if not then why.
+test got added (and its important properties if it did) or not and if not then
+why the test did not get added.
 
 2014/09/22:
 
