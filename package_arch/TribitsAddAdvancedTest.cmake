@@ -891,57 +891,11 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
   IF (ADD_THE_TEST)
 
-    IF (PARSE_OVERALL_WORKING_DIRECTORY)
-      IF ("${PARSE_OVERALL_WORKING_DIRECTORY}" STREQUAL "TEST_NAME")
-        SET(PARSE_OVERALL_WORKING_DIRECTORY ${TEST_NAME})
-      ENDIF()
-    ENDIF()
-  
-    APPEND_STRING_VAR( TEST_SCRIPT_STR
-      "\n"
-      "SET(TEST_NAME ${TEST_NAME})\n"
-      "\n"
-      "SET(NUM_CMNDS ${NUM_CMNDS})\n"
-      "\n"
-      "SET(OVERALL_WORKING_DIRECTORY \"${PARSE_OVERALL_WORKING_DIRECTORY}\")\n"
-      "\n"
-      "SET(FAIL_FAST ${PARSE_FAIL_FAST})\n"
-      "\n"
-      "SET(SHOW_START_END_DATE_TIME ${${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME})\n"
-      "\n"
-      "#\n"
-      "# Test invocation\n"
-      "#\n"
-      "\n"
-      "SET(CMAKE_MODULE_PATH ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_UTILS_DIR})\n"
-      "\n"
-      "INCLUDE(DriveAdvancedTest)\n"
-      "\n"
-      "DRIVE_ADVANCED_TEST()\n"
-      )
-  
-    IF (TRIBITS_ADD_ADVANCED_TEST_UNITTEST)
-      GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS ${NUM_CMNDS})
-    ENDIF()
-  
-    IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      PRINT_VAR(TEST_SCRIPT_STR)
-    ENDIF()
-  
-    # Write the script file
+    #
+    # F.1) Call ADD_TEST() and set the test properties
+    #
   
     SET(TEST_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.cmake")
-  
-    IF (NOT TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT)
-  
-      IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        MESSAGE("\nWriting file \"${TEST_SCRIPT_FILE}\" ...")
-      ENDIF()
-  
-      FILE( WRITE "${TEST_SCRIPT_FILE}"
-        "${TEST_SCRIPT_STR}" )
-  
-    ENDIF()
 
     IF(NOT TRIBITS_ADD_TEST_ADD_TEST_UNITTEST)
       # Tell CTest to run our script for this test.  Pass the test-type
@@ -996,8 +950,72 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
     TRIBITS_PRIVATE_ADD_TEST_PRINT_ADDED(${TEST_NAME}
       "${MAX_NUM_MPI_PROCS_USED_TO_PRINT}"  "${MAX_NUM_PROCESSORS_USED}"
       "${TIMEOUT_USED}" )
+
+    #
+    # F.2) Write the cmake -P script
+    #
+
+    IF (PARSE_OVERALL_WORKING_DIRECTORY)
+      IF ("${PARSE_OVERALL_WORKING_DIRECTORY}" STREQUAL "TEST_NAME")
+        SET(PARSE_OVERALL_WORKING_DIRECTORY ${TEST_NAME})
+      ENDIF()
+    ENDIF()
+  
+    APPEND_STRING_VAR( TEST_SCRIPT_STR
+      "\n"
+      "SET(TEST_NAME ${TEST_NAME})\n"
+      "\n"
+      "SET(NUM_CMNDS ${NUM_CMNDS})\n"
+      "\n"
+      "SET(OVERALL_WORKING_DIRECTORY \"${PARSE_OVERALL_WORKING_DIRECTORY}\")\n"
+      "\n"
+      "SET(FAIL_FAST ${PARSE_FAIL_FAST})\n"
+      "\n"
+      "SET(SHOW_START_END_DATE_TIME ${${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME})\n"
+      "\n"
+      "SET(SHOW_MACHINE_LOAD ${${PROJECT_NAME}_SHOW_MACHINE_LOAD_IN_TEST})\n"
+      "\n"
+      "SET(PROCESSORS ${MAX_NUM_PROCESSORS_USED})\n"
+      "\n"
+      "SET(TIMEOUT ${TIMEOUT_USED})\n"
+      "\n"
+      "#\n"
+      "# Test invocation\n"
+      "#\n"
+      "\n"
+      "SET(CMAKE_MODULE_PATH ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_UTILS_DIR})\n"
+      "\n"
+      "INCLUDE(DriveAdvancedTest)\n"
+      "\n"
+      "DRIVE_ADVANCED_TEST()\n"
+      )
+  
+    IF (TRIBITS_ADD_ADVANCED_TEST_UNITTEST)
+      GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS ${NUM_CMNDS})
+    ENDIF()
+  
+    IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      PRINT_VAR(TEST_SCRIPT_STR)
+    ENDIF()
+  
+    # Write the script file
+  
+    IF (NOT TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT)
+  
+      IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+        MESSAGE("\nWriting file \"${TEST_SCRIPT_FILE}\" ...")
+      ENDIF()
+  
+      FILE( WRITE "${TEST_SCRIPT_FILE}"
+        "${TEST_SCRIPT_STR}" )
+  
+    ENDIF()
+
+
   ELSE()
+
     GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
+
   ENDIF()
 
 ENDFUNCTION()

@@ -1107,9 +1107,13 @@ FUNCTION(UNITEST_TRIBITS_ADD_ADVANCED_TEST_BASIC)
   SET(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
   SET(CMNDN ls)
 
-  MESSAGE("***\n*** Add a single basic command with no arguments\n***")
+  MESSAGE("***\n*** Add a single basic command with no arguments (and check other parts)\n***")
+  SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME ON)
+  SET(${PROJECT_NAME}_SHOW_MACHINE_LOAD_IN_TEST OFF)
   TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
   TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_cmnd_1_args_0
+    OVERALL_NUM_TOTAL_CORES_USED 4
+    TIMEOUT 333.2
     TEST_0 CMND ${CMNDN}
     ADDED_TEST_NAME_OUT  TAAT_basic_cmnd_1_args_0_TEST_NAME
     )
@@ -1128,12 +1132,16 @@ FUNCTION(UNITEST_TRIBITS_ADD_ADVANCED_TEST_BASIC)
     REGEX_STRINGS
       "TEST_0_CMND \"ls\""
       "NUM_CMNDS 1"
-      "SET[(]SHOW_START_END_DATE_TIME [)]"
+      "SET[(]SHOW_START_END_DATE_TIME ON[)]"
+      "SET[(]SHOW_MACHINE_LOAD OFF[)]"
+      "SET[(]PROCESSORS 4[)]"
+      "SET[(]TIMEOUT 333.2[)]"
     )
 
-  MESSAGE("***\n*** Add a single package executable with no arguments\n***")
+  MESSAGE("***\n*** Add a single package executable with no arguments (and check other stuff)\n***")
   TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME ON)
+  SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME OFF) # Above test was ON
+  SET(${PROJECT_NAME}_SHOW_MACHINE_LOAD_IN_TEST ON) # Above test was OFF
   TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_exec_1_args_0
     TEST_0 EXEC ${EXEN}
     )
@@ -1150,7 +1158,8 @@ FUNCTION(UNITEST_TRIBITS_ADD_ADVANCED_TEST_BASIC)
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
-      "SET[(]SHOW_START_END_DATE_TIME ON[)]"
+      "SET[(]SHOW_START_END_DATE_TIME OFF[)]"
+      "SET[(]SHOW_MACHINE_LOAD ON[)]"
     )
 
   MESSAGE("***\n*** Add a single basic command with two arguments\n***")
@@ -2666,4 +2675,4 @@ MESSAGE("*** Determine final result of all unit tests")
 MESSAGE("***\n")
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(386)
+UNITTEST_FINAL_RESULT(390)
