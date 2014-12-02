@@ -12,11 +12,5 @@ with modern agile software development best practices.
 Documentation
 =============
 
-* See `Version Controlled TriBITS Documentation Index on Github
-  <http://htmlpreview.github.io/?https://raw.githubusercontent.com/TriBITSPub/TriBITS/master/doc/index.html>`_
-  (works on github or takes you to github)
-
-Coming soon: `tribits.org <http://tribits.org>`_
-
-.. ToDo: Provide a very short quickstart here to help people get going right
-.. away!
+See `TriBITS Documentation on tribits.org
+  <http://tribits.org>`_
