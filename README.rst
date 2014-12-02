@@ -12,5 +12,4 @@ with modern agile software development best practices.
 Documentation
 =============
 
-See `TriBITS Documentation on tribits.org
-  <http://tribits.org>`_
+See `TriBITS Documentation on tribits.org <http://tribits.org>`_
