@@ -58,7 +58,7 @@ pythonUtilsDir = os.path.join(tribitsDir, 'python_utils')
 utilsDir = pythonUtilsDir+"/utils"
 #print "utilsDir = '"+utilsDir+"'"
 
-mockProjectDir = os.path.join(tribitsPkgDir, "test/core/MockTrilinos")
+mockProjectDir = os.path.join(tribitsDir, "examples/MockTrilinos")
 
 sys.path = [pythonUtilsDir] + sys.path
 
