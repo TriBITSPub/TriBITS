@@ -47,11 +47,11 @@
 SET(CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
-   ${${PROJECT_NAME}_TRIBITS_DIR}/utils
-   ${${PROJECT_NAME}_TRIBITS_DIR}/package_arch
-   ${${PROJECT_NAME}_TRIBITS_DIR}/config_tests
-   ${${PROJECT_NAME}_TRIBITS_DIR}/modules
-   ${${PROJECT_NAME}_TRIBITS_DIR}/installation
+   ${${PROJECT_NAME}_TRIBITS_DIR}/core/utils
+   ${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch
+   ${${PROJECT_NAME}_TRIBITS_DIR}/core/config_tests
+   ${${PROJECT_NAME}_TRIBITS_DIR}/core/modules
+   ${${PROJECT_NAME}_TRIBITS_DIR}/core/installation
    )
 
 IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)

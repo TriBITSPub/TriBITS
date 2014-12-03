@@ -41,7 +41,7 @@
 # Unit testing code for extract_rst_cmake_doc.py #
 ##################################################
 
-
+from unittest_helpers import *
 from GeneralScriptSupport import *
 from extract_rst_cmake_doc import *
 
@@ -585,7 +585,7 @@ class test_getExtractFilesList(unittest.TestCase):
     self.assertEqual(getExtractFilesList(opts), ["file2.cmake","file1.cmake"] )
 
   def test_glob_data_files(self):
-    baseDir = scriptBaseDir+"/UnitTests/extract_rst_cmake_doc"
+    baseDir = testPythonUtilsDir+"/extract_rst_cmake_doc"
     opts = MockOptions()
     opts.extractFrom = baseDir+"/"
     filesList = getExtractFilesList(opts)
@@ -597,7 +597,7 @@ class test_getExtractFilesList(unittest.TestCase):
     self.assertEqual(filesList, filesList_expected )
 
   def test_glob_data_files_2_dirs(self):
-    baseDir = scriptBaseDir+"/UnitTests/extract_rst_cmake_doc"
+    baseDir = testPythonUtilsDir+"/extract_rst_cmake_doc"
     opts = MockOptions()
     opts.extractFrom = baseDir+"/,"+baseDir+"/"
     filesList = getExtractFilesList(opts)
@@ -659,7 +659,7 @@ class test_extractRstDocBlocksFromFileList(unittest.TestCase):
 class test_replaceWithRstDocBlocksInTemplateFile(unittest.TestCase):
 
   def test_replace_1_block_1_file(self):
-    baseDir = scriptBaseDir+"/UnitTests/extract_rst_cmake_doc"
+    baseDir = testPythonUtilsDir+"/extract_rst_cmake_doc"
     templateFileName = baseDir+"/simpleTemplate1.rst"
     fileName = "test_replace_1_block_1_file.rst"
     rstFileList = [ [templateFileName , fileName] ] 

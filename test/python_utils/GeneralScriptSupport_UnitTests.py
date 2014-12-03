@@ -41,8 +41,8 @@
 # Unit testing code for GeneralScriptSupport.py #
 #################################################
 
+from unittest_helpers import *
 from GeneralScriptSupport import *
-import unittest
 
 
 utilsDir = getScriptBaseDir()+"/utils"

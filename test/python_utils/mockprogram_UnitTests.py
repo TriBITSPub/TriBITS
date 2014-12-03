@@ -41,15 +41,23 @@
 # Unit testing code for mockprogram.py #
 ########################################
 
-import GeneralScriptSupport
-import unittest
-import os
-import sys
+from unittest_helpers import *
+
 import imp
 import shutil
 
-pythonDir = os.path.abspath(GeneralScriptSupport.getScriptBaseDir())
-mockProgramPath = pythonDir+"/mockprogram.py"
+#thisFilePath = __file__
+#thisFileRealAbsBasePath = os.path.dirname(os.path.abspath(thisFilePath))
+#tribitsDir = os.path.abspath(thisFileRealAbsBasePath+"/../../tribits")
+#print "tribitsDir = '"+tribitsDir+"'"
+#pythonUtilsDir = os.path.join(tribitsDir, 'python_utils')
+#print "pythonUtilsDir = '"+pythonUtilsDir+"'"
+#
+#sys.path = [pythonUtilsDir] + sys.path
+#
+#import GeneralScriptSupport
+
+mockProgramPath = pythonUtilsDir+"/mockprogram.py"
 
 testBaseDir = os.getcwd()
 

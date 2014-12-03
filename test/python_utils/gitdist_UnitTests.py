@@ -41,20 +41,17 @@
 # Unit testing code for gitdist #
 #################################
 
-import GeneralScriptSupport
-import unittest
-import os
 import sys
 import imp
 import shutil
 
+from unittest_helpers import *
 
 pythonDir = os.path.abspath(GeneralScriptSupport.getScriptBaseDir())
 utilsDir = pythonDir+"/utils"
 tribitsDir = os.path.abspath(pythonDir+"/..")
-commonToolsGitDir = tribitsDir+"/common_tools/git"
 
-sys.path = [commonToolsGitDir] + sys.path
+sys.path = [pythonUtilsDir] + sys.path
 #print "sys.path =", sys.path
 from gitdist import *
 
@@ -64,13 +61,12 @@ from gitdist import *
 #
 
 
-gitdistPath = commonToolsGitDir+"/gitdist"
+gitdistPath = pythonUtilsDir+"/gitdist"
 gitdistPathNoColor = gitdistPath+" --dist-no-color"
 gitdistPathMock = gitdistPathNoColor+" --dist-use-git=mockgit --dist-no-opt"
-mockGitPath = pythonDir+"/mockprogram.py"
+mockGitPath = pythonUtilsDir+"/mockprogram.py"
 
-mockProjectDir = tribitsDir+"/package_arch/UnitTests/MockTrilinos"
-unitTestDataDir = tribitsDir+"/python/UnitTests"
+unitTestDataDir = testPythonUtilsDir
 
 tempMockProjectDir = "MockProjectDir"
 

@@ -37,54 +37,29 @@
 # ************************************************************************
 # @HEADER
 
-# Define the TriBITS minimum required CMake version
-SET(TRIBITS_CMAKE_MINIMUM_REQUIRED 2.8.11)
+import unittest
+import os
+import sys
 
-# File names for TriBITS system
+thisFilePath = __file__
+thisFileRealAbsBasePath = os.path.dirname(os.path.abspath(thisFilePath))
 
-SET(${PROJECT_NAME}_PACKAGES_FILE_NAME PackagesList.cmake)
+testPythonUtilsDir = thisFileRealAbsBasePath
 
-SET(${PROJECT_NAME}_TPLS_FILE_NAME TPLsList.cmake)
+tribitsPkgDir = os.path.abspath(thisFileRealAbsBasePath+"/../..")
+#print "tribitsPkgDir = '"+tribitsPkgDir+"'"
 
-SET(${PROJECT_NAME}_EXTRA_EXTERNAL_REPOS_FILE_NAME ExtraRepositoriesList.cmake)
+tribitsDir = os.path.join(tribitsPkgDir, "tribits")
+#print "tribitsDir = '"+tribitsDir+"'"
 
-SET(${PROJECT_NAME}_EXTRA_PACKAGES_FILE_NAME PackagesList.cmake)
+pythonUtilsDir = os.path.join(tribitsDir, 'python_utils')
+#print "pythonUtilsDir = '"+pythonUtilsDir+"'"
 
-SET(${PROJECT_NAME}_REPO_VERSION_FILE_NAME ${PROJECT_NAME}RepoVersion.txt)
+utilsDir = pythonUtilsDir+"/utils"
+#print "utilsDir = '"+utilsDir+"'"
 
-SET(${PROJECT_NAME}_EXTRA_TPLS_FILE_NAME TPLsList.cmake)
+mockProjectDir = os.path.join(tribitsPkgDir, "test/core/MockTrilinos")
 
-# Directories relative to the TriBITS base directory
+sys.path = [pythonUtilsDir] + sys.path
 
-SET(TRIBITS_PYTHON_SCRIPTS_DIR "python")
-
-SET(TRIBITS_CMAKE_UTILS_DIR "core/utils")
-
-SET(TRIBITS_CMAKE_PACKAGE_ARCH_DIR "core/package_arch")
-
-SET(TRIBITS_CMAKE_INSTALLATION_FILES_DIR "core/installation")
-
-#SET(TRIBITS_REDUCED_MOCK_TRILINOS_DIR "package_arch/UnitTests/ReducedMockTrilinos")
-
-#SET(TRIBITS_MOCK_TRILINOS_DIR "package_arch/UnitTests/MockTrilinos")
-
-# Files and directories related to the specific project
-
-SET(${PROJECT_NAME}_PACKAGE_DEPS_XML_FILE_NAME ${PROJECT_NAME}PackageDependencies.xml)
-
-SET(${PROJECT_NAME}_CDASH_SUBPROJECT_DEPS_XML_FILE_NAME CDashSubprojectDependencies.xml)
-
-SET(${PROJECT_NAME}_PACKAGE_DEPS_TABLE_HTML_FILE_NAME ${PROJECT_NAME}PackageDependenciesTable.html)
-
-SET(${PROJECT_NAME}_PACKAGE_DEPS_FILES_DIR "cmake/dependencies")
-
-# Other stuff
-
-IF(WIN32)
-  #Apparently FIND_PROGRAM looks for an exact match of the file name.
-  #So even though "git clone ..." is valid to use on windows we need to give the
-  #full name of the command we want to run.
-  SET(GIT_NAME git.cmd)
-ELSE(WIN32)
-  SET(GIT_NAME git)
-ENDIF(WIN32)
+import GeneralScriptSupport

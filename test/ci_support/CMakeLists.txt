@@ -38,6 +38,9 @@
 # @HEADER
 
 
+#
+# Test generation of package dependency and related XML and related files
+#
 
 
 # The mock test project 
@@ -78,4 +81,30 @@ TRIBITS_ADD_ADVANCED_TEST( XmlHtmlCDashOutputTest
   TEST_3 CMND ${DIFF_COMMAND_STUFF}
     ${CMAKE_CURRENT_SOURCE_DIR}/CDashSubprojectDependencies.gold.xml
     CDashSubprojectDependencies.xml
+  )
+
+
+#
+# Test checkin-test.py script
+#
+
+
+IF(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE)
+  TRIBITS_ADD_ADVANCED_TEST( TribitsPackageFilePathUtils_UnitTests
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    TEST_0 CMND ${PYTHON_EXECUTABLE} 
+      ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsPackageFilePathUtils_UnitTests.py -v
+      PASS_REGULAR_EXPRESSION "OK"
+    )
+ENDIF()
+
+TRIBITS_ADD_ADVANCED_TEST( CheckinTest_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CheckinTest_UnitTests.py
+      --with-cmake="${CMAKE_COMMAND}"
+      -v
+    PASS_REGULAR_EXPRESSION "OK"
   )
