@@ -51,16 +51,22 @@
 # NOTE: Included first to check the version of python!
 #
 
+import sys
+import os
+import time
+import pprint
+import re
+
+checkinTestBasePath = os.path.dirname(os.path.abspath(os.path.realpath(__file__)))
+
+sys.path = [checkinTestBasePath+"/../python_utils"] + sys.path
+
 from GeneralScriptSupport import *
 
 from CheckinTestConstants import *
 from TribitsDependencies import getProjectDependenciesFromXmlFile
 from TribitsDependencies import getDefaultDepsXmlInFile
 from TribitsPackageFilePathUtils import *
-import time
-import pprint
-
-import re
 
 pp = pprint.PrettyPrinter(indent=4)
 

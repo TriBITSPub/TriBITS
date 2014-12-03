@@ -62,9 +62,6 @@ if debugDump: print "\nthisFilePath =", thisFilePath
 thisFileRealAbsBasePath = os.path.dirname(os.path.abspath(os.path.realpath(thisFilePath)))
 if debugDump: print "\nthisFileRealAbsBasePath = '"+thisFileRealAbsBasePath+"'"
 
-sys.path = [os.path.join(thisFileRealAbsBasePath, 'python')] + sys.path
-if debugDump: print "\nsys.path =", sys.path
-
 from CheckinTest import *
 from GeneralScriptSupport import *
 
