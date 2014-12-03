@@ -41,8 +41,8 @@ MESSAGE("The outer project: PROJECT_NAME = ${PROJECT_NAME}")
 MESSAGE("The outer project: ${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 
 SET( CMAKE_MODULE_PATH
-  "${${PROJECT_NAME}_TRIBITS_DIR}/utils"
-  "${${PROJECT_NAME}_TRIBITS_DIR}/package_arch"
+  "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
+  "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
 INCLUDE(TribitsAdjustPackageEnables)
@@ -83,7 +83,7 @@ ENDMACRO()
 #
 #####################################################################
 
-SET(PROJECT_SOURCE_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/package_arch/UnitTests/MockTrilinos")
+SET(PROJECT_SOURCE_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/examples/MockTrilinos")
 PRINT_VAR(PROJECT_SOURCE_DIR)
 SET(REPOSITORY_DIR ".")
 PRINT_VAR(REPOSITORY_DIR)

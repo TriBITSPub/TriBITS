@@ -59,8 +59,8 @@ MESSAGE("${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE = ${${PROJECT_NAME}_DEPS_XML_OUTPU
 # Get the utility CMake code that can determine the dependencies
 
 SET( CMAKE_MODULE_PATH
-  "${${PROJECT_NAME}_TRIBITS_DIR}/utils"
-  "${${PROJECT_NAME}_TRIBITS_DIR}/package_arch"
+  "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
+  "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
 INCLUDE(TribitsGlobalMacros)

@@ -37,9 +37,9 @@
 # ************************************************************************
 # @HEADER
 
+SET(TRIBITS_REDUCED_MOCK_TRILINOS_DIR "examples/ReducedMockTrilinos")
+SET(TRIBITS_MOCK_TRILINOS_DIR "examples/MockTrilinos")
 
-
-INCLUDE(ParseVariableArguments)
 
 # MockTrilinos project
 SET(MOCK_PROJECT_NAME Trilinos)
@@ -84,13 +84,13 @@ FUNCTION(CREATE_DEPENDENCY_XML_DUMP_TEST_CASE TEST_NAME)
         -D${MOCK_PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE=CDashSubprojectDependencies.xml
         -D${MOCK_PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE=${MOCK_PROJECT_NAME}PackageDependenciesTable.html
         ${PARSE_ARGS}
-        -P ${${PROJECT_NAME}_TRIBITS_DIR}/package_arch/TribitsDumpDepsXmlScript.cmake
+        -P ${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/TribitsDumpDepsXmlScript.cmake
       PASS_REGULAR_EXPRESSION_ALL ${PARSE_PASS_REGULAR_EXPRESSION_ALL}
     TEST_1 CMND "${CMAKE_COMMAND}"
       ARGS
         -E compare_files
         ${TEST_OUTPUT_DIR}/${MOCK_PROJECT_NAME}PackageDependencies.xml
-        ${${PROJECT_NAME}_TRIBITS_DIR}/python/UnitTests/${PARSE_COMPARE_XML_FILE}
+        ${PROJECT_SOURCE_DIR}/test/ci_support/${PARSE_COMPARE_XML_FILE}
     XHOSTTYPE Windows
     )
 
@@ -1038,8 +1038,8 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=
     -DTRIBITS_PROCESS_EXTRAREPOS_LISTS_DEBUG=TRUE
   PASS_REGULAR_EXPRESSION_ALL
-    "WARNING!  Ignoring missing extra repo 'MissingExtraRepo' packages list file ..+/package_arch/UnitTests/MockTrilinos/MissingExtraRepo/PackagesList.cmake. on request!"
-    "WARNING!  Ignoring missing extra repo 'MissingExtraRepo' TPLs list file ..+/package_arch/UnitTests/MockTrilinos/MissingExtraRepo/TPLsList.cmake. on request!"
+    "WARNING!  Ignoring missing extra repo 'MissingExtraRepo' packages list file ..+/examples/MockTrilinos/MissingExtraRepo/PackagesList.cmake. on request!"
+    "WARNING!  Ignoring missing extra repo 'MissingExtraRepo' TPLs list file ..+/examples/MockTrilinos/MissingExtraRepo/TPLsList.cmake. on request!"
     "Configuring done"
     "Generating done"
   )

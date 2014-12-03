@@ -96,9 +96,9 @@ ENDFUNCTION()
 #
 
 
-SET(HeaderOnlyTpl_BASE_DIR ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/tpls/HeaderOnlyTpl)
+SET(HeaderOnlyTpl_BASE_DIR ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl)
 SET(HeaderOnlyTpl_FINDMOD
-  ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject/cmake/tpls/FindTPLHeaderOnlyTpl.cmake)
+  ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject/cmake/tpls/FindTPLHeaderOnlyTpl.cmake)
 
 
 CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
@@ -117,7 +117,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/HeaderOnlyTpl'"
     "Exported TPL_ENABLE_HeaderOnlyTpl='ON'"
     "Exported TPL_HeaderOnlyTpl_NOT_FOUND=''"
-    "Exported TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
+    "Exported TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
     "Exported TPL_HeaderOnlyTpl_LIBRARIES=''"
   )
 
@@ -131,11 +131,11 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   PASS_REGULAR_EXPRESSION_ALL
     "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "-- Attempting to tentatively enable TPL 'HeaderOnlyTpl' [.][.][.]"
-    "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
+    "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
     "-- Attempt to tentatively enable TPL 'HeaderOnlyTpl' passed!"
     "Exported TPL_ENABLE_HeaderOnlyTpl='ON'"
     "Exported TPL_HeaderOnlyTpl_NOT_FOUND=''"
-    "Exported TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
+    "Exported TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
     "Exported TPL_HeaderOnlyTpl_LIBRARIES=''"
   )
 
