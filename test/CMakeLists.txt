@@ -5,6 +5,6 @@ IF (PYTHON_EXECUTABLE)
     python_utils
     ci_support
     ctest_driver
-    #devtools_install
+    devtools_install
     )
 ENDIF()
