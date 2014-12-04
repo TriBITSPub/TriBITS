@@ -28,7 +28,7 @@ PROJECT(${PROJECT_NAME} NONE)
 #
 
 SET(${PROJECT_NAME}_TRIBITS_DIR
-   "${CMAKE_CURRENT_LIST_DIR}/../../.."  CACHE  STRING
+   "${CMAKE_CURRENT_LIST_DIR}/../.."  CACHE  STRING
   "TriBITS base directory (default assumes in TriBITS source tree)")
 INCLUDE("${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake")
 
@@ -38,7 +38,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION ${TRIBITS_CMAKE_MINIMUM_REQUIRED})
 # Set default location for header-only TPL to make easy to configure out of
 # the TriBITS source tree.
 SET(HeaderOnlyTpl_INCLUDE_DIRS
-  "${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/tpls/HeaderOnlyTpl" 
+  "${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl" 
   CACHE PATH "Default set by TriBITS/CMakeLists.txt" )
 
 # Do all of the processing for this Tribits project

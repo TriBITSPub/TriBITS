@@ -45,7 +45,7 @@
 
 SET(COMMON_ENV_ARGS_PASSTHROUGH
   -DTPL_ENABLE_MPI=${TPL_ENABLE_MPI}
-  -DHeaderOnlyTpl_INCLUDE_DIRS=${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/tpls/HeaderOnlyTpl
+  -DHeaderOnlyTpl_INCLUDE_DIRS=${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl
   )
 
 IF (TPL_ENABLE_MPI)
@@ -82,11 +82,11 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
       ${COMMON_ENV_ARGS_PASSTHROUGH}
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/RawHelloWorld
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/RawHelloWorld
     PASS_REGULAR_EXPRESSION_ALL
       "Configuring done"
       "Generating done"
-      "Build files have been written to: .*doc/examples/UnitTests/TriBITS_RawHelloWorld"
+      "Build files have been written to: .*ExamplesUnitTests/TriBITS_RawHelloWorld"
   TEST_1 CMND make
     ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
@@ -112,11 +112,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
       ${COMMON_ENV_ARGS_PASSTHROUGH}
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsHelloWorld
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
     PASS_REGULAR_EXPRESSION_ALL
       "Configuring done"
       "Generating done"
-      "Build files have been written to: .*doc/examples/UnitTests/TriBITS_TribitsHelloWorld"
+      "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsHelloWorld"
   TEST_1 CMND make
     ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
@@ -140,7 +140,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
     ARGS
       ${COMMON_ENV_ARGS_PASSTHROUGH}
       -DDART_TESTING_TIMEOUT=200.0
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsHelloWorld
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
     PASS_REGULAR_EXPRESSION_ALL "Generating done"
     MESSAGE "Configure with default 1.0 scaling"
   TEST_1 CMND grep ARGS "^TimeOut: " DartConfiguration.tcl
@@ -152,7 +152,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
   TEST_3 CMND ${CMAKE_COMMAND}
     ARGS
       -DTribitsHelloWorld_SCALE_TEST_TIMEOUT=1.5
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsHelloWorld
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
     MESSAGE "Configure with 1.5 scaling"
     PASS_REGULAR_EXPRESSION_ALL
       "DART_TESTING_TIMEOUT=200.0 being scaled by TribitsHelloWorld_SCALE_TEST_TIMEOUT=1.5 to 300"
@@ -167,7 +167,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
   TEST_6 CMND ${CMAKE_COMMAND}
     ARGS
       -DTribitsHelloWorld_SCALE_TEST_TIMEOUT=2.0
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsHelloWorld
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
     MESSAGE "Configure with 2.0 scaling"
     PASS_REGULAR_EXPRESSION_ALL
       "DART_TESTING_TIMEOUT=200.0 being scaled by TribitsHelloWorld_SCALE_TEST_TIMEOUT=2.0 to 400"
@@ -189,7 +189,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
 ASSERT_DEFINED(TPL_ENABLE_MPI)
 IF (TPL_ENABLE_MPI)
   SET(TPL_MPI_FILE_TRACE
-    "-- File Trace: TPL        INCLUDE    .*/tpls/FindTPLMPI.cmake")
+    "-- File Trace: TPL        INCLUDE    .*/core/std_tpls/FindTPLMPI.cmake")
   SET(FINAL_ENABLED_TPLS "MPI HeaderOnlyTpl 2")
 ELSE()
   SET(TPL_MPI_FILE_TRACE "")
@@ -197,7 +197,7 @@ ELSE()
 ENDIF()
 
 
-IF (EXISTS "${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject/.gitignore")
+IF (EXISTS "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject/.gitignore")
   SET(REGEX_FOR_GITIGNORE "Only in .*/TribitsExampleProject: .gitignore")
 ELSE()
   SET(REGEX_FOR_GITIGNORE)
@@ -224,7 +224,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DCMAKE_INSTALL_PREFIX=install
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
       "Warning: Setting TribitsExProj_ENABLE_MixedLang=OFF because "
@@ -260,11 +260,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Final set of non-enabled packages:  MixedLang WrapExternal 2"
       "Processing enabled TPL: HeaderOnlyTpl"
       "-- File Trace: TPL        INCLUDE    .+/TribitsExampleProject/cmake/tpls/FindTPLHeaderOnlyTpl.cmake"
-      "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
+      "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
       "Performing Test HAVE_SIMPLECXX___INT64"
       "Configuring done"
       "Generating done"
-      "Build files have been written to: .*doc/examples/UnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran"
+      "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran"
       "-- File Trace: PROJECT    INCLUDE    .*/TribitsExampleProject/Version.cmake"
       "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/cmake/CallbackSetupExtraOptions.cmake"
       "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/PackagesList.cmake"
@@ -364,7 +364,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "WithSubpackages_INCLUDE_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../include'"
       "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
       "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/doc/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/examples/tpls/HeaderOnlyTpl'"
       "WithSubpackages_TPL_LIBRARY_DIRS = ''"
       "WithSubpackages_TPL_LIBRARIES = ''"
       "WithSubpackages_MPI_LIBRARIES = ''"
@@ -382,17 +382,20 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Run CPack packaging tool for source..."
       "CPack: Create package using TGZ"
       "CPack: Install projects"
-      "CPack: - Install directory: .*/doc/examples/TribitsExampleProject"
+      "CPack: - Install directory: .*/examples/TribitsExampleProject"
       "CPack: Create package"
-      "CPack: - package: .*/doc/examples/UnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/tribitsexproj-1.1-Source.tar.gz generated."
+      "CPack: - package: .*/ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/tribitsexproj-1.1-Source.tar.gz generated."
       "CPack: Create package using TBZ2"
       "CPack: Install projects"
-      "CPack: - Install directory: .*/doc/examples/TribitsExampleProject"
+      "CPack: - Install directory: .*/examples/TribitsExampleProject"
       "CPack: Create package"
-      "CPack: - package: .*/doc/examples/UnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/tribitsexproj-1.1-Source.tar.bz2 generated."
+      "CPack: - package: .*/ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/tribitsexproj-1.1-Source.tar.bz2 generated."
   TEST_6 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
     MESSAGE "Untar the tarball"
-  TEST_7 CMND diff ARGS -qr ${CMAKE_CURRENT_SOURCE_DIR}/../TribitsExampleProject tribitsexproj-1.1-Source
+  TEST_7 CMND diff
+     ARGS -qr
+       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+       tribitsexproj-1.1-Source
     MESSAGE "Make sure right directoires are excluced"
     PASS_REGULAR_EXPRESSION_ALL
       "Only in .*/TribitsExampleProject/cmake: ctest"
@@ -420,7 +423,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
         -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
         -DTribitsExProj_ENABLE_CONFIGURE_TIMING=ON
-        ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
         "Total time to read in and process all package dependencies: "
         "Total time to adjust package and TPL enables: "
@@ -485,7 +488,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
       -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DCMAKE_INSTALL_PREFIX=install
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "-- SimpleCxx: No library dependencies!"
       "-- WithSubpackagesA_FULL_ENABLED_DEP_PACKAGES: SimpleCxx"
@@ -551,7 +554,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
         -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
         -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
-        ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
         "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
         "Explicitly enabled packages on input .by user.:  0"
@@ -565,7 +568,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "Final set of non-enabled packages:  WrapExternal 1"
         "Configuring done"
         "Generating done"
-        "Build files have been written to: .*doc/examples/UnitTests/TriBITS_TribitsExampleProject_ALL_ST"
+        "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST"
     TEST_1 CMND make
       MESSAGE "Build the default 'all' target using raw 'make'"
       ARGS ${CTEST_BUILD_FLAGS}
@@ -605,7 +608,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
         -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
         -DTribitsExProj_LIBRARY_NAME_PREFIX=tep_
-        ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
         "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
         "Explicitly enabled packages on input .by user.:  0"
@@ -619,7 +622,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         "Final set of non-enabled packages:  WrapExternal 1"
         "Configuring done"
         "Generating done"
-        "Build files have been written to: .*doc/examples/UnitTests/TriBITS_TribitsExampleProject_ALL_ST_LibPrefix"
+        "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_LibPrefix"
     TEST_1 CMND make
       MESSAGE "Build the default 'all' target using raw 'make'"
       ARGS ${CTEST_BUILD_FLAGS}
@@ -660,7 +663,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_TESTS=ON
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-        ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
         "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
         "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
@@ -839,7 +842,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         -DTribitsExProj_ENABLE_TESTS=ON
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
         -DTribitsExProj_LIBRARY_NAME_PREFIX=tep_
-        ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
         "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
         "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
@@ -1004,7 +1007,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
       -DTribitsExProj_ENABLE_SimpleCxx=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DHAVE_SIMPLECXX___INT64=ON
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled packages:  SimpleCxx 1"
       "Configuring done"
@@ -1029,7 +1032,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   TEST_0
     MESSAGE "Copy TribitsExampleProject so that we can modify it."
     CMND cp
-    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject .
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
 
   TEST_1 CMND ${CMAKE_COMMAND}
     ARGS
@@ -1054,7 +1057,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
       "This package has no unfiltered binary files so consider out of date"
       "Configuring done"
       "Generating done"
-      "Build files have been written to: .*doc/examples/UnitTests/TriBITS_TribitsExampleProject_WrapExternal"
+      "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsExampleProject_WrapExternal"
   TEST_2 CMND make ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Built target WrapExternal_run_external_func"
@@ -1144,33 +1147,33 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_VERBOSE_CONFIGURE=ON
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled packages:  SimpleCxx WithSubpackages WrapExternal 3"
       "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
 
-      "HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
-      "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/doc/examples/tpls/HeaderOnlyTpl'"
+      "HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
+      "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
 
-      "SimpleCxx_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/doc/examples/tpls/HeaderOnlyTpl'"
+      "SimpleCxx_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl'"
       "SimpleCxx_LIBRARY_DIRS='.+/packages/simple_cxx/src'"
       "SimpleCxx_LIBRARIES='simplecxx'"
 
-      "WithSubpackagesA_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/doc/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackagesA_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl'"
       "WithSubpackagesA_LIBRARY_DIRS='.+/packages/with_subpackages/a[;].+/packages/simple_cxx/src'"
       "WithSubpackagesA_LIBRARIES='pws_a'"
 
-      "b_test_utils_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/doc/examples/tpls/HeaderOnlyTpl[;].+/TribitsExampleProject/packages/with_subpackages/b/tests/testlib'"
+      "b_test_utils_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl[;].+/TribitsExampleProject/packages/with_subpackages/b/tests/testlib'"
 
-      "WithSubpackagesB_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/doc/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackagesB_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl'"
       "WithSubpackagesB_LIBRARY_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src'"
       "WithSubpackagesB_LIBRARIES='pws_b'"
 
-      "WithSubpackagesC_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/doc/examples/tpls/HeaderOnlyTpl[;].+/TribitsExampleProject/packages/with_subpackages/c'"
+      "WithSubpackagesC_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl[;].+/TribitsExampleProject/packages/with_subpackages/c'"
       "WithSubpackagesC_LIBRARY_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/c'"
       "WithSubpackagesC_LIBRARIES='pws_c'"
 
-      "WithSubpackages_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/doc/examples/tpls/HeaderOnlyTpl[;].+/TribitsExampleProject/packages/with_subpackages/c'"
+      "WithSubpackages_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl[;].+/TribitsExampleProject/packages/with_subpackages/c'"
       "WithSubpackages_LIBRARY_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/c'"
       "WithSubpackages_LIBRARIES='pws_c.pws_b.pws_a'"
 
@@ -1215,7 +1218,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_WrapExternal_VerboseConfigu
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_VERBOSE_CONFIGURE=ON
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
@@ -1256,7 +1259,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
   TEST_0
     MESSAGE "Copy TribitsExampleProject so that we can modify it."
     CMND cp
-    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject .
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
 
   TEST_1
     MESSAGE "Copy the with_subpackages package dir to base dir."
@@ -1301,12 +1304,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a/CMakeLists[.]txt"
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a/tests/CMakeLists[.]txt"
 
-      "-- WithSubpackagesA_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src[;].+/doc/examples/tpls/HeaderOnlyTpl'"
+      "-- WithSubpackagesA_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl'"
 
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/CMakeLists[.]txt"
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/tests/CMakeLists[.]txt"
 
-      "-- WithSubpackagesB_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src[;].+/doc/examples/tpls/HeaderOnlyTpl'"
+      "-- WithSubpackagesB_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl'"
       "-- WithSubpackagesB_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/a[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src'"
 
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/c/CMakeLists[.]txt"
@@ -1315,7 +1318,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
       "-- WithSubpackagesC_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/c'"
       "-- WithSubpackagesC_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/a[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/c'"
 
-     "-- WithSubpackages_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src;.+/doc/examples/tpls/HeaderOnlyTpl;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/c'"
+     "-- WithSubpackages_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src;.+/examples/tpls/HeaderOnlyTpl;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/c'"
       "-- WithSubpackages_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/a[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/c'"
 
   TEST_4 CMND make
@@ -1345,7 +1348,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_Fail
       -DTribitsExProj_ENABLE_TESTS=ON
       #-DTribitsExProj_VERBOSE_CONFIGURE=ON
       -DHeaderOnlyTpl_INCLUDE_DIRS=/path_does_not_exist
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Processing enabled TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
       "-- Searching for headers in HeaderOnlyTpl_INCLUDE_DIRS='/path_does_not_exist'"
@@ -1385,7 +1388,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
       #-DTribitsExProj_VERBOSE_CONFIGURE=ON
       -DTPL_ENABLE_HeaderOnlyTpl=ON
       -DHeaderOnlyTpl_INCLUDE_DIRS=/path_does_not_exist
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
       "TIP: Even though the TPL 'HeaderOnlyTpl' was explicitly enabled in input,"
@@ -1411,7 +1414,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ExternalPkg
   TEST_0
     MESSAGE "Copy TribitsExampleProject so that we can copy in ExteranlPkg."
     CMND cp
-    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject .
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
 
   TEST_1
     MESSAGE "Configure to get the compiler options"
@@ -1440,7 +1443,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ExternalPkg
   TEST_3
     MESSAGE "Copy ExteranlPkg to base dir."
     CMND cp
-    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/ExternalPkg
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/ExternalPkg
       TribitsExampleProject/.
 
 
@@ -1489,7 +1492,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableW
       -DTribitsExProj_SHORTCIRCUIT_AFTER_DEPENDENCY_HANDLING=ON
       -DTribitsExProj_ENABLE_WithSubpackagesA=OFF
       -DTribitsExProj_ENABLE_WithSubpackagesB=ON
-      ${${PROJECT_NAME}_TRIBITS_DIR}/doc/examples/TribitsExampleProject
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Explicitly enabled SE packages on input .by user.:  WithSubpackagesB 1"
       "-- Setting TribitsExProj_ENABLE_WrapExternal=OFF because WrapExternal has a required library dependence on disabled package WithSubpackagesA"
