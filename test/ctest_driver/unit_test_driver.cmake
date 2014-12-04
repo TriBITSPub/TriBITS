@@ -59,14 +59,14 @@ MESSAGE("CTEST_SCRIPT_DIRECTORY = '${CTEST_SCRIPT_DIRECTORY}'")
 SET(MOCK_PROJECT_NAME Trilinos)
 
 GET_FILENAME_COMPONENT(${MOCK_PROJECT_NAME}_TRIBITS_DIR
-  "${CTEST_SCRIPT_DIRECTORY}/../.." ABSOLUTE)
+  "${CTEST_SCRIPT_DIRECTORY}/../../tribits" ABSOLUTE)
 MESSAGE("${MOCK_PROJECT_NAME}_TRIBITS_DIR = '${${MOCK_PROJECT_NAME}_TRIBITS_DIR}'")
 
-SET(TRIBITS_PROJECT_ROOT "${${MOCK_PROJECT_NAME}_TRIBITS_DIR}/package_arch/UnitTests/MockTrilinos")
+SET(TRIBITS_PROJECT_ROOT "${${MOCK_PROJECT_NAME}_TRIBITS_DIR}/examples/MockTrilinos")
 
 SET( CMAKE_MODULE_PATH
-  "${${MOCK_PROJECT_NAME}_TRIBITS_DIR}/utils"  # To find general support macros
-  "${${MOCK_PROJECT_NAME}_TRIBITS_DIR}/ctest"  # To find TrilinosCMakeCoreDriver.cmake
+  "${${MOCK_PROJECT_NAME}_TRIBITS_DIR}/core/utils"  # To find general support macros
+  "${${MOCK_PROJECT_NAME}_TRIBITS_DIR}/ctest_driver"  # To find TrilinosCMakeCoreDriver.cmake
   )
 
 INCLUDE(TribitsCTestDriverCore)

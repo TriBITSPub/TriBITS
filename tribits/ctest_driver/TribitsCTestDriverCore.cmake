@@ -118,8 +118,8 @@ MESSAGE("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 SET( CMAKE_MODULE_PATH
   "${TRIBITS_PROJECT_ROOT}"
   "${TRIBITS_PROJECT_ROOT}/cmake"
-  "${${PROJECT_NAME}_TRIBITS_DIR}/utils"
-  "${${PROJECT_NAME}_TRIBITS_DIR}/package_arch"
+  "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
+  "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
 INCLUDE(PrintVar)
@@ -546,7 +546,7 @@ MACRO(ENABLE_ONLY_MODIFIED_PACKAGES)
   IF (EXISTS "${MODIFIED_FILES_FILE_NAME}")
     EXECUTE_PROCESS(
       COMMAND ${PYTHON_EXECUTABLE}
-        ${${PROJECT_NAME}_TRIBITS_DIR}/python/get-tribits-packages-from-files-list.py
+        ${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages-from-files-list.py
         --files-list-file=${MODIFIED_FILES_FILE_NAME}
         --deps-xml-file=${CTEST_BINARY_DIRECTORY}/${${PROJECT_NAME}_PACKAGE_DEPS_XML_FILE_NAME}
       OUTPUT_VARIABLE MODIFIED_PACKAGES_LIST

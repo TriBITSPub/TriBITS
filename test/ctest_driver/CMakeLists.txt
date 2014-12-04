@@ -49,6 +49,8 @@ ADVANCED_SET(Trilinos_CTEST_COMMAND ctest CACHE STRING
 # The mock test project 
 SET(MOCK_PROJECT_NAME Trilinos)
 
+SET(TRIBITS_MOCK_TRILINOS_DIR "examples/MockTrilinos")
+
 SET(MOCK_TRILINOS_DIR ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_MOCK_TRILINOS_DIR})
 
 
@@ -244,10 +246,10 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra 8"
     "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 16"
     "Processing current package Teuchos: libs='ON', tests=''"
-    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_ENABLE_TESTS:BOOL=.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/package_arch/UnitTests/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_ENABLE_TESTS:BOOL=.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
     "Processing current package Epetra: libs='ON', tests=''"
     "Processing current package Thyra: libs='ON', tests='ON'"
-    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_ENABLE_TESTS:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/package_arch/UnitTests/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_EpetraExt:BOOL=.-DTrilinos_ENABLE_Thyra:BOOL=ON'"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_ENABLE_TESTS:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_EpetraExt:BOOL=.-DTrilinos_ENABLE_Thyra:BOOL=ON'"
   )
 # NOTE: The above test pins down the form of the configure options passed to
 # different package configures to make sure everything in there.
@@ -352,13 +354,13 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     Trilinos_ADDITIONAL_PACKAGES=Stalix
   PASS_REGULAR_EXPRESSION_ALL
     "preCopyrightTrilinos: Doing GIT update from URL 'url1:/git/preCopyrightTrilinos' to dir '.*/MockTrilinos/preCopyrightTrilinos'"
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git.reset.--hard.WORKING_DIRECTORY..*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE..*/ctest/UnitTests/TriBITS_CTestDriver_CI_EnableAllSecondaryTested_EnableStalix/preCopyrightTrilinos.reset.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git.clean.-df.WORKING_DIRECTORY..*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE..*/ctest/UnitTests/TriBITS_CTestDriver_CI_EnableAllSecondaryTested_EnableStalix/preCopyrightTrilinos.clean.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git.pull.WORKING_DIRECTORY..*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE..*/ctest/UnitTests/TriBITS_CTestDriver_CI_EnableAllSecondaryTested_EnableStalix/preCopyrightTrilinos.update.out."
-    "EXECUTE_PROCESS.COMMAND;/somebasedir/git.log.--pretty=format:.*.-C.HEAD..ORIG_HEAD.OUTPUT_VARIABLE.CLONE_OR_PULL_OUTPUT.WORKING_DIRECTORY;.*/package_arch/UnitTests/MockTrilinos/preCopyrightTrilinos."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git.reset.--hard.WORKING_DIRECTORY..*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE..*/test/ctest_driver/TriBITS_CTestDriver_CI_EnableAllSecondaryTested_EnableStalix/preCopyrightTrilinos.reset.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git.clean.-df.WORKING_DIRECTORY..*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE..*/test/ctest_driver/TriBITS_CTestDriver_CI_EnableAllSecondaryTested_EnableStalix/preCopyrightTrilinos.clean.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git.pull.WORKING_DIRECTORY..*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE..*/test/ctest_driver/TriBITS_CTestDriver_CI_EnableAllSecondaryTested_EnableStalix/preCopyrightTrilinos.update.out."
+    "EXECUTE_PROCESS.COMMAND;/somebasedir/git.log.--pretty=format:.*.-C.HEAD..ORIG_HEAD.OUTPUT_VARIABLE.CLONE_OR_PULL_OUTPUT.WORKING_DIRECTORY;.*/examples/MockTrilinos/preCopyrightTrilinos."
     "Dakota: Doing initial SVN clone/checkout from URL 'url3/somedirpath/trunk' to dir 'packages/TriKota/Dakota'"
-    "EXECUTE_PROCESS.COMMAND./someotherbasedir/svn.checkout.url3/somedirpath/trunk.packages/TriKota/Dakota.WORKING_DIRECTORY..*/MockTrilinos.OUTPUT_FILE..*/ctest/UnitTests/TriBITS_CTestDriver_CI_EnableAllSecondaryTested_EnableStalix/Dakota.update.out."
-    "EXECUTE_PROCESS.echo.OUTPUT_VARIABLE.CLONE_OR_PULL_OUTPUT.WORKING_DIRECTORY.*/package_arch/UnitTests/MockTrilinos/packages/TriKota/Dakota."
+    "EXECUTE_PROCESS.COMMAND./someotherbasedir/svn.checkout.url3/somedirpath/trunk.packages/TriKota/Dakota.WORKING_DIRECTORY..*/MockTrilinos.OUTPUT_FILE..*/test/ctest_driver/TriBITS_CTestDriver_CI_EnableAllSecondaryTested_EnableStalix/Dakota.update.out."
+    "EXECUTE_PROCESS.echo.OUTPUT_VARIABLE.CLONE_OR_PULL_OUTPUT.WORKING_DIRECTORY.*/examples/MockTrilinos/packages/TriKota/Dakota."
     ".... preCopyrightTrilinos updates."
     "... Dakota cloned version."
     "Adding extra Continuous repository preCopyrightTrilinos"
