@@ -2628,13 +2628,13 @@ MACRO(TRIBITS_ADD_DASHBOARD_TARGET)
         ${PROJECT_NAME}_PACKAGES=${${PROJECT_NAME}_ENABLED_PACKAGES_LIST}
         PROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}
         ${CMAKE_CTEST_COMMAND} ${${PROJECT_NAME}_DASHBOARD_CTEST_ARGS} -S
-          ${${PROJECT_NAME}_TRIBITS_DIR}/ctest/experimental_build_test.cmake
+          ${${PROJECT_NAME}_TRIBITS_DIR}/ctest_driver/experimental_build_test.cmake
       COMMAND echo
       COMMAND env ${EXPR_CMND_ARGS}
         ${PROJECT_NAME}_PACKAGES=${${PROJECT_NAME}_ENABLED_PACKAGES_LIST}
         PROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}
         ${CMAKE_CTEST_COMMAND} ${${PROJECT_NAME}_DASHBOARD_CTEST_ARGS} -S
-          ${${PROJECT_NAME}_TRIBITS_DIR}/ctest/experimental_build_test.cmake || echo
+          ${${PROJECT_NAME}_TRIBITS_DIR}/ctest_driver/experimental_build_test.cmake || echo
 
       # 2009/07/05: rabartl: Above, I added the ending '|| echo' to always make
       # the command pass so that 'make' will not stop and avoid this last command
