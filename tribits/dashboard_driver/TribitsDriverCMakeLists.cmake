@@ -57,18 +57,18 @@ endif()
 
 # Locate the TriBITS dependencies.
 IF (NOT TRIBITS_ROOT)
-  get_filename_component(TRIBITS_ROOT "${CMAKE_CURRENT_LIST_DIR}/../..")
+  get_filename_component(TRIBITS_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 ENDIF()
 get_filename_component(TRIBITS_ROOT "${TRIBITS_ROOT}" ABSOLUTE)
 
 set(CMAKE_MODULE_PATH
   ${CMAKE_CURRENT_LIST_DIR}
-  ${TRIBITS_ROOT}/utils
-  ${TRIBITS_ROOT}/package_arch
-  ${TRIBITS_ROOT}/config_tests
+  ${TRIBITS_ROOT}/core/utils
+  ${TRIBITS_ROOT}/core/package_arch
+  ${TRIBITS_ROOT}/core/config_tests
   )
 
-set(TRIBITS_PYTHON_DIR "${TRIBITS_ROOT}/python")
+set(TRIBITS_PYTHON_UTILS_DIR "${TRIBITS_ROOT}/python_utils")
 
 include(CTest)
 include(TribitsDriverSupport)

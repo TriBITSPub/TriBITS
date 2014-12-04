@@ -58,15 +58,15 @@ else:
   verbose = False
 
 
-# tribitsTddDriverDir is the directory where *this* script is:
+# tribitsDDDir is the directory where *this* script is:
 #
 this_path = os.path.abspath(os.path.realpath(__file__))
-tribitsTddDriverDir = os.path.dirname(this_path)
-print "tribitsTddDriverDir = '"+tribitsTddDriverDir+"'"
-
+tribitsDDDir = os.path.dirname(this_path)
+print "tribitsDDDir = '"+tribitsDDDir+"'"
 
 # Load the general script support python code
-sys.path.insert(0, tribitsTddDriverDir+"/../../python")
+pythonUtilsDir = os.path.join(tribitsDDDir, "../python_utils")
+sys.path = [pythonUtilsDir] + sys.path
 from GeneralScriptSupport import *
 
 
@@ -212,11 +212,11 @@ def run_driver(ctestSourceDirectory, projectRepoBaseDir):
 
     print "\nPWD=\""+os.getcwd()+"\"...\n"
     print "projectRepoBaseDir = '" + projectRepoBaseDir + "'"
-    print "tribitsTddDriverDir = '" + tribitsTddDriverDir + "'"
+    print "tribitsDDDir = '" + tribitsDDDir + "'"
 
     # tribitsDir is the root directory of the TriBITS system:
     #
-    tribitsDir = os.path.dirname(os.path.dirname(tribitsTddDriverDir))
+    tribitsDir = os.path.abspath(os.path.join(tribitsDDDir, ".."))
     print "tribitsDir = '"+tribitsDir+"'"
 
     # dashboardBaseDir is the parent directory of our containing source tree,
@@ -267,7 +267,7 @@ def run_driver(ctestSourceDirectory, projectRepoBaseDir):
     print "***\n"
     sys.exit(
       invoke_ctest(ctestExe,
-        os.path.join(tribitsTddDriverDir, "TribitsDriverDashboard.cmake"),
+        os.path.join(tribitsDDDir, "TribitsDriverDashboard.cmake"),
         tddDashboardRootDir,
         {
          "TDD_DASHBOARD_ROOT" : tddDashboardRootDir,

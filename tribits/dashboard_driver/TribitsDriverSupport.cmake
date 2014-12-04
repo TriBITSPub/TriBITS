@@ -93,8 +93,8 @@ function(TRIBITS_DRIVER_ADD_TEST_THAT_INSTALLS_CMAKE cmake_type)
     message(FATAL_ERROR "TD_BASE_DIR must be defined before calling this function")
   endif()
 
-  if(NOT TRIBITS_PYTHON_DIR)
-    message(FATAL_ERROR "TRIBITS_PYTHON_DIR must be defined before calling this function")
+  if(NOT TRIBITS_PYTHON_UTILS_DIR)
+    message(FATAL_ERROR "TRIBITS_PYTHON_UTILS_DIR must be defined before calling this function")
   endif()
 
   find_program(PYTHON_EXE python)
@@ -111,7 +111,7 @@ function(TRIBITS_DRIVER_ADD_TEST_THAT_INSTALLS_CMAKE cmake_type)
     )
 
   add_test(install-cmake-${cmake_type} ${PYTHON_EXE}
-    "${TRIBITS_PYTHON_DIR}/download-cmake.py"
+    "${TRIBITS_PYTHON_UTILS_DIR}/download-cmake.py"
     "--skip-detect"
     "--install-dir=${TD_BASE_DIR}/tools/cmake-${cmake_type}"
     "--installer-type=${cmake_type}"
