@@ -90,7 +90,7 @@ FUNCTION(CREATE_DEPENDENCY_XML_DUMP_TEST_CASE TEST_NAME)
       ARGS
         -E compare_files
         ${TEST_OUTPUT_DIR}/${MOCK_PROJECT_NAME}PackageDependencies.xml
-        ${PROJECT_SOURCE_DIR}/test/ci_support/${PARSE_COMPARE_XML_FILE}
+        ${${PACKAGE_NAME}_SOURCE_DIR}/test/ci_support/${PARSE_COMPARE_XML_FILE}
     XHOSTTYPE Windows
     )
 
