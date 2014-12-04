@@ -226,8 +226,8 @@ def setupAndAssertEgGitVersions(inOptions):
   egWhich = getCmndOutput("which eg", True, False)
   if egWhich == "" or re.match(".+no eg.+", egWhich):
     print "Warning, the eg command is not in your path! ("+egWhich+")"
-    setattr(inOptions, "eg", os.path.abspath(inOptions.scriptsDir+"/../common_tools/git/eg"))
-    print "Setting to default eg in source tree '"+inOptions.eg+"'!"
+    setattr(inOptions, "eg", os.path.abspath(inOptions.ciSupportDir+"/eg"))
+    print "Setting to default eg in TriBITS source tree '"+inOptions.eg+"'!"
   else:
     setattr(inOptions, "eg", "eg")
 
@@ -393,7 +393,7 @@ def getExtraReposPyFileFromCmakeFile(inOptions, extraReposPythonOutFile, \
   if inOptions.ignoreMissingExtraRepos:
     cmnd += " -DIGNORE_MISSING_EXTRA_REPOSITORIES=TRUE"
   cmnd += \
-    " -P "+inOptions.tribitsDir+"/package_arch/TribitsGetExtraReposForCheckinTest.cmake"
+    " -P "+inOptions.tribitsDir+"/ci_support/TribitsGetExtraReposForCheckinTest.cmake"
   echoRunSysCmnd(cmnd, throwExcept=True, timeCmnd=True, outFile=consoleOutputFile, \
     verbose=verbose)
 
@@ -500,7 +500,7 @@ def createAndGetProjectDependencies(inOptions, baseTestDir, tribitsGitRepos):
       cmakeScopedDefine(inOptions.projectName, "EXTRA_REPOSITORIES", "\""+\
         ';'.join(tribitsGitRepos.tribitsExtraRepoNamesList())+"\""),
       cmakeScopedDefine(inOptions.projectName, "DEPS_XML_OUTPUT_FILE", projectDepsXmlFile),
-      "-P %s/package_arch/TribitsDumpDepsXmlScript.cmake" % inOptions.tribitsDir,
+      "-P %s/ci_support/TribitsDumpDepsXmlScript.cmake" % inOptions.tribitsDir,
       ]
     cmnd = ' '.join(cmakeArgumentList)
     echoRunSysCmnd(cmnd,
@@ -1798,7 +1798,7 @@ def getProjectName(sourceDirectory):
     'This is required of any Tribits project.')
 
   
-def checkinTest(baseDir, inOptions, configuration={}):
+def checkinTest(tribitsDir, inOptions, configuration={}):
   """
   Main function for checkin testing.
   """
@@ -1810,12 +1810,12 @@ def checkinTest(baseDir, inOptions, configuration={}):
   print "*** Performing checkin testing of %s ***" % inOptions.projectName
   print "**********************************************"
 
-  setattr(inOptions, "tribitsDir", baseDir)
+  setattr(inOptions, "tribitsDir", tribitsDir)
 
-  scriptsDir = os.path.join(baseDir, 'python')
-  setattr(inOptions, "scriptsDir", scriptsDir)
+  ciSupportDir = os.path.join(tribitsDir, 'ci_support')
+  setattr(inOptions, "ciSupportDir", ciSupportDir)
 
-  print "\nscriptsDir =", scriptsDir
+  print "\nciSupportDir =", ciSupportDir
 
   print "\nsrcDir =", inOptions.srcDir
 

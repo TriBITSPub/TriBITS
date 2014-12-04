@@ -42,15 +42,21 @@
 # Unit testing code for CheckinTest.py #
 ########################################
 
+import os
+import sys
+
+ciSupportDir = os.path.join(
+  os.path.dirname(os.path.abspath(__file__)),
+  "../..", "tribits/ci_support" )
+sys.path = [ciSupportDir] + sys.path
 
 from CheckinTest import *
 import unittest
 
-scriptsDir = getScriptBaseDir()
+g_testBaseDir = getScriptBaseDir()
 
-tribitsBaseDir=os.path.abspath(scriptsDir+"/..")
-packageArchDir=os.path.abspath(tribitsBaseDir+"/package_arch")
-mockProjectBaseDir=os.path.abspath(packageArchDir+"/UnitTests/MockTrilinos")
+tribitsBaseDir=os.path.abspath(g_testBaseDir+"/../../tribits")
+mockProjectBaseDir=os.path.abspath(tribitsBaseDir+"/examples/MockTrilinos")
 
 #####################################################
 #
@@ -176,7 +182,7 @@ class test_getTimeInMinFromTotalTimeLine(unittest.TestCase):
 #############################################################################
 
 
-projectDepsXmlFileDefaultOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.gold.xml"
+projectDepsXmlFileDefaultOverride=g_testBaseDir+"/TrilinosPackageDependencies.gold.xml"
 projectDependenciesDefault = getProjectDependenciesFromXmlFile(projectDepsXmlFileDefaultOverride)
 
 
@@ -234,7 +240,7 @@ M	ExtraTrilinosPackages.cmake
 M	stalix/README
 """
     # NOTE: Above, we ignore top-level changes in extra repos which would cause global rebuilds
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     projectDependenciesLocal = getProjectDependenciesFromXmlFile(projectDepsXmlFileOverride)
 
     options = MockOptions()
@@ -414,10 +420,10 @@ def run_extrarepo_test(testObject, testName, extraReposFile, expectedReposList, 
   if extraCmakeVars:
     cmnd += " "+extraCmakeVars
   cmnd += \
-    " -DEXTRA_REPOS_FILE="+scriptsDir+"/UnitTests/"+extraReposFile+ \
+    " -DEXTRA_REPOS_FILE="+os.path.join(g_testBaseDir,extraReposFile)+ \
     " -DEXTRA_REPOS_PYTHON_OUT_FILE="+extraReposPythonOutFile+ \
     " -DUNITTEST_SKIP_FILTER_OR_ASSERT_EXTRA_REPOS=TRUE"+ \
-    " -P "+scriptsDir+"/../package_arch/TribitsGetExtraReposForCheckinTest.cmake"
+    " -P "+tribitsBaseDir+"/ci_support/TribitsGetExtraReposForCheckinTest.cmake"
   consoleOutFile = testName+".out"
   rtn = echoRunSysCmnd(cmnd, throwExcept=False, timeCmnd=True, outFile=consoleOutFile,
     verbose=run_extrarepo_test_verbose)
@@ -694,7 +700,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraRepos3_Continuous"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting_3.cmake"
+      g_testBaseDir+"/ExtraReposListExisting_3.cmake"
     inOptions.extraReposType = "Continuous"
     expectedTribitsExtraRepoNamesList = ["preCopyrightTrilinos"]
     expectedGitRepos = [
@@ -715,7 +721,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraRepos3_Nightly"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting_3.cmake"
+      g_testBaseDir+"/ExtraReposListExisting_3.cmake"
     inOptions.extraReposType = "Nightly"
     expectedPass = True
     expectedTribitsExtraRepoNamesList = ["preCopyrightTrilinos", "extraTrilinosRepo"]
@@ -738,7 +744,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraReposExisting1Missing1_assert"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting1Missing1.cmake"
+      g_testBaseDir+"/ExtraReposListExisting1Missing1.cmake"
     inOptions.extraReposType = "Nightly"
     expectedPass = False
     expectedTribitsExtraRepoNamesList = ["Will never be compared"]
@@ -755,7 +761,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraReposExisting1Missing1_ignore"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting1Missing1.cmake"
+      g_testBaseDir+"/ExtraReposListExisting1Missing1.cmake"
     inOptions.extraReposType = "Nightly"
     inOptions.ignoreMissingExtraRepos = True
     expectedPass = True
@@ -776,7 +782,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraRepos3_listExtraReposNotListed1"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting_3.cmake"
+      g_testBaseDir+"/ExtraReposListExisting_3.cmake"
     inOptions.extraRepos = "extraRepoNotInList"
     inOptions.extraReposType = "Nightly"
     expectedPass = False
@@ -793,7 +799,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraRepos3_listExtraReposNotListed2"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting_3.cmake"
+      g_testBaseDir+"/ExtraReposListExisting_3.cmake"
     inOptions.extraRepos = "preCopyrightTrilinos,extraRepoNotInList"
     inOptions.extraReposType = "Nightly"
     expectedPass = False
@@ -811,7 +817,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraRepos3_extraReposFullList_right_order"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting_3.cmake"
+      g_testBaseDir+"/ExtraReposListExisting_3.cmake"
     inOptions.extraReposType = "Nightly"
     inOptions.extraRepos = "preCopyrightTrilinos,extraTrilinosRepo,ExtraTeuchosRepo"
     expectedPass = True
@@ -832,7 +838,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraRepos3_extraReposFullList_wrong_order"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting_3.cmake"
+      g_testBaseDir+"/ExtraReposListExisting_3.cmake"
     inOptions.extraReposType = "Nightly"
     inOptions.extraRepos = "extraTrilinosRepo,preCopyrightTrilinos"
     expectedPass = False
@@ -850,7 +856,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraRepos3_listExtraRepos1_first"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting_3.cmake"
+      g_testBaseDir+"/ExtraReposListExisting_3.cmake"
     inOptions.extraRepos = "preCopyrightTrilinos"
     inOptions.extraReposType = "Nightly"
     expectedPass = True
@@ -869,7 +875,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraRepos3_listExtraRepos1_middle"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting_3.cmake"
+      g_testBaseDir+"/ExtraReposListExisting_3.cmake"
     inOptions.extraRepos = "extraTrilinosRepo"
     inOptions.extraReposType = "Nightly"
     expectedPass = True
@@ -888,7 +894,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraRepos3_listExtraRepos1_last"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListExisting_3.cmake"
+      g_testBaseDir+"/ExtraReposListExisting_3.cmake"
     inOptions.extraRepos = "ExtraTeuchosRepo"
     inOptions.extraReposType = "Nightly"
     expectedPass = True
@@ -907,7 +913,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraRepos3NoContinuous_noExtraRepos"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposList3NoContinuous.cmake"
+      g_testBaseDir+"/ExtraReposList3NoContinuous.cmake"
     inOptions.extraRepos = ""
     inOptions.extraReposType = "Continuous"
     expectedPass = True
@@ -925,7 +931,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraReposHasPackagesAndDeepDir"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListHasPackagesAndDeepDir.cmake"
+      g_testBaseDir+"/ExtraReposListHasPackagesAndDeepDir.cmake"
     inOptions.extraRepos = ""
     inOptions.extraReposType = "Continuous"
     expectedPass = False
@@ -943,7 +949,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     testName = "test_ExtraReposNotGit"
     inOptions = MockOptions()
     inOptions.extraReposFile = \
-      tribitsBaseDir+"/python/UnitTests/ExtraReposListNotGit.cmake"
+      g_testBaseDir+"/ExtraReposListNotGit.cmake"
     inOptions.extraRepos = ""
     inOptions.extraReposType = "Continuous"
     expectedPass = False
@@ -1271,14 +1277,14 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
     # B) Create the command to run the checkin-test.py script
     
     cmndArgs = [
-      scriptsDir + "/../checkin-test.py",
+      tribitsBaseDir + "/ci_support/checkin-test.py",
       "--with-cmake=\""+g_withCmake+"\"",
       "--project-name=Trilinos",
       "--no-eg-git-version-check",
-      "--src-dir="+scriptsDir+"/../package_arch/UnitTests/MockTrilinos",
+      "--src-dir="+mockProjectBaseDir,
       "--send-email-to=bogous@somwhere.com",
-      "--project-configuration=%s" % os.path.join(scriptsDir,
-        'UnitTests', 'CheckinTest_UnitTests_Config.py'),
+      "--project-configuration=%s" % os.path.join(g_testBaseDir,
+        'CheckinTest_UnitTests_Config.py'),
       optionsStr,
       ]
     cmnd = ' '.join(cmndArgs)
@@ -1668,7 +1674,7 @@ class test_checkin_test(unittest.TestCase):
   # entire workflow in order to make sure that raw 'eg' is not used anywhere
   # where it matters.
   def test_do_all_no_eg_installed(self):
-    eg = os.path.abspath(scriptsDir+"/../common_tools/git/eg")
+    eg = os.path.abspath(tribitsBaseDir+"/ci_support/eg")
     checkin_test_run_case(
       \
       self,
@@ -1703,7 +1709,7 @@ class test_checkin_test(unittest.TestCase):
       True,
       \
       "Warning, the eg command is not in your path! .*no eg in .path1:path2:path3.*\n" \
-      "Setting to default eg in source tree '.*/common_tools/git/eg'\n" \
+      "Setting to default eg in TriBITS source tree '.*/ci_support/eg'\n" \
       ,
       inPathEg=False, egVersion=False
       )
@@ -2008,7 +2014,7 @@ class test_checkin_test(unittest.TestCase):
 
   def test_extra_repo_1_explicit_enable_configure_pass(self):
 
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
 
     testName = "extra_repo_1_explicit_enable_configure_pass"
 
@@ -2052,7 +2058,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_implicit_enable_configure_pass(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2087,7 +2093,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_do_all_push_pass(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2130,7 +2136,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_pull_extra_pull_pass(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2165,7 +2171,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_trilinos_changes_do_all_push_pass(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2195,7 +2201,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_extra_repo_changes_do_all_push_pass(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2226,7 +2232,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_abort_gracefully_if_no_updates_no_updates_passes(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2260,7 +2266,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_no_updates_passes(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2298,7 +2304,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_main_repo_update(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2333,7 +2339,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_extra_repo_update(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2368,7 +2374,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_main_repo_extra_update(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2403,7 +2409,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_extra_repo_extra_update(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2438,7 +2444,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_abort_gracefully_if_no_changes_to_push_passes(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -2474,7 +2480,7 @@ class test_checkin_test(unittest.TestCase):
 
   def test_extra_repo_file_2_continuous_pull(self):
 
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
 
     testName = "test_extra_repo_file_2_continuous_pull"
 
@@ -2491,7 +2497,7 @@ class test_checkin_test(unittest.TestCase):
       \
       testName,
       \
-      " --extra-repos-file="+scriptsDir+"/UnitTests/ExtraReposListExisting_2.cmake" \
+      " --extra-repos-file="+g_testBaseDir+"/ExtraReposListExisting_2.cmake" \
       " --extra-repos-type=Continuous" \
       " --extra-builds=MPI_DEBUG_ST --enable-packages=Stalix --pull", \
       \
@@ -2520,7 +2526,7 @@ class test_checkin_test(unittest.TestCase):
 
   def test_extra_repo_file_2_nightly_pull(self):
 
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.extraTrilinosRepo.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.extraTrilinosRepo.gold.xml"
 
     testName = "test_extra_repo_file_2_nightly_pull"
 
@@ -2537,7 +2543,7 @@ class test_checkin_test(unittest.TestCase):
       \
       testName,
       \
-      " --extra-repos-file="+scriptsDir+"/UnitTests/ExtraReposListExisting_2.cmake" \
+      " --extra-repos-file="+g_testBaseDir+"/ExtraReposListExisting_2.cmake" \
       " --extra-repos-type=Nightly" \
       " --extra-builds=MPI_DEBUG_ST --pull", \
       \
@@ -2574,7 +2580,7 @@ class test_checkin_test(unittest.TestCase):
 
   def test_extra_repo_file_3_continuous_pull_configure(self):
 
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
 
     testName = "test_extra_repo_file_3_continuous_pull_configure"
 
@@ -2584,7 +2590,7 @@ class test_checkin_test(unittest.TestCase):
       \
       testName,
       \
-      " --extra-repos-file="+scriptsDir+"/UnitTests/ExtraReposListExisting_3.cmake" \
+      " --extra-repos-file="+g_testBaseDir+"/ExtraReposListExisting_3.cmake" \
       " --extra-repos-type=Continuous" \
       " --default-builds=MPI_DEBUG --pull --configure", \
       \
@@ -2629,7 +2635,7 @@ class test_checkin_test(unittest.TestCase):
 
   def test_extra_repo_file_3_continuous_do_all_push(self):
 
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.gold.xml"
 
     testName = "test_extra_repo_file_3_continuous_do_all_push"
 
@@ -2639,7 +2645,7 @@ class test_checkin_test(unittest.TestCase):
       \
       testName,
       \
-      " --extra-repos-file="+scriptsDir+"/UnitTests/ExtraReposListExisting_3.cmake" \
+      " --extra-repos-file="+g_testBaseDir+"/ExtraReposListExisting_3.cmake" \
       " --extra-repos-type=Continuous" \
       " --extra-repos=ExtraTeuchosRepo" \
       " --make-options=-j3 --ctest-options=-j5" \
@@ -2684,7 +2690,7 @@ class test_checkin_test(unittest.TestCase):
 
   def test_extra_repo_file_project_nightly_nothing_fail(self):
 
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
 
     testName = "test_extra_repo_file_project_nightly_nothing_fail"
 
@@ -2712,7 +2718,7 @@ class test_checkin_test(unittest.TestCase):
 
   def test_extra_repo_file_project_continuous_extra_repos_pull(self):
 
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
 
     testName = "test_extra_repo_file_project_continuous_extra_repos_pull"
 
@@ -2752,7 +2758,7 @@ class test_checkin_test(unittest.TestCase):
 
   def test_extra_repo_file_missing_assert_fail(self):
 
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
 
     testName = "test_extra_repo_file_missing_assert_fail"
 
@@ -2762,7 +2768,7 @@ class test_checkin_test(unittest.TestCase):
       \
       testName,
       \
-      " --extra-repos-file="+scriptsDir+"/UnitTests/ExtraReposListExisting1Missing1.cmake" \
+      " --extra-repos-file="+g_testBaseDir+"/ExtraReposListExisting1Missing1.cmake" \
       " --extra-repos-type=Continuous" , \
       \
       "" \
@@ -2780,7 +2786,7 @@ class test_checkin_test(unittest.TestCase):
 
   def test_extra_repo_file_missing_ignore_pull(self):
 
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
 
     testName = "test_extra_repo_file_missing_ignore_pull"
 
@@ -2790,7 +2796,7 @@ class test_checkin_test(unittest.TestCase):
       \
       testName,
       \
-      " --extra-repos-file="+scriptsDir+"/UnitTests/ExtraReposListExisting1Missing1.cmake" \
+      " --extra-repos-file="+g_testBaseDir+"/ExtraReposListExisting1Missing1.cmake" \
       " --extra-repos-type=Continuous --ignore-missing-extra-repos --pull" , \
       \
       g_cmndinterceptsDumpDepsXMLFile \
@@ -2814,7 +2820,7 @@ class test_checkin_test(unittest.TestCase):
 
 
 #  def test_extra_repo_file_default_pull_configure(self):
-#    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+#    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
 #    checkin_test_run_case(
 #      \
 #      self,
@@ -4417,7 +4423,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_no_changes_do_all_push_fail(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4485,7 +4491,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_mispell_repo_fail(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4507,7 +4513,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_initial_trilinos_pull_fail(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4538,7 +4544,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_initial_extra_repo_pull_fail(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4571,7 +4577,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_extra_pull_trilinos_fail(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4606,7 +4612,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_extra_pull_extra_repo_fail(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4643,7 +4649,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_do_all_final_pull_trilinos_fails(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4672,7 +4678,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_do_all_final_pull_extra_repo_fails(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4705,7 +4711,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_do_all_final_amend_trilinos_fails(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4738,7 +4744,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_do_all_final_amend_extra_repo_fails(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4774,7 +4780,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_do_all_final_push_trilinos_fails(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
@@ -4801,7 +4807,7 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_extra_repo_1_do_all_final_push_extra_repo_fails(self):
-    projectDepsXmlFileOverride=scriptsDir+"/UnitTests/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,

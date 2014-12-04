@@ -961,7 +961,7 @@ MACRO(TRIBITS_WRITE_XML_DEPENDENCY_FILES)
     MESSAGE("Dumping the HTML dependencies webpage file ${${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE} ..." )
     EXECUTE_PROCESS(
       COMMAND ${PYTHON_EXECUTABLE}
-        ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_PYTHON_SCRIPTS_DIR}/dump-package-dep-table.py
+        ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CI_SUPPORT_DIR}/dump-package-dep-table.py
         --input-xml-deps-file=${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE}
         --output-html-deps-file=${${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE} )
   ENDIF()
@@ -975,7 +975,7 @@ MACRO(TRIBITS_WRITE_XML_DEPENDENCY_FILES)
     MESSAGE("Dumping the CDash XML dependencies file ${${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE} ..." )
     EXECUTE_PROCESS(
       COMMAND ${PYTHON_EXECUTABLE}
-        ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_PYTHON_SCRIPTS_DIR}/dump-cdash-deps-xml-file.py
+        ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CTEST_DRIVER_DIR}/dump-cdash-deps-xml-file.py
         --input-xml-deps-file=${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE}
         --output-cdash-deps-xml-file=${${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE} )
   ENDIF()

@@ -41,7 +41,13 @@
 
 
 import xml.dom.minidom
+import os
+import sys
 
+pythonUtilsDir = os.path.join(
+  os.path.dirname(os.path.abspath(__file__)),
+  "..", "python_utils" )
+sys.path = [pythonUtilsDir] + sys.path
 
 from GeneralScriptSupport import *
 

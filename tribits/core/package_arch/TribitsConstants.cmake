@@ -56,7 +56,11 @@ SET(${PROJECT_NAME}_EXTRA_TPLS_FILE_NAME TPLsList.cmake)
 
 # Directories relative to the TriBITS base directory
 
-SET(TRIBITS_PYTHON_SCRIPTS_DIR "python")
+SET(TRIBITS_PYTHON_SCRIPTS_DIR "python_utils")
+
+SET(TRIBITS_CI_SUPPORT_DIR "ci_support")
+
+SET(TRIBITS_CTEST_DRIVER_DIR "ctest_driver")
 
 SET(TRIBITS_CMAKE_UTILS_DIR "core/utils")
 

@@ -85,6 +85,13 @@ clp.add_option(
 # Execute the commands
 #
 
+import os
+import sys
+
+ciSupportDir = os.path.join(
+  os.path.dirname(os.path.abspath(__file__)),
+  "..", "ci_support" )
+sys.path = [ciSupportDir] + sys.path
 
 from TribitsDependencies import getProjectDependenciesFromXmlFile
 

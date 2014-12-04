@@ -1206,10 +1206,10 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
 
     print "\nStarting time:", getCmndOutput("date",True)
 
-    baseDir = getCompleteFileDirname(__file__)
+    tribitsDir = os.path.abspath(getCompleteFileDirname(__file__)+"/..") # TriBITS dir!
 
     t1 = time.time()
-    success = checkinTest(baseDir, options, configuration)
+    success = checkinTest(tribitsDir, options, configuration)
     t2 = time.time()
     print "\nTotal time for checkin-test.py =", formatMinutesStr((t2-t1)/60.0)
 
