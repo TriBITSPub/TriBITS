@@ -41,6 +41,16 @@
 # Unit testing code for TribitsPackageFilePathUtils.py #
 ######################################################### 
 
+import os
+import sys
+
+ciSupportDir = os.path.abspath(
+  os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "../..", "tribits/ci_support"
+    )
+  )
+sys.path = [ciSupportDir] + sys.path
 
 from TribitsPackageFilePathUtils import *
 import unittest
@@ -128,7 +138,7 @@ class test_isGlobalBuildFileRequiringGlobalRebuild(unittest.TestCase):
       True )
 
 
-testingTrilinosDepsXmlInFile = getScriptBaseDir()+"/UnitTests/TrilinosPackageDependencies.gold.xml"
+testingTrilinosDepsXmlInFile = getScriptBaseDir()+"/TrilinosPackageDependencies.gold.xml"
 trilinosDependencies = getProjectDependenciesFromXmlFile(testingTrilinosDepsXmlInFile)
   
 #print "\ntrilinosDependencies:\n", trilinosDependencies
@@ -226,7 +236,7 @@ class testProjectPackageFilePathUtils(unittest.TestCase):
       )
 
     self.assertEqual(
-      getCmndOutput(getScriptBaseDir()+"/get-tribits-packages-from-files-list.py" \
+      getCmndOutput(ciSupportDir+"/get-tribits-packages-from-files-list.py" \
         " --files-list-file=modifiedFiles.txt --deps-xml-file="+testingTrilinosDepsXmlInFile,
         True),
       "ALL_PACKAGES;TrilinosFramework;ThyraCoreLibs;Thyra"
@@ -238,7 +248,7 @@ class testFilterPackagesList(unittest.TestCase):
 
   def test_get_PT(self):
     self.assertEqual(
-      getCmndOutput(getScriptBaseDir()+"/filter-packages-list.py" \
+      getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
         " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT",
         True),
@@ -248,7 +258,7 @@ class testFilterPackagesList(unittest.TestCase):
 
   def test_get_PT_ST(self):
     self.assertEqual(
-      getCmndOutput(getScriptBaseDir()+"/filter-packages-list.py" \
+      getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
         " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT,ST",
         True),
@@ -258,7 +268,7 @@ class testFilterPackagesList(unittest.TestCase):
 
   def test_get_PT_ST_EX(self):
     self.assertEqual(
-      getCmndOutput(getScriptBaseDir()+"/filter-packages-list.py" \
+      getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
         " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT,ST,EX",
         True),
@@ -268,7 +278,7 @@ class testFilterPackagesList(unittest.TestCase):
 
   def test_get_ST(self):
     self.assertEqual(
-      getCmndOutput(getScriptBaseDir()+"/filter-packages-list.py" \
+      getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
         " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=ST",
         True),
@@ -278,7 +288,7 @@ class testFilterPackagesList(unittest.TestCase):
 
   def test_get_PT_EX(self):
     self.assertEqual(
-      getCmndOutput(getScriptBaseDir()+"/filter-packages-list.py" \
+      getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
         " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT,EX",
         True),
