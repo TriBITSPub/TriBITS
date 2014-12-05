@@ -12,11 +12,10 @@ INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake)
 PROJECT(${PROJECT_NAME} NONE)
 
 SET(${PROJECT_NAME}_TRIBITS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..
-  CACHE PATH "Path to TriBITS.")
-INCLUDE("${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake")
+  CACHE PATH "TriBITS base directory (default assumes in TriBITS source tree).")
 
-# CMake requires this be in the top file and not in an include file :-(
-CMAKE_MINIMUM_REQUIRED(VERSION ${TRIBITS_CMAKE_MINIMUM_REQUIRED})
+# Include the TriBITS system
+INCLUDE("${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake")
 
 # Disable MPI and Fortran
 SET(TPL_ENABLE_MPI OFF CACHE BOOL "" FORCE)

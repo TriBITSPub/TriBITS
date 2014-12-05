@@ -16,7 +16,7 @@ SET(CMAKE_LEGACY_CYGWIN_WIN32 1 CACHE BOOL "" FORCE)
 # don't process this file.
 #
 
-# Get PROJECT_NAME (must be in file for other parts of system to read)
+# Get PROJECT_NAME (must be in a file for other parts of system to read)
 INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake")
 
 # CMake requires that you declare the CMake project in the top-level file and
@@ -31,9 +31,6 @@ SET(${PROJECT_NAME}_TRIBITS_DIR
    "${CMAKE_CURRENT_LIST_DIR}/../.."  CACHE  STRING
   "TriBITS base directory (default assumes in TriBITS source tree)")
 INCLUDE("${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake")
-
-# CMake requires this be in the top file and not in an include file :-(
-CMAKE_MINIMUM_REQUIRED(VERSION ${TRIBITS_CMAKE_MINIMUM_REQUIRED})
 
 # Set default location for header-only TPL to make easy to configure out of
 # the TriBITS source tree.
