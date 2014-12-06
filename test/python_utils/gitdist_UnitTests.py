@@ -239,8 +239,8 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: status --porcelain\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        " M file2\n" \
-        " M file3\n" \
+        " T file2\n" \
+        " D file3\n" \
         "?? file4\n" \
         "?? file5\n" \
         )
@@ -1081,11 +1081,11 @@ class test_gitdist(unittest.TestCase):
         "Legend:\n" \
         "* ID: Repository ID, zero based (order git commands are run)\n" \
         "* Repo Dir: Relative to base repo (base repo shown first with '(Base)')\n" \
-        "* Branch: current branch (or detached HEAD)\n" \
+        "* Branch: Current branch (or detached HEAD)\n" \
         "* Tracking Branch: Tracking branch (or empty if no tracking branch)\n" \
-        "* C: number local commits w.r.t. tracking branch (empty if zero)\n" \
-        "* M: number of tracked modified (uncommitted) files (empty if zero)\n" \
-        "* ?: number of untracked, non-ignored files (empty if zero)\n\n"
+        "* C: Number local commits w.r.t. tracking branch (empty if zero)\n" \
+        "* M: Number of tracked modified (uncommitted) files (empty if zero)\n" \
+        "* ?: Number of untracked, non-ignored files (empty if zero)\n\n"
       self.assertEqual(cmndOut, cmndOut_expected)
 
     finally:
