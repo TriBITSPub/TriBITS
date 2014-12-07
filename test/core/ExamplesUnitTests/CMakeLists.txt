@@ -226,6 +226,15 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -DCMAKE_INSTALL_PREFIX=install
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
+      "Configuring TribitsExProj build directory"
+      "-- PROJECT_SOURCE_DIR="
+      "-- PROJECT_BINARY_DIR="
+      "-- TribitsExProj_TRIBITS_DIR="
+      "-- TriBITS_VERSION_STRING="
+      "-- CMAKE_VERSION="
+      "-- CMAKE_HOST_SYSTEM_NAME="
+      "-- TribitsExProj_HOSTNAME="
+
       "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
       "Warning: Setting TribitsExProj_ENABLE_MixedLang=OFF because "
       "Printing package dependencies ..."
