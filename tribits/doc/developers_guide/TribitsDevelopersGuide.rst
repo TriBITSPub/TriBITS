@@ -2435,8 +2435,8 @@ directories), then creating a stand-alone project build of a single TriBITS
 package requires fairly little extra overhead or duplication.
 
 
-Standard and Common TPLs in TriBITS
------------------------------------
+Standard and Common TPLs
+------------------------
 
 While a TriBITS Repository can define their own TPLs and their own TPL find
 modules (see `TriBITS TPL`_), the TriBITS source tree contains the find
