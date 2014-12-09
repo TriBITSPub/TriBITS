@@ -412,6 +412,15 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
     "ThyraCoreLibs_FULL_ENABLED_DEP_PACKAGES='RTOp.Teuchos'"
     "ThyraEpetra_FULL_ENABLED_DEP_PACKAGES='ThyraCoreLibs.Epetra.RTOp.Teuchos'"
     "Thyra_FULL_ENABLED_DEP_PACKAGES='ThyraEpetra.ThyraCoreLibs.Epetra.RTOp.Teuchos'"
+    "MPI_FINDMOD='.*/ReducedMockTrilinos/../../core/std_tpls/FindTPLMPI.cmake'"
+    "MPI_TESTGROUP='PT'"
+    "MPI_TPLS_LIST_FILE='.*/ReducedMockTrilinos/TPLsList.cmake'"
+    "AMD_FINDMOD='cmake/TPLs/FindTPLAMD.cmake'"
+    "AMD_TESTGROUP='EX'"
+    "AMD_TPLS_LIST_FILE='.*/ReducedMockTrilinos/TPLsList.cmake'"
+    "PETSC_FINDMOD='.*/ReducedMockTrilinos/../../common_tpls/FindTPLPETSC.cmake'"
+    "PETSC_TESTGROUP='ST'"
+    "PETSC_TPLS_LIST_FILE='.*/ReducedMockTrilinos/TPLsList.cmake'"
   )
 
 
