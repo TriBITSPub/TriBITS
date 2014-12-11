@@ -1191,7 +1191,7 @@ timeouts for the individual tests that have their own timeout set (through the
 ``TIMEOUT`` argument for each individual test) can be scaled by a constant
 factor ``<testTimeoutScaleFactor>`` by configuring with::
 
-  -D <Project>_SCALE_TEST_TIMEOUT_TESTING_TIMEOUT=<testTimeoutScaleFactor>
+  -D <Project>_SCALE_TEST_TIMEOUT=<testTimeoutScaleFactor>
 
 Here, ``<testTimeoutScaleFactor>`` can be an integral number like ``5`` or can
 be fractional number like ``1.5``.
@@ -1754,7 +1754,7 @@ directory, do::
 
   $ ctest -T memcheck -L <TRIBITS_PACKAGE>
 
-To run valgrind on a specific test, from the **base** project directory, do:
+To run valgrind on a specific test, from the **base** project directory, do::
 
   $ ctest -T memcheck -R ^<FULL_TEST_NAME>$
 
