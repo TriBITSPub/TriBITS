@@ -602,6 +602,32 @@ cache variable::
   -D <Project>_CXX11_FLAGS="<compiler flags>"
 
 
+Enabling explicit template instantiation for C++
+------------------------------------------------
+
+To enable explicit template instantiation for C++ code for packages that
+support it, configure with::
+
+  -D <Project>_ENABLE_EXPLICIT_INSTANTIATION=ON
+
+When ``OFF``, all packages that have templated C++ code will use implicit
+template instantiation.
+
+Explicit template instantiation can be enabled and disabled for individual
+packages with::
+
+
+  -D <TRIBITS_PACKAGE>_ENABLE_EXPLICIT_INSTANTIATION=[ON|OFF]
+
+The default value for ``<TRIBITS_PACKAGE>_ENABLE_EXPLICIT_INSTANTIATION`` is
+set by ``<Project>_ENABLE_EXPLICIT_INSTANTIATION``.
+
+For packages that support it, explicit template instantation can massively
+reduce the compile times for the C++ code involved.  To see what packages
+support explicit instantation just search the CMakeCache.txt file for varibles
+with ``ENABLE_EXPLICIT_INSTANTIATION`` in the name.
+
+
 Disabling the Fortran compiler and all Fortran code
 ---------------------------------------------------
 
