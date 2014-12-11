@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 # This script is used to generate the the TribitsDevelopersGuide.(html,pdf)
 # files using a new script in TriBITS for that purpose.  You just run it from
@@ -57,6 +57,30 @@ ARGS=$@
 source source_set_env
 
 
+#
+# Below, we create *.tmp files and then we only copy to the files actually
+# mentioned in the Makefile if they are differnet.  That way if the files
+# don't change then the function will not copy over them and update their time
+# stamp and the makefile will not rebuild the documentation.  We don't want to
+# rebuild documentation if nothing changed.
+#
+
+function update_if_different {
+  base_file_name=$1
+  tmpext=$2
+  if [ -e $base_file_name ] ; then
+    changes=`diff $base_file_name.$tmpext $base_file_name`
+    if [ "$changes" != "" ] ; then
+       echo "Copy updated file $base_file_name" 
+       cp $base_file_name.$tmpext $base_file_name
+    fi
+  else
+     echo "Copy to non-existing file $base_file_name" 
+    cp $base_file_name.$tmpext $base_file_name 
+  fi
+}
+
+
 if [ "$TRIBITS_DEV_GUIDE_SKIP_DOCUMENTATION_EXTRACTION" == "" ] ; then
 
   echo
@@ -64,9 +88,12 @@ if [ "$TRIBITS_DEV_GUIDE_SKIP_DOCUMENTATION_EXTRACTION" == "" ] ; then
   echo
   ../../python_utils/extract_rst_cmake_doc.py \
     --extract-from=../../core/package_arch/,../../core/utils/,../../ctest_driver/ \
-    --rst-file-pairs=TribitsMacroFunctionDocTemplate.rst:TribitsMacroFunctionDoc.rst,UtilsMacroFunctionDocTemplate.rst:UtilsMacroFunctionDoc.rst \
+    --rst-file-pairs=TribitsMacroFunctionDocTemplate.rst:TribitsMacroFunctionDoc.rst.tmp,UtilsMacroFunctionDocTemplate.rst:UtilsMacroFunctionDoc.rst.tmp \
     $TRIBITS_DEV_GUIDE_EXTRACT_RST_CMAKE_DOC_EXTRA_ARGS
-  
+
+  update_if_different  TribitsMacroFunctionDoc.rst  tmp
+  update_if_different  UtilsMacroFunctionDoc.rst  tmp
+
 fi
 
 if [ "$TRIBITS_DEV_GUIDE_SKIP_OTHER_EXTRACTION" == "" ] ; then
@@ -74,61 +101,59 @@ if [ "$TRIBITS_DEV_GUIDE_SKIP_OTHER_EXTRACTION" == "" ] ; then
   echo
   echo "Generating list of Standard TriBITS TPLs ..."
   echo
-  ls -w 1 ../../core/std_tpls/ &> TribitsStandardTPLsList.txt
+  ls -w 1 ../../core/std_tpls/ &> TribitsStandardTPLsList.txt.tmp
+  update_if_different  TribitsStandardTPLsList.txt  tmp
 
   echo
   echo "Generating list of Common TriBITS TPLs ..."
   echo
-  ls -w 1 ../../common_tpls/ &> TribitsCommonTPLsList.txt
+  ls -w 1 ../../common_tpls/ &> TribitsCommonTPLsList.txt.tmp
+  update_if_different  TribitsCommonTPLsList.txt  tmp
 
   echo
   echo "Generating Directory structure of TribitsHelloWorld ..."
   echo
   ../../python_utils/tree.py -f -c -x ../../examples/TribitsHelloWorld/ \
-    &> TribitsHelloWorldDirAndFiles.txt
+    &> TribitsHelloWorldDirAndFiles.txt.tmp
+  update_if_different  TribitsHelloWorldDirAndFiles.txt  tmp
 
   echo
   echo "Generating output for 'checkin-test.py --help' ..."
   echo
-  ../../ci_support/checkin-test.py --help &> checkin-test-help.txt
+  ../../ci_support/checkin-test.py --help &> checkin-test-help.txt.tmp
+  update_if_different  checkin-test-help.txt  tmp
 
   echo
   echo "Generating output for 'gitdist --help' ..."
   echo
-  ../../python_utils/gitdist --help &> gitdist-help.txt
+  ../../python_utils/gitdist --help &> gitdist-help.txt.tmp
+  update_if_different  gitdist-help.txt  tmp
 
   echo
   echo "Generating output for 'snapshot-dir.py --help' ..."
   echo
   env SNAPSHOT_DIR_DUMMY_DEFAULTS=1 ../../python_utils/snapshot-dir.py --help \
-   &> snapshot-dir-help.txt
+   &> snapshot-dir-help.txt.tmp
+  update_if_different  snapshot-dir-help.txt  tmp
 
 fi
 
 if [ -e "../../../README.DIRECTORY_CONTENTS.rst" ] ; then
-
   echo
   echo "Copy TriBITS/README.DIRECTORY_CONTENTS.rst to TriBITS.README.DIRECTORY_CONTENTS.rst ..."
   echo
-
-  cp ../../../README.DIRECTORY_CONTENTS.rst TriBITS.README.DIRECTORY_CONTENTS.rst
-
+  cp ../../../README.DIRECTORY_CONTENTS.rst TriBITS.README.DIRECTORY_CONTENTS.rst.tmp
 else
-
-
   echo
   echo "TriBITS/README.DIRECTORY_CONTENTS.rst does not exist to copy!"
   echo
-
-  touch TriBITS.README.DIRECTORY_CONTENTS.rst
-
+  touch TriBITS.README.DIRECTORY_CONTENTS.rst.tmp
 fi
+update_if_different  TriBITS.README.DIRECTORY_CONTENTS.rst  tmp
+
 
 
 echo
 echo "Generating HTML and PDF files ..."
 echo
-../../python_utils/generate-docutils-output.py \
-  --file-base=TribitsDevelopersGuide \
-  --generate-latex-options="--stylesheet-path=rst2latex.tex" \
-  $ARGS
+make
