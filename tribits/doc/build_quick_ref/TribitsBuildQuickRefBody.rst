@@ -613,8 +613,8 @@ support it, configure with::
 When ``OFF``, all packages that have templated C++ code will use implicit
 template instantiation.
 
-Explicit template instantiation can be enabled and disabled for individual
-packages with::
+Explicit template instantiation can be enabled (``ON``) or disabled (``OFF``)
+for individual packages with::
 
 
   -D <TRIBITS_PACKAGE>_ENABLE_EXPLICIT_INSTANTIATION=[ON|OFF]
