@@ -6711,6 +6711,9 @@ Engineering for Computational Science and Engineering, 2009.  http://web.ornl.go
 
 *SCALE: A Comprehensive Modeling and Simulation Suite for Nuclear Safety Analysis and Design*, ORNL/TM-2005/39, Version 6.1, Oak Ridge National Laboratory, Oak Ridge, Tennessee, June 2011. Available from Radiation Safety Information Computational Center at Oak Ridge National Laboratory as CCC-785.  http://scale.ornl.gov/
 
+.. _LiveV:
+
+*LiveV*  https://github.com/lifev/cmake
 
 TriBITS Detailed Reference Documentation
 ========================================
@@ -7175,8 +7178,8 @@ History of TriBITS
 
 TriBITS started development in November 2007 as a set of helper macros to
 provide a CMake build system for a small subset of packages in Trilinos.  The
-initial goal was to just to support a native Windows build (using Visual C++)
-to compile and install these few Trilinos packages on Windows for usage by
+initial goal was to support a native Windows build (using Visual C++) to
+compile and install these few Trilinos packages on Windows for usage by
 another project (the Sandia Titan project which included VTK).  At that time,
 Trilinos was using a highly customized and augmented autotools build system.
 Initially, this CMake system was just a set of macros to streamline creating
@@ -7202,7 +7205,7 @@ CMake-based build system started in October 2011 and an initial implementation
 was complete in December 2011 when it was used for the CASL VERA build system.
 In early 2012, the ORNL CASL-related projects Denovo and SCALE (see [`SCALE,
 2011`_]) adopted TriBITS as their native development build systems.  Shortly
-after, TriBITS was adopted the native build system for the CASL-related
+after, TriBITS was adopted as the native build system for the CASL-related
 University of Michigan code MPACT.  In addition to being used in CASL, all of
 these codes also had a significant life outside of CASL.  Because they used
 the same TriBITS build system, it proved relatively easy to keep these various
@@ -7212,7 +7215,7 @@ independent from CASL VERA.  Since the initial extraction of TriBITS from
 Trilinos, the TriBITS system was further extended and refined, driven by CASL
 VERA development and expansion.  Independently, an early version of TriBITS
 from 2012 was adopted by the LiveV
-project\footnote{https://github.com/lifev/cmake} which was forked and extended
+project (see [`LiveV`_]) which was forked and extended
 independently.
 
 Why a TriBITS Package is not a CMake Package
