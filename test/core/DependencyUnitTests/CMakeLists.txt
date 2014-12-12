@@ -911,7 +911,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   preCopyrightTrilinos_EnableTeko
-  ARGS -DTrilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos
+  ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DTrilinos_ENABLE_Teko=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_PACKAGES='26'"
@@ -929,7 +929,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   preCopyrightTrilinos_EnableTeko_InconsistentExtraReposFile
-  ARGS -DTrilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos
+  ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/NoPackagesExtraReposFile.cmake
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=ON
@@ -979,7 +979,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   preCopyrightTrilinos_EnableStalix
-  ARGS -DTrilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos
+  ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DTrilinos_ENABLE_Stalix=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Explicitly enabled packages on input .* Stalix 1"
@@ -994,7 +994,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   preCopyrightTrilinos_ShowInvalidPackageNameError
-  ARGS -DTrilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos
+  ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
     -DTrilinos_ASSERT_MISSING_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -1009,7 +1009,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   preCopyrightTrilinos_ShowInvalidPackageSelfDependency
-  ARGS -DTrilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos
+  ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_SELF_PACKAGE_DEPENDENCY_ERROR=ON
     -DTrilinos_ASSERT_MISSING_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -1031,7 +1031,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   MissingExtraRepositoryFail
-  ARGS -DTrilinos_EXTRA_REPOSITORIES:STRING=MissingExtraRepo
+  ARGS -DTrilinos_EXTRA_REPOSITORIES=MissingExtraRepo
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=OFF
   PASS_REGULAR_EXPRESSION_ALL
     "ERROR: Skipping missing extra repo 'MissingExtraRepo' packages list file"
@@ -1042,7 +1042,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   MissingExtraRepositoryIgnore
-  ARGS -DTrilinos_EXTRA_REPOSITORIES:STRING=MissingExtraRepo
+  ARGS -DTrilinos_EXTRA_REPOSITORIES=MissingExtraRepo
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=ON
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=
     -DTRIBITS_PROCESS_EXTRAREPOS_LISTS_DEBUG=TRUE
@@ -1071,7 +1071,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   extraTrilinosRepo_EnableExtraPack
-  ARGS "-DTrilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos,extraTrilinosRepo"
+  ARGS "-DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo"
     -DTrilinos_ENABLE_ExtraPack=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_TPLS='22'"
@@ -1088,7 +1088,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   extraTrilinosRepo_EnableExtraPack_EnableExtraTPL1
-  ARGS "-DTrilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos,extraTrilinosRepo"
+  ARGS "-DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo"
     -DTrilinos_ENABLE_ExtraPack=ON -DTPL_ENABLE_ExtraTPL1=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_TPLS='22'"
@@ -1099,7 +1099,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   extraTrilinosRepo_ReplacePackagesList
-  ARGS -DTrilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos
+  ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DpreCopyrightTrilinos_PACKAGES_LIST_FILE=cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake
   PASS_REGULAR_EXPRESSION_ALL
     "Reading a list of extra packages from .*/MockTrilinos/cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake"
