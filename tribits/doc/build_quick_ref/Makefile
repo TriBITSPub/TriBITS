@@ -12,6 +12,9 @@ EXTRA_FILES = \
   TribitsBuildQuickRefBody.rst \
   TribitsBuildQuickRefTemplate.rst
 
+# NOTE: We *don't* want to rebuild the file if only the version has changed we
+# don't add a dependency on TribitsGitVersion.txt!
+
 all: $(BASE_NAME).rst $(BASE_NAME).html $(BASE_NAME).pdf
 
 $(BASE_NAME).pdf: $(BASE_NAME).html 

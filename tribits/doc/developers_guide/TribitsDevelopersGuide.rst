@@ -4,7 +4,7 @@ TriBITS Developers Guide and Reference
 
 :Author: Roscoe A. Bartlett (bartlettra@ornl.gov)
 :Date: |date|
-:Version: TriBITS Development at |date|
+:Version: .. include:: TribitsGitVersion.txt
 
 .. |date| date::
 

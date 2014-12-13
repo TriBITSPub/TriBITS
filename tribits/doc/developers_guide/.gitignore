@@ -5,6 +5,8 @@
 /TribitsCommonTPLsList.txt.tmp
 /TribitsDevelopersGuide.html
 /TribitsDevelopersGuide.pdf
+/TribitsGitVersion.txt
+/TribitsGitVersion.txt.tmp
 /TribitsHelloWorldDirAndFiles.txt
 /TribitsHelloWorldDirAndFiles.txt.tmp
 /TribitsMacroFunctionDoc.rst
@@ -19,3 +21,4 @@
 /gitdist-help.txt.tmp
 /snapshot-dir-help.txt
 /snapshot-dir-help.txt.tmp
+
