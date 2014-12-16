@@ -111,12 +111,19 @@ CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
   WithPreCopyrightTrilinos
   ARGS
     -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
+    -DLIST_ALWAYS_MISSING_PACKAGE=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_PACKAGES='26'"
     "Trilinos_NUM_TPLS='20'"
   COMPARE_XML_FILE
     TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml
   )
+# The above test also ensures that the TribitsDumpDepsXmlScript.cmake behaves
+# correctly when missing packages are listed but are marked as such and
+# therefore should be ignored.  I have another test for
+# TriBITSExProj/TribitsExampleProject that verifies that such a package is
+# processed correctly when it does exist.  It is just that this was not
+# testing this dump script.
 
 
 CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(

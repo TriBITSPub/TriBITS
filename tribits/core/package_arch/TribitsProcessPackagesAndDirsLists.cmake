@@ -548,6 +548,9 @@ MACRO(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS  REPOSITORY_NAME  REPOSITORY_DIR)
             "\n***\n" )
         ENDIF()
       ENDIF()
+      # NOTE: The variable ${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK only
+      # gets set to TRUE for some unit tests.  Otherwise, in every legitimate
+      # usage of this macro it is always FALSE.
 
       IF (TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE)
         PRINT_VAR(${TRIBITS_PACKAGE}_SOURCE_DIR)
