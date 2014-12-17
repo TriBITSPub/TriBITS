@@ -747,14 +747,11 @@ set in this top-level ``CMakeLists.txt`` file are those that do not impact the
 list of package enables/disables.  The latter type of defaults should set in
 other files (see below).
 
-.. _${PROJECT_NAME}_TRIBITS_DIR:
-
-In this example project, a CMake cache variable
-``${PROJECT_NAME}_TRIBITS_DIR`` must be set by the user to define where the
-base ``tribits`` source directory is located.  With this variable set
-(i.e. passed into ``cmake`` command-line use
-``-DTribitsExProj_TRIBITS_DIR=<someDir>``), one just includes a single file to
-pull in the TriBITS system::
+In this example project, a CMake cache variable `${PROJECT_NAME}_TRIBITS_DIR`_
+must be set by the user to define where the base ``tribits`` source directory
+is located.  With this variable set (i.e. passed into ``cmake`` command-line
+use ``-DTribitsExProj_TRIBITS_DIR=<someDir>``), one just includes a single
+file to pull in the TriBITS system::
 
   INCLUDE("${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake")
 
@@ -1014,7 +1011,7 @@ documentation`_.
 TriBITS Project Core Variables
 ..............................
 
-The following local variables are defined in the top-level Project
+The following `local variables` are defined in the top-level Project
 ``CMakeLists.txt`` file scope and are therefore accessible by all files
 processed by TriBITS:
 
@@ -1060,11 +1057,44 @@ processed by TriBITS:
     the built-in ``PROJECT()`` command called in the top-level
     `<projectDir>/CMakeLists.txt`_ file..
 
+The following `cache varaibles` are defined for every TriBITS project:
+
+  .. _${PROJECT_NAME}_TRIBITS_DIR:
+
+  ``${PROJECT_NAME}_TRIBITS_DIR``
+
+    CMake cache variable that gives the path to the TriBITS implementation
+    directory.  When set to a relative path (set as type ``STRING``, see
+    below), this is taken relative to ``${CMAKE_CURRENT_SOURCE_DIR}/`` (the
+    project base source dir).  When an absolute path is given, it is used
+    without modification.  If this variable is not set in the
+    `<projectDir>/CMakeLists.txt`_ file, then it will be automatically set as
+    a ``PATH`` cache variable by the include of ``TriBITS.cmake`` by the
+    statement ::
+
+      SET( ${PROJECT_NAME}_TRIBITS_DIR
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/tribits" CACHE PATH "...")
+
+    Therefore, projects that snapshot TriBITS into
+    `<projectDir>/cmake/tribits/`_ don't need to explicitly set
+    ``${PROJECT_NAME}_TRIBITS_DIR``.  In addition, one can also point to a
+    different TriBITS implementation just by setting the absolute path::
+
+      -D <Project>_TRIBITS_DIR=<some-abs-dir>
+
+    or to a relative path using, for example::
+
+      -D <Project>_TRIBITS_DIR:STRING=TriBITS/tribits
+
+    Note that when the ``TriBITS`` git repo itself is cloned by a TriBITS
+    project, then ``${PROJECT_NAME}_TRIBITS_DIR`` should be set to the
+    directory ``TriBITS/tribits`` (see `TriBITS/tribits/`_) as shown above.
+
   .. _${PROJECT_NAME}_ENABLE_TESTS:
 
   ``${PROJECT_NAME}_ENABLE_TESTS``
 
-    CMake cache variables that if set to ``ON``, then tests for all explicitly
+    CMake cache variable that if set to ``ON``, then tests for all explicitly
     enabled packages will be turned on.  This has a default value of ``OFF``.
     This is used in logic to enable individual SE package tests (see
     `<Project>_ENABLE_TESTS only enables explicitly enabled SE package
@@ -1072,11 +1102,11 @@ processed by TriBITS:
 
   ``${PACKAGE_NAME}_ENABLE_EXAMPLES``
 
-    CMake cache variables that if set to ``ON``, then examples for all
+    CMake cache variable that if set to ``ON``, then examples for all
     explicitly enabled packages will be turned on.  This has a default value
     of ``OFF``.
 
-The following internal project-scope local (non-cache) CMake variables are
+The following `internal project-scope local` (non-cache) CMake variables are
 defined by TriBITS giving the project's TriBITS repositories.:
 
   .. _${PROJECT_NAME}_NATIVE_REPOSITORIES:
