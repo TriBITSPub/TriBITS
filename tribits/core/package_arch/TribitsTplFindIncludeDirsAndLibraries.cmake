@@ -389,7 +389,7 @@ FUNCTION(TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES TPL_NAME)
           "   to point to the full paths for the libraries which will\n"
           "   bypass any search for libraries and these libraries will be used without\n"
           "   question in the build.  (But this will result in a build-time error\n"
-          "   obviously if all all of the necssary symbols are not found.)")
+          "   if not all of the necessary symbols are found.)")
         TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES_HANDLE_FAIL()
       ENDIF()
 
