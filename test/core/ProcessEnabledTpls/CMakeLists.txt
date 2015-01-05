@@ -408,7 +408,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "   to point to the full paths for the libraries which will"
     "   bypass any search for libraries and these libraries will be used without"
     "   question in the build.  .But this will result in a build-time error"
-    "   obviously if all all of the necssary symbols are not found.."
+    "   if not all of the necessary symbols are found.."
     "-- ERROR: Failed finding all of the parts of TPL 'HeadersAndLibsTpl' .see above., Aborting!"
     "TIP: One way to get past the configure failure for the"
     "TPL 'HeadersAndLibsTpl' is to simply disable it with:"
