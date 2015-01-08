@@ -58,22 +58,52 @@ FUNCTION(CREATE_PROCESS_ENABLED_TPLS_TEST_CASE  TEST_NAME)
      #prefix
      PARSE
      #lists
-     "TPL_NAME;TPL_FINDMOD;INCLUDE_DIRS;LIBRARY_DIRS;PASS_REGULAR_EXPRESSION_ALL;EXTRA_ARGS"
+     "TPL_NAME;TPL_FINDMOD;INCLUDE_DIRS;LIBRARY_DIRS;PASS_REGULAR_EXPRESSION_ALL;EXTRA_ARGS;RC_INCLUDE_DIRS;RC_LIBRARY_DIRS;RC_PASS_REGULAR_EXPRESSION_ALL;RC_EXTRA_ARGS"
      #options
      "TPL_FIND_SHARED_LIBS;VERBOSE_DEBUG"
      ${ARGN}
      )
 
-  SET(EXTENDED_TEST_NAME ProcessEnabledTpl_${TEST_NAME})
-  SET(FULL_TEST_NAME ${PACKAGE_NAME}_${EXTENDED_TEST_NAME})
+   # Do a reconfiugre as TEST_2 if requested through setting the "RC"
+   # arguments.
+   IF (PARSE_RC_INCLUDE_DIRS OR PARSE_RC_LIBRARY_DIRS OR
+     PARSE_RC_PASS_REGULAR_EXPRESSION_ALL OR PARSE_RC_EXTRA_ARGS
+     )
 
-  SET(TEST_OUTPUT_REL_DIR ${FULL_TEST_NAME})
-  SET(TEST_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/${TEST_OUTPUT_REL_DIR})
+     SET(TEST_2_ARGS
+       TEST_2 CMND "${CMAKE_COMMAND}"
+         ARGS
+           -DPROJECT_NAME=${MOCK_PROJECT_NAME}
+           -D${MOCK_PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+           -DTPL_NAME=${PARSE_TPL_NAME}
+           -D${PARSE_TPL_NAME}_FINDMOD=${PARSE_TPL_FINDMOD}
+           -D${PARSE_TPL_NAME}_INCLUDE_DIRS=${PARSE_RC_INCLUDE_DIRS}
+           -D${PARSE_TPL_NAME}_LIBRARY_DIRS=${PARSE_RC_LIBRARY_DIRS}
+           -DTPL_FIND_SHARED_LIBS=${PARSE_TPL_FIND_SHARED_LIBS}
+           -DTRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES_VERBOSE=${PARSE_VERBOSE_DEBUG}
+           ${PARSE_RC_EXTRA_ARGS}
+           .
+         PASS_REGULAR_EXPRESSION_ALL ${PARSE_RC_PASS_REGULAR_EXPRESSION_ALL}
+       )
 
-  TRIBITS_ADD_ADVANCED_TEST( ${EXTENDED_TEST_NAME}
-    OVERALL_WORKING_DIRECTORY ${TEST_OUTPUT_REL_DIR}
-    OVERALL_NUM_MPI_PROCS 1
-    TEST_0 CMND "${CMAKE_COMMAND}"
+   ELSE()
+
+     SET(TEST_2_ARGS)
+
+   ENDIF()
+
+
+  TRIBITS_ADD_ADVANCED_TEST( ProcessEnabledTpl_${TEST_NAME}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+
+    TEST_0
+      CMND "${CMAKE_COMMAND}"
+      ARGS -E copy
+        ${CMAKE_CURRENT_SOURCE_DIR}/TribitsProcessEnabledTplTesterCMakeLists.txt
+        CMakeLists.txt
+
+    TEST_1
+      CMND "${CMAKE_COMMAND}"
       ARGS
         -DPROJECT_NAME=${MOCK_PROJECT_NAME}
         -D${MOCK_PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
@@ -84,9 +114,13 @@ FUNCTION(CREATE_PROCESS_ENABLED_TPLS_TEST_CASE  TEST_NAME)
         -DTPL_FIND_SHARED_LIBS=${PARSE_TPL_FIND_SHARED_LIBS}
         -DTRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES_VERBOSE=${PARSE_VERBOSE_DEBUG}
         ${PARSE_EXTRA_ARGS}
-        -P ${CMAKE_CURRENT_SOURCE_DIR}/TribitsProcessEnabledTplTester.cmake
+        .
       PASS_REGULAR_EXPRESSION_ALL ${PARSE_PASS_REGULAR_EXPRESSION_ALL}
+
+    ${TEST_2_ARGS}
+
     XHOSTTYPE Windows
+
     )
 
 ENDFUNCTION()
@@ -116,7 +150,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "-- Found TPL 'HeaderOnlyTpl' include dirs '.+/HeaderOnlyTpl'"
     "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/HeaderOnlyTpl'"
     "Exported TPL_ENABLE_HeaderOnlyTpl='ON'"
-    "Exported TPL_HeaderOnlyTpl_NOT_FOUND=''"
+    "Exported TPL_HeaderOnlyTpl_NOT_FOUND='FALSE'"
     "Exported TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
     "Exported TPL_HeaderOnlyTpl_LIBRARIES=''"
   )
@@ -134,7 +168,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
     "-- Attempt to tentatively enable TPL 'HeaderOnlyTpl' passed!"
     "Exported TPL_ENABLE_HeaderOnlyTpl='ON'"
-    "Exported TPL_HeaderOnlyTpl_NOT_FOUND=''"
+    "Exported TPL_HeaderOnlyTpl_NOT_FOUND='FALSE'"
     "Exported TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
     "Exported TPL_HeaderOnlyTpl_LIBRARIES=''"
   )
@@ -147,7 +181,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   PASS_REGULAR_EXPRESSION_ALL
     "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='/some/dir/somewhere'"
-    "Exported TPL_HeaderOnlyTpl_NOT_FOUND=''"
+    "Exported TPL_HeaderOnlyTpl_NOT_FOUND='FALSE'"
     "Exported TPL_HeaderOnlyTpl_INCLUDE_DIRS='/some/dir/somewhere'"
     "Exported TPL_HeaderOnlyTpl_LIBRARIES=''"
   )
@@ -236,6 +270,32 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "Exported TPL_HeaderOnlyTpl_NOT_FOUND='TRUE'"
     "Exported TPL_HeaderOnlyTpl_LIBRARIES=''"
     "Exported TPL_HeaderOnlyTpl_INCLUDE_DIRS=''"
+    "Configuring done"
+  )
+
+
+CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+  HeaderOnlyTpl_BadPath_FailThenPass
+  TPL_NAME  HeaderOnlyTpl
+  TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
+
+  INCLUDE_DIRS  "/path_does_not_exist"
+  PASS_REGULAR_EXPRESSION_ALL
+    "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+    "-- ERROR: Could not find the include directories for TPL 'HeaderOnlyTpl'!"
+    "ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
+    "Configuring incomplete, errors occurred!"
+
+  RC_INCLUDE_DIRS  ${HeaderOnlyTpl_BASE_DIR}
+  RC_PASS_REGULAR_EXPRESSION_ALL
+    "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+    "Found TPL 'HeaderOnlyTpl' include dirs '.*/examples/tpls/HeaderOnlyTpl'"
+    "Exported TPL_ENABLE_HeaderOnlyTpl='ON'"
+    "Exported TPL_HeaderOnlyTpl_NOT_FOUND='FALSE'"
+    "Exported TPL_HeaderOnlyTpl_LIBRARIES=''"
+    "Exported TPL_HeaderOnlyTpl_INCLUDE_DIRS='.*/examples/tpls/HeaderOnlyTpl'"
+    "Configuring done"
+
   )
 
 
@@ -276,7 +336,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "--     Found header '.+/HeadersAndLibsTpl/include/HeadersAndLibsTpl_header2.hpp'"
     "-- Found TPL 'HeadersAndLibsTpl' include dirs '.+/HeadersAndLibsTpl/include'"
     "-- TPL_HeadersAndLibsTpl_INCLUDE_DIRS='.+/HeadersAndLibsTpl/include'"
-    "Exported TPL_HeadersAndLibsTpl_NOT_FOUND=''"
+    "Exported TPL_HeadersAndLibsTpl_NOT_FOUND='FALSE'"
     "Exported TPL_HeadersAndLibsTpl_LIBRARIES='.+/HeadersAndLibsTpl/lib/libhaltpl1.so[;].+/HeadersAndLibsTpl/lib/libhaltpl2.so'"
     "Exported TPL_HeadersAndLibsTpl_INCLUDE_DIRS='.+/HeadersAndLibsTpl/include'"
   )
@@ -315,7 +375,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "--     Found header '.+/HeadersAndLibsTpl/include/HeadersAndLibsTpl_header2.hpp'"
     "-- Found TPL 'HeadersAndLibsTpl' include dirs '.+/HeadersAndLibsTpl/include'"
     "-- TPL_HeadersAndLibsTpl_INCLUDE_DIRS='.+/HeadersAndLibsTpl/include'"
-    "Exported TPL_HeadersAndLibsTpl_NOT_FOUND=''"
+    "Exported TPL_HeadersAndLibsTpl_NOT_FOUND='FALSE'"
     "Exported TPL_HeadersAndLibsTpl_LIBRARIES='.+/HeadersAndLibsTpl/lib/libhaltpl1.so[;].+/HeadersAndLibsTpl/lib/libhaltpl2.so'"
     "Exported TPL_HeadersAndLibsTpl_INCLUDE_DIRS='.+/HeadersAndLibsTpl/include'"
   )
@@ -490,6 +550,36 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ .MESSAGE.:"
     "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
   )
+
+
+CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+  HeadersAndLibsTpl_Shared_BadLibPath_ThenPass
+  TPL_NAME  HeadersAndLibsTpl
+  TPL_FIND_SHARED_LIBS
+  TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
+
+  INCLUDE_DIRS  /include/path/does/not/exist
+  LIBRARY_DIRS  /path/does/not/exist
+  EXTR_ARGS
+  PASS_REGULAR_EXPRESSION_ALL
+    "Processing enabled TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='/path/does/not/exist'"
+    "-- ERROR: Could not find the libraries for the TPL 'HeadersAndLibsTpl'!"
+    "-- ERROR: Failed finding all of the parts of TPL 'HeadersAndLibsTpl' .see above., Aborting!"
+    "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
+    "Configuring incomplete, errors occurred!"
+
+  RC_INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
+  RC_LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
+  RC_EXTR_ARGS  -DNOT_MUST_FIND_ALL_HEADERS=ON
+  RC_PASS_REGULAR_EXPRESSION_ALL
+    "Processing enabled TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Exported TPL_HeadersAndLibsTpl_NOT_FOUND='FALSE'"
+    "Exported TPL_HeadersAndLibsTpl_LIBRARIES='.*/ProcessEnabledTpls/tpls/HeadersAndLibsTpl/lib/libhaltpl1.so[;].*/ProcessEnabledTpls/tpls/HeadersAndLibsTpl/lib/libhaltpl2.so'"
+    "Exported TPL_HeadersAndLibsTpl_INCLUDE_DIRS='.*/ProcessEnabledTpls/tpls/HeadersAndLibsTpl/include'"
+    "Configuring done"
+  )
+
 
 # ToDo: Add test case for only finding one of the headers in REQUIRED_HEADERS ...
 # ToDo: Add test case for only finding one of the libs in REQUIRED_LIBRARIES ...

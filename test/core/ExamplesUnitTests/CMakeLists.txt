@@ -1342,7 +1342,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_Fail
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -1382,6 +1382,23 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_Fail
       "  ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
       "Call Stack .most recent call first.:"
       "-- Configuring incomplete, errors occurred!"
+
+  TEST_1
+    MESSAGE "Reconfigure now fining the TPL correctly"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DHeaderOnlyTpl_INCLUDE_DIRS=${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl
+      #-DTribitsExProj_VERBOSE_CONFIGURE=ON
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Processing enabled TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+      "-- Searching for headers in HeaderOnlyTpl_INCLUDE_DIRS='.*/tribits/examples/tpls/HeaderOnlyTpl'"
+      "Found header '.*/tribits/examples/tpls/HeaderOnlyTpl/HeaderOnlyTpl_stuff.hpp'"
+      "Found TPL 'HeaderOnlyTpl' include dirs '.*/tribits/examples/tpls/HeaderOnlyTpl'"
+      "TPL_HeaderOnlyTpl_INCLUDE_DIRS='.*/tribits/examples/tpls/HeaderOnlyTpl'"
+      "Configuring done"
+      "Generating done"
+
   )
 
 

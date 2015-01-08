@@ -38,14 +38,18 @@
 # @HEADER
 
 #
-# This file is run as a cmake -P script to test out the
+# This file is defines a simple CMake project to test out the
 # TribitsProcessEnabledTpl.cmake and
 # TribitsTplFindIncludeDirsAndLibraries.cmake modules.
 #
 
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11)
+
 # Passed in on command-line
 MESSAGE("${PROJECT_NAME} = ${PROJECT_NAME}")
 MESSAGE("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
+
+PROJECT(${PROJECT_NAME} NONE)
 
 SET( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
