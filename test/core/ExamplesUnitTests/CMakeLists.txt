@@ -203,6 +203,14 @@ ELSE()
   SET(REGEX_FOR_GITIGNORE)
 ENDIF()
 
+IF (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.5)
+  SET(DEPRECATED_MSG_STR
+    ".* .Just don't call this function at all please!")
+ELSE()
+  SET(DEPRECATED_MSG_STR)
+ENDIF()
+# NOTE: Only GCC compilers 4.5 and newer support customized deprecated
+# messages.
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -223,6 +231,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
       -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+      -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
       -DCMAKE_INSTALL_PREFIX=install
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
@@ -300,13 +309,17 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/c/tests/CMakeLists.txt"
       "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/cmake/CallbackDefineRepositoryPackaging.cmake"
       "-- File Trace: PROJECT    INCLUDE    .*/TribitsExampleProject/cmake/CallbackDefineProjectPackaging.cmake"
+
   TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
     MESSAGE "Build the default 'all' target using raw 'make'"
     PASS_REGULAR_EXPRESSION_ALL
       "Built target simplecxx"
+      "‘int SimpleCxx::HelloWorld::someOldFunc.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:"
+      "‘int SimpleCxx::HelloWorld::someOldFunc2.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:${DEPRECATED_MSG_STR}"
       "Built target pws_a"
       "Built target pws_b"
       "Built target pws_c"
+
   TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
@@ -496,6 +509,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
       -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
       -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+      -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
+      -DTribitsExProj_SHOW_DEPRECATED_WARNINGS=OFF
       -DCMAKE_INSTALL_PREFIX=install
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
@@ -508,6 +523,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
       "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
       "Final set of non-enabled packages:  MixedLang WrapExternal 2"
       "Final set of non-enabled SE packages:  MixedLang WithSubpackagesB WithSubpackagesC WrapExternal 4"
+  # NOTES: In the above test, we do a configure with
+  # SIMPLECXX_SHOW_DEPRECATED_WARNINGS=1 and
+  # TribitsExProj_SHOW_DEPRECATED_WARNINGS=OFF so that deprecated functions
+  # are called but deprecated warnings for these functions are turned off.
+  # This makes sure the macros XXX_DEPRECATED and XXX_DEPRECATED_MSG are
+  # defined as tempy.
 
   TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
     MESSAGE "Build the default 'all' target using raw 'make'"
