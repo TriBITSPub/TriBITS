@@ -37,17 +37,8 @@
 # ************************************************************************
 # @HEADER
 
-import os
-import sys
+from FindGeneralScriptSupport import *
 
-pythonUtilsDir = os.path.abspath(
-  os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "..", "python_utils" )
-  )
-sys.path = [pythonUtilsDir] + sys.path
-
-from GeneralScriptSupport import *
 from optparse import OptionParser
 
 #
