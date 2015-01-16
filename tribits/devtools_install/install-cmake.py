@@ -142,7 +142,7 @@ ToDo: Allow user to select different cmake versions.
 
   def doUntar(self):
     echoChDir(self.cmakeBaseDir)
-    echoRunSysCmnd("tar -xzvf "+cmakeTarball)
+    echoRunSysCmnd("tar -xzf "+cmakeTarball)
 
   def doConfigure(self):
     createDir(self.cmakeBuildBaseDir, True, True)
