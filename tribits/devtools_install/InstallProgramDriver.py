@@ -41,18 +41,10 @@ from FindGeneralScriptSupport import *
 
 from optparse import OptionParser
 
-#
-# ToDo:
-#
-# (*) 2010/11/28: Add the functions installObj.insertExtraOptions() and
-# installObj.echoExtraOptions() to allow the installation customization object
-# to insert and use extra options.
-#
-# (*) 2010/11/28: Remove the argument --checkout-cmnd and allow the installObj
-# to define its own checkout command.  This is so that some install scripts
-# can more easily do multiple checkouts.
 
-
+#
+# Implement behavior of an tool install
+#
 class InstallProgramDriver:
 
 
@@ -75,7 +67,7 @@ class InstallProgramDriver:
     usageHelp = scriptName+\
 """ [OPTIONS] [--install-dir=<SOMEDIR> ...]
 
-Tool that checks out, untars, configures, builds, and installs
+Tool that checks out source, untars, configures, builds, and installs
 """+productName+""" in one shot!
 
 By default, if you just type:
@@ -83,7 +75,7 @@ By default, if you just type:
    $ SOME_DIR/"""+scriptName+""" --do-all --install-dir=SOME_INSTALL_DIR
 
 then the directory """+baseDirName+""" will be created in the local working directory
-and it will contain a tarball for """+productName+""" and the build files. NOTE: This
+and it will contain the source for """+productName+""" and the build files. NOTE: This
 requires that you not run as root or your userid on the download computer
 will not be correct.  If you want to install as root, see below.
 
@@ -123,6 +115,11 @@ in order to remove the intermediate source and build files.
       "--install-dir", dest="installDir", type="string",
       default="/usr/local",
       help="The install directory for "+productName+" (default = /usr/local)." )
+
+    clp.add_option(
+      "--parallel", dest="parallel", type="int", \
+      default=0, \
+      help="Uses parallelism in build if set to > 0." )
     
     clp.add_option(
       "--make-options", dest="makeOptions", type="string",
@@ -133,19 +130,19 @@ in order to remove the intermediate source and build files.
     
     clp.add_option(
       "--show-defaults", dest="showDefaults", action="store_true", default=False,
-      help="[Action] Show the defaults and exit." )
+      help="[ACTION] Show the defaults and exit." )
     
     clp.add_option(
       "--checkout", dest="checkout", action="store_true", default=False,
-      help="[Action] Do the checkout of the tarball" )
+      help="[ACTION] Do the checkout of the tarball" )
     
     clp.add_option(
       "--untar", dest="untar", action="store_true", default=False,
-      help="Do the untar of the "+productName+" sources" )
+      help="[ACTION] Do the untar of the "+productName+" sources" )
     
     clp.add_option(
       "--configure", dest="configure", action="store_true", default=False,
-      help="[Action] Configure "+productName+" to build" )
+      help="[ACTION] Configure "+productName+" to build" )
     
     clp.add_option(
       "--build", dest="build", action="store_true", default=False,
@@ -153,16 +150,16 @@ in order to remove the intermediate source and build files.
     
     clp.add_option(
       "--install", dest="install", action="store_true", default=False,
-      help="[Action] Install "+productName )
+      help="[ACTION] Install "+productName )
     
     clp.add_option(
       "--show-final-instructions", dest="showFinalInstructions", action="store_true",
       default=False,
-      help="[Action] Show final instructions for using "+productName )
+      help="[ACTION] Show final instructions for using "+productName )
     
     clp.add_option(
       "--do-all", dest="doAll", action="store_true", default=False,
-      help="[Aggr Action] Same as --checkout --untar --configure --build --install" \
+      help="[AGGR ACTION] Same as --checkout --untar --configure --build --install" \
       +" --show-final-instructions")
     
     (options, args) = clp.parse_args()
