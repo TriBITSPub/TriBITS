@@ -517,8 +517,10 @@ def removeIfExists(fileName):
     echoRunSysCmnd("rm "+fileName)
 
 
-def removeDirIfExists(dirName):
+def removeDirIfExists(dirName, verbose=False):
   if os.path.exists(dirName):
+    if verbose:
+      print "Removing existing directory '"+dirName+"' ..."
     echoRunSysCmnd("rm -rf "+dirName)
 
 
