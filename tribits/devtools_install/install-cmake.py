@@ -107,17 +107,14 @@ ToDo: Allow user to select different cmake versions.
     clp.add_option(
       "--checkout-cmnd", dest="checkoutCmnd", type="string",
       default=cmakeDefaultCheckoutCmnd,
-      help="Command used to check out CMake and dependent source tarball(s)." \
-        +"  (Default ='"+cmakeDefaultCheckoutCmnd+"')" )
+      help="Command used to check out CMake and dependent source." \
+        +"  (Default ='"+cmakeDefaultCheckoutCmnd+"')  WARNING: This will delete" \
+        +" an existing directory if it already exists!")
     clp.add_option(
       "--extra-configure-options", dest="extraConfigureOptions", type="string", \
       default="", \
       help="Extra options to add to the 'configure' command for "+self.getProductName()+"." \
-      +"  Note: This does not override the hard-coded configure options." )
-    clp.add_option(
-      "--parallel", dest="parallel", type="int", \
-      default=0, \
-      help="Uses parallelism in build if set to > 0." )
+        +"  Note: This does not override the hard-coded configure options." )
 
   def echoExtraCmndLineOptions(self, inOptions):
     cmndLine = ""
@@ -138,6 +135,7 @@ ToDo: Allow user to select different cmake versions.
     return " "
 
   def doCheckout(self):
+    removeDirIfExists(self.getBaseDirName(), True)
     echoRunSysCmnd(self.inOptions.checkoutCmnd)
 
   def doUntar(self):
