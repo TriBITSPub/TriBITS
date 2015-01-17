@@ -43,22 +43,11 @@
 # Version info that will change with new versions
 #
 
-def_gccVersion = "4.6.1"
-def_gmpVersion = "4.3.2"
-def_mpfrVersion = "2.4.2"
-def_mpcVersion = "0.8.1"
+def_gccVersion = "4.8.3"
 
-# ToDo: Move js and dehydra to their own install-js.py and install-dehydra.py
-# scripts!
-
-jsVersion = "20101126"
-jsTarball = "js-20101126-autoconfed.tar.gz"
-jsSrcDir = "js"
-
-dehydraVersion = "20101125"
-dehydraTarball = "dehydra-20101125.tar.gz"
-dehydraSrcDir = "dehydra"
-
+gccDefaultCheckoutCmnd = \
+  "git clone https://github.com/TriBITSPub/devtools-gcc-"+def_gccVersion+"-base" \
+  + " gcc-"+def_gccVersion+"-base" 
 
 #
 # Script code
@@ -109,23 +98,23 @@ class GccInstall:
 
   def getExtraHelpStr(self):
     return """
-This script builds gcc-"""+def_gccVersion+"""" (see other versions for --gcc-version) from source
-which includes the sources for gmp-"""+def_gmpVersion+""", mpfr-"""+def_mpfrVersion+""", and
-mpc-"""+def_mpcVersion+""" which are built and installed along with GCC.
+This script builds gcc-"""+def_gccVersion+"""" (see other versions for --gcc-version)
+rom source.
 
-NOTE: The sources for GCC may be patched so be careful to get an approved version (which the default
-pulled by --checkout-cmnd).
+NOTE: The sources for GCC may be patched so be careful to get an approved version
+(which the default pulled by --checkout-cmnd).
 """
 
   def getBaseDirName(self):
-    return "gcc.BASE"
+    return "gcc-"+def_gccVersion+"-base"
 
   def injectExtraCmndLineOptions(self, clp):
     clp.add_option(
       "--checkout-cmnd", dest="checkoutCmnd", type="string",
-      default="git clone software.sandia.gov:/space/git/TrilinosToolset/gcc.BASE "+\
-      self.getBaseDirName(),
-      help="Command used to check out "+self.getProductName()+" and dependent source tarball(s)." )
+      default=gccDefaultCheckoutCmnd,
+      help="Command used to checkout out the sources for "+self.getProductName() \
+        +"  (Default ='"+gccDefaultCheckoutCmnd+"').  WARNING: This will delete" \
+        +" an existing directory if it already exists!")
     clp.add_option(
       "--extra-configure-options", dest="extraConfigureOptions", type="string", default="",
       help="Extra options to add to the 'configure' command for "+self.getProductName()+"." \
@@ -135,7 +124,7 @@ pulled by --checkout-cmnd).
       help="Update the GCC specs file with the rpaths to GCC shared libraries." )
     clp.add_option(
       "--gcc-version", dest="gccVersion", type="string", default=def_gccVersion,
-      help="Select GCC version: 4.5.1 or 4.6.1. Default: " + def_gccVersion )
+      help="Select GCC version: 4.8.3. Default: " + def_gccVersion )
       
   def echoExtraCmndLineOptions(self, inOptions):
     cmndLine = ""
@@ -147,35 +136,16 @@ pulled by --checkout-cmnd).
   def selectVersion(self):
     gccVersion = self.inOptions.gccVersion 
     if gccVersion == def_gccVersion:
-      gmpVersion  = def_gmpVersion  
-      mpfrVersion = def_mpfrVersion 
-      mpcVersion  = def_mpcVersion  
-    elif gccVersion == '4.5.1':
-      gmpVersion = "4.3.2"
-      mpfrVersion = "2.4.2"
-      mpcVersion = "0.8.1"
-    elif gccVersion == '4.6.1':
-      gmpVersion = "4.3.2"
-      mpfrVersion = "2.4.2"
-      mpcVersion = "0.8.1"
+      None
     else:
       print "\nUnsupported GCC version. See help."
       sys.exit(1)
     #
     print "\nSelecting: \n" \
-          "  gcc: " + gccVersion + "\n" \
-          "  gmp: " + gmpVersion + "\n" \
-          " mpfr: " + mpfrVersion + "\n" \
-          "  mpc: " + mpcVersion + "\n"
+          "  gcc: " + gccVersion + "\n"
     #  
     self.gccTarball = "gcc-"+gccVersion+".tar.gz"
     self.gccSrcDir = "gcc-"+gccVersion
-    self.gmpTarball = "gmp-"+gmpVersion+".tar.gz"
-    self.gmpSrcDir = "gmp-"+gmpVersion
-    self.mpfrTarball = "mpfr-"+mpfrVersion+".tar.gz"
-    self.mpfrSrcDir = "mpfr-"+mpfrVersion
-    self.mpcTarball = "mpc-"+mpcVersion+".tar.gz"
-    self.mpcSrcDir = "mpc-"+mpcVersion
 
   def setup(self, inOptions):
 
@@ -188,29 +158,28 @@ pulled by --checkout-cmnd).
     self.scriptBaseDir = getScriptBaseDir()
 
   def doCheckout(self):
+    removeDirIfExists(self.getBaseDirName(), True)
     echoRunSysCmnd(self.inOptions.checkoutCmnd)
 
   def doUntar(self):
-    echoChDir(self.gccBaseDir)
-    echoRunSysCmnd("tar -xzvf "+self.gccTarball)
-    echoRunSysCmnd("tar -xzvf "+self.gmpTarball)
-    echoRunSysCmnd("tar -xzvf "+self.mpfrTarball)
-    echoRunSysCmnd("tar -xzvf "+self.mpcTarball)
+   print "Nothing to untar!"
 
   def doConfigure(self):
     echoChDir(self.gccSrcBaseDir)
-    echoRunSysCmnd("ln -sf ../"+self.gmpSrcDir+" gmp")
-    echoRunSysCmnd("ln -sf ../"+self.mpfrSrcDir+" mpfr")
-    echoRunSysCmnd("ln -sf ../"+self.mpcSrcDir+" mpc")
-    createDir(self.gccBuildBaseDir, True, True)
+    createDir(self.gccBuildBaseDir)
     echoRunSysCmnd(
       "../"+self.gccSrcDir+"/configure --enable-languages='c,c++,fortran'"+\
       " "+self.inOptions.extraConfigureOptions+\
-      " --prefix="+self.inOptions.installDir)
+      " --prefix="+self.inOptions.installDir,
+      workingDir=self.gccBuildBaseDir)
 
   def doBuild(self):
     echoChDir(self.gccBuildBaseDir)
-    echoRunSysCmnd("make "+self.inOptions.makeOptions)
+    cmnd = "make"
+    if self.inOptions.parallel > 0:
+      cmnd += " -j"+str(self.inOptions.parallel)
+    cmnd += " "+self.inOptions.makeOptions
+    echoRunSysCmnd(cmnd)
 
   def doInstall(self):
 
