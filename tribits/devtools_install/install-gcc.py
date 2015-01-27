@@ -165,7 +165,6 @@ NOTE: The sources for GCC may be patched so be careful to get an approved versio
    print "Nothing to untar!"
 
   def doConfigure(self):
-    echoChDir(self.gccSrcBaseDir)
     createDir(self.gccBuildBaseDir)
     echoRunSysCmnd(
       "../"+self.gccSrcDir+"/configure --enable-languages='c,c++,fortran'"+\
