@@ -411,10 +411,20 @@ INCLUDE(\"${${DEP_PACKAGE}_BINARY_DIR}/${DEP_PACKAGE}Config.cmake\")"
     ENDFOREACH()
 
     # Import build tree targets into applications.
+    #
+    # BMA: Export only the immediate libraries of this project to the
+    # build tree. Should manage more carefully, checking that they are
+    # targets of this project and not other libs.  Also, should
+    # consider more careful recursive management of targets when there
+    # are sub-packages.  We'd like to export per-package, but deps
+    # won't be satisfied, so we export one file for the project for
+    # now...
     IF(${TRIBITS_PACKAGE}_HAS_NATIVE_LIBRARIES)
+      EXPORT(TARGETS ${${PACKAGE_NAME}_LIBRARIES} FILE
+	"${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}Targets.cmake" APPEND)
       SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
 # Import ${PACKAGE_NAME} targets
-INCLUDE(\"${PROJECT_BINARY_DIR}/${PACKAGE_NAME}Targets.cmake\")"
+INCLUDE(\"${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}Targets.cmake\")"
       )
     ENDIF()
 
