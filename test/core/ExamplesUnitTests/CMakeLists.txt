@@ -353,7 +353,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "WithSubpackages_INCLUDE_DIRS = .+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/b/src;.+/TribitsExampleProject/packages/with_subpackages/b/src;.+/TribitsExampleProject/packages/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/simple_cxx/src;.+/TribitsExampleProject/packages/simple_cxx/src;.+/tpls/HeaderOnlyTpl;.+/TribitsExampleProject/packages/with_subpackages/c"
       "WithSubpackages_LIBRARY_DIRS = '.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/simple_cxx/src;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/c'"
       "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/doc/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/tribits/examples/tpls/HeaderOnlyTpl'"
       "WithSubpackages_TPL_LIBRARY_DIRS = ''"
       "WithSubpackages_TPL_LIBRARIES = ''"
       "WithSubpackages_MPI_LIBRARIES = ''"
