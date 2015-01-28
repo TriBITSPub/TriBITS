@@ -330,7 +330,44 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "WithSubpackagesC_test_of_c_util.* Passed"
       "100% tests passed, 0 tests failed out of 5"
 
-  TEST_3 CMND make ARGS install ${CTEST_BUILD_FLAGS}
+  TEST_3
+    MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
+      " from the build tree" 
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DDUMMY_PROJECT_NAME=DummyProject
+      -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
+      -DEXPORT_VAR_PREFIX=WithSubpackages
+      -DEXPORT_CONFIG_FILE=../packages/with_subpackages/WithSubpackagesConfig.cmake
+      -DCMAKE_COMMAND=${CMAKE_COMMAND}
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackages_CXX_FLAGS = '.*'"
+      "WithSubpackages_C_FLAGS = '.*'"
+      "WithSubpackages_FORTRAN_FLAGS = '.*'"
+      "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
+      "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
+      "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
+      "WithSubpackages_LINKER = '.+'"
+      "WithSubpackages_AR = '.+'"
+      "WithSubpackages_INCLUDE_DIRS = .+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/b/src;.+/TribitsExampleProject/packages/with_subpackages/b/src;.+/TribitsExampleProject/packages/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/simple_cxx/src;.+/TribitsExampleProject/packages/simple_cxx/src;.+/tpls/HeaderOnlyTpl;.+/TribitsExampleProject/packages/with_subpackages/c"
+      "WithSubpackages_LIBRARY_DIRS = '.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/simple_cxx/src;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/c'"
+      "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
+      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/doc/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackages_TPL_LIBRARY_DIRS = ''"
+      "WithSubpackages_TPL_LIBRARIES = ''"
+      "WithSubpackages_MPI_LIBRARIES = ''"
+      "WithSubpackages_MPI_LIBRARY_DIRS = ''"
+      "WithSubpackages_MPI_INCLUDE_DIRS = ''"
+      "WithSubpackages_MPI_EXEC = '${MPI_EXEC}'"
+      "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
+      "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
+      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
+      "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
+      "-- Configuring done"
+      "-- Generating done"
+
+  TEST_4 CMND make ARGS install ${CTEST_BUILD_FLAGS}
     MESSAGE "Build 'install' target using raw 'make'"
     PASS_REGULAR_EXPRESSION_ALL
       "Installing: .+/install/include/TribitsExProj_version.h"
@@ -365,7 +402,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets-release.cmake"
       "Installing: .+/install/include/Makefile.export.WithSubpackagesC"
 
-  TEST_4 CMND ${CMAKE_COMMAND}
+  TEST_5 CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
       -DDUMMY_PROJECT_DIR=dummy_client_of_WithSubpackages
@@ -412,9 +449,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "CPack: - Install directory: .*/examples/TribitsExampleProject"
       "CPack: Create package"
       "CPack: - package: .*/ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/tribitsexproj-1.1-Source.tar.bz2 generated."
-  TEST_6 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
+  TEST_7 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
     MESSAGE "Untar the tarball"
-  TEST_7 CMND diff
+  TEST_8 CMND diff
      ARGS -qr
        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
        tribitsexproj-1.1-Source
