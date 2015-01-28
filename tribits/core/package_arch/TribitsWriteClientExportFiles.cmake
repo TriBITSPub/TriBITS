@@ -403,9 +403,11 @@ FUNCTION(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES)
 
     # Include configurations of dependent packages
     FOREACH(DEP_PACKAGE ${${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES})
+      # Could use file(RELATIVE_PATH ...), but probably not necessary
+      # since unlike install trees, build trees need not be relocatable
       SET(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
-INCLUDE(\"\${CMAKE_CURRENT_LIST_DIR}/../${DEP_PACKAGE}/${DEP_PACKAGE}Config.cmake)"
-)
+INCLUDE(\"${${DEP_PACKAGE}_BINARY_DIR}/${DEP_PACKAGE}Config.cmake\")"
+        )
     ENDFOREACH()
 
     # Import build tree targets into applications.
