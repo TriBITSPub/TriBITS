@@ -50,12 +50,28 @@ class InstallProgramDriver:
 
   def __init__(self, installObj):
     self.installObj = installObj
+    self.productVersion = self.installObj.getProductDefaultVersion()
+
+
+  def getProductVersion(self):
+    return self.productVersion
 
 
   def runDriver(self):
 
-    productName = self.installObj.getProductName()
-    baseDirName = self.installObj.getBaseDirName()
+    # Get the production version out of command-line
+
+    versionCmndArgName = "--"+self.installObj.getProductBaseName()+"-version"    
+    for arg in sys.argv[1:]:
+      #print "arg = '"+arg+"'"
+      arg_and_value = arg.split("=")
+      if len(arg_and_value) and arg_and_value[0] == versionCmndArgName:
+        self.productVersion = arg_and_value[1].strip()
+
+    # Get basic info after knowing the version
+
+    productName = self.installObj.getProductName(self.productVersion)
+    baseDirName = self.installObj.getBaseDirName(self.productVersion)
 
     scriptName = self.installObj.getScriptName();
 
@@ -65,14 +81,18 @@ class InstallProgramDriver:
     #
       
     usageHelp = scriptName+\
-""" [OPTIONS] [--install-dir=<SOMEDIR> ...]
+""" [OPTIONS] [--install-dir=<install-dir> ...]
 
 Tool that checks out source, untars, configures, builds, and installs
-"""+productName+""" in one shot!
+"""+productName+""" in one shot.  Versions supported include:
+
+    """+str(self.installObj.getProductSupportedVersions())+"""
+
+(set with --"""+productName+"""-version=<version>)
 
 By default, if you just type:
 
-   $ SOME_DIR/"""+scriptName+""" --do-all --install-dir=SOME_INSTALL_DIR
+   $ SOME_DIR/"""+scriptName+""" --do-all --install-dir=<install-dir>
 
 then the directory """+baseDirName+""" will be created in the local working directory
 and it will contain the source for """+productName+""" and the build files. NOTE: This
@@ -93,8 +113,9 @@ you choose to install """+productName+""" in.
 NOTE: If you need to use sudo to install in /usr/local/bin or some other place
 that needs root privileges, do:
 
-  $ SOME_DIR/"""+scriptName+""" --install-dir=$HOME --checkout --untar --configure --build
-  $ sudo SOME_DIR/"""+scriptName+""" --install-dir=$HOME --install
+  $ SOME_DIR/"""+scriptName+""" --install-dir=$HOME --download --untar --configure --build
+  $ sudo SOME_DIR/"""+scriptName+""" --install-dir=$HOME --install \
+     --install-owner=<owner> --install-group=<group> [--install-for-all]
 
 This appears to work on most systems.
 
@@ -103,18 +124,42 @@ After you have done a successful install, you might want to do:
   $ rm -r """+baseDirName+"""
 
 in order to remove the intermediate source and build files.
-""" + self.installObj.getExtraHelpStr()
+""" + self.installObj.getExtraHelpStr(self.productVersion)
 
     #
     # 2) Parse the command-line
     #
 
     clp = OptionParser(usage=usageHelp)
+
+    supportedVersions = self.installObj.getProductSupportedVersions()
+    defaultVersion = self.installObj.getProductDefaultVersion()
+    defaultVersionIdx = supportedVersions.index(defaultVersion)
+
+    addOptionParserChoiceOption(
+      versionCmndArgName, "version", supportedVersions, defaultVersionIdx,
+      "Version to install for "+productName+".", clp)
     
     clp.add_option(
       "--install-dir", dest="installDir", type="string",
       default="/usr/local",
-      help="The install directory for "+productName+" (default = /usr/local)." )
+      help="The install directory <install-dir> for "+productName+" (default = /usr/local)." )
+    
+    clp.add_option(
+      "--install-owner", dest="installOwner", type="string", default="",
+      help="If set, then 'chown -R <install-owner> <install-dir>' will be run after install" )
+    
+    clp.add_option(
+      "--install-group", dest="installGroup", type="string", default="",
+      help="If set, then 'chgrp -R <install-group> <install-dir>' and " \
+        "'chmod -R g+rX <install-dir> will be run after install." )
+
+    clp.add_option(
+      "--install-for-all", dest="installForAll", action="store_true",
+      help="If set, then 'chmod -R a+rX <install-dir>' will be run after install.")
+    clp.add_option(
+      "--no-install-for-all", dest="installForAll", action="store_false", default=False,
+      help="If set, then <install-dir> is not opened up to everyone." )
 
     clp.add_option(
       "--parallel", dest="parallel", type="int", \
@@ -126,15 +171,15 @@ in order to remove the intermediate source and build files.
       default="",
       help="The options to pass to make for "+productName+"." )
 
-    self.installObj.injectExtraCmndLineOptions(clp)
+    self.installObj.injectExtraCmndLineOptions(clp, self.productVersion)
     
     clp.add_option(
       "--show-defaults", dest="showDefaults", action="store_true", default=False,
       help="[ACTION] Show the defaults and exit." )
     
     clp.add_option(
-      "--checkout", dest="checkout", action="store_true", default=False,
-      help="[ACTION] Do the checkout of the tarball" )
+      "--download", dest="download", action="store_true", default=False,
+      help="[ACTION] Do the download of the tarball" )
     
     clp.add_option(
       "--untar", dest="untar", action="store_true", default=False,
@@ -159,7 +204,7 @@ in order to remove the intermediate source and build files.
     
     clp.add_option(
       "--do-all", dest="doAll", action="store_true", default=False,
-      help="[AGGR ACTION] Same as --checkout --untar --configure --build --install" \
+      help="[AGGR ACTION] Same as --download --untar --configure --build --install" \
       +" --show-final-instructions")
     
     (options, args) = clp.parse_args()
@@ -172,10 +217,17 @@ in order to remove the intermediate source and build files.
     cmndLine = "******************************************************************************\n"
     cmndLine += scriptName + " \\\n"
     cmndLine += "  --install-dir='" + options.installDir + "' \\\n"
+    cmndLine += "  --install-owner='" + options.installOwner + "' \\\n"
+    cmndLine += "  --install-group='" + options.installGroup + "' \\\n"
+    if options.installForAll:
+      cmndLine += "  --install-for-all \\\n"
+    else:
+      cmndLine += "  --no-install-for-all \\\n"
+    cmndLine += "  --parallel='" + str(options.parallel) + "' \\\n"
     cmndLine += "  --make-options='" + options.makeOptions + "'\\\n"
     cmndLine += self.installObj.echoExtraCmndLineOptions(options)
-    if options.checkout:
-      cmndLine += "  --checkout \\\n"
+    if options.download:
+      cmndLine += "  --download \\\n"
     if options.untar:
       cmndLine += "  --untar \\\n"
     if options.configure:
@@ -199,7 +251,7 @@ in order to remove the intermediate source and build files.
     #
 
     if options.doAll:
-      options.checkout = True
+      options.download = True
       options.untar = True
       options.configure = True
       options.build = True
@@ -213,11 +265,11 @@ in order to remove the intermediate source and build files.
     self.installObj.setup(options)
 
     print ""
-    print "A) Checkout the tarball(s) for "+productName+" ..."
+    print "A) Download the source for "+productName+" ..."
     print ""
     
-    if options.checkout:
-      self.installObj.doCheckout()
+    if options.download:
+      self.installObj.doDownload()
     else:
       print "Skipping on request ..."
     
@@ -258,6 +310,13 @@ in order to remove the intermediate source and build files.
     
     if options.install:
       self.installObj.doInstall()
+      if options.installOwner:
+        echoRunSysCmnd("chown -R "+options.installOwner+" "+options.installDir)
+      if options.installGroup:
+        echoRunSysCmnd("chgrp -R "+options.installGroup+" "+options.installDir)
+        echoRunSysCmnd("chmod -R g+rX "+options.installDir)
+      if options.installForAll:
+        echoRunSysCmnd("chmod -R a+rX "+options.installDir)
     else:
       print "Skipping on request ..."
     
@@ -272,3 +331,24 @@ in order to remove the intermediate source and build files.
       print "Skipping on request ..."
     
     print "\n[End]"
+
+
+#
+# Insert the standard --download-cmnd option
+#
+
+def setStdDownloadCmndOption(installObj, clp, version):
+  productName = installObj.getProductBaseName()+"-"+version
+  productBaseDirName = productName+"-base"
+  defaultDownloadCmnd = \
+    "git clone https://github.com/tribitsdevtools/"+productBaseDirName
+  clp.add_option(
+    "--download-cmnd", dest="downloadCmnd", type="string",
+    default=defaultDownloadCmnd,
+    help="Command used to download source for "+productName+"." \
+      +"  (Default ='"+defaultDownloadCmnd+"')  WARNING: This will delete" \
+      +" an existing directory '"+productBaseDirName+"' if it already exists!")
+
+
+
+

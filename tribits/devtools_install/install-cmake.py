@@ -39,21 +39,18 @@
 # ************************************************************************
 # @HEADER
 
+
 #
-# Version info that will change with new versions
+# Defaults
 #
 
-cmakeVersion = "2.8.11"
-cmakeVersionFull = "2.8.11.2"
-# ToDo: Allow user to select a new version from the env
-# (e.g. TRIBITS_INSTALL_CMAKE_VERSION=2.8.12,
-# TRIBITS_INSTALL_CMAKE_VERSION_FULL=2.8.12.1).
-
-cmakeTarball = "cmake-"+cmakeVersionFull+".tar.gz"
-cmakeSrcDir = "cmake-"+cmakeVersionFull
-cmakeDefaultCheckoutCmnd = \
-  "git clone https://github.com/TriBITSPub/devtools-cmake-"+cmakeVersion+"-base" \
-  + " cmake-"+cmakeVersion+"-base" 
+cmakeBaseName = "cmake"
+cmakeDefaultVersion = "2.8.11"
+cmakeSupportedVersions = ["2.8.11", "3.1.1"]
+cmakeTarballVersions = {
+  "2.8.11" : "2.8.11.2",
+  "3.1.1" : "3.1.1"
+  }
 
 #
 # Script code
@@ -69,86 +66,106 @@ class CMakeInstall:
   def __init__(self):
     self.dummy = None
 
-  def getProductName(self):
-    return "cmake-"+cmakeVersion
-
-  def getBaseDirName(self):
-    return "cmake-"+cmakeVersion+"-base"
+  #
+  # Called before even knowing the product version
+  #
 
   def getScriptName(self):
     return "install-cmake.py"
 
-  def getExtraHelpStr(self):
+  def getProductBaseName(self):
+    return cmakeBaseName
+
+  def getProductDefaultVersion(self):
+    return cmakeDefaultVersion
+
+  def getProductSupportedVersions(self):
+    return cmakeSupportedVersions
+
+  #
+  # Called after knowing the product version but before parsing the
+  # command-line.
+  #
+
+  def getProductName(self, version):
+    return cmakeBaseName+"-"+version
+
+  def getBaseDirName(self, version):
+    return cmakeBaseName+"-"+version+"-base"
+
+  def getExtraHelpStr(self, version):
     return """
-This script builds CMake"""+self.getProductName()+""" from source compiled with the
+This script builds CMake"""+self.getProductName(version)+""" from source compiled with the
 configured C/C++ compilers in your path.  Note that the provided CMake
 configure script actually builds a local bootstrap copy of CMake first, before
 building the final version of CMake and the rest of the tools that gets
 installed.
 
-WARNING: By default CMake builds an unoptimized version!  To build an optimized
-version you must set CXXFLAGS and CFLAGS with:
-
-  env CXXFLAGS=-O3 CFLAGS=-O3 install-cmake.py [other options]
-
-There does not appear to be any other way to set compiler flags than
-on the env.
+NOTE: This build script sets the environment vars CXXFLAGS=-O3 AND CFLAGS=-O3
+when doing the configure.  Therefore, this builds and installs an optimized
+version of CMake by default.
 
 NOTE: The assumed directory structure of the download source provided by the
 command --checkout-cmnd=<checkout-cmnd> is:
 
    cmake-<version>-base/
-     cmake-<version>.tar.gz
-
-ToDo: Allow user to select different cmake versions.
+     cmake-<full-version>.tar.gz
 """
 
-  def injectExtraCmndLineOptions(self, clp):
-    clp.add_option(
-      "--checkout-cmnd", dest="checkoutCmnd", type="string",
-      default=cmakeDefaultCheckoutCmnd,
-      help="Command used to check out CMake and dependent source." \
-        +"  (Default ='"+cmakeDefaultCheckoutCmnd+"')  WARNING: This will delete" \
-        +" an existing directory if it already exists!")
+  def injectExtraCmndLineOptions(self, clp, version):
+    setStdDownloadCmndOption(self, clp, version)
     clp.add_option(
       "--extra-configure-options", dest="extraConfigureOptions", type="string", \
       default="", \
-      help="Extra options to add to the 'configure' command for "+self.getProductName()+"." \
+      help="Extra options to add to the 'configure' command for "+self.getProductName(version)+"." \
         +"  Note: This does not override the hard-coded configure options." )
 
   def echoExtraCmndLineOptions(self, inOptions):
     cmndLine = ""
-    cmndLine += "  --checkout-cmnd='"+inOptions.checkoutCmnd+"' \\\n"
+    cmndLine += "  --download-cmnd='"+inOptions.downloadCmnd+"' \\\n"
     return cmndLine
+
+  #
+  # Called after parsing the command-line
+  #
     
   def setup(self, inOptions):
     self.inOptions = inOptions
     self.baseDir = os.getcwd()
-    self.cmakeBaseDir = self.baseDir+"/"+self.getBaseDirName()
-    self.cmakeSrcBaseDir = self.cmakeBaseDir+"/"+cmakeSrcDir
+    self.cmakeBaseDir = self.baseDir+"/"+self.getBaseDirName(self.inOptions.version)
+    cmakeVersionFull = cmakeTarballVersions[self.inOptions.version]
+    self.cmakeTarball = "cmake-"+cmakeVersionFull+".tar.gz"
+    self.cmakeSrcDir = "cmake-"+cmakeVersionFull
     self.cmakeBuildBaseDir = self.cmakeBaseDir+"/cmake-build"
     self.scriptBaseDir = getScriptBaseDir()
+
+  #
+  # Called after setup()
+  #
 
   def getParallelOpt(self, optName):
     if self.inOptions.parallel > 0:
       return " "+optName+str(self.inOptions.parallel)
     return " "
 
-  def doCheckout(self):
-    removeDirIfExists(self.getBaseDirName(), True)
-    echoRunSysCmnd(self.inOptions.checkoutCmnd)
+  def doDownload(self):
+    removeDirIfExists(self.cmakeBaseDir, True)
+    echoRunSysCmnd(self.inOptions.downloadCmnd)
 
   def doUntar(self):
+    # Find the full name of the source tarball
     echoChDir(self.cmakeBaseDir)
-    echoRunSysCmnd("tar -xzf "+cmakeTarball)
+    echoRunSysCmnd("tar -xzf "+self.cmakeTarball)
 
   def doConfigure(self):
     createDir(self.cmakeBuildBaseDir, True, True)
     echoRunSysCmnd(
-      "../"+cmakeSrcDir+"/configure "+\
+      "../"+self.cmakeSrcDir+"/configure "+\
       " "+self.inOptions.extraConfigureOptions+\
       self.getParallelOpt("--parallel=")+\
-      " --prefix="+self.inOptions.installDir)
+      " --prefix="+self.inOptions.installDir,
+      extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
+      )
 
   def doBuild(self):
     echoChDir(self.cmakeBuildBaseDir)
@@ -160,7 +177,7 @@ ToDo: Allow user to select different cmake versions.
 
   def getFinalInstructions(self):
     return """
-To use the installed version of cmake-"""+cmakeVersion+""" add the path:
+To use the installed version of cmake-"""+self.inOptions.version+""" add the path:
 
   """+self.inOptions.installDir+"""/bin
 
