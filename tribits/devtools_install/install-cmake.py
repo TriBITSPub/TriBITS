@@ -52,6 +52,10 @@ cmakeTarballVersions = {
   "3.1.1" : "3.1.1"
   }
 
+# NOTES:
+#
+# See the patch files for 2.8.11 and 3.1.1 for CPack in the untar() function!
+
 #
 # Script code
 #
@@ -156,6 +160,9 @@ command --checkout-cmnd=<checkout-cmnd> is:
     # Find the full name of the source tarball
     echoChDir(self.cmakeBaseDir)
     echoRunSysCmnd("tar -xzf "+self.cmakeTarball)
+    if self.inOptions.version == "2.8.11" or self.inOptions.version == "3.1.1":
+      echoChDir(self.cmakeSrcDir+"/Source/CPack")
+      echoRunSysCmnd("patch -i ../../../fix_cpack_symlink.patch")
 
   def doConfigure(self):
     createDir(self.cmakeBuildBaseDir, True, True)
