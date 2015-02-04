@@ -145,7 +145,9 @@ in order to remove the intermediate source and build files.
     clp.add_option(
       "--install-dir", dest="installDir", type="string",
       default="/usr/local",
-      help="The install directory <install-dir> for "+productName+" (default = /usr/local)." )
+      help="The install directory <install-dir> for "+productName+ \
+        " (default = /usr/local).  This can be a relative or absolute path, it can" \
+        " start with ~/, etc." )
     
     clp.add_option(
       "--install-owner", dest="installOwner", type="string", default="",
@@ -247,6 +249,12 @@ in order to remove the intermediate source and build files.
 
     if options.showDefaults:
       return 0;
+
+    # Check the options
+
+    if options.installDir == "":
+      raise Exception("Error, --install-dir=<install-dir> can't be empty!")
+    options.installDir = os.path.abspath(os.path.expanduser(options.installDir))
 
     #
     # 4) Execute the commands
