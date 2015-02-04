@@ -127,6 +127,7 @@ command --download-cmnd=<download-cmnd> is:
   def echoExtraCmndLineOptions(self, inOptions):
     cmndLine = ""
     cmndLine += "  --download-cmnd='"+inOptions.downloadCmnd+"' \\\n"
+    cmndLine += "  --extra-configure-options='"+inOptions.extraConfigureOptions+"' \\\n"
     return cmndLine
 
   #
