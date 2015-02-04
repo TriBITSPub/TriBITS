@@ -39,15 +39,14 @@
 # ************************************************************************
 # @HEADER
 
+
 #
-# Version info that will change with new versions
+# Defaults
 #
 
-def_gccVersion = "4.8.3"
-
-gccDefaultCheckoutCmnd = \
-  "git clone https://github.com/TriBITSPub/devtools-gcc-"+def_gccVersion+"-base" \
-  + " gcc-"+def_gccVersion+"-base" 
+gccBaseName = "gcc"
+gccDefaultVersion = "4.8.3"
+gccSupportedVersions = ["4.8.3"]
 
 #
 # Script code
@@ -58,111 +57,87 @@ from InstallProgramDriver import *
 from GeneralScriptSupport import *
 
 
-def addRpathToLink(specFileStrIn, rpath):
-  specFileStrOut = ""
-  linkLastLine = False
-  for line in specFileStrIn.split('\n'):
-    #print "line: "+line
-    if linkLastLine:
-      #print "Prepending rpath!"
-      newLine = """%{!rpath:-rpath """+rpath+"""} """ + line
-      linkLastLine = False
-    else:
-      newLine = line
-    #print "newLine: "+newLine
-    specFileStrOut += newLine + "\n"
-    if line == "*link:":
-      #print "*link: found!"
-      linkLastLine = True
-  return specFileStrOut
-
-
-def appendToRPath(rpathIn, anotherPath):
-  rpathOut = rpathIn
-  if rpathIn:
-    rpathOut += ";:"
-  rpathOut += anotherPath
-  return rpathOut
-
-
 class GccInstall:
 
   def __init__(self):
     self.dummy = None
 
-  def getProductName(self):
-    return "gcc-"+def_gccVersion
+  #
+  # Called before even knowing the product version
+  #
 
   def getScriptName(self):
     return "install-gcc.py"
 
-  def getExtraHelpStr(self):
-    return """
-This script builds gcc-"""+def_gccVersion+"""" (see other versions for --gcc-version)
-rom source.
+  def getProductBaseName(self):
+    return gccBaseName
 
-NOTE: The sources for GCC may be patched so be careful to get an approved version
-(which the default pulled by --checkout-cmnd).
+  def getProductDefaultVersion(self):
+    return gccDefaultVersion
+
+  def getProductSupportedVersions(self):
+    return gccSupportedVersions
+
+  #
+  # Called after knowing the product version but before parsing the
+  # command-line.
+  #
+
+  def getProductName(self, version):
+    return gccBaseName+"-"+version
+
+  def getBaseDirName(self, version):
+    return gccBaseName+"-"+version+"-base"
+
+  def getExtraHelpStr(self, version):
+    return """
+This script builds """+self.getProductName(version)+""" from source compiled with the
+configured C compilers in your path.
+
+NOTE: The assumed directory structure of the download source provided by the
+command --download-cmnd=<download-cmnd> is:
+
+   gcc-<version>-base/
+     gcc-<full-version>.tar.gz
 """
 
-  def getBaseDirName(self):
-    return "gcc-"+def_gccVersion+"-base"
+  def injectExtraCmndLineOptions(self, clp, version):
+    setStdDownloadCmndOption(self, clp, version)
+    clp.add_option(
+      "--extra-configure-options", dest="extraConfigureOptions", type="string", \
+      default="", \
+      help="Extra options to add to the 'configure' command for " \
+        + self.getProductName(version)+"." \
+        +"  Note: This does not override the hard-coded configure options." )
 
-  def injectExtraCmndLineOptions(self, clp):
-    clp.add_option(
-      "--checkout-cmnd", dest="checkoutCmnd", type="string",
-      default=gccDefaultCheckoutCmnd,
-      help="Command used to checkout out the sources for "+self.getProductName() \
-        +"  (Default ='"+gccDefaultCheckoutCmnd+"').  WARNING: This will delete" \
-        +" an existing directory if it already exists!")
-    clp.add_option(
-      "--extra-configure-options", dest="extraConfigureOptions", type="string", default="",
-      help="Extra options to add to the 'configure' command for "+self.getProductName()+"." \
-      +"  Note: This does not override the hard-coded configure options." )
-    clp.add_option(
-      "--embed-rpath", dest="embedRPath", action="store_true", default=False,
-      help="Update the GCC specs file with the rpaths to GCC shared libraries." )
-    clp.add_option(
-      "--gcc-version", dest="gccVersion", type="string", default=def_gccVersion,
-      help="Select GCC version: 4.8.3. Default: " + def_gccVersion )
-      
   def echoExtraCmndLineOptions(self, inOptions):
     cmndLine = ""
-    cmndLine += "  --checkout-cmnd='"+inOptions.checkoutCmnd+"' \\\n"
-    if inOptions.extraConfigureOptions:
-      cmndLine += "  --extra-configure-options='"+inOptions.extraConfigureOptions+"' \\\n"
+    cmndLine += "  --download-cmnd='"+inOptions.downloadCmnd+"' \\\n"
+    cmndLine += "  --extra-configure-options='"+inOptions.extraConfigureOptions+"' \\\n"
     return cmndLine
 
-  def selectVersion(self):
-    gccVersion = self.inOptions.gccVersion 
-    if gccVersion == def_gccVersion:
-      None
-    else:
-      print "\nUnsupported GCC version. See help."
-      sys.exit(1)
-    #
-    print "\nSelecting: \n" \
-          "  gcc: " + gccVersion + "\n"
-    #  
-    self.gccTarball = "gcc-"+gccVersion+".tar.gz"
-    self.gccSrcDir = "gcc-"+gccVersion
-
+  #
+  # Called after parsing the command-line
+  #
+    
   def setup(self, inOptions):
-
     self.inOptions = inOptions
-    self.selectVersion()
     self.baseDir = os.getcwd()
-    self.gccBaseDir = self.baseDir+"/"+self.getBaseDirName()
-    self.gccSrcBaseDir = self.gccBaseDir+"/"+self.gccSrcDir
+    self.gccBaseDir = self.baseDir+"/"+self.getBaseDirName(self.inOptions.version)
+    self.gccSrcDir = "gcc-"+self.inOptions.version
     self.gccBuildBaseDir = self.gccBaseDir+"/gcc-build"
     self.scriptBaseDir = getScriptBaseDir()
 
-  def doCheckout(self):
-    removeDirIfExists(self.getBaseDirName(), True)
-    echoRunSysCmnd(self.inOptions.checkoutCmnd)
+  #
+  # Called after setup()
+  #
+
+  def doDownload(self):
+    removeDirIfExists(self.gccBaseDir, True)
+    echoRunSysCmnd(self.inOptions.downloadCmnd)
 
   def doUntar(self):
-   print "Nothing to untar!"
+    print "Nothing to untar!"
 
   def doConfigure(self):
     createDir(self.gccBuildBaseDir)
@@ -170,33 +145,27 @@ NOTE: The sources for GCC may be patched so be careful to get an approved versio
       "../"+self.gccSrcDir+"/configure --enable-languages='c,c++,fortran'"+\
       " "+self.inOptions.extraConfigureOptions+\
       " --prefix="+self.inOptions.installDir,
-      workingDir=self.gccBuildBaseDir)
+      workingDir=self.gccBuildBaseDir,
+      extraEnv={"CFLAGS":"-O3"},
+      )
 
   def doBuild(self):
     echoChDir(self.gccBuildBaseDir)
-    cmnd = "make"
-    if self.inOptions.parallel > 0:
-      cmnd += " -j"+str(self.inOptions.parallel)
-    cmnd += " "+self.inOptions.makeOptions
-    echoRunSysCmnd(cmnd)
+    echoRunSysCmnd("make " + getParallelOpt(self.inOptions, "-j") \
+      + self.inOptions.makeOptions)
 
   def doInstall(self):
-
-    print "\nInstall GCC ...\n"
     echoChDir(self.gccBuildBaseDir)
-    echoRunSysCmnd("make "+self.inOptions.makeOptions+" install")
-
-    if self.inOptions.embedRPath:
-      print "\nSet up rpath for GCC versions so that you don't need to set LD_LIBRARY_PATH ...\n"
-      self.updateSpecsFile()
+    echoRunSysCmnd("make " + getParallelOpt(self.inOptions, "-j") \
+      + self.inOptions.makeOptions + " install")
 
   def getFinalInstructions(self):
     return """
-In order to use """+self.getProductName()+""" prepend
+To use the installed version of gcc-"""+self.inOptions.version+""" add the path:
 
-   """+self.inOptions.installDir+"""/bin
+  """+self.inOptions.installDir+"""/bin
 
-to your PATH env variable.
+to your path and that should be it!
 
 Also, you must prepend
 
@@ -205,36 +174,10 @@ Also, you must prepend
 to your LD_LIBRARY_PATH env variable.
 """
 
-  def updateSpecsFile(self):
-    gccExec = self.inOptions.installDir+"/bin/gcc"
-    rpathbase = self.inOptions.installDir
-    print "rpathbase = "+rpathbase
-    specpath = getCmndOutput(gccExec+" --print-file libgcc.a | sed 's|/libgcc.a||'", True)
-    print "specpath = "+specpath
-    rpath = ""
-    libPath = rpathbase+"/lib"
-    if os.path.exists(libPath):
-      rpath = appendToRPath(rpath, libPath)
-    lib64Path = rpathbase+"/lib64"
-    if os.path.exists(lib64Path):
-      rpath = appendToRPath(rpath, lib64Path)
-    print "rpath will be: '"+rpath+"'"
-    specsfile = specpath+"/specs"
-    if os.path.exists(specsfile):
-      print "Backing up the existing GCC specs file '"+specsfile+"' ..."
-      echoRunSysCmnd("cp "+specsfile+" "+specsfile+".backup")
-    print "Writing to GCC specs file "+specsfile
-    gccSpecs = getCmndOutput(gccExec+" -dumpspecs", True)
-    #print "gccSpecs:\n", gccSpecs
-    gccSpecsMod = addRpathToLink(gccSpecs, rpath)
-    #print "gccSpecsMod:\n", gccSpecsMod
-    writeStrToFile(specsfile, gccSpecsMod)
-
 
 #
 # Executable statements
 #
 
-gitInstaller = InstallProgramDriver(GccInstall())
-
-gitInstaller.runDriver()
+gccInstaller = InstallProgramDriver(GccInstall())
+gccInstaller.runDriver()
