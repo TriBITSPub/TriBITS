@@ -110,7 +110,7 @@ when doing the configure.  Therefore, this builds and installs an optimized
 version of CMake by default.
 
 NOTE: The assumed directory structure of the download source provided by the
-command --checkout-cmnd=<checkout-cmnd> is:
+command --download-cmnd=<download-cmnd> is:
 
    cmake-<version>-base/
      cmake-<full-version>.tar.gz
