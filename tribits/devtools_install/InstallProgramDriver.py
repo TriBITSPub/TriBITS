@@ -85,7 +85,7 @@ class InstallProgramDriver:
     usageHelp = scriptName+\
 """ [OPTIONS] [--install-dir=<install-dir> ...]
 
-Tool that checks out source, untars, configures, builds, and installs
+This script checks out source, untars, configures, builds, and installs
 """+productName+""" in one shot.  Versions supported include:
 
     """+str(self.installObj.getProductSupportedVersions())+"""
@@ -94,7 +94,7 @@ Tool that checks out source, untars, configures, builds, and installs
 
 By default, if you just type:
 
-   $ SOME_DIR/"""+scriptName+""" --do-all --install-dir=<install-dir>
+   $ """+scriptName+""" --install-dir=<install-dir> --parallel=<num-procs> --do-all
 
 then the directory """+baseDirName+""" will be created in the local working directory
 and it will contain the source for """+productName+""" and the build files. NOTE: This
@@ -106,18 +106,20 @@ You can control various parts of the process with various options (see below).
 If you do not install as root then you must override the option --install-dir
 which is set to /usr/local/bin by default.  For example, you might just type:
 
-  $ SOME_DIR/"""+scriptName+""" --install-dir=$HOME --do-all
+  $ """+scriptName+""" --install-dir=$HOME/install --parallel=8 --do-all
 
-and then it would install """+productName+""" and the other executables in $HOME/bin.
+and then it would install """+productName+""" and the other executables in $HOME/install/bin.
 NOTE: You will have to update your PATH variable to include whatever directory
 you choose to install """+productName+""" in.
 
 NOTE: If you need to use sudo to install in /usr/local/bin or some other place
 that needs root privileges, do:
 
-  $ SOME_DIR/"""+scriptName+""" --install-dir=$HOME --download --untar --configure --build
-  $ sudo SOME_DIR/"""+scriptName+""" --install-dir=$HOME --install \\
-     --install-owner=<owner> --install-group=<group> [--install-for-all]
+  $ """+scriptName+""" --install-dir=$HOME/install --parallel=8 \\
+     --download --untar --configure --build
+  $ sudo """+scriptName+""" --install-dir=$HOME/install --parallel=8 \\
+     --install-owner=<owner> --install-group=<group> [--install-for-all] \\
+     --install
 
 This appears to work on most systems.
 
@@ -148,22 +150,8 @@ in order to remove the intermediate source and build files.
       help="The install directory <install-dir> for "+productName+ \
         " (default = /usr/local).  This can be a relative or absolute path, it can" \
         " start with ~/, etc." )
-    
-    clp.add_option(
-      "--install-owner", dest="installOwner", type="string", default="",
-      help="If set, then 'chown -R <install-owner> <install-dir>' will be run after install" )
-    
-    clp.add_option(
-      "--install-group", dest="installGroup", type="string", default="",
-      help="If set, then 'chgrp -R <install-group> <install-dir>' and " \
-        "'chmod -R g+rX <install-dir> will be run after install." )
 
-    clp.add_option(
-      "--install-for-all", dest="installForAll", action="store_true",
-      help="If set, then 'chmod -R a+rX <install-dir>' will be run after install.")
-    clp.add_option(
-      "--no-install-for-all", dest="installForAll", action="store_false", default=False,
-      help="If set, then <install-dir> is not opened up to everyone." )
+    insertInstallPermissionsOptions(clp)
 
     clp.add_option(
       "--parallel", dest="parallel", type="int", \
@@ -222,12 +210,7 @@ in order to remove the intermediate source and build files.
     cmndLine += scriptName + " \\\n"
     cmndLine += "  "+versionCmndArgName + "='"+options.version+"' \\\n"
     cmndLine += "  --install-dir='" + options.installDir + "' \\\n"
-    cmndLine += "  --install-owner='" + options.installOwner + "' \\\n"
-    cmndLine += "  --install-group='" + options.installGroup + "' \\\n"
-    if options.installForAll:
-      cmndLine += "  --install-for-all \\\n"
-    else:
-      cmndLine += "  --no-install-for-all \\\n"
+    cmndLine += echoInsertPermissionsOptions(options)
     cmndLine += "  --parallel='" + str(options.parallel) + "' \\\n"
     cmndLine += "  --make-options='" + options.makeOptions + "'\\\n"
     cmndLine += self.installObj.echoExtraCmndLineOptions(options)
@@ -321,13 +304,7 @@ in order to remove the intermediate source and build files.
     
     if options.install:
       self.installObj.doInstall()
-      if options.installOwner:
-        echoRunSysCmnd("chown -R "+options.installOwner+" "+options.installDir)
-      if options.installGroup:
-        echoRunSysCmnd("chgrp -R "+options.installGroup+" "+options.installDir)
-        echoRunSysCmnd("chmod -R g+rX "+options.installDir)
-      if options.installForAll:
-        echoRunSysCmnd("chmod -R a+rX "+options.installDir)
+      fixupInstallPermissions(options, options.installDir)
     else:
       print "Skipping on request ..."
     
@@ -368,3 +345,54 @@ def getParallelOpt(inOptions, optName):
   if inOptions.parallel > 0:
     return " "+optName+str(inOptions.parallel)
   return " "
+
+
+#
+# Insert options for fixing owner, group, permissions
+#
+
+def insertInstallPermissionsOptions(clp):
+  
+  clp.add_option(
+    "--install-owner", dest="installOwner", type="string", default="",
+    help="If set, then 'chown -R <install-owner> <install-dir>' will be run after install" )
+  
+  clp.add_option(
+    "--install-group", dest="installGroup", type="string", default="",
+    help="If set, then 'chgrp -R <install-group> <install-dir>' and " \
+      "'chmod -R g+rX <install-dir> will be run after install." )
+
+  clp.add_option(
+    "--install-for-all", dest="installForAll", action="store_true",
+    help="If set, then 'chmod -R a+rX <install-dir>' will be run after install.")
+  clp.add_option(
+    "--no-install-for-all", dest="installForAll", action="store_false", default=False,
+    help="If set, then <install-dir> is not opened up to everyone." )
+
+
+def echoInsertPermissionsOptions(inOptions):
+  cmndLine = ""
+  cmndLine += "  --install-owner='" + inOptions.installOwner + "' \\\n"
+  cmndLine += "  --install-group='" + inOptions.installGroup + "' \\\n"
+  if inOptions.installForAll:
+    cmndLine += "  --install-for-all \\\n"
+  else:
+    cmndLine += "  --no-install-for-all \\\n"
+  return cmndLine
+
+
+def fixupInstallPermissions(inOptions, installDir):
+  if inOptions.installOwner:
+    print "\n*** Changing owner to '"+inOptions.installOwner+"':"
+    echoRunSysCmnd("chown -R "+inOptions.installOwner+" "+installDir)
+  if inOptions.installGroup:
+    print "\n*** Changing group to '"+inOptions.installGroup+"' and giving group read/execute:"
+    echoRunSysCmnd("chgrp -R "+inOptions.installGroup+" "+installDir)
+    echoRunSysCmnd("chmod -R g+rX "+installDir)
+  if inOptions.installForAll:
+    print "\n*** Allowing everyone to read/execute:"
+    echoRunSysCmnd("chmod -R a+rX "+installDir)
+
+
+
+
