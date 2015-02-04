@@ -220,6 +220,7 @@ in order to remove the intermediate source and build files.
 
     cmndLine = "******************************************************************************\n"
     cmndLine += scriptName + " \\\n"
+    cmndLine += "  "+versionCmndArgName + "='"+options.version+"' \\\n"
     cmndLine += "  --install-dir='" + options.installDir + "' \\\n"
     cmndLine += "  --install-owner='" + options.installOwner + "' \\\n"
     cmndLine += "  --install-group='" + options.installGroup + "' \\\n"
