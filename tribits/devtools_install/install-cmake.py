@@ -165,7 +165,7 @@ command --download-cmnd=<download-cmnd> is:
     echoRunSysCmnd(
       "../"+self.cmakeSrcDir+"/configure "+\
       " "+self.inOptions.extraConfigureOptions+\
-      self.getParallelOpt(self.inOptions, "--parallel=")+\
+      getParallelOpt(self.inOptions, "--parallel=")+\
       " --prefix="+self.inOptions.installDir,
       extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
       )
