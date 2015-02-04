@@ -61,7 +61,9 @@ class InstallProgramDriver:
 
     # Get the production version out of command-line
 
-    versionCmndArgName = "--"+self.installObj.getProductBaseName()+"-version"    
+    productBaseName = self.installObj.getProductBaseName()
+
+    versionCmndArgName = "--"+productBaseName+"-version"    
     for arg in sys.argv[1:]:
       #print "arg = '"+arg+"'"
       arg_and_value = arg.split("=")
@@ -88,7 +90,7 @@ Tool that checks out source, untars, configures, builds, and installs
 
     """+str(self.installObj.getProductSupportedVersions())+"""
 
-(set with --"""+productName+"""-version=<version>)
+(set with --"""+productBaseName+"""-version=<version>)
 
 By default, if you just type:
 
