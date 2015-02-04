@@ -142,7 +142,7 @@ command --download-cmnd=<download-cmnd> is:
   def doConfigure(self):
     createDir(self.gccBuildBaseDir)
     echoRunSysCmnd(
-      "../"+self.gccSrcDir+"/configure --enable-languages='c,c++,fortran'"+\
+      "../"+self.gccSrcDir+"/configure --disable-multilib --enable-languages='c,c++,fortran'"+\
       " "+self.inOptions.extraConfigureOptions+\
       " --prefix="+self.inOptions.installDir,
       workingDir=self.gccBuildBaseDir,
