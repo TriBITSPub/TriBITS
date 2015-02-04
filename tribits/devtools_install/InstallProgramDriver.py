@@ -355,12 +355,15 @@ def insertInstallPermissionsOptions(clp):
   
   clp.add_option(
     "--install-owner", dest="installOwner", type="string", default="",
-    help="If set, then 'chown -R <install-owner> <install-dir>' will be run after install" )
+    help="If set, then 'chown -R <install-owner> <install-dir>' will be run after install." \
+      "  Note that you can only change the owner when running this script as sudo." )
   
   clp.add_option(
     "--install-group", dest="installGroup", type="string", default="",
     help="If set, then 'chgrp -R <install-group> <install-dir>' and " \
-      "'chmod -R g+rX <install-dir> will be run after install." )
+      "'chmod -R g+rX <install-dir> will be run after install." \
+      "  Note that you can only change a to a group that the owner is" \
+      " a member of. )
 
   clp.add_option(
     "--install-for-all", dest="installForAll", action="store_true",
