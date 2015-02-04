@@ -116,7 +116,7 @@ NOTE: If you need to use sudo to install in /usr/local/bin or some other place
 that needs root privileges, do:
 
   $ SOME_DIR/"""+scriptName+""" --install-dir=$HOME --download --untar --configure --build
-  $ sudo SOME_DIR/"""+scriptName+""" --install-dir=$HOME --install \
+  $ sudo SOME_DIR/"""+scriptName+""" --install-dir=$HOME --install \\
      --install-owner=<owner> --install-group=<group> [--install-for-all]
 
 This appears to work on most systems.
