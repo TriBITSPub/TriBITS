@@ -363,7 +363,7 @@ def insertInstallPermissionsOptions(clp):
     help="If set, then 'chgrp -R <install-group> <install-dir>' and " \
       "'chmod -R g+rX <install-dir> will be run after install." \
       "  Note that you can only change a to a group that the owner is" \
-      " a member of. )
+      " a member of." )
 
   clp.add_option(
     "--install-for-all", dest="installForAll", action="store_true",
