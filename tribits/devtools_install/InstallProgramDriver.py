@@ -349,6 +349,11 @@ def setStdDownloadCmndOption(installObj, clp, version):
       +"  (Default ='"+defaultDownloadCmnd+"')  WARNING: This will delete" \
       +" an existing directory '"+productBaseDirName+"' if it already exists!")
 
+#
+# Get the parallel option
+#
 
-
-
+def getParallelOpt(inOptions, optName):
+  if inOptions.parallel > 0:
+    return " "+optName+str(inOptions.parallel)
+  return " "

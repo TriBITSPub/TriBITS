@@ -147,11 +147,6 @@ command --download-cmnd=<download-cmnd> is:
   # Called after setup()
   #
 
-  def getParallelOpt(self, optName):
-    if self.inOptions.parallel > 0:
-      return " "+optName+str(self.inOptions.parallel)
-    return " "
-
   def doDownload(self):
     removeDirIfExists(self.cmakeBaseDir, True)
     echoRunSysCmnd(self.inOptions.downloadCmnd)
@@ -169,14 +164,14 @@ command --download-cmnd=<download-cmnd> is:
     echoRunSysCmnd(
       "../"+self.cmakeSrcDir+"/configure "+\
       " "+self.inOptions.extraConfigureOptions+\
-      self.getParallelOpt("--parallel=")+\
+      self.getParallelOpt(self.inOptions, "--parallel=")+\
       " --prefix="+self.inOptions.installDir,
       extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
       )
 
   def doBuild(self):
     echoChDir(self.cmakeBuildBaseDir)
-    echoRunSysCmnd("make "+self.getParallelOpt("-j")+self.inOptions.makeOptions)
+    echoRunSysCmnd("make "+getParallelOpt(self.inOptions, "-j")+self.inOptions.makeOptions)
 
   def doInstall(self):
     echoChDir(self.cmakeBuildBaseDir)
