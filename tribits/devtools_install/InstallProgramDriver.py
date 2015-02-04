@@ -83,21 +83,21 @@ class InstallProgramDriver:
     #
       
     usageHelp = scriptName+\
-""" [OPTIONS] [--install-dir=<install-dir> ...]
+r""" [OPTIONS] [--install-dir=<install-dir> ...]
 
 This script checks out source, untars, configures, builds, and installs
-"""+productName+""" in one shot.  Versions supported include:
+"""+productName+r""" in one shot.  Versions supported include:
 
-    """+str(self.installObj.getProductSupportedVersions())+"""
+    """+str(self.installObj.getProductSupportedVersions())+r"""
 
-(set with --"""+productBaseName+"""-version=<version>)
+(set with --"""+productBaseName+r"""-version=<version>)
 
 By default, if you just type:
 
-   $ """+scriptName+""" --install-dir=<install-dir> --parallel=<num-procs> --do-all
+   $ """+scriptName+r""" --install-dir=<install-dir> --parallel=<num-procs> --do-all
 
-then the directory """+baseDirName+""" will be created in the local working directory
-and it will contain the source for """+productName+""" and the build files. NOTE: This
+then the directory """+baseDirName+r""" will be created in the local working directory
+and it will contain the source for """+productName+r""" and the build files. NOTE: This
 requires that you not run as root or your userid on the download computer
 will not be correct.  If you want to install as root, see below.
 
@@ -106,26 +106,26 @@ You can control various parts of the process with various options (see below).
 If you do not install as root then you must override the option --install-dir
 which is set to /usr/local/bin by default.  For example, you might just type:
 
-  $ """+scriptName+""" --install-dir=$HOME/install --parallel=8 --do-all
+  $ """+scriptName+r""" --install-dir=$HOME/install --parallel=8 --do-all
 
-and then it would install """+productName+""" and the other executables in $HOME/install/bin.
+and then it would install """+productName+r""" and the other executables in $HOME/install/bin.
 NOTE: You will have to update your PATH variable to include whatever directory
-you choose to install """+productName+""" in.
+you choose to install """+productName+r""" in.
 
 NOTE: If you need to use sudo to install in /usr/local/bin or some other place
 that needs root privileges, do:
 
-  $ """+scriptName+""" --install-dir=$HOME/install --parallel=8 \\
+  $ """+scriptName+r""" --install-dir=$HOME/install --parallel=8 \
      --download --untar --configure --build
-  $ sudo """+scriptName+""" --install-dir=$HOME/install --parallel=8 \\
-     --install-owner=<owner> --install-group=<group> [--install-for-all] \\
+  $ sudo """+scriptName+r""" --install-dir=$HOME/install --parallel=8 \
+     --install-owner=<owner> --install-group=<group> [--install-for-all] \
      --install
 
 This appears to work on most systems.
 
 After you have done a successful install, you might want to do:
 
-  $ rm -r """+baseDirName+"""
+  $ rm -r """+baseDirName+r"""
 
 in order to remove the intermediate source and build files.
 """ + self.installObj.getExtraHelpStr(self.productVersion)
