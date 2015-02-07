@@ -45,12 +45,9 @@
 import os
 import sys
 
-ciSupportDir = os.path.join(
-  os.path.dirname(os.path.abspath(__file__)),
-  "../..", "tribits/ci_support" )
-sys.path = [ciSupportDir] + sys.path
-
+from FindCISupportDir import *
 from CheckinTest import *
+
 import unittest
 
 g_testBaseDir = getScriptBaseDir()
@@ -4845,17 +4842,7 @@ from optparse import OptionParser
 
 if __name__ == '__main__':
 
-  # Look for --with-cmake=??? argument and process and remove it
-  global g_withCmake
-  g_withCmake = "cmake"
-  args = []
-  for arg in sys.argv:
-    arg_find_cmake = arg.find("--with-cmake")
-    if arg_find_cmake == 0:
-      g_withCmake = arg.split("=")[1]
-    else:
-      args.append(arg)
-  sys.argv = args
+  from GetWithCmake import *
   
   if os.path.exists(g_checkin_test_tests_dir):
     echoRunSysCmnd("rm -rf "+g_checkin_test_tests_dir, verbose=g_verbose)
