@@ -98,7 +98,11 @@ This allows one to automatically exclude repos from being cloned that the user
 has no permissions to clone.  NOTE: See warning about --gitolite-root below!
 
 TIP: After cloning the set of repos, a nice too to use on the repos is
-'gitdist'.
+'gitdist'.  If your project does not have a version controlled
+.gitdist.default file, you can generate one using the
+--create-gitdist-file=<gitdist-file> argument, for example with:
+
+  --create-gitdist-file=.gitdist
 """
 
 
@@ -195,6 +199,12 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     default=True )
   
   clp.add_option(
+    "--create-gitdist-file", dest="createGitdistFile", type="string", default="",
+    help="If specified, the file <gitdist-file> will get generated with the list" \
+      " of git repos (the same list that is cloned with --do-clone)." \
+      "  (Default = '')")
+  
+  clp.add_option(
     "--show-defaults", dest="showDefaults", action="store_true",
     help="Show the default option values and do nothing at all.",
     default=False )
@@ -233,6 +243,8 @@ def fwdCmndLineOptions(inOptions, terminator=""):
     cmndLineOpts += "  --do-op" + terminator
   else:
     cmndLineOpts += "  --no-op" + terminator
+  cmndLineOpts += \
+    "  --create-gitdist-file='"+inOptions.createGitdistFile+"'"+terminator
   return cmndLineOpts 
 
 
@@ -330,34 +342,34 @@ def getGitoliteReposList(inOptions, trace=False, dumpGitoliteOutput=False):
     verbose = (True if (trace and not dumpGitoliteOutput) else False ) )
 
 
-def filterOutNotExtraRepos(extraReposDictList_in, notExtraRepos, verbose=False):
+def filterOutNotExtraRepos(extraRepoDictList_in, notExtraRepos, verbose=False):
   notExtraReposSet = set(notExtraRepos)
-  extraReposDictList = []
-  for extraReposDict in extraReposDictList_in:
+  extraRepoDictList = []
+  for extraReposDict in extraRepoDictList_in:
     extraRepoName = extraReposDict["NAME"]
     if extraRepoName in notExtraReposSet:
       if verbose:
         print "Excluding extra repo '"+extraRepoName+"'!"
     else:
-      extraReposDictList.append(extraReposDict)
-  return extraReposDictList
+      extraRepoDictList.append(extraReposDict)
+  return extraRepoDictList
 
 
-def filterOutMissingGitoliteRepos(extraReposDictList_in,
+def filterOutMissingGitoliteRepos(extraRepoDictList_in,
   gitoliteRepos, verbose=False):
   gitoliteReposSet = set(gitoliteRepos)
-  extraReposDictList = []
-  for extraReposDict in extraReposDictList_in:
+  extraRepoDictList = []
+  for extraReposDict in extraRepoDictList_in:
     extraRepoName = extraReposDict["NAME"]
     if not extraRepoName in gitoliteReposSet:
       if verbose:
         print "Excluding extra repo '"+extraRepoName+"' not listed by gitolite!"
     else:
-      extraReposDictList.append(extraReposDict)
-  return extraReposDictList
+      extraRepoDictList.append(extraReposDict)
+  return extraRepoDictList
 
 
-def getExtraReposTable(extraReposDictList):
+def getExtraReposTable(extraRepoDictList):
 
   # Get the lists for each column in the table
   repoIdList = []
@@ -367,7 +379,7 @@ def getExtraReposTable(extraReposDictList):
   repoUrlList = []
   repoCategoryList = []
   repoId = 1 # Use one-base indexing to match gitdist IDs!
-  for extraRepoDict in extraReposDictList:
+  for extraRepoDict in extraRepoDictList:
     repoIdList.append(str(repoId))
     repoNameList.append(extraRepoDict["NAME"])
     repoDirList.append(extraRepoDict["DIR"])
@@ -391,6 +403,15 @@ def getExtraReposTable(extraReposDictList):
 
   # Return the table
   return extraReposTable
+
+
+def createGitDistFile(extraRepoDictList, gitdistFile, verbose=False):
+  gitdistFileStr = ""
+  for extraRepoDict in extraRepoDictList:
+    gitdistFileStr += extraRepoDict["DIR"]+"\n"
+  if verbose:
+    print "Writing the file '"+gitdistFile+"' ..."
+  open(gitdistFile, 'w').write(gitdistFileStr)
 
 
 def cloneExtraRepo(inOptions, extraRepoDict):
@@ -449,9 +470,8 @@ def cloneExtraRepos(inOptions):
     gitoliteRepos = []
   #print "gitoliteRepos =", gitoliteRepos
 
-
   #
-  # B) Filter the list of extra repos
+  # C) Filter the list of extra repos
   #
 
   if gitoliteRepos:
@@ -472,9 +492,8 @@ def cloneExtraRepos(inOptions):
       inOptions.notExtraRepos.split(","),
       verbose=verbLevelIsMinimal)
 
-
   #
-  # C) print out table of repos
+  # D) print out table of repos
   #
 
   if isVerbosityLevel(inOptions, "more"):
@@ -487,7 +506,7 @@ def cloneExtraRepos(inOptions):
     print extraReposTable
 
   #
-  # D) Clone the repos
+  # E) Clone the repos
   #
 
   if inOptions.doClone:
@@ -499,6 +518,20 @@ def cloneExtraRepos(inOptions):
 
     for extraRepoDict in extraRepoDictList:
       cloneExtraRepo(inOptions, extraRepoDict)
+
+  #
+  # F) Create the gitdist file
+  #
+
+  if inOptions.createGitdistFile:
+
+    if verbLevelIsMinimal:
+      print "\n***"
+      print "*** Create the gitdist file:"
+      print "***\n"
+
+    createGitDistFile(extraRepoDictList, inOptions.createGitdistFile,
+      verbose=verbLevelIsMinimal)
 
 
 #

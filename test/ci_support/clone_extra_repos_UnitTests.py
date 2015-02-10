@@ -273,7 +273,8 @@ def clone_extra_repos_cmnd(extraOptions, throwOnError=True):
 
 def getScriptEchoCmndLine(
   extraRepos="", extraReposFile="cmake/ExtraRepositoriesList.cmake",
-  notExtraRepos="", doClone=True, doOp=True, verbosity="more"
+  notExtraRepos="", doClone=True, doOp=True, verbosity="more",
+  createGitdistFile="",
   ):
   global g_withCmake
   return \
@@ -287,7 +288,8 @@ def getScriptEchoCmndLine(
     "  --with-cmake='"+g_withCmake+"' \\\n" \
     "  --verbosity='"+verbosity+"' \\\n" \
     "  "+("--do-clone" if doClone else "--skip-clone")+" \\\n" \
-    "  "+("--do-op" if doOp else "--no-op")+" \\\n\n"
+    "  "+("--do-op" if doOp else "--no-op")+" \\\n" \
+    "  --create-gitdist-file='"+createGitdistFile+"' \\\n\n"
   
 
 class test_clone_extra_repos(unittest.TestCase):
@@ -412,6 +414,30 @@ class test_clone_extra_repos(unittest.TestCase):
       "\n" \
       "Running: git clone someurl2.com:/ExtraRepo2 packages/SomePackage/Blah\n"
     self.assertEqual(output, output_expected)
+
+  def test_generate_gitdist_file(self):
+    extraReposFile = testCiSupportDir+"/ExtraReposList.cmake"
+    gitdistFile = os.getcwd()+"/gitdist_file"
+    output = clone_extra_repos_cmnd(
+      "--verbosity=minimal --skip-clone --extra-repos-file="+extraReposFile+ \
+      " --create-gitdist-file="+gitdistFile)
+    output_expected = \
+      getScriptEchoCmndLine(verbosity="minimal", doClone=False,
+        extraReposFile=extraReposFile,createGitdistFile=gitdistFile) + \
+      "\n" \
+      "***\n" \
+      "*** Create the gitdist file:\n" \
+      "***\n" \
+      "\n" \
+      "Writing the file '"+gitdistFile+"' ...\n"
+    self.assertEqual(output, output_expected)
+    gitdistFileStr = open(gitdistFile, 'r').read()
+    gitdistFileStr_expected = \
+      "ExtraRepo1\n" \
+      "packages/SomePackage/Blah\n" \
+      "ExtraRepo3\n" \
+      "ExtraRepo4\n"
+    self.assertEqual(gitdistFileStr, gitdistFileStr_expected)
 
 
 if __name__ == '__main__':
