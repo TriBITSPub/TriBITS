@@ -355,26 +355,12 @@ def cloneExtraRepo(inOptions, extraRepoDict):
     print "\nRunning: "+cmnd
 
 
-#
-# Run the script
-#
-
-if __name__ == '__main__':
-
-  #
-  # A) Process the command-line input
-  #
-
-  inOptions = getCmndLineOptions()
-  if isVerbosityLevel(inOptions, "minimal"):
-    echoCmndLine(inOptions)
-  if inOptions.showDefaults:
-    sys.exit(0)
+def cloneExtraRepos(inOptions):
 
   verbLevelIsMinimal = isVerbosityLevel(inOptions, "minimal")
 
   #
-  # B) Get the list of extra repos
+  # A) Get the list of extra repos
   #
 
   extraRepoDictList = getExtraReposDictListFromCmakefile(
@@ -388,7 +374,7 @@ if __name__ == '__main__':
   #print "extraRepoDictList =", extraRepoDictList
 
   #
-  # C) Filter the list of extra repos
+  # B) Filter the list of extra repos
   #
 
   if inOptions.notExtraRepos:
@@ -402,7 +388,7 @@ if __name__ == '__main__':
       verbose=verbLevelIsMinimal)
 
   #
-  # D) print out table of repos
+  # C) print out table of repos
   #
 
   if isVerbosityLevel(inOptions, "more"):
@@ -415,7 +401,7 @@ if __name__ == '__main__':
     print extraReposTable
 
   #
-  # E) Clone the repos
+  # D) Clone the repos
   #
 
   if inOptions.doClone:
@@ -427,3 +413,18 @@ if __name__ == '__main__':
 
     for extraRepoDict in extraRepoDictList:
       cloneExtraRepo(inOptions, extraRepoDict)
+
+
+#
+# Run the script
+#
+
+if __name__ == '__main__':
+
+  inOptions = getCmndLineOptions()
+  if isVerbosityLevel(inOptions, "minimal"):
+    echoCmndLine(inOptions)
+  if inOptions.showDefaults:
+    sys.exit(0)
+
+  cloneExtraRepos(inOptions)
