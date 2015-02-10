@@ -481,7 +481,7 @@ def cloneExtraRepos(inOptions):
 
     print "\n***"
     print "*** List of selected extra repos to clone:"
-    print "***"
+    print "***\n"
   
     extraReposTable = getExtraReposTable(extraRepoDictList)
     print extraReposTable
