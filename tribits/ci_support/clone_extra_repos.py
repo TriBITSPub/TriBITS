@@ -95,7 +95,7 @@ If the git repo server is using gitolite, one can set
 --gitolite-root=<gitolite-root> and that will result in git repos being
 selected only if the selcted repos are listed in 'ssh <gitolite-root> info'.
 This allows one to automatically exclude repos from being cloned that the user
-has no permissions to clone.
+has no permissions to clone.  NOTE: See warning about --gitolite-root below!
 
 TIP: After cloning the set of repos, a nice too to use on the repos is
 'gitdist'.
@@ -157,7 +157,10 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     help="Gives the root for a gitolite repos <gitolite-root> (e.g. git@<some-url>)." \
       "  If specified, then any git repos with the <gitolite-root> listed as their" \
       " root will only be selected if they are listed with 'R' permissions returned" \
-      " from 'ssh <gitolite-root> info'.  (Default = '"+gitoliteRootDefault+"')" )
+      " from 'ssh <gitolite-root> info'.  WARNING: Make sure that you have your" \
+      " gitoliote SSH registred correctly before using this option by typing" \
+      " the command 'ssh <gitlite-root> info' and make sure that it does *not*"
+      " ask for a password! (Default = '"+gitoliteRootDefault+"')" )
 
   clp.add_option(
     "--with-cmake", dest="withCmake", type="string", default="cmake",
@@ -170,7 +173,8 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "  none = no output at all (except for commands with --no-op). " \
     "  minimal = print script args echo and clone commands." \
     "  more = print basic repo include/exclude logic and print repo table." \
-    "  most = print output from cmake script called and other detailed info." \
+    "  most = print output from cmake script called, the output from gitolite," \
+    " and other detailed info." \
     ,
     clp )
 
@@ -284,7 +288,49 @@ def getExtraReposDictListFromCmakefile(projectDir, extraReposFile, withCmake,
   return extraReposPytonDictList
 
 
-def filterExtraReposDictList(extraReposDictList_in, notExtraRepos, verbose=False):
+# Parse raw 'ssh <gitolite-root> info' output and return list of gitolite
+# repos.
+def parseRawSshGitoliteRootInfoOutput(rawSshGitoliteRootInfoOutput, verbose=False):
+
+  rawSshGitoliteRootInfoOutputList = rawSshGitoliteRootInfoOutput.split("\n")
+
+  gitoliteSshHeader = rawSshGitoliteRootInfoOutputList[0]
+  if verbose:
+    print gitoliteSshHeader
+
+  gitolioteReposList = []
+  parsingRepos = False
+  for line in rawSshGitoliteRootInfoOutputList:
+    #print "line = '"+line+"'"
+    # Look for the first blank line and then the next line will be the first
+    # listed repo.
+    if line == "":
+      parsingRepos = True
+      continue
+    # Parse the repos
+    if parsingRepos:
+      # The permisions and the repo name are split by a tab such as:
+      #  R W	ExtraRepo1
+      repoSplit = line.split("\t")
+      #print "repoSplit =", repoSplit
+      if len(repoSplit) == 2:
+        gitolioteReposList.append(repoSplit[1])
+  return gitolioteReposList
+
+
+# Get the list of gitolite repos from 'ssh <gitolite-root> info'.
+def getGitoliteReposList(inOptions, trace=False, dumpGitoliteOutput=False):
+  cmnd = "ssh "+inOptions.gitoliteRoot+" info"
+  if trace:
+    "Running: "+cmnd
+  rawSshGitoliteRootInfoOutput = getCmndOutput(cmnd)
+  if dumpGitoliteOutput:
+    print rawSshGitoliteRootInfoOutput
+  return parseRawSshGitoliteRootInfoOutput(rawSshGitoliteRootInfoOutput,
+    verbose = (True if (trace and not dumpGitoliteOutput) else False ) )
+
+
+def filterOutNotExtraRepos(extraReposDictList_in, notExtraRepos, verbose=False):
   notExtraReposSet = set(notExtraRepos)
   extraReposDictList = []
   for extraReposDict in extraReposDictList_in:
@@ -292,6 +338,20 @@ def filterExtraReposDictList(extraReposDictList_in, notExtraRepos, verbose=False
     if extraRepoName in notExtraReposSet:
       if verbose:
         print "Excluding extra repo '"+extraRepoName+"'!"
+    else:
+      extraReposDictList.append(extraReposDict)
+  return extraReposDictList
+
+
+def filterOutMissingGitoliteRepos(extraReposDictList_in,
+  gitoliteRepos, verbose=False):
+  gitoliteReposSet = set(gitoliteRepos)
+  extraReposDictList = []
+  for extraReposDict in extraReposDictList_in:
+    extraRepoName = extraReposDict["NAME"]
+    if not extraRepoName in gitoliteReposSet:
+      if verbose:
+        print "Excluding extra repo '"+extraRepoName+"' not listed by gitolite!"
     else:
       extraReposDictList.append(extraReposDict)
   return extraReposDictList
@@ -374,18 +434,44 @@ def cloneExtraRepos(inOptions):
   #print "extraRepoDictList =", extraRepoDictList
 
   #
+  # B) Get the list of gitolite repos
+  #
+  
+  if inOptions.gitoliteRoot:
+    if verbLevelIsMinimal:
+      print "\n***"
+      print "*** Get the list of repos that can be cloned from gitolite server:"
+      print "***\n"
+    gitoliteRepos = getGitoliteReposList(inOptions,
+      trace=verbLevelIsMinimal,
+      dumpGitoliteOutput=isVerbosityLevel(inOptions, "most"))
+  else:
+    gitoliteRepos = []
+  #print "gitoliteRepos =", gitoliteRepos
+
+
+  #
   # B) Filter the list of extra repos
   #
+
+  if gitoliteRepos:
+    if verbLevelIsMinimal:
+      print "\n***"
+      print "*** Filtering the set of extra repos based on gitolite repos:"
+      print "***\n"
+    extraRepoDictList = filterOutMissingGitoliteRepos(
+      extraRepoDictList, gitoliteRepos, verbose=verbLevelIsMinimal)
 
   if inOptions.notExtraRepos:
     if verbLevelIsMinimal:
       print "\n***"
       print "*** Filtering the set of extra repos based on --not-extra-repos:"
       print "***\n"
-    extraRepoDictList = filterExtraReposDictList(
+    extraRepoDictList = filterOutNotExtraRepos(
       extraRepoDictList,
       inOptions.notExtraRepos.split(","),
       verbose=verbLevelIsMinimal)
+
 
   #
   # C) print out table of repos

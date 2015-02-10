@@ -62,6 +62,13 @@ class MockOptions:
 # Test getExtraReposDictListFromCmakefile()
 #
 
+g_extraReposDictListFull = [
+  {'CATEGORY': 'Continuous', 'NAME': 'ExtraRepo1', 'REPOURL': 'someurl.com:/ExtraRepo1', 'REPOTYPE': 'GIT', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo1'},
+  {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo2', 'REPOURL': 'someurl2.com:/ExtraRepo2', 'REPOTYPE': 'GIT', 'PACKSTAT': 'NOPACKAGES', 'DIR': 'packages/SomePackage/Blah'},
+  {'CATEGORY': 'Continuous', 'NAME': 'ExtraRepo3', 'REPOURL': 'someurl3.com:/ExtraRepo3', 'REPOTYPE': 'HG', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo3'},
+  {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo4', 'REPOURL': 'someurl4.com:/ExtraRepo4', 'REPOTYPE': 'SVN', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo4'},
+  ]
+
 class test_getExtraReposDictListFromCmakefile(unittest.TestCase):
 
 
@@ -74,12 +81,7 @@ class test_getExtraReposDictListFromCmakefile(unittest.TestCase):
       extraReposType = "Nightly",
       extraRepos = "",
       verbose=False)
-    extraReposDict_expected = [
-      {'CATEGORY': 'Continuous', 'NAME': 'ExtraRepo1', 'REPOURL': 'someurl.com:/ExtraRepo1', 'REPOTYPE': 'GIT', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo1'},
-      {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo2', 'REPOURL': 'someurl2.com:/ExtraRepo2', 'REPOTYPE': 'GIT', 'PACKSTAT': 'NOPACKAGES', 'DIR': 'packages/SomePackage/Blah'},
-      {'CATEGORY': 'Continuous', 'NAME': 'ExtraRepo3', 'REPOURL': 'someurl3.com:/ExtraRepo3', 'REPOTYPE': 'HG', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo3'},
-      {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo4', 'REPOURL': 'someurl4.com:/ExtraRepo4', 'REPOTYPE': 'SVN', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo4'}
-      ]
+    extraReposDict_expected = g_extraReposDictListFull
     self.assertEqual(extraReposDict, extraReposDict_expected)
 
 
@@ -92,10 +94,7 @@ class test_getExtraReposDictListFromCmakefile(unittest.TestCase):
       extraReposType = "Continuous",
       extraRepos = "",
       verbose=False)
-    extraReposDict_expected = [
-      {'CATEGORY': 'Continuous', 'NAME': 'ExtraRepo1', 'REPOURL': 'someurl.com:/ExtraRepo1', 'REPOTYPE': 'GIT', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo1'},
-      {'CATEGORY': 'Continuous', 'NAME': 'ExtraRepo3', 'REPOURL': 'someurl3.com:/ExtraRepo3', 'REPOTYPE': 'HG', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo3'},
-      ]
+    extraReposDict_expected = [ g_extraReposDictListFull[0], g_extraReposDictListFull[2] ]
     self.assertEqual(extraReposDict, extraReposDict_expected)
 
 
@@ -108,9 +107,7 @@ class test_getExtraReposDictListFromCmakefile(unittest.TestCase):
       extraReposType = "Nightly",
       extraRepos = "ExtraRepo2",
       verbose=False)
-    extraReposDict_expected = [
-      {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo2', 'REPOURL': 'someurl2.com:/ExtraRepo2', 'REPOTYPE': 'GIT', 'PACKSTAT': 'NOPACKAGES', 'DIR': 'packages/SomePackage/Blah'},
-      ]
+    extraReposDict_expected = [ g_extraReposDictListFull[1] ]
     self.assertEqual(extraReposDict, extraReposDict_expected)
 
 
@@ -123,18 +120,15 @@ class test_getExtraReposDictListFromCmakefile(unittest.TestCase):
       extraReposType = "Nightly",
       extraRepos = "ExtraRepo2,ExtraRepo4",
       verbose=False)
-    extraReposDict_expected = [
-      {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo2', 'REPOURL': 'someurl2.com:/ExtraRepo2', 'REPOTYPE': 'GIT', 'PACKSTAT': 'NOPACKAGES', 'DIR': 'packages/SomePackage/Blah'},
-      {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo4', 'REPOURL': 'someurl4.com:/ExtraRepo4', 'REPOTYPE': 'SVN', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo4'}
-      ]
+    extraReposDict_expected = [ g_extraReposDictListFull[1], g_extraReposDictListFull[3] ]
     self.assertEqual(extraReposDict, extraReposDict_expected)
 
 
 #
-# Test filterExtraReposDictList()
+# Test filterOutNotExtraRepos()
 #
 
-class test_filterExtraReposDictList(unittest.TestCase):
+class test_filterOutNotExtraRepos(unittest.TestCase):
 
 
   def test_notExtraRepos_2(self):
@@ -146,7 +140,7 @@ class test_filterExtraReposDictList(unittest.TestCase):
       {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo4',
        'REPOURL': 'someurl4.com:/ExtraRepo4', 'REPOTYPE': 'SVN',
        'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo4'}
-    extraReposDict = filterExtraReposDictList(
+    extraReposDict = filterOutNotExtraRepos(
       [
         {'NAME': 'ExtraRepo1'},
         extraRepoDict2,
@@ -222,6 +216,43 @@ class test_isVerbosityLevel(unittest.TestCase):
     self.assertEqual(isVerbosityLevel(inOptions, "minimal"), True)
     self.assertEqual(isVerbosityLevel(inOptions, "more"), True)
     self.assertEqual(isVerbosityLevel(inOptions, "most"), True)
+
+
+#
+# Test parseRawSshGitoliteRootInfoOutput()
+#
+
+g_rawSshGitoliteRootInfoOutput_1 = \
+r"""hello 8vt, this is git@casl-dev running gitolite3 v3.6-11-g07ce4b9 on git 1.7.1
+
+ R W	ExtraRepo1
+ R  	ExtraRepo2
+ R W	SomeOtherRepo
+"""
+
+
+class test_parseRawSshGitoliteRootInfoOutput(unittest.TestCase):
+
+  def test_reposAreListed(self):
+    gitoliteReposList = parseRawSshGitoliteRootInfoOutput(
+      g_rawSshGitoliteRootInfoOutput_1)
+    gitoliteReposList_expected = ["ExtraRepo1", "ExtraRepo2", "SomeOtherRepo" ]
+    self.assertEqual(gitoliteReposList, gitoliteReposList_expected)
+
+
+#
+# Test filterOutMissingGitoliteRepos()
+#
+
+
+class test_filterOutMissingGitoliteRepos(unittest.TestCase):
+
+  def test_removeSomeRepos(self):
+    extraReposDictList = filterOutMissingGitoliteRepos(
+      g_extraReposDictListFull, [ "ExtraRepo1", "ExtraRepo2", "ExtraRepo4" ])
+    extraReposDictList_expected = [ g_extraReposDictListFull[0],
+      g_extraReposDictListFull[1], g_extraReposDictListFull[3] ]
+    self.assertEqual(extraReposDictList, extraReposDictList_expected)
 
 
 #
