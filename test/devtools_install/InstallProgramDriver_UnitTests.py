@@ -41,17 +41,18 @@
 # Unit testing code for TribitsPackageFilePathUtils.py #
 ######################################################### 
 
-import os
-import sys
-
-devtoolsInstallDir = os.path.join(
-  os.path.dirname(os.path.abspath(__file__)),
-  "../..", "tribits/devtools_install" )
-sys.path = [devtoolsInstallDir] + sys.path
-
-
+from FindDevtoolsInstall import *
 from InstallProgramDriver import *
 import unittest
+
+
+#
+# DummyInstall class
+#
+
+dummyBaseName = "dummy"
+dummyDefaultVersion = "0.1"
+dummySupportedVersions = ["0.1"]
 
 
 class DummyInstall:
@@ -59,29 +60,64 @@ class DummyInstall:
   def __init__(self):
     self.dummy = None
 
-  def getProductName(self):
-    return "Dummy-0.1"
+  #
+  # Called before even knowing the product version
+  #
 
   def getScriptName(self):
-    return "dummy-install.py"
+    return "install-dummy.py"
 
-  def getExtraHelpStr(self):
-    return "\nThis is the extra help string!"
+  def getProductBaseName(self):
+    return dummyBaseName
 
-  def getBaseDirName(self):
-    return "Dummy.base"
+  def getProductDefaultVersion(self):
+    return dummyDefaultVersion
 
-  def injectExtraCmndLineOptions(self, clp):
+  def getProductSupportedVersions(self):
+    return dummySupportedVersions
+
+
+  #
+  # Called after knowing the product version but before parsing the
+  # command-line.
+  #
+
+  def getProductName(self, version):
+    return dummyBaseName+"-"+version
+
+  def getBaseDirName(self, version):
+    return dummyBaseName+"-"+version+"-base"
+
+  def getExtraHelpStr(self, version):
+    return """
+This script builds Dummy"""+self.getProductName(version)+""" from source compiled with the
+configured C compilers in your path.
+
+NOTE: The assumed directory structure of the download source provided by the
+command --download-cmnd=<download-cmnd> is:
+
+   dummy-<version>-base/
+     dummy-<full-version>.tar.gz
+"""
+
+  def injectExtraCmndLineOptions(self, clp, version):
+    setStdDownloadCmndOption(self, clp, version)
     clp.add_option(
-      "--checkout-cmnd", dest="checkoutCmnd", type="string",
-      default="git clone software.sandia.gov:/space/git/TrilinosToolset/Dummy "\
-      +self.getBaseDirName()+"/Dummy",
-      help="Command used to check out "+self.getProductName()+" tarball(s)." )
+      "--extra-configure-options", dest="extraConfigureOptions", type="string", \
+      default="", \
+      help="Extra options to add to the 'configure' command for "+self.getProductName(version)+"." \
+        +"  Note: This does not override the hard-coded configure options." )
 
   def echoExtraCmndLineOptions(self, inOptions):
     cmndLine = ""
-    cmndLine += "  --checkout-cmnd='" + inOptions.checkoutCmnd + "' \\\n"
+    cmndLine += "  --download-cmnd='"+inOptions.downloadCmnd+"' \\\n"
+    cmndLine += "  --extra-configure-options='"+inOptions.extraConfigureOptions+"' \\\n"
     return cmndLine
+
+
+  #
+  # Called after parsing the command-line
+  #
 
   def setup(self, inOptions):
     self.options = inOptions
