@@ -40,7 +40,7 @@
 # This file gets included in the base-level CMakeLists.txt file to define
 # Fortran name mangling.
 
-IF (${PROJECT_NAME}_ENABLE_Fortran)
+IF (${PROJECT_NAME}_ENABLE_CXX AND ${PROJECT_NAME}_ENABLE_Fortran)
   INCLUDE(FortranMangling)
   FORTRAN_MANGLING()
 
