@@ -6847,6 +6847,7 @@ a given TriBITS project are:
 * `${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME`_
 * `${PROJECT_NAME}_TEST_CATEGORIES`_
 * `${PROJECT_NAME}_TPL_SYSTEM_INCLUDE_DIRS`_
+* `${PROJECT_NAME}_TRACE_ADD_TEST`_
 * `${PROJECT_NAME}_USE_GNUINSTALLDIRS`_
 * `MPI_EXEC_MAX_NUMPROCS`_
 
@@ -7150,6 +7151,20 @@ These options are described below.
   but project can override the default using::
 
     SET(${PROJECT_NAME}_TPL_SYSTEM_INCLUDE_DIRS_DEFAULT  TRUE)
+
+.. _${PROJECT_NAME}_TRACE_ADD_TEST:
+.. _${PROJECT_NAME}_TRACE_ADD_TEST_DEFAULT:
+
+**${PROJECT_NAME}_TRACE_ADD_TEST**
+
+  If ``${PROJECT_NAME}_TRACE_ADD_TEST`` is set to ``TRUE``, then a single line
+  will be printed for each call to `TRIBITS_ADD_TEST()`_ and
+  `TRIBITS_ADD_ADVANCED_TEST()`_ for if the test is added or not and if not
+  then why.  The default is set based on the value of
+  ``${PROJECT_NAME}_VERBOSE_CONFIGURE`` but a project can override the default
+  by setting::
+
+    SET(${PROJECT_NAME}_TRACE_ADD_TEST_DEFAULT  TRUE)
 
 .. _${PROJECT_NAME}_USE_GNUINSTALLDIRS:
 
