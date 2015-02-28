@@ -277,7 +277,7 @@ def getScriptEchoCmndLine(
   createGitdistFile="",
   ):
   global g_withCmake
-  return \
+  cmndLineEchoStr = \
     "\n**************************************************************************\n" \
     "Script: clone_extra_repos.py \\\n" \
     "  --extra-repos='"+extraRepos+"' \\\n" \
@@ -286,10 +286,15 @@ def getScriptEchoCmndLine(
     "  --extra-repos-type='Nightly' \\\n" \
     "  --gitolite-root='' \\\n" \
     "  --with-cmake='"+g_withCmake+"' \\\n" \
-    "  --verbosity='"+verbosity+"' \\\n" \
-    "  "+("--do-clone" if doClone else "--skip-clone")+" \\\n" \
-    "  "+("--do-op" if doOp else "--no-op")+" \\\n" \
-    "  --create-gitdist-file='"+createGitdistFile+"' \\\n\n"
+    "  --verbosity='"+verbosity+"' \\\n"
+  if doClone: cmndLineEchoStr += "  --do-clone \\\n"
+  else:       cmndLineEchoStr += "  --skip-clone \\\n"
+  if doOp:    cmndLineEchoStr += "  --do-op \\\n"
+  else:       cmndLineEchoStr += "  --no-op \\\n"
+  cmndLineEchoStr += \
+    "  --create-gitdist-file='"+createGitdistFile+"' \\\n" \
+    "\n"
+  return cmndLineEchoStr
   
 
 class test_clone_extra_repos(unittest.TestCase):
