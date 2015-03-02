@@ -432,8 +432,9 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 
 
 #
-# EnableAllPackages_RequiredOnly
+# Other ReducedMockTrilinos tests
 #
+
 
 CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
   EnableAllPackages_RequiredOnly
@@ -445,6 +446,45 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
     "Final set of enabled SE packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraEpetra Thyra 6"
     "Final set of non-enabled packages:  Triutils EpetraExt 2"
     "Final set of non-enabled SE packages:  Triutils EpetraExt ThyraGoodStuff ThyraCrazyStuff ThyraEpetraExt "
+  )
+
+
+CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllPackages_SS_TestRequiredTpl_DisableAMD
+  ARGS
+    -DSHOW_TEST_REQUIRED_TPL_DEP=ON
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DTPL_ENABLE_AMD=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- Setting EpetraExt_ENABLE_TESTS=OFF because EpetraExt has a required test/example dependence on disabled TPL AMD"
+    "-- Setting EpetraExt_ENABLE_EXAMPLES=OFF because EpetraExt has a required test/example dependence on disabled TPL AMD"
+    "-- Setting Trilinos_ENABLE_ThyraEpetraExt=ON"
+    "Processing enabled package: Triutils [(]Libs, Tests, Examples[)]"
+    "Processing enabled package: EpetraExt [(]Libs[)]"
+    "Finished configuring Trilinos!"
+    "Configuring done"
+  )
+
+
+CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllPackages_SS_TestRequiredPackage_DisableTriutils
+  ARGS
+    -DSHOW_TEST_REQUIRED_PACKAGE_DEP=ON
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DTrilinos_ENABLE_Triutils=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- Setting EpetraExt_ENABLE_TESTS=OFF because EpetraExt has a required test/example dependence on disabled package Triutils"
+    "-- Setting EpetraExt_ENABLE_EXAMPLES=OFF because EpetraExt has a required test/example dependence on disabled package Triutils"
+    "-- Setting Trilinos_ENABLE_ThyraEpetraExt=ON"
+    "Final set of non-enabled packages:  Triutils 1"
+    "Processing enabled package: Epetra [(]Libs, Tests, Examples[)]"
+    "Processing enabled package: EpetraExt [(]Libs[)]"
+    "Finished configuring Trilinos!"
+    "Configuring done"
   )
 
 
@@ -616,7 +656,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     "Setting Thyra_ENABLE_TESTS=ON because ThyraCoreLibs_ENABLE_TESTS=ON"
     "Setting Thyra_ENABLE_EXAMPLES=ON because ThyraCoreLibs_ENABLE_EXAMPLES=ON"
     "Final set of enabled packages:  Teuchos RTOp Thyra 3"
-    "Final set of enabled SE packages:  Teuchos RTOp ThyraCoreLibs Thyra 4"    
+    "Final set of enabled SE packages:  Teuchos RTOp ThyraCoreLibs Thyra 4"
   )
 
 
