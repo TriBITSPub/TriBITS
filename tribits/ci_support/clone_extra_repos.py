@@ -338,8 +338,9 @@ def getGitoliteReposList(inOptions, trace=False, dumpGitoliteOutput=False):
   rawSshGitoliteRootInfoOutput = getCmndOutput(cmnd)
   if dumpGitoliteOutput:
     print rawSshGitoliteRootInfoOutput
-  return parseRawSshGitoliteRootInfoOutput(rawSshGitoliteRootInfoOutput,
-    verbose = (True if (trace and not dumpGitoliteOutput) else False ) )
+  if (trace and not dumpGitoliteOutput): verbose=True
+  else: verbose=False
+  return parseRawSshGitoliteRootInfoOutput(rawSshGitoliteRootInfoOutput, verbose=verbose)
 
 
 def filterOutNotExtraRepos(extraRepoDictList_in, notExtraRepos, verbose=False):
