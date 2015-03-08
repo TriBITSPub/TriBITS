@@ -145,15 +145,16 @@ INCLUDE(PrintVar)
 #
 #   ``OVERALL_WORKING_DIRECTORY <overallWorkingDir>``
 #
-#     If specified, then the working directory ``<overallWorkingDir>`` will be
-#     created and all of the test commands by default will be run from within
-#     this directory.  If the value ``<overallWorkingDir>=TEST_NAME`` is
-#     given, then the working directory will be given the name ``<testName>``.
-#     By default, if the directory ``<overallWorkingDir>`` exists before the
-#     test runs, it will be deleted and created again.  If one wants to
-#     preserve the contents of this directory between test runs then set
+#     If specified, then the working directory ``<overallWorkingDir>``
+#     (relative or absolute path) will be created and all of the test commands
+#     by default will be run from within this directory.  If the value
+#     ``<overallWorkingDir>=TEST_NAME`` is given, then the working directory
+#     will be given the name ``<testName>``.  By default, if the directory
+#     ``<overallWorkingDir>`` exists before the test runs, it will be deleted
+#     and created again.  If one wants to preserve the contents of this
+#     directory between test runs then set
 #     ``SKIP_CLEAN_OVERALL_WORKING_DIRECTORY``.  Using a separate test
-#     directroy is a good option to use if the commands create intermediate
+#     directory is a good option to use if the commands create intermediate
 #     files and one wants to make sure they get deleted before the test cases
 #     are run again.  It is also important to create a separate test directory
 #     if multiple tests are defined in the same ``CMakeLists.txt`` file that
@@ -317,12 +318,12 @@ INCLUDE(PrintVar)
 #
 #   ``WORKING_DIRECTORY <workingDir>``
 #
-#     If specified, then the working directory ``<workingDir>`` will be
-#     created and the test will be run from within this directory.  If the
-#     directory ``<workingDir>`` exists before the test runs, it will be
-#     deleted and created again.  If one wants to preserve the contents of
-#     this directory between test blocks, then one needs to set
-#     ``SKIP_CLEAN_WORKING_DIRECTORY``.  Using a different
+#     If specified, then the working directory ``<workingDir>`` (relative or
+#     absolute) will be created and the test will be run from within this
+#     directory.  If the directory ``<workingDir>`` exists before the test
+#     runs, it will be deleted and created again.  If one wants to preserve
+#     the contents of this directory between test blocks, then one needs to
+#     set ``SKIP_CLEAN_WORKING_DIRECTORY``.  Using a different
 #     ``WORKING_DIRECTORY`` for individual test commands allows creating
 #     independent working directories for each test case.  This would be
 #     useful if a single ``OVERALL_WORKING_DIRECTORY`` was not sufficient for

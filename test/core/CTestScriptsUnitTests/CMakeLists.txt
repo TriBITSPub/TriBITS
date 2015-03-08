@@ -325,14 +325,15 @@ TRIBITS_ADD_ADVANCED_TEST(
 TRIBITS_ADD_ADVANCED_TEST(
   CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory_skip_clean
   OVERALL_WORKING_DIRECTORY
-    CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory
+    "${CMAKE_CURRENT_BINARY_DIR}/CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory"
   SKIP_CLEAN_OVERALL_WORKING_DIRECTORY
   SKIP_CLEAN_OVERALL_WORKING_DIRECTORY
   TEST_0 CMND "${CMAKE_COMMAND}"
     ARGS -E copy
       cmnd_3_args_1_overall_working_directory_working_directory_console.out
       cmnd_3_args_1_overall_working_directory_working_directory_console.gold.out
-    WORKING_DIRECTORY GenericDriver
+    WORKING_DIRECTORY
+      "${CMAKE_CURRENT_BINARY_DIR}/CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory/GenericDriver"
     SKIP_CLEAN_WORKING_DIRECTORY
   TEST_1 CMND ${DIFF_COMMAND_STUFF}  # Contains the ARGS part
     GenericDriver/cmnd_3_args_1_overall_working_directory_working_directory_console.out
