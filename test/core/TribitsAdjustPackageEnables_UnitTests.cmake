@@ -559,7 +559,7 @@ FUNCTION(UNITTEST_EXTRA_REPO_MISSING_OPTIONAL_PACKAGE)
   TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()
 
   UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
-    "WARNING: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!")
+    "WARNING: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
   UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
@@ -587,7 +587,7 @@ FUNCTION(UNITTEST_EXTRA_REPO_MISSING_REQUIRED_PACKAGE)
   TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()
 
   UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
-    "WARNING: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;WARNING: Setting Trilinos_ENABLE_Ex2Package1=OFF because; MissingUpstreamPackage is a required missing package!")
+    "WARNING: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;WARNING: Setting Trilinos_ENABLE_Ex2Package1=OFF because; MissingUpstreamPackage is a required missing package!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
   UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
