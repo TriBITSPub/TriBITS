@@ -1320,8 +1320,8 @@ can be used in the logic in these files.  Some of the variables that should
 already be defined (in addition to all of the basic user TriBITS cache
 variables set in ``TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS()``)
 include ``CMAKE_HOST_SYSTEM_NAME``, ``${PROJECT_NAME}_HOSTNAME``, and
-``PYTHON_EXECUTABLE``.  The types of commands and logic to put in this file
-include:
+``PYTHON_EXECUTABLE`` (see `Python Support`_).  The types of commands and
+logic to put in this file include:
 
 * Setting additional user cache variable options that are used by multiple
   packages in the TriBITS Repository.  For example, Trilinos defines a
@@ -2217,7 +2217,7 @@ through the call to `TRIBITS_PROJECT()`_.
 |       * ``INCLUDE(<optFile>)``
 |   3)  Set variables ``CMAKE_HOST_SYSTEM_NAME`` and ``${PROJECT_NAME}_HOSTNAME``
 |       (both of these can be overridden in the cache by the user)
-|   4)  Find Python (sets ``PYTHON_EXECUTABLE``)
+|   4)  Find Python (sets ``PYTHON_EXECUTABLE``, see `Python Support`_)
 |   5)  ``INCLUDE(`` `<projectDir>/Version.cmake`_ ``)``
 |   6)  Define primary TriBITS options and read in the list of extra repositories
 |       (calls ``TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS()``)
@@ -5570,23 +5570,55 @@ features it wants and therefore these projects will require newer versions of
 CMake than what is required by TriBITS (see discussion of
 ``CMAKE_MINIMUM_REQUIRED()`` in `<projectDir>/CMakeLists.txt`_).  But also
 note that specific TriBITS projects and packages will also require additional
-tools like compilers, Python, Perl, or many other such dependencies.  It is
-just that TriBITS itself does not require any of these in order to perform the
-basic configure, build, test, and install of software.  The goal of TriBITS is
-not to make the portability of software that uses it any worse than it already
-is but instead to make it easier in most cases (that after all is the whole
-goal of CMake).
+tools like compilers, Python (see `Python Support`_), Perl, or many other such
+dependencies.  It is just that TriBITS itself does not require any of these in
+order to perform the basic configure, build, test, and install of software.
+The goal of TriBITS is not to make the portability of software that uses it
+any worse than it already is but instead to make it easier in most cases (that
+after all is the whole goal of CMake).
 
-While the core TriBITS functionality to configure, build, test, and install
+While the TriBITS Core functionality to configure, build, test, and install
 software is written using only raw CMake, the more sophisticated development
 tools needed to implement the full TriBITS development environment require
-Python 2.4 (or higher, but not Python 3.x).  Python is needed for tools like
-`checkin-test.py`_ and `gitdist`_.  In addition, these python tools are used in
-`TRIBITS_CTEST_DRIVER()`_ to drive automated testing and submits to CDash.
-Also not that git is the chosen version control tool for the TriBITS software
-development tools and all the VC-related functionality in TriBITS.  But none
-of this is required for doing the most basic building, testing, or
-installation of a project using TriBITS.
+Python 2.4 (or higher, but not Python 3.x) (see `Python Support`_).  Python is
+needed for tools like `checkin-test.py`_ and `gitdist`_.  In addition, these
+python tools are used in `TRIBITS_CTEST_DRIVER()`_ to drive automated testing
+and submits to CDash.  Also note that ``git`` is the chosen version control
+tool for the TriBITS software development tools and all the VC-related
+functionality in TriBITS.  But none of this is required for doing the most
+basic building, testing, or installation of a project using TriBITS Core.
+
+
+Python Support
+--------------
+
+TriBITS Core does not require anything other than raw CMake.  However, Python
+Utils, TriBITS CI Support, and other extended TriBITS components require
+Python.  These extra TriBITS tools only require Python 2.4+.  By default, when
+a TriBITS project starts to configure using CMake, it will try to find Python
+2.4+ on the system (see `Full Processing of TriBITS Project Files`_).  If
+Python is found, it will set the global cache variable ``PYTHON_EXECUTABLE``.
+If it is not found, then it will print a warning and ``PYTHON_EXECUTABLE``
+will be empty.  With this default behavior, if Python is found, then the
+TriBITS project can use it.  Otherwise, it can do without it.
+
+While the default behavior for finding Python described above is useful for
+many TriBITS project (such as Trilinos), some TriBITS projects need different
+behavior such as:
+
+1. The TriBITS project may not ever use Python so there is no need to look for
+   it at all.  In this case, the TriBITS project would set
+   `${PROJECT_NAME}_USES_PYTHON`_ to ``FALSE``.
+
+2. Some TriBITS projects require Python and should not even configure if it
+   can't be found.  In this case, the TriBITS project would set
+   `${PROJECT_NAME}_REQUIRES_PYTHON`_ to ``TRUE``.
+
+3. Some TriBITS projects may require a version of Python more recent than 2.4.
+   In this case, the TriBITS project would set `PythonInterp_FIND_VERSION`_ to
+   some value higer than ``2.4``.  For example, may newer systems have Python
+   2.6.6 or higher versions installed by default and projects developed on
+   such a system typically requires this version or higher.
 
 
 Project-Specific Build Quick Reference
@@ -6935,12 +6967,16 @@ a given TriBITS project are:
 * `${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION`_
 * `${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES`_
 * `${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS`_
+* `${PROJECT_NAME}_REQUIRES_PYTHON`_
 * `${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME`_
 * `${PROJECT_NAME}_TEST_CATEGORIES`_
 * `${PROJECT_NAME}_TPL_SYSTEM_INCLUDE_DIRS`_
 * `${PROJECT_NAME}_TRACE_ADD_TEST`_
 * `${PROJECT_NAME}_USE_GNUINSTALLDIRS`_
+* `${PROJECT_NAME}_USES_PYTHON`_
 * `MPI_EXEC_MAX_NUMPROCS`_
+* `PythonInterp_FIND_VERSION`_
+
 
 These options are described below.
 
@@ -7180,6 +7216,17 @@ These options are described below.
   
     SET(${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS_DEFAULT OFF)
 
+.. _${PROJECT_NAME}_REQUIRES_PYTHON:
+
+**${PROJECT_NAME}_REQUIRES_PYTHON**
+
+  If the TriBITS project requires Python, set::
+
+    SET(${PROJECT_NAME}_REQUIRES_PYTHON  TRUE)
+
+  in the `<projectDir>/ProjectName.cmake`_ file (See `Python Support`_).  The
+  default is implicitly ``FALSE``.
+
 .. _${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME:
 
 **${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME**
@@ -7274,6 +7321,20 @@ These options are described below.
   in the project's top-level `<projectDir>/CMakeLists.txt`_ file or its
   `<projectDir>/ProjectName.cmake`_ file.  The default is ``FALSE``.
 
+.. _${PROJECT_NAME}_USES_PYTHON:
+
+**${PROJECT_NAME}_USES_PYTHON**
+
+  If the TriBITS project can use Python, but does not require it, set::
+
+    SET(${PROJECT_NAME}_USES_PYTHON  TRUE)
+
+  in the `<projectDir>/ProjectName.cmake`_ file (see `Python Support`_).  The
+  default for a TriBITS project is implicitly ``TRUE``.  To explicitly state
+  that Python is never needed, set::
+
+    SET(${PROJECT_NAME}_USES_PYTHON  FALSE)
+
 .. _MPI_EXEC_MAX_NUMPROCS:
 
 **MPI_EXEC_MAX_NUMPROCS**
@@ -7292,6 +7353,22 @@ These options are described below.
   by a given machine (or class of machines).  For example if a given machine
   has 64 cores, a reasonable number for ``MPI_EXEC_MAX_NUMPROCS_DEFAULT`` is
   64.
+
+.. _PythonInterp_FIND_VERSION:
+
+**PythonInterp_FIND_VERSION**
+
+  Determines the version of Python that is looked for.  TriBITS requires at
+  least version "2.4".  A particular TriBITS project can require a higher
+  version of TriBITS and this is set using, for example:
+
+    SET(PythonInterp_FIND_VERSION_DEFAULT "2.6.6")
+
+  in the `<projectDir>/ProjectName.cmake`_ file (See `Python Support`_).  The
+  default is version "2.4".  The user can force a more recent version of
+  Python by configuring with, for example::
+
+    -D PythonInterp_FIND_VERSION="2.7.3"
 
 
 TriBITS Macros and Functions

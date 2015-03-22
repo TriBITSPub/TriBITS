@@ -293,13 +293,20 @@ TRIBITS_ADD_ADVANCED_TEST(
 # messed up.  It is not clear if this is a problem with EXECUTE_PROCESS() or
 # not.
 
+
+#
+# Test creation and optional preservation of working directories
+#
+
 TRIBITS_ADD_ADVANCED_TEST(
   CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory
-  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_WORKING_DIRECTORY
+    CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory
   TEST_0 EXEC GenericDriver
     ARGS "This is another crazy test!" 0
     OUTPUT_FILE cmnd_3_args_1_overall_working_directory_working_directory_console.out
     WORKING_DIRECTORY GenericDriver
+    SKIP_CLEAN_WORKING_DIRECTORY
   TEST_1 CMND "${CMAKE_COMMAND}"
     ARGS -E copy
       ../GenericDriver/cmnd_3_args_1_overall_working_directory_working_directory_console.out
@@ -309,11 +316,44 @@ TRIBITS_ADD_ADVANCED_TEST(
     GenericDriver/cmnd_3_args_1_overall_working_directory_working_directory_console.out
     Gold/cmnd_3_args_1_overall_working_directory_working_directory_console.gold.out
   OVERALL_NUM_MPI_PROCS 1
+  ADDED_TEST_NAME_OUT
+    CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory_TEST_NAME
+  )
+
+# This test uses the same working directory and relies on it not being deleted
+# so it still contains the output file.
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory_skip_clean
+  OVERALL_WORKING_DIRECTORY
+    "${CMAKE_CURRENT_BINARY_DIR}/CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory"
+  SKIP_CLEAN_OVERALL_WORKING_DIRECTORY
+  SKIP_CLEAN_OVERALL_WORKING_DIRECTORY
+  TEST_0 CMND "${CMAKE_COMMAND}"
+    ARGS -E copy
+      cmnd_3_args_1_overall_working_directory_working_directory_console.out
+      cmnd_3_args_1_overall_working_directory_working_directory_console.gold.out
+    WORKING_DIRECTORY
+      "${CMAKE_CURRENT_BINARY_DIR}/CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory/GenericDriver"
+    SKIP_CLEAN_WORKING_DIRECTORY
+  TEST_1 CMND ${DIFF_COMMAND_STUFF}  # Contains the ARGS part
+    GenericDriver/cmnd_3_args_1_overall_working_directory_working_directory_console.out
+    GenericDriver/cmnd_3_args_1_overall_working_directory_working_directory_console.gold.out
+  OVERALL_NUM_MPI_PROCS 1
+  ADDED_TEST_NAME_OUT
+    CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory_skip_clean_TEST_NAME
+  )
+
+# You have to run the above two tests in sequence it the second test can't
+# pass.
+SET_PROPERTY(  TEST
+  ${CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory_skip_clean_TEST_NAME}
+  PROPERTY DEPENDS
+    ${CTestScripts_cmnd_3_args_1_overall_working_directory_working_directory_TEST_NAME}
   )
 
 # Demonstrate processes never dying
 
-IF (PERL_EXECUTABLE AND TrilinosFramework_ENABLE_RUNS_FOREVER_TEST)
+IF (PERL_EXECUTABLE AND TriBITS_ENABLE_RUNS_FOREVER_TEST)
   
   TRIBITS_ADD_EXECUTABLE(
     RunsForever

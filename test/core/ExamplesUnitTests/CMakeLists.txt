@@ -244,8 +244,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "-- CMAKE_HOST_SYSTEM_NAME="
       "-- TribitsExProj_HOSTNAME="
 
-      "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
-      "Warning: Setting TribitsExProj_ENABLE_MixedLang=OFF because "
+      "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because TribitsExProj_ENABLE_EXPORT_MAKEFILES"
+      "Warning: Setting TribitsExProj_ENABLE_MixedLang=OFF because TribitsExProj_ENABLE_Fortran"
       "Printing package dependencies ..."
       "-- TribitsExProj_PACKAGES: SimpleCxx MixedLang WithSubpackages WrapExternal"
       "-- TribitsExProj_SE_PACKAGES: SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
@@ -726,12 +726,13 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         ${COMMON_ENV_ARGS_PASSTHROUGH}
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_Fortran=ON
-        -DTribitsExProj_ENABLE_WrapExternal=OFF
+        -DPYTHON_EXECUTABLE=
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_TESTS=ON
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
+        "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because PYTHON_EXECUTABLE=''"
         "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
         "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
         "Configuring done"
