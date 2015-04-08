@@ -121,10 +121,7 @@ SET(${EXPORT_FILE_VAR_PREFIX}_MPI_EXEC_NUMPROCS_FLAG "${MPI_EXEC_NUMPROCS_FLAG}"
 ## ---------------------------------------------------------------------------
 
 ## The packages enabled for this project
-SET(
-  ${EXPORT_FILE_VAR_PREFIX}_PACKAGE_LIST
-  "${${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES}"
-  )
+SET(${EXPORT_FILE_VAR_PREFIX}_PACKAGE_LIST ${MY_DEP_SET})
 
 ## The TPLs enabled for this project
 SET(${EXPORT_FILE_VAR_PREFIX}_TPL_LIST "${MY_TPL_SET}")
