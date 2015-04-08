@@ -598,8 +598,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_INCLUDE_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../include'"
       "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
-      "WithSubpackages_LIBRARIES = 'pws_a.simplecxx'"
-      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesA.SimpleCxx'"
+      "WithSubpackages_LIBRARIES = 'pws_a'"
+      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesA'"
   )
 
 
