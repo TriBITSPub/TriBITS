@@ -2250,8 +2250,8 @@ class test_checkin_test(unittest.TestCase):
       "Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
       +"Did not pull any changes from this repo!\n" \
       +"No changes were pulled!\n" \
-      +"Not perfoming any build cases because pull did not bring any commits" \
-        " and --abort-gracefully-if-no-updates!\n" \
+      +"Not performing any build cases because pull did not bring any [*]new[*] commits" \
+        " and --abort-gracefully-if-no-updates was set!\n" \
       +"Skipping sending final email because there were no updates" \
           " and --abort-gracefully-if-no-updates was set!\n" \
       +"ABORTED DUE TO NO UPDATES\n" \
@@ -2288,8 +2288,8 @@ class test_checkin_test(unittest.TestCase):
       "Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
       +"Did not pull any changes from this repo!\n" \
       +"No changes were pulled!\n" \
-      +"Not perfoming any build cases because pull did not bring any commits" \
-        " and --abort-gracefully-if-no-updates!\n" \
+      +"Not performing any build cases because pull did not bring any [*]new[*] commits" \
+        " and --abort-gracefully-if-no-updates was set!\n" \
       +"Skipping sending final email because there were no updates" \
           " and --abort-gracefully-if-no-updates was set!\n" \
       +"ABORTED DUE TO NO UPDATES\n" \
