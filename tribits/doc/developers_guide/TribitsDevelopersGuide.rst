@@ -2098,7 +2098,7 @@ guts of finding at TPL which is perfectly fine.  In this case, the purpose for
 the wrapping ``FindTPL${TPL_NAME}.cmake`` is to standardize the output
 variables ``TPL_${TPL_NAME}_INCLUDE_DIRS`` and ``TPL_${TPL_NAME}_LIBRARIES``.
 For more details on properly using ``FIND_PACKAGE()`` to define a
-``FindTPL${TPL_NAME}.cmake`` file, see `How to Add use FIND_PACKAGE() for a
+``FindTPL${TPL_NAME}.cmake`` file, see `How to use FIND_PACKAGE() for a
 TriBITS TPL`_.
 
 Once the `<repoDir>/TPLsList.cmake`_ files are all processed, then each
@@ -5108,7 +5108,7 @@ This section provides short, succinct lists of the steps to accomplish a few
 common tasks.  Extra details are referenced.
 
 
-How to Add a new TriBITS Package
+How to add a new TriBITS Package
 --------------------------------
 
 To add a new TriBITS package, it is recommended to take the template from one
@@ -5149,11 +5149,11 @@ dependencies on this new package.
 .. ToDo: Expand on the above bullets a lot!
 
 
-How to Add a new TriBITS Package with Subpackages
+How to add a new TriBITS Package with Subpackages
 -------------------------------------------------
 
 Adding a new package with subpackages is similar to adding a new regular
-package described in `How to Add a new TriBITS Package`_.  Again, it is
+package described in `How to add a new TriBITS Package`_.  Again, it is
 recommended that one copies an example package from `TribitsExampleProject`_.
 For example, one could copy files and directories from the example package
 ``WithSubpackages``.
@@ -5178,18 +5178,18 @@ To add a new TriBITS package with packages, do the following:
 4) Configure the TriBITS project enabling the new empty package
    ``<packageName>``.
 
-5) Incrementally add the subpackages as described in `How to Add a new TriBITS
+5) Incrementally add the subpackages as described in `How to add a new TriBITS
    Subpackage`_, filling out the various ``CMakeLists.txt`` files defining
    libraries, executables, tests and examples.
 
 Once the new SE packages are defined, downstream SE packages can define
 dependencies on these.
 
-How to Add a new TriBITS Subpackage
+How to add a new TriBITS Subpackage
 -----------------------------------
 
 Given an existing top-level TriBITS package that is already broken down into
-subpackages (see `How to Add a new TriBITS Package with Subpackages`_), adding
+subpackages (see `How to add a new TriBITS Package with Subpackages`_), adding
 a new subpackage does not require changing any project-level or
 repository-level files.  One only needs to add the declaration for the new
 subpackages in its parent's `<packageDir>/cmake/Dependencies.cmake`_ file then
@@ -5230,7 +5230,7 @@ subpackages, do the following:
    and tests run as new pieces are added.
 
 
-How to Add a new TriBITS TPL
+How to add a new TriBITS TPL
 ----------------------------
 
 In order for an SE package to define a dependency on a new TPL (i.e. one that
@@ -5251,7 +5251,7 @@ To add a new TriBITS TPL, do the following:
    for details).  List the default required header files and/or libraries that
    must be provided by the TPL.  NOTE: This find module can also (optionally)
    use ``FIND_PACKAGE(<tplName> ...)`` for the default find operation.  For
-   details, see `How to Add use FIND_PACKAGE() for a TriBITS TPL`_.
+   details, see `How to use FIND_PACKAGE() for a TriBITS TPL`_.
 
 3) Add a row for the new TPL to the `<repoDir>/TPLsList.cmake`_ file after any
    TPLs that this new TPL may depend on.
@@ -5281,8 +5281,8 @@ To add a new TriBITS TPL, do the following:
 .. package and refer to it here.
 
 
-How to Add use FIND_PACKAGE() for a TriBITS TPL
------------------------------------------------
+How to use FIND_PACKAGE() for a TriBITS TPL
+-------------------------------------------
 
 When defining a ``FindTPL<tplName>.cmake`` file, it is possible (and
 encouraged) to utilize ``FIND_PACKAGE(<tplName> ...)`` to provide the default
@@ -5338,7 +5338,7 @@ specialized ``FindTPL<tplName>.cmake`` file and can't use the
 modules cannot completely adhere to the standard behavior described in
 `Enabling support for an optional Third-Party Library (TPL)`_.
 
-How to Add a new TriBITS Repository
+How to add a new TriBITS Repository
 -----------------------------------
 
 To add a new TriBITS and/ git VC repository to a TriBITS project that already
@@ -5567,7 +5567,7 @@ one would perform the following steps:
    under the repository directory.)
 
 4) Insert the package into the `<repoDir>/PackagesList.cmake`_ file as
-   described in `How to Add a new TriBITS Package`_ except one must also call
+   described in `How to add a new TriBITS Package`_ except one must also call
    ``TRIBITS_ALLOW_MISSING_EXTERNAL_PACKAGES(<insertedPackageName>)`` as
    described above.
 
