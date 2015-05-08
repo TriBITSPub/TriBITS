@@ -126,7 +126,7 @@ functions of a TriBITS Project User.  A casual TriBITS Project Developer
 typically does not need to know a lot about CMake and really only needs to
 know a subset of the `TriBITS Macros and Functions`_ defined in this document
 in addition to the genetic `TriBITS Build Reference
-<../build_ref/TribitsBuildReference.html>`_ document.  A slightly more
+<TribitsBuildReference.html>`_ document.  A slightly more
 sophisticated TriBITS Project Developer will also add new packages, add new
 package dependencies, and define new TPLs.  This current TriBITS Developers
 Guide and Reference document should supply everything such a developer needs
@@ -5694,7 +5694,7 @@ outputs.  This document are generally created in the base project source tree
 and given then name ``<Project>BuildReference.[rst,html,pdf]``.  This document
 consists of two parts.  One part is a generic template document::
 
-  tribits/doc/build_ref/TribitsBuildReferenceBody.rst
+  tribits/doc/TribitsBuildReferenceBody.rst
 
 provided in the TriBITS source tree that uses the place-holder ``<Project>``
 for the for the real project name.  The second part is a project-specific
@@ -7649,39 +7649,42 @@ Below is a snapshot of the output from ``install_devtools.py --help``.
 
 .. Common references to TribitsBuildReference document
 
-.. _<Project>BuildReference: ../build_ref/TribitsBuildReference.html
+.. NOTE: These references
+.. are for when published in the same directory using public_docs.sh
+
+.. _<Project>BuildReference: TribitsBuildReference.html
 
 .. _TribitsBuildReference: `<Project>BuildReference`_
 
-.. _Selecting the list of packages to enable: ../build_ref/TribitsBuildReference.html#selecting-the-list-of-packages-to-enable
+.. _Selecting the list of packages to enable: TribitsBuildReference.html#selecting-the-list-of-packages-to-enable
 
-.. _Enabling extra repositories with add-on packages: ../build_ref/TribitsBuildReference.html#enabling-extra-repositories-with-add-on-packages
+.. _Enabling extra repositories with add-on packages: TribitsBuildReference.html#enabling-extra-repositories-with-add-on-packages
 
-.. _Getting set up to use CMake: ../build_ref/TribitsBuildReference.html#getting-set-up-to-use-cmake
+.. _Getting set up to use CMake: TribitsBuildReference.html#getting-set-up-to-use-cmake
 
-.. _Dashboard Submissions: ../build_ref/TribitsBuildReference.html#dashboard-submissions
+.. _Dashboard Submissions: TribitsBuildReference.html#dashboard-submissions
 
-.. _<Project>_EXTRAREPOS_FILE: ../build_ref/TribitsBuildReference.html#project-extrarepos-file
+.. _<Project>_EXTRAREPOS_FILE: TribitsBuildReference.html#project-extrarepos-file
 
 .. _${PROJECT_NAME}_EXTRAREPOS_FILE: `<Project>_EXTRAREPOS_FILE`_
 
-.. _${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE: ../build_ref/TribitsBuildReference.html#generating-a-project-repo-version-file
+.. _${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE: TribitsBuildReference.html#generating-a-project-repo-version-file
 
-.. _Creating a tarball of the source tree: ../build_ref/TribitsBuildReference.html#creating-a-tarball-of-the-source-tree
+.. _Creating a tarball of the source tree: TribitsBuildReference.html#creating-a-tarball-of-the-source-tree
 
-.. _Enabling support for an optional Third-Party Library (TPL): ../build_ref/TribitsBuildReference.html#enabling-support-for-an-optional-third-party-library-tpl
+.. _Enabling support for an optional Third-Party Library (TPL): TribitsBuildReference.html#enabling-support-for-an-optional-third-party-library-tpl
 
-.. _${PROJECT_NAME}_CONFIGURE_OPTIONS_FILE: ../build_ref/TribitsBuildReference.html#project-configure-options-file
+.. _${PROJECT_NAME}_CONFIGURE_OPTIONS_FILE: TribitsBuildReference.html#project-configure-options-file
 
-.. _${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE: ../build_ref/TribitsBuildReference.html#outputting-package-dependency-information
+.. _${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE: TribitsBuildReference.html#outputting-package-dependency-information
 
-.. _${PROJECT_NAME}_TRACE_FILE_PROCESSING: ../build_ref/TribitsBuildReference.html#project-trace-file-processing
+.. _${PROJECT_NAME}_TRACE_FILE_PROCESSING: TribitsBuildReference.html#project-trace-file-processing
 
-.. _${PROJECT_NAME}_SCALE_TEST_TIMEOUT: ../build_ref/TribitsBuildReference.html#project-scale-test-timeout-testing-timeout
+.. _${PROJECT_NAME}_SCALE_TEST_TIMEOUT: TribitsBuildReference.html#project-scale-test-timeout-testing-timeout
 
-.. _make dashboard: ../build_ref/TribitsBuildReference.html#dashboard-submissions
+.. _make dashboard: TribitsBuildReference.html#dashboard-submissions
 
-.. _Setting the install prefix at configure time: ../build_ref/TribitsBuildReference.html#setting-the-install-prefix-at-configure-time
+.. _Setting the install prefix at configure time: TribitsBuildReference.html#setting-the-install-prefix-at-configure-time
 
 .. Common references to the TribitsOverview document
 
