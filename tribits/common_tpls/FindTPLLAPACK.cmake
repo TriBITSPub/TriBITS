@@ -54,6 +54,31 @@
 # @HEADER
 
 
+#
+# First search for LAPACK components using standard FIND_PACKAGE(LAPACK ...)
+#
+TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(LAPACK LAPACK_ALLOW_PREFIND)
+IF (LAPACK_ALLOW_PREFIND)
+
+  MESSAGE("-- Using FIND_PACKAGE(LAPACK) ...") 
+
+  FIND_PACKAGE(LAPACK)
+
+  IF(LAPACK_FOUND)
+    SET(TPL_LAPACK_INCLUDE_DIRS "" CACHE PATH
+      "LAPACK include dirs")
+    SET(TPL_LAPACK_LIBRARIES ${LAPACK_LIBRARIES} CACHE FILEPATH
+      "LAPACK libraries")
+    SET(TPL_LAPACK_LIBRARY_DIRS "" CACHE PATH
+      "LAPACK library dirs")
+  ENDIF()
+
+ENDIF()
+
+#
+# Second, set up default find operation using TriBITS system in case the
+# default FIND_PACKAGE(LAPACK) command was not used.
+#
 IF (MSVC AND NOT
     (LAPACK_LIBRARY_DIRS  OR
      (NOT "${LAPACK_LIBRARY_NAMES}" STREQUAL "lapack lapack_win32" AND
@@ -72,3 +97,8 @@ ENDIF()
 
 TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( LAPACK
   REQUIRED_LIBS_NAMES "lapack lapack_win32")
+
+# NOTE: If FIND_PACKAGE(LAPACK ...) was called and was successful, then
+# TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES() will just use the already set
+# variables TPL_LAPACK_INCLUDE_DIRS and TPL_LAPACK_LIBRARIES and just print them
+# out (and set some other standard varaibles).
