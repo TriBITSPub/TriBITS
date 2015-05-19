@@ -54,6 +54,31 @@
 # @HEADER
 
 
+#
+# First search for BLAS components using standard FIND_PACKAGE(BLAS ...)
+#
+TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(BLAS BLAS_ALLOW_PREFIND)
+IF (BLAS_ALLOW_PREFIND)
+
+  MESSAGE("-- Using FIND_PACKAGE(BLAS) ...") 
+
+  FIND_PACKAGE(BLAS)
+
+  IF(BLAS_FOUND)
+    SET(TPL_BLAS_INCLUDE_DIRS "" CACHE PATH
+      "BLAS include dirs")
+    SET(TPL_BLAS_LIBRARIES ${BLAS_LIBRARIES} CACHE FILEPATH
+      "BLAS libraries")
+    SET(TPL_BLAS_LIBRARY_DIRS "" CACHE PATH
+      "BLAS library dirs")
+  ENDIF()
+
+ENDIF()
+
+#
+# Second, set up default find operation using TriBITS system in case the
+# default FIND_PACKAGE(BLAS) command was not used.
+#
 IF (MSVC AND NOT
     (BLAS_LIBRARY_DIRS  OR
      (NOT "${BLAS_LIBRARY_NAMES}" STREQUAL "blas blas_win32" AND
@@ -78,3 +103,8 @@ ENDIF()
 
 TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( BLAS
   REQUIRED_LIBS_NAMES "blas blas_win32")
+
+# NOTE: If FIND_PACKAGE(BLAS ...) was called and was successful, then
+# TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES() will just use the already set
+# variables TPL_BLAS_INCLUDE_DIRS and TPL_BLAS_LIBRARIES and just print them
+# out (and set some other standard varaibles).
