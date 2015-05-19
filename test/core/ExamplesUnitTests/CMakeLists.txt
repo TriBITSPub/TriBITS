@@ -396,7 +396,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Installing: .+/install/lib/cmake/WithSubpackagesB/WithSubpackagesBTargets-release.cmake"
       "Installing: .+/install/include/Makefile.export.WithSubpackagesB"
       "Installing: .+/install/lib/libpws_c.a"
-      "Installing: .+/install/include/C.hpp"
+      "Installing: .+/install/include/wsp_c/C.hpp"
       "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCConfig.cmake"
       "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets.cmake"
       "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets-release.cmake"

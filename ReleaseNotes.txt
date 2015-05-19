@@ -2,6 +2,12 @@
 Release Notes for TriBITS
 ----------------------------------------
 
+2015/04/14:
+
+(*) When configuring with ${PROJECT_NAME}_ENABLE_CXX11=ON, if C++11 support
+cannot be verified, then the configure will fail hard right away.  Before,
+TriBITS would disable C++11 support and continue.
+
 2014/11/22:
 
 (*) TriBITS Core: Added ${PROJECT_NAME}_TRACE_ADD_TEST: Now you can a single
