@@ -53,8 +53,14 @@
 # ************************************************************************
 # @HEADER
 
+# Initialize vars
+SET(HDF5_FOUND  FALSE)
+SET(REQUIRED_HEADERS)
+SET(REQUIRED_LIBS_NAMES)
+
 #
-# First search for HDF5 components using standard FIND_PACKAGE(HDF5 ...)
+# First, search for HDF5 components (if allowed, see documentation) using
+# standard FIND_PACKAGE(HDF5 ...)
 #
 TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(HDF5  HDF5_ALLOW_PREFIND)
 IF (HDF5_ALLOW_PREFIND)
@@ -68,7 +74,7 @@ IF (HDF5_ALLOW_PREFIND)
 
   FIND_PACKAGE(HDF5 COMPONENTS ${HDF5_COMPNENTS})
 
-  IF(HDF5_FOUND)
+  IF (HDF5_FOUND)
     SET(TPL_HDF5_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS} CACHE PATH
       "HDF5 include dirs")
     SET(TPL_HDF5_LIBRARIES ${HDF5_LIBRARIES} CACHE FILEPATH
@@ -80,26 +86,32 @@ IF (HDF5_ALLOW_PREFIND)
 ENDIF()
 
 #
-# Second, set up default find operation using TriBITS system in case the
-# default FIND_PACKAGE(HDF5 command was not used).
+# Second, if FIND_PACKAGE(HDF5, ...) did not find components, then try to find
+# or specify them the TriBITS way (to maintain backward compatibility).
 #
+IF (NOT HDF5_FOUND)
 
-SET(REQUIRED_HEADERS hdf5.h)
-SET(REQUIRED_LIBS_NAMES hdf5)
+  SET(REQUIRED_HEADERS hdf5.h)
+  SET(REQUIRED_LIBS_NAMES hdf5)
 
-IF (HDF5_REQUIRE_FORTRAN)
-  SET(REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES} hdf5_fortran)
+  IF (HDF5_REQUIRE_FORTRAN)
+    SET(REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES} hdf5_fortran)
+  ENDIF()
+
+  IF (TPL_ENABLE_MPI)
+    SET(REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES} z)
+  ENDIF()
+
 ENDIF()
 
-IF (TPL_ENABLE_MPI)
-  SET(REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES} z)
-ENDIF()
-
+#
+# Third, always call TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES() as the
+# final hook no matter how one looks for HDF5.
+#
 TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( HDF5
   REQUIRED_HEADERS ${REQUIRED_HEADERS}
   REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES}
   )
-
 # NOTE: If FIND_PACKAGE(HDF5 ...) was called and was successful, then
 # TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES() will just use the already set
 # variables TPL_HDF5_INCLUDE_DIRS and TPL_HDF5_LIBRARIES and just print them
