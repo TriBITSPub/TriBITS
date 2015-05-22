@@ -53,14 +53,29 @@
 # ************************************************************************
 # @HEADER
 
-# Initialize vars
-SET(HDF5_FOUND  FALSE)
-SET(REQUIRED_HEADERS)
-SET(REQUIRED_LIBS_NAMES)
 
 #
-# First, search for HDF5 components (if allowed, see documentation) using
-# standard FIND_PACKAGE(HDF5 ...)
+# First, set up the variables for the (backward-compatible) TriBITS way of
+# finding HDF5.  These are used in case FIND_PACKAGE(HDF5 ...) is not called
+# or does not find HDF5.  Also, these variables need to be non-null in order
+# to trigger the right behavior in the function
+# TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES().
+#
+
+SET(REQUIRED_HEADERS hdf5.h)
+SET(REQUIRED_LIBS_NAMES hdf5)
+
+IF (HDF5_REQUIRE_FORTRAN)
+  SET(REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES} hdf5_fortran)
+ENDIF()
+
+IF (TPL_ENABLE_MPI)
+  SET(REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES} z)
+ENDIF()
+
+#
+# Second, search for HDF5 components (if allowed) using the standard
+# FIND_PACKAGE(HDF5 ...).
 #
 TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(HDF5  HDF5_ALLOW_PREFIND)
 IF (HDF5_ALLOW_PREFIND)
@@ -86,27 +101,7 @@ IF (HDF5_ALLOW_PREFIND)
 ENDIF()
 
 #
-# Second, if FIND_PACKAGE(HDF5, ...) did not find components, then try to find
-# or specify them the TriBITS way (to maintain backward compatibility).
-#
-IF (NOT HDF5_FOUND)
-
-  SET(REQUIRED_HEADERS hdf5.h)
-  SET(REQUIRED_LIBS_NAMES hdf5)
-
-  IF (HDF5_REQUIRE_FORTRAN)
-    SET(REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES} hdf5_fortran)
-  ENDIF()
-
-  IF (TPL_ENABLE_MPI)
-    SET(REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES} z)
-  ENDIF()
-
-ENDIF()
-
-#
-# Third, always call TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES() as the
-# final hook no matter how one looks for HDF5.
+# Third, call TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES()
 #
 TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( HDF5
   REQUIRED_HEADERS ${REQUIRED_HEADERS}
@@ -115,4 +110,4 @@ TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( HDF5
 # NOTE: If FIND_PACKAGE(HDF5 ...) was called and was successful, then
 # TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES() will just use the already set
 # variables TPL_HDF5_INCLUDE_DIRS and TPL_HDF5_LIBRARIES and just print them
-# out (and set some other standard varaibles).
+# out (and set some other standard variables).
