@@ -90,6 +90,7 @@ IF (HDF5_ALLOW_PREFIND)
   FIND_PACKAGE(HDF5 COMPONENTS ${HDF5_COMPNENTS})
 
   IF (HDF5_FOUND)
+    # Tell TriBITS that we found HDF5 and there no need to look any further!
     SET(TPL_HDF5_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS} CACHE PATH
       "HDF5 include dirs")
     SET(TPL_HDF5_LIBRARIES ${HDF5_LIBRARIES} CACHE FILEPATH
@@ -107,7 +108,8 @@ TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( HDF5
   REQUIRED_HEADERS ${REQUIRED_HEADERS}
   REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES}
   )
-# NOTE: If FIND_PACKAGE(HDF5 ...) was called and was successful, then
-# TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES() will just use the already set
-# variables TPL_HDF5_INCLUDE_DIRS and TPL_HDF5_LIBRARIES and just print them
-# out (and set some other standard variables).
+# NOTE: If FIND_PACKAGE(HDF5 ...) was called and successfully found HDF5, then
+# TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES() will use the already-set
+# variables TPL_HDF5_INCLUDE_DIRS and TPL_HDF5_LIBRARIES and then print them
+# out (and set some other standard variables as well).  This is the final
+# "hook" into the TriBITS TPL system.
