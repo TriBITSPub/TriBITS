@@ -1025,6 +1025,25 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+  PreAndExtraReposFile_EnableAllPackages
+  ARGS 
+    -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
+    -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON
+    -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- Adding PRE extra Continuous repository preRepoOnePackage"
+    "-- Adding POST extra Continuous repository preCopyrightTrilinos"
+    "Reading a list of extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
+    "Reading a list of extra TPLs from .*/MockTrilinos/preRepoOnePackage/TPLsList.cmake"
+    "Final set of enabled SE packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko ExtraPack"
+  )
+# NOTE: The above test shows that PRE extra repos are processed correctly and
+# their packages are listed before packages in the native project.
+
+
+CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   preCopyrightTrilinos_EnableStalix
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DTrilinos_ENABLE_Stalix=ON
