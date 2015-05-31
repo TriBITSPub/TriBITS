@@ -54,7 +54,7 @@
 # @HEADER
 
 
-SET(REQUIRED_LIBS_NAMES blas)
+SET(REQUIRED_LIBS_NAMES "blas blas_win32")
 
 #
 # Second, search for BLAS components (if allowed) using the standard
