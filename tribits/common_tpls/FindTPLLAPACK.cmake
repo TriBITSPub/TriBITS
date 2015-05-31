@@ -53,18 +53,28 @@
 # ************************************************************************
 # @HEADER
 
+#
+# First, set up the variables for the (backward-compatible) TriBITS way of
+# finding LAPACK.  These are used in case FIND_PACKAGE(LAPACK ...) is not called
+# or does not find LAPACK.  Also, these variables need to be non-null in order
+# to trigger the right behavior in the function
+# TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES().
+#
+SET(REQUIRED_LIBS_NAMES lapack)
 
 #
-# First search for LAPACK components using standard FIND_PACKAGE(LAPACK ...)
+# Second, search for LAPACK components (if allowed) using the standard
+# FIND_PACKAGE(LAPACK ...).
 #
-TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(LAPACK LAPACK_ALLOW_PREFIND)
+TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(LAPACK  LAPACK_ALLOW_PREFIND)
 IF (LAPACK_ALLOW_PREFIND)
 
-  MESSAGE("-- Using FIND_PACKAGE(LAPACK) ...") 
+  MESSAGE("-- Using FIND_PACKAGE(LAPACK ...) ...")
 
   FIND_PACKAGE(LAPACK)
 
-  IF(LAPACK_FOUND)
+  IF (LAPACK_FOUND)
+    # Tell TriBITS that we found LAPACK and there no need to look any further!
     SET(TPL_LAPACK_INCLUDE_DIRS "" CACHE PATH
       "LAPACK include dirs")
     SET(TPL_LAPACK_LIBRARIES ${LAPACK_LIBRARIES} CACHE FILEPATH
@@ -75,10 +85,6 @@ IF (LAPACK_ALLOW_PREFIND)
 
 ENDIF()
 
-#
-# Second, set up default find operation using TriBITS system in case the
-# default FIND_PACKAGE(LAPACK) command was not used.
-#
 IF (MSVC AND NOT
     (LAPACK_LIBRARY_DIRS  OR
      (NOT "${LAPACK_LIBRARY_NAMES}" STREQUAL "lapack lapack_win32" AND
@@ -95,10 +101,13 @@ IF (MSVC AND NOT
   ENDIF()
 ENDIF()
 
+#
+# Third, call TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES()
+#
 TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( LAPACK
-  REQUIRED_LIBS_NAMES "lapack lapack_win32")
-
-# NOTE: If FIND_PACKAGE(LAPACK ...) was called and was successful, then
-# TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES() will just use the already set
-# variables TPL_LAPACK_INCLUDE_DIRS and TPL_LAPACK_LIBRARIES and just print them
-# out (and set some other standard varaibles).
+  REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES}
+  )
+# NOTE: If FIND_PACKAGE(LAPACK ...) was called and successfully found LAPACK, then
+# TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES() will use the already-set
+# variables TPL_LAPACK_INCLUDE_DIRS and TPL_LAPACK_LIBRARIES and then print them
+# out (and set some other standard variables as well).  This is the final
