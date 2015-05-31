@@ -60,7 +60,7 @@
 # to trigger the right behavior in the function
 # TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES().
 #
-SET(REQUIRED_LIBS_NAMES lapack)
+SET(REQUIRED_LIBS_NAMES "lapack lapack_win32")
 
 #
 # Second, search for LAPACK components (if allowed) using the standard
