@@ -71,9 +71,9 @@ ELSE()
 ENDIF()
 
 
-#
+########################################################################
 # RawHelloWorld
-#
+########################################################################
 
 
 TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
@@ -101,9 +101,9 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
   )
 
 
-#
+########################################################################
 # TribitsHelloWorld
-#
+########################################################################
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
@@ -181,9 +181,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
   )
 
 
-#
+########################################################################
 # TribitsExampleProject
-#
+########################################################################
 
 
 ASSERT_DEFINED(TPL_ENABLE_MPI)
@@ -1593,3 +1593,59 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableW
   )
 # NOTE: The above test is the *only* test that we have that checks that a
 # parent package is re-enabled if any of its subpackages are enabled!
+
+
+########################################################################
+# TribitsExampleProject + TribitsExampleProjectAddons
+########################################################################
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TribitsExampleProjectAddons
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so that we can copy in TribitsExampleProjectAddons."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Copy TribitsExampleProjectAddons to base dir."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProjectAddons
+      TribitsExampleProject/.
+
+  TEST_2
+    MESSAGE "Configure with cmake/ExtraRepositoriesList.cmake file enabling all packages"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_DEBUG=OFF
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_EXTRAREPOS_FILE=cmake/ExtraRepositoriesList.cmake
+      -DTribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- Adding POST extra Continuous repository TribitsExampleProjectAddons"
+      "Reading the list of packages from .*/TribitsExampleProject/TribitsExampleProjectAddons/PackagesList.cmake"
+      "Reading a list of extra TPLs from .*/TribitsExampleProject/TribitsExampleProjectAddons/TPLsList.cmake"
+      "Final set of enabled SE packages:  SimpleCxx .* Addon1"
+      "Processing enabled package: Addon1 [(]Libs, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done"
+
+  TEST_3 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Scanning dependencies of target addon1"
+      "Built target Addon1_test"
+
+  TEST_4 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Test .*: Addon1_test .* Passed"
+      "100% tests passed, 0 tests failed out of"
+
+  )
