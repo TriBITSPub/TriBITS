@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
 
-#include "ExternalPkg.hpp"
+#include "InsertedPkg.hpp"
 
 int main() {
-  std::cout << "ExteranlPkg deps are: " << ExternalPkg::deps() << "\n";
+  std::cout << "InsertedPkg deps are: " << InsertedPkg::deps() << "\n";
   return 0;
 }

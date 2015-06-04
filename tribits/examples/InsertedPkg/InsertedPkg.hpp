@@ -1,12 +1,12 @@
-#ifndef EXTERNALPKG_HPP_
-#define EXTERNALPKG_HPP_
+#ifndef INSERTEDPKG_HPP_
+#define INSERTEDPKG_HPP_
 
 #include <string>
 
-namespace ExternalPkg {
+namespace InsertedPkg {
 
   std::string deps();
 
 }
 
-#endif /* EXTERNALPKG_HPP_ */
+#endif /* INSERTEDPKG_HPP_ */

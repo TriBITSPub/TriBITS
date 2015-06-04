@@ -1496,7 +1496,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ExternalPkg
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -1519,20 +1519,20 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ExternalPkg
       "Generating done"
 
   TEST_2
-    MESSAGE "Configure asserting existence of missing ExternalPkg"
+    MESSAGE "Configure asserting existence of missing InsertedPkg"
     CMND ${CMAKE_COMMAND}
     ARGS
-      -DExternalPkg_ALLOW_MISSING_EXTERNAL_PACKAGE=FALSE
+      -DInsertedPkg_ALLOW_MISSING_EXTERNAL_PACKAGE=FALSE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Error, the package ExternalPkg directory .+/TribitsExampleProject/ExternalPkg does not exist!"
+      "Error, the package InsertedPkg directory .+/TribitsExampleProject/InsertedPkg does not exist!"
       "CMake Error at .+/TribitsProcessPackagesAndDirsLists.cmake:[0-9]+ .MESSAGE.:"
       "Configuring incomplete, errors occurred!"
 
   TEST_3
     MESSAGE "Copy ExteranlPkg to base dir."
     CMND cp
-    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/ExternalPkg
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/InsertedPkg
       TribitsExampleProject/.
 
 
@@ -1545,9 +1545,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ExternalPkg
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
-      "Setting TribitsExProj_ENABLE_ExternalPkg=ON"
-      "Final set of enabled packages:  SimpleCxx ExternalPkg .+"
-      "Final set of enabled SE packages:  SimpleCxx ExternalPkg .+"
+      "Setting TribitsExProj_ENABLE_InsertedPkg=ON"
+      "Final set of enabled packages:  SimpleCxx InsertedPkg .+"
+      "Final set of enabled SE packages:  SimpleCxx InsertedPkg .+"
       "Configuring done"
       "Generating done"
 
@@ -1555,14 +1555,14 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ExternalPkg
     ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Built target externalpkg"
-      "Linking CXX executable ExternalPkg_test.exe"
+      "Linking CXX executable InsertedPkg_test.exe"
 
   TEST_6 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     PASS_REGULAR_EXPRESSION_ALL
-      "ExternalPkg_test${TEST_MPI_1_SUFFIX} [.]+   Passed"
+      "InsertedPkg_test${TEST_MPI_1_SUFFIX} [.]+   Passed"
       "100% tests passed, 0 tests failed out of"
 
-  # ToDo: Add usage of ExternalPkg in downstream package.
+  # ToDo: Add usage of InsertedPkg in downstream package.
 
   )
 
