@@ -63,10 +63,10 @@ class MockOptions:
 #
 
 g_extraReposDictListFull = [
-  {'CATEGORY': 'Continuous', 'NAME': 'ExtraRepo1', 'REPOURL': 'someurl.com:/ExtraRepo1', 'REPOTYPE': 'GIT', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo1'},
-  {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo2', 'REPOURL': 'someurl2.com:/ExtraRepo2', 'REPOTYPE': 'GIT', 'PACKSTAT': 'NOPACKAGES', 'DIR': 'packages/SomePackage/Blah'},
-  {'CATEGORY': 'Continuous', 'NAME': 'ExtraRepo3', 'REPOURL': 'someurl3.com:/ExtraRepo3', 'REPOTYPE': 'HG', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo3'},
-  {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo4', 'REPOURL': 'someurl4.com:/ExtraRepo4', 'REPOTYPE': 'SVN', 'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo4'},
+  {'CATEGORY': 'Continuous', 'NAME': 'ExtraRepo1', 'REPOURL': 'someurl.com:/ExtraRepo1', 'REPOTYPE': 'GIT', 'HASPKGS': 'HASPACKAGES', 'PREPOST': 'POST', 'DIR': 'ExtraRepo1'},
+  {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo2', 'REPOURL': 'someurl2.com:/ExtraRepo2', 'REPOTYPE': 'GIT', 'HASPKGS': 'NOPACKAGES', 'PREPOST': 'POST', 'DIR': 'packages/SomePackage/Blah'},
+  {'CATEGORY': 'Continuous', 'NAME': 'ExtraRepo3', 'REPOURL': 'someurl3.com:/ExtraRepo3', 'REPOTYPE': 'HG', 'HASPKGS': 'HASPACKAGES', 'PREPOST': 'POST', 'DIR': 'ExtraRepo3'},
+  {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo4', 'REPOURL': 'someurl4.com:/ExtraRepo4', 'REPOTYPE': 'SVN', 'HASPKGS': 'HASPACKAGES', 'PREPOST': 'POST', 'DIR': 'ExtraRepo4'},
   ]
 
 class test_getExtraReposDictListFromCmakefile(unittest.TestCase):
@@ -135,11 +135,11 @@ class test_filterOutNotExtraRepos(unittest.TestCase):
     extraRepoDict2 = \
       {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo2',
        'REPOURL': 'someurl2.com:/ExtraRepo2', 'REPOTYPE': 'GIT',
-       'PACKSTAT': 'NOPACKAGES', 'DIR': 'packages/SomePackage/Blah'}
+       'HASPKGS': 'NOPACKAGES', 'PREPOST': 'POST', 'DIR': 'packages/SomePackage/Blah'}
     extraRepoDict4 = \
       {'CATEGORY': 'Nightly', 'NAME': 'ExtraRepo4',
        'REPOURL': 'someurl4.com:/ExtraRepo4', 'REPOTYPE': 'SVN',
-       'PACKSTAT': 'HASPACKAGES', 'DIR': 'ExtraRepo4'}
+       'HASPKGS': 'HASPACKAGES', 'PREPOST': 'POST', 'DIR': 'ExtraRepo4'}
     extraReposDict = filterOutNotExtraRepos(
       [
         {'NAME': 'ExtraRepo1'},

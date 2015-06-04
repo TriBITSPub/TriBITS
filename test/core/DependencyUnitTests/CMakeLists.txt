@@ -150,6 +150,20 @@ CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
   )
 
 
+CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
+  WithPreRepoOnePackagePreCopyrightTrilinos
+  ARGS
+    -DTrilinos_PRE_REPOSITORIES=preRepoOnePackage
+    -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
+    -DLIST_ALWAYS_MISSING_PACKAGE=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Trilinos_NUM_PACKAGES='27'"
+    "Trilinos_NUM_TPLS='20'"
+  COMPARE_XML_FILE
+    TrilinosPackageDependencies.preRepoOnePackage.preCopyrightTrilinos.gold.xml
+  )
+
+
 #####################################################################
 #
 # Unit tests for dependency handling for reduced set of packages

@@ -459,7 +459,8 @@ class test_TribitsGetExtraReposForCheckinTest(unittest.TestCase):
           'DIR' : 'ExtraRepo1',
           'REPOTYPE' : 'GIT',
           'REPOURL' : 'someurl.com:/git/data/SomeExtraRepo1',
-          'PACKSTAT' : 'HASPACKAGES',
+          'HASPKGS' : 'HASPACKAGES',
+          'PREPOST' : 'POST',
           'CATEGORY' : 'Continuous',
           },
         ],
@@ -476,7 +477,8 @@ class test_TribitsGetExtraReposForCheckinTest(unittest.TestCase):
           'DIR' : 'ExtraRepo1',
           'REPOTYPE' : 'GIT',
           'REPOURL' : 'someurl.com:/git/data/SomeExtraRepo1',
-          'PACKSTAT' : 'HASPACKAGES',
+          'HASPKGS' : 'HASPACKAGES',
+          'PREPOST' : 'POST',
           'CATEGORY' : 'Continuous',
           },
         ],
@@ -494,7 +496,8 @@ class test_TribitsGetExtraReposForCheckinTest(unittest.TestCase):
           'DIR' : 'ExtraRepo1',
           'REPOTYPE' : 'GIT',
           'REPOURL' : 'someurl.com:/ExtraRepo1',
-          'PACKSTAT' : 'HASPACKAGES',
+          'HASPKGS' : 'HASPACKAGES',
+          'PREPOST' : 'POST',
           'CATEGORY' : 'Continuous',
           },
         {
@@ -502,7 +505,8 @@ class test_TribitsGetExtraReposForCheckinTest(unittest.TestCase):
           'DIR' : 'packages/SomePackage/Blah',
           'REPOTYPE' : 'GIT',
           'REPOURL' : 'someurl2.com:/ExtraRepo2',
-          'PACKSTAT' : 'NOPACKAGES',
+          'HASPKGS' : 'NOPACKAGES',
+          'PREPOST' : 'POST',
           'CATEGORY' : 'Nightly',
           },
         {
@@ -510,7 +514,8 @@ class test_TribitsGetExtraReposForCheckinTest(unittest.TestCase):
           'DIR' : 'ExtraRepo3',
           'REPOTYPE' : 'HG',
           'REPOURL' : 'someurl3.com:/ExtraRepo3',
-          'PACKSTAT' : 'HASPACKAGES',
+          'HASPKGS' : 'HASPACKAGES',
+          'PREPOST' : 'POST',
           'CATEGORY' : 'Continuous',
           },
         {
@@ -518,7 +523,8 @@ class test_TribitsGetExtraReposForCheckinTest(unittest.TestCase):
           'DIR' : 'ExtraRepo4',
           'REPOTYPE' : 'SVN',
           'REPOURL' : 'someurl4.com:/ExtraRepo4',
-          'PACKSTAT' : 'HASPACKAGES',
+          'HASPKGS' : 'HASPACKAGES',
+          'PREPOST' : 'POST',
           'CATEGORY' : 'Nightly',
           },
         ],
@@ -536,7 +542,8 @@ class test_TribitsGetExtraReposForCheckinTest(unittest.TestCase):
           'DIR' : 'ExtraRepo1',
           'REPOTYPE' : 'GIT',
           'REPOURL' : 'someurl.com:/ExtraRepo1',
-          'PACKSTAT' : 'HASPACKAGES',
+          'HASPKGS' : 'HASPACKAGES',
+          'PREPOST' : 'POST',
           'CATEGORY' : 'Continuous',
           },
         {
@@ -544,7 +551,8 @@ class test_TribitsGetExtraReposForCheckinTest(unittest.TestCase):
           'DIR' : 'ExtraRepo3',
           'REPOTYPE' : 'HG',
           'REPOURL' : 'someurl3.com:/ExtraRepo3',
-          'PACKSTAT' : 'HASPACKAGES',
+          'HASPKGS' : 'HASPACKAGES',
+          'PREPOST' : 'POST',
           'CATEGORY' : 'Continuous',
           },
         ],
@@ -2043,7 +2051,7 @@ class test_checkin_test(unittest.TestCase):
       True,
       \
       "-extra-repos=.preCopyrightTrilinos.\n" \
-      +"Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
+      +"Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \
       +"Enabling only the explicitly specified packages .Stalix. ...\n" \
       +"Trilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos\n" \
@@ -2076,7 +2084,7 @@ class test_checkin_test(unittest.TestCase):
       True,
       \
       "-extra-repos=.preCopyrightTrilinos.\n" \
-      +"Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
+      +"Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \
       +"Modified file: .preCopyrightTrilinos/teko/CMakeLists.txt.\n" \
       +"  => Enabling .Teko.!\n" \
@@ -2109,7 +2117,7 @@ class test_checkin_test(unittest.TestCase):
       True,
       \
       "-extra-repos=.preCopyrightTrilinos.\n" \
-      +"Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
+      +"Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"Enabling .Teko..\n" \
       +"Teko of type ST is being excluded because it is not in the valid list of package types .PT.\n" \
       +"'': Pulled changes from this repo!\n" \
@@ -2247,7 +2255,7 @@ class test_checkin_test(unittest.TestCase):
       \
       True,
       \
-      "Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
+      "Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"Did not pull any changes from this repo!\n" \
       +"No changes were pulled!\n" \
       +"Not performing any build cases because pull did not bring any [*]new[*] commits" \
@@ -2285,7 +2293,7 @@ class test_checkin_test(unittest.TestCase):
       \
       True,
       \
-      "Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
+      "Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"Did not pull any changes from this repo!\n" \
       +"No changes were pulled!\n" \
       +"Not performing any build cases because pull did not bring any [*]new[*] commits" \
@@ -2460,7 +2468,7 @@ class test_checkin_test(unittest.TestCase):
       \
       True,
       \
-      "Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
+      "Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"Did not pull any changes from this repo!\n" \
       +"No changes were pulled!\n" \
       +"Not perfoming any build cases because there are no local changes to push" \
@@ -2513,7 +2521,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "-extra-repos-file=.*ExtraReposListExisting_2.\n" \
       +"-extra-repos-type=.Continuous.\n" \
-      +"Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
+      +"Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \
       ,
       \
@@ -2562,7 +2570,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "-extra-repos-file=.*ExtraReposListExisting_2.\n" \
       +"-extra-repos-type=.Nightly.\n" \
-      +"Pulling in packages from extra repos: preCopyrightTrilinos,extraTrilinosRepo ...\n" \
+      +"Pulling in packages from POST extra repos: preCopyrightTrilinos,extraTrilinosRepo ...\n" \
       +"cmake .* -DTrilinos_EXTRA_REPOSITORIES=.preCopyrightTrilinos.extraTrilinosRepo. .* -P .*/TribitsDumpDepsXmlScript.cmake\n" \
       +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \
       +"3.a.1) Git Repo: .preCopyrightTrilinos.\n" \
@@ -2611,7 +2619,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "-extra-repos-file=.*ExtraReposListExisting_3.\n" \
       +"-extra-repos-type=.Continuous.\n" \
-      +"Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
+      +"Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \
       +"cmake .* -DTrilinos_EXTRA_REPOSITORIES=.preCopyrightTrilinos. .* -P .*/TribitsDumpDepsXmlScript.cmake\n" \
       +"Modified file: .packages/teuchos/extrastuff/ExtraTeuchosStuff.hpp.\n" \
@@ -2685,6 +2693,69 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
+  def test_extra_repo_file_4_continuous_pull_configure(self):
+
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preRepoOnePackage.preCopyrightTrilinos.gold.xml"
+
+    testName = "test_extra_repo_file_4_continuous_pull_configure"
+
+    checkin_test_run_case(
+      \
+      self,
+      \
+      testName,
+      \
+      " --extra-repos-file="+g_testBaseDir+"/ExtraReposListExisting_4.cmake" \
+      " --extra-repos-type=Continuous" \
+      " --default-builds=MPI_DEBUG --pull --configure", \
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +g_cmndinterceptsCurrentBranch \
+      +g_cmndinterceptsStatusPasses \
+      +g_cmndinterceptsStatusPasses \
+      +g_cmndinterceptsStatusPasses \
+      +g_cmndinterceptsStatusPasses \
+      +g_cmndinterceptsPullOnlyPasses \
+      +g_cmndinterceptsPullOnlyPasses \
+      +g_cmndinterceptsPullOnlyPasses \
+      +g_cmndinterceptsPullOnlyPasses \
+      +"IT: eg diff --name-status origin/currentbranch; 0; ''\n" \
+      +"IT: eg diff --name-status origin/currentbranch; 0; 'M\tpreRepoOnePackage.cpp'\n" \
+      +"IT: eg diff --name-status origin/currentbranch; 0; ''\n" \
+      +"IT: eg diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
+      +g_cmndinterceptsConfigPasses \
+      +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      "-extra-repos-file=.*ExtraReposListExisting_4.\n" \
+      +"-extra-repos-type=.Continuous.\n" \
+      +"Pulling in packages from PRE extra repos: preRepoOnePackage [.][.][.]\n" \
+      +"Pulling in packages from POST extra repos: preCopyrightTrilinos [.][.][.]\n" \
+      +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \
+      +"cmake .* -DTrilinos_PRE_REPOSITORIES=.preRepoOnePackage. -DTrilinos_EXTRA_REPOSITORIES=.preCopyrightTrilinos. .* -P .*/TribitsDumpDepsXmlScript.cmake\n" \
+      +".preRepoOnePackage.: Has modified files\n" \
+      +".ExtraTeuchosRepo.: Has modified files\n" \
+      +"Modified file: .preRepoOnePackage/preRepoOnePackage.cpp.\n" \
+      +"=> Enabling .preRepoOnePackage.\n" \
+      +"Modified file: .packages/teuchos/extrastuff/ExtraTeuchosStuff.hpp.\n" \
+      +"=> Enabling .Teuchos.\n" \
+      +"Full package enable list: .preRepoOnePackage,Teuchos.\n" \
+      ,
+      [
+      ("MPI_DEBUG/do-configure",
+       "\-DTrilinos_EXTRA_REPOSITORIES:STRING=preCopyrightTrilinos\n"+ \
+       "\-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous\n"+\
+       "\-DTrilinos_EXTRAREPOS_FILE=.*/ExtraReposListExisting_4.cmake\n" \
+       ), \
+      ],
+      \
+      envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
+      )
+
+
   def test_extra_repo_file_project_nightly_nothing_fail(self):
 
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
@@ -2745,7 +2816,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "-extra-repos-file=.project.\n" \
       +"-extra-repos-type=.Continuous.\n" \
-      +"Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
+      +"Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \
       ,
       \
@@ -2810,7 +2881,7 @@ class test_checkin_test(unittest.TestCase):
       True,
       \
       "WARNING: Ignoring missing extra repo .MissingRepo. as requested since\n" \
-      "Pulling in packages from extra repos: preCopyrightTrilinos ...\n" \
+      "Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       ,
       mustHaveCheckinTestOut=False
       )
