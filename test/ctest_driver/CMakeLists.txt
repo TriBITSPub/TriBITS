@@ -367,7 +367,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "Adding POST extra Continuous repository Dakota"
     "Trilinos_NUM_PACKAGES='24'"
     "Trilinos_NUM_TPLS='19'"
-    "Reading a list of extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
+    "Reading list of POST extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
     "Trilinos_NUM_PACKAGES='26'"
     "Trilinos_NUM_TPLS='20'"
     "Skipping reading packages and TPLs for extra repo Dakota because marked NOPACKAGES"

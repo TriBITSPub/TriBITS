@@ -1205,19 +1205,19 @@ MACRO(TRIBITS_READ_EXTRA_REPOSITORIES_LISTS)
       ENDIF()
 
       MESSAGE("")
-      MESSAGE("Reading a list of extra packages from ${EXTRAREPO_PACKAGES_FILE} ... ")
+      MESSAGE("Reading list of ${READ_PRE_OR_POST_EXRAREPOS} extra packages from ${EXTRAREPO_PACKAGES_FILE} ... ")
       MESSAGE("")
 
       IF (NOT EXISTS "${EXTRAREPO_PACKAGES_FILE}")
         IF (${PROJECT_NAME}_IGNORE_MISSING_EXTRA_REPOSITORIES)
           MESSAGE(
             "\n***"
-            "\n*** WARNING!  Ignoring missing extra repo '${EXTRA_REPO}' packages list file '${EXTRAREPO_PACKAGES_FILE}' on request!"
+            "\n*** WARNING!  Ignoring missing ${READ_PRE_OR_POST_EXRAREPOS} extra repo '${EXTRA_REPO}' packages list file '${EXTRAREPO_PACKAGES_FILE}' on request!"
             "\n***\n")
             # ToDo: TriBITS:73: Shorten above message to just one line
         ELSE()
           MESSAGE( SEND_ERROR
-            "ERROR: Skipping missing extra repo '${EXTRA_REPO}' packages list file '${EXTRAREPO_PACKAGES_FILE}'!")
+            "ERROR: Skipping missing ${READ_PRE_OR_POST_EXRAREPOS} extra repo '${EXTRA_REPO}' packages list file '${EXTRAREPO_PACKAGES_FILE}'!")
           # ToDo: TriBITS:73: Change to FATAL_ERROR to abort early
         ENDIF()
       ELSE()
@@ -1234,19 +1234,19 @@ MACRO(TRIBITS_READ_EXTRA_REPOSITORIES_LISTS)
         "${${EXTRA_REPO}_SOURCE_DIR}/${${PROJECT_NAME}_EXTRA_TPLS_FILE_NAME}")
 
       MESSAGE("")
-      MESSAGE("Reading a list of extra TPLs from ${${EXTRA_REPO}_TPLS_FILE} ... ")
+      MESSAGE("Reading list of ${READ_PRE_OR_POST_EXRAREPOS} extra TPLs from ${${EXTRA_REPO}_TPLS_FILE} ... ")
       MESSAGE("")
 
       IF (NOT EXISTS "${${EXTRA_REPO}_TPLS_FILE}")
         IF (${PROJECT_NAME}_IGNORE_MISSING_EXTRA_REPOSITORIES)
           MESSAGE(
             "\n***"
-            "\n*** WARNING!  Ignoring missing extra repo '${EXTRA_REPO}' TPLs list file '${${EXTRA_REPO}_TPLS_FILE}' on request!"
+            "\n*** WARNING!  Ignoring missing ${READ_PRE_OR_POST_EXRAREPOS} extra repo '${EXTRA_REPO}' TPLs list file '${${EXTRA_REPO}_TPLS_FILE}' on request!"
             "\n***\n")
           # ToDo: TriBITS:73: Shorten above warning to just one line
         ELSE()
           MESSAGE( SEND_ERROR
-            "ERROR: Skipping missing extra repo '${EXTRA_REPO}' TPLs list file '${${EXTRA_REPO}_TPLS_FILE}'!")
+            "ERROR: Skipping missing ${READ_PRE_OR_POST_EXRAREPOS} extra repo '${EXTRA_REPO}' TPLs list file '${${EXTRA_REPO}_TPLS_FILE}'!")
         ENDIF()
       ELSE()
         TRIBITS_TRACE_FILE_PROCESSING(REPOSITORY  INCLUDE  "${${EXTRA_REPO}_TPLS_FILE}")
@@ -1322,7 +1322,7 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
     ENDIF()
 
     MESSAGE("")
-    MESSAGE("Reading the list of packages from ${${NATIVE_REPO_NAME}_PACKAGES_FILE}")
+    MESSAGE("Reading list of native packages from ${${NATIVE_REPO_NAME}_PACKAGES_FILE}")
     MESSAGE("")
 
     IF (NATIVE_REPO STREQUAL ".")
@@ -1342,7 +1342,7 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
       "${${NATIVE_REPO_NAME}_SOURCE_DIR}/${${PROJECT_NAME}_TPLS_FILE_NAME}")
 
     MESSAGE("")
-    MESSAGE("Reading the list of TPLs from ${${NATIVE_REPO_NAME}_TPLS_FILE}")
+    MESSAGE("Reading list of native TPLs from ${${NATIVE_REPO_NAME}_TPLS_FILE}")
     MESSAGE("")
 
     TRIBITS_TRACE_FILE_PROCESSING(REPOSITORY  INCLUDE

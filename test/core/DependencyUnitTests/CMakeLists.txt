@@ -1035,8 +1035,8 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   PASS_REGULAR_EXPRESSION_ALL
     "-- Adding PRE extra Continuous repository preRepoOnePackage"
     "-- Adding POST extra Continuous repository preCopyrightTrilinos"
-    "Reading a list of extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
-    "Reading a list of extra TPLs from .*/MockTrilinos/preRepoOnePackage/TPLsList.cmake"
+    "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
+    "Reading list of PRE extra TPLs from .*/MockTrilinos/preRepoOnePackage/TPLsList.cmake"
     "Final set of enabled SE packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko ExtraPack"
   )
 # NOTE: The above test shows that PRE extra repos are processed correctly and
@@ -1100,8 +1100,8 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   ARGS -DTrilinos_EXTRA_REPOSITORIES=MissingExtraRepo
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "ERROR: Skipping missing extra repo 'MissingExtraRepo' packages list file"
-    "ERROR: Skipping missing extra repo 'MissingExtraRepo' TPLs list file"
+    "ERROR: Skipping missing POST extra repo 'MissingExtraRepo' packages list"
+    "ERROR: Skipping missing POST extra repo 'MissingExtraRepo' TPLs list"
     "Configuring incomplete, errors occurred"
   )
 
@@ -1113,8 +1113,8 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=
     -DTRIBITS_PROCESS_EXTRAREPOS_LISTS_DEBUG=TRUE
   PASS_REGULAR_EXPRESSION_ALL
-    "WARNING!  Ignoring missing extra repo 'MissingExtraRepo' packages list file ..+/examples/MockTrilinos/MissingExtraRepo/PackagesList.cmake. on request!"
-    "WARNING!  Ignoring missing extra repo 'MissingExtraRepo' TPLs list file ..+/examples/MockTrilinos/MissingExtraRepo/TPLsList.cmake. on request!"
+    "WARNING!  Ignoring missing POST extra repo 'MissingExtraRepo' packages list file ..+/examples/MockTrilinos/MissingExtraRepo/PackagesList.cmake. on request!"
+    "WARNING!  Ignoring missing POST extra repo 'MissingExtraRepo' TPLs list file ..+/examples/MockTrilinos/MissingExtraRepo/TPLsList.cmake. on request!"
     "Configuring done"
     "Generating done"
   )
@@ -1126,9 +1126,9 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Reading the list of packages from .*/MockTrilinos/PackagesList.cmake"
-    "Reading the list of packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
-    "Reading the list of packages from .*/MockTrilinos/extraTrilinosRepo/PackagesList.cmake"
+    "Reading list of native packages from .*/MockTrilinos/PackagesList.cmake"
+    "Reading list of native packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
+    "Reading list of native packages from .*/MockTrilinos/extraTrilinosRepo/PackagesList.cmake"
     "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Teko ExtraPack 24"
     "Configuring done"
     "Generating done"
@@ -1168,7 +1168,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DpreCopyrightTrilinos_PACKAGES_LIST_FILE=cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake
   PASS_REGULAR_EXPRESSION_ALL
-    "Reading a list of extra packages from .*/MockTrilinos/cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake"
+    "Reading list of POST extra packages from .*/MockTrilinos/cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake"
     "Trilinos_NUM_PACKAGES='24'"
     "Final set of non-enabled SE packages:  .* Phalanx Panzer Stalix 31"
   )
