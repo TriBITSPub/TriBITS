@@ -768,9 +768,6 @@ MACRO(TRIBITS_GET_AND_PROCESS_EXTRA_REPOSITORIES_LISTS)
       MESSAGE("Filtering and asserting existance (or ignore missing) extra repos ...")
       MESSAGE("")
       TRIBITS_FILTER_OR_ASSERT_EXTRA_REPOS()
-    ELSE()
-      SET(${PROJECT_NAME}_EXTRA_REPOSITORIES
-        ${${PROJECT_NAME}_EXTRA_REPOSITORIES_DEFAULT})
     ENDIF()
 
   ELSE()
