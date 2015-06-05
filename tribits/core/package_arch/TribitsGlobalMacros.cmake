@@ -66,6 +66,7 @@ INCLUDE(PrintVar)
 INCLUDE(RemoveGlobalDuplicates)
 INCLUDE(Split)
 INCLUDE(TimingUtils)
+INCLUDE(SetDefaultAndFromEnv) # Used by some call-back files
 
 # Standard CMake includes
 INCLUDE(CheckIncludeFileCXX)

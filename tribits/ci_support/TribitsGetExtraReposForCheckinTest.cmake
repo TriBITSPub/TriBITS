@@ -85,6 +85,7 @@ SET( CMAKE_MODULE_PATH
 INCLUDE(TribitsCMakePolicies)
 INCLUDE(Split)
 INCLUDE(AppendStringVar)
+INCLUDE(SetDefaultAndFromEnv) # Used in ExtraRepositoriesList.cmake file?
 INCLUDE(TribitsProcessExtraRepositoriesList)
 
 # Need to split this argument
