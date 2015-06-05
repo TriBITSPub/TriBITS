@@ -403,13 +403,13 @@ MACRO(TRIBITS_SETUP_PACKAGES)
   ENDIF()
   SET(${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE)
 
-  # Don't ignore missing repos.  This will allow processing to continue but this outer
-  # CTest script will fail (thereby sending a CDash email from the TDD
-  # system).  However, when we configure actual packages, we do set this to
-  # TRUE so that the package configures will not fail due to missing extra
-  # repositories.
+  # Don't ignore missing repos by default.  This will allow processing to
+  # continue but this outer CTest script will fail (thereby sending a CDash
+  # email from the TDD system).  However, when we configure actual packages,
+  # we do set this to TRUE so that the package configures will not fail due to
+  # missing extra repositories.
   SET_DEFAULT_AND_FROM_ENV(${PROJECT_NAME}_IGNORE_MISSING_EXTRA_REPOSITORIES FALSE)
-
+  SET_DEFAULT_AND_FROM_ENV(${PROJECT_NAME}_PRE_REPOSITORIES "")
   SET_DEFAULT_AND_FROM_ENV(${PROJECT_NAME}_EXTRA_REPOSITORIES "")
 
   TRIBITS_READ_IN_NATIVE_REPOSITORIES()
@@ -1061,6 +1061,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   ENDIF()
   SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE
      "${${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE_DEFAULT}" )
+
+  SET_DEFAULT_AND_FROM_ENV(${PROJECT_NAME}_PRE_REPOSITORIES "")
+  SPLIT("${${PROJECT_NAME}_PRE_REPOSITORIES}"  "," ${PROJECT_NAME}_PRE_REPOSITORIES)
 
   SET_DEFAULT_AND_FROM_ENV(${PROJECT_NAME}_EXTRA_REPOSITORIES "")
   SPLIT("${${PROJECT_NAME}_EXTRA_REPOSITORIES}"  "," ${PROJECT_NAME}_EXTRA_REPOSITORIES)
