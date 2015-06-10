@@ -71,9 +71,9 @@ ELSE()
 ENDIF()
 
 
-#
+########################################################################
 # RawHelloWorld
-#
+########################################################################
 
 
 TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
@@ -101,9 +101,9 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
   )
 
 
-#
+########################################################################
 # TribitsHelloWorld
-#
+########################################################################
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
@@ -181,9 +181,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
   )
 
 
-#
+########################################################################
 # TribitsExampleProject
-#
+########################################################################
 
 
 ASSERT_DEFINED(TPL_ENABLE_MPI)
@@ -1496,7 +1496,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ExternalPkg
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -1519,20 +1519,20 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ExternalPkg
       "Generating done"
 
   TEST_2
-    MESSAGE "Configure asserting existence of missing ExternalPkg"
+    MESSAGE "Configure asserting existence of missing InsertedPkg"
     CMND ${CMAKE_COMMAND}
     ARGS
-      -DExternalPkg_ALLOW_MISSING_EXTERNAL_PACKAGE=FALSE
+      -DInsertedPkg_ALLOW_MISSING_EXTERNAL_PACKAGE=FALSE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Error, the package ExternalPkg directory .+/TribitsExampleProject/ExternalPkg does not exist!"
+      "Error, the package InsertedPkg directory .+/TribitsExampleProject/InsertedPkg does not exist!"
       "CMake Error at .+/TribitsProcessPackagesAndDirsLists.cmake:[0-9]+ .MESSAGE.:"
       "Configuring incomplete, errors occurred!"
 
   TEST_3
     MESSAGE "Copy ExteranlPkg to base dir."
     CMND cp
-    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/ExternalPkg
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/InsertedPkg
       TribitsExampleProject/.
 
 
@@ -1545,9 +1545,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ExternalPkg
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
-      "Setting TribitsExProj_ENABLE_ExternalPkg=ON"
-      "Final set of enabled packages:  SimpleCxx ExternalPkg .+"
-      "Final set of enabled SE packages:  SimpleCxx ExternalPkg .+"
+      "Setting TribitsExProj_ENABLE_InsertedPkg=ON"
+      "Final set of enabled packages:  SimpleCxx InsertedPkg .+"
+      "Final set of enabled SE packages:  SimpleCxx InsertedPkg .+"
       "Configuring done"
       "Generating done"
 
@@ -1555,14 +1555,14 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ExternalPkg
     ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Built target externalpkg"
-      "Linking CXX executable ExternalPkg_test.exe"
+      "Linking CXX executable InsertedPkg_test.exe"
 
   TEST_6 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     PASS_REGULAR_EXPRESSION_ALL
-      "ExternalPkg_test${TEST_MPI_1_SUFFIX} [.]+   Passed"
+      "InsertedPkg_test${TEST_MPI_1_SUFFIX} [.]+   Passed"
       "100% tests passed, 0 tests failed out of"
 
-  # ToDo: Add usage of ExternalPkg in downstream package.
+  # ToDo: Add usage of InsertedPkg in downstream package.
 
   )
 
@@ -1593,3 +1593,292 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableW
   )
 # NOTE: The above test is the *only* test that we have that checks that a
 # parent package is re-enabled if any of its subpackages are enabled!
+
+
+########################################################################
+# TribitsExampleProject + TribitsExampleProjectAddons
+########################################################################
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TribitsExampleProjectAddons
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so that we can copy in TribitsExampleProjectAddons."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Copy TribitsExampleProjectAddons to base dir."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProjectAddons
+      TribitsExampleProject/.
+
+  TEST_2
+    MESSAGE "Configure with cmake/ExtraRepositoriesList.cmake file enabling all packages"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_DEBUG=OFF
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_EXTRAREPOS_FILE=cmake/ExtraRepositoriesList.cmake
+      -DTribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- Adding POST extra Continuous repository TribitsExampleProjectAddons "
+      "Reading list of native packages from .*/TribitsExampleProject/PackagesList.cmake"
+      "Reading list of native TPLs from .*/TribitsExampleProject/TPLsList.cmake"
+      "Reading list of POST extra packages from .*/TribitsExampleProject/TribitsExampleProjectAddons/PackagesList.cmake"
+      "Reading list of POST extra TPLs from .*/TribitsExampleProject/TribitsExampleProjectAddons/TPLsList.cmake"
+      "Final set of enabled SE packages:  SimpleCxx .* Addon1"
+      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled package: Addon1 [(]Libs, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done"
+
+  TEST_3 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Linking CXX executable Addon1_test.exe"
+      "Built target Addon1_test"
+
+  TEST_4 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Test .*: Addon1_test .* Passed"
+      "100% tests passed, 0 tests failed out of"
+
+  TEST_5 CMND make
+    ARGS ${CTEST_BUILD_FLAGS} clean
+
+  TEST_6
+    MESSAGE "Configure again enabling all packages using TribitsExProj_EXTRA_REPOSITORIES only"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProj_EXTRAREPOS_FILE=
+      -DTribitsExProj_EXTRA_REPOSITORIES=TribitsExampleProjectAddons
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Processing list of POST extra repos from TribitsExProj_EXTRA_REPOSITORIES='TribitsExampleProjectAddons'"
+      "Reading list of native packages from .*/TribitsExampleProject/PackagesList.cmake"
+      "Reading list of native TPLs from .*/TribitsExampleProject/TPLsList.cmake"
+      "Reading list of POST extra packages from .*/TribitsExampleProject/TribitsExampleProjectAddons/PackagesList.cmake"
+      "Reading list of POST extra TPLs from .*/TribitsExampleProject/TribitsExampleProjectAddons/TPLsList.cmake"
+      "Final set of enabled SE packages:  SimpleCxx .* Addon1"
+      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled package: Addon1 [(]Libs, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done"
+
+  TEST_7 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Linking CXX executable Addon1_test.exe"
+      "Built target Addon1_test"
+
+  TEST_8 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Test .*: Addon1_test .* Passed"
+      "100% tests passed, 0 tests failed out of"
+
+  )
+
+
+########################################################################
+# TribitsExampleProjectAddons
+########################################################################
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProjectAddons
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProjectAddons"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProjectAddons .
+
+  TEST_1
+    MESSAGE "Copy TribitsExampleProject to base dir"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      TribitsExampleProjectAddons/.
+
+  TEST_2
+    MESSAGE "Configure enabling all packages using cmake/ExtraRepositoriesList.cmake"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProjAddons_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProjAddons_ENABLE_Fortran=OFF
+      -DTribitsExProjAddons_ENABLE_DEBUG=OFF
+      -DTribitsExProjAddons_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProjAddons_ENABLE_TESTS=ON
+      TribitsExampleProjectAddons
+    PASS_REGULAR_EXPRESSION_ALL
+      "Reading the list of extra repositories from cmake/ExtraRepositoriesList.cmake"
+      "-- Adding PRE extra Continuous repository TribitsExampleProject "
+      "Reading list of PRE extra packages from .*/TribitsExampleProjectAddons/TribitsExampleProject/PackagesList.cmake"
+      "Reading list of PRE extra TPLs from .*/TribitsExampleProjectAddons/TribitsExampleProject/TPLsList.cmake"
+      "Reading list of native packages from .*/TribitsExampleProjectAddons/PackagesList.cmake"
+      "Reading list of native TPLs from .*/TribitsExampleProjectAddons/TPLsList.cmake"
+      "Final set of enabled SE packages:  SimpleCxx .* Addon1"
+      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled package: Addon1 [(]Libs, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done"
+
+  TEST_3 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Linking CXX executable Addon1_test.exe"
+      "Built target Addon1_test"
+
+  TEST_4 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Test .*: Addon1_test .* Passed"
+      "100% tests passed, 0 tests failed out of"
+
+  TEST_5 CMND make
+    ARGS ${CTEST_BUILD_FLAGS} clean
+
+  TEST_6
+    MESSAGE "Configure again enabling all packages using TribitsExProjAddons_PRE_REPOSITORIES only"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProjAddons_EXTRAREPOS_FILE=
+      -DTribitsExProjAddons_PRE_REPOSITORIES=TribitsExampleProject
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Processing list of PRE extra repos from TribitsExProjAddons_PRE_REPOSITORIES='TribitsExampleProject'"
+      "Reading list of PRE extra packages from .*/TribitsExampleProjectAddons/TribitsExampleProject/PackagesList.cmake"
+      "Reading list of PRE extra TPLs from .*/TribitsExampleProjectAddons/TribitsExampleProject/TPLsList.cmake"
+      "Reading list of native packages from .*/TribitsExampleProjectAddons/PackagesList.cmake"
+      "Reading list of native TPLs from .*/TribitsExampleProjectAddons/TPLsList.cmake"
+      "Final set of enabled SE packages:  SimpleCxx .* Addon1"
+      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled package: Addon1 [(]Libs, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done"
+
+  TEST_7 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Linking CXX executable Addon1_test.exe"
+      "Built target Addon1_test"
+
+  TEST_8 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Test .*: Addon1_test .* Passed"
+      "100% tests passed, 0 tests failed out of"
+
+  )
+
+
+########################################################################
+# TribitsExampleMetaProject
+########################################################################
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleMetaProject"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleMetaProject .
+
+  TEST_1
+    MESSAGE "Copy TribitsExampleProject to base dir"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      TribitsExampleMetaProject/.
+
+  TEST_2
+    MESSAGE "Copy TribitsExampleProjectAddons to base dir"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProjectAddons
+      TribitsExampleMetaProject/.
+
+  TEST_3
+    MESSAGE "Configure enabling all packages using cmake/ExtraRepositoriesList.cmake"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExMetaProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExMetaProj_ENABLE_Fortran=OFF
+      -DTribitsExMetaProj_ENABLE_DEBUG=OFF
+      -DTribitsExMetaProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExMetaProj_ENABLE_TESTS=ON
+      TribitsExampleMetaProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Reading the list of extra repositories from cmake/ExtraRepositoriesList.cmake"
+      "-- Adding POST extra Continuous repository TribitsExampleProject "
+      "-- Adding POST extra Continuous repository TribitsExampleProject "
+      "Reading list of native packages from .*/TribitsExampleMetaProject/PackagesList.cmake"
+      "Reading list of native TPLs from .*/TribitsExampleMetaProject/TPLsList.cmake"
+      "Reading list of POST extra packages from .*/TribitsExampleMetaProject/TribitsExampleProject/PackagesList.cmake"
+      "Reading list of POST extra TPLs from .*/TribitsExampleMetaProject/TribitsExampleProject/TPLsList.cmake"
+      "Reading list of POST extra packages from .*/TribitsExampleMetaProject/TribitsExampleProjectAddons/PackagesList.cmake"
+      "Reading list of POST extra TPLs from .*/TribitsExampleMetaProject/TribitsExampleProjectAddons/TPLsList.cmake"
+      "Final set of enabled SE packages:  SimpleCxx .* Addon1"
+      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled package: Addon1 [(]Libs, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done"
+
+  TEST_4 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Linking CXX executable Addon1_test.exe"
+      "Built target Addon1_test"
+
+  TEST_5 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Test .*: Addon1_test .* Passed"
+      "100% tests passed, 0 tests failed out of"
+
+  TEST_6 CMND make
+    ARGS ${CTEST_BUILD_FLAGS} clean
+
+  TEST_7
+    MESSAGE "Configure again enabling all packages using TribitsExMetaProj_PRE_REPOSITORIES and TribitsExMetaProj_EXTRA_REPOSITORIES only"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExMetaProj_EXTRAREPOS_FILE=
+      -DTribitsExMetaProj_PRE_REPOSITORIES=TribitsExampleProject
+      -DTribitsExMetaProj_EXTRA_REPOSITORIES=TribitsExampleProjectAddons
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Processing list of PRE extra repos from TribitsExMetaProj_PRE_REPOSITORIES='TribitsExampleProject'"
+      "Reading list of PRE extra packages from .*/TribitsExampleMetaProject/TribitsExampleProject/PackagesList.cmake"
+      "Reading list of PRE extra TPLs from .*/TribitsExampleMetaProject/TribitsExampleProject/TPLsList.cmake"
+      "Reading list of native packages from .*/TribitsExampleMetaProject/PackagesList.cmake"
+      "Reading list of native TPLs from .*/TribitsExampleMetaProject/TPLsList.cmake"
+      "Reading list of POST extra packages from .*/TribitsExampleMetaProject/TribitsExampleProjectAddons/PackagesList.cmake"
+      "Reading list of POST extra TPLs from .*/TribitsExampleMetaProject/TribitsExampleProjectAddons/TPLsList.cmake"
+      "Final set of enabled SE packages:  SimpleCxx .* Addon1"
+      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled package: Addon1 [(]Libs, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done"
+
+  TEST_8 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Linking CXX executable Addon1_test.exe"
+      "Built target Addon1_test"
+
+  TEST_9 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Test .*: Addon1_test .* Passed"
+      "100% tests passed, 0 tests failed out of"
+
+  )

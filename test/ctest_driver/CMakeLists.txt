@@ -116,6 +116,7 @@ FUNCTION(CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
         ${MOCK_PROJECT_NAME}_PACKAGES=  # Set back to default
         CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES= # Set back to default
         CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=OFF # Set back to default
+        ${MOCK_PROJECT_NAME}_PRE_REPOSITORIES= # Set back to default
         ${MOCK_PROJECT_NAME}_EXTRA_REPOSITORIES= # Set back to default
         CTEST_DO_UPDATES=ON # Set back to default
         CTEST_DASHBOARD_ROOT=  # Must be empty
@@ -363,11 +364,11 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "EXECUTE_PROCESS.echo.OUTPUT_VARIABLE.CLONE_OR_PULL_OUTPUT.WORKING_DIRECTORY.*/examples/MockTrilinos/packages/TriKota/Dakota."
     ".... preCopyrightTrilinos updates."
     "... Dakota cloned version."
-    "Adding extra Continuous repository preCopyrightTrilinos"
-    "Adding extra Continuous repository Dakota"
+    "Adding POST extra Continuous repository preCopyrightTrilinos"
+    "Adding POST extra Continuous repository Dakota"
     "Trilinos_NUM_PACKAGES='24'"
     "Trilinos_NUM_TPLS='19'"
-    "Reading a list of extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
+    "Reading list of POST extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
     "Trilinos_NUM_PACKAGES='26'"
     "Trilinos_NUM_TPLS='20'"
     "Skipping reading packages and TPLs for extra repo Dakota because marked NOPACKAGES"
@@ -396,6 +397,26 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "Trilinos_NUM_ENABLED_PACKAGES=25:  Configuring packages!"
     "Processing current package ExtraPack: libs='ON', tests='ON'"
     "Configuring TRIBITS_PACKAGE='ExtraPack'"
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  PreExtraRepos_ExtraReposFile
+  ARGS
+    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
+    Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+    Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- Adding PRE extra Continuous repository preRepoOnePackage"
+    "-- Adding POST extra Continuous repository preCopyrightTrilinos"
+    "-- Adding POST extra Continuous repository Dakota"
+    "preRepoOnePackage: Doing GIT update from URL .url1:/git/preRepoOnePackage. to dir ..*/MockTrilinos/preRepoOnePackage."
+    "-- Trilinos_PRE_REPOSITORIES=.preRepoOnePackage."
+    "-- Trilinos_EXTRA_REPOSITORIES=.preCopyrightTrilinos[;]Dakota."
+    "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
+    "Final set of enabled packages:  preRepoOnePackage TrilinosFramework Teuchos .* Teko"
+    "Processing current package preRepoOnePackage: libs=.ON., tests=.ON."
+    "CONFIGURE_OPTIONS = ..*-DTrilinos_EXTRAREPOS_FILE:STRING=.*/DependencyUnitTests/PreAndExtraRepositoriesList.cmake.*-DTrilinos_ENABLE_preRepoOnePackage:BOOL=ON."
   )
 
 
