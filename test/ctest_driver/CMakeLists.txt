@@ -371,7 +371,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "Reading list of POST extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
     "Trilinos_NUM_PACKAGES='26'"
     "Trilinos_NUM_TPLS='20'"
-    "Skipping reading packages and TPLs for extra repo Dakota because marked NOPACKAGES"
+    "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
     "Explicitly enabled packages on input .*  Stalix 1"
     "Explicitly disabled packages on input .*  Stokhos 1"
     "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
@@ -418,6 +418,58 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "Processing current package preRepoOnePackage: libs=.ON., tests=.ON."
     "CONFIGURE_OPTIONS = ..*-DTrilinos_EXTRAREPOS_FILE:STRING=.*/DependencyUnitTests/PreAndExtraRepositoriesList.cmake.*-DTrilinos_ENABLE_preRepoOnePackage:BOOL=ON."
   )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  PreExtraRepos_ExtraReposFile_ExtraReposList
+  ARGS
+    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
+    Trilinos_PRE_REPOSITORIES=preRepoOnePackage
+    Trilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo,Dakota
+    Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
+    Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- Adding PRE extra Continuous repository preRepoOnePackage"
+    "-- Adding POST extra Continuous repository preCopyrightTrilinos"
+    "-- Adding POST extra Nightly repository extraTrilinosRepo"
+    "-- Adding POST extra Continuous repository Dakota"
+    "-- Trilinos_PRE_REPOSITORIES=.preRepoOnePackage."
+    "-- Trilinos_EXTRA_REPOSITORIES=.preCopyrightTrilinos,extraTrilinosRepo,Dakota."
+    "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
+    "Reading list of native packages from .*/MockTrilinos/PackagesList.cmake"
+    "Reading list of POST extra packages from .*/preCopyrightTrilinos/PackagesList.cmake"
+    "Reading list of POST extra packages from .*/extraTrilinosRepo/PackagesList.cmake"
+    "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
+    "Final set of enabled packages:  preRepoOnePackage TrilinosFramework Teuchos .* Teko"
+    "Processing current package preRepoOnePackage: libs=.ON., tests=.ON."
+    "CONFIGURE_OPTIONS = ..*-DTrilinos_EXTRAREPOS_FILE:STRING=.*/DependencyUnitTests/PreAndExtraRepositoriesList.cmake.*-DTrilinos_ENABLE_preRepoOnePackage:BOOL=ON."
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  PreExtraRepos_ExtraReposFile_ExtraReposListPartial
+  ARGS
+    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
+    Trilinos_PRE_REPOSITORIES=
+    Trilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,Dakota
+    Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
+    Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- Adding PRE extra Continuous repository preRepoOnePackage"
+    "-- Adding POST extra Continuous repository preCopyrightTrilinos"
+    "-- Adding POST extra Continuous repository Dakota"
+    "-- Trilinos_PRE_REPOSITORIES=.preRepoOnePackage."
+    "-- Trilinos_EXTRA_REPOSITORIES=.preCopyrightTrilinos,Dakota."
+    "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
+    "Reading list of native packages from .*/MockTrilinos/PackagesList.cmake"
+    "Reading list of POST extra packages from .*/preCopyrightTrilinos/PackagesList.cmake"
+    "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
+    "Final set of enabled packages:  preRepoOnePackage TrilinosFramework Teuchos .* Teko"
+    "Processing current package preRepoOnePackage: libs=.ON., tests=.ON."
+    "CONFIGURE_OPTIONS = ..*-DTrilinos_EXTRAREPOS_FILE:STRING=.*/DependencyUnitTests/PreAndExtraRepositoriesList.cmake.*-DTrilinos_ENABLE_preRepoOnePackage:BOOL=ON."
+  )
+
+# ToDo: Add subset!
 
 
 #
