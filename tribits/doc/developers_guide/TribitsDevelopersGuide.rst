@@ -5567,17 +5567,21 @@ be missing.  This is demonstrated in `TribitsExampleProject`_ with the package
 .. include:: ../../examples/TribitsExampleProject/PackagesList.cmake
    :literal:
 
-In this example, the subpackage ``InsertedPkg`` has a required dependency on
-``SimpleCxx`` and ``WithSubpackagesB`` has an optional dependency on
+In this example, ``InsertedPkg`` has a required dependency on on ``SimpleCxx``
+and the SE package ``WithSubpackagesB`` has an optional dependency on
 ``InsertedPkg``.  Therefore, the inserted package ``InsertedPkg`` has upstream
-and downstream dependencies.
+and downstream dependencies on packages in the ``TribitsExampleProject`` repo.
 
-What the function ``TRIBITS_ALLOW_MISSING_EXTERNAL_PACKAGES()`` does is to
-tell TriBITS to treat ``InsertedPkg`` the same as any other package if the
-directory ``TribitsExampleProject/InsertedPkg`` exists and to otherwise
-complete ignore the package ``InsertedPkg`` if the source for the package does
-not exist.  In addition, TriBITS will automatically disable of all downstream
-package dependencies for the missing package.
+The function ``TRIBITS_ALLOW_MISSING_EXTERNAL_PACKAGES()`` tells TriBITS to
+treat ``InsertedPkg`` the same as any other package if the directory
+``TribitsExampleProject/InsertedPkg`` exists or to completely ignore the
+package ``InsertedPkg`` otherwise.  In addition, TriBITS will automatically
+disable of all downstream package dependencies for the missing package (and
+print a note about the disables).  NOTE: By default TriBITS will silently
+ignore missing inserted packages and disable optional support for the missing
+package.  To see what packages are missing and being ignored, configure with::
+
+  -D <Project>_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=TRUE
 
 The way one would set up ``TribitsExampleProject`` to enable ``InsertedPkg``,
 if these were in separate VC (e.g. git) repos for example, would be to do::
@@ -5622,6 +5626,9 @@ one would perform the following steps:
 6) When configuring and building to get the package working, add
    ``-D<insertedPackageName>_ALLOW_MISSING_EXTERNAL_PACKAGE=FALSE`` so that
    TriBITS will catch mistakes in specifying the package directory.
+   Otherwise, to see notes about ignoring missing inserted/external packages,
+   set the variable ``-D<Project>_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=TRUE``
+   and TriBITS will print warnings about missing external packages.
 
 
 Additional Topics
