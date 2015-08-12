@@ -38,9 +38,10 @@ IF (HDF5_ALLOW_PREFIND)
   FIND_PACKAGE(HDF5 COMPONENTS ${HDF5_COMPNENTS})
 
   # Make sure that HDF5 is parallel.
-  IF (NOT HDF5_IS_PARALLEL)
-    MESSAGE(FATAL_ERROR "HDF5 not parallel. Did CMake find the correct libraries?
-    Try setting HDF5_INCLUDE_DIRS and/or HDF5_LIBRARY_DIRS.
+  IF (TPL_ENABLE_MPI AND NOT HDF5_IS_PARALLEL)
+    MESSAGE(FATAL_ERROR "Trilinos is configured for MPI, HDF5 is not.
+    Did CMake find the correct libraries?
+    Try setting HDF5_INCLUDE_DIRS and/or HDF5_LIBRARY_DIRS explicitly.
     ")
   ENDIF()
 
