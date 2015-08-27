@@ -111,7 +111,7 @@ FUNCTION(UNITTEST_BASIC_PACKAGE_LIST_READ_ABS_PACAKGE_DIR)
   TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
 
   UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
-    "-- ;PROJECT_SOURCE_DIR_BASE_MATCH='/home/me/DummyProject';FATAL_ERROR;Error: The pacakge 'Package2' was given an absolute directory '/home/me/Package2' which is *not* under the project's soruce directory '/home/me/DummyProject/'!;-- ;DummyProject_NUM_PACKAGES='3'"
+    "-- ;PROJECT_SOURCE_DIR_BASE_MATCH='/home/me/DummyProject';FATAL_ERROR;Error: The pacakge 'Package2' was given an absolute directory '/home/me/Package2' which is *not* under the project's source directory '/home/me/DummyProject/'!;-- ;DummyProject_NUM_PACKAGES='3'"
     )
   UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
     "Package0;Package1;Package2")
