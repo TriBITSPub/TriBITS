@@ -211,7 +211,7 @@ Because tutorials and detailed documentation for the CMake language already
 exists, this document will not even attempt to provide a first reference to
 CMake (which is a large topic in itself).  However, what we try to provide
 below is a short overview of the more quirky or surprising aspects of the
-CMake language that an programmer experienced in another language might get
+CMake language that a programmer experienced in another language might get
 tripped up or surprised by.  Some of the more unique features of the language
 are described in order to help avoid some of these common mistakes and provide
 greater understanding of how TriBITS works.
@@ -224,19 +224,19 @@ Project Dependencies`_) is a fairly simple programming language with fairly
 simple rules (for the most part).  However, compared to other programming
 languages, there are a few peculiar aspects to the CMake language like strange
 variable scoping rules, and how arguments are passed to macros and functions,
-that can make working with it difficult if you don't understand these.  Also,
-CMake has some interesting gotchas.  In order to effectively use TriBITS (or
-just raw CMake) to construct and maintain a project's CMake files, one must
-know the basic rules of CMake and be aware of these gotchas.
+that can make working with it difficult if you don't understand these rules.
+Also, CMake has some interesting gotchas.  In order to effectively use TriBITS
+(or just raw CMake) to construct and maintain a project's CMake files, one
+must know the basic rules of CMake and be aware of these gotchas.
 
 The first thing to understand about the CMake language is that nearly every
 line of CMake code is just a command taking a string (or an array of strings)
 and functions that operate on strings.  An array argument is just a single
 string literal with elements separated by semi-colons ``"<str0>;<str1>;..."``.
-CMake is a bit odd in how it deals with these arrays (which are just
-represented as a string with elements separated with semi-colons ``';'``).
-For example, all of the following are equivalent and pass in a CMake array
-with 3 elements [``A``], [``B``], and [``C``]::
+CMake is a bit odd in how it deals with these arrays, which are just
+represented as a string with elements separated with semi-colons ``';'``.  For
+example, all of the following are equivalent and pass in a CMake array with 3
+elements [``A``], [``B``], and [``C``]::
 
   SOME_FUNC(A B C)
   SOME_FUNC("A" "B" "C")
@@ -270,7 +270,7 @@ In CMake, the above is identical, in every way, to::
 
 The function ``SET()`` simply interprets the first argument to as the name of
 a variable to set in the local scope.  Many other built-in and user-defined
-CMake functions work the same way.  That is some of the string arguments are
+CMake functions work the same way.  That is, some of the string arguments are
 interpreted as the names of variables.  There is no special language feature
 that interprets them as variables (except in an ``IF()`` statement).
 
