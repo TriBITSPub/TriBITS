@@ -4867,17 +4867,17 @@ users (same name as the email list name) and sets up a mapping of Labels
 (which are used for TriBITS package names) to CDash user emails
 addresses. CDash is automatically set up to process this XML file and create
 and update CDash users. It is not, however, set up to remove labels from
-existing users.  Therefore, if you change a TriBITS package's CDash regression
-email address (using one of the methods described above), then you need to
-manually remove the associated labels from the old email address.  CDash will
-not remove them for you.
+existing users.  Therefore, if one changes a TriBITS package's CDash
+regression email address (using one of the methods described above), then one
+needs to manually remove the associated labels from the old email address.
+CDash will not remove them for you.
 
 Therefore, to change the mapping of CDash regression email addresses to
-TriBITS packages, you must perform the actions:
+TriBITS packages, one must perform the actions:
 
 1) Change the TriBITS CMake files as described above that will result in the
    desired email addresses in the ``CDashSubprojectDependencies.xml``
-   file. You can debug this by running the `checkin-test.py`_ script and
+   file. One can debug this by running the `checkin-test.py`_ script and
    seeing what gets written in the generated
    `<Project>PackageDependencies.xml`_ file in the ``CHECKIN`` directory.
 
@@ -4895,8 +4895,9 @@ TriBITS packages, you must perform the actions:
    ``CDashSubprojectDependencies.xml`` file).  Also, any new CDash users for
    new email addresses will be created.
 
-Hopefully that should be enough clues to manage the mapping of CDash
-regression email lists to TriBITS packages.
+Hopefully that should be enough information to manage the mapping of CDash
+regression email lists to TriBITS packages for single and multi-repository
+TriBITS projects.
 
 
 Multi-Repository Support
