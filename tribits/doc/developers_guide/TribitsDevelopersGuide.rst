@@ -4860,20 +4860,39 @@ selected for a given package is:
    given package.
 
 What the above setup does is it results in the TriBITS system (in the
-`TRIBITS_CTEST_DRIVER()`_ function called in ``ctest -S`` script) creating a
-file called ``CDashSubprojectDependencies.xml`` that gets sent to the CDash
+`TRIBITS_CTEST_DRIVER()`_ function called in a ``ctest -S`` script) creating a
+file called ``CDashSubprojectDependencies.xml`` (which contains the list of
+TriBITS packages, which CDash calls "subprojects", and email address for each
+package to send regression emails to) and that file gets sent to the CDash
 server. CDash then takes this file and creates, or updates, a set of CDash
-users (same name as the email list name) and sets up a mapping of Labels
-(which are used for TriBITS package names) to CDash user emails
+users (same name and password as the email list address) and sets up a mapping
+of Labels (which are used for TriBITS package names) to CDash user emails
 addresses. CDash is automatically set up to process this XML file and create
-and update CDash users. It is not, however, set up to remove labels from
-existing users.  Therefore, if one changes a TriBITS package's CDash
-regression email address (using one of the methods described above), then one
-needs to manually remove the associated labels from the old email address.
-CDash will not remove them for you.
+and update CDash users.  There are several consequences of this implementation
+of which project maintainers need to be aware.
 
-Therefore, to change the mapping of CDash regression email addresses to
-TriBITS packages, one must perform the actions:
+First, **one should not list the email address for a CDash user account
+already on CDash**.  This is because labels will be added for the TriBITS
+packages that this email address is associated with and CDash emails will not
+be sent out for any other TriBITS packages, no matter what setting that CDash
+user account has.  Therefore, one should only list email addresses as CDash
+regression email lists that are not already CDash user accounts and wish to be
+maintained separately.  For example, if there is an email list that one wants
+to have CDash emails sent to but is already a CDash user account, then one can
+create another email list (e.g. using Mailman) which can then be registered
+with the TriBITS packages in the ``CDashSubprojectDependencies.xml`` file and
+then that new email list forward email to the target email list.
+
+Second, the CDash implementation currently is not set up to remove labels from
+existing users when an email address is disassociated with a TriBITS package
+in the ``CDashSubprojectDependencies.xml`` file.  Therefore, **if one changes
+a TriBITS package's CDash regression email address then one needs to manually
+remove the associated labels from the old email address**.  CDash will not
+remove them automatically.  Otherwise, email will continue to be sent to that
+email address for that package.
+
+Therefore, **to change the mapping of CDash regression email addresses to
+TriBITS packages, one must perform the following actions**:
 
 1) Change the TriBITS CMake files as described above that will result in the
    desired email addresses in the ``CDashSubprojectDependencies.xml``
