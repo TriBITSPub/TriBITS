@@ -420,6 +420,7 @@ def run_extrarepo_test(testObject, testName, extraReposFile, expectedReposList, 
     " -DEXTRA_REPOS_FILE="+os.path.join(g_testBaseDir,extraReposFile)+ \
     " -DEXTRA_REPOS_PYTHON_OUT_FILE="+extraReposPythonOutFile+ \
     " -DUNITTEST_SKIP_FILTER_OR_ASSERT_EXTRA_REPOS=TRUE"+ \
+    " -DTRIBITS_PROCESS_EXTRAREPOS_LISTS_DEBUG=TRUE"+ \
     " -P "+tribitsBaseDir+"/ci_support/TribitsGetExtraReposForCheckinTest.cmake"
   consoleOutFile = testName+".out"
   rtn = echoRunSysCmnd(cmnd, throwExcept=False, timeCmnd=True, outFile=consoleOutFile,
@@ -2521,12 +2522,19 @@ class test_checkin_test(unittest.TestCase):
       \
       "-extra-repos-file=.*ExtraReposListExisting_2.\n" \
       +"-extra-repos-type=.Continuous.\n" \
-      +"Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
+      +"Generate a Python datastructure containing TriBITS/git repos\n" \
+      +"Selecting the set of .Continuous. extra repos .asserting all selected repos exist. [.][.][.]\n" \
+      +"Adding POST extra Continuous repository preCopyrightTrilinos [.][.][.]\n" \
+      +".NOT. adding POST extra Nightly repository extraTrilinosRepo\n" \
+      +"Pulling in packages from POST extra repos: preCopyrightTrilinos [.][.][.]\n" \
       +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \
       ,
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
       )
+  # NOTE: The above test also greps the checkin-test.out log file to make sure
+  # that the selection process for the repos is show, including what repos are
+  # *NOT* selected.
 
 
   def test_extra_repo_file_2_nightly_pull(self):
