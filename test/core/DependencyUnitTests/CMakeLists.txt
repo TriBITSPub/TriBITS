@@ -1039,7 +1039,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
-  PreAndExtraReposFile_EnableAllPackages
+  PreAndExtraReposFile_Nightly_EnableAllPackages
   ARGS 
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
@@ -1047,14 +1047,60 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE
     -DTrilinos_ENABLE_ALL_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
+    "Selecting the set of .Nightly. extra repos .ignoring missing repos. [.][.][.]"
     "-- Adding PRE extra Continuous repository preRepoOnePackage"
     "-- Adding POST extra Continuous repository preCopyrightTrilinos"
+    "-- Adding POST extra Nightly repository extraTrilinosRepo"
+    "WARNING: Ignoring missing extra repo 'Dakota' as requested since .*/examples/MockTrilinos/packages/TriKota/Dakota does not exist"
     "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
     "Reading list of PRE extra TPLs from .*/MockTrilinos/preRepoOnePackage/TPLsList.cmake"
-    "Final set of enabled SE packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko ExtraPack"
+    "Final set of enabled SE packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko ExtraPack [0-9][0-9]"
   )
 # NOTE: The above test shows that PRE extra repos are processed correctly and
 # their packages are listed before packages in the native project.
+
+
+CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+  PreAndExtraReposFile_Continuous_EnableAllPackages
+  ARGS 
+    -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
+    -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON
+    -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Selecting the set of .Continuous. extra repos .ignoring missing repos. [.][.][.]"
+    "-- Adding PRE extra Continuous repository preRepoOnePackage"
+    "-- Adding POST extra Continuous repository preCopyrightTrilinos"
+    "-- .NOT. adding POST extra Nightly repository extraTrilinosRepo"
+    "WARNING: Ignoring missing extra repo 'Dakota' as requested since .*/examples/MockTrilinos/packages/TriKota/Dakota does not exist"
+    "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
+    "Reading list of PRE extra TPLs from .*/MockTrilinos/preRepoOnePackage/TPLsList.cmake"
+    "Final set of enabled SE packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko [0-9][0-9]"
+  )
+# NOTE: The above test shows that Nightly repos are not processed but are
+# printed out as not being processed!
+
+
+CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+  PreAndExtraReposFile_Continuous_AssertMissing_EnableAllPackages
+  ARGS 
+    -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
+    -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON
+    -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=FALSE
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Selecting the set of .Continuous. extra repos .asserting all selected repos exist. [.][.][.]"
+    "-- Adding PRE extra Continuous repository preRepoOnePackage"
+    "-- Adding POST extra Continuous repository preCopyrightTrilinos"
+    "-- .NOT. adding POST extra Nightly repository extraTrilinosRepo"
+    "CMake Error at .*/TribitsProcessExtraRepositoriesList.cmake"
+    "ERROR. Skipping missing extra repo .Dakota. since"
+    "Configuring incomplete, errors occurred"
+  )
+# NOTE: The above test shows that a missing repo is flagged and aborts
+# configuration and that it prints the right header message!
 
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
