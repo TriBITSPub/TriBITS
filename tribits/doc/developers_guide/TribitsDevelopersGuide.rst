@@ -790,17 +790,26 @@ is `TribitsExampleProject`_/``CTestConfig.cmake``:
 .. include:: ../../examples/TribitsExampleProject/CTestConfig.cmake
    :literal:
 
-All of the variables set in this file are directly understood by raw ``ctest``
-and will not be explained here further (see documentation for the standard
-CMake module ``CTest``).  The usage of the function
+Most of the variables set in this file are directly understood by raw
+``ctest`` and those variables not be explained here further (see documentation
+for the standard CMake module ``CTest``).  The usage of the function
 `SET_DEFAULT_AND_FROM_ENV()`_ allows the variables to be overridden both as
 CMake cache variables and in the environment.  The latter is needed when
 running using ``ctest`` as the driver (since older versions of ``ctest`` did
-not support ``-D<var-name>:<type>=<value>`` command-line arguments like
-``cmake`` does).  Given that all of these variables are nicely namespaced,
+not support ``-D<var-name>:<type>=<value>`` command-line arguments like for
+``cmake``).  Given that all of these variables are nicely namespaced,
 overriding them in the shell environment is not as dangerous as might
 otherwise be the case but this is what had to be done to get around
 limitations for older versions of CMake/CTest.
+
+NOTE: One can also set::
+
+  SET_DEFAULT_AND_FROM_ENV(TRIBITS_2ND_CTEST_DROP_SITE ...)
+  SET_DEFAULT_AND_FROM_ENV(TRIBITS_2ND_CTEST_DROP_LOCATION ...)
+
+in this file in order to submit to a second CDash site/location.  For details,
+see `Dashboard Submissions`_.  This is useful when considering a CDash upgrade
+and/or implementing new CDash features or tweaks.
 
 .. _<projectDir>/Version.cmake:
 
