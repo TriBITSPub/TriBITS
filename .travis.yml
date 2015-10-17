@@ -5,8 +5,8 @@ dist: trusty
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install cmake-data cmake
-  - sudo apt-get install gfortran
+  - sudo apt-get -y install cmake
+  - sudo apt-get -y install gfortran
 
 install:
   - mkdir build
