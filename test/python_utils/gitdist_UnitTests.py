@@ -424,6 +424,66 @@ def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
     )
 
 
+def writeGitMockProgram_base_3_2_1_repo1_0_0_0_repo2_4_0_2():
+
+  open(".mockprogram_inout.txt", "w").write(
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
+    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+    " M file2\n" \
+    "?? file3\n" \
+    "MOCK_PROGRAM_INPUT: status\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
+    "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
+    )
+
+  open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
+    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: \n" \
+    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: \n" \
+    )
+
+  open("ExtraRepo2/.mockprogram_inout.txt", "w").write(
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
+    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
+    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
+    "1 some other author\n" \
+    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: ??  file1\n" \
+    "?? file3\n" \
+    "MOCK_PROGRAM_INPUT: status\n" \
+    "MOCK_PROGRAM_RETURN: 0\n" \
+    "MOCK_PROGRAM_OUTPUT: On branch local_branch2\n" \
+    "Your branch is ahead of 'origin_repo2/remote_branch2' by 4 commits.\n" \
+    )
+
+
 class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase):
 
 
@@ -1018,13 +1078,13 @@ class test_gitdist(unittest.TestCase):
       os.chdir(testBaseDir)
 
 
-  def test_dist_repo_status_mod_only(self):
+  def test_dist_repo_status_mod_only_first(self):
     os.chdir(testBaseDir)
     try:
 
       # Create a mock git meta-project
 
-      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only")
+      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_first")
 
       os.mkdir("ExtraRepo1")
       os.mkdir("ExtraRepo2")
@@ -1051,13 +1111,13 @@ class test_gitdist(unittest.TestCase):
       os.chdir(testBaseDir)
 
 
-  def test_dist_repo_status_mod_only_legend(self):
+  def test_dist_repo_status_mod_only_first_legend(self):
     os.chdir(testBaseDir)
     try:
 
       # Create a mock git meta-project
 
-      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_legend")
+      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_first_legend")
 
       os.mkdir("ExtraRepo1")
       os.mkdir("ExtraRepo2")
@@ -1086,6 +1146,39 @@ class test_gitdist(unittest.TestCase):
         "* C: Number local commits w.r.t. tracking branch (empty if zero or no TB)\n" \
         "* M: Number of tracked modified (uncommitted) files (empty if zero)\n" \
         "* ?: Number of untracked, non-ignored files (empty if zero)\n\n"
+      self.assertEqual(cmndOut, cmndOut_expected)
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_dist_repo_status_mod_only_first_last(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_first_last")
+
+      os.mkdir("ExtraRepo1")
+      os.mkdir("ExtraRepo2")
+
+      writeGitMockProgram_base_3_2_1_repo1_0_0_0_repo2_4_0_2()
+
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
+          +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only dist-repo-status",
+        workingDir=testDir)
+      #print cmndOut
+      cmndOut_expected = \
+        "----------------------------------------------------------------------------------------\n" \
+        "| ID | Repo Dir              | Branch        | Tracking Branch             | C | M | ? |\n" \
+        "|----|-----------------------|---------------|-----------------------------|---|---|---|\n" \
+        "|  0 | MockProjectDir (Base) | local_branch0 | origin_repo0/remote_branch0 | 3 | 2 | 1 |\n" \
+        "|  2 | ExtraRepo2            | local_branch2 | origin_repo2/remote_branch2 | 4 |   | 2 |\n" \
+        "----------------------------------------------------------------------------------------\n" \
+        "\n" \
+        "(tip: to see a legend, pass in --dist-legend.)\n"
       self.assertEqual(cmndOut, cmndOut_expected)
 
     finally:
