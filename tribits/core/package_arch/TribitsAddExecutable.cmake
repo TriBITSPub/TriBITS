@@ -279,8 +279,15 @@ INCLUDE(ParseVariableArguments)
 #   TRIBITS_ADD_EXECUTABLE( someExe ...
 #     ADDED_EXE_TARGET_NAME_OUT  someExe_TARGET_NAME )
 #
-#   SET_TARGET_PROPERTIES( ${someExe_TARGET_NAME}
-#     PROPERTIES  LINKER_LANGUAGE  CXX )
+#   IF (someExe_TARGET_NAME)
+#     SET_TARGET_PROPERTIES( ${someExe_TARGET_NAME}
+#       PROPERTIES  LINKER_LANGUAGE  CXX )
+#   ENDIF()
+#
+# The ``IF(someExe_TARGET_NAME)`` is needed in case the executable does not
+# get added for some reason (see `Formal Arguments
+# (TRIBITS_ADD_EXECUTABLE())`_ for logic that can result in the executable
+# target not getting added).
 #
 # .. _Install Target (TRIBITS_ADD_EXECUTABLE()):
 #
