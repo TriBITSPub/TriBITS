@@ -1530,7 +1530,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
       "Configuring incomplete, errors occurred!"
 
   TEST_3
-    MESSAGE "Copy ExteranlPkg to base dir."
+    MESSAGE "Copy TargetDefinesPkg to base dir."
     CMND cp
     ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/InsertedPkg
       TribitsExampleProject/.
@@ -1563,6 +1563,65 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
       "100% tests passed, 0 tests failed out of"
 
   # ToDo: Add usage of InsertedPkg in downstream package.
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so that we can copy in ExteranlPkg."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Configure to get the compiler options"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_DEBUG=OFF
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+
+  TEST_2
+    MESSAGE "Copy TargetDefinesPkg to base dir."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TargetDefinesPkg
+      TribitsExampleProject/.
+
+  TEST_3
+    MESSAGE "Configure just TargetDefinesPkg"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DTribitsExProj_EXTRA_REPOSITORIES=TargetDefinesPkg
+      -DTribitsExProj_ENABLE_TargetDefinesPkg=ON 
+      -DTribitsExProj_ENABLE_TESTS=ON
+     .
+    PASS_REGULAR_EXPRESSION_ALL
+      "WARNING: Passing extra defines through 'DEFINES'"
+      "Final set of enabled packages:  TargetDefinesPkg 1"
+      "Final set of enabled SE packages:  TargetDefinesPkg 1"
+      "Configuring done"
+      "Generating done"
+
+  TEST_4 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target targetdefinespkg"
+      "Linking CXX executable TargetDefinesPkg_testcasedefault1"
+      "Linking CXX executable TargetDefinesPkg_testcase_deprecated_default2"
+
+  TEST_5 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "TargetDefinesPkg_testcasedefault1.* Passed"
+      "TargetDefinesPkg_testcase_deprecated_default2.* Passed"
+      "100% tests passed, 0 tests failed out of 8"
 
   )
 
