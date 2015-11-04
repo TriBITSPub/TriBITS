@@ -420,6 +420,9 @@ def cloneExtraRepo(inOptions, extraRepoDict):
   repoDir = extraRepoDict["DIR"]
   repoUrl = extraRepoDict["REPOURL"]
   repoVcType = extraRepoDict["REPOTYPE"]
+  commandMap = { "GIT":"git clone"
+                ,"HG" :"hg clone"
+                ,"SVN":"svn co"}
   verbLevelIsMinimum = isVerbosityLevel(inOptions, "minimal")
   if verbLevelIsMinimum:
     print "\nCloning repo "+repoName+" ..."
@@ -427,10 +430,10 @@ def cloneExtraRepo(inOptions, extraRepoDict):
     if verbLevelIsMinimum:
       print "\n  ==> Repo dir = '"+repoDir+"' already exists.  Skipping clone!"
     return
-  if repoVcType != "GIT":
+  if not repoVcType in commandMap:
     print "\n  ==> ERROR: Repo type '"+repoVcType+"' not supported!"
     sys.exit(1)
-  cmnd = "git clone "+repoUrl+" "+repoDir
+  cmnd = commandMap[repoVcType]+" "+repoUrl+" "+repoDir
   if inOptions.doOp:
     echoRunSysCmnd(cmnd, timeCmnd=True, verbose=verbLevelIsMinimum)
   elif verbLevelIsMinimum:
