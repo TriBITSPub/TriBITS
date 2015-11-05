@@ -1559,6 +1559,17 @@ which is:
 packages with names ``WithSubpackagesA``, ``WithSubpackagesB``, and
 ``WithSubpackagesC``.
 
+if a TriBITS Package or Subpackage has no dependencies, it still has to call
+``TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()`` but it is called with no arguments
+such as with:
+
+  `TribitsHelloWorld`_/``hello_world/cmake/Dependencies.cmake:``
+
+which contains:
+
+.. include:: ../../examples/TribitsHelloWorld/hello_world/cmake/Dependencies.cmake
+   :literal:
+
 .. _<packageDir>/cmake/<packageName>_config.h.in:
 
 **<packageDir>/cmake/<packageName>_config.h.in**: [Optional] The package's
