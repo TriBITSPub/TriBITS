@@ -2656,7 +2656,7 @@ shown by the file ``TribitsHelloWorld/hello_world/CMakeLists.txt`` which is:
 The build and test of this simple project is tested in the `The TriBITS Test
 Package`_ file::
 
-  tribits/doc/examples/UnitTests/CMakeLists.txt
+  TriBITS/test/core/ExamplesUnitTests/CMakeLists.txt
 
 Note that this little example is a fully functional `TriBITS Repository`_ and
 can be embedded in to a larger TriBITS meta-project and be seamlessly built
@@ -2889,14 +2889,14 @@ document come from ``MockTrilinos``.
 
 Most of the dependency tests involving ``MockTrilinos`` are specified in::
 
-  tribits/package_arch/UnitTests/DependencyUnitTests/CMakeLists.txt
+  TriBITS/test/core/DependencyUnitTests/CMakeLists.txt
 
 A great deal about the current behavior of TriBITS `Package Dependencies and
 Enable/Disable Logic`_ can be learned from inspecting these tests.  There are
 also some faster-running unit tests involving ``MockTrilinos`` defined in the
 file::
 
-  tribits/package_arch/UnitTests/TribitsAdjustPackageEnables_UnitTests.cmake
+  TriBITS/test/core/TribitsAdjustPackageEnables_UnitTests.cmake
 
 
 ReducedMockTrilinos
@@ -5962,7 +5962,7 @@ are specified in the file
 The `TribitsExampleProject`_ is set up for creating source distributions and
 this is demonstrated in one of the tests defined in::
 
-  tribits/doc/examples/UnitTests/CMakeLists.txt
+  TriBITS/test/core/ExamplesUnitTests/CMakeLists.txt
 
 There are a few points of caution to note about creating source distributions.
 
