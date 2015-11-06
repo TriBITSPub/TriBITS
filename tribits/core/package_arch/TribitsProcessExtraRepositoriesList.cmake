@@ -208,7 +208,7 @@ FUNCTION(TRIBITS_PARSE_EXTRAREPO_PACKSTAT  PACKSTAT_IN
 
   #PRINT_VAR(PACKSTAT_IN)
   SPLIT("${PACKSTAT_IN}"  ","  PACKSTAT_IN_ARRAY)
- 
+
   # Set the defaults
   SET(HASPKGS  "HASPACKAGES")
   SET(PREPOST  "POST")
@@ -229,7 +229,7 @@ FUNCTION(TRIBITS_PARSE_EXTRAREPO_PACKSTAT  PACKSTAT_IN
       MESSAGE_WRAPPER(FATAL_ERROR  "Error, the value of 'PACKSTAT' element"
         " '${PACKSTAT_ELE}' is not valid!  Valid choices are '' (empty),"
         " 'HASPACKAGES', 'NOPACKAGES', 'PRE', and 'POST'.  The defaults if all"
-        " fields are empty are 'HASPACKAGES' and 'POST'") 
+        " fields are empty are 'HASPACKAGES' and 'POST'")
     ENDIF()
   ENDFOREACH()
   # NOTE: In the above FOREACH(PACKSTAT_ELE ${PACKSTAT_IN_ARRAY}) loop, empty
@@ -353,7 +353,7 @@ MACRO(TRIBITS_PROCESS_EXTRAREPOS_LISTS)
       # Okay
     ELSEIF (EXTRAREPO_VCTYPE  STREQUAL  HG)
       # not quite okay
-      MESSAGE(WARNING "Warning: the repo ${EXTRAREPO_NAME} is a Mercurial repo: these are tolerated, but not fully supported.")
+      MESSAGE("NOTICE: the repo ${EXTRAREPO_NAME} is a Mercurial repo: these are tolerated, but not fully supported.")
     ELSEIF (EXTRAREPO_VCTYPE  STREQUAL  "")
       # We are okay with no VC type
     ELSE()
@@ -404,7 +404,7 @@ MACRO(TRIBITS_PROCESS_EXTRAREPOS_LISTS)
         " specified in the PACKSTAT field '${EXTRAREPO_PACKSTAT}' came directly after"
         " a 'POST' extra repo!  All 'PRE' extra repos must be listed before all"
         " 'POST' extra repos!"
-        ) 
+        )
     ENDIF()
 
     # B.2) Unconditionally add the extrarepo to the list
@@ -613,7 +613,7 @@ FUNCTION(TRIBITS_FILTER_OR_ASSERT_EXTRA_REPOS)
       IF (TRIBITS_PROCESS_EXTRAREPOS_LISTS_DEBUG)
         PRINT_VAR(${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE)
       ENDIF()
-  
+
       IF (${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE STREQUAL "Continuous" AND
           EXTRAREPO_CATEGORY STREQUAL "Continuous"
         )
