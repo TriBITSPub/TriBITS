@@ -2944,6 +2944,7 @@ class test_checkin_test(unittest.TestCase):
       +"Not running any build/test cases because the update (pull) failed!\n" \
       +"  => A PUSH IS .NOT. READY TO BE PERFORMED!\n" \
       +"INITIAL PULL FAILED\n" \
+      +"To find out more about this failure, grep the .checkin-test.out. log\n" \
       +"REQUESTED ACTIONS: FAILED\n" \
       )
 
@@ -4312,6 +4313,7 @@ class test_checkin_test(unittest.TestCase):
       +"Skippng appending test results due to prior errors!\n" \
       +"Not performing push due to prior errors!\n" \
       +"FINAL PULL FAILED: Trilinos:\n" \
+      +"To find out more about this failure, grep the .checkin-test.out. log\n" \
       )
 
 
@@ -4351,6 +4353,7 @@ class test_checkin_test(unittest.TestCase):
       +"Appending test results to last commit failed!\n" \
       +"Not performing push due to prior errors!\n" \
       +"AMEND COMMIT FAILED: Trilinos:\n" \
+      +"To find out more about this failure, grep the .checkin-test.out. log\n" \
       )
 
 
@@ -4390,6 +4393,7 @@ class test_checkin_test(unittest.TestCase):
       +"Appending test results to last commit passed!\n" \
       +"Push failed!\n" \
       +"PUSH FAILED: Trilinos:\n" \
+      +"To find out more about this failure, grep the .checkin-test.out. log\n" \
       )
 
 
