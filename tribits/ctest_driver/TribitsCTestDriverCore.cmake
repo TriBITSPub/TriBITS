@@ -1731,7 +1731,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
         SET(BUILD_OR_TEST_FAILED FALSE)
 
         # Build the ALL target, but append the results to the last build.xml
-        SET(CTEST_BUILD_TARGET)
+        SET_DEFAULT_AND_FROM_ENV(CTEST_BUILD_TARGET "")
         MESSAGE("\nBuild ALL target for '${TRIBITS_PACKAGE}' ...\n")
         CTEST_BUILD(
           BUILD "${CTEST_BINARY_DIRECTORY}"
