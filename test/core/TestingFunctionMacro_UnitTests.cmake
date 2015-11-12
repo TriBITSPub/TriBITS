@@ -1383,6 +1383,7 @@ FUNCTION(UNITEST_TRIBITS_ADD_ADVANCED_TEST_BASIC)
       "SET[(]SKIP_CLEAN_OVERALL_WORKING_DIRECTORY .FALSE.[)]"
       "SET[(]SHOW_START_END_DATE_TIME ON[)]"
       "SET[(]SHOW_MACHINE_LOAD OFF[)]"
+      "SET[(]CATEGORIES [)]"
       "SET[(]PROCESSORS 4[)]"
       "SET[(]TIMEOUT 333.2[)]"
       "SET[(] TEST_0_WORKING_DIRECTORY .someSubdir. [)]"
@@ -3007,4 +3008,4 @@ MESSAGE("*** Determine final result of all unit tests")
 MESSAGE("***\n")
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(442)
+UNITTEST_FINAL_RESULT(443)
