@@ -120,3 +120,38 @@ TRIBITS_ADD_ADVANCED_TEST( CheckinTest_UnitTests
       -v
     PASS_REGULAR_EXPRESSION "OK"
   )
+
+
+#
+# TRIBITS_STRIP_COMMENTS_FROM_CMAKE_CACHE_FILE()
+#
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsStripCommentsFromCMakeCacheFile_small
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${CMAKE_COMMAND} 
+    ARGS
+      -DPROJECT_NAME=DummyProject
+      -DTRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_CACHE_FILE_IN=${CMAKE_CURRENT_SOURCE_DIR}/CMakeCache.small.txt
+      -DCMAKE_CACHE_FILE_CLEAN_OUT=CMakeCache.small.clean.txt
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/TribitsStripCommentsFromCMakeCacheFile_TestDriver.cmake
+  TEST_1 CMND diff
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeCache.small.clean.txt.expected
+      CMakeCache.small.clean.txt
+  )
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsStripCommentsFromCMakeCacheFile_large
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${CMAKE_COMMAND} 
+    ARGS
+      -DPROJECT_NAME=DummyProject
+      -DTRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_CACHE_FILE_IN=${CMAKE_CURRENT_SOURCE_DIR}/CMakeCache.large.txt
+      -DCMAKE_CACHE_FILE_CLEAN_OUT=CMakeCache.large.clean.txt
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/TribitsStripCommentsFromCMakeCacheFile_TestDriver.cmake
+  TEST_1 CMND diff
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CMakeCache.large.clean.txt.expected
+      CMakeCache.large.clean.txt
+  )
