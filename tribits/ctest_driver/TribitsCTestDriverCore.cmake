@@ -1729,7 +1729,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
             FILE(REMOVE "${logfile}")
           ENDFOREACH()
           # Run the tests that match the ${TRIBITS_PACKAGE} name
-          MESSAGE("\nRunning test for package '${TRIBITS_PACKAGE}' ...\n")
+          MESSAGE("\nRunning test for package '${TRIBITS_PACKAGE}'"
+            " (parallel level ${CTEST_PARALLEL_LEVEL}) ...\n")
           CTEST_TEST(
             BUILD "${CTEST_BINARY_DIRECTORY}"
             PARALLEL_LEVEL "${CTEST_PARALLEL_LEVEL}"
