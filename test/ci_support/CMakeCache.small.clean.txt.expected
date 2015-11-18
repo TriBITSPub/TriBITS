@@ -8,3 +8,4 @@ Amesos_ENABLE_PARAKLETE:BOOL=OFF
 Amesos_ENABLE_PARDISO:BOOL=OFF
 Amesos_ENABLE_PARDISO_MKL:BOOL=OFF
 Amesos_ENABLE_TESTS:STRING=
+AmpxLibUtils_LIB_DEPENDS:STATIC=general;ScaleCell;general;AmpxLoader_fortranlib;general;ampxloader;general;ampxClib;general;ampxlib;general;scaleresource;general;scaleresourceClib;general;ScaleSerializeFortran;general;ScaleSerialize;general;Interface;

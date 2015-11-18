@@ -46,3 +46,6 @@ Amesos_ENABLE_PARDISO_MKL:BOOL=OFF
 //Build tests for the package Amesos.  Set to 'ON', 'OFF', or leave
 // empty '' to allow for other logic to decide.
 Amesos_ENABLE_TESTS:STRING=
+
+//Dependencies for the target
+AmpxLibUtils_LIB_DEPENDS:STATIC=general;ScaleCell;general;AmpxLoader_fortranlib;general;ampxloader;general;ampxClib;general;ampxlib;general;scaleresource;general;scaleresourceClib;general;ScaleSerializeFortran;general;ScaleSerialize;general;Interface;
