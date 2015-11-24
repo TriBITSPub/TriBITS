@@ -232,7 +232,7 @@ def setupAndAssertEgGitVersions(inOptions):
     setattr(inOptions, "eg", "eg")
 
   egVersionOuput = getCmndOutput(inOptions.eg+" --version", True, False)
-  egVersionsList = egVersionOuput.split('\n')
+  egVersionsList = egVersionOuput.splitlines()
 
   if inOptions.enableEgGitVersionCheck:
     assertEgGitVersionHelper(egVersionsList[0], "eg version "+g_officialEgVersion)
@@ -710,7 +710,7 @@ reModifiedFiles = re.compile(r"^[MAD]\t(.+)$")
 
 def getCurrentBranchName(inOptions, baseTestDir):
   branchesStr = getCmndOutput(inOptions.eg+" branch", workingDir=inOptions.srcDir)
-  for branchName in branchesStr.split('\n'):
+  for branchName in branchesStr.splitlines():
     #print "branchName =", branchName
     if branchName[0] == '*':
       currentBranch = branchName.split(' ')[1]
@@ -754,7 +754,7 @@ def extractPackageEnablesFromChangeStatus(changedFileDiffOutputStr, inOptions_in
     projectDependenciesLocal = getDefaultProjectDependenices()
 
   modifiedFilesList = extractFilesListMatchingPattern(
-    changedFileDiffOutputStr.split('\n'), reModifiedFiles )
+    changedFileDiffOutputStr.splitlines(), reModifiedFiles )
 
   for modifiedFileFullPath in modifiedFilesList:
 
@@ -1710,7 +1710,7 @@ def getLastCommitMessageStrFromRawCommitLogStr(rawLogOutput):
   numBlankLines = 0
   lastNumBlankLines = 0
   foundStatusHeader = False
-  for line in rawLogOutput.split('\n'):
+  for line in rawLogOutput.splitlines():
     #print "\nline = '"+line+"'\n"
     if pastHeader:
       origLogStrList.append(line)
@@ -1734,10 +1734,12 @@ def getLastCommitMessageStrFromRawCommitLogStr(rawLogOutput):
         " build/test summary block!  This is a corrupted commit message.  Please" \
         " use 'git commit --amend' and manually remove the 'Build/test Cases Summary' block.")
     origLogStrList = origLogStrList[0:-lastNumBlankLines]
+    lastCommitMessageStr = '\n'.join(origLogStrList)
   else:
+    lastCommitMessageStr = ('\n'.join(origLogStrList))+'\n'
     lastNumBlankLines = -1 # Flag we did not find status header
 
-  return ('\n'.join(origLogStrList), lastNumBlankLines)
+  return (lastCommitMessageStr, lastNumBlankLines)
 
 
 def getLastCommitMessageStr(inOptions, gitRepo):
@@ -1801,7 +1803,7 @@ def getLocalCommitsSHA1ListStr(inOptions, gitRepo):
 
   if rawLocalCommitsStr:
     return ("Other local commits for this build/test group: "
-      + (", ".join(rawLocalCommitsStr.split("\n")))) + "\n"
+      + (", ".join(rawLocalCommitsStr.splitlines()))) + "\n"
 
   return ""
 

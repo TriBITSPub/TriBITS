@@ -290,9 +290,9 @@ Some other message
        "\nBuild/Test Cases Summary\n"
     #print "\nrawLogOutput:\n----------------\n", rawLogOutput, "----------------\n"
     (cleanCommitMsg, numBlankLines) = getLastCommitMessageStrFromRawCommitLogStr(rawLogOutput)
+    #print "\ncleanCommitMsg:\n----------------\n", cleanCommitMsg, "-----------------\n"
     self.assertEqual(numBlankLines, 1)
     self.assertEqual(cleanCommitMsg, cleanCommitMsg_expected)
-    #print "\ncleanCommitMsg:\n----------------\n", cleanCommitMsg, "-----------------\n"
 
 
   def test_dirty_commit_2(self):
