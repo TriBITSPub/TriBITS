@@ -1337,7 +1337,7 @@ def main(cmndLineArgs):
         print "\nConfiguration loaded from configuration file =", configuration 
       success = runProjectTestsWithCommandLineArgs(cmndLineArgs, configuration)
     except SystemExit, e:
-      # In Python 2.4, SystemExit inherits Exception, but for proper exit
+      # In Python 2.6, SystemExit inherits Exception, but for proper exit
       # behavior the SystemExit exception must propagate all the way to the top
       # of the call stack. It cannot get handled by the catch Exception below.
       raise e

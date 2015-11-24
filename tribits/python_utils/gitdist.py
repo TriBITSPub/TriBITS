@@ -92,7 +92,7 @@ the repositories that you list.  The best way to do that is to run 'gitdist
 dist-repo-status' and see which repos are listed.
 
 This script is self-contained and has no dependencies other than standard
-python 2.4 packages so it can be copied to anywhere and used.
+python 2.6 packages so it can be copied to anywhere and used.
 
 TIPS:
 
@@ -273,7 +273,7 @@ or
 
 SCRIPT DEPENDENCIES:
 
-This Python script only depends on the Python 2.4+ standard modules 'sys',
+This Python script only depends on the Python 2.6+ standard modules 'sys',
 'os', 'subprocess', and 're'. Also, of course, it requires some compatible
 version of 'git' in your path.
 

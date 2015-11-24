@@ -46,8 +46,8 @@ Python module containing general support functions for creating scripts
 #
 
 import sys
-if sys.version < '2.4':
-   print "Error, Python version is "+sys.version+" < 2.4!"
+if sys.version < '2.6':
+   print "Error, Python version is "+sys.version+" < 2.6!"
    sys.exit(1)
 
 #
