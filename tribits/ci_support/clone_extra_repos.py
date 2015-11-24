@@ -265,7 +265,7 @@ def getHeaderOutputAndExtraReposDictList(rawOutputFromCmakefile):
   headerOuput = ""
   pythonDictListStr = ""
   processingPythonDict = False
-  for line in rawOutputFromCmakefile.split("\n"):
+  for line in rawOutputFromCmakefile.splitlines():
     if line == "*** Extra Repositories Python Dictionary":
       processingPythonDict=True
       continue
