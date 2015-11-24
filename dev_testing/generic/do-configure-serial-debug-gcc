@@ -1,0 +1,36 @@
+#!/bin/bash
+
+EXTRA_ARGS=$@
+
+#
+# Configure script for a SERIAL DEBUG build with GCC compilers of the TriBITS
+# project & package.
+#
+# This script will work in any platform where the gcc compilers are found by
+# default.
+#
+# This script must be symbolically linked in for it to find the path back to
+# the local TriBITS repo.
+#
+
+if [ "$TRIBITS_BASE_DIR" == "" ] ; then
+  _ABS_FILE_PATH=`readlink -f $0`
+  _SCRIPT_DIR=`dirname $_ABS_FILE_PATH`
+  TRIBITS_BASE_DIR=$_SCRIPT_DIR/../..
+fi
+
+TRIBITS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR)
+echo "TRIBITS_BASE_DIR_ABS = $TRIBITS_BASE_DIR_ABS"
+
+cmake \
+-D CMAKE_BUILD_TYPE="DEBUG" \
+-D TPL_ENABLE_MPI=OFF \
+-D CMAKE_C_COMPILER=gcc \
+-D TriBITS_ENABLE_Fortran=ON \
+-D TriBITS_ENABLE_TESTS=ON \
+-D TriBITS_ENABLE_CONFIGURE_TIMING=ON \
+$EXTRA_ARGS \
+${TRIBITS_BASE_DIR_ABS}
+
+# NOTE: Above we must set CMAKE_C_COMPILER=gcc or CMake will find cc by
+# default and then it will not find Fortran.
