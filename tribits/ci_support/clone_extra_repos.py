@@ -304,7 +304,7 @@ def getExtraReposDictListFromCmakefile(projectDir, extraReposFile, withCmake,
 # repos.
 def parseRawSshGitoliteRootInfoOutput(rawSshGitoliteRootInfoOutput, verbose=False):
 
-  rawSshGitoliteRootInfoOutputList = rawSshGitoliteRootInfoOutput.split("\n")
+  rawSshGitoliteRootInfoOutputList = rawSshGitoliteRootInfoOutput.splitlines()
 
   gitoliteSshHeader = rawSshGitoliteRootInfoOutputList[0]
   if verbose:

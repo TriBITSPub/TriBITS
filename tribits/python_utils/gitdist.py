@@ -92,7 +92,7 @@ the repositories that you list.  The best way to do that is to run 'gitdist
 dist-repo-status' and see which repos are listed.
 
 This script is self-contained and has no dependencies other than standard
-python 2.4 packages so it can be copied to anywhere and used.
+python 2.6 packages so it can be copied to anywhere and used.
 
 TIPS:
 
@@ -273,7 +273,7 @@ or
 
 SCRIPT DEPENDENCIES:
 
-This Python script only depends on the Python 2.4+ standard modules 'sys',
+This Python script only depends on the Python 2.6+ standard modules 'sys',
 'os', 'subprocess', and 're'. Also, of course, it requires some compatible
 version of 'git' in your path.
 
@@ -638,10 +638,11 @@ def requoteCmndLineArgsIntoArray(inArgs):
 
 # Get a data-structure for a set of repos from a string
 def getRepoVersionDictFromRepoVersionFileString(repoVersionFileStr):
-  repoVersionFileStrList = repoVersionFileStr.split("\n")
+  repoVersionFileStrList = repoVersionFileStr.splitlines()
   repoVersionDict = {}
+  len_repoVersionFileStrList = len(repoVersionFileStrList)
   i = 0
-  while i < len(repoVersionFileStrList):
+  while i < len_repoVersionFileStrList:
     #print "i = ", i
     repoDirLine = repoVersionFileStrList[i]
     #print "repoDirLine = '"+repoDirLine+"'"
@@ -655,7 +656,10 @@ def getRepoVersionDictFromRepoVersionFileString(repoVersionFileStr):
       repoVersionDict.update({repoDir : repoSha1})
     else:
       break
-    if repoVersionFileStrList[i+2][0:3] == "***":
+    nextRepoNoSummary_i = i+2
+    if nextRepoNoSummary_i >= len_repoVersionFileStrList:
+      break
+    if repoVersionFileStrList[nextRepoNoSummary_i][0:3] == "***":
       # Has no summary line
       i = i + 2
     else:
@@ -765,7 +769,7 @@ def getNumCommitsWrtTrackingBranch(options, trackingBranch):
   numCommits = 0
   summaryLines = summaryLines.strip()
   if summaryLines:
-    for summaryLine in summaryLines.split("\n"):
+    for summaryLine in summaryLines.splitlines():
       #print "summaryLine = '"+summaryLine+"'"
       numAuthorCommits = int(summaryLine.strip().split()[0].strip())
       #print "numAuthorCommits =", numAuthorCommits
@@ -785,7 +789,7 @@ def getNumModifiedAndUntracked(options):
   if rtnCode == 0:
     numModified = 0
     numUntracked = 0
-    for line in rawStatusOutput.split("\n"):
+    for line in rawStatusOutput.splitlines():
       if line.find(" M ") == 0 or line.find("M  ") == 0:
         numModified += 1
       elif line.find(" D ") == 0 or line.find("D  ") == 0:
