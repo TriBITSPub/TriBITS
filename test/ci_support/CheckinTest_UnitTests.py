@@ -1006,38 +1006,38 @@ g_cmndinterceptsDumpDepsXMLFile = \
   "IT: .*cmake .+ -P .+/TribitsDumpDepsXmlScript.cmake; 0; 'dump XML file passed'\n" \
 
 g_cmndinterceptsCurrentBranch = \
-  "IT: eg branch; 0; '* currentbranch'\n"
+  "IT: git branch; 0; '* currentbranch'\n"
 
 g_cmndinterceptsStatusPasses = \
-  "IT: eg status; 0; '(on master branch)'\n"
+  "IT: git status; 0; '(on master branch)'\n"
 
 g_cmndinterceptsStatusChangedButNotUpdatedPasses = \
-  "IT: eg status; 0; 'Changed but not updated'\n"
+  "IT: git status; 0; 'Changed but not updated'\n"
 
 g_cmndinterceptsPullOnlyPasses = \
-  "IT: eg pull; 0; 'pulled changes passes'\n"
+  "IT: git pull; 0; 'pulled changes passes'\n"
 
 g_cmndinterceptsPullOnlyFails = \
-  "IT: eg pull; 1; 'pull failed'\n"
+  "IT: git pull; 1; 'pull failed'\n"
 
 g_cmndinterceptsPullOnlyNoUpdatesPasses = \
-  "IT: eg pull; 0; 'Already up-to-date.'\n"
+  "IT: git pull; 0; 'Already up-to-date.'\n"
 
 g_cmndinterceptsStatusPullPasses = \
   g_cmndinterceptsStatusPasses+ \
   g_cmndinterceptsPullOnlyPasses
 
 g_cmndinterceptsDiffOnlyPasses = \
-  "IT: eg diff --name-status origin/currentbranch; 0; 'M\tpackages/teuchos/CMakeLists.txt'\n"
+  "IT: git diff --name-status origin/currentbranch; 0; 'M\tpackages/teuchos/CMakeLists.txt'\n"
 
 g_cmndinterceptsDiffOnlyNoChangesPasses = \
-  "IT: eg diff --name-status origin/currentbranch; 0; ''\n"
+  "IT: git diff --name-status origin/currentbranch; 0; ''\n"
 
 g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos = \
-  "IT: eg diff --name-status origin/currentbranch; 0; 'M\tteko/CMakeLists.txt'\n"
+  "IT: git diff --name-status origin/currentbranch; 0; 'M\tteko/CMakeLists.txt'\n"
 
 g_cmndinterceptsDiffOnlyPassesExtraTrilinosRepo = \
-  "IT: eg diff --name-status origin/currentbranch; 0; 'M\textrapack/src/ExtraPack_ConfigDefs.hpp'\n"
+  "IT: git diff --name-status origin/currentbranch; 0; 'M\textrapack/src/ExtraPack_ConfigDefs.hpp'\n"
 
 g_cmndinterceptsPullPasses = \
   g_cmndinterceptsStatusPullPasses \
@@ -1059,47 +1059,47 @@ g_cmndinterceptsConfigBuildTestPasses = \
   "IT: ctest -j5; 0; '100% tests passed, 0 tests failed out of 100'\n"
 
 g_cmnginterceptsEgLogCmnds = \
-  "IT: eg cat-file -p HEAD; 0; 'This is the last commit message'\n" \
-  "IT: eg log --oneline currentbranch \^origin/currentbranch; 0; '12345 Only one commit'\n" \
-  "IT: eg log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; '12345'\n"
+  "IT: git cat-file -p HEAD; 0; 'This is the last commit message'\n" \
+  "IT: git log --oneline currentbranch \^origin/currentbranch; 0; '12345 Only one commit'\n" \
+  "IT: git log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; '12345'\n"
 
 g_cmndinterceptsFinalPullRebasePasses = \
-  "IT: eg pull && eg rebase --against origin/currentbranch; 0; 'final eg pull and rebase passed'\n"
+  "IT: git pull && git rebase --against origin/currentbranch; 0; 'final git pull and rebase passed'\n"
 
 g_cmndinterceptsFinalPullRebaseFails = \
-  "IT: eg pull && eg rebase --against origin/currentbranch; 1; 'final eg pull and rebase failed'\n"
+  "IT: git pull && git rebase --against origin/currentbranch; 1; 'final git pull and rebase failed'\n"
 
 g_cmndinterceptsAmendCommitPasses = \
-  "IT: eg commit --amend -F .*; 0; 'Amending the last commit passed'\n"
+  "IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n"
 
 g_cmndinterceptsAmendCommitFails = \
-  "IT: eg commit --amend -F .*; 1; 'Amending the last commit failed'\n"
+  "IT: git commit --amend -F .*; 1; 'Amending the last commit failed'\n"
 
 g_cmndinterceptsLogCommitsPasses = \
-  "IT: eg log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n"
+  "IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n"
 
 g_cmndinterceptsPushOnlyPasses = \
-  "IT: eg push; 0; 'push passes'\n"
+  "IT: git push; 0; 'push passes'\n"
 
 g_cmndinterceptsPushOnlyFails = \
-  "IT: eg push; 1; 'push failed'\n"
+  "IT: git push; 1; 'push failed'\n"
 
 g_cmndinterceptsFinalPushPasses = \
   g_cmndinterceptsFinalPullRebasePasses+\
   g_cmnginterceptsEgLogCmnds+ \
   g_cmndinterceptsAmendCommitPasses+ \
   g_cmndinterceptsLogCommitsPasses+ \
-  "IT: eg push; 0; 'push passes'\n"
+  "IT: git push; 0; 'push passes'\n"
 
 g_cmndinterceptsFinalPushNoAppendTestResultsPasses = \
-  "IT: eg pull && eg rebase --against origin/currentbranch; 0; 'final eg pull and rebase passed'\n" \
+  "IT: git pull && git rebase --against origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
   +g_cmndinterceptsLogCommitsPasses\
   +g_cmndinterceptsPushOnlyPasses
 
 g_cmndinterceptsFinalPushNoRebasePasses = \
-  "IT: eg pull; 0; 'final eg pull only passed'\n" \
+  "IT: git pull; 0; 'final git pull only passed'\n" \
   +g_cmnginterceptsEgLogCmnds+ \
-  "IT: eg commit --amend -F .*; 0; 'Amending the last commit passed'\n" \
+  "IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n" \
   +g_cmndinterceptsLogCommitsPasses\
   +g_cmndinterceptsPushOnlyPasses
 
@@ -1263,8 +1263,7 @@ def create_checkin_test_case_dir(testName, verbose=False):
 # Main unit test driver
 def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
   expectPass, passRegexStrList, filePassRegexStrList=None, mustHaveCheckinTestOut=True, \
-  failRegexStrList=None, fileFailRegexStrList=None, envVars=[], inPathEg=True, \
-  egVersion=True \
+  failRegexStrList=None, fileFailRegexStrList=None, envVars=[], inPathGit=True
   ):
 
   verbose = g_verbose
@@ -1286,7 +1285,6 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
       tribitsBaseDir + "/ci_support/checkin-test.py",
       "--with-cmake=\""+g_withCmake+"\"",
       "--project-name=Trilinos",
-      "--no-eg-git-version-check",
       "--src-dir="+mockProjectBaseDir,
       "--send-email-to=bogous@somwhere.com",
       "--project-configuration=%s" % os.path.join(g_testBaseDir,
@@ -1294,11 +1292,6 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
       optionsStr,
       ]
     cmnd = ' '.join(cmndArgs)
-    # NOTE: Above, we want to turn off the eg/git version tests since we want
-    # these unit tests to run on machines that do not have the official
-    # versions (e.g. the SCICO LAN) but where the versions might be okay.
-    # Also, we have to point to the static mock Trilinos source directory
-    # also so that preCopyrighTrilinos will show up as an extra repo.
     
     # C) Set up the command intercept file
 
@@ -1314,14 +1307,10 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
       "FT: grep .*"+getEmailBodyFileName()+"\n" \
       "FT: grep .*REQUESTED ACTIONS\: PASSED.*\n"
 
-    if inPathEg:
+    if inPathGit:
       baseCmndInterceptsStr += \
       "IT: git config --get user.email; 0; bogous@somwhere.com\n" \
-      +"IT: which eg; 0; /some/path/eg\n"
-
-    if egVersion:
-      baseCmndInterceptsStr += \
-      "IT: eg --version; 0; "+g_officialEgVersion+"\n"
+      +"IT: which git; 0; /some/path/git\n"
 
     fullCmndInterceptsStr = baseCmndInterceptsStr + cmndInterceptsStr
 
@@ -1442,7 +1431,7 @@ def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexS
     \
     g_cmndinterceptsDumpDepsXMLFile \
     +g_cmndinterceptsCurrentBranch \
-    +"IT: eg diff --name-status origin/currentbranch; 0; '"+modifiedFilesStr+"'\n" \
+    +"IT: git diff --name-status origin/currentbranch; 0; '"+modifiedFilesStr+"'\n" \
     +g_cmndinterceptsConfigPasses \
     ,
     \
@@ -1636,7 +1625,7 @@ class test_checkin_test(unittest.TestCase):
       [
       (getInitialPullOutputFileName(""), "pulled changes passes\n"),
       (getModifiedFilesOutputFileName(""), "M\tpackages/teuchos/CMakeLists.txt\n"),
-      (getFinalPullOutputFileName(""), "final eg pull and rebase passed\n"),
+      (getFinalPullOutputFileName(""), "final git pull and rebase passed\n"),
       (getFinalCommitBodyFileName(""),
          getAutomatedStatusSummaryHeaderKeyStr()+"\n"
          +"Enabled Packages: Teuchos\n" \
@@ -1675,17 +1664,14 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  # In this test, we test the behavior of the script where eg on the path
-  # is not found and the default eg is used instead.  We have to test the
-  # entire workflow in order to make sure that raw 'eg' is not used anywhere
-  # where it matters.
-  def test_do_all_no_eg_installed(self):
-    eg = os.path.abspath(tribitsBaseDir+"/ci_support/eg")
+  # In this test, we test the behavior of the script where git on the path is
+  # not found.
+  def test_do_all_no_git_installed(self):
     checkin_test_run_case(
       \
       self,
       \
-      "do_all_no_eg_installed",
+      "do_all_no_git_installed",
       \
       "--make-options=-j3 --ctest-options=-j5" \
       +" --default-builds=MPI_DEBUG" \
@@ -1693,31 +1679,14 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       "IT: git config --get user.email; 0; bogous@somwhere.com\n" \
-      +"IT: which eg; 1; '/usr/bin/which: no eg in (path1:path2:path3)'\n" \
-      +"IT: "+eg+" --version; 0; "+g_officialEgVersion+"\n" \
-      +g_cmndinterceptsDumpDepsXMLFile \
-      +"IT: "+eg+" branch; 0; '* currentbranch'\n" \
-      +"IT: "+eg+" status; 0; '(on master branch)'\n" \
-      +"IT: "+eg+" pull; 0; 'initial eg pull passed'\n" \
-      +"IT: "+eg+" diff --name-status origin/currentbranch; 0; 'M\tpackages/teuchos/CMakeLists.txt'\n" \
-      +g_cmndinterceptsConfigBuildTestPasses \
-      +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: "+eg+" pull && "+eg+" rebase --against origin/currentbranch; 0; 'final eg pull and rebase passed'\n"
-      +"IT: "+eg+" cat-file -p HEAD; 0; 'This is the last commit message'\n" \
-      +"IT: "+eg+" log --oneline currentbranch \^origin/currentbranch; 0; '12345 Only one commit'\n" \
-      +"IT: "+eg+" log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; '12345'\n"
-      +"IT: "+eg+" commit --amend -F .*; 0; 'Amending the last commit passed'\n"
-      +"IT: "+eg+" log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n"
-      +"IT: "+eg+" push; 0; 'push passes'\n" \
-      +g_cmndinterceptsSendFinalEmail \
+      +"IT: which git; 1; '/usr/bin/which: no git in (path1:path2:path3)'\n" \
       ,
       \
-      True,
+      False,
       \
-      "Warning, the eg command is not in your path! .*no eg in .path1:path2:path3.*\n" \
-      "Setting to default eg in TriBITS source tree '.*/ci_support/eg'\n" \
+      "Error, the .git. command is not in your path. ./usr/bin/which: no git in .path1:path2:path3.." \
       ,
-      inPathEg=False, egVersion=False
+      inPathGit=False
       )
 
 
@@ -2157,8 +2126,8 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: eg pull somemachine someotherbranch; 0; 'eg extra pull passed'\n"
-      +"IT: eg pull somemachine someotherbranch; 0; 'eg extra pull passed'\n"
+      +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
+      +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsSendFinalEmail \
@@ -2615,9 +2584,9 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: eg diff --name-status origin/currentbranch; 0; ''\n" \
-      +"IT: eg diff --name-status origin/currentbranch; 0; ''\n" \
-      +"IT: eg diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsSendFinalEmail \
@@ -2670,8 +2639,8 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: eg diff --name-status origin/currentbranch; 0; ''\n" \
-      +"IT: eg diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPullRebasePasses \
@@ -2682,7 +2651,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsAmendCommitPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
-      +"IT: eg push; 0; 'push passes'\n" \
+      +"IT: git push; 0; 'push passes'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2727,10 +2696,10 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: eg diff --name-status origin/currentbranch; 0; ''\n" \
-      +"IT: eg diff --name-status origin/currentbranch; 0; 'M\tpreRepoOnePackage.cpp'\n" \
-      +"IT: eg diff --name-status origin/currentbranch; 0; ''\n" \
-      +"IT: eg diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; 'M\tpreRepoOnePackage.cpp'\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsSendFinalEmail \
@@ -3215,7 +3184,7 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsStatusPullPasses \
-      +"IT: eg pull machine:/repo/dir/repo master; 0; 'eg extra pull passed'\n"
+      +"IT: git pull machine:/repo/dir/repo master; 0; 'git extra pull passed'\n"
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -3224,7 +3193,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_expectedRegexUpdatePasses \
       +"Pulling in updates from .machine:\/repo\/dir\/repo master.\n" \
-      +"eg pull machine:\/repo\/dir\/repo master\n" \
+      +"git pull machine:\/repo\/dir\/repo master\n" \
       +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
       +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       +"^NOT READY TO PUSH: Trilinos:\n"
@@ -3525,7 +3494,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: eg diff --name-status origin/currentbranch; 0; 'M\tpackages/stokhos/CMakeLists.txt'\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; 'M\tpackages/stokhos/CMakeLists.txt'\n" \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushPasses \
@@ -3816,7 +3785,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
-      +"IT: eg diff --name-status origin/currentbranch; 0; 'eg diff passed'\n" \
+      +"IT: git diff --name-status origin/currentbranch; 0; 'git diff passed'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3903,54 +3872,6 @@ class test_checkin_test(unittest.TestCase):
 
 
   # F) Test various failing use cases
-
-
-  def test_do_all_wrong_eg_version(self):
-    checkin_test_run_case(
-      \
-      self,
-      \
-      "do_all_wrong_eg_version",
-      \
-      "--do-all --eg-git-version-check" \
-      ,
-      \
-      "IT: eg --version; 1; 'eg version wrong-version'\n" \
-      ,
-      \
-      False,
-      \
-      "Error, the installed eg version wrong-version does not equal the official eg version "+g_officialEgVersion+"!\n" \
-      ,
-      egVersion=False
-      )
-
-
-  def test_wrong_eg_version_ignore(self):
-    checkin_test_run_case(
-      \
-      self,
-      \
-      "wrong_eg_version_ignore",
-      \
-      "--no-eg-git-version-check --skip-push-readiness-check" \
-      ,
-      \
-      "IT: eg --version; 1; 'eg version wrong-version'\n" \
-      +g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      ,
-      \
-      True,
-      \
-      "WARNING: No actions were performed!\n" \
-      "REQUESTED ACTIONS: PASSED\n" \
-      ,
-      egVersion=False
-      )
-
-  #NOTE: I would also like to check the git verion but I can't becuase my
-  #command intercept system can't hanlde more than one line of output.
 
 
   def test_enable_packages_error(self):
@@ -4041,7 +3962,7 @@ class test_checkin_test(unittest.TestCase):
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
-      +"IT: eg status; 0; 'Changed but not updated'\n" \
+      +"IT: git status; 0; 'Changed but not updated'\n" \
       ,
       \
       False,
@@ -4064,7 +3985,7 @@ class test_checkin_test(unittest.TestCase):
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
-      +"IT: eg status; 0; 'Changes ready to be committed'\n" \
+      +"IT: git status; 0; 'Changes ready to be committed'\n" \
       ,
       \
       False,
@@ -4087,7 +4008,7 @@ class test_checkin_test(unittest.TestCase):
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
-      +"IT: eg status; 0; 'Newly created unknown files'\n" \
+      +"IT: git status; 0; 'Newly created unknown files'\n" \
       ,
       \
       False,
@@ -4110,8 +4031,8 @@ class test_checkin_test(unittest.TestCase):
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
-      +"IT: eg status; 0; '(on master branch)'\n" \
-      +"IT: eg pull; 1; 'eg pull failed'\n" \
+      +"IT: git status; 0; '(on master branch)'\n" \
+      +"IT: git pull; 1; 'git pull failed'\n" \
       ,
       \
       False,
@@ -4296,8 +4217,8 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: eg pull && eg rebase --against origin/currentbranch; 1; 'final eg pull FAILED'\n" \
-      +"IT: eg log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
+      +"IT: git pull && git rebase --against origin/currentbranch; 1; 'final git pull FAILED'\n" \
+      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,      \
       False,
@@ -4333,10 +4254,10 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: eg pull && eg rebase --against origin/currentbranch; 0; 'final eg pull and rebase passed'\n" \
+      +"IT: git pull && git rebase --against origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
       +g_cmnginterceptsEgLogCmnds \
-      +"IT: eg commit --amend -F .*; 1; 'Amending the last commit FAILED'\n" \
-      +"IT: eg log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
+      +"IT: git commit --amend -F .*; 1; 'Amending the last commit FAILED'\n" \
+      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4373,11 +4294,11 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: eg pull && eg rebase --against origin/currentbranch; 0; 'final eg pull and rebase passed'\n" \
+      +"IT: git pull && git rebase --against origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
       +g_cmnginterceptsEgLogCmnds \
-      +"IT: eg commit --amend -F .*; 0; 'Amending the last commit passed'\n" \
-      +"IT: eg log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
-      +"IT: eg push; 1; 'push FAILED'\n"
+      +"IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n" \
+      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
+      +"IT: git push; 1; 'push FAILED'\n"
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4414,11 +4335,11 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: eg pull && eg rebase --against origin/currentbranch; 0; 'final eg pull and rebase passed'\n" \
-      +"IT: eg cat-file -p HEAD; 0; 'This is the last commit message'\n" \
-      +"IT: eg log --oneline currentbranch \^origin/currentbranch; 0; ''\n" \
-      +"IT: eg log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; ''\n" \
-      +"IT: eg log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
+      +"IT: git pull && git rebase --against origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
+      +"IT: git cat-file -p HEAD; 0; 'This is the last commit message'\n" \
+      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; ''\n" \
+      +"IT: git log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; ''\n" \
+      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
