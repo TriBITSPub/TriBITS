@@ -84,7 +84,7 @@ something
 # @MACRO: SOME_MACRO_NAME1()
 #
 # Good documenation
-#
+# 
 MACRO(SOME_MACRO_NAME1 ...)
 some other stuff 
 ...
@@ -146,7 +146,7 @@ something
 #   SOME_FUNC_NAME2(blah
 #     goat
 #     )
-#
+# 
 FUNCTION(SOME_FUNC_NAME2 ...)
 some other stuff 
 ...
@@ -423,7 +423,6 @@ Good documenation
 
 
 something else
-
 """
 
 
@@ -462,8 +461,8 @@ b
 
 
 def lineByLineCompareAssert(testObj, text, textExpected):
-  textArray = text.split("\n")
-  textExpectedArray = textExpected.split("\n")
+  textArray = text.splitlines()
+  textExpectedArray = textExpected.splitlines()
   
   for i in range(0,min(len(textArray), len(textExpectedArray))):
     testObj.assertEqual(textArray[i], textExpectedArray[i],
