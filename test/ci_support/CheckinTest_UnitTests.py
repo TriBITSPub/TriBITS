@@ -1064,10 +1064,10 @@ g_cmnginterceptsEgLogCmnds = \
   "IT: git log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; '12345'\n"
 
 g_cmndinterceptsFinalPullRebasePasses = \
-  "IT: git pull && git rebase --against origin/currentbranch; 0; 'final git pull and rebase passed'\n"
+  "IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n"
 
 g_cmndinterceptsFinalPullRebaseFails = \
-  "IT: git pull && git rebase --against origin/currentbranch; 1; 'final git pull and rebase failed'\n"
+  "IT: git pull && git rebase origin/currentbranch; 1; 'final git pull and rebase failed'\n"
 
 g_cmndinterceptsAmendCommitPasses = \
   "IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n"
@@ -1092,7 +1092,7 @@ g_cmndinterceptsFinalPushPasses = \
   "IT: git push; 0; 'push passes'\n"
 
 g_cmndinterceptsFinalPushNoAppendTestResultsPasses = \
-  "IT: git pull && git rebase --against origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
+  "IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
   +g_cmndinterceptsLogCommitsPasses\
   +g_cmndinterceptsPushOnlyPasses
 
@@ -4217,7 +4217,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: git pull && git rebase --against origin/currentbranch; 1; 'final git pull FAILED'\n" \
+      +"IT: git pull && git rebase origin/currentbranch; 1; 'final git pull FAILED'\n" \
       +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,      \
@@ -4254,7 +4254,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: git pull && git rebase --against origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
+      +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
       +g_cmnginterceptsEgLogCmnds \
       +"IT: git commit --amend -F .*; 1; 'Amending the last commit FAILED'\n" \
       +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
@@ -4294,7 +4294,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: git pull && git rebase --against origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
+      +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
       +g_cmnginterceptsEgLogCmnds \
       +"IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n" \
       +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
@@ -4335,7 +4335,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: git pull && git rebase --against origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
+      +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
       +"IT: git cat-file -p HEAD; 0; 'This is the last commit message'\n" \
       +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; ''\n" \
       +"IT: git log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; ''\n" \
