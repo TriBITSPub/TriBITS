@@ -782,6 +782,12 @@ def getNumCommitsWrtTrackingBranch(options, trackingBranch, getCmndOutputFunc):
   # should be insignificant compared to the process execution command.
 
 
+def matchFieldOneOrTwo(findIdx):
+  if findIdx == 0 or findIdx == 1:
+    return True
+  return False
+
+
 # Get the number of modified
 def getNumModifiedAndUntracked(options, getCmndOutputFunc):
   (rawStatusOutput, rtnCode) = getCmndOutputFunc(
@@ -790,11 +796,17 @@ def getNumModifiedAndUntracked(options, getCmndOutputFunc):
     numModified = 0
     numUntracked = 0
     for line in rawStatusOutput.splitlines():
-      if line.find(" M ") == 0 or line.find("M  ") == 0:
+      if matchFieldOneOrTwo(line.find("M")):
         numModified += 1
-      elif line.find(" D ") == 0 or line.find("D  ") == 0:
+      elif matchFieldOneOrTwo(line.find("A")):
         numModified += 1
-      elif line.find(" T ") == 0 or line.find("T  ") == 0:
+      elif matchFieldOneOrTwo(line.find("D")):
+        numModified += 1
+      elif matchFieldOneOrTwo(line.find("T")):
+        numModified += 1
+      elif matchFieldOneOrTwo(line.find("U")):
+        numModified += 1
+      elif matchFieldOneOrTwo(line.find("R")):
         numModified += 1
       elif line.find("??") == 0:
         numUntracked += 1
