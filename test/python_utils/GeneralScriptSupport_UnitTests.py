@@ -301,8 +301,10 @@ IT: ./do-configure; 5; ''
       g_sysCmndInterceptor.setInterceptedCmnd("eg frog", 0, "bad frog\n")
       g_sysCmndInterceptor.setInterceptedCmnd("eg blog", 2, "who cares\n")
       g_sysCmndInterceptor.setAllowExtraCmnds(False)
-      self.assertEqual("good log", getCmndOutput("eg log", True))
-      self.assertEqual("bad frog", getCmndOutput("eg frog", True, False))
+      self.assertEqual(("good log", 0), getCmndOutput("eg log", True, rtnCode=True))
+      self.assertEqual(("bad frog", 0), getCmndOutput("eg frog", True, False, rtnCode=True))
+      self.assertEqual(("who cares", 2),
+        getCmndOutput("eg blog", True, throwOnError=False, rtnCode=True))
       self.assertRaises(Exception, getCmndOutput, "eg blog", True)
     finally:
       g_sysCmndInterceptor.clear()
