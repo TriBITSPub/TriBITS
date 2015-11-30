@@ -736,8 +736,8 @@ def repoExistsAndNotExcluded(options, extraRepo, notExtraReposList):
 
 
 # Get the tracking branch for a repo
-def getLocalBranch(options):
-  (branch, rtnCode) = getCmndOutput(
+def getLocalBranch(options, getCmndOutputFunc):
+  (branch, rtnCode) = getCmndOutputFunc(
     options.useGit + " rev-parse --abbrev-ref HEAD",
     rtnCode=True )
   if rtnCode == 0:
@@ -746,8 +746,8 @@ def getLocalBranch(options):
 
 
 # Get the tracking branch for a repo
-def getTrackingBranch(options):
-  (trackingBranch, rtnCode) = getCmndOutput(
+def getTrackingBranch(options, getCmndOutputFunc):
+  (trackingBranch, rtnCode) = getCmndOutputFunc(
     options.useGit + " rev-parse --abbrev-ref --symbolic-full-name @{u}",
     rtnCode=True )
   if rtnCode == 0:
@@ -759,10 +759,10 @@ def getTrackingBranch(options):
 
 
 # Get number of commits as a str wr.t.t tracking branch
-def getNumCommitsWrtTrackingBranch(options, trackingBranch):
+def getNumCommitsWrtTrackingBranch(options, trackingBranch, getCmndOutputFunc):
   if trackingBranch == "":
     return ""
-  (summaryLines, rtnCode) = getCmndOutput(
+  (summaryLines, rtnCode) = getCmndOutputFunc(
     options.useGit + " shortlog -s HEAD ^"+trackingBranch, rtnCode=True )
   if rtnCode != 0:
     raise Exception(summaryLines)
@@ -783,8 +783,8 @@ def getNumCommitsWrtTrackingBranch(options, trackingBranch):
 
 
 # Get the number of modified
-def getNumModifiedAndUntracked(options):
-  (rawStatusOutput, rtnCode) = getCmndOutput(
+def getNumModifiedAndUntracked(options, getCmndOutputFunc):
+  (rawStatusOutput, rtnCode) = getCmndOutputFunc(
     options.useGit + " status --porcelain", rtnCode=True )
   if rtnCode == 0:
     numModified = 0
@@ -842,11 +842,13 @@ class RepoStatsStruct:
     return False
 
 
-def getRepoStats(options):
-  branch = getLocalBranch(options)
-  trackingBranch = getTrackingBranch(options)
-  numCommits = getNumCommitsWrtTrackingBranch(options, trackingBranch)
-  (numModified, numUntracked) = getNumModifiedAndUntracked(options)
+def getRepoStats(options, getCmndOutputFunc=None):
+  if not getCmndOutputFunc:
+    getCmndOutputFunc = getCmndOutput
+  branch = getLocalBranch(options, getCmndOutputFunc)
+  trackingBranch = getTrackingBranch(options, getCmndOutputFunc)
+  numCommits = getNumCommitsWrtTrackingBranch(options, trackingBranch, getCmndOutputFunc)
+  (numModified, numUntracked) = getNumModifiedAndUntracked(options, getCmndOutputFunc)
   return RepoStatsStruct(branch, trackingBranch,
    numCommits, numModified, numUntracked)
 
