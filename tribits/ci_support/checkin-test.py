@@ -104,25 +104,29 @@ In order to do a safe push, perform the following recommended workflow
   NOTE: You can group your commits any way that you would like (see the basic
   git documentation).
 
-  NOTE: When multiple repos are involved, use gitdist instead.  It is provided
-  at tribits/python_utils/gitdist.  See gitdist --help for details.
+  NOTE: When multiple repos are involved, use the 'gitdist' command instead of
+  'git'.  It is provided at tribits/python_utils/gitdist.  See gitdist --help
+  for details.
 
 2) Review the changes that you have made to make sure it is safe to push:
 
   $ cd $PROJECT_HOME
-  $ git local-stat                  # Look at the full status of local repo
-  $ git diff --name-status origin   # [Optional] Look at the files that have changed
+  $ git local-stat                      # Look at the full status of local repo
+  $ git diff --name-status HEAD ^@{u}   # [Optional] Look at the files that have changed
 
   NOTE: The command 'local-stat' is a git alias that can be installed with the
-  script tribits/common_tools/git/git-config-alias.sh.  It is highly
-  recommended over just a raw 'git status' or 'git log' to review commits before
-  attempting to test/push commits.
+  script tribits/common_tools/git/git-config-alias.sh.  It is recommended over
+  just a raw 'git status' or 'git log' to review commits before attempting to
+  test/push commits.
 
   NOTE: If you see any files/directories that are listed as 'unknown' returned
   from 'git local-stat', then you will need to do an 'git add' to track them or
   add them to an ignore list *before* you run the checkin-test.py script.
   The git script will not allow you to push if there are new 'unknown' files or
   uncommitted changes to tracked files.
+
+  NOTE: When multiple repos are involved, use 'gitdist-mod-status' to see the
+  state of your repos before pushing.  See gitdist --help for details.
 
 3) Set up the checkin base build directory (first time only):
 
@@ -131,7 +135,7 @@ In order to do a safe push, perform the following recommended workflow
   $ mkdir CHECKIN
   $ cd CHECKIN
 
-  NOTE: You may need to set up some configuration files if CMake can not find
+  NOTE: You may need to set up some configuration files if CMake cannot find
   the right compilers, MPI, and TPLs by default (see detailed documentation
   below).
 
@@ -160,11 +164,11 @@ In order to do a safe push, perform the following recommended workflow
   updated correctly.  The branch 'master' is the most common branch but
   release tracking branches are also common.
 
-  NOTE: You must not have any uncommitted changes or the 'git pull && git rebase
-  --against origin' command will fail on the final pull/rebase before the push
+  NOTE: You must not have any uncommitted changes or the 'git pull && git
+  rebase origin' command will fail on the final pull/rebase before the push
   and therefore the whole script will fail.  To run the script, you will may
-  need to first use 'git stash' to stash away your unstaged/uncommitted changes
-  *before* running this script.
+  need to first use 'git stash' to stash away your unstaged/uncommitted
+  changes *before* running this script.
 
   NOTE: You need to have SSH public/private keys set up to the remote repo
   machines for the git commands invoked in the script to work without you
@@ -237,10 +241,10 @@ push (done if --push is set)
 
   5.a) Do a final 'git pull' (done if --pull or --do-all is set)
 
-  5.b) Do 'git rebase --against origin/<current_branch>' (done if --pull or
+  5.b) Do 'git rebase origin/<current_branch>' (done if --pull or
   --do-all is set and --rebase is set)
 
-    NOTE: The final 'git rebase --against origin/<current_branch>' is
+    NOTE: The final 'git rebase origin/<current_branch>' is
     required to avoid trivial merge commits that the global get repo
     will reject on the push.
   
