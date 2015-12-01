@@ -728,6 +728,17 @@ def runRepoCmnd(options, cmndLineArgsArray, repoDirName, baseDir, \
   runCmnd(options, egCmndArray)
 
 
+# Get the name of the base directory
+def getBaseDirNameFromPath(dirPath):
+  dirPathArray = dirPath.split("/")
+  return dirPathArray[-1]
+
+
+# Get the name of the base repo to insert into the table
+def getBaseRepoTblName(baseRepoName):
+  return baseRepoName+" (Base)"
+
+
 # Determine if the extra repo should be processed or not
 def repoExistsAndNotExcluded(options, extraRepo, notExtraReposList):
   if not os.path.isdir(extraRepo): return False
@@ -931,8 +942,7 @@ if __name__ == '__main__':
     print "*** Using git:", options.useGit
 
   # Get the name of the base repo
-  baseDirArray = baseDir.split("/")
-  baseRepoName = baseDirArray[-1]
+  baseRepoName = getBaseDirNameFromPath(baseDir)
 
   repoStatTable = RepoStatTable()
 
@@ -954,7 +964,7 @@ if __name__ == '__main__':
   # Process the base git repo
   if processBaseRepo:
     if distRepoStatus:
-      repoStatTable.insertRepoStat(baseRepoName+" (Base)", baseRepoStats, repoID)
+      repoStatTable.insertRepoStat(getBaseRepoTblName(baseRepoName), baseRepoStats, repoID)
     else:
       print ""
       print "*** Base Git Repo: "+addColorToRepoDir(options.useColor, baseRepoName)
