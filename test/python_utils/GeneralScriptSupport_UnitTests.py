@@ -213,6 +213,7 @@ class testGeneralScriptSupport(unittest.TestCase):
     sci.readCommandsFromStr(
 """
 FT: eg log.*
+IT: git log --pretty='%h'; 0; '1234'; '5678'
 FT: ls .*
 IT: eg log; 0; 'good log'
 IT: eg frog; 3; 'bad frog'
@@ -220,12 +221,18 @@ IT: ./do-configure; 5; ''
 """
     )
     self.assertEqual(["eg log.*", "ls .*"], sci.getFallThroughCmndRegexList())
-    self.assertEqual( str(InterceptedCmndStruct("eg log", 0, "good log")),
-      str(sci.getInterceptedCmndStructList()[0]) )
-    self.assertEqual( str(InterceptedCmndStruct("eg frog", 3, "bad frog")),
-      str(sci.getInterceptedCmndStructList()[1]) )
-    self.assertEqual( str(InterceptedCmndStruct("./do-configure", 5, "")),
-      str(sci.getInterceptedCmndStructList()[2]) )
+    self.assertEqual(
+      str(sci.getInterceptedCmndStructList()[0]),
+      str(InterceptedCmndStruct("git log --pretty='%h'", 0, "1234\n5678\n")) )
+    self.assertEqual(
+      str(sci.getInterceptedCmndStructList()[1]),
+      str(InterceptedCmndStruct("eg log", 0, "good log\n")) )
+    self.assertEqual(
+      str(sci.getInterceptedCmndStructList()[2]),
+      str(InterceptedCmndStruct("eg frog", 3, "bad frog\n")) )
+    self.assertEqual(
+      str(sci.getInterceptedCmndStructList()[3]),
+      str(InterceptedCmndStruct("./do-configure", 5, "\n")) )
 
 
   def test_runSysCmndInterface_fall_through(self):
