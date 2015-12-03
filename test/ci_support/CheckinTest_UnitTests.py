@@ -1066,7 +1066,7 @@ g_cmndinterceptsConfigBuildTestPasses = \
 
 g_cmnginterceptsGitLogCmnds = \
   "IT: git cat-file -p HEAD; 0; 'This is the last commit message'\n" \
-  "IT: git log --pretty=format:'%h' currentbranch\^ \^origin/trackingbranch; 0; '12345'\n"
+  "IT: git log --pretty=format:'%h' currentbranch \^origin/trackingbranch; 0; '54321'; '12345'\n"
 
 g_cmndinterceptsFinalPullRebasePasses = \
   "IT: git pull && git rebase origin/trackingbranch; 0; 'final git pull and rebase passed'\n"
@@ -1680,6 +1680,8 @@ class test_checkin_test(unittest.TestCase):
        +"\-DTrilinos_ENABLE_Teuchos:BOOL=ON\n" \
        +"\-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON\n" \
        +"\-DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON\n"),
+      ("commitFinalBody.out", 
+        "Other local commits for this build/test group: 12345\n"),
       # ToDo: Add more files to check
       ]
       )
