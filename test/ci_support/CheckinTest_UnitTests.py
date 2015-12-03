@@ -1064,7 +1064,7 @@ g_cmndinterceptsConfigBuildTestPasses = \
   g_cmndinterceptsConfigBuildPasses+ \
   "IT: ctest -j5; 0; '100% tests passed, 0 tests failed out of 100'\n"
 
-g_cmnginterceptsEgLogCmnds = \
+g_cmnginterceptsGitLogCmnds = \
   "IT: git cat-file -p HEAD; 0; 'This is the last commit message'\n" \
   "IT: git log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; '12345'\n"
 
@@ -1091,18 +1091,21 @@ g_cmndinterceptsPushOnlyFails = \
 
 g_cmndinterceptsFinalPushPasses = \
   g_cmndinterceptsFinalPullRebasePasses+\
-  g_cmnginterceptsEgLogCmnds+ \
+  g_cmnginterceptsGitLogCmnds+ \
   g_cmndinterceptsAmendCommitPasses+ \
+  g_cmndinterceptsLogCommitsPasses+ \
   "IT: git push; 0; 'push passes'\n"
 
 g_cmndinterceptsFinalPushNoAppendTestResultsPasses = \
   "IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
+  +g_cmndinterceptsLogCommitsPasses \
   +g_cmndinterceptsPushOnlyPasses
 
 g_cmndinterceptsFinalPushNoRebasePasses = \
   "IT: git pull; 0; 'final git pull only passed'\n" \
-  +g_cmnginterceptsEgLogCmnds+ \
+  +g_cmnginterceptsGitLogCmnds+ \
   "IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n" \
+  +g_cmndinterceptsLogCommitsPasses \
   +g_cmndinterceptsPushOnlyPasses
 
 g_cmndinterceptsSendBuildTestCaseEmail = \
@@ -1163,23 +1166,23 @@ g_cmndinterceptsExtraRepo1DoAllUpToPush = \
   g_cmndinterceptsExtraRepo1DoAllThroughTest \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmndinterceptsFinalPullRebasePasses \
-  +g_cmnginterceptsEgLogCmnds \
+  +g_cmnginterceptsGitLogCmnds \
   +g_cmndinterceptsAmendCommitPasses \
-  +g_cmnginterceptsEgLogCmnds \
+  +g_cmnginterceptsGitLogCmnds \
   +g_cmndinterceptsAmendCommitPasses 
 
 g_cmndinterceptsExtraRepo1TrilinosChangesDoAllUpToPush = \
   g_cmndinterceptsExtraRepo1TrilinosChangesDoAllThroughTest \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmndinterceptsFinalPullRebasePasses \
-  +g_cmnginterceptsEgLogCmnds \
+  +g_cmnginterceptsGitLogCmnds \
   +g_cmndinterceptsAmendCommitPasses
 
 g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllUpToPush = \
   g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllThroughTest \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmndinterceptsFinalPullRebasePasses \
-  +g_cmnginterceptsEgLogCmnds \
+  +g_cmnginterceptsGitLogCmnds \
   +g_cmndinterceptsAmendCommitPasses
 
 g_cmndinterceptsExtraRepo1NoChangesDoAllUpToPush = \
@@ -1616,7 +1619,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       +"IT: ssh -q godel /some/dir/some_command.sh &; 0; 'extra command passed'\n" \
       ,
@@ -1802,7 +1804,6 @@ class test_checkin_test(unittest.TestCase):
       +"IT: ctest -j5; 1; '80% tests passed, 20 tests failed out of 100'\n" \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,      \
       True,
@@ -1918,7 +1919,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       ,
       \
       True,
@@ -1989,7 +1989,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushNoAppendTestResultsPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2025,7 +2024,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushNoRebasePasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2145,10 +2143,10 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1DoAllUpToPush \
-      +g_cmndinterceptsPushOnlyPasses \
-      +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsPushOnlyPasses \
+      +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2226,8 +2224,8 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1TrilinosChangesDoAllUpToPush \
-      +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2258,8 +2256,8 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllUpToPush \
-      +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2726,14 +2724,14 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPullRebasePasses \
       +g_cmndinterceptsFinalPullRebasePasses \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +g_cmndinterceptsAmendCommitPasses \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +g_cmndinterceptsAmendCommitPasses \
-      +g_cmndinterceptsPushOnlyPasses \
-      +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsPushOnlyPasses \
+      +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3664,7 +3662,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3714,7 +3711,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3785,7 +3781,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3833,7 +3828,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3886,7 +3880,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3935,6 +3928,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsPullPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       ,
       \
       False,
@@ -3996,7 +3990,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4041,7 +4034,6 @@ class test_checkin_test(unittest.TestCase):
       +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4142,7 +4134,6 @@ class test_checkin_test(unittest.TestCase):
       +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsFinalPushPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4558,7 +4549,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +"IT: git commit --amend -F .*; 1; 'Amending the last commit FAILED'\n" \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -4597,10 +4588,10 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +"IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n" \
-      +"IT: git push; 1; 'push FAILED'\n"
       +g_cmndinterceptsLogCommitsPasses \
+      +"IT: git push; 1; 'push FAILED'\n"
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -5029,7 +5020,7 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsExtraRepo1DoAllThroughTest \
       +g_cmndinterceptsFinalPullRebasePasses \
       +g_cmndinterceptsFinalPullRebasePasses \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +g_cmndinterceptsAmendCommitFails \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
@@ -5062,9 +5053,9 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsExtraRepo1DoAllThroughTest \
       +g_cmndinterceptsFinalPullRebasePasses \
       +g_cmndinterceptsFinalPullRebasePasses \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +g_cmndinterceptsAmendCommitPasses \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +g_cmndinterceptsAmendCommitFails \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
@@ -5096,9 +5087,9 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1DoAllUpToPush \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsPushOnlyFails \
-      +g_cmndinterceptsLogCommitsPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -5125,10 +5116,10 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1DoAllUpToPush \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsPushOnlyFails \
-      +g_cmndinterceptsLogCommitsPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
