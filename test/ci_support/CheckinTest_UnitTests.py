@@ -1006,13 +1006,13 @@ g_cmndinterceptsDumpDepsXMLFile = \
   "IT: .*cmake .+ -P .+/TribitsDumpDepsXmlScript.cmake; 0; 'dump XML file passed'\n" \
 
 def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile="", \
-  branch = "currentbranch", trackingBranch="origin/currentbranch", \
+  branch = "currentbranch", trackingBranch="origin/trackingbranch", \
   numCommits = "4" \
   ):
   return \
     "IT: git rev-parse --abbrev-ref HEAD; 0; '"+branch+"'\n" \
     "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; '"+trackingBranch+"'\n" \
-    "IT: git shortlog -s HEAD .origin/currentbranch; 0; '    "+numCommits+"  John Doe'\n" \
+    "IT: git shortlog -s HEAD ."+trackingBranch+"; 0; '    "+numCommits+"  John Doe'\n" \
     "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
 def cmndinterceptsGetRepoStatsNoTrackingBranchPass(modifiedFile="", changedFile="", \
@@ -1037,13 +1037,13 @@ g_cmndinterceptsStatusPullPasses = \
   g_cmndinterceptsPullOnlyPasses
 
 g_cmndinterceptsDiffOnlyPasses = \
-  "IT: git diff --name-status origin/currentbranch; 0; 'M\tpackages/teuchos/CMakeLists.txt'\n"
+  "IT: git diff --name-status origin/trackingbranch; 0; 'M\tpackages/teuchos/CMakeLists.txt'\n"
 
 g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos = \
-  "IT: git diff --name-status origin/currentbranch; 0; 'M\tteko/CMakeLists.txt'\n"
+  "IT: git diff --name-status origin/trackingbranch; 0; 'M\tteko/CMakeLists.txt'\n"
 
 g_cmndinterceptsDiffOnlyPassesExtraTrilinosRepo = \
-  "IT: git diff --name-status origin/currentbranch; 0; 'M\textrapack/src/ExtraPack_ConfigDefs.hpp'\n"
+  "IT: git diff --name-status origin/trackingbranch; 0; 'M\textrapack/src/ExtraPack_ConfigDefs.hpp'\n"
 
 g_cmndinterceptsPullPasses = \
   g_cmndinterceptsStatusPullPasses \
@@ -1066,13 +1066,13 @@ g_cmndinterceptsConfigBuildTestPasses = \
 
 g_cmnginterceptsGitLogCmnds = \
   "IT: git cat-file -p HEAD; 0; 'This is the last commit message'\n" \
-  "IT: git log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; '12345'\n"
+  "IT: git log --pretty=format:'%h' currentbranch\^ \^origin/trackingbranch; 0; '12345'\n"
 
 g_cmndinterceptsFinalPullRebasePasses = \
-  "IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n"
+  "IT: git pull && git rebase origin/trackingbranch; 0; 'final git pull and rebase passed'\n"
 
 g_cmndinterceptsFinalPullRebaseFails = \
-  "IT: git pull && git rebase origin/currentbranch; 1; 'final git pull and rebase failed'\n"
+  "IT: git pull && git rebase origin/trackingbranch; 1; 'final git pull and rebase failed'\n"
 
 g_cmndinterceptsAmendCommitPasses = \
   "IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n"
@@ -1081,23 +1081,23 @@ g_cmndinterceptsAmendCommitFails = \
   "IT: git commit --amend -F .*; 1; 'Amending the last commit failed'\n"
 
 g_cmndinterceptsLogCommitsPasses = \
-  "IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n"
+  "IT: git log --oneline currentbranch \^origin/trackingbranch; 0; '54321 Only one commit'\n"
 
 g_cmndinterceptsPushOnlyPasses = \
-  "IT: git push; 0; 'push passes'\n"
+  "IT: git push origin currentbranch:trackingbranch ; 0; 'push passes'\n"
 
 g_cmndinterceptsPushOnlyFails = \
-  "IT: git push; 1; 'push failed'\n"
+  "IT: git push origin currentbranch:trackingbranch; 1; 'push failed'\n"
 
 g_cmndinterceptsFinalPushPasses = \
   g_cmndinterceptsFinalPullRebasePasses+\
   g_cmnginterceptsGitLogCmnds+ \
   g_cmndinterceptsAmendCommitPasses+ \
   g_cmndinterceptsLogCommitsPasses+ \
-  "IT: git push; 0; 'push passes'\n"
+  "IT: git push origin currentbranch:trackingbranch; 0; 'push passes'\n"
 
 g_cmndinterceptsFinalPushNoAppendTestResultsPasses = \
-  "IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
+  "IT: git pull && git rebase origin/trackingbranch; 0; 'final git pull and rebase passed'\n" \
   +g_cmndinterceptsLogCommitsPasses \
   +g_cmndinterceptsPushOnlyPasses
 
@@ -1427,7 +1427,7 @@ def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexS
 
   if doGitDiff:
     gitDiffCmnd= \
-      "IT: git diff --name-status origin/currentbranch; 0; '"+modifiedFilesStr+"'\n"
+      "IT: git diff --name-status origin/trackingbranch; 0; '"+modifiedFilesStr+"'\n"
   else:
     gitDiffCmnd=""
 
@@ -1624,8 +1624,8 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       True,
-      "[|] ID [|] Repo Dir            [|] Branch        [|] Tracking Branch      [|] C [|] M [|] [?] [|]\n" \
-      "[|]  0 [|] MockTrilinos [(]Base[)] [|] currentbranch [|] origin/currentbranch [|] 4 [|]   [|]   [|]\n" \
+      "[|] ID [|] Repo Dir            [|] Branch        [|] Tracking Branch       [|] C [|] M [|] [?] [|]\n" \
+      "[|]  0 [|] MockTrilinos [(]Base[)] [|] currentbranch [|] origin/trackingbranch [|] 4 [|]   [|]   [|]\n" \
       "enable-packages=.. or --enable-all-packages=.auto. => git diffs w.r.t. tracking branch .will. be needed to look for changed files!\n" \
       "Need git diffs w.r.t. tracking branch so all repos must be on a branch and have a tracking branch!\n" \
       "'': Pulled changes from this repo!\n" \
@@ -2078,9 +2078,9 @@ class test_checkin_test(unittest.TestCase):
       \
       True,
       \
-      "[|] ID [|] Repo Dir             [|] Branch        [|] Tracking Branch      [|] C [|] M [|] [?] [|]\n" \
-      "[|]  0 [|] MockTrilinos [(]Base[)]  [|] currentbranch [|] origin/currentbranch [|] 4 [|]   [|]   [|]\n" \
-      "[|]  1 [|] preCopyrightTrilinos [|] currentbranch [|] origin/currentbranch [|] 4 [|]   [|]   [|]\n" \
+      "[|] ID [|] Repo Dir             [|] Branch        [|] Tracking Branch       [|] C [|] M [|] [?] [|]\n" \
+      "[|]  0 [|] MockTrilinos [(]Base[)]  [|] currentbranch [|] origin/trackingbranch [|] 4 [|]   [|]   [|]\n" \
+      "[|]  1 [|] preCopyrightTrilinos [|] currentbranch [|] origin/trackingbranch [|] 4 [|]   [|]   [|]\n" \
       "-extra-repos=.preCopyrightTrilinos.\n" \
       +"Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \
@@ -2665,7 +2665,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: git diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
+      +"IT: git diff --name-status origin/trackingbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsLogCommitsPasses \
@@ -2718,8 +2718,8 @@ class test_checkin_test(unittest.TestCase):
       +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
-      +"IT: git diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
+      +"IT: git diff --name-status origin/trackingbranch; 0; ''\n" \
+      +"IT: git diff --name-status origin/trackingbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPullRebasePasses \
@@ -2776,10 +2776,10 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
-      +"IT: git diff --name-status origin/currentbranch; 0; 'M\tpreRepoOnePackage.cpp'\n" \
-      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
-      +"IT: git diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
+      +"IT: git diff --name-status origin/trackingbranch; 0; ''\n" \
+      +"IT: git diff --name-status origin/trackingbranch; 0; 'M\tpreRepoOnePackage.cpp'\n" \
+      +"IT: git diff --name-status origin/trackingbranch; 0; ''\n" \
+      +"IT: git diff --name-status origin/trackingbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsLogCommitsPasses \
@@ -3777,7 +3777,7 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: git diff --name-status origin/currentbranch; 0; 'M\tpackages/stokhos/CMakeLists.txt'\n" \
+      +"IT: git diff --name-status origin/trackingbranch; 0; 'M\tpackages/stokhos/CMakeLists.txt'\n" \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPushPasses \
@@ -4065,7 +4065,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
-      +"IT: git diff --name-status origin/currentbranch; 0; 'git diff passed'\n" \
+      +"IT: git diff --name-status origin/trackingbranch; 0; 'git diff passed'\n" \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -4512,7 +4512,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: git pull && git rebase origin/currentbranch; 1; 'final git pull FAILED'\n" \
+      +"IT: git pull && git rebase origin/trackingbranch; 1; 'final git pull FAILED'\n" \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,      \
@@ -4548,7 +4548,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
+      +"IT: git pull && git rebase origin/trackingbranch; 0; 'final git pull and rebase passed'\n" \
       +g_cmnginterceptsGitLogCmnds \
       +"IT: git commit --amend -F .*; 1; 'Amending the last commit FAILED'\n" \
       +g_cmndinterceptsLogCommitsPasses \
@@ -4587,11 +4587,11 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
+      +"IT: git pull && git rebase origin/trackingbranch; 0; 'final git pull and rebase passed'\n" \
       +g_cmnginterceptsGitLogCmnds \
       +"IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n" \
       +g_cmndinterceptsLogCommitsPasses \
-      +"IT: git push; 1; 'push FAILED'\n"
+      +"IT: git push origin currentbranch:trackingbranch; 1; 'push FAILED'\n"
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4627,7 +4627,7 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
+      +"IT: git pull && git rebase origin/trackingbranch; 0; 'final git pull and rebase passed'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
