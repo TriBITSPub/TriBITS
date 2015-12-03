@@ -1005,14 +1005,23 @@ class test_TribitsGitRepos(unittest.TestCase):
 g_cmndinterceptsDumpDepsXMLFile = \
   "IT: .*cmake .+ -P .+/TribitsDumpDepsXmlScript.cmake; 0; 'dump XML file passed'\n" \
 
-g_cmndinterceptsCurrentBranch = \
-  "IT: git branch; 0; '* currentbranch'\n"
+def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile="", \
+  branch = "currentbranch", trackingBranch="origin/currentbranch", \
+  numCommits = "4" \
+  ):
+  return \
+    "IT: git rev-parse --abbrev-ref HEAD; 0; '"+branch+"'\n" \
+    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; '"+trackingBranch+"'\n" \
+    "IT: git shortlog -s HEAD .origin/currentbranch; 0; '    "+numCommits+"  John Doe'\n" \
+    "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
-g_cmndinterceptsStatusPasses = \
-  "IT: git status; 0; '(on master branch)'\n"
-
-g_cmndinterceptsStatusChangedButNotUpdatedPasses = \
-  "IT: git status; 0; 'Changed but not updated'\n"
+def cmndinterceptsGetRepoStatsNoTrackingBranchPass(modifiedFile="", changedFile="", \
+  branch = "currentbranch"
+  ):
+  return \
+    "IT: git rev-parse --abbrev-ref HEAD; 0; '"+branch+"'\n" \
+    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; ''\n" \
+    "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
 g_cmndinterceptsPullOnlyPasses = \
   "IT: git pull; 0; 'pulled changes passes'\n"
@@ -1024,14 +1033,11 @@ g_cmndinterceptsPullOnlyNoUpdatesPasses = \
   "IT: git pull; 0; 'Already up-to-date.'\n"
 
 g_cmndinterceptsStatusPullPasses = \
-  g_cmndinterceptsStatusPasses+ \
+  cmndinterceptsGetRepoStatsPass()+ \
   g_cmndinterceptsPullOnlyPasses
 
 g_cmndinterceptsDiffOnlyPasses = \
   "IT: git diff --name-status origin/currentbranch; 0; 'M\tpackages/teuchos/CMakeLists.txt'\n"
-
-g_cmndinterceptsDiffOnlyNoChangesPasses = \
-  "IT: git diff --name-status origin/currentbranch; 0; ''\n"
 
 g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos = \
   "IT: git diff --name-status origin/currentbranch; 0; 'M\tteko/CMakeLists.txt'\n"
@@ -1044,8 +1050,8 @@ g_cmndinterceptsPullPasses = \
   +g_cmndinterceptsDiffOnlyPasses
 
 g_cmndinterceptsNoChangesPullPasses = \
-  g_cmndinterceptsStatusPullPasses \
-  +g_cmndinterceptsDiffOnlyNoChangesPasses
+  cmndinterceptsGetRepoStatsPass(numCommits="0") \
+  +g_cmndinterceptsPullOnlyPasses
 
 g_cmndinterceptsConfigPasses = \
   "IT: \./do-configure; 0; 'do-configure passed'\n"
@@ -1058,9 +1064,8 @@ g_cmndinterceptsConfigBuildTestPasses = \
   g_cmndinterceptsConfigBuildPasses+ \
   "IT: ctest -j5; 0; '100% tests passed, 0 tests failed out of 100'\n"
 
-g_cmnginterceptsEgLogCmnds = \
+g_cmnginterceptsGitLogCmnds = \
   "IT: git cat-file -p HEAD; 0; 'This is the last commit message'\n" \
-  "IT: git log --oneline currentbranch \^origin/currentbranch; 0; '12345 Only one commit'\n" \
   "IT: git log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; '12345'\n"
 
 g_cmndinterceptsFinalPullRebasePasses = \
@@ -1086,21 +1091,21 @@ g_cmndinterceptsPushOnlyFails = \
 
 g_cmndinterceptsFinalPushPasses = \
   g_cmndinterceptsFinalPullRebasePasses+\
-  g_cmnginterceptsEgLogCmnds+ \
+  g_cmnginterceptsGitLogCmnds+ \
   g_cmndinterceptsAmendCommitPasses+ \
   g_cmndinterceptsLogCommitsPasses+ \
   "IT: git push; 0; 'push passes'\n"
 
 g_cmndinterceptsFinalPushNoAppendTestResultsPasses = \
   "IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
-  +g_cmndinterceptsLogCommitsPasses\
+  +g_cmndinterceptsLogCommitsPasses \
   +g_cmndinterceptsPushOnlyPasses
 
 g_cmndinterceptsFinalPushNoRebasePasses = \
   "IT: git pull; 0; 'final git pull only passed'\n" \
-  +g_cmnginterceptsEgLogCmnds+ \
+  +g_cmnginterceptsGitLogCmnds+ \
   "IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n" \
-  +g_cmndinterceptsLogCommitsPasses\
+  +g_cmndinterceptsLogCommitsPasses \
   +g_cmndinterceptsPushOnlyPasses
 
 g_cmndinterceptsSendBuildTestCaseEmail = \
@@ -1111,9 +1116,13 @@ g_cmndinterceptsSendFinalEmail = \
 
 g_cmndinterceptsExtraRepo1ThroughStatusPasses = \
   g_cmndinterceptsDumpDepsXMLFile \
-  +g_cmndinterceptsCurrentBranch \
-  +g_cmndinterceptsStatusPasses \
-  +g_cmndinterceptsStatusPasses
+  +cmndinterceptsGetRepoStatsPass() \
+  +cmndinterceptsGetRepoStatsPass()
+
+g_cmndinterceptsExtraRepo1ThroughStatusNoChangesPasses = \
+  g_cmndinterceptsDumpDepsXMLFile \
+  +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+  +cmndinterceptsGetRepoStatsPass(numCommits="0")
 
 g_cmndinterceptsExtraRepo1DoAllThroughTest = \
   g_cmndinterceptsExtraRepo1ThroughStatusPasses \
@@ -1125,29 +1134,31 @@ g_cmndinterceptsExtraRepo1DoAllThroughTest = \
   +g_cmndinterceptsSendBuildTestCaseEmail
 
 g_cmndinterceptsExtraRepo1TrilinosChangesDoAllThroughTest = \
-  g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+  g_cmndinterceptsDumpDepsXMLFile \
+  +cmndinterceptsGetRepoStatsPass() \
+  +cmndinterceptsGetRepoStatsPass(numCommits="0") \
   +g_cmndinterceptsPullOnlyPasses \
   +g_cmndinterceptsPullOnlyPasses \
   +g_cmndinterceptsDiffOnlyPasses \
-  +g_cmndinterceptsDiffOnlyNoChangesPasses \
   +g_cmndinterceptsConfigBuildTestPasses \
   +g_cmndinterceptsSendBuildTestCaseEmail
 
 g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllThroughTest = \
-  g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+  g_cmndinterceptsDumpDepsXMLFile \
+  +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+  +cmndinterceptsGetRepoStatsPass() \
   +g_cmndinterceptsPullOnlyPasses \
   +g_cmndinterceptsPullOnlyPasses \
-  +g_cmndinterceptsDiffOnlyNoChangesPasses \
   +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
   +g_cmndinterceptsConfigBuildTestPasses \
   +g_cmndinterceptsSendBuildTestCaseEmail
 
 g_cmndinterceptsExtraRepo1NoChangesDoAllThroughTest = \
-  g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+  g_cmndinterceptsDumpDepsXMLFile \
+  +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+  +cmndinterceptsGetRepoStatsPass(numCommits="0") \
   +g_cmndinterceptsPullOnlyPasses \
   +g_cmndinterceptsPullOnlyPasses \
-  +g_cmndinterceptsDiffOnlyNoChangesPasses \
-  +g_cmndinterceptsDiffOnlyNoChangesPasses \
   +g_cmndinterceptsConfigBuildTestPasses \
   +g_cmndinterceptsSendBuildTestCaseEmail
 
@@ -1155,53 +1166,37 @@ g_cmndinterceptsExtraRepo1DoAllUpToPush = \
   g_cmndinterceptsExtraRepo1DoAllThroughTest \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmndinterceptsFinalPullRebasePasses \
-  +g_cmnginterceptsEgLogCmnds \
+  +g_cmnginterceptsGitLogCmnds \
   +g_cmndinterceptsAmendCommitPasses \
-  +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses \
-  +g_cmndinterceptsLogCommitsPasses \
-  +g_cmndinterceptsLogCommitsPasses
+  +g_cmnginterceptsGitLogCmnds \
+  +g_cmndinterceptsAmendCommitPasses 
 
 g_cmndinterceptsExtraRepo1TrilinosChangesDoAllUpToPush = \
   g_cmndinterceptsExtraRepo1TrilinosChangesDoAllThroughTest \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmndinterceptsFinalPullRebasePasses \
-  +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses \
-  +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses \
-  +g_cmndinterceptsLogCommitsPasses \
-  +g_cmndinterceptsLogCommitsPasses
+  +g_cmnginterceptsGitLogCmnds \
+  +g_cmndinterceptsAmendCommitPasses
 
 g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllUpToPush = \
   g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllThroughTest \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmndinterceptsFinalPullRebasePasses \
-  +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses \
-  +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses \
-  +g_cmndinterceptsLogCommitsPasses \
-  +g_cmndinterceptsLogCommitsPasses
+  +g_cmnginterceptsGitLogCmnds \
+  +g_cmndinterceptsAmendCommitPasses
 
 g_cmndinterceptsExtraRepo1NoChangesDoAllUpToPush = \
   g_cmndinterceptsExtraRepo1NoChangesDoAllThroughTest \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmndinterceptsFinalPullRebasePasses \
-  +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses \
-  +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses \
-  +g_cmndinterceptsLogCommitsPasses \
-  +g_cmndinterceptsLogCommitsPasses
 
 g_expectedRegexUpdatePasses = \
-  "Update passed!\n" \
+  "Pull passed!\n" \
 
 g_expectedRegexUpdateWithBuildCasePasses = \
-  "Update passed!\n" \
-  "The update passed!\n" \
-  "Update: Passed\n"
+  "Pull passed!\n" \
+  "The pull passed!\n" \
+  "Pull: Passed\n"
 
 g_expectedRegexConfigPasses = \
   "Full package enable list:.*Teuchos.*\n" \
@@ -1263,10 +1258,17 @@ def create_checkin_test_case_dir(testName, verbose=False):
 # Main unit test driver
 def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
   expectPass, passRegexStrList, filePassRegexStrList=None, mustHaveCheckinTestOut=True, \
-  failRegexStrList=None, fileFailRegexStrList=None, envVars=[], inPathGit=True
+  failRegexStrList=None, fileFailRegexStrList=None, envVars=[], inPathGit=True, \
+  grepForFinalPassFailStr=True \
   ):
 
   verbose = g_verbose
+
+  if grepForFinalPassFailStr:
+    if expectPass:
+      passRegexStrList += "REQUESTED ACTIONS: PASSED\n"
+    else:
+      passRegexStrList += "REQUESTED ACTIONS: FAILED\n"
 
   passRegexList = passRegexStrList.split('\n')
 
@@ -1384,10 +1386,10 @@ def g_test_do_all_default_builds_mpi_debug_pass(testObject, testName):
     "--make-options=-j3 --ctest-options=-j5 --default-builds=MPI_DEBUG --do-all",
     \
     g_cmndinterceptsDumpDepsXMLFile \
-    +g_cmndinterceptsCurrentBranch \
     +g_cmndinterceptsPullPasses \
     +g_cmndinterceptsConfigBuildTestPasses \
     +g_cmndinterceptsSendBuildTestCaseEmail \
+    +g_cmndinterceptsLogCommitsPasses \
     +g_cmndinterceptsSendFinalEmail \
     ,
     \
@@ -1413,11 +1415,21 @@ def g_test_do_all_default_builds_mpi_debug_pass(testObject, testName):
 
 
 def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexStrList, \
-  fileFailRegexStrList=[], modifiedFilesStr="", extraPassRegexStr="" \
+  fileFailRegexStrList=[], modifiedFilesStr="", extraPassRegexStr="", doGitDiff=True \
   ):
 
-  if not modifiedFilesStr:
+  if modifiedFilesStr == "" :
     modifiedFilesStr = "M\tpackages/teuchos/CMakeLists.txt"
+    modifiedFilesPorcelainStr = " M packages/teuchos/CMakeLists.txt"
+  else:
+    modifiedFilesStr = "M\t"+modifiedFilesStr
+    modifiedFilesPorcelainStr = " M "+modifiedFilesStr
+
+  if doGitDiff:
+    gitDiffCmnd= \
+      "IT: git diff --name-status origin/currentbranch; 0; '"+modifiedFilesStr+"'\n"
+  else:
+    gitDiffCmnd=""
 
   checkin_test_run_case(
     \
@@ -1430,8 +1442,8 @@ def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexS
     ,
     \
     g_cmndinterceptsDumpDepsXMLFile \
-    +g_cmndinterceptsCurrentBranch \
-    +"IT: git diff --name-status origin/currentbranch; 0; '"+modifiedFilesStr+"'\n" \
+    +cmndinterceptsGetRepoStatsPass(modifiedFilesPorcelainStr) \
+    +gitDiffCmnd \
     +g_cmndinterceptsConfigPasses \
     ,
     \
@@ -1448,7 +1460,7 @@ def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexS
 
 
 def checkin_test_configure_enables_test(testObject, testName, optionsStr, regexListStr, \
-  notRegexListStr="", modifiedFilesStr="", extraPassRegexStr="" \
+  notRegexListStr="", modifiedFilesStr="", extraPassRegexStr="", doGitDiff=True \
   ):
   checkin_test_configure_test(
      testObject,
@@ -1458,6 +1470,7 @@ def checkin_test_configure_enables_test(testObject, testName, optionsStr, regexL
      [("MPI_DEBUG/do-configure", notRegexListStr)],
      modifiedFilesStr,
      extraPassRegexStr,
+     doGitDiff
      )
 
 
@@ -1493,11 +1506,11 @@ def  g_test_st_extra_builds_st_do_all_pass(testObject, testName):
     ,
     \
     g_cmndinterceptsDumpDepsXMLFile \
-    +g_cmndinterceptsCurrentBranch \
     +g_cmndinterceptsPullPasses \
     +g_cmndinterceptsSendBuildTestCaseEmail \
     +g_cmndinterceptsConfigBuildTestPasses \
     +g_cmndinterceptsSendBuildTestCaseEmail \
+    +g_cmndinterceptsLogCommitsPasses \
     +g_cmndinterceptsSendFinalEmail \
     ,
     \
@@ -1532,11 +1545,13 @@ class test_checkin_test(unittest.TestCase):
       "", # No shell commands!
       True,
       "checkin-test.py \[OPTIONS\]\n" \
-      "Quickstart\:\n" \
-      "Detailed Documentation:\n" \
+      "QUICKSTART\n" \
+      "DETAILED DOCUMENTATION\n" \
       ".*--show-defaults.*\n" \
       ,
-      mustHaveCheckinTestOut=False
+      mustHaveCheckinTestOut=False \
+      ,
+      grepForFinalPassFailStr=False \
       )
     # Help should not write the checkin-test.out file!
     self.assertEqual(
@@ -1559,7 +1574,9 @@ class test_checkin_test(unittest.TestCase):
       +"Loading project configuration from\n" \
       ,
       mustHaveCheckinTestOut=False,
-      envVars=["TRIBITS_CHECKIN_TEST_DEBUG_DUMP=ON"]
+      envVars=["TRIBITS_CHECKIN_TEST_DEBUG_DUMP=ON"] \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -1573,7 +1590,9 @@ class test_checkin_test(unittest.TestCase):
       True,
       "Script: checkin-test.py\n" \
       ,
-      mustHaveCheckinTestOut=False
+      mustHaveCheckinTestOut=False \
+      ,
+      grepForFinalPassFailStr=False \
       )
     # Help should not write the checkin-test.out file!
     self.assertEqual(
@@ -1594,7 +1613,6 @@ class test_checkin_test(unittest.TestCase):
       +" --execute-on-ready-to-push=\"ssh -q godel /some/dir/some_command.sh &\"",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
@@ -1606,7 +1624,10 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       True,
-      \
+      "[|] ID [|] Repo Dir            [|] Branch        [|] Tracking Branch      [|] C [|] M [|] [?] [|]\n" \
+      "[|]  0 [|] MockTrilinos [(]Base[)] [|] currentbranch [|] origin/currentbranch [|] 4 [|]   [|]   [|]\n" \
+      "enable-packages=.. or --enable-all-packages=.auto. => git diffs w.r.t. tracking branch .will. be needed to look for changed files!\n" \
+      "Need git diffs w.r.t. tracking branch so all repos must be on a branch and have a tracking branch!\n" \
       "'': Pulled changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
       +g_expectedRegexUpdateWithBuildCasePasses \
@@ -1686,7 +1707,9 @@ class test_checkin_test(unittest.TestCase):
       \
       "Error, the .git. command is not in your path. ./usr/bin/which: no git in .path1:path2:path3.." \
       ,
-      inPathGit=False
+      inPathGit=False \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -1706,10 +1729,11 @@ class test_checkin_test(unittest.TestCase):
       +" --execute-on-ready-to-push=\"ssh -q godel /some/dir/some_command.sh &\"",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -1729,6 +1753,41 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
+  def test_local_do_all_detached_head_pass(self):
+    checkin_test_run_case(
+      \
+      self,
+      \
+      "local_do_all_detached_head_pass",
+      \
+      "--make-options=-j3 --ctest-options=-j5 --default-builds=MPI_DEBUG" \
+      +" --enable-all-packages=off --enable-packages=Teuchos --no-enable-fwd-packages" \
+      +" --local-do-all" \
+      ,
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass(branch="HEAD") \
+      +g_cmndinterceptsConfigBuildTestPasses \
+      +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      "enable-packages!=.. and --enable-all-packages=.off. => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+      +"No need for repos to be on a branch with a tracking branch!\n" \
+      +"Skipping all pulls on request!\n" \
+      +g_expectedRegexConfigPasses \
+      +g_expectedRegexBuildPasses \
+      +g_expectedRegexTestPasses \
+      +"0) MPI_DEBUG => passed: passed=100,notpassed=0\n" \
+      +"1) SERIAL_RELEASE => Test case SERIAL_RELEASE was not run! => Does not affect push readiness!\n" \
+      +g_expectedCommonOptionsSummary \
+      +"A current successful pull does \*not\* exist => Not ready for final push!\n" \
+      +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
+      +"^NOT READY TO PUSH: Trilinos:\n" \
+      )
+
+
   def test_do_all_default_builds_mpi_debug_test_fail_force_push_pass(self):
     checkin_test_run_case(
       \
@@ -1740,7 +1799,6 @@ class test_checkin_test(unittest.TestCase):
       " --do-all --force-push --push",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildPasses \
       +"IT: ctest -j5; 1; '80% tests passed, 20 tests failed out of 100'\n" \
@@ -1786,9 +1844,9 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +"FT: rm -rf MPI_DEBUG\n" \
       +g_cmndinterceptsPullPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -1824,12 +1882,13 @@ class test_checkin_test(unittest.TestCase):
       " --enable-packages=Teuchos --configure", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +"FT: rm CMakeCache.txt\n" \
       +"FT: rm -rf CMakeFiles\n" \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -1856,7 +1915,6 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
@@ -1886,9 +1944,8 @@ class test_checkin_test(unittest.TestCase):
       " --abort-gracefully-if-no-enables --do-all --push",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPullPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +g_cmndinterceptsPullOnlyPasses \
       ,
       \
       True,
@@ -1926,7 +1983,6 @@ class test_checkin_test(unittest.TestCase):
       +" --do-all --no-append-test-results --push",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
@@ -1962,7 +2018,6 @@ class test_checkin_test(unittest.TestCase):
       +" --do-all --no-rebase --push",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
@@ -2010,16 +2065,22 @@ class test_checkin_test(unittest.TestCase):
       " --extra-builds=MPI_DEBUG_ST --enable-packages=Stalix --configure", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
       True,
       \
+      "[|] ID [|] Repo Dir             [|] Branch        [|] Tracking Branch      [|] C [|] M [|] [?] [|]\n" \
+      "[|]  0 [|] MockTrilinos [(]Base[)]  [|] currentbranch [|] origin/currentbranch [|] 4 [|]   [|]   [|]\n" \
+      "[|]  1 [|] preCopyrightTrilinos [|] currentbranch [|] origin/currentbranch [|] 4 [|]   [|]   [|]\n" \
       "-extra-repos=.preCopyrightTrilinos.\n" \
       +"Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \
@@ -2043,11 +2104,14 @@ class test_checkin_test(unittest.TestCase):
       "--extra-repos=preCopyrightTrilinos --allow-no-pull --default-builds=MPI_DEBUG --configure", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2079,6 +2143,8 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1DoAllUpToPush \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -2093,10 +2159,10 @@ class test_checkin_test(unittest.TestCase):
       +"'': Pulled changes from this repo!\n" \
       +".preCopyrightTrilinos.: Pulled changes from this repo!\n" \
       +"pullInitial.preCopyrightTrilinos.out\n" \
-      +"Update passed!\n"\
+      +"Pull passed!\n"\
       +"All of the tests ran passed!\n" \
       +"pullFinal.preCopyrightTrilinos.out\n" \
-      +"Final update passed!\n" \
+      +"Final pull passed!\n" \
       +"commitFinalBody.preCopyrightTrilinos.out\n" \
       +"commitFinal.preCopyrightTrilinos.out\n" \
       +"push.preCopyrightTrilinos.out\n" \
@@ -2121,15 +2187,16 @@ class test_checkin_test(unittest.TestCase):
       "--extra-repos=preCopyrightTrilinos --pull --extra-pull-from=somemachine:someotherbranch", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
       +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2157,6 +2224,7 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1TrilinosChangesDoAllUpToPush \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -2165,7 +2233,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "==> ..: Has modified files!\n" \
       +"==> .preCopyrightTrilinos.: Does .not. have any modified files!\n" \
-      +"Skipping push to .preCopyrightTrilinos. because there are no changes!\n" \
+      +"Skipping push to .preCopyrightTrilinos. because there are no commits!\n" \
       +"Push passed!\n" \
       +"DID PUSH: Trilinos:\n" \
       +"REQUESTED ACTIONS: PASSED\n" \
@@ -2188,6 +2256,7 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllUpToPush \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -2196,7 +2265,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "==> ..: Does .not. have any modified files!\n" \
       +"==> .preCopyrightTrilinos.: Has modified files!\n" \
-      +"Skipping push to .. because there are no changes!\n" \
+      +"Skipping push to .. because there are no commits!\n" \
       +"Push passed!\n" \
       +"DID PUSH: Trilinos:\n" \
       +"REQUESTED ACTIONS: PASSED\n" \
@@ -2216,11 +2285,13 @@ class test_checkin_test(unittest.TestCase):
       \
       "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates --do-all --pull", \
       \
-      g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
+      +g_cmndinterceptsLogCommitsPasses \
       ,
       \
       True,
@@ -2252,13 +2323,15 @@ class test_checkin_test(unittest.TestCase):
       +" --extra-pull-from=machine:master --do-all --pull" \
       ,
       \
-      g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
+      +g_cmndinterceptsLogCommitsPasses \
       ,
       \
       True,
@@ -2290,13 +2363,15 @@ class test_checkin_test(unittest.TestCase):
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
-      g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2305,7 +2380,7 @@ class test_checkin_test(unittest.TestCase):
       "Pulled changes from this repo!\n" \
       +"Did not pull any changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
-      +"Update passed!\n" \
+      +"Pull passed!\n" \
       +"NOT READY TO PUSH\n" \
       ,
       \
@@ -2325,13 +2400,15 @@ class test_checkin_test(unittest.TestCase):
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
-      g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2340,7 +2417,7 @@ class test_checkin_test(unittest.TestCase):
       "Pulled changes from this repo!\n" \
       +"Did not pull any changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
-      +"Update passed!\n" \
+      +"Pull passed!\n" \
       +"NOT READY TO PUSH\n" \
       ,
       \
@@ -2360,13 +2437,15 @@ class test_checkin_test(unittest.TestCase):
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
-      g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2375,7 +2454,7 @@ class test_checkin_test(unittest.TestCase):
       "Pulled changes from this repo!\n" \
       +"Did not pull any changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
-      +"Update passed!\n" \
+      +"Pull passed!\n" \
       +"NOT READY TO PUSH\n" \
       ,
       \
@@ -2395,13 +2474,15 @@ class test_checkin_test(unittest.TestCase):
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
-      g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2410,7 +2491,7 @@ class test_checkin_test(unittest.TestCase):
       "Pulled changes from this repo!\n" \
       +"Did not pull any changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
-      +"Update passed!\n" \
+      +"Pull passed!\n" \
       +"NOT READY TO PUSH\n" \
       ,
       \
@@ -2429,11 +2510,9 @@ class test_checkin_test(unittest.TestCase):
       "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-to-push" \
         +" --do-all --pull", \
       \
-      g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+      g_cmndinterceptsExtraRepo1ThroughStatusNoChangesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       ,
       \
       True,
@@ -2477,13 +2556,14 @@ class test_checkin_test(unittest.TestCase):
       " --extra-builds=MPI_DEBUG_ST --enable-packages=Stalix --pull", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2530,16 +2610,18 @@ class test_checkin_test(unittest.TestCase):
       " --extra-builds=MPI_DEBUG_ST --pull", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsDiffOnlyPassesExtraTrilinosRepo \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2577,18 +2659,16 @@ class test_checkin_test(unittest.TestCase):
       " --default-builds=MPI_DEBUG --pull --configure", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
-      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
       +"IT: git diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2615,7 +2695,7 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_file_3_continuous_do_all_push(self):
+  def test_extra_repo_file_3_continuous_commits_but_no_diff_do_all_push(self):
 
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.gold.xml"
 
@@ -2634,9 +2714,8 @@ class test_checkin_test(unittest.TestCase):
       " --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
@@ -2645,13 +2724,14 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsFinalPullRebasePasses \
       +g_cmndinterceptsFinalPullRebasePasses \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +g_cmndinterceptsAmendCommitPasses \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +g_cmndinterceptsAmendCommitPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
-      +"IT: git push; 0; 'push passes'\n" \
+      +g_cmndinterceptsPushOnlyPasses \
+      +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2662,13 +2742,14 @@ class test_checkin_test(unittest.TestCase):
       +"Modified file: .packages/teuchos/extrastuff/ExtraTeuchosStuff.hpp.\n" \
       +"=> Enabling .Teuchos.!\n" \
       +"Full package enable list: .Teuchos.\n" \
-      +"Skipping push to .. because there are no changes!\n" \
       +"push.ExtraTeuchosRepo.out\n" \
       ,
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
       )
-
+    # NOTE: Above, the base repo has local commits but no modified files.
+    # This is a rare situation but it does happen in real practice from time
+    # to time.  Therefore, this is a valuable test case.
 
   def test_extra_repo_file_4_continuous_pull_configure(self):
 
@@ -2687,11 +2768,10 @@ class test_checkin_test(unittest.TestCase):
       " --default-builds=MPI_DEBUG --pull --configure", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -2702,6 +2782,10 @@ class test_checkin_test(unittest.TestCase):
       +"IT: git diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2757,8 +2841,12 @@ class test_checkin_test(unittest.TestCase):
       "MockTrilinos/packages/TriKota/Dakota\n" \
       "Error, the command ..*cmake .*TribitsGetExtraReposForCheckinTest.cmake\n" \
       ,
-      mustHaveCheckinTestOut=False
+      mustHaveCheckinTestOut=False \
+      ,
+      grepForFinalPassFailStr=False \
       )
+    # NOTE: Above, this fails because Dakota listed as a Nightly is missing.
+    # This aborts the script with the exception.
 
 
   def test_extra_repo_file_project_continuous_extra_repos_pull(self):
@@ -2779,13 +2867,14 @@ class test_checkin_test(unittest.TestCase):
       " --pull", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2824,7 +2913,9 @@ class test_checkin_test(unittest.TestCase):
       "ERROR! Skipping missing extra repo .MissingRepo. since\n" \
       "Error, the command ..*cmake .*TribitsGetExtraReposForCheckinTest.cmake\n" \
       ,
-      mustHaveCheckinTestOut=False
+      mustHaveCheckinTestOut=False \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -2845,13 +2936,14 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos-type=Continuous --ignore-missing-extra-repos --pull" , \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2875,8 +2967,7 @@ class test_checkin_test(unittest.TestCase):
 #      "--extra-repos-file=default --pull --configure", \
 #      \
 #      "IT: .*cmake .+ -P .+/TribitsDumpDepsXmlScript.cmake; 0; 'dump XML file passed'\n" \
-#      +g_cmndinterceptsCurrentBranch \
-#      +g_cmndinterceptsDiffOnlyPasses \
+##      +g_cmndinterceptsDiffOnlyPasses \
 #      ,
 #      \
 #      True,
@@ -2900,17 +2991,19 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusChangedButNotUpdatedPasses \
+      +cmndinterceptsGetRepoStatsPass(changedFile=" M somefile") \
+      +"IT: git status; 0; 'Git status returned changed but not updated'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
       False,
       \
-      "ERROR: There are changed unstaged uncommitted files => cannot continue!\n" \
+      "ERROR: There are changed uncommitted files => cannot continue!\n" \
+      +"Git status returned changed but not updated\n" \
       +"No changes were pulled!\n" \
       +"Skipping getting list of modified files because pull failed!\n" \
-      +"Not running any build/test cases because the update (pull) failed!\n" \
+      +"Not running any build/test cases because the pull failed!\n" \
       +"  => A PUSH IS .NOT. READY TO BE PERFORMED!\n" \
       +"INITIAL PULL FAILED\n" \
       +"To find out more about this failure, grep the .checkin-test.out. log\n" \
@@ -3081,7 +3174,7 @@ class test_checkin_test(unittest.TestCase):
       "", # --enable-all-packages=auto
       "\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n" \
       +"\-DTrilinos_ENABLE_TrilinosFramework:BOOL=ON\n",
-      modifiedFilesStr="M\tcmake/utils/AppendSet.cmake",
+      modifiedFilesStr="cmake/utils/AppendSet.cmake",
       )
 
 
@@ -3091,7 +3184,7 @@ class test_checkin_test(unittest.TestCase):
       "enable_all_packages_auto",
       "--enable-all-packages=auto",
       "\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n",
-      modifiedFilesStr="M\tCMakeLists.txt", # Will not trigger TrilinosFramework!
+      modifiedFilesStr="CMakeLists.txt", # Will not trigger TrilinosFramework!
       extraPassRegexStr="Modifed file: .CMakeLists.txt.\n"\
       +"Enabling all Trilinos packages!\n",
       )
@@ -3103,12 +3196,15 @@ class test_checkin_test(unittest.TestCase):
       "enable_all_packages_on",
       "--enable-all-packages=on",
       "\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n",
-      modifiedFilesStr = "M\tdummy.txt", # Will not trigger any enables!
+      modifiedFilesStr = "dummy.txt", # Will not trigger any enables!
       extraPassRegexStr=\
-        "Enabling all packages on request since --enable-all-packages=on\n"\
+        "enable-all-packages=on => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+        "No need for repos to be on a branch with a tracking branch!\n" \
+        +"Enabling all packages on request since --enable-all-packages=on\n"\
         +"Skipping detection of changed packages since --enable-all-packages=on\n"\
         +"cmakePkgOptions: ..-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON., .-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON., .-DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON..\n"\
         ,
+      doGitDiff=False \
       )
 
 
@@ -3119,7 +3215,7 @@ class test_checkin_test(unittest.TestCase):
       "--enable-all-packages=off",
       "\-DTrilinos_ENABLE_TrilinosFramework:BOOL=ON\n",
       notRegexListStr="\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n",
-      modifiedFilesStr="M\tcmake/utils/AppendSet.cmake",
+      modifiedFilesStr="cmake/utils/AppendSet.cmake",
       )
 
 
@@ -3135,8 +3231,8 @@ class test_checkin_test(unittest.TestCase):
       "--default-builds=MPI_DEBUG --pull",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3150,6 +3246,192 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
+  def test_default_builds_mpi_debug_enable_all_packages_on_pull_only(self):
+    checkin_test_run_case(
+      self,
+      \
+      "default_builds_mpi_debug_enable_all_packages_on_pull_only",
+      \
+      "--default-builds=MPI_DEBUG --enable-all-packages=on --pull",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +g_cmndinterceptsStatusPullPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      g_expectedRegexUpdatePasses \
+      +"enable-all-packages=on => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+      +"Doing a pull so all repos must be on a branch and have a tracking branch!\n" \
+      +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
+      +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
+      )
+
+
+  def test_detached_head_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "detached_head_fail",
+      \
+      "--default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass(branch="HEAD") \
+      ,
+      \
+      False,
+      \
+      "Need git diffs w.r.t. tracking branch so all repos must be on a branch and have a tracking branch!\n" \
+      +"Error, the base repo is in a detached head state which is not allowed in this case!\n"
+      )
+
+
+  def test_missing_tracking_branch_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "missing_tracking_branch_fail",
+      \
+      "--default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass() \
+      ,
+      \
+      False,
+      \
+      "Need git diffs w.r.t. tracking branch so all repos must be on a branch and have a tracking branch!\n" \
+      +"Error, the base repo is not on a tracking branch which is not allowed in this case!\n"
+      )
+
+
+  def test_extra_repo_detached_head_0_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "extra_repo_detached_head_0_fail",
+      \
+      "--extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass(branch="HEAD") \
+      +cmndinterceptsGetRepoStatsPass() \
+      ,
+      \
+      False,
+      \
+      "Error, the base repo is in a detached head state which is not allowed in this case!\n"
+      )
+
+
+  def test_extra_repo_detached_head_1_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "extra_repo_detached_head_0_fail",
+      \
+      "--extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass(branch="HEAD") \
+      ,
+      \
+      False,
+      \
+      "Error, the repo .preCopyrightTrilinos. is in a detached head state which is not allowed in this case!\n"
+      )
+
+
+  def test_extra_repo_missing_tracking_branch_0_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "extra_repo_missing_tracking_branch_0_fail",
+      \
+      "--extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass() \
+      +cmndinterceptsGetRepoStatsPass() \
+      ,
+      \
+      False,
+      \
+      "Error, the base repo is not on a tracking branch which is not allowed in this case!\n"
+      )
+
+
+  def test_extra_repo_missing_tracking_branch_1_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "extra_repo_missing_tracking_branch_0_fail",
+      \
+      "--extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass() \
+      ,
+      \
+      False,
+      \
+      "Error, the repo .preCopyrightTrilinos. is not on a tracking branch which is not allowed in this case!\n"
+      )
+
+
+  def test_default_builds_mpi_debug_enable_all_packages_off_enable_packages(self):
+    checkin_test_run_case(
+      self,
+      \
+      "default_builds_mpi_debug_enable_all_packages_off_enable_packages",
+      \
+      "--default-builds=MPI_DEBUG --enable-all-packages=off --enable-packages=Teuchos --allow-no-pull",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      "enable-packages!=.. and --enable-all-packages=.off. => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+      +"No need for repos to be on a branch with a tracking branch!\n" \
+      +"Skipping getting list of modified files because not needed!\n" \
+      +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
+      +"NOT READY TO PUSH:\n" \
+      )
+
+
+  def test_default_builds_mpi_debug_enable_all_packages_on_push_only(self):
+    checkin_test_run_case(
+      self,
+      \
+      "default_builds_mpi_debug_enable_all_packages_on_push_only",
+      \
+      "--default-builds=MPI_DEBUG --enable-all-packages=on --push",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      False,
+      \
+      "enable-all-packages=on => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+      +"Doing a push so all repos must be on a branch and have a tracking branch!\n" \
+      +"Skipping all pulls on request!\n" \
+      +"No previous successful pull is still current!\n" \
+      +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
+      )
+
+
   def test_default_builds_mpi_debug_pull_skip_push_readiness_check(self):
     checkin_test_run_case(
       self,
@@ -3159,7 +3441,6 @@ class test_checkin_test(unittest.TestCase):
       "--default-builds=MPI_DEBUG --pull --skip-push-readiness-check",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       ,
       \
@@ -3182,10 +3463,10 @@ class test_checkin_test(unittest.TestCase):
       "--pull --extra-pull-from=machine:/repo/dir/repo:master",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsStatusPullPasses \
       +"IT: git pull machine:/repo/dir/repo master; 0; 'git extra pull passed'\n"
       +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3209,13 +3490,14 @@ class test_checkin_test(unittest.TestCase):
       "--extra-pull-from=machine:master",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
       False,
       \
-      "Skipping all updates on request!\n" \
+      "Skipping all pulls on request!\n" \
       +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
       +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       +"^INITIAL PULL FAILED: Trilinos:\n"
@@ -3231,10 +3513,10 @@ class test_checkin_test(unittest.TestCase):
       "--default-builds=MPI_DEBUG --pull --configure",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3260,10 +3542,10 @@ class test_checkin_test(unittest.TestCase):
       "--make-options=-j3 --default-builds=MPI_DEBUG --pull --configure --build",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3337,6 +3619,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "Error, the extra build configuration file SERIAL_DEBUG_BOOST_TRACING.config" \
       +" does not exit!\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -3358,7 +3642,7 @@ class test_checkin_test(unittest.TestCase):
       +"-DTeuchos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON\n" \
       )
 
-    modifiedFilesStr = "M\tpackages/teuchos/CMakeLists.txt"
+    modifiedFilesStr = "packages/teuchos/CMakeLists.txt"
 
     checkin_test_run_case(
       \
@@ -3372,7 +3656,6 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
@@ -3410,7 +3693,7 @@ class test_checkin_test(unittest.TestCase):
       +"-DTeuchos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON\n" \
       )
 
-    modifiedFilesStr = "M\tpackages/teuchos/CMakeLists.txt"
+    modifiedFilesStr = "packages/teuchos/CMakeLists.txt"
 
     checkin_test_run_case(
       \
@@ -3424,7 +3707,6 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
@@ -3465,6 +3747,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "WARNING: --ss-extra-builds is deprecated!  Use --st-extra-builds instead!\n" \
       +"ERROR: Can.t set deprecated --ss-extra-builds and --st-extra-builds together!\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -3491,8 +3775,7 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +"IT: git diff --name-status origin/currentbranch; 0; 'M\tpackages/stokhos/CMakeLists.txt'\n" \
       +g_cmndinterceptsConfigBuildTestPasses \
@@ -3540,7 +3823,6 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsConfigBuildTestPasses \
@@ -3592,7 +3874,6 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
@@ -3646,8 +3927,8 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       ,
       \
       False,
@@ -3703,7 +3984,6 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsSendBuildTestCaseEmail \
@@ -3751,7 +4031,7 @@ class test_checkin_test(unittest.TestCase):
       "--make-options=-j3 --ctest-options=-j5 --default-builds=MPI_DEBUG --push",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsFinalPushPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -3784,8 +4064,9 @@ class test_checkin_test(unittest.TestCase):
       "--make-options=-j3 --ctest-options=-j5 --default-builds=MPI_DEBUG",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +"IT: git diff --name-status origin/currentbranch; 0; 'git diff passed'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3816,8 +4097,9 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3849,7 +4131,7 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsFinalPushPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -3891,6 +4173,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "Error, invalid package name TEuchos in --enable-packages=TEuchos." \
       "  The valid package names include: .*Teuchos, .*\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -3911,6 +4195,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "Error, invalid package name TEuchos in --disable-packages=TEuchos." \
       "  The valid package names include: .*Teuchos, .*\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -3930,6 +4216,8 @@ class test_checkin_test(unittest.TestCase):
       False,
       \
       "Error, you can not use --do-all and --local-do-all together!\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -3949,6 +4237,8 @@ class test_checkin_test(unittest.TestCase):
       False,
       \
       "Error, you can not use --do-all and --allow-no-pull together!\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -3957,19 +4247,21 @@ class test_checkin_test(unittest.TestCase):
       \
       self,
       \
-      "do_all_default_builds_mpi_debug_pull_fail",
+      "do_all_default_builds_mpi_debug_unstaged_changed_files_fail",
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +"IT: git status; 0; 'Changed but not updated'\n" \
+      +cmndinterceptsGetRepoStatsPass(changedFile="M  newfile") \
+      +"IT: git status; 0; 'Git status returned changed and staged but not committed'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
       ,
       \
       False,
       \
-      "ERROR: There are changed unstaged uncommitted files => cannot continue!\n" \
-      "Update failed!\n" \
-      "Not running any build/test cases because the update (pull) failed!\n" \
+      "ERROR: There are changed uncommitted files => cannot continue!\n" \
+      "Git status returned changed and staged but not committed\n" \
+      "Pull failed!\n" \
+      "Not running any build/test cases because the pull failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       "INITIAL PULL FAILED: Trilinos:\n"
       )
@@ -3980,19 +4272,21 @@ class test_checkin_test(unittest.TestCase):
       \
       self,
       \
-      "do_all_default_builds_mpi_debug_pull_fail",
+      "do_all_default_builds_mpi_debug_staged_uncommitted_files_fail",
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +"IT: git status; 0; 'Changes ready to be committed'\n" \
+      +cmndinterceptsGetRepoStatsPass(changedFile="MM somefile") \
+      +"IT: git status; 0; 'Git status returned both changed and staged but not committed'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
       ,
       \
       False,
       \
-      "ERROR: There are changed staged uncommitted files => cannot continue!\n" \
-      "Update failed!\n" \
-      "Not running any build/test cases because the update (pull) failed!\n" \
+      "ERROR: There are changed uncommitted files => cannot continue!\n" \
+      "Git status returned both changed and staged but not committed\n" \
+      "Pull failed!\n" \
+      "Not running any build/test cases because the pull failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       "INITIAL PULL FAILED: Trilinos:\n"
       )
@@ -4003,19 +4297,20 @@ class test_checkin_test(unittest.TestCase):
       \
       self,
       \
-      "do_all_default_builds_mpi_debug_pull_fail",
+      "do_all_default_builds_mpi_debug_unknown_files_fail",
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +"IT: git status; 0; 'Newly created unknown files'\n" \
+      +cmndinterceptsGetRepoStatsPass(changedFile="?? newfile") \
+      +"IT: git status; 0; 'New unknown files'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
       ,
       \
       False,
       \
       "ERROR: There are newly created uncommitted files => Cannot continue!\n" \
-      "Update failed!\n" \
-      "Not running any build/test cases because the update (pull) failed!\n" \
+      "Pull failed!\n" \
+      "Not running any build/test cases because the pull failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       "INITIAL PULL FAILED: Trilinos:\n"
       )
@@ -4030,15 +4325,15 @@ class test_checkin_test(unittest.TestCase):
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +"IT: git status; 0; '(on master branch)'\n" \
+      +cmndinterceptsGetRepoStatsPass() \
       +"IT: git pull; 1; 'git pull failed'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
       ,
       \
       False,
       \
       "Pull failed!\n" \
-      "Update failed!\n" \
       "Skipping getting list of modified files because pull failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       "INITIAL PULL FAILED: Trilinos:\n"
@@ -4078,9 +4373,10 @@ class test_checkin_test(unittest.TestCase):
       "--default-builds=MPI_DEBUG --configure --allow-no-pull",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4116,9 +4412,9 @@ class test_checkin_test(unittest.TestCase):
       "--do-all --default-builds=MPI_DEBUG",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +"IT: \./do-configure; 1; 'do-configure failed'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4145,11 +4441,11 @@ class test_checkin_test(unittest.TestCase):
       "--do-all --default-builds=MPI_DEBUG --make-options=-j3 --ctest-options=-j5",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +"IT: \./do-configure; 0; 'do-configure passed'\n" \
       +"IT: make -j3; 1; 'make filed'\n" \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4177,12 +4473,12 @@ class test_checkin_test(unittest.TestCase):
       "--do-all --default-builds=MPI_DEBUG --make-options=-j3 --ctest-options=-j5",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +"IT: \./do-configure; 0; 'do-configure passed'\n" \
       +"IT: make -j3; 0; 'make passed'\n" \
       +"IT: ctest -j5; 1; '80% tests passed, 20 tests failed out of 100.\n" \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,      \
       False,
@@ -4213,12 +4509,11 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +"IT: git pull && git rebase origin/currentbranch; 1; 'final git pull FAILED'\n" \
-      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,      \
       False,
@@ -4230,7 +4525,7 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedCommonOptionsSummary \
       +"A PUSH IS READY TO BE PERFORMED!\n" \
       +"'': Pull failed!\n" \
-      +"Final update failed!\n" \
+      +"Final pull failed!\n" \
       +"Skippng appending test results due to prior errors!\n" \
       +"Not performing push due to prior errors!\n" \
       +"FINAL PULL FAILED: Trilinos:\n" \
@@ -4250,14 +4545,13 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +"IT: git commit --amend -F .*; 1; 'Amending the last commit FAILED'\n" \
-      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4269,7 +4563,7 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedRegexTestPasses \
       +g_expectedCommonOptionsSummary \
       +"A PUSH IS READY TO BE PERFORMED!\n" \
-      +"Final update passed!\n" \
+      +"Final pull passed!\n" \
       +"Attempting to amend the final commmit message ...\n" \
       +"Appending test results to last commit failed!\n" \
       +"Not performing push due to prior errors!\n" \
@@ -4290,14 +4584,13 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +"IT: git commit --amend -F .*; 0; 'Amending the last commit passed'\n" \
-      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
       +"IT: git push; 1; 'push FAILED'\n"
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -4310,7 +4603,7 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedRegexTestPasses \
       +g_expectedCommonOptionsSummary \
       +"A PUSH IS READY TO BE PERFORMED!\n" \
-      +"Final update passed!\n" \
+      +"Final pull passed!\n" \
       +"Appending test results to last commit passed!\n" \
       +"Push failed!\n" \
       +"PUSH FAILED: Trilinos:\n" \
@@ -4329,17 +4622,12 @@ class test_checkin_test(unittest.TestCase):
       " --make-options=-j3 --ctest-options=-j5 --do-all --push",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsNoChangesPullPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
-      +"IT: git cat-file -p HEAD; 0; 'This is the last commit message'\n" \
-      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; ''\n" \
-      +"IT: git log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; ''\n" \
-      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4355,7 +4643,7 @@ class test_checkin_test(unittest.TestCase):
       +"No local commits exit!\n" \
       +"Skipping amending last commit because there are no local commits!\n" \
       +"Attempting to do the push ...\n" \
-      +"Skipping push to .. because there are no changes!\n" \
+      +"Skipping push to .. because there are no commits!\n" \
       +"Push failed because the push was never attempted!\n" \
       +"^PUSH FAILED: Trilinos:\n" \
       )
@@ -4371,11 +4659,11 @@ class test_checkin_test(unittest.TestCase):
       "--make-options=-j3 --ctest-options=-j5 --default-builds=MPI_DEBUG --do-all --push",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +g_cmndinterceptsConfigBuildPasses \
       +"IT: ctest -j5; 0; 'No tests were found!!!'\n" \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4385,7 +4673,7 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedRegexBuildPasses \
       +"No tests failed!\n"\
       +"CTest was invoked but no tests were run!\n"\
-      +"At least one of the actions (update, configure, built, test) failed or was not performed correctly!\n" \
+      +"At least one of the actions (pull, configure, built, test) failed or was not performed correctly!\n" \
        +"0) MPI_DEBUG => FAILED: no tests run\n" \
       +"=> A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       +"^FAILED CONFIGURE/BUILD/TEST: Trilinos:\n" \
@@ -4403,10 +4691,11 @@ class test_checkin_test(unittest.TestCase):
       "--make-options=-j3 --ctest-options=-j5 --default-builds=MPI_DEBUG --local-do-all --push",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4441,8 +4730,8 @@ class test_checkin_test(unittest.TestCase):
       \
       False,
       \
-      "Skipping push to .. because there are no changes!\n" \
-      "Skipping push to .preCopyrightTrilinos. because there are no changes!\n" \
+      "Skipping push to .. because there are no commits!\n" \
+      "Skipping push to .preCopyrightTrilinos. because there are no commits!\n" \
       +"Push failed because the push was never attempted!\n" \
       +"PUSH FAILED: Trilinos:\n" \
       +"REQUESTED ACTIONS: FAILED\n" \
@@ -4465,11 +4754,11 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
       +g_cmndinterceptsPullPasses \
       +"IT: \./do-configure; 1; 'do-configure failed'\n" \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsConfigBuildTestPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4510,6 +4799,8 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -4524,10 +4815,11 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --pull", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyFails \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4555,11 +4847,12 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --pull", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyFails \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4588,12 +4881,13 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --pull --extra-pull-from=ssg:master", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyFails \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4623,13 +4917,14 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --pull --extra-pull-from=ssg:master", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsCurrentBranch \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyFails \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -4702,7 +4997,7 @@ class test_checkin_test(unittest.TestCase):
       "pullFinal.out\n" \
       "pullFinal.preCopyrightTrilinos.out\n" \
       ".preCopyrightTrilinos.: Pull failed!\n" \
-      "Final update failed!\n" \
+      "Final pull failed!\n" \
       "FINAL PULL FAILED: Trilinos:\n" \
       "REQUESTED ACTIONS: FAILED\n" \
       ,
@@ -4725,7 +5020,7 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsExtraRepo1DoAllThroughTest \
       +g_cmndinterceptsFinalPullRebasePasses \
       +g_cmndinterceptsFinalPullRebasePasses \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +g_cmndinterceptsAmendCommitFails \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
@@ -4758,9 +5053,9 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsExtraRepo1DoAllThroughTest \
       +g_cmndinterceptsFinalPullRebasePasses \
       +g_cmndinterceptsFinalPullRebasePasses \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +g_cmndinterceptsAmendCommitPasses \
-      +g_cmnginterceptsEgLogCmnds \
+      +g_cmnginterceptsGitLogCmnds \
       +g_cmndinterceptsAmendCommitFails \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
@@ -4792,6 +5087,8 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1DoAllUpToPush \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsPushOnlyFails \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -4819,6 +5116,8 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1DoAllUpToPush \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsPushOnlyFails \
       +g_cmndinterceptsSendFinalEmail \

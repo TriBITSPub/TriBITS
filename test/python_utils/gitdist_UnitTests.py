@@ -254,6 +254,44 @@ class test_gitdist_getRepoStats(unittest.TestCase):
       os.chdir(testBaseDir)
 
 
+  def test_modified_and_staged_no_tracking_branch(self):
+    try:
+      testDir = createAndMoveIntoTestDir(
+        "gitdist_getRepoStats_all_changed_no_tracking_branch")
+      open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: local_branch\n" \
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+        "MOCK_PROGRAM_RETURN: 55\n" \
+        "MOCK_PROGRAM_OUTPUT: error: blah blahh blah\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+        "MM file1b\n" \
+        " T file2\n" \
+        "MT file2b\n" \
+        " D file3\n" \
+        "MD file3\n" \
+        "?? file4\n" \
+        "?? file5\n" \
+        "?? file5b\n" \
+        " A file6\n" \
+        "A  file6b\n" \
+        " U file7\n" \
+        "U  file7b\n" \
+        "R  file8\n" \
+        )
+      options = GitDistOptions(mockGitPath)
+      repoStats = getRepoStats(options)
+      repoStats_expected = "{branch='local_branch'," \
+        " trackingBranch='', numCommits=''," \
+        " numModified='11', numUntracked='3'}" 
+      self.assertEqual(str(repoStats), repoStats_expected)
+    finally:
+      os.chdir(testBaseDir)
+
+
   def test_all_changed_detached_head(self):
     try:
       testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_detached_head")
