@@ -369,12 +369,14 @@ def filterWarningsGen(lines):
   for line in lines:
     if not line.startswith('warning') and not line.startswith('error'): yield line
 
+
 # Filter warning and error lines from output
 def filterWarnings(lines): 
   g = filterWarningsGen(lines)
   if g is not None: 
     return list(g)
   return g
+
 
 # Get output from command
 def getCmndOutput(cmnd, rtnCode=False):
@@ -762,9 +764,12 @@ def getLocalBranch(options, getCmndOutputFunc):
     options.useGit + " rev-parse --abbrev-ref HEAD",
     rtnCode=True )
   if rtnCode == 0:
-    lines = filterWarnings(resp.strip().splitlines())
-    if lines and len(lines) > 0: 
-      return lines[0].strip()
+    filteredLines = filterWarnings(resp.strip().splitlines())
+    if filteredLines and len(filteredLines) > 0:
+      localBranch = filteredLines[0].strip()
+    else:
+      localBranch = "<AMBIGUOUS-HEAD>"
+    return localBranch
   return ""
 
 

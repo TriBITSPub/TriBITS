@@ -344,7 +344,7 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         )
       options = GitDistOptions(mockGitPath)
       repoStats = getRepoStats(options)
-      repoStats_expected = "{branch=''," \
+      repoStats_expected = "{branch='<AMBIGUOUS-HEAD>'," \
         " trackingBranch='remoterepo/trackingbranch', numCommits='7'," \
         " numModified='2', numUntracked='3'}" 
       self.assertEqual(str(repoStats), repoStats_expected)
@@ -352,7 +352,9 @@ class test_gitdist_getRepoStats(unittest.TestCase):
       os.chdir(testBaseDir)
     # NOTE: Above is a very strange test case.  It is what happens when
     # someone creates a tag called 'HEAD' using the command 'git tag HEAD'
-    # (which was an accident obviously).  See TriBITS #100 for details.
+    # (which was an accident obviously).  But amazingly, 'git rev-parse
+    # --abbrev HEAD' still returns 0 but returns no name!  See TriBITS #100
+    # for details.
 
 
   def test_all_changed_1_author(self):
