@@ -365,6 +365,16 @@ def createAsciiTable(tableData):
 # Helper functions for gitdist
 #
 
+def filterWarningsGen(lines): 
+  for line in lines:
+    if not line.startswith('warning') and not line.startswith('error'): yield line
+
+# Filter warning and error lines from output
+def filterWarnings(lines): 
+  g = filterWarningsGen(lines)
+  if g is not None: 
+    return list(g)
+  return g
 
 # Get output from command
 def getCmndOutput(cmnd, rtnCode=False):
@@ -748,11 +758,13 @@ def repoExistsAndNotExcluded(options, extraRepo, notExtraReposList):
 
 # Get the tracking branch for a repo
 def getLocalBranch(options, getCmndOutputFunc):
-  (branch, rtnCode) = getCmndOutputFunc(
+  (resp, rtnCode) = getCmndOutputFunc(
     options.useGit + " rev-parse --abbrev-ref HEAD",
     rtnCode=True )
   if rtnCode == 0:
-    return branch.strip()
+    lines = filterWarnings(resp.strip().splitlines())
+    if lines and len(lines) > 0: 
+      return lines[0].strip()
   return ""
 
 
@@ -780,7 +792,7 @@ def getNumCommitsWrtTrackingBranch(options, trackingBranch, getCmndOutputFunc):
   numCommits = 0
   summaryLines = summaryLines.strip()
   if summaryLines:
-    for summaryLine in summaryLines.splitlines():
+    for summaryLine in filterWarnings(summaryLines.splitlines()):
       #print "summaryLine = '"+summaryLine+"'"
       numAuthorCommits = int(summaryLine.strip().split()[0].strip())
       #print "numAuthorCommits =", numAuthorCommits
