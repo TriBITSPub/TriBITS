@@ -1016,11 +1016,11 @@ def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile="", \
     "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
 def cmndinterceptsGetRepoStatsNoTrackingBranchPass(modifiedFile="", changedFile="", \
-  branch = "currentbranch"
+  branch = "currentbranch" \
   ):
   return \
     "IT: git rev-parse --abbrev-ref HEAD; 0; '"+branch+"'\n" \
-    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; ''\n" \
+    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 128; ''\n" \
     "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
 g_cmndinterceptsPullOnlyPasses = \

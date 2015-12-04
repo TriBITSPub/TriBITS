@@ -273,13 +273,19 @@ class GitdistOptions:
     self.useGit = useGit
 
 
+# Create a matching version of gitdist.getCmndOutout
+def getCmndOutputForGitDist(cmnd, rtnCode=False):
+  return getCmndOutput(cmnd, rtnCode=rtnCode, throwOnError=False)
+
+
 def getRepoStats(inOptions, gitRepo_inout):
   gitRepoDir = getGitRepoDir(inOptions.srcDir, gitRepo_inout.repoDir)
   gitdistOptions = GitdistOptions(inOptions.git)
   pwd = os.getcwd()
   try:
     os.chdir(gitRepoDir)
-    gitRepo_inout.gitRepoStats = gitdist.getRepoStats(gitdistOptions, getCmndOutput)
+    gitRepo_inout.gitRepoStats = \
+      gitdist.getRepoStats(gitdistOptions, getCmndOutputForGitDist)
   finally:
     os.chdir(pwd)
 
