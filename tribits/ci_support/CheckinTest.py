@@ -1773,6 +1773,12 @@ def getLastCommitMessageStr(inOptions, gitRepo):
   return getLastCommitMessageStrFromRawCommitLogStr(rawLogOutput)[0]
 
 
+def trimLineToLen(lineIn, numChars):
+  if len(lineIn) > numChars:
+    return lineIn[:numChars]
+  return lineIn
+
+
 def getLocalCommitsSummariesStr(inOptions, gitRepo):
 
   # Get the list of local commits other than this one
@@ -1810,7 +1816,8 @@ def getLocalCommitsSummariesStr(inOptions, gitRepo):
   localCommitsStr = \
     "*** Commits for repo "+repoName+":"
   if localCommitsExist:
-    localCommitsStr += ("\n"+rawLocalCommitsStr)
+    for localCommitLine in rawLocalCommitsStr.splitlines():
+      localCommitsStr += ("\n  "+trimLineToLen(rawLocalCommitsStr, 72))
 
   return localCommitsStr
 

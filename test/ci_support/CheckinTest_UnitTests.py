@@ -103,7 +103,27 @@ def assertNotGrepFileForRegexStrList(testObject, testName, fileName, regexStrLis
 
 #############################################################################
 #
-# Test formatMinutesStr
+# Test trimLineToLen()
+#
+#############################################################################
+
+
+class test_trimLineToLen(unittest.TestCase):
+
+  def test_underNumChars(self):
+    self.assertEqual(trimLineToLen("something", 10), "something")
+
+  def test_equalNumChars(self):
+    self.assertEqual(trimLineToLen("something", 9), "something")
+
+  def test_overNumChars(self):
+    self.assertEqual(trimLineToLen("something", 8), "somethin")
+
+
+
+#############################################################################
+#
+# Test formatMinutesStr()
 #
 #############################################################################
 
@@ -146,7 +166,7 @@ class test_formatMinutesStr(unittest.TestCase):
 
 #############################################################################
 #
-# Test formatMinutesStr
+# Test getTimeInMinFromTotalTimeLine()
 #
 #############################################################################
 
@@ -174,7 +194,7 @@ class test_getTimeInMinFromTotalTimeLine(unittest.TestCase):
 
 #############################################################################
 #
-# Test extractPackageEnablesFromChangeStatus
+# Test extractPackageEnablesFromChangeStatus()
 #
 #############################################################################
 
@@ -1638,6 +1658,8 @@ class test_checkin_test(unittest.TestCase):
       +"1) SERIAL_RELEASE => passed: passed=100,notpassed=0\n" \
       +g_expectedCommonOptionsSummary \
       +"=> A PUSH IS READY TO BE PERFORMED!\n" \
+      +"^\*\*\* Commits for repo :\n" \
+      +"^  54321 Only one commit\n" \
       +"mailx .* trilinos-checkin-tests.*\n" \
       +"^DID PUSH: Trilinos:\n" \
       +"Executing final command (ssh -q godel /some/dir/some_command.sh &) since a push is okay to be performed!\n" \
