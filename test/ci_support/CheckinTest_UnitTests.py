@@ -116,8 +116,11 @@ class test_trimLineToLen(unittest.TestCase):
   def test_equalNumChars(self):
     self.assertEqual(trimLineToLen("something", 9), "something")
 
-  def test_overNumChars(self):
-    self.assertEqual(trimLineToLen("something", 8), "somethin")
+  def test_over1NumChars(self):
+    self.assertEqual(trimLineToLen("something", 8), "somethin..")
+
+  def test_over2NumChars(self):
+    self.assertEqual(trimLineToLen("something", 7), "somethi..")
 
 
 
