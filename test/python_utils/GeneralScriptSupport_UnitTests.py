@@ -306,13 +306,14 @@ IT: ./do-configure; 5; ''
       g_sysCmndInterceptor.setFallThroughCmndRegex("echo .+")
       g_sysCmndInterceptor.setInterceptedCmnd("eg log", 0, "good log\n")
       g_sysCmndInterceptor.setInterceptedCmnd("eg frog", 0, "bad frog\n")
-      g_sysCmndInterceptor.setInterceptedCmnd("eg blog", 2, "who cares\n")
+      g_sysCmndInterceptor.setInterceptedCmnd("eg blog1", 2, "who cares\n")
+      g_sysCmndInterceptor.setInterceptedCmnd("eg blog2", 2, "who cares\n")
       g_sysCmndInterceptor.setAllowExtraCmnds(False)
       self.assertEqual(("good log", 0), getCmndOutput("eg log", True, rtnCode=True))
       self.assertEqual(("bad frog", 0), getCmndOutput("eg frog", True, False, rtnCode=True))
       self.assertEqual(("who cares", 2),
-        getCmndOutput("eg blog", True, throwOnError=False, rtnCode=True))
-      self.assertRaises(Exception, getCmndOutput, "eg blog", True)
+        getCmndOutput("eg blog1", True, throwOnError=False, rtnCode=True))
+      self.assertRaises(RuntimeError, getCmndOutput, "eg blog2", True)
     finally:
       g_sysCmndInterceptor.clear()
 

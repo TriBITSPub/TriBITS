@@ -103,7 +103,30 @@ def assertNotGrepFileForRegexStrList(testObject, testName, fileName, regexStrLis
 
 #############################################################################
 #
-# Test formatMinutesStr
+# Test trimLineToLen()
+#
+#############################################################################
+
+
+class test_trimLineToLen(unittest.TestCase):
+
+  def test_underNumChars(self):
+    self.assertEqual(trimLineToLen("something", 10), "something")
+
+  def test_equalNumChars(self):
+    self.assertEqual(trimLineToLen("something", 9), "something")
+
+  def test_over1NumChars(self):
+    self.assertEqual(trimLineToLen("something", 8), "somethin..")
+
+  def test_over2NumChars(self):
+    self.assertEqual(trimLineToLen("something", 7), "somethi..")
+
+
+
+#############################################################################
+#
+# Test formatMinutesStr()
 #
 #############################################################################
 
@@ -146,7 +169,7 @@ class test_formatMinutesStr(unittest.TestCase):
 
 #############################################################################
 #
-# Test formatMinutesStr
+# Test getTimeInMinFromTotalTimeLine()
 #
 #############################################################################
 
@@ -174,7 +197,7 @@ class test_getTimeInMinFromTotalTimeLine(unittest.TestCase):
 
 #############################################################################
 #
-# Test extractPackageEnablesFromChangeStatus
+# Test extractPackageEnablesFromChangeStatus()
 #
 #############################################################################
 
@@ -1016,11 +1039,11 @@ def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile="", \
     "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
 def cmndinterceptsGetRepoStatsNoTrackingBranchPass(modifiedFile="", changedFile="", \
-  branch = "currentbranch"
+  branch = "currentbranch" \
   ):
   return \
     "IT: git rev-parse --abbrev-ref HEAD; 0; '"+branch+"'\n" \
-    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; ''\n" \
+    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 128; ''\n" \
     "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
 g_cmndinterceptsPullOnlyPasses = \
@@ -1638,6 +1661,8 @@ class test_checkin_test(unittest.TestCase):
       +"1) SERIAL_RELEASE => passed: passed=100,notpassed=0\n" \
       +g_expectedCommonOptionsSummary \
       +"=> A PUSH IS READY TO BE PERFORMED!\n" \
+      +"^\*\*\* Commits for repo :\n" \
+      +"^  54321 Only one commit\n" \
       +"mailx .* trilinos-checkin-tests.*\n" \
       +"^DID PUSH: Trilinos:\n" \
       +"Executing final command (ssh -q godel /some/dir/some_command.sh &) since a push is okay to be performed!\n" \
