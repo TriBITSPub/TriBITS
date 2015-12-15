@@ -59,7 +59,7 @@ sourceGitUrlBase_default = "https://github.com/tribitsdevtools/"
 
 # tool default versions
 autoconf_version_default = "2.69"
-cmake_version_default = "3.4.0"
+cmake_version_default = "3.3.2"
 gcc_version_default = "4.8.3"
 mpich_version_default = "3.1.3"
 
@@ -225,6 +225,20 @@ him/her-self and customize it as needed.
 If the user needs more customization, then they can just run with --do-all
 --no-op and see what commands are run to install things and then they can run
 the commands themselves manually and make whatever modifications they need.
+
+NOTE: The actual tool installs are performed using the scripts:
+
+* install-autoconf.py
+* install-cmake.py
+* install-gcc.py
+* install-git.py
+* install-mpich.py
+* install-openmpi.py
+
+More information about what versions are installed, how they are installed,
+etc. is found in these scripts.  Note that some of these scripts apply patches
+for certain versions.  For details, look at the --help output from these
+scripts and look at the implementaion of these scripts.
 """        
 
 
