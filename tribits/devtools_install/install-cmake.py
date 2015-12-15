@@ -102,7 +102,7 @@ class CMakeInstall:
 
   def getExtraHelpStr(self, version):
     return """
-This script builds CMake"""+self.getProductName(version)+""" from source compiled with the
+This script builds """+self.getProductName(version)+""" from source compiled with the
 configured C/C++ compilers in your path.  Note that the provided CMake
 configure script actually builds a local bootstrap copy of CMake first, before
 building the final version of CMake and the rest of the tools that gets
