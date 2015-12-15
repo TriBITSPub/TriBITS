@@ -58,7 +58,7 @@ class test_getCmndLineOptions(unittest.TestCase):
     inOptions = getCmndLineOptions(["--install-dir=/dev_env_base"], True)
     self.assertEqual(inOptions.installDir, "/dev_env_base")
     self.assertEqual(inOptions.sourceGitUrlBase, "https://github.com/tribitsdevtools/")
-    self.assertEqual(inOptions.commonTools, "gitdist,autoconf,cmake,git")
+    self.assertEqual(inOptions.commonTools, "gitdist,autoconf,cmake")
     self.assertEqual(inOptions.compilerToolset, "gcc,mpich")
     self.assertEqual(inOptions.skipOp, False)
     self.assertEqual(inOptions.showDefaults, False)
@@ -73,7 +73,7 @@ class test_getCmndLineOptions(unittest.TestCase):
     inOptions = getCmndLineOptions(
       ["--install-dir=/dev_env_base", "--common-tools=all", "--compiler-toolset=all"],
       True)
-    self.assertEqual(inOptions.commonTools, "gitdist,autoconf,cmake,git")
+    self.assertEqual(inOptions.commonTools, "gitdist,autoconf,cmake")
     self.assertEqual(inOptions.compilerToolset, "gcc,mpich")
 
 
