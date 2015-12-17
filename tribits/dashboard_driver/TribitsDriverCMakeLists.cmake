@@ -70,6 +70,7 @@ set(CMAKE_MODULE_PATH
 
 set(TRIBITS_PYTHON_UTILS_DIR "${TRIBITS_ROOT}/python_utils")
 
+INCLUDE(SetDefaultAndFromEnv)
 include(CTest)
 include(TribitsDriverSupport)
 include(TribitsConfigureCTestCustom)
