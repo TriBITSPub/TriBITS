@@ -4,8 +4,7 @@ configuration = {
     'defaults': {
         '--send-email-to-on-push': 'trilinos-checkin-tests@software.sandia.gov',
         '--enable-packages': 'TriBITS',
-        '--no-rebase': '',
-        '--no-append-test-results': ''
+        '--no-rebase': ''
         },
     # NOTE: The last two options --no-rebase --no-append-test-results ensure
     # that the checkin-test.py script does *not* modify the SHA1s of the local
