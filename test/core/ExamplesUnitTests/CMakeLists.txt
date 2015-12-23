@@ -1572,7 +1572,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
   OVERALL_NUM_MPI_PROCS 1
 
   TEST_0
-    MESSAGE "Copy TribitsExampleProject so that we can copy in ExteranlPkg."
+    MESSAGE "Copy TribitsExampleProject so that we can copy in TargetDefinesPkg."
     CMND cp
     ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
 
