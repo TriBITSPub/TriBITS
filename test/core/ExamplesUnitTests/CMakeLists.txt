@@ -1626,6 +1626,141 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so that we can copy in MixedSharedStaticLibs."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Configure to get the compiler options"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DBUILD_SHARED_LIBS=ON
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_DEBUG=OFF
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "BUILD_SHARED_LIBS=.ON."
+      "Configuring done"
+      "Generating done"
+
+  TEST_2
+    MESSAGE "Copy MixedSharedStaticLibs to base dir."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/MixedSharedStaticLibs
+      TribitsExampleProject/.
+
+  TEST_3
+    MESSAGE "Configure SimpleCxx and MixedSharedStaticLibs"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DTribitsExProj_EXTRA_REPOSITORIES=MixedSharedStaticLibs
+      -DTribitsExProj_ENABLE_SimpleCxx=ON 
+      -DTribitsExProj_ENABLE_MixedSharedStaticLibs=ON 
+      -DTribitsExProj_ENABLE_TESTS=ON
+     .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx MixedSharedStaticLibs 2"
+      "Final set of enabled SE packages:  SimpleCxx MixedSharedStaticLibsSharedOnly MixedSharedStaticLibsStaticOnly MixedSharedStaticLibsStaticExec MixedSharedStaticLibs 5"
+      "Configuring done"
+      "Generating done"
+
+  TEST_4 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target static_only_lib"
+      "Linking CXX shared library libsimplecxx.so"  # Shared because of BULID_SHARED_LIBS=ON
+      "Linking CXX shared library libshared_only_lib.so" # Always shared
+      "Built target shared_only_lib"
+      "Linking CXX static library libstatic_only_lib.a" # Always static
+      "Built target static_only_lib"
+      "Linking CXX executable MixedSharedStaticLibsSharedOnly_test"
+      "Linking CXX executable MixedSharedStaticLibsStaticExec_test"
+  TEST_5 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "MixedSharedStaticLibsSharedOnly_test.* Passed"
+      "MixedSharedStaticLibsStaticExec_test.* Passed"
+      "100% tests passed, 0 tests failed out of 3"
+
+  )
+  # NOTE: The above test make sure that you can build a static library with
+  # TRIBITS_ADD_LIBRARY( ... STATIC ...) in project that is defaulted to use
+  # shared libs with BUILD_SHARED_LIBS=ON.
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so that we can copy in MixedSharedStaticLibs."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Configure to get the compiler options"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DBUILD_SHARED_LIBS=OFF
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_DEBUG=OFF
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "BUILD_SHARED_LIBS=.OFF."
+      "Configuring done"
+      "Generating done"
+
+  TEST_2
+    MESSAGE "Copy MixedSharedStaticLibs to base dir."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/MixedSharedStaticLibs
+      TribitsExampleProject/.
+
+  TEST_3
+    MESSAGE "Configure SimpleCxx and MixedSharedStaticLibs"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DTribitsExProj_EXTRA_REPOSITORIES=MixedSharedStaticLibs
+      -DTribitsExProj_ENABLE_SimpleCxx=ON 
+      -DTribitsExProj_ENABLE_MixedSharedStaticLibs=ON 
+      -DTribitsExProj_ENABLE_TESTS=ON
+     .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx MixedSharedStaticLibs 2"
+      "Final set of enabled SE packages:  SimpleCxx MixedSharedStaticLibsSharedOnly MixedSharedStaticLibsStaticOnly MixedSharedStaticLibsStaticExec MixedSharedStaticLibs 5"
+      "Configuring done"
+      "Generating done"
+
+  TEST_4 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Linking CXX static library libsimplecxx.a"   # Shared because of BULID_SHARED_LIBS=OFF
+      "Linking CXX shared library libshared_only_lib.so" # Always shared
+      "Built target shared_only_lib"
+      "Linking CXX static library libstatic_only_lib.a" # Always static
+      "Built target static_only_lib"
+      "Linking CXX executable MixedSharedStaticLibsSharedOnly_test"
+      "Linking CXX executable MixedSharedStaticLibsStaticExec_test"
+  TEST_5 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "MixedSharedStaticLibsSharedOnly_test.* Passed"
+      "MixedSharedStaticLibsStaticExec_test.* Passed"
+      "100% tests passed, 0 tests failed out of 3"
+
+  )
+  # NOTE: The above test make sure that you can build a shared library with
+  # TRIBITS_ADD_LIBRARY( ... SHARED ...) in project that is defaulted to use
+  # static libs with BUILD_SHARED_LIBS=OFF.
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableWithSubpackagesB
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
