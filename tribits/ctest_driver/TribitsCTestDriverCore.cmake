@@ -160,6 +160,24 @@ ELSE()
     )
 ENDIF()
 
+#
+# QUEUE_ERROR should be called only for errors that are not already reported to
+# the dashboard in some other way. For example, if calling ctest_submit fails,
+# then that failure does NOT show up on the dashboard, so it is appropriate to
+# call QUEUE_ERROR for that case. For a build error or test failure, it is NOT
+# appropriate to call QUEUE_ERROR because those already show up on the
+# dashboard (assuming a good ctest_submit...)
+#
+# When adding more callers of QUEUE_ERROR, just make sure that it does not
+# duplicate an existing/reported dashboard failure.
+#
+
+MACRO(QUEUE_ERROR err_msg)
+  SET(TRIBITS_CTEST_DRIVER_ERROR_QUEUE
+    ${TRIBITS_CTEST_DRIVER_ERROR_QUEUE} "${err_msg}")
+ENDMACRO()
+
+
 
 # Find git
 
@@ -719,24 +737,6 @@ ENDMACRO()
 
 MACRO(INITIALIZE_ERROR_QUEUE)
   SET(TRIBITS_CTEST_DRIVER_ERROR_QUEUE "")
-ENDMACRO()
-
-
-#
-# QUEUE_ERROR should be called only for errors that are not already reported to
-# the dashboard in some other way. For example, if calling ctest_submit fails,
-# then that failure does NOT show up on the dashboard, so it is appropriate to
-# call QUEUE_ERROR for that case. For a build error or test failure, it is NOT
-# appropriate to call QUEUE_ERROR because those already show up on the
-# dashboard (assuming a good ctest_submit...)
-#
-# When adding more callers of QUEUE_ERROR, just make sure that it does not
-# duplicate an existing/reported dashboard failure.
-#
-
-MACRO(QUEUE_ERROR err_msg)
-  SET(TRIBITS_CTEST_DRIVER_ERROR_QUEUE
-    ${TRIBITS_CTEST_DRIVER_ERROR_QUEUE} "${err_msg}")
 ENDMACRO()
 
 
