@@ -290,6 +290,25 @@ def getRepoStats(inOptions, gitRepo_inout):
     os.chdir(pwd)
 
 
+def getReposStats(inOptions, tribitsGitRepos):
+  hasChangesToPush = False
+  repoStatTable = gitdist.RepoStatTable()
+  repoIdx = 0
+  for gitRepo in tribitsGitRepos.gitRepoList():
+    getRepoStats(inOptions, gitRepo)
+    if gitRepo.gitRepoStats.numCommitsInt() > 0:
+      hasChangesToPush = True
+    repoStatTableDirName = getRepoStatTableDirName(inOptions, gitRepo.repoDir)
+    repoStatTable.insertRepoStat(repoStatTableDirName, gitRepo.gitRepoStats, repoIdx)
+    repoIdx += 1
+  print gitdist.createAsciiTable(repoStatTable.getTableData())
+  return hasChangesToPush
+  # NOTE: Above, we could just call 'gitdist dist-repo-status' but by
+  # printing the table here with the actualy gitRepoStat data, we ensure
+  # that it gets collected correctly and that the selection of repos is
+  # exactly the same.
+
+
 def assertRepoHasBranchAndTrackingBranch(inOptions, gitRepo):
   repoName = gitRepo.repoName
   if repoName == "":
@@ -2041,24 +2060,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
     print "*** 2) Get repo status"
     print "***\n"
 
-    hasChangesToPush = False
-    repoStatTable = gitdist.RepoStatTable()
-
-    repoIdx = 0
-    for gitRepo in tribitsGitRepos.gitRepoList():
-      getRepoStats(inOptions, gitRepo)
-      if gitRepo.gitRepoStats.numCommitsInt() > 0:
-        hasChangesToPush = True
-      repoStatTableDirName = getRepoStatTableDirName(inOptions, gitRepo.repoDir)
-      repoStatTable.insertRepoStat(repoStatTableDirName, gitRepo.gitRepoStats, repoIdx)
-      repoIdx += 1
-
-    print gitdist.createAsciiTable(repoStatTable.getTableData())
-
-    # NOTE: Above, we could just call 'gitdist dist-repo-status' but by
-    # printing the table here with the actualy gitRepoStat data, we ensure
-    # that it gets collected correctly and that the selection of repos is
-    # exactly the same.
+    hasChangesToPush = getReposStats(inOptions, tribitsGitRepos)
 
     # Determine if we will need to perform git diffs of 
     if inOptions.enableAllPackages == "on":
@@ -2113,6 +2115,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
     doingAtLeastOnePull = inOptions.doPull
 
     pulledSomeChanges = False
+    pulledSomeExtraChanges = False
 
     if not doingAtLeastOnePull:
 
@@ -2210,6 +2213,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
             inOptions.extraPullFrom )
           if pullGotChanges:
             pulledSomeChanges = True
+            pulledSomeExtraChanges = True
           timings.pull += pullTimings
           if pullRtn != 0:
             print "\nPull failed!\n"
@@ -2221,9 +2225,15 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
     # Given overall status of the pulls and determine if to abort gracefully
     if pulledSomeChanges:
-      print "There where at least some changes pulled!"
+      print "\nThere where at least some changes pulled!"
     else:
-      print "No changes were pulled!"
+      print "\nNo changes were pulled!"
+
+    # Determine if extra changes were pulled and if to get repo status again
+    if pulledSomeExtraChanges:
+      print "\nExtra pull pulled new commits so need to get repo status again ...\n"
+      if getReposStats(inOptions, tribitsGitRepos):
+        hasChangesToPush = True
  
     #
     print "\nDetermine overall pull pass/fail ...\n"

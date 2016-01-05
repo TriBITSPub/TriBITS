@@ -1778,8 +1778,6 @@ class test_checkin_test(unittest.TestCase):
       +"^NOT READY TO PUSH: Trilinos:\n" \
       +"Not executing final command (ssh -q godel /some/dir/some_command.sh &) since a push is not okay to be performed!\n" \
       )
-    # NOTE: In the above scenario, there are no local changes until the
-    # --extra-pull-from pull pulls in commits.
 
 
   def test_local_do_all_detached_head_pass(self):
@@ -2216,12 +2214,14 @@ class test_checkin_test(unittest.TestCase):
       "--extra-repos=preCopyrightTrilinos --pull --extra-pull-from=somemachine:someotherbranch", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +cmndinterceptsGetRepoStatsPass() \
-      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
       +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
+      +cmndinterceptsGetRepoStatsPass(numCommits="1") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="3") \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
@@ -2239,6 +2239,8 @@ class test_checkin_test(unittest.TestCase):
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
       )
+    # NOTE: In the above scenario, there are no local changes until the
+    # --extra-pull-from pull pulls in commits.
 
 
   def test_extra_repo_1_trilinos_changes_do_all_push_pass(self):
@@ -2338,6 +2340,8 @@ class test_checkin_test(unittest.TestCase):
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
       )
+    # NOTE: The above test is the case where that are existing local commits
+    # in the extra repo but no new commits are pulled so the test is aborted.
 
 
   def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_no_updates_passes(self):
@@ -2468,11 +2472,13 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass(numCommits="0") \
-      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
+      +cmndinterceptsGetRepoStatsPass(numCommits="5") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -2505,11 +2511,13 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass(numCommits="0") \
-      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyPasses \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="1") \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -3494,6 +3502,7 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsStatusPullPasses \
       +"IT: git pull machine:/repo/dir/repo master; 0; 'git extra pull passed'\n"
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -4952,6 +4961,8 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyFails \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
