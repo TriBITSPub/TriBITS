@@ -1028,7 +1028,7 @@ class test_TribitsGitRepos(unittest.TestCase):
 g_cmndinterceptsDumpDepsXMLFile = \
   "IT: .*cmake .+ -P .+/TribitsDumpDepsXmlScript.cmake; 0; 'dump XML file passed'\n" \
 
-def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile="", \
+def cmndinterceptsGetRepoStatsPass(changedFile="", \
   branch = "currentbranch", trackingBranch="origin/trackingbranch", \
   numCommits = "4" \
   ):
@@ -1038,7 +1038,7 @@ def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile="", \
     "IT: git shortlog -s HEAD ."+trackingBranch+"; 0; '    "+numCommits+"  John Doe'\n" \
     "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
-def cmndinterceptsGetRepoStatsNoTrackingBranchPass(modifiedFile="", changedFile="", \
+def cmndinterceptsGetRepoStatsNoTrackingBranchPass(changedFile="", \
   branch = "currentbranch" \
   ):
   return \
@@ -1631,7 +1631,7 @@ class test_checkin_test(unittest.TestCase):
       "do_all_push_pass",
       \
       "--make-options=-j3 --ctest-options=-j5" \
-      +" --abort-gracefully-if-no-updates --abort-gracefully-if-no-changes-to-push" \
+      +" --abort-gracefully-if-no-changes-pulled --abort-gracefully-if-no-changes-to-push" \
       +" --do-all --push" \
       +" --execute-on-ready-to-push=\"ssh -q godel /some/dir/some_command.sh &\"",
       \
@@ -1937,7 +1937,7 @@ class test_checkin_test(unittest.TestCase):
       "send_email_only_on_failure_do_all_push_pass",
       \
       "--make-options=-j3 --ctest-options=-j5" \
-      +" --abort-gracefully-if-no-updates --do-all --push" \
+      +" --abort-gracefully-if-no-changes-pulled --do-all --push" \
       +" --send-email-only-on-failure" \
       ,
       \
@@ -2214,12 +2214,14 @@ class test_checkin_test(unittest.TestCase):
       "--extra-repos=preCopyrightTrilinos --pull --extra-pull-from=somemachine:someotherbranch", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +cmndinterceptsGetRepoStatsPass() \
-      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
       +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
+      +cmndinterceptsGetRepoStatsPass(numCommits="1") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="3") \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
@@ -2237,6 +2239,8 @@ class test_checkin_test(unittest.TestCase):
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
       )
+    # NOTE: In the above scenario, there are no local changes until the
+    # --extra-pull-from pull pulls in commits.
 
 
   def test_extra_repo_1_trilinos_changes_do_all_push_pass(self):
@@ -2302,15 +2306,15 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_1_abort_gracefully_if_no_updates_no_updates_passes(self):
+  def test_extra_repo_1_abort_gracefully_if_no_changes_pulled_no_updates_passes(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_abort_gracefully_if_no_updates_no_updates_passes",
+      "test_extra_repo_1_abort_gracefully_if_no_changes_pulled_no_updates_passes",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates --do-all --pull", \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled --do-all --pull", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass(numCommits="0") \
@@ -2327,26 +2331,28 @@ class test_checkin_test(unittest.TestCase):
       +"Did not pull any changes from this repo!\n" \
       +"No changes were pulled!\n" \
       +"Not performing any build cases because pull did not bring any [*]new[*] commits" \
-        " and --abort-gracefully-if-no-updates was set!\n" \
+        " and --abort-gracefully-if-no-changes-pulled was set!\n" \
       +"Skipping sending final email because there were no updates" \
-          " and --abort-gracefully-if-no-updates was set!\n" \
+          " and --abort-gracefully-if-no-changes-pulled was set!\n" \
       +"ABORTED DUE TO NO UPDATES\n" \
       +"REQUESTED ACTIONS: PASSED\n" \
       ,
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
       )
+    # NOTE: The above test is the case where that are existing local commits
+    # in the extra repo but no new commits are pulled so the test is aborted.
 
 
-  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_no_updates_passes(self):
+  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_no_updates_passes(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_extra_pull_abort_gracefully_if_no_updates_no_updates_passes",
+      "extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_no_updates_passes",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates" \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled" \
       +" --extra-pull-from=machine:master --do-all --pull" \
       ,
       \
@@ -2367,9 +2373,9 @@ class test_checkin_test(unittest.TestCase):
       +"Did not pull any changes from this repo!\n" \
       +"No changes were pulled!\n" \
       +"Not performing any build cases because pull did not bring any [*]new[*] commits" \
-        " and --abort-gracefully-if-no-updates was set!\n" \
+        " and --abort-gracefully-if-no-changes-pulled was set!\n" \
       +"Skipping sending final email because there were no updates" \
-          " and --abort-gracefully-if-no-updates was set!\n" \
+          " and --abort-gracefully-if-no-changes-pulled was set!\n" \
       +"ABORTED DUE TO NO UPDATES\n" \
       +"REQUESTED ACTIONS: PASSED\n" \
       ,
@@ -2378,15 +2384,15 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_main_repo_update(self):
+  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_main_repo_update(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_extra_pull_abort_gracefully_if_no_updates_main_repo_update",
+      "extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_main_repo_update",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates" \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled" \
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
@@ -2415,15 +2421,15 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_extra_repo_update(self):
+  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_extra_repo_update(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_extra_pull_abort_gracefully_if_no_updates_extra_repo_update",
+      "extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_extra_repo_update",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates" \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled" \
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
@@ -2452,25 +2458,27 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_main_repo_extra_update(self):
+  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_main_repo_extra_update(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_extra_pull_abort_gracefully_if_no_updates_main_repo_extra_update",
+      "extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_main_repo_extra_update",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates" \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled" \
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass(numCommits="0") \
-      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
+      +cmndinterceptsGetRepoStatsPass(numCommits="5") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -2489,25 +2497,27 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_extra_repo_extra_update(self):
+  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_extra_repo_extra_update(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_extra_pull_abort_gracefully_if_no_updates_extra_repo_extra_update",
+      "extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_extra_repo_extra_update",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates" \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled" \
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass(numCommits="0") \
-      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyPasses \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="1") \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -3007,14 +3017,14 @@ class test_checkin_test(unittest.TestCase):
 #      )
 
 
-  def test_abort_gracefully_if_no_updates_status_fails(self):
+  def test_abort_gracefully_if_no_changes_pulled_status_fails(self):
     checkin_test_run_case(
       \
       self,
       \
-      "abort_gracefully_if_no_updates_status_fails",
+      "abort_gracefully_if_no_changes_pulled_status_fails",
       \
-      "--abort-gracefully-if-no-updates --do-all --pull" \
+      "--abort-gracefully-if-no-changes-pulled --do-all --pull" \
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
@@ -3492,6 +3502,7 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsStatusPullPasses \
       +"IT: git pull machine:/repo/dir/repo master; 0; 'git extra pull passed'\n"
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -4950,6 +4961,8 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyFails \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
