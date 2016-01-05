@@ -1028,7 +1028,7 @@ class test_TribitsGitRepos(unittest.TestCase):
 g_cmndinterceptsDumpDepsXMLFile = \
   "IT: .*cmake .+ -P .+/TribitsDumpDepsXmlScript.cmake; 0; 'dump XML file passed'\n" \
 
-def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile="", \
+def cmndinterceptsGetRepoStatsPass(changedFile="", \
   branch = "currentbranch", trackingBranch="origin/trackingbranch", \
   numCommits = "4" \
   ):
@@ -1038,7 +1038,7 @@ def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile="", \
     "IT: git shortlog -s HEAD ."+trackingBranch+"; 0; '    "+numCommits+"  John Doe'\n" \
     "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
-def cmndinterceptsGetRepoStatsNoTrackingBranchPass(modifiedFile="", changedFile="", \
+def cmndinterceptsGetRepoStatsNoTrackingBranchPass(changedFile="", \
   branch = "currentbranch" \
   ):
   return \
@@ -1778,6 +1778,8 @@ class test_checkin_test(unittest.TestCase):
       +"^NOT READY TO PUSH: Trilinos:\n" \
       +"Not executing final command (ssh -q godel /some/dir/some_command.sh &) since a push is not okay to be performed!\n" \
       )
+    # NOTE: In the above scenario, there are no local changes until the
+    # --extra-pull-from pull pulls in commits.
 
 
   def test_local_do_all_detached_head_pass(self):
