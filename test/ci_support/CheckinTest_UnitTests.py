@@ -1631,7 +1631,7 @@ class test_checkin_test(unittest.TestCase):
       "do_all_push_pass",
       \
       "--make-options=-j3 --ctest-options=-j5" \
-      +" --abort-gracefully-if-no-updates --abort-gracefully-if-no-changes-to-push" \
+      +" --abort-gracefully-if-no-changes-pulled --abort-gracefully-if-no-changes-to-push" \
       +" --do-all --push" \
       +" --execute-on-ready-to-push=\"ssh -q godel /some/dir/some_command.sh &\"",
       \
@@ -1937,7 +1937,7 @@ class test_checkin_test(unittest.TestCase):
       "send_email_only_on_failure_do_all_push_pass",
       \
       "--make-options=-j3 --ctest-options=-j5" \
-      +" --abort-gracefully-if-no-updates --do-all --push" \
+      +" --abort-gracefully-if-no-changes-pulled --do-all --push" \
       +" --send-email-only-on-failure" \
       ,
       \
@@ -2306,15 +2306,15 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_1_abort_gracefully_if_no_updates_no_updates_passes(self):
+  def test_extra_repo_1_abort_gracefully_if_no_changes_pulled_no_updates_passes(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_abort_gracefully_if_no_updates_no_updates_passes",
+      "test_extra_repo_1_abort_gracefully_if_no_changes_pulled_no_updates_passes",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates --do-all --pull", \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled --do-all --pull", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass(numCommits="0") \
@@ -2331,9 +2331,9 @@ class test_checkin_test(unittest.TestCase):
       +"Did not pull any changes from this repo!\n" \
       +"No changes were pulled!\n" \
       +"Not performing any build cases because pull did not bring any [*]new[*] commits" \
-        " and --abort-gracefully-if-no-updates was set!\n" \
+        " and --abort-gracefully-if-no-changes-pulled was set!\n" \
       +"Skipping sending final email because there were no updates" \
-          " and --abort-gracefully-if-no-updates was set!\n" \
+          " and --abort-gracefully-if-no-changes-pulled was set!\n" \
       +"ABORTED DUE TO NO UPDATES\n" \
       +"REQUESTED ACTIONS: PASSED\n" \
       ,
@@ -2344,15 +2344,15 @@ class test_checkin_test(unittest.TestCase):
     # in the extra repo but no new commits are pulled so the test is aborted.
 
 
-  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_no_updates_passes(self):
+  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_no_updates_passes(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_extra_pull_abort_gracefully_if_no_updates_no_updates_passes",
+      "extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_no_updates_passes",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates" \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled" \
       +" --extra-pull-from=machine:master --do-all --pull" \
       ,
       \
@@ -2373,9 +2373,9 @@ class test_checkin_test(unittest.TestCase):
       +"Did not pull any changes from this repo!\n" \
       +"No changes were pulled!\n" \
       +"Not performing any build cases because pull did not bring any [*]new[*] commits" \
-        " and --abort-gracefully-if-no-updates was set!\n" \
+        " and --abort-gracefully-if-no-changes-pulled was set!\n" \
       +"Skipping sending final email because there were no updates" \
-          " and --abort-gracefully-if-no-updates was set!\n" \
+          " and --abort-gracefully-if-no-changes-pulled was set!\n" \
       +"ABORTED DUE TO NO UPDATES\n" \
       +"REQUESTED ACTIONS: PASSED\n" \
       ,
@@ -2384,15 +2384,15 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_main_repo_update(self):
+  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_main_repo_update(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_extra_pull_abort_gracefully_if_no_updates_main_repo_update",
+      "extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_main_repo_update",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates" \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled" \
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
@@ -2421,15 +2421,15 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_extra_repo_update(self):
+  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_extra_repo_update(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_extra_pull_abort_gracefully_if_no_updates_extra_repo_update",
+      "extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_extra_repo_update",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates" \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled" \
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
@@ -2458,15 +2458,15 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_main_repo_extra_update(self):
+  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_main_repo_extra_update(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_extra_pull_abort_gracefully_if_no_updates_main_repo_extra_update",
+      "extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_main_repo_extra_update",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates" \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled" \
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
@@ -2497,15 +2497,15 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_updates_extra_repo_extra_update(self):
+  def test_extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_extra_repo_extra_update(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
       self,
       \
-      "extra_repo_1_extra_pull_abort_gracefully_if_no_updates_extra_repo_extra_update",
+      "extra_repo_1_extra_pull_abort_gracefully_if_no_changes_pulled_extra_repo_extra_update",
       \
-      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-updates" \
+      "--extra-repos=preCopyrightTrilinos --abort-gracefully-if-no-changes-pulled" \
       +" --extra-pull-from=machine:master --pull" \
       ,
       \
@@ -3017,14 +3017,14 @@ class test_checkin_test(unittest.TestCase):
 #      )
 
 
-  def test_abort_gracefully_if_no_updates_status_fails(self):
+  def test_abort_gracefully_if_no_changes_pulled_status_fails(self):
     checkin_test_run_case(
       \
       self,
       \
-      "abort_gracefully_if_no_updates_status_fails",
+      "abort_gracefully_if_no_changes_pulled_status_fails",
       \
-      "--abort-gracefully-if-no-updates --do-all --pull" \
+      "--abort-gracefully-if-no-changes-pulled --do-all --pull" \
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \

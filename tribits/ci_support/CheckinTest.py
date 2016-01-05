@@ -2293,10 +2293,10 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
       runBuildCases = False
     elif doingAtLeastOnePull:
       if reposAreClean and not pulledSomeChanges and \
-        inOptions.abortGracefullyIfNoUpdates \
+        inOptions.abortGracefullyIfNoChangesPulled \
         :
         print "\nNot performing any build cases because pull did not bring any *new* commits" \
-          " and --abort-gracefully-if-no-updates was set!\n"
+          " and --abort-gracefully-if-no-changes-pulled was set!\n"
         abortGracefullyDueToNoUpdates = True
         runBuildCases = False
       elif reposAreClean and not hasChangesToPush and \
@@ -2747,7 +2747,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         success = False
       elif abortGracefullyDueToNoUpdates:
         subjectLine = "ABORTED DUE TO NO UPDATES"
-        commitEmailBodyExtra += "\n\nAborted because no updates and --abort-gracefully-if-no-updates was set!\n\n"
+        commitEmailBodyExtra += "\n\nAborted because no updates and --abort-gracefully-if-no-changes-pulled was set!\n\n"
         success = True
       elif abortGracefullyDueToNoChangesToPush:
         subjectLine = "ABORTED DUE TO NO CHANGES TO PUSH"
@@ -2817,7 +2817,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
       if inOptions.sendEmailTo and abortGracefullyDueToNoUpdates:
 
         print "\nSkipping sending final email because there were no updates" \
-          " and --abort-gracefully-if-no-updates was set!"
+          " and --abort-gracefully-if-no-changes-pulled was set!"
 
       elif inOptions.sendEmailTo and abortGracefullyDueToNoChangesToPush:
 
