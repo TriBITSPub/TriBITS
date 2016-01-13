@@ -80,12 +80,13 @@ def assertGrepFileForRegexStrList(testObject, testName, fileName, regexStrList, 
   for regexToFind in regexStrList.strip().split('\n'):
     if regexToFind == "": continue
     foundRegex = getCmndOutput("grep '"+regexToFind+"' "+fileName, True, False)
-    if verbose or not foundRegex:
-      print "\n"+testName+": In '"+fileName+"' look for regex '"+regexToFind+"' ...", 
-      print "'"+foundRegex+"'", 
-      if foundRegex: print ": PASSED"
-      else: print ": FAILED"
-    testObject.assertNotEqual(foundRegex, "")
+    msg = "\n"+testName+": In '"+fileName+"' look for regex '"+regexToFind+"' ..." \
+      + "'"+foundRegex+"'" 
+    if foundRegex: msg += ": PASSED"
+    else: msg += ": FAILED"
+    if verbose:
+      print msg
+    testObject.assertNotEqual(foundRegex, "", msg)
 
 
 def assertNotGrepFileForRegexStrList(testObject, testName, fileName, regexStrList, verbose):
