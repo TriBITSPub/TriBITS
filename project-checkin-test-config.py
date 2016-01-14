@@ -2,7 +2,7 @@ configuration = {
 
     # The default command line arguments
     'defaults': {
-        '--send-email-to-on-push': 'trilinos-checkin-tests@software.sandia.gov',
+        '--send-email-to-on-push': 'tribits-checkins@googlegroups.com',
         '--enable-packages': 'TriBITS',
         '--no-rebase': ''
         },
