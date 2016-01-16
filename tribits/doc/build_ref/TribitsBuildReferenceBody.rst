@@ -837,29 +837,79 @@ which sets the paths where the MPI executables (e.g. mpiCC, mpicc, mpirun,
 mpiexec) can be found.  By default this is set to ``${MPI_BASE_DIR}/bin`` if
 ``MPI_BASE_DIR`` is set.
 
-The value of ``LD_LIBRARY_PATH`` will also automatically be set to
-``${MPI_BASE_DIR}/lib`` if it exists.  This is needed for the basic compiler
-tests for some MPI implementations that are installed in non-standard
-locations.
+**NOTE:** TriBITS uses the MPI compiler wrappers (e.g. mpiCC, mpicc, mpic++,
+mpif90, etc.) which is more standard with other builds systems for HPC
+computing using MPI (and the way that MPI implementations were meant to be
+used).  But directly using the MPI compiler wrappers as the direct compilers
+is inconsistent with the way that the standard CMake module ``FindMPI.cmake``
+which tries to "unwrap" the compiler wrappers and grab out the raw underlying
+compilers and the raw compiler and linker command-line arguments.  In this
+way, TriBITS is more consistent with standard usage in the HPC community but
+is less consistent with CMake (see "HISTORICAL NOTE" below).
 
 There are several different different variations for configuring with MPI
 support:
 
 a) **Configuring build using MPI compiler wrappers:**
 
-  The MPI compiler wrappers are turned on by default.  There is built-in
-  logic that will try to find the right compiler wrappers.  However, you can
-  specifically select them by setting, for example::
+  The MPI compiler wrappers are turned on by default.  There is built-in logic
+  in TriBITS that will try to find the right MPI compiler wrappers.  However,
+  you can specifically select them by setting, for example::
 
     -D MPI_C_COMPILER:FILEPATH=mpicc \
     -D MPI_CXX_COMPILER:FILEPATH=mpic++ \
     -D MPI_Fortan_COMPILER:FILEPATH=mpif77
 
   which gives the name of the MPI C/C++/Fortran compiler wrapper executable.
-  If this is just the name of the program it will be looked for in
-  ${MPI_BIN_DIR} and in other standard locations with that name.  If this is
-  an absolute path, then this will be used as CMAKE_[C,CXX,Fortran]_COMPILER
-  to compile and link code.
+  In this case, just the names of the programs are given and absolute path of
+  the executables will be searched for under ``${MPI_BIN_DIR}/`` if the cache
+  variable ``MPI_BIN_DIR`` is set, or in the default path otherwise.  The
+  found programs will then be used to set the cache variables
+  ``CMAKE_[C,CXX,Fortran]_COMPILER``.
+
+  One can avoid the search and just use the absolute paths with, for example::
+
+    -D MPI_C_COMPILER:FILEPATH=/opt/mpich/bin/mpicc \
+    -D MPI_CXX_COMPILER:FILEPATH=/opt/mpich/bin/mpic++ \
+    -D MPI_Fortan_COMPILER:FILEPATH=/opt/mpich/bin/mpif77
+
+  However, you can also directly set the variables
+  ``CMAKE_[C,CXX,Fortran]_COMPILER`` with, for example::
+
+    -D CMAKE_C_COMPILER:FILEPATH=/opt/mpich/bin/mpicc \
+    -D CMAKE_CXX_COMPILER:FILEPATH=/opt/mpich/bin/mpic++ \
+    -D CMAKE_Fortan_COMPILER:FILEPATH=/opt/mpich/bin/mpif77
+
+  **WARNING:** If you set just the compiler names and not the absolute paths
+  with ``CMAKE_<LANG>_COMPILER`` in MPI mode, then a search will not be done
+  and these will be expected to be in the path at build time. (Note that his
+  is inconsistent the behavior of raw CMake in non-MPI mode described in
+  `Selecting compiler and linker options`_).  If both
+  ``CMAKE_<LANG>_COMPILER`` and ``MPI_<LANG>_COMPILER`` are set, however, then
+  ``CMAKE_<LANG>_COMPILER`` will be used and ``MPI_<LANG>_COMPILER`` will be
+  ignored.
+
+  Note that when ``USE_XSDK_DEFAULTS=FALSE`` (see `xSDK Configuration
+  Options`_), then the environment variables ``CC``, ``CXX`` and ``FC`` are
+  ignored.  But when ``USE_XSDK_DEFAULTS=TRUE`` and the CMake cache variables
+  ``CMAKE_[C,CXX,Fortran]_COMPILER`` are not set, then the environment
+  variables ``CC``, ``CXX`` and ``FC`` will be used for
+  ``CMAKE_[C,CXX,Fortran]_COMPILER``, even if the CMake cache variables
+  ``MPI_[C,CXX,Fortran]_COMPILER`` are set!  So if one wants to make sure and
+  set the MPI compilers irrespective of the xSDK mode, then one should set
+  cmake cache variables ``CMAKE_[C,CXX,Fortran]_COMPILER`` to the absolute
+  path of the MPI compiler wrappers.
+
+  **HISTORICAL NOTE:** The TriBITS system has its own custom MPI integration
+  support and does not (currently) use the standard CMake module
+  ``FindMPI.cmake``.  This custom support for MPI was added to TriBITS in 2008
+  when it was found the built-in ``FindMPI.cmake`` module was not sufficient
+  for the needs of Trilinos and the approach taken by the module (still in use
+  as of CMake 3.4.x) which tries to unwrap the raw compilers and grab the list
+  of include directories, link libraries, etc, was not sufficiently portable
+  for the systems where Trilinos needed to be used.  But earlier versions of
+  TriBITS used the ``FindMPI.cmake`` module and that is why the CMake cache
+  variables ``MPI_[C,CXX,Fortran]_COMPILER`` are defined and still supported.
 
 b) **Configuring to build using raw compilers and flags/libraries:**
 
