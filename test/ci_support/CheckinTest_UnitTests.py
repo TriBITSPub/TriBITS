@@ -76,7 +76,8 @@ class MockOptions:
 
 
 def assertGrepFileForRegexStrList(testObject, testName, fileName, regexStrList, verbose):
-  assert(os.path.isfile(fileName))
+  testObject.assertEqual(os.path.isfile(fileName), True,
+    "Error, the file '"+fileName+"' does not exist!")
   for regexToFind in regexStrList.strip().split('\n'):
     if regexToFind == "": continue
     foundRegex = getCmndOutput("grep '"+regexToFind+"' "+fileName, True, False)
@@ -1919,6 +1920,85 @@ class test_checkin_test(unittest.TestCase):
     self.assertEqual(
       os.path.exists(create_checkin_test_case_dir(testName, g_verbose)+"/checkin-test.out"),
       False)
+
+
+  def test_local_defaults_override_project_defaults(self):
+    
+    testName = "local_defaults_override_project_defaults"
+
+    testBaseDir = create_checkin_test_case_dir(testName, g_verbose)
+
+    writeStrToFile(testBaseDir+"/local-checkin-test-defaults.py",
+      "defaults = [\n" \
+      "  \"--send-email-to-on-push=dummy@nogood.com\",\n" \
+      "  \"-j10\",\n" \
+      "  \"--no-rebase\",\n" \
+      "  \"--ctest-options=-E '(PackageA_Test1|PackageB_Test2)'\"\n" \
+      "  ]\n"
+      )
+
+    checkin_test_run_case(
+      \
+      self,
+      \
+      testName,
+      \
+      " --show-defaults" \
+      ,
+      "", # No shell commands!
+      \
+      True,
+      \
+      "\-\-send-email-to-on-push=.dummy@nogood.com.\n" \
+      "\-j10\n" \
+      "\-\-no-rebase\n" \
+      "\-\-ctest-options=.-E ..PackageA_Test1.PackageB_Test2...\n" \
+      ,
+      mustHaveCheckinTestOut=False, grepForFinalPassFailStr=False,
+      # Above, grep checkin-test.test.out since checkin-test.out is not
+      # created when --show-defaults is passed in.
+      )
+
+
+  def test_command_args_override_local_defaults(self):
+    
+    testName = "command_args_override_local_defaults"
+
+    testBaseDir = create_checkin_test_case_dir(testName, g_verbose)
+
+    writeStrToFile(testBaseDir+"/local-checkin-test-defaults.py",
+      "defaults = [\n" \
+      "  \"--send-email-to-on-push=dummy@nogood.com\",\n" \
+      "  \"-j10\",\n" \
+      "  \"--no-rebase\",\n" \
+      "  \"--ctest-options=-E '(PackageA_Test1|PackageB_Test2)'\"\n" \
+      "  ]\n"
+      )
+
+    checkin_test_run_case(
+      \
+      self,
+      \
+      testName,
+      \
+      " --show-defaults" \
+      " --send-email-to-on-push=nothing@good.gov" \
+      " -j6 --rebase --ctest-options=\"-E '(Test5_|Test6_)'\""
+      ,
+      \
+      "", # No shell commands!
+      \
+      True,
+      \
+      "\-\-send-email-to-on-push=.nothing@good.gov.\n" \
+      "\-j6\n" \
+      "\-\-rebase\n" \
+      "\-\-ctest-options=.-E ..Test5_.Test6...\n" \
+      ,
+      mustHaveCheckinTestOut=False, grepForFinalPassFailStr=False,
+      # Above, grep checkin-test.test.out since checkin-test.out is not
+      # created when --show-defaults is passed in.
+      )
 
 
   def test_do_all_push_pass(self):
