@@ -3,7 +3,7 @@ configuration = {
     # The default command line arguments
     'defaults': {
         '--send-email-to-on-push': 'tribits-checkins@googlegroups.com',
-        '--enable-packages': 'TriBITS',
+        '--enable-all-packages': 'on',
         '--no-rebase': ''
         },
     # NOTE: The last two options --no-rebase --no-append-test-results ensure
