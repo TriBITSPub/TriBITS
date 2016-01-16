@@ -596,7 +596,7 @@ changed in this way.  The updated defaults can be observed by running:
 
   ./checkin-test.py --show-defaults
 
-Any command-line explicitly arguments passed in will override these local
+Any command-line arguments explicitly passed in will override these local
 defaults.
 
 
