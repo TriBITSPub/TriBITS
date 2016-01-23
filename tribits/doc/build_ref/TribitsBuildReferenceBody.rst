@@ -1390,13 +1390,13 @@ To turn on a set a given set of tests by test category, set::
 
   -D <Project>_TEST_CATEGORIES="<CATEGORY0>;<CATEGORY1>;..." 
 
-Valid categories include ``BASIC``, ``CONTINUOUS``, ``NIGHTLY``, ``WEEKLY``
-and ``PERFORMANCE``.  ``BASIC`` tests get built and run for pre-push testing,
-CI testing, and nightly testing.  ``CONTINUOUS`` tests are for post-push
-testing and nightly testing.  ``NIGHTLY`` tests are for nightly testing only.
-``WEEKLY`` tests are for more expensive tests that are run approximately
-weekly.  ``PERFORMANCE`` tests a special category used only for performance
-testing.
+Valid categories include ``BASIC``, ``CONTINUOUS``, ``NIGHTLY``, ``HEAVY`` and
+``PERFORMANCE``.  ``BASIC`` tests get built and run for pre-push testing, CI
+testing, and nightly testing.  ``CONTINUOUS`` tests are for post-push testing
+and nightly testing.  ``NIGHTLY`` tests are for nightly testing only.
+``HEAVY`` tests are for more expensive tests that require larger number of MPI
+processes and llonger run times.  ``PERFORMANCE`` tests a special category
+used only for performance testing.
 
 
 Disabling specific tests

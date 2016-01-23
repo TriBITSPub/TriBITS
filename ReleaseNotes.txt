@@ -2,6 +2,11 @@
 Release Notes for TriBITS
 ----------------------------------------
 
+2016/01/22:
+
+(*) Change test category WEEKLY to HEAVY and depreciate WEEKLY.  You can stil
+    use WEEKLY but it will result in a lot of warnings.
+
 2015/12/03:
 
 (*) checkin-test.py: Added support for tracking branches for each repo
