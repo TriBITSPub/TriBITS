@@ -876,7 +876,7 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     default="BASIC",
     help="." \
     +" Change the test categories.  Can be 'BASIC', 'CONTINUOUS', " \
-      " 'NIGHTLY', or 'WEEKLY' (default 'BASIC')." )
+      " 'NIGHTLY', or 'HEAVY' (default set by project, see --show-defaults)." )
 
   clp.add_option(
     "-j", "--parallel", dest="overallNumProcs", type="string", default="",
