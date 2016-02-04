@@ -17,8 +17,6 @@
 # exist, one is created with -j16 (for the Fissile4 that have 32 total cores).
 #
 
-EXTRA_ARGS=$@
-
 if [ "$TRIBITS_BASE_DIR" == "" ] ; then
   _ABS_FILE_PATH=`readlink -f $0`
   _SCRIPT_DIR=`dirname $_ABS_FILE_PATH`
@@ -53,4 +51,4 @@ export PATH=/projects/vera/common_tools/cmake-2.8.11/bin:$PATH
 $TRIBITS_BASE_DIR_ABS/checkin-test.py \
 --ctest-timeout=180 \
 --skip-case-no-email \
-$EXTRA_ARGS
+"$@"
