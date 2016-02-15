@@ -6489,8 +6489,6 @@ The sync driver script for this example should be called something like
 like::
 
   #!/bin/bash -e
- 
-  EXTRA_ARGS=$@ 
   
   # Set up the environment (i.e. PATH; needed for cron jobs)
   ...
@@ -6509,7 +6507,7 @@ like::
     --do-all --push \
     -j16 \
     --wipe-clean \
-    $EXTRA_ARGS
+    "$@"
 
 NOTE, in the above example ``sync_ExtraRepo1.sh`` script, the variable
 ``CHECKIN_TEST_WRAPPER`` is set to a wrapper script::
