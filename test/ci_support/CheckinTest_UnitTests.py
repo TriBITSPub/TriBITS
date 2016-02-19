@@ -1911,6 +1911,7 @@ class test_checkin_test(unittest.TestCase):
       "", # No shell commands!
       True,
       "Script: checkin-test.py\n" \
+      +"\-\-send-build-case-email=always\n" \
       ,
       mustHaveCheckinTestOut=False \
       ,
@@ -2087,6 +2088,35 @@ class test_checkin_test(unittest.TestCase):
         "Other local commits for this build/test group: 12345\n"),
       # ToDo: Add more files to check
       ]
+      )
+
+
+  def test_send_build_case_email_only_on_failure_do_all_push_pass(self):
+    checkin_test_run_case(
+      \
+      self,
+      \
+      "test_send_build_case_email_only_on_failure_do_all_push_pass",
+      \
+      "--make-options=-j3 --ctest-options=-j5" \
+      +" --send-build-case-email=only-on-failure --do-all --push" \
+      ,
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +g_cmndinterceptsPullPasses \
+      +g_cmndinterceptsConfigBuildTestPasses \
+      +g_cmndinterceptsConfigBuildTestPasses \
+      +g_cmndinterceptsFinalPushPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      "Skipping sending build/test case email because everything passed and --send-build-case-email=only-on-failure was set\n" \
+      +"0) MPI_DEBUG => passed: passed=100,notpassed=0\n" \
+      +"1) SERIAL_RELEASE => passed: passed=100,notpassed=0\n" \
+      +"mailx .* trilinos-checkin-tests.*\n" \
+      +"^DID PUSH: Trilinos:\n" \
+      ,
       )
 
 
@@ -5016,7 +5046,9 @@ class test_checkin_test(unittest.TestCase):
       \
       "do_all_default_builds_mpi_debug_build_fail",
       \
-      "--do-all --default-builds=MPI_DEBUG --make-options=-j3 --ctest-options=-j5",
+      "--do-all --default-builds=MPI_DEBUG --make-options=-j3 --ctest-options=-j5" \
+      +" --send-build-case-email=only-on-failure" \
+      ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsPullPasses \
@@ -5039,6 +5071,45 @@ class test_checkin_test(unittest.TestCase):
       +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       +"^FAILED CONFIGURE/BUILD/TEST: Trilinos:\n"
       )
+    # NOTE: Above test ensures that setting
+    # --send-build-case-email=only-on-failure still allows the build case
+    # email to go out if the build fails.
+
+
+  def test_send_build_case_email_never_do_all_default_builds_mpi_debug_build_fail(self):
+    checkin_test_run_case(
+      \
+      self,
+      \
+      "send_build_case_email_never_do_all_default_builds_mpi_debug_build_fail",
+      \
+      "--do-all --default-builds=MPI_DEBUG --make-options=-j3 --ctest-options=-j5" \
+      +" --send-build-case-email=never" \
+      ,
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +g_cmndinterceptsPullPasses \
+      +"IT: \./do-configure; 0; 'do-configure passed'\n" \
+      +"IT: make -j3; 1; 'make filed'\n" \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      False,
+      \
+      g_expectedRegexUpdateWithBuildCasePasses \
+      +g_expectedRegexConfigPasses \
+      +g_expectedRegexTestNotRun \
+      +g_expectedRegexBuildFailed \
+      +"Skipping sending build/test case email because everything passed and --send-build-case-email=never was set\n" \
+      +"0) MPI_DEBUG => FAILED: build failed => Not ready to push!\n" \
+      +"1) SERIAL_RELEASE => Test case SERIAL_RELEASE was not run! => Does not affect push readiness!\n" \
+      +g_expectedCommonOptionsSummary \
+      +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
+      +"^FAILED CONFIGURE/BUILD/TEST: Trilinos:\n"
+      )
+    # NOTE: Above test ensures that setting
+    # --send-build-case-email=never will avoid sending out build case emails 
 
 
   def test_do_all_default_builds_mpi_debug_test_fail(self):
