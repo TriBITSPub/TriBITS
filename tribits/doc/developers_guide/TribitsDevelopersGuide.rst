@@ -6502,6 +6502,7 @@ like::
     --extra-pull-from=ExtraRepo1:public:master \
     --abort-gracefully-if-no-changes-to-push \
     --enable-all-packages=on \
+    --send-build-case-email=only-on-failure \
     --send-email-to=base-proj-integrators@url4.gov \
     --send-email-to-on-push=base-proj-integrators@url4.gov \
     --no-append-test-results --no-rebase \
@@ -6585,6 +6586,16 @@ more details):
     ensure that minimal but complete testing was done (based on changed
     packages and package dependencies) and would also result in every commit
     being pushed on every invocation (where tests are passing).
+
+  ``--send-build-case-email=only-on-failure``
+
+    This makes the checkin-test.py script skip sending email about a build
+    case (e.g. ``MPI_DEBUG``) unless it fails.  That way, if everything
+    passes, then only a final ``DID PUSH`` email will go out.  But if a build
+    case does fail (i.e. configure, build, or tests fail), then an "early
+    warning" email will still go out.  However, if one wants to never get the
+    early build-case emails, one can turn this off by setting
+    ``--send-build-case-email=never``.
  
   ``--send-email-to=base-proj-integrators@url4.gov``
  
