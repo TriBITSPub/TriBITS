@@ -2322,7 +2322,7 @@ To install the software, type::
 
 Note that CMake actually puts in the build dependencies for installed targets
 so in some cases you can just type ``make -j<N> install`` and it will also
-build the software.  However, it is advanced to always build and test the
+build the software.  However, it is advised to always build and test the
 software first before installing with::
 
   $ make -j<N> && ctest -j<N> && make -j<N> install
