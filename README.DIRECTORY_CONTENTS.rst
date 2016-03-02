@@ -11,10 +11,10 @@ that are found in a TriBITS Project, Repository, and Package::
   TPLsList.cmake      # Lists only MPI
   cmake/              # Dependencies.cmake, etc.
 
-The core functionality of TriBITS is provided in the directory:
+The core functionality of TriBITS is provided in the following directory, 'tribits'/:
 
 **tribits/**: The part of TriBITS that CMake projects use to access TriBITS
-functionality and assimilate the the TriBITS framework.  It also contains
+functionality and assimilate into the TriBITS framework.  It also contains
 basic documentation and examples.  Files and directories from here are what
 get installed on the system or are snapshotted into
 ``<projectDir>/cmake/tribits/``.  Each TriBITS Project decides what parts of
