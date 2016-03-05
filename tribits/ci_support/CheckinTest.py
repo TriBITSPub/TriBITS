@@ -896,15 +896,13 @@ def createConfigureFile(cmakeOptions, baseCmnd, srcDir, configFileName):
     doConfigStr = ""
   
     doConfigStr += \
-      "EXTRA_ARGS=$@\n" \
-      "\n" \
-      +baseCmnd+ " \\\n"
+      baseCmnd+ " \\\n"
   
     for opt in cmakeOptions:
       doConfigStr += opt + " \\\n"
     
     doConfigStr += \
-      "$EXTRA_ARGS"
+      "\"$@\""
 
     if srcDir:
       doConfigStr += " \\\n"+srcDir
