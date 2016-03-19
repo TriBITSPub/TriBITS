@@ -1165,6 +1165,18 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
       "Included ConfigOptions1.cmake"
       "Included ConfigOptions2.cmake"
       "Generating done"
+  TEST_4 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the re-configure with two user configure options files"
+    ARGS
+      -DTribitsExProj_CONFIGURE_OPTIONS_FILE=${CMAKE_CURRENT_LIST_DIR}/ConfigOptions1.cmake,${CMAKE_CURRENT_LIST_DIR}/ConfigOptions2.cmake
+      -DTribitsExProj_CONFIGURE_OPTIONS_FILE_APPEND=
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Reading in configuration options from .*/ConfigOptions1.cmake"
+      "Reading in configuration options from .*/ConfigOptions2.cmake"
+      "Included ConfigOptions1.cmake"
+      "Included ConfigOptions2.cmake"
+      "Generating done"
   )
 
 
