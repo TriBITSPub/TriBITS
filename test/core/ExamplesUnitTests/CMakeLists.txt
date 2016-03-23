@@ -1122,6 +1122,64 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the initial configure with no opions file"
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+  TEST_1 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the re-configure with user-defined configure options file"
+    ARGS
+      -DTribitsExProj_CONFIGURE_OPTIONS_FILE=${CMAKE_CURRENT_LIST_DIR}/ConfigOptions1.cmake
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Reading in configuration options from .*/ConfigOptions1.cmake"
+      "Included ConfigOptions1.cmake"
+      "Generating done"
+  TEST_2 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the re-configure with configure options file append"
+    ARGS
+      -DTribitsExProj_CONFIGURE_OPTIONS_FILE=
+      -DTribitsExProj_CONFIGURE_OPTIONS_FILE_APPEND=${CMAKE_CURRENT_LIST_DIR}/ConfigOptions2.cmake
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Reading in configuration options from .*/ConfigOptions2.cmake"
+      "Included ConfigOptions2.cmake"
+      "Generating done"
+  TEST_3 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the re-configure with configure options file and append"
+    ARGS
+      -DTribitsExProj_CONFIGURE_OPTIONS_FILE=${CMAKE_CURRENT_LIST_DIR}/ConfigOptions1.cmake
+      -DTribitsExProj_CONFIGURE_OPTIONS_FILE_APPEND=${CMAKE_CURRENT_LIST_DIR}/ConfigOptions2.cmake
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Reading in configuration options from .*/ConfigOptions1.cmake"
+      "Reading in configuration options from .*/ConfigOptions2.cmake"
+      "Included ConfigOptions1.cmake"
+      "Included ConfigOptions2.cmake"
+      "Generating done"
+  TEST_4 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the re-configure with two user configure options files"
+    ARGS
+      -DTribitsExProj_CONFIGURE_OPTIONS_FILE=${CMAKE_CURRENT_LIST_DIR}/ConfigOptions1.cmake,${CMAKE_CURRENT_LIST_DIR}/ConfigOptions2.cmake
+      -DTribitsExProj_CONFIGURE_OPTIONS_FILE_APPEND=
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Reading in configuration options from .*/ConfigOptions1.cmake"
+      "Reading in configuration options from .*/ConfigOptions2.cmake"
+      "Included ConfigOptions1.cmake"
+      "Included ConfigOptions2.cmake"
+      "Generating done"
+  )
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
