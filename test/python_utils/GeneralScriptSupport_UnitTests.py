@@ -213,6 +213,7 @@ class testGeneralScriptSupport(unittest.TestCase):
     sci.readCommandsFromStr(
 """
 FT: eg log.*
+IT: git log --pretty='%h'; 0; '1234'; '5678'
 FT: ls .*
 IT: eg log; 0; 'good log'
 IT: eg frog; 3; 'bad frog'
@@ -220,12 +221,18 @@ IT: ./do-configure; 5; ''
 """
     )
     self.assertEqual(["eg log.*", "ls .*"], sci.getFallThroughCmndRegexList())
-    self.assertEqual( str(InterceptedCmndStruct("eg log", 0, "good log")),
-      str(sci.getInterceptedCmndStructList()[0]) )
-    self.assertEqual( str(InterceptedCmndStruct("eg frog", 3, "bad frog")),
-      str(sci.getInterceptedCmndStructList()[1]) )
-    self.assertEqual( str(InterceptedCmndStruct("./do-configure", 5, "")),
-      str(sci.getInterceptedCmndStructList()[2]) )
+    self.assertEqual(
+      str(sci.getInterceptedCmndStructList()[0]),
+      str(InterceptedCmndStruct("git log --pretty='%h'", 0, "1234\n5678\n")) )
+    self.assertEqual(
+      str(sci.getInterceptedCmndStructList()[1]),
+      str(InterceptedCmndStruct("eg log", 0, "good log\n")) )
+    self.assertEqual(
+      str(sci.getInterceptedCmndStructList()[2]),
+      str(InterceptedCmndStruct("eg frog", 3, "bad frog\n")) )
+    self.assertEqual(
+      str(sci.getInterceptedCmndStructList()[3]),
+      str(InterceptedCmndStruct("./do-configure", 5, "\n")) )
 
 
   def test_runSysCmndInterface_fall_through(self):
@@ -299,11 +306,14 @@ IT: ./do-configure; 5; ''
       g_sysCmndInterceptor.setFallThroughCmndRegex("echo .+")
       g_sysCmndInterceptor.setInterceptedCmnd("eg log", 0, "good log\n")
       g_sysCmndInterceptor.setInterceptedCmnd("eg frog", 0, "bad frog\n")
-      g_sysCmndInterceptor.setInterceptedCmnd("eg blog", 2, "who cares\n")
+      g_sysCmndInterceptor.setInterceptedCmnd("eg blog1", 2, "who cares\n")
+      g_sysCmndInterceptor.setInterceptedCmnd("eg blog2", 2, "who cares\n")
       g_sysCmndInterceptor.setAllowExtraCmnds(False)
-      self.assertEqual("good log", getCmndOutput("eg log", True))
-      self.assertEqual("bad frog", getCmndOutput("eg frog", True, False))
-      self.assertRaises(Exception, getCmndOutput, "eg blog", True)
+      self.assertEqual(("good log", 0), getCmndOutput("eg log", True, rtnCode=True))
+      self.assertEqual(("bad frog", 0), getCmndOutput("eg frog", True, False, rtnCode=True))
+      self.assertEqual(("who cares", 2),
+        getCmndOutput("eg blog1", True, throwOnError=False, rtnCode=True))
+      self.assertRaises(RuntimeError, getCmndOutput, "eg blog2", True)
     finally:
       g_sysCmndInterceptor.clear()
 

@@ -365,6 +365,18 @@ def createAsciiTable(tableData):
 # Helper functions for gitdist
 #
 
+def filterWarningsGen(lines): 
+  for line in lines:
+    if not line.startswith('warning') and not line.startswith('error'): yield line
+
+
+# Filter warning and error lines from output
+def filterWarnings(lines): 
+  g = filterWarningsGen(lines)
+  if g is not None: 
+    return list(g)
+  return g
+
 
 # Get output from command
 def getCmndOutput(cmnd, rtnCode=False):
@@ -728,6 +740,17 @@ def runRepoCmnd(options, cmndLineArgsArray, repoDirName, baseDir, \
   runCmnd(options, egCmndArray)
 
 
+# Get the name of the base directory
+def getBaseDirNameFromPath(dirPath):
+  dirPathArray = dirPath.split("/")
+  return dirPathArray[-1]
+
+
+# Get the name of the base repo to insert into the table
+def getBaseRepoTblName(baseRepoName):
+  return baseRepoName+" (Base)"
+
+
 # Determine if the extra repo should be processed or not
 def repoExistsAndNotExcluded(options, extraRepo, notExtraReposList):
   if not os.path.isdir(extraRepo): return False
@@ -736,18 +759,23 @@ def repoExistsAndNotExcluded(options, extraRepo, notExtraReposList):
 
 
 # Get the tracking branch for a repo
-def getLocalBranch(options):
-  (branch, rtnCode) = getCmndOutput(
+def getLocalBranch(options, getCmndOutputFunc):
+  (resp, rtnCode) = getCmndOutputFunc(
     options.useGit + " rev-parse --abbrev-ref HEAD",
     rtnCode=True )
   if rtnCode == 0:
-    return branch.strip()
+    filteredLines = filterWarnings(resp.strip().splitlines())
+    if filteredLines and len(filteredLines) > 0:
+      localBranch = filteredLines[0].strip()
+    else:
+      localBranch = "<AMBIGUOUS-HEAD>"
+    return localBranch
   return ""
 
 
 # Get the tracking branch for a repo
-def getTrackingBranch(options):
-  (trackingBranch, rtnCode) = getCmndOutput(
+def getTrackingBranch(options, getCmndOutputFunc):
+  (trackingBranch, rtnCode) = getCmndOutputFunc(
     options.useGit + " rev-parse --abbrev-ref --symbolic-full-name @{u}",
     rtnCode=True )
   if rtnCode == 0:
@@ -759,17 +787,17 @@ def getTrackingBranch(options):
 
 
 # Get number of commits as a str wr.t.t tracking branch
-def getNumCommitsWrtTrackingBranch(options, trackingBranch):
+def getNumCommitsWrtTrackingBranch(options, trackingBranch, getCmndOutputFunc):
   if trackingBranch == "":
     return ""
-  (summaryLines, rtnCode) = getCmndOutput(
+  (summaryLines, rtnCode) = getCmndOutputFunc(
     options.useGit + " shortlog -s HEAD ^"+trackingBranch, rtnCode=True )
   if rtnCode != 0:
     raise Exception(summaryLines)
   numCommits = 0
   summaryLines = summaryLines.strip()
   if summaryLines:
-    for summaryLine in summaryLines.splitlines():
+    for summaryLine in filterWarnings(summaryLines.splitlines()):
       #print "summaryLine = '"+summaryLine+"'"
       numAuthorCommits = int(summaryLine.strip().split()[0].strip())
       #print "numAuthorCommits =", numAuthorCommits
@@ -782,19 +810,31 @@ def getNumCommitsWrtTrackingBranch(options, trackingBranch):
   # should be insignificant compared to the process execution command.
 
 
+def matchFieldOneOrTwo(findIdx):
+  if findIdx == 0 or findIdx == 1:
+    return True
+  return False
+
+
 # Get the number of modified
-def getNumModifiedAndUntracked(options):
-  (rawStatusOutput, rtnCode) = getCmndOutput(
+def getNumModifiedAndUntracked(options, getCmndOutputFunc):
+  (rawStatusOutput, rtnCode) = getCmndOutputFunc(
     options.useGit + " status --porcelain", rtnCode=True )
   if rtnCode == 0:
     numModified = 0
     numUntracked = 0
     for line in rawStatusOutput.splitlines():
-      if line.find(" M ") == 0 or line.find("M  ") == 0:
+      if matchFieldOneOrTwo(line.find("M")):
         numModified += 1
-      elif line.find(" D ") == 0 or line.find("D  ") == 0:
+      elif matchFieldOneOrTwo(line.find("A")):
         numModified += 1
-      elif line.find(" T ") == 0 or line.find("T  ") == 0:
+      elif matchFieldOneOrTwo(line.find("D")):
+        numModified += 1
+      elif matchFieldOneOrTwo(line.find("T")):
+        numModified += 1
+      elif matchFieldOneOrTwo(line.find("U")):
+        numModified += 1
+      elif matchFieldOneOrTwo(line.find("R")):
         numModified += 1
       elif line.find("??") == 0:
         numUntracked += 1
@@ -842,11 +882,13 @@ class RepoStatsStruct:
     return False
 
 
-def getRepoStats(options):
-  branch = getLocalBranch(options)
-  trackingBranch = getTrackingBranch(options)
-  numCommits = getNumCommitsWrtTrackingBranch(options, trackingBranch)
-  (numModified, numUntracked) = getNumModifiedAndUntracked(options)
+def getRepoStats(options, getCmndOutputFunc=None):
+  if not getCmndOutputFunc:
+    getCmndOutputFunc = getCmndOutput
+  branch = getLocalBranch(options, getCmndOutputFunc)
+  trackingBranch = getTrackingBranch(options, getCmndOutputFunc)
+  numCommits = getNumCommitsWrtTrackingBranch(options, trackingBranch, getCmndOutputFunc)
+  (numModified, numUntracked) = getNumModifiedAndUntracked(options, getCmndOutputFunc)
   return RepoStatsStruct(branch, trackingBranch,
    numCommits, numModified, numUntracked)
 
@@ -917,8 +959,7 @@ if __name__ == '__main__':
     print "*** Using git:", options.useGit
 
   # Get the name of the base repo
-  baseDirArray = baseDir.split("/")
-  baseRepoName = baseDirArray[-1]
+  baseRepoName = getBaseDirNameFromPath(baseDir)
 
   repoStatTable = RepoStatTable()
 
@@ -940,7 +981,7 @@ if __name__ == '__main__':
   # Process the base git repo
   if processBaseRepo:
     if distRepoStatus:
-      repoStatTable.insertRepoStat(baseRepoName+" (Base)", baseRepoStats, repoID)
+      repoStatTable.insertRepoStat(getBaseRepoTblName(baseRepoName), baseRepoStats, repoID)
     else:
       print ""
       print "*** Base Git Repo: "+addColorToRepoDir(options.useColor, baseRepoName)

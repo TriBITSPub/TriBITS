@@ -2,6 +2,20 @@
 Release Notes for TriBITS
 ----------------------------------------
 
+2016/01/22:
+
+(*) Change test category WEEKLY to HEAVY and depreciate WEEKLY.  You can stil
+    use WEEKLY but it will result in a lot of warnings.
+
+2015/12/03:
+
+(*) checkin-test.py: Added support for tracking branches for each repo
+    independently and not assume 'origin' and not assume that all of the repos
+    are on the same branch or will be pulling and pushing to the same remote
+    branch.  This will make it easier to use the checkin-test.py script to set
+    up various integration scenarios.  See TriBITS GitHub Issue #15 for
+    details.
+
 2015/04/14:
 
 (*) When configuring with ${PROJECT_NAME}_ENABLE_CXX11=ON, if C++11 support

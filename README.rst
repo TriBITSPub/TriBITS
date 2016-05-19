@@ -1,3 +1,6 @@
+.. image:: https://badge.waffle.io/TriBITSPub/TriBITS.png?label=ready&title=Ready 
+ :target: https://waffle.io/TriBITSPub/TriBITS
+ :alt: 'Stories in Ready'
 =================================================
 TriBITS: Tribal Build, Integrate, and Test System
 =================================================
