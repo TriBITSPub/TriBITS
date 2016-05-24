@@ -7,3 +7,8 @@
 
 # TriBITSDoc repo
 /TriBITSDoc/
+
+# Ignore generated files
+/README.html
+/README.pdf
+/README.tex.log
