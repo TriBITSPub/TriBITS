@@ -1,6 +1,7 @@
 .. image:: https://badge.waffle.io/TriBITSPub/TriBITS.png?label=ready&title=Ready 
  :target: https://waffle.io/TriBITSPub/TriBITS
  :alt: 'Stories in Ready'
+
 =================================================
 TriBITS: Tribal Build, Integrate, and Test System
 =================================================
@@ -16,3 +17,66 @@ Documentation
 =============
 
 See `TriBITS Documentation on tribits.org <http://tribits.org>`_
+
+Developing on TriBITS
+=====================
+
+In order to make changes and enhancements to TriBITS (see `Contributing to
+TriBITS`_ and the role `TriBITS System Developer`_), one must be able to
+build, run, and extend the automated TriBITS test suite.  To develop on
+TriBITS, one must minimally have CMake 2.8.11 (or newer) and a working C and
+C++ compiler.  (A Fortran compiler is also desired to test Fortran-specific
+features of TriBITS but it can be disabled, see below).
+
+To set up to develop on TriBITS:
+
+1) Clone the TriBITS repository
+
+  ::
+
+    $ cd <some-base-dir>/
+    $ git clone git@github.com:TriBITSPub/TriBITS.git
+  
+2) Create and set up a build/test directory
+
+  ::
+
+    $ cd <some-base-dir>/
+    $ mkdir BUILD
+    $ cd BUILD/
+    $ ln -s ../TriBITS/dev_testing/generic/do-configure-serial-debug-gcc \
+      do-configure
+
+  NOTE: Other do-configure scripts are also in that directory (e.g. for MPI).
+
+3) Configure, build and run the TriBITS test suite
+
+  ::
+
+    $ ./do-configure
+    $ make
+    $ ctest -j12
+
+  NOTES:
+
+  * If you don't have a working and compatible Fortran compiler, then pass
+    ``-DTriBITS_ENABLE_Fortran=OFF`` into the ``do-configure`` script.
+
+  * Use as many processes as you have with ``ctest`` (``-j12`` is just used as
+    an example).
+
+  * All of the tests should pass on your machine before beginning any
+    development work (if there are any failures, then please `report them`_).
+
+Any change (refactoring) of TriBITS (minimally) requires that the automated
+test suite run with ``ctest`` pass 100%.  To add new features (in most cases)
+new automated tests must be added to define and protect those features (again,
+see `Contributing to TriBITS`_).
+
+.. References:
+
+.. _Contributing to TriBITS: https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS
+
+.. _Report them: https://github.com/TriBITSPub/TriBITS/issues
+
+.. _TriBITS System Developer: https://tribits.org/doc/TribitsDevelopersGuide.html#tribits-developer-and-user-roles
