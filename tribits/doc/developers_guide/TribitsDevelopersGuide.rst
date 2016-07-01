@@ -1781,19 +1781,17 @@ defined before a (SE) Package's ``CMakeLists.txt`` file is processed:
   ``${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}``
 
     Set to ``ON`` if support for the optional `upstream`_ dependent TPL
-    ``${OPTIONAL_DEP_TPL_NAME}`` is enabled in package
-    ``${PACKAGE_NAME}``.  Here ``${OPTIONAL_DEP_TPL_NAME}`` corresponds
-    each to the optional upstream TPL listed in the ``LIB_OPTIONAL_TPLS`` and
-    ``TEST_OPTIONAL_TPLS`` arguments to the
-    `TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()`_ macro.  **NOTE:** It is important
-    that the CMake code in the package ``${PACKAGE_NAME}`` key off of this
-    variable and **not** the global
+    ``${OPTIONAL_DEP_TPL_NAME}`` is enabled in package ``${PACKAGE_NAME}``.
+    Here ``${OPTIONAL_DEP_TPL_NAME}`` corresponds to each optional upstream
+    TPL listed in the ``LIB_OPTIONAL_TPLS`` and ``TEST_OPTIONAL_TPLS``
+    arguments to the `TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()`_ macro.
+    **NOTE:** It is important that the CMake code in the package
+    ``${PACKAGE_NAME}`` key off of this variable and **not** the global
     ``TPL_ENABLE_${OPTIONAL_DEP_TPL_NAME}`` variable because
-    ``${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}`` can be
-    explicitly turned off by the user even through the package
-    ``${PACKAGE_NAME}`` and the TPL ``${OPTIONAL_DEP_TPL_NAME}`` are
-    both enabled (see `Support for optional SE package/TPL can be explicitly
-    disabled`_).
+    ``${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}`` can be explicitly
+    turned off by the user even through the package ``${PACKAGE_NAME}`` and
+    the TPL ``${OPTIONAL_DEP_TPL_NAME}`` are both enabled (see `Support for
+    optional SE package/TPL can be explicitly disabled`_).
 
   .. _${PACKAGE_NAME}_ENABLE_TESTS:
 
@@ -5534,6 +5532,20 @@ as follows:
      #  include "<upstreamPackageName>_<fileName>"
      #endif 
 
+4) **For an optional dependency, use CMake IF() statements based on
+   ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}:** When a package
+   ``PACKAGE_NAME`` has an optional dependency on an upstream package
+   ``OPTIONAL_DEP_PACKAGE_NAME`` and needs to put in optional logic in a
+   CMakeLists.txt file, then the IF() statements should use the variable
+   `${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}`_ and **not** the
+   variable ``${PROJECT_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}``.  For
+   example, to optionally enable a test that depends on the enable of the
+   optional upstream dep package, one would use::
+
+     IF (${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME})
+       TRIBITS_ADD_TEST( ... )
+     ENDIF()
+
   .. ToDo: Find an example to point to in TribitsExampleProject.
   
 NOTE: TriBITS will automatically add the include directories for the upstream
@@ -5599,6 +5611,20 @@ follows:
      #if HAVE_<PACKAGE_NAME_UC>_<OPTIONAL_DEP_TPL_NAME_UC>
      #  include "<upstreamPackageName>_<fileName>"
      #endif 
+
+4) **For an optional dependency, use CMake IF() statements based on
+   ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}:** When a package
+   ``PACKAGE_NAME`` has an optional dependency on TPL
+   ``OPTIONAL_DEP_TPL_NAME`` and needs to put in optional logic in a
+   CMakeLists.txt file, then the IF() statements should use the variable
+   `${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}`_ and **not** the variable
+   ``${PROJECT_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}``.  For example, to
+   optionally enable a test that depends on the enable of the optional TPL,
+   one would use::
+
+     IF (${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME})
+       TRIBITS_ADD_TEST( ... )
+     ENDIF()
 
   .. ToDo: Find an example to point to in TribitsExampleProject.
   
