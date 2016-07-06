@@ -5046,11 +5046,11 @@ Once cloned, one needs to work with the multiple repositories to perform basic
 VC operations.  For this, TriBITS provides the tool **gitdist** which is a
 simple stand-alone Python script that distributes a git command across a set
 of git repos.  This tool is not specific to TriBITS but it is very useful for
-dealing with TriBITS projects with multiple repositories.  It only requires
-that a base git repo and a set of zero or more git repos cloned under it.
+dealing with TriBITS projects with multiple repositories.  It only requires a
+local base git repo and a set of zero or more git repos cloned under it.
 
 To use ``gitdist`` with this aggregate meta-project, one would first set up
-the file ``MetaProject/.gitdist`` (or a version controlled
+the file ``MetaProject/.gitdist`` (or a version-controlled
 ``MetaProject.gitdist.default`` file) which would contain the lines::
 
   ExtraRepo1
@@ -5066,7 +5066,7 @@ contains the lines::
 
 To use ``gitdist``, one would put ``gitdist`` into their path and also set up
 the command-line shell aliases ``gitdist-status`` and ``gitdist-mod`` (see
-`gitdist --help`_).
+`gitdist --dist-help=aliases`_).
 
 Some of the aggregate commands that one would typically run under the base
 ``MetaProject/`` directory are::
@@ -5085,7 +5085,7 @@ The script ``gitdist`` is provided under TriBITS directory::
   cmake/tribits/python_utils/gitidst   
 
 and can be installed by the `install_devtools.py`_ script (see `TriBITS
-Development Toolset`_).  See `gitdist --help`_ for more details.
+Development Toolset`_).  See `gitdist documentation`_ for more details.
 
 For projects with a standard set of extra repositories defined in the
 `<projectDir>/cmake/ExtraRepositoriesList.cmake`_ file, the
@@ -5119,7 +5119,7 @@ output, gets installed into the install directory, and get added to the source
 distributions tarball.  It also gets pushed up to CDash for all automated
 builds.  The tool `gitdist`_ can then use this file to checkout and tag
 compatible versions, difference two versions of the meta-project, etc. (see
-`gitdist --help`_ for more details on git operations).
+`gitdist documentation`_ for more details on git operations).
 
 The TriBITS approach to managing multiple VC repos described above works well
 for around 20 or 30 VC repos but is likely not a good solution for many more
@@ -5175,7 +5175,9 @@ repos (as used in the CASL VERA project).  The `checkin-test.py`_ script
 automatically handles all of the details of pulling, diffing, pushing etc. to
 all the VC repos.
 
-.. ToDo: Discuss usage of 'gitdist' and the rep clone script.
+
+
+.. ToDo: Discuss usage of 'gitdist' and the repo clone script.
 
 
 Howtos
@@ -6507,11 +6509,11 @@ This gives the remotes::
   origin	        url4.gov:/git/ExtraRepo2 (fetch)
 
 The remote ``public`` is used by the ``checkin-test.py`` wrapper script (see
-below) to pull and merge in additional changes that will be tested and pushed
-to the 'origin' repos on ``url4.gov``.  In this case, the ``ExtraRepo1``
-remote ``public`` will result in updates being pulled from the main
-development repo on ``url2.gov``, thereby facilitating the update of
-``ExtraRepo1`` in the integrated meta-project.
+`ACI Sync Driver Script`_ below) to pull and merge in additional changes that
+will be tested and pushed to the 'origin' repos on ``url4.gov``.  In this
+case, the ``ExtraRepo1`` remote ``public`` will result in updates being pulled
+from the main development repo on ``url2.gov``, thereby facilitating the
+update of ``ExtraRepo1`` in the integrated meta-project.
 
 
 ACI Integration Build Directory Setup
@@ -8112,15 +8114,78 @@ Support`_ and `Multi-Repository Development Workflow`_.
 .. include:: clone_extra_repos-help.txt
    :literal:
 
+gitdist documentation
+---------------------
+
+The sections below show snapshots of the output from the `gitdist`_ script
+from `gitdist --help`_ and ``gitdist --dist-help=<topic>``:
+
+* `gitdist --help`_
+* `gitdist --dist-help=overview`_
+* `gitdist --dist-help=repo-selection-and-setup`_
+* `gitdist --dist-help=dist-repo-status`_
+* `gitdist --dist-help=repo-versions`_
+* `gitdist --dist-help=aliases`_
+* `gitdist --dist-help=usage-tips`_
+* `gitdist --dist-help=script-dependencies`_
+* `gitdist --dist-help=all`_
+
+For more details on the usage of ``gitdist``, see `Multi-Repository Support`_
+and `Multi-Repository Development Workflow`_.
+
 
 gitdist --help
---------------
-
-Below is a snapshot of the output from ``gitdist --help``.  For more details
-on the usage of ``gitdist``, see `Multi-Repository Support`_ and
-`Multi-Repository Development Workflow`_.
+++++++++++++++
 
 .. include:: gitdist-help.txt
+   :literal:
+
+gitdist --dist-help=overview
+++++++++++++++++++++++++++++
+
+.. include:: gitdist-dist-help-overview.txt
+   :literal:
+
+gitdist --dist-help=repo-selection-and-setup
+++++++++++++++++++++++++++++++++++++++++++++
+
+.. include:: gitdist-dist-help-repo-selection-and-setup.txt
+   :literal:
+
+gitdist --dist-help=dist-repo-status
+++++++++++++++++++++++++++++++++++++
+
+.. include:: gitdist-dist-help-dist-repo-status.txt
+   :literal:
+
+gitdist --dist-help=repo-versions
++++++++++++++++++++++++++++++++++
+
+.. include:: gitdist-dist-help-repo-versions.txt
+   :literal:
+
+gitdist --dist-help=aliases
++++++++++++++++++++++++++++
+
+.. include:: gitdist-dist-help-aliases.txt
+   :literal:
+
+gitdist --dist-help=usage-tips
+++++++++++++++++++++++++++++++
+
+.. include:: gitdist-dist-help-usage-tips.txt
+   :literal:
+
+gitdist --dist-help=script-dependencies
++++++++++++++++++++++++++++++++++++++++
+
+.. include:: gitdist-dist-help-script-dependencies.txt
+   :literal:
+
+gitdist --dist-help=all
++++++++++++++++++++++++++++++++++++++++
+
+.. include:: gitdist-dist-help-all.txt
    :literal:
 
 
