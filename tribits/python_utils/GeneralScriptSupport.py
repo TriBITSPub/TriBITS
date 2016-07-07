@@ -729,27 +729,6 @@ class TeeOutput(object):
 reCmndLineArg = re.compile(r"(--.+=)(.+)")
 
 
-def addOptionParserChoiceOption(
-  optionName,
-  optionDest,
-  choiceOptions,
-  defaultChoiceIndex,
-  helpStr,
-  optionParser
-  ):
-  """ Add a general choice option to a optparse.OptionParser object"""
-  defaultOptionValue = choiceOptions[defaultChoiceIndex]
-  optionParser.add_option(
-    optionName,
-    dest=optionDest,
-    type="choice",
-    choices=choiceOptions,
-    default=defaultOptionValue,
-    help='%s Choices = (\'%s\').  [default = \'%s\']'
-    % (helpStr, '\', \''.join(choiceOptions), defaultOptionValue)
-    )
-
-
 def requoteCmndLineArgs(inArgs):
   argsStr = ""
   for arg in inArgs:
