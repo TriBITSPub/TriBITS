@@ -42,6 +42,7 @@
 from CheckinTestConstants import *
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
+from gitdist import addOptionParserChoiceOption
 import gitdist
 
 
