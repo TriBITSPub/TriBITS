@@ -45,10 +45,10 @@ helpTopicsDict = {}
 helpUsageHeader = r"""gitdist [gitdist arguments] [git arguments]
        gitdist [gitdist arguments] dist-repo-status
 
-Run git recursively over a set of git repos in a multi-repository git project
-(see --dist-help=overview --help).  This script also includes other tools like
+Run git over a set of git repos in a multi-repository git project (see
+--dist-help=overview --help).  This script also includes other tools like
 printing a compact repo status table (see --dist-help=dist-repo-status) and
-tracking versions through multi-repository SHA1 version files (see
+tracking compatible versions through multi-repository SHA1 version files (see
 --dist-help=repo-versions).
 
 The options in [gitdist options] are prefixed with '--dist-' and are pulled
