@@ -182,6 +182,7 @@ extra repos to process will be read from the file '.gitdist.default' in the
 current directory.  The format of this files '.gitdist' and '.gitdist.default'
 is to have one repo relative directory per line, for example:
 
+  $ cat .gitdist
   ExtraRepo1
   ExtraRepo1/ExtraRepo2
   ExtraRepo3
@@ -206,7 +207,7 @@ cloning and organizing the local git repo. For the example listed here, one
 would clone the base repo 'BaseRepo' and the three extra git repos, set up a
 .gitdist file, and then add ignores for the extra cloned repos like:
 
-  # Clone and organize the git repos
+  # A) Clone and organize the git repos
   $ git clone git@some.url:BaseRepo.git
   $ cd BaseRepo/
   $ git clone git@some.url:ExtraRepo1.git
@@ -215,20 +216,20 @@ would clone the base repo 'BaseRepo' and the three extra git repos, set up a
   $ cd ..
   $ git clone git@some.url:ExtraRepo3.git
 
-  # Create .gitdist
+  # B) Create .gitdist
   $ echo ExtraRepo1 > .gitdist
   $ echo ExtraRepo1/ExtraRepo2 >> .gitdist
   $ echo ExtraRepo3 >> .gitdist
 
-  # Add ignores in base repo
+  # C) Add ignores in base repo
   $ echo /ExtraRepo1/ >> .git/info/exclude
   $ echo /ExtraRepo3/ >> .git/info/exclude
 
-  # Add ignore in nexted extra repo
+  # D) Add ignore in nested extra repo
   $ echo /ExtraRepo2/ >> ExtraRepo1/.git/info/exclude
 
 (Note that one may instead add the above ignores to the version-controlled
-files BaseRepo/.gitignore and ExtraRepo1/.gitignore instead.)
+files BaseRepo/.gitignore and ExtraRepo1/.gitignore.)
 
 This produces the local repo structure:
 
@@ -248,7 +249,7 @@ After this setup, running:
 
 in the 'BaseRepo/ 'directory will automatically distribute a given command
 across the base repo 'BaseRepo/ and the extra repos ExtraRepo1/,
-ExtraRepo1/ExtraRepo2/, and ExtraRepo3/, in order.
+ExtraRepo1/ExtraRepo2/, and ExtraRepo3/, in that order.
 
 To simplify the setup for the usage of gitdist for a given set of local git
 repos, one may choose to instead create the file .gitdist.default in the base
