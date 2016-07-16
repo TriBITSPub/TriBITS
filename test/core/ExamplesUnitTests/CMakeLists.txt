@@ -106,12 +106,17 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
 ########################################################################
 
 
+SET(TribitsHelloWorld_COMMON_CONFIG_ARGS
+  ${COMMON_ENV_ARGS_PASSTHROUGH}
+  -DTribitsHelloWorld_ENABLE_Fortran=${TriBITS_ENABLE_Fortran}
+  )
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
     PASS_REGULAR_EXPRESSION_ALL
       "Configuring done"
@@ -137,7 +142,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
 
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
       -DDART_TESTING_TIMEOUT=200.0
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
     PASS_REGULAR_EXPRESSION_ALL "Generating done"
@@ -179,6 +184,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
 
   )
 
+IF (TriBITS_EANBLE_Fortran)
+ SET(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX
+    "-- XSDK: Setting CMAKE_Fortran_COMPILER from env var FC=")
+ELSE()
+ SET(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX)
+ENDIF()
+
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -186,7 +198,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
 
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
       -DUSE_XSDK_DEFAULTS=TRUE
       -DCMAKE_C_COMPILER=
       -DCMAKE_CXX_COMPILER=
@@ -197,7 +209,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
       "USE_XSDK_DEFAULTS=.TRUE."
       "-- XSDK: Setting CMAKE_C_COMPILER from env var CC="
       "-- XSDK: Setting CMAKE_CXX_COMPILER from env var CXX="
-      "-- XSDK: Setting CMAKE_Fortran_COMPILER from env var FC="
+      "${TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX}"
       "-- XSDK: Setting default CMAKE_BUILD_TYPE=DEBUG"
       "-- CMAKE_BUILD_TYPE='DEBUG'"
       "-- BUILD_SHARED_LIBS='TRUE'"
@@ -213,6 +225,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
 ########################################################################
 # TribitsExampleProject
 ########################################################################
+
+
+SET(TribitsExampleProject_COMMON_CONFIG_ARGS
+  ${COMMON_ENV_ARGS_PASSTHROUGH}
+  -DTribitsExampleProject_ENABLE_Fortran=${TriBITS_ENABLE_Fortran}
+  )
 
 
 ASSERT_DEFINED(TPL_ENABLE_MPI)
@@ -248,7 +266,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   TEST_0 CMND ${CMAKE_COMMAND}
     MESSAGE "Do the initial configure (and test a lot of things at once)"
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
@@ -503,7 +521,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
     TEST_0 CMND ${CMAKE_COMMAND}
       MESSAGE "Do the initial configure with basic configure timing"
       ARGS
-        ${COMMON_ENV_ARGS_PASSTHROUGH}
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_Fortran=OFF
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
@@ -567,7 +585,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
   TEST_0 CMND ${CMAKE_COMMAND}
     MESSAGE "Do the initial configure (and test a lot of things at once)"
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
@@ -642,7 +660,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
     TEST_0 CMND ${CMAKE_COMMAND}
       MESSAGE "Do the initial configure"
       ARGS
-        ${COMMON_ENV_ARGS_PASSTHROUGH}
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_Fortran=ON
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
@@ -695,7 +713,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
     TEST_0 CMND ${CMAKE_COMMAND}
       MESSAGE "Do the initial configure"
       ARGS
-        ${COMMON_ENV_ARGS_PASSTHROUGH}
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_Fortran=ON
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
@@ -752,7 +770,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         " and the  env probe in place."
       CMND ${CMAKE_COMMAND}
       ARGS
-        ${COMMON_ENV_ARGS_PASSTHROUGH}
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_Fortran=ON
         -DPYTHON_EXECUTABLE=
@@ -931,7 +949,7 @@ IF (${PROJECT_NAME}_ENABLE_Fortran)
         " and the  env probe in place."
       CMND ${CMAKE_COMMAND}
       ARGS
-        ${COMMON_ENV_ARGS_PASSTHROUGH}
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_Fortran=ON
         -DTribitsExProj_ENABLE_WrapExternal=OFF
@@ -1098,7 +1116,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
   TEST_0 CMND ${CMAKE_COMMAND}
     MESSAGE "Do the initial configure"
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_DEBUG=ON
       -DTribitsExProj_ENABLE_SimpleCxx=ON
@@ -1128,7 +1146,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
   TEST_0 CMND ${CMAKE_COMMAND}
     MESSAGE "Do the initial configure with no opions file"
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
@@ -1191,7 +1209,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
 
   TEST_1 CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_DEBUG=OFF
       -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
@@ -1292,7 +1310,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
     MESSSAGE "Do a verbose configure and check that the packages coupling variables are correct."
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_DEBUG=OFF
@@ -1363,7 +1381,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_WrapExternal_VerboseConfigu
     MESSSAGE "Do a verbose configure and check that the packages coupling variables are correct."
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=ON
       -DTribitsExProj_ENABLE_DEBUG=OFF
@@ -1431,7 +1449,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
     MESSSAGE "Override with_packages/ source dir and configure"
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_DEBUG=OFF
@@ -1496,7 +1514,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
     MESSAGE "Do the initial configure with a bad TPL find path"
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_SimpleCxx=ON
@@ -1556,7 +1574,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
     MESSAGE "Do the initial configure with a bad TPL find path"
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_SimpleCxx=ON
@@ -1596,7 +1614,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
     MESSAGE "Configure to get the compiler options"
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_DEBUG=OFF
@@ -1667,7 +1685,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
     MESSAGE "Configure to get the compiler options"
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_DEBUG=OFF
@@ -1726,7 +1744,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
     MESSAGE "Configure to get the compiler options"
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DBUILD_SHARED_LIBS=ON
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
@@ -1794,7 +1812,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
     MESSAGE "Configure to get the compiler options"
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DBUILD_SHARED_LIBS=OFF
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
@@ -1900,7 +1918,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TribitsExampleProjectAddons
     MESSAGE "Configure with cmake/ExtraRepositoriesList.cmake file enabling all packages"
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_DEBUG=OFF
@@ -1939,7 +1957,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TribitsExampleProjectAddons
     MESSAGE "Configure again enabling all packages using TribitsExProj_EXTRA_REPOSITORIES only"
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_EXTRAREPOS_FILE=
       -DTribitsExProj_EXTRA_REPOSITORIES=TribitsExampleProjectAddons
       .
