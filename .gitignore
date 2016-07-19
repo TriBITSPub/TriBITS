@@ -12,3 +12,6 @@
 /README.html
 /README.pdf
 /README.tex.log
+
+# Ignore build dirs
+BUILD/
