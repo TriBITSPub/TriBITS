@@ -73,6 +73,7 @@ INCLUDE(PrintVar)
 #     [XHOST <host0> <host1> ...]
 #     [HOSTTYPE <hosttype0> <hosttype1> ...]
 #     [XHOSTTYPE <hosttype0> <hosttype1> ...]
+#     [EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...]
 #     [FINAL_PASS_REGULAR_EXPRESSION <regex> |
 #       FINAL_FAIL_REGULAR_EXPRESSION <regex>]
 #     [ENVIRONMENT <var1>=<value1> <var2>=<value2> ...]
@@ -229,6 +230,11 @@ INCLUDE(PrintVar)
 #
 #     The list of host types for which **not** to enable the test (see
 #     `TRIBITS_ADD_TEST()`_).
+#
+#    ``EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...``
+#
+#     If specified, gives the names of CMake variables that must evaluate to
+#     true, or the test will not be added (see `TRIBITS_ADD_TEST()`_).
 #
 #   ``ENVIRONMENT <var1>=<value1> <var2>=<value2> ..``.
 #
@@ -604,7 +610,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
      #prefix
      PARSE
      #lists
-     "${TEST_IDX_LIST};OVERALL_WORKING_DIRECTORY;KEYWORDS;COMM;OVERALL_NUM_MPI_PROCS;OVERALL_NUM_TOTAL_CORES_USED;FINAL_PASS_REGULAR_EXPRESSION;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;FINAL_FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TEST_NAME_OUT"
+     "${TEST_IDX_LIST};OVERALL_WORKING_DIRECTORY;KEYWORDS;COMM;OVERALL_NUM_MPI_PROCS;OVERALL_NUM_TOTAL_CORES_USED;FINAL_PASS_REGULAR_EXPRESSION;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;FINAL_FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TEST_NAME_OUT"
      #options
      "FAIL_FAST;RUN_SERIAL;SKIP_CLEAN_OVERALL_WORKING_DIRECTORY"
      ${ARGN}
