@@ -229,7 +229,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
 
 SET(TribitsExampleProject_COMMON_CONFIG_ARGS
   ${COMMON_ENV_ARGS_PASSTHROUGH}
-  -DTribitsExampleProject_ENABLE_Fortran=${TriBITS_ENABLE_Fortran}
+  -DTribitsExProj_ENABLE_Fortran=${TriBITS_ENABLE_Fortran}
   )
 
 
@@ -262,6 +262,7 @@ ENDIF()
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Darwin
 
   TEST_0 CMND ${CMAKE_COMMAND}
     MESSAGE "Do the initial configure (and test a lot of things at once)"
@@ -522,8 +523,8 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
       MESSAGE "Do the initial configure with basic configure timing"
       ARGS
         ${TribitsExampleProject_COMMON_CONFIG_ARGS}
-        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_Fortran=OFF
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_TESTS=ON
         -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
@@ -586,8 +587,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
     MESSAGE "Do the initial configure (and test a lot of things at once)"
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
-      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
@@ -1117,6 +1118,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
     MESSAGE "Do the initial configure"
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_DEBUG=ON
       -DTribitsExProj_ENABLE_SimpleCxx=ON
@@ -1148,6 +1150,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Configuring done"
@@ -1201,6 +1204,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
     MESSAGE "Copy TribitsExampleProject so that we can modify it."
@@ -1373,61 +1377,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_WrapExternal_VerboseConfigure
-  OVERALL_WORKING_DIRECTORY TEST_NAME
-  OVERALL_NUM_MPI_PROCS 1
-
-  TEST_0
-    MESSSAGE "Do a verbose configure and check that the packages coupling variables are correct."
-    CMND ${CMAKE_COMMAND}
-    ARGS
-      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
-      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
-      -DTribitsExProj_ENABLE_Fortran=ON
-      -DTribitsExProj_ENABLE_DEBUG=OFF
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
-      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
-      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
-      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-      -DTribitsExProj_ENABLE_TESTS=ON
-      -DTribitsExProj_VERBOSE_CONFIGURE=ON
-      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
-    PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
-
-      # ToDo Fill in more checks for libs, variables, etc. 
-
-      "-- pws_b_TARGET_NAME='pws_b'"
-      "-- b_test_TARGET_NAME='WithSubpackagesB_b_test'"
-      "-- test_of_b_TEST_NAME='WithSubpackagesB_test_of_b'"
-      "-- c_util_TEST_NAME='WithSubpackagesC_test_of_c_util${TEST_MPI_1_SUFFIX}'"
-      "-- test_of_c_b_mixed_lang_TARGET_NAME='WithSubpackagesC_test_of_c_b_mixed_lang'"
-      "-- test_of_c_b_mixed_lang_TEST_NAME='WithSubpackagesC_test_of_c_b_mixed_lang${TEST_MPI_1_SUFFIX}'"
-
-      "-- simplecxx:LINK_LIBS=''"
-      "-- HelloWorldTests:LINK_LIBS='simplecxx'"
-      "-- mixedlang:LINK_LIBS=''"
-      "-- RayTracerTests:LINK_LIBS='mixedlang'"
-      "-- pws_a:LINK_LIBS='simplecxx'"
-      "-- a_test:LINK_LIBS='pws_a'"
-      "-- pws_b:LINK_LIBS='pws_a[;]simplecxx'"
-      "-- b_test:LINK_LIBS='pws_b[;]mixedlang'"
-      "-- b_mixed_lang:LINK_LIBS='pws_b[;]mixedlang'"
-      "-- test_of_b_mixed_lang:LINK_LIBS='b_test_utils[;]b_mixed_lang[;]pws_b[;]mixedlang'"
-      "-- c_util:LINK_LIBS='pws_b[;]pws_a'"
-      "-- pws_c:LINK_LIBS='pws_b[;]pws_a'"
-      "-- c_test:LINK_LIBS='pws_c'"
-      "-- c_b_mixed_lang:LINK_LIBS='pws_c[;]b_mixed_lang'"
-      "-- test_of_c_b_mixed_lang:LINK_LIBS='c_b_mixed_lang[;]pws_c'"
-      "-- run_external_func:LINK_LIBS='external_func[;]pws_a'"
-
-  )
-
-
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Darwin
 
   TEST_0
     MESSAGE "Copy TribitsExampleProject so that we can modify it."
@@ -1604,6 +1557,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Darwin
 
   TEST_0
     MESSAGE "Copy TribitsExampleProject so that we can copy in ExteranlPkg."
@@ -1734,6 +1688,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Darwin
 
   TEST_0
     MESSAGE "Copy TribitsExampleProject so that we can copy in MixedSharedStaticLibs."
@@ -1802,6 +1757,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Darwin
 
   TEST_0
     MESSAGE "Copy TribitsExampleProject so that we can copy in MixedSharedStaticLibs."
