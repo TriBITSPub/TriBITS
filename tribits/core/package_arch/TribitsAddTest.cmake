@@ -281,7 +281,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     ``HOSTTYPE`` list if it should exist.  Therefore, this exclusion list
 #     overrides the ``HOSTTYPE`` inclusion list.
 #
-#    ``EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...``
+#   ``EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...``
 #
 #     If specified, gives the names of CMake variables that must evaluate to
 #     true, or the test will not be added.

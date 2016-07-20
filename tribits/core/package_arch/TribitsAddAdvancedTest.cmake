@@ -231,7 +231,7 @@ INCLUDE(PrintVar)
 #     The list of host types for which **not** to enable the test (see
 #     `TRIBITS_ADD_TEST()`_).
 #
-#    ``EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...``
+#   ``EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...``
 #
 #     If specified, gives the names of CMake variables that must evaluate to
 #     true, or the test will not be added (see `TRIBITS_ADD_TEST()`_).
