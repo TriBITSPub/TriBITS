@@ -602,7 +602,7 @@ def assertContainsGitdistHelpHeader(testObj, cmndOut):
   cmndOutList = cmndOut.split("\n")
   cmndOutFirstLine = cmndOutList[0] 
   cmndOutFirstLineAfterComma = cmndOutFirstLine.split(":")[1].strip() 
-  cmndOutFirstLineAfterComma_expected = "gitdist [gitdist arguments] [git arguments]"
+  cmndOutFirstLineAfterComma_expected = "gitdist [gitdist arguments] <raw-git-command> [git arguments]"
   testObj.assertEqual(cmndOutFirstLineAfterComma, cmndOutFirstLineAfterComma_expected)
 
 
