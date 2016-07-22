@@ -250,14 +250,27 @@ ELSE()
   SET(REGEX_FOR_GITIGNORE)
 ENDIF()
 
-IF (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.5)
-  SET(DEPRECATED_MSG_STR
-    ".* .Just don't call this function at all please!")
+IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+  SET(DEPRECATED_WARNING_1_STR
+    "‘int SimpleCxx::HelloWorld::someOldFunc.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:"
+    )
+  IF (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.5)
+    # Only versions 4.5+ support this feature
+    SET(DEPRECATED_MSG_STR ".* .Just don't call this function at all please!")
+  ELSE()
+    SET(DEPRECATED_MSG_STR)
+  ENDIF()
+  SET(DEPRECATED_WARNING_2_STR
+    "‘int SimpleCxx::HelloWorld::someOldFunc2.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:${DEPRECATED_MSG_STR}"
+    )
 ELSE()
-  SET(DEPRECATED_MSG_STR)
+  SET(DEPRECATED_WARNING_1_STR
+    ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: ‘int SimpleCxx::HelloWorld::someOldFunc.. const’ is deprecated"
+    )
+  SET(DEPRECATED_WARNING_2_STR
+    ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: ‘int SimpleCxx::HelloWorld::someOldFunc2.. const’ is deprecated: .Just don't call this function at all please."
+    )
 ENDIF()
-# NOTE: Only GCC compilers 4.5 and newer support customized deprecated
-# messages.
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -362,8 +375,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
     MESSAGE "Build the default 'all' target using raw 'make'"
     PASS_REGULAR_EXPRESSION_ALL
       "Built target simplecxx"
-      "‘int SimpleCxx::HelloWorld::someOldFunc.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:"
-      "‘int SimpleCxx::HelloWorld::someOldFunc2.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:${DEPRECATED_MSG_STR}"
+      "${DEPRECATED_WARNING_1_STR}"
+      "${DEPRECATED_WARNING_2_STR}"
       "Built target pws_a"
       "Built target pws_b"
       "Built target pws_c"
