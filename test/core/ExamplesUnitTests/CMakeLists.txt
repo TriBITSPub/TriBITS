@@ -108,7 +108,7 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
 
 SET(TribitsHelloWorld_COMMON_CONFIG_ARGS
   ${COMMON_ENV_ARGS_PASSTHROUGH}
-  -DTribitsHelloWorld_ENABLE_Fortran=${TriBITS_ENABLE_Fortran}
+  -DTribitsHelloWorld_ENABLE_Fortran=${${PROJECT_NAME}_ENABLE_Fortran}
   )
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
@@ -229,7 +229,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
 
 SET(TribitsExampleProject_COMMON_CONFIG_ARGS
   ${COMMON_ENV_ARGS_PASSTHROUGH}
-  -DTribitsExProj_ENABLE_Fortran=${TriBITS_ENABLE_Fortran}
+  -DTribitsExProj_ENABLE_Fortran=${${PROJECT_NAME}_ENABLE_Fortran}
   )
 
 
