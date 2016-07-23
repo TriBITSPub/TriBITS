@@ -45,6 +45,7 @@ import unittest
 from FindCISupportDir import *
 from CDashQueryPassFail import *
 
+pythonVersion = sys.version_info.major
 
 g_testBaseDir = getScriptBaseDir()
 
@@ -340,8 +341,24 @@ class test_CDashQueryPassFail(unittest.TestCase):
     expectedBuildNames = ["build1"]
     (cdashIndexBuildsPassAndExpectedExist_passed, errMsg) = \
       cdashIndexBuildsPassAndExpectedExist(builds, expectedBuildNames)
-    self.assertEqual(errMsg,
-      "Error, the build {'buildname': 'build1', 'test': {'fail': 0, 'notrun': 0}, 'compilation': {'error': 0}, 'update': {'errors': 0}, 'configure': {'error': 5}} failed!")
+    expectedErrMsg = "Error, the build {'buildname': 'build1', 'test': " \
+                     "{'fail': 0, 'notrun': 0}, 'compilation': {'error': 0}, " \
+                     "'update': {'errors': 0}, 'configure': {'error': 5}} " \
+                     "failed!"
+    if pythonVersion == 2:
+      self.assertEqual(errMsg, expectedErrMsg)
+    elif pythonVersion == 3:
+      # wfspotz, 23 Jul 2016: I tried the Python 2 test
+      #
+      #     self.assertEqual(errMsg, expectedErrMsg)
+      #
+      # but this does not work in Python 3 because the order of the keys keeps
+      # changing. It appears the hash algorithm for sorting the keys is
+      # non-deterministic (I also believe, in Python 2, that the order can
+      # change from platform to platform). So here I only check the
+      # deterministic part of the error message.
+      self.assertEqual(errMsg[:18], "Error, the build {")
+      self.assertEqual(errMsg[-9:], "} failed!")
     self.assertEqual(cdashIndexBuildsPassAndExpectedExist_passed, False)
 
   def test_cdashIndexBuildsPassAndExpectedExist_1_missing_expected_build(self):
@@ -425,8 +442,28 @@ class test_CDashQueryPassFail(unittest.TestCase):
     (allPassed, errMsg) = queryCDashAndDeterminePassFail(
       "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21", "dummy-filter-fields",
       expectedBuildNames, False, dummyExtractCDashApiQueryData)
-    self.assertEqual(errMsg,
-      "Error, the build {u'buildname': 'build1', u'test': {'fail': 3, 'notrun': 0}, u'compilation': {'error': 0}, u'update': {'errors': 0}, u'configure': {'error': 0}} failed!" )
+    if pythonVersion == 2:
+      expectedErrMsg = "Error, the build {u'buildname': 'build1', u'test': " \
+                       "{'fail': 3, 'notrun': 0}, u'compilation': {'error': " \
+                       "0}, u'update': {'errors': 0}, u'configure': " \
+                       "{'error': 0}} failed!"
+      self.assertEqual(errMsg, expectedErrMsg)
+    elif pythonVersion == 3:
+      expectedErrMsg = "Error, the build {'buildname': 'build1', 'test': " \
+                       "{'fail': 3, 'notrun': 0}, 'compilation': {'error': " \
+                       "0}, 'update': {'errors': 0}, 'configure': " \
+                       "{'error': 0}} failed!"
+      # wfspotz, 23 Jul 2016: I tried the Python 2 test
+      #
+      #     self.assertEqual(errMsg, expectedErrMsg)
+      #
+      # but this does not work in Python 3 because the order of the keys keeps
+      # changing. It appears the hash algorithm for sorting the keys is
+      # non-deterministic (I also believe, in Python 2, that the order can
+      # change from platform to platform). So here I only check the
+      # deterministic part of the error message.
+      self.assertEqual(errMsg[:18], "Error, the build {")
+      self.assertEqual(errMsg[-9:], "} failed!")
     self.assertEqual(allPassed, False)
 
   def test_queryCDashAndDeterminePassFail_2_fail(self):
@@ -447,8 +484,28 @@ class test_CDashQueryPassFail(unittest.TestCase):
     (allPassed, errMsg) = queryCDashAndDeterminePassFail(
       "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21", "dummy-filter-fields",
       expectedBuildNames, False, dummyExtractCDashApiQueryData)
-    self.assertEqual(errMsg,
-      "Error, the build {u'buildname': 'build2', u'test': {'fail': 0, 'notrun': 2}, u'compilation': {'error': 0}, u'update': {'errors': 0}, u'configure': {'error': 0}} failed!")
+    if pythonVersion == 2:
+      expectedErrMsg = "Error, the build {u'buildname': 'build2', u'test': " \
+                       "{'fail': 0, 'notrun': 2}, u'compilation': {'error': " \
+                       "0}, u'update': {'errors': 0}, u'configure': " \
+                       "{'error': 0}} failed!"
+      self.assertEqual(errMsg, expectedErrMsg)
+    elif pythonVersion == 3:
+      expectedErrMsg = "Error, the build {'configure': {'error': 0}, " \
+                       "'update': {'errors': 0}, 'buildname': 'build2', " \
+                       "'test': {'notrun': 2, 'fail': 0}, 'compilation': " \
+                       "{'error': 0}} failed!"
+      # wfspotz, 23 Jul 2016: I tried the Python 2 test
+      #
+      #     self.assertEqual(errMsg, expectedErrMsg)
+      #
+      # but this does not work in Python 3 because the order of the keys keeps
+      # changing. It appears the hash algorithm for sorting the keys is
+      # non-deterministic (I also believe, in Python 2, that the order can
+      # change from platform to platform). So here I only check the
+      # deterministic part of the error message.
+      self.assertEqual(errMsg[:18], "Error, the build {")
+      self.assertEqual(errMsg[-9:], "} failed!")
     self.assertEqual(allPassed, False)
 
 

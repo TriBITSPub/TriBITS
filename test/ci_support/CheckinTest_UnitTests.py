@@ -45,6 +45,18 @@
 import os
 import sys
 
+if sys.version_info < (3,):
+  def b(x): return x
+  def s(x): return x
+else:
+  import codecs
+  def b(x): return codecs.latin_1_encode(x)[0]
+  def s(x):
+     try:
+        return x.decode("utf-8")
+     except AttributeError:
+        return x
+
 from FindCISupportDir import *
 from CheckinTest import *
 
@@ -77,16 +89,18 @@ class MockOptions:
 
 def assertGrepFileForRegexStrList(testObject, testName, fileName, regexStrList, verbose):
   testObject.assertEqual(os.path.isfile(fileName), True,
-    "Error, the file '"+fileName+"' does not exist!")
+    "Error, the file '" + fileName + "' does not exist!")
   for regexToFind in regexStrList.strip().split('\n'):
     if regexToFind == "": continue
-    foundRegex = getCmndOutput("grep '"+regexToFind+"' "+fileName, True, False)
-    msg = "\n"+testName+": In '"+fileName+"' look for regex '"+regexToFind+"' ..." \
-      + "'"+foundRegex+"'" 
-    if foundRegex: msg += ": PASSED"
-    else: msg += ": FAILED"
+    cmnd = "grep '" + regexToFind + "' " + fileName
+    print(cmnd)
+    foundRegex = s(getCmndOutput(cmnd, True, False))
+    msg = "\n" + testName + ": In '" + fileName + "' look for regex '" + \
+          regexToFind + "' ..." + "'" + foundRegex + "': " 
+    if foundRegex: msg += "PASSED"
+    else: msg += "FAILED"
     if verbose:
-      print msg
+      print(msg)
     testObject.assertNotEqual(foundRegex, "", msg)
 
 
@@ -94,12 +108,14 @@ def assertNotGrepFileForRegexStrList(testObject, testName, fileName, regexStrLis
   assert(os.path.isfile(fileName))
   for regexToFind in regexStrList.strip().split('\n'):
     if regexToFind == "": continue
-    foundRegex = getCmndOutput("grep '"+regexToFind+"' "+fileName, True, False)
+    foundRegex = s(getCmndOutput("grep '" + regexToFind + "' " + fileName, True,
+                                 False))
     if verbose or foundRegex:
-      print "\n"+testName+": In '"+fileName \
-        +"' assert not exist regex '"+regexToFind+"' ... '"+foundRegex+"'", 
-      if foundRegex: print ": FAILED"
-      else: print ": PASSED"
+      msg = "\n" + testName + ": In '" + fileName + "' assert not exist regex '" \
+            + regexToFind + "' ... '" + foundRegex + "': "
+      if foundRegex: msg += "FAILED"
+      else: msg += "PASSED"
+      print(msg)
     testObject.assertEqual(foundRegex, "")
 
 
@@ -313,9 +329,9 @@ Some other message
        "Standard git header stuff\n\n" \
        +cleanCommitMsg_expected+ \
        "\nBuild/Test Cases Summary\n"
-    #print "\nrawLogOutput:\n----------------\n", rawLogOutput, "----------------\n"
+    #print("\nrawLogOutput:\n----------------\n", rawLogOutput, "----------------\n")
     (cleanCommitMsg, numBlankLines) = getLastCommitMessageStrFromRawCommitLogStr(rawLogOutput)
-    #print "\ncleanCommitMsg:\n----------------\n", cleanCommitMsg, "-----------------\n"
+    #print("\ncleanCommitMsg:\n----------------\n", cleanCommitMsg, "-----------------\n")
     self.assertEqual(numBlankLines, 1)
     self.assertEqual(cleanCommitMsg, cleanCommitMsg_expected)
 
@@ -332,11 +348,11 @@ Some other message
        "Standard git header stuff\n\n" \
        +cleanCommitMsg_expected+ \
        "\nBuild/Test Cases Summary\n"
-    #print "\nrawLogOutput:\n----------------\n", rawLogOutput, "----------------\n"
+    #print("\nrawLogOutput:\n----------------\n", rawLogOutput, "----------------\n")
     (cleanCommitMsg, numBlankLines) = getLastCommitMessageStrFromRawCommitLogStr(rawLogOutput)
     self.assertEqual(numBlankLines, 1)
     self.assertEqual(cleanCommitMsg, cleanCommitMsg_expected)
-    #print "\ncleanCommitMsg:\n----------------\n", cleanCommitMsg, "-----------------\n"
+    #print("\ncleanCommitMsg:\n----------------\n", cleanCommitMsg, "-----------------\n")
 
 
   def test_invalid_commit(self):
@@ -350,7 +366,7 @@ Some other message"""
        "Standard git header stuff\n\n" \
        +cleanCommitMsg_expected+ \
        "\nBuild/Test Cases Summary\n"
-    #print "\nrawLogOutput:\n----------------\n", rawLogOutput, "----------------\n"
+    #print("\nrawLogOutput:\n----------------\n", rawLogOutput, "----------------\n")
     #(cleanCommitMsg, numBlankLines) = getLastCommitMessageStrFromRawCommitLogStr(rawLogOutput)
     self.assertRaises(Exception, getLastCommitMessageStrFromRawCommitLogStr, rawLogOutput)
 
@@ -452,23 +468,23 @@ def run_extrarepo_test(testObject, testName, extraReposFile, expectedReposList, 
     verbose=run_extrarepo_test_verbose)
   consoleOutputStr = readStrFromFile(consoleOutFile)
   if run_extrarepo_test_verbose:
-    print "\nrtn =", rtn
-    print "\n"+consoleOutFile+":\n", consoleOutputStr 
+    print("\nrtn =", rtn)
+    print("\n" + consoleOutFile + ":\n", consoleOutputStr)
   if rtn == 0:
     readReposListTxt = readStrFromFile(extraReposPythonOutFile)
     if run_extrarepo_test_verbose:
-      print "\nreadReposListTxt:\n", readReposListTxt
+      print("\nreadReposListTxt:\n", readReposListTxt)
     readReposList = eval(readReposListTxt)
     if run_extrarepo_test_verbose:
-      print "readReposList:\n", readReposList
+      print("readReposList:\n", readReposList)
     testObject.assertEqual(readReposList, expectedReposList)
   else:
     if run_extrarepo_test_verbose:
-      print "\nexpectedErrOutput =", expectedErrOutput
+      print("\nexpectedErrOutput =", expectedErrOutput)
     foundExpectedErrOutput = consoleOutputStr.find(expectedErrOutput)
     if foundExpectedErrOutput == -1:
-      print "Error, failed to find:\n\n", expectedErrOutput
-      print "\n\nin the output:\n\n", consoleOutputStr
+      print("Error, failed to find:\n\n", expectedErrOutput)
+      print("\n\nin the output:\n\n", consoleOutputStr)
     testObject.assertNotEqual(foundExpectedErrOutput, -1)
 
 
@@ -672,19 +688,19 @@ def test_TribitsGitRepos_run_case(testObject, testName, inOptions, \
         verbose=test_TribitsGitRepos_verbose)
       cmndPassed = True
       # NOTE: the file consoleOutputFile still gets written, even if throw
-    except Exception, e:
-      #print "e =", e
+    except Exception as e:
+      #print("e =", e)
       if exceptionRegexMatches:
         eMsg = e.args[0]
         for exceptRegex in exceptionRegexMatches.split('\n'):
           matchResult = re.search(exceptRegex, eMsg)
           if not matchResult:
-            print "Error, the regex expression '"+exceptRegex+"' was not" \
-              +" found in the exception string '"+eMsg+"'!"
+            print("Error, the regex expression '" + exceptRegex + "' was not" +
+                  " found in the exception string '" + eMsg + "'!")
           testObject.assertNotEqual(matchResult, None)
     testObject.assertEqual(cmndPassed, expectPass)
     if cmndPassed:
-      #print "\ntribitsGitRepos =", tribitsGitRepos
+      #print("\ntribitsGitRepos =", tribitsGitRepos)
       testObject.assertEqual(tribitsGitRepos.numTribitsExtraRepos(), len(expectedTribitsExtraRepoNamesList))
       expectedTribitsGitRepo = TribitsGitRepos().reset()
       expectedTribitsGitRepo._TribitsGitRepos__gitRepoList.extend(expectedGitRepos)
@@ -1594,7 +1610,7 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
 
   passRegexList = passRegexStrList.split('\n')
 
-  if verbose: print "\npassRegexList =", passRegexList
+  if verbose: print("\npassRegexList =", passRegexList)
 
   # A) Create the test directory
 
@@ -1649,8 +1665,8 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
 
     for envVar in envVars:
       (varName,varValue) = envVar.split("=")
-      #print "varName="+varName
-      #print "varValue="+varValue
+      #print("varName="+varName)
+      #print("varValue="+varValue)
       os.environ[varName] = varValue
       
     checkin_test_test_out = "checkin-test.test.out"

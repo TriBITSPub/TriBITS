@@ -47,12 +47,20 @@ import shutil
 
 from unittest_helpers import *
 
+if sys.version_info < (3,):
+  def b(x):
+    return x
+else:
+  import codecs
+  def b(x):
+    return codecs.latin_1_encode(x)[0]
+
 pythonDir = os.path.abspath(GeneralScriptSupport.getScriptBaseDir())
 utilsDir = pythonDir+"/utils"
 tribitsDir = os.path.abspath(pythonDir+"/..")
 
 sys.path = [pythonUtilsDir] + sys.path
-#print "sys.path =", sys.path
+#print("sys.path = " + str(sys.path))
 from gitdist import *
 
 
@@ -118,7 +126,7 @@ class test_createAsciiTable(unittest.TestCase):
       { "label" : "?", "align":"R", "fields" : ["0", "0", "4" ] },
       ]
     asciiTable = createAsciiTable(tableData)
-    #print asciiTable
+    #print(asciiTable)
     asciiTable_expected = \
       "-------------------------------------------------------------------\n" \
       "| ID | Repo Dir           | Branch | Tracking Branch | C | M  | ? |\n" \
@@ -145,7 +153,7 @@ class test_createAsciiTable(unittest.TestCase):
       { "label" : "?", "align":"R", "fields" : [] },
       ]
     asciiTable = createAsciiTable(tableData)
-    #print asciiTable
+    #print(asciiTable)
     asciiTable_expected = \
       "--------------------------------------------------------\n" \
       "| ID | Repo Dir | Branch | Tracking Branch | C | M | ? |\n" \
@@ -169,7 +177,7 @@ class test_createAsciiTable(unittest.TestCase):
       { "label" : "?", "align":"R", "fields" : ["4"] },
       ]
     asciiTable = createAsciiTable(tableData)
-    #print asciiTable
+    #print(asciiTable)
     asciiTable_expected = \
       "----------------------------------------------------------------\n" \
       "| ID | Repo Dir       | Branch | Tracking Branch | C  | M  | ? |\n" \
@@ -574,7 +582,7 @@ class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase
       'extraTrilinosRepo': 'sha1_2',
       'extraRepoOnePackage': 'sha1_3'
       }
-    #print "repoVersionDict =\n", repoVersionDict
+    #print("repoVersionDict =\n" + str(repoVersionDict))
     self.assertEqual(repoVersionDict, expectedDict)
 
 
@@ -586,7 +594,7 @@ class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase
       'extraRepoTwoPackages': 'sha1_2',
       'extraRepoOnePackageThreeSubpackages': 'sha1_3'
       }
-    #print "repoVersionDict =\n", repoVersionDict
+    #print("repoVersionDict =\n" + str(repoVersionDict))
     self.assertEqual(repoVersionDict, expectedDict)
 
 
@@ -599,10 +607,10 @@ class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase
 
 
 def assertContainsGitdistHelpHeader(testObj, cmndOut):
-  cmndOutList = cmndOut.split("\n")
-  cmndOutFirstLine = cmndOutList[0] 
-  cmndOutFirstLineAfterComma = cmndOutFirstLine.split(":")[1].strip() 
-  cmndOutFirstLineAfterComma_expected = "gitdist [gitdist arguments] <raw-git-command> [git arguments]"
+  cmndOutList = cmndOut.splitlines()
+  cmndOutFirstLine = cmndOutList[0]
+  cmndOutFirstLineAfterComma = cmndOutFirstLine.split(b(":"))[1].strip() 
+  cmndOutFirstLineAfterComma_expected = b("gitdist [gitdist arguments] <raw-git-command> [git arguments]")
   testObj.assertEqual(cmndOutFirstLineAfterComma, cmndOutFirstLineAfterComma_expected)
 
 
@@ -633,7 +641,7 @@ class test_gitdist(unittest.TestCase):
   def test_default(self):
     (cmndOut, errOut) = getCmndOutput(gitdistPathNoColor, rtnCode=True)
     cmndOut_expected = "Must specify git command. See 'git --help' for options.\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
     self.assertEqual(errOut, 1)
 
 
@@ -678,7 +686,7 @@ class test_gitdist(unittest.TestCase):
   def test_dist_help_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help --help")
     cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'all')\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   # Test --dist-helps=invalid-pick picked up as invalid value.
@@ -694,7 +702,7 @@ class test_gitdist(unittest.TestCase):
   def test_dist_help(self):
     (cmndOut, errOut) = getCmndOutput(gitdistPath+" --dist-help", rtnCode=True)
     self.assertEqual(
-      cmndOut, "gitdist: error: --dist-help option requires an argument\n")
+      cmndOut, b("gitdist: error: --dist-help option requires an argument\n"))
     self.assertEqual(errOut, 2)
 
 
@@ -702,7 +710,7 @@ class test_gitdist(unittest.TestCase):
   def test_dist_help_none(self):
     (cmndOut, errOut) = getCmndOutput(gitdistPathNoColor+" --dist-help=", rtnCode=True)
     self.assertEqual(
-      cmndOut, "Must specify git command. See 'git --help' for options.\n")
+      cmndOut, b("Must specify git command. See 'git --help' for options.\n"))
     self.assertEqual(errOut, 1)
 
 
@@ -736,7 +744,7 @@ class test_gitdist(unittest.TestCase):
     (cmndOut, errOut) = getCmndOutput(gitdistPathNoColor+" --dist-use-git= log",
       rtnCode=True)
     cmndOut_expected = "Can't find git, please set --dist-use-git\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
     self.assertEqual(errOut, 1)
 
 
@@ -745,7 +753,7 @@ class test_gitdist(unittest.TestCase):
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
       "['mockgit', 'log', 'HEAD', '-1']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_dot_gitdist(self):
@@ -778,7 +786,7 @@ class test_gitdist(unittest.TestCase):
         "['mockgit', 'status']\n\n" \
         "*** Git Repo: ExtraRepo3\n" \
         "['mockgit', 'status']\n\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
       # NOTE: Above ensures that all of the paths are read correctly and that
       # missing paths (MissingExtraRepo) are ignored.
 
@@ -796,7 +804,7 @@ class test_gitdist(unittest.TestCase):
         "['mockgit', 'status']\n\n" \
         "*** Git Repo: ExtraRepo3\n" \
         "['mockgit', 'status']\n\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
 
       # Make sure that --dist-extra-repos overrides all files
       cmndOut = GeneralScriptSupport.getCmndOutput(
@@ -809,7 +817,7 @@ class test_gitdist(unittest.TestCase):
         "['mockgit', 'status']\n\n" \
         "*** Git Repo: Path/To/ExtraRepo2\n" \
         "['mockgit', 'status']\n\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
 
     finally:
       os.chdir(testBaseDir)
@@ -823,7 +831,7 @@ class test_gitdist(unittest.TestCase):
       "['mockgit', 'log', 'HEAD', '-1']\n\n" \
       "*** Git Repo: extraTrilinosRepo\n" \
       "['mockgit', 'log', 'HEAD', '-1']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_log_args_extra_repo_2_not_first(self):
@@ -838,7 +846,7 @@ class test_gitdist(unittest.TestCase):
       "['mockgit', 'log', 'HEAD', '-1']\n\n" \
       "*** Git Repo: extraRepoOnePackage\n" \
       "['mockgit', 'log', 'HEAD', '-1']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_log_args_extra_repo_2_not_second(self):
@@ -853,7 +861,7 @@ class test_gitdist(unittest.TestCase):
       "['mockgit', 'log', 'HEAD', '-1']\n\n" \
       "*** Git Repo: extraRepoOnePackage\n" \
       "['mockgit', 'log', 'HEAD', '-1']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_log_args_extra_repo_1_not_base(self):
@@ -866,7 +874,7 @@ class test_gitdist(unittest.TestCase):
     cmndOut_expected = \
       "\n*** Git Repo: extraTrilinosRepo\n" \
       "['mockgit', 'log', 'HEAD', '-1']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_dist_mod_only_1_change_base(self):
@@ -937,7 +945,7 @@ class test_gitdist(unittest.TestCase):
         "\n*** Base Git Repo: MockProjectDir\n" \
         "On branch local_branch0\n" \
         "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n\n\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
 
     finally:
       os.chdir(testBaseDir)
@@ -1010,7 +1018,7 @@ class test_gitdist(unittest.TestCase):
       cmndOut_expected = \
         "\n*** Git Repo: ExtraRepo1\nOn branch local_branch1\n" \
         "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n\n\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
 
     finally:
       os.chdir(testBaseDir)
@@ -1065,7 +1073,7 @@ class test_gitdist(unittest.TestCase):
         "\n*** Base Git Repo: MockProjectDir\n" \
         "On branch local_branch0\n" \
         "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n\n\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
 
     finally:
       os.chdir(testBaseDir)
@@ -1121,7 +1129,7 @@ class test_gitdist(unittest.TestCase):
         "\n*** Git Repo: ExtraRepo1\n" \
         "On branch local_branch1\n" \
         "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n\n\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
 
     finally:
       os.chdir(testBaseDir)
@@ -1135,7 +1143,7 @@ class test_gitdist(unittest.TestCase):
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
       "['mockgit', 'log', 'sha1_1', '--some', '-other', 'args']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_log_version_file_extra_repo_1(self):
@@ -1148,7 +1156,7 @@ class test_gitdist(unittest.TestCase):
       "\n*** Base Git Repo: MockTrilinos\n" \
       "['mockgit', 'log', 'sha1_1']\n" \
       "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'sha1_2']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_log_version_file_extra_repo_2(self):
@@ -1162,7 +1170,7 @@ class test_gitdist(unittest.TestCase):
       "['mockgit', 'log', 'sha1_1']\n" \
       "\n*** Git Repo: extraRepoOnePackage\n['mockgit', 'log', 'sha1_3']\n" \
       "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'sha1_2']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_log_HEAD_version_file_extra_repo_1(self):
@@ -1175,7 +1183,7 @@ class test_gitdist(unittest.TestCase):
       "\n*** Base Git Repo: MockTrilinos\n" \
       "['mockgit', 'log', 'HEAD', '^sha1_1']\n" \
       "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'HEAD', '^sha1_2']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_version_file_invalid_extra_repo(self):
@@ -1187,7 +1195,7 @@ class test_gitdist(unittest.TestCase):
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n['mockgit', 'log', 'sha1_1']\n" \
       "\n*** Git Repo: extraRepoTwoPackages\nExtra repo 'extraRepoTwoPackages' is not in the list of extra repos ['extraTrilinosRepo', 'extraRepoOnePackage'] read in from version file.\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_log_not_version_file_2(self):
@@ -1199,7 +1207,7 @@ class test_gitdist(unittest.TestCase):
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
       "['mockgit', 'log', 'sha1_1', '^sha1_1_2']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_log_not_version_file_2_extra_repo_1(self):
@@ -1213,7 +1221,7 @@ class test_gitdist(unittest.TestCase):
       "\n*** Base Git Repo: MockTrilinos\n" \
       "['mockgit', 'log', 'sha1_1', '^sha1_1_2']\n" \
       "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'sha1_2', '^sha1_2_2']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
   def test_log_since_until_version_file_2_extra_repo_1(self):
@@ -1227,7 +1235,7 @@ class test_gitdist(unittest.TestCase):
       "\n*** Base Git Repo: MockTrilinos\n" \
       "['mockgit', 'log', 'sha1_1_2..sha1_1']\n" \
       "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'sha1_2_2..sha1_2']\n\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    self.assertEqual(cmndOut, b(cmndOut_expected))
   # The above test ensures that it repalces the SHA1s for in the same cmndline args
 
 
@@ -1248,7 +1256,7 @@ class test_gitdist(unittest.TestCase):
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
           +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 dist-repo-status",
         workingDir=testDir)
-      #print cmndOut
+      #print(cmndOut)
       cmndOut_expected = \
         "-----------------------------------------------------------------------------------------\n" \
         "| ID | Repo Dir              | Branch        | Tracking Branch             | C  | M | ? |\n" \
@@ -1259,7 +1267,7 @@ class test_gitdist(unittest.TestCase):
         "-----------------------------------------------------------------------------------------\n" \
         "\n" \
         "(tip: to see a legend, pass in --dist-legend.)\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
 
     finally:
       os.chdir(testBaseDir)
@@ -1282,7 +1290,7 @@ class test_gitdist(unittest.TestCase):
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
           +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only dist-repo-status",
         workingDir=testDir)
-      #print cmndOut
+      #print(cmndOut)
       cmndOut_expected = \
         "-----------------------------------------------------------------------------------------\n" \
         "| ID | Repo Dir              | Branch        | Tracking Branch             | C  | M | ? |\n" \
@@ -1292,7 +1300,7 @@ class test_gitdist(unittest.TestCase):
         "-----------------------------------------------------------------------------------------\n" \
         "\n" \
         "(tip: to see a legend, pass in --dist-legend.)\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
 
     finally:
       os.chdir(testBaseDir)
@@ -1316,7 +1324,7 @@ class test_gitdist(unittest.TestCase):
           +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only" \
           +" --dist-legend dist-repo-status",
         workingDir=testDir)
-      #print "+++++++++\n"+cmndOut+"+++++++\n"
+      #print("+++++++++\n" + cmndOut + "+++++++\n")
       cmndOut_expected = \
         "-----------------------------------------------------------------------------------------\n" \
         "| ID | Repo Dir              | Branch        | Tracking Branch             | C  | M | ? |\n" \
@@ -1333,7 +1341,7 @@ class test_gitdist(unittest.TestCase):
         "* C: Number local commits w.r.t. tracking branch (empty if zero or no TB)\n" \
         "* M: Number of tracked modified (uncommitted) files (empty if zero)\n" \
         "* ?: Number of untracked, non-ignored files (empty if zero)\n\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
 
     finally:
       os.chdir(testBaseDir)
@@ -1356,7 +1364,7 @@ class test_gitdist(unittest.TestCase):
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
           +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only dist-repo-status",
         workingDir=testDir)
-      #print cmndOut
+      #print(cmndOut)
       cmndOut_expected = \
         "----------------------------------------------------------------------------------------\n" \
         "| ID | Repo Dir              | Branch        | Tracking Branch             | C | M | ? |\n" \
@@ -1366,7 +1374,7 @@ class test_gitdist(unittest.TestCase):
         "----------------------------------------------------------------------------------------\n" \
         "\n" \
         "(tip: to see a legend, pass in --dist-legend.)\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
 
     finally:
       os.chdir(testBaseDir)
@@ -1385,10 +1393,10 @@ class test_gitdist(unittest.TestCase):
           +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only" \
           +" --dist-legend dist-repo-status --name-status",
         rtnCode=True)
-      #print cmndOut
+      #print(cmndOut)
       cmndOut_expected = \
         "Error, passing in extra git commands/args ='--name-status' with special comamnd 'dist-repo-status is not allowed!\n"
-      self.assertEqual(cmndOut, cmndOut_expected)
+      self.assertEqual(cmndOut, b(cmndOut_expected))
       self.assertEqual(errOut, 1)
 
     finally:

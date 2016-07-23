@@ -44,7 +44,6 @@
 from unittest_helpers import *
 from GeneralScriptSupport import *
 
-
 utilsDir = getScriptBaseDir()+"/utils"
 
 
@@ -56,7 +55,7 @@ class testGeneralScriptSupport(unittest.TestCase):
 
 
   def test_normalizePath_1(self):
-    #print "\ntest_normalizePath:"
+    #print("\ntest_normalizePath:")
     pathIn = "./aaa/bbb"
     pathOut = normalizePath(pathIn)
     pathOut_expected = "aaa/bbb"
@@ -64,7 +63,7 @@ class testGeneralScriptSupport(unittest.TestCase):
 
 
   def test_arrayToFormattedString(self):
-    #print "\ntest_normalizePath:"
+    #print("\ntest_normalizePath:")
     array = [ 'aaa', 'bbb', 'cc' ]
     arrayAsStr = arrayToFormattedString(array, "  ")
     arrayAsStr_expected = "  [\n    'aaa',\n    'bbb',\n    'cc'\n  ]\n"
@@ -72,7 +71,7 @@ class testGeneralScriptSupport(unittest.TestCase):
 
 
   def test_extractLinesAfterRegex(self):
-    #print "\ntest_extractLinesAfterRegex:"
+    #print("\ntest_extractLinesAfterRegex:")
     linesExtracted_expected = \
       "95% tests passed, 5 out tests failed out of 100\n" + \
       "test1\n" +\
@@ -87,7 +86,7 @@ class testGeneralScriptSupport(unittest.TestCase):
 
 
   def test_getRelativePathFrom1to2_not_exclusive(self):
-    #print "\ntest_getRelativePathFrom1to2_not_exclusive:"
+    #print("\ntest_getRelativePathFrom1to2_not_exclusive:")
     absPath1 = "/a/b/f/g"
     absPath2 = "/a/b/c/d"
     relPath1to2 = getRelativePathFrom1to2(absPath1, absPath2)
@@ -96,7 +95,7 @@ class testGeneralScriptSupport(unittest.TestCase):
 
 
   def test_getRelativePathFrom1to2_path1_in_path2_2_deep(self):
-    #print "\ntest_getRelativePathFrom1to2_path1_in_path2_2_deep:"
+    #print("\ntest_getRelativePathFrom1to2_path1_in_path2_2_deep:")
     absPath1 = "/a/b"
     absPath2 = "/a/b/c/d"
     relPath1to2 = getRelativePathFrom1to2(absPath1, absPath2)
@@ -105,7 +104,7 @@ class testGeneralScriptSupport(unittest.TestCase):
 
 
   def test_getRelativePathFrom1to2_path1_in_path2_1_deep(self):
-    #print "\ntest_getRelativePathFrom1to2_path1_in_path2_1_deep:"
+    #print("\ntest_getRelativePathFrom1to2_path1_in_path2_1_deep:")
     absPath1 = "/somebasedir/Trilinos/dev/flat_headers"
     absPath2 = "/somebasedir/Trilinos/dev"
     relPath1to2 = getRelativePathFrom1to2(absPath1, absPath2)
@@ -114,7 +113,7 @@ class testGeneralScriptSupport(unittest.TestCase):
 
 
   def test_getRelativePathFrom1to2_path2_in_path1(self):
-    #print "\ntest_getRelativePathFrom1to2_path2_in_path1:"
+    #print("\ntest_getRelativePathFrom1to2_path2_in_path1:")
     absPath1 = "/a/b/c/d"
     absPath2 = "/a/b"
     relPath1to2 = getRelativePathFrom1to2(absPath1, absPath2)
@@ -123,7 +122,7 @@ class testGeneralScriptSupport(unittest.TestCase):
 
 
   def test_getRelativePathFrom1to2_path1_equals_path2(self):
-    #print "\ntest_getRelativePathFrom1to2_path1_equals_path2:"
+    #print("\ntest_getRelativePathFrom1to2_path1_equals_path2:")
     absPath1 = "/a/b"
     absPath2 = "/a/b"
     relPath1to2 = getRelativePathFrom1to2(absPath1, absPath2)
@@ -139,9 +138,9 @@ class testGeneralScriptSupport(unittest.TestCase):
       './TPLs_src/Trilinos/dev/packages/ml/src/Operator' : 0
       }
     expandDirsDict(dirsDict)
-    expandedDirsList = dirsDict.keys()
+    expandedDirsList = list(dirsDict)
     expandedDirsList.sort()
-    #print "\nexpandedDirsList =\n", '\n'.join(expandedDirsList)
+    #print("\nexpandedDirsList =\n" + '\n'.join(expandedDirsList))
 
     expandedDirsList_expected = [
       ".",
@@ -174,7 +173,8 @@ class testGeneralScriptSupport(unittest.TestCase):
 
 
   def test_runSysCmndInteface_rtnOutput_pass(self):
-    self.assertEqual(("junk\n", 0), runSysCmndInterface("echo junk", rtnOutput=True))
+    self.assertEqual((b"junk\n", 0),
+                     runSysCmndInterface("echo junk", rtnOutput=True))
 
 
   def test_runSysCmndInteface_rtnOutput_fail(self):
@@ -250,13 +250,15 @@ IT: ./do-configure; 5; ''
       g_sysCmndInterceptor.setInterceptedCmnd("eg frog", 5)
       g_sysCmndInterceptor.setAllowExtraCmnds(False)
       self.assertEqual(3, runSysCmndInterface("eg log"))
-      self.assertEqual(("dummy1\n", 0),
-        runSysCmndInterface("echo dummy1", rtnOutput=True)) # Fall through!
+      self.assertEqual((b"dummy1\n", 0),
+                       runSysCmndInterface("echo dummy1",
+                                           rtnOutput=True)) # Fall through!
       self.assertEqual(5, runSysCmndInterface("eg frog"))
       self.assertEqual(g_sysCmndInterceptor.hasInterceptedCmnds(), False)
       self.assertRaises(Exception, runSysCmndInterface, utilsDir+"/return_input.py 2")
-      self.assertEqual(("dummy2\n", 0),
-        runSysCmndInterface("echo dummy2", rtnOutput=True)) # Fall through!
+      self.assertEqual((b"dummy2\n", 0),
+                       runSysCmndInterface("echo dummy2",
+                                           rtnOutput=True)) # Fall through!
       g_sysCmndInterceptor.setAllowExtraCmnds(True)
       self.assertEqual(4, runSysCmndInterface(utilsDir+"/return_input.py 4")) # Fall through!
     finally:
@@ -369,13 +371,18 @@ class testConfigurableOptionParser(unittest.TestCase):
 
 class testTeeOutput(unittest.TestCase):
   def test_write(self):
-    import StringIO
-    outputfile = StringIO.StringIO()
+    try:
+      # Python 2 version
+      from StringIO import StringIO
+    except ImportError:
+      # Python 3 version
+      from io import StringIO
+    outputfile = StringIO()
     tee = TeeOutput(outputfile)
     reset = sys.stdout
     try:
       sys.stdout = tee
-      print "line"
+      print("line")
       self.assertEqual(outputfile.getvalue(), "line\n")
     finally:
       sys.stdout = reset

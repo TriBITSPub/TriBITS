@@ -45,8 +45,14 @@ from FindCISupportDir import *
 
 from clone_extra_repos import *
 
+import sys
 import unittest
 
+if sys.version_info < (3,):
+  def b(x): return x
+else:
+  import codecs
+  def b(x): return codecs.latin_1_encode(x)[0]
 
 #
 # Mock options
@@ -301,68 +307,69 @@ class test_clone_extra_repos(unittest.TestCase):
 
   def test_skip_clone_verbosity_none(self):
     output = clone_extra_repos_cmnd("--skip-clone --verbosity=none")
-    output_expected = ""
+    output_expected = b("")
     self.assertEqual(output, output_expected)
 
   def test_skip_clone_verbosity_mimimal(self):
     output = clone_extra_repos_cmnd("--skip-clone --verbosity=minimal")
-    output_expected = getScriptEchoCmndLine(doClone=False, verbosity="minimal")
+    output_expected = b(getScriptEchoCmndLine(doClone=False,
+                                              verbosity="minimal"))
     self.assertEqual(output, output_expected)
 
   def test_skip_clone_verbosity_more(self):
     output = clone_extra_repos_cmnd("--skip-clone --verbosity=more")
     output_expected = \
-      getScriptEchoCmndLine(doClone=False, verbosity="more") + \
-      "\n" \
-      "***\n" \
-      "*** List of selected extra repos to clone:\n" \
-      "***\n\n" \
-      "-----------------------------------------------------------------------------------------------------------\n" \
-      "| ID | Repo Name            | Repo Dir                | VC  | Repo URL                       | Category   |\n" \
-      "|----|----------------------|-------------------------|-----|--------------------------------|------------|\n" \
-      "|  1 | preCopyrightTrilinos | preCopyrightTrilinos    | GIT | url1:/git/preCopyrightTrilinos | Continuous |\n" \
-      "|  2 | extraTrilinosRepo    | extraTrilinosRepo       | GIT | usr2:/git/extraTrilinosRepo    | Nightly    |\n" \
-      "|  3 | Dakota               | packages/TriKota/Dakota | SVN | url3/somedirpath/trunk         | Continuous |\n" \
-      "-----------------------------------------------------------------------------------------------------------\n" \
-      "\n"
+      b(getScriptEchoCmndLine(doClone=False, verbosity="more") + \
+        "\n" \
+        "***\n" \
+        "*** List of selected extra repos to clone:\n" \
+        "***\n\n" \
+        "-----------------------------------------------------------------------------------------------------------\n" \
+        "| ID | Repo Name            | Repo Dir                | VC  | Repo URL                       | Category   |\n" \
+        "|----|----------------------|-------------------------|-----|--------------------------------|------------|\n" \
+        "|  1 | preCopyrightTrilinos | preCopyrightTrilinos    | GIT | url1:/git/preCopyrightTrilinos | Continuous |\n" \
+        "|  2 | extraTrilinosRepo    | extraTrilinosRepo       | GIT | usr2:/git/extraTrilinosRepo    | Nightly    |\n" \
+        "|  3 | Dakota               | packages/TriKota/Dakota | SVN | url3/somedirpath/trunk         | Continuous |\n" \
+        "-----------------------------------------------------------------------------------------------------------\n" \
+        "\n")
     self.assertEqual(output, output_expected)
 
   def test_clone_git_repos_already_exists(self):
     output = clone_extra_repos_cmnd(
       "--verbosity=minimal --extra-repos=preCopyrightTrilinos,extraTrilinosRepo")
     output_expected = \
-      getScriptEchoCmndLine(verbosity="minimal",
-        extraRepos="preCopyrightTrilinos,extraTrilinosRepo") + \
-      "\n" \
-      "***\n" \
-      "*** Clone the selected extra repos:\n" \
-      "***\n" \
-      "\n" \
-      "\n" \
-      "Cloning repo preCopyrightTrilinos ...\n" \
-      "\n" \
-      "  ==> Repo dir = 'preCopyrightTrilinos' already exists.  Skipping clone!\n" \
-      "\n" \
-      "Cloning repo extraTrilinosRepo ...\n" \
-      "\n" \
-      "  ==> Repo dir = 'extraTrilinosRepo' already exists.  Skipping clone!\n"
+      b(getScriptEchoCmndLine(verbosity="minimal",
+                              extraRepos="preCopyrightTrilinos,extraTrilinosRepo") + \
+        "\n" \
+        "***\n" \
+        "*** Clone the selected extra repos:\n" \
+        "***\n" \
+        "\n" \
+        "\n" \
+        "Cloning repo preCopyrightTrilinos ...\n" \
+        "\n" \
+        "  ==> Repo dir = 'preCopyrightTrilinos' already exists.  Skipping clone!\n" \
+        "\n" \
+        "Cloning repo extraTrilinosRepo ...\n" \
+        "\n" \
+        "  ==> Repo dir = 'extraTrilinosRepo' already exists.  Skipping clone!\n")
     self.assertEqual(output, output_expected)
 
   def test_clone_nonsupported_svn_repo(self):
     output = clone_extra_repos_cmnd(
       "--verbosity=minimal --extra-repos=Dakota", throwOnError=False)
     output_expected = \
-      getScriptEchoCmndLine(verbosity="minimal",
-        extraRepos="Dakota") + \
-      "\n" \
-      "***\n" \
-      "*** Clone the selected extra repos:\n" \
-      "***\n" \
-      "\n" \
-      "\n" \
-      "Cloning repo Dakota ...\n" \
-      "\n" \
-      "  ==> ERROR: Repo type 'SVN' not supported!\n"
+      b(getScriptEchoCmndLine(verbosity="minimal",
+                              extraRepos="Dakota") + \
+        "\n" \
+        "***\n" \
+        "*** Clone the selected extra repos:\n" \
+        "***\n" \
+        "\n" \
+        "\n" \
+        "Cloning repo Dakota ...\n" \
+        "\n" \
+        "  ==> ERROR: Repo type 'SVN' not supported!\n")
     self.assertEqual(output, output_expected)
 
   def test_clone_git_repos_1_2(self):
@@ -371,22 +378,23 @@ class test_clone_extra_repos(unittest.TestCase):
       "--verbosity=minimal --extra-repos=ExtraRepo1,ExtraRepo2" \
       " --extra-repos-file="+extraReposFile+" --no-op")
     output_expected = \
-      getScriptEchoCmndLine(verbosity="minimal",
-        extraRepos="ExtraRepo1,ExtraRepo2", extraReposFile=extraReposFile,
-        doOp=False) + \
-      "\n" \
-      "***\n" \
-      "*** Clone the selected extra repos:\n" \
-      "***\n" \
-      "\n" \
-      "\n" \
-      "Cloning repo ExtraRepo1 ...\n" \
-      "\n" \
-      "Running: git clone someurl.com:/ExtraRepo1 ExtraRepo1\n" \
-      "\n" \
-      "Cloning repo ExtraRepo2 ...\n" \
-      "\n" \
-      "Running: git clone someurl2.com:/ExtraRepo2 packages/SomePackage/Blah\n"
+      b(getScriptEchoCmndLine(verbosity="minimal",
+                              extraRepos="ExtraRepo1,ExtraRepo2",
+                              extraReposFile=extraReposFile,
+                              doOp=False) + \
+        "\n" \
+        "***\n" \
+        "*** Clone the selected extra repos:\n" \
+        "***\n" \
+        "\n" \
+        "\n" \
+        "Cloning repo ExtraRepo1 ...\n" \
+        "\n" \
+        "Running: git clone someurl.com:/ExtraRepo1 ExtraRepo1\n" \
+        "\n" \
+        "Cloning repo ExtraRepo2 ...\n" \
+        "\n" \
+        "Running: git clone someurl2.com:/ExtraRepo2 packages/SomePackage/Blah\n")
     self.assertEqual(output, output_expected)
 
   def test_clone_git_repos_not_3_4(self):
@@ -395,29 +403,30 @@ class test_clone_extra_repos(unittest.TestCase):
       "--verbosity=minimal --not-extra-repos=ExtraRepo3,ExtraRepo4" \
       " --extra-repos-file="+extraReposFile+" --no-op")
     output_expected = \
-      getScriptEchoCmndLine(verbosity="minimal",
-        notExtraRepos="ExtraRepo3,ExtraRepo4", extraReposFile=extraReposFile,
-        doOp=False) + \
-      "\n" \
-      "***\n" \
-      "*** Filtering the set of extra repos based on --not-extra-repos:\n" \
-      "***\n" \
-      "\n" \
-      "Excluding extra repo 'ExtraRepo3'!\n" \
-      "Excluding extra repo 'ExtraRepo4'!\n" \
-      "\n" \
-      "***\n" \
-      "*** Clone the selected extra repos:\n" \
-      "***\n" \
-      "\n" \
-      "\n" \
-      "Cloning repo ExtraRepo1 ...\n" \
-      "\n" \
-      "Running: git clone someurl.com:/ExtraRepo1 ExtraRepo1\n" \
-      "\n" \
-      "Cloning repo ExtraRepo2 ...\n" \
-      "\n" \
-      "Running: git clone someurl2.com:/ExtraRepo2 packages/SomePackage/Blah\n"
+      b(getScriptEchoCmndLine(verbosity="minimal",
+                              notExtraRepos="ExtraRepo3,ExtraRepo4",
+                              extraReposFile=extraReposFile,
+                              doOp=False) + \
+        "\n" \
+        "***\n" \
+        "*** Filtering the set of extra repos based on --not-extra-repos:\n" \
+        "***\n" \
+        "\n" \
+        "Excluding extra repo 'ExtraRepo3'!\n" \
+        "Excluding extra repo 'ExtraRepo4'!\n" \
+        "\n" \
+        "***\n" \
+        "*** Clone the selected extra repos:\n" \
+        "***\n" \
+        "\n" \
+        "\n" \
+        "Cloning repo ExtraRepo1 ...\n" \
+        "\n" \
+        "Running: git clone someurl.com:/ExtraRepo1 ExtraRepo1\n" \
+        "\n" \
+        "Cloning repo ExtraRepo2 ...\n" \
+        "\n" \
+        "Running: git clone someurl2.com:/ExtraRepo2 packages/SomePackage/Blah\n")
     self.assertEqual(output, output_expected)
 
   def test_generate_gitdist_file(self):
@@ -427,14 +436,16 @@ class test_clone_extra_repos(unittest.TestCase):
       "--verbosity=minimal --skip-clone --extra-repos-file="+extraReposFile+ \
       " --create-gitdist-file="+gitdistFile)
     output_expected = \
-      getScriptEchoCmndLine(verbosity="minimal", doClone=False,
-        extraReposFile=extraReposFile,createGitdistFile=gitdistFile) + \
-      "\n" \
-      "***\n" \
-      "*** Create the gitdist file:\n" \
-      "***\n" \
-      "\n" \
-      "Writing the file '"+gitdistFile+"' ...\n"
+      b(getScriptEchoCmndLine(verbosity="minimal",
+                              doClone=False,
+                              extraReposFile=extraReposFile,
+                              createGitdistFile=gitdistFile) + \
+        "\n" \
+        "***\n" \
+        "*** Create the gitdist file:\n" \
+        "***\n" \
+        "\n" \
+        "Writing the file '"+gitdistFile+"' ...\n")
     self.assertEqual(output, output_expected)
     gitdistFileStr = open(gitdistFile, 'r').read()
     gitdistFileStr_expected = \
