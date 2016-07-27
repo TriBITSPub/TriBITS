@@ -265,10 +265,10 @@ IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
     )
 ELSE()
   SET(DEPRECATED_WARNING_1_STR
-    ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: ‘int SimpleCxx::HelloWorld::someOldFunc.. const’ is deprecated"
+    ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*int SimpleCxx::HelloWorld::someOldFunc.. const.* is deprecated"
     )
   SET(DEPRECATED_WARNING_2_STR
-    ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: ‘int SimpleCxx::HelloWorld::someOldFunc2.. const’ is deprecated: .Just don't call this function at all please."
+    ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*int SimpleCxx::HelloWorld::someOldFunc2.. const.* is deprecated: .Just don.t call this function at all please."
     )
 ENDIF()
 
