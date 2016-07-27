@@ -2467,7 +2467,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
       print("\nSetting up to run the build/test cases:")
       for i in range(len(buildTestCaseList)):
         buildTestCase = buildTestCaseList[i]
-        print(str(i) + ") " + buildTestCase.name + ":", end="")
+        print(str(i) + ") " + buildTestCase.name + ": ", end="")
         if buildTestCase.runBuildTestCase:
           print("Will attempt to run!")
         else:
