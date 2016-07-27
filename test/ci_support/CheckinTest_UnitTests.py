@@ -93,7 +93,7 @@ def assertGrepFileForRegexStrList(testObject, testName, fileName, regexStrList, 
   for regexToFind in regexStrList.strip().split('\n'):
     if regexToFind == "": continue
     cmnd = "grep '" + regexToFind + "' " + fileName
-    print(cmnd)
+    #print(cmnd)
     foundRegex = s(getCmndOutput(cmnd, True, False))
     msg = "\n" + testName + ": In '" + fileName + "' look for regex '" + \
           regexToFind + "' ..." + "'" + foundRegex + "': " 
