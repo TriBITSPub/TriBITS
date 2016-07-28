@@ -45,8 +45,6 @@ import unittest
 from FindCISupportDir import *
 from CDashQueryPassFail import *
 
-pythonVersion = sys.version_info.major
-
 g_testBaseDir = getScriptBaseDir()
 
 tribitsBaseDir=os.path.abspath(g_testBaseDir+"/../../tribits")
