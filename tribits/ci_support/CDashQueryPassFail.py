@@ -44,12 +44,6 @@ except ImportError:
   # Python 3
   from urllib.request import urlopen
 
-import sys
-if sys.version_info < (3,):
-  def u(x): return unicode(x)
-else:
-  def u(x): return x
-
 import json
 import datetime
 import pprint

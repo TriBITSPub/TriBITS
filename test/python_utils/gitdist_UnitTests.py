@@ -47,20 +47,11 @@ import shutil
 
 from unittest_helpers import *
 
-if sys.version_info < (3,):
-  def b(x):
-    return x
-else:
-  import codecs
-  def b(x):
-    return codecs.latin_1_encode(x)[0]
-
 pythonDir = os.path.abspath(GeneralScriptSupport.getScriptBaseDir())
 utilsDir = pythonDir+"/utils"
 tribitsDir = os.path.abspath(pythonDir+"/..")
 
 sys.path = [pythonUtilsDir] + sys.path
-#print("sys.path = " + str(sys.path))
 from gitdist import *
 
 

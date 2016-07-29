@@ -45,18 +45,6 @@
 import os
 import sys
 
-if sys.version_info < (3,):
-  def b(x): return x
-  def s(x): return x
-else:
-  import codecs
-  def b(x): return codecs.latin_1_encode(x)[0]
-  def s(x):
-     try:
-        return x.decode("utf-8")
-     except AttributeError:
-        return x
-
 from FindCISupportDir import *
 from CheckinTest import *
 
