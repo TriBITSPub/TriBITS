@@ -212,7 +212,7 @@ class test_CDashQueryPassFail(unittest.TestCase):
     builds = [build]
     (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
     self.assertEqual(buildPasses, False)
-    self.assertEqual(buildFailedMsg, "Error, the build " + sorted_str(build) +
+    self.assertEqual(buildFailedMsg, "Error, the build " + sorted_dict_str(build) +
                      " failed!")
 
   def test_cdashIndexBuildsPass_2_pass(self):
@@ -231,7 +231,7 @@ class test_CDashQueryPassFail(unittest.TestCase):
     (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
     self.assertEqual(buildPasses, False)
     self.assertEqual(buildFailedMsg, "Error, the build " +
-                     sorted_str(buildFailed) + " failed!")
+                     sorted_dict_str(buildFailed) + " failed!")
 
   def test_cdashIndexBuildsPass_2_fail_2(self):
     build = copy.deepcopy(singleBuildPasses)
@@ -242,7 +242,7 @@ class test_CDashQueryPassFail(unittest.TestCase):
     (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
     self.assertEqual(buildPasses, False)
     self.assertEqual(buildFailedMsg, "Error, the build " +
-                     sorted_str(buildFailed) + " failed!")
+                     sorted_dict_str(buildFailed) + " failed!")
 
   def test_getCDashIndexBuildNames(self):
     build1 = copy.deepcopy(singleBuildPasses)
@@ -344,7 +344,7 @@ class test_CDashQueryPassFail(unittest.TestCase):
       cdashIndexBuildsPassAndExpectedExist(builds, expectedBuildNames)
     expectedErrMsg = \
       "Error, the build " + \
-      sorted_str({
+      sorted_dict_str({
         'buildname': 'build1', 'test': {'notrun': 0, 'fail': 0},
         'compilation': {'error': 0}, 'update': {'errors': 0},
         'configure': {'error': 5}})+ \
@@ -440,7 +440,7 @@ class test_CDashQueryPassFail(unittest.TestCase):
       expectedBuildNames, False, dummyExtractCDashApiQueryData)
     expectedErrMsg = \
       "Error, the build " + \
-      sorted_str({
+      sorted_dict_str({
         u'buildname': 'build1', u'test': {'fail': 3, 'notrun': 0},
         u'compilation': {'error': 0}, u'update': {'errors': 0},
         u'configure': {'error': 0}}) + \
@@ -470,7 +470,7 @@ class test_CDashQueryPassFail(unittest.TestCase):
       expectedBuildNames, False, dummyExtractCDashApiQueryData)
     expectedErrMsg = \
       "Error, the build " + \
-      sorted_str({
+      sorted_dict_str({
         u'buildname': 'build2', u'test': {'fail': 0, 'notrun': 2},
         u'compilation': {'error': 0}, u'update': {'errors': 0},
         u'configure': {'error': 0}}) + \

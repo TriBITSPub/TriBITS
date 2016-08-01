@@ -52,18 +52,6 @@ from FindGeneralScriptSupport import *
 
 pp = pprint.PrettyPrinter()
 
-# Convert a dictionary to a string, using a sorted set of keys
-def sorted_str(d):
-  items = []
-  keys = list(d.keys())
-  keys.sort()
-  for key in keys:
-    if isinstance(d[key], dict):
-      value = sorted_str(d[key])
-    else:
-      value = repr(d[key])
-    items.append(repr(key) + ": " + value)
-  return "{" + ", ".join(items) + "}"
 
 # Validate a date format
 def validateYYYYMMDD(dateText):
@@ -186,7 +174,7 @@ def cdashIndexBuildsPass(summaryCDashIndexBuilds):
   for build in summaryCDashIndexBuilds:
     if not cdashIndexBuildPasses(build):
       buildsPass = False
-      buildFailedMsg = "Error, the build " + sorted_str(build) + " failed!"
+      buildFailedMsg = "Error, the build " + sorted_dict_str(build) + " failed!"
       break
   return (buildsPass, buildFailedMsg)
 

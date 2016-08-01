@@ -217,7 +217,25 @@ def extractLinesMatchingSubstr(string_in, substr_in):
       linesExtracted += line + "\n"
   return linesExtracted
 # NOTE: Above is *NOT* unit tested!
- 
+
+
+# Convert a dictionary to a string, using a sorted set of keys.
+#
+# This is needed to provide a portable string representation across various
+# versions of Python and platforms (see TriBITS GitHub Issue #119).
+def sorted_dict_str(d):
+  items = []
+  keys = list(d.keys())
+  keys.sort()
+  for key in keys:
+    if isinstance(d[key], dict):
+      value = sorted_dict_str(d[key])
+    else:
+      value = repr(d[key])
+    items.append(repr(key) + ": " + value)
+  return "{" + ", ".join(items) + "}"
+
+
 
 ##############################################
 # System command unit testing utiltities
