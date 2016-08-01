@@ -239,7 +239,7 @@ class testProjectPackageFilePathUtils(unittest.TestCase):
       getCmndOutput(ciSupportDir+"/get-tribits-packages-from-files-list.py" \
         " --files-list-file=modifiedFiles.txt --deps-xml-file="+testingTrilinosDepsXmlInFile,
         True),
-      "ALL_PACKAGES;TrilinosFramework;ThyraCoreLibs;Thyra"
+      b("ALL_PACKAGES;TrilinosFramework;ThyraCoreLibs;Thyra")
       )
 
 
@@ -252,7 +252,7 @@ class testFilterPackagesList(unittest.TestCase):
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
         " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT",
         True),
-      "Teuchos,Thyra"
+      b("Teuchos,Thyra")
       )
 
 
@@ -262,7 +262,7 @@ class testFilterPackagesList(unittest.TestCase):
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
         " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT,ST",
         True),
-      "Teuchos,Thyra,Phalanx"
+      b("Teuchos,Thyra,Phalanx")
       )
 
 
@@ -272,7 +272,7 @@ class testFilterPackagesList(unittest.TestCase):
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
         " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT,ST,EX",
         True),
-      "Teuchos,Thyra,Phalanx,Stokhos"
+      b("Teuchos,Thyra,Phalanx,Stokhos")
       )
 
 
@@ -282,7 +282,7 @@ class testFilterPackagesList(unittest.TestCase):
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
         " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=ST",
         True),
-      "Phalanx"
+      b("Phalanx")
       )
 
 
@@ -292,7 +292,7 @@ class testFilterPackagesList(unittest.TestCase):
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
         " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT,EX",
         True),
-      "Teuchos,Thyra,Stokhos"
+      b("Teuchos,Thyra,Stokhos")
       )
 
 

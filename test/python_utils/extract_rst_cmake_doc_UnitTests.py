@@ -274,7 +274,7 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
     try:
       rstDocBlocks = extractRstDocBlocksFromText(funcMissingColon, rstBlockTypes,
         "someFile1.cmake")
-    except Exception, e:
+    except Exception as e:
       exceptMessage = e.args[0]
     exceptMessage_expected = "someFile1.cmake:3: error: '# @FUNCTION SOME_MACRO_NAME1()' is missing the colon ':' separator!"
     self.assertEqual(exceptMessage, exceptMessage_expected)
@@ -285,7 +285,7 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
     try:
       rstDocBlocks = extractRstDocBlocksFromText(funcTerminateOnMacroText, rstBlockTypes,
         "someFile1.cmake")
-    except Exception, e:
+    except Exception as e:
       exceptMessage = e.args[0]
     exceptMessage_expected = "someFile1.cmake:7: error: expecting 'FUNCTION' but got type 'MACRO''"
     self.assertEqual(exceptMessage, exceptMessage_expected)
@@ -296,7 +296,7 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
     try:
       rstDocBlocks = extractRstDocBlocksFromText(funcNameMistmatchText, rstBlockTypes,
         "someFile2.cmake")
-    except Exception, e:
+    except Exception as e:
       exceptMessage = e.args[0]
     exceptMessage_expected = "someFile2.cmake:6: error: expecting FUNCTION SOME_FUNC_NAME1() but got wrong FUNCTION name 'SOME_FUNC_NAME2'"
     self.assertEqual(exceptMessage, exceptMessage_expected)
@@ -307,7 +307,7 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
     try:
       rstDocBlocks = extractRstDocBlocksFromText(badVerticalSpaceInCommentBlockText, rstBlockTypes,
         "someFile3.cmake")
-    except Exception, e:
+    except Exception as e:
       exceptMessage = e.args[0]
     exceptMessage_expected = "someFile3.cmake:4: error: expecting FUNCTION(SOME_FUNC_NAME1 ...) on this line.  RST comment block must terminate in the stated entity!"
     self.assertEqual(exceptMessage, exceptMessage_expected)
@@ -318,7 +318,7 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
     try:
       rstDocBlocks = extractRstDocBlocksFromText(msisingHorizontalSpaceInCommentBlockText,
          rstBlockTypes, "someFile4.cmake")
-    except Exception, e:
+    except Exception as e:
       exceptMessage = e.args[0]
     exceptMessage_expected = "someFile4.cmake:5: error: Comment blocks must have at least one space after '#' in line = '#Blah blah'"
     self.assertEqual(exceptMessage, exceptMessage_expected)
@@ -514,7 +514,7 @@ class test_replaceWithRstDocBlocksInText(unittest.TestCase):
     try:
       replacedText = replaceWithRstDocBlocksInText(textMissingSecChar,
        rstBlockTypes, simpleDocText1_and_2_rstDocBlocks_expected, "someFile1.cmake")
-    except Exception, e:
+    except Exception as e:
       exceptMessage = e.args[0]
     exceptMessage_expected = "someFile1.cmake:3: Error, line does not match format '@FUNCTION: <blockName> <sepChar>' for line = '@FUNCTION: SOME_FUNC_NAME2()'"
     self.assertEqual(exceptMessage, exceptMessage_expected)
@@ -525,7 +525,7 @@ class test_replaceWithRstDocBlocksInText(unittest.TestCase):
     try:
       replacedText = replaceWithRstDocBlocksInText(textSepCharTooLong,
        rstBlockTypes, simpleDocText1_and_2_rstDocBlocks_expected, "someFile2.cmake")
-    except Exception, e:
+    except Exception as e:
       exceptMessage = e.args[0]
     exceptMessage_expected = "someFile2.cmake:3: Error, separation char must be on char in line = '@FUNCTION: SOME_FUNC_NAME2() --'"
     self.assertEqual(exceptMessage, exceptMessage_expected)
@@ -536,7 +536,7 @@ class test_replaceWithRstDocBlocksInText(unittest.TestCase):
     try:
       replacedText = replaceWithRstDocBlocksInText(textWrongBlockType,
        rstBlockTypes, simpleDocText1_and_2_rstDocBlocks_expected, "someFile3.cmake")
-    except Exception, e:
+    except Exception as e:
       exceptMessage = e.args[0]
     exceptMessage_expected = "someFile3.cmake:3: Error, looked up block type '@FUNCTION' does not match block type for line = '@MACRO: SOME_FUNC_NAME2() -'"
     self.assertEqual(exceptMessage, exceptMessage_expected)
@@ -547,7 +547,7 @@ class test_replaceWithRstDocBlocksInText(unittest.TestCase):
     try:
       replacedText = replaceWithRstDocBlocksInText(textMisspelledOrMissingBlockName,
        rstBlockTypes, simpleDocText1_and_2_rstDocBlocks_expected, "someFile4.cmake")
-    except Exception, e:
+    except Exception as e:
       exceptMessage = e.args[0]
     exceptMessage_expected = "someFile4.cmake:3: Error, block name 'MissingBlockName()' does not exist in rstDocBlocks for line = '@MACRO: MissingBlockName() -'"
     self.assertEqual(exceptMessage, exceptMessage_expected)

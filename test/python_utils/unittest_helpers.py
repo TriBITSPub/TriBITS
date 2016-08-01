@@ -47,16 +47,16 @@ thisFileRealAbsBasePath = os.path.dirname(os.path.abspath(thisFilePath))
 testPythonUtilsDir = thisFileRealAbsBasePath
 
 tribitsPkgDir = os.path.abspath(thisFileRealAbsBasePath+"/../..")
-#print "tribitsPkgDir = '"+tribitsPkgDir+"'"
+#print("tribitsPkgDir = '" + tribitsPkgDir + "'")
 
 tribitsDir = os.path.join(tribitsPkgDir, "tribits")
-#print "tribitsDir = '"+tribitsDir+"'"
+#print("tribitsDir = '" + tribitsDir + "'")
 
 pythonUtilsDir = os.path.join(tribitsDir, 'python_utils')
-#print "pythonUtilsDir = '"+pythonUtilsDir+"'"
+#print("pythonUtilsDir = '" + pythonUtilsDir + "'")
 
 utilsDir = pythonUtilsDir+"/utils"
-#print "utilsDir = '"+utilsDir+"'"
+#print("utilsDir = '" + utilsDir + "'")
 
 mockProjectDir = os.path.join(tribitsDir, "examples/MockTrilinos")
 
