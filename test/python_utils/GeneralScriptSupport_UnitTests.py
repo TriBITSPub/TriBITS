@@ -303,6 +303,19 @@ IT: ./do-configure; 5; ''
       g_sysCmndInterceptor.clear()
 
 
+  def test_echoRunSysCmnd_intercept_01(self):
+    try:
+      g_sysCmndInterceptor.setFallThroughCmndRegex("echo .+")
+      g_sysCmndInterceptor.setInterceptedCmnd("eg log", 3)
+      g_sysCmndInterceptor.setInterceptedCmnd("eg frog", 5)
+      g_sysCmndInterceptor.setAllowExtraCmnds(False)
+      self.assertEqual(3, echoRunSysCmnd("eg log", throwExcept=False, extraEnv={"JUNK":"0"}))
+      self.assertRaises(Exception, echoRunSysCmnd, "eg frog")
+      self.assertEqual(g_sysCmndInterceptor.hasInterceptedCmnds(), False)
+    finally:
+      g_sysCmndInterceptor.clear()
+
+
   def test_getCmndOutput_intercept_01(self):
     try:
       g_sysCmndInterceptor.setFallThroughCmndRegex("echo .+")
