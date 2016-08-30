@@ -5747,21 +5747,42 @@ one would perform the following steps:
 How to check for and tweak TriBITS "ENABLE" cache variables
 -----------------------------------------------------------
 
-TriBITS defines a number of ``<XXX>_ENABLE_<YYY>`` variables, such as for
-enabling/disabling (SE) packages and TPLs (see `TriBITS Dependency Handling
-Behaviors`_).  Before considering how to properly query and tweak these
-variables, one must first understand how TriBITS CMake code defines and
-interprets these variables.
+TriBITS defines a number of ``<XXX>_ENABLE_<YYY>`` variables for
+enabling/disabling various things with examples that include:
 
-First, note that most of these variables are not ``BOOL`` cache variables but
-are actually ``STRING`` variables with the possible values of ``ON``, ``OFF``
-and empty ``""`` (see the macro `SET_CACHE_ON_OFF_EMPTY()`_).  Therefore, just
-because the value of a ``<XXX>_ENABLE_<YYY>`` variable is defined (e.g. ``IF
-(DEFINED <XXX>_ENABLE_<YYY>)``) does not mean that it has been set to ``ON``
-or ``OFF`` yet (or any non-empty values that evaluates to true or false in
-CMake).
+* ``${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>`` ((SE) packages)
+* ``TPL_ENABLE_<TPL>`` (TPLs)
+* ``<TRIBITS_PACKAGE>_ENABLE_<TRIBITS_DEP_PACKAGE_OR_TPL>`` (Optional support
+  for a (SE) package or TPL in a downstream package)
+* ``<TRIBITS_PACKAGE>_ENABLE_TESTS`` (Package tests)
+* ``<TRIBITS_PACKAGE>_ENABLE_EXAMPLES`` (Package examples)
+* ``${PROJECT_NAME}_ENABLE_TESTS`` (Tests for explicitly enabled packages)
+* ``${PROJECT_NAME}_ENABLE_EXAMPLES`` (Examples for explicitly enabled
+  packages)
 
-Second, note that TriBITS will not define these cache variables until TriBITS
+(see `TriBITS Dependency Handling Behaviors`_).  Before considering how to
+properly query and tweak these ``ENABLE`` variables, one must first understand
+how TriBITS CMake code defines and interprets variables of this type.
+
+First, note that most of these particular ``ENABLE`` variables are not
+``BOOL`` cache variables but are actually ``STRING`` variables with the
+possible values of ``ON``, ``OFF`` and empty ``""`` (see the macro
+`SET_CACHE_ON_OFF_EMPTY()`_).  Therefore, just because the value of a
+``<XXX>_ENABLE_<YYY>`` variable is defined (e.g. ``IF (DEFINED
+<XXX>_ENABLE_<YYY>) ... ENDIF()``) does not mean that it has been set to
+``ON`` or ``OFF`` yet (or any non-empty values that evaluates to true or false
+in CMake).  To see if an ``ENABLE`` variable is one of these variables, look
+in the CMakeCache.txt file for the type.  If the type is ``STRING``, then it
+is most likely this type of variable with a default value of empty ``""``.
+However, if the cache type is ``BOOL`` then it is likely a standard bool
+variable that is not allowed to have a value of empty ``""``.
+
+Second, note that the value of empty ``""`` evaluates to ``FALSE`` in CMake
+``IF()`` statements.  Therefore, if one just wants to know if one of these
+variables evaluates to true, then just use ``IF (<XXX>_ENABLE_<YYY>)
+... ENDIF()``.
+
+Third, note that TriBITS will not define these cache variables until TriBITS
 processes the ``Dependencies.cmake`` files on the first configure (see `Full
 TriBITS Project Configuration`_).  On future reconfigures, these variables are
 all defined (but most will have a default value of empty ``""`` stored in the
