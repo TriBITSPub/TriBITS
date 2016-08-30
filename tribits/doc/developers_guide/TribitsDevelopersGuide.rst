@@ -3241,7 +3241,11 @@ In more detail, these rules/behaviors are:
    given the initial value ``Trilinos_ENABLE_Teuchos=""``.  For an example,
    see `Default configure with no packages enabled on input`_.  This allows
    ``PT``, and ``ST`` packages to be enabled or disabled using other logic
-   defined by TriBITS which is described below.
+   defined by TriBITS which is described below.  TriBITS defines persistent
+   cache variables for these with the default value of empty "".  Therefore,
+   if the user or other CMake code does not hard enable or disable one of
+   these variables, then on future configures it will be defined but have the
+   value of empty "".
 
 .. _EX SE packages disabled by default:
 
@@ -3253,7 +3257,8 @@ In more detail, these rules/behaviors are:
    However, the user can explicitly set
    ``${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>=ON`` for an ``EX`` package and
    it will be enabled (unless one of its required dependencies are not enabled
-   for some reason).
+   for some reason).  In this case, the cache variable is given the cache
+   value of ``OFF``.
 
 .. _SE package enable triggers auto-enables of upstream dependencies:
 
@@ -5738,6 +5743,60 @@ one would perform the following steps:
    Otherwise, to see notes about ignoring missing inserted/external packages,
    set the variable ``-D<Project>_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=TRUE``
    and TriBITS will print warnings about missing external packages.
+
+How to check for and tweak TriBITS "ENABLE" cache variables
+-----------------------------------------------------------
+
+TriBITS defines a number of ``<XXX>_ENABLE_<YYY>`` variables, such as for
+enabling/disabling (SE) packages at TPLs (see `TriBITS Dependency Handling
+Behaviors`_).  Before considering how to query and tweak these variables, one
+must first understand how TriBITS CMake code defines and interpret these
+variables.
+
+First, note that most of these variables are not ``BOOL`` cache variables but
+are actually ``STRING`` variables with the possible values of ``ON``, ``OFF``
+and empty ``""`` (see the macro `SET_CACHE_ON_OFF_EMPTY()`_).  Therefore, just
+because the value of ``<XXX>_ENABLE_<YYY>`` does not mean that it has been set
+to ``ON`` or ``OFF`` (or any non-empty values that evaluate to true or false
+in CMake).
+
+Second, note that TriBITS will not define these cache variables until TriBITS
+processes the ``Dependencies.cmake`` files on the first configure.  On future
+reconfigures, these variables are all defined.
+
+Now for the "How To" list:
+
+1) To check to see if an ``ENABLE`` variable has been enabled or disabled
+   (either explicitly or through auto enable/disable logic), use::
+
+     IF (NOT "${<XXX>_ENABLE_<YYY>}" STREQUAL "")
+       ...
+     ENDIF()
+
+   This will work correctly independent if the cache variable has been default
+   defined or not.
+
+2) To tweak the enable/disable of one or more of these variables after user
+   input but before auto-enable/disable logic:
+
+  a) To tweak the enables/disables for a TriBITS Repository (i.e. affecting
+     all TriBITS projects) add enable/disable code to the file
+     `<repoDir>/cmake/RepositoryDependenciesSetup.cmake`_.
+
+  b) To tweak the enables/disables for a specific TriBITS Project
+     (i.e. affecting only that TriBITS projects) add enable/disable code to
+     the file `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_.
+
+For example, one might default disable a package if it has not been explicitly
+enabled (or disabled) in one of these files using logic like::
+
+  IF (NOT ${PROJECT_NAME}_ENABLE_Fortran)  # Is a BOOL var!
+    IF (NOT "${${PROJECT_NAME}_ENABLE_<SomeFortranPackage>}" STREQUAL "")
+      MESSAGE("-- " "NOTE: Setting ${PROJECT_NAME}_ENABLE_<SomeFortranPackage>=OFF because"
+        "${PROJECT_NAME}_ENABLE_Fortran = '${${PROJECT_NAME}_ENABLE_Fortran}'")
+      SET(${PROJECT_NAME}_ENABLE_<SomeFortranPackage> OFF)
+    ENDIF()
+  ENDIF()
 
 
 Additional Topics
