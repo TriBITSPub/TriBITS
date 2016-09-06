@@ -5747,11 +5747,12 @@ one would perform the following steps:
 How to check for and tweak TriBITS "ENABLE" cache variables
 -----------------------------------------------------------
 
-TriBITS defines a number of ``<XXX>_ENABLE_<YYY>`` variables for
-enabling/disabling various things with examples that include:
+TriBITS defines a number of special ``<XXX>_ENABLE_<YYY>`` variables for
+enabling/disabling various entities that allow for a default "undefined" empty
+``""`` enable status.  Examples of these special variables include:
 
 * ``${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>`` ((SE) packages)
-* ``TPL_ENABLE_<TPL>`` (TPLs)
+* ``TPL_ENABLE_<tplName>`` (TPLs)
 * ``<TRIBITS_PACKAGE>_ENABLE_<TRIBITS_DEP_PACKAGE_OR_TPL>`` (Optional support
   for a (SE) package or TPL in a downstream package)
 * ``<TRIBITS_PACKAGE>_ENABLE_TESTS`` (Package tests)
@@ -5760,9 +5761,47 @@ enabling/disabling various things with examples that include:
 * ``${PROJECT_NAME}_ENABLE_EXAMPLES`` (Examples for explicitly enabled
   packages)
 
-(see `TriBITS Dependency Handling Behaviors`_).  Before considering how to
-properly query and tweak these ``ENABLE`` variables, one must first understand
-how TriBITS CMake code defines and interprets variables of this type.
+(see `TriBITS Dependency Handling Behaviors`_).
+
+To check for and tweak these special "ENABLE" variables, perform the
+following:
+
+1) To check to see if an ``ENABLE`` variable has been enabled or disabled
+   (either explicitly or through auto enable/disable logic), use::
+
+     IF ("${<XXX>_ENABLE_<YYY>}" STREQUAL "")
+       # Variable has not be set to 'ON' or 'OFF' yet
+       ...
+     ENDIF()
+
+   This will work correctly independent of if the cache variable has been
+   default defined or not.
+
+2) To tweak the enable/disable of one or more of these variables after user
+   input but before auto-enable/disable logic:
+
+  a) To tweak the enables/disables for a TriBITS Repository (i.e. affecting
+     all TriBITS projects) add enable/disable code to the file
+     `<repoDir>/cmake/RepositoryDependenciesSetup.cmake`_.
+
+  b) To tweak the enables/disables for a specific TriBITS Project
+     (i.e. affecting only that TriBITS project) add enable/disable code to the
+     file `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_.
+
+  For example, one might default disable a package if it has not been
+  explicitly enabled (or disabled) in one of these files using logic like::
+
+    IF (NOT ${PROJECT_NAME}_ENABLE_Fortran)
+      IF ("${${PROJECT_NAME}_ENABLE_<SomeFortranPackage>}" STREQUAL "")
+        MESSAGE("-- " "NOTE: Setting ${PROJECT_NAME}_ENABLE_<SomeFortranPackage>=OFF because"
+          "${PROJECT_NAME}_ENABLE_Fortran = '${${PROJECT_NAME}_ENABLE_Fortran}'")
+        SET(${PROJECT_NAME}_ENABLE_<SomeFortranPackage> OFF)
+      ENDIF()
+    ENDIF()
+
+In order to understand the above steps for properly querying and tweaking
+these ``ENABLE`` variables, one must understand how TriBITS CMake code defines
+and interprets variables of this type.
 
 First, note that most of these particular ``ENABLE`` variables are not
 ``BOOL`` cache variables but are actually ``STRING`` variables with the
@@ -5787,41 +5826,6 @@ processes the ``Dependencies.cmake`` files on the first configure (see `Full
 TriBITS Project Configuration`_).  On future reconfigures, these variables are
 all defined (but most will have a default value of empty ``""`` stored in the
 cache).
-
-Now for the "How To" steps:
-
-1) To check to see if an ``ENABLE`` variable has been enabled or disabled
-   (either explicitly or through auto enable/disable logic), use::
-
-     IF ("${<XXX>_ENABLE_<YYY>}" STREQUAL "")
-       # Variable has not be set to 'ON' or 'OFF' yet
-       ...
-     ENDIF()
-
-   This will work correctly independent of if the cache variable has been
-   default defined or not.
-
-2) To tweak the enable/disable of one or more of these variables after user
-   input but before auto-enable/disable logic:
-
-  a) To tweak the enables/disables for a TriBITS Repository (i.e. affecting
-     all TriBITS projects) add enable/disable code to the file
-     `<repoDir>/cmake/RepositoryDependenciesSetup.cmake`_.
-
-  b) To tweak the enables/disables for a specific TriBITS Project
-     (i.e. affecting only that TriBITS project) add enable/disable code to the
-     file `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_.
-
-For example, one might default disable a package if it has not been explicitly
-enabled (or disabled) in one of these files using logic like::
-
-  IF (NOT ${PROJECT_NAME}_ENABLE_Fortran)
-    IF ("${${PROJECT_NAME}_ENABLE_<SomeFortranPackage>}" STREQUAL "")
-      MESSAGE("-- " "NOTE: Setting ${PROJECT_NAME}_ENABLE_<SomeFortranPackage>=OFF because"
-        "${PROJECT_NAME}_ENABLE_Fortran = '${${PROJECT_NAME}_ENABLE_Fortran}'")
-      SET(${PROJECT_NAME}_ENABLE_<SomeFortranPackage> OFF)
-    ENDIF()
-  ENDIF()
 
 The reason the files ``RepositoryDependenciesSetup.cmake`` and
 ``ProjectDependenciesSetup.cmake`` are the best places to put in these tweaks
