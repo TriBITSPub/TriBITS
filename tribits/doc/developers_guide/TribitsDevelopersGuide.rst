@@ -6655,7 +6655,7 @@ like::
   $CHECKIN_TEST_WRAPPER \
     --extra-pull-from=ExtraRepo1:public:master \
     --abort-gracefully-if-no-changes-to-push \
-    --enable-all-packages=on \
+    --enable-extra-packages=Package1A \
     --send-build-case-email=only-on-failure \
     --send-email-to=base-proj-integrators@url4.gov \
     --send-email-to-on-push=base-proj-integrators@url4.gov \
@@ -6706,40 +6706,35 @@ more details):
     priori if changes need to be synced so the script supports this option to
     deal with that case gracefully.
 
-  ``--enable-all-packages=on``
+  ``--enable-extra-packages=Package1A``
 
     This option should be set if one wants to ensure that all commits get
     synced, even when these changes don't impact the build or the tests of the
-    project.  If not setting ``--enable-all-packages=on`` or
-    ``--enable-packages=<pkg0>,<pkg1>,...``, then the ``checkin-test.py``
-    script will decide on its own what packages to test just based on what
-    packages have changed files in the ``ExtraRepo1`` repo.  For example, if a
-    top-level README file in the base ``ExtraRepo1`` repo gets modified that
-    does not sit under a package directory, then the automatic logic in the
-    checkin-test.py script will not trigger a package enable. In that case, no
-    configure, build, testing, or push will take place and therefore the sync
-    will not occur.  Therefore, if one wants to ensure that every commit gets
-    safely synced over on every invocation, then the safest way to that is to
-    specify ``--enable-all-packages=on``.  But if one wants to save on the
-    build and test times and one does not mind not syncing all the time, then
-    ``--enable-all-packages=on`` can be left off.  **WARNING:** it is not
-    advisable to manually set ``--enable-packages=<package-list>``.  This is
-    because if there are changes to other packages, then these packages will
-    not get enabled and not get tested, which could break the global build and
-    tests.  Also, this is fragile if new packages are added to ``ExtraRepo``
-    later that are not listed in ``--enable-packages=<pkg0>,<pkg1>,...`` as
-    they will not be included in the testing.  Also, if someone makes local
-    commits in other local git repos before running the sync script again,
-    then these packages will not get enabled and tested.  Therefore, in
-    general, don't set ``--enable-packages=<pkg0>,<pkg1>,...`` in a sync
-    script, only set ``--enable-all-packages=on`` to be robust and safe.
-    **ToDo:** Add the checkin-test.py option
-    ``--enable-extra-packages=<pkg0>,<pkg1>,...`` to ensure some minimal
-    testing is always done but also allow changes to other packages to trigger
-    their testing (and testing of downstream packages) as well.  This would
-    ensure that minimal but complete testing was done (based on changed
-    packages and package dependencies) and would also result in every commit
-    being pushed on every invocation (where tests are passing).
+    project.  If not setting ``--enable-extra-packages=<some-package>`` , then
+    the ``checkin-test.py`` script will only decide on its own what packages
+    to test just based on what packages have changed files in the
+    ``ExtraRepo1`` repo and if no modified files map to a package, then no
+    packages will be auto-enabled and therefore no packages will be enabled at
+    all.  For example, if a top-level README file in the base ``ExtraRepo1``
+    repo gets modified that does not sit under a package directory, then the
+    automatic logic in the checkin-test.py script will not trigger a package
+    enable. In that case, no configure, build, testing, or push will take
+    place (must run at least some tests in order to assume it is safe to push)
+    and therefore the sync will not occur.  Therefore, if one wants to ensure
+    that every commit gets safely synced over on every invocation, then the
+    safest way to that is to always enable at least one or more packages by
+    specify ``--enable-extra-packages=<pkg0>,<pkg1>``.  **WARNING:** it is not
+    advisable to manually set ``--enable-packages=<package-list>`` since it
+    turns off the auto-enable logic for changed files.  This is because if
+    there are changes to other packages, then these packages will not get
+    enabled and not get tested, which could break the global build and tests.
+    Also, this is fragile if new packages are added to ``ExtraRepo1`` later
+    that are not listed in ``--enable-packages=<pkg0>,<pkg1>,...`` as they
+    will not be included in the testing.  Also, if someone makes local commits
+    in other local git repos before running the sync script again, then these
+    packages will not get enabled and tested.  Therefore, in general, don't
+    set ``--enable-packages=<pkg0>,<pkg1>,...`` in a sync script, only set
+    ``--enable-extra-packages=<pkg0>,<pkg1>,...`` to be robust and safe.
 
   ``--send-build-case-email=only-on-failure``
 
