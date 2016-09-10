@@ -3241,7 +3241,11 @@ In more detail, these rules/behaviors are:
    given the initial value ``Trilinos_ENABLE_Teuchos=""``.  For an example,
    see `Default configure with no packages enabled on input`_.  This allows
    ``PT``, and ``ST`` packages to be enabled or disabled using other logic
-   defined by TriBITS which is described below.
+   defined by TriBITS which is described below.  TriBITS defines persistent
+   cache variables for these with the default value of empty "".  Therefore,
+   if the user or other CMake code does not hard enable or disable one of
+   these variables, then on future configures it will be defined but have the
+   value of empty "".
 
 .. _EX SE packages disabled by default:
 
@@ -3253,7 +3257,8 @@ In more detail, these rules/behaviors are:
    However, the user can explicitly set
    ``${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>=ON`` for an ``EX`` package and
    it will be enabled (unless one of its required dependencies are not enabled
-   for some reason).
+   for some reason).  In this case, the cache variable is given the cache
+   value of ``OFF``.
 
 .. _SE package enable triggers auto-enables of upstream dependencies:
 
@@ -5738,6 +5743,100 @@ one would perform the following steps:
    Otherwise, to see notes about ignoring missing inserted/external packages,
    set the variable ``-D<Project>_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=TRUE``
    and TriBITS will print warnings about missing external packages.
+
+How to check for and tweak TriBITS "ENABLE" cache variables
+-----------------------------------------------------------
+
+TriBITS defines a number of special ``<XXX>_ENABLE_<YYY>`` variables for
+enabling/disabling various entities that allow for a default "undefined" empty
+``""`` enable status.  Examples of these special variables include:
+
+* ``${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>`` ((SE) packages)
+* ``TPL_ENABLE_<tplName>`` (TPLs)
+* ``<TRIBITS_PACKAGE>_ENABLE_<TRIBITS_DEP_PACKAGE_OR_TPL>`` (Optional support
+  for a (SE) package or TPL in a downstream package)
+* ``<TRIBITS_PACKAGE>_ENABLE_TESTS`` (Package tests)
+* ``<TRIBITS_PACKAGE>_ENABLE_EXAMPLES`` (Package examples)
+* ``${PROJECT_NAME}_ENABLE_TESTS`` (Tests for explicitly enabled packages)
+* ``${PROJECT_NAME}_ENABLE_EXAMPLES`` (Examples for explicitly enabled
+  packages)
+
+(see `TriBITS Dependency Handling Behaviors`_).
+
+To check for and tweak these special "ENABLE" variables, perform the
+following:
+
+1) To check to see if an ``ENABLE`` variable has been enabled or disabled
+   (either explicitly or through auto enable/disable logic), use::
+
+     IF ("${<XXX>_ENABLE_<YYY>}" STREQUAL "")
+       # Variable has not be set to 'ON' or 'OFF' yet
+       ...
+     ENDIF()
+
+   This will work correctly independent of if the cache variable has been
+   default defined or not.
+
+2) To tweak the enable/disable of one or more of these variables after user
+   input but before auto-enable/disable logic:
+
+  a) To tweak the enables/disables for a TriBITS Repository (i.e. affecting
+     all TriBITS projects) add enable/disable code to the file
+     `<repoDir>/cmake/RepositoryDependenciesSetup.cmake`_.
+
+  b) To tweak the enables/disables for a specific TriBITS Project
+     (i.e. affecting only that TriBITS project) add enable/disable code to the
+     file `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_.
+
+  For example, one might default disable a package if it has not been
+  explicitly enabled (or disabled) in one of these files using logic like::
+
+    IF (NOT ${PROJECT_NAME}_ENABLE_Fortran)
+      IF ("${${PROJECT_NAME}_ENABLE_<SomeFortranPackage>}" STREQUAL "")
+        MESSAGE("-- " "NOTE: Setting ${PROJECT_NAME}_ENABLE_<SomeFortranPackage>=OFF because"
+          "${PROJECT_NAME}_ENABLE_Fortran = '${${PROJECT_NAME}_ENABLE_Fortran}'")
+        SET(${PROJECT_NAME}_ENABLE_<SomeFortranPackage> OFF)
+      ENDIF()
+    ENDIF()
+
+In order to understand the above steps for properly querying and tweaking
+these ``ENABLE`` variables, one must understand how TriBITS CMake code defines
+and interprets variables of this type.
+
+First, note that most of these particular ``ENABLE`` variables are not
+``BOOL`` cache variables but are actually ``STRING`` variables with the
+possible values of ``ON``, ``OFF`` and empty ``""`` (see the macro
+`SET_CACHE_ON_OFF_EMPTY()`_).  Therefore, just because the value of a
+``<XXX>_ENABLE_<YYY>`` variable is defined (e.g. ``IF (DEFINED
+<XXX>_ENABLE_<YYY>) ... ENDIF()``) does not mean that it has been set to
+``ON`` or ``OFF`` yet (or any non-empty values that evaluates to true or false
+in CMake).  To see if an ``ENABLE`` variable is one of these variables, look
+in the CMakeCache.txt file for the type.  If the type is ``STRING``, then it
+is most likely this type of variable with a default value of empty ``""``.
+However, if the cache type is ``BOOL`` then it is likely a standard bool
+variable that is not allowed to have a value of empty ``""``.
+
+Second, note that the value of empty ``""`` evaluates to ``FALSE`` in CMake
+``IF()`` statements.  Therefore, if one just wants to know if one of these
+variables evaluates to true, then just use ``IF (<XXX>_ENABLE_<YYY>)
+... ENDIF()``.
+
+Third, note that TriBITS will not define these cache variables until TriBITS
+processes the ``Dependencies.cmake`` files on the first configure (see `Full
+TriBITS Project Configuration`_).  On future reconfigures, these variables are
+all defined (but most will have a default value of empty ``""`` stored in the
+cache).
+
+The reason the files ``RepositoryDependenciesSetup.cmake`` and
+``ProjectDependenciesSetup.cmake`` are the best places to put in these tweaks
+is because, as shown in `Full Processing of TriBITS Project Files`_, they get
+processed after all of the user input has been read (in CMake cache variables
+set with ``-D<variable>=<value>`` and read in from
+`${PROJECT_NAME}_CONFIGURE_OPTIONS_FILE`_ files) but before TriBITS adjusts
+the SE package and TPLs enables and disables (see `Package Dependencies and
+Enable/Disable Logic`_).  Also, these files get processed in `Reduced Package
+Dependency Processing`_ as well so they get processed in all contexts where
+enable/disable logic is applied.
 
 
 Additional Topics

@@ -49,9 +49,9 @@ import shutil
 #thisFilePath = __file__
 #thisFileRealAbsBasePath = os.path.dirname(os.path.abspath(thisFilePath))
 #tribitsDir = os.path.abspath(thisFileRealAbsBasePath+"/../../tribits")
-#print "tribitsDir = '"+tribitsDir+"'"
+#print("tribitsDir = '" + tribitsDir + "'")
 #pythonUtilsDir = os.path.join(tribitsDir, 'python_utils')
-#print "pythonUtilsDir = '"+pythonUtilsDir+"'"
+#print("pythonUtilsDir = '" + pythonUtilsDir + "'")
 #
 #sys.path = [pythonUtilsDir] + sys.path
 #
@@ -77,7 +77,7 @@ class test_mockprogram(unittest.TestCase):
     try:
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = "Error: .mockprogram_inout.txt is missing!\n"
+      expected_output = b"Error: .mockprogram_inout.txt is missing!\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 1)
     finally:
@@ -90,7 +90,7 @@ class test_mockprogram(unittest.TestCase):
       open('.mockprogram_inout.txt', 'w').write("")
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = "Error: .mockprogram_inout.txt has less than three lines:\n-------------\n-------------\n"
+      expected_output = b"Error: .mockprogram_inout.txt has less than three lines:\n-------------\n-------------\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 2)
     finally:
@@ -107,7 +107,7 @@ class test_mockprogram(unittest.TestCase):
         )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = "Error, first line = 'MOCK_PROGRAM_INPUTS: some input', does not match ^MOCK_PROGRAM_INPUT:\n"
+      expected_output = b"Error, first line = 'MOCK_PROGRAM_INPUTS: some input', does not match ^MOCK_PROGRAM_INPUT:\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 3)
     finally:
@@ -124,7 +124,7 @@ class test_mockprogram(unittest.TestCase):
         )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = "Error, input args='some input' does not match expected='some other input'\n"
+      expected_output = b"Error, input args='some input' does not match expected='some other input'\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 4)
     finally:
@@ -141,7 +141,7 @@ class test_mockprogram(unittest.TestCase):
         )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = "Error, second line = 'MOCK_PROGRAM_OUTPUT: some output', does not match ^MOCK_PROGRAM_RETURN:\n"
+      expected_output = b"Error, second line = 'MOCK_PROGRAM_OUTPUT: some output', does not match ^MOCK_PROGRAM_RETURN:\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 5)
     finally:
@@ -158,7 +158,7 @@ class test_mockprogram(unittest.TestCase):
         )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = "Error, third line = 'more output', does not match ^MOCK_PROGRAM_OUTPUT:\n"
+      expected_output = b"Error, third line = 'more output', does not match ^MOCK_PROGRAM_OUTPUT:\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 6)
     finally:
@@ -175,7 +175,7 @@ class test_mockprogram(unittest.TestCase):
         )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = "some output\n"
+      expected_output = b"some output\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 11)
       remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
@@ -196,7 +196,7 @@ class test_mockprogram(unittest.TestCase):
         )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = "some output\nanother line of ouput\nlast ouptut line\n"
+      expected_output = b"some output\nanother line of ouput\nlast ouptut line\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 11)
       remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
@@ -218,12 +218,12 @@ class test_mockprogram(unittest.TestCase):
         )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 1", rtnOutput=True)
-      expected_output = "some output 1\n"
+      expected_output = b"some output 1\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 13)
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 2", rtnOutput=True)
-      expected_output = "some output 2\n"
+      expected_output = b"some output 2\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 15)
       remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
@@ -247,12 +247,12 @@ class test_mockprogram(unittest.TestCase):
         )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 1", rtnOutput=True)
-      expected_output = "some output 1\nanother line of ouput\nlast ouptut line\n"
+      expected_output = b"some output 1\nanother line of ouput\nlast ouptut line\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 13)
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 2", rtnOutput=True)
-      expected_output = "some output 2\n"
+      expected_output = b"some output 2\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 15)
       remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
