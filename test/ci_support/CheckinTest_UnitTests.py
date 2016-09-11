@@ -3726,6 +3726,28 @@ class test_checkin_test(unittest.TestCase):
     # files and set the enables manually.
 
 
+  def test_enable_extra_packages(self):
+    checkin_test_configure_enables_test(
+      \
+      self,
+      \
+      "enable_extra_packages",
+      \
+      "--enable-extra-packages=RTOp,Thyra",
+      \
+      "\-DTrilinos_ENABLE_Teuchos:BOOL=ON\n" \
+      +"\-DTrilinos_ENABLE_RTOp:BOOL=ON\n" \
+      +"\-DTrilinos_ENABLE_Thyra:BOOL=ON\n" \
+      ,
+      extraPassRegexStr=\
+      "Enabling extra explicitly specified packages .RTOp,Thyra.\n" \
+      "Final package enable list: \[Teuchos,RTOp,Thyra\]\n" \
+      "Full package enable list: \[Teuchos,RTOp,Thyra\]\n" \
+      )
+    # Above, the --enable-extra-packages option leave on the check of the modified
+    # files ahd just appends the set of enabled pacakges
+
+
   def test_disable_packages(self):
     checkin_test_configure_enables_test(
       \
@@ -3813,6 +3835,25 @@ class test_checkin_test(unittest.TestCase):
         "No need for repos to be on a branch with a tracking branch!\n" \
         +"Enabling all packages on request since --enable-all-packages=on\n"\
         +"Skipping detection of changed packages since --enable-all-packages=on\n"\
+        +"cmakePkgOptions: ..-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON., .-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON., .-DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON..\n"\
+        ,
+      doGitDiff=False \
+      )
+
+
+  def test_enable_all_packages_on_enable_extra_packages(self):
+    checkin_test_configure_enables_test(
+      self,
+      "enable_all_packages_on_enable_extra_packages",
+      "--enable-all-packages=on --enable-extra-packages=RTOp",
+      "\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n",
+      modifiedFilesStr = "dummy.txt", # Will not trigger any enables!
+      extraPassRegexStr=\
+        "enable-all-packages=on => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+        "No need for repos to be on a branch with a tracking branch!\n" \
+        +"Enabling all packages on request since --enable-all-packages=on\n"\
+        +"Skipping detection of changed packages since --enable-all-packages=on\n"\
+        +"Full package enable list: \[\]\n" \
         +"cmakePkgOptions: ..-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON., .-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON., .-DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON..\n"\
         ,
       doGitDiff=False \
@@ -4785,6 +4826,28 @@ class test_checkin_test(unittest.TestCase):
       \
       "Error, invalid package name TEuchos in --enable-packages=TEuchos." \
       "  The valid package names include: .*Teuchos, .*\n" \
+      ,
+      grepForFinalPassFailStr=False \
+      )
+
+
+  def test_enable_extra_packages_error(self):
+    checkin_test_run_case(
+      \
+      self,
+      \
+      "enable_extra_packages_error",
+      \
+      "--enable-extra-packages=RTOP" \
+      ,
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      ,
+      \
+      False,
+      \
+      "Error, invalid package name RTOP in --enable-extra-packages=RTOP." \
+      "  The valid package names include: .*RTOp, .*\n" \
       ,
       grepForFinalPassFailStr=False \
       )
