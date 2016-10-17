@@ -6047,6 +6047,22 @@ ready to compile code.  All of the major variables set as part of this process
 are printed to the ``cmake`` stdout.
 
 
+RPATH Handling
+--------------
+
+As explained in `Setting install RPATH`_, TriBITS changes the CMake defaults
+to write in the RPATH for shared libraries and executables so that they run
+right out of the install directory without needing to set paths in the
+environment (e.g. ``LD_LIBRARY_PATH``).  However, these defaults can be
+changed by changing setting different project defaults for the variables
+`${PROJECT_NAME}_SET_INSTALL_RPATH`_ and `CMAKE_INSTALL_RPATH_USE_LINK_PATH`_.
+But most projects should likely keep these defaults in place since they make
+it so that doing builds and installations on a single machine work correctly
+by default out of the box.  And for other installation/distribution use cases,
+the user is told how to manipulate CMake variables for those cases in `Setting
+install RPATH`_.
+
+
 Configure-time System Tests
 ---------------------------
 
@@ -7592,12 +7608,14 @@ a given TriBITS project are:
 * `${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES`_
 * `${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS`_
 * `${PROJECT_NAME}_REQUIRES_PYTHON`_
+* `${PROJECT_NAME}_SET_INSTALL_RPATH`_
 * `${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME`_
 * `${PROJECT_NAME}_TEST_CATEGORIES`_
 * `${PROJECT_NAME}_TPL_SYSTEM_INCLUDE_DIRS`_
 * `${PROJECT_NAME}_TRACE_ADD_TEST`_
 * `${PROJECT_NAME}_USE_GNUINSTALLDIRS`_
 * `${PROJECT_NAME}_USES_PYTHON`_
+* `CMAKE_INSTALL_RPATH_USE_LINK_PATH`_
 * `MPI_EXEC_MAX_NUMPROCS`_
 * `PythonInterp_FIND_VERSION`_
 
@@ -7872,6 +7890,22 @@ These options are described below.
   in the `<projectDir>/ProjectName.cmake`_ file (See `Python Support`_).  The
   default is implicitly ``FALSE``.
 
+
+.. _${PROJECT_NAME}_SET_INSTALL_RPATH:
+
+**${PROJECT_NAME}_SET_INSTALL_RPATH**
+
+  The cache variable ``${PROJECT_NAME}_SET_INSTALL_RPATH`` is used to define
+  the default RPATH mode for the TriBITS project (see `Setting install RPATH`_
+  for details).  The TriBITS default is to set this to ``TRUE`` but the
+  TriBITS project can be set the default to ``FALSE`` by setting::
+
+    SET(${PROJECT_NAME}_SET_INSTALL_RPATH_DEFAULT FALSE)
+
+  in the project's `<projectDir>/ProjectName.cmake`_ file (see `RPATH
+  Handling`_).
+
+
 .. _${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME:
 
 **${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME**
@@ -8021,6 +8055,19 @@ These options are described below.
   that Python is never needed, set::
 
     SET(${PROJECT_NAME}_USES_PYTHON  FALSE)
+
+.. _CMAKE_INSTALL_RPATH_USE_LINK_PATH:
+
+**CMAKE_INSTALL_RPATH_USE_LINK_PATH**
+
+  The cache variable ``CMAKE_INSTALL_RPATH_USE_LINK_PATH`` is a built-in CMake
+  variable that determines if the paths for external libraries (i.e. from
+  TPLs) is put into the installed library RPATHS (see `RPATH Handling`_).
+  TriBITS sets the default for this to ``TRUE`` but a project can change the
+  default back to ``FALSE`` by setting the following in the project's
+  `<projectDir>/ProjectName.cmake`_ file::
+
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH_DEFAULT FALSE)
 
 .. _MPI_EXEC_MAX_NUMPROCS:
 
@@ -8363,6 +8410,8 @@ Below is a snapshot of the output from ``install_devtools.py --help``.
 .. _Enabling extra repositories with add-on packages: TribitsBuildReference.html#enabling-extra-repositories-with-add-on-packages
 
 .. _Getting set up to use CMake: TribitsBuildReference.html#getting-set-up-to-use-cmake
+
+.. _Setting install RPATH: TribitsBuildReference.html#setting-install-rpath
 
 .. _Dashboard Submissions: TribitsBuildReference.html#dashboard-submissions
 

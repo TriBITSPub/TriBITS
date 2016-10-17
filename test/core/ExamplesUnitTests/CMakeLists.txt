@@ -42,6 +42,15 @@
 # Common arguments
 #
 
+SET(SERIAL_PASSTHROUGH_CONFIGURE_ARGS
+  -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+  -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+  )
+
+IF ({${PROJECT_NAME}_ENABLE_Fortran)
+  APPEND_SET(SERIAL_PASSTHROUGH_CONFIGURE_ARGS
+    -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER} )
+ENDIF()
 
 SET(COMMON_ENV_ARGS_PASSTHROUGH
   -DTPL_ENABLE_MPI=${TPL_ENABLE_MPI}
@@ -63,9 +72,7 @@ IF (TPL_ENABLE_MPI)
   SET(TEST_MPI_1_SUFFIX "_MPI_1")
 ELSE()
   APPEND_SET(COMMON_ENV_ARGS_PASSTHROUGH
-    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-    -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
+    ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
     )
   SET(TEST_MPI_1_SUFFIX "")
 ENDIF()
@@ -81,7 +88,7 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
-      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/RawHelloWorld
     PASS_REGULAR_EXPRESSION_ALL
       "Configuring done"
@@ -389,7 +396,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "WithSubpackagesB_test_of_b .* Passed"
       "WithSubpackagesC_test_of_c .* Passed"
       "WithSubpackagesC_test_of_c_util.* Passed"
-      "100% tests passed, 0 tests failed out of 5"
+      "100% tests passed, 0 tests failed out of 6"
 
   TEST_3
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
@@ -639,7 +646,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
     PASS_REGULAR_EXPRESSION_ALL
       "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
       "WithSubpackagesA_test_of_a .* Passed"
-      "100% tests passed, 0 tests failed out of 2"
+      "100% tests passed, 0 tests failed out of 3"
 
   TEST_3 CMND make ARGS install ${CTEST_BUILD_FLAGS}
     MESSAGE "Build 'install' target using raw 'make'"
@@ -714,7 +721,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST
       "WithSubpackagesC_test_of_c_util.* Passed" 
       "WithSubpackagesC_test_of_c .* Passed"
       "WithSubpackagesC_test_of_c_b_mixed_lang.* Passed"
-      "100% tests passed, 0 tests failed out of 8"
+      "100% tests passed, 0 tests failed out of 9"
   )
 
 
@@ -769,7 +776,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibPrefix
       "WithSubpackagesC_test_of_c_util.* Passed" 
       "WithSubpackagesC_test_of_c .* Passed"
       "WithSubpackagesC_test_of_c_b_mixed_lang.* Passed"
-      "100% tests passed, 0 tests failed out of 8"
+      "100% tests passed, 0 tests failed out of 9"
   )
 
 
@@ -1148,7 +1155,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
       "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
-      "100% tests passed, 0 tests failed out of 1"
+      "100% tests passed, 0 tests failed out of 2"
   )
 
 
@@ -1464,7 +1471,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
 
   TEST_5 CMND ${CMAKE_CTEST_COMMAND}
     PASS_REGULAR_EXPRESSION_ALL
-      "100% tests passed, 0 tests failed out of 6"
+      "100% tests passed, 0 tests failed out of 7"
 
   )
 
@@ -1756,7 +1763,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
     PASS_REGULAR_EXPRESSION_ALL
       "MixedSharedStaticLibsSharedOnly_test.* Passed"
       "MixedSharedStaticLibsStaticExec_test.* Passed"
-      "100% tests passed, 0 tests failed out of 3"
+      "100% tests passed, 0 tests failed out of 4"
 
   )
   # NOTE: The above test make sure that you can build a static library with
@@ -1824,7 +1831,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
     PASS_REGULAR_EXPRESSION_ALL
       "MixedSharedStaticLibsSharedOnly_test.* Passed"
       "MixedSharedStaticLibsStaticExec_test.* Passed"
-      "100% tests passed, 0 tests failed out of 3"
+      "100% tests passed, 0 tests failed out of 4"
 
   )
   # NOTE: The above test make sure that you can build a shared library with
@@ -1858,6 +1865,374 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableW
   )
 # NOTE: The above test is the *only* test that we have that checks that a
 # parent package is re-enabled if any of its subpackages are enabled!
+
+
+##################################
+# RPATH handling
+##################################
+
+
+IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  SET(SHARED_LIB_EXT "dylib")
+  SET(RPATH_INSPECT_CMND "otool")
+  SET(RPATH_INSPECT_ARG "-L")
+ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  SET(SHARED_LIB_EXT "so")
+  SET(RPATH_INSPECT_CMND "objdump")
+  SET(RPATH_INSPECT_ARG "-x")
+ENDIF()
+
+
+#
+# SimpleTpl_install_shared
+#
+
+IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  SET(THIS_RPATH_INSPECT_CMND "${RPATH_INSPECT_CMND}")
+  SET(THIS_RPATH_INSPECT_ARG "${RPATH_INSPECT_ARG}")
+  SET(RPATH_GREP_STR "@rpath/libsimpletpl.dylib")
+ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  SET(THIS_RPATH_INSPECT_CMND "ls")
+  SET(THIS_RPATH_INSPECT_ARG "")
+  SET(RPATH_GREP_STR "libsimpletpl")
+ENDIF()
+
+SET(SimpleTpl_install_shared_DIR
+  ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_SimpleTpl_install_shared)
+
+TRIBITS_ADD_ADVANCED_TEST( SimpleTpl_install_shared
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
+      -DBUILD_SHARED_LIBS=ON
+      -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
+      -DCMAKE_MACOSX_RPATH=TRUE
+      -DCMAKE_INSTALL_PREFIX=${SimpleTpl_install_shared_DIR}/install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/SimpleTpl
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+
+  TEST_1 CMND make
+    ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target simpletpl"
+      "Installing: ${SimpleTpl_install_shared_DIR}/install/lib/libsimpletpl[.]"
+      "Installing: ${SimpleTpl_install_shared_DIR}/install/include/SimpleTpl.hpp"
+
+  TEST_2 CMND ${THIS_RPATH_INSPECT_CMND}
+    ARGS ${THIS_RPATH_INSPECT_ARG}  install/lib/libsimpletpl.${SHARED_LIB_EXT}
+    PASS_REGULAR_EXPRESSION  "${THIS_RPATH_GREP_STR}"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ADDED_TEST_NAME_OUT SimpleTpl_install_shared_NAME
+
+  )
+
+
+#
+# Common configure arugments for all for the
+# TribitsExampleProject_SimpleTpl_RPATH_XXX tests.
+#
+
+SET(TEST_RPATH_COMMON_CONFIG_ARGS
+  ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+  -DBUILD_SHARED_LIBS=ON
+  -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+  -DTribitsExProj_ENABLE_Fortran=OFF
+  -DTribitsExProj_ENABLE_SimpleCxx=ON
+  -DTribitsExProj_ENABLE_TESTS=ON
+  -DTPL_ENABLE_SimpleTpl=ON
+  -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_shared_DIR}/install/include
+  -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_shared_DIR}/install/lib
+  )  
+
+SET(LD_LIBRARY_PATH_ORIG $ENV{LD_LIBRARY_PATH})
+
+
+#
+# Test default TriBITS RPATH setting
+#
+
+SET(RPATH_CURRENT_TEST_DIR
+  ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_default)
+
+IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  SET(RPATH_GREP_STR
+    "RPATH *${RPATH_CURRENT_TEST_DIR}/install/lib:${SimpleTpl_install_shared_DIR}/install/lib")
+ENDIF()
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_default
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do default configure for auto RPATH to install dir"
+    ARGS
+      ${TEST_RPATH_COMMON_CONFIG_ARGS}
+      -DCMAKE_INSTALL_PREFIX=${RPATH_CURRENT_TEST_DIR}/install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Processing enabled package: SimpleCxx .Libs, Tests, Examples."
+      "Configuring done"
+      "Generating done"
+  # Above tests the standard install lib location
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+    MESSAGE "Build the default 'all' target using raw 'make'"
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target simplecxx"
+      "Built target simplecxx-helloworld"
+      "Built target SimpleCxx_HelloWorldTests"
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    MESSAGE "Run all the tests with raw 'ctest'"
+    PASS_REGULAR_EXPRESSION_ALL
+      "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
+      "SimpleCxx_HelloWorldProg${TEST_MPI_1_SUFFIX} .* Passed"
+      "100% tests passed, 0 tests failed out of 2"
+
+  TEST_3 CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- Installing: .*/install/bin/simplecxx-helloworld"
+      "-- Installing: .*/install/lib/libsimplecxx[.].*${SHARED_LIB_EXT}"
+
+  TEST_4 CMND ${RPATH_INSPECT_CMND}
+    ARGS  ${RPATH_INSPECT_ARG}  install/lib/libsimplecxx.${SHARED_LIB_EXT}
+    PASS_REGULAR_EXPRESSION_ALL  "${RPATH_GREP_STR}"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_5
+    MESSAGE "Run installed executable without having to set env"
+    CMND ${RPATH_CURRENT_TEST_DIR}/install/bin/simplecxx-helloworld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Hello World"
+      "Cube.3. = 27"  # This comes from the SimpleTpl TPL
+
+  ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
+  )
+IF (RPATH_CURRENT_TEST_NAME_NAME)
+  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+    PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
+ENDIF()
+
+
+# NOTE: The above test does some more detailed checking for this first test
+# case.  Future test cases will not do as much checking but only change what
+# is changing.
+
+
+#
+# Test setting <project>_SET_INSTALL_RPATH=FALSE
+#
+
+SET(RPATH_CURRENT_TEST_DIR
+  ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH)
+
+IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  SET(RPATH_GREP_STR
+    "RPATH *${SimpleTpl_install_shared_DIR}/install/lib")
+ENDIF()
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do configure with -DTribitsExProj_SET_INSTALL_RPATH=OFF"
+    ARGS
+      ${TEST_RPATH_COMMON_CONFIG_ARGS}
+      -DCMAKE_INSTALL_PREFIX=${RPATH_CURRENT_TEST_DIR}/install2
+      -DTribitsExProj_SET_INSTALL_RPATH=OFF
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS} install
+
+  TEST_2 CMND ${RPATH_INSPECT_CMND}
+    ARGS  ${RPATH_INSPECT_ARG}  install2/lib/libsimplecxx.${SHARED_LIB_EXT}
+    PASS_REGULAR_EXPRESSION_ALL  "${RPATH_GREP_STR}"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    MESSAGE "Run the executables from the build directory which shows that RPATH is set in build tree."
+    PASS_REGULAR_EXPRESSION_ALL
+      "100% tests passed, 0 tests failed out of 2"
+
+  TEST_4
+    MESSAGE "Run installed executable which should fail"
+    CMND ${RPATH_CURRENT_TEST_DIR}/install/bin/simplecxx-helloworld
+    WILL_FAIL
+
+  ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
+  )
+IF (RPATH_CURRENT_TEST_NAME_NAME)
+  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+    PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
+ENDIF()
+
+
+# Run the exectuable built and installed above setting LD_LIBRARY_PATH
+TRIBITS_ADD_TEST(
+  simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
+    DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install2/bin
+  NAME TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run
+  ENVIRONMENT
+    LD_LIBRARY_PATH=${RPATH_CURRENT_TEST_DIR}/install2/lib:${LD_LIBRARY_PATH_ORIG}
+  ADDED_TESTS_NAMES_OUT TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES
+  )
+IF (TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES)
+  SET_TESTS_PROPERTIES(${TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES}
+    PROPERTIES DEPENDS ${RPATH_CURRENT_TEST_NAME_NAME} )
+ENDIF()
+
+
+#
+# Test setting CMAKE_INSTALL_RPATH="<path0>:<path1>:..."
+#
+
+SET(RPATH_CURRENT_TEST_DIR
+  ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_RPATH)
+
+IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  SET(RPATH_GREP_STR
+    "RPATH *${RPATH_CURRENT_TEST_DIR}/install2/nonstd_lib_location:${SimpleTpl_install_shared_DIR}/install/lib")
+ENDIF()
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_RPATH
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do configure with CMAKE_INSTALL_RPATH set to moved install dir install2/"
+    ARGS
+      ${TEST_RPATH_COMMON_CONFIG_ARGS}
+      -DCMAKE_INSTALL_PREFIX=${RPATH_CURRENT_TEST_DIR}/install
+      -DTribitsExProj_INSTALL_LIB_DIR:STRING=nonstd_lib_location
+      -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=FALSE
+      -DCMAKE_INSTALL_RPATH="${RPATH_CURRENT_TEST_DIR}/install2/nonstd_lib_location:${SimpleTpl_install_shared_DIR}/install/lib"
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+  # Above tests with a non-standard lib location to see that TriBITS has the
+  # right logic in this case.
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- Installing: .*/install/bin/simplecxx-helloworld"
+      "-- Installing: .*/install/nonstd_lib_location/libsimplecxx[.].*${SHARED_LIB_EXT}"
+
+  TEST_2 CMND ${RPATH_INSPECT_CMND}
+    ARGS  ${RPATH_INSPECT_ARG}  install/nonstd_lib_location/libsimplecxx.${SHARED_LIB_EXT}
+    PASS_REGULAR_EXPRESSION_ALL  "${RPATH_GREP_STR}"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    MESSAGE "Run the executables from the build directory which shows that RPATH is set in build tree."
+    PASS_REGULAR_EXPRESSION_ALL
+      "100% tests passed, 0 tests failed out of 2"
+
+  TEST_4
+    MESSAGE "Run installed executable which should fail"
+    CMND ${RPATH_CURRENT_TEST_DIR}/install/bin/simplecxx-helloworld
+    WILL_FAIL
+
+  TEST_5
+    MESSAGE "Move from install/ to install2/ which should match CMAKE_INSTALL_RPATH"
+    CMND mv ARGS install/ install2/
+
+  TEST_6
+    MESSAGE "Run from the moved install2/ dir which should pass"
+    CMND ${RPATH_CURRENT_TEST_DIR}/install2/bin/simplecxx-helloworld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Hello World"
+      "Cube.3. = 27"  # This comes from the SimpleTpl TPL
+
+  ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
+  )
+IF (RPATH_CURRENT_TEST_NAME_NAME)
+  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+    PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
+ENDIF()
+
+
+#
+# Test setting -DCMAKE_SKIP_INSTALL_RPATH=TRUE
+#
+
+SET(RPATH_CURRENT_TEST_DIR
+  ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH)
+
+IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  SET(RPATH_GREP_STR "") # Can't look for RPATH at all
+ENDIF()
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do configure with -DTribitsExProj_SET_INSTALL_RPATH=OFF"
+    ARGS
+      ${TEST_RPATH_COMMON_CONFIG_ARGS}
+      -DCMAKE_INSTALL_PREFIX=${RPATH_CURRENT_TEST_DIR}/install3
+      -DCMAKE_SKIP_INSTALL_RPATH=TRUE
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    MESSAGE "Install and grep to check for expected RPATH"
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- Installing: .*/install3/bin/simplecxx-helloworld"
+      "-- Installing: .*/install3/lib/libsimplecxx[.].*${SHARED_LIB_EXT}"
+
+  TEST_2 CMND ${RPATH_INSPECT_CMND}
+    ARGS  ${RPATH_INSPECT_ARG}  install3/lib/libsimplecxx.${SHARED_LIB_EXT}
+    PASS_REGULAR_EXPRESSION_ALL  "${RPATH_GREP_STR}"
+    FAIL_REGULAR_EXPRESSION  "RPATH.*${SimpleTpl_install_shared_DIR}/install/lib"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    MESSAGE "Run the executables from the build directory which shows that RPATH is set in build tree."
+    PASS_REGULAR_EXPRESSION_ALL
+      "100% tests passed, 0 tests failed out of 2"
+
+  TEST_4
+    MESSAGE "Run installed executable which should fail"
+    CMND ${RPATH_CURRENT_TEST_DIR}/install3/bin/simplecxx-helloworld
+    WILL_FAIL
+
+  ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
+  )
+IF (RPATH_CURRENT_TEST_NAME_NAME)
+  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+    PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
+ENDIF()
+
+
+# Run the exectuable built and installed above setting LD_LIBRARY_PATH
+TRIBITS_ADD_TEST(
+  simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
+    DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install3/bin
+  NAME TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run
+  PASS_REGULAR_EXPRESSION
+    "Hello World"
+  ENVIRONMENT
+    LD_LIBRARY_PATH=${RPATH_CURRENT_TEST_DIR}/install3/lib:${SimpleTpl_install_shared_DIR}/install/lib:${LD_LIBRARY_PATH_ORIG}
+  ADDED_TESTS_NAMES_OUT TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES
+  )
+IF (TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES)
+  SET_TESTS_PROPERTIES(${TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES}
+    PROPERTIES DEPENDS ${RPATH_CURRENT_TEST_NAME_NAME} )
+ENDIF()
 
 
 ########################################################################
