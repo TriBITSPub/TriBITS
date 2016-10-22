@@ -41,12 +41,8 @@
 #
 # The tests defined here are used to test the dynamic behavior of the
 # CMake/CTest functions TRIBITS_ADD_TEST(...) and
-# TRIBITS_ADD_ADVANCED_TEST(...).  The reason that these tests are defined
-# here in Teuchos is so that MPI handling can be taken care of automatically.
-# These tests run extremely fast so they should not be a drain on testing of
-# Teuchos or the rest of Trilinos.
+# TRIBITS_ADD_ADVANCED_TEST(...).
 #
-
 
 
 ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_MPI)
