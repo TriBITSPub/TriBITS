@@ -88,6 +88,46 @@ TRIBITS_ADD_TEST( GenericDriver
   WILL_FAIL
   NUM_MPI_PROCS 1
   )
+  # If you comment out WILL_FAIL above, then the final test result is "failed"
+  # due to the non-zero returncode being.
+
+TRIBITS_ADD_TEST( GenericDriver
+  NAME CTestScripts_will_fail_pass_regular_expression
+  POSTFIX_AND_ARGS_0 test1 "This test is expected the regex!" 0
+  PASS_REGULAR_EXPRESSION "Does not match string"
+  WILL_FAIL
+  NUM_MPI_PROCS 1
+  )
+  # The above test shows that the built-in WILL_FAIL just inverts the
+  # pass/fail result of the other criteria, PASS_REGULAR_EXPRESSION in this
+  # case.  If you comment out the WILL_FAIL, then this test final result is
+  # "failed"!
+
+TRIBITS_ADD_TEST( GenericDriver
+  NAME CTestScripts_will_fail_fail_regular_exprssion
+  POSTFIX_AND_ARGS_0 test1 "Printing a string that is matched with FAIL_REGULAR_EXPRESSION!" 0
+  FAIL_REGULAR_EXPRESSION "matched with FAIL_REGULAR_EXPRESSION"
+  WILL_FAIL
+  NUM_MPI_PROCS 1
+  )
+  # The above test shows that the built-in WILL_FAIL just inverts the
+  # pass/fail result of the other criteria, FAIL_REGULAR_EXPRESSION in this
+  # case.  If you comment out WILL_FAIL, then this test final result is failed
+  # (because the FAIL_REGULAR_EXPRESSION matched the STDOUT).
+
+TRIBITS_ADD_TEST( GenericDriver
+  NAME CTestScripts_pass_regular_expression_fail_regular_exprssion_will_fail
+  POSTFIX_AND_ARGS_0 test1 "This says PASS!  This says FAIL!" 1
+  PASS_REGULAR_EXPRESSION "This says PASS"
+  FAIL_REGULAR_EXPRESSION "This says FAIL"
+  WILL_FAIL
+  NUM_MPI_PROCS 1
+  )
+  # The above test shows that FAIL_REGULAR_EXPRESSION takes precedence over
+  # PASS_REGULAR_EXPRESSION.  The final WILL_FAIL inverts that and allows the
+  # test to pass.  If you comment out WILL_FAIL, the final result will be
+  # "failed".  If you comment out FAIL_REGULAR_EXPRESSION, the final result
+  # will be "failed".
 
 TRIBITS_ADD_ADVANCED_TEST(
   CTestScripts_cmnd_1_args_1_print_msg
@@ -381,3 +421,42 @@ TRIBITS_ADD_ADVANCED_TEST( CTestScripts_TAAT_pass_env
     PASS_REGULAR_EXPRESSION "PASS_IN_FROM_ENV_VAR: ThisWasPassedCorrectly"
   ENVIRONMENT PASS_IN_FROM_ENV_VAR=ThisWasPassedCorrectly
   )
+
+# TAAT() WILL_FAIL and FAIL_REGULAR_EXPRESSION
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_will_fail_return_code
+  TEST_0 EXEC GenericDriver
+    ARGS "We expect this test to fail" 1
+    WILL_FAIL
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_will_fail_pass_regular_expression
+  TEST_0 EXEC GenericDriver
+    ARGS "This test passes?" 1
+    PASS_REGULAR_EXPRESSION "This test PASSES" # will not match
+    WILL_FAIL
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_will_fail_fail_regular_expression
+  TEST_0 EXEC GenericDriver
+    ARGS "This test failed!" 0
+    FAIL_REGULAR_EXPRESSION "This test failed"
+    WILL_FAIL
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_will_fail_pass_regular_expression_fail_regular_expression
+  TEST_0 EXEC GenericDriver
+    ARGS "This test passed!  This test failed" 1
+    PASS_REGULAR_EXPRESSION "This test passed"
+    FAIL_REGULAR_EXPRESSION "This test failed"
+    WILL_FAIL
+  OVERALL_NUM_MPI_PROCS 1
+  )
+

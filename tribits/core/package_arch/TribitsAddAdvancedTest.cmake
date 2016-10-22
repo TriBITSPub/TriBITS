@@ -411,15 +411,26 @@ INCLUDE(PrintVar)
 #     TriBITS.  NOTE: It is critical that you replace ';' with '[;]' or CMake
 #     will interpretet this as a array eleemnt boundary.
 #
-#   ``FAIL_REGULAR_EXPRESSION "<regex>"``
-#
-#     If specified, the test command will be assumed to fail if it matches the
-#     given regular expression.  Otherwise, it is assumed to pass.
-#
 #   ``STANDARD_PASS_OUTPUT``
 #
 #     If specified, the test command will be assumed to pass if the string
 #     expression "Final Result: PASSED" is found in the output for the test.
+#
+#   ``FAIL_REGULAR_EXPRESSION "<regex>"``
+#
+#     If specified, the test command will be assumed to fail if it matches the
+#     given regular expression.  Otherwise, it is assumed to pass.  This will
+#     be applied and take precidence over other above pass criteria.  For
+#     example, if even if ``PASS_REGULAR_EXPRESSION`` or
+#     ``PASS_REGULAR_EXPRESSION_ALL`` match, then the test will be marked as
+#     failed if this fail regex matches the output.
+#
+#   ``WILL_FAIL``
+#
+#      If specified, invert the result from the other pass/fail criteria.  For
+#      example, if the regexes in ``PASS_REGULAR_EXPRESSION`` or
+#      ``PASS_REGULAR_EXPRESSION_ALL`` indicate that a test should pass, then
+#      setting ``WILL_FAIL`` will invert that and report the test as failing.
 #
 # All of the arguments for a test block ``TEST_<idx>`` must appear directly
 # below their ``TEST_<idx>`` argument and before the next test block (see
@@ -723,7 +734,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
        #lists
        "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION"
        #options
-       "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY"
+       "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;WILL_FAIL;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY"
        ${PARSE_TEST_${TEST_CMND_IDX}}
        )
 
@@ -917,6 +928,20 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       ENDFOREACH()
       APPEND_STRING_VAR( TEST_SCRIPT_STR
         ")\n"
+        )
+    ENDIF()
+
+    IF (PARSE_FAIL_REGULAR_EXPRESSION)
+      APPEND_STRING_VAR( TEST_SCRIPT_STR
+        "\n"
+        "SET( TEST_${TEST_CMND_IDX}_FAIL_REGULAR_EXPRESSION \"${PARSE_FAIL_REGULAR_EXPRESSION}\" )\n"
+        )
+    ENDIF()
+
+    IF (PARSE_WILL_FAIL)
+      APPEND_STRING_VAR( TEST_SCRIPT_STR
+        "\n"
+        "SET( TEST_${TEST_CMND_IDX}_WILL_FAIL TRUE )\n"
         )
     ENDIF()
 
