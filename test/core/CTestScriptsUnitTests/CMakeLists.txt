@@ -460,3 +460,28 @@ TRIBITS_ADD_ADVANCED_TEST(
   OVERALL_NUM_MPI_PROCS 1
   )
 
+# TAAT() ALWAYS_FAIL_ON_NONZERO_RETURN
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_pass_regular_expression_always_fail_on_nonzero_return
+  TEST_0 EXEC GenericDriver
+    ARGS "This test passed!" 1
+    PASS_REGULAR_EXPRESSION "This test passed"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    WILL_FAIL
+  OVERALL_NUM_MPI_PROCS 1
+  )
+  # Comment out WILL_FAIL and you will see th test fails because
+  # ALWAYS_FAIL_ON_NONZERO_RETURN is speicfied.
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_pass_regular_expression_all_always_fail_on_nonzero_return
+  TEST_0 EXEC GenericDriver
+    ARGS "This test passed!" 1
+    PASS_REGULAR_EXPRESSION_ALL  "This test"  "This test passed"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    WILL_FAIL
+  OVERALL_NUM_MPI_PROCS 1
+  )
+  # Comment out WILL_FAIL and you will see th test fails because
+  # ALWAYS_FAIL_ON_NONZERO_RETURN is speicfied.
