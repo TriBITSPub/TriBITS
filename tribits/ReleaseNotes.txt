@@ -4,9 +4,16 @@ Release Notes for TriBITS
 
 2016/10/22:
 
+(*) MAJOR: TriBITS Core: TRIBITS_ADD_TEST() argument FAIL_REGULAR_EXPRESSION
+    now works when circular RCP detection is enabled.  This is technically a
+    break in backward compatibility since now that argument will not be
+    ignored and any tests that specified this may change behavior.
+
 (*) MAJOR: TriBITS Core: TRIBITS_ADD_ADVANCED_TEST() TEST_<IDX> argument
     FAIL_REGULAR_EXPRESSION now works.  Before, it was just being ignored.
-    This is technically a break in backward compatibility
+    This is technically a break in backward compatibility since now that
+    argument will not be ignored and any tests that specified this may change
+    behavior.
 
 (*) MINOR: TriBITS Core: Added TRIBITS_ADD_ADVANCED_TEST() TEST_<IDX> option
     WILL_FAIL that has the same behavior as the built-in CTest option

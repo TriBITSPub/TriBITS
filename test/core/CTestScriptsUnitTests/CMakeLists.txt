@@ -129,6 +129,47 @@ TRIBITS_ADD_TEST( GenericDriver
   # "failed".  If you comment out FAIL_REGULAR_EXPRESSION, the final result
   # will be "failed".
 
+
+FUNCTION(CTestScripts_fail_regular_exprssion_w_circular_ref_detection_tests)
+
+  # Create private namespace for setting var
+  SET(${PACKAGE_NAME}_ENABLE_CIRCULAR_REF_DETECTION_FAILURE TRUE)
+
+  TRIBITS_ADD_TEST( GenericDriver
+    NAME CTestScripts_fail_regular_exprssion_w_circular_ref_detection_1
+    POSTFIX_AND_ARGS_0 test1 "Printing a string that is matched with FAIL_REGULAR_EXPRESSION!" 0
+    FAIL_REGULAR_EXPRESSION "matched with FAIL_REGULAR_EXPRESSION"
+    WILL_FAIL
+    NUM_MPI_PROCS 1
+    )
+    # The above tests makes sure that the passed-in regex is used to match and
+    # fail the test.  If you comment out WILL_FAIL, you will see the test
+    # fail.
+
+  TRIBITS_ADD_TEST( GenericDriver
+    NAME CTestScripts_fail_regular_exprssion_w_circular_ref_detection_2
+    POSTFIX_AND_ARGS_0 test1 "Some stuff\n\nThe following Teuchos::RCPNode objects were created\n\nsome other stuff" 0
+    FAIL_REGULAR_EXPRESSION "Some other bad outptut taht does not match"
+    WILL_FAIL
+    NUM_MPI_PROCS 1
+    )
+    # The above tests makes sure that the passed-in regex is used to match and
+    # fail the test does not overwrite the circular detection regex.  If you
+    # comment out WILL_FAIL, you will see the test fail.
+
+  TRIBITS_ADD_TEST( GenericDriver
+    NAME CTestScripts_fail_regular_exprssion_w_circular_ref_detection_3
+    POSTFIX_AND_ARGS_0 test1 "Some stuff\n\nThe following Teuchos::RCPNode objects were created\n\nsome other stuff" 0
+    WILL_FAIL
+    NUM_MPI_PROCS 1
+    )
+    # The above tests makes sure that the default circular detection regex is
+    # present.  If you comment out WILL_FAIL, you will see the test fail.
+
+ENDFUNCTION()
+
+CTestScripts_fail_regular_exprssion_w_circular_ref_detection_tests()
+
 TRIBITS_ADD_ADVANCED_TEST(
   CTestScripts_cmnd_1_args_1_print_msg
   TEST_0 EXEC GenericDriver ARGS "This is a crazy test!" 1
