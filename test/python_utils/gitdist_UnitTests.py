@@ -761,6 +761,7 @@ class test_gitdist(unittest.TestCase):
 
       # Make sure .gitdist.default is found and read correctly
       open(".gitdist.default", "w").write(
+        ".\n" \
         "ExtraRepo1\n" \
         "Path/To/ExtraRepo2\n" \
         "MissingExtraRep\n" \
@@ -783,6 +784,7 @@ class test_gitdist(unittest.TestCase):
 
       # Make sure that .gitdist overrides .gitdist.default
       open(".gitdist", "w").write(
+        ".\n" \
         "ExtraRepo1\n" \
         "ExtraRepo3\n"
         )
@@ -797,9 +799,9 @@ class test_gitdist(unittest.TestCase):
         "['mockgit', 'status']\n\n"
       self.assertEqual(cmndOut, b(cmndOut_expected))
 
-      # Make sure that --dist-extra-repos overrides all files
+      # Make sure that --dist-repos overrides all files
       cmndOut = GeneralScriptSupport.getCmndOutput(
-        gitdistPathMock+" --dist-extra-repos=ExtraRepo1,Path/To/ExtraRepo2 status",
+        gitdistPathMock+" --dist-repos=.,ExtraRepo1,Path/To/ExtraRepo2 status",
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
@@ -816,7 +818,7 @@ class test_gitdist(unittest.TestCase):
 
   def test_log_args_extra_repo_1(self):
     cmndOut = getCmndOutputInMockProjectDir(
-      gitdistPathMock+" --dist-extra-repos=extraTrilinosRepo log HEAD -1")
+      gitdistPathMock+" --dist-repos=.,extraTrilinosRepo log HEAD -1")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
       "['mockgit', 'log', 'HEAD', '-1']\n\n" \
@@ -828,8 +830,8 @@ class test_gitdist(unittest.TestCase):
   def test_log_args_extra_repo_2_not_first(self):
     cmndOut = getCmndOutputInMockProjectDir(
       gitdistPathMock+\
-        " --dist-extra-repos=extraTrilinosRepo,extraRepoOnePackage "+\
-        " --dist-not-extra-repos=extraTrilinosRepo "+\
+        " --dist-repos=.,extraTrilinosRepo,extraRepoOnePackage "+\
+        " --dist-not-repos=extraTrilinosRepo "+\
         " log HEAD -1"
       )
     cmndOut_expected = \
@@ -843,8 +845,8 @@ class test_gitdist(unittest.TestCase):
   def test_log_args_extra_repo_2_not_second(self):
     cmndOut = getCmndOutputInMockProjectDir(
       gitdistPathMock+\
-        " --dist-extra-repos=extraTrilinosRepo,extraRepoOnePackage "+\
-        " --dist-not-extra-repos=extraTrilinosRepo "+\
+        " --dist-repos=.,extraTrilinosRepo,extraRepoOnePackage "+\
+        " --dist-not-repos=extraTrilinosRepo "+\
         " log HEAD -1"
       )
     cmndOut_expected = \
@@ -858,8 +860,8 @@ class test_gitdist(unittest.TestCase):
   def test_log_args_extra_repo_1_not_base(self):
     cmndOut = getCmndOutputInMockProjectDir(
       gitdistPathMock+\
-        " --dist-extra-repos=extraTrilinosRepo "+\
-        " --dist-not-base-repo "+\
+        " --dist-repos=.,extraTrilinosRepo "+\
+        " --dist-not-repos=. "+\
         " log HEAD -1"
       )
     cmndOut_expected = \
@@ -930,7 +932,7 @@ class test_gitdist(unittest.TestCase):
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
-          +" --dist-mod-only --dist-extra-repos=ExtraRepo1,ExtraRepo2 status",
+          +" --dist-mod-only --dist-repos=.,ExtraRepo1,ExtraRepo2 status",
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
@@ -1004,7 +1006,7 @@ class test_gitdist(unittest.TestCase):
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
-          +" --dist-mod-only --dist-extra-repos=ExtraRepo1,ExtraRepo2 status",
+          +" --dist-mod-only --dist-repos=.,ExtraRepo1,ExtraRepo2 status",
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Git Repo: ExtraRepo1\nOn branch local_branch1\n" \
@@ -1058,7 +1060,7 @@ class test_gitdist(unittest.TestCase):
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
-          +" --dist-mod-only --dist-extra-repos=ExtraRepo1,ExtraRepo2 status",
+          +" --dist-mod-only --dist-repos=.,ExtraRepo1,ExtraRepo2 status",
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
@@ -1111,10 +1113,10 @@ class test_gitdist(unittest.TestCase):
         "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n" \
         )
 
-      # Make sure that --dist-extra-repos overrides all files
+      # Make sure that --dist-repos overrides all files
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
-          +" --dist-mod-only --dist-extra-repos=ExtraRepo1,ExtraRepo2 status",
+          +" --dist-mod-only --dist-repos=.,ExtraRepo1,ExtraRepo2 status",
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Git Repo: ExtraRepo1\n" \
@@ -1141,7 +1143,7 @@ class test_gitdist(unittest.TestCase):
     cmndOut = getCmndOutputInMockProjectDir(
       gitdistPathMock+ \
       " --dist-version-file="+unitTestDataDir+"/versionFile_withSummary_1.txt"+ \
-      " --dist-extra-repos=extraTrilinosRepo"+ \
+      " --dist-repos=.,extraTrilinosRepo"+ \
       " log _VERSION_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
@@ -1154,7 +1156,7 @@ class test_gitdist(unittest.TestCase):
     cmndOut = getCmndOutputInMockProjectDir(
       gitdistPathMock+ \
       " --dist-version-file="+unitTestDataDir+"/versionFile_withSummary_1.txt"+ \
-      " --dist-extra-repos=extraRepoOnePackage,extraTrilinosRepo"+ \
+      " --dist-repos=.,extraRepoOnePackage,extraTrilinosRepo"+ \
       " log _VERSION_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
@@ -1168,7 +1170,7 @@ class test_gitdist(unittest.TestCase):
     cmndOut = getCmndOutputInMockProjectDir(
       gitdistPathMock+ \
       " --dist-version-file="+unitTestDataDir+"/versionFile_withSummary_1.txt"+ \
-      " --dist-extra-repos=extraTrilinosRepo"+ \
+      " --dist-repos=.,extraTrilinosRepo"+ \
       " log HEAD ^_VERSION_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
@@ -1181,11 +1183,11 @@ class test_gitdist(unittest.TestCase):
     cmndOut = getCmndOutputInMockProjectDir(
       gitdistPathMock+ \
       " --dist-version-file="+unitTestDataDir+"/versionFile_withSummary_1.txt"+ \
-      " --dist-extra-repos=extraRepoTwoPackages"+ \
+      " --dist-repos=.,extraRepoTwoPackages"+ \
       " log _VERSION_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n['mockgit', 'log', 'sha1_1']\n" \
-      "\n*** Git Repo: extraRepoTwoPackages\nExtra repo 'extraRepoTwoPackages' is not in the list of extra repos ['extraTrilinosRepo', 'extraRepoOnePackage'] read in from version file.\n"
+      "\n*** Git Repo: extraRepoTwoPackages\nRepo 'extraRepoTwoPackages' is not in the list of repos ['.', 'extraRepoOnePackage', 'extraTrilinosRepo'] read in from the version file.\n"
     self.assertEqual(cmndOut, b(cmndOut_expected))
 
 
@@ -1206,7 +1208,7 @@ class test_gitdist(unittest.TestCase):
       gitdistPathMock+ \
       " --dist-version-file="+unitTestDataDir+"/versionFile_withSummary_1.txt"+ \
       " --dist-version-file2="+unitTestDataDir+"/versionFile_withSummary_1_2.txt"+ \
-      " --dist-extra-repos=extraTrilinosRepo"+ \
+      " --dist-repos=.,extraTrilinosRepo"+ \
       " log _VERSION_ ^_VERSION2_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
@@ -1220,7 +1222,7 @@ class test_gitdist(unittest.TestCase):
       gitdistPathMock+ \
       " --dist-version-file="+unitTestDataDir+"/versionFile_withSummary_1.txt"+ \
       " --dist-version-file2="+unitTestDataDir+"/versionFile_withSummary_1_2.txt"+ \
-      " --dist-extra-repos=extraTrilinosRepo"+ \
+      " --dist-repos=.,extraTrilinosRepo"+ \
       " log _VERSION2_.._VERSION_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
@@ -1245,7 +1247,7 @@ class test_gitdist(unittest.TestCase):
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
-          +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 dist-repo-status",
+          +" --dist-repos=.,ExtraRepo1,ExtraRepo2 dist-repo-status",
         workingDir=testDir)
       #print(cmndOut)
       cmndOut_expected = \
@@ -1279,7 +1281,7 @@ class test_gitdist(unittest.TestCase):
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
-          +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only dist-repo-status",
+          +" --dist-repos=.,ExtraRepo1,ExtraRepo2 --dist-mod-only dist-repo-status",
         workingDir=testDir)
       #print(cmndOut)
       cmndOut_expected = \
@@ -1312,7 +1314,7 @@ class test_gitdist(unittest.TestCase):
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
-          +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only" \
+          +" --dist-repos=.,ExtraRepo1,ExtraRepo2 --dist-mod-only" \
           +" --dist-legend dist-repo-status",
         workingDir=testDir)
       #print("+++++++++\n" + cmndOut + "+++++++\n")
@@ -1353,7 +1355,7 @@ class test_gitdist(unittest.TestCase):
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
-          +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only dist-repo-status",
+          +" --dist-repos=.,ExtraRepo1,ExtraRepo2 --dist-mod-only dist-repo-status",
         workingDir=testDir)
       #print(cmndOut)
       cmndOut_expected = \
@@ -1381,7 +1383,7 @@ class test_gitdist(unittest.TestCase):
 
       (cmndOut, errOut) = getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
-          +" --dist-extra-repos=ExtraRepo1,ExtraRepo2 --dist-mod-only" \
+          +" --dist-repos=.,ExtraRepo1,ExtraRepo2 --dist-mod-only" \
           +" --dist-legend dist-repo-status --name-status",
         rtnCode=True)
       #print(cmndOut)

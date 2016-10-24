@@ -4,6 +4,12 @@ Release Notes for TriBITS
 
 2016/11/02:
 
+(*) MAJOR: gitdist now accepts --dist-repos and --dist-not-repos arguments and
+    requires that the base repo '.' be explicitly listed in the
+    .gitdist[.default] files and in --dist-repos.  The arguments
+    --dist-extra-repos, --dist-not-extra-repos and --dist-not-base-repo are
+    not longer supported.  See gitdist --help for more details.
+
 (*) MINOR: TriBITS projects now install with full RPATH set by default (see
     "Setting install RPATH" in build reference guide).
 
