@@ -7892,6 +7892,20 @@ These options are described below.
   date/time for regular tests added with `TRIBITS_ADD_TEST()`_ (which uses a
   raw command with ``ADD_TEST()``).
 
+.. _${PROJECT_NAME}_SKIP_EXTRAREPOS_FILE:
+
+**${PROJECT_NAME}_SKIP_EXTRAREPOS_FILE**
+
+  The cache variable ``${PROJECT_NAME}_SKIP_EXTRAREPOS_FILE`` is set in the
+  `<projectDir>/ProjectName.cmake`_ file as::
+
+    SET(${PROJECT_NAME}_SKIP_EXTRAREPOS_FILE TRUE)
+
+  for projects that don't have a
+  `<projectDir>/cmake/ExtraRepositoriesList.cmake`_ file.  This variable needs
+  to be set when using the CTest driver script and does not need to be set for
+  the basic configure and build process.
+
 .. _${PROJECT_NAME}_TEST_CATEGORIES:
 .. _${PROJECT_NAME}_TEST_CATEGORIES_DEFAULT:
 
