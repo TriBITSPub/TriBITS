@@ -307,11 +307,14 @@ FUNCTION(DRIVE_ADVANCED_TEST)
       # C) Check for return code always 0?
       IF (TEST_${CMND_IDX}_ALWAYS_FAIL_ON_NONZERO_RETURN)
         IF (NOT EXEC_RESULT EQUAL 0)
+          SET(ALWAYS_FAIL_ON_NONZERO_RETURN_RESULT PASSED)
           SET(TEST_CASE_PASSED FALSE)
+        ELSE()
+          SET(ALWAYS_FAIL_ON_NONZERO_RETURN_RESULT FAILED)
         ENDIF()
         PRINT_SINGLE_CHECK_RESULT(
           "TEST_${CMND_IDX}: Pass criteria = ALWAYS_FAIL_ON_NONZERO_RETURN"
-          ${TEST_CASE_PASSED} )
+          ${ALWAYS_FAIL_ON_NONZERO_RETURN_RESULT} )
       ENDIF()
 
       # D) Invert pass/fail result?
