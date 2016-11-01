@@ -538,6 +538,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
   TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran_ConfigTiming
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    XHOSTTYPE Darwin
   
     TEST_0 CMND ${CMAKE_COMMAND}
       MESSAGE "Do the initial configure with basic configure timing"
