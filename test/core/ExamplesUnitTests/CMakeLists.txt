@@ -1223,6 +1223,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+  XHOSTTYPE "Darwin"
 
   TEST_0
     MESSAGE "Copy TribitsExampleProject so that we can modify it."
