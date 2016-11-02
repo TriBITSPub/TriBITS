@@ -31,6 +31,7 @@ SET( EXTRA_CONFIGURE_OPTIONS
   "-DCMAKE_CXX_COMPILER=g++"
   "-DCMAKE_Fortran_COMPILER=gfortran"
   "-DTriBITS_ENABLE_Fortran=ON"
+  "-DTriBITS_TRACE_ADD_TEST=ON"
   "-DTriBITS_HOSTNAME=travis-ci-server-linux"
   )
 
