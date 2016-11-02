@@ -60,13 +60,27 @@ To set up to develop on TriBITS:
   NOTES:
 
   * If you don't have a working and compatible Fortran compiler, then pass
-    ``-DTriBITS_ENABLE_Fortran=OFF`` into the ``do-configure`` script.
+    ``-DTriBITS_ENABLE_Fortran=OFF`` into the ``do-configure`` script as::
+
+      $ ./do-configure -DTriBITS_ENABLE_Fortran=OFF
+
+  * On Mac OSX systems, one has to manually set the path the the TriBITS
+    project base dir TRIBITS_BASE_DIR such as with::
+
+      $ env TRIBITS_BASE_DIR=.. ./do-configure [other options]
 
   * Use as many processes as you have with ``ctest`` (``-j12`` is just used as
     an example).
 
   * All of the tests should pass on your machine before beginning any
-    development work (if there are any failures, then please `report them`_).
+    development work.  If there are any failures, then please `report them`_.
+    To help show the failures you are seeing, do::
+
+      $ ./do-configure -DCTEST_PARALLEL_LEVEL=12
+      $ make dashboard
+
+    and then provide the link to the CDash results in the TriBITS Issue when
+    you report them.
 
 Any change (refactoring) of TriBITS (minimally) requires that the automated
 test suite run with ``ctest`` pass 100%.  To add new features (in most cases)
