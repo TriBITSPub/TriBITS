@@ -2,6 +2,11 @@
 Release Notes for TriBITS
 ----------------------------------------
 
+2016/11/02:
+
+(*) MINOR: TriBITS projects now install with full RPATH set by default (see
+    "Setting install RPATH" in build reference guide).
+
 2016/10/22:
 
 (*) MAJOR: TriBITS Core: TRIBITS_ADD_TEST() argument FAIL_REGULAR_EXPRESSION
