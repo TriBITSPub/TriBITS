@@ -15,3 +15,6 @@
 
 # Ignore build dirs
 BUILD/
+
+# Ignore the standard local gitdist override file
+/.gitdist
