@@ -6058,8 +6058,8 @@ changed by changing setting different project defaults for the variables
 `${PROJECT_NAME}_SET_INSTALL_RPATH`_ and `CMAKE_INSTALL_RPATH_USE_LINK_PATH`_.
 But most projects should likely keep these defaults in place since they make
 it so that doing builds and installations on a single machine work correctly
-by default out of the box.  And for other installation/distribution use cases,
-the user is told how to manipulate CMake variables for those cases in `Setting
+by default out of the box.  For other installation/distribution use cases, the
+user is told how to manipulate CMake variables for those cases in `Setting
 install RPATH`_.
 
 
