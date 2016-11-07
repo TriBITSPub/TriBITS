@@ -91,15 +91,16 @@ def runSnapshotDirTestCase(testObject, cmndLineArgsList, cmndInterceptList,
 
   rtn = snapshotDirMainDriver(cmndLineArgsList, defaultOptions, sout)
   ostr = sout.getStr()
-  #print ostr
+  #print("ostr =", ostr)
   for passRegexExpr in passRegexExpressionsList:
     try:
       testObject.assert_(re.search(passRegexExpr, ostr))
-    except Exception, e:
-      print "\n\nCould not find regex='"+passRegexExpr+"' in generated output:\n"
-      print sout.getStr() + "\n\n"
+    except Exception as e:
+      print("\n\nCould not find regex='" + passRegexExpr + "' in generated "
+            "output:\n")
+      print(sout.getStr() + "\n\n")
       printStackTrace()
-      raise e
+      raise
 
 
 #

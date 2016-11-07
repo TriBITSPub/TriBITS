@@ -45,7 +45,6 @@ import unittest
 from FindCISupportDir import *
 from CDashQueryPassFail import *
 
-
 g_testBaseDir = getScriptBaseDir()
 
 tribitsBaseDir=os.path.abspath(g_testBaseDir+"/../../tribits")
@@ -213,7 +212,8 @@ class test_CDashQueryPassFail(unittest.TestCase):
     builds = [build]
     (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
     self.assertEqual(buildPasses, False)
-    self.assertEqual(buildFailedMsg, "Error, the build "+str(build)+" failed!")
+    self.assertEqual(buildFailedMsg, "Error, the build " + sorted_dict_str(build) +
+                     " failed!")
 
   def test_cdashIndexBuildsPass_2_pass(self):
     build = copy.deepcopy(singleBuildPasses)
@@ -230,7 +230,8 @@ class test_CDashQueryPassFail(unittest.TestCase):
     builds = [buildFailed, build]
     (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
     self.assertEqual(buildPasses, False)
-    self.assertEqual(buildFailedMsg, "Error, the build "+str(buildFailed)+" failed!")
+    self.assertEqual(buildFailedMsg, "Error, the build " +
+                     sorted_dict_str(buildFailed) + " failed!")
 
   def test_cdashIndexBuildsPass_2_fail_2(self):
     build = copy.deepcopy(singleBuildPasses)
@@ -240,7 +241,8 @@ class test_CDashQueryPassFail(unittest.TestCase):
     builds = [build, buildFailed]
     (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
     self.assertEqual(buildPasses, False)
-    self.assertEqual(buildFailedMsg, "Error, the build "+str(buildFailed)+" failed!")
+    self.assertEqual(buildFailedMsg, "Error, the build " +
+                     sorted_dict_str(buildFailed) + " failed!")
 
   def test_getCDashIndexBuildNames(self):
     build1 = copy.deepcopy(singleBuildPasses)
@@ -340,9 +342,20 @@ class test_CDashQueryPassFail(unittest.TestCase):
     expectedBuildNames = ["build1"]
     (cdashIndexBuildsPassAndExpectedExist_passed, errMsg) = \
       cdashIndexBuildsPassAndExpectedExist(builds, expectedBuildNames)
-    self.assertEqual(errMsg,
-      "Error, the build {'buildname': 'build1', 'test': {'fail': 0, 'notrun': 0}, 'compilation': {'error': 0}, 'update': {'errors': 0}, 'configure': {'error': 5}} failed!")
+    expectedErrMsg = \
+      "Error, the build " + \
+      sorted_dict_str({
+        'buildname': 'build1', 'test': {'notrun': 0, 'fail': 0},
+        'compilation': {'error': 0}, 'update': {'errors': 0},
+        'configure': {'error': 5}})+ \
+      " failed!"
+    self.assertEqual(errMsg, expectedErrMsg)
     self.assertEqual(cdashIndexBuildsPassAndExpectedExist_passed, False)
+    # NOTE: Above we build the dict then convert to a string so that it will
+    # match the print out of the dict that is produced by the code itself.
+    # This is needed because the order of dict items changes between different
+    # versions of Python and even different platforms (see TriBITS Issue
+    # #119).
 
   def test_cdashIndexBuildsPassAndExpectedExist_1_missing_expected_build(self):
     build1 = copy.deepcopy(singleBuildPasses)
@@ -425,9 +438,17 @@ class test_CDashQueryPassFail(unittest.TestCase):
     (allPassed, errMsg) = queryCDashAndDeterminePassFail(
       "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21", "dummy-filter-fields",
       expectedBuildNames, False, dummyExtractCDashApiQueryData)
-    self.assertEqual(errMsg,
-      "Error, the build {u'buildname': 'build1', u'test': {'fail': 3, 'notrun': 0}, u'compilation': {'error': 0}, u'update': {'errors': 0}, u'configure': {'error': 0}} failed!" )
+    expectedErrMsg = \
+      "Error, the build " + \
+      sorted_dict_str({
+        u'buildname': 'build1', u'test': {'fail': 3, 'notrun': 0},
+        u'compilation': {'error': 0}, u'update': {'errors': 0},
+        u'configure': {'error': 0}}) + \
+      " failed!"
+    self.assertEqual(errMsg, expectedErrMsg)
     self.assertEqual(allPassed, False)
+    # NOTE: See note about dict keys ordering in above test (see TriBITS Issue
+    # #119).
 
   def test_queryCDashAndDeterminePassFail_2_fail(self):
     build1 = copy.deepcopy(singleBuildPasses)
@@ -447,9 +468,17 @@ class test_CDashQueryPassFail(unittest.TestCase):
     (allPassed, errMsg) = queryCDashAndDeterminePassFail(
       "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21", "dummy-filter-fields",
       expectedBuildNames, False, dummyExtractCDashApiQueryData)
-    self.assertEqual(errMsg,
-      "Error, the build {u'buildname': 'build2', u'test': {'fail': 0, 'notrun': 2}, u'compilation': {'error': 0}, u'update': {'errors': 0}, u'configure': {'error': 0}} failed!")
+    expectedErrMsg = \
+      "Error, the build " + \
+      sorted_dict_str({
+        u'buildname': 'build2', u'test': {'fail': 0, 'notrun': 2},
+        u'compilation': {'error': 0}, u'update': {'errors': 0},
+        u'configure': {'error': 0}}) + \
+      " failed!"
+    self.assertEqual(errMsg, expectedErrMsg)
     self.assertEqual(allPassed, False)
+    # NOTE: See note about dict keys ordering in above test (see TriBITS Issue
+    # #119).
 
 
 if __name__ == '__main__':

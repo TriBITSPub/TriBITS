@@ -36,6 +36,13 @@
 newrev=$2
 #echo "newrev=$newrev"
 
+if  [ "$newrev" == "0000000000000000000000000000000000000000" ]; then
+  # This happens when deleting a branch!  When deleting a branch, there is no
+  # new commits being pushed so there is nothing to check so we exist with
+  # success.
+  exit 0
+fi
+
 # Test that tab replacement works, issue in some Solaris envs at least
 testvariable=`echo -e "\t" | sed 's/\s//'`
 if [ "$testvariable" != "" ]; then
