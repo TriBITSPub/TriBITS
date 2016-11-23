@@ -229,6 +229,69 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsHelloWorld so that we can copy things into it."
+    CMND cp
+    ARGS -rL ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld .
+
+  TEST_1
+    MESSAGE "Get the initial configure out of the way"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Copy ConfigOptions1.cmake to source dir"
+    CMND cp
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/ConfigOptions1.cmake TribitsHelloWorld/
+
+  TEST_3
+    MESSAGE "Configure using default FILEPATH pointing to ConfigOptions1.cmake (should fail)"
+    CMND ${CMAKE_COMMAND}
+    ARGS -DTribitsHelloWorld_CONFIGURE_OPTIONS_FILE=ConfigOptions1.cmake
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "include could not find load file"
+      "TriBITS_TribitsHelloWorld_CONFIGURE_OPTIONS_FILE/ConfigOptions1.cmake"
+    # NOTE: Above shows that FILEPATH type causes relative paths to be
+    # evaluated w.r.t. the current working directory.
+
+  TEST_4
+    MESSAGE "Configure using STRING pointing to ConfigOptions1.cmake (should pass)"
+    CMND ${CMAKE_COMMAND}
+    ARGS -DTribitsHelloWorld_CONFIGURE_OPTIONS_FILE:STRING=ConfigOptions1.cmake
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Reading in configuration options from ConfigOptions1.cmake"
+      "Included ConfigOptions1.cmake"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    # NOTE: Above shows that STRING type causes relative paths to be evaluated
+    # w.r.t. the current working directory.
+
+  TEST_5
+    MESSAGE "Configure using FILEPATH pointing to ConfigOptions2.cmake (should pass)"
+    CMND ${CMAKE_COMMAND}
+    ARGS -DTribitsHelloWorld_CONFIGURE_OPTIONS_FILE:FILEPATH=${CMAKE_CURRENT_SOURCE_DIR}/ConfigOptions2.cmake
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Reading in configuration options from .*/test/core/ExamplesUnitTests/ConfigOptions2.cmake"
+      "Included ConfigOptions2.cmake"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    # NOTE: Above shows that STRING type causes relative paths to be evaluated
+    # w.r.t. the current working directory.
+
+  )
+
+
 ########################################################################
 # TribitsExampleProject
 ########################################################################
