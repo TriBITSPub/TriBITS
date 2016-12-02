@@ -235,8 +235,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
 
   TEST_0
     MESSAGE "Copy TribitsHelloWorld so that we can copy things into it."
-    CMND cp
-    ARGS -rL ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld .
+    CMND ${CMAKE_COMMAND}
+    ARGS -E copy_directory ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld TribitsHelloWorld
 
   TEST_1
     MESSAGE "Get the initial configure out of the way"
