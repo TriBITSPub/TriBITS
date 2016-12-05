@@ -1590,8 +1590,11 @@ Valid categories include ``BASIC``, ``CONTINUOUS``, ``NIGHTLY``, ``HEAVY`` and
 testing, and nightly testing.  ``CONTINUOUS`` tests are for post-push testing
 and nightly testing.  ``NIGHTLY`` tests are for nightly testing only.
 ``HEAVY`` tests are for more expensive tests that require larger number of MPI
-processes and llonger run times.  ``PERFORMANCE`` tests a special category
-used only for performance testing.
+processes and longer run times.  These test categories are nested
+(e.g. ``HEAVY`` contains all ``NIGHTLY``, ``NIGHTLY`` contains all
+``CONTINUOUS`` and ``CONTINUOUS`` contains all ``BASIC`` tests).  However,
+``PERFORMANCE`` tests are special category used only for performance testing
+and don't nest with the other categories.
 
 
 Disabling specific tests
