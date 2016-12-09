@@ -3693,6 +3693,31 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
+  def test_relative_src_dir(self):
+
+    testName = "relative_src_dir"
+    testDir = os.path.join(os.getcwd(), g_checkin_test_tests_dir, testName)
+    relativePathToSrc = os.path.relpath(mockProjectBaseDir, testDir)
+    #print "relativePathToSrc = " + relativePathToSrc
+ 
+    checkin_test_configure_test(
+      \
+      self,
+      \
+      testName,
+      \
+      "--src-dir="+relativePathToSrc+" --default-builds=MPI_DEBUG",
+      \
+      [
+      ("MPI_DEBUG/do-configure.base",
+       mockProjectBaseDir \
+       ),
+      ],
+      extraPassRegexStr = \
+      "src-dir=."+relativePathToSrc+".\n"
+      )
+
+
   def test_auto_enable(self):
     checkin_test_configure_enables_test(
       \
