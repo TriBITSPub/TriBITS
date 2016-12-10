@@ -1713,9 +1713,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
       # Determine if the build failed or not.
 
       SET(BUILD_LIBS_SUCCESS FALSE)
-      IF ("${BUILD_LIBS_NUM_ERRORS}" EQUAL "0" AND
-        "${BUILD_LIBS_RETURN_VAL}" EQUAL "0"
-        )
+      IF ("${BUILD_LIBS_NUM_ERRORS}" EQUAL "0")
         SET(BUILD_LIBS_SUCCESS TRUE)
       ENDIF()
       # Above: Since make -i is used BUILD_LIBS_RETURN_VAL might be 0, but
@@ -1748,9 +1746,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
         MESSAGE("Build all: BUILD_ALL_NUM_ERRORS='${BUILD_ALL_NUM_ERRORS}',"
           "BUILD_ALL_RETURN_VAL='${BUILD_ALL_RETURN_VAL}'" )
 
-        IF (NOT "${BUILD_LIBS_NUM_ERRORS}" EQUAL "0" OR
-          NOT "${BUILD_LIBS_RETURN_VAL}" EQUAL "0"
-          )
+        IF (NOT "${BUILD_LIBS_NUM_ERRORS}" EQUAL "0")
           SET(BUILD_OR_TEST_FAILED TRUE)
         ENDIF()
 
