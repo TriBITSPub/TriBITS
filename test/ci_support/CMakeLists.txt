@@ -189,7 +189,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_checkin_test
     MESSAGE "Run checkin-test.py script to make sure it finds base dir"
     CMND ${PYTHON_EXECUTABLE}
     ARGS -E TribitsExampleProject/cmake/tribits/ci_support/checkin-test.py
-      --send-email-to= --send-email-to-on-push= --allow-no-pull
+      --enable-all-packages=on --send-email-to= --send-email-to-on-push= --allow-no-pull
     PASS_REGULAR_EXPRESSION_ALL
       "src-dir=.*/TriBITS_TribitsExampleProject_checkin_test/TribitsExampleProject/cmake/tribits/ci_support/[.][.]/[.][.]/[.][.]"
       "0[)] MPI_DEBUG => No configure, build, or test for MPI_DEBUG was requested! => Not ready to push! [(]-1.00 min[)]"
