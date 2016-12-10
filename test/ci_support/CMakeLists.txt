@@ -163,3 +163,44 @@ TRIBITS_ADD_ADVANCED_TEST( CDashQueryPassFail_UnitTests
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CDashQueryPassFail_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
+
+#
+# TribitsExampleProject checkin-test.py tests
+#
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_checkin_test
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so we can snapshot TriBITS into it"
+    CMND ${CMAKE_COMMAND}
+    ARGS -E copy_directory ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      TribitsExampleProject
+
+  TEST_1
+    MESSAGE "Copy tribits dir into TribitsExampleProject/cmake/"
+    CMND ${CMAKE_COMMAND}
+    ARGS -E copy_directory ${${PROJECT_NAME}_TRIBITS_DIR}
+      TribitsExampleProject/cmake/tribits
+
+  TEST_2
+    MESSAGE "Run checkin-test.py script to make sure it finds base dir"
+    CMND ${PYTHON_EXECUTABLE}
+    ARGS -E TribitsExampleProject/cmake/tribits/ci_support/checkin-test.py
+      --send-email-to= --send-email-to-on-push= --allow-no-pull
+    PASS_REGULAR_EXPRESSION_ALL
+      "src-dir=.*/TriBITS_TribitsExampleProject_checkin_test/TribitsExampleProject/cmake/tribits/ci_support/[.][.]/[.][.]/[.][.]"
+      "0[)] MPI_DEBUG => No configure, build, or test for MPI_DEBUG was requested! => Not ready to push! [(]-1.00 min[)]"
+      "1[)] SERIAL_RELEASE => No configure, build, or test for SERIAL_RELEASE was requested! => Not ready to push! [(]-1.00 min[)]"
+    # NOTE: That above test proves that the checkin-test.py script can find
+    # the base directory when run as
+    # <projectDir>/cmake/tribis/ci_support/checkin-test.py
+
+  )
+
+
+# NOTE: The fact that all testing and pushing for the checkin-test.py script
+# is using the symlinked TriBITS/checkin-test.py tests and protects that use
+# case.
