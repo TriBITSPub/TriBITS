@@ -726,10 +726,10 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     "--project-configuration", dest="projectConfiguration", type="string", default="",
     help="Custom file to provide configuration defaults for the project." \
       + "  By default, the file project-checkin-test-config.py is looked for" \
-      + " in <checkin-test-path>/../.. (assuming default <projectDir>/cmake/tribits/" \
-      + " directory structure and second is looked for in <checkin-test-path>/ (which" \
-      + " is common practice to symlink the checkin-test.py script into the project's" \
-      + " base directory).  If this file is set to a location that is not in the" \
+      + " in <checkin-test-path> (in case it is symlinked into <projectDir>/checkin-test.py)" \
+      + " if not found there, then it is looked for in <checkin-test-path>/../../.." \
+      +"  (assuming default TriBITS snapshot <projectDir>/cmake/tribits/ci_support/)" \
+      + " If this file is set to a location that is not in the" \
       + " project's base directory, then --src-dir must be set to point to the" \
       + " project's base directory."
     )
@@ -1294,16 +1294,16 @@ def getConfigurationSearchPaths():
   """
   result = []
 
-  # Always look for the configuration file assuming the checkin-test.py script
-  # is run out of the standard snapshotted tribits directory
-  # <project-root>/cmake/tribits/ci_support
-  result.append(os.path.join(thisFileRealAbsBasePath, '..', '..', '..'))
-
-  # Lastly, look for the checkin-test.py file's base directory path. It is
+  # First, look for the checkin-test.py file's base directory path. It is
   # common practice to symbolically link the checkin-test.py script into the
   # project's base source directory.  NOTE: Don't use realpath here!  We don't
   # want to follow symbolic links!
   result.append(os.path.dirname(os.path.abspath(__file__)))
+
+  # Second, look for the configuration file assuming the checkin-test.py
+  # script is run out of the standard snapshotted tribits directory
+  # <project-root>/cmake/tribits/ci_support
+  result.append(os.path.join(thisFileRealAbsBasePath, '..', '..', '..'))
 
   return result
 
