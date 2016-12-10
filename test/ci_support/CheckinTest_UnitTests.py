@@ -1624,7 +1624,7 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
     # C) Set up the command intercept file
 
     baseCmndInterceptsStr = \
-      "FT: .*checkin-test-impl\.py.*\n" \
+      "FT: .*checkin-test\.py.*\n" \
       "FT: .*cmake .*TribitsGetExtraReposForCheckinTest.cmake.*\n" \
       "FT: date\n" \
       "FT: rm [a-zA-Z0-9_/\.]+\n" \
