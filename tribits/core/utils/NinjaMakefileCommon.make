@@ -10,8 +10,10 @@ ifdef NP
 NINJA_FLAGS += -j $(NP)
 endif
 
-all install test $(TARGETS):
+all install test:
 	$(NINJA) -C $(TOPDIR) $(NINJA_FLAGS) $(SUBDIR)/$@
+$(TARGETS):
+	$(NINJA) -C $(TOPDIR) $(NINJA_FLAGS) $@
 clean:
 	$(NINJA) -C $(TOPDIR) $(NINJA_FLAGS) -t clean $(SUBDIR)/all
 help:
