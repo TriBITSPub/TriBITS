@@ -265,13 +265,13 @@ for ``<Project>_SE_PACKAGES`` using, for example::
 Print package dependencies
 ++++++++++++++++++++++++++
 
-The set of package dependencies in a project will be printed in the ``cmake``
-STDOUT by setting::
+The set of package dependencies can be printed in the ``cmake`` STDOUT by
+setting the configure option::
 
   -D <Project>_DUMP_PACKAGE_DEPENDENCIES=ON
 
-This will print the basic backward dependencies for each SE package.  The find
-this in the output, find the line::
+This will print the basic forward/upstream dependencies for each SE package.
+To find this output, look for the line::
 
   Printing package dependencies ...
 
@@ -286,14 +286,17 @@ and the dependencies are listed below this for each SE package in the form::
   -- <PKG>_TEST_REQUIRED_DEP_PACKAGES: <PKG4> <[PKG5> ...
   -- <PKG>_TEST_OPTIONAL_DEP_PACKAGES: <PKG6> <PKG7> ...
   
-(Dependencies that don't exist left out of the output.  For example, if there
-are no ``<PKG>_LIB_OPTIONAL_DEP_PACKAGES`` dependencies, then that line is not
-printed.)
+(Dependencies that don't exist are left out of the output.  For example, if
+there are no ``<PKG>_LIB_OPTIONAL_DEP_PACKAGES`` dependencies, then that line
+is not printed.)
 
-To also see the direct forward dependencies for each SE package, also
-include::
+To also see the direct forward/downstream dependencies for each SE package,
+also include::
 
   -D <Project>_DUMP_FORWARD_PACKAGE_DEPENDENCIES=ON
+
+These dependencies are printed along with the backward/upstsream dependencies
+as described above.
 
 Both of these variables are automatically enabled when
 `<Project>_VERBOSE_CONFIGURE`_ = ``ON``.
