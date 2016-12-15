@@ -287,6 +287,7 @@ ELSE()
   SET(REGEX_FOR_GITIGNORE)
 ENDIF()
 
+
 IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
   SET(DEPRECATED_WARNING_1_STR
     "‘int SimpleCxx::HelloWorld::someOldFunc.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:"
@@ -308,6 +309,7 @@ ELSE()
     ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*int SimpleCxx::HelloWorld::someOldFunc2.. const.* is deprecated: .Just don.t call this function at all please."
     )
 ENDIF()
+
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -407,6 +409,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/c/tests/CMakeLists.txt"
       "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/cmake/CallbackDefineRepositoryPackaging.cmake"
       "-- File Trace: PROJECT    INCLUDE    .*/TribitsExampleProject/cmake/CallbackDefineProjectPackaging.cmake"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
     MESSAGE "Build the default 'all' target using raw 'make'"
@@ -417,6 +420,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Built target pws_a"
       "Built target pws_b"
       "Built target pws_c"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     MESSAGE "Run all the tests with raw 'ctest'"
@@ -427,6 +431,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "WithSubpackagesC_test_of_c .* Passed"
       "WithSubpackagesC_test_of_c_util.* Passed"
       "100% tests passed, 0 tests failed out of 6"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_3
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
@@ -464,6 +469,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
       "-- Configuring done"
       "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_4 CMND make ARGS install ${CTEST_BUILD_FLAGS}
     MESSAGE "Build 'install' target using raw 'make'"
@@ -499,6 +505,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets.cmake"
       "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets-release.cmake"
       "Installing: .+/install/include/Makefile.export.WithSubpackagesC"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_5 CMND ${CMAKE_COMMAND}
     ARGS
@@ -532,6 +539,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
       "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_5 CMND make ARGS package_source
     MESSAGE "Create the tarball"
@@ -547,9 +555,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "CPack: - Install directory: .*/examples/TribitsExampleProject"
       "CPack: Create package"
       "CPack: - package: .*/ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/tribitsexproj-1.1-Source.tar.bz2 generated."
-  TEST_7 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_6 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
     MESSAGE "Untar the tarball"
-  TEST_8 CMND diff
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_7 CMND diff
      ARGS -qr
        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
        tribitsexproj-1.1-Source
@@ -559,6 +571,127 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       ${REGEX_FOR_GITIGNORE}
       "Only in .*/TribitsExampleProject/packages: mixed_lang"
       "Only in .*/TribitsExampleProject/packages: wrap_external"
+    # NOTE: We don't check return code because diff returns nonzero
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE  USING_GENERATOR_NINJA  ${PROJECT_NAME}_WRITE_NINJA_MAKEFILES
+  XHOSTTYPE Darwin
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the initial configure with ninja"
+    ARGS
+      -GNinja
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
+      -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+      -DCMAKE_INSTALL_PREFIX=install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND make ARGS ${MAKE_PARALLEL_ARG} ${CTEST_BUILD_FLAGS}
+    MESSAGE "Build the default 'all' target using raw 'make'"
+    PASS_REGULAR_EXPRESSION_ALL
+      "Linking CXX .* library .*simplecxx"
+      "Linking CXX executable .*simplecxx-helloworld"
+      "Linking CXX .* library .*pws_a"
+      "Linking CXX .* library .*pws_b"
+      "Linking CXX .* library .*pws_c"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  # ToDo: Add check of 'make" returns "ninja: no work to do"
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    MESSAGE "Run all the tests with raw 'ctest'"
+    PASS_REGULAR_EXPRESSION_ALL
+      "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
+      "WithSubpackagesA_test_of_a .* Passed"
+      "WithSubpackagesB_test_of_b .* Passed"
+      "WithSubpackagesC_test_of_c .* Passed"
+      "WithSubpackagesC_test_of_c_util.* Passed"
+      "100% tests passed, 0 tests failed out of 6"
+
+  TEST_3
+    MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
+      " from the build tree" 
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DDUMMY_PROJECT_NAME=DummyProject
+      -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
+      -DEXPORT_VAR_PREFIX=WithSubpackages
+      -DEXPORT_CONFIG_FILE=../packages/with_subpackages/WithSubpackagesConfig.cmake
+      -DCMAKE_COMMAND=${CMAKE_COMMAND}
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
+      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/tribits/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
+      "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_4 CMND make ARGS ${MAKE_PARALLEL_ARG} install ${CTEST_BUILD_FLAGS}
+    MESSAGE "Build 'install' target using raw 'make'"
+    PASS_REGULAR_EXPRESSION_ALL
+      "Installing: .+/install/include/TribitsExProj_version.h"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_5
+    MESSAGE "Configure dummy project pointing to install tree"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DDUMMY_PROJECT_NAME=DummyProject
+      -DDUMMY_PROJECT_DIR=dummy_client_of_WithSubpackages
+      -DEXPORT_VAR_PREFIX=WithSubpackages
+      -DEXPORT_CONFIG_FILE=../install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake
+      -DCMAKE_COMMAND=${CMAKE_COMMAND}
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
+    MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
+    PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
+      "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
+      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
+      "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_5 CMND ninja ARGS -j1 package_source
+    MESSAGE "Create the tarball"
+    PASS_REGULAR_EXPRESSION_ALL
+      "Run CPack packaging tool for source..."
+      "CPack: - package: .*/ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles/tribitsexproj-1.1-Source.tar.gz generated."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    # Above should be 'make package_soruce' but the dummy makefiles don't
+    # support that yet!
+
+  TEST_6 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
+    MESSAGE "Untar the tarball"
+
+  TEST_7 CMND diff
+     ARGS -qr
+       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+       tribitsexproj-1.1-Source
+    MESSAGE "Make sure right directoires are excluced"
+    PASS_REGULAR_EXPRESSION_ALL
+      "Only in .*/TribitsExampleProject/cmake: ctest"
+      ${REGEX_FOR_GITIGNORE}
+      "Only in .*/TribitsExampleProject/packages: mixed_lang"
+      "Only in .*/TribitsExampleProject/packages: wrap_external"
+    # NOTE: We don't check the the return code form diff because it will
+    # return nonzero if there are any differences
 
   )
 
