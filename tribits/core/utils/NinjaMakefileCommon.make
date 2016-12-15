@@ -1,4 +1,5 @@
 default_target: all
+.NOTPARALLEL:
 
 NINJA := ninja
 
@@ -10,7 +11,9 @@ ifdef NP
 NINJA_FLAGS += -j $(NP)
 endif
 
-all install test:
+STANDARD_TARGETS := install test package package_source edit_cache rebuild_cache
+
+all $(STANDARD_TARGETS):
 	$(NINJA) -C $(TOPDIR) $(NINJA_FLAGS) $(SUBDIR)/$@
 $(TARGETS):
 	$(NINJA) -C $(TOPDIR) $(NINJA_FLAGS) $@
@@ -19,8 +22,10 @@ clean:
 help:
 	@echo "This Makefile supports the following standard targets:"
 	@echo ""
-	@for t in "all (default)" clean help install test; do echo "  $$t"; done
+	@for t in "all (default)" clean help $(STANDARD_TARGETS); do echo "  $$t"; done
 	@echo ""
 	@echo "and the following project targets:"
 	@echo ""
 	@for t in $(sort $(TARGETS)); do echo "  $$t"; done
+
+.PHONY: all clean help $(STANDARD_TARGETS) $(TARGETS)
