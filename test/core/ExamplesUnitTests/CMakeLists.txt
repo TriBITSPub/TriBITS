@@ -143,7 +143,45 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_FirstConfig
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Configure first time out scaling the timeout."
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DDART_TESTING_TIMEOUT=200.0
+      -DTribitsHelloWorld_SCALE_TEST_TIMEOUT=1.5
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL "Generating done"
+  TEST_1
+    MESSAGE "Make sure that 'TimeOut' is set correctly on the first try"
+    CMND grep ARGS "^TimeOut: " DartConfiguration.tcl
+    PASS_REGULAR_EXPRESSION "TimeOut: 300"
+  TEST_2
+    MESSAGE "Make sure DART_TESTING_TIMEOUT in cache is what the user passed in!"
+    CMND grep ARGS "^DART_TESTING_TIMEOUT:" CMakeCache.txt
+    PASS_REGULAR_EXPRESSION "DART_TESTING_TIMEOUT:STRING=200.0"
+
+  TEST_3
+    MESSAGE "Reconfigure and make sure the timeout is still set correctly"
+    CMND ${CMAKE_COMMAND} ARGS .
+    PASS_REGULAR_EXPRESSION_ALL "Generating done"
+  TEST_4
+    MESSAGE "Make sure that 'TimeOut' is set correctly on reconfigure"
+    CMND grep ARGS "^TimeOut: " DartConfiguration.tcl
+    PASS_REGULAR_EXPRESSION "TimeOut: 300"
+  TEST_5
+    MESSAGE "Make sure DART_TESTING_TIMEOUT in cache is still what the user passed in!"
+    CMND grep ARGS "^DART_TESTING_TIMEOUT:" CMakeCache.txt
+    PASS_REGULAR_EXPRESSION "DART_TESTING_TIMEOUT:STRING=200.0"
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_Reconfig
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -190,6 +228,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout
     PASS_REGULAR_EXPRESSION "DART_TESTING_TIMEOUT:STRING=200.0"
 
   )
+
 
 IF (TriBITS_EANBLE_Fortran)
  SET(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX
