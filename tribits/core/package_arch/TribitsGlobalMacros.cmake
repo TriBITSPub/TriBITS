@@ -1944,18 +1944,45 @@ ENDMACRO()
 #
 
 MACRO(TRIBITS_INCLUDE_CTEST_SUPPORT)
-  IF (DART_TESTING_TIMEOUT)
-    SET(DART_TESTING_TIMEOUT_IN ${DART_TESTING_TIMEOUT})
+
+  SET(DART_TESTING_TIMEOUT_IN ${DART_TESTING_TIMEOUT})
+
+  IF (DART_TESTING_TIMEOUT_IN)
     TRIBITS_SCALE_TIMEOUT(${DART_TESTING_TIMEOUT} DART_TESTING_TIMEOUT)
     IF (NOT DART_TESTING_TIMEOUT STREQUAL DART_TESTING_TIMEOUT_IN)
      MESSAGE("-- DART_TESTING_TIMEOUT=${DART_TESTING_TIMEOUT_IN} being scaled by ${PROJECT_NAME}_SCALE_TEST_TIMEOUT=${${PROJECT_NAME}_SCALE_TEST_TIMEOUT} to ${DART_TESTING_TIMEOUT}")
     ENDIF()
+    # Have to set DART_TESTING_TIMEOUT in cache or CMake will not put in right
+    # 'TimeOut' in DartConfiguration.tcl file!
+    SET(DART_TESTING_TIMEOUT ${DART_TESTING_TIMEOUT} CACHE STRING "" FORCE)
   ENDIF()
-  INCLUDE(CTest)
+
+  INCLUDE(CTest)  # Generates file DartConfiguration.tcl with 'TimeOut' set!
+
+  IF (DART_TESTING_TIMEOUT_IN)
+    # Put DART_TESTING_TIMEOUT back to user input value to avoid scaling this
+    # up and up on recofigures!
+    SET(DART_TESTING_TIMEOUT ${DART_TESTING_TIMEOUT_IN} CACHE STRING
+      "Original value set by user reset by TriBITS after scaling" FORCE)
+  ENDIF()
+
   TRIBITS_CONFIGURE_CTEST_CUSTOM(${${PROJECT_NAME}_SOURCE_DIR}
     ${${PROJECT_NAME}_BINARY_DIR})
-ENDMACRO()
 
+ENDMACRO()
+# NOTE: The above logic with DART_TESTING_TIMEOUT is a huge hack.  For some
+# reason, on the first configure CMake will not put the local value of the
+# scaled DART_TESTING_TIMEOUT variable into the DartConfiguration.tcl.
+# Instead, it uses the value of DART_TESTING_TIMEOUT that is in the cache.
+# But on reconfigures, CMake uses the value of the local variable
+# DART_TESTING_TIMEOUT and ignores the value in the cache (very irritating).
+# Therefore, to get CMake to put in the right value for 'TimeOut', you have to
+# force-set DART_TESTING_TIMEOUT in the cache on the first configure.  But to
+# avoid rescaling DART_TESTING_TIMEOUT up and up on reconfigures, you have to
+# force-set DART_TESTING_TIMEOUT back to the user's input value.  The only
+# disadvantage of this approach (other than it is a hack to get around a CMake
+# bug) is that you loose the user's documentation string, in case they set
+# that with a SET( ... CACHE ...) statement in an input *.cmake file.
 
 
 #
