@@ -83,6 +83,7 @@ INCLUDE(TribitsAddTestHelpers)
 # * `Determining Pass/Fail (TRIBITS_ADD_TEST())`_
 # * `Setting additional test properties (TRIBITS_ADD_TEST())`_
 # * `Running multiple tests at the same time (TRIBITS_ADD_TEST())`_
+# * `Setting timeouts for tests (TRIBITS_ADD_TEST())`_
 # * `Debugging and Examining Test Generation (TRIBITS_ADD_TEST())`_
 # * `Disabling Tests Externally (TRIBITS_ADD_TEST())`_
 #
