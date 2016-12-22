@@ -8431,6 +8431,8 @@ Below is a snapshot of the output from ``install_devtools.py --help``.
 
 .. _${PROJECT_NAME}_TRACE_FILE_PROCESSING: TribitsBuildReference.html#project-trace-file-processing
 
+.. _DART_TESTING_TIMEOUT: TribitsBuildReference.html#dart-testing-timeout
+
 .. _${PROJECT_NAME}_SCALE_TEST_TIMEOUT: TribitsBuildReference.html#project-scale-test-timeout-testing-timeout
 
 .. _make dashboard: TribitsBuildReference.html#dashboard-submissions
