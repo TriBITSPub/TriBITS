@@ -691,8 +691,10 @@ FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES)
 
   # Reversing the tpl list so that the list of tpls will be produced in
   # order of most dependent to least dependent.
-  SET(TPL_LIST ${${PROJECT_NAME}_TPLS})
-  LIST(REVERSE TPL_LIST)
+  IF( ${${PROJECT_NAME}_TPLS} )
+    SET(TPL_LIST ${${PROJECT_NAME}_TPLS})
+    LIST(REVERSE TPL_LIST)
+  ENDIF()
 
   # Loop over all TPLs to determine which were enabled. Then build a list
   # of all their libraries/includes in the proper order for linking
