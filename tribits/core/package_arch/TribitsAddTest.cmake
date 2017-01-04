@@ -108,8 +108,8 @@ INCLUDE(TribitsAddTestHelpers)
 #
 #      If specified, then the postfix
 #      ``${${PROJECT_NAME}_CMAKE_EXECUTABLE_SUFFIX}`` is assumed **not** to be
-#      post-pended to ``<exeRootName>`` (see `Determining the Executable or
-#      Command to Run (TRIBITS_ADD_TEST())`_).
+#      post-pended to ``<exeRootName>`` (except on Windows platforms, see
+#      `Determining the Executable or Command to Run (TRIBITS_ADD_TEST())`_).
 #
 #   ``NAME <testRootName>``
 #
@@ -381,7 +381,8 @@ INCLUDE(TribitsAddTestHelpers)
 #    ${PACKAGE_NAME}_<exeRootName>${${PROJECT_NAME}_CMAKE_EXECUTABLE_SUFFIX}
 #
 # which is (by no coincidence) identical to how it is selected in
-# `TRIBITS_ADD_EXECUTABLE()`_.  This name can be altered by passing in
+# `TRIBITS_ADD_EXECUTABLE()`_ (see `Executable and Target Name
+# (TRIBITS_ADD_EXECUTABLE())`_).  This name can be altered by passing in
 # ``NOEXEPREFIX``, ``NOEXESUFFIX``, and ``ADD_DIR_TO_NAME`` as described in
 # `Executable and Target Name (TRIBITS_ADD_EXECUTABLE())`_.
 #
@@ -395,6 +396,9 @@ INCLUDE(TribitsAddTestHelpers)
 # run.  If ``<exeRootName>`` is not an absolute path, then
 # ``${CMAKE_CURRENT_BINARY_DIR}/<exeRootName>`` is set as the executable to
 # run in this case.
+#
+# NOTE: On native Windows platforms, the``NOEXESUFFIX`` will still allow CTest
+# to run exectuables that have the ``*.exe`` suffix.
 #
 # Whatever executable path is specified using this logic, if the executable is
 # not found, then when ``ctest`` goes to run the test, it will mark it as
