@@ -397,8 +397,8 @@ INCLUDE(TribitsAddTestHelpers)
 # ``${CMAKE_CURRENT_BINARY_DIR}/<exeRootName>`` is set as the executable to
 # run in this case.
 #
-# NOTE: On native Windows platforms, the``NOEXESUFFIX`` will still allow CTest
-# to run exectuables that have the ``*.exe`` suffix.
+# NOTE: On native Windows platforms, the ``NOEXESUFFIX`` will still allow
+# CTest to run exectuables that have the ``*.exe`` suffix.
 #
 # Whatever executable path is specified using this logic, if the executable is
 # not found, then when ``ctest`` goes to run the test, it will mark it as
