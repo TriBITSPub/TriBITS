@@ -1659,12 +1659,12 @@ using the cache variable::
   -D DART_TESTING_TIMEOUT=<maxSeconds>
 
 where ``<maxSeconds>`` is the number of wall-clock seconds.  This value gets
-scaled by `<Project>_SCALE_TEST_TIMEOUT_TESTING_TIMEOUT`_ and then set as the
-varaible ``TimeOut`` in the generated file ``DartConfiguration.tcl`` which is
-directly read by the ``ctest`` exectuable.  By default ,there is no timeout
-limit set so it is a good idea to set some default limit just so tests don't
-hang and run forever.  For example, when an MPI program has a defect, it can
-easily hang forever until it is manually killed.  If killed by a timeout,
+scaled by `<Project>_SCALE_TEST_TIMEOUT`_ and then set as the varaible
+``TimeOut`` in the generated file ``DartConfiguration.tcl`` which is directly
+read by the ``ctest`` exectuable.  By default, there is no timeout limit set
+for many tests so it is a good idea to set some default limit just so tests
+don't hang and run forever.  For example, when an MPI program has a defect, it
+can easily hang forever until it is manually killed.  If killed by a timeout,
 CTest will kill the test process all of its child processes correctly.
 
 NOTES:
@@ -1679,11 +1679,11 @@ NOTES:
   has no impact on these individually set test timeouts.
 * The value of ``DART_TESTING_TIMEOUT`` and the timeouts for individual tests
   can be scaled up or down using the cache varaible
-  `<Project>_SCALE_TEST_TIMEOUT_TESTING_TIMEOUT`_.
+  `<Project>_SCALE_TEST_TIMEOUT`_.
 * To set or override the default global test timeout limit at runtime, see
   `Overridding test timeouts`_.
 
-.. _<Project>_SCALE_TEST_TIMEOUT_TESTING_TIMEOUT:
+.. _<Project>_SCALE_TEST_TIMEOUT:
 
 Scaling test timeouts at configure time
 ---------------------------------------
@@ -1707,6 +1707,13 @@ that create tests which run more slowly than for full release-mode optimized
 builds.
 
 NOTES:
+
+* If ``<Project>_SCALE_TEST_TIMEOUT`` is not set, then it is implicilty
+  ``1.0`` (i.e. no scaling of timeouts).
+
+* If `DART_TESTING_TIMEOUT`_ is not set and a test does not have its
+  ``TIMEOUT`` property set, then ``<Project>_SCALE_TEST_TIMEOUT`` has no
+  effect (i.e. scaling infinity by any finite number is still infinity).
 
 * When scaling the timeouts, the timeout is first truncated to integral
   seconds so an original timeout like ``200.5`` will be truncated to ``200``

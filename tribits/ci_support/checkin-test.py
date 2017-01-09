@@ -906,7 +906,7 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     +" ctest.  This value can be overridden using the ctest argument --timeout."
     +"  Individual tests may have their own timeouts set which will not be"
     +" impacted by this default global timeout.  See the configure variable"
-    +" <Project>_SCALE_TEST_TIMEOUT_TESTING_TIMEOUT to scale up timeouts for"
+    +" <Project>_SCALE_TEST_TIMEOUT to scale up timeouts for"
     +" all tests, even those that have individuals timeouts set." )
 
   clp.add_option(
