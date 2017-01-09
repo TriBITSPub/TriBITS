@@ -91,6 +91,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_CPACK_PACKAGING=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
     PASS_REGULAR_EXPRESSION_ALL
       "Configuring done"
