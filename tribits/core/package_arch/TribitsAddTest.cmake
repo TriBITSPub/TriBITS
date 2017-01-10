@@ -618,18 +618,20 @@ INCLUDE(TribitsAddTestHelpers)
 # the individual test exectuables).
 #
 # Timeouts for tests can be set in a couple of ways.  First, a default timeout
-# for all tests is enforced by CTest test given the configured value of the
+# for all tests is enforced by CTest given the configured value of the
 # variable `DART_TESTING_TIMEOUT`_ (typically set by the user).  This is a
 # global timeout that applies to all tests that don't otherwise have
 # individual timeouts set using the ``TIMEOUT`` CTest property (see below).
-# If ``DART_TESTING_TIMEOUT`` is not set, the by default, tests have no
-# timeout.  The value of ``DART_TESTING_TIMEOUT`` set by the user in the CMake
-# cache on input to CMake will get scaled by
-# `${PROJECT_NAME}_SCALE_TEST_TIMEOUT`_ and the scaled value of
-# ``DART_TESTING_TIMEOUT`` gets written into the file
-# ``DartConfiguration.tcl`` as the variable ``TimeOut`` that ``ctest``
-# directly reads when it runs.  The value of this default global ``TimeOut``
-# can be overridden using the ``ctest`` argument ``--timeout <seconds>``.
+# If ``DART_TESTING_TIMEOUT`` is not set, then by default, tests have no
+# timeout (i.e. the default test timeout is infinite).  The value of
+# ``DART_TESTING_TIMEOUT`` set by the user in the CMake cache on input to
+# CMake will get scaled by `${PROJECT_NAME}_SCALE_TEST_TIMEOUT`_ and the
+# scaled value of ``DART_TESTING_TIMEOUT`` gets written into the file
+# ``DartConfiguration.tcl`` as the variable ``TimeOut``. The``ctest``
+# executable then reads ``TimeOut`` from this file when it runs to determine
+# the default global timeout.  The value of this default global ``TimeOut``
+# can be overridden using the ``ctest`` argument ``--timeout <seconds>`` (see
+# `Overriding test timeouts`_).
 #
 # Alternatively, timeouts for individual tests can be set using the input
 # argument ``TIMEOUT`` (see `Formal Arguments (TRIBITS_ADD_TEST())`_ above).
@@ -641,16 +643,16 @@ INCLUDE(TribitsAddTestHelpers)
 # the global default timeout ``DART_TESTING_TIMEOUT`` or the ``ctest``
 # argument ``--timeout <seconds>``.
 #
-# In summary, CTest applies a timeout for any individual test as follows:
+# In summary, CTest determines the timeout for any individual test as follows:
 #
-# * If the ``TIMEOUT`` CTest property in ``CTestTestfile.cmake`` is set, then
-#   that value is used.
+# * If the ``TIMEOUT`` CTest property in ``CTestTestfile.cmake`` for that test
+#   is set, then that value is used.
 #
 # * Else if the ``ctest`` commandline option ``--timeout <seconds>`` is
 #   provided, then that timeout is used.
 #
-# * Else if the property ``TimeOut`` in the base ``DartConfiguration.tcl``
-#   file is set, then that timeout is used.
+# * Else if the property ``TimeOut`` in the base file
+#   ``DartConfiguration.tcl`` is set, then that timeout is used.
 #
 # * Else, no timeout is set and the test can run (and hang) forever until
 #   manually killed by the user.

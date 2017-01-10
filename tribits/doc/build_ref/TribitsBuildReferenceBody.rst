@@ -1653,35 +1653,42 @@ arguments).
 Setting test timeouts at configure time
 ---------------------------------------
 
-A maximum default time limit for all the tests can be set at configure time
-using the cache variable::
+A maximum default time limit (timeout) for all the tests can be set at
+configure time using the cache variable::
 
   -D DART_TESTING_TIMEOUT=<maxSeconds>
 
 where ``<maxSeconds>`` is the number of wall-clock seconds.  This value gets
 scaled by `<Project>_SCALE_TEST_TIMEOUT`_ and then set as the varaible
-``TimeOut`` in the generated file ``DartConfiguration.tcl`` which is directly
-read by the ``ctest`` exectuable.  By default, there is no timeout limit set
-for many tests so it is a good idea to set some default limit just so tests
-don't hang and run forever.  For example, when an MPI program has a defect, it
-can easily hang forever until it is manually killed.  If killed by a timeout,
-CTest will kill the test process all of its child processes correctly.
+``TimeOut`` in the CMake-generated file ``DartConfiguration.tcl``.  The value
+``TimeOut`` from this file is what is directly read by the ``ctest``
+exectuable.  By default, there is no timeout limit set for many tests so it is
+a good idea to set some default limit just so tests don't hang.  For example,
+when an MPI program has a defect, it can easily hang (forever) until it is
+manually killed.  If killed by a timeout, CTest will kill the test process and
+all of its child processes correctly.
 
 NOTES:
 
-* Be careful not set the timeout too low since if a machine becomes loaded
-  tests can take longer to run and may result in timeouts that would not
-  otherwise occur.
-* Individual tests may have there timeout limit set on a test-by-test basis
+* If ``DART_TESTING_TIMEOUT`` is not set, then it is implicitly infinite
+  (i.e. no default timeout for tests).
+
+* Individual tests may have their timeout limit set on a test-by-test basis
   internally in the project's ``CMakeLists.txt`` files (see the ``TIMEOUT``
   argument for ``TRIBITS_ADD_TEST()`` and ``TRIBITS_ADD_ADVANCED_TEST()``).
   When this is the case, the global timeout set with ``DART_TESTING_TIMEOUT``
   has no impact on these individually set test timeouts.
+
+* Be careful not set the timeout too low since if a machine becomes loaded
+  tests can take longer to run and may result in timeouts that would not
+  otherwise occur.
+
 * The value of ``DART_TESTING_TIMEOUT`` and the timeouts for individual tests
   can be scaled up or down using the cache varaible
   `<Project>_SCALE_TEST_TIMEOUT`_.
+
 * To set or override the default global test timeout limit at runtime, see
-  `Overridding test timeouts`_.
+  `Overriding test timeouts`_.
 
 .. _<Project>_SCALE_TEST_TIMEOUT:
 
@@ -2252,7 +2259,7 @@ working directory.  To run the test exactly as ``ctest`` would, cd into the
 shown working directory and run the shown command.
 
 
-Overridding test timeouts
+Overriding test timeouts
 -------------------------
 
 The configured glboal test timeout described in ``Setting test timeouts at
@@ -2260,9 +2267,10 @@ configure time`` can be overridden on the CTest command-line as::
 
   $ ctest --timeout <maxSeconds>
 
-This will override the configured cache variable `DART_TESTING_TIMEOUT`_.
-However, this will **not** override the test timesouts set on individual tests
-on a test-by-test basis!
+This will override the configured cache variable `DART_TESTING_TIMEOUT`_
+(actually, the scaled value set as ``TimeOut`` in the file
+``DartConfiguration.tcl``).  However, this will **not** override the test
+timesouts set on individual tests on a test-by-test basis!
 
 **WARNING:** Do not try to use ``--timeout=<maxSeconds>`` or CTest will just
 ignore the argument!

@@ -8435,6 +8435,8 @@ Below is a snapshot of the output from ``install_devtools.py --help``.
 
 .. _${PROJECT_NAME}_SCALE_TEST_TIMEOUT: TribitsBuildReference.html#project-scale-test-timeout-testing-timeout
 
+.. _Overriding test timeouts: TribitsBuildReference.html#overriding-test-timeouts
+
 .. _make dashboard: TribitsBuildReference.html#dashboard-submissions
 
 .. _Setting the install prefix at configure time: TribitsBuildReference.html#setting-the-install-prefix-at-configure-time
