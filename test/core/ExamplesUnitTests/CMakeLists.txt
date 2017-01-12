@@ -110,6 +110,79 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Configure first time not setting any default timeout."
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_1
+    MESSAGE "Make sure that 'TimeOut' is set to the CMake default of 1500"
+    CMND grep ARGS "^TimeOut: " DartConfiguration.tcl
+    PASS_REGULAR_EXPRESSION "TimeOut: 1500"
+  TEST_2
+    MESSAGE "Make sure DART_TESTING_TIMEOUT in cache is the CMake default 1500!"
+    CMND grep ARGS "^DART_TESTING_TIMEOUT:" CMakeCache.txt
+    PASS_REGULAR_EXPRESSION "DART_TESTING_TIMEOUT:STRING=1500"
+
+  TEST_3
+    MESSAGE "Reconfigure and make sure the timeout is still set correctly"
+    CMND ${CMAKE_COMMAND} ARGS .
+    PASS_REGULAR_EXPRESSION_ALL "Generating done"
+  TEST_4
+    MESSAGE "Make sure that 'TimeOut' is set correctly on reconfigure"
+    CMND grep ARGS "^TimeOut: " DartConfiguration.tcl
+    PASS_REGULAR_EXPRESSION "TimeOut: 1500"
+  TEST_5
+    MESSAGE "Make sure DART_TESTING_TIMEOUT in cache is still the default"
+    CMND grep ARGS "^DART_TESTING_TIMEOUT:" CMakeCache.txt
+    PASS_REGULAR_EXPRESSION "DART_TESTING_TIMEOUT:STRING=1500"
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout_ScaleTimeout
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Configure first time not setting any default timeout but scale it."
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_SCALE_TEST_TIMEOUT=2.0
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_1
+    MESSAGE "Make sure that default 'TimeOut' is scaled correctly by 2.0"
+    CMND grep ARGS "^TimeOut: " DartConfiguration.tcl
+    PASS_REGULAR_EXPRESSION "TimeOut: 3000"
+  TEST_2
+    MESSAGE "Make sure DART_TESTING_TIMEOUT in cache is CMake default 1500"
+    CMND grep ARGS "^DART_TESTING_TIMEOUT:" CMakeCache.txt
+    PASS_REGULAR_EXPRESSION "DART_TESTING_TIMEOUT:STRING=1500"
+
+  TEST_3
+    MESSAGE "Reconfigure and make sure the timeout is still set correctly"
+    CMND ${CMAKE_COMMAND} ARGS .
+    PASS_REGULAR_EXPRESSION_ALL "Generating done"
+  TEST_4
+    MESSAGE "Make sure that 'TimeOut' is set correctly on reconfigure"
+    CMND grep ARGS "^TimeOut: " DartConfiguration.tcl
+    PASS_REGULAR_EXPRESSION "TimeOut: 3000"
+  TEST_5
+    MESSAGE "Make sure DART_TESTING_TIMEOUT in cache is still the default"
+    CMND grep ARGS "^DART_TESTING_TIMEOUT:" CMakeCache.txt
+    PASS_REGULAR_EXPRESSION "DART_TESTING_TIMEOUT:STRING=1500"
+
+  )
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_FirstConfig
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1

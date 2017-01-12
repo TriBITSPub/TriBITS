@@ -2,6 +2,13 @@
 Release Notes for TriBITS
 ----------------------------------------
 
+2017/01/11:
+
+(*) MINOR: TriBITS now correctly sets the default value for
+    DART_TESTING_TIMEOUT to 1500 seconds and will scale it by
+    <Project>_SCALE_TEST_TIMEOUT even if DART_TESTING_TIMEOUT is not
+    explicitly set.
+
 2016/12/7/2016:
 
 (*) MAJOR: The long deprecated variable

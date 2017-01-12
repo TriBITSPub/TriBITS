@@ -1658,20 +1658,25 @@ configure time using the cache variable::
 
   -D DART_TESTING_TIMEOUT=<maxSeconds>
 
-where ``<maxSeconds>`` is the number of wall-clock seconds.  This value gets
-scaled by `<Project>_SCALE_TEST_TIMEOUT`_ and then set as the varaible
-``TimeOut`` in the CMake-generated file ``DartConfiguration.tcl``.  The value
-``TimeOut`` from this file is what is directly read by the ``ctest``
-exectuable.  By default, there is no timeout limit set for many tests so it is
-a good idea to set some default limit just so tests don't hang.  For example,
-when an MPI program has a defect, it can easily hang (forever) until it is
-manually killed.  If killed by a timeout, CTest will kill the test process and
-all of its child processes correctly.
+where ``<maxSeconds>`` is the number of wall-clock seconds.  The default for
+most projects is 1500 seconds (see the default value set in the CMake cache).
+This value gets scaled by `<Project>_SCALE_TEST_TIMEOUT`_ and then set as the
+field ``TimeOut`` in the CMake-generated file ``DartConfiguration.tcl``.  The
+value ``TimeOut`` from this file is what is directly read by the ``ctest``
+exectuable.  Timeouts for tests are important.  For example, when an MPI
+program has a defect, it can easily hang (forever) until it is manually
+killed.  If killed by a timeout, CTest will kill the test process and all of
+its child processes correctly.
 
 NOTES:
 
-* If ``DART_TESTING_TIMEOUT`` is not set, then it is implicitly infinite
-  (i.e. no default timeout for tests).
+* If ``DART_TESTING_TIMEOUT`` is not explicitly set by the user, then the
+  projects gives it a default value (typically 1500 seconds but see the value
+  in the CMakeCache.txt file).
+
+* If ``DART_TESTING_TIMEOUT`` is explicitly set to empty
+  (i.e. ``-DDART_TESTING_TIMEOUT=``), then by default tests have no timeout
+  and can run forever until manually killed.
 
 * Individual tests may have their timeout limit set on a test-by-test basis
   internally in the project's ``CMakeLists.txt`` files (see the ``TIMEOUT``
@@ -1679,9 +1684,9 @@ NOTES:
   When this is the case, the global timeout set with ``DART_TESTING_TIMEOUT``
   has no impact on these individually set test timeouts.
 
-* Be careful not set the timeout too low since if a machine becomes loaded
-  tests can take longer to run and may result in timeouts that would not
-  otherwise occur.
+* Be careful not set the global test timeout too low since if a machine
+  becomes loaded tests can take longer to run and may result in timeouts that
+  would not otherwise occur.
 
 * The value of ``DART_TESTING_TIMEOUT`` and the timeouts for individual tests
   can be scaled up or down using the cache varaible
@@ -1715,25 +1720,22 @@ builds.
 
 NOTES:
 
-* If ``<Project>_SCALE_TEST_TIMEOUT`` is not set, then it is implicilty
-  ``1.0`` (i.e. no scaling of timeouts).
-
-* If `DART_TESTING_TIMEOUT`_ is not set and a test does not have its
-  ``TIMEOUT`` property set, then ``<Project>_SCALE_TEST_TIMEOUT`` has no
-  effect (i.e. scaling infinity by any finite number is still infinity).
+* If ``<Project>_SCALE_TEST_TIMEOUT`` is not set, the the default value is set
+  to ``1.0`` (i.e. no scaling of test timeouts).
 
 * When scaling the timeouts, the timeout is first truncated to integral
   seconds so an original timeout like ``200.5`` will be truncated to ``200``
   before it gets scaled.
 
-* Only the first fractional digit is used so ``1.57`` is truncated to ``1.5``
-  before scaling the test timeouts.
+* Only the first fractional digit of ``<Project>_SCALE_TEST_TIMEOUT`` is used
+  so ``1.57`` is truncated to ``1.5``, for example, before scaling the test
+  timeouts.
 
-* The cache value of the variable `DART_TESTING_TIMEOUT`_ is not changed in
-  the ``CMakeCache.txt`` file.  Only the value of ``TimeOut`` written into the
+* The value of the variable `DART_TESTING_TIMEOUT`_ is not changed in the
+  ``CMakeCache.txt`` file.  Only the value of ``TimeOut`` written into the
   ``DartConfiguration.tcl`` file (which is directly read by ``ctest``) will be
   scaled.  (This ensures that running configure over and over again will not
-  increase ``DART_TESTING_TIMEOUT`` each time.)
+  increase ``DART_TESTING_TIMEOUT`` or ``TimeOut`` withc each new configure.)
 
 
 Enabling support for coverage testing
@@ -2145,7 +2147,7 @@ find the target name and then doing a find ``find . -name
 
 For this process to work correctly, you must be in the subdirectory where the
 ``TRIBITS_ADD_LIBRARY()`` or ``TRIBITS_ADD_EXECUTABLE()`` command is called
-from its ``CMakeList.txt`` file, otherwise the object file targets will not be
+from its ``CMakeLists.txt`` file, otherwise the object file targets will not be
 listed by ``make help``.
 
 NOTE: CMake does not seem to not check on dependencies when explicitly

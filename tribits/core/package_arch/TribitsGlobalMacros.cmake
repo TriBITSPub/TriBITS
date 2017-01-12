@@ -507,6 +507,18 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
   ADVANCED_SET(${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE OFF CACHE BOOL
     "Generate a <ProjectName>RepoVersion.txt file.")
 
+  IF ("${DART_TESTING_TIMEOUT_DEFAULT}"  STREQUAL "")
+    SET(DART_TESTING_TIMEOUT_DEFAULT  1500)
+  ENDIF()
+  ADVANCED_SET(
+    DART_TESTING_TIMEOUT ${DART_TESTING_TIMEOUT_DEFAULT}
+    CACHE STRING
+    "Raw CMake/CTest global default test timeout (default 1500).  (NOTE: Does not impact timeouts of tests that have the TIMEOUT property set on a test-by-test basis.)"
+    )
+  # NOTE: 1500 is the CMake default set in Modules/CTest.cmake.  We need to
+  # set the default here because we need to be able to scale it correctly in
+  # case the user does not explicilty set this var in the cache.
+
   ADVANCED_SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0 CACHE STRING
     "Scale factor for global DART_TESTING_TIMEOUT and individual test TIMEOUT (default 1.0)."
     )
