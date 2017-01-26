@@ -79,40 +79,37 @@ function(ADD_IMPORTED_LIBRARY target_name)
   endif()
 
   # Check to see if name already exists as a target
-  if ( TARGET "${target_name}" )
-    message(FATAL_ERROR "Target ${target_name} is already defined.")
-  endif()
+  if ( NOT TARGET "${target_name}" )
 
+    # --- Set the library type
+    set(lib_type UNKNOWN)
+    if(PARSE_STATIC)
+      set(lib_type STATIC)
+    endif()
+    if(PARSE_SHARED)
+      set(lib_type SHARED)
+    endif()
 
-  # --- Set the library type
-  set(lib_type UNKNOWN)
-  if(PARSE_STATIC)
-    set(lib_type STATIC)
-  endif()  
-  if(PARSE_SHARED)
-    set(lib_type SHARED)
-  endif()
+    # --- Add the library target 
+    add_library(${target_name} ${lib_type} IMPORTED)
 
-  # --- Add the library target 
-  add_library(${target_name} ${lib_type} IMPORTED)
+    # --- Update the global property that tracks imported targets
+    set(prop_name IMPORTED_${lib_type}_LIBRARIES)
+    get_property(prop_value GLOBAL PROPERTY ${prop_name})
+    set_property(GLOBAL PROPERTY ${prop_name} ${prop_value} ${target_name})
 
-  # --- Update the global property that tracks imported targets
-  set(prop_name IMPORTED_${lib_type}_LIBRARIES)
-  get_property(prop_value GLOBAL PROPERTY ${prop_name})
-  set_property(GLOBAL PROPERTY ${prop_name} ${prop_value} ${target_name})
-
-  # --- Set the properties
-  set_target_properties(${target_name} PROPERTIES
-                        IMPORTED_LOCATION ${PARSE_LOCATION})
-  if ( PARSE_LINK_LANGUAGES )
+    # --- Set the properties
     set_target_properties(${target_name} PROPERTIES
-                        IMPORTED_LINK_INTERFACE_LANGUAGES "${PARSE_LINK_LANGUAGES}")
-  endif()
-  if ( PARSE_LINK_INTERFACE_LIBRARIES )
-    set_target_properties(${target_name} PROPERTIES
-                          IMPORTED_LINK_INTERFACE_LIBRARIES "${PARSE_LINK_INTERFACE_LIBRARIES}")
-  endif()
+                          IMPORTED_LOCATION ${PARSE_LOCATION})
+    if ( PARSE_LINK_LANGUAGES )
+      set_target_properties(${target_name} PROPERTIES
+                          IMPORTED_LINK_INTERFACE_LANGUAGES "${PARSE_LINK_LANGUAGES}")
+    endif()
+    if ( PARSE_LINK_INTERFACE_LIBRARIES )
+      set_target_properties(${target_name} PROPERTIES
+                            IMPORTED_LINK_INTERFACE_LIBRARIES "${PARSE_LINK_INTERFACE_LIBRARIES}")
+    endif()
      
-  
+  endif()
 endfunction(ADD_IMPORTED_LIBRARY)
 

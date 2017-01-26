@@ -232,15 +232,11 @@ else(CGNS_LIBRARIES AND CGNS_INCLUDE_DIRS)
       string(REGEX REPLACE "[^0-9]" "" cg_build_hdf5 "${cg_build_hdf5_string}")
       if ( cg_build_hdf5 EQUAL 51 ) # Kluge: define is 1, but the 5 comes from hdf5
           message(STATUS "CGNS requires HDF5")
-	  if ( NOT TARGET hdf5)
-            add_package_dependency(CGNS DEPENDS_ON HDF5)
-	  endif()
+          add_package_dependency(CGNS DEPENDS_ON HDF5)
       endif()
     else()
       message(STATUS "CGNS does not have cgnsconfig.h; assuming CGNS depends on HDF5")     
-      if ( NOT TARGET hdf5)
-	 add_package_dependency(CGNS DEPENDS_ON HDF5)
-      endif()
+      add_package_dependency(CGNS DEPENDS_ON HDF5)
     endif()
 
     # Need to find the CGNS types include to check for SCOPING
