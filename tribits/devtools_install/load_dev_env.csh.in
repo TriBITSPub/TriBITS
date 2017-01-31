@@ -9,6 +9,7 @@ setenv PATH ${TRIBITS_DEV_ENV_BASE}/common_tools:$PATH
 setenv PATH ${TRIBITS_DEV_ENV_BASE}/common_tools/cmake-@CMAKE_VERSION@/bin:$PATH
 setenv PATH ${TRIBITS_DEV_ENV_BASE}/common_tools/git-@GIT_VERSION@/bin:$PATH
 setenv PATH ${TRIBITS_DEV_ENV_BASE}/common_tools/autoconf-@AUTOCONF_VERSION@/bin:$PATH
+setenv PATH ${TRIBITS_DEV_ENV_BASE}/common_tools/anaconda2-@ANACONDA2_VERSION@/bin:$PATH
 
 # B) GCC compiler stack base dir
 setenv TRIBITS_DEV_ENV_GCC_VERSION gcc-@GCC_VERSION@
