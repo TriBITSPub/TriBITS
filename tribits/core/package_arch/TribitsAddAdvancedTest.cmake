@@ -247,8 +247,9 @@ INCLUDE(PrintVar)
 #   ``TIMEOUT <maxSeconds>``
 #
 #     If passed in, gives maximum number of seconds the test will be allowed
-#     to run before being timed-out (see `TRIBITS_ADD_TEST()`_).  This is for
-#     the full CTest test, not individual ``TEST_<idx>`` commands!
+#     to run before being timed-out and killed (see `Setting timeouts for
+#     tests (TRIBITS_ADD_TEST())`_).  This is for the full CTest test, not
+#     individual ``TEST_<idx>`` commands!
 #
 #   ``ADDED_TEST_NAME_OUT <testName>``
 #

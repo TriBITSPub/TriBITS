@@ -13,6 +13,7 @@ IF (NOT TRIBITS_PROCESSING_PACKAGE)
   SET(${PROJECT_NAME}_TRIBITS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tribits" CACHE PATH "")
   INCLUDE("${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake")
   SET(${PROJECT_NAME}_ENABLE_TESTS ON CACHE BOOL "Enable tests by default.")
+  INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/cmake/AssertSameVersionFile.cmake")
   TRIBITS_PROJECT_ENABLE_ALL()
 ELSE()
   # This CMakeLists.txt file is being processed as the TriBITS package file.
