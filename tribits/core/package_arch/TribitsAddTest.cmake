@@ -53,6 +53,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     [NAME <testName> | NAME_POSTFIX <testNamePostfix>]
 #     [DIRECTORY <directory>]
 #     [ADD_DIR_TO_NAME]
+#     [RUN_SERIAL]
 #     [ARGS "<arg0> <arg1> ..." "<arg2> <arg3> ..." ...
 #       | POSTFIX_AND_ARGS_0 <postfix0> <arg0> <arg1> ...
 #         POSTFIX_AND_ARGS_1 ... ]
@@ -536,8 +537,34 @@ INCLUDE(TribitsAddTestHelpers)
 # or whether the test(s) are added or not (depending on other arguments like
 # ``COMM``, ``XHOST``, etc.).
 #
-# There are many other test properties that one may want to set also and this
-# is the way it needs to be done.
+# The following built-in CTest test properties are set through `Formal
+# Arguments (TRIBITS_ADD_TEST())`_ or are otherwise automatically set by this
+# function and should **NOT** be overridden by direct calls to
+# ``SET_TESTS_PROPERTIES()``: ``ENVIRONMENT``, ``FAIL_REGULAR_EXPRESSION``,
+# ``LABELS``, ``PASS_REGULAR_EXPRESSION``, ``RUN_SERIAL``, ``TIMEOUT``, and
+# ``WILL_FAIL``.
+#
+# However, generally, other built-in CTest test properties can be set after
+# the test is added like show above.  Examples of test properties that can be
+# set using direct calls to ``SET_TESTS_PROPERTIES()`` include
+# ``ATTACHED_FILES``, ``ATTACHED_FILES_ON_FAIL``, ``COST``, ``DEPENDS``,
+# ``MEASUREMENT``, ``RESOURCE_LOCK`` and ``WORKING_DIRECTORY``.
+#
+# For example, one can set a dependency between two tests using::
+#
+#   TRIBITS_ADD_TEST_TEST( test_a [...]
+#      ADDED_TEST_NAME_OUT  test_a_TEST_NAME )
+#   
+#   TRIBITS_ADD_TEST_TEST( test_b [...]
+#      ADDED_TEST_NAME_OUT  test_z_TEST_NAME )
+#   
+#   IF (test_a_TEST_NAME AND test_b_TEST_NAME)
+#     SET_TESTS_PROPERTIES(${test_b_TEST_NAME}
+#       PROPERTIES DEPENDS ${test_a_TEST_NAME})
+#   ENDIF()
+#
+# This ensures that test ``test_b`` will always be run after ``test_a`` if
+# both tests are run by CTest.
 #
 # .. _Running multiple tests at the same time (TRIBITS_ADD_TEST()):
 #
