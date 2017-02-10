@@ -43,6 +43,8 @@
 # Imports
 #
 
+import os, sys, urllib2
+
 from FindGeneralScriptSupport import *
 import InstallProgramDriver
 
@@ -57,14 +59,18 @@ scratch_dir = os.getcwd()
 
 sourceGitUrlBase_default = "https://github.com/tribitsdevtools/"
 
+anaconda2UrlBase_default = "https://repo.continuum.io/archive/"
+#https://repo.continuum.io/archive/Anaconda2-4.3.0-Linux-x86_64.sh
+
 # tool default versions
+anaconda2_version_default = "4.3.0"
 autoconf_version_default = "2.69"
 cmake_version_default = "3.3.2"
 gcc_version_default = "4.8.3"
 mpich_version_default = "3.1.3"
 
 # Common (compile independent) tools
-commonToolsArray = [ "gitdist", "autoconf", "cmake" ]
+commonToolsArray = [ "gitdist", "anaconda2", "autoconf", "cmake" ]
 commonToolsChoices = (["all"] + commonToolsArray + [""])
 
 # Compiler toolset
@@ -95,6 +101,7 @@ directory:
 
   <dev_env_base>/
     common_tools/
+      anaconda2-<anaconda-version>/
       autoconf-<autoconf-version>/
       cmake-<cmake-version>/
       gitdist
@@ -106,6 +113,7 @@ directory:
 
 The default versions of the tools installed are:
 
+* anaconda2-"""+anaconda2_version_default+"""
 * autoconf-"""+autoconf_version_default+"""
 * cmake-"""+cmake_version_default+"""
 * gcc-"""+gcc_version_default+"""
@@ -144,6 +152,12 @@ The informational arguments to this function are:
 
     The base directory that will be used for the install.  There is not
     default.  If this is not specified then it will abort.
+
+  --anaconda2-url-base=<url_base>
+
+    Specifies the base URL for Anaconda2 downloads.  The default is:
+
+      """ + anaconda2UrlBase_default + """
 
   --source-git-url-base=<url_base>
   
@@ -228,6 +242,7 @@ the commands themselves manually and make whatever modifications they need.
 
 NOTE: The actual tool installs are performed using the scripts:
 
+* install-anaconda2.py
 * install-autoconf.py
 * install-cmake.py
 * install-gcc.py
@@ -255,6 +270,13 @@ def getCmndLineOptions(cmndLineArgs, skipEchoCmndLine=False):
       +"  There is not default.  If this is not specified then will abort.")
 
   InstallProgramDriver.insertInstallPermissionsOptions(clp)
+
+  clp.add_option(
+      '--anaconda2-url-base',
+      dest = 'anaconda2UrlBase', type = 'string',
+      default = anaconda2UrlBase_default,
+      help = 'Specifies the base URL <url_base> for Anaconda2 downloads.'
+      )
 
   clp.add_option(
     "--source-git-url-base", dest="sourceGitUrlBase", type="string",
@@ -338,6 +360,7 @@ def getCmndLineOptions(cmndLineArgs, skipEchoCmndLine=False):
     cmndLine +=  "Script: install-devtools.py \\\n"
     cmndLine +=  "  --install-dir='"+options.installDir+"' \\\n"
     cmndLine += InstallProgramDriver.echoInsertPermissionsOptions(options)
+    cmndLine +=  "  --anaconda2-url-base='" + options.anaconda2UrlBase + "' \\\n"
     cmndLine +=  "  --source-git-url-base='"+options.sourceGitUrlBase+"' \\\n"
     cmndLine +=  "  --load-dev-env-file-base-name='"+options.loadDevEnvFileBaseName+"' \\\n"
     cmndLine +=  "  --common-tools='"+options.commonTools+"' \\\n"
@@ -451,6 +474,7 @@ def writeLoadDevEnvFiles(devEnvBaseDir, compilersToolsetBaseDir, inOptions):
   subPairArray = [
     ("@DEV_ENV_BASE@", devEnvBaseDir),
     ("@CMAKE_VERSION@", cmake_version_default),
+    ("@ANACONDA2_VERSION@", anaconda2_version_default),
     ("@AUTOCONF_VERSION@", autoconf_version_default),
     ("@GCC_VERSION@", gcc_version_default),
     ("@MPICH_VERSION@", mpich_version_default)
@@ -469,6 +493,46 @@ def writeLoadDevEnvFiles(devEnvBaseDir, compilersToolsetBaseDir, inOptions):
     subPairArray,
     os.path.join(compilersToolsetBaseDir, load_dev_env_base+".csh")
     )
+
+
+#
+# Download the source for tool
+#
+def downloadContinuumInstaller( toolName, toolVer, urlBase, inOptions ):
+  toolDir = toolName+"-"+toolVer
+
+  print("\nDownloading the installer for " + toolDir + " ...")
+
+  outFile = toolDir+"-download.log"
+  workingDir=scratch_dir
+  toolSrcBaseDir = toolDir+"-base"
+  targetToolSrcDir = workingDir+"/"+toolSrcBaseDir
+
+  if os.path.exists( targetToolSrcDir ):
+    print("\nRemoving existing directory '" + targetToolSrcDir + "' ...")
+    cmnd = "rm -rf "+targetToolSrcDir
+    if not inOptions.skipOp:
+      echoRunSysCmnd(cmnd)
+    else:
+      print("\nRunning: " + cmnd)
+
+  os.makedirs( targetToolSrcDir )
+
+  fname = toolName.capitalize() + '-' + toolVer + '-Linux-x86_64.sh'
+  download_url = urlBase
+  if not download_url.endswith( '/' ):
+    download_url += '/'
+  download_url += fname
+
+  url_fp = file_fp = None
+  try:
+    file_fp = file( os.path.join( targetToolSrcDir, fname ), 'wb' )
+    url_fp = urllib2.urlopen( download_url )
+    file_fp.write( url_fp.read() )
+  finally:
+    if file_fp: file_fp.close()
+    if url_fp: url_fp.close()
+#end downloadContinuumInstaller
 
 
 #
@@ -630,6 +694,12 @@ def main(cmndLineArgs):
       downloadToolSource("cmake", cmake_version_default,
         inOptions.sourceGitUrlBase, inOptions)
 
+    if "anaconda2" in commonToolsSelectedSet:
+      downloadContinuumInstaller(
+          'anaconda2', anaconda2_version_default,
+	  inOptions.anaconda2UrlBase, inOptions
+	  )
+
     if "autoconf" in commonToolsSelectedSet:
       downloadToolSource("autoconf", autoconf_version_default,
         inOptions.sourceGitUrlBase, inOptions)
@@ -662,6 +732,12 @@ def main(cmndLineArgs):
     if "cmake" in commonToolsSelectedSet:
       installToolFromSource("cmake", cmake_version_default,
         common_tools_dir, None, inOptions )
+
+    if "anaconda2" in commonToolsSelectedSet:
+      installToolFromSource(
+          "anaconda2", anaconda2_version_default,
+          common_tools_dir, None, inOptions
+	  )
 
     if "autoconf" in commonToolsSelectedSet:
       installToolFromSource("autoconf", autoconf_version_default,
