@@ -63,7 +63,7 @@ IF (Netcdf_ALLOW_PREFIND)
     "${CMAKE_CURRENT_LIST_DIR}/utils"
      )
   
-  find_package(NetCDF REQUIRED)
+  find_package(NetCDF)
 
   IF (NetCDF_FOUND)
     SET(DOCSTR "List of semi-colon separated paths to look for the TPL Netcdf")
