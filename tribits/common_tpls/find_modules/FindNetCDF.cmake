@@ -452,15 +452,7 @@ if ( NOT NetCDF_FIND_QUIETLY )
   message(STATUS "\tNetCDF_BINARIES          = ${NETCDF_TOOLS_FOUND}")
 
 endif()
-# For compatability with TriBITS:
-SET(DOCSTR "List of semi-colon separated paths to look for the TPL Netcdf")
 
-set(TPL_Netcdf_Enables_Netcdf4 ${NetCDF_NEEDS_HDF5} CACHE BOOL "True if netcdf enables netcdf-4")
-set(TPL_Netcdf_Enables_PNetcdf ${NetCDF_NEEDS_PNetCDF} CACHE BOOL "True if netcdf enables pnetcdf")
-set(TPL_Netcdf_PARALLEL ${NetCDF_PARALLEL} CACHE BOOL "True if netcdf compiled with parallel enabled")
-set(TPL_Netcdf_LIBRARY_DIRS ${_hdf5_LIBRARY_SEARCH_DIRS} CACHE PATH ${DOCSTR})
-set(TPL_Netcdf_LIBRARIES ${NetCDF_LIBRARIES} CACHE PATH ${DOCSTR})
-set(TPL_Netcdf_INCLUDE_DIRS ${NetCDF_INCLUDE_DIRS} CACHE PATH ${DOCSTR})
 mark_as_advanced(
   NetCDF_INCLUDE_DIR
   NetCDF_INCLUDE_DIRS

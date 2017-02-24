@@ -133,7 +133,7 @@ a) Create a 'do-configure' script such as [Recommended]::
   NOTE: If one has already configured once and one needs to configure from
   scratch (needs to wipe clean defaults for cache variables, updates
   compilers, other types of changes) then one will want to delete the local
-  CASL and other CMake-generated files before configuring again (see
+  CMakeCache.txt and other CMake-generated files before configuring again (see
   `Reconfiguring completely from scratch`_).
 
 .. _<Project>_CONFIGURE_OPTIONS_FILE:
@@ -150,41 +150,74 @@ b) Create a CMake file fragment and point to it [Recommended].
       $EXTRA_ARGS \
       ${SOURCE_BASE}
      
-  where MyConfigureOptions.cmake might look like::
+  where MyConfigureOptions.cmake (in the current working directory) might look
+  like::
 
-    SET(CMAKE_BUILD_TYPE DEBUG CACHE STRING "")
-    SET(<Project>_ENABLE_CHECKED_STL ON CACHE BOOL "")
-    SET(BUILD_SHARED_LIBS ON CACHE BOOL "")
+    SET(CMAKE_BUILD_TYPE DEBUG CACHE STRING "Set in MyConfigureOptions.cmake")
+    SET(<Project>_ENABLE_CHECKED_STL ON CACHE BOOL "Set in MyConfigureOptions.cmake")
+    SET(BUILD_SHARED_LIBS ON CACHE BOOL "Set in MyConfigureOptions.cmake")
     ...
 
   Using a configuration fragment file allows for better reuse of configure
   options across different configure scripts and better version control of
-  configure options.  Also, when this file changes, CMake will automatically
+  configure options.  Using the comment "Set in MyConfigureOptions.cmake"
+  makes it easy see where that variable got set when looking an the
+  CMakeCache.txt file.  Also, when this file changes, CMake will automatically
   trigger a reconfgure during a make (because it knows about the file and will
   check its time stamp).
 
-  NOTE: You can actually pass in a list of configuration fragment files
-  which will be read in the order they are given.
-
-  NOTE: You can use the ``FORCE`` option in the ``SET()`` shown above and that
-  will override any value of the options that might already be set.  However,
-  that will not allow the user to override the options on the CMake
-  comamndline using ``-D<VAR>=<value>`` so it is generally desired to use
+  One can use the ``FORCE`` option in the ``SET()`` shown above and that will
+  override any value of the options that might already be set.  However, that
+  will not allow the user to override the options on the CMake comamndline
+  using ``-D<VAR>=<value>`` so it is generally **not** desired to use
   ``FORCE``.
 
-c) Using ccmake to configure
+  One can actually pass in a list of configuration fragment files separated by
+  ''","'' which will be read in the order they are given::
 
-  ::
+    -D <Project>_CONFIGURE_OPTIONS_FILE=<file0>,<file1>,...
 
-    $ ccmake $SOURCE_BASE
+  One can read in configure option files under the project source directory by
+  using the type ``STRING`` such as with::
 
-d) Using the QT CMake configuration GUI:
+    -D <Project>_CONFIGURE_OPTIONS_FILE:STRING=cmake/MpiConfig1.cmake
+
+  In this case, the relative paths will be with respect to the project base
+  source directory, not the current working directroy.  (By specifying the
+  type ``STRING``, one turns off CMake interpretation as a ``FILEPATH``.
+  Otherwise, the type ``FILEPATH`` causes CMake to always interpret relative
+  paths with respect to the current working directory and set the absolute
+  path).
+
+  Note that a CMake options file can also be read in with::
+
+    cmake -C MyConfigureOptions.cmake [other options]  ${SOURCE_BASE}
+
+  However, the advantages of using ``<Project>_CONFIGURE_OPTIONS_FILE`` are:
+
+  1) One can use ``-D<Project>_CONFIGURE_OPTIONS_FILE:STRING=<rel-path>`` to
+  use a relative path w.r.t. to the source tree to make it easier to point to
+  options files in the project source.  Using ``cmake -C`` would require
+  having to give the absolute path or a longer relative path from the build
+  directory back to the source directory.
+
+  2) ``<Project>_CONFIGURE_OPTIONS_FILE`` accepts a list of files where
+  ``cmake -C`` only accepts a single file.  That saves from having to create
+  another dummy ``*.cmake`` file that just includes the others.
+
+  3) One can create and use parameterized ``*.cmake`` files that can be used
+  with multiple TriBITS projects.  For example, one can have set statements
+  like ``SET(${PROJECT_NAME}_ENABLE_Fortran OFF ...)`` since ``PROJECT_NAME``
+  is known before the file is included.  One can't do that with ``cmake -C``
+  and instead would have to the full variables names.
+
+c) Using the QT CMake configuration GUI:
 
   On systems where the QT CMake GUI is installed (e.g. Windows) the CMake GUI
-  can be a nice way to configure <Project> if you are a user.  To make your
-  configuration easily repeatable, you might want to create a fragment file
-  and just load it by setting `<Project>_CONFIGURE_OPTIONS_FILE`_ (see above)
-  in the GUI.
+  can be a nice way to configure <Project> (or just explore options) if you
+  are a user.  To make your configuration easily repeatable, you might want to
+  create a fragment file and just load it by setting
+  `<Project>_CONFIGURE_OPTIONS_FILE`_ (see above) in the GUI.
 
 Selecting the list of packages to enable
 ----------------------------------------
@@ -232,15 +265,38 @@ for ``<Project>_SE_PACKAGES`` using, for example::
 Print package dependencies
 ++++++++++++++++++++++++++
 
-The set of package dependencies in a project will be printed in the ``cmake``
-STDOUT by setting::
+The set of package dependencies can be printed in the ``cmake`` STDOUT by
+setting the configure option::
 
   -D <Project>_DUMP_PACKAGE_DEPENDENCIES=ON
 
-This will print the basic backward dependencies for each SE package.  To also
-see the direct forward dependencies for each SE package, also include::
+This will print the basic forward/upstream dependencies for each SE package.
+To find this output, look for the line::
+
+  Printing package dependencies ...
+
+and the dependencies are listed below this for each SE package in the form::
+
+  -- <PKG>_LIB_REQUIRED_DEP_TPLS: <TPL0> <TPL1> ...
+  -- <PKG>_LIB_OPTIONAL_DEP_TPLS: <TPL2> <TPL3> ...
+  -- <PKG>_LIB_REQUIRED_DEP_PACKAGES: <PKG0> <[PKG1> ...
+  -- <PKG>_LIB_OPTIONAL_DEP_PACKAGES: <PKG2> <PKG3> ...
+  -- <PKG>_TEST_REQUIRED_DEP_TPLS: <TPL4> <TPL5> ...
+  -- <PKG>_TEST_OPTIONAL_DEP_TPLS: <TPL6> <TPL7> ...
+  -- <PKG>_TEST_REQUIRED_DEP_PACKAGES: <PKG4> <[PKG5> ...
+  -- <PKG>_TEST_OPTIONAL_DEP_PACKAGES: <PKG6> <PKG7> ...
+  
+(Dependencies that don't exist are left out of the output.  For example, if
+there are no ``<PKG>_LIB_OPTIONAL_DEP_PACKAGES`` dependencies, then that line
+is not printed.)
+
+To also see the direct forward/downstream dependencies for each SE package,
+also include::
 
   -D <Project>_DUMP_FORWARD_PACKAGE_DEPENDENCIES=ON
+
+These dependencies are printed along with the backward/upstsream dependencies
+as described above.
 
 Both of these variables are automatically enabled when
 `<Project>_VERBOSE_CONFIGURE`_ = ``ON``.
@@ -1432,14 +1488,14 @@ b) **Getting verbose output from TriBITS configure:**
 
     -D <Project>_VERBOSE_CONFIGURE=ON
 
-  This produces a *lot* of output but can be very useful when debugging
+  However, this produces a *lot* of output so don't enable this unless you are
+  very desperate.  But this level of details can be very useful when debugging
   configuration problems.
 
-  To just dump the package and TPL dependencies, use::
+  To just view the package and TPL dependencies, it is recommended to use
+  ``-D`` `<Project>_DUMP_PACKAGE_DEPENDENCIES`_ ``= ON``.
 
-    -D <Project>_DUMP_PACKAGE_DEPENDENCIES=ON
-
-  To just dump the link libraries for each library and executable created,
+  To just print the link libraries for each library and executable created,
   use::
 
     -D <Project>_DUMP_LINK_LIBS=ON
@@ -1557,8 +1613,11 @@ Valid categories include ``BASIC``, ``CONTINUOUS``, ``NIGHTLY``, ``HEAVY`` and
 testing, and nightly testing.  ``CONTINUOUS`` tests are for post-push testing
 and nightly testing.  ``NIGHTLY`` tests are for nightly testing only.
 ``HEAVY`` tests are for more expensive tests that require larger number of MPI
-processes and llonger run times.  ``PERFORMANCE`` tests a special category
-used only for performance testing.
+processes and longer run times.  These test categories are nested
+(e.g. ``HEAVY`` contains all ``NIGHTLY``, ``NIGHTLY`` contains all
+``CONTINUOUS`` and ``CONTINUOUS`` contains all ``BASIC`` tests).  However,
+``PERFORMANCE`` tests are special category used only for performance testing
+and don't nest with the other categories.
 
 
 Disabling specific tests
@@ -1594,33 +1653,49 @@ arguments).
 Setting test timeouts at configure time
 ---------------------------------------
 
-A maximum default time limit for all the tests can be set at configure time
-using the cache variable::
+A maximum default time limit (timeout) for all the tests can be set at
+configure time using the cache variable::
 
   -D DART_TESTING_TIMEOUT=<maxSeconds>
 
-where ``<maxSeconds>`` is the number of wall-clock seconds.  By default there
-is no timeout limit set so it is a good idea to set some limit just so tests
-don't hang and run forever.  For example, when an MPI program has a defect, it
-can easily hang forever until it is manually killed.  If killed, CTest will
-kill all of this child processes correctly.
+where ``<maxSeconds>`` is the number of wall-clock seconds.  The default for
+most projects is 1500 seconds (see the default value set in the CMake cache).
+This value gets scaled by `<Project>_SCALE_TEST_TIMEOUT`_ and then set as the
+field ``TimeOut`` in the CMake-generated file ``DartConfiguration.tcl``.  The
+value ``TimeOut`` from this file is what is directly read by the ``ctest``
+exectuable.  Timeouts for tests are important.  For example, when an MPI
+program has a defect, it can easily hang (forever) until it is manually
+killed.  If killed by a timeout, CTest will kill the test process and all of
+its child processes correctly.
 
 NOTES:
 
-* Be careful not set the timeout too low since if a machine becomes loaded
-  tests can take longer to run and may result in timeouts that would not
-  otherwise occur.
-* Individual tests may have there timeout limit set on a test-by-test basis
+* If ``DART_TESTING_TIMEOUT`` is not explicitly set by the user, then the
+  projects gives it a default value (typically 1500 seconds but see the value
+  in the CMakeCache.txt file).
+
+* If ``DART_TESTING_TIMEOUT`` is explicitly set to empty
+  (i.e. ``-DDART_TESTING_TIMEOUT=``), then by default tests have no timeout
+  and can run forever until manually killed.
+
+* Individual tests may have their timeout limit set on a test-by-test basis
   internally in the project's ``CMakeLists.txt`` files (see the ``TIMEOUT``
   argument for ``TRIBITS_ADD_TEST()`` and ``TRIBITS_ADD_ADVANCED_TEST()``).
   When this is the case, the global timeout set with ``DART_TESTING_TIMEOUT``
-  has no impact on these individually set test timeouts.  To affect individual
-  test timeouts set on a test-by-test basis, use
-  `<Project>_SCALE_TEST_TIMEOUT_TESTING_TIMEOUT`_.
-* To set or override the default global test timeout limit at runtime, see
-  `Overridding test timeouts`_.
+  has no impact on these individually set test timeouts.
 
-.. _<Project>_SCALE_TEST_TIMEOUT_TESTING_TIMEOUT:
+* Be careful not set the global test timeout too low since if a machine
+  becomes loaded tests can take longer to run and may result in timeouts that
+  would not otherwise occur.
+
+* The value of ``DART_TESTING_TIMEOUT`` and the timeouts for individual tests
+  can be scaled up or down using the cache varaible
+  `<Project>_SCALE_TEST_TIMEOUT`_.
+
+* To set or override the default global test timeout limit at runtime, see
+  `Overriding test timeouts`_.
+
+.. _<Project>_SCALE_TEST_TIMEOUT:
 
 Scaling test timeouts at configure time
 ---------------------------------------
@@ -1645,18 +1720,22 @@ builds.
 
 NOTES:
 
+* If ``<Project>_SCALE_TEST_TIMEOUT`` is not set, the the default value is set
+  to ``1.0`` (i.e. no scaling of test timeouts).
+
 * When scaling the timeouts, the timeout is first truncated to integral
   seconds so an original timeout like ``200.5`` will be truncated to ``200``
   before it gets scaled.
 
-* Only the first fractional digit is used so ``1.57`` is truncated to ``1.5``
-  before scaling the test timeouts.
+* Only the first fractional digit of ``<Project>_SCALE_TEST_TIMEOUT`` is used
+  so ``1.57`` is truncated to ``1.5``, for example, before scaling the test
+  timeouts.
 
-* The cache value of the variable `DART_TESTING_TIMEOUT`_ is not changed in
-  the ``CMakeCache.txt`` file.  Only the value of ``TimeOut`` written into the
+* The value of the variable `DART_TESTING_TIMEOUT`_ is not changed in the
+  ``CMakeCache.txt`` file.  Only the value of ``TimeOut`` written into the
   ``DartConfiguration.tcl`` file (which is directly read by ``ctest``) will be
   scaled.  (This ensures that running configure over and over again will not
-  increase ``DART_TESTING_TIMEOUT`` each time.)
+  increase ``DART_TESTING_TIMEOUT`` or ``TimeOut`` withc each new configure.)
 
 
 Enabling support for coverage testing
@@ -2068,7 +2147,7 @@ find the target name and then doing a find ``find . -name
 
 For this process to work correctly, you must be in the subdirectory where the
 ``TRIBITS_ADD_LIBRARY()`` or ``TRIBITS_ADD_EXECUTABLE()`` command is called
-from its ``CMakeList.txt`` file, otherwise the object file targets will not be
+from its ``CMakeLists.txt`` file, otherwise the object file targets will not be
 listed by ``make help``.
 
 NOTE: CMake does not seem to not check on dependencies when explicitly
@@ -2182,7 +2261,7 @@ working directory.  To run the test exactly as ``ctest`` would, cd into the
 shown working directory and run the shown command.
 
 
-Overridding test timeouts
+Overriding test timeouts
 -------------------------
 
 The configured glboal test timeout described in ``Setting test timeouts at
@@ -2190,9 +2269,10 @@ configure time`` can be overridden on the CTest command-line as::
 
   $ ctest --timeout <maxSeconds>
 
-This will override the configured cache variable `DART_TESTING_TIMEOUT`_.
-However, this will **not** override the test timesouts set on individual tests
-on a test-by-test basis!
+This will override the configured cache variable `DART_TESTING_TIMEOUT`_
+(actually, the scaled value set as ``TimeOut`` in the file
+``DartConfiguration.tcl``).  However, this will **not** override the test
+timesouts set on individual tests on a test-by-test basis!
 
 **WARNING:** Do not try to use ``--timeout=<maxSeconds>`` or CTest will just
 ignore the argument!

@@ -1624,7 +1624,7 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
     # C) Set up the command intercept file
 
     baseCmndInterceptsStr = \
-      "FT: .*checkin-test-impl\.py.*\n" \
+      "FT: .*checkin-test\.py.*\n" \
       "FT: .*cmake .*TribitsGetExtraReposForCheckinTest.cmake.*\n" \
       "FT: date\n" \
       "FT: rm [a-zA-Z0-9_/\.]+\n" \
@@ -3690,6 +3690,31 @@ class test_checkin_test(unittest.TestCase):
        "\-DTrilinos_TEST_CATEGORIES:STRING=NIGHTLY\n" \
        ),
       ]
+      )
+
+
+  def test_relative_src_dir(self):
+
+    testName = "relative_src_dir"
+    testDir = os.path.join(os.getcwd(), g_checkin_test_tests_dir, testName)
+    relativePathToSrc = os.path.relpath(mockProjectBaseDir, testDir)
+    #print "relativePathToSrc = " + relativePathToSrc
+ 
+    checkin_test_configure_test(
+      \
+      self,
+      \
+      testName,
+      \
+      "--src-dir="+relativePathToSrc+" --default-builds=MPI_DEBUG",
+      \
+      [
+      ("MPI_DEBUG/do-configure.base",
+       mockProjectBaseDir \
+       ),
+      ],
+      extraPassRegexStr = \
+      "src-dir=."+relativePathToSrc+".\n"
       )
 
 
