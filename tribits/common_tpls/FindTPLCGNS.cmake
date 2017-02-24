@@ -37,14 +37,45 @@
 # ************************************************************************
 # @HEADER
 
-SET(CMAKE_MODULE_PATH
-  "${CMAKE_MODULE_PATH}"
-  "${CMAKE_CURRENT_LIST_DIR}/find_modules"
-  "${CMAKE_CURRENT_LIST_DIR}/utils"
-   )
+#
+# First, set up the variables for the (backward-compatible) TriBITS way of
+# finding Netcdf.  These are used in case FIND_PACKAGE(NetCDF ...) is not
+# called or does not find NetCDF.  Also, these variables need to be non-null
+# in order to trigger the right behavior in the function
+# TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES().
+#
+SET(REQUIRED_HEADERS cgnslib.h)
+SET(REQUIRED_LIBS_NAMES cgns)
 
-find_package(CGNS REQUIRED)
+#
+# Second, search for Netcdf components (if allowed) using the standard
+# FIND_PACKAGE(CGNS ...).
+#
+TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(CGNS  CGNS_ALLOW_PREFIND)
+IF (CGNS_ALLOW_PREFIND)
 
+  MESSAGE("-- Using FIND_PACKAGE(CGNS ...) ...")
+
+  SET(CMAKE_MODULE_PATH
+    "${CMAKE_MODULE_PATH}"
+    "${CMAKE_CURRENT_LIST_DIR}/find_modules"
+    "${CMAKE_CURRENT_LIST_DIR}/utils"
+     )
+  
+  find_package(CGNS)
+
+  IF (CGNS_FOUND)
+    set(TPL_CGNS_LIBRARIES ${CGNS_LIBRARIES} CACHE PATH
+      "List of semi-colon seprated (full) paths to the CGNS libraries")
+    set(TPL_CGNS_INCLUDE_DIRS ${CGNS_INCLUDE_DIRS} CACHE PATH
+      "List of semi-colon seprated list of directories containing CGNS header files")
+  ENDIF()
+
+ENDIF()
+
+#
+# Third, call TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES()
+#
 TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( CGNS
-  REQUIRED_HEADERS cgnslib.h
-  REQUIRED_LIBS_NAMES "cgns")
+  REQUIRED_HEADERS ${REQUIRED_HEADERS}
+  REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES})
