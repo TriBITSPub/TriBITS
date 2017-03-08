@@ -43,20 +43,20 @@ modern agile software development best practices.
 TriBITS is a fairly extensive framework that is built on top of the
 open-source CMake/CTest/CPack/CDash system (which in itself is a very
 extensive system of software and tools).  The most important thing to remember
-is that a software project that use TriBITS are really just a CMake project.
+is that a software project that uses TriBITS is really just a CMake project.
 TriBITS makes no attempt to hide that fact either from the TriBITS project
 developers or from the users that need to configure and build the software.
 Therefore, to make effective usage of TriBITS, one must learn the basics of
 CMake (both as a developer and as a user).  In particular, CMake is a
-Turning-complete programming language with local and global variables (with
-strange scoping rules), macros, functions, targets, commands, and other
+Turning-complete programming language with local varaibles, global variables, macros, functions, targets, commands, and other
 features.  One needs to understand how to define and use variables, macros,
 and functions in CMake.  One needs to know how to debug CMakeLists.txt files
 and CMake code in general (i.e. using ``MESSAGE()`` print statements).  One
 needs to understand how CMake defines and uses targets for various qualities
 like libraries, executables, etc.  Without this basic understanding of CMake,
-one will have trouble resolving problems when they might occur.
+one will have trouble resolving problems when they occur.
 
+(*Redundant with table of contents above?*)
 The remainder of this documented is structured as follows.  First, there is
 some additional `Background`_ material provided.  Then, a detailed
 specification of `TriBITS Project Structure`_ is given which lists and defines
@@ -77,14 +77,14 @@ Documentation`_.  Finally, several bits of information are provided in the
 Background
 ==========
 
-Before diving into the details about TriBITS in the following sections, first
-some more background is in order.  First, a discussion of `TriBITS Developer
-and User Roles`_ is provided to help the reader identify their own role(s) and
-to help guide the reader to the appropriate documentation (which may or may
-not primarily be in this document).  Then, section `CMake Language Overview
-and Gotchas`_ tries to orient readers with little to no CMake knowledge or
-experience on where to start and provides some warnings about non-obvious
-CMake behavior that often trips up new users of TriBITS.
+In order to easily find the most appropriate documentation, see the 'TriBITS 
+Developer and User Roles`_ guide.  This guide describes the different roles 
+that users of TriBITS may play and offers links to relevant sections of the
+documentation.  Additionally, the reader may wish to review the `CMake Language 
+Overview and Gotchas`_ section which is meant for users that are new to both 
+CMake and TriBITS. This section gives a brief overview of getting started with
+CMake and provides some warnings about non-obvious CMake behavior that often 
+trips up new users of TriBITS.
 
 
 TriBITS Developer and User Roles
@@ -108,11 +108,8 @@ basics about how to run the ``cmake`` and ``ctest`` executables, how to set
 CMake cache variables, and the basics of building software by typing ``make``
 and running tests with ``ctest``.  The proper reference for a TriBITS Project
 User is the `Project-Specific Build Reference`_.  The `TriBITS
-Overview`_ document may also be of some help.  A TriBITS project user does not
-need to know anything about the CMake language itself or any of the TriBITS
-macros or functions described in `TriBITS Macros and Functions`_ or really
-anything else described in this current document except for `Package
-Dependencies and Enable/Disable Logic`_.
+Overview`_ document may also be of some help.  A TriBITS project user may also
+need to consult `Package Dependencies and Enable/Disable Logic`_.
 
 .. _TriBITS Project Developer:
 .. _TriBITS Project Developers:
@@ -131,7 +128,7 @@ sophisticated TriBITS Project Developer will also add new packages, add new
 package dependencies, and define new TPLs.  This current TriBITS Developers
 Guide and Reference document should supply everything such a developer needs
 to know and more.  Only a smaller part of this document needs to be understood
-and accessed by people assuming this role.
+and accessed by people assuming this role. (*links?*)
 
 .. _TriBITS Project Architect:
 .. _TriBITS Project Architects:
@@ -175,14 +172,12 @@ author of this document).
 
 An explicit goal of this document is to make new `TriBITS Project Architects`_
 (i.e. those who would make the decision to adopt TriBITS for their projects),
-and new `TriBITS System Developers`_ to help extend and maintain TriBITS.  As
-TriBITS matures and its requirements further stabilize, the need for a
-`TriBITS System Architect`_ will hopefully be diminished.
+and new `TriBITS System Developers`_ to help extend and maintain TriBITS.
 
-So depending on the particular role that a reader falls into, this document
-may or may not be necessary but instead the `TriBITS Overview`_ or the
+Depending on the particular role that a reader falls into, this document
+may not be necessary and the `TriBITS Overview`_ or the
 `<Project>BuildReference`_ documents may be more appropriate.  Hopefully the
-above roles and discussion will help the reader select the right document to
+above roles and discussion help the reader select the right document to
 start with.
 
 
@@ -193,22 +188,21 @@ TriBITS removes a lot of the boiler plate code needed to write a CMake
 project.  As a result, many people can come into a project that uses TriBITS
 and quickly start to contribute by adding new source files, adding new
 libraries, adding new tests, and even adding new TriBITS packages and TPLs;
-all without really having learned anything about CMake.  One just needs to
-copy-and-paste existing example CMake code and files as basically "monkey see,
-monkey do".  As long as nothing out of the ordinary happens, many people can
-get along just fine in this mode for a time.
+all without really having learned anything about CMake.  Often one can use existing
+example CMake code as a guide and be successful using basic functionality. As long 
+as nothing out of the ordinary happens, many people can get along just fine in this 
+mode for a time.
 
-However, we have observed that most mistakes that people make when using
-TriBITS, and most of the problems they have when using the system, are due to a
-basic lack of knowledge of the CMake language.  One can find basic tutorials
-and references on the CMake language in various locations online for free.
+However, we have observed that most mistakes and problems that people run into when 
+using TriBITS are due to lack of basic knowledge of the CMake language.  One can find 
+basic tutorials and references on the CMake language in various locations online for free.
 One can also purchase the `official CMake reference book`_.  Also, documentation
 for any built-in CMake command is available locally by running::
 
    $ cmake --help-command <CMAKE_COMMAND>
 
 Because tutorials and detailed documentation for the CMake language already
-exists, this document will not even attempt to provide a first reference to
+exists, this document will does not attempt to provide a first reference to
 CMake (which is a large topic in itself).  However, what we try to provide
 below is a short overview of the more quirky or surprising aspects of the
 CMake language that a programmer experienced in another language might get
@@ -218,16 +212,17 @@ greater understanding of how TriBITS works.
 
 .. _Official CMake reference book: http://www.cmake.org/cmake/help/book.html
 
-The CMake language that is used to write CMake projects with TriBITS (and that
-core TriBITS functionality itself is implemented in, see `TriBITS System
-Project Dependencies`_) is a fairly simple programming language with fairly
-simple rules (for the most part).  However, compared to other programming
-languages, there are a few peculiar aspects to the CMake language like strange
-variable scoping rules, and how arguments are passed to macros and functions,
-that can make working with it difficult if you don't understand these rules.
-Also, CMake has some interesting gotchas.  In order to effectively use TriBITS
-(or just raw CMake) to construct and maintain a project's CMake files, one
-must know the basic rules of CMake and be aware of these gotchas.
+The CMake language is used to write CMake projects with TriBITS. In fact the
+core TriBITS functionality itself is implemented in the CMake language (see 
+`TriBITS System Project Dependencies`_). CMake is a fairly simple programming 
+language with relatively simple rules (for the most part).  However, compared 
+to other programming languages, there are a few peculiar aspects to the CMake 
+language that can make working with it difficult if you don't understand these 
+rules.  For example there are unexpected variable scoping rules and how arguments 
+are passed to macros and functions can be tricky. Also, CMake has some interesting 
+gotchas.  In order to effectively use TriBITS (or just raw CMake) to construct 
+and maintain a project's CMake files, one must know the basic rules of CMake 
+and be aware of these gotchas.
 
 The first thing to understand about the CMake language is that nearly every
 line of CMake code is just a command taking a string (or an array of strings)
@@ -265,7 +260,7 @@ string arguments like::
 In CMake, the above is identical, in every way, to::
 
   SET(SOME_VARIABLE some_value)
-  SET("SOME_VARIABLE;"some_value")
+(*is this syntax right? too many/not enough "?*)  SET("SOME_VARIABLE;"some_value")
   SET("SOME_VARIABLE;some_value")
 
 The function ``SET()`` simply interprets the first argument to as the name of
@@ -282,6 +277,8 @@ interpret them as a string array.  For example::
     MESSAGE("SOME_VAR='${SOME_VAR}'")
   ENDFOREACH()
 
+(*what is the right way to do the above?*)
+
 prints ```SOME_VAR='a;b;c'`` instead of printing ``SOME_VAR='a'`` followed by
 ``SOME_VAR='b'``, etc., as you would otherwise expect.  Therefore, this simple
 rule for the handling of function arguments as string arrays does not hold for
@@ -291,11 +288,11 @@ control structures (i.e. see ``cmake --help-command if`` and ``cmake
 
 CMake offers a rich assortment of built-in commands for doing all sorts of
 things.  Two of these are the built-in ``MACRO()`` and the ``FUNCTION()``
-commands which allow you to create user-defined macros and functions (which is
-what TriBITS is built on).  All of these built-in and user-defined macros and
-functions work exactly the same way; they take in an array of string
-arguments.  Some functions take in positional arguments but most actually take
-a combination of positional and keyword arguments (see `PARSE_ARGUMENTS()`_).
+commands which allow you to create user-defined macros and functions. TriBITS
+is actually built on CMake functions and macros.  All of the built-in and 
+user-defined macros, and some functions take an  array of string arguments.  
+Some functions take in positional arguments. In fact,  most functions take a 
+combination of positional and keyword arguments (see `PARSE_ARGUMENTS()`_).
 
 Variable names are translated into their stored values using
 ``${SOME_VARIABLE}``.  The value that is extracted depends on if the variable
@@ -468,9 +465,9 @@ listed below:
 Any of these six OO packaging principles (and other issues) may be considered
 when deciding how to partition software into different `TriBITS SE Packages`_.
 
-NOTE: This purpose of this TriBITS Developers Guide document is not teach
+NOTE: The purpose of this TriBITS Developers Guide document is not teach
 basic software engineering so these various principles will not be expanded on
-further here.  However, interested readers are strongly encouraged to read
+further.  However, interested readers are strongly encouraged to read
 [`Agile Software Development, 2003`_] as one of the better software
 engineering books out there (see
 http://web.ornl.gov/~8vt/readingList.html#Most_Recommended_SE_Books).
@@ -479,9 +476,9 @@ TriBITS Project Structure
 =========================
 
 TriBITS is a Framework, implemented in CMake, to create CMake projects.  As a
-Framework (with a capital "F"), TriBITS defines the overall structure of a
-CMake build system for a project and it processes the various project-,
-repository-, and package-specific files in a specified order.  Almost all of
+Framework (with a capital "F")(*what does that mean?*), TriBITS defines the 
+overall structure of a CMake build system for a project and it processes the 
+various project-, repository-, and package-specific files in a specified order.  Almost all of
 this processing takes place in the `TRIBITS_PROJECT()`_ macro (or macros and
 functions it calls).  The following subsections define the essence of the
 TriBITS framework in some detail.  Later sections cover specific topics and
@@ -527,7 +524,7 @@ units are:
 
 * `TriBITS Subpackage`_: A part of a parent `TriBITS Package`_ that also
   typically has source files built into libraries and tests but is documented
-  and tested along with the other subpackages the parent package.  The primary
+  and tested along with the other subpackages in the parent package.  The primary
   purpose for supporting subpackages is to provide finer-grained control of
   software dependencies.  In `TribitsExampleProject`_, ``WithSubpackages`` is
   an example of a package with subpackages ``'A'``, ``'B'``, and ``'C'``.  The
@@ -723,7 +720,7 @@ collection of set statements in this file.
 **<projectDir>/CMakeLists.txt**: [Required] The top-level CMake project file.
 This is the first file that the ``cmake`` executable processes that starts
 everything off and is the base-level scope for local (non-cache) CMake
-variables.  Due to a few CMake limitations and quarks, a project's top-level
+variables.  Due to a few CMake limitations and quirks, a project's top-level
 ``CMakeLists.txt`` file is not quit as clean as one might otherwise hope would
 be but it is not too bad.  A simple, but representative, example is
 `TribitsExampleProject`_/``CMakeLists.txt``:
@@ -731,7 +728,7 @@ be but it is not too bad.  A simple, but representative, example is
 .. include:: ../../examples/TribitsExampleProject/CMakeLists.txt
    :literal:
 
-A couple of CMake and TriBITS quarks that that above example
+A couple of CMake and TriBITS quirks that the above example
 ``CMakeLists.txt`` addresses are worth some discussion.  First, to avoid
 duplication, the project's ``ProjectName.cmake`` file is read in with an
 ``INCLUDE()`` that defines the local variable ``PROJECT_NAME``.  Right after
