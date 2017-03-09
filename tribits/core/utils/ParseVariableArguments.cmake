@@ -236,7 +236,7 @@ ENDMACRO()
 # NOTE: If the above function turns out to be a performance bottle neck, there
 # are a few things that could be done to improve performance.  One thing you
 # could do is repalce the O(len(arg_names)) and O(len(option_names)) lookups
-# with O(1) lookups by creating CMake varibles of the name
+# with O(1) lookups by creating CMake variables of the name
 # ${OUTER_FUNC_NAME}_arg_<argNamei> and then just look of that varible exists
 # or not.  That should use a hash function.  That might actually slow things
 # down for short lists however so we would have to measure, measure,
