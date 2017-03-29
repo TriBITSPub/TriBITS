@@ -496,7 +496,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='/path/does/not/exist'"
     "-- Searching for a lib in the set .haltpl1.:"
-    "-- ERROR: Did not find a lib in the lib set .haltpl1. for the TPL 'HeadersAndLibsTpl'!"
+    "-- NOTE: Did not find a lib in the lib set .haltpl1. for the TPL 'HeadersAndLibsTpl'!"
     "-- ERROR: Could not find the libraries for the TPL 'HeadersAndLibsTpl'!"
     "-- TIP: If the TPL 'HeadersAndLibsTpl' is on your system then you can set:"
     "-- ERROR: Failed finding all of the parts of TPL 'HeadersAndLibsTpl' .see above., Aborting!"
@@ -507,7 +507,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
 
 
 CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
-  HeadersAndLibsTpl_Static_BadLibName
+  HeadersAndLibsTpl_Static_BadLibName1_MustFind
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
   INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
@@ -524,6 +524,83 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "-- TIP: If the TPL 'HeadersAndLibsTpl' is on your system then you can set:"
     "-- ERROR: Failed finding all of the parts of TPL 'HeadersAndLibsTpl' .see above., Aborting!"
     "TIP: One way to get past the configure failure for the"
+    "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ .MESSAGE.:"
+    "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
+  )
+
+
+CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+  HeadersAndLibsTpl_Static_BadLibName1_NotMustFind
+  TPL_NAME  HeadersAndLibsTpl
+  TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
+  INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
+  LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
+  EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="badlibname,"
+    -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+    -DNOT_MUST_FIND_ALL_LIBS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
+    "-- Searching for a lib in the set .badlibname.:"
+    "-- NOTE: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
+    "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ .MESSAGE.:"
+    "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
+  )
+
+
+CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+  HeadersAndLibsTpl_Static_BadLibName2_MustFind
+  TPL_NAME  HeadersAndLibsTpl
+  TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
+  INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
+  LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
+  EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="haltpl2,badlibname"
+    -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+  PASS_REGULAR_EXPRESSION_ALL
+    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
+    "-- Searching for a lib in the set .badlibname.:"
+    "-- ERROR: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
+    "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ .MESSAGE.:"
+    "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
+  )
+
+
+CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+  HeadersAndLibsTpl_Static_BadLibName2_NotMustFind
+  TPL_NAME  HeadersAndLibsTpl
+  TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
+  INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
+  LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
+  EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="haltpl2,badlibname"
+    -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+    -DNOT_MUST_FIND_ALL_LIBS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
+    "-- Searching for a lib in the set .badlibname.:"
+    "-- NOTE: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
+    "-- TPL_HeadersAndLibsTpl_LIBRARIES='.*/HeadersAndLibsTpl/lib/libhaltpl2.a'"
+    "Configuring done"
+    "Generating done"
+  )
+
+
+CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+  HeadersAndLibsTpl_Static_BadLibName2_NotMustFind_ProjectMustFindAllTplLibs
+  TPL_NAME  HeadersAndLibsTpl
+  TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
+  INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
+  LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
+  EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="haltpl2,badlibname"
+    -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+    -DNOT_MUST_FIND_ALL_LIBS=ON
+    -D${MOCK_PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
+    "-- Searching for a lib in the set .badlibname.:"
+    "-- ERROR: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
     "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ .MESSAGE.:"
     "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
   )
