@@ -193,11 +193,11 @@ IF(NOT EXISTS "${GIT_EXE}")
   QUEUE_ERROR("error: GIT_EXE='${GIT_EXE}' does not exist")
 ENDIF()
 
-# Find svn
 
-FIND_PROGRAM(SVN_EXE NAMES svn)
-MESSAGE("SVN_EXE=${SVN_EXE}")
-# If we don't find svn, no big deal unless we have an SVN repo!
+# Find gitdist
+
+SET(GITDIST_EXE "${${PROJECT_NAME}_TRIBITS_DIR}/python_utils/gitdist")
+
 
 # Get the host name
 
@@ -232,13 +232,11 @@ ENDMACRO()
 # Update or clone a single extra repo
 #
 
-FUNCTION(CLONE_OR_UPDATE_EXTRAREPO  EXTRAREPO_NAME_IN  EXTRAREPO_DIR_IN
-  EXTRAREPO_REPOTYPE_IN  EXTRAREPO_REPOURL_IN  CHANGES_STR_VAR_INOUT
+FUNCTION(TRIBITS_CLONE_OR_UPDATE_EXTRAREPO  EXTRAREPO_NAME_IN  EXTRAREPO_DIR_IN
+  EXTRAREPO_REPOTYPE_IN  EXTRAREPO_REPOURL_IN
   )
 
-  #MESSAGE("CLONE_OR_UPDATE_EXTRAREPO: ${EXTRAREPO_NAME_IN} ${EXTRAREPO_REPOURL_IN}")
-
-  SET(CHANGES_STR "${${CHANGES_STR_VAR_INOUT}}")
+  #MESSAGE("TRIBITS_CLONE_OR_UPDATE_EXTRAREPO: ${EXTRAREPO_NAME_IN} ${EXTRAREPO_REPOURL_IN}")
 
   SET(EXTRAREPO_SRC_DIR "${${PROJECT_NAME}_SOURCE_DIRECTORY}/${EXTRAREPO_DIR_IN}")
   #PRINT_VAR(EXTRAREPO_SRC_DIR)
@@ -247,115 +245,160 @@ FUNCTION(CLONE_OR_UPDATE_EXTRAREPO  EXTRAREPO_NAME_IN  EXTRAREPO_DIR_IN
   SET(EXTRAREPO_CHECKOUT_OUT_FILE
     "${CTEST_BINARY_DIRECTORY}/${EXTRAREPO_NAME_IN}.checkout.out")
 
-  SET(GIT_LOG_SHORT "${GIT_EXE}" log
-    "--pretty=format:%h:  %s%nAuthor: %an <%ae>%nDate:   %ad%n"
-    --name-status -C)
-
   IF (NOT EXISTS "${EXTRAREPO_SRC_DIR}")
 
     MESSAGE("\n${EXTRAREPO_NAME_IN}: Doing initial ${EXTRAREPO_REPOTYPE_IN}"
       " clone/checkout from URL '${EXTRAREPO_REPOURL_IN}' to dir '${EXTRAREPO_DIR_IN}' ...")
 
-    # Determine the commands to clone/update and find the version
+    # Set the command to clone
     IF (${EXTRAREPO_REPOTYPE_IN} STREQUAL GIT)
       SET(CLONE_CMND_ARGS
         COMMAND "${GIT_EXE}" clone "${EXTRAREPO_REPOURL}" ${EXTRAREPO_DIR_IN}
         WORKING_DIRECTORY "${${PROJECT_NAME}_SOURCE_DIRECTORY}"
         OUTPUT_FILE "${EXTRAREPO_CLONE_OUT_FILE}" )
-      SET(CLONE_VERSION_CMND_ARGS
-        COMMAND ${GIT_LOG_SHORT} -1)
-    ELSEIF (${EXTRAREPO_REPOTYPE_IN} STREQUAL SVN)
-      IF (NOT SVN_EXE)
-        MESSAGE(SEND_ERROR "Error, could not find SVN executable!")
-      ENDIF()
-      SET(CLONE_CMND_ARGS
-        COMMAND "${SVN_EXE}" checkout "${EXTRAREPO_REPOURL}" ${EXTRAREPO_DIR_IN}
-        WORKING_DIRECTORY "${${PROJECT_NAME}_SOURCE_DIRECTORY}"
-        OUTPUT_FILE "${EXTRAREPO_CHECKOUT_OUT_FILE}" )
-      SET(CLONE_VERSION_CMND_ARGS "echo") # ToDo: Define this for SVN
     ELSE()
       MESSAGE(SEND_ERROR
 	"Error, Invalid EXTRAREPO_REPOTYPE_IN='${EXTRAREPO_REPOTYPE_IN}'!")
     ENDIF()
 
-    # Do the clone/update
+    # Do the clone
     EXTRAREPO_EXECUTE_PROCESS_WRAPPER(${CLONE_CMND_ARGS})
-
-    # Determine the cloned/checkout version
-    EXTRAREPO_EXECUTE_PROCESS_WRAPPER(
-      ${CLONE_VERSION_CMND_ARGS}
-      OUTPUT_VARIABLE  CLONE_OR_PULL_OUTPUT
-      WORKING_DIRECTORY "${EXTRAREPO_SRC_DIR}")
-
-    SET(VERSION_STATUS_TYPE "cloned version")
 
   ELSE()
 
     MESSAGE("\n${EXTRAREPO_NAME_IN}: Doing ${EXTRAREPO_REPOTYPE_IN} update"
       " from URL '${EXTRAREPO_REPOURL_IN}' to dir '${EXTRAREPO_SRC_DIR}' ...")
 
-    # Pull/update changes
-    IF (${EXTRAREPO_REPOTYPE_IN} STREQUAL GIT)
-      EXTRAREPO_CLEAN_FETCH_RESET("${GIT_EXE}" "${EXTRAREPO_SRC_DIR}")
-      SET(PULL_DIFF_CMND_ARGS
-        COMMAND ${GIT_LOG_SHORT} HEAD ^ORIG_HEAD)
-    ELSEIF (${EXTRAREPO_REPOTYPE_IN} STREQUAL SVN)
-      SET(PULL_CMND_ARGS
-        COMMAND "${SVN_EXE}" update
-        WORKING_DIRECTORY "${EXTRAREPO_SRC_DIR}"
-        OUTPUT_FILE "${EXTRAREPO_UPDATE_OUT_FILE}" )
-      EXTRAREPO_EXECUTE_PROCESS_WRAPPER(${PULL_CMND_ARGS})
-      SET(PULL_DIFF_CMND_ARGS "echo") # ToDo: Determine this for SVN
-    ELSE()
-      MESSAGE(SEND_ERROR
-	"Error, Invalid EXTRAREPO_REPOTYPE_IN='${EXTRAREPO_REPOTYPE_IN}'!")
-    ENDIF()
-
-    # Determine what changed
-    EXTRAREPO_EXECUTE_PROCESS_WRAPPER(
-      ${PULL_DIFF_CMND_ARGS}
-      OUTPUT_VARIABLE  CLONE_OR_PULL_OUTPUT
-      WORKING_DIRECTORY "${EXTRAREPO_SRC_DIR}")
-
-    SET(VERSION_STATUS_TYPE "updates")
-
   ENDIF()
 
-  SET(CHANGES_STR
-    "${CHANGES_STR}\n***\n*** ${EXTRAREPO_NAME_IN} ${VERSION_STATUS_TYPE}:\n***\n\n${CLONE_OR_PULL_OUTPUT}\n\n")
-
-  SET(${CHANGES_STR_VAR_INOUT} "${CHANGES_STR}" PARENT_SCOPE)
+  IF (${EXTRAREPO_REPOTYPE_IN} STREQUAL GIT)
+    # Always update the git repo, even after a clone.  See
+    # TRIBITS_CTEST_DRIVER() documentation.
+    TRIBITS_UPDATE_GIT_EXTRAREPO("${GIT_EXE}" "${EXTRAREPO_SRC_DIR}")
+  ELSE()
+    MESSAGE(SEND_ERROR
+      "Error, Invalid EXTRAREPO_REPOTYPE_IN='${EXTRAREPO_REPOTYPE_IN}'!")
+  ENDIF()
 
 ENDFUNCTION()
 
 
 #
-# Clone or update the whole list of extra repositories
+# Update the branch of the base git repo
+#
+FUNCTION(TRIBITS_SET_BASE_REPO_BRANCH  CTEST_UPDATE_RETURN_VAL
+  UPDATE_FAILED_VAR_OUT
+  )
+
+  SET(GIT_CHECKOUT_RETURN_VAL "0")
+
+  IF (${PROJECT_NAME}_BRANCH AND NOT "${CTEST_UPDATE_RETURN_VAL}" LESS "0")
+
+    MESSAGE("For base repo, doing switch to branch ${${PROJECT_NAME}_BRANCH}")
+
+    SET(EXECUTE_PROCESS_COMMANDS_ARGS
+      COMMAND ${GIT_EXE} checkout
+        -B ${${PROJECT_NAME}_BRANCH} --track origin/${${PROJECT_NAME}_BRANCH}
+      WORKING_DIRECTORY ${CTEST_SOURCE_DIRECTORY}
+      RESULT_VARIABLE GIT_CHECKOUT_RETURN_VAL
+      OUTPUT_VARIABLE BRANCH_OUTPUT
+      ERROR_VARIABLE  BRANCH_ERROR
+      )
+     # NOTE: Above will work smoothly even if the local branch already
+     # exists and/or is already on that branch.  This command does not move
+     # ORIG_HEAD so it will not mess up the pull and update that CTest did
+     # for the base repo.
+
+    IF (NOT CTEST_DEPENDENCY_HANDLING_UNIT_TESTING)
+      EXECUTE_PROCESS(${EXECUTE_PROCESS_COMMANDS_ARGS})
+    ELSE()
+      MESSAGE("EXECUTE_PROCESS(${EXECUTE_PROCESS_COMMANDS_ARGS})")
+      SET(GIT_CHECKOUT_RETURN_VAL 0)
+    ENDIF()
+
+    IF(NOT "${GIT_CHECKOUT_RETURN_VAL}" EQUAL "0")
+      MESSAGE("Switch to branch ${${PROJECT_NAME}_BRANCH} failed with"
+        " error code ${GIT_CHECKOUT_RETURN_VAL}")
+      QUEUE_ERROR("Switch to branch ${${PROJECT_NAME}_BRANCH} failed with"
+        " error code ${GIT_CHECKOUT_RETURN_VAL}")
+    ENDIF()
+    #Apparently the successful branch switch is also written to stderr.
+    MESSAGE("${BRANCH_ERROR}")
+
+  ENDIF()
+
+  IF ("${CTEST_UPDATE_RETURN_VAL}" LESS "0" OR NOT "${GIT_CHECKOUT_RETURN_VAL}" EQUAL "0")
+    SET(${UPDATE_FAILED_VAR_OUT} TRUE PARENT_SCOPE)
+  ELSE()
+    SET(${UPDATE_FAILED_VAR_OUT} FALSE PARENT_SCOPE)
+  ENDIF()
+
+ENDFUNCTION()
+
+
+#
+# Clone or update all of the repos and put them on right branch
+#
+# NOTE: The base repo is cloned and updated by CTEST_UPDATE() before calling
+# this function.  This function only puts the base repo on the right branch.
 #
 
-FUNCTION(CLONE_OR_UPDATE_ALL_EXTRAREPOS  CHANGES_STR_VAR_OUT)
+FUNCTION(TRIBITS_CLONE_OR_UPDATE_ALL_REPOS  CTEST_UPDATE_RETURN_VAL
+  UPDATE_FAILED_VAR_OUT
+  )
 
-  SET(CHANGES_STR "")
+  SET(UPDATE_FAILED FALSE)
+
+  # A) Put the base repo on the right branch
+
+  TRIBITS_SET_BASE_REPO_BRANCH(${CTEST_UPDATE_RETURN_VAL}  BASE_REPO_UPDATE_FAILED)
+  IF (BASE_REPO_UPDATE_FAILED)
+    SET(UPDATE_FAILED TRUE)
+  ENDIF()
+
+  # B) Clone and update the extra repos
+
+  IF (${PROJECT_NAME}_EXTRAREPOS_BRANCH)
+    MESSAGE("For extra repos, doing switch to branch ${${PROJECT_NAME}_EXTRAREPOS_BRANCH}")
+  ENDIF()
 
   SET(EXTRAREPO_IDX 0)
   FOREACH(EXTRAREPO_NAME ${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES})
-    LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIRS ${EXTRAREPO_IDX} EXTRAREPO_DIR )
-    LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_VCTYPES ${EXTRAREPO_IDX} EXTRAREPO_REPOTYPE )
-    LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_REPOURLS ${EXTRAREPO_IDX} EXTRAREPO_REPOURL )
-    CLONE_OR_UPDATE_EXTRAREPO(${EXTRAREPO_NAME} ${EXTRAREPO_DIR}
-      ${EXTRAREPO_REPOTYPE} ${EXTRAREPO_REPOURL} CHANGES_STR)
+    LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIRS ${EXTRAREPO_IDX}
+      EXTRAREPO_DIR )
+    LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_VCTYPES ${EXTRAREPO_IDX}
+      EXTRAREPO_REPOTYPE )
+    LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_REPOURLS ${EXTRAREPO_IDX}
+      EXTRAREPO_REPOURL )
+    TRIBITS_CLONE_OR_UPDATE_EXTRAREPO( ${EXTRAREPO_NAME} ${EXTRAREPO_DIR}
+      ${EXTRAREPO_REPOTYPE} ${EXTRAREPO_REPOURL} )
+    # ToDo: Detect and return failure
     MATH(EXPR EXTRAREPO_IDX "${EXTRAREPO_IDX}+1")
   ENDFOREACH()
 
-  SET(${CHANGES_STR_VAR_OUT} "${CHANGES_STR}" PARENT_SCOPE)
+  SET(${UPDATE_FAILED_VAR_OUT} ${UPDATE_FAILED} PARENT_SCOPE)
 
+ENDFUNCTION()
+
+
+#
+# Create the Updates.txt file
+#
+FUNCTION(TRIBITS_CREATE_REPO_UPDATES_FILE)
+  EXTRAREPO_EXECUTE_PROCESS_WRAPPER(
+    COMMAND ${PYTHON_EXECUTABLE}
+      ${GITDIST_EXE} --dist-no-color
+      log "--pretty=format:%h:  %s%nAuthor: %an <%ae>%nDate:   %ad%n"
+      --name-status -C ORIG_HEAD..HEAD
+    WORKING_DIRECTORY ${CTEST_SOURCE_DIRECTORY}
+    OUTPUT_FILE "${CTEST_BINARY_DIRECTORY}/Updates.txt"
+    )
 ENDFUNCTION()
 
 
 #
 # Select the set of extra repositories
 #
-
 MACRO(TRIBITS_SETUP_EXTRAREPOS)
 
   IF (EXISTS "${${PROJECT_NAME}_EXTRAREPOS_FILE}" )
@@ -444,7 +487,6 @@ MACRO(ENABLE_PACKAGE_IF_NOT_EXPLICITLY_EXCLUDED  TRIBITS_PACKAGE)
 ENDMACRO()
 
 
-
 #
 # Select packages set by the input
 #
@@ -517,10 +559,9 @@ MACRO(ENABLE_ONLY_MODIFIED_PACKAGES)
     LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_HASPKGS
       ${EXTRAREPO_IDX} EXTRAREPO_PACKSTAT )
 
-    # For now, only look for changes if it has packages.  Later, we need to
-    # generalize this for the general extra repo case with deeper directory
-    # and other than GIT (e.g. SVN with Dakota).  For example, we would like
-    # to pick up changes to Dakota and therefore enable TriKota to build.
+    # For now, only look for changes if it has packages.  Later, we may need
+    # to generalize this for the general extra repo case with deeper directory
+    # and other VC systems than GIT.
     IF (EXTRAREPO_PACKSTAT STREQUAL HASPACKAGES)
 
       SET(EXTRAREPO_SRC_DIR "${CTEST_SOURCE_DIRECTORY}/${EXTRAREPO_DIR}")
@@ -637,7 +678,6 @@ ENDMACRO()
 # Remove packages that are only implicitly enabled but don't have tests
 # enabled.
 #
-#
 MACRO(SELECT_FINAL_SET_OF_PACKAGES_TO_PROCESS)
 
   SET(${PROJECT_NAME}_PACKAGES_TO_PROCESS)
@@ -715,11 +755,11 @@ ENDMACRO()
 
 
 #
-# Call REPORT_QUEUED_ERRORS once at the bottom of TRIBITS_CTEST_DRIVER
+# Call REPORT_QUEUED_ERRORS() once at the bottom of TRIBITS_CTEST_DRIVER()
 #
 
 MACRO(REPORT_QUEUED_ERRORS)
-  IF("${TRIBITS_CTEST_DRIVER_ERROR_QUEUE}" STREQUAL "")
+  IF ("${TRIBITS_CTEST_DRIVER_ERROR_QUEUE}" STREQUAL "")
     MESSAGE("TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well.")
   ELSE()
     MESSAGE("error: TRIBITS_CTEST_DRIVER_ERROR_QUEUE reports the following error message queue:")
@@ -894,6 +934,88 @@ ENDMACRO()
 # ToDo: Document input variables that have defaults, to be set before, and can
 # be overridden from the env.
 #
+# **Repository updates:**
+#
+# Like the rest of TriBITS, ``ctest -S`` scripts written using this function
+# supports a collection of extra repositories in addition to the base
+# repository.  The basic clone of the extra repositories requires all repos to
+# use the version control system.
+#
+# CTest itself is used for handling the cloning and the pull of the base
+# repository by calling ``CTEST_UPDATE()``.  The other extra git repositories
+# are completely handled by the code in this function as described below.
+#
+# After the base repository is cloned for the first time (by calling
+# ``CTEST_UPDATE()``), the extra repositories are cloned using the following
+# command::
+#
+#   git clone <extrarepo_url>
+# 
+# Therefore, by default, whatever the default branch is set to on clone, that
+# is the branch that will be used.  Also, future repository updates will be
+# done on those branches.
+#
+# However, if ``${PROJECT_NAME}_BRANCH`` is set to non-empty, then that branch
+# will be checked out in all of the repositories.  For the base repository,
+# after the clone or update, that branch is checked out using the command::
+#
+#   $ git checkout -B ${${PROJECT_NAME}_BRANCH} \
+#       --track origin/${${PROJECT_NAME}_BRANCH}`
+#
+# That command is robust and will pass even if the current branch is already a
+# tracking branch for ``origin/${${PROJECT_NAME}_BRANCH}``.
+#
+# If ``${PROJECT_NAME}_BRANCH`` is empty, then each extra repository is
+# updated (even after the initial clone) using the commands::
+#
+#   $ git clean -fdx         # Remove untracked ignored files
+#   $ git reset --hard HEAD  # Removed untracked and modified tracked files
+#   $ git fetch origin       # Get updated commits
+#   $ git reset --hard @{u}  # Deal with forced push
+#
+# The command ``git clone -fdx`` removes any untracked ignored files that may
+# have been created since the last update (either by the build process or by
+# someone messing around in that git repository).  The command ``git reset
+# --hard HEAD`` removes any untracked non-ignored files, any modified tracked
+# files, and sets ``ORIG_HEAD`` to the current ``HEAD``.  This sets
+# ``ORIG_HEAD`` after the initial clone (as ``ORIG_HEAD`` is not set after a
+# ``git clone``).  This allows using the range ``ORIG_HEAD..HEAD`` with git
+# diff and log commands even after the initial clone.  The ``git fetch``
+# command followed by the ``git reset --hard @{u}`` command is used to update
+# the local repo to match the remote tracking branch instead of ``git pull` or
+# ``git fetch ; git merge @{u}``.  This is done to deal with a possible forced
+# push of the remote tracking branch.  Using ``git fetch ; git reset --hard
+# @{u}`` ensures that the local branch is exactly the same the remote tracking
+# branch no matter what.
+#
+# If ``${PROJECT_NAME}_BRANCH`` is non-empty, then each extra repository is
+# updated (even after the initial clone) using the commands::
+#
+#   $ git clean -fdx         # Remove untracked ignored files
+#   $ git reset --hard HEAD  # Clean files and set ORIG_HEAD to HEAD
+#   $ git fetch origin       # Get updated commits
+#   $ git checkout -B ${${PROJECT_NAME}_BRANCH} \
+#       --track origin/${${PROJECT_NAME}_BRANCH}  # Put on tracking branch
+#
+# These are the same commands as for the case where ``${PROJECT_NAME}_BRANCH``
+# is empty except for the last command which does a checkout of the tracking
+# branch ``${PROJECT_NAME}_BRANCH``.  In this case, the ``git reset --hard
+# HEAD`` serves an additional purpose.  It sets ``ORIG_HEAD`` to the current
+# ``HEAD`` before the update of the branch.  This is important because the
+# command ``git checkout -B ...`` does not move ``ORIG_HEAD`` so this reset is
+# needed so that the git range ``ORIG_HEAD..HEAD`` gives the changes since the
+# last update.  So for an update where no new commits are pulled,
+# ``ORIG_HEAD..HEAD`` will return no commits.
+#
+# Note that the repository updating approach using non-empty
+# ``${PROJECT_NAME}_BRANCH`` is more robust, because it can recover from a
+# state where someone may have put the repo on a detached head or checked out
+# a different branch.  This might occur when a person is messing around in the
+# Nightly build and source directories to try to figure out what happened and
+# forgot to put the repos back on the correct tracking branch.  Therefore, it
+# is recommended to always set ``${PROJECT_NAME}_BRANCH`` to a non-null value
+# like ``master`` for git repos.
+#
 # ToDo: Finish Documentation!
 #
 FUNCTION(TRIBITS_CTEST_DRIVER)
@@ -1065,6 +1187,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   ENDIF()
   SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_BRANCH "${${PROJECT_NAME}_BRANCH_DEFAULT}" )
 
+  SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_EXTRAREPOS_BRANCH "${${PROJECT_NAME}_BRANCH}" )
+
   SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE "${${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE_DEFAULT}" )
 
   IF(CTEST_TEST_TYPE STREQUAL "Nightly")
@@ -1162,7 +1286,6 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
   IF (CTEST_DEPENDENCY_HANDLING_UNIT_TESTING)
     SET(GIT_EXE /somebasedir/git)
-    SET(SVN_EXE /someotherbasedir/svn)
   ENDIF()
 
 
@@ -1235,6 +1358,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # Setup for the VC update
   #
 
+  SET(CREATE_VC_UPDATE_FILE FALSE)
+
   IF (CTEST_DO_UPDATES)
 
     SET(UPDATE_TYPE "git")
@@ -1242,6 +1367,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
     SET(CTEST_UPDATE_COMMAND "${GIT_EXE}")
     MESSAGE("CTEST_UPDATE_COMMAND='${CTEST_UPDATE_COMMAND}'")
+
     IF(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
       MESSAGE("${CTEST_SOURCE_DIRECTORY} does not exist so setting up for an initial checkout")
       SET( CTEST_CHECKOUT_COMMAND
@@ -1249,7 +1375,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
       MESSAGE("CTEST_CHECKOUT_COMMAND='${CTEST_CHECKOUT_COMMAND}'")
     ELSE()
       MESSAGE("${CTEST_SOURCE_DIRECTORY} exists so skipping the initial checkout.")
+      SET(CREATE_VC_UPDATE_FILE TRUE)
     ENDIF()
+
   ENDIF()
 
   #
@@ -1305,6 +1433,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   ELSE()
     CTEST_START(${CTEST_TEST_TYPE})
   ENDIF()
+  # NOTE: If the soruce directory does not yet exist, then CTEST_START() will
+  # clone it!
 
 
   MESSAGE(
@@ -1312,7 +1442,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     "\n*** Update the source code repositories ..."
     "\n***\n")
 
-  SET(UPDATE_FAILED TRUE)
+  SET(UPDATE_FAILED FALSE)
 
   IF (CTEST_DO_UPDATES)
 
@@ -1322,69 +1452,27 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
       RETURN()
     ENDIF()
 
-    MESSAGE("\nDoing GIT update of '${CTEST_SOURCE_DIRECTORY}' ...")
+    MESSAGE("\nCalling CTEST_UPDATE() to update base source repo '${CTEST_SOURCE_DIRECTORY}' ...")
     CTEST_UPDATE_WRAPPER( SOURCE "${CTEST_SOURCE_DIRECTORY}"
-      RETURN_VALUE  UPDATE_RETURN_VAL)
-    MESSAGE("CTEST_UPDATE(...) returned '${UPDATE_RETURN_VAL}'")
+      RETURN_VALUE  CTEST_UPDATE_RETURN_VAL)
+    MESSAGE("CTEST_UPDATE(...) returned '${CTEST_UPDATE_RETURN_VAL}'")
 
-    CLONE_OR_UPDATE_ALL_EXTRAREPOS(EXTRA_REPO_CHANGES_STR)
-
-    IF (CTEST_DEPENDENCY_HANDLING_UNIT_TESTING)
-      PRINT_VAR(EXTRA_REPO_CHANGES_STR)
-    ENDIF()
-
-    FILE(WRITE "${CTEST_BINARY_DIRECTORY}/Updates.txt"
-     ${EXTRA_REPO_CHANGES_STR})
-    # NOTE: Above, we are making the 'Updates.txt' file come first because
-    # this will be the first Notes file shown on CDash.
-
-    # Setting branch switch to success in case we are not doing a switch to a
-    # different branch.
-
-    SET(GIT_CHECKOUT_RETURN_VAL "0")
-
-    IF(${PROJECT_NAME}_BRANCH AND NOT "${UPDATE_RETURN_VAL}" LESS "0" AND NOT CTEST_DEPENDENCY_HANDLING_UNIT_TESTING)
-
-      MESSAGE("Doing switch to branch ${${PROJECT_NAME}_BRANCH}")
-
-      EXECUTE_PROCESS(COMMAND ${GIT_EXE} checkout ${${PROJECT_NAME}_BRANCH}
-        WORKING_DIRECTORY ${CTEST_SOURCE_DIRECTORY}
-        RESULT_VARIABLE GIT_CHECKOUT_RETURN_VAL
-        OUTPUT_VARIABLE BRANCH_OUTPUT
-        ERROR_VARIABLE  BRANCH_ERROR
-      )
-
-      IF(NOT "${GIT_CHECKOUT_RETURN_VAL}" EQUAL "0")
-        EXECUTE_PROCESS(COMMAND ${GIT_EXE} checkout --track origin/${${PROJECT_NAME}_BRANCH}
-          WORKING_DIRECTORY ${CTEST_SOURCE_DIRECTORY}
-          RESULT_VARIABLE GIT_CHECKOUT_RETURN_VAL
-          OUTPUT_VARIABLE BRANCH_OUTPUT
-          ERROR_VARIABLE  BRANCH_ERROR
-        )
-      ENDIF()
-
-      IF(NOT "${GIT_CHECKOUT_RETURN_VAL}" EQUAL "0")
-        MESSAGE("Switch to branch ${${PROJECT_NAME}_BRANCH} failed with"
-          " error code ${GIT_CHECKOUT_RETURN_VAL}")
-        QUEUE_ERROR("Switch to branch ${${PROJECT_NAME}_BRANCH} failed with"
-          " error code ${GIT_CHECKOUT_RETURN_VAL}")
-      ENDIF()
-      #Apparently the successful branch switch is also written to stderr.
-      MESSAGE("${BRANCH_ERROR}")
-
-    ENDIF()
-
-    IF ("${UPDATE_RETURN_VAL}" LESS "0" OR NOT "${GIT_CHECKOUT_RETURN_VAL}" EQUAL "0")
+    TRIBITS_CLONE_OR_UPDATE_ALL_REPOS(${CTEST_UPDATE_RETURN_VAL}  LOC_UPDATE_FAILED)
+    IF (LOC_UPDATE_FAILED)
       SET(UPDATE_FAILED TRUE)
-    ELSE()
-      SET(UPDATE_FAILED FALSE)
+    ENDIF()
+
+    IF (CREATE_VC_UPDATE_FILE)
+      TRIBITS_CREATE_REPO_UPDATES_FILE()
+      # NOTE: We can only create the Updates.txt file using `gitdist
+      # ... ORIG_HEAD..HEAD` when doing an update and not after the initial
+      # clone.  That is because ORIG_HEAD will not exist for the base git repo
+      # after the initial clone.
     ENDIF()
 
   ELSE()
 
      MESSAGE("Skipping the update by request!")
-
-     SET(UPDATE_FAILED FALSE)
 
   ENDIF()
 
@@ -1655,6 +1743,12 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
       ELSE()
         SET(CTEST_NOTES_FILES "${CTEST_NOTES_FILES_WO_CACHE}")
       ENDIF()
+
+      SET(REPO_VERSION_FILE "${CTEST_BINARY_DIRECTORY}/${PROJECT_NAME}RepoVersion.txt")
+      IF (EXISTS "${REPO_VERSION_FILE}")
+        SET(CTEST_NOTES_FILES "${REPO_VERSION_FILE};${CTEST_NOTES_FILES}")
+      ENDIF()
+
       PRINT_VAR(CTEST_NOTES_FILES)
 
       # Submit configure results and the notes to the dashboard
