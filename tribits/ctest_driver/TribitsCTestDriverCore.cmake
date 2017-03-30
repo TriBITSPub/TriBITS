@@ -227,28 +227,6 @@ MACRO(EXTRAREPO_EXECUTE_PROCESS_WRAPPER)
   ENDIF()
 ENDMACRO()
 
-#
-# Wrapper for getting the tracking branch
-#
-FUNCTION(EXTRAREPO_GET_TRACKING_BRANCH  EXTRAREPO_SRC_DIR  TRACKING_BRANCH_OUT)
-  IF (NOT CTEST_DEPENDENCY_HANDLING_UNIT_TESTING)
-    EXECUTE_PROCESS(
-      COMMAND "${GIT_EXE}" rev-parse --abbrev-ref --symbolic-full-name @{u}
-      WORKING_DIRECTORY "${EXTRAREPO_SRC_DIR}"
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-      RESULT_VARIABLE  EP_RTN
-      OUTPUT_VARIABLE  TRACKING_BRANCH
-      )
-    IF (NOT EP_RTN STREQUAL "0")
-      MESSAGE(SEND_ERROR "Error: obtaining tracking branch for repo"
-        " '${EXTRAREPO_SRC_DIR}' failed!" )
-    ENDIF()
-  ELSE()
-    SET(TRACKING_BRANCH "tracking/branch")
-  ENDIF()
-  SET(${TRACKING_BRANCH_OUT}  ${TRACKING_BRANCH}  PARENT_SCOPE)
-ENDFUNCTION()
-
 
 #
 # Update or clone a single extra repo
