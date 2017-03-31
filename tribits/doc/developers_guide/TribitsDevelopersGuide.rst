@@ -2246,8 +2246,8 @@ project's build files::
   $ cmake [options] <projectDir>
 
 Below, is a short pseudo-code algorithm for the TriBITS framework processing
-and callbacks that begin in the `<projectDir>/CMakeLists.txt`_ and proceed
-through the call to `TRIBITS_PROJECT()`_.
+and callbacks that begins in the `<projectDir>/CMakeLists.txt`_ file and
+proceeds through the call to `TRIBITS_PROJECT()`_.
 
 .. _Full Processing of TriBITS Project Files:
 
@@ -2305,11 +2305,11 @@ through the call to `TRIBITS_PROJECT()`_.
 |       * ``INCLUDE(`` `<repoDir>/cmake/CallbackDefineRepositoryPackaging.cmake`_ ``)``
 |       * Call ``TRIBITS_REPOSITORY_DEFINE_PACKAGING()``
 
-The TriBITS Framework obviously does a lot more that what is described above
+The TriBITS Framework obviously does a lot more than what is described above
 but the basic trace of major operations and ordering and the processing of
 project, repository, package, and subpackage files should be clear.  All of
 this information should also be clear when enabling `File Processing
-Tracing`_. 
+Tracing`_ and watching the output from the ``cmake`` configure STDOUT.
 
 Reduced Package Dependency Processing 
 ++++++++++++++++++++++++++++++++++++++
