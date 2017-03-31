@@ -496,7 +496,7 @@ IF (PYTHON_EXECUTABLE)
       CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled packages:  0"
-      "MODIFIED_PACKAGES_LIST='':  No modified packages to justify continuous integration test iteration"
+      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
     SKIP_STANDARD_DEPS_CHECK
     )
 
@@ -619,6 +619,28 @@ IF (PYTHON_EXECUTABLE)
 
 
   CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedTeko_OnlyPrimaryTestedCode
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teko.txt modifiedFiles.preCopyrightTrilinos.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=TRUE
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- MODIFIED_PACKAGES_LIST='Teko'"
+      "NOT enabling modified ST package: Teko"
+      "Directly modified or failing non-disabled packages that need to be tested:  0"
+      "Explicitly enabled packages on input .by user.:  0"
+      "Final set of enabled packages:  0"
+      "Directly modified or failing non-disabled packages that need to be tested:  0"
+      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
+    )
+  # NOTE: The above test ensures that if an ST package is changed but only PT
+  # packages are enabled, then it will not be enabled.
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     CI_EnableOnlyModified_ModifiedTeuchosTeko
     COPY_FILES
       ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teuchos.txt modifiedFiles.txt
@@ -694,6 +716,27 @@ IF (PYTHON_EXECUTABLE)
 
 
   CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedNone_FailedTeko_OnlyPrimaryStableCode
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/failedPackages.Teko.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "MODIFIED_PACKAGES_LIST=''"
+      "FAILING_PACKAGES_LIST='Teko'"
+      "NOT enabling previously failing ST package: Teko"
+      "Directly modified or failing non-disabled packages that need to be tested:  0"
+      "Explicitly enabled packages on input .*  0"
+      "Final set of enabled packages:  0"
+      "Final set of packages to be explicitly processed by CTest/CDash:  0"
+      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     CI_EnableOnlyModified_ModifiedNone_FailedThyraRBGen
     COPY_FILES
       ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
@@ -706,10 +749,11 @@ IF (PYTHON_EXECUTABLE)
       "CTEST_UPDATE.+ returned '0'"
       "MODIFIED_PACKAGES_LIST=''"
       "FAILING_PACKAGES_LIST='Thyra.RBGen'"
+      "Enabling previously failing package: Thyra"
+      "Enabling previously failing package: RBGen"
       "Directly modified or failing non-disabled packages that need to be tested:  Thyra RBGen 2"
       "Explicitly enabled packages on input .*  Thyra RBGen 2"
       "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 23"
-      "MODIFIED_PACKAGES_LIST='':  No modified packages to justify continuous integration test iteration"
     )
 
 
@@ -732,8 +776,7 @@ IF (PYTHON_EXECUTABLE)
       "Explicitly enabled packages on input .*  0"
       "Explicitly disabled packages on input .*  Stokhos Stalix 2"
       "Final set of enabled packages:  0"
-      "Final set of non-enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko Stalix 26"
-      "MODIFIED_PACKAGES_LIST='':  No modified packages to justify continuous integration test iteration"
+      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
     )
 
 
