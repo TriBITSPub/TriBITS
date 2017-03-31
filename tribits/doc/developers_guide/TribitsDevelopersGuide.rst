@@ -2256,7 +2256,7 @@ through the call to `TRIBITS_PROJECT()`_.
 | 1.  Read `<projectDir>/ProjectName.cmake`_ (sets `PROJECT_NAME`_)
 | 2.  Call ``PROJECT(${PROJECT_NAME} NONE)`` (sets `${PROJECT_NAME}_SOURCE_DIR`_
 |     and `${PROJECT_NAME}_BINARY_DIR`_)
-| 3.  Execute `TRIBITS_PROJECT()`_:
+| 3.  Call `TRIBITS_PROJECT()`_:
 |   1)  Set `PROJECT_SOURCE_DIR`_ and `PROJECT_BINARY_DIR`_
 |   2)  For each ``<optFile>`` in ${`${PROJECT_NAME}_CONFIGURE_OPTIONS_FILE`_}
 |         ${`${PROJECT_NAME}_CONFIGURE_OPTIONS_FILE_APPEND`_}
@@ -2289,7 +2289,7 @@ through the call to `TRIBITS_PROJECT()`_.
 |       (see `Package Dependencies and Enable/Disable Logic`_)
 |   11) `Probe and set up the environment`_ (finds MPI, compilers, etc.)
 |       (see `TriBITS Environment Probing and Setup`_)
-|   12) For ``<tplName>`` in the set of enabled TPLs:
+|   12) For each ``<tplName>`` in the set of enabled TPLs:
 |       * ``INCLUDE(${<tplName>_FINDMOD})`` (see `TriBITS TPL`_)
 |   13) For each ``<repoDir>`` in all defined TriBITS repositories:
 |       * Read `<repoDir>/Copyright.txt`_
