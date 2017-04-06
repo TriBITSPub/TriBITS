@@ -43,7 +43,7 @@
 # TribitsCTestDriverCore.cmake scirpt.
 #
 # NOTE: Some variables need to be set in the calling script in order to
-# override options set in the environment form the parent TriBITS project run
+# override options set in the environment from the parent TriBITS project run
 # of TribitsCTestDriverCore.cmake
 #
 
