@@ -49,6 +49,14 @@ IF (HDF5_ALLOW_PREFIND)
     ")
   ENDIF()
 
+  # Make sure that HDF5 is parallel.
+  IF (TPL_ENABLE_MPI AND NOT HDF5_IS_PARALLEL)
+    MESSAGE(FATAL_ERROR "Trilinos is configured for MPI, HDF5 is not.
+    Did CMake find the correct libraries?
+    Try setting HDF5_INCLUDE_DIRS and/or HDF5_LIBRARY_DIRS explicitly.
+    ")
+  ENDIF()
+
   IF (HDF5_FOUND)
     # Tell TriBITS that we found HDF5 and there no need to look any further!
     SET(TPL_HDF5_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS} CACHE PATH
