@@ -842,6 +842,16 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllPackages_EnableBoost_TeuchosEnableBoostOff
+  ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
+    -DTeuchos_ENABLE_Boost=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "Enabling all optional package TPL support <TRIBITS_PACKAGE>_ENABLE_<DEPTPL> not currently disabled for enabled TPLs"
+    "-- NOTE: Teuchos_ENABLE_Boost=OFF is already set so not enabling even though TPL_ENABLE_Boost=ON is set!"
+  )
+
+
+CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   EnableZoltan_ZoltanEnableParMETIS
   ARGS  -DTrilinos_ENABLE_Zoltan=ON -DZoltan_ENABLE_ParMETIS=ON
   PASS_REGULAR_EXPRESSION_ALL
