@@ -502,6 +502,18 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
+CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllPackages_ST_EperraExtEnableTriutilsOff
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DEpetraExt_ENABLE_Triutils=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- NOTE: EpetraExt_ENABLE_Triutils=OFF is already set so not enabling even though Trilinos_ENABLE_Triutils=ON is set!"
+  )
+
+
 #####################################################################
 #
 # Unit tests for dependency handling for full set of packages
