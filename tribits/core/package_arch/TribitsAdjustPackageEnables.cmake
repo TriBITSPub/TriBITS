@@ -1565,6 +1565,9 @@ MACRO(TRIBITS_PRIVATE_POSTPROCESS_OPTIONAL_PACKAGE_ENABLE PACKAGE_NAME OPTIONAL_
        " since ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=ON AND"
        " ${PROJECT_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE}=ON")
       SET(${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE} ON)
+    ELSE()
+      MESSAGE("-- " "NOT setting ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE}=ON"
+       " since ${OPTIONAL_DEP_PACKAGE} is NOT enabled at this point!")
     ENDIF()
   ENDIF()
 
@@ -2425,7 +2428,7 @@ MACRO(TRIBITS_ADJUST_PACKAGE_ENABLES)
   #
 
   MESSAGE("")
-  MESSAGE("Enabling all parent packages that have at least one subpackage enabled ...")
+  MESSAGE("Enabling the shell of non-enabled parent packages (mostly for show) that have at least one subpackage enabled ...")
   MESSAGE("")
   FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
     TRIBITS_POSTPROCESS_PACKAGE_WITH_SUBPACKAGES_ENABLES(${TRIBITS_PACKAGE})

@@ -2256,14 +2256,18 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableW
     PASS_REGULAR_EXPRESSION_ALL
       "Explicitly enabled SE packages on input .by user.:  WithSubpackagesB 1"
       "-- Setting TribitsExProj_ENABLE_WrapExternal=OFF because WrapExternal has a required library dependence on disabled package WithSubpackagesA"
-      "Enabling all parent packages that have at least one subpackage enabled [.][.][.]"
+      "Enabling all optional intra-package enables <TRIBITS_PACKAGE>_ENABLE_<DEPPACKAGE> that are not currently disabled if both sets of packages are enabled [.][.][.]"
+      "-- NOT setting WithSubpackagesB_ENABLE_MixedLang=ON since MixedLang is NOT enabled at this point!"
+      "Enabling the shell of non-enabled parent packages [(]mostly for show[)] that have at least one subpackage enabled [.][.][.]"
       "-- Setting TribitsExProj_ENABLE_WithSubpackages=ON because TribitsExProj_ENABLE_WithSubpackagesB=ON"
       "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
       "Final set of enabled SE packages:  SimpleCxx WithSubpackagesB WithSubpackages 3"
 
   )
 # NOTE: The above test is the *only* test that we have that checks that a
-# parent package is re-enabled if any of its subpackages are enabled!
+# parent package is enabled at the end if any of its subpackages are enabled!
+# This is also the only test that looks for the output that an optional
+# package enable is not set.
 
 
 ##################################
