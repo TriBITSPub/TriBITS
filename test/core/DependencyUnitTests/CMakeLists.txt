@@ -514,6 +514,18 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
+CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllPackages_ST_EpetraExtEnableTriutilsOn
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DEpetraExt_ENABLE_Triutils=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- NOTE: EpetraExt_ENABLE_Triutils=ON is already set!"
+  )
+
+
 #####################################################################
 #
 # Unit tests for dependency handling for full set of packages
@@ -848,6 +860,15 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   PASS_REGULAR_EXPRESSION_ALL
     "Enabling all optional package TPL support <TRIBITS_PACKAGE>_ENABLE_<DEPTPL> not currently disabled for enabled TPLs"
     "-- NOTE: Teuchos_ENABLE_Boost=OFF is already set so not enabling even though TPL_ENABLE_Boost=ON is set!"
+  )
+
+
+CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllPackages_EnableBoost_TeuchosEnableBoostOn
+  ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
+    -DTeuchos_ENABLE_Boost=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- NOTE: Teuchos_ENABLE_Boost=ON is already set!"
   )
 
 
