@@ -760,7 +760,7 @@ ENDMACRO()
 #
 MACRO(TRIBITS_READ_ALL_PACKAGE_SUBPACKAGE_DEPENDENCIES  PACKAGE_NAME  PACKAGE_DIR)
 
-  #MESSAGE("TRIBITS_READ_ALL_PACKAGE_SUBPACKAGE_DEPENDENCIES: ${PACAKGE_NAME} ${PACKAGE_DIR}")
+  #MESSAGE("TRIBITS_READ_ALL_PACKAGE_SUBPACKAGE_DEPENDENCIES: ${PACKAGE_NAME} ${PACKAGE_DIR}")
 
   #PRINT_VAR(${PROJECT_NAME}_SE_PACKAGES)
 
@@ -893,7 +893,7 @@ MACRO(TRIBITS_READ_PACKAGE_DEPENDENCIES  PACKAGE_NAME  PACKAGE_DIR)
     MATH(EXPR SUBPACKAGE_IDX "${SUBPACKAGE_IDX}+1")
   ENDFOREACH()
 
-  # Append this package to list of SE pacakges *after* subpackages are added!
+  # Append this package to list of SE packages *after* subpackages are added!
   LIST(APPEND ${PROJECT_NAME}_SE_PACKAGES ${PACKAGE_NAME})
 
   # Process this parent package's dependency lists!
@@ -2335,7 +2335,7 @@ MACRO(TRIBITS_ADJUST_PACKAGE_ENABLES)
       TRIBITS_ENABLE_FORWARD_TEST_PACKAGE_ENABLES(${TRIBITS_PACKAGE})
     ENDFOREACH()
     # NOTE: Above, we want to sweep backward to enable test-dependent packages
-    # because we don't want to enable pacakge Z just because pacakge Y was enabled
+    # because we don't want to enable package Z just because package Y was enabled
     # because it had a test-only dependency on package X.  Sweeping backwards through
     # the packages makes sure this does not happen.
     SET(${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES ON)
