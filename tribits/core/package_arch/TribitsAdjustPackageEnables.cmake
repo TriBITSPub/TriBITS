@@ -1081,7 +1081,8 @@ FUNCTION(TRIBITS_PRIVATE_PRINT_DISABLE
       MESSAGE(
         " ***\n"
         " *** WARNING: Setting ${ENABLE_BEING_DISABLED_VAR_NAME}=OFF"
-        " which was 'ON' because ${PACKAGE_WITH_SOMETHING_BEING_DISABLED} has"
+        " which was '${${ENABLE_BEING_DISABLED_VAR_NAME}}' because"
+        " ${PACKAGE_WITH_SOMETHING_BEING_DISABLED} has"
         " a required ${DEP_TYPE_STR} dependence on disabled"
         " ${THING_DISALBED_TYPE} ${THING_DISABLED_NAME}"
         " but ${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!\n"
@@ -1091,7 +1092,8 @@ FUNCTION(TRIBITS_PRIVATE_PRINT_DISABLE
       MESSAGE(FATAL_ERROR
         " ***\n"
         " *** ERROR: Setting ${ENABLE_BEING_DISABLED_VAR_NAME}=OFF"
-        " which was 'ON' because ${PACKAGE_WITH_SOMETHING_BEING_DISABLED} has"
+        " which was '${${ENABLE_BEING_DISABLED_VAR_NAME}}' because"
+        " ${PACKAGE_WITH_SOMETHING_BEING_DISABLED} has"
         " a required ${DEP_TYPE_STR} dependence on disabled"
         " ${THING_DISALBED_TYPE} ${THING_DISABLED_NAME}!\n"
         " ***\n"
