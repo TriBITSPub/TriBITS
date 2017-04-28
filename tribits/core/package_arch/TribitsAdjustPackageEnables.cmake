@@ -1243,10 +1243,18 @@ MACRO(TRIBITS_PRIVATE_DISABLE_OPTIONAL_PACKAGE_ENABLES
     # Always disable the conditional enable but only print the message if the package is enabled.
     #MESSAGE("--  Disasble ${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME} ...")
     IF (${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME})
-      MESSAGE("-- "
-        "Setting ${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}=OFF"
-        " because ${FORWARD_DEP_PACKAGE_NAME} has an optional library dependence"
-        " on disabled package ${PACKAGE_NAME}")
+      IF (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})  # is explicity try already!
+        MESSAGE("-- "
+          "NOTE: Setting ${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}=OFF"
+          " which was ${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}}"
+          " because ${FORWARD_DEP_PACKAGE_NAME} has an optional library dependence"
+          " on disabled package ${PACKAGE_NAME}")
+      ELSE()  # Not explicitly set
+        MESSAGE("-- "
+          "Setting ${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}=OFF"
+          " because ${FORWARD_DEP_PACKAGE_NAME} has an optional library dependence"
+          " on disabled package ${PACKAGE_NAME}")
+      ENDIF()
     ENDIF()
     SET(${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME} OFF)
   ENDIF()
@@ -1618,11 +1626,9 @@ MACRO(TRIBITS_PRIVATE_POSTPROCESS_OPTIONAL_TPL_ENABLE PACKAGE_NAME OPTIONAL_DEP_
       " ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}=${${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}}"
       " is already set!")
   ELSEIF (
-    (
-      (NOT TPL_ENABLE_${OPTIONAL_DEP_TPL})
-      AND
-      (NOT "${TPL_ENABLE_${OPTIONAL_DEP_TPL}}" STREQUAL "")
-      )
+    (NOT TPL_ENABLE_${OPTIONAL_DEP_TPL})
+    AND
+    (NOT "${TPL_ENABLE_${OPTIONAL_DEP_TPL}}" STREQUAL "")
     AND
     ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}
     )

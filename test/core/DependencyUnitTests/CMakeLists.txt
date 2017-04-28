@@ -526,6 +526,19 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
+CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+ ST_EnableEpetraExt_DisableTriutils_EpetraExtEnableTriutilsOn
+  ARGS
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DTrilinos_ENABLE_EpetraExt=ON
+    -DTrilinos_ENABLE_Triutils=OFF
+    -DEpetraExt_ENABLE_Triutils=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- NOTE: Setting EpetraExt_ENABLE_Triutils=OFF which was ON because EpetraExt has an optional library dependence on disabled package Triutils"
+  )
+
+
 #####################################################################
 #
 # Unit tests for dependency handling for full set of packages
