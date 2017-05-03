@@ -48,7 +48,7 @@ TriBITS makes no attempt to hide that fact either from the TriBITS project
 developers or from the users that need to configure and build the software.
 Therefore, to make effective usage of TriBITS, one must learn the basics of
 CMake (both as a developer and as a user).  In particular, CMake is a
-Turning-complete programming language with local varaibles, global variables, macros, functions, targets, commands, and other
+Turning-complete programming language with local variables, global variables, macros, functions, targets, commands, and other
 features.  One needs to understand how to define and use variables, macros,
 and functions in CMake.  One needs to know how to debug CMakeLists.txt files
 and CMake code in general (i.e. using ``MESSAGE()`` print statements).  One
@@ -1063,7 +1063,7 @@ processed by TriBITS:
     the built-in ``PROJECT()`` command called in the top-level
     `<projectDir>/CMakeLists.txt`_ file..
 
-The following `cache varaibles` are defined for every TriBITS project:
+The following `cache variables` are defined for every TriBITS project:
 
   .. _${PROJECT_NAME}_TRIBITS_DIR:
 
@@ -1163,7 +1163,7 @@ In short, a TriBITS Repository:
   respectively)
 * Defines the base source and binary directories for the Repository
   ``${REPOSITORY_NAME}_SOURCE_DIR`` and ``${REPOSITORY_NAME}_BINARY_DIR``.
-* Defines a common set of initializations and other hooks for a all the
+* Defines a common set of initializations and other hooks for all the
   packages in the repository.
 * Typically maps to a VC (i.e. git) repository and therefore represents a unit
   of integration, versioning and reuse.  (But core TriBITS has no dependency
@@ -1356,7 +1356,7 @@ specific to this TriBITS Repository.  This file must define the macro
 file is processed as the top project-level scope so any local variables set
 have project-wide effect.  This file is processed after the project's
 `<projectDir>/cmake/CallbackDefineProjectPackaging.cmake`_ file so any project
-CPACK varaibles are defined for the repository-level options and commands are
+CPACK variables are defined for the repository-level options and commands are
 created.  This file typically just sets extra excludes to remove files from
 the tarball.  The file:
 
@@ -1404,7 +1404,7 @@ are processed:
   ``${REPOSITORY_NAME}_SOURCE_DIR``
 
     The absolute path to the base of a given TriBITS Repository's source
-    directory.  CMake code, for example in a packages's ``CMakeLists.txt``
+    directory.  CMake code, for example in a packages' ``CMakeLists.txt``
     file, typically refers to this by the raw name like ``RepoX_SOURCE_DIR``.
     This makes such CMake code independent of where the various TriBITS repos
     are in relation to each other or the TriBITS Project (but does hard-code
@@ -1418,7 +1418,7 @@ are processed:
     where the various TriBITS repos are in relation to each other or the
     Project.
 
-The following project-level local varaibles can be defined by the project or
+The following project-level local variables can be defined by the project or
 the user to help define the what packages from the repository
 ``${REPOSITORY_NAME}`` contribute to the primary meta-project packages (PMPP):
 
@@ -1626,7 +1626,7 @@ The final command in the package's base ``CMakeLists.txt`` file must always be
 necessary post-processing by TriBITS.
 
 It is also possible for the package's top-level ``CMakeLists.txt`` to be the
-only ``CMakeLists.txt`` file for a package.  Such an example can be see in the
+only ``CMakeLists.txt`` file for a package.  Such an example can be seen in the
 example project `TribitsHelloWorld`_ in the ``HelloWorld`` package.
 
 When a TriBITS package is broken up into subpackages (see `TriBITS
@@ -1656,7 +1656,7 @@ base ``CMakeLists.txt`` file is `TRIBITS_PACKAGE_POSTPROCESS()`_.
 NOTE: The package's base ``CMakeLists.txt`` file only gets processed if the
 package is actually enabled
 (i.e. ``${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=ON``).  This is an important
-design feature of TriBITS in that the contents of non-enabled package's can't
+design feature of TriBITS in that the contents of non-enabled packages can't
 damage the configure, build, and test of the enabled packages based on errors
 in non-enabled packages.  This is critical to allow experimental `EX`_
 test-group packages and lower-maturity packages to exist in the same source
@@ -1682,7 +1682,7 @@ are being processed:
   ``PACKAGE_NAME``
 
     The name of the current TriBITS SE package.  This is set automatically by
-    TriBITS before the packages's ``CMakeLists.txt`` file is processed.
+    TriBITS before the packages' ``CMakeLists.txt`` file is processed.
     **WARNING:** This name must be globally unique across the entire project
     (see `Globally unique TriBITS package names`_).
 
@@ -1714,7 +1714,7 @@ defined:
     ``PackageX_SOURCE_DIR``.  This makes such CMake code independent of where
     the package is in relation to other packages.  NOTE: This variable is
     defined for all declared packages that exist, independent of whether they
-    are enabled or not.  This varible is set as soon as it is known if the
+    are enabled or not.  This variable is set as soon as it is known if the
     given package exists or not.
 
   ``${PACKAGE_NAME}_BINARY_DIR``
@@ -1883,7 +1883,7 @@ A TriBITS Subpackage:
   and/or tests with CMake build targets for building these for which TriBITS
   exports the list of include directories, libraries, and targets that are
   created (along with CMake dependencies).
-* Is declared in its parent packages's
+* Is declared in its parent packages'
   `<packageDir>/cmake/Dependencies.cmake`_ file in a call to
   `TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()`_ using the argument
   `SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS`_.
@@ -2680,7 +2680,7 @@ Project Core Files`_ and `TriBITS Repository Core Files`_, respectively.
 
 Several files from this project are used as examples in the section `TriBITS
 Project Structure`_.  Here, a fuller description is given of this project and
-demonstrates some how TriBITS works.  From this simple example project, one
+a demonstration of how TriBITS works.  From this simple example project, one
 can quickly see how the basic structural elements of a TriBITS project,
 repository, and package (and subpackage) are pulled together.
 
@@ -3598,7 +3598,7 @@ packages, this can produce a lot of output to stdout.  One just needs to
 understand what TriBITS is printing out and where to look in the output for
 different information.  The examples in the section `Example Enable/Disable
 Use Cases`_ show what this output looks like for the various enable/disable
-scenarios and tries to explains in more detail the reasons for why the given
+scenarios and tries to explain in more detail the reasons for why the given
 behavior is implemented the way that it is.  Given this output, the rule
 definitions given above, and the detailed `Example Enable/Disable Use Cases`_,
 one should always be able to figure out exactly why the final set of
@@ -3632,7 +3632,7 @@ packages in its listed repositories are handled.  What these variable do is to
 allow a large project to turn off the auto-enable of optional SE packages in a
 given TriBITS repository to provide more detailed control of what gets used
 from a given TriBITS repository.  This, for example, is used in the CASL VERA
-project to mange some of its extra repositories and packages to further reduce
+project to manage some of its extra repositories and packages to further reduce
 the number of packages that get auto-enabled.
 
 .. ToDo: We should likely change this so that only tests and example don't get
@@ -4048,7 +4048,7 @@ TriBITS Automated Testing
 =========================
 
 Much of the value provided by the TriBITS system is support for testing of
-complex complex projects.  Many different types of testing are required in a
+complex projects.  Many different types of testing are required in a
 complex project and development effort.  A large project with lots of
 repositories and packages provides a number of testing and development
 challenges but also provides a number of opportunities to do testing in an
@@ -4217,7 +4217,7 @@ More detailed descriptions of the test groups are given below.
   major harm to most developers.  Also, code may be marked as ``ST`` if it has
   required dependencies on ``ST`` TPLs which are either hard to install or may
   not be available on all platforms where developers do their development and
-  fro where they push changes to the global repo.  In addition, code my be
+  from where they push changes to the global repo.  In addition, code may be
   marked as ``ST`` if the project is just too big and developers can't be
   expected to build and test all of this code with every push (so a decision
   is made to only make some code as ``PT`` so that pushes don't take too
@@ -4356,7 +4356,7 @@ The different test test categories are described below in more detail:
 
 * Tests marked **HEAVY** are usually reserved for very expensive tests that
   are too expensive to run nightly.  ``HEAVY`` tests require more testing
-  resources and therefore may only be run on a fully optimzied build and/or
+  resources and therefore may only be run on a fully optimized build and/or
   run less frequently.  Tests marked as ``HEAVY`` are enabled only for the
   value of ``${PROJECT_NAME}_TEST_CATEGORIES`` equal to ``HEAVY``.
 
@@ -4519,7 +4519,7 @@ The nightly builds comprise the basic "heart beat" for the project.
 *Heavy Testing* builds are just an extension to the `Nightly Testing`_ builds
 that add on more expensive tests marked using the `Test Test Category HEAVY`_.
 For projects that define heavy tests and heavy builds, individual test cases
-may be alloed to take 24 hours or longer to run so they can't even be run
+may be allowed to take 24 hours or longer to run so they can't even be run
 every day in nightly testing.  What standard heavy builds have in common is
 that they tend to select repositories, SE packages and code, and individual
 tests using the following test-related classifications:
@@ -4565,7 +4565,7 @@ Test Test Category         ``PERFORMANCE``     (`Test Test Category PERFORMANCE`
 
 .. ToDo: I need to set up automated testing for TriBITS to use as the example
 .. for all of these types of testing.  There is no better example that one
-.. that actually works.  It would also be nice t have a snapshot repo of
+.. that actually works.  It would also be nice to have a snapshot repo of
 .. TribitsExampleProject that also had this testing enabled for it but I am
 .. not sure that really makes sense.
 
@@ -4809,7 +4809,7 @@ developed repository.
 
 2) **REGRESSION_EMAIL_LIST** (defined in
 `<packageDir>/cmake/Dependencies.cmake`_): Package-specific email address
-specified in the packages's ``Dependencies.cmake`` file using
+specified in the packages' ``Dependencies.cmake`` file using
 `TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()`_.
 
 .. _${REPOSITORY_NAME}_REPOSITORY_EMAIL_URL_ADDRESS_BASE:
@@ -5408,7 +5408,7 @@ resulting TriBITS TPL module file ``FindTPL<tplName>.cmake`` looks like::
 
 With this approach, the ``FindTPL<tplName>.cmake`` module preserves all of the
 user behavior described in `Enabling support for an optional Third-Party
-Library (TPL)`_ for overriding what TPL componets to look for, where to look
+Library (TPL)`_ for overriding what TPL components to look for, where to look
 and finally to override what is actually used.  That is, if the user sets the
 cache variables ``TPL_<tplName>_INCLUDE_DIRS``, ``TPL_<tplName>_LIBRARIES``,
 or ``TPL_<tplName>_LIBRARY_DIRS``, then they should be used without question
@@ -5439,7 +5439,7 @@ return a list of include directories and libraries.  Some, like
 packages. therefore, in these cases, ``FIND_PACKAGE(Qt4 ...)`` must be called
 on every configure.  In specialized cases such as this, one must write a more
 specialized ``FindTPL<tplName>.cmake`` file and can't use the
-`TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE()`_ function like shown shown above.  Such
+`TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE()`_ function like shown above.  Such
 find modules cannot completely adhere to the standard behavior described in
 `Enabling support for an optional Third-Party Library (TPL)`_.
 
@@ -5678,7 +5678,7 @@ be missing.  This is demonstrated in `TribitsExampleProject`_ with the package
 .. include:: ../../examples/TribitsExampleProject/PackagesList.cmake
    :literal:
 
-In this example, ``InsertedPkg`` has a required dependency on on ``SimpleCxx``
+In this example, ``InsertedPkg`` has a required dependency on ``SimpleCxx``
 and the SE package ``WithSubpackagesB`` has an optional dependency on
 ``InsertedPkg``.  Therefore, the inserted package ``InsertedPkg`` has upstream
 and downstream dependencies on packages in the ``TribitsExampleProject`` repo.
@@ -5767,7 +5767,7 @@ following:
    (either explicitly or through auto enable/disable logic), use::
 
      IF ("${<XXX>_ENABLE_<YYY>}" STREQUAL "")
-       # Variable has not be set to 'ON' or 'OFF' yet
+       # Variable has not been set to 'ON' or 'OFF' yet
        ...
      ENDIF()
 
@@ -5933,7 +5933,7 @@ behavior such as:
 
 3. Some TriBITS projects may require a version of Python more recent than 2.4.
    In this case, the TriBITS project would set `PythonInterp_FIND_VERSION`_ to
-   some value higer than ``2.4``.  For example, may newer systems have Python
+   some value higher than ``2.4``.  For example, may newer systems have Python
    2.6.6 or higher versions installed by default and projects developed on
    such a system typically requires this version or higher.
 
@@ -6024,7 +6024,7 @@ TriBITS Environment Probing and Setup
 Part of the TriBITS Framework is to probe the environment, set up the
 compilers, and get ready to compile code.  This was mentioned in `Full
 Processing of TriBITS Project Files`_.  This is executed by the TriBITS macro
-``TRIBITS_SETUP_ENV()``.  Some of to things this macro does are:
+``TRIBITS_SETUP_ENV()``.  Some of the things this macro does are:
 
 .. _Probe and set up the environment:
 
@@ -6097,7 +6097,7 @@ this allows one to create distributions which only includes subsets of a
 larger project (even a single package in some cases).
 
 Unlike other build systems (like autotools), CMake will put **EVERYTHING**
-into the source distribution (e.g. tarball) that it sitting in the source tree
+into the source distribution (e.g. tarball) that is sitting in the source tree
 by default.  Therefore, setting up for a source distribution usually means
 deciding what extra files and directories should be excluded.  Beyond the
 directories for non-enabled packages, further files can be selected to be
@@ -6230,7 +6230,7 @@ rebase by default) as shown in the following Trilinos commit::
       Define HAVE_TEUCHOSCORE_CXX11 in TeuchosCore_config.h
       
       This makes TeuchosCore a good example for how Trilinos (or any TriBITS)
-      subpackages should put in an optinal dependency on C++11.
+      subpackages should put in an optional dependency on C++11.
       
       Build/Test Cases Summary
       Enabled Packages: TeuchosCore
@@ -6599,7 +6599,7 @@ where, ``SYNC_BASE_DIR=~/sync_base_dir`` for example, which must already be
 created.
 
 Next, one defines a remote to pull changes for the ``ExtraRepo1`` from the
-main develoment repo:
+main development repo:
 
   $ cd $SYNC_BASE_DIR/BaseProj/ExtraRepo1
   $ git remote add public url2.gov:/git/ExtraRepo1
@@ -6868,7 +6868,7 @@ After the above cron job starts running (setup described above), the
 into the underlying ``checkin-test.py`` script.  If the emails report an
 update, configure, build, or test failure, then someone will need to log onto
 the machine where the ACI sync server is running and investigate what went
-wrong, just like they would if the were running the ``checkin-test.py`` script
+wrong, just like they would if they were running the ``checkin-test.py`` script
 for testing locally modified changes before pushing.
 
 In the above example, only a single git/TriBITS repo is integrated in this ACI
@@ -6898,7 +6898,7 @@ require non-trivial storage and CPU resources (due to the MySQL DB of test
 results) and requires some amount of extra maintenance.  As an intermediate
 approach, one can consider just using the project's `checkin-test.py`_ script
 to implement basic post-push CI and/or Nightly testing servers using simple
-cron jobs and a some other helper scripts.  The ``checkin-test.py`` script
+cron jobs and some other helper scripts.  The ``checkin-test.py`` script
 will robustly pull new commits, configure the project, build, run tests, and
 send out emails with results and pass/fail.  A bunch of builds can be run at
 once using multiple builds specified in the ``--default-builds``,
@@ -6932,7 +6932,7 @@ CI and Nightly testing using ``checkin-test.py`` may be quite adequate.  In
 fact, post-push testing processes implemented with ``checkin-test.py`` are
 much more solid and feature-full than have been employed in many software
 projects that we have seen over the years that were larger, more public, had
-many developers, and and were quite important to many users and development
+many developers, and were quite important to many users and development
 teams.
 
 
@@ -7177,7 +7177,7 @@ work on all later version GCC and Intel compilers).
 Hiding deprecated code to certify and facilitate later removal
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In addition to adding deprecation warnings at preprecessing or compile-time,
+In addition to adding deprecation warnings at preprocessing or compile-time,
 it is also highly desirable to allow the deprecated code to be removed from
 the build to help certify that client code indeed no longer needs the
 deprecated code.  The following subsections describe how to hide deprecated
@@ -7248,7 +7248,7 @@ included in the build and include path and downstream clients can use them.
 
 Once these files need to be permanently removed, one just then needs to remove
 them from the version control repository (i.e. ``git rm <files_to_remove>``)
-and them remove them from the above ``CMakeLists.txt`` code.
+and then remove them from the above ``CMakeLists.txt`` code.
 
 
 Physically removing deprecated code
@@ -7460,7 +7460,7 @@ See `snapshot-dir.py --help`_ for more details.  Note the guidance on using a
 different branch for the snapshot sync followed by a merge.  This allows for
 one to maintain local changes to TriBITS and use git to manage the merges.
 However, this will increase the changes of merge conflicts so one should
-consider just directly snapshottting into the master branch to avoid merge
+consider just directly snapshotting into the master branch to avoid merge
 conflicts.
 
 
