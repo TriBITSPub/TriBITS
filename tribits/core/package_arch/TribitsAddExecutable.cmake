@@ -353,7 +353,7 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
     SET(${PARSE_ADDED_EXE_TARGET_NAME_OUT} PARENT_SCOPE)
   ENDIF()
   #
-  # B) Exclude building the test executable based on some several criteria
+  # B) Exclude building the test executable based on some criteria
   #
 
   SET(ADD_THE_TEST FALSE)

@@ -240,7 +240,7 @@ ENDMACRO()
 # ${OUTER_FUNC_NAME}_arg_<argNamei> and then just look of that varible exists
 # or not.  That should use a hash function.  That might actually slow things
 # down for short lists however so we would have to measure, measure,
-# measure. I we would have to pass in the function/macro name to disabiguate
+# measure. I would have to pass in the function/macro name to disabiguate
 # the varible names.  It would really be better if cmake would provide a
 # sorted list find operation.  That would make this much faster for large
 # numbers of argument and option names.
