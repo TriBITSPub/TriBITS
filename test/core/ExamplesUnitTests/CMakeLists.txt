@@ -82,7 +82,6 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
 
 SET(TribitsHelloWorld_COMMON_CONFIG_ARGS
   ${COMMON_ENV_ARGS_PASSTHROUGH}
-  -DTribitsHelloWorld_ENABLE_Fortran=${${PROJECT_NAME}_ENABLE_Fortran}
   )
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
@@ -97,6 +96,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
       "Configuring done"
       "Generating done"
       "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsHelloWorld"
+    FAIL_REGULAR_EXPRESSION
+      "Check for working Fortran compiler" # Should not be looking for Fortran!
   TEST_1 CMND make
     ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
