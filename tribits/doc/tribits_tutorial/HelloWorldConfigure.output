@@ -1,0 +1,160 @@
+
+Configuring TribitsGreetings build directory
+
+-- PROJECT_SOURCE_DIR='/Users/jfrye/learn-cmake-tribits/trash/tribits_hello_world'
+-- PROJECT_BINARY_DIR='/Users/jfrye/learn-cmake-tribits/trash/tribits_hello_world/build'
+-- TribitsGreetings_TRIBITS_DIR='/Users/jfrye/learn-cmake-tribits/trash/tribits_hello_world/cmake/tribits'
+-- TriBITS_VERSION_STRING='0.9 (Dev)'
+-- CMAKE_VERSION='3.4.1'
+-- CMAKE_GENERATOR='Unix Makefiles'
+-- CMAKE_HOST_SYSTEM_NAME='Darwin'
+-- TribitsGreetings_HOSTNAME='cupojoe'
+-- Found PythonInterp: /Users/jfrye/anaconda/bin/python (found suitable version "2.7.12", minimum required is "2.6") 
+-- PYTHON_EXECUTABLE='/Users/jfrye/anaconda/bin/python'
+
+Setting up major user options ...
+
+
+Reading list of native packages from /Users/jfrye/learn-cmake-tribits/trash/tribits_hello_world/PackagesList.cmake
+
+-- TribitsGreetings_NUM_PACKAGES='1'
+
+Reading list of native TPLs from /Users/jfrye/learn-cmake-tribits/trash/tribits_hello_world/TPLsList.cmake
+
+-- TribitsGreetings_NUM_TPLS='0'
+
+Processing Project, Repository, and Package dependency files and building internal dependencies graph ...
+
+-- TribitsGreetings_NUM_SE_PACKAGES='1'
+
+Explicitly enabled packages on input (by user):  HelloPackage 1
+
+Explicitly enabled SE packages on input (by user):  HelloPackage 1
+
+Explicitly disabled packages on input (by user or by default):  0
+
+Explicitly disabled SE packages on input (by user or by default):  0
+
+Explicitly enabled TPLs on input (by user):  0
+
+Explicitly disabled TPLs on input (by user or by default):  0
+
+Disabling all packages that have a required dependency on disabled TPLs and optional package TPL support based on TPL_ENABLE_<TPL>=OFF ...
+
+
+Disabling subpackages for hard disables of parent packages due to TribitsGreetings_ENABLE_<PARENT_PACKAGE>=OFF ...
+
+
+Disabling forward required SE packages and optional intra-package support that have a dependancy on disabled SE packages TribitsGreetings_ENABLE_<TRIBITS_PACKAGE>=OFF ...
+
+
+Enabling subpackages for hard enables of parent packages due to TribitsGreetings_ENABLE_<PARENT_PACKAGE>=ON ...
+
+
+Enabling all required (and optional since TribitsGreetings_ENABLE_ALL_OPTIONAL_PACKAGES=ON) upstream SE packages for current set of enabled packages (TribitsGreetings_ENABLE_SECONDARY_TESTED_CODE=OFF) ...
+
+
+Enabling all optional intra-package enables <TRIBITS_PACKAGE>_ENABLE_<DEPPACKAGE> that are not currently disabled if both sets of packages are enabled ...
+
+
+Enabling all remaining required TPLs for current set of enabled packages ...
+
+
+Enabling all optional package TPL support for currently enabled TPLs ...
+
+
+Enabling TPLs based on <TRIBITS_PACKAGE>_ENABLE_<TPL>=ON if TPL is not explicitly disabled ...
+
+
+Set cache entries for optional packages/TPLs and tests/examples for packages actually enabled ...
+
+
+Enabling all parent packages that have at least one subpackage enabled ...
+
+
+Final set of enabled packages:  HelloPackage 1
+
+Final set of enabled SE packages:  HelloPackage 1
+
+Final set of non-enabled packages:  0
+
+Final set of non-enabled SE packages:  0
+
+Final set of enabled TPLs:  0
+
+Final set of non-enabled TPLs:  0
+
+Setting up export dependencies for all enabled SE packages ...
+
+
+Probing the environment ...
+
+-- BUILD_SHARED_LIBS='FALSE'
+-- Setting CMAKE_BUILD_TYPE=RELEASE since it was not set ...
+-- CMAKE_BUILD_TYPE='RELEASE'
+-- The C compiler identification is AppleClang 8.0.0.8000042
+-- Check for working C compiler: /Library/Developer/CommandLineTools/usr/bin/cc
+-- Check for working C compiler: /Library/Developer/CommandLineTools/usr/bin/cc -- works
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- CMAKE_C_COMPILER_ID='AppleClang'
+-- CMAKE_C_COMPILER_VERSION='8.0.0.8000042'
+-- The CXX compiler identification is AppleClang 8.0.0.8000042
+-- Check for working CXX compiler: /Library/Developer/CommandLineTools/usr/bin/c++
+-- Check for working CXX compiler: /Library/Developer/CommandLineTools/usr/bin/c++ -- works
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- CMAKE_CXX_COMPILER_ID='AppleClang'
+-- CMAKE_CXX_COMPILER_VERSION='8.0.0.8000042'
+-- TribitsGreetings_SET_INSTALL_RPATH='TRUE'
+-- CMAKE_INSTALL_RPATH_USE_LINK_PATH='TRUE'
+-- Setting default for CMAKE_INSTALL_RPATH pointing to TribitsGreetings_INSTALL_LIB_DIR
+-- Setting default CMAKE_MACOSX_RPATH=TRUE
+-- CMAKE_MACOSX_RPATH='TRUE'
+-- CMAKE_INSTALL_RPATH='/usr/local/lib'
+-- Looking for C++ include sys/time.h
+-- Looking for C++ include sys/time.h - found
+-- Looking for C++ include time.h
+-- Looking for C++ include time.h - found
+-- Looking for C++ include stdint.h
+-- Looking for C++ include stdint.h - found
+-- Looking for C++ include inttypes.h
+-- Looking for C++ include inttypes.h - found
+-- Found Perl: /usr/bin/perl (found version "5.18.2") 
+-- Performing Test MATH_LIBRARY_IS_SUPPLIED
+-- Performing Test MATH_LIBRARY_IS_SUPPLIED - Success
+-- Performing Test FINITE_VALUE_HAVE_GLOBAL_ISNAN
+-- Performing Test FINITE_VALUE_HAVE_GLOBAL_ISNAN - Success
+-- Performing Test FINITE_VALUE_HAVE_STD_ISNAN
+-- Performing Test FINITE_VALUE_HAVE_STD_ISNAN - Success
+-- Performing Test FINITE_VALUE_HAVE_GLOBAL_ISINF
+-- Performing Test FINITE_VALUE_HAVE_GLOBAL_ISINF - Success
+-- Performing Test FINITE_VALUE_HAVE_STD_ISINF
+-- Performing Test FINITE_VALUE_HAVE_STD_ISINF - Success
+-- Could NOT find Doxygen (missing:  DOXYGEN_EXECUTABLE) 
+
+Getting information for all enabled TPLs ...
+
+
+Setting up testing support ...
+
+
+Configuring individual enabled TribitsGreetings packages ...
+
+Processing enabled package: HelloPackage (Libs)
+
+No ETI support requested by packages.
+
+
+Skipping setup for distribution because TribitsGreetings_ENABLE_CPACK_PACKAGING=OFF
+
+
+Finished configuring TribitsGreetings!
+
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/jfrye/learn-cmake-tribits/trash/tribits_hello_world/build
