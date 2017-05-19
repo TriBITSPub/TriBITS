@@ -295,7 +295,7 @@ commands which allow you to create user-defined macros and functions (which is
 what TriBITS is built on).  All of these built-in and user-defined macros and
 functions work exactly the same way; they take in an array of string
 arguments.  Some functions take in positional arguments but most actually take
-a combination of positional and keyword arguments (see `PARSE_ARGUMENTS()`_).
+a combination of positional and keyword arguments.
 
 Variable names are translated into their stored values using
 ``${SOME_VARIABLE}``.  The value that is extracted depends on if the variable
@@ -411,7 +411,7 @@ sensitivity rules for variables and functions.  However, because we must parse
 macro and function arguments when writing user-defined macros and functions,
 it is a good thing that CMake variables are case sensitive.  Case insensitivity
 would make it much harder and more expensive to parse argument lists that take
-keyword-based arguments (see `PARSE_ARGUMENTS()`_).
+keyword-based arguments.
 
 Other mistakes that people make result from not understanding how CMake scopes
 variables and other entities.  CMake defines a global scope (i.e. "cache"

@@ -655,7 +655,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_5 CMND make ARGS package_source
+  TEST_6 CMND make ARGS package_source
     MESSAGE "Create the tarball"
     PASS_REGULAR_EXPRESSION_ALL
       "Run CPack packaging tool for source..."
@@ -671,11 +671,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "CPack: - package: .*/ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/tribitsexproj-1.1-Source.tar.bz2 generated."
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_6 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
+  TEST_7 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
     MESSAGE "Untar the tarball"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_7 CMND diff
+  TEST_8 CMND diff
      ARGS -qr
        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
        tribitsexproj-1.1-Source

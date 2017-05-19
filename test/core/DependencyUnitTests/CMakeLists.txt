@@ -56,13 +56,15 @@ SET(MOCK_TRILINOS_DIR
 
 FUNCTION(CREATE_DEPENDENCY_XML_DUMP_TEST_CASE TEST_NAME)
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "ARGS;PASS_REGULAR_EXPRESSION_ALL;COMPARE_XML_FILE"
      #options
      ""
+     #one_value_keywords
+     ""
+     #mulit_value_keywords
+     "ARGS;PASS_REGULAR_EXPRESSION_ALL;COMPARE_XML_FILE"
      ${ARGN}
      )
 
@@ -192,13 +194,15 @@ SET(REDUCED_MOCK_TRILINOS_OUTPUT_DIR
 
 FUNCTION(CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "ARGS;PASS_REGULAR_EXPRESSION_ALL"
      #options
      ""
+     #one_value_keywords
+     ""
+     #multi_value_keywords
+     "ARGS;PASS_REGULAR_EXPRESSION_ALL"
      ${ARGN}
      )
 
@@ -548,13 +552,15 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 
 FUNCTION(CREATE_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "ARGS;PASS_REGULAR_EXPRESSION_ALL"
      #options
      ""
+     #one_value_keywords
+     ""
+     #multi_value_keywords
+     "ARGS;PASS_REGULAR_EXPRESSION_ALL"
      ${ARGN}
      )
 
