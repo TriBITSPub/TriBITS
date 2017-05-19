@@ -39,7 +39,7 @@
 
 
 
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 INCLUDE(AdvancedSet)
 
 
@@ -58,13 +58,15 @@ FUNCTION(CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
 
   #MESSAGE("CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE: ${TEST_CASE} ${ARGN}")
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "COPY_FILES;ARGS;PASS_REGULAR_EXPRESSION_ALL;COMPARE_DEPS_FILE"
      #options
      "SKIP_STANDARD_DEPS_CHECK"
+     # one_value_keywords
+     ""
+     # multi_value_keywords
+     "COPY_FILES;ARGS;PASS_REGULAR_EXPRESSION_ALL;COMPARE_DEPS_FILE"
      ${ARGN}
      )
   

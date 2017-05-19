@@ -537,15 +537,15 @@ INCLUDE(PrintVar)
 # **Argument Parsing and Ordering (TRIBITS_ADD_ADVANCED_TEST())**
 #
 # The basic tool used for parsing the arguments to this function is the macro
-# `PARSE_ARGUMENTS()`_ which has a certain set of behaviors.  The parsing
-# using `PARSE_ARGUMENTS()`_ is actually done in two phases.  There is a
-# top-level parsing of the "overall" arguments listed in `Overall Arguments
-# (TRIBITS_ADD_ADVANCED_TEST())`_ that also pulls out the test blocks.  Then
-# there is a second level of parsing using ``PARSE_ARGUMENTS()`` for each of
-# the ``TEST_<idx>`` blocks.  Because of this usage, there are a few
-# restrictions that one needs to be aware of when using
-# ``TRIBITS_ADD_ADVANCED_TEST()``.  This short sections tries to explain the
-# behaviors and what is allowed and what is not allowed.
+# ``CMAKE_PARSE_ARGUMENTS()`` which has a certain set of behaviors.  The
+# parsing using ``CMAKE_PARSE_ARGUMENTS()`` is actually done in two phases.
+# There is a top-level parsing of the "overall" arguments listed in `Overall
+# Arguments (TRIBITS_ADD_ADVANCED_TEST())`_ that also pulls out the test
+# blocks.  Then there is a second level of parsing using
+# ``CMAKE_PARSE_ARGUMENTS()`` for each of the ``TEST_<idx>`` blocks.  Because
+# of this usage, there are a few restrictions that one needs to be aware of
+# when using ``TRIBITS_ADD_ADVANCED_TEST()``.  This short sections tries to
+# explain the behaviors and what is allowed and what is not allowed.
 #
 # For the most part, the "overall" arguments and the arguments inside of any
 # individual ``TEST_<idx>`` blocks can be listed in any order but there are
@@ -720,13 +720,15 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
   ENDFOREACH()
   #PRINT_VAR(TEST_IDX_LIST)
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "${TEST_IDX_LIST};OVERALL_WORKING_DIRECTORY;KEYWORDS;COMM;OVERALL_NUM_MPI_PROCS;OVERALL_NUM_TOTAL_CORES_USED;FINAL_PASS_REGULAR_EXPRESSION;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;FINAL_FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TEST_NAME_OUT"
      #options
      "FAIL_FAST;RUN_SERIAL;SKIP_CLEAN_OVERALL_WORKING_DIRECTORY"
+     # one_value_keywords
+     ""
+     # multi_value_keywords
+     "${TEST_IDX_LIST};OVERALL_WORKING_DIRECTORY;KEYWORDS;COMM;OVERALL_NUM_MPI_PROCS;OVERALL_NUM_TOTAL_CORES_USED;FINAL_PASS_REGULAR_EXPRESSION;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;FINAL_FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TEST_NAME_OUT"
      ${ARGN}
      )
 
@@ -831,13 +833,15 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
     #PRINT_VAR(PARSE_TEST_${TEST_CMND_IDX})
 
-    PARSE_ARGUMENTS(
+    CMAKE_PARSE_ARGUMENTS(
        #prefix
        PARSE
-       #lists
-       "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION"
        #options
-       "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ALWAYS_FAIL_ON_NONZERO_RETURN;ALWAYS_FAIL_ON_ZERO_RETURN;WILL_FAIL;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY"
+        "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ALWAYS_FAIL_ON_NONZERO_RETURN;ALWAYS_FAIL_ON_ZERO_RETURN;WILL_FAIL;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY"
+       # one_value_keywords
+       ""
+       # multi_value_keywords
+       "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION"
        ${PARSE_TEST_${TEST_CMND_IDX}}
        )
 
