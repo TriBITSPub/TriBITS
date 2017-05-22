@@ -42,7 +42,7 @@ defaults = [
 fi
 
 # Use CMake 2.8.11 to test since that is the min version we are enforcing!
-export PATH=/home/vera_dev/common_tools/cmake-2.8.11/bin:$PATH
+export PATH=/home/vera_env/common_tools/cmake-2.8.11/bin:$PATH
 
 $TRIBITS_BASE_DIR_ABS/checkin-test.py \
 --extra-cmake-options="-DPYTHON_EXECUTABLE=/usr/bin/python2.6" \
