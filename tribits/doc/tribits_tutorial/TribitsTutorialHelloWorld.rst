@@ -192,3 +192,6 @@ You should see something very similar to::
 
 ..literalinclude:: HelloWorldConfigure.output
 
+Now type::
+  make
+
