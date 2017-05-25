@@ -279,6 +279,15 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     the TriBITS system.  If ``CTEST_DASHBOARD_ROOT`` is set, then this is
 #     hard-coded internally to ``${CTEST_DASHBOARD_ROOT}/BUILD``.
 #
+#   ``${PROJECT_NAME}_PACKAGES``
+#
+#     Determines the specific set of packages to test.  If left at the default
+#     value of empty "", then `${PROJECT_NAME}_ENABLE_ALL_PACKAGES`_ is set to
+#     ``ON`` and that enables packages as described in
+#     `<Project>_ENABLE_ALL_PACKAGES enables all PT (cond. ST) SE packages`_.
+#     This variable can also be specified and read from from the env and can
+#     use `,` to separate package names instead of ';'.
+#
 # ToDo: Document input variables that have defaults, to be set before, and can
 # be overridden from the env.
 #
