@@ -379,10 +379,10 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     Trilinos_ADDITIONAL_PACKAGES=Stalix
   PASS_REGULAR_EXPRESSION_ALL
     "preCopyrightTrilinos: Doing GIT update from URL 'url1:/git/preCopyrightTrilinos' to dir '.*/MockTrilinos/preCopyrightTrilinos'"
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.clean.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.reset.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.fetch.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]tracking/branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.set_branch.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.clean.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.reset.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.fetch.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]tracking/branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.set_branch.out."
     "Dakota: Doing initial GIT clone/checkout from URL 'url3:/git/Dakota' to dir 'packages/TriKota/Dakota' ..."
     "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clone[;]url3:/git/Dakota[;]packages/TriKota/Dakota[;]WORKING_DIRECTORY[;].*/tribits/examples/MockTrilinos[;]OUTPUT_FILE[;].*/TriBITS_CTestDriver_CI_TestGitUpdateCommands/Dakota.clone.out"
     "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_CTestDriver_CI_TestGitUpdateCommands/Dakota.clean.out"
@@ -413,10 +413,10 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]checkout[;]-B[;]other-branch[;]--track[;]origin/other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos[;]RESULT_VARIABLE[;]GIT_CHECKOUT_RETURN_VAL[;]OUTPUT_VARIABLE[;]BRANCH_OUTPUT[;]ERROR_VARIABLE[;]BRANCH_ERROR"
     "For extra repos, doing switch to branch other-branch"
     "preCopyrightTrilinos: Doing GIT update from URL 'url1:/git/preCopyrightTrilinos' to dir '.*/MockTrilinos/preCopyrightTrilinos'"
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.clean.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.reset.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.fetch.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]checkout[;]-B[;]other-branch[;]--track[;]origin/other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.set_branch.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.clean.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.reset.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.fetch.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]checkout[;]-B[;]other-branch[;]--track[;]origin/other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.set_branch.out."
     "Dakota: Doing initial GIT clone/checkout from URL 'url3:/git/Dakota' to dir 'packages/TriKota/Dakota' ..."
     "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clone[;]url3:/git/Dakota[;]packages/TriKota/Dakota[;]WORKING_DIRECTORY[;].*/tribits/examples/MockTrilinos[;]OUTPUT_FILE[;].*/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch/Dakota.clone.out"
     "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch/Dakota.clean.out"
@@ -445,10 +445,10 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]checkout[;]-B[;]other-branch[;]--track[;]origin/other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos[;]RESULT_VARIABLE[;]GIT_CHECKOUT_RETURN_VAL[;]OUTPUT_VARIABLE[;]BRANCH_OUTPUT[;]ERROR_VARIABLE[;]BRANCH_ERROR"
     "For extra repos, doing switch to branch yet-other-branch"
     "preCopyrightTrilinos: Doing GIT update from URL 'url1:/git/preCopyrightTrilinos' to dir '.*/MockTrilinos/preCopyrightTrilinos'"
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.clean.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.reset.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.fetch.out."
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]checkout[;]-B[;]yet-other-branch[;]--track[;]origin/yet-other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.set_branch.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.clean.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.reset.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.fetch.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]checkout[;]-B[;]yet-other-branch[;]--track[;]origin/yet-other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.set_branch.out."
     "Dakota: Doing initial GIT clone/checkout from URL 'url3:/git/Dakota' to dir 'packages/TriKota/Dakota' ..."
     "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clone[;]url3:/git/Dakota[;]packages/TriKota/Dakota[;]WORKING_DIRECTORY[;].*/tribits/examples/MockTrilinos[;]OUTPUT_FILE[;].*/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/Dakota.clone.out"
     "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_CTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/Dakota.clean.out"
@@ -486,7 +486,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
 CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
   PreExtraRepos_ExtraReposFile
   ARGS
-    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
+    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
     Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
     Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -506,7 +506,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
 CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
   PreExtraRepos_ExtraReposFile_ExtraReposList
   ARGS
-    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
+    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
     Trilinos_PRE_REPOSITORIES=preRepoOnePackage
     Trilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo,Dakota
     Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
@@ -532,7 +532,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
 CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
   PreExtraRepos_ExtraReposFile_ExtraReposListPartial
   ARGS
-    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
+    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
     Trilinos_PRE_REPOSITORIES=
     Trilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,Dakota
     Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
