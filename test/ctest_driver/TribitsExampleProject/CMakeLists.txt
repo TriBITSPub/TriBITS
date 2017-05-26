@@ -142,6 +142,41 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_ALL_PASS
   # non-zero return code is mandated.
 
 
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_GlobalConfigureFail
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break the outer configure"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/CMakeLists.txt "The outer configure is broken!"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a failed configure for every package!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      ${CDASH_SUBMIT_ARGS}
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "SimpleCxx FAILED to configure"
+      "MixedLang FAILED to configure"
+      "WithSubpackages FAILED to configure"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+      "Final set packages that failed to configure or have the libraries build: 'SimpleCxx.MixedLang.WithSubpackages"
+    # ToDo: Add ALWAYS_FAIL_ON_ZERO_RETURN!
+  )
+  # NOTE: The above test ensures that the global configure breaks the
+  # configure for all of the packages that are tried.
+
+
+# ToDo: Test breaking the configure of an optional package and make sure
+# downstream package still builds and passes (for what is left).
+
+
 # ToDo: Test breaking the lib build of an upstream package
 
 
