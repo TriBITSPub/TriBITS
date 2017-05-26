@@ -261,7 +261,8 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #     If set, this is the base directory where this script runs that clones
 #     the sources for the project.  If this directory does not exist, it will
-#     be created.  If empty, then has no effect on the script.
+#     be created.  If provided the special value 'PWD', then the present
+#     working directory is used.  If empty, then has no effect on the script.
 #
 #   ``CTEST_SOURCE_DIRECTORY``
 #
@@ -424,6 +425,10 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # The root of the dasbhoard where ${PROJECT_NAME} will be cloned and the
   # BUILD directory will be create (only override for separate testing)
   SET_DEFAULT_AND_FROM_ENV( CTEST_DASHBOARD_ROOT "" )
+  IF (CTEST_DASHBOARD_ROOT STREQUAL "PWD")
+    SET(CTEST_DASHBOARD_ROOT ${CMAKE_CURRENT_BINARY_DIR})
+    PRINT_VAR(CTEST_DASHBOARD_ROOT)
+  ENDIF()
 
   # The build type (e.g. DEBUG, RELEASE, NONE)
   SET_DEFAULT_AND_FROM_ENV( BUILD_TYPE NONE )
