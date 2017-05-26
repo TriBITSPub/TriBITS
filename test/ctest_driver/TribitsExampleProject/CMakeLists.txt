@@ -204,15 +204,54 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureOptionalPkg
       "WithSubpackagesA_test_of_a .* Passed"
       "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WrapExternal:BOOL=ON'"
       "WrapExternal: Configure passed"
-      "Final set packages that failed to configure or have the libraries build: 'MixedLang"
+      "Final set packages that failed to configure or have the libraries build: 'MixedLang'"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
     # ToDo: Add ALWAYS_FAIL_ON_ZERO_RETURN!
   )
-  # NOTE: The above test ensures that the global configure breaks the
-  # configure for all of the packages that are tried.
+  # NOTE: The above test ensures that the configure of an upstream optional
+  # package does not break the configure, build, or tests of downstream
+  # packages.  It only disables the broken upstream package.
 
 
-# ToDo: Test breaking the lib build of an optional upstream package
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildLibOptionalPkg
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break the confgiure for just the optional MixLang package"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/packages/mixed_lang/src/MixedLang.cpp
+      "Build mixed_lang lib is broken!"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a failed configure for just the MixedLang package!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CDASH_SUBMIT_ARGS}
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "SimpleCxx: Configure passed"
+      "SimpleCxx_HelloWorldProg .* Passed"
+      "MixedLang: Configure passed"
+      "FAILED library build for package 'MixedLang'"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WithSubpackages:BOOL=ON'"
+      "WithSubpackages: Configure passed"
+      "WithSubpackagesA_test_of_a .* Passed"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WrapExternal:BOOL=ON'"
+      "WrapExternal: Configure passed"
+      "Final set packages that failed to configure or have the libraries build: 'MixedLang'"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+    # ToDo: Add ALWAYS_FAIL_ON_ZERO_RETURN!
+  )
+  # NOTE: The above test ensures that the library build of an optional
+  # upstream package does not break downstream packages.  It only disables the
+  # optional upstream package in downstream packages.
 
 
 # ToDo: Test breaking the all build for an optional upstream package
