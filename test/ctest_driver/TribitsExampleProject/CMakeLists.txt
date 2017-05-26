@@ -166,7 +166,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_GlobalConfigureFail
       "MixedLang FAILED to configure"
       "WithSubpackages FAILED to configure"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
-      "Final set packages that failed to configure or have the libraries build: 'SimpleCxx.MixedLang.WithSubpackages'"
+      "Final set packages that failed to configure or have the libraries build: 'SimpleCxx[;]MixedLang[;]WithSubpackages'"
     # ToDo: Add ALWAYS_FAIL_ON_ZERO_RETURN!
   )
   # NOTE: The above test ensures that the global configure breaks the
