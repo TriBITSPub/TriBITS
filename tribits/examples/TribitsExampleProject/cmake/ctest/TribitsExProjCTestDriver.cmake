@@ -2,10 +2,14 @@
 # Set the locations of things for this project
 #
 
+
 SET(TRIBITS_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../..")
 SET(CTEST_SOURCE_NAME "TribitsExampleProject")
 INCLUDE("${TRIBITS_PROJECT_ROOT}/ProjectName.cmake")
-IF ("${${PROJECT_NAME}_TRIBITS_DIR}" STREQUAL "")
+IF (NOT "$ENV{${PROJECT_NAME}_TRIBITS_DIR}" STREQUAL "")
+  SET(${PROJECT_NAME}_TRIBITS_DIR "$ENV{${PROJECT_NAME}_TRIBITS_DIR}")
+ENDIF()
+IF("${${PROJECT_NAME}_TRIBITS_DIR}" STREQUAL "")
   # If not set externally, then assume this is inside of tribits example
   # directory.
   SET(${PROJECT_NAME}_TRIBITS_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../..")

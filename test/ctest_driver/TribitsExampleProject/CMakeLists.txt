@@ -52,6 +52,7 @@ SET(COMMON_ENV_ARGS
   TribitsExProj_PRE_REPOSITORIES=
   TribitsExProj_EXTRA_REPOSITORIES=
   # Other args
+  TribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
   TribitsExProj_EXTRAREPOS_FILE=NONE
   CTEST_DO_UPDATES=OFF
   CTEST_DO_SUBMIT=OFF
@@ -66,13 +67,15 @@ SET(CTEST_S_SCRIPT_ARGS
 # Set up to submit to CDash if reqeusted
 #
 
-SET_DEFAULT_AND_FROM_ENV(${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO "")
+IF ("${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}" STREQUAL "") 
+  SET(${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO $ENV{${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO})
+ENDIF()
 
-IF ("${${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO}" STREQUAL "")
+IF ("${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}" STREQUAL "")
   SET(CDASH_SUBMIT_ARGS "")
-ELSEIF (${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO STREQUAL "MY_CDASH")
+ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "MY_CDASH")
   SET(CDASH_SUBMIT_ARGS CTEST_DO_SUBMIT=TRUE)
-ELSEIF (${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO STREQUAL "TRILINOS_CDASH")
+ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "TRILINOS_CDASH")
   SET(CDASH_SUBMIT_ARGS
     CTEST_DO_SUBMIT=TRUE
     CTEST_DROP_SITE=testing.sandia.gov/cdash
@@ -81,11 +84,17 @@ ELSEIF (${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO STREQUAL "TRILINOS_CDASH")
     )
 ELSE()
   MESSAGE(FATAL_ERROR "Error, the value"
-    " ${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO='${${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO}'"
+    " ${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO='${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}'"
     " is invalid!  Valid choices are '', 'MY_CDASH' and 'TRILINOS_CDASH'"
    ) 
 ENDIF()
 
+IF (CDASH_SUBMIT_ARGS)
+  MESSAGE(
+    "NOTE: The tests ${PACKAGE_NAME}_CTestDriver_XXX are set up to submit CDash!"
+    " (See the test details for what CDash site is being targeted!)"
+    )
+ENDIF()
 
 #
 # Run the tests
@@ -103,11 +112,11 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_ALL_PASS
     MESSAGE "Run ctest driver testing everyting but no push."
     CMND env
     ARGS
-      CTEST_DASHBOARD_ROOT=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestDriver_ST_ALL_PASS
       CTEST_DASHBOARD_ROOT=PWD
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_ALL_PASS
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "NONE does not exist, skipping extra repositories"
@@ -117,22 +126,22 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_ALL_PASS
       "SimpleCxx: Configure passed"
       "SimpleCxx: Libs build passed"
       "SimpleCxx: All build passed"
-      "SimpleCxx_HelloWorldProg .* Passed"
+      "SimpleCxx_HelloWorldProg [.]+ +Passed"
       "MixedLang: Configure passed"
       "MixedLang: Libs build passed"
       "MixedLang: All build passed"
-      "MixedLang_RayTracerTests .* Passed"
+      "MixedLang_RayTracerTests [.]+ +Passed"
       "WithSubpackages: Configure passed"
       "WithSubpackages: Libs build passed"
       "WithSubpackages: All build passed"
-      "WithSubpackagesA_test_of_a .* Passed"
-      "WithSubpackagesB_test_of_b .* Passed"
-      "WithSubpackagesC_test_of_c_util .* Passed"
-      "WithSubpackagesC_test_of_c_b_mixed_lang .* Passed"
+      "WithSubpackagesA_test_of_a [.]+ +Passed"
+      "WithSubpackagesB_test_of_b [.]+ +Passed"
+      "WithSubpackagesC_test_of_c_util [.]+ +Passed"
+      "WithSubpackagesC_test_of_c_b_mixed_lang [.]+ +Passed"
       "WrapExternal: Configure passed"
       "WrapExternal: Libs build passed"
       "WrapExternal: All build passed"
-      "WrapExternal_run_external_func .* Passed"
+      "WrapExternal_run_external_func [.]+ +Passed"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
@@ -142,10 +151,261 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_ALL_PASS
   # non-zero return code is mandated.
 
 
-# ToDo: Test breaking the lib build of an upstream package
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_GlobalConfigureFail
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break the outer configure"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/CMakeLists.txt "The outer configure is broken!"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a failed configure for every package!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_GlobalConfigureFail
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "SimpleCxx FAILED to configure"
+      "MixedLang FAILED to configure"
+      "WithSubpackages FAILED to configure"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+      "Final set packages that failed to configure or have the libraries build: 'SimpleCxx[;]MixedLang[;]WithSubpackages'"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+  # NOTE: The above test ensures that a global configure failures breaks the
+  # configure for all of the packages that are tried.
 
 
-# ToDo: Test breaking the all build for an upstream package
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureOptionalPkg
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break the confgiure for just the optional MixLang package"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/packages/mixed_lang/CMakeLists.txt
+      "Configure of mixed_lang is broken!"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a failed configure for just the MixedLang package!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakConfigureOptionalPkg
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "SimpleCxx: Configure passed"
+      "SimpleCxx_HelloWorldProg [.]+ +Passed"
+      "MixedLang FAILED to configure"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WithSubpackages:BOOL=ON'"
+      "WithSubpackages: Configure passed"
+      "WithSubpackagesA_test_of_a [.]+ +Passed"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WrapExternal:BOOL=ON'"
+      "WrapExternal: Configure passed"
+      "Final set packages that failed to configure or have the libraries build: 'MixedLang'"
+      "Final set packages that had any failures: 'MixedLang'"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+  # NOTE: The above test ensures that the configure failure of an upstream
+  # optional package does not break the configure, build, or tests of
+  # downstream packages.  It only disables the broken upstream package in
+  # downstream packages.
 
 
-# ToDo: 
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildLibOptionalPkg
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break the library build for optional MixLang package"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/packages/mixed_lang/src/MixedLang.cpp
+      "Build mixed_lang lib is broken!"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a failed libray build for just the MixedLang package!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuildLibOptionalPkg
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "SimpleCxx: Configure passed"
+      "SimpleCxx_HelloWorldProg [.]+ +Passed"
+      "MixedLang: Configure passed"
+      "FAILED library build for package 'MixedLang'"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WithSubpackages:BOOL=ON'"
+      "WithSubpackages: Configure passed"
+      "WithSubpackagesA_test_of_a [.]+ +Passed"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WrapExternal:BOOL=ON'"
+      "WrapExternal: Configure passed"
+      "Final set packages that failed to configure or have the libraries build: 'MixedLang'"
+      "Final set packages that had any failures: 'MixedLang'"
+      "CMake Error at .*/TribitsCTestDriverCore.cmake"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+  # NOTE: The above test ensures that the library build failure of an optional
+  # upstream package does not break downstream packages.  It only disables the
+  # optional upstream package in downstream packages.
+
+
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildAllOptionalPkg
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break a test build file only (not the library build)"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/packages/mixed_lang/test/tstRay_Tracer.cc
+      "Build mixed_lang test is broken!"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a failed ALL build (but not a failed lib build) for just the MixedLang package!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuildAllOptionalPkg
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "SimpleCxx: Configure passed"
+      "SimpleCxx_HelloWorldProg [.]+ +Passed"
+      "MixedLang: Configure passed"
+      "MixedLang: Libs build passed"
+      "MixedLang: All build FAILED"
+      "MixedLang_RayTracerTests .*[*][*][*]Not Run"
+      "WithSubpackages: Configure passed"
+      "WithSubpackagesA_test_of_a [.]+ +Passed"
+      "WithSubpackagesC_test_of_c_b_mixed_lang [.]+ +Passed"
+      "WrapExternal: Configure passed"
+      "Final set packages that had any failures: 'MixedLang'"
+      "CMake Error at .*/TribitsCTestDriverCore.cmake"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+    FAIL_REGULAR_EXPRESSION
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=OFF[;]"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+  # NOTE: The above test ensures that the ALL build failure (but not the
+  # library build failure) of an optional upstream package does not break
+  # downstream packages in any way and does not disable the upstream package.
+
+
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuilTestPkg
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break a test only (no build failure)"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/replace_string_in_file.sh
+    ARGS TribitsExampleProject/packages/simple_cxx/test/CMakeLists.txt
+      "Hello World" "Hellos World"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a test for the package SimpleCxx!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuilTestPkg
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "SimpleCxx: Configure passed"
+      "SimpleCxx_HelloWorldTests [.]+ +Passed"
+      "SimpleCxx_HelloWorldProg [.]+[*][*][*]Failed  Required regular expression not found.Regex=.Hellos World"
+      "SimpleCxx: File '.*/TriBITS_CTestDriver_ST_BreakBuilTestPkg/.*/LastTestsFailed_.*.log' exists so there were failed tests"
+      "MixedLang: All build passed"
+      "MixedLang_RayTracerTests [.]+ +Passed"
+      "WithSubpackages: All build passed"
+      "WithSubpackages: Configure passed"
+      "WithSubpackagesA_test_of_a [.]+ +Passed"
+      "WithSubpackagesC_test_of_c_b_mixed_lang [.]+ +Passed"
+      "WrapExternal: All build passed"
+      "WrapExternal_run_external_func [.]+ +Passed"
+      "Final set packages that had any failures: 'SimpleCxx'"
+      "CMake Error at .*/TribitsCTestDriverCore.cmake"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+    FAIL_REGULAR_EXPRESSION
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;]"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+  # NOTE: The above test ensures that a test failure in a package is caught
+  # and reported correctly.
+
+
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureRequiredPkg
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break the confgiure for just the required SimpleCxx package"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/packages/simple_cxx/CMakeLists.txt
+      "Configure of SimpleCxx is broken!"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a failed configure for just the SimpleCxx package!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakConfigureRequiredPkg
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "SimpleCxx FAILED to configure"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=ON'"
+      "MixedLang: Configure passed"
+      "MixedLang: Libs build passed"
+      "MixedLang_RayTracerTests [.]+ +Passed"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WithSubpackages:BOOL=ON'"
+      "WithSubpackages: Configure passed"
+      "WithSubpackages: Libs build passed"
+      "WithSubpackages: All build passed"
+      "No tests were found"  # Can't tell which package :-(
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WrapExternal:BOOL=ON'"
+      "WrapExternal: Configure passed"
+      "WrapExternal: All build passed"
+      "Final set packages that failed to configure or have the libraries build: 'SimpleCxx'"
+      "Final set packages that had any failures: 'SimpleCxx'"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+  # NOTE: The above test ensures that the configure failure of an upstream
+  # optional package does not break the configure, build, or tests of
+  # downstream packages.  It only disables the broken upstream package in
+  # downstream packages.

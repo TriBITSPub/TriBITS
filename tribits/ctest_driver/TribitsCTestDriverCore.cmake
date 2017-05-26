@@ -104,11 +104,11 @@ MESSAGE("PROJECT_NAME = ${PROJECT_NAME}")
 #
 # Set ${PROJECT_NAME}_TRIBITS_DIR
 #
-IF (NOT ${PROJECT_NAME}_TRIBITS_DIR)
+IF (NOT "$ENV{${PROJECT_NAME}_TRIBITS_DIR}" STREQUAL "")
   SET(${PROJECT_NAME}_TRIBITS_DIR "$ENV{${PROJECT_NAME}_TRIBITS_DIR}")
 ENDIF()
-IF (NOT ${PROJECT_NAME}_TRIBITS_DIR)
-  SET(${PROJECT_NAME}_TRIBITS_DIR "${TRIBITS_PROJECT_ROOT}/cmake//tribits")
+IF ("${${PROJECT_NAME}_TRIBITS_DIR}" STREQUAL "")
+  SET(${PROJECT_NAME}_TRIBITS_DIR "${TRIBITS_PROJECT_ROOT}/cmake/tribits")
 ENDIF()
 MESSAGE("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 
@@ -1175,7 +1175,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
         MESSAGE("Build all: BUILD_ALL_NUM_ERRORS='${BUILD_ALL_NUM_ERRORS}',"
           "BUILD_ALL_RETURN_VAL='${BUILD_ALL_RETURN_VAL}'" )
 
-        IF (NOT "${BUILD_LIBS_NUM_ERRORS}" EQUAL "0")
+        IF (NOT "${BUILD_ALL_NUM_ERRORS}" EQUAL "0")
+          MESSAGE("${TRIBITS_PACKAGE}: All build FAILED!")
           SET(BUILD_OR_TEST_FAILED TRUE)
         ELSE()
           MESSAGE("${TRIBITS_PACKAGE}: All build passed!")
@@ -1206,8 +1207,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
           # See if a 'LastTestsFailed*.log' file exists to determine if there
           # are failed tests
           FILE(GLOB FAILED_TEST_LOG_FILE "${TEST_TMP_DIR}/LastTestsFailed*.log")
-          PRINT_VAR(FAILED_TEST_LOG_FILE)
           IF (FAILED_TEST_LOG_FILE)
+	    MESSAGE("${TRIBITS_PACKAGE}: File '${FAILED_TEST_LOG_FILE}'"
+              " exists so there were failed tests!")
             SET(BUILD_OR_TEST_FAILED TRUE)
           ENDIF()
           # 2009/12/05: ToDo: We need to add an argument to CTEST_TEST(...)
@@ -1306,6 +1308,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
       "${SEE_CDASH_LINK_STR}\n"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED\n")
   ELSE()
+    # ToDo: Find out why other breaking tests don't fail when FATAL_ERROR is
+    # removed!
     MESSAGE(FATAL_ERROR
       "${SEE_CDASH_LINK_STR}\n"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED\n")
@@ -1313,7 +1317,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     # Also, it is critical to dislplay the "See results" in this
     # MESSAGE(FATAL_ERROR ...) command in order for it to be printed last.
     # Otherwise, if you run with ctest -V -S, then the ouptut from
-    # CTEST_TEST() will be printed last.
+    # CTEST_TEST() will be printed last :-(
   ENDIF()
 
 ENDFUNCTION()
