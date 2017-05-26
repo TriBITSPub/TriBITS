@@ -57,6 +57,10 @@ SET(COMMON_ENV_ARGS
   CTEST_DO_SUBMIT=OFF
   )
 
+SET(CTEST_S_SCRIPT_ARGS
+  ${CMAKE_CTEST_COMMAND} -V -S
+    ${TribitsExProj_DIR}/cmake/ctest/general_gcc/ctest_serial_debug.cmake
+  )
 
 #
 # Set up to submit to CDash if reqeusted
@@ -100,11 +104,11 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_ALL_PASS
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestDriver_ST_ALL_PASS
+      CTEST_DASHBOARD_ROOT=PWD
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
-      ${CMAKE_CTEST_COMMAND} -V -S
-        ${TribitsExProj_DIR}/cmake/ctest/general_gcc/ctest_serial_debug.cmake
+      ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "NONE does not exist, skipping extra repositories"
       "Setting TribitsExProj_ENABLE_ALL_PACKAGES=ON since TribitsExProj_PACKAGES_USER_SELECTED=''"
