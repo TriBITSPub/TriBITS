@@ -66,7 +66,9 @@ SET(CTEST_S_SCRIPT_ARGS
 # Set up to submit to CDash if reqeusted
 #
 
-SET_DEFAULT_AND_FROM_ENV(${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO "")
+IF ("${${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO}" STREQUAL "") 
+  SET(${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO $ENV{${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO})
+ENDIF()
 
 IF ("${${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO}" STREQUAL "")
   SET(CDASH_SUBMIT_ARGS "")
@@ -86,6 +88,12 @@ ELSE()
    ) 
 ENDIF()
 
+IF (CDASH_SUBMIT_ARGS)
+  MESSAGE(
+    "NOTE: The tests ${PACKAGE_NAME}_CTestDriver_XXX are set up to submit CDash!"
+    " (See the test details for what CDash site is being targeted!)"
+    )
+ENDIF()
 
 #
 # Run the tests
@@ -103,11 +111,11 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_ALL_PASS
     MESSAGE "Run ctest driver testing everyting but no push."
     CMND env
     ARGS
-      CTEST_DASHBOARD_ROOT=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestDriver_ST_ALL_PASS
       CTEST_DASHBOARD_ROOT=PWD
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_ALL_PASS
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "NONE does not exist, skipping extra repositories"
@@ -160,6 +168,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_GlobalConfigureFail
       CTEST_DASHBOARD_ROOT=PWD
       ${COMMON_ENV_ARGS}
       ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_GlobalConfigureFail
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "SimpleCxx FAILED to configure"
@@ -193,6 +202,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureOptionalPkg
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakConfigureOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
@@ -235,6 +245,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildLibOptionalPkg
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuildLibOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
@@ -278,6 +289,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildAllOptionalPkg
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuildAllOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
@@ -323,6 +335,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureRequiredPkg
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakConfigureRequiredPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
