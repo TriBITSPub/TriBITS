@@ -176,7 +176,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_GlobalConfigureFail
       "WithSubpackages FAILED to configure"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
       "Final set packages that failed to configure or have the libraries build: 'SimpleCxx[;]MixedLang[;]WithSubpackages'"
-    # ToDo: Add ALWAYS_FAIL_ON_ZERO_RETURN!
+    ALWAYS_FAIL_ON_ZERO_RETURN
   )
   # NOTE: The above test ensures that a global configure failures breaks the
   # configure for all of the packages that are tried.
@@ -217,7 +217,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureOptionalPkg
       "Final set packages that failed to configure or have the libraries build: 'MixedLang'"
       "Final set packages that had any failures: 'MixedLang'"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
-    # ToDo: Add ALWAYS_FAIL_ON_ZERO_RETURN!
+    ALWAYS_FAIL_ON_ZERO_RETURN
   )
   # NOTE: The above test ensures that the configure failure of an upstream
   # optional package does not break the configure, build, or tests of
@@ -262,7 +262,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildLibOptionalPkg
       "Final set packages that had any failures: 'MixedLang'"
       "CMake Error at .*/TribitsCTestDriverCore.cmake"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
-    # ToDo: Add ALWAYS_FAIL_ON_ZERO_RETURN!
+    ALWAYS_FAIL_ON_ZERO_RETURN
   )
   # NOTE: The above test ensures that the library build failure of an optional
   # upstream package does not break downstream packages.  It only disables the
@@ -308,7 +308,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildAllOptionalPkg
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
     FAIL_REGULAR_EXPRESSION
       "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=OFF[;]"
-    # ToDo: Add ALWAYS_FAIL_ON_ZERO_RETURN!
+    ALWAYS_FAIL_ON_ZERO_RETURN
   )
   # NOTE: The above test ensures that the ALL build failure (but not the
   # library build failure) of an optional upstream package does not break
@@ -355,7 +355,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureRequiredPkg
       "Final set packages that failed to configure or have the libraries build: 'SimpleCxx'"
       "Final set packages that had any failures: 'SimpleCxx'"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
-    # ToDo: Add ALWAYS_FAIL_ON_ZERO_RETURN!
+    ALWAYS_FAIL_ON_ZERO_RETURN
   )
   # NOTE: The above test ensures that the configure failure of an upstream
   # optional package does not break the configure, build, or tests of
