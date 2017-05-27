@@ -1261,10 +1261,6 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # iteration since these packages must be enabled
   FILE(WRITE "${FAILED_PACKAGES_FILE_NAME}" "${${PROJECT_NAME}_FAILED_PACKAGES}\n")
 
-  # This is no longer necessary with CMake 2.8.1
-  #MESSAGE("\nKill all hanging Zoltan processes ...")
-  #EXECUTE_PROCESS(COMMAND killall -s 9 zdrive.exe)
-
   MESSAGE("\nDone with the incremental building and testing of ${PROJECT_NAME} packages!\n")
 
   REPORT_QUEUED_ERRORS()
