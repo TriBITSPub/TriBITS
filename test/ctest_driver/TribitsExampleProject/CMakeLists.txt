@@ -277,7 +277,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildAllOptionalPkg
     CMND cp
     ARGS -r ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Break a test file only (not the library build)"
+    MESSAGE "Break a test build file only (not the library build)"
     CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
     ARGS TribitsExampleProject/packages/mixed_lang/test/tstRay_Tracer.cc
       "Build mixed_lang test is broken!"
@@ -313,6 +313,53 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildAllOptionalPkg
   # NOTE: The above test ensures that the ALL build failure (but not the
   # library build failure) of an optional upstream package does not break
   # downstream packages in any way and does not disable the upstream package.
+
+
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuilTestPkg
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break a test only (no build failure)"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/replace_string_in_file.sh
+    ARGS TribitsExampleProject/packages/simple_cxx/test/CMakeLists.txt
+      "Hello World" "Hellos World"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a test for the package SimpleCxx!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuilTestPkg
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "SimpleCxx: Configure passed"
+      "SimpleCxx_HelloWorldTests [.]+ +Passed"
+      "SimpleCxx_HelloWorldProg [.]+[*][*][*]Failed  Required regular expression not found.Regex=.Hellos World"
+      "SimpleCxx: File '.*/TriBITS_CTestDriver_ST_BreakBuilTestPkg/.*/LastTestsFailed_.*.log' exists so there were failed tests"
+      "MixedLang: All build passed"
+      "MixedLang_RayTracerTests .* Passed"
+      "WithSubpackages: All build passed"
+      "WithSubpackages: Configure passed"
+      "WithSubpackagesA_test_of_a .* Passed"
+      "WithSubpackagesC_test_of_c_b_mixed_lang .* Passed"
+      "WrapExternal: All build passed"
+      "WrapExternal_run_external_func .* Passed"
+      "Final set packages that had any failures: 'SimpleCxx'"
+      "CMake Error at .*/TribitsCTestDriverCore.cmake"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+    FAIL_REGULAR_EXPRESSION
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;]"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+  # NOTE: The above test ensures that a test failure in a package is caught
+  # and reported correctly.
 
 
 TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureRequiredPkg
