@@ -82,7 +82,6 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
 
 SET(TribitsHelloWorld_COMMON_CONFIG_ARGS
   ${COMMON_ENV_ARGS_PASSTHROUGH}
-  -DTribitsHelloWorld_ENABLE_Fortran=${${PROJECT_NAME}_ENABLE_Fortran}
   )
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
@@ -97,6 +96,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
       "Configuring done"
       "Generating done"
       "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsHelloWorld"
+    FAIL_REGULAR_EXPRESSION
+      "Check for working Fortran compiler" # Should not be looking for Fortran!
   TEST_1 CMND make
     ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
@@ -2256,14 +2257,18 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableW
     PASS_REGULAR_EXPRESSION_ALL
       "Explicitly enabled SE packages on input .by user.:  WithSubpackagesB 1"
       "-- Setting TribitsExProj_ENABLE_WrapExternal=OFF because WrapExternal has a required library dependence on disabled package WithSubpackagesA"
-      "Enabling all parent packages that have at least one subpackage enabled [.][.][.]"
+      "Enabling all optional intra-package enables <TRIBITS_PACKAGE>_ENABLE_<DEPPACKAGE> that are not currently disabled if both sets of packages are enabled [.][.][.]"
+      "-- NOT setting WithSubpackagesB_ENABLE_MixedLang=ON since MixedLang is NOT enabled at this point!"
+      "Enabling the shell of non-enabled parent packages [(]mostly for show[)] that have at least one subpackage enabled [.][.][.]"
       "-- Setting TribitsExProj_ENABLE_WithSubpackages=ON because TribitsExProj_ENABLE_WithSubpackagesB=ON"
       "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
       "Final set of enabled SE packages:  SimpleCxx WithSubpackagesB WithSubpackages 3"
 
   )
 # NOTE: The above test is the *only* test that we have that checks that a
-# parent package is re-enabled if any of its subpackages are enabled!
+# parent package is enabled at the end if any of its subpackages are enabled!
+# This is also the only test that looks for the output that an optional
+# package enable is not set.
 
 
 ##################################
@@ -2294,6 +2299,10 @@ ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   SET(THIS_RPATH_INSPECT_CMND "ls")
   SET(THIS_RPATH_INSPECT_ARG "")
   SET(RPATH_GREP_STR "libsimpletpl")
+ELSE()
+  SET(THIS_RPATH_INSPECT_CMND "")
+  SET(THIS_RPATH_INSPECT_ARG "")
+  SET(RPATH_GREP_STR "")
 ENDIF()
 
 SET(SimpleTpl_install_shared_DIR
@@ -2302,6 +2311,7 @@ SET(SimpleTpl_install_shared_DIR
 TRIBITS_ADD_ADVANCED_TEST( SimpleTpl_install_shared
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE THIS_RPATH_INSPECT_CMND
 
   TEST_0
     CMND ${CMAKE_COMMAND}
@@ -2370,6 +2380,7 @@ ENDIF()
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_default
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
 
   TEST_0 CMND ${CMAKE_COMMAND}
     MESSAGE "Do default configure for auto RPATH to install dir"
@@ -2444,6 +2455,7 @@ ENDIF()
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
 
   TEST_0 CMND ${CMAKE_COMMAND}
     MESSAGE "Do configure with -DTribitsExProj_SET_INSTALL_RPATH=OFF"
@@ -2487,8 +2499,11 @@ TRIBITS_ADD_TEST(
     LD_LIBRARY_PATH=${RPATH_CURRENT_TEST_DIR}/install2/lib:${LD_LIBRARY_PATH_ORIG}
   ADDED_TESTS_NAMES_OUT TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES
   )
-IF (TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES)
-  SET_TESTS_PROPERTIES(${TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES}
+IF (TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES
+  AND RPATH_CURRENT_TEST_NAME_NAME
+  )
+  SET_TESTS_PROPERTIES(
+    ${TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES}
     PROPERTIES DEPENDS ${RPATH_CURRENT_TEST_NAME_NAME} )
 ENDIF()
 
@@ -2510,6 +2525,7 @@ ENDIF()
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_RPATH
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
 
   TEST_0 CMND ${CMAKE_COMMAND}
     MESSAGE "Do configure with CMAKE_INSTALL_RPATH set to moved install dir install2/"
@@ -2578,6 +2594,7 @@ ENDIF()
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
 
   TEST_0 CMND ${CMAKE_COMMAND}
     MESSAGE "Do configure with -DTribitsExProj_SET_INSTALL_RPATH=OFF"
@@ -2628,8 +2645,11 @@ TRIBITS_ADD_TEST(
     LD_LIBRARY_PATH=${RPATH_CURRENT_TEST_DIR}/install3/lib:${SimpleTpl_install_shared_DIR}/install/lib:${LD_LIBRARY_PATH_ORIG}
   ADDED_TESTS_NAMES_OUT TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES
   )
-IF (TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES)
-  SET_TESTS_PROPERTIES(${TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES}
+IF (TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES
+  AND RPATH_CURRENT_TEST_NAME_NAME
+  )
+  SET_TESTS_PROPERTIES(
+    ${TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES}
     PROPERTIES DEPENDS ${RPATH_CURRENT_TEST_NAME_NAME} )
 ENDIF()
 
