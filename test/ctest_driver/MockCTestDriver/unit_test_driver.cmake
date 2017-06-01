@@ -43,7 +43,7 @@
 # TribitsCTestDriverCore.cmake scirpt.
 #
 # NOTE: Some variables need to be set in the calling script in order to
-# override options set in the environment form the parent TriBITS project run
+# override options set in the environment from the parent TriBITS project run
 # of TribitsCTestDriverCore.cmake
 #
 
@@ -59,7 +59,7 @@ MESSAGE("CTEST_SCRIPT_DIRECTORY = '${CTEST_SCRIPT_DIRECTORY}'")
 SET(MOCK_PROJECT_NAME Trilinos)
 
 GET_FILENAME_COMPONENT(${MOCK_PROJECT_NAME}_TRIBITS_DIR
-  "${CTEST_SCRIPT_DIRECTORY}/../../tribits" ABSOLUTE)
+  "${CTEST_SCRIPT_DIRECTORY}/../../../tribits" ABSOLUTE)
 MESSAGE("${MOCK_PROJECT_NAME}_TRIBITS_DIR = '${${MOCK_PROJECT_NAME}_TRIBITS_DIR}'")
 
 SET(TRIBITS_PROJECT_ROOT "${${MOCK_PROJECT_NAME}_TRIBITS_DIR}/examples/MockTrilinos")

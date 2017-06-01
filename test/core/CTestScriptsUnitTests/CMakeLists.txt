@@ -504,25 +504,77 @@ TRIBITS_ADD_ADVANCED_TEST(
 # TAAT() ALWAYS_FAIL_ON_NONZERO_RETURN
 
 TRIBITS_ADD_ADVANCED_TEST(
-  CTestScripts_TAAT_pass_regular_expression_always_fail_on_nonzero_return
+  CTestScripts_TAAT_always_fail_on_nonzero_return
   TEST_0 EXEC GenericDriver
-    ARGS "This test passed!" 1
-    PASS_REGULAR_EXPRESSION "This test passed"
     ALWAYS_FAIL_ON_NONZERO_RETURN
+    ARGS "This test passed!" 1
     WILL_FAIL
   OVERALL_NUM_MPI_PROCS 1
   )
-  # Comment out WILL_FAIL and you will see th test fails because
-  # ALWAYS_FAIL_ON_NONZERO_RETURN is speicfied.
+  # Above, ALWAYS_FAIL_ON_NONZERO_RETURN is listed belore ARGS so that the
+  # parsing will error out if it is not defined.
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_pass_regular_expression_always_fail_on_nonzero_return
+  TEST_0 EXEC GenericDriver
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    ARGS "This test passed!" 1
+    PASS_REGULAR_EXPRESSION "This test passed"
+    WILL_FAIL
+  OVERALL_NUM_MPI_PROCS 1
+  )
+  # Without the behavior of ALWAYS_FAIL_ON_NONZERO_RETURN, this test will fail
+  # because the PASS_REGULAR_EXPRESSION match will pass.
 
 TRIBITS_ADD_ADVANCED_TEST(
   CTestScripts_TAAT_pass_regular_expression_all_always_fail_on_nonzero_return
   TEST_0 EXEC GenericDriver
+    ALWAYS_FAIL_ON_NONZERO_RETURN
     ARGS "This test passed!" 1
     PASS_REGULAR_EXPRESSION_ALL  "This test"  "This test passed"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
     WILL_FAIL
   OVERALL_NUM_MPI_PROCS 1
   )
-  # Comment out WILL_FAIL and you will see th test fails because
-  # ALWAYS_FAIL_ON_NONZERO_RETURN is speicfied.
+  # Without the behavior of ALWAYS_FAIL_ON_NONZERO_RETURN, this test will fail
+  # because the PASS_REGULAR_EXPRESSION match will pass.
+
+# TAAT() ALWAYS_FAIL_ON_ZERO_RETURN
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_always_fail_on_zero_return
+  TEST_0 EXEC GenericDriver
+    ALWAYS_FAIL_ON_ZERO_RETURN
+    ARGS "This test failed but returned 0 when it should have returned nonzero!" 0
+    WILL_FAIL
+  OVERALL_NUM_MPI_PROCS 1
+  )
+  # Above, ALWAYS_FAIL_ON_ZERO_RETURN is listed belore ARGS so that the
+  # parsing will error out if it is not defined.  Also, without the behavior
+  # of ALWAYS_FAIL_ON_ZERO_RETURN, this test will fail since the default
+  # pass/fail is return value of 0 which is negated with WILL_FAIL.
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_pass_regular_expression_always_fail_on_zero_return
+  TEST_0 EXEC GenericDriver
+    ALWAYS_FAIL_ON_ZERO_RETURN
+    ARGS "This test failed but should have returned a nonzero return code!" 0
+    PASS_REGULAR_EXPRESSION "This test failed"
+    WILL_FAIL
+  OVERALL_NUM_MPI_PROCS 1
+  )
+  # Above: Without the behavior of ALWAYS_FAIL_ON_NONZERO_RETURN, this test
+  # will fail because the PASS_REGULAR_EXPRESSION match will pass and
+  # WILL_FAIL will negate that.
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_pass_regular_expression_all_always_fail_on_zero_return
+  TEST_0 EXEC GenericDriver
+    ALWAYS_FAIL_ON_ZERO_RETURN
+    ARGS "This test failed but should have returned a nonzero return code!" 0
+    PASS_REGULAR_EXPRESSION_ALL  "This test"  "This test failed"
+    WILL_FAIL
+  OVERALL_NUM_MPI_PROCS 1
+  )
+  # Above: Without the behavior of ALWAYS_FAIL_ON_NONZERO_RETURN, this test
+  # will fail because the PASS_REGULAR_EXPRESSION_ALL match will pass and
+  # WILL_FAIL will negate that.
