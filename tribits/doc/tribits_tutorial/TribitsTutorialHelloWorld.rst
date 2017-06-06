@@ -29,7 +29,7 @@ TriBITS Hello World Tutorial
 The Simplest HelloWorld project
 ===================================
 This short tutorial will walk you through setting up a basic HelloWorld project
-built by TriBITS to intdroduce the basic concepts in TriBits.  To begin you
+built by TriBITS to intdroduce the basic concepts in TriBITS.  To begin you
 will need cmake and TriBITS installed on your machine.  You will also need a 
 working c and c++ compiler.  
 
@@ -185,13 +185,151 @@ this path.  Now you should have a directory structure that looks like this::
 
 Build your TriBITS project
 ---------------------------
-Go to the build directory and type::
+Go to the build directory and type the following to configure your project::
   cmake ../
 
 You should see something very similar to::
 
 ..literalinclude:: HelloWorldConfigure.output
 
-Now type::
+The configure step will have created several files inside your build directory, most notably it will have created nessesary make files to
+actually build your project.  The other file I will mention here is the CMakeCache.txt which stores information about how the project was 
+configured.
+
+To build your project just type::
   make
 
+you should see::
+  [ 50%] Building CXX object hello_package_dir/CMakeFiles/Hello-Executable-Name.dir/src/HelloWorld.cpp.o
+  [100%] Linking CXX executable Hello-Executable-Name.exe
+  [100%] Built target Hello-Executable-Name
+
+now in build/hello_package_dir you will see an executable named "Hello-Executable-Name" and if you run that executable you will see::
+  $ ./hello_package_dir/Hello-Executable-Name.exe 
+  Hello World!
+
+
+Adding other targets
+===============================
+
+Types of targets
+-----------------
+Previously we had just one source file and we compiled it into one executable.  In addition to executables we may also want to create other
+targets such as libraries abd tests.  In the hello_package_dir/src directory create the following files:
+
+hello_world_main.cpp::
+  #include <iostream>
+  #include "hello_world_lib.hpp"
+  int main() {
+    std::cout << HelloWorld::getHelloWorld() << "\n";
+    return 0;
+  }
+
+hello_world_lib.hpp::
+  #include <string>
+  
+  namespace HelloWorld { std::string getHelloWorld(); }
+
+
+hello_world_lib.cpp::
+  #include "hello_world_lib.hpp"
+  std::string HelloWorld::getHelloWorld()
+  { return "Hello World!"; }
+
+hello_world_unit_tests.cpp::
+  #include <iostream>
+  #include "hello_world_lib.hpp"
+  
+  int main() {
+  
+    bool success = true;
+  
+    const std::string rtn = HelloWorld::getHelloWorld();
+    std::cout << "HelloWorld::getHelloWorld() = '"<<rtn<<"' == 'Hello World'? ";
+    if (rtn == "Hello World!") {
+       std::cout << "passed\n";
+    }
+    else {
+      std::cout << "FAILED\n";
+      success = false;
+    }
+  
+    if (success) {
+      std::cout << "All unit tests passed :-)\n";
+    }
+    else {
+      std::cout << "At least one unit test failed :-(\n";
+    }
+  
+  }
+
+We will use these firles to build an executalbe, a library, and tests.  Remember in the CMakeLists.txt file for the HelloPackage 
+(hello_package_dir/CMakeList.txt) we have the line::
+
+  TRIBITS_ADD_EXECUTABLE(Hello-Executable-Name NOEXEPREFIX SOURCES src/HelloWorld.cpp INSTALLABLE)
+
+lets now modify that line to build an executable of the same name but using hello_world_main.cpp instead of HelloWorld.cpp::
+
+  TRIBITS_ADD_EXECUTABLE(Hello-Executable-Name NOEXEPREFIX SOURCES src/hello_world_main.cpp INSTALLABLE)
+
+to create a library we need to call TRIBITS_ADD_LIBRARY() and give it a name, headers and sources.  add this the CMakeLists.txt::
+
+  TRIBITS_ADD_LIBRARY(hello_world_lib HEADERS src/hello_world_lib.hpp SOURCES src/hello_world_lib.cpp)
+
+we can also add tests.  You can add a test based on an executable you have already specified for example::
+
+  TRIBITS_ADD_TEST(Hello-Executable-Name NOEXEPREFIX PASS_REGULAR_EXPRESSION "Hello World")
+
+will run "Hello-Executable-Name" and verify that the output is "Hello World".  You can also add a test and an exectuable att he 
+same time. for example::
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(unit_tests SOURCES src/hello_world_unit_tests.cpp PASS_REGULAR_EXPRESSION "All unit tests passed")
+
+will create an executable named "unit_tests" from the source file hello_world_unit_tests.cpp.  This executable will be used in a test
+that will be marked as passing if the output of that executable is "All unit tests passed".  After making these changes and additions
+to the CMakeLists.txt file it should read::
+
+  TRIBITS_PACKAGE(HelloPackage)
+  TRIBITS_ADD_LIBRARY(hello_world_lib HEADERS src/hello_world_lib.hpp SOURCES src/hello_world_lib.cpp)
+  TRIBITS_ADD_EXECUTABLE(Hello-Executable-Name NOEXEPREFIX SOURCES hello_world_main.cpp INSTALLABLE)
+  TRIBITS_ADD_TEST(Hello-Executable-Name NOEXEPREFIX PASS_REGULAR_EXPRESSION "Hello World")
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(unit_tests SOURCES hello_world_unit_tests.cpp PASS_REGULAR_EXPRESSION "All unit tests passed")
+  TRIBITS_PACKAGE_POSTPROCESS()
+
+now reconfigure and rebuild in the build directory with::
+  cmake ../
+  make
+
+
+What did we build?
+=======================================
+
+In the build directory there are many new files created by TriBITS/CMake lets look at a few that are important for understanding how TriBITS
+is building your project. 
+
+BUild Targets
+-----------------
+
+In the last section we built a library, an executable, and two tests.  Where are they? look in::
+
+  build/hello_package_dir
+
+among other things you will see::
+  
+  Hello-Executable-Name.exe
+  HelloPackage_unit_tests.exe
+  libhello_world_lib.a
+
+by default, TriBITS will place the targets inside a directory with the same name as the package directory.  If you have more than one package
+then the files will be in separate directories::
+
+    build
+    ├── package_one
+    │   ├── build_target_A
+    │   └── build_target_B
+    └── package_two
+        ├── build_target_C
+        └── build_target_D
+
+often in this sitation, you may want to collect all of you generated executables in one folder (bin) and your libraries in another (lib) in order to do this
+we need to set some vaariables in the top level CMakeLists.txt file.  
