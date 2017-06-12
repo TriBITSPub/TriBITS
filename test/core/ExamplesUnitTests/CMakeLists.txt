@@ -783,7 +783,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_5 CMND ninja ARGS -j1 package_source
+  TEST_6 CMND ninja ARGS -j1 package_source
     MESSAGE "Create the tarball"
     PASS_REGULAR_EXPRESSION_ALL
       "Run CPack packaging tool for source..."
@@ -792,10 +792,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
     # Above should be 'make package_soruce' but the dummy makefiles don't
     # support that yet!
 
-  TEST_6 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
+  TEST_7 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
     MESSAGE "Untar the tarball"
 
-  TEST_7 CMND diff
+  TEST_8 CMND diff
      ARGS -qr
        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
        tribitsexproj-1.1-Source
@@ -903,7 +903,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_5 CMND make ARGS ${MAKE_PARALLEL_ARG} package_source
+  TEST_6 CMND make ARGS ${MAKE_PARALLEL_ARG} package_source
     MESSAGE "Create the tarball"
     PASS_REGULAR_EXPRESSION_ALL
       "Run CPack packaging tool for source..."
@@ -912,10 +912,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
     # Above should be 'make package_soruce' but the dummy makefiles don't
     # support that yet!
 
-  TEST_6 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
+  TEST_7 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
     MESSAGE "Untar the tarball"
 
-  TEST_7 CMND diff
+  TEST_8 CMND diff
      ARGS -qr
        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
        tribitsexproj-1.1-Source
