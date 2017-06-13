@@ -85,9 +85,17 @@ MACRO(TRIBITS_ADD_DASHBOARD_TARGET)
     APPEND_SET(EXPR_CMND_ARGS "TRIBITS_PROJECT_ROOT=${${PROJECT_NAME}_SOURCE_DIR}")
     APPEND_SET(EXPR_CMND_ARGS "${PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}")
     APPEND_SET(EXPR_CMND_ARGS "${PROJECT_NAME}_WARNINGS_AS_ERRORS_FLAGS='${${PROJECT_NAME}_WARNINGS_AS_ERRORS_FLAGS}'")
+    APPEND_SET(EXPR_CMND_ARGS "${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE='${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE}'")
 
-    # Conditionally override options used only for testing.  These options have no use in a
-    # a basic build/test so we don't want to interfere with options users might set on the env.
+    # Conditionally override options used only for testing.  These options
+    # have no use in a a basic build/test so we don't want to interfere with
+    # options users might set on the env.
+    IF (${PROJECT_NAME}_DO_ALL_AT_ONCE)
+      APPEND_SET(EXPR_CMND_ARGS "${PROJECT_NAME}_DO_ALL_AT_ONCE=TRUE")
+    ENDIF()
+    IF (${PROJECT_NAME}_USE_NEW_AAO_CTEST_CDASH_FEATURES)
+      APPEND_SET(EXPR_CMND_ARGS "${PROJECT_NAME}_USE_NEW_AAO_CTEST_CDASH_FEATURES=TRUE")
+    ENDIF()
     IF (${PROJECT_NAME}_ENABLE_COVERAGE_TESTING)
       APPEND_SET(EXPR_CMND_ARGS "CTEST_DO_COVERAGE_TESTING=TRUE")
     ENDIF()

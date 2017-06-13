@@ -103,12 +103,15 @@ IF (CDASH_SUBMIT_ARGS)
     )
 ENDIF()
 
+
+######################################################################
 #
-# Run the tests
+# Test package-by-package mode for TribitsCTestDriverCore.cmake
 #
+######################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_ALL_PASS
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -123,7 +126,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_ALL_PASS
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
-      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_ALL_PASS
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_ALL_PASS
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "NONE does not exist, skipping extra repositories"
@@ -158,7 +161,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_ALL_PASS
   # non-zero return code is mandated.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_GlobalConfigureFail
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_GlobalConfigureFail
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -176,7 +179,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_GlobalConfigureFail
       CTEST_DASHBOARD_ROOT=PWD
       ${COMMON_ENV_ARGS}
       ${CDASH_SUBMIT_ARGS}
-      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_GlobalConfigureFail
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_GlobalConfigureFail
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "SimpleCxx FAILED to configure"
@@ -190,7 +193,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_GlobalConfigureFail
   # configure for all of the packages that are tried.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureOptionalPkg
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -210,7 +213,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureOptionalPkg
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
-      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakConfigureOptionalPkg
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakConfigureOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
@@ -233,7 +236,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureOptionalPkg
   # downstream packages.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildLibOptionalPkg
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -253,7 +256,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildLibOptionalPkg
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
-      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuildLibOptionalPkg
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
@@ -277,7 +280,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildLibOptionalPkg
   # optional upstream package in downstream packages.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildAllOptionalPkg
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -297,7 +300,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildAllOptionalPkg
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
-      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuildAllOptionalPkg
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
@@ -323,7 +326,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildAllOptionalPkg
   # downstream packages in any way and does not disable the upstream package.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildTestPkg
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildTestPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -343,14 +346,14 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildTestPkg
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
-      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuildTestPkg
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildTestPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "SimpleCxx: Configure passed"
       "SimpleCxx_HelloWorldTests [.]+ +Passed"
       "SimpleCxx_HelloWorldProg [.]+[*][*][*]Failed  Required regular expression not found.Regex=.Hellos World"
-      "SimpleCxx: File '.*/TriBITS_CTestDriver_ST_BreakBuildTestPkg/.*/LastTestsFailed_.*.log' exists so there were failed tests"
+      "SimpleCxx: File '.*/TriBITS_CTestDriver_PBP_ST_BreakBuildTestPkg/.*/LastTestsFailed_.*.log' exists so there were failed tests"
       "MixedLang: All build passed"
       "MixedLang_RayTracerTests [.]+ +Passed"
       "WithSubpackages: All build passed"
@@ -370,7 +373,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildTestPkg
   # and reported correctly.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureRequiredPkg
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -390,7 +393,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureRequiredPkg
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
-      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakConfigureRequiredPkg
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakConfigureRequiredPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
@@ -418,7 +421,67 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureRequiredPkg
   # downstream packages.
 
 
-# ToDo: Add Coverage build test
+# ToDo: Add Coverage build test (only optional if told to)
+
+
+# ToDo: Add memory testing test (only optional if told to)
+
+
+######################################################################
+#
+# Test all-at-once mode for TribitsCTestDriverCore.cmake
+#
+######################################################################
+
+SET( AAO_COMMON_ENV_ARGS
+  ${COMMON_ENV_ARGS}
+  TribitsExProj_DO_ALL_AT_ONCE=TRUE
+  TribitsExProj_USE_NEW_AAO_CTEST_CDASH_FEATURES=TRUE
+  )
+
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO_ST_ALL_PASS
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
+    CMND ln
+    ARGS -s ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Run ctest driver testing everyting but no push."
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${AAO_COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CDASH_SUBMIT_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO_ST_ALL_PASS
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "NONE does not exist, skipping extra repositories"
+      "Setting TribitsExProj_ENABLE_ALL_PACKAGES=ON since TribitsExProj_PACKAGES_USER_SELECTED=''"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
+      "Configure, build, test and submit results all at once for all enabled packages"
+      "Configure PASSED"
+      "Build output: BUILD_ALL_NUM_ERRORS='0',BUILD_ALL_RETURN_VAL='0'"
+      "Build PASSED"
+      "Running tests .parallel level 1."
+      "WithSubpackagesA_test_of_a [.]+ +Passed"
+      "WithSubpackagesB_test_of_b [.]+ +Passed"
+      "WithSubpackagesC_test_of_c_util [.]+ +Passed"
+      "WithSubpackagesC_test_of_c_b_mixed_lang [.]+ +Passed"
+      "WrapExternal_run_external_func [.]+ +Passed"
+      "File '' does NOT exist so all tests passed"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  )
+  # NOTE: The above test is the basic mode of testing all packages and making
+  # sure that the configure, build, and tests all run correctly for
+  # everything.  The names of passing tests are grepped for to make sure they
+  # run and pass.  And a non-zero return code is mandated.
+
+
+# ToDo: Add Coverage build test (only optional if told to)
 
 
 # ToDo: Add memory testing test (only optional if told to)
