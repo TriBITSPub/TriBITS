@@ -316,7 +316,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildAllOptionalPkg
   # downstream packages in any way and does not disable the upstream package.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuilTestPkg
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuildTestPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -336,14 +336,14 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakBuilTestPkg
       ${COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CDASH_SUBMIT_ARGS}
-      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuilTestPkg
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_ST_BreakBuildTestPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "SimpleCxx: Configure passed"
       "SimpleCxx_HelloWorldTests [.]+ +Passed"
       "SimpleCxx_HelloWorldProg [.]+[*][*][*]Failed  Required regular expression not found.Regex=.Hellos World"
-      "SimpleCxx: File '.*/TriBITS_CTestDriver_ST_BreakBuilTestPkg/.*/LastTestsFailed_.*.log' exists so there were failed tests"
+      "SimpleCxx: File '.*/TriBITS_CTestDriver_ST_BreakBuildTestPkg/.*/LastTestsFailed_.*.log' exists so there were failed tests"
       "MixedLang: All build passed"
       "MixedLang_RayTracerTests [.]+ +Passed"
       "WithSubpackages: All build passed"
