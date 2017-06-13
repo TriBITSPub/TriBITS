@@ -82,6 +82,13 @@ ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "TRILINOS_CDASH")
     CTEST_PROJECT_NAME=TribitsExProj
     CTEST_DROP_LOCATION="/submit.php?project=TribitsExProj"
     )
+ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "EXP_CDASH")
+  SET(CDASH_SUBMIT_ARGS
+    CTEST_DO_SUBMIT=TRUE
+    CTEST_DROP_SITE=exp.cdash.org
+    CTEST_PROJECT_NAME=TribitsExProj
+    CTEST_DROP_LOCATION="/submit.php?project=TribitsExProj"
+    )
 ELSE()
   MESSAGE(FATAL_ERROR "Error, the value"
     " ${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO='${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}'"
@@ -409,3 +416,9 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_BreakConfigureRequiredPkg
   # optional package does not break the configure, build, or tests of
   # downstream packages.  It only disables the broken upstream package in
   # downstream packages.
+
+
+# ToDo: Add Coverage build test
+
+
+# ToDo: Add memory testing test (only optional if told to)
