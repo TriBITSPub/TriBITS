@@ -901,6 +901,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
   SELECT_FINAL_SET_OF_PACKAGES_TO_PROCESS()
 
+  # NOTE: When you get here, ${PROJECT_NAME}_PACKAGES is not the full set of
+  # packages but instead is the list of packages that should be explicitly
+  # tested by this script.
   TRIBITS_PRINT_ENABLED_PACKAGE_LIST(
     "\nFinal set of packages to be explicitly processed by CTest/CDash" ON FALSE)
 
@@ -1009,6 +1012,15 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     TRIBITS_CTEST_PACKAGE_BY_PACKAGE()
 
   ENDIF()
+
+  IF(${PROJECT_NAME}_FAILED_PACKAGES)
+    MESSAGE(
+      "\nFinal set packages that had any failures: '${${PROJECT_NAME}_FAILED_PACKAGES}'")
+  ENDIF()
+
+  # Write a file listing the packages that failed.  This will be read in on the next CI
+  # iteration since these packages must be enabled
+  FILE(WRITE "${FAILED_PACKAGES_FILE_NAME}" "${${PROJECT_NAME}_FAILED_PACKAGES}\n")
 
   REPORT_QUEUED_ERRORS()
 

@@ -85,11 +85,6 @@ TRIBITS_ADD_ADVANCED_TEST( XmlHtmlCDashOutputTest
   )
 
 
-#
-# Test checkin-test.py script
-#
-
-
 TRIBITS_ADD_ADVANCED_TEST( TribitsPackageFilePathUtils_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -97,6 +92,35 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsPackageFilePathUtils_UnitTests
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsPackageFilePathUtils_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsPackageTestNameUtils_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsPackageTestNameUtils_UnitTests.py -v
+    PASS_REGULAR_EXPRESSION "OK"
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_from_last_tests_failed_1
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Run checkin-test.py script to make sure it finds base dir"
+    CMND ${PYTHON_EXECUTABLE}
+    ARGS
+      -E "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages-from-last-tests-failed.py"
+      --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
+      --last-tests-failed-file="${CMAKE_CURRENT_SOURCE_DIR}/LastTestsFailed.1.log"
+    PASS_REGULAR_EXPRESSION_ALL
+      "^Thyra[;]Teuchos\n"
+  )
+
+
+#
+# Test checkin-test.py script
+#
 
 TRIBITS_ADD_ADVANCED_TEST( clone_extra_repos_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME

@@ -793,6 +793,44 @@ IF (PYTHON_EXECUTABLE)
 
 
   CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_AAO_EnableOnlyModified_ModifiedTeko_FailedAllPackages
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teko.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/failedPackages.ALL_PACKAGES.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      Trilinos_DO_ALL_AT_ONCE=TRUE
+      CTEST_TEST_TYPE=Continuous
+      CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "MODIFIED_PACKAGES_LIST='Teko'"
+      "FAILING_PACKAGES_LIST='ALL_PACKAGES'"
+      "Enabling modified package: Teko"
+      "Enabling previously failing ALL_PACKAGES"
+      "Directly modified or failing non-disabled packages that need to be tested:  ALL_PACKAGES"
+      "Explicitly enabled packages on input .*  Teko 1"
+      "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+      "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON .Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON."
+      "Final set of non-enabled packages:  Stokhos Stalix 2"
+      "Final set of packages to be explicitly processed by CTest/CDash:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 24"
+      "CTEST_UPDATE.[.][.][.]. returned '0'"
+      "Configure, build, test, and submit results for Trilinos packages"
+      "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.*[;]-DTrilinos_ENABLE_ALL_PACKAGES=ON'"
+      "Skipping actual ctest_configure.. because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Skipping build because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Skipping testing because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Done with the all-at-once configure, build, test, ans submit of Trilinos packages"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+    )
+  # NOTE: The above test is for the all-at-once appraoch that checks for the
+  # ALL_PACKAGES value in failedPackages.txt.  That value can be returned from
+  # a configure failure in a previous all-at-once CI build.  This test makes
+  # sure that all packages will get enabled in the follow-up CI iteration in
+  # that case.
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     CI_EnableOnlyModified_ModifiedNone_FailedTeko_OnlyPrimaryStableCode
     COPY_FILES
       ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
