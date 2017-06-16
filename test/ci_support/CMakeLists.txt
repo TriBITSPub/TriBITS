@@ -175,14 +175,18 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_checkin_test
 
   TEST_0
     MESSAGE "Copy TribitsExampleProject so we can snapshot TriBITS into it"
-    CMND ${CMAKE_COMMAND}
-    ARGS -E copy_directory ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       TribitsExampleProject
+    # NOTE: Had to use 'cp -r' instead of 'cmake -E copy_directory' because
+    # the latter failed for a development version of CMake.  But since the
+    # checkin-test.py scrpt will really only run on Linux/Unix systems, using
+    # 'cp -r' is not a testing portability problem.
 
   TEST_1
     MESSAGE "Copy tribits dir into TribitsExampleProject/cmake/"
-    CMND ${CMAKE_COMMAND}
-    ARGS -E copy_directory ${${PROJECT_NAME}_TRIBITS_DIR}
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}
       TribitsExampleProject/cmake/tribits
 
   TEST_2
