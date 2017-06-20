@@ -873,13 +873,13 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   IF (NOT CTEST_ENABLE_MODIFIED_PACKAGES_ONLY)
     MESSAGE(
       "\n***"
-      "\n*** Determining what packages to enable based what was set in ${PROJECT_NAME}_PACKAGES ..."
+      "\n*** Determining what packages to enable based what was set in ${PROJECT_NAME}_PACKAGES by the user ..."
       "\n***\n")
     ENABLE_USER_SELECTED_PACKAGES()
   ELSE()
     MESSAGE(
       "\n***"
-      "\n*** Determining what packages to enable based on what changed ..."
+      "\n*** Determining what packages to enable based on what changed (and failed last CI iteration) ..."
       "\n***\n")
     ENABLE_ONLY_MODIFIED_PACKAGES()
     SET(${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES ON)
@@ -897,14 +897,13 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   SET(${PROJECT_NAME}_ENABLE_EXAMPLES ON)
   SET(${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES ON)
   SET(DO_PROCESS_MPI_ENABLES FALSE) # Should not be needed but CMake is messing up
-  TRIBITS_ADJUST_AND_PRINT_PACKAGE_DEPENDENCIES() # Sets ${PROJECT_NAME}_NUM_ENABLED_PACKAGES
+  TRIBITS_ADJUST_AND_PRINT_PACKAGE_DEPENDENCIES()
+  # Above sets ${PROJECT_NAME}_NUM_ENABLED_PACKAGES
 
-  SELECT_FINAL_SET_OF_PACKAGES_TO_PROCESS()
+  SELECT_FINAL_SET_OF_PACKAGES_TO_DIRECTLY_TEST()
+  # Above sets ${PROJECT_NAME}_PACKAGES_TO_DIRECTLY_TEST
 
-  # NOTE: When you get here, ${PROJECT_NAME}_PACKAGES is not the full set of
-  # packages but instead is the list of packages that should be explicitly
-  # tested by this script.
-  TRIBITS_PRINT_ENABLED_PACKAGE_LIST(
+  TRIBITS_PRINT_ENABLED_PACKAGES_LIST_FROM_VAR( ${PROJECT_NAME}_PACKAGES_TO_DIRECTLY_TEST
     "\nFinal set of packages to be explicitly processed by CTest/CDash" ON FALSE)
 
   MESSAGE(
