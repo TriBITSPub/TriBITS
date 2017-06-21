@@ -38,6 +38,46 @@
 # @HEADER
 
 
+###############################################################################
+#
+# Strong automated testing of TribitsCTestDriverCore.cmake and
+# 'dashboard' target using real TribitsExampleProject.
+#
+# The tests in this CMakeLists.txt file use the TribitsExampleProject to do
+# real testing of TribitsCTestDriverCore.cmake using real CTest -S script
+# functions and can submit to a CDash site.  By default, these tests don't
+# submit to CDash.  To get them to submit to CDash, you must configure this
+# TriBITS project with::
+#
+#   -D${PROJECT_NAME}_TRIBITSEXPROJ_SUBMIT_TO=<site-name>
+#
+# where ``<cite-name>`` is one of the following values:
+#
+# * Empty "" (the default)
+#
+# * "MY_CDASH" (submits to the default TribitsExProj project site on
+#   my.cdash.org)
+#
+# * "TRILINOS_CDASH" (submits to TribitsExProj project on
+#   testing.sandia.gov/cdash/)
+#
+# * "EXP_CDASH" (submits to TribitsExProj on exp.cdash.org)
+#
+# In addition, tests can also be added to test coverage testing and memory
+# testing.
+#
+# To enable the coverage testing tests (which assumes gcov and GCC), use:
+#
+#   -D${PROJECT_NAME}_ENABLE_CTEST_DRIVER_COVERAGE_TESTS=ON
+#
+# To enable the memory testing tests (which assumes valgrind is set up to be
+# used), use:
+#
+#   -D${PROJECT_NAME}_ENABLE_CTEST_DRIVER_MEMORY_TESTS=ON
+#
+###############################################################################
+
+
 #
 # Set up common vars/args for all direct CTest Driver tests
 #
@@ -99,7 +139,7 @@ ELSE()
    ) 
 ENDIF()
 
-IF (CTEST_DROP_SITE_ENV_ARGS)
+IF (NOT "${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}" STREQUAL "")
   MESSAGE(
     "NOTE: The tests ${PACKAGE_NAME}_CTestDriver_XXX are set up to submit CDash!"
     " (See the test details for what CDash site is being targeted!)"
@@ -444,10 +484,74 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
   # downstream packages.
 
 
-# ToDo: Add Coverage build test (only optionally if told to)
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_COVERAGE
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  EXCLUDE_IF_NOT_TRUE  ${PROJECT_NAME}_ENABLE_CTEST_DRIVER_COVERAGE_TESTS
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
+    CMND ln
+    ARGS -s ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Run ctest driver testing everyting but no push."
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${PBP_COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+	CTEST_DO_COVERAGE_TESTING=TRUE
+      ${CTEST_DROP_SITE_ENV_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_ALL_COVERAGE
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "CTEST_DO_COVERAGE_TESTING='TRUE'"
+      "Loop through TribitsExProj packages to configure, build, and test"
+      "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Running coverage for package 'SimpleCxx'"
+      "Running coverage for package 'MixedLang'"
+      "Running coverage for package 'WithSubpackages'"
+      "Running coverage for package 'WrapExternal'"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  )
+  # NOTE: The above test is the only coverage test for PBP.
 
 
-# ToDo: Add memory testing test (only optionally if told to)
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_MEMORY
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  EXCLUDE_IF_NOT_TRUE  ${PROJECT_NAME}_ENABLE_CTEST_DRIVER_MEMORY_TESTS
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
+    CMND ln
+    ARGS -s ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Run ctest driver testing everyting but no push."
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${PBP_COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+        CTEST_DO_MEMORY_TESTING=TRUE
+      ${CTEST_DROP_SITE_ENV_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_ALL_MEMORY
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "CTEST_DO_MEMORY_TESTING='TRUE'"
+      "Loop through TribitsExProj packages to configure, build, and test"
+      "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Running memory testing for package 'SimpleCxx'"
+      "MemCheck .+: SimpleCxx_HelloWorldTests [.]+ +Passed"
+      "Running memory testing for package 'MixedLang'"
+      "MemCheck .+: MixedLang_RayTracerTests [.]+ +Passed"
+      "Running memory testing for package 'WithSubpackages'"
+      "MemCheck .+: WithSubpackagesA_test_of_a [.]+ +Passed"
+      "Running memory testing for package 'WrapExternal'"
+      "MemCheck .+: WrapExternal_run_external_func [.]+ +Passed"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  )
+  # NOTE: The above test is the only memory test for PBP.
 
 
 TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_ALL_PASS
