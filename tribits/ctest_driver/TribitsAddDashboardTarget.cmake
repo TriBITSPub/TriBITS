@@ -105,6 +105,9 @@ MACRO(TRIBITS_ADD_DASHBOARD_TARGET)
     IF (CTEST_PARALLEL_LEVEL)
       APPEND_SET(EXPR_CMND_ARGS "CTEST_PARALLEL_LEVEL=${CTEST_PARALLEL_LEVEL}")
     ENDIF()
+    IF (NOT "${CTEST_DO_SUBMIT}" STREQUAL "")
+      APPEND_SET(EXPR_CMND_ARGS "CTEST_DO_SUBMIT=${CTEST_DO_SUBMIT}")
+    ENDIF()
     IF (CTEST_DROP_SITE)
       APPEND_SET(EXPR_CMND_ARGS "CTEST_DROP_SITE=${CTEST_DROP_SITE}")
     ENDIF()
@@ -135,13 +138,69 @@ MACRO(TRIBITS_ADD_DASHBOARD_TARGET)
     # H.2) Add the custom target to enable all the packages with tests enabled
 
     IF (${PROJECT_NAME}_DO_ALL_AT_ONCE)
+
       SET(RUNNING_EXP_DASHBOARD_MSG_HEADER
         "Running all-at-once experimental dashboard"
         )
+
+      SET(DASHBOARD_TARGET_PRE_CTEST_DRIVER_CMNDS)
+
+      SET(DASHBOARD_TARGET_CTEST_DRIVER_CMND_NUM)
+
+      SET(DASHBOARD_TARGET_POST_CTEST_DRIVER_CMNDS)
+
     ELSE()
+
       SET(RUNNING_EXP_DASHBOARD_MSG_HEADER
         "Running package-by-package experimental dashboard"
         )
+
+      SET(DASHBOARD_TARGET_PRE_CTEST_DRIVER_CMNDS
+        COMMAND echo
+        COMMAND echo "***"
+        COMMAND echo "*** A) Clean out the list of packages"
+        COMMAND echo "***"
+        COMMAND echo
+        COMMAND echo Running: ${CMAKE_COMMAND} -D${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES:BOOL=TRUE
+          -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON -D${PROJECT_NAME}_ENABLE_ALL_PACKAGES:BOOL=OFF ${PROJECT_SOURCE_DIR}
+        COMMAND echo
+        COMMAND ${CMAKE_COMMAND} -D${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES:BOOL=TRUE
+          -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON -D${PROJECT_NAME}_ENABLE_ALL_PACKAGES:BOOL=OFF ${PROJECT_SOURCE_DIR}
+        # NOTE: Above, if ${PROJECT_NAME}_ENABLE_ALL_PACKAGES was set in CMakeCache.txt, then setting
+        # -D${PROJECT_NAME}_ENABLE_ALL_PACKAGES:BOOL=OFF will turn it off in the cache.  Note that it will
+        # never be turned on again which means that the list of packages will be set explicitly below.
+	)
+
+      SET(DASHBOARD_TARGET_CTEST_DRIVER_CMND_NUM "B) ")
+
+      SET(DASHBOARD_TARGET_POST_CTEST_DRIVER_CMNDS
+        COMMAND echo
+        COMMAND echo "***"
+        COMMAND echo "*** C) Clean out the list of packages again to clean the cache file"
+        COMMAND echo "***"
+        COMMAND echo
+        COMMAND echo Running: ${CMAKE_COMMAND} -D${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES:BOOL=TRUE
+          -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON -D${PROJECT_NAME}_ENABLE_ALL_PACKAGES:BOOL=OFF ${PROJECT_SOURCE_DIR}
+        COMMAND echo
+        COMMAND ${CMAKE_COMMAND} -D${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES:BOOL=TRUE
+          -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON -D${PROJECT_NAME}_ENABLE_ALL_PACKAGES:BOOL=OFF ${PROJECT_SOURCE_DIR}
+  
+        COMMAND echo
+        COMMAND echo "***"
+        COMMAND echo "*** D) Reconfigure with the original package list"
+        COMMAND echo "***"
+        COMMAND echo
+        COMMAND echo Running: ${CMAKE_COMMAND} ${${PROJECT_NAME}_ENABLED_PACKAGES_CMAKE_ARG_LIST}
+          -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON ${PROJECT_SOURCE_DIR}
+        COMMAND echo
+        COMMAND ${CMAKE_COMMAND} ${${PROJECT_NAME}_ENABLED_PACKAGES_CMAKE_ARG_LIST}
+          -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON ${PROJECT_SOURCE_DIR}
+  
+        COMMAND echo
+        COMMAND echo "See the results at http://${CTEST_DROP_SITE}${CTEST_DROP_LOCATION}&display=project\#Experimental"
+        COMMAND echo
+	)
+
     ENDIF()
 
     ADD_CUSTOM_TARGET( dashboard
@@ -158,24 +217,11 @@ MACRO(TRIBITS_ADD_DASHBOARD_TARGET)
       COMMAND echo ${PROJECT_NAME}_ENABLED_PACKAGES_LIST=${${PROJECT_NAME}_ENABLED_PACKAGES_LIST}
       COMMAND echo
 
-      COMMAND echo
-      COMMAND echo "***"
-      COMMAND echo "*** A) Clean out the list of packages"
-      COMMAND echo "***"
-      COMMAND echo
-      COMMAND echo Running: ${CMAKE_COMMAND} -D${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES:BOOL=TRUE
-        -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON -D${PROJECT_NAME}_ENABLE_ALL_PACKAGES:BOOL=OFF ${PROJECT_SOURCE_DIR}
-      COMMAND echo
-      COMMAND ${CMAKE_COMMAND} -D${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES:BOOL=TRUE
-        -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON -D${PROJECT_NAME}_ENABLE_ALL_PACKAGES:BOOL=OFF ${PROJECT_SOURCE_DIR}
-
-      # NOTE: Above, if ${PROJECT_NAME}_ENABLE_ALL_PACKAGES was set in CMakeCache.txt, then setting
-      # -D${PROJECT_NAME}_ENABLE_ALL_PACKAGES:BOOL=OFF will turn it off in the cache.  Note that it will
-      # never be turned on again which means that the list of packages will be set explicitly below.
+      ${DASHBOARD_TARGET_PRE_CTEST_DRIVER_CMNDS}
 
       COMMAND echo
       COMMAND echo "***"
-      COMMAND echo "*** B) Run the dashboard command setting the list of packages"
+      COMMAND echo "*** ${DASHBOARD_TARGET_CTEST_DRIVER_CMND_NUM}Run the dashboard command setting the list of packages"
       COMMAND echo "***"
       COMMAND echo
       COMMAND echo Running: env ${EXPR_CMND_ARGS}
@@ -189,32 +235,11 @@ MACRO(TRIBITS_ADD_DASHBOARD_TARGET)
         PROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}
         ${CMAKE_CTEST_COMMAND} ${${PROJECT_NAME}_DASHBOARD_CTEST_ARGS} -S
           ${${PROJECT_NAME}_TRIBITS_DIR}/ctest_driver/experimental_build_test.cmake || echo
-
       # 2009/07/05: rabartl: Above, I added the ending '|| echo' to always make
       # the command pass so that 'make' will not stop and avoid this last command
       # to set back the enabled packages.
 
-      COMMAND echo
-      COMMAND echo "***"
-      COMMAND echo "*** C) Clean out the list of packages again to clean the cache file"
-      COMMAND echo "***"
-      COMMAND echo
-      COMMAND echo Running: ${CMAKE_COMMAND} -D${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES:BOOL=TRUE
-        -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON -D${PROJECT_NAME}_ENABLE_ALL_PACKAGES:BOOL=OFF ${PROJECT_SOURCE_DIR}
-      COMMAND echo
-      COMMAND ${CMAKE_COMMAND} -D${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES:BOOL=TRUE
-        -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON -D${PROJECT_NAME}_ENABLE_ALL_PACKAGES:BOOL=OFF ${PROJECT_SOURCE_DIR}
-
-      COMMAND echo
-      COMMAND echo "***"
-      COMMAND echo "*** D) Reconfigure with the original package list"
-      COMMAND echo "***"
-      COMMAND echo
-      COMMAND echo Running: ${CMAKE_COMMAND} ${${PROJECT_NAME}_ENABLED_PACKAGES_CMAKE_ARG_LIST}
-        -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON ${PROJECT_SOURCE_DIR}
-      COMMAND echo
-      COMMAND ${CMAKE_COMMAND} ${${PROJECT_NAME}_ENABLED_PACKAGES_CMAKE_ARG_LIST}
-        -D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON ${PROJECT_SOURCE_DIR}
+      ${DASHBOARD_TARGET_POST_CTEST_DRIVER_CMNDS}
 
       COMMAND echo
       COMMAND echo "See the results at http://${CTEST_DROP_SITE}${CTEST_DROP_LOCATION}&display=project\#Experimental"
