@@ -39,7 +39,7 @@
 
 
 #
-# Set up common vars/args for all tests
+# Set up common vars/args for all direct CTest Driver tests
 #
 
 SET(TribitsExProj_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject")
@@ -68,7 +68,8 @@ SET(CTEST_S_SCRIPT_ARGS
 #
 
 IF ("${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}" STREQUAL "") 
-  SET(${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO $ENV{${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO})
+  SET(${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO
+    $ENV{${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO} )
 ENDIF()
 
 IF ("${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}" STREQUAL "")
@@ -76,18 +77,24 @@ IF ("${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}" STREQUAL "")
 ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "MY_CDASH")
   SET(CDASH_SUBMIT_ARGS CTEST_DO_SUBMIT=TRUE)
 ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "TRILINOS_CDASH")
-  SET(CDASH_SUBMIT_ARGS
-    CTEST_DO_SUBMIT=TRUE
-    CTEST_DROP_SITE=testing.sandia.gov/cdash
-    CTEST_PROJECT_NAME=TribitsExProj
+  SET(CTEST_DROP_SITE_ENV_ARGS
+    CTEST_DROP_SITE="testing.sandia.gov/cdash"
+    CTEST_PROJECT_NAME="TribitsExProj"
     CTEST_DROP_LOCATION="/submit.php?project=TribitsExProj"
     )
-ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "EXP_CDASH")
   SET(CDASH_SUBMIT_ARGS
     CTEST_DO_SUBMIT=TRUE
-    CTEST_DROP_SITE=exp.cdash.org
-    CTEST_PROJECT_NAME=TribitsExProj
+    ${CTEST_DROP_SITE_ENV_ARGS}
+    )
+ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "EXP_CDASH")
+  SET(CTEST_DROP_SITE_ENV_ARGS
+    CTEST_DROP_SITE="exp.cdash.org"
+    CTEST_PROJECT_NAME="TribitsExProj"
     CTEST_DROP_LOCATION="/submit.php?project=TribitsExProj"
+    )
+  SET(CDASH_SUBMIT_ARGS
+    CTEST_DO_SUBMIT=TRUE
+    ${CTEST_DROP_SITE_ENV_ARGS}
     )
 ELSE()
   MESSAGE(FATAL_ERROR "Error, the value"
@@ -102,6 +109,26 @@ IF (CDASH_SUBMIT_ARGS)
     " (See the test details for what CDash site is being targeted!)"
     )
 ENDIF()
+
+
+#
+# Set up arguments for direct configures of TribitsExamleProject to test the
+# 'dashboard' target.
+#
+
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/../../core/ExamplesUnitTests/GetCompilerPassthroughArgs.cmake")
+
+
+SET(CTEST_DROP_SITE_CONFIG_ARGS)
+FOREACH (CTEST_DROP_SITE_ENV_ARG ${CTEST_DROP_SITE_ENV_ARGS})
+  LIST(APPEND CTEST_DROP_SITE_CONFIG_ARGS "-D${CTEST_DROP_SITE_ENV_ARG}")
+ENDFOREACH()
+
+SET(TribitsExampleProject_COMMON_CONFIG_ARGS
+  ${COMMON_ENV_ARGS_PASSTHROUGH}
+  -DTribitsExProj_ENABLE_Fortran=${${PROJECT_NAME}_ENABLE_Fortran}
+  ${CTEST_DROP_SITE_CONFIG_ARGS}
+  )
 
 
 ######################################################################
@@ -427,7 +454,118 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
 # ToDo: Add memory testing test (only optionally if told to)
 
 
-# ToDo: Add `make dashboard` test that also optionally submits
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_ALL_PASS
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the initial configure"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=ON
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "Finished configuring TribitsExProj"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_1
+    MESSAGE "Run the dashboard target"
+    CMND env
+    ARGS
+      CTEST_BUILD_NAME=${PROJECT_NAME}_CTestDriver_PBP_Dashboard_ST_ALL_PASS
+      make dashboard
+    PASS_REGULAR_EXPRESSION_ALL
+      "Running package-by-package experimental dashboard"
+      "A[)] Clean out the list of packages"
+      "B[)] Run the dashboard command setting the list of packages"
+      "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Loop through TribitsExProj packages to configure, build, and test"
+      "0. Processing current package SimpleCxx: libs='ON', tests='ON'"
+      "1. Processing current package MixedLang: libs='ON', tests='ON'"
+      "2. Processing current package WithSubpackages: libs='ON', tests='ON'"
+      "3. Processing current package WrapExternal: libs='ON', tests='ON'"
+      "Done with the incremental building and testing of TribitsExProj packages"
+      "TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "C[)] Clean out the list of packages again to clean the cache file"
+      "D[)] Reconfigure with the original package list"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_2
+    MESSAGE "Verify that the right set of packages are set"
+    CMND ${CMAKE_COMMAND} ARGS .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Enabling all required .and optional since TribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=ON. upstream SE packages for current set of enabled packages .TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON."
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  )
+  # The above test does a lot of checking to really pin down the behavior of
+  # the TRIBITS_CTEST_DRIVER() function run from the basic 'dashboard' target.
+  # Follow-on tests will not check so much output.
+
+
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the initial configure"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=ON
+      -DTribitsExProj_ENABLE_SimpleCxx=ON
+      -DTribitsExProj_ENABLE_WrapExternal=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Setting SimpleCxx_ENABLE_TESTS=ON"
+      "Setting WrapExternal_ENABLE_TESTS=ON"
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled package: MixedLang [(]Libs[)]"
+      "Processing enabled package: WithSubpackages [(]A[)]"
+      "Processing enabled package: WrapExternal [(]Libs, Tests, Examples[)]"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_1
+    MESSAGE "Run the dashboard target"
+    CMND env
+    ARGS
+      CTEST_BUILD_NAME=${PROJECT_NAME}_CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
+      make dashboard
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx WrapExternal 2"
+      "Loop through TribitsExProj packages to configure, build, and test"
+      "0. Processing current package SimpleCxx: libs='ON', tests='ON'"
+      "1. Processing current package WrapExternal: libs='ON', tests='ON'"
+      "Done with the incremental building and testing of TribitsExProj packages"
+      "TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_2
+    MESSAGE "Verify that the right set of packages are set"
+    CMND ${CMAKE_COMMAND} ARGS .
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled package: MixedLang [(]Libs[)]"
+      "Processing enabled package: WithSubpackages [(]A[)]"
+      "Processing enabled package: WrapExternal [(]Libs, Tests, Examples[)]"
+      "Generating done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  )
+  # The above test makes sure that TRIBITS_CTEST_DRIVER() function run from
+  # the basic 'dashboard' target only tests the explicitly enabled and tested
+  # packages.  It also makes sure that when the project is reconfigured at the
+  # end, that it gives the same set of package enables.
 
 
 ######################################################################
@@ -439,6 +577,11 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
 
 FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 
+  SET(TribitsExampleProject_AAO_COMMON_CONFIG_ARGS
+    ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+    -DTribitsExProj_DO_ALL_AT_ONCE=TRUE
+    )
+
   SET( AAO_COMMON_ENV_ARGS
     ${PBP_COMMON_ENV_ARGS}
     TribitsExProj_DO_ALL_AT_ONCE=TRUE
@@ -448,6 +591,8 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     SET(AAO_POSTFIX "P")
     LIST(APPEND AAO_COMMON_ENV_ARGS
       TribitsExProj_USE_NEW_AAO_CTEST_CDASH_FEATURES=TRUE )
+    LIST(APPEND TribitsExampleProject_AAO_COMMON_CONFIG_ARGS
+      -DTribitsExProj_USE_NEW_AAO_CTEST_CDASH_FEATURES=TRUE )
     SET(CONFIGURE_OPTIONS_MATCH_USE_NEW_AAO_CTEST_CDASH_FEATURES
       "-DTribitsExProj_USE_NEW_AAO_CTEST_CDASH_FEATURES:BOOL=TRUE[;]" )
   ELSE()
@@ -477,7 +622,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
         "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
-        "Configure, build, test and submit results all at once for all enabled packages"
+        "Configure, build, test and submit results all-at-once for all enabled packages"
         "Configuring [.][.][.]"
         "CONFIGURE_OPTIONS = '-DTribitsExProj_TRIBITS_DIR=.*/tribits[;]-DCTEST_USE_LAUNCHERS:BOOL=1[;]-DTribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON[;]-DTribitsExProj_ENABLE_TESTS:BOOL=ON[;]-DTribitsExProj_WARNINGS_AS_ERRORS_FLAGS:STRING=[;]-DTribitsExProj_ALLOW_NO_PACKAGES:BOOL=ON[;]-DTribitsExProj_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON[;]-DTribitsExProj_DEPS_XML_OUTPUT_FILE:FILEPATH=[;]-DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE:BOOL=TRUE[;]-DTribitsExProj_EXTRAREPOS_FILE:STRING=[;]-DTribitsExProj_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON[;]-DTribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Continuous[;]${CONFIGURE_OPTIONS_MATCH_USE_NEW_AAO_CTEST_CDASH_FEATURES}-DTribitsExProj_ENABLE_ALL_PACKAGES=ON[;]-DBUILD_SHARED_LIBS:BOOL=ON[;]-DCMAKE_BUILD_TYPE=DEBUG[;]-DCMAKE_C_COMPILER=gcc[;]-DCMAKE_CXX_COMPILER=g[+][+][;]-DCMAKE_Fortran_COMPILER=gfortran[;]-DTribitsExProj_ENABLE_Fortran=ON[;]-DTribitsExProj_TRACE_ADD_TEST=ON'"
         "Configure PASSED"
@@ -530,7 +675,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
         "Final set of non-enabled SE packages:  WithSubpackagesB WithSubpackagesC 2"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx WrapExternal 2"
-        "Configure, build, test and submit results all at once for all enabled packages"
+        "Configure, build, test and submit results all-at-once for all enabled packages"
         "Configuring [.][.][.]"
         "CONFIGURE_OPTIONS = '-DTribitsExProj_TRIBITS_DIR=.*/tribits[;].+[;]${CONFIGURE_OPTIONS_MATCH_USE_NEW_AAO_CTEST_CDASH_FEATURES}-DTribitsExProj_ENABLE_SimpleCxx=ON[;]-DTribitsExProj_ENABLE_WrapExternal=ON[;]-DBUILD_SHARED_LIBS:BOOL=ON[;].+'"
         "Configure PASSED"
@@ -814,8 +959,99 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 
   # ToDo: Add memory testing test (only optional if told to)
 
-  # ToDo: Add `make dashboard` test that also optionally submits
+  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_ALL_PASS
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+    TEST_0 CMND ${CMAKE_COMMAND}
+      MESSAGE "Do the initial configure"
+      ARGS
+        ${TribitsExampleProject_AAO_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=ON
+        -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+        -DTribitsExProj_ENABLE_TESTS=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      PASS_REGULAR_EXPRESSION_ALL
+        "Enabling all required .and optional since TribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=ON. upstream SE packages for current set of enabled packages .TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON."
+        "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+        "Finished configuring TribitsExProj"
+        "Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_1
+      MESSAGE "Run the dashboard target"
+      CMND env
+      ARGS
+        CTEST_BUILD_NAME=${PROJECT_NAME}_CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_ALL_PASS
+        make dashboard
+      PASS_REGULAR_EXPRESSION_ALL
+        "Running all-at-once experimental dashboard"
+	"Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+	"Configure, build, test and submit results all-at-once for all enabled packages"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_2
+      MESSAGE "Verify that the right set of packages are set"
+      CMND ${CMAKE_COMMAND} ARGS .
+      PASS_REGULAR_EXPRESSION_ALL
+        "Enabling all required .and optional since TribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=ON. upstream SE packages for current set of enabled packages .TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON."
+        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+        "Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    )
 
+  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_PackagesSubset_PASS
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+    TEST_0 CMND ${CMAKE_COMMAND}
+      MESSAGE "Do the initial configure"
+      ARGS
+        ${TribitsExampleProject_AAO_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=ON
+        -DTribitsExProj_ENABLE_SimpleCxx=ON
+        -DTribitsExProj_ENABLE_WrapExternal=ON
+        -DTribitsExProj_ENABLE_TESTS=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      PASS_REGULAR_EXPRESSION_ALL
+        "Setting SimpleCxx_ENABLE_TESTS=ON"
+        "Setting WrapExternal_ENABLE_TESTS=ON"
+        "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+        "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+        "Processing enabled package: MixedLang [(]Libs[)]"
+        "Processing enabled package: WithSubpackages [(]A[)]"
+        "Processing enabled package: WrapExternal [(]Libs, Tests, Examples[)]"
+        "Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_1
+      MESSAGE "Run the dashboard target"
+      CMND env
+      ARGS
+        CTEST_BUILD_NAME=${PROJECT_NAME}_CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_PackagesSubset_PASS
+        make dashboard
+      PASS_REGULAR_EXPRESSION_ALL
+	"Configure, build, test and submit results all-at-once for all enabled packages"
+        "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx WrapExternal 2"
+        "TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_2
+      MESSAGE "Verify that the right set of packages are set"
+      CMND ${CMAKE_COMMAND} ARGS .
+      PASS_REGULAR_EXPRESSION_ALL
+        "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+        "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+        "Processing enabled package: MixedLang [(]Libs[)]"
+        "Processing enabled package: WithSubpackages [(]A[)]"
+        "Processing enabled package: WrapExternal [(]Libs, Tests, Examples[)]"
+        "Generating done"
+        "Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    )
+  
 ENDFUNCTION()
 
 

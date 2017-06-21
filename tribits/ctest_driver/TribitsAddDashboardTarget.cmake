@@ -134,16 +134,26 @@ MACRO(TRIBITS_ADD_DASHBOARD_TARGET)
 
     # H.2) Add the custom target to enable all the packages with tests enabled
 
-    ADD_CUSTOM_TARGET(dashboard
+    IF (${PROJECT_NAME}_DO_ALL_AT_ONCE)
+      SET(RUNNING_EXP_DASHBOARD_MSG_HEADER
+        "Running all-at-once experimental dashboard"
+        )
+    ELSE()
+      SET(RUNNING_EXP_DASHBOARD_MSG_HEADER
+        "Running package-by-package experimental dashboard"
+        )
+    ENDIF()
+
+    ADD_CUSTOM_TARGET( dashboard
 
       VERBATIM
 
       # WARNING: The echoed command and the actual commands are duplicated!  You have to reproduce them!
 
       COMMAND echo
-      COMMAND echo "***************************************************"
-      COMMAND echo "*** Running incremental experimental dashboard ***"
-      COMMAND echo "***************************************************"
+      COMMAND echo "**************************************************"
+      COMMAND echo "*** ${RUNNING_EXP_DASHBOARD_MSG_HEADER} ***"
+      COMMAND echo "**************************************************"
       COMMAND echo
       COMMAND echo ${PROJECT_NAME}_ENABLED_PACKAGES_LIST=${${PROJECT_NAME}_ENABLED_PACKAGES_LIST}
       COMMAND echo

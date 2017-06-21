@@ -1196,7 +1196,7 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
 
   MESSAGE(
     "\n***"
-    "\n*** Configure, build, test and submit results all at once for all enabled packages ..."
+    "\n*** Configure, build, test and submit results all-at-once for all enabled packages ..."
     "\n***")
 
   TRIBITS_SET_LABELS_TO_SUBPROJECTS_MAPPING()
