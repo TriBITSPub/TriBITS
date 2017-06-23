@@ -1139,7 +1139,7 @@ MACRO(TRIBITS_CTEST_PACKAGE_BY_PACKAGE)
         IF (CTEST_DO_MEMORY_TESTING)
           MESSAGE("\nRunning memory testing for package '${TRIBITS_PACKAGE}' ...\n")
           PRINT_VAR(CTEST_MEMORYCHECK_COMMAND)
-	    PRINT_VAR(CTEST_MEMORYCHECK_COMMAND_OPTIONS)
+          PRINT_VAR(CTEST_MEMORYCHECK_COMMAND_OPTIONS)
           PRINT_VAR(CTEST_MEMORYCHECK_SUPPRESSIONS_FILE)
           CTEST_MEMCHECK(
             BUILD "${CTEST_BINARY_DIRECTORY}"
@@ -1198,6 +1198,10 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
     "\n***"
     "\n*** Configure, build, test and submit results all-at-once for all enabled packages ..."
     "\n***")
+
+  #
+  # A) Set up mapping of labels to subprojects and gather configure arguments
+  #
 
   TRIBITS_SET_LABELS_TO_SUBPROJECTS_MAPPING()
 
@@ -1283,14 +1287,15 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
 
   ENDIF()
 
-  SET(AAO_BUILD_PASSED FALSE)
+  #
+  # C) Do the build
+  #
 
   IF (CTEST_DEPENDENCY_HANDLING_UNIT_TESTING AND AAO_CONFIGURE_PASSED)
 
     MESSAGE("Skipping build because"
       " CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='${CTEST_DEPENDENCY_HANDLING_UNIT_TESTING}'!"
       )
-    SET(AAO_BUILD_PASSED TRUE)
 
   ELSEIF (AAO_CONFIGURE_PASSED)
   
@@ -1310,7 +1315,6 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
       MESSAGE("Build FAILED!")
     ELSE()
       MESSAGE("Build PASSED!")
-      SET(AAO_BUILD_PASSED TRUE)
     ENDIF()
   
     # Submit the build for all target
@@ -1325,6 +1329,10 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
     MESSAGE("")
   
   ENDIF()
+
+  #
+  # D) Run tests
+  #
 
   IF (NOT CTEST_DO_TEST)
   
@@ -1343,7 +1351,6 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
     MESSAGE("Skipping testing because"
       " CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='${CTEST_DEPENDENCY_HANDLING_UNIT_TESTING}'!"
       )
-    SET(AAO_BUILD_PASSED TRUE)
 
   ELSE()
 
@@ -1379,6 +1386,93 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
 
   ENDIF()
 
+  #
+  # E) Gather coverage results
+  #
+
+  IF (NOT CTEST_DO_COVERAGE_TESTING)
+  
+    MESSAGE("")
+    MESSAGE("Skipping converage tests because CTEST_DO_COVERAGE_TESTING='${CTEST_DO_COVERAGE_TESTING}'!")
+    MESSAGE("")
+
+  ELSEIF (NOT AAO_CONFIGURE_PASSED)
+  
+    MESSAGE("")
+    MESSAGE("Skipping coverage tests because configure failed!")
+    MESSAGE("")
+
+  ELSEIF (CTEST_DEPENDENCY_HANDLING_UNIT_TESTING AND AAO_CONFIGURE_PASSED)
+
+    MESSAGE("Skipping coverage testing because"
+      " CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='${CTEST_DEPENDENCY_HANDLING_UNIT_TESTING}'!"
+      )
+
+  ELSE()
+    
+    # NOTE: We always gather the coverage results if the configure passed
+    # independent if there was any build or test failures.  The coverage stats
+    # may not be very valid if there are build or test failures but there is
+    # no harm and showing the coverage based on tests that actually run (even
+    # if they fail).
+
+    MESSAGE("\nGathering coverage results ...\n")
+    CTEST_COVERAGE(
+      BUILD "${CTEST_BINARY_DIRECTORY}"
+      )
+    IF (CTEST_DO_SUBMIT)
+      TRIBITS_CTEST_SUBMIT( PARTS Coverage )
+    ENDIF()
+
+  ENDIF()
+
+  #
+  # F) Do memory testing
+  #
+
+  IF (NOT CTEST_DO_MEMORY_TESTING)
+  
+    MESSAGE("")
+    MESSAGE("Skipping memory testing because CTEST_DO_MEMORY_TESTING='${CTEST_DO_MEMORY_TESTING}'!")
+    MESSAGE("")
+
+  ELSEIF (NOT AAO_CONFIGURE_PASSED)
+  
+    MESSAGE("")
+    MESSAGE("Skipping memory tests because configure failed!")
+    MESSAGE("")
+
+  ELSEIF (CTEST_DEPENDENCY_HANDLING_UNIT_TESTING AND AAO_CONFIGURE_PASSED)
+
+    MESSAGE("Skipping memory testing because"
+      " CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='${CTEST_DEPENDENCY_HANDLING_UNIT_TESTING}'!"
+      )
+
+  ELSE()
+    
+    # NOTE: We always gather the memory results if the configure passed
+    # independent if there was any build or test failures.  The memory stats
+    # may not be very valid if there are build or test failures but there is
+    # no harm and showing the memory based on tests that actually run (even
+    # if they fail).
+
+    MESSAGE("\nRunning memory tests ...\n")
+    PRINT_VAR(CTEST_MEMORYCHECK_COMMAND)
+    PRINT_VAR(CTEST_MEMORYCHECK_COMMAND_OPTIONS)
+    PRINT_VAR(CTEST_MEMORYCHECK_SUPPRESSIONS_FILE)
+    CTEST_MEMCHECK(
+      BUILD "${CTEST_BINARY_DIRECTORY}"
+      )
+    IF (CTEST_DO_SUBMIT)
+      TRIBITS_CTEST_SUBMIT( PARTS MemCheck )
+    ENDIF()
+
+  ENDIF()
+
+  #
+  # G) Determine final pass/fail by gathering list of failing packages
+  #
+
   IF (NOT AAO_CONFIGURE_PASSED)
     IF (${PROJECT_NAME}_ENABLE_ALL_PACKAGES)
       # Special value "ALL_PACAKGES" so that it will trigger enabling all
@@ -1395,10 +1489,7 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
     # If no tests failed, then there are no failed packages!
     SET(${PROJECT_NAME}_FAILED_PACKAGES)
   ENDIF()
-
-  # ToDo: Run coverage build
-  
-  # ToDo: Run memory testing
+  # ToDo: Optionally determine pass/fail based 
 
   MESSAGE("\nDone with the all-at-once configure, build, test, ans submit of ${PROJECT_NAME} packages!\n")
 

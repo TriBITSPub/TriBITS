@@ -49,7 +49,7 @@
 # submit to CDash.  To get them to submit to CDash, you must configure this
 # TriBITS project with::
 #
-#   -D${PROJECT_NAME}_TRIBITSEXPROJ_SUBMIT_TO=<site-name>
+#   -D${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO=<site-name>
 #
 # where ``<cite-name>`` is one of the following values:
 #
@@ -68,15 +68,29 @@
 #
 # To enable the coverage testing tests (which assumes gcov and GCC), use:
 #
-#   -D${PROJECT_NAME}_ENABLE_CTEST_DRIVER_COVERAGE_TESTS=ON
+#   -D${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS=ON
 #
 # To enable the memory testing tests (which assumes valgrind is set up to be
 # used), use:
 #
-#   -D${PROJECT_NAME}_ENABLE_CTEST_DRIVER_MEMORY_TESTS=ON
+#   -D${PACKAGE_NAME}_ENABLE_CTEST_DRIVER_MEMORY_TESTS=ON
 #
 ###############################################################################
 
+SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO ""
+  CACHE STRING
+  "Determines where CTestDriver test results are submitted to CDash (chose '' (nowhere), 'MY_CDASH', 'TRILINOS_CDASH', or 'EXP_CDASH'"
+  )
+
+SET(${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS OFF
+  CACHE BOOL
+  "Determine if coverage CTestDriver tests are run (requires gcov on local system)"
+  )
+
+SET(${PACKAGE_NAME}_CTEST_DRIVER_MEMORY_TESTS OFF
+  CACHE BOOL
+  "Determine if memory CTestDriver tests are run (requires valgrind on local system)"
+  )
 
 #
 # Set up common vars/args for all direct CTest Driver tests
@@ -107,25 +121,25 @@ SET(CTEST_S_SCRIPT_ARGS
 # Set up to submit to CDash if reqeusted
 #
 
-IF ("${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}" STREQUAL "") 
-  SET(${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO
-    $ENV{${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO} )
+IF ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "") 
+  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO
+    $ENV{${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO} )
 ENDIF()
 
-IF ("${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}" STREQUAL "")
+IF ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "")
   SET(CTEST_DROP_SITE_ENV_ARGS
     CTEST_DO_SUBMIT=OFF
     )
-ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "MY_CDASH")
+ELSEIF (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "MY_CDASH")
   SET(CTEST_DROP_SITE_ENV_ARGS CTEST_DO_SUBMIT=TRUE)
-ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "TRILINOS_CDASH")
+ELSEIF (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "TRILINOS_CDASH")
   SET(CTEST_DROP_SITE_ENV_ARGS
     CTEST_DO_SUBMIT=TRUE
     CTEST_DROP_SITE="testing.sandia.gov/cdash"
     CTEST_PROJECT_NAME="TribitsExProj"
     CTEST_DROP_LOCATION="/submit.php?project=TribitsExProj"
     )
-ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "EXP_CDASH")
+ELSEIF (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "EXP_CDASH")
   SET(CTEST_DROP_SITE_ENV_ARGS
     CTEST_DO_SUBMIT=TRUE
     CTEST_DROP_SITE="exp.cdash.org"
@@ -134,12 +148,12 @@ ELSEIF (${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO STREQUAL "EXP_CDASH")
     )
 ELSE()
   MESSAGE(FATAL_ERROR "Error, the value"
-    " ${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO='${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}'"
-    " is invalid!  Valid choices are '', 'MY_CDASH' and 'TRILINOS_CDASH'"
+    " ${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO='${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}'"
+    " is invalid!  Valid choices are '', 'MY_CDASH', 'TRILINOS_CDASH', and 'EXP_CDASH'"
    ) 
 ENDIF()
 
-IF (NOT "${${PACKAGE_NAME}_TRIBITSEXPROJ_SUBMIT_TO}" STREQUAL "")
+IF (NOT "${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "")
   MESSAGE(
     "NOTE: The tests ${PACKAGE_NAME}_CTestDriver_XXX are set up to submit CDash!"
     " (See the test details for what CDash site is being targeted!)"
@@ -486,7 +500,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
 
 TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_COVERAGE
   OVERALL_WORKING_DIRECTORY TEST_NAME
-  EXCLUDE_IF_NOT_TRUE  ${PROJECT_NAME}_ENABLE_CTEST_DRIVER_COVERAGE_TESTS
+  EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
     MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -519,7 +533,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_COVERAGE
 
 TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_MEMORY
   OVERALL_WORKING_DIRECTORY TEST_NAME
-  EXCLUDE_IF_NOT_TRUE  ${PROJECT_NAME}_ENABLE_CTEST_DRIVER_MEMORY_TESTS
+  EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_MEMORY_TESTS
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
     MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -737,6 +751,8 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "WithSubpackagesC_test_of_c_util [.]+ +Passed"
         "WithSubpackagesC_test_of_c_b_mixed_lang [.]+ +Passed"
         "WrapExternal_run_external_func [.]+ +Passed"
+	"Skipping converage tests because CTEST_DO_COVERAGE_TESTING='FALSE'"
+	"Skipping memory testing because CTEST_DO_MEMORY_TESTING='FALSE'"
         "File '' does NOT exist so all tests passed"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1053,11 +1069,74 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # upstream package will be caught but will not impact break downstream
     # packages and tests.
 
-  # ToDo: Add test for build failures for the tests in a downstream package.
+  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_COVERAGE
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS
+    OVERALL_NUM_MPI_PROCS 1
+    TEST_0
+      MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
+      CMND ln
+      ARGS -s ${TribitsExProj_DIR} .
+    TEST_1
+      MESSAGE "Run ctest driver testing"
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+        CTEST_DO_COVERAGE_TESTING=TRUE
+        ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_COVERAGE
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "CTEST_DO_COVERAGE_TESTING='TRUE'"
+	"Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+	"Configure, build, test and submit results all-at-once for all enabled packages"
+	"Gathering coverage results [.][.][.]"
+	"Performing coverage"   # printed by ctest_coverage()
+	"Percentage Coverage:"  # printed by ctest_coverage()
+	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
+	"TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    )
+    # NOTE: The above test is the only coverage test for AAO mode!
 
-  # ToDo: Add Coverage build test (only optional if told to)
-
-  # ToDo: Add memory testing test (only optional if told to)
+  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_MEMORY
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_MEMORY_TESTS
+    OVERALL_NUM_MPI_PROCS 1
+    TEST_0
+      MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
+      CMND ln
+      ARGS -s ${TribitsExProj_DIR} .
+    TEST_1
+      MESSAGE "Run ctest driver testing"
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+        CTEST_DO_MEMORY_TESTING=TRUE
+        ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_MEMORY
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "CTEST_DO_MEMORY_TESTING='TRUE'"
+	"Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+	"Configure, build, test and submit results all-at-once for all enabled packages"
+	"Running memory tests [.][.][.]"
+	"Memory check project"  # Printed by ctest_memcheck()
+        "MemCheck .+: SimpleCxx_HelloWorldTests [.]+ +Passed"
+        "MemCheck .+: MixedLang_RayTracerTests [.]+ +Passed"
+        "MemCheck .+: WithSubpackagesA_test_of_a [.]+ +Passed"
+        "MemCheck .+: WrapExternal_run_external_func [.]+ +Passed"
+	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
+	"TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    )
+    # NOTE: The above test is the only memory test for AAO mode!
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_ALL_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
