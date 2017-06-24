@@ -799,7 +799,7 @@ IF (PYTHON_EXECUTABLE)
       ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teko.txt modifiedFiles.preCopyrightTrilinos.txt
       ${CMAKE_CURRENT_SOURCE_DIR}/failedPackages.ALL_PACKAGES.txt failedPackages.txt
     ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
-      Trilinos_DO_ALL_AT_ONCE=TRUE
+      Trilinos_CTEST_DO_ALL_AT_ONCE=TRUE
       CTEST_TEST_TYPE=Continuous
       CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
       CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!

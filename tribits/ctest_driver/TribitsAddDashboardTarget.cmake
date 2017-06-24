@@ -90,11 +90,11 @@ MACRO(TRIBITS_ADD_DASHBOARD_TARGET)
     # Conditionally override options used only for testing.  These options
     # have no use in a a basic build/test so we don't want to interfere with
     # options users might set on the env.
-    IF (${PROJECT_NAME}_DO_ALL_AT_ONCE)
-      APPEND_SET(EXPR_CMND_ARGS "${PROJECT_NAME}_DO_ALL_AT_ONCE=TRUE")
+    IF (${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE)
+      APPEND_SET(EXPR_CMND_ARGS "${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE=TRUE")
     ENDIF()
-    IF (${PROJECT_NAME}_USE_NEW_AAO_CTEST_CDASH_FEATURES)
-      APPEND_SET(EXPR_CMND_ARGS "${PROJECT_NAME}_USE_NEW_AAO_CTEST_CDASH_FEATURES=TRUE")
+    IF (${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES)
+      APPEND_SET(EXPR_CMND_ARGS "${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES=TRUE")
     ENDIF()
     IF (${PROJECT_NAME}_ENABLE_COVERAGE_TESTING)
       APPEND_SET(EXPR_CMND_ARGS "CTEST_DO_COVERAGE_TESTING=TRUE")
@@ -137,7 +137,7 @@ MACRO(TRIBITS_ADD_DASHBOARD_TARGET)
 
     # H.2) Add the custom target to enable all the packages with tests enabled
 
-    IF (${PROJECT_NAME}_DO_ALL_AT_ONCE)
+    IF (${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE)
 
       SET(RUNNING_EXP_DASHBOARD_MSG_HEADER
         "Running all-at-once experimental dashboard"
