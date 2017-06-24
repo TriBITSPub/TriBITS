@@ -341,7 +341,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
     ARGS -DTribitsHelloWorld_CONFIGURE_OPTIONS_FILE=ConfigOptions1.cmake
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "include could not find load file"
+      "(include|INCLUDE) could not find load file"
       "TriBITS_TribitsHelloWorld_CONFIGURE_OPTIONS_FILE/ConfigOptions1.cmake"
     # NOTE: Above shows that FILEPATH type causes relative paths to be
     # evaluated w.r.t. the current working directory.
