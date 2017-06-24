@@ -210,36 +210,37 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # @FUNCTION: TRIBITS_CTEST_DRIVER()
 #
-# Platform-independent package-by-package CTest/CDash driver (run by ``ctest``
-# **NOT** ``cmake``).
+# Platform-independent CTest/CDash driver
 #
 # Usage::
 #
 #   TRIBITS_CTEST_DRIVER()
 #
-# This driver code that is platform independent.  This script drives the
-# testing process by doing a version control (VC) source update on all of the
-# VC repos and then configuring and building the top-level TriBITS packages
-# one at a time, in order.  This function gets called from inside of a
-# platform and build-specific ``ctest -S`` driver script.
+# This driver code is platform independent.  CTest -S scripts use this
+# function to drive the testing process for a TriBITS projects by doing a
+# version control (VC) source update on all of the VC repos and then
+# configuring, building, testing, and submitting results to CDash for the
+# TriBITS packages in a project either in package-by-package mode (the
+# default), or in an all-at-once mode (see
+# ``${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE``).
 #
-# To understand this script, one must understand that it gets run in several
-# different modes:
+# **Source and Binary Directory Locations:**
+#
+# To understand how to set the source and binary directories, one must
+# understand that it gets run in one of two different modes:
 #
 # **Mode 1**: Run where there are already existing source and binary
-# directories (``CTEST_DASHBOARD_ROOT`` is set empty before call).  This is
-# for when the ctest driver script is run on an existing source and binary
-# tree.  In this case, there is one project source tree and
-# ``CTEST_SOURCE_DIRECTORY`` and ``CTEST_BINARY_DIRECTORY`` must be set by the
-# user before calling this function.  This is used to test a local build and
-# post to CDash.
+# directories (i.e. ``CTEST_DASHBOARD_ROOT`` is set empty before call).  In
+# this case, ``CTEST_SOURCE_DIRECTORY`` and ``CTEST_BINARY_DIRECTORY`` must be
+# set by the user before calling this function.  This is used to test a local
+# build and post to CDash (see the custom ``dashboard`` target).
 #
 # **Mode 2**: A new binary directory is created and new sources are cloned (or
-# updated) in a driver directory (``CTEST_DASHBOARD_ROOT`` is set before
+# updated) in a driver directory (i.e. ``CTEST_DASHBOARD_ROOT`` is set before
 # call).  In this case, there are always two (partial) project source tree's,
-# i) a "driver" skeleton source tree (typically embedded with TriBITS
-# directory) that bootstraps the testing process, and ii) a true full "source"
-# that is (optionally) cloned and/or updated.
+# a) a "driver" skeleton source tree (typically embedded with TriBITS
+# directory) that bootstraps the testing process, and b) a true full "source"
+# that is (optionally) cloned and/or updated and tested..
 #
 # There are a few different directory locations are significant for this
 # script:
@@ -247,8 +248,8 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #   ``TRIBITS_PROJECT_ROOT``
 #
 #     The root directory to an existing source tree where the project's
-#     `<projectDir>/ProjectName.cmake`_ (defining ``PROJECT_NAME`` variable)
-#     and ``Version.cmake`` file's can be found.
+#     `<projectDir>/ProjectName.cmake`_ (defining the ``PROJECT_NAME``
+#     variable) and ``Version.cmake`` files can be found.
 #
 #   ``${PROJECT_NAME}_TRIBITS_DIR``
 #
@@ -261,17 +262,17 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #     If set, this is the base directory where this script runs that clones
 #     the sources for the project.  If this directory does not exist, it will
-#     be created.  If provided the special value 'PWD', then the present
-#     working directory is used.  If empty, then has no effect on the script.
+#     be created.  If provided as the special value "PWD", then the present
+#     working directory is used.  If empty, then this var has no effect.
 #
 #   ``CTEST_SOURCE_DIRECTORY``
 #
 #     Determines the location of the sources that are used to define packages,
-#     dependencies and configure and build the software.  This is a variable
-#     that CTest directly reads and must therefore be set. This is used to set
-#     `PROJECT_SOURCE_DIR`_ which is used by the TriBITS system.  If
-#     ``CTEST_DASHBOARD_ROOT`` is set, then this is hard-coded internally to
-#     ``${CTEST_DASHBOARD_ROOT}/${CTEST_SOURCE_NAME}``.
+#     dependencies and configure, build, and test the software.  This is a
+#     variable that CTest directly reads and must therefore be set. This is
+#     used to set `PROJECT_SOURCE_DIR`_ which is used by the TriBITS system.
+#     If ``CTEST_DASHBOARD_ROOT`` is set, then this is hard-coded internally
+#     to ``${CTEST_DASHBOARD_ROOT}/${CTEST_SOURCE_NAME}``.
 #
 #   ``CTEST_BINARY_DIRECTORY``
 #
@@ -279,6 +280,12 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     is put.  This is used to set to `PROJECT_BINARY_DIR`_ which is used by
 #     the TriBITS system.  If ``CTEST_DASHBOARD_ROOT`` is set, then this is
 #     hard-coded internally to ``${CTEST_DASHBOARD_ROOT}/BUILD``.
+#
+# **Determining What Packages Get Tested:**
+#
+# Before any testing is done, the set of packages to be tested is determined
+# are determined.  By default, the set of packages to be tested is determined
+# by the var:
 #
 #   ``${PROJECT_NAME}_PACKAGES``
 #
@@ -289,15 +296,69 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     This variable can also be specified and read from from the env and can
 #     use `,` to separate package names instead of ';'.
 #
-# ToDo: Document input variables that have defaults, to be set before, and can
-# be overridden from the env.
+# ToDo: Document other variables that determine what packages get tested.
 #
-# **Repository updates:**
+# The other mode is to only test the packages that have changes since the last
+# time this build was run and testing packages that previously failed.  That
+# mode is turned on by the var:
+#
+#   ``CTEST_ENABLE_MODIFIED_PACKAGES_ONLY``
+#
+#     If ``TRUE``, then only packages that have changes pulled from the git
+#     repos since the last time the build ran will be tested (in addition to
+#     packages that failed in the last build).  If ``FALSE``, the set of
+#     packages to be tested is determined by ``${PROJECT_NAME}_PACKAGES`` and
+#     other variables as described above.
+#
+# ToDo: Document other input variables that have defaults, to be set before,
+# and can be overridden from the env.
+#
+# **All-at-once vs. package-by-package mode:**
+#
+# This function supports driving the configure, build, testing, and submitting
+# to CDash of the packages in the TriBITS project either all-at-once or
+# package-by-package, based on the value:
+#
+#   ``${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE``
+#
+#     If ``TRUE``, then single calls to ``CTEST_CONFIGURE()``,
+#     ``CTEST_BUILD()`` and ``CTEST_TEST()` are made for all of the packages
+#     to be tested all at once with ``CTEST_SUBMIT()`` called after each of
+#     these.  If ``FALSE`` then ``CTEST_CONFIGURE()``, ``CTEST_BUILD()`` and
+#     ``CTEST_TEST()` and ``CTEST_SUBMIT()`` are called in a loop, once for
+#     each package to be explicitly tested.
+#
+# Both the all-at-once mode and the package-by-package mode should produce
+# equivalent builds of the project and submits to CDash (for correctly
+# constructed TriBITS projects and package).  But the package-by-package mode
+# will disable failing packages when processing downstream packages, and
+# therefore reduce the propagation of failures to downstream packages.
+#
+# For versions of CMake 3.10.0 and above and newer versions of CDash, the
+# all-at-once mode will break down the build and test results on a
+# package-by-package basis on CDash.  For older versions of CMake or CDash, it
+# will not break down results on a package-by-package basis on CDash and all
+# of the build warnings and errors and test will be all globed together.
+#
+# **Repository Updates:**
 #
 # Like the rest of TriBITS, ``ctest -S`` scripts written using this function
-# supports a collection of extra repositories in addition to the base
+# supports a collection of extra repositories in addition to the base git
 # repository.  The basic clone of the extra repositories requires all repos to
-# use the version control system.
+# use the git version control system.
+#
+# Whether the repos are updated (or left as is) is determined by the var:
+#
+#  ``CTEST_DO_UPDATES``
+#
+#    If set to ``TRUE``, then each of the git repos will be cloned if they are
+#    missing and if already present will be updated as described below (and
+#    will wipe out any local changes).  If ``FALSE``, then the git repos will
+#    be left alone (and must therefore already be cloned and updated at the
+#    desired state).
+#
+# **WARNING:** If you don't want local changes in your git repos to get blown
+# away, then set ``CTEST_DO_UPDATES`` to ``FALSE``!
 #
 # CTest itself is used for handling the cloning and the pull of the base
 # repository by calling ``CTEST_UPDATE()``.  The other extra git repositories
@@ -309,13 +370,14 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #   git clone <extrarepo_url>
 # 
-# Therefore, by default, whatever the default branch is set to on clone, that
-# is the branch that will be used.  Also, future repository updates will be
-# done on those branches.
+# Therefore, by default, whatever the default branch is set to on clone in the
+# base repos, that is the branch that will be used.  Also, future repository
+# updates will be done on those branches.
 #
 # However, if ``${PROJECT_NAME}_BRANCH`` is set to non-empty, then that branch
 # will be checked out in all of the repositories.  For the base repository,
-# after the clone or update, that branch is checked out using the command::
+# after the clone or update is performed in the call to ``CTEST_UPDATE()``,
+# then that branch is checked out using the command::
 #
 #   $ git checkout -B ${${PROJECT_NAME}_BRANCH} \
 #       --track origin/${${PROJECT_NAME}_BRANCH}`
@@ -333,9 +395,9 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # The command ``git clone -fdx`` removes any untracked ignored files that may
 # have been created since the last update (either by the build process or by
-# someone messing around in that git repository).  The command ``git reset
-# --hard HEAD`` removes any untracked non-ignored files, any modified tracked
-# files, and sets ``ORIG_HEAD`` to the current ``HEAD``.  This sets
+# someone messing around in that local git repository).  The command ``git
+# reset --hard HEAD`` removes any untracked non-ignored files, any modified
+# tracked files, and sets ``ORIG_HEAD`` to the current ``HEAD``.  This sets
 # ``ORIG_HEAD`` after the initial clone (as ``ORIG_HEAD`` is not set after a
 # ``git clone``).  This allows using the range ``ORIG_HEAD..HEAD`` with git
 # diff and log commands even after the initial clone.  The ``git fetch``
@@ -367,12 +429,13 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # Note that the repository updating approach using non-empty
 # ``${PROJECT_NAME}_BRANCH`` is more robust, because it can recover from a
-# state where someone may have put the repo on a detached head or checked out
-# a different branch.  This might occur when a person is messing around in the
-# Nightly build and source directories to try to figure out what happened and
-# forgot to put the repos back on the correct tracking branch.  Therefore, it
-# is recommended to always set ``${PROJECT_NAME}_BRANCH`` to a non-null value
-# like ``master`` for git repos.
+# state where someone may have put A repo on a detached head or checked out a
+# different branch.  One of these repos might get into this state when a
+# person is messing around in the Nightly build and source directories to try
+# to figure out what happened and forgot to put the repos back on the correct
+# tracking branch.  Therefore, it is recommended to always set
+# ``${PROJECT_NAME}_BRANCH`` to a non-null value like ``master`` for git
+# repos.
 #
 # ToDo: Finish Documentation!
 #
@@ -439,7 +502,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # Set the default compiler version
   SET_DEFAULT_AND_FROM_ENV(COMPILER_VERSION UNKNOWN)
 
-  # The name of the build that appears in the dashbaord
+  # The name of the build that appears in the dashboard
   SET_DEFAULT_AND_FROM_ENV( CTEST_BUILD_NAME
     "${HOST_TYPE}-${COMPILER_VERSION}-${BUILD_DIR_NAME}" )
 
@@ -627,7 +690,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # Set as part of CI testing in order to only enable modified packages
   SET_DEFAULT_AND_FROM_ENV( CTEST_ENABLE_MODIFIED_PACKAGES_ONLY OFF )
 
-  # Set if implicitly enabled packages should be explicitly processes
+  # Set if implicitly enabled packages should be explicitly processed in
+  # package-by-package mode.
   IF (CTEST_ENABLE_MODIFIED_PACKAGES_ONLY AND NOT CTEST_START_WITH_EMPTY_BINARY_DIRECTORY)
     SET( CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES_DEFAULT FALSE )
   ELSE()
