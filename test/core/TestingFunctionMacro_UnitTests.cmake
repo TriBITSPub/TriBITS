@@ -2821,6 +2821,8 @@ FUNCTION(UNITTEST_TRIBITS_ETI_TYPE_EXPANSION)
 
   MESSAGE("*** Test passing invalid arguments to TRIBITS_ETI_TYPE_EXPANSION( ... )\n")
 
+  SET(result "This is left over from other module!")  # See #199
+
   UNSET(expansion)
   TRIBITS_ETI_TYPE_EXPANSION(expansion "badformat")
   UNITTEST_COMPARE_CONST(
