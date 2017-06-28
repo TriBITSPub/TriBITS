@@ -425,6 +425,18 @@ ELSE()
 ENDIF()
 
 
+IF (TribitsExProj_CTEST_USE_NEW_AAO_FEATURES)
+  SET(LabelsForSubprojects_CMND_AND_ARGS
+    grep ARGS "^LabelsForSubprojects:" DartConfiguration.tcl)
+  SET(LabelsForSubprojects_REGEX
+    "LabelsForSubprojects: SimpleCxx[;]MixedLang[;]WithSubpackages[;]WrapExternal")
+ELSE()
+  SET(LabelsForSubprojects_CMND_AND_ARGS
+    echo ARGS "No grep, we don't need to look for anything")
+  SET(LabelsForSubprojects_REGEX "No grep, we don't need to look for anything")
+ENDIF()
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -445,6 +457,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
       -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+      -DTribitsExProj_CTEST_USE_NEW_AAO_FEATURES=${TribitsExProj_CTEST_USE_NEW_AAO_FEATURES}
       -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
       -DCMAKE_INSTALL_PREFIX=install
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
@@ -525,7 +538,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "-- File Trace: PROJECT    INCLUDE    .*/TribitsExampleProject/cmake/CallbackDefineProjectPackaging.cmake"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+  TEST_1
+    MESSAGE "Make sure that 'LabelsForSubprojects' is set to list of packages"
+    CMND ${LabelsForSubprojects_CMND_AND_ARGS}
+    PASS_REGULAR_EXPRESSION "${LabelsForSubprojects_REGEX}"
+
+  TEST_2 CMND make ARGS ${CTEST_BUILD_FLAGS}
     MESSAGE "Build the default 'all' target using raw 'make'"
     PASS_REGULAR_EXPRESSION_ALL
       "Built target simplecxx"
@@ -536,7 +554,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Built target pws_c"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+  TEST_3 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
       "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
@@ -547,7 +565,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "100% tests passed, 0 tests failed out of 6"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_3
+  TEST_4
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
       " from the build tree" 
     CMND ${CMAKE_COMMAND}
@@ -585,7 +603,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "-- Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_4 CMND make ARGS install ${CTEST_BUILD_FLAGS}
+  TEST_5 CMND make ARGS install ${CTEST_BUILD_FLAGS}
     MESSAGE "Build 'install' target using raw 'make'"
     PASS_REGULAR_EXPRESSION_ALL
       "Installing: .+/install/include/TribitsExProj_version.h"
@@ -621,7 +639,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Installing: .+/install/include/Makefile.export.WithSubpackagesC"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_5 CMND ${CMAKE_COMMAND}
+  TEST_6 CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
       -DDUMMY_PROJECT_DIR=dummy_client_of_WithSubpackages
@@ -655,7 +673,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_6 CMND make ARGS package_source
+  TEST_7 CMND make ARGS package_source
     MESSAGE "Create the tarball"
     PASS_REGULAR_EXPRESSION_ALL
       "Run CPack packaging tool for source..."
@@ -671,11 +689,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "CPack: - package: .*/ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/tribitsexproj-1.1-Source.tar.bz2 generated."
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_7 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
+  TEST_8 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
     MESSAGE "Untar the tarball"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_8 CMND diff
+  TEST_9 CMND diff
      ARGS -qr
        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
        tribitsexproj-1.1-Source
