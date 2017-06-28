@@ -1,8 +1,7 @@
 \documentclass[12pt]{article} 
 \usepackage{verbatim} 
 \title{TriBITS Hello World Tutorial} 
-\author{Roscoe A. Bartlett 
- (rabartl@sandia.gov), Joe Frye (jfrye@sandia.gov)}
+\author{Joe Frye (jfrye@sandia.gov)}
 
 \begin{document}
 \maketitle
@@ -12,24 +11,33 @@
 \section*{The Simplest HelloWorld project}
 
 This short tutorial will walk you through setting up a basic
-HelloWorld project built by TriBITS to intdroduce the basic concepts
+HelloWorld project built by TriBITS to intdroduce basic concepts
 in TriBITS.  To begin you will need cmake and TriBITS installed on
-your machine.  You will also need a working c and c++ compiler.
+your machine.  You will also need a working c and c++ compiler.\\
 
-TriBITS projects have a specific structure ie a project is a
-collection of packages.  For this example we will be creating a
-project that has just one package, the "HelloPackage" package.
+\textbf{Before you begin make sure you have:}
+\begin{itemize}
+\item CMake installed
+\item Tribits installed 
+\item C compiler
+\item C++ compiler
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Initial Setup}
 
-First lets create all the directories
-for our project.  We will need a top level directory for the project
-which I will call tribits\_hello\_world. We need a directory for the
-"HelloPackage" package.  We will also need a directory for the build
-which I call "build".  Under the hello\_package\_dir also create the
-directories "camke" and "src"
+TriBITS projects have a specific structure ie a project is a
+collection of packages.  Packages may or may not depend on other
+packages, and may or may not be required.  For this example we will be
+creating a project that has just one package, the "HelloPackage"
+package. First lets create all the directories for our project.  We
+will need a top level directory for the project which I will call
+tribits\_hello\_world. We need a directory for the "HelloPackage"
+package.  We will also need a directory for the build which I call
+"build".  Under the hello\_package\_dir also create the directories
+"cmake" and "src".\\
 
+\textbf{You should have the following directories:}
 \begin{verbatim}
   tribits_hello_world/
   tribits_hello_wolrd/build
@@ -39,23 +47,26 @@ directories "camke" and "src"
 
   $ tree
   .
-  └── tribits_hello_world
-      ├── build
-      └── hello_package_dir
-          ├── cmake
-          └── src
+  |__ tribits_hello_world
+      |__ build
+      |__ hello_package_dir
+          |__ cmake
+          |__ src
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Create a TriBITS package}
 
-The most basic TriBITS package needs to have 3 files.
-* a top level CMakeLists file
-* a source file
-* a file that track package dependencies
 
-First lets create the source file which is the classic HelloWorld.cpp.  Just 
-copy this to HelloWorld.cpp in the src directory
+Any TriBITS package needs to have atleast 3 file.
+\begin{itemize}
+\item a top level CMakeLists file
+\item a file that track package dependencies
+\item source files
+\end{itemize}
+
+First lets create a single source file which is the classic
+HelloWorld.cpp.  Just copy this to HelloWorld.cpp in the src directory
 
 \begin{verbatim}
   #include <iostream>
@@ -66,7 +77,7 @@ copy this to HelloWorld.cpp in the src directory
     return 0;
 
   }
-\end{verbatim}
+\end{verbatim}\\
 
 Second lets create the package dependencies file which should be
 placed in the cmake directory.  Copy the below text into a file called
@@ -74,20 +85,23 @@ Dependencies.cmake
 
 \begin{verbatim}
   TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()
-\end{verbatim}
+\end{verbatim}\\
 
 In this case the package we are creating has no dependencies but we
 still need this file.  The lack of arguments to the
-TRIBITS\_PACKAGE\_DEFINE\_DEPENDENCIES() call reflects that this package
-does not have dependencies.  The last and most interesting file we
-will create in the package directory is the CMakeLists.txt file.  Copy
-the following into CMakeLists.txt
+TRIBITS\_PACKAGE\_DEFINE\_DEPENDENCIES() call reflects that this
+package does not have dependencies.  The last and most interesting
+file we will create in the package directory is the CMakeLists.txt
+file.  Copy the following into CMakeLists.txt
 
 \begin{verbatim}
   TRIBITS_PACKAGE(HelloPackage)
-  TRIBITS_ADD_EXECUTABLE(Hello-Executable-Name NOEXEPREFIX SOURCES src/HelloWorld.cpp INSTALLABLE)
+  
+  TRIBITS_ADD_EXECUTABLE(Hello-Executable-Name NOEXEPREFIX SOURCES
+    src/HelloWorld.cpp INSTALLABLE)
+  
   TRIBITS_PACKAGE_POSTPROCESS()
-\end{verbatim}
+\end{verbatim}\\
 
 \textbf{\\TRIBITS\_PACKAGE(HelloPackage)} Sets this up a TriBITS package
 with the name "HelloPackage"
@@ -112,27 +126,27 @@ files in the top level directory and they are named:
 \begin{itemize}
 \item CMakeLists.txt
 \item PackageList.cmake
-\item ProjectName.camke
+\item ProjectName.cmake
 \item TPLsList.cmake
 \end{itemize}
 
 
 
-\textbf{\\\\TPLsList.camke} this file tells Tribits ablout TPLs needed for
+\textbf{\\\\TPLsList.cmake} this file tells Tribits ablout TPLs needed for
 the project.  In this case, the package does not depend on any TPLs so
 this file will be very simple.  It should contain just the following
 single line
 
 \begin{verbatim}
-  TRIBITS\_REPOSITORY\_DEFINE\_TPLS()
-\end{verbatim}
+  TRIBITS_REPOSITORY_DEFINE_TPLS()
+\end{verbatim}\\
 
-\textbf{\\ProjectName.camke} this file sets the name of the project.  Some other options can be specified in this file but we
+\textbf{\\ProjectName.cmake} this file sets the name of the project.  Some other options can be specified in this file but we
 will just set the project name. It should contain the following
   
 \begin{verbatim}
-  SET(PROJECT\_NAME TribitsHelloWorld)
-\end{verbatim}
+  SET(PROJECT_NAME TribitsHelloWorld)
+\end{verbatim}\\
 
 \textbf{\\PackageList.cmake} defeines which packages are in the project.  We will just need to tell it the name and location
 of our one package
@@ -141,7 +155,7 @@ of our one package
   TRIBITS_REPOSITORY_DEFINE_PACKAGES(
     HelloPackage  hello_package_dir  PT
   )
-\end{verbatim}
+\end{verbatim}\\
 
 \textbf{\\CMakeLists.txt} This is the most interesting file in this example.  Here we will set a minimum cmake version, load some 
 options, and tell cmake that this is a Tribits project.  The CMakeLists.txt file should have the following contents
@@ -176,27 +190,26 @@ options, and tell cmake that this is a Tribits project.  The CMakeLists.txt file
   
   # Do all of the processing for this Tribits project
   TRIBITS_PROJECT()
-\end{verbatim}
+\end{verbatim}\\
 
 
-\textbf{\\SET(${PROJECT\_NAME}\_TRIBITS\_DIR ${CMAKE\_CURRENT\_SOURCE\_DIR}/cmake/tribits 
-    CACHE PATH "TriBITS base directory (default assumes in TriBITS source tree).")}
+\textbf{\\\${PROJECT\_NAME}\_TRIBITS\_DIR}
 Make sure you set this to your Tribits Installation path it may not be the same as
 this path.  Now you should have a directory structure that looks like this
 
 \begin{verbatim}
   .
-  ├── CMakeLists.txt
-  ├── PackagesList.cmake
-  ├── ProjectName.cmake
-  ├── TPLsList.cmake
-  ├── build
-  └── hello_package_dir
-      ├── CMakeLists.txt
-      ├── cmake
-      │   └── Dependencies.cmake
-      └── src
-          └── HelloWorld.cpp
+  |__ CMakeLists.txt
+  |__ PackagesList.cmake
+  |__ ProjectName.cmake
+  |__ TPLsList.cmake
+  |__ build
+  |__ hello_package_dir
+      |__ CMakeLists.txt
+      |__ cmake
+      |__ └── Dependencies.cmake
+      |__ src
+          |__ HelloWorld.cpp
 \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -206,42 +219,28 @@ Go to the build directory and type the following to configure your project
 
 \begin{verbatim}
   cmake ../
-\end{verbatim}
-
-You should see something very similar to
- 
-\begin{verbatim}
-  ..literalinclude:: HelloWorldConfigure.output
-\end{verbatim}
-
+\end{verbatim}\\
 The configure step will have created several files inside your build
 directory, most notably it will have created nessesary make files to
 actually build your project.  The other file I will mention here is
 the CMakeCache.txt which stores information about how the project was
-configured.
-
-To build your project just type
-
+configured. To build your project just type
 \begin{verbatim}  
   make
-\end{verbatim}
-
+\end{verbatim}\\
 you should see
-
 \begin{verbatim} 
   [ 50\%] Building CXX object
    hello_package_dir/CMakeFiles/Hello-Executable-Name.dir/src/HelloWorld.cpp.o
   [100\%] Linking CXX executable Hello-Executable-Name.exe
   [100\%] Built target Hello-Executable-Name
-\end{verbatim}
-
+\end{verbatim}\\
 now in build/hello\_package\_dir you will see an executable named
 "Hello-Executable-Name" and if you run that executable you will see
-
 \begin{verbatim}
   $ ./hello_package_dir/Hello-Executable-Name.exe 
   Hello World!
-\end{verbatim}
+\end{verbatim}\\
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -265,7 +264,7 @@ following files:
     std::cout << HelloWorld::getHelloWorld() << "\n";
     return 0;
   }
-\end{verbatim}
+\end{verbatim}\\
 
 \textbf{\\hello\_world\_lib.hpp}
 \begin{verbatim}
@@ -308,57 +307,45 @@ following files:
     }
   
   }
-\end{verbatim}
-
+\end{verbatim}\\
 We will use these files to build an executalbe, a library, and tests.
 Remember in the CMakeLists.txt file for the HelloPackage
 (hello\_package\_dir/CMakeList.txt) we have the line
-
 \begin{verbatim}
   TRIBITS_ADD_EXECUTABLE(Hello-Executable-Name NOEXEPREFIX SOURCES
   src/HelloWorld.cpp INSTALLABLE)
-\end{verbatim}
-
+\end{verbatim}\\
 lets now modify that line to build an executable of the same name but
 using hello\_world\_main.cpp instead of HelloWorld.cpp
-
 \begin{verbatim}
   TRIBITS_ADD_EXECUTABLE(Hello-Executable-Name NOEXEPREFIX SOURCES
   src/hello_world_main.cpp INSTALLABLE)
-\end{verbatim}
-
+\end{verbatim}\\
 to create a library we need to call TRIBITS\_ADD\_LIBRARY() and give it
 a name, headers and sources.  add this the CMakeLists.txt
-
 \begin{verbatim}
   TRIBITS_ADD_LIBRARY(hello_world_lib HEADERS src/hello_world_lib.hpp
   SOURCES src/hello_world_lib.cpp)
-\end{verbatim}
-
+\end{verbatim}\\
 we can also add tests.  You can add a test based on an executable you
 have already specified for example
-
 \begin{verbatim}
   TRIBITS_ADD_TEST(Hello-Executable-Name NOEXEPREFIX
   PASS_REGULAR_EXPRESSION "Hello World")
-\end{verbatim}
-
+\end{verbatim}\\
 will run "Hello-Executable-Name" and verify that the output is "Hello
 World".  You can also add a test and an exectuable att he same
 time. for example
-
 \begin{verbatim}
   TRIBITS_ADD_EXECUTABLE_AND_TEST(unit_tests SOURCES
   src/hello_world_unit_tests.cpp PASS_REGULAR_EXPRESSION "All unit
   tests passed")
-\end{verbatim}
-
+\end{verbatim}\\
 will create an executable named "unit\_tests" from the source file
 hello\_world\_unit\_tests.cpp.  This executable will be used in a test
 that will be marked as passing if the output of that executable is
 "All unit tests passed".  After making these changes and additions to
 the CMakeLists.txt file it should read
-
 \begin{verbatim}
   TRIBITS_PACKAGE(HelloPackage)
 
@@ -376,14 +363,12 @@ the CMakeLists.txt file it should read
    passed")
 
   TRIBITS_PACKAGE_POSTPROCESS()
-\end{verbatim}
-
+\end{verbatim}\\
 now reconfigure and rebuild in the build directory with
-
 \begin{verbatim}
   cmake ../
   make
-\end{verbatim}
+\end{verbatim}\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -401,37 +386,33 @@ Where are they? look in
 
 \begin{verbatim}
   build/hello_package_dir
-\end{verbatim}
-
+\end{verbatim}\\
 among other things you will see
   
 \begin{verbatim}
   Hello-Executable-Name.exe
   HelloPackage_unit_tests.exe
   libhello_world_lib.a
-\end{verbatim}
-
+\end{verbatim}\\
 by default, TriBITS will place the targets inside a directory with the
 same name as the package directory.  If you have more than one package
 then the files will be in separate directories
 
 \begin{verbatim}
     build
-    ├── package_one
-    │   ├── build_target_A
-    │   └── build_target_B
-    └── package_two
-        ├── build_target_C
-        └── build_target_D
-\end{verbatim}
-
+    |__ package_one
+        |__ build_target_A
+        |__ build_target_B
+    |__  package_two
+        |__  build_target_C
+        |__  build_target_D
+\end{verbatim}\\
 You can install the built targets to the default location
 (/usr/local/bin) with
 
 \begin{verbatim}
 make install
-\end{verbatim}
-
+\end{verbatim}\\
 You may want to install somewhere other than the default.  In this
 case you want to set a CMamke variable called CMAKE\_INSTALL\_PREFIX. If
 this is set then the files will be installed to the directory
@@ -440,34 +421,43 @@ to a diecroyr called "Install" in the current source tree
 
 \begin{verbatim}
   SET(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/Install)
-\end{verbatim}
-
+\end{verbatim}\\
 now clear the contents ofthe build directory and reconfigure, biuld,
 and install the project with
 
 \begin{verbatim}
   cmake ../
   make install
-\end{verbatim}
-
+\end{verbatim}\\
 Now you should see a directory calle "Install" in the top level of the
 project with contents
 
 \begin{verbatim}
   tree
   .
-  ├── bin
-  │   └── Hello-Executable-Name.exe
-  ├── include
-  │   ├── Makefile.export.HelloPackage
-  │   ├── Makefile.export.TribitsGreetings
-  │   └── hello_world_lib.hpp
-  └── lib
-      ├── cmake
-      │   └── TribitsGreetings
-      │       └── TribitsGreetingsConfigVersion.cmake
-      └── libhello_world_lib.a
-\end{verbatim}
+  |__ bin
+  |   |__ Hello-Executable-Name.exe
+  |__ include
+  |   |__ Makefile.export.HelloPackage
+  |   |__ Makefile.export.TribitsGreetings
+  |   |__ hello_world_lib.hpp
+  |__ lib
+      |__ cmake
+      |   |__ TribitsGreetings
+      |       |__ TribitsGreetingsConfigVersion.cmake
+      |__ libhello_world_lib.a
+\end{verbatim}\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Summary}
+This tutorial has covered the most basic concepts in a TriBITS
+project. A TriBITS project a collection of TriBITS packages and each
+package defines its build targets (executables, tests, and libraries)
+and source files.  A package also must define its dependencies. See
+the TriBITS example project tutarial for a more complicate example of
+a project and more detail about Tribits packages, TPLs, and
+dependencies
 
 
 % End document
