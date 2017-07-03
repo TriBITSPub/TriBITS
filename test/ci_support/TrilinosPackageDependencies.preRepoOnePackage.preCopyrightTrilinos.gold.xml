@@ -1,4 +1,4 @@
-<PackageDependencies project="Trilinos">
+<PackageDependencies project="Trilinos" baseDirName="MockTrilinos">
   <Package name="preRepoOnePackage" dir="preRepoOnePackage" type="PT">
     <LIB_REQUIRED_DEP_PACKAGES/>
     <LIB_OPTIONAL_DEP_PACKAGES/>
