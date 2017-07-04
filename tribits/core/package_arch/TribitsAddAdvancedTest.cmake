@@ -404,7 +404,7 @@ INCLUDE(PrintVar)
 #
 #     If specified, the test command will be assumed to pass if it matches the
 #     given regular expression.  Otherwise, it is assumed to fail.  TIPS:
-#     Replace ';' with '[;]' or CMake will interpretet this as a array eleemnt
+#     Replace ';' with '[;]' or CMake will interpret this as an array elemnt
 #     boundary.  To match '.', use '[.]'.
 #
 #   ``PASS_REGULAR_EXPRESSION_ALL "<regex1>" "<regex2>" ... "<regexn>"``
@@ -413,7 +413,7 @@ INCLUDE(PrintVar)
 #     matches all of the provided regular expressions.  Note that this is not
 #     a capability of raw ctest and represents an extension provided by
 #     TriBITS.  NOTE: It is critical that you replace ';' with '[;]' or CMake
-#     will interpretet this as a array eleemnt boundary.
+#     will interpret this as an array elemnt boundary.
 #
 #   ``STANDARD_PASS_OUTPUT``
 #

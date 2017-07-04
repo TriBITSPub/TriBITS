@@ -167,7 +167,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     ``POSTFIX_AND_ARGS_<IDX>`` form instead.  **WARNING:** Multiple
 #     arguments passed to a single test invocation must be quoted or multiple
 #     tests taking single arguments will be created instead!  See `Adding
-#     Multiple Tests (TRIBITS_ADD_TEST())`_ for more details and exmaples.
+#     Multiple Tests (TRIBITS_ADD_TEST())`_ for more details and examples.
 #
 #   ``POSTFIX_AND_ARGS_<IDX> <postfix> <arg0> <arg1> ...``
 #
@@ -187,7 +187,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     that one can give a meaningful name to each test case and one can
 #     specify multiple arguments without having to quote them and one can
 #     allow long argument lists to span multiple lines.  See `Adding Multiple
-#     Tests (TRIBITS_ADD_TEST())`_ for more details and exmaples.
+#     Tests (TRIBITS_ADD_TEST())`_ for more details and examples.
 #
 #   ``COMM [serial] [mpi]``
 #
@@ -272,7 +272,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     the environment``) for which the test is allowed to be added.  If
 #     ``HOSTTYPE`` is specified and ``CMAKE_HOST_SYSTEM_NAME`` is not equal to
 #     one of the values of ``<hosttypei>``, then the test will **not** be
-#     added.  Typical host system type names include ``Linux``, ``Darwain``,
+#     added.  Typical host system type names include ``Linux``, ``Darwin``,
 #     ``Windows``, etc.
 #
 #   ``XHOSTTYPE <hosttype0> <hosttype1> ...``
@@ -347,7 +347,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     with the name(S) of the tests passed to ``ADD_TEST()``.  If more than
 #     one test is added, then this will be a list of test names.  Having this
 #     name allows the calling ``CMakeLists.txt`` file access and set
-#     additional test propeties (see `Setting additional test properties
+#     additional test properties (see `Setting additional test properties
 #     (TRIBITS_ADD_TEST())`_).
 #
 # In the end, this function just calls the built-in CMake commands
@@ -399,7 +399,7 @@ INCLUDE(TribitsAddTestHelpers)
 # run in this case.
 #
 # NOTE: On native Windows platforms, the ``NOEXESUFFIX`` will still allow
-# CTest to run exectuables that have the ``*.exe`` suffix.
+# CTest to run executables that have the ``*.exe`` suffix.
 #
 # Whatever executable path is specified using this logic, if the executable is
 # not found, then when ``ctest`` goes to run the test, it will mark it as
@@ -459,7 +459,7 @@ INCLUDE(TribitsAddTestHelpers)
 #
 # may be preferable since it will not add any postfix name to the test.  To
 # add more than one test case using ``ARGS``, one will use more than one
-# quoted set of arugments such as with::
+# quoted set of arguments such as with::
 #
 #   ARGS "<arg0> <arg1>" "<arg2> <arg2>"
 #
@@ -477,7 +477,7 @@ INCLUDE(TribitsAddTestHelpers)
 # the individual tests can be given more understandable names.
 #
 # The other advantage of the ``POSTFIX_AND_ARGS_<IDX>`` form is that the
-# arugments ``<arg0>``, ``<arg1>``, ... do not need to be quoted and can
+# arguments ``<arg0>``, ``<arg1>``, ... do not need to be quoted and can
 # therefore be extended over multiple lines like::
 #
 #   POSTFIX_AND_ARGS_0 long_args --this-is-the-first-long-arg=very

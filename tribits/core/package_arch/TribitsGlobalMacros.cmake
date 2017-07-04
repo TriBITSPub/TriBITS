@@ -779,7 +779,7 @@ MACRO(TRIBITS_SETUP_INSTALLATION_PATHS)
   ENDIF()
 
   #
-  # C) Set the cache varibles for the install dirs
+  # C) Set the cache variables for the install dirs
   #
 
   ADVANCED_SET( ${PROJECT_NAME}_INSTALL_INCLUDE_DIR
@@ -2639,7 +2639,7 @@ ENDMACRO()
 # CMake/CPack as a regex that is prefixed by the project's and package's
 # source directory names so as to not exclude files and directories of the
 # same name and path from other packages.  If ``<filei>`` is an absolute path
-# it it not prefixed but is appended to ``CPACK_SOURCE_IGNORE_FILES``
+# it is not prefixed but is appended to ``CPACK_SOURCE_IGNORE_FILES``
 # unmodified.
 #
 # In general, do **NOT** put in excludes for files and directories that are
