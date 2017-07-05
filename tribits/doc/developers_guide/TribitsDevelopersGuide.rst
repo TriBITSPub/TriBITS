@@ -56,7 +56,8 @@ needs to understand how CMake defines and uses targets for various qualities
 like libraries, executables, etc.  Without this basic understanding of CMake,
 one will have trouble resolving problems when they occur.
 
-(*Redundant with table of contents above?*)
+.. jfrye: Below paragraph is redundant with table of contents above?
+
 The remainder of this documented is structured as follows.  First, there is
 some additional `Background`_ material provided.  Then, a detailed
 specification of `TriBITS Project Structure`_ is given which lists and defines
@@ -128,7 +129,9 @@ sophisticated TriBITS Project Developer will also add new packages, add new
 package dependencies, and define new TPLs.  This current TriBITS Developers
 Guide and Reference document should supply everything such a developer needs
 to know and more.  Only a smaller part of this document needs to be understood
-and accessed by people assuming this role. (*links?*)
+and accessed by people assuming this role.
+
+.. jfrye: Add links to parts of document above?
 
 .. _TriBITS Project Architect:
 .. _TriBITS Project Architects:
@@ -202,12 +205,12 @@ for any built-in CMake command is available locally by running::
    $ cmake --help-command <CMAKE_COMMAND>
 
 Because tutorials and detailed documentation for the CMake language already
-exists, this document will does not attempt to provide a first reference to
-CMake (which is a large topic in itself).  However, what we try to provide
-below is a short overview of the more quirky or surprising aspects of the
-CMake language that a programmer experienced in another language might get
-tripped up or surprised by.  Some of the more unique features of the language
-are described in order to help avoid some of these common mistakes and provide
+exists, this document does not attempt to provide a first reference to CMake
+(which is a large topic in itself).  However, what we try to provide below is
+a short overview of the more quirky or surprising aspects of the CMake
+language that a programmer experienced in another language might get tripped
+up or surprised by.  Some of the more unique features of the language are
+described in order to help avoid some of these common mistakes and provide
 greater understanding of how TriBITS works.
 
 .. _Official CMake reference book: http://www.cmake.org/cmake/help/book.html
@@ -260,7 +263,7 @@ string arguments like::
 In CMake, the above is identical, in every way, to::
 
   SET(SOME_VARIABLE some_value)
-(*is this syntax right? too many/not enough "?*)  SET("SOME_VARIABLE;"some_value")
+  SET("SOME_VARIABLE";"some_value")
   SET("SOME_VARIABLE;some_value")
 
 The function ``SET()`` simply interprets the first argument to as the name of
@@ -277,7 +280,7 @@ interpret them as a string array.  For example::
     MESSAGE("SOME_VAR='${SOME_VAR}'")
   ENDFOREACH()
 
-(*what is the right way to do the above?*)
+.. jfrye: what is the right way to do the above?
 
 prints ```SOME_VAR='a;b;c'`` instead of printing ``SOME_VAR='a'`` followed by
 ``SOME_VAR='b'``, etc., as you would otherwise expect.  Therefore, this simple
@@ -475,24 +478,25 @@ http://web.ornl.gov/~8vt/readingList.html#Most_Recommended_SE_Books).
 TriBITS Project Structure
 =========================
 
+.. jfrye: What does the "F" in framework mean?
+
 TriBITS is a Framework, implemented in CMake, to create CMake projects.  As a
-Framework (with a capital "F")(*what does that mean?*), TriBITS defines the 
-overall structure of a CMake build system for a project and it processes the 
-various project-, repository-, and package-specific files in a specified order.  Almost all of
-this processing takes place in the `TRIBITS_PROJECT()`_ macro (or macros and
-functions it calls).  The following subsections define the essence of the
-TriBITS framework in some detail.  Later sections cover specific topics and
-the various sections link to each other.  Within this section, the subsection
-`TriBITS Structural Units`_ defines the basic units `TriBITS Project`_,
-`TriBITS Repository`_, `TriBITS Package`_, `TriBITS TPL`_ and other related
-structural units.  The subsection `Processing of TriBITS Files: Ordering and
-Details`_ defines exactly what files TriBITS processes and in what order.  It
-also shows how to get TriBITS to show exactly what files it is processing to
-help in debugging issues.  The subsection `Coexisting Projects, Repositories,
-and Packages`_ gives some of the rules and constrains for how the different
-structure units can co-exist in the same directories.  The last two
-subsections in this section cover `Standard TriBITS TPLs`_ and `Common TriBITS
-TPLs`_.
+`Software Framework`_, TriBITS defines the overall structure of a CMake build
+system for a project and it processes the various project-, repository-, and
+package-specific files in a specified order.  Almost all of this processing
+takes place in the `TRIBITS_PROJECT()`_ macro (or macros and functions it
+calls).  The following subsections define the essence of the TriBITS framework
+in some detail.  Later sections cover specific topics and the various sections
+link to each other.  Within this section, the subsection `TriBITS Structural
+Units`_ defines the basic units `TriBITS Project`_, `TriBITS Repository`_,
+`TriBITS Package`_, `TriBITS TPL`_ and other related structural units.  The
+subsection `Processing of TriBITS Files: Ordering and Details`_ defines
+exactly what files TriBITS processes and in what order.  It also shows how to
+get TriBITS to show exactly what files it is processing to help in debugging
+issues.  The subsection `Coexisting Projects, Repositories, and Packages`_
+gives some of the rules and constrains for how the different structure units
+can co-exist in the same directories.  The last two subsections in this
+section cover `Standard TriBITS TPLs`_ and `Common TriBITS TPLs`_.
 
 TriBITS Structural Units
 ------------------------
@@ -1883,10 +1887,9 @@ A TriBITS Subpackage:
   and/or tests with CMake build targets for building these for which TriBITS
   exports the list of include directories, libraries, and targets that are
   created (along with CMake dependencies).
-* Is declared in its parent packages'
-  `<packageDir>/cmake/Dependencies.cmake`_ file in a call to
-  `TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()`_ using the argument
-  `SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS`_.
+* Is declared in its parent package's `<packageDir>/cmake/Dependencies.cmake`_
+  file in a call to `TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()`_ using the
+  argument `SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS`_.
 * Defines dependencies on `upstream`_ TPLs and/or other SE packages by just
   naming the dependencies in the file
   `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ using the macro
@@ -4809,7 +4812,7 @@ developed repository.
 
 2) **REGRESSION_EMAIL_LIST** (defined in
 `<packageDir>/cmake/Dependencies.cmake`_): Package-specific email address
-specified in the packages' ``Dependencies.cmake`` file using
+specified in the package's ``Dependencies.cmake`` file using
 `TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()`_.
 
 .. _${REPOSITORY_NAME}_REPOSITORY_EMAIL_URL_ADDRESS_BASE:
@@ -8648,6 +8651,10 @@ Below is a snapshot of the output from ``install_devtools.py --help``.
 .. Common references to raw CMake commands:
 
 .. _CONFIGURE_FILE(): http://www.cmake.org/cmake/help/v2.8.11/cmake.html#command:configure_file
+
+.. Other references
+
+.. _Software Framework: https://en.wikipedia.org/wiki/Software_framework
 
 ..  LocalWords:  TribitsOverview TribitsLifecycleModel Lifecycle CMakeLists
 ..  LocalWords:  TriBITS Subpackage subpackage Subpackages subpackages TPL TPLs Kitware
