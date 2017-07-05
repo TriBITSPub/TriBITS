@@ -4,6 +4,8 @@
 \#*#
 .#*
 .*.swp
+*.DS_Store
+.gitignore
 
 # TriBITSDoc repo
 /TriBITSDoc/

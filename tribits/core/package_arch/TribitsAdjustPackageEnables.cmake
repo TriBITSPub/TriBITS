@@ -460,7 +460,7 @@ ENDMACRO()
 # directly setting the variables is that an SE package only needs to list
 # dependencies that exist.  Otherwise, the ``Dependencies.cmake`` file will
 # need to set all of the above local variables, even those that are empty.
-# This is a error checking property of the TriBITS system to avoid misspelling
+# This is an error checking property of the TriBITS system to avoid misspelling
 # the names of these variables.
 #
 MACRO(TRIBITS_PACKAGE_DEFINE_DEPENDENCIES)
