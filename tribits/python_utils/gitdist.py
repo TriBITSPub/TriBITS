@@ -771,7 +771,7 @@ def filterWarnings(lines):
 def getCmndOutput(cmnd, rtnCode=False):
   child = subprocess.Popen(cmnd, shell=True, stdout=subprocess.PIPE,
     stderr = subprocess.STDOUT)
-  output = child.stdout.read()
+  output = s(child.stdout.read())
   child.wait()
   if rtnCode:
     return (output, child.returncode)
@@ -786,7 +786,7 @@ def runCmnd(options, cmnd):
     print(cmnd)
   else:
     child = subprocess.Popen(cmnd, stdout=subprocess.PIPE).stdout
-    output = child.read()
+    output = s(child.read())
     sys.stdout.flush()
     print(output)
     sys.stdout.flush()
