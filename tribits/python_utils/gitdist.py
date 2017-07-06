@@ -1033,6 +1033,28 @@ def getCommandlineOps():
   # E) Get the list of extra repos
   #
 
+  # Change to top-level git directory (in case of nested git repos)
+
+  drive, currentPath = os.path.splitdrive(os.getcwd())
+  pathList = []
+  while 1:
+    currentPath, currentDir = os.path.split(currentPath)
+    if currentDir != "":
+      pathList.append(currentDir)
+    else:
+      if currentPath != "":
+        pathList.append(currentPath)
+      break
+  pathList.reverse()
+  newDir = drive+pathList[0]
+  for currentDir in pathList:
+    newDir = os.path.join(newDir, currentDir)
+    if os.path.isdir(os.path.join(newDir, ".git")):
+      break
+  os.chdir(newDir)
+
+  # Get list of extra repos
+
   if options.repos:
     reposFullList = options.repos.split(",")
   else:
