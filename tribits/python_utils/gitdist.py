@@ -1049,7 +1049,9 @@ def getCommandlineOps():
   newDir = drive+pathList[0]
   for currentDir in pathList:
     newDir = os.path.join(newDir, currentDir)
-    if os.path.isdir(os.path.join(newDir, ".git")):
+    if os.path.isfile(os.path.join(newDir, ".gitdist")):
+      break
+    if os.path.isfile(os.path.join(newDir, ".gitdist.default")):
       break
   os.chdir(newDir)
 
