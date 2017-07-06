@@ -1164,12 +1164,14 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
     -DTrilinos_ASSERT_MISSING_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
+    "CMake Error at .*/TribitsAdjustPackageEnables.cmake:.+ [(]MESSAGE[)]:"
     "Error, the package 'Anasazi' is listed as a dependency of the package"
     "'Teko' is in the list 'Trilinos_SE_PACKAGES' but the package 'Anasazi' is"
-    "either not defined or is listed later in the package order.  Check the"
-    "pelling of 'Anasazi' or see how it is listed in"
-    "Trilinos_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS in relationship to 'Teko'"
-    "Configuring incomplete, errors occurred"
+    "either not defined or is listed later in the package order[.]  This may also"
+    "be an attempt to create a cicular dependency between the packages 'Anasazi'"
+    "and 'Teko' [(]which is not allowed[)][.]  Check the spelling of 'Anasazi' or see"
+    "how it is listed in Trilinos_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS in"
+    "relationship to 'Teko'[.]"
   )
 
 
