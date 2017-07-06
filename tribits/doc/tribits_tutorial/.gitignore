@@ -3,3 +3,7 @@
 *.tex
 *.log
 .log
+/*.aux
+/*.log
+/*.pdf
+
