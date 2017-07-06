@@ -280,8 +280,6 @@ interpret them as a string array.  For example::
     MESSAGE("SOME_VAR='${SOME_VAR}'")
   ENDFOREACH()
 
-.. jfrye: what is the right way to do the above?
-
 prints ```SOME_VAR='a;b;c'`` instead of printing ``SOME_VAR='a'`` followed by
 ``SOME_VAR='b'``, etc., as you would otherwise expect.  Therefore, this simple
 rule for the handling of function arguments as string arrays does not hold for
