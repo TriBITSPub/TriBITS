@@ -1035,25 +1035,41 @@ def getCommandlineOps():
 
   # Change to top-level git directory (in case of nested git repos)
 
-  drive, currentPath = os.path.splitdrive(os.getcwd())
-  pathList = []
-  while 1:
-    currentPath, currentDir = os.path.split(currentPath)
-    if currentDir != "":
-      pathList.append(currentDir)
-    else:
-      if currentPath != "":
-        pathList.append(currentPath)
-      break
-  pathList.reverse()
-  newDir = drive+pathList[0]
-  for currentDir in pathList:
-    newDir = os.path.join(newDir, currentDir)
-    if os.path.isfile(os.path.join(newDir, ".gitdist")):
-      break
-    if os.path.isfile(os.path.join(newDir, ".gitdist.default")):
-      break
-  os.chdir(newDir)
+  moveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR")
+
+  if moveToBaseDir == None or moveToBaseDir == "":
+    # Run gitdist in the current directory
+    None
+  elif moveToBaseDir == "EXTREME_BASE":
+    # Run gitdist in the most base dir where .gitdist[.default] exists
+    drive, currentPath = os.path.splitdrive(os.getcwd())
+    pathList = []
+    while 1:
+      currentPath, currentDir = os.path.split(currentPath)
+      if currentDir != "":
+        pathList.append(currentDir)
+      else:
+        if currentPath != "":
+          pathList.append(currentPath)
+        break
+    #print("pathList="+str(pathList))
+    pathList.reverse()
+    #print("pathList="+str(pathList))
+    newDir = drive+pathList[0]
+    for currentDir in pathList:
+      #print("currentDir="+str(currentDir))
+      newDir = os.path.join(newDir, currentDir)
+      #print("newDir="+str(newDir))
+      if os.path.isfile(os.path.join(newDir, ".gitdist")):
+        break
+      if os.path.isfile(os.path.join(newDir, ".gitdist.default")):
+        break
+    os.chdir(newDir)
+  else:
+    print(
+      "Error, env var GITDIST_MOVE_TO_BASE_DIR='"+moveToBaseDir+"' is invalid!"+
+      "  Valid choices include empty '', and EXTREME_BASE")
+    sys.exit(1)
 
   # Get list of extra repos
 
