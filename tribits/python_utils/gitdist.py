@@ -1030,10 +1030,8 @@ def getCommandlineOps():
     sys.exit(1)
 
   #
-  # E) Get the list of extra repos
+  # E) Change to top-level git directory (in case of nested git repos)
   #
-
-  # Change to top-level git directory (in case of nested git repos)
 
   moveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR")
   if (moveToBaseDir == None) or (moveToBaseDir == ""):
@@ -1074,7 +1072,9 @@ def getCommandlineOps():
       + "  Valid choices include empty '', IMMEDIATE_BASE, and EXTREME_BASE")
     sys.exit(1)
 
-  # Get list of extra repos
+  #
+  # F) Get the list of extra repos
+  #
 
   if options.repos:
     reposFullList = options.repos.split(",")
@@ -1098,7 +1098,7 @@ def getCommandlineOps():
     notReposFullList = []
 
   #
-  # F) Return
+  # G) Return
   #
 
   return (options, nativeCmnd, otherArgs, reposFullList,
