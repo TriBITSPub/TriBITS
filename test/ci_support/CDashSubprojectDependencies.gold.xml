@@ -1,144 +1,144 @@
 <Project name="Trilinos">
   <SubProject name="TrilinosFramework">
-    <Path>MockTrilinos/cmake</Path>
+    <Path>cmake</Path>
     <EmailAddresses>
       <Email address="trilinosframework-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Teuchos">
-    <Path>MockTrilinos/packages/teuchos</Path>
+    <Path>packages/teuchos</Path>
     <EmailAddresses>
       <Email address="teuchos-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="RTOp">
-    <Path>MockTrilinos/packages/rtop</Path>
+    <Path>packages/rtop</Path>
     <EmailAddresses>
       <Email address="thyra-regression@software.sandia.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Epetra">
-    <Path>MockTrilinos/packages/epetra</Path>
+    <Path>packages/epetra</Path>
     <EmailAddresses>
       <Email address="epetra-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Zoltan">
-    <Path>MockTrilinos/packages/zoltan</Path>
+    <Path>packages/zoltan</Path>
     <EmailAddresses>
       <Email address="zoltan-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Shards">
-    <Path>MockTrilinos/packages/shards</Path>
+    <Path>packages/shards</Path>
     <EmailAddresses>
       <Email address="shards-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Triutils">
-    <Path>MockTrilinos/packages/triutils</Path>
+    <Path>packages/triutils</Path>
     <EmailAddresses>
       <Email address="triutils-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Tpetra">
-    <Path>MockTrilinos/packages/tpetra</Path>
+    <Path>packages/tpetra</Path>
     <EmailAddresses>
       <Email address="tpetra-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="EpetraExt">
-    <Path>MockTrilinos/packages/epetraext</Path>
+    <Path>packages/epetraext</Path>
     <EmailAddresses>
       <Email address="epetraext-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Stokhos">
-    <Path>MockTrilinos/packages/stokhos</Path>
+    <Path>packages/stokhos</Path>
     <EmailAddresses>
       <Email address="stokhos-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Sacado">
-    <Path>MockTrilinos/packages/sacado</Path>
+    <Path>packages/sacado</Path>
     <EmailAddresses>
       <Email address="sacado-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Thyra">
-    <Path>MockTrilinos/packages/thyra</Path>
+    <Path>packages/thyra</Path>
     <EmailAddresses>
       <Email address="thyra-boneheads@gmail.com"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Isorropia">
-    <Path>MockTrilinos/packages/isorropia</Path>
+    <Path>packages/isorropia</Path>
     <EmailAddresses>
       <Email address="isorropia-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="AztecOO">
-    <Path>MockTrilinos/packages/aztecoo</Path>
+    <Path>packages/aztecoo</Path>
     <EmailAddresses>
       <Email address="aztecoo-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Galeri">
-    <Path>MockTrilinos/packages/galeri</Path>
+    <Path>packages/galeri</Path>
     <EmailAddresses>
       <Email address="galeri-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Amesos">
-    <Path>MockTrilinos/packages/amesos</Path>
+    <Path>packages/amesos</Path>
     <EmailAddresses>
       <Email address="amesos-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Intrepid">
-    <Path>MockTrilinos/packages/intrepid</Path>
+    <Path>packages/intrepid</Path>
     <EmailAddresses>
       <Email address="intrepid-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Ifpack">
-    <Path>MockTrilinos/packages/ifpack</Path>
+    <Path>packages/ifpack</Path>
     <EmailAddresses>
       <Email address="ifpack-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="ML">
-    <Path>MockTrilinos/packages/ml</Path>
+    <Path>packages/ml</Path>
     <EmailAddresses>
       <Email address="ml-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Belos">
-    <Path>MockTrilinos/packages/belos</Path>
+    <Path>packages/belos</Path>
     <EmailAddresses>
       <Email address="belos-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Stratimikos">
-    <Path>MockTrilinos/packages/stratimikos</Path>
+    <Path>packages/stratimikos</Path>
     <EmailAddresses>
       <Email address="stratimikos-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="RBGen">
-    <Path>MockTrilinos/packages/rbgen</Path>
+    <Path>packages/rbgen</Path>
     <EmailAddresses>
       <Email address="rbgen-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Phalanx">
-    <Path>MockTrilinos/packages/phalanx</Path>
+    <Path>packages/phalanx</Path>
     <EmailAddresses>
       <Email address="phalanx-regression@repo.site.gov"/>
     </EmailAddresses>
   </SubProject>
   <SubProject name="Panzer">
-    <Path>MockTrilinos/packages/panzer</Path>
+    <Path>packages/panzer</Path>
     <EmailAddresses>
       <Email address="panzer-regression@repo.site.gov"/>
     </EmailAddresses>

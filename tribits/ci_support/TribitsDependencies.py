@@ -576,7 +576,7 @@ class TribitsDependencies:
       packageDeps = self.__packagesList[package_i]
 
       packageName = packageDeps.packageName
-      packagePath = projectBaseDirName+"/"+packageDeps.packageDir
+      packagePath = packageDeps.packageDir
 
       if packageDeps.parentPackage == "":
         
