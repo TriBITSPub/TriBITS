@@ -75,6 +75,12 @@ INCLUDE(TribitsAddTestHelpers)
 #     [ADDED_TESTS_NAMES_OUT <testsNames>]
 #     )
 #
+# The tests are only added if tests are enabled for the SE package
+# (i.e. `${PACKAGE_NAME}_ENABLE_TESTS`_) or the parent package (if this is a
+# subpackage) (i.e. ``${PARENT_PACKAGE_NAME}_ENABLE_TESTS``).  (NOTE: A more
+# efficient way to optionally enable tests is to put them in a ``test/``
+# subdir and then include that subdir with `TRIBITS_ADD_TEST_DIRECTORIES()`_.)
+#
 # *Sections:*
 #
 # * `Formal Arguments (TRIBITS_ADD_TEST())`_
@@ -803,6 +809,12 @@ FUNCTION(TRIBITS_ADD_TEST EXE_NAME)
   #
   # B) Add or don't add tests based on a number of criteria
   #
+
+  SET(ADD_THE_TEST FALSE)
+  TRIBITS_ADD_TEST_PROCESS_ENABLE_TESTS(ADD_THE_TEST)
+  IF (NOT ADD_THE_TEST)
+    RETURN()
+  ENDIF()
 
   SET(ADD_THE_TEST FALSE)
   TRIBITS_ADD_TEST_PROCESS_CATEGORIES(ADD_THE_TEST)
