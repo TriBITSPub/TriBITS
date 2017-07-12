@@ -562,6 +562,8 @@ units are:
 * `TriBITS Repository`_: A collection of one or more `TriBITS Packages`_
   specified in a `<repoDir>/PackagesList.cmake`_ file and zero or more TPL
   declarations specified in a `<repoDir>/TPLsList.cmake`_ file.
+  As discussed below, Repositories can include Native Repositories and Version
+  Control (VC) Repositories.
 
 .. _TriBITS Projects:
 
@@ -855,7 +857,7 @@ using checkin-test.py`_.
 
 .. _<projectDir>/cmake/NativeRepositoriesList.cmake:
 
-**<projectDir>/cmake/NativeRepositoriesList.cmake**: [Optional] If present,
+**<projectDir>/cmake/NativeRepositoriesList.cmake**: [Deprecated] If present,
 this file gives the list of native repositories for the TriBITS project.  The
 file must contain a ``SET()`` statement defining the variable
 ``${PROJECT_NAME}_NATIVE_REPOSITORIES`` which is just a flat list of repository
@@ -873,8 +875,8 @@ backward compatibility since there may be some TriBITS projects that still use
 it.  It is recommended instead to define multiple repositories using the
 `<projectDir>/cmake/ExtraRepositoriesList.cmake`_ file as it allows for more
 flexibility in how extra repositories are specified and how they are accessed.
-The latter file allows the various tools to perform VC activities with these
-repos while "native repositories" do not.
+The latter file allows the various tools to perform version control (VC)
+activities with these repos while "native repositories" do not.
 
 If this file ``NativeRepositoriesList.cmake`` does not exist, then TriBITS
 sets ``${PROJECT_NAME}_NATIVE_REPOSITORIES`` equal to ".", or the base project
@@ -1903,8 +1905,8 @@ A TriBITS Subpackage:
   ``${PARENT_PACKAGE_NAME}_ENABLE_TESTS=ON``.
 
 The contents of a TriBITS Subpackage are almost identical to those of a
-TriBITS Package.  The differences are described below and in `How is a TriBITS
-Subpackage is different from a TriBITS Package?`_.
+TriBITS Package.  The differences are described below and in `How is a TriBITS 
+Subpackage different from a TriBITS Package?`_.
 
 For more details on the definition of a TriBITS Package (or subpackage), see:
 
@@ -2061,8 +2063,8 @@ subpackage's files are:
     The absolute path to the parent package's base binary directory.
 
 
-How is a TriBITS Subpackage is different from a TriBITS Package?
-................................................................
+How is a TriBITS Subpackage different from a TriBITS Package?
+.............................................................
 
 A common question this is natural to ask is how a TriBITS Subpackage is
 different from a TriBITS Package?  They contain the same basic files (i.e. a
@@ -2389,7 +2391,7 @@ configure command::
     -DTribitsExProj_TRACE_FILE_PROCESSING=ON \
     -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON \
     -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON \
-    <tribitsDir>/doc/examples/TribitsExampleProject \
+    <tribitsDir>/doc/TribitsExampleProject \
     | grep "^-- File Trace:"
 
 looks something like::
@@ -2621,7 +2623,7 @@ itself which allows the TriBITS system to be tested and installed from any
 TriBITS project that lists it, including the ``TriBITS`` project itself
 (see `Coexisting Projects, Repositories, and Packages`_).
 
-The directory ``tribits/doc/examples/`` contains some other example TriBITS
+The directory ``tribits/examples/`` contains some other example TriBITS
 projects and repositories as well that are referred to in this and other
 documents.
 
@@ -2632,7 +2634,7 @@ TribitsHelloWorld
 ``TribitsHelloWorld`` is about the simplest possible TriBITS project that you
 can imagine and is contained under the directory::
 
-  tribits/doc/examples/TribitsHelloWorld/
+  tribits/examples/TribitsHelloWorld/
 
 This example project contains only a single TriBITS package and no frills at
 all (does not support MPI or Fortran).  However, it does show how minimal a
@@ -2673,7 +2675,7 @@ TribitsExampleProject
 ``TribitsExampleProject`` in an example `TriBITS Project`_ and `TriBITS
 Repository`_ contained in the TriBITS source tree under::
 
-  tribits/doc/examples/TribitsExampleProject/
+  tribits/examples/TribitsExampleProject/
 
 When this is used as the base TriBITS project, this is the directory
 corresponds to ``<projectDir>`` and ``<repoDir>`` referenced in `TriBITS
@@ -6108,7 +6110,7 @@ by default) and then generates the read-only files::
 
 For a simple example of this, see::
 
-  tribits/doc/examples/TribitsExampleProject/cmake/create-build-quickref.sh
+  tribits/doc/build_ref/create-build-ref.sh
 
 A project-independent version of this file is provided in the
 `TribitsBuildReference`_.[rst,html,pdf] which is referred to many times in this
