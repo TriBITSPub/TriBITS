@@ -1,12 +1,12 @@
 # Contributing to TriBITS
 
 **Contents:**
-* [Requirements for every change to TriBITS](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#requirements)
-* [Preferred process for suggesting and making changes to TriBITS](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#process):
-  * [Process Outline](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#process_outline)
-  * [Process Details](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#process_details)
+* [Requirements for every change to TriBITS](#requirements)
+* [Preferred process for suggesting and making changes to TriBITS](#process):
+  * [Process Outline](#process_outline)
+  * [Process Details](#process_details)
 
-Contributions to TriBITS are welcomed.  However, there are some [requirements](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#requirements) that every contribution needs to follow before it can be integrated into the main development branch of TriBITS and there is a [recommended process](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#process) for suggesting and submitted proposed changes.
+Contributions to TriBITS are welcomed.  However, there are some [requirements](#requirements) that every contribution needs to follow before it can be integrated into the main development branch of TriBITS and there is a [recommended process](#process) for suggesting and submitted proposed changes.
 
 **NOTE:** All contributions that are submitted are assumed to be given under the **[3-clause BSD-like TriBITS License](https://github.com/TriBITSPub/TriBITS/blob/master/tribits/Copyright.txt).**
 
@@ -17,9 +17,9 @@ Contributions to TriBITS are welcomed.  However, there are some [requirements](h
 1. Any change in behavior or new behavior needs to be accompanied with **automated tests** to define and protect these changes.  If automated tests are not possible or too difficult, this can be discussed in the Github Issue or Pull-Request (see below).
 2. All non-trivial changes should have a **GitHub Issue created** for them and all associated commits should **list the GitHub Issue ID in the commit logs**.
 3. Any new feature or change in the behavior of an existing feature must be **fully documented** before it is accepted.  This documentation is generally added to one or more of the following places:
-  * In the implementation `*.cmake` file itself (formatted with restructuredText and pulled out automatically into the TriBITS Developers Guide, see existing examples)
-  * In the `TribitsDevelopersGuide.rst` document (under `tribits/doc/developers_guide/`)
-  * In the `TribitsBuildReferenceBody.rst` document (under `tribits/doc/build_ref/`)
+   * Implementation `*.cmake` file itself (formatted with restructuredText and pulled out automatically into the TriBITS Developers Guide, see existing examples)
+   * `TribitsDevelopersGuide.rst` document (under `tribits/doc/developers_guide/`)
+   * `TribitsBuildReferenceBody.rst` document (under `tribits/doc/build_ref/`)
 
 <a name="process">
 
@@ -31,10 +31,10 @@ Contributions to TriBITS are welcomed.  However, there are some [requirements](h
 
 The steps in the preferred process for making changes to TriBITS are:
 
-1. [Create GitHub Issue](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#process_create_issue) (communicate about the requirements and design)
-2. [Create Pull-Request](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#process_create_pull_request) (each commit references the GitHub Issue ID)
-3. [Perform Code Review](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#process_code_review) (perhaps adding new commits to address issues)
-4. [Accept Pull-Request](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#process_accept_pull_request) (merge/rebase and push the branch to 'master')
+1. [Create GitHub Issue](#process_create_issue) (communicate about the requirements and design)
+2. [Create Pull-Request](#process_create_pull_request) (each commit references the GitHub Issue ID)
+3. [Perform Code Review](#process_code_review) (perhaps adding new commits to address issues)
+4. [Accept Pull-Request](#process_accept_pull_request) (merge/rebase and push the branch to 'master')
 
 The details are given in the next section.
 
@@ -44,9 +44,7 @@ The details are given in the next section.
 
 The following roles are mentioned on the process descriptions:
 * **TriBITS Maintainer**: Individual with push rights to the main TriBITS repo (i.e. Ross Bartlett).  Must review all issues and suggested changes and accept pull-requests.
-
 * **TriBITS Developer**: Someone who knows how to built TriBITS as a project with its tests, add tests, make acceptable changes, create pull-requests, etc. but can't directly push to the main TriBITS github 'master' branch (see the role of [TriBITS System Developer](https://tribits.org/doc/TribitsDevelopersGuide.html#tribits-developer-and-user-roles)).  This might be the Issue Reporter.
-
 * **Issue Reporter**: A person who first reports an issue with TriBITS and would like some type of change to happen (i.e. to fix a defect, implement a new feature, etc.).  This might be a TriBITS Developer.
 
 With those definitions in place, the recommended/preferred process for contributing to TriBITS is:
@@ -58,14 +56,11 @@ With those definitions in place, the recommended/preferred process for contribut
 <a name="process_create_pull_request"/>
 
 2. After the proposed change is approved in the GitHub Issue by the TriBITS Maintainer, then the TriBITS Developer (who might be the Issue Reporter or the TriBITS Maintainer) should **Create a Pull-Request** performing the following steps:
-  * **create a topic/feature branch** in their forked TriBITS repo (use descriptive branch name with issue ID, e.g. `some-great-feature-123`) ,
-  * **create commits with logs referencing the Issue ID** (e.g. `fix that thing (#123)`),
-
-  * **issue a [pull-request](https://help.github.com/articles/using-pull-requests/) (i.e. PR)**.
-
-  The changes in the PR will automatically be tested using [Travis CI](https://travis-ci.org/TriBITSPub/TriBITS).  Also, the PR allows for a well managed code review (comments for each line of the change, for example).  The pull request should then reference the original GitHub Issue in a comment to link the PR to the original Issue.  (NOTE: A partial set of changes is just fine in the PR, just enough to start the code review process.)
-
-  NOTE: The TriBITS Maintainers should be given push access to the topic-branch used to create the PR.  That way, the contributors, TriBITS Developers and the TriBITS Maintainer can all push new commits to that branch in a more collaborative way and have the PR Issue get updated automatically.
+    * **create a topic/feature branch** in their forked TriBITS repo (use descriptive branch name with issue ID, e.g. `some-great-feature-123`) ,
+    * **create commits with logs referencing the Issue ID** (e.g. `fix that thing (#123)`),
+    * **issue a [pull-request](https://help.github.com/articles/using-pull-requests/) (i.e. PR)**.
+    * The changes in the PR will automatically be tested using [Travis CI](https://travis-ci.org/TriBITSPub/TriBITS).  Also, the PR allows for a well managed code review (comments for each line of the change, for example).  The pull request should then reference the original GitHub Issue in a comment to link the PR to the original Issue.  (NOTE: A partial set of changes is just fine in the PR, just enough to start the code review process.)
+    * NOTE: The TriBITS Maintainers should be given push access to the topic-branch used to create the PR.  That way, the contributors, TriBITS Developers and the TriBITS Maintainer can all push new commits to that branch in a more collaborative way and have the PR Issue get updated automatically.
 
 <a name="process_code_review"/>
 
@@ -77,4 +72,4 @@ With those definitions in place, the recommended/preferred process for contribut
 
 **NOTE:** Very simple changes can but attached to a GitHub Issue which are generated using `git format-patch` but the above process involving pull requests is preferred.  But **generally raw patches will not be accepted** due to the added difficulty for the TriBITS Maintainer to review the changes and to eventually apply them to the TriBITS 'master' branch itself.  Also, using git commits send either through a branch in a pull-request or through `git format-patch` will record the author's contribution and give them credit for the change. 
 
-**NOTE:** The above process is just a suggested process.  What is important are the [requirements](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#requirements) listed above.
+**NOTE:** The above process is just a suggested process.  What is important are the [requirements](#requirements) listed above.
