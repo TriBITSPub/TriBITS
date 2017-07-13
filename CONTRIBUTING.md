@@ -1,4 +1,4 @@
-#Contributing to TriBITS
+# Contributing to TriBITS
 
 **Contents:**
 * [Requirements for every change to TriBITS](https://github.com/TriBITSPub/TriBITS/wiki/Contributing-to-TriBITS#requirements)
