@@ -14,9 +14,9 @@ Contributions to TriBITS are welcomed.  However, there are some [requirements](#
 
 ## Requirements for every change to TriBITS
 
-1. Any change in behavior or new behavior needs to be accompanied with **automated tests** to define and protect these changes.  If automated tests are not possible or too difficult, this can be discussed in the Github Issue or Pull-Request (see below).
-2. All non-trivial changes should have a **GitHub Issue created** for them and all associated commits should **list the GitHub Issue ID in the commit logs**.
-3. Any new feature or change in the behavior of an existing feature must be **fully documented** before it is accepted.  This documentation is generally added to one or more of the following places:
+1. **Automated Tests:** Any change in behavior or new behavior needs to be accompanied with automated tests to define and protect these changes.  If automated tests are not possible or too difficult, this can be discussed in the Github Issue or Pull-Request (see below).
+2. **GitHub Issue:** All non-trivial changes should have a [GitHub Issue created](#process_create_issue) for them and all associated commits should list the GitHub Issue ID in the commit logs.
+3. **Documentation:** Any new feature or change in the behavior of an existing feature must be fully documented before it is accepted.  This documentation is generally added to one or more of the following places:
    * Implementation `*.cmake` file itself (formatted with restructuredText and pulled out automatically into the TriBITS Developers Guide, see existing examples)
    * `TribitsDevelopersGuide.rst` document (under `tribits/doc/developers_guide/`)
    * `TribitsBuildReferenceBody.rst` document (under `tribits/doc/build_ref/`)
@@ -51,11 +51,11 @@ With those definitions in place, the recommended/preferred process for contribut
 
 <a name="process_create_issue"/>
 
-1. The Issue Reporter should **Submit a [GitHub Issue](https://github.com/TriBITSPub/TriBITS/issues) proposing the change** (see [Kanban Process](https://github.com/TriBITSPub/TriBITS/wiki/Kanban-Process-for-Issue-Tracking) used to manage TriBITS Issues).  That way, a conversation can be started to make sure the right contribution is made and to avoid wasted effort in case a suggested change can't be accepted for some reason.  **If the TriBITS Maintainer decides that the proposed change is not appropriate, then the Issue may be closed after the justification is added to a comment.**  Also, the TriBITS Maintainer may offer to implement the changes themselves or ask another TriBITS Developer to do so if that is most appropriate.  However, regardless of who actually makes the proposed changes, the following steps should is still be followed.
+1. **Create GitHub Issue:** The Issue Reporter should submit a [GitHub Issue](https://github.com/TriBITSPub/TriBITS/issues) proposing the change (see [Kanban Process](https://github.com/TriBITSPub/TriBITS/wiki/Kanban-Process-for-Issue-Tracking) used to manage TriBITS Issues).  That way, a conversation can be started to make sure the right contribution is made and to avoid wasted effort in case a suggested change can't be accepted for some reason.  **If the TriBITS Maintainer decides that the proposed change is not appropriate, then the Issue may be closed after the justification is added to a comment.**  Also, the TriBITS Maintainer may offer to implement the changes themselves or ask another TriBITS Developer to do so if that is most appropriate.  However, regardless of who actually makes the proposed changes, the following steps should is still be followed.
 
 <a name="process_create_pull_request"/>
 
-2. After the proposed change is approved in the GitHub Issue by the TriBITS Maintainer, then the TriBITS Developer (who might be the Issue Reporter or the TriBITS Maintainer) should **Create a Pull-Request** performing the following steps:
+2. **Create Pull-Request:** After the proposed change is approved in the GitHub Issue by the TriBITS Maintainer, then the TriBITS Developer (who might be the Issue Reporter or the TriBITS Maintainer) should create a Pull-Request performing the following steps:
     * **create a topic/feature branch** in their forked TriBITS repo (use descriptive branch name with issue ID, e.g. `some-great-feature-123`) ,
     * **create commits with logs referencing the Issue ID** (e.g. `fix that thing (#123)`),
     * **issue a [pull-request](https://help.github.com/articles/using-pull-requests/) (i.e. PR)**.
@@ -64,11 +64,11 @@ With those definitions in place, the recommended/preferred process for contribut
 
 <a name="process_code_review"/>
 
-3. A **Code review process is performed** by the TriBITS Maintainer and continued changes are made by the TriBITS Developer and comments are added to the new PR or the original Issue (whatever makes sense but usually comments specific to changes should be added to the PR while more general comments not specific to the PR should go into the associated GitHub Issue).  New updates to the branch can be pushed by the TriBITS Developer as changes are made to address issues with the changes.  (And if the topic branch is pushed to the main GitHub repo, then multiple developers can push commits as well.)
+3. **Perform Code Review:** A code review process is performed by the TriBITS Maintainer and continued changes are made by the TriBITS Developer and comments are added to the new PR or the original Issue (whatever makes sense but usually comments specific to changes should be added to the PR while more general comments not specific to the PR should go into the associated GitHub Issue).  New updates to the branch can be pushed by the TriBITS Developer as changes are made to address issues with the changes.  (And if the topic branch is pushed to the main GitHub repo, then multiple developers can push commits as well.)
 
 <a name="process_accept_pull_request"/>
 
-4. The TriBITS maintainer will then **either accept the PR** (by rebasing and merging the branch to main development branch) **or will state what further issues must be resolved** before the change can be incorporated.
+4. **Accept Pull-Request:** The TriBITS maintainer will then either accept the PR (by rebasing and merging the branch to main development branch) or will state what further issues must be resolved before the change can be incorporated.
 
 **NOTE:** Very simple changes can be attached to a GitHub Issue which are generated using `git format-patch` but the above process involving pull requests is preferred.  But **generally raw patches will not be accepted** due to the added difficulty for the TriBITS Maintainer to review the changes and to eventually apply them to the TriBITS 'master' branch itself.  Also, using git commits sent either through a branch in a pull-request or through `git format-patch` will record the author's contribution and give them credit for the change. 
 
