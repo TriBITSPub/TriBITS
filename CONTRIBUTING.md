@@ -70,6 +70,6 @@ With those definitions in place, the recommended/preferred process for contribut
 
 4. The TriBITS maintainer will then **either accept the PR** (by rebasing and merging the branch to main development branch) **or will state what further issues must be resolved** before the change can be incorporated.
 
-**NOTE:** Very simple changes can but attached to a GitHub Issue which are generated using `git format-patch` but the above process involving pull requests is preferred.  But **generally raw patches will not be accepted** due to the added difficulty for the TriBITS Maintainer to review the changes and to eventually apply them to the TriBITS 'master' branch itself.  Also, using git commits send either through a branch in a pull-request or through `git format-patch` will record the author's contribution and give them credit for the change. 
+**NOTE:** Very simple changes can be attached to a GitHub Issue which are generated using `git format-patch` but the above process involving pull requests is preferred.  But **generally raw patches will not be accepted** due to the added difficulty for the TriBITS Maintainer to review the changes and to eventually apply them to the TriBITS 'master' branch itself.  Also, using git commits sent either through a branch in a pull-request or through `git format-patch` will record the author's contribution and give them credit for the change. 
 
 **NOTE:** The above process is just a suggested process.  What is important are the [requirements](#requirements) listed above.
