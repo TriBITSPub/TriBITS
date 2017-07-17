@@ -786,6 +786,7 @@ def runCmnd(options, cmnd):
     print(cmnd)
   else:
     subprocess.Popen(cmnd, stdout=sys.stdout, stderr=sys.stderr).communicate()
+    print("")
 
 
 # Determine if a command exists:
