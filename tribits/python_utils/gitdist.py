@@ -785,11 +785,8 @@ def runCmnd(options, cmnd):
   if options.noOpt:
     print(cmnd)
   else:
-    child = subprocess.Popen(cmnd, stdout=subprocess.PIPE).stdout
-    output = child.read()
-    sys.stdout.flush()
-    print(s(output))
-    sys.stdout.flush()
+    subprocess.Popen(cmnd, stdout=sys.stdout, stderr=sys.stderr).communicate()
+    print("")
 
 
 # Determine if a command exists:
