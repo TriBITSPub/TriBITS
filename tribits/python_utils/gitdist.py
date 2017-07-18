@@ -593,11 +593,11 @@ Other usage tips:
    there are even 100s of git repos.
 
  - As an exception to the last item, a few different types of git commands
-    tend to be run on all the git repos like 'gitdist pull', 'gitdist
-    checkout', and 'gitdist tag'.
+   tend to be run on all the git repos like 'gitdist pull', 'gitdist
+   checkout', and 'gitdist tag'.
 
-  - If one is not sure whether to run 'gitdist' or 'gitdist-mod', then just
-    run 'gitdist' to be safe.
+ - If one is not sure whether to run 'gitdist' or 'gitdist-mod', then just
+   run 'gitdist' to be safe.
 """
 helpTopicsDict.update( { 'usage-tips' : usageTipsHelp } )
 
