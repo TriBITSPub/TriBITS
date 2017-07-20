@@ -2989,3 +2989,59 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject
       "100% tests passed, 0 tests failed out of"
 
   )
+
+
+########################################################################
+# User error checking tests
+########################################################################
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PASS
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so that we can copy in PkgWithUserErrors."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Copy PkgWithUserErrors to base dir."
+    CMND cp
+    ARGS -r ${CMAKE_CURRENT_SOURCE_DIR}/PkgWithUserErrors
+      TribitsExampleProject/.
+
+  TEST_2
+    MESSAGE "Configure PkgWithUserErrors"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Explicitly enabled packages on input [(]by user[)]:  PkgWithUserErrors 1"
+      "Final set of enabled packages:  PkgWithUserErrors 1"
+      "Processing enabled package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done" 
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target PkgWithUserErrors_PkgWithUserErrorsTest"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_4 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Test [#]1: PkgWithUserErrors_PkgWithUserErrorsTest_MPI_1 [.]+ +Passed"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+
+
+
