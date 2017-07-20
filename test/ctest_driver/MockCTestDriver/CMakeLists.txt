@@ -247,6 +247,30 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
 
 
 CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableThyra_EnableAllForwardDepPackages
+  ARGS Trilinos_PACKAGES=Thyra Trilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES=TRUE
+    Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Experimental
+    CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES=FALSE
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- ENV_Trilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES='TRUE'"
+    "-- Trilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES='TRUE'"
+    "Explicitly enabled SE packages on input [(]by user[)]:  Thyra 1"
+    "Sweep forward enabling all forward library dependent packages because Trilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON"
+    "-- Setting Trilinos_ENABLE_Stratimikos=ON because Trilinos_ENABLE_ThyraCoreLibs=ON"
+    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 15"
+    "Final set of enabled SE packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt ThyraCoreLibs ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 19"
+    "Final set of packages to be explicitly processed by CTest/CDash:  Thyra Stratimikos 2"
+    "Processing current package Thyra: libs='ON', tests='ON'"
+    "CONFIGURE_OPTIONS = '.*-DTrilinos_ENABLE_Thyra:BOOL=ON'"
+    "Processing current package Stratimikos: libs='ON', tests='ON'"
+    "CONFIGURE_OPTIONS = '.*-DTrilinos_ENABLE_Stratimikos:BOOL=ON'"
+  )
+# NOTE: The above test makes sure that
+# Trilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES is read from the env and has the
+# intended impact.
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
   EnableEpetraThyra_NoProcessImplicitlyEnabled
   ARGS Trilinos_PACKAGES=Epetra,Thyra
     CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES=OFF
