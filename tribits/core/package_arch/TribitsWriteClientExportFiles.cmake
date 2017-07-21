@@ -674,8 +674,9 @@ FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES)
   # Reversing the package list so that libraries will be produced in order of
   # most dependent to least dependent.
   SET(PACKAGE_LIST ${${PROJECT_NAME}_SE_PACKAGES})
-  LIST(REVERSE PACKAGE_LIST)
-
+  IF (PACKAGE_LIST)
+    LIST(REVERSE PACKAGE_LIST)
+  ENDIF()
 
   # Loop over all packages to determine which were enabled. Then build a list
   # of all their libraries/includes in the proper order for linking

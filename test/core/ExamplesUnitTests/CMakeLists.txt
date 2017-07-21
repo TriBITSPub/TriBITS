@@ -2863,6 +2863,35 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProjectAddons
 ########################################################################
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_Empty
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Configure TribitsExampleMetaProject with nothing in it"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExMetaProj_ENABLE_Fortran=OFF
+      -DTribitsExMetaProj_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleMetaProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "WARNING: Ignoring missing extra repo 'TribitsExampleProject' as requested since .*/TribitsExampleMetaProject/TribitsExampleProject does not exist"
+      "WARNING: Ignoring missing extra repo 'TribitsExampleProjectAddons' as requested since .*/TribitsExampleMetaProject/TribitsExampleProjectAddons does not exist"
+      "Final set of enabled SE packages:  0"
+      "Final set of non-enabled SE packages:  0"
+      "WARNING:  There were no packages configured so no libraries or tests/examples will be built"
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+# NOTE: That above test is the only test that triggers an empty list that
+# tries to get reversed.  This is a TriBITS project with no packages and no
+# TPLs.  While not common, it is a starter sitiation that users will have so
+# it should be have smoothly.
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
