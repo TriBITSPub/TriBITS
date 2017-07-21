@@ -1741,7 +1741,12 @@ MACRO(TRIBITS_SETUP_ENV)
 
   # Set up MPI if MPI is being used
 
-  ASSERT_DEFINED(TPL_ENABLE_MPI)
+  IF ("${TPL_ENABLE_MPI}" STREQUAL "")
+    # If TPL_ENABLE_MPI is undefined or empty because this project does not
+    # define an MPI TPL, then explicitly disable it.
+    SET(TPL_ENABLE_MPI FALSE)
+  ENDIF()
+
   IF (TPL_ENABLE_MPI)
     TRIBITS_SETUP_MPI()
   ENDIF()
