@@ -1027,7 +1027,50 @@ def getCommandlineOps():
     sys.exit(1)
 
   #
-  # E) Get the list of extra repos
+  # E) Change to top-level git directory (in case of nested git repos)
+  #
+
+  moveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR")
+  if (moveToBaseDir == None) or (moveToBaseDir == ""):
+    # Run gitdist in the current directory
+    None
+  elif moveToBaseDir == "EXTREME_BASE":
+    # Run gitdist in the most base dir where .gitdist[.default] exists
+    drive, currentPath = os.path.splitdrive(os.getcwd())
+    pathList = []
+    while 1:
+      currentPath, currentDir = os.path.split(currentPath)
+      if currentDir != "":
+        pathList.append(currentDir)
+      else:
+        if currentPath != "":
+          pathList.append(currentPath)
+        break
+    pathList.reverse()
+    newPath = drive+pathList[0]
+    for directory in pathList:
+      newPath = os.path.join(newPath, directory)
+      if ((os.path.isfile(os.path.join(newPath, ".gitdist"))) or
+        (os.path.isfile(os.path.join(newPath, ".gitdist.default")))):
+        break
+    os.chdir(newPath)
+  elif moveToBaseDir == "IMMEDIATE_BASE":
+    # Run gitdist in the immediate base dir where .gitdist[.default] exists
+    currentPath = os.getcwd()
+    while 1:
+      if ((os.path.isfile(os.path.join(currentPath, ".gitdist"))) or
+        (os.path.isfile(os.path.join(currentPath, ".gitdist.default")))):
+        break
+      currentPath, currentDir = os.path.split(currentPath)
+    os.chdir(currentPath)
+  else:
+    print(
+      "Error, env var GITDIST_MOVE_TO_BASE_DIR='"+moveToBaseDir+"' is invalid!"
+      + "  Valid choices include empty '', IMMEDIATE_BASE, and EXTREME_BASE")
+    sys.exit(1)
+
+  #
+  # F) Get the list of extra repos
   #
 
   if options.repos:
@@ -1052,7 +1095,7 @@ def getCommandlineOps():
     notReposFullList = []
 
   #
-  # F) Return
+  # G) Return
   #
 
   return (options, nativeCmnd, otherArgs, reposFullList,
