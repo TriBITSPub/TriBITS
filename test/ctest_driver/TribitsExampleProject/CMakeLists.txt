@@ -146,10 +146,18 @@ ELSEIF (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "EXP_CDASH")
     CTEST_PROJECT_NAME="TribitsExProj"
     CTEST_DROP_LOCATION="/submit.php?project=TribitsExProj"
     )
+ELSEIF (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "TESTING_VM_SANDIA_CDASH")
+  SET(CTEST_DROP_SITE_ENV_ARGS
+    CTEST_DO_SUBMIT=TRUE
+    CTEST_DROP_SITE="testing-vm.sandia.gov"
+    CTEST_PROJECT_NAME="TribitsExProj"
+    CTEST_DROP_LOCATION="/CDash/submit.php?project=TribitsExProj"
+    )
 ELSE()
   MESSAGE(FATAL_ERROR "Error, the value"
     " ${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO='${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}'"
-    " is invalid!  Valid choices are '', 'MY_CDASH', 'TRILINOS_CDASH', and 'EXP_CDASH'"
+    " is invalid!  Valid choices are '', 'MY_CDASH', 'TRILINOS_CDASH', 'EXP_CDASH',"
+    " and 'TESTING_VM_SANDIA_CDASH'!"
    ) 
 ENDIF()
 
