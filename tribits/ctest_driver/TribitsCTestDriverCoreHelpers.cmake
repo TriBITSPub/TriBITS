@@ -647,6 +647,24 @@ ENDMACRO()
 
 
 #
+# Set mapping of labels to subprojects (i.e. TriBITS packages) for CDash.
+#
+# NOTE: Unlike for the inner CMake configure, only subprojects that are
+# explicitly tested will be marked as a CDash subproject.  This limits the
+# rows in CDash.  This does not seem to be a problem for when running ctest
+# locally.  When run locally, ctest will just report aggregated times for
+# subprojects that have 1 or more tests.  Not true for CDash.
+#
+
+MACRO(TRIBITS_CTEST_DRIVER_SET_LABELS_TO_SUBPROJECTS_MAPPING)
+  SET(CTEST_LABELS_FOR_SUBPROJECTS)
+  FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES_TO_DIRECTLY_TEST})
+    LIST(APPEND CTEST_LABELS_FOR_SUBPROJECTS ${TRIBITS_PACKAGE})
+  ENDFOREACH()
+ENDMACRO()
+
+
+#
 # Select the default generator.
 #
 
@@ -1174,7 +1192,8 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
   # A) Define mapping from labels to subprojects and gather configure arguments
   #
 
-  TRIBITS_SET_LABELS_TO_SUBPROJECTS_MAPPING()
+  TRIBITS_CTEST_DRIVER_SET_LABELS_TO_SUBPROJECTS_MAPPING()
+  PRINT_VAR(CTEST_LABELS_FOR_SUBPROJECTS)
 
   MESSAGE("")
   MESSAGE("Configuring ...")

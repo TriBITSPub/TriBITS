@@ -1971,20 +1971,18 @@ MACRO(TRIBITS_SETUP_ENV)
 ENDMACRO()
 
 #
-# Set mapping of labels to subprojects (i.e. TriBITS packages) for CTest and
-# CDash
+# Set mapping of labels to subprojects (i.e. TriBITS packages) for local CTest
+# only.
+#
+# NOTE: This macro is only used define mapping of labels to subprojects for
+# running ctest locally.  This results in summarizing the tests run for each
+# subproject (TriBITS package) if any tests were run.  Therefore, it is
+# harmless to define the mapping for every TriBITS package.  Only TriBITS
+# packages will be listed in the summary if they had one or more tests run.
 #
 
 MACRO(TRIBITS_SET_LABELS_TO_SUBPROJECTS_MAPPING)
-  IF (${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES)
-    SET(CTEST_LABELS_FOR_SUBPROJECTS)
-    FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
-      TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE(${TRIBITS_PACKAGE}  PACKAGE_IS_PMPP)
-      IF (PACKAGE_IS_PMPP)
-        LIST(APPEND CTEST_LABELS_FOR_SUBPROJECTS ${TRIBITS_PACKAGE})
-       ENDIF()
-    ENDFOREACH()
-  ENDIF()
+  SET(CTEST_LABELS_FOR_SUBPROJECTS ${${PROJECT_NAME}_PACKAGES})
 ENDMACRO()
 
 
