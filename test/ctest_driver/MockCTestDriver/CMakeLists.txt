@@ -1,0 +1,915 @@
+# @HEADER
+# ************************************************************************
+#
+#            TriBITS: Tribal Build, Integrate, and Test System
+#                    Copyright 2013 Sandia Corporation
+#
+# Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
+# the U.S. Government retains certain rights in this software.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. Neither the name of the Corporation nor the names of the
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY SANDIA CORPORATION "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SANDIA CORPORATION OR THE
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# ************************************************************************
+# @HEADER
+
+
+
+INCLUDE(CMakeParseArguments)
+INCLUDE(AdvancedSet)
+
+
+ADVANCED_SET(Trilinos_CTEST_COMMAND ctest CACHE STRING
+  "CTest executable used to drive unit tests")
+
+# The mock test project 
+SET(MOCK_PROJECT_NAME Trilinos)
+
+SET(TRIBITS_MOCK_TRILINOS_DIR "examples/MockTrilinos")
+
+SET(MOCK_TRILINOS_DIR ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_MOCK_TRILINOS_DIR})
+
+
+FUNCTION(CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
+
+  #MESSAGE("CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE: ${TEST_CASE} ${ARGN}")
+
+  CMAKE_PARSE_ARGUMENTS(
+     #prefix
+     PARSE
+     #options
+     "SKIP_STANDARD_DEPS_CHECK"
+     # one_value_keywords
+     ""
+     # multi_value_keywords
+     "COPY_FILES;ARGS;PASS_REGULAR_EXPRESSION_ALL;COMPARE_DEPS_FILE"
+     ${ARGN}
+     )
+  
+  SET(TEST_CORE_NAME MockCTestDriver_${TEST_NAME})
+  SET(TEST_FULL_NAME ${PACKAGE_NAME}_${TEST_CORE_NAME})
+
+  SET(TEST_BLOCKS "")
+  SET(TEST_IDX 0)
+
+  IF (PARSE_COPY_FILES)
+
+    LIST(LENGTH  PARSE_COPY_FILES  COPY_FILES_LEN)
+    MATH(EXPR NUM_FILE_COPIES "${COPY_FILES_LEN}/2")
+    MATH(EXPR COPY_FILES_LAST_IDX "${NUM_FILE_COPIES}-1")
+
+    SET(NUM_COPY_FILE_ARGS 2)
+    SET(FILE_FROM_OFFSET 0)
+    SET(FILE_TO_OFFSET 1)
+
+    FOREACH(COPY_FILE_IDX RANGE ${COPY_FILES_LAST_IDX})
+
+      # FILE_FROM
+      MATH(EXPR FILE_FROM_IDX "${COPY_FILE_IDX}*${NUM_COPY_FILE_ARGS}+${FILE_FROM_OFFSET}")
+      LIST(GET PARSE_COPY_FILES ${FILE_FROM_IDX} FILE_FROM )
+      #PRINT_VAR(FILE_FROM)
+ 
+      # FILE_TO
+      MATH(EXPR FILE_TO_IDX "${COPY_FILE_IDX}*${NUM_COPY_FILE_ARGS}+${FILE_TO_OFFSET}")
+      LIST(GET PARSE_COPY_FILES ${FILE_TO_IDX} FILE_TO )
+      #PRINT_VAR(FILE_TO)
+
+      SET(TEST_BLOCKS ${TEST_BLOCKS}
+        TEST_${TEST_IDX} CMND ${CMAKE_COMMAND}
+          ARGS -E copy ${FILE_FROM} ${CMAKE_CURRENT_BINARY_DIR}/${TEST_FULL_NAME}/${FILE_TO}
+        )
+
+      MATH(EXPR TEST_IDX "${TEST_IDX}+1")
+
+    ENDFOREACH()
+
+  ENDIF()
+
+  SET(TEST_BLOCKS ${TEST_BLOCKS}
+    TEST_${TEST_IDX} CMND env
+      ARGS
+        ${MOCK_PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        CTEST_DEPENDENCY_HANDLING_UNIT_TESTING=ON
+        ${MOCK_PROJECT_NAME}_CTEST_COMMAND=${CMAKE_CTEST_COMMAND}
+        ${MOCK_PROJECT_NAME}_PACKAGES=  # Set back to default
+        CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES= # Set back to default
+        CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=OFF # Set back to default
+        ${MOCK_PROJECT_NAME}_PRE_REPOSITORIES= # Set back to default
+        ${MOCK_PROJECT_NAME}_EXTRA_REPOSITORIES= # Set back to default
+        CTEST_DO_UPDATES=ON # Set back to default
+        CTEST_DASHBOARD_ROOT=  # Must be empty
+        CTEST_DO_SUBMIT=OFF # Must be off
+        CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=OFF  # Must be off!
+        ${PARSE_ARGS}
+        ${CMAKE_CTEST_COMMAND} -S ${CMAKE_CURRENT_SOURCE_DIR}/unit_test_driver.cmake
+      PASS_REGULAR_EXPRESSION_ALL ${PARSE_PASS_REGULAR_EXPRESSION_ALL}
+    )
+
+  MATH(EXPR TEST_IDX "${TEST_IDX}+1")
+
+  IF (PARSE_COMPARE_DEPS_FILE)
+    SET(TEST_BLOCKS ${TEST_BLOCKS}
+      TEST_${TEST_IDX} CMND ${CMAKE_COMMAND}
+        ARGS -E compare_files
+          "${PARSE_COMPARE_DEPS_FILE}"
+          "${CMAKE_CURRENT_BINARY_DIR}/${TEST_FULL_NAME}/TrilinosPackageDependencies.xml"
+      )
+  ENDIF()
+
+  TRIBITS_ADD_ADVANCED_TEST( ${TEST_CORE_NAME}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    ${TEST_BLOCKS}
+    OVERALL_NUM_MPI_PROCS 1
+    )
+
+ENDFUNCTION()
+
+
+#
+# Test package enables/disables
+#
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllDefault
+  PASS_REGULAR_EXPRESSION_ALL
+    "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "Final set of non-enabled packages:  Stokhos Sacado Belos Phalanx Panzer 5"
+  COMPARE_DEPS_FILE
+     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Trilinos.xml"
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllSecondaryTested
+  ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 23"
+    "Final set of non-enabled packages:  Stokhos 1"
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableTeuchos
+  ARGS Trilinos_PACKAGES=Teuchos Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Experimental
+  PASS_REGULAR_EXPRESSION_ALL
+    "Final set of enabled packages:  Teuchos 1"
+    "Final set of non-enabled packages:  TrilinosFramework RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 23"
+    "Processing current package Teuchos: libs='ON', tests='ON'"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+.-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.*./MockTrilinos/cmake.ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_TESTS:BOOL=ON.-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
+  )
+# NOTE: The above test pins down the form of the configure options passed to
+# different package configures to make sure everything in there.
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableRTOp_DisableTeuchos
+  ARGS Trilinos_PACKAGES=RTOp Trilinos_EXCLUDE_PACKAGES=Teuchos
+  PASS_REGULAR_EXPRESSION_ALL
+    "Explicitly enabled packages on input .by user.:  RTOp 1"
+    "WARNING: Setting Trilinos_ENABLE_RTOp=OFF which was 'ON' because RTOp has a required library dependence on disabled package Teuchos but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
+    "Final set of enabled packages:  0"
+    "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script!"
+  )
+# NOTE: The above test ensures that disabled packages turn off explicitly
+#  enabled downstream packages.
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableTeuchosRTOp_DisableRTOp
+  ARGS Trilinos_PACKAGES="Teuchos,RTOp" Trilinos_EXCLUDE_PACKAGES=RTOp
+  PASS_REGULAR_EXPRESSION_ALL
+    "Disabling excluded package RTOp ..."
+    "Enabling explicitly set package Teuchos ..."
+    "NOT enabling explicitly set package RTOp since it was explicitly excluded"
+    "Explicitly enabled packages on input .by user.:  Teuchos 1"
+    "Final set of enabled packages:  Teuchos 1"
+    "Trilinos_NUM_ENABLED_PACKAGES=1:  Configuring packages!"
+  )
+# NOTE: The above test ensures that disabled packages turn off explicitly
+#  enabled downstream packages.
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableTeuchos_DisableTPLBLAS
+  ARGS Trilinos_PACKAGES=Teuchos Trilinos_EXCLUDE_TPLS=BLAS
+  PASS_REGULAR_EXPRESSION_ALL
+    "Explicitly enabled packages on input .by user.:  Teuchos 1"
+    "Explicitly disabled TPLs on input .by user or by default.:  BLAS 1"
+    "WARNING: Setting Trilinos_ENABLE_Teuchos=OFF which was 'ON' because Teuchos has a required library dependence on disabled TPL BLAS but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
+    "Final set of enabled packages:  0"
+    "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script!"
+  )
+# NOTE: The above test ensures that disabled TPLS turn off explicitly
+#  enabled downstream packages.
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableThyra
+  ARGS Trilinos_PACKAGES=Thyra Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Experimental
+  PASS_REGULAR_EXPRESSION_ALL
+    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra 8"
+    "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 16"
+    "Processing current package Teuchos: libs='ON', tests=''"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_TESTS:BOOL=.-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
+    "Processing current package Epetra: libs='ON', tests=''"
+    "Processing current package Thyra: libs='ON', tests='ON'"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_TESTS:BOOL=ON.-DTrilinos_ENABLE_EpetraExt:BOOL=.-DTrilinos_ENABLE_Thyra:BOOL=ON'"
+  )
+# NOTE: The above test pins down the form of the configure options passed to
+# different package configures to make sure everything in there.
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableEpetraThyra_NoProcessImplicitlyEnabled
+  ARGS Trilinos_PACKAGES=Epetra,Thyra
+    CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra 8"
+    "Final set of packages to be explicitly processed by CTest/CDash:  Epetra Thyra 2"
+    "0. Processing current package Epetra: libs=.ON., tests=.ON."
+    "1. Processing current package Thyra: libs=.ON., tests=.ON."
+  )
+# NOTE: The above test shows that ony 
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableThyra_ExcludeEpetra
+  ARGS Trilinos_PACKAGES=Thyra Trilinos_EXCLUDE_PACKAGES=Epetra
+  PASS_REGULAR_EXPRESSION_ALL
+    "Explicitly enabled packages on input .* Thyra 1"
+    "Explicitly disabled packages on input .*  Epetra Stokhos 2"
+    "Final set of enabled packages:  Teuchos RTOp Tpetra Thyra 4"
+    "Final set of non-enabled packages:  TrilinosFramework Epetra Zoltan Shards Triutils EpetraExt Stokhos Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 20"
+    "Processing current package Teuchos: libs='ON', tests=''"
+    "Processing current package Thyra: libs='ON', tests='ON'"
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAll_EnablePhalanx
+  ARGS Trilinos_ADDITIONAL_PACKAGES=Phalanx
+  PASS_REGULAR_EXPRESSION_ALL
+    "Enabling explicitly set package Phalanx"
+    "Explicitly enabled packages on input .*  Phalanx 1"
+    "Explicitly disabled packages on input .*  Stokhos 1"
+    "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen Phalanx 21"
+    "Final set of non-enabled packages:  Stokhos Belos Panzer 3"
+    "Processing current package RBGen: libs='ON', tests='ON'"
+    "Processing current package Phalanx: libs='ON', tests='ON'"
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAll_EnableStokhos
+  ARGS Trilinos_ADDITIONAL_PACKAGES=Stokhos
+  PASS_REGULAR_EXPRESSION_ALL
+    "Enabling explicitly set package Stokhos which was default or otherwise disabed!"
+    "Explicitly enabled packages on input .*  Stokhos 1"
+    "Explicitly disabled packages on input .*  0"
+    "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 20"
+    "Final set of non-enabled packages:  Sacado Belos Phalanx Panzer 4"
+    "Processing current package Stokhos: libs='ON', tests='ON'"
+    "Processing current package RBGen: libs='ON', tests='ON'"
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllSecondaryTested_EnableStokhos
+  ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON Trilinos_ADDITIONAL_PACKAGES=Stokhos
+  PASS_REGULAR_EXPRESSION_ALL
+    "Enabling explicitly set package Stokhos"
+    "Explicitly enabled packages on input .*  Stokhos 1"
+    "Explicitly disabled packages on input .*  0"
+    "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 24"
+    "Final set of non-enabled packages:  0"
+    "Processing current package Stokhos: libs='ON', tests='ON'"
+    "Processing current package RBGen: libs='ON', tests='ON'"
+    "Processing current package Phalanx: libs='ON', tests='ON'"
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  CI_EnableAllSecondaryTestedOff
+  ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+  PASS_REGULAR_EXPRESSION_ALL
+    "EXECUTE_PROCESS.+git.+preCopyrightTrilinos.+preCopyrightTrilinos.fetch.out"
+    "Explicitly enabled packages on input .*  0"
+    "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+    "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
+    "WARNING: Not Setting Trilinos_ENABLE_Belos=ON even though Stratimikos has an optional dependence on Belos because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "Final set of packages to be explicitly processed by CTest/CDash:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "Final set of non-enabled packages:  Stokhos Sacado Belos Phalanx Panzer Teko Stalix 7"
+    "CONFIGURE_OPTIONS.+Trilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.+-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Continuous.+"
+    "Processing current package Teuchos: libs='ON', tests='ON'"
+    "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Teuchos:BOOL=ON"
+  COMPARE_DEPS_FILE
+     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Continuos.xml"
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  CI_EnableAllSecondaryTested
+  ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+  PASS_REGULAR_EXPRESSION_ALL
+    "EXECUTE_PROCESS.+git.+preCopyrightTrilinos.+preCopyrightTrilinos.fetch.out"
+    "Explicitly enabled packages on input .*  0"
+    "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+    "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 24"
+    "Final set of packages to be explicitly processed by CTest/CDash:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 24"
+    "Final set of non-enabled packages:  Stokhos Stalix 2"
+    "CONFIGURE_OPTIONS.+Trilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON.+-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Continuous.+"
+    "Processing current package Teuchos: libs='ON', tests='ON'"
+    "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Teuchos:BOOL=ON"
+    "Processing current package Phalanx: libs='ON', tests='ON'"
+  COMPARE_DEPS_FILE
+     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Continuos.xml"
+  )
+
+
+# Check with an extra repo enabled and assert all of the internal logic
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  CI_EnableAllSecondaryTested_EnableStalix
+  ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+    Trilinos_ADDITIONAL_PACKAGES=Stalix
+  PASS_REGULAR_EXPRESSION_ALL
+    "Explicitly enabled packages on input .*  Stalix 1"
+    "Explicitly disabled packages on input .*  Stokhos 1"
+    "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko Stalix 25"
+    "Final set of non-enabled packages:  Stokhos 1"
+    "Processing current package Phalanx: libs='ON', tests='ON'"
+    "Processing current package Stalix: libs='ON', tests='ON'"
+  )
+
+
+# Check repo operations for an update
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  CI_TestGitUpdateCommands
+  ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+    Trilinos_ADDITIONAL_PACKAGES=Stalix
+  PASS_REGULAR_EXPRESSION_ALL
+    "preCopyrightTrilinos: Doing GIT update from URL 'url1:/git/preCopyrightTrilinos' to dir '.*/MockTrilinos/preCopyrightTrilinos'"
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.clean.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.reset.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.fetch.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]tracking/branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.set_branch.out."
+    "Dakota: Doing initial GIT clone/checkout from URL 'url3:/git/Dakota' to dir 'packages/TriKota/Dakota' ..."
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clone[;]url3:/git/Dakota[;]packages/TriKota/Dakota[;]WORKING_DIRECTORY[;].*/tribits/examples/MockTrilinos[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/Dakota.clone.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/Dakota.clean.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/Dakota.reset.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/Dakota.fetch.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]reset[;]--hard[;]tracking/branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/Dakota.set_branch.out"
+    "Dakota: Doing initial GIT clone/checkout from URL 'url3:/git/Dakota' to dir 'packages/TriKota/Dakota' ..."
+    "EXECUTE_PROCESS.COMMAND[;].*/python.*[;].*/python_utils/gitdist[;]--dist-no-color[;]log[;]--pretty=format.*[;]--name-status[;]-C[;]ORIG_HEAD..HEAD[;]WORKING_DIRECTORY[;].*/examples/MockTrilinos[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/Updates.txt"
+    "Adding POST extra Continuous repository preCopyrightTrilinos"
+    "Adding POST extra Continuous repository Dakota"
+    "Trilinos_NUM_PACKAGES='24'"
+    "Trilinos_NUM_TPLS='19'"
+    "Reading list of POST extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
+    "Trilinos_NUM_PACKAGES='26'"
+    "Trilinos_NUM_TPLS='20'"
+    "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
+    )
+
+
+# Test repo operations for Trilinos_BRANCH=other-branch (#130)
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  CI_TestGitUpdateCommands_Branch
+  ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+    Trilinos_ADDITIONAL_PACKAGES=Stalix
+    Trilinos_BRANCH=other-branch
+  PASS_REGULAR_EXPRESSION_ALL
+    "For base repo, doing switch to branch other-branch"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]checkout[;]-B[;]other-branch[;]--track[;]origin/other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos[;]RESULT_VARIABLE[;]GIT_CHECKOUT_RETURN_VAL[;]OUTPUT_VARIABLE[;]BRANCH_OUTPUT[;]ERROR_VARIABLE[;]BRANCH_ERROR"
+    "For extra repos, doing switch to branch other-branch"
+    "preCopyrightTrilinos: Doing GIT update from URL 'url1:/git/preCopyrightTrilinos' to dir '.*/MockTrilinos/preCopyrightTrilinos'"
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.clean.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.reset.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.fetch.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]checkout[;]-B[;]other-branch[;]--track[;]origin/other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch/preCopyrightTrilinos.set_branch.out."
+    "Dakota: Doing initial GIT clone/checkout from URL 'url3:/git/Dakota' to dir 'packages/TriKota/Dakota' ..."
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clone[;]url3:/git/Dakota[;]packages/TriKota/Dakota[;]WORKING_DIRECTORY[;].*/tribits/examples/MockTrilinos[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch/Dakota.clone.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch/Dakota.clean.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch/Dakota.reset.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch/Dakota.fetch.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]checkout[;]-B[;]other-branch[;]--track[;]origin/other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch/Dakota.set_branch.out"
+    "Adding POST extra Continuous repository preCopyrightTrilinos"
+    "Adding POST extra Continuous repository Dakota"
+    "Trilinos_NUM_PACKAGES='24'"
+    "Trilinos_NUM_TPLS='19'"
+    "Reading list of POST extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
+    "Trilinos_NUM_PACKAGES='26'"
+    "Trilinos_NUM_TPLS='20'"
+    "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
+    )
+
+
+# Test repo operations Trilinos_BRANCH=other-branch, Trilinos_EXTRAREPOS_BRANCH=yet-other-branch
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  CI_TestGitUpdateCommands_Branch_ExtraReposBranch
+  ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+    Trilinos_ADDITIONAL_PACKAGES=Stalix
+    Trilinos_BRANCH=other-branch Trilinos_EXTRAREPOS_BRANCH=yet-other-branch
+  PASS_REGULAR_EXPRESSION_ALL
+    "For base repo, doing switch to branch other-branch"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]checkout[;]-B[;]other-branch[;]--track[;]origin/other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos[;]RESULT_VARIABLE[;]GIT_CHECKOUT_RETURN_VAL[;]OUTPUT_VARIABLE[;]BRANCH_OUTPUT[;]ERROR_VARIABLE[;]BRANCH_ERROR"
+    "For extra repos, doing switch to branch yet-other-branch"
+    "preCopyrightTrilinos: Doing GIT update from URL 'url1:/git/preCopyrightTrilinos' to dir '.*/MockTrilinos/preCopyrightTrilinos'"
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.clean.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.reset.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.fetch.out."
+    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]checkout[;]-B[;]yet-other-branch[;]--track[;]origin/yet-other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/preCopyrightTrilinos.set_branch.out."
+    "Dakota: Doing initial GIT clone/checkout from URL 'url3:/git/Dakota' to dir 'packages/TriKota/Dakota' ..."
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clone[;]url3:/git/Dakota[;]packages/TriKota/Dakota[;]WORKING_DIRECTORY[;].*/tribits/examples/MockTrilinos[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/Dakota.clone.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/Dakota.clean.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/Dakota.reset.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]fetch[;]origin[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/Dakota.fetch.out"
+    "EXECUTE_PROCESS.COMMAND[;]/somebasedir/git[;]checkout[;]-B[;]yet-other-branch[;]--track[;]origin/yet-other-branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/packages/TriKota/Dakota[;]OUTPUT_FILE[;].*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/Dakota.set_branch.out"
+    "Adding POST extra Continuous repository preCopyrightTrilinos"
+    "Adding POST extra Continuous repository Dakota"
+    "Trilinos_NUM_PACKAGES='24'"
+    "Trilinos_NUM_TPLS='19'"
+    "Reading list of POST extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
+    "Trilinos_NUM_PACKAGES='26'"
+    "Trilinos_NUM_TPLS='20'"
+    "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
+    )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  Nightly_EnableAllSecondaryTested
+  ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
+  PASS_REGULAR_EXPRESSION_ALL
+    "EXECUTE_PROCESS.+git.+preCopyrightTrilinos.+preCopyrightTrilinos.fetch.out"
+    "EXECUTE_PROCESS.+git.+extraTrilinosRepo.+extraTrilinosRepo.fetch.out"
+    "Explicitly enabled packages on input .*  0"
+    "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+    "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko ExtraPack 25"
+    "Final set of non-enabled packages:  Stokhos Stalix 2"
+    "Trilinos_NUM_ENABLED_PACKAGES=25:  Configuring packages!"
+    "Processing current package ExtraPack: libs='ON', tests='ON'"
+    "Configuring TRIBITS_PACKAGE='ExtraPack'"
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  PreExtraRepos_ExtraReposFile
+  ARGS
+    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
+    Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
+    Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- Adding PRE extra Continuous repository preRepoOnePackage"
+    "-- Adding POST extra Continuous repository preCopyrightTrilinos"
+    "-- Adding POST extra Continuous repository Dakota"
+    "preRepoOnePackage: Doing GIT update from URL .url1:/git/preRepoOnePackage. to dir ..*/MockTrilinos/preRepoOnePackage."
+    "-- Trilinos_PRE_REPOSITORIES=.preRepoOnePackage."
+    "-- Trilinos_EXTRA_REPOSITORIES=.preCopyrightTrilinos[;]Dakota."
+    "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
+    "Final set of enabled packages:  preRepoOnePackage TrilinosFramework Teuchos .* Teko"
+    "Processing current package preRepoOnePackage: libs=.ON., tests=.ON."
+    "CONFIGURE_OPTIONS = ..*-DTrilinos_EXTRAREPOS_FILE:STRING=.*/DependencyUnitTests/PreAndExtraRepositoriesList.cmake.*-DTrilinos_ENABLE_preRepoOnePackage:BOOL=ON."
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  PreExtraRepos_ExtraReposFile_ExtraReposList
+  ARGS
+    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
+    Trilinos_PRE_REPOSITORIES=preRepoOnePackage
+    Trilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo,Dakota
+    Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
+    Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- Adding PRE extra Continuous repository preRepoOnePackage"
+    "-- Adding POST extra Continuous repository preCopyrightTrilinos"
+    "-- Adding POST extra Nightly repository extraTrilinosRepo"
+    "-- Adding POST extra Continuous repository Dakota"
+    "-- Trilinos_PRE_REPOSITORIES=.preRepoOnePackage."
+    "-- Trilinos_EXTRA_REPOSITORIES=.preCopyrightTrilinos,extraTrilinosRepo,Dakota."
+    "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
+    "Reading list of native packages from .*/MockTrilinos/PackagesList.cmake"
+    "Reading list of POST extra packages from .*/preCopyrightTrilinos/PackagesList.cmake"
+    "Reading list of POST extra packages from .*/extraTrilinosRepo/PackagesList.cmake"
+    "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
+    "Final set of enabled packages:  preRepoOnePackage TrilinosFramework Teuchos .* Teko"
+    "Processing current package preRepoOnePackage: libs=.ON., tests=.ON."
+    "CONFIGURE_OPTIONS = ..*-DTrilinos_EXTRAREPOS_FILE:STRING=.*/DependencyUnitTests/PreAndExtraRepositoriesList.cmake.*-DTrilinos_ENABLE_preRepoOnePackage:BOOL=ON."
+  )
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  PreExtraRepos_ExtraReposFile_ExtraReposListPartial
+  ARGS
+    Trilinos_EXTRAREPOS_FILE="${CMAKE_CURRENT_SOURCE_DIR}/../../core/DependencyUnitTests/PreAndExtraRepositoriesList.cmake"
+    Trilinos_PRE_REPOSITORIES=
+    Trilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,Dakota
+    Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
+    Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- Adding PRE extra Continuous repository preRepoOnePackage"
+    "-- Adding POST extra Continuous repository preCopyrightTrilinos"
+    "-- Adding POST extra Continuous repository Dakota"
+    "-- Trilinos_PRE_REPOSITORIES=.preRepoOnePackage."
+    "-- Trilinos_EXTRA_REPOSITORIES=.preCopyrightTrilinos,Dakota."
+    "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
+    "Reading list of native packages from .*/MockTrilinos/PackagesList.cmake"
+    "Reading list of POST extra packages from .*/preCopyrightTrilinos/PackagesList.cmake"
+    "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
+    "Final set of enabled packages:  preRepoOnePackage TrilinosFramework Teuchos .* Teko"
+    "Processing current package preRepoOnePackage: libs=.ON., tests=.ON."
+    "CONFIGURE_OPTIONS = ..*-DTrilinos_EXTRAREPOS_FILE:STRING=.*/DependencyUnitTests/PreAndExtraRepositoriesList.cmake.*-DTrilinos_ENABLE_preRepoOnePackage:BOOL=ON."
+  )
+
+# ToDo: Add subset!
+
+
+#
+# Test enable logic based on modified files/packages
+#
+
+
+IF (PYTHON_EXECUTABLE)
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedNone
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  0"
+      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
+    SKIP_STANDARD_DEPS_CHECK
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedTeuchos
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teuchos.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+    ARGS  Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous  CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=1
+    PASS_REGULAR_EXPRESSION_ALL
+      "Directly modified or failing non-disabled packages that need to be tested:  Teuchos 1"
+      "Explicitly enabled packages on input .*  Teuchos 1"
+      "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 23"
+      "Final set of non-enabled packages:  TrilinosFramework Stokhos Stalix 3"
+      "CTEST_UPDATE.+ returned '1'"
+      "Processing current package Teuchos: libs='ON', tests='ON'"
+      "Processing current package Teko: libs='ON', tests='ON'"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_Nightly_EnableOnlyModified_ModifiedTeuchos
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teuchos.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.extraTrilinosRepo.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=TRUE
+      Trilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
+      CTEST_UPDATE_RETURN_VAL=1
+    PASS_REGULAR_EXPRESSION_ALL
+      "Directly modified or failing non-disabled packages that need to be tested:  Teuchos 1"
+      "Explicitly enabled packages on input .*  Teuchos 1"
+      "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko ExtraPack 24"
+      "Final set of non-enabled packages:  TrilinosFramework Stokhos Stalix 3"
+      "CTEST_UPDATE.+ returned '1'"
+      "Processing current package Teuchos: libs='ON', tests='ON'"
+      "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Teuchos:BOOL=ON"
+      "Processing current package Zoltan: libs='ON', tests=''"
+      "Processing current package Teko: libs='ON', tests='ON'"
+      "Processing current package ExtraPack: libs='ON', tests='ON'"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedThyra_NoEnableImplictlyEnabled
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Thyra.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.extraTrilinosRepo.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE
+      CTEST_UPDATE_RETURN_VAL=1
+    PASS_REGULAR_EXPRESSION_ALL
+      "Directly modified or failing non-disabled packages that need to be tested:  Thyra 1"
+      "Explicitly enabled packages on input .*  Thyra 1"
+      "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos Phalanx Panzer Teko 22"
+      "Final set of non-enabled packages:  TrilinosFramework Stokhos RBGen Stalix 4"
+      "Final set of packages to be explicitly processed by CTest/CDash:  Thyra Stratimikos Panzer Teko 4"
+      "CTEST_UPDATE.+ returned '1'"
+      "Processing current package Thyra: libs='ON', tests='ON'"
+      "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Thyra:BOOL=ON"
+      "Processing current package Teko: libs='ON', tests='ON'"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedThyraCoreLibs_NoEnableImplictlyEnabled
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.ThyraCoreLibs.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.extraTrilinosRepo.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE
+      CTEST_UPDATE_RETURN_VAL=1
+    PASS_REGULAR_EXPRESSION_ALL
+      "Directly modified or failing non-disabled packages that need to be tested:  ThyraCoreLibs 1"
+      "Explicitly enabled packages on input .*  0"
+      "Explicitly enabled SE packages on input .*  ThyraCoreLibs 1"
+      "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos Phalanx Panzer Teko 22"
+      "Final set of non-enabled packages:  TrilinosFramework Stokhos RBGen Stalix 4"
+      "Final set of packages to be explicitly processed by CTest/CDash:  Thyra Stratimikos Panzer Teko 4"
+      "CTEST_UPDATE.+ returned '1'"
+      "Processing current package Thyra: libs='ON', tests='ON'"
+      "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Thyra:BOOL=ON"
+      "Processing current package Teko: libs='ON', tests='ON'"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedTeko
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teko.txt modifiedFiles.preCopyrightTrilinos.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=TRUE
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "Directly modified or failing non-disabled packages that need to be tested:  Teko 1"
+      "Explicitly enabled packages on input .*  Teko 1"
+      "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Belos Stratimikos Teko 17"
+      "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Sacado Intrepid RBGen Phalanx Panzer Stalix 9"
+      "CTEST_UPDATE.+ returned '0'"
+      "Processing current package Teuchos: libs='ON', tests=''"
+      "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Teuchos:BOOL=ON"
+      "Processing current package Teko: libs='ON', tests='ON'"
+    )
+  # NOTE: The above unit test is critical because it shows that Teko will get
+  # enabled and processed even though the main git update of the main Trilinos
+  # repo returns no updated files.  This ensures that if only extra repo
+  # packages get modified then they will get picked up in CI testing and
+  # processed correctly.
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedTeko_OnlyPrimaryTestedCode
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teko.txt modifiedFiles.preCopyrightTrilinos.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=TRUE
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- MODIFIED_PACKAGES_LIST='Teko'"
+      "NOT enabling modified ST package: Teko"
+      "Directly modified or failing non-disabled packages that need to be tested:  0"
+      "Explicitly enabled packages on input .by user.:  0"
+      "Final set of enabled packages:  0"
+      "Directly modified or failing non-disabled packages that need to be tested:  0"
+      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
+    )
+  # NOTE: The above test ensures that if an ST package is changed but only PT
+  # packages are enabled, then it will not be enabled.
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedTeuchosTeko
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teuchos.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teko.txt modifiedFiles.preCopyrightTrilinos.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=2
+    PASS_REGULAR_EXPRESSION_ALL
+      "MODIFIED_PACKAGES_LIST='Teuchos.Teko'"
+      "Enabling modified package: Teuchos"
+      "Enabling modified package: Teko"
+      "Directly modified or failing non-disabled packages that need to be tested:  Teuchos Teko 2"
+      "Explicitly enabled packages on input .*  Teuchos Teko 2"
+      "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 23"
+      "Final set of non-enabled packages:  TrilinosFramework Stokhos Stalix 3"
+      "CTEST_UPDATE.+ returned '2'"
+      "Processing current package Teuchos: libs='ON', tests='ON'"
+      "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Teuchos:BOOL=ON"
+      "Processing current package Teko: libs='ON', tests='ON'"
+      "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Teko:BOOL=ON"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedStokhosStalix_FailedNone
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Stokhos.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Stalix.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/failedPackages.none.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=1
+    PASS_REGULAR_EXPRESSION_ALL
+      "MODIFIED_PACKAGES_LIST='Stokhos.Stalix'"
+      "FAILING_PACKAGES_LIST=''"
+      "Not enabling explicitly disabled modified package: Stokhos"
+      "Not enabling explicitly disabled modified package: Stalix"
+      "Directly modified or failing non-disabled packages that need to be tested:  0"
+      "Explicitly enabled packages on input .*  0"
+      "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+      "Final set of enabled packages:  0"
+      "Final set of non-enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko Stalix 26"
+      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script!"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedTeko_FailedThyraRBGen
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teko.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/failedPackages.Thyra.RBGen.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "MODIFIED_PACKAGES_LIST='Teko'"
+      "FAILING_PACKAGES_LIST='Thyra.RBGen'"
+      "Enabling modified package: Teko"
+      "Enabling previously failing package: Thyra"
+      "Enabling previously failing package: RBGen"
+      "Directly modified or failing non-disabled packages that need to be tested:  Thyra RBGen Teko 3"
+      "Explicitly enabled packages on input .*  Thyra RBGen Teko 3"
+      "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+      "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 23"
+      "Final set of non-enabled packages:  TrilinosFramework Stokhos Stalix 3"
+      "Final set of packages to be explicitly processed by CTest/CDash:  Thyra Stratimikos RBGen Panzer Teko 5"
+      "CTEST_UPDATE.+ returned '0'"
+      "Processing current package Thyra: libs='ON', tests='ON'"
+      "Processing current package RBGen: libs='ON', tests='ON'"
+      "Processing current package Teko: libs='ON', tests='ON'"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_AAO_EnableOnlyModified_ModifiedTeko_FailedAllPackages
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teko.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/failedPackages.ALL_PACKAGES.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      Trilinos_CTEST_DO_ALL_AT_ONCE=TRUE
+      CTEST_TEST_TYPE=Continuous
+      CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "MODIFIED_PACKAGES_LIST='Teko'"
+      "FAILING_PACKAGES_LIST='ALL_PACKAGES'"
+      "Enabling modified package: Teko"
+      "Enabling previously failing ALL_PACKAGES"
+      "Directly modified or failing non-disabled packages that need to be tested:  ALL_PACKAGES"
+      "Explicitly enabled packages on input .*  Teko 1"
+      "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+      "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON .Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON."
+      "Final set of non-enabled packages:  Stokhos Stalix 2"
+      "Final set of packages to be explicitly processed by CTest/CDash:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 24"
+      "CTEST_UPDATE.[.][.][.]. returned '0'"
+      "Configure, build, test, and submit results for Trilinos packages"
+      "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.*[;]-DTrilinos_ENABLE_ALL_PACKAGES=ON[;]-DTrilinos_ENABLE_TESTS:BOOL=ON'"
+      "Skipping actual ctest_configure.. because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Skipping build because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Skipping testing because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Done with the all-at-once configure, build, test, ans submit of Trilinos packages"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+    )
+  # NOTE: The above test is for the all-at-once appraoch that checks for the
+  # ALL_PACKAGES value in failedPackages.txt.  That value can be returned from
+  # a configure failure in a previous all-at-once CI build.  This test makes
+  # sure that all packages will get enabled in the follow-up CI iteration in
+  # that case.
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedNone_FailedTeko_OnlyPrimaryStableCode
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/failedPackages.Teko.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "MODIFIED_PACKAGES_LIST=''"
+      "FAILING_PACKAGES_LIST='Teko'"
+      "NOT enabling previously failing ST package: Teko"
+      "Directly modified or failing non-disabled packages that need to be tested:  0"
+      "Explicitly enabled packages on input .*  0"
+      "Final set of enabled packages:  0"
+      "Final set of packages to be explicitly processed by CTest/CDash:  0"
+      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedNone_FailedThyraRBGen
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/failedPackages.Thyra.RBGen.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "CTEST_UPDATE.+ returned '0'"
+      "MODIFIED_PACKAGES_LIST=''"
+      "FAILING_PACKAGES_LIST='Thyra.RBGen'"
+      "Enabling previously failing package: Thyra"
+      "Enabling previously failing package: RBGen"
+      "Directly modified or failing non-disabled packages that need to be tested:  Thyra RBGen 2"
+      "Explicitly enabled packages on input .*  Thyra RBGen 2"
+      "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 23"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_ModifiedNone_FailedStokhosStalix
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/failedPackages.Stokhos.Stalix.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "CTEST_UPDATE.+ returned '0'"
+      "MODIFIED_PACKAGES_LIST=''"
+      "FAILING_PACKAGES_LIST='Stokhos.Stalix'"
+      "Not enabling explicitly disabled previously failing package: Stokhos"
+      "Not enabling explicitly disabled previously failing package: Stalix"
+      "Directly modified or failing non-disabled packages that need to be tested:  0"
+      "Explicitly enabled packages on input .*  0"
+      "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+      "Final set of enabled packages:  0"
+      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
+    )
+
+
+  # ToDo: Test modified package not to be implicitly enabled to not be enabled!
+
+ENDIF(PYTHON_EXECUTABLE)
+
+#
+# Test other behavior of TribitsCTestDriverCore
+#
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  Override_MPI_EXEC_MAX_NUMPROCSS
+  ARGS Trilinos_PACKAGES=Teuchos MPI_EXEC_MAX_NUMPROCS=6
+  PASS_REGULAR_EXPRESSION_ALL
+    "Processing current package Teuchos: libs='ON', tests='ON'"
+    "CONFIGURE_OPTIONS = '.*-DMPI_EXEC_MAX_NUMPROCS:STRING=6.*'"
+  )
+
+
+# ToDo: Test ???
