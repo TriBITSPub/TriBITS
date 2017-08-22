@@ -16,11 +16,32 @@ IF(${PACKAGE_NAME}_ADD_LIBRARY_BEFORE_POST_PROCESS)
 ENDIF()
 
 # Not added by defult
+IF(${PACKAGE_NAME}_UNPARSED_ARGS_ADD_LIBRARY)
+  TRIBITS_ADD_LIBRARY(
+    pkgwithusererrors
+    this_shouldnt_be_here
+    HEADERS PkgWithUserErrorsLib.hpp
+    SOURCES PkgWithUserErrorsLib.cpp
+    )
+ENDIF()
+
+# Not added by defult
 IF(${PACKAGE_NAME}_ADD_EXECUTABLE_BEFORE_POST_PROCESS)
   MESSAGE("building exectuable")
   TRIBITS_ADD_EXECUTABLE(
     usererrorexec
     SOURCES  PkgWithUserErrorsEX.cpp
+    )
+ENDIF()
+
+# Not added by defult
+IF(${PACKAGE_NAME}_UNPARSED_ARGS_ADD_EXECUTABLE)
+  MESSAGE("building exectuable")
+  TRIBITS_ADD_EXECUTABLE(
+    usererrorexec
+    misspelled_argument
+    SOURCES  PkgWithUserErrorsEX.cpp
+    SPORCOOS some_file.cpp
     )
 ENDIF()
 

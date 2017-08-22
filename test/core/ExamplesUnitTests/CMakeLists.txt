@@ -1747,7 +1747,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
   OVERALL_NUM_MPI_PROCS 1
 
   TEST_0
-    MESSSAGE "Do a verbose configure and check that the packages coupling variables are correct."
+    MESSAGE "Do a verbose configure and check that the packages coupling variables are correct."
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
@@ -1835,7 +1835,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
     ARGS -r TribitsExampleProject/packages/with_subpackages/
 
   TEST_3
-    MESSSAGE "Override with_packages/ source dir and configure"
+    MESSAGE "Override with_packages/ source dir and configure"
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
@@ -3204,4 +3204,83 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_TARGETS_AFTER
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
+  )
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so that we can copy in PkgWithUserErrors."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Copy PkgWithUserErrors to base dir."
+    CMND cp
+    ARGS -r ${CMAKE_CURRENT_SOURCE_DIR}/PkgWithUserErrors
+      TribitsExampleProject/.
+
+  TEST_2
+    MESSAGE "Configure PkgWithUserErrors"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
+      -DPkgWithUserErrors_UNPARSED_ARGS_DEFINE_DEPENDENCIES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "CMake Error at.*TribitsGeneralMacros.cmake:"
+      "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
+      "nonsense_jdslkfhlskd"
+      "TRIBITS_READ_PACKAGE_DEPENDENCIES"
+      "-- Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_3
+    MESSAGE "Configure PkgWithUserErrors"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
+      -DPkgWithUserErrors_UNPARSED_ARGS_DEFINE_DEPENDENCIES=OFF
+      -DPkgWithUserErrors_UNPARSED_ARGS_ADD_LIBRARY=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "CMake Error at.*TribitsGeneralMacros.cmake:"
+      "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
+      "this_shouldnt_be_here"
+      "PkgWithUserErrors/CMakeLists.txt.*TRIBITS_ADD_LIBRARY"
+      "-- Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_4
+    MESSAGE "Configure PkgWithUserErrors"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
+      -DPkgWithUserErrors_UNPARSED_ARGS_DEFINE_DEPENDENCIES=OFF
+      -DPkgWithUserErrors_UNPARSED_ARGS_ADD_LIBRARY=OFF
+      -DPkgWithUserErrors_UNPARSED_ARGS_ADD_EXECUTABLE=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "CMake Error at.*TribitsGeneralMacros.cmake:"
+      "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
+      "misspelled_argument"
+      "PkgWithUserErrors/CMakeLists.txt.*TRIBITS_ADD_EXECUTABLE"
+      "-- Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
   )

@@ -207,6 +207,8 @@ MACRO(TRIBITS_PACKAGE_DECL PACKAGE_NAME_IN)
     ${ARGN}
     )
 
+  TRIBITS_CHECK_FOR_UNPARSED_ARGUMENTS()
+
   #
   # B) Assert that the global and local package names are the same!
   #

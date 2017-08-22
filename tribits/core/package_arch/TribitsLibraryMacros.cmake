@@ -507,6 +507,8 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
     ${ARGN}
     )
 
+  TRIBITS_CHECK_FOR_UNPARSED_ARGUMENTS()
+
   # ToDo: Assert that HEADERS_INSTALL_SUBDIR has 0 or 1 entries!
   # ToDo: Assert that ADDED_LIB_TARGET_NAME_OUT as 0 or 1 entries!
 

@@ -93,6 +93,8 @@ FUNCTION(TRIBITS_CREATE_CLIENT_TEMPLATE_HEADERS BASE_DIR)
     ${ARGN}
     )
 
+  TRIBITS_CHECK_FOR_UNPARSED_ARGUMENTS()
+
   #
   # B) Get the names of the extensions
   #
