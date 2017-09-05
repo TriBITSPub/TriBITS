@@ -89,7 +89,7 @@ FUNCTION(TRIBITS_CREATE_CLIENT_TEMPLATE_HEADERS BASE_DIR)
     #one_value_keywords
     ""
     #multi_value_keywords
-    "ADDITIONAL_OUPTUT_DIRS"
+    "ADDITIONAL_OUTPUT_DIRS"
     ${ARGN}
     )
 
