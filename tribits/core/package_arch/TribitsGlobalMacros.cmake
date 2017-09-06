@@ -315,6 +315,28 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
     ${${PROJECT_NAME}_ENABLE_CONFIGURE_DEBUG_DEFAULT} CACHE BOOL
     "Enable debug checking of the process which finds errors in the project's CMake files (off by default unless ${PROJECT_NAME}_ENABLE_DEBUG=ON)." )
 
+  IF ("${${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS_DEFAULT}" STREQUAL "")
+    SET(${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS_DEFAULT "WARNING")
+  ENDIF()
+  ADVANCED_SET(${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS
+    ${${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS_DEFAULT}
+    CACHE STRING
+    "Determins how unparsed arguments for TriBITS functions that use CMAKE_PARASE_ARUMENTS() internally are handled.  Valid choices are 'WARNING', 'SEND_ERROR', and 'FATAL_ERROR'.  The default is 'SEND_ERROR'."
+    )
+  IF (
+    (NOT ${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS STREQUAL "WARNING")
+     AND
+    (NOT ${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS STREQUAL "SEND_ERROR")
+     AND
+    (NOT ${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS STREQUAL "FATAL_ERROR")
+    )
+    MESSAGE(FATAL_ERROR "Error, the value of"
+      " ${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS ="
+      " '${${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS}' is invalid!"
+      " Valid valules include 'WANRING', 'SEND_ERROR', and 'FATAL_ERROR'"
+      )
+  ENDIF()
+
   SET(${PROJECT_NAME}_ENABLE_TEUCHOS_TIME_MONITOR ON
     CACHE BOOL
     "Enable support for Teuchos Time Monitors in all Trilinos packages that support it."

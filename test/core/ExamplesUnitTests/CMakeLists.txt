@@ -3227,6 +3227,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_CHECK_FOR_UNPARSED_ARGUMENTS=FATAL_ERROR
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON

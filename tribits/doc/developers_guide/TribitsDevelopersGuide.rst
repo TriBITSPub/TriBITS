@@ -7724,6 +7724,7 @@ be documented in `TribitsBuildReference`_.
 The global project-level TriBITS options for which defaults can be provided by
 a given TriBITS project are:
 
+* `${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS`_
 * `${PROJECT_NAME}_CONFIGURE_OPTIONS_FILE_APPEND`_
 * `${PROJECT_NAME}_CPACK_SOURCE_GENERATOR`_
 * `${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE`_
@@ -7756,6 +7757,74 @@ a given TriBITS project are:
 
 
 These options are described below.
+
+.. _${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS:
+
+**${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS**
+
+  The variable ``${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS`` determines how
+  unparsed and otherwise ignored arguments are handled in TriBITS functions
+  that are called by the client TriBITS projects.  These are arguments that
+  are left over from parsing input options to functions and macros that take
+  both positional arguments and keyword arguments/options handled with the
+  ``CMAKE_PARSE_ARGUMENTS()`` function.  For example, for the a TriBITS
+  function declared like::
+
+    TRIBITS_COPY_FILES_TO_BINARY_DIR(
+      <targetName>
+      [SOURCE_FILES <file1> <file2> ...]
+      [SOURCE_DIR <sourceDir>]
+      ...
+      )
+
+  the arguments ``SOURCE_FILES <file1> <file2> ...`` and those that follow are
+  parsed by the ``CMAKE_PARSE_ARGUMENTS()`` function while the argument
+  ``<targetName>`` is a positional argument.  The problem is that any
+  arguments passed between the first ``<targetName>`` argument and the
+  specified keyword arguments like ``SOURCE_FILES`` and ``SOURCE_DIR`` are
+  returned as unparsed arguments and are basically ignored (which is what
+  happened in earlier versions of TriBITS).  For example, calling the function
+  as::
+
+    TRIBITS_COPY_FILES_TO_BINARY_DIR( FooTestCopyFiles
+      ThisArgumentIsNotParsedAndIsIgnored
+      SOURCE_FILES file1.cpp file2.cpp ...
+      ...
+      )
+
+  would result in the unparsed argument
+  ``ThisArgumentIsNotParsedAndIsIgnored``.
+
+  The value of ``${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS`` determines how
+  that ignored argument is handled.  If the value is ``WARNING``, then it will
+  just result in a ``MESSAGE(WARNING ...)`` command that states the warning
+  but configure is allowed to be completed. This would be the right value to
+  allow an old TriBITS project to keep configuring until the warnings can be
+  cleaned up.  If the value is ``SEND_ERROR``, then ``MESSAGE(SEND_ERROR
+  ...)`` is called.  This will result in the configure failing but will allow
+  configure to continue until the end (or a ``FATAL_ERROR`` is raised).  This
+  would be the right value when trying to upgrade a TriBITS project where you
+  wanted to see all of the warnings when upgrading TriBITS (so you could fix
+  them all in one shot).  Finally, the value of ``FATAL_ERROR`` will result in
+  ``MESSAGE(FATAL_ERROR ...)`` being called which will halt configure right
+  away.  This is the best value when developing on a TriBITS project that is
+  already clean but you want to catch new developer-inserted errors right
+  away.
+
+  The default value for ``${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS`` is
+  ``WARNING``, so that it will be backward compatible for TriBITS projects
+  that might have previously undetected unparased and therefore ignored
+  argument .  However, a project can change the default by setting, for
+  example::
+
+    SET(${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS_DEFAULT FATAL_ERROR)
+
+  in the `<projectDir>/ProjectName.cmake`_ file.
+
+  The user of a TriBITS project should not be able to trigger this unparsed
+  arguments condition so this variable is not documented in the `TriBITS Build
+  Reference`_.  But it is still a CMake cache var that is documented in the
+  CMakeCache.txt file and can be set by the user or developer if desired.
 
 .. _${PROJECT_NAME}_CONFIGURE_OPTIONS_FILE_APPEND:
 
