@@ -171,13 +171,26 @@ command --download-cmnd=<download-cmnd> is:
 
   def doConfigure(self):
     createDir(self.cmakeBuildBaseDir, True, True)
-    echoRunSysCmnd(
-      "../"+self.cmakeSrcDir+"/configure "+\
-      " "+self.inOptions.extraConfigureOptions+\
-      getParallelOpt(self.inOptions, "--parallel=")+\
-      " --prefix="+self.inOptions.installDir,
-      extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
-      )
+
+    cmakeCmd=self.which("cmake")
+    if cmakeCmd is not None:
+      #CMake is installed, configure CMake with CMake
+      echoRunSysCmnd(
+        cmakeCmd+" ../"+self.cmakeSrcDir+\
+        " "+self.inOptions.extraConfigureOptions+\
+        " -DCMAKE_USE_OPENSSL=ON"+\
+        " -DCMAKE_INSTALL_PREFIX="+self.inOptions.installDir,
+        extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
+        )
+    else:
+      # CMake is not already installed on system, so use configure
+      echoRunSysCmnd(
+        "../"+self.cmakeSrcDir+"/configure "+\
+        " "+self.inOptions.extraConfigureOptions+\
+        getParallelOpt(self.inOptions, "--parallel=")+\
+        " --prefix="+self.inOptions.installDir,
+        extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
+        )
 
   def doBuild(self):
     echoChDir(self.cmakeBuildBaseDir)
@@ -195,7 +208,23 @@ To use the installed version of cmake-"""+self.inOptions.version+""" add the pat
 
 to your path and that should be it!
 """
+  @staticmethod
+  def which(program):
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            path = path.strip('"')
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+
+    return None
 
 #
 # Executable statements
