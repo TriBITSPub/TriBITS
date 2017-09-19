@@ -15,9 +15,10 @@ else
   rm $1.out
   rm $1.log
   rm $1.toc
-  scp TribitsTutorial_ConvertAProject.pdf cupojoe.srn.sandia.gov:
+  scp $1.pdf cupojoe.srn.sandia.gov:
 fi
 }
 
 make_doc TribitsTutorial_ConvertAProject
-
+make_doc TribitsTutorial_BeyondHelloWorld
+make_doc TribitsTutorial_HelloWorld
