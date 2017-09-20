@@ -85,21 +85,42 @@ TRIBITS_ADD_ADVANCED_TEST( XmlHtmlCDashOutputTest
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsPackageFilePathUtils_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsPackageFilePathUtils_UnitTests.py -v
+    PASS_REGULAR_EXPRESSION "OK"
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsPackageTestNameUtils_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsPackageTestNameUtils_UnitTests.py -v
+    PASS_REGULAR_EXPRESSION "OK"
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_from_last_tests_failed_1
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    MESSAGE "Run checkin-test.py script to make sure it finds base dir"
+    CMND ${PYTHON_EXECUTABLE}
+    ARGS
+      -E "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages-from-last-tests-failed.py"
+      --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
+      --last-tests-failed-file="${CMAKE_CURRENT_SOURCE_DIR}/LastTestsFailed.1.log"
+    PASS_REGULAR_EXPRESSION_ALL
+      "^Thyra[;]Teuchos\n"
+  )
+
+
 #
 # Test checkin-test.py script
 #
-
-
-ASSERT_DEFINED(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE)
-IF (${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE)
-  TRIBITS_ADD_ADVANCED_TEST( TribitsPackageFilePathUtils_UnitTests
-    OVERALL_WORKING_DIRECTORY TEST_NAME
-    OVERALL_NUM_MPI_PROCS 1
-    TEST_0 CMND ${PYTHON_EXECUTABLE} 
-      ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsPackageFilePathUtils_UnitTests.py -v
-      PASS_REGULAR_EXPRESSION "OK"
-    )
-ENDIF()
 
 TRIBITS_ADD_ADVANCED_TEST( clone_extra_repos_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -175,14 +196,18 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_checkin_test
 
   TEST_0
     MESSAGE "Copy TribitsExampleProject so we can snapshot TriBITS into it"
-    CMND ${CMAKE_COMMAND}
-    ARGS -E copy_directory ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       TribitsExampleProject
+    # NOTE: Had to use 'cp -r' instead of 'cmake -E copy_directory' because
+    # the latter failed for a development version of CMake.  But since the
+    # checkin-test.py scrpt will really only run on Linux/Unix systems, using
+    # 'cp -r' is not a testing portability problem.
 
   TEST_1
     MESSAGE "Copy tribits dir into TribitsExampleProject/cmake/"
-    CMND ${CMAKE_COMMAND}
-    ARGS -E copy_directory ${${PROJECT_NAME}_TRIBITS_DIR}
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}
       TribitsExampleProject/cmake/tribits
 
   TEST_2

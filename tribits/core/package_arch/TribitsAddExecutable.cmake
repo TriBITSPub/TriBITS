@@ -45,7 +45,7 @@ INCLUDE(TribitsGeneralMacros)
 
 INCLUDE(PrintVar)
 INCLUDE(AppendSet)
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 
 ###
 ### WARNING: See "NOTES TO DEVELOPERS" at the bottom of the file
@@ -93,7 +93,7 @@ INCLUDE(ParseVariableArguments)
 #
 #   ``<exeRootName>``
 #
-#     The root name of the exectuable (and CMake target) (see `Executable and
+#     The root name of the executable (and CMake target) (see `Executable and
 #     Target Name (TRIBITS_ADD_EXECUTABLE())`_).  This must be the first
 #     argument.
 #
@@ -114,7 +114,7 @@ INCLUDE(ParseVariableArguments)
 #     If passed in, the directory path relative to the package's base
 #     directory (with "/" replaced by "_") is added to the executable name
 #     (see `Executable and Target Name (TRIBITS_ADD_EXECUTABLE())`_).  This
-#     provides a simple way to create unique test exectuable names inside of a
+#     provides a simple way to create unique test executable names inside of a
 #     given TriBITS package.  Only test executables in the same directory
 #     would need to have unique ``<execRootName>`` passed in.
 #
@@ -253,7 +253,7 @@ INCLUDE(ParseVariableArguments)
 #     set with the name of the executable target passed to
 #     ``ADD_EXECUTABLE(<exeTargetName> ... )``.  Having this name allows the
 #     calling ``CMakeLists.txt`` file access and set additional target
-#     propeties (see `Additional Executable and Source File Properties
+#     properties (see `Additional Executable and Source File Properties
 #     (TRIBITS_ADD_EXECUTABLE())`_).
 #
 # .. _Executable and Target Name (TRIBITS_ADD_EXECUTABLE()):
@@ -278,7 +278,7 @@ INCLUDE(ParseVariableArguments)
 # added to the actual executable file name if the option ``NOEXESUFFIX`` is
 # *not* passed in but this suffix is never added to the target name.
 # (However, note that on Windows platforms, the default ``*.exe`` extension is
-# always added because windows will not run an exectuable in many contexts
+# always added because windows will not run an executable in many contexts
 # unless it has the ``*.exe`` extension.)
 #
 # The reason that a default prefix is prepended to the executable and target
@@ -334,26 +334,42 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
     MESSAGE("")
     MESSAGE("TRIBITS_ADD_EXECUTABLE: ${EXE_NAME} ${ARGN}")
   ENDIF()
+  
+  #
+  # Confirm that TRIBITS_PACKAGE() was called prior to adding executable
+  #
+  
+  IF(NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_CALLED)
+    MESSAGE(FATAL_ERROR "Must call TRIBITS_PACKAGE() before TRIBITS_ADD_EXECUTABLE() in ${TRIBITS_PACKAGE_CMAKELIST_FILE}")
+  ENDIF()
+
+  IF(${PACKAGE_NAME}_TRIBITS_PACKAGE_POSTPROCESS_CALLED)
+    MESSAGE(FATAL_ERROR "Must call TRIBITS_ADD_EXECUTABLE() before TRIBITS_PACKAGE_POSTPROCESS() in ${TRIBITS_PACKAGE_CMAKELIST_FILE}")
+  ENDIF()
 
   #
   # A) Parse the input arguments
   #
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
     #prefix
     PARSE
-    #lists
-    "SOURCES;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;DIRECTORY;TESTONLYLIBS;IMPORTEDLIBS;DEPLIBS;COMM;LINKER_LANGUAGE;TARGET_DEFINES;DEFINES;ADDED_EXE_TARGET_NAME_OUT"
     #options
     "NOEXEPREFIX;NOEXESUFFIX;ADD_DIR_TO_NAME;INSTALLABLE"
+    #one_value_keywords
+    ""
+    #multi_value_keywords
+    "SOURCES;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;DIRECTORY;TESTONLYLIBS;IMPORTEDLIBS;DEPLIBS;COMM;LINKER_LANGUAGE;TARGET_DEFINES;DEFINES;ADDED_EXE_TARGET_NAME_OUT"
     ${ARGN}
     )
+
+  TRIBITS_CHECK_FOR_UNPARSED_ARGUMENTS()
 
   IF(PARSE_ADDED_EXE_TARGET_NAME_OUT)
     SET(${PARSE_ADDED_EXE_TARGET_NAME_OUT} PARENT_SCOPE)
   ENDIF()
   #
-  # B) Exclude building the test executable based on some several criteria
+  # B) Exclude building the test executable based on some criteria
   #
 
   SET(ADD_THE_TEST FALSE)

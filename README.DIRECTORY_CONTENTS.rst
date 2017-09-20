@@ -5,7 +5,7 @@ This base directory for TriBITS acts as a TriBITS Project, a TriBITS
 Repository, and a TriBITS Package.  As such, it contains the standard files
 that are found in a TriBITS Project, Repository, and Package::
 
-  ProjectName.cmake   # PROJECT_NAME=TriITS
+  ProjectName.cmake   # PROJECT_NAME=TriBITS
   CMakeLists.txt      # PROJECT_NAME = PACKAGE_NAME = TriBITS
   PackagesList.cmake  # Lists just "TriBITS . PT"
   TPLsList.cmake      # Lists only MPI

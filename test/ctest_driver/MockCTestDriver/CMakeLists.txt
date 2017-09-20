@@ -39,7 +39,7 @@
 
 
 
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 INCLUDE(AdvancedSet)
 
 
@@ -58,13 +58,15 @@ FUNCTION(CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
 
   #MESSAGE("CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE: ${TEST_CASE} ${ARGN}")
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "COPY_FILES;ARGS;PASS_REGULAR_EXPRESSION_ALL;COMPARE_DEPS_FILE"
      #options
      "SKIP_STANDARD_DEPS_CHECK"
+     # one_value_keywords
+     ""
+     # multi_value_keywords
+     "COPY_FILES;ARGS;PASS_REGULAR_EXPRESSION_ALL;COMPARE_DEPS_FILE"
      ${ARGN}
      )
   
@@ -180,7 +182,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "Final set of enabled packages:  Teuchos 1"
     "Final set of non-enabled packages:  TrilinosFramework RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 23"
     "Processing current package Teuchos: libs='ON', tests='ON'"
-    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_ENABLE_TESTS:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.*/MockTrilinos/cmake.ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+.-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.*./MockTrilinos/cmake.ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_TESTS:BOOL=ON.-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
   )
 # NOTE: The above test pins down the form of the configure options passed to
 # different package configures to make sure everything in there.
@@ -235,10 +237,10 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra 8"
     "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 16"
     "Processing current package Teuchos: libs='ON', tests=''"
-    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_ENABLE_TESTS:BOOL=.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_TESTS:BOOL=.-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
     "Processing current package Epetra: libs='ON', tests=''"
     "Processing current package Thyra: libs='ON', tests='ON'"
-    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_ENABLE_TESTS:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_EpetraExt:BOOL=.-DTrilinos_ENABLE_Thyra:BOOL=ON'"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_TESTS:BOOL=ON.-DTrilinos_ENABLE_EpetraExt:BOOL=.-DTrilinos_ENABLE_Thyra:BOOL=ON'"
   )
 # NOTE: The above test pins down the form of the configure options passed to
 # different package configures to make sure everything in there.
@@ -788,6 +790,44 @@ IF (PYTHON_EXECUTABLE)
       "Processing current package RBGen: libs='ON', tests='ON'"
       "Processing current package Teko: libs='ON', tests='ON'"
     )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_AAO_EnableOnlyModified_ModifiedTeko_FailedAllPackages
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Teko.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/failedPackages.ALL_PACKAGES.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      Trilinos_CTEST_DO_ALL_AT_ONCE=TRUE
+      CTEST_TEST_TYPE=Continuous
+      CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+    PASS_REGULAR_EXPRESSION_ALL
+      "MODIFIED_PACKAGES_LIST='Teko'"
+      "FAILING_PACKAGES_LIST='ALL_PACKAGES'"
+      "Enabling modified package: Teko"
+      "Enabling previously failing ALL_PACKAGES"
+      "Directly modified or failing non-disabled packages that need to be tested:  ALL_PACKAGES"
+      "Explicitly enabled packages on input .*  Teko 1"
+      "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+      "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON .Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON."
+      "Final set of non-enabled packages:  Stokhos Stalix 2"
+      "Final set of packages to be explicitly processed by CTest/CDash:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 24"
+      "CTEST_UPDATE.[.][.][.]. returned '0'"
+      "Configure, build, test, and submit results for Trilinos packages"
+      "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.*[;]-DTrilinos_ENABLE_ALL_PACKAGES=ON[;]-DTrilinos_ENABLE_TESTS:BOOL=ON'"
+      "Skipping actual ctest_configure.. because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Skipping build because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Skipping testing because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Done with the all-at-once configure, build, test, ans submit of Trilinos packages"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+    )
+  # NOTE: The above test is for the all-at-once appraoch that checks for the
+  # ALL_PACKAGES value in failedPackages.txt.  That value can be returned from
+  # a configure failure in a previous all-at-once CI build.  This test makes
+  # sure that all packages will get enabled in the follow-up CI iteration in
+  # that case.
 
 
   CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
