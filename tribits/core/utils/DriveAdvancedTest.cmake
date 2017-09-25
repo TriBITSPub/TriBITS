@@ -85,6 +85,33 @@ FUNCTION(DELETE_CREATE_WORKING_DIRECTORY  WORKING_DIR_IN   SKIP_CLEAN)
 ENDFUNCTION()
 
 
+MACRO(SETUP_AND_RUN_TEST_IDX_COPY_FILES_BLOCK)
+
+  MESSAGE(
+    "Copy files from:\n"
+    "    '${TEST_${CMND_IDX}_SOURCE_DIR}/'\n"
+    "  to:\n"
+    "    '${TEST_${CMND_IDX}_DEST_DIR}/' ...\n")
+
+  SPLIT("${TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR}"
+    "," COPY_FILES_TO_TEST_DIR_ARRAY)
+
+  SET(TEST_CASE_PASSED TRUE)
+  FOREACH(FILENAME ${COPY_FILES_TO_TEST_DIR_ARRAY})
+    MESSAGE("  ${FILENAME} ...")
+    CONFIGURE_FILE(
+      "${TEST_${CMND_IDX}_SOURCE_DIR}/${FILENAME}"
+      "${TEST_${CMND_IDX}_DEST_DIR}/${FILENAME}"
+      COPYONLY
+      )
+    # ToDo: Detect file copy failure and react accordingly
+  ENDFOREACH()
+
+  MESSAGE("")
+
+ENDMACRO()
+
+
 MACRO(SETUP_AND_RUN_TEST_IDX_CMND_BLOCK)
 
   # Address working directory for this TEST_<IDX> block if set
@@ -352,15 +379,10 @@ FUNCTION(DRIVE_ADVANCED_TEST)
     ENDIF()
 
     # Run the TEST_<IDX> block (Copy files or CMND)
-
     IF (TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR)
-
-      MESSAGE(FATAL_ERROR "ToDo: Implement COPY_FILES_TO_TEST_DIR!")
-
+      SETUP_AND_RUN_TEST_IDX_COPY_FILES_BLOCK()
     ELSE()
-
       SETUP_AND_RUN_TEST_IDX_CMND_BLOCK()
-
     ENDIF()
 
     # Print the load and/or timing info for TEST_<IDX> block
@@ -387,13 +409,10 @@ FUNCTION(DRIVE_ADVANCED_TEST)
       # Determine pass/fail for TEST_<IDX> copy files or CMND
 
       IF (TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR)
-  
-        MESSAGE(FATAL_ERROR "ToDo: Implement COPY_FILES_TO_TEST_DIR!")
-  
+        # Pass/fail already determined by setting TEST_CASE_PASSED in
+        # SETUP_AND_RUN_TEST_IDX_COPY_FILES_BLOCK above.
       ELSE()
-  
         DETERMINE_TEST_IDX_CMND_BLOCK_PASS_FAIL()
-  
       ENDIF()
 
       # Print final pass/fail for the TEST_<IDX> block
