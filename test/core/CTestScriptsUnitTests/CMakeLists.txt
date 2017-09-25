@@ -582,7 +582,7 @@ TRIBITS_ADD_ADVANCED_TEST(
 # TAAT() COPY_TO_TEST_DIR
 
 TRIBITS_ADD_ADVANCED_TEST(
-  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_default
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_REL_SORUCE_DIR_IMPLICIT_DEST_DIR
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
     SOURCE_DIR test_data
@@ -594,6 +594,78 @@ TRIBITS_ADD_ADVANCED_TEST(
   )
   # ToDo: Guard these for Linux systems or replace 'cat' with the right
   # command on Windows systems.
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_ABS_SORUCE_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test_data"
+  TEST_1 CMND cat ARGS test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_IMPLICIT_SORUCE_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_c.txt
+  TEST_1 CMND cat ARGS test_file_c.txt
+    PASS_REGULAR_EXPRESSION "This is Test File C"
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_REL_DEST_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR test_data
+    DEST_DIR .
+  TEST_1 CMND cat ARGS test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_REL_DEST_DIR_SUBDIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR test_data
+    DEST_DIR subtestdir
+  TEST_1 CMND cat ARGS subtestdir/test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS subtestdir/test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_ABS_DEST_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR test_data
+    DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_ABS_DEST_DIR"
+  TEST_1 CMND cat ARGS test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_ABS_DEST_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR test_data
+    DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_ABS_DEST_DIR"
+  TEST_1 CMND cat ARGS test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
 
 # ToDo: Test when a file copy fails (file does not exist, can't write output dir, etc.) ...
 
