@@ -85,7 +85,15 @@ FUNCTION(DELETE_CREATE_WORKING_DIRECTORY  WORKING_DIR_IN   SKIP_CLEAN)
 ENDFUNCTION()
 
 
+
+
+
+
 FUNCTION(DRIVE_ADVANCED_TEST)
+
+  #
+  # A) Print the header for the advanced test
+  #
 
   SET(ADVANDED_TEST_SEP
     "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
@@ -144,16 +152,22 @@ FUNCTION(DRIVE_ADVANCED_TEST)
    SET(TEST_OVERALL_START ${TEST_CMND_START})
   ENDIF()
 
+  #
+  # B) Loop over and run the TEST_<IDX> blocks one at a time
+  #
+
   SET(OVERALL_TEST_PASSED TRUE)
 
   FOREACH ( CMND_IDX RANGE ${LAST_CMND_IDX} )
     MESSAGE("\n${TEST_SEP}\n")
     MESSAGE("TEST_${CMND_IDX}\n")
 
+    # Print the message for this TEST_<IDX> block if set
     IF (TEST_${CMND_IDX}_MESSAGE)
       MESSAGE("${TEST_${CMND_IDX}_MESSAGE}\n")
     ENDIF()
 
+    # Address working directory for this TEST_<IDX> block if set
     IF (TEST_${CMND_IDX}_WORKING_DIRECTORY)
       IF (NOT  IS_ABSOLUTE  "${TEST_${CMND_IDX}_WORKING_DIRECTORY}")
         SET(TEST_${CMND_IDX}_WORKING_DIRECTORY
@@ -163,9 +177,19 @@ FUNCTION(DRIVE_ADVANCED_TEST)
         ${TEST_${CMND_IDX}_SKIP_CLEAN_WORKING_DIRECTORY})
     ENDIF()
 
+    IF (TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR)
+
+      MESSAGE(FATAL_ERROR "ToDo: Implement COPY_FILES_TO_TEST_DIR!")
+
+    ENDIF()
+
+    # Set up the TEST_<IDX> command block
+
     JOIN( TEST_CMND_STR " " TRUE ${TEST_${CMND_IDX}_CMND} )
     MESSAGE("Running: ${TEST_CMND_STR}\n")
     SET(EXEC_CMND COMMAND ${TEST_${CMND_IDX}_CMND})
+
+    # Set up the workig directory that this TEST_<IDX> CMND block will run in
 
     SET(WORKING_DIR_SET)
     IF (TEST_${CMND_IDX}_WORKING_DIRECTORY)
@@ -181,9 +205,13 @@ FUNCTION(DRIVE_ADVANCED_TEST)
       SET(WORKING_DIR "${CMAKE_CURRENT_BINARY_DIR}")
     ENDIF()
 
+    # Set the actual command that will be run with EXECUTE_PROCES()
+
     SET(EXEC_CMND ${EXEC_CMND}
       WORKING_DIRECTORY "${WORKING_DIR}"
       )
+
+    # Set up the optional output file that the EXECUTE_PROCESS() command will write to
 
     IF (TEST_${CMND_IDX}_OUTPUT_FILE)
       IF (NOT  IS_ABSOLUTE  "${TEST_${CMND_IDX}_OUTPUT_FILE}")
@@ -193,6 +221,8 @@ FUNCTION(DRIVE_ADVANCED_TEST)
       ENDIF()
       MESSAGE("  Writing output to file \"${OUTPUT_FILE_USED}\"\n")
     ENDIF()
+
+    # Run the actual comand with EXECUTTE_PROCESS() (or just print what would run) ...
 
     IF (NOT SHOW_COMMANDS_ONLY)
 
@@ -228,22 +258,26 @@ FUNCTION(DRIVE_ADVANCED_TEST)
 
     MESSAGE("${OUTPUT_SEP}\n")
 
+    # Print the load and/or timing info for TEST_<IDX> block
+
+    IF (SHOW_MACHINE_LOAD   AND  NOT  SHOW_COMMANDS_ONLY)
+      PRINT_UPTIME("TEST_${CMND_IDX}: Uptime:")
+    ENDIF()
+
+    IF (SHOW_START_END_DATE_TIME  AND  NOT  SHOW_COMMANDS_ONLY)
+      TIMER_GET_RAW_SECONDS(TEST_CMND_END)
+      IF (TEST_CMND_START AND TEST_CMND_END)
+        TIMER_PRINT_REL_TIME(${TEST_CMND_START} ${TEST_CMND_END}
+           "TEST_${CMND_IDX}: Time")
+      ELSE()
+        MESSAGE("ERROR: Not able to return test times! Is 'date' in your path?")
+      ENDIF()
+      SET(TEST_CMND_START ${TEST_CMND_END})
+    ENDIF()
+
+    # Determine pass/fail for the TEST_<IDX> CMND block
+
     IF (NOT SHOW_COMMANDS_ONLY)
-
-      IF (SHOW_MACHINE_LOAD   AND  NOT  SHOW_COMMANDS_ONLY)
-        PRINT_UPTIME("TEST_${CMND_IDX}: Uptime:")
-      ENDIF()
-
-      IF (SHOW_START_END_DATE_TIME  AND  NOT  SHOW_COMMANDS_ONLY)
-        TIMER_GET_RAW_SECONDS(TEST_CMND_END)
-        IF (TEST_CMND_START AND TEST_CMND_END)
-          TIMER_PRINT_REL_TIME(${TEST_CMND_START} ${TEST_CMND_END}
-             "TEST_${CMND_IDX}: Time")
-        ELSE()
-          MESSAGE("ERROR: Not able to return test times! Is 'date' in your path?")
-        ENDIF()
-        SET(TEST_CMND_START ${TEST_CMND_END})
-      ENDIF()
 
       MESSAGE("TEST_${CMND_IDX}: Return code = ${EXEC_RESULT}")
 
@@ -339,6 +373,8 @@ FUNCTION(DRIVE_ADVANCED_TEST)
           ${TEST_CASE_PASSED} )
       ENDIF()
 
+      # E) Print final pass/fail for the TEST_<IDX> block
+
       IF (TEST_CASE_PASSED)
         MESSAGE("TEST_${CMND_IDX}: Result = PASSED")
       ELSE()
@@ -350,11 +386,15 @@ FUNCTION(DRIVE_ADVANCED_TEST)
         ENDIF()
       ENDIF()
 
-    ENDIF()
+    ENDIF(NOT SHOW_COMMANDS_ONLY)
 
   ENDFOREACH()
 
   MESSAGE("\n${TEST_SEP}\n")
+
+  #
+  # C) Print the final test data and pass/fail
+  #
 
   IF (NOT SHOW_COMMANDS_ONLY)
 
