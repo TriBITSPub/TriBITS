@@ -698,6 +698,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
   GLOBAL_SET(TRIBITS_SET_TEST_PROPERTIES_INPUT)
   GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
 
+  # Set the full TEST_NAME
   IF (PACKAGE_NAME)
     SET(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_IN})
   ELSE()
@@ -1021,6 +1022,15 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       # This is a COPY_FLES_TO_TEST_DIR block
       #
 
+      # FILES_TO_COPY_COMMA_SEP
+      SET(FILES_TO_COPY_COMMA_SEP "${PARSE_COPY_FILES_TO_TEST_DIR}")
+      string(REPLACE ";" "," FILES_TO_COPY_COMMA_SEP
+        "${FILES_TO_COPY_COMMA_SEP}" )
+      # NOTE: Above, we have to replace ';' with ',' or the lower commands
+      # APPEND_STRING_VAR() will replace ';' with ''.  This is *not* what we
+      # want.  In DriveAdvancedTest.cmake, we will replace the ',' with ';'
+      # again :-)  
+
       # SOURCE_DIR
       IF (PARSE_SOURCE_DIR)
         IF (IS_ABSOLUTE "${PARSE_SOURCE_DIR}")
@@ -1046,11 +1056,11 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
         ELSE()
           MESSAGE(FATAL_ERROR "ToDo: This is not tested!")
           SET(COPY_FILES_TO_TEST_DIR_DEST_DIR
-            "${CMAKE_CURRENT_DEST_DIR}/${PARSE_DEST_DIR}")
+            "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}/${PARSE_DEST_DIR}")
         ENDIF()
       ELSE()
         SET(COPY_FILES_TO_TEST_DIR_DEST_DIR
-          "${CMAKE_CURRENT_DEST_DIR}")
+          "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}")
       ENDIF()
 
     ELSE()
@@ -1070,8 +1080,8 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
   
       APPEND_STRING_VAR( TEST_SCRIPT_STR
         "\n"
-        "SET( TEST_${TEST_CMND_IDX}_COPY_FILES_TO_TEST_DIR}\n"
-        "  \"${PARSE_COPY_FILES_TO_TEST_DIR}\")\n"
+        "SET( TEST_${TEST_CMND_IDX}_COPY_FILES_TO_TEST_DIR\n"
+        "  \"${FILES_TO_COPY_COMMA_SEP}\")\n"
         )
       IF (TRIBITS_ADD_ADVANCED_TEST_UNITTEST)
         GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_${TEST_CMND_IDX}
@@ -1080,13 +1090,13 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
   
       APPEND_STRING_VAR( TEST_SCRIPT_STR
         "\n"
-        "SET( TEST_${TEST_CMND_IDX}_SOURCE_DIR}\n"
+        "SET( TEST_${TEST_CMND_IDX}_SOURCE_DIR\n"
         "  \"${COPY_FILES_TO_TEST_DIR_SOURCE_DIR}\")\n"
         )
   
       APPEND_STRING_VAR( TEST_SCRIPT_STR
         "\n"
-        "SET( TEST_${TEST_CMND_IDX}_DEST_DIR}\n"
+        "SET( TEST_${TEST_CMND_IDX}_DEST_DIR\n"
         "  \"${COPY_FILES_TO_TEST_DIR_DEST_DIR}\")\n"
         )
 

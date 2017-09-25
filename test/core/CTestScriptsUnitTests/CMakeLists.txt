@@ -584,7 +584,7 @@ TRIBITS_ADD_ADVANCED_TEST(
 TRIBITS_ADD_ADVANCED_TEST(
   CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_default
   OVERALL_WORKING_DIRECTORY TEST_NAME
-  TEST_0 COPY_FILES_TO_TEST_DIR  Test_file_a.txt  test_file_b.txt
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
     SOURCE_DIR test_data
   TEST_1 CMND cat ARGS test_file_a.txt
     PASS_REGULAR_EXPRESSION "This is Test File A"
@@ -592,11 +592,12 @@ TRIBITS_ADD_ADVANCED_TEST(
     PASS_REGULAR_EXPRESSION "This is Test File B"
   OVERALL_NUM_MPI_PROCS 1
   )
+  # ToDo: Guard these for Linux systems or replace 'cat' with the right
+  # command on Windows systems.
 
-# ToDo: Test when a file copy fails for some reason ...
+# ToDo: Test when a file copy fails (file does not exist, can't write output dir, etc.) ...
 
-# ToDo: Test with an abs
+# ToDo: Test with relative and abs directories for SOURCE_DIR and DEST_DIR ...
 
-
-# ToDo: Add more unit tests that will require that arguments like 'FILES',
-# 'SOURCE_DIR' be ignored when parsing EXEC or CMND blocks!
+# ToDo: Add and EXEC test that passes arguments 'SOURCE_DIR' and 'DEST_DIR'
+# and shows that they are not pulled out during parsing.

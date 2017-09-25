@@ -85,8 +85,192 @@ FUNCTION(DELETE_CREATE_WORKING_DIRECTORY  WORKING_DIR_IN   SKIP_CLEAN)
 ENDFUNCTION()
 
 
+MACRO(SETUP_AND_RUN_TEST_IDX_CMND_BLOCK)
+
+  # Address working directory for this TEST_<IDX> block if set
+  IF (TEST_${CMND_IDX}_WORKING_DIRECTORY)
+    IF (NOT  IS_ABSOLUTE  "${TEST_${CMND_IDX}_WORKING_DIRECTORY}")
+      SET(TEST_${CMND_IDX}_WORKING_DIRECTORY
+        ${BASE_WORKING_DIRECTORY}/${TEST_${CMND_IDX}_WORKING_DIRECTORY})
+    ENDIF()
+    DELETE_CREATE_WORKING_DIRECTORY("${TEST_${CMND_IDX}_WORKING_DIRECTORY}"
+      ${TEST_${CMND_IDX}_SKIP_CLEAN_WORKING_DIRECTORY})
+  ENDIF()
+
+  # Set up the TEST_<IDX> command block
+  JOIN( TEST_CMND_STR " " TRUE ${TEST_${CMND_IDX}_CMND} )
+  MESSAGE("Running: ${TEST_CMND_STR}\n")
+  SET(EXEC_CMND COMMAND ${TEST_${CMND_IDX}_CMND})
+
+  # Set up the workig directory that this TEST_<IDX> CMND block will run in
+
+  SET(WORKING_DIR_SET)
+  IF (TEST_${CMND_IDX}_WORKING_DIRECTORY)
+    SET(WORKING_DIR_SET "${TEST_${CMND_IDX}_WORKING_DIRECTORY}")
+  ELSEIF(OVERALL_WORKING_DIRECTORY)
+    SET(WORKING_DIR_SET "${OVERALL_WORKING_DIRECTORY}")
+  ENDIF()
+
+  IF (WORKING_DIR_SET)
+    MESSAGE("  Running in working directory \"${WORKING_DIR_SET}\"\n")
+    SET(WORKING_DIR "${WORKING_DIR_SET}")
+  ELSE()
+    SET(WORKING_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+  ENDIF()
+
+  # Set the actual command that will be run with EXECUTE_PROCES()
+
+  SET(EXEC_CMND ${EXEC_CMND}
+    WORKING_DIRECTORY "${WORKING_DIR}"
+    )
+
+  # Set up the optional output file that the EXECUTE_PROCESS() command will write to
+
+  IF (TEST_${CMND_IDX}_OUTPUT_FILE)
+    IF (NOT  IS_ABSOLUTE  "${TEST_${CMND_IDX}_OUTPUT_FILE}")
+      SET(OUTPUT_FILE_USED "${WORKING_DIR}/${TEST_${CMND_IDX}_OUTPUT_FILE}")
+    ELSE()
+      SET(OUTPUT_FILE_USED "${TEST_${CMND_IDX}_OUTPUT_FILE}")
+    ENDIF()
+    MESSAGE("  Writing output to file \"${OUTPUT_FILE_USED}\"\n")
+  ENDIF()
+
+  # Run the actual command with EXECUTTE_PROCESS() (or just print what would run) ...
+
+  IF (NOT SHOW_COMMANDS_ONLY)
+
+    # Provide the test configuration in an environment variable.
+    IF(TEST_CONFIG)
+      SET(ENV{TEST_CONFIG} "${TEST_CONFIG}")
+    ENDIF(TEST_CONFIG)
+
+    EXECUTE_PROCESS(
+      ${EXEC_CMND}
+      OUTPUT_VARIABLE TEST_CMND_OUT
+      ERROR_VARIABLE TEST_CMND_OUT
+      RESULT_VARIABLE EXEC_RESULT
+      )
+
+    IF (TEST_${CMND_IDX}_OUTPUT_FILE)
+      FILE(WRITE "${OUTPUT_FILE_USED}" "${TEST_CMND_OUT}")
+    ENDIF()
+
+    MESSAGE("${OUTPUT_SEP}\n")
+
+    IF (NOT TEST_${CMND_IDX}_NO_ECHO_OUTPUT)
+      MESSAGE("${TEST_CMND_OUT}")
+    ELSE()
+      MESSAGE("NO_ECHO_OUTPUT\n")
+    ENDIF()
+
+  ELSE()
+
+    MESSAGE("\n*** Not running command on request ***")
+
+  ENDIF()
+
+  MESSAGE("${OUTPUT_SEP}\n")
+
+ENDMACRO()
 
 
+MACRO(DETERMINE_TEST_IDX_CMND_BLOCK_PASS_FAIL)
+
+  MESSAGE("TEST_${CMND_IDX}: Return code = ${EXEC_RESULT}")
+
+  # A) Apply first set of pass/fail logic
+  SET(TEST_CASE_PASSED FALSE)
+  IF (TEST_${CMND_IDX}_PASS_ANY)
+    SET(TEST_CASE_PASSED TRUE)
+    PRINT_SINGLE_CHECK_RESULT(
+      "TEST_${CMND_IDX}: Pass criteria = Pass Any"
+      ${TEST_CASE_PASSED} )
+  ELSEIF (TEST_${CMND_IDX}_PASS_REGULAR_EXPRESSION)
+    STRING(REGEX MATCH "${TEST_${CMND_IDX}_PASS_REGULAR_EXPRESSION}"
+      MATCH_STR "${TEST_CMND_OUT}" )
+    IF (MATCH_STR)
+      SET(TEST_CASE_PASSED TRUE)
+    ELSE()
+      SET(TEST_CASE_PASSED FALSE)
+    ENDIF()
+    PRINT_SINGLE_CHECK_RESULT(
+      "TEST_${CMND_IDX}: Pass criteria = Match REGEX {${TEST_${CMND_IDX}_PASS_REGULAR_EXPRESSION}}"
+      ${TEST_CASE_PASSED})
+  ELSEIF (TEST_${CMND_IDX}_PASS_REGULAR_EXPRESSION_ALL)
+    SET(TEST_CASE_PASSED TRUE)
+    FOREACH(REGEX_STR ${TEST_${CMND_IDX}_PASS_REGULAR_EXPRESSION_ALL})
+      STRING(REGEX MATCH "${REGEX_STR}" MATCH_STR "${TEST_CMND_OUT}" )
+      IF (NOT "${MATCH_STR}" STREQUAL "")
+        SET(THIS_REGEX_MATCHED  TRUE)
+      ELSE()
+        SET(THIS_REGEX_MATCHED  FALSE)
+      ENDIF()
+      IF (NOT  THIS_REGEX_MATCHED)
+        SET(TEST_CASE_PASSED FALSE)
+      ENDIF()
+      PRINT_SINGLE_CHECK_RESULT(
+        "TEST_${CMND_IDX}: Pass criteria = Match REGEX {${REGEX_STR}}"
+        ${THIS_REGEX_MATCHED} )
+    ENDFOREACH()
+  ELSE()
+    IF (EXEC_RESULT EQUAL 0)
+      SET(TEST_CASE_PASSED TRUE)
+    ELSE()
+      SET(TEST_CASE_PASSED FALSE)
+    ENDIF()
+    PRINT_SINGLE_CHECK_RESULT(
+      "TEST_${CMND_IDX}: Pass criteria = Zero return code"
+      ${TEST_CASE_PASSED} )
+  ENDIF()
+
+  # B) Check for failing regex matching?
+  IF (TEST_${CMND_IDX}_FAIL_REGULAR_EXPRESSION)
+    STRING(REGEX MATCH "${TEST_${CMND_IDX}_FAIL_REGULAR_EXPRESSION}"
+      MATCH_STR "${TEST_CMND_OUT}" )
+    IF (MATCH_STR)
+      SET(TEST_CASE_PASSED FALSE)
+    ENDIF()
+    PRINT_SINGLE_CHECK_RESULT(
+      "TEST_${CMND_IDX}: Pass criteria = Not match REGEX {${TEST_${CMND_IDX}_FAIL_REGULAR_EXPRESSION}}"
+     ${TEST_CASE_PASSED} )
+  ENDIF()
+
+  # C) Check for return code always 0?
+  IF (TEST_${CMND_IDX}_ALWAYS_FAIL_ON_NONZERO_RETURN)
+    IF (NOT EXEC_RESULT EQUAL 0)
+      SET(ALWAYS_FAIL_ON_NONZERO_RETURN_PASSED FALSE)
+      SET(TEST_CASE_PASSED FALSE)
+    ELSE()
+      SET(ALWAYS_FAIL_ON_NONZERO_RETURN_PASSED TRUE)
+    ENDIF()
+    PRINT_SINGLE_CHECK_RESULT(
+      "TEST_${CMND_IDX}: Pass criteria = ALWAYS_FAIL_ON_NONZERO_RETURN"
+      ${ALWAYS_FAIL_ON_NONZERO_RETURN_PASSED} )
+  ELSEIF (TEST_${CMND_IDX}_ALWAYS_FAIL_ON_ZERO_RETURN)
+    IF (EXEC_RESULT EQUAL 0)
+      SET(ALWAYS_FAIL_ON_ZERO_RETURN_PASSED FALSE)
+      SET(TEST_CASE_PASSED FALSE)
+    ELSE()
+      SET(ALWAYS_FAIL_ON_ZERO_RETURN_PASSED TRUE)
+    ENDIF()
+    PRINT_SINGLE_CHECK_RESULT(
+      "TEST_${CMND_IDX}: Pass criteria = ALWAYS_FAIL_ON_ZERO_RETURN"
+      ${ALWAYS_FAIL_ON_ZERO_RETURN_PASSED} )
+  ENDIF()
+
+  # D) Invert pass/fail result?
+  IF (TEST_${CMND_IDX}_WILL_FAIL)
+    IF (TEST_CASE_PASSED)
+      SET(TEST_CASE_PASSED FALSE)
+    ELSE()
+      SET(TEST_CASE_PASSED TRUE)
+    ENDIF()
+    PRINT_SINGLE_CHECK_RESULT(
+      "TEST_${CMND_IDX}: Pass criteria = WILL_FAIL (invert the above 'Pass critera')"
+      ${TEST_CASE_PASSED} )
+  ENDIF()
+
+ENDMACRO()
 
 
 FUNCTION(DRIVE_ADVANCED_TEST)
@@ -167,96 +351,17 @@ FUNCTION(DRIVE_ADVANCED_TEST)
       MESSAGE("${TEST_${CMND_IDX}_MESSAGE}\n")
     ENDIF()
 
-    # Address working directory for this TEST_<IDX> block if set
-    IF (TEST_${CMND_IDX}_WORKING_DIRECTORY)
-      IF (NOT  IS_ABSOLUTE  "${TEST_${CMND_IDX}_WORKING_DIRECTORY}")
-        SET(TEST_${CMND_IDX}_WORKING_DIRECTORY
-          ${BASE_WORKING_DIRECTORY}/${TEST_${CMND_IDX}_WORKING_DIRECTORY})
-      ENDIF()
-      DELETE_CREATE_WORKING_DIRECTORY("${TEST_${CMND_IDX}_WORKING_DIRECTORY}"
-        ${TEST_${CMND_IDX}_SKIP_CLEAN_WORKING_DIRECTORY})
-    ENDIF()
+    # Run the TEST_<IDX> block (Copy files or CMND)
 
     IF (TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR)
 
       MESSAGE(FATAL_ERROR "ToDo: Implement COPY_FILES_TO_TEST_DIR!")
 
-    ENDIF()
-
-    # Set up the TEST_<IDX> command block
-
-    JOIN( TEST_CMND_STR " " TRUE ${TEST_${CMND_IDX}_CMND} )
-    MESSAGE("Running: ${TEST_CMND_STR}\n")
-    SET(EXEC_CMND COMMAND ${TEST_${CMND_IDX}_CMND})
-
-    # Set up the workig directory that this TEST_<IDX> CMND block will run in
-
-    SET(WORKING_DIR_SET)
-    IF (TEST_${CMND_IDX}_WORKING_DIRECTORY)
-      SET(WORKING_DIR_SET "${TEST_${CMND_IDX}_WORKING_DIRECTORY}")
-    ELSEIF(OVERALL_WORKING_DIRECTORY)
-      SET(WORKING_DIR_SET "${OVERALL_WORKING_DIRECTORY}")
-    ENDIF()
-
-    IF (WORKING_DIR_SET)
-      MESSAGE("  Running in working directory \"${WORKING_DIR_SET}\"\n")
-      SET(WORKING_DIR "${WORKING_DIR_SET}")
-    ELSE()
-      SET(WORKING_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-    ENDIF()
-
-    # Set the actual command that will be run with EXECUTE_PROCES()
-
-    SET(EXEC_CMND ${EXEC_CMND}
-      WORKING_DIRECTORY "${WORKING_DIR}"
-      )
-
-    # Set up the optional output file that the EXECUTE_PROCESS() command will write to
-
-    IF (TEST_${CMND_IDX}_OUTPUT_FILE)
-      IF (NOT  IS_ABSOLUTE  "${TEST_${CMND_IDX}_OUTPUT_FILE}")
-        SET(OUTPUT_FILE_USED "${WORKING_DIR}/${TEST_${CMND_IDX}_OUTPUT_FILE}")
-      ELSE()
-        SET(OUTPUT_FILE_USED "${TEST_${CMND_IDX}_OUTPUT_FILE}")
-      ENDIF()
-      MESSAGE("  Writing output to file \"${OUTPUT_FILE_USED}\"\n")
-    ENDIF()
-
-    # Run the actual comand with EXECUTTE_PROCESS() (or just print what would run) ...
-
-    IF (NOT SHOW_COMMANDS_ONLY)
-
-      # Provide the test configuration in an environment variable.
-      IF(TEST_CONFIG)
-        SET(ENV{TEST_CONFIG} "${TEST_CONFIG}")
-      ENDIF(TEST_CONFIG)
-
-      EXECUTE_PROCESS(
-        ${EXEC_CMND}
-        OUTPUT_VARIABLE TEST_CMND_OUT
-        ERROR_VARIABLE TEST_CMND_OUT
-        RESULT_VARIABLE EXEC_RESULT
-        )
-
-      IF (TEST_${CMND_IDX}_OUTPUT_FILE)
-        FILE(WRITE "${OUTPUT_FILE_USED}" "${TEST_CMND_OUT}")
-      ENDIF()
-
-      MESSAGE("${OUTPUT_SEP}\n")
-
-      IF (NOT TEST_${CMND_IDX}_NO_ECHO_OUTPUT)
-        MESSAGE("${TEST_CMND_OUT}")
-      ELSE()
-        MESSAGE("NO_ECHO_OUTPUT\n")
-      ENDIF()
-
     ELSE()
 
-      MESSAGE("\n*** Not running command on request ***")
+      SETUP_AND_RUN_TEST_IDX_CMND_BLOCK()
 
     ENDIF()
-
-    MESSAGE("${OUTPUT_SEP}\n")
 
     # Print the load and/or timing info for TEST_<IDX> block
 
@@ -279,101 +384,19 @@ FUNCTION(DRIVE_ADVANCED_TEST)
 
     IF (NOT SHOW_COMMANDS_ONLY)
 
-      MESSAGE("TEST_${CMND_IDX}: Return code = ${EXEC_RESULT}")
+      # Determine pass/fail for TEST_<IDX> copy files or CMND
 
-      # A) Apply first set of pass/fail logic
-      SET(TEST_CASE_PASSED FALSE)
-      IF (TEST_${CMND_IDX}_PASS_ANY)
-        SET(TEST_CASE_PASSED TRUE)
-        PRINT_SINGLE_CHECK_RESULT(
-          "TEST_${CMND_IDX}: Pass criteria = Pass Any"
-          ${TEST_CASE_PASSED} )
-      ELSEIF (TEST_${CMND_IDX}_PASS_REGULAR_EXPRESSION)
-        STRING(REGEX MATCH "${TEST_${CMND_IDX}_PASS_REGULAR_EXPRESSION}"
-          MATCH_STR "${TEST_CMND_OUT}" )
-        IF (MATCH_STR)
-          SET(TEST_CASE_PASSED TRUE)
-        ELSE()
-          SET(TEST_CASE_PASSED FALSE)
-        ENDIF()
-        PRINT_SINGLE_CHECK_RESULT(
-          "TEST_${CMND_IDX}: Pass criteria = Match REGEX {${TEST_${CMND_IDX}_PASS_REGULAR_EXPRESSION}}"
-          ${TEST_CASE_PASSED})
-      ELSEIF (TEST_${CMND_IDX}_PASS_REGULAR_EXPRESSION_ALL)
-        SET(TEST_CASE_PASSED TRUE)
-        FOREACH(REGEX_STR ${TEST_${CMND_IDX}_PASS_REGULAR_EXPRESSION_ALL})
-          STRING(REGEX MATCH "${REGEX_STR}" MATCH_STR "${TEST_CMND_OUT}" )
-          IF (NOT "${MATCH_STR}" STREQUAL "")
-            SET(THIS_REGEX_MATCHED  TRUE)
-          ELSE()
-            SET(THIS_REGEX_MATCHED  FALSE)
-          ENDIF()
-          IF (NOT  THIS_REGEX_MATCHED)
-            SET(TEST_CASE_PASSED FALSE)
-          ENDIF()
-          PRINT_SINGLE_CHECK_RESULT(
-            "TEST_${CMND_IDX}: Pass criteria = Match REGEX {${REGEX_STR}}"
-            ${THIS_REGEX_MATCHED} )
-        ENDFOREACH()
+      IF (TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR)
+  
+        MESSAGE(FATAL_ERROR "ToDo: Implement COPY_FILES_TO_TEST_DIR!")
+  
       ELSE()
-        IF (EXEC_RESULT EQUAL 0)
-          SET(TEST_CASE_PASSED TRUE)
-        ELSE()
-          SET(TEST_CASE_PASSED FALSE)
-        ENDIF()
-        PRINT_SINGLE_CHECK_RESULT(
-          "TEST_${CMND_IDX}: Pass criteria = Zero return code"
-          ${TEST_CASE_PASSED} )
+  
+        DETERMINE_TEST_IDX_CMND_BLOCK_PASS_FAIL()
+  
       ENDIF()
 
-      # B) Check for failing regex matching?
-      IF (TEST_${CMND_IDX}_FAIL_REGULAR_EXPRESSION)
-        STRING(REGEX MATCH "${TEST_${CMND_IDX}_FAIL_REGULAR_EXPRESSION}"
-          MATCH_STR "${TEST_CMND_OUT}" )
-        IF (MATCH_STR)
-          SET(TEST_CASE_PASSED FALSE)
-        ENDIF()
-        PRINT_SINGLE_CHECK_RESULT(
-          "TEST_${CMND_IDX}: Pass criteria = Not match REGEX {${TEST_${CMND_IDX}_FAIL_REGULAR_EXPRESSION}}"
-         ${TEST_CASE_PASSED} )
-      ENDIF()
-
-      # C) Check for return code always 0?
-      IF (TEST_${CMND_IDX}_ALWAYS_FAIL_ON_NONZERO_RETURN)
-        IF (NOT EXEC_RESULT EQUAL 0)
-          SET(ALWAYS_FAIL_ON_NONZERO_RETURN_PASSED FALSE)
-          SET(TEST_CASE_PASSED FALSE)
-        ELSE()
-          SET(ALWAYS_FAIL_ON_NONZERO_RETURN_PASSED TRUE)
-        ENDIF()
-        PRINT_SINGLE_CHECK_RESULT(
-          "TEST_${CMND_IDX}: Pass criteria = ALWAYS_FAIL_ON_NONZERO_RETURN"
-          ${ALWAYS_FAIL_ON_NONZERO_RETURN_PASSED} )
-      ELSEIF (TEST_${CMND_IDX}_ALWAYS_FAIL_ON_ZERO_RETURN)
-        IF (EXEC_RESULT EQUAL 0)
-          SET(ALWAYS_FAIL_ON_ZERO_RETURN_PASSED FALSE)
-          SET(TEST_CASE_PASSED FALSE)
-        ELSE()
-          SET(ALWAYS_FAIL_ON_ZERO_RETURN_PASSED TRUE)
-        ENDIF()
-        PRINT_SINGLE_CHECK_RESULT(
-          "TEST_${CMND_IDX}: Pass criteria = ALWAYS_FAIL_ON_ZERO_RETURN"
-          ${ALWAYS_FAIL_ON_ZERO_RETURN_PASSED} )
-      ENDIF()
-
-      # D) Invert pass/fail result?
-      IF (TEST_${CMND_IDX}_WILL_FAIL)
-        IF (TEST_CASE_PASSED)
-          SET(TEST_CASE_PASSED FALSE)
-        ELSE()
-          SET(TEST_CASE_PASSED TRUE)
-        ENDIF()
-        PRINT_SINGLE_CHECK_RESULT(
-          "TEST_${CMND_IDX}: Pass criteria = WILL_FAIL (invert the above 'Pass critera')"
-          ${TEST_CASE_PASSED} )
-      ENDIF()
-
-      # E) Print final pass/fail for the TEST_<IDX> block
+      # Print final pass/fail for the TEST_<IDX> block
 
       IF (TEST_CASE_PASSED)
         MESSAGE("TEST_${CMND_IDX}: Result = PASSED")
