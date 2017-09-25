@@ -2,6 +2,14 @@
 Release Notes for TriBITS
 ----------------------------------------
 
+2017/09/30:
+
+(*) MINOR: Added TEST_<IDX> COPY_FILES_TO_TEST_DIR block for
+    TRIBITS_ADD_ADVANCED_TEST().  This was added in such a way so to avoid
+    clashing with existing usages of the script (since the new arguments
+    SOURCE_DIR and DEST_DIR are only parsed if COPY_FILES_TO_TEST_DIR is
+    listed in the TEST_<IDX> block.
+
 2017/09/05:
 
 (*) MINOR: Unparsed and otherwise ignored arguments are now flagged (see

@@ -578,3 +578,157 @@ TRIBITS_ADD_ADVANCED_TEST(
   # Above: Without the behavior of ALWAYS_FAIL_ON_NONZERO_RETURN, this test
   # will fail because the PASS_REGULAR_EXPRESSION_ALL match will pass and
   # WILL_FAIL will negate that.
+
+# TAAT() COPY_TO_TEST_DIR
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_REL_SOURCE_DIR_IMPLICIT_DEST_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR test_data
+  TEST_1 CMND cat ARGS test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+  # ToDo: Guard these for Linux systems or replace 'cat' with the right
+  # command on Windows systems.
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_ABS_SOURCE_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test_data"
+  TEST_1 CMND cat ARGS test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_IMPLICIT_SOURCE_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_c.txt
+  TEST_1 CMND cat ARGS test_file_c.txt
+    PASS_REGULAR_EXPRESSION "This is Test File C"
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_REL_DEST_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR test_data
+    DEST_DIR .
+  TEST_1 CMND cat ARGS test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_REL_DEST_DIR_SUBDIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR test_data
+    DEST_DIR subtestdir
+  TEST_1 CMND cat ARGS subtestdir/test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS subtestdir/test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_ABS_DEST_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR test_data
+    DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_ABS_DEST_DIR"
+  TEST_1 CMND cat ARGS test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_ABS_DEST_DIR
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  test_file_a.txt  test_file_b.txt
+    SOURCE_DIR test_data
+    DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_ABS_DEST_DIR"
+  TEST_1 CMND cat ARGS test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name_DRIVER
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS -DTRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCOPY_FILE_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/test_data
+      ${CMAKE_CURRENT_SOURCE_DIR}/TAATDriver/bad_file_name
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    PASS_REGULAR_EXPRESSION_ALL
+      "TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name: Added test [(]BASIC, PROCESSORS=1[)]"
+      "Generating done"
+  TEST_1 CMND make
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Error copying file .+/TAATDriver/bad_file_name/this_file_does_not_exist.txt. to .+/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name/"
+      "TEST_0: Result = FAILED"
+      "TEST_1: Result = PASSED"
+      "This is Test File A"
+      "TEST_2: Return code = 0"
+      "TEST_2: Pass criteria = Match REGEX .This is Test File A. .PASSED."
+      "TEST_2: Result = PASSED"                                
+      "OVERALL FINAL RESULT: TEST FAILED [(]TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name[)]"
+  )
+  # NOTE: The above test runs a ctest added with TAAT() and it ensures that
+  # bad file names are handled gracefully.  In this case, it ensures that the
+  # later TEST_<IDX> blocks are still run and can even pass (but the overall
+  # TAAT test fails).  This is a very strong test.  It actually asserts what
+  # is printed by TAAT() tests.  A more targeted test should really be added
+  # to do this.
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS -DTRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCOPY_FILE_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/test_data
+      ${CMAKE_CURRENT_SOURCE_DIR}/TAATDriver/bad_dest_dir
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    PASS_REGULAR_EXPRESSION_ALL
+      "TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir: Added test [(]BASIC, PROCESSORS=1[)]"
+      "Generating done"
+  TEST_1 CMND make
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Running: .mkdir. .read_only_dir."
+      "TEST_0: Result = PASSED"
+      "Running: .chmod. .a-w. .read_only_dir."
+      "TEST_1: Result = PASSED"
+      "Creating dest directory .*/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir/read_only_dir/subdir/"
+      "Error .*ing directory .*/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir/read_only_dir/subdir.[.]"
+      "Error copying file .*/CTestScriptsUnitTests/test_data/test_file_b.txt. to .*/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir/read_only_dir/subdir/."
+      "TEST_2: Result = FAILED"
+      "TEST_3: Result = PASSED"
+      "This is Test File A"
+      "TEST_4: Return code = 0"
+      "TEST_4: Pass criteria = Match REGEX .This is Test File A. .PASSED."
+      "TEST_4: Result = PASSED"                                
+      "OVERALL FINAL RESULT: TEST FAILED [(]TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir[)]"
+  )
+  # NOTE: The above test ensures that a bad dest dir creation attempt is
+  # handled gracefully.  Also note `cmake -E make_directory ...` with older
+  # CMake versions print "Error making directory ..." while newer versions
+  # print "Error creating director ...".  Hence, we need the silly "Error
+  # .*ing directory" regex above :-(
