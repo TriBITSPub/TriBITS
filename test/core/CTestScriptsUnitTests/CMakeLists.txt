@@ -578,3 +578,25 @@ TRIBITS_ADD_ADVANCED_TEST(
   # Above: Without the behavior of ALWAYS_FAIL_ON_NONZERO_RETURN, this test
   # will fail because the PASS_REGULAR_EXPRESSION_ALL match will pass and
   # WILL_FAIL will negate that.
+
+# TAAT() COPY_TO_TEST_DIR
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_default
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 COPY_FILES_TO_TEST_DIR  Test_file_a.txt  test_file_b.txt
+    SOURCE_DIR test_data
+  TEST_1 CMND cat ARGS test_file_a.txt
+    PASS_REGULAR_EXPRESSION "This is Test File A"
+  TEST_2 CMND cat ARGS test_file_b.txt
+    PASS_REGULAR_EXPRESSION "This is Test File B"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+# ToDo: Test when a file copy fails for some reason ...
+
+# ToDo: Test with an abs
+
+
+# ToDo: Add more unit tests that will require that arguments like 'FILES',
+# 'SOURCE_DIR' be ignored when parsing EXEC or CMND blocks!
