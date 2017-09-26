@@ -121,6 +121,10 @@ MACRO(SETUP_AND_RUN_TEST_IDX_COPY_FILES_BLOCK)
     IF (NOT MKDIR_COMMAND_RTN EQUAL 0)
       SET(TEST_CASE_PASSED FALSE)
     ENDIF()
+    # NOTE: Above, it would have been great to be able use FILE(MAKE_DIRECTORY
+    # ...)  but if that fails it will just abortS the cmake -P script.  There
+    # is no way to handle that gracefully.  Therefore, we have to use
+    # EXECUTE_PROCESS(cmake -E make_directory ...).
   ENDIF()
 
   # Copy the full list of files to the dest dir
@@ -133,6 +137,10 @@ MACRO(SETUP_AND_RUN_TEST_IDX_COPY_FILES_BLOCK)
   IF (NOT COPY_COMMAND_RTN EQUAL 0)
     SET(TEST_CASE_PASSED FALSE)
   ENDIF()
+  # NOTE: Above, it would have been great to be able use
+  # CONFIGURE_FILE(... COPYONLY) but if that fails it will just abortS the
+  # cmake -P script.  There is no way to handle that gracefully.  Therefore,
+  # we have to use EXECUTE_PROCESS(cmake -E copy ...).
 
   MESSAGE("${OUTPUT_SEP}\n")
 
