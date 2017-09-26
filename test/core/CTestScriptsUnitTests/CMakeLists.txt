@@ -677,20 +677,19 @@ TRIBITS_ADD_ADVANCED_TEST(
       ${CMAKE_CURRENT_SOURCE_DIR}/TAATDriver/bad_file_name
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
-      "TAAT_Driver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name: Added test [(]BASIC, PROCESSORS=1[)]"
+      "TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name: Added test [(]BASIC, PROCESSORS=1[)]"
       "Generating done"
   TEST_1 CMND make
   TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     PASS_REGULAR_EXPRESSION_ALL
-      "Error copying file .+/TAATDriver/bad_file_name/this_file_does_not_exist.txt. to .+/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name_DRIVER/TAAT_Driver_\
-TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name/"
+      "Error copying file .+/TAATDriver/bad_file_name/this_file_does_not_exist.txt. to .+/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name/"
       "TEST_0: Result = FAILED"
       "TEST_1: Result = PASSED"
       "This is Test File A"
       "TEST_2: Return code = 0"
       "TEST_2: Pass criteria = Match REGEX .This is Test File A. .PASSED."
       "TEST_2: Result = PASSED"                                
-      "OVERALL FINAL RESULT: TEST FAILED [(]TAAT_Driver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name[)]"
+      "OVERALL FINAL RESULT: TEST FAILED [(]TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name[)]"
   )
   # NOTE: Above is a very strong test.  It actually asserts what is printed by
   # TAAT() tests.  A more targeted test should really be added to do this.
