@@ -87,25 +87,14 @@ ENDFUNCTION()
 
 MACRO(SETUP_AND_RUN_TEST_IDX_COPY_FILES_BLOCK)
 
-  STRING(REPLACE "," ", "  FILES_TO_COPY_COMMA_SPACE
-    "${TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR}")
-
   MESSAGE(
-    "Copy files:\n"
-    "      ${FILES_TO_COPY_COMMA_SPACE}\n"
-    "  from:\n"
-    "      ${TEST_${CMND_IDX}_SOURCE_DIR}/\n"
+    "Copy files from:\n"
+    "    ${TEST_${CMND_IDX}_SOURCE_DIR}/\n"
     "  to:\n"
-    "      ${TEST_${CMND_IDX}_DEST_DIR}/\n")
+    "    ${TEST_${CMND_IDX}_DEST_DIR}/\n")
 
   SPLIT("${TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR}"
     "," COPY_FILES_TO_TEST_DIR_ARRAY)
-
-  SET(FILES_TO_COPY_ABS_PATH_LIST)
-  FOREACH(FILENAME ${COPY_FILES_TO_TEST_DIR_ARRAY})
-    LIST(APPEND FILES_TO_COPY_ABS_PATH_LIST
-      "${TEST_${CMND_IDX}_SOURCE_DIR}/${FILENAME}")
-  ENDFOREACH()
 
   SET(TEST_CASE_PASSED TRUE)
 
@@ -128,19 +117,27 @@ MACRO(SETUP_AND_RUN_TEST_IDX_COPY_FILES_BLOCK)
   ENDIF()
 
   # Copy the full list of files to the dest dir
-  EXECUTE_PROCESS(
-    COMMAND ${CMAKE_COMMAND} -E copy
-      ${FILES_TO_COPY_ABS_PATH_LIST}
-      "${TEST_${CMND_IDX}_DEST_DIR}/"
-    RESULT_VARIABLE COPY_COMMAND_RTN
-    )
-  IF (NOT COPY_COMMAND_RTN EQUAL 0)
-    SET(TEST_CASE_PASSED FALSE)
-  ENDIF()
+  FOREACH(FILENAME ${COPY_FILES_TO_TEST_DIR_ARRAY})
+    MESSAGE("Copy file ${FILENAME} ...") 
+    EXECUTE_PROCESS(
+      COMMAND ${CMAKE_COMMAND} -E copy
+        "${TEST_${CMND_IDX}_SOURCE_DIR}/${FILENAME}"
+        "${TEST_${CMND_IDX}_DEST_DIR}/"
+      RESULT_VARIABLE COPY_COMMAND_RTN
+      )
+    IF (NOT COPY_COMMAND_RTN EQUAL 0)
+      SET(TEST_CASE_PASSED FALSE)
+   ENDIF()
+  ENDFOREACH()
+
   # NOTE: Above, it would have been great to be able use
   # CONFIGURE_FILE(... COPYONLY) but if that fails it will just abortS the
   # cmake -P script.  There is no way to handle that gracefully.  Therefore,
-  # we have to use EXECUTE_PROCESS(cmake -E copy ...).
+  # we have to use EXECUTE_PROCESS(cmake -E copy ...).  Also, it would have
+  # been great to just copy the files all at once with `cmake -E copy
+  # <srcDir>/<file0> <srDir>/<file1> ... <distDir>/` but older versions of
+  # CMake don't support that mode.  They only support copying the files one at
+  # a time :-(
 
   MESSAGE("${OUTPUT_SEP}\n")
 
