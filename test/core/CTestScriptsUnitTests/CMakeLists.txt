@@ -674,7 +674,7 @@ TRIBITS_ADD_ADVANCED_TEST(
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS -DTRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DCOPY_FILE_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/test_data
-      ${CMAKE_CURRENT_SOURCE_DIR}/TAAT_COPY_FILES_TO_TEST_DIR/bad_file_name
+      ${CMAKE_CURRENT_SOURCE_DIR}/TAATDriver/bad_file_name
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "TAAT_Driver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name: Added test [(]BASIC, PROCESSORS=1[)]"
@@ -682,7 +682,7 @@ TRIBITS_ADD_ADVANCED_TEST(
   TEST_1 CMND make
   TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     PASS_REGULAR_EXPRESSION_ALL
-      "Error copying file .+/TAAT_COPY_FILES_TO_TEST_DIR/bad_file_name/this_file_does_not_exist.txt. to .+/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name_DRIVER/TAAT_Driver_\
+      "Error copying file .+/TAATDriver/bad_file_name/this_file_does_not_exist.txt. to .+/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name_DRIVER/TAAT_Driver_\
 TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name/"
       "TEST_0: Result = FAILED"
       "TEST_1: Result = PASSED"
