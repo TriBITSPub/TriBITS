@@ -691,8 +691,44 @@ TRIBITS_ADD_ADVANCED_TEST(
       "TEST_2: Result = PASSED"                                
       "OVERALL FINAL RESULT: TEST FAILED [(]TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name[)]"
   )
-  # NOTE: Above is a very strong test.  It actually asserts what is printed by
-  # TAAT() tests.  A more targeted test should really be added to do this.
+  # NOTE: The above test runs a ctest added with TAAT() and it ensures that
+  # bad file names are handled gracefully.  In this case, it ensures that the
+  # later TEST_<IDX> blocks are still run and can even pass (but the overall
+  # TAAT test fails).  This is a very strong test.  It actually asserts what
+  # is printed by TAAT() tests.  A more targeted test should really be added
+  # to do this.
+
+TRIBITS_ADD_ADVANCED_TEST(
+  CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS -DTRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCOPY_FILE_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}/test_data
+      ${CMAKE_CURRENT_SOURCE_DIR}/TAATDriver/bad_dest_dir
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    PASS_REGULAR_EXPRESSION_ALL
+      "TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir: Added test [(]BASIC, PROCESSORS=1[)]"
+      "Generating done"
+  TEST_1 CMND make
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Running: .mkdir. .read_only_dir."
+      "TEST_0: Result = PASSED"
+      "Running: .chmod. .a-w. .read_only_dir."
+      "TEST_1: Result = PASSED"
+      "Creating dest directory .*/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir/read_only_dir/subdir/"
+      "Error creating directory .*/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir/read_only_dir/subdir.[.]"
+      "Error copying file .*/CTestScriptsUnitTests/test_data/test_file_b.txt. to .*/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir/read_only_dir/subdir/."
+      "TEST_2: Result = FAILED"
+      "TEST_3: Result = PASSED"
+      "This is Test File A"
+      "TEST_4: Return code = 0"
+      "TEST_4: Pass criteria = Match REGEX .This is Test File A. .PASSED."
+      "TEST_4: Result = PASSED"                                
+      "OVERALL FINAL RESULT: TEST FAILED [(]TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir[)]"
+  )
+  # NOTE: The above test ensures that a bad dest dir creation attempt is
+  # handled gracefully.
 
 # ToDo: Test passing more than one arg for SOURCE_DIR and DEST_DIR and catching this at configure time ...
 

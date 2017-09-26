@@ -107,24 +107,34 @@ MACRO(SETUP_AND_RUN_TEST_IDX_COPY_FILES_BLOCK)
       "${TEST_${CMND_IDX}_SOURCE_DIR}/${FILENAME}")
   ENDFOREACH()
 
+  SET(TEST_CASE_PASSED TRUE)
+
   MESSAGE("${OUTPUT_SEP}\n")
 
-  FILE(MAKE_DIRECTORY "${TEST_${CMND_IDX}_DEST_DIR}")
+  # Make the dest directory if not exists (cmake -E copy will not create it)
+  IF (NOT EXISTS "${TEST_${CMND_IDX}_DEST_DIR}")
+    MESSAGE("Creating dest directory ${TEST_${CMND_IDX}_DEST_DIR}/ ...")
+    EXECUTE_PROCESS(
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${TEST_${CMND_IDX}_DEST_DIR}"
+      RESULT_VARIABLE MKDIR_COMMAND_RTN
+      )
+    IF (NOT MKDIR_COMMAND_RTN EQUAL 0)
+      SET(TEST_CASE_PASSED FALSE)
+    ENDIF()
+  ENDIF()
 
+  # Copy the full list of files to the dest dir
   EXECUTE_PROCESS(
     COMMAND ${CMAKE_COMMAND} -E copy
       ${FILES_TO_COPY_ABS_PATH_LIST}
       "${TEST_${CMND_IDX}_DEST_DIR}/"
     RESULT_VARIABLE COPY_COMMAND_RTN
     )
-
-  MESSAGE("${OUTPUT_SEP}\n")
-
-  IF (COPY_COMMAND_RTN EQUAL 0)
-    SET(TEST_CASE_PASSED TRUE)
-  ELSE()
+  IF (NOT COPY_COMMAND_RTN EQUAL 0)
     SET(TEST_CASE_PASSED FALSE)
   ENDIF()
+
+  MESSAGE("${OUTPUT_SEP}\n")
 
   MESSAGE("") # Need a vertical space for readability of the output
 
