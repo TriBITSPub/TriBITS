@@ -87,27 +87,46 @@ ENDFUNCTION()
 
 MACRO(SETUP_AND_RUN_TEST_IDX_COPY_FILES_BLOCK)
 
+  STRING(REPLACE "," ", "  FILES_TO_COPY_COMMA_SPACE
+    "${TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR}")
+
   MESSAGE(
-    "Copy files from:\n"
-    "    '${TEST_${CMND_IDX}_SOURCE_DIR}/'\n"
+    "Copy files:\n"
+    "      ${FILES_TO_COPY_COMMA_SPACE}\n"
+    "  from:\n"
+    "      ${TEST_${CMND_IDX}_SOURCE_DIR}/\n"
     "  to:\n"
-    "    '${TEST_${CMND_IDX}_DEST_DIR}/' ...\n")
+    "      ${TEST_${CMND_IDX}_DEST_DIR}/\n")
 
   SPLIT("${TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR}"
     "," COPY_FILES_TO_TEST_DIR_ARRAY)
 
-  SET(TEST_CASE_PASSED TRUE)
+  SET(FILES_TO_COPY_ABS_PATH_LIST)
   FOREACH(FILENAME ${COPY_FILES_TO_TEST_DIR_ARRAY})
-    MESSAGE("  ${FILENAME} ...")
-    CONFIGURE_FILE(
-      "${TEST_${CMND_IDX}_SOURCE_DIR}/${FILENAME}"
-      "${TEST_${CMND_IDX}_DEST_DIR}/${FILENAME}"
-      COPYONLY
-      )
-    # ToDo: Detect file copy failure and react accordingly
+    LIST(APPEND FILES_TO_COPY_ABS_PATH_LIST
+      "${TEST_${CMND_IDX}_SOURCE_DIR}/${FILENAME}")
   ENDFOREACH()
 
-  MESSAGE("")
+  MESSAGE("${OUTPUT_SEP}\n")
+
+  FILE(MAKE_DIRECTORY "${TEST_${CMND_IDX}_DEST_DIR}")
+
+  EXECUTE_PROCESS(
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${FILES_TO_COPY_ABS_PATH_LIST}
+      "${TEST_${CMND_IDX}_DEST_DIR}/"
+    RESULT_VARIABLE COPY_COMMAND_RTN
+    )
+
+  MESSAGE("${OUTPUT_SEP}\n")
+
+  IF (COPY_COMMAND_RTN EQUAL 0)
+    SET(TEST_CASE_PASSED TRUE)
+  ELSE()
+    SET(TEST_CASE_PASSED FALSE)
+  ENDIF()
+
+  MESSAGE("") # Need a vertical space for readability of the output
 
 ENDMACRO()
 
