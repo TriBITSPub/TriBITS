@@ -717,7 +717,7 @@ TRIBITS_ADD_ADVANCED_TEST(
       "Running: .chmod. .a-w. .read_only_dir."
       "TEST_1: Result = PASSED"
       "Creating dest directory .*/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir/read_only_dir/subdir/"
-      "Error creating directory .*/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir/read_only_dir/subdir.[.]"
+      "Error .*ing directory .*/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir/read_only_dir/subdir.[.]"
       "Error copying file .*/CTestScriptsUnitTests/test_data/test_file_b.txt. to .*/TriBITS_CTestScripts_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir_DRIVER/TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir/read_only_dir/subdir/."
       "TEST_2: Result = FAILED"
       "TEST_3: Result = PASSED"
@@ -728,7 +728,10 @@ TRIBITS_ADD_ADVANCED_TEST(
       "OVERALL FINAL RESULT: TEST FAILED [(]TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir[)]"
   )
   # NOTE: The above test ensures that a bad dest dir creation attempt is
-  # handled gracefully.
+  # handled gracefully.  Also note `cmake -E make_directory ...` with older
+  # CMake versions print "Error making directory ..." while newer versions
+  # print "Error creating director ...".  Hence, we need the silly "Error
+  # .*ing directory" regex above :-(
 
 # ToDo: Test passing more than one arg for SOURCE_DIR and DEST_DIR and catching this at configure time ...
 
