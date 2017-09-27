@@ -89,15 +89,13 @@ INCLUDE(PrintVar)
 # than just grepping STDOUT (e.g. by running separate post-processing programs
 # to examine output files).
 #
-# The test is only added if tests are enabled for the SE package
-# (i.e. `${PACKAGE_NAME}_ENABLE_TESTS`_) or the parent package (if this is a
-# subpackage) (i.e. ``${PARENT_PACKAGE_NAME}_ENABLE_TESTS``).  (NOTE: A more
-# efficient way to optionally enable tests is to put them in a ``test/``
-# subdir and then include that subdir with `TRIBITS_ADD_TEST_DIRECTORIES()`_.)
+# For more details on these arguments, see `TEST_<idx> EXEC/CMND Test Blocks
+# and Arguments (TRIBITS_ADD_ADVANCED_TEST())`_.
 #
-# Each atomic test case is either a package-built executable or just a basic
-# command.  An atomic test command block ``TEST_<idx>`` (i.e. ``TEST_0``,
-# ``TEST_1``, ..., up to ``TEST_19``) takes the form::
+# The most common form of an atomic test block ``TEST_<idx>`` is either a
+# package-built executable or just a basic command.  An atomic test command
+# block ``TEST_<idx>`` (i.e. ``TEST_0``, ``TEST_1``, ..., up to ``TEST_19``)
+# takes the form::
 #
 #   TEST_<idx>
 #      (EXEC <exeRootName> [NOEXEPREFIX] [NOEXESUFFIX] [ADD_DIR_TO_NAME]
@@ -119,13 +117,49 @@ INCLUDE(PrintVar)
 #      [ALWAYS_FAIL_ON_NONZERO_RETURN | ALWAYS_FAIL_ON_ZERO_RETURN]
 #      [WILL_FAIL]
 #
-# By default, each and every atomic test or command needs to pass (as defined below) in
-# order for the overall test to pass.
+# The other form of ``TEST_<idx>`` block supported is for copying files and
+# takes the form::
+#
+#   TEST_<idx>
+#     COPY_FILES_TO_TEST_DIR <file0> <file1> ... <filen>
+#     [SOURCE_DIR <srcDir>]
+#     [DEST_DIR <destDir>]
+#
+# This makes it easy to copy files from the source tree (or other location) to
+# inside of the test directory (usually created with ``OVERALL_WORKING_DIR
+# TEST_NAME``) so that tests can run in their own private working directory
+# (and so these files get deleted and recopied each time the test runs).  This
+# approach has several advantages:
+#
+# * One can modify the input files and then just run the test with ``ctest``
+#   in an iterative manner (and not have to configure again when using
+#   ``CONFIGURE_FILE( ... COPYONLY)`` or build again when using
+#   ``TRIBITS_COPY_FILES_TO_BINARY_DIR()`` in order to copy files).
+#
+# * When using ``OVERALL_WORKING_DIR TEST_NAME``, the test directory gets blow
+#   away every time before it runs and therefore any old files are deleted
+#   before the test gets run again (which avoids the problem of having a test
+#   pass looking for the old files that will not be there when someone
+#   configures and builds from scratch).
+#
+# For more information on the arguments for a ``TEST_<idx>``
+# ``COPY_FILES_TO_TEST_DIR`` block, see `TEST_<idx> COPY_FILES_TO_TEST_DIR
+# Test Blocks and Arguments (TRIBITS_ADD_ADVANCED_TEST())`_.
+# 
+# By default, each and every atomic ``TEST_<idx>`` command (or file copy)
+# needs to pass (as defined below) in order for the overall test to pass.
+#
+# Finally, the test is only added if tests are enabled for the SE package
+# (i.e. `${PACKAGE_NAME}_ENABLE_TESTS`_) or the parent package (if this is a
+# subpackage) (i.e. ``${PARENT_PACKAGE_NAME}_ENABLE_TESTS``).  (NOTE: A more
+# efficient way to optionally enable tests is to put them in a ``test/``
+# subdir and then include that subdir with `TRIBITS_ADD_TEST_DIRECTORIES()`_.)
 #
 # *Sections:*
 #
 # * `Overall Arguments (TRIBITS_ADD_ADVANCED_TEST())`_
-# * `TEST_<idx> Test Blocks and Arguments (TRIBITS_ADD_ADVANCED_TEST())`_
+# * `TEST_<idx> EXEC/CMND Test Blocks and Arguments (TRIBITS_ADD_ADVANCED_TEST())`_
+# * `TEST_<idx> COPY_FILES_TO_TEST_DIR Test Blocks and Arguments (TRIBITS_ADD_ADVANCED_TEST())`_
 # * `Test case Pass/Fail (TRIBITS_ADD_ADVANCED_TEST())`_
 # * `Overall Pass/Fail (TRIBITS_ADD_ADVANCED_TEST())`_
 # * `Argument Parsing and Ordering (TRIBITS_ADD_ADVANCED_TEST())`_
@@ -134,6 +168,7 @@ INCLUDE(PrintVar)
 # * `Running multiple tests at the same time (TRIBITS_ADD_ADVANCED_TEST())`_
 # * `Disabling Tests Externally (TRIBITS_ADD_ADVANCED_TEST())`_
 # * `Debugging and Examining Test Generation (TRIBITS_ADD_ADVANCED_TEST())`_
+# * `Using TRIBITS_ADD_ADVANCED_TEST() in non-TriBITS CMake projects`_
 #
 # .. _Overall Arguments (TRIBITS_ADD_ADVANCED_TEST()):
 #
@@ -265,13 +300,14 @@ INCLUDE(PrintVar)
 #     test properties (see `Setting additional test properties
 #     (TRIBITS_ADD_ADVANCED_TEST())`_).
 #
-# .. _TEST_<idx> Test Blocks and Arguments (TRIBITS_ADD_ADVANCED_TEST()):
+# .. _TEST_<idx> EXEC/CMND Test Blocks and Arguments (TRIBITS_ADD_ADVANCED_TEST()):
 #
-# **TEST_<idx> Test Blocks and Arguments (TRIBITS_ADD_ADVANCED_TEST())**
+# **TEST_<idx> EXEC/CMND Test Blocks and Arguments (TRIBITS_ADD_ADVANCED_TEST())**
 #
-# Each test command block ``TEST_<idx>`` runs either a package-built test
-# executable or some general command executable and is defined as either
-# ``EXEC <exeRootName>`` or ``CMND <cmndExec>`` with the arguments:
+# Each test general command block ``TEST_<idx>`` runs either a package-built
+# test executable or some general command executable and is defined as either
+# ``EXEC <exeRootName>`` or an arbitrary command ``CMND <cmndExec>`` with the
+# arguments:
 #
 #   ``EXEC <exeRootName> [NOEXEPREFIX] [NOEXESUFFIX] [ADD_DIR_TO_NAME]
 #   [DIRECTORY <dir>]``
@@ -474,11 +510,44 @@ INCLUDE(PrintVar)
 # the resulting behavior is undefined.  This restriction will be removed in a
 # future version of TriBITS.
 #
+# .. _TEST_<idx> COPY_FILES_TO_TEST_DIR Test Blocks and Arguments (TRIBITS_ADD_ADVANCED_TEST()):
+#
+# **TEST_<idx> COPY_FILES_TO_TEST_DIR Test Blocks and Arguments (TRIBITS_ADD_ADVANCED_TEST())**
+#
+# The arguments for the ``TEST_<idx>`` ``COPY_FILES_TO_TEST_DIR`` block are:
+#
+#   ``COPY_FILES_TO_TEST_DIR <file0> <file1> ... <filen>``
+#
+#     Required list of 1 or more file names for files that will be copied from
+#     the ``<srcDir>/`` to ``<destDir>/``.
+#
+#   ``SOURCE_DIR <srcDir>``
+#
+#     Optional source directory where the files will be copied from.  If
+#     ``<srcDir>`` is not given, then it is assumed to be
+#     ``${CMAKE_CURRENT_SOURCE_DIR}``.  If ``<srcDir>`` is given but is a
+#     relative path, then it is interpreted relative to
+#     ``${CMAKE_CURRENT_SOURCE_DIR}``.  If ``<srcDir>`` is an absolute path,
+#     then that path is used without modification.
+#
+#   ``DEST_DIR <destDir>``
+#
+#     Optional destination directory where the files will be copied to.  If
+#     ``<destDir>`` is not given, then it is assumed to be the working
+#     directory where the test is running (typically a new directory created
+#     under ``${CMAKE_CURRENT_BINARY_DIR}`` when ``OVERALL_WORKING_DIR
+#     TEST_NAME`` is given).  If ``<destDir>`` is given but is a relative
+#     path, then it is interpreted relative to the current test working
+#     directory.  If ``<destDir>`` is an absolute path, then that path is used
+#     without modification.  If ``<destDir>`` does not exist, then it will be
+#     created (including several directory levels deep if needed).
+#
 # .. _Test case Pass/Fail (TRIBITS_ADD_ADVANCED_TEST()):
 #
 # **Test case Pass/Fail (TRIBITS_ADD_ADVANCED_TEST())**
 #
-# The logic for how pass/fail for a test case ``TEST_<IDX>`` is applied is::
+# The logic for how pass/fail for a ``TEST_<IDX>`` ``EXEC`` or ``CMND`` case
+# is applied is given by::
 #
 #   # A) Apply first set of pass/fail logic
 #   TEST_CASE_PASSED = FALSE
@@ -688,6 +757,39 @@ INCLUDE(PrintVar)
 # examine the generated file ``<testName>.cmake`` in the current binary
 # directory (see `Implementation Details (TRIBITS_ADD_ADVANCED_TEST())`_) and
 # the generated ``CTestTestfile.cmake`` file that should list this test case.
+#
+# .. _Using TRIBITS_ADD_ADVANCED_TEST() in non-TriBITS CMake projects:
+#
+# **Using TRIBITS_ADD_ADVANCED_TEST() in non-TriBITS CMake projects**
+#
+# The function ``TRIBITS_ADD_ADVANCED_TEST()`` can be used to add tests in
+# non-TriBITS projects.  To do so, one just needs to set the variables
+# ``PROJECT_NAME``, ``PACKAGE_NAME`` (which could be the same as
+# ``PROJECT_NAME``), ``${PACKAGE_NAME}_ENABLE_TESTS=TRUE``, and
+# ``${PROJECT_NAME}_TRIBITS_DIR`` (pointing to the TriBITS location).  For example,
+# a valid project can be a simple as::
+#
+#   CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11)
+#   SET(PROJECT_NAME TAATDriver)
+#   PROJECT(${PROJECT_NAME} NONE)
+#   SET(${PROJECT_NAME}_TRACE_ADD_TEST TRUE)
+#   SET(${PROJECT_NAME}_TRIBITS_DIR ""  CACHE FILEPATH
+#     "Location of TriBITS to use." ) 
+#   SET(PACKAGE_NAME ${PROJECT_NAME})
+#   SET(${PACKAGE_NAME}_ENABLE_TESTS TRUE)
+#   SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+#     ${TRIBITS_DIR}/core/utils
+#     ${TRIBITS_DIR}/core/package_arch )
+#   INCLUDE(TribitsAddAdvancedTest)
+#   INCLUDE(CTest)
+#   ENABLE_TESTING()
+#   
+#   TRIBITS_ADD_ADVANCED_TEST(
+#     TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name
+#     OVERALL_WORKING_DIRECTORY TEST_NAME
+#     TEST_0 CMND echo ARGS "Hello World!"
+#       PASS_REGULAR_EXPRESIOIN "Hello World"
+#     )
 #
 FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
