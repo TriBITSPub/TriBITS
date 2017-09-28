@@ -5873,14 +5873,18 @@ The following steps describe how to submit results to a CDash site using the
   Once the CDash project and the `<projectDir>/CTestConfig.cmake`_ and
   `<projectDir>/cmake/ctest/CTestCustom.cmake.in`_ files are created, one
   perform an experimental submission by just configuring the project as normal
-  and then running the build target::
+  (except configuring additionally with ``-DCTEST_BUILD_FLAGS=-j8`` and
+  ``-DCTEST_PARALLEL_LEVEL=8`` to use parallelism in the build and testing in
+  the ``ctest -S`` script) and then runningq the build target::
 
     make dashboard
 
   That will configure, build, test, and submit results to the CDash site to
-  the ``Experimental`` track of the target CDash project.
+  the ``Experimental`` track of the target CDash project (see `Dashboard
+  Submissions`_).
 
-  To work out issue locally without spamming the CDash site, one can run with:
+  To work out problems locally without spamming the CDash site, one can run
+  with::
 
     env CTEST_DO_SUBMIT=OFF make dashboard
 
@@ -5889,11 +5893,11 @@ The following steps describe how to submit results to a CDash site using the
   configure time. For example, to submit TribitsExampleProject results to a
   different CDash site, configure with::
 
-    ctest \
+    cmake \
     -DCTEST_DROP_SITE=testing.sandia.gov/cdash \
     -DCTEST_PROJECT_NAME=TribitsExProj \
     -DCTEST_DROP_LOCATION="/submit.php?project=TribitsExProj" \
-    [other options] \
+    [other cmake options] \
     <baseDir>/TribitsExamplProject
 
   and then run ``make dashboard``.
@@ -5941,7 +5945,7 @@ The following steps describe how to submit results to a CDash site using the
          &> console.out
 
   where ``TRIBITS_DIR`` is an env var that points to the location of the
-  TriBITS/tribits directory on the local machine (and the location of the
+  ``TriBITS/tribits`` directory on the local machine (and the location of the
   CDash site and project is changed, since the free my.cdash.org site can only
   accept as small number of builds each day).
 
@@ -5961,15 +5965,22 @@ The following steps describe how to submit results to a CDash site using the
 
   * Travis CI can run them to respond to GitHub pushes.
 
+  * Use the legacy `TriBITS Dashboard Driver`_ system (not recommended).
+
   The setup of Jenkins, Travis CI and other more sophisticated automated
   testing systems will not be described here.  What will be briefly outlined
   below is the setup using cron jobs on a Linux machine.  That is sufficient
   for most smaller projects and provides tremendous value.
 
   To set up an automated build using a cron job, one will typically create a
-  shell driver script that sets the env and then calls the `ctest -S <script>`
-  command.  Then one just adds a call to that shell driver script using
-  `crontab -e`.  That is about all there is to it.
+  shell driver script that sets the env and then calls the ``ctest -S
+  <script>`` command.  Then one just adds a call to that shell driver script
+  using ``crontab -e``.  That is about all there is to it.
+
+  .. ToDo: Add some more details and examples on how to do this, using
+  .. TribitsExampleProject implementations.  In particular, you need two
+  .. clones of your base git repo.  One to provide the CTest -S script, and
+  .. the other cloned and updated by the CTest driver script.
 
 Additional Topics
 =================
@@ -7089,6 +7100,12 @@ However, this is the most confusing and immature part of the TriBITS system.
 The `TriBITS Package-by-Package CTest/Dash Driver`_ system using the
 `TRIBITS_CTEST_DRIVER()`_ can be used without this TriBITS Dashboard Driver
 (TDD) system.
+
+However, this TriBITS subsystem is not well tested with automated tests, is
+difficult to extend and test manually, and has other problems.  Therefore, it
+is not recommended that projects adopt the usage of this subsystem.  A simple
+set of cron jobs or a tool like Jenkins is likely a better option (if done
+carefully).
 
 .. ToDo: Import and format the contents of tribits/ctest/README related to
 .. this topic into this section.
