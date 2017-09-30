@@ -54,6 +54,7 @@ INCLUDE(TribitsAddAdvancedTest)
 INCLUDE(TribitsAddExecutableAndTest)
 INCLUDE(TribitsETISupport)
 INCLUDE(TribitsFindPythonInterp)
+INCLUDE(TribitsStandardizePaths)
 INCLUDE(TribitsTplFindIncludeDirsAndLibraries)
 INCLUDE(UnitTestHelpers)
 INCLUDE(GlobalSet)
@@ -181,6 +182,23 @@ FUNCTION(UNITTEST_TRIBITS_FIND_PYTHON_INTERP)
   TRIBITS_FIND_PYTHON_INTERP()
   UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;Error,; PythonInterp_FIND_VERSION=2.3 < 2.6; is not allowed!;-- ;PYTHON_EXECUTABLE='/dummy'")
+
+ENDFUNCTION()
+
+
+FUNCTION(UNITEST_TRIBITS_STANDARDIZE_ABS_PATHS)
+
+  MESSAGE("\n***")
+  MESSAGE("*** Testing TRIBITS_STANDARDIZE_ABS_PATHS()")
+  MESSAGE("***\n")
+
+  TRIBITS_STANDARDIZE_ABS_PATHS(STANDARDIZED_ABS_PATHS
+    "/okay/abs/path"
+    "/abs/rel/path/../../other/path"
+    "/final/okay/path"
+    )
+  UNITTEST_COMPARE_CONST(STANDARDIZED_ABS_PATHS
+    "/okay/abs/path;/abs/other/path;/final/okay/path")
 
 ENDFUNCTION()
 
@@ -3319,6 +3337,7 @@ MESSAGE("***\n")
 
 UNITTEST_APPEND_STRING_VAR()
 UNITTEST_TRIBITS_FIND_PYTHON_INTERP()
+UNITEST_TRIBITS_STANDARDIZE_ABS_PATHS()
 UNITEST_TRIBITS_MISC()
 UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE()
 
@@ -3372,4 +3391,4 @@ MESSAGE("*** Determine final result of all unit tests")
 MESSAGE("***\n")
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(506)
+UNITTEST_FINAL_RESULT(507)
