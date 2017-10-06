@@ -173,7 +173,7 @@ CMakLists file but not in any others ::
   TRIBITS_ADD_LIBRARY(library_name SOURCES ${example_srcs} HEADERS ${example_headers})
 
 
-Examples of Dependencies.camke files
+Examples of Dependencies.cmake files
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In Addition to the CMakeLists files described above, you will also
@@ -365,6 +365,8 @@ Testing category (Required)
 - *EX (Experimental)* - TPL is experimental, unstable and/or difficult to
   maintain.
 
+The recommendation is to list all TPLs as "PT"
+
 
 Version.cmake
 -------------
@@ -419,5 +421,48 @@ Here is an examlpe of a project CMakeLists::
 
 
 
-TPL find modules
------------------
+TriBITS Repositories
+--------------------
+
+In the simplest case your project will use packages that are in the
+same repository as your project but his does not have to be the case.
+Packages may be defined in a TriBITS repository that can then be used
+by your project by adding the extra repositories in a file
+"<projectDir>/cmake/ExtraRepositoriesList.cmake" which sets up the
+repositories with a call to::
+
+  TRIBITS_PROJECT_DEFINE_EXTRA_REPOSITORIES()
+
+such as ::
+
+  TRIBITS_PROJECT_DEFINE_EXTRA_REPOSITORIES(
+   <REPO_NAME> <REPO_DIR> <REPO_VCTYPE> <REPO_URL> <REPO_PACKSTAT> <REPO_CLASSIFICATION>
+    ...
+  )
+
+where each line is one repo and
+
+- **REPO_NAME** is the name ofthe repo
+
+- **REPO_DIR** is the relative path to the repo (asssumed to be
+  ./REPO_NAME/ if it is blank)
+
+- **REPO_VCTYPE** the type of version control used for this repo (must
+  be: "GIT", "SVN", or "")
+
+- **REPO_URL** the url to the repo (can be "". if REPO_VCTYPE is ""
+  then this must be "")
+
+- **REPO_PACKSTAT** indicates if this is a TriBITS repository with
+  packages or not.  "NOPACKAGES" means this repo does not contain
+  TriBITS packages.  "HASPACKAGES, PRE" means this repo does have
+  packages and you would like them to be processed before the packages
+  listed by your project because packages in your project depend on
+  the packages in this repo.  "HASPACKAGES, POST" means this repo has
+  packages and you would like for them to be processed after the
+  packages listed in your project because the packages in this repo
+  depend on the packages in your project
+
+- **REPO_CLASSIFICATION** indicates when this repo should be included
+  for testing must be: "Continuous", "Nightly", or "Experimental"
+

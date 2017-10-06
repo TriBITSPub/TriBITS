@@ -24,3 +24,4 @@ fi
 make_doc TribitsTutorial_ConvertAProject
 make_doc TribitsTutorial_Dependencies
 make_doc TribitsTutorial_HelloWorld
+make_doc TribitsTutorial_ProjectStructure
