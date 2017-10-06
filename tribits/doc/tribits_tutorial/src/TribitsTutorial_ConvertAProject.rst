@@ -201,10 +201,10 @@ Linking libraries
 
 If you are building more than one target in a package you may be
 accustomed to calling TARGET_LINK_LIBRARY() to tell camke to build the
-target against some libabry.  If the library is being built in the
+target against some library.  If the library is being built in the
 same package as your target, you do not need to do this because
-Tribits will automatically link agains any libraies built in the same
-package.  Additionally you do not need to do this for targats built in
+Tribits will automatically link against any libraies built in the same
+package.  Additionally you do not need to do this for targets built in
 other packages because tribits will link against any libraries built
 in packages that the current package depends on.  If you are calling
 TARGET_LINK_LIBRARY() then it is either redundant, or it indicates
