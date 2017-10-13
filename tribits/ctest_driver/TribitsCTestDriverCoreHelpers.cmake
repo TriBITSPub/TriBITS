@@ -1464,7 +1464,16 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
   ENDIF()
 
   #
-  # G) Determine final pass/fail by gathering list of failing packages
+  # G) Submit the update results to trigger the CDash notification email ...
+  #
+
+  IF (CTEST_DO_SUBMIT)
+    MESSAGE("\nSubmit the update file that will trigger the notification email ...\n")
+    TRIBITS_CTEST_SUBMIT( PARTS update )
+  ENDIF()
+
+  #
+  # H) Determine final pass/fail by gathering list of failing packages
   #
 
   IF (NOT AAO_CONFIGURE_PASSED)
