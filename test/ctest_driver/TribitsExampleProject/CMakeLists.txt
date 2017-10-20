@@ -600,6 +600,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_ALL_PASS
     CMND env
     ARGS
       CTEST_BUILD_NAME=${PROJECT_NAME}_CTestDriver_PBP_Dashboard_ST_ALL_PASS
+      CTEST_DASHBOARD_ROOT=
       make dashboard
     PASS_REGULAR_EXPRESSION_ALL
       "Running package-by-package experimental dashboard"
@@ -661,6 +662,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
     CMND env
     ARGS
       CTEST_BUILD_NAME=${PROJECT_NAME}_CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
+      CTEST_DASHBOARD_ROOT=
       make dashboard
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx WrapExternal 2"
@@ -1218,6 +1220,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       CMND env
       ARGS
         CTEST_BUILD_NAME=${PROJECT_NAME}_CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_ALL_PASS
+        CTEST_DASHBOARD_ROOT=
         make dashboard
       PASS_REGULAR_EXPRESSION_ALL
         "Running all-at-once experimental dashboard"
@@ -1261,6 +1264,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       CMND env
       ARGS
         CTEST_BUILD_NAME=${PROJECT_NAME}_CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_SimpleCxx_PASS
+        CTEST_DASHBOARD_ROOT=
         make dashboard
       PASS_REGULAR_EXPRESSION_ALL
 	"Configure, build, test and submit results all-at-once for all enabled packages"
@@ -1313,6 +1317,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       CMND env
       ARGS
         CTEST_BUILD_NAME=${PROJECT_NAME}_CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_PackagesSubset_PASS
+        CTEST_DASHBOARD_ROOT=
         make dashboard
       PASS_REGULAR_EXPRESSION_ALL
 	"Configure, build, test and submit results all-at-once for all enabled packages"
