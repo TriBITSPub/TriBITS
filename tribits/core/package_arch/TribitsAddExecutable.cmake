@@ -77,6 +77,8 @@ INCLUDE(CMakeParseArguments)
 #     [LINKER_LANGUAGE (C|CXX|Fortran)]
 #     [TARGET_DEFINES -D<define0> -D<define1> ...]
 #     [INSTALLABLE]
+#     [WIN32]
+#     [MACOSX_BUNDLE]
 #     [ADDED_EXE_TARGET_NAME_OUT <exeTargetName>]
 #     )
 #
@@ -247,6 +249,16 @@ INCLUDE(CMakeParseArguments)
 #     executable into the ``${CMAKE_INSTALL_PREFIX}/bin/`` directory (see
 #     `Install Target (TRIBITS_ADD_EXECUTABLE())`_).
 #
+#   ``WIN32``
+#
+#     If passed in, then the property WIN32_EXECUTABLE will be set on the target
+#     created. This makes it a GUI executable instead of a console application.
+#
+#   ``MACOSX_BUNDLE``
+#
+#     If passed in, the corresponding property will be set on the created target.
+#     This makes a GUI application that can be launched from the finder.
+#
 #   ``ADDED_EXE_TARGET_NAME_OUT <exeTargetName>``
 #
 #     If specified, then on output the variable ``<exeTargetName>`` will be
@@ -334,11 +346,11 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
     MESSAGE("")
     MESSAGE("TRIBITS_ADD_EXECUTABLE: ${EXE_NAME} ${ARGN}")
   ENDIF()
-  
+
   #
   # Confirm that TRIBITS_PACKAGE() was called prior to adding executable
   #
-  
+
   IF(NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_CALLED)
     MESSAGE(FATAL_ERROR "Must call TRIBITS_PACKAGE() before TRIBITS_ADD_EXECUTABLE() in ${TRIBITS_PACKAGE_CMAKELIST_FILE}")
   ENDIF()
@@ -355,7 +367,7 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
     #prefix
     PARSE
     #options
-    "NOEXEPREFIX;NOEXESUFFIX;ADD_DIR_TO_NAME;INSTALLABLE"
+    "NOEXEPREFIX;NOEXESUFFIX;ADD_DIR_TO_NAME;INSTALLABLE;WIN32;MACOSX_BUNDLE"
     #one_value_keywords
     ""
     #multi_value_keywords
@@ -531,6 +543,14 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
   ENDIF()
   ADD_EXECUTABLE(${EXE_BINARY_NAME} ${EXE_SOURCES})
   APPEND_GLOBAL_SET(${PARENT_PACKAGE_NAME}_ALL_TARGETS ${EXE_BINARY_NAME})
+
+  IF(PARSE_WIN32)
+    SET_TARGET_PROPERTIES(${EXE_BINARY_NAME} PROPERTIES WIN32_EXECUTABLE TRUE)
+  ENDIF()
+
+  IF(PARSE_MACOSX_BUNDLE)
+    SET_TARGET_PROPERTIES(${EXE_BINARY_NAME} PROPERTIES MACOSX_BUNDLE TRUE)
+  ENDIF()
 
   IF(PARSE_ADDED_EXE_TARGET_NAME_OUT)
     SET(${PARSE_ADDED_EXE_TARGET_NAME_OUT} ${EXE_BINARY_NAME} PARENT_SCOPE)

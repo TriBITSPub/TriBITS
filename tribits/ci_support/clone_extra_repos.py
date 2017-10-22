@@ -128,7 +128,7 @@ genericUsageHelp
 
 
 def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
-  
+
   clp.add_option(
     "--extra-repos", dest="extraRepos", type="string", default="",
     help="List of names of extra repos to be cloned <extra-repos>" \
@@ -137,12 +137,12 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       " will be selected.  But the repos listed in <extra-repos> must always" \
       " be a subset of the repos of type <extra-repos-type> selected from" \
       " <extra-repos-file>.   (Default '')" )
-  
+
   clp.add_option(
     "--not-extra-repos", dest="notExtraRepos", type="string", default="",
     help="List of names of extra repos *NOT* to clone (i.e. \"repo0,repo1,...\")." \
       "  (Default '')" )
-  
+
   clp.add_option(
     "--extra-repos-file", dest="extraReposFile", type="string",
      default=g_extraRerposFileDefault,
@@ -157,7 +157,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       "<extra-repos-file>.  When --extra-repos is set, then this argument" \
       " is ignored.",
     clp )
-  
+
   clp.add_option(
     "--gitolite-root", dest="gitoliteRoot", type="string", default=gitoliteRootDefault,
     help="Gives the root for a gitolite repos <gitolite-root> (e.g. git@<some-url>)." \
@@ -199,13 +199,13 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "--no-op", dest="doOp", action="store_false",
     help="Skip cloning the repos and just show the clone commands.",
     default=True )
-  
+
   clp.add_option(
     "--create-gitdist-file", dest="createGitdistFile", type="string", default="",
     help="If specified, the file <gitdist-file> will get generated with the list" \
       " of git repos (the same list that is cloned with --do-clone)." \
       "  (Default = '')")
-  
+
   clp.add_option(
     "--show-defaults", dest="showDefaults", action="store_true",
     help="Show the default option values and do nothing at all.",
@@ -247,7 +247,7 @@ def fwdCmndLineOptions(inOptions, terminator=""):
     cmndLineOpts += "  --no-op" + terminator
   cmndLineOpts += \
     "  --create-gitdist-file='"+inOptions.createGitdistFile+"'"+terminator
-  return cmndLineOpts 
+  return cmndLineOpts
 
 
 def echoCmndLineOptions(inOptions):
@@ -403,7 +403,7 @@ def getExtraReposTable(extraRepoDictList):
     { "label":"Category", "align":"L", "fields":repoCategoryList },
     ]
   #print("extraReposTableDictList =", extraReposTableDictList)
-  
+
   extraReposTable = gitdist.createAsciiTable(extraReposTableDictList)
 
   # Return the table
@@ -424,6 +424,9 @@ def cloneExtraRepo(inOptions, extraRepoDict):
   repoDir = extraRepoDict["DIR"]
   repoUrl = extraRepoDict["REPOURL"]
   repoVcType = extraRepoDict["REPOTYPE"]
+  commandMap = { "GIT":"git clone"
+                ,"HG" :"hg clone"
+                ,"SVN":"svn co"}
   verbLevelIsMinimum = isVerbosityLevel(inOptions, "minimal")
   if verbLevelIsMinimum:
     print("\nCloning repo " + repoName + " ...")
@@ -432,10 +435,10 @@ def cloneExtraRepo(inOptions, extraRepoDict):
       print("\n  ==> Repo dir = '" + repoDir +
             "' already exists.  Skipping clone!")
     return
-  if repoVcType != "GIT":
-    print("\n  ==> ERROR: Repo type '"+repoVcType+"' not supported!")
+  if not repoVcType in commandMap:
+    print "\n  ==> ERROR: Repo type '"+repoVcType+"' not supported!"
     sys.exit(1)
-  cmnd = "git clone "+repoUrl+" "+repoDir
+  cmnd = commandMap[repoVcType]+" "+repoUrl+" "+repoDir
   if inOptions.doOp:
     echoRunSysCmnd(cmnd, timeCmnd=True, verbose=verbLevelIsMinimum)
   elif verbLevelIsMinimum:
@@ -463,7 +466,7 @@ def cloneExtraRepos(inOptions):
   #
   # B) Get the list of gitolite repos
   #
-  
+
   if inOptions.gitoliteRoot:
     if verbLevelIsMinimal:
       print("\n***")
@@ -507,7 +510,7 @@ def cloneExtraRepos(inOptions):
     print("\n***")
     print("*** List of selected extra repos to clone:")
     print("***\n")
-  
+
     extraReposTable = getExtraReposTable(extraRepoDictList)
     print(extraReposTable)
 
