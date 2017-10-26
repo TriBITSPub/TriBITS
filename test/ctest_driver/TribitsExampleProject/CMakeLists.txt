@@ -985,7 +985,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"WithSubpackagesC_test_of_c_b_mixed_lang [.]+[*][*][*]Not Run"
         "WrapExternal_run_external_func [.]+[*][*][*]Not Run"
         "File '.+/${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakWithSubpackagesALib/BUILD/Testing/Temporary/LastTestsFailed_.+.log' exists so there were non-passing tests"
-        "Final set packages that had any failures: '.*WithSubpackages.*WrapExternal"
+        "Final set packages that had any failures: 'WithSubpackages.*WrapExternal"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
       ALWAYS_FAIL_ON_ZERO_RETURN
     TEST_3
