@@ -343,6 +343,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
       ${PBP_COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CTEST_DROP_SITE_ENV_ARGS}
+      CTEST_BUILD_FLAGS=-k
       CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
@@ -387,6 +388,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
       ${PBP_COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CTEST_DROP_SITE_ENV_ARGS}
+      CTEST_BUILD_FLAGS=-k
       CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
@@ -433,6 +435,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildTestPkg
       ${PBP_COMMON_ENV_ARGS}
       TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       ${CTEST_DROP_SITE_ENV_ARGS}
+      CTEST_BUILD_FLAGS=-k
       CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildTestPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
@@ -966,13 +969,14 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         ${AAO_COMMON_ENV_ARGS}
         TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
         ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_FLAGS=-k
         CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakWithSubpackagesALib
         ${CTEST_S_SCRIPT_ARGS}
       PASS_REGULAR_EXPRESSION_ALL
         "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
         "Configure PASSED"
-	"Build output: BUILD_ALL_NUM_ERRORS='2',BUILD_ALL_RETURN_VAL='0'"
+	"Build output: BUILD_ALL_NUM_ERRORS='[1-2]',BUILD_ALL_RETURN_VAL='[0-2]'"
 	"Build FAILED"
         "SimpleCxx_HelloWorldTests [.]+ +Passed"
         "SimpleCxx_HelloWorldProg [.]+ +Passed"
@@ -1026,13 +1030,14 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         TribitsExProj_PACKAGES=SimpleCxx,WrapExternal
         CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES=FALSE
         ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_FLAGS=-k
         CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_BreakWithSubpackagesALib
         ${CTEST_S_SCRIPT_ARGS}
       PASS_REGULAR_EXPRESSION_ALL
         "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx WrapExternal 2"
         "Configure PASSED"
-	"Build output: BUILD_ALL_NUM_ERRORS='2',BUILD_ALL_RETURN_VAL='0'"
+	"Build output: BUILD_ALL_NUM_ERRORS='[1-2]',BUILD_ALL_RETURN_VAL='[0-2]'"
 	"Build FAILED"
         "SimpleCxx_HelloWorldTests [.]+ +Passed"
         "SimpleCxx_HelloWorldProg [.]+ +Passed"
@@ -1066,12 +1071,13 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         ${AAO_COMMON_ENV_ARGS}
         TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
         ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_FLAGS=-k
         CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestBuild
         ${CTEST_S_SCRIPT_ARGS}
       PASS_REGULAR_EXPRESSION_ALL
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
         "Configure PASSED"
-	"Build output: BUILD_ALL_NUM_ERRORS='2',BUILD_ALL_RETURN_VAL='0'"
+	"Build output: BUILD_ALL_NUM_ERRORS='[1-2]',BUILD_ALL_RETURN_VAL='[0-2]'"
 	"Build FAILED"
         "SimpleCxx_HelloWorldTests [.]+[*][*][*]Not Run"
         "SimpleCxx_HelloWorldProg [.]+ +Passed"
@@ -1108,6 +1114,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         ${AAO_COMMON_ENV_ARGS}
         TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
         ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_FLAGS=-k
         CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestRun
         ${CTEST_S_SCRIPT_ARGS}
       PASS_REGULAR_EXPRESSION_ALL
