@@ -42,6 +42,10 @@
 # Test generation of package dependency and related XML and related files
 #
 
+# In case the project has ${PROJECT_NAME}_TRIBITS_DIR pointing to a symlink,
+# use the TriBITS implenetation in these test (which should be the same)
+SET(THIS_TRIBITS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../tribits")
+
 
 # The mock test project 
 SET(MOCK_PROJECT_NAME Trilinos)
@@ -197,7 +201,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_checkin_test
   TEST_0
     MESSAGE "Copy TribitsExampleProject so we can snapshot TriBITS into it"
     CMND cp
-    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    ARGS -r ${THIS_TRIBITS_DIR}/examples/TribitsExampleProject
       TribitsExampleProject
     # NOTE: Had to use 'cp -r' instead of 'cmake -E copy_directory' because
     # the latter failed for a development version of CMake.  But since the
@@ -207,7 +211,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_checkin_test
   TEST_1
     MESSAGE "Copy tribits dir into TribitsExampleProject/cmake/"
     CMND cp
-    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}
+    ARGS -r ${THIS_TRIBITS_DIR}
       TribitsExampleProject/cmake/tribits
 
   TEST_2
