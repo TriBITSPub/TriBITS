@@ -620,6 +620,8 @@ def assertContainsAllGitdistHelpSections(testObj, cmndOut):
     GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^USAGE TIPS:$"), "USAGE TIPS:\n")
   testObj.assertEqual(
     GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^SCRIPT DEPENDENCIES:$"), "SCRIPT DEPENDENCIES:\n")
+  testObj.assertEqual(
+    GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^DEFAULT BRANCH SPECIFICATION:$"), "DEFAULT BRANCH SPECIFICATION:\n")
 
 
 class test_gitdist(unittest.TestCase):
@@ -676,7 +678,7 @@ class test_gitdist(unittest.TestCase):
   # Tet that --dist-help --help prints nice error message
   def test_dist_help_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help --help")
-    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'all')\n"
+    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'default-branch', 'all')\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -684,7 +686,7 @@ class test_gitdist(unittest.TestCase):
   def test_dist_help_invalid_pick_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help=invalid-pick --help")
     assertContainsGitdistHelpHeader(self, cmndOut)
-    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'all')"
+    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'default-branch', 'all')"
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingSubstr(cmndOut,errorToFind), errorToFind+"\n")
 
@@ -1395,6 +1397,75 @@ class test_gitdist(unittest.TestCase):
         "Error, passing in extra git commands/args ='--name-status' with special comamnd 'dist-repo-status is not allowed!\n"
       self.assertEqual(cmndOut, s(cmndOut_expected))
       self.assertEqual(errOut, 1)
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_dist_default_branch(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("gitdist_default_branch")
+      os.mkdir("ExtraRepo1")
+      os.makedirs("Path/To/ExtraRepo2")
+      os.mkdir("ExtraRepo3")
+
+      # Make sure .gitdist.default is found and read correctly
+      open(".gitdist.default", "w").write(
+        ". master\n" \
+        "ExtraRepo1 develop\n" \
+        "Path/To/ExtraRepo2 app-devel\n" \
+        "MissingExtraRepo\n" \
+        "ExtraRepo3\n"
+        )
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPathMock+" checkout _DEFAULT_BRANCH_", workingDir=testDir)
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', 'checkout', 'master']\n\n" \
+        "*** Git Repo: ExtraRepo1\n" \
+        "['mockgit', 'checkout', 'develop']\n\n" \
+        "*** Git Repo: Path/To/ExtraRepo2\n" \
+        "['mockgit', 'checkout', 'app-devel']\n\n" \
+        "*** Git Repo: ExtraRepo3\n" \
+        "['mockgit', 'checkout', 'master']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+      # NOTE: Above ensures that all of the paths are read correctly and that
+      # missing paths (MissingExtraRepo) are ignored.
+
+      # Make sure that .gitdist overrides .gitdist.default
+      open(".gitdist", "w").write(
+        ". develop\n" \
+        "ExtraRepo1 develop\n" \
+        "ExtraRepo3 develop\n"
+        )
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPathMock+" checkout _DEFAULT_BRANCH_", workingDir=testDir)
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', 'checkout', 'develop']\n\n" \
+        "*** Git Repo: ExtraRepo1\n" \
+        "['mockgit', 'checkout', 'develop']\n\n" \
+        "*** Git Repo: ExtraRepo3\n" \
+        "['mockgit', 'checkout', 'develop']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+      # Make sure that --dist-repos overrides all files
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPathMock+" --dist-repos=.,ExtraRepo1,Path/To/ExtraRepo2 "+ \
+        "checkout _DEFAULT_BRANCH_",
+        workingDir=testDir)
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', 'checkout', 'master']\n\n" \
+        "*** Git Repo: ExtraRepo1\n" \
+        "['mockgit', 'checkout', 'master']\n\n" \
+        "*** Git Repo: Path/To/ExtraRepo2\n" \
+        "['mockgit', 'checkout', 'master']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
     finally:
       os.chdir(testBaseDir)
