@@ -972,10 +972,11 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
         "Configure PASSED"
+	"Build output: BUILD_ALL_NUM_ERRORS='2',BUILD_ALL_RETURN_VAL='0'"
 	"Build FAILED"
         "SimpleCxx_HelloWorldTests [.]+ +Passed"
         "SimpleCxx_HelloWorldProg [.]+ +Passed"
-	#"MixedLang_RayTracerTests [.]+ +Passed"   
+	"MixedLang_RayTracerTests [.]+ +Passed"
 	"WithSubpackagesA_test_of_a [.]+[*][*][*]Not Run"
 	"WithSubpackagesB_test_of_b [.]+[*][*][*]Not Run"
 	"WithSubpackagesB_test_of_b_mixed_lang [.]+[*][*][*]Not Run"
@@ -1002,10 +1003,6 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # triggered.  Also note that the contents of the failedPackages.txt file
     # is checked to make sure that it is getting written correctly.  That is
     # important for CI servers.
-    # NOTE: Above, I had to weaken the test some to get it to pass on th232
-    # when run with 'make dashboard'.  I also had to weaken the test for the
-    # list of list of failed packages because the MixedLang package has
-    # failures on anasova with 'make dashboard'.
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_BreakWithSubpackagesALib
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -1035,6 +1032,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx WrapExternal 2"
         "Configure PASSED"
+	"Build output: BUILD_ALL_NUM_ERRORS='2',BUILD_ALL_RETURN_VAL='0'"
 	"Build FAILED"
         "SimpleCxx_HelloWorldTests [.]+ +Passed"
         "SimpleCxx_HelloWorldProg [.]+ +Passed"
@@ -1047,10 +1045,6 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # NOTE: The above test ensures that the library build failure of an
     # upstream package is detected as a break in all downstream packages even
     # though that upstream package is not directly shown on CDash.
-    # NOTE: Above, I had to remove the grep of "Build output" because it
-    # returns a different set of outputs on th232 when run with 'make
-    # dashboard' (but not when run with just local ctset locally).
-
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestBuild
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -1077,20 +1071,22 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       PASS_REGULAR_EXPRESSION_ALL
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
         "Configure PASSED"
+	"Build output: BUILD_ALL_NUM_ERRORS='2',BUILD_ALL_RETURN_VAL='0'"
 	"Build FAILED"
         "SimpleCxx_HelloWorldTests [.]+[*][*][*]Not Run"
         "SimpleCxx_HelloWorldProg [.]+ +Passed"
-        "Final set packages that had any failures: 'SimpleCxx"
+        "WithSubpackagesA_test_of_a [.]+ +Passed"
+        "WithSubpackagesB_test_of_b [.]+ +Passed"
+        "WithSubpackagesC_test_of_c_util [.]+ +Passed"
+        "WithSubpackagesC_test_of_c_b_mixed_lang [.]+ +Passed"
+        "WrapExternal_run_external_func [.]+ +Passed"
+        "Final set packages that had any failures: 'SimpleCxx'"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
       ALWAYS_FAIL_ON_ZERO_RETURN
     )
     # NOTE: The above test ensures that a build failure in the test of an
     # upstream package will be caught but will not impact break downstream
     # packages and tests.
-    # NOTE: Above, on some machines (e.g. th232), at least one of the
-    # WithSubpackages tests fail to build, but only when using the 'dashboard'
-    # target (see CASL PHI #3913).  Therefore, I had to weeken the test some
-    # to get it to pass on these machines as well.
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestRun
     OVERALL_WORKING_DIRECTORY TEST_NAME
