@@ -1135,7 +1135,7 @@ def getCommandlineOps():
   else:
     print(
       "Error, env var GITDIST_MOVE_TO_BASE_DIR='"+moveToBaseDir+"' is invalid!"
-      + "  Valid choices include empty '', IMMEDIATE_BASE, and EXTREME_BASE")
+      + "  Valid choices include empty '', IMMEDIATE_BASE, and EXTREME_BASE.")
     sys.exit(1)
 
   #

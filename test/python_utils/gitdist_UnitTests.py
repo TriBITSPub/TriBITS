@@ -703,7 +703,7 @@ class test_gitdist(unittest.TestCase):
     assertContainsAllGitdistHelpSections(self, cmndOut)
 
 
-  # Tet that --dist-help --help prints nice error message
+  # Test that --dist-help --help prints nice error message
   def test_dist_help_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help --help")
     cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')\n"
@@ -1428,6 +1428,15 @@ class test_gitdist(unittest.TestCase):
 
     finally:
       os.chdir(testBaseDir)
+
+
+  def test_gitdist_move_to_base_dir_invalid_env_var(self):
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "INVALID"
+    cmndOut = getCmndOutput(gitdistPath+" status")
+    cmndOut_expected = "Error, env var GITDIST_MOVE_TO_BASE_DIR='INVALID' is invalid!  Valid choices include empty '', IMMEDIATE_BASE, and EXTREME_BASE.\n"
+    print("cmndOut = ", cmndOut)
+    print("cmndOut_expected = ", cmndOut_expected)
+    self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
   def test_gitdist_move_to_base_dir(self):
