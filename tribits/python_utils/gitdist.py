@@ -49,9 +49,9 @@ helpTopics = [
   'dist-repo-status',
   'repo-versions',
   'aliases', 
+  'default-branch',
   'usage-tips',
-  'script-dependencies',
-  'default-branch'
+  'script-dependencies'
   ]
 
  
@@ -469,6 +469,47 @@ or
 helpTopicsDict.update( { 'aliases' : usefulAliasesHelp } )
 
 
+defaultBranchHelp = r"""
+DEFAULT BRANCH SPECIFICATION:
+
+When using any git command that accepts a reference (a SHA1, or branch or tag
+name), it is possible to use _DEFAULT_BRANCH_ instead.  For instance,
+
+    gitdist checkout _DEFAULT_BRANCH_
+
+will check out the default development branch in each repository being managed
+by gitdist.  You can specify the default branch for each repository in your
+.gitdist[.default] file.  For instance, if your .gitdist file contains
+
+    . master
+    extraRepo1 develop
+    extraRepo2 app-devel
+
+then the command above would check out 'master' in the base repo, 'develop' in
+extraRepo1, and 'app-devel' in extraRepo2.  This makes it convenient when
+working with multiple repositories that have different names for their main
+development branches.  For instance, you can do a topic branch workflow like:
+
+    gitdist checkout _DEFAULT_BRANCH_
+    gitdist pull
+    gitdist checkout -b newFeatureBranch
+    <create some commits>
+    gitdist fetch
+    gitdist merge origin/_DEFAULT_BRANCH_
+    <create some commits>
+    gitdist checkout _DEFAULT_BRANCH_
+    gitdist pull
+    gitdist merge newFeatureBranch
+
+and not worry about this 'newFeatureBranch' being off of 'master' in the root
+repo, off of 'develop' in extraRepo1, and off of 'app-devel' in extraRepo2.
+
+If no branch name is specified for any given repository in the
+.gitdist[.default] file, then 'master' is assumed.
+"""
+helpTopicsDict.update( { 'default-branch' : defaultBranchHelp } )
+
+
 usageTipsHelp = r"""
 USAGE TIPS:
 
@@ -612,47 +653,6 @@ compatible version of 'git' in your path (but gitdist works with several
 versions of git starting as far back as git 1.6+).
 """
 helpTopicsDict.update( { 'script-dependencies' : scriptDependenciesHelp } )
-
-
-defaultBranchHelp = r"""
-DEFAULT BRANCH SPECIFICATION:
-
-When using any git command that accepts a reference (a SHA1, or branch or tag
-name), it is possible to use _DEFAULT_BRANCH_ instead.  For instance,
-
-    gitdist checkout _DEFAULT_BRANCH_
-
-will check out the default development branch in each repository being managed
-by gitdist.  You can specify the default branch for each repository in your
-.gitdist[.default] file.  For instance, if your .gitdist file contains
-
-    . master
-    extraRepo1 develop
-    extraRepo2 app-devel
-
-then the command above would check out master in the base repo, develop in
-extraRepo1, and app-devel in extraRepo2.  This makes it convenient when working
-with multiple repositories that have different names for their main development
-branches.  For instance, you can
-
-    gitdist checkout _DEFAULT_BRANCH_
-    gitdist pull
-    gitdist checkout -b newFeatureBranch
-    # do some work
-    gitdist fetch
-    gitdist merge _DEFAULT_BRANCH_
-    # do some more work
-    gitdist checkout _DEFAULT_BRANCH_
-    gitdist pull
-    gitdist merge newFeatureBranch
-
-and not worry about this newFeatureBranch being off of master in the root repo,
-off of develop in extraRepo1, and off of app-devel in extraRepo2.
-
-If no branch name is specified for any given repository in the
-.gitdist[.default] file, then master is assumed.
-"""
-helpTopicsDict.update( { 'default-branch' : defaultBranchHelp } )
 
 
 #

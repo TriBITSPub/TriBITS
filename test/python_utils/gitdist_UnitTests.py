@@ -678,7 +678,7 @@ class test_gitdist(unittest.TestCase):
   # Tet that --dist-help --help prints nice error message
   def test_dist_help_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help --help")
-    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'default-branch', 'all')\n"
+    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'default-branch', 'usage-tips', 'script-dependencies', 'all')\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -686,7 +686,7 @@ class test_gitdist(unittest.TestCase):
   def test_dist_help_invalid_pick_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help=invalid-pick --help")
     assertContainsGitdistHelpHeader(self, cmndOut)
-    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'default-branch', 'all')"
+    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'default-branch', 'usage-tips', 'script-dependencies', 'all')"
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingSubstr(cmndOut,errorToFind), errorToFind+"\n")
 
