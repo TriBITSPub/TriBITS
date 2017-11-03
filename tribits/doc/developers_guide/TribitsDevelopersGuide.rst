@@ -8631,6 +8631,7 @@ from `gitdist --help`_ and ``gitdist --dist-help=<topic>``:
 * `gitdist --dist-help=dist-repo-status`_
 * `gitdist --dist-help=repo-versions`_
 * `gitdist --dist-help=aliases`_
+* `gitdist --dist-help=default-branch`_
 * `gitdist --dist-help=move-to-base-dir`_
 * `gitdist --dist-help=usage-tips`_
 * `gitdist --dist-help=script-dependencies`_
@@ -8674,6 +8675,12 @@ gitdist --dist-help=aliases
 +++++++++++++++++++++++++++
 
 .. include:: gitdist-dist-help-aliases.txt
+   :literal:
+
+gitdist --dist-help=default-branch
+++++++++++++++++++++++++++++++++++
+
+.. include:: gitdist-dist-help-default-branch.txt
    :literal:
 
 gitdist --dist-help=move-to-base-dir
