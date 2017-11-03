@@ -49,8 +49,9 @@ helpTopics = [
   'dist-repo-status',
   'repo-versions',
   'aliases', 
+  'move-to-base-dir',
   'usage-tips',
-  'script-dependencies'
+  'script-dependencies',
   ]
 
  
@@ -466,6 +467,69 @@ or
 'git-config-alias.sh').
 """
 helpTopicsDict.update( { 'aliases' : usefulAliasesHelp } )
+
+
+moveToBaseDirHelp = r"""
+MOVE TO BASE DIRECTORY:
+
+By default, when you run gitdist, it will look in your current working
+directory for a .gitdist[.default] file.  If it fails to find one, it will
+treat the current directory as the base git repository (as if there was a
+.gitdist file in it, having a single line with only "." in it) and then run as
+usual.  You have the ability to change this behavior by setting the
+GITDIST_MOVE_TO_BASE_DIR environment variable.
+
+To describe the behavior for the differ net options, consider the following set
+of nested git repositories and directories:
+
+    BaseRepo/
+      .git
+      .gitdist
+      ...
+      ExtraRepo/
+        .git
+        .gitdist
+        ...
+        path/
+          ...
+          to/
+            ...
+            some/
+              ...
+              directory/
+                ...
+
+
+The valid settings for GITDIST_MOVE_TO_BASE_DIR include:
+
+  "" (Empty)
+
+    This gives the default behavior where gitdist runs in the current working
+    directory.
+
+  IMMEDIATE_BASE
+
+    In this case, gitdist will start moving up the directory tree until it
+    finds a .gitdist[.default] file, and then run in the directory where it
+    finds it.  In the above example, if you are in
+    BaseRepo/ExtraRepo/path/to/some/directory/ when you run gitdist, it will
+    move up to ExtraRepo to execute the command you give it from there.
+
+  EXTREME_BASE:
+
+    In this case, gitdist will continue moving up the directory tree until it
+    finds the outer-most repository containing a .gitdist[.default] file, and
+    then run in that directory.  Given the directory tree above, if you were
+    in BaseRepo/ExtraRepo/path/to/some/directory, it will move up to BaseRepo
+    to execute the command you give it.
+
+With either of the settings above, when gitdist is finished running, it will
+leave you in the same directory you were in when you executed command in the
+first place.  Additionally, if no .gitdist[.default] file can be found, gitdist
+will execute the command you give it in your current working directory, as if
+GITDIST_MOVE_TO_BASE_DIR hadn't been set.
+"""
+helpTopicsDict.update( { 'move-to-base-dir' : moveToBaseDirHelp } )
 
 
 usageTipsHelp = r"""
@@ -1057,16 +1121,21 @@ def getCommandlineOps():
   elif moveToBaseDir == "IMMEDIATE_BASE":
     # Run gitdist in the immediate base dir where .gitdist[.default] exists
     currentPath = os.getcwd()
+    foundIt = False
     while 1:
       if ((os.path.isfile(os.path.join(currentPath, ".gitdist"))) or
         (os.path.isfile(os.path.join(currentPath, ".gitdist.default")))):
+        foundIt = True
         break
       currentPath, currentDir = os.path.split(currentPath)
-    os.chdir(currentPath)
+      if currentDir == "":
+        break
+    if foundIt:
+      os.chdir(currentPath)
   else:
     print(
       "Error, env var GITDIST_MOVE_TO_BASE_DIR='"+moveToBaseDir+"' is invalid!"
-      + "  Valid choices include empty '', IMMEDIATE_BASE, and EXTREME_BASE")
+      + "  Valid choices include empty '', IMMEDIATE_BASE, and EXTREME_BASE.")
     sys.exit(1)
 
   #

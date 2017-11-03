@@ -102,6 +102,15 @@ class GitDistOptions:
 class test_createAsciiTable(unittest.TestCase):
 
 
+  def setUp(self):
+    self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+
+
+  def tearDown(self):
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = self.gitdistMoveToBaseDir
+
+
   def test_full_table(self):
     tableData = [
       { "label" : "ID", "align" : "R",
@@ -195,6 +204,15 @@ class test_createAsciiTable(unittest.TestCase):
 
 
 class test_gitdist_getRepoStats(unittest.TestCase):
+
+
+  def setUp(self):
+    self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+
+
+  def tearDown(self):
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = self.gitdistMoveToBaseDir
 
 
   def test_no_change(self):
@@ -562,7 +580,12 @@ class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase
 
 
   def setUp(self):
-    None
+    self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+
+
+  def tearDown(self):
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = self.gitdistMoveToBaseDir
 
 
   def test_repoVersionFile_withSummary_1(self):
@@ -620,13 +643,20 @@ def assertContainsAllGitdistHelpSections(testObj, cmndOut):
     GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^USAGE TIPS:$"), "USAGE TIPS:\n")
   testObj.assertEqual(
     GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^SCRIPT DEPENDENCIES:$"), "SCRIPT DEPENDENCIES:\n")
+  testObj.assertEqual(
+    GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^MOVE TO BASE DIRECTORY:$"), "MOVE TO BASE DIRECTORY:\n")
 
 
 class test_gitdist(unittest.TestCase):
 
 
   def setUp(self):
-    None
+    self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+
+
+  def tearDown(self):
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = self.gitdistMoveToBaseDir
 
 
   def test_default(self):
@@ -673,10 +703,10 @@ class test_gitdist(unittest.TestCase):
     assertContainsAllGitdistHelpSections(self, cmndOut)
 
 
-  # Tet that --dist-help --help prints nice error message
+  # Test that --dist-help --help prints nice error message
   def test_dist_help_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help --help")
-    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'all')\n"
+    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -684,7 +714,7 @@ class test_gitdist(unittest.TestCase):
   def test_dist_help_invalid_pick_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help=invalid-pick --help")
     assertContainsGitdistHelpHeader(self, cmndOut)
-    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'all')"
+    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')"
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingSubstr(cmndOut,errorToFind), errorToFind+"\n")
 
@@ -1396,6 +1426,129 @@ class test_gitdist(unittest.TestCase):
       self.assertEqual(cmndOut, s(cmndOut_expected))
       self.assertEqual(errOut, 1)
 
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_gitdist_move_to_base_dir_invalid_env_var(self):
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "INVALID"
+    cmndOut = getCmndOutput(gitdistPath+" status")
+    cmndOut_expected = "Error, env var GITDIST_MOVE_TO_BASE_DIR='INVALID' is invalid!  Valid choices include empty '', IMMEDIATE_BASE, and EXTREME_BASE.\n"
+    print("cmndOut = ", cmndOut)
+    print("cmndOut_expected = ", cmndOut_expected)
+    self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+
+  def test_gitdist_move_to_base_dir(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project.
+      testDir = createAndMoveIntoTestDir("gitdist_move_to_base_dir")
+      os.makedirs("ExtraRepo/path/to/somewhere")
+      open(".gitdist", "w").write(
+        ".\n" \
+        "ExtraRepo\n"
+        )
+      open("ExtraRepo/.gitdist", "w").write(
+        ".\n"
+        )
+      os.chdir("ExtraRepo/path/to/somewhere")
+
+      # Test with the default setting.
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: somewhere\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+      # Test moving up the directory tree until we find a .gitdist file.
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "IMMEDIATE_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: ExtraRepo\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+      # Test moving up the directory tree until we find the outer-most .gitdist
+      # file.
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "EXTREME_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+      
+      # Rename the .gitdist files .gitdist.default, and try the tests again.
+      os.rename("../../../.gitdist", "../../../.gitdist.default")
+      os.rename("../../../../.gitdist", "../../../../.gitdist.default")
+
+      # Test with the default setting.
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: somewhere\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+      # Test moving up the directory tree until we find a .gitdist file.
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "IMMEDIATE_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: ExtraRepo\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+      # Test moving up the directory tree until we find the outer-most .gitdist
+      # file.
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "EXTREME_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+      
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_gitdist_move_to_base_dir_no_dist_gitdist_file(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project but with no .gitdist[.default] files!
+      testDir = createAndMoveIntoTestDir("gitdist_move_to_base_dir_no_dist_gitdist_file")
+      os.makedirs(".git")
+      os.makedirs("ExtraRepo/.git")
+      os.makedirs("ExtraRepo/path/to/somewhere")
+      os.chdir("ExtraRepo/path/to/somewhere")
+
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: somewhere\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "IMMEDIATE_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: somewhere\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "EXTREME_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: somewhere\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+      
     finally:
       os.chdir(testBaseDir)
 
