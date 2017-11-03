@@ -1508,5 +1508,42 @@ class test_gitdist(unittest.TestCase):
       os.chdir(testBaseDir)
 
 
+  def test_gitdist_move_to_base_dir_no_dist_gitdist_file(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project but with no .gitdist[.default] files!
+      testDir = createAndMoveIntoTestDir("gitdist_move_to_base_dir_no_dist_gitdist_file")
+      os.makedirs(".git")
+      os.makedirs("ExtraRepo/.git")
+      os.makedirs("ExtraRepo/path/to/somewhere")
+      os.chdir("ExtraRepo/path/to/somewhere")
+
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: somewhere\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "IMMEDIATE_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: somewhere\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "EXTREME_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "\n*** Base Git Repo: somewhere\n" \
+        "['mockgit', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+      
+    finally:
+      os.chdir(testBaseDir)
+
+
 if __name__ == '__main__':
   unittest.main()
