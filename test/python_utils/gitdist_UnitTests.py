@@ -1536,7 +1536,6 @@ class test_gitdist(unittest.TestCase):
       os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "EXTREME_BASE"
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
       cmndOut_expected = \
-        "\n*** Base Git Repo: MockProjectDir\n" \
         "\n*** Base Git Repo: somewhere\n" \
         "['mockgit', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))

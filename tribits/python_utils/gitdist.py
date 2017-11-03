@@ -1121,12 +1121,17 @@ def getCommandlineOps():
   elif moveToBaseDir == "IMMEDIATE_BASE":
     # Run gitdist in the immediate base dir where .gitdist[.default] exists
     currentPath = os.getcwd()
+    foundIt = False
     while 1:
       if ((os.path.isfile(os.path.join(currentPath, ".gitdist"))) or
         (os.path.isfile(os.path.join(currentPath, ".gitdist.default")))):
+        foundIt = True
         break
       currentPath, currentDir = os.path.split(currentPath)
-    os.chdir(currentPath)
+      if currentDir == "":
+        break
+    if foundIt:
+      os.chdir(currentPath)
   else:
     print(
       "Error, env var GITDIST_MOVE_TO_BASE_DIR='"+moveToBaseDir+"' is invalid!"
