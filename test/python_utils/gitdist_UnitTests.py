@@ -103,7 +103,7 @@ class test_createAsciiTable(unittest.TestCase):
 
 
   def setUp(self):
-    self.gitdistMoveToBaseDir = os.environ["GITDIST_MOVE_TO_BASE_DIR"]
+    self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
 
 
@@ -207,7 +207,7 @@ class test_gitdist_getRepoStats(unittest.TestCase):
 
 
   def setUp(self):
-    self.gitdistMoveToBaseDir = os.environ["GITDIST_MOVE_TO_BASE_DIR"]
+    self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
 
 
@@ -580,7 +580,7 @@ class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase
 
 
   def setUp(self):
-    self.gitdistMoveToBaseDir = os.environ["GITDIST_MOVE_TO_BASE_DIR"]
+    self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
 
 
@@ -651,7 +651,7 @@ class test_gitdist(unittest.TestCase):
 
 
   def setUp(self):
-    self.gitdistMoveToBaseDir = os.environ["GITDIST_MOVE_TO_BASE_DIR"]
+    self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
 
 
@@ -706,7 +706,7 @@ class test_gitdist(unittest.TestCase):
   # Tet that --dist-help --help prints nice error message
   def test_dist_help_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help --help")
-    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'move-to-base-dir', 'all')\n"
+    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -714,7 +714,7 @@ class test_gitdist(unittest.TestCase):
   def test_dist_help_invalid_pick_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help=invalid-pick --help")
     assertContainsGitdistHelpHeader(self, cmndOut)
-    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'usage-tips', 'script-dependencies', 'move-to-base-dir', 'all')"
+    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')"
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingSubstr(cmndOut,errorToFind), errorToFind+"\n")
 
