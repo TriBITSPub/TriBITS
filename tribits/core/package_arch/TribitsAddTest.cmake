@@ -53,6 +53,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     [NAME <testName> | NAME_POSTFIX <testNamePostfix>]
 #     [DIRECTORY <directory>]
 #     [ADD_DIR_TO_NAME]
+#     [RUN_SERIAL]
 #     [ARGS "<arg0> <arg1> ..." "<arg2> <arg3> ..." ...
 #       | POSTFIX_AND_ARGS_0 <postfix0> <arg0> <arg1> ...
 #         POSTFIX_AND_ARGS_1 ... ]
@@ -73,6 +74,12 @@ INCLUDE(TribitsAddTestHelpers)
 #     [TIMEOUT <maxSeconds>]
 #     [ADDED_TESTS_NAMES_OUT <testsNames>]
 #     )
+#
+# The tests are only added if tests are enabled for the SE package
+# (i.e. `${PACKAGE_NAME}_ENABLE_TESTS`_) or the parent package (if this is a
+# subpackage) (i.e. ``${PARENT_PACKAGE_NAME}_ENABLE_TESTS``).  (NOTE: A more
+# efficient way to optionally enable tests is to put them in a ``test/``
+# subdir and then include that subdir with `TRIBITS_ADD_TEST_DIRECTORIES()`_.)
 #
 # *Sections:*
 #
@@ -166,7 +173,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     ``POSTFIX_AND_ARGS_<IDX>`` form instead.  **WARNING:** Multiple
 #     arguments passed to a single test invocation must be quoted or multiple
 #     tests taking single arguments will be created instead!  See `Adding
-#     Multiple Tests (TRIBITS_ADD_TEST())`_ for more details and exmaples.
+#     Multiple Tests (TRIBITS_ADD_TEST())`_ for more details and examples.
 #
 #   ``POSTFIX_AND_ARGS_<IDX> <postfix> <arg0> <arg1> ...``
 #
@@ -186,7 +193,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     that one can give a meaningful name to each test case and one can
 #     specify multiple arguments without having to quote them and one can
 #     allow long argument lists to span multiple lines.  See `Adding Multiple
-#     Tests (TRIBITS_ADD_TEST())`_ for more details and exmaples.
+#     Tests (TRIBITS_ADD_TEST())`_ for more details and examples.
 #
 #   ``COMM [serial] [mpi]``
 #
@@ -271,7 +278,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     the environment``) for which the test is allowed to be added.  If
 #     ``HOSTTYPE`` is specified and ``CMAKE_HOST_SYSTEM_NAME`` is not equal to
 #     one of the values of ``<hosttypei>``, then the test will **not** be
-#     added.  Typical host system type names include ``Linux``, ``Darwain``,
+#     added.  Typical host system type names include ``Linux``, ``Darwin``,
 #     ``Windows``, etc.
 #
 #   ``XHOSTTYPE <hosttype0> <hosttype1> ...``
@@ -346,7 +353,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     with the name(S) of the tests passed to ``ADD_TEST()``.  If more than
 #     one test is added, then this will be a list of test names.  Having this
 #     name allows the calling ``CMakeLists.txt`` file access and set
-#     additional test propeties (see `Setting additional test properties
+#     additional test properties (see `Setting additional test properties
 #     (TRIBITS_ADD_TEST())`_).
 #
 # In the end, this function just calls the built-in CMake commands
@@ -398,7 +405,7 @@ INCLUDE(TribitsAddTestHelpers)
 # run in this case.
 #
 # NOTE: On native Windows platforms, the ``NOEXESUFFIX`` will still allow
-# CTest to run exectuables that have the ``*.exe`` suffix.
+# CTest to run executables that have the ``*.exe`` suffix.
 #
 # Whatever executable path is specified using this logic, if the executable is
 # not found, then when ``ctest`` goes to run the test, it will mark it as
@@ -458,7 +465,7 @@ INCLUDE(TribitsAddTestHelpers)
 #
 # may be preferable since it will not add any postfix name to the test.  To
 # add more than one test case using ``ARGS``, one will use more than one
-# quoted set of arugments such as with::
+# quoted set of arguments such as with::
 #
 #   ARGS "<arg0> <arg1>" "<arg2> <arg2>"
 #
@@ -476,7 +483,7 @@ INCLUDE(TribitsAddTestHelpers)
 # the individual tests can be given more understandable names.
 #
 # The other advantage of the ``POSTFIX_AND_ARGS_<IDX>`` form is that the
-# arugments ``<arg0>``, ``<arg1>``, ... do not need to be quoted and can
+# arguments ``<arg0>``, ``<arg1>``, ... do not need to be quoted and can
 # therefore be extended over multiple lines like::
 #
 #   POSTFIX_AND_ARGS_0 long_args --this-is-the-first-long-arg=very
@@ -536,8 +543,34 @@ INCLUDE(TribitsAddTestHelpers)
 # or whether the test(s) are added or not (depending on other arguments like
 # ``COMM``, ``XHOST``, etc.).
 #
-# There are many other test properties that one may want to set also and this
-# is the way it needs to be done.
+# The following built-in CTest test properties are set through `Formal
+# Arguments (TRIBITS_ADD_TEST())`_ or are otherwise automatically set by this
+# function and should **NOT** be overridden by direct calls to
+# ``SET_TESTS_PROPERTIES()``: ``ENVIRONMENT``, ``FAIL_REGULAR_EXPRESSION``,
+# ``LABELS``, ``PASS_REGULAR_EXPRESSION``, ``RUN_SERIAL``, ``TIMEOUT``, and
+# ``WILL_FAIL``.
+#
+# However, generally, other built-in CTest test properties can be set after
+# the test is added like show above.  Examples of test properties that can be
+# set using direct calls to ``SET_TESTS_PROPERTIES()`` include
+# ``ATTACHED_FILES``, ``ATTACHED_FILES_ON_FAIL``, ``COST``, ``DEPENDS``,
+# ``MEASUREMENT``, ``RESOURCE_LOCK`` and ``WORKING_DIRECTORY``.
+#
+# For example, one can set a dependency between two tests using::
+#
+#   TRIBITS_ADD_TEST_TEST( test_a [...]
+#      ADDED_TEST_NAME_OUT  test_a_TEST_NAME )
+#   
+#   TRIBITS_ADD_TEST_TEST( test_b [...]
+#      ADDED_TEST_NAME_OUT  test_z_TEST_NAME )
+#   
+#   IF (test_a_TEST_NAME AND test_b_TEST_NAME)
+#     SET_TESTS_PROPERTIES(${test_b_TEST_NAME}
+#       PROPERTIES DEPENDS ${test_a_TEST_NAME})
+#   ENDIF()
+#
+# This ensures that test ``test_b`` will always be run after ``test_a`` if
+# both tests are run by CTest.
 #
 # .. _Running multiple tests at the same time (TRIBITS_ADD_TEST()):
 #
@@ -714,15 +747,19 @@ FUNCTION(TRIBITS_ADD_TEST EXE_NAME)
   ENDFOREACH()
   #PRINT_VAR(POSTFIX_AND_ARGS_LIST)
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "DIRECTORY;KEYWORDS;COMM;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;ARGS;${POSTFIX_AND_ARGS_LIST};NAME;NAME_POSTFIX;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;PASS_REGULAR_EXPRESSION;FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TESTS_NAMES_OUT"
-     #options
+     # options
      "NOEXEPREFIX;NOEXESUFFIX;STANDARD_PASS_OUTPUT;WILL_FAIL;ADD_DIR_TO_NAME;RUN_SERIAL"
+     #one_value_keywords
+     ""
+     #multi_value_keywords
+"DIRECTORY;KEYWORDS;COMM;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;ARGS;${POSTFIX_AND_ARGS_LIST};NAME;NAME_POSTFIX;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;PASS_REGULAR_EXPRESSION;FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TESTS_NAMES_OUT"
      ${ARGN}
      )
+
+  TRIBITS_CHECK_FOR_UNPARSED_ARGUMENTS()
 
   IF (PARSE_ARGS)
     LIST(LENGTH PARSE_ARGS NUM_PARSE_ARGS)
@@ -774,6 +811,12 @@ FUNCTION(TRIBITS_ADD_TEST EXE_NAME)
   #
   # B) Add or don't add tests based on a number of criteria
   #
+
+  SET(ADD_THE_TEST FALSE)
+  TRIBITS_ADD_TEST_PROCESS_ENABLE_TESTS(ADD_THE_TEST)
+  IF (NOT ADD_THE_TEST)
+    RETURN()
+  ENDIF()
 
   SET(ADD_THE_TEST FALSE)
   TRIBITS_ADD_TEST_PROCESS_CATEGORIES(ADD_THE_TEST)

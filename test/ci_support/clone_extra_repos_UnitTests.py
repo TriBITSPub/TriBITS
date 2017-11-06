@@ -323,7 +323,7 @@ class test_clone_extra_repos(unittest.TestCase):
         "|----|----------------------|-------------------------|-----|--------------------------------|------------|\n" \
         "|  1 | preCopyrightTrilinos | preCopyrightTrilinos    | GIT | url1:/git/preCopyrightTrilinos | Continuous |\n" \
         "|  2 | extraTrilinosRepo    | extraTrilinosRepo       | GIT | usr2:/git/extraTrilinosRepo    | Nightly    |\n" \
-        "|  3 | Dakota               | packages/TriKota/Dakota | SVN | url3/somedirpath/trunk         | Continuous |\n" \
+        "|  3 | Dakota               | packages/TriKota/Dakota | GIT | url3:/git/Dakota               | Continuous |\n" \
         "-----------------------------------------------------------------------------------------------------------\n" \
         "\n")
     self.assertEqual(output, output_expected)
@@ -347,23 +347,6 @@ class test_clone_extra_repos(unittest.TestCase):
         "Cloning repo extraTrilinosRepo ...\n" \
         "\n" \
         "  ==> Repo dir = 'extraTrilinosRepo' already exists.  Skipping clone!\n")
-    self.assertEqual(output, output_expected)
-
-  def test_clone_nonsupported_svn_repo(self):
-    output = clone_extra_repos_cmnd(
-      "--verbosity=minimal --extra-repos=Dakota", throwOnError=False)
-    output_expected = \
-      b(getScriptEchoCmndLine(verbosity="minimal",
-                              extraRepos="Dakota") + \
-        "\n" \
-        "***\n" \
-        "*** Clone the selected extra repos:\n" \
-        "***\n" \
-        "\n" \
-        "\n" \
-        "Cloning repo Dakota ...\n" \
-        "\n" \
-        "  ==> ERROR: Repo type 'SVN' not supported!\n")
     self.assertEqual(output, output_expected)
 
   def test_clone_git_repos_1_2(self):

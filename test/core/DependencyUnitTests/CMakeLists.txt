@@ -56,13 +56,15 @@ SET(MOCK_TRILINOS_DIR
 
 FUNCTION(CREATE_DEPENDENCY_XML_DUMP_TEST_CASE TEST_NAME)
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "ARGS;PASS_REGULAR_EXPRESSION_ALL;COMPARE_XML_FILE"
      #options
      ""
+     #one_value_keywords
+     ""
+     #mulit_value_keywords
+     "ARGS;PASS_REGULAR_EXPRESSION_ALL;COMPARE_XML_FILE"
      ${ARGN}
      )
 
@@ -192,13 +194,15 @@ SET(REDUCED_MOCK_TRILINOS_OUTPUT_DIR
 
 FUNCTION(CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "ARGS;PASS_REGULAR_EXPRESSION_ALL"
      #options
      ""
+     #one_value_keywords
+     ""
+     #multi_value_keywords
+     "ARGS;PASS_REGULAR_EXPRESSION_ALL"
      ${ARGN}
      )
 
@@ -464,7 +468,7 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 
 
 CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
-  EnableAllPackages_SS_TestRequiredTpl_DisableAMD
+  EnableAllPackages_ST_TestRequiredTpl_DisableAMD
   ARGS
     -DSHOW_TEST_REQUIRED_TPL_DEP=ON
     -DTrilinos_ENABLE_ALL_PACKAGES=ON
@@ -483,7 +487,7 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 
 
 CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
-  EnableAllPackages_SS_TestRequiredPackage_DisableTriutils
+  EnableAllPackages_ST_TestRequiredPackage_DisableTriutils
   ARGS
     -DSHOW_TEST_REQUIRED_PACKAGE_DEP=ON
     -DTrilinos_ENABLE_ALL_PACKAGES=ON
@@ -502,6 +506,43 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
+CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllPackages_ST_EpetraExtEnableTriutilsOff
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DEpetraExt_ENABLE_Triutils=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- NOTE: EpetraExt_ENABLE_Triutils=OFF is already set so not enabling even though Trilinos_ENABLE_Triutils=ON is set!"
+  )
+
+
+CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllPackages_ST_EpetraExtEnableTriutilsOn
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DEpetraExt_ENABLE_Triutils=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- NOTE: EpetraExt_ENABLE_Triutils=ON is already set!"
+  )
+
+
+CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+ ST_EnableEpetraExt_DisableTriutils_EpetraExtEnableTriutilsOn
+  ARGS
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DTrilinos_ENABLE_EpetraExt=ON
+    -DTrilinos_ENABLE_Triutils=OFF
+    -DEpetraExt_ENABLE_Triutils=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- NOTE: Setting EpetraExt_ENABLE_Triutils=OFF which was ON because EpetraExt has an optional library dependence on disabled package Triutils"
+  )
+
+
 #####################################################################
 #
 # Unit tests for dependency handling for full set of packages
@@ -511,13 +552,15 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 
 FUNCTION(CREATE_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "ARGS;PASS_REGULAR_EXPRESSION_ALL"
      #options
      ""
+     #one_value_keywords
+     ""
+     #multi_value_keywords
+     "ARGS;PASS_REGULAR_EXPRESSION_ALL"
      ${ARGN}
      )
 
@@ -830,6 +873,25 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 
 
 CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllPackages_EnableBoost_TeuchosEnableBoostOff
+  ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
+    -DTeuchos_ENABLE_Boost=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "Enabling all optional package TPL support <TRIBITS_PACKAGE>_ENABLE_<DEPTPL> not currently disabled for enabled TPLs"
+    "-- NOTE: Teuchos_ENABLE_Boost=OFF is already set so not enabling even though TPL_ENABLE_Boost=ON is set!"
+  )
+
+
+CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+  EnableAllPackages_EnableBoost_TeuchosEnableBoostOn
+  ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
+    -DTeuchos_ENABLE_Boost=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- NOTE: Teuchos_ENABLE_Boost=ON is already set!"
+  )
+
+
+CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   EnableZoltan_ZoltanEnableParMETIS
   ARGS  -DTrilinos_ENABLE_Zoltan=ON -DZoltan_ENABLE_ParMETIS=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -1102,12 +1164,14 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
     -DTrilinos_ASSERT_MISSING_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
+    "CMake Error at .*/TribitsAdjustPackageEnables.cmake:.+ [(]MESSAGE[)]:"
     "Error, the package 'Anasazi' is listed as a dependency of the package"
     "'Teko' is in the list 'Trilinos_SE_PACKAGES' but the package 'Anasazi' is"
-    "either not defined or is listed later in the package order.  Check the"
-    "pelling of 'Anasazi' or see how it is listed in"
-    "Trilinos_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS in relationship to 'Teko'"
-    "Configuring incomplete, errors occurred"
+    "either not defined or is listed later in the package order[.]  This may also"
+    "be an attempt to create a cicular dependency between the packages 'Anasazi'"
+    "and 'Teko' [(]which is not allowed[)][.]  Check the spelling of 'Anasazi' or see"
+    "how it is listed in Trilinos_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS in"
+    "relationship to 'Teko'[.]"
   )
 
 
