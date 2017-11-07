@@ -3096,7 +3096,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       TribitsExampleProject/.
 
   TEST_2
-    MESSAGE "Configure PkgWithUserErrors"
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
@@ -3114,7 +3113,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   TEST_3
-    MESSAGE "Configure PkgWithUserErrors"
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
@@ -3133,7 +3131,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   TEST_4
-    MESSAGE "Configure PkgWithUserErrors"
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
@@ -3148,12 +3145,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DPkgWithUserErrors_POSTPROCESS_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE[(][)] before TRIBITS_PACKAGE_POSTPROCESS[(][)]"
+      "Must call TRIBITS_PACKAGE[(][)] or TRIBITS_PACKAGE_DEF[(][)]"
+      "TRIBITS_PACKAGE_POSTPROCESS[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   TEST_5
-    MESSAGE "Configure PkgWithUserErrors"
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
@@ -3170,6 +3167,24 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Package .* declared more than once!"
+      "Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_6
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DPkgWithUserErrors_multiple_calls_to_PACKAGE=FALSE
+      -DPkgWithUserErrors_using_package_with_subpackage_commands=TRUE
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "The TriBITS Package 'PkgWithUserErrors' does not have any subpackages[.]"
+      "Therefore, you are not allowed to call TRIBITS_PROCESS_SUBPACKAGES[(][)]!"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
