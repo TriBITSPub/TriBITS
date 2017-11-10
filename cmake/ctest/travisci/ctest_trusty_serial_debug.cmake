@@ -34,6 +34,10 @@ SET( EXTRA_CONFIGURE_OPTIONS
   "-DTriBITS_ENABLE_Fortran=ON"
   "-DTriBITS_TRACE_ADD_TEST=ON"
   "-DTriBITS_HOSTNAME=travis-ci-server-linux"
+  "-DTriBITS_CTestDriver_AAO_ST_PackagesSubset_PASS_DISABLE=ON"
+  "-DTriBITS_CTestDriver_AAO_ST_SimpleCxx_PASS_DISABLE=ON"
+  "-DTriBITS_CTestDriver_AAO_ST_ALL_PASS_DISABLE=ON"
+  "-DTriBITS_CTestDriver_PBP_ST_ALL_PASS_DISABLE=ON"
   )
 
 SET(CTEST_TEST_TYPE Continuous)
