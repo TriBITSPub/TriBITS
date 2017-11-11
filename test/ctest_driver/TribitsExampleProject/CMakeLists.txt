@@ -153,7 +153,7 @@ ELSEIF (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "TESTING_VM_SANDIA_CDASH
     CTEST_DO_SUBMIT=TRUE
     CTEST_DROP_SITE="testing-vm.sandia.gov"
     CTEST_PROJECT_NAME="TribitsExProj"
-    CTEST_DROP_LOCATION="/CDash/submit.php?project=TribitsExProj"
+    CTEST_DROP_LOCATION="/cdash/submit.php?project=TribitsExProj"
     )
 ELSE()
   MESSAGE(FATAL_ERROR "Error, the value"
