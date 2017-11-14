@@ -115,6 +115,8 @@ g_gitRemote = "IT: git remote -v; 0; 'remotename\tsome-url-location (fetch)'\n"
 
 g_gitLog = "IT: git log  --pretty=.*; 0; 'one commit msg'\n"
 
+g_gitClean = "IT: git clean -xdf; 0; 'clean passed'\n"
+
 g_rsync = "IT: rsync -cav --delete --exclude=.* dummy/orig-dir/ dummy/dest-dir/; 0; 'sync passed'\n"
 
 g_gitLogSha1 = "IT: git log -1 --pretty=format:'.h'; 0; 'abc123'\n"
@@ -164,6 +166,7 @@ class test_snapshot_dir(unittest.TestCase):
       [
         g_gitDiffHead,
         g_gitDiffHead,
+        g_gitClean,
         g_gitRevParse,
         g_gitRemote,
         g_gitLog,
