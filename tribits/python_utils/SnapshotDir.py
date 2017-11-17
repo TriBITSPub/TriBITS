@@ -132,16 +132,16 @@ Note the trailing '/' is critical for the correct functioning of rsync.
 
 By default, this script does the following:
 
-1) Asserts that the git repo for 'orig-dir' is clean (i.e. no uncommitted
-   files, no unknown files, etc.).  This can be disabled by passing in
-   --allow-dirty-orig-dir.
+1) Assert that the git repo for 'orig-dir' is clean (i.e. no uncommitted
+   files, no unknown files, etc.).  (Can be disabled by passing in
+   --allow-dirty-orig-dir.)
 
-2) Asserts that the git repo for <some-dest-dir>/ is clean (see above).  This
-   can be disabled by passing in --allow-dirty-dest-dir.
+2) Assert that the git repo for <some-dest-dir>/ is clean (see above).  (Can
+be disabled by passing in --allow-dirty-dest-dir.)
 
-3) Cleans out the ignored files from <some-source-dir>/orig-dir using 'git
-   clean -xdf' run in that directory.  This can be disabled by passing in
-   --no-clean-orig-ingored-files.
+3) Clean out the ignored files from <some-source-dir>/orig-dir using 'git
+   clean -xdf' run in that directory.  (Only if --clean-ignored-files-orig-dir
+   is specified.)
 
 4) Run 'rsync -cav --delete' to copy the contents from 'orig-dir' to
    'dest-dir', excluding the '.git/' directory if it exists in either git repo
@@ -171,20 +171,21 @@ NOTES:
   .git/ directory when syncing.
 
 * The cleaning of the orig-dir/ using 'git clean -xdf' may be somewhat
-  dangerous but it is done by default to avoid copying locally-ignored files
-  in orig-dir/ (e.g. ignored in .git/info/excludes but not in a committed
-  .gitignore file) that get copied to and then committed into the dest-dir/
-  repoo.  Therefore, be sure you don't have any ignored files in orig-dir/
-  that you want to keep before you run this script!
+  dangerous but it is recommended that it be preformed by passing in
+  --clean-ignored-files-orig-dir to avoid copying locally-ignored files in
+  orig-dir/ (e.g. ignored in .git/info/excludes but not in a committed
+  .gitignore file) that get copied to and then committed in the dest-dir/
+  repo.  Therefore, be sure you don't have any ignored files in orig-dir/ that
+  you want to keep before you run this script!
 
 * Snapshotting with this script will create an exact duplicate of 'orig-dir'
   in 'dest-dir' and therefore if there are any local changes to the files or
-  chagnes after the last snapshot, they will get wiped out.  To avoid this, do
-  the snapshot on a branch in the 'dest-dir' git repo, then merge that branch
-  into the master branch in 'dest-dir' repo that has the local changes.  As
-  long as there are no merge conflicts, this will preserve local changes for
-  the mirrored directories and files.  This strategy works very well in many
-  cases.
+  changes after the last snapshot, they will get wiped out.  To avoid this,
+  one can the snapshot on a branch in the 'dest-dir' git repo, then merge that
+  branch into the main branch (e.g. 'master') in 'dest-dir' repo.  As long as
+  there are no merge conflicts, this will preserve local changes for the
+  mirrored directories and files.  This strategy can work well as a way to
+  allow for local modifications but still do the snapshotting..
 """
 
 
@@ -257,11 +258,11 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
 
     clp.add_option(
       "--clean-ignored-files-orig-dir", dest="cleanIgnoredFilesOrigDir", action="store_true",
-      help="Clean out the ignored files from orig-dir/ before snapshotting. [default]" )
+      help="Clean out the ignored files from orig-dir/ before snapshotting." )
     clp.add_option(
       "--no-clean-ignored-files-orig-dir", dest="cleanIgnoredFilesOrigDir", action="store_false",
-      default=True,
-      help="Do not clean out orig-dir/ ignored files before snapshotting." )
+      default=False,
+      help="Do not clean out orig-dir/ ignored files before snapshotting. [default]" )
 
     clp.add_option(
       "--do-rsync", dest="doRsync", action="store_true",

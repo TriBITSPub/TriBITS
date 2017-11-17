@@ -159,14 +159,13 @@ class test_snapshot_dir(unittest.TestCase):
      )
 
 
-  def test_full_snapshot(self):
+  def test_snapshot_default(self):
     runSnapshotDirTestCase(
       self,
       ["--orig-dir=dummy/orig-dir/", "--dest-dir=dummy/dest-dir/"],
       [
         g_gitDiffHead,
         g_gitDiffHead,
-        g_gitClean,
         g_gitRevParse,
         g_gitRemote,
         g_gitLog,
@@ -186,6 +185,28 @@ class test_snapshot_dir(unittest.TestCase):
         "Origin repo remote tracking branch: 'remotename/remotebranch'",
         "Origin repo remote repo URL: 'remotename = some-url-location'",
         "one commit msg"
+        ]
+     )
+
+  def test_snapshot_clean_ignored(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--orig-dir=dummy/orig-dir/", "--dest-dir=dummy/dest-dir/",
+        "--clean-ignored-files-orig-dir"],
+      [
+        g_gitDiffHead,
+        g_gitDiffHead,
+        g_gitClean,
+        g_gitRevParse,
+        g_gitRemote,
+        g_gitLog,
+        g_rsync,
+        g_gitLogSha1,
+        g_gitAdd,
+        g_gitCommit,
+        ],
+      [
+        "git clean -xdf"
         ]
      )
 
