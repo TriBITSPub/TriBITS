@@ -2675,6 +2675,54 @@ IF (TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES
 ENDIF()
 
 
+#
+# Test cmake/ProjectCompilerPostConfig.cmake
+#
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Darwin
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so that we can copy in cmake/ProjectCompilerPostConfig.cmake."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Copy in dummy cmake/ProjectCompilerPostConfig.cmake."
+    CMND cp
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/DummyProjectCompilerPostConfig.cmake  
+      TribitsExampleProject/cmake/ProjectCompilerPostConfig.cmake
+
+  TEST_2
+    MESSAGE "Configure SimpleCxx and trace includes"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_DEBUG=OFF
+      -DTribitsExProj_TRACE_FILE_PROCESSING=ON
+      -DTribitsExProj_ENABLE_SimpleCxx=ON
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- File Trace: PROJECT    INCLUDE    .*/cmake/ProjectCompilerPostConfig[.]cmake"
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "VERBOSE Build the simplecxx lib and verify that the new compiler flags is added "
+    CMND make
+    ARGS VERBOSE=1 simplecxx
+    PASS_REGULAR_EXPRESSION_ALL
+      "DDUMMY_DEFINE_JUST_TO_TSET_COMILER_POST_CONFIG"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+
+
 ########################################################################
 # TribitsExampleProject + TribitsExampleProjectAddons
 ########################################################################
