@@ -802,6 +802,15 @@ cache variable::
 
   -D <Project>_CXX11_FLAGS="<compiler flags>"
 
+In order to enable C++11 but not have the default system set any flags for
+C++11, use::
+
+  -D <Project>_ENABLE_CXX11=ON
+  -D <Project>_CXX11_FLAGS=" "
+
+The empty space " " will result in the system assuming that no flags needs to
+be set.
+
 
 Enabling explicit template instantiation for C++
 ------------------------------------------------
