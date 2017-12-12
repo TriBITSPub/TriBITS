@@ -23,7 +23,7 @@ A HelloWorld TriBITS Project
 Introduction
 =============
 
-This tutorail is designed to give you a basic overveiw of the
+This tutorial is designed to give you a basic overveiw of the
 structure of a TriBITS project at a high level.  See the tutorial on
 TriBITS Example Project for more detail and concrete examples. TriBITS
 defines a few structural units hat are then put together to form a
@@ -71,7 +71,7 @@ version of the project.
 
 
 TriBITS Sub-packages
-=================
+=====================
 
 Similar to the way a TriBITS project contains packages that can
 optionally be turned on and off, a package can defein subpackages that
