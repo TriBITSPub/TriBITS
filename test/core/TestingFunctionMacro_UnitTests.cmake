@@ -2765,6 +2765,40 @@ FUNCTION(UNITEST_TRIBITS_ADD_ADVANCED_TEST_COPY_FILES_TO_TEST_DIR)
       "NUM_CMNDS 1"
     )
 
+  MESSAGE("\n*** Test basic copy of files to dest dir under working dir with test name\n")
+  SET(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_1_test_explicit_dirs)
+  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
+  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    TEST_0 COPY_FILES_TO_TEST_DIR file1 file2
+      SOURCE_DIR /the/source/dir
+    )
+  UNITTEST_FILE_REGEX(
+    "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
+    REGEX_STRINGS
+      "TEST_0_COPY_FILES_TO_TEST_DIR \"file1,file2\""
+      "TEST_0_SOURCE_DIR \"/the/source/dir\""
+      "TEST_0_DEST_DIR \"${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}\""
+      "NUM_CMNDS 1"
+    )
+
+  MESSAGE("\n*** Test basic copy of files to dest dir under special-named working dir\n")
+  SET(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_1_test_explicit_dirs)
+  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
+  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME}
+    OVERALL_WORKING_DIRECTORY ${TEST_NAME}_other
+    TEST_0 COPY_FILES_TO_TEST_DIR file1 file2
+      SOURCE_DIR /the/source/dir
+    )
+  UNITTEST_FILE_REGEX(
+    "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
+    REGEX_STRINGS
+      "TEST_0_COPY_FILES_TO_TEST_DIR \"file1,file2\""
+      "TEST_0_SOURCE_DIR \"/the/source/dir\""
+      "TEST_0_DEST_DIR \"${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}_other\""
+      "NUM_CMNDS 1"
+    )
+
   MESSAGE("\n*** Test using an empty COPY_FILES_TO_TEST_DIR values\n")
   SET(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_missing_files)
   TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
@@ -3391,4 +3425,4 @@ MESSAGE("*** Determine final result of all unit tests")
 MESSAGE("***\n")
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(507)
+UNITTEST_FINAL_RESULT(515)

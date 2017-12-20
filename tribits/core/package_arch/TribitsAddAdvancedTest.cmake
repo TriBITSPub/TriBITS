@@ -852,6 +852,19 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
     SET(${PARSE_ADDED_TEST_NAME_OUT} "" PARENT_SCOPE )
   ENDIF()
 
+  # Set the relative overall working directory and abs working directory
+  IF (PARSE_OVERALL_WORKING_DIRECTORY)
+    IF ("${PARSE_OVERALL_WORKING_DIRECTORY}" STREQUAL "TEST_NAME")
+      SET(PARSE_OVERALL_WORKING_DIRECTORY ${TEST_NAME})
+    ENDIF()
+   # Test will run in created working subdir
+   SET(ABS_OVERALL_WORKING_DIRECTORY
+     ${CMAKE_CURRENT_BINARY_DIR}/${PARSE_OVERALL_WORKING_DIRECTORY})
+  ELSE()
+    # Test runs in current binary directory (not a good idea!) 
+    SET(ABS_OVERALL_WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+  ENDIF()
+
   #
   # B) Add or don't add tests based on a number of criteria
   #
@@ -1164,11 +1177,11 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
             "${PARSE_DEST_DIR}")
         ELSE()
           SET(COPY_FILES_TO_TEST_DIR_DEST_DIR
-            "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}/${PARSE_DEST_DIR}")
+            "${ABS_OVERALL_WORKING_DIRECTORY}/${PARSE_DEST_DIR}")
         ENDIF()
       ELSE()
         SET(COPY_FILES_TO_TEST_DIR_DEST_DIR
-          "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}")
+          "${ABS_OVERALL_WORKING_DIRECTORY}")
       ENDIF()
 
     ELSE()
@@ -1394,12 +1407,6 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
     #
     # F.2) Write the cmake -P script
     #
-
-    IF (PARSE_OVERALL_WORKING_DIRECTORY)
-      IF ("${PARSE_OVERALL_WORKING_DIRECTORY}" STREQUAL "TEST_NAME")
-        SET(PARSE_OVERALL_WORKING_DIRECTORY ${TEST_NAME})
-      ENDIF()
-    ENDIF()
   
     APPEND_STRING_VAR( TEST_SCRIPT_STR
       "\n"
