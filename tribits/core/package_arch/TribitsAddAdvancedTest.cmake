@@ -192,7 +192,11 @@ INCLUDE(PrintVar)
 #     The base name of the test (which will have ``${PACKAGE_NAME}_``
 #     prepended to the name, see <testName> below) that will be used to name
 #     the output CMake script file as well as the CTest test name passed into
-#     ``ADD_TEST()``.  This must be the first argument to this function.
+#     ``ADD_TEST()``.  This must be the first argument to this function.  The
+#     name is allowed to contain '/' chars but these will be replaced with
+#     '__' in the overall working directory name and the ctest -P script
+#     (`Debugging and Examining Test Generation
+#     (TRIBITS_ADD_ADVANCED_TEST())`_).
 #
 #   ``OVERALL_WORKING_DIRECTORY <overallWorkingDir>``
 #
@@ -200,11 +204,11 @@ INCLUDE(PrintVar)
 #     (relative or absolute path) will be created and all of the test commands
 #     by default will be run from within this directory.  If the value
 #     ``<overallWorkingDir>=TEST_NAME`` is given, then the working directory
-#     will be given the name ``<testName>``.  By default, if the directory
-#     ``<overallWorkingDir>`` exists before the test runs, it will be deleted
-#     and created again.  If one wants to preserve the contents of this
-#     directory between test runs then set
-#     ``SKIP_CLEAN_OVERALL_WORKING_DIRECTORY``.  Using a separate test
+#     will be given the name ``<testName>`` where any '/' chars are replaced
+#     with '__'.  By default, if the directory ``<overallWorkingDir>`` exists
+#     before the test runs, it will be deleted and created again.  If one
+#     wants to preserve the contents of this directory between test runs then
+#     set ``SKIP_CLEAN_OVERALL_WORKING_DIRECTORY``.  Using a separate test
 #     directory is a good option to use if the commands create intermediate
 #     files and one wants to make sure they get deleted before the test cases
 #     are run again.  It is also important to create a separate test directory
@@ -662,8 +666,8 @@ INCLUDE(PrintVar)
 #
 # Since raw CTest does not support the features provided by this function, the
 # way an advanced test is implemented is that a ``cmake -P`` script with the
-# name ``<testName>.cmake`` gets created in the current binary directory that
-# then gets added to CTest using::
+# name ``<testName>.cmake`` (with any '/' replaced with '__') gets created in
+# the current binary directory that then gets added to CTest using::
 #
 #   ADD_TEST(<testName> cmake [other options] -P <testName>.cmake)
 #
@@ -852,10 +856,14 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
     SET(${PARSE_ADDED_TEST_NAME_OUT} "" PARENT_SCOPE )
   ENDIF()
 
+  # Set the name of the cmake -P script.
+  STRING(REPLACE "/" "__" NORMALIZED_TEST_NAME "${TEST_NAME}")
+  SET(TEST_SCRIPT_FILE_NAME "${NORMALIZED_TEST_NAME}.cmake")
+
   # Set the relative overall working directory and abs working directory
   IF (PARSE_OVERALL_WORKING_DIRECTORY)
     IF ("${PARSE_OVERALL_WORKING_DIRECTORY}" STREQUAL "TEST_NAME")
-      SET(PARSE_OVERALL_WORKING_DIRECTORY ${TEST_NAME})
+      SET(PARSE_OVERALL_WORKING_DIRECTORY ${NORMALIZED_TEST_NAME})
     ENDIF()
    # Test will run in created working subdir
    SET(ABS_OVERALL_WORKING_DIRECTORY
@@ -1348,7 +1356,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
     # F.1) Call ADD_TEST() and set the test properties
     #
   
-    SET(TEST_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.cmake")
+    SET(TEST_SCRIPT_FILE "${CMAKE_CURRENT_BINARY_DIR}/${TEST_SCRIPT_FILE_NAME}")
 
     IF(NOT TRIBITS_ADD_TEST_ADD_TEST_UNITTEST)
       # Tell CTest to run our script for this test.  Pass the test-type
