@@ -9,8 +9,9 @@ before_install:
   - sudo apt-get -y install gfortran
 
 install:
-  - mkdir build
-  - cd build/
+  - cd ..
+  - mkdir tribits-build
+  - cd tribits-build
 
 script:
-  - ctest -V -S ../cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
+  - ctest -V -S ../TriBITS/cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
