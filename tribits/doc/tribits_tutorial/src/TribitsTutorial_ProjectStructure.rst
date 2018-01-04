@@ -53,6 +53,11 @@ source files to use to build each target and which targets to build.
 You will also need to define any dependencies this package may have on
 other packages in the project.
 
+In order top define a package, you must have the following files
+defined::
+
+
+
 TriBITS Projects
 ================
 
@@ -69,6 +74,15 @@ project wishes to use and where to find them, any TPL dependencies you
 may have, Project name and other project options, and the current
 version of the project.
 
+In order top define a project, you must have the following files
+defined::
+
+CTestConfig.cmake
+PackagesList.cmake
+ProjectName.cmake
+TPLsList.cmake
+Version.cmake
+
 
 TriBITS Sub-packages
 =====================
@@ -78,6 +92,9 @@ optionally be turned on and off, a package can defein subpackages that
 can be optionally enabled. Subpackages allow for a finer level of
 control over dependencies as each subpackage can define it's own
 dependencies.  A subpackage cannot have subpackages of it's own.
+
+In order top define a subpackage, you must have the following files
+defined::
 
 
 TriBITS Repositories
@@ -89,6 +106,8 @@ dependenecies, and options.  Dependencies between packages are still
 defined by the package.  A TriBITS project can also be used as a
 TriBITS repository for another TriBITS project.
 
+In order top define a tribits repository, you must have the following
+files defined::
 
 TriBITS TPLS
 ============
