@@ -569,8 +569,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     `<Project>_ENABLE_ALL_FORWARD_DEP_PACKAGES enables downstream
 #     packages/tests`_).  The default value is ``FALSE`` unless
 #     ``CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=TRUE`` is set in which case the
-#     default value is ``TRUE``.  This also gets passed to the inner CMake
-#     configure.
+#     default value is ``TRUE``.
 #
 #   .. _${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE:
 #
