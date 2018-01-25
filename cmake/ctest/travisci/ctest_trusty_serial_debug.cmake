@@ -1,3 +1,5 @@
+SET(CTEST_RUN_CURRENT_SCRIPT 0)
+
 #
 # Set the locations of things for this project
 #

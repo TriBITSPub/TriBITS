@@ -81,6 +81,8 @@
 # Do not modify any of this directly, use use environment variables instead!
 #
 
+SET(CTEST_RUN_CURRENT_SCRIPT 0)
+
 #
 # Include some CMake/CTest code files
 #
