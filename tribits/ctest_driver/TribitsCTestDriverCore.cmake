@@ -1659,18 +1659,13 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   ENDIF()
 
   #
-  # Write a few variables to the global level to make cmake happy.
-  #
-  # If these don't get set in the base CTest script scope, CTest returns an
-  # error!
+  # This is a workaround to prevent the test script from being run twice. Since
+  # we are declaring tests inside a function, CTEST_RUN_CURRENT_SCRIPT gets set
+  # in the function scope, NOT the global scope. Manually setting it here with
+  # PARENT_SCOPE sets it at the global scope.
   #
 
-  SET(CTEST_SOURCE_DIRECTORY ${CTEST_SOURCE_DIRECTORY} CACHE INTERNAL "")
-  SET(CTEST_BINARY_DIRECTORY ${CTEST_BINARY_DIRECTORY} CACHE INTERNAL "")
-  IF ("${CTEST_COMMAND}" STREQUAL "")
-    SET(CTEST_COMMAND ctest)
-  ENDIF()
-  SET(CTEST_COMMAND ${CTEST_COMMAND} CACHE INTERNAL "")
+  SET(CTEST_RUN_CURRENT_SCRIPT 0 PARENT_SCOPE)
 
   #
   # Empty out the binary directory
