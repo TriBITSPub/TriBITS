@@ -2705,6 +2705,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
       -DTribitsExProj_ENABLE_DEBUG=OFF
       -DTribitsExProj_TRACE_FILE_PROCESSING=ON
       -DTribitsExProj_ENABLE_SimpleCxx=ON
+      -DCMAKE_VERBOSE_MAKEFILE=ON
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "-- File Trace: PROJECT    INCLUDE    .*/cmake/ProjectCompilerPostConfig[.]cmake"
@@ -2715,9 +2716,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
   TEST_3
     MESSAGE "VERBOSE Build the simplecxx lib and verify that the new compiler flags is added "
     CMND make
-    ARGS VERBOSE=1 simplecxx
+    ARGS simplecxx
     PASS_REGULAR_EXPRESSION_ALL
-      "DDUMMY_DEFINE_JUST_TO_TSET_COMILER_POST_CONFIG"
+      "DDUMMY_DEFINE_JUST_TO_TEST_COMILER_POST_CONFIG"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
