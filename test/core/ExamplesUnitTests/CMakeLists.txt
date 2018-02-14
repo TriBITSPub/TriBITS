@@ -578,6 +578,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
       "WithSubpackages_CXX_FLAGS = '.*'"
       "WithSubpackages_C_FLAGS = '.*'"
       "WithSubpackages_FORTRAN_FLAGS = '.*'"
@@ -650,6 +651,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
     PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
       "WithSubpackages_CXX_FLAGS = '.*'"
       "WithSubpackages_C_FLAGS = '.*'"
       "WithSubpackages_FORTRAN_FLAGS = '.*'"
