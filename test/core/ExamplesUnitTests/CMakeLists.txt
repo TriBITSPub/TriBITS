@@ -113,6 +113,50 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_InSourceBuildErrors
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    CMND ${CMAKE_COMMAND}
+    ARGS -E copy_directory
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+      TribitsHelloWorld
+
+  TEST_1
+    MESSAGE "Try an in-source configure and check errror message"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      .
+    WORKING_DIRECTORY TribitsHelloWorld
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "CMAKE_CURRENT_SOURCE_DIR=.*/TriBITS_TribitsHelloWorld_InSourceBuildErrors/TribitsHelloWorld"
+      "CMAKE_CURRENT_BINARY_DIR=.*/TriBITS_TribitsHelloWorld_InSourceBuildErrors/TribitsHelloWorld"
+      "TribitsHelloWorld does not support in source builds"
+      "NOTE: You must now delete the CMakeCache.txt file and the CMakeFiles/"
+      "Please create a different directory and configure"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_2
+    MESSAGE "Try configure in build subdir and check for bad CMakeCache.txt file"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      ..
+    WORKING_DIRECTORY TribitsHelloWorld/BUILD
+    PASS_REGULAR_EXPRESSION_ALL
+      "TriBITS_TribitsHelloWorld_InSourceBuildErrors/TribitsHelloWorld/CMakeCache.txt"
+      "exists from a likely prior attempt to do an in-soruce build"
+      ""
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  
+  )
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1

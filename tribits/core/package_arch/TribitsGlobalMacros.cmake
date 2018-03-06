@@ -84,6 +84,27 @@ INCLUDE(TribitsTplDeclareLibraries) # Deprecated
 #
 MACRO(TRIBITS_ASSERT_AND_SETUP_PROJECT_AND_STATIC_SYSTEM_VARS)
 
+  APPEND_STRING_VAR(IN_SOURCE_ERROR_COMMON_MSG
+    "\nYou must now run something like:\n"
+    "  $ cd ${CMAKE_CURRENT_SOURCE_DIR}/\n"
+    "  $ rm -r CMakeCache.txt CMakeFiles/"
+    "\n"
+    "Please create a different directory and configure ${PROJECT_NAME}"
+    " under that such as:\n"
+    "  $ cd ${CMAKE_CURRENT_SOURCE_DIR}/\n"
+    "  $ mkdir MY_BUILD\n"
+    "  $ cd MY_BUILD\n"
+    "  $ cmake [OPTIONS] .."
+    )
+
+  IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/CMakeCache.txt")
+    MESSAGE(FATAL_ERROR "ERROR! "
+      "The file ${CMAKE_CURRENT_SOURCE_DIR}/CMakeCache.txt exists from a"
+      " likely prior attempt to do an in-soruce build."
+      "${IN_SOURCE_ERROR_COMMON_MSG}"
+      )
+  ENDIF()
+
   IF ("${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_BINARY_DIR}")
     MESSAGE(FATAL_ERROR "ERROR! "
       "CMAKE_CURRENT_SOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
@@ -91,13 +112,7 @@ MACRO(TRIBITS_ASSERT_AND_SETUP_PROJECT_AND_STATIC_SYSTEM_VARS)
       "\n${PROJECT_NAME} does not support in source builds!\n"
       "NOTE: You must now delete the CMakeCache.txt file and the CMakeFiles/ directory under"
       " the source directory for ${PROJECT_NAME} or you will not be able to configure ${PROJECT_NAME} correctly!"
-      "\nYou must now run something like:\n"
-      "  $ rm -r CMakeCache.txt CMakeFiles/"
-      "\n"
-      "Please create a different directory and configure ${PROJECT_NAME} under that such as:\n"
-      "  $ mkdir MY_BUILD\n"
-      "  $ cd MY_BUILD\n"
-      "  $ cmake [OPTIONS] .."
+      "${IN_SOURCE_ERROR_COMMON_MSG}"
       )
   ENDIF()
 
