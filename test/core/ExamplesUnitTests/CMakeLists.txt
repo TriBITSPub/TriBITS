@@ -113,6 +113,37 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_EXE_DISABLE
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DHelloWorld_unit_tests_EXE_DISABLE=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- HelloWorld_unit_tests EXE NOT being built due to HelloWorld_unit_tests_EXE_DISABLE=[']ON[']"
+      "Configuring done"
+      "Generating done"
+      "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsHelloWorld"
+  TEST_1 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target hello_world_lib"
+      "Built target hello_world"
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      "Test [#]2: HelloWorld_unit_tests [.]+[*][*][*]Not Run"
+      ": HelloWorld_hello_world .*  Passed"
+      "2 - HelloWorld_unit_tests [(]Not Run[)]"
+      "50% tests passed, 1 tests failed out of 2"
+  )
+  # NOTE: Above we are testing the <exec_name>_EXE_DISABLE option in a full
+  # configure and build case because the TRIBITS_ADD_EXECUTABLE() command is
+  # not set up for unit-testing mode.
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_InSourceBuildErrors
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
