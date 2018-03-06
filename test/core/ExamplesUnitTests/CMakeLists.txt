@@ -150,7 +150,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_InSourceBuildErrors
     WORKING_DIRECTORY TribitsHelloWorld/BUILD
     PASS_REGULAR_EXPRESSION_ALL
       "TriBITS_TribitsHelloWorld_InSourceBuildErrors/TribitsHelloWorld/CMakeCache.txt"
-      "exists from a likely prior attempt to do an in-soruce build"
+      "exists from a likely prior attempt to do an in-source build"
       ""
     ALWAYS_FAIL_ON_ZERO_RETURN
   
