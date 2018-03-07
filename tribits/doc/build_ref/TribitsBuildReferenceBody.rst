@@ -1668,14 +1668,31 @@ and don't nest with the other categories.
 Disabling specific tests
 ------------------------
 
-Any TriBTS added ctest test (i.e. listed in ``ctest -N``) can be disabled at
+Any TriBTS-added ctest test (i.e. listed in ``ctest -N``) can be disabled at
 configure time by setting::
 
   -D <fullTestName>_DISABLE=ON
 
 where ``<fulltestName>`` must exactly match the test listed out by ``ctest
 -N``.  Of course specific tests can also be excluded from ``ctest`` using the
-``-E`` argument.
+``-E`` argument.  This will result in the printing of a line for the excluded
+test when `Trace test addition or exclusion`_ is enabled.
+
+
+Disabling specific test executable builds
+-----------------------------------------
+
+Any TriBITS-added exectuable (i.e. listed in ``make help``) can be disabled
+from being built by setting::
+
+  -D <exeTargetName>_EXE_DISABLE=ON
+
+where ``<exeTargetName>`` is the name of the target in the build system.
+
+Note that one should also disable any ctest tests that might use this
+executable as well with ``-D<fullTestName>_DISABLE=ON`` (see above).  This
+will result in the printing of a line for the executable target being
+disabled.
 
 
 Trace test addition or exclusion
