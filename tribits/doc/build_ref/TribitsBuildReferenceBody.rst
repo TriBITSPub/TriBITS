@@ -1161,13 +1161,51 @@ Some machines, such as the Cray XT5, require static executables.  To build
 
 The first flag tells cmake to build static versions of the <Project>
 libraries.  The second flag tells cmake to locate static library versions of
-any required TPLs.  The third flag tells the autodetection routines that
+any required TPLs.  The third flag tells the auto-detection routines that
 search for extra required libraries (such as the mpi library and the gfortran
 library for gnu compilers) to locate static versions.
 
 NOTE: The flag ``<Project>_LINK_SEARCH_START_STATIC`` is only supported in
 cmake version 2.8.5 or higher.  The variable will be ignored in prior releases
 of cmake.
+
+
+Enabling the usage of resource files to reduce length of build lines
+--------------------------------------------------------------------
+
+CMake supports three very useful (undocumented) options for reducing the
+length of the command-lines used to build object files, create libraries, and
+link executables.  Using these options can avoid troublesome "command-line too
+long" errors, "Error 127" library creation errors, and other similar errors
+related to excessively long command lines to build various targets.
+
+To aggregate the list of all of the include directories (e.g. ``'-I
+<full_path>'``) into a single ``*.rsp`` file for compiling object files, set::
+
+  -D CMAKE_CXX_USE_RESPONSE_FILE_FOR_INCLUDES=ON
+
+To aggregate the list of all of the object files (e.g. ``'<path>/<name>.o'``)
+into a single ``*.rsp`` file for creating libraries or linking executables,
+set::
+
+  -D CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS=ON
+
+To aggregate the list of all of the libraries (e.g. ``'<path>/<libname>.a'``)
+into a single ``*.rsp`` file for creating shared libraries library or linking
+executables, set::
+
+  -D CMAKE_CXX_USE_RESPONSE_FILE_FOR_LIBRARIES=ON
+
+WARNING: Some of these options don't work with some compilers (or some
+versions of CMake don't know how pass these files to these compilers
+correctly).  For example, some versions of ``gfortran`` do not accept
+``*.rsp`` files as produced with some versions of CMake.  Because of problems
+like this, TriBITS cannot robustly automatically turn on these options.
+Therefore, it is up to the user to try these options out to see if they work
+with their specific version of CMake, compilers, and OS.
+
+NOTE: Newer versions of CMake may automatically determine when these options
+need to be turned on so watch for that in looking at the build lines.
 
 
 Enabling support for an optional Third-Party Library (TPL)
