@@ -1204,6 +1204,16 @@ like this, TriBITS cannot robustly automatically turn on these options.
 Therefore, it is up to the user to try these options out to see if they work
 with their specific version of CMake, compilers, and OS.
 
+NOTE: One can decide to set any combination of these three options based on
+need and preference and what actually works with a given OS, version of CMake,
+and provided compilers.  For example, on one system
+``CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS=ON`` may work but
+``CMAKE_CXX_USE_RESPONSE_FILE_FOR_INCLUDES=ON`` may not (which is the case for
+``gfortran`` mentioned above).  Therefore, one should experiment carefully and
+inspect the build lines using ``make VERBOSE=1 <target>`` as described in
+`Building with verbose output without reconfiguring`_ when deciding which of
+these options to enable.
+
 NOTE: Newer versions of CMake may automatically determine when these options
 need to be turned on so watch for that in looking at the build lines.
 
