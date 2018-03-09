@@ -934,7 +934,7 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
 
   clp.add_option(
     "--ss-extra-builds", dest="ssExtraBuilds", type="string", default="",
-    help="DEPRECATED!  Use --st-extra-builds instead!." )
+    help="DEPRECATED!  Use --st-extra-builds instead!. (Default empty "")" )
 
   clp.add_option(
     "--extra-builds", dest="extraBuilds", type="string", default="",
@@ -942,6 +942,10 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     +" --extra-builds=<BUILD1>,<BUILD2>,..., there must be a file <BUILDN>.config in" \
     +" the local directory along side the COMMON.config file that defines the special" \
     +" build options for the extra build." )
+
+  clp.add_option(
+    "--log-file", dest="logFile", type="string", default="checkin-test.out",
+    help="File used for detailed log info." )
 
   clp.add_option(
     "--send-email-to", dest="sendEmailTo", type="string",
@@ -972,10 +976,6 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     +" case.  But the final status email will still go out if --send-email-to=<email>" \
     +" is not empty. [default = 'always']",
     clp )
-
-  clp.add_option(
-    "--log-file", dest="logFile", type="string", default="",
-    help="File used for detailed log info." )
 
   clp.add_option(
     "--send-email-for-all", dest="sendEmailOnlyOnFailure", action="store_false",
@@ -1182,6 +1182,7 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     print "  --without-default-builds \\"
   print "  --st-extra-builds='"+options.stExtraBuilds+"' \\"
   print "  --extra-builds='"+options.extraBuilds+"' \\"
+  print "  --log-file='"+options.logFile+"' \\"
   print "  --send-email-to='"+options.sendEmailTo+"' \\"
   if options.skipCaseSendEmail:
     print "  --skip-case-send-email \\"

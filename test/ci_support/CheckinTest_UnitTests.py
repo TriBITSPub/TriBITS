@@ -1927,6 +1927,7 @@ class test_checkin_test(unittest.TestCase):
       True,
       "Script: checkin-test.py\n" \
       +"\-\-send-build-case-email=always\n" \
+      +"\-\-log-file=.checkin-test.out.\n" \
       ,
       mustHaveCheckinTestOut=False \
       ,
