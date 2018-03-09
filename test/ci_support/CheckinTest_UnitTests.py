@@ -1585,7 +1585,8 @@ def create_checkin_test_case_dir(testName, verbose=False):
 def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
   expectPass, passRegexStrList, filePassRegexStrList=None, mustHaveCheckinTestOut=True, \
   failRegexStrList=None, fileFailRegexStrList=None, envVars=[], inPathGit=True, \
-  grepForFinalPassFailStr=True \
+  grepForFinalPassFailStr=True, \
+  logFileName=None
   ):
 
   verbose = g_verbose
@@ -1608,7 +1609,7 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
   try:
 
     # B) Create the command to run the checkin-test.py script
-    
+
     cmndArgs = [
       tribitsBaseDir + "/ci_support/checkin-test.py",
       "--with-cmake=\""+g_withCmake+"\"",
@@ -1619,6 +1620,13 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
         'CheckinTest_UnitTests_Config.py'),
       optionsStr,
       ]
+    
+    if logFileName:
+      logFileNameExpected = logFileName
+      cmndArgs.append("--log-file="+logFileName)
+    else:
+      logFileNameExpected = "checkin-test.out"
+
     cmnd = ' '.join(cmndArgs)
     
     # C) Set up the command intercept file
@@ -1665,7 +1673,10 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
     # E) Grep the main output file looking for specific strings
 
     if mustHaveCheckinTestOut:
-      outputFileToGrep = "checkin-test.out"
+      if logFileName:
+        outputFileToGrep = logFileName
+      else:
+        outputFileToGrep = "checkin-test.out"
     else:
       outputFileToGrep = checkin_test_test_out
 
@@ -2120,7 +2131,7 @@ class test_checkin_test(unittest.TestCase):
       +"1) SERIAL_RELEASE => passed: passed=100,notpassed=0\n" \
       +"mailx .* trilinos-checkin-tests.*\n" \
       +"^DID PUSH: Trilinos:\n" \
-      ,
+      ,logFileName="checkin-test.other.out"
       )
 
 
