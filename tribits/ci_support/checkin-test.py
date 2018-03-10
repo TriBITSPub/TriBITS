@@ -891,8 +891,20 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     help="The options to pass to make and ctest (e.g. -j4)." )
 
   clp.add_option(
+    "--use-makefiles", dest="useNinja", action="store_false",
+    help="If set, then -G'Unix Makfiles' used for backend build tool." \
+    +" Note: The command 'make' must be in the default path. [default]",
+    default=False )
+  clp.add_option(
+    "--use-ninja", dest="useNinja", action="store_true",
+    help="If set, then -GNinja used for backend build tool." \
+    +" Note: The comamnd 'ninja' must be in the default path." ,
+    default=False )
+
+  clp.add_option(
     "--make-options", dest="makeOptions", type="string", default="",
-    help="The options to pass to make (e.g. -j4)." )
+    help="The options to pass to 'make' (e.g. -j4) or ninja" \
+    +" (if --use-ninja given)." )
 
   clp.add_option(
     "--ctest-options", dest="ctestOptions", type="string", default="",
@@ -1171,6 +1183,10 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
   print "  --test-categories='"+options.testCategories+"' \\"
   if options.overallNumProcs:
     print "  -j"+options.overallNumProcs+" \\"
+  if options.useNinja:
+    print "  --use-ninja \\"
+  else:
+    print "  --use-makefiles \\"
   print "  --make-options='"+options.makeOptions+"' \\"
   print "  --ctest-options='"+options.ctestOptions+"' \\"
   print "  --ctest-timeout="+str(options.ctestTimeOut)+" \\"

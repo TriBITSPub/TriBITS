@@ -1926,6 +1926,7 @@ class test_checkin_test(unittest.TestCase):
       "", # No shell commands!
       True,
       "Script: checkin-test.py\n" \
+      +"\-\-use-makefiles\n" \
       +"\-\-send-build-case-email=always\n" \
       +"\-\-log-file=.checkin-test.out.\n" \
       ,
@@ -5886,6 +5887,49 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
+      )
+
+
+  # G) Test --use-ninja
+
+  def test_use_ninja_build_only(self):
+    checkin_test_run_case(
+      self,
+      \
+      "use_ninja_build_only",
+      \
+      "--make-options=\"-j6 -k 99999\" --default-builds=MPI_DEBUG" \
+      +" --use-ninja --pull --configure --build",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +g_cmndinterceptsPullPasses \
+      +g_cmndinterceptsConfigPasses \
+      +"IT: ninja -j6 -k 99999; 0; 'ninja passed'\n" \
+      +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      g_expectedRegexUpdateWithBuildCasePasses+ \
+      "\-\-use-ninja\n" \
+      "Configure passed!\n" \
+      "touch configure.success\n" \
+      "Build passed!\n" \
+      "Skipping the tests on request!\n" \
+      "0) MPI_DEBUG => passed: build-only passed => Not ready to push!\n" \
+      "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
+      "NOT READY TO PUSH: Trilinos:\n" \
+      ,
+      [
+        ("MPI_DEBUG/do-configure.base",
+         "\-GNinja\n"\
+           +"\-DTrilinos_ENABLE_TESTS:BOOL=ON\n" \
+           +"\-DCMAKE_BUILD_TYPE:STRING=RELEASE\n" \
+           +"\-DTrilinos_ENABLE_DEBUG:BOOL=ON\n" \
+           )
+        ]
       )
 
 

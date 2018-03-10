@@ -1460,11 +1460,12 @@ def runBuildTestCase(inOptions, tribitsGitRepos, buildTestCase, timings):
     # A.1) Set the base options
   
     cmakeBaseOptions = []
+    if inOptions.useNinja:
+      cmakeBaseOptions.append("-GNinja")
     if inOptions.extraCmakeOptions:
       cmakeBaseOptions.extend(commandLineOptionsToList(inOptions.extraCmakeOptions))
-  
     cmakeBaseOptions.append(cmakeScopedDefine(projectName,
-      "TRIBITS_DIR:PATH", inOptions.tribitsDir))
+    "TRIBITS_DIR:PATH", inOptions.tribitsDir))
     cmakeBaseOptions.append(cmakeScopedDefine(projectName,
       "ENABLE_TESTS:BOOL", "ON"))
     cmakeBaseOptions.append(cmakeScopedDefine(projectName,
@@ -1576,7 +1577,10 @@ def runBuildTestCase(inOptions, tribitsGitRepos, buildTestCase, timings):
   
     if inOptions.doBuild and configurePassed:
   
-      cmnd = "make"
+      if inOptions.useNinja:
+        cmnd = "ninja"
+      else:
+        cmnd = "make"
       if inOptions.makeOptions:
         cmnd += " " + inOptions.makeOptions
   
