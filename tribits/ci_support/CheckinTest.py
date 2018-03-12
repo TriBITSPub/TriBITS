@@ -1717,7 +1717,7 @@ def cleanBuildTestCaseSuccessFiles(runBuildTestCaseBool, inOptions, baseTestDir,
 
 
 def cleanSuccessFiles(buildTestCaseList, inOptions, baseTestDir):
-  print("\Removing *.success files ...\n")
+  print("\nRemoving *.success files ...\n")
   removeIfExists(getInitialPullSuccessFileName())
   for buildTestCase in buildTestCaseList:
     cleanBuildTestCaseSuccessFiles(
