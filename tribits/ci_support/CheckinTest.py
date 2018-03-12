@@ -1705,6 +1705,24 @@ def cleanBuildTestCaseOutputFiles(runBuildTestCaseBool, inOptions, baseTestDir, 
       removeIfExists(getEmailSuccessFileName())
       echoChDir("..")
 
+def cleanBuildTestCaseSuccessFiles(runBuildTestCaseBool, inOptions, baseTestDir, \
+  buildTestCaseName \
+  ):
+
+  removeIfExists(buildTestCaseName+"/"+getConfigureSuccessFileName())
+  removeIfExists(buildTestCaseName+"/"+getBuildSuccessFileName())
+  removeIfExists(buildTestCaseName+"/"+getTestSuccessFileName())
+  removeIfExists(buildTestCaseName+"/"+getEmailSuccessFileName())
+  None
+
+
+def cleanSuccessFiles(buildTestCaseList, inOptions, baseTestDir):
+  print("\Removing *.success files ...\n")
+  removeIfExists(getInitialPullSuccessFileName())
+  for buildTestCase in buildTestCaseList:
+    cleanBuildTestCaseSuccessFiles(
+      buildTestCase.runBuildTestCase, inOptions, baseTestDir, buildTestCase.name)
+
 
 def runBuildTestCaseDriver(inOptions, tribitsGitRepos, baseTestDir, buildTestCase, timings):
 
@@ -2821,6 +2839,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
           if didAtLeastOnePush:
             print("\nPush passed!\n")
             didPush = True
+            cleanSuccessFiles(buildTestCaseList, inOptions, baseTestDir)
           else:
             print("\nPush failed because the push was never attempted!")
         else:

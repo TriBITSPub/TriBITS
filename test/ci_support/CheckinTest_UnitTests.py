@@ -80,6 +80,11 @@ def assertFileExists(testObject, filePath):
     "Error, the file '" + filePath + "' does not exist!")
 
 
+def assertFileNotExists(testObject, filePath):
+  testObject.assertEqual(os.path.isfile(filePath), False,
+    "Error, the file '" + filePath + "' exists!")
+
+
 def assertGrepFileForRegexStrList(testObject, testName, fileName, regexStrList, verbose):
   testObject.assertEqual(os.path.isfile(fileName), True,
     "Error, the file '" + fileName + "' does not exist!")
@@ -2027,11 +2032,13 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_do_all_push_pass(self):
+    testName = "do_all_push_pass"
+    testBaseDir = create_checkin_test_case_dir(testName, g_verbose)
     checkin_test_run_case(
       \
       self,
       \
-      "do_all_push_pass",
+      testName,
       \
       "--make-options=-j3 --ctest-options=-j5" \
       +" --abort-gracefully-if-no-changes-pulled --abort-gracefully-if-no-changes-to-push" \
@@ -2113,6 +2120,17 @@ class test_checkin_test(unittest.TestCase):
       # ToDo: Add more files to check
       ]
       )
+    assertFileNotExists(self, testBaseDir+"/pullInitial.success")
+    mpiDebugDir=testBaseDir+"/MPI_DEBUG"
+    assertFileNotExists(self, mpiDebugDir+"/configure.success")
+    assertFileNotExists(self, mpiDebugDir+"/make.success")
+    assertFileNotExists(self, mpiDebugDir+"/ctest.success")
+    assertFileNotExists(self, mpiDebugDir+"/email.success")
+    serialReleaseDir=testBaseDir+"/SERIAL_RELEASE"
+    assertFileNotExists(self, serialReleaseDir+"/configure.success")
+    assertFileNotExists(self, serialReleaseDir+"/make.success")
+    assertFileNotExists(self, serialReleaseDir+"/ctest.success")
+    assertFileNotExists(self, serialReleaseDir+"/email.success")
 
 
   def test_send_build_case_email_only_on_failure_do_all_push_pass(self):
@@ -2444,11 +2462,13 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_do_all_no_append_test_results_push_pass(self):
+    testName = "do_all_no_append_test_results_push_pass"
+    testBaseDir = create_checkin_test_case_dir(testName, g_verbose)
     checkin_test_run_case(
       \
       self,
       \
-      "do_all_no_append_test_results_push_pass",
+      testName,
       \
       "--make-options=-j3 --ctest-options=-j5" \
       +" --do-all --no-append-test-results --push",
@@ -2476,8 +2496,6 @@ class test_checkin_test(unittest.TestCase):
       +"=> A PUSH IS READY TO BE PERFORMED!\n" \
       +"^DID PUSH: Trilinos:\n" \
       )
-    # ToDo: Verify that a --push deletes all of the *.success files!
-    
 
 
   def test_do_all_no_rebase_push_pass(self):
