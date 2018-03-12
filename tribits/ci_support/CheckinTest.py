@@ -2926,9 +2926,9 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
           success = False
       else:
         if okayToPush:
-          subjectLine = "READY TO PUSH"
+          subjectLine = "PASSED (READY TO PUSH)"
         else:
-          subjectLine = "NOT READY TO PUSH"
+          subjectLine = "PASSED (NOT READY TO PUSH)"
 
       #
       print("\n9.b) Create and send out push (or readiness status) notification email ...")

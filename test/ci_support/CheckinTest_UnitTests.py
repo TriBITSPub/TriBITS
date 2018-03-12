@@ -1742,7 +1742,7 @@ def g_test_do_all_default_builds_mpi_debug_pass(testObject, testName):
     +"1) SERIAL_RELEASE => Test case SERIAL_RELEASE was not run! => Does not affect push readiness!\n" \
     +g_expectedCommonOptionsSummary \
     +"=> A PUSH IS READY TO BE PERFORMED!\n" \
-    +"^READY TO PUSH: Trilinos:\n" \
+    +"^PASSED [(]READY TO PUSH[)]: Trilinos:\n" \
     ,
     \
     failRegexStrList = \
@@ -1858,7 +1858,7 @@ def  g_test_st_extra_builds_st_do_all_pass(testObject, testName):
     +"passed: Trilinos/MPI_DEBUG_ST: passed=100,notpassed=0\n" \
     +"0) MPI_DEBUG => Skipped configure, build, test due to no enabled packages! => Does not affect push readiness!\n" \
     +"2) MPI_DEBUG_ST => passed: passed=100,notpassed=0\n" \
-    +"^READY TO PUSH\n" \
+    +"^PASSED [(]READY TO PUSH[)]\n" \
     )
 
 
@@ -2200,7 +2200,7 @@ class test_checkin_test(unittest.TestCase):
       +"A current successful pull does \*not\* exist => Not ready for final push!\n" \
       +"Explanation: In order to safely push, the local working directory needs\n" \
       +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
-      +"^NOT READY TO PUSH: Trilinos:\n" \
+      +"^PASSED [(]NOT READY TO PUSH[)]: Trilinos:\n" \
       +"Not executing final command (ssh -q godel /some/dir/some_command.sh &) since a push is not okay to be performed!\n" \
       )
 
@@ -2236,7 +2236,7 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedCommonOptionsSummary \
       +"A current successful pull does \*not\* exist => Not ready for final push!\n" \
       +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
-      +"^NOT READY TO PUSH: Trilinos:\n" \
+      +"^PASSED [(]NOT READY TO PUSH[)]: Trilinos:\n" \
       )
 
 
@@ -2307,7 +2307,7 @@ class test_checkin_test(unittest.TestCase):
       "Running: rm -rf MPI_DEBUG\n" \
       +"0) MPI_DEBUG => No configure, build, or test for MPI_DEBUG was requested! => Not ready to push!\n" \
       +"=> A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
-      +"^NOT READY TO PUSH: Trilinos:\n"
+      +"^PASSED [(]NOT READY TO PUSH[)]: Trilinos:\n"
       )
 
 
@@ -3932,7 +3932,7 @@ class test_checkin_test(unittest.TestCase):
       +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
       +"0) MPI_DEBUG => No configure, build, or test for MPI_DEBUG was requested! => Not ready to push!\n" \
       +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
-      +"^NOT READY TO PUSH: Trilinos:\n"
+      +"^PASSED [(]NOT READY TO PUSH[)]: Trilinos:\n"
       )
 
 
@@ -4094,7 +4094,7 @@ class test_checkin_test(unittest.TestCase):
       +"No need for repos to be on a branch with a tracking branch!\n" \
       +"Skipping getting list of modified files because not needed!\n" \
       +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
-      +"NOT READY TO PUSH:\n" \
+      +"PASSED [(]NOT READY TO PUSH[)]:\n" \
       )
 
 
@@ -4168,7 +4168,7 @@ class test_checkin_test(unittest.TestCase):
       +"git pull somerepo remotebranch\n" \
       +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
       +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
-      +"^NOT READY TO PUSH: Trilinos:\n"
+      +"^PASSED [(]NOT READY TO PUSH[)]: Trilinos:\n"
       )
 
 
@@ -4220,7 +4220,7 @@ class test_checkin_test(unittest.TestCase):
       "Skipping the tests on request!\n" \
       "0) MPI_DEBUG => passed: configure-only passed => Not ready to push!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
-      "NOT READY TO PUSH: Trilinos:\n"
+      "PASSED [(]NOT READY TO PUSH[)]: Trilinos:\n"
       )
 
 
@@ -4249,7 +4249,7 @@ class test_checkin_test(unittest.TestCase):
       "Skipping the tests on request!\n" \
       "0) MPI_DEBUG => passed: build-only passed => Not ready to push!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
-      "NOT READY TO PUSH: Trilinos:\n"
+      "PASSED [(]NOT READY TO PUSH[)]: Trilinos:\n"
       )
 
 
@@ -4765,7 +4765,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "0) MPI_DEBUG => passed: passed=100,notpassed=0\n" \
       "=> A PUSH IS READY TO BE PERFORMED!\n" \
-      "^READY TO PUSH: Trilinos:\n"
+      "^PASSED [(]READY TO PUSH[)]: Trilinos:\n"
       )
 
 
@@ -4798,7 +4798,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "0) MPI_DEBUG => passed: skipped configure, build, test due to no enabled packages\n" \
       +"2) MPI_DEBUG_ST => passed: passed=100,notpassed=0\n" \
-      +"^READY TO PUSH\n" \
+      +"^PASSED [(]READY TO PUSH[)]\n" \
       )
 
 
@@ -5920,7 +5920,7 @@ class test_checkin_test(unittest.TestCase):
       "Skipping the tests on request!\n" \
       "0) MPI_DEBUG => passed: build-only passed => Not ready to push!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
-      "NOT READY TO PUSH: Trilinos:\n" \
+      "^PASSED [(]NOT READY TO PUSH[)]: Trilinos:\n" \
       ,
       [
         ("MPI_DEBUG/do-configure.base",
