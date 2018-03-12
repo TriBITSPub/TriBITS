@@ -75,6 +75,11 @@ class MockOptions:
     self.withCmake = "cmake"
 
 
+def assertFileExists(testObject, filePath):
+  testObject.assertEqual(os.path.isfile(filePath), True,
+    "Error, the file '" + filePath + "' does not exist!")
+
+
 def assertGrepFileForRegexStrList(testObject, testName, fileName, regexStrList, verbose):
   testObject.assertEqual(os.path.isfile(fileName), True,
     "Error, the file '" + fileName + "' does not exist!")
@@ -1573,6 +1578,8 @@ g_verbose=False
 g_checkin_test_tests_dir = "checkin_test_tests"
 
 
+
+
 def create_checkin_test_case_dir(testName, verbose=False):
   baseDir = os.getcwd()
   testDirName = os.path.join(g_checkin_test_tests_dir, testName)
@@ -2166,7 +2173,14 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_do_all_default_builds_mpi_debug_pass(self):
-    g_test_do_all_default_builds_mpi_debug_pass(self, "do_all_default_builds_mpi_debug_pass")
+    testName = "do_all_default_builds_mpi_debug_pass"
+    testBaseDir = create_checkin_test_case_dir(testName, g_verbose)
+    g_test_do_all_default_builds_mpi_debug_pass(self, testName) 
+    mpiDebugDir=testBaseDir+"/MPI_DEBUG"
+    assertFileExists(self, mpiDebugDir+"/configure.success")
+    assertFileExists(self, mpiDebugDir+"/make.success")
+    assertFileExists(self, mpiDebugDir+"/ctest.success")
+    assertFileExists(self, mpiDebugDir+"/email.success")
 
 
   def test_local_do_all_default_builds_mpi_debug_pass(self):
@@ -2281,6 +2295,8 @@ class test_checkin_test(unittest.TestCase):
 
     testName = "do_all_default_builds_mpi_debug_then_wipe_clean_pull_pass"
 
+    testBaseDir = create_checkin_test_case_dir(testName, g_verbose)
+
     # Do the build/test only first (ready to push)
     g_test_do_all_default_builds_mpi_debug_pass(self, testName)
 
@@ -2309,6 +2325,9 @@ class test_checkin_test(unittest.TestCase):
       +"=> A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       +"^PASSED [(]NOT READY TO PUSH[)]: Trilinos:\n"
       )
+
+    assertFileExists(self, testBaseDir+"/pullInitial.success")
+
 
 
   def test_remove_existing_configure_files(self):
@@ -2457,6 +2476,8 @@ class test_checkin_test(unittest.TestCase):
       +"=> A PUSH IS READY TO BE PERFORMED!\n" \
       +"^DID PUSH: Trilinos:\n" \
       )
+    # ToDo: Verify that a --push deletes all of the *.success files!
+    
 
 
   def test_do_all_no_rebase_push_pass(self):
