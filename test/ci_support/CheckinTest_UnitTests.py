@@ -2032,8 +2032,10 @@ class test_checkin_test(unittest.TestCase):
 
 
   def test_do_all_push_pass(self):
+
     testName = "do_all_push_pass"
     testBaseDir = create_checkin_test_case_dir(testName, g_verbose)
+
     checkin_test_run_case(
       \
       self,
@@ -2120,6 +2122,8 @@ class test_checkin_test(unittest.TestCase):
       # ToDo: Add more files to check
       ]
       )
+
+    # Make sure that the success files don't exist after a successful push
     assertFileNotExists(self, testBaseDir+"/pullInitial.success")
     mpiDebugDir=testBaseDir+"/MPI_DEBUG"
     assertFileNotExists(self, mpiDebugDir+"/configure.success")
@@ -2133,6 +2137,57 @@ class test_checkin_test(unittest.TestCase):
     assertFileNotExists(self, serialReleaseDir+"/ctest.success")
     assertFileNotExists(self, serialReleaseDir+"/email.success")
     assertFileNotExists(self, serialReleaseDir+"/email.out")
+
+    # Make sure that the readyness check after the push reports the right
+    # status.
+    checkin_test_run_case(
+      \
+      self,
+      \
+      testName,
+      \
+      "",  # Just the default the readyness check!
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      False,
+      "Skipping getting list of modified files because pull failed!\n" \
+      +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
+      +"0) MPI_DEBUG => Error, The build/test was never completed! (the file .MPI_DEBUG/email.out. does not exist.) => Not ready to push! (-1.00 min)\n" \
+      +"1) SERIAL_RELEASE => Error, The build/test was never completed! (the file .SERIAL_RELEASE/email.out. does not exist.) => Not ready to push! (-1.00 min)\n" \
+      +"^INITIAL PULL FAILED: Trilinos:\n"\
+      +"REQUESTED ACTIONS: FAILED\n" \
+      )
+
+    # Make sure that the readyness check ignoring no --pull returns the right
+    # status status.
+    checkin_test_run_case(
+      \
+      self,
+      \
+      testName,
+      \
+      "--allow-no-pull",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      False,
+      "Not performing pull since --allow-no-pull was passed in\n" \
+      +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
+      +"0) MPI_DEBUG => Error, The build/test was never completed! (the file .MPI_DEBUG/email.out. does not exist.) => Not ready to push! (-1.00 min)\n" \
+      +"1) SERIAL_RELEASE => Error, The build/test was never completed! (the file .SERIAL_RELEASE/email.out. does not exist.) => Not ready to push! (-1.00 min)\n" \
+      +"^FAILED (NOT READY TO PUSH): Trilinos:\n"\
+      +"REQUESTED ACTIONS: FAILED\n" \
+      )
 
 
   def test_send_build_case_email_only_on_failure_do_all_push_pass(self):

@@ -2600,7 +2600,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
           abortedCommitPush = True
       else:
         okayToPush = False
-  
+
       if okayToPush:
         print("\n  => A PUSH IS READY TO BE PERFORMED!")
       else:
@@ -2950,7 +2950,11 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         if okayToPush:
           subjectLine = "PASSED (READY TO PUSH)"
         else:
-          subjectLine = "PASSED (NOT READY TO PUSH)"
+          if success:
+            subjectLine = "PASSED"
+          else:
+            subjectLine = "FAILED"
+          subjectLine += " (NOT READY TO PUSH)"
 
       #
       print("\n9.b) Create and send out push (or readiness status) notification email ...")
