@@ -1713,7 +1713,11 @@ def cleanBuildTestCaseSuccessFiles(runBuildTestCaseBool, inOptions, baseTestDir,
   removeIfExists(buildTestCaseName+"/"+getBuildSuccessFileName())
   removeIfExists(buildTestCaseName+"/"+getTestSuccessFileName())
   removeIfExists(buildTestCaseName+"/"+getEmailSuccessFileName())
-  None
+  removeIfExists(buildTestCaseName+"/"+getEmailBodyFileName())
+  # NOTE: ABove, we need to delete the 'email.out' file otherwise it will get
+  # picked up in a later run of just a status check.  But this info is not
+  # really last because it is duplicated in the file
+  # commitStatusEmailBody.out.
 
 
 def cleanSuccessFiles(buildTestCaseList, inOptions, baseTestDir):
@@ -2105,6 +2109,8 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
   assertPackageNames("--disable-packages", inOptions.disablePackages)
 
   success = True
+
+  didAtLeastOnePush = False
 
   timings = Timings()
 
@@ -2801,8 +2807,6 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         #print("debugSkipPush =", debugSkipPush)
         #debugSkipPush = True
 
-        didAtLeastOnePush = False
-
         repoIdx = 0
         for gitRepo in tribitsGitRepos.gitRepoList():
   
@@ -2839,7 +2843,6 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
           if didAtLeastOnePush:
             print("\nPush passed!\n")
             didPush = True
-            cleanSuccessFiles(buildTestCaseList, inOptions, baseTestDir)
           else:
             print("\nPush failed because the push was never attempted!")
         else:
@@ -3008,6 +3011,8 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
       print("\nNot performing push or sending out push readiness status on "
             "request!")
 
+    if pushPassed and didAtLeastOnePush and didPush:
+      cleanSuccessFiles(buildTestCaseList, inOptions, baseTestDir)
   
     print("\n***")
     print("*** 10) Run execute extra command on ready to push  ...")

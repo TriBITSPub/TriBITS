@@ -2126,11 +2126,13 @@ class test_checkin_test(unittest.TestCase):
     assertFileNotExists(self, mpiDebugDir+"/make.success")
     assertFileNotExists(self, mpiDebugDir+"/ctest.success")
     assertFileNotExists(self, mpiDebugDir+"/email.success")
+    assertFileNotExists(self, mpiDebugDir+"/email.out")
     serialReleaseDir=testBaseDir+"/SERIAL_RELEASE"
     assertFileNotExists(self, serialReleaseDir+"/configure.success")
     assertFileNotExists(self, serialReleaseDir+"/make.success")
     assertFileNotExists(self, serialReleaseDir+"/ctest.success")
     assertFileNotExists(self, serialReleaseDir+"/email.success")
+    assertFileNotExists(self, serialReleaseDir+"/email.out")
 
 
   def test_send_build_case_email_only_on_failure_do_all_push_pass(self):
@@ -2199,6 +2201,7 @@ class test_checkin_test(unittest.TestCase):
     assertFileExists(self, mpiDebugDir+"/make.success")
     assertFileExists(self, mpiDebugDir+"/ctest.success")
     assertFileExists(self, mpiDebugDir+"/email.success")
+    assertFileExists(self, mpiDebugDir+"/email.out")
 
 
   def test_local_do_all_default_builds_mpi_debug_pass(self):
