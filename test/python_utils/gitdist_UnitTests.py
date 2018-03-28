@@ -105,10 +105,14 @@ class test_createAsciiTable(unittest.TestCase):
   def setUp(self):
     self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+    self.gitdistUnitTestSttySize = os.environ.get(
+      "GITDIST_UNIT_TEST_STTY_SIZE", ""
+    )
 
 
   def tearDown(self):
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = self.gitdistMoveToBaseDir
+    os.environ["GITDIST_UNIT_TEST_STTY_SIZE"] = self.gitdistUnitTestSttySize
 
 
   def test_full_table(self):
@@ -196,6 +200,112 @@ class test_createAsciiTable(unittest.TestCase):
       ]
     #createAsciiTable(tableData)
     self.assertRaises(Exception, createAsciiTable, tableData)
+  
+
+  def create_stty_size_table(self):
+    tableData = [
+      { "label" : "ID", "align" : "R", "fields" : ["0", "1", "2"] },
+      { "label" : "Repo Dir", "align" : "L",
+        "fields" : [
+          "MockProjectDir (Base)",
+          "ExtraRepo1",
+          "really/long/path/to/ExtraRepo2"
+        ]
+      },
+      { "label" : "Branch", "align" : "L",
+        "fields" : [
+          "medium_branch",
+          "short_br",
+          "really_long_branch_name"
+        ]
+      },
+      { "label" : "Tracking Branch", "align" : "L",
+        "fields" : [
+          "medium_remote/medium_branch",
+          "origin/short_br",
+          "long_remote_name/really_long_branch_name"
+        ]
+      },
+      { "label" : "C", "align" : "R", "fields" : ["", "", ""] },
+      { "label" : "M", "align" : "R", "fields" : ["", "", ""] },
+      { "label" : "?", "align" : "R", "fields" : ["", "", ""] }
+    ]
+    return tableData
+
+
+  def test_stty_size_larger_than_needed(self):
+    os.environ["GITDIST_UNIT_TEST_STTY_SIZE"] = "60 140"
+    asciiTable = createAsciiTable(self.create_stty_size_table())
+    #print(asciiTable)
+    asciiTable_expected = \
+      "------------------------------------------------------------------------------------------------------------------------\n" \
+      "| ID | Repo Dir                       | Branch                  | Tracking Branch                          | C | M | ? |\n" \
+      "|----|--------------------------------|-------------------------|------------------------------------------|---|---|---|\n" \
+      "|  0 | MockProjectDir (Base)          | medium_branch           | medium_remote/medium_branch              |   |   |   |\n" \
+      "|  1 | ExtraRepo1                     | short_br                | origin/short_br                          |   |   |   |\n" \
+      "|  2 | really/long/path/to/ExtraRepo2 | really_long_branch_name | long_remote_name/really_long_branch_name |   |   |   |\n" \
+      "------------------------------------------------------------------------------------------------------------------------\n"
+    self.assertEqual(asciiTable, asciiTable_expected)
+
+
+  def test_stty_size_exactly_right(self):
+    os.environ["GITDIST_UNIT_TEST_STTY_SIZE"] = "60 120"
+    asciiTable = createAsciiTable(self.create_stty_size_table())
+    #print(asciiTable)
+    asciiTable_expected = \
+      "------------------------------------------------------------------------------------------------------------------------\n" \
+      "| ID | Repo Dir                       | Branch                  | Tracking Branch                          | C | M | ? |\n" \
+      "|----|--------------------------------|-------------------------|------------------------------------------|---|---|---|\n" \
+      "|  0 | MockProjectDir (Base)          | medium_branch           | medium_remote/medium_branch              |   |   |   |\n" \
+      "|  1 | ExtraRepo1                     | short_br                | origin/short_br                          |   |   |   |\n" \
+      "|  2 | really/long/path/to/ExtraRepo2 | really_long_branch_name | long_remote_name/really_long_branch_name |   |   |   |\n" \
+      "------------------------------------------------------------------------------------------------------------------------\n"
+    self.assertEqual(asciiTable, asciiTable_expected)
+
+
+  def test_stty_size_slightly_too_small(self):
+    os.environ["GITDIST_UNIT_TEST_STTY_SIZE"] = "60 106"
+    asciiTable = createAsciiTable(self.create_stty_size_table())
+    #print(asciiTable)
+    asciiTable_expected = \
+      "----------------------------------------------------------------------------------------------------------\n" \
+      "| ID | Repo Dir                  | Branch              | Tracking Branch                     | C | M | ? |\n" \
+      "|----|---------------------------|---------------------|-------------------------------------|---|---|---|\n" \
+      "|  0 | MockProjectDir (Base)     | medium_branch       | medium_remote/medium_branch         |   |   |   |\n" \
+      "|  1 | ExtraRepo1                | short_br            | origin/short_br                     |   |   |   |\n" \
+      "|  2 | really/long.../ExtraRepo2 | really_l...nch_name | long_remote_name...long_branch_name |   |   |   |\n" \
+      "----------------------------------------------------------------------------------------------------------\n"
+    self.assertEqual(asciiTable, asciiTable_expected)
+
+
+  def test_stty_size_significantly_too_small(self):
+    os.environ["GITDIST_UNIT_TEST_STTY_SIZE"] = "60 70"
+    asciiTable = createAsciiTable(self.create_stty_size_table())
+    #print(asciiTable)
+    asciiTable_expected = \
+      "----------------------------------------------------------------------\n" \
+      "| ID | Repo Dir      | Branch     | Tracking Branch      | C | M | ? |\n" \
+      "|----|---------------|------------|----------------------|---|---|---|\n" \
+      "|  0 | MockP...Base) | medi...nch | medium_re...m_branch |   |   |   |\n" \
+      "|  1 | ExtraRepo1    | short_br   | origin/short_br      |   |   |   |\n" \
+      "|  2 | reall...Repo2 | real...ame | long_remo...nch_name |   |   |   |\n" \
+      "----------------------------------------------------------------------\n"
+    self.assertEqual(asciiTable, asciiTable_expected)
+
+
+  def test_stty_size_too_small_for_heading(self):
+    os.environ["GITDIST_UNIT_TEST_STTY_SIZE"] = "60 50"
+    asciiTable = createAsciiTable(self.create_stty_size_table())
+    #print(asciiTable)
+    asciiTable_expected = \
+      "------------------------------------------------------------------------------------------------------------------------\n" \
+      "| ID | Repo Dir                       | Branch                  | Tracking Branch                          | C | M | ? |\n" \
+      "|----|--------------------------------|-------------------------|------------------------------------------|---|---|---|\n" \
+      "|  0 | MockProjectDir (Base)          | medium_branch           | medium_remote/medium_branch              |   |   |   |\n" \
+      "|  1 | ExtraRepo1                     | short_br                | origin/short_br                          |   |   |   |\n" \
+      "|  2 | really/long/path/to/ExtraRepo2 | really_long_branch_name | long_remote_name/really_long_branch_name |   |   |   |\n" \
+      "------------------------------------------------------------------------------------------------------------------------\n"
+    self.assertEqual(asciiTable, asciiTable_expected)
 
 
 #
