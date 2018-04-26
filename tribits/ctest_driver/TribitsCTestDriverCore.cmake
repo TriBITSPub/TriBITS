@@ -333,7 +333,6 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``${PROJECT_NAME}_ADDITIONAL_PACKAGES`` (`Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_BRANCH`` (`Repository Updates (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE`` (`All-at-once versus package-by-package mode (TRIBITS_CTEST_DRIVER())`_)
-# * ``${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES`` (`All-at-once versus package-by-package mode (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES`` (`Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES`` (`Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE``
@@ -1029,16 +1028,6 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # package-by-package, based on the vars (which can be set in the CTest -S
 # script and overridden by env vars):
 #
-#   .. _${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES:
-#
-#   ``${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES``
-#
-#     If set to ``TRUE``, then new features of CMake, CTest, and CDash will be
-#     used to allow for efficient all-at-once configure, build, test, and
-#     submit to CDash while breaking down results package-by-package on CDash.
-#     But only a version of CDash released after 9/2017 will have the changes
-#     to take advantage of this.  The default value is ``FALSE``.
-#
 #   ``${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE``
 #
 #     If ``TRUE``, then single calls to ``CTEST_CONFIGURE()``,
@@ -1046,8 +1035,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     to be tested all at once with ``CTEST_SUBMIT()`` called after each of
 #     these.  If ``FALSE`` then ``CTEST_CONFIGURE()``, ``CTEST_BUILD()`` and
 #     ``CTEST_TEST()`` and ``CTEST_SUBMIT()`` are called in a loop, once for
-#     each package to be explicitly tested.  The default value is set to
-#     ``${${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES}``.
+#     each package to be explicitly tested. 
 #
 # Both the all-at-once mode and the package-by-package mode should produce
 # equivalent builds of the project and submits to CDash (for correctly
@@ -1059,8 +1047,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # For versions of CMake 3.10.0 and above and newer versions of CDash, the
 # CDash server for the all-at-once mode will break down build and test results
-# on a package-by-package basis on CDash.
-# together.
+# on a package-by-package basis on CDash together.
 #
 # **NOTE:** It has been confirmed that older versions of CDash can accept and
 # display results from newer CMake/CTest versions when
@@ -1367,9 +1354,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES  FALSE )
  
   # Do all-at-once configure, build, test and submit (or package-by-package)
-  IF (${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES)
-    SET(${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE_DEFAULT TRUE)
-  ELSE()
+  IF ("${${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE_DEFAULT" STREQUAL "")
     SET(${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE_DEFAULT FALSE)
   ENDIF()
   SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE
