@@ -250,7 +250,8 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #    data to CDash.
 #
 # 2) **Empty the build directory** pointed to by `CTEST_BINARY_DIRECTORY`_
-#    (only if `CTEST_START_WITH_EMPTY_BINARY_DIRECTORY`_ ``= TRUE``).
+#    (only if `CTEST_DO_NEW_START`_ ``= TRUE`` and
+#    `CTEST_START_WITH_EMPTY_BINARY_DIRECTORY`_ ``= TRUE``).
 #
 # 3) **Generate the file <Project>PackageDependencies.xml** which is needed to
 #    determine which packages need to be tested based on changes (only if
@@ -268,29 +269,33 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #    can directly set `${PROJECT_NAME}_PACKAGES`_ and other variables (see
 #    `Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER())`_).
 #
-# 6) **Configure the selected packages to be tested** in the build directory
+# 6) **Start a new dashboard calling ctest_start()** which defines a new CDash
+#    build (with a unique Build Stamp) (only if `CTEST_DO_NEW_START`_ ``=
+#    TRUE``).
+#
+# 7) **Configure the selected packages to be tested** in the build directory
 #    pointed to by `CTEST_BINARY_DIRECTORY`_.  Submit "Configure" and "Notes"
-#    data to CDash.
+#    data to CDash (only if `CTEST_DO_CONFIGURE`_ ``= TRUE``).
 #
-# 7) **Build configured packages and the enabled package tests**.  Submit
-#    "Build" data to CDash.
+# 8) **Build configured packages and the enabled package tests**.  Submit
+#    "Build" data to CDash (only if `CTEST_DO_BUILD`_ ``= TRUE``).
 #
-# 8) **Run enabled tests for the configured packages** (only if
+# 9) **Run enabled tests for the configured packages** (only if
 #    `CTEST_DO_TEST`_ = ``TRUE``).  (Also, this will generate coverage data if
 #    `CTEST_DO_COVERAGE_TESTING`_ ``= TRUE``).  Submit "Test" data to CDash.
 #
-# 9) **Collect coverage results from tests already run** (only if
-#    `CTEST_DO_COVERAGE_TESTING`_ ``= TRUE``).  Submit "Coverage" data to
-#    CDash.
+# 10) **Collect coverage results from tests already run** (only if
+#     `CTEST_DO_COVERAGE_TESTING`_ ``= TRUE``).  Submit "Coverage" data to
+#     CDash.
 #
-# 10) **Run dynamic analysis testing on defined test suite** (e.g. run
+# 11) **Run dynamic analysis testing on defined test suite** (e.g. run
 #     ``valgrind`` with each of the test commands (only if
 #     `CTEST_DO_MEMORY_TESTING`_ ``= TRUE``).  Submit "MemCheck" data to CDash.
 #
 # After each of these steps, results are submitted to CDash if
 # `CTEST_DO_SUBMIT`_ ``= TRUE`` and otherwise no data is submitted to any
 # CDash site (which is good for local debugging of CTest -S driver scripts).
-# For the package-by-package mode these steps 6-10 for configure, build, and
+# For the package-by-package mode these steps 7-11 for configure, build, and
 # running tests shown above are actually done in a loop package-by-package
 # with submits for each package to be tested.  For the all-at-once mode, these
 # steps are done all at once for the selected packages to be tested and
@@ -320,6 +325,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * `Specifying where the results go to CDash (TRIBITS_CTEST_DRIVER())`_
 # * `Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER())`_
 # * `All-at-once versus package-by-package mode (TRIBITS_CTEST_DRIVER())`_
+# * `Mutiple ctest -S invocations (TRIBITS_CTEST_DRIVER())`_
 # * `Repository Updates (TRIBITS_CTEST_DRIVER())`_
 # * `Other CTest Driver options (TRIBITS_CTEST_DRIVER())`_
 # * `Return value (TRIBITS_CTEST_DRIVER())`_
@@ -357,8 +363,11 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``CTEST_CONFIGURATION_UNIT_TESTING`` (`Other CTest Driver options (TRIBITS_CTEST_DRIVER())`_)
 # * ``CTEST_COVERAGE_COMMAND`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
 # * ``CTEST_DASHBOARD_ROOT`` (`Source and Binary Directory Locations (TRIBITS_CTEST_DRIVER())`_)
+# * ``CTEST_DO_BUILD`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
+# * ``CTEST_DO_CONFIGURE`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
 # * ``CTEST_DO_COVERAGE_TESTING`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
 # * ``CTEST_DO_MEMORY_TESTING`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
+# * ``CTEST_DO_NEW_START`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
 # * ``CTEST_DO_SUBMIT`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
 # * ``CTEST_DO_TEST`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
 # * ``CTEST_DO_UPDATES`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
@@ -744,10 +753,20 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # ``TRIBITS_CTEST_DRIVER()`` and can be overridden by env vars of the same
 # name):
 #
+#   .. _CTEST_DO_NEW_START:
+#
+#   ``CTEST_DO_NEW_START``
+#
+#     If ``TRUE``, ``ctest_start()`` is called to set up a new "dashboard"
+#     (i.e. define a new CDash build with a unique Build Stamp defined in the
+#     ``Testing/TAG`` file).  If ``FALSE``, then ``ctest_start(APPEND)`` is
+#     called which allows it this ctest -S invocation to append results to an
+#     existing CDash build.  (See ???).  Default ``TRUE``.
+#
 #   ``CTEST_DO_UPDATES``
 #
 #     If ``TRUE``, then the source repos will be updated as specified in
-#     `Repository Updates (TRIBITS_CTEST_DRIVER())`_.
+#     `Repository Updates (TRIBITS_CTEST_DRIVER())`_.  Default ``TRUE``.
 #
 #   .. _CTEST_UPDATE_ARGS:
 #
@@ -766,7 +785,19 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     ``CTEST_EMPTY_BINARY_DIRECTORY()``.  However, this can set to ``FALSE``
 #     in which case a rebuild (using existing object files, libraries, etc.)
 #     will be performed which is useful when using an incremental CI server.
-#     The default is ``TRUE`` (which is the most robust option).
+#     But this is ignored if ``CTEST_DO_NEW_START=FALSE``. Default ``TRUE``
+#     (which is the most robust option).
+#
+#   .. _CTEST_DO_CONFIGURE:
+#
+#   ``CTEST_DO_CONFIGURE``
+#
+#     If ``TRUE``, then the selected packages will be configured.  If
+#     ``FALSE``, it is assumed that a relavent configure is already in place
+#     in the binary directory if a build or running tests is to be done.  Note
+#     that for the package-by-package mode, a configure is always done if a
+#     build or any testing is to be done but results will not be sent to CDash
+#     unless ``CTEST_DO_CONFIGURE=TRUE``. Default ``TRUE``.
 #
 #   .. _CTEST_WIPE_CACHE:
 #
@@ -776,8 +807,15 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     ``${CTEST_BINARY_DIRECTORY}/CMakeFiles/`` will be deleted before
 #     performing a configure.  (This value is set to ``FALSE`` by the `make
 #     dashboard`_ target that does an experimental build, test, and submit to
-#     CDash.)  The default value is ``TRUE`` (which is the most robust option
-#     in general).
+#     CDash.)  Default ``TRUE`` (which is the most robust option in general).
+#
+#   .. _CTEST_DO_BUILD:
+#
+#   ``CTEST_DO_BUILD``
+#
+#     If ``TRUE``, then the selected packages will be build.  If ``FALSE``, it
+#     is assumed that a relavent build is already in place in the binary
+#     directory if any testing is to be done.  Default ``TRUE``.
 #
 #   .. _CTEST_BUILD_FLAGS:
 #
@@ -1056,6 +1094,45 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # package-by-package basis on CDash and all of the build warnings and errors
 # and tests will be all globed together on CDash.
 #
+# .. _Mutiple ctest -S invocations (TRIBITS_CTEST_DRIVER()):
+#
+# **Mutiple ctest -S invocations (TRIBITS_CTEST_DRIVER()):**
+#
+# By default, this function is meant to be used in a single invocation of the
+# ``ctest -S <script>.cmake` command in order to do everything from the
+# beginning and submit to CDash.  But there are times when one needs to do the
+# various steps in multiple ``ctest -S`` invocations that all send data to the
+# same CDash build.  For example, on some clusters, configure and building
+# must be done on "compile nodes" but the tests must be run on "compute
+# nodes".  Typically, these types of machines have a shared file system.  On a
+# system like this, would would use two different invocations as::
+#
+#   # Start new dashboard, update, configure, and build on compile node
+#   env CTEST_DO_TEST=OFF \
+#     ctest -S <script>.cmake
+#
+#   # Run tests only on compute node
+#   <run-on-compute-node> \
+#     env CTEST_DO_NEW_START=OFF CTEST_DO_CONFIGURE=OFF CTEST_DO_BUILD=OFF
+#     ctest -S <script>.cmake
+#
+# Above, `CTEST_DO_NEW_START`_ ``= OFF`` is needed to ensure that the test
+# results go to the same CDash build.  (NOTE: A CDash build is uniquely
+# determined by the site name, build name and build stamp.)
+#
+# This approach works for both the all-at-once mode and the package-by-package
+# mode.
+#
+# Also, one can run each of the basic steps in its own ``ctest -S`` invocation
+# starting with ``CTEST_DO_NEW_START=ON``, then ``CTEST_DO_UPDATE=ON``, then
+# ``CTEST_DO_CONFIGURE=ON``, then ``CTEST_DO_BUILD=ON``, then then
+# ``CTEST_DO_TEST=ON``, etc.  There is typically no reason to split things up
+# to this level but CTest and this ``TRIBITS_CTEST_DRIVER()`` function will
+# support that.  All that is required is that those steps be performed in taht
+# order.  For example, one cannot do a build in one ``ctest -S`` invocation
+# and then try to do a configure in the next.  The build will fail because a
+# valid configuration may not exist yet.
+#
 # .. _Repository Updates (TRIBITS_CTEST_DRIVER()):
 #
 # **Repository Updates (TRIBITS_CTEST_DRIVER()):**
@@ -1327,6 +1404,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # Remove the entire build directory if it exists or not
   SET_DEFAULT_AND_FROM_ENV( CTEST_START_WITH_EMPTY_BINARY_DIRECTORY TRUE )
 
+  # Call CTEST_START(...) to start a new CDash build case or not
+  SET_DEFAULT_AND_FROM_ENV( CTEST_DO_NEW_START TRUE )
+
   # Remove an existing CMakeCache.txt file or not
   SET_DEFAULT_AND_FROM_ENV( CTEST_WIPE_CACHE TRUE )
 
@@ -1354,11 +1434,14 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES  FALSE )
  
   # Do all-at-once configure, build, test and submit (or package-by-package)
-  IF ("${${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE_DEFAULT" STREQUAL "")
+  IF ("${${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE_DEFAULT}" STREQUAL "")
     SET(${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE_DEFAULT FALSE)
   ENDIF()
   SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE
     ${${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE_DEFAULT} )
+
+  # Call CTEST_CONFIGURE(...) or not
+  SET_DEFAULT_AND_FROM_ENV( CTEST_DO_CONFIGURE TRUE )
 
   # Flags passed to 'make' assume gnumake with unix makefiles
   IF("${CTEST_CMAKE_GENERATOR}" MATCHES "Unix Makefiles")
@@ -1367,7 +1450,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     SET_DEFAULT_AND_FROM_ENV( CTEST_BUILD_FLAGS "")
   ENDIF()
 
-  # WARNING: This variable is currently ignored!  ToDo: Remove this!
+  # Call CTEST_BUILD(...) or not
   SET_DEFAULT_AND_FROM_ENV( CTEST_DO_BUILD TRUE )
 
   # Do the tests or not (Note: must be true for coverage testing)
@@ -1665,7 +1748,13 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # Empty out the binary directory
   #
 
-  IF (CTEST_START_WITH_EMPTY_BINARY_DIRECTORY)
+  IF (CTEST_START_WITH_EMPTY_BINARY_DIRECTORY AND NOT CTEST_DO_NEW_START)
+    MESSAGE("\nSkipping calling ctest_empty_binary_directory() even though"
+      "CTEST_START_WITH_EMPTY_BINARY_DIRECTORY='${CTEST_START_WITH_EMPTY_BINARY_DIRECTORY}'"
+      " because CTEST_DO_NEW_START='${CTEST_DO_NEW_START}'!"
+      "  You can't empty the binary directory unless you will be starting"
+      " a new dashboard!")
+  ELSEIF (CTEST_START_WITH_EMPTY_BINARY_DIRECTORY)
     MESSAGE("\nCleaning out binary directory '${CTEST_BINARY_DIRECTORY}' ...")
     CTEST_EMPTY_BINARY_DIRECTORY("${CTEST_BINARY_DIRECTORY}")
   ENDIF()
@@ -1686,23 +1775,61 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # NOTE: You have to set up the set of extra repos before you can read the
   # Dependencies.cmake files since the extra repos must be cloned first.
 
-
   MESSAGE(
     "\n***"
-    "\n*** Start up a new dashboard ..."
+    "\n*** Start up a new dashboard calling ctest_start(...) ..."
     "\n***\n")
 
-  PRINT_VAR(CTEST_TEST_TYPE)
-  PRINT_VAR(${PROJECT_NAME}_TRACK)
+  SET(CTEST_TESTING_TAG_FILE "${CTEST_BINARY_DIRECTORY}/Testing/TAG")
 
-  IF(${PROJECT_NAME}_TRACK)
-    CTEST_START(${CTEST_TEST_TYPE} TRACK ${${PROJECT_NAME}_TRACK})
+  IF (CTEST_DO_NEW_START)
+
+    MESSAGE(
+      "\n***"
+      "\n*** Start up a new dashboard calling ctest_start(...) ..."
+      "\n***\n")
+  
+    PRINT_VAR(CTEST_TEST_TYPE)
+    PRINT_VAR(${PROJECT_NAME}_TRACK)
+  
+    SET(CTEST_START_ARGS ${CTEST_TEST_TYPE})
+    IF(${PROJECT_NAME}_TRACK)
+      LIST(APPEND CTEST_START_ARGS TRACK ${${PROJECT_NAME}_TRACK})
+    ENDIF()
+
+    # NOTE: If the source directory does not yet exist, then CTEST_START()
+    # will clone it!
+  
   ELSE()
-    CTEST_START(${CTEST_TEST_TYPE})
-  ENDIF()
-  # NOTE: If the source directory does not yet exist, then CTEST_START() will
-  # clone it!
 
+    MESSAGE(
+      "\n***"
+      "\n*** Use previous dashboard calling ctest_start(APPEND) due to CTEST_DO_NEW_START='${CTEST_DO_NEW_START}' ..."
+      "\n***\n")
+
+    SET(CTEST_START_ARGS APPEND)
+
+    IF (EXISTS "${CTEST_TESTING_TAG_FILE}")
+      FILE(READ "${CTEST_TESTING_TAG_FILE}" TAG_FILE_CONTENTS_STR)
+      MESSAGE(
+	"\nPrevious file:"
+	"\n"
+	"\n  '${CTEST_TESTING_TAG_FILE}'"
+	"\n"
+	"\nexists with contents:\n"
+	"\n"
+	"${TAG_FILE_CONTENTS_STR}\n")
+    ELSE()
+      MESSAGE(FATAL_ERROR
+	"ERROR: Previous file '${CTEST_TESTING_TAG_FILE}' does NOT exist!"
+	"  A previous ctest_start() was not called.  Please call again"
+	" this time setting CTEST_DO_NEW_START=TRUE")
+    ENDIF()
+
+  ENDIF()
+
+  MESSAGE("\nCalling ctest_start(${CTEST_START_ARGS})... \n\n")
+  CTEST_START(${CTEST_START_ARGS})
 
   MESSAGE(
     "\n***"
@@ -1834,7 +1961,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # reconfigure.
   #
 
-  IF (CTEST_WIPE_CACHE)
+  IF (CTEST_DO_CONFIGURE AND CTEST_WIPE_CACHE)
     SET(CACHE_FILE_NAME "${CTEST_BINARY_DIRECTORY}/CMakeCache.txt")
     IF (EXISTS "${CACHE_FILE_NAME}")
       MESSAGE("Removing existing cache file '${CACHE_FILE_NAME}' ...")
@@ -1896,13 +2023,30 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   SET(CMAKE_CACHE_CLEAN_FILE "${CTEST_BINARY_DIRECTORY}/CMakeCache.clean.txt")
   SET(${PROJECT_NAME}_FAILED_PACKAGES)
 
-  IF (${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE)
+  IF (
+    CTEST_DO_CONFIGURE
+    OR
+    CTEST_DO_BUILD
+    OR
+    CTEST_DO_TEST
+    OR
+    CTEST_DO_MEMORY_TESTING
+    )
 
-    TRIBITS_CTEST_ALL_AT_ONCE()
+    IF (${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE)
+
+      TRIBITS_CTEST_ALL_AT_ONCE()
+
+    ELSE()
+
+        TRIBITS_CTEST_PACKAGE_BY_PACKAGE()
+
+    ENDIF()
 
   ELSE()
 
-    TRIBITS_CTEST_PACKAGE_BY_PACKAGE()
+    MESSAGE("\nSkipping processing anything else since not requested to"
+      " configure, build, test, or run memory tests!\n")
 
   ENDIF()
 
