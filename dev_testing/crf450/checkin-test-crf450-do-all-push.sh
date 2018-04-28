@@ -72,10 +72,18 @@ echo
 
 echo
 echo "***"
-echo "*** C) Running checkin-test.py [all the builds] --no-rebase $CHECKIN_TEST_PUSH_ARG ..."
+echo "*** C) Running checkin-test-crf450-cmake-3.11.1.sh $CHECKIN_TEST_2_ALLOW_NO_PULL_ARG --configure --build --test --send-email-to= ..."
+echo "***"
+echo
+
+./checkin-test-crf450-cmake-3.11.1.sh $CHECKIN_TEST_2_ALLOW_NO_PULL_ARG --configure --build --test --send-email-to=
+
+echo
+echo "***"
+echo "*** D) Running checkin-test.py [all the builds] --no-rebase $CHECKIN_TEST_PUSH_ARG ..."
 echo "***"
 echo
 
 $TRIBITS_BASE_DIR_ABS/checkin-test.py \
---st-extra-builds=MPI_DEBUG_CMAKE-3.6.2,SERIAL_RELEASE_CMAKE-3.6.2 \
+--st-extra-builds=MPI_DEBUG_CMAKE-3.6.2,SERIAL_RELEASE_CMAKE-3.6.2,MPI_DEBUG_CMAKE-3.11.1,SERIAL_RELEASE_CMAKE-3.11.1 \
 --no-rebase $CHECKIN_TEST_PUSH_ARG
