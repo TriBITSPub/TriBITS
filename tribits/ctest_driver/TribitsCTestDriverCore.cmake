@@ -1099,13 +1099,13 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # **Mutiple ctest -S invocations (TRIBITS_CTEST_DRIVER()):**
 #
 # By default, this function is meant to be used in a single invocation of the
-# ``ctest -S <script>.cmake` command in order to do everything from the
+# ``ctest -S <script>.cmake`` command in order to do everything from the
 # beginning and submit to CDash.  But there are times when one needs to do the
 # various steps in multiple ``ctest -S`` invocations that all send data to the
-# same CDash build.  For example, on some clusters, configure and building
-# must be done on "compile nodes" but the tests must be run on "compute
-# nodes".  Typically, these types of machines have a shared file system.  On a
-# system like this, would would use two different invocations as::
+# same CDash build.  For example, on some clusters, configure and build must
+# be done on "compile nodes" but the tests must be run on "compute nodes".
+# Typically, these types of machines have a shared file system.  On a system
+# like this, one would use two different invocations as::
 #
 #   # Start new dashboard, update, configure, and build on compile node
 #   env CTEST_DO_TEST=OFF \
@@ -1113,7 +1113,9 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #   # Run tests only on compute node
 #   <run-on-compute-node> \
-#     env CTEST_DO_NEW_START=OFF CTEST_DO_CONFIGURE=OFF CTEST_DO_BUILD=OFF
+#     env CTEST_DO_NEW_START=OFF CTEST_DO_UPDATES=OFF \
+#       CTEST_DO_CONFIGURE=OFF CTEST_DO_BUILD=OFF \
+#       CTEST_DO_TEST=ON \
 #     ctest -S <script>.cmake
 #
 # Above, `CTEST_DO_NEW_START`_ ``= OFF`` is needed to ensure that the test
@@ -1124,14 +1126,16 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # mode.
 #
 # Also, one can run each of the basic steps in its own ``ctest -S`` invocation
-# starting with ``CTEST_DO_NEW_START=ON``, then ``CTEST_DO_UPDATE=ON``, then
-# ``CTEST_DO_CONFIGURE=ON``, then ``CTEST_DO_BUILD=ON``, then then
-# ``CTEST_DO_TEST=ON``, etc.  There is typically no reason to split things up
-# to this level but CTest and this ``TRIBITS_CTEST_DRIVER()`` function will
-# support that.  All that is required is that those steps be performed in taht
-# order.  For example, one cannot do a build in one ``ctest -S`` invocation
-# and then try to do a configure in the next.  The build will fail because a
-# valid configuration may not exist yet.
+# starting with ``CTEST_DO_NEW_START = ON``, then `CTEST_DO_UPDATES`_ ``=
+# ON``, then `CTEST_DO_CONFIGURE`_ ``= ON``, then `CTEST_DO_BUILD`_ ``= ON``,
+# then then `CTEST_DO_TEST`_ ``= ON``, etc.  While there is typically no
+# reason to split things up to this level of granularity, CTest and this
+# ``TRIBITS_CTEST_DRIVER()`` function will support such usage.  All that is
+# required is that those steps be performed in that order.  For example, one
+# cannot do a build in one ``ctest -S`` invocation and then try to do a
+# configure in the next because the build will fail because a valid
+# configuration has not been performed yet.  And one cannot run just tests if
+# there is not a valid configuration and build already in place.
 #
 # .. _Repository Updates (TRIBITS_CTEST_DRIVER()):
 #
