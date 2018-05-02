@@ -1137,6 +1137,13 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # configuration has not been performed yet.  And one cannot run just tests if
 # there is not a valid configuration and build already in place.
 #
+# NOTE: In order for the results generated in the different ``ctest -S``
+# invocations to go to the same build on CDash, a version of CMake/CTest 3.10+
+# must be used.  With older versions of CMake/CTest, the
+# ``ctest_start(APPEND)`` command incorrectly creates a new build stamp which
+# then results in a different build on CDash.  CMake versions CMake/CTest
+# 3.10+ and above don't have this defect.
+#
 # .. _Repository Updates (TRIBITS_CTEST_DRIVER()):
 #
 # **Repository Updates (TRIBITS_CTEST_DRIVER()):**
