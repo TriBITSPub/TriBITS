@@ -1793,20 +1793,20 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
   SET(CTEST_TESTING_TAG_FILE "${CTEST_BINARY_DIRECTORY}/Testing/TAG")
 
+  PRINT_VAR(CTEST_TEST_TYPE)
+  PRINT_VAR(${PROJECT_NAME}_TRACK)
+  
+  SET(CTEST_START_ARGS ${CTEST_TEST_TYPE})
+  IF(${PROJECT_NAME}_TRACK)
+    LIST(APPEND CTEST_START_ARGS TRACK ${${PROJECT_NAME}_TRACK})
+  ENDIF()
+
   IF (CTEST_DO_NEW_START)
 
     MESSAGE(
       "\n***"
       "\n*** Start up a new dashboard calling ctest_start(...) ..."
       "\n***\n")
-  
-    PRINT_VAR(CTEST_TEST_TYPE)
-    PRINT_VAR(${PROJECT_NAME}_TRACK)
-  
-    SET(CTEST_START_ARGS ${CTEST_TEST_TYPE})
-    IF(${PROJECT_NAME}_TRACK)
-      LIST(APPEND CTEST_START_ARGS TRACK ${${PROJECT_NAME}_TRACK})
-    ENDIF()
 
     # NOTE: If the source directory does not yet exist, then CTEST_START()
     # will clone it!
@@ -1815,10 +1815,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
     MESSAGE(
       "\n***"
-      "\n*** Use previous dashboard calling ctest_start(APPEND) due to CTEST_DO_NEW_START='${CTEST_DO_NEW_START}' ..."
+      "\n*** Use previous dashboard calling ctest_start(... APPEND) due to CTEST_DO_NEW_START='${CTEST_DO_NEW_START}' ..."
       "\n***\n")
-
-    SET(CTEST_START_ARGS APPEND)
 
     IF (EXISTS "${CTEST_TESTING_TAG_FILE}")
       FILE(READ "${CTEST_TESTING_TAG_FILE}" TAG_FILE_CONTENTS_STR)
@@ -1836,6 +1834,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 	"  A previous ctest_start() was not called.  Please call again"
 	" this time setting CTEST_DO_NEW_START=TRUE")
     ENDIF()
+
+    LIST(APPEND CTEST_START_ARGS APPEND)
 
   ENDIF()
 
