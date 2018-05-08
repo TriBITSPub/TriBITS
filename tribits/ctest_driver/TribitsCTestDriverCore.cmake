@@ -759,9 +759,9 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #     If ``TRUE``, ``ctest_start()`` is called to set up a new "dashboard"
 #     (i.e. define a new CDash build with a unique Build Stamp defined in the
-#     ``Testing/TAG`` file).  If ``FALSE``, then ``ctest_start(APPEND)`` is
-#     called which allows it this ctest -S invocation to append results to an
-#     existing CDash build.  (See ???).  Default ``TRUE``.
+#     ``Testing/TAG`` file).  If ``FALSE``, then ``ctest_start(... APPEND)``
+#     is called which allows it this ctest -S invocation to append results to
+#     an existing CDash build.  (See ???).  Default ``TRUE``.
 #
 #   ``CTEST_DO_UPDATES``
 #
@@ -1136,13 +1136,6 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # configure in the next because the build will fail because a valid
 # configuration has not been performed yet.  And one cannot run just tests if
 # there is not a valid configuration and build already in place.
-#
-# NOTE: In order for the results generated in the different ``ctest -S``
-# invocations to go to the same build on CDash, a version of CMake/CTest 3.10+
-# must be used.  With older versions of CMake/CTest, the
-# ``ctest_start(APPEND)`` command incorrectly creates a new build stamp which
-# then results in a different build on CDash.  CMake versions CMake/CTest
-# 3.10+ and above don't have this defect.
 #
 # .. _Repository Updates (TRIBITS_CTEST_DRIVER()):
 #
