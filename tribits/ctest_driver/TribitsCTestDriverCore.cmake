@@ -823,10 +823,14 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #     Build-in CTest variable that gives the flags passed to the build command
 #     called inside of the built-in CTest command ``CTEST_BUILD()``.  The
-#     default is ``-j2`` when ``CTEST_CMAKE_GENERATOR`` is set to "Unix
-#     Makefiles".  Otherwise, the default is empty "".  Useful options to set
+#     default is ``-j2`` when `CTEST_CMAKE_GENERATOR`_ is set to ``Unix
+#     Makefiles``.  Otherwise, the default is empty "".  Useful options to set
 #     are ``-j<N>`` (to build on parallel) and ``-k`` (to keep going when
-#     there are build errors so we can see all of the build errors).
+#     there are build errors so we can see all of the build errors).  When
+#     ``CTEST_CMAKE_GENERATOR`` is set to ``Ninja``, the ``j<N>`` option can
+#     be left off (in which case all of the available unloaded cores are used
+#     to build) and the option ``-k 999999`` can be used to build all targets
+#     when there are build failures.
 #
 #   .. _CTEST_DO_TEST:
 #
@@ -1297,14 +1301,20 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # Other miscellaneous vars that can be set in the CTest -S script or as env
 # vars are given below.
 #
+#   .. _CTEST_CMAKE_GENERATOR:
+#
 #   ``CTEST_CMAKE_GENERATOR``
 #
-#     The CMake generator.  If an existing ``CMakeCache.txt`` file exists,
-#     then the generator will be read out of that file.  Otherwise, the
-#     default generator is selected to be ``Unix Makefiles``.  NOTE: Currently
-#     this value is **NOT** passed down into the inner CMake configure step!
-#     Currently, its only purpose is to select the default value for
-#     `CTEST_BUILD_FLAGS`_.
+#     Built-in CTest variable that determines the CMake generator used in the
+#     inner configure.  If an existing ``CMakeCache.txt`` file exists, then
+#     the default value for the generator will be read out of that file.
+#     Otherwise, the default generator is selected to be ``Unix Makefiles``.
+#     Another popular option is ``Ninja``.  The value of this variable
+#     determines the type of generator used in the inner CMake configure done
+#     by the command ``ctest_configure(...)`` called in this function.  This
+#     is done implicitly by CTest.  The selected generator has an impact on
+#     what flags can be used in `CTEST_BUILD_FLAGS`_ since ``make`` and
+#     ``ninja`` accept different arguments in some cases.
 #
 #   ``${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE``
 #
