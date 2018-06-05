@@ -103,14 +103,16 @@ To generate the entire documentation at once, run::
 (Open your web browser to the file cmake.help.html)
 
 
-Configuring (Makefile Generator)
-================================
+Configuring (Makefile, Ninja and other Generators)
+===================================================
 
-While CMake supports a number of different build generators (e.g. Eclipes,
-XCode, MS Visual Studio, etc.) the primary generator most people use on
-Unix/Linix system is make and CMake generates exceptional Makefiles.  The
-materila in this section, while not exclusing to the makefile generator this
-should be assumed as the default.
+CMake supports a number of different build generators (e.g. Ninja, Eclipse,
+XCode, MS Visual Studio, etc.) but the primary generator most people use on
+Unix/Linux system is ``make`` (using the default cmake option ``-G"Unix
+Makefiles"``) and CMake generated Makefiles.  Another (increasingly) popular
+generator is Ninja (using cmake option ``-GNinja``).  Most of the material in
+this section applies to all generators but most experience is for the
+Makefiles and Ninja generators.
 
 
 Setting up a build directory
@@ -488,8 +490,8 @@ will continue.
 Remove all package enables in the cache
 +++++++++++++++++++++++++++++++++++++++
 
-To wipe the set of pakage enables in the CMakeCache.txt file so they can be
-reset again from scratch, configure with::
+To wipe the set of package enables in the ``CMakeCache.txt`` file so they can
+be reset again from scratch, configure with::
 
   $ ./-do-confiugre -D <Project>_UNENABLE_ENABLED_PACKAGES=TRUE
 
@@ -766,8 +768,8 @@ requirements.
 Turning off strong warnings for individual packages
 +++++++++++++++++++++++++++++++++++++++++++++++++++
 
-To turn off strong warnings (for all langauges) for a given TriBITS
-package, set::
+To turn off strong warnings (for all languages) for a given TriBITS package,
+set::
 
   -D <TRIBITS_PACKAGE>_DISABLE_STRONG_WARNINGS=ON
 
@@ -825,8 +827,8 @@ Removing warnings as errors for CLEANED packages
 ++++++++++++++++++++++++++++++++++++++++++++++++
 
 To remove the ``-Werror`` flag (or some other flag that is set) from being
-applied to compile CLEANED packages like Teuchos, set the following when
-configuring::
+applied to compile CLEANED packages (like the Trilinos package Teuchos), set
+the following when configuring::
 
   -D <Project>_WARNINGS_AS_ERRORS_FLAGS=""
 
@@ -863,7 +865,7 @@ just like with the native CMake recursive ``-G"Unix Makefiles"`` generator.
 This allows one to ``cd`` into any binary directory and type ``make`` to build
 just the targets in that directory.  These TriBITS-generated Ninja makefiles
 also support ``help`` and ``help-objects`` targets making it easy to build
-individual exectuables, libraries and object files in any binary subdirectory.
+individual executables, libraries and object files in any binary subdirectory.
 
 **WARNING:** Using ``make -j<N>`` with these TriBITS-generated Ninja Makefiles
 will **not** result in using ``<N>`` processes to build in parallel and will
@@ -933,8 +935,8 @@ set by ``<Project>_ENABLE_EXPLICIT_INSTANTIATION``.
 
 For packages that support it, explicit template instantation can massively
 reduce the compile times for the C++ code involved.  To see what packages
-support explicit instantation just search the CMakeCache.txt file for varibles
-with ``ENABLE_EXPLICIT_INSTANTIATION`` in the name.
+support explicit instantation just search the CMakeCache.txt file for
+variables with ``ENABLE_EXPLICIT_INSTANTIATION`` in the name.
 
 
 Disabling the Fortran compiler and all Fortran code
@@ -945,8 +947,8 @@ set::
 
   -D <Project>_ENABLE_Fortran=OFF
 
-NOTE: The fortran compiler may be disabled automatically by default on
-systems like MS Windows.
+NOTE: The Fortran compiler may be disabled automatically by default on systems
+like MS Windows.
 
 NOTE: Most Apple Macs do not come with a compatible Fortran compiler by
 default so you must turn off Fortran if you don't have a compatible Fortran
@@ -1191,7 +1193,7 @@ c) **Setting up to run MPI programs:**
   argument.  The default is empty "".)
 
   NOTE: Multiple arguments listed in ``MPI_EXEC_PRE_NUMPROCS_FLAGS`` and
-  ``MPI_EXEC_POST_NUMPROCS_FLAGS`` must be quoted and seprated by ``';'`` as
+  ``MPI_EXEC_POST_NUMPROCS_FLAGS`` must be quoted and separated by ``';'`` as
   these variables are interpreted as CMake arrays.
 
 Configuring for OpenMP support
@@ -1431,8 +1433,8 @@ will error out with a helpful error message.  In that case, one can change the
 variables ``<TPLNAME>_INCLUDE_DIRS``, ``<TPLNAME>_LIBRARY_NAMES``, and/or
 ``<TPLNAME>_LIBRARY_DIRS`` in order to help fund the parts of the TPL.  One
 can do this over and over until the TPL is found. By reconfiguring, one avoid
-a complete configure from scrath which saves time.  Or, one can avoid the find
-operations by directly setting ``TPL_<TPLNAME>_INCLUDE_DIRS`` and
+a complete configure from scratch which saves time.  Or, one can avoid the
+find operations by directly setting ``TPL_<TPLNAME>_INCLUDE_DIRS`` and
 ``TPL_<TPLNAME>_LIBRARIES``.
 
 **WARNING:** The cmake cache variable ``TPL_<TPLNAME>_LIBRARY_DIRS`` does
@@ -1662,7 +1664,7 @@ a) **Trace file processing during configure:**
     -D <Project>_TRACE_FILE_PROCESSING=ON
 
   This will cause TriBITS to print out a trace for all of the project's,
-  repositorie's, and package's files get processed on lines using the prefix
+  repository's, and package's files get processed on lines using the prefix
   ``File Trace:``.  This shows what files get processed and in what order they
   get processed.  To get a clean listing of all the files processed by TriBITS
   just grep out the lines starting with ``-- File Trace:``.  This can be
@@ -1706,7 +1708,7 @@ c) **Getting verbose output from the makefile:**
     -D CMAKE_VERBOSE_MAKEFILE=TRUE
 
   NOTE: It is generally better to just pass in ``VERBOSE=`` when directly
-  calling ``make`` after configuration is finihsed.  See `Building with
+  calling ``make`` after configuration is finished.  See `Building with
   verbose output without reconfiguring`_.
 
 d) **Getting very verbose output from configure:**
@@ -1815,7 +1817,7 @@ and don't nest with the other categories.
 Disabling specific tests
 ------------------------
 
-Any TriBTS-added ctest test (i.e. listed in ``ctest -N``) can be disabled at
+Any TriBITS-added ctest test (i.e. listed in ``ctest -N``) can be disabled at
 configure time by setting::
 
   -D <fullTestName>_DISABLE=ON
@@ -1829,7 +1831,7 @@ test when `Trace test addition or exclusion`_ is enabled.
 Disabling specific test executable builds
 -----------------------------------------
 
-Any TriBITS-added exectuable (i.e. listed in ``make help``) can be disabled
+Any TriBITS-added executable (i.e. listed in ``make help``) can be disabled
 from being built by setting::
 
   -D <exeTargetName>_EXE_DISABLE=ON
@@ -1944,7 +1946,7 @@ NOTES:
   ``CMakeCache.txt`` file.  Only the value of ``TimeOut`` written into the
   ``DartConfiguration.tcl`` file (which is directly read by ``ctest``) will be
   scaled.  (This ensures that running configure over and over again will not
-  increase ``DART_TESTING_TIMEOUT`` or ``TimeOut`` withc each new configure.)
+  increase ``DART_TESTING_TIMEOUT`` or ``TimeOut`` with each new configure.)
 
 
 Enabling support for coverage testing
@@ -2040,7 +2042,7 @@ packages from a file, configure with::
   -D<Project>_EXTRAREPOS_FILE:FILEPATH=<EXTRAREPOSFILE> \
   -D<Project>_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
 
-Specifing extra repositories through an extra repos file allows greater
+Specifying extra repositories through an extra repos file allows greater
 flexibility in the specification of extra repos.  This is not helpful for a
 basic configure of the project but is useful in automated testing using the
 ``TribitsCTestDriverCore.cmake`` script and the ``checkin-test.py`` script.
@@ -2060,7 +2062,7 @@ repos automatically.
 If the file ``<projectDir>/cmake/ExtraRepositoriesList.cmake`` exists, then it
 is used as the default value for ``<Project>_EXTRAREPOS_FILE``.  However, the
 default value for ``<Project>_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE`` is empty so
-no extra repostories are defined by default unless
+no extra repositories are defined by default unless
 ``<Project>_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE`` is specifically set to one of
 the allowed values.
 
@@ -2122,7 +2124,7 @@ To view various configure errors, read the file::
   $BUILD_BASE_DIR/CMakeFiles/CMakeError.log
 
 This file contains detailed output from try-compile commands, Fortran/C name
-managling determination, and other CMake-specific information.
+mangling determination, and other CMake-specific information.
 
 
 Adding configure timers
@@ -2265,9 +2267,11 @@ Building (Makefile generator)
 =============================
 
 This section described building using the default CMake Makefile generator.
-TriBITS supports other CMake generators such as Visual Studio on Windows,
-XCode on Macs, and Eclipe project files but using those build systems are not
-documented here.
+Building with the Ninja is described in section `Building (Ninja generator)`_.
+But every other CMake generator is also supported such as Visual Studio on
+Windows, XCode on Macs, and Eclipse project files but using those build
+systems are not documented here (consult standard CMake and concrete build
+tool documentation).
 
 Building all targets
 --------------------
@@ -2614,7 +2618,7 @@ the default CMake-generated Makefiles where only the generated files in that
 subdirectory will be removed and files for upstream dependencies.
 
 Therefore, if one then wants to clean only the object files, libraries, and
-executbles in a subdirectory, one should just manually delete them with::
+executables in a subdirectory, one should just manually delete them with::
 
   cd <some-subdir>/
   find . -name "*.o" -exec rm {} \;
@@ -2655,12 +2659,12 @@ where CTest creates the ``Testing`` directory in the local directory where you
 run it from.
 
 NOTE: The ``-j<N>`` argument allows CTest to use more processes to run tests.
-This will intelligently load ballance the defined tests with multiple
-processes (i.e. MPI tests) and will try not exceed the number of processes
-``<N>``.  However, if tests are defined that use more that ``<N>`` processes,
-then CTest will still run the test but will not run any other tests while the
-limit of ``<N>`` processes is exceeded.  To exclude tests that require more
-than ``<N>`` processes, set the cache variable ``MPI_EXEC_MAX_NUMPROCS`` (see
+This will intelligently load balance the defined tests with multiple processes
+(i.e. MPI tests) and will try not exceed the number of processes ``<N>``.
+However, if tests are defined that use more that ``<N>`` processes, then CTest
+will still run the test but will not run any other tests while the limit of
+``<N>`` processes is exceeded.  To exclude tests that require more than
+``<N>`` processes, set the cache variable ``MPI_EXEC_MAX_NUMPROCS`` (see
 `Configuring with MPI support`_).
 
 
@@ -2681,7 +2685,7 @@ This will run tests for packages and subpackages inside of the parent package
 
 NOTE: CTest has a number of ways to filter what tests get run.  You can use
 the test name using ``-E``, you can exclude tests using ``-I``, and there are
-other approaches as well.  See ``ctest --help`` and online documentation, and
+other approaches as well.  See ``ctest --help`` and on-line documentation, and
 experiment for more details.
 
 
@@ -2693,9 +2697,9 @@ one can run::
 
   $ ctest -R ^<FULL_TEST_NAME>$ -VV
 
-However, when running just a single test, it is usally better to just run the
-test command manually to allow passing in more options.  To see what the actual test command is, use::
-
+However, when running just a single test, it is usually better to just run the
+test command manually to allow passing in more options.  To see what the
+actual test command is, use::
 
   $ ctest -R ^<FULL_TEST_NAME>$ -VV -N
 
@@ -2707,7 +2711,7 @@ shown working directory and run the shown command.
 Overriding test timeouts
 -------------------------
 
-The configured glboal test timeout described in ``Setting test timeouts at
+The configured global test timeout described in ``Setting test timeouts at
 configure time`` can be overridden on the CTest command-line as::
 
   $ ctest --timeout <maxSeconds>
@@ -2715,7 +2719,7 @@ configure time`` can be overridden on the CTest command-line as::
 This will override the configured cache variable `DART_TESTING_TIMEOUT`_
 (actually, the scaled value set as ``TimeOut`` in the file
 ``DartConfiguration.tcl``).  However, this will **not** override the test
-timesouts set on individual tests on a test-by-test basis!
+time-outs set on individual tests on a test-by-test basis!
 
 **WARNING:** Do not try to use ``--timeout=<maxSeconds>`` or CTest will just
 ignore the argument!
@@ -2932,7 +2936,7 @@ These scenarios in detail are:
      -D<Project>_SET_INSTALL_RPATH=FALSE \
      -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE \
 
-   Then, to run any exectubles using these shared libraries, one must update
+   Then, to run any executables using these shared libraries, one must update
    LD_LIBRARY_PATH as::
 
      $ export LD_LIBRARY_PATH=<final-install-dir>/lib:$LD_LIBRARY_PATH
@@ -3131,7 +3135,7 @@ project has its own default, check ``CMakeCache.txt`` to see what the default
 is).  If ``<Project>_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION=ON`` and
 but one wants to include some subpackages that are otherwise excluded, just
 enable them or their outer package so they will be included in the source
-tarball.  To get a printout of set regular expresions that will be used to
+tarball.  To get a printout of set regular expressions that will be used to
 match files to exclude, set::
 
   -D <Project>_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
@@ -3165,7 +3169,7 @@ from an existing binary directory with a valid initial configure.  The few of
 the advantages of using the custom TriBITS-enabled ``dashboard`` target over
 just using the standard ``ctest -D Experimental`` command are:
 
-* The configure, build, and test results are borken down nicely
+* The configure, build, and test results are broken down nicely
   package-by-package on CDash.
 
 * Additional notes files will be uploaded to the build on CDash.
@@ -3220,13 +3224,13 @@ dashboard.  If one does not set ``CTEST_BUILD_NAME``, the name of the binary
 directory is used instead by default (which may not be very descriptive if it
 called ``BUILD`` or something like that).
 
-If there is already a vaild configure and build and one does not want to
+If there is already a valid configure and build and one does not want to
 submit configure and build results to CDash, then one can run with::
 
   $ env CTEST_BUILD_NAME=<build-name> CTEST_DO_CONFIGURE=OFF CTEST_DO_BUILD=OFF \
     make dashboard
 
-wich will only run the enabled tests and submit results to the CDash build
+which will only run the enabled tests and submit results to the CDash build
 ``<build-name>``.
 
 The configure, builds, and submits are either done package-by-package or
@@ -3249,7 +3253,7 @@ For submitting line coverage results, once you configure with
 ``-D<Project>_ENABLE_COVERAGE_TESTING=ON``, the environment variable
 ``CTEST_DO_COVERAGE_TESTING=TRUE`` is automatically set by the target
 ``dashboard`` so you don't have to set this yourself.  Then when you run the
-``dashboard`` target, it will automatically submit converage results to CDash
+``dashboard`` target, it will automatically submit coverage results to CDash
 as well.
 
 Doing memory checking running the enabled tests with Valgrind requires that
