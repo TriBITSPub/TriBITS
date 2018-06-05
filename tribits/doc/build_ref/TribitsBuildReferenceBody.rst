@@ -195,13 +195,14 @@ b) Create a CMake file fragment and point to it [Recommended].
     SET(BUILD_SHARED_LIBS ON CACHE BOOL "Set in MyConfigureOptions.cmake")
     ...
 
-  Using a configuration fragment file allows for better reuse of configure
-  options across different configure scripts and better version control of
-  configure options.  Using the comment ``"Set in MyConfigureOptions.cmake"``
-  makes it easy see where that variable got set when looking an the generated
-  CMakeCache.txt file.  Also, when this file changes, CMake will automatically
-  trigger a reconfgure during a make (because it knows about the file and will
-  check its time stamp).
+  Using a configuration fragment ``*.cmake`` file allows for better reuse of
+  configure options across different configure scripts and better version
+  control of configure options.  Using the comment ``"Set in
+  MyConfigureOptions.cmake"`` makes it easy see where that variable got set
+  when looking an the generated ``CMakeCache.txt`` file.  Also, when this
+  ``*.cmake`` fragment file changes, CMake will automatically trigger a
+  reconfgure during a make (because it knows about the file and will check its
+  time stamp, unlike when using ``-C <file-name>.cmake``, see below).
 
   One can use the ``FORCE`` option in the ``SET()`` commands shown above and
   that will override any value of the options that might already be set.
@@ -209,10 +210,10 @@ b) Create a CMake file fragment and point to it [Recommended].
   command-line using ``-D<VAR>=<value>`` so it is generally **not** desired to
   use ``FORCE``.
 
-  One can actually pass in a list of configuration fragment files separated by
-  ''","'' which will be read in the order they are given::
+  One can also pass in a list of configuration fragment files separated by
+  commas ``','`` which will be read in the order they are given as::
 
-    -D <Project>_CONFIGURE_OPTIONS_FILE=<file0>,<file1>,...
+    -D <Project>_CONFIGURE_OPTIONS_FILE=<file0>.cmake,<file1>.cmake,...
 
   One can read in configure option files under the project source directory by
   using the type ``STRING`` such as with::
@@ -220,33 +221,66 @@ b) Create a CMake file fragment and point to it [Recommended].
     -D <Project>_CONFIGURE_OPTIONS_FILE:STRING=cmake/MpiConfig1.cmake
 
   In this case, the relative paths will be with respect to the project base
-  source directory, not the current working directory.  (By specifying the
-  type ``STRING``, one turns off CMake interpretation as a ``FILEPATH``.
-  Otherwise, the type ``FILEPATH`` causes CMake to always interpret relative
-  paths with respect to the current working directory and set the absolute
-  path).
+  source directory, not the current working directory (unlike when using ``-C
+  <file-name>.cmake``, see below).  (By specifying the type ``STRING``, one
+  turns off CMake interpretation as a ``FILEPATH``.  Otherwise, the type
+  ``FILEPATH`` causes CMake to always interpret relative paths with respect to
+  the current working directory and set the absolute path).
 
-  Note that a CMake options file can also be read in with::
+  Note that CMake options files can also be read in using the built-in CMake
+  argument ``-C <file>.cmake`` as::
 
-    cmake -C MyConfigureOptions.cmake [other options]  ${SOURCE_BASE}
+    cmake -C <file0>.cmake -C <file1>.cmake ... [other options] \
+      ${SOURCE_BASE}
 
-  However, the advantages of using ``<Project>_CONFIGURE_OPTIONS_FILE`` are:
+  However, there are some differences to using
+  ``<Project>_CONFIGURE_OPTIONS_FILE`` vs. ``-C`` to read in ``*.cmake`` files
+  to be aware of as described below:
 
-  1) One can use ``-D<Project>_CONFIGURE_OPTIONS_FILE:STRING=<rel-path>`` to
-  use a relative path w.r.t. to the source tree to make it easier to point to
-  options files in the project source.  Using ``cmake -C`` would require
-  having to give the absolute path or a longer relative path from the build
-  directory back to the source directory.
+  1) One can use
+  ``-D<Project>_CONFIGURE_OPTIONS_FILE:STRING=<rel-path>/<file-name>.cmake``
+  with a relative path w.r.t. to the source tree to make it easier to point to
+  options files in the project source.  Using ``cmake -C
+  <abs-path>/<file-name>.cmake`` would require having to give the absolute
+  path ``<abs-path>`` or a longer relative path from the build directory back
+  to the source directory.  Having to give the absolute path to files in the
+  source tree complicates configure scripts in some cases (i.e. where the
+  project source directory location may not be known or easy to get).
 
-  2) ``<Project>_CONFIGURE_OPTIONS_FILE`` accepts a list of files where
-  ``cmake -C`` only accepts a single file.  That saves from having to create
-  another dummy ``*.cmake`` file that just includes the others.
+  2) When configuration files are read in using
+  ``<Project>_CONFIGURE_OPTIONS_FILE``, the will get reprocessed on every
+  reconfigure (such as when reconfigure happens automatically when running
+  ``make``).  That means that if options change in those included ``*.cmake``
+  files from the initial configure, then those updated options will get
+  automatically picked up in a reconfigure.  But when processing ``*.cmake``
+  files using the built-in ``-C <file-name>.cmake`` argument, updated options
+  will not get set.  Therefore, if one wants to have the ``*.cmake`` files
+  automatically be reprocessed, then one should use
+  ``<Project>_CONFIGURE_OPTIONS_FILE``.  But if one does not want to have the
+  contents of the ``*.cmake`` file reread on reconfigures, then one would want
+  to use ``-C``.
 
   3) One can create and use parametrized ``*.cmake`` files that can be used
   with multiple TriBITS projects.  For example, one can have set statements
   like ``SET(${PROJECT_NAME}_ENABLE_Fortran OFF ...)`` since ``PROJECT_NAME``
   is known before the file is included.  One can't do that with ``cmake -C``
-  and instead would have to the full variables names.
+  and instead would have to the full variables names specific for a given
+  project.
+
+  4) However, the ``*.cmake`` files specified by
+  ``<Project>_CONFIGURE_OPTIONS_FILE`` will only get read in **after** the
+  project's ``ProjectName.cmake`` and other ``SET()`` statements are called at
+  the top of the project's top-level ``CMakeLists.txt.` file.  So any CMake
+  cache variables that are set in this early CMake code will override cache
+  defaults set in the included ``*.cmake`` file.  (This is why TriBITS
+  projects must be careful **not** to set default values for cache variables
+  directly like this but instead should set indirect
+  ``<Project>_<VarName>_DEFAULT`` non-cache variables.)  But when a
+  ``*.cmake`` file is read in using ``-C``, then the ``SET()`` statements in
+  those files will get processed before any in the project's
+  ``CMakeLists.txt`` file.  So be careful about this difference in behavior
+  and carefully watch cache variable values actually set in the generated
+  ``CMakeCache.txt`` file.
 
 c) Using the QT CMake configuration GUI:
 
