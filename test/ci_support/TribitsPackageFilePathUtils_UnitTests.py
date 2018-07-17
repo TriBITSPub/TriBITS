@@ -256,6 +256,36 @@ class testFilterPackagesList(unittest.TestCase):
       )
 
 
+  def test_get_PT_ALL_PACKAGES_begining(self):
+    self.assertEqual(
+      getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
+        " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
+        " --input-packages-list=ALL_PACKAGES,Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT",
+        True),
+      b("ALL_PACKAGES,Teuchos,Thyra")
+      )
+
+
+  def test_get_PT_ALL_PACKAGES_end(self):
+    self.assertEqual(
+      getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
+        " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
+        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos,ALL_PACKAGES --keep-types=PT",
+        True),
+      b("Teuchos,Thyra,ALL_PACKAGES")
+      )
+
+
+  def test_get_PT_ALL_PACKAGS_middle(self):
+    self.assertEqual(
+      getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
+        " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
+        " --input-packages-list=Teuchos,ALL_PACKAGES,Thyra,Phalanx,Stokhos --keep-types=PT",
+        True),
+      b("Teuchos,ALL_PACKAGES,Thyra")
+      )
+
+
   def test_get_PT_ST(self):
     self.assertEqual(
       getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
