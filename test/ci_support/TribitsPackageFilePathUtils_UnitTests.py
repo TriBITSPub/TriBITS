@@ -239,7 +239,7 @@ class testProjectPackageFilePathUtils(unittest.TestCase):
       getCmndOutput(ciSupportDir+"/get-tribits-packages-from-files-list.py" \
         " --files-list-file=modifiedFiles.txt --deps-xml-file="+testingTrilinosDepsXmlInFile,
         True),
-      b("ALL_PACKAGES;TrilinosFramework;ThyraCoreLibs;Thyra")
+      b("ALL_PACKAGES,TrilinosFramework,ThyraCoreLibs,Thyra")
       )
 
 
