@@ -37,10 +37,11 @@
 # ************************************************************************
 # @HEADER
 
-
 #
 # Test generation of package dependency and related XML and related files
 #
+
+ADD_SUBDIRECTORY(DumpXmlDepsTests)
 
 # In case the project has ${PROJECT_NAME}_TRIBITS_DIR pointing to a symlink,
 # use the TriBITS implenetation in these test (which should be the same)
