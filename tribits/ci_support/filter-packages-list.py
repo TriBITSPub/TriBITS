@@ -47,10 +47,10 @@ from TribitsPackageFilePathUtils import *
 #
 
 usageHelp = \
-r"""filter-packages-list --deps-xml-file=<PROJECT_DEPS_FILE> \
+r"""filter-packages-list.py --deps-xml-file=<PROJECT_DEPS_FILE> \
   --input-packages-list=<P1>,<P2>,... --keep-types=<T1>,<T2>,...
 
-This script takes in a comma-seprated list of TriBITS package name
+This script takes in a comma-seprated list of TriBITS package names
 <P1>,<P2>,... and keeps the package names matching the categories listed in
 <T1>,<T2>,... given the TriBITS-generated project dependencies file.
 
