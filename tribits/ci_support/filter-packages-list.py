@@ -48,7 +48,7 @@ from TribitsPackageFilePathUtils import *
 
 usageHelp = \
 r"""filter-packages-list.py --deps-xml-file=<PROJECT_DEPS_FILE> \
-  --input-packages-list=<P1>,<P2>,... --keep-types=<T1>,<T2>,...
+  --input-packages-list=<P1>,<P2>,... --keep-test-test-categories=<T1>,<T2>,...
 
 This script takes in a comma-seprated list of TriBITS package names
 <P1>,<P2>,... and keeps the package names matching the categories listed in
@@ -66,7 +66,7 @@ clp.add_option(
   help="Comma-seprated List of packages that needs to be filtered (i.e. \"P1,P2,...\")." )
 
 clp.add_option(
-  "--keep-types", dest="keepTypes", type="string", default="",
+  "--keep-test-test-categories", dest="keepTestTestCategories", type="string", default="",
   help="List of package types to keep (i.e. \"PT,ST,EX\"." )
 
 clp.add_option(
@@ -78,6 +78,7 @@ clp.add_option(
 trilinosDependencies = getProjectDependenciesFromXmlFile(options.depsXmlFile)
 
 inputPackagesList = options.inputPackagesList.split(",")
-keepTypesList = options.keepTypes.split(",")
-outputPackagesList = trilinosDependencies.filterPackageNameList(inputPackagesList, keepTypesList)
+keepTestTestCategoriesList = options.keepTestTestCategories.split(",")
+outputPackagesList = \
+  trilinosDependencies.filterPackageNameList(inputPackagesList, keepTestTestCategoriesList)
 print ','.join(outputPackagesList)
