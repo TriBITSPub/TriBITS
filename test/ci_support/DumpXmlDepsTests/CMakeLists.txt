@@ -46,6 +46,131 @@ SET(MOCK_TRILINOS_DIR
   ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_MOCK_TRILINOS_DIR})
 
 
+#
+# Check for invalid input and other basic behaviors before checking generated
+# XML files
+#
+# NOTE: In the below error message regextes, '[ \t\r\n]+' are used to match
+# whitespace chars instead of just a space ' ' since CMake wraps error
+# messages from MESSAGE(FATAL_ERROR ...) on multiple lines and we can't
+# predict the link breaks.  Also, we can't use the REGEX '\s' since CMake does
+# not allow it.
+#
+
+
+TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_NoProjectSourceDir
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy tribits dir so that it will not appear in the standard location under any TriBITS project"
+    CMND ${CMAKE_COMMAND}
+    ARGS -E copy_directory
+      ${${PROJECT_NAME}_TRIBITS_DIR}
+      tribits
+
+  TEST_1 CMND "${CMAKE_COMMAND}"
+    ARGS
+      -P tribits/ci_support/TribitsDumpDepsXmlScript.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "ERROR:[ \t\r\n]+Cannot[ \t\r\n]+determine[ \t\r\n]+a[ \t\r\n]+default[ \t\r\n]+PROJECT_SOURCE_DIR[ \t\r\n]+location,[ \t\r\n]+please[ \t\r\n]+set[ \t\r\n]+PROJECT_SOURCE_DIR!"
+     ALWAYS_FAIL_ON_ZERO_RETURN
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_BadProjectSourceDir
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND "${CMAKE_COMMAND}"
+    ARGS
+      -D PROJECT_SOURCE_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -P ${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/TribitsDumpDepsXmlScript.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+       "ERROR:[ \t\r\n]+PROJECT_SOURCE_DIR='.*/tribits'[ \t\r\n]+is[ \t\r\n]+not[ \t\r\n]+a[ \t\r\n]+TriBITS[ \t\r\n]+project[ \t\r\n]+base[ \t\r\n]+dir[ \t\r\n]+since[ \t\r\n]+it[ \t\r\n]+is[ \t\r\n]+missing[ \t\r\n]+the[ \t\r\n]+file[ \t\r\n]+ProjectName.cmake"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_InputProjectSourceDir
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND "${CMAKE_COMMAND}"
+    ARGS
+      -D PROJECT_SOURCE_DIR=${MOCK_TRILINOS_DIR}
+      -D ${MOCK_PROJECT_NAME}_DEPS_XML_OUTPUT_FILE=${MOCK_PROJECT_NAME}PackageDependencies.xml
+      -P ${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/TribitsDumpDepsXmlScript.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "Input: PROJECT_SOURCE_DIR = '${MOCK_TRILINOS_DIR}'"
+      "-- Setting Trilinos_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}"
+      "Dumping the XML dependencies file .*/TriBITS_DepXmlDumpTests_InputProjectSourceDir/${MOCK_PROJECT_NAME}PackageDependencies.xml"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND "${CMAKE_COMMAND}"
+    ARGS
+      -E compare_files
+      ${MOCK_PROJECT_NAME}PackageDependencies.xml
+      ${${PACKAGE_NAME}_SOURCE_DIR}/test/ci_support/TrilinosPackageDependencies.gold.xml
+
+  )
+  # NOTE: In the above invocation, the project does not have TriBITS it its
+  # standard location and this shows that such a case is well supported.
+
+
+
+TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_MissingDepsXmlOutputFile
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND "${CMAKE_COMMAND}"
+    ARGS
+      -D PROJECT_SOURCE_DIR=${MOCK_TRILINOS_DIR}
+      -P ${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/TribitsDumpDepsXmlScript.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "ERROR:[ \t\r\n]+Trilinos_DEPS_XML_OUTPUT_FILE[ \t\r\n]+cannot[ \t\r\n]+be[ \t\r\n]+empty.[ \t\r\n]+Please[ \t\r\n]+set[ \t\r\n]+Trilinos_DEPS_XML_OUTPUT_FILE!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_DefaultProjectSourceDir
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    CMND ${CMAKE_COMMAND}
+    ARGS -E copy_directory
+      ${MOCK_TRILINOS_DIR}
+      MockTrilinos
+
+  TEST_1
+    CMND ${CMAKE_COMMAND}
+    ARGS -E copy_directory
+      ${${PROJECT_NAME}_TRIBITS_DIR}
+      MockTrilinos/cmake/tribits
+
+  TEST_2 CMND "${CMAKE_COMMAND}"
+    ARGS
+      -D${MOCK_PROJECT_NAME}_DEPS_XML_OUTPUT_FILE=${MOCK_PROJECT_NAME}PackageDependencies.xml
+      -P MockTrilinos/cmake/tribits/ci_support/TribitsDumpDepsXmlScript.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "Input: PROJECT_SOURCE_DIR = ''"
+      "-- Setting default PROJECT_SOURCE_DIR=/.*/TriBITS_DepXmlDumpTests_DefaultProjectSourceDir/MockTrilinos"
+      "-- Setting Trilinos_TRIBITS_DIR=/.*/TriBITS_DepXmlDumpTests_DefaultProjectSourceDir/MockTrilinos/cmake/tribits"
+      "Dumping the XML dependencies file .*/TriBITS_DepXmlDumpTests_DefaultProjectSourceDir/${MOCK_PROJECT_NAME}PackageDependencies.xml"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3 CMND "${CMAKE_COMMAND}"
+    ARGS
+      -E compare_files
+      ${MOCK_PROJECT_NAME}PackageDependencies.xml
+      ${${PACKAGE_NAME}_SOURCE_DIR}/test/ci_support/TrilinosPackageDependencies.gold.xml
+
+  )
+  # NOTE: The above test shows that if TriBITS is present in the default
+  # project location, then you don't need to specify the PROJECT_SOURCE_DIR
+  # var.
+
+
 #####################################################################
 #
 # Unit tests for just creating the depencency XML files
@@ -87,6 +212,7 @@ FUNCTION(CREATE_DEPENDENCY_XML_DUMP_TEST_CASE TEST_NAME)
         ${PARSE_ARGS}
         -P ${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/TribitsDumpDepsXmlScript.cmake
       PASS_REGULAR_EXPRESSION_ALL ${PARSE_PASS_REGULAR_EXPRESSION_ALL}
+      ALWAYS_FAIL_ON_NONZERO_RETURN
     TEST_1 CMND "${CMAKE_COMMAND}"
       ARGS
         -E compare_files
