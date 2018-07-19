@@ -80,7 +80,7 @@ import time
 # global rebulid.
 #
 
-class DefaultProjectChangeLogic:
+class DefaultProjectCiFileChangeLogic:
 
   def isGlobalBuildFileRequiringGlobalRebuild(self, modifiedFileFullPath):
     modifiedFileFullPathArray = getFilePathArray(modifiedFileFullPath)
@@ -109,6 +109,28 @@ class DefaultProjectChangeLogic:
     return False
 
 
+def getProjectCiFileChangeLogic(projectDir):
+
+  if not projectDir:
+    return DefaultProjectCiFileChangeLogic()
+
+  tribitsDirPath = os.path.abspath(
+    os.path.join(
+      os.path.dirname(os.path.abspath(__file__)),
+      "../..", "tribits"
+      )
+    )
+
+  old_sys_path = sys.path
+
+  try:
+    sys.path = [tribitsDirPath+"/examples/TribitsExampleProject/cmake"] + sys.path
+    import ProjectCiFileChangeLogic
+    return ProjectCiFileChangeLogic.ProjectCiFileChangeLogic()
+  finally:
+    sys.path = old_sys_path
+
+
 def getPackageStructFromPath(projectDependencies, fullPath):
   packageName = getPackageNameFromPath(projectDependencies, fullPath)
   if packageName:
@@ -130,7 +152,7 @@ def extractFilesListMatchingPattern(fileList_in, reMatachingPattern):
 
 
 def getPackagesListFromFilePathsList(projectDependencies, filePathsList,
-  allPackages=False, projectChangeLogic=DefaultProjectChangeLogic() \
+  allPackages=False, projectCiFileChangeLogic=DefaultProjectCiFileChangeLogic() \
   ):
   packagesList = []
   enabledAllPackages = False
@@ -139,7 +161,7 @@ def getPackagesListFromFilePathsList(projectDependencies, filePathsList,
     if findInSequence(packagesList, packageName) == -1 and packageName: 
       packagesList.append(packageName.strip())
     if allPackages \
-      and projectChangeLogic.isGlobalBuildFileRequiringGlobalRebuild(filePath) \
+      and projectCiFileChangeLogic.isGlobalBuildFileRequiringGlobalRebuild(filePath) \
       and not enabledAllPackages \
       :
       packagesList.append("ALL_PACKAGES")

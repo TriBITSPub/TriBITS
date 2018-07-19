@@ -39,6 +39,7 @@
 # ************************************************************************
 # @HEADER
 
+from FindGeneralScriptSupport import *
 from TribitsPackageFilePathUtils import *
 
 
@@ -47,15 +48,20 @@ from TribitsPackageFilePathUtils import *
 #
 
 usageHelp = \
-r"""get-tribits-packages-from-files-list.py --deps-xml-file=<DEPS_XML_FILE> --files-list-file=<FILES_LIST_FILE>
+r"""get-tribits-packages-from-files-list.py --deps-xml-file=<DEPS_XML_FILE> \
+    --files-list-file=<FILES_LIST_FILE> [--project-dir=<projectDir>]
 
 This script returns a comma-seprated list of all of the project's TriBITS SE
 packages that must be directly tested for changes in the input list of files.
 This may also include the special package name 'ALL_PACKAGES' which means that
 at least one changed file (e.g. <projectDir>/CMakeLists.txt) should result in
 having to test all of the TriBITS packages in the project.  The logic for
-which files should trigger testing all packages can be specialized for the
-project through the Python module <projectDir>/cmake/ProjectFileChange.py.
+which file changes should trigger testing all packages can be specialized for
+the project through the Python module:
+
+  <projectDir>/cmake/ProjectCiFileChangeLogic.py.
+
+if that file exists.
 
 This script is used in continuous integration testing workflows involving
 TriBITS projects.  For such a scenario, the list files can come from:
@@ -78,15 +84,28 @@ clp.add_option(
   "--files-list-file", dest="filesListFile", type="string", default=None,
   help="File containing the list of modified files relative to project base directory, one file per line." )
 
+clp.add_option(
+  "--project-dir", dest="projectDir", type="string", default="",
+  help="Base proejct directory.  Used to acces more specialized logic beyond" \
+    +" what is known in the <DEPSXMLFILE>.  If empty '', then it will be set" \
+    +" automatically if TriBITS is is the standard location w.r.t. the project" \
+    +" in relation to this script run from the TriBITS dir.")
+
 (options, args) = clp.parse_args()
 
 if not options.filesListFile:
   raise Exception("Error, the option --files-list-file=FILENAME must be set!")
 
+if not options.projectDir and os.path.isfile(defaultProjectDir+"/ProjectName.cmake"):
+  options.projectDir = defaultProjectDir
+
 filesList = readStrFromFile(options.filesListFile).splitlines()
 
 trilinosDependencies = getProjectDependenciesFromXmlFile(options.depsXmlFile)
 
-packagesList = getPackagesListFromFilePathsList(trilinosDependencies, filesList, True)
+projectCiFileChangeLogic = getProjectCiFileChangeLogic(options.projectDir)
+
+packagesList = getPackagesListFromFilePathsList(trilinosDependencies, filesList, True,
+  projectCiFileChangeLogic)
 
 print ','.join(packagesList)

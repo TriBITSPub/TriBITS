@@ -47,7 +47,7 @@
 #       [-D <projectName>_PRE_REPOSITORIES=<prepo0>,<prepo1>,...] \
 #       [-D <projectName>_EXTRA_REPOSITORIES=<erepo0>,<erepo1>,...] \
 #       -D <projectName>_DEPS_XML_OUTPUT_FILE=<projectDepsFileOut> \
-#       -P SOME_BASE_DIR/TribitsDumpDepsXmlScript.cmake
+#       -P <tribitsDir>/ci_support/TribitsDumpDepsXmlScript.cmake
 #
 
 # A) Echo input options (must be specified with -D arguments to CMake command)

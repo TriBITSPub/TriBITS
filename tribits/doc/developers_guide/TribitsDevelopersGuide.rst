@@ -674,6 +674,7 @@ ${PROJECT_SOURCE_DIR}``) are::
      cmake/
        NativeRepositoriesList.cmake    # [Optional] Rarely used
        ExtraRepositoriesList.cmake     # [Optional] Lists repos and VC URLs 
+       ProjectCiFileChangeLogic.py     # [Optional] CI global change/test logic
        ProjectCompilerPostConfig.cmake # [Optional] Override/tweak build flags
        ProjectDependenciesSetup.cmake  # [Optional] Project deps overrides
        CallbackDefineProjectPackaging.cmake  # [Optional] CPack settings
@@ -690,6 +691,7 @@ These TriBITS Project files are documented in more detail below:
 * `<projectDir>/project-checkin-test-config.py`_
 * `<projectDir>/cmake/NativeRepositoriesList.cmake`_
 * `<projectDir>/cmake/ExtraRepositoriesList.cmake`_
+* `<projectDir>/cmake/ProjectCiFileChangeLogic.py`_
 * `<projectDir>/cmake/ProjectCompilerPostConfig.cmake`_
 * `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_
 * `<projectDir>/cmake/CallbackDefineProjectPackaging.cmake`_
@@ -924,6 +926,26 @@ NOTE: This file can be overridden by setting the cache variable
 .. looks like only the selected repos will be cloned.  I need to add some unit
 .. tests that really show what the real behavior is and then document that
 .. behavior here.
+
+
+.. _<projectDir>/cmake/ProjectCiFileChangeLogic.py:
+
+**<projectDir>/cmake/ProjectCiFileChangeLogic.py**: [Optional] If present,
+then this Python module is imported and the Python class defined there
+ProjectCiFileChangeLogic there is used to determine which files need to
+trigger a global rebuild of the project enabling all packages.
+
+An example of this given in the file
+``TribitsExampleProject/cmake/ProjectCiFileChangeLogic.py``:
+
+.. include:: ../../examples/TribitsExampleProject/cmake/ProjectCiFileChangeLogic.py
+   :literal:
+
+This logic is used in all code that is used in CI testing including
+`checkin-test.py`_, `TRIBITS_CTEST_DRIVER()`_ and
+`get-tribits-packages-from-files-list.py`_.  If this file does not exist, then
+TriBITS has some default logic which may or may not be sufficient for the
+needs of a given project.
 
 
 .. _<projectDir>/cmake/ProjectCompilerPostConfig.cmake:

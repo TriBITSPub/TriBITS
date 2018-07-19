@@ -60,96 +60,96 @@ import unittest
 # Test isGlobalBuildFileRequiringGlobalRebuild
 #
 
-class test_DefaultProjectChangeLogic(unittest.TestCase):
+class test_DefaultProjectCiFileChangeLogic(unittest.TestCase):
 
 
   def test_CMakeLists_txt(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'CMakeLists.txt' ), True )
 
 
   def test_PackagesList_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'PackagesList.cmake' ), False )
 
 
   def test_TPLsList_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'TPLsList.cmake' ), False )
 
 
   def test_Version_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'Version.cmake' ), True )
 
 
   def test_Anything_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'Anything.cmake' ), True )
 
 
   def test_TrilinosCMakeQuickstart_txt(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TrilinosCMakeQuickstart.txt' ),
       False )
 
 
   def test_TPLsList_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ExtraRepositoriesList.cmake' ),
       False )
 
 
   def test_experimental_build_test_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ctest/experimental_build_test.cmake' ),
       False )
 
 
   def test_cmake_ctest_drivers_something(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'something/cmake/ctest/drivers/machine/somefile.cmake' ),
       False )
 
 
   def test_something_cmake_ctest_drivers_something(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ctest/drivers/machine/somefile.cmake' ),
       False )
 
 
   def test_cmake_UnitTests(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/anything/UnitTests/CMakeLists.txt' ),
       False )
 
 
   def test_FindTPLBLAS_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLBLAS.cmake' ),
       False )
 
 
   def test_FindTPLLAPACK_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLLAPACK.cmake' ),
       False )
 
 
   def test_FindTPLMPI_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLMPI.cmake' ),
       False )
 
 
   def test_FindTPLDummy_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLDummy.cmake' ),
       False )
 
 
   def test_SetNotFound_cmake(self):
-    dpcl = DefaultProjectChangeLogic()
+    dpcl = DefaultProjectCiFileChangeLogic()
     self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/utils/SetNotFound.cmake' ),
       True )
 

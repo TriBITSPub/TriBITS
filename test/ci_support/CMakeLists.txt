@@ -107,20 +107,152 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsPackageTestNameUtils_UnitTests
     PASS_REGULAR_EXPRESSION "OK"
   )
 
+#
+# Test the get-tribits-packages-from-last-tests-failed.py script
+#
 
 TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_from_last_tests_failed_1
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
-    MESSAGE "Run checkin-test.py script to make sure it finds base dir"
     CMND ${PYTHON_EXECUTABLE}
     ARGS
-      -E "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages-from-last-tests-failed.py"
+      "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages-from-last-tests-failed.py"
       --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
       --last-tests-failed-file="${CMAKE_CURRENT_SOURCE_DIR}/LastTestsFailed.1.log"
     PASS_REGULAR_EXPRESSION_ALL
       "^Thyra[;]Teuchos\n"
   )
+
+#
+# Test TribitsExampleProject/cmake/ProjectCiFileChangeLogic.py
+#
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCiFileChangeLogic_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsExampleProject_ProjectCiFileChangeLogic_UnitTests.py -v
+    PASS_REGULAR_EXPRESSION "OK"
+  )
+
+#
+# Test the get-tribits-packages-from-last-tests-failed.py script with
+# TribitsExampleProject that does *NOT* have TriBITS copied into it in the
+# standard location.
+#
+
+FUNCTION(Test_TribitsExampleProject_get_tribits_packages_from_files_list
+  TEST_POSTFIX  CHANGED_FILES_NAME  MATCH_REGEX
+  )
+
+  TRIBITS_ADD_ADVANCED_TEST(
+    TribitsExampleProject_get_tribits_packages_from_files_list_${TEST_POSTFIX}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+  
+    TEST_0
+      CMND "${CMAKE_COMMAND}"
+      ARGS -E copy
+        "${CMAKE_CURRENT_LIST_DIR}/test_data/${CHANGED_FILES_NAME}"
+        changed_files.txt
+  
+    TEST_1
+      CMND "${CMAKE_COMMAND}"
+      ARGS
+        -D PROJECT_SOURCE_DIR="${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject"
+        -D TribitsExProj_DEPS_XML_OUTPUT_FILE=TribitsExProjPackageDependencies.cmake
+        -P "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/TribitsDumpDepsXmlScript.cmake"
+  
+    TEST_2
+      CMND ${PYTHON_EXECUTABLE}
+      ARGS
+        "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages-from-files-list.py"
+        --deps-xml-file=TribitsExProjPackageDependencies.cmake
+        --files-list-file=changed_files.txt
+        --project-dir="${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject"
+      PASS_REGULAR_EXPRESSION_ALL
+        "${MATCH_REGEX}"
+  
+    )
+
+ENDFUNCTION()
+
+Test_TribitsExampleProject_get_tribits_packages_from_files_list(
+  1  tribits-example-project-changed-files-1.txt  "^ALL_PACKAGES,SimpleCxx\n" )
+
+Test_TribitsExampleProject_get_tribits_packages_from_files_list(
+  2  tribits-example-project-changed-files-2.txt  "^ALL_PACKAGES,WithSubpackagesC\n" )
+
+Test_TribitsExampleProject_get_tribits_packages_from_files_list(
+  3  tribits-example-project-changed-files-3.txt  "^ALL_PACKAGES,MixedLang\n" )
+
+Test_TribitsExampleProject_get_tribits_packages_from_files_list(
+  4  tribits-example-project-changed-files-4.txt  "^WithSubpackages\n" )
+
+#
+# Test the get-tribits-packages-from-last-tests-failed.py script with
+# TribitsExampleProject with TriBITS copied into the standard location so that
+# we can leave off the --project-dir argument.
+#
+
+FUNCTION(Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list
+  TEST_POSTFIX  CHANGED_FILES_NAME  MATCH_REGEX
+  )
+
+  TRIBITS_ADD_ADVANCED_TEST(
+    TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list_${TEST_POSTFIX}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+  
+    TEST_0
+      CMND "${CMAKE_COMMAND}"
+      ARGS -E copy_directory
+        "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject"
+	TribitsExampleProject
+  
+    TEST_1
+      CMND "${CMAKE_COMMAND}"
+      ARGS -E copy_directory
+        "${${PROJECT_NAME}_TRIBITS_DIR}"
+	TribitsExampleProject/cmake/tribits
+  
+    TEST_2
+      CMND "${CMAKE_COMMAND}"
+      ARGS -E copy
+        "${CMAKE_CURRENT_LIST_DIR}/test_data/${CHANGED_FILES_NAME}"
+        changed_files.txt
+  
+    TEST_3
+      CMND "${CMAKE_COMMAND}"
+      ARGS
+        -D TribitsExProj_DEPS_XML_OUTPUT_FILE=TribitsExProjPackageDependencies.cmake
+        -P "TribitsExampleProject/cmake/tribits/ci_support/TribitsDumpDepsXmlScript.cmake"
+  
+    TEST_4
+      CMND ${PYTHON_EXECUTABLE}
+      ARGS
+        "TribitsExampleProject/cmake/tribits/ci_support/get-tribits-packages-from-files-list.py"
+        --deps-xml-file=TribitsExProjPackageDependencies.cmake
+        --files-list-file=changed_files.txt
+      PASS_REGULAR_EXPRESSION_ALL
+        "${MATCH_REGEX}"
+  
+    )
+
+ENDFUNCTION()
+
+Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list(
+  1  tribits-example-project-changed-files-1.txt  "^ALL_PACKAGES,SimpleCxx\n" )
+
+Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list(
+  2  tribits-example-project-changed-files-2.txt  "^ALL_PACKAGES,WithSubpackagesC\n" )
+
+Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list(
+  3  tribits-example-project-changed-files-3.txt  "^ALL_PACKAGES,MixedLang\n" )
+
+Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list(
+  4  tribits-example-project-changed-files-4.txt  "^WithSubpackages\n" )
 
 
 #
