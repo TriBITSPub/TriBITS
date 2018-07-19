@@ -47,15 +47,23 @@ from TribitsPackageFilePathUtils import *
 #
 
 usageHelp = \
-r"""get-tribits-packages-from-files-list.py --files-list-file=<FILES_LIST_FILE>
-    --deps-xml-file=<DEPS_XML_FILE>
+r"""get-tribits-packages-from-files-list.py --deps-xml-file=<DEPS_XML_FILE> --files-list-file=<FILES_LIST_FILE>
 
-This script uses the mapping of directory paths to package names to print out
-to STDOUT a comma-seprated list of all of the packages that a list of input
-files given in <FILES_LIST_FILE> corresponds to. 
+This script returns a comma-seprated list of all of the project's TriBITS SE
+packages that must be directly tested for changes in the input list of files.
+This may also include the special package name 'ALL_PACKAGES' which means that
+at least one changed file (e.g. <projectDir>/CMakeLists.txt) should result in
+having to test all of the TriBITS packages in the project.  The logic for
+which files should trigger testing all packages can be specialized for the
+project through the Python module <projectDir>/cmake/ProjectFileChange.py.
 
-For example, the list of input files can come from a 'git diff --name-only
-<new-version> ^<old-version>' command.
+This script is used in continuous integration testing workflows involving
+TriBITS projects.  For such a scenario, the list files can come from:
+
+  git diff --name-only <upstream>..<branch-tip>  >  changed-files.txt
+
+where <upstream> is the commit reference that the local branch was created
+from and <branch-tip> is the tip of the local branch.
 """
 
 from optparse import OptionParser
@@ -63,12 +71,12 @@ from optparse import OptionParser
 clp = OptionParser(usage=usageHelp)
 
 clp.add_option(
-  "--files-list-file", dest="filesListFile", type="string", default=None,
-  help="File containing the list of modified files relative to project base directory, one file per line." )
-
-clp.add_option(
   "--deps-xml-file", dest="depsXmlFile", type="string",
   help="File containing TriBITS-generated XML data-structure the listing of packages, dir names, dependencies, etc.")
+
+clp.add_option(
+  "--files-list-file", dest="filesListFile", type="string", default=None,
+  help="File containing the list of modified files relative to project base directory, one file per line." )
 
 (options, args) = clp.parse_args()
 
