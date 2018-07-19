@@ -60,81 +60,97 @@ import unittest
 # Test isGlobalBuildFileRequiringGlobalRebuild
 #
 
-class test_isGlobalBuildFileRequiringGlobalRebuild(unittest.TestCase):
+class test_DefaultProjectChangeLogic(unittest.TestCase):
 
 
   def test_CMakeLists_txt(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'CMakeLists.txt' ), True )
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'CMakeLists.txt' ), True )
 
 
   def test_PackagesList_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'PackagesList.cmake' ), False )
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'PackagesList.cmake' ), False )
 
 
   def test_TPLsList_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'TPLsList.cmake' ), False )
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'TPLsList.cmake' ), False )
 
 
   def test_Version_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'Version.cmake' ), True )
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'Version.cmake' ), True )
 
 
   def test_Anything_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'Anything.cmake' ), True )
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'Anything.cmake' ), True )
 
 
   def test_TrilinosCMakeQuickstart_txt(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TrilinosCMakeQuickstart.txt' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TrilinosCMakeQuickstart.txt' ),
       False )
 
 
   def test_TPLsList_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ExtraRepositoriesList.cmake' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ExtraRepositoriesList.cmake' ),
       False )
 
 
   def test_experimental_build_test_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ctest/experimental_build_test.cmake' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ctest/experimental_build_test.cmake' ),
       False )
 
 
   def test_cmake_ctest_drivers_something(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'something/cmake/ctest/drivers/machine/somefile.cmake' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'something/cmake/ctest/drivers/machine/somefile.cmake' ),
       False )
 
 
   def test_something_cmake_ctest_drivers_something(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ctest/drivers/machine/somefile.cmake' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ctest/drivers/machine/somefile.cmake' ),
       False )
 
 
   def test_cmake_UnitTests(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/anything/UnitTests/CMakeLists.txt' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/anything/UnitTests/CMakeLists.txt' ),
       False )
 
 
   def test_FindTPLBLAS_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLBLAS.cmake' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLBLAS.cmake' ),
       False )
 
 
   def test_FindTPLLAPACK_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLLAPACK.cmake' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLLAPACK.cmake' ),
       False )
 
 
   def test_FindTPLMPI_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLMPI.cmake' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLMPI.cmake' ),
       False )
 
 
   def test_FindTPLDummy_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLDummy.cmake' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLDummy.cmake' ),
       False )
 
 
   def test_SetNotFound_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/utils/SetNotFound.cmake' ),
+    dpcl = DefaultProjectChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/utils/SetNotFound.cmake' ),
       True )
 
 

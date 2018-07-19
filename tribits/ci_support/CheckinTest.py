@@ -849,6 +849,8 @@ def extractPackageEnablesFromChangeStatus(changedFileDiffOutputStr, inOptions_in
   projectDependenciesLocal=None ) \
   :
 
+  projectChangeLogic=DefaultProjectChangeLogic()
+
   if not projectDependenciesLocal:
     projectDependenciesLocal = getDefaultProjectDependenices()
 
@@ -859,7 +861,7 @@ def extractPackageEnablesFromChangeStatus(changedFileDiffOutputStr, inOptions_in
 
     # Only look for global rebuild files in the master repo (not in extra repos)
     if gitRepo.repoName == '' and \
-      isGlobalBuildFileRequiringGlobalRebuild(modifiedFileFullPath) \
+      projectChangeLogic.isGlobalBuildFileRequiringGlobalRebuild(modifiedFileFullPath) \
       :
       if inOptions_inout.enableAllPackages == 'auto':
         if verbose:
