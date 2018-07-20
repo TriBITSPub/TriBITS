@@ -246,6 +246,16 @@ class testProjectPackageFilePathUtils(unittest.TestCase):
 class testFilterPackagesList(unittest.TestCase):
 
 
+  def test_get_PT_empty(self):
+    self.assertEqual(
+      getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
+        " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
+        " --input-packages-list= --keep-test-test-categories=PT",
+        True),
+      b("")
+      )
+
+
   def test_get_PT(self):
     self.assertEqual(
       getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
