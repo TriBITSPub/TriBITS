@@ -70,7 +70,7 @@ if len(mockprogramInoutArray) and mockprogramInoutArray[-1] == "":
   mockprogramInoutArray = mockprogramInoutArray[:-1]
 
 if len(mockprogramInoutArray) < 3:
-  print("Error: .mockprogram_inout.txt has less than three lines:\n"
+  print("Error: "+mockProgramInOutFilePath+" has less than three lines:\n"
         "-------------\n" + mockprogramInout + "-------------")
   sys.exit(2)
 
@@ -113,10 +113,10 @@ print(outputStr)
 # Write the remaining lines back into the file
 lineLineIndex = 2 + numLinesOuput
 if len(mockprogramInoutArray) > lineLineIndex:
-  open('.mockprogram_inout.txt', 'w').write(
+  open(mockProgramInOutFilePath, 'w').write(
     ('\n'.join(mockprogramInoutArray[lineLineIndex:]))+"\n" )
 else:
-  open('.mockprogram_inout.txt', 'w').write("")
+  open(mockProgramInOutFilePath, 'w').write("")
 
 # Return exit code
 sys.exit(int(returnCode))
