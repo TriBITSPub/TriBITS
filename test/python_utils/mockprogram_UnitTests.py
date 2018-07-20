@@ -184,6 +184,27 @@ class test_mockprogram(unittest.TestCase):
       os.chdir(testBaseDir)
 
 
+  def test_call_1_MOCKPROGRAM_INOUT_FILE_OVERRIDE(self):
+    testDir = createAndMoveIntoTestDir("call_1")
+    try:
+      os.mkdir("subdir")
+      open('subdir/mockprogram_inout.txt', 'w').write(
+        "MOCK_PROGRAM_INPUT: some input\n" \
+        "MOCK_PROGRAM_RETURN: 11\n" \
+        "MOCK_PROGRAM_OUTPUT: some output\n" \
+        )
+      (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
+        mockProgramPath+" some input", rtnOutput=True,
+        extraEnv={"MOCKPROGRAM_INOUT_FILE_OVERRIDE":"subdir/mockprogram_inout.txt"} )
+      expected_output = b"some output\n"
+      self.assertEqual(output, expected_output)
+      self.assertEqual(errorCode, 11)
+      remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
+      self.assertEqual(remainingMockFileStr, "")
+    finally:
+      os.chdir(testBaseDir)
+
+
   def test_call_1_multiline_out(self):
     testDir = createAndMoveIntoTestDir("call_1_multiline_out")
     try:

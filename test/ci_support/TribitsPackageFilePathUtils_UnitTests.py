@@ -60,81 +60,97 @@ import unittest
 # Test isGlobalBuildFileRequiringGlobalRebuild
 #
 
-class test_isGlobalBuildFileRequiringGlobalRebuild(unittest.TestCase):
+class test_DefaultProjectCiFileChangeLogic(unittest.TestCase):
 
 
   def test_CMakeLists_txt(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'CMakeLists.txt' ), True )
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'CMakeLists.txt' ), True )
 
 
   def test_PackagesList_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'PackagesList.cmake' ), False )
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'PackagesList.cmake' ), False )
 
 
   def test_TPLsList_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'TPLsList.cmake' ), False )
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'TPLsList.cmake' ), False )
 
 
   def test_Version_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'Version.cmake' ), True )
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'Version.cmake' ), True )
 
 
   def test_Anything_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'Anything.cmake' ), True )
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'Anything.cmake' ), True )
 
 
   def test_TrilinosCMakeQuickstart_txt(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TrilinosCMakeQuickstart.txt' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TrilinosCMakeQuickstart.txt' ),
       False )
 
 
   def test_TPLsList_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ExtraRepositoriesList.cmake' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ExtraRepositoriesList.cmake' ),
       False )
 
 
   def test_experimental_build_test_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ctest/experimental_build_test.cmake' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ctest/experimental_build_test.cmake' ),
       False )
 
 
   def test_cmake_ctest_drivers_something(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'something/cmake/ctest/drivers/machine/somefile.cmake' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'something/cmake/ctest/drivers/machine/somefile.cmake' ),
       False )
 
 
   def test_something_cmake_ctest_drivers_something(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ctest/drivers/machine/somefile.cmake' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/ctest/drivers/machine/somefile.cmake' ),
       False )
 
 
   def test_cmake_UnitTests(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/anything/UnitTests/CMakeLists.txt' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/anything/UnitTests/CMakeLists.txt' ),
       False )
 
 
   def test_FindTPLBLAS_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLBLAS.cmake' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLBLAS.cmake' ),
       False )
 
 
   def test_FindTPLLAPACK_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLLAPACK.cmake' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLLAPACK.cmake' ),
       False )
 
 
   def test_FindTPLMPI_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLMPI.cmake' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLMPI.cmake' ),
       False )
 
 
   def test_FindTPLDummy_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLDummy.cmake' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/TPLs/FindTPLDummy.cmake' ),
       False )
 
 
   def test_SetNotFound_cmake(self):
-    self.assertEqual( isGlobalBuildFileRequiringGlobalRebuild( 'cmake/utils/SetNotFound.cmake' ),
+    dpcl = DefaultProjectCiFileChangeLogic()
+    self.assertEqual( dpcl.isGlobalBuildFileRequiringGlobalRebuild( 'cmake/utils/SetNotFound.cmake' ),
       True )
 
 
@@ -246,11 +262,21 @@ class testProjectPackageFilePathUtils(unittest.TestCase):
 class testFilterPackagesList(unittest.TestCase):
 
 
+  def test_get_PT_empty(self):
+    self.assertEqual(
+      getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
+        " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
+        " --input-packages-list= --keep-test-test-categories=PT",
+        True),
+      b("")
+      )
+
+
   def test_get_PT(self):
     self.assertEqual(
       getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
-        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT",
+        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-test-test-categories=PT",
         True),
       b("Teuchos,Thyra")
       )
@@ -260,7 +286,7 @@ class testFilterPackagesList(unittest.TestCase):
     self.assertEqual(
       getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
-        " --input-packages-list=ALL_PACKAGES,Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT",
+        " --input-packages-list=ALL_PACKAGES,Teuchos,Thyra,Phalanx,Stokhos --keep-test-test-categories=PT",
         True),
       b("ALL_PACKAGES,Teuchos,Thyra")
       )
@@ -270,7 +296,7 @@ class testFilterPackagesList(unittest.TestCase):
     self.assertEqual(
       getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
-        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos,ALL_PACKAGES --keep-types=PT",
+        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos,ALL_PACKAGES --keep-test-test-categories=PT",
         True),
       b("Teuchos,Thyra,ALL_PACKAGES")
       )
@@ -280,7 +306,7 @@ class testFilterPackagesList(unittest.TestCase):
     self.assertEqual(
       getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
-        " --input-packages-list=Teuchos,ALL_PACKAGES,Thyra,Phalanx,Stokhos --keep-types=PT",
+        " --input-packages-list=Teuchos,ALL_PACKAGES,Thyra,Phalanx,Stokhos --keep-test-test-categories=PT",
         True),
       b("Teuchos,ALL_PACKAGES,Thyra")
       )
@@ -290,7 +316,7 @@ class testFilterPackagesList(unittest.TestCase):
     self.assertEqual(
       getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
-        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT,ST",
+        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-test-test-categories=PT,ST",
         True),
       b("Teuchos,Thyra,Phalanx")
       )
@@ -300,7 +326,7 @@ class testFilterPackagesList(unittest.TestCase):
     self.assertEqual(
       getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
-        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT,ST,EX",
+        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-test-test-categories=PT,ST,EX",
         True),
       b("Teuchos,Thyra,Phalanx,Stokhos")
       )
@@ -310,7 +336,7 @@ class testFilterPackagesList(unittest.TestCase):
     self.assertEqual(
       getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
-        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=ST",
+        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-test-test-categories=ST",
         True),
       b("Phalanx")
       )
@@ -320,7 +346,7 @@ class testFilterPackagesList(unittest.TestCase):
     self.assertEqual(
       getCmndOutput(ciSupportDir+"/filter-packages-list.py" \
         " --deps-xml-file="+testingTrilinosDepsXmlInFile+"" \
-        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-types=PT,EX",
+        " --input-packages-list=Teuchos,Thyra,Phalanx,Stokhos --keep-test-test-categories=PT,EX",
         True),
       b("Teuchos,Thyra,Stokhos")
       )
