@@ -52,8 +52,9 @@ r"""filter-packages-list.py --deps-xml-file=<PROJECT_DEPS_FILE> \
 
 This script takes in a comma-seprated list of TriBITS package names
 <P1>,<P2>,... and then filters out the package names for packages that don't
-the package test test categories listed in <T1>,<T2>,... which are given the
-TriBITS-generated project dependencies file.
+match the give set of test test categories listed in <T1>,<T2>,... (which each
+package's test test category is given the input TriBITS-generated project
+dependencies file).  The filtered list of packages is printed to STDOUT.
 
 For example, to keep only the Primary Tested (PT) packages, use:
 
@@ -68,8 +69,6 @@ To keep all packages, use:
   filter-packages-list.py --keep-test-test-categories=PT,ST,EX [other args]
 
 (or don't both running the script).
-
-The comma-seprated filtered list of packages is printed to STDOUT.
 """
 
 from optparse import OptionParser
