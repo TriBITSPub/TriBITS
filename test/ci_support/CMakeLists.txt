@@ -121,7 +121,7 @@ TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_from_last_tests_failed_1
       --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
       --last-tests-failed-file="${CMAKE_CURRENT_SOURCE_DIR}/LastTestsFailed.1.log"
     PASS_REGULAR_EXPRESSION_ALL
-      "^Thyra[;]Teuchos\n"
+      "^Thyra,Teuchos\n"
   )
 
 #
