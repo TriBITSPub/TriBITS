@@ -765,10 +765,15 @@ class test_gitdist(unittest.TestCase):
   def setUp(self):
     self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+    self.gitdistUnitTestSttySize = os.environ.get(
+      "GITDIST_UNIT_TEST_STTY_SIZE", ""
+    )
+    os.environ["GITDIST_UNIT_TEST_STTY_SIZE"] = "60 120"
 
 
   def tearDown(self):
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = self.gitdistMoveToBaseDir
+    os.environ["GITDIST_UNIT_TEST_STTY_SIZE"] = self.gitdistUnitTestSttySize
 
 
   def test_default(self):

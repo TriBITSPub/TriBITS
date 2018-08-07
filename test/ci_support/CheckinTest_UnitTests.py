@@ -1598,7 +1598,8 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
   expectPass, passRegexStrList, filePassRegexStrList=None, mustHaveCheckinTestOut=True, \
   failRegexStrList=None, fileFailRegexStrList=None, envVars=[], inPathGit=True, \
   grepForFinalPassFailStr=True, \
-  logFileName=None
+  logFileName=None, \
+  printOutputFile=False
   ):
 
   verbose = g_verbose
@@ -1691,6 +1692,9 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
         outputFileToGrep = "checkin-test.out"
     else:
       outputFileToGrep = checkin_test_test_out
+
+    if printOutputFile:
+      print(readStrFromFile(outputFileToGrep))
 
     assertGrepFileForRegexStrList(testObject, testName, outputFileToGrep,
       passRegexStrList, verbose)
@@ -2638,8 +2642,13 @@ class test_checkin_test(unittest.TestCase):
       +"Enabled Packages: Stalix\n" \
       ,
       \
-      envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
+      envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride,
+        "GITDIST_UNIT_TEST_STTY_SIZE=120" \
+         ]
       )
+    # NOTE: Above, we set GITDIST_UNIT_TEST_STTY_SIZE=120 so that
+    # checkin-test.py will print the full table reguardless what the terminal
+    # size is in the env where this runs.
 
 
   def test_extra_repo_1_implicit_enable_configure_pass(self):
