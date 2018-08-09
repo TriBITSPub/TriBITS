@@ -2643,7 +2643,7 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride,
-        "GITDIST_UNIT_TEST_STTY_SIZE=120" \
+        "GITDIST_UNIT_TEST_STTY_SIZE=60 120" \
          ]
       )
     # NOTE: Above, we set GITDIST_UNIT_TEST_STTY_SIZE=120 so that
