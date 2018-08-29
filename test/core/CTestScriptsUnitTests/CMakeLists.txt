@@ -62,6 +62,20 @@ TRIBITS_ADD_ADVANCED_TEST(
   )
 
 TRIBITS_ADD_TEST( GenericDriver
+  NAME CTestScripts_simple_pass_0
+  ARGS "0"
+  PASS_REGULAR_EXPRESSION "0"
+  NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_TEST( GenericDriver
+  NAME CTestScripts_simple_pass_0
+  ARGS "N"
+  PASS_REGULAR_EXPRESSION "N"
+  NUM_MPI_PROCS 1
+  )
+
+TRIBITS_ADD_TEST( GenericDriver
   NAME CTestScripts_simple_pass_regex
   ARGS "\"This is a crazy test!\" 1"
   PASS_REGULAR_EXPRESSION "[^=]This is a crazy test"
