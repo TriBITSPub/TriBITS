@@ -12,12 +12,6 @@ else
   rst2html $1.rst $1.html
   rst2latex $1.rst $1.tex
   latex  -output-format=pdf $1.tex
-  rm $1.aux
-  rm $1.out
-  rm $1.log
-  rm $1.toc
-  rm $1.rst
-  scp $1.pdf cupojoe.srn.sandia.gov:
 fi
 }
 
