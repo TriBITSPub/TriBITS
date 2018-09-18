@@ -435,13 +435,15 @@ package by configuring with::
 
   -D <Project>_ENABLE_<TRIBITS_PACKAGE_1>=ON \
   -D <Project>_ENABLE_<TRIBITS_PACKAGE_2>=ON \
-  -D <TRIBITS_PACKAGE_X>_ENABLE_TESTS=OFF \
+  -D <Project>_ENABLE_<TRIBITS_PACKAGE_3>=ON \
   -D <Project>_ENABLE_TESTS=ON \
+  -D <TRIBITS_PACKAGE_2>_ENABLE_TESTS=OFF \
 
 The above will enable the package test suites for ``<TRIBITS_PACKGE_1>`` and
-``<TRIBITS_PACKGE_2>`` but **not** for ``<TRIBITS_PACKAGE_X>``.  One might use
-this if one ways to build and install package ``<TRIBITS_PACKAGE_X>`` but does
-not want to build and run the test suite for that package.
+``<TRIBITS_PACKGE_3>`` but **not** for ``<TRIBITS_PACKAGE_2>`` (or any other
+packages that might get implicitly enabled).  One might use this if one wants
+to build and install package ``<TRIBITS_PACKAGE_2>`` but does not want to
+build and run the test suite for that package.
 
 These and other options give the user complete control of what packages get
 enabled or disabled and what package test suites are enabled or disabled.
