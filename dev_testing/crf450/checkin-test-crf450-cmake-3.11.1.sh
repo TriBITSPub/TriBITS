@@ -27,7 +27,7 @@ echo "
 -DTriBITS_ENABLE_Fortran:BOOL=ON
 -DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE
 -DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE
-" > MPI_DEBUG_CMAKE-3.11.1.config
+" > MPI_DEBUG.config
 
 echo "
 -DTPL_ENABLE_MPI:BOOL=OFF
@@ -38,14 +38,12 @@ echo "
 -DCMAKE_Fortran_COMPILER=gfortran
 -DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE
 -DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE
-" > SERIAL_RELEASE_CMAKE-3.11.1.config
+" > SERIAL_RELEASE.config
 
 # Run checkin-test.py
 
 $TRIBITS_BASE_DIR_ABS/checkin-test.py \
 --extra-cmake-options="-DPYTHON_EXECUTABLE=/usr/bin/python2.6" \
---default-builds= \
---st-extra-builds=MPI_DEBUG_CMAKE-3.11.1,SERIAL_RELEASE_CMAKE-3.11.1 \
 --ctest-timeout=180 \
 --skip-case-no-email \
 "$@"
