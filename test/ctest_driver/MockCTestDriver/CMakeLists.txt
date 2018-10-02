@@ -120,6 +120,7 @@ FUNCTION(CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
         CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=OFF # Set back to default
         ${MOCK_PROJECT_NAME}_PRE_REPOSITORIES= # Set back to default
         ${MOCK_PROJECT_NAME}_EXTRA_REPOSITORIES= # Set back to default
+        CTEST_TEST_TYPE= # Set back to default
         CTEST_DO_UPDATES=ON # Set back to default
         CTEST_DASHBOARD_ROOT=  # Must be empty
         CTEST_DO_SUBMIT=OFF # Must be off
