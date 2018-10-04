@@ -263,38 +263,59 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
     dict_key=build_name+"---"+test_name+"---"+site
     simplified_dict_of_tests[dict_key]={}
     simplified_dict_of_tests[dict_key]["site"]=site
+    simplified_dict_of_tests[dict_key]["site_url"]=""
     simplified_dict_of_tests[dict_key]["build_name"]=build_name
+    simplified_dict_of_tests[dict_key]["build_name_url"]="build.url.com"
     simplified_dict_of_tests[dict_key]["test_name"]=test_name
+    simplified_dict_of_tests[dict_key]["test_name_url"]=""
+    simplified_dict_of_tests[dict_key]["issue_tracker"]=""
+    simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
+    simplified_dict_of_tests[dict_key]["test_history"]="Test History"
+    simplified_dict_of_tests[dict_key]["test_history_url"]=""
+
     simplified_dict_of_tests[dict_key]["previous_failure_date"]=""
     simplified_dict_of_tests[dict_key]["num_fails_in_last_2_weeks"]=""
     simplified_dict_of_tests[dict_key]["previous_failure_date"]=""
-    simplified_dict_of_tests[dict_key]["issue_tracker_text"]=""
-    simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
-    simplified_dict_of_tests[dict_key]["test_history_url"]=""
 
   return simplified_dict_of_tests
 
+def fillInInfoAboutTests():
+  # take a dictionary of tests and construct the queries to populte teh urls
+  # analyze some of the queries to get stats to report about the tests
+  return 0
+
+def filterDictionary(dictOfTests, fieldToTest, testValue="", testType=""):
+  dict_of_tests_that_pass={}
+  dict_of_tests_that_fail={}
+  
+  for key in dictOfTests:
+    if dictOfTests[key][fieldToTest] == "":
+      dict_of_tests_that_pass[key] = dictOfTests[key]
+    else:
+      dict_of_tests_that_fail[key] = dictOfTests[key]
+
+  return dict_of_tests_that_pass, dict_of_tests_that_fail
+
 def checkForIssueTracker(dictOfTests, issueTrackerDBFileName):
   
-  dict_of_know_issues={}
+  dict_of_known_issues={}
   with open(issueTrackerDBFileName, "r") as f:
     for line in f:
-      print(line.strip())
       build_name=line.split(",")[0].strip()
       test_name=line.split(",")[1].strip()
       site=line.split(",")[2].strip()
       dict_key=build_name+"---"+test_name+"---"+site
-      dict_of_know_issues[dict_key]={}
-      dict_of_know_issues[dict_key]["issue_tracker_url"]=line.split(",")[3].strip()
-      dict_of_know_issues[dict_key]["issue_tracker_text"]=line.split(",")[4].strip()
+      dict_of_known_issues[dict_key]={}
+      dict_of_known_issues[dict_key]["issue_tracker_url"]=line.split(",")[3].strip()
+      dict_of_known_issues[dict_key]["issue_tracker"]=line.split(",")[4].strip()
 
     f.close()
   
   with open(issueTrackerDBFileName, "a") as f:
     for key in dictOfTests:
-      if key in dict_of_know_issues:
-        dictOfTests[key]["issue_tracker_text"]=dict_of_know_issues[key]["issue_tracker_text"]
-        dictOfTests[key]["issue_tracker_url"]=dict_of_know_issues[key]["issue_tracker_url"]
+      if key in dict_of_known_issues:
+        dictOfTests[key]["issue_tracker"]=dict_of_known_issues[key]["issue_tracker"]
+        dictOfTests[key]["issue_tracker_url"]=dict_of_known_issues[key]["issue_tracker_url"]
       else:
         f.write("\n"+ \
                 dictOfTests[key]["build_name"]+", "+ \
