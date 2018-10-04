@@ -244,6 +244,60 @@ def queryCDashAndDeterminePassFail(cdashUrl, projectName, date, filterFields,
     return (False, errMsg)
   return (True, "")
     
+def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
+  AllFailingTestsApiQueryUrl= \
+    cdashUrl+ \
+    "/api/v1/queryTests.php?"+ \
+    "project="+projectName+ \
+    "&date="+date+ \
+    filterFields
 
+  json_from_cdash_query=extractCDashApiQueryData(AllFailingTestsApiQueryUrl)
+  simplified_dict_of_tests={}
 
+  for i in range(0, len(json_from_cdash_query["builds"])):
+    site=json_from_cdash_query["builds"][i]["site"]
+    build_name=json_from_cdash_query["builds"][i]["buildName"]
+    test_name=json_from_cdash_query["builds"][i]["testname"]
 
+    dict_key=build_name+"---"+test_name+"---"+site
+    simplified_dict_of_tests[dict_key]={}
+    simplified_dict_of_tests[dict_key]["site"]=site
+    simplified_dict_of_tests[dict_key]["build_name"]=build_name
+    simplified_dict_of_tests[dict_key]["test_name"]=test_name
+    simplified_dict_of_tests[dict_key]["previous_failure_date"]=""
+    simplified_dict_of_tests[dict_key]["num_fails_in_last_2_weeks"]=""
+    simplified_dict_of_tests[dict_key]["previous_failure_date"]=""
+    simplified_dict_of_tests[dict_key]["issue_tracker_text"]=""
+    simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
+    simplified_dict_of_tests[dict_key]["test_history_url"]=""
+
+  return simplified_dict_of_tests
+
+def checkForIssueTracker(dictOfTests, issueTrackerDBFileName):
+  
+  dict_of_know_issues={}
+  with open(issueTrackerDBFileName, "r") as f:
+    for line in f:
+      print(line.strip())
+      build_name=line.split(",")[0].strip()
+      test_name=line.split(",")[1].strip()
+      site=line.split(",")[2].strip()
+      dict_key=build_name+"---"+test_name+"---"+site
+      dict_of_know_issues[dict_key]={}
+      dict_of_know_issues[dict_key]["issue_tracker_url"]=line.split(",")[3].strip()
+      dict_of_know_issues[dict_key]["issue_tracker_text"]=line.split(",")[4].strip()
+
+    f.close()
+  
+  with open(issueTrackerDBFileName, "a") as f:
+    for key in dictOfTests:
+      if key in dict_of_know_issues:
+        dictOfTests[key]["issue_tracker_text"]=dict_of_know_issues[key]["issue_tracker_text"]
+        dictOfTests[key]["issue_tracker_url"]=dict_of_know_issues[key]["issue_tracker_url"]
+      else:
+        f.write("\n"+ \
+                dictOfTests[key]["build_name"]+", "+ \
+                dictOfTests[key]["test_name"]+", "+ \
+                dictOfTests[key]["site"]+", ,")
+  f.close()
