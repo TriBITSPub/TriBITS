@@ -244,45 +244,127 @@ def queryCDashAndDeterminePassFail(cdashUrl, projectName, date, filterFields,
     return (False, errMsg)
   return (True, "")
     
+# This will return a dictionary with information about all the tests that were returned
+# in the json from cdash as a result of the CDash query from the given inputs
 def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
-  AllFailingTestsApiQueryUrl= \
+
+  # construct the cdash query.  the "/api/v1/" will cause CDash to return a json data 
+  # structure instead of a web page
+  CdashTestsApiQueryUrl= \
     cdashUrl+ \
     "/api/v1/queryTests.php?"+ \
     "project="+projectName+ \
     "&date="+date+ \
     filterFields
 
-  json_from_cdash_query=extractCDashApiQueryData(AllFailingTestsApiQueryUrl)
+  # convert the date into a datetime.date so we can easiliy add/subtract days for 
+  # queries taht need to span many days
+  given_date=datetime.date(int(date.split('-')[0]), \
+                           int(date.split('-')[1]), \
+                           int(date.split('-')[2]))
+  
+  # get the json from CDash using the query constructed above
+  json_from_cdash_query=extractCDashApiQueryData(CdashTestsApiQueryUrl)
   simplified_dict_of_tests={}
 
+  # The CDash json has a lot of information and is many levels deep.  This will collect 
+  # relevant data about the tests and stoer it in a dictionary
   for i in range(0, len(json_from_cdash_query["builds"])):
     site=json_from_cdash_query["builds"][i]["site"]
     build_name=json_from_cdash_query["builds"][i]["buildName"]
     test_name=json_from_cdash_query["builds"][i]["testname"]
 
-    dict_key=build_name+"---"+test_name+"---"+site
-    simplified_dict_of_tests[dict_key]={}
-    simplified_dict_of_tests[dict_key]["site"]=site
-    simplified_dict_of_tests[dict_key]["site_url"]=""
-    simplified_dict_of_tests[dict_key]["build_name"]=build_name
-    simplified_dict_of_tests[dict_key]["build_name_url"]="build.url.com"
-    simplified_dict_of_tests[dict_key]["test_name"]=test_name
-    simplified_dict_of_tests[dict_key]["test_name_url"]=""
-    simplified_dict_of_tests[dict_key]["issue_tracker"]=""
-    simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
-    simplified_dict_of_tests[dict_key]["test_history"]="Test History"
-    simplified_dict_of_tests[dict_key]["test_history_url"]=""
+    #URL used to get the 30 day history of the test in JSON form
+    testHistoryQueryUrl= \
+    cdashUrl+ \
+    "/api/v1/queryTests.php?"+ \
+    "project="+projectName+ \
+    "&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and"+ \
+    "&field1=buildname&compare1=61&value1="+build_name+ \
+    "&field2=testname&compare2=61&value2="+test_name+ \
+    "&field3=site&compare3=61&value3="+site+ \
+    "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
+    "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-30)).isoformat()
 
-    simplified_dict_of_tests[dict_key]["previous_failure_date"]=""
-    simplified_dict_of_tests[dict_key]["num_fails_in_last_2_weeks"]=""
-    simplified_dict_of_tests[dict_key]["previous_failure_date"]=""
+    #URL to imbed in email to show the 30 day history of the test to humans
+    testHistoryEmailUrl= \
+    cdashUrl+ \
+    "/queryTests.php?"+ \
+    "project="+projectName+ \
+    "&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and"+ \
+    "&field1=buildname&compare1=61&value1="+build_name+ \
+    "&field2=testname&compare2=61&value2="+test_name+ \
+    "&field3=site&compare3=61&value3="+site+ \
+    "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
+    "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-30)).isoformat()
+
+    #URL to imbed in email to show the 30 day history of the build to humans
+    buildHistoryEmailUrl= \
+    cdashUrl+ \
+    "/index.php?"+ \
+    "project="+projectName+ \
+    "&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and"+ \
+    "&field1=buildname&compare1=61&value1="+build_name+ \
+    "&field2=site&compare2=61&value2="+site+ \
+    "&field3=buildstarttime&compare3=84&value3="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
+    "&field4=buildstarttime&compare4=83&value4="+(given_date+datetime.timedelta(days=-30)).isoformat()                    
+    
+    # A unique test is determined by the build name, the test name, and the site where it was run
+    # construct a dictionary key unique to each test using those 3 things. And initialize dictionary
+    dict_key=build_name+"---"+test_name+"---"+site
+    if dict_key in simplified_dict_of_tests:
+      simplified_dict_of_tests[dict_key]["count"]+=1
+    else:
+      simplified_dict_of_tests[dict_key]={}
+
+      # Store relevant information in the dictionary.  This information is all available from the 
+      # first CDash query we ran above.  There is only information about the given day no history
+      # some of these are just initialized but not used yet
+      simplified_dict_of_tests[dict_key]["site"]=site
+      simplified_dict_of_tests[dict_key]["site_url"]=""
+      simplified_dict_of_tests[dict_key]["build_name"]=build_name
+      simplified_dict_of_tests[dict_key]["build_name_url"]=buildHistoryEmailUrl
+      simplified_dict_of_tests[dict_key]["test_name"]=test_name
+      simplified_dict_of_tests[dict_key]["test_name_url"]=testHistoryEmailUrl
+      simplified_dict_of_tests[dict_key]["issue_tracker"]=""
+      simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
+      simplified_dict_of_tests[dict_key]["test_history"]="Test History"
+      simplified_dict_of_tests[dict_key]["test_history_url"]=testHistoryQueryUrl
+      simplified_dict_of_tests[dict_key]["status"]=""
+      simplified_dict_of_tests[dict_key]["status_url"]=""
+      simplified_dict_of_tests[dict_key]["previous_failure_date"]=""
+      simplified_dict_of_tests[dict_key]["most_recent_failure_date"]=""
+      simplified_dict_of_tests[dict_key]["failures_in_last_30_days"]=""
+      simplified_dict_of_tests[dict_key]["count"]=1
+      # Some of the information needed is historical.  For this we need to look at the test 
+      # for the last 30 days
+      print("Getting history of "+test_name+" in the build "+build_name+" on "+site)
+      test_history_json_from_cdash=extractCDashApiQueryData(testHistoryQueryUrl)
+      failed_count=0
+      failed_dates=[]
+
+      # adding up number of failures and collecting dates of the failures
+      for cdash_build in test_history_json_from_cdash["builds"]:
+        if cdash_build["status"] == "Failed":
+          failed_count+=1
+          failed_dates.append(cdash_build["buildstarttime"].split('T')[0])
+
+      simplified_dict_of_tests[dict_key]["failures_in_last_30_days"]=failed_count
+
+      # set most recent and previous failure dates
+      failed_dates.sort(reverse=True)
+      if len(failed_dates) == 0:
+        simplified_dict_of_tests[dict_key]["previous_failure_date"]="None"
+        simplified_dict_of_tests[dict_key]["most_recent_failure_date"]="None"
+      elif len(failed_dates) == 1:
+        simplified_dict_of_tests[dict_key]["previous_failure_date"]="None"
+        simplified_dict_of_tests[dict_key]["most_recent_failure_date"]=failed_dates[0]
+      else:
+        simplified_dict_of_tests[dict_key]["previous_failure_date"]=failed_dates[1]
+        simplified_dict_of_tests[dict_key]["most_recent_failure_date"]=failed_dates[0]
 
   return simplified_dict_of_tests
 
-def fillInInfoAboutTests():
-  # take a dictionary of tests and construct the queries to populte teh urls
-  # analyze some of the queries to get stats to report about the tests
-  return 0
 
 def filterDictionary(dictOfTests, fieldToTest, testValue="", testType=""):
   dict_of_tests_that_pass={}
