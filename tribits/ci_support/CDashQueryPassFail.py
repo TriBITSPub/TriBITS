@@ -256,20 +256,26 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
     "project="+projectName+ \
     "&date="+date+ \
     filterFields
+  
+  # get the json from CDash using the query constructed above
+  json_from_cdash_query=extractCDashApiQueryData(CdashTestsApiQueryUrl)
+
+  # JRF: ToDo: Create a simple function that is the above two statements
+  # (which can't be unit tested because it gets real date).
 
   # convert the date into a datetime.date so we can easiliy add/subtract days for 
   # queries taht need to span many days
   given_date=datetime.date(int(date.split('-')[0]), \
                            int(date.split('-')[1]), \
                            int(date.split('-')[2]))
-  
-  # get the json from CDash using the query constructed above
-  json_from_cdash_query=extractCDashApiQueryData(CdashTestsApiQueryUrl)
+  # JRF: ToDo: Repalce above with call to validateYYYYMMDD()
+
   simplified_dict_of_tests={}
 
   # The CDash json has a lot of information and is many levels deep.  This will collect 
   # relevant data about the tests and stoer it in a dictionary
   for i in range(0, len(json_from_cdash_query["builds"])):
+
     site=json_from_cdash_query["builds"][i]["site"]
     build_name=json_from_cdash_query["builds"][i]["buildName"]
     test_name=json_from_cdash_query["builds"][i]["testname"]
@@ -342,6 +348,13 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
       # for the last 30 days
       print("Getting history of "+test_name+" in the build "+build_name+" on "+site)
       test_history_json_from_cdash=extractCDashApiQueryData(testHistoryQueryUrl)
+
+      # JRF: ToDo: Refactor above code that gets test history data into its
+      # own function (with minimal code that you can't unit test).
+
+      # JRF: ToDo: Refactor below code that processes data for each test into
+      # its own Python function that can be unit tested.
+
       failed_count=0
       failed_dates=[]
 
