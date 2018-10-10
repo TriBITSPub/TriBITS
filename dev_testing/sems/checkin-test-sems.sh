@@ -27,7 +27,7 @@ TRILINOS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR_ABS/..)
 
 # Make sure the right env is loaded!
 export TRILINOS_SEMS_DEV_ENV_VERBOSE=1
-source $TRILINOS_BASE_DIR_ABS/cmake/load_sems_dev_env.sh default default sems-cmake/2.8.11
+source $TRILINOS_BASE_DIR_ABS/cmake/load_sems_dev_env.sh default default sems-cmake/3.10.3
 
 echo "
 " > MPI_DEBUG.config
