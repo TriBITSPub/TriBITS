@@ -328,9 +328,11 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
       simplified_dict_of_tests[dict_key]["test_name_url"]=testHistoryEmailUrl
       simplified_dict_of_tests[dict_key]["issue_tracker"]=""
       simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
+      simplified_dict_of_tests[dict_key]["details"]=json_from_cdash_query["builds"][i]["details"]
+      simplified_dict_of_tests[dict_key]["details_url"]=""
       simplified_dict_of_tests[dict_key]["test_history"]="Test History"
       simplified_dict_of_tests[dict_key]["test_history_url"]=testHistoryQueryUrl
-      simplified_dict_of_tests[dict_key]["status"]=""
+      simplified_dict_of_tests[dict_key]["status"]=json_from_cdash_query["builds"][i]["status"]
       simplified_dict_of_tests[dict_key]["status_url"]=""
       simplified_dict_of_tests[dict_key]["previous_failure_date"]=""
       simplified_dict_of_tests[dict_key]["most_recent_failure_date"]=""
