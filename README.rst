@@ -24,7 +24,7 @@ Developing on TriBITS
 In order to make changes and enhancements to TriBITS (see `Contributing to
 TriBITS`_ and the role `TriBITS System Developer`_), one must be able to
 build, run, and extend the automated TriBITS test suite.  To develop on
-TriBITS, one must minimally have CMake 2.8.11 (or newer) and a working C and
+TriBITS, one must minimally have CMake 3.10.0 (or newer) and a working C and
 C++ compiler.  (A Fortran compiler is also desired to test Fortran-specific
 features of TriBITS but it can be disabled, see below).
 
