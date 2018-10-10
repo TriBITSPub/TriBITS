@@ -5,5 +5,5 @@
 module load sems-env
 module load sems-git/2.10.1
 module load atdm-env
-module load atdm-cmake/3.7.0
+module load atdm-cmake/3.11.1
 module load atdm-ninja_fortran/1.7.2

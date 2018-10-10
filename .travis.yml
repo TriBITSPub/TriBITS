@@ -10,6 +10,7 @@ before_install:
   - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local/cmake-3.10.3
   - export PATH=/usr/local/cmake-3.10.3/bin:$PATH
   - sudo apt-get -y install gfortran
+  - sudo apt-get -y install valgrind
 
 install:
   - cd ..
