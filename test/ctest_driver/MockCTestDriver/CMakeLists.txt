@@ -856,6 +856,35 @@ IF (PYTHON_EXECUTABLE)
 
 
   CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_AAO_EnableAllPackages_ExcludePackges
+    ARGS
+      Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      Trilinos_EXCLUDE_PACKAGES=RBGen,Panzer
+      Trilinos_CTEST_DO_ALL_AT_ONCE=TRUE
+      CTEST_TEST_TYPE=Nightly
+    PASS_REGULAR_EXPRESSION_ALL
+      "Trilinos_EXCLUDE_PACKAGES='RBGen,Panzer'"
+      "Disabling excluded package RBGen [.][.][.]"
+      "Disabling excluded package Panzer [.][.][.]"
+      "Explicitly disabled packages on input .by user or by default.:  Stokhos RBGen Panzer Stalix 4"
+      "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON .Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON."
+      "Final set of non-enabled packages:  Stokhos RBGen Panzer Stalix 4"
+      "Final set of non-enabled SE packages:  Stokhos ThyraCrazyStuff RBGen Panzer Stalix 5"
+      "Configure, build, test, and submit results for Trilinos packages"
+      "CONFIGURE_OPTIONS = '.+[;]-DTrilinos_ENABLE_ALL_PACKAGES=ON[;]-DTrilinos_ENABLE_RBGen=OFF[;]-DTrilinos_ENABLE_Panzer=OFF[;]-DTrilinos_ENABLE_TESTS:BOOL=ON'"
+      "Skipping actual ctest_configure.. because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Skipping build because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Skipping testing because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
+      "Done with the all-at-once configure, build, test, ans submit of Trilinos packages"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+    )
+  # NOTE: The above test is for the all-at-once appraoch where
+  # <Project>_ENABLE_ALL_PACKAGES=ON is set (implicitly) but some packages are
+  # disabled through setting <Project>_EXCLUDE_PACKAGES.  This makes sure that
+  # these disables are passed into the inner configure.
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     CI_EnableOnlyModified_ModifiedNone_FailedTeko_OnlyPrimaryStableCode
     COPY_FILES
       ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.txt
