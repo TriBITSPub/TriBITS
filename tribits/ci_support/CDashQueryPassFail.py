@@ -365,7 +365,6 @@ def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options):
           failed_dates.append(cdash_build["buildstarttime"].split('T')[0])
 
       simplified_dict_of_tests[dict_key][history_title_string]=len(failed_dates)
-      print(failed_dates)
 
       # set most recent and previous failure dates
       failed_dates.sort(reverse=True)
@@ -409,14 +408,8 @@ def checkForIssueTracker(dictOfTests, issueTrackerDBFileName):
 
     f.close()
   
-  with open(issueTrackerDBFileName, "a") as f:
-    for key in dictOfTests:
-      if key in dict_of_known_issues:
-        dictOfTests[key]["issue_tracker"]=dict_of_known_issues[key]["issue_tracker"]
-        dictOfTests[key]["issue_tracker_url"]=dict_of_known_issues[key]["issue_tracker_url"]
-      else:
-        f.write("\n"+ \
-                dictOfTests[key]["build_name"]+", "+ \
-                dictOfTests[key]["test_name"]+", "+ \
-                dictOfTests[key]["site"]+", ,")
+  for key in dictOfTests:
+    if key in dict_of_known_issues:
+      dictOfTests[key]["issue_tracker"]=dict_of_known_issues[key]["issue_tracker"]
+      dictOfTests[key]["issue_tracker_url"]=dict_of_known_issues[key]["issue_tracker_url"]
   f.close()
