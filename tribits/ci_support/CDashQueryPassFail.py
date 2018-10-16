@@ -246,8 +246,9 @@ def queryCDashAndDeterminePassFail(cdashUrl, projectName, date, filterFields,
     
 # This will return a dictionary with information about all the tests that were returned
 # in the json from cdash as a result of the CDash query from the given inputs
-def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
+def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options):
 
+  date=options.date
   # construct the cdash query.  the "/api/v1/" will cause CDash to return a json data 
   # structure instead of a web page
   CdashTestsApiQueryUrl= \
@@ -279,8 +280,9 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
     site=json_from_cdash_query["builds"][i]["site"]
     build_name=json_from_cdash_query["builds"][i]["buildName"]
     test_name=json_from_cdash_query["builds"][i]["testname"]
-
-    #URL used to get the 30 day history of the test in JSON form
+    days_of_history=int(options.test_history_days)
+    
+    #URL used to get the history of the test in JSON form
     testHistoryQueryUrl= \
     cdashUrl+ \
     "/api/v1/queryTests.php?"+ \
@@ -290,9 +292,9 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
     "&field2=testname&compare2=61&value2="+test_name+ \
     "&field3=site&compare3=61&value3="+site+ \
     "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
-    "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-30)).isoformat()
+    "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()
 
-    #URL to imbed in email to show the 30 day history of the test to humans
+    #URL to imbed in email to show the history of the test to humans
     testHistoryEmailUrl= \
     cdashUrl+ \
     "/queryTests.php?"+ \
@@ -302,9 +304,9 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
     "&field2=testname&compare2=61&value2="+test_name+ \
     "&field3=site&compare3=61&value3="+site+ \
     "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
-    "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-30)).isoformat()
+    "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()
 
-    #URL to imbed in email to show the 30 day history of the build to humans
+    #URL to imbed in email to show the history of the build to humans
     buildHistoryEmailUrl= \
     cdashUrl+ \
     "/index.php?"+ \
@@ -313,7 +315,7 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
     "&field1=buildname&compare1=61&value1="+build_name+ \
     "&field2=site&compare2=61&value2="+site+ \
     "&field3=buildstarttime&compare3=84&value3="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
-    "&field4=buildstarttime&compare4=83&value4="+(given_date+datetime.timedelta(days=-30)).isoformat()                    
+    "&field4=buildstarttime&compare4=83&value4="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()                    
     
     # A unique test is determined by the build name, the test name, and the site where it was run
     # construct a dictionary key unique to each test using those 3 things. And initialize dictionary
@@ -326,6 +328,7 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
       # Store relevant information in the dictionary.  This information is all available from the 
       # first CDash query we ran above.  There is only information about the given day no history
       # some of these are just initialized but not used yet
+      history_title_string="failures_in_last_"+str(options.test_history_days)+"_days"
       simplified_dict_of_tests[dict_key]["site"]=site
       simplified_dict_of_tests[dict_key]["site_url"]=""
       simplified_dict_of_tests[dict_key]["build_name"]=build_name
@@ -342,10 +345,9 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
       simplified_dict_of_tests[dict_key]["status_url"]=""
       simplified_dict_of_tests[dict_key]["previous_failure_date"]=""
       simplified_dict_of_tests[dict_key]["most_recent_failure_date"]=""
-      simplified_dict_of_tests[dict_key]["failures_in_last_30_days"]=""
+      simplified_dict_of_tests[dict_key][history_title_string]=""
       simplified_dict_of_tests[dict_key]["count"]=1
-      # Some of the information needed is historical.  For this we need to look at the test 
-      # for the last 30 days
+      # Some of the information needed is historical.  For this we need to look at the history of the test
       print("Getting history of "+test_name+" in the build "+build_name+" on "+site)
       test_history_json_from_cdash=extractCDashApiQueryData(testHistoryQueryUrl)
 
@@ -355,16 +357,15 @@ def getTestsJsonFromCdash(cdashUrl, projectName, date, filterFields):
       # JRF: ToDo: Refactor below code that processes data for each test into
       # its own Python function that can be unit tested.
 
-      failed_count=0
       failed_dates=[]
 
       # adding up number of failures and collecting dates of the failures
       for cdash_build in test_history_json_from_cdash["builds"]:
         if cdash_build["status"] == "Failed":
-          failed_count+=1
           failed_dates.append(cdash_build["buildstarttime"].split('T')[0])
 
-      simplified_dict_of_tests[dict_key]["failures_in_last_30_days"]=failed_count
+      simplified_dict_of_tests[dict_key][history_title_string]=len(failed_dates)
+      print(failed_dates)
 
       # set most recent and previous failure dates
       failed_dates.sort(reverse=True)
