@@ -247,40 +247,75 @@ def queryCDashAndDeterminePassFail(cdashUrl, projectName, date, filterFields,
 # This will return a dictionary with information about all the tests that were returned
 # in the json from cdash as a result of the CDash query from the given inputs
 def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options):
+  raw_json_from_cdash=getRawJsonFromCdash(cdashUrl, projectName, filterFields, options)
+  simplified_dict_of_tests=getTestDictionaryFromCdashJson(raw_json_from_cdash, options)
+  getHistoricalDataForTests(simplified_dict_of_tests, cdashUrl, projectName, filterFields, options)
+  return simplified_dict_of_tests
 
-  date=options.date
+# Construct a URL and return the raw json from cdash
+def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options):
   # construct the cdash query.  the "/api/v1/" will cause CDash to return a json data 
   # structure instead of a web page
   CdashTestsApiQueryUrl= \
     cdashUrl+ \
     "/api/v1/queryTests.php?"+ \
     "project="+projectName+ \
-    "&date="+date+ \
+    "&date="+options.date+ \
     filterFields
   
   # get the json from CDash using the query constructed above
   json_from_cdash_query=extractCDashApiQueryData(CdashTestsApiQueryUrl)
+  return json_from_cdash_query
 
-  # JRF: ToDo: Create a simple function that is the above two statements
-  # (which can't be unit tested because it gets real date).
-
-  # convert the date into a datetime.date so we can easiliy add/subtract days for 
-  # queries taht need to span many days
-  given_date=datetime.date(int(date.split('-')[0]), \
-                           int(date.split('-')[1]), \
-                           int(date.split('-')[2]))
-  # JRF: ToDo: Repalce above with call to validateYYYYMMDD()
-
+def getTestDictionaryFromCdashJson(CDash_json, options):
+ 
   simplified_dict_of_tests={}
 
   # The CDash json has a lot of information and is many levels deep.  This will collect 
-  # relevant data about the tests and stoer it in a dictionary
-  for i in range(0, len(json_from_cdash_query["builds"])):
+  # relevant data about the tests and store it in a dictionary
+  for i in range(0, len(CDash_json["builds"])):
 
-    site=json_from_cdash_query["builds"][i]["site"]
-    build_name=json_from_cdash_query["builds"][i]["buildName"]
-    test_name=json_from_cdash_query["builds"][i]["testname"]
+    site=CDash_json["builds"][i]["site"]
+    build_name=CDash_json["builds"][i]["buildName"]
+    test_name=CDash_json["builds"][i]["testname"]
     days_of_history=int(options.test_history_days)
+    
+    
+    # A unique test is determined by the build name, the test name, and the site where it was run
+    # construct a dictionary key unique to each test using those 3 things. And initialize dictionary
+    dict_key=build_name+"---"+test_name+"---"+site
+    if dict_key in simplified_dict_of_tests:
+      simplified_dict_of_tests[dict_key]["count"]+=1
+    else:
+      simplified_dict_of_tests[dict_key]={}
+
+      # Store relevant information in the dictionary.  This information is all available from the 
+      # first CDash query we ran above.  There is only information about the given day no history
+      # some of these are just initialized but not used yet
+      simplified_dict_of_tests[dict_key]["site"]=site
+      simplified_dict_of_tests[dict_key]["build_name"]=build_name
+      simplified_dict_of_tests[dict_key]["test_name"]=test_name
+      simplified_dict_of_tests[dict_key]["issue_tracker"]=""
+      simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
+      simplified_dict_of_tests[dict_key]["details"]=CDash_json["builds"][i]["details"]
+      simplified_dict_of_tests[dict_key]["status"]=CDash_json["builds"][i]["status"]
+      simplified_dict_of_tests[dict_key]["status_url"]=""
+      simplified_dict_of_tests[dict_key]["count"]=1
+
+  return simplified_dict_of_tests
+
+
+def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterFields, options):
+      # Some of the information needed is historical.  For this we need to look at the history of the test
+  for dict_key in testDictionary:
+    site=testDictionary[dict_key]["site"]
+    build_name=testDictionary[dict_key]["build_name"]
+    test_name=testDictionary[dict_key]["test_name"]
+    days_of_history=int(options.test_history_days)
+    given_date=validateYYYYMMDD(options.date)
+    print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site)
+
+    history_title_string="failures_in_last_"+str(options.test_history_days)+"_days"
     
     #URL used to get the history of the test in JSON form
     testHistoryQueryUrl= \
@@ -316,69 +351,42 @@ def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options):
     "&field2=site&compare2=61&value2="+site+ \
     "&field3=buildstarttime&compare3=84&value3="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
     "&field4=buildstarttime&compare4=83&value4="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()                    
-    
-    # A unique test is determined by the build name, the test name, and the site where it was run
-    # construct a dictionary key unique to each test using those 3 things. And initialize dictionary
-    dict_key=build_name+"---"+test_name+"---"+site
-    if dict_key in simplified_dict_of_tests:
-      simplified_dict_of_tests[dict_key]["count"]+=1
+
+    testDictionary[dict_key]["site_url"]=""
+    testDictionary[dict_key]["build_name_url"]=buildHistoryEmailUrl
+    testDictionary[dict_key]["test_name_url"]=testHistoryEmailUrl
+    testDictionary[dict_key]["test_history"]="Test History"
+    testDictionary[dict_key]["test_history_url"]=testHistoryQueryUrl
+    testDictionary[dict_key]["previous_failure_date"]=""
+    testDictionary[dict_key]["most_recent_failure_date"]=""
+    testDictionary[dict_key][history_title_string]=""
+    testDictionary[dict_key]["count"]=1
+
+    test_history_json_from_cdash=extractCDashApiQueryData(testHistoryQueryUrl)
+
+    # JRF: ToDo: Refactor above code that gets test history data into its
+    # own function (with minimal code that you can't unit test).
+
+    failed_dates=[]
+
+    # adding up number of failures and collecting dates of the failures
+    for cdash_build in test_history_json_from_cdash["builds"]:
+      if cdash_build["status"] == "Failed":
+        failed_dates.append(cdash_build["buildstarttime"].split('T')[0])
+
+    testDictionary[dict_key][history_title_string]=len(failed_dates)
+
+    # set most recent and previous failure dates
+    failed_dates.sort(reverse=True)
+    if len(failed_dates) == 0:
+      testDictionary[dict_key]["previous_failure_date"]="None"
+      testDictionary[dict_key]["most_recent_failure_date"]="None"
+    elif len(failed_dates) == 1:
+      testDictionary[dict_key]["previous_failure_date"]="None"
+      testDictionary[dict_key]["most_recent_failure_date"]=failed_dates[0]
     else:
-      simplified_dict_of_tests[dict_key]={}
-
-      # Store relevant information in the dictionary.  This information is all available from the 
-      # first CDash query we ran above.  There is only information about the given day no history
-      # some of these are just initialized but not used yet
-      history_title_string="failures_in_last_"+str(options.test_history_days)+"_days"
-      simplified_dict_of_tests[dict_key]["site"]=site
-      simplified_dict_of_tests[dict_key]["site_url"]=""
-      simplified_dict_of_tests[dict_key]["build_name"]=build_name
-      simplified_dict_of_tests[dict_key]["build_name_url"]=buildHistoryEmailUrl
-      simplified_dict_of_tests[dict_key]["test_name"]=test_name
-      simplified_dict_of_tests[dict_key]["test_name_url"]=testHistoryEmailUrl
-      simplified_dict_of_tests[dict_key]["issue_tracker"]=""
-      simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
-      simplified_dict_of_tests[dict_key]["details"]=json_from_cdash_query["builds"][i]["details"]
-      simplified_dict_of_tests[dict_key]["details_url"]=""
-      simplified_dict_of_tests[dict_key]["test_history"]="Test History"
-      simplified_dict_of_tests[dict_key]["test_history_url"]=testHistoryQueryUrl
-      simplified_dict_of_tests[dict_key]["status"]=json_from_cdash_query["builds"][i]["status"]
-      simplified_dict_of_tests[dict_key]["status_url"]=""
-      simplified_dict_of_tests[dict_key]["previous_failure_date"]=""
-      simplified_dict_of_tests[dict_key]["most_recent_failure_date"]=""
-      simplified_dict_of_tests[dict_key][history_title_string]=""
-      simplified_dict_of_tests[dict_key]["count"]=1
-      # Some of the information needed is historical.  For this we need to look at the history of the test
-      print("Getting history of "+test_name+" in the build "+build_name+" on "+site)
-      test_history_json_from_cdash=extractCDashApiQueryData(testHistoryQueryUrl)
-
-      # JRF: ToDo: Refactor above code that gets test history data into its
-      # own function (with minimal code that you can't unit test).
-
-      # JRF: ToDo: Refactor below code that processes data for each test into
-      # its own Python function that can be unit tested.
-
-      failed_dates=[]
-
-      # adding up number of failures and collecting dates of the failures
-      for cdash_build in test_history_json_from_cdash["builds"]:
-        if cdash_build["status"] == "Failed":
-          failed_dates.append(cdash_build["buildstarttime"].split('T')[0])
-
-      simplified_dict_of_tests[dict_key][history_title_string]=len(failed_dates)
-
-      # set most recent and previous failure dates
-      failed_dates.sort(reverse=True)
-      if len(failed_dates) == 0:
-        simplified_dict_of_tests[dict_key]["previous_failure_date"]="None"
-        simplified_dict_of_tests[dict_key]["most_recent_failure_date"]="None"
-      elif len(failed_dates) == 1:
-        simplified_dict_of_tests[dict_key]["previous_failure_date"]="None"
-        simplified_dict_of_tests[dict_key]["most_recent_failure_date"]=failed_dates[0]
-      else:
-        simplified_dict_of_tests[dict_key]["previous_failure_date"]=failed_dates[1]
-        simplified_dict_of_tests[dict_key]["most_recent_failure_date"]=failed_dates[0]
-
-  return simplified_dict_of_tests
+      testDictionary[dict_key]["previous_failure_date"]=failed_dates[1]
+      testDictionary[dict_key]["most_recent_failure_date"]=failed_dates[0]
 
 
 def filterDictionary(dictOfTests, fieldToTest, testValue="", testType=""):
