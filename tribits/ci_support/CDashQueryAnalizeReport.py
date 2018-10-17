@@ -429,9 +429,9 @@ def checkForIssueTracker(dictOfTests, issueTrackerDBFileName):
   dict_of_known_issues={}
   with open(issueTrackerDBFileName, "r") as f:
     for line in f:
-      build_name=line.split(",")[0].strip()
-      test_name=line.split(",")[1].strip()
-      site=line.split(",")[2].strip()
+      site=line.split(",")[0].strip()
+      build_name=line.split(",")[1].strip()
+      test_name=line.split(",")[2].strip()
       dict_key=build_name+"---"+test_name+"---"+site
       dict_of_known_issues[dict_key]={}
       dict_of_known_issues[dict_key]["issue_tracker_url"]=line.split(",")[3].strip()
