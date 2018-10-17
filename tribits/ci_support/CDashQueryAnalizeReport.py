@@ -444,3 +444,81 @@ def checkForIssueTracker(dictOfTests, issueTrackerDBFileName):
       dictOfTests[key]["issue_tracker"]=dict_of_known_issues[key]["issue_tracker"]
       dictOfTests[key]["issue_tracker_url"]=dict_of_known_issues[key]["issue_tracker_url"]
   f.close()
+
+#
+# Create an html table from a python dictionary
+#
+def createHtmlTable(dictionary, list_of_column_headings, title):
+
+  # style optiions for the tables
+  html_string="<style>"
+  html_string+="table, th, td {"
+  html_string+="border: 1px solid black;"
+  html_string+="border-collapse: collapse;"
+  html_string+="}"
+  html_string+="tr:nth-child(even) {background-color: #eee;}"
+  html_string+="tr:nth-child(odd) {background-color: #fff;}"
+  html_string+="</style>"
+
+  html_string+="<h2>"+title+"</h2>"
+  html_string+="<table style=\"width:100%\">"  
+  # add the column headings:
+  html_string+="<tr>"
+  for heading in list_of_column_headings:
+    html_string+="<th>"+heading.replace("_", " ").title()+"</th>"
+  html_string+="</tr>"
+
+  # add the table data
+  for key in dictionary:
+    html_string+="<tr>"
+    for heading in list_of_column_headings:
+      if heading+"_url" not in dictionary[key] or dictionary[key][heading+"_url"] == "":
+        html_string+="<td>"+str(dictionary[key][heading])+"</td>"
+      else:
+        html_string+="<td> <a href="+dictionary[key][heading+"_url"]+">"+str(dictionary[key][heading])+"</a> </td>"
+    html_string+="</tr>"
+
+  html_string+="</table>"
+  return(html_string)
+
+
+#
+# Create an HTML MIME Email
+#  
+import smtplib
+
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+def createHtmlMimeEmail(fromAddress, toAddress, subject, textBody, htmlBody):
+
+  # Create message container - the correct MIME type is multipart/alternative.
+  msg = MIMEMultipart('alternative')
+  msg['From'] = fromAddress
+  msg['To'] = toAddress
+  msg['Subject'] = subject
+
+  # Record the MIME types of both parts - text/plain and text/html.
+  part1 = MIMEText(textBody, 'plain')
+  part2 = MIMEText(htmlBody, 'html')
+
+  # Attach parts into message container.
+  # According to RFC 2046, the last part of a multipart message, in this case
+  # the HTML message, is best and preferred.
+  msg.attach(part1)
+  msg.attach(part2)
+
+  return msg
+
+
+#
+# Send a MIME formatted email
+#
+
+def sendMineEmail(mimeEmail):
+  # Send the message via local SMTP server.
+  s = smtplib.SMTP('localhost')
+  # sendmail function takes 3 arguments: sender's address, recipient's address
+  # and message to send - here it is sent as one string.
+  s.sendmail(mimeEmail['From'], mimeEmail['To'], mimeEmail.as_string())
+  s.quit()
