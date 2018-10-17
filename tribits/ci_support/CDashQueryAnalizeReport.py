@@ -313,7 +313,6 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     test_name=testDictionary[dict_key]["test_name"]
     days_of_history=int(options.test_history_days)
     given_date=validateYYYYMMDD(options.date)
-    print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site)
 
     history_title_string="failures_in_last_"+str(options.test_history_days)+"_days"
     
@@ -362,15 +361,39 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     testDictionary[dict_key][history_title_string]=""
     testDictionary[dict_key]["count"]=1
 
-    test_history_json_from_cdash=extractCDashApiQueryData(testHistoryQueryUrl)
+    # set the names of the cached files so we can check if they exists and write them out otherwise
+    cache_folder_name=options.cache_dir
+    cache_file_name=options.date+"-"+site+"-"+build_name+"-"+test_name+"-HIST-"+str(days_of_history)+".json"
 
-    # JRF: ToDo: Refactor above code that gets test history data into its
-    # own function (with minimal code that you can't unit test).
+    # creating the cache directory if it does not already exist
+    if not os.path.exists(os.path.dirname(cache_folder_name+"/")):
+      os.makedirs(os.path.dirname(cache_folder_name+"/"))
 
-    failed_dates=[]
+    # initialize test_history_json to empty dict.  if it is read from the cache then it will not be empty
+    # after these ifs
+    test_history_json={}
+    if options.construct_from_cache:
+      if os.path.exists(cache_folder_name+"/"+cache_file_name):
+        print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from the cache")
+        f = open(cache_folder_name+"/"+cache_file_name, "r")
+        test_history_json=json.load(f)
+        f.close
+
+    # if test_history_json is still empty then either it was not found in the cache or we the user 
+    # told us not to look in the cache.  Get the json from CDash
+    if not test_history_json:
+      print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from CDash")
+      test_history_json=extractCDashApiQueryData(testHistoryQueryUrl)      
+
+      # cache json files if the option is on (turned on by default)
+      if options.cache_cdash_queries:
+        f = open(cache_folder_name+"/"+cache_file_name, "w")
+        json.dump(test_history_json, f)
+        f.close
 
     # adding up number of failures and collecting dates of the failures
-    for cdash_build in test_history_json_from_cdash["builds"]:
+    failed_dates=[]
+    for cdash_build in test_history_json["builds"]:
       if cdash_build["status"] == "Failed":
         failed_dates.append(cdash_build["buildstarttime"].split('T')[0])
 
