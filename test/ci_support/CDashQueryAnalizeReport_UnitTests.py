@@ -43,7 +43,7 @@ import copy
 import unittest
 
 from FindCISupportDir import *
-from CDashQueryPassFail import *
+from CDashQueryAnalizeReport import *
 
 g_testBaseDir = getScriptBaseDir()
 
@@ -83,11 +83,11 @@ def dummyExtractCDashApiQueryData(cdashQueryUrl_expected):
 
 #############################################################################
 #
-# Test CDashQueryPassFail.py
+# Test CDashQueryAnalizeReport.py
 #
 #############################################################################
 
-class test_CDashQueryPassFail(unittest.TestCase):
+class test_CDashQueryAnalizeReport(unittest.TestCase):
 
   def test_validateYYYYMMDD_pass1(self):
     yyyyymmdd = validateYYYYMMDD("2015-12-21")
