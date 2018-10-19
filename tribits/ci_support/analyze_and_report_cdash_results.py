@@ -39,8 +39,15 @@
 # ************************************************************************
 # @HEADER
 
+import sys
+print sys.version_info
+if sys.version_info < (2,7,9):
+  raise Exception("Error: Must be using Python 2.7.9 or newer")
+# NOTE: If we use Python 2.6.6. then the urllib2 function crashes!
+
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
+import CDashQueryAnalizeReport
 
 
 #
@@ -82,7 +89,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     help="Name for the set of builds. (Default '')" )
   
   clp.add_option(
-    "--cdash-base-site", dest="cdashBaseSite", type="string", default="",
+    "--cdash-site-url", dest="cdashSiteUrl", type="string", default="",
     help="Base CDash site, e.g. 'https://testing.sandia.gov/cdash'. (Default '')" )
 
   clp.add_option(
@@ -97,11 +104,21 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     help="Path to CSV file that lists the expected builds. (Default '')" )
 
 
+def validateCmndLineOptions(inOptions):
+  
+  if inOptions.date == "":
+    print "Error, can't have empty --date, must pass in --date=YYYY-MM-DD!"
+    sys.exit(1)
+  else:
+    CDashQueryAnalizeReport.validateYYYYMMDD(inOptions.date)
+
+
 def getCmndLineOptions():
   from optparse import OptionParser
   clp = OptionParser(usage=usageHelp)
   injectCmndLineOptionsInParser(clp)
   (options, args) = clp.parse_args()
+  validateCmndLineOptions(options)
   return options
 
 
@@ -110,7 +127,7 @@ def fwdCmndLineOptions(inOptions, terminator=""):
     "  --date='"+inOptions.date+"'"+terminator +  \
     "  --cdash-project-name='"+inOptions.cdashProjectName+"'"+terminator +  \
     "  --build-set-name='"+inOptions.buildSetName+"'"+terminator +  \
-    "  --cdash-base-site='"+inOptions.cdashBaseSite+"'"+terminator +  \
+    "  --cdash-site-url='"+inOptions.cdashSiteUrl+"'"+terminator +  \
     "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+terminator +  \
     "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+terminator
   return cmndLineOpts 
@@ -136,7 +153,38 @@ def echoCmndLine(inOptions):
 if __name__ == '__main__':
 
   inOptions = getCmndLineOptions()
-
   echoCmndLine(inOptions)
 
-  raise Exception("ToDo: Implement!")
+  print "***"
+  print "*** Check for pass/fail of "+inOptions.buildSetName+" for "+inOptions.date
+  print "***"
+
+  projectExpectedBuilds=[]
+  # ToDo: Read this in from inOptions.expectedBuildsFile!
+
+  allBuildsPass = True
+
+  print "\n*** Check the "+inOptions.cdashProjectName+" project builds ...\n"
+  (projectBuildsPass, errMsg) = \
+      CDashQueryAnalizeReport.queryCDashAndDeterminePassFail(
+       inOptions.cdashSiteUrl,
+       inOptions.cdashProjectName,
+       inOptions.date,
+       inOptions.cdashBuildsFilters,
+       projectExpectedBuilds \
+       )
+  if not projectBuildsPass:
+    print "\nTrilinos builds failed!\n"
+    allBuildsPass = False
+    print errMsg
+  else:
+    print "\nTrilinos builds passed!\n"
+  
+  print "\n*** Determine overall pass/fail ...\n"
+  
+  if allBuildsPass:
+    print "FINAL: The Trilinos builds on "+inOptions.date+" PASSED"
+    sys.exit(0)
+  else:
+    print "FINAL: One or more of the Trilinos builds on "+inOptions.date+" FAILED"
+    sys.exit(2)
