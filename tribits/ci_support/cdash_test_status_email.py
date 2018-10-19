@@ -115,7 +115,7 @@ if not options.write_email_to_file == "":
 if not options.skip_send_email:
   emailRecipientsList=options.email_recipients.split(",")
   emailFromAddress=options.email_from_address
-  emailFromAddress=options.email_subject_line+": "+options.date
+  emailSubject=options.email_subject_line+": "+options.date
   for recipient in emailRecipientsList:
     msg=CDQAR.createHtmlMimeEmail(emailFromAddress, recipient.strip(), emailSubject, "", htmlBody)
     CDQAR.sendMineEmail(msg)
