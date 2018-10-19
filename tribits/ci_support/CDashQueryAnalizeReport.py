@@ -379,7 +379,7 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
         test_history_json=json.load(f)
         f.close
 
-    # if test_history_json is still empty then either it was not found in the cache or we the user 
+    # if test_history_json is still empty then either it was not found in the cache or the user 
     # told us not to look in the cache.  Get the json from CDash
     if not test_history_json:
       print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from CDash")

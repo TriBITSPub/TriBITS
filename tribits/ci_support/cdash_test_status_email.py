@@ -102,10 +102,13 @@ if not options.write_email_to_file == "":
   outfile=open(options.write_email_to_file, "w")
   outfile.write(htmlBody)
 
+recipients_list=["jfrye@sandia.gov","rabartl@sandia.gov", "jfrye@sandia.gov"]
 if not options.skip_send_email:
-  msg=CDQAR.createHtmlMimeEmail("jfrye@sandia.gov", "jfrye@sandia.gov, rabartl@sandia.gov", "ATDM Trlinos Test Summary "+options.date, "", htmlBody)
-
-  CDQAR.sendMineEmail(msg)
+  for recipient in recipients_list:
+    msg=CDQAR.createHtmlMimeEmail("jfrye@sandia.gov", recipient, "ATDM Trlinos Test Summary "+options.date, "", htmlBody)
+    CDQAR.sendMineEmail(msg)
+else:
+  print("Email is not being sent")
 #
 # Done
 #
