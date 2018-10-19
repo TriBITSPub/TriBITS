@@ -102,7 +102,7 @@ if not options.write_email_to_file == "":
   outfile=open(options.write_email_to_file, "w")
   outfile.write(htmlBody)
 
-recipients_list=["jfrye@sandia.gov","rabartl@sandia.gov", "jfrye@sandia.gov"]
+recipients_list=["jfrye@sandia.gov","rabartl@sandia.gov", "jasteph@sandia.gov"]
 if not options.skip_send_email:
   for recipient in recipients_list:
     msg=CDQAR.createHtmlMimeEmail("jfrye@sandia.gov", recipient, "ATDM Trlinos Test Summary "+options.date, "", htmlBody)
