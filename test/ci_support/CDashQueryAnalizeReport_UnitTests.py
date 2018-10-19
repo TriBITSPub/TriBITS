@@ -165,7 +165,6 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
       "dummy-cdash-url", outputCacheFile,
       useCachedCDashData=True,
       printCDashUrl=False,
-      extractCDashApiQueryData_in=extractCDashApiQueryData
       )
     self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
 
