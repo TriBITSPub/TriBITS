@@ -12,12 +12,7 @@ import datetime
 # Read in the command-line arguments
 #
 
-usageHelp = r"""TODO trilinos_atdm_builds_status.py --date=YYYY-MM-DD
-
-This script looks at filtered CDash results for the Trilinos project for the
-given testing day --date=YYYY-MM-DD and generates html that is sent in an email.
-
-"""
+usageHelp = r"""TODO """
 
 from optparse import OptionParser
 
@@ -53,6 +48,18 @@ clp.add_option(
 clp.add_option(
       "--email-subject-line", dest="email_subject_line", type="string",  default="",
     help="the subject line on sent out emails" )
+clp.add_option(
+      "--cdash-site-url", dest="cdash_site_url", type="string",  default="",
+    help="the subject line on sent out emails" )
+clp.add_option(
+      "--cdash-site-project", dest="cdash_site_project", type="string",  default="",
+    help="the subject line on sent out emails" )
+clp.add_option(
+      "--cdash-site-extra-query-fields", dest="cdash_site_extra_query_fields", type="string",  default="",
+    help="the subject line on sent out emails" )
+clp.add_option(
+      "--issue-tracking-csv-file-name", dest="issue_tracking_csv_file_name", type="string",  default="",
+    help="the subject line on sent out emails" )
 
 (options, args) = clp.parse_args()
 
@@ -63,30 +70,20 @@ print("Analyzing test results from "+options.date)
 # Define fixed data
 #
 
-cdashUrl = "https://testing.sandia.gov/cdash"
-
-project = "Trilinos"
+cdashUrl = options.cdash_site_url
+project = options.cdash_site_project
+extra_filter_fields= options.cdash_site_extra_query_fields
 
 #
 # Run the query commands
 #
 
-# filters to get all tests that failed on the given date 
-all_failed_tests_filter_fields= \
-  "&filtercombine=and"+ \
-  "&filtercount=4"+ \
-  "&showfilters=1"+ \
-  "&filtercombine=and"+ \
-  "&field1=buildname&compare1=65&value1=Trilinos-atdm-"+ \
-  "&field2=status&compare2=62&value2=passed"+ \
-  "&field3=status&compare3=62&value3=notrun"+ \
-  "&field4=groupname&compare4=61&value4=ATDM"
-
 # get data from cdash and return in a simpler form
-all_failing_tests=CDQAR.getTestsJsonFromCdash(cdashUrl, project, all_failed_tests_filter_fields, options)
+all_failing_tests=CDQAR.getTestsJsonFromCdash(cdashUrl, project, extra_filter_fields, options)
 
 # add issue tracking information to the tests' data
-CDQAR.checkForIssueTracker(all_failing_tests, "knownIssues.csv")
+#CDQAR.checkForIssueTracker(all_failing_tests, "knownIssues.csv")
+CDQAR.checkForIssueTracker(all_failing_tests, options.issue_tracking_csv_file_name)
 
 # split the tests into those with issue tracking and those without
 tests_without_issue_tracking, tests_with_issue_tracking = CDQAR.filterDictionary(all_failing_tests, "issue_tracker")

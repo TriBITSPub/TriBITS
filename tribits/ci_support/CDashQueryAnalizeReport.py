@@ -262,6 +262,8 @@ def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options):
     "project="+projectName+ \
     "&date="+options.date+ \
     filterFields
+
+  print(CdashTestsApiQueryUrl)
   
   # get the json from CDash using the query constructed above
   json_from_cdash_query=extractCDashApiQueryData(CdashTestsApiQueryUrl)
