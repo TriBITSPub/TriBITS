@@ -314,11 +314,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsStripCommentsFromCMakeCacheFile_large
       CMakeCache.large.clean.txt
   )
 
-TRIBITS_ADD_ADVANCED_TEST( CDashQueryPassFail_UnitTests
+TRIBITS_ADD_ADVANCED_TEST( CDashQueryAnalizeReport_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
-    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CDashQueryPassFail_UnitTests.py -v
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CDashQueryAnalizeReport_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
 
