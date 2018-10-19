@@ -171,11 +171,30 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
 
   def test_getCDashIndexQueryUrl(self):
     cdashIndexQueryUrl = getCDashIndexQueryUrl(
-      "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21",
-      "filtercount=1&showfilters=1&filtercombine=and&field1=groupname&compare1=61&value1=Nightly" \
-    )
+      "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
     cdashIndexQueryUrl_expected = \
-    "https://casl-dev.ornl.gov/testing/api/v1/index.php?project=VERA&date=2015-12-21&filtercount=1&showfilters=1&filtercombine=and&field1=groupname&compare1=61&value1=Nightly"
+      "site.com/cdash/api/v1/index.php?project=project-name&date=2015-12-21&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+  def test_getCDashIndexBrowserUrl(self):
+    cdashIndexQueryUrl = getCDashIndexBrowserUrl(
+      "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/index.php?project=project-name&date=2015-12-21&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+  def test_getCDashQueryTestsQueryUrl(self):
+    cdashIndexQueryUrl = getCDashQueryTestsQueryUrl(
+      "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/api/v1/queryTests.php?project=project-name&date=2015-12-21&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+  def test_getCDashQueryTestsBrowserUrl(self):
+    cdashIndexQueryUrl = getCDashQueryTestsBrowserUrl(
+      "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/queryTests.php?project=project-name&date=2015-12-21&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
   def test_getCDashIndexBuildsSummary(self):

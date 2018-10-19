@@ -47,7 +47,7 @@ if sys.version_info < (2,7,9):
 
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
-import CDashQueryAnalizeReport
+import CDashQueryAnalizeReport as CDQAR
 from gitdist import addOptionParserChoiceOption
 
 #
@@ -99,6 +99,12 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       +" the set of builds. (Default '')" )
 
   clp.add_option(
+    "--cdash-nonpassed-tests-filters", dest="cdashNonpassedTestsFilters", type="string",
+    default="",
+    help="Partial URL fragment for queryTests.php making of the filters for" \
+      +" the set of non-passing tests matching this set of builds. (Default '')" )
+
+  clp.add_option(
     "--expected-builds-file", dest="expectedBuildsFile", type="string",
     default="",
     help="Path to CSV file that lists the expected builds. (Default '')" )
@@ -116,6 +122,10 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     ("on", "off"), 1,
     "Use data downloaded from CDash already cached.",
     clp )
+  
+  clp.add_option(
+    "--write-email-to-file", dest="writeEmailToFile", type="string", default="",
+    help="Write the body of the HTML email this file. (Default '')" )
 
 
 def validateCmndLineOptions(inOptions):
@@ -124,7 +134,7 @@ def validateCmndLineOptions(inOptions):
     print "Error, can't have empty --date, must pass in --date=YYYY-MM-DD!"
     sys.exit(1)
   else:
-    CDashQueryAnalizeReport.validateYYYYMMDD(inOptions.date)
+    CDQAR.validateYYYYMMDD(inOptions.date)
 
   # ToDo: Assert more of the options to make sure they are correct!
 
@@ -138,16 +148,18 @@ def getCmndLineOptions():
   return options
 
 
-def fwdCmndLineOptions(inOptions, terminator=""):
+def fwdCmndLineOptions(inOptions, lt=""):
   cmndLineOpts = \
-    "  --date='"+inOptions.date+"'"+terminator + \
-    "  --cdash-project-name='"+inOptions.cdashProjectName+"'"+terminator + \
-    "  --build-set-name='"+inOptions.buildSetName+"'"+terminator + \
-    "  --cdash-site-url='"+inOptions.cdashSiteUrl+"'"+terminator + \
-    "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+terminator + \
-    "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+terminator +\
-    "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+terminator + \
-    "  --use-cached-cdash-data='"+inOptions.useCachedCDashData+"'"+terminator
+    "  --date='"+inOptions.date+"'"+lt+\
+    "  --cdash-project-name='"+inOptions.cdashProjectName+"'"+lt+\
+    "  --build-set-name='"+inOptions.buildSetName+"'"+lt+\
+    "  --cdash-site-url='"+inOptions.cdashSiteUrl+"'"+lt+\
+    "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+lt+\
+    "  --cdash-nonpassed-tests-filters='"+inOptions.cdashNonpassedTestsFilters+"'"+lt+\
+    "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+lt +\
+    "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+lt+\
+    "  --use-cached-cdash-data='"+inOptions.useCachedCDashData+"'"+lt+\
+    "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt
   return cmndLineOpts 
 
 
@@ -182,6 +194,26 @@ if __name__ == '__main__':
   print "*** Check for pass/fail of "+inOptions.buildSetName+" for "+inOptions.date
   print "***"
 
+  htmlEmailBody = \
+   "<p><b>Build and Test results for "+inOptions.buildSetName \
+      +" on "+inOptions.date+"</b></p>\n\n"
+
+  htmlEmailBody += "<p>\n"
+
+  cdashIndexBuildsBrowserUrl = CDQAR.getCDashIndexBrowserUrl(
+    inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
+    inOptions.cdashBuildsFilters)
+  htmlEmailBody += \
+   "<a href=\""+cdashIndexBuildsBrowserUrl+"\">Builds on CDash</a><br>\n"
+
+  cdashNonpassingTestsBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
+    inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
+    inOptions.cdashNonpassedTestsFilters)
+  htmlEmailBody += \
+   "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">Nonpassing Tests on CDash</a><br>\n"
+
+  htmlEmailBody += "</p>\n"
+
   projectExpectedBuilds=[]
   # ToDo: Read this in from inOptions.expectedBuildsFile!
 
@@ -192,7 +224,7 @@ if __name__ == '__main__':
 
   print "\n*** Check the "+inOptions.cdashProjectName+" project builds ...\n"
   (projectBuildsPass, errMsg) = \
-      CDashQueryAnalizeReport.queryCDashAndDeterminePassFail(
+      CDQAR.queryCDashAndDeterminePassFail(
        inOptions.cdashSiteUrl,
        inOptions.cdashProjectName,
        inOptions.date,
@@ -208,6 +240,10 @@ if __name__ == '__main__':
   else:
     print "\nTrilinos builds passed!\n"
   
+
+  if inOptions.writeEmailToFile:
+    open(inOptions.writeEmailToFile, 'w').write(htmlEmailBody)
+
   print "\n*** Determine overall pass/fail ...\n"
   
   if allBuildsPass:

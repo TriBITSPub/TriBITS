@@ -87,9 +87,27 @@ def getAndCacheCDashQueryDataOrReadFromCache(
   return cdashQueryData
 
 
-# Construct the full query URL given the pieces
+# Construct the full query URL to pull data down given the pieces
 def getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields):
   return cdashUrl+"/api/v1/index.php?project="+projectName+"&date="+date \
+    + "&"+filterFields
+
+
+# Construct the full browser URL given the pieces
+def getCDashIndexBrowserUrl(cdashUrl, projectName, date, filterFields):
+  return cdashUrl+"/index.php?project="+projectName+"&date="+date \
+    + "&"+filterFields
+
+
+# Construct the full query URL given the pieces
+def getCDashQueryTestsQueryUrl(cdashUrl, projectName, date, filterFields):
+  return cdashUrl+"/api/v1/queryTests.php?project="+projectName+"&date="+date \
+    + "&"+filterFields
+
+
+# Construct the full browser URL given the pieces
+def getCDashQueryTestsBrowserUrl(cdashUrl, projectName, date, filterFields):
+  return cdashUrl+"/queryTests.php?project="+projectName+"&date="+date \
     + "&"+filterFields
 
 
