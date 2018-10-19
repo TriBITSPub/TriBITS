@@ -40,6 +40,7 @@
 import os
 import sys
 import copy
+import shutil
 import unittest
 
 from FindCISupportDir import *
@@ -72,6 +73,27 @@ singleBuildPasses = {
   'compilation':{'error':0},
   'test': {'fail':0, 'notrun':0},
   }
+
+# Helper script for creating test directories
+def deleteThenCreateTestDir(testDir):
+    outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_write_cache"
+    if os.path.exists(testDir): shutil.rmtree(testDir)
+    os.mkdir(testDir)
+
+# Dummy data for getAndCacheCDashQueryDataOrReadFromCache() tests
+
+g_getAndCacheCDashQueryDataOrReadFromCache_data = {
+  'keyname1' : "value1",
+  'keyname2' : "value2",
+   }
+
+def dummyGetCDashData_for_getAndCacheCDashQueryDataOrReadFromCache(
+  cdashQueryUrl_expected \
+  ):
+  if cdashQueryUrl_expected != "dummy-cdash-url":
+    raise Exception("Error, cdashQueryUrl_expected != \'dummy-cdash-url\'")  
+  return g_getAndCacheCDashQueryDataOrReadFromCache_data
+
 
 # Dummy queryCDashAndDeterminePassFail() for unit testing
 
@@ -118,6 +140,34 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
   def test_validateYYYYMMDD_fail1(self):
     #yyyyymmdd = validateYYYYMMDD("201512-21")
     self.assertRaises(ValueError, validateYYYYMMDD,  "201512-21")
+
+  def test_getAndCacheCDashQueryDataOrReadFromCache_write_cache(self):
+    outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_write_cache"
+    outputCacheFile=outputCacheDir+"/cachedCDashQueryData.json"
+    deleteThenCreateTestDir(outputCacheDir)
+    cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
+      "dummy-cdash-url", outputCacheFile,
+      useCachedCDashData=False,
+      printCDashUrl=False,
+      extractCDashApiQueryData_in=\
+        dummyGetCDashData_for_getAndCacheCDashQueryDataOrReadFromCache \
+      )
+    self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
+    cdashQueryData_cache = eval(open(outputCacheFile, 'r').read())
+    self.assertEqual(cdashQueryData_cache, g_getAndCacheCDashQueryDataOrReadFromCache_data)
+
+  def test_getAndCacheCDashQueryDataOrReadFromCache_read_cache(self):
+    outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_read_cache"
+    outputCacheFile=outputCacheDir+"/cachedCDashQueryData.json"
+    deleteThenCreateTestDir(outputCacheDir)
+    open(outputCacheFile, 'w').write(str(g_getAndCacheCDashQueryDataOrReadFromCache_data))
+    cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
+      "dummy-cdash-url", outputCacheFile,
+      useCachedCDashData=True,
+      printCDashUrl=False,
+      extractCDashApiQueryData_in=extractCDashApiQueryData
+      )
+    self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
 
   def test_getCDashIndexQueryUrl(self):
     cdashIndexQueryUrl = getCDashIndexQueryUrl(

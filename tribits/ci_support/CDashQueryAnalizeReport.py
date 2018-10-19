@@ -59,16 +59,38 @@ def validateYYYYMMDD(dateText):
     raise ValueError("Incorrect data format for '"+dateText+"', should be YYYY-MM-DD")
 
 
-# Construct the full query URL given the pieces
-def getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields):
-  return cdashUrl+"/api/v1/index.php?project="+projectName+"&date="+date \
-    + "&"+filterFields
-
-
 # Given a CDash query URL, return the full Python CDash data-structure
 def extractCDashApiQueryData(cdashApiQueryUrl):
   response = urlopen(cdashApiQueryUrl)
   return json.load(response)
+
+
+# Get data off of CDash and cache it or read from previously cached data
+def getAndCacheCDashQueryDataOrReadFromCache(
+  cdashQueryUrl,
+  cdashQueryDataCacheFile,  # File name
+  useCachedCDashData,  # If 'True', then cdasyQueryDataCacheFile must be non-null
+  printCDashUrl = False,
+  extractCDashApiQueryData_in=extractCDashApiQueryData,
+  ):
+  if useCachedCDashData:
+    if printCDashUrl:
+      print("Using cached data from:\n\n  " + cdashQueryUrl )
+    cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
+  else:
+    if printCDashUrl:
+      print("Getting data from:\n\n  " + cdashQueryUrl )
+    cdashQueryData = extractCDashApiQueryData_in(cdashQueryUrl)
+    if cdashQueryDataCacheFile:
+      pp = pprint.PrettyPrinter(stream=open(cdashQueryDataCacheFile,'w'), indent=4)
+      pp.pprint(cdashQueryData)
+  return cdashQueryData
+
+
+# Construct the full query URL given the pieces
+def getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields):
+  return cdashUrl+"/api/v1/index.php?project="+projectName+"&date="+date \
+    + "&"+filterFields
 
 
 # Collect CDash index.php build summary fields
@@ -225,8 +247,13 @@ def cdashIndexBuildsPassAndExpectedExist(summaryCDashIndexBuilds,
 
 # Determine if CDash index.php query builds all pass and has all expected
 # builds.
-def queryCDashAndDeterminePassFail(cdashUrl, projectName, date, filterFields,
-  expectedBuildNames, printCDashUrl=True,
+def queryCDashAndDeterminePassFail(
+  cdashUrl,
+  projectName,
+  date,
+  filterFields,
+  expectedBuildNames,
+  printCDashUrl=True,
   extractCDashApiQueryData_in=extractCDashApiQueryData,
   cdashQueriesCacheDir=None,
   useCachedCDashData=False,
@@ -235,17 +262,12 @@ def queryCDashAndDeterminePassFail(cdashUrl, projectName, date, filterFields,
   cdashQueryUrl = getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields)
   if cdashQueriesCacheDir:
     fullCDashIndexBuildsCacheFile=cdashQueriesCacheDir+"/fullCDashIndexBuilds.json"
-  if useCachedCDashData:
-    if printCDashUrl:
-      print("Using cached data data from:\n\n  " + cdashQueryUrl )
-    fullCDashIndexBuilds=eval(open(fullCDashIndexBuildsCacheFile, 'r').read())
   else:
-    if printCDashUrl:
-      print("Getting data from:\n\n  " + cdashQueryUrl )
-    fullCDashIndexBuilds = extractCDashApiQueryData_in(cdashQueryUrl)
-    if cdashQueriesCacheDir:
-      pp = pprint.PrettyPrinter(stream=open(fullCDashIndexBuildsCacheFile,'w'), indent=4)
-      pp.pprint(fullCDashIndexBuilds)
+    fullCDashIndexBuildsCacheFile = None
+  fullCDashIndexBuilds = getAndCacheCDashQueryDataOrReadFromCache(
+    cdashQueryUrl, fullCDashIndexBuildsCacheFile, useCachedCDashData,
+    printCDashUrl, extractCDashApiQueryData_in )
+  # Get trimmed down set of builds
   summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
   # Determine pass/fail
   (cdashIndexBuildsPassAndExpectedExist_pass, errMsg) = \
