@@ -50,8 +50,6 @@ import pprint
 
 from FindGeneralScriptSupport import *
 
-pp = pprint.PrettyPrinter()
-
 
 # Validate a date format
 def validateYYYYMMDD(dateText):
@@ -61,16 +59,56 @@ def validateYYYYMMDD(dateText):
     raise ValueError("Incorrect data format for '"+dateText+"', should be YYYY-MM-DD")
 
 
-# Construct the full query URL given the pieces
+# Given a CDash query URL, return the full Python CDash data-structure
+def extractCDashApiQueryData(cdashApiQueryUrl):
+  response = urlopen(cdashApiQueryUrl)
+  return json.load(response)
+
+
+# Get data off of CDash and cache it or read from previously cached data
+def getAndCacheCDashQueryDataOrReadFromCache(
+  cdashQueryUrl,
+  cdashQueryDataCacheFile,  # File name
+  useCachedCDashData,  # If 'True', then cdasyQueryDataCacheFile must be non-null
+  printCDashUrl = False,
+  extractCDashApiQueryData_in=extractCDashApiQueryData,
+  ):
+  if useCachedCDashData:
+    if printCDashUrl:
+      print("Using cached data from:\n\n  " + cdashQueryUrl )
+    cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
+  else:
+    if printCDashUrl:
+      print("Getting data from:\n\n  " + cdashQueryUrl )
+    cdashQueryData = extractCDashApiQueryData_in(cdashQueryUrl)
+    if cdashQueryDataCacheFile:
+      pp = pprint.PrettyPrinter(stream=open(cdashQueryDataCacheFile,'w'), indent=4)
+      pp.pprint(cdashQueryData)
+  return cdashQueryData
+
+
+# Construct the full query URL to pull data down given the pieces
 def getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields):
   return cdashUrl+"/api/v1/index.php?project="+projectName+"&date="+date \
     + "&"+filterFields
 
 
-# Given a CDash query URL, return the full Python CDash data-structure
-def extractCDashApiQueryData(cdashApiQueryUrl):
-  response = urlopen(cdashApiQueryUrl)
-  return json.load(response)
+# Construct the full browser URL given the pieces
+def getCDashIndexBrowserUrl(cdashUrl, projectName, date, filterFields):
+  return cdashUrl+"/index.php?project="+projectName+"&date="+date \
+    + "&"+filterFields
+
+
+# Construct the full query URL given the pieces
+def getCDashQueryTestsQueryUrl(cdashUrl, projectName, date, filterFields):
+  return cdashUrl+"/api/v1/queryTests.php?project="+projectName+"&date="+date \
+    + "&"+filterFields
+
+
+# Construct the full browser URL given the pieces
+def getCDashQueryTestsBrowserUrl(cdashUrl, projectName, date, filterFields):
+  return cdashUrl+"/queryTests.php?project="+projectName+"&date="+date \
+    + "&"+filterFields
 
 
 # Collect CDash index.php build summary fields
@@ -227,15 +265,27 @@ def cdashIndexBuildsPassAndExpectedExist(summaryCDashIndexBuilds,
 
 # Determine if CDash index.php query builds all pass and has all expected
 # builds.
-def queryCDashAndDeterminePassFail(cdashUrl, projectName, date, filterFields,
-  expectedBuildNames, printCDashUrl=True,
-  extractCDashApiQueryData_in=extractCDashApiQueryData \
+def queryCDashAndDeterminePassFail(
+  cdashUrl,
+  projectName,
+  date,
+  filterFields,
+  expectedBuildNames,
+  printCDashUrl=True,
+  extractCDashApiQueryData_in=extractCDashApiQueryData,
+  cdashQueriesCacheDir=None,
+  useCachedCDashData=False,
   ):
   # Get the query data
   cdashQueryUrl = getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields)
-  if printCDashUrl:
-    print("Getting data from:\n\n  " + cdashQueryUrl )
-  fullCDashIndexBuilds = extractCDashApiQueryData_in(cdashQueryUrl)
+  if cdashQueriesCacheDir:
+    fullCDashIndexBuildsCacheFile=cdashQueriesCacheDir+"/fullCDashIndexBuilds.json"
+  else:
+    fullCDashIndexBuildsCacheFile = None
+  fullCDashIndexBuilds = getAndCacheCDashQueryDataOrReadFromCache(
+    cdashQueryUrl, fullCDashIndexBuildsCacheFile, useCachedCDashData,
+    printCDashUrl, extractCDashApiQueryData_in )
+  # Get trimmed down set of builds
   summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
   # Determine pass/fail
   (cdashIndexBuildsPassAndExpectedExist_pass, errMsg) = \
@@ -243,6 +293,7 @@ def queryCDashAndDeterminePassFail(cdashUrl, projectName, date, filterFields,
   if not cdashIndexBuildsPassAndExpectedExist_pass:
     return (False, errMsg)
   return (True, "")
+
     
 # This will return a dictionary with information about all the tests that were returned
 # in the json from cdash as a result of the CDash query from the given inputs
@@ -251,6 +302,7 @@ def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options):
   simplified_dict_of_tests=getTestDictionaryFromCdashJson(raw_json_from_cdash, options)
   getHistoricalDataForTests(simplified_dict_of_tests, cdashUrl, projectName, filterFields, options)
   return simplified_dict_of_tests
+
 
 # Construct a URL and return the raw json from cdash
 def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options):
@@ -268,6 +320,7 @@ def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options):
   # get the json from CDash using the query constructed above
   json_from_cdash_query=extractCDashApiQueryData(CdashTestsApiQueryUrl)
   return json_from_cdash_query
+
 
 def getTestDictionaryFromCdashJson(CDash_json, options):
  
@@ -426,6 +479,7 @@ def filterDictionary(dictOfTests, fieldToTest, testValue="", testType=""):
 
   return dict_of_tests_that_pass, dict_of_tests_that_fail
 
+
 def checkForIssueTracker(dictOfTests, issueTrackerDBFileName):
   
   dict_of_known_issues={}
@@ -446,6 +500,7 @@ def checkForIssueTracker(dictOfTests, issueTrackerDBFileName):
       dictOfTests[key]["issue_tracker"]=dict_of_known_issues[key]["issue_tracker"]
       dictOfTests[key]["issue_tracker_url"]=dict_of_known_issues[key]["issue_tracker_url"]
   f.close()
+
 
 #
 # Create an html table from a python dictionary
@@ -487,10 +542,12 @@ def createHtmlTable(dictionary, list_of_column_headings, title):
 #
 # Create an HTML MIME Email
 #  
+
 import smtplib
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+
 
 def createHtmlMimeEmail(fromAddress, toAddress, subject, textBody, htmlBody):
 
