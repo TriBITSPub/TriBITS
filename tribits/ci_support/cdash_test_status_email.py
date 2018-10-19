@@ -42,9 +42,17 @@ clp.add_option(
       "--skip-send-email", dest="skip_send_email", default=False,
     help="Do not send email" )
 clp.add_option(
-      "--write-email-to-file", dest="write_email_to_file",type="string",  default="",
+      "--write-email-to-file", dest="write_email_to_file", type="string",  default="",
     help="Write the email out as a file with the given name" )
-
+clp.add_option(
+      "--email-recipients", dest="email_recipients", type="string",  default="",
+    help="list of email addresses that the email will be sent to" )
+clp.add_option(
+      "--email-from-address", dest="email_from_address", type="string",  default="",
+    help="the from address on sent out emails" )
+clp.add_option(
+      "--email-subject-line", dest="email_subject_line", type="string",  default="",
+    help="the subject line on sent out emails" )
 
 (options, args) = clp.parse_args()
 
@@ -98,14 +106,18 @@ table_headings=["site", \
 htmlBody=CDQAR.createHtmlTable(tests_without_issue_tracking, table_headings, "Failing Tests without Issue Tracking: "+options.date)
 htmlBody+=CDQAR.createHtmlTable(tests_with_issue_tracking, table_headings, "Failing Tests with Issue Tracking: "+options.date)
 
+
 if not options.write_email_to_file == "":
   outfile=open(options.write_email_to_file, "w")
   outfile.write(htmlBody)
 
-recipients_list=["jfrye@sandia.gov","rabartl@sandia.gov", "jasteph@sandia.gov"]
+
 if not options.skip_send_email:
-  for recipient in recipients_list:
-    msg=CDQAR.createHtmlMimeEmail("jfrye@sandia.gov", recipient, "ATDM Trlinos Test Summary "+options.date, "", htmlBody)
+  emailRecipientsList=options.email_recipients.split(",")
+  emailFromAddress=options.email_from_address
+  emailFromAddress=options.email_subject_line+": "+options.date
+  for recipient in emailRecipientsList:
+    msg=CDQAR.createHtmlMimeEmail(emailFromAddress, recipient.strip(), emailSubject, "", htmlBody)
     CDQAR.sendMineEmail(msg)
 else:
   print("Email is not being sent")
