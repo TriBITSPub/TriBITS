@@ -48,7 +48,7 @@ if sys.version_info < (2,7,9):
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
 import CDashQueryAnalizeReport
-
+from gitdist import addOptionParserChoiceOption
 
 #
 # Help message
@@ -103,6 +103,20 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     default="",
     help="Path to CSV file that lists the expected builds. (Default '')" )
 
+  cdashQueriesCacheDir_default=os.getcwd()
+
+  clp.add_option(
+    "--cdash-queries-cache-dir", dest="cdashQueriesCacheDir", type="string",
+    default=cdashQueriesCacheDir_default,
+    help="Cache CDash query data this directory" \
+      +" (default ='"+cdashQueriesCacheDir_default+"')." )
+
+  addOptionParserChoiceOption(
+    "--use-cached-cdash-data", "useCachedCDashData",
+    ("on", "off"), 1,
+    "Use data downloaded from CDash already cached.",
+    clp )
+
 
 def validateCmndLineOptions(inOptions):
   
@@ -111,6 +125,8 @@ def validateCmndLineOptions(inOptions):
     sys.exit(1)
   else:
     CDashQueryAnalizeReport.validateYYYYMMDD(inOptions.date)
+
+  # ToDo: Assert more of the options to make sure they are correct!
 
 
 def getCmndLineOptions():
@@ -124,12 +140,14 @@ def getCmndLineOptions():
 
 def fwdCmndLineOptions(inOptions, terminator=""):
   cmndLineOpts = \
-    "  --date='"+inOptions.date+"'"+terminator +  \
-    "  --cdash-project-name='"+inOptions.cdashProjectName+"'"+terminator +  \
-    "  --build-set-name='"+inOptions.buildSetName+"'"+terminator +  \
-    "  --cdash-site-url='"+inOptions.cdashSiteUrl+"'"+terminator +  \
-    "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+terminator +  \
-    "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+terminator
+    "  --date='"+inOptions.date+"'"+terminator + \
+    "  --cdash-project-name='"+inOptions.cdashProjectName+"'"+terminator + \
+    "  --build-set-name='"+inOptions.buildSetName+"'"+terminator + \
+    "  --cdash-site-url='"+inOptions.cdashSiteUrl+"'"+terminator + \
+    "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+terminator + \
+    "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+terminator +\
+    "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+terminator + \
+    "  --use-cached-cdash-data='"+inOptions.useCachedCDashData+"'"+terminator
   return cmndLineOpts 
 
 
@@ -155,12 +173,20 @@ if __name__ == '__main__':
   inOptions = getCmndLineOptions()
   echoCmndLine(inOptions)
 
+  if inOptions.useCachedCDashData == "on":
+    useCachedCDashData=True
+  else:
+    useCachedCDashData=False
+
   print "***"
   print "*** Check for pass/fail of "+inOptions.buildSetName+" for "+inOptions.date
   print "***"
 
   projectExpectedBuilds=[]
   # ToDo: Read this in from inOptions.expectedBuildsFile!
+
+  # ToDo: Write out the date the the cache dir so that it can be read back in
+  # to check the cache.
 
   allBuildsPass = True
 
@@ -171,7 +197,9 @@ if __name__ == '__main__':
        inOptions.cdashProjectName,
        inOptions.date,
        inOptions.cdashBuildsFilters,
-       projectExpectedBuilds \
+       projectExpectedBuilds,
+       cdashQueriesCacheDir=inOptions.cdashQueriesCacheDir,
+       useCachedCDashData=useCachedCDashData,
        )
   if not projectBuildsPass:
     print "\nTrilinos builds failed!\n"
