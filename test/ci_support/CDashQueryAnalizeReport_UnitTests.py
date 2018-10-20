@@ -55,7 +55,7 @@ mockProjectBaseDir=os.path.abspath(tribitsBaseDir+"/examples/MockTrilinos")
 g_pp = pprint.PrettyPrinter(indent=4)
 
 #
-# Data for tests
+# Helper functions
 #
 
 # Helper script for creating test directories
@@ -67,7 +67,7 @@ def deleteThenCreateTestDir(testDir):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.validateYYYYMMDD_pass1
+# Test CDashQueryAnalizeReport.validateYYYYMMDD_pass1()
 #
 #############################################################################
 
@@ -106,18 +106,18 @@ class test_validateYYYYMMDD(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.readCsvFileIntoListOfDics
+# Test CDashQueryAnalizeReport.readCsvFileIntoListOfDicts()
 #
 #############################################################################
 
-class test_readCsvFileIntoListOfDics(unittest.TestCase):
+class test_readCsvFileIntoListOfDicts(unittest.TestCase):
 
   def test_col_3_row_2_expected_cols__pass(self):
     csvFileStr=\
         "col_0, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"+\
         "val_10, val_11, val_12\n\n\n"  # Add extra blanks line for extra test!
-    csvFileName = "readCsvFileIntoListOfDics_col_3_row_2_expeced_cols_pass.csv"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_expeced_cols_pass.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
@@ -135,7 +135,7 @@ class test_readCsvFileIntoListOfDics(unittest.TestCase):
         "col_0, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"+\
         "val_10, val_11, val_12\n\n\n"  # Add extra blanks line for extra test!
-    csvFileName = "readCsvFileIntoListOfDics_col_3_row_2_no_expected_cols_pass.csv"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_no_expected_cols_pass.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     listOfDicts = readCsvFileIntoListOfDicts(csvFileName)
@@ -152,7 +152,7 @@ class test_readCsvFileIntoListOfDics(unittest.TestCase):
     csvFileStr=\
         "wrong col, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"
-    csvFileName = "readCsvFileIntoListOfDics_too_few_expected_headers_fail.csv"
+    csvFileName = "readCsvFileIntoListOfDicts_too_few_expected_headers_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     #listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1'])
@@ -163,7 +163,7 @@ class test_readCsvFileIntoListOfDics(unittest.TestCase):
     csvFileStr=\
         "wrong col, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"
-    csvFileName = "readCsvFileIntoListOfDics_too_many_expected_headers_fail.csv"
+    csvFileName = "readCsvFileIntoListOfDicts_too_many_expected_headers_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     #listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
@@ -175,7 +175,7 @@ class test_readCsvFileIntoListOfDics(unittest.TestCase):
     csvFileStr=\
         "wrong col, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"
-    csvFileName = "readCsvFileIntoListOfDics_wrong_expected_col_0_fail.csv"
+    csvFileName = "readCsvFileIntoListOfDicts_wrong_expected_col_0_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     #listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
@@ -186,7 +186,7 @@ class test_readCsvFileIntoListOfDics(unittest.TestCase):
     csvFileStr=\
         "col_0, wrong col, col_2\n"+\
         "val_00, val_01, val_02\n"
-    csvFileName = "readCsvFileIntoListOfDics_wrong_expected_col_1_fail.csv"
+    csvFileName = "readCsvFileIntoListOfDicts_wrong_expected_col_1_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     #listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
@@ -198,7 +198,7 @@ class test_readCsvFileIntoListOfDics(unittest.TestCase):
         "col_0, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"+\
         "val_10, val_11, val_12, extra\n"
-    csvFileName = "readCsvFileIntoListOfDics_col_3_row_2_bad_row_len_fail.csv"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_bad_row_len_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     #listOfDicts = readCsvFileIntoListOfDicts(csvFileName)
@@ -211,7 +211,7 @@ class test_readCsvFileIntoListOfDics(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.getExpectedBuildsListfromCsvFile
+# Test CDashQueryAnalizeReport.getExpectedBuildsListfromCsvFile()
 #
 #############################################################################
 
@@ -240,7 +240,7 @@ class test_getExpectedBuildsListfromCsvFile(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.getAndCacheCDashQueryDataOrReadFromCache
+# Test CDashQueryAnalizeReport.getAndCacheCDashQueryDataOrReadFromCache()
 #
 #############################################################################
 
@@ -325,7 +325,7 @@ class test_CDashQueryAnalizeReport_UrlFuncs(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.collectCDashIndexBuildSummaryFields
+# Test CDashQueryAnalizeReport.collectCDashIndexBuildSummaryFields()
 #
 #############################################################################
 
@@ -376,7 +376,7 @@ class test_collectCDashIndexBuildSummaryFields(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.getCDashIndexBuildsSummary
+# Test CDashQueryAnalizeReport.getCDashIndexBuildsSummary()
 #
 #############################################################################
 
@@ -407,7 +407,7 @@ class test_getCDashIndexBuildsSummary(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.createBuildLookupDict
+# Test CDashQueryAnalizeReport.createBuildLookupDict()
 #
 #############################################################################
 
@@ -452,7 +452,7 @@ class test_createBuildLookupDict(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.lookupBuildSummaryGivenLookupDict
+# Test CDashQueryAnalizeReport.lookupBuildSummaryGivenLookupDict()
 #
 #############################################################################
 
@@ -476,6 +476,20 @@ class test_lookupBuildSummaryGivenLookupDict(unittest.TestCase):
     self.assertEqual(lookupData('group2','site3','build1', blud), None)
     self.assertEqual(lookupData('group2','site4','build1', blud), None)
     self.assertEqual(lookupData('group3','site1','build1', blud), None)
+
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.getMissingExpectedBuildsList()
+#
+#############################################################################
+     
+class test_getMissingExpectedBuildsList(unittest.TestCase):
+
+  def test_1(self):
+    None
+
 
 
 #############################################################################
