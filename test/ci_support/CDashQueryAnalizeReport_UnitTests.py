@@ -80,20 +80,6 @@ def deleteThenCreateTestDir(testDir):
     if os.path.exists(testDir): shutil.rmtree(testDir)
     os.mkdir(testDir)
 
-# Dummy data for getAndCacheCDashQueryDataOrReadFromCache() tests
-
-g_getAndCacheCDashQueryDataOrReadFromCache_data = {
-  'keyname1' : "value1",
-  'keyname2' : "value2",
-   }
-
-def dummyGetCDashData_for_getAndCacheCDashQueryDataOrReadFromCache(
-  cdashQueryUrl_expected \
-  ):
-  if cdashQueryUrl_expected != "dummy-cdash-url":
-    raise Exception("Error, cdashQueryUrl_expected != \'dummy-cdash-url\'")  
-  return g_getAndCacheCDashQueryDataOrReadFromCache_data
-
 
 # Dummy queryCDashAndDeterminePassFail() for unit testing
 
@@ -105,48 +91,57 @@ def dummyExtractCDashApiQueryData(cdashQueryUrl_expected):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.py
+# Test CDashQueryAnalizeReport.validateYYYYMMDD_pass1
 #
 #############################################################################
 
-class test_CDashQueryAnalizeReport(unittest.TestCase):
+class test_validateYYYYMMDD(unittest.TestCase):
 
-  def test_validateYYYYMMDD_pass1(self):
+  def test_pass1(self):
     yyyyymmdd = validateYYYYMMDD("2015-12-21")
     self.assertEqual(str(yyyyymmdd), "2015-12-21 00:00:00")
 
-  def test_validateYYYYMMDD_pass2(self):
+  def test_pass2(self):
     yyyyymmdd = validateYYYYMMDD("2015-12-01")
     self.assertEqual(str(yyyyymmdd), "2015-12-01 00:00:00")
 
-  def test_validateYYYYMMDD_pass3(self):
+  def test_pass3(self):
     yyyyymmdd = validateYYYYMMDD("2015-12-1")
     self.assertEqual(str(yyyyymmdd), "2015-12-01 00:00:00")
 
-  def test_validateYYYYMMDD_pass4(self):
+  def test_pass4(self):
     yyyyymmdd = validateYYYYMMDD("2015-01-1")
     self.assertEqual(str(yyyyymmdd), "2015-01-01 00:00:00")
 
-  def test_validateYYYYMMDD_pass4(self):
+  def test_pass4(self):
     yyyyymmdd = validateYYYYMMDD("2015-1-9")
     self.assertEqual(str(yyyyymmdd), "2015-01-09 00:00:00")
 
-  def test_validateYYYYMMDD_fail_empty(self):
+  def test_fail_empty(self):
     self.assertRaises(ValueError, validateYYYYMMDD,  "")
 
-  def test_validateYYYYMMDD_fail1(self):
+  def test_fail1(self):
     self.assertRaises(ValueError, validateYYYYMMDD,  "201512-21")
 
-  def test_validateYYYYMMDD_fail1(self):
+  def test_fail1(self):
     #yyyyymmdd = validateYYYYMMDD("201512-21")
     self.assertRaises(ValueError, validateYYYYMMDD,  "201512-21")
 
-  def test_readCsvFileIntoListOfDics_col_3_row_2_pass(self):
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.readCsvFileIntoListOfDics
+#
+#############################################################################
+
+class test_readCsvFileIntoListOfDics(unittest.TestCase):
+
+  def test_col_3_row_2_pass(self):
     csvFileStr=\
         "col_0, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"+\
         "val_10, val_11, val_12\n\n\n"  # Add extra blanks line for extra test!
-    csvFileName = "test_readCsvFileIntoListOfDics_col_3_row_2_pass.csv"
+    csvFileName = "readCsvFileIntoListOfDics_col_3_row_2_pass.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
@@ -165,12 +160,21 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
 
   # ToDo: Test with row number of items in row
 
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.getExpectedBuildsListfromCsvFile
+#
+#############################################################################
+
+class test_getExpectedBuildsListfromCsvFile(unittest.TestCase):
+
   def test_getExpectedBuildsListfromCsvFile(self):
     expectedBuildsCsvFileStr=\
         "group, site, buildname\n"+\
         "group1, site1, buildname1\n"+\
         "group1, site1, buildname2\n"+\
-        "group2, site2, buildname2\n"
+        "group2, site2, buildname2\n\n\n\n"
     csvFileName = "test_getExpectedBuildsListfromCsvFile.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(expectedBuildsCsvFileStr)
@@ -185,7 +189,26 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
     for i in range(len(expectedBuildsList_expected)):
       self.assertEqual(expectedBuildsList[i], expectedBuildsList_expected[i])
 
-  # ToDo: Add tests for bad CSV file format files
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.getAndCacheCDashQueryDataOrReadFromCache
+#
+#############################################################################
+
+g_getAndCacheCDashQueryDataOrReadFromCache_data = {
+  'keyname1' : "value1",
+  'keyname2' : "value2",
+   }
+
+def dummyGetCDashData_for_getAndCacheCDashQueryDataOrReadFromCache(
+  cdashQueryUrl_expected \
+  ):
+  if cdashQueryUrl_expected != "dummy-cdash-url":
+    raise Exception("Error, cdashQueryUrl_expected != \'dummy-cdash-url\'")  
+  return g_getAndCacheCDashQueryDataOrReadFromCache_data
+
+class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
 
   def test_getAndCacheCDashQueryDataOrReadFromCache_write_cache(self):
     outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_write_cache"
@@ -214,6 +237,15 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
       )
     self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
 
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport URL functions
+#
+#############################################################################
+
+class test_CDashQueryAnalizeReport_UrlFuncs(unittest.TestCase):
+
   def test_getCDashIndexQueryUrl(self):
     cdashIndexQueryUrl = getCDashIndexQueryUrl(
       "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
@@ -241,6 +273,15 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
     cdashIndexQueryUrl_expected = \
       "site.com/cdash/queryTests.php?project=project-name&date=2015-12-21&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.getCDashIndexBuildsSummary
+#
+#############################################################################
+
+class test_getCDashIndexBuildsSummary(unittest.TestCase):
 
   def test_getCDashIndexBuildsSummary(self):
     summaryCDashIndexBuilds = getCDashIndexBuildsSummary(g_fullCDashIndexBuilds)
@@ -284,6 +325,15 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
     summaryCDashIndexBuild_expected = copy.deepcopy(singleBuildPasses)
     summaryCDashIndexBuild_expected['test'] = {'fail':9999, 'notrun':9999,'this_field_was_missing':1} 
     self.assertEqual(summaryCDashIndexBuild, summaryCDashIndexBuild_expected)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.cdashIndexBuildPasses
+#
+#############################################################################
+
+class test_cdashIndexBuildPasses(unittest.TestCase):
 
   def test_cdashIndexBuildPasses_pass(self):
     build = copy.deepcopy(singleBuildPasses)
@@ -368,6 +418,15 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
     builds = [build1, build2, build3]
     buildNames_expected = [ "build1", "build2", "build3" ]
     self.assertEqual(getCDashIndexBuildNames(builds), buildNames_expected)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.doAllExpectedBuildsExist
+#
+#############################################################################
+
+class test_doAllExpectedBuildsExist(unittest.TestCase):
 
   def test_doAllExpectedBuildsExist_1_pass(self):
     buildNames = ["build1"]
@@ -481,6 +540,15 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
     self.assertEqual(errMsg,
       "Error, the expected build 'build2' does not exist in the list of builds ['build1']")
     self.assertEqual(cdashIndexBuildsPassAndExpectedExist_passed, False)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.queryCDashAndDeterminePassFail
+#
+#############################################################################
+
+class test_queryCDashAndDeterminePassFail(unittest.TestCase):
 
   def test_queryCDashAndDeterminePassFail_1_pass(self):
     build1 = copy.deepcopy(singleBuildPasses)
