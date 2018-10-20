@@ -288,7 +288,15 @@ def createBuildLookupDict(summaryBuildsList):
     siteDict = groupDict.setdefault(siteName, {})
     siteDict.setdefault(buildName, buildSummaryDict)
   return buildLookupDict
- 
+
+# Lookup a build dict given a lookup dict from createBuildLookupDict()
+def lookupBuildSummaryGivenLookupDict(groupSiteBuildDict, buildLookupDict):
+  groupDict = buildLookupDict.get(groupSiteBuildDict.get('group'), None)
+  if not groupDict: return None
+  siteDict = groupDict.get(groupSiteBuildDict.get('site'), None)
+  if not siteDict: return None
+  buildDict = siteDict.get(groupSiteBuildDict.get('buildname'), None)
+  return buildDict
 
 # Return if a CDash Index build passes
 def cdashIndexBuildPasses(cdashIndexBuild):
