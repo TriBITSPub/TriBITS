@@ -223,7 +223,7 @@ def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
 #    'all_buildgroups': [ {'id':1,'name:"Nightly"}, ...],
 #    'buildgroups': [
 #      {
-#        'name':"???",   # group name, e.g. nightly
+#        'name':"???",   # group name, e.g. Nightly
 #        'builds":[
 #          {
 #            'site':"???"
@@ -274,7 +274,21 @@ def getCDashIndexBuildsSummary(fullCDashIndexBuilds):
       summaryBuild = collectCDashIndexBuildSummaryFields(build, groupName)
       summaryCDashIndexBuilds.append(summaryBuild)
   return summaryCDashIndexBuilds
-  
+
+
+# Create a lookup dict for builds "group" => "site" => "build" given summary
+# list of builds.
+def createBuildLookupDict(summaryBuildsList):
+  buildLookupDict = {}
+  for buildSummaryDict in summaryBuildsList:
+    groupName = buildSummaryDict.get('group')
+    siteName = buildSummaryDict.get('site')
+    buildName = buildSummaryDict.get('buildname')
+    groupDict = buildLookupDict.setdefault(groupName, {})
+    siteDict = groupDict.setdefault(siteName, {})
+    siteDict.setdefault(buildName, buildSummaryDict)
+  return buildLookupDict
+ 
 
 # Return if a CDash Index build passes
 def cdashIndexBuildPasses(cdashIndexBuild):

@@ -500,6 +500,51 @@ class test_cdashIndexBuildPasses(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalizeReport.createBuildLookupDict
+#
+#############################################################################
+
+g_buildsListForExpectedBuilds = [
+  { 'group':'group1', 'site':'site1', 'buildname':'build1' },
+  { 'group':'group1', 'site':'site1', 'buildname':'build2' },
+  { 'group':'group1', 'site':'site2', 'buildname':'build3' },
+  { 'group':'group2', 'site':'site1', 'buildname':'build1' },
+  { 'group':'group2', 'site':'site3', 'buildname':'build4' },
+  ]
+
+g_buildLookupDictForExpectedBuilds = {
+  'group1' : {
+    'site1' : {
+      'build1' : { 'group':'group1', 'site':'site1', 'buildname':'build1' },
+      'build2' : { 'group':'group1', 'site':'site1', 'buildname':'build2' },
+      },
+    'site2' : {
+      'build3' : { 'group':'group1', 'site':'site2', 'buildname':'build3' },
+      },
+    },
+  'group2' : {
+    'site1' : {
+      'build1' : { 'group':'group2', 'site':'site1', 'buildname':'build1' },
+      },
+    'site3' : {
+      'build4' : { 'group':'group2', 'site':'site3', 'buildname':'build4' },
+      },
+    },
+  }
+
+class test_createBuildLookupDict(unittest.TestCase):
+
+  def test_1(self):
+    buildLookupDict = createBuildLookupDict(g_buildsListForExpectedBuilds)
+    #print("\nbuildLookupDict:")
+    #g_pp.pprint(buildLookupDict)
+    #print("\ng_buildLookupDictForExpectedBuilds:")
+    #g_pp.pprint(g_buildLookupDictForExpectedBuilds)
+    self.assertEqual(buildLookupDict, g_buildLookupDictForExpectedBuilds)
+
+
+#############################################################################
+#
 # Test CDashQueryAnalizeReport.doAllExpectedBuildsExist
 #
 #############################################################################
