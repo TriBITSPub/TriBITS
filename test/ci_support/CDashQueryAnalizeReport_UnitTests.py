@@ -456,11 +456,12 @@ class test_createBuildLookupDict(unittest.TestCase):
 #
 #############################################################################
 
+def gsb(groupName, siteName, buildName):
+  return {'group':groupName, 'site':siteName, 'buildname':buildName}
+
 def lookupData(groupName, siteName, buildName, buildLookupDict):
   buildDict = lookupBuildSummaryGivenLookupDict(
-     {'group':groupName, 'site':siteName, 'buildname':buildName},
-     buildLookupDict \
-     )
+    gsb(groupName, siteName, buildName), buildLookupDict)
   if not buildDict : return None
   return buildDict.get('data')
      
@@ -488,8 +489,21 @@ class test_lookupBuildSummaryGivenLookupDict(unittest.TestCase):
 class test_getMissingExpectedBuildsList(unittest.TestCase):
 
   def test_1(self):
-    None
-
+    blud = copy.deepcopy(createBuildLookupDict(g_buildsListForExpectedBuilds))
+    blud.get('group2').get('site3').get('build4').update({'test':{'pass':1}})
+    expectedBuildsList = [
+      gsb('group1', 'site2', 'build3'),  # Build exists but missing tests
+      gsb('group2', 'site3', 'build4'),  # Build exists and has tests
+      gsb('group2', 'site3', 'build8'),  # Build missing all-together
+      ]
+    missingExpectedBuildsList = getMissingExpectedBuildsList(blud, expectedBuildsList)
+    self.assertEqual(len(missingExpectedBuildsList), 2)
+    self.assertEqual(missingExpectedBuildsList[0],
+      { 'group':'group1', 'site':'site2', 'buildname':'build3',
+        'status':"Build exists but no test results" } )
+    self.assertEqual(missingExpectedBuildsList[1],
+      { 'group':'group2', 'site':'site3', 'buildname':'build8',
+        'status':"Build not found on CDash" } )
 
 
 #############################################################################

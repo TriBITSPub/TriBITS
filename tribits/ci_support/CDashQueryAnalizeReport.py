@@ -46,8 +46,8 @@ except ImportError:
 
 import json
 import datetime
+import copy
 import pprint
-import csv
 
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
@@ -289,6 +289,7 @@ def createBuildLookupDict(summaryBuildsList):
     siteDict.setdefault(buildName, buildSummaryDict)
   return buildLookupDict
 
+
 # Lookup a build dict given a lookup dict from createBuildLookupDict()
 def lookupBuildSummaryGivenLookupDict(groupSiteBuildDict, buildLookupDict):
   groupDict = buildLookupDict.get(groupSiteBuildDict.get('group'), None)
@@ -297,6 +298,54 @@ def lookupBuildSummaryGivenLookupDict(groupSiteBuildDict, buildLookupDict):
   if not siteDict: return None
   buildDict = siteDict.get(groupSiteBuildDict.get('buildname'), None)
   return buildDict
+
+
+# Gather up a list of the missing builds.
+#
+# Inputs:
+#
+#   buildLookupDict [in]: Lookup dict of build summary dicts gotten off CDash
+#   
+#   expectedBuildsList [in]: List of expected builds dict with fields 'group',
+#   'site', and 'buildname'.
+#
+# Returns an array of dicts of missing expected builds with list elements:
+#
+#    {'group':"???", 'site':"???", 'buildname':"???", 'status':"???"}
+#
+# The field 'status' will either be given either:
+#
+#   "Build not found on CDash"
+#
+# or
+#
+#   "Build exists but no test results"
+#
+def getMissingExpectedBuildsList(buildLookupDict, expectedBuildsList):
+  missingExpectedBuildsList = []
+  for expectedBuildDict in expectedBuildsList:
+    #print("\nexpectedBuildDict = "+str(expectedBuildDict))
+    buildSummaryDict = \
+      lookupBuildSummaryGivenLookupDict(expectedBuildDict, buildLookupDict)
+    #print("buildSummaryDict = "+str(buildSummaryDict))
+    if not buildSummaryDict:
+      # Expected build not found!
+      missingExpectedBuildDict = copy.deepcopy(expectedBuildDict)
+      missingExpectedBuildDict.update({'status':"Build not found on CDash"})
+      #print("missingExpectedBuildDict = "+str(missingExpectedBuildDict))
+      missingExpectedBuildsList.append(missingExpectedBuildDict)
+    elif not buildSummaryDict.get('test', None):
+      # Build exists but it is missing tests!
+      missingExpectedBuildDict = copy.deepcopy(expectedBuildDict)
+      missingExpectedBuildDict.update({'status':"Build exists but no test results"})
+      #print("missingExpectedBuildDict = "+str(missingExpectedBuildDict))
+      missingExpectedBuildsList.append(missingExpectedBuildDict)
+    else:
+      # This build exists and it has test results so don't add it
+      None
+  # Return the list of missing expected builds and status
+  return missingExpectedBuildsList
+
 
 # Return if a CDash Index build passes
 def cdashIndexBuildPasses(cdashIndexBuild):
