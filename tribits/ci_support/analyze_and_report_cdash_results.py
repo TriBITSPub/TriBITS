@@ -214,11 +214,12 @@ if __name__ == '__main__':
 
   htmlEmailBody += "</p>\n"
 
-  projectExpectedBuilds=[]
-  # ToDo: Read this in from inOptions.expectedBuildsFile!
+  expectedBuildsList = \
+    CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
 
-  # ToDo: Write out the date the the cache dir so that it can be read back in
-  # to check the cache.
+  # ToDo: Write out the date and the query strings data to a cache file and
+  # then check it to make sure that the arguments are the same when checking
+  # the cache.
 
   allBuildsPass = True
 
@@ -229,7 +230,7 @@ if __name__ == '__main__':
        inOptions.cdashProjectName,
        inOptions.date,
        inOptions.cdashBuildsFilters,
-       projectExpectedBuilds,
+       expectedBuildsList,
        cdashQueriesCacheDir=inOptions.cdashQueriesCacheDir,
        useCachedCDashData=useCachedCDashData,
        )
