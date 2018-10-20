@@ -47,9 +47,10 @@ except ImportError:
 import json
 import datetime
 import pprint
+import csv
 
 from FindGeneralScriptSupport import *
-
+from GeneralScriptSupport import *
 
 # Validate a date format
 def validateYYYYMMDD(dateText):
@@ -63,6 +64,87 @@ def validateYYYYMMDD(dateText):
 def extractCDashApiQueryData(cdashApiQueryUrl):
   response = urlopen(cdashApiQueryUrl)
   return json.load(response)
+
+
+
+
+
+
+
+# Read a CSV file into a list of dictionaries for each row where the rows of
+# the output list are dicts with the column names as keys.
+#
+# For example, for the CSV file:
+#
+#   col_0, col_1, col_2
+#   val_00, val_01, val_02
+#   val_10, val_11, val_12
+#
+# The returned list of dicts will be:
+#
+#  [
+#    { 'col_0':'val_00', 'col_1':'val_01', 'col_2':'val_02' }, 
+#    { 'col_0':'val_10', 'col_1':'val_11', 'col_2':'val_12' }, 
+#    ]
+#
+# and the expected list of column headers would be:
+#
+#   expectedColumnHeadersList = [ 'col_0', 'col_1', 'col_2' ]
+#
+# But the expectedColumnHeadersList argument is optional.
+#
+def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
+  listOfDicts = []
+  with open(csvFileName, 'r') as csvFile:
+    # Get the list of column headers
+    columnHeadersLineStr = csvFile.readline().strip()
+    columnHeadersRawStrList = columnHeadersLineStr.split(',')
+    columnHeadersList = []
+    for headerRawStr in columnHeadersRawStrList:
+      columnHeadersList.append(headerRawStr.strip())
+    if expectedColumnHeadersList:
+      if len(columnHeadersList) != len(expectedColumnHeadersList):
+        raise Exception(
+          "Error, for CSV file '"+csvFileName+"' the"+\
+          " column headers '"+str(columnHeadersList)+"' has"+\
+          " "+len(columnHeadersList)+" items but the expected"+\
+          " set of column headers '"+str(expectedColumnHeadersList)+"'"+\
+          " has "+len(expectedColumnHeadersList)+" items!")
+      for i in range(len(columnHeadersList)):
+        if columnHeadersList[i] != expectedColumnHeadersList[i]:
+          raise Exception(
+            "Error, column header "+str(i)+" '"+columnHeadersList[i]+"' does"+\
+            " not match expected column header '"+expectedColumnHeadersList[i]+"'!")
+    # Read the rows of the CSV file into dicts
+    dataRow = 0
+    line = csvFile.readline().strip()
+    while line:
+      #print("\ndataRow = "+str(dataRow))
+      lineList = line.split(',')
+      #print(lineList)
+      # Assert that the row has the right number of entries
+      if len(lineList) != len(columnHeadersList):
+        raise Exception(
+          "Error, data row "+str(dataRow)+" '"+line+"' has"+\
+          " "+len(lineList)+" entries which does not macth"+\
+          " the number of column headers "+len(columnHeadersList)+"!")
+      # Read the row entries into a new dict
+      rowDict = {}
+      for j in range(len(columnHeadersList)):
+        rowDict.update( { columnHeadersList[j] : lineList[j].strip() } )
+      #print(rowDict)
+      listOfDicts.append(rowDict)
+      # Update for next row
+      line = csvFile.readline().strip()
+      dataRow += 1
+  # Return the constructed object
+  return listOfDicts
+
+
+# Get list of expected builds from CSV file
+def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
+  return readCsvFileIntoListOfDicts(expectedBuildsFileName,
+    ['group', 'site', 'buildname'])
 
 
 # Get data off of CDash and cache it or read from previously cached data

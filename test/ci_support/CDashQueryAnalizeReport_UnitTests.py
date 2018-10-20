@@ -141,6 +141,52 @@ class test_CDashQueryAnalizeReport(unittest.TestCase):
     #yyyyymmdd = validateYYYYMMDD("201512-21")
     self.assertRaises(ValueError, validateYYYYMMDD,  "201512-21")
 
+  def test_readCsvFileIntoListOfDics_col_3_row_2_pass(self):
+    csvFileStr=\
+        "col_0, col_1, col_2\n"+\
+        "val_00, val_01, val_02\n"+\
+        "val_10, val_11, val_12\n\n\n"  # Add extra blanks line for extra test!
+    csvFileName = "test_readCsvFileIntoListOfDics_col_3_row_2_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
+    listOfDicts_expected = \
+      [
+        { 'col_0' : 'val_00', 'col_1' : 'val_01', 'col_2' : 'val_02' },
+        { 'col_0' : 'val_10', 'col_1' : 'val_11', 'col_2' : 'val_12' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_expected)):
+      self.assertEqual(listOfDicts[i], listOfDicts_expected[i])
+
+  # ToDo: Test with no expected column headers list
+
+  # ToDo: Test with wrong set of expected column headers
+
+  # ToDo: Test with row number of items in row
+
+  def test_getExpectedBuildsListfromCsvFile(self):
+    expectedBuildsCsvFileStr=\
+        "group, site, buildname\n"+\
+        "group1, site1, buildname1\n"+\
+        "group1, site1, buildname2\n"+\
+        "group2, site2, buildname2\n"
+    csvFileName = "test_getExpectedBuildsListfromCsvFile.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(expectedBuildsCsvFileStr)
+    expectedBuildsList = getExpectedBuildsListfromCsvFile(csvFileName)
+    expectedBuildsList_expected = \
+      [
+        { 'group' : 'group1', 'site' : 'site1', 'buildname' : 'buildname1' },
+        { 'group' : 'group1', 'site' : 'site1', 'buildname' : 'buildname2' },
+        { 'group' : 'group2', 'site' : 'site2', 'buildname' : 'buildname2' },
+        ]
+    self.assertEqual(len(expectedBuildsList), 3)
+    for i in range(len(expectedBuildsList_expected)):
+      self.assertEqual(expectedBuildsList[i], expectedBuildsList_expected[i])
+
+  # ToDo: Add tests for bad CSV file format files
+
   def test_getAndCacheCDashQueryDataOrReadFromCache_write_cache(self):
     outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_write_cache"
     outputCacheFile=outputCacheDir+"/cachedCDashQueryData.json"
