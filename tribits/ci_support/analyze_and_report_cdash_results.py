@@ -125,7 +125,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
   
   clp.add_option(
     "--write-email-to-file", dest="writeEmailToFile", type="string", default="",
-    help="Write the body of the HTML email this file. (Default '')" )
+    help="Write the body of the HTML email to this file. (Default '')" )
 
 
 def validateCmndLineOptions(inOptions):
