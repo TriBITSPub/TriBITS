@@ -330,7 +330,9 @@ class test_CDashQueryAnalizeReport_UrlFuncs(unittest.TestCase):
 #############################################################################
 
 # This summary build has just the minimal required fields
-g_singleBuildPassesMinimal = {
+g_singleBuildPassesSummary = {
+  'group':'groupName',
+  'site':'siteName',
   'buildname':"buildName",
   'update': {'errors':0},
   'configure':{'error': 0},
@@ -339,28 +341,35 @@ g_singleBuildPassesMinimal = {
   }
 
 # Single build with extra stuff
-g_singleBuildPassesWithExtra = copy.deepcopy(g_singleBuildPassesMinimal)
-g_singleBuildPassesWithExtra.update( { 'extra-stuff':'stuff' } )
+g_singleBuildPassesRaw = {
+  'site':'siteName',
+  'buildname':"buildName",
+  'update': {'errors':0},
+  'configure':{'error': 0},
+  'compilation':{'error':0},
+  'test': {'fail':0, 'notrun':0},
+  'extra-stuff':'stuff',
+  }
 
 class test_collectCDashIndexBuildSummaryFields(unittest.TestCase):
 
   def test_collectCDashIndexBuildSummaryFields_full(self):
-    buildSummary = collectCDashIndexBuildSummaryFields(g_singleBuildPassesWithExtra)
-    self.assertEqual(buildSummary, g_singleBuildPassesMinimal)
+    buildSummary = collectCDashIndexBuildSummaryFields(g_singleBuildPassesRaw, "groupName")
+    self.assertEqual(buildSummary, g_singleBuildPassesSummary)
 
   def test_collectCDashIndexBuildSummaryFields_missing_update(self):
-    fullCDashIndexBuild_in = copy.deepcopy(g_singleBuildPassesWithExtra)
+    fullCDashIndexBuild_in = copy.deepcopy(g_singleBuildPassesRaw)
     del fullCDashIndexBuild_in['update']
-    buildSummary = collectCDashIndexBuildSummaryFields(fullCDashIndexBuild_in)
-    buildSummary_expected = copy.deepcopy(g_singleBuildPassesMinimal)
+    buildSummary = collectCDashIndexBuildSummaryFields(fullCDashIndexBuild_in, "groupName")
+    buildSummary_expected = copy.deepcopy(g_singleBuildPassesSummary)
     del buildSummary_expected['update']
     self.assertEqual(buildSummary, buildSummary_expected)
 
   def test_collectCDashIndexBuildSummaryFields_missing_configure(self):
-    fullCDashIndexBuild_in = copy.deepcopy(g_singleBuildPassesWithExtra)
+    fullCDashIndexBuild_in = copy.deepcopy(g_singleBuildPassesRaw)
     del fullCDashIndexBuild_in['configure']
-    buildSummary = collectCDashIndexBuildSummaryFields(fullCDashIndexBuild_in)
-    buildSummary_expected = copy.deepcopy(g_singleBuildPassesMinimal)
+    buildSummary = collectCDashIndexBuildSummaryFields(fullCDashIndexBuild_in, "groupName")
+    buildSummary_expected = copy.deepcopy(g_singleBuildPassesSummary)
     del buildSummary_expected['configure']
     self.assertEqual(buildSummary, buildSummary_expected)
 
@@ -375,11 +384,15 @@ class test_collectCDashIndexBuildSummaryFields(unittest.TestCase):
 # make for better testing.
 g_fullCDashIndexBuilds = \
   eval(open(g_testBaseDir+'/cdash_index_query_data.txt', 'r').read())
+#print("g_fullCDashIndexBuilds:")
+#g_pp.pprint(g_fullCDashIndexBuilds)
 
 # This file was manually created from the above file to match what the reduced
 # builds should be.
 g_summaryCDashIndexBuilds_expected = \
   eval(open(g_testBaseDir+'/cdash_index_query_data.summary.txt', 'r').read())
+#print("g_summaryCDashIndexBuilds_expected:")
+#g_pp.pprint(g_summaryCDashIndexBuilds_expected)
 
 class test_getCDashIndexBuildsSummary(unittest.TestCase):
 
@@ -401,42 +414,42 @@ class test_getCDashIndexBuildsSummary(unittest.TestCase):
 class test_cdashIndexBuildPasses(unittest.TestCase):
 
   def test_cdashIndexBuildPasses_pass(self):
-    build = copy.deepcopy(g_singleBuildPassesMinimal)
+    build = copy.deepcopy(g_singleBuildPassesSummary)
     self.assertEqual(cdashIndexBuildPasses(build), True)
 
   def test_cdashIndexBuildPasses_update_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesMinimal)
+    build = copy.deepcopy(g_singleBuildPassesSummary)
     build['update']['errors'] = 1
     self.assertEqual(cdashIndexBuildPasses(build), False)
 
   def test_cdashIndexBuildPasses_configure_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesMinimal)
+    build = copy.deepcopy(g_singleBuildPassesSummary)
     build['configure']['error'] = 1
     self.assertEqual(cdashIndexBuildPasses(build), False)
 
   def test_cdashIndexBuildPasses_compilation_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesMinimal)
+    build = copy.deepcopy(g_singleBuildPassesSummary)
     build['compilation']['error'] = 1
     self.assertEqual(cdashIndexBuildPasses(build), False)
 
   def test_cdashIndexBuildPasses_test_fail_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesMinimal)
+    build = copy.deepcopy(g_singleBuildPassesSummary)
     build['test']['fail'] = 1
     self.assertEqual(cdashIndexBuildPasses(build), False)
 
   def test_cdashIndexBuildPasses_test_notrun_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesMinimal)
+    build = copy.deepcopy(g_singleBuildPassesSummary)
     build['test']['notrun'] = 1
     self.assertEqual(cdashIndexBuildPasses(build), False)
 
   def test_cdashIndexBuildsPass_1_pass(self):
-    builds = [copy.deepcopy(g_singleBuildPassesMinimal)]
+    builds = [copy.deepcopy(g_singleBuildPassesSummary)]
     (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
     self.assertEqual(buildPasses, True)
     self.assertEqual(buildFailedMsg, "")
 
   def test_cdashIndexBuildsPass_1_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesMinimal)
+    build = copy.deepcopy(g_singleBuildPassesSummary)
     build['compilation']['error'] = 1
     builds = [build]
     (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
@@ -445,15 +458,15 @@ class test_cdashIndexBuildPasses(unittest.TestCase):
                      " failed!")
 
   def test_cdashIndexBuildsPass_2_pass(self):
-    build = copy.deepcopy(g_singleBuildPassesMinimal)
+    build = copy.deepcopy(g_singleBuildPassesSummary)
     builds = [build, build]
     (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
     self.assertEqual(buildPasses, True)
     self.assertEqual(buildFailedMsg, "")
 
   def test_cdashIndexBuildsPass_2_fail_1(self):
-    build = copy.deepcopy(g_singleBuildPassesMinimal)
-    buildFailed = copy.deepcopy(g_singleBuildPassesMinimal)
+    build = copy.deepcopy(g_singleBuildPassesSummary)
+    buildFailed = copy.deepcopy(g_singleBuildPassesSummary)
     buildFailed['buildname'] = "failedBuild"
     buildFailed['compilation']['error'] = 1
     builds = [buildFailed, build]
@@ -463,8 +476,8 @@ class test_cdashIndexBuildPasses(unittest.TestCase):
                      sorted_dict_str(buildFailed) + " failed!")
 
   def test_cdashIndexBuildsPass_2_fail_2(self):
-    build = copy.deepcopy(g_singleBuildPassesMinimal)
-    buildFailed = copy.deepcopy(g_singleBuildPassesMinimal)
+    build = copy.deepcopy(g_singleBuildPassesSummary)
+    buildFailed = copy.deepcopy(g_singleBuildPassesSummary)
     buildFailed['buildname'] = "failedBuild"
     buildFailed['compilation']['error'] = 1
     builds = [build, buildFailed]
@@ -474,11 +487,11 @@ class test_cdashIndexBuildPasses(unittest.TestCase):
                      sorted_dict_str(buildFailed) + " failed!")
 
   def test_getCDashIndexBuildNames(self):
-    build1 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build1 = copy.deepcopy(g_singleBuildPassesSummary)
     build1['buildname'] = "build1"
-    build2 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build2 = copy.deepcopy(g_singleBuildPassesSummary)
     build2['buildname'] = "build2"
-    build3 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build3 = copy.deepcopy(g_singleBuildPassesSummary)
     build3['buildname'] = "build3"
     builds = [build1, build2, build3]
     buildNames_expected = [ "build1", "build2", "build3" ]
@@ -562,7 +575,7 @@ class test_doAllExpectedBuildsExist(unittest.TestCase):
     self.assertEqual(allExpectedBuildsExist, False)
 
   def test_cdashIndexBuildsPassAndExpectedExist_1_pass(self):
-    build1 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build1 = copy.deepcopy(g_singleBuildPassesSummary)
     build1['buildname'] = "build1"
     builds = [ build1 ]
     expectedBuildNames = ["build1"]
@@ -573,7 +586,9 @@ class test_doAllExpectedBuildsExist(unittest.TestCase):
     self.assertEqual(cdashIndexBuildsPassAndExpectedExist_passed, True)
 
   def test_cdashIndexBuildsPassAndExpectedExist_1_build_fail(self):
-    build1 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build1 = copy.deepcopy(g_singleBuildPassesSummary)
+    build1['group'] = "group1"
+    build1['site'] = "site1"
     build1['buildname'] = "build1"
     build1['configure']['error'] = 5
     builds = [ build1 ]
@@ -583,7 +598,8 @@ class test_doAllExpectedBuildsExist(unittest.TestCase):
     expectedErrMsg = \
       "Error, the build " + \
       sorted_dict_str({
-        'buildname': 'build1', 'test': {'notrun': 0, 'fail': 0},
+        'group':'group1', 'site':'site1', 'buildname': 'build1',
+        'test': {'notrun': 0, 'fail': 0},
         'compilation': {'error': 0}, 'update': {'errors': 0},
         'configure': {'error': 5}})+ \
       " failed!"
@@ -596,7 +612,7 @@ class test_doAllExpectedBuildsExist(unittest.TestCase):
     # #119).
 
   def test_cdashIndexBuildsPassAndExpectedExist_1_missing_expected_build(self):
-    build1 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build1 = copy.deepcopy(g_singleBuildPassesSummary)
     build1['buildname'] = "build1"
     builds = [ build1 ]
     expectedBuildNames = ["build2"]
@@ -621,11 +637,11 @@ def dummyExtractCDashApiQueryData(cdashQueryUrl_expected):
 class test_queryCDashAndDeterminePassFail(unittest.TestCase):
 
   def test_queryCDashAndDeterminePassFail_1_pass(self):
-    build1 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build1 = copy.deepcopy(g_singleBuildPassesSummary)
     build1['buildname'] = "build1"
     fullCDashIndexBuilds = {
       'buildgroups':[
-        {'builds':[build1]}
+        {'name':'group1', 'builds':[build1]}
         ]
       }
     global g_extractCDashApiQueryData_builds
@@ -638,14 +654,14 @@ class test_queryCDashAndDeterminePassFail(unittest.TestCase):
     self.assertEqual(allPassed, True)
 
   def test_queryCDashAndDeterminePassFail_2_pass(self):
-    build1 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build1 = copy.deepcopy(g_singleBuildPassesSummary)
     build1['buildname'] = "build1"
-    build2 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build2 = copy.deepcopy(g_singleBuildPassesSummary)
     build2['buildname'] = "build2"
     fullCDashIndexBuilds = {
       'buildgroups':[
-        {'builds':[build1]},
-        {'builds':[build2]}
+        {'name':'group1', 'builds':[build1]},
+        {'name':'group2', 'builds':[build2]}
         ]
       }
     global g_extractCDashApiQueryData_builds
@@ -658,11 +674,11 @@ class test_queryCDashAndDeterminePassFail(unittest.TestCase):
     self.assertEqual(allPassed, True)
 
   def test_queryCDashAndDeterminePassFail_1_missing_expected(self):
-    build1 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build1 = copy.deepcopy(g_singleBuildPassesSummary)
     build1['buildname'] = "build1"
     fullCDashIndexBuilds = {
       'buildgroups':[
-        {'builds':[build1]}
+        {'name':'group1', 'builds':[build1]}
         ]
       }
     global g_extractCDashApiQueryData_builds
@@ -676,12 +692,12 @@ class test_queryCDashAndDeterminePassFail(unittest.TestCase):
     self.assertEqual(allPassed, False)
 
   def test_queryCDashAndDeterminePassFail_1_fail(self):
-    build1 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build1 = copy.deepcopy(g_singleBuildPassesSummary)
     build1['buildname'] = "build1"
     build1['test']['fail'] = 3
     fullCDashIndexBuilds = {
       'buildgroups':[
-        {'builds':[build1]}
+        {'name':'group1', 'builds':[build1]}
         ]
       }
     global g_extractCDashApiQueryData_builds
@@ -693,7 +709,8 @@ class test_queryCDashAndDeterminePassFail(unittest.TestCase):
     expectedErrMsg = \
       "Error, the build " + \
       sorted_dict_str({
-        u'buildname': 'build1', u'test': {'fail': 3, 'notrun': 0},
+        u'group':'group1', u'site':'siteName', u'buildname': 'build1',
+        u'test': {'fail': 3, 'notrun': 0},
         u'compilation': {'error': 0}, u'update': {'errors': 0},
         u'configure': {'error': 0}}) + \
       " failed!"
@@ -703,15 +720,15 @@ class test_queryCDashAndDeterminePassFail(unittest.TestCase):
     # #119).
 
   def test_queryCDashAndDeterminePassFail_2_fail(self):
-    build1 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build1 = copy.deepcopy(g_singleBuildPassesSummary)
     build1['buildname'] = "build1"
-    build2 = copy.deepcopy(g_singleBuildPassesMinimal)
+    build2 = copy.deepcopy(g_singleBuildPassesSummary)
     build2['buildname'] = "build2"
     build2['test']['notrun'] = 2
     fullCDashIndexBuilds = {
       'buildgroups':[
-        {'builds':[build1]},
-        {'builds':[build2]}
+        {'name':'group1', 'builds':[build1]},
+        {'name':'group2', 'builds':[build2]}
         ]
       }
     global g_extractCDashApiQueryData_builds
@@ -723,7 +740,8 @@ class test_queryCDashAndDeterminePassFail(unittest.TestCase):
     expectedErrMsg = \
       "Error, the build " + \
       sorted_dict_str({
-        u'buildname': 'build2', u'test': {'fail': 0, 'notrun': 2},
+        u'group':'group2', u'site':'siteName', u'buildname': 'build2',
+        u'test': {'fail': 0, 'notrun': 2},
         u'compilation': {'error': 0}, u'update': {'errors': 0},
         u'configure': {'error': 0}}) + \
       " failed!"

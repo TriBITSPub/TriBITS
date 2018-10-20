@@ -66,11 +66,6 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
   return json.load(response)
 
 
-
-
-
-
-
 # Read a CSV file into a list of dictionaries for each row where the rows of
 # the output list are dicts with the column names as keys.
 #
@@ -164,7 +159,7 @@ def getAndCacheCDashQueryDataOrReadFromCache(
       print("Getting data from:\n\n  " + cdashQueryUrl )
     cdashQueryData = extractCDashApiQueryData_in(cdashQueryUrl)
     if cdashQueryDataCacheFile:
-      pp = pprint.PrettyPrinter(stream=open(cdashQueryDataCacheFile,'w'), indent=4)
+      pp = pprint.PrettyPrinter(stream=open(cdashQueryDataCacheFile,'w'), indent=2)
       pp.pprint(cdashQueryData)
   return cdashQueryData
 
@@ -201,8 +196,9 @@ def copyKeyDictIfExists(sourceDict_in, keyName_in, dict_inout):
 
 
 # Collect CDash index.php build summary fields
-def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild):
-  summaryBuild = {}
+def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
+  summaryBuild = { u'group' : groupName }
+  copyKeyDictIfExists(fullCDashIndexBuild, u'site', summaryBuild)
   copyKeyDictIfExists(fullCDashIndexBuild, u'buildname', summaryBuild)
   copyKeyDictIfExists(fullCDashIndexBuild, u'update', summaryBuild)
   copyKeyDictIfExists(fullCDashIndexBuild, u'configure', summaryBuild)
@@ -211,24 +207,26 @@ def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild):
   return summaryBuild
 
 
-# Given the full Python CDash API builds data-structure returned from the
+# Given the full Python CDash API builds JSON data-structure returned from the
 # CDash index.php page and query, return an reduced data-structure to be used
-# for pass/fail examination.
+# for pass/fail examination and look for missing builds.
 #
 # This function takes in the data-structre directly returned from:
 #
 #   <cdash-url>/api/v1/index.php?project=<project>&date=<YYYY-MM-DD>&<filter-fields>
 #
-# The input full CDash API collapsed builds data-structure that has the
-# following structure and fields of interest:
+# The input full CDash API collapsed builds data-structure has the following
+# structure and fields of interest:
 #
 #  fullCDashIndexBuilds =
 #  {
 #    'all_buildgroups': [ {'id':1,'name:"Nightly"}, ...],
 #    'buildgroups': [
 #      {
+#        'name':"???",   # group name, e.g. nightly
 #        'builds":[
 #          {
+#            'site':"???"
 #            'buildname':"???",
 #            'update': {'errors':???, ...},
 #            'configure':{'error': ???, ...},
@@ -251,6 +249,8 @@ def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild):
 #
 #   [
 #     {
+#       'group':"???",
+#       'site':"???",
 #       'buildname':"???",
 #       'update': {'errors':???, ...},
 #       'configure':{'error': ???, ...},
@@ -261,16 +261,17 @@ def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild):
 #       ...
 #       }
 #
-# This collects *all* of the builds from all of the build groups, not just the
-# 'Nighlty' build group.  Therefore, if you want to only consider on set of
-# build groups, you need to add that to the CDash query URL
-# (e.g. group='Nighlty').
+# This collects *all* of the builds from all of the build groups provided by
+# that data-structure, not just the 'Nighlty' build group.  Therefore, if you
+# want to only consider on set of build groups, you need to add that to the
+# CDash query URL (e.g. group='Nighlty').
 #
 def getCDashIndexBuildsSummary(fullCDashIndexBuilds):
   summaryCDashIndexBuilds = []
   for buildgroup in fullCDashIndexBuilds["buildgroups"]:
+    groupName = buildgroup["name"]
     for build in buildgroup["builds"]:
-      summaryBuild = collectCDashIndexBuildSummaryFields(build)
+      summaryBuild = collectCDashIndexBuildSummaryFields(build, groupName)
       summaryCDashIndexBuilds.append(summaryBuild)
   return summaryCDashIndexBuilds
   
@@ -317,6 +318,7 @@ def doAllExpectedBuildsExist(buildNames, expectedBuildNames):
   for expectedBuildName in expectedBuildNames:
     if findInSequence(buildNames, expectedBuildName) == -1:
       allExpectedBuildsExist = False
+      #print(expectedBuildName)
       errMsg = "Error, the expected build '"+expectedBuildName+"'" \
         +" does not exist in the list of builds "+str(buildNames) 
       break
