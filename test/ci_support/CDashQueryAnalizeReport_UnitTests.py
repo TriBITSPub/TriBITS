@@ -58,42 +58,11 @@ g_pp = pprint.PrettyPrinter(indent=4)
 # Data for tests
 #
 
-# This file was taken from an actual CDash query and then modified a little to
-# make for better testing.
-g_fullCDashIndexBuilds = \
-  eval(open(g_testBaseDir+'/cdash_index_query_data.txt', 'r').read())
-
-# This file was manually created from the above file to match what the reduced
-# builds should be.
-g_summaryCDashIndexBuilds_expected = \
-  eval(open(g_testBaseDir+'/cdash_index_query_data.summary.txt', 'r').read())
-
-# This summary build has just the minimal required fields
-g_singleBuildPassesMinimal = {
-  'buildname':"buildName",
-  'update': {'errors':0},
-  'configure':{'error': 0},
-  'compilation':{'error':0},
-  'test': {'fail':0, 'notrun':0},
-  }
-
-# Single build with extra stuff
-g_singleBuildPassesWithExtra = copy.deepcopy(g_singleBuildPassesMinimal)
-g_singleBuildPassesWithExtra.update( { 'extra-stuff':'stuff' } )
-
 # Helper script for creating test directories
 def deleteThenCreateTestDir(testDir):
     outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_write_cache"
     if os.path.exists(testDir): shutil.rmtree(testDir)
     os.mkdir(testDir)
-
-
-# Dummy queryCDashAndDeterminePassFail() for unit testing
-
-g_extractCDashApiQueryData_builds = None
-
-def dummyExtractCDashApiQueryData(cdashQueryUrl_expected):
-  return g_extractCDashApiQueryData_builds
 
 
 #############################################################################
@@ -360,6 +329,19 @@ class test_CDashQueryAnalizeReport_UrlFuncs(unittest.TestCase):
 #
 #############################################################################
 
+# This summary build has just the minimal required fields
+g_singleBuildPassesMinimal = {
+  'buildname':"buildName",
+  'update': {'errors':0},
+  'configure':{'error': 0},
+  'compilation':{'error':0},
+  'test': {'fail':0, 'notrun':0},
+  }
+
+# Single build with extra stuff
+g_singleBuildPassesWithExtra = copy.deepcopy(g_singleBuildPassesMinimal)
+g_singleBuildPassesWithExtra.update( { 'extra-stuff':'stuff' } )
+
 class test_collectCDashIndexBuildSummaryFields(unittest.TestCase):
 
   def test_collectCDashIndexBuildSummaryFields_full(self):
@@ -388,6 +370,16 @@ class test_collectCDashIndexBuildSummaryFields(unittest.TestCase):
 # Test CDashQueryAnalizeReport.getCDashIndexBuildsSummary
 #
 #############################################################################
+
+# This file was taken from an actual CDash query and then modified a little to
+# make for better testing.
+g_fullCDashIndexBuilds = \
+  eval(open(g_testBaseDir+'/cdash_index_query_data.txt', 'r').read())
+
+# This file was manually created from the above file to match what the reduced
+# builds should be.
+g_summaryCDashIndexBuilds_expected = \
+  eval(open(g_testBaseDir+'/cdash_index_query_data.summary.txt', 'r').read())
 
 class test_getCDashIndexBuildsSummary(unittest.TestCase):
 
@@ -620,6 +612,11 @@ class test_doAllExpectedBuildsExist(unittest.TestCase):
 # Test CDashQueryAnalizeReport.queryCDashAndDeterminePassFail
 #
 #############################################################################
+
+g_extractCDashApiQueryData_builds = None
+
+def dummyExtractCDashApiQueryData(cdashQueryUrl_expected):
+  return g_extractCDashApiQueryData_builds
 
 class test_queryCDashAndDeterminePassFail(unittest.TestCase):
 
