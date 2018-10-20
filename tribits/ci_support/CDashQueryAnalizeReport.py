@@ -107,9 +107,9 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
         raise Exception(
           "Error, for CSV file '"+csvFileName+"' the"+\
           " column headers '"+str(columnHeadersList)+"' has"+\
-          " "+len(columnHeadersList)+" items but the expected"+\
+          " "+str(len(columnHeadersList))+" items but the expected"+\
           " set of column headers '"+str(expectedColumnHeadersList)+"'"+\
-          " has "+len(expectedColumnHeadersList)+" items!")
+          " has "+str(len(expectedColumnHeadersList))+" items!")
       for i in range(len(columnHeadersList)):
         if columnHeadersList[i] != expectedColumnHeadersList[i]:
           raise Exception(
@@ -126,8 +126,8 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
       if len(lineList) != len(columnHeadersList):
         raise Exception(
           "Error, data row "+str(dataRow)+" '"+line+"' has"+\
-          " "+len(lineList)+" entries which does not macth"+\
-          " the number of column headers "+len(columnHeadersList)+"!")
+          " "+str(len(lineList))+" entries which does not macth"+\
+          " the number of column headers "+str(len(columnHeadersList))+"!")
       # Read the row entries into a new dict
       rowDict = {}
       for j in range(len(columnHeadersList)):

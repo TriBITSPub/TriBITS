@@ -136,12 +136,12 @@ class test_validateYYYYMMDD(unittest.TestCase):
 
 class test_readCsvFileIntoListOfDics(unittest.TestCase):
 
-  def test_col_3_row_2_pass(self):
+  def test_col_3_row_2_expected_cols__pass(self):
     csvFileStr=\
         "col_0, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"+\
         "val_10, val_11, val_12\n\n\n"  # Add extra blanks line for extra test!
-    csvFileName = "readCsvFileIntoListOfDics_col_3_row_2_pass.csv"
+    csvFileName = "readCsvFileIntoListOfDics_col_3_row_2_expeced_cols_pass.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
@@ -154,11 +154,83 @@ class test_readCsvFileIntoListOfDics(unittest.TestCase):
     for i in range(len(listOfDicts_expected)):
       self.assertEqual(listOfDicts[i], listOfDicts_expected[i])
 
-  # ToDo: Test with no expected column headers list
+  def test_col_3_row_2_no_expected_cols_pass(self):
+    csvFileStr=\
+        "col_0, col_1, col_2\n"+\
+        "val_00, val_01, val_02\n"+\
+        "val_10, val_11, val_12\n\n\n"  # Add extra blanks line for extra test!
+    csvFileName = "readCsvFileIntoListOfDics_col_3_row_2_no_expected_cols_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName)
+    listOfDicts_expected = \
+      [
+        { 'col_0' : 'val_00', 'col_1' : 'val_01', 'col_2' : 'val_02' },
+        { 'col_0' : 'val_10', 'col_1' : 'val_11', 'col_2' : 'val_12' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_expected)):
+      self.assertEqual(listOfDicts[i], listOfDicts_expected[i])
 
-  # ToDo: Test with wrong set of expected column headers
+  def test_too_few_expected_headers_fail(self):
+    csvFileStr=\
+        "wrong col, col_1, col_2\n"+\
+        "val_00, val_01, val_02\n"
+    csvFileName = "readCsvFileIntoListOfDics_too_few_expected_headers_fail.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1'])
+    self.assertRaises(Exception, readCsvFileIntoListOfDicts,
+      csvFileName, ['col_0', 'col_1'])
 
-  # ToDo: Test with row number of items in row
+  def test_too_many_expected_headers_fail(self):
+    csvFileStr=\
+        "wrong col, col_1, col_2\n"+\
+        "val_00, val_01, val_02\n"
+    csvFileName = "readCsvFileIntoListOfDics_too_many_expected_headers_fail.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
+    #  ['col_0', 'col_1', 'col_2', 'col3'])
+    self.assertRaises(Exception, readCsvFileIntoListOfDicts,
+      csvFileName, ['col_0', 'col_1', 'col_2', 'col3'])
+
+  def test_wrong_expected_col_0_fail(self):
+    csvFileStr=\
+        "wrong col, col_1, col_2\n"+\
+        "val_00, val_01, val_02\n"
+    csvFileName = "readCsvFileIntoListOfDics_wrong_expected_col_0_fail.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
+    self.assertRaises(Exception, readCsvFileIntoListOfDicts,
+      csvFileName, ['col_0', 'col_1', 'col_2'])
+
+  def test_wrong_expected_col_1_fail(self):
+    csvFileStr=\
+        "col_0, wrong col, col_2\n"+\
+        "val_00, val_01, val_02\n"
+    csvFileName = "readCsvFileIntoListOfDics_wrong_expected_col_1_fail.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
+    self.assertRaises(Exception, readCsvFileIntoListOfDicts,
+      csvFileName, ['col_0', 'col_1', 'col_2'])
+
+  def test_col_3_row_2_bad_row_len_fail(self):
+    csvFileStr=\
+        "col_0, col_1, col_2\n"+\
+        "val_00, val_01, val_02\n"+\
+        "val_10, val_11, val_12, extra\n"
+    csvFileName = "readCsvFileIntoListOfDics_col_3_row_2_bad_row_len_fail.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName)
+    self.assertRaises(Exception, readCsvFileIntoListOfDicts, csvFileName)
+
+  # ToDo: Add test for reading a CSV file with no rows
+
+  # ToDo: Add test for reading an empty CSV file (no column headers)
 
 
 #############################################################################
