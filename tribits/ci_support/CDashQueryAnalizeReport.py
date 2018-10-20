@@ -75,7 +75,7 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 #   val_00, val_01, val_02
 #   val_10, val_11, val_12
 #
-# The returned list of dicts will be:
+# the returned list of dicts will be:
 #
 #  [
 #    { 'col_0':'val_00', 'col_1':'val_01', 'col_2':'val_02' }, 
@@ -345,6 +345,53 @@ def getMissingExpectedBuildsList(buildLookupDict, expectedBuildsList):
       None
   # Return the list of missing expected builds and status
   return missingExpectedBuildsList
+
+
+# Download set of builds from CDash builds
+#
+# The CDash index.php query URL is built using the arguments:
+#
+#   cdashUrl,  projectName, date, buildFilterFields
+#
+# If printCDashUrl==True, the the CDash query URL will be printed to STDOUT.
+# Otherwise, this function is silent and will not return any output to STDOUT.
+#
+# If cdashQueriesCacheDir != None, then the raw JSON data-structure will be
+# written to the file cdashQueriesCacheDir/fullCDashIndexBuilds.json.
+#
+# If useCachedCDashData==True, then data will not be pulled off of CDash and
+# instead the list of builds will be read from the file
+# cdashQueriesCacheDir/fullCDashIndexBuilds.json must already exist from a
+# prior call to this function (mostly for debugging and unit testing
+# purposes).
+# 
+# The list of builds pulled off of CDash flattended and summmerized form
+# extracted by the funtion getCDashIndexBuildsSummary() (with 'group', 'site',
+# 'buildname' and update, configure, build, test and other results for the
+# build).
+#
+# NOTE: The optional argument extractCDashApiQueryData_in is used in unit
+# testing to avoid calling CDash.
+#
+def downloadBuildsOffCDashAndSummarize(
+  cdashUrl,  projectName, date, buildFilters,
+  printCDashUrl=True,
+  cdashQueriesCacheDir=None,
+  useCachedCDashData=False,
+  extractCDashApiQueryData_in=extractCDashApiQueryData,
+  ):
+  # Get the query data
+  cdashQueryUrl = getCDashIndexQueryUrl(cdashUrl, projectName, date, buildFilters)
+  if cdashQueriesCacheDir:
+    fullCDashIndexBuildsCacheFile=cdashQueriesCacheDir+"/fullCDashIndexBuilds.json"
+  else:
+    fullCDashIndexBuildsCacheFile = None
+  fullCDashIndexBuilds = getAndCacheCDashQueryDataOrReadFromCache(
+    cdashQueryUrl, fullCDashIndexBuildsCacheFile, useCachedCDashData,
+    printCDashUrl, extractCDashApiQueryData_in )
+  # Get trimmed down set of builds
+  summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
+  return summaryCDashIndexBuilds
 
 
 # Return if a CDash Index build passes

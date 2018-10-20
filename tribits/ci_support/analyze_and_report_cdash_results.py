@@ -191,8 +191,17 @@ if __name__ == '__main__':
     useCachedCDashData=False
 
   print "***"
-  print "*** Check for pass/fail of "+inOptions.buildSetName+" for "+inOptions.date
+  print "*** Query and analyze CDash results "+inOptions.buildSetName+\
+        " for testing day "+inOptions.date
   print "***"
+
+  # ToDo: Write out the date and the query strings data to a cache file and
+  # then check it to make sure that the arguments are the same when checking
+  # the cache.
+
+  #
+  # A) Create beginning of email body (that does not require getting any data off CDash)
+  #
 
   htmlEmailBody = \
    "<p><b>Build and Test results for "+inOptions.buildSetName \
@@ -200,12 +209,14 @@ if __name__ == '__main__':
 
   htmlEmailBody += "<p>\n"
 
+  # Builds on CDash
   cdashIndexBuildsBrowserUrl = CDQAR.getCDashIndexBrowserUrl(
     inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
     inOptions.cdashBuildsFilters)
   htmlEmailBody += \
    "<a href=\""+cdashIndexBuildsBrowserUrl+"\">Builds on CDash</a><br>\n"
 
+  # Nonpassing Tests on CDash
   cdashNonpassingTestsBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
     inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
     inOptions.cdashNonpassedTestsFilters)
@@ -214,42 +225,70 @@ if __name__ == '__main__':
 
   htmlEmailBody += "</p>\n"
 
-  expectedBuildsList = \
-    CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
+  #
+  # B) Get data off of CDash, do analysis, and construct HTML body parts
+  #
+  
+  globalPass = True
 
-  # ToDo: Write out the date and the query strings data to a cache file and
-  # then check it to make sure that the arguments are the same when checking
-  # the cache.
+  # Types of data shown in email and defines global pass/fail
+  numMissingExpectedBuilds = 0       # bme
+  numBuildsWithConfigureFailures = 0 # c
+  numBuildsWithBuildFailures = 0     # b
+  # ToDo: Add others
 
-  allBuildsPass = True
+  try:
 
-  print "\n*** Check the "+inOptions.cdashProjectName+" project builds ...\n"
-  (projectBuildsPass, errMsg) = \
-      CDQAR.queryCDashAndDeterminePassFail(
+    #
+    # B.1) Get data off of CDash and do analysis
+    #
+
+    print("\nCDash builds browser URL:\n")
+    print("  "+cdashIndexBuildsBrowserUrl+"\n")
+   
+    buildsSummaryList = \
+      CDQAR.downloadBuildsOffCDashAndSummarize(
+       # CDash URL Args
        inOptions.cdashSiteUrl,
        inOptions.cdashProjectName,
        inOptions.date,
        inOptions.cdashBuildsFilters,
-       expectedBuildsList,
-       cdashQueriesCacheDir=inOptions.cdashQueriesCacheDir,
+       # Other args
        useCachedCDashData=useCachedCDashData,
+       cdashQueriesCacheDir=inOptions.cdashQueriesCacheDir,
        )
-  if not projectBuildsPass:
-    print "\nTrilinos builds failed!\n"
-    allBuildsPass = False
-    print errMsg
-  else:
-    print "\nTrilinos builds passed!\n"
-  
 
-  if inOptions.writeEmailToFile:
-    open(inOptions.writeEmailToFile, 'w').write(htmlEmailBody)
+    print("\nSearch for any missing expected builds ...\n")
 
-  print "\n*** Determine overall pass/fail ...\n"
+    expectedBuildsList = \
+      CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
+
+    # ToDo: Implement!
+
+    print("\nSearch for any builds with configure failures ...\n")
+
+    # ToDo: Implement!
+
+    print("\nSearch for any builds with compilation (build) failures ...\n")
+
+    # ToDo: Implement!
+
+    #
+    # B.2) Create data for builds results in HTML body
+    #
+ 
+  except Exception:
+
+    sys.stdout.flush()
+    traceback.print_exc()
+
+    print("\nError, could not compute the analysis due to"+\
+      " above error so return failed!")
+    globalPass = False
   
-  if allBuildsPass:
-    print "FINAL: The Trilinos builds on "+inOptions.date+" PASSED"
+  if globalPass:
+    print "PASSED: "+inOptions.buildSetName+" on "+inOptions.date
     sys.exit(0)
   else:
-    print "FINAL: One or more of the Trilinos builds on "+inOptions.date+" FAILED"
+    print "FILAED: "+inOptions.buildSetName+" on "+inOptions.date
     sys.exit(2)
