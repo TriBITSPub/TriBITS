@@ -193,19 +193,21 @@ def getCDashQueryTestsBrowserUrl(cdashUrl, projectName, date, filterFields):
     + "&"+filterFields
 
 
+# Copy a key/value pair from one dict to another if it eixsts
+def copyKeyDictIfExists(sourceDict_in, keyName_in, dict_inout):
+  value = sourceDict_in.get(keyName_in, None)
+  if value:
+    dict_inout.update( { keyName_in : value } )
+
+
 # Collect CDash index.php build summary fields
 def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild):
-  summaryBuild = {
-    u('buildname') : fullCDashIndexBuild.get('buildname', 'missing_build_name'),
-    u('update') : \
-      fullCDashIndexBuild.get('update', {'errors':9999,'this_field_was_missing':1}),
-    u('configure') : \
-      fullCDashIndexBuild.get('configure', {'error':9999,'this_field_was_missing':1}),
-    u('compilation') : \
-      fullCDashIndexBuild.get('compilation', {'error':9999,'this_field_was_missing':1}),
-    u('test') : \
-     fullCDashIndexBuild.get('test', {'fail':9999, 'notrun':9999,'this_field_was_missing':1} ),
-    }
+  summaryBuild = {}
+  copyKeyDictIfExists(fullCDashIndexBuild, u'buildname', summaryBuild)
+  copyKeyDictIfExists(fullCDashIndexBuild, u'update', summaryBuild)
+  copyKeyDictIfExists(fullCDashIndexBuild, u'configure', summaryBuild)
+  copyKeyDictIfExists(fullCDashIndexBuild, u'compilation', summaryBuild)
+  copyKeyDictIfExists(fullCDashIndexBuild, u'test', summaryBuild)
   return summaryBuild
 
 
