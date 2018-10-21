@@ -189,9 +189,6 @@ def echoCmndLine(inOptions):
 
 if __name__ == '__main__':
 
-  tcd = CDQAR.TableColumnData
-  pp = pprint.PrettyPrinter(indent=2)
-
   inOptions = getCmndLineOptions()
   echoCmndLine(inOptions)
 
@@ -199,6 +196,20 @@ if __name__ == '__main__':
     useCachedCDashData=True
   else:
     useCachedCDashData=False
+
+  #
+  # Common data, etc.
+  #
+
+  tcd = CDQAR.TableColumnData
+  pp = pprint.PrettyPrinter(indent=2)
+
+
+  groupSiteBuildNameSortOrder = ['group', 'site', 'buildname']
+
+  #
+  # Sound off
+  #
 
   print "***"
   print "*** Query and analyze CDash results "+inOptions.buildSetName+\
@@ -224,24 +235,6 @@ if __name__ == '__main__':
    "<h2>Build and Test results for "+inOptions.buildSetName \
       +" on "+inOptions.date+"</h2>\n\n"
 
-  htmlEmailBodyTop += "<p>\n"
-
-  # Builds on CDash
-  cdashIndexBuildsBrowserUrl = CDQAR.getCDashIndexBrowserUrl(
-    inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
-    inOptions.cdashBuildsFilters)
-  htmlEmailBodyTop += \
-   "<a href=\""+cdashIndexBuildsBrowserUrl+"\">Builds on CDash</a><br>\n"
-
-  # Nonpassing Tests on CDash
-  cdashNonpassingTestsBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
-    inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
-    inOptions.cdashNonpassedTestsFilters)
-  htmlEmailBodyTop += \
-   "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">Nonpassing Tests on CDash</a><br>\n"
-
-  htmlEmailBodyTop += "</p>\n"
-
   #
   # B) Get data off of CDash, do analysis, and construct HTML body parts
   #
@@ -257,8 +250,16 @@ if __name__ == '__main__':
   try:
 
     #
-    # B.1) Get build data off of CDash and analize
+    # B.1) Get build and test data off of CDash and analize
     #
+
+    #
+    # B.1.a) Get list of builds of CDash
+    #
+
+    cdashIndexBuildsBrowserUrl = CDQAR.getCDashIndexBrowserUrl(
+      inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
+      inOptions.cdashBuildsFilters)
 
     print("\nCDash builds browser URL:\n  "+cdashIndexBuildsBrowserUrl+"\n")
    
@@ -274,9 +275,31 @@ if __name__ == '__main__':
        cdashQueriesCacheDir=inOptions.cdashQueriesCacheDir,
        )
 
+    # Beginning of top full bulid and tests CDash links paragraph 
+    htmlEmailBodyTop += "<p>\n"
+  
+    # Builds on CDash
+    htmlEmailBodyTop += \
+     "<a href=\""+cdashIndexBuildsBrowserUrl+"\">"+\
+     "Builds on CDash</a> (num="+str(len(buildsSummaryList))+")<br>\n"
+
+    # Get a dict to help look up builds
     buildLookupDict = CDQAR.createBuildLookupDict(buildsSummaryList)
 
-    groupSiteBuildNameSortOrder = ['group', 'site', 'buildname']
+    #
+    # B.1.b) Get list of non-passing tests of CDash
+    #
+    cdashNonpassingTestsBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
+      inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
+      inOptions.cdashNonpassedTestsFilters)
+  
+    # Nonpassing Tests on CDash
+    htmlEmailBodyTop += \
+     "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
+     "Nonpassing Tests on CDash</a> (num=???)<br>\n"
+  
+    # End of full build and test link paragraph 
+    htmlEmailBodyTop += "</p>\n"
 
     #
     print("\nSearch for any missing expected builds ...\n")
@@ -330,19 +353,16 @@ if __name__ == '__main__':
     #
 
     # ToDo: Implement!
-   
-
-
-
  
   except Exception:
-
+    # Traceback!
     sys.stdout.flush()
     traceback.print_exc()
-
+    # Reporte the error
     print("\nError, could not compute the analysis due to"+\
       " above error so return failed!")
     globalPass = False
+    summaryLineDataNumbersList.append("SCRIPT CRASHED")
 
   #
   # C) Put together final email summary  line
