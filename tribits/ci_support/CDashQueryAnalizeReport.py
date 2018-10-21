@@ -66,6 +66,11 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
   return json.load(response)
 
 
+# Color HTML text in red
+def makeHtmlTextRed(htmlText):
+  return("<font color=\"red\">"+htmlText+"</font>")
+
+
 # Read a CSV file into a list of dictionaries for each row where the rows of
 # the output list are dicts with the column names as keys.
 #
@@ -580,14 +585,21 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
   htmlStr+="</tr>\n\n"
 
   # Rows for the table
+  row_i = 0
   for rowData in rowDataList:
     htmlStr+="<tr>\n"
     for colData in colDataList:
+      data = rowData.get(colData.dictKey)
+      if data == None:
+        raise Exception(
+          "Error, column dict ='"+colData.dictKey+"' row "+str(row_i)+\
+          " data is 'None' which is not allowed! row dict = "+str(rowData))  
       htmlStr+=\
         "<td align=\""+colData.colAlign+"\">"+\
-        str(rowData.get(colData.dictKey))+\
+        str(data)+\
         "</td>\n"
     htmlStr+="</tr>\n\n"
+    row_i += 1
 
   # End of table
   htmlStr+="</table>\n\n"  # Use two newlines makes for good formatting!

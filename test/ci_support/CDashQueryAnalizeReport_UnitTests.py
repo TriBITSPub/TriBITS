@@ -971,13 +971,13 @@ r"""<style>my_style</style>
     self.assertEqual(htmlTable, htmlTable_expected)
 
   # Check the correct default table style is set
-  def test_1x2_table_correct_style(self):
+  def test_1x1_table_correct_style(self):
     tcd = TableColumnData
     colDataList = [  tcd('key1', "Data 1") ]
     rowDataList = [ {'key1':'data1'} ]
     htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList, htmlTableStyle="")
     #print(htmlTable)
-    #with open("test_1x2_table_style.html", 'w') as outFile: outFile.write(htmlTable)
+    #with open("test_1x1_table_style.html", 'w') as outFile: outFile.write(htmlTable)
     # NOTE: Above, uncomment the print and file write to view the formatted
     # table in a browser to see if this gets the data right and you like the
     # default table style.
@@ -1006,10 +1006,19 @@ tr:nth-child(odd) {background-color: #fff;}
 """
     self.assertEqual(htmlTable, htmlTable_expected)
 
-
-
-
-
+  # Check that a bad column dict key name throws
+  def test_1x1_bad_key_fail(self):
+    tcd = TableColumnData
+    colDataList = [  tcd('badKey', "Data 1") ]
+    rowDataList = [ {'key1':'data1'} ]
+    try:
+      htmlTable = createHtmlTableStr("Title", colDataList, rowDataList)
+      self.assertEqual("Excpetion did not get thrown!", "No it did not!")
+    except Exception, errMsg:
+      self.assertEqual(str(errMsg),
+         "Error, column dict ='badKey' row 0 data is 'None' which is"+\
+         " not allowed! row dict = {'key1': 'data1'}")
+      
 
 #############################################################################
 #

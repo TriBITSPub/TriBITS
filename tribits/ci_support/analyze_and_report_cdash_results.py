@@ -40,6 +40,7 @@
 # @HEADER
 
 import sys
+import pprint
 print sys.version_info
 if sys.version_info < (2,7,9):
   raise Exception("Error: Must be using Python 2.7.9 or newer")
@@ -122,6 +123,11 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     ("on", "off"), 1,
     "Use data downloaded from CDash already cached.",
     clp )
+
+  clp.add_option(
+    "--limit-table-rows", dest="limitTableRows", type="int",
+    default=10,
+    help="Limit to the number of table rows. (Default '10')" )
   
   clp.add_option(
     "--write-email-to-file", dest="writeEmailToFile", type="string", default="",
@@ -159,6 +165,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+lt +\
     "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+lt+\
     "  --use-cached-cdash-data='"+inOptions.useCachedCDashData+"'"+lt+\
+    "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
     "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt
   return cmndLineOpts 
 
@@ -182,6 +189,9 @@ def echoCmndLine(inOptions):
 
 if __name__ == '__main__':
 
+  tcd = CDQAR.TableColumnData
+  pp = pprint.PrettyPrinter(indent=2)
+
   inOptions = getCmndLineOptions()
   echoCmndLine(inOptions)
 
@@ -203,27 +213,34 @@ if __name__ == '__main__':
   # A) Create beginning of email body (that does not require getting any data off CDash)
   #
 
-  htmlEmailBody = \
-   "<p><b>Build and Test results for "+inOptions.buildSetName \
-      +" on "+inOptions.date+"</b></p>\n\n"
+  # This is the top of the body
+  htmlEmailBodyTop = ""
+  # This is the bottom of the email body
+  htmlEmailBodyBottom = ""
+  # This var will store the list of data numbers for the summary line
+  summaryLineDataNumbersList = []
 
-  htmlEmailBody += "<p>\n"
+  htmlEmailBodyTop += \
+   "<h2>Build and Test results for "+inOptions.buildSetName \
+      +" on "+inOptions.date+"</h2>\n\n"
+
+  htmlEmailBodyTop += "<p>\n"
 
   # Builds on CDash
   cdashIndexBuildsBrowserUrl = CDQAR.getCDashIndexBrowserUrl(
     inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
     inOptions.cdashBuildsFilters)
-  htmlEmailBody += \
+  htmlEmailBodyTop += \
    "<a href=\""+cdashIndexBuildsBrowserUrl+"\">Builds on CDash</a><br>\n"
 
   # Nonpassing Tests on CDash
   cdashNonpassingTestsBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
     inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
     inOptions.cdashNonpassedTestsFilters)
-  htmlEmailBody += \
+  htmlEmailBodyTop += \
    "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">Nonpassing Tests on CDash</a><br>\n"
 
-  htmlEmailBody += "</p>\n"
+  htmlEmailBodyTop += "</p>\n"
 
   #
   # B) Get data off of CDash, do analysis, and construct HTML body parts
@@ -240,11 +257,10 @@ if __name__ == '__main__':
   try:
 
     #
-    # B.1) Get data off of CDash and do analysis
+    # B.1) Get build data off of CDash and analize
     #
 
-    print("\nCDash builds browser URL:\n")
-    print("  "+cdashIndexBuildsBrowserUrl+"\n")
+    print("\nCDash builds browser URL:\n  "+cdashIndexBuildsBrowserUrl+"\n")
    
     buildsSummaryList = \
       CDQAR.downloadBuildsOffCDashAndSummarize(
@@ -258,12 +274,48 @@ if __name__ == '__main__':
        cdashQueriesCacheDir=inOptions.cdashQueriesCacheDir,
        )
 
+    buildLookupDict = CDQAR.createBuildLookupDict(buildsSummaryList)
+
+    groupSiteBuildNameSortOrder = ['group', 'site', 'buildname']
+
+    #
     print("\nSearch for any missing expected builds ...\n")
+    #
 
     expectedBuildsList = \
       CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
 
-    # ToDo: Implement!
+    missingExpectedBuildsList = CDQAR.getMissingExpectedBuildsList(
+      buildLookupDict, expectedBuildsList)
+    #pp.pprint(missingExpectedBuildsList)
+
+    bmeDescr = "Missing expected builds"
+    bmeAcro = "bme"
+    bmeNum = len(missingExpectedBuildsList)
+
+    bmeSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(bmeDescr,  bmeAcro, bmeNum)
+
+    print(bmeSummaryStr)
+
+    if bmeNum > 0:
+
+      globalPass = False
+
+      summaryLineDataNumbersList.append(bmeAcro+"="+str(bmeNum))
+
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bmeSummaryStr)
+
+      bmeColDataList = [
+        tcd('group', "Group"),
+        tcd('site', "Site"),
+        tcd('buildname', "Build Name"),
+        tcd('status', "Missing Status"),
+        ]
+
+      htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+        bmeDescr,  bmeAcro, bmeColDataList, missingExpectedBuildsList,
+        groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
     print("\nSearch for any builds with configure failures ...\n")
 
@@ -274,8 +326,14 @@ if __name__ == '__main__':
     # ToDo: Implement!
 
     #
-    # B.2) Create data for builds results in HTML body
+    # B.2) Get the test results data and analyze
     #
+
+    # ToDo: Implement!
+   
+
+
+
  
   except Exception:
 
@@ -285,10 +343,44 @@ if __name__ == '__main__':
     print("\nError, could not compute the analysis due to"+\
       " above error so return failed!")
     globalPass = False
-  
+
+  #
+  # C) Put together final email summary  line
+  #
+
   if globalPass:
-    print "PASSED: "+inOptions.buildSetName+" on "+inOptions.date
+    summaryLine = "PASSED"
+  else:
+    summaryLine = "FAILED"
+
+  if summaryLineDataNumbersList:
+    summaryLine += " (" + ", ".join(summaryLineDataNumbersList) + ")"
+
+  summaryLine += ": "+inOptions.buildSetName+" on "+inOptions.date
+
+  #
+  # D) Write and send the email
+  #
+
+  htmlEmaiBody = htmlEmailBodyTop + "\n\n" + htmlEmailBodyBottom
+
+  if inOptions.writeEmailToFile:
+    htmlEmaiBodyFileStr = \
+      "<h2>"+summaryLine+"</h2>\n\n"+\
+      htmlEmaiBody
+    with open(inOptions.writeEmailToFile, 'w') as outFile:
+      outFile.write(htmlEmaiBodyFileStr)
+
+  # ToDo: Implement sending the email!
+
+  #
+  # E) Return final global pass/fail
+  #
+
+  print("\n"+summaryLine+"\n")
+
+  if globalPass:
     sys.exit(0)
   else:
-    print "FILAED: "+inOptions.buildSetName+" on "+inOptions.date
     sys.exit(2)
+  
