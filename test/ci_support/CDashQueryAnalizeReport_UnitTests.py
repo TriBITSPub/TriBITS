@@ -966,6 +966,7 @@ r"""<style>my_style</style>
 </tr>
 
 </table>
+
 """
     self.assertEqual(htmlTable, htmlTable_expected)
 
@@ -1001,6 +1002,7 @@ tr:nth-child(odd) {background-color: #fff;}
 </tr>
 
 </table>
+
 """
     self.assertEqual(htmlTable, htmlTable_expected)
 
@@ -1108,6 +1110,7 @@ tr:nth-child(odd) {background-color: #fff;}
 </tr>
 
 </table>
+
 """
     self.assertEqual(htmlTable, htmlTable_expected)
     self.assertEqual(rowDataList, rowDataListCopy)   # Make sure not sorting in place

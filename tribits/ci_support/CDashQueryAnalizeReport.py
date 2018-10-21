@@ -590,7 +590,7 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
     htmlStr+="</tr>\n\n"
 
   # End of table
-  htmlStr+="</table>\n"
+  htmlStr+="</table>\n\n"  # Use two newlines makes for good formatting!
   return(htmlStr)
 
 
