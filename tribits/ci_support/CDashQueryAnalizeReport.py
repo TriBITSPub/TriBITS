@@ -375,7 +375,7 @@ def getMissingExpectedBuildsList(buildLookupDict, expectedBuildsList):
 #
 def downloadBuildsOffCDashAndSummarize(
   cdashUrl,  projectName, date, buildFilters,
-  printCDashUrl=True,
+  verbose=True,
   cdashQueriesCacheDir=None,
   useCachedCDashData=False,
   extractCDashApiQueryData_in=extractCDashApiQueryData,
@@ -388,7 +388,7 @@ def downloadBuildsOffCDashAndSummarize(
     fullCDashIndexBuildsCacheFile = None
   fullCDashIndexBuilds = getAndCacheCDashQueryDataOrReadFromCache(
     cdashQueryUrl, fullCDashIndexBuildsCacheFile, useCachedCDashData,
-    printCDashUrl, extractCDashApiQueryData_in )
+    verbose, extractCDashApiQueryData_in )
   # Get trimmed down set of builds
   summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
   return summaryCDashIndexBuilds

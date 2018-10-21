@@ -531,7 +531,27 @@ class test_getMissingExpectedBuildsList(unittest.TestCase):
 class test_downloadBuildsOffCDashAndSummarize(unittest.TestCase):
 
   def test_allBuilds(self):
-    None
+    # Define dummy CDash filter data
+    cdashUrl = "site.come/cdash"
+    projectName = "projectName"
+    date = "YYYY-MM-DD"
+    buildFilters = "build&filters"
+    # Define mock object to return the data
+    mockExtractCDashApiQueryDataFuctor = MockExtractCDashApiQueryDataFuctor(
+       getCDashIndexQueryUrl(cdashUrl,  projectName, date, buildFilters),
+       g_fullCDashIndexBuilds )
+    # Get the mock data off of CDash
+    summaryCDashIndexBuilds = downloadBuildsOffCDashAndSummarize(
+      cdashUrl,  projectName, date, buildFilters,
+      verbose=False, cdashQueriesCacheDir=None,
+      useCachedCDashData=False,
+      extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFuctor )
+    # Assert the data returned is correct
+    #g_pp.pprint(summaryCDashIndexBuilds)
+    self.assertEqual(
+      len(summaryCDashIndexBuilds), len(g_summaryCDashIndexBuilds_expected))
+    for i in range(0, len(summaryCDashIndexBuilds)):
+      self.assertEqual(summaryCDashIndexBuilds[i], g_summaryCDashIndexBuilds_expected[i])
 
 
 #############################################################################
