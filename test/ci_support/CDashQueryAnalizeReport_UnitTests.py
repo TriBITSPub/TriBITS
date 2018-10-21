@@ -926,7 +926,7 @@ class test_createHtmlTableStr(unittest.TestCase):
       trd("r2d1", 2, "r2d3"),
       trd("r3d1", 3, "r3d3"),
       ]
-    htmlTable = createHtmlTableStr(colData, rowData, "My great data",
+    htmlTable = createHtmlTableStr("My great data", colData, rowData,
       htmlStyle="my_style",  # Test custom table style
       #htmlStyle=None,       # Uncomment to view this style
       #htmlTableStyle="",    # Uncomment to view this style
@@ -974,7 +974,7 @@ r"""<style>my_style</style>
     tcd = TableColumnData
     colData = [  tcd('key1', "Data 1") ]
     rowData = [ {'key1':'data1'} ]
-    htmlTable = createHtmlTableStr(colData, rowData, "My great data", htmlTableStyle="")
+    htmlTable = createHtmlTableStr("My great data", colData, rowData, htmlTableStyle="")
     #print(htmlTable)
     #with open("test_1x2_table_style.html", 'w') as outFile: outFile.write(htmlTable)
     # NOTE: Above, uncomment the print and file write to view the formatted
@@ -1003,6 +1003,31 @@ tr:nth-child(odd) {background-color: #fff;}
 </table>
 """
     self.assertEqual(htmlTable, htmlTable_expected)
+
+
+
+
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.createCDashDataSummaryHtmlTableStr()
+#
+#############################################################################
+
+#class test_createCDashDataSummaryHtmlTableStr(unittest.TestCase):
+
+
+# ToDo: Test with limitRowsToDisplay > len(rowDataList)
+
+# ToDo: Test with limitRowsToDisplay == len(rowDataList)
+
+# ToDo: Test with limitRowsToDisplay < len(rowDataList)
+
+# ToDo: Test with now rows and therefore now table printed
+
+
+
 
 #
 # Run the unit tests!

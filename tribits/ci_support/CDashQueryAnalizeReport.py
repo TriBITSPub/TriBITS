@@ -523,6 +523,11 @@ class TableColumnData(object):
 
 # Create an html table string from a list of dicts and column headers.
 #
+# Arguments:
+#
+# tableTitle [in]: String for the name of the table included at the top of the
+# table.
+# 
 # colDataList [in]: List of TableColumnData objects where
 #   colDataList[j].dictKey gives the name of the key for that column of data,
 #   colDataList[j].colHeader is the text name for the column header and
@@ -532,19 +537,15 @@ class TableColumnData(object):
 # rowDataList [in]: List of dicts that provide the data from the table.  The
 #   dict in each row must have the keys specified by colData[j].dictKey.
 #
-# tableTitle [in]: String for the name of the table included at the top of the
-# table.
-#
 # htmlStyle [in]: The HTML style data (between <style></style>.  If None is
 # passed in then a default style is provided internally.
 #
 # htmlTableStyle [in]: The style for the HTML table used in <table
-#   style=htmlTableStyle>.  The default is "stile=\"width:100%\"".  Not not
-#   set a style, then pass in the empty string "" (not None).
-#   
+#   style=htmlTableStyle>.  If set to None, then a default style is used.  To
+#   not set a style, pass in the empty string "" (not None).
 #
-def createHtmlTableStr(colDataList, rowDataList, tableTitle,
-  htmlStyle=None, htmlTableStyle="style=\"width:100%\"" \
+def createHtmlTableStr(tableTitle, colDataList, rowDataList,
+  htmlStyle=None, htmlTableStyle=None \
   ):
 
   # style options for the table
@@ -556,13 +557,15 @@ def createHtmlTableStr(colDataList, rowDataList, tableTitle,
     "}\n"+\
     "tr:nth-child(even) {background-color: #eee;}\n"+\
     "tr:nth-child(odd) {background-color: #fff;}\n"
-  if htmlStyle: htmlStyleUsed = htmlStyle
+  if htmlStyle != None: htmlStyleUsed = htmlStyle
   else: htmlStyleUsed = defaultHtmlStyle
   htmlStr="<style>"+htmlStyleUsed+"</style>\n"
 
-  # Table title and start of <table>
+  # Table title and <table style=...>
   htmlStr+="<h3>"+tableTitle+"</h3>\n"
-  htmlStr+="<table "+htmlTableStyle+">\n\n"
+  if htmlTableStyle != None: htmlTableStyleUsed = htmlTableStyle
+  else: htmlTableStyleUsed = "style=\"width:100%\""
+  htmlStr+="<table "+htmlTableStyleUsed+">\n\n"
 
   # Column headings:
   htmlStr+="<tr>\n"
@@ -583,6 +586,111 @@ def createHtmlTableStr(colDataList, rowDataList, tableTitle,
   # End of table
   htmlStr+="</table>\n"
   return(htmlStr)
+
+
+
+
+# Get string for table title for CDash data to display
+#
+# Arguments:
+#
+# Arguments:
+#
+# tableTitle [in]: String for the name of the table included at the top of the
+# table.
+#
+# dataCountAcronym [in]: Acronym for the type of data being displayed
+# (e.g. 'twoi' for "Tests With Out issue trackers").  This is printed in the
+# table title in the form dataCoutAcronym=len(rowDataList).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Create an html table string for CDash summary data.
+#
+# Arguments:
+#
+# tableTitle [in]: String for the name of the table included at the top of the
+# table.
+#
+# dataCountAcronym [in]: Acronym for the type of data being displayed
+# (e.g. 'twoi' for "Tests With Out issue trackers").  This is printed in the
+# table title in the form dataCoutAcronym=len(rowDataList).
+#
+# colDataList [in]: List of TableColumnData objects where
+#   colDataList[j].dictKey gives the name of the key for that column of data,
+#   colDataList[j].colHeader is the text name for the column header and
+#   colDataList[j].colAlign gives the HTML alignment.  That columns in the
+#   table will listed in the order given in this list.
+#
+# rowDataList [in]: List of dicts that provide the data from the table.  The
+#   dict in each row must have the keys specified by colData[j].dictKey.
+#
+# limitRowsToDisplay [in]: The max number of rows to display.  The default is
+# None which will result in no limit to the number of rows displayed.
+#
+# htmlStyle [in]: The HTML style data (between <style></style>.  If None is
+# passed in then a default style is provided internally.
+#
+# htmlTableStyle [in]: The style for the HTML table used in <table
+#   style=htmlTableStyle>.  The default is "stile=\"width:100%\"".  Not not
+#   set a style, then pass in the empty string "" (not None).
+#
+# NOTE: If len(rowDataList) == 0, then the empty string is returned.
+# 
+# ToDo: Add an argument to sort the data based on some given ordering of keys.
+#
+def createCDashDataSummaryHtmlTableStr(tableTitle, dataCountAcronym,
+  colDataList, rowDataList, limitRowsToDisplay,
+  htmlStyle=None, htmlTableStyle="style=\"width:100%\"" \
+  ):
+  return ""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+########################################################################
+#
+# Joe's CDash test test query and analysis code
+#
+# ToDo: Once under some basic testing, refactor to reduce duplication and
+# improve consistency.
+#
+########################################################################
 
 
 # Construct a URL and return the raw json from cdash
