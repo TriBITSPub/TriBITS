@@ -508,6 +508,83 @@ def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options):
   return simplified_dict_of_tests
 
 
+# Class to store dict key and table header
+class TableColumnData(object):
+  validColAlignList=["left","right","center","justify","char"]
+  def __init__(self, dictKey, colHeader, colAlign="left"):
+    self.dictKey = dictKey
+    self.colHeader = colHeader
+    if not colAlign in self.validColAlignList:
+      raise Excpetion(
+        "Error, colAlign="+colAlign+" not valid.  Please choose from"+\
+        " the list ['" + "', '".join(validColAlignList) + "']!" )
+    self.colAlign = colAlign
+
+
+# Create an html table string from a list of dicts and column headers.
+#
+# colDataList [in]: List of TableColumnData objects where
+#   colDataList[j].dictKey gives the name of the key for that column of data,
+#   colDataList[j].colHeader is the text name for the column header and
+#   colDataList[j].colAlign gives the HTML alignment.  That columns in the
+#   table will listed in the order given in this list.
+#
+# rowDataList [in]: List of dicts that provide the data from the table.  The
+#   dict in each row must have the keys specified by colData[j].dictKey.
+#
+# tableTitle [in]: String for the name of the table included at the top of the
+# table.
+#
+# htmlStyle [in]: The HTML style data (between <style></style>.  If None is
+# passed in then a default style is provided internally.
+#
+# htmlTableStyle [in]: The style for the HTML table used in <table
+#   style=htmlTableStyle>.  The default is "stile=\"width:100%\"".  Not not
+#   set a style, then pass in the empty string "" (not None).
+#   
+#
+def createHtmlTableStr(colDataList, rowDataList, tableTitle,
+  htmlStyle=None, htmlTableStyle="style=\"width:100%\"" \
+  ):
+
+  # style options for the table
+  defaultHtmlStyle=\
+    "table, th, td {\n"+\
+    "  padding: 5px;\n"+\
+    "  border: 1px solid black;\n"+\
+    "  border-collapse: collapse;\n"+\
+    "}\n"+\
+    "tr:nth-child(even) {background-color: #eee;}\n"+\
+    "tr:nth-child(odd) {background-color: #fff;}\n"
+  if htmlStyle: htmlStyleUsed = htmlStyle
+  else: htmlStyleUsed = defaultHtmlStyle
+  htmlStr="<style>"+htmlStyleUsed+"</style>\n"
+
+  # Table title and start of <table>
+  htmlStr+="<h3>"+tableTitle+"</h3>\n"
+  htmlStr+="<table "+htmlTableStyle+">\n\n"
+
+  # Column headings:
+  htmlStr+="<tr>\n"
+  for colData in colDataList:
+    htmlStr+="<th>"+colData.colHeader+"</th>\n"
+  htmlStr+="</tr>\n\n"
+
+  # Rows for the table
+  for rowData in rowDataList:
+    htmlStr+="<tr>\n"
+    for colData in colDataList:
+      htmlStr+=\
+        "<td align=\""+colData.colAlign+"\">"+\
+        str(rowData.get(colData.dictKey))+\
+        "</td>\n"
+    htmlStr+="</tr>\n\n"
+
+  # End of table
+  htmlStr+="</table>\n"
+  return(htmlStr)
+
+
 # Construct a URL and return the raw json from cdash
 def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options):
   # construct the cdash query.  the "/api/v1/" will cause CDash to return a json data 

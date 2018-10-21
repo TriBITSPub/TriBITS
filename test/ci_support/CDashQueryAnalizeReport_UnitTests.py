@@ -556,7 +556,7 @@ class test_downloadBuildsOffCDashAndSummarize(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.cdashIndexBuildPasses
+# Test CDashQueryAnalizeReport.cdashIndexBuildPasses()
 #
 #############################################################################
 
@@ -649,7 +649,7 @@ class test_cdashIndexBuildPasses(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.doAllExpectedBuildsExist
+# Test CDashQueryAnalizeReport.doAllExpectedBuildsExist()
 #
 #############################################################################
 
@@ -774,7 +774,7 @@ class test_doAllExpectedBuildsExist(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.queryCDashAndDeterminePassFail
+# Test CDashQueryAnalizeReport.queryCDashAndDeterminePassFail()
 #
 #############################################################################
 
@@ -899,6 +899,114 @@ class test_queryCDashAndDeterminePassFail(unittest.TestCase):
     # NOTE: See note about dict keys ordering in above test (see TriBITS Issue
     # #119).
 
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.createHtmlTableStr()
+#
+#############################################################################
+
+def createTestTableRowColumnData(data1, data2, data3):
+  return { 'key1':data1, 'key2':data2, 'key3':data3 }
+
+class test_createHtmlTableStr(unittest.TestCase):
+  
+  # Check that the contents are put in the right place, the correct alignment,
+  # correct handling of non-string data, etc.
+  def test_3x3_table_correct_contents(self):
+    tcd = TableColumnData
+    trd = createTestTableRowColumnData
+    colData = [
+      tcd('key3', "Data 3"),
+      tcd('key1', "Data 1"),
+      tcd('key2', "Data 2", "right"),  # Alignment and non-string dat3
+      ]
+    rowData = [
+      trd("r1d1", 1, "r1d3"),
+      trd("r2d1", 2, "r2d3"),
+      trd("r3d1", 3, "r3d3"),
+      ]
+    htmlTable = createHtmlTableStr(colData, rowData, "My great data",
+      htmlStyle="my_style",  # Test custom table style
+      #htmlStyle=None,       # Uncomment to view this style
+      #htmlTableStyle="",    # Uncomment to view this style
+      )
+    #print(htmlTable)
+    #with open("test_3x2_table.html", 'w') as outFile: outFile.write(htmlTable)
+    # NOTE: Above, uncomment the htmlStyle=None, ... line and the print and
+    # file write commands to view the formatted table in a browser to see if
+    # this gets the data right and you like the default table style.
+    htmlTable_expected = \
+r"""<style>my_style</style>
+<h3>My great data</h3>
+<table style="width:100%">
+
+<tr>
+<th>Data 3</th>
+<th>Data 1</th>
+<th>Data 2</th>
+</tr>
+
+<tr>
+<td align="left">r1d3</td>
+<td align="left">r1d1</td>
+<td align="right">1</td>
+</tr>
+
+<tr>
+<td align="left">r2d3</td>
+<td align="left">r2d1</td>
+<td align="right">2</td>
+</tr>
+
+<tr>
+<td align="left">r3d3</td>
+<td align="left">r3d1</td>
+<td align="right">3</td>
+</tr>
+
+</table>
+"""
+    self.assertEqual(htmlTable, htmlTable_expected)
+
+  # Check the correct default table style is set
+  def test_1x2_table_correct_style(self):
+    tcd = TableColumnData
+    colData = [  tcd('key1', "Data 1") ]
+    rowData = [ {'key1':'data1'} ]
+    htmlTable = createHtmlTableStr(colData, rowData, "My great data", htmlTableStyle="")
+    #print(htmlTable)
+    #with open("test_1x2_table_style.html", 'w') as outFile: outFile.write(htmlTable)
+    # NOTE: Above, uncomment the print and file write to view the formatted
+    # table in a browser to see if this gets the data right and you like the
+    # default table style.
+    htmlTable_expected = \
+r"""<style>table, th, td {
+  padding: 5px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+tr:nth-child(even) {background-color: #eee;}
+tr:nth-child(odd) {background-color: #fff;}
+</style>
+<h3>My great data</h3>
+<table >
+
+<tr>
+<th>Data 1</th>
+</tr>
+
+<tr>
+<td align="left">data1</td>
+</tr>
+
+</table>
+"""
+    self.assertEqual(htmlTable, htmlTable_expected)
+
+#
+# Run the unit tests!
+#
 
 if __name__ == '__main__':
 
