@@ -54,9 +54,25 @@ mockProjectBaseDir=os.path.abspath(tribitsBaseDir+"/examples/MockTrilinos")
 
 g_pp = pprint.PrettyPrinter(indent=4)
 
+
 #
-# Helper functions
+# Helper functions and classes
 #
+
+
+# Mock function object for getting data off of CDash as a stand-in for the
+# function extractCDashApiQueryData().
+class MockExtractCDashApiQueryDataFuctor(object):
+  def __init__(self, cdashApiQueryUrl_expected, dataToReturn):
+    self.cdashApiQueryUrl_expected = cdashApiQueryUrl_expected
+    self.dataToReturn = dataToReturn
+  def __call__(self, cdashApiQueryUrl):
+    if cdashApiQueryUrl != self.cdashApiQueryUrl_expected:
+      raise Exception(
+        "Error, cdashApiQueryUrl='"+cdashApiQueryUrl+"' !="+\
+        " cdashApiQueryUrl_expected='"+cdashApiQueryUrl_expected+"'!")
+    return self.dataToReturn
+
 
 # Helper script for creating test directories
 def deleteThenCreateTestDir(testDir):
@@ -262,12 +278,13 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
     outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_write_cache"
     outputCacheFile=outputCacheDir+"/cachedCDashQueryData.json"
     deleteThenCreateTestDir(outputCacheDir)
+    mockExtractCDashApiQueryDataFuctor = MockExtractCDashApiQueryDataFuctor(
+       "dummy-cdash-url", g_getAndCacheCDashQueryDataOrReadFromCache_data)
     cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
       "dummy-cdash-url", outputCacheFile,
       useCachedCDashData=False,
       printCDashUrl=False,
-      extractCDashApiQueryData_in=\
-        dummyGetCDashData_for_getAndCacheCDashQueryDataOrReadFromCache \
+      extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFuctor
       )
     self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
     cdashQueryData_cache = eval(open(outputCacheFile, 'r').read())
@@ -479,7 +496,6 @@ class test_lookupBuildSummaryGivenLookupDict(unittest.TestCase):
     self.assertEqual(lookupData('group3','site1','build1', blud), None)
 
 
-
 #############################################################################
 #
 # Test CDashQueryAnalizeReport.getMissingExpectedBuildsList()
@@ -504,6 +520,18 @@ class test_getMissingExpectedBuildsList(unittest.TestCase):
     self.assertEqual(missingExpectedBuildsList[1],
       { 'group':'group2', 'site':'site3', 'buildname':'build8',
         'status':"Build not found on CDash" } )
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.downloadBuildsOffCDashAndSummarize
+#
+#############################################################################
+
+class test_downloadBuildsOffCDashAndSummarize(unittest.TestCase):
+
+  def test_allBuilds(self):
+    None
 
 
 #############################################################################
