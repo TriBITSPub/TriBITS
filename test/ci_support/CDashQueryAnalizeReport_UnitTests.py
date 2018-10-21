@@ -916,17 +916,17 @@ class test_createHtmlTableStr(unittest.TestCase):
   def test_3x3_table_correct_contents(self):
     tcd = TableColumnData
     trd = createTestTableRowColumnData
-    colData = [
+    colDataList = [
       tcd('key3', "Data 3"),
       tcd('key1', "Data 1"),
       tcd('key2', "Data 2", "right"),  # Alignment and non-string dat3
       ]
-    rowData = [
+    rowDataList = [
       trd("r1d1", 1, "r1d3"),
       trd("r2d1", 2, "r2d3"),
       trd("r3d1", 3, "r3d3"),
       ]
-    htmlTable = createHtmlTableStr("My great data", colData, rowData,
+    htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList,
       htmlStyle="my_style",  # Test custom table style
       #htmlStyle=None,       # Uncomment to view this style
       #htmlTableStyle="",    # Uncomment to view this style
@@ -972,9 +972,9 @@ r"""<style>my_style</style>
   # Check the correct default table style is set
   def test_1x2_table_correct_style(self):
     tcd = TableColumnData
-    colData = [  tcd('key1', "Data 1") ]
-    rowData = [ {'key1':'data1'} ]
-    htmlTable = createHtmlTableStr("My great data", colData, rowData, htmlTableStyle="")
+    colDataList = [  tcd('key1', "Data 1") ]
+    rowDataList = [ {'key1':'data1'} ]
+    htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList, htmlTableStyle="")
     #print(htmlTable)
     #with open("test_1x2_table_style.html", 'w') as outFile: outFile.write(htmlTable)
     # NOTE: Above, uncomment the print and file write to view the formatted
@@ -1015,8 +1015,104 @@ tr:nth-child(odd) {background-color: #fff;}
 #
 #############################################################################
 
-#class test_createCDashDataSummaryHtmlTableStr(unittest.TestCase):
 
+def missingExpectedBuildsRow(groupName, siteName, buildName, missingStatus):
+  return { 'group':groupName, 'site':siteName, 'buildname':buildName,
+    'status':missingStatus }
+
+
+class test_DictSortFunctor(unittest.TestCase):
+
+  def test_call(self):
+    meb = missingExpectedBuildsRow
+    row = meb("group1", "site1", "build2", "Build exists but not tests")
+    sortKeyFunctor = DictSortFunctor(['group', 'site', 'buildname'])
+    sortKey = sortKeyFunctor(row)
+    self.assertEqual(sortKey, "group1-site1-build2")
+    
+  def test_sort(self):
+    meb = missingExpectedBuildsRow
+    rowDataList = [
+      meb("group1", "site1", "build2", "Build exists but not tests"),
+      meb("group1", "site1", "build1", "Build is missing"),
+      ]
+    sortKeyFunctor = DictSortFunctor(['group', 'site', 'buildname'])
+    rowDataList.sort(key=sortKeyFunctor)
+    rowDataList_expected = [
+      meb("group1", "site1", "build1", "Build is missing"),
+      meb("group1", "site1", "build2", "Build exists but not tests"),
+      ]
+    self.assertEqual(rowDataList, rowDataList_expected)
+   
+   
+class test_createCDashDataSummaryHtmlTableStr(unittest.TestCase):
+
+  def test_2x4_missing_expected_builds(self):
+    tcd = TableColumnData
+    meb = missingExpectedBuildsRow
+    colDataList = [
+      tcd('group', "Group"),
+      tcd('site', "Site"),
+      tcd('buildname', "Build Name"),
+      tcd('status', "Missing Status"),
+      ]
+    rowDataList = [
+      meb("group1", "site1", "build2", "Build exists but not tests"),
+      meb("group1", "site1", "build1", "Build is missing"),  # Should be listed first!
+      ]
+    rowDataListCopy = copy.deepcopy(rowDataList)  # Make sure a copy is sorted!
+    htmlTable = createCDashDataSummaryHtmlTableStr(
+      "Missing expected builds", "bme",
+      colDataList, rowDataList,
+      ['group', 'site', 'buildname'],
+      #htmlStyle="my_style",  # Don't check default style
+      #htmlStyle=None,       # Uncomment to view this style
+      #htmlTableStyle="",    # Uncomment to view this style
+      )
+    #print(htmlTable)
+    #with open("test_2x4_missing_expected_builds.html", 'w') as outFile: outFile.write(htmlTable)
+    # NOTE: Above, uncomment the htmlStyle=None, ... line and the print and
+    # file write commands to view the formatted table in a browser to see if
+    # this gets the data right and you like the default table style.
+    htmlTable_expected = \
+r"""<style>table, th, td {
+  padding: 5px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+tr:nth-child(even) {background-color: #eee;}
+tr:nth-child(odd) {background-color: #fff;}
+</style>
+<h3>Missing expected builds: bme=2</h3>
+<table style="width:100%">
+
+<tr>
+<th>Group</th>
+<th>Site</th>
+<th>Build Name</th>
+<th>Missing Status</th>
+</tr>
+
+<tr>
+<td align="left">group1</td>
+<td align="left">site1</td>
+<td align="left">build1</td>
+<td align="left">Build is missing</td>
+</tr>
+
+<tr>
+<td align="left">group1</td>
+<td align="left">site1</td>
+<td align="left">build2</td>
+<td align="left">Build exists but not tests</td>
+</tr>
+
+</table>
+"""
+    self.assertEqual(htmlTable, htmlTable_expected)
+    self.assertEqual(rowDataList, rowDataListCopy)   # Make sure not sorting in place
+
+# ToDo: Test without sorting
 
 # ToDo: Test with limitRowsToDisplay > len(rowDataList)
 
@@ -1025,8 +1121,6 @@ tr:nth-child(odd) {background-color: #fff;}
 # ToDo: Test with limitRowsToDisplay < len(rowDataList)
 
 # ToDo: Test with now rows and therefore now table printed
-
-
 
 
 #

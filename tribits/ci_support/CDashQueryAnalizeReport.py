@@ -498,14 +498,20 @@ def queryCDashAndDeterminePassFail(
     return (False, errMsg)
   return (True, "")
 
-    
-# This will return a dictionary with information about all the tests that were returned
-# in the json from cdash as a result of the CDash query from the given inputs
-def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options):
-  raw_json_from_cdash=getRawJsonFromCdash(cdashUrl, projectName, filterFields, options)
-  simplified_dict_of_tests=getTestDictionaryFromCdashJson(raw_json_from_cdash, options)
-  getHistoricalDataForTests(simplified_dict_of_tests, cdashUrl, projectName, filterFields, options)
-  return simplified_dict_of_tests
+
+# Functor class to sort a row of dicts by multiple columns of string data.
+class DictSortFunctor(object):
+  def __init__(self, sortKeyList):
+    self.sortKeyList = sortKeyList
+  def __call__(self, dict_in):
+    sortKeyStr=""
+    for key in self.sortKeyList:
+      keyData = dict_in.get(key)
+      if sortKeyStr:
+        sortKeyStr += "-"+keyData
+      else:
+        sortKeyStr = keyData
+    return sortKeyStr
 
 
 # Class to store dict key and table header
@@ -588,46 +594,29 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
   return(htmlStr)
 
 
-
-
 # Get string for table title for CDash data to display
 #
 # Arguments:
 #
 # Arguments:
 #
-# tableTitle [in]: String for the name of the table included at the top of the
-# table.
+# dataTitle [in]: Name of the data category.
 #
 # dataCountAcronym [in]: Acronym for the type of data being displayed
 # (e.g. 'twoi' for "Tests With Out issue trackers").  This is printed in the
 # table title in the form dataCoutAcronym=len(rowDataList).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#
+# numItems [in]: The number of items of data
+#
+def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems):
+  return dataTitle+": "+dataCountAcronym+"="+str(numItems)
 
 
 # Create an html table string for CDash summary data.
 #
 # Arguments:
 #
-# tableTitle [in]: String for the name of the table included at the top of the
-# table.
+# dataTitle [in]: Name of the data that we be included in the table title.
 #
 # dataCountAcronym [in]: Acronym for the type of data being displayed
 # (e.g. 'twoi' for "Tests With Out issue trackers").  This is printed in the
@@ -642,45 +631,47 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
 # rowDataList [in]: List of dicts that provide the data from the table.  The
 #   dict in each row must have the keys specified by colData[j].dictKey.
 #
+# sortKeyList [in]: List of dict keys that define the sort order for the data
+# in the list.  The default is None which means that no sort is performed.
+#
 # limitRowsToDisplay [in]: The max number of rows to display.  The default is
-# None which will result in no limit to the number of rows displayed.
+# None which will result in no limit to the number of rows displayed.  The top
+# limitRowsToDisplay items will be dispalyed after the list is sorted.
 #
 # htmlStyle [in]: The HTML style data (between <style></style>.  If None is
-# passed in then a default style is provided internally.
+# passed in then a default style is provided internally (see
+# createHtmlTableStr().
 #
 # htmlTableStyle [in]: The style for the HTML table used in <table
-#   style=htmlTableStyle>.  The default is "stile=\"width:100%\"".  Not not
-#   set a style, then pass in the empty string "" (not None).
+#   style=htmlTableStyle>.  The default is None in which case a default is
+#   picked by createHtmlTableStr(().
 #
-# NOTE: If len(rowDataList) == 0, then the empty string is returned.
+# NOTE: If len(rowDataList) == 0, then the empty string "" is returned.
 # 
 # ToDo: Add an argument to sort the data based on some given ordering of keys.
 #
-def createCDashDataSummaryHtmlTableStr(tableTitle, dataCountAcronym,
-  colDataList, rowDataList, limitRowsToDisplay,
-  htmlStyle=None, htmlTableStyle="style=\"width:100%\"" \
+def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
+  colDataList, rowDataList, sortKeyList = None, limitRowsToDisplay = None,
+  htmlStyle=None, htmlTableStyle=None \
   ):
-  return ""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  # If no rows, don't create a table
+  if len(rowDataList) == 0:
+    return ""
+  # Sort the list
+  if sortKeyList:
+    rowDatListOrdered = copy.deepcopy(rowDataList)
+    rowDatListOrdered.sort(key=DictSortFunctor(sortKeyList))
+  else:
+    rowDatListOrdered = rowDataList
+  # Limit rows to display if asked
+  if limitRowsToDisplay == None:
+    rowDataListDisplayed = rowDatListOrdered
+  else:
+    rowDataListDisplayed = rowDatListOrdered[0:limitRowsToDisplay]
+  # Create and return the table
+  return createHtmlTableStr(
+    getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, len(rowDataList)),
+    colDataList, rowDataListDisplayed, htmlStyle, htmlTableStyle )
 
 
 ########################################################################
@@ -691,7 +682,14 @@ def createCDashDataSummaryHtmlTableStr(tableTitle, dataCountAcronym,
 # improve consistency.
 #
 ########################################################################
-
+    
+# This will return a dictionary with information about all the tests that were returned
+# in the json from cdash as a result of the CDash query from the given inputs
+def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options):
+  raw_json_from_cdash=getRawJsonFromCdash(cdashUrl, projectName, filterFields, options)
+  simplified_dict_of_tests=getTestDictionaryFromCdashJson(raw_json_from_cdash, options)
+  getHistoricalDataForTests(simplified_dict_of_tests, cdashUrl, projectName, filterFields, options)
+  return simplified_dict_of_tests
 
 # Construct a URL and return the raw json from cdash
 def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options):
