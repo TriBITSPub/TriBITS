@@ -60,6 +60,9 @@ clp.add_option(
 clp.add_option(
       "--issue-tracking-csv-file-name", dest="issue_tracking_csv_file_name", type="string",  default="",
     help="the subject line on sent out emails" )
+clp.add_option(
+      "--show-debug-print-statements", dest="show_debug_print_statements", type="string",  default="",
+    help="the subject line on sent out emails" )
 
 (options, args) = clp.parse_args()
 

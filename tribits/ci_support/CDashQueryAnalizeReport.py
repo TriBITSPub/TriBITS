@@ -711,6 +711,10 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
     "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()
 
+    print("")
+    print("")
+#    print("test history(query): "+testHistoryQueryUrl)
+
     #URL to imbed in email to show the history of the test to humans
     testHistoryEmailUrl= \
     cdashUrl+ \
@@ -722,6 +726,8 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     "&field3=site&compare3=61&value3="+site+ \
     "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
     "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()
+
+    print("test history(email): "+testHistoryEmailUrl)
 
     #URL to imbed in email to show the history of the build to humans
     buildHistoryEmailUrl= \
@@ -744,6 +750,8 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     testDictionary[dict_key][history_title_string]=""
     testDictionary[dict_key]["count"]=1
 
+    print("from dictionary: "+testDictionary[dict_key]["test_name_url"])
+
     # set the names of the cached files so we can check if they exists and write them out otherwise
     cache_folder_name=options.cache_dir
     cache_file_name=options.date+"-"+site+"-"+build_name+"-"+test_name+"-HIST-"+str(days_of_history)+".json"
@@ -757,7 +765,7 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     test_history_json={}
     if options.construct_from_cache:
       if os.path.exists(cache_folder_name+"/"+cache_file_name):
-        print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from the cache")
+#        print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from the cache")
         f = open(cache_folder_name+"/"+cache_file_name, "r")
         test_history_json=json.load(f)
         f.close
