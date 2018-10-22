@@ -680,8 +680,8 @@ def getTestDictionaryFromCdashJson(CDash_json, options):
       simplified_dict_of_tests[dict_key]["test_name"]=test_name
       simplified_dict_of_tests[dict_key]["issue_tracker"]=""
       simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
-      simplified_dict_of_tests[dict_key]["details"]=CDash_json["builds"][i]["details"]
-      simplified_dict_of_tests[dict_key]["status"]=CDash_json["builds"][i]["status"]
+      simplified_dict_of_tests[dict_key]["details"]=CDash_json["builds"][i]["details"].strip()
+      simplified_dict_of_tests[dict_key]["status"]=CDash_json["builds"][i]["status"].strip()
       simplified_dict_of_tests[dict_key]["status_url"]=""
       simplified_dict_of_tests[dict_key]["count"]=1
 
