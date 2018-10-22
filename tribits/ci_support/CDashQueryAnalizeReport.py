@@ -851,7 +851,7 @@ def createHtmlTable(dictionary, list_of_column_headings, title):
   html_string+="}"
   html_string+="tr:nth-child(even) {background-color: #eee;}"
   html_string+="tr:nth-child(odd) {background-color: #fff;}"
-  html_string+="</style>"
+  html_string+="</style>\n"
 
   html_string+="<h2>"+title+"</h2>"
   html_string+="<table style=\"width:100%\">"  
@@ -859,19 +859,19 @@ def createHtmlTable(dictionary, list_of_column_headings, title):
   html_string+="<tr>"
   for heading in list_of_column_headings:
     html_string+="<th>"+heading.replace("_", " ").title()+"</th>"
-  html_string+="</tr>"
+  html_string+="</tr>\n"
 
   # add the table data
   for key in dictionary:
     html_string+="<tr>"
     for heading in list_of_column_headings:
       if heading+"_url" not in dictionary[key] or dictionary[key][heading+"_url"] == "":
-        html_string+="<td>"+str(dictionary[key][heading])+"</td>"
+        html_string+="<td>"+str(dictionary[key][heading])+"</td>\n"
       else:
-        html_string+="<td> <a href="+dictionary[key][heading+"_url"]+">"+str(dictionary[key][heading])+"</a> </td>"
-    html_string+="</tr>"
+        html_string+="<td> <a href="+dictionary[key][heading+"_url"]+">"+str(dictionary[key][heading])+"</a> </td>\n"
+    html_string+="</tr>\n"
 
-  html_string+="</table>"
+  html_string+="</table>\n"
   return(html_string)
 
 
