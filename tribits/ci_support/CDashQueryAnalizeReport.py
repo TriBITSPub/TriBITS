@@ -661,6 +661,7 @@ def getTestDictionaryFromCdashJson(CDash_json, options):
     site=CDash_json["builds"][i]["site"]
     build_name=CDash_json["builds"][i]["buildName"]
     test_name=CDash_json["builds"][i]["testname"]
+#    test_name_url=CDash_json["builds"][i]["testname"] 
     days_of_history=int(options.test_history_days)
     
     
@@ -678,11 +679,12 @@ def getTestDictionaryFromCdashJson(CDash_json, options):
       simplified_dict_of_tests[dict_key]["site"]=site
       simplified_dict_of_tests[dict_key]["build_name"]=build_name
       simplified_dict_of_tests[dict_key]["test_name"]=test_name
+      simplified_dict_of_tests[dict_key]["test_name_url"]=options.cdash_site_url+"/"+CDash_json["builds"][i]["testDetailsLink"]
       simplified_dict_of_tests[dict_key]["issue_tracker"]=""
       simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
       simplified_dict_of_tests[dict_key]["details"]=CDash_json["builds"][i]["details"].strip()
       simplified_dict_of_tests[dict_key]["status"]=CDash_json["builds"][i]["status"].strip()
-      simplified_dict_of_tests[dict_key]["status_url"]=""
+      simplified_dict_of_tests[dict_key]["status_url"]=options.cdash_site_url+"/"+CDash_json["builds"][i]["testDetailsLink"]
       simplified_dict_of_tests[dict_key]["count"]=1
 
   return simplified_dict_of_tests
@@ -711,10 +713,6 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
     "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()
 
-    print("")
-    print("")
-#    print("test history(query): "+testHistoryQueryUrl)
-
     #URL to imbed in email to show the history of the test to humans
     testHistoryEmailUrl= \
     cdashUrl+ \
@@ -726,8 +724,6 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     "&field3=site&compare3=61&value3="+site+ \
     "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
     "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()
-
-    print("test history(email): "+testHistoryEmailUrl)
 
     #URL to imbed in email to show the history of the build to humans
     buildHistoryEmailUrl= \
@@ -742,15 +738,13 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
 
     testDictionary[dict_key]["site_url"]=""
     testDictionary[dict_key]["build_name_url"]=buildHistoryEmailUrl
-    testDictionary[dict_key]["test_name_url"]=testHistoryEmailUrl
     testDictionary[dict_key]["test_history"]="Test History"
     testDictionary[dict_key]["test_history_url"]=testHistoryQueryUrl
     testDictionary[dict_key]["previous_failure_date"]=""
     testDictionary[dict_key]["most_recent_failure_date"]=""
     testDictionary[dict_key][history_title_string]=""
+    testDictionary[dict_key][history_title_string+"_url"]=testHistoryEmailUrl
     testDictionary[dict_key]["count"]=1
-
-    print("from dictionary: "+testDictionary[dict_key]["test_name_url"])
 
     # set the names of the cached files so we can check if they exists and write them out otherwise
     cache_folder_name=options.cache_dir
@@ -765,7 +759,7 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     test_history_json={}
     if options.construct_from_cache:
       if os.path.exists(cache_folder_name+"/"+cache_file_name):
-#        print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from the cache")
+        print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from the cache")
         f = open(cache_folder_name+"/"+cache_file_name, "r")
         test_history_json=json.load(f)
         f.close
