@@ -41,6 +41,8 @@
 
 import sys
 import pprint
+import datetime
+
 print sys.version_info
 if sys.version_info < (2,7,9):
   raise Exception("Error: Must be using Python 2.7.9 or newer")
@@ -76,10 +78,13 @@ genericUsageHelp
 
 
 def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
+
+  yesterday = (datetime.date.today()+datetime.timedelta(days=-1)).isoformat()
   
   clp.add_option(
-    "--date", dest="date", type="string", default="",
-    help="Date for the testing day <YYYY-MM-DD>. (Default '')" )
+    "--date", dest="date", type="string", default=yesterday,
+    help="Date for the testing day <YYYY-MM-DD>."+\
+      " (Default yesterday '"+yesterday+"')" )
   
   clp.add_option(
     "--cdash-project-name", dest="cdashProjectName", type="string", default="",
