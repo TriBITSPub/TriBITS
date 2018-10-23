@@ -256,12 +256,6 @@ if __name__ == '__main__':
   
   globalPass = True
 
-  # Types of data shown in email and defines global pass/fail
-  numMissingExpectedBuilds = 0       # bme
-  numBuildsWithConfigureFailures = 0 # c
-  numBuildsWithBuildFailures = 0     # b
-  # ToDo: Add others
-
   try:
 
     #
@@ -307,6 +301,8 @@ if __name__ == '__main__':
     cdashNonpassingTestsBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
       inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
       inOptions.cdashNonpassedTestsFilters)
+
+    # ToDo: Get list non-passing tests from CDash
   
     # Nonpassing Tests on CDash
     htmlEmailBodyTop += \
@@ -342,7 +338,7 @@ if __name__ == '__main__':
 
       summaryLineDataNumbersList.append(bmeAcro+"="+str(bmeNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bmeSummaryStr)
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bmeSummaryStr)+"<br>"
 
       bmeColDataList = [
         tcd('group', "Group"),
@@ -355,11 +351,47 @@ if __name__ == '__main__':
         bmeDescr,  bmeAcro, bmeColDataList, missingExpectedBuildsList,
         groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
+    #
     print("\nSearch for any builds with configure failures ...\n")
+    #
+
+    buildsWithConfigureFailuresList = CDQAR.getBuildsWtihConfigureFailures(
+      buildsSummaryList)
+    #print("\nbuildsWithConfigureFailuresList:")
+    #pp.pprint(buildsWithConfigureFailuresList)
+
+    cDescr = "Builds with configure failures"
+    cAcro = "c"
+    cNum = len(buildsWithConfigureFailuresList)
+
+    cSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(cDescr,  cAcro, cNum)
+
+    print(cSummaryStr)
+
+    if cNum > 0:
+
+      globalPass = False
+
+      summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
+
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>"
+
+      cColDataList = [
+        tcd('group', "Group"),
+        tcd('site', "Site"),
+        tcd('buildname', "Build Name"),
+        ]
+
+      htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+        cDescr,  cAcro, cColDataList, buildsWithConfigureFailuresList,
+        groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
     # ToDo: Implement!
 
+    #
     print("\nSearch for any builds with compilation (build) failures ...\n")
+    #
 
     # ToDo: Implement!
 
@@ -408,7 +440,7 @@ if __name__ == '__main__':
       outFile.write(htmlEmaiBodyFileStr)
 
   if inOptions.sendEmailTo:
-    for emailAddress in nOptions.sendEmailTo.split(','):
+    for emailAddress in inOptions.sendEmailTo.split(','):
       emailAddress = emailAddress.strip()
       print("\nSending email to '"+emailAddress+"' ...")
       msg=CDQAR.createHtmlMimeEmail(
