@@ -360,8 +360,6 @@ if __name__ == '__main__':
 
     buildsWithConfigureFailuresList = CDQAR.getBuildsWtihConfigureFailures(
       buildsSummaryList)
-    #print("\nbuildsWithConfigureFailuresList:")
-    #pp.pprint(buildsWithConfigureFailuresList)
 
     cDescr = "Builds with configure failures"
     cAcro = "c"
@@ -390,13 +388,45 @@ if __name__ == '__main__':
         cDescr,  cAcro, cColDataList, buildsWithConfigureFailuresList,
         groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
-    # ToDo: Implement!
+      # ToDo: Update to show number of configure failures with hyperlinks and
+      # don't limit the number of builds shown.
 
     #
     print("\nSearch for any builds with compilation (build) failures ...\n")
     #
 
-    # ToDo: Implement!
+    buildsWithBuildFailuresList = CDQAR.getBuildsWtihBuildFailures(
+      buildsSummaryList)
+
+    bDescr = "Builds with build failures"
+    bAcro = "b"
+    bNum = len(buildsWithBuildFailuresList)
+
+    bSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(bDescr,  bAcro, bNum)
+
+    print(bSummaryStr)
+
+    if bNum > 0:
+
+      globalPass = False
+
+      summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
+
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bSummaryStr)+"<br>"
+
+      cColDataList = [
+        tcd('group', "Group"),
+        tcd('site', "Site"),
+        tcd('buildname', "Build Name"),
+        ]
+
+      htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+        bDescr,  bAcro, cColDataList, buildsWithBuildFailuresList,
+        groupSiteBuildNameSortOrder, inOptions.limitTableRows )
+
+      # ToDo: Update to show number of build failures with hyperlinks and
+      # don't limit the number of builds shown.
 
     #
     # B.2) Get the test results data and analyze
