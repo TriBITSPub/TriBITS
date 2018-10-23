@@ -161,7 +161,7 @@ def getAndCacheCDashQueryDataOrReadFromCache(
     cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
   else:
     if printCDashUrl:
-      print("Getting data from:\n\n  " + cdashQueryUrl )
+      print("Getting bulid data from:\n\n  " + cdashQueryUrl )
     cdashQueryData = extractCDashApiQueryData_in(cdashQueryUrl)
     if cdashQueryDataCacheFile:
       pp = pprint.PrettyPrinter(stream=open(cdashQueryDataCacheFile,'w'), indent=2)
