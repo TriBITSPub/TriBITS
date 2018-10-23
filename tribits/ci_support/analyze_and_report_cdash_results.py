@@ -215,6 +215,7 @@ def getFlatListOfTestsFromTestDict(testsDict):
     testDictList.append(testsDict[key])
   return testDictList
 
+
 #
 # Run the script
 #
@@ -496,6 +497,7 @@ if __name__ == '__main__':
 
     testsWithoutIssueTrackerList = getFlatListOfTestsFromTestDict(
       tests_without_issue_tracking)
+    #pp.pprint(testsWithoutIssueTrackerList)
 
     twoiDescr = "Failing tests without issue tracker"
     twoiAcro = "twoi"
@@ -548,31 +550,6 @@ if __name__ == '__main__':
         testnameBuildnameSiteSortOrder)
       # NOTE: We don't limit the number of tests tracked tests listed because
       # we will never have a huge number of failing tests with issue trackers.
-
-
-    #
-    # ToDo: Remove the below table printouts once we figure out how to get the
-    # issue links to work in above tables.
-    #
-
-    table_headings=[
-      "site",
-      "build_name",
-      "test_name",
-      "status",
-      "details",
-      "failures_in_last_"+str(inOptions.test_history_days)+"_days",
-      "previous_failure_date",
-      "issue_tracker",
-      ]
-
-    htmlEmailBodyBottom += CDQAR.createHtmlTable(
-      tests_without_issue_tracking, table_headings,
-      "Failing Tests without Issue Tracking: "+inOptions.date)
-
-    htmlEmailBodyBottom += CDQAR.createHtmlTable(
-      tests_with_issue_tracking, table_headings,
-      "Failing Tests with Issue Tracking: "+inOptions.date)
  
   except Exception:
     # Traceback!
