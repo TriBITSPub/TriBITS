@@ -80,20 +80,20 @@ genericUsageHelp
 def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
 
   yesterday = (datetime.date.today()+datetime.timedelta(days=-1)).isoformat()
-  
+
   clp.add_option(
     "--date", dest="date", type="string", default=yesterday,
     help="Date for the testing day <YYYY-MM-DD>."+\
       " (Default yesterday '"+yesterday+"')" )
-  
+
   clp.add_option(
     "--cdash-project-name", dest="cdashProjectName", type="string", default="",
     help="CDash project name, e.g. 'Trilinos'. (Default '')" )
-  
+
   clp.add_option(
     "--build-set-name", dest="buildSetName", type="string", default="",
     help="Name for the set of builds. (Default '')" )
-  
+
   clp.add_option(
     "--cdash-site-url", dest="cdashSiteUrl", type="string", default="",
     help="Base CDash site, e.g. 'https://testing.sandia.gov/cdash'. (Default '')" )
@@ -133,10 +133,18 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "--limit-table-rows", dest="limitTableRows", type="int",
     default=10,
     help="Limit to the number of table rows. (Default '10')" )
-  
+
   clp.add_option(
     "--write-email-to-file", dest="writeEmailToFile", type="string", default="",
     help="Write the body of the HTML email to this file. (Default '')" )
+
+  clp.add_option(
+    "--email-from-address=", dest="emailFromAddress", type="string", default="",
+    help="Address reported in the sent email. (Default '')" )
+
+  clp.add_option(
+    "--send-email-to=", dest="sendEmailTo", type="string", default="",
+    help="Send email to 'address1,address2,...'. (Default '')" )
 
 
 def validateCmndLineOptions(inOptions):
@@ -171,7 +179,9 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+lt+\
     "  --use-cached-cdash-data='"+inOptions.useCachedCDashData+"'"+lt+\
     "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
-    "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt
+    "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt+\
+    "  --send-email-to='"+inOptions.sendEmailTo+"'"+lt+\
+    "  --email-from-address='"+inOptions.emailFromAddress+"'"+lt
   return cmndLineOpts 
 
 
@@ -266,7 +276,7 @@ if __name__ == '__main__':
       inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
       inOptions.cdashBuildsFilters)
 
-    print("\nCDash builds browser URL:\n  "+cdashIndexBuildsBrowserUrl+"\n")
+    print("\nCDash builds browser URL:\n\n  "+cdashIndexBuildsBrowserUrl+"\n")
    
     buildsSummaryList = \
       CDQAR.downloadBuildsOffCDashAndSummarize(
@@ -390,13 +400,20 @@ if __name__ == '__main__':
   htmlEmaiBody = htmlEmailBodyTop + "\n\n" + htmlEmailBodyBottom
 
   if inOptions.writeEmailToFile:
+    print("\nWriting HTML file '"+inOptions.writeEmailToFile+"' ...")
     htmlEmaiBodyFileStr = \
       "<h2>"+summaryLine+"</h2>\n\n"+\
       htmlEmaiBody
     with open(inOptions.writeEmailToFile, 'w') as outFile:
       outFile.write(htmlEmaiBodyFileStr)
 
-  # ToDo: Implement sending the email!
+  if inOptions.sendEmailTo:
+    for emailAddress in nOptions.sendEmailTo.split(','):
+      emailAddress = emailAddress.strip()
+      print("\nSending email to '"+emailAddress+"' ...")
+      msg=CDQAR.createHtmlMimeEmail(
+        inOptions.emailFromAddress, emailAddress, summaryLine, "", htmlEmaiBody)
+      CDQAR.sendMineEmail(msg)
 
   #
   # E) Return final global pass/fail
