@@ -893,6 +893,17 @@ def missingExpectedBuildsRow(groupName, siteName, buildName, missingStatus):
   return { 'group':groupName, 'site':siteName, 'buildname':buildName,
     'status':missingStatus }
 
+class test_getCDashDataSummaryHtmlTableTitleStr(unittest.TestCase):
+
+  def test_no_limitRowsToDisplay(self):
+    self.assertEqual(
+      getCDashDataSummaryHtmlTableTitleStr("data name", "dac", 30),
+      "data name: dac=30" )
+
+  def test_limitRowsToDisplay(self):
+    self.assertEqual(
+      getCDashDataSummaryHtmlTableTitleStr("data name", "dac", 30, 15),
+      "data name (limited to 15): dac=30" )
 
 class test_DictSortFunctor(unittest.TestCase):
 

@@ -349,7 +349,10 @@ if __name__ == '__main__':
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         bmeDescr,  bmeAcro, bmeColDataList, missingExpectedBuildsList,
-        groupSiteBuildNameSortOrder, inOptions.limitTableRows )
+        groupSiteBuildNameSortOrder, None )
+      # NOTE: Above we don't want to limit any missing builds in this table
+      # because that data is not shown on CDash and that list will never bo
+      # super big.
 
     #
     print("\nSearch for any builds with configure failures ...\n")

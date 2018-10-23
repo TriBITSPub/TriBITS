@@ -588,9 +588,14 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
 #
 # numItems [in]: The number of items of data
 #
-def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems):
-  return dataTitle+": "+dataCountAcronym+"="+str(numItems)
-
+def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems,
+  limitRowsToDisplay=None \
+  ):
+  tableTitle = dataTitle
+  if limitRowsToDisplay:
+    tableTitle += " (limited to "+str(limitRowsToDisplay)+")"
+  tableTitle += ": "+dataCountAcronym+"="+str(numItems)
+  return tableTitle
 
 # Create an html table string for CDash summary data.
 #
@@ -648,9 +653,12 @@ def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
     rowDataListDisplayed = rowDatListOrdered
   else:
     rowDataListDisplayed = rowDatListOrdered[0:limitRowsToDisplay]
+  # Table title
+  tableTitle = getCDashDataSummaryHtmlTableTitleStr(
+    dataTitle, dataCountAcronym, len(rowDataList), limitRowsToDisplay )
+
   # Create and return the table
-  return createHtmlTableStr(
-    getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, len(rowDataList)),
+  return createHtmlTableStr( tableTitle,
     colDataList, rowDataListDisplayed, htmlStyle, htmlTableStyle )
 
 
