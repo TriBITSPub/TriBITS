@@ -514,7 +514,10 @@ class TableColumnData(object):
 #   table will listed in the order given in this list.
 #
 # rowDataList [in]: List of dicts that provide the data from the table.  The
-#   dict in each row must have the keys specified by colData[j].dictKey.
+#   dict in each row must have the keys specified by colData[j].dictKey.  In
+#   addition, if (key_url=rowDataList[i].get(colData[j].dictKey+"_url",#
+#   None))!=None, then the table entry will be an HTML link <a
+#   href="dataRowList[i].get(key_url)">dataRowList[i].get(key)</a>.
 #
 # htmlStyle [in]: The HTML style data (between <style></style>.  If None is
 # passed in then a default style is provided internally.
@@ -555,16 +558,32 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
   # Rows for the table
   row_i = 0
   for rowData in rowDataList:
+    #print("\nrowData = "+str(rowData))
     htmlStr+="<tr>\n"
     for colData in colDataList:
-      data = rowData.get(colData.dictKey)
-      if data == None:
+      dictKey = colData.dictKey
+      #print("\ndictKey = "+dictKey)
+      # Get the raw entry for this column
+      entry = rowData.get(dictKey, None)
+      if entry == None:
         raise Exception(
           "Error, column dict ='"+colData.dictKey+"' row "+str(row_i)+\
-          " data is 'None' which is not allowed! row dict = "+str(rowData))  
+          " entry is 'None' which is not allowed! row dict = "+str(rowData))  
+      # See if the _url key also exists
+      dictKey_url = dictKey+"_url"
+      #print("dictKey_url = "+dictKey_url)
+      entry_url = rowData.get(dictKey_url, None)
+      #print("entry_url = "+str(entry_url))
+      # Set the text for this row/column entry with or without the hyperlink
+      if entry_url:
+        entryStr = "<a href=\""+entry_url+"\">"+str(entry)+"</a>"
+      else:
+        entryStr = entry
+      #print("entryStr = "+entryStr)
+      # Set the row entry in the HTML table
       htmlStr+=\
         "<td align=\""+colData.colAlign+"\">"+\
-        str(data)+\
+        str(entryStr)+\
         "</td>\n"
     htmlStr+="</tr>\n\n"
     row_i += 1

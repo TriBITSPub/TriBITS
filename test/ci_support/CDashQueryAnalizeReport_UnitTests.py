@@ -771,6 +771,13 @@ class test_cdashIndexBuildPasses(unittest.TestCase):
 def createTestTableRowColumnData(data1, data2, data3):
   return { 'key1':data1, 'key2':data2, 'key3':data3 }
 
+def createTestTableRowColumnDataWithUrl(data1, data2, data3):
+  return {
+    'key1':data1[0], 'key1_url':data1[1],
+    'key2':data2[0], 'key2_url':data2[1],
+    'key3':data3[0], 'key3_url':data3[1],
+    }
+
 class test_createHtmlTableStr(unittest.TestCase):
   
   # Check that the contents are put in the right place, the correct alignment,
@@ -878,8 +885,80 @@ tr:nth-child(odd) {background-color: #fff;}
       self.assertEqual("Excpetion did not get thrown!", "No it did not!")
     except Exception, errMsg:
       self.assertEqual(str(errMsg),
-         "Error, column dict ='badKey' row 0 data is 'None' which is"+\
+         "Error, column dict ='badKey' row 0 entry is 'None' which is"+\
          " not allowed! row dict = {'key1': 'data1'}")
+  
+  # Check that the contents are put in the right place, the correct alignment,
+  # correct handling of non-string data, etc.
+  def test_3x3_table_with_url_correct_contents(self):
+    tcd = TableColumnData
+    trdu = createTestTableRowColumnDataWithUrl
+    colDataList = [
+      tcd('key3', "Data 3"),
+      tcd('key1', "Data 1"),
+      tcd('key2', "Data 2", "right"),  # Alignment and non-string dat3
+      ]
+    rowDataList = [
+      trdu(["r1d1","some.com/r1d1"], [1,"some.com/r1d2"], ["r1d3","some.com/r1d3"]),
+      trdu(["r2d1","some.com/r2d1"], [2,"some.com/r2d2"], ["r2d3","some.com/r2d3"]),
+      trdu(["r3d1","some.com/r3d1"], [3,"some.com/r3d2"], ["r3d3","some.com/r3d3"]),
+      ]
+    htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList,
+      htmlStyle="my_style",  # Test custom table style
+      #htmlStyle=None,       # Uncomment to view this style
+      htmlTableStyle="",    # Uncomment to view this style
+      )
+    #print(htmlTable)
+    #with open("test_3x3_table_with_url_correct_contents.html", 'w') as outFile:
+    #  outFile.write(htmlTable)
+    # NOTE: Above, uncomment the htmlStyle=None, ... line and the print and
+    # file write commands to view the formatted table in a browser to see if
+    # this gets the data right and you like the default table style.
+    htmlTable_expected = \
+r"""<style>my_style</style>
+<h3>My great data</h3>
+<table >
+
+<tr>
+<th>Data 3</th>
+<th>Data 1</th>
+<th>Data 2</th>
+</tr>
+
+<tr>
+<td align="left"><a href="some.com/r1d3">r1d3</a></td>
+<td align="left"><a href="some.com/r1d1">r1d1</a></td>
+<td align="right"><a href="some.com/r1d2">1</a></td>
+</tr>
+
+<tr>
+<td align="left"><a href="some.com/r2d3">r2d3</a></td>
+<td align="left"><a href="some.com/r2d1">r2d1</a></td>
+<td align="right"><a href="some.com/r2d2">2</a></td>
+</tr>
+
+<tr>
+<td align="left"><a href="some.com/r3d3">r3d3</a></td>
+<td align="left"><a href="some.com/r3d1">r3d1</a></td>
+<td align="right"><a href="some.com/r3d2">3</a></td>
+</tr>
+
+</table>
+
+"""
+    self.assertEqual(htmlTable, htmlTable_expected)
+
+
+
+
+
+
+
+
+
+
+
+
       
 
 #############################################################################
