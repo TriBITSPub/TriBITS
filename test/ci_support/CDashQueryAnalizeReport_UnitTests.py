@@ -562,14 +562,19 @@ class test_downloadBuildsOffCDashAndSummarize(unittest.TestCase):
 
 class test_buildHasConfigureFailures(unittest.TestCase):
 
-  def test_has_no_build_failures(self):
+  def test_has_no_configure_failures(self):
     buildDict = copy.deepcopy(g_singleBuildPassesSummary)
     self.assertEqual(buildHasConfigureFailures(buildDict), False)
 
-  def test_has_build_failures(self):
+  def test_has_configure_failures(self):
     buildDict = copy.deepcopy(g_singleBuildPassesSummary)
     buildDict['configure']['error'] = 1
     self.assertEqual(buildHasConfigureFailures(buildDict), True)
+
+  def test_has_no_configure_results(self):
+    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    del buildDict['configure']
+    self.assertEqual(buildHasConfigureFailures(buildDict), False)
 
 
 
@@ -589,6 +594,11 @@ class test_buildHasBuildFailures(unittest.TestCase):
     buildDict = copy.deepcopy(g_singleBuildPassesSummary)
     buildDict['compilation']['error'] = 1
     self.assertEqual(buildHasBuildFailures(buildDict), True)
+
+  def test_has_no_build_results(self):
+    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    del buildDict['compilation']
+    self.assertEqual(buildHasBuildFailures(buildDict), False)
 
 
 #############################################################################

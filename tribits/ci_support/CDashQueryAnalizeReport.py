@@ -401,22 +401,29 @@ def downloadBuildsOffCDashAndSummarize(
 
 # Return if a build has configure failures
 def buildHasConfigureFailures(buildDict):
-  if buildDict['configure']['error'] > 0:
+  configureDict = buildDict.get('configure', None)
+  if configureDict and configureDict['error'] > 0:
     return True
   return False
 
 
-# Return if a build has configure failures
+# Return if a build has compilation failures
 def buildHasBuildFailures(buildDict):
-  if buildDict['compilation']['error'] > 0:
+  compilationDict = buildDict.get('compilation', None)
+  if compilationDict and compilationDict['error'] > 0:
     return True
   return False
 
 
 # Get a list of builds with configure failures
 def getBuildsWtihConfigureFailures(buildDictList):
+  pp = pprint.PrettyPrinter(indent=2)
+  #print("\nbuildDictList:")
+  #pp.pprint(buildDictList)
   buildsWithConfigureFailures = []
   for buildDict in buildDictList:
+    #print("\nbuildDict:")
+    #pp.pprint(buildDict)
     if buildHasConfigureFailures(buildDict):
       buildsWithConfigureFailures.append(buildDict)
   return buildsWithConfigureFailures
