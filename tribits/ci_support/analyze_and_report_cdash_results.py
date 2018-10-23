@@ -43,7 +43,7 @@ import sys
 import pprint
 import datetime
 
-print sys.version_info
+#print sys.version_info
 if sys.version_info < (2,7,9):
   raise Exception("Error: Must be using Python 2.7.9 or newer")
 # NOTE: If we use Python 2.6.6. then the urllib2 function crashes!
@@ -57,20 +57,20 @@ from gitdist import addOptionParserChoiceOption
 # Help message
 #
 
-# This part can be reused in other scripts that are project-specific
-genericUsageHelp = \
-r"""
-ToDo: Finish documentation!
-"""
-
 
 usageHelp = r"""analyze_and_report_cdash_results.py [options]
 
+This script takes in CDash URL information as command-line arguments and then
+analyzes it to look for missing expected and various types of failures and
+then reports the findings as an HTML file written to disk and/or as an HTML
+formatted email to one or more email addresses.
+
+If all of the expected builds are found (and all of them have test results)
+and there are no other failures found, then the script returns 0.  Otherwise
+the script returns non-zero.
+
 ToDo: Finish documentation!
-
-""" + \
-genericUsageHelp
-
+"""
 
 #
 # Helper functions
