@@ -484,8 +484,8 @@ if __name__ == '__main__':
       tcd("failures_in_last_"+str(inOptions.test_history_days)+"_days",
         "# Fails last "+str(inOptions.test_history_days)+" Days",
         "right"),
-      tcd("previous_failure_date", "Previous Failure Date"),
-      tcd("issue_tracker", "Tracker"),
+      tcd("previous_failure_date", "Previous Failure Date", "right"),
+      tcd("issue_tracker", "Tracker", "right"),
       ]
 
     # Sort order for tests
