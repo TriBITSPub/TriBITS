@@ -208,6 +208,13 @@ def echoCmndLine(inOptions):
   echoCmndLineOptions(inOptions)
 
 
+# Temp function to get flat list of tests
+def getFlatListOfTestsFromTestDict(testsDict):
+  testDictList = []
+  for key in testsDict.keys():
+    testDictList.append(testsDict[key])
+  return testDictList
+
 #
 # Run the script
 #
@@ -465,7 +472,89 @@ if __name__ == '__main__':
     #
     # B.2) Get the test results data and analyze
     #
-    
+
+    # Column header for listing tests
+    testsColDataList = [
+      tcd("site", "Site"),
+      tcd("build_name", "Build Name"),
+      tcd("test_name", "Test Name"),
+      tcd("status", "Status"),
+      tcd("details", "Details"),
+      tcd("failures_in_last_"+str(inOptions.test_history_days)+"_days",
+        "# Fails last "+str(inOptions.test_history_days)+" Days",
+        "right"),
+      tcd("previous_failure_date", "Previous Failure Date"),
+      tcd("issue_tracker", "Tracker"),
+      ]
+
+    # Sort order for tests
+    testnameBuildnameSiteSortOrder = ['test_name', 'build_name', 'site']
+
+    #
+    print("\nSearch failing tests without issue tracker ...\n")
+    #
+
+    testsWithoutIssueTrackerList = getFlatListOfTestsFromTestDict(
+      tests_without_issue_tracking)
+
+    twoiDescr = "Failing tests without issue tracker"
+    twoiAcro = "twoi"
+    twoiNum = len(testsWithoutIssueTrackerList)
+
+    cSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twoiDescr,  twoiAcro, twoiNum)
+
+    print(cSummaryStr)
+
+    if twoiNum > 0:
+
+      globalPass = False
+
+      summaryLineDataNumbersList.append(twoiAcro+"="+str(twoiNum))
+
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>"
+
+      htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+        twoiDescr,  twoiAcro, testsColDataList, testsWithoutIssueTrackerList,
+        testnameBuildnameSiteSortOrder, inOptions.limitTableRows )
+
+    #
+    print("\nSearch failing tests with issue tracker ...\n")
+    #
+
+    testsWithIssueTrackerList = getFlatListOfTestsFromTestDict(
+      tests_with_issue_tracking)
+    #pp.pprint(testsWithIssueTrackerList)
+
+    twiDescr = "Failing tests with issue tracker"
+    twiAcro = "twi"
+    twiNum = len(testsWithIssueTrackerList)
+
+    cSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twiDescr,  twiAcro, twiNum)
+
+    print(cSummaryStr)
+
+    if twiNum > 0:
+
+      globalPass = False
+
+      summaryLineDataNumbersList.append(twiAcro+"="+str(twiNum))
+
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>"
+
+      htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+        twiDescr,  twiAcro, testsColDataList, testsWithIssueTrackerList,
+        testnameBuildnameSiteSortOrder)
+      # NOTE: We don't limit the number of tests tracked tests listed because
+      # we will never have a huge number of failing tests with issue trackers.
+
+
+    #
+    # ToDo: Remove the below table printouts once we figure out how to get the
+    # issue links to work in above tables.
+    #
+
     table_headings=[
       "site",
       "build_name",
