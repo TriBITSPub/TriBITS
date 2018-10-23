@@ -556,6 +556,110 @@ class test_downloadBuildsOffCDashAndSummarize(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalizeReport.buildHasConfigureFailures()
+#
+#############################################################################
+
+class test_buildHasConfigureFailures(unittest.TestCase):
+
+  def test_has_no_build_failures(self):
+    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    self.assertEqual(buildHasConfigureFailures(buildDict), False)
+
+  def test_has_build_failures(self):
+    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    buildDict['configure']['error'] = 1
+    self.assertEqual(buildHasConfigureFailures(buildDict), True)
+
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.buildHasBuildFailures()
+#
+#############################################################################
+
+class test_buildHasBuildFailures(unittest.TestCase):
+
+  def test_has_no_build_failures(self):
+    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    self.assertEqual(buildHasBuildFailures(buildDict), False)
+
+  def test_has_build_failures(self):
+    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    buildDict['compilation']['error'] = 1
+    self.assertEqual(buildHasBuildFailures(buildDict), True)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.getBuildsWtihConfigureFailures()
+#
+#############################################################################
+
+def dummyBuildWithConfigureFailures(numConfigureFailures):
+    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    buildDict['configure']['error'] = numConfigureFailures
+    return buildDict
+
+class test_getBuildsWtihConfigureFailures(unittest.TestCase):
+
+  def test_1(self):
+    bwcf = dummyBuildWithConfigureFailures
+    buildDictList = [
+      bwcf(1),
+      bwcf(0),
+      bwcf(2)
+      ]
+    buildWithConfigureFailuresList = getBuildsWtihConfigureFailures(buildDictList)
+    buildWithConfigureFailuresList_expected = [
+      bwcf(1),
+      bwcf(2)
+      ]
+    self.assertEqual(buildWithConfigureFailuresList,
+      buildWithConfigureFailuresList_expected)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.getBuildsWtihConfigureFailures()
+#
+#############################################################################
+
+def dummyBuildWithBuildFailures(numBuildFailures):
+    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    buildDict['compilation']['error'] = numBuildFailures
+    return buildDict
+
+class test_getBuildsWtihBuildFailures(unittest.TestCase):
+
+  def test_1(self):
+    bwbf = dummyBuildWithBuildFailures
+    buildDictList = [
+      bwbf(1),
+      bwbf(0),
+      bwbf(2)
+      ]
+    buildWithBuildFailuresList = getBuildsWtihBuildFailures(buildDictList)
+    buildWithBuildFailuresList_expected = [
+      bwbf(1),
+      bwbf(2)
+      ]
+    self.assertEqual(buildWithBuildFailuresList,
+      buildWithBuildFailuresList_expected)
+
+
+
+
+
+
+
+
+
+
+
+#############################################################################
+#
 # Test CDashQueryAnalizeReport.cdashIndexBuildPasses()
 #
 #############################################################################

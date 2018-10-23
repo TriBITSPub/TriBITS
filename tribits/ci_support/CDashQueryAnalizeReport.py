@@ -399,6 +399,38 @@ def downloadBuildsOffCDashAndSummarize(
   return summaryCDashIndexBuilds
 
 
+# Return if a build has configure failures
+def buildHasConfigureFailures(buildDict):
+  if buildDict['configure']['error'] > 0:
+    return True
+  return False
+
+
+# Return if a build has configure failures
+def buildHasBuildFailures(buildDict):
+  if buildDict['compilation']['error'] > 0:
+    return True
+  return False
+
+
+# Get a list of builds with configure failures
+def getBuildsWtihConfigureFailures(buildDictList):
+  buildsWithConfigureFailures = []
+  for buildDict in buildDictList:
+    if buildHasConfigureFailures(buildDict):
+      buildsWithConfigureFailures.append(buildDict)
+  return buildsWithConfigureFailures
+
+
+# Get a list of builds with configure failures
+def getBuildsWtihBuildFailures(buildDictList):
+  buildsWithBuildFailures = []
+  for buildDict in buildDictList:
+    if buildHasBuildFailures(buildDict):
+      buildsWithBuildFailures.append(buildDict)
+  return buildsWithBuildFailures
+
+
 # Return if a CDash Index build passes
 def cdashIndexBuildPasses(cdashIndexBuild):
   if cdashIndexBuild['update']['errors'] > 0:
