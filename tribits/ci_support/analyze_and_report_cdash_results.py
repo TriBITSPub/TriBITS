@@ -111,9 +111,19 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       +" the set of non-passing tests matching this set of builds. (Default '')" )
 
   clp.add_option(
+    "--limit-test-history-days", dest="test_history_days", default=30,
+    help="Number of days to go back in history for each test" )
+    # ToDo: Rename test_history_days to limitTestHistoryDays
+
+  clp.add_option(
     "--expected-builds-file", dest="expectedBuildsFile", type="string",
     default="",
     help="Path to CSV file that lists the expected builds. (Default '')" )
+
+  clp.add_option(
+    "--issue-tracking-csv-file-name", dest="issue_tracking_csv_file_name",
+    type="string",  default="",
+    help="the subject line on sent out emails" )
 
   cdashQueriesCacheDir_default=os.getcwd()
 
@@ -124,7 +134,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       +" (default ='"+cdashQueriesCacheDir_default+"')." )
 
   addOptionParserChoiceOption(
-    "--use-cached-cdash-data", "useCachedCDashData",
+    "--use-cached-cdash-data", "useCachedCDashDataStr",
     ("on", "off"), 1,
     "Use data downloaded from CDash already cached.",
     clp )
@@ -177,7 +187,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --cdash-nonpassed-tests-filters='"+inOptions.cdashNonpassedTestsFilters+"'"+lt+\
     "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+lt +\
     "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+lt+\
-    "  --use-cached-cdash-data='"+inOptions.useCachedCDashData+"'"+lt+\
+    "  --use-cached-cdash-data='"+inOptions.useCachedCDashDataStr+"'"+lt+\
     "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
     "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt+\
     "  --send-email-to='"+inOptions.sendEmailTo+"'"+lt+\
@@ -207,10 +217,12 @@ if __name__ == '__main__':
   inOptions = getCmndLineOptions()
   echoCmndLine(inOptions)
 
-  if inOptions.useCachedCDashData == "on":
-    useCachedCDashData=True
+  if inOptions.useCachedCDashDataStr == "on":
+    setattr(inOptions, 'useCachedCDashData', True)
   else:
-    useCachedCDashData=False
+    setattr(inOptions, 'useCachedCDashData', False)
+  useCachedCDashData = inOptions.useCachedCDashData
+  # ToDo: Remove var useCachedCDashData and use inOptions.useCachedCDashData
 
   #
   # Common data, etc.
@@ -302,12 +314,34 @@ if __name__ == '__main__':
       inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
       inOptions.cdashNonpassedTestsFilters)
 
-    # ToDo: Get list non-passing tests from CDash
+    print("\nGetting list of non-passing tests from CDash ...\n")
+
+    print("\nCDash non-passing tests browser URL:\n\n"+\
+      "  "+cdashNonpassingTestsBrowserUrl+"\n")
+
+    # get data from cdash and return in a simpler form
+    all_failing_tests=CDQAR.getTestsJsonFromCdash(
+      inOptions.cdashSiteUrl, inOptions.cdashProjectName,
+      inOptions.cdashNonpassedTestsFilters,
+      inOptions, printCDashUrl=True )
+
+
+    # add issue tracking information to the tests' data
+    #CDQAR.checkForIssueTracker(all_failing_tests, "knownIssues.csv")
+    CDQAR.checkForIssueTracker(all_failing_tests, inOptions.issue_tracking_csv_file_name)
+    
+    # split the tests into those with issue tracking and those without
+    tests_without_issue_tracking, tests_with_issue_tracking = \
+      CDQAR.filterDictionary(all_failing_tests, "issue_tracker")
+    print("\nnum tests_without_issue_tracking = "+\
+      str(len(tests_without_issue_tracking.keys())))
+    print("\nnum tests_with_issue_tracking = "+\
+      str(len(tests_with_issue_tracking.keys())))
   
     # Nonpassing Tests on CDash
     htmlEmailBodyTop += \
      "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
-     "Nonpassing Tests on CDash</a> (num=???)<br>\n"
+     "Nonpassing Tests on CDash</a> (num="+str(len(all_failing_tests.keys()))+")<br>\n"
   
     # End of full build and test link paragraph 
     htmlEmailBodyTop += "</p>\n"
@@ -431,8 +465,25 @@ if __name__ == '__main__':
     #
     # B.2) Get the test results data and analyze
     #
+    
+    table_headings=[
+      "site",
+      "build_name",
+      "test_name",
+      "status",
+      "details",
+      "failures_in_last_"+str(inOptions.test_history_days)+"_days",
+      "previous_failure_date",
+      "issue_tracker",
+      ]
 
-    # ToDo: Implement!
+    htmlEmailBodyBottom += CDQAR.createHtmlTable(
+      tests_without_issue_tracking, table_headings,
+      "Failing Tests without Issue Tracking: "+inOptions.date)
+
+    htmlEmailBodyBottom += CDQAR.createHtmlTable(
+      tests_with_issue_tracking, table_headings,
+      "Failing Tests with Issue Tracking: "+inOptions.date)
  
   except Exception:
     # Traceback!
@@ -466,9 +517,7 @@ if __name__ == '__main__':
 
   if inOptions.writeEmailToFile:
     print("\nWriting HTML file '"+inOptions.writeEmailToFile+"' ...")
-    htmlEmaiBodyFileStr = \
-      "<h2>"+summaryLine+"</h2>\n\n"+\
-      htmlEmaiBody
+    htmlEmaiBodyFileStr = "<h2>"+summaryLine+"</h2>\n\n"+htmlEmaiBody
     with open(inOptions.writeEmailToFile, 'w') as outFile:
       outFile.write(htmlEmaiBodyFileStr)
 

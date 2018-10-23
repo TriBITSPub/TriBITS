@@ -31,7 +31,7 @@ clp.add_option(
       "--construct-from-cache", dest="construct_from_cache",  default=True,
     help="Use cached json files instead of cdash queries when possible" )
 clp.add_option(
-      "--cache-dir", dest="cache_dir",  default="cached_files/",
+      "--cache-dir", dest="cdashQueriesCacheDir",  default="cached_files/",
     help="directory used to read and write cached files" )
 clp.add_option(
       "--skip-send-email", dest="skip_send_email", default=False,
@@ -49,7 +49,7 @@ clp.add_option(
       "--email-subject-line", dest="email_subject_line", type="string",  default="",
     help="the subject line on sent out emails" )
 clp.add_option(
-      "--cdash-site-url", dest="cdash_site_url", type="string",  default="",
+      "--cdash-site-url", dest="cdashSiteUrl", type="string",  default="",
     help="the subject line on sent out emails" )
 clp.add_option(
       "--cdash-site-project", dest="cdash_site_project", type="string",  default="",
@@ -73,7 +73,7 @@ print("Analyzing test results from "+options.date)
 # Define fixed data
 #
 
-cdashUrl = options.cdash_site_url
+cdashUrl = options.cdashSiteUrl
 project = options.cdash_site_project
 extra_filter_fields= options.cdash_site_extra_query_fields
 

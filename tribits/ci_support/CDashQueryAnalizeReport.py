@@ -673,14 +673,20 @@ def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
     
 # This will return a dictionary with information about all the tests that were returned
 # in the json from cdash as a result of the CDash query from the given inputs
-def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options):
-  raw_json_from_cdash=getRawJsonFromCdash(cdashUrl, projectName, filterFields, options)
+def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options,
+  printCDashUrl=False \
+  ):
+  raw_json_from_cdash=getRawJsonFromCdash(cdashUrl, projectName, filterFields,
+    options, printCDashUrl)
   simplified_dict_of_tests=getTestDictionaryFromCdashJson(raw_json_from_cdash, options)
-  getHistoricalDataForTests(simplified_dict_of_tests, cdashUrl, projectName, filterFields, options)
+  getHistoricalDataForTests(simplified_dict_of_tests, cdashUrl, projectName,
+    filterFields, options)
   return simplified_dict_of_tests
 
 # Construct a URL and return the raw json from cdash
-def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options):
+def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options,
+  printCDashUrl=False \
+  ):
   # construct the cdash query.  the "/api/v1/" will cause CDash to return a json data 
   # structure instead of a web page
   CdashTestsApiQueryUrl= \
@@ -688,9 +694,10 @@ def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options):
     "/api/v1/queryTests.php?"+ \
     "project="+projectName+ \
     "&date="+options.date+ \
-    filterFields
+    "&"+filterFields
 
-  print(CdashTestsApiQueryUrl)
+  if printCDashUrl:
+    print("Getting bulid data from:\n\n  " + CdashTestsApiQueryUrl )
   
   # get the json from CDash using the query constructed above
   json_from_cdash_query=extractCDashApiQueryData(CdashTestsApiQueryUrl)
@@ -726,12 +733,12 @@ def getTestDictionaryFromCdashJson(CDash_json, options):
       simplified_dict_of_tests[dict_key]["site"]=site
       simplified_dict_of_tests[dict_key]["build_name"]=build_name
       simplified_dict_of_tests[dict_key]["test_name"]=test_name
-      simplified_dict_of_tests[dict_key]["test_name_url"]=options.cdash_site_url+"/"+CDash_json["builds"][i]["testDetailsLink"]
+      simplified_dict_of_tests[dict_key]["test_name_url"]=options.cdashSiteUrl+"/"+CDash_json["builds"][i]["testDetailsLink"]
       simplified_dict_of_tests[dict_key]["issue_tracker"]=""
       simplified_dict_of_tests[dict_key]["issue_tracker_url"]=""
       simplified_dict_of_tests[dict_key]["details"]=CDash_json["builds"][i]["details"].strip()
       simplified_dict_of_tests[dict_key]["status"]=CDash_json["builds"][i]["status"].strip()
-      simplified_dict_of_tests[dict_key]["status_url"]=options.cdash_site_url+"/"+CDash_json["builds"][i]["testDetailsLink"]
+      simplified_dict_of_tests[dict_key]["status_url"]=options.cdashSiteUrl+"/"+CDash_json["builds"][i]["testDetailsLink"]
       simplified_dict_of_tests[dict_key]["count"]=1
 
   return simplified_dict_of_tests
@@ -794,7 +801,7 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     testDictionary[dict_key]["count"]=1
 
     # set the names of the cached files so we can check if they exists and write them out otherwise
-    cache_folder_name=options.cache_dir
+    cache_folder_name=options.cdashQueriesCacheDir+"/test_history"
     cache_file_name=options.date+"-"+site+"-"+build_name+"-"+test_name+"-HIST-"+str(days_of_history)+".json"
 
     # creating the cache directory if it does not already exist
@@ -804,7 +811,7 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     # initialize test_history_json to empty dict.  if it is read from the cache then it will not be empty
     # after these ifs
     test_history_json={}
-    if options.construct_from_cache:
+    if options.useCachedCDashData:
       if os.path.exists(cache_folder_name+"/"+cache_file_name):
         print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from the cache")
         f = open(cache_folder_name+"/"+cache_file_name, "r")
@@ -818,7 +825,7 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
       test_history_json=extractCDashApiQueryData(testHistoryQueryUrl)      
 
       # cache json files if the option is on (turned on by default)
-      if options.cache_cdash_queries:
+      if options.cdashQueriesCacheDir:
         f = open(cache_folder_name+"/"+cache_file_name, "w")
         json.dump(test_history_json, f)
         f.close
