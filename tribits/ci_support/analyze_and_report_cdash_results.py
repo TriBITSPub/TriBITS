@@ -543,7 +543,7 @@ if __name__ == '__main__':
 
       summaryLineDataNumbersList.append(twiAcro+"="+str(twiNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>"
+      htmlEmailBodyTop += cSummaryStr+"<br>"
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         twiDescr,  twiAcro, testsColDataList, testsWithIssueTrackerList,
