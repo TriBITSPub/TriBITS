@@ -659,107 +659,133 @@ class test_getBuildsWtihBuildFailures(unittest.TestCase):
       buildWithBuildFailuresList_expected)
 
 
-
-
-
-
-
-
-
-
-
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.cdashIndexBuildPasses()
+# Test CDashQueryAnalizeReport.sortAndLimitListOfDicts()
 #
 #############################################################################
 
-class test_cdashIndexBuildPasses(unittest.TestCase):
+def createDictForTest(data1, data2, data3):
+  return { 'key1':data1, 'key2':data2, 'key3':data3 }
 
-  def test_cdashIndexBuildPasses_pass(self):
-    build = copy.deepcopy(g_singleBuildPassesSummary)
-    self.assertEqual(cdashIndexBuildPasses(build), True)
-
-  def test_cdashIndexBuildPasses_update_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesSummary)
-    build['update']['errors'] = 1
-    self.assertEqual(cdashIndexBuildPasses(build), False)
-
-  def test_cdashIndexBuildPasses_configure_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesSummary)
-    build['configure']['error'] = 1
-    self.assertEqual(cdashIndexBuildPasses(build), False)
-
-  def test_cdashIndexBuildPasses_compilation_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesSummary)
-    build['compilation']['error'] = 1
-    self.assertEqual(cdashIndexBuildPasses(build), False)
-
-  def test_cdashIndexBuildPasses_test_fail_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesSummary)
-    build['test']['fail'] = 1
-    self.assertEqual(cdashIndexBuildPasses(build), False)
-
-  def test_cdashIndexBuildPasses_test_notrun_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesSummary)
-    build['test']['notrun'] = 1
-    self.assertEqual(cdashIndexBuildPasses(build), False)
-
-  def test_cdashIndexBuildsPass_1_pass(self):
-    builds = [copy.deepcopy(g_singleBuildPassesSummary)]
-    (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
-    self.assertEqual(buildPasses, True)
-    self.assertEqual(buildFailedMsg, "")
-
-  def test_cdashIndexBuildsPass_1_fail(self):
-    build = copy.deepcopy(g_singleBuildPassesSummary)
-    build['compilation']['error'] = 1
-    builds = [build]
-    (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
-    self.assertEqual(buildPasses, False)
-    self.assertEqual(buildFailedMsg, "Error, the build " + sorted_dict_str(build) +
-                     " failed!")
-
-  def test_cdashIndexBuildsPass_2_pass(self):
-    build = copy.deepcopy(g_singleBuildPassesSummary)
-    builds = [build, build]
-    (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
-    self.assertEqual(buildPasses, True)
-    self.assertEqual(buildFailedMsg, "")
-
-  def test_cdashIndexBuildsPass_2_fail_1(self):
-    build = copy.deepcopy(g_singleBuildPassesSummary)
-    buildFailed = copy.deepcopy(g_singleBuildPassesSummary)
-    buildFailed['buildname'] = "failedBuild"
-    buildFailed['compilation']['error'] = 1
-    builds = [buildFailed, build]
-    (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
-    self.assertEqual(buildPasses, False)
-    self.assertEqual(buildFailedMsg, "Error, the build " +
-                     sorted_dict_str(buildFailed) + " failed!")
-
-  def test_cdashIndexBuildsPass_2_fail_2(self):
-    build = copy.deepcopy(g_singleBuildPassesSummary)
-    buildFailed = copy.deepcopy(g_singleBuildPassesSummary)
-    buildFailed['buildname'] = "failedBuild"
-    buildFailed['compilation']['error'] = 1
-    builds = [build, buildFailed]
-    (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
-    self.assertEqual(buildPasses, False)
-    self.assertEqual(buildFailedMsg, "Error, the build " +
-                     sorted_dict_str(buildFailed) + " failed!")
-
-  def test_getCDashIndexBuildNames(self):
-    build1 = copy.deepcopy(g_singleBuildPassesSummary)
-    build1['buildname'] = "build1"
-    build2 = copy.deepcopy(g_singleBuildPassesSummary)
-    build2['buildname'] = "build2"
-    build3 = copy.deepcopy(g_singleBuildPassesSummary)
-    build3['buildname'] = "build3"
-    builds = [build1, build2, build3]
-    buildNames_expected = [ "build1", "build2", "build3" ]
-    self.assertEqual(getCDashIndexBuildNames(builds), buildNames_expected)
-
+def createDictForTestWithUrl(data1, data2, data3):
+  return {
+    'key1':data1[0], 'key1_url':data1[1],
+    'key2':data2[0], 'key2_url':data2[1],
+    'key3':data3[0], 'key3_url':data3[1],
+    }
+ 
+class test_sortAndLimitListOfDicts(unittest.TestCase):
+  
+  def test_no_sort_no_limit(self):
+    cd = createDictForTest
+    origList = [
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_a", 1, "c2_c"),
+      cd("c1_b", 2, "c2_a"),
+      ]
+    resultList = sortAndLimitListOfDicts(origList)
+    resultList_expected = origList
+    self.assertEqual(resultList, resultList_expected)
+  
+  def test_multicol_sort_no_limit(self):
+    cd = createDictForTest
+    origList = [
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_b", 2, "c2_a"),
+      cd("c1_a", 1, "c2_c"),
+      ]
+    resultList = sortAndLimitListOfDicts(origList,  ['key1', 'key2'])
+    resultList_expected = [
+      cd("c1_a", 1, "c2_c"),
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_b", 2, "c2_a"),
+      ]
+    self.assertEqual(resultList, resultList_expected)
+  
+  def test_multicol_sort_limit_2(self):
+    cd = createDictForTest
+    origList = [
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_b", 2, "c2_a"),
+      cd("c1_a", 1, "c2_c"),
+      ]
+    resultList = sortAndLimitListOfDicts(origList,  ['key1', 'key2'], 2)
+    resultList_expected = [
+      cd("c1_a", 1, "c2_c"),
+      cd("c1_a", 3, "c2_b"),
+      ]
+    self.assertEqual(resultList, resultList_expected)
+  
+  def test_multicol_sort_limit_3(self):
+    cd = createDictForTest
+    origList = [
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_b", 2, "c2_a"),
+      cd("c1_a", 1, "c2_c"),
+      ]
+    resultList = sortAndLimitListOfDicts(origList,  ['key1', 'key2'], 3)
+    resultList_expected = [
+      cd("c1_a", 1, "c2_c"),
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_b", 2, "c2_a"),
+      ]
+    self.assertEqual(resultList, resultList_expected)
+  
+  def test_multicol_sort_limit_4(self):
+    cd = createDictForTest
+    origList = [
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_b", 2, "c2_a"),
+      cd("c1_a", 1, "c2_c"),
+      ]
+    resultList = sortAndLimitListOfDicts(origList,  ['key1', 'key2'], 4)
+    resultList_expected = [
+      cd("c1_a", 1, "c2_c"),
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_b", 2, "c2_a"),
+      ]
+    self.assertEqual(resultList, resultList_expected)
+  
+  def test_multicol_sort_limit_0(self):
+    cd = createDictForTest
+    origList = [
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_b", 2, "c2_a"),
+      cd("c1_a", 1, "c2_c"),
+      ]
+    resultList = sortAndLimitListOfDicts(origList,  ['key1', 'key2'], 0)
+    resultList_expected = []
+    self.assertEqual(resultList, resultList_expected)
+  
+  def test_no_sort_limit_2(self):
+    cd = createDictForTest
+    origList = [
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_a", 1, "c2_c"),
+      cd("c1_b", 2, "c2_a"),
+      ]
+    resultList = sortAndLimitListOfDicts(origList, None, 2)
+    resultList_expected = [
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_a", 1, "c2_c"),
+      ]
+    self.assertEqual(resultList, resultList_expected)
+  
+  def test_sort_key2_no_limit(self):
+    cd = createDictForTest
+    origList = [
+      cd("c1_a", 3, "c2_b"),
+      cd("c1_a", 1, "c2_c"),
+      cd("c1_b", 2, "c2_a"),
+      ]
+    resultList = sortAndLimitListOfDicts(origList, ['key2'])
+    resultList_expected = [
+      cd("c1_a", 1, "c2_c"),
+      cd("c1_b", 2, "c2_a"),
+      cd("c1_a", 3, "c2_b"),
+      ]
+    self.assertEqual(resultList, resultList_expected)
 
 
 #############################################################################
@@ -767,24 +793,14 @@ class test_cdashIndexBuildPasses(unittest.TestCase):
 # Test CDashQueryAnalizeReport.createHtmlTableStr()
 #
 #############################################################################
-
-def createTestTableRowColumnData(data1, data2, data3):
-  return { 'key1':data1, 'key2':data2, 'key3':data3 }
-
-def createTestTableRowColumnDataWithUrl(data1, data2, data3):
-  return {
-    'key1':data1[0], 'key1_url':data1[1],
-    'key2':data2[0], 'key2_url':data2[1],
-    'key3':data3[0], 'key3_url':data3[1],
-    }
-
+ 
 class test_createHtmlTableStr(unittest.TestCase):
   
   # Check that the contents are put in the right place, the correct alignment,
   # correct handling of non-string data, etc.
   def test_3x3_table_correct_contents(self):
     tcd = TableColumnData
-    trd = createTestTableRowColumnData
+    trd = createDictForTest
     colDataList = [
       tcd('key3', "Data 3"),
       tcd('key1', "Data 1"),
@@ -892,7 +908,7 @@ tr:nth-child(odd) {background-color: #fff;}
   # correct handling of non-string data, etc.
   def test_3x3_table_with_url_correct_contents(self):
     tcd = TableColumnData
-    trdu = createTestTableRowColumnDataWithUrl
+    trdu = createDictForTestWithUrl
     colDataList = [
       tcd('key3', "Data 3"),
       tcd('key1', "Data 1"),

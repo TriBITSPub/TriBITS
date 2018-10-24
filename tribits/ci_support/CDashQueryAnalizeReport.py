@@ -438,40 +438,6 @@ def getBuildsWtihBuildFailures(buildDictList):
   return buildsWithBuildFailures
 
 
-# Return if a CDash Index build passes
-def cdashIndexBuildPasses(cdashIndexBuild):
-  if cdashIndexBuild['update']['errors'] > 0:
-    return False
-  if cdashIndexBuild['configure']['error'] > 0:
-    return False
-  if cdashIndexBuild['compilation']['error'] > 0:
-    return False
-  if (cdashIndexBuild['test']['fail'] + cdashIndexBuild['test']['notrun'])  > 0:
-    return False
-  return True
-  
-
-# Return if a list of CDash builds pass or fail and return error string if
-# they fail.
-def cdashIndexBuildsPass(summaryCDashIndexBuilds):
-  buildsPass = True
-  buildFailedMsg = ""
-  for build in summaryCDashIndexBuilds:
-    if not cdashIndexBuildPasses(build):
-      buildsPass = False
-      buildFailedMsg = "Error, the build " + sorted_dict_str(build) + " failed!"
-      break
-  return (buildsPass, buildFailedMsg)
-
-
-# Extract the set of build names from a list of build names
-def getCDashIndexBuildNames(summaryCDashIndexBuilds):
-  buildNames = []
-  for build in summaryCDashIndexBuilds:
-    buildNames.append(build['buildname'])
-  return buildNames
-
-
 # Functor class to sort a row of dicts by multiple columns of string data.
 class DictSortFunctor(object):
   def __init__(self, sortKeyList):
@@ -481,10 +447,41 @@ class DictSortFunctor(object):
     for key in self.sortKeyList:
       keyData = dict_in.get(key)
       if sortKeyStr:
-        sortKeyStr += "-"+keyData
+        sortKeyStr += "-"+str(keyData)
       else:
         sortKeyStr = keyData
     return sortKeyStr
+
+
+# Sort and limit a list of dicts
+#
+# Arguments:
+#
+# listOfDicts [in]: List of dicts that will be sorted according to keys.
+#
+# sortKeyList [in]: List of dict keys that define the sort order for the data
+# in the list.  The default is None which means that no sort is performed.
+#
+# limitRowsToDisplay [in]: The max number of rows to display.  The default is
+# None which will result in no limit to the number of rows displayed.  The top
+# limitRowsToDisplay items will be dispalyed after the list is sorted.
+#
+def sortAndLimitListOfDicts(listOfDicts, sortKeyList = None,
+  limitRowsToDisplay = None\
+  ):
+  # Sort the list
+  if sortKeyList:
+    listOfDictsOrdered = copy.copy(listOfDicts)  # Shallow copy
+    listOfDictsOrdered.sort(key=DictSortFunctor(sortKeyList))
+  else:
+    listOfDictsOrdered = listOfDicts  # No sort being done
+  # Limit rows
+  if limitRowsToDisplay == None:
+    listOfDictsLimited = listOfDictsOrdered
+  else:
+    listOfDictsLimited = listOfDictsOrdered[0:limitRowsToDisplay]
+  # Return the final sorted limited list
+  return listOfDictsLimited
 
 
 # Class to store dict key and table header
@@ -616,6 +613,7 @@ def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems,
   tableTitle += ": "+dataCountAcronym+"="+str(numItems)
   return tableTitle
 
+
 # Create an html table string for CDash summary data.
 #
 # Arguments:
@@ -661,17 +659,9 @@ def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
   # If no rows, don't create a table
   if len(rowDataList) == 0:
     return ""
-  # Sort the list
-  if sortKeyList:
-    rowDatListOrdered = copy.deepcopy(rowDataList)
-    rowDatListOrdered.sort(key=DictSortFunctor(sortKeyList))
-  else:
-    rowDatListOrdered = rowDataList
-  # Limit rows to display if asked
-  if limitRowsToDisplay == None:
-    rowDataListDisplayed = rowDatListOrdered
-  else:
-    rowDataListDisplayed = rowDatListOrdered[0:limitRowsToDisplay]
+  # Sort the list and limit the list
+  rowDataListDisplayed = sortAndLimitListOfDicts(
+    rowDataList, sortKeyList, limitRowsToDisplay)
   # Table title
   tableTitle = getCDashDataSummaryHtmlTableTitleStr(
     dataTitle, dataCountAcronym, len(rowDataList), limitRowsToDisplay )
