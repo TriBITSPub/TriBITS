@@ -685,9 +685,20 @@ def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
 def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options,
   printCDashUrl=False \
   ):
-  raw_json_from_cdash=getRawJsonFromCdash(cdashUrl, projectName, filterFields,
-    options, printCDashUrl)
-  simplified_dict_of_tests=getTestDictionaryFromCdashJson(raw_json_from_cdash, options)
+
+  cacheFolder=options.cdashQueriesCacheDir+"/test_history"
+  cacheFile=options.date+"-All-Failing-Tests.json"
+  simplified_dict_of_tests={}
+  if options.useCachedCDashData:
+    simplified_dict_of_tests=getJsonDataFromCache(cacheFolder, cacheFile)
+  
+  if not simplified_dict_of_tests:
+    raw_json_from_cdash=getRawJsonFromCdash(cdashUrl, projectName, filterFields,
+      options, printCDashUrl)
+    simplified_dict_of_tests=getTestDictionaryFromCdashJson(raw_json_from_cdash, options)
+    if options.cdashQueriesCacheDir:
+      writeJsonDataToCache(cacheFolder, cacheFile, simplified_dict_of_tests)
+
   getHistoricalDataForTests(simplified_dict_of_tests, cdashUrl, projectName,
     filterFields, options)
   return simplified_dict_of_tests
@@ -707,7 +718,7 @@ def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options,
 
   if printCDashUrl:
     print("Getting bulid data from:\n\n  " + CdashTestsApiQueryUrl )
-  
+    
   # get the json from CDash using the query constructed above
   json_from_cdash_query=extractCDashApiQueryData(CdashTestsApiQueryUrl)
   return json_from_cdash_query
@@ -810,22 +821,14 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     testDictionary[dict_key]["count"]=1
 
     # set the names of the cached files so we can check if they exists and write them out otherwise
-    cache_folder_name=options.cdashQueriesCacheDir+"/test_history"
-    cache_file_name=options.date+"-"+site+"-"+build_name+"-"+test_name+"-HIST-"+str(days_of_history)+".json"
-
-    # creating the cache directory if it does not already exist
-    if not os.path.exists(os.path.dirname(cache_folder_name+"/")):
-      os.makedirs(os.path.dirname(cache_folder_name+"/"))
+    cacheFolder=options.cdashQueriesCacheDir+"/test_history"
+    cacheFile=options.date+"-"+site+"-"+build_name+"-"+test_name+"-HIST-"+str(days_of_history)+".json"
 
     # initialize test_history_json to empty dict.  if it is read from the cache then it will not be empty
     # after these ifs
     test_history_json={}
     if options.useCachedCDashData:
-      if os.path.exists(cache_folder_name+"/"+cache_file_name):
-        print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from the cache")
-        f = open(cache_folder_name+"/"+cache_file_name, "r")
-        test_history_json=json.load(f)
-        f.close
+      test_history_json=getJsonDataFromCache(cacheFolder, cacheFile)
 
     # if test_history_json is still empty then either it was not found in the cache or the user 
     # told us not to look in the cache.  Get the json from CDash
@@ -835,9 +838,7 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
 
       # cache json files if the option is on (turned on by default)
       if options.cdashQueriesCacheDir:
-        f = open(cache_folder_name+"/"+cache_file_name, "w")
-        json.dump(test_history_json, f)
-        f.close
+        writeJsonDataToCache(cacheFolder, cacheFile, test_history_json)
 
     # adding up number of failures and collecting dates of the failures
     failed_dates=[]
@@ -859,6 +860,29 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
       testDictionary[dict_key]["previous_failure_date"]=failed_dates[1]
       testDictionary[dict_key]["most_recent_failure_date"]=failed_dates[0]
 
+def getJsonDataFromCache(cacheFolder, cacheFile):
+  # will read json data from specified file and return that data.
+  # if the file does not exist then return empy dict
+
+  cacheFilePath=cacheFolder+"/"+cacheFile
+  jsonData={}
+  if os.path.exists(cacheFilePath):
+    print("Reading cache file: "+cacheFilePath)
+    f = open(cacheFilePath, "r")
+    jsonData=json.load(f)
+    f.close
+  else:
+    print("Cache file: "+cacheFilePath+" not found")
+  return jsonData
+
+def writeJsonDataToCache(cacheFolder, cacheFile, jsonData):
+  # creating the cache directory if it does not already exist
+  if not os.path.exists(os.path.dirname(cacheFolder+"/")):
+    os.makedirs(os.path.dirname(cacheFolder+"/"))
+
+  f = open(cacheFolder+"/"+cacheFile, "w")
+  json.dump(jsonData, f)
+  f.close
 
 def filterDictionary(dictOfTests, fieldToTest, testValue="", testType=""):
   dict_of_tests_that_pass={}

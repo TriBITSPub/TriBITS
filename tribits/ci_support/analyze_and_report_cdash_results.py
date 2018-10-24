@@ -95,6 +95,10 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     help="Name for the set of builds. (Default '')" )
 
   clp.add_option(
+    "--test-set-name", dest="testSetName", type="string", default="",
+    help="Name for the set of tests. (Default '')" )
+
+  clp.add_option(
     "--cdash-site-url", dest="cdashSiteUrl", type="string", default="",
     help="Base CDash site, e.g. 'https://testing.sandia.gov/cdash'. (Default '')" )
 
@@ -182,6 +186,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --date='"+inOptions.date+"'"+lt+\
     "  --cdash-project-name='"+inOptions.cdashProjectName+"'"+lt+\
     "  --build-set-name='"+inOptions.buildSetName+"'"+lt+\
+    "  --test-set-name='"+inOptions.testSetName+"'"+lt+\
     "  --cdash-site-url='"+inOptions.cdashSiteUrl+"'"+lt+\
     "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+lt+\
     "  --cdash-nonpassed-tests-filters='"+inOptions.cdashNonpassedTestsFilters+"'"+lt+\
