@@ -287,6 +287,10 @@ if __name__ == '__main__':
     # B.1) Get build and test data off of CDash and analize
     #
 
+    # Get expected builds list early in case there is a problem reading it
+    expectedBuildsList = \
+      CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
+
     #
     # B.1.a) Get list of builds of CDash
     #
@@ -362,9 +366,6 @@ if __name__ == '__main__':
     #
     print("\nSearch for any missing expected builds ...\n")
     #
-
-    expectedBuildsList = \
-      CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
 
     missingExpectedBuildsList = CDQAR.getMissingExpectedBuildsList(
       buildLookupDict, expectedBuildsList)
