@@ -360,8 +360,11 @@ if __name__ == '__main__':
      "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
      "Nonpassing Tests on CDash</a> (num="+str(len(all_failing_tests.keys()))+")<br>\n"
   
-    # End of full build and test link paragraph 
-    htmlEmailBodyTop += "</p>\n"
+    # End of full build and test link paragraph and start the next paragraph
+    # for the summary of failures and other tables
+    htmlEmailBodyTop += \
+      "</p>\n\n"+\
+      "<p>\n"
 
     #
     print("\nSearch for any missing expected builds ...\n")
@@ -386,7 +389,7 @@ if __name__ == '__main__':
 
       summaryLineDataNumbersList.append(bmeAcro+"="+str(bmeNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bmeSummaryStr)+"<br>"
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bmeSummaryStr)+"<br>\n"
 
       bmeColDataList = [
         tcd('group', "Group"),
@@ -424,7 +427,7 @@ if __name__ == '__main__':
 
       summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>"
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>\n"
 
       cColDataList = [
         tcd('group', "Group"),
@@ -461,7 +464,7 @@ if __name__ == '__main__':
 
       summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bSummaryStr)+"<br>"
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bSummaryStr)+"<br>\n"
 
       cColDataList = [
         tcd('group', "Group"),
@@ -520,7 +523,7 @@ if __name__ == '__main__':
 
       summaryLineDataNumbersList.append(twoiAcro+"="+str(twoiNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>"
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>\n"
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         twoiDescr,  twoiAcro, testsColDataList, testsWithoutIssueTrackerList,
@@ -549,7 +552,7 @@ if __name__ == '__main__':
 
       summaryLineDataNumbersList.append(twiAcro+"="+str(twiNum))
 
-      htmlEmailBodyTop += cSummaryStr+"<br>"
+      htmlEmailBodyTop += cSummaryStr+"<br>\n"
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         twiDescr,  twiAcro, testsColDataList, testsWithIssueTrackerList,
@@ -582,18 +585,66 @@ if __name__ == '__main__':
   summaryLine += ": "+inOptions.buildSetName+" on "+inOptions.date
 
   #
-  # D) Write and send the email
+  # D) Finish of HTML body guts and define overall body style
   #
 
-  htmlEmaiBody = htmlEmailBodyTop + "\n\n" + htmlEmailBodyBottom
+  # Finish off the top paragraph of the summary lines
+  htmlEmailBodyTop += \
+    "</p>"
+    
+  # Construct HTML body guts without header or begin/end body.
+  htmlEmaiBodyGuts = \
+    htmlEmailBodyTop+\
+    "\n\n"+\
+    htmlEmailBodyBottom
+
+  htmlHeaderAndBeginBody = \
+    "<html>\n"+\
+    "<head>\n"+\
+    "<style>\n"+\
+    "h1 {\n"+\
+    "  font-size: 40px;\n"+\
+    "}\n"+\
+    "h2 {\n"+\
+    "  font-size: 30px;\n"+\
+    "}\n"+\
+    "h3 {\n"+\
+    "  font-size: 24px;\n"+\
+    "}\n"+\
+    "p {\n"+\
+    "  font-size: 18px;\n"+\
+    "}\n"+\
+    "</style>\n"+\
+    "</head>\n"+\
+    "\n"+\
+    "<body>\n"+\
+    "\n"
+
+  htmlEndBody = \
+    "</body>\n"+\
+    "</html>\n"
+
+  #
+  # E) Write HTML body file and/or send HTML email(s)
+  #
 
   if inOptions.writeEmailToFile:
     print("\nWriting HTML file '"+inOptions.writeEmailToFile+"' ...")
-    htmlEmaiBodyFileStr = "<h2>"+summaryLine+"</h2>\n\n"+htmlEmaiBody
+    htmlEmaiBodyFileStr = \
+      htmlHeaderAndBeginBody+\
+      "<h2>"+summaryLine+"</h2>\n\n"+\
+      htmlEmaiBodyGuts+"\n"+\
+      htmlEmailBodyBottom+\
+      htmlEndBody
     with open(inOptions.writeEmailToFile, 'w') as outFile:
       outFile.write(htmlEmaiBodyFileStr)
 
   if inOptions.sendEmailTo:
+    htmlEmaiBody = \
+      htmlHeaderAndBeginBody+\
+      htmlEmaiBodyGuts+"\n"+\
+      htmlEmailBodyBottom+\
+      htmlEndBody
     for emailAddress in inOptions.sendEmailTo.split(','):
       emailAddress = emailAddress.strip()
       print("\nSending email to '"+emailAddress+"' ...")
