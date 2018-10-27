@@ -634,7 +634,6 @@ if __name__ == '__main__':
       htmlHeaderAndBeginBody+\
       "<h2>"+summaryLine+"</h2>\n\n"+\
       htmlEmaiBodyGuts+"\n"+\
-      htmlEmailBodyBottom+\
       htmlEndBody
     with open(inOptions.writeEmailToFile, 'w') as outFile:
       outFile.write(htmlEmaiBodyFileStr)
@@ -643,7 +642,6 @@ if __name__ == '__main__':
     htmlEmaiBody = \
       htmlHeaderAndBeginBody+\
       htmlEmaiBodyGuts+"\n"+\
-      htmlEmailBodyBottom+\
       htmlEndBody
     for emailAddress in inOptions.sendEmailTo.split(','):
       emailAddress = emailAddress.strip()
