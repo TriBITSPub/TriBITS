@@ -288,8 +288,11 @@ if __name__ == '__main__':
     #
 
     # Get expected builds list early in case there is a problem reading it
-    expectedBuildsList = \
-      CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
+    if inOptions.expectedBuildsFile:
+      expectedBuildsList = \
+        CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
+    else:
+      expectedBuildsList = []
 
     #
     # B.1.a) Get list of builds of CDash
