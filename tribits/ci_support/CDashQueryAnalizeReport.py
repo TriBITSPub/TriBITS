@@ -151,6 +151,12 @@ def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
     ['group', 'site', 'buildname'])
 
 
+# Print print a nested Python data-structure to a file
+def pprintPythonData(pythonData, filePath):
+  pp = pprint.PrettyPrinter(stream=open(filePath,'w'), indent=2)
+  pp.pprint(pythonData)
+
+
 # Get data off of CDash and cache it or read from previously cached data
 def getAndCacheCDashQueryDataOrReadFromCache(
   cdashQueryUrl,
@@ -168,8 +174,7 @@ def getAndCacheCDashQueryDataOrReadFromCache(
       print("Getting bulid data from:\n\n  " + cdashQueryUrl )
     cdashQueryData = extractCDashApiQueryData_in(cdashQueryUrl)
     if cdashQueryDataCacheFile:
-      pp = pprint.PrettyPrinter(stream=open(cdashQueryDataCacheFile,'w'), indent=2)
-      pp.pprint(cdashQueryData)
+      pprintPythonData(cdashQueryData, cdashQueryDataCacheFile) 
   return cdashQueryData
 
 
