@@ -43,11 +43,6 @@ import sys
 import pprint
 import datetime
 
-#print sys.version_info
-if sys.version_info < (2,7,9):
-  raise Exception("Error: Must be using Python 2.7.9 or newer")
-# NOTE: If we use Python 2.6.6. then the urllib2 function crashes!
-
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
 import CDashQueryAnalizeReport as CDQAR
@@ -662,5 +657,5 @@ if __name__ == '__main__':
   if globalPass:
     sys.exit(0)
   else:
-    sys.exit(2)
+    sys.exit(1)
   
