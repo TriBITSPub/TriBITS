@@ -57,18 +57,8 @@ g_pp = pprint.PrettyPrinter(indent=4)
 
 
 #
-# Some helper function
+# Some helper functions
 # 
-
-
-# Helper script for creating test directories (in CWD)
-def deleteThenCreateTestDir(testDir):
-  baseTestDir="analyze_and_report_cdash_results"
-  if not os.path.exists(baseTestDir): os.mkdir(baseTestDir)
-  testSubdir = baseTestDir+"/"+testDir
-  if os.path.exists(testSubdir): shutil.rmtree(testSubdir)
-  os.mkdir(testSubdir)
-  return testSubdir
 
 
 # Search for a list of regexs in order in a list of strings
@@ -124,6 +114,22 @@ def assertListOfRegexsFoundInLinstOfStrs(
       " in "+stringsListName+"!")
 
 
+# Base test directory in the build tree
+g_baseTestDir="analyze_and_report_cdash_results"
+
+
+# Set up the test case directory and copy starter files into it
+#
+# These files can then be modified in order to define other test cases.
+#
+def analyze_and_report_cdash_results_setup_test_dir(
+  testCaseName,
+  copyFrom="raw_cdash_data_twoi_12_twi_9",
+  ):
+  testInputDir = testCiSupportDir+"/"+g_baseTestDir+"/"+copyFrom
+  testOutputDir = g_baseTestDir+"/"+testCaseName
+  shutil.copytree(testInputDir, testOutputDir)
+
 
 # Run a test case involving the analyze_and_report_cdash_results.py
 #
@@ -141,68 +147,63 @@ def analyze_and_report_cdash_results_run_case(
   verbose=False,
   ):
 
-  # Location of test files
-  testInputDir = testCiSupportDir+"/analyze_and_report_cdash_results/"+testCaseName
-
-  # Clean out test output directory and move into it
-  testOutputDir = deleteThenCreateTestDir(testCaseName)
+  # Change into test directory
+  pwdDir = os.getcwd()
+  testOutputDir = g_baseTestDir+"/"+testCaseName
   os.chdir(testOutputDir)
 
-  # Copy the cached CDash data files
+  try:
+
+    # Create expression commandline to run
   
-  buildsDataCacheFile = "fullCDashIndexBuilds.json"
-  shutil.copyfile(testInputDir+"/"+buildsDataCacheFile, buildsDataCacheFile)
+    htmlFileName = "htmlFile.html"
+    htmlFileAbsPath = os.getcwd()+"/"+htmlFileName
+  
+    cmnd = ciSupportDir+"/analyze_and_report_cdash_results.py"+\
+      " --date=2001-01-01"+\
+      " --cdash-project-name='ProjectName'"+\
+      " --build-set-name='ProjectName Nightly Builds'"+\
+      " --cdash-site-url='https://something.com/cdash'"+\
+      " --cdash-builds-filters='builds_filters'"+\
+      " --cdash-nonpassed-tests-filters='nonpasssing_tests_filters'"+\
+      " --use-cached-cdash-data=on"+\
+      " --expected-builds-file=expectedBuilds.csv"+\
+      " --issue-tracking-csv-file-name=testsWithIssueTrackers.csv"+\
+      " --write-email-to-file="+htmlFileName+\
+      " "+extraCmndLineOptions
+  
+    # Run analyze_and_report_cdash_results.py
+    stdoutFile = "stdout.out"
+    stdoutFileAbsPath = os.getcwd()+"/"+stdoutFile
+    rtnCode = echoRunSysCmnd(cmnd, throwExcept=False,
+      outFile=stdoutFile, verbose=verbose)
+  
+    # Check the return code
+    testObj.assertEqual(rtnCode, expectedRtnCode)
+  
+    # Read the STDOUT into a array of string so we can grep it
+    with open(stdoutFile, 'r') as stdout:
+      stdoutStrList = stdout.read().split("\n")
+  
+    # Look for STDOUT for expected summary line
+    assertFindStringInListOfStrings(testObj, expectedSummaryLineStr,
+      stdoutStrList, stdoutFileAbsPath)
+  
+    # Grep the STDOUT for other grep strings
+    assertListOfRegexsFoundInLinstOfStrs(testObj, stdoutRegexList,
+      stdoutStrList, stdoutFileAbsPath)
+  
+    # Release the list of strings for the STDOUT file
+    stdoutStrList = None
+  
+    # Search for expected regexes and in HTML file
+    with open(htmlFileName, 'r') as htmlFile:
+      htmlFileStrList = htmlFile.read().split("\n")
+    assertListOfRegexsFoundInLinstOfStrs(testObj, htmlFileRegexList,
+      htmlFileStrList, htmlFileAbsPath)
 
-  testHistoryDir = "test_history"
-  shutil.copytree(testInputDir+"/"+testHistoryDir, testHistoryDir)
-
-  # Create expression commandline to run
-
-  htmlFileName = "htmlFile.html"
-  htmlFileAbsPath = os.getcwd()+"/"+htmlFileName
-
-  cmnd = ciSupportDir+"/analyze_and_report_cdash_results.py"+\
-    " --date=2001-01-01"+\
-    " --cdash-project-name='ProjectName'"+\
-    " --build-set-name='ProjectName Nightly Builds'"+\
-    " --cdash-site-url='https://something.com/cdash'"+\
-    " --cdash-builds-filters='builds_filters'"+\
-    " --cdash-nonpassed-tests-filters='nonpasssing_tests_filters'"+\
-    " --use-cached-cdash-data=on"+\
-    " --expected-builds-file="+testInputDir+"/expectedBuilds.csv"+\
-    " --issue-tracking-csv-file-name="+testInputDir+"/testsWithIssueTrackers.csv"+\
-    " --write-email-to-file="+htmlFileName+\
-    " "+extraCmndLineOptions
-
-  # Run analyze_and_report_cdash_results.py
-  stdoutFile = "stdout.out"
-  stdoutFileAbsPath = os.getcwd()+"/"+stdoutFile
-  rtnCode = echoRunSysCmnd(cmnd, throwExcept=False,
-    outFile=stdoutFile, verbose=verbose)
-
-  # Check the return code
-  testObj.assertEqual(rtnCode, expectedRtnCode)
-
-  # Read the STDOUT into a array of string so we can grep it
-  with open(stdoutFile, 'r') as stdout:
-    stdoutStrList = stdout.read().split("\n")
-
-  # Look for STDOUT for expected summary line
-  assertFindStringInListOfStrings(testObj, expectedSummaryLineStr,
-    stdoutStrList, stdoutFileAbsPath)
-
-  # Grep the STDOUT for other grep strings
-  assertListOfRegexsFoundInLinstOfStrs(testObj, stdoutRegexList, stdoutStrList,
-    stdoutFileAbsPath)
-
-  # Release the list of strings for the STDOUT file
-  stdoutStrList = None
-
-  # Search for expected regexes and in HTML file
-  with open(htmlFileName, 'r') as htmlFile:
-    htmlFileStrList = htmlFile.read().split("\n")
-  assertListOfRegexsFoundInLinstOfStrs(testObj, htmlFileRegexList, htmlFileStrList,
-    htmlFileAbsPath)
+  finally:
+    os.chdir(pwdDir)
 
 
 #############################################################################
@@ -214,10 +215,13 @@ def analyze_and_report_cdash_results_run_case(
 
 class test_analyze_and_report_cdash_results(unittest.TestCase):
 
-  def test_case1(self):
+  # Base case for raw CDash data we happened to choose
+  def test_twoi_12_twi_9(self):
+    testCaseName = "twoi_12_twi_9"
+    analyze_and_report_cdash_results_setup_test_dir(testCaseName)
     analyze_and_report_cdash_results_run_case(
       self,
-      "case1",
+      testCaseName,
       "",
       1,
       "FAILED (twoi=12, twi=9): ProjectName Nightly Builds on 2001-01-01",
@@ -266,5 +270,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 #
 
 if __name__ == '__main__':
+
+  # Clean out and re-recate the base test directory
+  if os.path.exists(g_baseTestDir): shutil.rmtree(g_baseTestDir)
+  os.mkdir(g_baseTestDir)
 
   unittest.main()
