@@ -282,7 +282,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   # NOTE: The above unit test checks several parts of the HTML output that
   # other tests will not check.  In particular, this really pins down the
   # tables 'twoi' and 'twi'.  Other tests will not do this to avoid
-# met:duplication in testing.
+  # duplication in testing.
 
 
   # Add some missing builds, some builds with configure failuires, and builds
@@ -419,6 +419,48 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       )
   # NOTE: That above test really pin down the contents of the 'bme', 'c', and
   # 'b' tables.  Other tests will not do that to avoid duplication in testing.
+
+  # Test the all passing case
+  def test_passed_clean(self):
+
+    testCaseName = "passed_clean"
+
+    # Copy the raw files from CDash to get started
+    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+
+    # Remove all of the failing tests
+    testListFilePath = testOutputDir+"/test_history/2001-01-01-All-Failing-Tests.json"
+    CDQAR.pprintPythonData( {}, testListFilePath )
+    # ToDo: Fix above once the script caches the raw CDash JSON output.
+
+    # Run analyze_and_report_cdash_results.py and make sure that it prints the
+    # right stuff
+    analyze_and_report_cdash_results_run_case(
+      self,
+      testCaseName,
+      [
+        "--build-set-name='Project Specialized Builds'",  # Test changing this
+        ],
+      0,
+      "PASSED: Project Specialized Builds on 2001-01-01",
+      [
+        "Missing expected builds: bme=0",
+        "Builds with configure failures: c=0",
+        "Builds with build failures: b=0",
+        "Failing tests without issue tracker: twoi=0",
+        "Failing tests with issue tracker: twi=0",
+        ],
+      [
+        "<h2>Build and Test results for Project Specialized Builds on 2001-01-01</h2>",
+
+        # Links to build and non-passing tests
+        "<p>",
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2001-01-01&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2001-01-01&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=0[)]<br>",
+        "</p>",
+       ],
+      #verbose=True,
+      )
 
 #
 # Run the unit tests!

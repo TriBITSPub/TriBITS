@@ -701,7 +701,7 @@ def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options,
   if options.useCachedCDashData:
     simplified_dict_of_tests=getJsonDataFromCache(cacheFolder, cacheFile)
   
-  if not simplified_dict_of_tests:
+  if not simplified_dict_of_tests and (not options.useCachedCDashData):
     raw_json_from_cdash=getRawJsonFromCdash(cdashUrl, projectName, filterFields,
       options, printCDashUrl)
     simplified_dict_of_tests=getTestDictionaryFromCdashJson(raw_json_from_cdash, options)
