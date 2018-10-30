@@ -46,9 +46,9 @@ import unittest
 import pprint
 
 from FindCISupportDir import *
-from CDashQueryAnalizeReport import *
+import CDashQueryAnalizeReport as CDQAR
 
-g_testBaseDir = getScriptBaseDir()
+g_testBaseDir = CDQAR.getScriptBaseDir()
 
 tribitsBaseDir=os.path.abspath(g_testBaseDir+"/../../tribits")
 mockProjectBaseDir=os.path.abspath(tribitsBaseDir+"/examples/MockTrilinos")
@@ -83,6 +83,7 @@ def assertListOfRegexsFoundInLinstOfStrs(
   regexList,
   stringsList,
   stringsListName,
+  debugPrint=False,
   ):
   # Set up for first regex
   current_regex_idx = 0
@@ -95,14 +96,18 @@ def assertListOfRegexsFoundInLinstOfStrs(
     if current_regex_idx == len(regexList):
       # Found all the regexes so we are done!
       break
-    #print("\nstrLine_idx = '"+str(strLine_idx)+"'")
-    #print("strLine = '"+strLine+"'")
-    #print("regexList["+str(current_regex_idx)+"] = '"+regexList[current_regex_idx]+"'")
+    if debugPrint:
+      print("\nstrLine_idx = '"+str(strLine_idx)+"'")
+      print("strLine = '"+strLine+"'")
+      print("regexList["+str(current_regex_idx)+"] = '"+regexList[current_regex_idx]+"'")
     if currentRe.match(strLine):
       # Found the current regex being looked for!
-      #print("Found match!")
+      if debugPrint:
+        print("Found match!")
       current_regex_idx += 1
       if current_regex_idx < len(regexList):
+        if debugPrint:
+          print("regexList["+str(current_regex_idx)+"] = '"+regexList[current_regex_idx]+"'")
         currentRe = re.compile(regexList[current_regex_idx])
       continue
   # Look to see if you have found all of the regexes being searched for.  If
@@ -129,6 +134,7 @@ def analyze_and_report_cdash_results_setup_test_dir(
   testInputDir = testCiSupportDir+"/"+g_baseTestDir+"/"+copyFrom
   testOutputDir = g_baseTestDir+"/"+testCaseName
   shutil.copytree(testInputDir, testOutputDir)
+  return testOutputDir
 
 
 # Run a test case involving the analyze_and_report_cdash_results.py
@@ -139,12 +145,13 @@ def analyze_and_report_cdash_results_setup_test_dir(
 def analyze_and_report_cdash_results_run_case(
   testObj,
   testCaseName,
-  extraCmndLineOptions,
+  extraCmndLineOptionsList,
   expectedRtnCode,
   expectedSummaryLineStr,
   stdoutRegexList,
   htmlFileRegexList,
   verbose=False,
+  debugPrint=False,
   ):
 
   # Change into test directory
@@ -170,12 +177,12 @@ def analyze_and_report_cdash_results_run_case(
       " --expected-builds-file=expectedBuilds.csv"+\
       " --issue-tracking-csv-file-name=testsWithIssueTrackers.csv"+\
       " --write-email-to-file="+htmlFileName+\
-      " "+extraCmndLineOptions
+      " "+" ".join(extraCmndLineOptionsList)
   
     # Run analyze_and_report_cdash_results.py
     stdoutFile = "stdout.out"
     stdoutFileAbsPath = os.getcwd()+"/"+stdoutFile
-    rtnCode = echoRunSysCmnd(cmnd, throwExcept=False,
+    rtnCode = CDQAR.echoRunSysCmnd(cmnd, throwExcept=False,
       outFile=stdoutFile, verbose=verbose)
   
     # Check the return code
@@ -185,13 +192,15 @@ def analyze_and_report_cdash_results_run_case(
     with open(stdoutFile, 'r') as stdout:
       stdoutStrList = stdout.read().split("\n")
   
+    # Grep the STDOUT for other grep strings
+    assertListOfRegexsFoundInLinstOfStrs(testObj, stdoutRegexList,
+      stdoutStrList, stdoutFileAbsPath, debugPrint=debugPrint)
+  
     # Look for STDOUT for expected summary line
     assertFindStringInListOfStrings(testObj, expectedSummaryLineStr,
       stdoutStrList, stdoutFileAbsPath)
-  
-    # Grep the STDOUT for other grep strings
-    assertListOfRegexsFoundInLinstOfStrs(testObj, stdoutRegexList,
-      stdoutStrList, stdoutFileAbsPath)
+    # NOTE: We search for this last in STDOUT so that we can match the
+    # individual parts first.
   
     # Release the list of strings for the STDOUT file
     stdoutStrList = None
@@ -200,7 +209,7 @@ def analyze_and_report_cdash_results_run_case(
     with open(htmlFileName, 'r') as htmlFile:
       htmlFileStrList = htmlFile.read().split("\n")
     assertListOfRegexsFoundInLinstOfStrs(testObj, htmlFileRegexList,
-      htmlFileStrList, htmlFileAbsPath)
+      htmlFileStrList, htmlFileAbsPath, debugPrint=debugPrint)
 
   finally:
     os.chdir(pwdDir)
@@ -222,7 +231,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     analyze_and_report_cdash_results_run_case(
       self,
       testCaseName,
-      "",
+      [],
       1,
       "FAILED (twoi=12, twi=9): ProjectName Nightly Builds on 2001-01-01",
       [
@@ -233,17 +242,25 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Failing tests with issue tracker: twi=9",
         ],
       [
+        # Top title
         "<h2>Build and Test results for ProjectName Nightly Builds on 2001-01-01</h2>",
 
+        # First paragraph with with links to build and nonpassing tests results on cdsah
+        "<p>",
         "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2001-01-01&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
         "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2001-01-01&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
+        "</p>",
 
+        # Second paragraph with listing of different types of tables below
+        "<p>",
         "<font color=\"red\">Failing tests without issue tracker: twoi=12</font><br>",
         "Failing tests with issue tracker: twi=9<br>",
-        
+        "</p>",
+         
+        # twoi table
         "<h3>Failing tests without issue tracker [(]limited to 10[)]: twoi=12</h3>",
-
-        # Pin down the first row of this table
+        # Pin down the first row of this table (pin down this first row
+        "<tr>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
         "<td align=\"left\"><a href=\"https://testing[.]sandia[.]gov/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Anasazi_Epetra_BKS_norestart_test_MPI_4</a></td>",
         "<td align=\"left\"><a href=\"https://testing[.]sandia[.]gov/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Failed</a></td>",
@@ -251,19 +268,157 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-03T00:00:00\">30</a></td>",
         "<td align=\"right\">2018-10-27</td>",
         "<td align=\"right\"></td>",
-
+        "</tr>",
+        # Second row
         "<td align=\"left\"><a href=\"https://testing[.]sandia[.]gov/cdash/testDetails[.]php[?]test=57860535&build=4107241\">Belos_gcrodr_hb_MPI_4</a></td>",
 
+        # twi table
         "<h3>Failing tests with issue tracker: twi=9</h3>",
-
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>"
         ],
       #verbose=True,
+      #debugPrint=True,
       )
   # NOTE: The above unit test checks several parts of the HTML output that
-  # other tests will not check.  Ths is done to really pin things down the
-  # with this first unit test.
+  # other tests will not check.  In particular, this really pins down the
+  # tables 'twoi' and 'twi'.  Other tests will not do this to avoid
+# met:duplication in testing.
 
+
+  # Add some missing builds, some builds with configure failuires, and builds
+  # with build failures
+  def test_bme_2_c_1_b_2_twoi_12_twi_9(self):
+
+    testCaseName = "bme_2_c_1_b_2_twoi_12_twi_9"
+
+    # Copy the raw files from CDash to get started
+    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+
+    # Add some expected builds that don't exist
+    expectedBuildsFilePath = testOutputDir+"/expectedBuilds.csv"
+    with open(expectedBuildsFilePath, 'r') as expectedBuildsFile:
+      expectedBuildsStrList = expectedBuildsFile.readlines()
+    expectedBuildsStrList.extend(
+      [
+        "Specialized, missing_site, Trilinos-atdm-waterman-gnu-release-debug-openmp\n",
+        "Specialized, waterman, Trilinos-atdm-waterman-missing-build\n",
+        ]
+      )
+    with open(expectedBuildsFilePath, 'w') as expectedBuildsFile:
+      expectedBuildsFile.write("".join(expectedBuildsStrList))
+
+    # Add some configure and build failures
+    fullCDashIndexBuildsJsonFilePath = testOutputDir+"/fullCDashIndexBuilds.json"
+    with open(fullCDashIndexBuildsJsonFilePath, 'r') as fullCDashIndexBuildsJsonFile:
+      fullCDashIndexBuildsJson = eval(fullCDashIndexBuildsJsonFile.read())
+    specializedGroup = fullCDashIndexBuildsJson['buildgroups'][0]
+    specializedGroup['builds'][1]['configure']['error'] = 1
+    specializedGroup['builds'][3]['compilation']['error'] = 2
+    specializedGroup['builds'][5]['compilation']['error'] = 1
+    CDQAR.pprintPythonData(fullCDashIndexBuildsJson, fullCDashIndexBuildsJsonFilePath)
+
+    # Run analyze_and_report_cdash_results.py and make sure that it prints
+    # the right stuff
+    analyze_and_report_cdash_results_run_case(
+      self,
+      testCaseName,
+      [
+        "--build-set-name='Project Specialized Builds'",  # Test changing this
+        "--limit-table-rows=15",  # Check that this is read correctly
+        ],
+      1,
+      "FAILED (bme=2, c=1, b=2, twoi=12, twi=9): Project Specialized Builds on 2001-01-01",
+      [
+        "Missing expected builds: bme=2",
+        "Builds with configure failures: c=1",
+        "Builds with build failures: b=2",
+        "Failing tests without issue tracker: twoi=12",
+        "Failing tests with issue tracker: twi=9",
+        ],
+      [
+        "<h2>Build and Test results for Project Specialized Builds on 2001-01-01</h2>",
+
+        # Links to build and non-passing tests
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2001-01-01&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2001-01-01&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
+
+        # Top listing of types of data/tables to be displayed below 
+        "<font color=\"red\">Missing expected builds: bme=2</font><br>",
+        "<font color=\"red\">Builds with configure failures: c=1</font><br>",
+        "<font color=\"red\">Builds with build failures: b=2</font><br>",
+        "<font color=\"red\">Failing tests without issue tracker: twoi=12</font><br>",
+        "Failing tests with issue tracker: twi=9<br>",
+        
+        # 'bme' table (Really pin down this table)
+        "<h3>Missing expected builds: bme=2</h3>",
+        "<table.*>",  # NOTE: Other unit test code checks the default style!
+        "<tr>",
+        "<th>Group</th>",
+        "<th>Site</th>",
+        "<th>Build Name</th>",
+        "<th>Missing Status</th>",
+        "</tr>",
+        "<tr>",
+        "<td align=\"left\">Specialized</td>",
+        "<td align=\"left\">missing_site</td>",
+        "<td align=\"left\">Trilinos-atdm-waterman-gnu-release-debug-openmp</td>",
+        "<td align=\"left\">Build not found on CDash</td>",
+        "</tr>",
+        "<tr>",
+        "<td align=\"left\">Specialized</td>",
+        "<td align=\"left\">waterman</td>",
+        "<td align=\"left\">Trilinos-atdm-waterman-missing-build</td>",
+        "<td align=\"left\">Build not found on CDash</td>",
+        "</tr>",
+        "</table>",
+
+        # 'c' table (Really pin this down)
+        "<h3>Builds with configure failures [(]limited to 15[)]: c=1</h3>",
+        "<table.*>",
+        "<tr>",
+        "<th>Group</th>",
+        "<th>Site</th>",
+        "<th>Build Name</th>",
+        "</tr>",
+        "<tr>",
+        "<td align=\"left\">Specialized</td>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\">Trilinos-atdm-cee-rhel6-clang-opt-serial</td>",
+        "</tr>",
+        "</table>",
+        # NOTE: Above checks that --limit-table-rows=15 is getting used
+        # correctly!
+
+        # 'b' table (Really pin this down)
+        "<h3>Builds with build failures [(]limited to 15[)]: b=2</h3>",
+        "<table.*>",
+        "<tr>",
+        "<th>Group</th>",
+        "<th>Site</th>",
+        "<th>Build Name</th>",
+        "</tr>",
+        "<tr>",
+        "<td align=\"left\">Specialized</td>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</td>",
+        "</tr>",
+        "<tr>",
+        "<td align=\"left\">Specialized</td>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\">Trilinos-atdm-cee-rhel6-intel-opt-serial</td>",
+        "</tr>",
+        "</table>",
+
+        # 'twoi' table
+        "<h3>Failing tests without issue tracker [(]limited to 15[)]: twoi=12</h3>",
+
+        # 'twi' table
+        "<h3>Failing tests with issue tracker: twi=9</h3>",
+       ],
+      #verbose=True,
+      )
+  # NOTE: That above test really pin down the contents of the 'bme', 'c', and
+  # 'b' tables.  Other tests will not do that to avoid duplication in testing.
 
 #
 # Run the unit tests!
