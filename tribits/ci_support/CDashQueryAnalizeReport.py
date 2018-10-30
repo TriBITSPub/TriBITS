@@ -713,6 +713,7 @@ def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options,
     filterFields, options)
   return simplified_dict_of_tests
 
+
 # Construct a URL and return the raw json from cdash
 def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options,
   printCDashUrl=False \
@@ -870,6 +871,7 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
       testDictionary[dict_key]["previous_failure_date"]=failed_dates[1]
       testDictionary[dict_key]["most_recent_failure_date"]=failed_dates[0]
 
+
 def getJsonDataFromCache(cacheFolder, cacheFile):
   # will read json data from specified file and return that data.
   # if the file does not exist then return empy dict
@@ -885,6 +887,7 @@ def getJsonDataFromCache(cacheFolder, cacheFile):
     print("Cache file: "+cacheFilePath+" not found")
   return jsonData
 
+
 def writeJsonDataToCache(cacheFolder, cacheFile, jsonData):
   # creating the cache directory if it does not already exist
   if not os.path.exists(os.path.dirname(cacheFolder+"/")):
@@ -893,6 +896,7 @@ def writeJsonDataToCache(cacheFolder, cacheFile, jsonData):
   f = open(cacheFolder+"/"+cacheFile, "w")
   json.dump(jsonData, f)
   f.close
+
 
 def filterDictionary(dictOfTests, fieldToTest, testValue="", testType=""):
   dict_of_tests_that_pass={}
@@ -927,42 +931,6 @@ def checkForIssueTracker(dictOfTests, issueTrackerDBFileName):
       dictOfTests[key]["issue_tracker"]=dict_of_known_issues[key]["issue_tracker"]
       dictOfTests[key]["issue_tracker_url"]=dict_of_known_issues[key]["issue_tracker_url"]
   f.close()
-
-
-# Create an html table from a python dictionary
-#
-def createHtmlTable(dictionary, list_of_column_headings, title):
-
-  # style optiions for the tables
-  html_string="<style>"
-  html_string+="table, th, td {"
-  html_string+="border: 1px solid black;"
-  html_string+="border-collapse: collapse;"
-  html_string+="}"
-  html_string+="tr:nth-child(even) {background-color: #eee;}"
-  html_string+="tr:nth-child(odd) {background-color: #fff;}"
-  html_string+="</style>\n"
-
-  html_string+="<h2>"+title+"</h2>"
-  html_string+="<table style=\"width:100%\">"  
-  # add the column headings:
-  html_string+="<tr>"
-  for heading in list_of_column_headings:
-    html_string+="<th>"+heading.replace("_", " ").title()+"</th>"
-  html_string+="</tr>\n"
-
-  # add the table data
-  for key in dictionary:
-    html_string+="<tr>"
-    for heading in list_of_column_headings:
-      if heading+"_url" not in dictionary[key] or dictionary[key][heading+"_url"] == "":
-        html_string+="<td>"+str(dictionary[key][heading])+"</td>\n"
-      else:
-        html_string+="<td> <a href="+dictionary[key][heading+"_url"]+">"+str(dictionary[key][heading])+"</a> </td>\n"
-    html_string+="</tr>\n"
-
-  html_string+="</table>\n"
-  return(html_string)
 
 
 #
