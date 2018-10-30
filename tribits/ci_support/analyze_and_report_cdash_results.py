@@ -334,12 +334,29 @@ if __name__ == '__main__':
     print("\nCDash non-passing tests browser URL:\n\n"+\
       "  "+cdashNonpassingTestsBrowserUrl+"\n")
 
+    # Get the list of non-passing tests for current testing day off CDash
+
+    # ToDo: Implement!
+
     # get data from cdash and return in a simpler form
     all_failing_tests=CDQAR.getTestsJsonFromCdash(
       inOptions.cdashSiteUrl, inOptions.cdashProjectName,
       inOptions.cdashNonpassedTestsFilters,
       inOptions, printCDashUrl=True )
 
+    # Get list of *all* tests with issue trackers (including those passing,
+    # missing, etc.)
+
+    # ToDo: Implement!
+
+    # Get list of non-passing tests that don't have issue trackers
+
+    # ToDo: Implement!
+
+    # Get history of all tests with issue trackers (passing, failing, not-run,
+    # and missing)
+
+    # ToDo: Implement!
 
     # add issue tracking information to the tests' data
     #CDQAR.checkForIssueTracker(all_failing_tests, "knownIssues.csv")
@@ -498,6 +515,11 @@ if __name__ == '__main__':
     print("\nSearch failing tests without issue tracker ...\n")
     #
 
+    # Sort and get history for the top <N> tests without issue trackers that
+    # are failing (and not-run for now)
+
+    # ToDo: Implement!
+
     testsWithoutIssueTrackerList = getFlatListOfTestsFromTestDict(
       tests_without_issue_tracking)
     #pp.pprint(testsWithoutIssueTrackerList)
@@ -506,10 +528,10 @@ if __name__ == '__main__':
     twoiAcro = "twoi"
     twoiNum = len(testsWithoutIssueTrackerList)
 
-    cSummaryStr = \
+    twoiSummaryStr = \
       CDQAR.getCDashDataSummaryHtmlTableTitleStr(twoiDescr,  twoiAcro, twoiNum)
 
-    print(cSummaryStr)
+    print(twoiSummaryStr)
 
     if twoiNum > 0:
 
@@ -517,7 +539,7 @@ if __name__ == '__main__':
 
       summaryLineDataNumbersList.append(twoiAcro+"="+str(twoiNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>\n"
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoiSummaryStr)+"<br>\n"
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         twoiDescr,  twoiAcro, testsColDataList, testsWithoutIssueTrackerList,
@@ -527,6 +549,11 @@ if __name__ == '__main__':
     print("\nSearch failing tests with issue tracker ...\n")
     #
 
+    # Sort and get detailed test history for top <N> 'twif' failing tests
+    # without issue trackers.
+
+    # ToDo: Implement!
+
     testsWithIssueTrackerList = getFlatListOfTestsFromTestDict(
       tests_with_issue_tracking)
     #pp.pprint(testsWithIssueTrackerList)
@@ -535,10 +562,10 @@ if __name__ == '__main__':
     twiAcro = "twi"
     twiNum = len(testsWithIssueTrackerList)
 
-    cSummaryStr = \
+    twiSummaryStr = \
       CDQAR.getCDashDataSummaryHtmlTableTitleStr(twiDescr,  twiAcro, twiNum)
 
-    print(cSummaryStr)
+    print(twiSummaryStr)
 
     if twiNum > 0:
 
@@ -546,13 +573,34 @@ if __name__ == '__main__':
 
       summaryLineDataNumbersList.append(twiAcro+"="+str(twiNum))
 
-      htmlEmailBodyTop += cSummaryStr+"<br>\n"
+      htmlEmailBodyTop += twiSummaryStr+"<br>\n"
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         twiDescr,  twiAcro, testsColDataList, testsWithIssueTrackerList,
         testnameBuildnameSiteSortOrder)
       # NOTE: We don't limit the number of tests tracked tests listed because
       # we will never have a huge number of failing tests with issue trackers.
+
+    # Generate table "Tests without issue trackers not run: twoinr=???"
+    # (sorted and limited to the top <N> items).
+
+    # ToDo: Implement!
+
+    # Generate table "Tests with issue trackers not run: twinr=???"
+
+    # ToDo: Implement!
+
+    # Generate table "Tests with issue trackers not run: twinr=???"
+
+    # ToDo: Implement!
+
+    # Generate table "Tests with issue trackers missing: twim=???"
+
+    # ToDo: Implement!
+
+    # Generate table "Tests with issue trackers currently passing: twip=???"
+
+    # ToDo: Implement!
  
   except Exception:
     # Traceback!

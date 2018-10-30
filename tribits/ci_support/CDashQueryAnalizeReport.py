@@ -688,7 +688,8 @@ def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
 # improve consistency.
 #
 ########################################################################
-    
+
+
 # This will return a dictionary with information about all the tests that were returned
 # in the json from cdash as a result of the CDash query from the given inputs
 def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options,
@@ -928,7 +929,6 @@ def checkForIssueTracker(dictOfTests, issueTrackerDBFileName):
   f.close()
 
 
-#
 # Create an html table from a python dictionary
 #
 def createHtmlTable(dictionary, list_of_column_headings, title):
@@ -975,6 +975,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
+# Create MINE formatted email object (but don't send it)
+#
 def createHtmlMimeEmail(fromAddress, toAddress, subject, textBody, htmlBody):
 
   # Create message container - the correct MIME type is multipart/alternative.
@@ -996,10 +998,8 @@ def createHtmlMimeEmail(fromAddress, toAddress, subject, textBody, htmlBody):
   return msg
 
 
-#
 # Send a MIME formatted email
 #
-
 def sendMineEmail(mimeEmail):
   # Send the message via local SMTP server.
   s = smtplib.SMTP('localhost')
