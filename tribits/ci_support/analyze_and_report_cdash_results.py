@@ -348,10 +348,6 @@ if __name__ == '__main__':
     # split the tests into those with issue tracking and those without
     tests_without_issue_tracking, tests_with_issue_tracking = \
       CDQAR.filterDictionary(all_failing_tests, "issue_tracker")
-    print("\nnum tests_without_issue_tracking = "+\
-      str(len(tests_without_issue_tracking.keys())))
-    print("\nnum tests_with_issue_tracking = "+\
-      str(len(tests_with_issue_tracking.keys())))
   
     # Nonpassing Tests on CDash
     htmlEmailBodyTop += \

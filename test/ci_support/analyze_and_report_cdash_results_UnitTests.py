@@ -222,8 +222,6 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       1,
       "FAILED (twoi=12, twi=9): ProjectName Nightly Builds on 2001-01-01",
       [
-        "num tests_without_issue_tracking = 12",
-        "num tests_with_issue_tracking = 9",
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
