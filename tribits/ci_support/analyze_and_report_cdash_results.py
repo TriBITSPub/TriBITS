@@ -581,7 +581,7 @@ if __name__ == '__main__':
       tests_with_issue_tracking)
     #pp.pprint(testsWithIssueTrackerList)
 
-    # Sort and get detailed test history for top <N> 'twif' failing tests with
+    # Sort and get detailed test history for all 'twif' failing tests with
     # issue trackers.
 
     # ToDo: Implement!
