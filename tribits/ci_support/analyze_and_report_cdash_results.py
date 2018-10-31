@@ -120,7 +120,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     help="Path to CSV file that lists the expected builds. (Default '')" )
 
   clp.add_option(
-    "--issue-tracking-csv-file-name", dest="issue_tracking_csv_file_name",
+    "--tests-with-issue-trackers-file", dest="testsWithIssueTrackersFile",
     type="string",  default="",
     help="the subject line on sent out emails" )
 
@@ -185,7 +185,8 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --cdash-site-url='"+inOptions.cdashSiteUrl+"'"+lt+\
     "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+lt+\
     "  --cdash-nonpassed-tests-filters='"+inOptions.cdashNonpassedTestsFilters+"'"+lt+\
-    "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+lt +\
+    "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+lt+\
+    "  --tests-with-issue-trackers-file'"+inOptions.testsWithIssueTrackersFile+"'"+lt+\
     "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+lt+\
     "  --use-cached-cdash-data='"+inOptions.useCachedCDashDataStr+"'"+lt+\
     "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
@@ -360,7 +361,7 @@ if __name__ == '__main__':
 
     # add issue tracking information to the tests' data
     #CDQAR.checkForIssueTracker(all_failing_tests, "knownIssues.csv")
-    CDQAR.checkForIssueTracker(all_failing_tests, inOptions.issue_tracking_csv_file_name)
+    CDQAR.checkForIssueTracker(all_failing_tests, inOptions.testsWithIssueTrackersFile)
     
     # split the tests into those with issue tracking and those without
     tests_without_issue_tracking, tests_with_issue_tracking = \

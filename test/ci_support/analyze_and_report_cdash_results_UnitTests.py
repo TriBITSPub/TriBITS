@@ -175,7 +175,7 @@ def analyze_and_report_cdash_results_run_case(
       " --cdash-nonpassed-tests-filters='nonpasssing_tests_filters'"+\
       " --use-cached-cdash-data=on"+\
       " --expected-builds-file=expectedBuilds.csv"+\
-      " --issue-tracking-csv-file-name=testsWithIssueTrackers.csv"+\
+      " --tests-with-issue-trackers-file=testsWithIssueTrackers.csv"+\
       " --write-email-to-file="+htmlFileName+\
       " "+" ".join(extraCmndLineOptionsList)
   
