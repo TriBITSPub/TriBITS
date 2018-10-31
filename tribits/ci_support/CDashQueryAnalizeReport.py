@@ -234,16 +234,16 @@ def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
 
 # Given the full JSON data-structure returned from the page
 # cdash/api/v1/index.php query, return an flattened-out data-structure that is
-# easier to maniuplate.
+# easier to manipulate.
 #
-# This function takes in the JSON data-structre (as a nested set of Python
+# This function takes in the JSON data-structure (as a nested set of Python
 # dicts and listed) directly returned from a query gotten from the page
 # cdash/api/v1/index.php with some filters.
 #
 # The input full CDash index.php JSON data-structure has the following
 # structure and fields of interest:
 #
-#  fullCDashIndexBuilds =
+#  fullCDashIndexBuildsJson =
 #  {
 #    'all_buildgroups': [ {'id':1,'name:"Nightly"}, ...],
 #    'buildgroups': [
@@ -284,22 +284,93 @@ def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
 #       'test': {'fail':???, 'notrun':???, 'pass':???, ...},
 #       ...
 #       },
-#       ...
-#       }
+#     ...
+#     ]
 #
 # This collects *all* of the builds from all of the build groups provided by
 # that data-structure, not just the 'Nighlty' build group.  Therefore, if you
 # want to only consider one set of build groups, you need to add that to the
 # CDash query URL (e.g. group='Nighlty').
 #
-def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuilds):
+def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
   summaryCDashIndexBuilds = []
-  for buildgroup in fullCDashIndexBuilds["buildgroups"]:
+  for buildgroup in fullCDashIndexBuildsJson["buildgroups"]:
     groupName = buildgroup["name"]
     for build in buildgroup["builds"]:
       summaryBuild = collectCDashIndexBuildSummaryFields(build, groupName)
       summaryCDashIndexBuilds.append(summaryBuild)
   return summaryCDashIndexBuilds
+
+# Given the full JSON data-structure returned from the page
+# cdash/api/v1/queryTests.php query, return an flattened-out data-structure
+# that is easier to manipulate.
+#
+# This function takes in the JSON data-structure (as a nested set of Python
+# dicts and listed) directly returned from a query gotten from the page
+# cdash/api/v1/queryTests.php with some filters.
+#
+# The input full CDash queryTests.php JSON data-structure has the following
+# structure and fields of interest:
+#
+#  fullCDashQueryTestsJson =
+#  {
+#    'version':???,
+#    'feed_enabled':???,
+#    ...
+#    'builds': [
+#      {
+#        "testname": "Anasazi_Epetra_BKS_norestart_test_MPI_4",
+#        "site": "mutrino",
+#        "buildName": "Trilinos-atdm-mutrino-intel-opt-openmp-HSW",
+#        "buildstarttime": "2018-10-26T05:45:04 UTC",
+#        "time": 13.81,
+#        "prettyTime": "13s 810ms",
+#        "details": "Completed (Failed)\n",
+#        "siteLink": "viewSite.php?siteid=223",
+#        "buildSummaryLink": "buildSummary.php?buildid=4099474",
+#        "testDetailsLink": "testDetails.php?test=57709291&build=4099474",
+#        "status": "Failed",
+#        "statusclass": "error",
+#        "nprocs": 4,
+#        "procTime": 55.24,
+#        "prettyProcTime": "55s 240ms"
+#        },
+#      ...
+#      ],
+#    ...
+#    }
+#
+# This function gets the data from *all* of the tests and returns the
+# flatten-out list of dicts for each test:
+#
+#   [
+#     {
+#       "testname": "Anasazi_Epetra_BKS_norestart_test_MPI_4",
+#       "site": "mutrino",
+#       "buildName": "Trilinos-atdm-mutrino-intel-opt-openmp-HSW",
+#       "buildstarttime": "2018-10-26T05:45:04 UTC",
+#       "time": 13.81,
+#       "prettyTime": "13s 810ms",
+#       "details": "Completed (Failed)\n",
+#       "siteLink": "viewSite.php?siteid=223",
+#       "buildSummaryLink": "buildSummary.php?buildid=4099474",
+#       "testDetailsLink": "testDetails.php?test=57709291&build=4099474",
+#       "status": "Failed",
+#       "statusclass": "error",
+#       "nprocs": 4,
+#       "procTime": 55.24,
+#       "prettyProcTime": "55s 240ms"
+#       },
+#     ...
+#     ]
+#
+# This collects *all* of the tests from all of the "build" list provided by
+# the CDash JSON data-structure.  Therefore, if you want to only consider one
+# set of build groups, you need to add that to the CDash query URL
+# (e.g. buildName='<build-name>').
+#
+def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
+  raise Exception("ToDo: Implement")
 
 
 # Create a lookup dict for builds "group" => "site" => "build" given summary
@@ -423,15 +494,15 @@ def downloadBuildsOffCDashAndFlatten(
   # Get the query data
   cdashQueryUrl = getCDashIndexQueryUrl(cdashUrl, projectName, date, buildFilters)
   if cdashQueriesCacheDir:
-    fullCDashIndexBuildsCacheFile=cdashQueriesCacheDir+"/fullCDashIndexBuilds.json"
+    fullCDashIndexBuildsJsonCacheFile=cdashQueriesCacheDir+"/fullCDashIndexBuilds.json"
   else:
-    fullCDashIndexBuildsCacheFile = None
-  fullCDashIndexBuilds = getAndCacheCDashQueryDataOrReadFromCache(
-    cdashQueryUrl, fullCDashIndexBuildsCacheFile, useCachedCDashData,
+    fullCDashIndexBuildsJsonCacheFile = None
+  fullCDashIndexBuildsJson = getAndCacheCDashQueryDataOrReadFromCache(
+    cdashQueryUrl, fullCDashIndexBuildsJsonCacheFile, useCachedCDashData,
     verbose, extractCDashApiQueryData_in )
   # Get trimmed down set of builds
   summaryCDashIndexBuilds = \
-    flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuilds)
+    flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson)
   return summaryCDashIndexBuilds
 
 

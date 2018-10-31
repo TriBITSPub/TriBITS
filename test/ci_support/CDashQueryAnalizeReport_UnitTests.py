@@ -399,10 +399,10 @@ class test_collectCDashIndexBuildSummaryFields(unittest.TestCase):
 
 # This file was taken from an actual CDash query and then modified a little to
 # make for better testing.
-g_fullCDashIndexBuilds = \
+g_fullCDashIndexBuildsJson = \
   eval(open(g_testBaseDir+'/cdash_index_query_data.txt', 'r').read())
-#print("g_fullCDashIndexBuilds:")
-#g_pp.pprint(g_fullCDashIndexBuilds)
+#print("g_fullCDashIndexBuildsJson:")
+#g_pp.pprint(g_fullCDashIndexBuildsJson)
 
 # This file was manually created from the above file to match what the reduced
 # builds should be.
@@ -414,7 +414,7 @@ g_summaryCDashIndexBuilds_expected = \
 class test_flattenCDashIndexBuildsToListOfDicts(unittest.TestCase):
 
   def test_flattenCDashIndexBuildsToListOfDicts(self):
-    summaryCDashIndexBuilds = flattenCDashIndexBuildsToListOfDicts(g_fullCDashIndexBuilds)
+    summaryCDashIndexBuilds = flattenCDashIndexBuildsToListOfDicts(g_fullCDashIndexBuildsJson)
     #pp.pprint(summaryCDashIndexBuilds)
     self.assertEqual(
       len(summaryCDashIndexBuilds), len(g_summaryCDashIndexBuilds_expected))
@@ -539,7 +539,7 @@ class test_downloadBuildsOffCDashAndFlatten(unittest.TestCase):
     # Define mock object to return the data
     mockExtractCDashApiQueryDataFuctor = MockExtractCDashApiQueryDataFuctor(
        getCDashIndexQueryUrl(cdashUrl,  projectName, date, buildFilters),
-       g_fullCDashIndexBuilds )
+       g_fullCDashIndexBuildsJson )
     # Get the mock data off of CDash
     summaryCDashIndexBuilds = downloadBuildsOffCDashAndFlatten(
       cdashUrl,  projectName, date, buildFilters,
