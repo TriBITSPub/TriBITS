@@ -186,7 +186,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+lt+\
     "  --cdash-nonpassed-tests-filters='"+inOptions.cdashNonpassedTestsFilters+"'"+lt+\
     "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+lt+\
-    "  --tests-with-issue-trackers-file'"+inOptions.testsWithIssueTrackersFile+"'"+lt+\
+    "  --tests-with-issue-trackers-file='"+inOptions.testsWithIssueTrackersFile+"'"+lt+\
     "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+lt+\
     "  --use-cached-cdash-data='"+inOptions.useCachedCDashDataStr+"'"+lt+\
     "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
@@ -293,7 +293,9 @@ if __name__ == '__main__':
 
     # Get list of tests with issue tracker from input CSV file
 
-    # ToDo: Implement!
+    testsWithIssueTrackersListOfDicts = CDQAR.readCsvFileIntoListOfDicts(
+      inOptions.testsWithIssueTrackersFile,
+      [ 'site', 'buildName', 'testname', 'issue_url', 'issue_text' ] )
 
     #
     # D.2) Get lists of build and test data off CDash

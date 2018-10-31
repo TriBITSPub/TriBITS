@@ -1,4 +1,4 @@
-site, build name, test name, issue url, issue text
+site, buildName, testname, issue_url, issue_text
 mutrino, Trilinos-atdm-mutrino-intel-opt-openmp-HSW, Anasazi_MultiVecTraitsTest2_MPI_4, https://github.com/trilinos/Trilinos/issues/3499, #3499
 mutrino, Trilinos-atdm-mutrino-intel-opt-openmp-HSW, Anasazi_Epetra_BKS_norestart_test_MPI_4, https://github.com/trilinos/Trilinos/issues/3499, #3499
 white, Trilinos-atdm-white-ride-cuda-9.2-debug, PanzerAdaptersSTK_CurlLaplacianExample-ConvTest-Quad-Order-4, https://github.com/trilinos/Trilinos/issues/3579, #3579
