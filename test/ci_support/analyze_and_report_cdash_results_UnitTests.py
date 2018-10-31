@@ -129,7 +129,7 @@ g_baseTestDir="analyze_and_report_cdash_results"
 #
 def analyze_and_report_cdash_results_setup_test_dir(
   testCaseName,
-  copyFrom="raw_cdash_data_twoi_12_twi_9",
+  copyFrom="raw_cdash_data_twoif_12_twif_9",
   ):
   testInputDir = testCiSupportDir+"/"+g_baseTestDir+"/"+copyFrom
   testOutputDir = g_baseTestDir+"/"+testCaseName
@@ -225,21 +225,21 @@ def analyze_and_report_cdash_results_run_case(
 class test_analyze_and_report_cdash_results(unittest.TestCase):
 
   # Base case for raw CDash data we happened to choose
-  def test_twoi_12_twi_9(self):
-    testCaseName = "twoi_12_twi_9"
+  def test_twoif_12_twif_9(self):
+    testCaseName = "twoif_12_twif_9"
     analyze_and_report_cdash_results_setup_test_dir(testCaseName)
     analyze_and_report_cdash_results_run_case(
       self,
       testCaseName,
       [],
       1,
-      "FAILED (twoi=12, twi=9): ProjectName Nightly Builds on 2001-01-01",
+      "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2001-01-01",
       [
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
-        "Failing tests without issue tracker: twoi=12",
-        "Failing tests with issue tracker: twi=9",
+        "Failing tests without issue trackers: twoif=12",
+        "Failing tests with issue trackers: twif=9",
         ],
       [
         # Top title
@@ -253,12 +253,12 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
         # Second paragraph with listing of different types of tables below
         "<p>",
-        "<font color=\"red\">Failing tests without issue tracker: twoi=12</font><br>",
-        "Failing tests with issue tracker: twi=9<br>",
+        "<font color=\"red\">Failing tests without issue trackers: twoif=12</font><br>",
+        "Failing tests with issue trackers: twif=9<br>",
         "</p>",
          
-        # twoi table
-        "<h3>Failing tests without issue tracker [(]limited to 10[)]: twoi=12</h3>",
+        # twoif table
+        "<h3>Failing tests without issue trackers [(]limited to 10[)]: twoif=12</h3>",
         # Pin down the first row of this table (pin down this first row
         "<tr>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
@@ -272,8 +272,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         # Second row
         "<td align=\"left\"><a href=\"https://testing[.]sandia[.]gov/cdash/testDetails[.]php[?]test=57860535&build=4107241\">Belos_gcrodr_hb_MPI_4</a></td>",
 
-        # twi table
-        "<h3>Failing tests with issue tracker: twi=9</h3>",
+        # twif table
+        "<h3>Failing tests with issue trackers: twif=9</h3>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>"
         ],
       #verbose=True,
@@ -281,15 +281,15 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       )
   # NOTE: The above unit test checks several parts of the HTML output that
   # other tests will not check.  In particular, this really pins down the
-  # tables 'twoi' and 'twi'.  Other tests will not do this to avoid
+  # tables 'twoif' and 'twif'.  Other tests will not do this to avoid
   # duplication in testing.
 
 
   # Add some missing builds, some builds with configure failuires, and builds
   # with build failures
-  def test_bme_2_c_1_b_2_twoi_12_twi_9(self):
+  def test_bme_2_c_1_b_2_twoif_12_twif_9(self):
 
-    testCaseName = "bme_2_c_1_b_2_twoi_12_twi_9"
+    testCaseName = "bme_2_c_1_b_2_twoif_12_twif_9"
 
     # Copy the raw files from CDash to get started
     testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
@@ -327,13 +327,13 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "--limit-table-rows=15",  # Check that this is read correctly
         ],
       1,
-      "FAILED (bme=2, c=1, b=2, twoi=12, twi=9): Project Specialized Builds on 2001-01-01",
+      "FAILED (bme=2, c=1, b=2, twoif=12, twif=9): Project Specialized Builds on 2001-01-01",
       [
         "Missing expected builds: bme=2",
         "Builds with configure failures: c=1",
         "Builds with build failures: b=2",
-        "Failing tests without issue tracker: twoi=12",
-        "Failing tests with issue tracker: twi=9",
+        "Failing tests without issue trackers: twoif=12",
+        "Failing tests with issue trackers: twif=9",
         ],
       [
         "<h2>Build and Test results for Project Specialized Builds on 2001-01-01</h2>",
@@ -346,8 +346,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<font color=\"red\">Missing expected builds: bme=2</font><br>",
         "<font color=\"red\">Builds with configure failures: c=1</font><br>",
         "<font color=\"red\">Builds with build failures: b=2</font><br>",
-        "<font color=\"red\">Failing tests without issue tracker: twoi=12</font><br>",
-        "Failing tests with issue tracker: twi=9<br>",
+        "<font color=\"red\">Failing tests without issue trackers: twoif=12</font><br>",
+        "Failing tests with issue trackers: twif=9<br>",
         
         # 'bme' table (Really pin down this table)
         "<h3>Missing expected builds: bme=2</h3>",
@@ -409,11 +409,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</tr>",
         "</table>",
 
-        # 'twoi' table
-        "<h3>Failing tests without issue tracker [(]limited to 15[)]: twoi=12</h3>",
+        # 'twoif' table
+        "<h3>Failing tests without issue trackers [(]limited to 15[)]: twoif=12</h3>",
 
-        # 'twi' table
-        "<h3>Failing tests with issue tracker: twi=9</h3>",
+        # 'twif' table
+        "<h3>Failing tests with issue trackers: twif=9</h3>",
        ],
       #verbose=True,
       )
@@ -447,8 +447,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
-        "Failing tests without issue tracker: twoi=0",
-        "Failing tests with issue tracker: twi=0",
+        "Failing tests without issue trackers: twoif=0",
+        "Failing tests with issue trackers: twif=0",
         ],
       [
         "<h2>Build and Test results for Project Specialized Builds on 2001-01-01</h2>",

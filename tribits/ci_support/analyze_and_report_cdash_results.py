@@ -512,7 +512,7 @@ if __name__ == '__main__':
     testnameBuildnameSiteSortOrder = ['test_name', 'build_name', 'site']
 
     #
-    print("\nSearch failing tests without issue tracker ...\n")
+    print("\nSearch failing tests without issue trackers ...\n")
     #
 
     # Sort and get history for the top <N> tests without issue trackers that
@@ -524,29 +524,29 @@ if __name__ == '__main__':
       tests_without_issue_tracking)
     #pp.pprint(testsWithoutIssueTrackerList)
 
-    twoiDescr = "Failing tests without issue tracker"
-    twoiAcro = "twoi"
-    twoiNum = len(testsWithoutIssueTrackerList)
+    twoifDescr = "Failing tests without issue trackers"
+    twoifAcro = "twoif"
+    twoifNum = len(testsWithoutIssueTrackerList)
 
-    twoiSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twoiDescr,  twoiAcro, twoiNum)
+    twoifSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twoifDescr,  twoifAcro, twoifNum)
 
-    print(twoiSummaryStr)
+    print(twoifSummaryStr)
 
-    if twoiNum > 0:
+    if twoifNum > 0:
 
       globalPass = False
 
-      summaryLineDataNumbersList.append(twoiAcro+"="+str(twoiNum))
+      summaryLineDataNumbersList.append(twoifAcro+"="+str(twoifNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoiSummaryStr)+"<br>\n"
+      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoifSummaryStr)+"<br>\n"
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        twoiDescr,  twoiAcro, testsColDataList, testsWithoutIssueTrackerList,
+        twoifDescr,  twoifAcro, testsColDataList, testsWithoutIssueTrackerList,
         testnameBuildnameSiteSortOrder, inOptions.limitTableRows )
 
     #
-    print("\nSearch failing tests with issue tracker ...\n")
+    print("\nSearch failing tests with issue trackers ...\n")
     #
 
     # Sort and get detailed test history for top <N> 'twif' failing tests
@@ -558,25 +558,25 @@ if __name__ == '__main__':
       tests_with_issue_tracking)
     #pp.pprint(testsWithIssueTrackerList)
 
-    twiDescr = "Failing tests with issue tracker"
-    twiAcro = "twi"
-    twiNum = len(testsWithIssueTrackerList)
+    twifDescr = "Failing tests with issue trackers"
+    twifAcro = "twif"
+    twifNum = len(testsWithIssueTrackerList)
 
-    twiSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twiDescr,  twiAcro, twiNum)
+    twifSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twifDescr,  twifAcro, twifNum)
 
-    print(twiSummaryStr)
+    print(twifSummaryStr)
 
-    if twiNum > 0:
+    if twifNum > 0:
 
       globalPass = False
 
-      summaryLineDataNumbersList.append(twiAcro+"="+str(twiNum))
+      summaryLineDataNumbersList.append(twifAcro+"="+str(twifNum))
 
-      htmlEmailBodyTop += twiSummaryStr+"<br>\n"
+      htmlEmailBodyTop += twifSummaryStr+"<br>\n"
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        twiDescr,  twiAcro, testsColDataList, testsWithIssueTrackerList,
+        twifDescr,  twifAcro, testsColDataList, testsWithIssueTrackerList,
         testnameBuildnameSiteSortOrder)
       # NOTE: We don't limit the number of tests tracked tests listed because
       # we will never have a huge number of failing tests with issue trackers.
