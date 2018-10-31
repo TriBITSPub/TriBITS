@@ -152,12 +152,20 @@ def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
 
 
 # Print print a nested Python data-structure to a file
+#
+# ToDo: Reimplement this to create a better looking set of indented that that
+# involves less right-drift and the expense of more vertical space.
 def pprintPythonData(pythonData, filePath):
   pp = pprint.PrettyPrinter(stream=open(filePath,'w'), indent=2)
   pp.pprint(pythonData)
 
 
-# Get data off of CDash and cache it or read from previously cached data
+# Get data off CDash and cache it or read from previously cached data
+#
+# This function can be used to get data off of CDash using any page on CDash
+# including cdash/api/v1/index.php, cdash/api/v1/queryTests.php and anything
+# other PHP page that returns a JSON data structure (which is all of the
+# cdash/api/v1/XXX.php pages).
 def getAndCacheCDashQueryDataOrReadFromCache(
   cdashQueryUrl,
   cdashQueryDataCacheFile,  # File name
@@ -178,25 +186,26 @@ def getAndCacheCDashQueryDataOrReadFromCache(
   return cdashQueryData
 
 
-# Construct the full query URL to pull data down given the pieces
+# Construct full cdash/api/v1/index.php query URL to pull data down given the
+# pieces
 def getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields):
   return cdashUrl+"/api/v1/index.php?project="+projectName+"&date="+date \
     + "&"+filterFields
 
 
-# Construct the full browser URL given the pieces
+# Construct full cdash/index.php browser URL given the pieces
 def getCDashIndexBrowserUrl(cdashUrl, projectName, date, filterFields):
   return cdashUrl+"/index.php?project="+projectName+"&date="+date \
     + "&"+filterFields
 
 
-# Construct the full query URL given the pieces
+# Construct full cdash/api/v1/queryTests.php query URL given the pieces
 def getCDashQueryTestsQueryUrl(cdashUrl, projectName, date, filterFields):
   return cdashUrl+"/api/v1/queryTests.php?project="+projectName+"&date="+date \
     + "&"+filterFields
 
 
-# Construct the full browser URL given the pieces
+# Construct full cdash/queryTests.php browser URL given the pieces
 def getCDashQueryTestsBrowserUrl(cdashUrl, projectName, date, filterFields):
   return cdashUrl+"/queryTests.php?project="+projectName+"&date="+date \
     + "&"+filterFields
@@ -210,6 +219,8 @@ def copyKeyDictIfExists(sourceDict_in, keyName_in, dict_inout):
 
 
 # Collect CDash index.php build summary fields
+#
+# Change this to get all of the fields and add the 'group' field as well.
 def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
   summaryBuild = { u'group' : groupName }
   copyKeyDictIfExists(fullCDashIndexBuild, u'site', summaryBuild)
@@ -221,15 +232,15 @@ def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
   return summaryBuild
 
 
-# Given the full Python CDash API builds JSON data-structure returned from the
-# CDash index.php page and query, return an reduced data-structure to be used
-# for pass/fail examination and look for missing builds.
+# Given the full JSON data-structure returned from the page
+# cdash/api/v1/index.php query, return an flattened-out data-structure that is
+# easier to maniuplate.
 #
-# This function takes in the data-structre directly returned from:
+# This function takes in the JSON data-structre (as a nested set of Python
+# dicts and listed) directly returned from a query gotten from the page
+# cdash/api/v1/index.php with some filters.
 #
-#   <cdash-url>/api/v1/index.php?project=<project>&date=<YYYY-MM-DD>&<filter-fields>
-#
-# The input full CDash API collapsed builds data-structure has the following
+# The input full CDash index.php JSON data-structure has the following
 # structure and fields of interest:
 #
 #  fullCDashIndexBuilds =
@@ -259,7 +270,8 @@ def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
 #    }
 #
 # This function gets the data from *all* of the collapsed builds and returns
-# the reduced data-structure:
+# the flatten-out list of dicts for each build with the 'group' field added in
+# as:
 #
 #   [
 #     {
@@ -277,10 +289,10 @@ def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
 #
 # This collects *all* of the builds from all of the build groups provided by
 # that data-structure, not just the 'Nighlty' build group.  Therefore, if you
-# want to only consider on set of build groups, you need to add that to the
+# want to only consider one set of build groups, you need to add that to the
 # CDash query URL (e.g. group='Nighlty').
 #
-def getCDashIndexBuildsSummary(fullCDashIndexBuilds):
+def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuilds):
   summaryCDashIndexBuilds = []
   for buildgroup in fullCDashIndexBuilds["buildgroups"]:
     groupName = buildgroup["name"]
@@ -325,7 +337,10 @@ def lookupBuildSummaryGivenLookupDict(groupSiteBuildDict, buildLookupDict):
 #
 # Returns an array of dicts of missing expected builds with list elements:
 #
-#    {'group':"???", 'site':"???", 'buildname':"???", 'status':"???"}
+#    {'group':"???", 'site':"???", 'buildname':"???", 'status':"???", ...}
+#
+# wher the '...' will be the rest of the fields for builds that exist on CDash
+# but don't have full results.
 #
 # The field 'status' will either be given either:
 #
@@ -334,6 +349,12 @@ def lookupBuildSummaryGivenLookupDict(groupSiteBuildDict, buildLookupDict):
 # or
 #
 #   "Build exists but no test results"
+#
+# ToDo: Change name of 'status' to 'build_missing_status' and add other
+# 'build_missing_status' values like:
+#
+#   "Build exists but no build results"
+#   "Build exists but no configure results"
 #
 def getMissingExpectedBuildsList(buildLookupDict, expectedBuildsList):
   missingExpectedBuildsList = []
@@ -361,9 +382,9 @@ def getMissingExpectedBuildsList(buildLookupDict, expectedBuildsList):
   return missingExpectedBuildsList
 
 
-# Download set of builds from CDash builds
+# Download set of builds from CDash builds and return flattened list of dicts
 #
-# The CDash index.php query URL is built using the arguments:
+# The cdash/api/v1/index.php query URL is built using the arguments:
 #
 #   cdashUrl,  projectName, date, buildFilterFields
 #
@@ -373,6 +394,9 @@ def getMissingExpectedBuildsList(buildLookupDict, expectedBuildsList):
 # If cdashQueriesCacheDir != None, then the raw JSON data-structure will be
 # written to the file cdashQueriesCacheDir/fullCDashIndexBuilds.json.
 #
+# ToDo: Pass in the full path to the JSON cache file and don't assume the
+# total file.
+#
 # If useCachedCDashData==True, then data will not be pulled off of CDash and
 # instead the list of builds will be read from the file
 # cdashQueriesCacheDir/fullCDashIndexBuilds.json must already exist from a
@@ -380,14 +404,16 @@ def getMissingExpectedBuildsList(buildLookupDict, expectedBuildsList):
 # purposes).
 # 
 # The list of builds pulled off of CDash flattended and summmerized form
-# extracted by the funtion getCDashIndexBuildsSummary() (with 'group', 'site',
-# 'buildname' and update, configure, build, test and other results for the
-# build).
+# extracted by the funtion flattenCDashIndexBuildsToListOfDicts() (with
+# 'group', 'site', 'buildname' and update, configure, build, test and other
+# results for the build).
 #
 # NOTE: The optional argument extractCDashApiQueryData_in is used in unit
 # testing to avoid calling CDash.
 #
-def downloadBuildsOffCDashAndSummarize(
+# ToDo: Pass in the full cdashQueryUrl.
+#
+def downloadBuildsOffCDashAndFlatten(
   cdashUrl,  projectName, date, buildFilters,
   verbose=True,
   cdashQueriesCacheDir=None,
@@ -404,7 +430,8 @@ def downloadBuildsOffCDashAndSummarize(
     cdashQueryUrl, fullCDashIndexBuildsCacheFile, useCachedCDashData,
     verbose, extractCDashApiQueryData_in )
   # Get trimmed down set of builds
-  summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
+  summaryCDashIndexBuilds = \
+    flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuilds)
   return summaryCDashIndexBuilds
 
 
@@ -678,6 +705,11 @@ def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
   # Create and return the table
   return createHtmlTableStr( tableTitle,
     colDataList, rowDataListDisplayed, htmlStyle, htmlTableStyle )
+
+
+#
+
+
 
 
 ########################################################################

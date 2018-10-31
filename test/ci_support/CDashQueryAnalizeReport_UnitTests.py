@@ -393,7 +393,7 @@ class test_collectCDashIndexBuildSummaryFields(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.getCDashIndexBuildsSummary()
+# Test CDashQueryAnalizeReport.flattenCDashIndexBuildsToListOfDicts()
 #
 #############################################################################
 
@@ -411,10 +411,10 @@ g_summaryCDashIndexBuilds_expected = \
 #print("g_summaryCDashIndexBuilds_expected:")
 #g_pp.pprint(g_summaryCDashIndexBuilds_expected)
 
-class test_getCDashIndexBuildsSummary(unittest.TestCase):
+class test_flattenCDashIndexBuildsToListOfDicts(unittest.TestCase):
 
-  def test_getCDashIndexBuildsSummary(self):
-    summaryCDashIndexBuilds = getCDashIndexBuildsSummary(g_fullCDashIndexBuilds)
+  def test_flattenCDashIndexBuildsToListOfDicts(self):
+    summaryCDashIndexBuilds = flattenCDashIndexBuildsToListOfDicts(g_fullCDashIndexBuilds)
     #pp.pprint(summaryCDashIndexBuilds)
     self.assertEqual(
       len(summaryCDashIndexBuilds), len(g_summaryCDashIndexBuilds_expected))
@@ -524,11 +524,11 @@ class test_getMissingExpectedBuildsList(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.downloadBuildsOffCDashAndSummarize()
+# Test CDashQueryAnalizeReport.downloadBuildsOffCDashAndFlatten()
 #
 #############################################################################
 
-class test_downloadBuildsOffCDashAndSummarize(unittest.TestCase):
+class test_downloadBuildsOffCDashAndFlatten(unittest.TestCase):
 
   def test_allBuilds(self):
     # Define dummy CDash filter data
@@ -541,7 +541,7 @@ class test_downloadBuildsOffCDashAndSummarize(unittest.TestCase):
        getCDashIndexQueryUrl(cdashUrl,  projectName, date, buildFilters),
        g_fullCDashIndexBuilds )
     # Get the mock data off of CDash
-    summaryCDashIndexBuilds = downloadBuildsOffCDashAndSummarize(
+    summaryCDashIndexBuilds = downloadBuildsOffCDashAndFlatten(
       cdashUrl,  projectName, date, buildFilters,
       verbose=False, cdashQueriesCacheDir=None,
       useCachedCDashData=False,

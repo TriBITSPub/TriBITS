@@ -280,7 +280,7 @@ if __name__ == '__main__':
   try:
 
     #
-    # D.1) Read data from input file
+    # D.1) Read data from input files
     #
     # Assert this data is correct and abort if there is an error before we run
     # expensive CDash queries!
@@ -312,7 +312,7 @@ if __name__ == '__main__':
     print("\nCDash builds browser URL:\n\n  "+cdashIndexBuildsBrowserUrl+"\n")
    
     buildsSummaryList = \
-      CDQAR.downloadBuildsOffCDashAndSummarize(
+      CDQAR.downloadBuildsOffCDashAndFlatten(
        # CDash URL Args
        inOptions.cdashSiteUrl,
        inOptions.cdashProjectName,
