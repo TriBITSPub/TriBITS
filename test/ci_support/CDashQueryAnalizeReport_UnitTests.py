@@ -407,7 +407,7 @@ g_fullCDashIndexBuildsJson = \
 # This file was manually created from the above file to match what the reduced
 # builds should be.
 g_summaryCDashIndexBuilds_expected = \
-  eval(open(g_testBaseDir+'/cdash_index_query_data.summary.json', 'r').read())
+  eval(open(g_testBaseDir+'/cdash_index_query_data.flattened.json', 'r').read())
 #print("g_summaryCDashIndexBuilds_expected:")
 #g_pp.pprint(g_summaryCDashIndexBuilds_expected)
 
