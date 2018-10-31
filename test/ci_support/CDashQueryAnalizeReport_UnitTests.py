@@ -62,7 +62,7 @@ g_pp = pprint.PrettyPrinter(indent=4)
 
 # Mock function object for getting data off of CDash as a stand-in for the
 # function extractCDashApiQueryData().
-class MockExtractCDashApiQueryDataFuctor(object):
+class MockExtractCDashApiQueryDataFunctor(object):
   def __init__(self, cdashApiQueryUrl_expected, dataToReturn):
     self.cdashApiQueryUrl_expected = cdashApiQueryUrl_expected
     self.dataToReturn = dataToReturn
@@ -278,13 +278,13 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
     outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_write_cache"
     outputCacheFile=outputCacheDir+"/cachedCDashQueryData.json"
     deleteThenCreateTestDir(outputCacheDir)
-    mockExtractCDashApiQueryDataFuctor = MockExtractCDashApiQueryDataFuctor(
+    mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
        "dummy-cdash-url", g_getAndCacheCDashQueryDataOrReadFromCache_data)
     cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
       "dummy-cdash-url", outputCacheFile,
       useCachedCDashData=False,
       printCDashUrl=False,
-      extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFuctor
+      extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFunctor
       )
     self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
     cdashQueryData_cache = eval(open(outputCacheFile, 'r').read())
@@ -569,7 +569,7 @@ class test_downloadBuildsOffCDashAndFlatten(unittest.TestCase):
     date = "YYYY-MM-DD"
     buildFilters = "build&filters"
     # Define mock object to return the data
-    mockExtractCDashApiQueryDataFuctor = MockExtractCDashApiQueryDataFuctor(
+    mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
        getCDashIndexQueryUrl(cdashUrl,  projectName, date, buildFilters),
        g_fullCDashIndexBuildsJson )
     # Get the mock data off of CDash
@@ -577,13 +577,48 @@ class test_downloadBuildsOffCDashAndFlatten(unittest.TestCase):
       cdashUrl,  projectName, date, buildFilters,
       verbose=False, cdashQueriesCacheDir=None,
       useCachedCDashData=False,
-      extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFuctor )
+      extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFunctor )
     # Assert the data returned is correct
     #g_pp.pprint(summaryCDashIndexBuilds)
     self.assertEqual(
       len(summaryCDashIndexBuilds), len(g_summaryCDashIndexBuilds_expected))
     for i in range(0, len(summaryCDashIndexBuilds)):
       self.assertEqual(summaryCDashIndexBuilds[i], g_summaryCDashIndexBuilds_expected[i])
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.downloadTestsOffCDashQueryTestsAndFlatten()
+#
+#############################################################################
+
+class test_downloadTestsOffCDashQueryTestsAndFlatten(unittest.TestCase):
+
+  def test_all_tests(self):
+    # Define dummy CDash filter data
+    cdashUrl = "site.come/cdash"
+    projectName = "projectName"
+    date = "YYYY-MM-DD"
+    nonpassingTestsFilters = "tests&filters"
+    # cdash/api/v1/queryTests.php URL
+    nonpassingTestsQueryUrl = getCDashQueryTestsQueryUrl(
+      cdashUrl, projectName, date, nonpassingTestsFilters)
+    # Define mock object to return the data
+    mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
+       nonpassingTestsQueryUrl, g_fullCDashQueryTestsJson )
+    # Get the mock data off of CDash
+    testsListOfDicts = downloadTestsOffCDashQueryTestsAndFlatten(
+      nonpassingTestsQueryUrl, fullCDashQueryTestsJsonCacheFile=None,
+      useCachedCDashData=False,
+      verbose=False,
+      extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFunctor )
+    # Assert the data returned is correct
+    #g_pp.pprint(testsListOfDicts)
+    self.assertEqual(
+      len(testsListOfDicts), len(g_testsListOfDicts_expected))
+    for i in range(0, len(testsListOfDicts)):
+      self.assertEqual(testsListOfDicts[i], g_testsListOfDicts_expected[i])
+
 
 
 #############################################################################

@@ -545,10 +545,9 @@ def downloadTestsOffCDashQueryTestsAndFlatten(
     cdashQueryTestsUrl, fullCDashQueryTestsJsonCacheFile, useCachedCDashData,
     verbose, extractCDashApiQueryData_in )
   # Get flattend set of tests
-  #testsListOfDicts = \
-  #  flattenCDashIndexBuildsToListOfDicts(fullCDashQueryTestsJson)
-  #return testsListOfDicts
-  return []
+  testsListOfDicts = \
+    flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson)
+  return testsListOfDicts
 
 
 # Return if a build has configure failures
