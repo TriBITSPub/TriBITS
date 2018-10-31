@@ -295,7 +295,7 @@ if __name__ == '__main__':
 
     testsWithIssueTrackersListOfDicts = CDQAR.readCsvFileIntoListOfDicts(
       inOptions.testsWithIssueTrackersFile,
-      [ 'site', 'buildName', 'testname', 'issue_url', 'issue_text' ] )
+      [ 'site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker' ] )
 
     #
     # D.2) Get lists of build and test data off CDash
@@ -377,12 +377,13 @@ if __name__ == '__main__':
 
     # ToDo: Implement!  (Replace above call to CDQAR.getTestsJsonFromCdash())
 
-    # Get list of dicts of *all* tests with issue trackers (including those
-    # passing, missing, etc.)
+    # Split out list of nonpassing tests into those without issue trackers and
+    # those with issue trackers.
 
     # ToDo: Implement!
 
-    # Get list of non-passing tests that don't have issue trackers
+    # Get list of dicts of *all* tests with issue trackers (including those
+    # passing, missing, etc.)
 
     # ToDo: Implement!
 
