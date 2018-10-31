@@ -319,21 +319,21 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
 #    ...
 #    'builds': [
 #      {
-#        "testname": "Anasazi_Epetra_BKS_norestart_test_MPI_4",
-#        "site": "mutrino",
-#        "buildName": "Trilinos-atdm-mutrino-intel-opt-openmp-HSW",
-#        "buildstarttime": "2018-10-26T05:45:04 UTC",
-#        "time": 13.81,
-#        "prettyTime": "13s 810ms",
-#        "details": "Completed (Failed)\n",
-#        "siteLink": "viewSite.php?siteid=223",
-#        "buildSummaryLink": "buildSummary.php?buildid=4099474",
-#        "testDetailsLink": "testDetails.php?test=57709291&build=4099474",
-#        "status": "Failed",
-#        "statusclass": "error",
-#        "nprocs": 4,
-#        "procTime": 55.24,
-#        "prettyProcTime": "55s 240ms"
+#        'buildName': 'Trilinos-atdm-mutrino-intel-opt-openmp-HSW',
+#        'buildSummaryLink': 'buildSummary.php?buildid=4109735',
+#        'buildstarttime': '2018-10-29T05:54:03 UTC',
+#        'details': 'Completed (Failed)\n',
+#        'nprocs': 4,
+#        'prettyProcTime': '40s 400ms',
+#        'prettyTime': '10s 100ms',
+#        'procTime': 40.4,
+#        'site': 'mutrino',
+#        'siteLink': 'viewSite.php?siteid=223',
+#        'status': 'Failed',
+#        'statusclass': 'error',
+#        'testDetailsLink': 'testDetails.php?test=57925465&build=4109735',
+#        'testname': 'Anasazi_Epetra_BKS_norestart_test_MPI_4',
+#        'time': 10.1
 #        },
 #      ...
 #      ],
@@ -345,24 +345,27 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
 #
 #   [
 #     {
-#       "testname": "Anasazi_Epetra_BKS_norestart_test_MPI_4",
-#       "site": "mutrino",
-#       "buildName": "Trilinos-atdm-mutrino-intel-opt-openmp-HSW",
-#       "buildstarttime": "2018-10-26T05:45:04 UTC",
-#       "time": 13.81,
-#       "prettyTime": "13s 810ms",
-#       "details": "Completed (Failed)\n",
-#       "siteLink": "viewSite.php?siteid=223",
-#       "buildSummaryLink": "buildSummary.php?buildid=4099474",
-#       "testDetailsLink": "testDetails.php?test=57709291&build=4099474",
-#       "status": "Failed",
-#       "statusclass": "error",
-#       "nprocs": 4,
-#       "procTime": 55.24,
-#       "prettyProcTime": "55s 240ms"
+#       'buildName': 'Trilinos-atdm-mutrino-intel-opt-openmp-HSW',
+#       'buildSummaryLink': 'buildSummary.php?buildid=4109735',
+#       'buildstarttime': '2018-10-29T05:54:03 UTC',
+#       'details': 'Completed (Failed)\n',
+#       'nprocs': 4,
+#       'prettyProcTime': '40s 400ms',
+#       'prettyTime': '10s 100ms',
+#       'procTime': 40.4,
+#       'site': 'mutrino',
+#       'siteLink': 'viewSite.php?siteid=223',
+#       'status': 'Failed',
+#       'statusclass': 'error',
+#       'testDetailsLink': 'testDetails.php?test=57925465&build=4109735',
+#       'testname': 'Anasazi_Epetra_BKS_norestart_test_MPI_4',
+#       'time': 10.1
 #       },
 #     ...
 #     ]
+#
+# NOTE: This does a shallow copy so any modifications to the returned list and
+# dicts will modify the original data-structure fullCDashQueryTestsJson.
 #
 # This collects *all* of the tests from all of the "build" list provided by
 # the CDash JSON data-structure.  Therefore, if you want to only consider one
@@ -370,7 +373,8 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
 # (e.g. buildName='<build-name>').
 #
 def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
-  raise Exception("ToDo: Implement")
+  testsListOfDicts = fullCDashQueryTestsJson['builds']
+  return testsListOfDicts
 
 
 # Create a lookup dict for builds "group" => "site" => "build" given summary
@@ -504,6 +508,47 @@ def downloadBuildsOffCDashAndFlatten(
   summaryCDashIndexBuilds = \
     flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson)
   return summaryCDashIndexBuilds
+
+
+# Download set of tests from cdash/api/v1/ctest/queryTests.php and return
+# flattened list of dicts
+#
+# cdashQueryTestsUrl [in]: String URL for cdash/api/v1/ctest/queryTests.php
+# with filters.
+#
+# If printCDashUrl==True, the the CDash query URL will be printed to STDOUT.
+# Otherwise, this function is silent and will not return any output to STDOUT.
+#
+# If fullCDashQueryTestsJsonCacheFile != None, then the raw JSON
+# data-structure will be written to that file.
+#
+# If useCachedCDashData==True, then data will not be pulled off of CDash and
+# instead the list of builds will be read from the file cdashQueryCacheFile
+# which must already exist from a prior call to this function (mostly for
+# debugging and unit testing purposes).
+# 
+# The list of tests pulled off CDash is flattended and returned by the
+# function flattenCDashQueryTestsToListOfDicts().
+#
+# NOTE: The optional argument extractCDashApiQueryData_in is used in unit
+# testing to avoid calling CDash.
+#
+def downloadTestsOffCDashQueryTestsAndFlatten(
+  cdashQueryTestsUrl,
+  fullCDashQueryTestsJsonCacheFile=None,
+  useCachedCDashData=False,
+  verbose=True,
+  extractCDashApiQueryData_in=extractCDashApiQueryData,
+  ):
+  # Get the query data
+  fullCDashQueryTestsJson = getAndCacheCDashQueryDataOrReadFromCache(
+    cdashQueryTestsUrl, fullCDashQueryTestsJsonCacheFile, useCachedCDashData,
+    verbose, extractCDashApiQueryData_in )
+  # Get flattend set of tests
+  #testsListOfDicts = \
+  #  flattenCDashIndexBuildsToListOfDicts(fullCDashQueryTestsJson)
+  #return testsListOfDicts
+  return []
 
 
 # Return if a build has configure failures

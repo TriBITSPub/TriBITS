@@ -422,80 +422,36 @@ class test_flattenCDashIndexBuildsToListOfDicts(unittest.TestCase):
       self.assertEqual(summaryCDashIndexBuilds[i], g_summaryCDashIndexBuilds_expected[i])
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-##############################################################################
-##
-## Test CDashQueryAnalizeReport.flattenCDashQueryTestsToListOfDicts()
-##
-##############################################################################
+#############################################################################
 #
-## This file was taken from an actual CDash query and then modified a little to
-## make for better testing.
-#g_fullCDashQueryTestsJson = \
-#  eval(open(g_testBaseDir+'/cdash_query_tests_data.json', 'r').read())
-##print("g_fullCDashQueryTestsJson:")
-##g_pp.pprint(g_fullCDashQueryTestsJson)
+# Test CDashQueryAnalizeReport.flattenCDashQueryTestsToListOfDicts()
 #
-## This file was manually created from the above file to match what the reduced
-## builds should be.
-#g_testsListOfDicts_expected = \
-#  eval(open(g_testBaseDir+'/cdash_query_tests_data.flattened.json', 'r').read())
-##print("g_testsListOfDicts_expected:")
-##g_pp.pprint(g_testsListOfDicts_expected)
-#
-#class test_flattenCDashQueryTestsToListOfDicts(unittest.TestCase):
-#
-#  def test_flattenCDashQueryTestsToListOfDicts(self):
-#    testsListOfDicts = \
-#      flattenCDashQueryTestsToListOfDicts(g_fullCDashQueryTestsJson)
-#    #pp.pprint(testsListOfDicts)
-#    self.assertEqual(
-#      len(testsListOfDicts), len(g_testsListOfDicts_expected))
-#    for i in range(0, len(testsListOfDicts)):
-#      self.assertEqual(testsListOfDicts[i], g_testsListOfDicts_expected[i])
-#
+#############################################################################
 
+# This file was taken from an actual CDash query and then modified a little to
+# make for better testing.
+g_fullCDashQueryTestsJson = \
+  eval(open(g_testBaseDir+'/cdash_query_tests_data.json', 'r').read())
+#print("g_fullCDashQueryTestsJson:")
+#g_pp.pprint(g_fullCDashQueryTestsJson)
 
+# This file was manually created from the above file to match what the reduced
+# builds should be.
+g_testsListOfDicts_expected = \
+  eval(open(g_testBaseDir+'/cdash_query_tests_data.flattened.json', 'r').read())
+#print("g_testsListOfDicts_expected:")
+#g_pp.pprint(g_testsListOfDicts_expected)
 
+class test_flattenCDashQueryTestsToListOfDicts(unittest.TestCase):
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  def test_flattenCDashQueryTestsToListOfDicts(self):
+    testsListOfDicts = \
+      flattenCDashQueryTestsToListOfDicts(g_fullCDashQueryTestsJson)
+    #pp.pprint(testsListOfDicts)
+    self.assertEqual(
+      len(testsListOfDicts), len(g_testsListOfDicts_expected))
+    for i in range(0, len(testsListOfDicts)):
+      self.assertEqual(testsListOfDicts[i], g_testsListOfDicts_expected[i])
 
 
 #############################################################################

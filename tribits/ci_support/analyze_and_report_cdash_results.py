@@ -230,8 +230,6 @@ if __name__ == '__main__':
     setattr(inOptions, 'useCachedCDashData', True)
   else:
     setattr(inOptions, 'useCachedCDashData', False)
-  useCachedCDashData = inOptions.useCachedCDashData
-  # ToDo: Remove var useCachedCDashData and use inOptions.useCachedCDashData
 
   #
   # A) Define common data, etc
@@ -319,7 +317,7 @@ if __name__ == '__main__':
        inOptions.date,
        inOptions.cdashBuildsFilters,
        # Other args
-       useCachedCDashData=useCachedCDashData,
+       useCachedCDashData=inOptions.useCachedCDashData,
        cdashQueriesCacheDir=inOptions.cdashQueriesCacheDir,
        )
 
@@ -348,6 +346,20 @@ if __name__ == '__main__':
     print("\nCDash non-passing tests browser URL:\n\n"+\
       "  "+cdashNonpassingTestsBrowserUrl+"\n")
 
+    # Get a single list of dicts of non-passing tests for current testing day
+    # off CDash
+
+    cdashNonpassingTestsQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
+      inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
+      inOptions.cdashNonpassedTestsFilters)
+
+    cdashNonpassingTestsQueryJsonCacheFile = \
+      inOptions.cdashQueriesCacheDir+"/fullCDashNonpassingTests.json"
+
+    nonpasingTestsListOfDicts = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
+      cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
+      inOptions.useCachedCDashData )
+
     # Get data from cdash and return in a simpler form
     all_failing_tests=CDQAR.getTestsJsonFromCdash(
       inOptions.cdashSiteUrl, inOptions.cdashProjectName,
@@ -360,9 +372,6 @@ if __name__ == '__main__':
     # Split the tests into those with issue tracking and those without
     tests_without_issue_tracking, tests_with_issue_tracking = \
       CDQAR.filterDictionary(all_failing_tests, "issue_tracker")
-
-    # Get a single list of dicts of non-passing tests for current testing day
-    # off CDash
 
     # ToDo: Implement!  (Replace above call to CDQAR.getTestsJsonFromCdash())
 
