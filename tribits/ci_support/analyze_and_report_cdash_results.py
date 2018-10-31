@@ -234,17 +234,16 @@ if __name__ == '__main__':
   # ToDo: Remove var useCachedCDashData and use inOptions.useCachedCDashData
 
   #
-  # Common data, etc.
+  # A) Define common data, etc
   #
 
   tcd = CDQAR.TableColumnData
   pp = pprint.PrettyPrinter(indent=2)
 
-
   groupSiteBuildNameSortOrder = ['group', 'site', 'buildname']
 
   #
-  # Sound off
+  # B) Sound off
   #
 
   print "***"
@@ -257,7 +256,7 @@ if __name__ == '__main__':
   # the cache.
 
   #
-  # A) Create beginning of email body (that does not require getting any data off CDash)
+  # C) Create beginning of email body (that does not require getting any data off CDash)
   #
 
   # This is the top of the body
@@ -272,7 +271,8 @@ if __name__ == '__main__':
       +" on "+inOptions.date+"</h2>\n\n"
 
   #
-  # B) Get data off of CDash, do analysis, and construct HTML body parts
+  # D) Read data files, get data off of CDash, do analysis, and construct HTML
+  # body parts
   #
   
   globalPass = True
@@ -280,18 +280,29 @@ if __name__ == '__main__':
   try:
 
     #
-    # B.1) Get build and test data off of CDash and analize
+    # D.1) Read data from input file
+    #
+    # Assert this data is correct and abort if there is an error before we run
+    # expensive CDash queries!
     #
 
-    # Get expected builds list early in case there is a problem reading it
+    # Get list of expected builds from input CSV file
     if inOptions.expectedBuildsFile:
       expectedBuildsList = \
         CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
     else:
       expectedBuildsList = []
 
+    # Get list of tests with issue tracker from input CSV file
+
+    # ToDo: Implement!
+
     #
-    # B.1.a) Get list of builds of CDash
+    # D.2) Get lists of build and test data off CDash
+    #
+
+    #
+    # D.2.a) Get list of dicts of builds off CDash
     #
 
     cdashIndexBuildsBrowserUrl = CDQAR.getCDashIndexBrowserUrl(
@@ -324,8 +335,10 @@ if __name__ == '__main__':
     buildLookupDict = CDQAR.createBuildLookupDict(buildsSummaryList)
 
     #
-    # B.1.b) Get list of non-passing tests of CDash
+    # D.2.b) Get list of dicts of all non-passing tests off CDash and for
+    # tests with issue trackers.
     #
+
     cdashNonpassingTestsBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
       inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
       inOptions.cdashNonpassedTestsFilters)
@@ -335,18 +348,26 @@ if __name__ == '__main__':
     print("\nCDash non-passing tests browser URL:\n\n"+\
       "  "+cdashNonpassingTestsBrowserUrl+"\n")
 
-    # Get the list of non-passing tests for current testing day off CDash
-
-    # ToDo: Implement!
-
-    # get data from cdash and return in a simpler form
+    # Get data from cdash and return in a simpler form
     all_failing_tests=CDQAR.getTestsJsonFromCdash(
       inOptions.cdashSiteUrl, inOptions.cdashProjectName,
       inOptions.cdashNonpassedTestsFilters,
       inOptions, printCDashUrl=True )
 
-    # Get list of *all* tests with issue trackers (including those passing,
-    # missing, etc.)
+    # Add issue tracking information to the tests' data
+    CDQAR.checkForIssueTracker(all_failing_tests, inOptions.testsWithIssueTrackersFile)
+    
+    # Split the tests into those with issue tracking and those without
+    tests_without_issue_tracking, tests_with_issue_tracking = \
+      CDQAR.filterDictionary(all_failing_tests, "issue_tracker")
+
+    # Get a single list of dicts of non-passing tests for current testing day
+    # off CDash
+
+    # ToDo: Implement!  (Replace above call to CDQAR.getTestsJsonFromCdash())
+
+    # Get list of dicts of *all* tests with issue trackers (including those
+    # passing, missing, etc.)
 
     # ToDo: Implement!
 
@@ -354,18 +375,10 @@ if __name__ == '__main__':
 
     # ToDo: Implement!
 
-    # Get history of all tests with issue trackers (passing, failing, not-run,
-    # and missing)
+    # Get test history of all tests with issue trackers (passing, failing,
+    # not-run, and missing)
 
     # ToDo: Implement!
-
-    # add issue tracking information to the tests' data
-    #CDQAR.checkForIssueTracker(all_failing_tests, "knownIssues.csv")
-    CDQAR.checkForIssueTracker(all_failing_tests, inOptions.testsWithIssueTrackersFile)
-    
-    # split the tests into those with issue tracking and those without
-    tests_without_issue_tracking, tests_with_issue_tracking = \
-      CDQAR.filterDictionary(all_failing_tests, "issue_tracker")
   
     # Nonpassing Tests on CDash
     htmlEmailBodyTop += \
@@ -414,7 +427,7 @@ if __name__ == '__main__':
         bmeDescr,  bmeAcro, bmeColDataList, missingExpectedBuildsList,
         groupSiteBuildNameSortOrder, None )
       # NOTE: Above we don't want to limit any missing builds in this table
-      # because that data is not shown on CDash and that list will never bo
+      # because that data is not shown on CDash and that list will never be
       # super big.
 
     #
@@ -451,8 +464,9 @@ if __name__ == '__main__':
         cDescr,  cAcro, cColDataList, buildsWithConfigureFailuresList,
         groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
-      # ToDo: Update to show number of configure failures with hyperlinks and
-      # don't limit the number of builds shown.
+      # ToDo: Update to show number of configure failures and the history info
+      # for that build with hyperlinks and don't limit the number of builds
+      # shown.
 
     #
     print("\nSearch for any builds with compilation (build) failures ...\n")
@@ -488,11 +502,12 @@ if __name__ == '__main__':
         bDescr,  bAcro, cColDataList, buildsWithBuildFailuresList,
         groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
-      # ToDo: Update to show number of build failures with hyperlinks and
-      # don't limit the number of builds shown.
+      # ToDo: Update to show number of builds failures and the history info
+      # for that build with hyperlinks and don't limit the number of builds
+      # shown.
 
     #
-    # B.2) Get the test results data and analyze
+    # D.3) Analyaize and report test results in different tables
     #
 
     # Column header for listing tests
@@ -516,14 +531,14 @@ if __name__ == '__main__':
     print("\nSearch failing tests without issue trackers ...\n")
     #
 
-    # Sort and get history for the top <N> tests without issue trackers that
-    # are failing (and not-run for now)
-
-    # ToDo: Implement!
-
     testsWithoutIssueTrackerList = getFlatListOfTestsFromTestDict(
       tests_without_issue_tracking)
     #pp.pprint(testsWithoutIssueTrackerList)
+
+    # Sort and get detailed history of CDash for the top <N> 'twoif' tests
+    # *without* issue trackers that are failing (and not-run for now)
+
+    # ToDo: Implement!
 
     twoifDescr = "Failing tests without issue trackers"
     twoifAcro = "twoif"
@@ -550,14 +565,14 @@ if __name__ == '__main__':
     print("\nSearch failing tests with issue trackers ...\n")
     #
 
-    # Sort and get detailed test history for top <N> 'twif' failing tests
-    # without issue trackers.
-
-    # ToDo: Implement!
-
     testsWithIssueTrackerList = getFlatListOfTestsFromTestDict(
       tests_with_issue_tracking)
     #pp.pprint(testsWithIssueTrackerList)
+
+    # Sort and get detailed test history for top <N> 'twif' failing tests with
+    # issue trackers.
+
+    # ToDo: Implement!
 
     twifDescr = "Failing tests with issue trackers"
     twifAcro = "twif"
@@ -591,10 +606,6 @@ if __name__ == '__main__':
 
     # ToDo: Implement!
 
-    # Generate table "Tests with issue trackers not run: twinr=???"
-
-    # ToDo: Implement!
-
     # Generate table "Tests with issue trackers missing: twim=???"
 
     # ToDo: Implement!
@@ -614,7 +625,7 @@ if __name__ == '__main__':
     summaryLineDataNumbersList.append("SCRIPT CRASHED")
 
   #
-  # C) Put together final email summary  line
+  # E) Put together final email summary  line
   #
 
   if globalPass:
@@ -628,7 +639,7 @@ if __name__ == '__main__':
   summaryLine += ": "+inOptions.buildSetName+" on "+inOptions.date
 
   #
-  # D) Finish of HTML body guts and define overall body style
+  # F) Finish of HTML body guts and define overall body style
   #
 
   # Finish off the top paragraph of the summary lines
@@ -668,7 +679,7 @@ if __name__ == '__main__':
     "</html>\n"
 
   #
-  # E) Write HTML body file and/or send HTML email(s)
+  # G) Write HTML body file and/or send HTML email(s)
   #
 
   if inOptions.writeEmailToFile:
@@ -694,7 +705,7 @@ if __name__ == '__main__':
       CDQAR.sendMineEmail(msg)
 
   #
-  # E) Return final global pass/fail
+  # H) Return final global pass/fail
   #
 
   print("\n"+summaryLine+"\n")
