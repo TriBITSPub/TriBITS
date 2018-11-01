@@ -377,7 +377,8 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
 #    }
 #
 # This function gets the data from *all* of the tests and returns the
-# flatten-out list of dicts for each test:
+# flatten-out list of dicts with some additional fields for each test of the
+# form:
 #
 #   [
 #     {
@@ -395,13 +396,20 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
 #       'statusclass': 'error',
 #       'testDetailsLink': 'testDetails.php?test=57925465&build=4109735',
 #       'testname': 'Anasazi_Epetra_BKS_norestart_test_MPI_4',
-#       'time': 10.1
+#       'time': 10.1,
+#       'issue_tracker': "",
+#       'issue_tracker_url': "",
 #       },
 #     ...
 #     ]
 #
+# The empty fields 'issue_tracker' and 'issue_tracker_url' and done to
+# simplify later code.
+#
 # NOTE: This does a shallow copy so any modifications to the returned list and
-# dicts will modify the original data-structure fullCDashQueryTestsJson.
+# dicts will modify the original data-structure fullCDashQueryTestsJson.  If
+# that is a problem, then make sure and do a deep copy before passing in
+# fullCDashQueryTestsJson.
 #
 # This collects *all* of the tests from all of the "build" list provided by
 # the CDash JSON data-structure.  Therefore, if you want to only consider one
@@ -409,7 +417,11 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
 # (e.g. buildName='<build-name>').
 #
 def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
-  testsListOfDicts = fullCDashQueryTestsJson['builds']
+  testsListOfDicts = []
+  for testDict in fullCDashQueryTestsJson['builds']:
+    testDict.setdefault('issue_tracker', "")
+    testDict.setdefault('issue_tracker_url', "")
+    testsListOfDicts.append(testDict)
   return testsListOfDicts
 
 
@@ -686,29 +698,6 @@ def buildHasBuildFailures(buildDict):
   if compilationDict and compilationDict['error'] > 0:
     return True
   return False
-
-
-# Get a list of builds with configure failures
-def getBuildsWtihConfigureFailures(buildDictList):
-  pp = pprint.PrettyPrinter(indent=2)
-  #print("\nbuildDictList:")
-  #pp.pprint(buildDictList)
-  buildsWithConfigureFailures = []
-  for buildDict in buildDictList:
-    #print("\nbuildDict:")
-    #pp.pprint(buildDict)
-    if buildHasConfigureFailures(buildDict):
-      buildsWithConfigureFailures.append(buildDict)
-  return buildsWithConfigureFailures
-
-
-# Get a list of builds with configure failures
-def getBuildsWtihBuildFailures(buildDictList):
-  buildsWithBuildFailures = []
-  for buildDict in buildDictList:
-    if buildHasBuildFailures(buildDict):
-      buildsWithBuildFailures.append(buildDict)
-  return buildsWithBuildFailures
 
 
 # Functor class to sort a row of dicts by multiple columns of string data.
