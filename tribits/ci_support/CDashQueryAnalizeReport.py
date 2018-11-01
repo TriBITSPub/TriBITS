@@ -438,16 +438,32 @@ def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind):
 # Class that encapsulates a list of dicts and an efficient lookup of a dict
 # given a set key/value pairs to match.
 class SearchableListOfDicts(object):
+  # Constructor
   def __init__(self, listOfDicts, listOfKeys):
     self.__listOfDicts = listOfDicts
     self.__listOfKeys = listOfKeys
     self.__lookupDict = createLookupDictForListOfDicts(
-      self.__listOfDicts, self.__listOfKeys) 
+      self.__listOfDicts, self.__listOfKeys)
+  # Return listOfDicts passed into Constructor 
   def getListOfDicts(self):
     return self.__listOfDicts
+  # Return listOfKeys passed to Constructor
+  def getListOfKeys(self):
+    return self.__listOfKeys
+  # Lookup a dict given a dict with same key/value pairs for keys listed in
+  # listOfKeys.
   def lookupDictGivenKeyValueDict(self, keyValueDictToFind):
     return lookupDictGivenLookupDict(
      self.__lookupDict, self.__listOfKeys, keyValueDictToFind)
+  # Lookup a dict given a flat list of values for the keys (must be in same
+  # order).
+  def lookupDictGivenKeyValuesList(self, keyValuesListToFind):
+    keyValueDictToFind = {}
+    i = 0
+    for key in self.getListOfKeys():
+      keyValueDictToFind[key] = keyValuesListToFind[i]
+      i += 1
+    return self.lookupDictGivenKeyValueDict(keyValueDictToFind)
   def __len__(self):
     return len(self.__listOfDicts)
   def __getitem__(self, index_in):
@@ -459,6 +475,12 @@ class SearchableListOfDicts(object):
 def createBuildLookupDict(summaryBuildsList):
   return createLookupDictForListOfDicts(summaryBuildsList,
     ['group', 'site', 'buildname'] )
+  
+
+# Create a lookup dict for builds "group" => "site" => "build" given summary
+# list of builds.
+def createSearchableListOfBuilds(buildsListOfDicts):
+  return SearchableListOfDicts(buildsListOfDicts, ['group', 'site', 'buildname'])
 
 
 # Lookup a build dict given a lookup dict from createBuildLookupDict()
@@ -497,12 +519,12 @@ def lookupBuildSummaryGivenLookupDict(buildLookupDict, groupSiteBuildDict):
 #   "Build exists but no build results"
 #   "Build exists but no configure results"
 #
-def getMissingExpectedBuildsList(buildLookupDict, expectedBuildsList):
+def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList):
   missingExpectedBuildsList = []
   for expectedBuildDict in expectedBuildsList:
     #print("\nexpectedBuildDict = "+str(expectedBuildDict))
     buildSummaryDict = \
-      lookupBuildSummaryGivenLookupDict(buildLookupDict, expectedBuildDict)
+      buildsSearchableListOfDicts.lookupDictGivenKeyValueDict(expectedBuildDict)
     #print("buildSummaryDict = "+str(buildSummaryDict))
     if not buildSummaryDict:
       # Expected build not found!

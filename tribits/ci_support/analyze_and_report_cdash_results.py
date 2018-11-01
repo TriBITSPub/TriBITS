@@ -307,7 +307,7 @@ if __name__ == '__main__':
 
     print("\nCDash builds browser URL:\n\n  "+cdashIndexBuildsBrowserUrl+"\n")
    
-    buildsSummaryList = \
+    buildsListOfDicts = \
       CDQAR.downloadBuildsOffCDashAndFlatten(
        # CDash URL Args
        inOptions.cdashSiteUrl,
@@ -325,10 +325,10 @@ if __name__ == '__main__':
     # Builds on CDash
     htmlEmailBodyTop += \
      "<a href=\""+cdashIndexBuildsBrowserUrl+"\">"+\
-     "Builds on CDash</a> (num="+str(len(buildsSummaryList))+")<br>\n"
+     "Builds on CDash</a> (num="+str(len(buildsListOfDicts))+")<br>\n"
 
     # Get a dict to help look up builds
-    buildLookupDict = CDQAR.createBuildLookupDict(buildsSummaryList)
+    buildsSLOD = CDQAR.createSearchableListOfBuilds(buildsListOfDicts)
 
     #
     # D.2.b) Get list of dicts of all non-passing tests off CDash and for
@@ -404,7 +404,7 @@ if __name__ == '__main__':
     #
 
     missingExpectedBuildsList = CDQAR.getMissingExpectedBuildsList(
-      buildLookupDict, expectedBuildsList)
+      buildsSLOD, expectedBuildsList)
     #pp.pprint(missingExpectedBuildsList)
 
     bmeDescr = "Missing expected builds"
@@ -442,8 +442,7 @@ if __name__ == '__main__':
     print("\nSearch for any builds with configure failures ...\n")
     #
 
-    buildsWithConfigureFailuresList = CDQAR.getBuildsWtihConfigureFailures(
-      buildsSummaryList)
+    buildsWithConfigureFailuresList = CDQAR.getBuildsWtihConfigureFailures(buildsSLOD)
 
     cDescr = "Builds with configure failures"
     cAcro = "c"
@@ -480,8 +479,7 @@ if __name__ == '__main__':
     print("\nSearch for any builds with compilation (build) failures ...\n")
     #
 
-    buildsWithBuildFailuresList = CDQAR.getBuildsWtihBuildFailures(
-      buildsSummaryList)
+    buildsWithBuildFailuresList = CDQAR.getBuildsWtihBuildFailures(buildsSLOD)
 
     bDescr = "Builds with build failures"
     bAcro = "b"

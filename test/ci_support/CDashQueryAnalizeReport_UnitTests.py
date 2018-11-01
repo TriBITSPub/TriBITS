@@ -567,15 +567,20 @@ def slodLookupData(slod, groupName, siteName, buildName):
 class test_lookupDictGivenLookupDict(unittest.TestCase):
 
   def test_basic(self):
-    slod = SearchableListOfDicts(g_buildsListForExpectedBuilds,
-      ['group', 'site', 'buildname'])
+    listOfKeys = ['group', 'site', 'buildname'] 
+    slod = SearchableListOfDicts(g_buildsListForExpectedBuilds, listOfKeys)
     self.assertEqual(slod.getListOfDicts(), g_buildsListForExpectedBuilds)
+    self.assertEqual(slod.getListOfKeys(), listOfKeys)
     self.assertEqual(len(slod), len(g_buildsListForExpectedBuilds))
     self.assertEqual(slod[0], g_buildsListForExpectedBuilds[0])
     self.assertEqual(slod[3], g_buildsListForExpectedBuilds[3])
     self.assertEqual(slodLookupData(slod, 'group1','site1','build1'), 'val1')
     self.assertEqual(slodLookupData(slod, 'group1','site2','build3'), 'val3')
     self.assertEqual(slodLookupData(slod, 'group2','site4','build1'), None)
+    self.assertEqual(
+      slod.lookupDictGivenKeyValuesList(('group1','site2','build3'))['data'], 'val3')
+    self.assertEqual(
+      slod.lookupDictGivenKeyValuesList(('group2','site4','build1')), None)
 
   def test_iterator(self):
     slod = SearchableListOfDicts(g_buildsListForExpectedBuilds,
@@ -650,14 +655,15 @@ class test_lookupBuildSummaryGivenLookupDict(unittest.TestCase):
 class test_getMissingExpectedBuildsList(unittest.TestCase):
 
   def test_1(self):
-    blud = copy.deepcopy(createBuildLookupDict(g_buildsListForExpectedBuilds))
-    blud.get('group2').get('site3').get('build4').update({'test':{'pass':1}})
+    slob = createSearchableListOfBuilds(copy.deepcopy(g_buildsListForExpectedBuilds))
+    slob.lookupDictGivenKeyValuesList(('group2','site3','build4')).update(
+      {'test':{'pass':1}})
     expectedBuildsList = [
       gsb('group1', 'site2', 'build3'),  # Build exists but missing tests
       gsb('group2', 'site3', 'build4'),  # Build exists and has tests
       gsb('group2', 'site3', 'build8'),  # Build missing all-together
       ]
-    missingExpectedBuildsList = getMissingExpectedBuildsList(blud, expectedBuildsList)
+    missingExpectedBuildsList = getMissingExpectedBuildsList(slob, expectedBuildsList)
     self.assertEqual(len(missingExpectedBuildsList), 2)
     self.assertEqual(missingExpectedBuildsList[0],
       { 'group':'group1', 'site':'site2', 'buildname':'build3',
