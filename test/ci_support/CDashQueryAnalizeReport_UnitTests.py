@@ -456,6 +456,84 @@ class test_flattenCDashQueryTestsToListOfDicts(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalizeReport.createLookupDictForListOfDicts()
+#
+#############################################################################
+
+g_buildsListForExpectedBuilds = [
+  { 'group':'group1', 'site':'site1', 'buildname':'build1', 'data':'val1' },
+  { 'group':'group1', 'site':'site1', 'buildname':'build2', 'data':'val2' },
+  { 'group':'group1', 'site':'site2', 'buildname':'build3', 'data':'val3' },
+  { 'group':'group2', 'site':'site1', 'buildname':'build1', 'data':'val4' },
+  { 'group':'group2', 'site':'site3', 'buildname':'build4', 'data':'val5' },
+  ]
+
+g_buildLookupDictForExpectedBuilds = {
+  'group1' : {
+    'site1' : {
+      'build1':{'group':'group1','site':'site1','buildname':'build1','data':'val1'},
+      'build2':{'group':'group1','site':'site1','buildname':'build2','data':'val2'},
+      },
+    'site2' : {
+      'build3':{'group':'group1','site':'site2','buildname':'build3','data':'val3'},
+      },
+    },
+  'group2' : {
+    'site1' : {
+      'build1':{'group':'group2','site':'site1','buildname':'build1','data':'val4'},
+      },
+    'site3' : {
+      'build4':{'group':'group2','site':'site3','buildname':'build4','data':'val5'},
+      },
+    },
+  }
+
+class test_createLookupDictForListOfDicts(unittest.TestCase):
+
+  def test_1(self):
+    buildLookupDict = createLookupDictForListOfDicts(
+      g_buildsListForExpectedBuilds,
+      ['group', 'site', 'buildname'] )
+    #print("\nbuildLookupDict:")
+    #g_pp.pprint(buildLookupDict)
+    #print("\ng_buildLookupDictForExpectedBuilds:")
+    #g_pp.pprint(g_buildLookupDictForExpectedBuilds)
+    self.assertEqual(buildLookupDict, g_buildLookupDictForExpectedBuilds)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.lookupDictGivenLookupDict()
+#
+#############################################################################
+
+def gsb(groupName, siteName, buildName):
+  return {'group':groupName, 'site':siteName, 'buildname':buildName}
+
+def lookupDictData(groupName, siteName, buildName, buildLookupDict):
+  dictFound = lookupDictGivenLookupDict(buildLookupDict,
+    ['group', 'site', 'buildname'],
+    gsb(groupName, siteName, buildName) )
+  if not dictFound : return None
+  return dictFound.get('data')
+     
+class test_lookupDictGivenLookupDict(unittest.TestCase):
+
+  def test_1(self):
+    lud = createLookupDictForListOfDicts(g_buildsListForExpectedBuilds,
+      ['group', 'site', 'buildname'] )
+    self.assertEqual(lookupDictData('group1','site1','build1', lud), 'val1')
+    self.assertEqual(lookupDictData('group1','site1','build2', lud), 'val2')
+    self.assertEqual(lookupDictData('group1','site2','build3', lud), 'val3')
+    self.assertEqual(lookupDictData('group2','site1','build1', lud), 'val4')
+    self.assertEqual(lookupDictData('group2','site3','build4', lud), 'val5')
+    self.assertEqual(lookupDictData('group2','site3','build1', lud), None)
+    self.assertEqual(lookupDictData('group2','site4','build1', lud), None)
+    self.assertEqual(lookupDictData('group3','site1','build1', lud), None)
+
+
+#############################################################################
+#
 # Test CDashQueryAnalizeReport.createBuildLookupDict()
 #
 #############################################################################
@@ -509,8 +587,8 @@ def gsb(groupName, siteName, buildName):
   return {'group':groupName, 'site':siteName, 'buildname':buildName}
 
 def lookupData(groupName, siteName, buildName, buildLookupDict):
-  buildDict = lookupBuildSummaryGivenLookupDict(
-    gsb(groupName, siteName, buildName), buildLookupDict)
+  buildDict = lookupBuildSummaryGivenLookupDict(buildLookupDict,
+    gsb(groupName, siteName, buildName) )
   if not buildDict : return None
   return buildDict.get('data')
      

@@ -249,10 +249,6 @@ if __name__ == '__main__':
         " for testing day "+inOptions.date
   print "***"
 
-  # ToDo: Write out the date and the query strings data to a cache file and
-  # then check it to make sure that the arguments are the same when checking
-  # the cache.
-
   #
   # C) Create beginning of email body (that does not require getting any data off CDash)
   #
@@ -358,7 +354,7 @@ if __name__ == '__main__':
     cdashNonpassingTestsQueryJsonCacheFile = \
       inOptions.cdashQueriesCacheDir+"/fullCDashNonpassingTests.json"
 
-    nonpasingTestsListOfDicts = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
+    nonpassingTestsListOfDicts = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
 

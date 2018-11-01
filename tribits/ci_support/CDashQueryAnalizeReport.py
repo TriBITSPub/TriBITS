@@ -377,28 +377,68 @@ def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
   return testsListOfDicts
 
 
+# Create a lookup dict for a list of dicts.
+def createLookupDictForListOfDicts(listOfDicts, listOfKeys):
+  #print("\nlistOfDicts = "+str(listOfDicts))
+  #print("\nlistOfKeys = "+str(listOfKeys))
+  lookupDict = {}
+  for dictEle in listOfDicts:
+    #print("\ndictEle = "+str(dictEle))
+    currentLookupDictRef = lookupDict 
+    for key in listOfKeys:
+      #print("\nkey = '"+key+"'")
+      keyValue = dictEle[key]
+      #print("keyValue = '"+str(keyValue)+"'")
+      #print("currentLookupDictRef = "+str(currentLookupDictRef))
+      nextLookupDictRef = currentLookupDictRef.setdefault(keyValue, {})
+      #print("nextLookupDictRef = "+str(nextLookupDictRef))
+      currentLookupDictRef = nextLookupDictRef
+      #print("lookupDict = "+str(lookupDict))
+    currentLookupDictRef.update(dictEle)
+  return  lookupDict
+
+
+# Lookup a dict in a dict given a lookup dict returned from
+# createLookupDictForListOfDicts() where they listOfKeys matches.
+#
+# lookupDict [in]: A dict created by createLookupDictForListOfDicts() given
+# the same listOfKeys used in that function.
+#
+# listOfKeys [in]: List of keys used to create lookupDict.
+#
+# dictToFind [in]: A dict with the key value pairs one is trying to find.  In
+# this case dictToFind must contain the keys listed in listOfKeys.
+#
+def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind):
+  #print("\nlookupDict = "+str(lookupDict))
+  #print("\nlistOfKeys = "+str(listOfKeys))
+  #print("\ndictToFind = "+str(dictToFind))
+  currentSubLookupDict = lookupDict
+  for key in listOfKeys:
+    #print("\nkey = '"+key+"'")
+    keyValueToFind = dictToFind[key]
+    #print("keyValueToFind = '"+str(keyValueToFind)+"'")
+    #print("currentSubLookupDict = "+str(currentSubLookupDict))
+    keyValueLookedUp = currentSubLookupDict.get(keyValueToFind, None)
+    #print("keyValueLookedUp = "+str(keyValueLookedUp))
+    if not keyValueLookedUp: return None
+    currentSubLookupDict = keyValueLookedUp
+  if keyValueLookedUp:
+    return keyValueLookedUp
+  return None
+
+
 # Create a lookup dict for builds "group" => "site" => "build" given summary
 # list of builds.
 def createBuildLookupDict(summaryBuildsList):
-  buildLookupDict = {}
-  for buildSummaryDict in summaryBuildsList:
-    groupName = buildSummaryDict.get('group')
-    siteName = buildSummaryDict.get('site')
-    buildName = buildSummaryDict.get('buildname')
-    groupDict = buildLookupDict.setdefault(groupName, {})
-    siteDict = groupDict.setdefault(siteName, {})
-    siteDict.setdefault(buildName, buildSummaryDict)
-  return buildLookupDict
+  return createLookupDictForListOfDicts(summaryBuildsList,
+    ['group', 'site', 'buildname'] )
 
 
 # Lookup a build dict given a lookup dict from createBuildLookupDict()
-def lookupBuildSummaryGivenLookupDict(groupSiteBuildDict, buildLookupDict):
-  groupDict = buildLookupDict.get(groupSiteBuildDict.get('group'), None)
-  if not groupDict: return None
-  siteDict = groupDict.get(groupSiteBuildDict.get('site'), None)
-  if not siteDict: return None
-  buildDict = siteDict.get(groupSiteBuildDict.get('buildname'), None)
-  return buildDict
+def lookupBuildSummaryGivenLookupDict(buildLookupDict, groupSiteBuildDict):
+  return lookupDictGivenLookupDict( buildLookupDict,
+   ['group', 'site', 'buildname'], groupSiteBuildDict )
 
 
 # Gather up a list of the missing builds.
@@ -436,7 +476,7 @@ def getMissingExpectedBuildsList(buildLookupDict, expectedBuildsList):
   for expectedBuildDict in expectedBuildsList:
     #print("\nexpectedBuildDict = "+str(expectedBuildDict))
     buildSummaryDict = \
-      lookupBuildSummaryGivenLookupDict(expectedBuildDict, buildLookupDict)
+      lookupBuildSummaryGivenLookupDict(buildLookupDict, expectedBuildDict)
     #print("buildSummaryDict = "+str(buildSummaryDict))
     if not buildSummaryDict:
       # Expected build not found!
