@@ -534,37 +534,53 @@ class test_lookupDictGivenLookupDict(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.createBuildLookupDict()
+# Test CDashQueryAnalizeReport.SearchableListOfDicts
 #
 #############################################################################
 
-g_buildsListForExpectedBuilds = [
-  { 'group':'group1', 'site':'site1', 'buildname':'build1', 'data':'val1' },
-  { 'group':'group1', 'site':'site1', 'buildname':'build2', 'data':'val2' },
-  { 'group':'group1', 'site':'site2', 'buildname':'build3', 'data':'val3' },
-  { 'group':'group2', 'site':'site1', 'buildname':'build1', 'data':'val4' },
-  { 'group':'group2', 'site':'site3', 'buildname':'build4', 'data':'val5' },
-  ]
 
-g_buildLookupDictForExpectedBuilds = {
-  'group1' : {
-    'site1' : {
-      'build1':{'group':'group1','site':'site1','buildname':'build1','data':'val1'},
-      'build2':{'group':'group1','site':'site1','buildname':'build2','data':'val2'},
-      },
-    'site2' : {
-      'build3':{'group':'group1','site':'site2','buildname':'build3','data':'val3'},
-      },
-    },
-  'group2' : {
-    'site1' : {
-      'build1':{'group':'group2','site':'site1','buildname':'build1','data':'val4'},
-      },
-    'site3' : {
-      'build4':{'group':'group2','site':'site3','buildname':'build4','data':'val5'},
-      },
-    },
-  }
+def slodLookupData(slod, groupName, siteName, buildName):
+  dictFound = slod.lookupDictGivenKeyValueDict(gsb(groupName, siteName, buildName))
+  if not dictFound : return None
+  return dictFound.get('data')
+
+
+class test_lookupDictGivenLookupDict(unittest.TestCase):
+
+  def test_basic(self):
+    slod = SearchableListOfDicts(g_buildsListForExpectedBuilds,
+      ['group', 'site', 'buildname'])
+    self.assertEqual(slod.getListOfDicts(), g_buildsListForExpectedBuilds)
+    self.assertEqual(len(slod), len(g_buildsListForExpectedBuilds))
+    self.assertEqual(slod[0], g_buildsListForExpectedBuilds[0])
+    self.assertEqual(slod[3], g_buildsListForExpectedBuilds[3])
+    self.assertEqual(slodLookupData(slod, 'group1','site1','build1'), 'val1')
+    self.assertEqual(slodLookupData(slod, 'group1','site2','build3'), 'val3')
+    self.assertEqual(slodLookupData(slod, 'group2','site4','build1'), None)
+
+  def test_iterator(self):
+    slod = SearchableListOfDicts(g_buildsListForExpectedBuilds,
+      ['group', 'site', 'buildname'])
+    i = 0
+    for dictEle in slod:
+      self.assertEqual(dictEle, g_buildsListForExpectedBuilds[i])
+      i += 1  
+
+  def test_in(self):
+    slod = SearchableListOfDicts(g_buildsListForExpectedBuilds,
+      ['group', 'site', 'buildname'])
+    self.assertEqual(g_buildsListForExpectedBuilds[0] in slod, True)
+    self.assertEqual(g_buildsListForExpectedBuilds[2] in slod, True)
+    dummyDict = copy.deepcopy(g_buildsListForExpectedBuilds[0])
+    dummyDict['data'] = 'different_val'
+    self.assertEqual(dummyDict in slod, False)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.createBuildLookupDict()
+#
+#############################################################################
 
 class test_createBuildLookupDict(unittest.TestCase):
 

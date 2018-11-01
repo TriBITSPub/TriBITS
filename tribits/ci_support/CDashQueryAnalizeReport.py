@@ -428,6 +428,25 @@ def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind):
   return None
 
 
+# Class that encapsulates a list of dicts and an efficient lookup of a dict
+# given a set key/value pairs to match.
+class SearchableListOfDicts(object):
+  def __init__(self, listOfDicts, listOfKeys):
+    self.__listOfDicts = listOfDicts
+    self.__listOfKeys = listOfKeys
+    self.__lookupDict = createLookupDictForListOfDicts(
+      self.__listOfDicts, self.__listOfKeys) 
+  def getListOfDicts(self):
+    return self.__listOfDicts
+  def lookupDictGivenKeyValueDict(self, keyValueDictToFind):
+    return lookupDictGivenLookupDict(
+     self.__lookupDict, self.__listOfKeys, keyValueDictToFind)
+  def __len__(self):
+    return len(self.__listOfDicts)
+  def __getitem__(self, index_in):
+    return self.__listOfDicts[index_in]
+  
+
 # Create a lookup dict for builds "group" => "site" => "build" given summary
 # list of builds.
 def createBuildLookupDict(summaryBuildsList):
