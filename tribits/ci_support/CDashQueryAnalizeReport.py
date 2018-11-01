@@ -62,11 +62,36 @@ def validateYYYYMMDD(dateText):
     raise ValueError("Incorrect data format for '"+dateText+"', should be YYYY-MM-DD")
 
 
+# Filter and input list and return a list with elements where
+# matchFunctor(inputList[i])==True.
+def getFilteredList(inputList, matchFunctor):
+  filteredList = []
+  for ele in inputList:
+    if matchFunctor(ele): filteredList.append(ele)
+  return filteredList
+
+
+# Filter an input list return a two lists (matchList, nomatchList) where the
+# first list has elements where matchFunctor(inputList[i])==True and the
+# second list has elements where matchFunctor(inputList[i])==False.
+def splitListOnMatch(inputList, matchFunctor):
+  matchList = []
+  nomatchList = []
+  for ele in inputList:
+    if matchFunctor(ele): matchList.append(ele)
+    else: nomatchList.append(ele)
+  return (matchList, nomatchList)
+
+
 # Given a CDash query URL PHP page that returns JSON data, return the JSON
 # data converged to a Python data-structure.
 #
 # The returned Python object will be a simple nested set of Python dicts and
 # lists.
+#
+# NOTE: This function can't really be unit tested becuase it actually gets
+# data from CDash.  Therefore, the code below will be structured such that it
+# we can avoid getting call it in any automated tests.
 #
 def extractCDashApiQueryData(cdashApiQueryUrl):
   #print sys.version_info

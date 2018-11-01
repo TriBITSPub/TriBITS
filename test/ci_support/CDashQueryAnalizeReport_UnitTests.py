@@ -122,6 +122,64 @@ class test_validateYYYYMMDD(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalizeReport.getFilteredList()
+#
+#############################################################################
+
+def isGreaterThan5(val): return val > 5
+
+class test_getFilteredList(unittest.TestCase):
+
+  def test_filter_list(self):
+    origList = [ 4, 3, 6, 8, 10, 2, 12 ];
+    self.assertEqual(getFilteredList(origList, isGreaterThan5), [6, 8, 10, 12])
+
+  def test_filtered_list_empty(self):
+    origList = [ 4, 3, 2 ];
+    self.assertEqual(getFilteredList(origList, isGreaterThan5), [])
+
+  def test_empty_list(self):
+    origList = [];
+    self.assertEqual(getFilteredList(origList, isGreaterThan5), [])
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.splitListOnMatch()
+#
+#############################################################################
+
+def isLessThan5(val): return val < 5
+
+class test_splitListOnMatch(unittest.TestCase):
+
+  def test_split_list(self):
+    origList = [ 4, 3, 6, 8, 10, 2, 12 ];
+    (lessThan5List, notLessThan5List) = splitListOnMatch(origList, isLessThan5) 
+    self.assertEqual(lessThan5List, [ 4, 3, 2 ])
+    self.assertEqual(notLessThan5List, [6, 8, 10, 12])
+
+  def test_match_empty(self):
+    origList = [ 6, 8, 10, 12 ];
+    (lessThan5List, notLessThan5List) = splitListOnMatch(origList, isLessThan5) 
+    self.assertEqual(lessThan5List, [])
+    self.assertEqual(notLessThan5List, [6, 8, 10, 12])
+
+  def test_nomatch_empty(self):
+    origList = [ 4, 3, 2 ];
+    (lessThan5List, notLessThan5List) = splitListOnMatch(origList, isLessThan5) 
+    self.assertEqual(lessThan5List, [ 4, 3, 2 ])
+    self.assertEqual(notLessThan5List, [])
+
+  def test_empty(self):
+    origList = [];
+    (lessThan5List, notLessThan5List) = splitListOnMatch(origList, isLessThan5) 
+    self.assertEqual(lessThan5List, [])
+    self.assertEqual(notLessThan5List, [])
+
+
+#############################################################################
+#
 # Test CDashQueryAnalizeReport.readCsvFileIntoListOfDicts()
 #
 #############################################################################
