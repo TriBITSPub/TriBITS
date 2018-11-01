@@ -307,17 +307,16 @@ if __name__ == '__main__':
 
     print("\nCDash builds browser URL:\n\n  "+cdashIndexBuildsBrowserUrl+"\n")
    
-    buildsListOfDicts = \
-      CDQAR.downloadBuildsOffCDashAndFlatten(
-       # CDash URL Args
-       inOptions.cdashSiteUrl,
-       inOptions.cdashProjectName,
-       inOptions.date,
-       inOptions.cdashBuildsFilters,
-       # Other args
-       useCachedCDashData=inOptions.useCachedCDashData,
-       cdashQueriesCacheDir=inOptions.cdashQueriesCacheDir,
-       )
+    cdashIndexBuildsQueryUrl = CDQAR.getCDashIndexQueryUrl(
+      inOptions.cdashSiteUrl,
+      inOptions.cdashProjectName,
+      inOptions.date,
+      inOptions.cdashBuildsFilters )
+
+    buildsListOfDicts = CDQAR.downloadBuildsOffCDashAndFlatten(
+      cdashIndexBuildsQueryUrl,
+      inOptions.cdashQueriesCacheDir+"/fullCDashIndexBuilds.json",
+      inOptions.useCachedCDashData )
 
     # Beginning of top full bulid and tests CDash links paragraph 
     htmlEmailBodyTop += "<p>\n"

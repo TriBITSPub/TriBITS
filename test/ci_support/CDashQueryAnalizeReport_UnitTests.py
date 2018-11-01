@@ -654,15 +654,17 @@ class test_downloadBuildsOffCDashAndFlatten(unittest.TestCase):
     projectName = "projectName"
     date = "YYYY-MM-DD"
     buildFilters = "build&filters"
+    cdashIndexBuildsQueryUrl = \
+      getCDashIndexQueryUrl(cdashUrl,  projectName, date, buildFilters)
     # Define mock object to return the data
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
-       getCDashIndexQueryUrl(cdashUrl,  projectName, date, buildFilters),
-       g_fullCDashIndexBuildsJson )
+       cdashIndexBuildsQueryUrl, g_fullCDashIndexBuildsJson )
     # Get the mock data off of CDash
     summaryCDashIndexBuilds = downloadBuildsOffCDashAndFlatten(
-      cdashUrl,  projectName, date, buildFilters,
-      verbose=False, cdashQueriesCacheDir=None,
+      cdashIndexBuildsQueryUrl,
+      cdashQueryCacheFile=None,
       useCachedCDashData=False,
+      verbose=False,
       extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFunctor )
     # Assert the data returned is correct
     #g_pp.pprint(summaryCDashIndexBuilds)

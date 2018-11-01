@@ -162,6 +162,7 @@ def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
 #
 # ToDo: Reimplement this to create a better looking set of indented that that
 # involves less right-drift and the expense of more vertical space.
+#
 def pprintPythonData(pythonData, filePath):
   pp = pprint.PrettyPrinter(stream=open(filePath,'w'), indent=2)
   pp.pprint(pythonData)
@@ -576,55 +577,34 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
 
 # Download set of builds from CDash builds and return flattened list of dicts
 #
-# The cdash/api/v1/index.php query URL is built using the arguments:
+# The cdash/api/v1/index.php query selecting the set of builds is provided by
+# cdashIndexBuildsQueryUrl.
 #
-#   cdashUrl,  projectName, date, buildFilterFields
-#
-# If printCDashUrl==True, the the CDash query URL will be printed to STDOUT.
-# Otherwise, this function is silent and will not return any output to STDOUT.
-#
-# If cdashQueriesCacheDir != None, then the raw JSON data-structure will be
-# written to the file cdashQueriesCacheDir/fullCDashIndexBuilds.json.
-#
-# ToDo: Pass in the full path to the JSON cache file and don't assume the
-# total file.
-#
-# If useCachedCDashData==True, then data will not be pulled off of CDash and
-# instead the list of builds will be read from the file
-# cdashQueriesCacheDir/fullCDashIndexBuilds.json must already exist from a
-# prior call to this function (mostly for debugging and unit testing
-# purposes).
+# If cdashQueryCacheFile != None, then the raw JSON data-structure downloaded
+# from CDash will be written to the file cdashQueryCacheFile or read from that
+# file if useCachedCDashData==True.
 # 
-# The list of builds pulled off of CDash flattended and summmerized form
-# extracted by the funtion flattenCDashIndexBuildsToListOfDicts() (with
-# 'group', 'site', 'buildname' and update, configure, build, test and other
-# results for the build).
+# The list of builds pulled off of CDash is flattended and extracted using the
+# function flattenCDashIndexBuildsToListOfDicts().
 #
 # NOTE: The optional argument extractCDashApiQueryData_in is used in unit
 # testing to avoid calling CDash.
 #
-# ToDo: Pass in the full cdashQueryUrl.
-#
 def downloadBuildsOffCDashAndFlatten(
-  cdashUrl,  projectName, date, buildFilters,
-  verbose=True,
-  cdashQueriesCacheDir=None,
+  cdashIndexBuildsQueryUrl,
+  cdashQueryCacheFile=None,
   useCachedCDashData=False,
+  verbose=True,
   extractCDashApiQueryData_in=extractCDashApiQueryData,
   ):
   # Get the query data
-  cdashQueryUrl = getCDashIndexQueryUrl(cdashUrl, projectName, date, buildFilters)
-  if cdashQueriesCacheDir:
-    fullCDashIndexBuildsJsonCacheFile=cdashQueriesCacheDir+"/fullCDashIndexBuilds.json"
-  else:
-    fullCDashIndexBuildsJsonCacheFile = None
   fullCDashIndexBuildsJson = getAndCacheCDashQueryDataOrReadFromCache(
-    cdashQueryUrl, fullCDashIndexBuildsJsonCacheFile, useCachedCDashData,
+    cdashIndexBuildsQueryUrl, cdashQueryCacheFile, useCachedCDashData,
     verbose, extractCDashApiQueryData_in )
   # Get trimmed down set of builds
-  summaryCDashIndexBuilds = \
+  buildsListOfDicts = \
     flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson)
-  return summaryCDashIndexBuilds
+  return buildsListOfDicts
 
 
 # Download set of tests from cdash/api/v1/ctest/queryTests.php and return
@@ -917,8 +897,6 @@ def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems,
 #   picked by createHtmlTableStr(().
 #
 # NOTE: If len(rowDataList) == 0, then the empty string "" is returned.
-# 
-# ToDo: Add an argument to sort the data based on some given ordering of keys.
 #
 def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
   colDataList, rowDataList, sortKeyList = None, limitRowsToDisplay = None,
