@@ -382,6 +382,7 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys):
   #print("\nlistOfDicts = "+str(listOfDicts))
   #print("\nlistOfKeys = "+str(listOfKeys))
   lookupDict = {}
+  i = 0
   for dictEle in listOfDicts:
     #print("\ndictEle = "+str(dictEle))
     currentLookupDictRef = lookupDict 
@@ -394,7 +395,13 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys):
       #print("nextLookupDictRef = "+str(nextLookupDictRef))
       currentLookupDictRef = nextLookupDictRef
       #print("lookupDict = "+str(lookupDict))
+    if currentLookupDictRef:
+      raise Exception(
+        "Error, listOfDicts["+str(i)+"]="+str(dictEle)+" has duplicate"+\
+        " values for the list of keys ["+str(listOfKeys)+"] with the element"+\
+        " already added "+str(currentLookupDictRef)+"!")
     currentLookupDictRef.update(dictEle)
+    i += 1
   return  lookupDict
 
 

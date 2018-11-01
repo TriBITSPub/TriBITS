@@ -488,9 +488,10 @@ g_buildLookupDictForExpectedBuilds = {
     },
   }
 
+
 class test_createLookupDictForListOfDicts(unittest.TestCase):
 
-  def test_1(self):
+  def test_unique_dicts(self):
     buildLookupDict = createLookupDictForListOfDicts(
       g_buildsListForExpectedBuilds,
       ['group', 'site', 'buildname'] )
@@ -499,6 +500,24 @@ class test_createLookupDictForListOfDicts(unittest.TestCase):
     #print("\ng_buildLookupDictForExpectedBuilds:")
     #g_pp.pprint(g_buildLookupDictForExpectedBuilds)
     self.assertEqual(buildLookupDict, g_buildLookupDictForExpectedBuilds)
+
+  def test_duplicate_dicts(self):
+    listOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
+    newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[0])
+    newDictEle['data'] = 'new_data_val1'
+    listOfDicts.append(newDictEle)
+    try:
+      buildLookupDict = createLookupDictForListOfDicts(
+        listOfDicts,
+        ['group', 'site', 'buildname'] )
+      self.assertEqual("Did not throw exception!", "no it did not!")
+    except Exception, errMsg:
+      self.assertEqual(str(errMsg),
+        "Error, listOfDicts[5]="+\
+        "{'buildname': 'build1', 'group': 'group1', 'data': 'new_data_val1', 'site': 'site1'}"+\
+        " has duplicate values for the list of keys [['group', 'site', 'buildname']]"+\
+        " with the element already added"+\
+        " {'buildname': 'build1', 'data': 'val1', 'group': 'group1', 'site': 'site1'}!" )
 
 
 #############################################################################
