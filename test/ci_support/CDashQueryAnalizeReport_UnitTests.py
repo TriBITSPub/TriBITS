@@ -816,64 +816,6 @@ class test_buildHasBuildFailures(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.getBuildsWtihConfigureFailures()
-#
-#############################################################################
-
-def dummyBuildWithConfigureFailures(numConfigureFailures):
-    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
-    buildDict['configure']['error'] = numConfigureFailures
-    return buildDict
-
-class test_getBuildsWtihConfigureFailures(unittest.TestCase):
-
-  def test_1(self):
-    bwcf = dummyBuildWithConfigureFailures
-    buildDictList = [
-      bwcf(1),
-      bwcf(0),
-      bwcf(2)
-      ]
-    buildWithConfigureFailuresList = getBuildsWtihConfigureFailures(buildDictList)
-    buildWithConfigureFailuresList_expected = [
-      bwcf(1),
-      bwcf(2)
-      ]
-    self.assertEqual(buildWithConfigureFailuresList,
-      buildWithConfigureFailuresList_expected)
-
-
-#############################################################################
-#
-# Test CDashQueryAnalizeReport.getBuildsWtihConfigureFailures()
-#
-#############################################################################
-
-def dummyBuildWithBuildFailures(numBuildFailures):
-    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
-    buildDict['compilation']['error'] = numBuildFailures
-    return buildDict
-
-class test_getBuildsWtihBuildFailures(unittest.TestCase):
-
-  def test_1(self):
-    bwbf = dummyBuildWithBuildFailures
-    buildDictList = [
-      bwbf(1),
-      bwbf(0),
-      bwbf(2)
-      ]
-    buildWithBuildFailuresList = getBuildsWtihBuildFailures(buildDictList)
-    buildWithBuildFailuresList_expected = [
-      bwbf(1),
-      bwbf(2)
-      ]
-    self.assertEqual(buildWithBuildFailuresList,
-      buildWithBuildFailuresList_expected)
-
-
-#############################################################################
-#
 # Test CDashQueryAnalizeReport.sortAndLimitListOfDicts()
 #
 #############################################################################

@@ -441,7 +441,8 @@ if __name__ == '__main__':
     print("\nSearch for any builds with configure failures ...\n")
     #
 
-    buildsWithConfigureFailuresList = CDQAR.getBuildsWtihConfigureFailures(buildsSLOD)
+    buildsWithConfigureFailuresList = \
+      CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasConfigureFailures)
 
     cDescr = "Builds with configure failures"
     cAcro = "c"
@@ -478,7 +479,8 @@ if __name__ == '__main__':
     print("\nSearch for any builds with compilation (build) failures ...\n")
     #
 
-    buildsWithBuildFailuresList = CDQAR.getBuildsWtihBuildFailures(buildsSLOD)
+    buildsWithBuildFailuresList = \
+      CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasBuildFailures)
 
     bDescr = "Builds with build failures"
     bAcro = "b"
