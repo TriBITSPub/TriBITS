@@ -52,7 +52,9 @@ import pprint
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
 
-# Validate a date format
+
+# Validate a date YYYY-MM-DD string and return a standarized form the
+# valudated string.
 def validateYYYYMMDD(dateText):
   try:
     return datetime.datetime.strptime(dateText, '%Y-%m-%d')
@@ -60,7 +62,12 @@ def validateYYYYMMDD(dateText):
     raise ValueError("Incorrect data format for '"+dateText+"', should be YYYY-MM-DD")
 
 
-# Given a CDash query URL, return the full Python CDash data-structure
+# Given a CDash query URL PHP page that returns JSON data, return the JSON
+# data converged to a Python data-structure.
+#
+# The returned Python object will be a simple nested set of Python dicts and
+# lists.
+#
 def extractCDashApiQueryData(cdashApiQueryUrl):
   #print sys.version_info
   if sys.version_info < (2,7,9):
@@ -166,6 +173,7 @@ def pprintPythonData(pythonData, filePath):
 # including cdash/api/v1/index.php, cdash/api/v1/queryTests.php and anything
 # other PHP page that returns a JSON data structure (which is all of the
 # cdash/api/v1/XXX.php pages).
+#
 def getAndCacheCDashQueryDataOrReadFromCache(
   cdashQueryUrl,
   cdashQueryDataCacheFile,  # File name
@@ -221,6 +229,7 @@ def copyKeyDictIfExists(sourceDict_in, keyName_in, dict_inout):
 # Collect CDash index.php build summary fields
 #
 # Change this to get all of the fields and add the 'group' field as well.
+#
 def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
   summaryBuild = { u'group' : groupName }
   copyKeyDictIfExists(fullCDashIndexBuild, u'site', summaryBuild)
@@ -232,9 +241,9 @@ def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
   return summaryBuild
 
 
-# Given the full JSON data-structure returned from the page
-# cdash/api/v1/index.php query, return an flattened-out data-structure that is
-# easier to manipulate.
+# Given the full Python JSON data-structure returned from the page
+# cdash/api/v1/index.php query from extractCDashApiQueryData(), return a
+# flattened-out data-structure that is easier to manipulate.
 #
 # This function takes in the JSON data-structure (as a nested set of Python
 # dicts and listed) directly returned from a query gotten from the page
@@ -301,9 +310,10 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
       summaryCDashIndexBuilds.append(summaryBuild)
   return summaryCDashIndexBuilds
 
+
 # Given the full JSON data-structure returned from the page
-# cdash/api/v1/queryTests.php query, return an flattened-out data-structure
-# that is easier to manipulate.
+# cdash/api/v1/queryTests.php query from extractCDashApiQueryData(), return a
+# flattened-out data-structure that is easier to manipulate.
 #
 # This function takes in the JSON data-structure (as a nested set of Python
 # dicts and listed) directly returned from a query gotten from the page
@@ -377,7 +387,20 @@ def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
   return testsListOfDicts
 
 
-# Create a lookup dict for a list of dicts.
+# Create a lookup dict for a list of dicts
+#
+# listOfDicts [in] List of dict objects that have keys that one will want to
+# lookup the dict based on their values.
+#
+# listOfKeys [in] List of the names of keys in these dicts that are used to
+# build a search dict data-structure which is returned from this function.
+#
+# WARNING: The values of the dict key/value pairs listed in listOfKeys must be
+# unique.  If not, then an excpetion is thrown.
+#
+# NOTE: This is an implementation function that is used in the class
+# SearchableListOfDicts.  Please use that class instead of this raw function.
+#
 def createLookupDictForListOfDicts(listOfDicts, listOfKeys):
   #print("\nlistOfDicts = "+str(listOfDicts))
   #print("\nlistOfKeys = "+str(listOfKeys))
@@ -416,6 +439,9 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys):
 # dictToFind [in]: A dict with the key value pairs one is trying to find.  In
 # this case dictToFind must contain the keys listed in listOfKeys.
 #
+# NOTE: This is an implementation function that is used in the class
+# SearchableListOfDicts.  Please use that class instead of this raw function.
+#
 def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind):
   #print("\nlookupDict = "+str(lookupDict))
   #print("\nlistOfKeys = "+str(listOfKeys))
@@ -436,7 +462,15 @@ def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind):
 
 
 # Class that encapsulates a list of dicts and an efficient lookup of a dict
-# given a set key/value pairs to match.
+# given a list key/value pairs to match.
+#
+# Once created, this object acts like a list of dicts in most cases but also
+# contains functions to search for speicfic dicts given a set of key/value
+# pairs.
+#
+# NOTE: The key values for the list of keys given in listOfKeys must be
+# unique!  If it is not, then an excpetion will be thrown.
+#
 class SearchableListOfDicts(object):
   # Constructor
   def __init__(self, listOfDicts, listOfKeys):
@@ -464,6 +498,7 @@ class SearchableListOfDicts(object):
       keyValueDictToFind[key] = keyValuesListToFind[i]
       i += 1
     return self.lookupDictGivenKeyValueDict(keyValueDictToFind)
+  # Return 
   def __len__(self):
     return len(self.__listOfDicts)
   def __getitem__(self, index_in):
@@ -477,16 +512,10 @@ def createBuildLookupDict(summaryBuildsList):
     ['group', 'site', 'buildname'] )
   
 
-# Create a lookup dict for builds "group" => "site" => "build" given summary
-# list of builds.
+# Create a SearchableListOfDicts object for a list of builds dicts that allows
+# lookups of builds given the keys "group" => "site" => "build" : build_dict.
 def createSearchableListOfBuilds(buildsListOfDicts):
   return SearchableListOfDicts(buildsListOfDicts, ['group', 'site', 'buildname'])
-
-
-# Lookup a build dict given a lookup dict from createBuildLookupDict()
-def lookupBuildSummaryGivenLookupDict(buildLookupDict, groupSiteBuildDict):
-  return lookupDictGivenLookupDict( buildLookupDict,
-   ['group', 'site', 'buildname'], groupSiteBuildDict )
 
 
 # Gather up a list of the missing builds.
@@ -638,7 +667,7 @@ def downloadTestsOffCDashQueryTestsAndFlatten(
   return testsListOfDicts
 
 
-# Return if a build has configure failures
+# Functor to return if a build has configure failures
 def buildHasConfigureFailures(buildDict):
   configureDict = buildDict.get('configure', None)
   if configureDict and configureDict['error'] > 0:
@@ -646,7 +675,7 @@ def buildHasConfigureFailures(buildDict):
   return False
 
 
-# Return if a build has compilation failures
+# Functor that return if a build has compilation failures
 def buildHasBuildFailures(buildDict):
   compilationDict = buildDict.get('compilation', None)
   if compilationDict and compilationDict['error'] > 0:
@@ -908,11 +937,6 @@ def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
   # Create and return the table
   return createHtmlTableStr( tableTitle,
     colDataList, rowDataListDisplayed, htmlStyle, htmlTableStyle )
-
-
-#
-
-
 
 
 ########################################################################

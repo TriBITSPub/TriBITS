@@ -610,40 +610,7 @@ class test_createBuildLookupDict(unittest.TestCase):
 
   def test_1(self):
     buildLookupDict = createBuildLookupDict(g_buildsListForExpectedBuilds)
-    #print("\nbuildLookupDict:")
-    #g_pp.pprint(buildLookupDict)
-    #print("\ng_buildLookupDictForExpectedBuilds:")
-    #g_pp.pprint(g_buildLookupDictForExpectedBuilds)
     self.assertEqual(buildLookupDict, g_buildLookupDictForExpectedBuilds)
-
-
-#############################################################################
-#
-# Test CDashQueryAnalizeReport.lookupBuildSummaryGivenLookupDict()
-#
-#############################################################################
-
-def gsb(groupName, siteName, buildName):
-  return {'group':groupName, 'site':siteName, 'buildname':buildName}
-
-def lookupData(groupName, siteName, buildName, buildLookupDict):
-  buildDict = lookupBuildSummaryGivenLookupDict(buildLookupDict,
-    gsb(groupName, siteName, buildName) )
-  if not buildDict : return None
-  return buildDict.get('data')
-     
-class test_lookupBuildSummaryGivenLookupDict(unittest.TestCase):
-
-  def test_1(self):
-    blud = createBuildLookupDict(g_buildsListForExpectedBuilds)
-    self.assertEqual(lookupData('group1','site1','build1', blud), 'val1')
-    self.assertEqual(lookupData('group1','site1','build2', blud), 'val2')
-    self.assertEqual(lookupData('group1','site2','build3', blud), 'val3')
-    self.assertEqual(lookupData('group2','site1','build1', blud), 'val4')
-    self.assertEqual(lookupData('group2','site3','build4', blud), 'val5')
-    self.assertEqual(lookupData('group2','site3','build1', blud), None)
-    self.assertEqual(lookupData('group2','site4','build1', blud), None)
-    self.assertEqual(lookupData('group3','site1','build1', blud), None)
 
 
 #############################################################################
