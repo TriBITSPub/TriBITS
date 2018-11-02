@@ -98,6 +98,26 @@ def splitListOnMatch(inputList, matchFunctor):
   return (matchList, nomatchList)
 
 
+# Apply a functor to transform every element in a list
+#
+# The object transformFunctor is applied as:
+#
+#   list_inout[i] = transformFunctor(list_inout[i])
+#
+# If the elements are small value-type objects, then the assignment is needed.
+# However, if the list elements are handled with reference semantics like a
+# list [] or a dict {} then really the object is being modified in place and
+# the assignment is not needed but it cheap and harmess in that case.
+#
+# This returns the input list transformed but the return object can be ignored
+# because it modifies the input list object's elements in place.
+#
+def foreachTransform(list_inout, transformFunctor):
+  for i in xrange(len(list_inout)):
+    list_inout[i] = transformFunctor(list_inout[i])
+  return list_inout
+
+
 # Given a CDash query URL PHP page that returns JSON data, return the JSON
 # data converged to a Python data-structure.
 #

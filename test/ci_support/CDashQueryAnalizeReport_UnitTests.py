@@ -198,6 +198,39 @@ class test_splitListOnMatch(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalizeReport.foreachTransform()
+#
+#############################################################################
+
+def sqrnum(num): return num*num
+
+def dictnum(num): return { 'num':num }
+
+def sqrdictnum(dict_inout):
+  num = dict_inout['num']
+  dict_inout['num'] = num*num
+  return dict_inout
+
+class test_foreachTransform(unittest.TestCase):
+
+  def test_many_int(self):
+    self.assertEqual(foreachTransform([1,2,3,4,5],sqrnum), [1,4,9,16,25])
+
+  def test_1_int(self):
+    self.assertEqual(foreachTransform([3],sqrnum), [9])
+
+  def test_0_int(self):
+    self.assertEqual(foreachTransform([],sqrnum), [])
+
+  def test_many_dict(self):
+    dm = dictnum
+    self.assertEqual(
+      foreachTransform([dm(1),dm(2),dm(3),dm(4)],sqrdictnum),
+      [dm(1),dm(4),dm(9),dm(16)])
+
+
+#############################################################################
+#
 # Test CDashQueryAnalizeReport.readCsvFileIntoListOfDicts()
 #
 #############################################################################
