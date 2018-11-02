@@ -309,6 +309,11 @@ if __name__ == '__main__':
 
     testsWithIssueTrackersListOfDicts = \
       CDQAR.getTestsWtihIssueTrackersListFromCsvFile(inOptions.testsWithIssueTrackersFile)
+    testsWithIssueTrackerSLOD = \
+      CDQAR.createSearchableListOfLists(testsWithIssueTrackersListOfDicts)
+    testsWithIssueTrackerMatchFunctor = \
+      CDQAR.MatchDictKeysValuesFunctor(testsWithIssueTrackerSLOD)
+
 
     #
     # D.2) Get lists of build and test data off CDash
@@ -376,6 +381,16 @@ if __name__ == '__main__':
     nonpassingTestsListOfDicts = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
+
+    (nonpassingTestsWithIssueTrackersLOD,nonpassingTestsWithoutIssueTrackersLOD)=\
+      CDQAR.splitListOnMatch(
+        nonpassingTestsListOfDicts,
+        testsWithIssueTrackerMatchFunctor
+        )
+    print("\nlen(nonpassingTestsWithoutIssueTrackersLOD) = "+
+      str(len(nonpassingTestsWithoutIssueTrackersLOD)))
+    print("\nlen(nonpassingTestsWithIssueTrackersLOD) = "+
+      str(len(nonpassingTestsWithIssueTrackersLOD)))
 
     # Get data from cdash and return in a simpler form
     all_failing_tests=CDQAR.getTestsJsonFromCdash(
