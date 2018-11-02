@@ -839,6 +839,41 @@ class test_MatchDictKeysValuesFunctor(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalizeReport.AddIssueTrackerInfoToTestDictFunctor
+#
+#############################################################################
+
+def aitf_itf(aitf, site, buildName, testname):
+  testDictTransformed = aitf(sbt(site, buildName, testname))
+  return [
+    testDictTransformed['issue_tracker_url'],
+    testDictTransformed['issue_tracker'] 
+    ]
+
+
+class test_AddIssueTrackerInfoToTestDictFunctor(unittest.TestCase):
+
+  def test_pass(self):
+    testsWithIssueTrackerSLOD = createSearchableListOfTests(g_testsWtihIssueTrackersList)
+    aitf = AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackerSLOD)
+    self.assertEqual(aitf_itf(aitf, 'site1','build1','test1'), ['url1','#1111'])
+    self.assertEqual(aitf_itf(aitf, 'site2','build2','test1'), ['url3','#1113'])
+
+  def test_error(self):
+    testsWithIssueTrackerSLOD = createSearchableListOfTests(g_testsWtihIssueTrackersList)
+    aitf = AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackerSLOD)
+    dict_inout=sbt('site2','build2','test9')
+    try:
+      aitf(dict_inout)
+      self.assertEqual("Error, did not thorw exception", "No it did not!")
+    except Exception, errMsg:
+      self.assertEqual(str(errMsg),
+        "Error, dict_inout="+str(dict_inout)+\
+        " does not have an assigned issue tracker!" )
+
+
+#############################################################################
+#
 # Test CDashQueryAnalizeReport.buildHasConfigureFailures()
 #
 #############################################################################

@@ -460,8 +460,8 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
 def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
   testsListOfDicts = []
   for testDict in fullCDashQueryTestsJson['builds']:
-    testDict.setdefault('issue_tracker', "")
-    testDict.setdefault('issue_tracker_url', "")
+    testDict.setdefault(u'issue_tracker', "")
+    testDict.setdefault(u'issue_tracker_url', "")
     testsListOfDicts.append(testDict)
   return testsListOfDicts
 
@@ -598,8 +598,8 @@ def createSearchableListOfTests(testsListOfDicts):
   return SearchableListOfDicts(testsListOfDicts, ['site', 'buildName', 'testname'])
 
 
-# Functor that returns true if the the input dict has key/values that matches
-# one dicts in the input SearchableListOfDits.
+# Match functor that returns true if the the input dict has key/values that
+# matches one dicts in the input SearchableListOfDits.
 class MatchDictKeysValuesFunctor(object):
   def __init__(self, searchableListOfDict):
     self.__searchableListOfDict = searchableListOfDict
@@ -608,6 +608,20 @@ class MatchDictKeysValuesFunctor(object):
     if matchingDict:
       return True
     return False
+
+
+# Transform functor that adds issue tracker info and URL to an existing test
+# dict.
+class AddIssueTrackerInfoToTestDictFunctor(object):
+  def __init__(self, searchableListOfDict):
+    self.__searchableListOfDict = searchableListOfDict
+  def __call__(self, dict_inout):
+    matchingDict = self.__searchableListOfDict.lookupDictGivenKeyValueDict(dict_inout)
+    assert (matchingDict != None), \
+      "Error, dict_inout="+str(dict_inout)+" does not have an assigned issue tracker!"
+    dict_inout[u'issue_tracker'] = matchingDict['issue_tracker']
+    dict_inout[u'issue_tracker_url'] = matchingDict['issue_tracker_url']
+    return dict_inout
 
 
 # Gather up a list of the missing builds.
