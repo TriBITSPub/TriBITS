@@ -795,7 +795,7 @@ def sbt(site, buildName, testname):
 class test_MatchDictKeysValuesFunctor(unittest.TestCase):
 
   def test_1(self):
-    testsWithIssueTrackerSLOD = createSearchableListOfLists(g_testsWtihIssueTrackersList)
+    testsWithIssueTrackerSLOD = createSearchableListOfTests(g_testsWtihIssueTrackersList)
     matchFunctor = MatchDictKeysValuesFunctor(testsWithIssueTrackerSLOD)
     self.assertEqual(matchFunctor(sbt('site1','build1','test1')), True)
     self.assertEqual(matchFunctor(sbt('site2','build2','test1')), True)

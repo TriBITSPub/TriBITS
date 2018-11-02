@@ -574,7 +574,7 @@ def createSearchableListOfBuilds(buildsListOfDicts):
 # Create a SearchableListOfDicts object for a list of tests with issue
 # trackers that allows lookups of tests given the keys "site" => "buildName"
 # => "testname" : test_dict.
-def createSearchableListOfLists(testsListOfDicts):
+def createSearchableListOfTests(testsListOfDicts):
   return SearchableListOfDicts(testsListOfDicts, ['site', 'buildName', 'testname'])
 
 

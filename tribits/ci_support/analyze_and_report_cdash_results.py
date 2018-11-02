@@ -300,17 +300,17 @@ if __name__ == '__main__':
 
     # Get list of expected builds from input CSV file
     if inOptions.expectedBuildsFile:
-      expectedBuildsList = \
+      expectedBuildsLOD = \
         CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
     else:
-      expectedBuildsList = []
+      expectedBuildsLOD = []
 
     # Get list of tests with issue tracker from input CSV file
 
-    testsWithIssueTrackersListOfDicts = \
+    testsWithIssueTrackersLOD = \
       CDQAR.getTestsWtihIssueTrackersListFromCsvFile(inOptions.testsWithIssueTrackersFile)
     testsWithIssueTrackerSLOD = \
-      CDQAR.createSearchableListOfLists(testsWithIssueTrackersListOfDicts)
+      CDQAR.createSearchableListOfTests(testsWithIssueTrackersLOD)
     testsWithIssueTrackerMatchFunctor = \
       CDQAR.MatchDictKeysValuesFunctor(testsWithIssueTrackerSLOD)
 
@@ -378,13 +378,13 @@ if __name__ == '__main__':
     cdashNonpassingTestsQueryJsonCacheFile = \
       cacheDirAndBaseFilePrefix+"fullCDashNonpassingTests.json"
 
-    nonpassingTestsListOfDicts = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
+    nonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
 
     (nonpassingTestsWithIssueTrackersLOD,nonpassingTestsWithoutIssueTrackersLOD)=\
       CDQAR.splitListOnMatch(
-        nonpassingTestsListOfDicts,
+        nonpassingTestsLOD,
         testsWithIssueTrackerMatchFunctor
         )
     print("\nlen(nonpassingTestsWithoutIssueTrackersLOD) = "+
@@ -437,13 +437,13 @@ if __name__ == '__main__':
     print("\nSearch for any missing expected builds ...\n")
     #
 
-    missingExpectedBuildsList = CDQAR.getMissingExpectedBuildsList(
-      buildsSLOD, expectedBuildsList)
-    #pp.pprint(missingExpectedBuildsList)
+    missingExpectedBuildsLOD = CDQAR.getMissingExpectedBuildsList(
+      buildsSLOD, expectedBuildsLOD)
+    #pp.pprint(missingExpectedBuildsLOD)
 
     bmeDescr = "Missing expected builds"
     bmeAcro = "bme"
-    bmeNum = len(missingExpectedBuildsList)
+    bmeNum = len(missingExpectedBuildsLOD)
 
     bmeSummaryStr = \
       CDQAR.getCDashDataSummaryHtmlTableTitleStr(bmeDescr,  bmeAcro, bmeNum)
@@ -466,7 +466,7 @@ if __name__ == '__main__':
         ]
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        bmeDescr,  bmeAcro, bmeColDataList, missingExpectedBuildsList,
+        bmeDescr,  bmeAcro, bmeColDataList, missingExpectedBuildsLOD,
         groupSiteBuildNameSortOrder, None )
       # NOTE: Above we don't want to limit any missing builds in this table
       # because that data is not shown on CDash and that list will never be
@@ -476,12 +476,12 @@ if __name__ == '__main__':
     print("\nSearch for any builds with configure failures ...\n")
     #
 
-    buildsWithConfigureFailuresList = \
+    buildsWithConfigureFailuresLOD = \
       CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasConfigureFailures)
 
     cDescr = "Builds with configure failures"
     cAcro = "c"
-    cNum = len(buildsWithConfigureFailuresList)
+    cNum = len(buildsWithConfigureFailuresLOD)
 
     cSummaryStr = \
       CDQAR.getCDashDataSummaryHtmlTableTitleStr(cDescr,  cAcro, cNum)
@@ -503,7 +503,7 @@ if __name__ == '__main__':
         ]
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        cDescr,  cAcro, cColDataList, buildsWithConfigureFailuresList,
+        cDescr,  cAcro, cColDataList, buildsWithConfigureFailuresLOD,
         groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
       # ToDo: Update to show number of configure failures and the history info
@@ -514,12 +514,12 @@ if __name__ == '__main__':
     print("\nSearch for any builds with compilation (build) failures ...\n")
     #
 
-    buildsWithBuildFailuresList = \
+    buildsWithBuildFailuresLOD = \
       CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasBuildFailures)
 
     bDescr = "Builds with build failures"
     bAcro = "b"
-    bNum = len(buildsWithBuildFailuresList)
+    bNum = len(buildsWithBuildFailuresLOD)
 
     bSummaryStr = \
       CDQAR.getCDashDataSummaryHtmlTableTitleStr(bDescr,  bAcro, bNum)
@@ -541,7 +541,7 @@ if __name__ == '__main__':
         ]
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        bDescr,  bAcro, cColDataList, buildsWithBuildFailuresList,
+        bDescr,  bAcro, cColDataList, buildsWithBuildFailuresLOD,
         groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
       # ToDo: Update to show number of builds failures and the history info
@@ -573,9 +573,9 @@ if __name__ == '__main__':
     print("\nSearch failing tests without issue trackers ...\n")
     #
 
-    testsWithoutIssueTrackerList = getFlatListOfTestsFromTestDict(
+    testsWithoutIssueTrackerLOD = getFlatListOfTestsFromTestDict(
       tests_without_issue_tracking)
-    #pp.pprint(testsWithoutIssueTrackerList)
+    #pp.pprint(testsWithoutIssueTrackerLOD)
 
     # Sort and get detailed history of CDash for the top <N> 'twoif' tests
     # *without* issue trackers that are failing (and not-run for now)
@@ -584,7 +584,7 @@ if __name__ == '__main__':
 
     twoifDescr = "Failing tests without issue trackers"
     twoifAcro = "twoif"
-    twoifNum = len(testsWithoutIssueTrackerList)
+    twoifNum = len(testsWithoutIssueTrackerLOD)
 
     twoifSummaryStr = \
       CDQAR.getCDashDataSummaryHtmlTableTitleStr(twoifDescr,  twoifAcro, twoifNum)
@@ -600,16 +600,16 @@ if __name__ == '__main__':
       htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoifSummaryStr)+"<br>\n"
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        twoifDescr,  twoifAcro, testsColDataList, testsWithoutIssueTrackerList,
+        twoifDescr,  twoifAcro, testsColDataList, testsWithoutIssueTrackerLOD,
         testnameBuildnameSiteSortOrder, inOptions.limitTableRows )
 
     #
     print("\nSearch failing tests with issue trackers ...\n")
     #
 
-    testsWithIssueTrackerList = getFlatListOfTestsFromTestDict(
+    testsWithIssueTrackerLOD = getFlatListOfTestsFromTestDict(
       tests_with_issue_tracking)
-    #pp.pprint(testsWithIssueTrackerList)
+    #pp.pprint(testsWithIssueTrackerLOD)
 
     # Sort and get detailed test history for all 'twif' failing tests with
     # issue trackers.
@@ -618,7 +618,7 @@ if __name__ == '__main__':
 
     twifDescr = "Failing tests with issue trackers"
     twifAcro = "twif"
-    twifNum = len(testsWithIssueTrackerList)
+    twifNum = len(testsWithIssueTrackerLOD)
 
     twifSummaryStr = \
       CDQAR.getCDashDataSummaryHtmlTableTitleStr(twifDescr,  twifAcro, twifNum)
@@ -634,7 +634,7 @@ if __name__ == '__main__':
       htmlEmailBodyTop += twifSummaryStr+"<br>\n"
 
       htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        twifDescr,  twifAcro, testsColDataList, testsWithIssueTrackerList,
+        twifDescr,  twifAcro, testsColDataList, testsWithIssueTrackerLOD,
         testnameBuildnameSiteSortOrder)
       # NOTE: We don't limit the number of tests tracked tests listed because
       # we will never have a huge number of failing tests with issue trackers.
