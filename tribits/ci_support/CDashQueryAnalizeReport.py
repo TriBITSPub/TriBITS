@@ -565,9 +565,29 @@ class SearchableListOfDicts(object):
 
 
 # Create a SearchableListOfDicts object for a list of builds dicts that allows
-# lookups of builds given the keys "group" => "site" => "build" : build_dict.
+# lookups of builds given the keys "group" => "site" => "buildname" :
+# build_dict.
 def createSearchableListOfBuilds(buildsListOfDicts):
   return SearchableListOfDicts(buildsListOfDicts, ['group', 'site', 'buildname'])
+
+
+# Create a SearchableListOfDicts object for a list of tests with issue
+# trackers that allows lookups of tests given the keys "site" => "buildName"
+# => "testname" : test_dict.
+def createSearchableListOfLists(testsListOfDicts):
+  return SearchableListOfDicts(testsListOfDicts, ['site', 'buildName', 'testname'])
+
+
+# Functor that returns true if the the input dict has key/values that matches
+# one dicts in the input SearchableListOfDits.
+class MatchDictKeysValuesFunctor(object):
+  def __init__(self, searchableListOfDict):
+    self.__searchableListOfDict = searchableListOfDict
+  def __call__(self, dict_in):
+    matchingDict = self.__searchableListOfDict.lookupDictGivenKeyValueDict(dict_in)
+    if matchingDict:
+      return True
+    return False
 
 
 # Gather up a list of the missing builds.

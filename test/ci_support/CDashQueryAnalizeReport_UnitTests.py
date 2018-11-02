@@ -774,6 +774,38 @@ class test_downloadTestsOffCDashQueryTestsAndFlatten(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalizeReport.MatchDictKeysValuesFunctor
+#
+#############################################################################
+
+def sbtiturlit(site, buildName, testname, it_url, it):
+  return { 'site':site, 'buildName':buildName, 'testname':testname,
+    'issue_tracker_url':it_url, 'issue_tracker':it }
+
+g_testsWtihIssueTrackersList = [
+  sbtiturlit('site1', 'build1', 'test1', 'url1', '#1111'),
+  sbtiturlit('site1', 'build1', 'test2', 'url2', '#1112'),
+  sbtiturlit('site2', 'build2', 'test1', 'url3', '#1113'),
+  sbtiturlit('site2', 'build1', 'test5', 'url5', '#1114'),
+  ]
+
+def sbt(site, buildName, testname):
+  return { 'site':site, 'buildName':buildName, 'testname':testname }
+
+class test_MatchDictKeysValuesFunctor(unittest.TestCase):
+
+  def test_1(self):
+    testsWithIssueTrackerSLOD = createSearchableListOfLists(g_testsWtihIssueTrackersList)
+    matchFunctor = MatchDictKeysValuesFunctor(testsWithIssueTrackerSLOD)
+    self.assertEqual(matchFunctor(sbt('site1','build1','test1')), True)
+    self.assertEqual(matchFunctor(sbt('site2','build2','test1')), True)
+    self.assertEqual(matchFunctor(sbt('site2','build2','test7')), False)
+    self.assertEqual(matchFunctor(sbt('site1','build2','test3')), False)
+    self.assertEqual(matchFunctor(sbt('site2','build1','test5')), True)
+
+
+#############################################################################
+#
 # Test CDashQueryAnalizeReport.buildHasConfigureFailures()
 #
 #############################################################################
