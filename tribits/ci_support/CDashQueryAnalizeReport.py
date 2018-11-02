@@ -90,6 +90,7 @@ def getFilteredList(inputList, matchFunctor):
 # first list has elements where matchFunctor(inputList[i])==True and the
 # second list has elements where matchFunctor(inputList[i])==False.
 def splitListOnMatch(inputList, matchFunctor):
+  #print("\nsplitListOnMatch(): matchFunctor = "+str(matchFunctor))
   matchList = []
   nomatchList = []
   for ele in inputList:
@@ -557,6 +558,11 @@ class SearchableListOfDicts(object):
     self.__listOfKeys = listOfKeys
     self.__lookupDict = createLookupDictForListOfDicts(
       self.__listOfDicts, self.__listOfKeys)
+  # Convert to string rep
+  def __str__(self):
+    myStr = "SearchableListOfDicts{listOfDicts="+str(self.__listOfDicts)+\
+      ", listOfKeys="+str(self.__listOfKeys)+", lookupDict="+str(self.__lookupDict)+"}"
+    return myStr
   # Return listOfDicts passed into Constructor 
   def getListOfDicts(self):
     return self.__listOfDicts
@@ -598,11 +604,21 @@ def createSearchableListOfTests(testsListOfDicts):
   return SearchableListOfDicts(testsListOfDicts, ['site', 'buildName', 'testname'])
 
 
-# Match functor that returns true if the the input dict has key/values that
-# matches one dicts in the input SearchableListOfDits.
+# Match functor that returns true if the input dict has key/values that
+# matches one dicts in the input SearchableListOfDicts.
 class MatchDictKeysValuesFunctor(object):
+
+  # Construct with a SearchableListOfDicts object 
   def __init__(self, searchableListOfDict):
     self.__searchableListOfDict = searchableListOfDict
+
+  # Convert to string rep for debugging/etc.
+  def __str__(self):
+    myStr = "MatchDictKeysValuesFunctor{"+str(self.__searchableListOfDict)+"}"
+    return myStr
+
+  # Return 'true' if the key/value pairs in dict_in match the key/value pairs
+  # in one of the dicts in the searchableListOfDict object.
   def __call__(self, dict_in):
     matchingDict = self.__searchableListOfDict.lookupDictGivenKeyValueDict(dict_in)
     if matchingDict:
@@ -612,16 +628,145 @@ class MatchDictKeysValuesFunctor(object):
 
 # Transform functor that adds issue tracker info and URL to an existing test
 # dict.
+#
+# This functor looks up the test based on 'site', 'buildName', and 'testname'
+# keys to find the entry in the list of known issues with issue trackers and
+# then it copies the issue issue tracker fields to the input/output test dict.
 class AddIssueTrackerInfoToTestDictFunctor(object):
-  def __init__(self, searchableListOfDict):
-    self.__searchableListOfDict = searchableListOfDict
-  def __call__(self, dict_inout):
-    matchingDict = self.__searchableListOfDict.lookupDictGivenKeyValueDict(dict_inout)
-    assert (matchingDict != None), \
-      "Error, dict_inout="+str(dict_inout)+" does not have an assigned issue tracker!"
-    dict_inout[u'issue_tracker'] = matchingDict['issue_tracker']
-    dict_inout[u'issue_tracker_url'] = matchingDict['issue_tracker_url']
-    return dict_inout
+
+  # Construct with a SearchableListOfDicts object that has issue tracker info.
+  # This object testsWithIssueTrackersSLOD must have been constructed using
+  # the function createSearchableListOfTests() so it will allow lookups based
+  # on the 'site', 'buildName', and 'testname' keys.
+  def __init__(self, testsWithIssueTrackersSLOD):
+    self.__testsWithIssueTrackersSLOD = testsWithIssueTrackersSLOD
+
+  # Lookup the issue tracker info and add it as new key/value pairs to
+  # testDict_inout.
+  def __call__(self, testDict_inout):
+    # Look up the entry for the test tracker info based on the 'site',
+    # 'buildName', and 'testname' key/value pairs in testDict_inout.
+    matchingDict = \
+      self.__testsWithIssueTrackersSLOD.lookupDictGivenKeyValueDict(testDict_inout)
+    if not matchingDict:
+      raise Exception(
+        "Error, testDict_inout="+str(testDict_inout)+\
+        " does not have an assigned issue tracker!")
+    testDict_inout[u'issue_tracker'] = matchingDict['issue_tracker']
+    testDict_inout[u'issue_tracker_url'] = matchingDict['issue_tracker_url']
+    return testDict_inout
+
+
+# Transform functor that computes and add detailed test history to an existing
+# test dict.
+class AddTestHistoryToTestDictFunctor(object):
+
+
+  # Constructor
+  def __init__(self, cdashUrl, projectName, date, daysOfHistory):
+    self.__cdashUrl = cdashUrl
+    self.__projectName = projectName
+    self.__date = date
+    self.__daysOfHistory = daysOfHistory
+
+
+  # Generate history and add history info
+  def __call__(self, testDict_inout):
+
+    # Get basic info about the test from the testdict or self
+    site=testDict_inout["site"]
+    build_name=testDict_inout["buildName"]
+    test_name=testDict_inout["testname"]
+    days_of_history=self.__daysOfHistory
+    given_date=self.__date
+    
+#    #URL used to get the history of the test in JSON form
+#    testHistoryQueryUrl= \
+#    cdashUrl+ \
+#    "/api/v1/queryTests.php?"+ \
+#    "project="+projectName+ \
+#    "&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and"+ \
+#    "&field1=buildname&compare1=61&value1="+build_name+ \
+#    "&field2=testname&compare2=61&value2="+test_name+ \
+#    "&field3=site&compare3=61&value3="+site+ \
+#    "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
+#    "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()
+#
+#    #URL to imbed in email to show the history of the test to humans
+#    testHistoryEmailUrl= \
+#    cdashUrl+ \
+#    "/queryTests.php?"+ \
+#    "project="+projectName+ \
+#    "&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and"+ \
+#    "&field1=buildname&compare1=61&value1="+build_name+ \
+#    "&field2=testname&compare2=61&value2="+test_name+ \
+#    "&field3=site&compare3=61&value3="+site+ \
+#    "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
+#    "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()
+#
+#    #URL to imbed in email to show the history of the build to humans
+#    buildHistoryEmailUrl= \
+#    cdashUrl+ \
+#    "/index.php?"+ \
+#    "project="+projectName+ \
+#    "&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and"+ \
+#    "&field1=buildname&compare1=61&value1="+build_name+ \
+#    "&field2=site&compare2=61&value2="+site+ \
+#    "&field3=buildstarttime&compare3=84&value3="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
+#    "&field4=buildstarttime&compare4=83&value4="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()                    
+#
+#    testDict_inout["site_url"]=""
+#    testDict_inout["build_name_url"]=buildHistoryEmailUrl
+#    testDict_inout["test_history"]="Test History"
+#    testDict_inout["test_history_url"]=testHistoryQueryUrl
+#    testDict_inout["previous_failure_date"]=""
+#    testDict_inout["most_recent_failure_date"]=""
+#    testDict_inout[history_title_string]=""
+#    testDict_inout[history_title_string+"_url"]=testHistoryEmailUrl
+#    testDict_inout["count"]=1
+#
+#    # set the names of the cached files so we can check if they exists and write them out otherwise
+#    cacheFolder=options.cdashQueriesCacheDir+"/test_history"
+#    cacheFile=options.date+"-"+site+"-"+build_name+"-"+test_name+"-HIST-"+str(days_of_history)+".json"
+#
+#    # initialize test_history_json to empty dict.  if it is read from the cache then it will not be empty
+#    # after these ifs
+#    test_history_json={}
+#    if options.useCachedCDashData:
+#      test_history_json=getJsonDataFromCache(cacheFolder, cacheFile)
+#
+#    # if test_history_json is still empty then either it was not found in the cache or the user 
+#    # told us not to look in the cache.  Get the json from CDash
+#    if not test_history_json:
+#      print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from CDash")
+#      test_history_json=extractCDashApiQueryData(testHistoryQueryUrl)      
+#
+#      # cache json files if the option is on (turned on by default)
+#      if options.cdashQueriesCacheDir:
+#        writeJsonDataToCache(cacheFolder, cacheFile, test_history_json)
+#
+#    # adding up number of failures and collecting dates of the failures
+#    failed_dates=[]
+#    for cdash_build in test_history_json["builds"]:
+#      if cdash_build["status"] != "Passed":
+#        failed_dates.append(cdash_build["buildstarttime"].split('T')[0])
+#
+#    testDict_inout[history_title_string]=len(failed_dates)
+#
+#    # set most recent and previous failure dates
+#    failed_dates.sort(reverse=True)
+#    if len(failed_dates) == 0:
+#      testDict_inout["previous_failure_date"]="None"
+#      testDict_inout["most_recent_failure_date"]="None"
+#    elif len(failed_dates) == 1:
+#      testDict_inout["previous_failure_date"]="None"
+#      testDict_inout["most_recent_failure_date"]=failed_dates[0]
+#    else:
+#      testDict_inout["previous_failure_date"]=failed_dates[1]
+#      testDict_inout["most_recent_failure_date"]=failed_dates[0]
+
+    return testDict_inout
+
 
 
 # Gather up a list of the missing builds.

@@ -850,8 +850,26 @@ def aitf_itf(aitf, site, buildName, testname):
     testDictTransformed['issue_tracker'] 
     ]
 
-
 class test_AddIssueTrackerInfoToTestDictFunctor(unittest.TestCase):
+
+  def test_demo(self):
+    # My initial test dict like gotten directly from CDash with no issue
+    # tracker info
+    initailTestDict = { 'site':'site1', 'buildName':'build1', 'testname':'test1',
+     'other_data':'great' }
+    # Create a functor that can add matching issue tracker info to a test dict
+    # that may not have issue tracker info.
+    testsWithIssueTrackerSLOD = createSearchableListOfTests(g_testsWtihIssueTrackersList)
+    addIssueTrackerInfoFunctor = \
+      AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackerSLOD)
+    # Use the functor to add the matching issue tracker info
+    addIssueTrackerInfoFunctor(initailTestDict)
+    # Check to make sure it added correct issue tracker data
+    self.assertEqual(
+      initailTestDict,
+      { 'site':'site1', 'buildName':'build1', 'testname':'test1',
+      'other_data':'great', 'issue_tracker_url':'url1', 'issue_tracker':'#1111' }
+      )
 
   def test_pass(self):
     testsWithIssueTrackerSLOD = createSearchableListOfTests(g_testsWtihIssueTrackersList)
@@ -868,8 +886,66 @@ class test_AddIssueTrackerInfoToTestDictFunctor(unittest.TestCase):
       self.assertEqual("Error, did not thorw exception", "No it did not!")
     except Exception, errMsg:
       self.assertEqual(str(errMsg),
-        "Error, dict_inout="+str(dict_inout)+\
+        "Error, testDict_inout="+str(dict_inout)+\
         " does not have an assigned issue tracker!" )
+
+
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.AddTestHistoryToTestDictFunctor
+#
+#############################################################################
+
+g_testDictFailed = {
+  u'buildName': u'build_name',
+  u'buildSummaryLink': u'buildSummary.php?buildid=<buildid>',
+  u'buildstarttime': u'2001-01-01T05:54:03 UTC',
+  u'details': u'Completed (Failed)\n',
+  u'nprocs': 4,
+  u'prettyProcTime': u'40s 400ms',
+  u'prettyTime': u'10s 100ms',
+  u'procTime': 40.4,
+  u'site': u'site_name',
+  u'siteLink': u'viewSite.php?siteid=<site_id>',
+  u'status': u'Failed',
+  u'statusclass': u'error',
+  u'testDetailsLink': u'testDetails.php?test=<testid>&build=<buildid>',
+  u'testname': u'test_name',
+  u'time': 10.1,
+  u'issue_tracker': u'#1234',
+  u'issue_tracker_url': u'some.com/site/issue/1234'
+  }
+
+class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
+
+  def test_1(self):
+    testDict = copy.deepcopy(g_testDictFailed)
+    # Construct functor
+    cdashUrl = "site.come/cdash"
+    projectName = "projectName"
+    date = "YYYY-MM-DD"
+    daysOfHistory=5
+    addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
+      cdashUrl, projectName, date, daysOfHistory)
+    # Apply the functor
+    testDict = addTestHistoryFunctor(testDict)
+    # Check to fields
+    self.assertEqual(testDict['site'], 'site_name')
+    self.assertEqual(testDict['buildName'], 'build_name')
+    return
+    self.assertEqual(testDict['buildName_url'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['testname'], 'test_name')
+    self.assertEqual(testDict['testname_url'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['test_history_days'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['test_history_list'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['test_history_query_url'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['nopass_last_x_days'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['nopass_last_x_days_url'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['previous_nopass_date'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['issue_tracker'], '#1234')
+    self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
+    # ToDo: Add more checks!
 
 
 #############################################################################
