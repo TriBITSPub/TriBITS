@@ -132,6 +132,16 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     help="Cache CDash query data this directory" \
       +" (default ='"+cdashQueriesCacheDir_default+"')." )
 
+  clp.add_option(
+    "--cdash-base-cache-files-prefix", dest="cdashBaseCacheFilesPrefix", type="string",
+    default="",
+    help="Prefix given to the base-level cache files outside of the test_history/"+\
+      " directory.   This is to allow multiple invocations of this script to share"+\
+      " the same base cache directory and share the test_history/ in case there are"+\
+      " overrlapping sets of tests where the cache could be reused."+\
+      " (default is derived from the --build-set-name=<build_set_name> argument where"+\
+      " spaces and punctuation in <build_set_name> is replaced with '_')" )
+
   addOptionParserChoiceOption(
     "--use-cached-cdash-data", "useCachedCDashDataStr",
     ("on", "off"), 1,
@@ -188,6 +198,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+lt+\
     "  --tests-with-issue-trackers-file='"+inOptions.testsWithIssueTrackersFile+"'"+lt+\
     "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+lt+\
+    "  --cdash-base-cache-files-prefix='"+inOptions.cdashBaseCacheFilesPrefix+"'"+lt+\
     "  --use-cached-cdash-data='"+inOptions.useCachedCDashDataStr+"'"+lt+\
     "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
     "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt+\
@@ -230,6 +241,13 @@ if __name__ == '__main__':
     setattr(inOptions, 'useCachedCDashData', True)
   else:
     setattr(inOptions, 'useCachedCDashData', False)
+
+  if inOptions.cdashBaseCacheFilesPrefix == "":
+    inOptions.cdashBaseCacheFilesPrefix = \
+     CDQAR.getFileNameStrFromText(inOptions.buildSetName)
+
+  cacheDirAndBaseFilePrefix = \
+    inOptions.cdashQueriesCacheDir+"/"+inOptions.cdashBaseCacheFilesPrefix
 
   #
   # A) Define common data, etc
@@ -313,9 +331,12 @@ if __name__ == '__main__':
       inOptions.date,
       inOptions.cdashBuildsFilters )
 
+    fullCDashIndexBuildsJsonCacheFile = \
+      cacheDirAndBaseFilePrefix+"fullCDashIndexBuilds.json"
+
     buildsListOfDicts = CDQAR.downloadBuildsOffCDashAndFlatten(
       cdashIndexBuildsQueryUrl,
-      inOptions.cdashQueriesCacheDir+"/fullCDashIndexBuilds.json",
+      fullCDashIndexBuildsJsonCacheFile,
       inOptions.useCachedCDashData )
 
     # Beginning of top full bulid and tests CDash links paragraph 
@@ -351,7 +372,7 @@ if __name__ == '__main__':
       inOptions.cdashNonpassedTestsFilters)
 
     cdashNonpassingTestsQueryJsonCacheFile = \
-      inOptions.cdashQueriesCacheDir+"/fullCDashNonpassingTests.json"
+      cacheDirAndBaseFilePrefix+"fullCDashNonpassingTests.json"
 
     nonpassingTestsListOfDicts = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,

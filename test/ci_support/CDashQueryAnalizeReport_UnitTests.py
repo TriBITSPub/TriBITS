@@ -122,6 +122,24 @@ class test_validateYYYYMMDD(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalizeReport.getFileNameStrFromText()
+#
+#############################################################################
+
+class test_getFileNameStrFromText(unittest.TestCase):
+
+  def test_simple(self):
+    self.assertEqual(
+      getFileNameStrFromText("This is something"), "This_is_something_")
+
+  def test_harder(self):
+    self.assertEqual(
+      getFileNameStrFromText("thi@ (something; other)"),
+      "thi___something__other__")
+
+
+#############################################################################
+#
 # Test CDashQueryAnalizeReport.getFilteredList()
 #
 #############################################################################
@@ -720,7 +738,7 @@ class test_downloadBuildsOffCDashAndFlatten(unittest.TestCase):
     # Get the mock data off of CDash
     summaryCDashIndexBuilds = downloadBuildsOffCDashAndFlatten(
       cdashIndexBuildsQueryUrl,
-      cdashQueryCacheFile=None,
+      fullCDashIndexBuildsJsonCacheFile=None,
       useCachedCDashData=False,
       verbose=False,
       extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFunctor )
@@ -754,7 +772,8 @@ class test_downloadTestsOffCDashQueryTestsAndFlatten(unittest.TestCase):
        nonpassingTestsQueryUrl, g_fullCDashQueryTestsJson )
     # Get the mock data off of CDash
     testsListOfDicts = downloadTestsOffCDashQueryTestsAndFlatten(
-      nonpassingTestsQueryUrl, fullCDashQueryTestsJsonCacheFile=None,
+      nonpassingTestsQueryUrl,
+      fullCDashQueryTestsJsonCacheFile=None,
       useCachedCDashData=False,
       verbose=False,
       extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFunctor )

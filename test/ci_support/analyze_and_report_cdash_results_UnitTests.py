@@ -129,11 +129,18 @@ g_baseTestDir="analyze_and_report_cdash_results"
 #
 def analyze_and_report_cdash_results_setup_test_dir(
   testCaseName,
+  buildSetName="ProjectName Nightly Builds",
   copyFrom="raw_cdash_data_twoif_12_twif_9",
   ):
   testInputDir = testCiSupportDir+"/"+g_baseTestDir+"/"+copyFrom
   testOutputDir = g_baseTestDir+"/"+testCaseName
   shutil.copytree(testInputDir, testOutputDir)
+  baseFilePrefix = CDQAR.getFileNameStrFromText(buildSetName)
+  filesToRename = [ "fullCDashIndexBuilds.json", "fullCDashNonpassingTests.json" ]
+  for fileToRename in filesToRename:
+    oldName = testOutputDir+"/"+fileToRename
+    newName = testOutputDir+"/"+baseFilePrefix+fileToRename
+    os.rename(oldName, newName)
   return testOutputDir
 
 
@@ -290,9 +297,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   def test_bme_2_c_1_b_2_twoif_12_twif_9(self):
 
     testCaseName = "bme_2_c_1_b_2_twoif_12_twif_9"
+    buildSetName = "Project Specialized Builds"
 
     # Copy the raw files from CDash to get started
-    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName,
+      buildSetName)
 
     # Add some expected builds that don't exist
     expectedBuildsFilePath = testOutputDir+"/expectedBuilds.csv"
@@ -308,7 +317,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       expectedBuildsFile.write("".join(expectedBuildsStrList))
 
     # Add some configure and build failures
-    fullCDashIndexBuildsJsonFilePath = testOutputDir+"/fullCDashIndexBuilds.json"
+    fullCDashIndexBuildsJsonFilePath = \
+      testOutputDir+\
+      "/"+CDQAR.getFileNameStrFromText(buildSetName)+\
+      "fullCDashIndexBuilds.json"
     with open(fullCDashIndexBuildsJsonFilePath, 'r') as fullCDashIndexBuildsJsonFile:
       fullCDashIndexBuildsJson = eval(fullCDashIndexBuildsJsonFile.read())
     specializedGroup = fullCDashIndexBuildsJson['buildgroups'][0]
@@ -323,7 +335,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       self,
       testCaseName,
       [
-        "--build-set-name='Project Specialized Builds'",  # Test changing this
+        "--build-set-name='"+buildSetName+"'",  # Test changing this
         "--limit-table-rows=15",  # Check that this is read correctly
         ],
       1,
@@ -424,9 +436,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   def test_passed_clean(self):
 
     testCaseName = "passed_clean"
+    buildSetName = "Project Specialized Builds"
 
     # Copy the raw files from CDash to get started
-    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName,
+      buildSetName)
 
     # Remove all of the failing tests
     testListFilePath = testOutputDir+"/test_history/2001-01-01-All-Failing-Tests.json"
@@ -439,7 +453,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       self,
       testCaseName,
       [
-        "--build-set-name='Project Specialized Builds'",  # Test changing this
+        "--build-set-name='"+buildSetName+"'",  # Test changing this
         ],
       0,
       "PASSED: Project Specialized Builds on 2001-01-01",

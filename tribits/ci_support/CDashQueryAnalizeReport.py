@@ -62,6 +62,21 @@ def validateYYYYMMDD(dateText):
     raise ValueError("Incorrect data format for '"+dateText+"', should be YYYY-MM-DD")
 
 
+# Get a file name string from a general text string.
+#
+# This replaces non-alphanumeric chars with '_'.
+#
+def getFileNameStrFromText(inputStr):
+  fileNameStr = ""
+  for char in inputStr:
+    if char.isalnum():
+      fileNameStr += char
+    else:
+       fileNameStr += "_"
+  fileNameStr += "_"
+  return fileNameStr
+
+
 # Filter and input list and return a list with elements where
 # matchFunctor(inputList[i])==True.
 def getFilteredList(inputList, matchFunctor):
@@ -617,9 +632,10 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
 # The cdash/api/v1/index.php query selecting the set of builds is provided by
 # cdashIndexBuildsQueryUrl.
 #
-# If cdashQueryCacheFile != None, then the raw JSON data-structure downloaded
-# from CDash will be written to the file cdashQueryCacheFile or read from that
-# file if useCachedCDashData==True.
+# If cdashIndexBuildsQueryCacheFile != None, then the raw JSON data-structure
+# downloaded from CDash will be written to the file
+# cdashIndexBuildsQueryCacheFile or read from that file if
+# useCachedCDashData==True.
 # 
 # The list of builds pulled off of CDash is flattended and extracted using the
 # function flattenCDashIndexBuildsToListOfDicts().
@@ -629,14 +645,14 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
 #
 def downloadBuildsOffCDashAndFlatten(
   cdashIndexBuildsQueryUrl,
-  cdashQueryCacheFile=None,
+  fullCDashIndexBuildsJsonCacheFile=None,
   useCachedCDashData=False,
   verbose=True,
   extractCDashApiQueryData_in=extractCDashApiQueryData,
   ):
   # Get the query data
   fullCDashIndexBuildsJson = getAndCacheCDashQueryDataOrReadFromCache(
-    cdashIndexBuildsQueryUrl, cdashQueryCacheFile, useCachedCDashData,
+    cdashIndexBuildsQueryUrl, fullCDashIndexBuildsJsonCacheFile, useCachedCDashData,
     verbose, extractCDashApiQueryData_in )
   # Get trimmed down set of builds
   buildsListOfDicts = \
