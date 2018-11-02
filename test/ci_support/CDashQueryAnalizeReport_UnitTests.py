@@ -678,19 +678,6 @@ class test_lookupDictGivenLookupDict(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.createBuildLookupDict()
-#
-#############################################################################
-
-class test_createBuildLookupDict(unittest.TestCase):
-
-  def test_1(self):
-    buildLookupDict = createBuildLookupDict(g_buildsListForExpectedBuilds)
-    self.assertEqual(buildLookupDict, g_buildLookupDictForExpectedBuilds)
-
-
-#############################################################################
-#
 # Test CDashQueryAnalizeReport.getMissingExpectedBuildsList()
 #
 #############################################################################
@@ -785,7 +772,6 @@ class test_downloadTestsOffCDashQueryTestsAndFlatten(unittest.TestCase):
       self.assertEqual(testsListOfDicts[i], g_testsListOfDicts_expected[i])
 
 
-
 #############################################################################
 #
 # Test CDashQueryAnalizeReport.buildHasConfigureFailures()
@@ -807,7 +793,6 @@ class test_buildHasConfigureFailures(unittest.TestCase):
     buildDict = copy.deepcopy(g_singleBuildPassesSummary)
     del buildDict['configure']
     self.assertEqual(buildHasConfigureFailures(buildDict), False)
-
 
 
 #############################################################################

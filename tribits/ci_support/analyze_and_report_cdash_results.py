@@ -307,9 +307,8 @@ if __name__ == '__main__':
 
     # Get list of tests with issue tracker from input CSV file
 
-    testsWithIssueTrackersListOfDicts = CDQAR.readCsvFileIntoListOfDicts(
-      inOptions.testsWithIssueTrackersFile,
-      [ 'site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker' ] )
+    testsWithIssueTrackersListOfDicts = \
+      CDQAR.getTestsWtihIssueTrackersListFromCsvFile(inOptions.testsWithIssueTrackersFile)
 
     #
     # D.2) Get lists of build and test data off CDash

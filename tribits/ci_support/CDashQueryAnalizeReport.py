@@ -198,6 +198,12 @@ def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
     ['group', 'site', 'buildname'])
 
 
+# Get list of tests from CSV file
+def getTestsWtihIssueTrackersListFromCsvFile(testsWithIssueTrackersFile):
+  return readCsvFileIntoListOfDicts(testsWithIssueTrackersFile,
+      ['site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'])
+
+
 # Print print a nested Python data-structure to a file
 #
 # ToDo: Reimplement this to create a better looking set of indented that that
@@ -556,14 +562,7 @@ class SearchableListOfDicts(object):
     return len(self.__listOfDicts)
   def __getitem__(self, index_in):
     return self.__listOfDicts[index_in]
-  
 
-# Create a lookup dict for builds "group" => "site" => "build" given summary
-# list of builds.
-def createBuildLookupDict(summaryBuildsList):
-  return createLookupDictForListOfDicts(summaryBuildsList,
-    ['group', 'site', 'buildname'] )
-  
 
 # Create a SearchableListOfDicts object for a list of builds dicts that allows
 # lookups of builds given the keys "group" => "site" => "build" : build_dict.
@@ -708,7 +707,7 @@ def buildHasConfigureFailures(buildDict):
   return False
 
 
-# Functor that return if a build has compilation failures
+# Functor that return if a build has compilation/build failures
 def buildHasBuildFailures(buildDict):
   compilationDict = buildDict.get('compilation', None)
   if compilationDict and compilationDict['error'] > 0:
