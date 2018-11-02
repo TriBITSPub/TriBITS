@@ -921,30 +921,31 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
   def test_1(self):
     testDict = copy.deepcopy(g_testDictFailed)
     # Construct functor
-    cdashUrl = "site.come/cdash"
+    cdashUrl = "site.com/cdash"
     projectName = "projectName"
-    date = "YYYY-MM-DD"
+    date = "2001-01-01"
     daysOfHistory=5
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, daysOfHistory)
-    # Apply the functor
-    testDict = addTestHistoryFunctor(testDict)
+    # Apply the functor to add the test history to the test dict
+    addTestHistoryFunctor(testDict)
     # Check to fields
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
-    return
-    self.assertEqual(testDict['buildName_url'], 'DUMMY NO MATCH')
-    self.assertEqual(testDict['testname'], 'test_name')
-    self.assertEqual(testDict['testname_url'], 'DUMMY NO MATCH')
-    self.assertEqual(testDict['test_history_days'], 'DUMMY NO MATCH')
-    self.assertEqual(testDict['test_history_list'], 'DUMMY NO MATCH')
-    self.assertEqual(testDict['test_history_query_url'], 'DUMMY NO MATCH')
-    self.assertEqual(testDict['nopass_last_x_days'], 'DUMMY NO MATCH')
-    self.assertEqual(testDict['nopass_last_x_days_url'], 'DUMMY NO MATCH')
-    self.assertEqual(testDict['previous_nopass_date'], 'DUMMY NO MATCH')
-    self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
-    self.assertEqual(testDict['issue_tracker'], '#1234')
-    self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
+    #self.assertEqual(testDict['buildName_url'], 'DUMMY NO MATCH')
+    #self.assertEqual(testDict['testname'], 'test_name')
+    #self.assertEqual(testDict['testname_url'], 'DUMMY NO MATCH')
+    #self.assertEqual(testDict['test_history_days'], 'DUMMY NO MATCH')
+    #self.assertEqual(testDict['test_history_list'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['test_history_query_url'],
+     u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00')
+    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00')
+    #self.assertEqual(testDict['nopass_last_x_days'], 'DUMMY NO MATCH')
+    #self.assertEqual(testDict['nopass_last_x_days_url'], 'DUMMY NO MATCH')
+    #self.assertEqual(testDict['previous_nopass_date'], 'DUMMY NO MATCH')
+    #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
+    #self.assertEqual(testDict['issue_tracker'], '#1234')
+    #self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
     # ToDo: Add more checks!
 
 

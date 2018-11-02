@@ -670,64 +670,73 @@ class AddTestHistoryToTestDictFunctor(object):
     self.__daysOfHistory = daysOfHistory
 
 
-  # Generate history and add history info
-  def __call__(self, testDict_inout):
+  # Get test history off CDash and add test history info and URL to info we
+  # find out from that test history
+  def __call__(self, testDict):
 
     # Get basic info about the test from the testdict or self
-    site=testDict_inout["site"]
-    build_name=testDict_inout["buildName"]
-    test_name=testDict_inout["testname"]
-    days_of_history=self.__daysOfHistory
-    given_date=self.__date
+    site = testDict["site"]
+    buildName = testDict["buildName"]
+    testname = testDict["testname"]
+
+    # Get short names for data inside of functor
+    cdashUrl = self.__cdashUrl
+    projectName = self.__projectName
+    testDayDate = validateYYYYMMDD(self.__date)
+    daysOfHistory = self.__daysOfHistory
+
+    # Date range for test history
+    dayAfterCurrentTestDay = \
+      (testDayDate+datetime.timedelta(days=1)).isoformat()
+    daysBeforeCurrentTestDay = \
+      (testDayDate+datetime.timedelta(days=-1*daysOfHistory+1)).isoformat()
+
+    # Define queryTests.php query filters for test history
+    testHistoryQueryFilters = \
+      "&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and"+\
+      "&field1=buildname&compare1=61&value1="+buildName+\
+      "&field2=testname&compare2=61&value2="+testname+\
+      "&field3=site&compare3=61&value3="+site+\
+      "&field4=buildstarttime&compare4=84&value4="+dayAfterCurrentTestDay+\
+      "&field5=buildstarttime&compare5=83&value5="+daysBeforeCurrentTestDay
     
-#    #URL used to get the history of the test in JSON form
-#    testHistoryQueryUrl= \
-#    cdashUrl+ \
-#    "/api/v1/queryTests.php?"+ \
-#    "project="+projectName+ \
-#    "&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and"+ \
-#    "&field1=buildname&compare1=61&value1="+build_name+ \
-#    "&field2=testname&compare2=61&value2="+test_name+ \
-#    "&field3=site&compare3=61&value3="+site+ \
-#    "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
-#    "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()
-#
-#    #URL to imbed in email to show the history of the test to humans
-#    testHistoryEmailUrl= \
-#    cdashUrl+ \
-#    "/queryTests.php?"+ \
-#    "project="+projectName+ \
-#    "&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and"+ \
-#    "&field1=buildname&compare1=61&value1="+build_name+ \
-#    "&field2=testname&compare2=61&value2="+test_name+ \
-#    "&field3=site&compare3=61&value3="+site+ \
-#    "&field4=buildstarttime&compare4=84&value4="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
-#    "&field5=buildstarttime&compare5=83&value5="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()
+    # URL used to get the history of the test in JSON form
+    testHistoryQueryUrl = \
+      cdashUrl+"/api/v1/queryTests.php?project="+projectName+testHistoryQueryFilters
+
+    # URL to imbed in email to show the history of the test to humans
+    testHistoryEmailUrl = \
+      cdashUrl+"/queryTests.php?project="+projectName+testHistoryQueryFilters
+
+    # ToDo: Put in check testDict['buildstarttime'] equals the most recent
+    # test dict generated from the query in testHistoryQueryUrl.  That is
+    # needed to ensure that we got the date dayAfterCurrentTestDay correct.
+
 #
 #    #URL to imbed in email to show the history of the build to humans
 #    buildHistoryEmailUrl= \
-#    cdashUrl+ \
-#    "/index.php?"+ \
-#    "project="+projectName+ \
-#    "&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and"+ \
-#    "&field1=buildname&compare1=61&value1="+build_name+ \
-#    "&field2=site&compare2=61&value2="+site+ \
-#    "&field3=buildstarttime&compare3=84&value3="+(given_date+datetime.timedelta(days=1)).isoformat()+ \
-#    "&field4=buildstarttime&compare4=83&value4="+(given_date+datetime.timedelta(days=-1*days_of_history+1)).isoformat()                    
+#    cdashUrl+\
+#    "/index.php?"+\
+#    "project="+projectName+\
+#    "&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and"+\
+#    "&field1=buildname&compare1=61&value1="+buildName+\
+#    "&field2=site&compare2=61&value2="+site+\
+#    "&field3=buildstarttime&compare3=84&value3="+(testDayDate+datetime.timedelta(days=1)).isoformat()+\
+#    "&field4=buildstarttime&compare4=83&value4="+(testDayDate+datetime.timedelta(days=-1*daysOfHistory+1)).isoformat()                    
 #
-#    testDict_inout["site_url"]=""
-#    testDict_inout["build_name_url"]=buildHistoryEmailUrl
-#    testDict_inout["test_history"]="Test History"
-#    testDict_inout["test_history_url"]=testHistoryQueryUrl
-#    testDict_inout["previous_failure_date"]=""
-#    testDict_inout["most_recent_failure_date"]=""
-#    testDict_inout[history_title_string]=""
-#    testDict_inout[history_title_string+"_url"]=testHistoryEmailUrl
-#    testDict_inout["count"]=1
+#    testDict["site_url"]=""
+#    testDict["buildName_url"]=buildHistoryEmailUrl
+#    testDict["test_history"]="Test History"
+#    testDict["test_history_url"]=testHistoryQueryUrl
+#    testDict["previous_failure_date"]=""
+#    testDict["most_recent_failure_date"]=""
+#    testDict[history_title_string]=""
+#    testDict[history_title_string+"_url"]=testHistoryEmailUrl
+#    testDict["count"]=1
 #
 #    # set the names of the cached files so we can check if they exists and write them out otherwise
 #    cacheFolder=options.cdashQueriesCacheDir+"/test_history"
-#    cacheFile=options.date+"-"+site+"-"+build_name+"-"+test_name+"-HIST-"+str(days_of_history)+".json"
+#    cacheFile=options.date+"-"+site+"-"+buildName+"-"+testname+"-HIST-"+str(daysOfHistory)+".json"
 #
 #    # initialize test_history_json to empty dict.  if it is read from the cache then it will not be empty
 #    # after these ifs
@@ -738,7 +747,7 @@ class AddTestHistoryToTestDictFunctor(object):
 #    # if test_history_json is still empty then either it was not found in the cache or the user 
 #    # told us not to look in the cache.  Get the json from CDash
 #    if not test_history_json:
-#      print("Getting "+str(days_of_history)+" days of history for "+test_name+" in the build "+build_name+" on "+site+" from CDash")
+#      print("Getting "+str(daysOfHistory)+" days of history for "+testname+" in the build "+buildName+" on "+site+" from CDash")
 #      test_history_json=extractCDashApiQueryData(testHistoryQueryUrl)      
 #
 #      # cache json files if the option is on (turned on by default)
@@ -751,21 +760,27 @@ class AddTestHistoryToTestDictFunctor(object):
 #      if cdash_build["status"] != "Passed":
 #        failed_dates.append(cdash_build["buildstarttime"].split('T')[0])
 #
-#    testDict_inout[history_title_string]=len(failed_dates)
+#    testDict[history_title_string]=len(failed_dates)
 #
 #    # set most recent and previous failure dates
 #    failed_dates.sort(reverse=True)
 #    if len(failed_dates) == 0:
-#      testDict_inout["previous_failure_date"]="None"
-#      testDict_inout["most_recent_failure_date"]="None"
+#      testDict["previous_failure_date"]="None"
+#      testDict["most_recent_failure_date"]="None"
 #    elif len(failed_dates) == 1:
-#      testDict_inout["previous_failure_date"]="None"
-#      testDict_inout["most_recent_failure_date"]=failed_dates[0]
+#      testDict["previous_failure_date"]="None"
+#      testDict["most_recent_failure_date"]=failed_dates[0]
 #    else:
-#      testDict_inout["previous_failure_date"]=failed_dates[1]
-#      testDict_inout["most_recent_failure_date"]=failed_dates[0]
+#      testDict["previous_failure_date"]=failed_dates[1]
+#      testDict["most_recent_failure_date"]=failed_dates[0]
 
-    return testDict_inout
+    # Assign all of the new test dict fields we are adding
+    testDict['test_history_query_url'] = testHistoryQueryUrl
+    testDict['test_history_browser_url'] = testHistoryEmailUrl
+
+
+
+    return testDict
 
 
 
