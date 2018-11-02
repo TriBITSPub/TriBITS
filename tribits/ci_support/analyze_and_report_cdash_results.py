@@ -560,7 +560,7 @@ if __name__ == '__main__':
       tcd("status", "Status"),
       tcd("details", "Details"),
       tcd("failures_in_last_"+str(inOptions.test_history_days)+"_days",
-        "Fails last "+str(inOptions.test_history_days)+" Days",
+        "Nopass last "+str(inOptions.test_history_days)+" Days",
         "right"),
       tcd("previous_failure_date", "Previous Failure Date", "right"),
       tcd("issue_tracker", "Tracker", "right"),

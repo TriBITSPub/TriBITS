@@ -1140,7 +1140,7 @@ def getHistoricalDataForTests(testDictionary, cdashUrl, projectName, filterField
     # adding up number of failures and collecting dates of the failures
     failed_dates=[]
     for cdash_build in test_history_json["builds"]:
-      if cdash_build["status"] == "Failed":
+      if cdash_build["status"] != "Passed":
         failed_dates.append(cdash_build["buildstarttime"].split('T')[0])
 
     testDictionary[dict_key][history_title_string]=len(failed_dates)
