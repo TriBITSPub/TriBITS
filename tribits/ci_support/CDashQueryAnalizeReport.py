@@ -265,26 +265,32 @@ def getAndCacheCDashQueryDataOrReadFromCache(
 # Construct full cdash/api/v1/index.php query URL to pull data down given the
 # pieces
 def getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields):
-  return cdashUrl+"/api/v1/index.php?project="+projectName+"&date="+date \
+  if date: dateArg = "&date="+date
+  else: dateArg = "" 
+  return cdashUrl+"/api/v1/index.php?project="+projectName+dateArg \
     + "&"+filterFields
 
 
 # Construct full cdash/index.php browser URL given the pieces
 def getCDashIndexBrowserUrl(cdashUrl, projectName, date, filterFields):
-  return cdashUrl+"/index.php?project="+projectName+"&date="+date \
+  if date: dateArg = "&date="+date
+  else: dateArg = "" 
+  return cdashUrl+"/index.php?project="+projectName+dateArg \
     + "&"+filterFields
 
 
 # Construct full cdash/api/v1/queryTests.php query URL given the pieces
 def getCDashQueryTestsQueryUrl(cdashUrl, projectName, date, filterFields):
-  return cdashUrl+"/api/v1/queryTests.php?project="+projectName+"&date="+date \
-    + "&"+filterFields
+  if date: dateArg = "&date="+date
+  else: dateArg = "" 
+  return cdashUrl+"/api/v1/queryTests.php?project="+projectName+dateArg+"&"+filterFields
 
 
 # Construct full cdash/queryTests.php browser URL given the pieces
 def getCDashQueryTestsBrowserUrl(cdashUrl, projectName, date, filterFields):
-  return cdashUrl+"/queryTests.php?project="+projectName+"&date="+date \
-    + "&"+filterFields
+  if date: dateArg = "&date="+date
+  else: dateArg = "" 
+  return cdashUrl+"/queryTests.php?project="+projectName+dateArg+"&"+filterFields
 
 
 # Copy a key/value pair from one dict to another if it eixsts
@@ -658,20 +664,32 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
 
 
 # Transform functor that computes and add detailed test history to an existing
-# test dict.
+# test dict so that it can be printed in the table
+# createCDashTestHtmlTableStr().
+#
 class AddTestHistoryToTestDictFunctor(object):
 
 
   # Constructor
-  def __init__(self, cdashUrl, projectName, date, daysOfHistory):
+  #
+  # Takes additional data needed to get the test history and other stuff.
+  #
+  def __init__(self, cdashUrl, projectName, date, daysOfHistory,
+    testCacheDir, useCachedCDashData,
+    extractCDashApiQueryData_in=extractCDashApiQueryData, # For unit testing
+    ):
     self.__cdashUrl = cdashUrl
     self.__projectName = projectName
     self.__date = date
     self.__daysOfHistory = daysOfHistory
+    self.__testCacheDir = testCacheDir
+    self.__useCachedCDashData = useCachedCDashData
+    self.__extractCDashApiQueryData_in = extractCDashApiQueryData_in
 
 
   # Get test history off CDash and add test history info and URL to info we
   # find out from that test history
+  #
   def __call__(self, testDict):
 
     # Get basic info about the test from the testdict or self
@@ -693,7 +711,7 @@ class AddTestHistoryToTestDictFunctor(object):
 
     # Define queryTests.php query filters for test history
     testHistoryQueryFilters = \
-      "&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and"+\
+      "filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and"+\
       "&field1=buildname&compare1=61&value1="+buildName+\
       "&field2=testname&compare2=61&value2="+testname+\
       "&field3=site&compare3=61&value3="+site+\
@@ -702,47 +720,58 @@ class AddTestHistoryToTestDictFunctor(object):
     
     # URL used to get the history of the test in JSON form
     testHistoryQueryUrl = \
-      cdashUrl+"/api/v1/queryTests.php?project="+projectName+testHistoryQueryFilters
+      getCDashQueryTestsQueryUrl(cdashUrl, projectName, None, testHistoryQueryFilters)
 
     # URL to imbed in email to show the history of the test to humans
     testHistoryEmailUrl = \
-      cdashUrl+"/queryTests.php?project="+projectName+testHistoryQueryFilters
+      getCDashQueryTestsBrowserUrl(cdashUrl, projectName, None, testHistoryQueryFilters)
 
     # ToDo: Put in check testDict['buildstarttime'] equals the most recent
     # test dict generated from the query in testHistoryQueryUrl.  That is
     # needed to ensure that we got the date dayAfterCurrentTestDay correct.
 
-#
-#    #URL to imbed in email to show the history of the build to humans
-#    buildHistoryEmailUrl= \
-#    cdashUrl+\
-#    "/index.php?"+\
-#    "project="+projectName+\
-#    "&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and"+\
-#    "&field1=buildname&compare1=61&value1="+buildName+\
-#    "&field2=site&compare2=61&value2="+site+\
-#    "&field3=buildstarttime&compare3=84&value3="+(testDayDate+datetime.timedelta(days=1)).isoformat()+\
-#    "&field4=buildstarttime&compare4=83&value4="+(testDayDate+datetime.timedelta(days=-1*daysOfHistory+1)).isoformat()                    
-#
-#    testDict["site_url"]=""
-#    testDict["buildName_url"]=buildHistoryEmailUrl
-#    testDict["test_history"]="Test History"
-#    testDict["test_history_url"]=testHistoryQueryUrl
-#    testDict["previous_failure_date"]=""
-#    testDict["most_recent_failure_date"]=""
-#    testDict[history_title_string]=""
-#    testDict[history_title_string+"_url"]=testHistoryEmailUrl
-#    testDict["count"]=1
-#
-#    # set the names of the cached files so we can check if they exists and write them out otherwise
-#    cacheFolder=options.cdashQueriesCacheDir+"/test_history"
-#    cacheFile=options.date+"-"+site+"-"+buildName+"-"+testname+"-HIST-"+str(daysOfHistory)+".json"
+    # URL for to the build summary on index.php page
+    buildHistoryEmailUrl = getCDashIndexBrowserUrl(
+      cdashUrl, projectName, None,
+      "filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and"+\
+      "&field1=buildname&compare1=61&value1="+buildName+\
+      "&field2=site&compare2=61&value2="+site+\
+      "&field3=buildstarttime&compare3=84&value3="+dayAfterCurrentTestDay+\
+      "&field4=buildstarttime&compare4=83&value4="+daysBeforeCurrentTestDay )
+    # ToDo: Replace this with the the URL to just this one build the index.php
+    # page.  To do that, get the build stamp from the list of builds on CDash
+    # and then create a URL link for this one build given 'site', 'buildName',
+    # and 'buildStamp'.  (NOTE: We can't use 'buildstarttime' without
+    # replacing ':' with '%' or the URL will not work with CDash.)
+
+    # Set the names of the cached files so we can check if they exists and
+    # write them out otherwise
+    testHistoryCacheFile = self.__testCacheDir+"/"+\
+      self.__date+"-"+site+"-"+buildName+"-"+testname+"-HIST-"+str(daysOfHistory)+".json"
+
+    # Get the test history off of CDash (or from reading the cache file)
+    testHistoryLOD = downloadTestsOffCDashQueryTestsAndFlatten(
+      testHistoryQueryUrl, testHistoryCacheFile,
+      useCachedCDashData=self.__useCachedCDashData,
+      verbose=False,
+      extractCDashApiQueryData_in=self.__extractCDashApiQueryData_in
+      )
+
+    #pp = pprint.PrettyPrinter(indent=2)
+    #pp.pprint(testHistoryLOD)
+
+
+
+    
+
+
+
 #
 #    # initialize test_history_json to empty dict.  if it is read from the cache then it will not be empty
 #    # after these ifs
 #    test_history_json={}
 #    if options.useCachedCDashData:
-#      test_history_json=getJsonDataFromCache(cacheFolder, cacheFile)
+#      test_history_json=getJsonDataFromCache(testCacheDir, testHistoryCacheFile)
 #
 #    # if test_history_json is still empty then either it was not found in the cache or the user 
 #    # told us not to look in the cache.  Get the json from CDash
@@ -752,7 +781,7 @@ class AddTestHistoryToTestDictFunctor(object):
 #
 #      # cache json files if the option is on (turned on by default)
 #      if options.cdashQueriesCacheDir:
-#        writeJsonDataToCache(cacheFolder, cacheFile, test_history_json)
+#        writeJsonDataToCache(testCacheDir, testHistoryCacheFile, test_history_json)
 #
 #    # adding up number of failures and collecting dates of the failures
 #    failed_dates=[]
@@ -775,13 +804,17 @@ class AddTestHistoryToTestDictFunctor(object):
 #      testDict["most_recent_failure_date"]=failed_dates[0]
 
     # Assign all of the new test dict fields we are adding
+    testDict["site_url"] = ""
+    testDict['buildName_url'] = buildHistoryEmailUrl # ToDo: Change to one build
+    testDict['test_history_num_days'] = daysOfHistory
     testDict['test_history_query_url'] = testHistoryQueryUrl
     testDict['test_history_browser_url'] = testHistoryEmailUrl
+    #testDict['previous_nopass_date'] = ""
+    #testDict['previous_nopass_date_url'] = ""
+    #testDict['most_recent_failure_date"] = ""
 
-
-
+    # Return the updated test dict 
     return testDict
-
 
 
 # Gather up a list of the missing builds.

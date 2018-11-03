@@ -424,28 +424,64 @@ class test_CDashQueryAnalizeReport_UrlFuncs(unittest.TestCase):
     cdashIndexQueryUrl = getCDashIndexQueryUrl(
       "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
     cdashIndexQueryUrl_expected = \
-      "site.com/cdash/api/v1/index.php?project=project-name&date=2015-12-21&filtercount=1&morestuff"
+      "site.com/cdash/api/v1/index.php?project=project-name&date=2015-12-21"+\
+      "&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+  def test_getCDashIndexQueryUrl_no_date(self):
+    cdashIndexQueryUrl = getCDashIndexQueryUrl(
+      "site.com/cdash", "project-name", None, "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/api/v1/index.php?project=project-name"+\
+      "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
   def test_getCDashIndexBrowserUrl(self):
     cdashIndexQueryUrl = getCDashIndexBrowserUrl(
       "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
     cdashIndexQueryUrl_expected = \
-      "site.com/cdash/index.php?project=project-name&date=2015-12-21&filtercount=1&morestuff"
+      "site.com/cdash/index.php?project=project-name&date=2015-12-21"+\
+      "&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+  def test_getCDashIndexBrowserUrl_no_date(self):
+    cdashIndexQueryUrl = getCDashIndexBrowserUrl(
+      "site.com/cdash", "project-name", None, "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/index.php?project=project-name"+\
+      "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
   def test_getCDashQueryTestsQueryUrl(self):
     cdashIndexQueryUrl = getCDashQueryTestsQueryUrl(
       "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
     cdashIndexQueryUrl_expected = \
-      "site.com/cdash/api/v1/queryTests.php?project=project-name&date=2015-12-21&filtercount=1&morestuff"
+      "site.com/cdash/api/v1/queryTests.php?project=project-name&date=2015-12-21"+\
+      "&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+  def test_getCDashQueryTestsQueryUrl_no_date(self):
+    cdashIndexQueryUrl = getCDashQueryTestsQueryUrl(
+      "site.com/cdash", "project-name", None, "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/api/v1/queryTests.php?project=project-name"+\
+      "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
   def test_getCDashQueryTestsBrowserUrl(self):
     cdashIndexQueryUrl = getCDashQueryTestsBrowserUrl(
       "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
     cdashIndexQueryUrl_expected = \
-      "site.com/cdash/queryTests.php?project=project-name&date=2015-12-21&filtercount=1&morestuff"
+      "site.com/cdash/queryTests.php?project=project-name&date=2015-12-21"+\
+      "&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+  def test_getCDashQueryTestsBrowserUrl_no_date(self):
+    cdashIndexQueryUrl = getCDashQueryTestsBrowserUrl(
+      "site.com/cdash", "project-name", None, "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/queryTests.php?project=project-name"+\
+      "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
 
@@ -918,35 +954,56 @@ g_testDictFailed = {
 
 class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
-  def test_1(self):
+  def test_downloadFromCDash(self):
+    # Deep copy the test dict so we don't modify the original
     testDict = copy.deepcopy(g_testDictFailed)
-    # Construct functor
+    # Target test date
+    testHistoryQueryUrl = \
+      u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00'
+    # Create a subdir for the created cache file
+    testCacheOutputDir = \
+      os.getcwd()+"/AddTestHistoryToTestDictFunctor/test_downloadFromCDash"
+    if os.path.exists(testCacheOutputDir): shutil.rmtree(testCacheOutputDir)
+    os.makedirs(testCacheOutputDir)
+    # Construct arguments
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
-    daysOfHistory=5
+    daysOfHistory = 5
+    useCachedCDashData = False
+    mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
+      testHistoryQueryUrl, {'builds':[]}) # ToDo: put in dummy test history!
+    # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, daysOfHistory)
+      cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir, useCachedCDashData,
+      mockExtractCDashApiQueryDataFunctor,
+      )
     # Apply the functor to add the test history to the test dict
     addTestHistoryFunctor(testDict)
     # Check to fields
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
-    #self.assertEqual(testDict['buildName_url'], 'DUMMY NO MATCH')
-    #self.assertEqual(testDict['testname'], 'test_name')
+    self.assertEqual(testDict['buildName_url'],
+      u'site.com/cdash/index.php?project=projectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-28T00:00:00'
+      )
+    self.assertEqual(testDict['testname'], 'test_name')
     #self.assertEqual(testDict['testname_url'], 'DUMMY NO MATCH')
-    #self.assertEqual(testDict['test_history_days'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['test_history_num_days'], 5)
+    self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
+    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00'
+      )
     #self.assertEqual(testDict['test_history_list'], 'DUMMY NO MATCH')
-    self.assertEqual(testDict['test_history_query_url'],
-     u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00')
-    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00')
     #self.assertEqual(testDict['nopass_last_x_days'], 'DUMMY NO MATCH')
     #self.assertEqual(testDict['nopass_last_x_days_url'], 'DUMMY NO MATCH')
     #self.assertEqual(testDict['previous_nopass_date'], 'DUMMY NO MATCH')
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
-    #self.assertEqual(testDict['issue_tracker'], '#1234')
-    #self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
-    # ToDo: Add more checks!
+    self.assertEqual(testDict['issue_tracker'], '#1234')
+    self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
+    # Check for the existance of the created Cache file
+    cacheFile = \
+      testCacheOutputDir+"/2001-01-01-site_name-build_name-test_name-HIST-5.json"
+    self.assertEqual(os.path.exists(testCacheOutputDir), True)
+    # ToDo: Check the contents of the cache file!
 
 
 #############################################################################
