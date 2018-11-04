@@ -391,10 +391,6 @@ if __name__ == '__main__':
         nonpassingTestsLOD,
         testsWithIssueTrackerMatchFunctor
         )
-    print("\nlen(nonpassingTestsWithoutIssueTrackersLOD) = "+
-      str(len(nonpassingTestsWithoutIssueTrackersLOD)))
-    print("\nlen(nonpassingTestsWithIssueTrackersLOD) = "+
-      str(len(nonpassingTestsWithIssueTrackersLOD)))
 
     # Split out list of nonpassing tests into those without issue trackers and
     # those with issue trackers.
