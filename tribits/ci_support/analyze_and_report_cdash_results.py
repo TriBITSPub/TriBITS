@@ -45,7 +45,7 @@ import datetime
 
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
-import CDashQueryAnalizeReport as CDQAR
+import CDashQueryAnalyzeReport as CDQAR
 from gitdist import addOptionParserChoiceOption
 
 #

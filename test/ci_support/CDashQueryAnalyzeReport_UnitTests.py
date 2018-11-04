@@ -45,7 +45,7 @@ import unittest
 import pprint
 
 from FindCISupportDir import *
-from CDashQueryAnalizeReport import *
+from CDashQueryAnalyzeReport import *
 
 g_testBaseDir = getScriptBaseDir()
 
@@ -83,7 +83,7 @@ def deleteThenCreateTestDir(testDir):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.validateYYYYMMDD_pass1()
+# Test CDashQueryAnalyzeReport.validateYYYYMMDD_pass1()
 #
 #############################################################################
 
@@ -122,7 +122,7 @@ class test_validateYYYYMMDD(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.getFileNameStrFromText()
+# Test CDashQueryAnalyzeReport.getFileNameStrFromText()
 #
 #############################################################################
 
@@ -140,7 +140,7 @@ class test_getFileNameStrFromText(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.getFilteredList()
+# Test CDashQueryAnalyzeReport.getFilteredList()
 #
 #############################################################################
 
@@ -163,7 +163,7 @@ class test_getFilteredList(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.splitListOnMatch()
+# Test CDashQueryAnalyzeReport.splitListOnMatch()
 #
 #############################################################################
 
@@ -198,7 +198,7 @@ class test_splitListOnMatch(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.foreachTransform()
+# Test CDashQueryAnalyzeReport.foreachTransform()
 #
 #############################################################################
 
@@ -231,7 +231,7 @@ class test_foreachTransform(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.readCsvFileIntoListOfDicts()
+# Test CDashQueryAnalyzeReport.readCsvFileIntoListOfDicts()
 #
 #############################################################################
 
@@ -336,7 +336,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.getExpectedBuildsListfromCsvFile()
+# Test CDashQueryAnalyzeReport.getExpectedBuildsListfromCsvFile()
 #
 #############################################################################
 
@@ -365,7 +365,7 @@ class test_getExpectedBuildsListfromCsvFile(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.getAndCacheCDashQueryDataOrReadFromCache()
+# Test CDashQueryAnalyzeReport.getAndCacheCDashQueryDataOrReadFromCache()
 #
 #############################################################################
 
@@ -426,11 +426,11 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport URL functions
+# Test CDashQueryAnalyzeReport URL functions
 #
 #############################################################################
 
-class test_CDashQueryAnalizeReport_UrlFuncs(unittest.TestCase):
+class test_CDashQueryAnalyzeReport_UrlFuncs(unittest.TestCase):
 
   def test_getCDashIndexQueryUrl(self):
     cdashIndexQueryUrl = getCDashIndexQueryUrl(
@@ -499,7 +499,7 @@ class test_CDashQueryAnalizeReport_UrlFuncs(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.collectCDashIndexBuildSummaryFields()
+# Test CDashQueryAnalyzeReport.collectCDashIndexBuildSummaryFields()
 #
 #############################################################################
 
@@ -550,7 +550,7 @@ class test_collectCDashIndexBuildSummaryFields(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.flattenCDashIndexBuildsToListOfDicts()
+# Test CDashQueryAnalyzeReport.flattenCDashIndexBuildsToListOfDicts()
 #
 #############################################################################
 
@@ -581,7 +581,7 @@ class test_flattenCDashIndexBuildsToListOfDicts(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.flattenCDashQueryTestsToListOfDicts()
+# Test CDashQueryAnalyzeReport.flattenCDashQueryTestsToListOfDicts()
 #
 #############################################################################
 
@@ -613,7 +613,7 @@ class test_flattenCDashQueryTestsToListOfDicts(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.createLookupDictForListOfDicts()
+# Test CDashQueryAnalyzeReport.createLookupDictForListOfDicts()
 #
 #############################################################################
 
@@ -679,7 +679,7 @@ class test_createLookupDictForListOfDicts(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.lookupDictGivenLookupDict()
+# Test CDashQueryAnalyzeReport.lookupDictGivenLookupDict()
 #
 #############################################################################
 
@@ -710,7 +710,7 @@ class test_lookupDictGivenLookupDict(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.SearchableListOfDicts
+# Test CDashQueryAnalyzeReport.SearchableListOfDicts
 #
 #############################################################################
 
@@ -759,7 +759,7 @@ class test_lookupDictGivenLookupDict(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.getMissingExpectedBuildsList()
+# Test CDashQueryAnalyzeReport.getMissingExpectedBuildsList()
 #
 #############################################################################
      
@@ -786,7 +786,7 @@ class test_getMissingExpectedBuildsList(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.downloadBuildsOffCDashAndFlatten()
+# Test CDashQueryAnalyzeReport.downloadBuildsOffCDashAndFlatten()
 #
 #############################################################################
 
@@ -820,7 +820,7 @@ class test_downloadBuildsOffCDashAndFlatten(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.downloadTestsOffCDashQueryTestsAndFlatten()
+# Test CDashQueryAnalyzeReport.downloadTestsOffCDashQueryTestsAndFlatten()
 #
 #############################################################################
 
@@ -855,7 +855,7 @@ class test_downloadTestsOffCDashQueryTestsAndFlatten(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.MatchDictKeysValuesFunctor
+# Test CDashQueryAnalyzeReport.MatchDictKeysValuesFunctor
 #
 #############################################################################
 
@@ -887,7 +887,7 @@ class test_MatchDictKeysValuesFunctor(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.AddIssueTrackerInfoToTestDictFunctor
+# Test CDashQueryAnalyzeReport.AddIssueTrackerInfoToTestDictFunctor
 #
 #############################################################################
 
@@ -945,7 +945,7 @@ class test_AddIssueTrackerInfoToTestDictFunctor(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.AddTestHistoryToTestDictFunctor
+# Test CDashQueryAnalyzeReport.AddTestHistoryToTestDictFunctor
 #
 #############################################################################
 
@@ -1057,7 +1057,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.buildHasConfigureFailures()
+# Test CDashQueryAnalyzeReport.buildHasConfigureFailures()
 #
 #############################################################################
 
@@ -1080,7 +1080,7 @@ class test_buildHasConfigureFailures(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.buildHasBuildFailures()
+# Test CDashQueryAnalyzeReport.buildHasBuildFailures()
 #
 #############################################################################
 
@@ -1103,7 +1103,7 @@ class test_buildHasBuildFailures(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.sortAndLimitListOfDicts()
+# Test CDashQueryAnalyzeReport.sortAndLimitListOfDicts()
 #
 #############################################################################
 
@@ -1232,7 +1232,7 @@ class test_sortAndLimitListOfDicts(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.createHtmlTableStr()
+# Test CDashQueryAnalyzeReport.createHtmlTableStr()
 #
 #############################################################################
  
@@ -1409,7 +1409,7 @@ r"""<style>my_style</style>
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.createCDashDataSummaryHtmlTableStr()
+# Test CDashQueryAnalyzeReport.createCDashDataSummaryHtmlTableStr()
 #
 #############################################################################
 
@@ -1535,7 +1535,7 @@ tr:nth-child(odd) {background-color: #fff;}
 
 #############################################################################
 #
-# Test CDashQueryAnalizeReport.createCDashTestHtmlTableStr()
+# Test CDashQueryAnalyzeReport.createCDashTestHtmlTableStr()
 #
 #############################################################################
 

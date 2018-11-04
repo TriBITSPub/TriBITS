@@ -46,7 +46,7 @@ import unittest
 import pprint
 
 from FindCISupportDir import *
-import CDashQueryAnalizeReport as CDQAR
+import CDashQueryAnalyzeReport as CDQAR
 
 g_testBaseDir = CDQAR.getScriptBaseDir()
 
