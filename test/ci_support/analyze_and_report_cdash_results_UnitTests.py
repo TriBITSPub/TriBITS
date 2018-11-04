@@ -184,6 +184,7 @@ def analyze_and_report_cdash_results_run_case(
       " --expected-builds-file=expectedBuilds.csv"+\
       " --tests-with-issue-trackers-file=testsWithIssueTrackers.csv"+\
       " --write-email-to-file="+htmlFileName+\
+      " --use-new-test-code"+\
       " "+" ".join(extraCmndLineOptionsList)
   
     # Run analyze_and_report_cdash_results.py
@@ -269,15 +270,15 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         # Pin down the first row of this table (pin down this first row
         "<tr>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
-        "<td align=\"left\"><a href=\"https://testing[.]sandia[.]gov/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Anasazi_Epetra_BKS_norestart_test_MPI_4</a></td>",
-        "<td align=\"left\"><a href=\"https://testing[.]sandia[.]gov/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Failed</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Anasazi_Epetra_BKS_norestart_test_MPI_4</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Failed</a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
         "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-03T00:00:00\">30</a></td>",
         "<td align=\"right\">2018-10-27</td>",
         "<td align=\"right\"></td>",
         "</tr>",
         # Second row
-        "<td align=\"left\"><a href=\"https://testing[.]sandia[.]gov/cdash/testDetails[.]php[?]test=57860535&build=4107241\">Belos_gcrodr_hb_MPI_4</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57860535&build=4107241\">Belos_gcrodr_hb_MPI_4</a></td>",
 
         # twif table
         "<h3>Failing tests with issue trackers: twif=9</h3>",

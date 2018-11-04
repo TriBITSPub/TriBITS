@@ -1405,18 +1405,6 @@ r"""<style>my_style</style>
 
 """
     self.assertEqual(htmlTable, htmlTable_expected)
-
-
-
-
-
-
-
-
-
-
-
-
       
 
 #############################################################################
@@ -1543,7 +1531,15 @@ tr:nth-child(odd) {background-color: #fff;}
 # ToDo: Test with limitRowsToDisplay < len(rowDataList)
 
 # ToDo: Test with now rows and therefore now table printed
+      
 
+#############################################################################
+#
+# Test CDashQueryAnalizeReport.createCDashTestHtmlTableStr()
+#
+#############################################################################
+
+# ToDo: Add unit tests for createCDashTestHtmlTableStr()!
 
 #
 # Run the unit tests!

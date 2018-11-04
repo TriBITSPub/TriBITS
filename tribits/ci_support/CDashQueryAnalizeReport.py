@@ -1149,7 +1149,7 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
       # Set the row entry in the HTML table
       htmlStr+=\
         "<td align=\""+colData.colAlign+"\">"+\
-        str(entryStr)+\
+        str(entryStr).strip()+\
         "</td>\n"
     htmlStr+="</tr>\n\n"
     row_i += 1
@@ -1174,7 +1174,7 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
 # numItems [in]: The number of items of data
 #
 def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems,
-  limitRowsToDisplay=None \
+  limitRowsToDisplay=None,
   ):
   tableTitle = dataTitle
   if limitRowsToDisplay:
@@ -1220,7 +1220,7 @@ def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems,
 # NOTE: If len(rowDataList) == 0, then the empty string "" is returned.
 #
 def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
-  colDataList, rowDataList, sortKeyList = None, limitRowsToDisplay = None,
+  colDataList, rowDataList, sortKeyList=None, limitRowsToDisplay=None,
   htmlStyle=None, htmlTableStyle=None,
   ):
   # If no rows, don't create a table
@@ -1232,7 +1232,6 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
   # Table title
   tableTitle = getCDashDataSummaryHtmlTableTitleStr(
     dataTitle, dataCountAcronym, len(rowDataList), limitRowsToDisplay )
-
   # Create and return the table
   return createHtmlTableStr( tableTitle,
     colDataList, rowDataListDisplayed, htmlStyle, htmlTableStyle )
@@ -1242,12 +1241,17 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
 #
 # ToDo: Finish documentation!
 #
-def createCDashTestHtmlTableStr( testTypeDescr, testTypeCountAcronym,
-  testsLOD, daysOfHistory, htmlStyle=None, htmlTableStyle=None,
+def createCDashTestHtmlTableStr( testTypeDescr,
+  testTypeCountAcronym, testTypeCountNum,
+  testsLOD, daysOfHistory, limitRowsToDisplay=None,
+  htmlStyle=None, htmlTableStyle=None,
   ):
   # Return empty string if no tests
   if len(testsLOD) == 0:
      return ""
+  # Table title
+  tableTitle = getCDashDataSummaryHtmlTableTitleStr(
+    testTypeDescr, testTypeCountAcronym, testTypeCountNum, limitRowsToDisplay )
   # Create column headers
   tcd = TableColumnData
   testsColDataList = [
@@ -1261,8 +1265,8 @@ def createCDashTestHtmlTableStr( testTypeDescr, testTypeCountAcronym,
     tcd("issue_tracker", "Tracker", "right"),
     ]
   # Return the HTML table
-  return createCDashDataSummaryHtmlTableStr(
-    testTypeDescr, testTypeCountAcronym, testsColDataList, testsLOD,
+  return createHtmlTableStr( tableTitle,
+    testsColDataList, testsLOD,
     htmlStyle=htmlStyle, htmlTableStyle=htmlTableStyle )
 
 

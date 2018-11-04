@@ -206,8 +206,11 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --use-cached-cdash-data='"+inOptions.useCachedCDashDataStr+"'"+lt+\
     "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
     "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt+\
-    "  --send-email-to='"+inOptions.sendEmailTo+"'"+lt+\
-    "  --email-from-address='"+inOptions.emailFromAddress+"'"+lt
+    "  --email-from-address='"+inOptions.emailFromAddress+"'"+lt+\
+    "  --send-email-to='"+inOptions.sendEmailTo+"'"+lt
+  if inOptions.useNewTestCode:
+    cmndLineOpts += \
+    "  --use-new-test-code="+lt
   return cmndLineOpts 
 
 
@@ -604,7 +607,7 @@ if __name__ == '__main__':
     twoifNum = len(nonpassingTestsWithoutIssueTrackersLOD)
 
     twoifSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twoifDescr,  twoifAcro, twoifNum)
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twoifDescr, twoifAcro, twoifNum)
 
     print(twoifSummaryStr)
 
@@ -641,8 +644,9 @@ if __name__ == '__main__':
           )
 
         htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-          twoifDescr,  twoifAcro, nonpassingTestsWithoutIssueTrackersSortedLimitedLOD,
-          inOptions.test_history_days )
+          twoifDescr, twoifAcro, twoifNum,
+          nonpassingTestsWithoutIssueTrackersSortedLimitedLOD,
+          inOptions.test_history_days, inOptions.limitTableRows )
 
       else:
 
@@ -664,7 +668,7 @@ if __name__ == '__main__':
     twifNum = len(nonpassingTestsWithIssueTrackersLOD)
 
     twifSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twifDescr,  twifAcro, twifNum)
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twifDescr, twifAcro, twifNum)
 
     print(twifSummaryStr)
 
@@ -695,7 +699,8 @@ if __name__ == '__main__':
           )
 
         htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-          twifDescr,  twifAcro, nonpassingTestsWithIssueTrackersLOD,
+          twifDescr, twifAcro, twifNum,
+          nonpassingTestsWithIssueTrackersLOD,
           inOptions.test_history_days )
 
       else:
