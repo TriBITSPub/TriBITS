@@ -235,7 +235,18 @@ def pprintPythonData(pythonData, filePath):
   pp.pprint(pythonData)
 
 
-# Get data off CDash and cache it or read from previously cached data
+# Get data off CDash and cache it or read from previously cached data.
+#
+# If useCachedCDashData == True, then the file cdashQueryDataCacheFile must
+# exist and will be used to get the data instead of calling CDash
+#
+# If alwaysUseCacheFileIfExists==True and the file cdashQueryDataCacheFile
+# already exists, then the file cdashQueryDataCacheFile will be used to get
+# the dta instead of callig CDash.
+#
+# Otherwise, CDash will be called at cdashQueryUrl to get the data and then
+# the data will be written to the the file cdashQueryDataCacheFile if
+# cdashQueryDataCacheFile != None.
 #
 # This function can be used to get data off of CDash using any page on CDash
 # including cdash/api/v1/index.php, cdash/api/v1/queryTests.php and anything
@@ -246,12 +257,21 @@ def getAndCacheCDashQueryDataOrReadFromCache(
   cdashQueryUrl,
   cdashQueryDataCacheFile,  # File name
   useCachedCDashData,  # If 'True', then cdasyQueryDataCacheFile must be non-null
+  alwaysUseCacheFileIfExists = False,
   printCDashUrl = False,
   extractCDashApiQueryData_in=extractCDashApiQueryData,
   ):
   if useCachedCDashData:
     if printCDashUrl:
-      print("Using cached data from:\n\n  " + cdashQueryUrl )
+      print("Using cached data from file:\n\n  " + cdashQueryUrl )
+    cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
+  elif (
+      alwaysUseCacheFileIfExists \
+      and cdashQueryDataCacheFile \
+      and os.path.exists(cdashQueryDataCacheFile) \
+    ):
+    if printCDashUrl:
+      print("Since the file exists, using cached data from file:\n\n  " + cdashQueryUrl )
     cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
   else:
     if printCDashUrl:
@@ -671,12 +691,15 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
 class AddTestHistoryToTestDictFunctor(object):
 
 
-  # Constructor
+  # Constructor which takes additional data needed to get the test history and
+  # other stuff.
   #
-  # Takes additional data needed to get the test history and other stuff.
+  # By default, this wil always read the data from the cache file if that file
+  # already exists.
   #
   def __init__(self, cdashUrl, projectName, date, daysOfHistory,
-    testCacheDir, useCachedCDashData,
+    testCacheDir, useCachedCDashData=True, alwaysUseCacheFileIfExists=True,
+    verbose=True,
     extractCDashApiQueryData_in=extractCDashApiQueryData, # For unit testing
     ):
     self.__cdashUrl = cdashUrl
@@ -685,6 +708,8 @@ class AddTestHistoryToTestDictFunctor(object):
     self.__daysOfHistory = daysOfHistory
     self.__testCacheDir = testCacheDir
     self.__useCachedCDashData = useCachedCDashData
+    self.__alwaysUseCacheFileIfExists = alwaysUseCacheFileIfExists
+    self.__verbose = verbose
     self.__extractCDashApiQueryData_in = extractCDashApiQueryData_in
 
 
@@ -746,10 +771,15 @@ class AddTestHistoryToTestDictFunctor(object):
     testHistoryCacheFile = self.__testCacheDir+"/"+\
       self.__date+"-"+site+"-"+buildName+"-"+testname+"-HIST-"+str(daysOfHistory)+".json"
 
+    if self.__verbose:
+      print("Getting "+str(daysOfHistory)+" days of history for "+testname+\
+        " in the build "+buildName+" on "+site)
+
     # Get the test history off of CDash (or from reading the cache file)
     testHistoryLOD = downloadTestsOffCDashQueryTestsAndFlatten(
       testHistoryQueryUrl, testHistoryCacheFile,
       useCachedCDashData=self.__useCachedCDashData,
+      alwaysUseCacheFileIfExists=self.__alwaysUseCacheFileIfExists,
       verbose=False,
       extractCDashApiQueryData_in=self.__extractCDashApiQueryData_in
       )
@@ -870,6 +900,10 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
 # downloaded from CDash will be written to the file
 # cdashIndexBuildsQueryCacheFile or read from that file if
 # useCachedCDashData==True.
+#
+# If alwaysUseCacheFileIfExists==True, then if the file
+# cdashIndexBuildsQueryCacheFile already exists, it will always be read to get
+# data instead of communicating with CDash even if useCachedCDashData==False.
 # 
 # The list of builds pulled off of CDash is flattended and extracted using the
 # function flattenCDashIndexBuildsToListOfDicts().
@@ -881,13 +915,15 @@ def downloadBuildsOffCDashAndFlatten(
   cdashIndexBuildsQueryUrl,
   fullCDashIndexBuildsJsonCacheFile=None,
   useCachedCDashData=False,
+  alwaysUseCacheFileIfExists = False,
   verbose=True,
   extractCDashApiQueryData_in=extractCDashApiQueryData,
   ):
   # Get the query data
   fullCDashIndexBuildsJson = getAndCacheCDashQueryDataOrReadFromCache(
     cdashIndexBuildsQueryUrl, fullCDashIndexBuildsJsonCacheFile, useCachedCDashData,
-    verbose, extractCDashApiQueryData_in )
+    alwaysUseCacheFileIfExists, printCDashUrl=verbose,
+    extractCDashApiQueryData_in=extractCDashApiQueryData_in )
   # Get trimmed down set of builds
   buildsListOfDicts = \
     flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson)
@@ -910,6 +946,10 @@ def downloadBuildsOffCDashAndFlatten(
 # instead the list of builds will be read from the file cdashQueryCacheFile
 # which must already exist from a prior call to this function (mostly for
 # debugging and unit testing purposes).
+#
+# If alwaysUseCacheFileIfExists==True, then if the file
+# cdashIndexBuildsQueryCacheFile already exists, it will always be read to get
+# data instead of communicating with CDash even if useCachedCDashData==False.
 # 
 # The list of tests pulled off CDash is flattended and returned by the
 # function flattenCDashQueryTestsToListOfDicts().
@@ -921,13 +961,15 @@ def downloadTestsOffCDashQueryTestsAndFlatten(
   cdashQueryTestsUrl,
   fullCDashQueryTestsJsonCacheFile=None,
   useCachedCDashData=False,
+  alwaysUseCacheFileIfExists = False,
   verbose=True,
   extractCDashApiQueryData_in=extractCDashApiQueryData,
   ):
   # Get the query data
   fullCDashQueryTestsJson = getAndCacheCDashQueryDataOrReadFromCache(
     cdashQueryTestsUrl, fullCDashQueryTestsJsonCacheFile, useCachedCDashData,
-    verbose, extractCDashApiQueryData_in )
+    alwaysUseCacheFileIfExists, printCDashUrl=verbose,
+    extractCDashApiQueryData_in=extractCDashApiQueryData_in )
   # Get flattend set of tests
   testsListOfDicts = \
     flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson)

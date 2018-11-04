@@ -411,6 +411,18 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
       )
     self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
 
+  def test_getAndCacheCDashQueryDataOrReadFromCache_always_read_cache(self):
+    outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_always_read_cache"
+    outputCacheFile=outputCacheDir+"/cachedCDashQueryData.json"
+    deleteThenCreateTestDir(outputCacheDir)
+    open(outputCacheFile, 'w').write(str(g_getAndCacheCDashQueryDataOrReadFromCache_data))
+    cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
+      "dummy-cdash-url", outputCacheFile,
+      useCachedCDashData=True,
+      printCDashUrl=False,
+      )
+    self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
+
 
 #############################################################################
 #
@@ -976,11 +988,14 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     date = "2001-01-01"
     daysOfHistory = 5
     useCachedCDashData = False
+    alwaysUseCacheFileIfExists = False
+    verbose = False
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
       testHistoryQueryUrl, {'builds':[]}) # ToDo: put in dummy test history!
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir, useCachedCDashData,
+      cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
+      useCachedCDashData, alwaysUseCacheFileIfExists, verbose,
       mockExtractCDashApiQueryDataFunctor,
       )
     # Apply the functor to add the test history to the test dict
@@ -1010,6 +1025,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(os.path.exists(testCacheOutputDir), True)
     # ToDo: Check the contents of the cache file!
 
+    # ToDo: Add test reading data from cache file!
 
 #############################################################################
 #
