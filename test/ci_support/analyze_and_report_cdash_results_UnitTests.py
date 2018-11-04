@@ -184,7 +184,6 @@ def analyze_and_report_cdash_results_run_case(
       " --expected-builds-file=expectedBuilds.csv"+\
       " --tests-with-issue-trackers-file=testsWithIssueTrackers.csv"+\
       " --write-email-to-file="+htmlFileName+\
-      " --use-new-test-code"+\
       " "+" ".join(extraCmndLineOptionsList)
   
     # Run analyze_and_report_cdash_results.py
@@ -444,8 +443,6 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       buildSetName)
 
     # Remove all of the failing tests
-    oldTestListFilePath = testOutputDir+"/test_history/2001-01-01-All-Failing-Tests.json"
-    CDQAR.pprintPythonData( {}, oldTestListFilePath )
     testListFilePath = \
       testOutputDir+"/Project_Specialized_Builds_fullCDashNonpassingTests.json"
     CDQAR.pprintPythonData( {'builds':[]}, testListFilePath )
