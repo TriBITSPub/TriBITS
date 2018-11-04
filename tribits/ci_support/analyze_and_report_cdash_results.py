@@ -165,6 +165,10 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "--send-email-to=", dest="sendEmailTo", type="string", default="",
     help="Send email to 'address1,address2,...'. (Default '')" )
 
+  clp.add_option(
+    "--use-new-test-code=", dest="useNewTestCode", action="store_true", default=False,
+    help="Send email to 'address1,address2,...'. (Default '')" )
+
 
 def validateCmndLineOptions(inOptions):
   
@@ -314,7 +318,6 @@ if __name__ == '__main__':
     testsWithIssueTrackerMatchFunctor = \
       CDQAR.MatchDictKeysValuesFunctor(testsWithIssueTrackerSLOD)
 
-
     #
     # D.2) Get lists of build and test data off CDash
     #
@@ -397,20 +400,29 @@ if __name__ == '__main__':
     print("\nlen(nonpassingTestsWithIssueTrackersLOD) = "+
       str(len(nonpassingTestsWithIssueTrackersLOD)))
 
-    # Get data from cdash and return in a simpler form
-    all_failing_tests=CDQAR.getTestsJsonFromCdash(
-      inOptions.cdashSiteUrl, inOptions.cdashProjectName,
-      inOptions.cdashNonpassedTestsFilters,
-      inOptions, printCDashUrl=True )
+    if not inOptions.useNewTestCode:
 
-    # Add issue tracking information to the tests' data
-    CDQAR.checkForIssueTracker(all_failing_tests, inOptions.testsWithIssueTrackersFile)
-    
-    # Split the tests into those with issue tracking and those without
-    tests_without_issue_tracking, tests_with_issue_tracking = \
-      CDQAR.filterDictionary(all_failing_tests, "issue_tracker")
+      # Old test query and history code
 
-    # ToDo: Implement!  (Replace above call to CDQAR.getTestsJsonFromCdash())
+      # Get data from cdash and return in a simpler form
+      all_failing_tests = CDQAR.getTestsJsonFromCdash(
+        inOptions.cdashSiteUrl, inOptions.cdashProjectName,
+        inOptions.cdashNonpassedTestsFilters,
+        inOptions, printCDashUrl=True )
+  
+      # Add issue tracking information to the tests' data
+      CDQAR.checkForIssueTracker(all_failing_tests, inOptions.testsWithIssueTrackersFile)
+      
+      # Split the tests into those with issue tracking and those without
+      tests_without_issue_tracking, tests_with_issue_tracking = \
+        CDQAR.filterDictionary(all_failing_tests, "issue_tracker")
+
+    else:
+
+      all_failing_tests = {}
+      tests_without_issue_tracking = {}
+      tests_with_issue_tracking = {}
+
 
     # Split out list of nonpassing tests into those without issue trackers and
     # those with issue trackers.
@@ -430,7 +442,7 @@ if __name__ == '__main__':
     # Nonpassing Tests on CDash
     htmlEmailBodyTop += \
      "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
-     "Nonpassing Tests on CDash</a> (num="+str(len(all_failing_tests.keys()))+")<br>\n"
+     "Nonpassing Tests on CDash</a> (num="+str(len(nonpassingTestsLOD))+")<br>\n"
   
     # End of full build and test link paragraph and start the next paragraph
     # for the summary of failures and other tables
@@ -589,7 +601,7 @@ if __name__ == '__main__':
 
     twoifDescr = "Failing tests without issue trackers"
     twoifAcro = "twoif"
-    twoifNum = len(testsWithoutIssueTrackerLOD)
+    twoifNum = len(nonpassingTestsWithoutIssueTrackersLOD)
 
     twoifSummaryStr = \
       CDQAR.getCDashDataSummaryHtmlTableTitleStr(twoifDescr,  twoifAcro, twoifNum)
@@ -604,9 +616,40 @@ if __name__ == '__main__':
 
       htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoifSummaryStr)+"<br>\n"
 
-      htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        twoifDescr,  twoifAcro, testsColDataList, testsWithoutIssueTrackerLOD,
-        testnameBuildnameSiteSortOrder, inOptions.limitTableRows )
+      # Sort and get only the top <N> non-passing tests without issue trackers
+      # (since this can be a huge number of failing tests)
+      nonpassingTestsWithoutIssueTrackersSortedLimitedLOD = CDQAR.sortAndLimitListOfDicts(
+        nonpassingTestsWithoutIssueTrackersLOD, testnameBuildnameSiteSortOrder,
+        inOptions.limitTableRows )
+
+      if inOptions.useNewTestCode:
+
+        # Add test history data to the tope <N> non-assing tests without issue
+        # trackres
+        CDQAR.foreachTransform(
+          nonpassingTestsWithoutIssueTrackersSortedLimitedLOD,
+          CDQAR.AddTestHistoryToTestDictFunctor(
+            inOptions.cdashSiteUrl,
+            inOptions.cdashProjectName,
+            inOptions.date,
+            inOptions.test_history_days,
+            inOptions.cdashQueriesCacheDir+"/test_history",
+            useCachedCDashData=inOptions.useCachedCDashData,
+            alwaysUseCacheFileIfExists=True,
+            verbose=True,
+            )
+          )
+
+        htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+          twoifDescr,  twoifAcro, nonpassingTestsWithoutIssueTrackersSortedLimitedLOD,
+          inOptions.test_history_days )
+
+      else:
+
+        # Print the HTML table
+        htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+          twoifDescr,  twoifAcro, testsColDataList, testsWithoutIssueTrackerLOD,
+          testnameBuildnameSiteSortOrder, inOptions.limitTableRows )
 
     #
     print("\nSearch failing tests with issue trackers ...\n")
@@ -616,14 +659,9 @@ if __name__ == '__main__':
       tests_with_issue_tracking)
     #pp.pprint(testsWithIssueTrackerLOD)
 
-    # Sort and get detailed test history for all 'twif' failing tests with
-    # issue trackers.
-
-    # ToDo: Implement!
-
     twifDescr = "Failing tests with issue trackers"
     twifAcro = "twif"
-    twifNum = len(testsWithIssueTrackerLOD)
+    twifNum = len(nonpassingTestsWithIssueTrackersLOD)
 
     twifSummaryStr = \
       CDQAR.getCDashDataSummaryHtmlTableTitleStr(twifDescr,  twifAcro, twifNum)
@@ -638,11 +676,35 @@ if __name__ == '__main__':
 
       htmlEmailBodyTop += twifSummaryStr+"<br>\n"
 
-      htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        twifDescr,  twifAcro, testsColDataList, testsWithIssueTrackerLOD,
-        testnameBuildnameSiteSortOrder)
-      # NOTE: We don't limit the number of tests tracked tests listed because
-      # we will never have a huge number of failing tests with issue trackers.
+      if inOptions.useNewTestCode:
+
+        # Add test history data to the tope <N> non-assing tests without issue
+        # trackres
+        CDQAR.foreachTransform(
+          nonpassingTestsWithIssueTrackersLOD,
+          CDQAR.AddTestHistoryToTestDictFunctor(
+            inOptions.cdashSiteUrl,
+            inOptions.cdashProjectName,
+            inOptions.date,
+            inOptions.test_history_days,
+            inOptions.cdashQueriesCacheDir+"/test_history",
+            useCachedCDashData=inOptions.useCachedCDashData,
+            alwaysUseCacheFileIfExists=True,
+            verbose=True,
+            )
+          )
+
+        htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+          twifDescr,  twifAcro, nonpassingTestsWithIssueTrackersLOD,
+          inOptions.test_history_days )
+
+      else:
+
+        htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+          twifDescr,  twifAcro, testsColDataList, testsWithIssueTrackerLOD,
+          testnameBuildnameSiteSortOrder)
+        # NOTE: We don't limit the number of tests tracked tests listed because
+        # we will never have a huge number of failing tests with issue trackers.
 
     # Generate table "Tests without issue trackers not run: twoinr=???"
     # (sorted and limited to the top <N> items).

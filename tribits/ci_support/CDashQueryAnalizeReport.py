@@ -261,17 +261,18 @@ def getAndCacheCDashQueryDataOrReadFromCache(
   printCDashUrl = False,
   extractCDashApiQueryData_in=extractCDashApiQueryData,
   ):
-  if useCachedCDashData:
-    if printCDashUrl:
-      print("Using cached data from file:\n\n  " + cdashQueryUrl )
-    cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
-  elif (
+  if (
       alwaysUseCacheFileIfExists \
       and cdashQueryDataCacheFile \
       and os.path.exists(cdashQueryDataCacheFile) \
     ):
     if printCDashUrl:
-      print("Since the file exists, using cached data from file:\n\n  " + cdashQueryUrl )
+      print("Since the file exists, using cached data from file:\n\n"+\
+        "  "+cdashQueryDataCacheFile )
+    cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
+  elif useCachedCDashData:
+    if printCDashUrl:
+      print("Using cached data from file:\n\n  " + cdashQueryUrl )
     cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
   else:
     if printCDashUrl:
@@ -699,7 +700,7 @@ class AddTestHistoryToTestDictFunctor(object):
   #
   def __init__(self, cdashUrl, projectName, date, daysOfHistory,
     testCacheDir, useCachedCDashData=True, alwaysUseCacheFileIfExists=True,
-    verbose=True,
+    verbose=False,
     extractCDashApiQueryData_in=extractCDashApiQueryData, # For unit testing
     ):
     self.__cdashUrl = cdashUrl
@@ -718,16 +719,22 @@ class AddTestHistoryToTestDictFunctor(object):
   #
   def __call__(self, testDict):
 
-    # Get basic info about the test from the from the testDict
-    site = testDict["site"]
-    buildName = testDict["buildName"]
-    testname = testDict["testname"]
+    #pp = pprint.PrettyPrinter(indent=2)
+
+    #print("\ntestDict:\n")
+    #pp.pprint(testDict)
 
     # Get short names for data inside of this functor
     cdashUrl = self.__cdashUrl
     projectName = self.__projectName
     testDayDate = validateYYYYMMDD(self.__date)
     daysOfHistory = self.__daysOfHistory
+
+    # Get basic info about the test from the from the testDict
+    site = testDict["site"]
+    buildName = testDict["buildName"]
+    testname = testDict["testname"]
+    fullTestDetailsLink = cdashUrl+"/"+testDict['testDetailsLink']
 
     # Date range for test history
     dayAfterCurrentTestDay = \
@@ -772,8 +779,14 @@ class AddTestHistoryToTestDictFunctor(object):
       self.__date+"-"+site+"-"+buildName+"-"+testname+"-HIST-"+str(daysOfHistory)+".json"
 
     if self.__verbose:
-      print("Getting "+str(daysOfHistory)+" days of history for "+testname+\
-        " in the build "+buildName+" on "+site)
+      gettingTestHistoryMsg = \
+        "Getting "+str(daysOfHistory)+" days of history for "+testname+\
+        " in the build "+buildName+" on "+site
+      if os.path.exists(testHistoryCacheFile):
+        gettingTestHistoryMsg += " from cache file"
+      else:
+        gettingTestHistoryMsg += " from CDash"
+      print(gettingTestHistoryMsg)
 
     # Get the test history off of CDash (or from reading the cache file)
     testHistoryLOD = downloadTestsOffCDashQueryTestsAndFlatten(
@@ -821,6 +834,8 @@ class AddTestHistoryToTestDictFunctor(object):
     # Assign all of the new test dict fields we are adding
     testDict["site_url"] = ""
     testDict['buildName_url'] = buildHistoryEmailUrl # ToDo: Change to one build
+    testDict['testname_url'] = fullTestDetailsLink
+    testDict['status_url'] = fullTestDetailsLink
     testDict['test_history_num_days'] = daysOfHistory
     testDict['test_history_query_url'] = testHistoryQueryUrl
     testDict['test_history_browser_url'] = testHistoryBrowserUrl
@@ -1204,9 +1219,9 @@ def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems,
 #
 # NOTE: If len(rowDataList) == 0, then the empty string "" is returned.
 #
-def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
+def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
   colDataList, rowDataList, sortKeyList = None, limitRowsToDisplay = None,
-  htmlStyle=None, htmlTableStyle=None \
+  htmlStyle=None, htmlTableStyle=None,
   ):
   # If no rows, don't create a table
   if len(rowDataList) == 0:
@@ -1221,6 +1236,34 @@ def createCDashDataSummaryHtmlTableStr(dataTitle, dataCountAcronym,
   # Create and return the table
   return createHtmlTableStr( tableTitle,
     colDataList, rowDataListDisplayed, htmlStyle, htmlTableStyle )
+
+
+# Create at tests HTML table string
+#
+# ToDo: Finish documentation!
+#
+def createCDashTestHtmlTableStr( testTypeDescr, testTypeCountAcronym,
+  testsLOD, daysOfHistory, htmlStyle=None, htmlTableStyle=None,
+  ):
+  # Return empty string if no tests
+  if len(testsLOD) == 0:
+     return ""
+  # Create column headers
+  tcd = TableColumnData
+  testsColDataList = [
+    tcd("site", "Site"),
+    tcd("buildName", "Build Name"),
+    tcd("testname", "Test Name"),
+    tcd("status", "Status"),
+    tcd("details", "Details"),
+    tcd('nopass_last_x_days', "Nopass last "+str(daysOfHistory)+" Days", "right"),
+    tcd("previous_nopass_date", "Previous Nopass Date", "right"),
+    tcd("issue_tracker", "Tracker", "right"),
+    ]
+  # Return the HTML table
+  return createCDashDataSummaryHtmlTableStr(
+    testTypeDescr, testTypeCountAcronym, testsColDataList, testsLOD,
+    htmlStyle=htmlStyle, htmlTableStyle=htmlTableStyle )
 
 
 ########################################################################

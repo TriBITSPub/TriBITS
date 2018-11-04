@@ -443,8 +443,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       buildSetName)
 
     # Remove all of the failing tests
-    testListFilePath = testOutputDir+"/test_history/2001-01-01-All-Failing-Tests.json"
-    CDQAR.pprintPythonData( {}, testListFilePath )
+    oldTestListFilePath = testOutputDir+"/test_history/2001-01-01-All-Failing-Tests.json"
+    CDQAR.pprintPythonData( {}, oldTestListFilePath )
+    testListFilePath = \
+      testOutputDir+"/Project_Specialized_Builds_fullCDashNonpassingTests.json"
+    CDQAR.pprintPythonData( {'builds':[]}, testListFilePath )
     # ToDo: Fix above once the script caches the raw CDash JSON output.
 
     # Run analyze_and_report_cdash_results.py and make sure that it prints the

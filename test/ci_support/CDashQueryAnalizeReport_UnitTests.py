@@ -1033,7 +1033,8 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
       u'site.com/cdash/index.php?project=projectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-28T00:00:00'
       )
     self.assertEqual(testDict['testname'], 'test_name')
-    #self.assertEqual(testDict['testname_url'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['testname_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['status_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
     self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00'
