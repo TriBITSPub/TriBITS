@@ -1237,9 +1237,37 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
     colDataList, rowDataListDisplayed, htmlStyle, htmlTableStyle )
 
 
-# Create at tests HTML table string
+# Create a tests HTML table string
 #
-# ToDo: Finish documentation!
+# testTypeDescr [in]: Description of the test type being tabulated
+# (e.g. "Failing tests without issue trackers")
+#
+# testTypeCountAcronym [in]: Acronym for the test type being tabulated
+# (e.g. "twoif")
+#
+# testTypeCountNum [in]: Number of total items for the test type, before
+# limiting (e.g. 25)
+#
+# testsLOD [in]: List of dicts of the test data typically first first
+# downloaded from CDash.  Each dict in this list must also have been operated
+# on by the functors AddIssueTrackerInfoToTestDictFunctor and
+# AddTestHistoryToTestDictFunctor in order to have all of the data needed to
+# print in this table.
+#
+# daysOfHistory [in]: Number of days of test history being displayed.  This is
+# needed for one of the table column headers.  (ToDo: Remove this and get this
+# from the data).
+#
+# limitRowsToDisplay [in]: Limit of the number of rows to display.  If this
+# limited then this arugment is needed in order to print "(limited it ???)" in
+# the table title.  Should be 'None' if this listing is not limited. (default
+# None)
+#
+# htmlStyle [in]: HTML sytle for the entire table (see createHtmlTableStr())
+# (default None)
+#
+# htmlTableStyle [in]: Sytle inside of <table ... > (see createHtmlTableStr())
+# (default None)
 #
 def createCDashTestHtmlTableStr( testTypeDescr,
   testTypeCountAcronym, testTypeCountNum,
