@@ -537,22 +537,8 @@ if __name__ == '__main__':
     # D.3) Analyaize and report test results in different tables
     #
 
-    # Column header for listing tests
-    testsColDataList = [
-      tcd("site", "Site"),
-      tcd("build_name", "Build Name"),
-      tcd("test_name", "Test Name"),
-      tcd("status", "Status"),
-      tcd("details", "Details"),
-      tcd("failures_in_last_"+str(inOptions.test_history_days)+"_days",
-        "Nopass last "+str(inOptions.test_history_days)+" Days",
-        "right"),
-      tcd("previous_failure_date", "Previous Failure Date", "right"),
-      tcd("issue_tracker", "Tracker", "right"),
-      ]
-
     # Sort order for tests
-    testnameBuildnameSiteSortOrder = ['test_name', 'build_name', 'site']
+    testnameBuildnameSiteSortOrder = ['testname', 'buildName', 'site']
 
     #
     print("\nSearch failing tests without issue trackers ...\n")
