@@ -445,14 +445,9 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
 #       'testDetailsLink': 'testDetails.php?test=57925465&build=4109735',
 #       'testname': 'Anasazi_Epetra_BKS_norestart_test_MPI_4',
 #       'time': 10.1,
-#       'issue_tracker': "",
-#       'issue_tracker_url': "",
 #       },
 #     ...
 #     ]
-#
-# The empty fields 'issue_tracker' and 'issue_tracker_url' and done to
-# simplify later code.
 #
 # NOTE: This does a shallow copy so any modifications to the returned list and
 # dicts will modify the original data-structure fullCDashQueryTestsJson.  If
@@ -467,8 +462,6 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
 def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
   testsListOfDicts = []
   for testDict in fullCDashQueryTestsJson['builds']:
-    testDict.setdefault(u'issue_tracker', "")
-    testDict.setdefault(u'issue_tracker_url', "")
     testsListOfDicts.append(testDict)
   return testsListOfDicts
 
@@ -644,8 +637,9 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
   # This object testsWithIssueTrackersSLOD must have been constructed using
   # the function createSearchableListOfTests() so it will allow lookups based
   # on the 'site', 'buildName', and 'testname' keys.
-  def __init__(self, testsWithIssueTrackersSLOD):
+  def __init__(self, testsWithIssueTrackersSLOD, addEmptyOnNoMatch=True):
     self.__testsWithIssueTrackersSLOD = testsWithIssueTrackersSLOD
+    self.__addEmptyOnNoMatch = addEmptyOnNoMatch
 
   # Lookup the issue tracker info and add it as new key/value pairs to
   # testDict_inout.
@@ -654,12 +648,19 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
     # 'buildName', and 'testname' key/value pairs in testDict_inout.
     matchingDict = \
       self.__testsWithIssueTrackersSLOD.lookupDictGivenKeyValueDict(testDict_inout)
-    if not matchingDict:
-      raise Exception(
-        "Error, testDict_inout="+str(testDict_inout)+\
-        " does not have an assigned issue tracker!")
-    testDict_inout[u'issue_tracker'] = matchingDict['issue_tracker']
-    testDict_inout[u'issue_tracker_url'] = matchingDict['issue_tracker_url']
+    if matchingDict:
+      issue_tracker = matchingDict['issue_tracker']
+      issue_tracker_url = matchingDict['issue_tracker_url']
+    else:
+      if self.__addEmptyOnNoMatch:
+        issue_tracker = ""
+        issue_tracker_url = ""
+      else:
+        raise Exception(
+         "Error, testDict_inout="+str(testDict_inout)+\
+          " does not have an assigned issue tracker!")
+    testDict_inout[u'issue_tracker'] = issue_tracker
+    testDict_inout[u'issue_tracker_url'] = issue_tracker_url
     return testDict_inout
 
 
@@ -692,12 +693,12 @@ class AddTestHistoryToTestDictFunctor(object):
   #
   def __call__(self, testDict):
 
-    # Get basic info about the test from the testdict or self
+    # Get basic info about the test from the from the testDict
     site = testDict["site"]
     buildName = testDict["buildName"]
     testname = testDict["testname"]
 
-    # Get short names for data inside of functor
+    # Get short names for data inside of this functor
     cdashUrl = self.__cdashUrl
     projectName = self.__projectName
     testDayDate = validateYYYYMMDD(self.__date)
@@ -725,10 +726,6 @@ class AddTestHistoryToTestDictFunctor(object):
     # URL to imbed in email to show the history of the test to humans
     testHistoryEmailUrl = \
       getCDashQueryTestsBrowserUrl(cdashUrl, projectName, None, testHistoryQueryFilters)
-
-    # ToDo: Put in check testDict['buildstarttime'] equals the most recent
-    # test dict generated from the query in testHistoryQueryUrl.  That is
-    # needed to ensure that we got the date dayAfterCurrentTestDay correct.
 
     # URL for to the build summary on index.php page
     buildHistoryEmailUrl = getCDashIndexBrowserUrl(
@@ -760,29 +757,20 @@ class AddTestHistoryToTestDictFunctor(object):
     #pp = pprint.PrettyPrinter(indent=2)
     #pp.pprint(testHistoryLOD)
 
+    # Sort testHistoryLOD by 'buildstarttime' with the most recent test/build
+    # at the top and get the test history stats like 'numPassDays',
+    # 'numNotRunDays', 'numFailDays', 'mostRecentNopassTestIndex' (before
+    # today), 'mostRecentPassTestIndex' (before today), 'numConsecPassDays'
+    # (starting from most recent pass day, including today) and
+    # 'numConsecNopassDays' (starting from most recent nopass day, including
+    # today).
 
+    # ToDo: Implement!
 
-    
+    # ToDo: Put in check that testDict['buildstarttime'] equals the most
+    # recent test in testHistoryLOD.  That is needed to ensure that we got the
+    # date dayAfterCurrentTestDay correct!
 
-
-
-#
-#    # initialize test_history_json to empty dict.  if it is read from the cache then it will not be empty
-#    # after these ifs
-#    test_history_json={}
-#    if options.useCachedCDashData:
-#      test_history_json=getJsonDataFromCache(testCacheDir, testHistoryCacheFile)
-#
-#    # if test_history_json is still empty then either it was not found in the cache or the user 
-#    # told us not to look in the cache.  Get the json from CDash
-#    if not test_history_json:
-#      print("Getting "+str(daysOfHistory)+" days of history for "+testname+" in the build "+buildName+" on "+site+" from CDash")
-#      test_history_json=extractCDashApiQueryData(testHistoryQueryUrl)      
-#
-#      # cache json files if the option is on (turned on by default)
-#      if options.cdashQueriesCacheDir:
-#        writeJsonDataToCache(testCacheDir, testHistoryCacheFile, test_history_json)
-#
 #    # adding up number of failures and collecting dates of the failures
 #    failed_dates=[]
 #    for cdash_build in test_history_json["builds"]:

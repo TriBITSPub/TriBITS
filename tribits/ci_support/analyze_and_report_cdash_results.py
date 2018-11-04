@@ -382,6 +382,10 @@ if __name__ == '__main__':
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
 
+    # Add issue tracker info for all non passing tests
+    CDQAR.foreachTransform(nonpassingTestsLOD,
+      CDQAR.AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackerSLOD))
+
     # Split the list of nonpassing it those with and without issue trackers
     (nonpassingTestsWithIssueTrackersLOD,nonpassingTestsWithoutIssueTrackersLOD)=\
       CDQAR.splitListOnMatch(
@@ -392,11 +396,6 @@ if __name__ == '__main__':
       str(len(nonpassingTestsWithoutIssueTrackersLOD)))
     print("\nlen(nonpassingTestsWithIssueTrackersLOD) = "+
       str(len(nonpassingTestsWithIssueTrackersLOD)))
-
-    # Add issue tracker info for tests with issue trackers
-    CDQAR.foreachTransform(
-      nonpassingTestsWithIssueTrackersLOD,
-      CDQAR.AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackerSLOD) )
 
     # Get data from cdash and return in a simpler form
     all_failing_tests=CDQAR.getTestsJsonFromCdash(

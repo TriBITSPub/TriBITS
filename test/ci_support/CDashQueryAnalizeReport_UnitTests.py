@@ -913,9 +913,14 @@ class test_AddIssueTrackerInfoToTestDictFunctor(unittest.TestCase):
     self.assertEqual(aitf_itf(aitf, 'site1','build1','test1'), ['url1','#1111'])
     self.assertEqual(aitf_itf(aitf, 'site2','build2','test1'), ['url3','#1113'])
 
-  def test_error(self):
+  def test_add_empty(self):
     testsWithIssueTrackerSLOD = createSearchableListOfTests(g_testsWtihIssueTrackersList)
     aitf = AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackerSLOD)
+    self.assertEqual(aitf_itf(aitf, 'site2','build2','test9'), ['',''])
+
+  def test_missing_error(self):
+    testsWithIssueTrackerSLOD = createSearchableListOfTests(g_testsWtihIssueTrackersList)
+    aitf = AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackerSLOD, False)
     dict_inout=sbt('site2','build2','test9')
     try:
       aitf(dict_inout)
