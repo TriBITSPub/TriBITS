@@ -749,7 +749,7 @@ class AddTestHistoryToTestDictFunctor(object):
       getCDashQueryTestsQueryUrl(cdashUrl, projectName, None, testHistoryQueryFilters)
 
     # URL to imbed in email to show the history of the test to humans
-    testHistoryEmailUrl = \
+    testHistoryBrowserUrl = \
       getCDashQueryTestsBrowserUrl(cdashUrl, projectName, None, testHistoryQueryFilters)
 
     # URL for to the build summary on index.php page
@@ -783,55 +783,55 @@ class AddTestHistoryToTestDictFunctor(object):
       verbose=False,
       extractCDashApiQueryData_in=self.__extractCDashApiQueryData_in
       )
-
     #pp = pprint.PrettyPrinter(indent=2)
     #pp.pprint(testHistoryLOD)
 
-    # Sort testHistoryLOD by 'buildstarttime' with the most recent test/build
-    # at the top and get the test history stats like 'numPassDays',
-    # 'numNotRunDays', 'numFailDays', 'mostRecentNopassTestIndex' (before
-    # today), 'mostRecentPassTestIndex' (before today), 'numConsecPassDays'
-    # (starting from most recent pass day, including today) and
-    # 'numConsecNopassDays' (starting from most recent nopass day, including
-    # today).
-
-    # ToDo: Implement!
+    # ToDo: Create function to sort testHistoryLOD by 'buildstarttime' with
+    # the most recent test/build at the top and get the test history stats
+    # like 'numPassDays', 'numNotRunDays', 'numFailDays',
+    # 'mostRecentNopassTestIndex' (before today), 'mostRecentPassTestIndex'
+    # (before today), 'numConsecPassDays' (starting from most recent pass day,
+    # including today) and 'numConsecNopassDays' (starting from most recent
+    # nopass day, including today).  This will make it easy to get other
+    # various statistics and other data out of this test history as shown
+    # below.
 
     # ToDo: Put in check that testDict['buildstarttime'] equals the most
     # recent test in testHistoryLOD.  That is needed to ensure that we got the
     # date dayAfterCurrentTestDay correct!
 
-#    # adding up number of failures and collecting dates of the failures
-#    failed_dates=[]
-#    for cdash_build in test_history_json["builds"]:
-#      if cdash_build["status"] != "Passed":
-#        failed_dates.append(cdash_build["buildstarttime"].split('T')[0])
-#
-#    testDict[history_title_string]=len(failed_dates)
-#
-#    # set most recent and previous failure dates
-#    failed_dates.sort(reverse=True)
-#    if len(failed_dates) == 0:
-#      testDict["previous_failure_date"]="None"
-#      testDict["most_recent_failure_date"]="None"
-#    elif len(failed_dates) == 1:
-#      testDict["previous_failure_date"]="None"
-#      testDict["most_recent_failure_date"]=failed_dates[0]
-#    else:
-#      testDict["previous_failure_date"]=failed_dates[1]
-#      testDict["most_recent_failure_date"]=failed_dates[0]
+    # Add up number of nopass days and collect dates of the nopass days
+    nopassDatesList=[]
+    for testHistoryDict in testHistoryLOD:
+      if testHistoryDict["status"] != "Passed":
+        nopassDatesList.append(testHistoryDict["buildstarttime"].split('T')[0])
+
+    # Set most recent and previous failure dates
+    nopassDatesList.sort(reverse=True)
+    if len(nopassDatesList) == 0:
+      mostRecentNopassDate="None"
+      previousNopassDate="None"
+    elif len(nopassDatesList) == 1:
+      mostRecentNopassDate=nopassDatesList[0]
+      previousNopassDate="None"
+    else:
+      mostRecentNopassDate=nopassDatesList[0]
+      previousNopassDate=nopassDatesList[1]
 
     # Assign all of the new test dict fields we are adding
     testDict["site_url"] = ""
     testDict['buildName_url'] = buildHistoryEmailUrl # ToDo: Change to one build
     testDict['test_history_num_days'] = daysOfHistory
     testDict['test_history_query_url'] = testHistoryQueryUrl
-    testDict['test_history_browser_url'] = testHistoryEmailUrl
-    #testDict['previous_nopass_date'] = ""
-    #testDict['previous_nopass_date_url'] = ""
-    #testDict['most_recent_failure_date"] = ""
+    testDict['test_history_browser_url'] = testHistoryBrowserUrl
+    testDict['test_history_list'] = testHistoryLOD
+    testDict['nopass_last_x_days'] = len(nopassDatesList)
+    testDict['nopass_last_x_days_url'] = testHistoryBrowserUrl
+    testDict['most_recent_nopass_date'] = mostRecentNopassDate
+    testDict['previous_nopass_date'] = previousNopassDate
+    #testDict['previous_nopass_date_url'] = ""  # ToDo: Put in link to this build
 
-    # Return the updated test dict 
+    # Return the updated test dict with the new fields
     return testDict
 
 

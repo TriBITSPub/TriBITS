@@ -969,6 +969,22 @@ g_testDictFailed = {
   u'issue_tracker_url': u'some.com/site/issue/1234'
   }
 
+def getTestHistoryLOD5(statusListOrderedByDate):
+  testHistoryListLOD = []
+  for i in xrange(5): testHistoryListLOD.append(copy.deepcopy(g_testDictFailed))
+  testHistoryListLOD[1]['buildstarttime'] = '2001-01-01T05:54:03 UTC'
+  testHistoryListLOD[1]['status'] = statusListOrderedByDate[0]
+  testHistoryListLOD[0]['buildstarttime'] = '2000-12-31T05:54:03 UTC'
+  testHistoryListLOD[0]['status'] = statusListOrderedByDate[1]
+  testHistoryListLOD[4]['buildstarttime'] = '2000-12-30T05:54:03 UTC'
+  testHistoryListLOD[4]['status'] = statusListOrderedByDate[2]
+  testHistoryListLOD[3]['buildstarttime'] = '2000-12-29T05:54:03 UTC'
+  testHistoryListLOD[3]['status'] = statusListOrderedByDate[3]
+  testHistoryListLOD[2]['buildstarttime'] = '2000-12-28T05:54:03 UTC'
+  testHistoryListLOD[2]['status'] = statusListOrderedByDate[4]
+  return testHistoryListLOD
+  # NOTE: Above, we make them unsorted so that we can test the sort.
+
 class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
   def test_downloadFromCDash(self):
@@ -982,6 +998,16 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
       os.getcwd()+"/AddTestHistoryToTestDictFunctor/test_downloadFromCDash"
     if os.path.exists(testCacheOutputDir): shutil.rmtree(testCacheOutputDir)
     os.makedirs(testCacheOutputDir)
+    # Create dummy test history
+    testHistoryLOD = getTestHistoryLOD5(
+      [
+        'Failed',
+        'Failed',
+        'Passed',
+        'Passed',
+        'Not Run',
+        ]
+      )
     # Construct arguments
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
@@ -991,7 +1017,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     alwaysUseCacheFileIfExists = False
     verbose = False
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
-      testHistoryQueryUrl, {'builds':[]}) # ToDo: put in dummy test history!
+      testHistoryQueryUrl, {'builds':testHistoryLOD})
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
@@ -1012,10 +1038,11 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
     self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00'
       )
-    #self.assertEqual(testDict['test_history_list'], 'DUMMY NO MATCH')
-    #self.assertEqual(testDict['nopass_last_x_days'], 'DUMMY NO MATCH')
-    #self.assertEqual(testDict['nopass_last_x_days_url'], 'DUMMY NO MATCH')
-    #self.assertEqual(testDict['previous_nopass_date'], 'DUMMY NO MATCH')
+    self.assertEqual(testDict['test_history_list'], testHistoryLOD)
+    self.assertEqual(testDict['nopass_last_x_days'], 3)
+    self.assertEqual(testDict['nopass_last_x_days_url'],
+       u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00')
+    self.assertEqual(testDict['previous_nopass_date'], '2000-12-31')
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
