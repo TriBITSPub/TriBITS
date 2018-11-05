@@ -292,6 +292,148 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   # duplication in testing.
 
 
+  # Test out Not Run test
+  def test_twoif_10_twoinr2_twif_8_twinr_1(self):
+
+    testCaseName = "twoif_10_twoinr2_twif_8_twinr_1"
+
+    # Copy the raw files to get started
+    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+
+    # Open nonpassing test data JSON file that we will modify
+    testListFilePath = \
+      testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
+    with open(testListFilePath, 'r') as testListFile:
+      testListFileJson = eval(testListFile.read())
+    testListLOD =  testListFileJson['builds']
+    testListSLOD = CDQAR.createSearchableListOfTests(testListLOD)
+    # make twoif test Anasazi_Epetra_BKS_norestart_test_MPI_4 Not Run
+    testDict = testListLOD[0]
+    testDict['status'] = u'Not Run'
+    testDict['details'] = u'Required Files Missing'
+    # make twoif test Belos_gcrodr_hb_MPI_4 Not Run 
+    testDict = testListLOD[1]
+    testDict['status'] = u'Not Run'
+    testDict['details'] = u'Required Files Missing'
+    # make twif test Teko_ModALPreconditioner_MPI_1 Not Run
+    testDict = testListLOD[18]
+    testDict['status'] = u'Not Run'
+    testDict['details'] = u'Required Files Missing'
+    # Write updated test data back to file
+    #g_pp.pprint(testListFileJson)
+    CDQAR.pprintPythonData(testListFileJson, testListFilePath)
+
+    # Run the script and make sure it outputs the right stuff
+    analyze_and_report_cdash_results_run_case(
+      self,
+      testCaseName,
+      [],
+      1,
+      "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2001-01-01",
+      [
+        "Missing expected builds: bme=0",
+        "Builds with configure failures: c=0",
+        "Builds with build failures: b=0",
+        "Failing tests without issue trackers: twoif=10",
+        "Getting 30 days of history for Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for KokkosKernels_blas_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for KokkosKernels_common_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for KokkosKernels_graph_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for KokkosKernels_sparse_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for MueLu_ConvergenceTpetra_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for MueLu_ConvergenceTpetra_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for Sacado_tradoptest_55_EQA_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for Teko_testdriver_tpetra_MPI_1 in the build Trilinos-atdm-waterman-cuda-9.2-release-debug on waterman from cache file",
+        "Getting 30 days of history for Teko_testdriver_tpetra_MPI_4 in the build Trilinos-atdm-waterman-cuda-9.2-release-debug on waterman from cache file",
+        "Not Run tests without issue trackers: twoinr=2",
+        "Getting 30 days of history for Anasazi_Epetra_BKS_norestart_test_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for Belos_gcrodr_hb_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Failing tests with issue trackers: twif=8",
+        "Getting 30 days of history for MueLu_UnitTestsBlockedEpetra_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for Stratimikos_test_single_belos_thyra_solver_driver_nos1_nrhs8_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Not Run tests with issue trackers: twinr=1",
+        "Getting 30 days of history for Teko_ModALPreconditioner_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
+        ],
+      [
+
+        # Second paragraph with listing of different types of tables below
+        "<p>",
+        "<font color=\"red\">Failing tests without issue trackers: twoif=10</font><br>",
+        "<font color=\"red\">Not Run tests without issue trackers: twoinr=2</font><br>",
+        "Failing tests with issue trackers: twif=8<br>",
+        "Not Run tests with issue trackers: twinr=1<br>",
+        "</p>",
+         
+        # twoif table
+        "<h3>Failing tests without issue trackers [(]limited to 10[)]: twoif=10</h3>",
+        # Pin down the first row of this table
+        "<tr>",
+        "<td align=\"left\">mutrino</td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\">Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\">Failed</a></td>",
+        "<td align=\"left\">Completed [(]Failed[)]</td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-03T00:00:00\">1</a></td>",
+        "<td align=\"right\">None</td>",
+        "<td align=\"right\"></td>",
+        "</tr>",
+         
+        # twoinr table
+        "<h3>Not Run tests without issue trackers [(]limited to 10[)]: twoinr=2</h3>",
+        # Pin down the first row of this table
+        "<tr>",
+        "<td .+mutrino</td>",
+        "<td align=\"left\"><a .+>Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
+        "<td align=\"left\"><a .+>Anasazi_Epetra_BKS_norestart_test_MPI_4</a></td>",
+        "<td align=\"left\"><a .+>Not Run</a></td>",
+        "<td align=\"left\">Required Files Missing</td>",
+        "<td align=\"right\"><a .+>30</a></td>",
+        "<td align=\"right\">2018-10-27</td>",
+        "<td align=\"right\"></td>",
+        "</tr>",
+         
+        # twif table
+        "<h3>Failing tests with issue trackers: twif=8</h3>",
+        # Pin down the first row of this table
+        "<tr>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a .+>Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
+        "<td align=\"left\"><a .+>MueLu_UnitTestsBlockedEpetra_MPI_1</a></td>",
+        "<td align=\"left\"><a .+>Failed</a></td>",
+        "<td align=\"left\">Completed [(]Failed[)]</td>",
+        "<td align=\"right\"><a .+>15</a></td>",
+        "<td align=\"right\">2018-10-27</td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/3640\">#3640</a></td>",
+        "</tr>",
+         
+        # twinr table
+        "<h3>Not Run tests with issue trackers: twinr=1</h3>",
+        # Pin down the first row of this table
+        "<tr>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a .+>Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
+        "<td align=\"left\"><a .+>Teko_ModALPreconditioner_MPI_1</a></td>",
+        "<td align=\"left\"><a .+>Not Run</a></td>",
+        "<td align=\"left\">Required Files Missing</td>",
+        "<td align=\"right\"><a .+>15</a></td>",
+        "<td align=\"right\">2018-10-27</td>",
+        "<td align=\"right\"><a .+>#3638</a></td>",
+        "</tr>",
+
+        ],
+      #verbose=True,
+      #debugPrint=True,
+      )
+  # NOTE: The above unit test checks the tables 'twoinr' and 'twinr' in detail
+  # and checks some of the contents of the 'twoif' and 'twif'.
+
+
   # Add some missing builds, some builds with configure failuires, and builds
   # with build failures
   def test_bme_2_c_1_b_2_twoif_12_twif_9(self):
