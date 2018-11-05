@@ -685,9 +685,16 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
     return testDict_inout
 
 
+# Extract just the date from the testDict['buildstartdate'] field
+def dateFromBuildStartTime(buildStartTime):
+  return buildStartTime.split('T')[0]  
+
+
 # Transform functor that computes and add detailed test history to an existing
 # test dict so that it can be printed in the table
 # createCDashTestHtmlTableStr().
+#
+# ToDo: Document the fields set by this functor
 #
 class AddTestHistoryToTestDictFunctor(object):
 
@@ -796,31 +803,23 @@ class AddTestHistoryToTestDictFunctor(object):
       verbose=False,
       extractCDashApiQueryData_in=self.__extractCDashApiQueryData_in
       )
-    #pp = pprint.PrettyPrinter(indent=2)
-    #pp.pprint(testHistoryLOD)
 
-    # ToDo: Create function to sort testHistoryLOD by 'buildstarttime' with
-    # the most recent test/build at the top and get the test history stats
-    # like 'numPassDays', 'numNotRunDays', 'numFailDays',
-    # 'mostRecentNopassTestIndex' (before today), 'mostRecentPassTestIndex'
-    # (before today), 'numConsecPassDays' (starting from most recent pass day,
-    # including today) and 'numConsecNopassDays' (starting from most recent
-    # nopass day, including today).  This will make it easy to get other
-    # various statistics and other data out of this test history as shown
-    # below.
+    # Sort the list with the most recent day first
+    testHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
 
     # ToDo: Put in check that testDict['buildstarttime'] equals the most
     # recent test in testHistoryLOD.  That is needed to ensure that we got the
-    # date dayAfterCurrentTestDay correct!
+    # date dayAfterCurrentTestDay correct!  Actually, that is only going to be
+    # true for tests that did not run in the current testing day.  For missing
+    # tests, the current testing day results will be missing.
 
-    # Add up number of nopass days and collect dates of the nopass days
+    # Gather up number of nopass days (already in order)
     nopassDatesList=[]
     for testHistoryDict in testHistoryLOD:
       if testHistoryDict["status"] != "Passed":
-        nopassDatesList.append(testHistoryDict["buildstarttime"].split('T')[0])
+        nopassDatesList.append(dateFromBuildStartTime(testHistoryDict['buildstarttime']))
 
     # Set most recent and previous failure dates
-    nopassDatesList.sort(reverse=True)
     if len(nopassDatesList) == 0:
       mostRecentNopassDate="None"
       previousNopassDate="None"
@@ -830,6 +829,16 @@ class AddTestHistoryToTestDictFunctor(object):
     else:
       mostRecentNopassDate=nopassDatesList[0]
       previousNopassDate=nopassDatesList[1]
+
+    # ToDo: Replace above with function to sort testHistoryLOD by
+    # 'buildstarttime' with the most recent test/build at the top and get the
+    # test history stats like 'numPassDays', 'numNotRunDays', 'numFailDays',
+    # 'mostRecentNopassTestIndex' (before today), 'mostRecentPassTestIndex'
+    # (before today), 'numConsecPassDays' (starting from most recent pass day,
+    # including today) and 'numConsecNopassDays' (starting from most recent
+    # nopass day, including today).  This will make it easy to get other
+    # various statistics and other data out of this test history as shown
+    # below.
 
     # Assign all of the new test dict fields we are adding
     testDict["site_url"] = ""

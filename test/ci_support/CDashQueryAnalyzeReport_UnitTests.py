@@ -945,6 +945,19 @@ class test_AddIssueTrackerInfoToTestDictFunctor(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.dateFromBuildStartTime()
+#
+#############################################################################
+
+class test_dateFromBuildStartTime(unittest.TestCase):
+
+  def test_1(self):
+    self.assertEqual(
+      dateFromBuildStartTime(u'2001-01-01T05:54:03 UTC'), u'2001-01-01')
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.AddTestHistoryToTestDictFunctor
 #
 #############################################################################
@@ -1026,7 +1039,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
       )
     # Apply the functor to add the test history to the test dict
     addTestHistoryFunctor(testDict)
-    # Check to fields
+    # Checkt the set fields out output
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
@@ -1039,7 +1052,16 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
     self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00'
       )
-    self.assertEqual(testDict['test_history_list'], testHistoryLOD)
+    self.assertEqual(
+      testDict['test_history_list'][0]['buildstarttime'], '2001-01-01T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][1]['buildstarttime'], '2000-12-31T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][2]['buildstarttime'], '2000-12-30T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][3]['buildstarttime'], '2000-12-29T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][4]['buildstarttime'], '2000-12-28T05:54:03 UTC')
     self.assertEqual(testDict['nopass_last_x_days'], 3)
     self.assertEqual(testDict['nopass_last_x_days_url'],
        u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00')
