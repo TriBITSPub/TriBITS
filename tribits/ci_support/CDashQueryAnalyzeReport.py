@@ -572,28 +572,34 @@ def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind):
 # unique!  If it is not, then an excpetion will be thrown.
 #
 class SearchableListOfDicts(object):
+
   # Constructor
   def __init__(self, listOfDicts, listOfKeys):
     self.__listOfDicts = listOfDicts
     self.__listOfKeys = listOfKeys
     self.__lookupDict = createLookupDictForListOfDicts(
       self.__listOfDicts, self.__listOfKeys)
+
   # Convert to string rep
   def __str__(self):
     myStr = "SearchableListOfDicts{listOfDicts="+str(self.__listOfDicts)+\
       ", listOfKeys="+str(self.__listOfKeys)+", lookupDict="+str(self.__lookupDict)+"}"
     return myStr
+
   # Return listOfDicts passed into Constructor 
   def getListOfDicts(self):
     return self.__listOfDicts
+
   # Return listOfKeys passed to Constructor
   def getListOfKeys(self):
     return self.__listOfKeys
+
   # Lookup a dict given a dict with same key/value pairs for keys listed in
   # listOfKeys.
   def lookupDictGivenKeyValueDict(self, keyValueDictToFind):
     return lookupDictGivenLookupDict(
      self.__lookupDict, self.__listOfKeys, keyValueDictToFind)
+
   # Lookup a dict given a flat list of values for the keys (must be in same
   # order).
   def lookupDictGivenKeyValuesList(self, keyValuesListToFind):
@@ -603,7 +609,8 @@ class SearchableListOfDicts(object):
       keyValueDictToFind[key] = keyValuesListToFind[i]
       i += 1
     return self.lookupDictGivenKeyValueDict(keyValueDictToFind)
-  # Return 
+
+  # Functions to allow this to act like a list
   def __len__(self):
     return len(self.__listOfDicts)
   def __getitem__(self, index_in):
@@ -816,7 +823,7 @@ class AddTestHistoryToTestDictFunctor(object):
     # Gather up number of nopass days (already in order)
     nopassDatesList=[]
     for testHistoryDict in testHistoryLOD:
-      if testHistoryDict["status"] != "Passed":
+      if not isTestPassed(testHistoryDict):
         nopassDatesList.append(dateFromBuildStartTime(testHistoryDict['buildstarttime']))
 
     # Set most recent and previous failure dates
@@ -1000,7 +1007,7 @@ def downloadTestsOffCDashQueryTestsAndFlatten(
   return testsListOfDicts
 
 
-# Functor to return if a build has configure failures
+# Returns True if a build has configure failures
 def buildHasConfigureFailures(buildDict):
   configureDict = buildDict.get('configure', None)
   if configureDict and configureDict['error'] > 0:
@@ -1008,12 +1015,27 @@ def buildHasConfigureFailures(buildDict):
   return False
 
 
-# Functor that return if a build has compilation/build failures
+# Returns True if a build has compilation/build failures
 def buildHasBuildFailures(buildDict):
   compilationDict = buildDict.get('compilation', None)
   if compilationDict and compilationDict['error'] > 0:
     return True
   return False
+
+
+# Returns True if a test has 'status' 'Passed'
+def isTestPassed(testDict):
+  return (testDict.get('status', None) == 'Passed')
+
+
+# Returns True if a test has 'status' 'Failed'
+def isTestFailed(testDict):
+  return (testDict.get('status', None) == 'Failed')
+
+
+# Returns True if a test has 'status' 'Not Run'
+def isTestNotRun(testDict):
+  return (testDict.get('status', None) == 'Not Run')
 
 
 # Functor class to sort a row of dicts by multiple columns of string data.

@@ -1125,6 +1125,53 @@ class test_buildHasBuildFailures(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.isTestPassed(), isTestFailed() and isTestNotRun()
+#
+#############################################################################
+
+
+def testDictStatus(status):
+  testDict = copy.deepcopy(g_testDictFailed)
+  testDict['status'] = status
+  return testDict
+
+class test_isTestPassed(unittest.TestCase):
+
+  def test_passed(self):
+    self.assertEqual(isTestPassed(testDictStatus('Passed')), True)
+
+  def test_failed(self):
+    self.assertEqual(isTestPassed(testDictStatus('Failed')), False)
+
+  def test_notrun(self):
+    self.assertEqual(isTestPassed(testDictStatus('Not Run')), False)
+
+class test_isTestFailed(unittest.TestCase):
+
+  def test_passed(self):
+    self.assertEqual(isTestFailed(testDictStatus('Passed')), False)
+
+  def test_failed(self):
+    self.assertEqual(isTestFailed(testDictStatus('Failed')), True)
+
+  def test_notrun(self):
+    self.assertEqual(isTestFailed(testDictStatus('Not Run')), False)
+
+class test_isTestNotRun(unittest.TestCase):
+
+  def test_passed(self):
+    self.assertEqual(isTestNotRun(testDictStatus('Passed')), False)
+
+  def test_failed(self):
+    self.assertEqual(isTestNotRun(testDictStatus('Failed')), False)
+
+  def test_notrun(self):
+    self.assertEqual(isTestNotRun(testDictStatus('Not Run')), True)
+
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.sortAndLimitListOfDicts()
 #
 #############################################################################
@@ -1562,6 +1609,7 @@ tr:nth-child(odd) {background-color: #fff;}
 #############################################################################
 
 # ToDo: Add unit tests for createCDashTestHtmlTableStr()!
+
 
 #
 # Run the unit tests!
