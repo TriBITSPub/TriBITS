@@ -235,7 +235,20 @@ class test_foreachTransform(unittest.TestCase):
 #
 #############################################################################
 
-#class test_readCsvFileIntoListOfDicts(unittest.TestCase):
+def dummyMatch5(intVal):
+  return (intVal == 5)
+
+class test_NotMatchFunctor(unittest.TestCase):
+
+  def test_dummyMatch5(self):
+    self.assertEqual(dummyMatch5(4), False)
+    self.assertEqual(dummyMatch5(5), True)
+    self.assertEqual(dummyMatch5(6), False)
+
+  def test_dummyMatch5(self):
+    self.assertEqual(NotMatchFunctor(dummyMatch5)(4), True)
+    self.assertEqual(NotMatchFunctor(dummyMatch5)(5), False)
+    self.assertEqual(NotMatchFunctor(dummyMatch5)(6), True)
 
 
 #############################################################################

@@ -80,6 +80,7 @@ def getFileNameStrFromText(inputStr):
 
 # Filter and input list and return a list with elements where
 # matchFunctor(inputList[i])==True.
+#
 def getFilteredList(inputList, matchFunctor):
   filteredList = []
   for ele in inputList:
@@ -90,6 +91,7 @@ def getFilteredList(inputList, matchFunctor):
 # Filter an input list return a two lists (matchList, nomatchList) where the
 # first list has elements where matchFunctor(inputList[i])==True and the
 # second list has elements where matchFunctor(inputList[i])==False.
+#
 def splitListOnMatch(inputList, matchFunctor):
   #print("\nsplitListOnMatch(): matchFunctor = "+str(matchFunctor))
   matchList = []
@@ -98,6 +100,24 @@ def splitListOnMatch(inputList, matchFunctor):
     if matchFunctor(ele): matchList.append(ele)
     else: nomatchList.append(ele)
   return (matchList, nomatchList)
+
+
+# DECORATOR match functor class that negates the match of a stored functor.
+#
+class NotMatchFunctor(object):
+
+  # Construct with another functor to negate
+  def __init__(self, matchFunctor):
+    self.__matchFunctor = matchFunctor
+
+  # Convert to string rep for debugging/etc.
+  def __str__(self):
+    myStr = "NotMatchFunctor{"+str(self.__matchFunctor)+"}"
+    return myStr
+
+  # Negate the matchFunctor
+  def __call__(self, item):
+    return (self.__matchFunctor(item) == False)
 
 
 # Apply a functor to transform every element in a list
