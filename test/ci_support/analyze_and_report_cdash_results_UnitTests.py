@@ -242,6 +242,16 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       1,
       "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2001-01-01",
       [
+        "Num expected builds = 6",
+        "Num total tests with issue trackers = 6",
+        "Num builds = 6",
+        "Num nonpassing tests = 21",
+        "Num nonpassing tests without issue trackers = 12",
+        "Num nonpassing tests with issue trackers = 9",
+        "Num nonpassing tests without issue trackers Failed = 12",
+        "Num nonpassing tests without issue trackers Not Run = 0",
+        "Num nonpassing tests with issue trackers Failed = 9",
+        "Num nonpassing tests with issue trackers Not Run = 0",
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
@@ -343,6 +353,14 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       1,
       "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2001-01-01",
       [
+        "Num builds = 6",
+        "Num nonpassing tests = 21",
+        "Num nonpassing tests without issue trackers = 12",
+        "Num nonpassing tests with issue trackers = 9",
+        "Num nonpassing tests without issue trackers Failed = 10",
+        "Num nonpassing tests without issue trackers Not Run = 2",
+        "Num nonpassing tests with issue trackers Failed = 8",
+        "Num nonpassing tests with issue trackers Not Run = 1",
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
@@ -481,6 +499,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     specializedGroup['builds'][1]['configure']['error'] = 1
     specializedGroup['builds'][3]['compilation']['error'] = 2
     specializedGroup['builds'][5]['compilation']['error'] = 1
+    # ToDo: Replace above [i] access with dict lookups with
+    # SearchableListOfDicts
     CDQAR.pprintPythonData(fullCDashIndexBuildsJson, fullCDashIndexBuildsJsonFilePath)
 
     # Run analyze_and_report_cdash_results.py and make sure that it prints
@@ -495,6 +515,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       1,
       "FAILED (bme=2, c=1, b=2, twoif=12, twif=9): Project Specialized Builds on 2001-01-01",
       [
+        "Num expected builds = 8",
+        "Num total tests with issue trackers = 8",
+        "Num builds = 6",
+        "Num nonpassing tests = 21",
         "Missing expected builds: bme=2",
         "Builds with configure failures: c=1",
         "Builds with build failures: b=2",
@@ -613,6 +637,14 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       0,
       "PASSED: Project Specialized Builds on 2001-01-01",
       [
+        "Num builds = 6",
+        "Num nonpassing tests = 0",
+        "Num nonpassing tests without issue trackers = 0",
+        "Num nonpassing tests with issue trackers = 0",
+        "Num nonpassing tests without issue trackers Failed = 0",
+        "Num nonpassing tests without issue trackers Not Run = 0",
+        "Num nonpassing tests with issue trackers Failed = 0",
+        "Num nonpassing tests with issue trackers Not Run = 0",
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",

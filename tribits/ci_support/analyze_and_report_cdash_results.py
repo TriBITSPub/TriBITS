@@ -304,11 +304,13 @@ if __name__ == '__main__':
         CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
     else:
       expectedBuildsLOD = []
+    print("\nNum expected builds = "+str(len(expectedBuildsLOD)))
 
     # Get list of tests with issue tracker from input CSV file
 
     testsWithIssueTrackersLOD = \
       CDQAR.getTestsWtihIssueTrackersListFromCsvFile(inOptions.testsWithIssueTrackersFile)
+    print("\nNum total tests with issue trackers = "+str(len(expectedBuildsLOD)))
     testsWithIssueTrackerSLOD = \
       CDQAR.createSearchableListOfTests(testsWithIssueTrackersLOD)
     testsWithIssueTrackerMatchFunctor = \
@@ -341,6 +343,7 @@ if __name__ == '__main__':
       cdashIndexBuildsQueryUrl,
       fullCDashIndexBuildsJsonCacheFile,
       inOptions.useCachedCDashData )
+    print("\nNum builds = "+str(len(buildsListOfDicts)))
 
     # Beginning of top full bulid and tests CDash links paragraph 
     htmlEmailBodyTop += "<p>\n"
@@ -380,6 +383,7 @@ if __name__ == '__main__':
     nonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
+    print("\nNum nonpassing tests = "+str(len(nonpassingTestsLOD)))
 
     # Add issue tracker info for all non passing tests
     CDQAR.foreachTransform(nonpassingTestsLOD,
@@ -392,16 +396,24 @@ if __name__ == '__main__':
         nonpassingTestsLOD,
         testsWithIssueTrackerMatchFunctor
         )
+    print("Num nonpassing tests without issue trackers = "+\
+      str(len(nonpassingTestsWithoutIssueTrackersLOD)))
+    print("Num nonpassing tests with issue trackers = "+\
+      str(len(nonpassingTestsWithIssueTrackersLOD)))
 
     # Split the list nonpassing tests without issue trackers into 'twoif' and
     # 'twoinp'
     (twoifLOD, twoinrLOD) = CDQAR.splitListOnMatch(
       nonpassingTestsWithoutIssueTrackersLOD, CDQAR.isTestFailed)
+    print("Num nonpassing tests without issue trackers Failed = "+str(len(twoifLOD)))
+    print("Num nonpassing tests without issue trackers Not Run = "+str(len(twoinrLOD)))
 
     # Split the list nonpassing tests with issue trackers into 'twif' and
     # 'twinp'
     (twifLOD, twinrLOD) = CDQAR.splitListOnMatch(
       nonpassingTestsWithIssueTrackersLOD, CDQAR.isTestFailed)
+    print("Num nonpassing tests with issue trackers Failed = "+str(len(twifLOD)))
+    print("Num nonpassing tests with issue trackers Not Run = "+str(len(twinrLOD)))
   
     # Nonpassing Tests on CDash
     htmlEmailBodyTop += \
