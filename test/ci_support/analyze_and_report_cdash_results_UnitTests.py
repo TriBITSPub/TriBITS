@@ -308,15 +308,27 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testListLOD =  testListFileJson['builds']
     testListSLOD = CDQAR.createSearchableListOfTests(testListLOD)
     # make twoif test Anasazi_Epetra_BKS_norestart_test_MPI_4 Not Run
-    testDict = testListLOD[0]
+    testDict = testListSLOD.lookupDictGivenKeyValuesList([
+      'mutrino',
+      'Trilinos-atdm-mutrino-intel-opt-openmp-KNL',
+      'Anasazi_Epetra_BKS_norestart_test_MPI_4',
+      ])
     testDict['status'] = u'Not Run'
     testDict['details'] = u'Required Files Missing'
     # make twoif test Belos_gcrodr_hb_MPI_4 Not Run 
-    testDict = testListLOD[1]
+    testDict = testListSLOD.lookupDictGivenKeyValuesList([
+      'mutrino',
+      'Trilinos-atdm-mutrino-intel-opt-openmp-KNL',
+      'Belos_gcrodr_hb_MPI_4',
+      ])
     testDict['status'] = u'Not Run'
     testDict['details'] = u'Required Files Missing'
     # make twif test Teko_ModALPreconditioner_MPI_1 Not Run
-    testDict = testListLOD[18]
+    testDict = testListSLOD.lookupDictGivenKeyValuesList([
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'Teko_ModALPreconditioner_MPI_1',
+      ])
     testDict['status'] = u'Not Run'
     testDict['details'] = u'Required Files Missing'
     # Write updated test data back to file

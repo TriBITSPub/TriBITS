@@ -660,21 +660,20 @@ class test_createLookupDictForListOfDicts(unittest.TestCase):
 
   def test_duplicate_dicts(self):
     listOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
+    origDictEle = g_buildsListForExpectedBuilds[0]
     newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[0])
     newDictEle['data'] = 'new_data_val1'
     listOfDicts.append(newDictEle)
     try:
       buildLookupDict = createLookupDictForListOfDicts(
-        listOfDicts,
-        ['group', 'site', 'buildname'] )
+        listOfDicts, ['group', 'site', 'buildname'] )
       self.assertEqual("Did not throw exception!", "no it did not!")
     except Exception, errMsg:
-      self.assertEqual(str(errMsg),
-        "Error, listOfDicts[5]="+\
-        "{'buildname': 'build1', 'group': 'group1', 'data': 'new_data_val1', 'site': 'site1'}"+\
-        " has duplicate values for the list of keys [['group', 'site', 'buildname']]"+\
-        " with the element already added"+\
-        " {'buildname': 'build1', 'data': 'val1', 'group': 'group1', 'site': 'site1'}!" )
+      self.assertEqual( str(errMsg),
+        "Error, listOfDicts[5]="+sorted_dict_str(newDictEle)+\
+        " has duplicate values for the list of keys ['group', 'site', 'buildname']"+\
+        " with the element already added "+\
+        sorted_dict_str(origDictEle)+"!" )
 
 
 #############################################################################
@@ -755,6 +754,14 @@ class test_lookupDictGivenLookupDict(unittest.TestCase):
     dummyDict = copy.deepcopy(g_buildsListForExpectedBuilds[0])
     dummyDict['data'] = 'different_val'
     self.assertEqual(dummyDict in slod, False)
+
+  def test_indirect_update(self):
+    origListOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
+    slod = SearchableListOfDicts( origListOfDicts, ['group', 'site', 'buildname'])
+    buildDict = slod.lookupDictGivenKeyValuesList(['group1','site2','build3'])
+    self.assertEqual(buildDict['data'], "val3")
+    buildDict['data'] = "new_data"
+    self.assertEqual(origListOfDicts[2]['data'], "new_data")
 
 
 #############################################################################

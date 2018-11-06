@@ -508,22 +508,26 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys):
   i = 0
   for dictEle in listOfDicts:
     #print("\ndictEle = "+str(dictEle))
-    currentLookupDictRef = lookupDict 
+    currentLookupDictRef = lookupDict
+    lastLookupDictRef = None
+    lastKeyValue = None
     for key in listOfKeys:
       #print("\nkey = '"+key+"'")
       keyValue = dictEle[key]
       #print("keyValue = '"+str(keyValue)+"'")
       #print("currentLookupDictRef = "+str(currentLookupDictRef))
+      lastLookupDictRef = currentLookupDictRef
+      lastKeyValue = keyValue
       nextLookupDictRef = currentLookupDictRef.setdefault(keyValue, {})
       #print("nextLookupDictRef = "+str(nextLookupDictRef))
       currentLookupDictRef = nextLookupDictRef
       #print("lookupDict = "+str(lookupDict))
     if currentLookupDictRef:
       raise Exception(
-        "Error, listOfDicts["+str(i)+"]="+str(dictEle)+" has duplicate"+\
-        " values for the list of keys ["+str(listOfKeys)+"] with the element"+\
-        " already added "+str(currentLookupDictRef)+"!")
-    currentLookupDictRef.update(dictEle)
+        "Error, listOfDicts["+str(i)+"]="+sorted_dict_str(dictEle)+" has duplicate"+\
+        " values for the list of keys "+str(listOfKeys)+" with the element"+\
+        " already added "+sorted_dict_str(currentLookupDictRef)+"!")
+    lastLookupDictRef[lastKeyValue] = dictEle
     i += 1
   return  lookupDict
 
@@ -568,6 +572,13 @@ def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind):
 # contains functions to search for speicfic dicts given a set of key/value
 # pairs.
 #
+# Any modifications to the dicts looked up with this object will edit the
+# dicts in the underlying list of dicts.  This therefore makes this class act
+# as a type of multi-key lookup dict using the member function
+# lookupDictGivenKeyValuesList(['keyval0', 'keyval1', ...]).  This provides a
+# handy way to access and edit the underlying dicts that require
+# multi-key/value pairs to find them.
+#
 # NOTE: The key values for the list of keys given in listOfKeys must be
 # unique!  If it is not, then an excpetion will be thrown.
 #
@@ -600,8 +611,10 @@ class SearchableListOfDicts(object):
     return lookupDictGivenLookupDict(
      self.__lookupDict, self.__listOfKeys, keyValueDictToFind)
 
-  # Lookup a dict given a flat list of values for the keys (must be in same
-  # order).
+  # Lookup a dict given a flat list of values for the keys
+  #
+  # Must be in same order self.getListOfKeys().
+  #
   def lookupDictGivenKeyValuesList(self, keyValuesListToFind):
     keyValueDictToFind = {}
     i = 0
