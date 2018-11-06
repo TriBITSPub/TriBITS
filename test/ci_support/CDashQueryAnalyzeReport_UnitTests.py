@@ -83,41 +83,41 @@ def deleteThenCreateTestDir(testDir):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.validateYYYYMMDD_pass1()
+# Test CDashQueryAnalyzeReport.validateAndConvertYYYYMMDD_pass1()
 #
 #############################################################################
 
-class test_validateYYYYMMDD(unittest.TestCase):
+class test_validateAndConvertYYYYMMDD(unittest.TestCase):
 
   def test_pass1(self):
-    yyyyymmdd = validateYYYYMMDD("2015-12-21")
+    yyyyymmdd = validateAndConvertYYYYMMDD("2015-12-21")
     self.assertEqual(str(yyyyymmdd), "2015-12-21 00:00:00")
 
   def test_pass2(self):
-    yyyyymmdd = validateYYYYMMDD("2015-12-01")
+    yyyyymmdd = validateAndConvertYYYYMMDD("2015-12-01")
     self.assertEqual(str(yyyyymmdd), "2015-12-01 00:00:00")
 
   def test_pass3(self):
-    yyyyymmdd = validateYYYYMMDD("2015-12-1")
+    yyyyymmdd = validateAndConvertYYYYMMDD("2015-12-1")
     self.assertEqual(str(yyyyymmdd), "2015-12-01 00:00:00")
 
   def test_pass4(self):
-    yyyyymmdd = validateYYYYMMDD("2015-01-1")
+    yyyyymmdd = validateAndConvertYYYYMMDD("2015-01-1")
     self.assertEqual(str(yyyyymmdd), "2015-01-01 00:00:00")
 
   def test_pass4(self):
-    yyyyymmdd = validateYYYYMMDD("2015-1-9")
+    yyyyymmdd = validateAndConvertYYYYMMDD("2015-1-9")
     self.assertEqual(str(yyyyymmdd), "2015-01-09 00:00:00")
 
   def test_fail_empty(self):
-    self.assertRaises(ValueError, validateYYYYMMDD,  "")
+    self.assertRaises(ValueError, validateAndConvertYYYYMMDD,  "")
 
   def test_fail1(self):
-    self.assertRaises(ValueError, validateYYYYMMDD,  "201512-21")
+    self.assertRaises(ValueError, validateAndConvertYYYYMMDD,  "201512-21")
 
   def test_fail1(self):
-    #yyyyymmdd = validateYYYYMMDD("201512-21")
-    self.assertRaises(ValueError, validateYYYYMMDD,  "201512-21")
+    #yyyyymmdd = validateAndConvertYYYYMMDD("201512-21")
+    self.assertRaises(ValueError, validateAndConvertYYYYMMDD,  "201512-21")
 
 
 #############################################################################
@@ -227,6 +227,15 @@ class test_foreachTransform(unittest.TestCase):
     self.assertEqual(
       foreachTransform([dm(1),dm(2),dm(3),dm(4)],sqrdictnum),
       [dm(1),dm(4),dm(9),dm(16)])
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.NotMatchFunctor()
+#
+#############################################################################
+
+#class test_readCsvFileIntoListOfDicts(unittest.TestCase):
 
 
 #############################################################################

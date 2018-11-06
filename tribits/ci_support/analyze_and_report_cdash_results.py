@@ -172,7 +172,7 @@ def validateCmndLineOptions(inOptions):
     print "Error, can't have empty --date, must pass in --date=YYYY-MM-DD!"
     sys.exit(1)
   else:
-    CDQAR.validateYYYYMMDD(inOptions.date)
+    CDQAR.validateAndConvertYYYYMMDD(inOptions.date)
 
   # ToDo: Assert more of the options to make sure they are correct!
 

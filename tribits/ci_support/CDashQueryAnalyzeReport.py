@@ -53,9 +53,10 @@ from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
 
 
-# Validate a date YYYY-MM-DD string and return a standarized form the
-# valudated string.
-def validateYYYYMMDD(dateText):
+# Validate a date YYYY-MM-DD string and return a date object for the
+# 'datetime' module.
+# 
+def validateAndConvertYYYYMMDD(dateText):
   try:
     return datetime.datetime.strptime(dateText, '%Y-%m-%d')
   except ValueError:
@@ -754,7 +755,7 @@ class AddTestHistoryToTestDictFunctor(object):
     # Get short names for data inside of this functor
     cdashUrl = self.__cdashUrl
     projectName = self.__projectName
-    testDayDate = validateYYYYMMDD(self.__date)
+    testDayDate = validateAndConvertYYYYMMDD(self.__date)
     daysOfHistory = self.__daysOfHistory
 
     # Get basic info about the test from the from the testDict
@@ -1444,7 +1445,7 @@ def createCDashTestHtmlTableStr( testTypeDescr,
 #    build_name=testDictionary[dict_key]["build_name"]
 #    test_name=testDictionary[dict_key]["test_name"]
 #    days_of_history=int(options.test_history_days)
-#    given_date=validateYYYYMMDD(options.date)
+#    given_date=validateAndConvertYYYYMMDD(options.date)
 #
 #    history_title_string="failures_in_last_"+str(options.test_history_days)+"_days"
 #    
