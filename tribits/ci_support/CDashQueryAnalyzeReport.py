@@ -302,16 +302,16 @@ def getAndCacheCDashQueryDataOrReadFromCache(
       and os.path.exists(cdashQueryDataCacheFile) \
     ):
     if printCDashUrl:
-      print("Since the file exists, using cached data from file:\n\n"+\
+      print("Since the file exists, using cached data from file:\n"+\
         "  "+cdashQueryDataCacheFile )
     cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
   elif useCachedCDashData:
     if printCDashUrl:
-      print("Using cached data from file:\n\n  " + cdashQueryUrl )
+      print("Using cached data from file:\n  " + cdashQueryUrl )
     cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
   else:
     if printCDashUrl:
-      print("Getting bulid data from:\n\n  " + cdashQueryUrl )
+      print("Getting bulid data from:\n  " + cdashQueryUrl )
     cdashQueryData = extractCDashApiQueryData_in(cdashQueryUrl)
     if cdashQueryDataCacheFile:
       pprintPythonDataToFile(cdashQueryData, cdashQueryDataCacheFile) 
@@ -850,7 +850,7 @@ class AddTestHistoryToTestDictFunctor(object):
   #
   def __init__(self, cdashUrl, projectName, date, daysOfHistory,
     testCacheDir, useCachedCDashData=True, alwaysUseCacheFileIfExists=True,
-    verbose=False,
+    verbose=False, printDetails=False,
     extractCDashApiQueryData_in=extractCDashApiQueryData, # For unit testing
     ):
     self.__cdashUrl = cdashUrl
@@ -861,6 +861,7 @@ class AddTestHistoryToTestDictFunctor(object):
     self.__useCachedCDashData = useCachedCDashData
     self.__alwaysUseCacheFileIfExists = alwaysUseCacheFileIfExists
     self.__verbose = verbose
+    self.__printDetails = printDetails
     self.__extractCDashApiQueryData_in = extractCDashApiQueryData_in
 
 
@@ -948,7 +949,7 @@ class AddTestHistoryToTestDictFunctor(object):
       testHistoryQueryUrl, testHistoryCacheFile,
       useCachedCDashData=self.__useCachedCDashData,
       alwaysUseCacheFileIfExists=self.__alwaysUseCacheFileIfExists,
-      verbose=False,
+      verbose=self.__printDetails,
       extractCDashApiQueryData_in=self.__extractCDashApiQueryData_in
       )
 

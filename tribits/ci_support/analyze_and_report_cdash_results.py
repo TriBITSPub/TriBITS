@@ -155,6 +155,12 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     default=10,
     help="Limit to the number of table rows. (Default '10')" )
 
+  addOptionParserChoiceOption(
+    "--print-details", "printDetailsStr",
+    ("on", "off"), 1,
+    "Print more info about what is happening.",
+    clp )
+
   clp.add_option(
     "--write-email-to-file", dest="writeEmailToFile", type="string", default="",
     help="Write the body of the HTML email to this file. (Default '')" )
@@ -203,6 +209,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --cdash-base-cache-files-prefix='"+inOptions.cdashBaseCacheFilesPrefix+"'"+lt+\
     "  --use-cached-cdash-data='"+inOptions.useCachedCDashDataStr+"'"+lt+\
     "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
+    "  --print-details='"+inOptions.printDetailsStr+"'"+lt+\
     "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt+\
     "  --email-from-address='"+inOptions.emailFromAddress+"'"+lt+\
     "  --send-email-to='"+inOptions.sendEmailTo+"'"+lt
@@ -236,6 +243,10 @@ def getFlatListOfTestsFromTestDict(testsDict):
 
 if __name__ == '__main__':
 
+  #
+  # Get commandline options and bool versions of [on|off] and others
+  #
+
   inOptions = getCmndLineOptions()
   echoCmndLine(inOptions)
 
@@ -243,6 +254,11 @@ if __name__ == '__main__':
     setattr(inOptions, 'useCachedCDashData', True)
   else:
     setattr(inOptions, 'useCachedCDashData', False)
+
+  if inOptions.printDetailsStr == "on":
+    setattr(inOptions, 'printDetails', True)
+  else:
+    setattr(inOptions, 'printDetails', False)
 
   if inOptions.cdashBaseCacheFilesPrefix == "":
     inOptions.cdashBaseCacheFilesPrefix = \
@@ -583,6 +599,40 @@ if __name__ == '__main__':
     # Cache directory for test history data
     testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
 
+    # Get test history for all of the tests with issue trackers that are not
+    # nonpassing.  These will either be tests that are passing toiday (and
+    # therefore have history) or they will be tests that are missing.
+
+    twipLOD = []
+    twimLOD = []
+
+    if testsWithIssueTrackersNotNonpassingLOD:
+
+      print("\nGetting test history for tests with issue trackers"+\
+        " that are not nonpassing: num="+str(len(testsWithIssueTrackersNotNonpassingLOD)))
+
+      CDQAR.foreachTransform(
+        testsWithIssueTrackersNotNonpassingLOD,
+        CDQAR.AddTestHistoryToTestDictFunctor(
+          inOptions.cdashSiteUrl,
+          inOptions.cdashProjectName,
+          inOptions.date,
+          inOptions.testHistoryDays,
+          testHistoryCacheDir,
+          useCachedCDashData=inOptions.useCachedCDashData,
+          alwaysUseCacheFileIfExists=True,
+          verbose=True,
+          printDetails=inOptions.printDetails,
+          )
+        )
+
+      # Split into list of tests that are passing vs. those that are missing
+      (twipLOD, twimLOD) = CDQAR.splitListOnMatch(
+        testsWithIssueTrackersNotNonpassingLOD, CDQAR.isTestPassed )
+
+    print("\nNum tests with issue trackers Passed = "+str(len(twipLOD)))
+    print("\nNum tests with issue trackers Missing = "+str(len(twimLOD)))
+
     #
     # D.3.a) twoif
     #
@@ -625,6 +675,7 @@ if __name__ == '__main__':
           useCachedCDashData=inOptions.useCachedCDashData,
           alwaysUseCacheFileIfExists=True,
           verbose=True,
+          printDetails=inOptions.printDetails,
           )
         )
 
@@ -675,6 +726,7 @@ if __name__ == '__main__':
           useCachedCDashData=inOptions.useCachedCDashData,
           alwaysUseCacheFileIfExists=True,
           verbose=True,
+          printDetails=inOptions.printDetails,
           )
         )
 
@@ -723,6 +775,7 @@ if __name__ == '__main__':
           useCachedCDashData=inOptions.useCachedCDashData,
           alwaysUseCacheFileIfExists=True,
           verbose=True,
+          printDetails=inOptions.printDetails,
           )
         )
 
@@ -772,6 +825,7 @@ if __name__ == '__main__':
           useCachedCDashData=inOptions.useCachedCDashData,
           alwaysUseCacheFileIfExists=True,
           verbose=True,
+          printDetails=inOptions.printDetails,
           )
         )
 

@@ -1148,16 +1148,20 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
 
   def test_nonpassingTest_downloadFromCDash(self):
+
     # Deep copy the test dict so we don't modify the original
     testDict = copy.deepcopy(g_testDictFailed)
+
     # Target test date
     testHistoryQueryUrl = \
       u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00'
+
     # Create a subdir for the created cache file
     testCacheOutputDir = \
       os.getcwd()+"/AddTestHistoryToTestDictFunctor/test_nonpassingTest_downloadFromCDash"
     if os.path.exists(testCacheOutputDir): shutil.rmtree(testCacheOutputDir)
     os.makedirs(testCacheOutputDir)
+
     # Create dummy test history
     testHistoryLOD = getTestHistoryLOD5(
       [
@@ -1168,6 +1172,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
         'Not Run',
         ]
       )
+
     # Construct arguments
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
@@ -1176,16 +1181,20 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     useCachedCDashData = False
     alwaysUseCacheFileIfExists = False
     verbose = False
+    printDetails = False
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
       testHistoryQueryUrl, {'builds':testHistoryLOD})
+
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
-      useCachedCDashData, alwaysUseCacheFileIfExists, verbose,
+      useCachedCDashData, alwaysUseCacheFileIfExists, verbose, printDetails,
       mockExtractCDashApiQueryDataFunctor,
       )
+
     # Apply the functor to add the test history to the test dict
     addTestHistoryFunctor(testDict)
+
     # Checkt the set fields out output
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
@@ -1218,6 +1227,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
+
     # Check for the existance of the created Cache file
     cacheFile = \
       testCacheOutputDir+"/2001-01-01-site_name-build_name-test_name-HIST-5.json"
@@ -1276,11 +1286,12 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     useCachedCDashData = True
     alwaysUseCacheFileIfExists = True
     verbose = False
+    printDetails = False
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
-      useCachedCDashData, alwaysUseCacheFileIfExists, verbose,
+      useCachedCDashData, alwaysUseCacheFileIfExists, verbose, printDetails,
       )
 
     # Apply the functor to add the test history to the test dict.  This will
@@ -1371,11 +1382,12 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     useCachedCDashData = True
     alwaysUseCacheFileIfExists = True
     verbose = False
+    printDetails = False
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
-      useCachedCDashData, alwaysUseCacheFileIfExists, verbose,
+      useCachedCDashData, alwaysUseCacheFileIfExists, verbose, printDetails,
       )
 
     # Apply the functor to add the test history to the test dict.  This will
@@ -1461,7 +1473,8 @@ class test_buildHasBuildFailures(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.isTestPassed(), isTestFailed() and isTestNotRun()
+# Test CDashQueryAnalyzeReport.isTestPassed(), isTestFailed() and
+# isTestNotRun()
 #
 #############################################################################
 
