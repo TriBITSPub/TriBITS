@@ -245,7 +245,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num expected builds = 6",
         "Num tests with issue trackers = 6",
         "Num builds = 6",
-        "Num nonpassing tests = 21",
+        "Num nonpassing tests direct from CDash query = 21",
+        "Num nonpassing tests after removing duplicate tests = 21",
         "Num nonpassing tests without issue trackers = 12",
         "Num nonpassing tests with issue trackers = 9",
         "Num nonpassing tests without issue trackers Failed = 12",
@@ -355,7 +356,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2001-01-01",
       [
         "Num builds = 6",
-        "Num nonpassing tests = 21",
+        "Num nonpassing tests direct from CDash query = 21",
+        "Num nonpassing tests after removing duplicate tests = 21",
         "Num nonpassing tests without issue trackers = 12",
         "Num nonpassing tests with issue trackers = 9",
         "Num nonpassing tests without issue trackers Failed = 10",
@@ -465,6 +467,65 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   # and checks some of the contents of the 'twoif' and 'twif'.
 
 
+  # Test with some duplicate tests from CDash query (this happens in real life
+  # sometimes!)
+  def test_twoif_12_twif_9_with_duplicate_nonpassing_tests(self):
+
+    testCaseName = "test_twoif_12_twif_9_with_duplicate_nonpassing_tests"
+
+    # Copy the raw files to get started
+    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+
+    # Open nonpassing test data JSON file that we will modify
+    testListFilePath = \
+      testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
+    with open(testListFilePath, 'r') as testListFile:
+      testListFileJson = eval(testListFile.read())
+    testListLOD =  testListFileJson['builds']
+    # Duplicate the test Belos_gcrodr_hb_MPI_4
+    testDict = copy.deepcopy(testListLOD[1])
+    testListLOD.insert(2, testDict)
+    # Write updated test data back to file
+    #g_pp.pprint(testListFileJson)
+    CDQAR.pprintPythonData(testListFileJson, testListFilePath)
+
+    # Run the script and make sure it outputs the right stuff
+    analyze_and_report_cdash_results_run_case(
+      self,
+      testCaseName,
+      [],
+      1,
+      "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2001-01-01",
+      [
+        "Num builds = 6",
+        "Num nonpassing tests direct from CDash query = 22",
+        "Num nonpassing tests after removing duplicate tests = 21",
+        "Num nonpassing tests without issue trackers = 12",
+        "Num nonpassing tests with issue trackers = 9",
+        "Num nonpassing tests without issue trackers Failed = 12",
+        "Num nonpassing tests with issue trackers Failed = 9",
+        "Missing expected builds: bme=0",
+        "Builds with configure failures: c=0",
+        "Builds with build failures: b=0",
+        "Failing tests without issue trackers: twoif=12",
+        "Failing tests with issue trackers: twif=9",
+        ],
+      [
+
+        # Second paragraph with listing of different types of tables below
+        "<p>",
+        "<font color=\"red\">Failing tests without issue trackers: twoif=12</font><br>",
+        "Failing tests with issue trackers: twif=9<br>",
+        "</p>",
+
+        ],
+      #verbose=True,
+      #debugPrint=True,
+      )
+  # NOTE: The above unit test checks the tables 'twoinr' and 'twinr' in detail
+  # and checks some of the contents of the 'twoif' and 'twif'.
+
+
   # Add some missing builds, some builds with configure failuires, and builds
   # with build failures
   def test_bme_2_c_1_b_2_twoif_12_twif_9(self):
@@ -519,7 +580,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num expected builds = 8",
         "Num tests with issue trackers = 8",
         "Num builds = 6",
-        "Num nonpassing tests = 21",
+        "Num nonpassing tests direct from CDash query = 21",
+        "Num nonpassing tests after removing duplicate tests = 21",
         "Missing expected builds: bme=2",
         "Builds with configure failures: c=1",
         "Builds with build failures: b=2",
@@ -639,7 +701,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       "PASSED: Project Specialized Builds on 2001-01-01",
       [
         "Num builds = 6",
-        "Num nonpassing tests = 0",
+        "Num nonpassing tests direct from CDash query = 0",
+        "Num nonpassing tests after removing duplicate tests = 0",
         "Num nonpassing tests without issue trackers = 0",
         "Num nonpassing tests with issue trackers = 0",
         "Num nonpassing tests without issue trackers Failed = 0",

@@ -394,10 +394,16 @@ if __name__ == '__main__':
     nonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
-    print("\nNum nonpassing tests = "+str(len(nonpassingTestsLOD)))
+    print("\nNum nonpassing tests direct from CDash query = "+str(len(nonpassingTestsLOD)))
 
-    # Create a searchable list and match functor of nonpassing tests
-    nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(nonpassingTestsLOD)
+    # Create a searchable list of nonpassing tests
+    nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(nonpassingTestsLOD,
+      removeExactDuplicateElements=True)
+    # NOTE: Above we add the option to remove exact 100% duplicate list items
+    # since cdash/queryTests.php can return duplicate tests!
+    print("Num nonpassing tests after removing duplicate tests = "+str(len(nonpassingTestsLOD)))
+
+    # Create a functor to match nonpassing tests
     nonpassingTestsMatchFunctor = \
       CDQAR.MatchDictKeysValuesFunctor(nonpassingTestsSLOD)
 

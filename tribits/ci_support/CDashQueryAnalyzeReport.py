@@ -524,23 +524,36 @@ def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
 
 # Create a lookup dict for a list of dicts
 #
-# listOfDicts [in] List of dict objects that have keys that one will want to
-# lookup the dict based on their values.
+# listOfDicts [in/out]: List of dict objects that have keys that one will want
+# to lookup the dict based on their values.  May have 100% duplicate elements
+# removed from the list.
 #
-# listOfKeys [in] List of the names of keys in these dicts that are used to
+# listOfKeys [in]: List of the names of keys in these dicts that are used to
 # build a search dict data-structure which is returned from this function.
 #
-# WARNING: The values of the dict key/value pairs listed in listOfKeys must be
-# unique.  If not, then an excpetion is thrown.
+# removeExactDuplicateElements [in]: If True, then dict elements that are 100%
+# duplicates and have the exact same key/value pairs will be removed from
+# listOfDicts. (default False)
+#
+# If listOfDicts has any elements that are 100% complete duplicates with the
+# same exact key/value pairs, then the later elements will be removed from the
+# list.  But if just the key/value pairs listed in listOfKeys are duplicated
+# but one or more of the other key/value pairs is different, then then an
+# excpetion is thrown.
 #
 # NOTE: This is an implementation function that is used in the class
 # SearchableListOfDicts.  Please use that class instead of this raw function.
 #
-def createLookupDictForListOfDicts(listOfDicts, listOfKeys):
+def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
+    removeExactDuplicateElements=False,
+  ):
   #print("\nlistOfDicts = "+str(listOfDicts))
   #print("\nlistOfKeys = "+str(listOfKeys))
+  # Build the lookup dict data-structure. Also, optionally mark any 100%
+  # duplicate elements if asked to remove 100% duplicate elements.
   lookupDict = {}
   i = 0
+  duplicateIndexesToRemoveList = []
   for dictEle in listOfDicts:
     #print("\ndictEle = "+str(dictEle))
     currentLookupDictRef = lookupDict
@@ -557,13 +570,30 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys):
       #print("nextLookupDictRef = "+str(nextLookupDictRef))
       currentLookupDictRef = nextLookupDictRef
       #print("lookupDict = "+str(lookupDict))
+    addEle = True
     if currentLookupDictRef:
-      raise Exception(
-        "Error, listOfDicts["+str(i)+"]="+sorted_dict_str(dictEle)+" has duplicate"+\
-        " values for the list of keys "+str(listOfKeys)+" with the element"+\
-        " already added "+sorted_dict_str(currentLookupDictRef)+"!")
-    lastLookupDictRef[lastKeyValue] = dictEle
+      if currentLookupDictRef == dictEle and removeExactDuplicateElements:
+        # This is a 100% duplicate element to one previously added.
+        # Therefore, marke this duplicate element to be removed from the
+        # orginal list.
+        duplicateIndexesToRemoveList.append(i)
+        addEle = False
+      else:
+        raise Exception(
+          "Error, listOfDicts["+str(i)+"]="+sorted_dict_str(dictEle)+" has duplicate"+\
+          " values for the list of keys "+str(listOfKeys)+" with the element"+\
+          " already added "+sorted_dict_str(currentLookupDictRef)+"!")
+    # Need to go back and reset the dict on the last dict in the
+    # data-structure so that modifications to the dicts that are looked up
+    # will modify the original list.
+    if addEle:
+      lastLookupDictRef[lastKeyValue] = dictEle
     i += 1
+  # Remove 100% duplicate elements marged above
+  numRemoved = 0
+  for duplicateIndex in duplicateIndexesToRemoveList:
+    del listOfDicts[duplicateIndex-numRemoved]
+    numRemoved += 1
   return  lookupDict
 
 
@@ -620,11 +650,12 @@ def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind):
 class SearchableListOfDicts(object):
 
   # Constructor
-  def __init__(self, listOfDicts, listOfKeys):
+  def __init__(self, listOfDicts, listOfKeys, removeExactDuplicateElements=False):
     self.__listOfDicts = listOfDicts
     self.__listOfKeys = listOfKeys
     self.__lookupDict = createLookupDictForListOfDicts(
-      self.__listOfDicts, self.__listOfKeys)
+      self.__listOfDicts, self.__listOfKeys,
+      removeExactDuplicateElements=removeExactDuplicateElements)
 
   # Convert to string rep
   def __str__(self):
@@ -675,8 +706,9 @@ def createSearchableListOfBuilds(buildsListOfDicts):
 # Create a SearchableListOfDicts object for a list of tests with issue
 # trackers that allows lookups of tests given the keys "site" => "buildName"
 # => "testname" : test_dict.
-def createSearchableListOfTests(testsListOfDicts):
-  return SearchableListOfDicts(testsListOfDicts, ['site', 'buildName', 'testname'])
+def createSearchableListOfTests(testsListOfDicts, removeExactDuplicateElements=False):
+  return SearchableListOfDicts(testsListOfDicts, ['site', 'buildName', 'testname'],
+    removeExactDuplicateElements=removeExactDuplicateElements)
 
 
 # Match functor that returns true if the input dict has key/values that

@@ -716,6 +716,21 @@ class test_createLookupDictForListOfDicts(unittest.TestCase):
         " with the element already added "+\
         sorted_dict_str(origDictEle)+"!" )
 
+  def test_exact_duplicate_dicts_with_removal(self):
+    listOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
+    origDictEle = g_buildsListForExpectedBuilds[0]
+    newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[2])
+    listOfDicts.insert(3, newDictEle)
+    newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[0])
+    listOfDicts.insert(1, newDictEle)
+    newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[0])
+    listOfDicts.insert(2, newDictEle)
+    newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[4])
+    listOfDicts.append(newDictEle)
+    buildLookupDict = createLookupDictForListOfDicts(
+      listOfDicts, ['group', 'site', 'buildname'], removeExactDuplicateElements=True )
+    self.assertEqual(buildLookupDict, g_buildLookupDictForExpectedBuilds)
+
 
 #############################################################################
 #
@@ -778,6 +793,28 @@ class test_lookupDictGivenLookupDict(unittest.TestCase):
       slod.lookupDictGivenKeyValuesList(('group1','site2','build3'))['data'], 'val3')
     self.assertEqual(
       slod.lookupDictGivenKeyValuesList(('group2','site4','build1')), None)
+
+  def test_exact_duplicate_ele_with_removal(self):
+    listOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
+    newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[2])
+    listOfDicts.insert(3, newDictEle)
+    newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[0])
+    listOfDicts.insert(1, newDictEle)
+    newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[0])
+    listOfDicts.insert(2, newDictEle)
+    newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[4])
+    listOfDicts.append(newDictEle)
+    listOfKeys = ['group', 'site', 'buildname'] 
+    slod = SearchableListOfDicts(listOfDicts, listOfKeys,
+      removeExactDuplicateElements=True)
+    self.assertEqual(slod.getListOfDicts(), g_buildsListForExpectedBuilds)
+    self.assertEqual(listOfDicts, g_buildsListForExpectedBuilds)
+    self.assertEqual(len(slod), len(g_buildsListForExpectedBuilds))
+    self.assertEqual(slod[0], g_buildsListForExpectedBuilds[0])
+    self.assertEqual(slod[3], g_buildsListForExpectedBuilds[3])
+    self.assertEqual(slodLookupData(slod, 'group1','site1','build1'), 'val1')
+    self.assertEqual(slodLookupData(slod, 'group1','site2','build3'), 'val3')
+    self.assertEqual(slodLookupData(slod, 'group2','site4','build1'), None)
 
   def test_iterator(self):
     slod = SearchableListOfDicts(g_buildsListForExpectedBuilds,
