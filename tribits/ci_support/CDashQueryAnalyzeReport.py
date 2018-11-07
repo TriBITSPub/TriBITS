@@ -265,7 +265,7 @@ def getTestsWtihIssueTrackersListFromCsvFile(testsWithIssueTrackersFile):
 # ToDo: Reimplement this to create a better looking set of indented that that
 # involves less right-drift and the expense of more vertical space.
 #
-def pprintPythonData(pythonData, filePath):
+def pprintPythonDataToFile(pythonData, filePath):
   pp = pprint.PrettyPrinter(stream=open(filePath,'w'), indent=2)
   pp.pprint(pythonData)
 
@@ -314,7 +314,7 @@ def getAndCacheCDashQueryDataOrReadFromCache(
       print("Getting bulid data from:\n\n  " + cdashQueryUrl )
     cdashQueryData = extractCDashApiQueryData_in(cdashQueryUrl)
     if cdashQueryDataCacheFile:
-      pprintPythonData(cdashQueryData, cdashQueryDataCacheFile) 
+      pprintPythonDataToFile(cdashQueryData, cdashQueryDataCacheFile) 
   return cdashQueryData
 
 
@@ -884,7 +884,12 @@ class AddTestHistoryToTestDictFunctor(object):
     site = testDict["site"]
     buildName = testDict["buildName"]
     testname = testDict["testname"]
-    fullTestDetailsLink = cdashUrl+"/"+testDict['testDetailsLink']
+
+    # Determine if this test has data from CDash or if it does not
+    if testDict.get('buildstarttime', None):
+      testAlreadyHasCDashData = True
+    else:
+      testAlreadyHasCDashData = False
 
     # Date range for test history
     dayAfterCurrentTestDay = \
@@ -983,11 +988,39 @@ class AddTestHistoryToTestDictFunctor(object):
     # various statistics and other data out of this test history as shown
     # below.
 
-    # Assign all of the new test dict fields we are adding
+    # Fill in the test details for the current day test from the test top
+    # history dict if it ran today.
+    if not testAlreadyHasCDashData:
+      # See if the top test in the test history ran in the current testing day
+      mostRecentTestHistoryDate = \
+        dateFromBuildStartTime(testHistoryLOD[0]['buildstarttime'])
+      if mostRecentTestHistoryDate == self.__date:
+        # The test ran.  Therefore, just grab the info for the test
+        testDict.update(testHistoryLOD[0])
+      else:
+        # The test did not run in the current testing day so don't add any
+        # info for the current testing day beyond the minimum to dispaly in
+        # the table
+        raise Exception("ToDo: Test before allowing code below to run!")
+        testDict['status'] = "Missing"
+        testDict['details'] = "Missing"
+
+    # ToDo: Lookup the matching build info so that we can get the buildstamp
+    # in order to build a good link to the build on CDash?
+
+    # Get the link to the test details if it exists
+    testDetailsLink = testDict.get('testDetailsLink', None)
+    if testDetailsLink:
+      fullTestDetailsLink = cdashUrl+"/"+testDetailsLink
+    else:
+      fullTestDetailsLink = None
+
+    # Assign all of the new test dict fields that need to be added
     testDict["site_url"] = ""
     testDict['buildName_url'] = buildHistoryEmailUrl # ToDo: Change to one build
-    testDict['testname_url'] = fullTestDetailsLink
-    testDict['status_url'] = fullTestDetailsLink
+    if fullTestDetailsLink:
+      testDict['testname_url'] = fullTestDetailsLink
+      testDict['status_url'] = fullTestDetailsLink
     testDict['test_history_num_days'] = daysOfHistory
     testDict['test_history_query_url'] = testHistoryQueryUrl
     testDict['test_history_browser_url'] = testHistoryBrowserUrl

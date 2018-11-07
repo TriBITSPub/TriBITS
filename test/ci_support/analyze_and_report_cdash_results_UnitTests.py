@@ -345,7 +345,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testDict['details'] = u'Required Files Missing'
     # Write updated test data back to file
     #g_pp.pprint(testListFileJson)
-    CDQAR.pprintPythonData(testListFileJson, testListFilePath)
+    CDQAR.pprintPythonDataToFile(testListFileJson, testListFilePath)
 
     # Run the script and make sure it outputs the right stuff
     analyze_and_report_cdash_results_run_case(
@@ -487,7 +487,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testListLOD.insert(2, testDict)
     # Write updated test data back to file
     #g_pp.pprint(testListFileJson)
-    CDQAR.pprintPythonData(testListFileJson, testListFilePath)
+    CDQAR.pprintPythonDataToFile(testListFileJson, testListFilePath)
 
     # Run the script and make sure it outputs the right stuff
     analyze_and_report_cdash_results_run_case(
@@ -563,7 +563,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     specializedGroup['builds'][5]['compilation']['error'] = 1
     # ToDo: Replace above [i] access with dict lookups with
     # SearchableListOfDicts
-    CDQAR.pprintPythonData(fullCDashIndexBuildsJson, fullCDashIndexBuildsJsonFilePath)
+    CDQAR.pprintPythonDataToFile(fullCDashIndexBuildsJson, fullCDashIndexBuildsJsonFilePath)
 
     # Run analyze_and_report_cdash_results.py and make sure that it prints
     # the right stuff
@@ -686,7 +686,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     # Remove all of the failing tests
     testListFilePath = \
       testOutputDir+"/Project_Specialized_Builds_fullCDashNonpassingTests.json"
-    CDQAR.pprintPythonData( {'builds':[]}, testListFilePath )
+    CDQAR.pprintPythonDataToFile( {'builds':[]}, testListFilePath )
     # ToDo: Fix above once the script caches the raw CDash JSON output.
 
     # Run analyze_and_report_cdash_results.py and make sure that it prints the
