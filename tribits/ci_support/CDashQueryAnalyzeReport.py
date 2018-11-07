@@ -1001,7 +1001,6 @@ class AddTestHistoryToTestDictFunctor(object):
         # The test did not run in the current testing day so don't add any
         # info for the current testing day beyond the minimum to dispaly in
         # the table
-        raise Exception("ToDo: Test before allowing code below to run!")
         testDict['status'] = "Missing"
         testDict['details'] = "Missing"
 
