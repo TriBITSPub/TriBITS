@@ -833,6 +833,16 @@ def dateFromBuildStartTime(buildStartTime):
   return buildStartTime.split('T')[0]  
 
 
+# Get the test history CDash cache file.
+#
+# Note: this takes care of things like having '/' in the test name
+#
+def getTestHistoryCacheFileName(date, site, buildName, testname, daysOfHistory):
+  testHistoryFileName = \
+    date+"-"+site+"-"+buildName+"-"+testname+"-HIST-"+str(daysOfHistory)+".json"
+  return testHistoryFileName.replace('/', '_')
+
+
 # Transform functor that computes and add detailed test history to an existing
 # test dict so that it can be printed in the table
 # createCDashTestHtmlTableStr().
@@ -931,8 +941,9 @@ class AddTestHistoryToTestDictFunctor(object):
 
     # Set the names of the cached files so we can check if they exists and
     # write them out otherwise
-    testHistoryCacheFile = self.__testCacheDir+"/"+\
-      self.__date+"-"+site+"-"+buildName+"-"+testname+"-HIST-"+str(daysOfHistory)+".json"
+    testHistoryCacheFile = \
+      self.__testCacheDir+"/"+\
+      getTestHistoryCacheFileName(self.__date,site,buildName,testname,daysOfHistory)
 
     if self.__verbose:
       gettingTestHistoryMsg = \

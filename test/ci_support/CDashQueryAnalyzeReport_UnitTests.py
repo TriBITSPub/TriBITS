@@ -1101,6 +1101,29 @@ class test_dateFromBuildStartTime(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.getTestHistoryCacheFileName()
+#
+#############################################################################
+
+class test_getTestHistoryCacheFileName(unittest.TestCase):
+
+  def test_normal(self):
+    cacheFileName = getTestHistoryCacheFileName('YYYY-MM-DD', 'site_name',
+      'build_name', 'test_name', 7)
+    cacheFileName_expected = \
+      "YYYY-MM-DD-site_name-build_name-test_name-HIST-7.json"
+    self.assertEqual(cacheFileName, cacheFileName_expected)
+
+  def test_test_name_with_slash(self):
+    cacheFileName = getTestHistoryCacheFileName('YYYY-MM-DD', 'site_name',
+      'build_name', 'base_test_name/test_name', 7)
+    cacheFileName_expected = \
+      "YYYY-MM-DD-site_name-build_name-base_test_name_test_name-HIST-7.json"
+    self.assertEqual(cacheFileName, cacheFileName_expected)
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.AddTestHistoryToTestDictFunctor
 #
 #############################################################################
