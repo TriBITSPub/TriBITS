@@ -164,6 +164,20 @@ def makeHtmlTextRed(htmlText):
   return("<font color=\"red\">"+htmlText+"</font>")
 
 
+# Add <br> for every newline in the input string
+def htmlNewlineBreak(inputStr):
+  inputStrList = inputStr.split("\n")
+  outputHtmlStr = ""
+  lenInputStrList = len(inputStrList)
+  for i in xrange(lenInputStrList):
+    lineStr = inputStrList[i]
+    if i < lenInputStrList-1:
+      outputHtmlStr += lineStr + "<br>\n"
+    elif lineStr != "":
+      outputHtmlStr += lineStr + "<br>\n"
+  return outputHtmlStr
+
+
 # Read a CSV file into a list of dictionaries for each row where the rows of
 # the output list are dicts with the column names as keys.
 #
@@ -724,6 +738,62 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
     testDict_inout[u'issue_tracker'] = issue_tracker
     testDict_inout[u'issue_tracker_url'] = issue_tracker_url
     return testDict_inout
+
+
+# Assert that the list of tests with issue trackers matches the expected
+# builds.
+#
+# testsWithIssueTrackersLOD [in]: List of dicts of tests with issue trackers.
+#   Here, only the fields 'site', 'buildName', and 'testname' are significant.
+#
+# expectedBuildsLOD [in]: List of dicts of expected builds with fields 'site',
+# 'buildname'.  Here, the key/value pairs 'site' and 'buildname' must be
+# unique.  The 'group' field is ignored (because cdash/queryTests.php does not
+# give the 'group' of each test).
+#
+# This returns a tuple (matches, errMsg).  If all of the tests match, then
+# 'matches' will be True and errMsg=="".  If one or more of the tests don't
+# match then 'matches' will be False and 'errMsg' will give a message about
+# which tests are missing.
+#
+def testsWithIssueTrackersMatchExpectedBuilds(
+  testsWithIssueTrackersLOD,
+  expectedBuildsLOD,
+  ):
+  # Create a SearchableListOfDicts that will look up a build given just
+  # ['site', 'buildname'] (since the list of tests with issue trackers does
+  # not have 'group' since CDash queryTests.php does not give the 'group'
+  # associated with each test).
+  expectedBuildsSLOD = SearchableListOfDicts(expectedBuildsLOD, ['site','buildname'])
+  #print("\nexpectedBuildsLOD:")
+  #pp = pprint.PrettyPrinter(indent=2)
+  #pp.pprint(expectedBuildsLOD)
+  # Gather up all of the tests that don't match one of the epxected builds
+  nonmatchingTestsWithIssueTrackersLOD = []
+  for testDict in testsWithIssueTrackersLOD:
+    #print("\ntestDict = "+str(testDict))
+    expectedBuildDict = expectedBuildsSLOD.lookupDictGivenKeyValuesList(
+      [ testDict['site'], testDict['buildName'] ] )
+    #print("expectedBuildDict = "+str(expectedBuildDict))
+    if not expectedBuildDict:
+      nonmatchingTestsWithIssueTrackersLOD.append(
+        {'site':testDict['site'], 'buildName':testDict['buildName'],
+         'testname':testDict['testname']} )
+  #print("\nnonmatchingTestsWithIssueTrackersLOD:")
+  #pp.pprint(nonmatchingTestsWithIssueTrackersLOD)
+  # If all tests matched, return True
+  if len(nonmatchingTestsWithIssueTrackersLOD) == 0:
+    return (True, "")
+  # One or more tests did not match so build an error message and return False
+  errMsg = \
+    "Error: The following tests with issue trackers did not match 'site' and"+\
+    " 'buildName' in one of the expected builds:\n"
+  for testDict in nonmatchingTestsWithIssueTrackersLOD:
+    errMsg += \
+      "  {'site'='"+testDict['site']+"'"+\
+      ", 'buildName'="+testDict['buildName']+"'"+\
+      ", 'testname'="+testDict['testname']+"'}\n"
+  return (False, errMsg)
 
 
 # Extract just the date from the testDict['buildstartdate'] field

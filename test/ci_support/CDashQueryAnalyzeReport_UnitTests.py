@@ -253,6 +253,25 @@ class test_NotMatchFunctor(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.htmlNewlineBreak()
+#
+#############################################################################
+
+class test_htmlNewlineBreak(unittest.TestCase):
+
+  def test_1(self):
+    inputStr = "line one\nline two\nline three\n"
+    htmlStr_expected = "line one<br>\nline two<br>\nline three<br>\n"
+    self.assertEqual(htmlNewlineBreak(inputStr), htmlStr_expected)
+
+  def test_2(self):
+    inputStr = "line one\n\nline two\nline three\n"
+    htmlStr_expected = "line one<br>\n<br>\nline two<br>\nline three<br>\n"
+    self.assertEqual(htmlNewlineBreak(inputStr), htmlStr_expected)
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.readCsvFileIntoListOfDicts()
 #
 #############################################################################
@@ -970,6 +989,64 @@ class test_AddIssueTrackerInfoToTestDictFunctor(unittest.TestCase):
       self.assertEqual(str(errMsg),
         "Error, testDict_inout="+str(dict_inout)+\
         " does not have an assigned issue tracker!" )
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.testsWithIssueTrackersMatchExpectedBuilds()
+#
+#############################################################################
+
+def gsb(group, site, buildname):
+  return {'group':group,'site':site,'buildname':buildname }
+
+g_expectedBuildsLOD = [
+  gsb('group1', 'site1', 'build1'),
+  gsb('group1', 'site1', 'build2'),
+  gsb('group2', 'site2', 'build2'),
+  gsb('group2', 'site1', 'build3'),
+  ]
+  # NOTE: 'site' and 'buildname' have to be unique for this part of the code!
+
+g_testsWtihIssueTrackersLOD = [
+  sbtiturlit('site1', 'build3', 'test1', 'url1', '#1111'),
+  sbtiturlit('site1', 'build1', 'test2', 'url2', '#1112'),
+  sbtiturlit('site2', 'build2', 'test1', 'url3', '#1113'),
+  sbtiturlit('site2', 'build2', 'test5', 'url5', '#1114'),
+  ]
+
+class test_testsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
+
+  def test_all_match(self):
+    self.assertEqual(
+      testsWithIssueTrackersMatchExpectedBuilds(
+        g_testsWtihIssueTrackersLOD, g_expectedBuildsLOD),
+      (True, "")
+      )
+
+  def test_nomatch_1(self):
+    testsWtihIssueTrackersLOD = copy.deepcopy(g_testsWtihIssueTrackersLOD)
+    testsWtihIssueTrackersLOD[1]['buildName'] = 'build8'
+    (matches, errMsg) = testsWithIssueTrackersMatchExpectedBuilds(
+      testsWtihIssueTrackersLOD, g_expectedBuildsLOD)
+    self.assertEqual(matches, False)
+    self.assertEqual(errMsg,
+      "Error: The following tests with issue trackers did not match 'site' and"+\
+      " 'buildName' in one of the expected builds:\n"+\
+      "  {'site'='site1', 'buildName'=build8', 'testname'=test2'}\n" )
+
+  def test_nomatch_2(self):
+    testsWtihIssueTrackersLOD = copy.deepcopy(g_testsWtihIssueTrackersLOD)
+    testsWtihIssueTrackersLOD[1]['buildName'] = 'build8'
+    testsWtihIssueTrackersLOD[3]['site'] = 'site3'
+    (matches, errMsg) = testsWithIssueTrackersMatchExpectedBuilds(
+      testsWtihIssueTrackersLOD, g_expectedBuildsLOD)
+    self.assertEqual(matches, False)
+    self.assertEqual(errMsg,
+      "Error: The following tests with issue trackers did not match 'site' and"+\
+      " 'buildName' in one of the expected builds:\n"+\
+      "  {'site'='site1', 'buildName'=build8', 'testname'=test2'}\n"+\
+      "  {'site'='site3', 'buildName'=build2', 'testname'=test5'}\n" )
 
 
 #############################################################################

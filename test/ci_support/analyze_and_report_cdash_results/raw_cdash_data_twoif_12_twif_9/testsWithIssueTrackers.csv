@@ -1,13 +1,4 @@
 site, buildName, testname, issue_tracker_url, issue_tracker
-mutrino, Trilinos-atdm-mutrino-intel-opt-openmp-HSW, Anasazi_MultiVecTraitsTest2_MPI_4, https://github.com/trilinos/Trilinos/issues/3499, #3499
-mutrino, Trilinos-atdm-mutrino-intel-opt-openmp-HSW, Anasazi_Epetra_BKS_norestart_test_MPI_4, https://github.com/trilinos/Trilinos/issues/3499, #3499
-white, Trilinos-atdm-white-ride-cuda-9.2-debug, PanzerAdaptersSTK_CurlLaplacianExample-ConvTest-Quad-Order-4, https://github.com/trilinos/Trilinos/issues/3579, #3579
-mutrino, Trilinos-atdm-mutrino-intel-opt-openmp-HSW, Belos_gcrodr_hb_MPI_4, https://github.com/trilinos/Trilinos/issues/3497, #3497
-white, Trilinos-atdm-white-ride-cuda-9.2-opt, PanzerAdaptersSTK_CurlLaplacianExample-ConvTest-Quad-Order-4, https://github.com/trilinos/Trilinos/issues/3579, #3579
-hansen, Trilinos-atdm-hansen-shiller-cuda-9.0-debug, PanzerAdaptersSTK_CurlLaplacianExample-ConvTest-Quad-Order-4, https://github.com/trilinos/Trilinos/issues/3579, #3579
-hansen, Trilinos-atdm-hansen-shiller-cuda-8.0-opt, PanzerAdaptersSTK_CurlLaplacianExample-ConvTest-Quad-Order-4, https://github.com/trilinos/Trilinos/issues/3579, #3579
-hansen, Trilinos-atdm-hansen-shiller-cuda-9.0-opt, PanzerAdaptersSTK_CurlLaplacianExample-ConvTest-Quad-Order-4, https://github.com/trilinos/Trilinos/issues/3579, #3579
-hansen, Trilinos-atdm-hansen-shiller-cuda-8.0-debug, PanzerAdaptersSTK_CurlLaplacianExample-ConvTest-Quad-Order-4, https://github.com/trilinos/Trilinos/issues/3579, #3579
 cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial, MueLu_UnitTestsBlockedEpetra_MPI_1, https://github.com/trilinos/Trilinos/issues/3640, #3640
 cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2, https://github.com/trilinos/Trilinos/issues/3632, #3632
 cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2, https://github.com/trilinos/Trilinos/issues/3632, #3632

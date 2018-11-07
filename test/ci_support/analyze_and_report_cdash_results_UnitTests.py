@@ -243,7 +243,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2001-01-01",
       [
         "Num expected builds = 6",
-        "Num total tests with issue trackers = 6",
+        "Num tests with issue trackers = 6",
         "Num builds = 6",
         "Num nonpassing tests = 21",
         "Num nonpassing tests without issue trackers = 12",
@@ -252,6 +252,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Not Run = 0",
         "Num nonpassing tests with issue trackers Failed = 9",
         "Num nonpassing tests with issue trackers Not Run = 0",
+        "Num tests with issue trackers not nonpassing = 2",
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
@@ -516,7 +517,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       "FAILED (bme=2, c=1, b=2, twoif=12, twif=9): Project Specialized Builds on 2001-01-01",
       [
         "Num expected builds = 8",
-        "Num total tests with issue trackers = 8",
+        "Num tests with issue trackers = 8",
         "Num builds = 6",
         "Num nonpassing tests = 21",
         "Missing expected builds: bme=2",
@@ -661,6 +662,49 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</p>",
        ],
       #verbose=True,
+      )
+
+
+  # Test the error behavior when one of the tests with issue trackers does not
+  # match the expected builds
+  def test_tests_with_issue_trackers_no_match_expected_builds(self):
+
+    testCaseName = "tests_with_issue_trackers_no_match_expected_builds"
+
+    # Copy the raw files to get started
+    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+
+    # Add an test with an issue tracker that does not match an expected builds
+    testsWithIssueTrackersFilePath = testOutputDir+"/testsWithIssueTrackers.csv"
+    with open(testsWithIssueTrackersFilePath, 'r') as testsWithIssueTrackersFile:
+      testsWithIssueTrackersStr = testsWithIssueTrackersFile.read()
+    testsWithIssueTrackersStr += \
+      "othersite, otherbuild, Teko_ModALPreconditioner_MPI_1, githuburl, #3638\n"
+    with open(testsWithIssueTrackersFilePath, 'w') as testsWithIssueTrackersFile:
+      testsWithIssueTrackersFile.write(testsWithIssueTrackersStr)
+    # Run the script and make sure it outputs the right stuff
+    analyze_and_report_cdash_results_run_case(
+      self,
+      testCaseName,
+      [],
+      1,
+      "FAILED (SCRIPT CRASHED): ProjectName Nightly Builds on 2001-01-01",
+      [
+        "Num expected builds = 6",
+        "Num tests with issue trackers = 6",
+        ".+File \".+/analyze_and_report_cdash_results.py\", line.+",
+        ".+Error: The following tests with issue trackers did not match 'site' and 'buildName' in one of the expected builds:",
+        ".+{'site'='othersite', 'buildName'=otherbuild', 'testname'=Teko_ModALPreconditioner_MPI_1'}",
+        ],
+      [
+        # Top title
+        "<h2>Build and Test results for ProjectName Nightly Builds on 2001-01-01</h2>",
+
+        # The error message
+        ".+File \".+/analyze_and_report_cdash_results.py\", line.+<br>",
+        ".+Error: The following tests with issue trackers did not match 'site' and 'buildName' in one of the expected builds:<br>",
+        ".+{'site'='othersite', 'buildName'=otherbuild', 'testname'=Teko_ModALPreconditioner_MPI_1'}<br>",
+        ],
       )
 
 #

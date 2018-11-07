@@ -307,14 +307,25 @@ if __name__ == '__main__':
     print("\nNum expected builds = "+str(len(expectedBuildsLOD)))
 
     # Get list of tests with issue tracker from input CSV file
-
     testsWithIssueTrackersLOD = \
       CDQAR.getTestsWtihIssueTrackersListFromCsvFile(inOptions.testsWithIssueTrackersFile)
-    print("\nNum total tests with issue trackers = "+str(len(expectedBuildsLOD)))
+    print("\nNum tests with issue trackers = "+str(len(expectedBuildsLOD)))
+    # Get a SearchableListOfDicts for the tests with issue trackers to allow
+    # them to be looked up based on matching ['site', 'buildName', 'testname']
+    # key/value pairs.
     testsWithIssueTrackerSLOD = \
       CDQAR.createSearchableListOfTests(testsWithIssueTrackersLOD)
+    # Get a functor that will return True if a passed-in dict matches the
+    # ['site', 'buildName', and 'testname'] key/value pairs.
     testsWithIssueTrackerMatchFunctor = \
       CDQAR.MatchDictKeysValuesFunctor(testsWithIssueTrackerSLOD)
+
+    # Assert they the list of tests with issue trackers matches the list of
+    # expected builds
+    (allTestsMatch, errMsg) = CDQAR.testsWithIssueTrackersMatchExpectedBuilds(
+      testsWithIssueTrackersLOD, expectedBuildsLOD)
+    if not allTestsMatch:
+      raise Exception(errMsg)
 
     #
     # D.2) Get lists of build and test data off CDash
@@ -385,6 +396,11 @@ if __name__ == '__main__':
       inOptions.useCachedCDashData )
     print("\nNum nonpassing tests = "+str(len(nonpassingTestsLOD)))
 
+    # Create a searchable list and match functor of nonpassing tests
+    nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(nonpassingTestsLOD)
+    nonpassingTestsMatchFunctor = \
+      CDQAR.MatchDictKeysValuesFunctor(nonpassingTestsSLOD)
+
     # Add issue tracker info for all non passing tests
     CDQAR.foreachTransform(nonpassingTestsLOD,
       CDQAR.AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackerSLOD))
@@ -414,6 +430,14 @@ if __name__ == '__main__':
       nonpassingTestsWithIssueTrackersLOD, CDQAR.isTestFailed)
     print("Num nonpassing tests with issue trackers Failed = "+str(len(twifLOD)))
     print("Num nonpassing tests with issue trackers Not Run = "+str(len(twinrLOD)))
+
+    # Get list of tests with issue trackers that are not in the list of
+    # non-passing tests
+    testsWithIssueTrackersNotNonpassingLOD = CDQAR.getFilteredList(
+      testsWithIssueTrackerSLOD,
+      CDQAR.NotMatchFunctor(nonpassingTestsMatchFunctor) )
+    print("Num tests with issue trackers not nonpassing = "+\
+      str(len(testsWithIssueTrackersNotNonpassingLOD)))
   
     # Nonpassing Tests on CDash
     htmlEmailBodyTop += \
@@ -759,7 +783,8 @@ if __name__ == '__main__':
     # Traceback!
     sys.stdout.flush()
     traceback.print_exc()
-    # Reporte the error
+    # Report the error
+    htmlEmailBodyTop += CDQAR.htmlNewlineBreak(traceback.format_exc()) 
     print("\nError, could not compute the analysis due to"+\
       " above error so return failed!")
     globalPass = False
