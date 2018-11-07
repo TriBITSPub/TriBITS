@@ -550,7 +550,7 @@ def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
 # SearchableListOfDicts.  Please use that class instead of this raw function.
 #
 def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
-    removeExactDuplicateElements=False,
+  removeExactDuplicateElements=False,
   ):
   #print("\nlistOfDicts = "+str(listOfDicts))
   #print("\nlistOfKeys = "+str(listOfKeys))

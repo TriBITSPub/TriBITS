@@ -839,7 +839,7 @@ if __name__ == '__main__':
 
     print("")
 
-    twipDescr = "Passing tests without issue trackers"
+    twipDescr = "Passing tests with issue trackers"
     twipAcro = "twip"
     twipNum = len(twipLOD)
 
@@ -849,8 +849,6 @@ if __name__ == '__main__':
     print(twipSummaryStr)
 
     if twipNum > 0:
-
-      globalPass = False
 
       summaryLineDataNumbersList.append(twipAcro+"="+str(twipNum))
 
@@ -869,7 +867,7 @@ if __name__ == '__main__':
 
     print("")
 
-    twimDescr = "Missing tests without issue trackers"
+    twimDescr = "Missing tests with issue trackers"
     twimAcro = "twim"
     twimNum = len(twimLOD)
 
@@ -879,8 +877,6 @@ if __name__ == '__main__':
     print(twimSummaryStr)
 
     if twimNum > 0:
-
-      globalPass = False
 
       summaryLineDataNumbersList.append(twimAcro+"="+str(twimNum))
 
