@@ -833,13 +833,65 @@ if __name__ == '__main__':
         twinrDescr, twinrAcro, twinrNum, twinrSortedLOD,
         inOptions.testHistoryDays )
 
-    # Generate table "Tests with issue trackers missing: twim=???"
+    #
+    # D.3.e) twip
+    #
 
-    # ToDo: Implement!
+    print("")
 
-    # Generate table "Tests with issue trackers currently passing: twip=???"
+    twipDescr = "Passing tests without issue trackers"
+    twipAcro = "twip"
+    twipNum = len(twipLOD)
 
-    # ToDo: Implement!
+    twipSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twipDescr, twipAcro, twipNum)
+
+    print(twipSummaryStr)
+
+    if twipNum > 0:
+
+      globalPass = False
+
+      summaryLineDataNumbersList.append(twipAcro+"="+str(twipNum))
+
+      htmlEmailBodyTop += CDQAR.makeHtmlTextGreen(twipSummaryStr)+"<br>\n"
+
+      twipSortedLOD = CDQAR.sortAndLimitListOfDicts(
+        twipLOD, testnameBuildnameSiteSortOrder)
+
+      htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+        twipDescr, twipAcro, twipNum, twipSortedLOD,
+        inOptions.testHistoryDays )
+
+    #
+    # D.3.f) twim
+    #
+
+    print("")
+
+    twimDescr = "Missing tests without issue trackers"
+    twimAcro = "twim"
+    twimNum = len(twimLOD)
+
+    twimSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twimDescr, twimAcro, twimNum)
+
+    print(twimSummaryStr)
+
+    if twimNum > 0:
+
+      globalPass = False
+
+      summaryLineDataNumbersList.append(twimAcro+"="+str(twimNum))
+
+      htmlEmailBodyTop += twimSummaryStr+"<br>\n"
+
+      twimSortedLOD = CDQAR.sortAndLimitListOfDicts(
+        twimLOD, testnameBuildnameSiteSortOrder)
+
+      htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+        twimDescr, twimAcro, twimNum, twimSortedLOD,
+        inOptions.testHistoryDays )
  
   except Exception:
     # Traceback!

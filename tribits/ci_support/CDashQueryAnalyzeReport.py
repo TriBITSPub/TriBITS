@@ -164,6 +164,11 @@ def makeHtmlTextRed(htmlText):
   return("<font color=\"red\">"+htmlText+"</font>")
 
 
+# Color HTML text in grean
+def makeHtmlTextGreen(htmlText):
+  return("<font color=\"green\">"+htmlText+"</font>")
+
+
 # Add <br> for every newline in the input string
 def htmlNewlineBreak(inputStr):
   inputStrList = inputStr.split("\n")
