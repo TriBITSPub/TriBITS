@@ -1003,13 +1003,18 @@ class AddTestHistoryToTestDictFunctor(object):
     # Fill in the test details for the current day test from the test top
     # history dict if it ran today.
     if not testAlreadyHasCDashData:
-      # See if the top test in the test history ran in the current testing day
-      mostRecentTestHistoryDate = \
-        dateFromBuildStartTime(testHistoryLOD[0]['buildstarttime'])
-      if mostRecentTestHistoryDate == self.__date:
-        # The test ran.  Therefore, just grab the info for the test
-        testDict.update(testHistoryLOD[0])
-      else:
+      # Determine if there is any test history at all and if there is, get the
+      # top date
+      hasDataForCurrentDate = False
+      if testHistoryLOD:
+        mostRecentTestHistoryDate = \
+          dateFromBuildStartTime(testHistoryLOD[0]['buildstarttime'])
+        if mostRecentTestHistoryDate == self.__date:
+          # The test ran.  Therefore, just grab the info for the test
+          testDict.update(testHistoryLOD[0])
+          hasDataForCurrentDate = True
+      # If there is no history for the current day, then the test is missing
+      if not hasDataForCurrentDate:
         # The test did not run in the current testing day so don't add any
         # info for the current testing day beyond the minimum to dispaly in
         # the table

@@ -631,7 +631,7 @@ if __name__ == '__main__':
         testsWithIssueTrackersNotNonpassingLOD, CDQAR.isTestPassed )
 
     print("\nNum tests with issue trackers Passed = "+str(len(twipLOD)))
-    print("\nNum tests with issue trackers Missing = "+str(len(twimLOD)))
+    print("Num tests with issue trackers Missing = "+str(len(twimLOD)))
 
     #
     # D.3.a) twoif
