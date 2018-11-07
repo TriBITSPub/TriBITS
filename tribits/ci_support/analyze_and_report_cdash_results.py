@@ -55,17 +55,19 @@ from gitdist import addOptionParserChoiceOption
 
 usageHelp = r"""analyze_and_report_cdash_results.py [options]
 
-This script takes in CDash URL information as command-line arguments and then
-analyzes it to look for missing expected and various types of failures and
-then reports the findings as an HTML file written to disk and/or as an HTML
-formatted email to one or more email addresses.
+This script takes in CDash URL information and other data as command-line
+arguments and then analyzes it to look for missing expected and various types
+of failures and then reports the findings as an HTML file written to disk
+and/or as an HTML formatted email to one or more email addresses.
 
 If all of the expected builds are found (and all of them have test results)
 and there are no other failures found, then the script returns 0.  Otherwise
-the script returns non-zero.
+the script returns non-zero.  Therefore, this script can be used to drive
+automated workflows by examining data on CDash.
 
 ToDo: Finish documentation!
 """
+
 
 #
 # Helper functions
@@ -110,9 +112,9 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       +" the set of non-passing tests matching this set of builds. (Default '')" )
 
   clp.add_option(
-    "--limit-test-history-days", dest="test_history_days", default=30,
+    "--limit-test-history-days", dest="testHistoryDays", default=30,
     help="Number of days to go back in history for each test" )
-    # ToDo: Rename test_history_days to limitTestHistoryDays
+    # ToDo: Rename testHistoryDays to limitTestHistoryDays
 
   clp.add_option(
     "--expected-builds-file", dest="expectedBuildsFile", type="string",
@@ -618,7 +620,7 @@ if __name__ == '__main__':
           inOptions.cdashSiteUrl,
           inOptions.cdashProjectName,
           inOptions.date,
-          inOptions.test_history_days,
+          inOptions.testHistoryDays,
           testHistoryCacheDir,
           useCachedCDashData=inOptions.useCachedCDashData,
           alwaysUseCacheFileIfExists=True,
@@ -629,7 +631,7 @@ if __name__ == '__main__':
       htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         twoifDescr, twoifAcro, twoifNum,
         twoifSortedLimitedLOD,
-        inOptions.test_history_days, inOptions.limitTableRows )
+        inOptions.testHistoryDays, inOptions.limitTableRows )
 
     #
     # D.3.b) twoinr
@@ -668,7 +670,7 @@ if __name__ == '__main__':
           inOptions.cdashSiteUrl,
           inOptions.cdashProjectName,
           inOptions.date,
-          inOptions.test_history_days,
+          inOptions.testHistoryDays,
           testHistoryCacheDir,
           useCachedCDashData=inOptions.useCachedCDashData,
           alwaysUseCacheFileIfExists=True,
@@ -679,7 +681,7 @@ if __name__ == '__main__':
       htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         twoinrDescr, twoinrAcro, twoinrNum,
         twoinrSortedLimitedLOD,
-        inOptions.test_history_days, inOptions.limitTableRows )
+        inOptions.testHistoryDays, inOptions.limitTableRows )
 
     #
     # D.3.c) twif
@@ -716,7 +718,7 @@ if __name__ == '__main__':
           inOptions.cdashSiteUrl,
           inOptions.cdashProjectName,
           inOptions.date,
-          inOptions.test_history_days,
+          inOptions.testHistoryDays,
           testHistoryCacheDir,
           useCachedCDashData=inOptions.useCachedCDashData,
           alwaysUseCacheFileIfExists=True,
@@ -726,7 +728,7 @@ if __name__ == '__main__':
 
       htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         twifDescr, twifAcro, twifNum, twifSortedLOD,
-        inOptions.test_history_days )
+        inOptions.testHistoryDays )
       # NOTE: We don't limit the number of tests tracked tests listed because
       # we will never have a huge number of failing tests with issue trackers.
 
@@ -765,7 +767,7 @@ if __name__ == '__main__':
           inOptions.cdashSiteUrl,
           inOptions.cdashProjectName,
           inOptions.date,
-          inOptions.test_history_days,
+          inOptions.testHistoryDays,
           testHistoryCacheDir,
           useCachedCDashData=inOptions.useCachedCDashData,
           alwaysUseCacheFileIfExists=True,
@@ -775,7 +777,7 @@ if __name__ == '__main__':
 
       htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         twinrDescr, twinrAcro, twinrNum, twinrSortedLOD,
-        inOptions.test_history_days )
+        inOptions.testHistoryDays )
 
     # Generate table "Tests with issue trackers missing: twim=???"
 

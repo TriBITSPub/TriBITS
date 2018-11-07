@@ -1532,7 +1532,7 @@ def createCDashTestHtmlTableStr( testTypeDescr,
 #    build_name=CDash_json["builds"][i]["buildName"]
 #    test_name=CDash_json["builds"][i]["testname"]
 ##    test_name_url=CDash_json["builds"][i]["testname"] 
-#    days_of_history=int(options.test_history_days)
+#    days_of_history=int(options.testHistoryDays)
 #    
 #    
 #    # A unique test is determined by the build name, the test name, and the site where it was run
@@ -1566,10 +1566,10 @@ def createCDashTestHtmlTableStr( testTypeDescr,
 #    site=testDictionary[dict_key]["site"]
 #    build_name=testDictionary[dict_key]["build_name"]
 #    test_name=testDictionary[dict_key]["test_name"]
-#    days_of_history=int(options.test_history_days)
+#    days_of_history=int(options.testHistoryDays)
 #    given_date=validateAndConvertYYYYMMDD(options.date)
 #
-#    history_title_string="failures_in_last_"+str(options.test_history_days)+"_days"
+#    history_title_string="failures_in_last_"+str(options.testHistoryDays)+"_days"
 #    
 #    #URL used to get the history of the test in JSON form
 #    testHistoryQueryUrl= \
