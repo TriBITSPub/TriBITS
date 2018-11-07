@@ -456,12 +456,12 @@ if __name__ == '__main__':
     print("Num nonpassing tests with issue trackers Not Run = "+str(len(twinrLOD)))
 
     # Get list of tests with issue trackers that are not in the list of
-    # non-passing tests
-    testsWithIssueTrackersNotNonpassingLOD = CDQAR.getFilteredList(
+    # nonpassing tests (and therefore these are passing or missing)
+    testsWithIssueTrackersPassingOrMissingLOD = CDQAR.getFilteredList(
       testsWithIssueTrackerSLOD,
       CDQAR.NotMatchFunctor(nonpassingTestsMatchFunctor) )
-    print("Num tests with issue trackers not nonpassing = "+\
-      str(len(testsWithIssueTrackersNotNonpassingLOD)))
+    print("Num tests with issue trackers passing or missing = "+\
+      str(len(testsWithIssueTrackersPassingOrMissingLOD)))
   
     # Nonpassing Tests on CDash
     htmlEmailBodyTop += \
@@ -606,13 +606,13 @@ if __name__ == '__main__':
     twipLOD = []
     twimLOD = []
 
-    if testsWithIssueTrackersNotNonpassingLOD:
+    if testsWithIssueTrackersPassingOrMissingLOD:
 
       print("\nGetting test history for tests with issue trackers"+\
-        " that are not nonpassing: num="+str(len(testsWithIssueTrackersNotNonpassingLOD)))
+        " passing or missing: num="+str(len(testsWithIssueTrackersPassingOrMissingLOD)))
 
       CDQAR.foreachTransform(
-        testsWithIssueTrackersNotNonpassingLOD,
+        testsWithIssueTrackersPassingOrMissingLOD,
         CDQAR.AddTestHistoryToTestDictFunctor(
           inOptions.cdashSiteUrl,
           inOptions.cdashProjectName,
@@ -628,7 +628,7 @@ if __name__ == '__main__':
 
       # Split into list of tests that are passing vs. those that are missing
       (twipLOD, twimLOD) = CDQAR.splitListOnMatch(
-        testsWithIssueTrackersNotNonpassingLOD, CDQAR.isTestPassed )
+        testsWithIssueTrackersPassingOrMissingLOD, CDQAR.isTestPassed )
 
     print("\nNum tests with issue trackers Passed = "+str(len(twipLOD)))
     print("Num tests with issue trackers Missing = "+str(len(twimLOD)))
