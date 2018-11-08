@@ -257,8 +257,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
-        "Failing tests without issue trackers: twoif=12",
-        "Failing tests with issue trackers: twif=9",
+        "Tests without issue trackers Failed: twoif=12",
+        "Tests with issue trackers Failed: twif=9",
         ],
       [
         # Top title
@@ -272,12 +272,12 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
         # Second paragraph with listing of different types of tables below
         "<p>",
-        "<font color=\"red\">Failing tests without issue trackers: twoif=12</font><br>",
-        "Failing tests with issue trackers: twif=9<br>",
+        "<font color=\"red\">Tests without issue trackers Failed: twoif=12</font><br>",
+        "Tests with issue trackers Failed: twif=9<br>",
         "</p>",
          
         # twoif table
-        "<h3>Failing tests without issue trackers [(]limited to 10[)]: twoif=12</h3>",
+        "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</h3>",
         # Pin down the first row of this table (pin down this first row
         "<tr>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
@@ -292,7 +292,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57860535&build=4107241\">Belos_gcrodr_hb_MPI_4</a></td>",
 
         # twif table
-        "<h3>Failing tests with issue trackers: twif=9</h3>",
+        "<h3>Tests with issue trackers Failed: twif=9</h3>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>"
         ],
       #verbose=True,
@@ -367,7 +367,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
-        "Failing tests without issue trackers: twoif=10",
+        "Tests without issue trackers Failed: twoif=10",
         "Getting 30 days of history for Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "Getting 30 days of history for KokkosKernels_blas_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "Getting 30 days of history for KokkosKernels_common_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
@@ -378,10 +378,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Getting 30 days of history for Sacado_tradoptest_55_EQA_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "Getting 30 days of history for Teko_testdriver_tpetra_MPI_1 in the build Trilinos-atdm-waterman-cuda-9.2-release-debug on waterman from cache file",
         "Getting 30 days of history for Teko_testdriver_tpetra_MPI_4 in the build Trilinos-atdm-waterman-cuda-9.2-release-debug on waterman from cache file",
-        "Not Run tests without issue trackers: twoinr=2",
+        "Tests without issue trackers Not Run: twoinr=2",
         "Getting 30 days of history for Anasazi_Epetra_BKS_norestart_test_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "Getting 30 days of history for Belos_gcrodr_hb_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
-        "Failing tests with issue trackers: twif=8",
+        "Tests with issue trackers Failed: twif=8",
         "Getting 30 days of history for MueLu_UnitTestsBlockedEpetra_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file",
@@ -390,21 +390,21 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file",
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6 from cache file",
         "Getting 30 days of history for Stratimikos_test_single_belos_thyra_solver_driver_nos1_nrhs8_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
-        "Not Run tests with issue trackers: twinr=1",
+        "Tests with issue trackers Not Run: twinr=1",
         "Getting 30 days of history for Teko_ModALPreconditioner_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
         ],
       [
 
         # Second paragraph with listing of different types of tables below
         "<p>",
-        "<font color=\"red\">Failing tests without issue trackers: twoif=10</font><br>",
-        "<font color=\"red\">Not Run tests without issue trackers: twoinr=2</font><br>",
-        "Failing tests with issue trackers: twif=8<br>",
-        "Not Run tests with issue trackers: twinr=1<br>",
+        "<font color=\"red\">Tests without issue trackers Failed: twoif=10</font><br>",
+        "<font color=\"red\">Tests without issue trackers Not Run: twoinr=2</font><br>",
+        "Tests with issue trackers Failed: twif=8<br>",
+        "Tests with issue trackers Not Run: twinr=1<br>",
         "</p>",
          
         # twoif table
-        "<h3>Failing tests without issue trackers [(]limited to 10[)]: twoif=10</h3>",
+        "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=10</h3>",
         # Pin down the first row of this table
         "<tr>",
         "<td align=\"left\">mutrino</td>",
@@ -418,7 +418,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</tr>",
          
         # twoinr table
-        "<h3>Not Run tests without issue trackers [(]limited to 10[)]: twoinr=2</h3>",
+        "<h3>Tests without issue trackers Not Run [(]limited to 10[)]: twoinr=2</h3>",
         # Pin down the first row of this table
         "<tr>",
         "<td .+mutrino</td>",
@@ -432,7 +432,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</tr>",
          
         # twif table
-        "<h3>Failing tests with issue trackers: twif=8</h3>",
+        "<h3>Tests with issue trackers Failed: twif=8</h3>",
         # Pin down the first row of this table
         "<tr>",
         "<td align=\"left\">cee-rhel6</td>",
@@ -446,7 +446,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</tr>",
          
         # twinr table
-        "<h3>Not Run tests with issue trackers: twinr=1</h3>",
+        "<h3>Tests with issue trackers Not Run: twinr=1</h3>",
         # Pin down the first row of this table
         "<tr>",
         "<td align=\"left\">cee-rhel6</td>",
@@ -507,15 +507,15 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
-        "Failing tests without issue trackers: twoif=12",
-        "Failing tests with issue trackers: twif=9",
+        "Tests without issue trackers Failed: twoif=12",
+        "Tests with issue trackers Failed: twif=9",
         ],
       [
 
         # Second paragraph with listing of different types of tables below
         "<p>",
-        "<font color=\"red\">Failing tests without issue trackers: twoif=12</font><br>",
-        "Failing tests with issue trackers: twif=9<br>",
+        "<font color=\"red\">Tests without issue trackers Failed: twoif=12</font><br>",
+        "Tests with issue trackers Failed: twif=9<br>",
         "</p>",
 
         ],
@@ -585,8 +585,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Missing expected builds: bme=2",
         "Builds with configure failures: c=1",
         "Builds with build failures: b=2",
-        "Failing tests without issue trackers: twoif=12",
-        "Failing tests with issue trackers: twif=9",
+        "Tests without issue trackers Failed: twoif=12",
+        "Tests with issue trackers Failed: twif=9",
         ],
       [
         "<h2>Build and Test results for Project Specialized Builds on 2001-01-01</h2>",
@@ -599,8 +599,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<font color=\"red\">Missing expected builds: bme=2</font><br>",
         "<font color=\"red\">Builds with configure failures: c=1</font><br>",
         "<font color=\"red\">Builds with build failures: b=2</font><br>",
-        "<font color=\"red\">Failing tests without issue trackers: twoif=12</font><br>",
-        "Failing tests with issue trackers: twif=9<br>",
+        "<font color=\"red\">Tests without issue trackers Failed: twoif=12</font><br>",
+        "Tests with issue trackers Failed: twif=9<br>",
         
         # 'bme' table (Really pin down this table)
         "<h3>Missing expected builds: bme=2</h3>",
@@ -663,10 +663,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</table>",
 
         # 'twoif' table
-        "<h3>Failing tests without issue trackers [(]limited to 15[)]: twoif=12</h3>",
+        "<h3>Tests without issue trackers Failed [(]limited to 15[)]: twoif=12</h3>",
 
         # 'twif' table
-        "<h3>Failing tests with issue trackers: twif=9</h3>",
+        "<h3>Tests with issue trackers Failed: twif=9</h3>",
        ],
       #verbose=True,
       )
@@ -714,8 +714,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
         "Getting test history for tests with issue trackers passing or missing: num=9",
-        "Failing tests without issue trackers: twoif=0",
-        "Failing tests with issue trackers: twif=0",
+        "Tests without issue trackers Failed: twoif=0",
+        "Tests with issue trackers Failed: twif=0",
         ],
       [
         "<h2>Build and Test results for Project Specialized Builds on 2001-01-01</h2>",

@@ -639,7 +639,7 @@ if __name__ == '__main__':
 
     print("")
 
-    twoifDescr = "Failing tests without issue trackers"
+    twoifDescr = "Tests without issue trackers Failed"
     twoifAcro = "twoif"
     twoifNum = len(twoifLOD)
 
@@ -690,7 +690,7 @@ if __name__ == '__main__':
 
     print("")
 
-    twoinrDescr = "Not Run tests without issue trackers"
+    twoinrDescr = "Tests without issue trackers Not Run"
     twoinrAcro = "twoinr"
     twoinrNum = len(twoinrLOD)
 
@@ -741,7 +741,7 @@ if __name__ == '__main__':
 
     print("")
 
-    twifDescr = "Failing tests with issue trackers"
+    twifDescr = "Tests with issue trackers Failed"
     twifAcro = "twif"
     twifNum = len(twifLOD)
 
@@ -791,7 +791,7 @@ if __name__ == '__main__':
 
     print("")
 
-    twinrDescr = "Not Run tests with issue trackers"
+    twinrDescr = "Tests with issue trackers Not Run"
     twinrAcro = "twinr"
     twinrNum = len(twinrLOD)
 
@@ -839,7 +839,7 @@ if __name__ == '__main__':
 
     print("")
 
-    twipDescr = "Passing tests with issue trackers"
+    twipDescr = "Tests with issue trackers Passed"
     twipAcro = "twip"
     twipNum = len(twipLOD)
 
@@ -867,7 +867,7 @@ if __name__ == '__main__':
 
     print("")
 
-    twimDescr = "Missing tests with issue trackers"
+    twimDescr = "Tests with issue trackers Missing"
     twimAcro = "twim"
     twimNum = len(twimLOD)
 
@@ -892,9 +892,10 @@ if __name__ == '__main__':
   except Exception:
     # Traceback!
     sys.stdout.flush()
+    print("")
     traceback.print_exc()
     # Report the error
-    htmlEmailBodyTop += CDQAR.htmlNewlineBreak(traceback.format_exc()) 
+    htmlEmailBodyTop += "\n"+CDQAR.htmlNewlineBreak(traceback.format_exc()) 
     print("\nError, could not compute the analysis due to"+\
       " above error so return failed!")
     globalPass = False
