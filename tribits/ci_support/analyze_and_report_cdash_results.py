@@ -320,16 +320,17 @@ if __name__ == '__main__':
     #
 
     # Get list of expected builds from input CSV file
+    expectedBuildsLOD = []
     if inOptions.expectedBuildsFile:
       expectedBuildsLOD = \
         CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
-    else:
-      expectedBuildsLOD = []
     print("\nNum expected builds = "+str(len(expectedBuildsLOD)))
 
     # Get list of tests with issue tracker from input CSV file
-    testsWithIssueTrackersLOD = \
-      CDQAR.getTestsWtihIssueTrackersListFromCsvFile(inOptions.testsWithIssueTrackersFile)
+    testsWithIssueTrackersLOD = []
+    if inOptions.testsWithIssueTrackersFile:
+      testsWithIssueTrackersLOD = CDQAR.getTestsWtihIssueTrackersListFromCsvFile(
+        inOptions.testsWithIssueTrackersFile)
     print("\nNum tests with issue trackers = "+str(len(expectedBuildsLOD)))
     # Get a SearchableListOfDicts for the tests with issue trackers to allow
     # them to be looked up based on matching ['site', 'buildName', 'testname']

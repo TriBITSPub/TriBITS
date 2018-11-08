@@ -322,6 +322,71 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       )
 
 
+  # Base case for raw CDash data but no expected builds or tests with issue
+  # trackers CSV files
+  #
+  # This test shows that you can leave these arguments blank and just run the
+  # script pointing to a CDash site and get useful info.
+  #
+  def test_twoif_21_no_expected_builds_or_tests_with_issue_trackers(self):
+
+    testCaseName = "twoif_21_no_expected_builds_or_tests_with_issue_trackers"
+
+    analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+
+    analyze_and_report_cdash_results_run_case(
+      self,
+      testCaseName,
+      ["--expected-builds-file= --tests-with-issue-trackers-file="],
+      1,
+      "FAILED (twoif=21): ProjectName Nightly Builds on 2018-10-28",
+      [
+        "Num expected builds = 0",
+        "Num tests with issue trackers = 0",
+        "Num builds = 6",
+
+        "Num nonpassing tests direct from CDash query = 21",
+        "Num nonpassing tests after removing duplicate tests = 21",
+        "Num nonpassing tests without issue trackers = 21",
+        "Num nonpassing tests with issue trackers = 0",
+        "Num nonpassing tests without issue trackers Failed = 21",
+        "Num nonpassing tests without issue trackers Not Run = 0",
+        "Num nonpassing tests with issue trackers Failed = 0",
+        "Num nonpassing tests with issue trackers Not Run = 0",
+        "Num tests with issue trackers passing or missing = 0",
+
+        "Missing expected builds: bme=0",
+        "Builds with configure failures: c=0",
+        "Builds with build failures: b=0",
+        "Num tests with issue trackers Passed = 0",
+        "Num tests with issue trackers Missing = 0",
+        "Tests without issue trackers Failed: twoif=21",
+
+        "Getting 30 days of history for Anasazi_Epetra_BKS_norestart_test_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        ],
+      [
+        # Top title
+        "<h2>Build and Test results for ProjectName Nightly Builds on 2018-10-28</h2>",
+
+        # First paragraph with with links to build and nonpassing tests results on cdsah
+        "<p>",
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
+        "</p>",
+
+        # Second paragraph with listing of different types of tables below
+        "<p>",
+        "<font color=\"red\">Tests without issue trackers Failed: twoif=21</font><br>",
+        "</p>",
+         
+        # twoif table
+        "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=21</h3>",
+        ],
+      #verbose=True,
+      #debugPrint=True,
+      )
+
+
   # Test out Not Run tests
   #
   # This test checks the tables 'twoinr' and 'twinr' in detail and checks some
