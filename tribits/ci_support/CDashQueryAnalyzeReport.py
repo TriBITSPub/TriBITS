@@ -44,6 +44,7 @@ except ImportError:
   # Python 3
   from urllib.request import urlopen
 
+import hashlib
 import json
 import datetime
 import copy
@@ -77,6 +78,29 @@ def getFileNameStrFromText(inputStr):
   fileNameStr += "_"
   return fileNameStr
 
+
+# Compress a long file name to avoid open() error
+#
+# If the full file name must be shorted and if prefix!="", then it is added to
+# the beginning of the shortened filename.  Also, if ext!="", then "."+ext is
+# added to the end of the shortened filename.  Otherwise, if inputFileName is
+# not too long, then it is returned without modification (i.e. 'prefix' and
+# 'ext' are ignored).  NOTE: If 'prefix' and 'ext' are too long, then the
+# returned shortened filename may also be too long.
+#
+# This function should return a shorter unique file name that is platform
+# independent.
+#
+def getCompressedFileNameIfTooLong(inputFileName, prefix="", ext=""):
+  maxFileNameLength = 255 # ToDo: Figure out for this system?
+  if len(inputFileName) > maxFileNameLength:
+    hashObject = hashlib.sha1(inputFileName)
+    hashStr = hashObject.hexdigest()
+    newFileName = prefix+hashObject.hexdigest()
+    if ext: newFileName += "." + ext
+    return newFileName
+  return inputFileName
+    
 
 # Filter and input list and return a list with elements where
 # matchFunctor(inputList[i])==True.
@@ -935,15 +959,18 @@ class AddTestHistoryToTestDictFunctor(object):
 
     # Set the names of the cached files so we can check if they exists and
     # write them out otherwise
-    testHistoryCacheFile = \
-      self.__testCacheDir+"/"+\
+    testHistoryCacheFileFullName = \
       getTestHistoryCacheFileName(self.__date,site,buildName,testname,daysOfHistory)
+    # Possibly compress the file name if it is too long
+    testHistoryCacheFilePath = \
+     self.__testCacheDir+"/"+\
+      getCompressedFileNameIfTooLong(testHistoryCacheFileFullName,self.__date+"-","json")
 
     if self.__verbose:
       gettingTestHistoryMsg = \
         "Getting "+str(daysOfHistory)+" days of history for "+testname+\
         " in the build "+buildName+" on "+site
-      if os.path.exists(testHistoryCacheFile):
+      if os.path.exists(testHistoryCacheFilePath):
         gettingTestHistoryMsg += " from cache file"
       else:
         gettingTestHistoryMsg += " from CDash"
@@ -951,7 +978,7 @@ class AddTestHistoryToTestDictFunctor(object):
 
     # Get the test history off of CDash (or from reading the cache file)
     testHistoryLOD = downloadTestsOffCDashQueryTestsAndFlatten(
-      testHistoryQueryUrl, testHistoryCacheFile,
+      testHistoryQueryUrl, testHistoryCacheFilePath,
       useCachedCDashData=self.__useCachedCDashData,
       alwaysUseCacheFileIfExists=self.__alwaysUseCacheFileIfExists,
       verbose=self.__printDetails,

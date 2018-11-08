@@ -140,6 +140,34 @@ class test_getFileNameStrFromText(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.getCompressedFileNameIfTooLong()
+#
+#############################################################################
+
+class test_getCompressedFileNameIfTooLong(unittest.TestCase):
+
+  def test_short_filename(self):
+    self.assertEqual(
+      getCompressedFileNameIfTooLong("some_short_filename.txt"),
+      "some_short_filename.txt")
+
+  def test_too_long_filename(self):
+    self.assertEqual(
+      getCompressedFileNameIfTooLong(
+        "2018-11-06-sierra-waterman-sparc-alltpls_waterman-gpu_cuda-9.2.88-gcc-7.2.0_openmpi-2.1.2_shared_opt-sparc-regression-ear99_aero_blottner-sphere_Ma5.0_laminar-isot_air-pg_imp-bdf1_nlin-newton_lin-pi_sccfv_1o_0000132-hex_np01_cgns_tpetra-bcrs_belos-fp-jacobi-HIST-30.json"),
+      "ec424ddf0b79e61e539ff7a441019f0b928f88e9" )
+
+  def test_too_long_filename_prefix_ext(self):
+    self.assertEqual(
+      getCompressedFileNameIfTooLong(
+        "2018-11-06-sierra-waterman-sparc-alltpls_waterman-gpu_cuda-9.2.88-gcc-7.2.0_openmpi-2.1.2_shared_opt-sparc-regression-ear99_aero_blottner-sphere_Ma5.0_laminar-isot_air-pg_imp-bdf1_nlin-newton_lin-pi_sccfv_1o_0000132-hex_np01_cgns_tpetra-bcrs_belos-fp-jacobi-HIST-30.json",
+        "2018-11-06-", "json"
+        ),
+      "2018-11-06-ec424ddf0b79e61e539ff7a441019f0b928f88e9.json" )
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.getFilteredList()
 #
 #############################################################################
