@@ -309,6 +309,9 @@ if __name__ == '__main__':
 
   try:
 
+    # Beginning of top full bulid and tests CDash links paragraph 
+    htmlEmailBodyTop += "<p>\n"
+
     #
     # D.1) Read data from input files
     #
@@ -373,9 +376,6 @@ if __name__ == '__main__':
       fullCDashIndexBuildsJsonCacheFile,
       inOptions.useCachedCDashData )
     print("\nNum builds = "+str(len(buildsListOfDicts)))
-
-    # Beginning of top full bulid and tests CDash links paragraph 
-    htmlEmailBodyTop += "<p>\n"
   
     # Builds on CDash
     htmlEmailBodyTop += \
@@ -895,7 +895,8 @@ if __name__ == '__main__':
     print("")
     traceback.print_exc()
     # Report the error
-    htmlEmailBodyTop += "\n"+CDQAR.htmlNewlineBreak(traceback.format_exc()) 
+    htmlEmailBodyTop += "\n<pre><code>\n"+\
+      traceback.format_exc()+"\n</code></pre>\n"
     print("\nError, could not compute the analysis due to"+\
       " above error so return failed!")
     globalPass = False

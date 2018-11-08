@@ -169,20 +169,6 @@ def makeHtmlTextGreen(htmlText):
   return("<font color=\"green\">"+htmlText+"</font>")
 
 
-# Add <br> for every newline in the input string
-def htmlNewlineBreak(inputStr):
-  inputStrList = inputStr.split("\n")
-  outputHtmlStr = ""
-  lenInputStrList = len(inputStrList)
-  for i in xrange(lenInputStrList):
-    lineStr = inputStrList[i]
-    if i < lenInputStrList-1:
-      outputHtmlStr += lineStr + "<br>\n"
-    elif lineStr != "":
-      outputHtmlStr += lineStr + "<br>\n"
-  return outputHtmlStr
-
-
 # Read a CSV file into a list of dictionaries for each row where the rows of
 # the output list are dicts with the column names as keys.
 #

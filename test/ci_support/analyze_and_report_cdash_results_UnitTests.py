@@ -772,9 +772,13 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<h2>Build and Test results for ProjectName Nightly Builds on 2001-01-01</h2>",
 
         # The error message
-        ".+File \".+/analyze_and_report_cdash_results.py\", line.+<br>",
-        ".+Error: The following tests with issue trackers did not match 'site' and 'buildName' in one of the expected builds:<br>",
-        ".+{'site'='othersite', 'buildName'=otherbuild', 'testname'=Teko_ModALPreconditioner_MPI_1'}<br>",
+        "<pre><code>",
+        "Traceback [(]most recent call last[)]:",
+        "  File \".+/analyze_and_report_cdash_results.py\".+",
+        "    raise Exception[(]errMsg[)]",
+        "Exception: Error: The following tests with issue trackers did not match 'site' and 'buildName' in one of the expected builds:",
+        "  {'site'='othersite', 'buildName'=otherbuild', 'testname'=Teko_ModALPreconditioner_MPI_1'}",
+        "</code></pre>",
         ],
       )
 

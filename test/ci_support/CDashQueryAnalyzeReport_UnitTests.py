@@ -253,25 +253,6 @@ class test_NotMatchFunctor(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.htmlNewlineBreak()
-#
-#############################################################################
-
-class test_htmlNewlineBreak(unittest.TestCase):
-
-  def test_1(self):
-    inputStr = "line one\nline two\nline three\n"
-    htmlStr_expected = "line one<br>\nline two<br>\nline three<br>\n"
-    self.assertEqual(htmlNewlineBreak(inputStr), htmlStr_expected)
-
-  def test_2(self):
-    inputStr = "line one\n\nline two\nline three\n"
-    htmlStr_expected = "line one<br>\n<br>\nline two<br>\nline three<br>\n"
-    self.assertEqual(htmlNewlineBreak(inputStr), htmlStr_expected)
-
-
-#############################################################################
-#
 # Test CDashQueryAnalyzeReport.readCsvFileIntoListOfDicts()
 #
 #############################################################################
