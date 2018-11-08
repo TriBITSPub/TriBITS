@@ -298,7 +298,7 @@ def getAndCacheCDashQueryDataOrReadFromCache(
   cdashQueryDataCacheFile,  # File name
   useCachedCDashData,  # If 'True', then cdasyQueryDataCacheFile must be non-null
   alwaysUseCacheFileIfExists = False,
-  printCDashUrl = False,
+  verbose = False,
   extractCDashApiQueryData_in=extractCDashApiQueryData,
   ):
   if (
@@ -306,19 +306,22 @@ def getAndCacheCDashQueryDataOrReadFromCache(
       and cdashQueryDataCacheFile \
       and os.path.exists(cdashQueryDataCacheFile) \
     ):
-    if printCDashUrl:
-      print("Since the file exists, using cached data from file:\n"+\
-        "  "+cdashQueryDataCacheFile )
+    if verbose:
+      print("  Since the file exists, using cached data from file:\n"+\
+        "    "+cdashQueryDataCacheFile )
     cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
   elif useCachedCDashData:
-    if printCDashUrl:
-      print("Using cached data from file:\n  " + cdashQueryUrl )
+    if verbose:
+      print("  Using cached data from file:\n    "+cdashQueryUrl )
     cdashQueryData=eval(open(cdashQueryDataCacheFile, 'r').read())
   else:
-    if printCDashUrl:
-      print("Getting bulid data from:\n  " + cdashQueryUrl )
+    if verbose:
+      print("  Downloading CDash data from:\n    "+cdashQueryUrl )
     cdashQueryData = extractCDashApiQueryData_in(cdashQueryUrl)
     if cdashQueryDataCacheFile:
+      if verbose:
+        print("  Caching data downloaded from CDash to file:\n    "+\
+          cdashQueryDataCacheFile)
       pprintPythonDataToFile(cdashQueryData, cdashQueryDataCacheFile) 
   return cdashQueryData
 
@@ -1143,7 +1146,7 @@ def downloadBuildsOffCDashAndFlatten(
   # Get the query data
   fullCDashIndexBuildsJson = getAndCacheCDashQueryDataOrReadFromCache(
     cdashIndexBuildsQueryUrl, fullCDashIndexBuildsJsonCacheFile, useCachedCDashData,
-    alwaysUseCacheFileIfExists, printCDashUrl=verbose,
+    alwaysUseCacheFileIfExists, verbose=verbose,
     extractCDashApiQueryData_in=extractCDashApiQueryData_in )
   # Get trimmed down set of builds
   buildsListOfDicts = \
@@ -1157,7 +1160,7 @@ def downloadBuildsOffCDashAndFlatten(
 # cdashQueryTestsUrl [in]: String URL for cdash/api/v1/ctest/queryTests.php
 # with filters.
 #
-# If printCDashUrl==True, the the CDash query URL will be printed to STDOUT.
+# If verbose==True, the the CDash query URL will be printed to STDOUT.
 # Otherwise, this function is silent and will not return any output to STDOUT.
 #
 # If fullCDashQueryTestsJsonCacheFile != None, then the raw JSON
@@ -1189,7 +1192,7 @@ def downloadTestsOffCDashQueryTestsAndFlatten(
   # Get the query data
   fullCDashQueryTestsJson = getAndCacheCDashQueryDataOrReadFromCache(
     cdashQueryTestsUrl, fullCDashQueryTestsJsonCacheFile, useCachedCDashData,
-    alwaysUseCacheFileIfExists, printCDashUrl=verbose,
+    alwaysUseCacheFileIfExists, verbose=verbose,
     extractCDashApiQueryData_in=extractCDashApiQueryData_in )
   # Get flattend set of tests
   testsListOfDicts = \
@@ -1532,7 +1535,7 @@ def createCDashTestHtmlTableStr( testTypeDescr,
 ## This will return a dictionary with information about all the tests that were returned
 ## in the json from cdash as a result of the CDash query from the given inputs
 #def getTestsJsonFromCdash(cdashUrl, projectName, filterFields, options,
-#  printCDashUrl=False \
+#  verbose=False \
 #  ):
 #
 #  cacheFolder=options.cdashQueriesCacheDir+"/test_history"
@@ -1543,7 +1546,7 @@ def createCDashTestHtmlTableStr( testTypeDescr,
 #  
 #  if not simplified_dict_of_tests and (not options.useCachedCDashData):
 #    raw_json_from_cdash=getRawJsonFromCdash(cdashUrl, projectName, filterFields,
-#      options, printCDashUrl)
+#      options, verbose)
 #    simplified_dict_of_tests=getTestDictionaryFromCdashJson(raw_json_from_cdash, options)
 #    if options.cdashQueriesCacheDir:
 #      writeJsonDataToCache(cacheFolder, cacheFile, simplified_dict_of_tests)
@@ -1555,7 +1558,7 @@ def createCDashTestHtmlTableStr( testTypeDescr,
 #
 ## Construct a URL and return the raw json from cdash
 #def getRawJsonFromCdash(cdashUrl, projectName, filterFields, options,
-#  printCDashUrl=False \
+#  verbose=False \
 #  ):
 #  # construct the cdash query.  the "/api/v1/" will cause CDash to return a json data 
 #  # structure instead of a web page
@@ -1566,7 +1569,7 @@ def createCDashTestHtmlTableStr( testTypeDescr,
 #    "&date="+options.date+ \
 #    "&"+filterFields
 #
-#  if printCDashUrl:
+#  if verbose:
 #    print("Getting bulid data from:\n\n  " + CdashTestsApiQueryUrl )
 #    
 #  # get the json from CDash using the query constructed above

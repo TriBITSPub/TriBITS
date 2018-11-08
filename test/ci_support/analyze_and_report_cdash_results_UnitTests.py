@@ -238,7 +238,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     analyze_and_report_cdash_results_run_case(
       self,
       testCaseName,
-      [],
+      ["--print-details=on"],  # grep for verbose output
       1,
       "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2001-01-01",
       [
@@ -257,7 +257,13 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
+        "Num tests with issue trackers Passed = 0",
+        "Num tests with issue trackers Missing = 0",
         "Tests without issue trackers Failed: twoif=12",
+        "Getting 30 days of history for Anasazi_Epetra_BKS_norestart_test_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "  Since the file exists, using cached data from file:",
+        "    .+/twoif_12_twif_9/test_history/2001-01-01-mutrino-Trilinos-atdm-mutrino-intel-opt-openmp-KNL-Anasazi_Epetra_BKS_norestart_test_MPI_4-HIST-30.json",
+        "Getting 30 days of history for Belos_gcrodr_hb_MPI_4 in the build ",
         "Tests with issue trackers Failed: twif=9",
         ],
       [

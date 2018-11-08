@@ -433,7 +433,7 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
     cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
       "dummy-cdash-url", outputCacheFile,
       useCachedCDashData=False,
-      printCDashUrl=False,
+      verbose=False,
       extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFunctor
       )
     self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
@@ -448,7 +448,7 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
     cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
       "dummy-cdash-url", outputCacheFile,
       useCachedCDashData=True,
-      printCDashUrl=False,
+      verbose=False,
       )
     self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
 
@@ -460,7 +460,7 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
     cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
       "dummy-cdash-url", outputCacheFile,
       useCachedCDashData=True,
-      printCDashUrl=False,
+      verbose=False,
       )
     self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
 
