@@ -678,19 +678,29 @@ g_buildsListForExpectedBuilds = [
 g_buildLookupDictForExpectedBuilds = {
   'group1' : {
     'site1' : {
-      'build1':{'group':'group1','site':'site1','buildname':'build1','data':'val1'},
-      'build2':{'group':'group1','site':'site1','buildname':'build2','data':'val2'},
+      'build1':{
+        'dict':{'group':'group1','site':'site1','buildname':'build1','data':'val1'},
+        'idx':0 },
+      'build2':{
+        'dict':{'group':'group1','site':'site1','buildname':'build2','data':'val2'},
+        'idx':1 },
       },
     'site2' : {
-      'build3':{'group':'group1','site':'site2','buildname':'build3','data':'val3'},
+      'build3':{
+        'dict':{'group':'group1','site':'site2','buildname':'build3','data':'val3'},
+        'idx':2 },
       },
     },
   'group2' : {
     'site1' : {
-      'build1':{'group':'group2','site':'site1','buildname':'build1','data':'val4'},
+      'build1':{
+        'dict':{'group':'group2','site':'site1','buildname':'build1','data':'val4'},
+        'idx':3 },
       },
     'site3' : {
-      'build4':{'group':'group2','site':'site3','buildname':'build4','data':'val5'},
+      'build4':{
+        'dict':{'group':'group2','site':'site3','buildname':'build4','data':'val5'},
+        'idx':4 },
       },
     },
   }
@@ -708,7 +718,7 @@ class test_createLookupDictForListOfDicts(unittest.TestCase):
     #g_pp.pprint(g_buildLookupDictForExpectedBuilds)
     self.assertEqual(buildLookupDict, g_buildLookupDictForExpectedBuilds)
 
-  def test_duplicate_dicts(self):
+  def test_duplicate_dicts_error(self):
     listOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
     origDictEle = g_buildsListForExpectedBuilds[0]
     newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[0])
@@ -722,7 +732,7 @@ class test_createLookupDictForListOfDicts(unittest.TestCase):
       self.assertEqual( str(errMsg),
         "Error, listOfDicts[5]="+sorted_dict_str(newDictEle)+\
         " has duplicate values for the list of keys ['group', 'site', 'buildname']"+\
-        " with the element already added "+\
+        " with the element already added listOfDicts[0]="+\
         sorted_dict_str(origDictEle)+"!" )
 
   def test_exact_duplicate_dicts_with_removal(self):

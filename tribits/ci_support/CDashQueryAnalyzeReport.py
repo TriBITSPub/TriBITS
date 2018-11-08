@@ -570,10 +570,12 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
   # Build the lookup dict data-structure. Also, optionally mark any 100%
   # duplicate elements if asked to remove 100% duplicate elements.
   lookupDict = {}
-  i = 0
+  idx = 0
   duplicateIndexesToRemoveList = []
   for dictEle in listOfDicts:
-    #print("\ndictEle = "+str(dictEle))
+    #print("\nidx = "+str(idx))
+    #print("dictEle = "+str(dictEle))
+    # Create the structure of recursive dicts for the keys in order
     currentLookupDictRef = lookupDict
     lastLookupDictRef = None
     lastKeyValue = None
@@ -589,24 +591,32 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
       currentLookupDictRef = nextLookupDictRef
       #print("lookupDict = "+str(lookupDict))
     addEle = True
+    # Check to see if this dict has already been added
+    #print("currentLookupDictRef = "+str(currentLookupDictRef))
     if currentLookupDictRef:
-      if currentLookupDictRef == dictEle and removeExactDuplicateElements:
+      lookedUpDict = currentLookupDictRef.get('dict', None)
+      lookedUpIdx = currentLookupDictRef.get('idx', None)
+      #print("lookedUpDict = "+str(lookedUpIdx))
+      #print("lookedUpIdx = "+str(lookedUpIdx))
+      if lookedUpDict == dictEle and removeExactDuplicateElements:
         # This is a 100% duplicate element to one previously added.
         # Therefore, marke this duplicate element to be removed from the
         # orginal list.
-        duplicateIndexesToRemoveList.append(i)
+        duplicateIndexesToRemoveList.append(idx)
         addEle = False
       else:
         raise Exception(
-          "Error, listOfDicts["+str(i)+"]="+sorted_dict_str(dictEle)+" has duplicate"+\
+          "Error, listOfDicts["+str(idx)+"]="+sorted_dict_str(dictEle)+" has duplicate"+\
           " values for the list of keys "+str(listOfKeys)+" with the element"+\
-          " already added "+sorted_dict_str(currentLookupDictRef)+"!")
+          " already added listOfDicts["+str(lookedUpIdx)+"]="+\
+          sorted_dict_str(lookedUpDict)+"!")
     # Need to go back and reset the dict on the last dict in the
     # data-structure so that modifications to the dicts that are looked up
     # will modify the original list.
+    #print("addEle = "+str(addEle))
     if addEle:
-      lastLookupDictRef[lastKeyValue] = dictEle
-    i += 1
+      currentLookupDictRef.update({'dict':dictEle, 'idx':idx})
+      idx += 1
   # Remove 100% duplicate elements marged above
   numRemoved = 0
   for duplicateIndex in duplicateIndexesToRemoveList:
