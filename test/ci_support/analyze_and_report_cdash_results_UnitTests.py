@@ -174,7 +174,7 @@ def analyze_and_report_cdash_results_run_case(
     htmlFileAbsPath = os.getcwd()+"/"+htmlFileName
   
     cmnd = ciSupportDir+"/analyze_and_report_cdash_results.py"+\
-      " --date=2001-01-01"+\
+      " --date=2018-10-28"+\
       " --cdash-project-name='ProjectName'"+\
       " --build-set-name='ProjectName Nightly Builds'"+\
       " --cdash-site-url='https://something.com/cdash'"+\
@@ -231,20 +231,31 @@ def analyze_and_report_cdash_results_run_case(
 
 class test_analyze_and_report_cdash_results(unittest.TestCase):
 
-  # Base case for raw CDash data we happened to choose
+
+  # Base case for raw CDash data we happened to choose for all fo tests tests
+  #
+  # This first test checks several parts of the STDOUT and HTML output that
+  # other tests will not check.  In particular, this really pins down the
+  # tables 'twoif' and 'twif'.  Other tests will not do this to avoid
+  # duplication in testing.
+  #
   def test_twoif_12_twif_9(self):
+
     testCaseName = "twoif_12_twif_9"
+
     analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+
     analyze_and_report_cdash_results_run_case(
       self,
       testCaseName,
       ["--print-details=on"],  # grep for verbose output
       1,
-      "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2001-01-01",
+      "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2018-10-28",
       [
         "Num expected builds = 6",
         "Num tests with issue trackers = 6",
         "Num builds = 6",
+
         "Num nonpassing tests direct from CDash query = 21",
         "Num nonpassing tests after removing duplicate tests = 21",
         "Num nonpassing tests without issue trackers = 12",
@@ -254,26 +265,31 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers Failed = 9",
         "Num nonpassing tests with issue trackers Not Run = 0",
         "Num tests with issue trackers passing or missing = 0",
+
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
         "Num tests with issue trackers Passed = 0",
         "Num tests with issue trackers Missing = 0",
         "Tests without issue trackers Failed: twoif=12",
+
         "Getting 30 days of history for Anasazi_Epetra_BKS_norestart_test_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "  Since the file exists, using cached data from file:",
-        "    .+/twoif_12_twif_9/test_history/2001-01-01-mutrino-Trilinos-atdm-mutrino-intel-opt-openmp-KNL-Anasazi_Epetra_BKS_norestart_test_MPI_4-HIST-30.json",
+        "    .+/twoif_12_twif_9/test_history/2018-10-28-mutrino-Trilinos-atdm-mutrino-intel-opt-openmp-KNL-Anasazi_Epetra_BKS_norestart_test_MPI_4-HIST-30.json",
         "Getting 30 days of history for Belos_gcrodr_hb_MPI_4 in the build ",
+        # Above grep order should pin down the file name matched with the test
+        # name.
+
         "Tests with issue trackers Failed: twif=9",
         ],
       [
         # Top title
-        "<h2>Build and Test results for ProjectName Nightly Builds on 2001-01-01</h2>",
+        "<h2>Build and Test results for ProjectName Nightly Builds on 2018-10-28</h2>",
 
         # First paragraph with with links to build and nonpassing tests results on cdsah
         "<p>",
-        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2001-01-01&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
-        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2001-01-01&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
         "</p>",
 
         # Second paragraph with listing of different types of tables below
@@ -286,11 +302,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</h3>",
         # Pin down the first row of this table (pin down this first row
         "<tr>",
-        "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Anasazi_Epetra_BKS_norestart_test_MPI_4</a></td>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Failed</a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
-        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-03T00:00:00\">30</a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">30</a></td>",
         "<td align=\"right\">2018-10-27</td>",
         "<td align=\"right\"></td>",
         "</tr>",
@@ -299,18 +315,20 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
         # twif table
         "<h3>Tests with issue trackers Failed: twif=9</h3>",
-        "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>"
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>"
         ],
       #verbose=True,
       #debugPrint=True,
       )
-  # NOTE: The above unit test checks several parts of the HTML output that
-  # other tests will not check.  In particular, this really pins down the
-  # tables 'twoif' and 'twif'.  Other tests will not do this to avoid
-  # duplication in testing.
 
 
-  # Test out Not Run test
+  # Test out Not Run tests
+  #
+  # This test checks the tables 'twoinr' and 'twinr' in detail and checks some
+  # of the contents of the 'twoif' and 'twif'.  To do this, we just change the
+  # 'status' of a few tests in the fullCDashNonpassingTests.json file from
+  # 'Failed' to 'Not Run'.
+  #
   def test_twoif_10_twoinr2_twif_8_twinr_1(self):
 
     testCaseName = "twoif_10_twoinr2_twif_8_twinr_1"
@@ -318,7 +336,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     # Copy the raw files to get started
     testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
 
-    # Open nonpassing test data JSON file that we will modify
+    # Change the status for few tests from 'Failed' to 'Not Run'.
     testListFilePath = \
       testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
     with open(testListFilePath, 'r') as testListFile:
@@ -350,7 +368,6 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testDict['status'] = u'Not Run'
     testDict['details'] = u'Required Files Missing'
     # Write updated test data back to file
-    #g_pp.pprint(testListFileJson)
     CDQAR.pprintPythonDataToFile(testListFileJson, testListFilePath)
 
     # Run the script and make sure it outputs the right stuff
@@ -359,7 +376,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       testCaseName,
       [],
       1,
-      "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2001-01-01",
+      "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2018-10-28",
       [
         "Num builds = 6",
         "Num nonpassing tests direct from CDash query = 21",
@@ -370,9 +387,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Not Run = 2",
         "Num nonpassing tests with issue trackers Failed = 8",
         "Num nonpassing tests with issue trackers Not Run = 1",
+
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
+
         "Tests without issue trackers Failed: twoif=10",
         "Getting 30 days of history for Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "Getting 30 days of history for KokkosKernels_blas_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
@@ -384,9 +403,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Getting 30 days of history for Sacado_tradoptest_55_EQA_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "Getting 30 days of history for Teko_testdriver_tpetra_MPI_1 in the build Trilinos-atdm-waterman-cuda-9.2-release-debug on waterman from cache file",
         "Getting 30 days of history for Teko_testdriver_tpetra_MPI_4 in the build Trilinos-atdm-waterman-cuda-9.2-release-debug on waterman from cache file",
+
         "Tests without issue trackers Not Run: twoinr=2",
         "Getting 30 days of history for Anasazi_Epetra_BKS_norestart_test_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "Getting 30 days of history for Belos_gcrodr_hb_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+
         "Tests with issue trackers Failed: twif=8",
         "Getting 30 days of history for MueLu_UnitTestsBlockedEpetra_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
@@ -396,6 +417,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file",
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6 from cache file",
         "Getting 30 days of history for Stratimikos_test_single_belos_thyra_solver_driver_nos1_nrhs8_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+
         "Tests with issue trackers Not Run: twinr=1",
         "Getting 30 days of history for Teko_ModALPreconditioner_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
         ],
@@ -414,11 +436,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         # Pin down the first row of this table
         "<tr>",
         "<td align=\"left\">mutrino</td>",
-        "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-03T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\">Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1</a></td>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\">Failed</a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
-        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-03T00:00:00\">1</a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">1</a></td>",
         "<td align=\"right\">None</td>",
         "<td align=\"right\"></td>",
         "</tr>",
@@ -469,12 +491,13 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       #verbose=True,
       #debugPrint=True,
       )
-  # NOTE: The above unit test checks the tables 'twoinr' and 'twinr' in detail
-  # and checks some of the contents of the 'twoif' and 'twif'.
 
 
   # Test with some duplicate tests from CDash query (this happens in real life
   # sometimes!)
+  #
+  # Here we add a duplicate test to the file fullCDashNonpassingTests.json.
+  #
   def test_twoif_12_twif_9_with_duplicate_nonpassing_tests(self):
 
     testCaseName = "test_twoif_12_twif_9_with_duplicate_nonpassing_tests"
@@ -482,7 +505,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     # Copy the raw files to get started
     testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
 
-    # Open nonpassing test data JSON file that we will modify
+    # Add a dupicate test to the set of nonpasssing tests JSON file
     testListFilePath = \
       testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
     with open(testListFilePath, 'r') as testListFile:
@@ -492,7 +515,6 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testDict = copy.deepcopy(testListLOD[1])
     testListLOD.insert(2, testDict)
     # Write updated test data back to file
-    #g_pp.pprint(testListFileJson)
     CDQAR.pprintPythonDataToFile(testListFileJson, testListFilePath)
 
     # Run the script and make sure it outputs the right stuff
@@ -501,7 +523,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       testCaseName,
       [],
       1,
-      "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2001-01-01",
+      "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2018-10-28",
       [
         "Num builds = 6",
         "Num nonpassing tests direct from CDash query = 22",
@@ -534,6 +556,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
   # Add some missing builds, some builds with configure failuires, and builds
   # with build failures
+  #
+  # Here we just a couple of new builds to the file expectedBuilds.csv that
+  # will become missing expected builds and we modfiy the dicts for a few
+  # builds to change them from passing to failing.
+  #
   def test_bme_2_c_1_b_2_twoif_12_twif_9(self):
 
     testCaseName = "bme_2_c_1_b_2_twoif_12_twif_9"
@@ -558,8 +585,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
     # Add some configure and build failures
     fullCDashIndexBuildsJsonFilePath = \
-      testOutputDir+\
-      "/"+CDQAR.getFileNameStrFromText(buildSetName)+\
+      testOutputDir+"/"+CDQAR.getFileNameStrFromText(buildSetName)+\
       "fullCDashIndexBuilds.json"
     with open(fullCDashIndexBuildsJsonFilePath, 'r') as fullCDashIndexBuildsJsonFile:
       fullCDashIndexBuildsJson = eval(fullCDashIndexBuildsJsonFile.read())
@@ -581,7 +607,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "--limit-table-rows=15",  # Check that this is read correctly
         ],
       1,
-      "FAILED (bme=2, c=1, b=2, twoif=12, twif=9): Project Specialized Builds on 2001-01-01",
+      "FAILED (bme=2, c=1, b=2, twoif=12, twif=9): Project Specialized Builds on 2018-10-28",
       [
         "Num expected builds = 8",
         "Num tests with issue trackers = 8",
@@ -595,11 +621,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Tests with issue trackers Failed: twif=9",
         ],
       [
-        "<h2>Build and Test results for Project Specialized Builds on 2001-01-01</h2>",
+        "<h2>Build and Test results for Project Specialized Builds on 2018-10-28</h2>",
 
         # Links to build and non-passing tests
-        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2001-01-01&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
-        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2001-01-01&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
 
         # Top listing of types of data/tables to be displayed below 
         "<font color=\"red\">Missing expected builds: bme=2</font><br>",
@@ -679,7 +705,12 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   # NOTE: That above test really pin down the contents of the 'bme', 'c', and
   # 'b' tables.  Other tests will not do that to avoid duplication in testing.
 
+
   # Test the all passing case
+  #
+  # To run this test case, we just need to empty out the set of tests in the
+  # file fullCDashNonpassingTests.json.
+  #
   def test_passed_clean(self):
 
     testCaseName = "passed_clean"
@@ -704,7 +735,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "--build-set-name='"+buildSetName+"'",  # Test changing this
         ],
       0,
-      "PASSED (twim=9): Project Specialized Builds on 2001-01-01",
+      "PASSED (twim=9): Project Specialized Builds on 2018-10-28",
       [
         "Num builds = 6",
         "Num nonpassing tests direct from CDash query = 0",
@@ -724,12 +755,12 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Tests with issue trackers Failed: twif=0",
         ],
       [
-        "<h2>Build and Test results for Project Specialized Builds on 2001-01-01</h2>",
+        "<h2>Build and Test results for Project Specialized Builds on 2018-10-28</h2>",
 
         # Links to build and non-passing tests
         "<p>",
-        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2001-01-01&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
-        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2001-01-01&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=0[)]<br>",
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=0[)]<br>",
         "</p>",
        ],
       #verbose=True,
@@ -738,6 +769,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
   # Test the error behavior when one of the tests with issue trackers does not
   # match the expected builds
+  #
+  # To perform this test, we need to add an extra test to the file
+  # testsWithIssueTrackers.csv in order to trigger this failure.
+  #
   def test_tests_with_issue_trackers_no_match_expected_builds(self):
 
     testCaseName = "tests_with_issue_trackers_no_match_expected_builds"
@@ -753,13 +788,14 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       "othersite, otherbuild, Teko_ModALPreconditioner_MPI_1, githuburl, #3638\n"
     with open(testsWithIssueTrackersFilePath, 'w') as testsWithIssueTrackersFile:
       testsWithIssueTrackersFile.write(testsWithIssueTrackersStr)
+
     # Run the script and make sure it outputs the right stuff
     analyze_and_report_cdash_results_run_case(
       self,
       testCaseName,
       [],
       1,
-      "FAILED (SCRIPT CRASHED): ProjectName Nightly Builds on 2001-01-01",
+      "FAILED (SCRIPT CRASHED): ProjectName Nightly Builds on 2018-10-28",
       [
         "Num expected builds = 6",
         "Num tests with issue trackers = 6",
@@ -769,7 +805,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         ],
       [
         # Top title
-        "<h2>Build and Test results for ProjectName Nightly Builds on 2001-01-01</h2>",
+        "<h2>Build and Test results for ProjectName Nightly Builds on 2018-10-28</h2>",
 
         # The error message
         "<pre><code>",
@@ -781,6 +817,42 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</code></pre>",
         ],
       )
+
+
+  # Test to check the behavior for tests with issue trackers that are passing
+  # and missing
+  #
+  # We want to test two use cases for missing tests.  First, we want to
+  # display tests with issue trackers that are missing in the current testing
+  # day where the matching build exists and have test results.  Second, we
+  # want some tests with issue trackers that are missing in the current
+  # testing day for expected builds that are missing entirely or don't have
+  # test results.  For those missing tests that match missing expected builds,
+  # we we don't want to bother displaying them or even listing them as missing
+  # at all (other than in the STDOUT).  Finally, we want to to check tests
+  # with issue trackers that are passing in the current testing day.  In order
+  # implement this test, we don't want to use any extra data than what already
+  # exists in the raw_cdash_data_twoif_12_twif_9/ test directory.  To
+  # accomplish this, we will remove some of the tests with issue trackers from
+  # the file fullCDashNonpassingTests.json and the ones that we remove will be
+  # for used to represent tests with issue trackers passing and missing tests.
+  # That way, we have the test history for these tests.  We will just need to
+  # manipulate that test history by deleting some days from the test history
+  # files for the missing tests and we will need to change the history for the
+  # passing tests to be passed for the current testing day (and a few days
+  # before that?).  Also, it is easiest to just manipulate for the existing
+  # set of tests with issue trackers so that we don't have to modify the file
+  # testsWithIssueTrackers.csv.
+  #
+
+
+
+
+
+
+
+
+
 
 #
 # Run the unit tests!
