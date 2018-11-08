@@ -374,7 +374,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     analyze_and_report_cdash_results_run_case(
       self,
       testCaseName,
-      [],
+      ["--limit-test-history-days=30"], # Test that you can set this as int
       1,
       "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2018-10-28",
       [

@@ -112,11 +112,6 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       +" the set of non-passing tests matching this set of builds. (Default '')" )
 
   clp.add_option(
-    "--limit-test-history-days", dest="testHistoryDays", default=30,
-    help="Number of days to go back in history for each test" )
-    # ToDo: Rename testHistoryDays to limitTestHistoryDays
-
-  clp.add_option(
     "--expected-builds-file", dest="expectedBuildsFile", type="string",
     default="",
     help="Path to CSV file that lists the expected builds. (Default '')" )
@@ -149,6 +144,10 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     ("on", "off"), 1,
     "Use data downloaded from CDash already cached.",
     clp )
+
+  clp.add_option(
+    "--limit-test-history-days", dest="testHistoryDays", default=30, type="int",
+    help="Number of days to go back in history for each test" )
 
   clp.add_option(
     "--limit-table-rows", dest="limitTableRows", type="int",
@@ -208,6 +207,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+lt+\
     "  --cdash-base-cache-files-prefix='"+inOptions.cdashBaseCacheFilesPrefix+"'"+lt+\
     "  --use-cached-cdash-data='"+inOptions.useCachedCDashDataStr+"'"+lt+\
+    "  --limit-test-history-days='"+str(inOptions.expectedBuildsFile)+"'"+lt+\
     "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
     "  --print-details='"+inOptions.printDetailsStr+"'"+lt+\
     "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt+\
