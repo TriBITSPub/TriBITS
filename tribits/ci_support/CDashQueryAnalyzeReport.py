@@ -1769,6 +1769,7 @@ import smtplib
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import formatdate
 
 
 # Create MINE formatted email object (but don't send it)
@@ -1779,15 +1780,16 @@ def createHtmlMimeEmail(fromAddress, toAddress, subject, textBody, htmlBody):
   msg = MIMEMultipart('alternative')
   msg['From'] = fromAddress
   msg['To'] = toAddress
+  msg['Date'] = formatdate(localtime=True)
   msg['Subject'] = subject
 
   # Record the MIME types of both parts - text/plain and text/html.
   part1 = MIMEText(textBody, 'plain')
   part2 = MIMEText(htmlBody, 'html')
 
-  # Attach parts into message container.
-  # According to RFC 2046, the last part of a multipart message, in this case
-  # the HTML message, is best and preferred.
+  # Attach parts into message container.  According to RFC 2046, the last part
+  # of a multipart message, in this case the HTML message, is best and
+  # preferred.
   msg.attach(part1)
   msg.attach(part2)
 
