@@ -841,7 +841,10 @@ class test_lookupDictGivenLookupDict(unittest.TestCase):
       ['group1', 'site1'])
       self.assertFalse("Error, did not throw!")
     except Exception, errMsg:
-      self.assertEqual(str(errMsg), "Error, len(listOfKeys)=3 != len(listOfValues)=2!")
+      self.assertEqual( str(errMsg),
+        "Error, len(listOfKeys)=3 != len(listOfValues)=2 where"+\
+        " listOfKeys=['group', 'site', 'buildname'] and"+\
+        " listOfValues=['group1', 'site1']!" )
 
   def test_dict_only(self):
     lud = createLookupDictForListOfDicts(g_buildsListForExpectedBuilds,
@@ -1237,17 +1240,21 @@ g_testsWtihIssueTrackersLOD = [
 class test_testsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
 
   def test_all_match(self):
+    testToExpectedBuildsSLOD = \
+      createTestToBuildSearchableListOfDicts(g_expectedBuildsLOD)
     self.assertEqual(
       testsWithIssueTrackersMatchExpectedBuilds(
-        g_testsWtihIssueTrackersLOD, g_expectedBuildsLOD),
+        g_testsWtihIssueTrackersLOD, testToExpectedBuildsSLOD),
       (True, "")
       )
 
   def test_nomatch_1(self):
     testsWtihIssueTrackersLOD = copy.deepcopy(g_testsWtihIssueTrackersLOD)
+    testToExpectedBuildsSLOD = \
+      createTestToBuildSearchableListOfDicts(g_expectedBuildsLOD)
     testsWtihIssueTrackersLOD[1]['buildName'] = 'build8'
     (matches, errMsg) = testsWithIssueTrackersMatchExpectedBuilds(
-      testsWtihIssueTrackersLOD, g_expectedBuildsLOD)
+      testsWtihIssueTrackersLOD, testToExpectedBuildsSLOD)
     self.assertEqual(matches, False)
     self.assertEqual(errMsg,
       "Error: The following tests with issue trackers did not match 'site' and"+\
@@ -1256,10 +1263,12 @@ class test_testsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
 
   def test_nomatch_2(self):
     testsWtihIssueTrackersLOD = copy.deepcopy(g_testsWtihIssueTrackersLOD)
+    testToExpectedBuildsSLOD = \
+      createTestToBuildSearchableListOfDicts(g_expectedBuildsLOD)
     testsWtihIssueTrackersLOD[1]['buildName'] = 'build8'
     testsWtihIssueTrackersLOD[3]['site'] = 'site3'
     (matches, errMsg) = testsWithIssueTrackersMatchExpectedBuilds(
-      testsWtihIssueTrackersLOD, g_expectedBuildsLOD)
+      testsWtihIssueTrackersLOD, testToExpectedBuildsSLOD)
     self.assertEqual(matches, False)
     self.assertEqual(errMsg,
       "Error: The following tests with issue trackers did not match 'site' and"+\

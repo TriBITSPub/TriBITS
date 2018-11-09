@@ -677,7 +677,9 @@ def lookupDictGivenLookupDict(lookupDict, listOfKeys, listOfValues,
   #print("\ndictToFind = "+str(dictToFind))
   if len(listOfKeys) != len(listOfValues):
     raise Exception("Error, len(listOfKeys)="+str(len(listOfKeys))+\
-    " != len(listOfValues)="+str(len(listOfValues))+"!")
+    " != len(listOfValues)="+str(len(listOfValues))+" where"+\
+    " listOfKeys="+str(listOfKeys)+\
+    " and listOfValues="+str(listOfValues)+"!")
   currentSubLookupDict = lookupDict
   idx = 0
   for idx in xrange(len(listOfValues)):
@@ -816,9 +818,16 @@ def createSearchableListOfTests(testsListOfDicts, removeExactDuplicateElements=F
 # Create a SearchableListOfDicts object for a list of build dicts allows
 # lookups that match the 'site' and 'buildname' fields but uses input for the
 # search that are test dicts that have the fiels 'site' and 'buildName'.
-#def createSearchableListOfTests(testsListOfDicts, removeExactDuplicateElements=False):
-#  return SearchableListOfDicts(testsListOfDicts, ['site', 'buildName', 'testname'],
-#    removeExactDuplicateElements=removeExactDuplicateElements)
+def createTestToBuildSearchableListOfDicts(buildsLOD,
+   removeExactDuplicateElements=False,
+   ):
+  return SearchableListOfDicts( buildsLOD, ('site', 'buildname'),
+    removeExactDuplicateElements=removeExactDuplicateElements,
+    keyMapList=('site', 'buildName') )
+  # NOTE: The extra keyMapList is needed because CDash used the key name
+  # 'buildname' for the build name returned form the cdash/index.php page
+  # while it gave the build name the key name 'buildName' for the data
+  # returned from cdash/queryTests.php.
 
 
 # Match functor that returns true if the input dict has key/values that
@@ -898,31 +907,17 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
 # match then 'matches' will be False and 'errMsg' will give a message about
 # which tests are missing.
 #
-def testsWithIssueTrackersMatchExpectedBuilds(
-  testsWithIssueTrackersLOD,
-  expectedBuildsLOD,
+def testsWithIssueTrackersMatchExpectedBuilds( testsWithIssueTrackersLOD,
+  testToExpectedBuildsSLOD,
   ):
-  # Create a SearchableListOfDicts that will look up a build given just
-  # ['site', 'buildname'] (since the list of tests with issue trackers does
-  # not have 'group' since CDash queryTests.php does not give the 'group'
-  # associated with each test).
-  expectedBuildsSLOD = SearchableListOfDicts(expectedBuildsLOD, ['site','buildname'])
-  #print("\nexpectedBuildsLOD:")
-  #pp = pprint.PrettyPrinter(indent=2)
-  #pp.pprint(expectedBuildsLOD)
-  # Gather up all of the tests that don't match one of the epxected builds
+  # Gather up all of the tests that don't match one of the expected builds
   nonmatchingTestsWithIssueTrackersLOD = []
   for testDict in testsWithIssueTrackersLOD:
-    #print("\ntestDict = "+str(testDict))
-    expectedBuildDict = expectedBuildsSLOD.lookupDictGivenKeyValuesList(
-      [ testDict['site'], testDict['buildName'] ] )
-    #print("expectedBuildDict = "+str(expectedBuildDict))
+    expectedBuildDict = testToExpectedBuildsSLOD.lookupDictGivenKeyValueDict(testDict)
     if not expectedBuildDict:
       nonmatchingTestsWithIssueTrackersLOD.append(
         {'site':testDict['site'], 'buildName':testDict['buildName'],
          'testname':testDict['testname']} )
-  #print("\nnonmatchingTestsWithIssueTrackersLOD:")
-  #pp.pprint(nonmatchingTestsWithIssueTrackersLOD)
   # If all tests matched, return True
   if len(nonmatchingTestsWithIssueTrackersLOD) == 0:
     return (True, "")

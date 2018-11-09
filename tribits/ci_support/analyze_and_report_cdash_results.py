@@ -342,10 +342,17 @@ if __name__ == '__main__':
     testsWithIssueTrackerMatchFunctor = \
       CDQAR.MatchDictKeysValuesFunctor(testsWithIssueTrackerSLOD)
 
+    # Create a SearchableListOfDicts that will look up an expected build given
+    # just the testDict fields ['site', 'buildName'] (since the list of tests
+    # with issue trackers does not have 'group' since CDash queryTests.php
+    # does not give the 'group' associated with each test).
+    testToExpectedBuildsSLOD = \
+      CDQAR.createTestToBuildSearchableListOfDicts(expectedBuildsLOD)
+
     # Assert they the list of tests with issue trackers matches the list of
     # expected builds
     (allTestsMatch, errMsg) = CDQAR.testsWithIssueTrackersMatchExpectedBuilds(
-      testsWithIssueTrackersLOD, expectedBuildsLOD)
+      testsWithIssueTrackersLOD, testToExpectedBuildsSLOD)
     if not allTestsMatch:
       raise Exception(errMsg)
 
