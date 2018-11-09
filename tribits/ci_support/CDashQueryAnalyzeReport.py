@@ -649,8 +649,8 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
 #
 # listOfKeys [in]: List of keys that was used used to create lookupDict.
 #
-# dictToFind [in]: A dict with the key value pairs one is trying to find.  In
-# this case dictToFind must contain the keys listed in listOfKeys.
+# listOfValues [in]: A list of values for the given list of keys in
+# listOfKeys.
 #
 # alsoReturnIdx [in]: If True, then the index of the located dict in the
 # original listOfDicts will be returned as well.  (default False)
@@ -669,16 +669,21 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
 # NOTE: This is an implementation function that is used in the class
 # SearchableListOfDicts.  Please use that class instead of this raw function.
 #
-def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind,
+def lookupDictGivenLookupDict(lookupDict, listOfKeys, listOfValues,
   alsoReturnIdx=False,
   ):
   #print("\nlookupDict = "+str(lookupDict))
   #print("\nlistOfKeys = "+str(listOfKeys))
   #print("\ndictToFind = "+str(dictToFind))
+  if len(listOfKeys) != len(listOfValues):
+    raise Exception("Error, len(listOfKeys)="+str(len(listOfKeys))+\
+    " != len(listOfValues)="+str(len(listOfValues))+"!")
   currentSubLookupDict = lookupDict
-  for key in listOfKeys:
+  idx = 0
+  for idx in xrange(len(listOfValues)):
+    key = listOfKeys[idx]
     #print("\nkey = '"+key+"'")
-    keyValueToFind = dictToFind[key]
+    keyValueToFind = listOfValues[idx]
     #print("keyValueToFind = '"+str(keyValueToFind)+"'")
     #print("currentSubLookupDict = "+str(currentSubLookupDict))
     keyValueLookedUp = currentSubLookupDict.get(keyValueToFind, None)
@@ -714,9 +719,34 @@ def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind,
 class SearchableListOfDicts(object):
 
   # Constructor
-  def __init__(self, listOfDicts, listOfKeys, removeExactDuplicateElements=False):
+  #
+  # listOfDicts [stored, may be modifed]: List of dicts that a search
+  # data-structure will be created for.
+  #
+  # listOfKeys [stored, will not be modified]: List of the names of keys in
+  # the dicts of listOfDicts that a search data-structure will be created for
+  # and defines the set of key/value pairs used to look up up dicts in
+  # listOfDicts.
+  #
+  # removeExactDuplicateElements [in]: If True, then exact duplicate dicts
+  # based on the key/value pairs in listOfKeys will be removed from
+  # listOfDicts (which is modified in place, not a copy). (default False)
+  #
+  # keyMapList [in]: Optional list of key names in the input
+  # keyValueDictToFind to pull out and used the match the key/value pairs in
+  # the listOfKeys.  This allows a mapping from int input dict key names to
+  # the output dict key names. (default None)
+  #
+  def __init__(self, listOfDicts, listOfKeys,
+    removeExactDuplicateElements=False, keyMapList=None,
+    ):
+    if keyMapList:
+      if len(listOfKeys) != len(keyMapList):
+        raise Exception("Error, listOfKeys="+str(listOfKeys)+\
+          " keyMapList="+str(listOfKeys)+" have different lenghts!" )  
     self.__listOfDicts = listOfDicts
     self.__listOfKeys = listOfKeys
+    self.__keyMapList = keyMapList
     self.__lookupDict = createLookupDictForListOfDicts(
       self.__listOfDicts, self.__listOfKeys,
       removeExactDuplicateElements=removeExactDuplicateElements)
@@ -735,11 +765,21 @@ class SearchableListOfDicts(object):
   def getListOfKeys(self):
     return self.__listOfKeys
 
+  # Return keyMapList passed to Constructor
+  def getKeyMapList(self):
+    return self.__keyMapList
+
   # Lookup a dict given a dict with same key/value pairs for keys listed in
   # listOfKeys.
   def lookupDictGivenKeyValueDict(self, keyValueDictToFind, alsoReturnIdx=False):
-    lookupRtn = lookupDictGivenLookupDict(self.__lookupDict, self.__listOfKeys,
-      keyValueDictToFind, alsoReturnIdx)
+    if self.__keyMapList:
+      keyListToUse = self.__keyMapList
+    else:
+      keyListToUse = self.__listOfKeys
+    keyValuesListToFind = []
+    for idx in xrange(len(keyListToUse)):
+      keyValuesListToFind.append(keyValueDictToFind.get(keyListToUse[idx]))
+    lookupRtn = self.lookupDictGivenKeyValuesList(keyValuesListToFind, alsoReturnIdx)
     return lookupRtn
 
   # Lookup a dict given a flat list of values for the keys
@@ -747,12 +787,9 @@ class SearchableListOfDicts(object):
   # Must be in same order self.getListOfKeys().
   #
   def lookupDictGivenKeyValuesList(self, keyValuesListToFind, alsoReturnIdx=False):
-    keyValueDictToFind = {}
-    i = 0
-    for key in self.getListOfKeys():
-      keyValueDictToFind[key] = keyValuesListToFind[i]
-      i += 1
-    return self.lookupDictGivenKeyValueDict(keyValueDictToFind, alsoReturnIdx)
+    lookupRtn = lookupDictGivenLookupDict(self.__lookupDict, self.__listOfKeys,
+      keyValuesListToFind, alsoReturnIdx)
+    return lookupRtn
 
   # Functions to allow this to act like a list
   def __len__(self):
@@ -774,6 +811,14 @@ def createSearchableListOfBuilds(buildsListOfDicts):
 def createSearchableListOfTests(testsListOfDicts, removeExactDuplicateElements=False):
   return SearchableListOfDicts(testsListOfDicts, ['site', 'buildName', 'testname'],
     removeExactDuplicateElements=removeExactDuplicateElements)
+
+
+# Create a SearchableListOfDicts object for a list of build dicts allows
+# lookups that match the 'site' and 'buildname' fields but uses input for the
+# search that are test dicts that have the fiels 'site' and 'buildName'.
+#def createSearchableListOfTests(testsListOfDicts, removeExactDuplicateElements=False):
+#  return SearchableListOfDicts(testsListOfDicts, ['site', 'buildName', 'testname'],
+#    removeExactDuplicateElements=removeExactDuplicateElements)
 
 
 # Match functor that returns true if the input dict has key/values that

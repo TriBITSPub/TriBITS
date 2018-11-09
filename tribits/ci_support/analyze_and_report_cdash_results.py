@@ -461,7 +461,7 @@ if __name__ == '__main__':
     testsWithIssueTrackersPassingOrMissingLOD = CDQAR.getFilteredList(
       testsWithIssueTrackerSLOD,
       CDQAR.NotMatchFunctor(nonpassingTestsMatchFunctor) )
-    print("Num tests with issue trackers passing or missing = "+\
+    print("Num tests with issue trackers passing or gross missing = "+\
       str(len(testsWithIssueTrackersPassingOrMissingLOD)))
   
     # Nonpassing Tests on CDash

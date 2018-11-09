@@ -820,18 +820,28 @@ def gsb(groupName, siteName, buildName):
 
 def luDictData(groupName, siteName, buildName, buildLookupDict):
   dictFound = lookupDictGivenLookupDict(buildLookupDict,
-    ['group', 'site', 'buildname'], gsb(groupName, siteName, buildName) )
+    ['group', 'site', 'buildname'], [groupName, siteName, buildName] )
   if not dictFound : return None
   return dictFound.get('data')
 
 def luDictIdxData(groupName, siteName, buildName, buildLookupDict):
   (dictFound, idxFound) = lookupDictGivenLookupDict(buildLookupDict,
-    ['group', 'site', 'buildname'], gsb(groupName, siteName, buildName),
+    ('group', 'site', 'buildname'), (groupName, siteName, buildName),
     alsoReturnIdx=True )
   if not dictFound : return (None, None)
   return (idxFound, dictFound.get('data'))
      
 class test_lookupDictGivenLookupDict(unittest.TestCase):
+
+  def test_bad_list_len(self):
+    lud = createLookupDictForListOfDicts(g_buildsListForExpectedBuilds,
+      ['group', 'site', 'buildname'] )
+    try:
+      rtn = lookupDictGivenLookupDict(lud, ['group', 'site', 'buildname'],
+      ['group1', 'site1'])
+      self.assertFalse("Error, did not throw!")
+    except Exception, errMsg:
+      self.assertEqual(str(errMsg), "Error, len(listOfKeys)=3 != len(listOfValues)=2!")
 
   def test_dict_only(self):
     lud = createLookupDictForListOfDicts(g_buildsListForExpectedBuilds,
@@ -864,33 +874,49 @@ class test_lookupDictGivenLookupDict(unittest.TestCase):
 #
 #############################################################################
 
-def slodLuData(slod, groupName, siteName, buildName):
-  dictFound = slod.lookupDictGivenKeyValueDict(gsb(groupName, siteName, buildName))
+g_buildsListForExpectedBuildsUniqSiteBuildName = [
+  { 'group':'group1', 'site':'site1', 'buildname':'build1', 'data':'val1' },
+  { 'group':'group1', 'site':'site1', 'buildname':'build2', 'data':'val2' },
+  { 'group':'group1', 'site':'site2', 'buildname':'build3', 'data':'val3' },
+  { 'group':'group2', 'site':'site3', 'buildname':'build4', 'data':'val5' },
+  ]
+
+def slodLuData(slod, group, site, buildName):
+  dictFound = slod.lookupDictGivenKeyValueDict(gsb(group, site, buildName))
   if not dictFound : return None
   return dictFound.get('data')
 
-def slodLuIdxData(slod, groupName, siteName, buildName):
+def slodLuIdxData(slod, group, site, buildName):
   (dictFound, idxFound) = slod.lookupDictGivenKeyValueDict(
-    gsb(groupName, siteName, buildName), alsoReturnIdx=True)
+    gsb(group, site, buildName), alsoReturnIdx=True)
   if not dictFound : return (None, None)
   return (idxFound, dictFound.get('data'))
 
-class test_lookupDictGivenLookupDict(unittest.TestCase):
+def tsb(site, buildName):
+  return {'site':site, 'buildName':buildName}
+
+def slodmLuData(slodm, site, buildName):
+  dictFound = slodm.lookupDictGivenKeyValueDict(tsb(site, buildName))
+  if not dictFound : return None
+  return dictFound.get('data')
+
+def slodmLuIdxData(slodm, site, buildName):
+  (dictFound, idxFound) = slodm.lookupDictGivenKeyValueDict(tsb(site, buildName),
+    alsoReturnIdx=True)
+  if not dictFound : return (None, None)
+  return (idxFound, dictFound.get('data'))
+
+class test_SearchableListOfDicts(unittest.TestCase):
 
   def test_basic(self):
     listOfKeys = ['group', 'site', 'buildname'] 
     slod = SearchableListOfDicts(g_buildsListForExpectedBuilds, listOfKeys)
     self.assertEqual(slod.getListOfDicts(), g_buildsListForExpectedBuilds)
     self.assertEqual(slod.getListOfKeys(), listOfKeys)
+    self.assertEqual(slod.getKeyMapList(), None)
     self.assertEqual(len(slod), len(g_buildsListForExpectedBuilds))
     self.assertEqual(slod[0], g_buildsListForExpectedBuilds[0])
     self.assertEqual(slod[3], g_buildsListForExpectedBuilds[3])
-    self.assertEqual(slodLuData(slod, 'group1','site1','build1'), 'val1')
-    self.assertEqual(slodLuData(slod, 'group1','site2','build3'), 'val3')
-    self.assertEqual(slodLuData(slod, 'group2','site4','build1'), None)
-    self.assertEqual(slodLuIdxData(slod, 'group1','site1','build1'), (0,'val1'))
-    self.assertEqual(slodLuIdxData(slod, 'group1','site2','build3'), (2,'val3'))
-    self.assertEqual(slodLuIdxData(slod, 'group2','site4','build1'), (None, None))
     self.assertEqual(
       slod.lookupDictGivenKeyValuesList(('group1','site2','build3'))['data'], 'val3')
     (dictR,idxR)=slod.lookupDictGivenKeyValuesList(('group1','site2','build3'), True)
@@ -899,6 +925,50 @@ class test_lookupDictGivenLookupDict(unittest.TestCase):
       slod.lookupDictGivenKeyValuesList(('group2','site4','build1')), None)
     (dictR,idxR)=slod.lookupDictGivenKeyValuesList(('group2','site4','build1'), True)
     self.assertEqual((idxR,dictR), (None, None))
+    self.assertEqual(slodLuData(slod, 'group1','site1','build1'), 'val1')
+    self.assertEqual(slodLuData(slod, 'group1','site2','build3'), 'val3')
+    self.assertEqual(slodLuData(slod, 'group2','site4','build1'), None)
+    self.assertEqual(slodLuIdxData(slod, 'group1','site1','build1'), (0,'val1'))
+    self.assertEqual(slodLuIdxData(slod, 'group1','site2','build3'), (2,'val3'))
+    self.assertEqual(slodLuIdxData(slod, 'group2','site4','build1'), (None, None))
+
+  def test_with_key_map(self):
+    listOfKeys = ['site', 'buildname'] 
+    keyMapList = ['site', 'buildName'] 
+    slodm = SearchableListOfDicts(g_buildsListForExpectedBuildsUniqSiteBuildName,
+      listOfKeys, removeExactDuplicateElements=False, keyMapList=keyMapList)
+    self.assertEqual(slodm.getListOfDicts(),
+      g_buildsListForExpectedBuildsUniqSiteBuildName)
+    self.assertEqual(slodm.getListOfKeys(), listOfKeys)
+    self.assertEqual(slodm.getKeyMapList(), keyMapList)
+    self.assertEqual(slodmLuData(slodm, 'site1', 'build1'), 'val1')
+    self.assertEqual(slodmLuData(slodm, 'site2', 'build3'), 'val3')
+    self.assertEqual(slodmLuData(slodm, 'site4', 'build1'), None)
+    self.assertEqual(slodmLuIdxData(slodm, 'site1', 'build1'), (0,'val1'))
+    self.assertEqual(slodmLuIdxData(slodm, 'site2', 'build3'), (2,'val3'))
+    self.assertEqual(slodmLuIdxData(slodm, 'site4','build1'), (None, None))
+    self.assertEqual(
+      slodm.lookupDictGivenKeyValuesList(('site2','build3'))['data'], 'val3')
+    (dictR,idxR)=slodm.lookupDictGivenKeyValuesList(('site2','build3'), True)
+    self.assertEqual((dictR['data'],idxR), ('val3',2))
+    self.assertEqual(
+      slodm.lookupDictGivenKeyValuesList(('site4','build1')), None)
+    (dictR,idxR)=slodm.lookupDictGivenKeyValuesList(('site4','build1'), True)
+    self.assertEqual((idxR,dictR), (None, None))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   def test_exact_duplicate_ele_with_removal(self):
     listOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
@@ -2045,8 +2115,8 @@ r"""<style>my_style</style>
 #############################################################################
 
 
-def missingExpectedBuildsRow(groupName, siteName, buildName, missingStatus):
-  return { 'group':groupName, 'site':siteName, 'buildname':buildName,
+def missingExpectedBuildsRow(group, site, buildName, missingStatus):
+  return { 'group':group, 'site':site, 'buildname':buildName,
     'status':missingStatus }
 
 class test_getCDashDataSummaryHtmlTableTitleStr(unittest.TestCase):

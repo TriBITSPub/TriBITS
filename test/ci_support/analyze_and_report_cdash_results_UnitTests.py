@@ -299,7 +299,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Not Run = 0",
         "Num nonpassing tests with issue trackers Failed = 9",
         "Num nonpassing tests with issue trackers Not Run = 0",
-        "Num tests with issue trackers passing or missing = 0",
+        "Num tests with issue trackers passing or gross missing = 0",
 
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
@@ -388,7 +388,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Not Run = 0",
         "Num nonpassing tests with issue trackers Failed = 0",
         "Num nonpassing tests with issue trackers Not Run = 0",
-        "Num tests with issue trackers passing or missing = 0",
+        "Num tests with issue trackers passing or gross missing = 0",
 
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
@@ -845,7 +845,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Not Run = 0",
         "Num nonpassing tests with issue trackers Failed = 0",
         "Num nonpassing tests with issue trackers Not Run = 0",
-        "Num tests with issue trackers passing or missing = 9",
+        "Num tests with issue trackers passing or gross missing = 9",
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
@@ -1003,16 +1003,36 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     # Add some dummy builds to the list of expected builds so that some new
     # added dummy matching tests will be missing but not listed in the table
     # fo missing tests.
-
-    # ToDo: Implement
+    expectedBuildsFilePath = testOutputDir+"/expectedBuilds.csv"
+    with open(expectedBuildsFilePath, 'r') as expectedBuildsFile:
+      expectedBuildsStrList = expectedBuildsFile.readlines()
+    expectedBuildsStrList.extend(
+      [
+        "Specialized, waterman, Trilinos-atdm-waterman-missing-build\n",
+        ]
+      )
+    with open(expectedBuildsFilePath, 'w') as expectedBuildsFile:
+      expectedBuildsFile.write("".join(expectedBuildsStrList))
 
     # Add some dummy tests with issue trackers to match the new dummy expected
     # builds so that we can test that the tool does not try to get test
     # history for a missing test that matches a missing expected build.
+    testsWithIssueTrackersFilePath = testOutputDir+"/testsWithIssueTrackers.csv"
+    with open(testsWithIssueTrackersFilePath, 'r') as testsWithIssueTrackersFile:
+      testsWithIssueTrackersStrList = testsWithIssueTrackersFile.readlines()
+    testsWithIssueTrackersStrList.extend(
+      [
+        "waterman, Trilinos-atdm-waterman-missing-build, missing_test_1, url1, issue1\n",
+        "waterman, Trilinos-atdm-waterman-missing-build, missing_test_2, url2, issue2\n",
+        ]
+      )
+    with open(testsWithIssueTrackersFilePath, 'w') as testsWithIssueTrackersFile:
+      testsWithIssueTrackersFile.write("".join(testsWithIssueTrackersStrList))
 
-    # ToDo: Implement
+    # Change the history for some tests so that they show up correctly as
+    # Passing and Missing
 
-    # Change the history for some tests to 
+    # ToDo: Implement!
 
     # Run the script and make sure it outputs the right stuff
     analyze_and_report_cdash_results_run_case(
@@ -1022,6 +1042,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       1,
       "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2018-10-28",
       [
+        "Num expected builds = 7",
+        "Num tests with issue trackers = 7",
         "Num builds = 6",
         "Num nonpassing tests direct from CDash query = 17",
         "Num nonpassing tests after removing duplicate tests = 17",
@@ -1033,8 +1055,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers Not Run = 0",
         "Num tests with issue trackers passing or gross missing = 6",
 
-        "Tests with issue trackers matching missing expected builds: num=2"
-        "DUMMY NO MATCH tests with issue trackers matching missing expected builds"
+        "Tests with issue trackers matching missing expected builds: num=2",
+        "DUMMY NO MATCH tests with issue trackers matching missing expected builds",
 
         "Num tests with issue trackers passing or missing matching posted builds = 4",
 
