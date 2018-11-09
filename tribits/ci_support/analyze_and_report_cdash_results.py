@@ -262,7 +262,7 @@ if __name__ == '__main__':
 
   if inOptions.cdashBaseCacheFilesPrefix == "":
     inOptions.cdashBaseCacheFilesPrefix = \
-     CDQAR.getFileNameStrFromText(inOptions.buildSetName)
+     CDQAR.getFileNameStrFromText(inOptions.buildSetName)+"_"
 
   cacheDirAndBaseFilePrefix = \
     inOptions.cdashQueriesCacheDir+"/"+inOptions.cdashBaseCacheFilesPrefix

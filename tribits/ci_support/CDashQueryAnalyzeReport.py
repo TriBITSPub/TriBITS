@@ -76,7 +76,6 @@ def getFileNameStrFromText(inputStr):
       fileNameStr += char
     else:
        fileNameStr += "_"
-  fileNameStr += "_"
   return fileNameStr
 
 
@@ -164,6 +163,21 @@ def foreachTransform(list_inout, transformFunctor):
     list_inout[i] = transformFunctor(list_inout[i])
   return list_inout
 
+
+# Remove elements from a list given a list of indexes
+#
+# This modifies the orginal list inplace but also returns it.  Therefore, if
+# you want to keep the original list, you better create a copy of the base
+# list object before passing it in.
+#
+def removeElementsFromListGivenIndexes(list_inout, indexesToRemoveList_in):
+  indexesToRemoveList = copy.copy(indexesToRemoveList_in)
+  indexesToRemoveList.sort()
+  numRemoved = 0
+  for index in indexesToRemoveList:
+    del list_inout[index-numRemoved]
+    numRemoved += 1
+  return list_inout
 
 # Given a CDash query URL PHP page that returns JSON data, return the JSON
 # data converged to a Python data-structure.
@@ -622,10 +636,7 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
       numRemoved += 1
     idx += 1
   # Remove 100% duplicate elements marged above
-  numRemoved = 0
-  for duplicateIndex in duplicateIndexesToRemoveList:
-    del listOfDicts[duplicateIndex-numRemoved]
-    numRemoved += 1
+  removeElementsFromListGivenIndexes(listOfDicts, duplicateIndexesToRemoveList)
   return  lookupDict
 
 

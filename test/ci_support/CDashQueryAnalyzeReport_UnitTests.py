@@ -130,12 +130,12 @@ class test_getFileNameStrFromText(unittest.TestCase):
 
   def test_simple(self):
     self.assertEqual(
-      getFileNameStrFromText("This is something"), "This_is_something_")
+      getFileNameStrFromText("This is something"), "This_is_something")
 
   def test_harder(self):
     self.assertEqual(
       getFileNameStrFromText("thi@ (something; other)"),
-      "thi___something__other__")
+      "thi___something__other_")
 
 
 #############################################################################
@@ -277,6 +277,64 @@ class test_NotMatchFunctor(unittest.TestCase):
     self.assertEqual(NotMatchFunctor(dummyMatch5)(4), True)
     self.assertEqual(NotMatchFunctor(dummyMatch5)(5), False)
     self.assertEqual(NotMatchFunctor(dummyMatch5)(6), True)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.removeElementsFromListGivenIndexes()
+#
+#############################################################################
+
+class test_removeElementsFromListGivenIndexes(unittest.TestCase):
+
+  def test_remove_none(self):
+    list_orig = [0, 1, 2, 3, 4]
+    idxToRemove = []
+    list_expected = [0, 1, 2, 3, 4]
+    self.assertEqual(removeElementsFromListGivenIndexes(list_orig,idxToRemove),
+      list_expected )
+
+  def test_remove_some1_ordered(self):
+    list_orig = [0, 1, 2, 3, 4]
+    idxToRemove = [0, 2, 3]
+    list_expected = [1, 4] 
+    self.assertEqual(removeElementsFromListGivenIndexes(list_orig,idxToRemove),
+      list_expected )
+
+  def test_remove_some1_unordered1(self):
+    list_orig = [0, 1, 2, 3, 4]
+    idxToRemove = [3, 0, 2]
+    list_expected = [1, 4] 
+    self.assertEqual(removeElementsFromListGivenIndexes(list_orig,idxToRemove),
+      list_expected )
+
+  def test_remove_some1_unordered2(self):
+    list_orig = [0, 1, 2, 3, 4]
+    idxToRemove = [3, 2, 0]
+    list_expected = [1, 4] 
+    self.assertEqual(removeElementsFromListGivenIndexes(list_orig,idxToRemove),
+      list_expected )
+
+  def test_remove_some2_ordered(self):
+    list_orig = [0, 1, 2, 3, 4]
+    idxToRemove = [0, 2, 4]
+    list_expected = [1, 3]
+    self.assertEqual(removeElementsFromListGivenIndexes(list_orig,idxToRemove),
+      list_expected )
+
+  def test_remove_some2_unordered1(self):
+    list_orig = [0, 1, 2, 3, 4]
+    idxToRemove = [2, 4, 0]
+    list_expected = [1, 3]
+    self.assertEqual(removeElementsFromListGivenIndexes(list_orig,idxToRemove),
+      list_expected )
+
+  def test_remove_some2_unordered2(self):
+    list_orig = [0, 1, 2, 3, 4]
+    idxToRemove = [4, 2, 0]
+    list_expected = [1, 3]
+    self.assertEqual(removeElementsFromListGivenIndexes(list_orig,idxToRemove),
+      list_expected )
 
 
 #############################################################################

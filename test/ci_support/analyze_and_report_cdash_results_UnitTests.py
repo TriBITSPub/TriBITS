@@ -139,9 +139,44 @@ def analyze_and_report_cdash_results_setup_test_dir(
   filesToRename = [ "fullCDashIndexBuilds.json", "fullCDashNonpassingTests.json" ]
   for fileToRename in filesToRename:
     oldName = testOutputDir+"/"+fileToRename
-    newName = testOutputDir+"/"+baseFilePrefix+fileToRename
+    newName = testOutputDir+"/"+baseFilePrefix+"_"+fileToRename
     os.rename(oldName, newName)
   return testOutputDir
+
+
+# Extract out the list of tests from a cdash/queryTests.php JSON cache file
+#
+# By default this assumes reading the namespaced fullCDashNonpassingTests.json
+# file.  Otherwise, the can be overridden by passing in the path.
+#
+def getTestsListFromJsonFile( testOutputDir,
+  buildSetName="ProjectName Nightly Builds",
+  testsJsonFilePath = None
+  ):
+  baseFilePrefix = CDQAR.getFileNameStrFromText(buildSetName)
+  if not testsJsonFilePath:
+    testsJsonFilePath = \
+      testOutputDir+"/"+baseFilePrefix+"_fullCDashNonpassingTests.json"
+  with open(testsJsonFilePath, 'r') as testsJsonFile:
+    testsJson = eval(testsJsonFile.read())
+  return testsJson['builds']
+
+
+# Write a list of tests back to cdash/queryTests.php JSON file
+#
+# By default this assumes writing the namespaced fullCDashNonpassingTests.json
+# file.  Otherwise, the can be overridden by passing in the path.
+#
+def writeTestsListToJsonFile( testsLOD, testOutputDir,
+  buildSetName="ProjectName Nightly Builds",
+  testsJsonFilePath = None
+  ):
+  baseFilePrefix = CDQAR.getFileNameStrFromText(buildSetName)
+  if not testsJsonFilePath:
+    testsJsonFilePath = \
+      testOutputDir+"/"+baseFilePrefix+"_fullCDashNonpassingTests.json"
+  testsJson = { 'builds': testsLOD }
+  CDQAR.pprintPythonDataToFile(testsJson, testsJsonFilePath)
 
 
 # Run a test case involving the analyze_and_report_cdash_results.py
@@ -402,12 +437,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
 
     # Change the status for few tests from 'Failed' to 'Not Run'.
-    testListFilePath = \
-      testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
-    with open(testListFilePath, 'r') as testListFile:
-      testListFileJson = eval(testListFile.read())
-    testListLOD =  testListFileJson['builds']
-    testListSLOD = CDQAR.createSearchableListOfTests(testListLOD)
+
+    testsLOD = getTestsListFromJsonFile(testOutputDir)
+    testListSLOD = CDQAR.createSearchableListOfTests(testsLOD)
+
     # make twoif test Anasazi_Epetra_BKS_norestart_test_MPI_4 Not Run
     testDict = testListSLOD.lookupDictGivenKeyValuesList([
       'mutrino',
@@ -432,8 +465,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       ])
     testDict['status'] = u'Not Run'
     testDict['details'] = u'Required Files Missing'
+
     # Write updated test data back to file
-    CDQAR.pprintPythonDataToFile(testListFileJson, testListFilePath)
+    writeTestsListToJsonFile(testsLOD, testOutputDir)
 
     # Run the script and make sure it outputs the right stuff
     analyze_and_report_cdash_results_run_case(
@@ -575,10 +609,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
     with open(testListFilePath, 'r') as testListFile:
       testListFileJson = eval(testListFile.read())
-    testListLOD =  testListFileJson['builds']
+    testsLOD =  testListFileJson['builds']
     # Duplicate the test Belos_gcrodr_hb_MPI_4
-    testDict = copy.deepcopy(testListLOD[1])
-    testListLOD.insert(2, testDict)
+    testDict = copy.deepcopy(testsLOD[1])
+    testsLOD.insert(2, testDict)
     # Write updated test data back to file
     CDQAR.pprintPythonDataToFile(testListFileJson, testListFilePath)
 
@@ -651,7 +685,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     # Add some configure and build failures
     fullCDashIndexBuildsJsonFilePath = \
       testOutputDir+"/"+CDQAR.getFileNameStrFromText(buildSetName)+\
-      "fullCDashIndexBuilds.json"
+      "_fullCDashIndexBuilds.json"
     with open(fullCDashIndexBuildsJsonFilePath, 'r') as fullCDashIndexBuildsJsonFile:
       fullCDashIndexBuildsJson = eval(fullCDashIndexBuildsJsonFile.read())
     specializedGroup = fullCDashIndexBuildsJson['buildgroups'][0]
@@ -908,16 +942,135 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   # before that?).  Also, it is easiest to just manipulate for the existing
   # set of tests with issue trackers so that we don't have to modify the file
   # testsWithIssueTrackers.csv.
-  #
+  def test_passing_and_missing(self):
 
+    testCaseName = "passing_and_missing"
 
+    # Copy the raw files to get started
+    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
 
+    # Get full list of nonpassing tests from Json file
+    nonpassingTestsLOD = getTestsListFromJsonFile(testOutputDir)
+    nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(nonpassingTestsLOD)
 
+    # Mark which tests with issue trackers to remove from the list of
+    # non-passing tests.  (These will be used for passing tests and msising
+    # tests with history)
 
+    nonpassingTestsToRemoveIndexes = []
 
+    # Mark test that will become passing test
+    (testDict, testIdx) = nonpassingTestsSLOD.lookupDictGivenKeyValuesList([
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'MueLu_UnitTestsBlockedEpetra_MPI_1',
+      ], True)
+    nonpassingTestsToRemoveIndexes.append(testIdx)
 
+    # Mark test that will become passing test
+    (testDict, testIdx) = nonpassingTestsSLOD.lookupDictGivenKeyValuesList([
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2',
+      ], True)
+    nonpassingTestsToRemoveIndexes.append(testIdx)
 
+    # Mark test that will become missing test
+    (testDict, testIdx) = nonpassingTestsSLOD.lookupDictGivenKeyValuesList([
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2',
+      ], True)
+    nonpassingTestsToRemoveIndexes.append(testIdx)
 
+    # Mark test that will become missing test
+    (testDict, testIdx) = nonpassingTestsSLOD.lookupDictGivenKeyValuesList([
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3',
+      ], True)
+    nonpassingTestsToRemoveIndexes.append(testIdx)
+
+    # Remove marked tests from list of nonpassing and missing tests with
+    # history
+    nonpassingTestsSLOD = None  # Must delete since changing underlying list
+    CDQAR.removeElementsFromListGivenIndexes( nonpassingTestsLOD,
+      nonpassingTestsToRemoveIndexes)
+
+    # Write the reduced list of nonpassing test data back to file
+    writeTestsListToJsonFile(nonpassingTestsLOD, testOutputDir)
+
+    # Add some dummy builds to the list of expected builds so that some new
+    # added dummy matching tests will be missing but not listed in the table
+    # fo missing tests.
+
+    # ToDo: Implement
+
+    # Add some dummy tests with issue trackers to match the new dummy expected
+    # builds so that we can test that the tool does not try to get test
+    # history for a missing test that matches a missing expected build.
+
+    # ToDo: Implement
+
+    # Change the history for some tests to 
+
+    # Run the script and make sure it outputs the right stuff
+    analyze_and_report_cdash_results_run_case(
+      self,
+      testCaseName,
+      ["--limit-test-history-days=30"], # Test that you can set this as int
+      1,
+      "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2018-10-28",
+      [
+        "Num builds = 6",
+        "Num nonpassing tests direct from CDash query = 17",
+        "Num nonpassing tests after removing duplicate tests = 17",
+        "Num nonpassing tests without issue trackers = 12",
+        "Num nonpassing tests with issue trackers = 5",
+        "Num nonpassing tests without issue trackers Failed = 12",
+        "Num nonpassing tests without issue trackers Not Run = 0",
+        "Num nonpassing tests with issue trackers Failed = 5",
+        "Num nonpassing tests with issue trackers Not Run = 0",
+        "Num tests with issue trackers passing or gross missing = 6",
+
+        "Tests with issue trackers matching missing expected builds: num=2"
+        "DUMMY NO MATCH tests with issue trackers matching missing expected builds"
+
+        "Num tests with issue trackers passing or missing matching posted builds = 4",
+
+        "Missing expected builds: bme=2",
+        "Builds with configure failures: c=0",
+        "Builds with build failures: b=0",
+
+        "Getting test history for tests with issue trackers passing or missing: num=4",
+        "Getting 30 days of history for MueLu_UnitTestsBlockedEpetra_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file",
+
+        "Num nonpassing tests with issue trackers Passed = 2",
+        "Num nonpassing tests with issue trackers Missing = 2",
+
+        "Tests without issue trackers Failed: twoif=12",
+
+        "Tests with issue trackers Failed: twif=3",
+        "DUMMY NO MATCH twif test lines",
+
+        "Tests wtih issue trackers Passed: twip = 2",
+        "DUMMY NO MATCH twip test lines",
+
+        "Tests wtih issue trackers Passed: twim = 2",
+        "DUMMY NO MATCH twim test lines",
+
+        ],
+      [
+
+        "DUMMY NO MATCH",
+
+        ],
+      #verbose=True,
+      #debugPrint=True,
+      )
 
 #
 # Run the unit tests!
