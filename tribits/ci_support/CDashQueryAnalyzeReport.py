@@ -44,6 +44,7 @@ except ImportError:
   # Python 3
   from urllib.request import urlopen
 
+import sys
 import hashlib
 import json
 import datetime
@@ -571,6 +572,7 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
   # duplicate elements if asked to remove 100% duplicate elements.
   lookupDict = {}
   idx = 0
+  numRemoved = 0
   duplicateIndexesToRemoveList = []
   for dictEle in listOfDicts:
     #print("\nidx = "+str(idx))
@@ -615,8 +617,10 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
     # will modify the original list.
     #print("addEle = "+str(addEle))
     if addEle:
-      currentLookupDictRef.update({'dict':dictEle, 'idx':idx})
-      idx += 1
+      currentLookupDictRef.update({'dict':dictEle, 'idx':idx-numRemoved})
+    else:
+      numRemoved += 1
+    idx += 1
   # Remove 100% duplicate elements marged above
   numRemoved = 0
   for duplicateIndex in duplicateIndexesToRemoveList:
@@ -625,21 +629,38 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
   return  lookupDict
 
 
-# Lookup a dict in a dict given a lookup dict returned from
-# createLookupDictForListOfDicts() where they listOfKeys matches.
+# Lookup a dict (and optionally also its index location) in a list of dicts
+# given a lookup dict returned from createLookupDictForListOfDicts() where the
+# key/value pairs match
 #
 # lookupDict [in]: A dict created by createLookupDictForListOfDicts() given
 # the same listOfKeys used in that function.
 #
-# listOfKeys [in]: List of keys used to create lookupDict.
+# listOfKeys [in]: List of keys that was used used to create lookupDict.
 #
 # dictToFind [in]: A dict with the key value pairs one is trying to find.  In
 # this case dictToFind must contain the keys listed in listOfKeys.
 #
+# alsoReturnIdx [in]: If True, then the index of the located dict in the
+# original listOfDicts will be returned as well.  (default False)
+#
+# If the matching dict is found, then it will be returned as:
+#
+#   matchingDict = lookupDictGivenLookupDict(...)
+#
+# If alsoReturnIdx==True, then also the index will be returned as:
+#
+#   (matchingDict, idx) = lookupDictGivenLookupDict(...)
+#
+# If the matching dict is not found, then None will be returned or the tuple
+# (None, None) if alsoReturnIdx==True.
+#
 # NOTE: This is an implementation function that is used in the class
 # SearchableListOfDicts.  Please use that class instead of this raw function.
 #
-def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind):
+def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind,
+  alsoReturnIdx=False,
+  ):
   #print("\nlookupDict = "+str(lookupDict))
   #print("\nlistOfKeys = "+str(listOfKeys))
   #print("\ndictToFind = "+str(dictToFind))
@@ -651,10 +672,14 @@ def lookupDictGivenLookupDict(lookupDict, listOfKeys, dictToFind):
     #print("currentSubLookupDict = "+str(currentSubLookupDict))
     keyValueLookedUp = currentSubLookupDict.get(keyValueToFind, None)
     #print("keyValueLookedUp = "+str(keyValueLookedUp))
-    if not keyValueLookedUp: return None
+    if not keyValueLookedUp:
+      if alsoReturnIdx: return (None, None)
+      return None
     currentSubLookupDict = keyValueLookedUp
   if keyValueLookedUp:
-    return keyValueLookedUp
+    if alsoReturnIdx:
+      return (keyValueLookedUp.get('dict'), keyValueLookedUp.get('idx'))
+    return keyValueLookedUp.get('dict')
   return None
 
 
@@ -701,21 +726,22 @@ class SearchableListOfDicts(object):
 
   # Lookup a dict given a dict with same key/value pairs for keys listed in
   # listOfKeys.
-  def lookupDictGivenKeyValueDict(self, keyValueDictToFind):
-    return lookupDictGivenLookupDict(
-     self.__lookupDict, self.__listOfKeys, keyValueDictToFind)
+  def lookupDictGivenKeyValueDict(self, keyValueDictToFind, alsoReturnIdx=False):
+    lookupRtn = lookupDictGivenLookupDict(self.__lookupDict, self.__listOfKeys,
+      keyValueDictToFind, alsoReturnIdx)
+    return lookupRtn
 
   # Lookup a dict given a flat list of values for the keys
   #
   # Must be in same order self.getListOfKeys().
   #
-  def lookupDictGivenKeyValuesList(self, keyValuesListToFind):
+  def lookupDictGivenKeyValuesList(self, keyValuesListToFind, alsoReturnIdx=False):
     keyValueDictToFind = {}
     i = 0
     for key in self.getListOfKeys():
       keyValueDictToFind[key] = keyValuesListToFind[i]
       i += 1
-    return self.lookupDictGivenKeyValueDict(keyValueDictToFind)
+    return self.lookupDictGivenKeyValueDict(keyValueDictToFind, alsoReturnIdx)
 
   # Functions to allow this to act like a list
   def __len__(self):
