@@ -379,19 +379,19 @@ if __name__ == '__main__':
     fullCDashIndexBuildsJsonCacheFile = \
       cacheDirAndBaseFilePrefix+"fullCDashIndexBuilds.json"
 
-    buildsListOfDicts = CDQAR.downloadBuildsOffCDashAndFlatten(
+    buildsLOD = CDQAR.downloadBuildsOffCDashAndFlatten(
       cdashIndexBuildsQueryUrl,
       fullCDashIndexBuildsJsonCacheFile,
       inOptions.useCachedCDashData )
-    print("\nNum builds = "+str(len(buildsListOfDicts)))
+    print("\nNum builds = "+str(len(buildsLOD)))
   
     # Builds on CDash
     htmlEmailBodyTop += \
      "<a href=\""+cdashIndexBuildsBrowserUrl+"\">"+\
-     "Builds on CDash</a> (num="+str(len(buildsListOfDicts))+")<br>\n"
+     "Builds on CDash</a> (num="+str(len(buildsLOD))+")<br>\n"
 
-    # Get a dict to help look up builds
-    buildsSLOD = CDQAR.createSearchableListOfBuilds(buildsListOfDicts)
+    # Get a dict to help look up builds (requires unique builds)
+    buildsSLOD = CDQAR.createSearchableListOfBuilds(buildsLOD)
 
     #
     # D.2.b) Get list of dicts of all non-passing tests off CDash and for
@@ -422,6 +422,17 @@ if __name__ == '__main__':
       inOptions.useCachedCDashData )
     print("\nNum nonpassing tests direct from CDash query = "+\
       str(len(nonpassingTestsLOD)))
+  
+    # Nonpassing Tests on CDash
+    htmlEmailBodyTop += \
+     "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
+     "Nonpassing Tests on CDash</a> (num="+str(len(nonpassingTestsLOD))+")<br>\n"
+  
+    # End of full build and test link paragraph and start the next paragraph
+    # for the summary of failures and other tables
+    htmlEmailBodyTop += \
+      "</p>\n\n"+\
+      "<p>\n"
 
     # Create a searchable list of nonpassing tests
     nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(nonpassingTestsLOD,
@@ -472,17 +483,6 @@ if __name__ == '__main__':
       CDQAR.NotMatchFunctor(nonpassingTestsMatchFunctor) )
     print("Num tests with issue trackers gross passing or missing = "+\
       str(len(testsWithIssueTrackersGrossPassingOrMissingLOD)))
-  
-    # Nonpassing Tests on CDash
-    htmlEmailBodyTop += \
-     "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
-     "Nonpassing Tests on CDash</a> (num="+str(len(nonpassingTestsLOD))+")<br>\n"
-  
-    # End of full build and test link paragraph and start the next paragraph
-    # for the summary of failures and other tables
-    htmlEmailBodyTop += \
-      "</p>\n\n"+\
-      "<p>\n"
 
     #
     print("\nSearch for any missing expected builds ...\n")
