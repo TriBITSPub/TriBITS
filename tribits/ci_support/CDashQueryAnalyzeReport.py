@@ -79,6 +79,46 @@ def getFileNameStrFromText(inputStr):
   return fileNameStr
 
 
+# Check if the key/value pairs for two dicts are the same and if return an
+# error message explaining how they are different.
+#
+# Returns tuple (hasSameKeyValuePairs, errMsg).  If
+# hasSameKeyValuePairs==True, then errMsg==None.  Otherwise, if
+# hasSameKeyValuePairs==False, then errMsg gives a string that explains how
+# they are different.
+#
+# This improves on a simple check dict_1 == dict_2 in that shows exactly why
+# the dicts are different for a single key/value pair.
+#
+def checkDictsAreSame(dict_1, dict_1_name, dict_2, dict_2_name):
+  # Assume all passing unless we find a difference
+  hasSameKeyValuePairs = True
+  errMsg = None
+  # Check if they have the same number of keys
+  if hasSameKeyValuePairs and (len(dict_1.keys()) != len(dict_2.keys())):
+    hasSameKeyValuePairs = False
+    errMsg = "len("+dict_1_name+".keys())="+str(len(dict_1.keys()))+\
+      " != len("+dict_2_name+".keys())="+str(len(dict_2.keys()))
+  # Check that they have the same key/value pairs
+  if hasSameKeyValuePairs:
+    for key_1 in dict_1.keys():
+      if not key_1 in dict_2.keys():
+        hasSameKeyValuePairs = False
+        errMsg = dict_1_name+"['"+key_1+"'] does not exist in "+dict_2_name
+        break
+      keyVal_1 = dict_1[key_1]
+      keyVal_2 = dict_2[key_1]
+      if keyVal_1 != keyVal_2:
+        hasSameKeyValuePairs = False
+        errMsg = dict_1_name+"['"+key_1+"']="+str(keyVal_1)+" != "+\
+          dict_2_name+"['"+key_1+"']="+str(keyVal_2)
+        break
+    #end for
+  #end if
+  # Return the final result
+  return (hasSameKeyValuePairs, errMsg)
+
+
 # Compress a long file name to avoid open() error
 #
 # If the full file name must be shorted and if prefix!="", then it is added to
@@ -580,41 +620,29 @@ def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
 def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
   removeExactDuplicateElements=False,
   ):
-  #print("\nlistOfDicts = "+str(listOfDicts))
-  #print("\nlistOfKeys = "+str(listOfKeys))
   # Build the lookup dict data-structure. Also, optionally mark any 100%
   # duplicate elements if asked to remove 100% duplicate elements.
-  lookupDict = {}
-  idx = 0
-  numRemoved = 0
-  duplicateIndexesToRemoveList = []
+  lookupDict = {} ; idx = 0 ; numRemoved = 0 ; duplicateIndexesToRemoveList = []
   for dictEle in listOfDicts:
-    #print("\nidx = "+str(idx))
-    #print("dictEle = "+str(dictEle))
     # Create the structure of recursive dicts for the keys in order
     currentLookupDictRef = lookupDict
     lastLookupDictRef = None
     lastKeyValue = None
     for key in listOfKeys:
-      #print("\nkey = '"+key+"'")
       keyValue = dictEle[key]
-      #print("keyValue = '"+str(keyValue)+"'")
-      #print("currentLookupDictRef = "+str(currentLookupDictRef))
       lastLookupDictRef = currentLookupDictRef
       lastKeyValue = keyValue
       nextLookupDictRef = currentLookupDictRef.setdefault(keyValue, {})
-      #print("nextLookupDictRef = "+str(nextLookupDictRef))
       currentLookupDictRef = nextLookupDictRef
-      #print("lookupDict = "+str(lookupDict))
     addEle = True
     # Check to see if this dict has already been added
-    #print("currentLookupDictRef = "+str(currentLookupDictRef))
     if currentLookupDictRef:
       lookedUpDict = currentLookupDictRef.get('dict', None)
       lookedUpIdx = currentLookupDictRef.get('idx', None)
-      #print("lookedUpDict = "+str(lookedUpIdx))
-      #print("lookedUpIdx = "+str(lookedUpIdx))
-      if lookedUpDict == dictEle and removeExactDuplicateElements:
+      (hasSameKeyValuePairs, dictDiffErrorMsg) = checkDictsAreSame(
+        dictEle, "listOfDicts["+str(idx)+"]",
+        lookedUpDict, "listOfDicts["+str(lookedUpIdx)+"]" )
+      if hasSameKeyValuePairs and removeExactDuplicateElements:
         # This is a 100% duplicate element to one previously added.
         # Therefore, marke this duplicate element to be removed from the
         # orginal list.
@@ -625,11 +653,10 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
           "Error, listOfDicts["+str(idx)+"]="+sorted_dict_str(dictEle)+" has duplicate"+\
           " values for the list of keys "+str(listOfKeys)+" with the element"+\
           " already added listOfDicts["+str(lookedUpIdx)+"]="+\
-          sorted_dict_str(lookedUpDict)+"!")
+          sorted_dict_str(lookedUpDict)+" and differs by "+str(dictDiffErrorMsg)+"!")
     # Need to go back and reset the dict on the last dict in the
     # data-structure so that modifications to the dicts that are looked up
     # will modify the original list.
-    #print("addEle = "+str(addEle))
     if addEle:
       currentLookupDictRef.update({'dict':dictEle, 'idx':idx-numRemoved})
     else:

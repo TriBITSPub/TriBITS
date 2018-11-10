@@ -140,6 +140,51 @@ class test_getFileNameStrFromText(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.checkDictsAreSame()
+#
+#############################################################################
+
+class test_checkDictsAreSame(unittest.TestCase):
+
+  def test_same_dicts(self):
+    dict_1 = { 'site':'site_ame', 'buildname':'build_name', 'data':'val1' }
+    dict_2 = { 'site':'site_ame', 'buildname':'build_name', 'data':'val1' }
+    expectedRtn = (True, None)
+    self.assertEqual(checkDictsAreSame(dict_1, "dict_1", dict_2, "dict_2"), expectedRtn)
+
+  def test_different_num_keys(self):
+    dict_1 = { 'site':'site_ame', 'buildname':'build_name', 'data':'val1' }
+    dict_2 = { 'site':'site_ame', 'buildname':'build_name' }
+    expectedRtn = (False, "len(dict_1.keys())=3 != len(dict_2.keys())=2")
+    self.assertEqual(checkDictsAreSame(dict_1, "dict_1", dict_2, "dict_2"), expectedRtn)
+
+  def test_different_key_name_1(self):
+    dict_1 = { 'site':'site_ame', 'buildname':'build_name', 'data':'val1' }
+    dict_2 = { 'site':'site_ame', 'buildname':'build_name', 'data2':'val1' }
+    expectedRtn = (False, "dict_1['data'] does not exist in dict_2")
+    self.assertEqual(checkDictsAreSame(dict_1, "dict_1", dict_2, "dict_2"), expectedRtn)
+
+  def test_different_key_name_2(self):
+    dict_1 = { 'site':'site_ame', 'buildname':'build_name', 'data':'val1' }
+    dict_2 = { 'site':'site_ame', 'buildName':'build_name', 'data':'val1' }
+    expectedRtn = (False, "dict_1['buildname'] does not exist in dict_2")
+    self.assertEqual(checkDictsAreSame(dict_1, "dict_1", dict_2, "dict_2"), expectedRtn)
+
+  def test_different_key_value_1(self):
+    dict_1 = { 'site':'site_ame', 'buildname':'build_name', 'data':'val1' }
+    dict_2 = { 'site':'site_ame', 'buildname':'build_name', 'data':'val2' }
+    expectedRtn = (False, "dict_1['data']=val1 != dict_2['data']=val2")
+    self.assertEqual(checkDictsAreSame(dict_1, "dict_1", dict_2, "dict_2"), expectedRtn)
+
+  def test_different_key_value_2(self):
+    dict_1 = { 'site':'site_name', 'buildname':'build_name', 'data':'val1' }
+    dict_2 = { 'site':'site_name2', 'buildname':'build_name', 'data':'val1' }
+    expectedRtn = (False, "dict_1['site']=site_name != dict_2['site']=site_name2")
+    self.assertEqual(checkDictsAreSame(dict_1, "dict_1", dict_2, "dict_2"), expectedRtn)
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.getCompressedFileNameIfTooLong()
 #
 #############################################################################
@@ -791,7 +836,8 @@ class test_createLookupDictForListOfDicts(unittest.TestCase):
         "Error, listOfDicts[5]="+sorted_dict_str(newDictEle)+\
         " has duplicate values for the list of keys ['group', 'site', 'buildname']"+\
         " with the element already added listOfDicts[0]="+\
-        sorted_dict_str(origDictEle)+"!" )
+        sorted_dict_str(origDictEle)+" and differs by"+\
+        " listOfDicts[5]['data']=new_data_val1 != listOfDicts[0]['data']=val1!" )
 
   def test_exact_duplicate_dicts_with_removal(self):
     listOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
