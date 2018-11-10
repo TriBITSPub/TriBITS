@@ -1063,14 +1063,16 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers Not Run = 0",
         "Num tests with issue trackers gross passing or missing = 6",
 
-        "Tests with issue trackers matching missing expected builds: num=2",
-        "DUMMY NO MATCH tests with issue trackers matching missing expected builds",
+        "Missing expected builds: bme=1",
+        "Builds with configure failures: c=0",
+        "Builds with build failures: b=0",
 
         "Num tests with issue trackers passing or missing matching posted builds = 4",
 
-        "Missing expected builds: bme=2",
-        "Builds with configure failures: c=0",
-        "Builds with build failures: b=0",
+        "Tests with issue trackers missing that match missing expected builds: num=2",
+        "  {'buildName': 'Trilinos-atdm-waterman-missing-build', 'issue_tracker': 'issue1', 'issue_tracker_url': 'url1', 'site': 'waterman', 'testname': 'missing_test_1'}",
+        "  {'buildName': 'Trilinos-atdm-waterman-missing-build', 'issue_tracker': 'issue2', 'issue_tracker_url': 'url2', 'site': 'waterman', 'testname': 'missing_test_2'}",
+        "NOTE: The above tests will NOT be listed in the set 'twim'!",
 
         "Getting test history for tests with issue trackers passing or missing: num=4",
         "Getting 30 days of history for MueLu_UnitTestsBlockedEpetra_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",

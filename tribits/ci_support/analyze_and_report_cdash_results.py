@@ -490,6 +490,7 @@ if __name__ == '__main__':
 
     missingExpectedBuildsLOD = CDQAR.getMissingExpectedBuildsList(
       buildsSLOD, expectedBuildsLOD)
+    #print("\nmissingExpectedBuildsLOD:")
     #pp.pprint(missingExpectedBuildsLOD)
 
     bmeDescr = "Missing expected builds"
@@ -609,20 +610,31 @@ if __name__ == '__main__':
     # Cache directory for test history data
     testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
 
+    # Special functor to look up missing expected build given a test dict
     testsToMissingExpectedBuildsSLOD = \
       CDQAR.createTestToBuildSearchableListOfDicts(missingExpectedBuildsLOD)
 
+    # Functor for matching an missing expected build given a test dict
     testMatchesMissingExpectedBuildsFunctor = CDQAR.MatchDictKeysValuesFunctor(
-      testsToExpectedBuildsSLOD)
+      testsToMissingExpectedBuildsSLOD)
 
     # Get list of tests with issue trackers that are not in the list of
     # nonpassing tests and don't match expected builds (and therefore these
     # are passing or missing)
-    testsWithIssueTrackersPassingOrMissingLOD = CDQAR.getFilteredList(
-      testsWithIssueTrackersGrossPassingOrMissingLOD,
-      CDQAR.NotMatchFunctor(testMatchesMissingExpectedBuildsFunctor) )
-    print("Num tests with issue trackers passing or missing = "+\
-      str(len(testsWithIssueTrackersPassingOrMissingLOD)))
+    ( testsWithIssueTrackersMissingMatchMissingExpectedBuildsLOD,
+      testsWithIssueTrackersPassingOrMissingLOD \
+      ) = CDQAR.splitListOnMatch( testsWithIssueTrackersGrossPassingOrMissingLOD,
+        testMatchesMissingExpectedBuildsFunctor )
+    print("\nNum tests with issue trackers passing or missing matching"+\
+      " posted builds = "+str(len(testsWithIssueTrackersPassingOrMissingLOD)))
+    print("\nTests with issue trackers missing that match"+\
+      " missing expected builds: num="+\
+      str(len(testsWithIssueTrackersMissingMatchMissingExpectedBuildsLOD)))
+    for testDict in testsWithIssueTrackersMissingMatchMissingExpectedBuildsLOD:
+      print("  "+sorted_dict_str(testDict))
+    if len(testsWithIssueTrackersMissingMatchMissingExpectedBuildsLOD) > 0:
+      print("\nNOTE: The above tests will NOT be listed in the set 'twim'!")
+    
 
     # Get test history for all of the tests with issue trackers that are not
     # passing or missing.  These will either be tests that are passing today
