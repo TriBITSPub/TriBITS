@@ -288,9 +288,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2018-10-28",
       [
         "Num expected builds = 6",
-        "Num tests with issue trackers = 6",
+        "Num tests with issue trackers = 9",
         "Num builds = 6",
-
         "Num nonpassing tests direct from CDash query = 21",
         "Num nonpassing tests after removing duplicate tests = 21",
         "Num nonpassing tests without issue trackers = 12",
@@ -299,7 +298,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Not Run = 0",
         "Num nonpassing tests with issue trackers Failed = 9",
         "Num nonpassing tests with issue trackers Not Run = 0",
-        "Num tests with issue trackers passing or gross missing = 0",
+        "Num tests with issue trackers gross passing or missing = 0",
 
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
@@ -363,23 +362,25 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   # This test shows that you can leave these arguments blank and just run the
   # script pointing to a CDash site and get useful info.
   #
-  def test_twoif_21_no_expected_builds_or_tests_with_issue_trackers(self):
+  def test_twoif_21_no_input_csv_files(self):
 
-    testCaseName = "twoif_21_no_expected_builds_or_tests_with_issue_trackers"
+    testCaseName = "twoif_21_no_input_csv_files"
 
     analyze_and_report_cdash_results_setup_test_dir(testCaseName)
 
     analyze_and_report_cdash_results_run_case(
       self,
       testCaseName,
-      ["--expected-builds-file= --tests-with-issue-trackers-file="],
+      [
+        "--expected-builds-file=",
+        "--tests-with-issue-trackers-file=",
+        ],
       1,
       "FAILED (twoif=21): ProjectName Nightly Builds on 2018-10-28",
       [
         "Num expected builds = 0",
         "Num tests with issue trackers = 0",
         "Num builds = 6",
-
         "Num nonpassing tests direct from CDash query = 21",
         "Num nonpassing tests after removing duplicate tests = 21",
         "Num nonpassing tests without issue trackers = 21",
@@ -388,7 +389,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Not Run = 0",
         "Num nonpassing tests with issue trackers Failed = 0",
         "Num nonpassing tests with issue trackers Not Run = 0",
-        "Num tests with issue trackers passing or gross missing = 0",
+        "Num tests with issue trackers gross passing or missing = 0",
 
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
@@ -709,7 +710,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       "FAILED (bme=2, c=1, b=2, twoif=12, twif=9): Project Specialized Builds on 2018-10-28",
       [
         "Num expected builds = 8",
-        "Num tests with issue trackers = 8",
+        "Num tests with issue trackers = 9",
         "Num builds = 6",
         "Num nonpassing tests direct from CDash query = 21",
         "Num nonpassing tests after removing duplicate tests = 21",
@@ -823,7 +824,13 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testListFilePath = \
       testOutputDir+"/Project_Specialized_Builds_fullCDashNonpassingTests.json"
     CDQAR.pprintPythonDataToFile( {'builds':[]}, testListFilePath )
-    # ToDo: Fix above once the script caches the raw CDash JSON output.
+
+    # Remove all of the tests with issue trackers (no open issues!)
+    testsWithIssueTrackersStr = \
+      "site, buildName, testname, issue_tracker_url, issue_tracker\n"
+    testsWithIssueTrackersFilePath = testOutputDir+"/testsWithIssueTrackers.csv"
+    with open(testsWithIssueTrackersFilePath, 'w') as testsWithIssueTrackersFile:
+      testsWithIssueTrackersFile.write(testsWithIssueTrackersStr)
 
     # Run analyze_and_report_cdash_results.py and make sure that it prints the
     # right stuff
@@ -834,8 +841,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "--build-set-name='"+buildSetName+"'",  # Test changing this
         ],
       0,
-      "PASSED (twim=9): Project Specialized Builds on 2018-10-28",
+      "PASSED: Project Specialized Builds on 2018-10-28",
       [
+        "Num expected builds = 6",
+        "Num tests with issue trackers = 0",
         "Num builds = 6",
         "Num nonpassing tests direct from CDash query = 0",
         "Num nonpassing tests after removing duplicate tests = 0",
@@ -845,11 +854,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Not Run = 0",
         "Num nonpassing tests with issue trackers Failed = 0",
         "Num nonpassing tests with issue trackers Not Run = 0",
-        "Num tests with issue trackers passing or gross missing = 9",
+        "Num tests with issue trackers gross passing or missing = 0",
         "Missing expected builds: bme=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
-        "Getting test history for tests with issue trackers passing or missing: num=9",
         "Tests without issue trackers Failed: twoif=0",
         "Tests with issue trackers Failed: twif=0",
         ],
@@ -897,7 +905,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       "FAILED (SCRIPT CRASHED): ProjectName Nightly Builds on 2018-10-28",
       [
         "Num expected builds = 6",
-        "Num tests with issue trackers = 6",
+        "Num tests with issue trackers = 10",
         ".+File \".+/analyze_and_report_cdash_results.py\", line.+",
         ".+Error: The following tests with issue trackers did not match 'site' and 'buildName' in one of the expected builds:",
         ".+{'site'='othersite', 'buildName'=otherbuild', 'testname'=Teko_ModALPreconditioner_MPI_1'}",
@@ -942,9 +950,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   # before that?).  Also, it is easiest to just manipulate for the existing
   # set of tests with issue trackers so that we don't have to modify the file
   # testsWithIssueTrackers.csv.
-  def test_passing_and_missing(self):
+  def test_twip_twim(self):
 
-    testCaseName = "passing_and_missing"
+    testCaseName = "twip_twim"
 
     # Copy the raw files to get started
     testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
@@ -1043,7 +1051,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2018-10-28",
       [
         "Num expected builds = 7",
-        "Num tests with issue trackers = 7",
+        "Num tests with issue trackers = 11",
         "Num builds = 6",
         "Num nonpassing tests direct from CDash query = 17",
         "Num nonpassing tests after removing duplicate tests = 17",
@@ -1053,7 +1061,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Not Run = 0",
         "Num nonpassing tests with issue trackers Failed = 5",
         "Num nonpassing tests with issue trackers Not Run = 0",
-        "Num tests with issue trackers passing or gross missing = 6",
+        "Num tests with issue trackers gross passing or missing = 6",
 
         "Tests with issue trackers matching missing expected builds: num=2",
         "DUMMY NO MATCH tests with issue trackers matching missing expected builds",

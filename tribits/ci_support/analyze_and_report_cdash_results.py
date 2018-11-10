@@ -331,28 +331,28 @@ if __name__ == '__main__':
     if inOptions.testsWithIssueTrackersFile:
       testsWithIssueTrackersLOD = CDQAR.getTestsWtihIssueTrackersListFromCsvFile(
         inOptions.testsWithIssueTrackersFile)
-    print("\nNum tests with issue trackers = "+str(len(expectedBuildsLOD)))
+    print("\nNum tests with issue trackers = "+str(len(testsWithIssueTrackersLOD)))
     # Get a SearchableListOfDicts for the tests with issue trackers to allow
     # them to be looked up based on matching ['site', 'buildName', 'testname']
     # key/value pairs.
-    testsWithIssueTrackerSLOD = \
+    testsWithIssueTrackersSLOD = \
       CDQAR.createSearchableListOfTests(testsWithIssueTrackersLOD)
     # Get a functor that will return True if a passed-in dict matches the
     # ['site', 'buildName', and 'testname'] key/value pairs.
     testsWithIssueTrackerMatchFunctor = \
-      CDQAR.MatchDictKeysValuesFunctor(testsWithIssueTrackerSLOD)
+      CDQAR.MatchDictKeysValuesFunctor(testsWithIssueTrackersSLOD)
 
     # Create a SearchableListOfDicts that will look up an expected build given
     # just the testDict fields ['site', 'buildName'] (since the list of tests
     # with issue trackers does not have 'group' since CDash queryTests.php
     # does not give the 'group' associated with each test).
-    testToExpectedBuildsSLOD = \
+    testsToExpectedBuildsSLOD = \
       CDQAR.createTestToBuildSearchableListOfDicts(expectedBuildsLOD)
 
     # Assert they the list of tests with issue trackers matches the list of
     # expected builds
     (allTestsMatch, errMsg) = CDQAR.testsWithIssueTrackersMatchExpectedBuilds(
-      testsWithIssueTrackersLOD, testToExpectedBuildsSLOD)
+      testsWithIssueTrackersLOD, testsToExpectedBuildsSLOD)
     if not allTestsMatch:
       raise Exception(errMsg)
 
@@ -407,7 +407,7 @@ if __name__ == '__main__':
     print("\nCDash non-passing tests browser URL:\n\n"+\
       "  "+cdashNonpassingTestsBrowserUrl+"\n")
 
-    # Get a single list of dicts of non-passing tests for current testing day
+    # Get a single list of dicts of nonpassing tests for current testing day
     # off CDash
 
     cdashNonpassingTestsQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
@@ -420,22 +420,24 @@ if __name__ == '__main__':
     nonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
-    print("\nNum nonpassing tests direct from CDash query = "+str(len(nonpassingTestsLOD)))
+    print("\nNum nonpassing tests direct from CDash query = "+\
+      str(len(nonpassingTestsLOD)))
 
     # Create a searchable list of nonpassing tests
     nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(nonpassingTestsLOD,
       removeExactDuplicateElements=True)
     # NOTE: Above we add the option to remove exact 100% duplicate list items
     # since cdash/queryTests.php can return duplicate tests!
-    print("Num nonpassing tests after removing duplicate tests = "+str(len(nonpassingTestsLOD)))
+    print("Num nonpassing tests after removing duplicate tests = "+\
+      str(len(nonpassingTestsLOD)))
 
     # Create a functor to match nonpassing tests
     nonpassingTestsMatchFunctor = \
       CDQAR.MatchDictKeysValuesFunctor(nonpassingTestsSLOD)
 
     # Add issue tracker info for all non passing tests
-    CDQAR.foreachTransform(nonpassingTestsLOD,
-      CDQAR.AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackerSLOD))
+    CDQAR.foreachTransform( nonpassingTestsLOD,
+      CDQAR.AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackersSLOD))
 
     # Split the list of nonpassing tests into those with and without issue
     # trackers
@@ -465,11 +467,11 @@ if __name__ == '__main__':
 
     # Get list of tests with issue trackers that are not in the list of
     # nonpassing tests (and therefore these are passing or missing)
-    testsWithIssueTrackersPassingOrMissingLOD = CDQAR.getFilteredList(
-      testsWithIssueTrackerSLOD,
+    testsWithIssueTrackersGrossPassingOrMissingLOD = CDQAR.getFilteredList(
+      testsWithIssueTrackersSLOD,
       CDQAR.NotMatchFunctor(nonpassingTestsMatchFunctor) )
-    print("Num tests with issue trackers passing or gross missing = "+\
-      str(len(testsWithIssueTrackersPassingOrMissingLOD)))
+    print("Num tests with issue trackers gross passing or missing = "+\
+      str(len(testsWithIssueTrackersGrossPassingOrMissingLOD)))
   
     # Nonpassing Tests on CDash
     htmlEmailBodyTop += \
@@ -607,9 +609,25 @@ if __name__ == '__main__':
     # Cache directory for test history data
     testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
 
+    testsToMissingExpectedBuildsSLOD = \
+      CDQAR.createTestToBuildSearchableListOfDicts(missingExpectedBuildsLOD)
+
+    testMatchesMissingExpectedBuildsFunctor = CDQAR.MatchDictKeysValuesFunctor(
+      testsToExpectedBuildsSLOD)
+
+    # Get list of tests with issue trackers that are not in the list of
+    # nonpassing tests and don't match expected builds (and therefore these
+    # are passing or missing)
+    testsWithIssueTrackersPassingOrMissingLOD = CDQAR.getFilteredList(
+      testsWithIssueTrackersGrossPassingOrMissingLOD,
+      CDQAR.NotMatchFunctor(testMatchesMissingExpectedBuildsFunctor) )
+    print("Num tests with issue trackers passing or missing = "+\
+      str(len(testsWithIssueTrackersPassingOrMissingLOD)))
+
     # Get test history for all of the tests with issue trackers that are not
-    # nonpassing.  These will either be tests that are passing toiday (and
-    # therefore have history) or they will be tests that are missing.
+    # passing or missing.  These will either be tests that are passing today
+    # (and therefore have history) or they will be tests that are missing.
+    # But don't look at history for tests in missing expected builds.
 
     twipLOD = []
     twimLOD = []
@@ -899,8 +917,8 @@ if __name__ == '__main__':
  
   except Exception:
     # Traceback!
-    sys.stdout.flush()
     print("")
+    sys.stdout.flush()
     traceback.print_exc()
     # Report the error
     htmlEmailBodyTop += "\n<pre><code>\n"+\
