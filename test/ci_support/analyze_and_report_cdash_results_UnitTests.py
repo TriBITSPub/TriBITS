@@ -300,6 +300,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       1,
       "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2018-10-28",
       [
+        "[*][*][*] Query and analyze CDash results for ProjectName Nightly Builds for testing day 2018-10-28",
         "Num expected builds = 6",
         "Num tests with issue trackers = 9",
         "Num builds = 6",

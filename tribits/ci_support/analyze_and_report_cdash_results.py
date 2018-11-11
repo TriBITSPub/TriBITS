@@ -361,7 +361,7 @@ if __name__ == '__main__':
   #
 
   print "***"
-  print "*** Query and analyze CDash results "+inOptions.buildSetName+\
+  print "*** Query and analyze CDash results for "+inOptions.buildSetName+\
         " for testing day "+inOptions.date
   print "***"
 
