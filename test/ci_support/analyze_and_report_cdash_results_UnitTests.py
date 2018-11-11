@@ -144,39 +144,52 @@ def analyze_and_report_cdash_results_setup_test_dir(
   return testOutputDir
 
 
-# Extract out test dicts list from a cdash/queryTests.php JSON cache file.
-#
-# By default this assumes reading the namespaced fullCDashNonpassingTests.json
-# file.  Otherwise, the can be overridden by passing in the path.
-#
-def getTestsListFromJsonFile(testOutputDir,
-  buildSetName="ProjectName Nightly Builds",
-  testsJsonFilePath = None
-  ):
-  baseFilePrefix = CDQAR.getFileNameStrFromText(buildSetName)
-  if not testsJsonFilePath:
-    testsJsonFilePath = \
-      testOutputDir+"/"+baseFilePrefix+"_fullCDashNonpassingTests.json"
-  with open(testsJsonFilePath, 'r') as testsJsonFile:
+# Extract test dicts list from a cdash/queryTests.php JSON cache file
+def getTestsDictListFromCDashJsonFile(testOutputDir, testJsonRelFilePath):
+  testsJsonFileFullPath = testOutputDir+"/"+testJsonRelFilePath
+  with open(testsJsonFileFullPath, 'r') as testsJsonFile:
     testsJson = eval(testsJsonFile.read())
   return testsJson['builds']
 
 
-# Write a list of tests back to cdash/queryTests.php JSON file
-#
-# By default this assumes writing the namespaced fullCDashNonpassingTests.json
-# file.  Otherwise, the can be overridden by passing in the path.
-#
-def writeTestsListToJsonFile( testsLOD, testOutputDir,
-  buildSetName="ProjectName Nightly Builds",
-  testsJsonFilePath = None
+# Write test dicts list to cdash/queryTests.php JSON cache file
+def writeTestsDictListToCDashJsonFile(testsLOD, testOutputDir, testJsonRelFilePath):
+  testsJsonFileFullPath = testOutputDir+"/"+testJsonRelFilePath
+  testsJson = { 'builds': testsLOD }
+  CDQAR.pprintPythonDataToFile(testsJson, testsJsonFileFullPath)
+
+
+# Extract test history dicts list from a cdash/queryTests.php JSON cache file
+def getTestHistoryDictListFromCDashJsonFile(testOutputDir, testHistoryFileName):
+  testsJsonRelFilePath = "test_history/"+testHistoryFileName
+  return getTestsDictListFromCDashJsonFile(testOutputDir, testsJsonRelFilePath)
+
+
+# Write test history dicts list to a cdash/queryTests.php JSON cache file
+def writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD,
+    testOutputDir, testHistoryFileName,
+  ):
+  testHistoryJsonRelFilePath = "test_history/"+testHistoryFileName
+  writeTestsDictListToCDashJsonFile(testHistoryLOD, testOutputDir,
+    testHistoryJsonRelFilePath)
+
+
+# Extract nonpassing test dicts lists from ctest/queryTests.php cache file
+def getNonpassTestsDictListFromCDashJsonFile(testOutputDir,
+    buildSetName="ProjectName Nightly Builds",
   ):
   baseFilePrefix = CDQAR.getFileNameStrFromText(buildSetName)
-  if not testsJsonFilePath:
-    testsJsonFilePath = \
-      testOutputDir+"/"+baseFilePrefix+"_fullCDashNonpassingTests.json"
-  testsJson = { 'builds': testsLOD }
-  CDQAR.pprintPythonDataToFile(testsJson, testsJsonFilePath)
+  testsJsonRelFilePath = baseFilePrefix+"_fullCDashNonpassingTests.json"
+  return getTestsDictListFromCDashJsonFile(testOutputDir, testsJsonRelFilePath)
+
+
+# Write nonpassing test dicts lists to ctest/queryTests.php cache file
+def writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir,
+    buildSetName="ProjectName Nightly Builds",
+  ):
+  baseFilePrefix = CDQAR.getFileNameStrFromText(buildSetName)
+  testsJsonRelFilePath = baseFilePrefix+"_fullCDashNonpassingTests.json"
+  writeTestsDictListToCDashJsonFile(testsLOD, testOutputDir, testsJsonRelFilePath)
 
 
 # Run a test case involving the analyze_and_report_cdash_results.py
@@ -439,7 +452,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
     # Change the status for few tests from 'Failed' to 'Not Run'.
 
-    testsLOD = getTestsListFromJsonFile(testOutputDir)
+    testsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
     testListSLOD = CDQAR.createSearchableListOfTests(testsLOD)
 
     # make twoif test Anasazi_Epetra_BKS_norestart_test_MPI_4 Not Run
@@ -468,7 +481,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testDict['details'] = u'Required Files Missing'
 
     # Write updated test data back to file
-    writeTestsListToJsonFile(testsLOD, testOutputDir)
+    writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir)
 
     # Run the script and make sure it outputs the right stuff
     analyze_and_report_cdash_results_run_case(
@@ -605,17 +618,13 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     # Copy the raw files to get started
     testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
 
-    # Add a dupicate test to the set of nonpasssing tests JSON file
-    testListFilePath = \
-      testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
-    with open(testListFilePath, 'r') as testListFile:
-      testListFileJson = eval(testListFile.read())
-    testsLOD =  testListFileJson['builds']
+    # Get list of nonpassing tests from JSON file
+    testsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
     # Duplicate the test Belos_gcrodr_hb_MPI_4
     testDict = copy.deepcopy(testsLOD[1])
     testsLOD.insert(2, testDict)
     # Write updated test data back to file
-    CDQAR.pprintPythonDataToFile(testListFileJson, testListFilePath)
+    writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir)
 
     # Run the script and make sure it outputs the right stuff
     analyze_and_report_cdash_results_run_case(
@@ -667,18 +676,14 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     # Copy the raw files to get started
     testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
 
-    # Add a dupicate test to the set of nonpasssing tests JSON file
-    testListFilePath = \
-      testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
-    with open(testListFilePath, 'r') as testListFile:
-      testListFileJson = eval(testListFile.read())
-    testsLOD =  testListFileJson['builds']
+    # Get list of nonpassing tests from JSON file
+    testsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
     # Duplicate the test Belos_gcrodr_hb_MPI_4 bug give different testid
     testDict = copy.deepcopy(testsLOD[1])
     testDict['testDetailsLink'] = 'testDetails.php?test=57860536&build=4107241'
     testsLOD.insert(2, testDict)
     # Write updated test data back to file
-    CDQAR.pprintPythonDataToFile(testListFileJson, testListFilePath)
+    writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir)
 
     # Run the script and make sure it outputs the right stuff
     analyze_and_report_cdash_results_run_case(
@@ -1019,7 +1024,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
 
     # Get full list of nonpassing tests from Json file
-    nonpassingTestsLOD = getTestsListFromJsonFile(testOutputDir)
+    nonpassingTestsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
     nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(nonpassingTestsLOD)
 
     # Mark which tests with issue trackers to remove from the list of
@@ -1067,7 +1072,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       nonpassingTestsToRemoveIndexes)
 
     # Write the reduced list of nonpassing test data back to file
-    writeTestsListToJsonFile(nonpassingTestsLOD, testOutputDir)
+    writeNonpassTestsDictListToCDashJsonFile(nonpassingTestsLOD, testOutputDir)
 
     # Add some dummy builds to the list of expected builds so that some new
     # added dummy matching tests will be missing but not listed in the table
@@ -1099,37 +1104,36 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     daysOfHistory = 30
 
     # Make a test passed
-    testHistoryCacheFileFullName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
       'cee-rhel6',
       'Trilinos-atdm-cee-rhel6-clang-opt-serial',
       'MueLu_UnitTestsBlockedEpetra_MPI_1',
       daysOfHistory)
-    testHistoryFilePath = testOutputDir+"/test_history/"+testHistoryCacheFileFullName
-    testHistoryLOD = getTestsListFromJsonFile( testOutputDir, 
-      testsJsonFilePath=testHistoryFilePath )
+    testHistoryLOD = getTestHistoryDictListFromCDashJsonFile(
+      testOutputDir, testHistoryFileName)
     testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
     testHistoryLOD[0]['status'] = u'Passed'
     testHistoryLOD[0]['details'] = u'Completed (Passed)'
-    writeTestsListToJsonFile(testHistoryLOD, testOutputDir, 
-      testsJsonFilePath=testHistoryFilePath)
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName) 
 
     # Make a test passed
-    testHistoryCacheFileFullName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
       'cee-rhel6',
       'Trilinos-atdm-cee-rhel6-intel-opt-serial',
       'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2',
       daysOfHistory)
-    testHistoryFilePath = testOutputDir+"/test_history/"+testHistoryCacheFileFullName
-    testHistoryLOD = getTestsListFromJsonFile( testOutputDir, 
-      testsJsonFilePath=testHistoryFilePath )
+    testHistoryLOD = getTestHistoryDictListFromCDashJsonFile(
+      testOutputDir, testHistoryFileName)
     testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
     testHistoryLOD[0]['status'] = u'Passed'
     testHistoryLOD[0]['details'] = u'Completed (Passed)'
-    writeTestsListToJsonFile(testHistoryLOD, testOutputDir, 
-      testsJsonFilePath=testHistoryFilePath)
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName) 
 
     # ToDo: Remove history for missing tests to test different numbers of
-    # missing days ...
+    # missing days.  (This will need to be done once we tablulate "Consecutive
+    # Pass Days" and "Consecutive Missing Days".)
 
     # Run the script and make sure it outputs the right stuff
     analyze_and_report_cdash_results_run_case(
