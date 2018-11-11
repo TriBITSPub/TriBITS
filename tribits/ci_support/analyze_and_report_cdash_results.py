@@ -245,64 +245,77 @@ class OverallVars(object):
     self.htmlEmailBodyBottom = ""
     # This var will store the list of data numbers for the summary line
     self.summaryLineDataNumbersList = []
-  
 
-# Helper function for getting history, analyzing, and printing test data
+
+# Class to help get test history and then analyze and report for each test
+# site.
 #
-def testSetGetDataAnalyzeReport( testSetDescr, testSetAcro, testSetTotalSize,
-    testSetLOD, inOptions, overallVars,
-    testSetNonzeroSizeTriggerGlobalFail=True,
-    sortTests=True,
-    limitTableRows=None,   # Change to 'int' > 0 to limit to this num
-    getTestHistory=False,
-  ):
+# NOTE: The reason this is a class is that the data inOptions and overallVars
+# never changes once this object is constructed.
+#
+class TestSetGetDataAnayzeRepoter(object):
 
-  print("")
+  def __init__(self, inOptions, overallVars):
+    self.inOptions = inOptions
+    self.overallVars = overallVars
 
-  testSetSummaryStr =  CDQAR.getCDashDataSummaryHtmlTableTitleStr(testSetDescr,
-    testSetAcro, testSetTotalSize)
-
-  print(testSetSummaryStr)
-
-  if testSetTotalSize > 0:
-
-    overallVars.globalPass = False
-
-    overallVars.summaryLineDataNumbersList.append(testSetAcro+"="+str(testSetTotalSize))
-
-    overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(testSetSummaryStr)+"<br>\n"
-
-    testnameBuildnameSiteSortOrder = ['testname', 'buildName', 'site']
-
-    if sortTests or limitTableRows:
-      testSetSortedLimitedLOD = CDQAR.sortAndLimitListOfDicts(
-        testSetLOD, testnameBuildnameSiteSortOrder,
-        limitTableRows )
-    else:
-      testSetSortedLimitedLOD = testSetLOD
-
-    if getTestHistory:
-
-      testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
-
-      CDQAR.foreachTransform(
-        testSetSortedLimitedLOD,
-        CDQAR.AddTestHistoryToTestDictFunctor(
-          inOptions.cdashSiteUrl,
-          inOptions.cdashProjectName,
-          inOptions.date,
-          inOptions.testHistoryDays,
-          testHistoryCacheDir,
-          useCachedCDashData=inOptions.useCachedCDashData,
-          alwaysUseCacheFileIfExists=True,
-          verbose=True,
-          printDetails=inOptions.printDetails,
+  def testSetGetDataAnalyzeReport( self,
+      testSetDescr, testSetAcro, testSetTotalSize,
+      testSetLOD,
+      testSetNonzeroSizeTriggerGlobalFail=True,
+      sortTests=True,
+      limitTableRows=None,   # Change to 'int' > 0 to limit to this num
+      getTestHistory=False,
+    ):
+  
+    print("")
+  
+    testSetSummaryStr =  CDQAR.getCDashDataSummaryHtmlTableTitleStr(testSetDescr,
+      testSetAcro, testSetTotalSize)
+  
+    print(testSetSummaryStr)
+  
+    if testSetTotalSize > 0:
+  
+      self.overallVars.globalPass = False
+  
+      self.overallVars.summaryLineDataNumbersList.append(
+        testSetAcro+"="+str(testSetTotalSize))
+  
+      self.overallVars.htmlEmailBodyTop += \
+        CDQAR.makeHtmlTextRed(testSetSummaryStr)+"<br>\n"
+  
+      testnameBuildnameSiteSortOrder = ['testname', 'buildName', 'site']
+  
+      if sortTests or limitTableRows:
+        testSetSortedLimitedLOD = CDQAR.sortAndLimitListOfDicts(
+          testSetLOD, testnameBuildnameSiteSortOrder,
+          limitTableRows )
+      else:
+        testSetSortedLimitedLOD = testSetLOD
+  
+      if getTestHistory:
+  
+        testHistoryCacheDir = self.inOptions.cdashQueriesCacheDir+"/test_history"
+  
+        CDQAR.foreachTransform(
+          testSetSortedLimitedLOD,
+          CDQAR.AddTestHistoryToTestDictFunctor(
+            self.inOptions.cdashSiteUrl,
+            self.inOptions.cdashProjectName,
+            self.inOptions.date,
+            self.inOptions.testHistoryDays,
+            testHistoryCacheDir,
+            useCachedCDashData=self.inOptions.useCachedCDashData,
+            alwaysUseCacheFileIfExists=True,
+            verbose=True,
+            printDetails=self.inOptions.printDetails,
+            )
           )
-        )
-
-    overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-      testSetDescr, testSetAcro, testSetTotalSize, testSetSortedLimitedLOD,
-        inOptions.testHistoryDays, limitTableRows )
+  
+      self.overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+        testSetDescr, testSetAcro, testSetTotalSize, testSetSortedLimitedLOD,
+          self.inOptions.testHistoryDays, limitTableRows )
 
 
 #
@@ -672,6 +685,8 @@ if __name__ == '__main__':
     # Cache directory for test history data
     testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
 
+    testSetGetDataAnayzeRepoter = TestSetGetDataAnayzeRepoter(inOptions,overallVars)
+
     # Special functor to look up missing expected build given a test dict
     testsToMissingExpectedBuildsSLOD = \
       CDQAR.createTestToBuildSearchableListOfDicts(missingExpectedBuildsLOD)
@@ -696,7 +711,6 @@ if __name__ == '__main__':
       print("  "+sorted_dict_str(testDict))
     if len(testsWithIssueTrackersMissingMatchMissingExpectedBuildsLOD) > 0:
       print("\nNOTE: The above tests will NOT be listed in the set 'twim'!")
-    
 
     # Get test history for all of the tests with issue trackers that are not
     # passing or missing.  These will either be tests that are passing today
@@ -737,13 +751,11 @@ if __name__ == '__main__':
     # D.3.a) twoif
     #
 
-    testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
       "Tests without issue trackers Failed",
       "twoif",
       len(twoifLOD),
       twoifLOD,
-      inOptions,
-      overallVars,
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True
       )
