@@ -144,12 +144,12 @@ def analyze_and_report_cdash_results_setup_test_dir(
   return testOutputDir
 
 
-# Extract out the list of tests from a cdash/queryTests.php JSON cache file
+# Extract out test dicts list from a cdash/queryTests.php JSON cache file.
 #
 # By default this assumes reading the namespaced fullCDashNonpassingTests.json
 # file.  Otherwise, the can be overridden by passing in the path.
 #
-def getTestsListFromJsonFile( testOutputDir,
+def getTestsListFromJsonFile(testOutputDir,
   buildSetName="ProjectName Nightly Builds",
   testsJsonFilePath = None
   ):
@@ -600,7 +600,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   #
   def test_twoif_12_twif_9_with_duplicate_nonpassing_tests(self):
 
-    testCaseName = "test_twoif_12_twif_9_with_duplicate_nonpassing_tests"
+    testCaseName = "twoif_12_twif_9_with_duplicate_nonpassing_tests"
 
     # Copy the raw files to get started
     testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
@@ -650,8 +650,69 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       #verbose=True,
       #debugPrint=True,
       )
-  # NOTE: The above unit test checks the tables 'twoinr' and 'twinr' in detail
-  # and checks some of the contents of the 'twoif' and 'twif'.
+
+
+  # Test with some duplicate tests from CDash query that have the same buildid
+  # but different testids (this happens in real life sometimes!)
+  #
+  # Here we add a duplicate test to the file fullCDashNonpassingTests.json
+  # with the same buidlid but a different test id.  See:
+  #
+  #   https://gitlab.kitware.com/snl/project-1/issues/77
+  #
+  def test_twoif_12_twif_9_with_duplicate_nonpasing_testids(self):
+
+    testCaseName = "twoif_12_twif_9_with_duplicate_nonpasing_testids"
+
+    # Copy the raw files to get started
+    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+
+    # Add a dupicate test to the set of nonpasssing tests JSON file
+    testListFilePath = \
+      testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
+    with open(testListFilePath, 'r') as testListFile:
+      testListFileJson = eval(testListFile.read())
+    testsLOD =  testListFileJson['builds']
+    # Duplicate the test Belos_gcrodr_hb_MPI_4 bug give different testid
+    testDict = copy.deepcopy(testsLOD[1])
+    testDict['testDetailsLink'] = 'testDetails.php?test=57860536&build=4107241'
+    testsLOD.insert(2, testDict)
+    # Write updated test data back to file
+    CDQAR.pprintPythonDataToFile(testListFileJson, testListFilePath)
+
+    # Run the script and make sure it outputs the right stuff
+    analyze_and_report_cdash_results_run_case(
+      self,
+      testCaseName,
+      [],
+      1,
+      "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2018-10-28",
+      [
+        "Num builds = 6",
+        "Num nonpassing tests direct from CDash query = 22",
+        "Num nonpassing tests after removing duplicate tests = 21",
+        "Num nonpassing tests without issue trackers = 12",
+        "Num nonpassing tests with issue trackers = 9",
+        "Num nonpassing tests without issue trackers Failed = 12",
+        "Num nonpassing tests with issue trackers Failed = 9",
+        "Missing expected builds: bme=0",
+        "Builds with configure failures: c=0",
+        "Builds with build failures: b=0",
+        "Tests without issue trackers Failed: twoif=12",
+        "Tests with issue trackers Failed: twif=9",
+        ],
+      [
+
+        # Second paragraph with listing of different types of tables below
+        "<p>",
+        "<font color=\"red\">Tests without issue trackers Failed: twoif=12</font><br>",
+        "Tests with issue trackers Failed: twif=9<br>",
+        "</p>",
+
+        ],
+      #verbose=True,
+      #debugPrint=True,
+      )
 
 
   # Add some missing builds, some builds with configure failuires, and builds
@@ -1014,11 +1075,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     expectedBuildsFilePath = testOutputDir+"/expectedBuilds.csv"
     with open(expectedBuildsFilePath, 'r') as expectedBuildsFile:
       expectedBuildsStrList = expectedBuildsFile.readlines()
-    expectedBuildsStrList.extend(
-      [
-        "Specialized, waterman, Trilinos-atdm-waterman-missing-build\n",
-        ]
-      )
+    expectedBuildsStrList.append(
+      "Specialized, waterman, Trilinos-atdm-waterman-missing-build\n" )
     with open(expectedBuildsFilePath, 'w') as expectedBuildsFile:
       expectedBuildsFile.write("".join(expectedBuildsStrList))
 
@@ -1028,19 +1086,50 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testsWithIssueTrackersFilePath = testOutputDir+"/testsWithIssueTrackers.csv"
     with open(testsWithIssueTrackersFilePath, 'r') as testsWithIssueTrackersFile:
       testsWithIssueTrackersStrList = testsWithIssueTrackersFile.readlines()
-    testsWithIssueTrackersStrList.extend(
-      [
-        "waterman, Trilinos-atdm-waterman-missing-build, missing_test_1, url1, issue1\n",
-        "waterman, Trilinos-atdm-waterman-missing-build, missing_test_2, url2, issue2\n",
-        ]
-      )
+    testsWithIssueTrackersStrList.extend( [
+      "waterman, Trilinos-atdm-waterman-missing-build, missing_test_1, url1, issue1\n",
+      "waterman, Trilinos-atdm-waterman-missing-build, missing_test_2, url2, issue2\n",
+      ] )
     with open(testsWithIssueTrackersFilePath, 'w') as testsWithIssueTrackersFile:
       testsWithIssueTrackersFile.write("".join(testsWithIssueTrackersStrList))
 
     # Change the history for some tests so that they show up correctly as
     # Passing and Missing
 
-    # ToDo: Implement!
+    daysOfHistory = 30
+
+    # Make a test passed
+    testHistoryCacheFileFullName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'MueLu_UnitTestsBlockedEpetra_MPI_1',
+      daysOfHistory)
+    testHistoryFilePath = testOutputDir+"/test_history/"+testHistoryCacheFileFullName
+    testHistoryLOD = getTestsListFromJsonFile( testOutputDir, 
+      testsJsonFilePath=testHistoryFilePath )
+    testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
+    testHistoryLOD[0]['status'] = u'Passed'
+    testHistoryLOD[0]['details'] = u'Completed (Passed)'
+    writeTestsListToJsonFile(testHistoryLOD, testOutputDir, 
+      testsJsonFilePath=testHistoryFilePath)
+
+    # Make a test passed
+    testHistoryCacheFileFullName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2',
+      daysOfHistory)
+    testHistoryFilePath = testOutputDir+"/test_history/"+testHistoryCacheFileFullName
+    testHistoryLOD = getTestsListFromJsonFile( testOutputDir, 
+      testsJsonFilePath=testHistoryFilePath )
+    testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
+    testHistoryLOD[0]['status'] = u'Passed'
+    testHistoryLOD[0]['details'] = u'Completed (Passed)'
+    writeTestsListToJsonFile(testHistoryLOD, testOutputDir, 
+      testsJsonFilePath=testHistoryFilePath)
+
+    # ToDo: Remove history for missing tests to test different numbers of
+    # missing days ...
 
     # Run the script and make sure it outputs the right stuff
     analyze_and_report_cdash_results_run_case(
@@ -1048,7 +1137,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       testCaseName,
       ["--limit-test-history-days=30"], # Test that you can set this as int
       1,
-      "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2018-10-28",
+      "FAILED (bme=1, twoif=12, twif=5, twip=2, twim=2):"+\
+        " ProjectName Nightly Builds on 2018-10-28",
       [
         "Num expected builds = 7",
         "Num tests with issue trackers = 11",
@@ -1080,24 +1170,56 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6 from cache file",
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file",
 
-        "Num nonpassing tests with issue trackers Passed = 2",
-        "Num nonpassing tests with issue trackers Missing = 2",
+        "Num tests with issue trackers Passed = 2",
+        "Num tests with issue trackers Missing = 2",
 
         "Tests without issue trackers Failed: twoif=12",
 
-        "Tests with issue trackers Failed: twif=3",
-        "DUMMY NO MATCH twif test lines",
+        "Tests with issue trackers Failed: twif=5",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for Stratimikos_test_single_belos_thyra_solver_driver_nos1_nrhs8_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for Teko_ModALPreconditioner_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
 
-        "Tests wtih issue trackers Passed: twip = 2",
-        "DUMMY NO MATCH twip test lines",
-
-        "Tests wtih issue trackers Passed: twim = 2",
-        "DUMMY NO MATCH twim test lines",
+        "Tests with issue trackers Not Run: twinr=0",
+        "Tests with issue trackers Passed: twip=2",
+        "Tests with issue trackers Missing: twim=2",
 
         ],
       [
 
-        "DUMMY NO MATCH",
+        "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</h3>",
+
+        "<h3>Tests with issue trackers Failed: twif=5</h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
+        "<td align=\"left\"><a href=\".+\">PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2</a></td>",
+        "<td align=\"left\"><a href=\".+\">Failed</a></td>",
+        "<td align=\"left\">Completed [(]Failed[)]</td>",
+        "<td align=\"right\"><a href=\".+\">15</a></td>",
+        "<td align=\"right\">2018-10-27</td>",
+        "<td align=\"right\"><a href=\".+\">#3632</a></td>",
+
+        "<h3>Tests with issue trackers Passed: twip=2</h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
+        "<td align=\"left\"><a href=\".+\">MueLu_UnitTestsBlockedEpetra_MPI_1</a></td>",
+        "<td align=\"left\"><a href=\".+\">Passed</a></td>",
+        "<td align=\"left\">Completed [(]Passed[)]</td>",
+        "<td align=\"right\"><a href=\".+\">14</a></td>",
+        "<td align=\"right\">2018-10-26</td>",
+        "<td align=\"right\"><a href=\".+\">#3640</a></td>",
+
+        "<h3>Tests with issue trackers Missing: twim=2</h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>",
+        "<td align=\"left\"><a href=\".+\">PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2</a></td>",
+        "<td align=\"left\"><a href=\".+\">Failed</a></td>",
+        "<td align=\"left\">Completed [(]Failed[)]</td>",
+        "<td align=\"right\"><a href=\".+\">1</a></td>",
+        "<td align=\"right\">None</td>",
+        "<td align=\"right\"><a href=\".+\">#3632</a></td>",
 
         ],
       #verbose=True,

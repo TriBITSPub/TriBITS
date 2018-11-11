@@ -1338,6 +1338,69 @@ class test_dateFromBuildStartTime(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.checkCDashTestDictsAreSame()
+#
+#############################################################################
+
+g_cdashTestDict = {
+  u'site' : u'site1',
+  u'buildName' : u'build1',
+  u'testname' : u'test1',
+  u'testDetailsLink' : u'testDetails.php?test=58569474&build=4143620',
+  u'otherData' : u'dataValue',
+  } 
+
+class test_extractTestIdAndBuildIdFromTestDetailsLink(unittest.TestCase):
+
+  def test_1(self):
+    self.assertEqual(
+      extractTestIdAndBuildIdFromTestDetailsLink(
+        u'testDetails.php?test=58569474&build=4143620'),
+      ("58569474", "4143620") )
+
+class test_checkCDashTestDictsAreSame(unittest.TestCase):
+
+  def test_exact_same(self):
+    testDict_1 = copy.deepcopy(g_cdashTestDict)
+    testDict_2 = copy.deepcopy(g_cdashTestDict)
+    expectedRtn = (True, None)
+    self.assertEqual(
+      checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
+      expectedRtn )
+
+  def test_same_except_for_testid(self):
+    testDict_1 = copy.deepcopy(g_cdashTestDict)
+    testDict_2 = copy.deepcopy(g_cdashTestDict)
+    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
+    expectedRtn = (True, None)
+    self.assertEqual(
+      checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
+      expectedRtn )
+
+  def test_different_testid_and_buildid(self):
+    testDict_1 = copy.deepcopy(g_cdashTestDict)
+    testDict_2 = copy.deepcopy(g_cdashTestDict)
+    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143621'
+    expectedRtn = (False,
+      "testDict_1['testDetailsLink']=testDetails.php?test=58569474&build=4143620 !="+\
+      " testDict_2['testDetailsLink']=testDetails.php?test=58569475&build=4143621")
+    self.assertEqual(
+      checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
+      expectedRtn )
+
+  def test_different_other_key_value_pair(self):
+    testDict_1 = copy.deepcopy(g_cdashTestDict)
+    testDict_2 = copy.deepcopy(g_cdashTestDict)
+    testDict_2['otherData'] = u'dataValueDiff'
+    expectedRtn = (False,
+      "testDict_1['otherData']=dataValue != testDict_2['otherData']=dataValueDiff")
+    self.assertEqual(
+      checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
+      expectedRtn )
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.getTestHistoryCacheFileName()
 #
 #############################################################################

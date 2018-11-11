@@ -94,6 +94,9 @@ def checkDictsAreSame(dict_1, dict_1_name, dict_2, dict_2_name):
   # Assume all passing unless we find a difference
   hasSameKeyValuePairs = True
   errMsg = None
+  # Start with the fast internal Python check
+  if dict_1 == dict_2:
+    return (True, None)
   # Check if they have the same number of keys
   if hasSameKeyValuePairs and (len(dict_1.keys()) != len(dict_2.keys())):
     hasSameKeyValuePairs = False
@@ -608,6 +611,12 @@ def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
 # duplicates and have the exact same key/value pairs will be removed from
 # listOfDicts. (default False)
 #
+# checkDictsAreSame_in [in]: Allows specialization of the check for exact dict
+# matches and reporting the differences.  The default value is the function
+# checkDictsAreSame().  Any Python object that has the __call__() operator
+# function defined that takes those same arguments and returns the same
+# outputs as the function checkDictsAreSame() can be passed in.
+#
 # If listOfDicts has any elements that are 100% complete duplicates with the
 # same exact key/value pairs, then the later elements will be removed from the
 # list.  But if just the key/value pairs listed in listOfKeys are duplicated
@@ -619,6 +628,7 @@ def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
 #
 def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
   removeExactDuplicateElements=False,
+  checkDictsAreSame_in=checkDictsAreSame,
   ):
   # Build the lookup dict data-structure. Also, optionally mark any 100%
   # duplicate elements if asked to remove 100% duplicate elements.
@@ -639,7 +649,7 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
     if currentLookupDictRef:
       lookedUpDict = currentLookupDictRef.get('dict', None)
       lookedUpIdx = currentLookupDictRef.get('idx', None)
-      (hasSameKeyValuePairs, dictDiffErrorMsg) = checkDictsAreSame(
+      (hasSameKeyValuePairs, dictDiffErrorMsg) = checkDictsAreSame_in(
         dictEle, "listOfDicts["+str(idx)+"]",
         lookedUpDict, "listOfDicts["+str(lookedUpIdx)+"]" )
       if hasSameKeyValuePairs and removeExactDuplicateElements:
@@ -766,8 +776,15 @@ class SearchableListOfDicts(object):
   # the listOfKeys.  This allows a mapping from int input dict key names to
   # the output dict key names. (default None)
   #
+  # checkDictsAreSame_in [in]: Allows specialization of the check for exact
+  # dict matches and reporting the differences.  The default value is the
+  # function checkDictsAreSame().  Any Python object that has the __call__()
+  # operator function defined that takes those same arguments and returns the
+  # same outputs as the function checkDictsAreSame() can be passed in.
+  #
   def __init__(self, listOfDicts, listOfKeys,
     removeExactDuplicateElements=False, keyMapList=None,
+    checkDictsAreSame_in=checkDictsAreSame,
     ):
     if keyMapList:
       if len(listOfKeys) != len(keyMapList):
@@ -776,9 +793,11 @@ class SearchableListOfDicts(object):
     self.__listOfDicts = listOfDicts
     self.__listOfKeys = listOfKeys
     self.__keyMapList = keyMapList
+    self.__checkDictsAreSame = checkDictsAreSame_in
     self.__lookupDict = createLookupDictForListOfDicts(
       self.__listOfDicts, self.__listOfKeys,
-      removeExactDuplicateElements=removeExactDuplicateElements)
+      removeExactDuplicateElements=removeExactDuplicateElements,
+      checkDictsAreSame_in=checkDictsAreSame_in)
 
   # Convert to string rep
   def __str__(self):
@@ -837,9 +856,13 @@ def createSearchableListOfBuilds(buildsListOfDicts):
 # Create a SearchableListOfDicts object for a list of tests with issue
 # trackers that allows lookups of tests given the keys "site" => "buildName"
 # => "testname" : test_dict.
-def createSearchableListOfTests(testsListOfDicts, removeExactDuplicateElements=False):
+def createSearchableListOfTests( testsListOfDicts,
+    removeExactDuplicateElements=False,
+    checkDictsAreSame_in=checkDictsAreSame,
+  ):
   return SearchableListOfDicts(testsListOfDicts, ['site', 'buildName', 'testname'],
-    removeExactDuplicateElements=removeExactDuplicateElements)
+    removeExactDuplicateElements=removeExactDuplicateElements,
+    checkDictsAreSame_in=checkDictsAreSame_in )
 
 
 # Create a SearchableListOfDicts object for a list of build dicts allows
@@ -963,6 +986,68 @@ def testsWithIssueTrackersMatchExpectedBuilds( testsWithIssueTrackersLOD,
 # Extract just the date from the testDict['buildstartdate'] field
 def dateFromBuildStartTime(buildStartTime):
   return buildStartTime.split('T')[0]  
+
+
+# Extract testid and buildid from 'testDetailsLink' CDash test dict
+# field.
+def extractTestIdAndBuildIdFromTestDetailsLink(testDetailsLink):
+  testDetailsLinkList = testDetailsLink.split('?')
+  phpArgsList = testDetailsLinkList[1].split('&')
+  testidArgList = phpArgsList[0].split("=")
+  buildidArgList = phpArgsList[1].split("=")
+  return (testidArgList[1], buildidArgList[1])
+
+
+# Check if two test dicts returned from CDash are the same, accounting for
+# possible CDash defects allowing duplicate tests except for different test
+# IDs.
+#
+# Has the same calling conventions as 
+#
+# Returns tuple (hasSameKeyValuePairs, errMsg).  If
+# hasSameKeyValuePairs==True, then errMsg==None.  Otherwise, if
+# hasSameKeyValuePairs==False, then errMsg gives a string that explains how
+# they are different.
+#
+# This improves on a simple check dict_1 == dict_2 in that shows exactly why
+# the dicts are different for a single key/value pair.
+#
+def checkCDashTestDictsAreSame(testDict_1, testDict_1_name,
+    testDict_2, testDict_2_name,
+  ):
+  # Check the easy case where they are exactly the same
+  if testDict_1 == testDict_2:
+    return (True, None)
+  # Check to see if 'testDetailsLink' is there in both and then check contents
+  sameBuildIdDifferentTestIds = False
+  if (
+      ('testDetailsLink' in testDict_1.keys()) \
+      and \
+      ('testDetailsLink' in testDict_2.keys()) \
+    ):
+    (test1d_1, buildid_1) = \
+      extractTestIdAndBuildIdFromTestDetailsLink(testDict_1['testDetailsLink'])
+    (test1d_2, buildid_2) = \
+      extractTestIdAndBuildIdFromTestDetailsLink(testDict_2['testDetailsLink'])
+    if (buildid_1 == buildid_2) and (test1d_1 != test1d_2):
+      # This is the special case that we are writing this function for!
+      sameBuildIdDifferentTestIds = True
+  # If buildIds are the same but the testIds are different, then check the
+  # rest of the key/value pairs to determin if they are the same:
+  if sameBuildIdDifferentTestIds:
+    # Create copies and remove the 'testDetailsLink' key/value and compare the
+    # rest of the fields to determine if they are the same
+    testDict_1_copy = copy.deepcopy(testDict_1)
+    testDict_2_copy = copy.deepcopy(testDict_2)
+    testDict_1_copy.pop('testDetailsLink', None)
+    testDict_2_copy.pop('testDetailsLink', None)
+    return checkDictsAreSame(testDict_1_copy, testDict_1_name,
+      testDict_2_copy, testDict_2_name )
+  # Else, if we get here, then this is not the special case of the buildIds
+  # being the same and the testIds being different so just use the standard
+  # comparison that will give a good error message.
+  return checkDictsAreSame(testDict_1, testDict_1_name,
+    testDict_2, testDict_2_name )
 
 
 # Get the test history CDash cache file.

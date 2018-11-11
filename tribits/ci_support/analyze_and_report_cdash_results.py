@@ -435,8 +435,9 @@ if __name__ == '__main__':
       "<p>\n"
 
     # Create a searchable list of nonpassing tests
-    nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(nonpassingTestsLOD,
-      removeExactDuplicateElements=True)
+    nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(
+      nonpassingTestsLOD, removeExactDuplicateElements=True,
+      checkDictsAreSame_in=CDQAR.checkCDashTestDictsAreSame )
     # NOTE: Above we add the option to remove exact 100% duplicate list items
     # since cdash/queryTests.php can return duplicate tests!
     print("Num nonpassing tests after removing duplicate tests = "+\
