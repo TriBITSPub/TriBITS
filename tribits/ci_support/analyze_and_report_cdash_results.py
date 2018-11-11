@@ -229,14 +229,6 @@ def echoCmndLine(inOptions):
   echoCmndLineOptions(inOptions)
 
 
-# Temp function to get flat list of tests
-def getFlatListOfTestsFromTestDict(testsDict):
-  testDictList = []
-  for key in testsDict.keys():
-    testDictList.append(testsDict[key])
-  return testDictList
-
-
 #
 # Run the script
 #
