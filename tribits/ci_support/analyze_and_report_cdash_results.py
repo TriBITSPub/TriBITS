@@ -229,6 +229,24 @@ def echoCmndLine(inOptions):
   echoCmndLineOptions(inOptions)
 
 
+# Class object to store and manipulate vars that are operated on by various
+# function.
+#
+# NOTE: This is put into a class object so that these vars can be updated in
+# place when passed to a function.
+#
+class OverallVars(object):
+  def __init__(self):
+    # Gives the final result (assume passing by defualt)
+    self.globalPass = True
+    # This is the top of the body
+    self.htmlEmailBodyTop = ""
+    # This is the bottom of the email body
+    self.htmlEmailBodyBottom = ""
+    # This var will store the list of data numbers for the summary line
+    self.summaryLineDataNumbersList = []
+  
+
 #
 # Run the script
 #
@@ -281,14 +299,9 @@ if __name__ == '__main__':
   # C) Create beginning of email body (that does not require getting any data off CDash)
   #
 
-  # This is the top of the body
-  htmlEmailBodyTop = ""
-  # This is the bottom of the email body
-  htmlEmailBodyBottom = ""
-  # This var will store the list of data numbers for the summary line
-  summaryLineDataNumbersList = []
+  overallVars = OverallVars()
 
-  htmlEmailBodyTop += \
+  overallVars.htmlEmailBodyTop += \
    "<h2>Build and Test results for "+inOptions.buildSetName \
       +" on "+inOptions.date+"</h2>\n\n"
 
@@ -296,13 +309,11 @@ if __name__ == '__main__':
   # D) Read data files, get data off of CDash, do analysis, and construct HTML
   # body parts
   #
-  
-  globalPass = True
 
   try:
 
     # Beginning of top full bulid and tests CDash links paragraph 
-    htmlEmailBodyTop += "<p>\n"
+    overallVars.htmlEmailBodyTop += "<p>\n"
 
     #
     # D.1) Read data from input files
@@ -378,7 +389,7 @@ if __name__ == '__main__':
     print("\nNum builds = "+str(len(buildsLOD)))
   
     # Builds on CDash
-    htmlEmailBodyTop += \
+    overallVars.htmlEmailBodyTop += \
      "<a href=\""+cdashIndexBuildsBrowserUrl+"\">"+\
      "Builds on CDash</a> (num="+str(len(buildsLOD))+")<br>\n"
 
@@ -416,13 +427,13 @@ if __name__ == '__main__':
       str(len(nonpassingTestsLOD)))
   
     # Nonpassing Tests on CDash
-    htmlEmailBodyTop += \
+    overallVars.htmlEmailBodyTop += \
      "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
      "Nonpassing Tests on CDash</a> (num="+str(len(nonpassingTestsLOD))+")<br>\n"
   
     # End of full build and test link paragraph and start the next paragraph
     # for the summary of failures and other tables
-    htmlEmailBodyTop += \
+    overallVars.htmlEmailBodyTop += \
       "</p>\n\n"+\
       "<p>\n"
 
@@ -497,11 +508,11 @@ if __name__ == '__main__':
 
     if bmeNum > 0:
 
-      globalPass = False
+      overallVars.globalPass = False
 
-      summaryLineDataNumbersList.append(bmeAcro+"="+str(bmeNum))
+      overallVars.summaryLineDataNumbersList.append(bmeAcro+"="+str(bmeNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bmeSummaryStr)+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bmeSummaryStr)+"<br>\n"
 
       bmeColDataList = [
         tcd('group', "Group"),
@@ -510,7 +521,7 @@ if __name__ == '__main__':
         tcd('status', "Missing Status"),
         ]
 
-      htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+      overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         bmeDescr,  bmeAcro, bmeColDataList, missingExpectedBuildsLOD,
         groupSiteBuildNameSortOrder, None )
       # NOTE: Above we don't want to limit any missing builds in this table
@@ -535,11 +546,11 @@ if __name__ == '__main__':
 
     if cNum > 0:
 
-      globalPass = False
+      overallVars.globalPass = False
 
-      summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
+      overallVars.summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>\n"
 
       cColDataList = [
         tcd('group', "Group"),
@@ -547,7 +558,7 @@ if __name__ == '__main__':
         tcd('buildname', "Build Name"),
         ]
 
-      htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+      overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         cDescr,  cAcro, cColDataList, buildsWithConfigureFailuresLOD,
         groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
@@ -573,11 +584,11 @@ if __name__ == '__main__':
 
     if bNum > 0:
 
-      globalPass = False
+      overallVars.globalPass = False
 
-      summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
+      overallVars.summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bSummaryStr)+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bSummaryStr)+"<br>\n"
 
       cColDataList = [
         tcd('group', "Group"),
@@ -585,7 +596,7 @@ if __name__ == '__main__':
         tcd('buildname', "Build Name"),
         ]
 
-      htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+      overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         bDescr,  bAcro, cColDataList, buildsWithBuildFailuresLOD,
         groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
@@ -681,11 +692,11 @@ if __name__ == '__main__':
 
     if twoifNum > 0:
 
-      globalPass = False
+      overallVars.globalPass = False
 
-      summaryLineDataNumbersList.append(twoifAcro+"="+str(twoifNum))
+      overallVars.summaryLineDataNumbersList.append(twoifAcro+"="+str(twoifNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoifSummaryStr)+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoifSummaryStr)+"<br>\n"
 
       # Sort and get only the top <N> non-passing tests without issue trackers
       # (since this can be a huge number of failing tests)
@@ -710,7 +721,7 @@ if __name__ == '__main__':
           )
         )
 
-      htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         twoifDescr, twoifAcro, twoifNum,
         twoifSortedLimitedLOD,
         inOptions.testHistoryDays, inOptions.limitTableRows )
@@ -732,11 +743,11 @@ if __name__ == '__main__':
 
     if twoinrNum > 0:
 
-      globalPass = False
+      overallVars.globalPass = False
 
-      summaryLineDataNumbersList.append(twoinrAcro+"="+str(twoinrNum))
+      overallVars.summaryLineDataNumbersList.append(twoinrAcro+"="+str(twoinrNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoinrSummaryStr)+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoinrSummaryStr)+"<br>\n"
 
       # Sort and get only the top <N> non-passing tests without issue trackers
       # (since this can be a huge number of failing tests)
@@ -761,7 +772,7 @@ if __name__ == '__main__':
           )
         )
 
-      htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         twoinrDescr, twoinrAcro, twoinrNum,
         twoinrSortedLimitedLOD,
         inOptions.testHistoryDays, inOptions.limitTableRows )
@@ -783,11 +794,11 @@ if __name__ == '__main__':
 
     if twifNum > 0:
 
-      globalPass = False
+      overallVars.globalPass = False
 
-      summaryLineDataNumbersList.append(twifAcro+"="+str(twifNum))
+      overallVars.summaryLineDataNumbersList.append(twifAcro+"="+str(twifNum))
 
-      htmlEmailBodyTop += twifSummaryStr+"<br>\n"
+      overallVars.htmlEmailBodyTop += twifSummaryStr+"<br>\n"
 
       # Sort but do't limit the list
       twifSortedLOD = CDQAR.sortAndLimitListOfDicts(
@@ -810,7 +821,7 @@ if __name__ == '__main__':
           )
         )
 
-      htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         twifDescr, twifAcro, twifNum, twifSortedLOD,
         inOptions.testHistoryDays )
       # NOTE: We don't limit the number of tests tracked tests listed because
@@ -833,11 +844,11 @@ if __name__ == '__main__':
 
     if twinrNum > 0:
 
-      globalPass = False
+      overallVars.globalPass = False
 
-      summaryLineDataNumbersList.append(twinrAcro+"="+str(twinrNum))
+      overallVars.summaryLineDataNumbersList.append(twinrAcro+"="+str(twinrNum))
 
-      htmlEmailBodyTop += twinrSummaryStr+"<br>\n"
+      overallVars.htmlEmailBodyTop += twinrSummaryStr+"<br>\n"
 
       # Sort but do't limit the list
       twinrSortedLOD = CDQAR.sortAndLimitListOfDicts(
@@ -860,7 +871,7 @@ if __name__ == '__main__':
           )
         )
 
-      htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         twinrDescr, twinrAcro, twinrNum, twinrSortedLOD,
         inOptions.testHistoryDays )
 
@@ -881,14 +892,14 @@ if __name__ == '__main__':
 
     if twipNum > 0:
 
-      summaryLineDataNumbersList.append(twipAcro+"="+str(twipNum))
+      overallVars.summaryLineDataNumbersList.append(twipAcro+"="+str(twipNum))
 
-      htmlEmailBodyTop += CDQAR.makeHtmlTextGreen(twipSummaryStr)+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextGreen(twipSummaryStr)+"<br>\n"
 
       twipSortedLOD = CDQAR.sortAndLimitListOfDicts(
         twipLOD, testnameBuildnameSiteSortOrder)
 
-      htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         twipDescr, twipAcro, twipNum, twipSortedLOD,
         inOptions.testHistoryDays )
 
@@ -909,14 +920,14 @@ if __name__ == '__main__':
 
     if twimNum > 0:
 
-      summaryLineDataNumbersList.append(twimAcro+"="+str(twimNum))
+      overallVars.summaryLineDataNumbersList.append(twimAcro+"="+str(twimNum))
 
-      htmlEmailBodyTop += twimSummaryStr+"<br>\n"
+      overallVars.htmlEmailBodyTop += twimSummaryStr+"<br>\n"
 
       twimSortedLOD = CDQAR.sortAndLimitListOfDicts(
         twimLOD, testnameBuildnameSiteSortOrder)
 
-      htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         twimDescr, twimAcro, twimNum, twimSortedLOD,
         inOptions.testHistoryDays )
  
@@ -926,24 +937,24 @@ if __name__ == '__main__':
     sys.stdout.flush()
     traceback.print_exc()
     # Report the error
-    htmlEmailBodyTop += "\n<pre><code>\n"+\
+    overallVars.htmlEmailBodyTop += "\n<pre><code>\n"+\
       traceback.format_exc()+"\n</code></pre>\n"
     print("\nError, could not compute the analysis due to"+\
       " above error so return failed!")
-    globalPass = False
-    summaryLineDataNumbersList.append("SCRIPT CRASHED")
+    overallVars.globalPass = False
+    overallVars.summaryLineDataNumbersList.append("SCRIPT CRASHED")
 
   #
   # E) Put together final email summary  line
   #
 
-  if globalPass:
+  if overallVars.globalPass:
     summaryLine = "PASSED"
   else:
     summaryLine = "FAILED"
 
-  if summaryLineDataNumbersList:
-    summaryLine += " (" + ", ".join(summaryLineDataNumbersList) + ")"
+  if overallVars.summaryLineDataNumbersList:
+    summaryLine += " (" + ", ".join(overallVars.summaryLineDataNumbersList) + ")"
 
   summaryLine += ": "+inOptions.buildSetName+" on "+inOptions.date
 
@@ -952,14 +963,14 @@ if __name__ == '__main__':
   #
 
   # Finish off the top paragraph of the summary lines
-  htmlEmailBodyTop += \
+  overallVars.htmlEmailBodyTop += \
     "</p>"
     
   # Construct HTML body guts without header or begin/end body.
   htmlEmaiBodyGuts = \
-    htmlEmailBodyTop+\
+    overallVars.htmlEmailBodyTop+\
     "\n\n"+\
-    htmlEmailBodyBottom
+    overallVars.htmlEmailBodyBottom
 
   htmlHeaderAndBeginBody = \
     "<html>\n"+\
@@ -1019,7 +1030,7 @@ if __name__ == '__main__':
 
   print("\n"+summaryLine+"\n")
 
-  if globalPass:
+  if overallVars.globalPass:
     sys.exit(0)
   else:
     sys.exit(1)
