@@ -1141,7 +1141,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       testCaseName,
       ["--limit-test-history-days=30"], # Test that you can set this as int
       1,
-      "FAILED (bme=1, twoif=12, twif=5, twip=2, twim=2):"+\
+      "FAILED (bme=1, twoif=12, twip=2, twim=2, twif=5):"+\
         " ProjectName Nightly Builds on 2018-10-28",
       [
         "Num expected builds = 7",
@@ -1179,6 +1179,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
         "Tests without issue trackers Failed: twoif=12",
 
+        "Tests with issue trackers Passed: twip=2",
+
+        "Tests with issue trackers Missing: twim=2",
+
         "Tests with issue trackers Failed: twif=5",
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
         "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
@@ -1187,23 +1191,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Getting 30 days of history for Teko_ModALPreconditioner_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
 
         "Tests with issue trackers Not Run: twinr=0",
-        "Tests with issue trackers Passed: twip=2",
-        "Tests with issue trackers Missing: twim=2",
 
         ],
       [
 
         "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</h3>",
-
-        "<h3>Tests with issue trackers Failed: twif=5</h3>",
-        "<td align=\"left\">cee-rhel6</td>",
-        "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
-        "<td align=\"left\"><a href=\".+\">PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2</a></td>",
-        "<td align=\"left\"><a href=\".+\">Failed</a></td>",
-        "<td align=\"left\">Completed [(]Failed[)]</td>",
-        "<td align=\"right\"><a href=\".+\">15</a></td>",
-        "<td align=\"right\">2018-10-27</td>",
-        "<td align=\"right\"><a href=\".+\">#3632</a></td>",
 
         "<h3>Tests with issue trackers Passed: twip=2</h3>",
         "<td align=\"left\">cee-rhel6</td>",
@@ -1223,6 +1215,16 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\">Completed [(]Failed[)]</td>",
         "<td align=\"right\"><a href=\".+\">1</a></td>",
         "<td align=\"right\">None</td>",
+        "<td align=\"right\"><a href=\".+\">#3632</a></td>",
+
+        "<h3>Tests with issue trackers Failed: twif=5</h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
+        "<td align=\"left\"><a href=\".+\">PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2</a></td>",
+        "<td align=\"left\"><a href=\".+\">Failed</a></td>",
+        "<td align=\"left\">Completed [(]Failed[)]</td>",
+        "<td align=\"right\"><a href=\".+\">15</a></td>",
+        "<td align=\"right\">2018-10-27</td>",
         "<td align=\"right\"><a href=\".+\">#3632</a></td>",
 
         ],

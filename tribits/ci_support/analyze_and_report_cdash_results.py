@@ -748,10 +748,7 @@ if __name__ == '__main__':
     print("\nNum tests with issue trackers Passed = "+str(len(twipLOD)))
     print("Num tests with issue trackers Missing = "+str(len(twimLOD)))
 
-    #
-    # D.3.a) twoif
-    #
-
+    # twoif
     testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
       "Tests without issue trackers Failed",
       "twoif",
@@ -762,10 +759,7 @@ if __name__ == '__main__':
       getTestHistory=True,
       )
 
-    #
-    # D.3.b) twoinr
-    #
-
+    # twoinr
     testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
       "Tests without issue trackers Not Run",
       "twoinr",
@@ -776,38 +770,7 @@ if __name__ == '__main__':
       getTestHistory=True,
       )
 
-    #
-    # D.3.c) twif
-    #
-
-    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
-      "Tests with issue trackers Failed",
-      "twif",
-      len(twifLOD),
-      twifLOD,
-      colorTestSet=None,
-      limitTableRows=None,
-      getTestHistory=True,
-      )
-
-    #
-    # D.3.d) twinr
-    #
-
-    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
-      "Tests with issue trackers Not Run",
-      "twinr",
-      len(twinrLOD),
-      twinrLOD,
-      colorTestSet=None,
-      limitTableRows=None,
-      getTestHistory=True,
-      )
-
-    #
-    # D.3.e) twip
-    #
-
+    # twip
     testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
       "Tests with issue trackers Passed",
       "twip",
@@ -818,10 +781,7 @@ if __name__ == '__main__':
       getTestHistory=False,  # Already got it above!
       )
 
-    #
-    # D.3.f) twim
-    #
-
+    # twim
     testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
       "Tests with issue trackers Missing",
       "twim",
@@ -830,6 +790,28 @@ if __name__ == '__main__':
       colorTestSet=None,
       limitTableRows=None,
       getTestHistory=False,  # Already got it above!
+      )
+
+    # twif
+    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+      "Tests with issue trackers Failed",
+      "twif",
+      len(twifLOD),
+      twifLOD,
+      colorTestSet=None,
+      limitTableRows=None,
+      getTestHistory=True,
+      )
+
+    # twinr
+    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+      "Tests with issue trackers Not Run",
+      "twinr",
+      len(twinrLOD),
+      twinrLOD,
+      colorTestSet=None,
+      limitTableRows=None,
+      getTestHistory=True,
       )
 
   except Exception:
