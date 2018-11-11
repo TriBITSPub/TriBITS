@@ -255,14 +255,17 @@ class OverallVars(object):
 #
 class TestSetGetDataAnayzeRepoter(object):
 
-  def __init__(self, inOptions, overallVars):
+  def __init__(self, inOptions, testsSortOrder, testHistoryCacheDir, overallVars):
     self.inOptions = inOptions
+    self.testsSortOrder = testsSortOrder
+    self.testHistoryCacheDir = testHistoryCacheDir
     self.overallVars = overallVars
 
   def testSetGetDataAnalyzeReport( self,
       testSetDescr, testSetAcro, testSetTotalSize,
       testSetLOD,
       testSetNonzeroSizeTriggerGlobalFail=True,
+      colorTestSet=None,     # Change to "red" or "green"
       sortTests=True,
       limitTableRows=None,   # Change to 'int' > 0 to limit to this num
       getTestHistory=False,
@@ -283,21 +286,17 @@ class TestSetGetDataAnayzeRepoter(object):
         testSetAcro+"="+str(testSetTotalSize))
   
       self.overallVars.htmlEmailBodyTop += \
-        CDQAR.makeHtmlTextRed(testSetSummaryStr)+"<br>\n"
-  
-      testnameBuildnameSiteSortOrder = ['testname', 'buildName', 'site']
+        CDQAR.colorHtmlText(testSetSummaryStr, colorTestSet)+"<br>\n"
   
       if sortTests or limitTableRows:
         testSetSortedLimitedLOD = CDQAR.sortAndLimitListOfDicts(
-          testSetLOD, testnameBuildnameSiteSortOrder,
+          testSetLOD, self.testsSortOrder,
           limitTableRows )
       else:
         testSetSortedLimitedLOD = testSetLOD
   
       if getTestHistory:
-  
-        testHistoryCacheDir = self.inOptions.cdashQueriesCacheDir+"/test_history"
-  
+
         CDQAR.foreachTransform(
           testSetSortedLimitedLOD,
           CDQAR.AddTestHistoryToTestDictFunctor(
@@ -305,7 +304,7 @@ class TestSetGetDataAnayzeRepoter(object):
             self.inOptions.cdashProjectName,
             self.inOptions.date,
             self.inOptions.testHistoryDays,
-            testHistoryCacheDir,
+            self.testHistoryCacheDir,
             useCachedCDashData=self.inOptions.useCachedCDashData,
             alwaysUseCacheFileIfExists=True,
             verbose=True,
@@ -583,7 +582,7 @@ if __name__ == '__main__':
 
       overallVars.summaryLineDataNumbersList.append(bmeAcro+"="+str(bmeNum))
 
-      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bmeSummaryStr)+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bmeSummaryStr,'red')+"<br>\n"
 
       bmeColDataList = [
         tcd('group', "Group"),
@@ -621,7 +620,7 @@ if __name__ == '__main__':
 
       overallVars.summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
 
-      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(cSummaryStr)+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(cSummaryStr,'red')+"<br>\n"
 
       cColDataList = [
         tcd('group', "Group"),
@@ -659,7 +658,7 @@ if __name__ == '__main__':
 
       overallVars.summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
 
-      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(bSummaryStr)+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bSummaryStr,'red')+"<br>\n"
 
       cColDataList = [
         tcd('group', "Group"),
@@ -679,13 +678,15 @@ if __name__ == '__main__':
     # D.3) Analyaize and report test results in different tables
     #
 
-    # Sort order for tests
-    testnameBuildnameSiteSortOrder = ['testname', 'buildName', 'site']
+    # Sort order for test to display in tables
+    testsSortOrder = ['testname', 'buildName', 'site']
 
-    # Cache directory for test history data
+    # Test history cache dir
     testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
 
-    testSetGetDataAnayzeRepoter = TestSetGetDataAnayzeRepoter(inOptions,overallVars)
+    # Object to make it easy to process the different test sets
+    testSetGetDataAnayzeRepoter = TestSetGetDataAnayzeRepoter(inOptions,
+      testsSortOrder, testHistoryCacheDir, overallVars)
 
     # Special functor to look up missing expected build given a test dict
     testsToMissingExpectedBuildsSLOD = \
@@ -756,262 +757,81 @@ if __name__ == '__main__':
       "twoif",
       len(twoifLOD),
       twoifLOD,
+      colorTestSet='red',
       limitTableRows=inOptions.limitTableRows,
-      getTestHistory=True
+      getTestHistory=True,
       )
-
-#    print("")
-#
-#    twoifDescr = "Tests without issue trackers Failed"
-#    twoifAcro = "twoif"
-#    twoifNum = len(twoifLOD)
-#
-#    twoifSummaryStr = \
-#      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twoifDescr, twoifAcro, twoifNum)
-#
-#    print(twoifSummaryStr)
-#
-#    if twoifNum > 0:
-#
-#      overallVars.globalPass = False
-#
-#      overallVars.summaryLineDataNumbersList.append(twoifAcro+"="+str(twoifNum))
-#
-#      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoifSummaryStr)+"<br>\n"
-#
-#      # Sort and get only the top <N> non-passing tests without issue trackers
-#      # (since this can be a huge number of failing tests)
-#      twoifSortedLimitedLOD = CDQAR.sortAndLimitListOfDicts(
-#        twoifLOD, testnameBuildnameSiteSortOrder,
-#        inOptions.limitTableRows )
-#
-#      # Add test history data to the tope <N> non-assing tests without issue
-#      # trackres
-#      CDQAR.foreachTransform(
-#        twoifSortedLimitedLOD,
-#        CDQAR.AddTestHistoryToTestDictFunctor(
-#          inOptions.cdashSiteUrl,
-#          inOptions.cdashProjectName,
-#          inOptions.date,
-#          inOptions.testHistoryDays,
-#          testHistoryCacheDir,
-#          useCachedCDashData=inOptions.useCachedCDashData,
-#          alwaysUseCacheFileIfExists=True,
-#          verbose=True,
-#          printDetails=inOptions.printDetails,
-#          )
-#        )
-#
-#      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-#        twoifDescr, twoifAcro, twoifNum,
-#        twoifSortedLimitedLOD,
-#        inOptions.testHistoryDays, inOptions.limitTableRows )
 
     #
     # D.3.b) twoinr
     #
 
-    print("")
-
-    twoinrDescr = "Tests without issue trackers Not Run"
-    twoinrAcro = "twoinr"
-    twoinrNum = len(twoinrLOD)
-
-    twoinrSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twoinrDescr, twoinrAcro, twoinrNum)
-
-    print(twoinrSummaryStr)
-
-    if twoinrNum > 0:
-
-      overallVars.globalPass = False
-
-      overallVars.summaryLineDataNumbersList.append(twoinrAcro+"="+str(twoinrNum))
-
-      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextRed(twoinrSummaryStr)+"<br>\n"
-
-      # Sort and get only the top <N> non-passing tests without issue trackers
-      # (since this can be a huge number of failing tests)
-      twoinrSortedLimitedLOD = CDQAR.sortAndLimitListOfDicts(
-        twoinrLOD, testnameBuildnameSiteSortOrder,
-        inOptions.limitTableRows )
-
-      # Add test history data to the tope <N> non-assing tests without issue
-      # trackres
-      CDQAR.foreachTransform(
-        twoinrSortedLimitedLOD,
-        CDQAR.AddTestHistoryToTestDictFunctor(
-          inOptions.cdashSiteUrl,
-          inOptions.cdashProjectName,
-          inOptions.date,
-          inOptions.testHistoryDays,
-          testHistoryCacheDir,
-          useCachedCDashData=inOptions.useCachedCDashData,
-          alwaysUseCacheFileIfExists=True,
-          verbose=True,
-          printDetails=inOptions.printDetails,
-          )
-        )
-
-      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-        twoinrDescr, twoinrAcro, twoinrNum,
-        twoinrSortedLimitedLOD,
-        inOptions.testHistoryDays, inOptions.limitTableRows )
+    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+      "Tests without issue trackers Not Run",
+      "twoinr",
+      len(twoinrLOD),
+      twoinrLOD,
+      colorTestSet='red',
+      limitTableRows=inOptions.limitTableRows,
+      getTestHistory=True,
+      )
 
     #
     # D.3.c) twif
     #
 
-    print("")
-
-    twifDescr = "Tests with issue trackers Failed"
-    twifAcro = "twif"
-    twifNum = len(twifLOD)
-
-    twifSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twifDescr, twifAcro, twifNum)
-
-    print(twifSummaryStr)
-
-    if twifNum > 0:
-
-      overallVars.globalPass = False
-
-      overallVars.summaryLineDataNumbersList.append(twifAcro+"="+str(twifNum))
-
-      overallVars.htmlEmailBodyTop += twifSummaryStr+"<br>\n"
-
-      # Sort but do't limit the list
-      twifSortedLOD = CDQAR.sortAndLimitListOfDicts(
-        twifLOD, testnameBuildnameSiteSortOrder)
-
-      # Add test history data to the tope <N> non-assing tests without issue
-      # trackres
-      CDQAR.foreachTransform(
-        twifSortedLOD,
-        CDQAR.AddTestHistoryToTestDictFunctor(
-          inOptions.cdashSiteUrl,
-          inOptions.cdashProjectName,
-          inOptions.date,
-          inOptions.testHistoryDays,
-          testHistoryCacheDir,
-          useCachedCDashData=inOptions.useCachedCDashData,
-          alwaysUseCacheFileIfExists=True,
-          verbose=True,
-          printDetails=inOptions.printDetails,
-          )
-        )
-
-      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-        twifDescr, twifAcro, twifNum, twifSortedLOD,
-        inOptions.testHistoryDays )
-      # NOTE: We don't limit the number of tests tracked tests listed because
-      # we will never have a huge number of failing tests with issue trackers.
+    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+      "Tests with issue trackers Failed",
+      "twif",
+      len(twifLOD),
+      twifLOD,
+      colorTestSet=None,
+      limitTableRows=None,
+      getTestHistory=True,
+      )
 
     #
     # D.3.d) twinr
     #
 
-    print("")
-
-    twinrDescr = "Tests with issue trackers Not Run"
-    twinrAcro = "twinr"
-    twinrNum = len(twinrLOD)
-
-    twinrSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twinrDescr, twinrAcro, twinrNum)
-
-    print(twinrSummaryStr)
-
-    if twinrNum > 0:
-
-      overallVars.globalPass = False
-
-      overallVars.summaryLineDataNumbersList.append(twinrAcro+"="+str(twinrNum))
-
-      overallVars.htmlEmailBodyTop += twinrSummaryStr+"<br>\n"
-
-      # Sort but do't limit the list
-      twinrSortedLOD = CDQAR.sortAndLimitListOfDicts(
-        twinrLOD, testnameBuildnameSiteSortOrder)
-
-      # Add test history data to the tope <N> non-assing tests without issue
-      # trackres
-      CDQAR.foreachTransform(
-        twinrSortedLOD,
-        CDQAR.AddTestHistoryToTestDictFunctor(
-          inOptions.cdashSiteUrl,
-          inOptions.cdashProjectName,
-          inOptions.date,
-          inOptions.testHistoryDays,
-          testHistoryCacheDir,
-          useCachedCDashData=inOptions.useCachedCDashData,
-          alwaysUseCacheFileIfExists=True,
-          verbose=True,
-          printDetails=inOptions.printDetails,
-          )
-        )
-
-      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-        twinrDescr, twinrAcro, twinrNum, twinrSortedLOD,
-        inOptions.testHistoryDays )
+    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+      "Tests with issue trackers Not Run",
+      "twinr",
+      len(twinrLOD),
+      twinrLOD,
+      colorTestSet=None,
+      limitTableRows=None,
+      getTestHistory=True,
+      )
 
     #
     # D.3.e) twip
     #
 
-    print("")
-
-    twipDescr = "Tests with issue trackers Passed"
-    twipAcro = "twip"
-    twipNum = len(twipLOD)
-
-    twipSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twipDescr, twipAcro, twipNum)
-
-    print(twipSummaryStr)
-
-    if twipNum > 0:
-
-      overallVars.summaryLineDataNumbersList.append(twipAcro+"="+str(twipNum))
-
-      overallVars.htmlEmailBodyTop += CDQAR.makeHtmlTextGreen(twipSummaryStr)+"<br>\n"
-
-      twipSortedLOD = CDQAR.sortAndLimitListOfDicts(
-        twipLOD, testnameBuildnameSiteSortOrder)
-
-      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-        twipDescr, twipAcro, twipNum, twipSortedLOD,
-        inOptions.testHistoryDays )
+    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+      "Tests with issue trackers Passed",
+      "twip",
+      len(twipLOD),
+      twipLOD,
+      colorTestSet="green",
+      limitTableRows=None,
+      getTestHistory=False,  # Already got it above!
+      )
 
     #
     # D.3.f) twim
     #
 
-    print("")
+    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+      "Tests with issue trackers Missing",
+      "twim",
+      len(twimLOD),
+      twimLOD,
+      colorTestSet=None,
+      limitTableRows=None,
+      getTestHistory=False,  # Already got it above!
+      )
 
-    twimDescr = "Tests with issue trackers Missing"
-    twimAcro = "twim"
-    twimNum = len(twimLOD)
-
-    twimSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(twimDescr, twimAcro, twimNum)
-
-    print(twimSummaryStr)
-
-    if twimNum > 0:
-
-      overallVars.summaryLineDataNumbersList.append(twimAcro+"="+str(twimNum))
-
-      overallVars.htmlEmailBodyTop += twimSummaryStr+"<br>\n"
-
-      twimSortedLOD = CDQAR.sortAndLimitListOfDicts(
-        twimLOD, testnameBuildnameSiteSortOrder)
-
-      overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-        twimDescr, twimAcro, twimNum, twimSortedLOD,
-        inOptions.testHistoryDays )
- 
   except Exception:
     # Traceback!
     print("")

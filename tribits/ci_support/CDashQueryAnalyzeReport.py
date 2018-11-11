@@ -241,16 +241,6 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
   return json.load(response)
 
 
-# Color HTML text in red
-def makeHtmlTextRed(htmlText):
-  return("<font color=\"red\">"+htmlText+"</font>")
-
-
-# Color HTML text in grean
-def makeHtmlTextGreen(htmlText):
-  return("<font color=\"green\">"+htmlText+"</font>")
-
-
 # Read a CSV file into a list of dictionaries for each row where the rows of
 # the output list are dicts with the column names as keys.
 #
@@ -1500,6 +1490,25 @@ class TableColumnData(object):
         "Error, colAlign="+colAlign+" not valid.  Please choose from"+\
         " the list ['" + "', '".join(validColAlignList) + "']!" )
     self.colAlign = colAlign
+
+
+#
+# HTML stuff
+#
+
+
+# Color HTML text supported color
+def colorHtmlText(htmlText, color_in):
+  if color_in == None or color_in == "":
+    return htmlText
+  elif color_in == "red": 
+    None # Okay!
+  elif color_in == "green": 
+    None # Okay!
+  else:
+    raise Exception("Error, color='"+color_in+"' is invalid."+\
+      "  Only 'red' and 'green' are supported!")
+  return("<font color=\""+color_in+"\">"+htmlText+"</font>")
 
 
 # Create an html table string from a list of dicts and column headers.

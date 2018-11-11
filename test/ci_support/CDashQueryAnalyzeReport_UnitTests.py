@@ -2051,6 +2051,37 @@ class test_sortAndLimitListOfDicts(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.colorHtmlText()
+#
+#############################################################################
+ 
+class test_colorHtmlText(unittest.TestCase):
+
+  def test_none(self):
+    self.assertEqual(colorHtmlText("some text", None), "some text")
+
+  def test_empty(self):
+    self.assertEqual(colorHtmlText("some text", ""), "some text")
+
+  def test_red(self):
+    self.assertEqual(colorHtmlText("some text", "red"),
+      "<font color=\"red\">some text</font>")
+
+  def test_green(self):
+    self.assertEqual(colorHtmlText("some text", "green"),
+      "<font color=\"green\">some text</font>")
+
+  def test_invalid(self):
+    try:
+      coloredText = colorHtmlText("some text", "badcolor")
+      self.assertTrue(False)   # Should not get here!
+    except Exception, errMsg:
+      self.assertEqual(str(errMsg),
+        "Error, color='badcolor' is invalid.  Only 'red' and 'green' are supported!" )
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.createHtmlTableStr()
 #
 #############################################################################
