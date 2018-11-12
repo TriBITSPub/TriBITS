@@ -56,9 +56,10 @@ from gitdist import addOptionParserChoiceOption
 usageHelp = r"""analyze_and_report_cdash_results.py [options]
 
 This script takes in CDash URL information and other data as command-line
-arguments and then analyzes it to look for missing expected and various types
-of failures and then reports the findings as an HTML file written to disk
-and/or as an HTML formatted email to one or more email addresses.
+arguments and then analyzes it to look for missing expected builds, failed
+tests,q and various types of failures and then reports the findings as an HTML
+file written to disk and/or as HTML-formatted emails sent to one or more email
+addresses.
 
 If all of the expected builds are found (and all of them have test results)
 and there are no other failures found, then the script returns 0.  Otherwise
@@ -81,53 +82,60 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
   clp.add_option(
     "--date", dest="date", type="string", default=yesterday,
     help="Date for the testing day <YYYY-MM-DD>."+\
-      " (Default yesterday '"+yesterday+"')" )
+      " [default yesterday '"+yesterday+"']" )
 
   clp.add_option(
     "--cdash-project-name", dest="cdashProjectName", type="string", default="",
-    help="CDash project name, e.g. 'Trilinos'. (Default '')" )
+    help="CDash project name (e.g. 'Trilinos'). [REQUIRED] [default = '']" )
 
   clp.add_option(
     "--build-set-name", dest="buildSetName", type="string", default="",
-    help="Name for the set of builds. (Default '')" )
-
-  clp.add_option(
-    "--test-set-name", dest="testSetName", type="string", default="",
-    help="Name for the set of tests. (Default '')" )
+    help="Name for the set of builds, (e.g. 'Trilinos Nightly Builds)."+\
+      "  This used in the email summary line and in the HTML file body"+\
+      " to identify the set of builds and tests being examined."+\
+      " [REQUIRED] [default = '']" )
 
   clp.add_option(
     "--cdash-site-url", dest="cdashSiteUrl", type="string", default="",
-    help="Base CDash site, e.g. 'https://testing.sandia.gov/cdash'. (Default '')" )
+    help="Base CDash site (e.g. 'https://testing.sandia.gov/cdash')."+\
+      " [REQUIRED] [default = '']" )
 
   clp.add_option(
     "--cdash-builds-filters", dest="cdashBuildsFilters", type="string",
     default="",
-    help="Partial URL fragment for index.php making of the filters for" \
-      +" the set of builds. (Default '')" )
+    help="Partial URL fragment for index.php making of the filters for"+\
+      " the set of builds (e.g. 'filtercount=1&showfilters=1&field1=groupname&compare1=61&value1=ATDM')."+\
+      " [REQUIRED] [default = '']" )
 
   clp.add_option(
     "--cdash-nonpassed-tests-filters", dest="cdashNonpassedTestsFilters", type="string",
     default="",
-    help="Partial URL fragment for queryTests.php making of the filters for" \
-      +" the set of non-passing tests matching this set of builds. (Default '')" )
+    help="Partial URL fragment for queryTests.php making of the filters for"+\
+      " the set of non-passing tests matching this set of builds (e.g."+\
+      " 'filtercombine=and&filtercount=1&showfilters=1&filtercombine=and&field1=groupname&compare1=61&value1=ATDM'"+\
+      " [REQUIRED] [default = '']" )
 
   clp.add_option(
     "--expected-builds-file", dest="expectedBuildsFile", type="string",
     default="",
-    help="Path to CSV file that lists the expected builds. (Default '')" )
+    help="Path to CSV file that lists the expected builds.  Each of these builds"+\
+      " must have unique 'site' and 'buildname' field pairs or an error will be"+\
+      " raised and the tool will abort.  [default = '']" )
 
   clp.add_option(
     "--tests-with-issue-trackers-file", dest="testsWithIssueTrackersFile",
     type="string",  default="",
-    help="the subject line on sent out emails" )
+    help="Path to CSV file that lists tests with issue trackers (and other data)."+\
+    "  Each of these tests must have a unique 'site', 'buildName', and 'testname'"+\
+    " sets or an error will be raised and the tool will abort.  [default = '']" )
 
   cdashQueriesCacheDir_default=os.getcwd()
 
   clp.add_option(
     "--cdash-queries-cache-dir", dest="cdashQueriesCacheDir", type="string",
     default=cdashQueriesCacheDir_default,
-    help="Cache CDash query data this directory" \
-      +" (default ='"+cdashQueriesCacheDir_default+"')." )
+    help="Cache CDash query data this directory." \
+      +" [Default = '"+cdashQueriesCacheDir_default+"']" )
 
   clp.add_option(
     "--cdash-base-cache-files-prefix", dest="cdashBaseCacheFilesPrefix", type="string",
@@ -135,42 +143,62 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     help="Prefix given to the base-level cache files outside of the test_history/"+\
       " directory.   This is to allow multiple invocations of this script to share"+\
       " the same base cache directory and share the test_history/ in case there are"+\
-      " overrlapping sets of tests where the cache could be reused."+\
-      " (default is derived from the --build-set-name=<build_set_name> argument where"+\
-      " spaces and punctuation in <build_set_name> is replaced with '_')" )
+      " overrlapping sets of tests where the test history cache could be reused."+\
+      " [default is derived from the --build-set-name=<build_set_name> argument where"+\
+      " spaces and punctuation in <build_set_name> are replaced with '_']" )
 
   addOptionParserChoiceOption(
     "--use-cached-cdash-data", "useCachedCDashDataStr",
     ("on", "off"), 1,
-    "Use data downloaded from CDash already cached.",
+    "Use data downloaded from CDash already cached.  Note that this only"+\
+    " impacts the reuse of base-level cache files and does not impact the usage"+\
+    " of test history cache in the <cacheDir>/test_history/ directory."+\
+    "  If a test history file for a given testing day exists under the test_history/"+\
+    " directory it is used unconditionally.",
     clp )
 
+  testHistoryDaysDefault= 30
+
   clp.add_option(
-    "--limit-test-history-days", dest="testHistoryDays", default=30, type="int",
-    help="Number of days to go back in history for each test" )
+    "--limit-test-history-days", dest="testHistoryDays",
+    default=testHistoryDaysDefault, type="int",
+    help="Number of days to go back in history for each test."+\
+      "  [default = '"+str(testHistoryDaysDefault)+"']" )
+
+  limitTableRows = 10
 
   clp.add_option(
     "--limit-table-rows", dest="limitTableRows", type="int",
-    default=10,
-    help="Limit to the number of table rows. (Default '10')" )
+    default=limitTableRows,
+    help="Limit to the number of rows displayed in many of"+\
+      " the tables.  This impacts tables like 'twoif' and 'twoinr'"+\
+      " that could have thousands of entries for some projects."+\
+      "   This limits the number of tests for which detailed test history"+\
+      " is downloaded from CDash and is therefore important to ensure the"+\
+      " tool does not take too long to execute.  However, this does NOT"+\
+      " limit the number of rows in many other tables that should be bounded like"+\
+      " any of the tables related to the builds or the list of tests with"+\
+      " issue trackers.  (The number of those should never be extremely high.)"+\
+       "  [default '"+str(limitTableRows)+"']" )
 
   addOptionParserChoiceOption(
     "--print-details", "printDetailsStr",
     ("on", "off"), 1,
-    "Print more info about what is happening.",
+    "Print more info like the CDash URLs for downloaded data and the cache"+\
+      " file names.",
     clp )
 
   clp.add_option(
     "--write-email-to-file", dest="writeEmailToFile", type="string", default="",
-    help="Write the body of the HTML email to this file. (Default '')" )
+    help="Write the body of the HTML email to this file. [default = '']" )
 
   clp.add_option(
     "--email-from-address=", dest="emailFromAddress", type="string", default="",
-    help="Address reported in the sent email. (Default '')" )
+    help="Address reported in the sent email. [default '']" )
 
   clp.add_option(
     "--send-email-to=", dest="sendEmailTo", type="string", default="",
-    help="Send email to 'address1,address2,...'. (Default '')" )
+    help="Send email to 'address1, address2, ...'.  [default '']" )
 
 
 def validateCmndLineOptions(inOptions):
@@ -198,7 +226,6 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --date='"+inOptions.date+"'"+lt+\
     "  --cdash-project-name='"+inOptions.cdashProjectName+"'"+lt+\
     "  --build-set-name='"+inOptions.buildSetName+"'"+lt+\
-    "  --test-set-name='"+inOptions.testSetName+"'"+lt+\
     "  --cdash-site-url='"+inOptions.cdashSiteUrl+"'"+lt+\
     "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+lt+\
     "  --cdash-nonpassed-tests-filters='"+inOptions.cdashNonpassedTestsFilters+"'"+lt+\
@@ -229,8 +256,8 @@ def echoCmndLine(inOptions):
   echoCmndLineOptions(inOptions)
 
 
-# Class object to store and manipulate vars that are operated on by various
-# function.
+# Class object to store and manipulate vars the top-level main() vars that are
+# operated on by various functions.
 #
 # NOTE: This is put into a class object so that these vars can be updated in
 # place when passed to a function.
@@ -248,12 +275,14 @@ class OverallVars(object):
 
 
 # Class to help get test history and then analyze and report for each test
-# site.
+# set.
 #
 # NOTE: The reason this is a class is that the data inOptions and overallVars
-# never changes once this object is constructed.
+# never changes once this object is constructed in main().  This avoids having
+# to pass these options in every function call for each test set.
 #
-class TestSetGetDataAnayzeRepoter(object):
+class TestSetGetDataAnayzeReporter(object):
+
 
   def __init__(self, inOptions, testsSortOrder, testHistoryCacheDir, overallVars):
     self.inOptions = inOptions
@@ -261,13 +290,14 @@ class TestSetGetDataAnayzeRepoter(object):
     self.testHistoryCacheDir = testHistoryCacheDir
     self.overallVars = overallVars
 
+
   def testSetGetDataAnalyzeReport( self,
       testSetDescr, testSetAcro, testSetTotalSize,
       testSetLOD,
       testSetNonzeroSizeTriggerGlobalFail=True,
       colorTestSet=None,     # Change to "red" or "green"
       sortTests=True,
-      limitTableRows=None,   # Change to 'int' > 0 to limit to this num
+      limitTableRows=None,   # Change to 'int' > 0 to limit to this this
       getTestHistory=False,
     ):
   
@@ -369,6 +399,8 @@ if __name__ == '__main__':
   # C) Create beginning of email body (that does not require getting any data off CDash)
   #
 
+  # Aggregation of vars that get updated in this main() body and by functions
+  # called.
   overallVars = OverallVars()
 
   overallVars.htmlEmailBodyTop += \
@@ -399,28 +431,38 @@ if __name__ == '__main__':
         CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
     print("\nNum expected builds = "+str(len(expectedBuildsLOD)))
 
-    # Get list of tests with issue tracker from input CSV file
+    # Create a SearchableListOfDicts that will look up an expected build given
+    # just a test dict fields ['site', 'buildName']. (The list of tests with
+    # issue trackers does not have 'group' since cdash/queryTests.php does not
+    # give the 'group' associated with each test.  Also, note that we need
+    # this special SearchableListOfDicts since the Build Name key name
+    # different for a cdash/queryTests.php test dict 'buildName' and a
+    # cdash/index.php build dict 'buildname'.)
+    testsToExpectedBuildsSLOD = \
+      CDQAR.createTestToBuildSearchableListOfDicts(expectedBuildsLOD)
+    # ToDo: Put in try/except to print about error in duplicate rows in the
+    # list of expected builds.
+
+    # Get list of tests with issue trackers from the input CSV file
     testsWithIssueTrackersLOD = []
     if inOptions.testsWithIssueTrackersFile:
       testsWithIssueTrackersLOD = CDQAR.getTestsWtihIssueTrackersListFromCsvFile(
         inOptions.testsWithIssueTrackersFile)
     print("\nNum tests with issue trackers = "+str(len(testsWithIssueTrackersLOD)))
+
     # Get a SearchableListOfDicts for the tests with issue trackers to allow
     # them to be looked up based on matching ['site', 'buildName', 'testname']
     # key/value pairs.
     testsWithIssueTrackersSLOD = \
       CDQAR.createSearchableListOfTests(testsWithIssueTrackersLOD)
-    # Get a functor that will return True if a passed-in dict matches the
-    # ['site', 'buildName', and 'testname'] key/value pairs.
+    # ToDo: Put in try/except to print about error in duplicate rows in the
+    # list of tests with issue trackers.
+
+    # Get a functor that will return True if a passed-in test dict matches a
+    # test with an issue tracker for the test key/value pairs ['site',
+    # 'buildName', and 'testname'].
     testsWithIssueTrackerMatchFunctor = \
       CDQAR.MatchDictKeysValuesFunctor(testsWithIssueTrackersSLOD)
-
-    # Create a SearchableListOfDicts that will look up an expected build given
-    # just the testDict fields ['site', 'buildName'] (since the list of tests
-    # with issue trackers does not have 'group' since CDash queryTests.php
-    # does not give the 'group' associated with each test).
-    testsToExpectedBuildsSLOD = \
-      CDQAR.createTestToBuildSearchableListOfDicts(expectedBuildsLOD)
 
     # Assert they the list of tests with issue trackers matches the list of
     # expected builds
@@ -430,11 +472,11 @@ if __name__ == '__main__':
       raise Exception(errMsg)
 
     #
-    # D.2) Get lists of build and test data off CDash
+    # D.2) Get top-level lists of build and nonpassing tests off CDash
     #
 
     #
-    # D.2.a) Get list of dicts of builds off CDash
+    # D.2.a) Get list of dicts of builds off cdash/index.phpp
     #
 
     cdashIndexBuildsBrowserUrl = CDQAR.getCDashIndexBrowserUrl(
@@ -458,30 +500,31 @@ if __name__ == '__main__':
       inOptions.useCachedCDashData )
     print("\nNum builds = "+str(len(buildsLOD)))
   
-    # Builds on CDash
+    # HTML line "Builds on CDash" 
     overallVars.htmlEmailBodyTop += \
      "<a href=\""+cdashIndexBuildsBrowserUrl+"\">"+\
      "Builds on CDash</a> (num="+str(len(buildsLOD))+")<br>\n"
 
-    # Get a dict to help look up builds (requires unique builds)
+    # Create a SearchableListOfDict object to help look up builds given a
+    # build dict by key/value pairs 'group', 'site', and 'buildname' (requires
+    # unique builds with these key/value pairs)
     buildsSLOD = CDQAR.createSearchableListOfBuilds(buildsLOD)
+    # ToDo: Add try/except to report duplicate builds in case this raises an
+    # exception.
 
     #
-    # D.2.b) Get list of dicts of all non-passing tests off CDash and for
-    # tests with issue trackers.
+    # D.2.b) Get list of dicts of all nonpassing tests off
+    # cdash/queryTests.php
     #
 
     cdashNonpassingTestsBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
       inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
       inOptions.cdashNonpassedTestsFilters)
 
-    print("\nGetting list of non-passing tests from CDash ...\n")
+    print("\nGetting list of nonpassing tests from CDash ...\n")
 
-    print("\nCDash non-passing tests browser URL:\n\n"+\
+    print("\nCDash nonpassing tests browser URL:\n\n"+\
       "  "+cdashNonpassingTestsBrowserUrl+"\n")
-
-    # Get a single list of dicts of nonpassing tests for current testing day
-    # off CDash
 
     cdashNonpassingTestsQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
       inOptions.cdashSiteUrl, inOptions.cdashProjectName, inOptions.date,
@@ -496,7 +539,7 @@ if __name__ == '__main__':
     print("\nNum nonpassing tests direct from CDash query = "+\
       str(len(nonpassingTestsLOD)))
   
-    # Nonpassing Tests on CDash
+    # HTML line "Nonpassing Tests on CDash"
     overallVars.htmlEmailBodyTop += \
      "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
      "Nonpassing Tests on CDash</a> (num="+str(len(nonpassingTestsLOD))+")<br>\n"
@@ -507,30 +550,40 @@ if __name__ == '__main__':
       "</p>\n\n"+\
       "<p>\n"
 
-    # Create a searchable list of nonpassing tests
+    # Create a SearchableListOfDicts object for looking up a nonpassing test
+    # given the test dict fields 'site', 'buildName', and 'testname'.
     nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(
       nonpassingTestsLOD, removeExactDuplicateElements=True,
       checkDictsAreSame_in=CDQAR.checkCDashTestDictsAreSame )
-    # NOTE: Above we add the option to remove exact 100% duplicate list items
-    # since cdash/queryTests.php can return duplicate tests!
+    # NOTE: Above we add the option to remove exact duplicate tests since
+    # cdash/queryTests.php can return duplicate tests (i.e. all test dict
+    # fields are the same except and has the same buildid but could have
+    # different testids!)
+    # ToDo: Add try/except for above code in order to report duplicate tests
+    # where the buildid (and other fields) not match.
+
     print("Num nonpassing tests after removing duplicate tests = "+\
       str(len(nonpassingTestsLOD)))
 
-    # Create a functor to match nonpassing tests
+    # Create a functor to to see if a test dict matches one of the nonpassing
+    # tests downloaded from cdash/queryTests.php.
     nonpassingTestsMatchFunctor = \
       CDQAR.MatchDictKeysValuesFunctor(nonpassingTestsSLOD)
 
-    # Add issue tracker info for all non passing tests
+    #
+    # D.3) Partition the varous list of tests into different sets that will
+    # be displayed in different tables.
+    #
+
+    # Add issue tracker info for all nonpassing tests (including adding empty
+    # issue tracker fields for tests that don't have issue trackers)
     CDQAR.foreachTransform( nonpassingTestsLOD,
       CDQAR.AddIssueTrackerInfoToTestDictFunctor(testsWithIssueTrackersSLOD))
 
     # Split the list of nonpassing tests into those with and without issue
     # trackers
     (nonpassingTestsWithIssueTrackersLOD,nonpassingTestsWithoutIssueTrackersLOD)=\
-      CDQAR.splitListOnMatch(
-        nonpassingTestsLOD,
-        testsWithIssueTrackerMatchFunctor
-        )
+      CDQAR.splitListOnMatch(nonpassingTestsLOD, testsWithIssueTrackerMatchFunctor)
     print("Num nonpassing tests without issue trackers = "+\
       str(len(nonpassingTestsWithoutIssueTrackersLOD)))
     print("Num nonpassing tests with issue trackers = "+\
@@ -559,8 +612,14 @@ if __name__ == '__main__':
       str(len(testsWithIssueTrackersGrossPassingOrMissingLOD)))
 
     #
-    print("\nSearch for any missing expected builds ...\n")
+    # D.4) Process and tabulate lists of builds
     #
+
+    #
+    # 'bme'
+    #
+
+    print("\nSearch for any missing expected builds ...\n")
 
     missingExpectedBuildsLOD = CDQAR.getMissingExpectedBuildsList(
       buildsSLOD, expectedBuildsLOD)
@@ -599,8 +658,10 @@ if __name__ == '__main__':
       # super big.
 
     #
-    print("\nSearch for any builds with configure failures ...\n")
+    # 'cf'
     #
+
+    print("\nSearch for any builds with configure failures ...\n")
 
     buildsWithConfigureFailuresLOD = \
       CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasConfigureFailures)
@@ -637,8 +698,10 @@ if __name__ == '__main__':
       # shown.
 
     #
-    print("\nSearch for any builds with compilation (build) failures ...\n")
+    # 'bf'
     #
+
+    print("\nSearch for any builds with compilation (build) failures ...\n")
 
     buildsWithBuildFailuresLOD = \
       CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasBuildFailures)
@@ -675,17 +738,22 @@ if __name__ == '__main__':
       # shown.
 
     #
-    # D.3) Analyaize and report test results in different tables
+    # D.5) Analyaize and report the different sets of tests
     #
 
-    # Sort order for test to display in tables
+    #
+    # D.5.a) Final processing of lists of tests and splitting into the
+    # different tests sets to report
+    #
+
+    # Sort order for tests to display in tables
     testsSortOrder = ['testname', 'buildName', 'site']
 
     # Test history cache dir
     testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
 
     # Object to make it easy to process the different test sets
-    testSetGetDataAnayzeRepoter = TestSetGetDataAnayzeRepoter(inOptions,
+    testSetGetDataAnayzeReporter = TestSetGetDataAnayzeReporter(inOptions,
       testsSortOrder, testHistoryCacheDir, overallVars)
 
     # Special functor to look up missing expected build given a test dict
@@ -697,26 +765,28 @@ if __name__ == '__main__':
       testsToMissingExpectedBuildsSLOD)
 
     # Get list of tests with issue trackers that are not in the list of
-    # nonpassing tests and don't match expected builds (and therefore these
-    # are passing or missing)
-    ( testsWithIssueTrackersMissingMatchMissingExpectedBuildsLOD,
-      testsWithIssueTrackersPassingOrMissingLOD \
-      ) = CDQAR.splitListOnMatch( testsWithIssueTrackersGrossPassingOrMissingLOD,
+    # nonpassing tests and don't match expected builds (and therefore will be
+    # included in the sets 'twip' and 'twim').
+    ( testsWithIssueTrackersMatchingMissingExpectedBuildsLOD,
+      testsWithIssueTrackersPassingOrMissingLOD ) \
+      = \
+      CDQAR.splitListOnMatch( testsWithIssueTrackersGrossPassingOrMissingLOD,
         testMatchesMissingExpectedBuildsFunctor )
     print("\nNum tests with issue trackers passing or missing matching"+\
       " posted builds = "+str(len(testsWithIssueTrackersPassingOrMissingLOD)))
     print("\nTests with issue trackers missing that match"+\
       " missing expected builds: num="+\
-      str(len(testsWithIssueTrackersMissingMatchMissingExpectedBuildsLOD)))
-    for testDict in testsWithIssueTrackersMissingMatchMissingExpectedBuildsLOD:
+      str(len(testsWithIssueTrackersMatchingMissingExpectedBuildsLOD)))
+    for testDict in testsWithIssueTrackersMatchingMissingExpectedBuildsLOD:
       print("  "+sorted_dict_str(testDict))
-    if len(testsWithIssueTrackersMissingMatchMissingExpectedBuildsLOD) > 0:
+    if len(testsWithIssueTrackersMatchingMissingExpectedBuildsLOD) > 0:
       print("\nNOTE: The above tests will NOT be listed in the set 'twim'!")
 
     # Get test history for all of the tests with issue trackers that are not
     # passing or missing.  These will either be tests that are passing today
     # (and therefore have history) or they will be tests that are missing.
-    # But don't look at history for tests in missing expected builds.
+    # (But don't get test history or list out tests with issue trackers that
+    # match missing expected builds that did not submit any test data today.)
 
     twipLOD = []
     twimLOD = []
@@ -741,15 +811,22 @@ if __name__ == '__main__':
           )
         )
 
-      # Split into list of tests that are passing vs. those that are missing
+      # Split into lists for 'twip' and 'twim'
       (twipLOD, twimLOD) = CDQAR.splitListOnMatch(
         testsWithIssueTrackersPassingOrMissingLOD, CDQAR.isTestPassed )
 
     print("\nNum tests with issue trackers Passed = "+str(len(twipLOD)))
     print("Num tests with issue trackers Missing = "+str(len(twimLOD)))
 
+    #
+    # D.5.b) Report the different sets of tests
+    #
+    # NOTE: The order of these is chosen so those that require action of the
+    # person doing the triaging are sorted to the top.
+    #
+
     # twoif
-    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
       "Tests without issue trackers Failed",
       "twoif",
       len(twoifLOD),
@@ -760,7 +837,7 @@ if __name__ == '__main__':
       )
 
     # twoinr
-    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
       "Tests without issue trackers Not Run",
       "twoinr",
       len(twoinrLOD),
@@ -771,7 +848,7 @@ if __name__ == '__main__':
       )
 
     # twip
-    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
       "Tests with issue trackers Passed",
       "twip",
       len(twipLOD),
@@ -782,7 +859,7 @@ if __name__ == '__main__':
       )
 
     # twim
-    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
       "Tests with issue trackers Missing",
       "twim",
       len(twimLOD),
@@ -793,7 +870,7 @@ if __name__ == '__main__':
       )
 
     # twif
-    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
       "Tests with issue trackers Failed",
       "twif",
       len(twifLOD),
@@ -804,7 +881,7 @@ if __name__ == '__main__':
       )
 
     # twinr
-    testSetGetDataAnayzeRepoter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
       "Tests with issue trackers Not Run",
       "twinr",
       len(twinrLOD),
@@ -828,7 +905,7 @@ if __name__ == '__main__':
     overallVars.summaryLineDataNumbersList.append("SCRIPT CRASHED")
 
   #
-  # E) Put together final email summary  line
+  # E) Put together final email summary line
   #
 
   if overallVars.globalPass:
@@ -842,7 +919,7 @@ if __name__ == '__main__':
   summaryLine += ": "+inOptions.buildSetName+" on "+inOptions.date
 
   #
-  # F) Finish of HTML body guts and define overall body style
+  # F) Finish off HTML body guts and define overall HTML body style
   #
 
   # Finish off the top paragraph of the summary lines
@@ -917,4 +994,3 @@ if __name__ == '__main__':
     sys.exit(0)
   else:
     sys.exit(1)
-  
