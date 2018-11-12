@@ -777,9 +777,9 @@ if __name__ == '__main__':
     print("\nTests with issue trackers missing that match"+\
       " missing expected builds: num="+\
       str(len(testsWithIssueTrackersMatchingMissingExpectedBuildsLOD)))
-    for testDict in testsWithIssueTrackersMatchingMissingExpectedBuildsLOD:
-      print("  "+sorted_dict_str(testDict))
     if len(testsWithIssueTrackersMatchingMissingExpectedBuildsLOD) > 0:
+      for testDict in testsWithIssueTrackersMatchingMissingExpectedBuildsLOD:
+        print("  "+sorted_dict_str(testDict))
       print("\nNOTE: The above tests will NOT be listed in the set 'twim'!")
 
     # Get test history for all of the tests with issue trackers that are not
