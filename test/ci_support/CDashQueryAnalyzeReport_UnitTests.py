@@ -173,13 +173,13 @@ class test_checkDictsAreSame(unittest.TestCase):
   def test_different_key_value_1(self):
     dict_1 = { 'site':'site_ame', 'buildname':'build_name', 'data':'val1' }
     dict_2 = { 'site':'site_ame', 'buildname':'build_name', 'data':'val2' }
-    expectedRtn = (False, "dict_1['data']=val1 != dict_2['data']=val2")
+    expectedRtn = (False, "dict_1['data'] = 'val1' != dict_2['data'] = 'val2'")
     self.assertEqual(checkDictsAreSame(dict_1, "dict_1", dict_2, "dict_2"), expectedRtn)
 
   def test_different_key_value_2(self):
     dict_1 = { 'site':'site_name', 'buildname':'build_name', 'data':'val1' }
     dict_2 = { 'site':'site_name2', 'buildname':'build_name', 'data':'val1' }
-    expectedRtn = (False, "dict_1['site']=site_name != dict_2['site']=site_name2")
+    expectedRtn = (False, "dict_1['site'] = 'site_name' != dict_2['site'] = 'site_name2'")
     self.assertEqual(checkDictsAreSame(dict_1, "dict_1", dict_2, "dict_2"), expectedRtn)
 
 
@@ -833,11 +833,16 @@ class test_createLookupDictForListOfDicts(unittest.TestCase):
       self.assertEqual("Did not throw exception!", "no it did not!")
     except Exception, errMsg:
       self.assertEqual( str(errMsg),
-        "Error, listOfDicts[5]="+sorted_dict_str(newDictEle)+\
-        " has duplicate values for the list of keys ['group', 'site', 'buildname']"+\
-        " with the element already added listOfDicts[0]="+\
-        sorted_dict_str(origDictEle)+" and differs by"+\
-        " listOfDicts[5]['data']=new_data_val1 != listOfDicts[0]['data']=val1!" )
+        "Error, The element\n\n"+\
+        "    listOfDicts[5] =\n\n"+\
+        "      "+sorted_dict_str(newDictEle)+"\n\n"+\
+        "  has duplicate values for the list of keys\n\n"+\
+        "    ['group', 'site', 'buildname']\n\n"+\
+        "  with the element already added\n\n"+\
+        "    listOfDicts[0] =\n\n"+\
+        "      "+sorted_dict_str(origDictEle)+"\n\n"+\
+        "  and differs by at least the key/value pair\n\n"+\
+        "    listOfDicts[5]['data'] = 'new_data_val1' != listOfDicts[0]['data'] = 'val1'" )
 
   def test_exact_duplicate_dicts_with_removal(self):
     listOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
@@ -1382,8 +1387,8 @@ class test_checkCDashTestDictsAreSame(unittest.TestCase):
     testDict_2 = copy.deepcopy(g_cdashTestDict)
     testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143621'
     expectedRtn = (False,
-      "testDict_1['testDetailsLink']=testDetails.php?test=58569474&build=4143620 !="+\
-      " testDict_2['testDetailsLink']=testDetails.php?test=58569475&build=4143621")
+      "testDict_1['testDetailsLink'] = 'testDetails.php?test=58569474&build=4143620' !="+\
+      " testDict_2['testDetailsLink'] = 'testDetails.php?test=58569475&build=4143621'")
     self.assertEqual(
       checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
       expectedRtn )
@@ -1393,7 +1398,7 @@ class test_checkCDashTestDictsAreSame(unittest.TestCase):
     testDict_2 = copy.deepcopy(g_cdashTestDict)
     testDict_2['otherData'] = u'dataValueDiff'
     expectedRtn = (False,
-      "testDict_1['otherData']=dataValue != testDict_2['otherData']=dataValueDiff")
+      "testDict_1['otherData'] = 'dataValue' != testDict_2['otherData'] = 'dataValueDiff'")
     self.assertEqual(
       checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
       expectedRtn )

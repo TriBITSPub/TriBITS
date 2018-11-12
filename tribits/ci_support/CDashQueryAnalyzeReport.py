@@ -113,8 +113,8 @@ def checkDictsAreSame(dict_1, dict_1_name, dict_2, dict_2_name):
       keyVal_2 = dict_2[key_1]
       if keyVal_1 != keyVal_2:
         hasSameKeyValuePairs = False
-        errMsg = dict_1_name+"['"+key_1+"']="+str(keyVal_1)+" != "+\
-          dict_2_name+"['"+key_1+"']="+str(keyVal_2)
+        errMsg = dict_1_name+"['"+key_1+"'] = '"+str(keyVal_1)+"' != "+\
+          dict_2_name+"['"+key_1+"'] = '"+str(keyVal_2)+"'"
         break
     #end for
   #end if
@@ -650,10 +650,16 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
         addEle = False
       else:
         raise Exception(
-          "Error, listOfDicts["+str(idx)+"]="+sorted_dict_str(dictEle)+" has duplicate"+\
-          " values for the list of keys "+str(listOfKeys)+" with the element"+\
-          " already added listOfDicts["+str(lookedUpIdx)+"]="+\
-          sorted_dict_str(lookedUpDict)+" and differs by "+str(dictDiffErrorMsg)+"!")
+          "Error, The element\n\n"+\
+          "    listOfDicts["+str(idx)+"] =\n\n"+\
+          "      "+sorted_dict_str(dictEle)+"\n\n"+\
+          "  has duplicate values for the list of keys\n\n"+\
+          "    "+str(listOfKeys)+"\n\n"+\
+          "  with the element already added\n\n"+\
+          "    listOfDicts["+str(lookedUpIdx)+"] =\n\n"+\
+          "      "+sorted_dict_str(lookedUpDict)+"\n\n"+\
+          "  and differs by at least the key/value pair\n\n"+\
+          "    "+str(dictDiffErrorMsg))
     # Need to go back and reset the dict on the last dict in the
     # data-structure so that modifications to the dicts that are looked up
     # will modify the original list.
