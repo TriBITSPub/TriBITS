@@ -212,12 +212,30 @@ def validateCmndLineOptions(inOptions):
   # ToDo: Assert more of the options to make sure they are correct!
 
 
+def setExtraCmndLineOptionsAfterParse(inOptions_inout):
+
+  if inOptions_inout.useCachedCDashDataStr == "on":
+    setattr(inOptions_inout, 'useCachedCDashData', True)
+  else:
+    setattr(inOptions_inout, 'useCachedCDashData', False)
+
+  if inOptions_inout.printDetailsStr == "on":
+    setattr(inOptions_inout, 'printDetails', True)
+  else:
+    setattr(inOptions_inout, 'printDetails', False)
+
+  if inOptions_inout.cdashBaseCacheFilesPrefix == "":
+    inOptions_inout.cdashBaseCacheFilesPrefix = \
+     CDQAR.getFileNameStrFromText(inOptions_inout.buildSetName)+"_"
+
+
 def getCmndLineOptions():
   from optparse import OptionParser
   clp = OptionParser(usage=usageHelp)
   injectCmndLineOptionsInParser(clp)
   (options, args) = clp.parse_args()
   validateCmndLineOptions(options)
+  setExtraCmndLineOptionsAfterParse(options)
   return options
 
 
@@ -355,25 +373,11 @@ class TestSetGetDataAnayzeReporter(object):
 if __name__ == '__main__':
 
   #
-  # Get commandline options and bool versions of [on|off] and others
+  # Get commandline options
   #
 
   inOptions = getCmndLineOptions()
   echoCmndLine(inOptions)
-
-  if inOptions.useCachedCDashDataStr == "on":
-    setattr(inOptions, 'useCachedCDashData', True)
-  else:
-    setattr(inOptions, 'useCachedCDashData', False)
-
-  if inOptions.printDetailsStr == "on":
-    setattr(inOptions, 'printDetails', True)
-  else:
-    setattr(inOptions, 'printDetails', False)
-
-  if inOptions.cdashBaseCacheFilesPrefix == "":
-    inOptions.cdashBaseCacheFilesPrefix = \
-     CDQAR.getFileNameStrFromText(inOptions.buildSetName)+"_"
 
   cacheDirAndBaseFilePrefix = \
     inOptions.cdashQueriesCacheDir+"/"+inOptions.cdashBaseCacheFilesPrefix
