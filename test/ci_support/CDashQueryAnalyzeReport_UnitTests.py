@@ -1343,6 +1343,271 @@ class test_dateFromBuildStartTime(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.sortTestHistoryGetStatistics()
+#
+#############################################################################
+
+g_testDictFailed = {
+  u'buildName': u'build_name',
+  u'buildSummaryLink': u'buildSummary.php?buildid=<buildid>',
+  u'buildstarttime': u'2001-01-01T05:54:03 UTC',
+  u'details': u'Completed (Failed)\n',
+  u'nprocs': 4,
+  u'prettyProcTime': u'40s 400ms',
+  u'prettyTime': u'10s 100ms',
+  u'procTime': 40.4,
+  u'site': u'site_name',
+  u'siteLink': u'viewSite.php?siteid=<site_id>',
+  u'status': u'Failed',
+  u'statusclass': u'error',
+  u'testDetailsLink': u'testDetails.php?test=<testid>&build=<buildid>',
+  u'testname': u'test_name',
+  u'time': 10.1,
+  u'issue_tracker': u'#1234',
+  u'issue_tracker_url': u'some.com/site/issue/1234'
+  }
+
+def getTestHistoryLOD5(statusListOrderedByDate):
+  testHistoryListLOD = []
+  for i in xrange(5): testHistoryListLOD.append(copy.deepcopy(g_testDictFailed))
+  testHistoryListLOD[1]['buildstarttime'] = '2001-01-01T05:54:03 UTC'
+  testHistoryListLOD[1]['status'] = statusListOrderedByDate[0]
+  testHistoryListLOD[0]['buildstarttime'] = '2000-12-31T05:54:03 UTC'
+  testHistoryListLOD[0]['status'] = statusListOrderedByDate[1]
+  testHistoryListLOD[4]['buildstarttime'] = '2000-12-30T05:54:03 UTC'
+  testHistoryListLOD[4]['status'] = statusListOrderedByDate[2]
+  testHistoryListLOD[3]['buildstarttime'] = '2000-12-29T05:54:03 UTC'
+  testHistoryListLOD[3]['status'] = statusListOrderedByDate[3]
+  testHistoryListLOD[2]['buildstarttime'] = '2000-12-28T05:54:03 UTC'
+  testHistoryListLOD[2]['status'] = statusListOrderedByDate[4]
+  return testHistoryListLOD
+  # NOTE: Above, we make them unsorted so that we can test the sort done
+  # inside of AddTestHistoryToTestDictFuctor.  Also, the tests require the
+  # exact ordering of this list do don't change it!
+
+def getSTestHistoryLOD5(statusListOrderedByDate):
+  sortedTestHistoryLOD = getTestHistoryLOD5(statusListOrderedByDate)
+  sortedTestHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
+  return sortedTestHistoryLOD
+
+class test_sortTestHistoryGetStatistics(unittest.TestCase):
+
+  def test_all_passed(self):
+    testHistoryLOD = getTestHistoryLOD5(['Passed','Passed','Passed','Passed','Passed'])
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    # Test the sorting
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(sortedTestHistoryLOD[1]['buildstarttime'],'2000-12-31T05:54:03 UTC')
+    self.assertEqual(sortedTestHistoryLOD[2]['buildstarttime'],'2000-12-30T05:54:03 UTC')
+    self.assertEqual(sortedTestHistoryLOD[3]['buildstarttime'],'2000-12-29T05:54:03 UTC')
+    self.assertEqual(sortedTestHistoryLOD[4]['buildstarttime'],'2000-12-28T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 5)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 5)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testStatus, 'Passed')
+  # NOTE: The above test checks that the history gets sorted correctly.  We
+  # don't need to do that for the remaining tests.
+
+  def test_pass_3_but_nopass_2(self):
+    testHistoryLOD = getTestHistoryLOD5(['Passed','Passed','Passed','Failed','Failed'])
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 3)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 3)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testStatus, 'Passed')
+
+  def test_pass_2_but_nopass_3(self):
+    testHistoryLOD = getTestHistoryLOD5(['Passed','Passed','Failed','Passed','Failed'])
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 3)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 2)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testStatus, 'Passed')
+
+  def test_pass_1_but_nopass_2_missing_1(self):
+    testHistoryLOD = getSTestHistoryLOD5(['Passed','DELETED','Failed','Passed','Failed'])
+    del testHistoryLOD[1]
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 1)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 1)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testStatus, 'Passed')
+
+  def test_all_failed(self):
+    testHistoryLOD = getTestHistoryLOD5(['Failed','Failed','Failed','Failed','Failed'])
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 5)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 5)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testStatus, 'Failed')
+
+  def test_failed_3_passed_2(self):
+    testHistoryLOD = getTestHistoryLOD5(['Failed','Not Run','Passed','Passed','Failed'])
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 3)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 2)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testStatus, 'Failed')
+
+  def test_failed_2_passed_1_missing_2(self):
+    testHistoryLOD = getSTestHistoryLOD5(['Failed','DELETED','Passed','DELETED','Failed'])
+    del testHistoryLOD[3]
+    del testHistoryLOD[1]
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    # Test the sorting
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 1)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 1)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testStatus, 'Failed')
+
+  def test_all_notrun(self):
+    testHistoryLOD = getTestHistoryLOD5(
+      ['Not Run','Not Run','Not Run','Not Run','Not Run'])
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 5)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 5)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testStatus, 'Not Run')
+
+  def test_notrun_2_passed_2(self):
+    testHistoryLOD = getTestHistoryLOD5(['Not Run','Not Run','Passed','Failed','Passed'])
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 3)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 2)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testStatus, 'Not Run')
+
+  def test_notrun_2_passed_1_missing_2(self):
+    testHistoryLOD = getSTestHistoryLOD5(['Not Run','DELETED','Passed','Failed','DELETED'])
+    del testHistoryLOD[4]
+    del testHistoryLOD[1]
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 1)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 1)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testStatus, 'Not Run')
+
+  def test_all_missing(self):
+    testHistoryLOD = []
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD, [])
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 5)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 5)
+    self.assertEqual(testStatus, 'Missing')
+
+  def test_all_missing_1_nopass_4(self):
+    testHistoryLOD = getSTestHistoryLOD5(['DELETED','Failed','Failed','Failed','Failed'])
+    del testHistoryLOD[0]
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2000-12-31T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 4)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 1)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 1)
+    self.assertEqual(testStatus, 'Missing')
+
+  def test_all_missing_3_pass_1_nopass__1(self):
+    testHistoryLOD = getSTestHistoryLOD5(['DELETED','DELETED','Failed','DELETED','Passed'])
+    del testHistoryLOD[3]
+    del testHistoryLOD[1]
+    del testHistoryLOD[0]
+    currentTestDate = "2001-01-01"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2000-12-30T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 1)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 1)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 3)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 2)
+    self.assertEqual(testStatus, 'Missing')
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.checkCDashTestDictsAreSame()
 #
 #############################################################################
@@ -1432,44 +1697,6 @@ class test_getTestHistoryCacheFileName(unittest.TestCase):
 # Test CDashQueryAnalyzeReport.AddTestHistoryToTestDictFunctor
 #
 #############################################################################
-
-g_testDictFailed = {
-  u'buildName': u'build_name',
-  u'buildSummaryLink': u'buildSummary.php?buildid=<buildid>',
-  u'buildstarttime': u'2001-01-01T05:54:03 UTC',
-  u'details': u'Completed (Failed)\n',
-  u'nprocs': 4,
-  u'prettyProcTime': u'40s 400ms',
-  u'prettyTime': u'10s 100ms',
-  u'procTime': 40.4,
-  u'site': u'site_name',
-  u'siteLink': u'viewSite.php?siteid=<site_id>',
-  u'status': u'Failed',
-  u'statusclass': u'error',
-  u'testDetailsLink': u'testDetails.php?test=<testid>&build=<buildid>',
-  u'testname': u'test_name',
-  u'time': 10.1,
-  u'issue_tracker': u'#1234',
-  u'issue_tracker_url': u'some.com/site/issue/1234'
-  }
-
-def getTestHistoryLOD5(statusListOrderedByDate):
-  testHistoryListLOD = []
-  for i in xrange(5): testHistoryListLOD.append(copy.deepcopy(g_testDictFailed))
-  testHistoryListLOD[1]['buildstarttime'] = '2001-01-01T05:54:03 UTC'
-  testHistoryListLOD[1]['status'] = statusListOrderedByDate[0]
-  testHistoryListLOD[0]['buildstarttime'] = '2000-12-31T05:54:03 UTC'
-  testHistoryListLOD[0]['status'] = statusListOrderedByDate[1]
-  testHistoryListLOD[4]['buildstarttime'] = '2000-12-30T05:54:03 UTC'
-  testHistoryListLOD[4]['status'] = statusListOrderedByDate[2]
-  testHistoryListLOD[3]['buildstarttime'] = '2000-12-29T05:54:03 UTC'
-  testHistoryListLOD[3]['status'] = statusListOrderedByDate[3]
-  testHistoryListLOD[2]['buildstarttime'] = '2000-12-28T05:54:03 UTC'
-  testHistoryListLOD[2]['status'] = statusListOrderedByDate[4]
-  return testHistoryListLOD
-  # NOTE: Above, we make them unsorted so that we can test the sort done
-  # inside of AddTestHistoryToTestDictFuctor.  Also, the tests require the
-  # exact ordering of this list do don't change it!
 
 
 class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):

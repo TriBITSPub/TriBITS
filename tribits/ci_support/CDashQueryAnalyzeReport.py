@@ -984,6 +984,128 @@ def dateFromBuildStartTime(buildStartTime):
   return buildStartTime.split('T')[0]  
 
 
+# Sort list of test history dicts and get statistics
+#
+# Inputs:
+#
+#   testHistoryLOD [in]: List of test dicts for the same test.  This array is
+#   not the elements are modified in this call.
+#
+#   currentTestDate [in]: The current testing day (as a string YYYY-MM-DD).
+#   This is needed to define a frame of reference for interpeting if the test
+#   is currently 'Passed', 'Failed', 'Not Run', or is 'Missing' (i.e. does not
+#   have any test results for curent testing date).
+#
+#   daysOfHistory [in]: Number of days of history that were requested.
+#
+# Note that len(testHistoryLOD) may be less than daysOfHistory which is
+# allowed and handled in function.  Any days in that range missing contribute
+# to testHistoryStats['missing_last_x_days'].
+#
+# Returns:
+#
+#   (sortedTestHistoryLOD, testHistoryStats, testStatus)
+#
+# where:
+#
+#   sortedTestHistoryLOD: The sorted list of test dicts with most recent dict
+#   at the top.  (New list object with references to the same test dict
+#   elements.)
+#
+#   testHistoryStats: Dict that gives statistics for the test with fields:
+#     - 'pass_last_x_days': Number of times test 'Passed'
+#     - 'nopass_last_x_days': Number of times the not 'Passed'
+#     - 'missing_last_x_days': Number of days there was no test data
+#     - 'consec_pass_days': Number of times the test consecutively passed
+#     - 'consec_nopass_days': Number of times the test consecutively did not pass
+#     - 'consec_missing_days': Number of days test is missing
+#
+#   testStatus: The status of the test for the current testing day with values:
+#     - 'Passed': Most recent test 'Passed' had date matching curentTestDate
+#     - 'Failed': Most recent test 'Failed' had date matching curentTestDate
+#     - 'Not Run': Most recent test 'Not Run' had date matching curentTestDate
+#     - 'Missing': Most recent test has date before matching curentTestDate
+#
+def sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory):
+
+  def incr(testDict, key): testDict[key] = testDict[key] + 1
+  def decr(testDict, key): testDict[key] = testDict[key] - 1
+
+  # Initialize outputs assuming no history (i.e. missing)
+  sortedTestHistoryLOD = []
+  testHistoryStats = {
+    'pass_last_x_days': 0,
+    'nopass_last_x_days': 0,
+    'missing_last_x_days': daysOfHistory,
+    'consec_pass_days': 0,
+    'consec_nopass_days': 0,
+    'consec_missing_days': 0,
+    }
+  testStatus = "Missing"
+
+  # Return if there is no test history
+  if len(testHistoryLOD) == 0:
+    testHistoryStats['consec_missing_days'] = daysOfHistory
+    return (sortedTestHistoryLOD, testHistoryStats, testStatus)
+
+  # Sort the test history by the buildstarttime (most current date at top)
+  sortedTestHistoryLOD = copy.copy(testHistoryLOD)
+  sortedTestHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
+
+  # Top (most recent) test history data
+  topTestDict = sortedTestHistoryLOD[0]
+
+  # testStatus (for this test based on history)
+  topTestBuildStartDate = dateFromBuildStartTime(topTestDict['buildstarttime'])
+  if topTestBuildStartDate == currentTestDate:
+    testStatus = topTestDict['status']
+  else:
+    testStatus = "Missing"
+  #print("\ntestStatus = "+testStatus)
+
+  # testHistoryStats
+
+  if testStatus == "Missing":
+    # The test is missing so see how many consecutive days that it is missing
+    currentTestDateObj = validateAndConvertYYYYMMDD(currentTestDate)
+    topTestDateObj = validateAndConvertYYYYMMDD(topTestBuildStartDate)
+    testHistoryStats['consec_missing_days'] = (currentTestDateObj - topTestDateObj).days
+    # There are no initial consecutive passing or nopassing days
+    initialTestStatusHasChanged = True
+  else:
+    # Count number of consecutive days that test is either passing or
+    # nopasssing
+    initialTestStatusHasChanged = False
+
+  if testStatus == 'Passed': previousTestStatusPassed = True
+  else: previousTestStatusPassed = False
+
+  for currTestDict in sortedTestHistoryLOD:
+    currTestStatus = currTestDict['status']
+    # Count the initial consecutive streaks
+    if (
+       (currTestStatus=='Passed') == previousTestStatusPassed \
+       and not initialTestStatusHasChanged \
+      ):
+      # The initial consecutive streak continues!
+      if currTestStatus == 'Passed':
+        incr(testHistoryStats, 'consec_pass_days')
+      else:
+        incr(testHistoryStats, 'consec_nopass_days')
+    else:
+      # The initial consecutive streak has been broken
+      initialTestStatusHasChanged = True
+    # Count total pass/nopass/missing tests
+    decr(testHistoryStats, 'missing_last_x_days')
+    if currTestStatus == 'Passed':
+      incr(testHistoryStats, 'pass_last_x_days')
+    else:
+      incr(testHistoryStats, 'nopass_last_x_days')
+
+  # Return the computed stuff
+  return (sortedTestHistoryLOD, testHistoryStats, testStatus)
+
+
 # Extract testid and buildid from 'testDetailsLink' CDash test dict
 # field.
 def extractTestIdAndBuildIdFromTestDetailsLink(testDetailsLink):
