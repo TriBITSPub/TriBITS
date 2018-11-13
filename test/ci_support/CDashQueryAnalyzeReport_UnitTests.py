@@ -1894,7 +1894,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['nopass_last_x_days'], 3)
     self.assertEqual(testDict['nopass_last_x_days_url'],
        u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00')
-    self.assertEqual(testDict['previous_nopass_date'], '2000-12-29')
+    self.assertEqual(testDict['previous_nopass_date'], '2000-12-30')
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
@@ -1987,7 +1987,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['nopass_last_x_days'], 3)
     self.assertEqual(testDict['nopass_last_x_days_url'],
        u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00')
-    self.assertEqual(testDict['previous_nopass_date'], '2000-12-29')
+    self.assertEqual(testDict['previous_nopass_date'], '2000-12-30')
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')

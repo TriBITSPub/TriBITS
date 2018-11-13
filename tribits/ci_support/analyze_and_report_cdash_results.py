@@ -344,7 +344,7 @@ class TestSetGetDataAnayzeReporter(object):
   
       self.overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         testSetDescr, testSetAcro, testSetTotalSize, testSetSortedLimitedLOD,
-          self.inOptions.testHistoryDays, limitTableRows )
+        self.inOptions.testHistoryDays, limitTableRows )
 
 
 #

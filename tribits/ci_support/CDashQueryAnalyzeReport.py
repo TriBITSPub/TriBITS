@@ -1318,63 +1318,16 @@ class AddTestHistoryToTestDictFunctor(object):
       extractCDashApiQueryData_in=self.__extractCDashApiQueryData_in
       )
 
-#    # Sort and get test history stats
-#    (testHistoryLOD, testHistoryStats, testStatus) = sortTestHistoryGetStatistics(
-#      testHistoryLOD, self.__date, daysOfHistory)
+    # Sort and get test history stats and update core testDict fields
 
-    # Sort the list with the most recent day first
-    testHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
+    (testHistoryLOD, testHistoryStats, testStatus) = sortTestHistoryGetStatistics(
+      testHistoryLOD, self.__date, daysOfHistory)
 
-    # ToDo: Put in check that testDict['buildstarttime'] equals the most
-    # recent test in testHistoryLOD.  That is needed to ensure that we got the
-    # date dayAfterCurrentTestDay correct!  Actually, that is only going to be
-    # true for tests that did not run in the current testing day.  For missing
-    # tests, the current testing day results will be missing.
-
-    # Gather up number of nopass days (already in order)
-    nopassDatesList=[]
-    for testHistoryDict in testHistoryLOD:
-      if not isTestPassed(testHistoryDict):
-        nopassDatesList.append(dateFromBuildStartTime(testHistoryDict['buildstarttime']))
-
-    # Set most recent and previous failure dates
-    if len(nopassDatesList) == 0:
-      previousNopassDate="None"
-    elif len(nopassDatesList) == 1:
-      previousNopassDate="None"
-    else:
-      previousNopassDate=nopassDatesList[1]
-
-    # ToDo: Replace above with function to sort testHistoryLOD by
-    # 'buildstarttime' with the most recent test/build at the top and get the
-    # test history stats like 'numPassDays', 'numNotRunDays', 'numFailDays',
-    # 'mostRecentNopassTestIndex' (before today), 'mostRecentPassTestIndex'
-    # (before today), 'numConsecPassDays' (starting from most recent pass day,
-    # including today) and 'numConsecNopassDays' (starting from most recent
-    # nopass day, including today).  This will make it easy to get other
-    # various statistics and other data out of this test history as shown
-    # below.
-
-    # Fill in the test details for the current day test from the test top
-    # history dict if it ran today.
-    if not testAlreadyHasCDashData:
-      # Determine if there is any test history at all and if there is, get the
-      # top date
-      hasDataForCurrentDate = False
-      if testHistoryLOD:
-        mostRecentTestHistoryDate = \
-          dateFromBuildStartTime(testHistoryLOD[0]['buildstarttime'])
-        if mostRecentTestHistoryDate == self.__date:
-          # The test ran.  Therefore, just grab the info for the test
-          testDict.update(testHistoryLOD[0])
-          hasDataForCurrentDate = True
-      # If there is no history for the current day, then the test is missing
-      if not hasDataForCurrentDate:
-        # The test did not run in the current testing day so don't add any
-        # info for the current testing day beyond the minimum to dispaly in
-        # the table
-        testDict['status'] = "Missing"
-        testDict['details'] = "Missing"
+    if testStatus == "Missing":
+      testDict['status'] = "Missing"
+      testDict['details'] = "Missing"
+    elif testStatus == "Passed":
+      testDict.update(testHistoryLOD[0])
 
     # ToDo: Lookup the matching build info so that we can get the buildstamp
     # in order to build a good link to the build on CDash?
@@ -1396,10 +1349,20 @@ class AddTestHistoryToTestDictFunctor(object):
     testDict['test_history_query_url'] = testHistoryQueryUrl
     testDict['test_history_browser_url'] = testHistoryBrowserUrl
     testDict['test_history_list'] = testHistoryLOD
-    testDict['nopass_last_x_days'] = len(nopassDatesList)
+    testDict.update(testHistoryStats)
+    testDict['pass_last_x_days_url'] = testHistoryBrowserUrl
     testDict['nopass_last_x_days_url'] = testHistoryBrowserUrl
-    testDict['previous_nopass_date'] = previousNopassDate
-    #testDict['previous_nopass_date_url'] = ""  # ToDo: Put in link to this build
+    testDict['missing_last_x_days_url'] = testHistoryBrowserUrl
+    testDict['consec_pass_days'] = testHistoryBrowserUrl
+    testDict['consec_nopass_days'] = testHistoryBrowserUrl
+    testDict['consec_missing_days'] = testHistoryBrowserUrl
+
+    if testDict.get('status', None) == None:
+      print("\ntestStatus = "+testStatus)
+      print("\ntestDict:")
+      pp = pprint.PrettyPrinter(indent=2)
+      pp.pprint(testDict)
+      raise Exception("Error, testDict['status']==None for testDict="+str(testDict))
 
     # Return the updated test dict with the new fields
     return testDict

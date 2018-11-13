@@ -1132,6 +1132,38 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
       testHistoryFileName) 
 
+    # Make a test missing (here, we need to move the date back)
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2',
+      daysOfHistory)
+    testHistoryLOD = getTestHistoryDictListFromCDashJsonFile(
+      testOutputDir, testHistoryFileName)
+    testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
+    # There is just one day in history so we need to duplicate it
+    testHistoryLOD.append(copy.deepcopy(testHistoryLOD[0]))
+    # Make first non-missing day failed
+    testHistoryLOD[0]['buildstarttime'] = "2018-10-26T12:00:00 UTC"
+    testHistoryLOD[0]['status'] = u'Failed'
+    testHistoryLOD[0]['details'] = u'Completed (Failed)'
+    # Make second non-missing day passed
+    testHistoryLOD[1]['buildstarttime'] = "2018-10-25T12:00:00 UTC"
+    testHistoryLOD[1]['status'] = u'Passed'
+    testHistoryLOD[1]['details'] = u'Completed (Passed)'
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName) 
+
+    # Make a test missing (no days of test history)
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3',
+      daysOfHistory)
+    testHistoryLOD = []
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName) 
+
     # ToDo: Remove history for missing tests to test different numbers of
     # missing days.  (This will need to be done once we tablulate "Consecutive
     # Pass Days" and "Consecutive Missing Days".)
@@ -1205,17 +1237,16 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\"><a href=\".+\">Passed</a></td>",
         "<td align=\"left\">Completed [(]Passed[)]</td>",
         "<td align=\"right\"><a href=\".+\">14</a></td>",
-        "<td align=\"right\">2018-10-26</td>",
+        "<td align=\"right\">2018-10-27</td>",
         "<td align=\"right\"><a href=\".+\">#3640</a></td>",
 
         "<h3>Tests with issue trackers Missing: twim=2</h3>",
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>",
-        "<td align=\"left\"><a href=\".+\">PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2</a></td>",
-        "<td align=\"left\"><a href=\".+\">Failed</a></td>",
-        "<td align=\"left\">Completed [(]Failed[)]</td>",
+        "<td align=\"left\">PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2</td>",
+        "<td align=\"left\">Missing</td>",  # Missing is duplicated
         "<td align=\"right\"><a href=\".+\">1</a></td>",
-        "<td align=\"right\">None</td>",
+        "<td align=\"right\">2018-10-26</td>",
         "<td align=\"right\"><a href=\".+\">#3632</a></td>",
 
         "<h3>Tests with issue trackers Failed: twif=5</h3>",
