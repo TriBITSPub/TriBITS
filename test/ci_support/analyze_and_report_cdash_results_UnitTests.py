@@ -356,6 +356,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\">Completed [(]Failed[)]</td>",
         "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">30</a></td>",
         "<td align=\"right\">2018-10-27</td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">0</a></td>",
         "<td align=\"right\"></td>",
         "</tr>",
         # Second row

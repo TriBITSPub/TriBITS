@@ -1850,6 +1850,7 @@ def createCDashTestHtmlTableStr( testTypeDescr,
     tcd("details", "Details"),
     tcd('nopass_last_x_days', "Nopass last "+str(daysOfHistory)+" Days", "right"),
     tcd("previous_nopass_date", "Previous Nopass Date", "right"),
+    tcd('pass_last_x_days', "Pass last "+str(daysOfHistory)+" Days", "right"),
     tcd("issue_tracker", "Tracker", "right"),
     ]
   # Return the HTML table
