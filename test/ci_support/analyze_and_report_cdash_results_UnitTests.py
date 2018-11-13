@@ -348,6 +348,16 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
          
         # twoif table
         "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</h3>",
+        # Pin down table headers
+        "<th>Site</th>",
+        "<th>Build Name</th>",
+        "<th>Test Name</th>",
+        "<th>Status</th>",
+        "<th>Details</th>",
+        "<th>Consec&shy;utive Days Nopass</th>",
+        "<th>Nopass last 30 Days</th>",
+        "<th>Pass last 30 Days</th>",
+        "<th>Tracker</th>",
         # Pin down the first row of this table (pin down this first row
         "<tr>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
@@ -355,7 +365,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Failed</a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
         "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">30</a></td>",
-        "<td align=\"right\">2018-10-27</td>",
+        # NOTE: Above is duplicated for consecutive nopass days
         "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">0</a></td>",
         "<td align=\"right\"></td>",
         "</tr>",
@@ -556,7 +566,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\">Failed</a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
         "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">1</a></td>",
-        "<td align=\"right\">None</td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">1</a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">29</a></td>",
         "<td align=\"right\"></td>",
         "</tr>",
          
@@ -570,7 +581,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\"><a .+>Not Run</a></td>",
         "<td align=\"left\">Required Files Missing</td>",
         "<td align=\"right\"><a .+>30</a></td>",
-        "<td align=\"right\">2018-10-27</td>",
+        "<td align=\"right\"><a .+>30</a></td>",
+        "<td align=\"right\"><a .+>0</a></td>",
         "<td align=\"right\"></td>",
         "</tr>",
          
@@ -584,7 +596,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\"><a .+>Failed</a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
         "<td align=\"right\"><a .+>15</a></td>",
-        "<td align=\"right\">2018-10-27</td>",
+        "<td align=\"right\"><a .+>15</a></td>",
+        "<td align=\"right\"><a .+>0</a></td>",
         "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/3640\">#3640</a></td>",
         "</tr>",
          
@@ -598,7 +611,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\"><a .+>Not Run</a></td>",
         "<td align=\"left\">Required Files Missing</td>",
         "<td align=\"right\"><a .+>15</a></td>",
-        "<td align=\"right\">2018-10-27</td>",
+        "<td align=\"right\"><a .+>15</a></td>",
+        "<td align=\"right\"><a .+>0</a></td>",
         "<td align=\"right\"><a .+>#3638</a></td>",
         "</tr>",
 
@@ -1232,22 +1246,47 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</h3>",
 
         "<h3>Tests with issue trackers Passed: twip=2</h3>",
+        # Pin down table headers
+        "<th>Site</th>",
+        "<th>Build Name</th>",
+        "<th>Test Name</th>",
+        "<th>Status</th>",
+        "<th>Details</th>",
+        "<th>Consec&shy;utive Days Pass</th>",
+        "<th>Nopass last 30 Days</th>",
+        "<th>Pass last 30 Days</th>",
+        "<th>Tracker</th>",
+        # Pin down first row
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
         "<td align=\"left\"><a href=\".+\">MueLu&shy;_UnitTestsBlockedEpetra&shy;_MPI&shy;_1</a></td>",
         "<td align=\"left\"><a href=\".+\">Passed</a></td>",
         "<td align=\"left\">Completed [(]Passed[)]</td>",
+        "<td align=\"right\"><a href=\".+\">1</a></td>",
         "<td align=\"right\"><a href=\".+\">14</a></td>",
-        "<td align=\"right\">2018-10-27</td>",
+        "<td align=\"right\"><a href=\".+\">1</a></td>",
         "<td align=\"right\"><a href=\".+\">#3640</a></td>",
 
         "<h3>Tests with issue trackers Missing: twim=2</h3>",
+        # Pin down table headers
+        "<th>Site</th>",
+        "<th>Build Name</th>",
+        "<th>Test Name</th>",
+        "<th>Status</th>",
+        "<th>Details</th>",
+        "<th>Consec&shy;utive Days Missing</th>",
+        "<th>Nopass last 30 Days</th>",
+        "<th>Pass last 30 Days</th>",
+        "<th>Tracker</th>",
+        # Pin down first row
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>",
         "<td align=\"left\">PanzerAdaptersIOSS&shy;_tIOSSConnManager2&shy;_MPI&shy;_2</td>",
-        "<td align=\"left\">Missing</td>",  # Missing is duplicated
+        "<td align=\"left\">Missing</td>",
+        "<td align=\"left\">Missing</td>",
+        "<td align=\"right\"><a href=\".+\">2</a></td>",
         "<td align=\"right\"><a href=\".+\">1</a></td>",
-        "<td align=\"right\">2018-10-26</td>",
+        "<td align=\"right\"><a href=\".+\">1</a></td>",
         "<td align=\"right\"><a href=\".+\">#3632</a></td>",
 
         "<h3>Tests with issue trackers Failed: twif=5</h3>",
@@ -1257,7 +1296,8 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\"><a href=\".+\">Failed</a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
         "<td align=\"right\"><a href=\".+\">15</a></td>",
-        "<td align=\"right\">2018-10-27</td>",
+        "<td align=\"right\"><a href=\".+\">15</a></td>",
+        "<td align=\"right\"><a href=\".+\">0</a></td>",
         "<td align=\"right\"><a href=\".+\">#3632</a></td>",
 
         ],

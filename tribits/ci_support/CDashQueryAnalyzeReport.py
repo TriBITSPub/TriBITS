@@ -1353,9 +1353,9 @@ class AddTestHistoryToTestDictFunctor(object):
     testDict['pass_last_x_days_url'] = testHistoryBrowserUrl
     testDict['nopass_last_x_days_url'] = testHistoryBrowserUrl
     testDict['missing_last_x_days_url'] = testHistoryBrowserUrl
-    testDict['consec_pass_days'] = testHistoryBrowserUrl
-    testDict['consec_nopass_days'] = testHistoryBrowserUrl
-    testDict['consec_missing_days'] = testHistoryBrowserUrl
+    testDict['consec_pass_days_url'] = testHistoryBrowserUrl
+    testDict['consec_nopass_days_url'] = testHistoryBrowserUrl
+    testDict['consec_missing_days_url'] = testHistoryBrowserUrl
 
     if testDict.get('status', None) == None:
       print("\ntestStatus = "+testStatus)
@@ -1687,6 +1687,7 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
   for rowData in rowDataList:
     #print("\nrowData = "+str(rowData))
     htmlStr+="<tr>\n"
+    col_j = 0
     for colData in colDataList:
       dictKey = colData.dictKey
       #print("\ndictKey = "+dictKey)
@@ -1694,8 +1695,9 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
       entry = rowData.get(dictKey, None)
       if entry == None:
         raise Exception(
-          "Error, column dict ='"+colData.dictKey+"' row "+str(row_i)+\
-          " entry is 'None' which is not allowed! row dict = "+str(rowData))  
+          "Error, column "+str(col_j)+" dict key='"+colData.dictKey+"'"+\
+          " row "+str(row_i)+" entry is 'None' which is not allowed!\n\n"+\
+          "Row dict = "+str(rowData))  
       entry = addHtmlSoftWordBreaks(str(entry).strip())
       # See if the _url key also exists
       dictKey_url = dictKey+"_url"
@@ -1711,6 +1713,7 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
       # Set the row entry in the HTML table
       htmlStr+=\
         "<td align=\""+colData.colAlign+"\">"+entryStr+"</td>\n"
+      col_j += 1  
     htmlStr+="</tr>\n\n"
     row_i += 1
 
@@ -1829,9 +1832,10 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
 # htmlTableStyle [in]: Sytle inside of <table ... > (see createHtmlTableStr())
 # (default None)
 #
-def createCDashTestHtmlTableStr( testTypeDescr,
-  testTypeCountAcronym, testTypeCountNum,
-  testsLOD, daysOfHistory, limitRowsToDisplay=None,
+def createCDashTestHtmlTableStr(
+  testSetType,
+  testTypeDescr, testTypeCountAcronym, testTypeCountNum, testsLOD,
+  daysOfHistory, limitRowsToDisplay=None,
   htmlStyle=None, htmlTableStyle=None,
   ):
   # Return empty string if no tests
@@ -1840,16 +1844,25 @@ def createCDashTestHtmlTableStr( testTypeDescr,
   # Table title
   tableTitle = getCDashDataSummaryHtmlTableTitleStr(
     testTypeDescr, testTypeCountAcronym, testTypeCountNum, limitRowsToDisplay )
-  # Create column headers
+  # Consecutive nopass/pass/missing column
   tcd = TableColumnData
+  if testSetType == 'nopass':
+    consecCol = tcd('consec_nopass_days', "Consec&shy;utive Days Nopass", 'right')
+  elif testSetType == 'pass':
+    consecCol = tcd('consec_pass_days', "Consec&shy;utive Days Pass", 'right')
+  elif testSetType == 'missing':
+    consecCol = tcd('consec_missing_days', "Consec&shy;utive Days Missing", 'right')
+  else:
+    raise Exception("Error, invalid testSetType="+str(testSetType))
+  # Create column headers
   testsColDataList = [
     tcd("site", "Site"),
     tcd("buildName", "Build Name"),
     tcd("testname", "Test Name"),
     tcd("status", "Status"),
     tcd("details", "Details"),
+    consecCol,
     tcd('nopass_last_x_days', "Nopass last "+str(daysOfHistory)+" Days", "right"),
-    tcd("previous_nopass_date", "Previous Nopass Date", "right"),
     tcd('pass_last_x_days', "Pass last "+str(daysOfHistory)+" Days", "right"),
     tcd("issue_tracker", "Tracker", "right"),
     ]

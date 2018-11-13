@@ -1763,6 +1763,8 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     # Apply the functor to add the test history to the test dict
     addTestHistoryFunctor(testDict)
 
+    testHistoryBrowserUrl = u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00'
+
     # Checkt the set fields out output
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
@@ -1776,8 +1778,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['status_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
-    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00'
-      )
+    self.assertEqual(testDict['test_history_browser_url'], testHistoryBrowserUrl)
     self.assertEqual(
       testDict['test_history_list'][0]['buildstarttime'], '2001-01-01T05:54:03 UTC')
     self.assertEqual(
@@ -1788,11 +1789,19 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
       testDict['test_history_list'][3]['buildstarttime'], '2000-12-29T05:54:03 UTC')
     self.assertEqual(
       testDict['test_history_list'][4]['buildstarttime'], '2000-12-28T05:54:03 UTC')
+    self.assertEqual(testDict['pass_last_x_days'], 2)
+    self.assertEqual(testDict['pass_last_x_days_url'], testHistoryBrowserUrl)
     self.assertEqual(testDict['nopass_last_x_days'], 3)
-    self.assertEqual(testDict['nopass_last_x_days_url'],
-       u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00')
+    self.assertEqual(testDict['nopass_last_x_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['missing_last_x_days'], 0)
+    self.assertEqual(testDict['missing_last_x_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['consec_pass_days'], 0)
+    self.assertEqual(testDict['consec_pass_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['consec_nopass_days'], 2)
+    self.assertEqual(testDict['consec_nopass_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['consec_missing_days'], 0)
+    self.assertEqual(testDict['consec_missing_days_url'], testHistoryBrowserUrl)
     self.assertEqual(testDict['previous_nopass_date'], '2000-12-31')
-    #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
 
@@ -2451,8 +2460,8 @@ tr:nth-child(odd) {background-color: #fff;}
       self.assertEqual("Excpetion did not get thrown!", "No it did not!")
     except Exception, errMsg:
       self.assertEqual(str(errMsg),
-         "Error, column dict ='badKey' row 0 entry is 'None' which is"+\
-         " not allowed! row dict = {'key1': 'data1'}")
+         "Error, column 0 dict key='badKey' row 0 entry is 'None' which is"+\
+         " not allowed!\n\nRow dict = {'key1': 'data1'}")
   
   # Check that the contents are put in the right place, the correct alignment,
   # correct handling of non-string data, etc.

@@ -292,8 +292,8 @@ class TestSetGetDataAnayzeReporter(object):
 
 
   def testSetGetDataAnalyzeReport( self,
-      testSetDescr, testSetAcro, testSetTotalSize,
-      testSetLOD,
+      testSetType,
+      testSetDescr, testSetAcro, testSetTotalSize, testSetLOD,
       testSetNonzeroSizeTriggerGlobalFail=True,
       colorTestSet=None,     # Change to "red" or "green"
       sortTests=True,
@@ -343,8 +343,9 @@ class TestSetGetDataAnayzeReporter(object):
           )
   
       self.overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
+        testSetType,
         testSetDescr, testSetAcro, testSetTotalSize, testSetSortedLimitedLOD,
-        self.inOptions.testHistoryDays, limitTableRows )
+        self.inOptions.testHistoryDays, limitRowsToDisplay=limitTableRows )
 
 
 #
@@ -651,7 +652,7 @@ if __name__ == '__main__':
         ]
 
       overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        bmeDescr,  bmeAcro, bmeColDataList, missingExpectedBuildsLOD,
+         bmeDescr,  bmeAcro, bmeColDataList, missingExpectedBuildsLOD,
         groupSiteBuildNameSortOrder, None )
       # NOTE: Above we don't want to limit any missing builds in this table
       # because that data is not shown on CDash and that list will never be
@@ -826,7 +827,7 @@ if __name__ == '__main__':
     #
 
     # twoif
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'nopass',
       "Tests without issue trackers Failed",
       "twoif",
       len(twoifLOD),
@@ -837,7 +838,7 @@ if __name__ == '__main__':
       )
 
     # twoinr
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'nopass',
       "Tests without issue trackers Not Run",
       "twoinr",
       len(twoinrLOD),
@@ -848,7 +849,7 @@ if __name__ == '__main__':
       )
 
     # twip
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'pass',
       "Tests with issue trackers Passed",
       "twip",
       len(twipLOD),
@@ -859,7 +860,7 @@ if __name__ == '__main__':
       )
 
     # twim
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'missing',
       "Tests with issue trackers Missing",
       "twim",
       len(twimLOD),
@@ -870,7 +871,7 @@ if __name__ == '__main__':
       )
 
     # twif
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'nopass',
       "Tests with issue trackers Failed",
       "twif",
       len(twifLOD),
@@ -881,7 +882,7 @@ if __name__ == '__main__':
       )
 
     # twinr
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport(
+    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'nopass',
       "Tests with issue trackers Not Run",
       "twinr",
       len(twinrLOD),
