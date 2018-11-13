@@ -2327,6 +2327,19 @@ class test_colorHtmlText(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.addHtmlSoftWordBreaks()
+#
+#############################################################################
+ 
+class test_addHtmlSoftWordBreaks(unittest.TestCase):
+
+  def test_1(self):
+    self.assertEqual(addHtmlSoftWordBreaks("some_long_name"),
+      "some&shy;_long&shy;_name")
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.createHtmlTableStr()
 #
 #############################################################################
@@ -2452,10 +2465,10 @@ tr:nth-child(odd) {background-color: #fff;}
       tcd('key2', "Data 2", "right"),  # Alignment and non-string dat3
       ]
     rowDataList = [
-      trdu(["r1d1","some.com/r1d1"], [1,"some.com/r1d2"], ["r1d3","some.com/r1d3"]),
-      trdu(["r2d1","some.com/r2d1"], [2,"some.com/r2d2"], ["r2d3","some.com/r2d3"]),
-      trdu(["r3d1","some.com/r3d1"], [3,"some.com/r3d2"], ["r3d3","some.com/r3d3"]),
-      ]
+      trdu(["r1d1","some.com/r1d1"], [1,"some.com/r1d2"], ["r1_d3","some.com/r1d3"]),
+      trdu(["r2d1","some.com/r2d1"], [2,"some.com/r2d2"], ["r2_d3","some.com/r2d3"]),
+      trdu(["r3d1","some.com/r3d1"], [3,"some.com/r3d2"], ["r3_d3","some.com/r3d3"]),
+      ]  # NOTE: Using '_' we test adding soft line breaks '&shy;_'!
     htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList,
       htmlStyle="my_style",  # Test custom table style
       #htmlStyle=None,       # Uncomment to view this style
@@ -2479,19 +2492,19 @@ r"""<style>my_style</style>
 </tr>
 
 <tr>
-<td align="left"><a href="some.com/r1d3">r1d3</a></td>
+<td align="left"><a href="some.com/r1d3">r1&shy;_d3</a></td>
 <td align="left"><a href="some.com/r1d1">r1d1</a></td>
 <td align="right"><a href="some.com/r1d2">1</a></td>
 </tr>
 
 <tr>
-<td align="left"><a href="some.com/r2d3">r2d3</a></td>
+<td align="left"><a href="some.com/r2d3">r2&shy;_d3</a></td>
 <td align="left"><a href="some.com/r2d1">r2d1</a></td>
 <td align="right"><a href="some.com/r2d2">2</a></td>
 </tr>
 
 <tr>
-<td align="left"><a href="some.com/r3d3">r3d3</a></td>
+<td align="left"><a href="some.com/r3d3">r3&shy;_d3</a></td>
 <td align="left"><a href="some.com/r3d1">r3d1</a></td>
 <td align="right"><a href="some.com/r3d2">3</a></td>
 </tr>

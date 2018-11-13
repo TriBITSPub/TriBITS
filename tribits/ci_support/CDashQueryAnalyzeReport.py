@@ -1618,6 +1618,12 @@ def colorHtmlText(htmlText, color_in):
   return("<font color=\""+color_in+"\">"+htmlText+"</font>")
 
 
+# Add soft word breaks for '_' chars and at other places to allow word wrap
+def addHtmlSoftWordBreaks(text_in):
+  text_out = text_in.replace('_', '&shy;_')
+  return text_out
+
+
 # Create an html table string from a list of dicts and column headers.
 #
 # Arguments:
@@ -1643,6 +1649,9 @@ def colorHtmlText(htmlText, color_in):
 # htmlTableStyle [in]: The style for the HTML table used in <table
 #   style=htmlTableStyle>.  If set to None, then a default style is used.  To
 #   not set a style, pass in the empty string "" (not None).
+#
+# This will also put in soft work breaks for chars like '_' to allow for
+# compressing the produced tables.
 #
 def createHtmlTableStr(tableTitle, colDataList, rowDataList,
   htmlStyle=None, htmlTableStyle=None \
@@ -1687,6 +1696,7 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
         raise Exception(
           "Error, column dict ='"+colData.dictKey+"' row "+str(row_i)+\
           " entry is 'None' which is not allowed! row dict = "+str(rowData))  
+      entry = addHtmlSoftWordBreaks(str(entry).strip())
       # See if the _url key also exists
       dictKey_url = dictKey+"_url"
       #print("dictKey_url = "+dictKey_url)
@@ -1700,9 +1710,7 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
       #print("entryStr = "+entryStr)
       # Set the row entry in the HTML table
       htmlStr+=\
-        "<td align=\""+colData.colAlign+"\">"+\
-        str(entryStr).strip()+\
-        "</td>\n"
+        "<td align=\""+colData.colAlign+"\">"+entryStr+"</td>\n"
     htmlStr+="</tr>\n\n"
     row_i += 1
 
