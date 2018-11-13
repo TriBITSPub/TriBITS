@@ -2361,9 +2361,9 @@ class test_createHtmlTableStr(unittest.TestCase):
     tcd = TableColumnData
     trd = createDictForTest
     colDataList = [
-      tcd('key3', "Data 3"),
-      tcd('key1', "Data 1"),
-      tcd('key2', "Data 2", "right"),  # Alignment and non-string dat3
+      tcd("Data 3", 'key3'),
+      tcd("Data 1", 'key1'),
+      tcd("Data 2", 'key2', "right"),  # Alignment and non-string dat3
       ]
     rowDataList = [
       trd("r1d1", 1, "r1d3"),
@@ -2417,7 +2417,7 @@ r"""<style>my_style</style>
   # Check the correct default table style is set
   def test_1x1_table_correct_style(self):
     tcd = TableColumnData
-    colDataList = [  tcd('key1', "Data 1") ]
+    colDataList = [  tcd("Data 1", 'key1') ]
     rowDataList = [ {'key1':'data1'} ]
     htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList, htmlTableStyle="")
     #print(htmlTable)
@@ -2453,7 +2453,7 @@ tr:nth-child(odd) {background-color: #fff;}
   # Check that a bad column dict key name throws
   def test_1x1_bad_key_fail(self):
     tcd = TableColumnData
-    colDataList = [  tcd('badKey', "Data 1") ]
+    colDataList = [  tcd("Data 1", 'badKey') ]
     rowDataList = [ {'key1':'data1'} ]
     try:
       htmlTable = createHtmlTableStr("Title", colDataList, rowDataList)
@@ -2469,9 +2469,9 @@ tr:nth-child(odd) {background-color: #fff;}
     tcd = TableColumnData
     trdu = createDictForTestWithUrl
     colDataList = [
-      tcd('key3', "Data 3"),
-      tcd('key1', "Data 1"),
-      tcd('key2', "Data 2", "right"),  # Alignment and non-string dat3
+      tcd("Data 3", 'key3'),
+      tcd("Data 1", 'key1'),
+      tcd("Data 2", 'key2', "right"),  # Alignment and non-string dat3
       ]
     rowDataList = [
       trdu(["r1d1","some.com/r1d1"], [1,"some.com/r1d2"], ["r1_d3","some.com/r1d3"]),
@@ -2577,10 +2577,10 @@ class test_createCDashDataSummaryHtmlTableStr(unittest.TestCase):
     tcd = TableColumnData
     meb = missingExpectedBuildsRow
     colDataList = [
-      tcd('group', "Group"),
-      tcd('site', "Site"),
-      tcd('buildname', "Build Name"),
-      tcd('status', "Missing Status"),
+      tcd("Group",'group'),
+      tcd("Site", 'site'),
+      tcd("Build Name", 'buildname'),
+      tcd("Missing Status", 'status'),
       ]
     rowDataList = [
       meb("group1", "site1", "build2", "Build exists but not tests"),

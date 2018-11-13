@@ -645,10 +645,10 @@ if __name__ == '__main__':
       overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bmeSummaryStr,'red')+"<br>\n"
 
       bmeColDataList = [
-        tcd('group', "Group"),
-        tcd('site', "Site"),
-        tcd('buildname', "Build Name"),
-        tcd('status', "Missing Status"),
+        tcd("Group", 'group'),
+        tcd("Site", 'site'),
+        tcd("Build Name", 'buildname'),
+        tcd("Missing Status", 'status'),
         ]
 
       overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
@@ -685,9 +685,9 @@ if __name__ == '__main__':
       overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(cSummaryStr,'red')+"<br>\n"
 
       cColDataList = [
-        tcd('group', "Group"),
-        tcd('site', "Site"),
-        tcd('buildname', "Build Name"),
+        tcd("Group", 'group'),
+        tcd("Site", 'site'),
+        tcd("Build Name", 'buildname'),
         ]
 
       overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
@@ -725,9 +725,9 @@ if __name__ == '__main__':
       overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bSummaryStr,'red')+"<br>\n"
 
       cColDataList = [
-        tcd('group', "Group"),
-        tcd('site', "Site"),
-        tcd('buildname', "Build Name"),
+        tcd("Group", 'group'),
+        tcd("Site", 'site'),
+        tcd("Build Name", 'buildname'),
         ]
 
       overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(

@@ -1588,10 +1588,14 @@ def sortAndLimitListOfDicts(listOfDicts, sortKeyList = None,
 
 # Class to store dict key and table header
 class TableColumnData(object):
+
+  # Class data
   validColAlignList=["left","right","center","justify","char"]
-  def __init__(self, dictKey, colHeader, colAlign="left"):
-    self.dictKey = dictKey
+
+  # Constructor
+  def __init__(self, colHeader, dictKey, colAlign="left"):
     self.colHeader = colHeader
+    self.dictKey = dictKey
     if not colAlign in self.validColAlignList:
       raise Excpetion(
         "Error, colAlign="+colAlign+" not valid.  Please choose from"+\
@@ -1847,24 +1851,24 @@ def createCDashTestHtmlTableStr(
   # Consecutive nopass/pass/missing column
   tcd = TableColumnData
   if testSetType == 'nopass':
-    consecCol = tcd('consec_nopass_days', "Consec&shy;utive Days Nopass", 'right')
+    consecCol = tcd("Consec&shy;utive Days Nopass", 'consec_nopass_days', 'right')
   elif testSetType == 'pass':
-    consecCol = tcd('consec_pass_days', "Consec&shy;utive Days Pass", 'right')
+    consecCol = tcd("Consec&shy;utive Days Pass", 'consec_pass_days', 'right')
   elif testSetType == 'missing':
-    consecCol = tcd('consec_missing_days', "Consec&shy;utive Days Missing", 'right')
+    consecCol = tcd("Consec&shy;utive Days Missing", 'consec_missing_days', 'right')
   else:
     raise Exception("Error, invalid testSetType="+str(testSetType))
   # Create column headers
   testsColDataList = [
-    tcd("site", "Site"),
-    tcd("buildName", "Build Name"),
-    tcd("testname", "Test Name"),
-    tcd("status", "Status"),
-    tcd("details", "Details"),
+    tcd("Site", "site"),
+    tcd("Build Name", "buildName"),
+    tcd("Test Name", "testname"),
+    tcd("Status", "status"),
+    tcd("Details", "details"),
     consecCol,
-    tcd('nopass_last_x_days', "Nopass last "+str(daysOfHistory)+" Days", "right"),
-    tcd('pass_last_x_days', "Pass last "+str(daysOfHistory)+" Days", "right"),
-    tcd("issue_tracker", "Tracker", "right"),
+    tcd("Nopass last "+str(daysOfHistory)+" Days", 'nopass_last_x_days', "right"),
+    tcd("Pass last "+str(daysOfHistory)+" Days", 'pass_last_x_days', "right"),
+    tcd("Tracker", "issue_tracker", "right"),
     ]
   # Return the HTML table
   return createHtmlTableStr( tableTitle,
