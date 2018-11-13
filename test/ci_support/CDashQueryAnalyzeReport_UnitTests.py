@@ -1410,6 +1410,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 5)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
     self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], 'None')
     self.assertEqual(testStatus, 'Passed')
   # NOTE: The above test checks that the history gets sorted correctly.  We
   # don't need to do that for the remaining tests.
@@ -1427,6 +1428,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 3)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
     self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-29')
     self.assertEqual(testStatus, 'Passed')
 
   def test_pass_2_but_nopass_3(self):
@@ -1442,6 +1444,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 2)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
     self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-30')
     self.assertEqual(testStatus, 'Passed')
 
   def test_pass_1_but_nopass_2_missing_1(self):
@@ -1458,6 +1461,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 1)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
     self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-30')
     self.assertEqual(testStatus, 'Passed')
 
   def test_all_failed(self):
@@ -1473,6 +1477,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 0)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 5)
     self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-31')
     self.assertEqual(testStatus, 'Failed')
 
   def test_failed_3_passed_2(self):
@@ -1488,6 +1493,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 0)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 2)
     self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-31')
     self.assertEqual(testStatus, 'Failed')
 
   def test_failed_2_passed_1_missing_2(self):
@@ -1506,6 +1512,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 0)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 1)
     self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-28')
     self.assertEqual(testStatus, 'Failed')
 
   def test_all_notrun(self):
@@ -1522,6 +1529,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 0)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 5)
     self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-31')
     self.assertEqual(testStatus, 'Not Run')
 
   def test_notrun_2_passed_2(self):
@@ -1537,6 +1545,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 0)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 2)
     self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-31')
     self.assertEqual(testStatus, 'Not Run')
 
   def test_notrun_2_passed_1_missing_2(self):
@@ -1554,6 +1563,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 0)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 1)
     self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-29')
     self.assertEqual(testStatus, 'Not Run')
 
   def test_all_missing(self):
@@ -1569,6 +1579,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 0)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
     self.assertEqual(testHistoryStats['consec_missing_days'], 5)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], 'None')
     self.assertEqual(testStatus, 'Missing')
 
   def test_all_missing_1_nopass_4(self):
@@ -1585,6 +1596,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 0)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
     self.assertEqual(testHistoryStats['consec_missing_days'], 1)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-31')
     self.assertEqual(testStatus, 'Missing')
 
   def test_all_missing_3_pass_1_nopass__1(self):
@@ -1603,6 +1615,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_pass_days'], 0)
     self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
     self.assertEqual(testHistoryStats['consec_missing_days'], 2)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-30')
     self.assertEqual(testStatus, 'Missing')
 
 

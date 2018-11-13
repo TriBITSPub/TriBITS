@@ -988,8 +988,9 @@ def dateFromBuildStartTime(buildStartTime):
 #
 # Inputs:
 #
-#   testHistoryLOD [in]: List of test dicts for the same test.  This array is
-#   not the elements are modified in this call.
+#   testHistoryLOD [in]: List of test dicts for the same test.  This list nore
+#   its elements are modified in this call. (The base list object is shallow
+#   copied before it is sorted.)
 #
 #   currentTestDate [in]: The current testing day (as a string YYYY-MM-DD).
 #   This is needed to define a frame of reference for interpeting if the test
@@ -1019,6 +1020,7 @@ def dateFromBuildStartTime(buildStartTime):
 #     - 'consec_pass_days': Number of times the test consecutively passed
 #     - 'consec_nopass_days': Number of times the test consecutively did not pass
 #     - 'consec_missing_days': Number of days test is missing
+#     - 'previous_nopass_date': Before current date, the previous nopass date
 #
 #   testStatus: The status of the test for the current testing day with values:
 #     - 'Passed': Most recent test 'Passed' had date matching curentTestDate
@@ -1040,6 +1042,7 @@ def sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
     'consec_pass_days': 0,
     'consec_nopass_days': 0,
     'consec_missing_days': 0,
+    'previous_nopass_date': 'None'
     }
   testStatus = "Missing"
 
@@ -1061,9 +1064,10 @@ def sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
     testStatus = topTestDict['status']
   else:
     testStatus = "Missing"
-  #print("\ntestStatus = "+testStatus)
 
   # testHistoryStats
+
+  # Set up for counting num of consecutive pass, nopass, or missing
 
   if testStatus == "Missing":
     # The test is missing so see how many consecutive days that it is missing
@@ -1080,15 +1084,19 @@ def sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
   if testStatus == 'Passed': previousTestStatusPassed = True
   else: previousTestStatusPassed = False
 
-  for currTestDict in sortedTestHistoryLOD:
-    currTestStatus = currTestDict['status']
+  previousNopassDate = None
+
+  # Loop over test history and update quantities
+  for pastTestDict in sortedTestHistoryLOD:
+    pastTestStatus = pastTestDict['status']
+    pastTestDate = dateFromBuildStartTime(pastTestDict['buildstarttime'])
     # Count the initial consecutive streaks
     if (
-       (currTestStatus=='Passed') == previousTestStatusPassed \
+       (pastTestStatus=='Passed') == previousTestStatusPassed \
        and not initialTestStatusHasChanged \
       ):
       # The initial consecutive streak continues!
-      if currTestStatus == 'Passed':
+      if pastTestStatus == 'Passed':
         incr(testHistoryStats, 'consec_pass_days')
       else:
         incr(testHistoryStats, 'consec_nopass_days')
@@ -1097,10 +1105,18 @@ def sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
       initialTestStatusHasChanged = True
     # Count total pass/nopass/missing tests
     decr(testHistoryStats, 'missing_last_x_days')
-    if currTestStatus == 'Passed':
+    if pastTestStatus == 'Passed':
       incr(testHistoryStats, 'pass_last_x_days')
     else:
       incr(testHistoryStats, 'nopass_last_x_days')
+    # Find most recent previous nopass test date
+    if (
+        previousNopassDate == None \
+        and pastTestDate != currentTestDate \
+        and pastTestStatus != 'Passed' \
+      ):
+      previousNopassDate = pastTestDate
+      testHistoryStats['previous_nopass_date'] = previousNopassDate
 
   # Return the computed stuff
   return (sortedTestHistoryLOD, testHistoryStats, testStatus)
@@ -1302,6 +1318,10 @@ class AddTestHistoryToTestDictFunctor(object):
       extractCDashApiQueryData_in=self.__extractCDashApiQueryData_in
       )
 
+#    # Sort and get test history stats
+#    (testHistoryLOD, testHistoryStats, testStatus) = sortTestHistoryGetStatistics(
+#      testHistoryLOD, self.__date, daysOfHistory)
+
     # Sort the list with the most recent day first
     testHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
 
@@ -1319,13 +1339,10 @@ class AddTestHistoryToTestDictFunctor(object):
 
     # Set most recent and previous failure dates
     if len(nopassDatesList) == 0:
-      mostRecentNopassDate="None"
       previousNopassDate="None"
     elif len(nopassDatesList) == 1:
-      mostRecentNopassDate=nopassDatesList[0]
       previousNopassDate="None"
     else:
-      mostRecentNopassDate=nopassDatesList[0]
       previousNopassDate=nopassDatesList[1]
 
     # ToDo: Replace above with function to sort testHistoryLOD by
@@ -1381,7 +1398,6 @@ class AddTestHistoryToTestDictFunctor(object):
     testDict['test_history_list'] = testHistoryLOD
     testDict['nopass_last_x_days'] = len(nopassDatesList)
     testDict['nopass_last_x_days_url'] = testHistoryBrowserUrl
-    testDict['most_recent_nopass_date'] = mostRecentNopassDate
     testDict['previous_nopass_date'] = previousNopassDate
     #testDict['previous_nopass_date_url'] = ""  # ToDo: Put in link to this build
 
