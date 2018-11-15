@@ -347,7 +347,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</p>",
          
         # twoif table
-        "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</h3>",
+        "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</font></h3>",
         # Pin down table headers
         "<th>Site</th>",
         "<th>Build Name</th>",
@@ -362,11 +362,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<tr>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Anasazi_&shy;Epetra_&shy;BKS_&shy;norestart_&shy;test_&shy;MPI_&shy;4</a></td>",
-        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57860629&build=4107240\">Failed</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57860629&build=4107240\"><font color=\"red\">Failed</font></a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
-        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">30</a></td>",
-        # NOTE: Above is duplicated for consecutive nopass days
-        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">0</a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\"><font color=\"red\">30</font></a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\"><font color=\"red\">30</font></a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\"><font color=\"green\">0</font></a></td>",
         "<td align=\"right\"></td>",
         "</tr>",
         # Second row
@@ -441,7 +441,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</p>",
          
         # twoif table
-        "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=21</h3>",
+        "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 10[)]: twoif=21</font></h3>",
         ],
       #verbose=True,
       #debugPrint=True,
@@ -464,33 +464,77 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
     # Change the status for few tests from 'Failed' to 'Not Run'.
 
+    daysOfHistory = 30
+
+    # Get list of nonpassing tests from Json file
     testsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
     testListSLOD = CDQAR.createSearchableListOfTests(testsLOD)
 
     # make twoif test Anasazi_Epetra_BKS_norestart_test_MPI_4 Not Run
-    testDict = testListSLOD.lookupDictGivenKeyValuesList([
+
+    testStatusBuildTestList = [
       'mutrino',
       'Trilinos-atdm-mutrino-intel-opt-openmp-KNL',
       'Anasazi_Epetra_BKS_norestart_test_MPI_4',
-      ])
+      ]
+    testDict = testListSLOD.lookupDictGivenKeyValuesList(testStatusBuildTestList)
     testDict['status'] = u'Not Run'
     testDict['details'] = u'Required Files Missing'
+
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      testStatusBuildTestList[0], testStatusBuildTestList[1], testStatusBuildTestList[2],
+      daysOfHistory)
+    testHistoryLOD = getTestHistoryDictListFromCDashJsonFile(
+      testOutputDir, testHistoryFileName)
+    testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
+    testHistoryLOD[0]['status'] = u'Not Run'
+    testHistoryLOD[0]['details'] = u'Missing Required Files'
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName) 
+
     # make twoif test Belos_gcrodr_hb_MPI_4 Not Run 
-    testDict = testListSLOD.lookupDictGivenKeyValuesList([
+
+    testStatusBuildTestList = [
       'mutrino',
       'Trilinos-atdm-mutrino-intel-opt-openmp-KNL',
       'Belos_gcrodr_hb_MPI_4',
-      ])
+      ]
+    testDict = testListSLOD.lookupDictGivenKeyValuesList(testStatusBuildTestList)
     testDict['status'] = u'Not Run'
     testDict['details'] = u'Required Files Missing'
+
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      testStatusBuildTestList[0], testStatusBuildTestList[1], testStatusBuildTestList[2],
+      daysOfHistory)
+    testHistoryLOD = getTestHistoryDictListFromCDashJsonFile(
+      testOutputDir, testHistoryFileName)
+    testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
+    testHistoryLOD[0]['status'] = u'Not Run'
+    testHistoryLOD[0]['details'] = u'Missing Required Files'
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName) 
+
     # make twif test Teko_ModALPreconditioner_MPI_1 Not Run
-    testDict = testListSLOD.lookupDictGivenKeyValuesList([
+
+    testStatusBuildTestList = [
       'cee-rhel6',
       'Trilinos-atdm-cee-rhel6-clang-opt-serial',
       'Teko_ModALPreconditioner_MPI_1',
-      ])
+      ]
+    testDict = testListSLOD.lookupDictGivenKeyValuesList(testStatusBuildTestList)
     testDict['status'] = u'Not Run'
     testDict['details'] = u'Required Files Missing'
+
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      testStatusBuildTestList[0], testStatusBuildTestList[1], testStatusBuildTestList[2],
+      daysOfHistory)
+    testHistoryLOD = getTestHistoryDictListFromCDashJsonFile(
+      testOutputDir, testHistoryFileName)
+    testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
+    testHistoryLOD[0]['status'] = u'Not Run'
+    testHistoryLOD[0]['details'] = u'Missing Required Files'
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName) 
 
     # Write updated test data back to file
     writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir)
@@ -551,38 +595,38 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         # Second paragraph with listing of different types of tables below
         "<p>",
         "<font color=\"red\">Tests without issue trackers Failed: twoif=10</font><br>",
-        "<font color=\"red\">Tests without issue trackers Not Run: twoinr=2</font><br>",
+        "<font color=\"orange\">Tests without issue trackers Not Run: twoinr=2</font><br>",
         "Tests with issue trackers Failed: twif=8<br>",
         "Tests with issue trackers Not Run: twinr=1<br>",
         "</p>",
          
         # twoif table
-        "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=10</h3>",
+        "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 10[)]: twoif=10</font></h3>",
         # Pin down the first row of this table
         "<tr>",
         "<td align=\"left\">mutrino</td>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\">Intrepid2_&shy;unit-test_&shy;Discretization_&shy;Basis_&shy;HCURL_&shy;TRI_&shy;In_&shy;FEM_&shy;Serial_&shy;Test_&shy;01_&shy;SLFadDouble_&shy;MPI_&shy;1</a></td>",
-        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\">Failed</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\"><font color=\"red\">Failed</font></a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
-        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">1</a></td>",
-        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">1</a></td>",
-        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\">29</a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\"><font color=\"red\">1</font></a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\"><font color=\"red\">1</font></a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00\"><font color=\"green\">29</font></a></td>",
         "<td align=\"right\"></td>",
         "</tr>",
-         
+
         # twoinr table
-        "<h3>Tests without issue trackers Not Run [(]limited to 10[)]: twoinr=2</h3>",
+        "<h3><font color=\"orange\">Tests without issue trackers Not Run [(]limited to 10[)]: twoinr=2</font></h3>",
         # Pin down the first row of this table
         "<tr>",
         "<td .+mutrino</td>",
         "<td align=\"left\"><a .+>Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
         "<td align=\"left\"><a .+>Anasazi_&shy;Epetra_&shy;BKS_&shy;norestart_&shy;test_&shy;MPI_&shy;4</a></td>",
-        "<td align=\"left\"><a .+>Not Run</a></td>",
+        "<td align=\"left\"><a .+><font color=\"orange\">Not Run</font></a></td>",
         "<td align=\"left\">Required Files Missing</td>",
-        "<td align=\"right\"><a .+>30</a></td>",
-        "<td align=\"right\"><a .+>30</a></td>",
-        "<td align=\"right\"><a .+>0</a></td>",
+        "<td align=\"right\"><a .+><font color=\"red\">30</font></a></td>",
+        "<td align=\"right\"><a .+><font color=\"red\">30</font></a></td>",
+        "<td align=\"right\"><a .+><font color=\"green\">0</font></a></td>",
         "<td align=\"right\"></td>",
         "</tr>",
          
@@ -593,11 +637,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a .+>Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
         "<td align=\"left\"><a .+>MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>",
-        "<td align=\"left\"><a .+>Failed</a></td>",
+        "<td align=\"left\"><a .+><font color=\"red\">Failed</font></a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
-        "<td align=\"right\"><a .+>15</a></td>",
-        "<td align=\"right\"><a .+>15</a></td>",
-        "<td align=\"right\"><a .+>0</a></td>",
+        "<td align=\"right\"><a .+><font color=\"red\">15</font></a></td>",
+        "<td align=\"right\"><a .+><font color=\"red\">15</font></a></td>",
+        "<td align=\"right\"><a .+><font color=\"green\">0</font></a></td>",
         "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/3640\">#3640</a></td>",
         "</tr>",
          
@@ -608,11 +652,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a .+>Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
         "<td align=\"left\"><a .+>Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>",
-        "<td align=\"left\"><a .+>Not Run</a></td>",
+        "<td align=\"left\"><a .+><font color=\"orange\">Not Run</font></a></td>",
         "<td align=\"left\">Required Files Missing</td>",
-        "<td align=\"right\"><a .+>15</a></td>",
-        "<td align=\"right\"><a .+>15</a></td>",
-        "<td align=\"right\"><a .+>0</a></td>",
+        "<td align=\"right\"><a .+><font color=\"red\">15</font></a></td>",
+        "<td align=\"right\"><a .+><font color=\"red\">15</font></a></td>",
+        "<td align=\"right\"><a .+><font color=\"green\">0</font></a></td>",
         "<td align=\"right\"><a .+>#3638</a></td>",
         "</tr>",
 
@@ -877,7 +921,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</table>",
 
         # 'twoif' table
-        "<h3>Tests without issue trackers Failed [(]limited to 15[)]: twoif=12</h3>",
+        "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 15[)]: twoif=12</font></h3>",
 
         # 'twif' table
         "<h3>Tests with issue trackers Failed: twif=9</h3>",
@@ -1243,9 +1287,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         ],
       [
 
-        "<h3>Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</h3>",
+        "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</font></h3>",
 
-        "<h3>Tests with issue trackers Passed: twip=2</h3>",
+        "<h3><font color=\"green\">Tests with issue trackers Passed: twip=2</font></h3>",
         # Pin down table headers
         "<th>Site</th>",
         "<th>Build Name</th>",
@@ -1260,11 +1304,11 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
         "<td align=\"left\"><a href=\".+\">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>",
-        "<td align=\"left\"><a href=\".+\">Passed</a></td>",
+        "<td align=\"left\"><a href=\".+\"><font color=\"green\">Passed</font></a></td>",
         "<td align=\"left\">Completed [(]Passed[)]</td>",
-        "<td align=\"right\"><a href=\".+\">1</a></td>",
-        "<td align=\"right\"><a href=\".+\">14</a></td>",
-        "<td align=\"right\"><a href=\".+\">1</a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"green\">1</font></a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"red\">14</font></a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"green\">1</font></a></td>",
         "<td align=\"right\"><a href=\".+\">#3640</a></td>",
 
         "<h3>Tests with issue trackers Missing: twim=2</h3>",
@@ -1282,22 +1326,22 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>",
         "<td align=\"left\">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</td>",
+        "<td align=\"left\"><font color=\"gray\">Missing</font></td>",
         "<td align=\"left\">Missing</td>",
-        "<td align=\"left\">Missing</td>",
-        "<td align=\"right\"><a href=\".+\">2</a></td>",
-        "<td align=\"right\"><a href=\".+\">1</a></td>",
-        "<td align=\"right\"><a href=\".+\">1</a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"gray\">2</font></a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"red\">1</font></a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"green\">1</font></a></td>",
         "<td align=\"right\"><a href=\".+\">#3632</a></td>",
 
         "<h3>Tests with issue trackers Failed: twif=5</h3>",
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
         "<td align=\"left\"><a href=\".+\">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>",
-        "<td align=\"left\"><a href=\".+\">Failed</a></td>",
+        "<td align=\"left\"><a href=\".+\"><font color=\"red\">Failed</font></a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
-        "<td align=\"right\"><a href=\".+\">15</a></td>",
-        "<td align=\"right\"><a href=\".+\">15</a></td>",
-        "<td align=\"right\"><a href=\".+\">0</a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"red\">15</font></a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"red\">15</font></a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"green\">0</font></a></td>",
         "<td align=\"right\"><a href=\".+\">#3632</a></td>",
 
         ],

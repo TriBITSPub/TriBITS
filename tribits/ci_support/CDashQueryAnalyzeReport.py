@@ -222,6 +222,19 @@ def removeElementsFromListGivenIndexes(list_inout, indexesToRemoveList_in):
     numRemoved += 1
   return list_inout
 
+
+#
+# CDash Specific stuff
+#
+
+
+def cdashColorPassed(): return 'green'
+def cdashColorFailed(): return 'red'
+def cdashColorNotRun(): return 'orange'
+def cdashColorMissing(): return 'gray'
+# ToDo: Make the above return different colors for a color-blind pallette
+
+
 # Given a CDash query URL PHP page that returns JSON data, return the JSON
 # data converged to a Python data-structure.
 #
@@ -1323,11 +1336,28 @@ class AddTestHistoryToTestDictFunctor(object):
     (testHistoryLOD, testHistoryStats, testStatus) = sortTestHistoryGetStatistics(
       testHistoryLOD, self.__date, daysOfHistory)
 
+    # Assert and update the status 
+
     if testStatus == "Missing":
       testDict['status'] = "Missing"
+      testDict['status_color'] = cdashColorMissing()
       testDict['details'] = "Missing"
     elif testStatus == "Passed":
       testDict.update(testHistoryLOD[0])
+      testDict['status_color'] = cdashColorPassed()
+    else:
+      if testDict['status'] != testStatus:
+        raise Exception(
+          "Error, non-passsing test testDict['status'] = '"+testDict['status']+\
+          "' != "+\
+          " top test history testStatus = '"+testStatus+"'"+\
+          " where:\n\n"+\
+          "   non-passing test dict = "+str(testDict)+"\n\n"+\
+          "   top test history dict = "+str(testHistoryLOD[0])+"\n\n" )
+      if testStatus == "Failed":
+        testDict['status_color'] = cdashColorFailed()
+      elif testStatus == "Not Run":
+        testDict['status_color'] = cdashColorNotRun()
 
     # ToDo: Lookup the matching build info so that we can get the buildstamp
     # in order to build a good link to the build on CDash?
@@ -1350,11 +1380,17 @@ class AddTestHistoryToTestDictFunctor(object):
     testDict['test_history_browser_url'] = testHistoryBrowserUrl
     testDict['test_history_list'] = testHistoryLOD
     testDict.update(testHistoryStats)
+    testDict['pass_last_x_days_color'] = cdashColorPassed()
     testDict['pass_last_x_days_url'] = testHistoryBrowserUrl
+    testDict['nopass_last_x_days_color'] = cdashColorFailed()
     testDict['nopass_last_x_days_url'] = testHistoryBrowserUrl
+    testDict['missing_last_x_days_color'] = cdashColorMissing()
     testDict['missing_last_x_days_url'] = testHistoryBrowserUrl
+    testDict['consec_pass_days_color'] = cdashColorPassed()
     testDict['consec_pass_days_url'] = testHistoryBrowserUrl
+    testDict['consec_nopass_days_color'] = cdashColorFailed()
     testDict['consec_nopass_days_url'] = testHistoryBrowserUrl
+    testDict['consec_missing_days_color'] = cdashColorMissing()
     testDict['consec_missing_days_url'] = testHistoryBrowserUrl
 
     if testDict.get('status', None) == None:
@@ -1616,9 +1652,13 @@ def colorHtmlText(htmlText, color_in):
     None # Okay!
   elif color_in == "green": 
     None # Okay!
+  elif color_in == "gray": 
+    None # Okay!
+  elif color_in == "orange": 
+    None # Okay!
   else:
     raise Exception("Error, color='"+color_in+"' is invalid."+\
-      "  Only 'red' and 'green' are supported!")
+      "  Only 'red', 'green', 'gray' and 'orange' are supported!")
   return("<font color=\""+color_in+"\">"+htmlText+"</font>")
 
 
@@ -1689,12 +1729,10 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
   # Rows for the table
   row_i = 0
   for rowData in rowDataList:
-    #print("\nrowData = "+str(rowData))
     htmlStr+="<tr>\n"
     col_j = 0
     for colData in colDataList:
       dictKey = colData.dictKey
-      #print("\ndictKey = "+dictKey)
       # Get the raw entry for this column
       entry = rowData.get(dictKey, None)
       if entry == None:
@@ -1702,18 +1740,19 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
           "Error, column "+str(col_j)+" dict key='"+colData.dictKey+"'"+\
           " row "+str(row_i)+" entry is 'None' which is not allowed!\n\n"+\
           "Row dict = "+str(rowData))  
+      # Add soft word breaks to allow line breaks for table compression
       entry = addHtmlSoftWordBreaks(str(entry).strip())
+      # Add color if defined for this field
+      entryColor = rowData.get(dictKey+"_color", None)
+      if entryColor:
+        entry = colorHtmlText(entry, entryColor) 
       # See if the _url key also exists
-      dictKey_url = dictKey+"_url"
-      #print("dictKey_url = "+dictKey_url)
-      entry_url = rowData.get(dictKey_url, None)
-      #print("entry_url = "+str(entry_url))
+      entry_url = rowData.get(dictKey+"_url", None)
       # Set the text for this row/column entry with or without the hyperlink
       if entry_url:
         entryStr = "<a href=\""+entry_url+"\">"+str(entry)+"</a>"
       else:
         entryStr = entry
-      #print("entryStr = "+entryStr)
       # Set the row entry in the HTML table
       htmlStr+=\
         "<td align=\""+colData.colAlign+"\">"+entryStr+"</td>\n"
@@ -1839,15 +1878,17 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
 def createCDashTestHtmlTableStr(
   testSetType,
   testTypeDescr, testTypeCountAcronym, testTypeCountNum, testsLOD,
-  daysOfHistory, limitRowsToDisplay=None,
+  daysOfHistory, limitRowsToDisplay=None, testSetColor="",
   htmlStyle=None, htmlTableStyle=None,
   ):
   # Return empty string if no tests
   if len(testsLOD) == 0:
      return ""
   # Table title
-  tableTitle = getCDashDataSummaryHtmlTableTitleStr(
-    testTypeDescr, testTypeCountAcronym, testTypeCountNum, limitRowsToDisplay )
+  tableTitle = colorHtmlText(
+    getCDashDataSummaryHtmlTableTitleStr(
+      testTypeDescr, testTypeCountAcronym, testTypeCountNum, limitRowsToDisplay ),
+    testSetColor )
   # Consecutive nopass/pass/missing column
   tcd = TableColumnData
   if testSetType == 'nopass':

@@ -313,7 +313,7 @@ class TestSetGetDataAnayzeReporter(object):
       testSetType,
       testSetDescr, testSetAcro, testSetTotalSize, testSetLOD,
       testSetNonzeroSizeTriggerGlobalFail=True,
-      colorTestSet=None,     # Change to "red" or "green"
+      colorTestSet=None,     # Change to one of the supported colors
       sortTests=True,
       limitTableRows=None,   # Change to 'int' > 0 to limit to this this
       getTestHistory=False,
@@ -363,7 +363,8 @@ class TestSetGetDataAnayzeReporter(object):
       self.overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         testSetType,
         testSetDescr, testSetAcro, testSetTotalSize, testSetSortedLimitedLOD,
-        self.inOptions.testHistoryDays, limitRowsToDisplay=limitTableRows )
+        self.inOptions.testHistoryDays, limitRowsToDisplay=limitTableRows,
+        testSetColor=colorTestSet )
 
 
 #
@@ -646,7 +647,7 @@ if __name__ == '__main__':
 
       overallVars.summaryLineDataNumbersList.append(bmeAcro+"="+str(bmeNum))
 
-      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bmeSummaryStr,'red')+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bmeSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
 
       bmeColDataList = [
         tcd("Group", 'group'),
@@ -686,7 +687,7 @@ if __name__ == '__main__':
 
       overallVars.summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
 
-      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(cSummaryStr,'red')+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(cSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
 
       cColDataList = [
         tcd("Group", 'group'),
@@ -726,7 +727,7 @@ if __name__ == '__main__':
 
       overallVars.summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
 
-      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bSummaryStr,'red')+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
 
       cColDataList = [
         tcd("Group", 'group'),
@@ -836,7 +837,7 @@ if __name__ == '__main__':
       "twoif",
       len(twoifLOD),
       twoifLOD,
-      colorTestSet='red',
+      colorTestSet=CDQAR.cdashColorFailed(),
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True,
       )
@@ -847,7 +848,7 @@ if __name__ == '__main__':
       "twoinr",
       len(twoinrLOD),
       twoinrLOD,
-      colorTestSet='red',
+      colorTestSet=CDQAR.cdashColorNotRun(),
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True,
       )
@@ -858,7 +859,7 @@ if __name__ == '__main__':
       "twip",
       len(twipLOD),
       twipLOD,
-      colorTestSet="green",
+      colorTestSet=CDQAR.cdashColorPassed(),
       limitTableRows=None,
       getTestHistory=False,  # Already got it above!
       )

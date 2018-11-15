@@ -1776,6 +1776,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['status'], 'Failed')
     self.assertEqual(testDict['details'], 'Completed (Failed)\n')
     self.assertEqual(testDict['status_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['status_color'], 'red')
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
     self.assertEqual(testDict['test_history_browser_url'], testHistoryBrowserUrl)
@@ -1791,16 +1792,21 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
       testDict['test_history_list'][4]['buildstarttime'], '2000-12-28T05:54:03 UTC')
     self.assertEqual(testDict['pass_last_x_days'], 2)
     self.assertEqual(testDict['pass_last_x_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['pass_last_x_days_color'], 'green')
     self.assertEqual(testDict['nopass_last_x_days'], 3)
     self.assertEqual(testDict['nopass_last_x_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['nopass_last_x_days_color'], 'red')
     self.assertEqual(testDict['missing_last_x_days'], 0)
     self.assertEqual(testDict['missing_last_x_days_url'], testHistoryBrowserUrl)
     self.assertEqual(testDict['consec_pass_days'], 0)
     self.assertEqual(testDict['consec_pass_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['consec_pass_days_color'], 'green')
     self.assertEqual(testDict['consec_nopass_days'], 2)
     self.assertEqual(testDict['consec_nopass_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['consec_nopass_days_color'], 'red')
     self.assertEqual(testDict['consec_missing_days'], 0)
     self.assertEqual(testDict['consec_missing_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['consec_missing_days_color'], 'gray')
     self.assertEqual(testDict['previous_nopass_date'], '2000-12-31')
     self.assertEqual(testDict['issue_tracker'], '#1234')
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
@@ -2325,13 +2331,22 @@ class test_colorHtmlText(unittest.TestCase):
     self.assertEqual(colorHtmlText("some text", "green"),
       "<font color=\"green\">some text</font>")
 
+  def test_gray(self):
+    self.assertEqual(colorHtmlText("some text", "gray"),
+      "<font color=\"gray\">some text</font>")
+
+  def test_orange(self):
+    self.assertEqual(colorHtmlText("some text", "orange"),
+      "<font color=\"orange\">some text</font>")
+
   def test_invalid(self):
     try:
       coloredText = colorHtmlText("some text", "badcolor")
       self.assertTrue(False)   # Should not get here!
     except Exception, errMsg:
       self.assertEqual(str(errMsg),
-        "Error, color='badcolor' is invalid.  Only 'red' and 'green' are supported!" )
+        "Error, color='badcolor' is invalid.  Only 'red', 'green',"+\
+        " 'gray' and 'orange' are supported!" )
 
 
 #############################################################################
@@ -2477,7 +2492,11 @@ tr:nth-child(odd) {background-color: #fff;}
       trdu(["r1d1","some.com/r1d1"], [1,"some.com/r1d2"], ["r1_d3","some.com/r1d3"]),
       trdu(["r2d1","some.com/r2d1"], [2,"some.com/r2d2"], ["r2_d3","some.com/r2d3"]),
       trdu(["r3d1","some.com/r3d1"], [3,"some.com/r3d2"], ["r3_d3","some.com/r3d3"]),
-      ]  # NOTE: Using '_' we test adding soft line breaks '_&shy;'!
+      ] # NOTE: Above, using '_' we test adding soft line breaks '_&shy;'
+    # Add some color
+    rowDataList[0]['key1_color'] = 'red'
+    rowDataList[2]['key2_color'] = 'green'
+    # Create the table
     htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList,
       htmlStyle="my_style",  # Test custom table style
       #htmlStyle=None,       # Uncomment to view this style
@@ -2502,7 +2521,7 @@ r"""<style>my_style</style>
 
 <tr>
 <td align="left"><a href="some.com/r1d3">r1_&shy;d3</a></td>
-<td align="left"><a href="some.com/r1d1">r1d1</a></td>
+<td align="left"><a href="some.com/r1d1"><font color="red">r1d1</font></a></td>
 <td align="right"><a href="some.com/r1d2">1</a></td>
 </tr>
 
@@ -2515,7 +2534,7 @@ r"""<style>my_style</style>
 <tr>
 <td align="left"><a href="some.com/r3d3">r3_&shy;d3</a></td>
 <td align="left"><a href="some.com/r3d1">r3d1</a></td>
-<td align="right"><a href="some.com/r3d2">3</a></td>
+<td align="right"><a href="some.com/r3d2"><font color="green">3</font></a></td>
 </tr>
 
 </table>
