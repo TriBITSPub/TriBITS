@@ -1624,7 +1624,7 @@ def colorHtmlText(htmlText, color_in):
 
 # Add soft word breaks for '_' chars and at other places to allow word wrap
 def addHtmlSoftWordBreaks(text_in):
-  text_out = text_in.replace('_', '&shy;_')
+  text_out = text_in.replace('_', '_&shy;')
   return text_out
 
 
