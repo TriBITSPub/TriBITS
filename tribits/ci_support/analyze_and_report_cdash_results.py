@@ -757,6 +757,8 @@ if __name__ == '__main__':
 
     # Test history cache dir
     testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
+    if not os.path.exists(testHistoryCacheDir):
+      os.mkdir(testHistoryCacheDir)
 
     # Object to make it easy to process the different test sets
     testSetGetDataAnayzeReporter = TestSetGetDataAnayzeReporter(inOptions,
