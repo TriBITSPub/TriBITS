@@ -2398,7 +2398,7 @@ class test_createHtmlTableStr(unittest.TestCase):
     htmlTable_expected = \
 r"""<style>my_style</style>
 <h3>My great data</h3>
-<table style="width:100%">
+<table style="width:100%" boarder="1">
 
 <tr>
 <th>Data 3</th>
@@ -2629,7 +2629,7 @@ tr:nth-child(even) {background-color: #eee;}
 tr:nth-child(odd) {background-color: #fff;}
 </style>
 <h3>Missing expected builds: bme=2</h3>
-<table style="width:100%">
+<table style="width:100%" boarder="1">
 
 <tr>
 <th>Group</th>

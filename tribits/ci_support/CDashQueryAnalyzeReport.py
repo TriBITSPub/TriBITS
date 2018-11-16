@@ -1688,7 +1688,10 @@ def addHtmlSoftWordBreaks(text_in):
 #   href="dataRowList[i].get(key_url)">dataRowList[i].get(key)</a>.
 #
 # htmlStyle [in]: The HTML style data (between <style></style>.  If None is
-# passed in then a default style is provided internally.
+# passed in then a default style is provided internally.  NOTE: The default
+# table style uses CSS formatting for boarders but also sets the <table>
+# 'boarder' property since some email clients like Gmail ignore the CSS style
+# sections.
 #
 # htmlTableStyle [in]: The style for the HTML table used in <table
 #   style=htmlTableStyle>.  If set to None, then a default style is used.  To
@@ -1717,7 +1720,7 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
   # Table title and <table style=...>
   htmlStr+="<h3>"+tableTitle+"</h3>\n"
   if htmlTableStyle != None: htmlTableStyleUsed = htmlTableStyle
-  else: htmlTableStyleUsed = "style=\"width:100%\""
+  else: htmlTableStyleUsed = "style=\"width:100%\" boarder=\"1\""
   htmlStr+="<table "+htmlTableStyleUsed+">\n\n"
 
   # Column headings:
