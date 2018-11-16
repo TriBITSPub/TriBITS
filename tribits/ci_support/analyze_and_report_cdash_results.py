@@ -424,7 +424,7 @@ if __name__ == '__main__':
     overallVars.htmlEmailBodyTop += "<p>\n"
 
     #
-    # D.1) Read data from input files
+    # D.1) Read data from input files, set up cache directories
     #
     # Assert this data is correct and abort if there is an error before we run
     # expensive CDash queries!
@@ -476,6 +476,12 @@ if __name__ == '__main__':
       testsWithIssueTrackersLOD, testsToExpectedBuildsSLOD)
     if not allTestsMatch:
       raise Exception(errMsg)
+
+    # Test history cache dir
+    testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
+    if not os.path.exists(testHistoryCacheDir):
+      print("\nCreating new test cache directory '"+testHistoryCacheDir+"'") 
+      os.mkdir(testHistoryCacheDir)
 
     #
     # D.2) Get top-level lists of build and nonpassing tests off CDash
@@ -754,11 +760,6 @@ if __name__ == '__main__':
 
     # Sort order for tests to display in tables
     testsSortOrder = ['testname', 'buildName', 'site']
-
-    # Test history cache dir
-    testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
-    if not os.path.exists(testHistoryCacheDir):
-      os.mkdir(testHistoryCacheDir)
 
     # Object to make it easy to process the different test sets
     testSetGetDataAnayzeReporter = TestSetGetDataAnayzeReporter(inOptions,
