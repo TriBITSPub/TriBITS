@@ -718,8 +718,8 @@ if __name__ == '__main__':
     buildsWithBuildFailuresLOD = \
       CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasBuildFailures)
 
-    bDescr = "Builds with build failures"
-    bAcro = "b"
+    bDescr = "Builds with Build Failures"
+    bAcro = "bf"
     bNum = len(buildsWithBuildFailuresLOD)
 
     bSummaryStr = \
