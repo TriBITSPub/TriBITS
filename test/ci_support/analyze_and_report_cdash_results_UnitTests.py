@@ -315,7 +315,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num tests with issue trackers gross passing or missing = 0",
 
         "Builds Missing: bm=0",
-        "Builds with configure failures: c=0",
+        "Builds with Configure Failures: cf=0",
         "Builds with build failures: b=0",
         "Num tests with issue trackers Passed = 0",
         "Num tests with issue trackers Missing = 0",
@@ -417,7 +417,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num tests with issue trackers gross passing or missing = 0",
 
         "Builds Missing: bm=0",
-        "Builds with configure failures: c=0",
+        "Builds with Configure Failures: cf=0",
         "Builds with build failures: b=0",
         "Num tests with issue trackers Passed = 0",
         "Num tests with issue trackers Missing = 0",
@@ -558,7 +558,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers Not Run = 1",
 
         "Builds Missing: bm=0",
-        "Builds with configure failures: c=0",
+        "Builds with Configure Failures: cf=0",
         "Builds with build failures: b=0",
 
         "Tests without issue trackers Failed: twoif=10",
@@ -702,7 +702,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Failed = 12",
         "Num nonpassing tests with issue trackers Failed = 9",
         "Builds Missing: bm=0",
-        "Builds with configure failures: c=0",
+        "Builds with Configure Failures: cf=0",
         "Builds with build failures: b=0",
         "Tests without issue trackers Failed: twoif=12",
         "Tests with issue trackers Failed: twif=9",
@@ -761,7 +761,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests without issue trackers Failed = 12",
         "Num nonpassing tests with issue trackers Failed = 9",
         "Builds Missing: bm=0",
-        "Builds with configure failures: c=0",
+        "Builds with Configure Failures: cf=0",
         "Builds with build failures: b=0",
         "Tests without issue trackers Failed: twoif=12",
         "Tests with issue trackers Failed: twif=9",
@@ -833,7 +833,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "--limit-table-rows=15",  # Check that this is read correctly
         ],
       1,
-      "FAILED (bm=2, c=1, b=2, twoif=12, twif=9): Project Specialized Builds on 2018-10-28",
+      "FAILED (bm=2, cf=1, b=2, twoif=12, twif=9): Project Specialized Builds on 2018-10-28",
       [
         "Num expected builds = 8",
         "Num tests with issue trackers = 9",
@@ -841,7 +841,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests direct from CDash query = 21",
         "Num nonpassing tests after removing duplicate tests = 21",
         "Builds Missing: bm=2",
-        "Builds with configure failures: c=1",
+        "Builds with Configure Failures: cf=1",
         "Builds with build failures: b=2",
         "Tests without issue trackers Failed: twoif=12",
         "Tests with issue trackers Failed: twif=9",
@@ -855,7 +855,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
         # Top listing of types of data/tables to be displayed below 
         "<font color=\"red\">Builds Missing: bm=2</font><br>",
-        "<font color=\"red\">Builds with configure failures: c=1</font><br>",
+        "<font color=\"red\">Builds with Configure Failures: cf=1</font><br>",
         "<font color=\"red\">Builds with build failures: b=2</font><br>",
         "<font color=\"red\">Tests without issue trackers Failed: twoif=12</font><br>",
         "Tests with issue trackers Failed: twif=9<br>",
@@ -884,7 +884,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "</table>",
 
         # 'c' table (Really pin this down)
-        "<h3>Builds with configure failures [(]limited to 15[)]: c=1</h3>",
+        "<h3>Builds with Configure Failures [(]limited to 15[)]: cf=1</h3>",
         "<table.*>",
         "<tr>",
         "<th>Group</th>",
@@ -982,7 +982,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers Not Run = 0",
         "Num tests with issue trackers gross passing or missing = 0",
         "Builds Missing: bm=0",
-        "Builds with configure failures: c=0",
+        "Builds with Configure Failures: cf=0",
         "Builds with build failures: b=0",
         "Tests without issue trackers Failed: twoif=0",
         "Tests with issue trackers Failed: twif=0",
@@ -1250,7 +1250,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num tests with issue trackers gross passing or missing = 6",
 
         "Builds Missing: bm=1",
-        "Builds with configure failures: c=0",
+        "Builds with Configure Failures: cf=0",
         "Builds with build failures: b=0",
 
         "Num tests with issue trackers passing or missing matching posted builds = 4",

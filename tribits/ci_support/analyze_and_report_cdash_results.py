@@ -678,8 +678,8 @@ if __name__ == '__main__':
     buildsWithConfigureFailuresLOD = \
       CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasConfigureFailures)
 
-    cDescr = "Builds with configure failures"
-    cAcro = "c"
+    cDescr = "Builds with Configure Failures"
+    cAcro = "cf"
     cNum = len(buildsWithConfigureFailuresLOD)
 
     cSummaryStr = \
