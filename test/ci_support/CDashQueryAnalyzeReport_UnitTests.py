@@ -652,12 +652,12 @@ class test_CDashQueryAnalyzeReport_UrlFuncs(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.collectCDashIndexBuildSummaryFields()
+# Test CDashQueryAnalyzeReport.extendCDashIndexBuildDict()
 #
 #############################################################################
 
 # This summary build has just the minimal required fields
-g_singleBuildPassesSummary = {
+g_singleBuildPassesExtended = {
   'group':'groupName',
   'site':'siteName',
   'buildname':"buildName",
@@ -665,6 +665,7 @@ g_singleBuildPassesSummary = {
   'configure':{'error': 0},
   'compilation':{'error':0},
   'test': {'fail':0, 'notrun':0},
+  'extra-stuff':'stuff',
   }
 
 # Single build with extra stuff
@@ -678,25 +679,25 @@ g_singleBuildPassesRaw = {
   'extra-stuff':'stuff',
   }
 
-class test_collectCDashIndexBuildSummaryFields(unittest.TestCase):
+class test_extendCDashIndexBuildDict(unittest.TestCase):
 
-  def test_collectCDashIndexBuildSummaryFields_full(self):
-    buildSummary = collectCDashIndexBuildSummaryFields(g_singleBuildPassesRaw, "groupName")
-    self.assertEqual(buildSummary, g_singleBuildPassesSummary)
+  def test_extendCDashIndexBuildDict_full(self):
+    buildSummary = extendCDashIndexBuildDict(g_singleBuildPassesRaw, "groupName")
+    self.assertEqual(buildSummary, g_singleBuildPassesExtended)
 
-  def test_collectCDashIndexBuildSummaryFields_missing_update(self):
+  def test_extendCDashIndexBuildDict_missing_update(self):
     fullCDashIndexBuild_in = copy.deepcopy(g_singleBuildPassesRaw)
     del fullCDashIndexBuild_in['update']
-    buildSummary = collectCDashIndexBuildSummaryFields(fullCDashIndexBuild_in, "groupName")
-    buildSummary_expected = copy.deepcopy(g_singleBuildPassesSummary)
+    buildSummary = extendCDashIndexBuildDict(fullCDashIndexBuild_in, "groupName")
+    buildSummary_expected = copy.deepcopy(g_singleBuildPassesExtended)
     del buildSummary_expected['update']
     self.assertEqual(buildSummary, buildSummary_expected)
 
-  def test_collectCDashIndexBuildSummaryFields_missing_configure(self):
+  def test_extendCDashIndexBuildDict_missing_configure(self):
     fullCDashIndexBuild_in = copy.deepcopy(g_singleBuildPassesRaw)
     del fullCDashIndexBuild_in['configure']
-    buildSummary = collectCDashIndexBuildSummaryFields(fullCDashIndexBuild_in, "groupName")
-    buildSummary_expected = copy.deepcopy(g_singleBuildPassesSummary)
+    buildSummary = extendCDashIndexBuildDict(fullCDashIndexBuild_in, "groupName")
+    buildSummary_expected = copy.deepcopy(g_singleBuildPassesExtended)
     del buildSummary_expected['configure']
     self.assertEqual(buildSummary, buildSummary_expected)
 
@@ -711,25 +712,27 @@ class test_collectCDashIndexBuildSummaryFields(unittest.TestCase):
 # make for better testing.
 g_fullCDashIndexBuildsJson = \
   eval(open(g_testBaseDir+'/cdash_index_query_data.json', 'r').read())
-#print("g_fullCDashIndexBuildsJson:")
+#print("\ng_fullCDashIndexBuildsJson:")
 #g_pp.pprint(g_fullCDashIndexBuildsJson)
 
 # This file was manually created from the above file to match what the reduced
 # builds should be.
-g_summaryCDashIndexBuilds_expected = \
+g_flattenedCDashIndexBuilds_expected = \
   eval(open(g_testBaseDir+'/cdash_index_query_data.flattened.json', 'r').read())
-#print("g_summaryCDashIndexBuilds_expected:")
-#g_pp.pprint(g_summaryCDashIndexBuilds_expected)
+#print("\ng_flattenedCDashIndexBuilds_expected:")
+#g_pp.pprint(g_flattenedCDashIndexBuilds_expected)
 
 class test_flattenCDashIndexBuildsToListOfDicts(unittest.TestCase):
 
   def test_flattenCDashIndexBuildsToListOfDicts(self):
-    summaryCDashIndexBuilds = flattenCDashIndexBuildsToListOfDicts(g_fullCDashIndexBuildsJson)
-    #pp.pprint(summaryCDashIndexBuilds)
+    flattendedCDashIndexBuilds = \
+      flattenCDashIndexBuildsToListOfDicts(g_fullCDashIndexBuildsJson)
+    #pp.pprint(flattendedCDashIndexBuilds)
     self.assertEqual(
-      len(summaryCDashIndexBuilds), len(g_summaryCDashIndexBuilds_expected))
-    for i in range(0, len(summaryCDashIndexBuilds)):
-      self.assertEqual(summaryCDashIndexBuilds[i], g_summaryCDashIndexBuilds_expected[i])
+      len(flattendedCDashIndexBuilds), len(g_flattenedCDashIndexBuilds_expected))
+    for i in range(0, len(flattendedCDashIndexBuilds)):
+      self.assertEqual(flattendedCDashIndexBuilds[i],
+        g_flattenedCDashIndexBuilds_expected[i])
 
 
 #############################################################################
@@ -1125,18 +1128,18 @@ class test_downloadBuildsOffCDashAndFlatten(unittest.TestCase):
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
        cdashIndexBuildsQueryUrl, g_fullCDashIndexBuildsJson )
     # Get the mock data off of CDash
-    summaryCDashIndexBuilds = downloadBuildsOffCDashAndFlatten(
+    flattendedCDashIndexBuilds = downloadBuildsOffCDashAndFlatten(
       cdashIndexBuildsQueryUrl,
       fullCDashIndexBuildsJsonCacheFile=None,
       useCachedCDashData=False,
       verbose=False,
       extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFunctor )
     # Assert the data returned is correct
-    #g_pp.pprint(summaryCDashIndexBuilds)
+    #g_pp.pprint(flattendedCDashIndexBuilds)
     self.assertEqual(
-      len(summaryCDashIndexBuilds), len(g_summaryCDashIndexBuilds_expected))
-    for i in range(0, len(summaryCDashIndexBuilds)):
-      self.assertEqual(summaryCDashIndexBuilds[i], g_summaryCDashIndexBuilds_expected[i])
+      len(flattendedCDashIndexBuilds), len(g_flattenedCDashIndexBuilds_expected))
+    for i in range(0, len(flattendedCDashIndexBuilds)):
+      self.assertEqual(flattendedCDashIndexBuilds[i], g_flattenedCDashIndexBuilds_expected[i])
 
 
 #############################################################################
@@ -2095,16 +2098,16 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 class test_buildHasConfigureFailures(unittest.TestCase):
 
   def test_has_no_configure_failures(self):
-    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    buildDict = copy.deepcopy(g_singleBuildPassesExtended)
     self.assertEqual(buildHasConfigureFailures(buildDict), False)
 
   def test_has_configure_failures(self):
-    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    buildDict = copy.deepcopy(g_singleBuildPassesExtended)
     buildDict['configure']['error'] = 1
     self.assertEqual(buildHasConfigureFailures(buildDict), True)
 
   def test_has_no_configure_results(self):
-    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    buildDict = copy.deepcopy(g_singleBuildPassesExtended)
     del buildDict['configure']
     self.assertEqual(buildHasConfigureFailures(buildDict), False)
 
@@ -2118,16 +2121,16 @@ class test_buildHasConfigureFailures(unittest.TestCase):
 class test_buildHasBuildFailures(unittest.TestCase):
 
   def test_has_no_build_failures(self):
-    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    buildDict = copy.deepcopy(g_singleBuildPassesExtended)
     self.assertEqual(buildHasBuildFailures(buildDict), False)
 
   def test_has_build_failures(self):
-    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    buildDict = copy.deepcopy(g_singleBuildPassesExtended)
     buildDict['compilation']['error'] = 1
     self.assertEqual(buildHasBuildFailures(buildDict), True)
 
   def test_has_no_build_results(self):
-    buildDict = copy.deepcopy(g_singleBuildPassesSummary)
+    buildDict = copy.deepcopy(g_singleBuildPassesExtended)
     del buildDict['compilation']
     self.assertEqual(buildHasBuildFailures(buildDict), False)
 

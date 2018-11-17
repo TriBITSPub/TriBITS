@@ -435,19 +435,19 @@ def copyKeyDictIfExists(sourceDict_in, keyName_in, dict_inout):
     dict_inout.update( { keyName_in : value } )
 
 
-# Collect CDash index.php build summary fields
+# Extend the set of fields for a CDash index.phpb build dict.
+#
+# buildDict_in [in]: The build dict gotten from cdash/index.php.  This will be
+# modified in place.
+#
+# Returns the modified build dict.
 #
 # Change this to get all of the fields and add the 'group' field as well.
 #
-def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild, groupName):
-  summaryBuild = { u'group' : groupName }
-  copyKeyDictIfExists(fullCDashIndexBuild, u'site', summaryBuild)
-  copyKeyDictIfExists(fullCDashIndexBuild, u'buildname', summaryBuild)
-  copyKeyDictIfExists(fullCDashIndexBuild, u'update', summaryBuild)
-  copyKeyDictIfExists(fullCDashIndexBuild, u'configure', summaryBuild)
-  copyKeyDictIfExists(fullCDashIndexBuild, u'compilation', summaryBuild)
-  copyKeyDictIfExists(fullCDashIndexBuild, u'test', summaryBuild)
-  return summaryBuild
+def extendCDashIndexBuildDict(buildDict_in, groupName):
+  buildDict = buildDict_in
+  buildDict[u'group'] = groupName
+  return buildDict
 
 
 # Given the full Python JSON data-structure returned from the page
@@ -515,7 +515,7 @@ def flattenCDashIndexBuildsToListOfDicts(fullCDashIndexBuildsJson):
   for buildgroup in fullCDashIndexBuildsJson["buildgroups"]:
     groupName = buildgroup["name"]
     for build in buildgroup["builds"]:
-      summaryBuild = collectCDashIndexBuildSummaryFields(build, groupName)
+      summaryBuild = extendCDashIndexBuildDict(build, groupName)
       summaryCDashIndexBuilds.append(summaryBuild)
   return summaryCDashIndexBuilds
 
