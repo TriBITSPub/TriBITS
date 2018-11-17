@@ -314,7 +314,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers Not Run = 0",
         "Num tests with issue trackers gross passing or missing = 0",
 
-        "Missing expected builds: bme=0",
+        "Builds Missing: bm=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
         "Num tests with issue trackers Passed = 0",
@@ -416,7 +416,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers Not Run = 0",
         "Num tests with issue trackers gross passing or missing = 0",
 
-        "Missing expected builds: bme=0",
+        "Builds Missing: bm=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
         "Num tests with issue trackers Passed = 0",
@@ -557,7 +557,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers Failed = 8",
         "Num nonpassing tests with issue trackers Not Run = 1",
 
-        "Missing expected builds: bme=0",
+        "Builds Missing: bm=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
 
@@ -701,7 +701,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers = 9",
         "Num nonpassing tests without issue trackers Failed = 12",
         "Num nonpassing tests with issue trackers Failed = 9",
-        "Missing expected builds: bme=0",
+        "Builds Missing: bm=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
         "Tests without issue trackers Failed: twoif=12",
@@ -760,7 +760,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers = 9",
         "Num nonpassing tests without issue trackers Failed = 12",
         "Num nonpassing tests with issue trackers Failed = 9",
-        "Missing expected builds: bme=0",
+        "Builds Missing: bm=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
         "Tests without issue trackers Failed: twoif=12",
@@ -787,9 +787,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
   # will become missing expected builds and we modfiy the dicts for a few
   # builds to change them from passing to failing.
   #
-  def test_bme_2_c_1_b_2_twoif_12_twif_9(self):
+  def test_bm_2_c_1_b_2_twoif_12_twif_9(self):
 
-    testCaseName = "bme_2_c_1_b_2_twoif_12_twif_9"
+    testCaseName = "bm_2_c_1_b_2_twoif_12_twif_9"
     buildSetName = "Project Specialized Builds"
 
     # Copy the raw files from CDash to get started
@@ -833,14 +833,14 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "--limit-table-rows=15",  # Check that this is read correctly
         ],
       1,
-      "FAILED (bme=2, c=1, b=2, twoif=12, twif=9): Project Specialized Builds on 2018-10-28",
+      "FAILED (bm=2, c=1, b=2, twoif=12, twif=9): Project Specialized Builds on 2018-10-28",
       [
         "Num expected builds = 8",
         "Num tests with issue trackers = 9",
         "Num builds = 6",
         "Num nonpassing tests direct from CDash query = 21",
         "Num nonpassing tests after removing duplicate tests = 21",
-        "Missing expected builds: bme=2",
+        "Builds Missing: bm=2",
         "Builds with configure failures: c=1",
         "Builds with build failures: b=2",
         "Tests without issue trackers Failed: twoif=12",
@@ -854,14 +854,14 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
 
         # Top listing of types of data/tables to be displayed below 
-        "<font color=\"red\">Missing expected builds: bme=2</font><br>",
+        "<font color=\"red\">Builds Missing: bm=2</font><br>",
         "<font color=\"red\">Builds with configure failures: c=1</font><br>",
         "<font color=\"red\">Builds with build failures: b=2</font><br>",
         "<font color=\"red\">Tests without issue trackers Failed: twoif=12</font><br>",
         "Tests with issue trackers Failed: twif=9<br>",
         
-        # 'bme' table (Really pin down this table)
-        "<h3>Missing expected builds: bme=2</h3>",
+        # 'bm' table (Really pin down this table)
+        "<h3>Builds Missing: bm=2</h3>",
         "<table.*>",  # NOTE: Other unit test code checks the default style!
         "<tr>",
         "<th>Group</th>",
@@ -928,7 +928,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
        ],
       #verbose=True,
       )
-  # NOTE: That above test really pin down the contents of the 'bme', 'c', and
+  # NOTE: That above test really pin down the contents of the 'bm', 'c', and
   # 'b' tables.  Other tests will not do that to avoid duplication in testing.
 
 
@@ -981,7 +981,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers Failed = 0",
         "Num nonpassing tests with issue trackers Not Run = 0",
         "Num tests with issue trackers gross passing or missing = 0",
-        "Missing expected builds: bme=0",
+        "Builds Missing: bm=0",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
         "Tests without issue trackers Failed: twoif=0",
@@ -1233,7 +1233,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       testCaseName,
       ["--limit-test-history-days=30"], # Test that you can set this as int
       1,
-      "FAILED (bme=1, twoif=12, twip=2, twim=2, twif=5):"+\
+      "FAILED (bm=1, twoif=12, twip=2, twim=2, twif=5):"+\
         " ProjectName Nightly Builds on 2018-10-28",
       [
         "Num expected builds = 7",
@@ -1249,7 +1249,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "Num nonpassing tests with issue trackers Not Run = 0",
         "Num tests with issue trackers gross passing or missing = 6",
 
-        "Missing expected builds: bme=1",
+        "Builds Missing: bm=1",
         "Builds with configure failures: c=0",
         "Builds with build failures: b=0",
 

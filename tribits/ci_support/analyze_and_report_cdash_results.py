@@ -628,7 +628,7 @@ if __name__ == '__main__':
     #
 
     #
-    # 'bme'
+    # 'bm'
     #
 
     print("\nSearch for any missing expected builds ...\n")
@@ -638,24 +638,24 @@ if __name__ == '__main__':
     #print("\nmissingExpectedBuildsLOD:")
     #pp.pprint(missingExpectedBuildsLOD)
 
-    bmeDescr = "Missing expected builds"
-    bmeAcro = "bme"
-    bmeNum = len(missingExpectedBuildsLOD)
+    bmDescr = "Builds Missing"
+    bmAcro = "bm"
+    bmNum = len(missingExpectedBuildsLOD)
 
-    bmeSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(bmeDescr,  bmeAcro, bmeNum)
+    bmSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(bmDescr,  bmAcro, bmNum)
 
-    print(bmeSummaryStr)
+    print(bmSummaryStr)
 
-    if bmeNum > 0:
+    if bmNum > 0:
 
       overallVars.globalPass = False
 
-      overallVars.summaryLineDataNumbersList.append(bmeAcro+"="+str(bmeNum))
+      overallVars.summaryLineDataNumbersList.append(bmAcro+"="+str(bmNum))
 
-      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bmeSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
+      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bmSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
 
-      bmeColDataList = [
+      bmColDataList = [
         tcd("Group", 'group'),
         tcd("Site", 'site'),
         tcd("Build Name", 'buildname'),
@@ -663,7 +663,7 @@ if __name__ == '__main__':
         ]
 
       overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-         bmeDescr,  bmeAcro, bmeColDataList, missingExpectedBuildsLOD,
+         bmDescr,  bmAcro, bmColDataList, missingExpectedBuildsLOD,
         groupSiteBuildNameSortOrder, None )
       # NOTE: Above we don't want to limit any missing builds in this table
       # because that data is not shown on CDash and that list will never be
