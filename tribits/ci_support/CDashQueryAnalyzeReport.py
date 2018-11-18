@@ -1338,6 +1338,9 @@ class AddTestHistoryToTestDictFunctor(object):
 
     # Assert and update the status 
 
+    #print("\ntestStatus = "+str(testStatus))
+    #print("\ntestHistoryLOD[0] = "+str(testHistoryLOD[0]))
+
     if testStatus == "Missing":
       testDict['status'] = "Missing"
       testDict['status_color'] = cdashColorMissing()
@@ -1346,14 +1349,29 @@ class AddTestHistoryToTestDictFunctor(object):
       testDict.update(testHistoryLOD[0])
       testDict['status_color'] = cdashColorPassed()
     else:
-      if testDict['status'] != testStatus:
+      # If we get here, there should be at least one test dict in
+      # testHistoryLOD and this should be a Failed or Not Run test
+      # testHistoryLOD[0] should be an exact duplicate of testDict.  The below
+      # check confirms that to make sure that CDash is giving us consistent
+      # data.
+      if testDict.get('status', None) != testStatus:
         raise Exception(
-          "Error, non-passsing test testDict['status'] = '"+testDict['status']+\
-          "' != "+\
-          " top test history testStatus = '"+testStatus+"'"+\
+          "Error, test testDict['status'] = '"+str(testDict.get('status',None))+"'"+\
+          " != "+\
+          "top test history testStatus = '"+testStatus+"'"+\
           " where:\n\n"+\
-          "   non-passing test dict = "+str(testDict)+"\n\n"+\
-          "   top test history dict = "+str(testHistoryLOD[0])+"\n\n" )
+          "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
+          "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
+      if testDict.get('buildstarttime', None) != testHistoryLOD[0]['buildstarttime']:
+        raise Exception(
+          "Error, testDict['buildstarttime'] = '"+\
+          str(testDict.get('buildstarttime',None))+"'"+\
+          " != "+\
+          "top test history 'buildstarttime' = "+\
+          "'"+testHistoryLOD[0]['buildstarttime']+"'"+\
+          " where:\n\n"+\
+          "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
+          "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
       if testStatus == "Failed":
         testDict['status_color'] = cdashColorFailed()
       elif testStatus == "Not Run":
