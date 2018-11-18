@@ -906,7 +906,7 @@ if __name__ == '__main__':
     sys.stdout.flush()
     traceback.print_exc()
     # Report the error
-    overallVars.htmlEmailBodyTop += "\n<pre><code>\n"+\
+    overallVars.htmlEmailBodyBottom += "\n<pre><code>\n"+\
       traceback.format_exc()+"\n</code></pre>\n"
     print("\nError, could not compute the analysis due to"+\
       " above error so return failed!")
