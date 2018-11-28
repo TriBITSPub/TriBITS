@@ -355,7 +355,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<th>Status</th>",
         "<th>Details</th>",
         "<th>Consec&shy;utive Non-pass Days</th>",
-        "<th>No-pass Last 30 Days</th>",
+        "<th>Non-pass Last 30 Days</th>",
         "<th>Pass Last 30 Days</th>",
         "<th>Tracker</th>",
         # Pin down the first row of this table (pin down this first row
@@ -1297,7 +1297,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<th>Status</th>",
         "<th>Details</th>",
         "<th>Consec&shy;utive Pass Days</th>",
-        "<th>No-pass Last 30 Days</th>",
+        "<th>Non-pass Last 30 Days</th>",
         "<th>Pass Last 30 Days</th>",
         "<th>Tracker</th>",
         # Pin down first row
@@ -1319,7 +1319,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<th>Status</th>",
         "<th>Details</th>",
         "<th>Consec&shy;utive Missing Days</th>",
-        "<th>No-pass Last 30 Days</th>",
+        "<th>Non-pass Last 30 Days</th>",
         "<th>Pass Last 30 Days</th>",
         "<th>Tracker</th>",
         # Pin down first row

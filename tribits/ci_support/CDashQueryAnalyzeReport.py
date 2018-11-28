@@ -1928,7 +1928,7 @@ def createCDashTestHtmlTableStr(
     tcd("Status", "status"),
     tcd("Details", "details"),
     consecCol,
-    tcd("No-pass Last "+str(daysOfHistory)+" Days", 'nopass_last_x_days', "right"),
+    tcd("Non-pass Last "+str(daysOfHistory)+" Days", 'nopass_last_x_days', "right"),
     tcd("Pass Last "+str(daysOfHistory)+" Days", 'pass_last_x_days', "right"),
     tcd("Tracker", "issue_tracker", "right"),
     ]
