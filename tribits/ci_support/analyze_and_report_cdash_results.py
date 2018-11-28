@@ -554,7 +554,7 @@ if __name__ == '__main__':
     # HTML line "Nonpassing Tests on CDash"
     overallVars.htmlEmailBodyTop += \
      "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
-     "Nonpassing Tests on CDash</a> (num="+str(len(nonpassingTestsLOD))+")<br>\n"
+     "Non-passing Tests on CDash</a> (num="+str(len(nonpassingTestsLOD))+")<br>\n"
   
     # End of full build and test link paragraph and start the next paragraph
     # for the summary of failures and other tables

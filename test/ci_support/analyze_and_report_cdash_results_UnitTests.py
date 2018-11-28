@@ -337,7 +337,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         # First paragraph with with links to build and nonpassing tests results on cdsah
         "<p>",
         "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
-        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Non-passing Tests on CDash</a> [(]num=21[)]<br>",
         "</p>",
 
         # Second paragraph with listing of different types of tables below
@@ -354,9 +354,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<th>Test Name</th>",
         "<th>Status</th>",
         "<th>Details</th>",
-        "<th>Consec&shy;utive Days Nopass</th>",
-        "<th>Nopass last 30 Days</th>",
-        "<th>Pass last 30 Days</th>",
+        "<th>Consec&shy;utive Non-pass Days</th>",
+        "<th>No-pass Last 30 Days</th>",
+        "<th>Pass Last 30 Days</th>",
         "<th>Tracker</th>",
         # Pin down the first row of this table (pin down this first row
         "<tr>",
@@ -432,7 +432,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         # First paragraph with with links to build and nonpassing tests results on cdsah
         "<p>",
         "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
-        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Non-passing Tests on CDash</a> [(]num=21[)]<br>",
         "</p>",
 
         # Second paragraph with listing of different types of tables below
@@ -851,7 +851,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
         # Links to build and non-passing tests
         "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
-        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=21[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Non-passing Tests on CDash</a> [(]num=21[)]<br>",
 
         # Top listing of types of data/tables to be displayed below 
         "<font color=\"red\">Builds Missing: bm=2</font><br>",
@@ -993,7 +993,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         # Links to build and non-passing tests
         "<p>",
         "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
-        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Nonpassing Tests on CDash</a> [(]num=0[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Non-passing Tests on CDash</a> [(]num=0[)]<br>",
         "</p>",
        ],
       #verbose=True,
@@ -1296,9 +1296,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<th>Test Name</th>",
         "<th>Status</th>",
         "<th>Details</th>",
-        "<th>Consec&shy;utive Days Pass</th>",
-        "<th>Nopass last 30 Days</th>",
-        "<th>Pass last 30 Days</th>",
+        "<th>Consec&shy;utive Pass Days</th>",
+        "<th>No-pass Last 30 Days</th>",
+        "<th>Pass Last 30 Days</th>",
         "<th>Tracker</th>",
         # Pin down first row
         "<td align=\"left\">cee-rhel6</td>",
@@ -1318,9 +1318,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<th>Test Name</th>",
         "<th>Status</th>",
         "<th>Details</th>",
-        "<th>Consec&shy;utive Days Missing</th>",
-        "<th>Nopass last 30 Days</th>",
-        "<th>Pass last 30 Days</th>",
+        "<th>Consec&shy;utive Missing Days</th>",
+        "<th>No-pass Last 30 Days</th>",
+        "<th>Pass Last 30 Days</th>",
         "<th>Tracker</th>",
         # Pin down first row
         "<td align=\"left\">cee-rhel6</td>",

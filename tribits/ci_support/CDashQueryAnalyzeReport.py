@@ -1913,11 +1913,11 @@ def createCDashTestHtmlTableStr(
   # Consecutive nopass/pass/missing column
   tcd = TableColumnData
   if testSetType == 'nopass':
-    consecCol = tcd("Consec&shy;utive Days Nopass", 'consec_nopass_days', 'right')
+    consecCol = tcd("Consec&shy;utive Non-pass Days", 'consec_nopass_days', 'right')
   elif testSetType == 'pass':
-    consecCol = tcd("Consec&shy;utive Days Pass", 'consec_pass_days', 'right')
+    consecCol = tcd("Consec&shy;utive Pass Days", 'consec_pass_days', 'right')
   elif testSetType == 'missing':
-    consecCol = tcd("Consec&shy;utive Days Missing", 'consec_missing_days', 'right')
+    consecCol = tcd("Consec&shy;utive Missing Days", 'consec_missing_days', 'right')
   else:
     raise Exception("Error, invalid testSetType="+str(testSetType))
   # Create column headers
@@ -1928,8 +1928,8 @@ def createCDashTestHtmlTableStr(
     tcd("Status", "status"),
     tcd("Details", "details"),
     consecCol,
-    tcd("Nopass last "+str(daysOfHistory)+" Days", 'nopass_last_x_days', "right"),
-    tcd("Pass last "+str(daysOfHistory)+" Days", 'pass_last_x_days', "right"),
+    tcd("No-pass Last "+str(daysOfHistory)+" Days", 'nopass_last_x_days', "right"),
+    tcd("Pass Last "+str(daysOfHistory)+" Days", 'pass_last_x_days', "right"),
     tcd("Tracker", "issue_tracker", "right"),
     ]
   # Return the HTML table
