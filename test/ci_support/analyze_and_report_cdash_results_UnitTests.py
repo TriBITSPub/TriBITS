@@ -336,7 +336,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
         # First paragraph with with links to build and nonpassing tests results on cdsah
         "<p>",
-        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num/expected=6/6[)]<br>",
         "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Non-passing Tests on CDash</a> [(]num=21[)]<br>",
         "</p>",
 
@@ -431,7 +431,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
         # First paragraph with with links to build and nonpassing tests results on cdsah
         "<p>",
-        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num/expected=6/0[)]<br>",
         "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Non-passing Tests on CDash</a> [(]num=21[)]<br>",
         "</p>",
 
@@ -850,7 +850,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<h2>Build and Test results for Project Specialized Builds on 2018-10-28</h2>",
 
         # Links to build and non-passing tests
-        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num/expected=6/8[)]<br>",
         "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Non-passing Tests on CDash</a> [(]num=21[)]<br>",
 
         # Top listing of types of data/tables to be displayed below 
@@ -992,7 +992,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
         # Links to build and non-passing tests
         "<p>",
-        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num=6[)]<br>",
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num/expected=6/6[)]<br>",
         "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Non-passing Tests on CDash</a> [(]num=0[)]<br>",
         "</p>",
        ],

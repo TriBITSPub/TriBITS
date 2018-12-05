@@ -515,7 +515,8 @@ if __name__ == '__main__':
     # HTML line "Builds on CDash" 
     overallVars.htmlEmailBodyTop += \
      "<a href=\""+cdashIndexBuildsBrowserUrl+"\">"+\
-     "Builds on CDash</a> (num="+str(len(buildsLOD))+")<br>\n"
+     "Builds on CDash</a> (num/expected="+\
+     str(len(buildsLOD))+"/"+str(len(expectedBuildsLOD))+")<br>\n"
 
     # Create a SearchableListOfDict object to help look up builds given a
     # build dict by key/value pairs 'group', 'site', and 'buildname' (requires
