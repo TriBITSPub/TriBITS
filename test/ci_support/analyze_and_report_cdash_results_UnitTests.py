@@ -357,7 +357,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<th>Consec&shy;utive Non-pass Days</th>",
         "<th>Non-pass Last 30 Days</th>",
         "<th>Pass Last 30 Days</th>",
-        "<th>Tracker</th>",
+        "<th>Issue Tracker</th>",
         # Pin down the first row of this table (pin down this first row
         "<tr>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
@@ -1299,7 +1299,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<th>Consec&shy;utive Pass Days</th>",
         "<th>Non-pass Last 30 Days</th>",
         "<th>Pass Last 30 Days</th>",
-        "<th>Tracker</th>",
+        "<th>Issue Tracker</th>",
         # Pin down first row
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
@@ -1321,7 +1321,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         "<th>Consec&shy;utive Missing Days</th>",
         "<th>Non-pass Last 30 Days</th>",
         "<th>Pass Last 30 Days</th>",
-        "<th>Tracker</th>",
+        "<th>Issue Tracker</th>",
         # Pin down first row
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>",

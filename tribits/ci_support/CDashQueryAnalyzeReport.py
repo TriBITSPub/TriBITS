@@ -1930,7 +1930,7 @@ def createCDashTestHtmlTableStr(
     consecCol,
     tcd("Non-pass Last "+str(daysOfHistory)+" Days", 'nopass_last_x_days', "right"),
     tcd("Pass Last "+str(daysOfHistory)+" Days", 'pass_last_x_days', "right"),
-    tcd("Tracker", "issue_tracker", "right"),
+    tcd("Issue Tracker", "issue_tracker", "right"),
     ]
   # Return the HTML table
   return createHtmlTableStr( tableTitle,
