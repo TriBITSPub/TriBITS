@@ -224,6 +224,27 @@ def removeElementsFromListGivenIndexes(list_inout, indexesToRemoveList_in):
 
 
 #
+# Class CsvFileStructure
+#
+
+class CsvFileStructure(object):
+
+  def __init__(self, headersList, rowsList):
+    self.headersList = headersList
+    self.rowsList = rowsList
+
+
+#
+# Write a CsvFileStructure data to a string
+#
+
+def writeCsvFileStructureToStr(csvFileStruct):
+  csvFileStr = ", ".join(csvFileStruct.headersList)+"\n"
+  for rowFieldsList in csvFileStruct.rowsList:
+    csvFileStr += ", ".join(rowFieldsList)+"\n"
+  return csvFileStr
+
+#
 # CDash Specific stuff
 #
 
@@ -330,10 +351,42 @@ def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
     ['group', 'site', 'buildname'])
 
 
+# Headers for basic CSV file
+g_testsWithIssueTrackersCsvFileHeaders = \
+  ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker')
+
+
 # Get list of tests from CSV file
 def getTestsWtihIssueTrackersListFromCsvFile(testsWithIssueTrackersFile):
   return readCsvFileIntoListOfDicts(testsWithIssueTrackersFile,
-      ['site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'])
+    g_testsWithIssueTrackersCsvFileHeaders)
+
+
+# Write list of tests from a Tests LOD to a CSV file structure meant to match
+# tests with issue trackers CSV file.
+#
+def writeTestsLODToCsvFileStructure(testsLOD):
+  csvFileHeadersList = copy.deepcopy(g_testsWithIssueTrackersCsvFileHeaders)
+  csvFileRowsList = []
+  for testDict in testsLOD:
+    csvFileRow = (
+      testDict['site'], 
+      testDict['buildName'], 
+      testDict['testname'],
+      "",  # issue_tracker_url
+      "",  # issue_tracker
+      )
+    csvFileRowsList.append(csvFileRow)
+  return CsvFileStructure(csvFileHeadersList, csvFileRowsList)
+
+
+# Write list of tests from a Tests LOD to a CSV file meant to match tests with
+# issue trackers CSV file.
+#
+def writeTestsLODToCsvFile(testsLOD, csvFileName):
+  csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+  with open(csvFileName, 'w') as csvFile:
+    csvFile.write(writeCsvFileStructureToStr(csvFileStruct))
 
 
 # Print print a nested Python data-structure to a file

@@ -189,6 +189,13 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     clp )
 
   clp.add_option(
+    "--write-failing-tests-without-issue-trackers-to-file",
+    dest="writeFailingTestsWithoutIssueTrackersToFile", type="string", default="",
+    help="Write CSV file with a list of tets with issue trackers failed 'twif'." \
+    +"  This is to make it easy to add new entires to the file read by" \
+    +" the option --tests-with-issue-trackers-file=<file>. [default = '']" )
+
+  clp.add_option(
     "--write-email-to-file", dest="writeEmailToFile", type="string", default="",
     help="Write the body of the HTML email to this file. [default = '']" )
 
@@ -255,6 +262,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --limit-test-history-days='"+str(inOptions.expectedBuildsFile)+"'"+lt+\
     "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
     "  --print-details='"+inOptions.printDetailsStr+"'"+lt+\
+    "  --write-failing-tests-without-issue-trackers-to-file='"+inOptions.writeFailingTestsWithoutIssueTrackersToFile+"'"+lt+\
     "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt+\
     "  --email-from-address='"+inOptions.emailFromAddress+"'"+lt+\
     "  --send-email-to='"+inOptions.sendEmailTo+"'"+lt
@@ -900,6 +908,18 @@ if __name__ == '__main__':
       limitTableRows=None,
       getTestHistory=True,
       )
+
+    #
+    # D.6) Write out list twiof to CSV file
+    #
+
+    if inOptions.writeFailingTestsWithoutIssueTrackersToFile:
+
+      twoifCsvFileName = inOptions.writeFailingTestsWithoutIssueTrackersToFile
+
+      print("\nWriting list of 'twiof' to file "+twoifCsvFileName+" ...")
+
+      CDQAR.writeTestsLODToCsvFile(twoifLOD, twoifCsvFileName)
 
   except Exception:
     # Traceback!

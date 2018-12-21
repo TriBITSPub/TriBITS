@@ -489,6 +489,52 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.writeCsvFileStructureToStr()
+#
+#############################################################################
+
+class test_writeCsvFileStructureToStr(unittest.TestCase):
+
+  def test_rows_0(self):
+    csvFileStruct = CsvFileStructure(
+      ('field1', 'field2', 'field3', 'field4', ),
+      ()
+      )
+    csvFileStr = writeCsvFileStructureToStr(csvFileStruct)
+    csvFileStr_expected = \
+      "field1, field2, field3, field4\n"
+    self.assertEqual(csvFileStr, csvFileStr_expected)
+
+  def test_rows_1(self):
+    csvFileStruct = CsvFileStructure(
+      ('field1', 'field2', 'field3', 'field4', ),
+      [ ('dat11', 'dat12', '', '') ]
+      )
+    csvFileStr = writeCsvFileStructureToStr(csvFileStruct)
+    csvFileStr_expected = \
+      "field1, field2, field3, field4\n" + \
+      "dat11, dat12, , \n"
+    self.assertEqual(csvFileStr, csvFileStr_expected)
+
+  def test_rows_3(self):
+    csvFileStruct = CsvFileStructure(
+      ('field1', 'field2', 'field3', 'field4', ),
+      [ ('dat11', 'dat12', '', ''),
+        ('', 'dat22', '', 'dat24'),
+        ('dat31', '', '', 'dat44'),
+        ]
+      )
+    csvFileStr = writeCsvFileStructureToStr(csvFileStruct)
+    csvFileStr_expected = \
+      "field1, field2, field3, field4\n"+\
+      "dat11, dat12, , \n"+\
+      ", dat22, , dat24\n"+\
+      "dat31, , , dat44\n"
+    self.assertEqual(csvFileStr, csvFileStr_expected)
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.getExpectedBuildsListfromCsvFile()
 #
 #############################################################################
@@ -514,6 +560,54 @@ class test_getExpectedBuildsListfromCsvFile(unittest.TestCase):
     self.assertEqual(len(expectedBuildsList), 3)
     for i in range(len(expectedBuildsList_expected)):
       self.assertEqual(expectedBuildsList[i], expectedBuildsList_expected[i])
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.writeTestsLODToCsvFileStructure()
+#
+#############################################################################
+
+class test_writeTestsLODToCsvFileStructure(unittest.TestCase):
+
+  def test_tests_0(self):
+    testsLOD = []
+    csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+    csvFileStruct_expected = CsvFileStructure(
+      ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'),
+      [] )
+    self.assertEqual(csvFileStruct.headersList, csvFileStruct_expected.headersList)
+    self.assertEqual(csvFileStruct.rowsList, csvFileStruct_expected.rowsList)
+
+  def test_tests_1(self):
+    testsLOD = [
+      {'site':'site1', 'buildName':'build1', 'testname':'test1'},
+      ]
+    csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+    csvFileStruct_expected = CsvFileStructure(
+      ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'),
+      [ ('site1', 'build1', 'test1', '', '' ),
+        ]
+      )
+    self.assertEqual(csvFileStruct.headersList, csvFileStruct_expected.headersList)
+    self.assertEqual(csvFileStruct.rowsList, csvFileStruct_expected.rowsList)
+
+  def test_tests_3(self):
+    testsLOD = [
+      {'site':'site1', 'buildName':'build1', 'testname':'test1'},
+      {'site':'site3', 'buildName':'build3', 'testname':'test3'},
+      {'site':'site2', 'buildName':'build2', 'testname':'test2'},
+      ]
+    csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+    csvFileStruct_expected = CsvFileStructure(
+      ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'),
+      [ ('site1', 'build1', 'test1', '', '' ),
+        ('site3', 'build3', 'test3', '', '' ),
+        ('site2', 'build2', 'test2', '', '' ),
+        ]
+      )
+    self.assertEqual(csvFileStruct.headersList, csvFileStruct_expected.headersList)
+    self.assertEqual(csvFileStruct.rowsList, csvFileStruct_expected.rowsList)
 
 
 #############################################################################

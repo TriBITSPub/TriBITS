@@ -543,7 +543,10 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     analyze_and_report_cdash_results_run_case(
       self,
       testCaseName,
-      ["--limit-test-history-days=30"], # Test that you can set this as int
+      [
+        "--limit-test-history-days=30",   # Test that you can set this as int
+        "--write-failing-tests-without-issue-trackers-to-file=twoif.csv"
+        ],
       1,
       "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2018-10-28",
       [
@@ -664,6 +667,33 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       #verbose=True,
       #debugPrint=True,
       )
+
+    # Read the written file 'twoif.csv' and verify that it is correct
+    twoifCsvLOD = \
+      CDQAR.getTestsWtihIssueTrackersListFromCsvFile(testOutputDir+"/twoif.csv")
+    self.assertEqual(len(twoifCsvLOD), 10)
+    self.assertEqual(twoifCsvLOD[0],
+      {
+        'site': 'mutrino',
+        'buildName': 'Trilinos-atdm-mutrino-intel-opt-openmp-KNL',
+        'testname': 'Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1',
+        'issue_tracker_url': '',
+        'issue_tracker': '',
+        }
+      )
+    self.assertEqual(twoifCsvLOD[9],
+      {
+        'site': 'waterman',
+        'buildName': 'Trilinos-atdm-waterman-cuda-9.2-release-debug',
+        'testname': 'Teko_testdriver_tpetra_MPI_4',
+        'issue_tracker_url': '',
+        'issue_tracker': '',
+        }
+      )
+    # NOTE: Don't need to bother checking other entires.  There are good unit
+    # tests for the guts of what is being called.  Just want to macke sure the
+    # right number of tests are being written and the first and last are
+    # correct.
 
 
   # Test with some duplicate tests from CDash query (this happens in real life
