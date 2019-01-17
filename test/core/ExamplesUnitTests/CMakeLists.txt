@@ -449,6 +449,32 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_Shared_NoVersion
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DBUILD_SHARED_LIBS=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_1 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target hello_world_lib"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_2 CMND ls ARGS hello_world
+    PASS_REGULAR_EXPRESSION_ALL
+      "libhello_world_lib[.]so"
+    FAIL_REGULAR_EXPRESSION
+      "libhello_world_lib[.]so[.]SOVERSION"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  )
+
+
 ########################################################################
 # TribitsExampleProject
 ########################################################################
@@ -2255,7 +2281,24 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
       "Built target static_only_lib"
       "Linking CXX executable MixedSharedStaticLibsSharedOnly_test"
       "Linking CXX executable MixedSharedStaticLibsStaticExec_test"
-  TEST_5 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+
+  TEST_5 CMND ls ARGS packages/simple_cxx/src
+    PASS_REGULAR_EXPRESSION_ALL
+      "libsimplecxx[.]so"
+      "libsimplecxx[.]so[.]01"
+      "libsimplecxx[.]so[.]1[.]1"
+
+  TEST_6 CMND ls ARGS MixedSharedStaticLibs/shared_only
+    PASS_REGULAR_EXPRESSION_ALL
+      "libshared_only_lib[.]so"
+      "libshared_only_lib[.]so[.]01"
+      "libshared_only_lib[.]so[.]1[.]1"
+
+  TEST_7 CMND ls ARGS MixedSharedStaticLibs/static_only
+    PASS_REGULAR_EXPRESSION_ALL
+      "libstatic_only_lib[.]a"
+
+  TEST_8 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     PASS_REGULAR_EXPRESSION_ALL
       "MixedSharedStaticLibsSharedOnly_test.* Passed"
       "MixedSharedStaticLibsStaticExec_test.* Passed"
@@ -2264,7 +2307,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
   )
   # NOTE: The above test make sure that you can build a static library with
   # TRIBITS_ADD_LIBRARY( ... STATIC ...) in project that is defaulted to use
-  # shared libs with BUILD_SHARED_LIBS=ON.
+  # shared libs with BUILD_SHARED_LIBS=ON.  This also tests that the correct
+  # soversion links are created as well.
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
