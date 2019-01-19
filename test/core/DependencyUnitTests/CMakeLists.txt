@@ -571,8 +571,8 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   ARGS -DTrilinos_ENABLE_EpetraExt:BOOL=ON -DTrilinos_ENABLE_AztecOO:BOOL=OFF
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "WARNING: Not Setting Trilinos_ENABLE_Belos=ON even though Stratimikos has an optional dependence on Belos because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
-    "WARNING: Not Setting Trilinos_ENABLE_Sacado=ON even though Intrepid has an optional dependence on Sacado because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
+    "NOTE: Not Setting Trilinos_ENABLE_Belos=ON even though Stratimikos has an optional dependence on Belos because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
+    "NOTE: Not Setting Trilinos_ENABLE_Sacado=ON even though Intrepid has an optional dependence on Sacado because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
     "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 17"
   )
 
@@ -666,7 +666,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     "Explicitly enabled packages on input .by user.:  Thyra 1"
     "Explicitly enabled SE packages on input .by user.:  ThyraEpetraExt Thyra 2"
     "Explicitly disabled SE packages on input .by user or by default.:  .+ ThyraEpetra"
-    "WARNING: Setting Trilinos_ENABLE_ThyraEpetraExt=OFF which was 'ON' because ThyraEpetraExt has a required library dependence on disabled package ThyraEpetra but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
+    "NOTE: Setting Trilinos_ENABLE_ThyraEpetraExt=OFF which was 'ON' because ThyraEpetraExt has a required library dependence on disabled package ThyraEpetra but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
     "Setting Thyra_ENABLE_ThyraEpetra=OFF because Thyra has an optional library dependence on disabled package ThyraEpetra"
     "Final set of enabled packages:  Teuchos RTOp Epetra Triutils Tpetra Thyra 6"
     "Final set of enabled SE packages:  Teuchos RTOp Epetra Triutils Tpetra ThyraCoreLibs ThyraTpetra Thyra 8"
@@ -683,7 +683,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     "Explicitly enabled SE packages on input .by user.:  ThyraEpetraExt Thyra 2"
     "Explicitly disabled packages on input .by user or by default.:  Epetra"
     "Setting Trilinos_ENABLE_ThyraEpetra=OFF because ThyraEpetra has a required library dependence on disabled package Epetra"
-    "WARNING: Setting Trilinos_ENABLE_ThyraEpetraExt=OFF which was 'ON' because ThyraEpetraExt has a required library dependence on disabled package EpetraExt but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
+    "NOTE: Setting Trilinos_ENABLE_ThyraEpetraExt=OFF which was 'ON' because ThyraEpetraExt has a required library dependence on disabled package EpetraExt but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
     "Final set of enabled packages:  Teuchos RTOp Tpetra Thyra 4"
     "Final set of enabled SE packages:  Teuchos RTOp Tpetra ThyraCoreLibs ThyraTpetra Thyra 6"
   )
@@ -712,7 +712,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetraExt=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraTpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
-    "WARNING: Setting Trilinos_ENABLE_Stratimikos=OFF which was 'ON' because Stratimikos has a required library dependence on disabled package ThyraCoreLibs but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON"
+    "NOTE: Setting Trilinos_ENABLE_Stratimikos=OFF which was 'ON' because Stratimikos has a required library dependence on disabled package ThyraCoreLibs but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON"
     "Final set of enabled packages:  0"
     "Final set of non-enabled packages:  .+ Teuchos .+ Thyra .+ Stratimikos .+"
   )
@@ -785,7 +785,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   EnableZoltan_ZoltanEnableParMETIS_TplDisableParMETIS
   ARGS -DTrilinos_ENABLE_Zoltan=ON -DZoltan_ENABLE_ParMETIS=ON -DTPL_ENABLE_ParMETIS=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "WARNING: Setting Zoltan_ENABLE_ParMETIS=OFF which was ON since TPL_ENABLE_ParMETIS=OFF"
+    "NOTE: Setting Zoltan_ENABLE_ParMETIS=OFF which was ON since TPL_ENABLE_ParMETIS=OFF"
     "Final set of enabled TPLs:  0"
   )
 
@@ -827,7 +827,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "WARNING: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled TPL MPI but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON"
+    "NOTE: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled TPL MPI but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON"
     "Final set of enabled packages:  0"
     "Final set of non-enabled packages:  .+ Panzer .+"
   )
@@ -884,7 +884,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   ARGS  -DTrilinos_ENABLE_Stratimikos=ON -DTrilinos_ENABLE_Ifpack=ON
     -DTrilinos_HOSTTYPE:STRING=BadSystem2
   PASS_REGULAR_EXPRESSION_ALL
-    "WARNING: User has set Trilinos_ENABLE_Ifpack=ON but the" 
+    "NOTE: User has set Trilinos_ENABLE_Ifpack=ON but the" 
     "package Ifpack is not supported on this platform type 'BadSystem2'"
     "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 14"
     "Final set of enabled SE packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt ThyraCoreLibs ThyraEpetra ThyraEpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 17"
@@ -972,7 +972,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     "-- Adding PRE extra Continuous repository preRepoOnePackage"
     "-- Adding POST extra Continuous repository preCopyrightTrilinos"
     "-- Adding POST extra Nightly repository extraTrilinosRepo"
-    "WARNING: Ignoring missing extra repo 'Dakota' as requested since .*/examples/MockTrilinos/packages/TriKota/Dakota does not exist"
+    "NOTE: Ignoring missing extra repo 'Dakota' as requested since .*/examples/MockTrilinos/packages/TriKota/Dakota does not exist"
     "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
     "Reading list of PRE extra TPLs from .*/MockTrilinos/preRepoOnePackage/TPLsList.cmake"
     "Final set of enabled SE packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko ExtraPack [0-9][0-9]"
@@ -994,7 +994,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     "-- Adding PRE extra Continuous repository preRepoOnePackage"
     "-- Adding POST extra Continuous repository preCopyrightTrilinos"
     "-- .NOT. adding POST extra Nightly repository extraTrilinosRepo"
-    "WARNING: Ignoring missing extra repo 'Dakota' as requested since .*/examples/MockTrilinos/packages/TriKota/Dakota does not exist"
+    "NOTE: Ignoring missing extra repo 'Dakota' as requested since .*/examples/MockTrilinos/packages/TriKota/Dakota does not exist"
     "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
     "Reading list of PRE extra TPLs from .*/MockTrilinos/preRepoOnePackage/TPLsList.cmake"
     "Final set of enabled SE packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko [0-9][0-9]"
@@ -1031,7 +1031,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   PASS_REGULAR_EXPRESSION_ALL
     "Explicitly enabled packages on input .* Stalix 1"
     "Explicitly disabled packages on input .* Stokhos 1"
-    "WARNING: Not Setting Trilinos_ENABLE_ThyraGoodStuff=ON even though Thyra has an optional dependence on ThyraGoodStuff because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
+    "NOTE: Not Setting Trilinos_ENABLE_ThyraGoodStuff=ON even though Thyra has an optional dependence on ThyraGoodStuff because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
     "Setting Trilinos_ENABLE_Tpetra=ON because Stalix has a required dependence on Tpetra"
     "Setting Trilinos_ENABLE_Thyra=ON because Stalix has a required dependence on Thyra"
     "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Sacado Thyra Stalix 10"
@@ -1096,8 +1096,8 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=
     -DTRIBITS_PROCESS_EXTRAREPOS_LISTS_DEBUG=TRUE
   PASS_REGULAR_EXPRESSION_ALL
-    "WARNING!  Ignoring missing POST extra repo 'MissingExtraRepo' packages list file ..+/examples/MockTrilinos/MissingExtraRepo/PackagesList.cmake. on request!"
-    "WARNING!  Ignoring missing POST extra repo 'MissingExtraRepo' TPLs list file ..+/examples/MockTrilinos/MissingExtraRepo/TPLsList.cmake. on request!"
+    "NOTE: Ignoring missing POST extra repo 'MissingExtraRepo' packages list file ..+/examples/MockTrilinos/MissingExtraRepo/PackagesList.cmake. on request!"
+    "NOTE: Ignoring missing POST extra repo 'MissingExtraRepo' TPLs list file ..+/examples/MockTrilinos/MissingExtraRepo/TPLsList.cmake. on request!"
     "Configuring done"
     "Generating done"
   )
@@ -1128,7 +1128,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     "Explicitly disabled packages on input .* Stokhos Stalix 2"
     "Setting Trilinos_ENABLE_Teuchos=ON because ExtraPack has a required dependence on Teuchos"
     "Setting Trilinos_ENABLE_Teko=ON because ExtraPack has a required dependence on Teko"
-    "WARNING: Not Setting Trilinos_ENABLE_Sacado=ON even though ExtraPack has an optional dependence on Sacado because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
+    "NOTE: Not Setting Trilinos_ENABLE_Sacado=ON even though ExtraPack has an optional dependence on Sacado because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
     "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos Teko ExtraPack 17"
     "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Sacado Intrepid Belos RBGen Phalanx Panzer Stalix 10"
     "Final set of enabled TPLs:  BLAS LAPACK TekoDepTPL ExtraTPL2 4"

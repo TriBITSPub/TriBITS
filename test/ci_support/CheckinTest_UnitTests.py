@@ -816,7 +816,7 @@ class test_TribitsGitRepos(unittest.TestCase):
       GitRepo('preCopyrightTrilinos', 'preCopyrightTrilinos', "GIT", True),
       ]
     consoleRegexMatches = \
-      "WARNING: Ignoring missing extra repo .MissingRepo. as requested since\n"
+      "NOTE: Ignoring missing extra repo .MissingRepo. as requested since\n"
     consoleRegexNotMatches = \
       "Adding POST extra Continuous repository MissingRepo"
     test_TribitsGitRepos_run_case(self, testName, inOptions, expectedPass, \
@@ -3679,7 +3679,7 @@ class test_checkin_test(unittest.TestCase):
       \
       True,
       \
-      "WARNING: Ignoring missing extra repo .MissingRepo. as requested since\n" \
+      "NOTE: Ignoring missing extra repo .MissingRepo. as requested since\n" \
       "Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       ,
       mustHaveCheckinTestOut=False
