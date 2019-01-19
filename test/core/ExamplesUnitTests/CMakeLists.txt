@@ -573,8 +573,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "-- CMAKE_HOST_SYSTEM_NAME="
       "-- TribitsExProj_HOSTNAME="
 
-      "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because TribitsExProj_ENABLE_EXPORT_MAKEFILES"
-      "Warning: Setting TribitsExProj_ENABLE_MixedLang=OFF because TribitsExProj_ENABLE_Fortran"
+      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because TribitsExProj_ENABLE_EXPORT_MAKEFILES"
+      "NOTE: Setting TribitsExProj_ENABLE_MixedLang=OFF because TribitsExProj_ENABLE_Fortran"
       "Printing package dependencies ..."
       "-- TribitsExProj_PACKAGES: SimpleCxx MixedLang WithSubpackages WrapExternal"
       "-- TribitsExProj_SE_PACKAGES: SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
@@ -1209,7 +1209,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
+      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
       "Explicitly enabled packages on input .by user.:  0"
       "Explicitly disabled packages on input .by user or by default.:  WrapExternal 1"
       "Enabling all SE packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
@@ -1264,7 +1264,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibPrefix
       -DTribitsExProj_LIBRARY_NAME_PREFIX=tep_
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
+      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
       "Explicitly enabled packages on input .by user.:  0"
       "Explicitly disabled packages on input .by user or by default.:  WrapExternal 1"
       "Enabling all SE packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
@@ -1320,7 +1320,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Warning: Setting TribitsExProj_ENABLE_WrapExternal=OFF because PYTHON_EXECUTABLE=''"
+      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because PYTHON_EXECUTABLE=''"
       "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
       "Configuring done"
@@ -3048,8 +3048,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_Empty
       -DTribitsExMetaProj_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleMetaProject
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Ignoring missing extra repo 'TribitsExampleProject' as requested since .*/TribitsExampleMetaProject/TribitsExampleProject does not exist"
-      "WARNING: Ignoring missing extra repo 'TribitsExampleProjectAddons' as requested since .*/TribitsExampleMetaProject/TribitsExampleProjectAddons does not exist"
+      "NOTE: Ignoring missing extra repo 'TribitsExampleProject' as requested since .*/TribitsExampleMetaProject/TribitsExampleProject does not exist"
+      "NOTE: Ignoring missing extra repo 'TribitsExampleProjectAddons' as requested since .*/TribitsExampleMetaProject/TribitsExampleProjectAddons does not exist"
       "Final set of enabled SE packages:  0"
       "Final set of non-enabled SE packages:  0"
       "WARNING:  There were no packages configured so no libraries or tests/examples will be built"
