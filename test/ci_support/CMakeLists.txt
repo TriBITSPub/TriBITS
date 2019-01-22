@@ -107,6 +107,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsPackageTestNameUtils_UnitTests
     PASS_REGULAR_EXPRESSION "OK"
   )
 
+
 #
 # Test the get-tribits-packages-from-last-tests-failed.py script
 #
@@ -275,6 +276,21 @@ TRIBITS_ADD_ADVANCED_TEST( CheckinTest_UnitTests
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CheckinTest_UnitTests.py
       --with-cmake="${CMAKE_COMMAND}"
+      -v
+    PASS_REGULAR_EXPRESSION "OK"
+  )
+
+
+#
+# Test script cdash_build_testing_date.py
+#
+
+
+TRIBITS_ADD_ADVANCED_TEST( cdash_build_testing_date_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/cdash_build_testing_date_UnitTests.py
       -v
     PASS_REGULAR_EXPRESSION "OK"
   )
