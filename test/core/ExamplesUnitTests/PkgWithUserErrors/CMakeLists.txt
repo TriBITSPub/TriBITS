@@ -161,6 +161,55 @@ IF(${PACKAGE_NAME}_UNPARSED_ARGS_ADD_EXECUTABLE)
   TRIBITS_PACKAGE_POSTPROCESS()
 ENDIF()
 
+###############################################################
+# Regression: Package_decl called then process package
+###############################################################
+IF(${PACKAGE_NAME}_Package_decl_called_then_add_library)
+  MESSAGE("Package_decl called then add_library")
+  TRIBITS_PACKAGE_DECL(PkgWithUserErrors)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+  MESSAGE("building library")
+  TRIBITS_PACKAGE_DEF()
+  TRIBITS_ADD_LIBRARY(
+    pkgwithusererrors
+    HEADERS PkgWithUserErrorsLib.hpp
+    SOURCES PkgWithUserErrorsLib.cpp
+    )
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
+
+IF(${PACKAGE_NAME}_Package_decl_called_then_add_test_directories)
+  MESSAGE("Package_decl called then add_test_directories")
+  TRIBITS_PACKAGE_DECL(PkgWithUserErrors)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+  MESSAGE("adding test directories")
+  TRIBITS_ADD_TEST_DIRECTORIES(test)
+  TRIBITS_PACKAGE_DEF()
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
+
+IF(${PACKAGE_NAME}_Package_decl_called_then_add_executable)
+  MESSAGE("Package_decl called then add_executable")
+  TRIBITS_PACKAGE_DECL(PkgWithUserErrors)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+  MESSAGE("building executable")
+  TRIBITS_ADD_EXECUTABLE(
+    usererrorexec
+    SOURCES  PkgWithUserErrorsEX.cpp
+  )
+  TRIBITS_PACKAGE_DEF()
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
+
+IF(${PACKAGE_NAME}_Package_decl_called_then_add_example_directories)
+  MESSAGE("Package_decl called then add_example_directories")
+  TRIBITS_PACKAGE_DECL(PkgWithUserErrors)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+  MESSAGE("adding example directories")
+  TRIBITS_ADD_EXAMPLE_DIRECTORIES(test)
+  TRIBITS_PACKAGE_DEF()
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
 
 IF (${PACKAGE_NAME}_using_package_with_subpackage_commands)
   MESSAGE("Using package with subpackage commands in error")
