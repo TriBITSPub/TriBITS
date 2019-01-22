@@ -3278,7 +3278,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DPkgWithUserErrors_ADD_LIBRARY_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE[(][)] before TRIBITS_ADD_LIBRARY[(][)]"
+      "Must call TRIBITS_PACKAGE[(][)] or TRIBITS_PACKAGE_DECL[(][)] before\n  TRIBITS_ADD_LIBRARY[(][)] in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -3296,7 +3296,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DPkgWithUserErrors_ADD_EXECUTABLE_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE[(][)] before TRIBITS_ADD_EXECUTABLE[(][)]"
+      "Must call TRIBITS_PACKAGE[(][)] or TRIBITS_PACKAGE_DECL[(][)] before\n  TRIBITS_ADD_EXECUTABLE[(][)] in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
