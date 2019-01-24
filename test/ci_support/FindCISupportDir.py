@@ -43,6 +43,7 @@ import sys
 testCiSupportDir = os.path.dirname(os.path.abspath(__file__))
 tribitsDir = os.path.abspath(os.path.join(testCiSupportDir,"../../tribits"))
 ciSupportDir = os.path.join(tribitsDir,"ci_support")
+pythonUtilsDir = os.path.join(tribitsDir,"python_utils")
 #print "ciSupportDir =", ciSupportDir
 
-sys.path = [ciSupportDir] + sys.path
+sys.path = [ciSupportDir, pythonUtilsDir] + sys.path
