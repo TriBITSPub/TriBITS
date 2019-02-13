@@ -476,6 +476,67 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_Shared_NoVersion
 
 
 ########################################################################
+# RawAndTribitsHelloWorld
+########################################################################
+
+
+TRIBITS_ADD_ADVANCED_TEST( RawAndTribitsHelloWorld_Raw
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS
+      ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/RawAndTribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+      "Build files have been written to: .*ExamplesUnitTests/TriBITS_RawAndTribitsHelloWorld"
+  TEST_1 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target hello_world_lib"
+      "Built target hello_world"
+      "Built target unit_tests"
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      ": test .*  Passed"
+      ": unit_test .*  Passed"
+      "100% tests passed, 0 tests failed out of 2"
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( RawAndTribitsHelloWorld_Tribits
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS
+      -DRawAndTribitsHelloWorld_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
+      ${RawAndTribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DRawAndTribitsHelloWorld_ENABLE_TESTS=ON
+      -DHelloWorld_ENABLE_CPACK_PACKAGING=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/RawAndTribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+      "Build files have been written to: .*ExamplesUnitTests/TriBITS_RawAndTribitsHelloWorld"
+    FAIL_REGULAR_EXPRESSION
+      "Check for working Fortran compiler" # Should not be looking for Fortran!
+  TEST_1 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target hello_world_lib"
+      "Built target hello_world"
+      "Built target HelloWorld_unit_tests"
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      ": HelloWorld_hello_world .*  Passed"
+      ": HelloWorld_unit_tests .*  Passed"
+      "100% tests passed, 0 tests failed out of 2"
+  )
+
+
+########################################################################
 # TribitsExampleProject
 ########################################################################
 
