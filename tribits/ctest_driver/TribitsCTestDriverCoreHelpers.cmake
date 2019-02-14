@@ -103,14 +103,14 @@ FUNCTION(TRIBITS_UPDATE_GIT_EXTRAREPO  GIT_EXE  EXTRAREPO_SRC_DIR)
     WORKING_DIRECTORY "${EXTRAREPO_SRC_DIR}"
     OUTPUT_FILE "${EXTRAREPO_RESET_OUT_FILE}" )
   SET(FETCH_CMND_ARGS
-    COMMAND "${GIT_EXE}" fetch origin
+    COMMAND "${GIT_EXE}" fetch ${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}
     TIMEOUT 600 # seconds
     WORKING_DIRECTORY "${EXTRAREPO_SRC_DIR}"
     OUTPUT_FILE "${EXTRAREPO_FETCH_OUT_FILE}" )
   IF (${PROJECT_NAME}_EXTRAREPOS_BRANCH)
     SET(SET_BRANCH_CMND_ARGS
       COMMAND "${GIT_EXE}" checkout -B ${${PROJECT_NAME}_EXTRAREPOS_BRANCH}
-        --track origin/${${PROJECT_NAME}_EXTRAREPOS_BRANCH}
+        --track ${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}/${${PROJECT_NAME}_EXTRAREPOS_BRANCH}
       WORKING_DIRECTORY "${EXTRAREPO_SRC_DIR}"
       OUTPUT_FILE "${EXTRAREPO_SET_BRANCH_OUT_FILE}" )
   ELSE ()
@@ -184,59 +184,6 @@ ENDFUNCTION()
 
 
 #
-# Update the branch of the base git repo
-#
-FUNCTION(TRIBITS_SET_BASE_REPO_BRANCH  CTEST_UPDATE_RETURN_VAL
-  UPDATE_FAILED_VAR_OUT
-  )
-
-  SET(GIT_CHECKOUT_RETURN_VAL "0")
-
-  IF (${PROJECT_NAME}_BRANCH AND NOT "${CTEST_UPDATE_RETURN_VAL}" LESS "0")
-
-    MESSAGE("For base repo, doing switch to branch ${${PROJECT_NAME}_BRANCH}")
-
-    SET(EXECUTE_PROCESS_COMMANDS_ARGS
-      COMMAND ${GIT_EXE} checkout
-        -B ${${PROJECT_NAME}_BRANCH} --track origin/${${PROJECT_NAME}_BRANCH}
-      WORKING_DIRECTORY ${CTEST_SOURCE_DIRECTORY}
-      RESULT_VARIABLE GIT_CHECKOUT_RETURN_VAL
-      OUTPUT_VARIABLE BRANCH_OUTPUT
-      ERROR_VARIABLE  BRANCH_ERROR
-      )
-     # NOTE: Above will work smoothly even if the local branch already
-     # exists and/or is already on that branch.  This command does not move
-     # ORIG_HEAD so it will not mess up the pull and update that CTest did
-     # for the base repo.
-
-    IF (NOT CTEST_DEPENDENCY_HANDLING_UNIT_TESTING)
-      EXECUTE_PROCESS(${EXECUTE_PROCESS_COMMANDS_ARGS})
-    ELSE()
-      MESSAGE("EXECUTE_PROCESS(${EXECUTE_PROCESS_COMMANDS_ARGS})")
-      SET(GIT_CHECKOUT_RETURN_VAL 0)
-    ENDIF()
-
-    IF(NOT "${GIT_CHECKOUT_RETURN_VAL}" EQUAL "0")
-      MESSAGE("Switch to branch ${${PROJECT_NAME}_BRANCH} failed with"
-        " error code ${GIT_CHECKOUT_RETURN_VAL}")
-      QUEUE_ERROR("Switch to branch ${${PROJECT_NAME}_BRANCH} failed with"
-        " error code ${GIT_CHECKOUT_RETURN_VAL}")
-    ENDIF()
-    #Apparently the successful branch switch is also written to stderr.
-    MESSAGE("${BRANCH_ERROR}")
-
-  ENDIF()
-
-  IF ("${CTEST_UPDATE_RETURN_VAL}" LESS "0" OR NOT "${GIT_CHECKOUT_RETURN_VAL}" EQUAL "0")
-    SET(${UPDATE_FAILED_VAR_OUT} TRUE PARENT_SCOPE)
-  ELSE()
-    SET(${UPDATE_FAILED_VAR_OUT} FALSE PARENT_SCOPE)
-  ENDIF()
-
-ENDFUNCTION()
-
-
-#
 # Clone or update all of the repos and put them on right branch
 #
 # NOTE: The base repo is cloned and updated by CTEST_UPDATE() before calling
@@ -249,12 +196,10 @@ FUNCTION(TRIBITS_CLONE_OR_UPDATE_ALL_REPOS  CTEST_UPDATE_RETURN_VAL
 
   SET(UPDATE_FAILED FALSE)
 
-  # A) Put the base repo on the right branch
-
-  TRIBITS_SET_BASE_REPO_BRANCH(${CTEST_UPDATE_RETURN_VAL}  BASE_REPO_UPDATE_FAILED)
-  IF (BASE_REPO_UPDATE_FAILED)
-    SET(UPDATE_FAILED TRUE)
-  ENDIF()
+  # A) NOTE: The base repo is already on the right branch either due to the
+  # initial clone run in ctest_start() that set the branch with 'git clone -b
+  # <branch> ...' or it was set in the ctest_update() where it checked out the
+  # correct banch.
 
   # B) Clone and update the extra repos
 
