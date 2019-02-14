@@ -1,0 +1,9 @@
+*** Base Git Repo: TribitsExMetaProj
+56877b3 [Tue Feb 19 09:22:43 2019 -0700] <rabartl@sandia.gov>
+Update more settings go get automated testing working (#278)
+*** Git Repo: TribitsExampleProject
+348adfa [Tue Feb 19 06:25:53 2019 -0700] <rabartl@sandia.gov>
+Update the README file some (tribitspub/tribits#278)
+*** Git Repo: TribitsExampleProjectAddons
+226a17e [Tue Feb 19 06:33:23 2019 -0700] <rabartl@sandia.gov>
+Update README file (tribitspub/tribits#278)
