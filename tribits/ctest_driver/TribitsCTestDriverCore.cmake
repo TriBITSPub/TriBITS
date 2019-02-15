@@ -1014,6 +1014,20 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     ``BUILD_DIR_NAME`` is expected to be set in each specific CTest -S
 #     driver script.
 #
+#   .. _CTEST_NOTES_FILES:
+#
+#   ``CTEST_NOTES_FILES``
+#
+#     Built-in CTest variable that specifies a set of files that will get
+#     uploaded to CDash as "notes files".  This function will also add other
+#     files as well such as the ``CMakeCache.clean.txt`` file (cleaned-up
+#     version of the CMakeCache.txt file), the ``Updates.txt`` file (lists new
+#     git commits pulled in all the git repos since), the
+#     ``UpdateCommandsOutput.txt`` file (list of commands and their output
+#     which are run by the ``ctest_update()`` in the base git repo), and the
+#     ``${PROJECT_NAME}RepoVersion.txt`` file (gives version of all the git
+#     repos being tested).
+#
 # .. _Specifying where the results go to CDash (TRIBITS_CTEST_DRIVER()):
 #
 # **Specifying where the results go to CDash (TRIBITS_CTEST_DRIVER()):**
@@ -1751,6 +1765,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
   SET(CREATE_VC_UPDATE_FILE FALSE)
 
+  SET(CTEST_UPDATE_COMMANDS_OUTPUT_FILE
+    "${CTEST_BINARY_DIRECTORY}/UpdateCommandsOutput.txt")
+
   IF (CTEST_DO_UPDATES)
 
     SET(UPDATE_TYPE "git")
@@ -1796,11 +1813,13 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     # Provide a custom command to do the update
 
     SET(CTEST_GIT_UPDATE_CUSTOM
-      "${CMAKE_COMMAND}" -DGIT_EXE=${GIT_EXE}
-        -DREMOTE_NAME=${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}
-        -DBRANCH=${${PROJECT_NAME}_BRANCH}
-        -DUNIT_TEST_MODE=${CTEST_DEPENDENCY_HANDLING_UNIT_TESTING}
-        -P ${THIS_CMAKE_CURRENT_LIST_DIR}/tribits_ctest_update_commands.cmake
+      "${CMAKE_COMMAND}"
+      -DGIT_EXE=${GIT_EXE}
+      -DREMOTE_NAME=${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}
+      -DBRANCH=${${PROJECT_NAME}_BRANCH}
+      -DUNIT_TEST_MODE=${CTEST_DEPENDENCY_HANDLING_UNIT_TESTING}
+      -DOUTPUT_FILE=${CTEST_UPDATE_COMMANDS_OUTPUT_FILE}
+      -P ${THIS_CMAKE_CURRENT_LIST_DIR}/tribits_ctest_update_commands_wrapper.cmake
       )
     MESSAGE("CTEST_GIT_UPDATE_CUSTOM=${CTEST_GIT_UPDATE_CUSTOM}")
 
@@ -1928,6 +1947,14 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     CTEST_UPDATE_WRAPPER( SOURCE "${CTEST_SOURCE_DIRECTORY}"
       RETURN_VALUE  CTEST_UPDATE_RETURN_VAL)
     MESSAGE("CTEST_UPDATE(...) returned '${CTEST_UPDATE_RETURN_VAL}' [ rtn >= 0: num files; rnt == -1: error ]")
+
+    # Print the output from the git commands called in ctest_update()
+    IF (EXISTS "${CTEST_UPDATE_COMMANDS_OUTPUT_FILE}")
+      FILE(READ "${CTEST_UPDATE_COMMANDS_OUTPUT_FILE}" CTEST_UPDATE_COMMANDS_OUTPUT_STR)
+      MESSAGE("\n------------------------------------------------------------------------")
+      MESSAGE("${CTEST_UPDATE_COMMANDS_OUTPUT_STR}")
+      MESSAGE("------------------------------------------------------------------------\n")
+    ENDIF()
 
     TRIBITS_CLONE_OR_UPDATE_EXTRA_REPOS(${CTEST_UPDATE_RETURN_VAL}  LOC_UPDATE_FAILED)
     IF (LOC_UPDATE_FAILED)
@@ -2066,12 +2093,30 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     "\n***\n"
     )
 
-  IF (EXISTS ${CTEST_BINARY_DIRECTORY}/Updates.txt)
-    SET(CTEST_NOTES_FILES_WO_CACHE
-      "${CTEST_BINARY_DIRECTORY}/Updates.txt;${CTEST_NOTES_FILES}")
-  ELSE()
-    SET(CTEST_NOTES_FILES_WO_CACHE "${CTEST_NOTES_FILES}")
+  # Set up a list of notes files that don't include the CMakeCache.clean.txt
+  # file which will change for every submit in the package-by-package modee.
+
+  SET(CTEST_NOTES_FILES_WO_CACHE)
+
+  SET(REPO_VERSION_FILE "${CTEST_BINARY_DIRECTORY}/${PROJECT_NAME}RepoVersion.txt")
+  IF (EXISTS "${REPO_VERSION_FILE}")
+    LIST(APPEND CTEST_NOTES_FILES_WO_CACHE "${REPO_VERSION_FILE}")
   ENDIF()
+
+  SET(MULTIREPO_GIT_UPDATES_FILE "${CTEST_BINARY_DIRECTORY}/Updates.txt" )
+  IF (EXISTS "${MULTIREPO_GIT_UPDATES_FILE}")
+    LIST(APPEND CTEST_NOTES_FILES_WO_CACHE "${MULTIREPO_GIT_UPDATES_FILE}")
+  ENDIF()
+
+  IF (EXISTS "${CTEST_UPDATE_COMMANDS_OUTPUT_FILE}")
+    LIST(APPEND CTEST_NOTES_FILES_WO_CACHE "${CTEST_UPDATE_COMMANDS_OUTPUT_FILE}" )
+  ENDIF()
+
+  # Tack on any notes files that the client might have set to the end of these
+  IF ("${CTEST_NOTES_FILES}")
+    LIST(APPEND CTEST_NOTES_FILES_WO_CACHE "${CTEST_NOTES_FILES}")
+  ENDIF()
+
   PRINT_VAR(CTEST_NOTES_FILES_WO_CACHE)
 
   # Note: We must only do the submit after we have decided if there are any
