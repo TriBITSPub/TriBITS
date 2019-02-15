@@ -184,13 +184,13 @@ ENDFUNCTION()
 
 
 #
-# Clone or update all of the repos and put them on right branch
+# Clone or update all of the extra repos and put them on the right branch.
 #
 # NOTE: The base repo is cloned and updated by CTEST_UPDATE() before calling
-# this function.  This function only puts the base repo on the right branch.
+# this function.  This function only operators on the extra repos.
 #
 
-FUNCTION(TRIBITS_CLONE_OR_UPDATE_ALL_REPOS  CTEST_UPDATE_RETURN_VAL
+FUNCTION(TRIBITS_CLONE_OR_UPDATE_EXTRA_REPOS  CTEST_UPDATE_RETURN_VAL
   UPDATE_FAILED_VAR_OUT
   )
 
