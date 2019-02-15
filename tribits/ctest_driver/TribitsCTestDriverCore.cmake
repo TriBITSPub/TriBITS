@@ -1792,7 +1792,20 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     # ctest_update() will return failed!
 
     # Provide a custom command to do the update
-    SET(CTEST_GIT_UPDATE_CUSTOM "${GIT_EXE};pull")
+
+    SET(CTEST_GIT_UPDATE_CUSTOM
+      "${GIT_EXE}" clean -fdx
+      && "${GIT_EXE}" reset --hard HEAD
+      && "${GIT_EXE}" fetch ${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}
+      )
+    IF (${PROJECT_NAME}_BRANCH)
+      LIST(APPEND CTEST_GIT_UPDATE_CUSTOM
+        && "${GIT_EXE}" checkout -B ${${PROJECT_NAME}_BRANCH} --track ${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}/${${PROJECT_NAME}_BRANCH} )
+    ELSE()
+      LIST(APPEND CTEST_GIT_UPDATE_CUSTOM
+        "${GIT_EXE}" reset --hard @{u} )
+    ENDIF()
+    MESSAGE("CTEST_GIT_UPDATE_CUSTOM=${CTEST_GIT_UPDATE_CUSTOM}")
 
   ENDIF()
 
