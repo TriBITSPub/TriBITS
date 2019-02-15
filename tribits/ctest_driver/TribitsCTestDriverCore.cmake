@@ -1754,6 +1754,10 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     SET(UPDATE_TYPE "git")
     MESSAGE("UPDATE_TYPE = '${UPDATE_TYPE}'")
 
+    #
+    # Set the initial clone command for if the local repo is missing
+    #
+
     IF (${PROJECT_NAME}_BRANCH) 
       SET(CHECKOUT_BRANCH_ARG "-b ${${PROJECT_NAME}_BRANCH} ")
     ELSE()
@@ -1773,6 +1777,10 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
       MESSAGE("${CTEST_SOURCE_DIRECTORY} exists so skipping the initial checkout.")
       SET(CREATE_VC_UPDATE_FILE TRUE)
     ENDIF()
+
+    #
+    # Set the git update command for an already cloned repo
+    #
 
     SET(CTEST_UPDATE_COMMAND "${GIT_EXE}")
     MESSAGE("CTEST_UPDATE_COMMAND='${CTEST_UPDATE_COMMAND}'")
