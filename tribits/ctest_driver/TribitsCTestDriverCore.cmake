@@ -1782,8 +1782,11 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     # Set the git update command for an already cloned repo
     #
 
-    SET(CTEST_UPDATE_COMMAND "${GIT_EXE}")
-    MESSAGE("CTEST_UPDATE_COMMAND='${CTEST_UPDATE_COMMAND}'")
+    SET(CTEST_GIT_COMMAND "${GIT_EXE}") 
+    MESSAGE("CTEST_GIT_COMMAND=${CTEST_GIT_COMMAND}")
+    # NOTE: You can't put the above command "${GIT_EXE}" in quotes like
+    # "'${GIT_EXE}'" or "\"${GIT_EXE}\"" or it will not work and
+    # ctest_update() will return failed!
 
   ENDIF()
 
