@@ -1782,11 +1782,17 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     # Set the git update command for an already cloned repo
     #
 
+    # CTest always needs the raw git command in order to do stuff like get the
+    # version of the repo before and after the update, even if you provide a
+    # custom update command.
     SET(CTEST_GIT_COMMAND "${GIT_EXE}") 
     MESSAGE("CTEST_GIT_COMMAND=${CTEST_GIT_COMMAND}")
     # NOTE: You can't put the above command "${GIT_EXE}" in quotes like
     # "'${GIT_EXE}'" or "\"${GIT_EXE}\"" or it will not work and
     # ctest_update() will return failed!
+
+    # Provide a custom command to do the update
+    SET(CTEST_GIT_UPDATE_CUSTOM "${GIT_EXE};pull")
 
   ENDIF()
 
