@@ -1200,7 +1200,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #   ``${PROJECT_NAME}_REPOSITORY_LOCATION``
 #
-#     The location of the base git repo to clone inside of ``CTEST_UPDATE()``.
+#     The location of the base git repo to clone inside of ``CTEST_START()``.
 #     The default is
 #     ``${${PROJECT_NAME}_REPOSITORY_LOCATION_NIGHTLY_DEFAULT}`` when
 #     ``CTEST_TEST_TYPE=Nightly`` and otherwise the default is
