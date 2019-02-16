@@ -1182,35 +1182,40 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # **Repository Updates (TRIBITS_CTEST_DRIVER()):**
 #
 # Like the rest of TriBITS, ``ctest -S`` scripts written using this function
-# supports a collection of extra repositories in addition to the base git
-# repository.  The basic clone and update of the extra repositories requires
-# all repos to use the git version control system.
+# support a collection of extra repositories in addition to the base git
+# repository.
 #
-# Whether the repos are updated (or left as is) is determined by the var:
+# Whether the local repos are updated (or left as is) is determined by the
+# variable:
 #
 #  .. _CTEST_DO_UPDATES:
 #
 #  ``CTEST_DO_UPDATES``
 #
 #    If set to ``TRUE``, then each of the git repos will be cloned if they do
-#    not already exist at `CTEST_SOURCE_DIRECTORY` and if already present will
-#    be updated as described below (and will wipe out any local changes).  If
-#    set to ``FALSE``, then the git repos will be left alone and must
-#    therefore already be cloned and updated at the desired state.  For
-#    example, this should be set to ``FALSE`` when running against a local
-#    development repo (e.g. the `make dashboard`_ target sets this to
-#    ``FALSE`` automatically) or when other logic is used to setup the source
-#    directories. **WARNING:** If you are running against a local repo with
-#    local changes and you don't set to ``FALSE``, then your local uncommitted
-#    changes will be wiped out and the local branch will be hard reset to the
-#    remote tracking branch!  The default value is ``TRUE``.
+#    not already exist and if already present will be updated as described
+#    below (and will wipe out any local changes).  If set to ``FALSE``, then
+#    the git repos will be left alone and must therefore already be cloned and
+#    updated at the desired state.  For example, this should be set to
+#    ``FALSE`` when running against a local development repo (e.g. the `make
+#    dashboard`_ target sets this to ``FALSE`` automatically) or when other
+#    logic is used to setup the source directories. **WARNING:** If you are
+#    running against a local repo with local changes and you don't set to
+#    ``FALSE``, then your local uncommitted changes will be wiped out and the
+#    local branch will be hard reset to the remote tracking branch!  The
+#    default value is ``TRUE``.
 #
 # **WARNING:** If you don't want local changes in your git repos to get blown
 # away, then set ``CTEST_DO_UPDATES`` to ``FALSE``!
 #
-# CTest itself is used for handling the cloning and the pull of the base
-# repository by calling ``CTEST_UPDATE()``.  The repo that is cloned is
-# determined by:
+# If the base repo pointed to by ``${CTEST_SOURCE_DIRECTORY}`` is missing, it
+# cloned inside of the ``CTEST_START()`` function using the custom command::
+#
+#   git clone [-b ${${PROJECT_NAME}_BRANCH}] \
+#     -o ${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE} \
+#     ${${PROJECT_NAME}_REPOSITORY_LOCATION}
+#
+# where:
 #
 #   .. _${PROJECT_NAME}_REPOSITORY_LOCATION:
 #
@@ -1222,68 +1227,96 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     ``CTEST_TEST_TYPE=Nightly`` and otherwise the default is
 #     ``${${PROJECT_NAME}_REPOSITORY_LOCATION_DEFAULT}``.
 #
-# The cloning of the extra git repositories are completely handled by the
-# CMake/CTest code in this ``TRIBITS_CTEST_DRIVER()`` function as described
-# below.
+#   .. _${PROJECT_NAME}_GIT_REPOSITORY_REMOTE:
 #
-# After the base repository is cloned for the first time (by calling
-# ``CTEST_UPDATE()``), the extra repositories are cloned using the following
-# command::
+#   ``${PROJECT_NAME}_GIT_REPOSITORY_REMOTE``
 #
-#   git clone <extrarepo_url>
-#
-# where ``<extrarepo_url>`` is given in the
-# ``${PROJECT_NAME}_EXTRAREPOS_FILE`` file.
-# 
-# Therefore, by default, whatever the default branch is set to on clone in the
-# base repos, that is the branch that will be used.  Also, future repository
-# updates will be done on those branches according to their set up remote
-# tracking branch.
-#
-# However the branches of the code tested can be explicitly set using the
-# vars:
+#     The git remote name given to the cloned repo.  This is needed for robust
+#     git operations as described below (Default 'origin').
 #
 #   ``${PROJECT_NAME}_BRANCH``
 #
 #     The branch of the base repo to explicitly checkout after clone (and on
-#     each update).  The default is
-#     ``${${PROJECT_NAME}_REPOSITORY_BRANCH}}``.
+#     each update).  The value of empty "" is allowed which results in the
+#     default branch being checked out on clone (and the ``-b <branch>``
+#     argument to be omitted from the ``git clone`` command).  The default
+#     value determined by the variable
+#     ``${${PROJECT_NAME}_REPOSITORY_BRANCH}}``.  The default value for
+#     ``${PROJECT_NAME}_REPOSITORY_BRANCH`` is empty.
 #
-#   ``${PROJECT_NAME}_REPOSITORY_BRANCH``
+# If the base repo already exists, no initial clone is performed and it is
+# assumed that it is in a state to allow it to be updated as described below.
 #
-#     Defines the default for ``${PROJECT_NAME}_BRANCH``.  This must be set in
-#     the CTest -S script (e.g. in the ``<projectDir>/CTestConfig.cmake``
-#     file).  The default if not otherwise specified is empty "".
+# After the base repo is cloned, any missing extra git repositories are cloned
+# using CMake/CTest code in this ``TRIBITS_CTEST_DRIVER()`` function (raw
+# CTest does not support cloning a list of extra repos) using the command::
+#
+#   git clone [-b ${${PROJECT_NAME}_EXTRAREPO_BRANCH}] \
+#     -o ${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE} \
+#     <extrarepo_url>
+#
+# where:
+#
+#   .. _${PROJECT_NAME}_EXTRAREPOS_BRANCH:
 #
 #   ``${PROJECT_NAME}_EXTRAREPOS_BRANCH``
 #
 #     The branch that each extra VC repo that is checked out.  The default
-#     value is set to ``${${PROJECT_NAME}_BRANCH}``.  (NOTE: Checking out a
-#     separate branch on the extra repos from the base repo was needed for
-#     backward compatibility for the Trilinos project but this is not
-#     recommended usage and it violates the "single branch" approach for using
-#     `gitdist`_.)
+#     value is set to ``${${PROJECT_NAME}_BRANCH}``.  If empty "", then the
+#     ``-b <branch>`` argument is omitted from the ``git clone`` command.
+#     (NOTE: Checking out a separate branch on the extra repos from the base
+#     repo was needed for backward compatibility for the Trilinos project and
+#     is not recommended usage as it violates the "single branch" approach for
+#     using `gitdist`_.)
 #
-# If ``${PROJECT_NAME}_BRANCH`` is set to non-empty, then that branch will be
-# checked out in all of the repositories.  For the base repository, after the
-# clone or update is performed in the call to ``CTEST_UPDATE()``, then that
-# branch is checked out using the command::
+#   ``<extrarepo_url>``
 #
-#   $ git checkout -B ${${PROJECT_NAME}_BRANCH} \
-#       --track origin/${${PROJECT_NAME}_BRANCH}`
+#     The git repo remote URL given in the file
+#     `${PROJECT_NAME}_EXTRAREPOS_FILE`_.
 #
-# That command is robust and will pass even if the current branch is already a
-# tracking branch for ``origin/${${PROJECT_NAME}_BRANCH}``.  **WARNING:** This
-# version of the ``git checkout -B``` command is not supported in older
-# versions of git.
+# When ``CTEST_DO_UPDATES=TRUE`` (after a possible initial clone), the
+# function ``CTEST_UPDATE()`` is called to update the base git repo.  The base
+# git repo is updated with the custom git commands executed inside of the
+# ``CTEST_UPDATE()`` using::
 #
-# If ``${PROJECT_NAME}_EXTRAREPO_BRANCH`` is empty, then each extra repository
-# is updated (even after the initial clone) using the commands::
-#
+#   $ git fetch ${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}
 #   $ git clean -fdx         # Remove untracked ignored files
-#   $ git reset --hard HEAD  # Removed untracked and modified tracked files
-#   $ git fetch origin       # Get updated commits
-#   $ git reset --hard @{u}  # Deal with forced push
+#   $ git reset --hard HEAD  # Clean files and set ORIG_HEAD to HEAD
+#   $ git checkout -B ${${PROJECT_NAME}_BRANCH} \
+#       --track origin/${${PROJECT_NAME}_BRANCH}   # Sets HEAD
+#
+# The above set of commands are the maximally robust way to update a git repo.
+# They will correct any local state of the local repo and will put the local
+# repo on the requested local tracking branch.  It can handled hard-reset
+# remote branches, previous tracking branch now missing, etc.  The only
+# requirement is that the remote repo pointed to at
+# ``${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}`` is valid and has not changed
+# since the repo was first cloned.  (NOTE: A future version of TriBITS may
+# automate the update of this git remote.)
+#
+# If ``${PROJECT_NAME}_BRANCH`` is empty "", the last ``git checkout -B
+# <branch> ...`` command is replaced with the git command::
+#
+#   $ git reset --hard @{u}  # Sets HEAD
+#
+# After the base git repo is updated inside of ``CTEST_UPDATE()`` as described
+# above, each of the extra repos is updated using a similar set of git
+# commands::
+#
+#   $ git fetch ${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}
+#   $ git clean -fdx         # Remove untracked ignored files
+#   $ git reset --hard HEAD  # Clean files and set ORIG_HEAD to HEAD
+#   $ git checkout -B ${${PROJECT_NAME}_EXTRAREPO_BRANCH} \
+#       --track origin/${${PROJECT_NAME}_EXTRAREPO_BRANCH}  # Sets HEAD
+#
+# where if ``${PROJECT_NAME}_EXTRAREPO_BRANCH`` is empty, the last ``git
+# checkout -B <branch> ...`` command replaced with::
+#
+#   $ git reset --hard @{u}
+#
+# **WARNING:** This version of the ``git checkout -B <branch> ...`` command
+# is not supported in older versions of git.  Therefore, a newer version of
+# git is required when using named branches.
 #
 # The command ``git clone -fdx`` removes any untracked ignored files that may
 # have been created since the last update (either by the build process or by
@@ -1291,34 +1324,14 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # reset --hard HEAD`` removes any untracked non-ignored files, any modified
 # tracked files, and sets ``ORIG_HEAD`` to the current ``HEAD``.  This sets
 # ``ORIG_HEAD`` after the initial clone (which is needed since ``ORIG_HEAD``
-# is not set after the initial ``git clone``).  This allows using the range
-# ``ORIG_HEAD..HEAD`` with git diff and log commands even after the initial
-# clone.  The ``git fetch`` command followed by the ``git reset --hard @{u}``
-# command are used to update the local repo to match the remote tracking
-# branch instead of ``git pull` or ``git fetch ; git merge @{u}``.  This is
-# done to deal with a possible forced push of the remote tracking branch.
-# Using ``git fetch ; git reset --hard @{u}`` ensures that the local branch is
-# exactly the same the remote tracking branch no matter what.
-#
-# If ``${PROJECT_NAME}_EXTRAREPO_BRANCH`` is non-empty, then each extra
-# repository is updated (even after the initial clone) using the commands::
-#
-#   $ git clean -fdx         # Remove untracked ignored files
-#   $ git reset --hard HEAD  # Clean files and set ORIG_HEAD to HEAD
-#   $ git fetch origin       # Get updated commits
-#   $ git checkout -B ${${PROJECT_NAME}_EXTRAREPO_BRANCH} \
-#       --track origin/${${PROJECT_NAME}_EXTRAREPO_BRANCH}  # Put on tracking branch
-#
-# These are the same commands as for the case where
-# ``${PROJECT_NAME}_EXTRAREPO_BRANCH`` is empty except for the last command
-# which does a checkout of the tracking branch
-# ``${PROJECT_NAME}_EXTRAREPO_BRANCH``.  In this case, the ``git reset --hard
-# HEAD`` serves an additional purpose.  It sets ``ORIG_HEAD`` to the current
-# ``HEAD`` before the update of the branch.  This is important because the
-# command ``git checkout -B ...`` does not move ``ORIG_HEAD`` so this reset is
-# needed so that the git range ``ORIG_HEAD..HEAD`` gives the changes since the
-# last update.  So for an update where no new commits are pulled,
-# ``ORIG_HEAD..HEAD`` will return no commits.
+# is not set after the initial ``git clone`` command).  This allows using the
+# range ``ORIG_HEAD..HEAD`` with ``git diff`` and ``git log`` commands even
+# after the initial clone.  (Directly after the initial clone, the range
+# ``ORIG_HEAD..HEAD`` will be empty). The git commands ``git checkout -B
+# <branch> <remote>/<branch>`` or ``git reset --hard @{u}`` are used to update
+# the local repo to match the remote tracking branch.  This is done to deal
+# with a possible forced push of the remote tracking branch or even changing
+# to different tracking branch (when using an explicit ``<branch>`` name).
 #
 # Note that the repository updating approach described above using non-empty
 # ``${PROJECT_NAME}_BRANCH`` is more robust, because it can recover from a
@@ -1326,9 +1339,10 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # different branch.  One of these repos might get into this state when a
 # person is messing around in the Nightly build and source directories to try
 # to figure out what happened and forgot to put the repos back on the correct
-# tracking branch.  Therefore, it is recommended to always set
+# tracking branch.  Therefore, it is recommended to always set an explicit
 # ``${PROJECT_NAME}_BRANCH`` to a non-null value like ``master`` or
-# ``develop`` for the git repos.
+# ``develop`` for the git repos, even if this branch is the default repo
+# branch.
 #
 # .. _Other CTest Driver options (TRIBITS_CTEST_DRIVER()):
 #
