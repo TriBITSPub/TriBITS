@@ -412,7 +412,8 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
   PASS_REGULAR_EXPRESSION_ALL
     "CTEST_CHECKOUT_COMMAND=./somebasedir/git. clone -o other-remote --reference <some-base-dir>/Trilinos https://some-git-url/Trilinos[.]git"
     "preCopyrightTrilinos: Doing GIT update from URL 'url1:/git/preCopyrightTrilinos' to dir '.*/MockTrilinos/preCopyrightTrilinos'"
-    "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.clean.out."
+     "CTEST_GIT_UPDATE_CUSTOM=${CMAKE_COMMAND}[;]-DGIT_EXE=/somebasedir/git[;]-DREMOTE_NAME=other-remote[;]-DBRANCH=[;]-DUNIT_TEST_MODE=ON[;]-DOUTPUT_FILE=.*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/UpdateCommandsOutput.txt[;]-P[;].*/tribits/ctest_driver/tribits_ctest_update_commands_wrapper.cmake"
+     "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]clean[;]-fdx[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.clean.out."
     "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]HEAD[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.reset.out."
     "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]fetch[;]other-remote[;]TIMEOUT[;]600[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.fetch.out."
     "EXECUTE_PROCESS.COMMAND./somebasedir/git[;]reset[;]--hard[;]tracking/branch[;]WORKING_DIRECTORY[;].*/MockTrilinos/preCopyrightTrilinos.OUTPUT_FILE[;].*/test/ctest_driver/MockCTestDriver/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands/preCopyrightTrilinos.set_branch.out."
@@ -447,6 +448,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     Trilinos_ADDITIONAL_PACKAGES=Stalix
   PASS_REGULAR_EXPRESSION_ALL
     "CTEST_CHECKOUT_COMMAND=./somebasedir/git. clone -b other-branch -o origin --reference <some-base-dir>/Trilinos https://some-git-url/Trilinos[.]git"
+    "CTEST_GIT_UPDATE_CUSTOM=${CMAKE_COMMAND}[;]-DGIT_EXE=/somebasedir/git[;]-DREMOTE_NAME=origin[;]-DBRANCH=other-branch[;]-DUNIT_TEST_MODE=ON[;]-DOUTPUT_FILE=.*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch/UpdateCommandsOutput.txt[;]-P[;].*/tribits/ctest_driver/tribits_ctest_update_commands_wrapper.cmake"
     
     "For extra repos, doing switch to branch other-branch"
     "preCopyrightTrilinos: Doing GIT update from URL 'url1:/git/preCopyrightTrilinos' to dir '.*/MockTrilinos/preCopyrightTrilinos'"
@@ -486,6 +488,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
   PASS_REGULAR_EXPRESSION_ALL
 
     "CTEST_CHECKOUT_COMMAND=./somebasedir/git. clone -b other-branch -o origin  https://some-git-url/Trilinos[.]git"
+    "CTEST_GIT_UPDATE_CUSTOM=${CMAKE_COMMAND}[;]-DGIT_EXE=/somebasedir/git[;]-DREMOTE_NAME=origin[;]-DBRANCH=other-branch[;]-DUNIT_TEST_MODE=ON[;]-DOUTPUT_FILE=.*/TriBITS_MockCTestDriver_CI_TestGitUpdateCommands_Branch_ExtraReposBranch/UpdateCommandsOutput.txt[;]-P[;].*/tribits/ctest_driver/tribits_ctest_update_commands_wrapper.cmake"
     
     "For extra repos, doing switch to branch yet-other-branch"
     "preCopyrightTrilinos: Doing GIT update from URL 'url1:/git/preCopyrightTrilinos' to dir '.*/MockTrilinos/preCopyrightTrilinos'"
