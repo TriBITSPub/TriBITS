@@ -205,6 +205,8 @@ class test_cdash_build_testing_date_py(unittest.TestCase):
 
   def test_right_now_previous_day(self):
     nowUtc = datetime.datetime.utcnow()
+    if nowUtc.minute+1 >= 60:
+      return  # Skip the test if ran at 59 minutes after hour!
     testingDayStartTime = str(nowUtc.hour)+":"+str(nowUtc.minute+1) 
     cmndArgs = [
        "--cdash-project-start-time='"+testingDayStartTime+"'",
@@ -217,6 +219,8 @@ class test_cdash_build_testing_date_py(unittest.TestCase):
 
   def test_right_now_next_day(self):
     nowUtc = datetime.datetime.utcnow()
+    if nowUtc.minute-1 < 0:
+      return  # Skip the test if ran at 0 minutes after the hour
     testingDayStartTime = str(nowUtc.hour)+":"+str(nowUtc.minute-1) 
     cmndArgs = [
        "--cdash-project-start-time='"+testingDayStartTime+"'",
