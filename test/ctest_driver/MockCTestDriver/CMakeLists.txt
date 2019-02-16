@@ -987,3 +987,84 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
 
 
 # ToDo: Test ???
+
+
+#
+# Test tribits_ctest_update_commands_wrapper.cmake
+#
+
+
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_tribits_ctest_update_commands_wrapper_named_branch
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    CMND "${CMAKE_COMMAND}"
+    ARGS
+      -DGIT_EXE=/some-dir/git
+      -DREMOTE_NAME=my-remote
+      -DBRANCH=my-branch
+      -DUNIT_TEST_MODE=ON
+      -DOUTPUT_FILE=UpdateCommandsOutput.txt
+      -P ${${PROJECT_NAME}_TRIBITS_DIR}/ctest_driver/tribits_ctest_update_commands_wrapper.cmake
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    PASS_REGULAR_EXPRESSION_ALL
+      "cmake -P tribits_ctest_update_commands_wrapper.cmake"
+      "-- OUTPUT_FILE=UpdateCommandsOutput.txt"
+      "tribits_ctest_update_commands_wrapper.cmake return: 0"
+
+  TEST_1
+    CMND cat ARGS UpdateCommandsOutput.txt
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    PASS_REGULAR_EXPRESSION_ALL
+      "cmake -P tribits_ctest_update_commands.cmake:"
+      "-- GIT_EXE=/some-dir/git"
+      "-- REMOTE_NAME=my-remote"
+      "-- BRANCH=my-branch"
+      "-- UNIT_TEST_MODE=ON"
+      "Running: execute_process[(]COMMAND[;]/some-dir/git[;]fetch[;]my-remote[)]"
+      "Running: execute_process[(]COMMAND[;]/some-dir/git[;]clean[;]-fdx[)]"
+      "Running: execute_process[(]COMMAND[;]/some-dir/git[;]reset[;]--hard[;]HEAD[)]"
+      "Running: execute_process[(]COMMAND[;]/some-dir/git[;]checkout[;]-B[;]my-branch[;]--track[;]my-remote/my-branch[)]"
+      "Git Update PASSED!"
+
+   )
+
+
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_tribits_ctest_update_commands_wrapper_default_branch
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    CMND "${CMAKE_COMMAND}"
+    ARGS
+      -DGIT_EXE=/some-dir/git
+      -DREMOTE_NAME=origin
+      -DBRANCH=
+      -DUNIT_TEST_MODE=ON
+      -DOUTPUT_FILE=UpdateCommandsOutput.txt
+      -P ${${PROJECT_NAME}_TRIBITS_DIR}/ctest_driver/tribits_ctest_update_commands_wrapper.cmake
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    PASS_REGULAR_EXPRESSION_ALL
+      "cmake -P tribits_ctest_update_commands_wrapper.cmake"
+      "-- OUTPUT_FILE=UpdateCommandsOutput.txt"
+      "tribits_ctest_update_commands_wrapper.cmake return: 0"
+
+  TEST_1
+    CMND cat ARGS UpdateCommandsOutput.txt
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    PASS_REGULAR_EXPRESSION_ALL
+      "cmake -P tribits_ctest_update_commands.cmake:"
+      "-- GIT_EXE=/some-dir/git"
+      "-- REMOTE_NAME=origin"
+      "-- BRANCH="
+      "-- UNIT_TEST_MODE=ON"
+      "Running: execute_process[(]COMMAND[;]/some-dir/git[;]fetch[;]origin[)]"
+      "Running: execute_process[(]COMMAND[;]/some-dir/git[;]clean[;]-fdx[)]"
+      "Running: execute_process[(]COMMAND[;]/some-dir/git[;]reset[;]--hard[;]HEAD[)]"
+      "Running: execute_process[(]COMMAND[;]/some-dir/git[;]reset[;]--hard[;]@{u}[)]"
+      "Git Update PASSED!"
+
+   )
+
+
