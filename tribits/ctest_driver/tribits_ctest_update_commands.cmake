@@ -28,8 +28,9 @@ set(OVERALL_SUCCESS TRUE)
 set(ERROR_CODE 0)
 
 macro(execute_process_wrapper)
-  message("\nRunning: execute_process(${ARGN})")
-  if (NOT UNIT_TEST_MODE)
+  if (UNIT_TEST_MODE)
+    message("execute_process(${ARGN})")
+  else()
     execute_process(${ARGN} RESULT_VARIABLE RTN_CODE)
     message("RTN_CODE: ${RTN_CODE}")
     IF (NOT "${RTN_CODE}" STREQUAL "0")
@@ -39,21 +40,27 @@ macro(execute_process_wrapper)
   endif()
 endmacro()
 
-execute_process_wrapper(
-  COMMAND "${GIT_EXE}" fetch ${REMOTE_NAME} )
+macro(run_command)
+  string(REPLACE ";" " " CMND_STR "${ARGN}")
+  message("\nRunning: ${CMND_STR}")
+  execute_process_wrapper(COMMAND ${ARGN})
+endmacro()
 
-execute_process_wrapper(
-  COMMAND "${GIT_EXE}" clean -fdx )
+run_command(
+  "${GIT_EXE}" fetch ${REMOTE_NAME} )
 
-execute_process_wrapper(
-  COMMAND "${GIT_EXE}" reset --hard HEAD )
+run_command(
+  "${GIT_EXE}" clean -fdx )
+
+run_command(
+  "${GIT_EXE}" reset --hard HEAD )
 
 if (BRANCH)
-  execute_process_wrapper(
-    COMMAND "${GIT_EXE}" checkout -B ${BRANCH} --track ${REMOTE_NAME}/${BRANCH} )
+  run_command(
+    "${GIT_EXE}" checkout -B ${BRANCH} --track ${REMOTE_NAME}/${BRANCH} )
 else()
-  execute_process_wrapper(
-    COMMAND "${GIT_EXE}" reset --hard @{u} )
+  run_command(
+    "${GIT_EXE}" reset --hard @{u} )
 endif()
 
 if (OVERALL_SUCCESS)
