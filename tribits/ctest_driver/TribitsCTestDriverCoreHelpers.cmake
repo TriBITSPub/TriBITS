@@ -273,7 +273,6 @@ ENDMACRO()
 # NOTE: This macro is used to clean up the main TRIBITS_CTEST_DRIVER()
 # macro.
 #
-
 MACRO(TRIBITS_SETUP_PACKAGES)
 
   # Here, we must point into the source tree just cloned (or updated)
@@ -342,7 +341,6 @@ ENDMACRO()
 #
 # Select packages set by the input
 #
-
 MACRO(ENABLE_USER_SELECTED_PACKAGES)
 
   # 1) Set the enables for packages already set with
@@ -390,7 +388,6 @@ ENDMACRO()
 #
 # Select only packages that are modified or failed in the last CI iteration
 #
-
 MACRO(ENABLE_ONLY_MODIFIED_PACKAGES)
 
   #
@@ -559,7 +556,6 @@ ENDMACRO()
 # NOTE: These disables need to dominate over the above enables so this code is
 # after all the enable code has run
 #
-
 MACRO(DISABLE_EXCLUDED_PACKAGES)
   FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_EXCLUDE_PACKAGES})
     MESSAGE("Disabling excluded package ${TRIBITS_PACKAGE} ...")
@@ -609,7 +605,6 @@ ENDMACRO()
 # locally.  When run locally, ctest will just report aggregated times for
 # subprojects that have 1 or more tests.  Not true for CDash.
 #
-
 MACRO(TRIBITS_CTEST_DRIVER_SET_LABELS_TO_SUBPROJECTS_MAPPING)
   SET(CTEST_LABELS_FOR_SUBPROJECTS)
   FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES_TO_DIRECTLY_TEST})
@@ -621,7 +616,6 @@ ENDMACRO()
 #
 # Select the default generator.
 #
-
 MACRO(SELECT_DEFAULT_GENERATOR)
   # When the build tree is known and exists, use
   # its generator.
@@ -641,7 +635,6 @@ ENDMACRO()
 #
 # Call INITIALIZE_ERROR_QUEUE once at the top of TRIBITS_CTEST_DRIVER
 #
-
 MACRO(INITIALIZE_ERROR_QUEUE)
   SET(TRIBITS_CTEST_DRIVER_ERROR_QUEUE "")
 ENDMACRO()
@@ -658,7 +651,6 @@ ENDMACRO()
 # When adding more callers of QUEUE_ERROR, just make sure that it does not
 # duplicate an existing/reported dashboard failure.
 #
-
 MACRO(QUEUE_ERROR err_msg)
   SET(TRIBITS_CTEST_DRIVER_ERROR_QUEUE
     ${TRIBITS_CTEST_DRIVER_ERROR_QUEUE} "${err_msg}")
@@ -668,7 +660,6 @@ ENDMACRO()
 #
 # Call REPORT_QUEUED_ERRORS() once at the bottom of TRIBITS_CTEST_DRIVER()
 #
-
 MACRO(REPORT_QUEUED_ERRORS)
   IF ("${TRIBITS_CTEST_DRIVER_ERROR_QUEUE}" STREQUAL "")
     MESSAGE("TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well.")
@@ -685,7 +676,6 @@ ENDMACRO()
 # Override CTEST_SUBMIT to drive multiple submits and to detect failed
 # submissions and track them as queued errors.
 #
-
 MACRO(TRIBITS_CTEST_SUBMIT)
 
   # Cache the original CTEST_DROP_SITE and CTEST_DROP_LOCATION
