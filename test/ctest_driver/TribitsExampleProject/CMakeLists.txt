@@ -1052,7 +1052,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       CMND ln
       ARGS -s ${TribitsExProj_DIR} .
     TEST_1
-      MESSAGE "Run ctest driver testing everyting but no push."
+      MESSAGE "Run ctest -S driver"
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1084,6 +1084,25 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "File '' does NOT exist so all tests passed"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
+    #TEST_2
+    #  MESSAGE "Make sure the Note.xml file contains the right contents"
+    #  CMND env
+    #  ARGS
+    #    TRIBITS_PROJECT_NAME=TribitsExProj
+    #    TribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+    #    CTEST_BUILD_DIR=BUILD
+    #    "${CMAKE_CURRENT_LIST_DIR}/../list_cdash_notes_files_in_xml_file.sh"
+    #  PASS_REGULAR_EXPRESSION_ALL
+    #    "DUMMY_NO_MATCH"
+    #  ALWAYS_FAIL_ON_NONZERO_RETURN
+   
+    # NOTE: Above, we can't actually grep the notes file because the Notes.xml
+    # file does not get created unless you submit!  And the notes files for
+    # Updates.txt and UpdateCommandsOutput.txt will not get created unless you
+    # do ctest_update().  Therefore, we will need automated tests that
+    # actually clone and update repos in order to test the generated Notes.xml
+    # file.
+
     )
     # NOTE: The above test enables just one package with no upstream packages
     # at all.  It should display just a single row on CDash.  We can't detect
