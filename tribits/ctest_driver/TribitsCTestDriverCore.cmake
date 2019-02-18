@@ -1018,15 +1018,15 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #   ``CTEST_NOTES_FILES``
 #
-#     Built-in CTest variable that specifies a set of files that will get
-#     uploaded to CDash as "notes files".  This function will also add other
-#     files as well such as the ``CMakeCache.clean.txt`` file (cleaned-up
-#     version of the CMakeCache.txt file), the ``Updates.txt`` file (lists new
-#     git commits pulled in all the git repos since), the
-#     ``UpdateCommandsOutput.txt`` file (list of commands and their output
-#     which are run by the ``ctest_update()`` in the base git repo), and the
-#     ``${PROJECT_NAME}RepoVersion.txt`` file (gives version of all the git
-#     repos being tested).
+#     Built-in CTest variable that specifies a semi-colon seprated list of
+#     files that will get uploaded to CDash as "notes files".  This function
+#     will also add other files as notes files as well such as the file
+#     ``CMakeCache.clean.txt`` (cleaned-up version of the CMakeCache.txt
+#     file), the file ``Updates.txt`` (lists new git commits pulled in all the
+#     git repos), the file ``UpdateCommandsOutput.txt`` (list of commands and
+#     their output which are run by ``ctest_update()`` in the base git repo),
+#     and the file ``${PROJECT_NAME}RepoVersion.txt`` (gives version of all
+#     the git repos being tested).
 #
 # .. _Specifying where the results go to CDash (TRIBITS_CTEST_DRIVER()):
 #
@@ -1473,6 +1473,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
   # Remove an existing CMakeCache.txt file or not
   SET_DEFAULT_AND_FROM_ENV( CTEST_WIPE_CACHE TRUE )
+
+  # Extra notes files suggested by user
+  SET_DEFAULT_AND_FROM_ENV( CTEST_NOTES_FILES "" )
 
   # Select a default generator.
   SELECT_DEFAULT_GENERATOR()
