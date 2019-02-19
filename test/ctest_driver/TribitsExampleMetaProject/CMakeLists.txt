@@ -182,6 +182,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       CTEST_DASHBOARD_ROOT=PWD
       ${COMMON_ENV_ARGS}
       CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE
+      CTEST_WIPE_CACHE=FALSE
       TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       TribitsExMetaProj_BRANCH=for-testing
       CTEST_NOTES_FILES=${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleMetaProject/README
@@ -237,40 +238,69 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_8
-    MESSAGE "Check that one of the extra repos in on the correct branch"
-    CMND diff ARGS
+    MESSAGE "Make sure that the file TribitsExMetaProjRepoVersion.txt is correct"
+    CMND diff ARGS 
       "${CMAKE_CURRENT_LIST_DIR}/data/TribitsExMetaProjRepoVersion.for-testing.txt"
       BUILD/TribitsExMetaProjRepoVersion.txt 
-    SKIP_CLEAN_WORKING_DIRECTORY
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Delete one of the extra repos so that it will be cloned again
+  TEST_9
+    MESSAGE "Remove one of the git repos to make sure that it clones again"
+    CMND rm ARGS -rf TribitsExampleMetaProject/TribitsExampleProjectAddons
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Reset back the other repos to an ealier version on the branch 'for-testing'
+  TEST_10
+    MESSAGE "Reset other repos back to an earlier version so we can simulate and update"
+    CMND "${${PROJECT_NAME}_TRIBITS_DIR}/python_utils/gitdist"
+    ARGS --dist-no-color --dist-repos=.,TribitsExampleProject reset --hard HEAD^
+    WORKING_DIRECTORY TribitsExampleMetaProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "[*][*][*] Base Git Repo: TribitsExampleMetaProject"
+      "HEAD is now at a8f6f48 Update README file [(]tribitspub/tribits#278[)]"
+      "[*][*][*] Git Repo: TribitsExampleProject"
+      "HEAD is now at 8108b6a Automatic snapshot commit from TribitsExampleProject at f5ca5b7"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Do the update, configure, build, and test again checking the repo
-  # commands and output (make sure that the correct version is reached)
+  TEST_11
+    MESSAGE "Run ctest driver with an on branch 'for-testing'"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE
+      CTEST_WIPE_CACHE=FALSE
+      TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      TribitsExMetaProj_BRANCH=for-testing
+      CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_default_branch_remote
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- CTEST_NOTES_FILES=''"
+      "-- ENV_TribitsExMetaProj_BRANCH='for-testing'"
+      "-- TribitsExMetaProj_BRANCH='for-testing'"
+      "Calling CTEST_UPDATE[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/TribitsExampleMetaProject"
+      "Old revision of repository is: a8f6f489088537176f0cab2fc189294038963ec4"
+      "New revision of repository is: 56877b3b3dd06f41dfb27cedcedc2693aafaef03"
+      "CTEST_UPDATE[(][.][.][.][)] returned '1'"
+      "cmake -P tribits_ctest_update_commands[.]cmake"
+      "HEAD is now at a8f6f48 Update README file [(]tribitspub/tribits#278[)]"
+      "Git Update PASSED!"
+      "For extra repos, doing switch to branch for-testing"
+      "TribitsExampleProject: Doing GIT update from URL '.*github[.]com.tribits/TribitsExampleProject[.]git' to dir '.*/TribitsExampleProject' [.][.][.]"
+      "TribitsExampleProjectAddons: Doing initial GIT clone/checkout from URL '.*github.com.tribits/TribitsExampleProjectAddons.git' to dir 'TribitsExampleProjectAddons' [.][.][.]"
+      "CTEST_NOTES_FILES_WO_CACHE='.*/BUILD/Updates.txt[;].*/BUILD/UpdateCommandsOutput.txt'"
+      "Configure PASSED!"
+      "CTEST_NOTES_FILES='.*/BUILD/Updates.txt[;].*/BUILD/UpdateCommandsOutput.txt[;].*/BUILD/CMakeCache.clean.txt[;].*/BUILD/TribitsExMetaProjRepoVersion.txt'"
+      "Build PASSED!"
+      "100% tests passed, 0 tests failed out of 11"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Check the TribitsExMetaProjRepoVersion.txt file (on the branch 'for-testing')
-
-
-
-  # ToDo: Check out a non-tracking branch in the base repo and an extra repo
-
-  # ToDo: Do the update, configure, build, and test again checking the repo
-  # commands and output
-
-  # ToDo: Check the TribitsExMetaProjRepoVersion.txt file
-
-  # ToDo: Do the update, configure, build, and test again, except change the
-  # git URLs for the base and extra repos and make sure that it renames the
-  # remotes correctly.  (This functionality is not implemented yet but it
-  # needs to be.)
-
-  # ToDo: Check the remote name 'github' and branch name 'for-testing' in the
-  # cloned repos
-
-  # ToDo: Check the TribitsExMetaProjRepoVersion.txt file
+  TEST_12
+    MESSAGE "Make sure that the file TribitsExMetaProjRepoVersion.txt is correct"
+    CMND diff ARGS 
+      "${CMAKE_CURRENT_LIST_DIR}/data/TribitsExMetaProjRepoVersion.for-testing.txt"
+      BUILD/TribitsExMetaProjRepoVersion.txt 
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
   # The above test checks several things:
@@ -283,18 +313,40 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   # * Makes sure some git commit SHA1s are shown in 'Old/New revision of
   #   repository' printouts from ctest_update().
   #
-  # * 
+  # * ???
   # 
   #
   # NOTE: The reason that so many tests are done in a single ctest test is the
   # cost of the initial configure which is very expensive.  The other runs use
-  # CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE to avoid this cost.
+  # CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE and CTEST_WIPE_CACHE=FALSE
+  # to avoid this cost.
+
 
 
 # ToDo: Do fresh clone but using the remote name 'github' and branch 'for-testing'
 
+  # ToDo: Check out a non-tracking branch in the base repo and an extra repo
+
+  # ToDo: Do the update, configure, build, and test again checking the repo
+  # commands and output (and verify that it checks out the correct versions)
+
+  # ToDo: Check the TribitsExMetaProjRepoVersion.txt file
 
 
+
+
+
+
+
+  # ToDo: Do the update, configure, build, and test again, except change the
+  # git URLs for the base and extra repos and make sure that it resets the git
+  # remote URL correctly.  (This functionality is not implemented yet but it
+  # needs to be.)
+
+  # ToDo: Check the remote name 'github' and git remote URLs and branch name
+  # 'for-testing' in the cloned repos
+
+  # ToDo: Check the TribitsExMetaProjRepoVersion.txt file
 
 
 
