@@ -21,8 +21,10 @@ ENDIF()
 INCLUDE("${${PROJECT_NAME}_TRIBITS_DIR}/ctest_driver/TribitsCTestDriverCore.cmake")
 
 FUNCTION(TRIBITSEXMETAPROJ_CTEST_DRIVER)
+  SET_DEFAULT_AND_FROM_ENV(TribitsExMetaProj_GIT_URL_REPO_BASE
+    https://github.com/tribits/)
   SET_DEFAULT(TribitsExMetaProj_REPOSITORY_LOCATION_DEFAULT
-    "https://github.com/tribits/TribitsExampleMetaProject.git")
+    "${TribitsExMetaProj_GIT_URL_REPO_BASE}TribitsExampleMetaProject.git")
   SET_DEFAULT(TribitsExMetaProj_REPOSITORY_LOCATION_NIGHTLY_DEFAULT 
     "${TribitsExMetaProj_REPOSITORY_LOCATION_DEFAULT}")
   TRIBITS_CTEST_DRIVER()
