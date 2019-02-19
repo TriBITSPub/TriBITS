@@ -31,3 +31,12 @@ ADD_SUBDIRECTORY(MockCTestDriver)
 IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   ADD_SUBDIRECTORY(TribitsExampleProject)
 ENDIF()
+
+SET(${PROJECT_NAME}_ENABLE_REAL_GIT_CLONE_TESTS OFF CACHE BOOL
+  "If TRUE, then perform tests that do real clones of repos from GitHub.")
+
+IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux" AND
+    ${PROJECT_NAME}_ENABLE_REAL_GIT_CLONE_TESTS
+  )
+  ADD_SUBDIRECTORY(TribitsExampleMetaProject)
+ENDIF()
