@@ -305,7 +305,8 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   )
   # The above test checks several things:
   #
-  # * Tests the initial clone of all the repos from scratch
+  # * Tests the initial clone of all the repos from scratch on the default
+  #   branch and remote name work.
   #
   # * Tests that the Updates.txt file in *NOT* created or attached as a notes
   #   file on the initial clone.
@@ -322,31 +323,126 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   # to avoid this cost.
 
 
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_custom_branch_remote
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
 
-# ToDo: Do fresh clone but using the remote name 'github' and branch 'for-testing'
+  TEST_0
+    MESSAGE "Run ctest driver with intial clone of the repos on the default branch 'master' and remote 'origin'"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      TribitsExMetaProj_GIT_REPOSITORY_REMOTE=github
+      TribitsExMetaProj_BRANCH=for-testing
+      TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_custom_branch_remote
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "CTEST_NOTES_FILES=''"
+      "First perform the initial checkout: .*/git. clone -b for-testing -o github .*github.com.tribits/TribitsExampleMetaProject.git"
+      "Perform checkout in directory: .*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote"
+      "Calling CTEST_UPDATE[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/TribitsExampleMetaProject"
+      "Old revision of repository is: 56877b3b3dd06f41dfb27cedcedc2693aafaef03"
+      "New revision of repository is: 56877b3b3dd06f41dfb27cedcedc2693aafaef03"
+      "CTEST_UPDATE[(][.][.][.][)] returned '0'"
+      "cmake -P tribits_ctest_update_commands[.]cmake"
+      "Git Update PASSED!"
+      "TribitsExampleProject: Doing initial GIT clone/checkout from URL '.*github[.]com.tribits/TribitsExampleProject.git' to dir 'TribitsExampleProject' [.][.][.]"
+      "Cloning into 'TribitsExampleProject'[.][.][.]"
+      "TribitsExampleProjectAddons: Doing initial GIT clone/checkout from URL '.*github[.]com.tribits/TribitsExampleProjectAddons.git' to dir 'TribitsExampleProjectAddons' [.][.][.]"
+      "Cloning into 'TribitsExampleProjectAddons'[.][.][.]"
+      "CTEST_NOTES_FILES_WO_CACHE='.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/BUILD/UpdateCommandsOutput.txt'"
+      "Configure PASSED!"
+       "CTEST_NOTES_FILES='.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/BUILD/UpdateCommandsOutput.txt[;].*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/BUILD/CMakeCache.clean.txt[;].*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/BUILD/TribitsExMetaProjRepoVersion.txt'"
+      "Build PASSED!"
+      "100% tests passed, 0 tests failed out of 11"
+      "Addon1 .*=.*.* sec[*]proc [(]1 test[)]"
+      "MixedLang .* =.*.* sec[*]proc [(]1 test[)]"
+      "SimpleCxx .*=*.* sec[*]proc [(]2 tests[)]"
+      "WithSubpackages .*=*.* sec[*]proc [(]6 tests[)]"
+      "WrapExternal .*=*.* sec[*]proc [(]1 test[)]"
+      "File '' does NOT exist so all tests passed!"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Check that base repo has correct remote"
+    CMND git ARGS remote -v
+    WORKING_DIRECTORY TribitsExampleMetaProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "github.*.*github[.]com.tribits/TribitsExampleMetaProject[.]git"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check that base repo is on the correct branch"
+    CMND git ARGS branch
+    WORKING_DIRECTORY TribitsExampleMetaProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "[*].*for-testing"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Check that one of the extra repos has correct remote"
+    CMND git ARGS remote -v
+    WORKING_DIRECTORY TribitsExampleMetaProject/TribitsExampleProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "github.*.*github[.]com.tribits/TribitsExampleProject[.]git"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_4
+    MESSAGE "Check that one of the extra repos in on the correct branch"
+    CMND git ARGS branch
+    WORKING_DIRECTORY TribitsExampleMetaProject/TribitsExampleProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "[*].*for-testing"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   # ToDo: Check out a non-tracking branch in the base repo and an extra repo
 
+  # ToDo: Verify that a non-tracking branch is checkout out in the base repo
+  # and an extra repo
+
   # ToDo: Do the update, configure, build, and test again checking the repo
-  # commands and output (and verify that it checks out the correct versions)
+  # commands and output (and verify that it checks out the correct branch and
+  # versions again)
 
   # ToDo: Check the TribitsExMetaProjRepoVersion.txt file
 
-
-
-
-
-
-
-  # ToDo: Do the update, configure, build, and test again, except change the
-  # git URLs for the base and extra repos and make sure that it resets the git
-  # remote URL correctly.  (This functionality is not implemented yet but it
-  # needs to be.)
+  # ToDo: Do the update except change the git URLs for the base and extra
+  # repos and make sure that it resets the git remote URL correctly.  (This
+  # functionality is not implemented yet but it needs to be.)  But this will
+  # fail the update because those remotes don't actually exist (but that is
+  # okay for the purpose of this test).
 
   # ToDo: Check the remote name 'github' and git remote URLs and branch name
   # 'for-testing' in the cloned repos
 
   # ToDo: Check the TribitsExMetaProjRepoVersion.txt file
 
+  )
+  # The above test checks a few other use cases:
+  #
+  # * Initial clone on non-default branch and remote name
+  #
+  # * 
+  #
+  # ???
+  #
 
 
+
+# ToDo: Add a test that does a bad clone and ensure that it fails (use an
+# invalid git repo URL).
+
+
+
+# ToDo: Define the proper behavior for doing and update where the name
+# ${TribitsExMetaProj_GIT_REPOSITORY_REMOTE} does not exist but the git repos
+# already exist.  What should be the behavior?  NOTE: This should likely just
+# error out as this should be an invalid use case.  If you want to use
+# different remote, add it external to the ctest -S script invocation.
