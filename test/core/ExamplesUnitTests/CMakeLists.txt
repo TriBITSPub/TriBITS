@@ -3158,7 +3158,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject
       -DTribitsExMetaProj_ENABLE_TESTS=ON
       TribitsExampleMetaProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Reading the list of extra repositories from cmake/ExtraRepositoriesList.cmake"
+      "Reading the list of extra repositories from .*cmake/ExtraRepositoriesList.cmake"
       "-- Adding POST extra Continuous repository TribitsExampleProject "
       "-- Adding POST extra Continuous repository TribitsExampleProject "
       "Reading list of native packages from .*/TribitsExampleMetaProject/PackagesList.cmake"
