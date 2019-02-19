@@ -402,16 +402,104 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
       "[*].*for-testing"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Check out a non-tracking branch in the base repo and an extra repo
+  TEST_5
+    MESSAGE "Check out a retarded non-tracking branch"
+    CMND "${${PROJECT_NAME}_TRIBITS_DIR}/python_utils/gitdist"
+    ARGS --dist-no-color
+      --dist-repos=.,TribitsExampleProject,TribitsExampleProjectAddons
+      checkout -b non-tracking HEAD^
+    WORKING_DIRECTORY TribitsExampleMetaProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "[*][*][*] Base Git Repo: TribitsExampleMetaProject"
+      "Switched to a new branch 'non-tracking'"
+      "[*][*][*] Git Repo: TribitsExampleProject"
+      "[*][*][*] Git Repo: TribitsExampleProjectAddons"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Verify that a non-tracking branch is checkout out in the base repo
-  # and an extra repo
+  TEST_6
+    MESSAGE "Check that base repo is on the correct branch"
+    CMND git ARGS branch
+    WORKING_DIRECTORY TribitsExampleMetaProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "[*].*non-tracking"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Do the update, configure, build, and test again checking the repo
-  # commands and output (and verify that it checks out the correct branch and
-  # versions again)
+  TEST_7
+    MESSAGE "Check that one of the extra repos in on the correct branch"
+    CMND git ARGS branch
+    WORKING_DIRECTORY TribitsExampleMetaProject/TribitsExampleProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "[*].*non-tracking"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Check the TribitsExMetaProjRepoVersion.txt file
+  TEST_8
+    MESSAGE "Remote the generated <project>RepoVersion.txt file"
+    CMND rm ARGS BUILD/TribitsExMetaProjRepoVersion.txt
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_9
+    MESSAGE "Run ctest driver to get back on the 'for-testing' branch"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE
+      CTEST_WIPE_CACHE=FALSE
+      TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      TribitsExMetaProj_GIT_REPOSITORY_REMOTE=github
+      TribitsExMetaProj_BRANCH=for-testing
+      CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_default_branch_remote
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- ENV_TribitsExMetaProj_BRANCH='for-testing'"
+      "-- TribitsExMetaProj_BRANCH='for-testing'"
+      "Calling CTEST_UPDATE[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/TribitsExampleMetaProject"
+      "Old revision of repository is: a8f6f489088537176f0cab2fc189294038963ec4"
+      "New revision of repository is: 56877b3b3dd06f41dfb27cedcedc2693aafaef03"
+      "CTEST_UPDATE[(][.][.][.][)] returned '1'"
+      "cmake -P tribits_ctest_update_commands[.]cmake"
+      "HEAD is now at a8f6f48 Update README file [(]tribitspub/tribits#278[)]"
+      "Git Update PASSED!"
+      "For extra repos, doing switch to branch for-testing"
+      "TribitsExampleProject: Doing GIT update from URL '.*github[.]com.tribits/TribitsExampleProject[.]git' to dir '.*/TribitsExampleProject' [.][.][.]"
+      "TribitsExampleProjectAddons: Doing GIT update from URL '.*github.com.tribits/TribitsExampleProjectAddons.git' to dir '.*/TribitsExampleProjectAddons' [.][.][.]"
+      "CTEST_NOTES_FILES_WO_CACHE='.*/BUILD/Updates.txt[;].*/BUILD/UpdateCommandsOutput.txt'"
+      "Configure PASSED!"
+      "CTEST_NOTES_FILES='.*/BUILD/Updates.txt[;].*/BUILD/UpdateCommandsOutput.txt[;].*/BUILD/CMakeCache.clean.txt[;].*/BUILD/TribitsExMetaProjRepoVersion.txt'"
+      "Build PASSED!"
+      "100% tests passed, 0 tests failed out of 11"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  # NOTE: The above use case requires the custom git commands used by
+  # ctest_update().  The default git commits used inside of ctest_update()
+  # fail in that use case (see #TRIL-260 for an example).
+
+  TEST_10
+    MESSAGE "Check that base repo is on the correct branch"
+    CMND git ARGS branch
+    WORKING_DIRECTORY TribitsExampleMetaProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "[*].*for-testing"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_11
+    MESSAGE "Check that one of the extra repos in on the correct branch"
+    CMND git ARGS branch
+    WORKING_DIRECTORY TribitsExampleMetaProject/TribitsExampleProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "[*].*for-testing"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_12
+    MESSAGE "Make sure that the file TribitsExMetaProjRepoVersion.txt is correct"
+    CMND diff ARGS 
+      "${CMAKE_CURRENT_LIST_DIR}/data/TribitsExMetaProjRepoVersion.for-testing.txt"
+      BUILD/TribitsExMetaProjRepoVersion.txt 
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   # ToDo: Do the update except change the git URLs for the base and extra
   # repos and make sure that it resets the git remote URL correctly.  (This
@@ -436,8 +524,16 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
 
 
 
-# ToDo: Add a test that does a bad clone and ensure that it fails (use an
-# invalid git repo URL).
+# ToDo: Add a test that does a bad clone using a bad repo URL for the base repo
+
+
+
+# ToDo: Add a test that does a bad clone using a bad bad extra repo branch
+# (but an okay base repo branch)
+
+
+
+
 
 
 
