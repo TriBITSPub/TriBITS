@@ -8499,15 +8499,16 @@ These options are described below.
 
   The cache variable ``${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME``
   determines if the start and end date/time for each advanced test (i.e. added
-  with `TRIBITS_ADD_ADVANCED_TEST()`_) is printed or not with each test.  The
-  TriBITS default is ``OFF`` but a TriBITS project can change this default by
-  setting::
+  with `TRIBITS_ADD_ADVANCED_TEST()`_) is printed or not with each test.  If
+  set to ``TRUE`` this also causes in the timing for each ``TEST_<IDX>`` block
+  to be printed as well.  The TriBITS default is ``OFF`` but a TriBITS project
+  can change this default by setting::
 
     SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME_DEFAULT ON)
 
   The implementation of this feature currently uses ``EXECUTE_PROCESS(date)``
-  and therefore will only work on Linux/Unix/Mac systems and not Windows
-  systems.
+  and therefore will only work on many (but perhaps not all) Linux/Unix/Mac
+  systems and not Windows systems.
 
   NOTE: In a future version of CTest, this option may turn on start and end
   date/time for regular tests added with `TRIBITS_ADD_TEST()`_ (which uses a
