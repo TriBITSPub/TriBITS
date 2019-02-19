@@ -112,6 +112,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_default_branch_remote
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
+      "CTEST_NOTES_FILES=''"
       "First perform the initial checkout: .*/git. clone -o origin .*github.com.tribits/TribitsExampleMetaProject.git"
       "Perform checkout in directory: .*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote"
       "Calling CTEST_UPDATE[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/TribitsExampleMetaProject"
@@ -124,7 +125,9 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "Cloning into 'TribitsExampleProject'[.][.][.]"
       "TribitsExampleProjectAddons: Doing initial GIT clone/checkout from URL '.*github[.]com.tribits/TribitsExampleProjectAddons.git' to dir 'TribitsExampleProjectAddons' [.][.][.]"
       "Cloning into 'TribitsExampleProjectAddons'[.][.][.]"
+      "CTEST_NOTES_FILES_WO_CACHE='.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/BUILD/UpdateCommandsOutput.txt'"
       "Configure PASSED!"
+       "CTEST_NOTES_FILES='.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/BUILD/UpdateCommandsOutput.txt[;].*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/BUILD/CMakeCache.clean.txt[;].*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/BUILD/TribitsExMetaProjRepoVersion.txt'"
       "Build PASSED!"
       "100% tests passed, 0 tests failed out of 11"
       "Addon1 .*=.*.* sec[*]proc [(]1 test[)]"
@@ -164,7 +167,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_4
-    MESSAGE "Check that one of the extra repos in on the corredt branch"
+    MESSAGE "Check that one of the extra repos in on the correct branch"
     CMND git ARGS branch
     WORKING_DIRECTORY TribitsExampleMetaProject/TribitsExampleProject
     SKIP_CLEAN_WORKING_DIRECTORY
@@ -181,14 +184,17 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE
       TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       TribitsExMetaProj_BRANCH=for-testing
+      CTEST_NOTES_FILES=${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleMetaProject/README
       CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_default_branch_remote
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
+      "-- ENV_CTEST_NOTES_FILES='.*/tribits/examples/TribitsExampleMetaProject/README'"
+      "-- CTEST_NOTES_FILES='.*/tribits/examples/TribitsExampleMetaProject/README'"
       "-- ENV_TribitsExMetaProj_BRANCH='for-testing'"
       "-- TribitsExMetaProj_BRANCH='for-testing'"
       "Calling CTEST_UPDATE[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/TribitsExampleMetaProject"
       "Old revision of repository is: [a-z0-9]+"
-      "New revision of repository is: a8f6f489088537176f0cab2fc189294038963ec4"
+      "New revision of repository is: 56877b3b3dd06f41dfb27cedcedc2693aafaef03"
       "CTEST_UPDATE[(][.][.][.][)] returned '[0-9]+'"
       "cmake -P tribits_ctest_update_commands[.]cmake"
       "Running: .*/git checkout -B for-testing --track origin/for-testing"
@@ -198,7 +204,9 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "For extra repos, doing switch to branch for-testing"
       "TribitsExampleProject: Doing GIT update from URL '.*github[.]com.tribits/TribitsExampleProject[.]git' to dir '.*/TribitsExampleProject' [.][.][.]"
       "TribitsExampleProjectAddons: Doing GIT update from URL '.*github[.]com.tribits/TribitsExampleProjectAddons[.]git' to dir '.*/TribitsExampleProjectAddons' [.][.][.]"
+      "CTEST_NOTES_FILES_WO_CACHE='.*/BUILD/Updates.txt[;].*/BUILD/UpdateCommandsOutput.txt[;].*/tribits/examples/TribitsExampleMetaProject/README'"
       "Configure PASSED!"
+      "CTEST_NOTES_FILES='.*/BUILD/Updates.txt[;].*/BUILD/UpdateCommandsOutput.txt[;].*/tribits/examples/TribitsExampleMetaProject/README[;].*/BUILD/CMakeCache.clean.txt[;].*/BUILD/TribitsExMetaProjRepoVersion.txt'"
       "Build PASSED!"
       "100% tests passed, 0 tests failed out of 11"
       "Addon1 .*=.*.* sec[*]proc [(]1 test[)]"
@@ -210,9 +218,31 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Check for the branch 'for-testing' in the cloned repos
+  TEST_6
+    MESSAGE "Check that base repo is on the correct branch"
+    CMND git ARGS branch
+    WORKING_DIRECTORY TribitsExampleMetaProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "[*].*for-testing"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Check the TribitsExMetaProjRepoVersion.txt file (on the branch 'for-testing')
+  TEST_7
+    MESSAGE "Check that one of the extra repos in on the correct branch"
+    CMND git ARGS branch
+    WORKING_DIRECTORY TribitsExampleMetaProject/TribitsExampleProject
+    SKIP_CLEAN_WORKING_DIRECTORY
+    PASS_REGULAR_EXPRESSION_ALL
+      "[*].*for-testing"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_8
+    MESSAGE "Check that one of the extra repos in on the correct branch"
+    CMND diff ARGS
+      "${CMAKE_CURRENT_LIST_DIR}/data/TribitsExMetaProjRepoVersion.for-testing.txt"
+      BUILD/TribitsExMetaProjRepoVersion.txt 
+    SKIP_CLEAN_WORKING_DIRECTORY
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   # ToDo: Delete one of the extra repos so that it will be cloned again
 
@@ -243,6 +273,19 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   # ToDo: Check the TribitsExMetaProjRepoVersion.txt file
 
   )
+  # The above test checks several things:
+  #
+  # * Tests the initial clone of all the repos from scratch
+  #
+  # * Tests that the Updates.txt file in *NOT* created or attached as a notes
+  #   file on the initial clone.
+  #
+  # * Makes sure some git commit SHA1s are shown in 'Old/New revision of
+  #   repository' printouts from ctest_update().
+  #
+  # * 
+  # 
+  #
   # NOTE: The reason that so many tests are done in a single ctest test is the
   # cost of the initial configure which is very expensive.  The other runs use
   # CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE to avoid this cost.

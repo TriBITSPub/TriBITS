@@ -11,5 +11,8 @@ SET(${PROJECT_NAME}_EXTRAREPOS_FILE
 SET(${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE  Continuous
   CACHE  STRING  "Set in ProjectName.cmake")
 
-# Do the all-at-once approach by default
+# Generate <Project>RepoVersion.txt file
+SET(${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE_DEFAULT ON)
+
+# Do the all-at-once approach with tribits_ctest_driver() by default
 SET(${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE_DEFAULT ON)
