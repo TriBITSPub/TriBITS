@@ -1,15 +1,4 @@
-#
-# Set the locations of things for this project
-#
-
-SET(TRIBITS_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../..")
-SET(TriBITS_TRIBITS_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../tribits")
-
-#
-# Include the TriBITS file to get other modules included
-#
-
-INCLUDE("${CMAKE_CURRENT_LIST_DIR}/../../../tribits/ctest_driver/TribitsCTestDriverCore.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/../TribitsProjCTestDriver.cmake")
 
 #
 # Set the options specific to this build case
@@ -35,7 +24,9 @@ SET( EXTRA_CONFIGURE_OPTIONS
   "-DTriBITS_ENABLE_Fortran=ON"
   "-DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE"
   "-DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE"
+  "-DTriBITS_ENABLE_REAL_GIT_CLONE_TESTS=TRUE"
   "-DTriBITS_TRACE_ADD_TEST=ON"
+  "-DTriBITS_SHOW_TEST_START_END_DATE_TIME=ON"
   "-DTriBITS_HOSTNAME=${CTEST_SITE}"
   )
 
@@ -45,4 +36,4 @@ SET(CTEST_TEST_TYPE Continuous)
 # Run the CTest driver and submit to CDash
 #
 
-TRIBITS_CTEST_DRIVER()
+TRIBITS_PROJ_CTEST_DRIVER()
