@@ -240,7 +240,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_PASS
       "WrapExternal: Libs build passed"
       "WrapExternal: All build passed"
       "WrapExternal_run_external_func [.]+ +Passed"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
   # NOTE: The above test is the basic mode of testing everything and making
@@ -540,7 +540,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_COVERAGE
       "Running coverage for package 'MixedLang'"
       "Running coverage for package 'WithSubpackages'"
       "Running coverage for package 'WrapExternal'"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
   # NOTE: The above test is the only coverage test for PBP.
@@ -577,7 +577,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_MEMORY
       "MemCheck .+: WithSubpackagesA_test_of_a [.]+ +Passed"
       "Running memory testing for package 'WrapExternal'"
       "MemCheck .+: WrapExternal_run_external_func [.]+ +Passed"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
   # NOTE: The above test is the only memory test for PBP.
@@ -624,7 +624,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_ALL_PASS
       "3. Processing current package WrapExternal: libs='ON', tests='ON'"
       "Done with the incremental building and testing of TribitsExProj packages"
       "TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       "C[)] Clean out the list of packages again to clean the cache file"
       "D[)] Reconfigure with the original package list"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -681,7 +681,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
       "1. Processing current package WrapExternal: libs='ON', tests='ON'"
       "Done with the incremental building and testing of TribitsExProj packages"
       "TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   TEST_2
     MESSAGE "Verify that the right set of packages are set"
@@ -756,7 +756,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_2
       "WithSubpackages: Libs build passed"
       "WithSubpackages: All build passed"
       "WithSubpackages: Skipping running tests due to CTEST_DO_TEST='OFF'"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_2
@@ -793,7 +793,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_2
       "WithSubpackages: Configure passed!"
       "WithSubpackages: Skipping build due to CTEST_DO_BUILD='OFF'"
       "WithSubpackages: File '' does NOT exist so all tests passed"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
@@ -840,7 +840,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
       "Calling ctest_start[(]Continuous[)]"
       "Run dashboard with model Continuous"
       "Skipping processing anything else since not requested to configure, build, test, or run memory tests"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_2
@@ -878,7 +878,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
       "WithSubpackages: Configure passed!"
       "WithSubpackages: Skipping build due to CTEST_DO_BUILD='OFF'"
       "WithSubpackages: Skipping running tests due to CTEST_DO_TEST='OFF'"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_3
@@ -919,7 +919,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
       "WithSubpackages: Libs build passed"
       "WithSubpackages: All build passed"
       "WithSubpackages: Skipping running tests due to CTEST_DO_TEST='OFF'"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_4
@@ -956,7 +956,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
       "WithSubpackages: Configure passed!"
       "WithSubpackages: Skipping build due to CTEST_DO_BUILD='OFF'"
       "WithSubpackages: File '' does NOT exist so all tests passed"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
@@ -1034,7 +1034,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"Skipping converage tests because CTEST_DO_COVERAGE_TESTING='FALSE'"
 	"Skipping memory testing because CTEST_DO_MEMORY_TESTING='FALSE'"
         "File '' does NOT exist so all tests passed"
-        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
     # NOTE: The above test is the basic mode of testing all packages and making
@@ -1082,7 +1082,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "SimpleCxx_HelloWorldTests [.]+ +Passed"
         "SimpleCxx_HelloWorldProg [.]+ +Passed"
         "File '' does NOT exist so all tests passed"
-        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     #TEST_2
     #  MESSAGE "Make sure the Note.xml file contains the right contents"
@@ -1148,7 +1148,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "SimpleCxx_HelloWorldProg [.]+ +Passed"
         "WrapExternal_run_external_func [.]+ +Passed"
         "File '' does NOT exist so all tests passed"
-        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
     # NOTE: The above test makes sure that requesting a subset of packages build
@@ -1446,7 +1446,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"Percentage Coverage:"  # printed by ctest_coverage()
 	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
 	"TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
-        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
     # NOTE: The above test is the only coverage test for AAO mode!
@@ -1482,7 +1482,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "MemCheck .+: WrapExternal_run_external_func [.]+ +Passed"
 	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
 	"TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
-        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
     # NOTE: The above test is the only memory test for AAO mode!
@@ -1519,7 +1519,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
 	"Configure, build, test and submit results all-at-once for all enabled packages"
         "CTEST_LABELS_FOR_SUBPROJECTS='SimpleCxx[;]MixedLang[;]WithSubpackages[;]WrapExternal'"
-        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     TEST_2
       MESSAGE "Verify that the right set of packages are set"
@@ -1563,7 +1563,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx 1"
         "CTEST_LABELS_FOR_SUBPROJECTS='SimpleCxx'"
         "TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
-        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     TEST_2
       MESSAGE "Verify that the right set of packages are set"
@@ -1616,7 +1616,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx WrapExternal 2"
         "CTEST_LABELS_FOR_SUBPROJECTS='SimpleCxx[;]WrapExternal'"
         "TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
-        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     TEST_2
       MESSAGE "Verify that the right set of packages are set"
@@ -1678,7 +1678,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"Skipping tests because CTEST_DO_TEST='OFF'"
 	"Skipping converage tests because CTEST_DO_COVERAGE_TESTING='FALSE'"
 	"Skipping memory testing because CTEST_DO_MEMORY_TESTING='FALSE'"
-	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_2
@@ -1714,7 +1714,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"File '' does NOT exist so all tests passed"
 	"Skipping converage tests because CTEST_DO_COVERAGE_TESTING='FALSE'"
 	"Skipping memory testing because CTEST_DO_MEMORY_TESTING='FALSE'"
-	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     )
@@ -1754,7 +1754,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"Calling ctest_start[(]Continuous[)]"
 	"Run dashboard with model Continuous"
 	"Skipping processing anything else since not requested to configure, build, test, or run memory tests"
-	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_2
@@ -1780,7 +1780,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"Configure PASSED"
 	"Skipping build due to CTEST_DO_BUILD='OFF'"
 	"Skipping tests because CTEST_DO_TEST='OFF'"
-	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_3
@@ -1807,7 +1807,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"Building all targets"
 	"Build PASSED"
 	"Skipping tests because CTEST_DO_TEST='OFF'"
-	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_4
@@ -1833,7 +1833,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"Skipping configure due to CTEST_DO_CONFIGURE='OFF'"
 	"Skipping build due to CTEST_DO_BUILD='OFF'"
 	"File '' does NOT exist so all tests passed"
-	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+	"TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     )
@@ -1876,7 +1876,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "Build install output: BUILD_INSTALL_NUM_ERRORS='0',BUILD_INSTALL_RETURN_VAL='0'"
 	"Install PASSED!"
         "File '' does NOT exist so all tests passed!"
-        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     TEST_2
       MESSAGE "Run the installed simplecxx-helloworld program."

@@ -136,7 +136,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "WithSubpackages .*=*.* sec[*]proc [(]6 tests[)]"
       "WrapExternal .*=*.* sec[*]proc [(]1 test[)]"
       "File '' does NOT exist so all tests passed!"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_1
@@ -216,7 +216,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "WithSubpackages .*=*.* sec[*]proc [(]6 tests[)]"
       "WrapExternal .*=*.* sec[*]proc [(]1 test[)]"
       "File '' does NOT exist so all tests passed!"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_6
@@ -363,7 +363,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
       "WithSubpackages .*=*.* sec[*]proc [(]6 tests[)]"
       "WrapExternal .*=*.* sec[*]proc [(]1 test[)]"
       "File '' does NOT exist so all tests passed!"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_1
@@ -523,17 +523,21 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
   #
 
 
+# ToDo: Move the extra repo cloning and updating code into being called by
+# cmake -P script unside of CTEST_UPDATE() so that any update failure can be
+# reported to CDash!  Also, don't do the configure, build, or tests if there
+# is an update failure.
+
 
 # ToDo: Add a test that does a bad clone using a bad repo URL for the base repo
-
 
 
 # ToDo: Add a test that does a bad clone using a bad bad extra repo branch
 # (but an okay base repo branch)
 
 
-
-
+# ToDo: Add a test does a bad checkout of a branch that does not exist in an
+# extra repo and ensure it reports the update failure.
 
 
 

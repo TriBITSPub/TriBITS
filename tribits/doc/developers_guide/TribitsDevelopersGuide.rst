@@ -5935,10 +5935,10 @@ as::
 A twist on this use case is for a package that only builds as a TriBITS
 package inside of some larger TriBITS project and not as its own TriBITS CMake
 project.  In this case, some slight changes are needed to this example but the
-basic approach is nearly identical.  One still needs a ``if()`` statement at
-the top of first ``CMakeLists.txt`` file (this time for the package) and the
-macro ``include_tribits_build()`` needs to be defined at the top of that file
-as well.  Then every ``CMakeLists.txt`` file in subdirectories just calls
+basic approach is nearly identical.  One still needs an ``if()`` statement at
+the top of the first ``CMakeLists.txt`` file (this time for the package) and
+the macro ``include_tribits_build()`` needs to be defined at the top of that
+file as well.  Then every ``CMakeLists.txt`` file in subdirectories just calls
 ``include_tribits_build()``.  That is it.
 
 
@@ -8507,8 +8507,8 @@ These options are described below.
     SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME_DEFAULT ON)
 
   The implementation of this feature currently uses ``EXECUTE_PROCESS(date)``
-  and therefore will only work on many (but perhaps not all) Linux/Unix/Mac
-  systems and not Windows systems.
+  and therefore will work on many (but perhaps not all) Linux/Unix/Mac systems
+  and not on Windows systems.
 
   NOTE: In a future version of CTest, this option may turn on start and end
   date/time for regular tests added with `TRIBITS_ADD_TEST()`_ (which uses a

@@ -37,10 +37,11 @@
 # ************************************************************************
 # @HEADER
 
+#############################################
 #
-# Tribits platform-independent test driver.
+# TriBITS platform-independent test driver.
 #
-#
+#############################################
 
 MESSAGE("")
 MESSAGE("*******************************")
@@ -595,7 +596,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #   .. _${PROJECT_NAME}_EXCLUDE_PACKAGES:
 #
-#   ``${PROJECT_NAME}_EXCLUDE_PACKAGES=<pkg0>,<pgk1>,...``
+#   ``${PROJECT_NAME}_EXCLUDE_PACKAGES=<pkg0>,<pkg1>,...``
 #
 #     A semi-colon ';' or comma ',' separated list of packages **NOT** to
 #     enable when determining the set of packages to be tested.  NOTE: Listing
@@ -1018,9 +1019,9 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #   ``CTEST_NOTES_FILES="<filepath1>;<filepath2>;..."``
 #
-#     Built-in CTest variable that specifies a semi-colon seprated list of
+#     Built-in CTest variable that specifies a semi-colon separated list of
 #     files that will get uploaded to CDash as "notes files".  This function
-#     will also add other files as notes files as well such as the file
+#     will also add notes files as well such as the file
 #     ``CMakeCache.clean.txt`` (cleaned-up version of the CMakeCache.txt
 #     file), the file ``Updates.txt`` (lists new git commits pulled in all the
 #     git repos), the file ``UpdateCommandsOutput.txt`` (list of commands and
@@ -1451,7 +1452,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # The name of the site in the dashboard (almost never need to override this)
   SET_DEFAULT_AND_FROM_ENV( CTEST_SITE ${CTEST_SITE_DEFAULT} )
 
-  # The root of the dasbhoard where ${PROJECT_NAME} will be cloned and the
+  # The root of the dashboard where ${PROJECT_NAME} will be cloned and the
   # BUILD directory will be create (only override for separate testing)
   SET_DEFAULT_AND_FROM_ENV( CTEST_DASHBOARD_ROOT "" )
   IF (CTEST_DASHBOARD_ROOT STREQUAL "PWD")
@@ -1515,7 +1516,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # Call CTEST_CONFIGURE(...) or not
   SET_DEFAULT_AND_FROM_ENV( CTEST_DO_CONFIGURE TRUE )
 
-  # Flags passed to 'make' assume gnumake with unix makefiles
+  # Flags passed to 'make'
   IF("${CTEST_CMAKE_GENERATOR}" MATCHES "Unix Makefiles")
     SET_DEFAULT_AND_FROM_ENV( CTEST_BUILD_FLAGS "-j2")
   ELSE()
@@ -2120,7 +2121,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     )
 
   # Set up a list of notes files that don't include the CMakeCache.clean.txt
-  # file which will change for every submit in the package-by-package modee.
+  # file which will change for every submit in the package-by-package mode.
 
   SET(CTEST_NOTES_FILES_WO_CACHE)
 
@@ -2187,7 +2188,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
     ELSE()
 
-        TRIBITS_CTEST_PACKAGE_BY_PACKAGE()
+      TRIBITS_CTEST_PACKAGE_BY_PACKAGE()
 
     ENDIF()
 
@@ -2226,7 +2227,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   IF ("${${PROJECT_NAME}_FAILED_PACKAGES}" STREQUAL "")
     MESSAGE(
       "${SEE_CDASH_LINK_STR}\n"
-      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED\n")
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED\n")
   ELSE()
     # ToDo: Find out why other breaking tests don't fail when FATAL_ERROR is
     # removed!
@@ -2234,9 +2235,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
       "${SEE_CDASH_LINK_STR}\n"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED\n")
     # NOTE: FATAL_ERROR is needed so that the ctest -S script returns != 0
-    # Also, it is critical to dislplay the "See results" in this
+    # Also, it is critical to display the "See results" in this
     # MESSAGE(FATAL_ERROR ...) command in order for it to be printed last.
-    # Otherwise, if you run with ctest -V -S, then the ouptut from
+    # Otherwise, if you run with ctest -V -S, then the output from
     # CTEST_TEST() will be printed last :-(
   ENDIF()
 
