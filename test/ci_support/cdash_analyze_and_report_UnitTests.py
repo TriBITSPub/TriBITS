@@ -120,14 +120,14 @@ def assertListOfRegexsFoundInLinstOfStrs(
 
 
 # Base test directory in the build tree
-g_baseTestDir="analyze_and_report_cdash_results"
+g_baseTestDir="cdash_analyze_and_report"
 
 
 # Set up the test case directory and copy starter files into it
 #
 # These files can then be modified in order to define other test cases.
 #
-def analyze_and_report_cdash_results_setup_test_dir(
+def cdash_analyze_and_report_setup_test_dir(
   testCaseName,
   buildSetName="ProjectName Nightly Builds",
   copyFrom="raw_cdash_data_twoif_12_twif_9",
@@ -192,12 +192,12 @@ def writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir,
   writeTestsDictListToCDashJsonFile(testsLOD, testOutputDir, testsJsonRelFilePath)
 
 
-# Run a test case involving the analyze_and_report_cdash_results.py
+# Run a test case involving the cdash_analyze_and_report.py
 #
 # This function runs a test case involving a the script
-# analyze_and_report_cdash_results.py.
+# cdash_analyze_and_report.py.
 #
-def analyze_and_report_cdash_results_run_case(
+def cdash_analyze_and_report_run_case(
   testObj,
   testCaseName,
   extraCmndLineOptionsList,
@@ -221,7 +221,7 @@ def analyze_and_report_cdash_results_run_case(
     htmlFileName = "htmlFile.html"
     htmlFileAbsPath = os.getcwd()+"/"+htmlFileName
   
-    cmnd = ciSupportDir+"/analyze_and_report_cdash_results.py"+\
+    cmnd = ciSupportDir+"/cdash_analyze_and_report.py"+\
       " --date=2018-10-28"+\
       " --cdash-project-name='ProjectName'"+\
       " --build-set-name='ProjectName Nightly Builds'"+\
@@ -234,7 +234,7 @@ def analyze_and_report_cdash_results_run_case(
       " --write-email-to-file="+htmlFileName+\
       " "+" ".join(extraCmndLineOptionsList)
   
-    # Run analyze_and_report_cdash_results.py
+    # Run cdash_analyze_and_report.py
     stdoutFile = "stdout.out"
     stdoutFileAbsPath = os.getcwd()+"/"+stdoutFile
     rtnCode = CDQAR.echoRunSysCmnd(cmnd, throwExcept=False,
@@ -272,12 +272,12 @@ def analyze_and_report_cdash_results_run_case(
 
 #############################################################################
 #
-# System-level tests for analyze_and_report_cdash_results.py
+# System-level tests for cdash_analyze_and_report.py
 #
 #############################################################################
 
 
-class test_analyze_and_report_cdash_results(unittest.TestCase):
+class test_cdash_analyze_and_report(unittest.TestCase):
 
 
   # Base case for raw CDash data we happened to choose for all fo tests tests
@@ -291,9 +291,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
     testCaseName = "twoif_12_twif_9"
 
-    analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+    cdash_analyze_and_report_setup_test_dir(testCaseName)
 
-    analyze_and_report_cdash_results_run_case(
+    cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       ["--print-details=on"],  # grep for verbose output
@@ -391,9 +391,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
 
     testCaseName = "twoif_21_no_input_csv_files"
 
-    analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+    cdash_analyze_and_report_setup_test_dir(testCaseName)
 
-    analyze_and_report_cdash_results_run_case(
+    cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       [
@@ -460,7 +460,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testCaseName = "twoif_10_twoinr2_twif_8_twinr_1"
 
     # Copy the raw files to get started
-    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
 
     # Change the status for few tests from 'Failed' to 'Not Run'.
 
@@ -540,7 +540,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir)
 
     # Run the script and make sure it outputs the right stuff
-    analyze_and_report_cdash_results_run_case(
+    cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       [
@@ -706,7 +706,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testCaseName = "twoif_12_twif_9_with_duplicate_nonpassing_tests"
 
     # Copy the raw files to get started
-    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
 
     # Get list of nonpassing tests from JSON file
     testsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
@@ -717,7 +717,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir)
 
     # Run the script and make sure it outputs the right stuff
-    analyze_and_report_cdash_results_run_case(
+    cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       [],
@@ -764,7 +764,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testCaseName = "twoif_12_twif_9_with_duplicate_nonpasing_testids"
 
     # Copy the raw files to get started
-    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
 
     # Get list of nonpassing tests from JSON file
     testsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
@@ -776,7 +776,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir)
 
     # Run the script and make sure it outputs the right stuff
-    analyze_and_report_cdash_results_run_case(
+    cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       [],
@@ -823,7 +823,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     buildSetName = "Project Specialized Builds"
 
     # Copy the raw files from CDash to get started
-    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName,
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName,
       buildSetName)
 
     # Add some expected builds that don't exist
@@ -853,9 +853,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     # SearchableListOfDicts
     CDQAR.pprintPythonDataToFile(fullCDashIndexBuildsJson, fullCDashIndexBuildsJsonFilePath)
 
-    # Run analyze_and_report_cdash_results.py and make sure that it prints
+    # Run cdash_analyze_and_report.py and make sure that it prints
     # the right stuff
-    analyze_and_report_cdash_results_run_case(
+    cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       [
@@ -973,7 +973,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     buildSetName = "Project Specialized Builds"
 
     # Copy the raw files from CDash to get started
-    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName,
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName,
       buildSetName)
 
     # Remove all of the failing tests
@@ -988,9 +988,9 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     with open(testsWithIssueTrackersFilePath, 'w') as testsWithIssueTrackersFile:
       testsWithIssueTrackersFile.write(testsWithIssueTrackersStr)
 
-    # Run analyze_and_report_cdash_results.py and make sure that it prints the
+    # Run cdash_analyze_and_report.py and make sure that it prints the
     # right stuff
-    analyze_and_report_cdash_results_run_case(
+    cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       [
@@ -1041,7 +1041,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testCaseName = "tests_with_issue_trackers_no_match_expected_builds"
 
     # Copy the raw files to get started
-    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
 
     # Add an test with an issue tracker that does not match an expected builds
     testsWithIssueTrackersFilePath = testOutputDir+"/testsWithIssueTrackers.csv"
@@ -1053,7 +1053,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       testsWithIssueTrackersFile.write(testsWithIssueTrackersStr)
 
     # Run the script and make sure it outputs the right stuff
-    analyze_and_report_cdash_results_run_case(
+    cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       [],
@@ -1062,7 +1062,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
       [
         "Num expected builds = 6",
         "Num tests with issue trackers = 10",
-        ".+File \".+/analyze_and_report_cdash_results.py\", line.+",
+        ".+File \".+/cdash_analyze_and_report.py\", line.+",
         ".+Error: The following tests with issue trackers did not match 'site' and 'buildName' in one of the expected builds:",
         ".+{'site'='othersite', 'buildName'=otherbuild', 'testname'=Teko_ModALPreconditioner_MPI_1'}",
         ],
@@ -1073,7 +1073,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
         # The error message
         "<pre><code>",
         "Traceback [(]most recent call last[)]:",
-        "  File \".+/analyze_and_report_cdash_results.py\".+",
+        "  File \".+/cdash_analyze_and_report.py\".+",
         "    raise Exception[(]errMsg[)]",
         "Exception: Error: The following tests with issue trackers did not match 'site' and 'buildName' in one of the expected builds:",
         "  {'site'='othersite', 'buildName'=otherbuild', 'testname'=Teko_ModALPreconditioner_MPI_1'}",
@@ -1111,7 +1111,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     testCaseName = "twip_twim"
 
     # Copy the raw files to get started
-    testOutputDir = analyze_and_report_cdash_results_setup_test_dir(testCaseName)
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
 
     # Get full list of nonpassing tests from Json file
     nonpassingTestsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
@@ -1258,7 +1258,7 @@ class test_analyze_and_report_cdash_results(unittest.TestCase):
     # Pass Days" and "Consecutive Missing Days".)
 
     # Run the script and make sure it outputs the right stuff
-    analyze_and_report_cdash_results_run_case(
+    cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       ["--limit-test-history-days=30"], # Test that you can set this as int

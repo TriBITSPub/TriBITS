@@ -53,7 +53,7 @@ from gitdist import addOptionParserChoiceOption
 #
 
 
-usageHelp = r"""analyze_and_report_cdash_results.py [options]
+usageHelp = r"""cdash_analyze_and_report.py [options]
 
 This script takes in CDash URL information and other data as command-line
 arguments and then analyzes it to look for missing expected builds, failed
@@ -277,7 +277,7 @@ def echoCmndLine(inOptions):
 
   print("")
   print("**************************************************************************")
-  print("analyze_and_report_cdash_results.py \\")
+  print("cdash_analyze_and_report.py \\")
 
   echoCmndLineOptions(inOptions)
 
