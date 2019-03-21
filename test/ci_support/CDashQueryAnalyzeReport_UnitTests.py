@@ -1727,6 +1727,7 @@ g_cdashTestDict = {
   u'buildName' : u'build1',
   u'testname' : u'test1',
   u'testDetailsLink' : u'testDetails.php?test=58569474&build=4143620',
+  u'time' : 0.22,
   u'otherData' : u'dataValue',
   } 
 
@@ -1753,6 +1754,27 @@ class test_checkCDashTestDictsAreSame(unittest.TestCase):
     testDict_2 = copy.deepcopy(g_cdashTestDict)
     testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
     expectedRtn = (True, None)
+    self.assertEqual(
+      checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
+      expectedRtn )
+
+  def test_same_except_for_testid_and_small_time_diff(self):
+    testDict_1 = copy.deepcopy(g_cdashTestDict)
+    testDict_2 = copy.deepcopy(g_cdashTestDict)
+    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
+    testDict_2['time'] = 0.23
+    expectedRtn = (True, None)
+    self.assertEqual(
+      checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
+      expectedRtn )
+
+  def test_same_except_for_testid_and_large_time_diff(self):
+    testDict_1 = copy.deepcopy(g_cdashTestDict)
+    testDict_2 = copy.deepcopy(g_cdashTestDict)
+    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
+    testDict_2['time'] = 0.4
+    expectedRtn = (False,
+       "testDict_1['time'] = '0.22' != testDict_2['time'] = '0.4'")
     self.assertEqual(
       checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
       expectedRtn )

@@ -1200,9 +1200,10 @@ def extractTestIdAndBuildIdFromTestDetailsLink(testDetailsLink):
 
 # Check if two test dicts returned from CDash are the same, accounting for
 # possible CDash defects allowing duplicate tests except for different test
-# IDs.
+# IDs and small changes in 'time' (strange defects in CDash).
 #
-# Has the same calling conventions as 
+# Has the same calling conventions and return value as the function
+# checkDictsAreSame().
 #
 # Returns tuple (hasSameKeyValuePairs, errMsg).  If
 # hasSameKeyValuePairs==True, then errMsg==None.  Otherwise, if
@@ -1232,22 +1233,29 @@ def checkCDashTestDictsAreSame(testDict_1, testDict_1_name,
     if (buildid_1 == buildid_2) and (test1d_1 != test1d_2):
       # This is the special case that we are writing this function for!
       sameBuildIdDifferentTestIds = True
+  # Set up copy to allow dropping out fields for comparison
+  testDict_1_copy = copy.deepcopy(testDict_1)
+  testDict_2_copy = copy.deepcopy(testDict_2)
   # If buildIds are the same but the testIds are different, then check the
-  # rest of the key/value pairs to determin if they are the same:
+  # rest of the key/value pairs to determine if they are the same:
   if sameBuildIdDifferentTestIds:
-    # Create copies and remove the 'testDetailsLink' key/value and compare the
-    # rest of the fields to determine if they are the same
-    testDict_1_copy = copy.deepcopy(testDict_1)
-    testDict_2_copy = copy.deepcopy(testDict_2)
     testDict_1_copy.pop('testDetailsLink', None)
     testDict_2_copy.pop('testDetailsLink', None)
-    return checkDictsAreSame(testDict_1_copy, testDict_1_name,
-      testDict_2_copy, testDict_2_name )
-  # Else, if we get here, then this is not the special case of the buildIds
-  # being the same and the testIds being different so just use the standard
-  # comparison that will give a good error message.
-  return checkDictsAreSame(testDict_1, testDict_1_name,
-    testDict_2, testDict_2_name )
+  # If the test 'time' is different by a little bit, then delcare them to be
+  # the same and remove 'time' field from comparison.
+  if testDict_1['time'] != testDict_2['time']:
+    time_1 = testDict_1['time'] 
+    time_2 = testDict_2['time'] 
+    rel_err = abs(time_1 - time_2) / ( (time_1 + time_2 + 1.0)/2.0 )
+    rel_err_max = 0.1  # ToDo: Make this adjustable?
+    if rel_err <= rel_err_max:
+      testDict_1_copy.pop('time', None)
+      testDict_2_copy.pop('time', None)
+    # ToDo: Provide a better error message that prints the diff!
+  # Compare what ever fields are left that may be different and just use the
+  # standard comparison that will give a good error message for differences.
+  return checkDictsAreSame(testDict_1_copy, testDict_1_name,
+    testDict_2_copy, testDict_2_name )
 
 
 # Get the test history CDash cache file.
