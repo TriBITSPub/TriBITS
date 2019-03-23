@@ -1246,8 +1246,10 @@ def checkCDashTestDictsAreSame(testDict_1, testDict_1_name,
   if testDict_1['time'] != testDict_2['time']:
     time_1 = testDict_1['time'] 
     time_2 = testDict_2['time'] 
-    rel_err = abs(time_1 - time_2) / ( (time_1 + time_2 + 1.0)/2.0 )
-    rel_err_max = 0.1  # ToDo: Make this adjustable?
+    rel_err = abs(time_1 - time_2) / ( (time_1 + time_2 + 1e-5)/2.0 )
+    rel_err_max = 1.0  # ToDo: Make this adjustable?
+    print("rel_err = "+str(rel_err))
+    print("rel_err_max = "+str(rel_err_max))
     if rel_err <= rel_err_max:
       testDict_1_copy.pop('time', None)
       testDict_2_copy.pop('time', None)
