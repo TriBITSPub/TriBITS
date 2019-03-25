@@ -1079,7 +1079,7 @@ FUNCTION(TRIBITS_GENERATE_SINGLE_REPO_VERSION_STRING  GIT_REPO_DIR
    SINGLE_REPO_VERSION_STRING_OUT
   )
 
-  IF (NOT GIT_EXEC)
+  IF (NOT GIT_EXECUTABLE)
     MESSAGE(SEND_ERROR "ERROR, the program '${GIT_NAME}' could not be found!"
       "  We can not generate the repo version file!")
   ENDIF()
@@ -1087,7 +1087,7 @@ FUNCTION(TRIBITS_GENERATE_SINGLE_REPO_VERSION_STRING  GIT_REPO_DIR
   # A) Get the basic version info.
 
   EXECUTE_PROCESS(
-    COMMAND ${GIT_EXEC} log -1 --pretty=format:"%h [%ad] <%ae>"
+    COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:"%h [%ad] <%ae>"
     WORKING_DIRECTORY ${GIT_REPO_DIR}
     RESULT_VARIABLE GIT_RETURN
     OUTPUT_VARIABLE GIT_OUTPUT
@@ -1097,7 +1097,7 @@ FUNCTION(TRIBITS_GENERATE_SINGLE_REPO_VERSION_STRING  GIT_REPO_DIR
   # strip them out later :-(
 
   IF (NOT GIT_RETURN STREQUAL 0)
-    MESSAGE(FATAL_ERROR "ERROR, ${GIT_EXEC} command returned ${GIT_RETURN}!=0"
+    MESSAGE(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${GIT_RETURN}!=0"
       " for extra repo ${GIT_REPO_DIR}!")
     SET(GIT_VERSION_INFO "Error, could not get version info!")
   ELSE()
@@ -1111,14 +1111,14 @@ FUNCTION(TRIBITS_GENERATE_SINGLE_REPO_VERSION_STRING  GIT_REPO_DIR
   # B) Get the first 80 chars of the summary message for more info
 
   EXECUTE_PROCESS(
-    COMMAND ${GIT_EXEC} log -1 --pretty=format:"%s"
+    COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:"%s"
     WORKING_DIRECTORY ${GIT_REPO_DIR}
     RESULT_VARIABLE GIT_RETURN
     OUTPUT_VARIABLE GIT_OUTPUT
     )
 
   IF (NOT GIT_RETURN STREQUAL 0)
-    MESSAGE(FATAL_ERROR "ERROR, ${GIT_EXEC} command returned ${GIT_RETURN}!=0"
+    MESSAGE(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${GIT_RETURN}!=0"
       " for extra repo ${GIT_REPO_DIR}!")
     SET(GIT_VERSION_SUMMARY "Error, could not get version summary!")
   ELSE()
@@ -1242,9 +1242,6 @@ FUNCTION(TRIBITS_GENERATE_REPO_VERSION_OUTPUT_AND_FILE_AND_INSTALL)
       SET(PROJECT_SOURCE_IS_GIT_REPO FALSE)
     ENDIF()
     IF (PROJECT_SOURCE_IS_GIT_REPO)
-      # Find git first here so we  don't have to find it in called function so
-      # it can be unit tested.
-      FIND_PROGRAM(GIT_EXEC ${GIT_NAME})
       # Get repo versions, print to stdout and write file
       TRIBITS_GENERATE_REPO_VERSION_OUTPUT_AND_FILE()
       # Add install target for this file
