@@ -54,6 +54,7 @@ INCLUDE(TribitsAddAdvancedTest)
 INCLUDE(TribitsAddExecutableAndTest)
 INCLUDE(TribitsETISupport)
 INCLUDE(TribitsFindPythonInterp)
+INCLUDE(TribitsStripQuotesFromStr)
 INCLUDE(TribitsStandardizePaths)
 INCLUDE(TribitsTplFindIncludeDirsAndLibraries)
 INCLUDE(UnitTestHelpers)
@@ -317,6 +318,35 @@ MACRO(UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS  TPL_NAME)
   SET(TPL_${TPL_NAME}_LIBRARIES "")
   SET(TPL_${TPL_NAME}_LIBRARY_DIRS "")
 ENDMACRO()
+
+
+FUNCTION(UNITEST_TRIBITS_STRIP_QUOTES_FROM_STR)
+
+  MESSAGE("\n***")
+  MESSAGE("*** Testing TRIBITS_STRIP_QUOTES_FROM_STR()")
+  MESSAGE("***\n")
+
+  MESSAGE("Testing TRIBITS_STRIP_QUOTES_FROM_STR() with str with quotes")
+  TRIBITS_STRIP_QUOTES_FROM_STR("\"some string in quotes\"" STR_OUT)
+  UNITTEST_COMPARE_CONST(STR_OUT "some string in quotes")
+
+  MESSAGE("Testing TRIBITS_STRIP_QUOTES_FROM_STR() with just '\"'")
+  TRIBITS_STRIP_QUOTES_FROM_STR("\"" STR_OUT)
+  UNITTEST_COMPARE_CONST(STR_OUT "\"")
+
+  MESSAGE("Testing TRIBITS_STRIP_QUOTES_FROM_STR() with just '\"\"'")
+  TRIBITS_STRIP_QUOTES_FROM_STR("\"\"" STR_OUT)
+  UNITTEST_COMPARE_CONST(STR_OUT "")
+
+  MESSAGE("Testing TRIBITS_STRIP_QUOTES_FROM_STR() with str with quote only on front")
+  TRIBITS_STRIP_QUOTES_FROM_STR("\"some string in quotes" STR_OUT)
+  UNITTEST_COMPARE_CONST(STR_OUT "\"some string in quotes")
+
+  MESSAGE("Testing TRIBITS_STRIP_QUOTES_FROM_STR() with str with quote only on back")
+  TRIBITS_STRIP_QUOTES_FROM_STR("some string in quotes\"" STR_OUT)
+  UNITTEST_COMPARE_CONST(STR_OUT "some string in quotes\"")
+
+ENDFUNCTION()
 
 
 FUNCTION(UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE)
@@ -3474,6 +3504,7 @@ UNITTEST_APPEND_STRING_VAR()
 UNITTEST_TRIBITS_FIND_PYTHON_INTERP()
 UNITEST_TRIBITS_STANDARDIZE_ABS_PATHS()
 UNITEST_TRIBITS_MISC()
+UNITEST_TRIBITS_STRIP_QUOTES_FROM_STR()
 UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE()
 
 # Set the default test categories
@@ -3526,4 +3557,4 @@ MESSAGE("*** Determine final result of all unit tests")
 MESSAGE("***\n")
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(531)
+UNITTEST_FINAL_RESULT(536)
