@@ -99,6 +99,7 @@ MACRO(TRIBITS_PROJECT_IMPL)
   # configuration
   TRIBITS_SETUP_BASIC_SYSTEM_VARS()
   TRIBITS_FIND_PYTHON_INTERP()
+  FIND_PACKAGE(Git)
 
   #
   # A.4) Read in the Project's version file
