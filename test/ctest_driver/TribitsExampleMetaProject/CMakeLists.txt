@@ -40,8 +40,8 @@
 
 ###############################################################################
 #
-# Strong automated testing of TribitsCTestDriverCore.cmake and 'dashboard'
-# target using real TribitsExampleMetaProject including cloning git repos
+# Strong automated testing of TribitsCTestDriverCore.cmake using real
+# TribitsExampleMetaProject and sub-repos including cloning git repos.
 #
 ###############################################################################
 
@@ -306,7 +306,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   # The above test checks several things:
   #
   # * Tests the initial clone of all the repos from scratch on the default
-  #   branch and remote name work.
+  #   branch and remote name.
   #
   # * Tests that the Updates.txt file in *NOT* created or attached as a notes
   #   file on the initial clone.
@@ -315,10 +315,10 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   #   repository' printouts from ctest_update().
   #
   # * ???
-  # 
   #
   # NOTE: The reason that so many tests are done in a single ctest test is the
-  # cost of the initial configure which is very expensive.  The other runs use
+  # cost of the initial configure which checks the compilers which is very
+  # expensive.  The other runs use
   # CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE and CTEST_WIPE_CACHE=FALSE
   # to avoid this cost.
 
@@ -510,8 +510,6 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
   # ToDo: Check the remote name 'github' and git remote URLs and branch name
   # 'for-testing' in the cloned repos
 
-  # ToDo: Check the TribitsExMetaProjRepoVersion.txt file
-
   )
   # The above test checks a few other use cases:
   #
@@ -523,8 +521,62 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
   #
 
 
+IF (NOT GIT_VERSION_STRING VERSION_LESS "2.10.0")
+  SET(GIT_SUPPORTS_VERSION_DATE TRUE)
+ELSE()
+  SET(GIT_SUPPORTS_VERSION_DATE FASLE)
+ENDIF()
+
+SET(FULL_TEST_BINARY_DIR
+  "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestDriver_TribitsExMetaProj_version_date")
+
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE GIT_SUPPORTS_VERSION_DATE
+
+  TEST_0
+    MESSAGE "Run ctest driver with intial clone and generate the TribitsExMetaProjec_version_date.h file and install"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      TribitsExMetaProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR} # Need updated TriBITS!
+      TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      #TribitsExMetaProj_CMAKE_INSTALL_PREFIX=${FULL_TEST_BINARY_DIR}/BUILD/install
+      #CTEST_DO_INSTALL=TRUE
+      CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_version_date_header
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  # ToDo: Check that the build directory has VersionDate.cmake and
+  # <RepoName>_version_date.h for the base repo and each of the slave repos ...
+
+  # ToDo: Verify that the <RepoName>_version_date.h file gets installed in
+  # <install_dir>/include/ for each of the TriBITS repos that are also
+  # version-control repos ...
+
+  # ToD: Verify that that the <Project>Config.cmake file contains
+  # <REPO_NAME>_VERSION_DATE vars for each of the included repos and that they
+  # are set to the correct values ...
+
+  # ToDo: Go into the build directory and generate the source tarball ...
+
+  # ToDo: Untar the source tarball and verify that it contains the generated
+  # VersionDate.cmake
+
+  )
+  # The above test checks several things:
+  #
+  # * Tests the generation of the VersionDate.cmake and
+  #   <RepoName>_version_date.h files for each included repo.
+  #
+  # * ???
+
+
 # ToDo: Move the extra repo cloning and updating code into being called by
-# cmake -P script unside of CTEST_UPDATE() so that any update failure can be
+# cmake -P script inside of CTEST_UPDATE() so that any update failure can be
 # reported to CDash!  Also, don't do the configure, build, or tests if there
 # is an update failure.
 
@@ -532,8 +584,8 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
 # ToDo: Add a test that does a bad clone using a bad repo URL for the base repo
 
 
-# ToDo: Add a test that does a bad clone using a bad bad extra repo branch
-# (but an okay base repo branch)
+# ToDo: Add a test that does a bad clone using a bad extra repo branch (but an
+# okay base repo branch)
 
 
 # ToDo: Add a test does a bad checkout of a branch that does not exist in an
