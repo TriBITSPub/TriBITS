@@ -2315,6 +2315,66 @@ NOTE: If the base ``.git/`` directory is missing, then no
 is printed to cmake STDOUT.
 
 
+Generating git version date files
+---------------------------------
+
+When working with local git repos for the project sources, one can generate
+The files ``VersionDate.cmake`` and ``<Project>_version_date.h`` in the build
+directory which contain ``<PROJECT_NAME_UC>_VERSION_DATE`` by setting::
+
+   -D <Project>PROJ_GENERATE_GIT_VERSION_DATE_FILES=ON
+
+These files are generated in the build directory and
+``<Project>_version_date.h`` is installed in the installation directory.
+
+This uses git to extract the commit date for HEAD using the command::
+
+  env TZ=GMT git log --format="%cd" --date=iso-local -1 HEAD
+
+which returns the date and time for the commit date of ``HEAD`` in the form::
+
+  "YYYY-MM-DD hh:mm:ss +0000"
+
+which is used to create a 10-digit date/time integer of the form::
+
+  YYYYMMDDhh
+
+This 10-digit integer is set to a CMake variable
+`<PROJECT_NAME_UC>_VERSION_DATE` in the generated ``VersionDate.cmake`` file
+and a C/C++ preprocessor macro `<PROJECT_NAME_UC>_VERSION_DATE` in the
+generated ``<Project>_version_date.h`` header file.
+
+This 10-digit date/time integer ``YYYYMMDDhh`` will fit in a signed 32-bit
+integer with a maximum value of `2^32 / 2 - 1` = `2147483647`.  Therefore, the
+maximum date that can be handled is the year 2147 with the max date/time of
+`2147 12 31 23` = `2147123123`.
+
+The file ``<Project>_version_date.h`` is meant to be included by downstream
+codes to determine the version of `<Project>` being used and allows
+`<PROJECT_NAME_UC>_VERSION_DATE` to be used in C/C++ ``ifdefs`` like::
+
+  #if <PROJECT_NAME_UC>_VERSION_DATE >= 2019032704
+    /* The version is newer than 2019-03-27 04:00:00 UTC */
+    ...
+  #else
+    /* The version is older than 2019-03-27 04:00:00 UTC */
+    ...
+  #endif
+
+This allows downstream codes to know the fine-grained version of `<Project>`
+at configure and build time to adjust for the addition of new features,
+deprecation of code, or breaks in backward compatibility (which occur in
+specific commits with unique commit dates).
+
+NOTE: If the branch is not hard-reset then the first-parent commits on that
+branch will have monotonically increasing git commit dates (adjusted for UTC).
+
+NOTE: If the base ``.git/`` directory is missing or the version of git is not
+>= 2.10.1 (needed for the `` --date=iso-local`` argument) then no version date
+files will be generated or installed and a ``NOTE`` will be printed to cmake
+STDOUT.
+
+
 CMake configure-time development mode and debug checking
 --------------------------------------------------------
 
