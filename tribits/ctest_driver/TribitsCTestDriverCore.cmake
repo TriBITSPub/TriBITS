@@ -348,7 +348,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``${PROJECT_NAME}_EXTRAREPOS_FILE`` (`Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_EXTRA_REPOSITORIES`` (`Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_PACKAGES`` (`Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER())`_)
-# * ``${PROJECT_NAME}_PROJ_GENERATE_GIT_VERSION_DATE_FILES`` (`Other CTest Driver options (TRIBITS_CTEST_DRIVER())`_)
+# * ``${PROJECT_NAME}_GENERATE_GIT_VERSION_DATE_FILES`` (`Setting variables in the inner CMake configure (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_PRE_REPOSITORIES`` (`Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_REPOSITORY_BRANCH`` (`Repository Updates (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_REPOSITORY_LOCATION`` (`Repository Updates (TRIBITS_CTEST_DRIVER())`_)
@@ -692,8 +692,8 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``${PROJECT_NAME}_EXTRAREPOS_FILE``: Set to empty if
 #   ``${PROJECT_NAME}_EXTRAREPOS_FILE=NONE``. Otherwise, passed through.
 # * ``${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE``: Direct pass-through
-# * `${PROJECT_NAME}_PROJ_GENERATE_GIT_VERSION_DATE_FILES`_: Oly passed down if 
-#   non-empty value is set (default empty "").
+# * `${PROJECT_NAME}_GENERATE_GIT_VERSION_DATE_FILES`_: Oly passed down if 
+#   non-empty value is set (default empty "")
 #
 # Arbitrary options can be set to be passed into the inner CMake configure
 # after the above options are passed by setting the following variables in the
@@ -1519,7 +1519,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   ENDIF()
 
   # Generate version date files or not
-  SET_DEFAULT_AND_FROM_ENV(${PROJECT_NAME}_PROJ_GENERATE_GIT_VERSION_DATE_FILES "")
+  SET_DEFAULT_AND_FROM_ENV(${PROJECT_NAME}_GENERATE_GIT_VERSION_DATE_FILES "")
 
   # Call CTEST_BUILD(...) or not
   SET_DEFAULT_AND_FROM_ENV( CTEST_DO_BUILD TRUE )

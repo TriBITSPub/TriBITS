@@ -544,21 +544,21 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
       TribitsExMetaProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR} # Need updated TriBITS!
       TribitsExMetaProj_BRANCH=for-testing
       TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
-      TribitsExMetaProj_PROJ_GENERATE_GIT_VERSION_DATE_FILES=TRUE
+      TribitsExMetaProj_GENERATE_GIT_VERSION_DATE_FILES=TRUE
       TribitsExMetaProj_TRACE_FILE_PROCESSING=ON
-      #TribitsExMetaProj_CMAKE_INSTALL_PREFIX=${FULL_TEST_BINARY_DIR}/BUILD/install
-      #CTEST_DO_INSTALL=TRUE
+      TribitsExMetaProj_CMAKE_INSTALL_PREFIX=${FULL_TEST_BINARY_DIR}/BUILD/install
+      CTEST_DO_INSTALL=TRUE
       CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_version_date_header
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
-      "-- ENV_TribitsExMetaProj_PROJ_GENERATE_GIT_VERSION_DATE_FILES='TRUE'"
-      "-- TribitsExMetaProj_PROJ_GENERATE_GIT_VERSION_DATE_FILES='TRUE'"
-      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExMetaProj_PROJ_GENERATE_GIT_VERSION_DATE_FILES:BOOL=TRUE[;].*[;]-DTribitsExMetaProj_TRACE_ADD_TEST=ON'"
+      "-- ENV_TribitsExMetaProj_GENERATE_GIT_VERSION_DATE_FILES='TRUE'"
+      "-- TribitsExMetaProj_GENERATE_GIT_VERSION_DATE_FILES='TRUE'"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExMetaProj_GENERATE_GIT_VERSION_DATE_FILES:BOOL=TRUE[;].*[;]-DTribitsExMetaProj_TRACE_ADD_TEST=ON[;]-DCMAKE_INSTALL_PREFIX=.*/TriBITS_CTestDriver_TribitsExMetaProj_version_date/BUILD/install'"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_1
-    MESSAGE "Check that the TribitsExMetaProjec_version_date.h matches expected entrie file "
+    MESSAGE "Check that the TribitsExMetaProjec_version_date.h matches expected entrie file"
     CMND diff
     ARGS
       "${CMAKE_CURRENT_SOURCE_DIR}/data/TribitsExMetaProj_version_date.for-testing.h"
@@ -568,7 +568,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
     # check other entire files like this, only the version date macro.
 
   TEST_2
-    MESSAGE "Check that the VersionDAte matches expected entrie file "
+    MESSAGE "Check that the VersionDAte matches expected entrie file."
     CMND diff
     ARGS
       "${CMAKE_CURRENT_SOURCE_DIR}/data/VersionDate.TribitsExMetaProj.cmake"
@@ -578,7 +578,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
     # check other entire files like this, only the version date macro.
 
   TEST_3
-    MESSAGE "Check just the version date macro in TribitsExampleProject_version_date.h "
+    MESSAGE "Check just macro in TribitsExampleProject_version_date.h"
     CMND cat
     ARGS BUILD/TribitsExampleProject/TribitsExampleProject_version_date.h
     PASS_REGULAR_EXPRESSION
@@ -592,7 +592,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
       "set[(]TRIBITSEXAMPLEPROJECT_VERSION_DATE 2019021913[)]"
 
   TEST_5
-    MESSAGE "Check just the version date macro in TribitsExampleProjectAddons_version_date.h "
+    MESSAGE "Check just macro in TribitsExampleProjectAddons_version_date.h"
     CMND cat
     ARGS BUILD/TribitsExampleProjectAddons/TribitsExampleProjectAddons_version_date.h
     PASS_REGULAR_EXPRESSION
@@ -605,23 +605,69 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
     PASS_REGULAR_EXPRESSION
       "set[(]TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE 2019021913[)]"
 
-  # ToDo: Verify that the <RepoName>_version_date.h file gets installed in
-  # <install_dir>/include/ for each of the TriBITS repos that are also
-  # version-control repos ...
+  TEST_7
+    MESSAGE "Check that installed TribitsExMetaProjec_version_date.h matches expected entrie file!"
+    CMND diff
+    ARGS
+      "${CMAKE_CURRENT_SOURCE_DIR}/data/TribitsExMetaProj_version_date.for-testing.h"
+      BUILD/install/include/TribitsExMetaProj_version_date.h
 
-  # ToD: Verify that that the <Project>Config.cmake file contains
-  # <REPO_NAME>_VERSION_DATE vars for each of the included repos and that they
-  # are set to the correct values ...
+  TEST_8
+    MESSAGE "Check just the version date macro in intalled TribitsExampleProject_version_date.h"
+    CMND cat
+    ARGS BUILD/install/include/TribitsExampleProject_version_date.h
+    PASS_REGULAR_EXPRESSION
+      "#define TRIBITSEXAMPLEPROJECT_VERSION_DATE 2019021913"
 
-  # ToDo: Run the configure again to see the tracing of the created files ...
+  TEST_9
+    MESSAGE "Check just the version date macro in installed TribitsExampleProjectAddons_version_date.h"
+    CMND cat
+    ARGS BUILD/install/include/TribitsExampleProjectAddons_version_date.h
+    PASS_REGULAR_EXPRESSION
+      "#define TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE 2019021913"
 
-  # ToDo: Reconfigure but this time set GIT_VERSION_STRING=2.6.1 and verify
-  # that <REPO_NAME_UC>_VERSION_DATE is undef ...
+  TEST_10
+    MESSAGE "Reconfigure to see the tracking of the includes of VersionDate.cmake files"
+    WORKING_DIRECTORY BUILD
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND ${CMAKE_COMMAND} ARGS -DTribitsExMetaProj_TRACE_FILE_PROCESSING=ON .
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- File Trace: REPOSITORY INCLUDE .*/BUILD/VersionDate.cmake"
+      "-- File Trace: REPOSITORY INCLUDE .*/BUILD/TribitsExampleProject/VersionDate.cmake"
+      "-- File Trace: REPOSITORY INCLUDE .*/BUILD/TribitsExampleProjectAddons/VersionDate.cmake"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Go into the build directory and generate the source tarball ...
+  TEST_11
+    MESSAGE "Reconfigure with GIT_VERSION_STRING set to old to create undef macros"
+    WORKING_DIRECTORY BUILD
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND ${CMAKE_COMMAND} ARGS -DGIT_VERSION_STRING_OVERRIDE=2.6.1 .
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- NOTE: Can't fill in version date files for TribitsExMetaProj since GIT_VERSION_STRING=2.6.1 < 2.10.0"
+      "-- NOTE: Can't fill in version date files for TribitsExampleProject since GIT_VERSION_STRING=2.6.1 < 2.10.0"
+      "-- NOTE: Can't fill in version date files for TribitsExampleProjectAddons since GIT_VERSION_STRING=2.6.1 < 2.10.0"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Untar the source tarball and verify that it contains the generated
-  # VersionDate.cmake
+  TEST_12
+    MESSAGE "Check that the TribitsExMetaProjec_version_date.h for undef macro"
+    CMND cat
+    ARGS BUILD/TribitsExMetaProj_version_date.h
+    PASS_REGULAR_EXPRESSION
+      "#undef TRIBITSEXMETAPROJ_VERSION_DATE"
+
+  TEST_13
+    MESSAGE "Check TribitsExampleProjectAddons_version_date.h for undef macro"
+    CMND cat
+    ARGS BUILD/TribitsExampleProjectAddons/TribitsExampleProjectAddons_version_date.h
+    PASS_REGULAR_EXPRESSION
+      "#undef TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE"
+
+  # ToD: Implement support for and verify that that the <Project>Config.cmake
+  # file contains <REPO_NAME>_VERSION_DATE vars for each of the included repos
+  # and that they are set to the correct values ...
+
+  # ToDo: Go into the build directory and generate the source tarball to be
+  # tested in a new configure below ...
 
   )
   # The above test checks several things:
@@ -629,7 +675,20 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
   # * Tests the generation of the VersionDate.cmake and
   #   <RepoName>_version_date.h files for each included repo.
   #
-  # * ???
+  # * Tests the install of the <RepoName>_version_date.h files.
+  #
+  # * Tests that if GIT_VERSION_STRING is too old, then it will generate
+  #   <RepoName>_version_date.h files that have undef macros in them.
+
+
+# ToDo: Untar the source tarball, verify that it contains the generated
+# VersionDate.cmake files, configure to generate the correct
+# <RepoVersion>_version_date.h files ...
+
+
+
+
+
 
 
 # ToDo: Move the extra repo cloning and updating code into being called by

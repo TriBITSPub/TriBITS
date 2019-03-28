@@ -8034,6 +8034,7 @@ a given TriBITS project are:
 * `${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE`_
 * `${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION`_
 * `${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES`_
+* `${PROJECT_NAME}_GENERATE_GIT_VERSION_DATE_FILES`_
 * `${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE`_
 * `${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS`_
 * `${PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS`_
@@ -8392,20 +8393,6 @@ These options are described below.
 
     SET(${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION_DEFAULT FALSE)
 
-.. _${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE:
-
-**${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE**
-
-  If ``${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE`` is ``ON``, then the file
-  ``<Project>RepoVersion.txt`` will get generated as a byproduct of
-  configuring with CMake.  See `Multi-Repository Support`_ and
-  `<Project>_GENERATE_REPO_VERSION_FILE`_.  The default is ``OFF`` but the
-  project can change that by setting::
-
-    SET(${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE_DEFAULT ON)
-
-  in the `<projectDir>/ProjectName.cmake`_ file.
-
 .. _${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES:
 
 **${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES**
@@ -8425,6 +8412,35 @@ These options are described below.
 
   is so that the necessary data-structures are generated in order to use the
   function `TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES()`_.
+
+.. _${PROJECT_NAME}_GENERATE_GIT_VERSION_DATE_FILES:
+
+**${PROJECT_NAME}_GENERATE_GIT_VERSION_DATE_FILES**
+
+  If ``${PROJECT_NAME}_GENERATE_GIT_VERSION_DATE_FILES`` is ``ON``, then the
+  fileS ``VersionDate.cmake`` and ``<RepoName>_version_date.h`` will get
+  generated and ``<RepoName>_version_date.h`` will get installed for each repo
+  that is a git repo when the local sources are git repos.  Support`_ and
+  `<Project>_GENERATE_REPO_VERSION_FILE`_.  The default is ``OFF`` but the
+  project can change that by setting::
+
+    SET(${PROJECT_NAME}_GENERATE_GIT_VERSION_DATE_FILES ON)
+
+  in the `<projectDir>/ProjectName.cmake`_ file.
+
+.. _${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE:
+
+**${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE**
+
+  If ``${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE`` is ``ON``, then the file
+  ``<Project>RepoVersion.txt`` will get generated as a byproduct of
+  configuring with CMake.  See `Multi-Repository Support`_ and
+  `<Project>_GENERATE_REPO_VERSION_FILE`_.  The default is ``OFF`` but the
+  project can change that by setting::
+
+    SET(${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE_DEFAULT ON)
+
+  in the `<projectDir>/ProjectName.cmake`_ file.
   
 .. _${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS:
 
