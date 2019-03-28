@@ -191,15 +191,7 @@ ENDIF()
 
 # Find git
 
-FIND_PROGRAM(GIT_EXE NAMES ${GIT_NAME})
-MESSAGE("GIT_EXE=${GIT_EXE}")
-
-IF(NOT GIT_EXE)
-  QUEUE_ERROR("error: could not find git: GIT_EXE='${GIT_EXE}'")
-ENDIF()
-IF(NOT EXISTS "${GIT_EXE}")
-  QUEUE_ERROR("error: GIT_EXE='${GIT_EXE}' does not exist")
-ENDIF()
+FIND_PACKAGE(Git REQUIRED)
 
 
 # Find gitdist
@@ -356,6 +348,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``${PROJECT_NAME}_EXTRAREPOS_FILE`` (`Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_EXTRA_REPOSITORIES`` (`Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_PACKAGES`` (`Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER())`_)
+# * ``${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES`` (`Setting variables in the inner CMake configure (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_PRE_REPOSITORIES`` (`Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_REPOSITORY_BRANCH`` (`Repository Updates (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_REPOSITORY_LOCATION`` (`Repository Updates (TRIBITS_CTEST_DRIVER())`_)
@@ -699,6 +692,8 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``${PROJECT_NAME}_EXTRAREPOS_FILE``: Set to empty if
 #   ``${PROJECT_NAME}_EXTRAREPOS_FILE=NONE``. Otherwise, passed through.
 # * ``${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE``: Direct pass-through
+# * `${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES`_: Oly passed down if 
+#   non-empty value is set (default empty "")
 #
 # Arbitrary options can be set to be passed into the inner CMake configure
 # after the above options are passed by setting the following variables in the
@@ -1523,6 +1518,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     SET_DEFAULT_AND_FROM_ENV( CTEST_BUILD_FLAGS "")
   ENDIF()
 
+  # Generate version date files or not
+  SET_DEFAULT_AND_FROM_ENV(${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES "")
+
   # Call CTEST_BUILD(...) or not
   SET_DEFAULT_AND_FROM_ENV( CTEST_DO_BUILD TRUE )
 
@@ -1714,7 +1712,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   SET_DEFAULT_AND_FROM_ENV( CTEST_UPDATE_RETURN_VAL 0 )
 
   IF (CTEST_DEPENDENCY_HANDLING_UNIT_TESTING)
-    SET(GIT_EXE /somebasedir/git)
+    SET(GIT_EXECUTABLE /somebasedir/git)
   ENDIF()
 
 
@@ -1807,7 +1805,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     ENDIF()
 
     SET( _CTEST_CHECKOUT_COMMAND
-      "\"${GIT_EXE}\" clone ${CHECKOUT_BRANCH_ARG}-o ${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE} ${CTEST_UPDATE_ARGS} ${${PROJECT_NAME}_REPOSITORY_LOCATION}" )
+      "\"${GIT_EXECUTABLE}\" clone ${CHECKOUT_BRANCH_ARG}-o ${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE} ${CTEST_UPDATE_ARGS} ${${PROJECT_NAME}_REPOSITORY_LOCATION}" )
     MESSAGE("CTEST_CHECKOUT_COMMAND=${_CTEST_CHECKOUT_COMMAND}")
 
     IF(NOT EXISTS "${CTEST_SOURCE_DIRECTORY}")
@@ -1827,17 +1825,17 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     # CTest always needs the raw git command in order to do stuff like get the
     # version of the repo before and after the update, even if you provide a
     # custom update command.
-    SET(CTEST_GIT_COMMAND "${GIT_EXE}") 
+    SET(CTEST_GIT_COMMAND "${GIT_EXECUTABLE}") 
     MESSAGE("CTEST_GIT_COMMAND=${CTEST_GIT_COMMAND}")
-    # NOTE: You can't put the above command "${GIT_EXE}" in quotes like
-    # "'${GIT_EXE}'" or "\"${GIT_EXE}\"" or it will not work and
+    # NOTE: You can't put the above command "${GIT_EXECUTABLE}" in quotes like
+    # "'${GIT_EXECUTABLE}'" or "\"${GIT_EXECUTABLE}\"" or it will not work and
     # ctest_update() will return failed!
 
     # Provide a custom command to do the update
 
     SET(CTEST_GIT_UPDATE_CUSTOM
       "${CMAKE_COMMAND}"
-      -DGIT_EXE=${GIT_EXE}
+      -DGIT_EXE=${GIT_EXECUTABLE}
       -DREMOTE_NAME=${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}
       -DBRANCH=${${PROJECT_NAME}_BRANCH}
       -DUNIT_TEST_MODE=${CTEST_DEPENDENCY_HANDLING_UNIT_TESTING}

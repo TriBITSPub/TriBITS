@@ -2898,7 +2898,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
   TEST_3
     MESSAGE "VERBOSE Build the simplecxx lib and verify that the new compiler flags is added "
     CMND make
-    ARGS simplecxx
     PASS_REGULAR_EXPRESSION_ALL
       "DDUMMY_DEFINE_JUST_TO_TEST_COMILER_POST_CONFIG"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -3122,7 +3121,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_Empty
 # NOTE: That above test is the only test that triggers an empty list that
 # tries to get reversed.  This is a TriBITS project with no packages and no
 # TPLs.  While not common, it is a starter sitiation that users will have so
-# it should be have smoothly.
+# it should be handled smoothly.
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject
@@ -3220,6 +3219,72 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject
     PASS_REGULAR_EXPRESSION_ALL
       "Test .*: Addon1_test .* Passed"
       "100% tests passed, 0 tests failed out of"
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_version_date_undef
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleMetaProject"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleMetaProject .
+
+  TEST_1
+    MESSAGE "Copy TribitsExampleProject to base dir"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      TribitsExampleMetaProject/.
+
+  TEST_2
+    MESSAGE "Copy TribitsExampleProjectAddons to base dir"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProjectAddons
+      TribitsExampleMetaProject/.
+
+  TEST_3
+    MESSAGE "Configure enabling all packages and generate version files"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${COMMON_ENV_ARGS_PASSTHROUGH}
+      -DTribitsExMetaProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExMetaProj_ENABLE_Fortran=OFF
+      -DTribitsExMetaProj_ENABLE_DEBUG=OFF
+      -DTribitsExMetaProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExMetaProj_ENABLE_TESTS=ON
+      -DTribitsExMetaProj_GENERATE_VERSION_DATE_FILES=TRUE
+      -DTribitsExMetaProj_TRACE_FILE_PROCESSING=ON
+      TribitsExampleMetaProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- NOTE: Can't fill in version date files for TribitsExMetaProj since .*/TribitsExampleMetaProject/.git/ does not exist!"
+      "-- File Trace: REPOSITORY CONFIGURE  .*/TribitsExMetaProj_version_date.h"
+      "-- NOTE: Can't fill in version date files for TribitsExampleProject since .*/TribitsExampleMetaProject/TribitsExampleProject/.git/ does not exist!"
+      "-- File Trace: REPOSITORY CONFIGURE  .*/TribitsExampleProject/TribitsExampleProject_version_date.h"
+      "-- NOTE: Can't fill in version date files for TribitsExampleProjectAddons since .*/TribitsExampleMetaProject/TribitsExampleProjectAddons/.git/ does not exist!"
+      "-- File Trace: REPOSITORY CONFIGURE  .*/TribitsExampleProjectAddons/TribitsExampleProjectAddons_version_date.h"
+
+  TEST_4
+    MESSAGE "Check that the TribitsExMetaProjec_version_date.h for undef macro"
+    CMND cat
+    ARGS TribitsExMetaProj_version_date.h
+    PASS_REGULAR_EXPRESSION
+      "#undef TRIBITSEXMETAPROJ_VERSION_DATE"
+
+  TEST_5
+    MESSAGE "Check TribitsExampleProject_version_date.h for undef macro"
+    CMND cat
+    ARGS TribitsExampleProject/TribitsExampleProject_version_date.h
+    PASS_REGULAR_EXPRESSION
+      "#undef TRIBITSEXAMPLEPROJECT_VERSION_DATE"
+
+  TEST_6
+    MESSAGE "Check TribitsExampleProjectAddons_version_date.h for undef macro"
+    CMND cat
+    ARGS TribitsExampleProjectAddons/TribitsExampleProjectAddons_version_date.h
+    PASS_REGULAR_EXPRESSION
+      "#undef TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE"
 
   )
 

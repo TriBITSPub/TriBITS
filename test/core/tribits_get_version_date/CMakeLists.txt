@@ -37,46 +37,57 @@
 # ************************************************************************
 # @HEADER
 
-IF (MESSAGE_WRAPPER_INCLUDED)
-  RETURN()
-ENDIF()
-SET(MESSAGE_WRAPPER_INCLUDED TRUE)
+#
+# Function to make running tests easy
+#
 
-INCLUDE("${${PROJECT_NAME}_TRIBITS_DIR}/core/utils/GlobalSet.cmake")
+function(tribits_get_version_test_case  case_name_dir  expected_output
+  git_version  expected_to_pass
+  )
+
+  if (expected_to_pass)
+    set(fail_on_return_arg ALWAYS_FAIL_ON_NONZERO_RETURN)
+  else()
+    set(fail_on_return_arg ALWAYS_FAIL_ON_ZERO_RETURN)
+  endif()
+
+  set(test_name tribits_get_version_date_${case_name_dir})
+
+  set(test_abs_dir "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${test_name}")
+
+  tribits_add_advanced_test( ${test_name}
+
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+
+    TEST_0 CMND ${CMAKE_COMMAND} ARGS -E copy
+      "${CMAKE_CURRENT_SOURCE_DIR}/${case_name_dir}/mock_git_inout.txt"
+      .mockprogram_inout.txt
+
+    TEST_1
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -DPROJECT_NAME=DummyProj
+        -DDummyProj_SOURCE_DIR="${test_abs_dir}"
+        -DCOMMIT_REF=HEAD
+        -DGIT_EXECUTABLE=${${PROJECT_NAME}_TRIBITS_DIR}/python_utils/mockprogram.py
+        -DGIT_VERSION_STRING=${git_version}
+        -P "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch/tribits_get_version_date.cmake"
+      ${fail_on_return_arg}
+      PASS_REGULAR_EXPRESSION_ALL
+        "${expected_output}"
+    )
+
+endfunction()
+
 
 #
-# @FUNCTION: MESSAGE_WRAPPER()
+# Define the tests
 #
-# Function that wraps the standard CMake/CTest ``MESSAGE()`` function call in
-# order to allow unit testing to intercept the output.
-#
-# Usage::
-#
-#   MESSAGE_WRAPPER(...)
-#
-# This function takes exactly the same arguments as built-in ``MESSAGE()``
-# function.  However, when the variable ``MESSAGE_WRAPPER_UNIT_TEST_MODE`` is
-# set to ``TRUE``, then this function will not call ``MESSAGE(...)`` but
-# instead will prepend set to the global variable ``MESSAGE_WRAPPER_INPUT``
-# the input argument that would have gone to ``MESSAGE()``.  To capture just
-# this call's input, first call::
-#
-#   GLOBAL_NULL_SET(MESSAGE_WRAPPER_INPUT)
-#
-# before calling this function (or the functions/macros that call this
-# function).
-#
-# This function allows one to unit test other user-defined CMake macros and
-# functions that call this function to catch error conditions without stopping
-# the CMake program.  Otherwise, this is used to capture print messages to
-# verify that they say the right thing.
-#
-FUNCTION(MESSAGE_WRAPPER)
-  #MESSAGE("MESSAGE_WRAPPER: ${ARGN}")
-  IF (MESSAGE_WRAPPER_UNIT_TEST_MODE)
-    GLOBAL_SET(MESSAGE_WRAPPER_INPUT "${MESSAGE_WRAPPER_INPUT}" ${ARGN})
-  ELSE()
-    MESSAGE(${ARGN})
-  ENDIF()
-ENDFUNCTION()
 
+tribits_get_version_test_case(good_input_1  "2024111512"  "2.10.1"  TRUE)
+tribits_get_version_test_case(good_input_2  "2019032616"  "2.11.2"  TRUE)
+tribits_get_version_test_case(wrong_git_version
+  "Error, GIT_VERSION_STRING=2[.]6[.]1 < 2[.]10[.]0!"  "2.6.1" FALSE)
+tribits_get_version_test_case(git_command_failed
+  "ERROR: GIT_CMD_RTN=15 != 0!;Error Message: Command failed for some reason"
+  "2.12.5"  FALSE)
