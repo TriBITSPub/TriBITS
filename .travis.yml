@@ -11,6 +11,7 @@ before_install:
   - export PATH=/usr/local/cmake-3.10.3/bin:$PATH
   - sudo apt-get -y install gfortran
   - sudo apt-get -y install valgrind
+  - sudo apt-get -y install ninja-build
 
 install:
   - cd ..
