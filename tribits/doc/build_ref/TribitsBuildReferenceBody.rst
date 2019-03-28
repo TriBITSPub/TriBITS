@@ -2133,9 +2133,12 @@ packages from a file, configure with::
   -D<Project>_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
 
 Specifying extra repositories through an extra repos file allows greater
-flexibility in the specification of extra repos.  This is not helpful for a
-basic configure of the project but is useful in automated testing using the
-``TribitsCTestDriverCore.cmake`` script and the ``checkin-test.py`` script.
+flexibility in the specification of extra repos.  This is not needed for a
+basic configure of the project but is useful in generating version information
+using `<Project>_GENERATE_VERSION_DATE_FILES`_ and
+`<Project>_GENERATE_REPO_VERSION_FILE`_ as well as in automated testing using
+the ctest -S scripts with the ``TRIBITS_CTEST_DRIVER()`` function and the
+``checkin-test.py`` tool.
 
 The valid values of ``<Project>_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE`` include
 ``Continuous``, ``Nightly``, and ``Experimental``.  Only repositories listed
@@ -2296,6 +2299,7 @@ NOTES:
 * One would only want to limit the export files generated for very large
   projects where the cost my be high for doing so.
 
+.. _<Project>_GENERATE_REPO_VERSION_FILE:
 
 Generating a project repo version file
 --------------------------------------
@@ -2311,23 +2315,28 @@ binary directory, get installed in the install directory, and get included in
 the source distribution tarball.
 
 NOTE: If the base ``.git/`` directory is missing, then no
-``<Project>RepoVersion.txt`` file will get generated and a ``NOTE:`` message
-is printed to cmake STDOUT.
+``<Project>RepoVersion.txt`` file will get generated and a ``NOTE`` message is
+printed to cmake STDOUT.
 
+.. _<Project>_GENERATE_VERSION_DATE_FILES:
 
 Generating git version date files
 ---------------------------------
 
 When working with local git repos for the project sources, one can generate
-The files ``VersionDate.cmake`` and ``<Project>_version_date.h`` in the build
-directory which contain ``<PROJECT_NAME_UC>_VERSION_DATE`` by setting::
+the files ``VersionDate.cmake`` and ``<Project>_version_date.h`` in the build
+directory by setting::
 
-   -D <Project>PROJ_GENERATE_VERSION_DATE_FILES=ON
+   -D <Project>_GENERATE_VERSION_DATE_FILES=ON
 
-These files are generated in the build directory and
-``<Project>_version_date.h`` is installed in the installation directory.
+These files are generated in the build directory and the file
+``<Project>_version_date.h`` is installed in the installation directory.  (In
+addition, these files are also generated for each extra repository that are
+also version-controlled repos, see `<Project>_EXTRAREPOS_FILE`_.)
 
-This uses git to extract the commit date for HEAD using the command::
+These files contain ``<PROJECT_NAME_UC>_VERSION_DATE`` which is a 10-digit
+date-time version integer.  This integer is created by first using git to
+extract the commit date for ``HEAD`` using the command::
 
   env TZ=GMT git log --format="%cd" --date=iso-local -1 HEAD
 
@@ -2335,25 +2344,26 @@ which returns the date and time for the commit date of ``HEAD`` in the form::
 
   "YYYY-MM-DD hh:mm:ss +0000"
 
-which is used to create a 10-digit date/time integer of the form::
+This git commit date is then is used to create a 10-digit date/time integer of
+the form::
 
   YYYYMMDDhh
 
 This 10-digit integer is set to a CMake variable
-`<PROJECT_NAME_UC>_VERSION_DATE` in the generated ``VersionDate.cmake`` file
-and a C/C++ preprocessor macro `<PROJECT_NAME_UC>_VERSION_DATE` in the
+``<PROJECT_NAME_UC>_VERSION_DATE`` in the generated ``VersionDate.cmake`` file
+and a C/C++ preprocessor macro ``<PROJECT_NAME_UC>_VERSION_DATE`` in the
 generated ``<Project>_version_date.h`` header file.
 
 This 10-digit date/time integer ``YYYYMMDDhh`` will fit in a signed 32-bit
-integer with a maximum value of `2^32 / 2 - 1` = `2147483647`.  Therefore, the
-maximum date that can be handled is the year 2147 with the max date/time of
-`2147 12 31 23` = `2147123123`.
+integer with a maximum value of ``2^32 / 2 - 1`` = ``2147483647``.  Therefore,
+the maximum date that can be handled is the year 2147 with the max date/time
+of ``2147 12 31 23`` = ``2147123123``.
 
 The file ``<Project>_version_date.h`` is meant to be included by downstream
-codes to determine the version of `<Project>` being used and allows
-`<PROJECT_NAME_UC>_VERSION_DATE` to be used in C/C++ ``ifdefs`` like::
+codes to determine the version of ``<Project>`` being used and allows
+``<PROJECT_NAME_UC>_VERSION_DATE`` to be used in C/C++ ``ifdefs`` like::
 
-  #if <PROJECT_NAME_UC>_VERSION_DATE >= 2019032704
+  #if defined(<PROJECT_NAME_UC>_VERSION_DATE) && <PROJECT_NAME_UC>_VERSION_DATE >= 2019032704
     /* The version is newer than 2019-03-27 04:00:00 UTC */
     ...
   #else
@@ -2361,18 +2371,21 @@ codes to determine the version of `<Project>` being used and allows
     ...
   #endif
 
-This allows downstream codes to know the fine-grained version of `<Project>`
-at configure and build time to adjust for the addition of new features,
+This allows downstream codes to know the fine-grained version of <Project> at
+configure and build time to adjust for the addition of new features,
 deprecation of code, or breaks in backward compatibility (which occur in
 specific commits with unique commit dates).
 
 NOTE: If the branch is not hard-reset then the first-parent commits on that
 branch will have monotonically increasing git commit dates (adjusted for UTC).
+This assumption is required for the correct usage of the
+``<PROJECT_NAME_UC>_VERSION_DATE`` macro as demonstrated above.
 
 NOTE: If the base ``.git/`` directory is missing or the version of git is not
->= 2.10.1 (needed for the `` --date=iso-local`` argument) then no version date
-files will be generated or installed and a ``NOTE`` will be printed to cmake
-STDOUT.
+2.10.0 or greater (needed for the ``--date=iso-local`` argument), then the
+``<Project>_version_date.h`` file will still get generated but will have an
+undefined macro ``<PROJECT_NAME_UC>_VERSION_DATE`` and a ``NOTE`` message will
+be printed to cmake STDOUT.
 
 
 CMake configure-time development mode and debug checking

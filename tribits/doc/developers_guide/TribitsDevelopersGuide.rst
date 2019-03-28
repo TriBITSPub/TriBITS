@@ -8417,12 +8417,12 @@ These options are described below.
 
 **${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES**
 
-  If ``${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES`` is ``ON``, then the
-  fileS ``VersionDate.cmake`` and ``<RepoName>_version_date.h`` will get
-  generated and ``<RepoName>_version_date.h`` will get installed for each repo
-  that is a git repo when the local sources are git repos.  Support`_ and
-  `<Project>_GENERATE_REPO_VERSION_FILE`_.  The default is ``OFF`` but the
-  project can change that by setting::
+  If ``${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES`` is ``ON``, then the files
+  ``VersionDate.cmake`` and ``<RepoName>_version_date.h`` will get generated
+  and the generated file ``<RepoName>_version_date.h`` will get installed for
+  each TriBITS version-controlled repository when the local directories are
+  git repositories.  The default is ``OFF`` but the project can change that by
+  setting::
 
     SET(${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES ON)
 
