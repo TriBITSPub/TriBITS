@@ -656,6 +656,13 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
       "#undef TRIBITSEXMETAPROJ_VERSION_DATE"
 
   TEST_13
+    MESSAGE "Check TribitsExampleProject_version_date.h for undef macro"
+    CMND cat
+    ARGS BUILD/TribitsExampleProject/TribitsExampleProject_version_date.h
+    PASS_REGULAR_EXPRESSION
+      "#undef TRIBITSEXAMPLEPROJECT_VERSION_DATE"
+
+  TEST_14
     MESSAGE "Check TribitsExampleProjectAddons_version_date.h for undef macro"
     CMND cat
     ARGS BUILD/TribitsExampleProjectAddons/TribitsExampleProjectAddons_version_date.h
