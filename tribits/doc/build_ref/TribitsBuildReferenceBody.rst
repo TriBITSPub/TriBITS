@@ -2322,7 +2322,7 @@ When working with local git repos for the project sources, one can generate
 The files ``VersionDate.cmake`` and ``<Project>_version_date.h`` in the build
 directory which contain ``<PROJECT_NAME_UC>_VERSION_DATE`` by setting::
 
-   -D <Project>PROJ_GENERATE_GIT_VERSION_DATE_FILES=ON
+   -D <Project>PROJ_GENERATE_VERSION_DATE_FILES=ON
 
 These files are generated in the build directory and
 ``<Project>_version_date.h`` is installed in the installation directory.

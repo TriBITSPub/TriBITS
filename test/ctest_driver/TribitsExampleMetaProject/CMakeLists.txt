@@ -544,16 +544,16 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
       TribitsExMetaProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR} # Need updated TriBITS!
       TribitsExMetaProj_BRANCH=for-testing
       TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
-      TribitsExMetaProj_GENERATE_GIT_VERSION_DATE_FILES=TRUE
+      TribitsExMetaProj_GENERATE_VERSION_DATE_FILES=TRUE
       TribitsExMetaProj_TRACE_FILE_PROCESSING=ON
       TribitsExMetaProj_CMAKE_INSTALL_PREFIX=${FULL_TEST_BINARY_DIR}/BUILD/install
       CTEST_DO_INSTALL=TRUE
       CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_version_date_header
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
-      "-- ENV_TribitsExMetaProj_GENERATE_GIT_VERSION_DATE_FILES='TRUE'"
-      "-- TribitsExMetaProj_GENERATE_GIT_VERSION_DATE_FILES='TRUE'"
-      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExMetaProj_GENERATE_GIT_VERSION_DATE_FILES:BOOL=TRUE[;].*[;]-DTribitsExMetaProj_TRACE_ADD_TEST=ON[;]-DCMAKE_INSTALL_PREFIX=.*/TriBITS_CTestDriver_TribitsExMetaProj_version_date/BUILD/install'"
+      "-- ENV_TribitsExMetaProj_GENERATE_VERSION_DATE_FILES='TRUE'"
+      "-- TribitsExMetaProj_GENERATE_VERSION_DATE_FILES='TRUE'"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExMetaProj_GENERATE_VERSION_DATE_FILES:BOOL=TRUE[;].*[;]-DTribitsExMetaProj_TRACE_ADD_TEST=ON[;]-DCMAKE_INSTALL_PREFIX=.*/TriBITS_CTestDriver_TribitsExMetaProj_version_date/BUILD/install'"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
