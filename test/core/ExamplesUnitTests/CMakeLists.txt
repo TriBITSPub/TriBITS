@@ -2898,7 +2898,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
   TEST_3
     MESSAGE "VERBOSE Build the simplecxx lib and verify that the new compiler flags is added "
     CMND make
-    ARGS simplecxx
     PASS_REGULAR_EXPRESSION_ALL
       "DDUMMY_DEFINE_JUST_TO_TEST_COMILER_POST_CONFIG"
     ALWAYS_FAIL_ON_NONZERO_RETURN
