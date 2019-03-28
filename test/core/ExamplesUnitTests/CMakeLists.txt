@@ -873,10 +873,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   )
 
 
+FIND_PROGRAM(NINJA_EXE ninja)
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE  USING_GENERATOR_NINJA
+  EXCLUDE_IF_NOT_TRUE  NINJA_EXE
   XHOSTTYPE Darwin
 
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -894,6 +897,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
       -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+      -DTribitsExProj_PARALLEL_COMPILE_JOBS_LIMIT=3
+      -DTribitsExProj_PARALLEL_LINK_JOBS_LIMIT=2
       -DCMAKE_INSTALL_PREFIX=install
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
@@ -901,7 +906,21 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_1 CMND ninja ARGS -j1 ${CTEST_BUILD_FLAGS}
+  TEST_1
+    MESSAGE "Verify TribitsExProj_PARALLEL_COMPILE_JOBS_LIMIT=3 has correct effect"
+    CMND grep ARGS -A 1 compile_job_pool rules.ninja
+    PASS_REGULAR_EXPRESSION
+      "depth *= *3"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Verify TribitsExProj_PARALLEL_LINK_JOBS_LIMIT=2 has correct effect"
+    CMND grep ARGS -A 1 link_job_pool rules.ninja
+    PASS_REGULAR_EXPRESSION
+      "depth *= *2"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3 CMND ninja ARGS -j1 ${CTEST_BUILD_FLAGS}
     MESSAGE "Build the default 'all' target using raw 'ninja'"
     PASS_REGULAR_EXPRESSION_ALL
       "Linking CXX .* library .*simplecxx"
@@ -913,7 +932,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
 
   # ToDo: Add check of 'ninja" returns "ninja: no work to do"
 
-  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+  TEST_4 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
       "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
@@ -923,7 +942,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       "WithSubpackagesC_test_of_c_util.* Passed"
       "100% tests passed, 0 tests failed out of 6"
 
-  TEST_3
+  TEST_5
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
       " from the build tree" 
     CMND ${CMAKE_COMMAND}
@@ -941,13 +960,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_4 CMND ninja ARGS -j1 install ${CTEST_BUILD_FLAGS}
+  TEST_6 CMND ninja ARGS -j1 install ${CTEST_BUILD_FLAGS}
     MESSAGE "Build 'install' target using raw 'ninja'"
     PASS_REGULAR_EXPRESSION_ALL
       "Installing: .+/install/include/TribitsExProj_version.h"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_5
+  TEST_7
     MESSAGE "Configure dummy project pointing to install tree"
     CMND ${CMAKE_COMMAND}
     ARGS
@@ -966,7 +985,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_6 CMND ninja ARGS -j1 package_source
+  TEST_8 CMND ninja ARGS -j1 package_source
     MESSAGE "Create the tarball"
     PASS_REGULAR_EXPRESSION_ALL
       "Run CPack packaging tool for source..."
@@ -975,10 +994,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
     # Above should be 'make package_soruce' but the dummy makefiles don't
     # support that yet!
 
-  TEST_7 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
+  TEST_9 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
     MESSAGE "Untar the tarball"
 
-  TEST_8 CMND diff
+  TEST_10 CMND diff
      ARGS -qr
        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
        tribitsexproj-1.1-Source
@@ -997,7 +1016,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE  USING_GENERATOR_NINJA  ${PROJECT_NAME}_WRITE_NINJA_MAKEFILES
+  EXCLUDE_IF_NOT_TRUE  NINJA_EXE
   XHOSTTYPE Darwin
 
   TEST_0 CMND ${CMAKE_COMMAND}
