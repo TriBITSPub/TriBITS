@@ -3030,6 +3030,44 @@ WARNING: To overwrite default relative paths, you must use the data type
 current binary directory for the base path.  Otherwise, if you want to specify
 absolute paths, use the data type ``PATH`` as shown above.
 
+Setting install directory permissions
+-------------------------------------
+
+By default, when installing with the ``install`` target, any directories
+created are given the default permissions for the user that runs the install
+command (just as if they typed ``mkdir <some-dir>``).  (On Unix/Linux systems,
+one can use ``umask`` and set the default group and the group sticky bit to
+control how directories are created.)  However, for versions of CMake 3.11.0+,
+CMake supports the CMake variable
+``CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS`` which will result in directory
+permissions according to these and not the user/system defaults.  To make this
+easier to use, the ``<Project>`` CMake build system defines the options::
+
+  -D <Project>_MAKE_INSTALL_GROUP_READABLE=[TRUE|FALSE] \
+  -D <Project>_MAKE_INSTALL_WORLD_READABLE=[TRUE|FALSE] \
+
+that automatically sets up ``CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS``
+with the correct permissions according to these options when either of these
+two variables are set to non-empty.  To make the install group and world
+readable, set::
+
+  -D <Project>_MAKE_INSTALL_WORLD_READABLE=TRUE
+
+To make the install group readable but not world readable, set::
+
+  -D <Project>_MAKE_INSTALL_GROUP_READABLE=TRUE
+
+(In that case, make sure and set the desired group in the base install
+directory and set the group sticky bit using ``chmod g+s <base-install-dir>``
+before running the ``install`` target.)
+
+When both of these variables are empty,
+``CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS`` is not set and therefore the
+default user/system directory permissions are used for new directories.  When
+the version of CMake is less than 3.11.0, then setting these variables and
+``CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS`` have no effect and the default
+user/system directory permissions are used.
+
 Setting install RPATH
 ---------------------
 
