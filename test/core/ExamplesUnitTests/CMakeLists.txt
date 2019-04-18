@@ -475,6 +475,181 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_Shared_NoVersion
   )
 
 
+IF (NOT CMAKE_VERSION VERSION_LESS 3.11.0)
+  SET(CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS TRUE)
+ELSE()
+  SET(CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS FALSE)
+ENDIF()
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
+
+  TEST_0
+    MESSAGE "Do initial configure with just libs not tests with default install settings"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DCMAKE_INSTALL_PREFIX=install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Do make to build everything"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Make install with default directory settings"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/lib/libhello_world_lib.a"
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/include/hello_world_lib.hpp"
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/bin/hello_world.exe"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Check some default install directory permissions"
+    CMND ls ARGS -ld
+      install install/include install/lib install/bin
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwx.*[.] .* install"
+      "drwx.*[.] .* install/bin"
+      "drwx.*[.] .* install/include"
+      "drwx.*[.] .* install/lib"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    # NOTE: Above we can't change the default group or other permissions
+    # because that depends on the user's umask when the run these tests.  But
+    # the owner should have read/write/execute on the directories or it could
+    # not possibily install anything.
+
+  TEST_4
+    MESSAGE "Check some default install file permissions"
+    CMND ls ARGS -l
+      install install/include install/lib install/bin
+    PASS_REGULAR_EXPRESSION_ALL
+      "[-]rwxr-xr-x[.] .* hello_world.exe"
+      "[-]rw-r--r--[.] .* Makefile.export.HelloWorld"
+      "[-]rw-r--r--[.] .* .* libhello_world_lib.a"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    # NOTE: The above permissions are the default install permissions of CMake
+    # for files that it installs.
+
+  TEST_5
+    MESSAGE "Reconfigure with <Project>_MAKE_INSTALL_WORLD_READABLE=ON"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_MAKE_INSTALL_WORLD_READABLE=ON
+      -DCMAKE_INSTALL_PREFIX=install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- TribitsHelloWorld_MAKE_INSTALL_WORLD_READABLE='ON'"
+      "-- TribitsHelloWorld_MAKE_INSTALL_GROUP_READABLE=''"
+      "-- CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS = [(]OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_6
+    MESSAGE "Remove the install directory"
+    CMND rm ARGS -r install
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_7
+    MESSAGE "Re-install"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_8
+    MESSAGE "Check updated permissions for <Project>_MAKE_INSTALL_WORLD_READABLE=ON"
+    CMND ls ARGS -ld
+      install install/include install/lib install/bin
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwxr-xr-x[.] .* install"
+      "drwxr-xr-x[.] .* install/bin"
+      "drwxr-xr-x[.] .* install/include"
+      "drwxr-xr-x[.] .* install/lib"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_9
+    MESSAGE "Reconfigure with <Project>_MAKE_INSTALL_GROUP_READABLE=ON and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_MAKE_INSTALL_GROUP_READABLE=ON
+      -DTribitsHelloWorld_MAKE_INSTALL_WORLD_READABLE=OFF
+      -DCMAKE_INSTALL_PREFIX=install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- TribitsHelloWorld_MAKE_INSTALL_GROUP_READABLE='ON'"
+      "-- TribitsHelloWorld_MAKE_INSTALL_WORLD_READABLE='OFF'"
+      "-- CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS = [(]OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_10
+    MESSAGE "Remove the install directory"
+    CMND rm ARGS -r install
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_11
+    MESSAGE "Re-install"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_12
+    MESSAGE "Check updated permissions for <Project>_MAKE_INSTALL_GROUP_READABLE=ON and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
+    CMND ls ARGS -ld
+      install install/include install/lib install/bin
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwxr-x---[.] .* install"
+      "drwxr-x---[.] .* install/bin"
+      "drwxr-x---[.] .* install/include"
+      "drwxr-x---[.] .* install/lib"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_13
+    MESSAGE "Reconfigure with <Project>_MAKE_INSTALL_GROUP_READABLE=OFF and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_MAKE_INSTALL_GROUP_READABLE=OFF
+      -DTribitsHelloWorld_MAKE_INSTALL_WORLD_READABLE=OFF
+      -DCMAKE_INSTALL_PREFIX=install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- TribitsHelloWorld_MAKE_INSTALL_GROUP_READABLE='OFF'"
+      "-- TribitsHelloWorld_MAKE_INSTALL_WORLD_READABLE='OFF'"
+      "-- CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS = [(]OWNER_READ OWNER_WRITE OWNER_EXECUTE[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_14
+    MESSAGE "Remove the install directory"
+    CMND rm ARGS -r install
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_15
+    MESSAGE "Re-install"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_16
+    MESSAGE "Check updated permissions for <Project>_MAKE_INSTALL_GROUP_READABLE=OFF and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
+    CMND ls ARGS -ld
+      install install/include install/lib install/bin
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwx------[.] .* install"
+      "drwx------[.] .* install/bin"
+      "drwx------[.] .* install/include"
+      "drwx------[.] .* install/lib"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: Above we are testing different directory install options.
+
+
 ########################################################################
 # RawAndTribitsHelloWorld
 ########################################################################
