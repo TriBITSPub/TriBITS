@@ -1349,12 +1349,12 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
     IF (CTEST_DO_INSTALL)
 
       MESSAGE("")
-      MESSAGE("Installing (i.e. building target 'install') ...")
+      MESSAGE("Installing (i.e. building target 'install_package_by_package') ...")
       MESSAGE("")
 
       CTEST_BUILD(
         BUILD "${CTEST_BINARY_DIRECTORY}"
-        TARGET install
+        TARGET install_package_by_package
         RETURN_VALUE  BUILD_INSTALL_RETURN_VAL
         NUMBER_ERRORS  BUILD_INSTALL_NUM_ERRORS
         )

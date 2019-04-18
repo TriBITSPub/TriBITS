@@ -1872,7 +1872,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "ENV_CTEST_DO_INSTALL='ON'"
         "CTEST_DO_INSTALL='ON'"
         "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-        "Installing [(]i.e. building target 'install'[)] [.][.][.]"
+        "Installing [(]i.e. building target 'install_package_by_package'[)] [.][.][.]"
         "Build install output: BUILD_INSTALL_NUM_ERRORS='0',BUILD_INSTALL_RETURN_VAL='0'"
 	"Install PASSED!"
         "File '' does NOT exist so all tests passed!"
@@ -1941,7 +1941,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
         "CONFIGURE_OPTIONS = '.*[;]-DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON[;].*[;]-DCMAKE_INSTALL_PREFIX=install'"
         "Build PASSED!"
-        "Installing [(]i.e. building target 'install'[)] [.][.][.]"
+        "Installing [(]i.e. building target 'install_package_by_package'[)] [.][.][.]"
         "Build install output: BUILD_INSTALL_NUM_ERRORS='1',BUILD_INSTALL_RETURN_VAL='2'"
 	"Install FAILED!"
         "File '' does NOT exist so all tests passed!"
@@ -1954,8 +1954,23 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     PASS_REGULAR_EXPRESSION_ALL
       "simplecxx-helloworld"      # /bin
       "SimpleCxx_HelloWorld.hpp"  # /include/
+      "A.hpp"
+      "B.hpp"
+      "MixedLang.hpp"
+      "Ray_Tracer.hh"
+      "TribitsExProj_version.h"
+      "BUILD/install/include/wsp_c:"
+      "C.hpp"
       "libsimplecxx.so"           # /lib/
+      "libmixedlang.so"
+      "libpws_a.so"
+      "libpws_b.so"
+      "libpws_c.so"
     ALWAYS_FAIL_ON_NONZERO_RETURN
+    # NOTE: Above proves the 'install_package_by_package' target is working
+    # and just calling the 'install' target because the 'install' target
+    # aborts in the SimpleCxx install while the 'install_package_by_package'
+    # will call install in all of the packages.
 
     TEST_4
       MESSAGE "Remove the install directory"
@@ -1963,18 +1978,12 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_5
-      MESSAGE "Fix the CMakeLists.txt file to remove the bad install file"
-      CMND cp ARGS
-        ${TribitsExProj_DIR}/packages/simple_cxx/src/CMakeLists.txt
-        ${TEST_DIR}/TribitsExampleProject/packages/simple_cxx/src/CMakeLists.txt
-
-    TEST_6
       MESSAGE "Break the library build WithSubpackageC"
       CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
       ARGS TribitsExampleProject/packages/with_subpackages/c/C.cpp
         "Build of C.cpp lib is broken!"
 
-    TEST_7
+    TEST_6
       MESSAGE "Run rerun ctest -S driver with a broken lib."
       CMND env
       ARGS
@@ -1998,7 +2007,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
       ALWAYS_FAIL_ON_ZERO_RETURN
 
-    TEST_8
+    TEST_7
       MESSAGE "Check the contents of the install dir"
       CMND ls ARGS -R BUILD/install
     PASS_REGULAR_EXPRESSION_ALL
@@ -2007,11 +2016,15 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       "A.hpp"
       "B.hpp"
       "MixedLang.hpp"
-      "libmixedlang.so"           # /lib/
+      "Ray_Tracer.hh"
+      "TribitsExProj_version.h"
+      "libsimplecxx.so"           # /lib/
+      "libmixedlang.so"
       "libpws_a.so"
       "libpws_b.so"
-      "libsimplecxx.so"
     ALWAYS_FAIL_ON_NONZERO_RETURN
+    # NOTE: Almost everything will install accept for the WithSubpackageC
+    # stuff since that library did not build.
 
     )
     # NOTE: That above test tests two primary things:
@@ -2022,9 +2035,10 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     #   This checks that -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON is set
     #   correctly in the inner configure.
     #
-    # NOTE: As of CMake 3.11, the CMake 'install' target will abort on the
-    # first file it can't install.  This is not desirable behavior for the use
-    # cases where we want to use this for Trilinos.
+    # * If an install failure occures in one package, it will not impact
+    #   installs in other packages due to the custom
+    #   'install_package_by_package' target.
+    #
 
  
 ENDFUNCTION()

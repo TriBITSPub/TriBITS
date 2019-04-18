@@ -3304,28 +3304,28 @@ To install the software, type::
 
   $ make install
 
-Note that CMake actually puts in the build dependencies for installed targets
-so in some cases you can just type ``make -j<N> install`` and it will also
-build the software before installing.  However, it is advised to always build
-and test the software first before installing with::
+Note that by default CMake actually puts in the build dependencies for
+installed targets so in some cases you can just type ``make -j<N> install``
+and it will also build the software before installing (but this can be
+disabled by setting ``-DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON``).  It is
+advised to always build and test the software first before installing with::
 
   $ make -j<N> && ctest -j<N> && make -j<N> install
 
 This will ensure that everything is built correctly and all tests pass before
 installing.
 
-**WARNING:** When using shared libraries, one must be careful to avoid the
-error **"RegularExpression::compile(): Expression too big."** when using RPATH
-and when RPATH gets stripped out on install.  To avoid this error, use the
-shortest build directory you can, like::
+If there are build failures in any packages and one wants to still install the
+packages that do build correctly, then configure with::
 
-  $HOME/<Project>_BUILD/
+  -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON
 
-This has been shown to allow even the most complex TriBITS-based CMake
-projects to successfully install and avoid this error.
+and run the custom install target::
 
-NOTE: This problem has been resolved in CMake versions 3.6.0+ and does not
-require a short build directory path.
+  $ make install_package_by_package
+
+This will ensure that every package that builds correctly will get installed.
+(The default 'install' target aborts on the first file install failure.)
 
 
 Packaging

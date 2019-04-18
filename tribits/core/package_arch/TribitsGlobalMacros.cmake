@@ -2902,6 +2902,24 @@ MACRO(TRIBITS_SETUP_FOR_INSTALLATION)
 
   ENDIF()
 
+  # Create custom 'install/package_by_package' target
+
+  SET(TRIBITS_ENABLED_PACKAGES_BINARY_DIRS)
+  FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
+    LIST(APPEND TRIBITS_ENABLED_PACKAGES_BINARY_DIRS "${${TRIBITS_PACKAGE}_BINARY_DIR}")
+  ENDFOREACH()
+
+  CONFIGURE_FILE(
+    ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/cmake_pbp_install.cmake.in
+    cmake_pbp_install.cmake
+    @ONLY
+    )
+
+  ADD_CUSTOM_TARGET(install_package_by_package
+    ${CMAKE_COMMAND} -P cmake_pbp_install.cmake
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    )
+
 ENDMACRO()
 
 
