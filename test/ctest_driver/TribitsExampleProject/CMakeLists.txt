@@ -1863,6 +1863,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         CTEST_DASHBOARD_ROOT=PWD
         ${AAO_COMMON_ENV_ARGS}
         TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+	TribitsExProj_EXTRA_CONFIGURE_OPTIONS=-DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
         TribitsExProj_PACKAGES=SimpleCxx,WithSubpackages
         TribitsExProj_CMAKE_INSTALL_PREFIX=install
         CTEST_DO_INSTALL=ON
@@ -1919,7 +1920,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       MESSAGE "Add the install of a file that does not exist!"
       CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
       ARGS
-        ${TEST_DIR}/TribitsExampleProject/packages/simple_cxx/src/CMakeLists.txt
+        ${TEST_DIR}/TribitsExampleProject/packages/mixed_lang/src/CMakeLists.txt
         "\nINSTALL(FILES does_not_exist.txt DESTINATION dummy_intall_dir COMPONENT SimpleCxx)\n"
 
     TEST_2
@@ -1929,7 +1930,8 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         CTEST_DASHBOARD_ROOT=PWD
         ${AAO_COMMON_ENV_ARGS}
         TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
-        TribitsExProj_PACKAGES=SimpleCxx,WithSubpackages
+	TribitsExProj_EXTRA_CONFIGURE_OPTIONS=-DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        TribitsExProj_PACKAGES=SimpleCxx,MixedLang,WithSubpackages
         TribitsExProj_CMAKE_INSTALL_PREFIX=install
         CTEST_BUILD_FLAGS="-j2 -k"  # Build everything that will build!
         CTEST_DO_INSTALL=ON
@@ -1941,7 +1943,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "ENV_CTEST_DO_INSTALL='ON'"
         "CTEST_DO_INSTALL='ON'"
         "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-        "CONFIGURE_OPTIONS = '.*[;]-DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON[;].*[;]-DCMAKE_INSTALL_PREFIX=install'"
+        "CONFIGURE_OPTIONS = '.*[;]-DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON[;].*[;]-DCMAKE_INSTALL_PREFIX=install[;]-DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON'"
         "Build PASSED!"
         "Installing [(]i.e. building target 'install_package_by_package'[)] [.][.][.]"
         "Build install output: BUILD_INSTALL_NUM_ERRORS='1',BUILD_INSTALL_RETURN_VAL='2'"
@@ -1992,7 +1994,8 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         CTEST_DASHBOARD_ROOT=PWD
         ${AAO_COMMON_ENV_ARGS}
         TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
-        TribitsExProj_PACKAGES=SimpleCxx,WithSubpackages
+	TribitsExProj_EXTRA_CONFIGURE_OPTIONS=-DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        TribitsExProj_PACKAGES=SimpleCxx,MixedLang,WithSubpackages
         TribitsExProj_CMAKE_INSTALL_PREFIX=install
         CTEST_BUILD_FLAGS="-j2 -k"  # Build everything that will build!
         CTEST_DO_INSTALL=ON
@@ -2003,7 +2006,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       PASS_REGULAR_EXPRESSION_ALL
         "Build FAILED!"
 	"Install FAILED!"
-        "75% tests passed, 2 tests failed out of 8"
+        "78% tests passed, 2 tests failed out of 9"
 	"WithSubpackagesC_test_of_c [(]Not Run[)]"
 	"WithSubpackagesC_test_of_c_b_mixed_lang [(]Not Run[)]"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
@@ -2028,6 +2031,29 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # NOTE: Almost everything will install accept for the WithSubpackageC
     # stuff since that library did not build.
 
+  TEST_8
+    MESSAGE "Create and configure a dummy project that includes"
+      " TribitsExProjConfig.cmake from the install tree" 
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DDUMMY_PROJECT_NAME=DummyProject
+      -DDUMMY_PROJECT_DIR=dummy_client_of_TribitsExProj
+      -DEXPORT_VAR_PREFIX=TribitsExProj
+      "-DDUMMY_PROJECT_FIND_COMPONENTS=SimpleCxx,WithSubpackagesA"
+      -DEXPORT_CONFIG_FILE=../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake
+      -DCMAKE_COMMAND=${CMAKE_COMMAND}
+      -P ${PROJECT_SOURCE_DIR}/test/core/ExamplesUnitTests/RunDummyPackageClientBulid.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "DUMMY_PROJECT_NAME = 'DummyProject'"
+      "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsExProj'"
+      "EXPORT_CONFIG_FILE = '../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
+      "TribitsExProj_FIND_COMPONENTS = 'SimpleCxx[;]WithSubpackagesA'"
+      "TribitsExProj_LIBRARIES = 'pws_a[;]simplecxx'"
+      "TribitsExProj_TPL_INCLUDE_DIRS = '.*/examples/tpls/HeaderOnlyTpl'"
+      "-- Configuring done"
+      "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
     )
     # NOTE: That above test tests two primary things:
     #
@@ -2040,6 +2066,11 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # * If an install failure occures in one package, it will not impact
     #   installs in other packages due to the custom
     #   'install_package_by_package' target.
+    #
+    # * Even if one package breaks, one can still use the
+    #   <Project>Config.cmake file if one does not request a broken package
+    #   (or any package downstream from a broken package) in specifing
+    #   COMPONENTS.
     #
 
  
