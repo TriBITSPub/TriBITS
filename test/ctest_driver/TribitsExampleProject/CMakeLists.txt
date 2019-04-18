@@ -1907,18 +1907,21 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
   TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME_BODY}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+
     TEST_0
       MESSAGE "Copy TribitsExampleProject in so we can break it the install."
       CMND cp
       ARGS -r ${TribitsExProj_DIR} .
+
     TEST_1
       MESSAGE "Add the install of a file that does not exist!"
       CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
       ARGS
         ${TEST_DIR}/TribitsExampleProject/packages/simple_cxx/src/CMakeLists.txt
-        "\nINSTALL(FILES does_not_exist.txt DESTINATION dummy_intall_dir COMPONENT SimpleCxx)"
+        "\nINSTALL(FILES does_not_exist.txt DESTINATION dummy_intall_dir COMPONENT SimpleCxx)\n"
+
     TEST_2
-      MESSAGE "Run ctest driver which includes the install which should fail."
+      MESSAGE "Run ctest -S driver which includes the install which should fail."
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1926,6 +1929,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
         TribitsExProj_PACKAGES=SimpleCxx,WithSubpackages
         TribitsExProj_CMAKE_INSTALL_PREFIX=install
+        CTEST_BUILD_FLAGS="-j2 -k"  # Build everything that will build!
         CTEST_DO_INSTALL=ON
         CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES=FALSE
         ${CTEST_DROP_SITE_ENV_ARGS}
@@ -1935,13 +1939,93 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "ENV_CTEST_DO_INSTALL='ON'"
         "CTEST_DO_INSTALL='ON'"
         "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
+        "CONFIGURE_OPTIONS = '.*[;]-DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON[;].*[;]-DCMAKE_INSTALL_PREFIX=install'"
+        "Build PASSED!"
         "Installing [(]i.e. building target 'install'[)] [.][.][.]"
         "Build install output: BUILD_INSTALL_NUM_ERRORS='1',BUILD_INSTALL_RETURN_VAL='2'"
 	"Install FAILED!"
         "File '' does NOT exist so all tests passed!"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
       ALWAYS_FAIL_ON_ZERO_RETURN
+
+    TEST_3
+      MESSAGE "Check the contents of the install dir to see if anything installed"
+      CMND ls ARGS -R BUILD/install
+    PASS_REGULAR_EXPRESSION_ALL
+      "simplecxx-helloworld"      # /bin
+      "SimpleCxx_HelloWorld.hpp"  # /include/
+      "libsimplecxx.so"           # /lib/
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_4
+      MESSAGE "Remove the install directory"
+      CMND rm ARGS -r BUILD/install
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_5
+      MESSAGE "Fix the CMakeLists.txt file to remove the bad install file"
+      CMND cp ARGS
+        ${TribitsExProj_DIR}/packages/simple_cxx/src/CMakeLists.txt
+        ${TEST_DIR}/TribitsExampleProject/packages/simple_cxx/src/CMakeLists.txt
+
+    TEST_6
+      MESSAGE "Break the library build WithSubpackageC"
+      CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+      ARGS TribitsExampleProject/packages/with_subpackages/c/C.cpp
+        "Build of C.cpp lib is broken!"
+
+    TEST_7
+      MESSAGE "Run rerun ctest -S driver with a broken lib."
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+        TribitsExProj_PACKAGES=SimpleCxx,WithSubpackages
+        TribitsExProj_CMAKE_INSTALL_PREFIX=install
+        CTEST_BUILD_FLAGS="-j2 -k"  # Build everything that will build!
+        CTEST_DO_INSTALL=ON
+        CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES=FALSE
+        ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_NAME=${TEST_NAME}
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Build FAILED!"
+	"Install FAILED!"
+        "75% tests passed, 2 tests failed out of 8"
+	"WithSubpackagesC_test_of_c [(]Not Run[)]"
+	"WithSubpackagesC_test_of_c_b_mixed_lang [(]Not Run[)]"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+      ALWAYS_FAIL_ON_ZERO_RETURN
+
+    TEST_8
+      MESSAGE "Check the contents of the install dir"
+      CMND ls ARGS -R BUILD/install
+    PASS_REGULAR_EXPRESSION_ALL
+      "simplecxx-helloworld"      # /bin
+      "SimpleCxx_HelloWorld.hpp"  # /include/
+      "A.hpp"
+      "B.hpp"
+      "MixedLang.hpp"
+      "libmixedlang.so"           # /lib/
+      "libpws_a.so"
+      "libpws_b.so"
+      "libsimplecxx.so"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
     )
+    # NOTE: That above test tests two primary things:
+    #
+    # * Install failures due to missing files will be caught and reported.
+    #
+    # * If something fails to build, the install will still be attempted.
+    #   This checks that -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON is set
+    #   correctly in the inner configure.
+    #
+    # NOTE: As of CMake 3.11, the CMake 'install' target will abort on the
+    # first file it can't install.  This is not desirable behavior for the use
+    # cases where we want to use this for Trilinos.
+
  
 ENDFUNCTION()
 
