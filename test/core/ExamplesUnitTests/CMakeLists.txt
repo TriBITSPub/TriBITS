@@ -2711,6 +2711,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableW
     ARGS
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES_DEFAULT=OFF
       -DTribitsExProj_SHORTCIRCUIT_AFTER_DEPENDENCY_HANDLING=ON
       -DTribitsExProj_ENABLE_WithSubpackagesA=OFF
       -DTribitsExProj_ENABLE_WithSubpackagesB=ON
