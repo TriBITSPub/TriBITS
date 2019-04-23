@@ -1904,7 +1904,9 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
 
-  SET(TEST_NAME_BODY CTestDriver_AAO${AAO_POSTFIX}_CTEST_DO_INSTALL_FAIL)
+
+  SET(TEST_NAME_BODY
+    CTestDriver_AAO${AAO_POSTFIX}_CTEST_DO_INSTALL_FAIL_bad_intall_filename)
   SET(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_BODY})
   SET(TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}")
   TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME_BODY}
@@ -1976,19 +1978,82 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # aborts in the SimpleCxx install while the 'install_package_by_package'
     # will call install in all of the packages.
 
-    TEST_4
-      MESSAGE "Remove the install directory"
-      CMND rm ARGS -r BUILD/install
-      ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_4
+    MESSAGE "Create and configure a dummy project that includes"
+      " TribitsExProjConfig.cmake from the install tree and ask for non-enabled package" 
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DDUMMY_PROJECT_NAME=DummyProject
+      -DDUMMY_PROJECT_DIR=dummy_client_of_TribitsExProj
+      -DEXPORT_VAR_PREFIX=TribitsExProj
+      "-DDUMMY_PROJECT_FIND_COMPONENTS=SimpleCxx,WithSubpackagesA,WrapExternal"
+      -DEXPORT_CONFIG_FILE=../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake
+      -DCMAKE_COMMAND=${CMAKE_COMMAND}
+      -P ${PROJECT_SOURCE_DIR}/test/core/ExamplesUnitTests/RunDummyPackageClientBulid.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "DUMMY_PROJECT_NAME = 'DummyProject'"
+      "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsExProj'"
+      "EXPORT_CONFIG_FILE = '../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
+      "TribitsExProj_FIND_COMPONENTS = 'SimpleCxx[;]WithSubpackagesA[;]WrapExternal'"
+      "Component .WrapExternal. NOT found"
+      "TribitsExProj_LIBRARIES = 'pws_a[;]simplecxx'"
+      "TribitsExProj_TPL_INCLUDE_DIRS = '.*/examples/tpls/HeaderOnlyTpl'"
+      "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]MixedLang[;]SimpleCxx'"
+      "TribitsExProj_TPL_LIST = 'HeaderOnlyTpl'"
+      "TribitsExProj_WithSubpackages_FOUND = ''"
+      "TribitsExProj_WithSubpackagesC_FOUND = ''"
+      "TribitsExProj_WithSubpackagesB_FOUND = ''"
+      "TribitsExProj_WithSubpackagesA_FOUND = 'TRUE'"
+      "TribitsExProj_MixedLang_FOUND = ''"
+      "TribitsExProj_SimpleCxx_FOUND = 'TRUE'"
+      "TribitsExProj_FOUND = 'TRUE'"
+      "TribitsExProj_WrapExternal_FOUND = 'FALSE'"
+      "-- Configuring done"
+      "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_5
+    # ToDo: Add another dummy project for the case where componets are
+    # required and assure that TribitsExProj_FOUND = 'FALSE'.
+
+    )
+    # NOTE: That above test tests two primary things:
+    #
+    # * Install failures due to missing files will be caught and reported.
+    #
+    # * If an install failure occures in one package, it will not impact
+    #   installs in other packages due to the custom
+    #   'install_package_by_package' target.
+    #
+
+
+  SET(TEST_NAME_BODY
+    CTestDriver_AAO${AAO_POSTFIX}_CTEST_DO_INSTALL_FAIL_build_failed)
+  SET(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_BODY})
+  SET(TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}")
+  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME_BODY}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+
+    TEST_0
+      MESSAGE "Copy TribitsExampleProject in so we can break it the install."
+      CMND cp
+      ARGS -r ${TribitsExProj_DIR} .
+
+    TEST_1
+      MESSAGE "Add the install of a file that does not exist!"
+      CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+      ARGS
+        ${TEST_DIR}/TribitsExampleProject/packages/mixed_lang/src/CMakeLists.txt
+        "\nINSTALL(FILES does_not_exist.txt DESTINATION dummy_intall_dir COMPONENT SimpleCxx)\n"
+
+    TEST_2
       MESSAGE "Break the library build WithSubpackageC"
       CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
       ARGS TribitsExampleProject/packages/with_subpackages/c/C.cpp
         "Build of C.cpp lib is broken!"
 
-    TEST_6
-      MESSAGE "Run rerun ctest -S driver with a broken lib."
+    TEST_3
+      MESSAGE "Run ctest -S driver"
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -2012,7 +2077,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
       ALWAYS_FAIL_ON_ZERO_RETURN
 
-    TEST_7
+    TEST_4
       MESSAGE "Check the contents of the install dir"
       CMND ls ARGS -R BUILD/install
     PASS_REGULAR_EXPRESSION_ALL
@@ -2031,9 +2096,9 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # NOTE: Almost everything will install accept for the WithSubpackageC
     # stuff since that library did not build.
 
-  TEST_8
+  TEST_5
     MESSAGE "Create and configure a dummy project that includes"
-      " TribitsExProjConfig.cmake from the install tree" 
+      " TribitsExProjConfig.cmake where componets are optional" 
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -2050,9 +2115,21 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       "TribitsExProj_FIND_COMPONENTS = 'SimpleCxx[;]WithSubpackagesA'"
       "TribitsExProj_LIBRARIES = 'pws_a[;]simplecxx'"
       "TribitsExProj_TPL_INCLUDE_DIRS = '.*/examples/tpls/HeaderOnlyTpl'"
+      "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]MixedLang[;]SimpleCxx'"
+      "TribitsExProj_TPL_LIST = 'HeaderOnlyTpl'"
+      "TribitsExProj_WithSubpackages_FOUND = ''"
+      "TribitsExProj_WithSubpackagesC_FOUND = ''"
+      "TribitsExProj_WithSubpackagesB_FOUND = ''"
+      "TribitsExProj_WithSubpackagesA_FOUND = 'TRUE'"
+      "TribitsExProj_MixedLang_FOUND = ''"
+      "TribitsExProj_SimpleCxx_FOUND = 'TRUE'"
+      "TribitsExProj_FOUND = 'TRUE'"
       "-- Configuring done"
       "-- Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    # ToDo: Add another dummy project for the case where componets are
+    # required and assure that TribitsExProj_FOUND = 'FALSE'.
 
     )
     # NOTE: That above test tests two primary things:
@@ -2087,4 +2164,3 @@ GENERATE_AAO_TESTS(FALSE)
 IF (${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES)
   GENERATE_AAO_TESTS(TRUE)
 ENDIF()
-
