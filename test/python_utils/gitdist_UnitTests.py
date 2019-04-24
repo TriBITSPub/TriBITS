@@ -396,6 +396,90 @@ class test_createTable(unittest.TestCase):
 
 
 #
+# Unit tests for createMarkdownTable
+#
+
+
+class test_createMarkdownTable(unittest.TestCase):
+
+
+  def create_table_data(self):
+    tableData = [
+      {"label": "Repository", "align": "L",
+       "fields": ["MockProjectDir", "ExtraRepo1", "ExtraRepo2"]},
+      {"label": "SHA1", "align": "C",
+       "fields": ["e2dc488", "f671414", "50bbf3e"]},
+      {"label": "Commit Date", "align": "L",
+       "fields": ["2019-10-23 10:16:07", "2019-10-22 11:18:47",
+                  "2019-10-17 16:32:15"]},
+      {"label": "Author", "align": "L",
+       "fields": ["user@domain.com", "wile.e.coyote@acme.com",
+                  "someone@somwhere.com"]},
+      {"label": "Summary", "align": "L",
+       "fields": ["Merge Pull Request #1234 from user/repo/branch",
+                  "Fixed a Bug", "Did Some Work"]}
+      ]
+    return tableData
+
+
+  def test_full_markdown_table(self):
+    tableData = self.create_table_data()
+    table = createMarkdownTable(tableData)
+    #print(table)
+    table_expected = \
+      "| Repository     | SHA1    | Commit Date         | Author                 | Summary                                        |\n" \
+      "|:-------------- |:-------:|:------------------- |:---------------------- |:---------------------------------------------- |\n" \
+      "| MockProjectDir | e2dc488 | 2019-10-23 10:16:07 | user@domain.com        | Merge Pull Request #1234 from user/repo/branch |\n" \
+      "| ExtraRepo1     | f671414 | 2019-10-22 11:18:47 | wile.e.coyote@acme.com | Fixed a Bug                                    |\n" \
+      "| ExtraRepo2     | 50bbf3e | 2019-10-17 16:32:15 | someone@somwhere.com   | Did Some Work                                  |"
+    self.assertEqual(table, table_expected)
+
+
+  def test_short_markdown_table(self):
+    tableData = self.create_table_data()[0:2]
+    table = createMarkdownTable(tableData)
+    #print(table)
+    table_expected = \
+      "| Repository     | SHA1    |\n" \
+      "|:-------------- |:-------:|\n" \
+      "| MockProjectDir | e2dc488 |\n" \
+      "| ExtraRepo1     | f671414 |\n" \
+      "| ExtraRepo2     | 50bbf3e |"
+    self.assertEqual(table, table_expected)
+
+
+  def test_no_rows(self):
+    tableData = self.create_table_data()
+    for entry in tableData:
+        entry["fields"][:] = []
+    table = createMarkdownTable(tableData)
+    #print(table)
+    table_expected = \
+      "| Repository | SHA1 | Commit Date | Author | Summary |\n" \
+      "|:---------- |:----:|:----------- |:------ |:------- |"
+    self.assertEqual(table, table_expected)
+
+
+  def test_one_row(self):
+    tableData = self.create_table_data()
+    for entry in tableData:
+        entry["fields"][:] = [entry["fields"][0]]
+    table = createMarkdownTable(tableData)
+    #print(table)
+    table_expected = \
+      "| Repository     | SHA1    | Commit Date         | Author          | Summary                                        |\n" \
+      "|:-------------- |:-------:|:------------------- |:--------------- |:---------------------------------------------- |\n" \
+      "| MockProjectDir | e2dc488 | 2019-10-23 10:16:07 | user@domain.com | Merge Pull Request #1234 from user/repo/branch |"
+    self.assertEqual(table, table_expected)
+
+
+  def test_row_mismatch(self):
+    tableData = self.create_table_data()
+    tableData[0]["fields"][:] = []
+    self.assertRaises(Exception, createMarkdownTable, tableData)
+
+
+#
 # Unit tests for functions in gitdist
 #
 
@@ -713,6 +797,120 @@ def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
     )
 
 
+def writeGitMockProgram_dist_repo_versions_table():
+
+  with open(".mockprogram_inout.txt", "w") as f:
+    f.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --short HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: e2dc488\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%cd --date=format:%G-%m-%d %H:%M:%S\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 2019-10-23 10:16:07\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%ae\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: user@domain.com\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: Merge Pull Request #1234 from user/repo/branch\n" \
+    )
+
+  with open("ExtraRepo1/.mockprogram_inout.txt", "w") as f:
+    f.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --short HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: f671414\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%cd --date=format:%G-%m-%d %H:%M:%S\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 2019-10-22 11:18:47\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%ae\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: wile.e.coyote@acme.com\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: Fixed a Bug\n" \
+    )
+
+  with open("ExtraRepo2/.mockprogram_inout.txt", "w") as f:
+    f.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --short HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 50bbf3e\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%cd --date=format:%G-%m-%d %H:%M:%S\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 2019-10-17 16:32:15\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%ae\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: someone@somwhere.com\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: Did Some Work\n" \
+    )
+
+
+def writeGitMockProgram_dist_repo_versions_table_1_change_base():
+
+  with open(".mockprogram_inout.txt", "w") as f:
+    f.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+      "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
+      "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --short HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: e2dc488\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%cd --date=format:%G-%m-%d %H:%M:%S\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 2019-10-23 10:16:07\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%ae\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: user@domain.com\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: Merge Pull Request #1234 from user/repo/branch\n" \
+    )
+
+  with open("ExtraRepo1/.mockprogram_inout.txt", "w") as f:
+    f.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --short HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: f671414\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%cd --date=format:%G-%m-%d %H:%M:%S\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 2019-10-22 11:18:47\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%ae\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: wile.e.coyote@acme.com\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: Fixed a Bug\n" \
+    )
+
+  with open("ExtraRepo2/.mockprogram_inout.txt", "w") as f:
+    f.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --short HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 50bbf3e\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%cd --date=format:%G-%m-%d %H:%M:%S\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 2019-10-17 16:32:15\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%ae\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: someone@somwhere.com\n" \
+      "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: Did Some Work\n" \
+    )
+
+
 def writeGitMockProgram_base_3_2_1_repo1_0_0_0_repo2_4_0_2():
 
   open(".mockprogram_inout.txt", "w").write(
@@ -844,6 +1042,8 @@ def assertContainsAllGitdistHelpSections(testObj, cmndOut):
     GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^DEFAULT BRANCH SPECIFICATION:$"), "DEFAULT BRANCH SPECIFICATION:\n")
   testObj.assertEqual(
     GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^MOVE TO BASE DIRECTORY:$"), "MOVE TO BASE DIRECTORY:\n")
+  testObj.assertEqual(
+    GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^REPO VERSION TABLE:$"), "REPO VERSION TABLE:\n")
 
 
 class test_gitdist(unittest.TestCase):
@@ -910,7 +1110,7 @@ class test_gitdist(unittest.TestCase):
   # Test that --dist-help --help prints nice error message
   def test_dist_help_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help --help")
-    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'default-branch', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')\n"
+    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'dist-repo-versions-table', 'aliases', 'default-branch', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -918,7 +1118,7 @@ class test_gitdist(unittest.TestCase):
   def test_dist_help_invalid_pick_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help=invalid-pick --help")
     assertContainsGitdistHelpHeader(self, cmndOut)
-    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'aliases', 'default-branch', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')"
+    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'dist-repo-versions-table', 'aliases', 'default-branch', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')"
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingSubstr(cmndOut,errorToFind), errorToFind+"\n")
 
@@ -1507,6 +1707,97 @@ class test_gitdist(unittest.TestCase):
       os.chdir(testBaseDir)
 
 
+  def test_dist_repo_versions_table(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_versions_table")
+
+      os.mkdir("ExtraRepo1")
+      os.mkdir("ExtraRepo2")
+
+      writeGitMockProgram_dist_repo_versions_table()
+
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPath + " --dist-use-git=" + mockGitPath \
+          + " --dist-repos=.,ExtraRepo1,ExtraRepo2 dist-repo-versions-table",
+        workingDir=testDir)
+      #print(cmndOut.decode("ascii"))
+      cmndOut_expected = \
+        "| Repository     | SHA1    | Commit Date         | Author                 | Summary                                        |\n" \
+        "|:-------------- |:-------:|:------------------- |:---------------------- |:---------------------------------------------- |\n" \
+        "| MockProjectDir | e2dc488 | 2019-10-23 10:16:07 | user@domain.com        | Merge Pull Request #1234 from user/repo/branch |\n" \
+        "| ExtraRepo1     | f671414 | 2019-10-22 11:18:47 | wile.e.coyote@acme.com | Fixed a Bug                                    |\n" \
+        "| ExtraRepo2     | 50bbf3e | 2019-10-17 16:32:15 | someone@somwhere.com   | Did Some Work                                  |\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_dist_repo_versions_table_1_change_base(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir(
+        "gitdist_dist_repo_versions_table_1_change_base")
+
+      os.mkdir("ExtraRepo1")
+      os.mkdir("ExtraRepo2")
+
+      writeGitMockProgram_dist_repo_versions_table_1_change_base()
+
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPath + " --dist-use-git=" + mockGitPath \
+          + " --dist-repos=.,ExtraRepo1,ExtraRepo2 dist-repo-versions-table"
+          + " --dist-mod-only",
+        workingDir=testDir)
+      #print(cmndOut.decode("ascii"))
+      cmndOut_expected = \
+        "| Repository     | SHA1    | Commit Date         | Author          | Summary                                        |\n" \
+        "|:-------------- |:-------:|:------------------- |:--------------- |:---------------------------------------------- |\n" \
+        "| MockProjectDir | e2dc488 | 2019-10-23 10:16:07 | user@domain.com | Merge Pull Request #1234 from user/repo/branch |\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_dist_repo_versions_short_table(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_versions_short_table")
+
+      os.mkdir("ExtraRepo1")
+      os.mkdir("ExtraRepo2")
+
+      writeGitMockProgram_dist_repo_versions_table()
+
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPath + " --dist-use-git=" + mockGitPath \
+          + " --dist-repos=.,ExtraRepo1,ExtraRepo2 dist-repo-versions-table" \
+          + " --dist-short",
+        workingDir=testDir)
+      #print(cmndOut.decode("ascii"))
+      cmndOut_expected = \
+        "| Repository     | SHA1    |\n" \
+        "|:-------------- |:-------:|\n" \
+        "| MockProjectDir | e2dc488 |\n" \
+        "| ExtraRepo1     | f671414 |\n" \
+        "| ExtraRepo2     | 50bbf3e |\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+    finally:
+      os.chdir(testBaseDir)
+
+
   def test_dist_repo_status_all_utf8(self):
     if sys.version_info < (3,):
       print("Test disabled for Python 2.")
@@ -1786,7 +2077,30 @@ class test_gitdist(unittest.TestCase):
         rtnCode=True)
       #print(cmndOut)
       cmndOut_expected = \
-        "Error, passing in extra git commands/args ='--name-status' with special comamnd 'dist-repo-status is not allowed!\n"
+        "Error, passing in extra git commands/args ='--name-status' with special command 'dist-repo-status' is not allowed!\n"
+      self.assertEqual(cmndOut, s(cmndOut_expected))
+      self.assertEqual(errOut, 1)
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_dist_repo_versions_table_extra_args_fail(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("dist_repo_versions_table_extra_args_fail")
+
+      (cmndOut, errOut) = getCmndOutput(
+        gitdistPath + " --dist-no-color --dist-use-git=" + mockGitPath \
+          + " --dist-repos=.,ExtraRepo1,ExtraRepo2 dist-repo-versions-table" \
+          + " --name-status",
+        rtnCode=True)
+      #print(cmndOut)
+      cmndOut_expected = \
+        "Error, passing in extra git commands/args ='--name-status' with special command 'dist-repo-versions-table' is not allowed!\n"
       self.assertEqual(cmndOut, s(cmndOut_expected))
       self.assertEqual(errOut, 1)
 
@@ -1867,8 +2181,8 @@ class test_gitdist(unittest.TestCase):
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "INVALID"
     cmndOut = getCmndOutput(gitdistPath+" status")
     cmndOut_expected = "Error, env var GITDIST_MOVE_TO_BASE_DIR='INVALID' is invalid!  Valid choices include empty '', IMMEDIATE_BASE, and EXTREME_BASE.\n"
-    print("cmndOut = ", cmndOut)
-    print("cmndOut_expected = ", cmndOut_expected)
+    #print("cmndOut = ", cmndOut)
+    #print("cmndOut_expected = ", cmndOut_expected)
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
