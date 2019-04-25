@@ -650,6 +650,102 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
   # NOTE: Above we are testing different directory install options.
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
+
+  TEST_0
+    MESSAGE "Do initial configure with just libs"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DCMAKE_INSTALL_PREFIX=install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Do make to build everything"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Make install_package_by_package without a runner"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install_package_by_package
+    PASS_REGULAR_EXPRESSION_ALL
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_package_by_package/install/lib/libhello_world_lib[.]a"
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_package_by_package/install/include/hello_world_lib[.]hpp"
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_package_by_package/install/bin/hello_world[.]exe"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Check for some installed files"
+    CMND ls ARGS
+      install/include/hello_world_lib.hpp
+      install/lib/libhello_world_lib.a
+      install/bin/hello_world.exe
+    PASS_REGULAR_EXPRESSION_ALL
+      "install/include/hello_world_lib[.]hpp"
+      "install/lib/libhello_world_lib[.]a"
+      "install/bin/hello_world[.]exe"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: Above we are testing the 'install_package_by_package' target and
+  # without using an install runner.
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_runner
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
+
+  TEST_0
+    MESSAGE "Do initial configure with an install_package_by_package runner"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_INSTALL_PBP_RUNNER=${CMAKE_CURRENT_SOURCE_DIR}/run-program.sh
+      -DCMAKE_INSTALL_PREFIX=install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Do make to build everything"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Make install_package_by_package with a runner"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install_package_by_package
+    PASS_REGULAR_EXPRESSION_ALL
+      "Running: .*/cmake -P cmake_pbp_install[.]cmake"
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_package_by_package_with_runner/install/lib/libhello_world_lib[.]a"
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_package_by_package_with_runner/install/include/hello_world_lib[.]hpp"
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_package_by_package_with_runner/install/bin/hello_world[.]exe"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Check for some installed files"
+    CMND ls ARGS
+      install/include/hello_world_lib.hpp
+      install/lib/libhello_world_lib.a
+      install/bin/hello_world.exe
+    PASS_REGULAR_EXPRESSION_ALL
+      "install/include/hello_world_lib[.]hpp"
+      "install/lib/libhello_world_lib[.]a"
+      "install/bin/hello_world[.]exe"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: Above we are testing the 'install_package_by_package' with an
+  # install runner for that target set with <Project>_INSTALL_PBP_RUNNER.
+
+
 ########################################################################
 # RawAndTribitsHelloWorld
 ########################################################################
