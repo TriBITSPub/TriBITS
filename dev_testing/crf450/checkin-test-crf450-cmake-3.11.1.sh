@@ -17,6 +17,7 @@ TRIBITS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR)
 # Load the env:
 source /home/vera_env/gcc-4.8.3/load_dev_env.sh
 export PATH=/home/vera_env/common_tools/cmake-3.11.1/bin:$PATH
+export TribitsExMetaProj_GIT_URL_REPO_BASE=git@github.com:tribits/
 
 # Create extra builds run by this script
 
