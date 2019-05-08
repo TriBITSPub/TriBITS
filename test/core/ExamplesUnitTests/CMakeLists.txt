@@ -4306,7 +4306,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_DOUBLE_SUBPACKAGE_INIT=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Already called TRIBITS_SUBPACKGE[(][)] for thePkgWithSubpkgsWithUserErrors"
+      "Already called TRIBITS_SUBPACKGE[(][)] for the PkgWithSubpkgsWithUserErrors"
+      "subpackage A"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4317,8 +4318,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPAckageA_DOUBLE_SUBPACKAGE_POSTPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Already called TRIBITS_SUBPACKGE_POSTPROCESS[(][)] for"
-      "thePkgWithSubpkgsWithUserErrors subpackage A"
+      "Already called TRIBITS_SUBPACKGE_POSTPROCESS[(][)] for the"
+      "PkgWithSubpkgsWithUserErrors subpackage A"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4329,8 +4330,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPAckageA_DOUBLE_SUBPACKAGE_POSTPROCESS=FALSE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "TRIBITS_SUBPACKAGE[(][)] must be called before"
-      "TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]for the PkgWithSubpkgsWithUserErrors"
+      "TRIBITS_SUBPACKAGE[(][)] must be called before TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      " for the PkgWithSubpkgsWithUserErrors"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
