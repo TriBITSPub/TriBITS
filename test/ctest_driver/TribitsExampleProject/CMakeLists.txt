@@ -2011,7 +2011,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       "-DDUMMY_PROJECT_FIND_COMPONENTS=SimpleCxx,WithSubpackagesA,WrapExternal"
       -DEXPORT_CONFIG_FILE=../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
-      -P ${PROJECT_SOURCE_DIR}/test/core/ExamplesUnitTests/RunDummyPackageClientBulid.cmake
+      -P ${TriBITS_SOURCE_DIR}/test/core/ExamplesUnitTests/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "DUMMY_PROJECT_NAME = 'DummyProject'"
       "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsExProj'"
@@ -2129,7 +2129,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       "-DDUMMY_PROJECT_FIND_COMPONENTS=SimpleCxx,WithSubpackagesA"
       -DEXPORT_CONFIG_FILE=../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
-      -P ${PROJECT_SOURCE_DIR}/test/core/ExamplesUnitTests/RunDummyPackageClientBulid.cmake
+      -P ${TriBITS_SOURCE_DIR}/test/core/ExamplesUnitTests/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "DUMMY_PROJECT_NAME = 'DummyProject'"
       "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsExProj'"
