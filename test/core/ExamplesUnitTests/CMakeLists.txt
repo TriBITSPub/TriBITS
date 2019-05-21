@@ -746,6 +746,84 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_run
   # install runner for that target set with <Project>_INSTALL_PBP_RUNNER.
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Do initial configure with just libs"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DCMAKE_INSTALL_PREFIX=install
+      -DTribitsHelloWorld_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Do make install to build and everything"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Create and configure a dummy project that includes"
+      " TribitsHelloWorkdConfig.cmake from the install tree" 
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DDUMMY_PROJECT_NAME=DummyProject
+      -DDUMMY_PROJECT_DIR=dummy_client_of_TribitsHelloWorld
+      -DEXPORT_VAR_PREFIX=TribitsHelloWorld
+      -DEXPORT_CONFIG_FILE=../install/lib/cmake/TribitsHelloWorld/TribitsHelloWorldConfig.cmake
+      -DCMAKE_COMMAND=${CMAKE_COMMAND}
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "DUMMY_PROJECT_NAME = 'DummyProject'"
+      "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsHelloWorld'"
+      "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsHelloWorld/TribitsHelloWorldConfig.cmake'"
+      "EXPORT_VAR_PREFIX = 'TribitsHelloWorld'"
+      "Configure the dummy project to print the variables in .*/TriBITS_TribitsHelloWorld_install_config_dummy_proj/dummy_client_of_TribitsHelloWorld ..."
+      "DUMMY_PROJECT_NAME = 'DummyProject'"
+      "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsHelloWorld/TribitsHelloWorldConfig.cmake'"
+      "EXPORT_VAR_PREFIX = 'TribitsHelloWorld'"
+      "TribitsHelloWorld_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "TribitsHelloWorld_CXX_FLAGS = ''"
+      "TribitsHelloWorld_C_FLAGS = ''"
+      "TribitsHelloWorld_FORTRAN_FLAGS = ''"
+      "TribitsHelloWorld_EXTRA_LD_FLAGS = ''"
+      "TribitsHelloWorld_SHARED_LIB_RPATH_COMMAND = ''"
+      "TribitsHelloWorld_BUILD_SHARED_LIBS = 'FALSE'"
+      "TribitsHelloWorld_LINKER = '.*'"
+      "TribitsHelloWorld_AR = '.*'"
+      "TribitsHelloWorld_INCLUDE_DIRS = '.*/TriBITS_TribitsHelloWorld_install_config_dummy_proj/install/include'"
+      "TribitsHelloWorld_LIBRARY_DIRS = '.*/TriBITS_TribitsHelloWorld_install_config_dummy_proj/install/lib'"
+      "TribitsHelloWorld_LIBRARIES = 'hello_world_lib'"
+      "TribitsHelloWorld_TPL_INCLUDE_DIRS = '"
+      "TribitsHelloWorld_TPL_LIBRARY_DIRS = ''"
+      "TribitsHelloWorld_TPL_LIBRARIES = ''"
+      "TribitsHelloWorld_MPI_LIBRARIES = ''"
+      "TribitsHelloWorld_MPI_LIBRARY_DIRS = ''"
+      "TribitsHelloWorld_MPI_INCLUDE_DIRS = ''"
+      "TribitsHelloWorld_MPI_EXEC = '.*'"
+      "TribitsHelloWorld_MPI_EXEC_MAX_NUMPROCS = '[1-9]*'"  # Is null for an MPI build
+      "TribitsHelloWorld_MPI_EXEC_NUMPROCS_FLAG = '.*'"
+      "TribitsHelloWorld_PACKAGE_LIST = 'HelloWorld'"
+      "TribitsHelloWorld_TPL_LIST = ''"  # Must work for no MPI too
+      "-- Configuring done"
+      "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: Above we are testing:
+  #
+  # * 'install' target builds and installs by default
+  #
+  # * The <Project>Config.cmake file works if there are no TPLs enabled
+  #   (defect trilinos/trilinos#5213)
+  #
+
+
 ########################################################################
 # RawAndTribitsHelloWorld
 ########################################################################
