@@ -2934,8 +2934,6 @@ MACRO(TRIBITS_SETUP_FOR_INSTALLATION)
 
   ADVANCED_SET(${PROJECT_NAME}_INSTALL_PBP_RUNNER "" CACHE FILEPATH
     "Program used to run cmake -P cmake_pbp_install.cmake to change user for 'install_package_by_package' target")
-  PRINT_VAR(${PROJECT_NAME}_INSTALL_PBP_RUNNER)
-
 
   ADD_CUSTOM_TARGET(install_package_by_package
    ${${PROJECT_NAME}_INSTALL_PBP_RUNNER}
