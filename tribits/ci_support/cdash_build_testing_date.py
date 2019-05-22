@@ -85,6 +85,10 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "--cdash-build-start-time", dest="cdashBuildStartTime", type="string", default="",
     help="CDash build start time in format 'YYYY-MM-DDThh:mm UTC'.  If empty ''"\
       +" then the current date/time in UTC is used.  (default '') [optional]" )
+  
+  clp.add_option(
+    "--debug-level", dest="debugLevel", type="int", default="0",
+    help="Debug level.  An integer >= 0 (default '0')" )
 
 
 def getCmndLineOptions():
@@ -98,30 +102,70 @@ def getCmndLineOptions():
   return options
 
 
+# Return the current time in UTC as a datetime object
 def getCurrentDateTimeUtc():
   return datetime.datetime.utcnow()
 
 
-def getBuildStartTimeFromStr(buildStartTime):
-  return datetime.datetime.strptime(buildStartTime, "%Y-%m-%dT%H:%M:%S %Z")
+# Get the timezone offset as a timedelta object w.r.t to UTC
+#
+# The supported timezones for timeZoneStr are the strings:
+#
+# * UTC: 0
+# * EDT: 4
+# * EST: 5
+# * CDT: 5
+# * CST: 6
+# * MDT: 6
+# * MST: 7
+#
+# NOTE: Any timezone that CDash returns for the 'buildstarttime' field must be
+# added below.
+#
+def getTimeZoneOffset(timeZoneStr):
+  if timeZoneStr == "UTC": timezoneOffsetInt = 0
+  elif timeZoneStr == "EDT": timezoneOffsetInt = 4
+  elif timeZoneStr == "EST": timezoneOffsetInt = 5
+  elif timeZoneStr == "CDT": timezoneOffsetInt = 5
+  elif timeZoneStr == "CST": timezoneOffsetInt = 6
+  elif timeZoneStr == "MDT": timezoneOffsetInt = 6
+  elif timeZoneStr == "MST": timezoneOffsetInt = 7
+  else: raise Exception("Error, unrecognized timezone '"+timeZoneStr+"'!")
+  return datetime.timedelta(hours=timezoneOffsetInt)
 
 
+# Return a timezone aware datetime object given an input date and time given
+# in the format "<YYYY>-<MM>-<DD>T<hh>:<mm>:<ss> <TZ>".
+def getBuildStartTimeUtcFromStr(buildStartTime):
+  buildStartTimeArray = buildStartTime.split(" ")
+  if len(buildStartTimeArray) == 2:
+    timezoneOffset = getTimeZoneOffset(buildStartTimeArray[1])
+  else:
+    timezoneOffset = 0
+  #print timezoneOffset
+  localDateTime = datetime.datetime.strptime(buildStartTimeArray[0], "%Y-%m-%dT%H:%M:%S")
+  return localDateTime + timezoneOffset 
+
+
+# Return a timedelta object for the CDash Project start time passed in as a
+# string in the format "<hh>:<mm>" in UTC.
 def getProjectTestingDayStartTimeDeltaFromStr(cdashProjectStartTimeStr):
   t = datetime.datetime.strptime(cdashProjectStartTimeStr, '%H:%M')
   return datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
 
 
+# Return a timedelta object for a day increment pass in as an signed integer.
 def getDayIncrTimeDeltaFromInt(dayIncrInt):
   return datetime.timedelta(days=dayIncrInt)
 
 
+# Return the string "<YYYY>-<MM>-<DD>" for an input datetime object.
 def getDateStrFromDateTime(dateTime):
   return dateTime.strftime("%Y-%m-%d")
 
 
-#
 # Return the shifted CDash build start relative to the given CDash project
-# testing day start time (as configured on CDash)
+# testing day start time (as configured on CDash).
 #
 # This function is meant to match the CDash logic for what testing day a given
 # CDash build matches for the CDash 'date' field in various PHP pages for a
@@ -135,7 +179,8 @@ def getDateStrFromDateTime(dateTime):
 # then the relative CDash build date time would be 2018-01-22:00:10 UTC and
 # the testing day would be 2018-01-22.
 #
-# To extract the YYYY-MM-DD string, use the function getDateStrFromDateTime()
+# To extract the "<YYYY>-<MM>-<DD>" string, use the function
+# getDateStrFromDateTime().
 # 
 def getRelativeCDashBuildStartTime(
   cdashBuildStartTime,   # CDash build start time in UTC (datetime objet)
@@ -146,7 +191,6 @@ def getRelativeCDashBuildStartTime(
   return relativeCDashBuildDateTime
 
 
-#
 # Return the shifted CDash build start relative to the given CDash project
 # testing day start time given input from the command-line arguments.
 #
@@ -157,20 +201,21 @@ def getRelativeCDashBuildStartTimeFromCmndLineArgs(
   cdashBuildStartTimeStr,  # If 'None', then is taken from getCurrentDateTimeUtc()
   cdashProjectStartTimeStr,
   dayIncrInt,
+  debugLevel=0,
   ):
 
   if cdashBuildStartTimeStr:
-    buildStartTimeUtc = getBuildStartTimeFromStr(cdashBuildStartTimeStr)
+    buildStartTimeUtc = getBuildStartTimeUtcFromStr(cdashBuildStartTimeStr)
   else:
     buildStartTimeUtc = getCurrentDateTimeUtc()
-  #print("buildStartTimeUtc = "+str(buildStartTimeUtc))
+  if debugLevel: print("buildStartTimeUtc = "+str(buildStartTimeUtc))
 
   cdashStartTime = \
     getProjectTestingDayStartTimeDeltaFromStr(cdashProjectStartTimeStr)
-  #print("cdashStartTime ="+str(cdashStartTime))
+  if debugLevel: print("cdashStartTime = "+str(cdashStartTime))
 
   dayIncr = getDayIncrTimeDeltaFromInt(dayIncrInt)
-  #print("dayIncr = "+str(dayIncr))
+  if debugLevel: print("dayIncr = "+str(dayIncr))
 
   return getRelativeCDashBuildStartTime(buildStartTimeUtc, cdashStartTime, dayIncr)
 
@@ -185,7 +230,7 @@ if __name__ == '__main__':
 
   relativeCDashBuildBuildDateTime = getRelativeCDashBuildStartTimeFromCmndLineArgs(
     inOptions.cdashBuildStartTime, inOptions.cdashProjectStartTimeStr,
-    inOptions.dayIncrInt,
+    inOptions.dayIncrInt, inOptions.debugLevel,
     )
 
   print(getDateStrFromDateTime(relativeCDashBuildBuildDateTime))

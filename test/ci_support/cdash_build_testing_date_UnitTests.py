@@ -49,14 +49,57 @@ import sys
 import unittest
 
 
-class test_getBuildStartTimeFromStr(unittest.TestCase):
+def assert_timezone_offset(testObj, timezoneStr, hours):
+  timeZoneOffset = getTimeZoneOffset(timezoneStr)
+  testObj.assertEqual(timeZoneOffset.days, 0)
+  testObj.assertEqual(timeZoneOffset.seconds, hours*3600)
+  testObj.assertEqual(timeZoneOffset.microseconds, 0)
 
-  def test_valid(self):
-    buildStartTime = getBuildStartTimeFromStr("2019-11-16T01:02:03 UTC")
+
+class test_utc(unittest.TestCase):
+
+  def test_utc(self):
+    assert_timezone_offset(self, "UTC", 0)
+
+  def test_edt(self):
+    assert_timezone_offset(self, "EDT", 4)
+
+  def test_est(self):
+    assert_timezone_offset(self, "EST", 5)
+
+  def test_cdt(self):
+    assert_timezone_offset(self, "CDT", 5)
+
+  def test_cst(self):
+    assert_timezone_offset(self, "CST", 6)
+
+  def test_mdt(self):
+    assert_timezone_offset(self, "MDT", 6)
+
+  def test_mst(self):
+    assert_timezone_offset(self, "MST", 7)
+
+
+class test_getBuildStartTimeUtcFromStr(unittest.TestCase):
+
+  def test_utc(self):
+    buildStartTime = getBuildStartTimeUtcFromStr("2019-11-16T01:02:03 UTC")
     self.assertEqual(buildStartTime.year, 2019)
     self.assertEqual(buildStartTime.month, 11)
     self.assertEqual(buildStartTime.day, 16)
     self.assertEqual(buildStartTime.hour, 1)
+    self.assertEqual(buildStartTime.minute, 2)
+    self.assertEqual(buildStartTime.second, 3)
+    self.assertEqual(buildStartTime.microsecond, 0)
+    self.assertEqual(buildStartTime.tzinfo, None)
+
+  def test_mdt(self):
+    buildStartTime = getBuildStartTimeUtcFromStr("2019-11-16T01:02:03 MDT")
+    print str(buildStartTime)
+    self.assertEqual(buildStartTime.year, 2019)
+    self.assertEqual(buildStartTime.month, 11)
+    self.assertEqual(buildStartTime.day, 16)
+    self.assertEqual(buildStartTime.hour, 7)
     self.assertEqual(buildStartTime.minute, 2)
     self.assertEqual(buildStartTime.second, 3)
     self.assertEqual(buildStartTime.microsecond, 0)
@@ -106,12 +149,12 @@ class test_getDayIncrTimeDeltaFromInt(unittest.TestCase):
 class test_getgetDateStrFromDateTime(unittest.TestCase):
 
   def test_date_1(self):
-    buildStartTime = getBuildStartTimeFromStr("2019-11-16T01:02:03 UTC")
+    buildStartTime = getBuildStartTimeUtcFromStr("2019-11-16T01:02:03 UTC")
     dateStr = getDateStrFromDateTime(buildStartTime)
     self.assertEqual(dateStr, "2019-11-16")
 
   def test_date_2(self):
-    buildStartTime = getBuildStartTimeFromStr("2018-01-03T01:02:03 UTC")
+    buildStartTime = getBuildStartTimeUtcFromStr("2018-01-03T01:02:03 UTC")
     dateStr = getDateStrFromDateTime(buildStartTime)
     self.assertEqual(dateStr, "2018-01-03")
 
@@ -123,7 +166,7 @@ class test_getRelativeCDashBuildStartTimeFromCmndLineArgs(unittest.TestCase):
   def test_previous_day_late(self):
     relBuildStartTime = getRelativeCDashBuildStartTimeFromCmndLineArgs(
       "2018-01-15T03:50:30 UTC", "04:10", 0)
-    relBuildStartTime_expected = getBuildStartTimeFromStr(
+    relBuildStartTime_expected = getBuildStartTimeUtcFromStr(
       "2018-01-14T23:40:30 UTC")
     self.assertEqual(relBuildStartTime, relBuildStartTime_expected)
     self.assertEqual(getDateStrFromDateTime(relBuildStartTime), "2018-01-14")
@@ -131,7 +174,7 @@ class test_getRelativeCDashBuildStartTimeFromCmndLineArgs(unittest.TestCase):
   def test_previous_day_last(self):
     relBuildStartTime = getRelativeCDashBuildStartTimeFromCmndLineArgs(
       "2018-01-15T04:09:59 UTC", "04:10", 0)
-    relBuildStartTime_expected = getBuildStartTimeFromStr(
+    relBuildStartTime_expected = getBuildStartTimeUtcFromStr(
       "2018-01-14T23:59:59 UTC")
     self.assertEqual(relBuildStartTime, relBuildStartTime_expected)
     self.assertEqual(getDateStrFromDateTime(relBuildStartTime), "2018-01-14")
@@ -139,7 +182,7 @@ class test_getRelativeCDashBuildStartTimeFromCmndLineArgs(unittest.TestCase):
   def test_same_day_first(self):
     relBuildStartTime = getRelativeCDashBuildStartTimeFromCmndLineArgs(
       "2018-01-15T04:10:00 UTC", "04:10", 0)
-    relBuildStartTime_expected = getBuildStartTimeFromStr(
+    relBuildStartTime_expected = getBuildStartTimeUtcFromStr(
       "2018-01-15T00:00:00 UTC")
     self.assertEqual(relBuildStartTime, relBuildStartTime_expected)
     self.assertEqual(getDateStrFromDateTime(relBuildStartTime), "2018-01-15")
@@ -147,7 +190,7 @@ class test_getRelativeCDashBuildStartTimeFromCmndLineArgs(unittest.TestCase):
   def test_same_day_early(self):
     relBuildStartTime = getRelativeCDashBuildStartTimeFromCmndLineArgs(
       "2018-01-15T04:50:29 UTC", "04:10", 0)
-    relBuildStartTime_expected = getBuildStartTimeFromStr(
+    relBuildStartTime_expected = getBuildStartTimeUtcFromStr(
       "2018-01-15T00:40:29 UTC")
     self.assertEqual(relBuildStartTime, relBuildStartTime_expected)
     self.assertEqual(getDateStrFromDateTime(relBuildStartTime), "2018-01-15")
@@ -155,7 +198,7 @@ class test_getRelativeCDashBuildStartTimeFromCmndLineArgs(unittest.TestCase):
   def test_same_day_mid(self):
     relBuildStartTime = getRelativeCDashBuildStartTimeFromCmndLineArgs(
       "2018-01-15T12:44:20 UTC", "04:10", 0)
-    relBuildStartTime_expected = getBuildStartTimeFromStr(
+    relBuildStartTime_expected = getBuildStartTimeUtcFromStr(
       "2018-01-15T08:34:20 UTC")
     self.assertEqual(relBuildStartTime, relBuildStartTime_expected)
     self.assertEqual(getDateStrFromDateTime(relBuildStartTime), "2018-01-15")

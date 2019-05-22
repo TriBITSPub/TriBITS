@@ -85,6 +85,12 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       " [default yesterday '"+yesterday+"']" )
 
   clp.add_option(
+    "--cdash-project-testing-day-start-time", dest="cdashProjectTestingDayStartTime",
+    type="string", default="00:00",
+    help="The CDash project testing day build star time in UTC in format '<hh>:<mm>'."+\
+      " [default = '00:00'" )
+
+  clp.add_option(
     "--cdash-project-name", dest="cdashProjectName", type="string", default="",
     help="CDash project name (e.g. 'Trilinos'). [REQUIRED] [default = '']" )
 
@@ -114,12 +120,6 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       " the set of non-passing tests matching this set of builds (e.g."+\
       " 'filtercombine=and&filtercount=1&showfilters=1&filtercombine=and&field1=groupname&compare1=61&value1=ATDM'"+\
       " [REQUIRED] [default = '']" )
-
-  clp.add_option(
-    "--cdash-project-testing-day-start-time", dest="cdashProjectTestingDayStartTime",
-    type="string", default="00:00",
-    help="The CDash project testing day build startime in UTC in format '<hh>:<mm>'."+\
-      " [default = '00:00'" )
 
   clp.add_option(
     "--expected-builds-file", dest="expectedBuildsFile", type="string",
@@ -255,12 +255,12 @@ def getCmndLineOptions():
 def fwdCmndLineOptions(inOptions, lt=""):
   cmndLineOpts = \
     "  --date='"+inOptions.date+"'"+lt+\
+    "  --cdash-project-testing-day-start-time='"+inOptions.cdashProjectTestingDayStartTime+"'"+lt+\
     "  --cdash-project-name='"+inOptions.cdashProjectName+"'"+lt+\
     "  --build-set-name='"+inOptions.buildSetName+"'"+lt+\
     "  --cdash-site-url='"+inOptions.cdashSiteUrl+"'"+lt+\
     "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+lt+\
     "  --cdash-nonpassed-tests-filters='"+inOptions.cdashNonpassedTestsFilters+"'"+lt+\
-    "  --cdash-project-test-day-start-time='"+inOptions.cdashProjectTestingDayStartTime+"'"+lt+\
     "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+lt+\
     "  --tests-with-issue-trackers-file='"+inOptions.testsWithIssueTrackersFile+"'"+lt+\
     "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+lt+\

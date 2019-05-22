@@ -1874,6 +1874,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
+    testingDayStartTime = "00:00 UTC"
     daysOfHistory = 5
     useCachedCDashData = False
     alwaysUseCacheFileIfExists = False
@@ -1884,9 +1885,9 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
-      useCachedCDashData, alwaysUseCacheFileIfExists, verbose, printDetails,
-      mockExtractCDashApiQueryDataFunctor,
+      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
+      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
@@ -1994,6 +1995,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
+    testingDayStartTime = "00:00 UTC"
     daysOfHistory = 5
     useCachedCDashData = True
     alwaysUseCacheFileIfExists = True
@@ -2002,8 +2004,9 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
-      useCachedCDashData, alwaysUseCacheFileIfExists, verbose, printDetails,
+      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
+      verbose, printDetails,
       )
 
     # Apply the functor to add the test history to the test dict.  This will
@@ -2090,6 +2093,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
+    testingDayStartTime = "00:00 UTC"
     daysOfHistory = 5
     useCachedCDashData = True
     alwaysUseCacheFileIfExists = True
@@ -2098,8 +2102,9 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
-      useCachedCDashData, alwaysUseCacheFileIfExists, verbose, printDetails,
+      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
+      verbose, printDetails,
       )
 
     # Apply the functor to add the test history to the test dict.  This will
@@ -2174,6 +2179,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
+    testingDayStartTime = "00:00 UTC"
     daysOfHistory = 5
     useCachedCDashData = True
     alwaysUseCacheFileIfExists = True
@@ -2182,8 +2188,9 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
-      useCachedCDashData, alwaysUseCacheFileIfExists, verbose, printDetails,
+      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
+      verbose, printDetails,
       )
 
     # Apply the functor to add the test history to the test dict.  This will
@@ -2260,6 +2267,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
+    testingDayStartTime = "00:00 UTC"
     daysOfHistory = 5
     useCachedCDashData = False
     alwaysUseCacheFileIfExists = False
@@ -2270,9 +2278,9 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
-      useCachedCDashData, alwaysUseCacheFileIfExists, verbose, printDetails,
-      mockExtractCDashApiQueryDataFunctor,
+      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
+      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
@@ -2331,6 +2339,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
+    testingDayStartTime = "00:00 UTC"
     daysOfHistory = 5
     useCachedCDashData = False
     alwaysUseCacheFileIfExists = False
@@ -2341,9 +2350,9 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, daysOfHistory, testCacheOutputDir,
-      useCachedCDashData, alwaysUseCacheFileIfExists, verbose, printDetails,
-      mockExtractCDashApiQueryDataFunctor,
+      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
+      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
