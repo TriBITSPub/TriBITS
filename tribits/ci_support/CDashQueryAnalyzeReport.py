@@ -54,6 +54,7 @@ import pprint
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
 
+import cdash_build_testing_date
 
 # Validate a date YYYY-MM-DD string and return a date object for the
 # 'datetime' module.
@@ -1285,7 +1286,7 @@ class AddTestHistoryToTestDictFunctor(object):
   # By default, this wil always read the data from the cache file if that file
   # already exists.
   #
-  def __init__(self, cdashUrl, projectName, date, daysOfHistory,
+  def __init__(self, cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
     testCacheDir, useCachedCDashData=True, alwaysUseCacheFileIfExists=True,
     verbose=False, printDetails=False,
     extractCDashApiQueryData_in=extractCDashApiQueryData, # For unit testing
@@ -1293,6 +1294,7 @@ class AddTestHistoryToTestDictFunctor(object):
     self.__cdashUrl = cdashUrl
     self.__projectName = projectName
     self.__date = date
+    self.__testingDayStartTime = testingDayStartTime
     self.__daysOfHistory = daysOfHistory
     self.__testCacheDir = testCacheDir
     self.__useCachedCDashData = useCachedCDashData
