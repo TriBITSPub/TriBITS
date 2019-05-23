@@ -1464,18 +1464,21 @@ g_testDictFailed = {
   u'issue_tracker_url': u'some.com/site/issue/1234'
   }
 
-def getTestHistoryLOD5(statusListOrderedByDate):
+def getTestHistoryLOD5(statusListOrderedByDate,
+  time = "05:54:03",
+  timezoneStr = "UTC",
+  ):
   testHistoryListLOD = []
   for i in xrange(5): testHistoryListLOD.append(copy.deepcopy(g_testDictFailed))
-  testHistoryListLOD[1]['buildstarttime'] = '2001-01-01T05:54:03 UTC'
+  testHistoryListLOD[1]['buildstarttime'] = '2001-01-01T'+time+' '+timezoneStr
   testHistoryListLOD[1]['status'] = statusListOrderedByDate[0]
-  testHistoryListLOD[0]['buildstarttime'] = '2000-12-31T05:54:03 UTC'
+  testHistoryListLOD[0]['buildstarttime'] = '2000-12-31T'+time+' '+timezoneStr
   testHistoryListLOD[0]['status'] = statusListOrderedByDate[1]
-  testHistoryListLOD[4]['buildstarttime'] = '2000-12-30T05:54:03 UTC'
+  testHistoryListLOD[4]['buildstarttime'] = '2000-12-30T'+time+' '+timezoneStr
   testHistoryListLOD[4]['status'] = statusListOrderedByDate[2]
-  testHistoryListLOD[3]['buildstarttime'] = '2000-12-29T05:54:03 UTC'
+  testHistoryListLOD[3]['buildstarttime'] = '2000-12-29T'+time+' '+timezoneStr
   testHistoryListLOD[3]['status'] = statusListOrderedByDate[3]
-  testHistoryListLOD[2]['buildstarttime'] = '2000-12-28T05:54:03 UTC'
+  testHistoryListLOD[2]['buildstarttime'] = '2000-12-28T'+time+' '+timezoneStr
   testHistoryListLOD[2]['status'] = statusListOrderedByDate[4]
   return testHistoryListLOD
   # NOTE: Above, we make them unsorted so that we can test the sort done
@@ -1492,9 +1495,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
   def test_all_passed(self):
     testHistoryLOD = getTestHistoryLOD5(['Passed','Passed','Passed','Passed','Passed'])
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     # Test the sorting
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(sortedTestHistoryLOD[1]['buildstarttime'],'2000-12-31T05:54:03 UTC')
@@ -1515,9 +1520,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
   def test_pass_3_but_nopass_2(self):
     testHistoryLOD = getTestHistoryLOD5(['Passed','Passed','Passed','Failed','Failed'])
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 3)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 2)
@@ -1531,9 +1538,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
   def test_pass_2_but_nopass_3(self):
     testHistoryLOD = getTestHistoryLOD5(['Passed','Passed','Failed','Passed','Failed'])
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 3)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 2)
@@ -1548,9 +1557,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     testHistoryLOD = getSTestHistoryLOD5(['Passed','DELETED','Failed','Passed','Failed'])
     del testHistoryLOD[1]
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 2)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 2)
@@ -1564,9 +1575,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
   def test_all_failed(self):
     testHistoryLOD = getTestHistoryLOD5(['Failed','Failed','Failed','Failed','Failed'])
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 0)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 5)
@@ -1580,9 +1593,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
   def test_failed_3_passed_2(self):
     testHistoryLOD = getTestHistoryLOD5(['Failed','Not Run','Passed','Passed','Failed'])
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 2)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 3)
@@ -1598,9 +1613,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     del testHistoryLOD[3]
     del testHistoryLOD[1]
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     # Test the sorting
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 1)
@@ -1616,9 +1633,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     testHistoryLOD = getTestHistoryLOD5(
       ['Not Run','Not Run','Not Run','Not Run','Not Run'])
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 0)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 5)
@@ -1632,9 +1651,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
   def test_notrun_2_passed_2(self):
     testHistoryLOD = getTestHistoryLOD5(['Not Run','Not Run','Passed','Failed','Passed'])
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 2)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 3)
@@ -1650,9 +1671,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     del testHistoryLOD[4]
     del testHistoryLOD[1]
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 1)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 2)
@@ -1666,9 +1689,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
   def test_all_missing(self):
     testHistoryLOD = []
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD, [])
     self.assertEqual(testHistoryStats['pass_last_x_days'], 0)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 0)
@@ -1683,9 +1708,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     testHistoryLOD = getSTestHistoryLOD5(['DELETED','Failed','Failed','Failed','Failed'])
     del testHistoryLOD[0]
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2000-12-31T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 0)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 4)
@@ -1702,9 +1729,11 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     del testHistoryLOD[1]
     del testHistoryLOD[0]
     currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
-      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2000-12-30T05:54:03 UTC')
     self.assertEqual(testHistoryStats['pass_last_x_days'], 1)
     self.assertEqual(testHistoryStats['nopass_last_x_days'], 1)
@@ -1714,6 +1743,43 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['consec_missing_days'], 2)
     self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-30')
     self.assertEqual(testStatus, 'Missing')
+
+  def test_mdt_1(self):
+    testHistoryLOD = getTestHistoryLOD5(
+      ['Passed','Passed','Passed','Passed','Passed'], "18:44:29", "MDT")
+    currentTestDate = "2001-01-02"
+    testingDayStartTimeUtc = "18:00"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
+    print()
+    print("testHistoryStats = "+str(testHistoryStats))
+    print("testStatus = "+str(testStatus))
+    # Test the sorting
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T18:44:29 MDT')
+    self.assertEqual(sortedTestHistoryLOD[1]['buildstarttime'],'2000-12-31T18:44:29 MDT')
+    self.assertEqual(sortedTestHistoryLOD[2]['buildstarttime'],'2000-12-30T18:44:29 MDT')
+    self.assertEqual(sortedTestHistoryLOD[3]['buildstarttime'],'2000-12-29T18:44:29 MDT')
+    self.assertEqual(sortedTestHistoryLOD[4]['buildstarttime'],'2000-12-28T18:44:29 MDT')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 5)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 5)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], 'None')
+    self.assertEqual(testStatus, 'Passed')
+  # NOTE: The above test checks the logic where the raw 'buildstarttime' field
+  # is in MDT and has the raw "YYYY-MM-DD" in the previous day but is actually
+  # the current testing day according to the CDash project testing day start
+  # time.  Here, the testing day start time is 18:00 MDT which is 02:00 UTC
+  # the next calendar day.  Therefore '2001-01-01T18:44:29 MDT' is actually
+  # '2001-01-02T02:44:29 UTC' with the calendar date '2001-01-02' which
+  # matches the CDash testing day '2001-01-02'.
+
+  # ToDo: Test that '2001-12-31T18:44:29 MDT' as the top entry matches testing
+  # day '2001-01-01'.
 
 
 #############################################################################

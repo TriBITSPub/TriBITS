@@ -366,7 +366,7 @@ class TestSetGetDataAnayzeReporter(object):
             cdashUrl=self.inOptions.cdashSiteUrl,
             projectName=self.inOptions.cdashProjectName,
             date=self.inOptions.date,
-            testingDayStartTime=self.inOptions.cdashProjectTestingDayStartTime,
+            testingDayStartTimeUtc=self.inOptions.cdashProjectTestingDayStartTime,
             daysOfHistory=self.inOptions.testHistoryDays,
             testCacheDir=self.testHistoryCacheDir,
             useCachedCDashData=self.inOptions.useCachedCDashData,

@@ -183,11 +183,12 @@ def getDateStrFromDateTime(dateTime):
 # getDateStrFromDateTime().
 # 
 def getRelativeCDashBuildStartTime(
-  cdashBuildStartTime,   # CDash build start time in UTC (datetime objet)
-  cdashProjectStartTime, # CDash start time in UTC (timedelta object)
-  dayIncr,               # Day increment in past or future (timedelta object)
+  cdashBuildStartTimeUtc,   # CDash build start time in UTC (datetime objet)
+  cdashProjectStartTimeUtc, # CDash start time in UTC (timedelta object)
+  dayIncr,                  # Day increment in past or future (timedelta object)
   ):
-  relativeCDashBuildDateTime = cdashBuildStartTime - cdashProjectStartTime + dayIncr
+  relativeCDashBuildDateTime = \
+    cdashBuildStartTimeUtc - cdashProjectStartTimeUtc + dayIncr
   return relativeCDashBuildDateTime
 
 

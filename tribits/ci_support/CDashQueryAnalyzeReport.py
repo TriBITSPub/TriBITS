@@ -54,7 +54,7 @@ import pprint
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
 
-import cdash_build_testing_date
+import cdash_build_testing_date as CBTD
 
 # Validate a date YYYY-MM-DD string and return a date object for the
 # 'datetime' module.
@@ -1055,14 +1055,19 @@ def dateFromBuildStartTime(buildStartTime):
 #
 # Inputs:
 #
-#   testHistoryLOD [in]: List of test dicts for the same test.  This list nore
-#   its elements are modified in this call. (The base list object is shallow
-#   copied before it is sorted.)
+#   testHistoryLOD [in]: List of test dicts for the same test.  This input
+#   list nore its elements are modified in this call.  The base list object is
+#   shallow copied before it is sorted and returend.
 #
-#   currentTestDate [in]: The current testing day (as a string YYYY-MM-DD).
+#   currentTestDate [in]: The current testing day (as a string "YYYY-MM-DD").
 #   This is needed to define a frame of reference for interpeting if the test
 #   is currently 'Passed', 'Failed', 'Not Run', or is 'Missing' (i.e. does not
 #   have any test results for curent testing date).
+#
+#   testingDayStartTimeUtc [in]: The CDash project testing day start time
+#   "<hh>:<mm>" in UTC.  For example, if the CDash project testing day start
+#   time is 6 PM MDT (18:00 MDT), then the testing day start time is "02:00"
+#   (UTC) (which is the next calendar day).
 #
 #   daysOfHistory [in]: Number of days of history that were requested.
 #
@@ -1095,7 +1100,10 @@ def dateFromBuildStartTime(buildStartTime):
 #     - 'Not Run': Most recent test 'Not Run' had date matching curentTestDate
 #     - 'Missing': Most recent test has date before matching curentTestDate
 #
-def sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory):
+def sortTestHistoryGetStatistics(testHistoryLOD,
+  currentTestDate, testingDayStartTimeUtc,
+  daysOfHistory,
+  ):
 
   def incr(testDict, key): testDict[key] = testDict[key] + 1
   def decr(testDict, key): testDict[key] = testDict[key] - 1
@@ -1125,9 +1133,17 @@ def sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate, daysOfHistory)
   # Top (most recent) test history data
   topTestDict = sortedTestHistoryLOD[0]
 
-  # testStatus (for this test based on history)
+  # Get calendar date in UTC for the top test date
+  topTestDictBuildstarttimeUtc = \
+    CBTD.getBuildStartTimeUtcFromStr(topTestDict['buildstarttime'])
+  #testingDayStartTimeUtcTimeDelta = \
+  #  CBTD.getProjectTestingDayStartTimeDeltaFromStr(testingDayStartTimeUtc)
+  topTestBuildStartDateUtc = CBTD.getDateStrFromDateTime(topTestDictBuildstarttimeUtc)
+
   topTestBuildStartDate = dateFromBuildStartTime(topTestDict['buildstarttime'])
-  if topTestBuildStartDate == currentTestDate:
+
+  # testStatus (for this test based on history)
+  if topTestBuildStartDateUtc == currentTestDate:
     testStatus = topTestDict['status']
   else:
     testStatus = "Missing"
@@ -1286,7 +1302,7 @@ class AddTestHistoryToTestDictFunctor(object):
   # By default, this wil always read the data from the cache file if that file
   # already exists.
   #
-  def __init__(self, cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+  def __init__(self, cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
     testCacheDir, useCachedCDashData=True, alwaysUseCacheFileIfExists=True,
     verbose=False, printDetails=False,
     extractCDashApiQueryData_in=extractCDashApiQueryData, # For unit testing
@@ -1294,7 +1310,7 @@ class AddTestHistoryToTestDictFunctor(object):
     self.__cdashUrl = cdashUrl
     self.__projectName = projectName
     self.__date = date
-    self.__testingDayStartTime = testingDayStartTime
+    self.__testingDayStartTimeUtc = testingDayStartTimeUtc
     self.__daysOfHistory = daysOfHistory
     self.__testCacheDir = testCacheDir
     self.__useCachedCDashData = useCachedCDashData
@@ -1399,7 +1415,7 @@ class AddTestHistoryToTestDictFunctor(object):
     # Sort and get test history stats and update core testDict fields
 
     (testHistoryLOD, testHistoryStats, testStatus) = sortTestHistoryGetStatistics(
-      testHistoryLOD, self.__date, daysOfHistory)
+      testHistoryLOD, self.__date, self.__testingDayStartTimeUtc, daysOfHistory)
 
     # Assert and update the status 
 
