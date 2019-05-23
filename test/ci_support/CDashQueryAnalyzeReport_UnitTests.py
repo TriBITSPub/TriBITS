@@ -1744,7 +1744,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-30')
     self.assertEqual(testStatus, 'Missing')
 
-  def test_mdt_1(self):
+  def test_mdt_allpass_same_month(self):
     testHistoryLOD = getTestHistoryLOD5(
       ['Passed','Passed','Passed','Passed','Passed'], "18:44:29", "MDT")
     currentTestDate = "2001-01-02"
@@ -1753,9 +1753,6 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
       sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
          testingDayStartTimeUtc, daysOfHistory)
-    print()
-    print("testHistoryStats = "+str(testHistoryStats))
-    print("testStatus = "+str(testStatus))
     # Test the sorting
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T18:44:29 MDT')
     self.assertEqual(sortedTestHistoryLOD[1]['buildstarttime'],'2000-12-31T18:44:29 MDT')
@@ -1778,8 +1775,59 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
   # '2001-01-02T02:44:29 UTC' with the calendar date '2001-01-02' which
   # matches the CDash testing day '2001-01-02'.
 
-  # ToDo: Test that '2001-12-31T18:44:29 MDT' as the top entry matches testing
-  # day '2001-01-01'.
+  def test_mdt_allpass_next_month(self):
+    testHistoryLOD = getTestHistoryLOD5(
+      ['Passed','Passed','Passed','Passed','Passed'], "18:44:29", "MDT")
+    del testHistoryLOD[1]  # This is the most recent!
+    #print("testHistoryLOD:")
+    #g_pp.pprint(testHistoryLOD)
+    currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "18:00"
+    daysOfHistory = 4
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
+    # Test the sorting
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2000-12-31T18:44:29 MDT')
+    self.assertEqual(sortedTestHistoryLOD[1]['buildstarttime'],'2000-12-30T18:44:29 MDT')
+    self.assertEqual(sortedTestHistoryLOD[2]['buildstarttime'],'2000-12-29T18:44:29 MDT')
+    self.assertEqual(sortedTestHistoryLOD[3]['buildstarttime'],'2000-12-28T18:44:29 MDT')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 4)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 4)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], 'None')
+    self.assertEqual(testStatus, 'Passed')
+  # NOTE: The above test ensures that the datetime logic will shift to the
+  # next month for the testing day.
+
+  def test_mdt_missing_and_failed(self):
+    testHistoryLOD = getTestHistoryLOD5(
+      ['DELETED','DELETED','Passed','Failed','Passed'], "18:44:29", "MDT")
+    del testHistoryLOD[1] # Remove two most recent days
+    del testHistoryLOD[0]
+    #print("testHistoryLOD:")
+    #g_pp.pprint(testHistoryLOD)
+    currentTestDate = "2001-01-02"
+    testingDayStartTimeUtc = "18:00"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
+    # Test the sorting
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2000-12-30T18:44:29 MDT')
+    self.assertEqual(sortedTestHistoryLOD[1]['buildstarttime'],'2000-12-29T18:44:29 MDT')
+    self.assertEqual(sortedTestHistoryLOD[2]['buildstarttime'],'2000-12-28T18:44:29 MDT')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 1)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 2)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-30') # Shifted!
+    self.assertEqual(testStatus, 'Missing')
 
 
 #############################################################################
@@ -1910,6 +1958,8 @@ class test_getTestHistoryCacheFileName(unittest.TestCase):
 class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
 
+  # Base test case for a non-passing test with test dict info already from
+  # CDash.
   def test_nonpassingTest_downloadFromCDash(self):
 
     # Deep copy the test dict so we don't modify the original
@@ -1940,7 +1990,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
-    testingDayStartTime = "00:00 UTC"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     useCachedCDashData = False
     alwaysUseCacheFileIfExists = False
@@ -1951,7 +2001,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
       verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
       )
@@ -2061,7 +2111,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
-    testingDayStartTime = "00:00 UTC"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     useCachedCDashData = True
     alwaysUseCacheFileIfExists = True
@@ -2070,7 +2120,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
       verbose, printDetails,
       )
@@ -2159,7 +2209,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
-    testingDayStartTime = "00:00 UTC"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     useCachedCDashData = True
     alwaysUseCacheFileIfExists = True
@@ -2168,7 +2218,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
       verbose, printDetails,
       )
@@ -2208,10 +2258,10 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
 
 
-  # Test the case where the testDict just has the minimal fields that come the
-  # tests with issue trackers CSV file and the tets did not actually run in
-  # the current testing day.  Also, in this case, there is no recent test
-  # history
+  # Test the case where the testDict just has the minimal fields that come
+  # from the tests with issue trackers CSV file and the tets did not actually
+  # run in the current testing day.  Also, in this case, there is no recent
+  # test history.
   def test_empty_test_missing_no_recent_history(self):
 
     # Initial test dict as it would come from the tests with issue trackers
@@ -2245,7 +2295,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
-    testingDayStartTime = "00:00 UTC"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     useCachedCDashData = True
     alwaysUseCacheFileIfExists = True
@@ -2254,7 +2304,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
       verbose, printDetails,
       )
@@ -2333,7 +2383,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
-    testingDayStartTime = "00:00 UTC"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     useCachedCDashData = False
     alwaysUseCacheFileIfExists = False
@@ -2344,7 +2394,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
       verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
       )
@@ -2405,7 +2455,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     cdashUrl = "site.com/cdash"
     projectName = "projectName"
     date = "2001-01-01"
-    testingDayStartTime = "00:00 UTC"
+    testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
     useCachedCDashData = False
     alwaysUseCacheFileIfExists = False
@@ -2416,7 +2466,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Construct the functor
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
-      cdashUrl, projectName, date, testingDayStartTime, daysOfHistory,
+      cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
       verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
       )
