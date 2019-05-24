@@ -73,7 +73,7 @@ the testing day would be 2018-01-22.
 def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
   
   clp.add_option(
-    "--cdash-project-start-time", dest="cdashProjectStartTimeStr", type="string", default="",
+    "--cdash-project-start-time", dest="cdashProjectStartTimeUtcStr", type="string", default="",
     help="Starting time for the CDash testing day in 'HH:MM' in UTC."\
       + " Check the CDash project settings for the testing date." )
   
@@ -96,7 +96,7 @@ def getCmndLineOptions():
   clp = OptionParser(usage=usageHelp)
   injectCmndLineOptionsInParser(clp)
   (options, args) = clp.parse_args()
-  if options.cdashProjectStartTimeStr == "":
+  if options.cdashProjectStartTimeUtcStr == "":
     raise Exception("Error, input argument --cdash-project-start-time must be non"\
       +"-empty and must be of the format HH:MM UTC")
   return options
@@ -136,27 +136,32 @@ def getTimeZoneOffset(timeZoneStr):
 
 # Return a timezone aware datetime object given an input date and time given
 # in the format "<YYYY>-<MM>-<DD>T<hh>:<mm>:<ss> <TZ>".
-def getBuildStartTimeUtcFromStr(buildStartTime):
-  buildStartTimeArray = buildStartTime.split(" ")
-  if len(buildStartTimeArray) == 2:
-    timezoneOffset = getTimeZoneOffset(buildStartTimeArray[1])
+def getBuildStartTimeUtcFromStr(buildStartTimeStr):
+  buildStartTimeStrArray = buildStartTimeStr.split(" ")
+  if len(buildStartTimeStrArray) == 2:
+    timezoneOffset = getTimeZoneOffset(buildStartTimeStrArray[1])
   else:
     timezoneOffset = 0
-  #print timezoneOffset
-  localDateTime = datetime.datetime.strptime(buildStartTimeArray[0], "%Y-%m-%dT%H:%M:%S")
+  localDateTime = datetime.datetime.strptime(buildStartTimeStrArray[0], "%Y-%m-%dT%H:%M:%S")
   return localDateTime + timezoneOffset 
 
 
 # Return a timedelta object for the CDash Project start time passed in as a
 # string in the format "<hh>:<mm>" in UTC.
-def getProjectTestingDayStartTimeDeltaFromStr(cdashProjectStartTimeStr):
-  t = datetime.datetime.strptime(cdashProjectStartTimeStr, '%H:%M')
+def getProjectTestingDayStartTimeDeltaFromStr(cdashProjectStartTimeUtcStr):
+  t = datetime.datetime.strptime(cdashProjectStartTimeUtcStr, '%H:%M')
   return datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
 
 
 # Return a timedelta object for a day increment pass in as an signed integer.
 def getDayIncrTimeDeltaFromInt(dayIncrInt):
   return datetime.timedelta(days=dayIncrInt)
+
+
+# Return the string "YYYY-MM-DDThh:mm:ss UTC" corresponding to the input
+# datetime object.
+def getBuildStartTimeUtcStrFromUtcDT(datetimeUtcDT):
+  return datetimeUtcDT.strftime("%Y-%m-%dT%H:%M:%S UTC")
 
 
 # Return the string "<YYYY>-<MM>-<DD>" for an input datetime object.
@@ -200,7 +205,7 @@ def getRelativeCDashBuildStartTime(
 #
 def getRelativeCDashBuildStartTimeFromCmndLineArgs(
   cdashBuildStartTimeStr,  # If 'None', then is taken from getCurrentDateTimeUtc()
-  cdashProjectStartTimeStr,
+  cdashProjectStartTimeUtcStr,
   dayIncrInt,
   debugLevel=0,
   ):
@@ -212,7 +217,7 @@ def getRelativeCDashBuildStartTimeFromCmndLineArgs(
   if debugLevel: print("buildStartTimeUtc = "+str(buildStartTimeUtc))
 
   cdashStartTime = \
-    getProjectTestingDayStartTimeDeltaFromStr(cdashProjectStartTimeStr)
+    getProjectTestingDayStartTimeDeltaFromStr(cdashProjectStartTimeUtcStr)
   if debugLevel: print("cdashStartTime = "+str(cdashStartTime))
 
   dayIncr = getDayIncrTimeDeltaFromInt(dayIncrInt)
@@ -220,6 +225,40 @@ def getRelativeCDashBuildStartTimeFromCmndLineArgs(
 
   return getRelativeCDashBuildStartTime(buildStartTimeUtc, cdashStartTime, dayIncr)
 
+
+# Class to encapsulate handling of CDash testing day logic
+#
+class CDashProjectTestingDay(object):
+
+  # Construct
+  #
+  # currentTestingDayDateStr [in]: The current project CDash testing date in
+  # string format "YYYY-MM-DD".
+  #
+  # projectTestingDayStartTimeUtcStr [in]: The CDash projects's testing day start
+  # time in UTC.  This is a string in the format "hh:mm".
+  #
+  def __init__(self, currentTestingDayDateStr, projectTestingDayStartTimeUtcStr):
+    # Store input args
+    self.__currentTestingDayDateStr = currentTestingDayDateStr
+    self.__projectTestingDayStartTimeUtcStr = projectTestingDayStartTimeUtcStr
+    # Set the start of the testing day in UTC
+    currentTestingDayDateDT = \
+      datetime.datetime.strptime(currentTestingDayDateStr, "%Y-%m-%d")
+    projectTestingDayStartTimeUtcTD = \
+      getProjectTestingDayStartTimeDeltaFromStr(projectTestingDayStartTimeUtcStr)
+    noonTD = getProjectTestingDayStartTimeDeltaFromStr("12:00")
+    oneDayTD = datetime.timedelta(days=1)
+    if projectTestingDayStartTimeUtcTD >= noonTD:
+      self.__testingDayStartDateTimeUtcDT = \
+         currentTestingDayDateDT - oneDayTD + projectTestingDayStartTimeUtcTD
+    else:
+      self.__testingDayStartDateTimeUtcDT = \
+        currentTestingDayDateDT + projectTestingDayStartTimeUtcTD
+
+  # Return the testing day start in UTC as a datetime object
+  def getTestingDayStartUtcDT(self):
+    return self.__testingDayStartDateTimeUtcDT
 
 #
 # Run the script
@@ -230,7 +269,7 @@ if __name__ == '__main__':
   inOptions = getCmndLineOptions()
 
   relativeCDashBuildBuildDateTime = getRelativeCDashBuildStartTimeFromCmndLineArgs(
-    inOptions.cdashBuildStartTime, inOptions.cdashProjectStartTimeStr,
+    inOptions.cdashBuildStartTime, inOptions.cdashProjectStartTimeUtcStr,
     inOptions.dayIncrInt, inOptions.debugLevel,
     )
 

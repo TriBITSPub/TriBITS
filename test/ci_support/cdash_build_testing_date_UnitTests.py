@@ -56,7 +56,7 @@ def assert_timezone_offset(testObj, timezoneStr, hours):
   testObj.assertEqual(timeZoneOffset.microseconds, 0)
 
 
-class test_utc(unittest.TestCase):
+class test_getTimeZoneOffset(unittest.TestCase):
 
   def test_utc(self):
     assert_timezone_offset(self, "UTC", 0)
@@ -202,6 +202,51 @@ class test_getRelativeCDashBuildStartTimeFromCmndLineArgs(unittest.TestCase):
       "2018-01-15T08:34:20 UTC")
     self.assertEqual(relBuildStartTime, relBuildStartTime_expected)
     self.assertEqual(getDateStrFromDateTime(relBuildStartTime), "2018-01-15")
+
+
+class test_CDashProjectTestingDay(unittest.TestCase):
+
+  def test_construct_mignight(self):
+    cdashProjectTestingDayObj = CDashProjectTestingDay("2019-05-22", "00:00")
+    self.assertEqual(
+      getBuildStartTimeUtcStrFromUtcDT(
+        cdashProjectTestingDayObj.getTestingDayStartUtcDT() ),
+      "2019-05-22T00:00:00 UTC" )
+
+  def test_construct_3_am(self):
+    cdashProjectTestingDayObj = CDashProjectTestingDay("2019-05-22", "03:00")
+    self.assertEqual(
+      getBuildStartTimeUtcStrFromUtcDT(
+        cdashProjectTestingDayObj.getTestingDayStartUtcDT() ),
+      "2019-05-22T03:00:00 UTC" )
+
+  def test_construct_just_before_noon(self):
+    cdashProjectTestingDayObj = CDashProjectTestingDay("2019-05-22", "11:59")
+    self.assertEqual(
+      getBuildStartTimeUtcStrFromUtcDT(
+        cdashProjectTestingDayObj.getTestingDayStartUtcDT() ),
+      "2019-05-22T11:59:00 UTC" )
+
+  def test_construct_noon(self):
+    cdashProjectTestingDayObj = CDashProjectTestingDay("2019-05-22", "12:00")
+    self.assertEqual(
+      getBuildStartTimeUtcStrFromUtcDT(
+        cdashProjectTestingDayObj.getTestingDayStartUtcDT() ),
+      "2019-05-21T12:00:00 UTC" )
+
+  def test_construct_just_after_noon(self):
+    cdashProjectTestingDayObj = CDashProjectTestingDay("2019-05-22", "12:01")
+    self.assertEqual(
+      getBuildStartTimeUtcStrFromUtcDT(
+        cdashProjectTestingDayObj.getTestingDayStartUtcDT() ),
+      "2019-05-21T12:01:00 UTC" )
+
+  def test_construct_6_pm(self):
+    cdashProjectTestingDayObj = CDashProjectTestingDay("2019-05-22", "18:00")
+    self.assertEqual(
+      getBuildStartTimeUtcStrFromUtcDT(
+        cdashProjectTestingDayObj.getTestingDayStartUtcDT() ),
+      "2019-05-21T18:00:00 UTC" )
 
 
 # Utility function to make it easy to test the script itself

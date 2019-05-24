@@ -1349,6 +1349,11 @@ class AddTestHistoryToTestDictFunctor(object):
     else:
       testAlreadyHasCDashData = False
 
+    # Set up object to handle CDash testing day stuff
+    currentProjectTestingDayObj = \
+      CBTD.CDashProjectTestingDay(self.__date, self.__testingDayStartTimeUtc)
+    currentTestingDayStartUtcDT = currentProjectTestingDayObj.getTestingDayStartUtcDT()
+
     # Date range for test history
     dayAfterCurrentTestDay = \
       (testDayDate+datetime.timedelta(days=+1)).isoformat()
