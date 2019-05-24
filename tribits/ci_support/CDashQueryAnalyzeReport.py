@@ -1351,9 +1351,9 @@ class AddTestHistoryToTestDictFunctor(object):
 
     # Date range for test history
     dayAfterCurrentTestDay = \
-      (testDayDate+datetime.timedelta(days=1)).isoformat()
+      (testDayDate+datetime.timedelta(days=+1)).isoformat()
     daysBeforeCurrentTestDay = \
-      (testDayDate+datetime.timedelta(days=-1*daysOfHistory+1)).isoformat()
+      (testDayDate+datetime.timedelta(days=-(daysOfHistory-1))).isoformat()
 
     # Define queryTests.php query filters for test history
     testHistoryQueryFilters = \

@@ -70,7 +70,7 @@ class MockExtractCDashApiQueryDataFunctor(object):
     if cdashApiQueryUrl != self.cdashApiQueryUrl_expected:
       raise Exception(
         "Error, cdashApiQueryUrl='"+cdashApiQueryUrl+"' !="+\
-        " cdashApiQueryUrl_expected='"+cdashApiQueryUrl_expected+"'!")
+        " cdashApiQueryUrl_expected='"+self.cdashApiQueryUrl_expected+"'!")
     return self.dataToReturn
 
 
@@ -2062,6 +2062,114 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
       testCacheOutputDir+"/2001-01-01-site_name-build_name-test_name-HIST-5.json"
     self.assertEqual(os.path.exists(testCacheOutputDir), True)
     # ToDo: Check the contents of the cache file!
+
+  # Base test case for a non-passing test with test dict info already from
+  # CDash but there the data is in MDT and there is a shift in the calendar
+  # date when converted to UTC.
+  def test_mdt_nonpassingTest_downloadFromCDash(self):
+
+    # Deep copy the test dict so we don't modify the original
+    testDict = copy.deepcopy(g_testDictFailed)
+    testDict['buildstarttime'] = '2001-01-01T18:44:29 MDT'
+
+    # Target test date
+    testHistoryQueryUrl = \
+      u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-03T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-29T00:00:00'
+
+    # Create a subdir for the created cache file
+    testCacheOutputDir = \
+      os.getcwd()+"/AddTestHistoryToTestDictFunctor/test_nonpassingTest_downloadFromCDash"
+    if os.path.exists(testCacheOutputDir): shutil.rmtree(testCacheOutputDir)
+    os.makedirs(testCacheOutputDir)
+
+    # Create dummy test history
+    testHistoryLOD = getTestHistoryLOD5(
+      [
+        'Failed',
+        'Failed',
+        'Passed',
+        'Passed',
+        'Not Run',
+        ],
+      "18:44:29",
+      "MDT",
+      )
+
+    # Construct arguments
+    cdashUrl = "site.com/cdash"
+    projectName = "projectName"
+    date = "2001-01-02"
+    testingDayStartTimeUtc = "00:00"
+    daysOfHistory = 5
+    useCachedCDashData = False
+    alwaysUseCacheFileIfExists = False
+    verbose = False
+    printDetails = False
+    mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
+      testHistoryQueryUrl, {'builds':testHistoryLOD})
+
+    # Construct the functor
+    addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
+      cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
+      testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
+      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
+      )
+
+    # Apply the functor to add the test history to the test dict
+    addTestHistoryFunctor(testDict)
+
+    testHistoryBrowserUrl = u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-03T00:00:00&field5=buildstarttime&compare5=83&value5=2000-12-29T00:00:00'
+
+    # Checkt the set fields out output
+    self.assertEqual(testDict['site'], 'site_name')
+    self.assertEqual(testDict['buildName'], 'build_name')
+    self.assertEqual(testDict['buildName_url'],
+      u'site.com/cdash/index.php?project=projectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name&field3=buildstarttime&compare3=84&value3=2001-01-03T00:00:00&field4=buildstarttime&compare4=83&value4=2000-12-29T00:00:00'
+      )
+    self.assertEqual(testDict['testname'], 'test_name')
+    self.assertEqual(testDict['testname_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['status'], 'Failed')
+    self.assertEqual(testDict['details'], 'Completed (Failed)\n')
+    self.assertEqual(testDict['status_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['status_color'], 'red')
+    self.assertEqual(testDict['test_history_num_days'], 5)
+    self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
+    self.assertEqual(testDict['test_history_browser_url'], testHistoryBrowserUrl)
+    self.assertEqual(
+      testDict['test_history_list'][0]['buildstarttime'], '2001-01-01T18:44:29 MDT')
+    self.assertEqual(
+      testDict['test_history_list'][1]['buildstarttime'], '2000-12-31T18:44:29 MDT')
+    self.assertEqual(
+      testDict['test_history_list'][2]['buildstarttime'], '2000-12-30T18:44:29 MDT')
+    self.assertEqual(
+      testDict['test_history_list'][3]['buildstarttime'], '2000-12-29T18:44:29 MDT')
+    self.assertEqual(
+      testDict['test_history_list'][4]['buildstarttime'], '2000-12-28T18:44:29 MDT')
+    self.assertEqual(testDict['pass_last_x_days'], 2)
+    self.assertEqual(testDict['pass_last_x_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['pass_last_x_days_color'], 'green')
+    self.assertEqual(testDict['nopass_last_x_days'], 3)
+    self.assertEqual(testDict['nopass_last_x_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['nopass_last_x_days_color'], 'red')
+    self.assertEqual(testDict['missing_last_x_days'], 0)
+    self.assertEqual(testDict['missing_last_x_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['consec_pass_days'], 0)
+    self.assertEqual(testDict['consec_pass_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['consec_pass_days_color'], 'green')
+    self.assertEqual(testDict['consec_nopass_days'], 2)
+    self.assertEqual(testDict['consec_nopass_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['consec_nopass_days_color'], 'red')
+    self.assertEqual(testDict['consec_missing_days'], 0)
+    self.assertEqual(testDict['consec_missing_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(testDict['consec_missing_days_color'], 'gray')
+    self.assertEqual(testDict['previous_nopass_date'], '2001-01-01') # In UTC!
+    self.assertEqual(testDict['issue_tracker'], '#1234')
+    self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
+
+    # Check for the existance of the created Cache file
+    cacheFile = \
+      testCacheOutputDir+"/2001-01-01-site_name-build_name-test_name-HIST-5.json"
+    self.assertEqual(os.path.exists(testCacheOutputDir), True)
 
 
   # Test the case where the testDict just has the minimal fields that come the
