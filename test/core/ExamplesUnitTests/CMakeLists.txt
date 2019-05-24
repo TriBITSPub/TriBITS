@@ -1287,6 +1287,123 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Darwin
+
+  TEST_0
+    MESSAGE "Copy the TribitsExampleProject locally so we can move it after install"
+    WORKING_DIRECTORY BUILD_LIBS
+    CMND ${CMAKE_COMMAND}
+    ARGS -E copy_directory
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      TribitsExampleProject
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Do the initial configure of just the libraries"
+    WORKING_DIRECTORY BUILD_LIBS
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+      -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing/install
+      TribitsExampleProject
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Do Make install "
+    WORKING_DIRECTORY BUILD_LIBS
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "BUILD_LIBS dir to a subdir to make sure install is independent of build and source tree"
+    WORKING_DIRECTORY BUILD_LIBS_MOVED_BASE
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND mv ARGS ../BUILD_LIBS .
+
+  TEST_4
+    MESSAGE "Copy the TribitsExampleProject locally so we can remove some libs source and header files"
+    WORKING_DIRECTORY BUILD_TESTS
+    CMND ${CMAKE_COMMAND}
+    ARGS -E copy_directory
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      TribitsExampleProject
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_5
+    MESSAGE "Remove some lib header and source files from local TribitsExampleProject source tree!"
+    CMND rm ARGS
+      BUILD_TESTS/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp
+      BUILD_TESTS/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp
+      BUILD_TESTS/TribitsExampleProject/packages/with_subpackages/a/A.hpp
+      BUILD_TESTS/TribitsExampleProject/packages/with_subpackages/a/A.cpp
+      BUILD_TESTS/TribitsExampleProject/packages/with_subpackages/b/src/B.hpp
+      BUILD_TESTS/TribitsExampleProject/packages/with_subpackages/b/src/B.cpp
+      BUILD_TESTS/TribitsExampleProject/packages/with_subpackages/c/C.cpp
+      BUILD_TESTS/TribitsExampleProject/packages/with_subpackages/c/wsp_c/C.hpp
+
+  TEST_6
+    MESSAGE "Do the configure of just the tests/examples pointing to existing install"
+    WORKING_DIRECTORY BUILD_TESTS
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+      -DTribitsExProj_ENABLE_INSTALLATION_TESTING=ON
+      -DTribitsExProj_INSTALLATION_DIR=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing/install
+      TribitsExampleProject
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_7
+    MESSAGE "Build 'all' target"
+    WORKING_DIRECTORY BUILD_TESTS
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_8
+    MESSAGE "Run all the tests with ctest"
+    WORKING_DIRECTORY BUILD_TESTS
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND ${CMAKE_CTEST_COMMAND}
+    PASS_REGULAR_EXPRESSION_ALL
+      "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
+      "WithSubpackagesA_test_of_a .* Passed"
+      "WithSubpackagesB_test_of_b .* Passed"
+      "WithSubpackagesC_test_of_c .* Passed"
+      "WithSubpackagesC_test_of_c_util.* Passed"
+      "100% tests passed, 0 tests failed out of 6"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+# NOTE: Above is a very strong test that ensures that the
+# <Project>_ENABLE_INSTALLATION_TESTING option works as it should.  This above
+# test also shows the the installation of the non-Fortran packages in
+# TribitsExampleProject works and is independent from the source and build
+# trees.  If you comment out the cmake options
+# TribitsExProj_ENABLE_INSTALLATION_TESTING and TribitsExProj_INSTALLATION_DIR
+# you will see that build of the project fails because we removed some source
+# files that are needed.  This proves that they are being used from the
+# install tree!
+
+
 # Find ninja so we can test TriBITS using ninja as well
 FIND_PROGRAM(NINJA_EXE ninja)
 
