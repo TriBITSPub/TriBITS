@@ -136,6 +136,9 @@ def getTimeZoneOffset(timeZoneStr):
 
 # Return a timezone aware datetime object given an input date and time given
 # in the format "<YYYY>-<MM>-<DD>T<hh>:<mm>:<ss> <TZ>".
+#
+# Note. the timzone <TZ> can be any of those supported by the function
+# getTimeZoneOffset()
 def getBuildStartTimeUtcFromStr(buildStartTimeStr):
   buildStartTimeStrArray = buildStartTimeStr.split(" ")
   if len(buildStartTimeStrArray) == 2:
@@ -167,6 +170,57 @@ def getBuildStartTimeUtcStrFromUtcDT(datetimeUtcDT):
 # Return the string "<YYYY>-<MM>-<DD>" for an input datetime object.
 def getDateStrFromDateTime(dateTime):
   return dateTime.strftime("%Y-%m-%d")
+
+
+# Compute the CDash testing day for a given build using its 'buildstarttime'
+# field and the testing day start time.
+#
+# buildStartTimeStr [in]: The 'buildstarttime' field string as returned from
+# CDash in the format "<YYYY>-<MM>-<DD>T<hh>:<mm>:<ss> <TZ>".  Note. the
+# timzone <TZ> can be any of those supported by the function
+# getTimeZoneOffset()
+#
+# testingDayStartTimeUtcTD [in]: The testing day start time as the a timedelta
+# object.
+#
+# ToDo: Take into account the CDash server timezone which determine what noon
+# means!
+# 
+def getTestingDayDateFromBuildStartTimeStr(
+  buildStartTimeStr, testingDayStartTimeUtcTD,
+  ):
+
+  #print()
+  #print("testingDayStartTimeUtcTD = "+str(testingDayStartTimeUtcTD))
+  #print("testingDayStartTimeUtcTD.seconds = "+str(testingDayStartTimeUtcTD.seconds))
+
+  # Constants
+  oneDayTD = datetime.timedelta(days=1)
+  noonTD = getProjectTestingDayStartTimeDeltaFromStr("12:00")
+
+  # Convert input 'buildstartime' to datetime object in UtC
+  buildStartTimeUtcDT = getBuildStartTimeUtcFromStr(buildStartTimeStr)
+
+  # Get the date and time separately for the input 'buildstartime'
+  buildStartTimeDateDT = datetime.datetime(
+    year=buildStartTimeUtcDT.year,
+    month=buildStartTimeUtcDT.month,
+    day=buildStartTimeUtcDT.day,
+    )
+  #print("buildStartTimeDateDT = "+str(buildStartTimeDateDT))
+  buildStartTimeTimeTD = buildStartTimeUtcDT - buildStartTimeDateDT
+  #print("buildStartTimeTimeTD = "+str(buildStartTimeTimeTD))
+  #print("buildStartTimeTimeTD.seconds = "+str(buildStartTimeTimeTD.seconds))
+
+  if buildStartTimeTimeTD.seconds < testingDayStartTimeUtcTD.seconds:
+    buildStartTimeDateDT -= oneDayTD
+    #print("buildStartTimeDateDT = "+str(buildStartTimeDateDT))
+
+  if testingDayStartTimeUtcTD > noonTD:
+    buildStartTimeDateDT += oneDayTD
+    #print("buildStartTimeDateDT = "+str(buildStartTimeDateDT))
+
+  return getDateStrFromDateTime(buildStartTimeDateDT)
 
 
 # Return the shifted CDash build start relative to the given CDash project
@@ -245,20 +299,25 @@ class CDashProjectTestingDay(object):
     # Set the start of the testing day in UTC
     currentTestingDayDateDT = \
       datetime.datetime.strptime(currentTestingDayDateStr, "%Y-%m-%d")
-    projectTestingDayStartTimeUtcTD = \
+    self.__projectTestingDayStartTimeUtcTD = \
       getProjectTestingDayStartTimeDeltaFromStr(projectTestingDayStartTimeUtcStr)
     noonTD = getProjectTestingDayStartTimeDeltaFromStr("12:00")
     oneDayTD = datetime.timedelta(days=1)
-    if projectTestingDayStartTimeUtcTD >= noonTD:
+    if self.__projectTestingDayStartTimeUtcTD >= noonTD:
       self.__testingDayStartDateTimeUtcDT = \
-         currentTestingDayDateDT - oneDayTD + projectTestingDayStartTimeUtcTD
+         currentTestingDayDateDT - oneDayTD + self.__projectTestingDayStartTimeUtcTD
     else:
       self.__testingDayStartDateTimeUtcDT = \
-        currentTestingDayDateDT + projectTestingDayStartTimeUtcTD
+        currentTestingDayDateDT + self.__projectTestingDayStartTimeUtcTD
 
   # Return the testing day start in UTC as a datetime object
   def getTestingDayStartUtcDT(self):
     return self.__testingDayStartDateTimeUtcDT
+
+  def getTestingDayDateFromBuildStartTimeStr(self, buildStartTimeStr):
+    return getTestingDayDateFromBuildStartTimeStr(
+      buildStartTimeStr, self.__projectTestingDayStartTimeUtcTD)
+
 
 #
 # Run the script

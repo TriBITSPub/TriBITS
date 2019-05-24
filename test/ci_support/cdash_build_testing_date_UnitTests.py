@@ -95,7 +95,7 @@ class test_getBuildStartTimeUtcFromStr(unittest.TestCase):
 
   def test_mdt(self):
     buildStartTime = getBuildStartTimeUtcFromStr("2019-11-16T01:02:03 MDT")
-    print str(buildStartTime)
+    #print str(buildStartTime)
     self.assertEqual(buildStartTime.year, 2019)
     self.assertEqual(buildStartTime.month, 11)
     self.assertEqual(buildStartTime.day, 16)
@@ -159,6 +159,51 @@ class test_getgetDateStrFromDateTime(unittest.TestCase):
     self.assertEqual(dateStr, "2018-01-03")
 
   # ToDo: Test invalid build start times!
+
+
+class test_getTestingDayDateFromBuildStartTimeStr(unittest.TestCase):
+
+  def test_0102_utc_0000_utc(self):
+    self.assertEqual(
+      getTestingDayDateFromBuildStartTimeStr("2019-11-16T01:02:03 UTC",
+         datetime.timedelta(hours=0)),
+      "2019-11-16" )
+
+  def test_0102_utc_0200_utc(self):
+    self.assertEqual(
+      getTestingDayDateFromBuildStartTimeStr("2019-11-16T01:02:03 UTC",
+         datetime.timedelta(hours=2)),
+      "2019-11-15" )
+
+  def test_0102_utc_1149_utc(self):
+    self.assertEqual(
+      getTestingDayDateFromBuildStartTimeStr("2019-11-16T01:02:03 UTC",
+         datetime.timedelta(hours=11, minutes=49)),
+      "2019-11-15" )
+
+  def test_0102_utc_1200_utc(self):
+    self.assertEqual(
+      getTestingDayDateFromBuildStartTimeStr("2019-11-16T01:02:03 UTC",
+         datetime.timedelta(hours=12, minutes=0)),
+      "2019-11-15" )
+
+  def test_0102_utc_1201_utc(self):
+    self.assertEqual(
+      getTestingDayDateFromBuildStartTimeStr("2019-11-16T01:02:03 UTC",
+         datetime.timedelta(hours=12, minutes=1)),
+      "2019-11-16" )
+
+  def test_1822_mdt_0000_utc(self):
+    self.assertEqual(
+      getTestingDayDateFromBuildStartTimeStr("2019-11-15T18:22:45 MDT",
+         datetime.timedelta(hours=0)),
+      "2019-11-16" )
+
+  def test_1822_mdt_0100_utc(self):
+    self.assertEqual(
+      getTestingDayDateFromBuildStartTimeStr("2019-11-15T18:22:45 MDT",
+         datetime.timedelta(hours=1)),
+      "2019-11-15" )
 
 
 class test_getRelativeCDashBuildStartTimeFromCmndLineArgs(unittest.TestCase):
@@ -247,6 +292,42 @@ class test_CDashProjectTestingDay(unittest.TestCase):
       getBuildStartTimeUtcStrFromUtcDT(
         cdashProjectTestingDayObj.getTestingDayStartUtcDT() ),
       "2019-05-21T18:00:00 UTC" )
+
+  def test_0102_utc_0000_utc(self):
+    cptdo = CDashProjectTestingDay("2019-05-22", "00:00")
+    self.assertEqual(
+      cptdo.getTestingDayDateFromBuildStartTimeStr("2019-11-16T01:02:03 UTC"),
+      "2019-11-16" )
+
+  def test_0102_utc_0000_utc(self):
+    cptdo = CDashProjectTestingDay("2019-05-22", "02:00")
+    self.assertEqual(
+      cptdo.getTestingDayDateFromBuildStartTimeStr("2019-11-16T01:02:03 UTC"),
+      "2019-11-15" )
+
+  def test_1822_mdt_0000_utc(self):
+    cptdo = CDashProjectTestingDay("2019-05-22", "00:00")
+    self.assertEqual(
+      cptdo.getTestingDayDateFromBuildStartTimeStr("2019-11-15T18:22:45 MDT"),
+      "2019-11-16" )
+
+  def test_1722_mdt_0000_utc(self):
+    cptdo = CDashProjectTestingDay("2019-05-22", "00:00")
+    self.assertEqual(
+      cptdo.getTestingDayDateFromBuildStartTimeStr("2019-11-15T17:22:45 MDT"),
+      "2019-11-15" )
+
+  def test_0102_utc_1200_utc(self):
+    cptdo = CDashProjectTestingDay("2019-05-22", "12:00")
+    self.assertEqual(
+      cptdo.getTestingDayDateFromBuildStartTimeStr("2019-11-16T01:02:03 UTC"),
+      "2019-11-15" )
+
+  def test_0102_utc_1201_utc(self):
+    cptdo = CDashProjectTestingDay("2019-05-22", "12:01")
+    self.assertEqual(
+      cptdo.getTestingDayDateFromBuildStartTimeStr("2019-11-16T01:02:03 UTC"),
+      "2019-11-16" )
 
 
 # Utility function to make it easy to test the script itself
