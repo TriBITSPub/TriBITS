@@ -1356,9 +1356,11 @@ class AddTestHistoryToTestDictFunctor(object):
 
     # Date range for test history
     dayAfterCurrentTestDay = \
-      (testDayDate+datetime.timedelta(days=+1)).isoformat()
+      CBTD.getBuildStartTimeUtcStrFromUtcDT(
+        currentTestingDayStartUtcDT + datetime.timedelta(days=1) )
     daysBeforeCurrentTestDay = \
-      (testDayDate+datetime.timedelta(days=-(daysOfHistory-1))).isoformat()
+      CBTD.getBuildStartTimeUtcStrFromUtcDT(
+        currentTestingDayStartUtcDT - datetime.timedelta(days=daysOfHistory-1))
 
     # Define queryTests.php query filters for test history
     testHistoryQueryFilters = \
