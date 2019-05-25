@@ -969,6 +969,58 @@ IF (PYTHON_EXECUTABLE)
     )
 
 
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_GlobalModified_PT_AAO
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Global.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF
+      CTEST_TEST_TYPE=Continuous
+      CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+      Trilinos_CTEST_DO_ALL_AT_ONCE=ON
+    PASS_REGULAR_EXPRESSION_ALL
+      "CTEST_UPDATE.+ returned '0'"
+      "MODIFIED_PACKAGES_LIST='ALL_PACKAGES'"
+      "FAILING_PACKAGES_LIST=''"
+      "Directly modified or failing non-disabled packages that need to be tested:  ALL_PACKAGES"
+      "Explicitly enabled packages on input .*  0"
+      "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+      "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON [(]Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF[)] [.][.][.]"
+      "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+      "Final set of non-enabled packages:  Stokhos Sacado Belos Phalanx Panzer Teko Stalix 7"
+      "MODIFIED_PACKAGES_LIST='ALL_PACKAGES':  Found modified packages, processing enabled packages!"
+      "CONFIGURE_OPTIONS = '.+[;]-DTrilinos_ENABLE_ALL_PACKAGES=ON[;].+'"
+    )
+
+
+  CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+    CI_EnableOnlyModified_GlobalModified_ST_AAO
+    COPY_FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.Global.txt modifiedFiles.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt modifiedFiles.preCopyrightTrilinos.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/modifiedFiles.empty.txt failedPackages.txt
+    ARGS Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+      CTEST_TEST_TYPE=Continuous
+      CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
+      CTEST_UPDATE_RETURN_VAL=0 # Main update returns nothing for the main Trilinos repo!
+      Trilinos_CTEST_DO_ALL_AT_ONCE=ON
+    PASS_REGULAR_EXPRESSION_ALL
+      "CTEST_UPDATE.+ returned '0'"
+      "MODIFIED_PACKAGES_LIST='ALL_PACKAGES'"
+      "FAILING_PACKAGES_LIST=''"
+      "Directly modified or failing non-disabled packages that need to be tested:  ALL_PACKAGES"
+      "Explicitly enabled packages on input .*  0"
+      "Explicitly disabled packages on input .*  Stokhos Stalix 2"
+      "Enabling all SE packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON [(]Trilinos_ENABLE_SECONDARY_TESTED_CODE=ON[)] [.][.][.]"
+      "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 24"
+      "Final set of non-enabled packages:  Stokhos Stalix 2"
+      "MODIFIED_PACKAGES_LIST='ALL_PACKAGES':  Found modified packages, processing enabled packages!"
+      "CONFIGURE_OPTIONS = '.+[;]-DTrilinos_ENABLE_ALL_PACKAGES=ON[;].+'"
+    )
+
+
   # ToDo: Test modified package not to be implicitly enabled to not be enabled!
 
 ENDIF(PYTHON_EXECUTABLE)
