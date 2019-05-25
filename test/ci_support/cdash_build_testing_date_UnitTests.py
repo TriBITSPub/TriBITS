@@ -257,6 +257,10 @@ class test_CDashProjectTestingDay(unittest.TestCase):
       getBuildStartTimeUtcStrFromUtcDT(
         cdashProjectTestingDayObj.getTestingDayStartUtcDT() ),
       "2019-05-22T00:00:00 UTC" )
+    self.assertEqual(
+      getBuildStartTimeUtcStrFromUtcDT(
+        cdashProjectTestingDayObj.getTestingDayStartUtcDT(), True ),
+      "2019-05-22T00:00:00UTC" )
 
   def test_construct_0302_am(self):
     cdashProjectTestingDayObj = CDashProjectTestingDay("2019-05-22", "03:20")

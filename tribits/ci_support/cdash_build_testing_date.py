@@ -163,8 +163,11 @@ def getDayIncrTimeDeltaFromInt(dayIncrInt):
 
 # Return the string "YYYY-MM-DDThh:mm:ss UTC" corresponding to the input
 # datetime object.
-def getBuildStartTimeUtcStrFromUtcDT(datetimeUtcDT):
-  return datetimeUtcDT.strftime("%Y-%m-%dT%H:%M:%S UTC")
+def getBuildStartTimeUtcStrFromUtcDT(datetimeUtcDT, removeSpace=False):
+  dateTimeStr = datetimeUtcDT.strftime("%Y-%m-%dT%H:%M:%S UTC")
+  if removeSpace:
+    return dateTimeStr.replace(" ", "")
+  return dateTimeStr
 
 
 # Return the string "<YYYY>-<MM>-<DD>" for an input datetime object.

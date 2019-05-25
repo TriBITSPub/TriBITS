@@ -1137,19 +1137,23 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
   # Get testing day/time helper object
   testingDayTimeObj = CBTD.CDashProjectTestingDay(currentTestDate, testingDayStartTimeUtc)
   currentTestDateDT = testingDayTimeObj.getCurrentTestingDayDateDT()
+  #print("currentTestDateDT = "+str(currentTestDateDT))
 
   # Top (most recent) test history data
   topTestDict = sortedTestHistoryLOD[0]
+  #print("topTestDict['buildstarttime'] = "+topTestDict['buildstarttime'])
 
   # Get the CDash testing date of the most recent test
   topTestDictTestingDayDT = testingDayTimeObj.getTestingDayDateFromBuildStartTimeDT(
     topTestDict['buildstarttime'] )
+  #print("topTestDictTestingDayDT ="+str(topTestDictTestingDayDT))
 
   # testStatus (for this test based on history)
   if topTestDictTestingDayDT == currentTestDateDT:
     testStatus = topTestDict['status']
   else:
     testStatus = "Missing"
+  #print("testStatus = "+testStatus)
 
   # testHistoryStats
 
@@ -1358,10 +1362,10 @@ class AddTestHistoryToTestDictFunctor(object):
     # Date range for test history
     dayAfterCurrentTestDay = \
       CBTD.getBuildStartTimeUtcStrFromUtcDT(
-        currentTestingDayStartUtcDT + datetime.timedelta(days=1) )
+        currentTestingDayStartUtcDT + datetime.timedelta(days=1), True )
     daysBeforeCurrentTestDay = \
       CBTD.getBuildStartTimeUtcStrFromUtcDT(
-        currentTestingDayStartUtcDT - datetime.timedelta(days=daysOfHistory-1))
+        currentTestingDayStartUtcDT - datetime.timedelta(days=daysOfHistory-1), True)
 
     # Define queryTests.php query filters for test history
     testHistoryQueryFilters = \
