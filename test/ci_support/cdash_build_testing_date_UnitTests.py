@@ -258,12 +258,16 @@ class test_CDashProjectTestingDay(unittest.TestCase):
         cdashProjectTestingDayObj.getTestingDayStartUtcDT() ),
       "2019-05-22T00:00:00 UTC" )
 
-  def test_construct_3_am(self):
-    cdashProjectTestingDayObj = CDashProjectTestingDay("2019-05-22", "03:00")
+  def test_construct_0302_am(self):
+    cdashProjectTestingDayObj = CDashProjectTestingDay("2019-05-22", "03:20")
+    self.assertEqual(
+      getBuildStartTimeUtcStrFromUtcDT(
+        cdashProjectTestingDayObj.getCurrentTestingDayDateDT() ),
+      "2019-05-22T00:00:00 UTC" )
     self.assertEqual(
       getBuildStartTimeUtcStrFromUtcDT(
         cdashProjectTestingDayObj.getTestingDayStartUtcDT() ),
-      "2019-05-22T03:00:00 UTC" )
+      "2019-05-22T03:20:00 UTC" )
 
   def test_construct_just_before_noon(self):
     cdashProjectTestingDayObj = CDashProjectTestingDay("2019-05-22", "11:59")

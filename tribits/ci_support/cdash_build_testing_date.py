@@ -173,7 +173,7 @@ def getDateStrFromDateTime(dateTime):
 
 
 # Compute the CDash testing day for a given build using its 'buildstarttime'
-# field and the testing day start time.
+# field and the testing day start time and return it as a datetime object.
 #
 # buildStartTimeStr [in]: The 'buildstarttime' field string as returned from
 # CDash in the format "<YYYY>-<MM>-<DD>T<hh>:<mm>:<ss> <TZ>".  Note. the
@@ -186,7 +186,7 @@ def getDateStrFromDateTime(dateTime):
 # ToDo: Take into account the CDash server timezone which determine what noon
 # means!
 # 
-def getTestingDayDateFromBuildStartTimeStr(
+def getTestingDayDateFromBuildStartTimeDT(
   buildStartTimeStr, testingDayStartTimeUtcTD,
   ):
 
@@ -220,7 +220,19 @@ def getTestingDayDateFromBuildStartTimeStr(
     buildStartTimeDateDT += oneDayTD
     #print("buildStartTimeDateDT = "+str(buildStartTimeDateDT))
 
-  return getDateStrFromDateTime(buildStartTimeDateDT)
+  return buildStartTimeDateDT
+
+
+# Compute the CDash testing day for a given build using its 'buildstarttime'
+# field and the testing day start time and return as a string "YYYY-MM-DD".
+#
+# See getTestingDayDateFromBuildStartTimeDT()
+#
+def getTestingDayDateFromBuildStartTimeStr(
+  buildStartTimeStr, testingDayStartTimeUtcTD,
+  ):
+  return getDateStrFromDateTime(
+    getTestingDayDateFromBuildStartTimeDT(buildStartTimeStr, testingDayStartTimeUtcTD) )
 
 
 # Return the shifted CDash build start relative to the given CDash project
@@ -297,7 +309,7 @@ class CDashProjectTestingDay(object):
     self.__currentTestingDayDateStr = currentTestingDayDateStr
     self.__projectTestingDayStartTimeUtcStr = projectTestingDayStartTimeUtcStr
     # Set the start of the testing day in UTC
-    currentTestingDayDateDT = \
+    self.__currentTestingDayDateDT = \
       datetime.datetime.strptime(currentTestingDayDateStr, "%Y-%m-%d")
     self.__projectTestingDayStartTimeUtcTD = \
       getProjectTestingDayStartTimeDeltaFromStr(projectTestingDayStartTimeUtcStr)
@@ -305,18 +317,30 @@ class CDashProjectTestingDay(object):
     oneDayTD = datetime.timedelta(days=1)
     if self.__projectTestingDayStartTimeUtcTD >= noonTD:
       self.__testingDayStartDateTimeUtcDT = \
-         currentTestingDayDateDT - oneDayTD + self.__projectTestingDayStartTimeUtcTD
+         self.__currentTestingDayDateDT - oneDayTD + self.__projectTestingDayStartTimeUtcTD
     else:
       self.__testingDayStartDateTimeUtcDT = \
-        currentTestingDayDateDT + self.__projectTestingDayStartTimeUtcTD
+        self.__currentTestingDayDateDT + self.__projectTestingDayStartTimeUtcTD
 
   # Return the testing day start in UTC as a datetime object
   def getTestingDayStartUtcDT(self):
     return self.__testingDayStartDateTimeUtcDT
 
-  def getTestingDayDateFromBuildStartTimeStr(self, buildStartTimeStr):
-    return getTestingDayDateFromBuildStartTimeStr(
+  # Return the testing day date (not time) as a datetime object
+  def getCurrentTestingDayDateDT(self):
+    return self.__currentTestingDayDateDT
+
+  # Return the testing day as a datetime object for the input 'buildstartime'
+  # string.
+  def getTestingDayDateFromBuildStartTimeDT(self, buildStartTimeStr):
+    return getTestingDayDateFromBuildStartTimeDT(
       buildStartTimeStr, self.__projectTestingDayStartTimeUtcTD)
+
+  # Return the testing day string "YYYY-MM-DD" for the input 'buildstartime'
+  # string.
+  def getTestingDayDateFromBuildStartTimeStr(self, buildStartTimeStr):
+    return getDateStrFromDateTime(
+       self.getTestingDayDateFromBuildStartTimeDT(buildStartTimeStr) )
 
 
 #
