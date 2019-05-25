@@ -1107,6 +1107,7 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
   daysOfHistory,
   ):
 
+  # Helper functions
   def incr(testDict, key): testDict[key] = testDict[key] + 1
   def decr(testDict, key): testDict[key] = testDict[key] - 1
 
@@ -1132,19 +1133,20 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
   # Sort the test history by the buildstarttime (most current date at top)
   sortedTestHistoryLOD = copy.copy(testHistoryLOD)
   sortedTestHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
+ 
+  # Get testing day/time helper object
+  testingDayTimeObj = CBTD.CDashProjectTestingDay(currentTestDate, testingDayStartTimeUtc)
+  currentTestDateDT = testingDayTimeObj.getCurrentTestingDayDateDT()
 
   # Top (most recent) test history data
   topTestDict = sortedTestHistoryLOD[0]
 
-  # Get calendar date in UTC for the most recent test
-  topTestDictBuildstarttimeUtc = \
-    CBTD.getBuildStartTimeUtcFromStr(topTestDict['buildstarttime'])
-  #testingDayStartTimeUtcTimeDelta = \
-  #  CBTD.getProjectTestingDayStartTimeDeltaFromStr(testingDayStartTimeUtc)
-  topTestBuildStartDateUtc = CBTD.getDateStrFromDateTime(topTestDictBuildstarttimeUtc)
+  # Get the CDash testing date of the most recent test
+  topTestDictTestingDayDT = testingDayTimeObj.getTestingDayDateFromBuildStartTimeDT(
+    topTestDict['buildstarttime'] )
 
   # testStatus (for this test based on history)
-  if topTestBuildStartDateUtc == currentTestDate:
+  if topTestDictTestingDayDT == currentTestDateDT:
     testStatus = topTestDict['status']
   else:
     testStatus = "Missing"
@@ -1155,9 +1157,8 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
 
   if testStatus == "Missing":
     # The test is missing so see how many consecutive days that it is missing
-    currentTestDateObj = validateAndConvertYYYYMMDD(currentTestDate)
-    topTestDateObj = validateAndConvertYYYYMMDD(topTestBuildStartDateUtc)
-    testHistoryStats['consec_missing_days'] = (currentTestDateObj - topTestDateObj).days
+    testHistoryStats['consec_missing_days'] = \
+      (currentTestDateDT - topTestDictTestingDayDT).days
     # There are no initial consecutive passing or nopassing days
     initialTestStatusHasChanged = True
   else:
@@ -1173,8 +1174,8 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
   # Loop over test history for each of the kth entries and update quantities
   for pastTestDict_k in sortedTestHistoryLOD:
     pastTestStatus_k = pastTestDict_k['status']
-    pastTestDateUtc_k = CBTD.getDateStrFromDateTime(
-      CBTD.getBuildStartTimeUtcFromStr(pastTestDict_k['buildstarttime']))
+    pastTestDateUtc_k = testingDayTimeObj.getTestingDayDateFromBuildStartTimeStr(
+      pastTestDict_k['buildstarttime'])
     # Count the initial consecutive streaks for passing and nonpassing
     if (
        (pastTestStatus_k=='Passed') == previousTestStatusPassed \
