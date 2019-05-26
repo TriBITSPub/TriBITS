@@ -1056,7 +1056,7 @@ def dateFromBuildStartTime(buildStartTime):
 # Inputs:
 #
 #   testHistoryLOD [in]: List of test dicts for the same test.  This input
-#   list nore its elements are modified in this call.  The base list object is
+#   list nor its elements are modified in this call.  The base list object is
 #   shallow copied before it is sorted and returned.
 #
 #   currentTestDate [in]: The current testing day (as a string "YYYY-MM-DD").
