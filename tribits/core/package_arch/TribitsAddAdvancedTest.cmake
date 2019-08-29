@@ -473,7 +473,7 @@ INCLUDE(PrintVar)
 #     If specified, the test command will be assumed to pass if the string
 #     expression "Final Result: PASSED" is found in the output for the test.
 #     This as the result of directly passing in ``PASS_REGULAR_EXPRESSION
-#     "Final Result: PASSED"``.
+#     "End Result: TEST PASSED"``.
 #
 #   ``FAIL_REGULAR_EXPRESSION "<regex>"``
 #
