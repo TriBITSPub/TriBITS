@@ -66,6 +66,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     [HOSTTYPE <hosttype0> <hosttype1> ...]
 #     [XHOSTTYPE <hosttype0> <hosttype1> ...]
 #     [EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...]
+#     [DISABLED <messageWhyDisabled>]
 #     [STANDARD_PASS_OUTPUT
 #       | PASS_REGULAR_EXPRESSION "<regex0>;<regex1>;..."]
 #     [FAIL_REGULAR_EXPRESSION "<regex0>;<regex1>;..."]
@@ -73,7 +74,6 @@ INCLUDE(TribitsAddTestHelpers)
 #     [ENVIRONMENT <var0>=<value0> <var1>=<value1> ...]
 #     [TIMEOUT <maxSeconds>]
 #     [ADDED_TESTS_NAMES_OUT <testsNames>]
-#     [DISABLED <messageWhyDisabled>]
 #     )
 #
 # The tests are only added if tests are enabled for the SE package
@@ -295,6 +295,17 @@ INCLUDE(TribitsAddTestHelpers)
 #
 #     If specified, gives the names of CMake variables that must evaluate to
 #     true, or the test will not be added.
+#
+#   ``DISABLED <messageWhyDisabled>``
+#
+#     If ``<messageWhyDisabled>`` is non-empty, then the test will be added by
+#     ``add_test()`` (so CTest will see it) but the ctest test property
+#     ``DISABLED`` will be set and therefore CTest will not run the test and
+#     will list it as "Not Run" when tests are run locally and when submitted
+#     to CDash (with test details "Not Run (Disabled)").  Also, the message
+#     ``<messageWhyDisabled>`` will be printed to STDOUT after the line
+#     stating the test was added when ``${PROJECT_NAME}_TRACE_ADD_TEST=ON`` is
+#     set.
 #
 #   ``STANDARD_PASS_OUTPUT``
 #

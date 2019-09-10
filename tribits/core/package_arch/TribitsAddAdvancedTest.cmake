@@ -74,12 +74,12 @@ INCLUDE(PrintVar)
 #     [HOSTTYPE <hosttype0> <hosttype1> ...]
 #     [XHOSTTYPE <hosttype0> <hosttype1> ...]
 #     [EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...]
+#     [DISABLED <messageWhyDisabled>]
 #     [FINAL_PASS_REGULAR_EXPRESSION <regex> |
 #       FINAL_FAIL_REGULAR_EXPRESSION <regex>]
 #     [ENVIRONMENT <var1>=<value1> <var2>=<value2> ...]
 #     [TIMEOUT <maxSeconds>]
 #     [ADDED_TEST_NAME_OUT <testName>]
-#     [DISABLED <messageWhyDisabled>]
 #     )
 #
 # This function allows one to add a single CTest test that is actually a
@@ -290,6 +290,12 @@ INCLUDE(PrintVar)
 #
 #     If specified, gives the names of CMake variables that must evaluate to
 #     true, or the test will not be added (see `TRIBITS_ADD_TEST()`_).
+#
+#   ``DISABLED <messageWhyDisabled>``
+#
+#     If ``<messageWhyDisabled>`` is non-empty, then the test will be added by
+#     ctest but the ``DISABLED`` test property will be set (see
+#     `TRIBITS_ADD_TEST()`_).
 #
 #   ``ENVIRONMENT <var1>=<value1> <var2>=<value2> ..``.
 #

@@ -98,6 +98,7 @@ ENDMACRO()
 #     [XHOSTTYPE <xhosttype0> <xhosttype1> ...]
 #     [XHOSTTYPE_TEST <xhosttype0> <xhosttype1> ...]
 #     [EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...]
+#     [DISABLED "<messageWhyDisabled>"]
 #     [DIRECTORY <dir>]
 #     [TESTONLYLIBS <lib0> <lib1> ...]
 #     [IMPORTEDLIBS <lib0> <lib1> ...]
@@ -114,7 +115,6 @@ ENDMACRO()
 #     [TIMEOUT <maxSeconds>]
 #     [ADDED_EXE_TARGET_NAME_OUT <exeTargetName>]
 #     [ADDED_TESTS_NAMES_OUT <testsNames>]
-#     [DISABLED "<messageWhyDisabled>"]
 #     )
 #
 # This function takes a fairly common set of arguments to
