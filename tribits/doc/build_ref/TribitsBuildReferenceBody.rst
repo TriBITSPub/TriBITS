@@ -1941,7 +1941,7 @@ in processes where tests get posted to CDash).  Also, ``<messageWhyDisabled>``
 will get printed to STDOUT when CMake is run to configure the project and
 ``-D<Project>_TRACE_ADD_TEST=ON`` is set.
 
-Also, note that ff a test is currently disabled using the ``DISABLED`` option
+Also, note that if a test is currently disabled using the ``DISABLED`` option
 in the CMakeLists.txt file, then that ``DISABLE`` property can be removed by
 configuring with::
 
