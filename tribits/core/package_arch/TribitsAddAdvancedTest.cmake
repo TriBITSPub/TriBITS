@@ -293,9 +293,9 @@ INCLUDE(PrintVar)
 #
 #   ``DISABLED <messageWhyDisabled>``
 #
-#     If ``<messageWhyDisabled>`` is non-empty, then the test will be added by
-#     ctest but the ``DISABLED`` test property will be set (see
-#     `TRIBITS_ADD_TEST()`_).
+#     If ``<messageWhyDisabled>`` is non-empty and does not evaluate to FALSE
+#     by CMake, then the test will be added by ctest but the ``DISABLED`` test
+#     property will be set (see `TRIBITS_ADD_TEST()`_).
 #
 #   ``ENVIRONMENT <var1>=<value1> <var2>=<value2> ..``.
 #
@@ -833,7 +833,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
   #
   # A) Parse the overall arguments and figure out how many tests
-  # comands we will have
+  # commands we will have
   #
 
   # Allow for a maximum of 20 (0 through 19) test commands
@@ -904,6 +904,9 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
   IF (DISABLE_THIS_TEST)
     RETURN()
   ENDIF()
+
+  TRIBITS_SET_DISABLED_AND_MSG(${TEST_NAME} "${PARSE_DISABLED}"
+    SET_DISABLED_AND_MSG)  # Adds the test but sets DISABLED test prop!
 
   #
   # C) Determine if we will add the serial or MPI tests based on input COMM
@@ -1391,7 +1394,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
         PROCESSORS "${MAX_NUM_PROCESSORS_USED}")
     ENDIF()
 
-    IF (PARSE_DISABLED)
+    IF (SET_DISABLED_AND_MSG)
       TRIBITS_SET_TESTS_PROPERTIES(${TEST_NAME} PROPERTIES DISABLED ON)
     ENDIF()
 
@@ -1420,7 +1423,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
     TRIBITS_PRIVATE_ADD_TEST_PRINT_ADDED(${TEST_NAME}
       "${PARSE_CATEGORIES}"  "${MAX_NUM_MPI_PROCS_USED_TO_PRINT}"
       "${MAX_NUM_PROCESSORS_USED}"  "${TIMEOUT_USED}"
-      "${PARSE_DISABLED}")
+      "${SET_DISABLED_AND_MSG}")
 
     #
     # F.2) Write the cmake -P script

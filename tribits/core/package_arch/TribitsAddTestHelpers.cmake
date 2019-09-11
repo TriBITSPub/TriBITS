@@ -577,7 +577,38 @@ ENDFUNCTION()
 
 
 #
-# Determine if the test should be skipped due to a disable
+# Read ${TEST_NAME_IN}_SET_DISABLED_AND_MSG and set output
+# var SET_DISABLED_AND_MSG_OUT
+#
+# Usage:
+#
+#    TRIBITS_SET_DISABLED_AND_MSG(
+#      <testName>              # The full test name passed to add_test()
+#      "${PARSE_DISABLED}"     # From the input arg DISABLED <msg>
+#      <setDisabledAndMsgOut>  # Sets var of this name
+#      )
+#
+FUNCTION(TRIBITS_SET_DISABLED_AND_MSG  TEST_NAME_IN  PARSE_DISABLED
+  SET_DISABLED_AND_MSG_OUT
+  )
+
+  SET(SET_DISABLED_AND_MSG "${PARSE_DISABLED}")
+  IF (NOT "${${TEST_NAME_IN}_SET_DISABLED_AND_MSG}" STREQUAL "")
+    SET(SET_DISABLED_AND_MSG "${${TEST_NAME_IN}_SET_DISABLED_AND_MSG}")
+  ENDIF()
+
+  SET(${SET_DISABLED_AND_MSG_OUT} "${SET_DISABLED_AND_MSG}" PARENT_SCOPE)
+
+ENDFUNCTION()
+
+
+#
+# Determine if the test should be skipped due to a disable var set
+#
+# Usage:
+#
+#   TRIBITS_ADD_TEST_QUERY_DISABLE(
+#     <disableThisTestVarOut>  # Set var of this name on output
 #
 FUNCTION(TRIBITS_ADD_TEST_QUERY_DISABLE  DISABLE_TEST_VAR_OUT)
 
