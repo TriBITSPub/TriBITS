@@ -756,6 +756,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
     ARGS
       ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
       -DCMAKE_INSTALL_PREFIX=install
+      -DMPI_EXEC=mympiexec
+      -DMPI_EXEC_PRE_NUMPROCS_FLAGS="--pre-flags"    # Can't use ';'
+      -DMPI_EXEC_NUMPROCS_FLAG="-mynp"
+      -DMPI_EXEC_POST_NUMPROCS_FLAGS="--post-flags"  # Can't use ';'
       -DTribitsHelloWorld_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
     PASS_REGULAR_EXPRESSION_ALL
@@ -805,9 +809,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
       "TribitsHelloWorld_MPI_LIBRARIES = ''"
       "TribitsHelloWorld_MPI_LIBRARY_DIRS = ''"
       "TribitsHelloWorld_MPI_INCLUDE_DIRS = ''"
-      "TribitsHelloWorld_MPI_EXEC = '.*'"
+      "TribitsHelloWorld_MPI_EXEC = 'mympiexec"
       "TribitsHelloWorld_MPI_EXEC_MAX_NUMPROCS = '[1-9]*'"  # Is null for an MPI build
-      "TribitsHelloWorld_MPI_EXEC_NUMPROCS_FLAG = '.*'"
+      "TribitsHelloWorld_MPI_EXEC_PRE_NUMPROCS_FLAGS = '--pre-flags'"
+      "TribitsHelloWorld_MPI_EXEC_NUMPROCS_FLAG = '-mynp"
+      "TribitsHelloWorld_MPI_EXEC_POST_NUMPROCS_FLAGS = '--post-flags'"
       "TribitsHelloWorld_PACKAGE_LIST = 'HelloWorld'"
       "TribitsHelloWorld_TPL_LIST = ''"  # Must work for no MPI too
       "-- Configuring done"
