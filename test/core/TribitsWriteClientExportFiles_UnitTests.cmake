@@ -111,7 +111,7 @@ FUNCTION(UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_BEFORE_LIBS)
   SET(Teuchos_LIBRARY_DIRS "teuchos/core/src;teuchos/numeric/src")
   SET(Teuchos_INCLUDE_DIRS "teuchos/core/include;teuchos/numeric/include")
   SET(Teuchos_LIBRARIES "teuchoscore;teuchosnumeric")
-  SET(Teuchos_HAS_NATIVE_LIBRARIES TRUE)
+  SET(Teuchos_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
 
   SET(GENERATED_EXPORT_CONFIG
     "${CURRENT_TEST_DIRECTORY}/RTOpBeforeConfig.cmake")
@@ -189,11 +189,11 @@ FUNCTION(UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_AFTER_LIBS)
   SET(Teuchos_LIBRARY_DIRS "teuchos/core/src;teuchos/numeric/src")
   SET(Teuchos_INCLUDE_DIRS "teuchos/core/include;teuchos/numeric/include")
   SET(Teuchos_LIBRARIES "teuchoscore;teuchosnumeric")
-  SET(Teuchos_HAS_NATIVE_LIBRARIES TRUE)
+  SET(Teuchos_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
   SET(RTOp_LIBRARY_DIRS "rtop/src;teuchos/core/src;teuchos/numeric/src")
   SET(RTOp_INCLUDE_DIRS "rtop/include;teuchos/core/include;teuchos/numeric/include")
   SET(RTOp_LIBRARIES "rtop")
-  SET(RTOp_HAS_NATIVE_LIBRARIES TRUE)
+  SET(RTOp_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
 
   SET(GENERATED_EXPORT_CONFIG
     "${CURRENT_TEST_DIRECTORY}/RTOpAfterConfig.cmake")
