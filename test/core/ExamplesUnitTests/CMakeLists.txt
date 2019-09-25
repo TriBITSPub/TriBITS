@@ -1955,7 +1955,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
     ARGS -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=ON
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'simplecxx' in DEPSLIBS is not a lib in this SE package"
+      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this SE package"
       "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -2018,7 +2018,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       -DSPKC_SHOW_TESTONLY_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'm' in DEPSLIBS is not a lib defined in the current cmake "
+      "WARNING: 'm' in DEPLIBS is not a lib defined in the current cmake "
       "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -2135,7 +2135,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
     ARGS -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=ON
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'simplecxx' in DEPSLIBS is not a lib in this SE package"
+      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this SE package"
       "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
@@ -2198,7 +2198,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DSPKC_SHOW_TESTONLY_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'm' in DEPSLIBS is not a lib defined in the current cmake "
+      "WARNING: 'm' in DEPLIBS is not a lib defined in the current cmake "
       "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
