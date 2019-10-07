@@ -6038,6 +6038,25 @@ Enable/Disable Logic`_).  Also, these files get processed in `Reduced Package
 Dependency Processing`_ as well so they get processed in all contexts where
 enable/disable logic is applied.
 
+How to tweak downstream TriBITS "ENABLE" variables during package configuration
+-------------------------------------------------------------------------------
+
+The internal configuration of a package (``<XXX>/CMakeLists.txt``)
+may determine that an optional feature (``<XXX>_ENABLE_<YYY>``) must be
+enabled or disabled with ``SET(<XXX>_ENABLE_<YYY> <val>)``.
+Changing the value of ``<XXX>_ENABLE_<YYY>`` inside package `<XXX>` using ``SET``
+changes the variable's value inside the package's scope, but all other
+packages will see the old value of ``<XXX>_ENABLE_<YYY>``.
+
+However, it is sometimes necessary to make this change visible to downstream packages.
+To do this, use ``DUAL_SCOPE_SET(<XXX>_ENABLE_<YYY> <val>)`` instead. This
+sets the value in both the global (project) scope and in the local scope of package `<XXX>`.
+Any downstream package (configured after `<XXX>` chronologically)
+will see the new value: ``${<XXX>_ENABLE_<YYY>} STREQUAL <val>``.
+Caution: packages that don't depend on `<XXX>` may or may not see the change.
+It is also strongly recommended that a message or warning is given when globally
+changing an ENABLE variable. The user may have set it explicitly, and they
+should know exacly why and where their choice is being overridden.
 
 How to set up multi-repository support
 --------------------------------------
