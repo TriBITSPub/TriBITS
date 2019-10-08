@@ -6084,12 +6084,11 @@ cache variable ``<XXX>_ENABLE_<YYY>`` that may have been set by the user or
 some other means; see `TriBITS auto-enables/disables done using non-cache
 local variables`_.)  Any downstream package (configured after processing
 ``<packageDir>/CMakeLists.txt``) will see the new value ``<XXX>_ENABLE_<YYY>
-STREQUAL <val>``.  Caution: packages that don't depend on the package that
-makes these changes may or may not see the change.  It is also strongly
-recommended that a message or warning be printed to CMake STDOUT using
-``MESSAGE(["NOTE: "|WARNING] "<message>")`` when globally changing an ENABLE
-variable. The user may have set it explicitly, and they should know exactly
-why and where their choice is being overridden.
+STREQUAL <val>``.  It is also strongly recommended that a message or warning
+be printed to CMake STDOUT using ``MESSAGE(["NOTE: "|WARNING] "<message>")``
+when globally changing an ENABLE variable. The user may have set it
+explicitly, and they should know exactly why and where their choice is being
+overridden.
 
 
 How to set up multi-repository support
