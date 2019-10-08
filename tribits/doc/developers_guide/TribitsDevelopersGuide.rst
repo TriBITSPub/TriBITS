@@ -6053,8 +6053,7 @@ To do this, use ``DUAL_SCOPE_SET(<XXX>_ENABLE_<YYY> <val>)`` instead. This
 sets the value in both the global (project) scope and in the local scope of package `<XXX>`.
 Any downstream package (configured after `<XXX>` chronologically)
 will see the new value: ``${<XXX>_ENABLE_<YYY>} STREQUAL <val>``.
-Caution: packages that don't depend on `<XXX>` may or may not see the change.
-It is also strongly recommended that a message or warning is given when globally
+It is strongly recommended that a message or warning is given when globally
 changing an ENABLE variable. The user may have set it explicitly, and they
 should know exacly why and where their choice is being overridden.
 
