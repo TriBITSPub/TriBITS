@@ -1967,7 +1967,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC'
+      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2009,13 +2009,13 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     # Apply the functor to add the test history to the test dict
     addTestHistoryFunctor(testDict)
 
-    testHistoryBrowserUrl = u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC'
+    testHistoryBrowserUrl = u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
 
     # Checkt the set fields out output
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
-      u'site.com/cdash/index.php?project=projectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00UTC&field4=buildstarttime&compare4=83&value4=2000-12-28T00:00:00UTC'
+      u'site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name'
       )
     self.assertEqual(testDict['testname'], 'test_name')
     self.assertEqual(testDict['testname_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
@@ -2075,7 +2075,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-03T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-29T00:00:00UTC'
+      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-29&end=2001-01-02&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2119,13 +2119,13 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     # Apply the functor to add the test history to the test dict
     addTestHistoryFunctor(testDict)
 
-    testHistoryBrowserUrl = u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-03T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-29T00:00:00UTC'
+    testHistoryBrowserUrl = u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-29&end=2001-01-02&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
 
     # Checkt the set fields out output
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
-      u'site.com/cdash/index.php?project=projectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name&field3=buildstarttime&compare3=84&value3=2001-01-03T00:00:00UTC&field4=buildstarttime&compare4=83&value4=2000-12-29T00:00:00UTC'
+      u'site.com/cdash/index.php?project=projectName&begin=2000-12-29&end=2001-01-02&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name'
       )
     self.assertEqual(testDict['testname'], 'test_name')
     self.assertEqual(testDict['testname_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
@@ -2192,7 +2192,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC'
+      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2242,7 +2242,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
-      u'site.com/cdash/index.php?project=projectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00UTC&field4=buildstarttime&compare4=83&value4=2000-12-28T00:00:00UTC'
+      u'site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name'
       )
     self.assertEqual(testDict['testname'], 'test_name')
     self.assertEqual(testDict['testname_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
@@ -2251,7 +2251,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['status_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
-    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC'
+    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
       )
     self.assertEqual(
       testDict['test_history_list'][0]['buildstarttime'], '2001-01-01T05:54:03 UTC')
@@ -2265,7 +2265,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
       testDict['test_history_list'][4]['buildstarttime'], '2000-12-28T05:54:03 UTC')
     self.assertEqual(testDict['nopass_last_x_days'], 3)
     self.assertEqual(testDict['nopass_last_x_days_url'],
-       u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC')
+       u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
     self.assertEqual(testDict['previous_nopass_date'], '2000-12-30')
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
@@ -2289,7 +2289,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC'
+      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2340,7 +2340,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
-      u'site.com/cdash/index.php?project=projectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00UTC&field4=buildstarttime&compare4=83&value4=2000-12-28T00:00:00UTC'
+      u'site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name'
       )
     self.assertEqual(testDict['testname'], 'test_name')
     self.assertEqual(testDict.get('testname_url',None), None)
@@ -2349,7 +2349,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict.get('status_url', None), None)
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
-    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC'
+    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
       )
     self.assertEqual(len(testDict['test_history_list']), 3)
     self.assertEqual(
@@ -2360,7 +2360,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
       testDict['test_history_list'][2]['buildstarttime'], '2000-12-28T05:54:03 UTC')
     self.assertEqual(testDict['nopass_last_x_days'], 3)
     self.assertEqual(testDict['nopass_last_x_days_url'],
-       u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC')
+       u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
     self.assertEqual(testDict['previous_nopass_date'], '2000-12-30')
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
@@ -2385,7 +2385,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC'
+      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2426,7 +2426,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
-      u'site.com/cdash/index.php?project=projectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name&field3=buildstarttime&compare3=84&value3=2001-01-02T00:00:00UTC&field4=buildstarttime&compare4=83&value4=2000-12-28T00:00:00UTC'
+      u'site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name'
       )
     self.assertEqual(testDict['testname'], 'test_name')
     self.assertEqual(testDict.get('testname_url',None), None)
@@ -2435,12 +2435,12 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict.get('status_url', None), None)
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
-    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC'
+    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
       )
     self.assertEqual(len(testDict['test_history_list']), 0)
     self.assertEqual(testDict['nopass_last_x_days'], 0)
     self.assertEqual(testDict['nopass_last_x_days_url'],
-       u'site.com/cdash/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC')
+       u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
     self.assertEqual(testDict['previous_nopass_date'], 'None')
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
@@ -2466,7 +2466,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC'
+      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2533,7 +2533,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name&field4=buildstarttime&compare4=84&value4=2001-01-02T00:00:00UTC&field5=buildstarttime&compare5=83&value5=2000-12-28T00:00:00UTC'
+      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \

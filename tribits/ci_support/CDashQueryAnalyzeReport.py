@@ -1354,27 +1354,19 @@ class AddTestHistoryToTestDictFunctor(object):
     else:
       testAlreadyHasCDashData = False
 
-    # Set up object to handle CDash testing day stuff
-    currentProjectTestingDayObj = \
-      CBTD.CDashProjectTestingDay(self.__date, self.__testingDayStartTimeUtc)
-    currentTestingDayStartUtcDT = currentProjectTestingDayObj.getTestingDayStartUtcDT()
-
-    # Date range for test history
-    dayAfterCurrentTestDay = \
-      CBTD.getBuildStartTimeUtcStrFromUtcDT(
-        currentTestingDayStartUtcDT + datetime.timedelta(days=1), True )
-    daysBeforeCurrentTestDay = \
-      CBTD.getBuildStartTimeUtcStrFromUtcDT(
-        currentTestingDayStartUtcDT - datetime.timedelta(days=daysOfHistory-1), True)
+    # Get the date range for CDash queries
+    dateRangeBeginDT = testDayDate - datetime.timedelta(days=(daysOfHistory-1))
+    dateRangeBeginDateStr = CBTD.getDateStrFromDateTime(dateRangeBeginDT)
+    dateRangeEndDateStr = self.__date
+    beginEndUrlFields = "begin="+dateRangeBeginDateStr+"&end="+dateRangeEndDateStr
 
     # Define queryTests.php query filters for test history
     testHistoryQueryFilters = \
-      "filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and"+\
+      beginEndUrlFields+"&"+\
+      "filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and"+\
       "&field1=buildname&compare1=61&value1="+buildName+\
       "&field2=testname&compare2=61&value2="+testname+\
-      "&field3=site&compare3=61&value3="+site+\
-      "&field4=buildstarttime&compare4=84&value4="+dayAfterCurrentTestDay+\
-      "&field5=buildstarttime&compare5=83&value5="+daysBeforeCurrentTestDay
+      "&field3=site&compare3=61&value3="+site
     
     # URL used to get the history of the test in JSON form
     testHistoryQueryUrl = \
@@ -1387,11 +1379,11 @@ class AddTestHistoryToTestDictFunctor(object):
     # URL for to the build summary on index.php page
     buildHistoryEmailUrl = getCDashIndexBrowserUrl(
       cdashUrl, projectName, None,
-      "filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and"+\
+      beginEndUrlFields+"&"+\
+      "filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and"+\
       "&field1=buildname&compare1=61&value1="+buildName+\
-      "&field2=site&compare2=61&value2="+site+\
-      "&field3=buildstarttime&compare3=84&value3="+dayAfterCurrentTestDay+\
-      "&field4=buildstarttime&compare4=83&value4="+daysBeforeCurrentTestDay )
+      "&field2=site&compare2=61&value2="+site
+      )
     # ToDo: Replace this with the the URL to just this one build the index.php
     # page.  To do that, get the build stamp from the list of builds on CDash
     # and then create a URL link for this one build given 'site', 'buildName',
