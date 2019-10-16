@@ -390,7 +390,7 @@ class test_removeElementsFromListGivenIndexes(unittest.TestCase):
 
 class test_readCsvFileIntoListOfDicts(unittest.TestCase):
 
-  def test_col_3_row_2_expected_cols__pass(self):
+  def test_col_3_row_2_required_cols_pass(self):
     csvFileStr=\
         "col_0, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"+\
@@ -399,72 +399,203 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
-    listOfDicts_expected = \
+    listOfDicts_required = \
       [
         { 'col_0' : 'val_00', 'col_1' : 'val_01', 'col_2' : 'val_02' },
         { 'col_0' : 'val_10', 'col_1' : 'val_11', 'col_2' : 'val_12' },
         ]
     self.assertEqual(len(listOfDicts), 2)
-    for i in range(len(listOfDicts_expected)):
-      self.assertEqual(listOfDicts[i], listOfDicts_expected[i])
+    for i in range(len(listOfDicts_required)):
+      self.assertEqual(listOfDicts[i], listOfDicts_required[i])
 
-  def test_col_3_row_2_no_expected_cols_pass(self):
+  def test_col_3_row_2_w_blanks_required_cols_pass(self):
+    csvFileStr=\
+        "col_0, col_1, col_2\n"+\
+        "\n\n"+\
+        "val_00, val_01, val_02\n"+\
+        "\n"+\
+        "val_10, val_11, val_12\n\n\n"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_w_blanks_required_cols_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
+    listOfDicts_required = \
+      [
+        { 'col_0' : 'val_00', 'col_1' : 'val_01', 'col_2' : 'val_02' },
+        { 'col_0' : 'val_10', 'col_1' : 'val_11', 'col_2' : 'val_12' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_required)):
+      self.assertEqual(listOfDicts[i], listOfDicts_required[i])
+
+  def test_col_3_row_2_required_cols_tuple_pass(self):
+    csvFileStr=\
+        "col_0, col_1, col_2\n"+\
+        "val_00, val_01, val_02\n"+\
+        "val_10, val_11, val_12\n"
+    csvFileName = "readCsvFileIntoListOfDicts_test_col_3_row_2_required_cols_tuple_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ('col_0', 'col_1', 'col_2'))
+    listOfDicts_required = \
+      [
+        { 'col_0' : 'val_00', 'col_1' : 'val_01', 'col_2' : 'val_02' },
+        { 'col_0' : 'val_10', 'col_1' : 'val_11', 'col_2' : 'val_12' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_required)):
+      self.assertEqual(listOfDicts[i], listOfDicts_required[i])
+
+  def test_col_3_row_2_no_required_cols_pass(self):
     csvFileStr=\
         "col_0, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"+\
         "val_10, val_11, val_12\n\n\n"  # Add extra blanks line for extra test!
-    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_no_expected_cols_pass.csv"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_no_required_cols_pass.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     listOfDicts = readCsvFileIntoListOfDicts(csvFileName)
-    listOfDicts_expected = \
+    listOfDicts_required = \
       [
         { 'col_0' : 'val_00', 'col_1' : 'val_01', 'col_2' : 'val_02' },
         { 'col_0' : 'val_10', 'col_1' : 'val_11', 'col_2' : 'val_12' },
         ]
     self.assertEqual(len(listOfDicts), 2)
-    for i in range(len(listOfDicts_expected)):
-      self.assertEqual(listOfDicts[i], listOfDicts_expected[i])
+    for i in range(len(listOfDicts_required)):
+      self.assertEqual(listOfDicts[i], listOfDicts_required[i])
 
-  def test_too_few_expected_headers_fail(self):
+  def test_col_3_row_2_required_3_optional_2_col_no_opt_pass(self):
     csvFileStr=\
-        "wrong col, col_1, col_2\n"+\
-        "val_00, val_01, val_02\n"
-    csvFileName = "readCsvFileIntoListOfDicts_too_few_expected_headers_fail.csv"
+        "col_0, col_1, col_2\n"+\
+        "val_00, val_01, val_02\n"+\
+        "val_10, val_11, val_12\n\n\n"  # Add extra blanks line for extra test!
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_required_3_optional_2_col_no_opt_pass.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
-    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1'])
-    self.assertRaises(Exception, readCsvFileIntoListOfDicts,
-      csvFileName, ['col_0', 'col_1'])
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
+      ['col_0', 'col_1', 'col_2'], ['opt_0', 'opt_1'])
+    listOfDicts_required = \
+      [
+        { 'col_0' : 'val_00', 'col_1' : 'val_01', 'col_2' : 'val_02' },
+        { 'col_0' : 'val_10', 'col_1' : 'val_11', 'col_2' : 'val_12' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_required)):
+      self.assertEqual(listOfDicts[i], listOfDicts_required[i])
 
-  def test_too_many_expected_headers_fail(self):
+  def test_col_3_row_2_required_3_optional_2_col_opt_1_pass(self):
     csvFileStr=\
-        "wrong col, col_1, col_2\n"+\
-        "val_00, val_01, val_02\n"
-    csvFileName = "readCsvFileIntoListOfDicts_too_many_expected_headers_fail.csv"
+        "col_0, col_1, col_2, opt_1\n"+\
+        "val_00, val_01, val_02, val_03\n"+\
+        "val_10, val_11, val_12, val_13\n"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_required_3_optional_2_col_opt_1_pass.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
-    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
-    #  ['col_0', 'col_1', 'col_2', 'col3'])
-    self.assertRaises(Exception, readCsvFileIntoListOfDicts,
-      csvFileName, ['col_0', 'col_1', 'col_2', 'col3'])
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
+      ['col_0', 'col_1', 'col_2'], ['opt_0', 'opt_1'])
+    listOfDicts_required = \
+      [
+        { 'col_0':'val_00', 'col_1':'val_01', 'col_2':'val_02', 'opt_1':'val_03' },
+        { 'col_0':'val_10', 'col_1':'val_11', 'col_2':'val_12', 'opt_1':'val_13' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_required)):
+      self.assertEqual(listOfDicts[i], listOfDicts_required[i])
 
-  def test_wrong_expected_col_0_fail(self):
+  def test_col_3_row_2_optional_only_pass(self):
+    csvFileStr=\
+        "col_0, col_1, col_2, opt_1\n"+\
+        "val_00, val_01, val_02, val_03\n"+\
+        "val_10, val_11, val_12, val_13\n"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_optional_only_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
+      (), ['opt_0', 'opt_1', 'col_0', 'col_1', 'col_2'])
+    listOfDicts_required = \
+      [
+        { 'col_0':'val_00', 'col_1':'val_01', 'col_2':'val_02', 'opt_1':'val_03' },
+        { 'col_0':'val_10', 'col_1':'val_11', 'col_2':'val_12', 'opt_1':'val_13' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_required)):
+      self.assertEqual(listOfDicts[i], listOfDicts_required[i])
+
+  def test_col_3_row_2_required_3_optional_2_col_opt_1_mixed_order_pass(self):
+    csvFileStr=\
+        "col_2, opt_1, col_1, col_0\n"+\
+        "val_00, val_01, val_02, val_03\n"+\
+        "val_10, val_11, val_12, val_13\n"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_required_3_optional_2_col_opt_1_mixed_order_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
+      ['col_0', 'col_1', 'col_2'], ['opt_0', 'opt_1'])
+    listOfDicts_required = \
+      [
+        { 'col_2':'val_00', 'opt_1':'val_01', 'col_1':'val_02', 'col_0':'val_03' },
+        { 'col_2':'val_10', 'opt_1':'val_11', 'col_1':'val_12', 'col_0':'val_13' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_required)):
+      self.assertEqual(listOfDicts[i], listOfDicts_required[i])
+
+  def test_too_few_required_headers_fail(self):
     csvFileStr=\
         "wrong col, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"
-    csvFileName = "readCsvFileIntoListOfDicts_wrong_expected_col_0_fail.csv"
+    csvFileName = "readCsvFileIntoListOfDicts_too_few_required_headers_fail.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    threwException = True
+    try:
+      listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1'])
+      threwException = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, for CSV file '"+csvFileName+"' the column header 'wrong col'"+\
+        " is not in the set of required column headers '['col_0', 'col_1']'"+\
+        " or optional column headers '[]'!"
+        )
+    if not threwException:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+  def test_too_many_required_headers_fail(self):
+    csvFileStr=\
+        "col_0, col_1, col_2\n"+\
+        "val_00, val_01, val_02\n"
+    csvFileName = "readCsvFileIntoListOfDicts_too_many_required_headers_fail.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    threwException = True
+    try:
+      listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
+        ['col_0', 'col_1', 'col_2', 'col_3'])
+      threwException = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, for CSV file '"+csvFileName+"' the required header"+\
+        " 'col_3' is missing from the set of included column headers"+\
+        " '['col_0', 'col_1', 'col_2']'!" )
+    if not threwException:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+  def test_wrong_required_col_0_fail(self):
+    csvFileStr=\
+        "wrong col, col_1, col_2\n"+\
+        "val_00, val_01, val_02\n"
+    csvFileName = "readCsvFileIntoListOfDicts_wrong_required_col_0_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     #listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
     self.assertRaises(Exception, readCsvFileIntoListOfDicts,
       csvFileName, ['col_0', 'col_1', 'col_2'])
 
-  def test_wrong_expected_col_1_fail(self):
+  def test_wrong_required_col_1_fail(self):
     csvFileStr=\
         "col_0, wrong col, col_2\n"+\
         "val_00, val_01, val_02\n"
-    csvFileName = "readCsvFileIntoListOfDicts_wrong_expected_col_1_fail.csv"
+    csvFileName = "readCsvFileIntoListOfDicts_wrong_required_col_1_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
     #listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
@@ -479,12 +610,41 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_bad_row_len_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
-    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName)
-    self.assertRaises(Exception, readCsvFileIntoListOfDicts, csvFileName)
+    threwException = True
+    try:
+      listOfDicts = readCsvFileIntoListOfDicts(csvFileName)
+      threwException = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, for CSV file '"+csvFileName+"' the data row 1"+\
+        " ['val_10', 'val_11', 'val_12', 'extra'] has 4 entries"+\
+        " which does not macth the number of column headers 3!" )
+    if not threwException:
+      self.assertFalse("ERROR: Did not thown an excpetion")
 
-  # ToDo: Add test for reading a CSV file with no rows
+  def test_col_3_row_0_required_cols_pass(self):
+    csvFileStr=\
+        "col_0, col_1, col_2\n"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_0_required_cols_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
+    self.assertEqual(len(listOfDicts), 0)
 
-  # ToDo: Add test for reading an empty CSV file (no column headers)
+  def test_empty_csv_file_with_required_fields_fail(self):
+    csvFileStr=""
+    csvFileName = "readCsvFileIntoListOfDicts_empty_csv_file_with_required_fields_fail.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    threwException = True
+    try:
+      listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0'])
+      threwException = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, CSV file '"+csvFileName+"' is empty which is not allowed!" )
+    if not threwException:
+      self.assertFalse("ERROR: Did not thown an excpetion")
 
 
 #############################################################################

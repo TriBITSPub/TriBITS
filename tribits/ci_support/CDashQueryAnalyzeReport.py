@@ -50,6 +50,7 @@ import json
 import datetime
 import copy
 import pprint
+import csv
 
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
@@ -294,56 +295,108 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 #
 # and the expected list of column headers would be:
 #
-#   expectedColumnHeadersList = [ 'col_0', 'col_1', 'col_2' ]
+# This function can also allow the user to assert that the included columns
+# match a set of required and optional headers.  For example, that above cSV file would match:
 #
-# But the expectedColumnHeadersList argument is optional.
+#   requiredColumnHeadersList = [ 'col_0', 'col_1', 'col_2' ]
 #
-def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
+# or:
+#
+#   requiredColumnHeadersList = [ 'col_0', 'col_1', 'col_2' ]
+#   optionalColumnHeadersList = [ 'col_2', 'col_3', ]
+#
+# But the requiredColumnHeadersList and optionalColumnHeadersList argument
+# lists are optional.
+#
+# Also, the columns can be appear in any order as long as they match all of
+# the required headers and don't contain any headers not in the list of
+# expected headers.
+#
+def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
+  optionalColumnHeadersList=[],
+  ):
   listOfDicts = []
   with open(csvFileName, 'r') as csvFile:
+    csvReader = csv.reader(csvFile)
     # Get the list of column headers
-    columnHeadersLineStr = csvFile.readline().strip()
-    columnHeadersRawStrList = columnHeadersLineStr.split(',')
-    columnHeadersList = []
-    for headerRawStr in columnHeadersRawStrList:
-      columnHeadersList.append(headerRawStr.strip())
-    if expectedColumnHeadersList:
-      if len(columnHeadersList) != len(expectedColumnHeadersList):
-        raise Exception(
-          "Error, for CSV file '"+csvFileName+"' the"+\
-          " column headers '"+str(columnHeadersList)+"' has"+\
-          " "+str(len(columnHeadersList))+" items but the expected"+\
-          " set of column headers '"+str(expectedColumnHeadersList)+"'"+\
-          " has "+str(len(expectedColumnHeadersList))+" items!")
-      for i in range(len(columnHeadersList)):
-        if columnHeadersList[i] != expectedColumnHeadersList[i]:
-          raise Exception(
-            "Error, column header "+str(i)+" '"+columnHeadersList[i]+"' does"+\
-            " not match expected column header '"+expectedColumnHeadersList[i]+"'!")
+    columnHeadersList = getColumnHeadersFromCsvFileReader(csvFileName, csvReader)
+    assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersList,
+      optionalColumnHeadersList, columnHeadersList)
     # Read the rows of the CSV file into dicts
     dataRow = 0
-    line = csvFile.readline().strip()
-    while line:
-      #print("\ndataRow = "+str(dataRow))
-      lineList = line.split(',')
-      #print(lineList)
-      # Assert that the row has the right number of entries
-      if len(lineList) != len(columnHeadersList):
-        raise Exception(
-          "Error, data row "+str(dataRow)+" '"+line+"' has"+\
-          " "+str(len(lineList))+" entries which does not macth"+\
-          " the number of column headers "+str(len(columnHeadersList))+"!")
+    for lineList in csvReader:
+      if not lineList: continue # Ingore blank line
+      stripWhiltespaceFromStrList(lineList)
+      assertExpectedNumRowsFromCsvFile(csvFileName, dataRow, lineList,
+        columnHeadersList)
       # Read the row entries into a new dict
       rowDict = {}
       for j in range(len(columnHeadersList)):
-        rowDict.update( { columnHeadersList[j] : lineList[j].strip() } )
-      #print(rowDict)
+        rowDict.update( { columnHeadersList[j] : lineList[j] } )
       listOfDicts.append(rowDict)
       # Update for next row
-      line = csvFile.readline().strip()
       dataRow += 1
   # Return the constructed object
   return listOfDicts
+
+
+def getColumnHeadersFromCsvFileReader(csvFileName, csvReader):
+  try:
+    columnHeadersList = csvReader.next()
+    stripWhiltespaceFromStrList(columnHeadersList)
+    return columnHeadersList
+  except StopIteration:
+    raise Exception(
+      "Error, CSV file '"+csvFileName+"' is empty which is not allowed!"
+      )
+
+
+def assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersList,
+  optionalColumnHeadersList, columnHeadersList,
+  ):
+
+  if not requiredColumnHeadersList and not optionalColumnHeadersList:
+    return  # No expected column headers to assert against!
+
+  requiredAndOptionalHeadersSet = set(requiredColumnHeadersList)
+  requiredAndOptionalHeadersSet.update(optionalColumnHeadersList)
+  columnHeadersSet = set(columnHeadersList)
+
+  # Assert that each column header is expected
+  for colHeader in columnHeadersList:
+    if not colHeader in requiredAndOptionalHeadersSet:
+      raise Exception(
+        "Error, for CSV file '"+csvFileName+"' the"+\
+        " column header '"+str(colHeader)+"' is not in the set"+\
+        " of required column headers '"+str(requiredColumnHeadersList)+"'"+\
+        " or optional column headers '"+str(optionalColumnHeadersList)+"'!"+\
+        ""
+        )
+
+  # Assert that all of the required headers are present
+  for requiredHeader in requiredColumnHeadersList:
+    if not requiredHeader in columnHeadersSet:
+      raise Exception(
+        "Error, for CSV file '"+csvFileName+"' the"+\
+        " required header '"+str(requiredHeader)+"' is missing from the"+\
+        " set of included column headers '"+str(columnHeadersList)+"'!"+\
+        ""
+        )
+
+
+def assertExpectedNumRowsFromCsvFile(csvFileName, dataRow, lineList,
+  columnHeadersList,
+  ):
+  if len(lineList) != len(columnHeadersList):
+    raise Exception(
+      "Error, for CSV file '"+csvFileName+"' the data row"+\
+      " "+str(dataRow)+" "+str(lineList)+" has"+\
+      " "+str(len(lineList))+" entries which does not macth"+\
+      " the number of column headers "+str(len(columnHeadersList))+"!")
+
+
+def stripWhiltespaceFromStrList(strListInOut):
+  for i in range(len(strListInOut)): strListInOut[i] = strListInOut[i].strip()
 
 
 # Get list of expected builds from CSV file
