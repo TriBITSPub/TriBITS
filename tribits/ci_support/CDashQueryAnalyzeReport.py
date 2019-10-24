@@ -81,7 +81,7 @@ def getFileNameStrFromText(inputStr):
   return fileNameStr
 
 
-# Check if the key/value pairs for two dicts are the same and if return an
+# Check if the key/value pairs for two dicts are the same and if so, return an
 # error message explaining how they are different.
 #
 # Returns tuple (hasSameKeyValuePairs, errMsg).  If
@@ -246,10 +246,10 @@ def writeCsvFileStructureToStr(csvFileStruct):
     csvFileStr += ", ".join(rowFieldsList)+"\n"
   return csvFileStr
 
+
 #
 # CDash Specific stuff
 #
-
 
 def cdashColorPassed(): return 'green'
 def cdashColorFailed(): return 'red'
@@ -293,20 +293,19 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 #    { 'col_0':'val_10', 'col_1':'val_11', 'col_2':'val_12' }, 
 #    ]
 #
-# and the expected list of column headers would be:
-#
 # This function can also allow the user to assert that the included columns
-# match a set of required and optional headers.  For example, that above cSV file would match:
+# match a set of required and optional headers.  For example, that above CSV
+# file would match:
 #
 #   requiredColumnHeadersList = [ 'col_0', 'col_1', 'col_2' ]
 #
 # or:
 #
-#   requiredColumnHeadersList = [ 'col_0', 'col_1', 'col_2' ]
+#   requiredColumnHeadersList = [ 'col_0', 'col_1' ]
 #   optionalColumnHeadersList = [ 'col_2', 'col_3', ]
 #
-# But the requiredColumnHeadersList and optionalColumnHeadersList argument
-# lists are optional.
+# The requiredColumnHeadersList and optionalColumnHeadersList argument lists
+# are optional.
 #
 # Also, the columns can be appear in any order as long as they match all of
 # the required headers and don't contain any headers not in the list of
@@ -318,7 +317,6 @@ def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
   listOfDicts = []
   with open(csvFileName, 'r') as csvFile:
     csvReader = csv.reader(csvFile)
-    # Get the list of column headers
     columnHeadersList = getColumnHeadersFromCsvFileReader(csvFileName, csvReader)
     assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersList,
       optionalColumnHeadersList, columnHeadersList)
@@ -399,28 +397,25 @@ def stripWhiltespaceFromStrList(strListInOut):
   for i in range(len(strListInOut)): strListInOut[i] = strListInOut[i].strip()
 
 
-# Get list of expected builds from CSV file
 def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
   return readCsvFileIntoListOfDicts(expectedBuildsFileName,
     ['group', 'site', 'buildname'])
 
 
-# Headers for basic CSV file
-g_testsWithIssueTrackersCsvFileHeaders = \
+g_testsWithIssueTrackersCsvFileHeadersRequired = \
   ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker')
 
 
-# Get list of tests from CSV file
 def getTestsWtihIssueTrackersListFromCsvFile(testsWithIssueTrackersFile):
   return readCsvFileIntoListOfDicts(testsWithIssueTrackersFile,
-    g_testsWithIssueTrackersCsvFileHeaders)
+    g_testsWithIssueTrackersCsvFileHeadersRequired)
 
 
 # Write list of tests from a Tests LOD to a CSV file structure meant to match
 # tests with issue trackers CSV file.
 #
 def writeTestsLODToCsvFileStructure(testsLOD):
-  csvFileHeadersList = copy.deepcopy(g_testsWithIssueTrackersCsvFileHeaders)
+  csvFileHeadersList = copy.deepcopy(g_testsWithIssueTrackersCsvFileHeadersRequired)
   csvFileRowsList = []
   for testDict in testsLOD:
     csvFileRow = (
@@ -1186,6 +1181,9 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
   # Sort the test history by the buildstarttime (most current date at top)
   sortedTestHistoryLOD = copy.copy(testHistoryLOD)
   sortedTestHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
+
+  # Remove duplicate tests from list of dicts
+  # ToDo: Implement!
  
   # Get testing day/time helper object
   testingDayTimeObj = CBTD.CDashProjectTestingDay(currentTestDate, testingDayStartTimeUtc)
@@ -1337,7 +1335,7 @@ def checkCDashTestDictsAreSame(testDict_1, testDict_1_name,
     testDict_2_copy, testDict_2_name )
 
 
-# Get the test history CDash cache file.
+# Get the test history CDash cache filename
 #
 # Note: this takes care of things like having '/' in the test name
 #
