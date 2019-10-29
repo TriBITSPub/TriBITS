@@ -1600,7 +1600,7 @@ class test_dateFromBuildStartTime(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.sortTestHistoryGetStatistics()
+# Test CDashQueryAnalyzeReport.getUniqueSortedTestsHistoryLOD()
 #
 #############################################################################
 
@@ -1645,15 +1645,64 @@ def getTestHistoryLOD5(statusListOrderedByDate,
   # inside of AddTestHistoryToTestDictFuctor.  Also, the tests require the
   # exact ordering of this list do don't change it!
 
-def getSTestHistoryLOD5(statusListOrderedByDate):
+def getSortedTestHistoryLOD5(statusListOrderedByDate):
   sortedTestHistoryLOD = getTestHistoryLOD5(statusListOrderedByDate)
   sortedTestHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
   return sortedTestHistoryLOD
+
+class test_getUniqueSortedTestsHistoryLOD(unittest.TestCase):
+
+  def test_empty_entries(self):
+    testHistLOD = []
+    uniTestHistLOD = \
+      getUniqueSortedTestsHistoryLOD(testHistLOD)
+    self.assertEqual(len(uniTestHistLOD), 0)
+
+  def test_one_entries(self):
+    testHistLOD = [
+      getSortedTestHistoryLOD5(['Passed','Passed','Failed','Passed','Failed'])[2]
+      ]
+    uniTestHistLOD = \
+      getUniqueSortedTestsHistoryLOD(testHistLOD)
+    self.assertEqual(uniTestHistLOD[0]['buildstarttime'],'2000-12-30T05:54:03 UTC')
+
+  def test_unique_entries(self):
+    testHistLOD = \
+      getSortedTestHistoryLOD5(['Passed','Passed','Failed','Passed','Failed'])
+    uniTestHistLOD = \
+      getUniqueSortedTestsHistoryLOD(testHistLOD)
+    self.assertEqual(uniTestHistLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(uniTestHistLOD[1]['buildstarttime'],'2000-12-31T05:54:03 UTC')
+    self.assertEqual(uniTestHistLOD[2]['buildstarttime'],'2000-12-30T05:54:03 UTC')
+    self.assertEqual(uniTestHistLOD[3]['buildstarttime'],'2000-12-29T05:54:03 UTC')
+    self.assertEqual(uniTestHistLOD[4]['buildstarttime'],'2000-12-28T05:54:03 UTC')
+
+  def test_duplicate_entries(self):
+    testHistLOD = \
+      getSortedTestHistoryLOD5(['Passed','Passed','Failed','Passed','Failed'])
+    testHistLOD.insert(4, testHistLOD[4])
+    testHistLOD.insert(2, testHistLOD[2])
+    testHistLOD.insert(1, testHistLOD[0])
+    uniTestHistLOD = \
+      getUniqueSortedTestsHistoryLOD(testHistLOD)
+    self.assertEqual(uniTestHistLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(uniTestHistLOD[1]['buildstarttime'],'2000-12-31T05:54:03 UTC')
+    self.assertEqual(uniTestHistLOD[2]['buildstarttime'],'2000-12-30T05:54:03 UTC')
+    self.assertEqual(uniTestHistLOD[3]['buildstarttime'],'2000-12-29T05:54:03 UTC')
+    self.assertEqual(uniTestHistLOD[4]['buildstarttime'],'2000-12-28T05:54:03 UTC')
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.sortTestHistoryGetStatistics()
+#
+#############################################################################
 
 class test_sortTestHistoryGetStatistics(unittest.TestCase):
 
   def test_all_passed(self):
     testHistoryLOD = getTestHistoryLOD5(['Passed','Passed','Passed','Passed','Passed'])
+    testHistoryLOD.append(testHistoryLOD[2])  # Include a duplicate
     currentTestDate = "2001-01-01"
     testingDayStartTimeUtc = "00:00"
     daysOfHistory = 5
@@ -1661,6 +1710,7 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
       sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
          testingDayStartTimeUtc, daysOfHistory)
     # Test the sorting
+    self.assertEqual(len(sortedTestHistoryLOD), 5)
     self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(sortedTestHistoryLOD[1]['buildstarttime'],'2000-12-31T05:54:03 UTC')
     self.assertEqual(sortedTestHistoryLOD[2]['buildstarttime'],'2000-12-30T05:54:03 UTC')
@@ -1714,7 +1764,8 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testStatus, 'Passed')
 
   def test_pass_1_but_nopass_2_missing_1(self):
-    testHistoryLOD = getSTestHistoryLOD5(['Passed','DELETED','Failed','Passed','Failed'])
+    testHistoryLOD = \
+      getSortedTestHistoryLOD5(['Passed','DELETED','Failed','Passed','Failed'])
     del testHistoryLOD[1]
     currentTestDate = "2001-01-01"
     testingDayStartTimeUtc = "00:00"
@@ -1769,7 +1820,8 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testStatus, 'Failed')
 
   def test_failed_2_passed_1_missing_2(self):
-    testHistoryLOD = getSTestHistoryLOD5(['Failed','DELETED','Passed','DELETED','Failed'])
+    testHistoryLOD = \
+      getSortedTestHistoryLOD5(['Failed','DELETED','Passed','DELETED','Failed'])
     del testHistoryLOD[3]
     del testHistoryLOD[1]
     currentTestDate = "2001-01-01"
@@ -1827,7 +1879,8 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testStatus, 'Not Run')
 
   def test_notrun_2_passed_1_missing_2(self):
-    testHistoryLOD = getSTestHistoryLOD5(['Not Run','DELETED','Passed','Failed','DELETED'])
+    testHistoryLOD = \
+      getSortedTestHistoryLOD5(['Not Run','DELETED','Passed','Failed','DELETED'])
     del testHistoryLOD[4]
     del testHistoryLOD[1]
     currentTestDate = "2001-01-01"
@@ -1865,7 +1918,8 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testStatus, 'Missing')
 
   def test_all_missing_1_nopass_4(self):
-    testHistoryLOD = getSTestHistoryLOD5(['DELETED','Failed','Failed','Failed','Failed'])
+    testHistoryLOD = \
+      getSortedTestHistoryLOD5(['DELETED','Failed','Failed','Failed','Failed'])
     del testHistoryLOD[0]
     currentTestDate = "2001-01-01"
     testingDayStartTimeUtc = "00:00"
@@ -1884,7 +1938,8 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testStatus, 'Missing')
 
   def test_all_missing_3_pass_1_nopass__1(self):
-    testHistoryLOD = getSTestHistoryLOD5(['DELETED','DELETED','Failed','DELETED','Passed'])
+    testHistoryLOD = \
+      getSortedTestHistoryLOD5(['DELETED','DELETED','Failed','DELETED','Passed'])
     del testHistoryLOD[3]
     del testHistoryLOD[1]
     del testHistoryLOD[0]

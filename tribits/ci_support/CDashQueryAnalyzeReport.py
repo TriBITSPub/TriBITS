@@ -1123,6 +1123,9 @@ def dateFromBuildStartTime(buildStartTime):
 # allowed and handled in function.  Any days in that range missing contribute
 # to testHistoryStats['missing_last_x_days'].
 #
+# Also note that this function will remove any duplicate tests (which seem to
+# occur sometimes due to a defect in CDash).
+#
 # Returns:
 #
 #   (sortedTestHistoryLOD, testHistoryStats, testStatus)
@@ -1183,7 +1186,7 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
   sortedTestHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
 
   # Remove duplicate tests from list of dicts
-  # ToDo: Implement!
+  sortedTestHistoryLOD = getUniqueSortedTestsHistoryLOD(sortedTestHistoryLOD)
  
   # Get testing day/time helper object
   testingDayTimeObj = CBTD.CDashProjectTestingDay(currentTestDate, testingDayStartTimeUtc)
@@ -1261,6 +1264,34 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
 
   # Return the computed stuff
   return (sortedTestHistoryLOD, testHistoryStats, testStatus)
+
+
+# Get a new list with unique entires from an input sorted list of test dicts.
+#
+# The returned list is new and does not modify any of the entires in the input
+# sorted inputSortedTestHistoryLOD object.
+#
+def getUniqueSortedTestsHistoryLOD(inputSortedTestHistoryLOD):
+
+  if len(inputSortedTestHistoryLOD) == 0:
+    return inputSortedTestHistoryLOD
+
+  uniqueSortedTestHistoryLOD = []
+
+  lastUniqueTestDict = inputSortedTestHistoryLOD[0]
+  uniqueSortedTestHistoryLOD.append(lastUniqueTestDict)
+
+  idx = 1
+  while idx < len(inputSortedTestHistoryLOD):
+    candidateTestDict = inputSortedTestHistoryLOD[idx]
+    
+    if not checkCDashTestDictsAreSame(candidateTestDict, "a", lastUniqueTestDict, "b")[0]:
+      uniqueSortedTestHistoryLOD.append(candidateTestDict)
+      lastUniqueTestDict = candidateTestDict
+    # Else, this is dupliate test entry so skip
+    idx += 1
+
+  return uniqueSortedTestHistoryLOD
 
 
 # Extract testid and buildid from 'testDetailsLink' CDash test dict
