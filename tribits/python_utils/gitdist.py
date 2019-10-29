@@ -1015,6 +1015,8 @@ def parseGitdistFile(gitdistfile):
   defaultBranchDict = {}
   with open(gitdistfile, 'r') as file:
     for line in file:
+      line = line.strip()
+      if line == "": continue  # ignore blank lines!
       entries = line.split()
       reposFullList.append(entries[0])
       if len(entries) > 1:

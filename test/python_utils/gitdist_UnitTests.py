@@ -1024,7 +1024,10 @@ class test_gitdist(unittest.TestCase):
       open(".gitdist", "w").write(
         ".\n" \
         "ExtraRepo1\n" \
-        "ExtraRepo3\n"
+        "\n" \
+        "   \n" \
+        "ExtraRepo3\n" \
+        "\n"
         )
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status",
         workingDir=testDir)
