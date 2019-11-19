@@ -130,7 +130,7 @@ g_baseTestDir="cdash_analyze_and_report"
 def cdash_analyze_and_report_setup_test_dir(
   testCaseName,
   buildSetName="ProjectName Nightly Builds",
-  copyFrom="raw_cdash_data_twoif_12_twif_9",
+  copyFrom="twoif_12_twif_9",
   ):
   testInputDir = testCiSupportDir+"/"+g_baseTestDir+"/"+copyFrom
   testOutputDir = g_baseTestDir+"/"+testCaseName
@@ -1095,7 +1095,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
   # at all (other than in the STDOUT).  Finally, we want to to check tests
   # with issue trackers that are passing in the current testing day.  In order
   # implement this test, we don't want to use any extra data than what already
-  # exists in the raw_cdash_data_twoif_12_twif_9/ test directory.  To
+  # exists in the twoif_12_twif_9/ test directory.  To
   # accomplish this, we will remove some of the tests with issue trackers from
   # the file fullCDashNonpassingTests.json and the ones that we remove will be
   # for used to represent tests with issue trackers passing and missing tests.
