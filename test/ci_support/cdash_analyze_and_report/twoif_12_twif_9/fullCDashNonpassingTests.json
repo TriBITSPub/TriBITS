@@ -42,7 +42,7 @@
                  u'status': u'Failed',
                  u'statusclass': u'error',
                  u'testDetailsLink': u'testDetails.php?test=57859582&build=4107243',
-                 u'testname': u'Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1',
+                 u'testname': u'Intrepid2_unit-test_Discretization_shorter',
                  u'time': 15.66},
                { u'buildName': u'Trilinos-atdm-mutrino-intel-opt-openmp-KNL',
                  u'buildSummaryLink': u'buildSummary.php?buildid=4107245',
