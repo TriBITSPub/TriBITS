@@ -565,7 +565,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         "Builds with Build Failures: bf=0",
 
         "Tests without issue trackers Failed: twoif=10",
-        "Getting 30 days of history for Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
+        "Getting 30 days of history for Intrepid2_unit-test_Discretization_shorter in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "Getting 30 days of history for KokkosKernels_blas_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "Getting 30 days of history for KokkosKernels_common_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
         "Getting 30 days of history for KokkosKernels_graph_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file",
@@ -609,12 +609,12 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         "<tr>",
         "<td align=\"left\">mutrino</td>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>",
-        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\">Intrepid2_&shy;unit-test_&shy;Discretization_&shy;Basis_&shy;HCURL_&shy;TRI_&shy;In_&shy;FEM_&shy;Serial_&shy;Test_&shy;01_&shy;SLFadDouble_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\">Intrepid2_&shy;unit-test_&shy;Discretization_&shy;shorter</a></td>",
         "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57859582&build=4107243\"><font color=\"red\">Failed</font></a></td>",
         "<td align=\"left\">Completed [(]Failed[)]</td>",
-        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino\"><font color=\"red\">1</font></a></td>",
-        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino\"><font color=\"red\">1</font></a></td>",
-        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino\"><font color=\"green\">29</font></a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_shorter&field3=site&compare3=61&value3=mutrino\"><font color=\"red\">1</font></a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_shorter&field3=site&compare3=61&value3=mutrino\"><font color=\"red\">1</font></a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_shorter&field3=site&compare3=61&value3=mutrino\"><font color=\"green\">29</font></a></td>",
         "<td align=\"right\"></td>",
         "</tr>",
 
@@ -676,7 +676,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       {
         'site': 'mutrino',
         'buildName': 'Trilinos-atdm-mutrino-intel-opt-openmp-KNL',
-        'testname': 'Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1',
+        'testname': 'Intrepid2_unit-test_Discretization_shorter',
         'issue_tracker_url': '',
         'issue_tracker': '',
         }
