@@ -83,7 +83,50 @@ def deleteThenCreateTestDir(testDir):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.validateAndConvertYYYYMMDD_pass1()
+# Test CDashQueryAnalyzeReport.convertInputDateArgToYYYYMMDD()
+#
+#############################################################################
+
+class test_convertInputDateArgToYYYYMMDD(unittest.TestCase):
+
+  def test_yesterday_before_testing_day_start(self):
+    convertedDate = convertInputDateArgToYYYYMMDD("04:01", "yesterday",
+      "2019-11-20T04:00:00 UTC")
+    self.assertEqual(str(convertedDate), "2019-11-18 00:00:00")
+
+  def test_yesterday_after_testing_day_start(self):
+    convertedDate = convertInputDateArgToYYYYMMDD("04:01", "yesterday",
+      "2019-11-20T04:02:00 UTC")
+    self.assertEqual(str(convertedDate), "2019-11-19 00:00:00")
+
+  def test_today_before_testing_day_start(self):
+    convertedDate = convertInputDateArgToYYYYMMDD("04:01", "today",
+      "2019-11-20T04:00:00 UTC")
+    self.assertEqual(str(convertedDate), "2019-11-19 00:00:00")
+
+  def test_today_after_testing_day_start(self):
+    convertedDate = convertInputDateArgToYYYYMMDD("04:01", "today",
+      "2019-11-20T04:02:00 UTC")
+    self.assertEqual(str(convertedDate), "2019-11-20 00:00:00")
+
+  def test_YYYYMMDD_before_testing_day_start(self):
+    convertedDate = convertInputDateArgToYYYYMMDD("04:01", "2019-11-20",
+      "2019-11-20T04:00:00 UTC")
+    self.assertEqual(str(convertedDate), "2019-11-20 00:00:00")
+
+  def test_YYYYMMDD_after_testing_day_start(self):
+    convertedDate = convertInputDateArgToYYYYMMDD("04:01", "2019-11-20",
+      "2019-11-20T04:02:00 UTC")
+    self.assertEqual(str(convertedDate), "2019-11-20 00:00:00")
+
+  # Above, in the last two tests, I am askig for the testing day 2019-11-20
+  # and therefore it should not matter when I ask for that.  I should always
+  # get results for that testing day!
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.validateAndConvertYYYYMMDD()
 #
 #############################################################################
 
