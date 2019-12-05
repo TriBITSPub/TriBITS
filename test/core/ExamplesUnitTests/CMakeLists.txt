@@ -44,6 +44,12 @@
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/GetCompilerPassthroughArgs.cmake)
 
+IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  SET(IS_REAL_LINUX_SYSTEM ON)
+ELSE()
+  SET(IS_REAL_LINUX_SYSTEM OFF)
+ENDIF()
+
 
 ########################################################################
 # RawHelloWorld
@@ -451,6 +457,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_Shared_NoVersion
   OVERALL_WORKING_DIRECTORY TEST_NAME
+  EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -517,10 +524,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     CMND ls ARGS -ld
       install install/include install/lib install/bin
     PASS_REGULAR_EXPRESSION_ALL
-      "drwx.*[.] .* install"
-      "drwx.*[.] .* install/bin"
-      "drwx.*[.] .* install/include"
-      "drwx.*[.] .* install/lib"
+      "drwx.* .* install"
+      "drwx.* .* install/bin"
+      "drwx.* .* install/include"
+      "drwx.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
     # NOTE: Above we can't change the default group or other permissions
     # because that depends on the user's umask when the run these tests.  But
@@ -532,9 +539,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     CMND ls ARGS -l
       install install/include install/lib install/bin
     PASS_REGULAR_EXPRESSION_ALL
-      "[-]rwxr-xr-x[.] .* hello_world.exe"
-      "[-]rw-r--r--[.] .* Makefile.export.HelloWorld"
-      "[-]rw-r--r--[.] .* .* libhello_world_lib.a"
+      "[-]rwxr-xr-x.* .* hello_world.exe"
+      "[-]rw-r--r--.* .* Makefile.export.HelloWorld"
+      "[-]rw-r--r--.* .* .* libhello_world_lib.a"
     ALWAYS_FAIL_ON_NONZERO_RETURN
     # NOTE: The above permissions are the default install permissions of CMake
     # for files that it installs.
@@ -568,10 +575,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     CMND ls ARGS -ld
       install install/include install/lib install/bin
     PASS_REGULAR_EXPRESSION_ALL
-      "drwxr-xr-x[.] .* install"
-      "drwxr-xr-x[.] .* install/bin"
-      "drwxr-xr-x[.] .* install/include"
-      "drwxr-xr-x[.] .* install/lib"
+      "drwxr-xr-x.* .* install"
+      "drwxr-xr-x.* .* install/bin"
+      "drwxr-xr-x.* .* install/include"
+      "drwxr-xr-x.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_9
@@ -604,10 +611,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     CMND ls ARGS -ld
       install install/include install/lib install/bin
     PASS_REGULAR_EXPRESSION_ALL
-      "drwxr-x---[.] .* install"
-      "drwxr-x---[.] .* install/bin"
-      "drwxr-x---[.] .* install/include"
-      "drwxr-x---[.] .* install/lib"
+      "drwxr-x---.* .* install"
+      "drwxr-x---.* .* install/bin"
+      "drwxr-x---.* .* install/include"
+      "drwxr-x---.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_13
@@ -640,10 +647,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     CMND ls ARGS -ld
       install install/include install/lib install/bin
     PASS_REGULAR_EXPRESSION_ALL
-      "drwx------[.] .* install"
-      "drwx------[.] .* install/bin"
-      "drwx------[.] .* install/include"
-      "drwx------[.] .* install/lib"
+      "drwx------.* .* install"
+      "drwx------.* .* install/bin"
+      "drwx------.* .* install/include"
+      "drwx------.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
@@ -723,7 +730,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_run
     MESSAGE "Make install_package_by_package with a runner"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install_package_by_package
     PASS_REGULAR_EXPRESSION_ALL
-      "Running: .*/cmake -P cmake_pbp_install[.]cmake"
+      "Running: .*/cmake.* -P cmake_pbp_install[.]cmake"
       "Installing: .*/TriBITS_TribitsHelloWorld_install_package_by_package_with_runner/install/lib/libhello_world_lib[.]a"
       "Installing: .*/TriBITS_TribitsHelloWorld_install_package_by_package_with_runner/install/include/hello_world_lib[.]hpp"
       "Installing: .*/TriBITS_TribitsHelloWorld_install_package_by_package_with_runner/install/bin/hello_world[.]exe"
@@ -1215,7 +1222,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsExProj'"
       "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
       "EXPORT_VAR_PREFIX = 'TribitsExProj'"
-      "CMAKE_COMMAND = '.*/cmake'"
+      "CMAKE_COMMAND = '${CMAKE_COMMAND}"
       "Create the dummy client directory ..."
       "Create dummy dummy_client_of_TribitsExProj/CMakeLists.txt file ..."
       "Configure the dummy project to print the variables in .*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/dummy_client_of_TribitsExProj ..."
@@ -2844,6 +2851,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
   OVERALL_WORKING_DIRECTORY TEST_NAME
+  EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
 
@@ -2931,6 +2939,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
   OVERALL_WORKING_DIRECTORY TEST_NAME
+  EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
 
@@ -3257,6 +3266,7 @@ TRIBITS_ADD_TEST(
   simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
     DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install2/bin
   NAME TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run
+  EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   ENVIRONMENT
     LD_LIBRARY_PATH=${RPATH_CURRENT_TEST_DIR}/install2/lib:${LD_LIBRARY_PATH_ORIG}
   ADDED_TESTS_NAMES_OUT TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES
@@ -3401,6 +3411,7 @@ TRIBITS_ADD_TEST(
   simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
     DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install3/bin
   NAME TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run
+  EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   PASS_REGULAR_EXPRESSION
     "Hello World"
   ENVIRONMENT
