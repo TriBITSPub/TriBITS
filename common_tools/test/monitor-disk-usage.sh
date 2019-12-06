@@ -23,7 +23,7 @@ partition=$1
 percentage_usage_warn=$2
 email_addresss=$3
 
-hostname=`hostname`
+hostname=`hostname -f`
 
 CURRENT=$(df ${partition} | grep ${partition} | awk '{ print $5}' | sed 's/%//g')
 
@@ -36,12 +36,14 @@ echo
 echo "${df_h_output}"
 
 if [ "${CURRENT}" -gt "${percentage_usage_warn}" ] ; then
+  echo
   echo "Sending notiviation email to ${email_addresss}"
   mail -s "${usage_str}" ${email_addresss} << EOF
 WARNING: Partition ${partition} on ${hostname} is critically low!
-  Used: ${CURRENT}%
-  Warning threshold: ${percentage_usage_warn}%
 
-  ${df_h_output}
+Used: ${CURRENT}%
+Warning threshold: ${percentage_usage_warn}%
+
+${df_h_output}
 EOF
 fi
