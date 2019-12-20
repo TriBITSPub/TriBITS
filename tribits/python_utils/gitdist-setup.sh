@@ -37,7 +37,7 @@ function gitdist-show-full-repo-state {
   echo
   echo "Repo remotes:"
   echo
-  gitdist "$@" remote -v | grep "\(Git Repo\|push\)"
+  gitdist --dist-no-color "$@" remote -v | grep "\(Git Repo\|push\)"
 }
 export -f gitdist-show-full-repo-state
 
