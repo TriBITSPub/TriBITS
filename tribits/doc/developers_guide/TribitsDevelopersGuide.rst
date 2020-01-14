@@ -9165,6 +9165,20 @@ Below is a snapshot of the output from ``install_devtools.py --help``.
    :literal:
 
 
+TriBITS System Maintainers Guide
+================================
+
+In this last section, information for maintainers of the TriBITS system itself
+is contained.  This information is meant to make it easier to understand and
+manipulate the internal implementation of TriBITS.
+
+
+.. include:: ../../core/package_arch/TribitsPackageDependenciesDataStructures.rst
+
+
+.. include:: TribitsSystemMacroFunctionDoc.rst
+
+
 
 .. ***
 .. *** Common references

@@ -371,12 +371,14 @@ ENDFUNCTION()
 
 
 #
-# Macro that processes ${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS into
-# ${PROJECT_NAME}_PACKAGES, ${PROJECT_NAME}_PACKAGE_DIRS, ${PROJECT_NAME}_NUM_PACKAGES,
-# ${PROJECT_NAME}_LAST_PACKAGE_IDX, and ${PROJECT_NAME}_REVERSE_PACKAGES.
+# Macro that processes
+# ${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS into
+# ${PROJECT_NAME}_PACKAGES, ${PROJECT_NAME}_PACKAGE_DIRS,
+# ${PROJECT_NAME}_NUM_PACKAGES, ${PROJECT_NAME}_LAST_PACKAGE_IDX, and
+# ${PROJECT_NAME}_REVERSE_PACKAGES.
 #
-# This macro also sets up the standard package options along with
-# default enables/disables.
+# This macro also sets up the standard package options along with default
+# enables/disables.
 #
 # NOTE: Set TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE=TRUE to see really verbose
 # debug ouptut from this macro.
