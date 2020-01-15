@@ -931,15 +931,29 @@ ENDFUNCTION()
 
 
 #
-# Macro that reads all the package dependencies and builds dependency graph
+# @MACRO: TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()
 #
-# Reads from the variables:
+# Usage::
+#
+#   TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()
+#
+# Macro that reads all the package dependencies and builds dependency graph.
+# This reads in all of the `<packageDir>/cmake/Dependencies.cmake`_ and
+# `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ files and builds the
+# depenency graph varibles.
+#
+# Reads from the variables::
+#
 #   ${PROJECT_NAME}_ALL_REPOSITORIES
 #   ${PROJECT_NAME}_PACKAGES
 #
-# Writes to:
+# Writes to the variables:
+#
 #   ${PROJECT_NAME}_SE_PACKAGES
-#   ${PROJECT_NAME}_SE_PACKAGES_DIRS	
+#   ${PROJECT_NAME}_SE_PACKAGES_DIS
+#
+# as well as the package dependency varaibles described in `Top-level internal
+# non-cache variables defining direct package dependencies`_.
 #
 MACRO(TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES)
 

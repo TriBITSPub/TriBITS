@@ -1785,6 +1785,8 @@ Once all of the TriBITS SE package's ``Dependencies.cmake`` files have been
 processed, the following *TriBITS Package Top-Level Local Variables* are
 defined:
 
+  .. _${PACKAGE_NAME}_SOURCE_DIR:
+
   ``${PACKAGE_NAME}_SOURCE_DIR``
 
     The absolute path to the package's base source directory.  CMake code, for
@@ -1794,6 +1796,8 @@ defined:
     defined for all declared packages that exist, independent of whether they
     are enabled or not.  This variable is set as soon as it is known if the
     given package exists or not.
+
+  .. _${PACKAGE_NAME}_BINARY_DIR:
 
   ``${PACKAGE_NAME}_BINARY_DIR``
 
@@ -2162,6 +2166,7 @@ relationship between the subpackages within a single parent package.  These
 are some of the issues to consider when breaking up software into packages and
 subpackages that will be mentioned in other sections as well.
 
+
 TriBITS TPL
 +++++++++++
 
@@ -2210,7 +2215,7 @@ module which is currently:
 Some concrete ``FindTPL${TPL_NAME}.cmake`` files actually do use
 ``FIND_PACKAGE()`` and a standard CMake package find module to fill in the
 guts of finding at TPL which is perfectly fine.  In this case, the purpose for
-the wrapping ``FindTPL${TPL_NAME}.cmake`` is to standardize the output
+the wrapping ``FindTPL${TPL_NAME}.cmake`` file is to standardize the output
 variables ``TPL_${TPL_NAME}_INCLUDE_DIRS`` and ``TPL_${TPL_NAME}_LIBRARIES``.
 For more details on properly using ``FIND_PACKAGE()`` to define a
 ``FindTPL${TPL_NAME}.cmake`` file, see `How to use FIND_PACKAGE() for a
@@ -2218,6 +2223,8 @@ TriBITS TPL`_.
 
 Once the `<repoDir>/TPLsList.cmake`_ files are all processed, then each
 defined TPL ``TPL_NAME`` is assigned the following global non-cache variables:
+
+  .. _${PACKAGE_NAME}_FINDMOD:
 
   .. _${TPL_NAME}_FINDMOD:
 
@@ -2251,6 +2258,10 @@ defined TPL ``TPL_NAME`` is assigned the following global non-cache variables:
     be used.  Therefore, the project can override the test group for a given
     TPL if desired.
 
+As noted above, it is allowed for the same TPL to be listed in multiple
+`<repoDir>/TPLsList.cmake`_ files.  In this case, the rules for overrides of
+the find module and the test group as as described above.
+
 The specification given in `Enabling support for an optional Third-Party
 Library (TPL)`_ and `TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES()`_ describes
 how the a ``FindTPL${TPL_NAME}.cmake`` module should behave and allow users to
@@ -2268,6 +2279,7 @@ The core variables related to an enabled TPL are ``${TPL_NAME}_LIBRARIES``,
 ``${TPL_NAME}_INCLUDE_DIRS``, and ``${TPL_NAME}_TESTGROUP`` as defined in
 `TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES()`_ need to be defined.  For more
 details, see `TRIBITS_REPOSITORY_DEFINE_TPLS()`_.
+
 
 Processing of TriBITS Files: Ordering and Details
 --------------------------------------------------

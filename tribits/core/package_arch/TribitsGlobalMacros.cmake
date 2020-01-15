@@ -2460,7 +2460,6 @@ ENDFUNCTION()
 #
 # Macro that does the final set of package configurations
 #
-
 MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
 
   IF (${PROJECT_NAME}_ENABLE_CONFIGURE_TIMING)
@@ -2612,7 +2611,6 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
 
   ENDFOREACH()
 
-
   #
   # D) Loop backwards over ETI packages if ETI is enabled
   #
@@ -2725,7 +2723,6 @@ ENDMACRO()
 #
 # Set up for packaging and distribution
 #
-
 MACRO(TRIBITS_SETUP_PACKAGING_AND_DISTRIBUTION)
 
   IF (${PROJECT_NAME}_ENABLE_CONFIGURE_TIMING)
@@ -2883,7 +2880,6 @@ ENDMACRO()
 #
 # Setup for installation
 #
-
 MACRO(TRIBITS_SETUP_FOR_INSTALLATION)
 
   # Set up to install <Package>Config.cmake, <Project>Config.cmake, and export
@@ -2966,7 +2962,7 @@ ENDMACRO()
 # never get added to ``CPACK_SOURCE_IGNORE_FILES``.
 #
 # Also, be careful to note that the ``<filei>`` arguments are actually regexes
-# and one must be very careful not understand how CPack will use these regexes
+# and one must be very careful to understand how CPack will use these regexes
 # to match files that get excluded from the tarball.  For more details, see
 # `Creating Source Distributions`_.
 #

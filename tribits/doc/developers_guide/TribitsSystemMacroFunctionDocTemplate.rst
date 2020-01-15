@@ -10,4 +10,6 @@ These are key macros and functions that are used to implement the guts of
 TriBITS that TriBITS System Maintainers need to know about in order to
 understand the internals of TriBITS.
 
+@MACRO:    TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS() +
 @MACRO:    TRIBITS_PROCESS_TPLS_LISTS() +
+@MACRO:    TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES() +
