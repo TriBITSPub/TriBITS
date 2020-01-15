@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #
-# Send an email of the given partition is greater than percentage threadshold.
+# Send emails if the given disk partition usage is greater than the given
+# percentage threadshold.
 #
 # Usage:
 #
