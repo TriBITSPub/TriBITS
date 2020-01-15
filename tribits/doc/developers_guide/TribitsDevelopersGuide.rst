@@ -1797,6 +1797,16 @@ defined:
     are enabled or not.  This variable is set as soon as it is known if the
     given package exists or not.
 
+  .. _${PACKAGE_NAME}_REL_SOURCE_DIR:
+
+  ``${PACKAGE_NAME}_REL_SOURCE_DIR``
+
+    The **relative path** to the package's base source directory, relative to
+    the projects base source directory `${PROJECT_NAME}_SOURCE_DIR`_.  This is
+    used in various contexts such as processing the packages
+    `<packageDir>/CMakeLists.txt`_ file and generating the projects
+    `<Project>PackageDependencies.xml`_ file where relative paths are needed.
+
   .. _${PACKAGE_NAME}_BINARY_DIR:
 
   ``${PACKAGE_NAME}_BINARY_DIR``

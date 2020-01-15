@@ -1537,7 +1537,6 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
 
   # Set to empty
   SET(${PROJECT_NAME}_PACKAGES)
-  SET(${PROJECT_NAME}_PACKAGE_DIRS)
   SET(${PROJECT_NAME}_TPLS)
 
   #
@@ -2481,15 +2480,12 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
   # other even downstream packages (which is pretty messed up really).
   #
 
-  SET(PACKAGE_IDX 0)
   FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
 
     # Get all the package sources independent of whether they are enabled or not.
     # There are some messed up packages that grab parts out of unrelated
     # downstream packages that might not even be enabled.  To support this,
     # allow this.
-    LIST(GET ${PROJECT_NAME}_PACKAGE_DIRS ${PACKAGE_IDX} PACKAGE_DIR)
-    #PRINT_VAR(${TRIBITS_PACKAGE}_SOURCE_DIR)
 
     TRIBITS_DETERMINE_IF_PROCESS_PACKAGE(${TRIBITS_PACKAGE}
        PROCESS_PACKAGE  PACKAGE_ENABLE_STR)
@@ -2507,15 +2503,14 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
             ${CMAKE_CURRENT_BINARY_DIR}/${${TRIBITS_PACKAGE}_SPECIFIED_BINARY_DIR})
         ENDIF()
       ELSE()
-        SET(${TRIBITS_PACKAGE}_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_DIR})
+        SET(${TRIBITS_PACKAGE}_BINARY_DIR
+	  ${CMAKE_CURRENT_BINARY_DIR}/${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
       ENDIF()
       IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
         PRINT_VAR(${TRIBITS_PACKAGE}_BINARY_DIR)
       ENDIF()
 
     ENDIF()
-
-    MATH(EXPR PACKAGE_IDX "${PACKAGE_IDX}+1")
 
   ENDFOREACH()
 
@@ -2536,7 +2531,6 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
   # Tell packages that are also repos they are being processed as a package.
   SET(TRIBITS_PROCESSING_PACKAGE TRUE)
 
-  SET(PACKAGE_IDX 0)
   FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
 
     TRIBITS_DETERMINE_IF_PROCESS_PACKAGE(${TRIBITS_PACKAGE}
@@ -2606,8 +2600,6 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
       SET(CONFIGURED_A_PACKAGE TRUE)
 
     ENDIF()
-
-    MATH(EXPR PACKAGE_IDX "${PACKAGE_IDX}+1")
 
   ENDFOREACH()
 
@@ -2740,10 +2732,8 @@ MACRO(TRIBITS_SETUP_PACKAGING_AND_DISTRIBUTION)
 
   IF (${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION)
     SET(_SE_OR_FULL_PACKAGES ${${PROJECT_NAME}_SE_PACKAGES})
-    SET(_SE_OR_FULL_PACKAGE_DIRS ${${PROJECT_NAME}_SE_PACKAGE_DIRS})
   ELSE()
     SET(_SE_OR_FULL_PACKAGES ${${PROJECT_NAME}_PACKAGES})
-    SET(_SE_OR_FULL_PACKAGE_DIRS ${${PROJECT_NAME}_PACKAGE_DIRS})
   ENDIF()
 
   TRIBITS_GET_NONENABLED_LIST(
@@ -2759,10 +2749,6 @@ MACRO(TRIBITS_SETUP_PACKAGING_AND_DISTRIBUTION)
 
     IF (NOT TRIBITS_PACKAGE_DONT_IGNORE)
 
-      LIST(FIND _SE_OR_FULL_PACKAGES ${TRIBITS_PACKAGE} PACKAGE_IDX)
-      LIST(GET _SE_OR_FULL_PACKAGE_DIRS ${PACKAGE_IDX} PACKAGE_DIR)
-      # ToDo: Repalce the above O(N) LIST(FIND ...) with a O(1) lookup ...
-
       # Checking if we have a relative path to the package's files. Since the
       # exclude is a regular expression any "../" will be interpretted as <any
       # char><any char>/ which would never match the package's actual
@@ -2772,14 +2758,17 @@ MACRO(TRIBITS_SETUP_PACKAGING_AND_DISTRIBUTION)
       # find_path for the CMakeLists.txt file for the package. Since the
       # package has to have this file to work correctly it should be
       # guaranteed to be there.
-      STRING(REGEX MATCH "[.][.]/" IS_RELATIVE_PATH ${PACKAGE_DIR})
-      IF("${IS_RELATIVE_PATH}" STREQUAL "")
-        SET(CPACK_SOURCE_IGNORE_FILES "${PROJECT_SOURCE_DIR}/${PACKAGE_DIR}/"
+      STRING(REGEX MATCH "[.][.]/" RELATIVE_PATH_CHARS_MATCH
+	${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
+      IF ("${RELATIVE_PATH_CHARS_MATCH}" STREQUAL "")
+        SET(CPACK_SOURCE_IGNORE_FILES
+	  "${PROJECT_SOURCE_DIR}/${${TRIBITS_PACKAGE}_REL_SOURCE_DIR}/"
           ${CPACK_SOURCE_IGNORE_FILES})
       ELSE()
         FIND_PATH(ABSOLUTE_PATH  CMakeLists.txt  PATHS
-          ${PROJECT_SOURCE_DIR}/${PACKAGE_DIR} NO_DEFAULT_PATH)
-        IF("${ABSOLUTE_PATH}" STREQUAL "ABSOLUTE_PATH-NOTFOUND")
+          "${PROJECT_SOURCE_DIR}/${${TRIBITS_PACKAGE}_REL_SOURCE_DIR}"
+	  NO_DEFAULT_PATH)
+        IF ("${ABSOLUTE_PATH}" STREQUAL "ABSOLUTE_PATH-NOTFOUND")
           MESSAGE(AUTHOR_WARNING "Relative path found for disabled package"
             " ${TRIBITS_PACKAGE} but package was missing a CMakeLists.txt file."
             " This disabled package will likely not be excluded from a source release")
