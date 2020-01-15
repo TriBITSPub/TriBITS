@@ -2968,6 +2968,14 @@ ENDMACRO()
 #
 MACRO(TRIBITS_EXCLUDE_FILES)
 
+  IF (NOT "${${PACKAGE_NAME}_PARENT_PACKAGE}" STREQUAL "")
+    MESSAGE(FATAL_ERROR
+      "ERROR: TRIBITS_EXCLUDE_FILES() was called in a subpackage CmakeLists.txt file!"
+      "  Instead, move this call to the file"
+      " ${${${PACKAGE_NAME}_PARENT_PACKAGE}_SOURCE_DIR}/CMakeLists.txt"
+      " and adjust the paths accodingly!" )
+  ENDIF()
+
   SET(FILES_TO_EXCLUDE ${ARGN})
 
   # Need to add "/<project source dir>/<package dir>/" to each file to prevent

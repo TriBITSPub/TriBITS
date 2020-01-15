@@ -87,19 +87,6 @@ This data gets set in functions in the file::
 
   TribitsProcessPackagesAndDirsLists.cmake
 
-The full list of all of the defined packages and subpackages is stored in the
-variable::
-
-  ${PROJECT_NAME}_SE_PACKAGES
-
-That list is created from the information in the
-`<repoDir>/PackagesList.cmake`_ and `<packageDir>/cmake/Dependencies.cmake`_
-files and the Dependencies.cmake files for the top-level packages must be read
-in order to define that variable and those files are read and processed in the
-macro `TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()`_ using macros in the file::
-
-  TribitsAdjustPackageEnables.cmake
-
 The full list of defined TPLs is stored in the variable::
 
   ${PROJECT_NAME}_TPLS
@@ -114,6 +101,25 @@ of these TriBITS TPLs are defined::
 This data gets set in functions in the file::
 
   TribitsProcessTplsLists.cmake  
+
+The full list of all of the defined packages and subpackages is stored in the
+project-level non-cache list variable::
+
+  ${PROJECT_NAME}_SE_PACKAGES
+
+That list is created from the information in the
+`<repoDir>/PackagesList.cmake`_ and `<packageDir>/cmake/Dependencies.cmake`_
+files and the Dependencies.cmake files for the top-level packages must be read
+in order to define that variable and those files are read and processed in the
+macro `TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()`_ using macros in the file::
+
+  TribitsAdjustPackageEnables.cmake
+
+One can determine if a package in this list is a top-level parent package or a
+sub-subpackage based on the value of the varaible
+`${PACKAGE_NAME}_PARENT_PACKAGE`_.  If the value is non empty, then
+``${PACKAGE_NAME}`` is a subpackage.  If the value is empty "", then
+``${PACKAGE_NAME}`` is a parent package.
 
 
 Top-level user cache variables

@@ -2126,6 +2126,13 @@ to refer to its parent package where a top-level package does not have a
 parent package.  The extra variables that are defined when processing a
 subpackage's files are:
 
+  .. _${PACKAGE_NAME}_PARENT_PACKAGE:
+
+  ``${PACKAGE_NAME}_PARENT_PACKAGE``
+
+    The name of the parent package.  (NOTE: If this is empty "", then
+    ``${PACKAGE_NAME}`` is actually a parent package and not a subpackage.)
+
   .. _PARENT_PACKAGE_NAME:
 
   ``PARENT_PACKAGE_NAME``
