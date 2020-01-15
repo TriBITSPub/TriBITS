@@ -1295,6 +1295,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       ${REGEX_FOR_GITIGNORE}
       "Only in .*/TribitsExampleProject/packages: mixed_lang"
       "Only in .*/TribitsExampleProject/packages: wrap_external"
+      "Only in .*/TribitsExampleProject/packages/with_subpackages/b: ExcludeFromRelease.txt"
+      "Only in .*/TribitsExampleProject/packages/with_subpackages/b/src: AlsoExcludeFromTarball.txt"
     # NOTE: We don't check return code because diff returns nonzero
 
   )

@@ -2946,13 +2946,13 @@ ENDMACRO()
 #
 #  TRIBITS_EXCLUDE_FILES(<file0> <file1> ...)
 #
-# This is called in the package's top-level `<packageDir>/CMakeLists.txt`_
-# file and each file or directory name ``<filei>`` is actually interpreted by
-# CMake/CPack as a regex that is prefixed by the project's and package's
-# source directory names so as to not exclude files and directories of the
-# same name and path from other packages.  If ``<filei>`` is an absolute path
-# it is not prefixed but is appended to ``CPACK_SOURCE_IGNORE_FILES``
-# unmodified.
+# This is called in the top-level parent package's
+# `<packageDir>/CMakeLists.txt`_ file and each file or directory name
+# ``<filei>`` is actually interpreted by CMake/CPack as a regex that is
+# prefixed by the project's and package's source directory names so as to not
+# exclude files and directories of the same name and path from other packages.
+# If ``<filei>`` is an absolute path it is not prefixed but is appended to
+# ``CPACK_SOURCE_IGNORE_FILES`` unmodified.
 #
 # In general, do **NOT** put in excludes for files and directories that are
 # not under this package's source tree.  If the given package is not enabled,
@@ -2977,17 +2977,14 @@ MACRO(TRIBITS_EXCLUDE_FILES)
 
   SET(${PROJECT_NAME}_SOURCE_PATH ${${PROJECT_NAME}_SOURCE_DIR})
 
-  LIST(FIND ${PROJECT_NAME}_PACKAGES ${PACKAGE_NAME} PACKAGE_IDX)
-  LIST(GET ${PROJECT_NAME}_PACKAGE_DIRS ${PACKAGE_IDX} PACKAGE_DIR)
-
   FOREACH(FILE ${FILES_TO_EXCLUDE})
     #Ensure that if the full path was specified for the file that we don't add
     #"/<project source dir>/<package dir>/" again.
-    SET(MATCH_STRING "${${PROJECT_NAME}_SOURCE_PATH}/${PACKAGE_DIR}")
+    SET(MATCH_STRING "${${PACKAGE_NAME}_SOURCE_DIR}")
     STRING(REGEX MATCH ${MATCH_STRING} MATCHED ${FILE} )
     IF(NOT MATCHED)
       LIST(APPEND MODIFIED_FILES_TO_EXCLUDE
-        ${${PROJECT_NAME}_SOURCE_PATH}/${PACKAGE_DIR}/${FILE})
+        "${${PACKAGE_NAME}_SOURCE_DIR}/${FILE}")
     ELSE()
       LIST(APPEND MODIFIED_FILES_TO_EXCLUDE ${FILE})
     ENDIF()
