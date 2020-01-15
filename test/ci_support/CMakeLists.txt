@@ -207,20 +207,20 @@ FUNCTION(Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_li
     OVERALL_NUM_MPI_PROCS 1
   
     TEST_0
-      CMND "${CMAKE_COMMAND}"
-      ARGS -E copy_directory
+      CMND cp
+      ARGS -r
         "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject"
 	TribitsExampleProject
   
     TEST_1
-      CMND "${CMAKE_COMMAND}"
-      ARGS -E copy_directory
+      CMND cp
+      ARGS -r
         "${${PROJECT_NAME}_TRIBITS_DIR}"
 	TribitsExampleProject/cmake/tribits
   
     TEST_2
-      CMND "${CMAKE_COMMAND}"
-      ARGS -E copy
+      CMND cp
+      ARGS
         "${CMAKE_CURRENT_LIST_DIR}/test_data/${CHANGED_FILES_NAME}"
         changed_files.txt
   
