@@ -695,7 +695,6 @@ ENDMACRO()
 # Macro that reads in a single subpackage dependencies file and sets up
 # the dependency structure for it.
 #
-
 MACRO(TRIBITS_READ_SUBPACKAGE_DEPENDENCIES  PACKAGE_NAME
   SUBPACKAGE_NAME  SUBPACKAGE_DIR
   )
@@ -952,8 +951,10 @@ ENDFUNCTION()
 #   ${PROJECT_NAME}_SE_PACKAGES
 #   ${PROJECT_NAME}_SE_PACKAGES_DIS
 #
-# as well as the package dependency varaibles described in `Top-level internal
-# non-cache variables defining direct package dependencies`_.
+# as well creates the package dependency varaibles described in `Top-level
+# internal non-cache variables defining direct package dependencies`_ that
+# defines the directed package depenency graph (with navigation up and down
+# the graph).
 #
 MACRO(TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES)
 

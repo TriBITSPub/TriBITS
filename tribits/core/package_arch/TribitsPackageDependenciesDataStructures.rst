@@ -8,14 +8,14 @@ the TriBITS system itself and should not need to be know by TriBITS Project
 maintainers.
 
 
-List of all defined internal (TriBITS) and external (TPL) packages
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Lists internal (TriBITS) and external (TPL) packages
+++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The full list of defined external packages (TPLs) and top-level internal
 packages (TriBITS packages) is storied in the project-level non-cache list
 variable::
 
-  ${PROJECT_NAME}_ALL_PACKAGES
+  ${PROJECT_NAME}_ALL_DEFINED_PACKAGES
 
 The first set of elements in this list are the defined external packages
 (TPLs) that are read in from the `<repoDir>/TPLsList.cmake`_ files from each
@@ -25,20 +25,78 @@ internal packages (TriBITS packages) that are defined in the
 read in order.
 
 An internal TriBITS Package (i.e. a package that can be built from source)
-will have a non-empty `${PACKAGE_NAME}_SOURCE_DIR`_ varaible set while an
-external package (i.e. TPL that is prebuilt and installed in some way) in this
-list will have a non-empty `${PACKAGE_NAME}_FINDMOD`_ varaible set.  However,
-the final decision if a package is treated as an internal or external package
-is determiend by the variable::
+will have a non-empty `${PACKAGE_NAME}_SOURCE_DIR`_ ``!= ""`` varaible set
+while an external package (i.e. TPL that is prebuilt and installed in some
+way) in this list will have a non-empty `${PACKAGE_NAME}_FINDMOD`_ ``!= ""``
+varaible set.
+
+The orignal list of all defined external packages (TPLs) read from the
+processed `<repoDir>/TPLsList.cmake`_ files is given in the variable::
+
+  ${PROJECT_NAME}_DEFINED_TPLS
+
+The orginal list of all defined internal packages read in from the processed
+`<repoDir>/PackagesList.cmake`_ files is given in the variable::
+
+  ${PACKAGE_NAME}_DEFINED_INTERNAL_PACKAGES
+
+The sizes of these arrays is given by the variables:
+
+  ${PACKAGE_NAME}_NUM_DEFINED_TPLS
+  ${PACKAGE_NAME}_NUM_DEFINED_INTERNAL_PACKAGES
+
+However, the final decision if a package is treated as an internal or external
+package is determiend by the variable::
 
   ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
 
-For example, a package that has a non-empty ``${PACKAGE_NAME}_SOURCE_DIR``
-variable can in facth have ``${PACKAGE_NAME}_PACKAGE_STATUS=EXTERNAL`` in a
-number of different use cases.  (One example is if the user configured with
-``TPL_ENABLE_${PACKAGE_NAME}=ON`` telling the TriBITS project to not build the
-package ``${PACKAGE_NAME}`` from source but instead to look for it out on the
-system.)
+For example, a package that has a non-empty variable
+``${PACKAGE_NAME}_SOURCE_DIR != ""`` can in fact have
+``${PACKAGE_NAME}_PACKAGE_STATUS=EXTERNAL`` in various use cases.  (One
+example is if the user configured with ``TPL_ENABLE_${PACKAGE_NAME}=ON``
+telling the TriBITS project to not build the package ``${PACKAGE_NAME}`` from
+source but instead to look for a pre-installed version of the package already
+out on the system.)
+
+Once all of the logic has been applied, the final list of enabled external
+packages, internal packages, and all enabled package are given in the
+varaibles::
+
+  ${PROJECT_NAME}_ALL_ENABLED_EXTERNAL_PACKAGES
+  ${PROJECT_NAME}_ALL_ENABLED_INTERNAL_PACKAGES
+  ${PROJECT_NAME}_ALL_ENABLED_PACKAGES
+
+where::
+
+  length(${PROJECT_NAME}_ALL_ENABLED_EXTERNAL_PACKAGES)
+  +
+  length(${PROJECT_NAME}_ALL_ENABLED_INTERNAL_PACKAGES)
+  =
+  length(${PROJECT_NAME}_ALL_ENABLED_PACKAGES)
+
+Note that the list ``${PROJECT_NAME}_ALL_ENABLED_EXTERNAL_PACKAGES`` can
+include both regular TPLs which have ``${PACKAGE_NAME}_FINDMOD != ""`` and
+also packages that could be built as internal packages which have
+``${PACKAGE_NAME}_SOURCE_DIR != ""``.  How such non-TPL external packages are
+determined and found is the subject of the section ???.
+
+When sorting lists of enabled packages, one only needs to considered enabled
+packages, and therefore only the list ${PROJECT_NAME}_ALL_ENABLED_PACKAGES
+needs to be considered in those cases.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -156,64 +214,67 @@ SE package's Dependencies.cmake file and they are used to define the basic
 dependencies that exist between ${PROJECT_NAME} SE packages to support the SE
 package enable and disable logic described above.  These variables taken
 together constitute a bidirectionally navigate-able tree data-structure for SE
-package and TPL dependencies::
+package and TPL dependencies:
 
-  ${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES
+  ``${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES``
   
     The list of *direct* SE package dependencies that are required for the
-    libraries built by ${PACKAGE_NAME}.  These should not include indirect
-    dependencies but it is harmless to list these also.
+    libraries and non-test executables built by ``${PACKAGE_NAME}``.  These
+    should not include indirect dependencies but it is harmless to list these
+    also.
   
-  ${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES
+  ``${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES``
   
     The list of *direct* SE package dependencies that are only optional for
-    the libraries built by ${PACKAGE_NAME}.  These should not include indirect
-    dependencies but it is harmless to list these also.
-  
-  ${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES
-  
-    The list of *direct* SE package dependencies that are required for the
-    tests/examples built by ${PACKAGE_NAME}.  This list should not contain any
-    of the packages listed in ${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES.
+    the libraries and non-test executables built by ``${PACKAGE_NAME}``.
     These should not include indirect dependencies but it is harmless to list
     these also.
   
-  ${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES
+  ``${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES``
+  
+    The list of *direct* SE package dependencies that are required for the
+    tests/examples built by ``${PACKAGE_NAME}``.  This list should not contain
+    any of the packages listed in
+    ``${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES``.  These should not include
+    indirect dependencies but it is harmless to list these also.
+  
+  ``${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES```
   
     The list of *direct* SE package dependencies that are optional for the
-    tests/examples built by ${PACKAGE_NAME}.  This list should not contain any
-    of the SE packages listed in ${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES,
-    ${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES, or
-    ${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES.  These should not include
+    tests/examples built by ``${PACKAGE_NAME}``.  This list should not contain
+    any of the SE packages listed in
+    ``${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES``,
+    ``${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES``, or
+    ``${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES``.  These should not include
     indirect dependencies but it is harmless to list these also.
 
 Given the above variables, the following derived variables are then set which
 provide navigation from a package to its downstream/forward dependent
-packages::
+packages:
 
-  ${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES
+  ``${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES``
   
-    For a given SE package ${PACKAGE_NAME}, gives the names of all of the
+    For a given SE package ``${PACKAGE_NAME}``, gives the names of all of the
     forward SE packages that list this SE package in their
-    ${FORWARD_PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES variables.
+    ``${FORWARD_PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES`` variables.
   
-  ${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES
+  ``${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES``
   
-    For a given SE package ${PACKAGE_NAME}, gives the names of all of the
+    For a given SE package ``${PACKAGE_NAME}``, gives the names of all of the
     forward SE packages that list this SE package in their
-    ${FORWARD_PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES variables.
+    ``${FORWARD_PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES`` variables.
   
-  ${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES
+  ``${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES``
   
-    For a given SE package ${PACKAGE_NAME}, gives the names of all of the
+    For a given SE package ``${PACKAGE_NAME}``, gives the names of all of the
     forward SE packages that list this SE package in their
-    ${FORWARD_PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES variables.
+    ``${FORWARD_PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES`` variables.
   
-  ${PACKAGE_NAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES
+  ``${PACKAGE_NAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES``
   
-    For a given SE package ${PACKAGE_NAME}, gives the names of all of the
+    For a given SE package ``${PACKAGE_NAME}``, gives the names of all of the
     forward SE packages that list this SE package in their
-    ${FORWARD_PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES variables.
+    ``${FORWARD_PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES`` variables.
 
 Some subset of these packages will turn out to be external packages
 (e.g. TPLs).  If a package can be built internally, it will have::
