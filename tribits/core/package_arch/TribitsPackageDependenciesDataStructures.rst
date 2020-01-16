@@ -15,7 +15,7 @@ The full list of defined external packages (TPLs) and top-level internal
 packages (TriBITS packages) is storied in the project-level non-cache list
 variable::
 
-  ${PROJECT_NAME}_ALL_PACKAGES_REF63
+  ${PROJECT_NAME}_ALL_PACKAGES
 
 The first set of elements in this list are the defined external packages
 (TPLs) that are read in from the `<repoDir>/TPLsList.cmake`_ files from each
@@ -24,24 +24,29 @@ internal packages (TriBITS packages) that are defined in the
 `<repoDir>/PackagesList.cmake`_ files from each processed TriBITS repository,
 read in order.
 
-An internal package will have a non-empty `${PACKAGE_NAME}_SOURCE_DIR`_
-varaible set while an external package (TPL) in this list will have a
-non-empty `${PACKAGE_NAME}_FINDMOD`_ varaible set.  However, the final
-decision if a package is treated as an internal or external package is
-determiend by the variable::
+An internal TriBITS Package (i.e. a package that can be built from source)
+will have a non-empty `${PACKAGE_NAME}_SOURCE_DIR`_ varaible set while an
+external package (i.e. TPL that is prebuilt and installed in some way) in this
+list will have a non-empty `${PACKAGE_NAME}_FINDMOD`_ varaible set.  However,
+the final decision if a package is treated as an internal or external package
+is determiend by the variable::
 
   ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
 
-For example, a package that has a non-empty ``${PACKAGE_NAME}_SOURCE_DIR`` can
-have ``${PACKAGE_NAME}_PACKAGE_STATUS=EXTERNAL`` in a number of different use
-cases (such as setting ``TPL_ENABLE_${PACKAGE_NAME}=ON``.
+For example, a package that has a non-empty ``${PACKAGE_NAME}_SOURCE_DIR``
+variable can in facth have ``${PACKAGE_NAME}_PACKAGE_STATUS=EXTERNAL`` in a
+number of different use cases.  (One example is if the user configured with
+``TPL_ENABLE_${PACKAGE_NAME}=ON`` telling the TriBITS project to not build the
+package ``${PACKAGE_NAME}`` from source but instead to look for it out on the
+system.)
 
-NOTE: The same external package (TPL) can be duplicated in multiple
-``TPLsList.cmake`` files.  This has the affect of allowing overrides of the
-``FindTPL<TPLName>.cmake`` module.  See the discussion in `TriBITS TPL`_ for
-more details.
 
-ToDo: Deal with old data-structures below after the refactoring is complete.
+
+
+
+
+ToDo: Deal with old data-structures below after the refactoring for #63 is
+complete.
 
 The full list of defined top-level parent packages is stored in the
 project-level non-cache list variable::
@@ -50,6 +55,24 @@ project-level non-cache list variable::
 
 This list does **not** include any subpackages.  This gets created from the
 `<repoDir>/PackagesList.cmake`_ file from each processed TriBITS repository.
+
+The full list of all of the defined packages and subpackages is stored in the
+project-level non-cache list variable::
+
+  ${PROJECT_NAME}_SE_PACKAGES
+
+That list is created from the information in the
+`<repoDir>/PackagesList.cmake`_ and `<packageDir>/cmake/Dependencies.cmake`_
+files for the top-level packages read and processed in the macro
+`TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()`_ using macros in the file::
+
+  TribitsAdjustPackageEnables.cmake
+
+One can determine if a package in this list is a top-level parent package or a
+sub-subpackage based on the value of the varaible
+`${PACKAGE_NAME}_PARENT_PACKAGE`_.  If the value is non empty, then
+``${PACKAGE_NAME}`` is a subpackage.  If the value is empty "", then
+``${PACKAGE_NAME}`` is a parent package.
 
 This full number of defined top-level parent packages (i.e. the number of
 items in the array ``${PROJECT_NAME}_PACKAGES``) is given in the variable::
@@ -70,7 +93,7 @@ The full list of defined TPLs is stored in the variable::
 
   ${PROJECT_NAME}_TPLS
 
-This list is created from the `<repoDir>/TPLsList.cmake` files from each
+This list is created from the `<repoDir>/TPLsList.cmake`_ files from each
 defined TriBITS Repository.  Along with this, the following variables for each
 of these TriBITS TPLs are defined::
 
@@ -81,24 +104,10 @@ This data gets set in functions in the file::
 
   TribitsProcessTplsLists.cmake  
 
-The full list of all of the defined packages and subpackages is stored in the
-project-level non-cache list variable::
-
-  ${PROJECT_NAME}_SE_PACKAGES
-
-That list is created from the information in the
-`<repoDir>/PackagesList.cmake`_ and `<packageDir>/cmake/Dependencies.cmake`_
-files and the Dependencies.cmake files for the top-level packages must be read
-in order to define that variable and those files are read and processed in the
-macro `TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()`_ using macros in the file::
-
-  TribitsAdjustPackageEnables.cmake
-
-One can determine if a package in this list is a top-level parent package or a
-sub-subpackage based on the value of the varaible
-`${PACKAGE_NAME}_PARENT_PACKAGE`_.  If the value is non empty, then
-``${PACKAGE_NAME}`` is a subpackage.  If the value is empty "", then
-``${PACKAGE_NAME}`` is a parent package.
+NOTE: The same external package (TPL) can be duplicated in multiple
+``TPLsList.cmake`` files.  This has the affect of allowing overrides of the
+``FindTPL<TPLName>.cmake`` module.  See the discussion in `TriBITS TPL`_ for
+more details.
 
 
 Top-level user cache variables
