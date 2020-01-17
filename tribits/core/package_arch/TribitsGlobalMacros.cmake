@@ -1527,11 +1527,30 @@ MACRO(TRIBITS_READ_EXTRA_REPOSITORIES_LISTS)
 
 ENDMACRO()
 
+
 #
-# Read in ${PROJECT_NAME} packages and TPLs, process dependencies, write XML
-# files
+# @MACRO: TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS()
 #
-MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
+# Usage::
+#
+#   TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS()
+#
+# Macro run at the top project-level cope that reads in the contents of all of
+# the `<repoDir>/TPLsList.cmake`_ and `<repoDir>/PackagesList.cmake`_ files to
+# get the list of defined external packages (TPLs) and internal top-level
+# packages.
+#
+# On output, this produces::
+#
+#   ${PROJECT_NAME}_PACKAGES
+#   ${PROJECT_NAME}_TPLS
+#
+# and related varaibles.  Calls and sets variables from:
+#
+#  * `TRIBITS_PROCESS_TPLS_LISTS()`_
+#  * `TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS()`_
+#
+MACRO(TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS)
 
   TRIBITS_SET_ALL_EXTRA_REPOSITORIES()
 
@@ -1549,10 +1568,6 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
   #
   # B) Read list of packages and TPLs from native repos
   #
-
-  IF (${PROJECT_NAME}_ENABLE_CONFIGURE_TIMING)
-    TIMER_GET_RAW_SECONDS(SET_UP_DEPENDENCIES_TIME_START_SECONDS)
-  ENDIF()
 
   FOREACH(NATIVE_REPO ${${PROJECT_NAME}_NATIVE_REPOSITORIES})
 
@@ -1624,14 +1639,32 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
   SET(READ_PRE_OR_POST_EXRAREPOS  POST)
   TRIBITS_READ_EXTRA_REPOSITORIES_LISTS()
 
-  #
-  # D) Process lists of packages, TPLs, etc.
-  #
+ENDMACRO()
+
+
+#
+# @MACRO: TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()
+#
+# Usage::
+#
+#   TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()
+#
+# Macro run at the top project-level scope that reads in packages and TPLs,
+# process dependencies, and (optimally) writes XML files of dependency
+# information.
+# 
+#
+MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
 
   #
-  # D.1) Package dependencies for all of the packages for all of the defined
-  # packages (not just the core packages)
+  # A) Read in list of packages and package dependencies
   #
+
+  IF (${PROJECT_NAME}_ENABLE_CONFIGURE_TIMING)
+    TIMER_GET_RAW_SECONDS(SET_UP_DEPENDENCIES_TIME_START_SECONDS)
+  ENDIF()
+
+  TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS()
 
   TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()
 
@@ -1643,7 +1676,7 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
   ENDIF()
 
   #
-  # D.2) Write out the XML dependency files for the full list of dependencies!
+  # B) Dump dependnecy info as XML files if asked
   #
 
   SET(TRIBITS_DUMP_XML_DEPS_MODULE
