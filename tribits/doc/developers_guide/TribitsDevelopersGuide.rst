@@ -9202,7 +9202,7 @@ is contained.  This information is meant to make it easier to understand and
 manipulate the internal implementation of TriBITS.
 
 
-.. include:: ../../core/package_arch/TribitsPackageDependenciesDataStructures.rst
+.. include:: ../../core/package_arch/TribitsSystemDataStructures.rst
 
 
 .. include:: TribitsSystemMacroFunctionDoc.rst

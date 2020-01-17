@@ -1,10 +1,10 @@
-TriBITS Package Dependencies Data Structures
---------------------------------------------
+TriBITS System Data Structures
+------------------------------
 
 This section describes the global CMake variables that make up the
 data-structures that define the TriBITS package system.  This defines a graph
 of package and TPL dependencies.  This information is meant for maintainers of
-the TriBITS system itself and should not need to be know by TriBITS Project
+the TriBITS system itself and should not need to be known by TriBITS Project
 maintainers.
 
 
