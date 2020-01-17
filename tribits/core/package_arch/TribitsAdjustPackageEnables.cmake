@@ -2277,8 +2277,14 @@ ENDMACRO()
 
 
 #
-# Macro that adjusts all of the package enables from what the user input
-# to the final set that will be used to enable packages
+# @MACRO: TRIBITS_ADJUST_PACKAGE_ENABLES()
+#
+# Usage:
+#
+#   TRIBITS_ADJUST_PACKAGE_ENABLES()
+#
+# Macro that adjusts all of the package enables from what the user input to
+# the final set that will be used to enable packages.
 #
 MACRO(TRIBITS_ADJUST_PACKAGE_ENABLES)
 

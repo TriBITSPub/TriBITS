@@ -2376,7 +2376,7 @@ proceeds through the call to `TRIBITS_PROJECT()`_.
 |   7)  For each ``<repoDir>`` in all defined TriBITS repositories:
 |       * ``INCLUDE(`` `<repoDir>/cmake/CallbackSetupExtraOptions.cmake`_ ``)``
 |       * Call macro ``TRIBITS_REPOSITORY_SETUP_EXTRA_OPTIONS()``
-|   9)  Call ``TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()``:
+|   9)  Call `TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()`_:
 |     a)  For each ``<repoDir>`` in all defined TriBITS repositories:
 |         * ``INCLUDE(`` `<repoDir>/PackagesList.cmake`_ ``)`` and process list
 |         * ``INCLUDE(`` `<repoDir>/TPLsList.cmake`_ ``)`` and process list

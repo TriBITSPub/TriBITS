@@ -377,24 +377,24 @@ ENDFUNCTION()
 #
 #   TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS()
 #
-# Macro that processes the list variable:
+# Macro that processes the list variable::
 #
 #    ${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
 #
-# from a `<repoDir>/PackagesList.cmake` file that just got read in and creates
-# the varaibles::
+# from a `<repoDir>/PackagesList.cmake`_ file that just got read in and
+# creates/updates the varaibles::
 #
 #   ${PROJECT_NAME}_PACKAGES
 #   ${PROJECT_NAME}_NUM_PACKAGES
 #   ${PROJECT_NAME}_LAST_PACKAGE_IDX
-#   ${PROJECT_NAME}_REVERSE_PACKAGES.
+#   ${PROJECT_NAME}_REVERSE_PACKAGES
 #
 # For each of the listed top-level (parent) packages ${PACKAGE_NAME}, it also
 # sets up constant variables like:
 #
-#   ${PACKAGE_NAME}_SOURCE_DIR      # Absolute path
-#   ${PACKAGE_NAME}_REL_SOURCE_DIR  # Relative to to ${PROJECT_SOURCE_DIR}
-#   ${PACKAGE_NAME}_TESTGROUP
+# * `${PACKAGE_NAME}_SOURCE_DIR`_
+# * `${PACKAGE_NAME}_REL_SOURCE_DIR`_
+# * `${PACKAGE_NAME}_TESTGROUP`_
 #
 # and sets up some standard enable/diable vars with default values like:
 #

@@ -11,18 +11,15 @@ maintainers.
 Lists internal (TriBITS) and external (TPL) packages
 ++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The full list of defined external packages (TPLs) and top-level internal
-packages (TriBITS packages) is storied in the project-level non-cache list
-variable::
+The orignal list of all defined external packages (TPLs) read from the
+processed `<repoDir>/TPLsList.cmake`_ files is given in the variable::
 
-  ${PROJECT_NAME}_ALL_DEFINED_PACKAGES
+  ${PROJECT_NAME}_DEFINED_TPLS
 
-The first set of elements in this list are the defined external packages
-(TPLs) that are read in from the `<repoDir>/TPLsList.cmake`_ files from each
-processed TriBITS repository, in order.  This is followed by the set of
-internal packages (TriBITS packages) that are defined in the
-`<repoDir>/PackagesList.cmake`_ files from each processed TriBITS repository,
-read in order.
+The orginal list of all defined internal top-level packages read in from the
+processed `<repoDir>/PackagesList.cmake`_ files is given in the variable::
+
+  ${PACKAGE_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
 
 An internal TriBITS Package (i.e. a package that can be built from source)
 will have a non-empty `${PACKAGE_NAME}_SOURCE_DIR`_ ``!= ""`` varaible set
@@ -30,20 +27,47 @@ while an external package (i.e. TPL that is prebuilt and installed in some
 way) in this list will have a non-empty `${PACKAGE_NAME}_FINDMOD`_ ``!= ""``
 varaible set.
 
-The orignal list of all defined external packages (TPLs) read from the
-processed `<repoDir>/TPLsList.cmake`_ files is given in the variable::
-
-  ${PROJECT_NAME}_DEFINED_TPLS
-
-The orginal list of all defined internal packages read in from the processed
-`<repoDir>/PackagesList.cmake`_ files is given in the variable::
-
-  ${PACKAGE_NAME}_DEFINED_INTERNAL_PACKAGES
-
 The sizes of these arrays is given by the variables:
 
   ${PACKAGE_NAME}_NUM_DEFINED_TPLS
   ${PACKAGE_NAME}_NUM_DEFINED_INTERNAL_PACKAGES
+
+The full list of defined external packages (TPLs) and top-level internal
+packages (TriBITS packages) is storied in the project-level non-cache list
+variable::
+
+  ${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
+
+The first set of elements in this list are the defined external packages
+(TPLs) that are read in from the `<repoDir>/TPLsList.cmake`_ files from each
+processed TriBITS repository, in order.  This is followed by the set of
+internal packages (TriBITS packages) that are defined in the
+`<repoDir>/PackagesList.cmake`_ files from each processed TriBITS repository,
+read in order.  This list does **not** include any subpackages.
+
+After the function `TRIBITS_ADJUST_PACKAGE_ENABLES()`_ is run the following
+list variable is created::
+
+  ${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 However, the final decision if a package is treated as an internal or external
 package is determiend by the variable::
