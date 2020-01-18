@@ -937,17 +937,19 @@ ENDFUNCTION()
 #   TRIBITS_READ_PROJECT_AND_PACKAGE_DEPENDENCIES_CREATE_GRAPH_PRINT_DEPS()
 #
 # This macro reads of all the package dependencies and builds the package
-# dependency graph.  This reads in all of the
-# `<packageDir>/cmake/Dependencies.cmake`_ and
+# dependency graph.  This first executes the logic in the files
+# `<repoDir>/cmake/RepositoryDependenciesSetup.cmake`_ (for each TriBITS repo)
+# and `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_ and then reads in
+# all of the `<packageDir>/cmake/Dependencies.cmake`_ and
 # `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ files and builds the
-# depenency graph varibles.
+# package depenency graph varibles.
 #
 # This macro reads from the variables::
 #
 #   ${PROJECT_NAME}_ALL_REPOSITORIES
 #   ${PROJECT_NAME}_PACKAGES
 #
-# And write to the variables:
+# And writes to the variable:
 #
 #   ${PROJECT_NAME}_SE_PACKAGES
 #
@@ -962,30 +964,11 @@ MACRO(TRIBITS_READ_PROJECT_AND_PACKAGE_DEPENDENCIES_CREATE_GRAPH_PRINT_DEPS)
   MESSAGE("Processing Project, Repository, and Package dependency files and building internal dependencies graph ...")
   MESSAGE("")
 
-  # A) Process all Repository and Project dependency setup files
-
   TRIBITS_PROCESS_ALL_REPOSTIORY_DEPENDENCY_SETUP_LOGIC()
 
   TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_LOGIC()
 
-  # B) Process the package dependency files, yielding the list of subpackages
-  # as well
-
-  SET(${PROJECT_NAME}_SE_PACKAGES) # Packages and subpackages
-
-  FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
-    TRIBITS_READ_PACKAGE_DEPENDENCIES(${TRIBITS_PACKAGE}
-      ${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
-  ENDFOREACH()
-
-  # Create a reverse se packages list for later use
-  SET(${PROJECT_NAME}_REVERSE_SE_PACKAGES ${${PROJECT_NAME}_SE_PACKAGES})
-  IF (${PROJECT_NAME}_REVERSE_SE_PACKAGES)
-    LIST(REVERSE ${PROJECT_NAME}_REVERSE_SE_PACKAGES)
-  ENDIF()
-
-  LIST(LENGTH ${PROJECT_NAME}_SE_PACKAGES ${PROJECT_NAME}_NUM_SE_PACKAGES)
-  PRINT_VAR(${PROJECT_NAME}_NUM_SE_PACKAGES)
+  TRIBITS_READ_PACKAGE_DEPENDENCIES_CREATE_GRAPH()
 
   TRIBITS_PRINT_TENTATIVELY_ENABLED_TPLS()
 
@@ -1050,6 +1033,53 @@ MACRO(TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_LOGIC)
     ENDIF()
   ENDIF()
 ENDMACRO()
+
+
+#
+# @MACRO: TRIBITS_READ_PACKAGE_DEPENDENCIES_CREATE_GRAPH()
+#
+# Usage::
+#
+#   TRIBITS_READ_PACKAGE_DEPENDENCIES_CREATE_GRAPH()
+#
+# This macro reads in all of the `<packageDir>/cmake/Dependencies.cmake`_ and
+# `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ files and builds the
+# package depenency graph varibles.
+#
+# This macro reads from the variables::
+#
+#   ${PROJECT_NAME}_ALL_REPOSITORIES
+#   ${PROJECT_NAME}_PACKAGES
+#
+# And writes to the variable:
+#
+#   ${PROJECT_NAME}_SE_PACKAGES
+#
+# as well creates the package dependency varaibles described in `List
+# variables defining the package dependencies graph`_ that defines the
+# directed acyclic depenency (DAG) package dependency graph (with navigation
+# up and down the graph).
+#
+MACRO(TRIBITS_READ_PACKAGE_DEPENDENCIES_CREATE_GRAPH)
+
+  SET(${PROJECT_NAME}_SE_PACKAGES) # Packages and subpackages
+
+  FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
+    TRIBITS_READ_PACKAGE_DEPENDENCIES(${TRIBITS_PACKAGE}
+      ${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
+  ENDFOREACH()
+
+  # Create a reverse se packages list for later use
+  SET(${PROJECT_NAME}_REVERSE_SE_PACKAGES ${${PROJECT_NAME}_SE_PACKAGES})
+  IF (${PROJECT_NAME}_REVERSE_SE_PACKAGES)
+    LIST(REVERSE ${PROJECT_NAME}_REVERSE_SE_PACKAGES)
+  ENDIF()
+
+  LIST(LENGTH ${PROJECT_NAME}_SE_PACKAGES ${PROJECT_NAME}_NUM_SE_PACKAGES)
+  PRINT_VAR(${PROJECT_NAME}_NUM_SE_PACKAGES)
+
+ENDMACRO()
+
 
 #
 # Print the set of tentatively enabled TPLs
