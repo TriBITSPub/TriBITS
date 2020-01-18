@@ -930,14 +930,15 @@ ENDFUNCTION()
 
 
 #
-# @MACRO: TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()
+# @MACRO: TRIBITS_READ_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH()
 #
 # Usage::
 #
-#   TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()
+#   TRIBITS_READ_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH()
 #
-# Macro that reads all the package dependencies and builds dependency graph.
-# This reads in all of the `<packageDir>/cmake/Dependencies.cmake`_ and
+# Macro that reads all the package dependencies and builds the package
+# dependency graph.  This reads in all of the
+# `<packageDir>/cmake/Dependencies.cmake`_ and
 # `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ files and builds the
 # depenency graph varibles.
 #
@@ -951,12 +952,11 @@ ENDFUNCTION()
 #   ${PROJECT_NAME}_SE_PACKAGES
 #   ${PROJECT_NAME}_SE_PACKAGES_DIS
 #
-# as well creates the package dependency varaibles described in `Top-level
-# internal non-cache variables defining direct package dependencies`_ that
-# defines the directed package depenency graph (with navigation up and down
-# the graph).
+# as well creates the package dependency varaibles described in `List
+# variables defining the package dependencies graph`_ that defines the
+# directed package depenency graph (with navigation up and down the graph).
 #
-MACRO(TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES)
+MACRO(TRIBITS_READ_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH)
 
   MESSAGE("")
   MESSAGE("Processing Project, Repository, and Package dependency files and building internal dependencies graph ...")

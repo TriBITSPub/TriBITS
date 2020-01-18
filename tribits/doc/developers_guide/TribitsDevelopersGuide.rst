@@ -56,8 +56,6 @@ needs to understand how CMake defines and uses targets for various qualities
 like libraries, executables, etc.  Without this basic understanding of CMake,
 one will have trouble resolving problems when they occur.
 
-.. jfrye: Below paragraph is redundant with table of contents above?
-
 The remainder of this documented is structured as follows.  First, there is
 some additional `Background`_ material provided.  Then, a detailed
 specification of `TriBITS Project Structure`_ is given which lists and defines
@@ -74,6 +72,7 @@ fit well into other sections.  Then the main bulk of the detailed reference
 material for TriBITS is given in the section `TriBITS Detailed Reference
 Documentation`_.  Finally, several bits of information are provided in the
 `Appendix`_.
+
 
 Background
 ==========

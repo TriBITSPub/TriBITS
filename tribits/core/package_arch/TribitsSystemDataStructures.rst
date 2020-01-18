@@ -2,14 +2,16 @@ TriBITS System Data Structures
 ------------------------------
 
 This section describes the global CMake variables that make up the
-data-structures that define the TriBITS package system.  This defines a graph
-of package and TPL dependencies.  This information is meant for maintainers of
-the TriBITS system itself and should not need to be known by TriBITS Project
-maintainers.
+data-structures that define the TriBITS package system.  These variables all
+exist at the project level and are typically not cache variables (and
+therefore are recomputed on every reconfigure).  These variables define a
+graph of external package (TPL) and internal (buildable) packages.  This
+information is meant for maintainers of the TriBITS system itself and should
+not need to be known by TriBITS Project maintainers.
 
 
-Lists internal (TriBITS) and external (TPL) packages
-++++++++++++++++++++++++++++++++++++++++++++++++++++
+Lists of external and internal packages
++++++++++++++++++++++++++++++++++++++++
 
 The orignal list of all defined external packages (TPLs) read from the
 processed `<repoDir>/TPLsList.cmake`_ files is given in the variable::
@@ -27,7 +29,7 @@ while an external package (i.e. TPL that is prebuilt and installed in some
 way) in this list will have a non-empty `${PACKAGE_NAME}_FINDMOD`_ ``!= ""``
 varaible set.
 
-The sizes of these arrays is given by the variables:
+The sizes of these arrays is given by the variables::
 
   ${PACKAGE_NAME}_NUM_DEFINED_TPLS
   ${PACKAGE_NAME}_NUM_DEFINED_INTERNAL_PACKAGES
@@ -49,25 +51,6 @@ After the function `TRIBITS_ADJUST_PACKAGE_ENABLES()`_ is run the following
 list variable is created::
 
   ${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 However, the final decision if a package is treated as an internal or external
 package is determiend by the variable::
@@ -92,11 +75,11 @@ varaibles::
 
 where::
 
-  length(${PROJECT_NAME}_ALL_ENABLED_EXTERNAL_PACKAGES)
+  length( ${PROJECT_NAME}_ALL_ENABLED_EXTERNAL_PACKAGES )
   +
-  length(${PROJECT_NAME}_ALL_ENABLED_INTERNAL_PACKAGES)
+  length( ${PROJECT_NAME}_ALL_ENABLED_INTERNAL_PACKAGES )
   =
-  length(${PROJECT_NAME}_ALL_ENABLED_PACKAGES)
+  length( ${PROJECT_NAME}_ALL_ENABLED_PACKAGES )
 
 Note that the list ``${PROJECT_NAME}_ALL_ENABLED_EXTERNAL_PACKAGES`` can
 include both regular TPLs which have ``${PACKAGE_NAME}_FINDMOD != ""`` and
@@ -105,22 +88,8 @@ also packages that could be built as internal packages which have
 determined and found is the subject of the section ???.
 
 When sorting lists of enabled packages, one only needs to considered enabled
-packages, and therefore only the list ${PROJECT_NAME}_ALL_ENABLED_PACKAGES
+packages, and therefore only the list ``${PROJECT_NAME}_ALL_ENABLED_PACKAGES``
 needs to be considered in those cases.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -146,7 +115,7 @@ project-level non-cache list variable::
 That list is created from the information in the
 `<repoDir>/PackagesList.cmake`_ and `<packageDir>/cmake/Dependencies.cmake`_
 files for the top-level packages read and processed in the macro
-`TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()`_ using macros in the file::
+`TRIBITS_READ_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH()`_ using macros in the file::
 
   TribitsAdjustPackageEnables.cmake
 
@@ -192,49 +161,11 @@ NOTE: The same external package (TPL) can be duplicated in multiple
 more details.
 
 
-Top-level user cache variables
-++++++++++++++++++++++++++++++
-
-The following variables are set by the user to determine what packages get
-enabled or disabled::
-  
-  ${PROJECT_NAME}_ENABLE_ALL_PACKAGES
-  
-  ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES
-  
-  ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES
-
-  ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}
-  
-  ${PROJECT_NAME}_ENABLE_TESTS
-  
-  ${PROJECT_NAME}_ENABLE_EXAMPLES
-  
-  ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}
-  
-  ${PACKAGE_NAME}_ENABLE_TESTS
-  
-  ${PACKAGE_NAME}_ENABLE_EXAMPLES
-
-These variables are defined in the file::
-
-   TribitsGlobalMacros.cmake
-
-This dependency logic is executed in the TriBITS file::
-
-    TribitsAdjustPackageEnables.cmake
-
-There are pretty good unit and regression tests to demonstrate and protect
-this functionality in the directory::
-
-  tribits/package_arch/UntiTests/
-
-
-Top-level internal non-cache variables defining direct package dependencies
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+List variables defining the package dependencies graph
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The following top-level non-cache variables are defined after reading in each
-SE package's Dependencies.cmake file and they are used to define the basic
+package's Dependencies.cmake file and they are used to define the basic
 dependencies that exist between ${PROJECT_NAME} SE packages to support the SE
 package enable and disable logic described above.  These variables taken
 together constitute a bidirectionally navigate-able tree data-structure for SE
@@ -329,7 +260,7 @@ this functionality in the directory:
   tribits/package_arch/UntiTests/
 
 
-External Package/TPL Dependencies
+External package/TPL dependencies
 +++++++++++++++++++++++++++++++++
 
 ToDo: Document how dependencies between external packages/TPLs are determined
@@ -339,14 +270,14 @@ in FindTPL<ExternalPackage>Dependencies.cmake files and
 overridden in the cache.
 
 
-Top-level internal cache variables defining header and library dependencies
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+List variables defining include directories and libraries
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The following global internal cache variables are used to communicate
-the required header directory paths and libraries needed to build and
-link against a given package's capabilities::
+The following global internal cache variables are used to communicate the
+required header directory paths and libraries needed to build and link against
+a given package's capabilities:
 
-  ${PACKAGE_NAME}_INCLUDE_DIRS
+  ``${PACKAGE_NAME}_INCLUDE_DIRS``
 
     Defines a list of include paths needed to find all of the headers needed
     to compile client code against this (sub)packages sources and it's
@@ -361,7 +292,7 @@ link against a given package's capabilities::
 
     ToDo: Split off ${PACKAGE_NAME}_TPL_INCLUDE_DIRS
   
-  ${PACKAGE_NAME}_LIBRARY_DIRS
+  ``${PACKAGE_NAME}_LIBRARY_DIRS``
   
     Defines as list of the link directories needed to find all of the
     libraries for this packages and it's upstream packages and TPLs.  Adding
@@ -370,7 +301,7 @@ link against a given package's capabilities::
     library directories is used when creating ${PACKAGE_NAME}Config.cmake and
     Makefile.export.${PACKAGE_NAME} files.
   
-  ${PACKAGE_NAME}_LIBRARIES
+  ``${PACKAGE_NAME}_LIBRARIES``
   
     Defines list of *only* the libraries associated with the given
     (sub)package and does *not* list libraries in upstream packages.  Linkages
@@ -386,13 +317,13 @@ link against a given package's capabilities::
     false.  The primary purpose of this variable is to passe to
     TARGET_LINK_LIBRARIES(...) by downstream libraries and executables.
 
-  ${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES
+  ``${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES``
 
     Will be true if a package has native libraries.  Otherwise, it will be
     false.  This information is used to build export makefiles to avoid
     duplicate libraries on the link line.
 
-  ${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES
+  ``${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES``
 
     Lists out, in order, all of the enabled upstream SE packages that the
     given package depends on and support that package is enabled in the given
@@ -402,24 +333,58 @@ link against a given package's capabilities::
     list does *not* include the package itself.  This list is created after
     all of the enable/disable logic is applied.
  
-  ${PARENT_PACKAGE_NAME}_LIB_TARGETS
+  ``${PARENT_PACKAGE_NAME}_LIB_TARGETS``
  
     Lists all of the library targets for this package only that are as part of
-    this package added by the TRIBITS_ADD_LIBRARY(...) function.  This is used
+    this package added by the `TRIBITS_ADD_LIBRARY()`_ function.  This is used
     to define a target called ${PACKAGE_NAME}_libs that is then used by
-    TRIBITS_CTEST_DRIVER().  If a package has no libraries, then the library
-    targets for all of the immediate upstream direct dependent packages will
-    be added.  This is needed for the chain of dependencies to work correctly.
-    Note that subpackages don't have this variable defined for them.
+    `TRIBITS_CTEST_DRIVER()`_ in the package-by-package mode.  If a package
+    has no libraries, then the library targets for all of the immediate
+    upstream direct dependent packages will be added.  This is needed for the
+    chain of dependencies to work correctly.  Note that subpackages don't have
+    this variable defined for them.
  
-  ${PARENT_PACKAGE_NAME}_ALL_TARGETS
+  ``${PARENT_PACKAGE_NAME}_ALL_TARGETS``
  
     Lists all of the targets associated with this package.  This includes all
-    libraries and tests added with TRIBITS_ADD_LIBRARY(...) and
-    TRIBITS_ADD_EXECUTABLE(...).  If this package has no targets (no libraries
+    libraries and tests added with `TRIBITS_ADD_LIBRARY()`_ and
+    `TRIBITS_ADD_EXECUTABLE()`_.  If this package has no targets (no libraries
     or executables) this this will have the dependency only on
     ${PARENT_PACKAGE_NAME}_libs.  Note that subpackages don't have this
     variable defined for them.
+
+
+User enable/disable cache variables
++++++++++++++++++++++++++++++++++++
+
+The following variables can be set by the user to determine what packages get
+enabled or disabled::
+  
+  ${PROJECT_NAME}_ENABLE_ALL_PACKAGES
+  
+  ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES
+  
+  ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES
+
+  ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}
+  
+  ${PROJECT_NAME}_ENABLE_TESTS
+  
+  ${PROJECT_NAME}_ENABLE_EXAMPLES
+  
+  ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}
+  
+  ${PACKAGE_NAME}_ENABLE_TESTS
+  
+  ${PACKAGE_NAME}_ENABLE_EXAMPLES
+
+according to the rules described in `Package Dependencies and Enable/Disable
+Logic`_.
+
+There are pretty good unit and regression tests to demonstrate and protect
+this functionality in the directory::
+
+  tribits/package_arch/UntiTests/
 
 
 Notes on dependency logic
@@ -431,13 +396,13 @@ a number of factors:
 1) Packages can have libraries or no libraries.  
 
 2) In installation-testing mode, the libraries for a package are read from a
-file instead of generated in source.
+   file instead of generated in source.
 
 3) A library can be a regular package library, or a test-only library, in
-which case it will not be listed in ${PACKAGE_NAME}_LIBRARIES.  The above
-description does not even talk about how test-only libraries are handed within
-the system except to say that they are excluded from the package's exported
-library dependencies.
+   which case it will not be listed in ${PACKAGE_NAME}_LIBRARIES.  The above
+   description does not even talk about how test-only libraries are handed
+   within the system except to say that they are excluded from the package's
+   exported library dependencies.
 
 The management and usage of the intra-package linkage variables is spread
 across a number of TriBITS ``*.cmake`` files but the primary ones are::
