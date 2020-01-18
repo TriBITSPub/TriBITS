@@ -39,6 +39,7 @@
 
 
 # Standard TriBITS system includes
+INCLUDE(TribitsConstants)
 INCLUDE(TribitsProcessExtraRepositoriesList)
 INCLUDE(TribitsProcessPackagesAndDirsLists)
 INCLUDE(TribitsProcessTplsLists)
@@ -143,33 +144,30 @@ MACRO(TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS)
       ${NATIVE_REPO_NAME}_SOURCE_DIR)
     #PRINT_VAR(${NATIVE_REPO_NAME}_SOURCE_DIR)
 
-    #
-    # B.1) Define the lists of all ${NATIVE_REPO_NAME} native packages and TPLs
-    #
-
-    IF (${NATIVE_REPO_NAME}_PACKAGES_FILE_OVERRIDE)
-      IF (IS_ABSOLUTE "${${NATIVE_REPO_NAME}_PACKAGES_FILE_OVERRIDE}")
-        MESSAGE(FATAL_ERROR
-          "ToDo: Implement abs path for ${NATIVE_REPO_NAME}_PACKAGES_FILE_OVERRIDE")
-      ELSE()
-        SET(${NATIVE_REPO_NAME}_PACKAGES_FILE
-          "${${NATIVE_REPO_NAME}_SOURCE_DIR}/${${NATIVE_REPO_NAME}_PACKAGES_FILE_OVERRIDE}")
-      ENDIF()
-    ELSE()
-      SET(${NATIVE_REPO_NAME}_PACKAGES_FILE
-        "${${NATIVE_REPO_NAME}_SOURCE_DIR}/${${PROJECT_NAME}_PACKAGES_FILE_NAME}")
-    ENDIF()
-
     IF (NATIVE_REPO STREQUAL ".")
       SET(REPOSITORY_NAME ${PROJECT_NAME})
     ELSE()
       SET(REPOSITORY_NAME ${NATIVE_REPO_NAME})
     ENDIF()
 
+    #
+    # B.1) Define the lists of all ${NATIVE_REPO_NAME} native packages and TPLs
+    #
+
     # B.1.a) Read in the list of TPLs for this repo
 
-    SET(${NATIVE_REPO_NAME}_TPLS_FILE
-      "${${NATIVE_REPO_NAME}_SOURCE_DIR}/${${PROJECT_NAME}_TPLS_FILE_NAME}")
+    IF (${NATIVE_REPO_NAME}_TPLS_FILE_OVERRIDE)
+      IF (IS_ABSOLUTE "${${NATIVE_REPO_NAME}_TPLS_FILE_OVERRIDE}")
+        SET(${NATIVE_REPO_NAME}_TPLS_FILE
+          "${${NATIVE_REPO_NAME}_TPLS_FILE_OVERRIDE}")
+      ELSE()
+        SET(${NATIVE_REPO_NAME}_TPLS_FILE
+          "${${NATIVE_REPO_NAME}_SOURCE_DIR}/${${NATIVE_REPO_NAME}_TPLS_FILE_OVERRIDE}")
+      ENDIF()
+    ELSE()
+      SET(${NATIVE_REPO_NAME}_TPLS_FILE
+        "${${NATIVE_REPO_NAME}_SOURCE_DIR}/${${PROJECT_NAME}_TPLS_FILE_NAME}")
+    ENDIF()
 
     MESSAGE("")
     MESSAGE("Reading list of native TPLs from ${${NATIVE_REPO_NAME}_TPLS_FILE}")
@@ -181,6 +179,19 @@ MACRO(TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS)
     TRIBITS_PROCESS_TPLS_LISTS(${NATIVE_REPO_NAME}  ${NATIVE_REPO_DIR})
 
     # B.1.b) Read in list of packages for this repo
+
+    IF (${NATIVE_REPO_NAME}_PACKAGES_FILE_OVERRIDE)
+      IF (IS_ABSOLUTE "${${NATIVE_REPO_NAME}_PACKAGES_FILE_OVERRIDE}")
+        SET(${NATIVE_REPO_NAME}_PACKAGES_FILE
+          "${${NATIVE_REPO_NAME}_PACKAGES_FILE_OVERRIDE}")
+      ELSE()
+        SET(${NATIVE_REPO_NAME}_PACKAGES_FILE
+          "${${NATIVE_REPO_NAME}_SOURCE_DIR}/${${NATIVE_REPO_NAME}_PACKAGES_FILE_OVERRIDE}")
+      ENDIF()
+    ELSE()
+      SET(${NATIVE_REPO_NAME}_PACKAGES_FILE
+        "${${NATIVE_REPO_NAME}_SOURCE_DIR}/${${PROJECT_NAME}_PACKAGES_FILE_NAME}")
+    ENDIF()
 
     MESSAGE("")
     MESSAGE("Reading list of native packages from ${${NATIVE_REPO_NAME}_PACKAGES_FILE}")
@@ -218,3 +229,152 @@ FUNCTION(TRIBITS_WRITE_XML_DEPENDENCY_FILES_IF_SUPPORTED)
     TRIBITS_WRITE_XML_DEPENDENCY_FILES()
   ENDIF()
 ENDFUNCTION()
+
+
+#
+# Macro that sets ${PROJECT_NAME}_ALL_REPOSITORIES from
+# ${PROJECT_NAME}_PRE_REPOSITORIES and ${PROJECT_NAME}_EXTRA_REPOSITORIES if
+# it is not alrady set.  Also, it replaces ',' with ';' in the latter.
+#
+# This function is needed in use cases where extra repos are used where the
+# extra repos are not read in through an ExtraRepositoriesList.cmake file and
+# instead are directly passed in by the user.
+#
+MACRO(TRIBITS_SET_ALL_EXTRA_REPOSITORIES)
+  IF ("${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES}"   STREQUAL  "")
+    # Allow list to be seprated by ',' instead of just by ';'.  This is needed
+    # by the unit test driver code
+    SPLIT("${${PROJECT_NAME}_PRE_REPOSITORIES}"  ","
+      ${PROJECT_NAME}_PRE_REPOSITORIES)
+    SPLIT("${${PROJECT_NAME}_EXTRA_REPOSITORIES}"  ","
+      ${PROJECT_NAME}_EXTRA_REPOSITORIES)
+    SET(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES
+      ${${PROJECT_NAME}_PRE_REPOSITORIES}  ${${PROJECT_NAME}_EXTRA_REPOSITORIES})
+  ENDIF()
+ENDMACRO()
+
+
+#
+# Macro that processes the list of package and TPLs for the set of 'PRE' or
+# 'POST' extra repos.
+#
+MACRO(TRIBITS_READ_EXTRA_REPOSITORIES_LISTS)
+
+  LIST(LENGTH  ${PROJECT_NAME}_PRE_REPOSITORIES  PRE_EXTRAREPOS_LEN)
+  LIST(LENGTH  ${PROJECT_NAME}_EXTRA_REPOSITORIES  POST_EXTRAREPOS_LEN)
+  MATH(EXPR  ALL_EXTRAREPOS_LEN  "${PRE_EXTRAREPOS_LEN} + ${POST_EXTRAREPOS_LEN}")
+
+  # See if processing 'PRE' or 'POST' extra repos
+  IF (READ_PRE_OR_POST_EXRAREPOS  STREQUAL  "PRE")
+    SET(EXTRAREPO_IDX_START  0)
+    SET(EXTRAREPO_IDX_END  ${PRE_EXTRAREPOS_LEN})
+  ELSEIF (READ_PRE_OR_POST_EXRAREPOS  STREQUAL  "POST")
+    SET(EXTRAREPO_IDX_START  ${PRE_EXTRAREPOS_LEN})
+    SET(EXTRAREPO_IDX_END  ${ALL_EXTRAREPOS_LEN})
+  ELSE()
+    MESSAGE(FATAL_ERROR "Invalid value for READ_PRE_OR_POST_EXRAREPOS='${READ_PRE_OR_POST_EXRAREPOS}' ")
+  ENDIF()
+  # NOTE: For some reason, we can't pass this argument to the function and
+  # have it read.  Instead, we have to pass it a local variable.  I will never
+  # understand CMake.
+
+  SET(EXTRAREPO_IDX  ${EXTRAREPO_IDX_START})
+  WHILE(EXTRAREPO_IDX  LESS  EXTRAREPO_IDX_END)
+
+    LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES  ${EXTRAREPO_IDX}  EXTRA_REPO )
+    SET(REPOSITORY_NAME  ${EXTRA_REPO})
+
+    #PRINT_VAR(EXTRA_REPO)
+    #PRINT_VAR(EXTRAREPO_IDX)
+    #PRINT_VAR(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_HASPKGS)
+
+    # Need to make sure this gets set because logic in Dependencies.cmake files
+    # looks for the presents of this variable.
+    SET(${EXTRA_REPO}_SOURCE_DIR "${PROJECT_SOURCE_DIR}/${EXTRA_REPO}")
+    IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      PRINT_VAR(${EXTRA_REPO}_SOURCE_DIR)
+    ENDIF()
+    # ToDo: TriBITS:73: Get ${EXTRA_REPO}_SOURCE_DIR from
+    # ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIR when it exists.
+
+    SET(EXTRAREPO_PACKSTAT "")
+    IF (${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_HASPKGS)
+      LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_HASPKGS ${EXTRAREPO_IDX}
+        EXTRAREPO_PACKSTAT )
+    ENDIF()
+
+    IF (EXTRAREPO_PACKSTAT STREQUAL NOPACKAGES)
+
+      MESSAGE("")
+      MESSAGE("Skipping reading packages and TPLs for ${READ_PRE_OR_POST_EXRAREPOS} extra repo ${EXTRA_REPO} because marked NOPACKAGES ... ")
+      MESSAGE("")
+      # ToDo: TriBITS:73: Don't print the above message by default.  It is
+      # just clutter.
+
+    ELSE()
+
+      # Read in the add-on TPLs from the extra repo
+
+      SET(${EXTRA_REPO}_TPLS_FILE
+        "${${EXTRA_REPO}_SOURCE_DIR}/${${PROJECT_NAME}_EXTRA_TPLS_FILE_NAME}")
+      PRINT_VAR(${EXTRA_REPO}_SOURCE_DIR)
+      PRINT_VAR(${PROJECT_NAME}_EXTRA_TPLS_FILE_NAME)
+      PRINT_VAR(${EXTRA_REPO}_TPLS_FILE)
+
+      MESSAGE("")
+      MESSAGE("Reading list of ${READ_PRE_OR_POST_EXRAREPOS} extra TPLs from ${${EXTRA_REPO}_TPLS_FILE} ... ")
+      MESSAGE("")
+
+      IF (NOT EXISTS "${${EXTRA_REPO}_TPLS_FILE}")
+        IF (${PROJECT_NAME}_IGNORE_MISSING_EXTRA_REPOSITORIES)
+          MESSAGE("-- "
+            "NOTE: Ignoring missing ${READ_PRE_OR_POST_EXRAREPOS} extra repo '${EXTRA_REPO}' TPLs list file '${${EXTRA_REPO}_TPLS_FILE}' on request!" )
+        ELSE()
+          MESSAGE( SEND_ERROR
+            "ERROR: Skipping missing ${READ_PRE_OR_POST_EXRAREPOS} extra repo '${EXTRA_REPO}' TPLs list file '${${EXTRA_REPO}_TPLS_FILE}'!")
+        ENDIF()
+      ELSE()
+        TRIBITS_TRACE_FILE_PROCESSING(REPOSITORY  INCLUDE  "${${EXTRA_REPO}_TPLS_FILE}")
+        INCLUDE("${${EXTRA_REPO}_TPLS_FILE}")
+        SET(APPEND_TO_TPLS_LIST  TRUE)
+        TRIBITS_PROCESS_TPLS_LISTS(${EXTRA_REPO}  ${EXTRA_REPO})
+      ENDIF()
+
+      # Read in the add-on packages from the extra repo
+
+      #PRINT_VAR(${EXTRA_REPO}_PACKAGES_LIST_FILE)
+      IF (${EXTRA_REPO}_PACKAGES_LIST_FILE)
+        SET(EXTRAREPO_PACKAGES_FILE
+          "${PROJECT_SOURCE_DIR}/${${EXTRA_REPO}_PACKAGES_LIST_FILE}")
+      ELSE()
+        SET(EXTRAREPO_PACKAGES_FILE
+          "${${EXTRA_REPO}_SOURCE_DIR}/${${PROJECT_NAME}_EXTRA_PACKAGES_FILE_NAME}")
+      ENDIF()
+
+      MESSAGE("")
+      MESSAGE("Reading list of ${READ_PRE_OR_POST_EXRAREPOS} extra packages from ${EXTRAREPO_PACKAGES_FILE} ... ")
+      MESSAGE("")
+
+      IF (NOT EXISTS "${EXTRAREPO_PACKAGES_FILE}")
+        IF (${PROJECT_NAME}_IGNORE_MISSING_EXTRA_REPOSITORIES)
+          MESSAGE("-- "
+            "NOTE: Ignoring missing ${READ_PRE_OR_POST_EXRAREPOS} extra repo '${EXTRA_REPO}' packages list file '${EXTRAREPO_PACKAGES_FILE}' on request!")
+        ELSE()
+          MESSAGE( SEND_ERROR
+            "ERROR: Skipping missing ${READ_PRE_OR_POST_EXRAREPOS} extra repo '${EXTRA_REPO}' packages list file '${EXTRAREPO_PACKAGES_FILE}'!")
+          # ToDo: TriBITS:73: Change to FATAL_ERROR to abort early
+        ENDIF()
+      ELSE()
+        TRIBITS_TRACE_FILE_PROCESSING(REPOSITORY  INCLUDE  "${EXTRAREPO_PACKAGES_FILE}")
+        INCLUDE("${EXTRAREPO_PACKAGES_FILE}")
+        SET(APPEND_TO_PACKAGES_LIST  TRUE)
+        TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO} ${EXTRA_REPO})
+      ENDIF()
+
+    ENDIF()
+
+    MATH(EXPR EXTRAREPO_IDX "${EXTRAREPO_IDX}+1")
+
+  ENDWHILE()
+
+ENDMACRO()
