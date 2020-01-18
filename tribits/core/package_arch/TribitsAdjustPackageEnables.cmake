@@ -269,7 +269,7 @@ ENDFUNCTION()
 # Helper macros for TRIBITS_READ_PACKAGE_DEPENDENCIES()
 
 
-MACRO(TRIBITS_PREP_TO_READ_DEPENDENCIES)
+MACRO(TRIBITS_PREP_TO_READ_DEPENDENCIES  PACKAGE_NAME_IN)
 
   TRIBITS_DECLARE_UNDEFINED(LIB_REQUIRED_DEP_PACKAGES)
   TRIBITS_DECLARE_UNDEFINED(LIB_OPTIONAL_DEP_PACKAGES)
@@ -280,6 +280,13 @@ MACRO(TRIBITS_PREP_TO_READ_DEPENDENCIES)
   TRIBITS_DECLARE_UNDEFINED(LIB_OPTIONAL_DEP_TPLS "")
   TRIBITS_DECLARE_UNDEFINED(TEST_REQUIRED_DEP_TPLS "")
   TRIBITS_DECLARE_UNDEFINED(TEST_OPTIONAL_DEP_TPLS "")
+
+  SET(REGRESSION_EMAIL_LIST "") # Allow to be empty
+
+  SET(${PACKAGE_NAME_IN}_FORWARD_LIB_REQUIRED_DEP_PACKAGES "")
+  SET(${PACKAGE_NAME_IN}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES "")
+  SET(${PACKAGE_NAME_IN}_FORWARD_TEST_REQUIRED_DEP_PACKAGES "")
+  SET(${PACKAGE_NAME_IN}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES "")
 
 ENDMACRO()
 
@@ -708,12 +715,7 @@ MACRO(TRIBITS_READ_SUBPACKAGE_DEPENDENCIES  PACKAGE_NAME
   # Dependencies.cmake file
   #
 
-  SET(${SUBPACKAGE_FULLNAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES "")
-  SET(${SUBPACKAGE_FULLNAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES "")
-  SET(${SUBPACKAGE_FULLNAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES "")
-  SET(${SUBPACKAGE_FULLNAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES "")
-
-  TRIBITS_PREP_TO_READ_DEPENDENCIES()
+  TRIBITS_PREP_TO_READ_DEPENDENCIES(${SUBPACKAGE_FULLNAME})
 
   # NOTE: Subpackages use the regression email list from the parent package.
 
@@ -801,26 +803,14 @@ ENDMACRO()
 #
 MACRO(TRIBITS_READ_PACKAGE_DEPENDENCIES  PACKAGE_NAME)
 
-  #
   # A) Get ready to read in the contents of this this pakages's Dependencies.cmake file
-  #
 
-  SET(${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES "")
-  SET(${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES "")
-  SET(${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES "")
-  SET(${PACKAGE_NAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES "")
-
-  TRIBITS_PREP_TO_READ_DEPENDENCIES()
-
-  # Set one regression email list for the package and all subpackages!
-  SET(REGRESSION_EMAIL_LIST "") # Allow to be empty
+  TRIBITS_PREP_TO_READ_DEPENDENCIES(${PACKAGE_NAME})
 
   # Listing of subpakages
   SET(SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS) # Allow to be empty
 
-  #
   # B) Read in this package's Dependencies file and save off read dependency vars.
-  #
 
   SET(PAKCAGE_DEPENDENCIES_FILE
     "${PROJECT_SOURCE_DIR}/${${PACKAGE_NAME}_REL_SOURCE_DIR}/cmake/Dependencies.cmake")
@@ -832,12 +822,47 @@ MACRO(TRIBITS_READ_PACKAGE_DEPENDENCIES  PACKAGE_NAME)
 
   TRIBITS_SAVE_OFF_DEPENDENCIES_VARS(PARENTPACK)
 
-  #
-  # B.1) Set up the mail addresses
-  #
+  # B.1) Set up the mail addresses (one regression email list for the package
+  # and all subpackages)
 
-  # ToDo: Move this above so that it will be handled as part of subpackage
-  # processing?
+  TRIBITS_SET_PACAKGE_REGRESSION_EMAIL_LIST(${PACKAGE_NAME})
+
+  # B.2) Process this package's subpackages first *before* finishing this packages!
+
+  TRIBITS_PARSE_SUBPACKAGES_AND_APPEND_SE_PACKAGES_AND_ADD_OPTIONS(${PACKAGE_NAME})
+
+  TRIBITS_READ_ALL_PACKAGE_SUBPACKAGE_DEPENDENCIES(${PACKAGE_NAME})
+
+  # C) Finish processing this package's dependencies into dependency graph vars
+  #
+  # NOTE: The subpackages for this package are automatically treated as
+  # optional or required library dependent packages for this outer package!
+
+  TRIBITS_READ_BACK_DEPENDENCIES_VARS(PARENTPACK)
+
+  # Append the subpackages to the dependencies list
+  SET(SUBPACKAGE_IDX 0)
+  FOREACH(TRIBITS_SUBPACKAGE ${${PACKAGE_NAME}_SUBPACKAGES})
+    SET(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${TRIBITS_SUBPACKAGE})
+    LIST(GET ${PACKAGE_NAME}_SUBPACKAGE_OPTREQ ${SUBPACKAGE_IDX} SUBPACKAGE_OPTREQ)
+    LIST(APPEND LIB_${SUBPACKAGE_OPTREQ}_DEP_PACKAGES ${SUBPACKAGE_FULLNAME})
+    MATH(EXPR SUBPACKAGE_IDX "${SUBPACKAGE_IDX}+1")
+  ENDFOREACH()
+
+  # Append this package to list of SE packages *after* subpackages are added!
+  LIST(APPEND ${PROJECT_NAME}_SE_PACKAGES ${PACKAGE_NAME})
+
+  # Process this parent package's dependency lists!
+  TRIBITS_PROCESS_PACKAGE_DEPENDENCIES_LISTS(${PACKAGE_NAME})
+
+ENDMACRO()
+
+
+#
+# Set a pacakge's regression email address
+# ${PACKAGE_NAME}_REGRESSION_EMAIL_LIST
+#
+MACRO(TRIBITS_SET_PACAKGE_REGRESSION_EMAIL_LIST PACKAGE_NAME)
 
   # Lower-case package name To be used with auto email naming based on base email address
   STRING(TOLOWER "${PACKAGE_NAME}" LPACKAGE)
@@ -873,45 +898,12 @@ MACRO(TRIBITS_READ_PACKAGE_DEPENDENCIES  PACKAGE_NAME)
     PRINT_VAR(${PACKAGE_NAME}_REGRESSION_EMAIL_LIST)
   ENDIF()
 
-  #
-  # B.2) Process this package's subpackages first *before* finishing this packages!
-  #
-
-  TRIBITS_PARSE_SUBPACKAGES_AND_APPEND_SE_PACKAGES_AND_ADD_OPTIONS(${PACKAGE_NAME})
-
-  TRIBITS_READ_ALL_PACKAGE_SUBPACKAGE_DEPENDENCIES(${PACKAGE_NAME})
-
-  #
-  # C) Finish processing this package's dependencies into dependency graph vars
-  #
-  # NOTE: The subpackages for this package are automatically treated as
-  # optional or required library dependent packages for this outer package!
-  #
-
-  TRIBITS_READ_BACK_DEPENDENCIES_VARS(PARENTPACK)
-
-  # Append the subpackages to the dependencies list
-  SET(SUBPACKAGE_IDX 0)
-  FOREACH(TRIBITS_SUBPACKAGE ${${PACKAGE_NAME}_SUBPACKAGES})
-    SET(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${TRIBITS_SUBPACKAGE})
-    LIST(GET ${PACKAGE_NAME}_SUBPACKAGE_OPTREQ ${SUBPACKAGE_IDX} SUBPACKAGE_OPTREQ)
-    LIST(APPEND LIB_${SUBPACKAGE_OPTREQ}_DEP_PACKAGES ${SUBPACKAGE_FULLNAME})
-    MATH(EXPR SUBPACKAGE_IDX "${SUBPACKAGE_IDX}+1")
-  ENDFOREACH()
-
-  # Append this package to list of SE packages *after* subpackages are added!
-  LIST(APPEND ${PROJECT_NAME}_SE_PACKAGES ${PACKAGE_NAME})
-
-  # Process this parent package's dependency lists!
-  TRIBITS_PROCESS_PACKAGE_DEPENDENCIES_LISTS(${PACKAGE_NAME})
-
 ENDMACRO()
 
 
 #
 # Get the REPO_NAME and REPO_DIR given the REPO
 #
-
 FUNCTION(TRIBITS_GET_REPO_NAME_DIR  REPO_IN  REPO_NAME_OUT  REPO_DIR_OUT)
   #MESSAGE("TRIBITS_GET_REPO_NAME_DIR:  '${REPO_IN}'  '${REPO_NAME_OUT}'  '${REPO_DIR_OUT}'")
   # This list of repositories is the list of directories!
