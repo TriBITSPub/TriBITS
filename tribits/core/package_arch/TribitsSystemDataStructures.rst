@@ -115,7 +115,7 @@ project-level non-cache list variable::
 That list is created from the information in the
 `<repoDir>/PackagesList.cmake`_ and `<packageDir>/cmake/Dependencies.cmake`_
 files for the top-level packages read and processed in the macro
-`TRIBITS_READ_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH()`_ using macros in the file::
+`TRIBITS_READ_PROJECT_AND_PACKAGE_DEPENDENCIES_CREATE_GRAPH_PRINT_DEPS()`_ using macros in the file::
 
   TribitsAdjustPackageEnables.cmake
 

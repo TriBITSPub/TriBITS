@@ -930,11 +930,11 @@ ENDFUNCTION()
 
 
 #
-# @MACRO: TRIBITS_READ_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH()
+# @MACRO: TRIBITS_READ_PROJECT_AND_PACKAGE_DEPENDENCIES_CREATE_GRAPH_PRINT_DEPS()
 #
 # Usage::
 #
-#   TRIBITS_READ_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH()
+#   TRIBITS_READ_PROJECT_AND_PACKAGE_DEPENDENCIES_CREATE_GRAPH_PRINT_DEPS()
 #
 # This macro reads of all the package dependencies and builds the package
 # dependency graph.  This reads in all of the
@@ -956,7 +956,7 @@ ENDFUNCTION()
 # directed acyclic depenency (DAG) package dependency graph (with navigation
 # up and down the graph).
 #
-MACRO(TRIBITS_READ_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH)
+MACRO(TRIBITS_READ_PROJECT_AND_PACKAGE_DEPENDENCIES_CREATE_GRAPH_PRINT_DEPS)
 
   MESSAGE("")
   MESSAGE("Processing Project, Repository, and Package dependency files and building internal dependencies graph ...")
