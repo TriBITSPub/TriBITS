@@ -960,7 +960,7 @@ MACRO(TRIBITS_READ_PROJECT_AND_PACKAGE_DEPENDENCIES_CREATE_GRAPH_PRINT_DEPS)
 
   TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_LOGIC()
 
-  TRIBITS_READ_PACKAGE_DEPENDENCIES_CREATE_GRAPH()
+  TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH()
 
   TRIBITS_PRINT_TENTATIVELY_ENABLED_TPLS()
 
@@ -1028,15 +1028,16 @@ ENDMACRO()
 
 
 #
-# @MACRO: TRIBITS_READ_PACKAGE_DEPENDENCIES_CREATE_GRAPH()
+# @MACRO: TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH()
 #
 # Usage::
 #
-#   TRIBITS_READ_PACKAGE_DEPENDENCIES_CREATE_GRAPH()
+#   TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH()
 #
 # This macro reads in all of the `<packageDir>/cmake/Dependencies.cmake`_ and
-# `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ files and builds the
-# package depenency graph varibles.
+# `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ files for top-level
+# packages and subpackages, respectively, and builds the package dependency
+# graph variables.
 #
 # This macro reads from the variables::
 #
@@ -1047,12 +1048,12 @@ ENDMACRO()
 #
 #   ${PROJECT_NAME}_SE_PACKAGES
 #
-# as well creates the package dependency varaibles described in `List
+# as well creates the package dependency variables described in `List
 # variables defining the package dependencies graph`_ that defines the
-# directed acyclic depenency (DAG) package dependency graph (with navigation
+# directed acyclic dependency (DAG) package dependency graph (with navigation
 # up and down the graph).
 #
-MACRO(TRIBITS_READ_PACKAGE_DEPENDENCIES_CREATE_GRAPH)
+MACRO(TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES_AND_CREATE_GRAPH)
 
   SET(${PROJECT_NAME}_SE_PACKAGES) # Packages and subpackages
 
@@ -1061,7 +1062,7 @@ MACRO(TRIBITS_READ_PACKAGE_DEPENDENCIES_CREATE_GRAPH)
       ${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
   ENDFOREACH()
 
-  # Create a reverse se packages list for later use
+  # Create a reverse SE packages list for later use
   SET(${PROJECT_NAME}_REVERSE_SE_PACKAGES ${${PROJECT_NAME}_SE_PACKAGES})
   IF (${PROJECT_NAME}_REVERSE_SE_PACKAGES)
     LIST(REVERSE ${PROJECT_NAME}_REVERSE_SE_PACKAGES)
