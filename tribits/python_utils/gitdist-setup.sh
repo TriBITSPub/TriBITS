@@ -28,7 +28,7 @@ function gitdist_show_full_repo_state {
   echo
   echo "Repo branch status:"
   echo
-  gitdist-status "$@" | grep -v "^$" | grep -v "(tip: to see a legend"
+  gitdist dist-repo-status "$@" | grep -v "^$" | grep -v "(tip: to see a legend"
   echo
   echo "Repo remotes:"
   echo
