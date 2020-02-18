@@ -1,3 +1,32 @@
+#
+# Bash setup gitdist and commandline completion
+#
+# Usage:
+#
+#   source <base-dir>/gitdist-setup.sh
+#
+# First, this script, when sourced, will create an alias for gitdist to the
+# gitdist script in the same directory where this script resides if 'gitdist'
+# is not already in the path.  (This just makes it easy to get 'gitdist' in
+# your path.)
+#
+# Second, this script sets up commandline completion for the gitdist command
+# the same as for the git command.  So, if you have sourced the script
+# git-completion.bash before sourcing this script, then gitdist will get all
+# of the same commandline command and argument completions as the git command.
+# In addition, it adds commandline completions for the additional gitdist
+# commands and options (e.g. dist-repo-status, --dist-mod-only, --dist-repos,
+# etc.).
+#
+# Third, this script sets up bash functions and alias for:
+#
+# gitdist-status                 Show repo status table
+# gitdist-mod                    Run gitdist only on modified repos
+# gitdist-mod-status             Show status table for only modified repos               
+# gitdist-repo-versions          Show repo version info (for --dist-version-file)
+# gitdist-show-full-repo-state   Full repo state (status table, versions, remotes)
+#
+
 # Assert this script is sourced, not run!
 called=$_
 if [ "$called" == "$0" ] ; then
