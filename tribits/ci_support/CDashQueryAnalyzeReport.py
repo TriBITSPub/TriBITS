@@ -1529,9 +1529,7 @@ class AddTestHistoryToTestDictFunctor(object):
     #print("\ntestHistoryLOD[0] = "+str(testHistoryLOD[0]))
 
     if testStatus == "Missing":
-      testDict['status'] = "Missing"
-      testDict['status_color'] = cdashColorMissing()
-      testDict['details'] = "Missing"
+      testDict = setTestDictAsMissing(testStatus)
     elif testStatus == "Passed":
       testDict.update(testHistoryLOD[0])
       testDict['status_color'] = cdashColorPassed()
@@ -1541,25 +1539,28 @@ class AddTestHistoryToTestDictFunctor(object):
       # testHistoryLOD[0] should be an exact duplicate of testDict.  The below
       # check confirms that to make sure that CDash is giving us consistent
       # data.
-      if testDict.get('status', None) != testStatus:
-        raise Exception(
-          "Error, test testDict['status'] = '"+str(testDict.get('status',None))+"'"+\
-          " != "+\
-          "top test history testStatus = '"+testStatus+"'"+\
-          " where:\n\n"+\
-          "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
-          "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
-      if testDict.get('buildstarttime', None) != testHistoryLOD[0]['buildstarttime']:
-        raise Exception(
-          "Error, testDict['buildstarttime'] = '"+\
-          str(testDict.get('buildstarttime',None))+"'"+\
-          " != "+\
-          "top test history 'buildstarttime' = "+\
-          "'"+testHistoryLOD[0]['buildstarttime']+"'"+\
-          " where:\n\n"+\
-          "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
-          "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
-      if testStatus == "Failed":
+#      if testDict.get('status', None) != testStatus:
+#        raise Exception(
+#          "Error, test testDict['status'] = '"+str(testDict.get('status',None))+"'"+\
+#          " != "+\
+#          "top test history testStatus = '"+testStatus+"'"+\
+#          " where:\n\n"+\
+#          "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
+#          "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
+#      if testDict.get('buildstarttime', None) != testHistoryLOD[0]['buildstarttime']:
+#        raise Exception(
+#          "Error, testDict['buildstarttime'] = '"+\
+#          str(testDict.get('buildstarttime',None))+"'"+\
+#          " != "+\
+#          "top test history 'buildstarttime' = "+\
+#          "'"+testHistoryLOD[0]['buildstarttime']+"'"+\
+#          " where:\n\n"+\
+#          "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
+#          "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
+      if testDict.get('status', None) == None and testStatus == "Failed":
+        testDict = setTestDictAsMissing(testDict)
+        testDict.update(testHistoryLOD[0])
+      elif testStatus == "Failed":
         testDict['status_color'] = cdashColorFailed()
       elif testStatus == "Not Run":
         testDict['status_color'] = cdashColorNotRun()
@@ -1608,6 +1609,12 @@ class AddTestHistoryToTestDictFunctor(object):
     # Return the updated test dict with the new fields
     return testDict
 
+
+def setTestDictAsMissing(testDict):
+  testDict['status'] = "Missing"
+  testDict['status_color'] = cdashColorMissing()
+  testDict['details'] = "Missing"
+  return testDict
 
 # Gather up a list of the missing builds.
 #
