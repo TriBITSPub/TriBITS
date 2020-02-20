@@ -1411,7 +1411,7 @@ class AddTestHistoryToTestDictFunctor(object):
   #
   def __init__(self, cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
     testCacheDir, useCachedCDashData=True, alwaysUseCacheFileIfExists=True,
-    verbose=False, printDetails=False,
+    verbose=False, printDetails=False, requireMatchTestTopTestHistory=True,
     extractCDashApiQueryData_in=extractCDashApiQueryData, # For unit testing
     ):
     self.__cdashUrl = cdashUrl
@@ -1424,6 +1424,7 @@ class AddTestHistoryToTestDictFunctor(object):
     self.__alwaysUseCacheFileIfExists = alwaysUseCacheFileIfExists
     self.__verbose = verbose
     self.__printDetails = printDetails
+    self.__requireMatchTestTopTestHistory = requireMatchTestTopTestHistory
     self.__extractCDashApiQueryData_in = extractCDashApiQueryData_in
 
 
@@ -1529,7 +1530,7 @@ class AddTestHistoryToTestDictFunctor(object):
     #print("\ntestHistoryLOD[0] = "+str(testHistoryLOD[0]))
 
     if testStatus == "Missing":
-      testDict = setTestDictAsMissing(testStatus)
+      testDict = setTestDictAsMissing(testDict)
     elif testStatus == "Passed":
       testDict.update(testHistoryLOD[0])
       testDict['status_color'] = cdashColorPassed()
@@ -1539,24 +1540,25 @@ class AddTestHistoryToTestDictFunctor(object):
       # testHistoryLOD[0] should be an exact duplicate of testDict.  The below
       # check confirms that to make sure that CDash is giving us consistent
       # data.
-#      if testDict.get('status', None) != testStatus:
-#        raise Exception(
-#          "Error, test testDict['status'] = '"+str(testDict.get('status',None))+"'"+\
-#          " != "+\
-#          "top test history testStatus = '"+testStatus+"'"+\
-#          " where:\n\n"+\
-#          "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
-#          "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
-#      if testDict.get('buildstarttime', None) != testHistoryLOD[0]['buildstarttime']:
-#        raise Exception(
-#          "Error, testDict['buildstarttime'] = '"+\
-#          str(testDict.get('buildstarttime',None))+"'"+\
-#          " != "+\
-#          "top test history 'buildstarttime' = "+\
-#          "'"+testHistoryLOD[0]['buildstarttime']+"'"+\
-#          " where:\n\n"+\
-#          "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
-#          "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
+      if self.__requireMatchTestTopTestHistory:
+        if testDict.get('status', None) != testStatus:
+          raise Exception(
+            "Error, test testDict['status'] = '"+str(testDict.get('status',None))+"'"+\
+            " != "+\
+            "top test history testStatus = '"+testStatus+"'"+\
+            " where:\n\n"+\
+            "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
+            "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
+        if testDict.get('buildstarttime', None) != testHistoryLOD[0]['buildstarttime']:
+          raise Exception(
+            "Error, testDict['buildstarttime'] = '"+\
+            str(testDict.get('buildstarttime',None))+"'"+\
+            " != "+\
+            "top test history 'buildstarttime' = "+\
+            "'"+testHistoryLOD[0]['buildstarttime']+"'"+\
+            " where:\n\n"+\
+            "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
+            "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
       if testDict.get('status', None) == None and testStatus == "Failed":
         testDict = setTestDictAsMissing(testDict)
         testDict.update(testHistoryLOD[0])

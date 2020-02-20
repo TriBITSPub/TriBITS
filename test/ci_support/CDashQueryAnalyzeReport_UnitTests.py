@@ -2254,6 +2254,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     alwaysUseCacheFileIfExists = False
     verbose = False
     printDetails = False
+    requireMatchTestTopTestHistory = True
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
       testHistoryQueryUrl, {'builds':testHistoryLOD})
 
@@ -2261,7 +2262,8 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
-      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
+      verbose, printDetails, requireMatchTestTopTestHistory,
+      mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
@@ -2364,6 +2366,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     alwaysUseCacheFileIfExists = False
     verbose = False
     printDetails = False
+    requireMatchTestTopTestHistory = True
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
       testHistoryQueryUrl, {'builds':testHistoryLOD})
 
@@ -2371,7 +2374,8 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
-      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
+      verbose, printDetails, requireMatchTestTopTestHistory,
+      mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
@@ -2626,7 +2630,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
 
   # Test the case where the testDict just has the minimal fields that come
-  # from the tests with issue trackers CSV file and the tets did not actually
+  # from the tests with issue trackers CSV file and the test did not actually
   # run in the current testing day.  Also, in this case, there is no recent
   # test history.
   def test_empty_test_missing_no_recent_history(self):
@@ -2756,6 +2760,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     alwaysUseCacheFileIfExists = False
     verbose = False
     printDetails = False
+    requireMatchTestTopTestHistory = True
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
       testHistoryQueryUrl, {'builds':testHistoryLOD})
 
@@ -2763,7 +2768,8 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
-      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
+      verbose, printDetails, requireMatchTestTopTestHistory,
+      mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
@@ -2777,6 +2783,100 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
         " where:\n\n"+\
         "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
         "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
+
+
+  # Check the case where a tracked test with a minimal testDict that is not
+  # failing in the list of global nonpassing tests (and is therefore
+  # considered missing) actually has test history for the current testing day
+  # which will typically be 'Failed'.  This is to support the use case where
+  # random system failures get sorted out of the global list of nonpassing
+  # tests but tracked test may be failing in the current.
+  def test_mismatch_top_test_history_status_allowed(self):
+
+    # Initial test dict as it would come from the tests with issue trackers
+    # CSV file (was not presenet in global nonpassing list of tests due to
+    # matching extra filtering criterial).
+    testDict = {
+      u'site': u'site_name',
+      u'buildName': u'build_name',
+      u'testname': u'test_name',
+      u'issue_tracker': u'#1234',
+      u'issue_tracker_url': u'some.com/site/issue/1234'
+    }
+
+    # Target test date
+    testHistoryQueryUrl = \
+      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+
+    # Create a subdir for the created cache file
+    testCacheOutputDir = \
+      os.getcwd()+"/AddTestHistoryToTestDictFunctor/test_mismatch_top_test_history_status"
+    if os.path.exists(testCacheOutputDir): shutil.rmtree(testCacheOutputDir)
+    os.makedirs(testCacheOutputDir)
+
+    # Create dummy test history
+    testHistoryLOD = getTestHistoryLOD5(
+      [
+        'Failed',  # This test got filtered out of the global lsit of nonpassing tests 
+        'Failed',
+        'Passed',
+        'Passed',
+        'Not Run',
+        ]
+      )
+
+    # Make it easy to find the top test dict below
+    testHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
+
+    # Construct arguments
+    cdashUrl = "site.com/cdash"
+    projectName = "projectName"
+    date = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
+    daysOfHistory = 5
+    useCachedCDashData = False
+    alwaysUseCacheFileIfExists = False
+    verbose = False
+    printDetails = False
+    requireMatchTestTopTestHistory = False
+    mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
+      testHistoryQueryUrl, {'builds':testHistoryLOD})
+
+    # Construct the functor
+    addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
+      cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
+      testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
+      verbose, printDetails, requireMatchTestTopTestHistory,
+      mockExtractCDashApiQueryDataFunctor,
+      )
+
+    # Apply the functor to add the test history to the test dict.  This will
+    # also fill in the missing data for the testDict.
+    addTestHistoryFunctor(testDict)
+
+    # Check the set fields out output
+    self.assertEqual(testDict['site'], 'site_name')
+    self.assertEqual(testDict['buildName'], 'build_name')
+    self.assertEqual(testDict['testname'], 'test_name')
+    self.assertEqual(testDict['testname_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['status'], 'Failed')
+    self.assertEqual(testDict['details'], 'Completed (Failed)\n')
+    self.assertEqual(testDict['status_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['test_history_num_days'], 5)
+    self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
+    self.assertEqual(
+      testDict['test_history_list'][0]['buildstarttime'], '2001-01-01T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][1]['buildstarttime'], '2000-12-31T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][2]['buildstarttime'], '2000-12-30T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][3]['buildstarttime'], '2000-12-29T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][4]['buildstarttime'], '2000-12-28T05:54:03 UTC')
+    self.assertEqual(testDict['nopass_last_x_days'], 3)
+    self.assertEqual(testDict['issue_tracker'], '#1234')
+    self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
 
 
   # Check error message for case where the 'buildstarttime' of the test
@@ -2828,6 +2928,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     alwaysUseCacheFileIfExists = False
     verbose = False
     printDetails = False
+    requireMatchTestTopTestHistory = True
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
       testHistoryQueryUrl, {'builds':testHistoryLOD})
 
@@ -2835,7 +2936,8 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
-      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
+      verbose, printDetails, requireMatchTestTopTestHistory, 
+      mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
