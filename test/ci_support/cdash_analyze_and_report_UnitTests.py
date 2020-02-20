@@ -61,6 +61,20 @@ g_pp = pprint.PrettyPrinter(indent=4)
 # 
 
 
+# Find the index of a test in a list of test dicts
+def getIdxOfTestInTestLOD(testsLOD, site, buildName, testname):
+  testIdx = 0
+  for testsDict in testsLOD:
+    if testsDict['site'] == site \
+      and testsDict['buildName'] == buildName \
+      and testsDict['testname'] == testname \
+      :
+      #print(testsDict)
+      break
+    testIdx = testIdx+1
+  return testIdx
+
+
 # Search for a list of regexs in order in a list of strings
 def assertFindStringInListOfStrings(
   testObj,
@@ -448,7 +462,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       )
 
 
-  # Test out Not Run tests
+  # Test out NotRun tests
   #
   # This test checks the tables 'twoinr' and 'twinr' in detail and checks some
   # of the contents of the 'twoif' and 'twif'.  To do this, we just change the
@@ -710,9 +724,12 @@ class test_cdash_analyze_and_report(unittest.TestCase):
 
     # Get list of nonpassing tests from JSON file
     testsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
+    testIdx = getIdxOfTestInTestLOD(testsLOD, 'mutrino',
+      'Trilinos-atdm-mutrino-intel-opt-openmp-KNL',
+      'Belos_gcrodr_hb_MPI_4' )
     # Duplicate the test Belos_gcrodr_hb_MPI_4
-    testDict = copy.deepcopy(testsLOD[1])
-    testsLOD.insert(2, testDict)
+    testDict = copy.deepcopy(testsLOD[testIdx])
+    testsLOD.insert(testIdx+1, testDict)
     # Write updated test data back to file
     writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir)
 
@@ -769,9 +786,12 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     # Get list of nonpassing tests from JSON file
     testsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
     # Duplicate the test Belos_gcrodr_hb_MPI_4 bug give different testid
-    testDict = copy.deepcopy(testsLOD[1])
+    testIdx = getIdxOfTestInTestLOD(testsLOD, 'mutrino',
+      'Trilinos-atdm-mutrino-intel-opt-openmp-KNL',
+      'Belos_gcrodr_hb_MPI_4' )
+    testDict = copy.deepcopy(testsLOD[testIdx])
     testDict['testDetailsLink'] = 'testDetails.php?test=57860536&build=4107241'
-    testsLOD.insert(2, testDict)
+    testsLOD.insert(testIdx+1, testDict)
     # Write updated test data back to file
     writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir)
 
@@ -803,6 +823,80 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         "<font color=\"red\">Tests without issue trackers Failed: twoif=12</font><br>",
         "Tests with issue trackers Failed: twif=9<br>",
         "</p>",
+
+        ],
+      #verbose=True,
+      #debugPrint=True,
+      )
+
+
+  # Test removing a failing test in the out list of nonpassing tests and add
+  # the option --require-test-history-match-nonpassing-tests=off and verify
+  # that the test is listed in the 'twim' table but with status 'Failed'.
+  #
+  def test_twoif_12_twif_9_filtered_out_nonpassing_test(self):
+
+    testCaseName = "twoif_12_twif_9_filtered_out_nonpassing_test"
+
+    # Copy the raw files to get started
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
+
+    # Get list of nonpassing tests from JSON file
+    testsLOD = getNonpassTestsDictListFromCDashJsonFile(testOutputDir)
+    # Remove tracked test MueLu_UnitTestsBlockedEpetra_MPI_1
+    testIdx = getIdxOfTestInTestLOD(testsLOD, 'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'MueLu_UnitTestsBlockedEpetra_MPI_1')
+    del testsLOD[testIdx]
+    # Write updated test data back to file
+    writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir)
+
+    # Run the script and make sure it outputs the right stuff
+    cdash_analyze_and_report_run_case(
+      self,
+      testCaseName,
+      ["--require-test-history-match-nonpassing-tests=off"],
+      1,
+      "FAILED (twoif=12, twim=1, twif=8): ProjectName Nightly Builds on 2018-10-28",
+      [
+        "Num builds = 6",
+        "Num nonpassing tests direct from CDash query = 20",
+        "Num nonpassing tests after removing duplicate tests = 20",
+        "Num nonpassing tests without issue trackers = 12",
+        "Num nonpassing tests with issue trackers = 8",
+        "Num nonpassing tests without issue trackers Failed = 12",
+        "Num nonpassing tests with issue trackers Failed = 8",
+        "Num tests with issue trackers gross passing or missing = 1",
+        "Builds Missing: bm=0",
+        "Builds with Configure Failures: cf=0",
+        "Builds with Build Failures: bf=0",
+        "Tests without issue trackers Failed: twoif=12",
+        "Tests with issue trackers Missing: twim=1",
+        "Tests with issue trackers Failed: twif=8",
+        ],
+      [
+
+        # Second paragraph with listing of different types of tables below
+        "<p>",
+        "<font color=\"red\">Tests without issue trackers Failed: twoif=12</font><br>",
+        "Tests with issue trackers Missing: twim=1<br>",
+        "Tests with issue trackers Failed: twif=8<br>",
+        "</p>",
+
+        # Check the twim table entries to pin it down
+        "<h3>Tests with issue trackers Missing: twim=1</h3>",
+
+        "<tr>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=site&compare2=61&value2=cee-rhel6\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57816429&build=4107319\">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\"https://something[.]com/cdash/testDetails[.]php[?]test=57816429&build=4107319\"><font color=\"gray\">Failed</font></a></td>",
+        "<td align=\"left\">Completed [(]Failed[)]</td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=MueLu_UnitTestsBlockedEpetra_MPI_1&field3=site&compare3=61&value3=cee-rhel6\"><font color=\"gray\">0</font></a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=MueLu_UnitTestsBlockedEpetra_MPI_1&field3=site&compare3=61&value3=cee-rhel6\"><font color=\"red\">15</font></a></td>",
+        "<td align=\"right\"><a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-09-29&end=2018-10-28&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=MueLu_UnitTestsBlockedEpetra_MPI_1&field3=site&compare3=61&value3=cee-rhel6\"><font color=\"green\">0</font></a></td>",
+        "<td align=\"right\"><a href=\"https://github[.]com/trilinos/Trilinos/issues/3640\">#3640</a></td>",
+        "</tr>",
 
         ],
       #verbose=True,
@@ -883,13 +977,13 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num/expected=6/8[)]<br>",
         "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Non-passing Tests on CDash</a> [(]num=21[)]<br>",
 
-        # Top listing of types of data/tables to be displayed below 
+        # Top listing of types of data/tables to be displayed below
         "<font color=\"red\">Builds Missing: bm=2</font><br>",
         "<font color=\"red\">Builds with Configure Failures: cf=1</font><br>",
         "<font color=\"red\">Builds with Build Failures: bf=2</font><br>",
         "<font color=\"red\">Tests without issue trackers Failed: twoif=12</font><br>",
         "Tests with issue trackers Failed: twif=9<br>",
-        
+
         # 'bm' table (Really pin down this table)
         "<h3>Builds Missing: bm=2</h3>",
         "<table.*>",  # NOTE: Other unit test code checks the default style!
@@ -1205,7 +1299,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     testHistoryLOD[0]['status'] = u'Passed'
     testHistoryLOD[0]['details'] = u'Completed (Passed)'
     writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
-      testHistoryFileName) 
+      testHistoryFileName)
 
     # Make a test passed
     testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
@@ -1219,7 +1313,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     testHistoryLOD[0]['status'] = u'Passed'
     testHistoryLOD[0]['details'] = u'Completed (Passed)'
     writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
-      testHistoryFileName) 
+      testHistoryFileName)
 
     # Make a test missing (here, we need to move the date back)
     testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
@@ -1241,7 +1335,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     testHistoryLOD[1]['status'] = u'Passed'
     testHistoryLOD[1]['details'] = u'Completed (Passed)'
     writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
-      testHistoryFileName) 
+      testHistoryFileName)
 
     # Make a test missing (no days of test history)
     testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
@@ -1251,7 +1345,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       daysOfHistory)
     testHistoryLOD = []
     writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
-      testHistoryFileName) 
+      testHistoryFileName)
 
     # ToDo: Remove history for missing tests to test different numbers of
     # missing days.  (This will need to be done once we tablulate "Consecutive
