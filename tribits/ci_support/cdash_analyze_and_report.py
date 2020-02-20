@@ -117,7 +117,10 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     default="",
     help="Partial URL fragment for queryTests.php making of the filters for"+\
       " the set of non-passing tests matching this set of builds (e.g."+\
-      " 'filtercombine=and&filtercount=1&showfilters=1&filtercombine=and&field1=groupname&compare1=61&value1=ATDM'"+\
+      " 'filtercombine=and&filtercount=1&showfilters=1&filtercombine=and&field1=groupname&compare1=61&value1=ATDM')."+\
+      "  This set of filter fields may also filter out extra nonpassing tests"+\
+      " such for know random system failures to avoid flooding the output.  In this"+\
+      " case, one should also set --require-test-history-match-nonpassing-tests=off."+\
       " [REQUIRED] [default = '']" )
 
   clp.add_option(
@@ -187,6 +190,20 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
        "  [default '"+str(limitTableRows)+"']" )
 
   addOptionParserChoiceOption(
+    "--require-test-history-match-nonpassing-tests", "requireTestHistoryMatchNonpassingTestsStr",
+    ("on", "off"), 0,
+    "Require that the status for each tracked test listed in the tests with issue"+\
+    " trackers CSV file match the status of that test returned from the test history"+\
+    " returned from CDash.  In general, these should match up but these may not if extra"+\
+    " filter criteria has been added to the list on nonpassing tests in the"+\
+    " --cdash-nonpassed-tests-filters=<filters> set of filters (such as to filter out"+\
+    " a large number of random system failures).  In this case, an error will be returned"+\
+    " by default and the script will crash.  But this can be relaxed by setting this to 'off'"+\
+    " which will result in these tracked tests being listed in the 'twim' table but typically"+\
+    " with status 'Failed'.",
+    clp )
+
+  addOptionParserChoiceOption(
     "--print-details", "printDetailsStr",
     ("on", "off"), 1,
     "Print more info like the CDash URLs for downloaded data and the cache"+\
@@ -235,6 +252,11 @@ def setExtraCmndLineOptionsAfterParse(inOptions_inout):
   else:
     setattr(inOptions_inout, 'useCachedCDashData', False)
 
+  if inOptions_inout.requireTestHistoryMatchNonpassingTestsStr == "on":
+    setattr(inOptions_inout, 'requireTestHistoryMatchNonpassingTests', True)
+  else:
+    setattr(inOptions_inout, 'requireTestHistoryMatchNonpassingTests', False)
+
   if inOptions_inout.printDetailsStr == "on":
     setattr(inOptions_inout, 'printDetails', True)
   else:
@@ -271,6 +293,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --use-cached-cdash-data='"+inOptions.useCachedCDashDataStr+"'"+lt+\
     "  --limit-test-history-days='"+str(inOptions.testHistoryDays)+"'"+lt+\
     "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
+    "  --require-test-history-match-nonpassing-tests='"+inOptions.requireTestHistoryMatchNonpassingTestsStr+"'"+lt+\
     "  --print-details='"+inOptions.printDetailsStr+"'"+lt+\
     "  --write-failing-tests-without-issue-trackers-to-file='"+inOptions.writeFailingTestsWithoutIssueTrackersToFile+"'"+lt+\
     "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt+\
@@ -376,6 +399,7 @@ class TestSetGetDataAnayzeReporter(object):
             alwaysUseCacheFileIfExists=True,
             verbose=True,
             printDetails=self.inOptions.printDetails,
+            requireMatchTestTopTestHistory=self.inOptions.requireTestHistoryMatchNonpassingTests,
             )
           )
   
@@ -838,6 +862,8 @@ if __name__ == '__main__':
           alwaysUseCacheFileIfExists=True,
           verbose=True,
           printDetails=inOptions.printDetails,
+          requireMatchTestTopTestHistory=inOptions.requireTestHistoryMatchNonpassingTests,
+
           )
         )
 
