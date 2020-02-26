@@ -64,10 +64,8 @@ TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_NoProjectSourceDir
 
   TEST_0
     MESSAGE "Copy tribits dir so that it will not appear in the standard location under any TriBITS project"
-    CMND ${CMAKE_COMMAND}
-    ARGS -E copy_directory
-      ${${PROJECT_NAME}_TRIBITS_DIR}
-      tribits
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR} tribits
 
   TEST_1 CMND "${CMAKE_COMMAND}"
     ARGS
@@ -137,16 +135,12 @@ TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_DefaultProjectSourceDir
   OVERALL_NUM_MPI_PROCS 1
 
   TEST_0
-    CMND ${CMAKE_COMMAND}
-    ARGS -E copy_directory
-      ${MOCK_TRILINOS_DIR}
-      MockTrilinos
+    CMND cp
+    ARGS -r ${MOCK_TRILINOS_DIR} MockTrilinos
 
   TEST_1
-    CMND ${CMAKE_COMMAND}
-    ARGS -E copy_directory
-      ${${PROJECT_NAME}_TRIBITS_DIR}
-      MockTrilinos/cmake/tribits
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR} MockTrilinos/cmake/tribits
 
   TEST_2 CMND "${CMAKE_COMMAND}"
     ARGS
