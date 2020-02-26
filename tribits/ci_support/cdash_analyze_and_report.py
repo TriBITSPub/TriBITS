@@ -190,7 +190,8 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
        "  [default '"+str(limitTableRows)+"']" )
 
   addOptionParserChoiceOption(
-    "--require-test-history-match-nonpassing-tests", "requireTestHistoryMatchNonpassingTestsStr",
+    "--require-test-history-match-nonpassing-tests",
+    "requireTestHistoryMatchNonpassingTestsStr",
     ("on", "off"), 0,
     "Require that the status for each tracked test listed in the tests with issue"+\
     " trackers CSV file match the status of that test returned from the test history"+\
@@ -278,27 +279,28 @@ def getCmndLineOptions():
 
 
 def fwdCmndLineOptions(inOptions, lt=""):
+  io = inOptions
   cmndLineOpts = \
-    "  --date='"+inOptions.date+"'"+lt+\
-    "  --cdash-project-testing-day-start-time='"+inOptions.cdashProjectTestingDayStartTime+"'"+lt+\
-    "  --cdash-project-name='"+inOptions.cdashProjectName+"'"+lt+\
-    "  --build-set-name='"+inOptions.buildSetName+"'"+lt+\
-    "  --cdash-site-url='"+inOptions.cdashSiteUrl+"'"+lt+\
-    "  --cdash-builds-filters='"+inOptions.cdashBuildsFilters+"'"+lt+\
-    "  --cdash-nonpassed-tests-filters='"+inOptions.cdashNonpassedTestsFilters+"'"+lt+\
-    "  --expected-builds-file='"+inOptions.expectedBuildsFile+"'"+lt+\
-    "  --tests-with-issue-trackers-file='"+inOptions.testsWithIssueTrackersFile+"'"+lt+\
-    "  --cdash-queries-cache-dir='"+inOptions.cdashQueriesCacheDir+"'"+lt+\
-    "  --cdash-base-cache-files-prefix='"+inOptions.cdashBaseCacheFilesPrefix+"'"+lt+\
-    "  --use-cached-cdash-data='"+inOptions.useCachedCDashDataStr+"'"+lt+\
-    "  --limit-test-history-days='"+str(inOptions.testHistoryDays)+"'"+lt+\
-    "  --limit-table-rows='"+str(inOptions.limitTableRows)+"'"+lt+\
-    "  --require-test-history-match-nonpassing-tests='"+inOptions.requireTestHistoryMatchNonpassingTestsStr+"'"+lt+\
-    "  --print-details='"+inOptions.printDetailsStr+"'"+lt+\
-    "  --write-failing-tests-without-issue-trackers-to-file='"+inOptions.writeFailingTestsWithoutIssueTrackersToFile+"'"+lt+\
-    "  --write-email-to-file='"+inOptions.writeEmailToFile+"'"+lt+\
-    "  --email-from-address='"+inOptions.emailFromAddress+"'"+lt+\
-    "  --send-email-to='"+inOptions.sendEmailTo+"'"+lt
+    "  --date='"+io.date+"'"+lt+\
+    "  --cdash-project-testing-day-start-time='"+io.cdashProjectTestingDayStartTime+"'"+lt+\
+    "  --cdash-project-name='"+io.cdashProjectName+"'"+lt+\
+    "  --build-set-name='"+io.buildSetName+"'"+lt+\
+    "  --cdash-site-url='"+io.cdashSiteUrl+"'"+lt+\
+    "  --cdash-builds-filters='"+io.cdashBuildsFilters+"'"+lt+\
+    "  --cdash-nonpassed-tests-filters='"+io.cdashNonpassedTestsFilters+"'"+lt+\
+    "  --expected-builds-file='"+io.expectedBuildsFile+"'"+lt+\
+    "  --tests-with-issue-trackers-file='"+io.testsWithIssueTrackersFile+"'"+lt+\
+    "  --cdash-queries-cache-dir='"+io.cdashQueriesCacheDir+"'"+lt+\
+    "  --cdash-base-cache-files-prefix='"+io.cdashBaseCacheFilesPrefix+"'"+lt+\
+    "  --use-cached-cdash-data='"+io.useCachedCDashDataStr+"'"+lt+\
+    "  --limit-test-history-days='"+str(io.testHistoryDays)+"'"+lt+\
+    "  --limit-table-rows='"+str(io.limitTableRows)+"'"+lt+\
+    "  --require-test-history-match-nonpassing-tests='"+io.requireTestHistoryMatchNonpassingTestsStr+"'"+lt+\
+    "  --print-details='"+io.printDetailsStr+"'"+lt+\
+    "  --write-failing-tests-without-issue-trackers-to-file='"+io.writeFailingTestsWithoutIssueTrackersToFile+"'"+lt+\
+    "  --write-email-to-file='"+io.writeEmailToFile+"'"+lt+\
+    "  --email-from-address='"+io.emailFromAddress+"'"+lt+\
+    "  --send-email-to='"+io.sendEmailTo+"'"+lt
   return cmndLineOpts 
 
 
@@ -383,30 +385,32 @@ class TestSetGetDataAnayzeReporter(object):
           limitTableRows )
       else:
         testSetSortedLimitedLOD = testSetLOD
+
+      sio = self.inOptions
   
       if getTestHistory:
 
         CDQAR.foreachTransform(
           testSetSortedLimitedLOD,
           CDQAR.AddTestHistoryToTestDictFunctor(
-            cdashUrl=self.inOptions.cdashSiteUrl,
-            projectName=self.inOptions.cdashProjectName,
-            date=self.inOptions.date,
-            testingDayStartTimeUtc=self.inOptions.cdashProjectTestingDayStartTime,
-            daysOfHistory=self.inOptions.testHistoryDays,
+            cdashUrl=sio.cdashSiteUrl,
+            projectName=sio.cdashProjectName,
+            date=sio.date,
+            testingDayStartTimeUtc=sio.cdashProjectTestingDayStartTime,
+            daysOfHistory=sio.testHistoryDays,
             testCacheDir=self.testHistoryCacheDir,
-            useCachedCDashData=self.inOptions.useCachedCDashData,
+            useCachedCDashData=sio.useCachedCDashData,
             alwaysUseCacheFileIfExists=True,
             verbose=True,
-            printDetails=self.inOptions.printDetails,
-            requireMatchTestTopTestHistory=self.inOptions.requireTestHistoryMatchNonpassingTests,
+            printDetails=sio.printDetails,
+            requireMatchTestTopTestHistory=sio.requireTestHistoryMatchNonpassingTests,
             )
           )
   
       self.overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         testSetType,
         testSetDescr, testSetAcro, testSetTotalSize, testSetSortedLimitedLOD,
-        self.inOptions.testHistoryDays, limitRowsToDisplay=limitTableRows,
+        sio.testHistoryDays, limitRowsToDisplay=limitTableRows,
         testSetColor=colorTestSet )
 
 
@@ -697,7 +701,8 @@ if __name__ == '__main__':
 
       overallVars.summaryLineDataNumbersList.append(bmAcro+"="+str(bmNum))
 
-      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bmSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
+      overallVars.htmlEmailBodyTop += \
+        CDQAR.colorHtmlText(bmSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
 
       bmColDataList = [
         tcd("Group", 'group'),
@@ -737,7 +742,8 @@ if __name__ == '__main__':
 
       overallVars.summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
 
-      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(cSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
+      overallVars.htmlEmailBodyTop += \
+        CDQAR.colorHtmlText(cSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
 
       cColDataList = [
         tcd("Group", 'group'),
@@ -777,7 +783,8 @@ if __name__ == '__main__':
 
       overallVars.summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
 
-      overallVars.htmlEmailBodyTop += CDQAR.colorHtmlText(bSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
+      overallVars.htmlEmailBodyTop += \
+        CDQAR.colorHtmlText(bSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
 
       cColDataList = [
         tcd("Group", 'group'),
