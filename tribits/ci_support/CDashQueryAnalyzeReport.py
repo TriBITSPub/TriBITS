@@ -750,21 +750,18 @@ def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
 # SearchableListOfDicts.  Please use that class instead of this raw function.
 #
 def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
-  removeExactDuplicateElements=False,
-  checkDictsAreSame_in=checkDictsAreSame,
+  removeExactDuplicateElements=False, checkDictsAreSame_in=checkDictsAreSame,
   ):
   # Build the lookup dict data-structure. Also, optionally mark any 100%
   # duplicate elements if asked to remove 100% duplicate elements.
-  lookupDict = {} ; idx = 0 ; numRemoved = 0 ; duplicateIndexesToRemoveList = []
+  lookupDict = {} ; idx = 0 ; numRemoved = 0 ; duplicateIndexesToRemoveFromList = []
   for dictEle in listOfDicts:
     # Create the structure of recursive dicts for the keys in order
     currentLookupDictRef = lookupDict
     lastLookupDictRef = None
-    lastKeyValue = None
     for key in listOfKeys:
       keyValue = dictEle[key]
       lastLookupDictRef = currentLookupDictRef
-      lastKeyValue = keyValue
       nextLookupDictRef = currentLookupDictRef.setdefault(keyValue, {})
       currentLookupDictRef = nextLookupDictRef
     addEle = True
@@ -777,22 +774,12 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
         lookedUpDict, "listOfDicts["+str(lookedUpIdx)+"]" )
       if hasSameKeyValuePairs and removeExactDuplicateElements:
         # This is a 100% duplicate element to one previously added.
-        # Therefore, marke this duplicate element to be removed from the
-        # orginal list.
-        duplicateIndexesToRemoveList.append(idx)
+        # Therefore, mark this duplicate element to be removed.
+        duplicateIndexesToRemoveFromList.append(idx)
         addEle = False
       else:
-        raise Exception(
-          "Error, The element\n\n"+\
-          "    listOfDicts["+str(idx)+"] =\n\n"+\
-          "      "+sorted_dict_str(dictEle)+"\n\n"+\
-          "  has duplicate values for the list of keys\n\n"+\
-          "    "+str(listOfKeys)+"\n\n"+\
-          "  with the element already added\n\n"+\
-          "    listOfDicts["+str(lookedUpIdx)+"] =\n\n"+\
-          "      "+sorted_dict_str(lookedUpDict)+"\n\n"+\
-          "  and differs by at least the key/value pair\n\n"+\
-          "    "+str(dictDiffErrorMsg))
+        raiseDuplicateDictEleException(idx, dictEle, listOfKeys, lookedUpIdx,
+          lookedUpDict, dictDiffErrorMsg)
     # Need to go back and reset the dict on the last dict in the
     # data-structure so that modifications to the dicts that are looked up
     # will modify the original list.
@@ -801,9 +788,25 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
     else:
       numRemoved += 1
     idx += 1
-  # Remove 100% duplicate elements marged above
-  removeElementsFromListGivenIndexes(listOfDicts, duplicateIndexesToRemoveList)
+  # Remove 100% duplicate elements marked above
+  removeElementsFromListGivenIndexes(listOfDicts, duplicateIndexesToRemoveFromList)
   return  lookupDict
+
+
+def raiseDuplicateDictEleException(idx, dictEle, listOfKeys,
+  lookedUpIdx, lookedUpDict, dictDiffErrorMsg \
+  ):
+  raise Exception(
+    "Error, The element\n\n"+\
+    "    listOfDicts["+str(idx)+"] =\n\n"+\
+    "      "+sorted_dict_str(dictEle)+"\n\n"+\
+    "  has duplicate values for the list of keys\n\n"+\
+    "    "+str(listOfKeys)+"\n\n"+\
+    "  with the element already added\n\n"+\
+    "    listOfDicts["+str(lookedUpIdx)+"] =\n\n"+\
+    "      "+sorted_dict_str(lookedUpDict)+"\n\n"+\
+    "  and differs by at least the key/value pair\n\n"+\
+    "    "+str(dictDiffErrorMsg))
 
 
 # Lookup a dict (and optionally also its index location) in a list of dicts
