@@ -193,15 +193,15 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "--require-test-history-match-nonpassing-tests",
     "requireTestHistoryMatchNonpassingTestsStr",
     ("on", "off"), 0,
-    "Require that the status for each tracked test listed in the tests with issue"+\
-    " trackers CSV file match the status of that test returned from the test history"+\
-    " returned from CDash.  In general, these should match up but these may not if extra"+\
-    " filter criteria has been added to the list on nonpassing tests in the"+\
-    " --cdash-nonpassed-tests-filters=<filters> set of filters (such as to filter out"+\
-    " a large number of random system failures).  In this case, an error will be returned"+\
-    " by default and the script will crash.  But this can be relaxed by setting this to 'off'"+\
-    " which will result in these tracked tests being listed in the 'twim' table but typically"+\
-    " with status 'Failed'.",
+    "Require that the status for each tracked test listed in the tests with issue"\
+    +" trackers CSV file match the status of that test returned from the test history"\
+    +" returned from CDash.  In general, these should match up but these may not if extra"\
+    +" filter criteria has been added to the list on nonpassing tests in the"\
+    +" --cdash-nonpassed-tests-filters=<filters> set of filters (such as to filter out"\
+    +" a large number of random system failures).  In this case, an error will be"\
+    +" returned by default and the script will crash.  But this can be relaxed by"\
+    +" setting this to 'off' which will result in these tracked tests being listed in"\
+    +" the 'twim' table but typically with status 'Failed'.",
     clp )
 
   addOptionParserChoiceOption(
@@ -214,9 +214,18 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
   clp.add_option(
     "--write-failing-tests-without-issue-trackers-to-file",
     dest="writeFailingTestsWithoutIssueTrackersToFile", type="string", default="",
-    help="Write CSV file with a list of tets with issue trackers failed 'twif'." \
+    help="Write a CSV file with a list of tets with issue trackers failed 'twif'." \
     +"  This is to make it easy to add new entires to the file read by" \
     +" the option --tests-with-issue-trackers-file=<file>. [default = '']" )
+
+  clp.add_option(
+    "--write-test-data-to-file",
+    dest="writeTestDataToFile", type="string", default="",
+    help="Write pretty-printed Python list of dictionaries for tests with" \
+    +" with issue trackers.  This includes the history of the tests for" \
+    +" --limit-test-history-days=<days> of history.  This contains all of the" \
+    +" information that appears in the generated summary tables for tests with" \
+    +" associated issue trackers.  [default = '']" )
 
   clp.add_option(
     "--write-email-to-file", dest="writeEmailToFile", type="string", default="",
@@ -298,6 +307,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --require-test-history-match-nonpassing-tests='"+io.requireTestHistoryMatchNonpassingTestsStr+"'"+lt+\
     "  --print-details='"+io.printDetailsStr+"'"+lt+\
     "  --write-failing-tests-without-issue-trackers-to-file='"+io.writeFailingTestsWithoutIssueTrackersToFile+"'"+lt+\
+    "  --write-test-data-to-file='"+io.writeTestDataToFile+"'"+lt+\
     "  --write-email-to-file='"+io.writeEmailToFile+"'"+lt+\
     "  --email-from-address='"+io.emailFromAddress+"'"+lt+\
     "  --send-email-to='"+io.sendEmailTo+"'"+lt
@@ -959,12 +969,20 @@ if __name__ == '__main__':
     #
 
     if inOptions.writeFailingTestsWithoutIssueTrackersToFile:
-
       twoifCsvFileName = inOptions.writeFailingTestsWithoutIssueTrackersToFile
-
       print("\nWriting list of 'twiof' to file "+twoifCsvFileName+" ...")
-
       CDQAR.writeTestsLODToCsvFile(twoifLOD, twoifCsvFileName)
+
+    #
+    # D.7) Write out test data to CSV file
+    #
+
+    if inOptions.writeTestDataToFile:
+      testDataFileName = inOptions.writeTestDataToFile
+      print("\nWriting out gathered test data to file "+testDataFileName+" ...")
+      testDataLOD = twipLOD + twimLOD + twifLOD + twinrLOD
+      # ToDo: Add the first inOptions.limitTableRows elements of twiofLOD and twoinrLOD ...
+      CDQAR.pprintPythonDataToFile(testDataLOD, testDataFileName)
 
   except Exception:
     # Traceback!
