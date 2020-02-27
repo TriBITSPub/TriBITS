@@ -559,7 +559,8 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       testCaseName,
       [
         "--limit-test-history-days=30",   # Test that you can set this as int
-        "--write-failing-tests-without-issue-trackers-to-file=twoif.csv"
+        "--write-failing-tests-without-issue-trackers-to-file=twoif.csv",
+        "--write-test-data-to-file=test_data.json"
         ],
       1,
       "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2018-10-28",
@@ -708,6 +709,34 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     # tests for the guts of what is being called.  Just want to macke sure the
     # right number of tests are being written and the first and last are
     # correct.
+
+    # Read the written file 'test_data.json' and verify that it is correct
+    testDataLOD = eval(open(testOutputDir+"/test_data.json", 'r').read())
+    self.assertEqual(len(testDataLOD), 9)
+    # Make sure an entry from 'twif' exists!
+    testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'MueLu_UnitTestsBlockedEpetra_MPI_1')
+    testDict = testDataLOD[testIdx]
+    self.assertEqual(testDict['site'], 'cee-rhel6')
+    self.assertEqual(testDict['buildName'], 'Trilinos-atdm-cee-rhel6-clang-opt-serial')
+    self.assertEqual(testDict['testname'], 'MueLu_UnitTestsBlockedEpetra_MPI_1')
+    self.assertEqual(testDict['status'], 'Failed')
+    self.assertEqual(testDict['details'], 'Completed (Failed)\n')
+    self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
+      '2018-10-28T06:10:33 UTC')
+    # Make sure an entry from 'twinr' exists!
+    testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'Teko_ModALPreconditioner_MPI_1')
+    testDict = testDataLOD[testIdx]
+    self.assertEqual(testDict['site'], 'cee-rhel6')
+    self.assertEqual(testDict['buildName'], 'Trilinos-atdm-cee-rhel6-clang-opt-serial')
+    self.assertEqual(testDict['testname'], 'Teko_ModALPreconditioner_MPI_1')
+    self.assertEqual(testDict['status'], 'Not Run')
+    self.assertEqual(testDict['details'], 'Required Files Missing')
+    self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
+      '2018-10-28T06:10:33 UTC')
 
 
   # Test with some duplicate tests from CDash query (this happens in real life
@@ -1355,7 +1384,9 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     cdash_analyze_and_report_run_case(
       self,
       testCaseName,
-      ["--limit-test-history-days=30"], # Test that you can set this as int
+      [ "--limit-test-history-days=30",  # Test that you can set this as int
+        "--write-test-data-to-file=test_data.json",
+        ],
       1,
       "FAILED (bm=1, twoif=12, twip=2, twim=2, twif=5):"+\
         " ProjectName Nightly Builds on 2018-10-28",
@@ -1472,6 +1503,47 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       #verbose=True,
       #debugPrint=True,
       )
+
+    # Read the written file 'test_data.json' and verify that it is correct
+    testDataLOD = eval(open(testOutputDir+"/test_data.json", 'r').read())
+    self.assertEqual(len(testDataLOD), 9)
+    # Make sure an entry from 'twip' exists!
+    testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'MueLu_UnitTestsBlockedEpetra_MPI_1')
+    testDict = testDataLOD[testIdx]
+    self.assertEqual(testDict['site'], 'cee-rhel6')
+    self.assertEqual(testDict['buildName'], 'Trilinos-atdm-cee-rhel6-clang-opt-serial')
+    self.assertEqual(testDict['testname'], 'MueLu_UnitTestsBlockedEpetra_MPI_1')
+    self.assertEqual(testDict['status'], 'Passed')
+    self.assertEqual(testDict['details'], 'Completed (Passed)')
+    self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
+      '2018-10-28T06:10:33 UTC')
+    # Make sure an entry from 'twim' exists!
+    testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    testDict = testDataLOD[testIdx]
+    self.assertEqual(testDict['site'], 'cee-rhel6')
+    self.assertEqual(testDict['buildName'], 'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial')
+    self.assertEqual(testDict['testname'], 'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    self.assertEqual(testDict['status'], 'Missing')
+    self.assertEqual(testDict['details'], 'Missing')
+    self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
+      '2018-10-26T12:00:00 UTC')
+    # Make sure an entry from 'twif' exists!
+    testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    testDict = testDataLOD[testIdx]
+    self.assertEqual(testDict['site'], 'cee-rhel6')
+    self.assertEqual(testDict['buildName'], 'Trilinos-atdm-cee-rhel6-clang-opt-serial')
+    self.assertEqual(testDict['testname'], 'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    self.assertEqual(testDict['status'], 'Failed')
+    self.assertEqual(testDict['details'], 'Completed (Failed)\n')
+    self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
+      '2018-10-28T06:10:33 UTC')
+
 
 #
 # Run the unit tests!
