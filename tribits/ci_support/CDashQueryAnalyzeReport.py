@@ -1563,8 +1563,14 @@ class AddTestHistoryToTestDictFunctor(object):
             "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
             "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
       if testDict.get('status', None) == None and testStatus == "Failed":
+        # This is a test missing in the outer list of nonpassing tests but is
+        # shown to be failing for the current testing day when looking at the
+        # test history.  This can happen when the outer CDash query filters
+        # out random system failures (see documentation for option
+        # --require-test-history-match-nonpassing-tests).
         testDict = setTestDictAsMissing(testDict)
-        testDict.update(testHistoryLOD[0])
+        testDict.update(testHistoryLOD[0])       # Overwrites 'status' = "Failed"
+        testDict['status'] = "Missing / Failed"  # Show this special status!
       elif testStatus == "Failed":
         testDict['status_color'] = cdashColorFailed()
       elif testStatus == "Not Run":

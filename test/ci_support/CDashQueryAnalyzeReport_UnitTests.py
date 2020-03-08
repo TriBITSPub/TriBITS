@@ -2859,7 +2859,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['testname'], 'test_name')
     self.assertEqual(testDict['testname_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
-    self.assertEqual(testDict['status'], 'Failed')
+    self.assertEqual(testDict['status'], 'Missing / Failed')
     self.assertEqual(testDict['details'], 'Completed (Failed)\n')
     self.assertEqual(testDict['status_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
     self.assertEqual(testDict['test_history_num_days'], 5)
