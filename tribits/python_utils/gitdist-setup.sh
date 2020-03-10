@@ -45,7 +45,7 @@ if [[ "${existing_gitdist}" == "" ]] ; then
 fi
 
 function gitdist_repo_versions {
-  gitdist "$@" --dist-no-color log -1 --pretty=format:"%h [%ad] <%ae>%n%s" | grep -v "^$"
+  gitdist "$@" --dist-no-color log -1 --pretty=format:"%H [%cd] <%ae>%n%s" | grep -v "^$"
 }
 export -f gitdist_repo_versions
 
