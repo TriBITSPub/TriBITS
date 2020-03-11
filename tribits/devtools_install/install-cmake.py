@@ -92,7 +92,10 @@ class CMakeInstall:
   def getExtraHelpStr(self, version):
     return """
 This script builds """+self.getProductName(version)+""" from source compiled with the
-configured C/C++ compilers in your path.
+configured C/C++ compilers in your path.  To select a C and C++ compiler which is not
+the default in your path, run with:
+
+  env CC=<path-to-c-compiler> CXX=<path-to-cxx-compiler> install-cmake.py [other options]
 
 This downloads tarballs from GitHub by default for the given cmake version.
 
@@ -190,10 +193,11 @@ version of CMake by default.
     else:
       # CMake is not already installed on system, so use configure
       echoRunSysCmnd(
-        "../"+self.cmakeSrcDir+"/configure "+\
+        "../"+self.cmakeSrcDir+"/bootstrap "+\
         " "+self.inOptions.extraConfigureOptions+\
         getParallelOpt(self.inOptions, "--parallel=")+\
-        " --prefix="+self.inOptions.installDir,
+        " --prefix="+self.inOptions.installDir+\
+        " -- "+openSSLCachVarStr,
         extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
         )
 
