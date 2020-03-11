@@ -45,23 +45,8 @@
 #
 
 cmakeBaseName = "cmake"
-cmakeDefaultVersion = "3.3.2"
-cmakeSupportedVersions = ["2.8.11", "3.1.1", "3.3.2", "3.4.0", "3.4.1", "3.4.3", "3.5.1", "3.6.2"]
-cmakeTarballVersions = {
-  "2.8.11" : "2.8.11.2",
-  "3.1.1" : "3.1.1",
-  "3.3.2" : "3.3.2",
-  "3.4.0" : "3.4.0",
-  "3.4.1" : "3.4.1",
-  "3.4.3" : "3.4.3",
-  "3.5.1" : "3.5.1",
-  "3.6.2" : "3.6.2",
-  }
-cmakeNativeConfigOpts = ["on", "off", "auto"]
+cmakeDefaultVersion = "3.13.4"
 
-# NOTES:
-#
-# See the patch files for 2.8.11 and 3.1.1 for CPack in the untar() function!
 
 #
 # Script code
@@ -91,7 +76,7 @@ class CMakeInstall:
     return cmakeDefaultVersion
 
   def getProductSupportedVersions(self):
-    return cmakeSupportedVersions
+    return []  # Support all versions!
 
   #
   # Called after knowing the product version but before parsing the
@@ -102,39 +87,44 @@ class CMakeInstall:
     return cmakeBaseName+"-"+version
 
   def getBaseDirName(self, version):
-    return cmakeBaseName+"-"+version+"-base"
+    return cmakeBaseName+"-"+version
 
   def getExtraHelpStr(self, version):
     return """
 This script builds """+self.getProductName(version)+""" from source compiled with the
-configured C/C++ compilers in your path.  Note that the provided CMake
-configure script actually builds a local bootstrap copy of CMake first, before
-building the final version of CMake and the rest of the tools that gets
-installed.
+configured C/C++ compilers in your path.
 
-NOTE: This build script sets the environment vars CXXFLAGS=-O3 AND CFLAGS=-O3
+This downloads tarballs from github by default for the given cmake version.
+
+This build script sets the environment vars CXXFLAGS=-O3 AND CFLAGS=-O3
 when doing the configure.  Therefore, this builds and installs an optimized
 version of CMake by default.
-
-NOTE: The assumed directory structure of the download source provided by the
-command --download-cmnd=<download-cmnd> is:
-
-   cmake-<version>-base/
-     cmake-<full-version>.tar.gz
 """
 
   def injectExtraCmndLineOptions(self, clp, version):
-    setStdDownloadCmndOption(self, clp, version)
+    setStdGithubDownloadCmndOption(self, "kitware", "cmake", clp, version)
     clp.add_option(
       "--extra-configure-options", dest="extraConfigureOptions", type="string", \
       default="", \
-      help="Extra options to add to the 'configure' command for "+self.getProductName(version)+"." \
+      help="Extra options to add to the 'configure' command for "\
+        +self.getProductName(version)+"." \
         +"  Note: This does not override the hard-coded configure options." )
-
     addOptionParserChoiceOption(
-      "--use-native-cmake-config", "cmakeNativeConfig", cmakeNativeConfigOpts, 2,
+      "--use-native-cmake-config", "cmakeNativeConfig",
+      ["on", "off", "auto"], 2,
       "Use an already installed version of CMake for configuring " \
       +self.getProductName(version)+".", clp)
+    addOptionParserChoiceOption(
+      "--use-openssl", "useOpenSSL",
+      ["on", "off"], 1,
+      "Build in support for OpenSSL to submit to CDash via HTTPS for " \
+      +self.getProductName(version)+".", clp)
+    clp.add_option(
+      "--cxx-compiler", dest="cxxCompiler", type="string", \
+      default="g++", \
+      help="C++ compiler to use to build "\
+        +self.getProductName(version)+"." \
+        +"  [default = g++]." )
 
   def echoExtraCmndLineOptions(self, inOptions):
     cmndLine = ""
@@ -151,7 +141,7 @@ command --download-cmnd=<download-cmnd> is:
     self.inOptions = inOptions
     self.baseDir = os.getcwd()
     self.cmakeBaseDir = self.baseDir+"/"+self.getBaseDirName(self.inOptions.version)
-    cmakeVersionFull = cmakeTarballVersions[self.inOptions.version]
+    cmakeVersionFull = self.inOptions.version
     self.cmakeTarball = "cmake-"+cmakeVersionFull+".tar.gz"
     self.cmakeSrcDir = "cmake-"+cmakeVersionFull
     self.cmakeBuildBaseDir = self.cmakeBaseDir+"/cmake-build"
@@ -163,18 +153,15 @@ command --download-cmnd=<download-cmnd> is:
 
   def doDownload(self):
     removeDirIfExists(self.cmakeBaseDir, True)
+    createDir(self.cmakeBaseDir, cdIntoDir=True, verbose=True)
     echoRunSysCmnd(self.inOptions.downloadCmnd)
 
   def doUntar(self):
     # Find the full name of the source tarball
     echoChDir(self.cmakeBaseDir)
-    echoRunSysCmnd("tar -xzf "+self.cmakeTarball)
-    if self.inOptions.version == "2.8.11" or self.inOptions.version == "3.1.1":
-      echoChDir(self.cmakeSrcDir+"/Source/CPack")
-      echoRunSysCmnd("patch -i ../../../fix_cpack_symlink.patch")
-    elif self.inOptions.version == "3.3.2" or self.inOptions.version == "3.4.0":
-      echoChDir(self.cmakeSrcDir+"/Source")
-      echoRunSysCmnd("patch -i ../../remove_getrealpath.patch")
+    createDir(self.cmakeSrcDir, verbose=True)
+    echoRunSysCmnd("tar -xzf "+self.cmakeTarball \
+     +" -C "+self.cmakeSrcDir+" --strip-components 1")
 
   def doConfigure(self):
     createDir(self.cmakeBuildBaseDir, True, True)
@@ -186,16 +173,22 @@ command --download-cmnd=<download-cmnd> is:
       # Configuring NOT with CMake was explicitly requested
       cmakeCmd = None
 
+    if self.inOptions.useOpenSSL == "on":
+      openSSLCachVarStr=" -DCMAKE_USE_OPENSSL=ON"
+    else:
+      openSSLCachVarStr=" -DCMAKE_USE_OPENSSL=OFF"
+
     if cmakeCmd is not None:
       # CMake is installed, configure CMake with CMake
       echoRunSysCmnd(
         cmakeCmd+" ../"+self.cmakeSrcDir+\
         " "+self.inOptions.extraConfigureOptions+\
-        " -DCMAKE_USE_OPENSSL=ON"+\
-        " -DCMAKE_INSTALL_PREFIX="+self.inOptions.installDir,
-        extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
+        " -DCMAKE_BUILD_TYPE=Release"+\
+        openSSLCachVarStr+\
+        " -DCMAKE_CXX_COMPILER="+self.inOptions.cxxCompiler+\
+        " -DCMAKE_INSTALL_PREFIX="+self.inOptions.installDir
         )
-    elif  self.inOptions.cmakeNativeConfig is "on":
+    elif self.inOptions.cmakeNativeConfig is "on":
       # Configuring CMake with CMake was explicitly requested but
       # the CMake executable was not found in PATH
       raise Exception("Could not find 'cmake' in PATH and --use-native-cmake-config=on!")
@@ -206,7 +199,7 @@ command --download-cmnd=<download-cmnd> is:
         " "+self.inOptions.extraConfigureOptions+\
         getParallelOpt(self.inOptions, "--parallel=")+\
         " --prefix="+self.inOptions.installDir,
-        extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
+        extraEnv={"CXX":self.inOptions.cxxCompiler,"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
         )
 
   def doBuild(self):

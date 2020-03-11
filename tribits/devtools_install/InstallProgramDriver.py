@@ -141,10 +141,16 @@ in order to remove the intermediate source and build files.
     defaultVersion = self.installObj.getProductDefaultVersion()
     defaultVersionIdx = findInSequence(supportedVersions, defaultVersion)
 
-    addOptionParserChoiceOption(
-      versionCmndArgName, "version", supportedVersions, defaultVersionIdx,
-      "Version to install for "+productName+".", clp)
-    
+    if supportedVersions:
+      addOptionParserChoiceOption(
+        versionCmndArgName, "version", supportedVersions, defaultVersionIdx,
+        "Version to install for "+productName+".", clp)
+    else:
+      clp.add_option(
+        versionCmndArgName, dest="version", type="string",
+        default=defaultVersion,
+        help="Version to install for "+productName+" (list of versions open-ended).")
+
     clp.add_option(
       "--install-dir", dest="installDir", type="string",
       default="/usr/local",
@@ -335,6 +341,18 @@ def setStdDownloadCmndOption(installObj, clp, version):
     "--download-cmnd", dest="downloadCmnd", type="string",
     default=defaultDownloadCmnd,
     help="Command used to download source for "+productName+"." \
+      +"  (Default ='"+defaultDownloadCmnd+"')  WARNING: This will delete" \
+      +" an existing directory '"+productBaseDirName+"' if it already exists!")
+
+def setStdGithubDownloadCmndOption(installObj, githubOrg, githubRepo, clp, version):
+  productName = installObj.getProductBaseName()+"-"+version
+  productBaseDirName = productName+"-base"
+  defaultDownloadCmnd = \
+    "wget -O "+productName+".tar.gz https://github.com/"+githubOrg+"/"+githubRepo+"/tarball/v"+version
+  clp.add_option(
+    "--download-cmnd", dest="downloadCmnd", type="string",
+    default=defaultDownloadCmnd,
+    help="Command used to download source tarball for "+productName+"." \
       +"  (Default ='"+defaultDownloadCmnd+"')  WARNING: This will delete" \
       +" an existing directory '"+productBaseDirName+"' if it already exists!")
 
