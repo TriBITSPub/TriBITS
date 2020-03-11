@@ -119,12 +119,6 @@ version of CMake by default.
       ["on", "off"], 1,
       "Build in support for OpenSSL to submit to CDash via HTTPS for " \
       +self.getProductName(version)+".", clp)
-    clp.add_option(
-      "--cxx-compiler", dest="cxxCompiler", type="string", \
-      default="g++", \
-      help="C++ compiler to use to build "\
-        +self.getProductName(version)+"." \
-        +"  [default = g++]." )
 
   def echoExtraCmndLineOptions(self, inOptions):
     cmndLine = ""
@@ -185,9 +179,9 @@ version of CMake by default.
         " "+self.inOptions.extraConfigureOptions+\
         " -DCMAKE_BUILD_TYPE=Release"+\
         openSSLCachVarStr+\
-        " -DCMAKE_CXX_COMPILER="+self.inOptions.cxxCompiler+\
         " -DCMAKE_INSTALL_PREFIX="+self.inOptions.installDir
         )
+
     elif self.inOptions.cmakeNativeConfig is "on":
       # Configuring CMake with CMake was explicitly requested but
       # the CMake executable was not found in PATH
@@ -199,7 +193,7 @@ version of CMake by default.
         " "+self.inOptions.extraConfigureOptions+\
         getParallelOpt(self.inOptions, "--parallel=")+\
         " --prefix="+self.inOptions.installDir,
-        extraEnv={"CXX":self.inOptions.cxxCompiler,"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
+        extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
         )
 
   def doBuild(self):
