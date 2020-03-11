@@ -111,7 +111,7 @@ version of CMake by default.
         +"  Note: This does not override the hard-coded configure options." )
     addOptionParserChoiceOption(
       "--use-native-cmake-config", "cmakeNativeConfig",
-      ["on", "off", "auto"], 2,
+      ["on", "off", "auto"], 1,
       "Use an already installed version of CMake for configuring " \
       +self.getProductName(version)+".", clp)
     addOptionParserChoiceOption(
