@@ -94,7 +94,7 @@ class CMakeInstall:
 This script builds """+self.getProductName(version)+""" from source compiled with the
 configured C/C++ compilers in your path.
 
-This downloads tarballs from github by default for the given cmake version.
+This downloads tarballs from GitHub by default for the given cmake version.
 
 This build script sets the environment vars CXXFLAGS=-O3 AND CFLAGS=-O3
 when doing the configure.  Therefore, this builds and installs an optimized
