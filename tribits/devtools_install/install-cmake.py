@@ -123,8 +123,9 @@ version of CMake by default.
   def echoExtraCmndLineOptions(self, inOptions):
     cmndLine = ""
     cmndLine += "  --download-cmnd='"+inOptions.downloadCmnd+"' \\\n"
-    cmndLine += "  --use-native-cmake-config='"+inOptions.cmakeNativeConfig+"' \\\n"
     cmndLine += "  --extra-configure-options='"+inOptions.extraConfigureOptions+"' \\\n"
+    cmndLine += "  --use-native-cmake-config='"+inOptions.cmakeNativeConfig+"' \\\n"
+    cmndLine += "  --use-openssl='"+inOptions.useOpenSSL+"' \\\n"
     return cmndLine
 
   #
