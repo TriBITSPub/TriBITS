@@ -153,10 +153,17 @@ in order to remove the intermediate source and build files.
 
     clp.add_option(
       "--install-dir", dest="installDir", type="string",
-      default="/usr/local",
+      default="",
       help="The install directory <install-dir> for "+productName+ \
-        " (default = /usr/local).  This can be a relative or absolute path, it can" \
+        " (default = '').  This can be a relative or absolute path, it can" \
         " start with ~/, etc." )
+
+    clp.add_option(
+      "--install-dir-base", dest="installDirBase", type="string",
+      default="",
+      help="The base install directory <install-dir> for "+productName+ \
+        " (default = '').  In this case the subdir "+productName+\
+        " will be created under this directory for the install prefix." )
 
     insertInstallPermissionsOptions(clp)
 
@@ -213,10 +220,12 @@ in order to remove the intermediate source and build files.
     # 3) Echo the command-line options
     #
 
-    cmndLine = "******************************************************************************\n"
+    cmndLine = \
+      "******************************************************************************\n"
     cmndLine += scriptName + " \\\n"
     cmndLine += "  "+versionCmndArgName + "='"+options.version+"' \\\n"
     cmndLine += "  --install-dir='" + options.installDir + "' \\\n"
+    cmndLine += "  --install-dir-base='" + options.installDirBase + "' \\\n"
     cmndLine += echoInsertPermissionsOptions(options)
     cmndLine += "  --parallel='" + str(options.parallel) + "' \\\n"
     cmndLine += "  --make-options='" + options.makeOptions + "'\\\n"
@@ -243,7 +252,10 @@ in order to remove the intermediate source and build files.
 
     # Check the options
 
-    if options.installDir == "":
+    if options.installDirBase != "" and options.installDir == "":
+      options.installDir=options.installDirBase+"/"+productName
+
+    elif options.installDir == "":
       raise Exception("Error, --install-dir=<install-dir> can't be empty!")
     options.installDir = os.path.abspath(os.path.expanduser(options.installDir))
 
@@ -283,17 +295,14 @@ in order to remove the intermediate source and build files.
     else:
       print("Skipping on request ...")
     
-    
     print("")
     print("C) Configure "+productName+" ...")
     print("")
-    
     
     if options.configure:
       self.installObj.doConfigure()
     else:
       print("Skipping on request ...")
-    
     
     print("")
     print("D) Build "+productName+" ...")
@@ -303,7 +312,6 @@ in order to remove the intermediate source and build files.
       self.installObj.doBuild()
     else:
       print("Skipping on request ...")
-    
     
     print("")
     print("E) Install "+productName+" ...")
