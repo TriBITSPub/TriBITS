@@ -82,16 +82,21 @@ class InstallProgramDriver:
     #
     # 1) Set up the help text
     #
+
+    productSupportedVersions = self.installObj.getProductSupportedVersions()
+    if productSupportedVersions:
+      supportedVersionsTxt = "Versions supported include:\n   "+\
+        str(self.installObj.getProductSupportedVersions())
+    else:
+      supportedVersionsTxt = "Arbirary versions are supported."
       
     usageHelp = scriptName+\
 r""" [OPTIONS] [--install-dir=<install-dir> ...]
 
 This script checks out source, untars, configures, builds, and installs
-"""+productName+r""" in one shot.  Versions supported include:
+"""+productName+r""" in one shot.  """+supportedVersionsTxt+r"""
 
-    """+str(self.installObj.getProductSupportedVersions())+r"""
-
-(set with --"""+productBaseName+r"""-version=<version>)
+The version to install is set with --"""+productBaseName+r"""-version=<version>.
 
 By default, if you just type:
 
