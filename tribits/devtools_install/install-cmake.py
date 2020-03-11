@@ -57,6 +57,7 @@ cmakeTarballVersions = {
   "3.5.1" : "3.5.1",
   "3.6.2" : "3.6.2",
   }
+cmakeNativeConfigOpts = ["on", "off", "auto"]
 
 # NOTES:
 #
@@ -130,9 +131,15 @@ command --download-cmnd=<download-cmnd> is:
       help="Extra options to add to the 'configure' command for "+self.getProductName(version)+"." \
         +"  Note: This does not override the hard-coded configure options." )
 
+    addOptionParserChoiceOption(
+      "--use-native-cmake-config", "cmakeNativeConfig", cmakeNativeConfigOpts, 2,
+      "Use an already installed version of CMake for configuring " \
+      +self.getProductName(version)+".", clp)
+
   def echoExtraCmndLineOptions(self, inOptions):
     cmndLine = ""
     cmndLine += "  --download-cmnd='"+inOptions.downloadCmnd+"' \\\n"
+    cmndLine += "  --use-native-cmake-config='"+inOptions.cmakeNativeConfig+"' \\\n"
     cmndLine += "  --extra-configure-options='"+inOptions.extraConfigureOptions+"' \\\n"
     return cmndLine
 
@@ -171,13 +178,36 @@ command --download-cmnd=<download-cmnd> is:
 
   def doConfigure(self):
     createDir(self.cmakeBuildBaseDir, True, True)
-    echoRunSysCmnd(
-      "../"+self.cmakeSrcDir+"/configure "+\
-      " "+self.inOptions.extraConfigureOptions+\
-      getParallelOpt(self.inOptions, "--parallel=")+\
-      " --prefix="+self.inOptions.installDir,
-      extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
-      )
+
+    # Look for an already installed CMake
+    if self.inOptions.cmakeNativeConfig is not "off":
+      cmakeCmd = self.which("cmake")
+    else:
+      # Configuring NOT with CMake was explicitly requested
+      cmakeCmd = None
+
+    if cmakeCmd is not None:
+      # CMake is installed, configure CMake with CMake
+      echoRunSysCmnd(
+        cmakeCmd+" ../"+self.cmakeSrcDir+\
+        " "+self.inOptions.extraConfigureOptions+\
+        " -DCMAKE_USE_OPENSSL=ON"+\
+        " -DCMAKE_INSTALL_PREFIX="+self.inOptions.installDir,
+        extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
+        )
+    elif  self.inOptions.cmakeNativeConfig is "on":
+      # Configuring CMake with CMake was explicitly requested but
+      # the CMake executable was not found in PATH
+      raise Exception("Could not find 'cmake' in PATH and --use-native-cmake-config=on!")
+    else:
+      # CMake is not already installed on system, so use configure
+      echoRunSysCmnd(
+        "../"+self.cmakeSrcDir+"/configure "+\
+        " "+self.inOptions.extraConfigureOptions+\
+        getParallelOpt(self.inOptions, "--parallel=")+\
+        " --prefix="+self.inOptions.installDir,
+        extraEnv={"CXXFLAGS":"-O3", "CFLAGS":"-O3"},
+        )
 
   def doBuild(self):
     echoChDir(self.cmakeBuildBaseDir)
@@ -195,7 +225,23 @@ To use the installed version of cmake-"""+self.inOptions.version+""" add the pat
 
 to your path and that should be it!
 """
+  @staticmethod
+  def which(program):
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            path = path.strip('"')
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+
+    return None
 
 #
 # Executable statements
