@@ -242,6 +242,11 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
       )
 
     clp.add_argument(
+      "--exclude", dest="exclude", default=None, nargs="*",
+      help="List of files/directories/globs to exclude from orig-dir when " \
+      +"snapshotting.")
+
+    clp.add_argument(
       "--assert-clean-orig-dir", dest="assertCleanOrigDir", action="store_true",
       default=True,
       help="Check that orig-dir is committed and clean. [default]" )
@@ -281,7 +286,7 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
       "--skip-commit", dest="doCommit", action="store_false",
       help="Skip the commit." )
     
-    (options, args) = clp.parse_args(cmndLineArgs)
+    options = clp.parse_args(cmndLineArgs)
   
     #
     # B) Echo the command-line
@@ -293,6 +298,8 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
 
     print("  --orig-dir='" + options.origDir + "' \\")
     print("  --dest-dir='" + options.destDir + "' \\")
+    if options.exclude:
+      print("  --exclude " + " ".join(options.exclude) + " \\")
     if options.assertCleanOrigDir:
       print("  --assert-clean-orig-dir \\")
     else:
