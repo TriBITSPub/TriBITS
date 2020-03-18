@@ -395,6 +395,8 @@ def snapshotDir(inOptions):
     if inOptions.exclude:
         excludes += " " + " ".join(map(lambda ex: "--exclude="+ex,
                                        inOptions.exclude))
+        print("Excluding files/directories/globs: " +
+              " ".join(inOptions.exclude))
     # Note that when syncing one git repo to another, we want to sync the
     # .gitingore and other hidden files as well.
   

@@ -146,6 +146,20 @@ class test_snapshot_dir(unittest.TestCase):
       )
 
 
+  def test_show_defaults_with_exclude(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--show-defaults", "--exclude", "foo", "bar*", "baz/"],
+      [],
+      [
+        "Script: snapshot-dir\.py",
+        "--orig-dir='dummy/orig/dir/'",
+        "--dest-dir='dummy/dest/dir/'",
+        "--exclude foo bar\* baz/"
+        ]
+      )
+
+
   def test_override_orig_dest_dirs(self):
     runSnapshotDirTestCase(
       self,
@@ -185,6 +199,37 @@ class test_snapshot_dir(unittest.TestCase):
         "Origin repo remote tracking branch: 'remotename/remotebranch'",
         "Origin repo remote repo URL: 'remotename = some-url-location'",
         "one commit msg"
+        ]
+     )
+
+  def test_snapshot_default_with_exclude(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--orig-dir=dummy/orig-dir/", "--dest-dir=dummy/dest-dir/",
+       "--exclude", "foo", "bar*", "baz/"],
+      [
+        g_gitDiffHead,
+        g_gitDiffHead,
+        g_gitRevParse,
+        g_gitRemote,
+        g_gitLog,
+        g_rsync,
+        g_gitLogSha1,
+        g_gitAdd,
+        g_gitCommit,
+        ],
+      [
+        "Script: snapshot-dir\.py",
+        "--orig-dir='dummy/orig-dir/'",
+        "--dest-dir='dummy/dest-dir/'",
+        "origin remote name = 'remotename'",
+        "origin remote branch = 'remotebranch'",
+        "origin remote URL = 'some-url-location'",
+        "Automatic snapshot commit from orig-dir at abc123",
+        "Origin repo remote tracking branch: 'remotename/remotebranch'",
+        "Origin repo remote repo URL: 'remotename = some-url-location'",
+        "one commit msg",
+        "Excluding files/directories/globs: foo bar\* baz/"
         ]
      )
 
