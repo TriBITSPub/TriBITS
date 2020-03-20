@@ -453,10 +453,10 @@ if __name__ == '__main__':
   # B) Sound off
   #
 
-  print "***"
-  print "*** Query and analyze CDash results for "+inOptions.buildSetName+\
-        " for testing day "+inOptions.date
-  print "***"
+  print("***")
+  print("*** Query and analyze CDash results for "+inOptions.buildSetName+\
+        " for testing day "+inOptions.date)
+  print("***")
 
   #
   # C) Create beginning of email body (that does not require getting any data off CDash)
