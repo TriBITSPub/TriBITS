@@ -288,8 +288,8 @@ def cdashColorMissing(): return 'gray'
 #
 def extractCDashApiQueryData(cdashApiQueryUrl):
   #print sys.version_info
-  if sys.version_info < (2,7,9):
-    raise Exception("Error: Must be using Python 2.7.9 or newer")
+  if sys.version_info < (2,7,5):
+    raise Exception("Error: Must be using Python 2.7.5 or newer")
   # NOTE: If we use Python 2.6.6. then the urllib2 function crashes!
   response = urlopen(cdashApiQueryUrl)
   return json.load(response)
