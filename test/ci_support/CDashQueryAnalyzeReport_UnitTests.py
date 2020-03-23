@@ -1310,20 +1310,6 @@ class test_SearchableListOfDicts(unittest.TestCase):
     (dictR,idxR)=slodm.lookupDictGivenKeyValuesList(('site4','build1'), True)
     self.assertEqual((idxR,dictR), (None, None))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   def test_exact_duplicate_ele_with_removal(self):
     listOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
     newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[2])
@@ -1383,26 +1369,79 @@ class test_SearchableListOfDicts(unittest.TestCase):
 # Test CDashQueryAnalyzeReport.getMissingExpectedBuildsList()
 #
 #############################################################################
-     
+
+def gsb_pass(group, site, build):
+  buildDict = {
+    'group':group,
+    'site':site,
+    'buildname':build,
+    'update': {'errors':0},
+    'configure':{'error': 0},
+    'compilation':{'error':0},
+    'test': {'pass':1, 'fail':0, 'notrun':0},
+    'extra-stuff':'stuff',
+    'data':'val1' }
+  return buildDict
+
+g_buildsListForMissingExpectedBuilds = [
+  gsb_pass('group1', 'site1', 'build1'),
+  gsb_pass('group1', 'site1', 'build2'),
+  gsb_pass('group1', 'site2', 'build3'),
+  gsb_pass('group2', 'site1', 'build1'),
+  gsb_pass('group2', 'site3', 'build4'),
+  ]
+
+g_expectedBuildsList = [
+  gsb('group1', 'site2', 'build3'),
+  gsb('group2', 'site3', 'build4'),
+  gsb('group2', 'site3', 'build8'),   # This is always a missing expected build
+  ]
+
 class test_getMissingExpectedBuildsList(unittest.TestCase):
 
-  def test_1(self):
-    slob = createSearchableListOfBuilds(copy.deepcopy(g_buildsListForExpectedBuilds))
-    slob.lookupDictGivenKeyValuesList(('group2','site3','build4')).update(
-      {'test':{'pass':1}})
-    expectedBuildsList = [
-      gsb('group1', 'site2', 'build3'),  # Build exists but missing tests
-      gsb('group2', 'site3', 'build4'),  # Build exists and has tests
-      gsb('group2', 'site3', 'build8'),  # Build missing all-together
-      ]
-    missingExpectedBuildsList = getMissingExpectedBuildsList(slob, expectedBuildsList)
-    self.assertEqual(len(missingExpectedBuildsList), 2)
-    self.assertEqual(missingExpectedBuildsList[0],
-      { 'group':'group1', 'site':'site2', 'buildname':'build3',
-        'status':"Build exists but no test results" } )
-    self.assertEqual(missingExpectedBuildsList[1],
-      { 'group':'group2', 'site':'site3', 'buildname':'build8',
-        'status':"Build not found on CDash" } )
+  def test_missing_2_no_conf_no_build_1_notests_1(self):
+    listOfBuilds = copy.deepcopy(g_buildsListForMissingExpectedBuilds)
+    #print("\nlistOfBuilds:"); g_pp.pprint(listOfBuilds)
+    slob = createSearchableListOfBuilds(listOfBuilds)
+    # Remove test results from one of the builds
+    del slob.lookupDictGivenKeyValuesList(('group1','site2','build3'))['test']
+    #print("\nlistOfBuilds:"); g_pp.pprint(listOfBuilds)
+    # Remove build results from one of the builds
+    buildDict = slob.lookupDictGivenKeyValuesList(('group2','site3','build4'))
+    del buildDict['configure']
+    del buildDict['compilation']
+    #print("\nlistOfBuilds:"); g_pp.pprint(listOfBuilds)
+    #
+    missingExpectedBuildsList = getMissingExpectedBuildsList(slob, g_expectedBuildsList)
+    #print("\nmissingExpectedBuildsList:"); g_pp.pprint(missingExpectedBuildsList)
+    self.assertEqual(len(missingExpectedBuildsList), 3)
+    #
+    expectedBuildDict = gsb('group1', 'site2', 'build3')
+    expectedBuildDict.update({'status':"Missing tests"})
+    self.assertEqual(missingExpectedBuildsList[0], expectedBuildDict)
+    #
+    expectedBuildDict = gsb('group2', 'site3', 'build4')
+    expectedBuildDict.update({'status':"Missing configure, build"})
+    self.assertEqual(missingExpectedBuildsList[1], expectedBuildDict)
+    #
+    expectedBuildDict = gsb('group2', 'site3', 'build8')
+    expectedBuildDict.update({'status':"Build not found on CDash"})
+    self.assertEqual(missingExpectedBuildsList[2], expectedBuildDict)
+
+  def test_zero_tests(self):
+    listOfBuilds = copy.deepcopy(g_buildsListForMissingExpectedBuilds)
+    slob = createSearchableListOfBuilds(listOfBuilds)
+    # Set test results to 0 passing tests and ensure that this is still not missing
+    slob.lookupDictGivenKeyValuesList(('group1','site2','build3')).update(
+      {'test':{'pass':0}})
+    #
+    missingExpectedBuildsList = getMissingExpectedBuildsList(slob, g_expectedBuildsList)
+    #print("\nmissingExpectedBuildsList:"); g_pp.pprint(missingExpectedBuildsList)
+    self.assertEqual(len(missingExpectedBuildsList), 1)
+    #
+    expectedBuildDict = gsb('group2', 'site3', 'build8')
+    expectedBuildDict.update({'status':"Build not found on CDash"})
+    self.assertEqual(missingExpectedBuildsList[0], expectedBuildDict)
 
 
 #############################################################################

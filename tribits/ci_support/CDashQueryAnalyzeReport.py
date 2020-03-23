@@ -1665,20 +1665,36 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
       buildsSearchableListOfDicts.lookupDictGivenKeyValueDict(expectedBuildDict)
     #print("buildSummaryDict = "+str(buildSummaryDict))
     if not buildSummaryDict:
-      # Expected build not found!
+      # No part of the expected build is found!
       missingExpectedBuildDict = copy.deepcopy(expectedBuildDict)
       missingExpectedBuildDict.update({'status':"Build not found on CDash"})
       #print("missingExpectedBuildDict = "+str(missingExpectedBuildDict))
       missingExpectedBuildsList.append(missingExpectedBuildDict)
-    elif not buildSummaryDict.get('test', None):
-      # Build exists but it is missing tests!
-      missingExpectedBuildDict = copy.deepcopy(expectedBuildDict)
-      missingExpectedBuildDict.update({'status':"Build exists but no test results"})
-      #print("missingExpectedBuildDict = "+str(missingExpectedBuildDict))
-      missingExpectedBuildsList.append(missingExpectedBuildDict)
     else:
-      # This build exists and it has test results so don't add it
-      None
+      # This build has some build results so see if all of the results are
+      # there or not
+      missingPartsList = []
+      #if not buildSummaryDict.get('update', None):
+      #  missingPartsList.append("update")
+      # NOTE: We are skipping checking for missing 'update' results for now
+      # because we want to allow some builds to not have update results.
+      if not buildSummaryDict.get('configure', None):
+        missingPartsList.append("configure")
+      if not buildSummaryDict.get('compilation', None):
+        missingPartsList.append("build")
+      if not buildSummaryDict.get('test', None):
+        missingPartsList.append("tests")
+      # See if any parts are missing and report if there are as a missing build
+      if len(missingPartsList) > 0:
+        missingBuildStr = "Missing "+", ".join(missingPartsList)
+        missingExpectedBuildDict = copy.deepcopy(expectedBuildDict)
+        missingExpectedBuildDict.update({'status':missingBuildStr})
+        #print("missingExpectedBuildDict = "+str(missingExpectedBuildDict))
+        missingExpectedBuildsList.append(missingExpectedBuildDict)
+      else:
+        # All parts of the expected build exists so don't report this as an
+        # expected build.
+        None
   # Return the list of missing expected builds and status
   return missingExpectedBuildsList
 
