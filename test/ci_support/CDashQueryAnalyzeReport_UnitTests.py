@@ -1377,7 +1377,7 @@ def gsb_pass(group, site, build):
     'buildname':build,
     'update': {'errors':0},
     'configure':{'error': 0},
-    'compilation':{'error':0},
+    'compilation':{'error':0, 'time':'20m10s'},
     'test': {'pass':1, 'fail':0, 'notrun':0},
     'extra-stuff':'stuff',
     'data':'val1' }
@@ -1428,20 +1428,34 @@ class test_getMissingExpectedBuildsList(unittest.TestCase):
     expectedBuildDict.update({'status':"Build not found on CDash"})
     self.assertEqual(missingExpectedBuildsList[2], expectedBuildDict)
 
-  def test_zero_tests(self):
+  def test_compilation_time_zero_1_zero_tests_1(self):
     listOfBuilds = copy.deepcopy(g_buildsListForMissingExpectedBuilds)
     slob = createSearchableListOfBuilds(listOfBuilds)
-    # Set test results to 0 passing tests and ensure that this is still not missing
+    # Set test results to 0 passing tests and ensure that this not considered missing
     slob.lookupDictGivenKeyValuesList(('group1','site2','build3')).update(
       {'test':{'pass':0}})
+    # Set compilation time to '0s' and remove test results which is a sign
+    # that the build did not happen! (NOTE: This is a heuristic since it is
+    # possible to have a zero build time and still have build results
+    # submitted to CDash.  However, it is unlikely that the build time is zero
+    # and just happens to be missing test results.  In that case, it is likely
+    # that the job that was doing the build died and never submitted build
+    # results in the first place.)
+    buildDict = slob.lookupDictGivenKeyValuesList(('group2','site3','build4'))
+    buildDict.update({'compilation':{'time':'0s'}})
+    del buildDict['test']
     #
     missingExpectedBuildsList = getMissingExpectedBuildsList(slob, g_expectedBuildsList)
     #print("\nmissingExpectedBuildsList:"); g_pp.pprint(missingExpectedBuildsList)
-    self.assertEqual(len(missingExpectedBuildsList), 1)
+    self.assertEqual(len(missingExpectedBuildsList), 2)
+    #
+    expectedBuildDict = gsb('group2', 'site3', 'build4')
+    expectedBuildDict.update({'status':"Missing build, tests"})
+    self.assertEqual(missingExpectedBuildsList[0], expectedBuildDict)
     #
     expectedBuildDict = gsb('group2', 'site3', 'build8')
     expectedBuildDict.update({'status':"Build not found on CDash"})
-    self.assertEqual(missingExpectedBuildsList[0], expectedBuildDict)
+    self.assertEqual(missingExpectedBuildsList[1], expectedBuildDict)
 
 
 #############################################################################

@@ -1663,7 +1663,7 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
     #print("\nexpectedBuildDict = "+str(expectedBuildDict))
     buildSummaryDict = \
       buildsSearchableListOfDicts.lookupDictGivenKeyValueDict(expectedBuildDict)
-    #print("buildSummaryDict = "+str(buildSummaryDict))
+    #print("\nbuildSummaryDict = "+str(buildSummaryDict))
     if not buildSummaryDict:
       # No part of the expected build is found!
       missingExpectedBuildDict = copy.deepcopy(expectedBuildDict)
@@ -1676,15 +1676,17 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
       missingPartsList = []
       #if not buildSummaryDict.get('update', None):
       #  missingPartsList.append("update")
-      # NOTE: We are skipping checking for missing 'update' results for now
-      # because we want to allow some builds to not have update results.
       if not buildSummaryDict.get('configure', None):
         missingPartsList.append("configure")
       if not buildSummaryDict.get('compilation', None):
         missingPartsList.append("build")
       if not buildSummaryDict.get('test', None):
+        compilationDict = buildSummaryDict.get('compilation', None)
+        if compilationDict and compilationDict['time'] == '0s':
+          missingPartsList.append("build") # See NOTE below for explaination!
         missingPartsList.append("tests")
-      # See if any parts are missing and report if there are as a missing build
+      # See if any parts are missing and report if there are as a missing
+      # build
       if len(missingPartsList) > 0:
         missingBuildStr = "Missing "+", ".join(missingPartsList)
         missingExpectedBuildDict = copy.deepcopy(expectedBuildDict)
@@ -1698,6 +1700,35 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
   # Return the list of missing expected builds and status
   return missingExpectedBuildsList
 
+  # NOTE: Above uses a heuristic for reporting missing build/compilation data
+  # that if the 'compilation' 'time' is '0s' and there is no test data, then
+  # we will assume that no build data was submitted to the dashboard.
+  # Otherwise, we can't detect when build results are missing because if just
+  # 'configure' data is updated to CDash, then CDash will automatically create
+  # a 'compilation' subdict and will set the initail time to '0s'.  So we
+  # can't directly tell if build has missing build/compilation data or if it
+  # just has configure data.  (I consider this to be a defect in CDash and we
+  # may ask Kitware to fix this but for now we can just use this heuristic.)
+  # But we don't want to assume that a time of '0s' means that no
+  # build/compilation data was submitted to CDash since a rebuild with no
+  # targets getting built can take under 0s.  However, it is unlikely that the
+  # build/compilation time is '0s' and just happens to be missing test
+  # results.  In that case, it is likely that the job that was doing the build
+  # died and never submitted build results in the first place.  Therefore, we
+  # will never report missing build results unless there are also missing test
+  # results.  And if there are missing test results, then the build will be
+  # listed and missing anyway.  And I don't see a lot of harm in failing to
+  # report missing build results if there are test results and all of the
+  # tests pass.  The only gap is this logic, therefore, are expected builds
+  # that have zero tests defined and submitted 0 tests to CDash (so the 'test'
+  # subdict exists).  So this is not perfect but I think this is the best we
+  # can do until Kitware fixes CDash to not create a 'compilation' subdict
+  # unless build data is actually submitted to CDash.
+
+  # NOTE: Above, we are skipping checking for missing 'update' results for now
+  # because we want to allow some builds to not have update results.  In the
+  # future, it may be better to allow an expected build to say that it does
+  # not have expected 'update' results.
 
 # Download set of builds from CDash builds and return flattened list of dicts
 #
