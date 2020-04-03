@@ -83,8 +83,7 @@ class DefaultOptions:
 # Main help string
 #
 
-usageHelp = r"""snapshot-dir.py [other options] [--orig-dir=<orig-dir>/] [--dest-dir=<dest-dir>/]
-
+usageHelp = r"""
 This tool snapshots the contents of an origin directory ('orig-dir') to
 destination directory ('dest-dir') and creates linkages between the two git
 repos in the commit message in the 'dest-dir' git branch.  The command 'git'
@@ -214,25 +213,27 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
     # A) Get the command-line options
     #
   
-    from optparse import OptionParser
+    from argparse import ArgumentParser, RawDescriptionHelpFormatter
   
-    clp = OptionParser(usage=usageHelp)
+    clp = ArgumentParser(
+      description=usageHelp,
+      formatter_class=RawDescriptionHelpFormatter)
   
-    clp.add_option(
+    clp.add_argument(
       "--show-defaults", dest="showDefaults", action="store_true",
       help="Show the default option values and do nothing at all.",
       default=False )
 
-    clp.add_option(
-      "--orig-dir", dest="origDir", type="string",
+    clp.add_argument(
+      "--orig-dir", dest="origDir",
       default=defaultOptions.getDefaultOrigDir(),
       help="Original directory that is the source for the snapshotted directory." \
       +"  Note that it is important to add a final /' to the directory name." \
       +"  The default is the directory where this script lives (or is soft-linked)." \
       +"  [default: '"+defaultOptions.getDefaultOrigDir()+"']")
 
-    clp.add_option(
-      "--dest-dir", dest="destDir", type="string",
+    clp.add_argument(
+      "--dest-dir", dest="destDir",
       default=defaultOptions.getDefaultDestDir(),
       help="Destination directory that is the target for the snapshoted directory." \
       +"  Note that a final '/' just be added or the origin will be added as subdir." \
@@ -240,47 +241,52 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
       +"  [default: '"+defaultOptions.getDefaultDestDir()+"']" \
       )
 
-    clp.add_option(
+    clp.add_argument(
+      "--exclude", dest="exclude", default=None, nargs="*",
+      help="List of files/directories/globs to exclude from orig-dir when " \
+      +"snapshotting.")
+
+    clp.add_argument(
       "--assert-clean-orig-dir", dest="assertCleanOrigDir", action="store_true",
-      help="Check that orig-dir is committed and clean. [default]" )
-    clp.add_option(
-      "--allow-dirty-orig-dir", dest="assertCleanOrigDir", action="store_false",
       default=True,
+      help="Check that orig-dir is committed and clean. [default]" )
+    clp.add_argument(
+      "--allow-dirty-orig-dir", dest="assertCleanOrigDir", action="store_false",
       help="Skip clean check of orig-dir." )
 
-    clp.add_option(
+    clp.add_argument(
       "--assert-clean-dest-dir", dest="assertCleanDestDir", action="store_true",
-      help="Check that dest-dir is committed and clean. [default]" )
-    clp.add_option(
-      "--allow-dirty-dest-dir", dest="assertCleanDestDir", action="store_false",
       default=True,
+      help="Check that dest-dir is committed and clean. [default]" )
+    clp.add_argument(
+      "--allow-dirty-dest-dir", dest="assertCleanDestDir", action="store_false",
       help="Skip clean check of dest-dir." )
 
-    clp.add_option(
+    clp.add_argument(
       "--clean-ignored-files-orig-dir", dest="cleanIgnoredFilesOrigDir", action="store_true",
-      help="Clean out the ignored files from orig-dir/ before snapshotting." )
-    clp.add_option(
-      "--no-clean-ignored-files-orig-dir", dest="cleanIgnoredFilesOrigDir", action="store_false",
       default=False,
+      help="Clean out the ignored files from orig-dir/ before snapshotting." )
+    clp.add_argument(
+      "--no-clean-ignored-files-orig-dir", dest="cleanIgnoredFilesOrigDir", action="store_false",
       help="Do not clean out orig-dir/ ignored files before snapshotting. [default]" )
 
-    clp.add_option(
+    clp.add_argument(
       "--do-rsync", dest="doRsync", action="store_true",
-      help="Actually do the rsync. [default]" )
-    clp.add_option(
-      "--skip-rsync", dest="doRsync", action="store_false",
       default=True,
+      help="Actually do the rsync. [default]" )
+    clp.add_argument(
+      "--skip-rsync", dest="doRsync", action="store_false",
       help="Skip the rsync (testing only?)." )
 
-    clp.add_option(
+    clp.add_argument(
       "--do-commit", dest="doCommit", action="store_true",
-      help="Actually do the commit. [default]" )
-    clp.add_option(
-      "--skip-commit", dest="doCommit", action="store_false",
       default=True,
+      help="Actually do the commit. [default]" )
+    clp.add_argument(
+      "--skip-commit", dest="doCommit", action="store_false",
       help="Skip the commit." )
     
-    (options, args) = clp.parse_args(cmndLineArgs)
+    options = clp.parse_args(cmndLineArgs)
   
     #
     # B) Echo the command-line
@@ -292,6 +298,8 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
 
     print("  --orig-dir='" + options.origDir + "' \\")
     print("  --dest-dir='" + options.destDir + "' \\")
+    if options.exclude:
+      print("  --exclude " + " ".join(options.exclude) + " \\")
     if options.assertCleanOrigDir:
       print("  --assert-clean-orig-dir \\")
     else:
@@ -384,6 +392,11 @@ def snapshotDir(inOptions):
   if inOptions.doRsync:
 
     excludes = r"""--exclude=\.git"""
+    if inOptions.exclude:
+        excludes += " " + " ".join(map(lambda ex: "--exclude="+ex,
+                                       inOptions.exclude))
+        print("Excluding files/directories/globs: " +
+              " ".join(inOptions.exclude))
     # Note that when syncing one git repo to another, we want to sync the
     # .gitingore and other hidden files as well.
   
