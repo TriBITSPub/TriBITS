@@ -66,6 +66,7 @@ INCLUDE(TribitsIncludeDirectories)
 INCLUDE(TribitsFindPythonInterp)
 INCLUDE(TribitsGlobalMacros)
 INCLUDE(TribitsConfigureCTestCustom)
+INCLUDE(TribitsGenerateResourceSpecFile)
 
 INCLUDE(AdvancedSet)
 INCLUDE(AdvancedOption)
@@ -321,7 +322,27 @@ MACRO(TRIBITS_PROJECT_IMPL)
   ENDIF()
 
   #
-  # N) Show final timing and end
+  # N) Generate resource spec file if applicable
+  #
+
+  IF (${PROJECT_NAME}_AUTOGENERATE_TEST_RESOURCE_FILE)
+    IF (CTEST_RESOURCE_SPEC_FILE STREQUAL CTEST_RESOURCE_SPEC_FILE_DEFAULT)
+      TRIBITS_GENERATE_RESOURCE_SPEC_FILE()
+    ELSE()
+      MESSAGE("NOTE: The test resource file CTEST_RESOURCE_SPEC_FILE='${CTEST_RESOURCE_SPEC_FILE}'"
+        " will not be auto-generated even through"
+        " ${PROJECT_NAME}_AUTOGENERATE_TEST_RESOURCE_FILE=${${PROJECT_NAME}_AUTOGENERATE_TEST_RESOURCE_FILE}"
+        " because its location does not match the default"
+        " location '${CTEST_RESOURCE_SPEC_FILE_DEFAULT}'."
+        "  If you want to auto-generate this file, please clear CTEST_RESOURCE_SPEC_FILE and"
+        " reconfigure or create that file on your own and clear"
+        " ${PROJECT_NAME}_AUTOGENERATE_TEST_RESOURCE_FILE."
+        )
+    ENDIF()
+  ENDIF()
+
+  #
+  # O) Show final timing and end
   #
 
   MESSAGE("")
