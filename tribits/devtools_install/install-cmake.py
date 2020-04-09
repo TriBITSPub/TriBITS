@@ -107,7 +107,7 @@ when doing the configure.  Therefore, this builds and installs an optimized
 version of CMake by default.
 
 If CMake 3.17 is selected, a patch is applied which adds the CTEST_RESOURCE_SPEC_FILE
-variable.
+variable.  (For versions 3.18+ this is not needed.)
 """
 
   def injectExtraCmndLineOptions(self, clp, version):
