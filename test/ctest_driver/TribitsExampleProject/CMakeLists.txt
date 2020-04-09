@@ -468,7 +468,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakTestPkg
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "SimpleCxx: Configure passed"
       "SimpleCxx_HelloWorldTests [.]+ +Passed"
-      "SimpleCxx_HelloWorldProg [.]+[*][*][*]Failed  Required regular expression not found.Regex=.Hellos World"
+      "SimpleCxx_HelloWorldProg [.]+[*][*][*]Failed  Required regular expression not found.*Regex=.Hellos World"
       "SimpleCxx: File '.*/TriBITS_CTestDriver_PBP_ST_BreakTestPkg/.*/LastTestsFailed_.*.log' exists so there were failed tests"
       "MixedLang: All build passed"
       "MixedLang_RayTracerTests [.]+ +Passed"
