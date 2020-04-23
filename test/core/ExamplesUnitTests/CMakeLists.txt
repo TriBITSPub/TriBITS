@@ -190,7 +190,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_InSourceBuildErrors
       "exists from a likely prior attempt to do an in-source build"
       ""
     ALWAYS_FAIL_ON_ZERO_RETURN
-  
+
   )
 
 
@@ -568,6 +568,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
   TEST_7
     MESSAGE "Re-install"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/bin/hello_world.exe"
+      "0: Running: chmod o[+]rX -R /.*/TriBITS_TribitsHelloWorld_install_perms/install"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_8
@@ -1304,6 +1307,278 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   )
 
 
+IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+
+  EXECUTE_PROCESS(COMMAND whoami
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE  TribitsExProj_INSTALL_OWNING_USER)
+
+  IF ("${TribitsExProj_INSTALL_OWNING_GROUP}" STREQUAL "")
+    EXECUTE_PROCESS(COMMAND id -gn
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      OUTPUT_VARIABLE  TribitsExProj_INSTALL_OWNING_GROUP)
+  ENDIF()
+
+ENDIF()
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Windows
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so we can change the source permissions"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Make TribitsExampleProject source dir user rwX only!"
+    CMND chmod
+    ARGS g-rwx,o-rwx -R TribitsExampleProject
+
+  TEST_2
+    MESSAGE "Do initial configure with just libs not tests with default install settings"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_WithSubpackages=ON
+      -DCMAKE_INSTALL_PREFIX=install_base/install
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=install_base
+      -DTribitsExProj_MAKE_INSTALL_WORLD_READABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP_WRITABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP=${TribitsExProj_INSTALL_OWNING_GROUP}
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Do make to build everything"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_4
+    MESSAGE "Make install with fixup of permissions"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      ".*/install_base/install/include/wsp_c/C.hpp"
+      ".*/install_base/install/lib/libpws_c.a"
+      "0: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_perms/install_base"
+      "0: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_perms/install_base"
+      "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R /.*/TriBITS_TribitsExampleProject_install_perms/install_base/install"
+      "1: Running: chmod g[+]rwX,o[+]rX -R /.*/TriBITS_TribitsExampleProject_install_perms/install_base/install"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_5
+    MESSAGE "Check some installed directory permissions and the owning group"
+    CMND ls ARGS -ld
+      install_base
+      install_base/install
+      install_base/install/bin
+      install_base/install/include
+      install_base/install/lib
+      install_base/install/share/WithSubpackagesB/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/bin"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/include"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/lib"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesB/stuff"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_6
+    MESSAGE "Check some installed file permissions"
+    CMND ls ARGS -l
+      install_base/install
+      install_base/install/include
+      install_base/install/include/wsp_c
+      install_base/install/lib
+      install_base/install/bin
+      install_base/install/share/WithSubpackagesB/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "[d]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* wsp_c"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* C.hpp"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesC"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_c.a"
+      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    # NOTE: Above, the file Makefile.export.WithSubpackagesC seems to be the
+    # last file installed and therefore if it has the right permissions, then
+    # this final script set_installed_group_and_permissions.cmake must be
+    # getting called at the very end.
+
+  TEST_7
+    MESSAGE "Make sure that exec_script.sh is exectuable"
+    CMND ./install_base/install/share/WithSubpackagesB/stuff/exec_script.sh
+    PASS_REGULAR_EXPRESSION
+      "exec_script.sh executed and returned this string"
+
+  )
+  # NOTE: The above test checks a few important things:
+  #
+  # * The CMake install machinery will actually create multiple base dirs
+  #   under ${CMAKE_INSTALL_PREFIX} in case they don't already exist.
+  #
+  # * The group ownership actaully will be set correctly starting with
+  #   ${<Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR} which is
+  #   above ${CMAKE_INSTALL_PREFIX}.  This is needed to address systems where
+  #   the group sticky bit is disabled (like we see on some SNL systems, see
+  #   ATDV-241).
+  #
+  # * Even with the source directory permissions being 'rwx------' (i.e. 700),
+  #   the files isntalled under share/WithSubpackagesB/stuff using
+  #   install(DIRECTORY ... USE_SOURCE_PERMISSIONS) will actually have the
+  #   correct group and other permissions set.
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perms
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Windows
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so we can change the source permissions"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Break the WithSubpackagesB so that it will not install"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/packages/with_subpackages/c/C.cpp
+      "C.cpp is broken!"
+
+  TEST_2
+    MESSAGE "Make TribitsExampleProject source dir user rwX only!"
+    CMND chmod
+    ARGS g-rwx,o-rwx -R TribitsExampleProject
+
+  TEST_3
+    MESSAGE "Do initial configure with just libs not tests with default install settings"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_WithSubpackages=ON
+      -DCMAKE_INSTALL_PREFIX=install_base/subdir/install
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=install_base
+      -DTribitsExProj_MAKE_INSTALL_WORLD_READABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP_WRITABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP=${TribitsExProj_INSTALL_OWNING_GROUP}
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_4
+    MESSAGE "Do make -k to build everything that will build"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "C.cpp is broken"
+      "packages/with_subpackages/c/CMakeFiles/pws_c.dir/C.cpp.o.*Error"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_5
+    MESSAGE "Make install_pakage_by_package with fixup of permissions"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install_package_by_package
+    PASS_REGULAR_EXPRESSION_ALL
+      "The global install failed so resorting to package-by-package installs"
+      ".*/install_base/subdir/install/include/B.hpp"
+      ".*/install_base/subdir/install/lib/libpws_b.a"
+      "0: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base"
+      "0: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base"
+      "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir"
+      "1: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir"
+      "2: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir/install"
+      "2: Running: chmod g[+]rwX,o[+]rX -R /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir/install"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_6
+    MESSAGE "Check some installed directory permissions and the owning group"
+    CMND ls ARGS -ld
+      install_base
+      install_base/subdir
+      install_base/subdir/install
+      install_base/subdir/install/bin
+      install_base/subdir/install/include
+      install_base/subdir/install/lib
+      install_base/subdir/install/share/WithSubpackagesB/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/bin"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/include"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/lib"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/share/WithSubpackagesB/stuff"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_7
+    MESSAGE "Check some installed file permissions"
+    CMND ls ARGS -l
+      install_base/subdir/install
+      install_base/subdir/install/include
+      install_base/subdir/install/lib
+      install_base/subdir/install/bin
+      install_base/subdir/install/share/WithSubpackagesB/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* B.hpp"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesB"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_b.a"
+      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_8
+    MESSAGE "Make sure that exec_script.sh is exectuable"
+    CMND ./install_base/subdir/install/share/WithSubpackagesB/stuff/exec_script.sh
+    PASS_REGULAR_EXPRESSION
+      "exec_script.sh executed and returned this string"
+
+  )
+  # NOTE: In addition to the same checks performed by the test
+  # TribitsExampleProject_install_perms described above, this above test also:
+  #
+  # * Ensures that the non-recursive group and permisions gets set on
+  # * base-dirs.
+  #
+  # * Ensures that owning group and directory permissions get set even if
+  #   there is a package install failure.  The other packages that did build
+  #   correctly will get installed and all of the files and directories that
+  #   did install will have the correct group and permissions.
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Windows
+
+  TEST_0
+    MESSAGE "Configure with TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR not a base dir of CMAKE_INSTALL_PREFIX "
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_INSTALL_PREFIX=install_base/install
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=non_base_dir
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "ERROR in TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR"
+      "TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=.*/TriBITS_TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir/non_base_dir"
+      "is not a strict base dir of"
+      "CMAKE_INSTALL_PREFIX=.*/TriBITS_TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir/install_base/install"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  )
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -1692,7 +1967,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     XHOSTTYPE Darwin
-  
+
     TEST_0 CMND ${CMAKE_COMMAND}
       MESSAGE "Do the initial configure with basic configure timing"
       ARGS
@@ -1715,7 +1990,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         "Total time to configure TribitsExProj: "
         "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
         "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
-  
+
     TEST_1 CMND ${CMAKE_COMMAND}
       MESSAGE "Reconfigure to test out timing of all packages"
       ARGS
@@ -1731,7 +2006,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         "Total time to configure enabled packages: "
         "Total time to set up for CPack packaging: "
         "Total time to configure TribitsExProj: "
-  
+
     TEST_2 CMND ${CMAKE_COMMAND}
       MESSAGE "Reconfigure to test out timing of just one package"
       ARGS
@@ -1747,7 +2022,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         "Total time to configure enabled packages: "
         "Total time to set up for CPack packaging: "
         "Total time to configure TribitsExProj: "
-  
+
     )
 
 ENDIF()
