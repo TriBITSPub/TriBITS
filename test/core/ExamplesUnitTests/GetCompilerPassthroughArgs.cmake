@@ -54,6 +54,7 @@ IF ({${PROJECT_NAME}_ENABLE_Fortran)
 ENDIF()
 
 SET(COMMON_ENV_ARGS_PASSTHROUGH
+  #-C ${${PROJECT_NAME}_TRIBITS_DIR}/core/utils/UseCcacheIfExists.cmake
   -DTPL_ENABLE_MPI=${TPL_ENABLE_MPI}
   -DHeaderOnlyTpl_INCLUDE_DIRS=${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl
   )
