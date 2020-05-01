@@ -1,11 +1,11 @@
 #!/bin/bash
 
 ../../../Trilinos/TriBITS/dev_testing/generic/do-configure-mpi-debug \
--DRULE_LAUNCH_COMPILE=ccache \
 -DCTEST_PARALLEL_LEVEL=16 \
 -DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE \
 -DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE \
 -DTriBITS_ENABLE_CONFIGURE_TIMING=ON \
+-DTribitsExProj_INSTALL_BASE_DIR=/tmp/tribits_install_tests \
 -DTribitsExProj_INSTALL_OWNING_GROUP=wg-atdm-devops \
 -DTriBITS_ENABLE_REAL_GIT_CLONE_TESTS=ON \
 -DDART_TESTING_TIMEOUT=60 \
@@ -40,4 +40,23 @@
 #  export TribitsExMetaProj_GIT_URL_REPO_BASE=git@github.com:tribits/
 #
 # before configuring.
+#
+# NOTE: The directrory /tmp/tribits_install_tests above was created beforehand with:
+#
+# $ /home/atdm-devops-admin/tools/run-as-atdm-devops-admin mkdir /tmp/tribits_install_tests
+# $ /home/atdm-devops-admin/tools/run-as-atdm-devops-admin chgrp wg-run-as-atdm-devops /tmp/tribits_install_tests
+# $ /home/atdm-devops-admin/tools/run-as-atdm-devops-admin chmod g+rwX /tmp/tribits_install_tests
+#
+# which created the directory:
+#
+# $ls -ld /tmp/tribits_install_tests/
+# drwxrwxr-x. 2 atdm-devops-admin wg-run-as-atdm-devops 4096 May  1 11:13 /tmp/tribits_install_tests/
+#
+# That tests a use case where the base install directory is not that of the
+# current user.
 
+
+
+
+
+Finished configuring TriBITS!
