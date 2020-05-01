@@ -1555,6 +1555,137 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
   #   did install will have the correct group and permissions.
 
 
+
+
+
+
+
+
+IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  SET(TribitsExProj_INSTALL_BASE_DIR "" CACHE FILEPATH
+    "Path to a base directory that installs will be made into that is not owned by the current user but is in the same owning group and has group write access"
+    )
+  IF (TribitsExProj_INSTALL_BASE_DIR)
+    EXECUTE_PROCESS(COMMAND stat -c %U "${TribitsExProj_INSTALL_BASE_DIR}"
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      OUTPUT_VARIABLE  TribitsExProj_INSTALL_BASE_OWNING_USER)
+  ENDIF()
+  SET(installBaseDir "${TribitsExProj_INSTALL_BASE_DIR}")
+  SET(installPrefixBaseDir
+    "${installBaseDir}/TribitsExampleProject_install_perms_nonowning_base_dir")
+  SET(installPrefix
+    "${installPrefixBaseDir}/install")
+ENDIF()
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_dir
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  EXCLUDE_IF_NOT_TRUE TribitsExProj_INSTALL_BASE_DIR
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Windows
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so we can change the source permissions"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Make TribitsExampleProject source dir user rwX only!"
+    CMND chmod
+    ARGS g-rwx,o-rwx -R TribitsExampleProject
+
+  TEST_2
+    MESSAGE "Remove existing intermediate base install if exists"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/remove-dir-if-exists.sh
+    ARGS ${installPrefixBaseDir}
+
+  TEST_3
+    MESSAGE "Do initial configure with just libs not tests with default install settings"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_WithSubpackages=ON
+      -DCMAKE_INSTALL_PREFIX=${installPrefix}
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=${installBaseDir}
+      -DTribitsExProj_MAKE_INSTALL_WORLD_READABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP_WRITABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP=${TribitsExProj_INSTALL_OWNING_GROUP}
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_4
+    MESSAGE "Do make to build everything"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_5
+    MESSAGE "Make install with fixup of permissions"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      "${installPrefix}/include/wsp_c/C.hpp"
+      "${installPrefix}/lib/libpws_c.a"
+      "0: NOTE: Not calling chgrp and chmod on ${installBaseDir} since owner '${TribitsExProj_INSTALL_BASE_OWNING_USER}' != current owner '${TribitsExProj_INSTALL_OWNING_USER}'!"
+      "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} ${installPrefixBaseDir}"
+      "1: Running: chmod g[+]rwX,o[+]rX ${installPrefixBaseDir}"
+      "2: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R ${installPrefix}"
+      "2: Running: chmod g[+]rwX,o[+]rX -R ${installPrefix}"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_6
+    MESSAGE "Check some installed directory permissions and the owning group"
+    CMND ls ARGS -ld
+      ${installBaseDir}
+      ${installPrefixBaseDir}
+      ${installPrefix}
+      ${installPrefix}/bin
+      ${installPrefix}/include
+      ${installPrefix}/lib
+      ${installPrefix}/share/WithSubpackagesB/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_BASE_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installBaseDir}"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefixBaseDir}"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/bin"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/include"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/lib"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/share/WithSubpackagesB/stuff"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: The above test ensures that if a base dir under
+  # ${TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR} is not
+  # owned by the current user then chgrp will not be run on it and will avoid
+  # an error.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
