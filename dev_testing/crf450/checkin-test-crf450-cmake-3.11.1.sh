@@ -15,7 +15,7 @@ TRIBITS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR)
 #echo "TRIBITS_BASE_DIR_ABS = $TRIBITS_BASE_DIR_ABS"
 
 # Load the env:
-source ${_SCRIPT_DIR}/load_env.sh
+source ${_SCRIPT_DIR}/load-env.sh
 
 # Create extra builds run by this script
 
