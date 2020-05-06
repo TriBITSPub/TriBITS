@@ -1425,7 +1425,7 @@ class test_getMissingExpectedBuildsList(unittest.TestCase):
     self.assertEqual(missingExpectedBuildsList[1], expectedBuildDict)
     #
     expectedBuildDict = gsb('group2', 'site3', 'build8')
-    expectedBuildDict.update({'status':"Build not found on CDash"})
+    expectedBuildDict.update({'status':"Missing ALL"})
     self.assertEqual(missingExpectedBuildsList[2], expectedBuildDict)
 
   def test_compilation_time_zero_1_zero_tests_1(self):
@@ -1454,7 +1454,7 @@ class test_getMissingExpectedBuildsList(unittest.TestCase):
     self.assertEqual(missingExpectedBuildsList[0], expectedBuildDict)
     #
     expectedBuildDict = gsb('group2', 'site3', 'build8')
-    expectedBuildDict.update({'status':"Build not found on CDash"})
+    expectedBuildDict.update({'status':"Missing ALL"})
     self.assertEqual(missingExpectedBuildsList[1], expectedBuildDict)
 
 
