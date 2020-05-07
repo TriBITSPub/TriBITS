@@ -1015,6 +1015,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     SET(AAO_POSTFIX "")
   ENDIF()
 
+
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1067,6 +1068,80 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # run and pass.  And a non-zero return code is mandated.  Also, the full
     # CONFIGURE_OPTIONS list is checked to make sure that it does not change
     # without being noticed.  Follow-on tests will not check all of that.
+
+
+  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_SKIP_CTEST_ADD_TEST
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+
+    TEST_0
+      MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
+      CMND ln
+      ARGS -s ${TribitsExProj_DIR} .
+
+    TEST_1
+      MESSAGE "Run ctest driver testing everyting but no push."
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        CTEST_PARALLEL_LEVEL=3
+        TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+        TribitsExProj_SKIP_CTEST_ADD_TEST=TRUE
+        ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_SKIP_CTEST_ADD_TEST
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "-- ENV_TribitsExProj_SKIP_CTEST_ADD_TEST='TRUE'"
+	"-- TribitsExProj_SKIP_CTEST_ADD_TEST='TRUE'"
+	"CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_SKIP_CTEST_ADD_TEST:BOOL=TRUE[;].*'"
+        "No tests were found[!][!][!]"
+        "File '' does NOT exist so all tests passed[!]"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
+      #ALWAYS_FAIL_ON_NONZERO_RETURN
+
+      # NOTE: Above, ctest -S returns with the return code of 255 instead of
+      # 0.  It seems that ctest just might be assuming that no tests run means
+      # that it was an error.  This is disappointing behavior from CTest here.
+      # Apparently, this is a known issue.  See
+      # https://cmake.org/pipermail/cmake/2011-January/042366.html
+    )
+
+
+  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_INNER_ENABLE_TESTS
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+
+    TEST_0
+      MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
+      CMND ln
+      ARGS -s ${TribitsExProj_DIR} .
+
+    TEST_1
+      MESSAGE "Run ctest driver testing everyting but no push."
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        CTEST_PARALLEL_LEVEL=3
+        TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+        TribitsExProj_INNER_ENABLE_TESTS=OFF
+        ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_INNER_ENABLE_TESTS
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "-- ENV_TribitsExProj_INNER_ENABLE_TESTS='OFF'"
+	"-- TribitsExProj_INNER_ENABLE_TESTS='OFF'"
+	"CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_TESTS:BOOL=OFF[;].*'"
+        "No tests were found[!][!][!]"
+        "File '' does NOT exist so all tests passed[!]"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
+      #ALWAYS_FAIL_ON_NONZERO_RETURN
+ 
+     # NOTE: Above, ctest -S returns with the return code of 255 instead of
+      # 0.  See comment above for SKIP_CTEST_ADD_TEST test.
+    )
+
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_SimpleCxx_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -1132,6 +1207,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # at all.  It should display just a single row on CDash.  We can't detect
     # that here but this submits the data so we can inspect that on CDash.
 
+
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1180,6 +1256,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # enable/disable type of testing should be done with the much cheaper
     # dependency testing in the file ../MockCTestDriver/CMakeLists.txt.
 
+
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_GlobalConfigureFail
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1220,6 +1297,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # NOTE: The above test ensures that a configure failure is correctly
     # interpreted and processed.
 
+
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_GlobalConfigureFail
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1254,6 +1332,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     )
     # NOTE: The above test ensures that a configure failure is correctly
     # interpreted and processed.
+
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakWithSubpackagesALib
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -1314,6 +1393,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # is checked to make sure that it is getting written correctly.  That is
     # important for CI servers.
 
+
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_BreakWithSubpackagesALib
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1356,6 +1436,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # NOTE: The above test ensures that the library build failure of an
     # upstream package is detected as a break in all downstream packages even
     # though that upstream package is not directly shown on CDash.
+
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestBuild
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -1400,6 +1481,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # upstream package will be caught but will not impact break downstream
     # packages and tests.
 
+
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestRun
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1442,6 +1524,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     # upstream package will be caught but will not impact break downstream
     # packages and tests.
 
+
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_COVERAGE
     OVERALL_WORKING_DIRECTORY TEST_NAME
     EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS
@@ -1474,6 +1557,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
     # NOTE: The above test is the only coverage test for AAO mode!
+
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_MEMORY
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -1510,6 +1594,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
     # NOTE: The above test is the only memory test for AAO mode!
+
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_ALL_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
