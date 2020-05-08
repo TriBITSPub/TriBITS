@@ -347,11 +347,13 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``${PROJECT_NAME}_EXTRAREPOS_BRANCH`` (`Repository Updates (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_EXTRAREPOS_FILE`` (`Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_EXTRA_REPOSITORIES`` (`Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER())`_)
-# * ``${PROJECT_NAME}_PACKAGES`` (`Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES`` (`Setting variables in the inner CMake configure (TRIBITS_CTEST_DRIVER())`_)
+# * ``${PROJECT_NAME}_INNER_ENABLE_TESTS`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
+# * ``${PROJECT_NAME}_PACKAGES`` (`Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_PRE_REPOSITORIES`` (`Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_REPOSITORY_BRANCH`` (`Repository Updates (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_REPOSITORY_LOCATION`` (`Repository Updates (TRIBITS_CTEST_DRIVER())`_)
+# * ``${PROJECT_NAME}_SKIP_CTEST_ADD_TEST`` (`Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_TESTING_TRACK`` (`Determining how the results are displayed on CDash (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_TRIBITS_DIR`` (`Source and Binary Directory Locations (TRIBITS_CTEST_DRIVER())`_)
 # * ``${PROJECT_NAME}_VERBOSE_CONFIGURE`` (`Other CTest Driver options (TRIBITS_CTEST_DRIVER())`_)
@@ -686,13 +688,16 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE``: Set to empty if
 #   ``CTEST_GENERATE_DEPS_XML_OUTPUT_FILE==FALSE``
 # * ``${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE``: Direct pass-through
+# * ``${PROJECT_NAME}_ENABLE_TESTS``: Set the the same value as
+#   `${PROJECT_NAME}_INNER_ENABLE_TESTS`_ set in the outer ctest -S driver script
+# * ``${PROJECT_NAME}_SKIP_CTEST_ADD_TEST``: Direct pass-through
 # * ``MPI_EXEC_MAX_NUMPROCS``: Direct pass-through
 # * ``${PROJECT_NAME}_ENABLE_COVERAGE_TESTING``: Set to ``ON`` if
 #   ``CTEST_DO_COVERAGE_TESTING==TRUE``
 # * ``${PROJECT_NAME}_EXTRAREPOS_FILE``: Set to empty if
 #   ``${PROJECT_NAME}_EXTRAREPOS_FILE=NONE``. Otherwise, passed through.
 # * ``${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE``: Direct pass-through
-# * `${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES`_: Oly passed down if 
+# * `${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES`_: Only passed down if
 #   non-empty value is set (default empty "")
 #
 # Arbitrary options can be set to be passed into the inner CMake configure
@@ -881,6 +886,39 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     The parallel level passed in the ``PARALLEL_LEVEL`` argument to
 #     ``CTEST_TEST()`` AND ``CTEST_MEMCHECK()``.  The default value is ``1``
 #     (one).
+#
+#   .. _${PROJECT_NAME}_INNER_ENABLE_TESTS:
+#
+#   ``${PROJECT_NAME}_INNER_ENABLE_TESTS``
+#
+#     If ``OFF``, then ``${PROJECT_NAME}_ENABLE_TESTS=OFF`` will be passed to
+#     the inner CMake configure.  This will avoid building of all tests and
+#     examples for the enabled packages and also no CTest tests will be
+#     defined using calls to ``add_test()`` in the inner project configure.
+#     This results in just the building of the libraries and non-test,
+#     non-example executables (which will be much faster for some projects).
+#     The default value is ``ON`` (in which case all of the test and example
+#     executable and other targets will get built for all of the explicitly
+#     enabled packages and the associated ctest tests will be defined and
+#     run).
+#
+#   .. _${PROJECT_NAME}_SKIP_CTEST_ADD_TEST:
+#
+#   ``${PROJECT_NAME}_SKIP_CTEST_ADD_TEST``:
+#
+#     If set to ``TRUE``, then ``${PROJECT_NAME}_SKIP_CTEST_ADD_TEST=TRUE`` is
+#     passed in to the inner CMake configure.  This will result in all of the
+#     test and example executables for the enabled packages to be built but no
+#     ctest tests will get defined and run by skipping the inner CMake calls
+#     to ``add_test()``.  Setting this to ``TRUE`` allows all of the
+#     libraries, production executables and the test and example executables
+#     and other targets to get built, but no tests will be run.  However, when
+#     ``CTEST_DO_TEST=ON``, the ``ctest_test()`` command will still be run and
+#     test results will still be submitted to CDash which will report zero
+#     tests.  This avoids the test results being reported as missing on CDash
+#     for tools like ``ctest_analyze_and_report.py``.  The default value is
+#     ``FALSE`` (in which case any enabled tests or examples in the explicitly
+#     enabled packages will get run).
 #
 #   .. _CTEST_DO_COVERAGE_TESTING:
 #
@@ -1546,6 +1584,12 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
   # Do the tests or not (Note: must be true for coverage testing)
   SET_DEFAULT_AND_FROM_ENV( CTEST_DO_TEST TRUE )
+
+  # Pass through
+  SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_INNER_ENABLE_TESTS ON )
+
+  # Pass through
+  SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_SKIP_CTEST_ADD_TEST FALSE )
 
   # Maximum number of procs an mpi test can request (if more are requested,
   # the test will be skipped).  Value of 0 means no override (determined
