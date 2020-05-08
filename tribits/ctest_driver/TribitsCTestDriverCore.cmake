@@ -1770,6 +1770,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
   SET_DEFAULT_AND_FROM_ENV( CTEST_DEPENDENCY_HANDLING_UNIT_TESTING FALSE )
 
+  SET_DEFAULT_AND_FROM_ENV( CTEST_UPDATE_UNIT_TESTING_MODE
+    ${CTEST_DEPENDENCY_HANDLING_UNIT_TESTING} )
+
   SET_DEFAULT_AND_FROM_ENV( CTEST_UPDATE_RETURN_VAL 0 )
 
   IF (CTEST_DEPENDENCY_HANDLING_UNIT_TESTING)
@@ -2032,7 +2035,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
       RETURN_VALUE  CTEST_UPDATE_RETURN_VAL)
     MESSAGE("CTEST_UPDATE(...) returned '${CTEST_UPDATE_RETURN_VAL}' [ rtn >= 0: num files; rnt == -1: error ]")
 
-    IF ("${UPDATE_FAILED}" STREQUAL "-1")
+    IF ("${CTEST_UPDATE_RETURN_VAL}" STREQUAL "-1")
       SET(UPDATE_FAILED TRUE)
     ENDIF()
 
@@ -2055,6 +2058,10 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
       # ... ORIG_HEAD..HEAD` when doing an update and not after the initial
       # clone.  That is because ORIG_HEAD will not exist for the base git repo
       # after the initial clone.
+    ENDIF()
+
+    IF (UPDATE_FAILED)
+      MESSAGE("Update FAILED!")
     ENDIF()
 
   ELSE()
@@ -2209,13 +2216,12 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # packages to enable or not and otherwise exit the script!
 
   IF (UPDATE_FAILED)
-    MESSAGE("The VC update failed so submitting update and stopping ...")
+    MESSAGE(SEND_ERROR
+      "The VC update failed so submitting update so don't perform any extra actions!")
     IF (CTEST_DO_SUBMIT)
       SET(CTEST_NOTES_FILES "${CTEST_NOTES_FILES_WO_CACHE}")
       TRIBITS_CTEST_SUBMIT( PARTS update notes )
     ENDIF()
-    REPORT_QUEUED_ERRORS()
-    RETURN()
   ENDIF()
 
   IF (CTEST_DO_SUBMIT AND EXISTS ${CDASH_SUBPROJECT_XML_FILE})
@@ -2233,7 +2239,11 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   SET(CMAKE_CACHE_CLEAN_FILE "${CTEST_BINARY_DIRECTORY}/CMakeCache.clean.txt")
   SET(${PROJECT_NAME}_FAILED_PACKAGES)
 
-  IF (
+  IF (UPDATE_FAILED)
+
+    MESSAGE("\nUpdate failed so skipping any further actions!\n")
+
+  ELSEIF(
     CTEST_DO_CONFIGURE
     OR
     CTEST_DO_BUILD
@@ -2285,7 +2295,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # ToDo: Above: We would love to provide the buildID to point to the exact
   # URL but CTest does not currently give that to you.
 
-  IF ("${${PROJECT_NAME}_FAILED_PACKAGES}" STREQUAL "")
+  IF ((NOT UPDATE_FAILED) AND ("${${PROJECT_NAME}_FAILED_PACKAGES}" STREQUAL ""))
     MESSAGE(
       "${SEE_CDASH_LINK_STR}\n"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED\n")
