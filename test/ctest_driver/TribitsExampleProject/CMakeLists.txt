@@ -1831,19 +1831,59 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
   # the tests in teh second ctest -S invocation.
 
 
+  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_update_fail
 
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
 
+    TEST_0
+      MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
+      CMND ln
+      ARGS -s ${TribitsExProj_DIR} .
 
+    TEST_1
+      MESSAGE "Do start, update, configure, and build (no testing) (update fails)"
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        CTEST_DO_UPDATES=ON
+        CTEST_DO_TEST=OFF
+        CTEST_UPDATE_UNIT_TESTING_MODE=ON
+        CTEST_UPDATE_RETURN_VAL=-1
+        TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+        ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_update_fail
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Update FAILED[!]"
+        "The VC update failed so submitting update so don't perform"
+        "Update failed so skipping any further actions[!]"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+      ALWAYS_FAIL_ON_ZERO_RETURN
 
+    TEST_2
+      MESSAGE "Do only testing (which should be skipped because update failed)"
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        CTEST_DO_NEW_START=OFF
+        CTEST_DO_CONFIGURE=OFF
+        CTEST_DO_BUILD=OFF
+        TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+        ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_update_fail
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Skipping configure due to CTEST_DO_CONFIGURE='OFF'[!]"
+        "HOWEVER: A configure was previously attempted but did not pass so consider configure FAILED[!]"
+        "Skipping build due to CTEST_DO_BUILD='OFF'[!]"
+        "Skipping tests because configure failed[!]"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+      ALWAYS_FAIL_ON_ZERO_RETURN
 
-
-
-
-
-
-
-
-
+    )
 
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_config_fail
@@ -1902,34 +1942,6 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       ALWAYS_FAIL_ON_ZERO_RETURN
 
     )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_4
