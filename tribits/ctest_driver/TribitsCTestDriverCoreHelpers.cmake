@@ -643,6 +643,75 @@ ENDMACRO()
 
 
 #
+# Setup for tracking if a configure is being attempted to keep memory if it
+# will pass or not.
+#
+# This will wrilte files in the directory ${CTEST_BINARY_DIRECTORY} to keep
+# track of this across multiple ctest -S script invocations.
+#
+MACRO(TRIBITS_REMEMBER_IF_CONFIGURE_ATTEMPTED)
+
+  # Must always define these files names as they they are used in functions
+  # called later in the same ctest -S invocation!
+  SET(CONFIGURE_ATTEMPTED_FILE
+    "${CTEST_BINARY_DIRECTORY}/ConfigureAttempted.txt")
+  SET(CONFIGURE_PASSED_FILE
+    "${CTEST_BINARY_DIRECTORY}/ConfigurePasssed.txt")
+
+  IF (CTEST_DO_CONFIGURE)
+    FILE(WRITE "${CONFIGURE_ATTEMPTED_FILE}" "Attempting configure")
+    IF (EXISTS "${CONFIGURE_PASSED_FILE}")
+      FILE(REMOVE "${CONFIGURE_PASSED_FILE}")
+    ENDIF()
+  ELSEIF(CTEST_DO_NEW_START)
+    IF (EXISTS "${CONFIGURE_ATTEMPTED_FILE}")
+      FILE(REMOTE "${CONFIGURE_ATTEMPTED_FILE}")
+    ENDIF()
+    IF (EXISTS "${CONFIGURE_PASSED_FILE}")
+      FILE(REMOVE "${CONFIGURE_PASSED_FILE}")
+    ENDIF()
+  ENDIF()
+
+ENDMACRO()
+# NOTE: Above, this is made a macro because it defines the vars
+# CONFIGURE_ATTEMPTED_FILE and CONFIGURE_PASSED_FILE at the top function
+# scope.  This is needed so the below functions will see them set.
+
+
+#
+# Determine if a past configure was attempted but did not pass
+#
+FUNCTION(TRIBITS_PREVIOUS_CONFIGURE_ATTEMPTED_BUT_NOT_PASSSED
+  PREVIOUS_CONFIGURE_ATTEMPTED_BUT_NOT_PASSSED_VAR_OUT
+  )
+
+  #PRINT_VAR(CONFIGURE_ATTEMPTED_FILE)
+  #PRINT_VAR(CONFIGURE_PASSED_FILE)
+
+  IF(
+    (EXISTS "${CONFIGURE_ATTEMPTED_FILE}")
+    AND
+    (NOT EXISTS "${CONFIGURE_PASSED_FILE}")
+    )
+    SET(PREVIOUS_CONFIGURE_ATTEMPTED_BUT_NOT_PASSSED TRUE)
+  ELSE()
+    SET(PREVIOUS_CONFIGURE_ATTEMPTED_BUT_NOT_PASSSED FALSE)
+  ENDIF()
+
+  SET(${PREVIOUS_CONFIGURE_ATTEMPTED_BUT_NOT_PASSSED_VAR_OUT}
+    ${PREVIOUS_CONFIGURE_ATTEMPTED_BUT_NOT_PASSSED} PARENT_SCOPE)
+
+ENDFUNCTION()
+
+
+#
+# Remember that the configure passed for later ctest -S invocations
+#
+FUNCTION(TRIBITS_REMEMBER_CONFIGURE_PASSED)
+  FILE(WRITE "${CONFIGURE_PASSED_FILE}" "Configure Passed!")
+ENDFUNCTION()
+
+#
 # Override CTEST_SUBMIT to drive multiple submits and to detect failed
 # submissions and track them as queued errors.
 #
@@ -1253,7 +1322,19 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
   # B) Configure the package and its dependent packages
   #
 
-  IF (NOT CTEST_DO_CONFIGURE)
+  TRIBITS_PREVIOUS_CONFIGURE_ATTEMPTED_BUT_NOT_PASSSED(
+    PREVIOUS_CONFIGURE_ATTEMPTED_BUT_NOT_PASSSED)
+  #PRINT_VAR(PREVIOUS_CONFIGURE_ATTEMPTED_BUT_NOT_PASSSED)
+
+  IF ((NOT CTEST_DO_CONFIGURE) AND PREVIOUS_CONFIGURE_ATTEMPTED_BUT_NOT_PASSSED)
+
+    MESSAGE(
+      "\nSkipping configure due to CTEST_DO_CONFIGURE='${CTEST_DO_CONFIGURE}'!\n"
+      "\nHOWEVER: A configure was previously attempted but did not pass so consider configure FAILED!")
+    SET(AAO_CONFIGURE_PASSED FALSE)
+    SET(AAO_CONFIGURE_FAILED TRUE)
+
+  ELSEIF (NOT CTEST_DO_CONFIGURE)
 
     MESSAGE("\nSkipping configure due to CTEST_DO_CONFIGURE='${CTEST_DO_CONFIGURE}'!\n")
     SET(AAO_CONFIGURE_PASSED TRUE)
@@ -1291,6 +1372,10 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
       CTEST_READ_CUSTOM_FILES(BUILD "${CTEST_BINARY_DIRECTORY}")
       # Overridde from this file!
       INCLUDE("${TRIBITS_PROJECT_ROOT}/CTestConfig.cmake")
+    ENDIF()
+
+    IF (AAO_CONFIGURE_PASSED)
+      TRIBITS_REMEMBER_CONFIGURE_PASSED()
     ENDIF()
   
     SET(CTEST_NOTES_FILES "${CTEST_NOTES_FILES_WO_CACHE}")

@@ -1831,6 +1831,107 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
   # the tests in teh second ctest -S invocation.
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_config_fail
+
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+
+    TEST_0
+      MESSAGE "Copy the project dir so I can break it!"
+      CMND cp
+      ARGS -r ${TribitsExProj_DIR} .
+
+    TEST_1
+      MESSAGE "Break the outer configure"
+      CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+      ARGS TribitsExampleProject/CMakeLists.txt "The outer configure is broken!"
+
+    TEST_2
+      MESSAGE "Do start, configure, and build (no testing) (config fails)"
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        CTEST_DO_TEST=OFF
+        TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+        ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_config_fail
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Configure FAILED!"
+        "Skipping build because configure failed[!]"
+        "Skipping tests because CTEST_DO_TEST='OFF'[!]"
+        "Final set of packages that had any failures: 'ALL_PACKAGES'"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+      ALWAYS_FAIL_ON_ZERO_RETURN
+
+    TEST_3
+      MESSAGE "Do only testing (which should be skipped because config failed)"
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        CTEST_DO_NEW_START=OFF
+        CTEST_DO_CONFIGURE=OFF
+        CTEST_DO_BUILD=OFF
+        TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+        ${CTEST_DROP_SITE_ENV_ARGS}
+        CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_config_fail
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Skipping configure due to CTEST_DO_CONFIGURE='OFF'[!]"
+        "HOWEVER: A configure was previously attempted but did not pass so consider configure FAILED[!]"
+        "Skipping build due to CTEST_DO_BUILD='OFF'[!]"
+        "Skipping tests because configure failed[!]"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+      ALWAYS_FAIL_ON_ZERO_RETURN
+
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_4
 
     OVERALL_WORKING_DIRECTORY TEST_NAME

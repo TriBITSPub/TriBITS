@@ -2010,6 +2010,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   MESSAGE("\nCalling ctest_start(${CTEST_START_ARGS})... \n\n")
   CTEST_START(${CTEST_START_ARGS})
 
+  TRIBITS_REMEMBER_IF_CONFIGURE_ATTEMPTED()
+
   MESSAGE(
     "\n***"
     "\n*** Update the source code repositories ..."
