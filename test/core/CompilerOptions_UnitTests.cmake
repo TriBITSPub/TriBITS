@@ -92,6 +92,12 @@ FUNCTION(UNITEST_GCC_BASE_OPTIONS)
   MESSAGE("*** Testing GCC base compiler options")
   MESSAGE("***\n")
 
+  BODY_UNITEST_GCC_BASE_OPTIONS()
+
+ENDFUNCTION()
+
+MACRO(BODY_UNITEST_GCC_BASE_OPTIONS)
+
   TRIBITS_SET_ALL_COMPILER_ID(GNU)
 
   TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
@@ -99,7 +105,7 @@ FUNCTION(UNITEST_GCC_BASE_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings" )
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -108,7 +114,7 @@ FUNCTION(UNITEST_GCC_BASE_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+ENDMACRO()
 
 
 FUNCTION(UNITEST_GCC_STD_OVERRIDE_OPTIONS)
@@ -125,7 +131,7 @@ FUNCTION(UNITEST_GCC_STD_OVERRIDE_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c34" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings" )
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -143,23 +149,10 @@ FUNCTION(UNITEST_GCC_ENABLE_CXX11_OPTIONS)
   MESSAGE("*** Testing GCC with C++11 enabled")
   MESSAGE("***\n")
 
+  # This option has been removed.  Test that it has no effect.
   SET(${PROJECT_NAME}_ENABLE_CXX11 ON)
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
-
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c99" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -Wwrite-strings" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  BODY_UNITEST_GCC_BASE_OPTIONS()
 
 ENDFUNCTION()
 
@@ -187,7 +180,7 @@ FUNCTION(UNITEST_GCC_PROJECT_DEFINED_STRONG_C_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -common-opt1 -common-opt2 -std=cverygood" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -common-opt1 -common-opt2 -std=c++98 -Wwrite-strings" )
+    " -common-opt1 -common-opt2 -Wwrite-strings" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -206,7 +199,6 @@ FUNCTION(UNITEST_GCC_PROJECT_DEFINED_STRONG_CXX_OPTIONS)
   MESSAGE("***\n")
 
   MULTILINE_SET(DummyProject_CXX_STRONG_COMPILE_WARNING_FLAGS
-    " -std=c++98" # C++98 standard code
     " -pedantic" # Adds more static checking to remove non-ANSI GNU extensions
     " -Wall" # Enable a bunch of default warnings
     " -Wno-long-long" # Allow long long int since it is used by MPI, SWIG, etc.
@@ -219,7 +211,7 @@ FUNCTION(UNITEST_GCC_PROJECT_DEFINED_STRONG_CXX_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -std=c++98 -pedantic -Wall -Wno-long-long" )
+    " -pedantic -Wall -Wno-long-long" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -245,7 +237,6 @@ FUNCTION(UNITEST_GCC_PROJECT_DEFINED_STRONG_C_CXX_OPTIONS)
   )
 
   MULTILINE_SET(DummyProject_CXX_STRONG_COMPILE_WARNING_FLAGS
-    "-std=c++98" # C++98 standard code
     " -pedantic" # Adds more static checking to remove non-ANSI GNU extensions
     " -Wall" # Enable a bunch of default warnings
     " -Wno-long-long" # Allow long long int since it is used by MPI, SWIG, etc.
@@ -260,7 +251,7 @@ FUNCTION(UNITEST_GCC_PROJECT_DEFINED_STRONG_C_CXX_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     "-std=c99 -pedantic -Wall -Wno-long-long" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    "-std=c++98 -pedantic -Wall -Wno-long-long -Wwrite-strings" )
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -287,7 +278,7 @@ FUNCTION(UNITEST_GCC_WITH_SHADOW_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings -Wshadow -Woverloaded-virtual" )
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings -Wshadow -Woverloaded-virtual" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -315,7 +306,7 @@ FUNCTION(UNITEST_GCC_GLOBAL_ENABLE_SHADOW_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings -Wshadow -Woverloaded-virtual" )
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings -Wshadow -Woverloaded-virtual" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -342,7 +333,7 @@ FUNCTION(UNITEST_GCC_GLOBAL_DISABLE_SHADOW_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings" )
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -368,7 +359,7 @@ FUNCTION(UNITEST_GCC_WITH_COVERAGE_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99 -fprofile-arcs -ftest-coverage" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings -fprofile-arcs -ftest-coverage" )
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings -fprofile-arcs -ftest-coverage" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS
     "-fprofile-arcs -ftest-coverage" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
@@ -395,7 +386,7 @@ FUNCTION(UNITEST_GCC_WITH_CHECKED_STL_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99  -D_GLIBCXX_DEBUG" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings  -D_GLIBCXX_DEBUG" )
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings  -D_GLIBCXX_DEBUG" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS " -D_GLIBCXX_DEBUG" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -421,7 +412,7 @@ FUNCTION(UNITEST_GCC_WITH_CLEANED_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -std=c99" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings" )
+    "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -Wwrite-strings" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -574,7 +565,7 @@ FUNCTION(UNITEST_GCC_WITH_SHADOW_CLEANED_CHECKED_STL_COVERAGE_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -std=c99 -fprofile-arcs -ftest-coverage -D_GLIBCXX_DEBUG" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings -Wshadow -Woverloaded-virtual -fprofile-arcs -ftest-coverage -D_GLIBCXX_DEBUG" )
+    "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -Wwrite-strings -Wshadow -Woverloaded-virtual -fprofile-arcs -ftest-coverage -D_GLIBCXX_DEBUG" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "-fprofile-arcs -ftest-coverage -D_GLIBCXX_DEBUG" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -610,7 +601,7 @@ FUNCTION(UNITEST_GCC_ADDITIONAL_USER_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99   --additional-user-c-flags" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings   --additional-user-cxx-flags" )
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings   --additional-user-cxx-flags" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "  --additional-user-fortran-flags" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
@@ -722,7 +713,7 @@ FUNCTION(UNITEST_GCC_WITH_DEBUG_SYMBOLES_OPTIONS)
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99  -g" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings  -g" )
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings  -g" )
   UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS " -g" )
   UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
   UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
