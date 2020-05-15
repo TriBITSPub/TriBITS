@@ -1,6 +1,12 @@
 #!/bin/bash
 
-../../../Trilinos/TriBITS/dev_testing/generic/do-configure-mpi-debug \
+if [ "$TRIBITS_BASE_DIR" == "" ] ; then
+  _ABS_FILE_PATH=`readlink -f $0`
+  _SCRIPT_DIR=`dirname $_ABS_FILE_PATH`
+  TRIBITS_BASE_DIR=$_SCRIPT_DIR/../../..
+fi
+
+${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-mpi-debug \
 -DCTEST_PARALLEL_LEVEL=16 \
 -DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE \
 -DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE \
@@ -54,9 +60,3 @@
 #
 # That tests a use case where the base install directory is not that of the
 # current user.
-
-
-
-
-
-Finished configuring TriBITS!
