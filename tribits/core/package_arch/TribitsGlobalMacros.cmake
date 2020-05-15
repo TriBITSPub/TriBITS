@@ -2296,6 +2296,8 @@ MACRO(TRIBITS_INCLUDE_CTEST_SUPPORT)
   TRIBITS_CONFIGURE_CTEST_CUSTOM(${${PROJECT_NAME}_SOURCE_DIR}
     ${${PROJECT_NAME}_BINARY_DIR})
 
+  TRIBITS_ADD_TEST_HELPERS_INIT()
+
 ENDMACRO()
 # NOTE: The above logic with DART_TESTING_TIMEOUT is a huge hack.  For some
 # reason, on the first configure CMake will not put the local value of the

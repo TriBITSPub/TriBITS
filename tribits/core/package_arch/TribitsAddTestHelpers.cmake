@@ -51,6 +51,21 @@ INCLUDE(AdvancedSet)
 INCLUDE(MessageWrapper)
 INCLUDE(TribitsGetCategoriesString)
 
+
+#
+# Do initialization for test helpers
+#
+# This must be run just before the packages define their tests and this macro
+# must be run in the base-level project scope.
+#
+MACRO(TRIBITS_ADD_TEST_HELPERS_INIT)
+  IF (TPL_ENABLE_CUDA)
+    SET(TRIBITS_TEST_EXTRA_ENVIRONMENT CTEST_KOKKOS_DEVICE_TYPE=gpus)
+    SET(TRIBITS_RESOURCES_PER_PROCESS gpus:1)
+  ENDIF()
+ENDMACRO()
+
+
 #
 # Wrapper function for SET_TESTS_PROPERTIES() to be used in unit testing.
 #
