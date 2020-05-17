@@ -1881,8 +1881,16 @@ NOTES:
   Python is enabled.
 
 
+Test-related configuration settings
+-----------------------------------
+
+Many options can be set at configure time to determine what tests are enabled
+and how they are run.  The following subsections described these various
+settings.
+
+
 Enabling different test categories
-----------------------------------
+++++++++++++++++++++++++++++++++++
 
 To turn on a set a given set of tests by test category, set::
 
@@ -1901,7 +1909,7 @@ and don't nest with the other categories.
 
 
 Disabling specific tests
-------------------------
+++++++++++++++++++++++++
 
 Any TriBITS-added ctest test (i.e. listed in ``ctest -N``) can be disabled at
 configure time by setting::
@@ -1940,7 +1948,7 @@ Also note that other specific defined tests can also be excluded using the
 
 
 Disabling specific test executable builds
------------------------------------------
++++++++++++++++++++++++++++++++++++++++++
 
 Any TriBITS-added executable (i.e. listed in ``make help``) can be disabled
 from being built by setting::
@@ -1956,7 +1964,7 @@ at configure time to CMake STDOUT.
 
 
 Disabling just the ctest tests but not the test executables
------------------------------------------------------------
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 To allow the building of the tests and examples in a package (enabled either
 through setting `<Project>_ENABLE_TESTS`_ ``= ON`` or
@@ -2016,7 +2024,7 @@ should be build and which tests should be run can be made at configure time.
 
 
 Trace test addition or exclusion
---------------------------------
+++++++++++++++++++++++++++++++++
 
 To see what tests get added and see those that don't get added for various
 reasons, configure with::
@@ -2032,7 +2040,7 @@ arguments).
 
 
 Enable advanced test start and end times and timing blocks
-----------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 For tests added using ``TRIBITS_ADD_ADVANCED_TEST()``, one can see start and
 end times for the tests and the timing for each ``TEST_<IDX>`` block in the
@@ -2047,8 +2055,9 @@ systems and not native Windows systems.
 
 .. _DART_TESTING_TIMEOUT:
 
+
 Setting test timeouts at configure time
----------------------------------------
++++++++++++++++++++++++++++++++++++++++
 
 A maximum default time limit (timeout) for all the tests can be set at
 configure time using the cache variable::
@@ -2094,8 +2103,9 @@ NOTES:
 
 .. _<Project>_SCALE_TEST_TIMEOUT:
 
+
 Scaling test timeouts at configure time
----------------------------------------
++++++++++++++++++++++++++++++++++++++++
 
 The global default test timeout `DART_TESTING_TIMEOUT`_ as well as all of the
 timeouts for the individual tests that have their own timeout set (through the
