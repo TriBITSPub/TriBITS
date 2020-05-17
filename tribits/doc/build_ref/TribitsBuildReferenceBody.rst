@@ -10,6 +10,8 @@
 
 .. _Ninja: https://ninja-build.org
 
+.. _CMake Ninja Fortran Support: https://cmake.org/cmake/help/latest/generator/Ninja.html
+
 
 
 Getting set up to use CMake
@@ -50,7 +52,7 @@ To get help for installing CMake with this script use::
 
   $ $TRIBITS_BASE_DIR/devtools_install/install-cmake.py --help
 
-NOTE: you will want to read the help message about how to install CMake to
+NOTE: You will want to read the help message about how to install CMake to
 share with other users and maintainers and how to install with sudo if needed.
 
 
@@ -69,10 +71,17 @@ The Kitware fork of Ninja at:
 
 provides releases of Ninja that allows CMake 3.7.0+ to build Fortran code with
 Ninja.  For example, the Kitware Ninja release ``1.7.2.git.kitware.dyndep-1``
-works with Fortran.
+works with Fortran.  As of Ninja 1.10+, Fortran support is part of the
+official Google-maintained version of Ninja as can be obtained from:
 
-Ninja is easy to install from source.  It is a simple ``configure
---prefix=<dir>``, ``make`` and ``make install``.
+  https://github.com/ninja-build/ninja/releases
+
+and as of CMake 3.17+, cmake will recognize native Fortran support for Ninja
+1.10+ (see `CMake Ninja Fortran Support`_).
+
+Ninja is easy to install from source on almost any machine.  On Unix/Linux
+systems it is as simple as ``configure --prefix=<dir>``, ``make`` and ``make
+install``.
 
 
 Getting CMake Help
@@ -1881,8 +1890,16 @@ NOTES:
   Python is enabled.
 
 
+Test-related configuration settings
+-----------------------------------
+
+Many options can be set at configure time to determine what tests are enabled
+and how they are run.  The following subsections described these various
+settings.
+
+
 Enabling different test categories
-----------------------------------
+++++++++++++++++++++++++++++++++++
 
 To turn on a set a given set of tests by test category, set::
 
@@ -1901,7 +1918,7 @@ and don't nest with the other categories.
 
 
 Disabling specific tests
-------------------------
+++++++++++++++++++++++++
 
 Any TriBITS-added ctest test (i.e. listed in ``ctest -N``) can be disabled at
 configure time by setting::
@@ -1940,7 +1957,7 @@ Also note that other specific defined tests can also be excluded using the
 
 
 Disabling specific test executable builds
------------------------------------------
++++++++++++++++++++++++++++++++++++++++++
 
 Any TriBITS-added executable (i.e. listed in ``make help``) can be disabled
 from being built by setting::
@@ -1956,7 +1973,7 @@ at configure time to CMake STDOUT.
 
 
 Disabling just the ctest tests but not the test executables
------------------------------------------------------------
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 To allow the building of the tests and examples in a package (enabled either
 through setting `<Project>_ENABLE_TESTS`_ ``= ON`` or
@@ -2016,7 +2033,7 @@ should be build and which tests should be run can be made at configure time.
 
 
 Trace test addition or exclusion
---------------------------------
+++++++++++++++++++++++++++++++++
 
 To see what tests get added and see those that don't get added for various
 reasons, configure with::
@@ -2032,7 +2049,7 @@ arguments).
 
 
 Enable advanced test start and end times and timing blocks
-----------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 For tests added using ``TRIBITS_ADD_ADVANCED_TEST()``, one can see start and
 end times for the tests and the timing for each ``TEST_<IDX>`` block in the
@@ -2047,8 +2064,9 @@ systems and not native Windows systems.
 
 .. _DART_TESTING_TIMEOUT:
 
+
 Setting test timeouts at configure time
----------------------------------------
++++++++++++++++++++++++++++++++++++++++
 
 A maximum default time limit (timeout) for all the tests can be set at
 configure time using the cache variable::
@@ -2094,8 +2112,9 @@ NOTES:
 
 .. _<Project>_SCALE_TEST_TIMEOUT:
 
+
 Scaling test timeouts at configure time
----------------------------------------
++++++++++++++++++++++++++++++++++++++++
 
 The global default test timeout `DART_TESTING_TIMEOUT`_ as well as all of the
 timeouts for the individual tests that have their own timeout set (through the

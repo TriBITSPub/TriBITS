@@ -2358,6 +2358,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because PYTHON_EXECUTABLE=''"
@@ -2538,6 +2540,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       -DTribitsExProj_LIBRARY_NAME_PREFIX=tep_
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
