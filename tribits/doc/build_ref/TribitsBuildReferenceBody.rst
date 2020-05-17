@@ -12,6 +12,14 @@
 
 .. _CMake Ninja Fortran Support: https://cmake.org/cmake/help/latest/generator/Ninja.html
 
+.. _CTest Resource Allocation System: https://cmake.org/cmake/help/latest/manual/ctest.1.html#resource-allocation
+
+.. _CTest Resource Specification File: https://cmake.org/cmake/help/latest/manual/ctest.1.html#ctest-resource-specification-file
+
+.. _CTest Resource Allocation Environment Variables: https://cmake.org/cmake/help/latest/manual/ctest.1.html#environment-variables
+
+.. _RESOURCE_GROUPS: https://cmake.org/cmake/help/latest/prop_test/RESOURCE_GROUPS.html#prop_test:RESOURCE_GROUPS
+
 
 
 Getting set up to use CMake
@@ -2152,6 +2160,103 @@ NOTES:
   ``DartConfiguration.tcl`` file (which is directly read by ``ctest``) will be
   scaled.  (This ensures that running configure over and over again will not
   increase ``DART_TESTING_TIMEOUT`` or ``TimeOut`` with each new configure.)
+
+
+Spreading out and limiting tests running on GPUs
+++++++++++++++++++++++++++++++++++++++++++++++++
+
+For CUDA builds (i.e. ``TPL_ENABLE_CUDA=ON``) with tests that run on GPUs
+where a single node has multiple GPUs, there are settings that can help
+``ctest`` spread out the testing load over all of the GPUs and limit the
+number of kernels that can run at the same time on a single GPU.
+
+To instruct ``ctest`` to spread out the load on multiple GPUs, one can set the
+following configure-time options::
+
+  -D TPL_ENABLE_CUDA=ON \
+  -D <Project>_AUTOGENERATE_TEST_RESOURCE_FILE=ON \
+  -D <Project>_CUDA_NUM_GPUS=<num-gpus> \
+  -D <Project>_CUDA_SLOTS_PER_GPU=<slots-per-gpu> \
+
+This will cause a file ``ctest_resources.json`` to get generated in the base
+build directory that CTest will use to spread out the work across the
+``<num-gpus>`` GPUs with a maximum of ``<slots-per-gpu>`` processes running
+kernels on any one GPU.  (This uses the `CTest Resource Allocation System`_
+first added in CMake 3.16 and made more usable in CMake 3.18.)
+
+For example, when running on 2 nodes on a system with 4 GPUs per node
+(allowing 5 kernels to run at a time on a single GPU) one would configure
+with::
+
+  -D TPL_ENABLE_CUDA=ON \
+  -D <Project>_AUTOGENERATE_TEST_RESOURCE_FILE=ON \
+  -D <Project>_CUDA_NUM_GPUS=8 \
+  -D <Project>_CUDA_SLOTS_PER_GPU=5 \
+
+This would allow up to 10 tests using 4 MPI processes each to run at the same
+time.  But a single 41-rank or above MPI test would not be allowed to run and
+would be listed as "Not Run" because it would have required more than
+``<slots-per-gpu> = 5`` MPI processes running kernels at one time on a single
+GPU.  (Therefore, one must set ``<slots-per-gpu>`` large enough, or add more
+nodes an increase ``<num-gpus>``, to allow all of the defined tests to run or
+one should avoid defining tests that require too many slots for available
+GPUs.)
+
+The CTest implementation uses a breath-first approach to spread out the work
+across all the available GPUs before adding more work for each GPU.  For
+example, when running two 4-rank MPI tests at the same time (e.g. using
+``ctest -j8``) in the above example, CTest will instruct these tests at
+runtime to spread out across all 8 GPUs and therefore run just a single MPI
+processes' work on each GPU.  But when running four 4-rank MPI tests at the
+same time (e.g. using ``ctest -j16``), then each of the 8 GPUs would get the
+work of two MPI processes (i.e. running two kernels at a time on each of the 8
+GPUs).
+
+One can also manually create a `CTest Resource Specification File`_ and point
+to it by setting::
+
+  -D TPL_ENABLE_CUDA=ON \
+  -D CTEST_RESOURCE_SPEC_FILE=<file-path> \
+
+In all cases, ctest will not spread out and limit running on the GPUs unless
+``TPL_ENABLE_CUDA=ON`` is set which causes TriBITS to add the
+`RESOURCE_GROUPS`_ test property to each test.
+
+NOTES:
+
+* This setup assumes that a single MPI process will run just one kernel on its
+  assigned GPU and therefore take up one GPU "slot".  So a 2-rank MPI test
+  will take up 2 total GPU "slots" (either on the same or two different GPUs,
+  as determined by CTest).
+
+* The underlying test executables themselves must be set up read in the `CTest
+  Resource Allocation Environment Variables`_ set specifically by ``ctest`` on
+  the fly for each test and run on the specific GPUs specified in those
+  environment variables.  (If the project is using a ``Kokkos`` back-end
+  implementation for running CUDA code on the GPU then this will work
+  automatically since ``Kokkos`` is set up to automatically look for these
+  CTest-set environment variables.)
+
+* The option ``<Project>_AUTOGENERATE_TEST_RESOURCE_FILE=ON`` sets the
+  built-in CMake variable ``CTEST_RESOURCE_SPEC_FILE`` to point to the
+  generated file ``ctest_resources.json`` in the build directory.
+
+* One can avoid setting the CMake cache variables
+  ``<Project>_AUTOGENERATE_TEST_RESOURCE_FILE`` or
+  ``CTEST_RESOURCE_SPEC_FILE`` at configure time and can instead directly pass
+  the path to the `CTest Resource Specification File`_ directly into ``ctest``
+  using the command-line option ``--resource-spec-file`` or the
+  ``ctest_test()`` function argument ``RESOURCE_SPEC_FILE`` (when using a
+  ``ctest -S`` script driver).  (This allows using CMake 3.16+ since support
+  for the ``CTEST_RESOURCE_SPEC_FILE`` cache variable was not added until
+  CMake 3.18.)
+
+* A patched version of CMake 3.17 can be used to get built-in CMake/CTest
+  support for the ``CTEST_RESOURCE_SPEC_FILE`` cache variable, as installed
+  using the TriBITS-provided ``install-cmake.py --cmake-version=3.17 [other
+  args]`` command (see `Installing CMake from source [developers and
+  experienced users]`_).  This avoids needing to explicitly pass the ctest
+  resource file to ``ctest`` at runtime for CMake/CTest versions [3.16, 3.18).
 
 
 Enabling support for coverage testing
