@@ -10,6 +10,8 @@
 
 .. _Ninja: https://ninja-build.org
 
+.. _CMake Ninja Fortran Support: https://cmake.org/cmake/help/latest/generator/Ninja.html
+
 
 
 Getting set up to use CMake
@@ -50,7 +52,7 @@ To get help for installing CMake with this script use::
 
   $ $TRIBITS_BASE_DIR/devtools_install/install-cmake.py --help
 
-NOTE: you will want to read the help message about how to install CMake to
+NOTE: You will want to read the help message about how to install CMake to
 share with other users and maintainers and how to install with sudo if needed.
 
 
@@ -69,10 +71,17 @@ The Kitware fork of Ninja at:
 
 provides releases of Ninja that allows CMake 3.7.0+ to build Fortran code with
 Ninja.  For example, the Kitware Ninja release ``1.7.2.git.kitware.dyndep-1``
-works with Fortran.
+works with Fortran.  As of Ninja 1.10+, Fortran support is part of the
+official Google-maintained version of Ninja as can be obtained from:
 
-Ninja is easy to install from source.  It is a simple ``configure
---prefix=<dir>``, ``make`` and ``make install``.
+  https://github.com/ninja-build/ninja/releases
+
+and as of CMake 3.17+, cmake will recognize native Fortran support for Ninja
+1.10+ (see `CMake Ninja Fortran Support`_).
+
+Ninja is easy to install from source on almost any machine.  On Unix/Linux
+systems it is as simple as ``configure --prefix=<dir>``, ``make`` and ``make
+install``.
 
 
 Getting CMake Help
