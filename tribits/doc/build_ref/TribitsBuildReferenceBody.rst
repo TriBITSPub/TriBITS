@@ -2165,10 +2165,10 @@ NOTES:
 Spreading out and limiting tests running on GPUs
 ++++++++++++++++++++++++++++++++++++++++++++++++
 
-For CUDA builds (i.e. ``TPL_ENABLE_CUDA=ON``) with tests that run on GPUs
-where a single node has multiple GPUs, there are settings that can help
-``ctest`` spread out the testing load over all of the GPUs and limit the
-number of kernels that can run at the same time on a single GPU.
+For CUDA builds (i.e. ``TPL_ENABLE_CUDA=ON``) with tests that run on a single
+node which has multiple GPUs, there are settings that can help ``ctest``
+spread out the testing load over all of the GPUs and limit the number of
+kernels that can run at the same time on a single GPU.
 
 To instruct ``ctest`` to spread out the load on multiple GPUs, one can set the
 following configure-time options::
@@ -2184,33 +2184,34 @@ build directory that CTest will use to spread out the work across the
 kernels on any one GPU.  (This uses the `CTest Resource Allocation System`_
 first added in CMake 3.16 and made more usable in CMake 3.18.)
 
-For example, when running on 2 nodes on a system with 4 GPUs per node
+For example, when running on one node on a system with 4 GPUs per node
 (allowing 5 kernels to run at a time on a single GPU) one would configure
 with::
 
   -D TPL_ENABLE_CUDA=ON \
   -D <Project>_AUTOGENERATE_TEST_RESOURCE_FILE=ON \
-  -D <Project>_CUDA_NUM_GPUS=8 \
+  -D <Project>_CUDA_NUM_GPUS=4 \
   -D <Project>_CUDA_SLOTS_PER_GPU=5 \
 
-This would allow up to 10 tests using 4 MPI processes each to run at the same
-time.  But a single 41-rank or above MPI test would not be allowed to run and
-would be listed as "Not Run" because it would have required more than
-``<slots-per-gpu> = 5`` MPI processes running kernels at one time on a single
-GPU.  (Therefore, one must set ``<slots-per-gpu>`` large enough, or add more
-nodes an increase ``<num-gpus>``, to allow all of the defined tests to run or
-one should avoid defining tests that require too many slots for available
-GPUs.)
+This allows, for example, up to 5 tests using 4-rank MPI jobs, or 10 tests
+using 2-rank MPI jobs, or 20 tests using 1-rank MPI jobs, to run at the same
+time (or any combination of tests that add up to 20 or less total MPI
+processes to run a the same time).  But a single 21-rank or above MPI test job
+would not be allowed to run and would be listed as "Not Run" because it would
+have required more than ``<slots-per-gpu> = 5`` MPI processes running kernels
+at one time on a single GPU.  (Therefore, one must set ``<slots-per-gpu>``
+large enough to allow all of the defined tests to run or one should avoid
+defining tests that require too many slots for available GPUs.)
 
 The CTest implementation uses a breath-first approach to spread out the work
 across all the available GPUs before adding more work for each GPU.  For
-example, when running two 4-rank MPI tests at the same time (e.g. using
-``ctest -j8``) in the above example, CTest will instruct these tests at
-runtime to spread out across all 8 GPUs and therefore run just a single MPI
-processes' work on each GPU.  But when running four 4-rank MPI tests at the
-same time (e.g. using ``ctest -j16``), then each of the 8 GPUs would get the
-work of two MPI processes (i.e. running two kernels at a time on each of the 8
-GPUs).
+example, when running two 2-rank MPI tests at the same time (e.g. using
+``ctest -j4``) in the above example, CTest will instruct these tests at
+runtime to spread out across all 4 GPUs and therefore run the CUDA kernels for
+just one MPI process on each GPU.  But when running four 2-rank MPI tests at
+the same time (e.g. using ``ctest -j8``), then each of the 4 GPUs would get
+the work of two MPI processes (i.e. running two kernels at a time on each of
+the 4 GPUs).
 
 One can also manually create a `CTest Resource Specification File`_ and point
 to it by setting::
@@ -2229,13 +2230,17 @@ NOTES:
   will take up 2 total GPU "slots" (either on the same or two different GPUs,
   as determined by CTest).
 
-* The underlying test executables themselves must be set up read in the `CTest
-  Resource Allocation Environment Variables`_ set specifically by ``ctest`` on
-  the fly for each test and run on the specific GPUs specified in those
-  environment variables.  (If the project is using a ``Kokkos`` back-end
-  implementation for running CUDA code on the GPU then this will work
-  automatically since ``Kokkos`` is set up to automatically look for these
-  CTest-set environment variables.)
+* The underlying test executables/scripts themselves must be set up to read in
+  the `CTest Resource Allocation Environment Variables`_ set specifically by
+  ``ctest`` on the fly for each test and then must run on the specific GPUs
+  specified in those environment variables.  (If the project is using a Kokkos
+  back-end implementation for running CUDA code on the GPU then this will work
+  automatically since Kokkos is set up to automatically look for these
+  CTest-set environment variables.  Without this CTest and TriBITS
+  implementation, when running 2-rank MPI tests on a node with 4 GPUs, Kokkos
+  would just utilize the first two GPUs and leave the other two GPUs idle.
+  One when running 1-rank MPI tests, Kokkos would only utilize the first GPU
+  and leave the last three GPUs idle.)
 
 * The option ``<Project>_AUTOGENERATE_TEST_RESOURCE_FILE=ON`` sets the
   built-in CMake variable ``CTEST_RESOURCE_SPEC_FILE`` to point to the
@@ -2253,10 +2258,20 @@ NOTES:
 
 * A patched version of CMake 3.17 can be used to get built-in CMake/CTest
   support for the ``CTEST_RESOURCE_SPEC_FILE`` cache variable, as installed
-  using the TriBITS-provided ``install-cmake.py --cmake-version=3.17 [other
-  args]`` command (see `Installing CMake from source [developers and
+  using the TriBITS-provided ``install-cmake.py`` command (using option
+  ``--cmake-version=3.17``, see `Installing CMake from source [developers and
   experienced users]`_).  This avoids needing to explicitly pass the ctest
   resource file to ``ctest`` at runtime for CMake/CTest versions [3.16, 3.18).
+
+* **WARNING:** This currently only works for a single node, not multiple
+  nodes.  (CTest needs to be extended to work correctly for multiple nodes
+  where each node has multiple GPUs.  Alternatively, TriBITS could be extended
+  to make this work for multiple nodes but will require considerable work and
+  will need to closely interact with the MPI launcher to control what nodes
+  are run on for each MPI job/test.)
+
+* **WARNING:** This feature is still evolving in CMake/CTest and TriBITS and
+  therefore the input options and behavior of this may change in the future.
 
 
 Enabling support for coverage testing
