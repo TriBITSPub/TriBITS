@@ -262,6 +262,7 @@ class TribitsDependencies:
     return None
 
 
+  # Note: Path must contain ending "/"
   def getPackageNameFromPath(self, fullPath):
     for packageDep in self.__packagesList:
       regexFilePath = packageDep.packageDir+"/"
@@ -275,6 +276,7 @@ class TribitsDependencies:
     # packages because subpackages are listed before packages!
 
 
+  # Returns the paraent package name given a test name
   def getPackageNameFromTestName(self, testName):
     for packageDep in self.__packagesList:
       startTestName = packageDep.packageName+"_"
