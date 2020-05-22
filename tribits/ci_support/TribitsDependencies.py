@@ -47,7 +47,6 @@ import sys
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
 
-
 #
 # Default file locations
 #
@@ -240,6 +239,22 @@ class TribitsDependencies:
 
   def numPackages(self):
     return len(self.__packagesList)
+
+
+  def getPackagesNamesList(self, onlyTopLevelPackages=True):
+    packagesNamesList = []
+    for packageDep in self.__packagesList:
+      #print ("packageDep.packageName = "+packageDep.packageName)
+      #print ("packageDep.parentPackage = "+packageDep.parentPackage)
+      if packageDep.parentPackage == "":
+        addPackage = True
+      elif not onlyTopLevelPackages:
+        addPackage = True
+      else:
+        addPackage = False
+      if addPackage:
+        packagesNamesList.append(packageDep.packageName)
+    return packagesNamesList
 
 
   def packageNameToID(self, packageName):
