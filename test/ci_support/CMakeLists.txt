@@ -116,6 +116,47 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsPackageTestNameUtils_UnitTests
     PASS_REGULAR_EXPRESSION "OK"
   )
 
+#
+# Test the get-tribits-packages.py script
+#
+
+TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_default
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    CMND ${PYTHON_EXECUTABLE}
+    ARGS
+      "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages.py"
+      --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
+    PASS_REGULAR_EXPRESSION_ALL
+      "^TrilinosFramework,Teuchos,.*,Sacado,Thyra,Isorropia,.*,Phalanx,Panzer\n"
+  )
+
+TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_only_toplevel_packages
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    CMND ${PYTHON_EXECUTABLE}
+    ARGS
+      "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages.py"
+      --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
+      --only-top-level-packages=on
+    PASS_REGULAR_EXPRESSION_ALL
+      "^TrilinosFramework,Teuchos,.*,Sacado,Thyra,Isorropia,.*,Phalanx,Panzer\n"
+  )
+
+TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_all_se_packages
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0
+    CMND ${PYTHON_EXECUTABLE}
+    ARGS
+      "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages.py"
+      --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
+      --only-top-level-packages=off
+    PASS_REGULAR_EXPRESSION_ALL
+      "^TrilinosFramework.*,Sacado,ThyraCoreLibs,ThyraGoodStuff,ThyraCrazyStuff,ThyraEpetra,ThyraEpetraExt,ThyraTpetra,Thyra,Isorropia,.*,Phalanx,Panzer\n"
+  )
 
 #
 # Test the get-tribits-packages-from-last-tests-failed.py script
