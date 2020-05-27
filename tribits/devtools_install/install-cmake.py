@@ -169,6 +169,8 @@ variable.  (For versions 3.18+ this is not needed.)
     if self.inOptions.version.startswith("3.17"):
       echoRunSysCmnd("patch -d "+self.cmakeSrcDir+" -p1 -i " \
        +os.path.join(devtools_install_dir, "0001-CTest-Add-CTEST_RESOURCE_SPEC_FILE-variable.patch"))
+      echoRunSysCmnd("patch -d "+self.cmakeSrcDir+" -p1 -i " \
+       +os.path.join(devtools_install_dir, "0002-CTest-Log-environment-variables-as-a-test-measuremen.patch"))
 
   def doConfigure(self):
     createDir(self.cmakeBuildBaseDir, True, True)
