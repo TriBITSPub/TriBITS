@@ -1319,10 +1319,19 @@ def getUniqueSortedTestsHistoryLOD(inputSortedTestHistoryLOD):
 # field.
 def extractTestIdAndBuildIdFromTestDetailsLink(testDetailsLink):
   testDetailsLinkList = testDetailsLink.split('?')
-  phpArgsList = testDetailsLinkList[1].split('&')
-  testidArgList = phpArgsList[0].split("=")
-  buildidArgList = phpArgsList[1].split("=")
-  return (testidArgList[1], buildidArgList[1])
+  if (len(testDetailsLinkList) > 1):
+    # Older CDash implementations have ?testid=<testid>&buildid=<buildid>
+    phpArgsList = testDetailsLinkList[1].split('&')
+    testidArgList = phpArgsList[0].split("=")
+    buildidArgList = phpArgsList[1].split("=")
+    testId = testidArgList[1]
+    buildId = buildidArgList[1]
+  else:
+    # Newer CDash implementations have 
+    testDetailsLinkList = testDetailsLink.split('/')
+    testId = testDetailsLinkList[1]
+    buildId = ""
+  return (testId, buildId)
 
 
 # Check if two test dicts returned from CDash are the same, accounting for

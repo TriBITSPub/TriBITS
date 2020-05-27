@@ -2158,11 +2158,19 @@ g_cdashTestDict = {
 
 class test_extractTestIdAndBuildIdFromTestDetailsLink(unittest.TestCase):
 
-  def test_1(self):
+  def test_old_cdash(self):
     self.assertEqual(
       extractTestIdAndBuildIdFromTestDetailsLink(
         u'testDetails.php?test=58569474&build=4143620'),
-      ("58569474", "4143620") )
+      ("58569474", "4143620")
+      )
+
+  def test_new_cdash(self):
+    self.assertEqual(
+      extractTestIdAndBuildIdFromTestDetailsLink(u'test/14614128'),
+      ("14614128", "")
+      )
+
 
 class test_checkCDashTestDictsAreSame(unittest.TestCase):
 
