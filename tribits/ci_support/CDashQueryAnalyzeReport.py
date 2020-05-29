@@ -265,15 +265,30 @@ def writeCsvFileStructureToStr(csvFileStruct):
   return csvFileStr
 
 
-#
+########################################
 # CDash Specific stuff
+########################################
+
+
 #
+# Policy, data, and defaults
+# 
+
 
 def cdashColorPassed(): return 'green'
 def cdashColorFailed(): return 'red'
 def cdashColorNotRun(): return 'orange'
 def cdashColorMissing(): return 'gray'
 # ToDo: Make the above return different colors for a color-blind pallette
+
+
+def getDefaultTestsSortOrder() : return ['testname', 'buildName', 'site']
+
+
+#
+# Implementation functions
+#
+
 
 
 # Given a CDash query URL PHP page that returns JSON data, return the JSON

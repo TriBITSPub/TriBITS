@@ -355,11 +355,13 @@ class OverallVars(object):
 class TestsetGetDataAnayzeReporter(object):
 
 
-  def __init__(self, inOptions, testsSortOrder, testHistoryCacheDir, overallVars):
+  def __init__(self, inOptions, testHistoryCacheDir, overallVars,
+    testsSortOrder=CDQAR.getDefaultTestsSortOrder() \
+    ):
     self.inOptions = inOptions
-    self.testsSortOrder = testsSortOrder
     self.testHistoryCacheDir = testHistoryCacheDir
     self.overallVars = overallVars
+    self.testsSortOrder = testsSortOrder
 
 
   def testsetGetDataAnalyzeReport( self,
@@ -374,7 +376,7 @@ class TestsetGetDataAnayzeReporter(object):
   
     print("")
   
-    testsetSummaryStr =  CDQAR.getCDashDataSummaryHtmlTableTitleStr(testsetDescr,
+    testsetSummaryStr = CDQAR.getCDashDataSummaryHtmlTableTitleStr(testsetDescr,
       testsetAcro, testsetTotalSize)
   
     print(testsetSummaryStr)
@@ -819,12 +821,9 @@ if __name__ == '__main__':
     # different tests sets to report
     #
 
-    # Sort order for tests to display in tables
-    testsSortOrder = ['testname', 'buildName', 'site']
-
     # Object to make it easy to process the different test sets
     testSetGetDataAnayzeReporter = TestsetGetDataAnayzeReporter(inOptions,
-      testsSortOrder, testHistoryCacheDir, overallVars)
+      testHistoryCacheDir, overallVars)
 
     # Special functor to look up missing expected build given a test dict
     testsToMissingExpectedBuildsSLOD = \
