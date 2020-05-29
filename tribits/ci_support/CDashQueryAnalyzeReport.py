@@ -2154,7 +2154,7 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
 def createCDashTestHtmlTableStr(
   testsetType,
   testTypeDescr, testTypeCountAcronym, testTypeCountNum, testsLOD,
-  daysOfHistory, limitRowsToDisplay=None, testsetColor="",
+  limitRowsToDisplay=None, testsetColor="",
   htmlStyle=None, htmlTableStyle=None,
   ):
   # Return empty string if no tests
@@ -2175,6 +2175,8 @@ def createCDashTestHtmlTableStr(
     consecCol = tcd("Consec&shy;utive Missing Days", 'consec_missing_days', 'right')
   else:
     raise Exception("Error, invalid testsetType="+str(testsetType))
+  # Get daysOfHistory out of the data
+  daysOfHistory = testsLOD[0]['test_history_num_days']
   # Create column headers
   testsColDataList = [
     tcd("Site", "site"),

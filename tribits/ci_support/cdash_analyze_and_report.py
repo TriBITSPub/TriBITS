@@ -420,7 +420,7 @@ class TestsetGetDataAnayzeReporter(object):
       self.overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         testsetType,
         testsetDescr, testsetAcro, testsetTotalSize, testsetSortedLimitedLOD,
-        sio.testHistoryDays, limitRowsToDisplay=limitTableRows,
+        limitRowsToDisplay=limitTableRows,
         testsetColor=colorTestSet )
 
 
