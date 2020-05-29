@@ -1000,15 +1000,8 @@ if __name__ == '__main__':
   # E) Put together final email summary line
   #
 
-  if overallVars.globalPass:
-    summaryLine = "PASSED"
-  else:
-    summaryLine = "FAILED"
-
-  if overallVars.summaryLineDataNumbersList:
-    summaryLine += " (" + ", ".join(overallVars.summaryLineDataNumbersList) + ")"
-
-  summaryLine += ": "+inOptions.buildSetName+" on "+inOptions.date
+  summaryLine = CDQAR.createOverallSummaryLine(overallVars,
+    inOptions.buildSetName, inOptions.date)
 
   #
   # F) Finish off HTML body guts and define overall HTML body style

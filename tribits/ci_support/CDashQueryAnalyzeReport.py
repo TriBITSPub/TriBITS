@@ -290,7 +290,6 @@ def getDefaultTestsSortOrder() : return ['testname', 'buildName', 'site']
 #
 
 
-
 # Given a CDash query URL PHP page that returns JSON data, return the JSON
 # data converged to a Python data-structure.
 #
@@ -1910,6 +1909,32 @@ def sortAndLimitListOfDicts(listOfDicts, sortKeyList = None,
   return listOfDictsLimited
 
 
+# Create a final summary line of global passfail
+#
+# Input object overallVars has fields:
+#
+# * globalPass
+# * summaryLineDataNumbersList
+#
+def createOverallSummaryLine(overallVars, buildsetName, date):
+  if overallVars.globalPass:
+    summaryLine = "PASSED"
+  else:
+    summaryLine = "FAILED"
+
+  if overallVars.summaryLineDataNumbersList:
+    summaryLine += " (" + ", ".join(overallVars.summaryLineDataNumbersList) + ")"
+
+  summaryLine += ": "+buildsetName+" on "+date
+
+  return summaryLine
+
+
+#
+# HTML Table support code
+#
+
+
 # Class to store dict key and table header
 class TableColumnData(object):
 
@@ -1925,11 +1950,6 @@ class TableColumnData(object):
         "Error, colAlign="+colAlign+" not valid.  Please choose from"+\
         " the list ['" + "', '".join(validColAlignList) + "']!" )
     self.colAlign = colAlign
-
-
-#
-# HTML stuff
-#
 
 
 # Color HTML text supported color
