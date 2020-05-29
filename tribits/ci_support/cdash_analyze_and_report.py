@@ -352,7 +352,7 @@ class OverallVars(object):
 # never changes once this object is constructed in main().  This avoids having
 # to pass these options in every function call for each test set.
 #
-class TestSetGetDataAnayzeReporter(object):
+class TestsetGetDataAnayzeReporter(object):
 
 
   def __init__(self, inOptions, testsSortOrder, testHistoryCacheDir, overallVars):
@@ -362,10 +362,10 @@ class TestSetGetDataAnayzeReporter(object):
     self.overallVars = overallVars
 
 
-  def testSetGetDataAnalyzeReport( self,
-      testSetType,
-      testSetDescr, testSetAcro, testSetTotalSize, testSetLOD,
-      testSetNonzeroSizeTriggerGlobalFail=True,
+  def testsetGetDataAnalyzeReport( self,
+      testsetType,
+      testsetDescr, testsetAcro, testsetTotalSize, testsetLOD,
+      testsetNonzeroSizeTriggerGlobalFail=True,
       colorTestSet=None,     # Change to one of the supported colors
       sortTests=True,
       limitTableRows=None,   # Change to 'int' > 0 to limit to this this
@@ -374,34 +374,34 @@ class TestSetGetDataAnayzeReporter(object):
   
     print("")
   
-    testSetSummaryStr =  CDQAR.getCDashDataSummaryHtmlTableTitleStr(testSetDescr,
-      testSetAcro, testSetTotalSize)
+    testsetSummaryStr =  CDQAR.getCDashDataSummaryHtmlTableTitleStr(testsetDescr,
+      testsetAcro, testsetTotalSize)
   
-    print(testSetSummaryStr)
+    print(testsetSummaryStr)
   
-    if testSetTotalSize > 0:
+    if testsetTotalSize > 0:
   
       self.overallVars.globalPass = False
   
       self.overallVars.summaryLineDataNumbersList.append(
-        testSetAcro+"="+str(testSetTotalSize))
+        testsetAcro+"="+str(testsetTotalSize))
   
       self.overallVars.htmlEmailBodyTop += \
-        CDQAR.colorHtmlText(testSetSummaryStr, colorTestSet)+"<br>\n"
+        CDQAR.colorHtmlText(testsetSummaryStr, colorTestSet)+"<br>\n"
   
       if sortTests or limitTableRows:
-        testSetSortedLimitedLOD = CDQAR.sortAndLimitListOfDicts(
-          testSetLOD, self.testsSortOrder,
+        testsetSortedLimitedLOD = CDQAR.sortAndLimitListOfDicts(
+          testsetLOD, self.testsSortOrder,
           limitTableRows )
       else:
-        testSetSortedLimitedLOD = testSetLOD
+        testsetSortedLimitedLOD = testsetLOD
 
       sio = self.inOptions
   
       if getTestHistory:
 
         CDQAR.foreachTransform(
-          testSetSortedLimitedLOD,
+          testsetSortedLimitedLOD,
           CDQAR.AddTestHistoryToTestDictFunctor(
             cdashUrl=sio.cdashSiteUrl,
             projectName=sio.cdashProjectName,
@@ -418,10 +418,10 @@ class TestSetGetDataAnayzeReporter(object):
           )
   
       self.overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-        testSetType,
-        testSetDescr, testSetAcro, testSetTotalSize, testSetSortedLimitedLOD,
+        testsetType,
+        testsetDescr, testsetAcro, testsetTotalSize, testsetSortedLimitedLOD,
         sio.testHistoryDays, limitRowsToDisplay=limitTableRows,
-        testSetColor=colorTestSet )
+        testsetColor=colorTestSet )
 
 
 #
@@ -823,7 +823,7 @@ if __name__ == '__main__':
     testsSortOrder = ['testname', 'buildName', 'site']
 
     # Object to make it easy to process the different test sets
-    testSetGetDataAnayzeReporter = TestSetGetDataAnayzeReporter(inOptions,
+    testSetGetDataAnayzeReporter = TestsetGetDataAnayzeReporter(inOptions,
       testsSortOrder, testHistoryCacheDir, overallVars)
 
     # Special functor to look up missing expected build given a test dict
@@ -899,7 +899,7 @@ if __name__ == '__main__':
     #
 
     # twoif
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'nopass',
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'nopass',
       "Tests without issue trackers Failed",
       "twoif",
       len(twoifLOD),
@@ -910,7 +910,7 @@ if __name__ == '__main__':
       )
 
     # twoinr
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'nopass',
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'nopass',
       "Tests without issue trackers Not Run",
       "twoinr",
       len(twoinrLOD),
@@ -921,7 +921,7 @@ if __name__ == '__main__':
       )
 
     # twip
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'pass',
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'pass',
       "Tests with issue trackers Passed",
       "twip",
       len(twipLOD),
@@ -932,7 +932,7 @@ if __name__ == '__main__':
       )
 
     # twim
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'missing',
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'missing',
       "Tests with issue trackers Missing",
       "twim",
       len(twimLOD),
@@ -943,7 +943,7 @@ if __name__ == '__main__':
       )
 
     # twif
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'nopass',
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'nopass',
       "Tests with issue trackers Failed",
       "twif",
       len(twifLOD),
@@ -954,7 +954,7 @@ if __name__ == '__main__':
       )
 
     # twinr
-    testSetGetDataAnayzeReporter.testSetGetDataAnalyzeReport( 'nopass',
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'nopass',
       "Tests with issue trackers Not Run",
       "twinr",
       len(twinrLOD),

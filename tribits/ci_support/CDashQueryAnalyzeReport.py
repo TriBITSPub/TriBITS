@@ -2152,9 +2152,9 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
 # (default None)
 #
 def createCDashTestHtmlTableStr(
-  testSetType,
+  testsetType,
   testTypeDescr, testTypeCountAcronym, testTypeCountNum, testsLOD,
-  daysOfHistory, limitRowsToDisplay=None, testSetColor="",
+  daysOfHistory, limitRowsToDisplay=None, testsetColor="",
   htmlStyle=None, htmlTableStyle=None,
   ):
   # Return empty string if no tests
@@ -2164,17 +2164,17 @@ def createCDashTestHtmlTableStr(
   tableTitle = colorHtmlText(
     getCDashDataSummaryHtmlTableTitleStr(
       testTypeDescr, testTypeCountAcronym, testTypeCountNum, limitRowsToDisplay ),
-    testSetColor )
+    testsetColor )
   # Consecutive nopass/pass/missing column
   tcd = TableColumnData
-  if testSetType == 'nopass':
+  if testsetType == 'nopass':
     consecCol = tcd("Consec&shy;utive Non-pass Days", 'consec_nopass_days', 'right')
-  elif testSetType == 'pass':
+  elif testsetType == 'pass':
     consecCol = tcd("Consec&shy;utive Pass Days", 'consec_pass_days', 'right')
-  elif testSetType == 'missing':
+  elif testsetType == 'missing':
     consecCol = tcd("Consec&shy;utive Missing Days", 'consec_missing_days', 'right')
   else:
-    raise Exception("Error, invalid testSetType="+str(testSetType))
+    raise Exception("Error, invalid testsetType="+str(testsetType))
   # Create column headers
   testsColDataList = [
     tcd("Site", "site"),
