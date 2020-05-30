@@ -345,6 +345,40 @@ class OverallVars(object):
     self.summaryLineDataNumbersList = []
 
 
+# Strategy class that can get test history for a list of tests and set them in
+# the test dicts taking input from the cdash_analyze_and_report.py commandline
+# arguments.
+#
+class AddTestHistoryStrategy(object):
+
+
+  def __init__(self, inOptions, testHistoryCacheDir):
+    self.inOptions = inOptions
+    self.testHistoryCacheDir = testHistoryCacheDir
+
+
+  def getTestHistory(self, testLOD):
+
+    sio = self.inOptions
+
+    CDQAR.foreachTransform(
+      testLOD,
+      CDQAR.AddTestHistoryToTestDictFunctor(
+        cdashUrl=sio.cdashSiteUrl,
+        projectName=sio.cdashProjectName,
+        date=sio.date,
+        testingDayStartTimeUtc=sio.cdashProjectTestingDayStartTime,
+        daysOfHistory=sio.testHistoryDays,
+        testCacheDir=self.testHistoryCacheDir,
+        useCachedCDashData=sio.useCachedCDashData,
+        alwaysUseCacheFileIfExists=True,
+        verbose=True,
+        printDetails=sio.printDetails,
+        requireMatchTestTopTestHistory=sio.requireTestHistoryMatchNonpassingTests,
+        )
+      )
+
+
 # Class to help get test history and then analyze and report for each test
 # set.
 #
@@ -352,19 +386,19 @@ class OverallVars(object):
 # never changes once this object is constructed in main().  This avoids having
 # to pass these options in every function call for each test set.
 #
-class TestsetGetDataAnayzeReporter(object):
+class TestsetReporter(object):
 
 
-  def __init__(self, inOptions, testHistoryCacheDir, overallVars,
-    testsSortOrder=CDQAR.getDefaultTestsSortOrder() \
+  def __init__(self, overallVars,
+    testsSortOrder=CDQAR.getDefaultTestsSortOrder(),
+    addTestHistoryStrategy=None,
     ):
-    self.inOptions = inOptions
-    self.testHistoryCacheDir = testHistoryCacheDir
     self.overallVars = overallVars
     self.testsSortOrder = testsSortOrder
+    self.addTestHistoryStrategy = addTestHistoryStrategy
 
 
-  def testsetGetDataAnalyzeReport( self,
+  def report(self,
       testsetInfo,
       testsetTotalSize, testsetLOD,
       testsetNonzeroSizeTriggerGlobalFail=True,
@@ -375,8 +409,9 @@ class TestsetGetDataAnayzeReporter(object):
   
     print("")
   
-    testsetSummaryStr = CDQAR.getCDashDataSummaryHtmlTableTitleStr(testsetInfo.testsetDescr,
-      testsetInfo.testsetAcro, testsetTotalSize)
+    testsetSummaryStr = \
+      CDQAR.getCDashDataSummaryHtmlTableTitleStr(testsetInfo.testsetDescr,
+        testsetInfo.testsetAcro, testsetTotalSize)
   
     print(testsetSummaryStr)
   
@@ -396,27 +431,9 @@ class TestsetGetDataAnayzeReporter(object):
           limitTableRows )
       else:
         testsetSortedLimitedLOD = testsetLOD
-
-      sio = self.inOptions
   
-      if getTestHistory:
-
-        CDQAR.foreachTransform(
-          testsetSortedLimitedLOD,
-          CDQAR.AddTestHistoryToTestDictFunctor(
-            cdashUrl=sio.cdashSiteUrl,
-            projectName=sio.cdashProjectName,
-            date=sio.date,
-            testingDayStartTimeUtc=sio.cdashProjectTestingDayStartTime,
-            daysOfHistory=sio.testHistoryDays,
-            testCacheDir=self.testHistoryCacheDir,
-            useCachedCDashData=sio.useCachedCDashData,
-            alwaysUseCacheFileIfExists=True,
-            verbose=True,
-            printDetails=sio.printDetails,
-            requireMatchTestTopTestHistory=sio.requireTestHistoryMatchNonpassingTests,
-            )
-          )
+      if getTestHistory and self.addTestHistoryStrategy:
+        self.addTestHistoryStrategy.getTestHistory(testsetSortedLimitedLOD)
   
       self.overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
         testsetInfo,
@@ -820,8 +837,9 @@ if __name__ == '__main__':
     #
 
     # Object to make it easy to process the different test sets
-    testSetGetDataAnayzeReporter = TestsetGetDataAnayzeReporter(inOptions,
-      testHistoryCacheDir, overallVars)
+    addTestHistoryStrategy = AddTestHistoryStrategy(inOptions, testHistoryCacheDir)
+    testsetReporter = TestsetReporter(overallVars,
+      addTestHistoryStrategy=addTestHistoryStrategy)
 
     # Special functor to look up missing expected build given a test dict
     testsToMissingExpectedBuildsSLOD = \
@@ -895,42 +913,42 @@ if __name__ == '__main__':
     # person doing the triaging are sorted to the top.
     #
 
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+    testsetReporter.report(
       CDQAR.getStandardTestsetInfo('twoif'),
       len(twoifLOD), twoifLOD,
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True,
       )
 
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+    testsetReporter.report(
       CDQAR.getStandardTestsetInfo('twoinr'),
       len(twoinrLOD), twoinrLOD,
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True,
       )
 
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+    testsetReporter.report(
       CDQAR.getStandardTestsetInfo('twip'),
       len(twipLOD), twipLOD,
       limitTableRows=None,
       getTestHistory=False,  # Already got it above!
       )
 
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+    testsetReporter.report(
       CDQAR.getStandardTestsetInfo('twim', ""),
       len(twimLOD), twimLOD,
       limitTableRows=None,
       getTestHistory=False,  # Already got it above!
       )
 
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+    testsetReporter.report(
       CDQAR.getStandardTestsetInfo('twif', ""),
       len(twifLOD), twifLOD,
       limitTableRows=None,
       getTestHistory=True,
       )
 
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+    testsetReporter.report(
       CDQAR.getStandardTestsetInfo('twinr', ""),
       len(twinrLOD), twinrLOD,
       limitTableRows=None,
