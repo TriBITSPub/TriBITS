@@ -365,10 +365,9 @@ class TestsetGetDataAnayzeReporter(object):
 
 
   def testsetGetDataAnalyzeReport( self,
-      testsetType,
-      testsetDescr, testsetAcro, testsetTotalSize, testsetLOD,
+      testsetInfo,
+      testsetTotalSize, testsetLOD,
       testsetNonzeroSizeTriggerGlobalFail=True,
-      colorTestSet=None,     # Change to one of the supported colors
       sortTests=True,
       limitTableRows=None,   # Change to 'int' > 0 to limit to this this
       getTestHistory=False,
@@ -376,8 +375,8 @@ class TestsetGetDataAnayzeReporter(object):
   
     print("")
   
-    testsetSummaryStr = CDQAR.getCDashDataSummaryHtmlTableTitleStr(testsetDescr,
-      testsetAcro, testsetTotalSize)
+    testsetSummaryStr = CDQAR.getCDashDataSummaryHtmlTableTitleStr(testsetInfo.testsetDescr,
+      testsetInfo.testsetAcro, testsetTotalSize)
   
     print(testsetSummaryStr)
   
@@ -386,10 +385,10 @@ class TestsetGetDataAnayzeReporter(object):
       self.overallVars.globalPass = False
   
       self.overallVars.summaryLineDataNumbersList.append(
-        testsetAcro+"="+str(testsetTotalSize))
+        testsetInfo.testsetAcro+"="+str(testsetTotalSize))
   
       self.overallVars.htmlEmailBodyTop += \
-        CDQAR.colorHtmlText(testsetSummaryStr, colorTestSet)+"<br>\n"
+        CDQAR.colorHtmlText(testsetSummaryStr, testsetInfo.testsetColor)+"<br>\n"
   
       if sortTests or limitTableRows:
         testsetSortedLimitedLOD = CDQAR.sortAndLimitListOfDicts(
@@ -420,10 +419,9 @@ class TestsetGetDataAnayzeReporter(object):
           )
   
       self.overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-        testsetType,
-        testsetDescr, testsetAcro, testsetTotalSize, testsetSortedLimitedLOD,
-        limitRowsToDisplay=limitTableRows,
-        testsetColor=colorTestSet )
+        testsetInfo,
+        testsetTotalSize, testsetSortedLimitedLOD,
+        limitRowsToDisplay=limitTableRows)
 
 
 #
@@ -897,68 +895,44 @@ if __name__ == '__main__':
     # person doing the triaging are sorted to the top.
     #
 
-    # twoif
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'nopass',
-      "Tests without issue trackers Failed",
-      "twoif",
-      len(twoifLOD),
-      twoifLOD,
-      colorTestSet=CDQAR.cdashColorFailed(),
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+      CDQAR.getStandardTestsetInfo('twoif'),
+      len(twoifLOD), twoifLOD,
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True,
       )
 
-    # twoinr
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'nopass',
-      "Tests without issue trackers Not Run",
-      "twoinr",
-      len(twoinrLOD),
-      twoinrLOD,
-      colorTestSet=CDQAR.cdashColorNotRun(),
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+      CDQAR.getStandardTestsetInfo('twoinr'),
+      len(twoinrLOD), twoinrLOD,
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True,
       )
 
-    # twip
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'pass',
-      "Tests with issue trackers Passed",
-      "twip",
-      len(twipLOD),
-      twipLOD,
-      colorTestSet=CDQAR.cdashColorPassed(),
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+      CDQAR.getStandardTestsetInfo('twip'),
+      len(twipLOD), twipLOD,
       limitTableRows=None,
       getTestHistory=False,  # Already got it above!
       )
 
-    # twim
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'missing',
-      "Tests with issue trackers Missing",
-      "twim",
-      len(twimLOD),
-      twimLOD,
-      colorTestSet=None,
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+      CDQAR.getStandardTestsetInfo('twim', ""),
+      len(twimLOD), twimLOD,
       limitTableRows=None,
       getTestHistory=False,  # Already got it above!
       )
 
-    # twif
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'nopass',
-      "Tests with issue trackers Failed",
-      "twif",
-      len(twifLOD),
-      twifLOD,
-      colorTestSet=None,
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+      CDQAR.getStandardTestsetInfo('twif', ""),
+      len(twifLOD), twifLOD,
       limitTableRows=None,
       getTestHistory=True,
       )
 
-    # twinr
-    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport( 'nopass',
-      "Tests with issue trackers Not Run",
-      "twinr",
-      len(twinrLOD),
-      twinrLOD,
-      colorTestSet=None,
+    testSetGetDataAnayzeReporter.testsetGetDataAnalyzeReport(
+      CDQAR.getStandardTestsetInfo('twinr', ""),
+      len(twinrLOD), twinrLOD,
       limitTableRows=None,
       getTestHistory=True,
       )

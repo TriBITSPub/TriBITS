@@ -271,10 +271,11 @@ def writeCsvFileStructureToStr(csvFileStruct):
 
 
 #
-# Policy, data, and defaults
+# Reporting policy, data, and defaults
 # 
 
 
+# Define standard CDash colors
 def cdashColorPassed(): return 'green'
 def cdashColorFailed(): return 'red'
 def cdashColorNotRun(): return 'orange'
@@ -282,7 +283,64 @@ def cdashColorMissing(): return 'gray'
 # ToDo: Make the above return different colors for a color-blind pallette
 
 
+# Define default test sort order in tbles
 def getDefaultTestsSortOrder() : return ['testname', 'buildName', 'site']
+
+
+
+# Aggregate info about a test set used for generating the summary and table.
+#
+# Members:
+#
+# * testsetAcro: e.g. 'twoif'
+# * testsetDescr: e.g. "Tests without issue trackers Failed"
+# * testsetTableType: Values: 'nopass', 'pass', 'missing'
+# * testsetColor: e.g.  'red', 'green' (whatever is accepted by colorHtmlText())
+#
+class TestsetInfo(object):
+
+  def __init__(self, testsetAcro, testsetDescr, testsetTableType, testsetColor):
+    self.testsetAcro = testsetAcro
+    self.testsetDescr = testsetDescr
+    self.testsetTableType = testsetTableType
+    self.testsetColor = testsetColor
+
+
+# Return the TestsetInfo object for the standard types of test sets that get
+# their own tables.
+#
+# testsetArco [in] Acronym for the standard test set (e.g. 'twoif')
+#
+# testsetColor [in] Gives the color to use for the summary line and the table
+# header.  If 'None' is passed in (the default), then a standard color is
+# used.  If the empty string is passed in '', then no color will be applied.
+#
+def getStandardTestsetInfo(testsetAcro, testsetColor=None):
+  if testsetAcro == "twoif":
+    tsi = TestsetInfo(testsetAcro, "Tests without issue trackers Failed", 'nopass',
+      cdashColorFailed())
+  elif testsetAcro == "twoinr":
+    tsi = TestsetInfo(testsetAcro, "Tests without issue trackers Not Run", 'nopass',
+      cdashColorNotRun())
+  elif testsetAcro == "twip":
+    tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Passed", 'pass',
+      cdashColorPassed())
+  elif testsetAcro == "twim":
+    tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Missing", 'missing',
+      cdashColorMissing())
+  elif testsetAcro == "twif":
+    tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Failed", 'nopass',
+      cdashColorFailed())
+  elif testsetAcro == "twinr":
+    tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Not Run",'nopass',
+      cdashColorNotRun())
+  else:
+    raise Excpetion("Error, typesetAcro="+str(testsetAcro)+" not supported!")
+
+  if testsetColor != None:
+    tsi.testsetColor = testsetColor
+
+  return tsi
 
 
 #
@@ -2156,11 +2214,7 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
 
 # Create a tests HTML table string
 #
-# testTypeDescr [in]: Description of the test type being tabulated
-# (e.g. "Failing tests without issue trackers")
-#
-# testTypeCountAcronym [in]: Acronym for the test type being tabulated
-# (e.g. "twoif")
+# testsetInfo [in]: Information about the testset of type TestsetInfo
 #
 # testTypeCountNum [in]: Number of total items for the test type, before
 # limiting (e.g. 25)
@@ -2187,29 +2241,30 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
 # (default None)
 #
 def createCDashTestHtmlTableStr(
-  testsetType,
-  testTypeDescr, testTypeCountAcronym, testTypeCountNum, testsLOD,
-  limitRowsToDisplay=None, testsetColor="",
+  testsetInfo,
+  testTypeCountNum, testsLOD,
+  limitRowsToDisplay=None,
   htmlStyle=None, htmlTableStyle=None,
   ):
   # Return empty string if no tests
   if len(testsLOD) == 0:
-     return ""
+    return ""
   # Table title
   tableTitle = colorHtmlText(
     getCDashDataSummaryHtmlTableTitleStr(
-      testTypeDescr, testTypeCountAcronym, testTypeCountNum, limitRowsToDisplay ),
-    testsetColor )
+      testsetInfo.testsetDescr, testsetInfo.testsetAcro,
+      testTypeCountNum, limitRowsToDisplay ),
+    testsetInfo.testsetColor )
   # Consecutive nopass/pass/missing column
   tcd = TableColumnData
-  if testsetType == 'nopass':
+  if testsetInfo.testsetTableType == 'nopass':
     consecCol = tcd("Consec&shy;utive Non-pass Days", 'consec_nopass_days', 'right')
-  elif testsetType == 'pass':
+  elif testsetInfo.testsetTableType == 'pass':
     consecCol = tcd("Consec&shy;utive Pass Days", 'consec_pass_days', 'right')
-  elif testsetType == 'missing':
+  elif testsetInfo.testsetTableType == 'missing':
     consecCol = tcd("Consec&shy;utive Missing Days", 'consec_missing_days', 'right')
   else:
-    raise Exception("Error, invalid testsetType="+str(testsetType))
+    raise Exception("Error, invalid testsetTableType="+str(testsetTableType))
   # Get daysOfHistory out of the data
   daysOfHistory = testsLOD[0]['test_history_num_days']
   # Create column headers
