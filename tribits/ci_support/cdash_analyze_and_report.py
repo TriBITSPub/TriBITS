@@ -379,68 +379,6 @@ class AddTestHistoryStrategy(object):
       )
 
 
-# Class to help get test history and then analyze and report for each test
-# set.
-#
-# NOTE: The reason this is a class is that the data inOptions and overallVars
-# never changes once this object is constructed in main().  This avoids having
-# to pass these options in every function call for each test set.
-#
-class TestsetReporter(object):
-
-
-  def __init__(self, overallVars,
-    testsSortOrder=CDQAR.getDefaultTestsSortOrder(),
-    addTestHistoryStrategy=None,
-    ):
-    self.overallVars = overallVars
-    self.testsSortOrder = testsSortOrder
-    self.addTestHistoryStrategy = addTestHistoryStrategy
-
-
-  def report(self,
-      testsetInfo,
-      testsetTotalSize, testsetLOD,
-      testsetNonzeroSizeTriggerGlobalFail=True,
-      sortTests=True,
-      limitTableRows=None,   # Change to 'int' > 0 to limit to this this
-      getTestHistory=False,
-    ):
-  
-    print("")
-  
-    testsetSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(testsetInfo.testsetDescr,
-        testsetInfo.testsetAcro, testsetTotalSize)
-  
-    print(testsetSummaryStr)
-  
-    if testsetTotalSize > 0:
-  
-      self.overallVars.globalPass = False
-  
-      self.overallVars.summaryLineDataNumbersList.append(
-        testsetInfo.testsetAcro+"="+str(testsetTotalSize))
-  
-      self.overallVars.htmlEmailBodyTop += \
-        CDQAR.colorHtmlText(testsetSummaryStr, testsetInfo.testsetColor)+"<br>\n"
-  
-      if sortTests or limitTableRows:
-        testsetSortedLimitedLOD = CDQAR.sortAndLimitListOfDicts(
-          testsetLOD, self.testsSortOrder,
-          limitTableRows )
-      else:
-        testsetSortedLimitedLOD = testsetLOD
-  
-      if getTestHistory and self.addTestHistoryStrategy:
-        self.addTestHistoryStrategy.getTestHistory(testsetSortedLimitedLOD)
-  
-      self.overallVars.htmlEmailBodyBottom += CDQAR.createCDashTestHtmlTableStr(
-        testsetInfo,
-        testsetTotalSize, testsetSortedLimitedLOD,
-        limitRowsToDisplay=limitTableRows)
-
-
 #
 # Run the script
 #
@@ -838,7 +776,7 @@ if __name__ == '__main__':
 
     # Object to make it easy to process the different test sets
     addTestHistoryStrategy = AddTestHistoryStrategy(inOptions, testHistoryCacheDir)
-    testsetReporter = TestsetReporter(overallVars,
+    testsetReporter = CDQAR.TestsetReporter(overallVars,
       addTestHistoryStrategy=addTestHistoryStrategy)
 
     # Special functor to look up missing expected build given a test dict

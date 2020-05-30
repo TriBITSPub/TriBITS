@@ -2285,6 +2285,86 @@ def createCDashTestHtmlTableStr(
     htmlStyle=htmlStyle, htmlTableStyle=htmlTableStyle )
 
 
+# Class to optionally get test history and then analyze and report a given
+# test-set.
+#
+# NOTE: The reason this is a class is that the data overallVars and
+# addTestHistoryStrategy never changes once this object is constructed in
+# main().  This avoids having to pass these options in every function call for
+# each test-set.
+#
+class TestsetReporter(object):
+
+
+  # Constructor
+  #
+  # overallVars [persisting]: Data used to create the final report (of type
+  # OverallVars).
+  #
+  # testsSortOrder [persisting]: The sort order array tests dicts (input to
+  # ???). (Defualt getDefaultTestsSortOrder()).
+  #
+  # addTestHistoryStrategy [persisting]: Strategy object that can set the test
+  # history on a list of dicts.  Must have member function
+  # getTestHistory(testLOD).  (Default 'None')
+  #
+  def __init__(self, overallVars,
+    testsSortOrder=getDefaultTestsSortOrder(),
+    addTestHistoryStrategy=None,
+    ):
+    self.overallVars = overallVars
+    self.testsSortOrder = testsSortOrder
+    self.addTestHistoryStrategy = addTestHistoryStrategy
+
+
+  def report(self,
+      testsetInfo,
+      testsetTotalSize, testsetLOD,
+      testsetNonzeroSizeTriggerGlobalFail=True,
+      sortTests=True,
+      limitTableRows=None,   # Change to 'int' > 0 to limit table rows
+      getTestHistory=False,
+    ):
+
+    print("")
+
+    testsetSummaryStr = \
+      getCDashDataSummaryHtmlTableTitleStr(testsetInfo.testsetDescr,
+        testsetInfo.testsetAcro, testsetTotalSize)
+
+    print(testsetSummaryStr)
+
+    if testsetTotalSize > 0:
+
+      self.overallVars.globalPass = False
+
+      self.overallVars.summaryLineDataNumbersList.append(
+        testsetInfo.testsetAcro+"="+str(testsetTotalSize))
+
+      self.overallVars.htmlEmailBodyTop += \
+        colorHtmlText(testsetSummaryStr, testsetInfo.testsetColor)+"<br>\n"
+
+      if sortTests or limitTableRows:
+        testsetSortedLimitedLOD = sortAndLimitListOfDicts(
+          testsetLOD, self.testsSortOrder,
+          limitTableRows )
+      else:
+        testsetSortedLimitedLOD = testsetLOD
+
+      if getTestHistory and self.addTestHistoryStrategy:
+        self.addTestHistoryStrategy.getTestHistory(testsetSortedLimitedLOD)
+
+      self.overallVars.htmlEmailBodyBottom += createCDashTestHtmlTableStr(
+        testsetInfo,
+        testsetTotalSize, testsetSortedLimitedLOD,
+        limitRowsToDisplay=limitTableRows)
+
+
+#########################################
+# HTML Email stuff
+#########################################
+
+
 #
 # Create an HTML MIME Email
 #  
