@@ -433,7 +433,7 @@ def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
     for lineList in csvReader:
       if not lineList: continue # Ingore blank line
       stripWhiltespaceFromStrList(lineList)
-      assertExpectedNumRowsFromCsvFile(csvFileName, dataRow, lineList,
+      assertExpectedNumColsFromCsvFile(csvFileName, dataRow, lineList,
         columnHeadersList)
       # Read the row entries into a new dict
       rowDict = {}
@@ -490,7 +490,7 @@ def assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersLis
         )
 
 
-def assertExpectedNumRowsFromCsvFile(csvFileName, dataRow, lineList,
+def assertExpectedNumColsFromCsvFile(csvFileName, dataRow, lineList,
   columnHeadersList,
   ):
   if len(lineList) != len(columnHeadersList):
