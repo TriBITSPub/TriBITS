@@ -275,6 +275,24 @@ def writeCsvFileStructureToStr(csvFileStruct):
 # 
 
 
+# Collecton of data used to create the final HTML CDash report that is
+# updated and queried by various functions.
+#
+# NOTE: This is put into a class object so that these vars can be updated in
+# place when passed to a function.
+#
+class CDashReportData(object):
+  def __init__(self):
+    # Gives the final result (assume passing by defualt)
+    self.globalPass = True
+    # This is the top of the HTML body
+    self.htmlEmailBodyTop = ""
+    # This is the bottom of the email body
+    self.htmlEmailBodyBottom = ""
+    # This var will store the list of data numbers for the summary line
+    self.summaryLineDataNumbersList = []
+
+
 # Define standard CDash colors
 def cdashColorPassed(): return 'green'
 def cdashColorFailed(): return 'red'
@@ -1969,19 +1987,20 @@ def sortAndLimitListOfDicts(listOfDicts, sortKeyList = None,
 
 # Create a final summary line of global passfail
 #
-# Input object overallVars has fields:
+# cdashReportData [in]: Report data of type CDashReportData
 #
-# * globalPass
-# * summaryLineDataNumbersList
+# buildsetName [in]: The name of the set of builds ot summary of the report
 #
-def createOverallSummaryLine(overallVars, buildsetName, date):
-  if overallVars.globalPass:
+# date [in]: Date string in format "YYYY-MM-DD"
+#
+def createOverallSummaryLine(cdashReportData, buildsetName, date):
+  if cdashReportData.globalPass:
     summaryLine = "PASSED"
   else:
     summaryLine = "FAILED"
 
-  if overallVars.summaryLineDataNumbersList:
-    summaryLine += " (" + ", ".join(overallVars.summaryLineDataNumbersList) + ")"
+  if cdashReportData.summaryLineDataNumbersList:
+    summaryLine += " (" + ", ".join(cdashReportData.summaryLineDataNumbersList) + ")"
 
   summaryLine += ": "+buildsetName+" on "+date
 
@@ -2288,7 +2307,7 @@ def createCDashTestHtmlTableStr(
 # Class to optionally get test history and then analyze and report a given
 # test-set.
 #
-# NOTE: The reason this is a class is that the data overallVars and
+# NOTE: The reason this is a class is that the data cdashReportData and
 # addTestHistoryStrategy never changes once this object is constructed in
 # main().  This avoids having to pass these options in every function call for
 # each test-set.
@@ -2298,8 +2317,8 @@ class TestsetReporter(object):
 
   # Constructor
   #
-  # overallVars [persisting]: Data used to create the final report (of type
-  # OverallVars).
+  # cdashReportData [persisting]: Data used to create the final report (of type
+  # CDashReportData).
   #
   # testsSortOrder [persisting]: The sort order array tests dicts (input to
   # ???). (Defualt getDefaultTestsSortOrder()).
@@ -2308,11 +2327,11 @@ class TestsetReporter(object):
   # history on a list of dicts.  Must have member function
   # getTestHistory(testLOD).  (Default 'None')
   #
-  def __init__(self, overallVars,
+  def __init__(self, cdashReportData,
     testsSortOrder=getDefaultTestsSortOrder(),
     addTestHistoryStrategy=None,
     ):
-    self.overallVars = overallVars
+    self.cdashReportData = cdashReportData
     self.testsSortOrder = testsSortOrder
     self.addTestHistoryStrategy = addTestHistoryStrategy
 
@@ -2336,12 +2355,12 @@ class TestsetReporter(object):
 
     if testsetTotalSize > 0:
 
-      self.overallVars.globalPass = False
+      self.cdashReportData.globalPass = False
 
-      self.overallVars.summaryLineDataNumbersList.append(
+      self.cdashReportData.summaryLineDataNumbersList.append(
         testsetInfo.testsetAcro+"="+str(testsetTotalSize))
 
-      self.overallVars.htmlEmailBodyTop += \
+      self.cdashReportData.htmlEmailBodyTop += \
         colorHtmlText(testsetSummaryStr, testsetInfo.testsetColor)+"<br>\n"
 
       if sortTests or limitTableRows:
@@ -2354,7 +2373,7 @@ class TestsetReporter(object):
       if getTestHistory and self.addTestHistoryStrategy:
         self.addTestHistoryStrategy.getTestHistory(testsetSortedLimitedLOD)
 
-      self.overallVars.htmlEmailBodyBottom += createCDashTestHtmlTableStr(
+      self.cdashReportData.htmlEmailBodyBottom += createCDashTestHtmlTableStr(
         testsetInfo,
         testsetTotalSize, testsetSortedLimitedLOD,
         limitRowsToDisplay=limitTableRows)

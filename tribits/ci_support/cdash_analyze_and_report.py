@@ -327,24 +327,6 @@ def echoCmndLine(inOptions):
   echoCmndLineOptions(inOptions)
 
 
-# Class object to store and manipulate vars the top-level main() vars that are
-# operated on by various functions.
-#
-# NOTE: This is put into a class object so that these vars can be updated in
-# place when passed to a function.
-#
-class OverallVars(object):
-  def __init__(self):
-    # Gives the final result (assume passing by defualt)
-    self.globalPass = True
-    # This is the top of the body
-    self.htmlEmailBodyTop = ""
-    # This is the bottom of the email body
-    self.htmlEmailBodyBottom = ""
-    # This var will store the list of data numbers for the summary line
-    self.summaryLineDataNumbersList = []
-
-
 # Strategy class that can get test history for a list of tests and set them in
 # the test dicts taking input from the cdash_analyze_and_report.py commandline
 # arguments.
@@ -419,9 +401,9 @@ if __name__ == '__main__':
 
   # Aggregation of vars that get updated in this main() body and by functions
   # called.
-  overallVars = OverallVars()
+  cdashReportData = CDQAR.CDashReportData()
 
-  overallVars.htmlEmailBodyTop += \
+  cdashReportData.htmlEmailBodyTop += \
    "<h2>Build and Test results for "+inOptions.buildSetName \
       +" on "+inOptions.date+"</h2>\n\n"
 
@@ -433,7 +415,7 @@ if __name__ == '__main__':
   try:
 
     # Beginning of top full bulid and tests CDash links paragraph 
-    overallVars.htmlEmailBodyTop += "<p>\n"
+    cdashReportData.htmlEmailBodyTop += "<p>\n"
 
     #
     # D.1) Read data from input files, set up cache directories
@@ -525,7 +507,7 @@ if __name__ == '__main__':
     print("\nNum builds = "+str(len(buildsLOD)))
   
     # HTML line "Builds on CDash" 
-    overallVars.htmlEmailBodyTop += \
+    cdashReportData.htmlEmailBodyTop += \
      "<a href=\""+cdashIndexBuildsBrowserUrl+"\">"+\
      "Builds on CDash</a> (num/expected="+\
      str(len(buildsLOD))+"/"+str(len(expectedBuildsLOD))+")<br>\n"
@@ -565,13 +547,13 @@ if __name__ == '__main__':
       str(len(nonpassingTestsLOD)))
   
     # HTML line "Nonpassing Tests on CDash"
-    overallVars.htmlEmailBodyTop += \
+    cdashReportData.htmlEmailBodyTop += \
      "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
      "Non-passing Tests on CDash</a> (num="+str(len(nonpassingTestsLOD))+")<br>\n"
   
     # End of full build and test link paragraph and start the next paragraph
     # for the summary of failures and other tables
-    overallVars.htmlEmailBodyTop += \
+    cdashReportData.htmlEmailBodyTop += \
       "</p>\n\n"+\
       "<p>\n"
 
@@ -662,11 +644,11 @@ if __name__ == '__main__':
 
     if bmNum > 0:
 
-      overallVars.globalPass = False
+      cdashReportData.globalPass = False
 
-      overallVars.summaryLineDataNumbersList.append(bmAcro+"="+str(bmNum))
+      cdashReportData.summaryLineDataNumbersList.append(bmAcro+"="+str(bmNum))
 
-      overallVars.htmlEmailBodyTop += \
+      cdashReportData.htmlEmailBodyTop += \
         CDQAR.colorHtmlText(bmSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
 
       bmColDataList = [
@@ -676,7 +658,7 @@ if __name__ == '__main__':
         tcd("Missing Status", 'status'),
         ]
 
-      overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+      cdashReportData.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
          bmDescr,  bmAcro, bmColDataList, missingExpectedBuildsLOD,
         groupSiteBuildNameSortOrder, None )
       # NOTE: Above we don't want to limit any missing builds in this table
@@ -703,11 +685,11 @@ if __name__ == '__main__':
 
     if cNum > 0:
 
-      overallVars.globalPass = False
+      cdashReportData.globalPass = False
 
-      overallVars.summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
+      cdashReportData.summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
 
-      overallVars.htmlEmailBodyTop += \
+      cdashReportData.htmlEmailBodyTop += \
         CDQAR.colorHtmlText(cSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
 
       cColDataList = [
@@ -716,7 +698,7 @@ if __name__ == '__main__':
         tcd("Build Name", 'buildname'),
         ]
 
-      overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+      cdashReportData.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         cDescr,  cAcro, cColDataList, buildsWithConfigureFailuresLOD,
         groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
@@ -744,11 +726,11 @@ if __name__ == '__main__':
 
     if bNum > 0:
 
-      overallVars.globalPass = False
+      cdashReportData.globalPass = False
 
-      overallVars.summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
+      cdashReportData.summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
 
-      overallVars.htmlEmailBodyTop += \
+      cdashReportData.htmlEmailBodyTop += \
         CDQAR.colorHtmlText(bSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
 
       cColDataList = [
@@ -757,7 +739,7 @@ if __name__ == '__main__':
         tcd("Build Name", 'buildname'),
         ]
 
-      overallVars.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
+      cdashReportData.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
         bDescr,  bAcro, cColDataList, buildsWithBuildFailuresLOD,
         groupSiteBuildNameSortOrder, inOptions.limitTableRows )
 
@@ -776,7 +758,7 @@ if __name__ == '__main__':
 
     # Object to make it easy to process the different test sets
     addTestHistoryStrategy = AddTestHistoryStrategy(inOptions, testHistoryCacheDir)
-    testsetReporter = CDQAR.TestsetReporter(overallVars,
+    testsetReporter = CDQAR.TestsetReporter(cdashReportData,
       addTestHistoryStrategy=addTestHistoryStrategy)
 
     # Special functor to look up missing expected build given a test dict
@@ -919,18 +901,18 @@ if __name__ == '__main__':
     sys.stdout.flush()
     traceback.print_exc()
     # Report the error
-    overallVars.htmlEmailBodyBottom += "\n<pre><code>\n"+\
+    cdashReportData.htmlEmailBodyBottom += "\n<pre><code>\n"+\
       traceback.format_exc()+"\n</code></pre>\n"
     print("\nError, could not compute the analysis due to"+\
       " above error so return failed!")
-    overallVars.globalPass = False
-    overallVars.summaryLineDataNumbersList.append("SCRIPT CRASHED")
+    cdashReportData.globalPass = False
+    cdashReportData.summaryLineDataNumbersList.append("SCRIPT CRASHED")
 
   #
   # E) Put together final email summary line
   #
 
-  summaryLine = CDQAR.createOverallSummaryLine(overallVars,
+  summaryLine = CDQAR.createOverallSummaryLine(cdashReportData,
     inOptions.buildSetName, inOptions.date)
 
   #
@@ -938,14 +920,14 @@ if __name__ == '__main__':
   #
 
   # Finish off the top paragraph of the summary lines
-  overallVars.htmlEmailBodyTop += \
+  cdashReportData.htmlEmailBodyTop += \
     "</p>"
     
   # Construct HTML body guts without header or begin/end body.
   htmlEmaiBodyGuts = \
-    overallVars.htmlEmailBodyTop+\
+    cdashReportData.htmlEmailBodyTop+\
     "\n\n"+\
-    overallVars.htmlEmailBodyBottom
+    cdashReportData.htmlEmailBodyBottom
 
   htmlHeaderAndBeginBody = \
     "<html>\n"+\
@@ -1005,7 +987,7 @@ if __name__ == '__main__':
 
   print("\n"+summaryLine+"\n")
 
-  if overallVars.globalPass:
+  if cdashReportData.globalPass:
     sys.exit(0)
   else:
     sys.exit(1)
