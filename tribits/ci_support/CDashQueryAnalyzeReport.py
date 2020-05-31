@@ -62,7 +62,7 @@ import cdash_build_testing_date as CBTD
 # 'YYYY-MM-DD' value.
 #
 def convertInputDateArgToYYYYMMDD(cdashProjectTestingDayStartTime, dateText,
-  currentDateTimeStr=None,  # Used for unit testing only
+    currentDateTimeStr=None,  # Used for unit testing only
   ):
   if dateText == "yesterday" or dateText == "today":
     if dateText == "yesterday": dayIncr = -1
@@ -415,7 +415,7 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 # expected headers.
 #
 def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
-  optionalColumnHeadersList=[],
+    optionalColumnHeadersList=[],
   ):
   listOfDicts = []
   with open(csvFileName, 'r') as csvFile:
@@ -453,7 +453,7 @@ def getColumnHeadersFromCsvFileReader(csvFileName, csvReader):
 
 
 def assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersList,
-  optionalColumnHeadersList, columnHeadersList,
+    optionalColumnHeadersList, columnHeadersList,
   ):
 
   if not requiredColumnHeadersList and not optionalColumnHeadersList:
@@ -486,7 +486,7 @@ def assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersLis
 
 
 def assertExpectedNumColsFromCsvFile(csvFileName, dataRow, lineList,
-  columnHeadersList,
+    columnHeadersList,
   ):
   if len(lineList) != len(columnHeadersList):
     raise Exception(
@@ -835,7 +835,7 @@ def flattenCDashQueryTestsToListOfDicts(fullCDashQueryTestsJson):
 # SearchableListOfDicts.  Please use that class instead of this raw function.
 #
 def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
-  removeExactDuplicateElements=False, checkDictsAreSame_in=checkDictsAreSame,
+    removeExactDuplicateElements=False, checkDictsAreSame_in=checkDictsAreSame,
   ):
   # Build the lookup dict data-structure. Also, optionally mark any 100%
   # duplicate elements if asked to remove 100% duplicate elements.
@@ -879,7 +879,7 @@ def createLookupDictForListOfDicts(listOfDicts, listOfKeys,
 
 
 def raiseDuplicateDictEleException(idx, dictEle, listOfKeys,
-  lookedUpIdx, lookedUpDict, dictDiffErrorMsg \
+    lookedUpIdx, lookedUpDict, dictDiffErrorMsg,
   ):
   raise Exception(
     "Error, The element\n\n"+\
@@ -924,7 +924,7 @@ def raiseDuplicateDictEleException(idx, dictEle, listOfKeys,
 # SearchableListOfDicts.  Please use that class instead of this raw function.
 #
 def lookupDictGivenLookupDict(lookupDict, listOfKeys, listOfValues,
-  alsoReturnIdx=False,
+    alsoReturnIdx=False,
   ):
   #print("\nlookupDict = "+str(lookupDict))
   #print("\nlistOfKeys = "+str(listOfKeys))
@@ -1000,8 +1000,8 @@ class SearchableListOfDicts(object):
   # same outputs as the function checkDictsAreSame() can be passed in.
   #
   def __init__(self, listOfDicts, listOfKeys,
-    removeExactDuplicateElements=False, keyMapList=None,
-    checkDictsAreSame_in=checkDictsAreSame,
+      removeExactDuplicateElements=False, keyMapList=None,
+      checkDictsAreSame_in=checkDictsAreSame,
     ):
     if keyMapList:
       if len(listOfKeys) != len(keyMapList):
@@ -1086,8 +1086,8 @@ def createSearchableListOfTests( testsListOfDicts,
 # lookups that match the 'site' and 'buildname' fields but uses input for the
 # search that are test dicts that have the fiels 'site' and 'buildName'.
 def createTestToBuildSearchableListOfDicts(buildsLOD,
-   removeExactDuplicateElements=False,
-   ):
+    removeExactDuplicateElements=False,
+  ):
   return SearchableListOfDicts( buildsLOD, ('site', 'buildname'),
     removeExactDuplicateElements=removeExactDuplicateElements,
     keyMapList=('site', 'buildName') )
@@ -1175,7 +1175,7 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
 # which tests are missing.
 #
 def testsWithIssueTrackersMatchExpectedBuilds( testsWithIssueTrackersLOD,
-  testToExpectedBuildsSLOD,
+    testToExpectedBuildsSLOD,
   ):
   # Gather up all of the tests that don't match one of the expected builds
   nonmatchingTestsWithIssueTrackersLOD = []
@@ -1260,8 +1260,8 @@ def dateFromBuildStartTime(buildStartTime):
 #     - 'Missing': Most recent test has date before matching curentTestDate
 #
 def sortTestHistoryGetStatistics(testHistoryLOD,
-  currentTestDate, testingDayStartTimeUtc,
-  daysOfHistory,
+    currentTestDate, testingDayStartTimeUtc,
+    daysOfHistory,
   ):
 
   # Helper functions
@@ -1839,12 +1839,12 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
 # testing to avoid calling CDash.
 #
 def downloadBuildsOffCDashAndFlatten(
-  cdashIndexBuildsQueryUrl,
-  fullCDashIndexBuildsJsonCacheFile=None,
-  useCachedCDashData=False,
-  alwaysUseCacheFileIfExists = False,
-  verbose=True,
-  extractCDashApiQueryData_in=extractCDashApiQueryData,
+    cdashIndexBuildsQueryUrl,
+    fullCDashIndexBuildsJsonCacheFile=None,
+    useCachedCDashData=False,
+    alwaysUseCacheFileIfExists = False,
+    verbose=True,
+    extractCDashApiQueryData_in=extractCDashApiQueryData,
   ):
   # Get the query data
   fullCDashIndexBuildsJson = getAndCacheCDashQueryDataOrReadFromCache(
@@ -1885,12 +1885,12 @@ def downloadBuildsOffCDashAndFlatten(
 # testing to avoid calling CDash.
 #
 def downloadTestsOffCDashQueryTestsAndFlatten(
-  cdashQueryTestsUrl,
-  fullCDashQueryTestsJsonCacheFile=None,
-  useCachedCDashData=False,
-  alwaysUseCacheFileIfExists = False,
-  verbose=True,
-  extractCDashApiQueryData_in=extractCDashApiQueryData,
+    cdashQueryTestsUrl,
+    fullCDashQueryTestsJsonCacheFile=None,
+    useCachedCDashData=False,
+    alwaysUseCacheFileIfExists = False,
+    verbose=True,
+    extractCDashApiQueryData_in=extractCDashApiQueryData,
   ):
   # Get the query data
   fullCDashQueryTestsJson = getAndCacheCDashQueryDataOrReadFromCache(
@@ -1963,7 +1963,7 @@ class DictSortFunctor(object):
 # limitRowsToDisplay items will be dispalyed after the list is sorted.
 #
 def sortAndLimitListOfDicts(listOfDicts, sortKeyList = None,
-  limitRowsToDisplay = None\
+   limitRowsToDisplay = None\
   ):
   # Sort the list
   if sortKeyList:
@@ -2081,7 +2081,7 @@ def addHtmlSoftWordBreaks(text_in):
 # compressing the produced tables.
 #
 def createHtmlTableStr(tableTitle, colDataList, rowDataList,
-  htmlStyle=None, htmlTableStyle=None \
+    htmlStyle=None, htmlTableStyle=None \
   ):
 
   # style options for the table
@@ -2163,7 +2163,7 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
 # numItems [in]: The number of items of data
 #
 def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems,
-  limitRowsToDisplay=None,
+    limitRowsToDisplay=None,
   ):
   tableTitle = dataTitle
   if limitRowsToDisplay:
@@ -2209,8 +2209,8 @@ def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems,
 # NOTE: If len(rowDataList) == 0, then the empty string "" is returned.
 #
 def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
-  colDataList, rowDataList, sortKeyList=None, limitRowsToDisplay=None,
-  htmlStyle=None, htmlTableStyle=None,
+    colDataList, rowDataList, sortKeyList=None, limitRowsToDisplay=None,
+    htmlStyle=None, htmlTableStyle=None,
   ):
   # If no rows, don't create a table
   if len(rowDataList) == 0:
@@ -2254,11 +2254,8 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
 # htmlTableStyle [in]: Sytle inside of <table ... > (see createHtmlTableStr())
 # (default None)
 #
-def createCDashTestHtmlTableStr(
-  testsetInfo,
-  testTypeCountNum, testsLOD,
-  limitRowsToDisplay=None,
-  htmlStyle=None, htmlTableStyle=None,
+def createCDashTestHtmlTableStr(testsetInfo, testTypeCountNum, testsLOD,
+    limitRowsToDisplay=None, htmlStyle=None, htmlTableStyle=None,
   ):
   # Return empty string if no tests
   if len(testsLOD) == 0:
@@ -2315,7 +2312,6 @@ def getCDashTestHtmlTableConsecColData(testsetTableType):
 #
 class TestsetReporter(object):
 
-
   # Constructor
   #
   # cdashReportData [persisting]: Data used to create the final report (of type
@@ -2329,24 +2325,22 @@ class TestsetReporter(object):
   # getTestHistory(testLOD).  (Default 'None')
   #
   def __init__(self, cdashReportData,
-    testDictsSortKeyList=getDefaultTestDictsSortKeyList(),
-    addTestHistoryStrategy=None,
+      testDictsSortKeyList=getDefaultTestDictsSortKeyList(),
+      addTestHistoryStrategy=None,
     ):
     self.cdashReportData = cdashReportData
     self.testDictsSortKeyList = testDictsSortKeyList
     self.addTestHistoryStrategy = addTestHistoryStrategy
 
-
-  def report(self,
-      testsetInfo,
-      testsetTotalSize, testsetLOD,
-      testsetNonzeroSizeTriggerGlobalFail=True,
-      sortTests=True,
+  # Report on a given test-set and write info to self.cdashReportData
+  #
+  def report(self, testsetInfo, testsetTotalSize, testsetLOD,
+      testsetNonzeroSizeTriggerGlobalFail=True, sortTests=True,
       limitTableRows=None,   # Change to 'int' > 0 to limit table rows
       getTestHistory=False,
     ):
 
-    print("")
+    print("")  # RAB: Note to self, why is this print() here?
 
     testsetSummaryStr = \
       getCDashDataSummaryHtmlTableTitleStr(testsetInfo.testsetDescr,
@@ -2374,8 +2368,7 @@ class TestsetReporter(object):
         self.addTestHistoryStrategy.getTestHistory(testsetSortedLimitedLOD)
 
       self.cdashReportData.htmlEmailBodyBottom += createCDashTestHtmlTableStr(
-        testsetInfo,
-        testsetTotalSize, testsetSortedLimitedLOD,
+        testsetInfo, testsetTotalSize, testsetSortedLimitedLOD,
         limitRowsToDisplay=limitTableRows)
 
 
