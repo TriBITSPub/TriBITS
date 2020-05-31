@@ -243,10 +243,8 @@ def removeElementsFromListGivenIndexes(list_inout, indexesToRemoveList_in):
   return list_inout
 
 
-#
 # Class CsvFileStructure
 #
-
 class CsvFileStructure(object):
 
   def __init__(self, headersList, rowsList):
@@ -254,10 +252,8 @@ class CsvFileStructure(object):
     self.rowsList = rowsList
 
 
-#
 # Write a CsvFileStructure data to a string
 #
-
 def writeCsvFileStructureToStr(csvFileStruct):
   csvFileStr = ", ".join(csvFileStruct.headersList)+"\n"
   for rowFieldsList in csvFileStruct.rowsList:
@@ -301,9 +297,8 @@ def cdashColorMissing(): return 'gray'
 # ToDo: Make the above return different colors for a color-blind pallette
 
 
-# Define default test sort order in tbles
+# Define default test dicts sort order in tables
 def getDefaultTestDictsSortKeyList() : return ['testname', 'buildName', 'site']
-
 
 
 # Aggregate info about a test set used for generating the summary and table.
@@ -546,7 +541,7 @@ def writeTestsLODToCsvFile(testsLOD, csvFileName):
     csvFile.write(writeCsvFileStructureToStr(csvFileStruct))
 
 
-# Print print a nested Python data-structure to a file
+# Pretty print a nested Python data-structure to a file
 #
 # ToDo: Reimplement this to create a better looking set of indented that that
 # involves less right-drift and the expense of more vertical space.
@@ -556,7 +551,7 @@ def pprintPythonDataToFile(pythonData, filePath):
   pp.pprint(pythonData)
 
 
-# Get data off CDash and cache it or read from previously cached data.
+# Get data off CDash and cache it or read from previously cached data
 #
 # If useCachedCDashData == True, then the file cdashQueryDataCacheFile must
 # exist and will be used to get the data instead of calling CDash
@@ -645,7 +640,7 @@ def copyKeyDictIfExists(sourceDict_in, keyName_in, dict_inout):
     dict_inout.update( { keyName_in : value } )
 
 
-# Extend the set of fields for a CDash index.phpb build dict.
+# Extend the set of fields for a CDash index.phpb build dict
 #
 # buildDict_in [in]: The build dict gotten from cdash/index.php.  This will be
 # modified in place.
@@ -961,7 +956,7 @@ def lookupDictGivenLookupDict(lookupDict, listOfKeys, listOfValues,
 
 
 # Class that encapsulates a list of dicts and an efficient lookup of a dict
-# given a list key/value pairs to match.
+# given a list key/value pairs to match
 #
 # Once created, this object acts like a list of dicts in most cases but also
 # contains functions to search for speicfic dicts given a set of key/value
@@ -1504,7 +1499,6 @@ def getTestHistoryCacheFileName(date, site, buildName, testname, daysOfHistory):
 #
 class AddTestHistoryToTestDictFunctor(object):
 
-
   # Constructor which takes additional data needed to get the test history and
   # other stuff.
   #
@@ -1528,7 +1522,6 @@ class AddTestHistoryToTestDictFunctor(object):
     self.__printDetails = printDetails
     self.__requireMatchTestTopTestHistory = requireMatchTestTopTestHistory
     self.__extractCDashApiQueryData_in = extractCDashApiQueryData_in
-
 
   # Get test history off CDash and add test history info and URL to info we
   # find out from that test history
@@ -1726,7 +1719,8 @@ def setTestDictAsMissing(testDict):
   testDict['details'] = "Missing"
   return testDict
 
-# Gather up a list of the missing builds.
+
+# Gather up a list of the missing builds
 #
 # Inputs:
 #
@@ -1822,6 +1816,7 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
   # because we want to allow some builds to not have update results.  In the
   # future, it may be better to allow an expected build to say that it does
   # not have expected 'update' results.
+
 
 # Download set of builds from CDash builds and return flattened list of dicts
 #
@@ -2007,9 +2002,9 @@ def createOverallSummaryLine(cdashReportData, buildsetName, date):
   return summaryLine
 
 
-#
+################################################################################
 # HTML Table support code
-#
+################################################################################
 
 
 # Class to store dict key and table header
@@ -2053,7 +2048,7 @@ def addHtmlSoftWordBreaks(text_in):
   return text_out
 
 
-# Create an html table string from a list of dicts and column headers.
+# Create an HTML table string from a list of dicts and column headers
 #
 # Arguments:
 #
@@ -2189,9 +2184,9 @@ def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems,
 #
 # colDataList [in]: List of TableColumnData objects where
 #   colDataList[j].dictKey gives the name of the key for that column of data,
-#   colDataList[j].colHeader is the text name for the column header and
-#   colDataList[j].colAlign gives the HTML alignment.  That columns in the
-#   table will listed in the order given in this list.
+#   colDataList[j].colHeader is the text name for the column header, and
+#   colDataList[j].colAlign gives the HTML alignment.
+#   The columns in the table will listed in the order given in this list.
 #
 # rowDataList [in]: List of dicts that provide the data from the table.  The
 #   dict in each row must have the keys specified by colData[j].dictKey.
@@ -2275,18 +2270,11 @@ def createCDashTestHtmlTableStr(
       testTypeCountNum, limitRowsToDisplay ),
     testsetInfo.testsetColor )
   # Consecutive nopass/pass/missing column
-  tcd = TableColumnData
-  if testsetInfo.testsetTableType == 'nopass':
-    consecCol = tcd("Consec&shy;utive Non-pass Days", 'consec_nopass_days', 'right')
-  elif testsetInfo.testsetTableType == 'pass':
-    consecCol = tcd("Consec&shy;utive Pass Days", 'consec_pass_days', 'right')
-  elif testsetInfo.testsetTableType == 'missing':
-    consecCol = tcd("Consec&shy;utive Missing Days", 'consec_missing_days', 'right')
-  else:
-    raise Exception("Error, invalid testsetTableType="+str(testsetTableType))
+  consecCol = getCDashTestHtmlTableConsecColData(testsetInfo.testsetTableType)
   # Get daysOfHistory out of the data
   daysOfHistory = testsLOD[0]['test_history_num_days']
   # Create column headers
+  tcd = TableColumnData
   testsColDataList = [
     tcd("Site", "site"),
     tcd("Build Name", "buildName"),
@@ -2302,6 +2290,19 @@ def createCDashTestHtmlTableStr(
   return createHtmlTableStr( tableTitle,
     testsColDataList, testsLOD,
     htmlStyle=htmlStyle, htmlTableStyle=htmlTableStyle )
+
+
+def getCDashTestHtmlTableConsecColData(testsetTableType):
+  tcd = TableColumnData
+  if testsetTableType == 'nopass':
+    consecCol = tcd("Consec&shy;utive Non-pass Days", 'consec_nopass_days', 'right')
+  elif testsetTableType == 'pass':
+    consecCol = tcd("Consec&shy;utive Pass Days", 'consec_pass_days', 'right')
+  elif testsetTableType == 'missing':
+    consecCol = tcd("Consec&shy;utive Missing Days", 'consec_missing_days', 'right')
+  else:
+    raise Exception("Error, invalid testsetTableType="+str(testsetTableType))
+  return consecCol
 
 
 # Class to optionally get test history and then analyze and report a given
