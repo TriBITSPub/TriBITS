@@ -302,7 +302,7 @@ def cdashColorMissing(): return 'gray'
 
 
 # Define default test sort order in tbles
-def getDefaultTestsSortOrder() : return ['testname', 'buildName', 'site']
+def getDefaultTestDictsSortKeyList() : return ['testname', 'buildName', 'site']
 
 
 
@@ -2320,19 +2320,19 @@ class TestsetReporter(object):
   # cdashReportData [persisting]: Data used to create the final report (of type
   # CDashReportData).
   #
-  # testsSortOrder [persisting]: The sort order array tests dicts (input to
-  # ???). (Defualt getDefaultTestsSortOrder()).
+  # testDictsSortKeyList [persisting]: The sort order array tests dicts (input
+  # to DictSortFunctor()). (Defualt getDefaultTestDictsSortKeyList()).
   #
   # addTestHistoryStrategy [persisting]: Strategy object that can set the test
   # history on a list of dicts.  Must have member function
   # getTestHistory(testLOD).  (Default 'None')
   #
   def __init__(self, cdashReportData,
-    testsSortOrder=getDefaultTestsSortOrder(),
+    testDictsSortKeyList=getDefaultTestDictsSortKeyList(),
     addTestHistoryStrategy=None,
     ):
     self.cdashReportData = cdashReportData
-    self.testsSortOrder = testsSortOrder
+    self.testDictsSortKeyList = testDictsSortKeyList
     self.addTestHistoryStrategy = addTestHistoryStrategy
 
 
@@ -2365,8 +2365,7 @@ class TestsetReporter(object):
 
       if sortTests or limitTableRows:
         testsetSortedLimitedLOD = sortAndLimitListOfDicts(
-          testsetLOD, self.testsSortOrder,
-          limitTableRows )
+          testsetLOD, self.testDictsSortKeyList, limitTableRows )
       else:
         testsetSortedLimitedLOD = testsetLOD
 
