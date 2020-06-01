@@ -3597,7 +3597,7 @@ tr:nth-child(odd) {background-color: #fff;}
 # ToDo: Test with limitRowsToDisplay < len(rowDataList)
 
 # ToDo: Test with now rows and therefore now table printed
-      
+
 
 #############################################################################
 #
@@ -3606,6 +3606,96 @@ tr:nth-child(odd) {background-color: #fff;}
 #############################################################################
 
 # ToDo: Add unit tests for createCDashTestHtmlTableStr()!
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.binTestDictsByIssueTracker()
+#
+#############################################################################
+
+def tdwi(site, buildname, testname, issueTrackerNum):
+  testDict = {
+    u'site': unicode(site),
+    u'buildName': unicode(buildname),
+    u'testname': unicode(testname),
+  }
+  if issueTrackerNum:
+    testDict.update(
+       {
+         u'issue_tracker': u'#'+issueTrackerNum,
+         u'issue_tracker_url': u'some.com/site/issue/'+issueTrackerNum,
+         }
+       )
+  return testDict
+
+
+class test_binTestDictsByIssueTracker(unittest.TestCase):
+
+  def test_empty(self):
+    testsLOD =[]
+    (tdbi, twoiLOD) = binTestDictsByIssueTracker(testsLOD)
+    tdbi_expected = {}
+    twoiLOD_expected = []
+    self.assertEqual(tdbi, tdbi_expected)
+    self.assertEqual(twoiLOD, twoiLOD_expected)
+
+  def test_issues_1_noissues_1(self):
+    testsLOD =[
+      tdwi('site1', 'build1', 'test1', '1234'),
+      tdwi('site2', 'build2', 'test2', '1234'),
+      tdwi('site3', 'build3', 'test3', ''),
+      ]
+    (tdbi, twoiLOD) = binTestDictsByIssueTracker(testsLOD)
+    # Check tdbi
+    self.assertEqual(len(tdbi.keys()), 1)
+    self.assertEqual(tdbi['#1234'][0],
+      tdwi('site1', 'build1', 'test1', '1234'))
+    self.assertEqual(tdbi['#1234'][1],
+      tdwi('site2', 'build2', 'test2', '1234'))
+    tdbi_expected = {
+      u'#1234' : [
+        tdwi('site1', 'build1', 'test1', '1234'),
+        tdwi('site2', 'build2', 'test2', '1234'),
+        ],
+      }
+    self.assertEqual(tdbi, tdbi_expected)
+    # Check twoiLOD
+    self.assertEqual(len(twoiLOD), 1)
+    twoiLOD_expected = [
+      tdwi('site3', 'build3', 'test3', ''),
+      ]
+    self.assertEqual(twoiLOD, twoiLOD_expected)
+
+  def test_issues_3_noissues_2(self):
+    testsLOD =[
+      tdwi('site1', 'build1', 'test1', '1234'),
+      tdwi('site1', 'build2', 'test1', ''),
+      tdwi('site2', 'build3', 'test2', '1234'),
+      tdwi('site3', 'build4', 'test3', '1236'),
+      tdwi('site3', 'build5', 'test3', ''),
+      tdwi('site4', 'build6', 'test1', '1235'),
+      ]
+    (tdbi, twoiLOD) = binTestDictsByIssueTracker(testsLOD)
+    tdbi_expected = {
+      '#1234' : [
+        tdwi('site1', 'build1', 'test1', '1234'),
+        tdwi('site2', 'build3', 'test2', '1234'),
+        ],
+      '#1235' : [
+        tdwi('site4', 'build6', 'test1', '1235'),
+        ],
+      '#1236' : [
+        tdwi('site3', 'build4', 'test3', '1236'),
+        ],
+      }
+    twoiLOD_expected = [
+      tdwi('site1', 'build2', 'test1', ''),
+      tdwi('site3', 'build5', 'test3', ''),
+      ]
+    self.assertEqual(tdbi, tdbi_expected)
+    self.assertEqual(twoiLOD, twoiLOD_expected)
+
 
 
 #

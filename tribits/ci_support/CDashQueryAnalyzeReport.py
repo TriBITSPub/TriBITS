@@ -2322,7 +2322,7 @@ class TestsetReporter(object):
   #
   # addTestHistoryStrategy [persisting]: Strategy object that can set the test
   # history on a list of dicts.  Must have member function
-  # getTestHistory(testLOD).  (Default 'None')
+  # getTestHistory(testsLOD).  (Default 'None')
   #
   def __init__(self, cdashReportData,
       testDictsSortKeyList=getDefaultTestDictsSortKeyList(),
@@ -2370,6 +2370,66 @@ class TestsetReporter(object):
       self.cdashReportData.htmlEmailBodyBottom += createCDashTestHtmlTableStr(
         testsetInfo, testsetTotalSize, testsetSortedLimitedLOD,
         limitRowsToDisplay=limitTableRows)
+
+
+# Bin a list of test dicts by issue tracker
+#
+# Input arguments:
+#
+#   testsLOD [in]: Tests list of dicts
+#
+# Returns (testDictsByIssueTracker, testsWithoutIssueTrackersLOD)
+#
+#  testDictsByIssueTracker [out]: A dict where the keys are the issue tracker
+#  strings (e.g. '#1234') and the values are the sublist test dicts that have
+#  that issue tracker.
+#
+#  testsWithoutIssueTrackersLOD [out]: The remaining list of test dicts that
+#  don't have an issue tracker.
+#
+# For example, the input list of dicts:
+#
+#  testsLOD = [
+#    { 'testname':'test1' ... 'issue_tracker':'#1234' },
+#    { 'testname':'test2' ... },
+#    { 'testname':'test3' ... 'issue_tracker':'#1235' },
+#    { 'testname':'test4' ... 'issue_tracker':'#1234' },
+#    { 'testname':'test5' ... },
+#    { 'testname':'test6' ... 'issue_tracker':'#1235' },
+#    { 'testname':'test7' ... 'issue_tracker':'#1236' },
+#
+# would yeild:
+#
+#   testDictsByIssueTracker = {
+#     '#1234' : [
+#       { 'testname':'test1' ... 'issue_tracker':'#1234' },
+#       { 'testname':'test4' ... 'issue_tracker':'#1234' },
+#       ],
+#     '#1235' : [
+#       { 'testname':'test3' ... 'issue_tracker':'#1235' },
+#       { 'testname':'test6' ... 'issue_tracker':'#1235' },
+#       ],
+#     '#1236' : [
+#       { 'testname':'test7' ... 'issue_tracker':'#1236' },
+#       ],
+#     ]
+#
+#   testsWithoutIssueTrackersLOD = [
+#    { 'testname':'test2' ... },
+#    { 'testname':'test5' ... },
+#    ]
+#
+def binTestDictsByIssueTracker(testsLOD):
+  testDictsByIssueTracker = {}
+  testsWithoutIssueTrackersLOD = []
+  for testDict in testsLOD:
+    issueTracker = testDict.get('issue_tracker', None)
+    if issueTracker:
+      issueTrackerBinTestsLOD = testDictsByIssueTracker.setdefault(issueTracker, [])
+      issueTrackerBinTestsLOD.append(testDict)
+    else:
+      testsWithoutIssueTrackersLOD.append(testDict)
+  return (testDictsByIssueTracker, testsWithoutIssueTrackersLOD)
 
 
 #########################################
