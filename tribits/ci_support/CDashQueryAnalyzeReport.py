@@ -2507,6 +2507,61 @@ def binTestDictsByIssueTracker(testsLOD):
   return (testDictsByIssueTracker, testsWithoutIssueTrackersLOD)
 
 
+# Bin a list of test dicts their test-set acronym
+#
+# Input arguments:
+#
+#   testsLOD [in]: Tests list of dicts
+#
+# Returns testDictsByTestsetAcro
+#
+#  testDictsByTestsetAcro [out]: A dict where the keys are the standard
+#  test-set acronyms ('twoif', 'twoinr', 'twip', etc) and the value for each
+#  is the list of test dicts that below to that test-set category.
+#
+# For example, the input list of dicts:
+#
+#   testsLOD = [
+#     { 'testname':'test1', 'status':'Failed' ... 'issue_tracker':'#1234' },
+#     { 'testname':'test2', 'status':'Failed' ... },
+#     { 'testname':'test3', 'status':'Passed' ... 'issue_tracker':'#1235' },
+#     { 'testname':'test4', 'status':'Failed' ... 'issue_tracker':'#1234' },
+#     { 'testname':'test5', 'status':'Not Run' ... },
+#     { 'testname':'test6', 'status':'Missing' ... 'issue_tracker':'#1235' },
+#     { 'testname':'test7', 'status':'Not Run' ... 'issue_tracker':'#1236' },
+#
+# would yeild:
+#
+#   testDictsByTestsetAcro = {
+#     'twoif' : [
+#       { 'testname':'test2', 'status':'Failed' ... },
+#       ],
+#     'twoinr' : [
+#       { 'testname':'test5', 'status':'Not Run' ... },
+#       ],
+#     'twip' : [
+#       { 'testname':'test3', 'status':'Passed' ... 'issue_tracker':'#1235' },
+#       ],
+#     'twim' : [
+#       { 'testname':'test6', 'status':'Missing' ... 'issue_tracker':'#1235' },
+#       ],
+#     'twif' : [
+#       { 'testname':'test1', 'status':'Failed' ... 'issue_tracker':'#1234' },
+#       { 'testname':'test4', 'status':'Failed' ... 'issue_tracker':'#1234' },
+#       ],
+#     'twinr' : [
+#     { 'testname':'test7', 'status':'Not Run' ... 'issue_tracker':'#1236' },
+#       ],
+#
+def binTestDictsByTestsetAcro(testsLOD):
+  testDictsByTestsetAcro = {}
+  for testDict in testsLOD:
+    testsetAcron = getTestsetAcroFromTestDict(testDict)
+    testsetAcronBinTestsLOD = testDictsByTestsetAcro.setdefault(testsetAcron, [])
+    testsetAcronBinTestsLOD.append(testDict)
+  return testDictsByTestsetAcro
+
+
 #########################################
 # HTML Email stuff
 #########################################

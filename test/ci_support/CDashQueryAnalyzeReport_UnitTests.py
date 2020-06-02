@@ -3757,6 +3757,111 @@ class test_binTestDictsByIssueTracker(unittest.TestCase):
     self.assertEqual(twoiLOD, twoiLOD_expected)
 
 
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.binTestDictsByTestsetAcro()
+#
+#############################################################################
+
+def tdswi(testname, status, issueTrackerNum):
+  testDict = {
+    u'testname': unicode(testname),
+    u'status': unicode(status),
+  }
+  if issueTrackerNum:
+    testDict.update(
+       {
+         u'issue_tracker': u'#'+issueTrackerNum,
+         u'issue_tracker_url': u'some.com/site/issue/'+issueTrackerNum,
+         }
+       )
+  return testDict
+
+
+class test_binTestDictsByTestsetAcro(unittest.TestCase):
+
+  def test_empty(self):
+    testsLOD =[]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    tbtsa_expected = {}
+    self.assertEqual(tbtsa, tbtsa_expected)
+
+  def test_twoif(self):
+    testsLOD =[
+      tdswi('test1', 'Failed', '')
+      ]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    self.assertEqual(len(tbtsa.keys()), 1)
+    self.assertEqual(tbtsa['twoif'],
+      [
+        tdswi('test1', 'Failed', ""),
+        ],
+       )
+
+  def test_twoif_twip(self):
+    testsLOD =[
+      tdswi('test1', 'Failed', ''),
+      tdswi('test2', 'Passed', '1234'),
+      tdswi('test3', 'Failed', ''),
+      ]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    self.assertEqual(len(tbtsa.keys()), 2)
+    self.assertEqual(tbtsa['twoif'],
+      [
+        tdswi('test1', 'Failed', ""),
+        tdswi('test3', 'Failed', ''),
+        ],
+       )
+    self.assertEqual(tbtsa['twip'],
+      [
+        tdswi('test2', 'Passed', '1234'),
+        ],
+       )
+
+  def test_all(self):
+    testsLOD =[
+      tdswi('test1', 'Failed', '1234'),
+      tdswi('test2', 'Failed', ''),
+      tdswi('test3', 'Passed', '1235'),
+      tdswi('test4', 'Failed', '1234'),
+      tdswi('test5', 'Not Run', ''),
+      tdswi('test6', 'Missing', '1235'),
+      tdswi('test7', 'Not Run', '1236'),
+      ]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    self.assertEqual(len(tbtsa.keys()), 6)
+    self.assertEqual(tbtsa['twoif'],
+      [
+        tdswi('test2', 'Failed', ''),
+        ],
+       )
+    self.assertEqual(tbtsa['twoinr'],
+      [
+        tdswi('test5', 'Not Run', ''),
+        ],
+       )
+    self.assertEqual(tbtsa['twip'],
+      [
+        tdswi('test3', 'Passed', '1235'),
+        ],
+       )
+    self.assertEqual(tbtsa['twim'],
+      [
+        tdswi('test6', 'Missing', '1235'),
+        ],
+       )
+    self.assertEqual(tbtsa['twif'],
+      [
+        tdswi('test1', 'Failed', '1234'),
+        tdswi('test4', 'Failed', '1234'),
+        ],
+       )
+    self.assertEqual(tbtsa['twinr'],
+      [
+        tdswi('test7', 'Not Run', '1236'),
+        ],
+       )
+
 
 #
 # Run the unit tests!
