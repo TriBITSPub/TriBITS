@@ -3869,14 +3869,28 @@ class test_binTestDictsByTestsetAcro(unittest.TestCase):
 #
 #############################################################################
 
+
+def makeTestPassing(testDict):
+  testDict['status'] = u'Passed'
+  testDict['status_color'] = cdashColorPassed()
+  testDict['details'] = u'Completed (Passed)\n'
+
+
+def makeTestMissing(testDict):
+  setTestDictAsMissing(testDict)
+
+
 cdash_analyze_and_report_dir = g_testBaseDir+'/cdash_analyze_and_report'
+
 
 g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out = \
   eval(
     open(cdash_analyze_and_report_dir+'/twoif_10_twoinr2_twif_8_twinr_1/test_data.json',
     'r').read())
 
+
 class test_TestsetsReporter(unittest.TestCase):
+
 
   def test_empty(self):
     cdashReportData = CDashReportData()
@@ -3887,8 +3901,9 @@ class test_TestsetsReporter(unittest.TestCase):
     self.assertEqual(cdashReportData.htmlEmailBodyTop, "")
     self.assertEqual(cdashReportData.htmlEmailBodyBottom, "")
 
+
   def test_twif_8_twinr_1(self):
-    allTestsLOD = g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out
+    allTestsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
     cdashReportData = CDashReportData()
     testsetsReporter = TestsetsReporter(cdashReportData,
       htmlStyle="",  # GitHub Markdown does not like the default HTML style
@@ -3926,14 +3941,122 @@ class test_TestsetsReporter(unittest.TestCase):
         "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/3638\">#3638</a></td>",
         ],
       stringsList=cdashReportData.htmlEmailBodyBottom.split('\n'),
-      stringsListName=cdashReportData.htmlEmailBodyBottom,
+      stringsListName="cdashReportData.htmlEmailBodyBottom",
       debugPrint=False
       )
     testsHtmlReportStr = testsetsReporter.getTestsHtmlReportStr(
-      "Tests for #1234", "2018-10-28")
+      "Status of tests for issue #1234")
     # TODO: REMOVE THIS FILE WRITE!!!
     #with open("testsHtmlReport.html", 'w') as testsHtmlReportFile:
     #  testsHtmlReportFile.write(testsHtmlReportStr)
+    assertListOfRegexsFoundInLinstOfStrs(self,
+      regexList=[
+        '<h2>Status of tests for issue #1234</h2>',
+        '<font color="red">Tests with issue trackers Failed: twif=8</font><br>',
+        '<font color="orange">Tests with issue trackers Not Run: twinr=1</font><br>',
+        '<h3><font color="red">Tests with issue trackers Failed: twif=8</font></h3>',
+        '<h3><font color="orange">Tests with issue trackers Not Run: twinr=1</font></h3>',
+        ],
+      stringsList=testsHtmlReportStr.split('\n'),
+      stringsListName="testsHtmlReportStr",
+      debugPrint=False
+      )
+
+
+  def test_twip_1_twif_5_twim_2_twinr_1(self):
+    allTestsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    # Change a test from failing to passing
+    testIdx = getIdxOfTestInTestLOD(allTestsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    makeTestPassing(allTestsLOD[testIdx])
+    # Change a from from faling to missing
+    testIdx = getIdxOfTestInTestLOD(allTestsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    makeTestMissing(allTestsLOD[testIdx])
+    # Change another a test from failing to missing
+    testIdx = getIdxOfTestInTestLOD(allTestsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3')
+    makeTestMissing(allTestsLOD[testIdx])
+    # Run the reporter
+    cdashReportData = CDashReportData()
+    testsetsReporter = TestsetsReporter(cdashReportData,
+      htmlStyle="",
+      verbose=False)
+    testsLOD = allTestsLOD
+    #g_pp.pprint(testsLOD)
+    testsetsReporter.reportTestsets(testsLOD)
+    #print("\ncdashReportData.summaryLineDataNumbersList = "+\
+    #  str(cdashReportData.summaryLineDataNumbersList))
+    #print("\ncdashReportData.htmlEmailBodyTop:\n"+\
+    #  cdashReportData.htmlEmailBodyTop)
+    summaryLineDataNumbersList_expected = \
+      ['twip=1', 'twim=2', 'twif=5', 'twinr=1']
+    self.assertEqual(cdashReportData.summaryLineDataNumbersList,
+      summaryLineDataNumbersList_expected)
+    htmlEmailBodyTop_expected = \
+      '<font color="green">Tests with issue trackers Passed: twip=1</font><br>\n'+\
+      '<font color="gray">Tests with issue trackers Missing: twim=2</font><br>\n'+\
+      '<font color="red">Tests with issue trackers Failed: twif=5</font><br>\n'+\
+      '<font color="orange">Tests with issue trackers Not Run: twinr=1</font><br>\n'
+    self.assertEqual(cdashReportData.htmlEmailBodyTop,
+      htmlEmailBodyTop_expected)
+    #print("\ncdashReportData.htmlEmailBodyBottom:\n"+\
+    #  cdashReportData.htmlEmailBodyBottom)
+    assertListOfRegexsFoundInLinstOfStrs(self,
+      regexList=[
+        '<h3><font color="green">Tests with issue trackers Passed: twip=1</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>',
+        '<td align="left"><a href=".*">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>',
+        '<td align="left"><a href=".*"><font color="green">Passed</font></a></td>',
+        '<td align="left">Completed [(]Passed[)]</td>',
+
+        '<h3><font color="gray">Tests with issue trackers Missing: twim=2</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-intel-opt-serial</a></td>',
+        '<td align="left"><a href=".*">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>',
+        '<td align="left"><a href=".*"><font color="gray">Missing</font></a></td>',
+        '<td align="left">Missing</td>',
+
+        '<h3><font color="red">Tests with issue trackers Failed: twif=5</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>',
+        '<td align="left"><a href=".*">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>',
+        '<td align="left"><a href=".*"><font color="red">Failed</font></a></td>',
+        '<td align="left">Completed [(]Failed[)]</td>',
+
+        '<h3><font color="orange">Tests with issue trackers Not Run: twinr=1</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>',
+        '<td align="left"><a href=".*">Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>',
+        '<td align="left"><a href=".*"><font color="orange">Not Run</font></a></td>',
+        '<td align="left">Required Files Missing</td>',
+        ],
+      stringsList=cdashReportData.htmlEmailBodyBottom.split('\n'),
+      stringsListName="cdashReportData.htmlEmailBodyBottom",
+      debugPrint=False
+      )
+    # Get the summary report
+    testsHtmlReportStr = testsetsReporter.getTestsHtmlReportStr(
+      "Status of tests for issue #1236")
+    # TODO: REMOVE THIS FILE WRITE!!!
+    with open("testsHtmlReport.html", 'w') as testsHtmlReportFile:
+      testsHtmlReportFile.write(testsHtmlReportStr)
+    assertListOfRegexsFoundInLinstOfStrs(self,
+      regexList=[
+        '<h2>Status of tests for issue #1236</h2>',
+        '<font color="green">Tests with issue trackers Passed: twip=1</font><br>',
+        '<font color="gray">Tests with issue trackers Missing: twim=2</font><br>',
+        '<font color="red">Tests with issue trackers Failed: twif=5</font><br>',
+        '<font color="orange">Tests with issue trackers Not Run: twinr=1</font><br>',
+        '<h3><font color="green">Tests with issue trackers Passed: twip=1</font></h3>',
+        '<h3><font color="gray">Tests with issue trackers Missing: twim=2</font></h3>',
+        '<h3><font color="red">Tests with issue trackers Failed: twif=5</font></h3>',
+        '<h3><font color="orange">Tests with issue trackers Not Run: twinr=1</font></h3>',
+        ],
+      stringsList=testsHtmlReportStr.split('\n'),
+      stringsListName="testsHtmlReportStr",
+      debugPrint=False
+      )
 
 
 #

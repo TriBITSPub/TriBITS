@@ -2513,14 +2513,12 @@ class TestsetsReporter(object):
 
   # Generate a pass/fail report for all of the testset analyzed by
   # reportTestsets().
-  def getTestsHtmlReportStr(self, testsetName, date):
-    summaryLine = createOverallCDashReportSummaryLine(self.cdashReportData,
-      testsetName, date)
+  def getTestsHtmlReportStr(self, testsSummaryTitle):
     cdashReportData = self.cdashReportData
     cdashReportData.htmlEmailBodyTop = \
       "<p>\n" + cdashReportData.htmlEmailBodyTop + "</p>\n"
     return getFullCDashHtmlReportPageStr(
-      cdashReportData, pageTitle=summaryLine, pageStyle="")
+      cdashReportData, pageTitle=testsSummaryTitle, pageStyle="")
 
 
 # Bin a list of test dicts by issue tracker
