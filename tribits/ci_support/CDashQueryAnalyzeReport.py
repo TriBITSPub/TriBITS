@@ -2377,15 +2377,14 @@ def getCDashTestHtmlTableConsecColData(testsetTableType):
   return consecCol
 
 
-# Class to optionally get test history and then analyze and report a given
+# Class to optionally get test history and then analyze and report a single
 # test-set.
 #
-# NOTE: The reason this is a class is that the data cdashReportData and
-# addTestHistoryStrategy never changes once this object is constructed in
-# main().  This avoids having to pass these options in every function call for
-# each test-set.
+# NOTE: The reason this is a class is that the cdashReportData and
+# addTestHistoryStrategy objects are set once and are used for multiple calls
+# to report().
 #
-class TestsetReporter(object):
+class SingleTestsetReporter(object):
 
   # Constructor
   #
@@ -2409,6 +2408,7 @@ class TestsetReporter(object):
 
   # Report on a given test-set and write info to self.cdashReportData
   #
+  #
   def report(self, testsetInfo, testsetTotalSize, testsetLOD,
       testsetNonzeroSizeTriggerGlobalFail=True, sortTests=True,
       limitTableRows=None,   # Change to 'int' > 0 to limit table rows
@@ -2425,7 +2425,7 @@ class TestsetReporter(object):
 
     if testsetTotalSize > 0:
 
-      self.cdashReportData.globalPass = False
+      self.cdashReportData.globalPass = False  # ToDo: Remove this from here!
 
       self.cdashReportData.summaryLineDataNumbersList.append(
         testsetInfo.testsetAcro+"="+str(testsetTotalSize))

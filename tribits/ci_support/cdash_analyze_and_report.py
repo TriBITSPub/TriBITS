@@ -758,7 +758,7 @@ if __name__ == '__main__':
 
     # Object to make it easy to process the different test sets
     addTestHistoryStrategy = AddTestHistoryStrategy(inOptions, testHistoryCacheDir)
-    testsetReporter = CDQAR.TestsetReporter(cdashReportData,
+    testsetReporter = CDQAR.SingleTestsetReporter(cdashReportData,
       addTestHistoryStrategy=addTestHistoryStrategy)
 
     # Special functor to look up missing expected build given a test dict
