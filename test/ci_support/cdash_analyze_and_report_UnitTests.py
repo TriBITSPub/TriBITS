@@ -1241,7 +1241,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(nonpassingTestsLOD)
 
     # Mark which tests with issue trackers to remove from the list of
-    # non-passing tests.  (These will be used for passing tests and msising
+    # non-passing tests.  (These will be used for passing tests and missing
     # tests with history)
 
     nonpassingTestsToRemoveIndexes = []

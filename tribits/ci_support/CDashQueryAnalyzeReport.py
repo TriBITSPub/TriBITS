@@ -2030,8 +2030,56 @@ def createOverallSummaryLine(cdashReportData, buildsetName, date):
 
 
 ################################################################################
-# HTML Table support code
+# HTML Support Code
 ################################################################################
+
+
+def getFullCDashHtmlReportPageStr(cdashReportData, pageTitle="", pageStyle=""):
+
+  htmlPage = \
+    "<html>\n"
+
+  if pageStyle:
+    htmlPage += \
+      "<head>\n"+\
+      pageStyle+\
+      "</head>\n"
+
+  htmlPage += \
+    "\n"+\
+    "<body>\n"+\
+    "\n"
+
+  if pageTitle:
+    htmlPage += \
+      "<h2>"+pageTitle+"</h2>\n\n"
+
+  htmlPage += \
+    cdashReportData.htmlEmailBodyTop+\
+    "\n\n"+\
+    cdashReportData.htmlEmailBodyBottom+\
+    "</body>\n"+\
+    "</html>\n"
+
+  return htmlPage
+
+
+def getDefaultHtmlPageStyleStr():
+  return \
+    "<style>\n"+\
+    "h1 {\n"+\
+    "  font-size: 40px;\n"+\
+    "}\n"+\
+    "h2 {\n"+\
+    "  font-size: 30px;\n"+\
+    "}\n"+\
+    "h3 {\n"+\
+    "  font-size: 24px;\n"+\
+    "}\n"+\
+    "p {\n"+\
+    "  font-size: 18px;\n"+\
+    "}\n"+\
+    "</style>\n"
 
 
 # Class to store dict key and table header

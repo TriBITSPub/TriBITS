@@ -932,20 +932,7 @@ if __name__ == '__main__':
   htmlHeaderAndBeginBody = \
     "<html>\n"+\
     "<head>\n"+\
-    "<style>\n"+\
-    "h1 {\n"+\
-    "  font-size: 40px;\n"+\
-    "}\n"+\
-    "h2 {\n"+\
-    "  font-size: 30px;\n"+\
-    "}\n"+\
-    "h3 {\n"+\
-    "  font-size: 24px;\n"+\
-    "}\n"+\
-    "p {\n"+\
-    "  font-size: 18px;\n"+\
-    "}\n"+\
-    "</style>\n"+\
+    CDQAR.getDefaultHtmlPageStyleStr()+\
     "</head>\n"+\
     "\n"+\
     "<body>\n"+\
@@ -959,26 +946,23 @@ if __name__ == '__main__':
   # G) Write HTML body file and/or send HTML email(s)
   #
 
+  defaultPageStyle = CDQAR.getDefaultHtmlPageStyleStr()
+
   if inOptions.writeEmailToFile:
     print("\nWriting HTML file '"+inOptions.writeEmailToFile+"' ...")
-    htmlEmaiBodyFileStr = \
-      htmlHeaderAndBeginBody+\
-      "<h2>"+summaryLine+"</h2>\n\n"+\
-      htmlEmaiBodyGuts+"\n"+\
-      htmlEndBody
+    fullCDashHtmlReportPageStr = CDQAR.getFullCDashHtmlReportPageStr(cdashReportData,
+      pageTitle=summaryLine, pageStyle=defaultPageStyle)
     with open(inOptions.writeEmailToFile, 'w') as outFile:
-      outFile.write(htmlEmaiBodyFileStr)
+      outFile.write(fullCDashHtmlReportPageStr)
 
   if inOptions.sendEmailTo:
-    htmlEmaiBody = \
-      htmlHeaderAndBeginBody+\
-      htmlEmaiBodyGuts+"\n"+\
-      htmlEndBody
+    htmlEmailBodyStr = CDQAR.getFullCDashHtmlReportPageStr(cdashReportData,
+      pageStyle=defaultPageStyle)
     for emailAddress in inOptions.sendEmailTo.split(','):
       emailAddress = emailAddress.strip()
       print("\nSending email to '"+emailAddress+"' ...")
       msg=CDQAR.createHtmlMimeEmail(
-        inOptions.emailFromAddress, emailAddress, summaryLine, "", htmlEmaiBody)
+        inOptions.emailFromAddress, emailAddress, summaryLine, "", htmlEmailBodyStr)
       CDQAR.sendMineEmail(msg)
 
   #
