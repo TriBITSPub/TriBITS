@@ -3377,7 +3377,7 @@ class test_createHtmlTableStr(unittest.TestCase):
       trd("r3d1", 3, "r3d3"),
       ]
     htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList,
-      htmlStyle="my_style",  # Test custom table style
+      htmlStyle="<style>my_style</style>",  # Test custom table style
       #htmlStyle=None,       # Uncomment to view this style
       #htmlTableStyle="",    # Uncomment to view this style
       )
@@ -3489,7 +3489,7 @@ tr:nth-child(odd) {background-color: #fff;}
     rowDataList[2]['key2_color'] = 'green'
     # Create the table
     htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList,
-      htmlStyle="my_style",  # Test custom table style
+      htmlStyle="",         # No style!
       #htmlStyle=None,       # Uncomment to view this style
       htmlTableStyle="",    # Uncomment to view this style
       )
@@ -3500,8 +3500,7 @@ tr:nth-child(odd) {background-color: #fff;}
     # file write commands to view the formatted table in a browser to see if
     # this gets the data right and you like the default table style.
     htmlTable_expected = \
-r"""<style>my_style</style>
-<h3>My great data</h3>
+r"""<h3>My great data</h3>
 <table >
 
 <tr>
@@ -3891,7 +3890,9 @@ class test_TestsetsReporter(unittest.TestCase):
   def test_twif_8_twinr_1(self):
     allTestsLOD = g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out
     cdashReportData = CDashReportData()
-    testsetsReporter = TestsetsReporter(cdashReportData, verbose=False)
+    testsetsReporter = TestsetsReporter(cdashReportData,
+      htmlStyle="",  # GitHub Markdown does not like the default HTML style
+      verbose=False)
     testsLOD = allTestsLOD
     #g_pp.pprint(testsLOD)
     testsetsReporter.reportTestsets(testsLOD)

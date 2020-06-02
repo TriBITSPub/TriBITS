@@ -2150,7 +2150,8 @@ def addHtmlSoftWordBreaks(text_in):
 # passed in then a default style is provided internally.  NOTE: The default
 # table style uses CSS formatting for boarders but also sets the <table>
 # 'boarder' property since some email clients like Gmail ignore the CSS style
-# sections.
+# sections.  To not set a style at all, pass in the empty string "" (not
+# None).
 #
 # htmlTableStyle [in]: The style for the HTML table used in <table
 #   style=htmlTableStyle>.  If set to None, then a default style is used.  To
@@ -2163,18 +2164,23 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
     htmlStyle=None, htmlTableStyle=None \
   ):
 
+  htmlStr = ""
+
   # style options for the table
   defaultHtmlStyle=\
-    "table, th, td {\n"+\
+    "<style>table, th, td {\n"+\
     "  padding: 5px;\n"+\
     "  border: 1px solid black;\n"+\
     "  border-collapse: collapse;\n"+\
     "}\n"+\
     "tr:nth-child(even) {background-color: #eee;}\n"+\
-    "tr:nth-child(odd) {background-color: #fff;}\n"
-  if htmlStyle != None: htmlStyleUsed = htmlStyle
+    "tr:nth-child(odd) {background-color: #fff;}\n"+\
+    "</style>"
+  if htmlStyle == "": htmlStyleUsed = ""
+  elif htmlStyle != None: htmlStyleUsed = htmlStyle
   else: htmlStyleUsed = defaultHtmlStyle
-  htmlStr="<style>"+htmlStyleUsed+"</style>\n"
+  if htmlStyleUsed:
+    htmlStr+=htmlStyleUsed+"\n"
 
   # Table title and <table style=...>
   htmlStr+="<h3>"+tableTitle+"</h3>\n"
@@ -2404,11 +2410,15 @@ class SingleTestsetReporter(object):
   #
   def __init__(self, cdashReportData,
       testDictsSortKeyList=getDefaultTestDictsSortKeyList(),
-      addTestHistoryStrategy=None, verbose=True,
+      addTestHistoryStrategy=None,
+      htmlStyle=None, htmlTableStyle=None,
+      verbose=True,
     ):
     self.cdashReportData = cdashReportData
     self.testDictsSortKeyList = testDictsSortKeyList
     self.addTestHistoryStrategy = addTestHistoryStrategy
+    self.htmlStyle = htmlStyle
+    self.htmlTableStyle = htmlTableStyle
     self.verbose = verbose
 
   # Report on a given test-set and write info to self.cdashReportData
@@ -2463,7 +2473,8 @@ class SingleTestsetReporter(object):
 
       self.cdashReportData.htmlEmailBodyBottom += createCDashTestHtmlTableStr(
         testsetInfo, testsetTotalSize, testsetSortedLimitedLOD,
-        limitRowsToDisplay=limitTableRows)
+        limitRowsToDisplay=limitTableRows,
+        htmlStyle=self.htmlStyle, htmlTableStyle=self.htmlTableStyle )
 
 
 # Class to generate the data for an HTML report for all test-sets represented
@@ -2477,10 +2488,12 @@ class TestsetsReporter(object):
   # CDashReportData).
   #
   def __init__(self, cdashReportData, testsetAcroList=getStandardTestsetAcroList(),
-    verbose=True):
+      htmlStyle=None, htmlTableStyle=None, verbose=True,
+    ):
     self.cdashReportData = cdashReportData
     self.testsetAcroList = testsetAcroList
-    self.singleTestsetReporter = SingleTestsetReporter(cdashReportData, verbose=verbose)
+    self.singleTestsetReporter = SingleTestsetReporter(cdashReportData,
+      htmlStyle=htmlStyle, htmlTableStyle=htmlTableStyle, verbose=verbose)
 
 
   # Separate out and report on all of the test-sets in the input list of test
@@ -2503,8 +2516,11 @@ class TestsetsReporter(object):
   def getTestsHtmlReportStr(self, testsetName, date):
     summaryLine = createOverallCDashReportSummaryLine(self.cdashReportData,
       testsetName, date)
+    cdashReportData = self.cdashReportData
+    cdashReportData.htmlEmailBodyTop = \
+      "<p>\n" + cdashReportData.htmlEmailBodyTop + "</p>\n"
     return getFullCDashHtmlReportPageStr(
-      self.cdashReportData, pageTitle=summaryLine, pageStyle="")
+      cdashReportData, pageTitle=summaryLine, pageStyle="")
 
 
 # Bin a list of test dicts by issue tracker
