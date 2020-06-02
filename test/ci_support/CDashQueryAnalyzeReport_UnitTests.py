@@ -3069,7 +3069,6 @@ class test_buildHasBuildFailures(unittest.TestCase):
 #
 #############################################################################
 
-
 def testDictStatus(status):
   testDict = copy.deepcopy(g_testDictFailed)
   testDict['status'] = status
@@ -3086,6 +3085,10 @@ class test_isTestPassed(unittest.TestCase):
   def test_notrun(self):
     self.assertEqual(isTestPassed(testDictStatus('Not Run')), False)
 
+  def test_missing(self):
+    self.assertEqual(isTestPassed(testDictStatus('Missing')), False)
+    self.assertEqual(isTestPassed(testDictStatus('Missing / Failed')), False)
+
 class test_isTestFailed(unittest.TestCase):
 
   def test_passed(self):
@@ -3097,6 +3100,10 @@ class test_isTestFailed(unittest.TestCase):
   def test_notrun(self):
     self.assertEqual(isTestFailed(testDictStatus('Not Run')), False)
 
+  def test_missing(self):
+    self.assertEqual(isTestFailed(testDictStatus('Missing')), False)
+    self.assertEqual(isTestFailed(testDictStatus('Missing / Failed')), False)
+
 class test_isTestNotRun(unittest.TestCase):
 
   def test_passed(self):
@@ -3107,6 +3114,25 @@ class test_isTestNotRun(unittest.TestCase):
 
   def test_notrun(self):
     self.assertEqual(isTestNotRun(testDictStatus('Not Run')), True)
+
+  def test_missing(self):
+    self.assertEqual(isTestNotRun(testDictStatus('Missing')), False)
+    self.assertEqual(isTestNotRun(testDictStatus('Missing / Failed')), False)
+
+class test_isTestMissing(unittest.TestCase):
+
+  def test_passed(self):
+    self.assertEqual(isTestMissing(testDictStatus('Passed')), False)
+
+  def test_failed(self):
+    self.assertEqual(isTestMissing(testDictStatus('Failed')), False)
+
+  def test_notrun(self):
+    self.assertEqual(isTestMissing(testDictStatus('Not Run')), False)
+
+  def test_missing(self):
+    self.assertEqual(isTestMissing(testDictStatus('Missing')), True)
+    self.assertEqual(isTestMissing(testDictStatus('Missing / Failed')), True)
 
 
 
@@ -3237,6 +3263,40 @@ class test_sortAndLimitListOfDicts(unittest.TestCase):
       cd("c1_a", 3, "c2_b"),
       ]
     self.assertEqual(resultList, resultList_expected)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getTestsetAcroFromTestDict()
+#
+#############################################################################
+
+class test_getTestsetAcroFromTestDict(unittest.TestCase):
+
+  def run_test_case(self, status, issueTracker, testsetAcro_expected):
+    testDict = { u'status' : unicode(status) }
+    if issueTracker:
+      testDict.update({u'issue_tracker' : unicode(issueTracker)})
+    self.assertEqual(getTestsetAcroFromTestDict(testDict), testsetAcro_expected)
+
+  def test_twoif(self):
+    self.run_test_case('Failed', None, 'twoif')
+
+  def test_twoinr(self):
+    self.run_test_case('Not Run', None, 'twoinr')
+
+  def test_twip(self):
+    self.run_test_case('Passed', '#1234', 'twip')
+
+  def test_twim(self):
+    self.run_test_case('Missing', '#1234', 'twim')
+    self.run_test_case('Missing / Failed', '#1234', 'twim')
+
+  def test_twif(self):
+    self.run_test_case('Failed', '#1234', 'twif')
+
+  def test_twinr(self):
+    self.run_test_case('Not Run','#1234', 'twinr')
 
 
 #############################################################################

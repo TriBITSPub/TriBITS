@@ -297,10 +297,6 @@ def cdashColorMissing(): return 'gray'
 # ToDo: Make the above return different colors for a color-blind pallette
 
 
-# Define default test dicts sort order in tables
-def getDefaultTestDictsSortKeyList() : return ['testname', 'buildName', 'site']
-
-
 # Aggregate info about a test set used for generating the summary and table.
 #
 # Members:
@@ -354,6 +350,52 @@ def getStandardTestsetInfo(testsetAcro, testsetColor=None):
     tsi.testsetColor = testsetColor
 
   return tsi
+
+
+# Get the Test-set acronym from the fields of a test dict
+#
+def getTestsetAcroFromTestDict(testDict):
+  issueTracker = testDict.get('issue_tracker', None)
+  if isTestFailed(testDict) and issueTracker == None:
+    return 'twoif'
+  if isTestNotRun(testDict) and issueTracker == None:
+    return 'twoinr'
+  if isTestPassed(testDict) and issueTracker != None:
+    return 'twip'
+  if isTestMissing(testDict) and issueTracker != None:
+    return 'twim'
+  if isTestFailed(testDict) and issueTracker != None:
+    return 'twif'
+  if isTestNotRun(testDict) and issueTracker != None:
+    return 'twinr'
+  raise Exception("Error, testDict = '"+str(testDict)+"' not supported!")
+
+
+# Returns True if a test has 'status' 'Passed'
+def isTestPassed(testDict):
+  return (testDict.get('status', None) == 'Passed')
+
+
+# Returns True if a test has 'status' 'Failed'
+def isTestFailed(testDict):
+  return (testDict.get('status', None) == 'Failed')
+
+
+# Returns True if a test has 'status' 'Not Run'
+def isTestNotRun(testDict):
+  return (testDict.get('status', None) == 'Not Run')
+
+
+# Return True if a test is missing
+def isTestMissing(testDict):
+  status = testDict.get('status', None)
+  if status == 'Missing': return True
+  if status == 'Missing / Failed': return True
+  return False
+
+
+# Define default test dicts sort order in tables
+def getDefaultTestDictsSortKeyList() : return ['testname', 'buildName', 'site']
 
 
 #
@@ -1917,21 +1959,6 @@ def buildHasBuildFailures(buildDict):
   if compilationDict and compilationDict['error'] > 0:
     return True
   return False
-
-
-# Returns True if a test has 'status' 'Passed'
-def isTestPassed(testDict):
-  return (testDict.get('status', None) == 'Passed')
-
-
-# Returns True if a test has 'status' 'Failed'
-def isTestFailed(testDict):
-  return (testDict.get('status', None) == 'Failed')
-
-
-# Returns True if a test has 'status' 'Not Run'
-def isTestNotRun(testDict):
-  return (testDict.get('status', None) == 'Not Run')
 
 
 # Functor class to sort a row of dicts by multiple columns of string data.
