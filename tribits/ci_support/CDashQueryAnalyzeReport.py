@@ -2501,11 +2501,10 @@ class TestsetsReporter(object):
   # Generate a pass/fail report for all of the testset analyzed by
   # reportTestsets().
   def getTestsHtmlReportStr(self, testsetName, date):
-    #summaryLine = CDQAR.createOverallCDashReportSummaryLine(cdashReportData,
-    #  inOptions.buildSetName, inOptions.date)
-    return ""
-
-    
+    summaryLine = createOverallCDashReportSummaryLine(self.cdashReportData,
+      testsetName, date)
+    return getFullCDashHtmlReportPageStr(
+      self.cdashReportData, pageTitle=summaryLine, pageStyle="")
 
 
 # Bin a list of test dicts by issue tracker

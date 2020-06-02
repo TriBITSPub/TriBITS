@@ -3928,6 +3928,11 @@ class test_TestsetsReporter(unittest.TestCase):
       stringsListName=cdashReportData.htmlEmailBodyBottom,
       debugPrint=False
       )
+    testsHtmlReportStr = testsetsReporter.getTestsHtmlReportStr(
+      "Tests for #1234", "2018-10-28")
+    # TODO: REMOVE THIS FILE WRITE!!!
+    #with open("testsHtmlReport.html", 'w') as testsHtmlReportFile:
+    #  testsHtmlReportFile.write(testsHtmlReportStr)
 
 
 #
