@@ -297,6 +297,10 @@ def cdashColorMissing(): return 'gray'
 # ToDo: Make the above return different colors for a color-blind pallette
 
 
+def getStandardTestsetAcroList():
+  return ['twoif', 'twoinr', 'twip', 'twim', 'twif', 'twinr']
+
+
 # Aggregate info about a test set used for generating the summary and table.
 #
 # Members:
@@ -2011,11 +2015,11 @@ def sortAndLimitListOfDicts(listOfDicts, sortKeyList = None,
 #
 # cdashReportData [in]: Report data of type CDashReportData
 #
-# buildsetName [in]: The name of the set of builds ot summary of the report
+# buildsetName [in]: The name of the set of builds to report on
 #
 # date [in]: Date string in format "YYYY-MM-DD"
 #
-def createOverallSummaryLine(cdashReportData, buildsetName, date):
+def createOverallCDashReportSummaryLine(cdashReportData, buildsetName, date):
   if cdashReportData.globalPass:
     summaryLine = "PASSED"
   else:
@@ -2400,32 +2404,47 @@ class SingleTestsetReporter(object):
   #
   def __init__(self, cdashReportData,
       testDictsSortKeyList=getDefaultTestDictsSortKeyList(),
-      addTestHistoryStrategy=None,
+      addTestHistoryStrategy=None, verbose=True,
     ):
     self.cdashReportData = cdashReportData
     self.testDictsSortKeyList = testDictsSortKeyList
     self.addTestHistoryStrategy = addTestHistoryStrategy
+    self.verbose = verbose
 
   # Report on a given test-set and write info to self.cdashReportData
   #
+  # On output, self.cdashReportData data will be updated with the summary and
+  # table of this given testsetInfo data.  In particular, the following
+  # cdashReportData fields will be written to:
   #
-  def report(self, testsetInfo, testsetTotalSize, testsetLOD,
+  #   cdashReportData.summaryLineDataNumbersList: List will be appended with
+  #   the entry ``testsetInfo.testsetAcro+"="+testsetTotalSize``.
+  #
+  #   cdashReportData.htmlEmailBodyTop: The name of the table from
+  #   testsetInfo.testsetDescr, the acronym testsetInfo.testsetAcro and the
+  #   size will be written on one line ending with ``<br>\n``.
+  #
+  #   cdashReportData.htmlEmailBodyBottom: Summary HTML table (with title)
+  #   will be written, along with formatting.
+  #
+  def reportSingleTestset(self, testsetInfo, testsetTotalSize, testsetLOD,
       testsetNonzeroSizeTriggerGlobalFail=True, sortTests=True,
       limitTableRows=None,   # Change to 'int' > 0 to limit table rows
       getTestHistory=False,
     ):
 
-    print("")  # RAB: Note to self, why is this print() here?
-
     testsetSummaryStr = \
       getCDashDataSummaryHtmlTableTitleStr(testsetInfo.testsetDescr,
         testsetInfo.testsetAcro, testsetTotalSize)
 
-    print(testsetSummaryStr)
+    if self.verbose:
+      print("")
+      print(testsetSummaryStr)
 
     if testsetTotalSize > 0:
 
-      self.cdashReportData.globalPass = False  # ToDo: Remove this from here!
+      if testsetNonzeroSizeTriggerGlobalFail:
+        self.cdashReportData.globalPass = False
 
       self.cdashReportData.summaryLineDataNumbersList.append(
         testsetInfo.testsetAcro+"="+str(testsetTotalSize))
@@ -2445,6 +2464,48 @@ class SingleTestsetReporter(object):
       self.cdashReportData.htmlEmailBodyBottom += createCDashTestHtmlTableStr(
         testsetInfo, testsetTotalSize, testsetSortedLimitedLOD,
         limitRowsToDisplay=limitTableRows)
+
+
+# Class to generate the data for an HTML report for all test-sets represented
+# in a list of test dicts.
+# 
+class TestsetsReporter(object):
+
+  # Constructor
+  #
+  # cdashReportData [persisting]: Data used to create the final report (of type
+  # CDashReportData).
+  #
+  def __init__(self, cdashReportData, testsetAcroList=getStandardTestsetAcroList(),
+    verbose=True):
+    self.cdashReportData = cdashReportData
+    self.testsetAcroList = testsetAcroList
+    self.singleTestsetReporter = SingleTestsetReporter(cdashReportData, verbose=verbose)
+
+
+  # Separate out and report on all of the test-sets in the input list of test
+  # dicts.
+  # 
+  def reportTestsets(self, testsLOD):
+    testDictsByTestsetAcro = binTestDictsByTestsetAcro(testsLOD)
+    for testsetAcro in self.testsetAcroList:
+      testsetLOD = testDictsByTestsetAcro.get(testsetAcro, None)
+      if testsetLOD:
+        testsetInfo = getStandardTestsetInfo(testsetAcro)
+        self.singleTestsetReporter.reportSingleTestset(testsetInfo,
+          len(testsetLOD), testsetLOD)
+  # ToDo: Modify the above to assert that there are no unexpected test-set
+  # types!
+
+
+  # Generate a pass/fail report for all of the testset analyzed by
+  # reportTestsets().
+  def getTestsHtmlReportStr(self, testsetName, date):
+    #summaryLine = CDQAR.createOverallCDashReportSummaryLine(cdashReportData,
+    #  inOptions.buildSetName, inOptions.date)
+    return ""
+
+    
 
 
 # Bin a list of test dicts by issue tracker

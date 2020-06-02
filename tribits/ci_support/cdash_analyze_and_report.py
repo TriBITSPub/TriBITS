@@ -833,42 +833,42 @@ if __name__ == '__main__':
     # person doing the triaging are sorted to the top.
     #
 
-    testsetReporter.report(
+    testsetReporter.reportSingleTestset(
       CDQAR.getStandardTestsetInfo('twoif'),
       len(twoifLOD), twoifLOD,
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True,
       )
 
-    testsetReporter.report(
+    testsetReporter.reportSingleTestset(
       CDQAR.getStandardTestsetInfo('twoinr'),
       len(twoinrLOD), twoinrLOD,
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True,
       )
 
-    testsetReporter.report(
+    testsetReporter.reportSingleTestset(
       CDQAR.getStandardTestsetInfo('twip'),
       len(twipLOD), twipLOD,
       limitTableRows=None,
       getTestHistory=False,  # Already got it above!
       )
 
-    testsetReporter.report(
+    testsetReporter.reportSingleTestset(
       CDQAR.getStandardTestsetInfo('twim', ""),
       len(twimLOD), twimLOD,
       limitTableRows=None,
       getTestHistory=False,  # Already got it above!
       )
 
-    testsetReporter.report(
+    testsetReporter.reportSingleTestset(
       CDQAR.getStandardTestsetInfo('twif', ""),
       len(twifLOD), twifLOD,
       limitTableRows=None,
       getTestHistory=True,
       )
 
-    testsetReporter.report(
+    testsetReporter.reportSingleTestset(
       CDQAR.getStandardTestsetInfo('twinr', ""),
       len(twinrLOD), twinrLOD,
       limitTableRows=None,
@@ -912,7 +912,7 @@ if __name__ == '__main__':
   # E) Put together final email summary line
   #
 
-  summaryLine = CDQAR.createOverallSummaryLine(cdashReportData,
+  summaryLine = CDQAR.createOverallCDashReportSummaryLine(cdashReportData,
     inOptions.buildSetName, inOptions.date)
 
   #

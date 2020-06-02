@@ -46,6 +46,7 @@ import pprint
 
 from FindCISupportDir import *
 from CDashQueryAnalyzeReport import *
+from CDashQueryAnalyzeReportUnitTestHelpers import *
 
 g_testBaseDir = getScriptBaseDir()
 
@@ -3861,6 +3862,72 @@ class test_binTestDictsByTestsetAcro(unittest.TestCase):
         tdswi('test7', 'Not Run', '1236'),
         ],
        )
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.TestsetsReporter
+#
+#############################################################################
+
+cdash_analyze_and_report_dir = g_testBaseDir+'/cdash_analyze_and_report'
+
+g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out = \
+  eval(
+    open(cdash_analyze_and_report_dir+'/twoif_10_twoinr2_twif_8_twinr_1/test_data.json',
+    'r').read())
+
+class test_TestsetsReporter(unittest.TestCase):
+
+  def test_empty(self):
+    cdashReportData = CDashReportData()
+    testsetsReporter = TestsetsReporter(cdashReportData, verbose=False)
+    testsLOD = []
+    testsetsReporter.reportTestsets(testsLOD)
+    self.assertEqual(cdashReportData.summaryLineDataNumbersList, [])
+    self.assertEqual(cdashReportData.htmlEmailBodyTop, "")
+    self.assertEqual(cdashReportData.htmlEmailBodyBottom, "")
+
+  def test_twif_8_twinr_1(self):
+    allTestsLOD = g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out
+    cdashReportData = CDashReportData()
+    testsetsReporter = TestsetsReporter(cdashReportData, verbose=False)
+    testsLOD = allTestsLOD
+    #g_pp.pprint(testsLOD)
+    testsetsReporter.reportTestsets(testsLOD)
+    #print("\ncdashReportData.summaryLineDataNumbersList = "+\
+    #  str(cdashReportData.summaryLineDataNumbersList))
+    #print("\ncdashReportData.htmlEmailBodyTop:\n"+\
+    #  cdashReportData.htmlEmailBodyTop)
+    summaryLineDataNumbersList_expected = \
+      ['twif=8', 'twinr=1']
+    self.assertEqual(cdashReportData.summaryLineDataNumbersList,
+      summaryLineDataNumbersList_expected)
+    htmlEmailBodyTop_expected = \
+      '<font color="red">Tests with issue trackers Failed: twif=8</font><br>\n'+\
+      '<font color="orange">Tests with issue trackers Not Run: twinr=1</font><br>\n'
+    self.assertEqual(cdashReportData.htmlEmailBodyTop,
+      htmlEmailBodyTop_expected)
+    #print("\ncdashReportData.htmlEmailBodyBottom:\n"+\
+    #  cdashReportData.htmlEmailBodyBottom)
+    assertListOfRegexsFoundInLinstOfStrs(self,
+      regexList=[
+        "<h3><font color=.red.>Tests with issue trackers Failed: twif=8</font></h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\"><font color=\"red\">Failed</font></a></td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/3640\">#3640</a></td>",
+        "<h3><font color=\"orange\">Tests with issue trackers Not Run: twinr=1</font></h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816373&build=4107331\">Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816373&build=4107331\"><font color=\"orange\">Not Run</font></a></td>",
+        "<td align=\"left\">Required Files Missing</td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/3638\">#3638</a></td>",
+        ],
+      stringsList=cdashReportData.htmlEmailBodyBottom.split('\n'),
+      stringsListName=cdashReportData.htmlEmailBodyBottom,
+      debugPrint=False
+      )
 
 
 #
