@@ -21,6 +21,24 @@ def getIdxOfTestInTestLOD(testsLOD, site, buildName, testname):
   return testIdx
 
 
+# Search for a list of strings in a single long string
+def assertFindListOfStringsInString(
+  testObj,
+  stringListToFind,
+  stringToSearch,
+  stringToSearchVarName,
+  debugPrint=False,
+  ):
+  for stringToFind in stringListToFind:
+    foundString = True
+    if stringToSearch.find(stringToFind) == -1:
+      foundString = False
+      if debugPrint:
+        print(stringToSearchVarName+" = "+str(stringToSearch))
+    testObj.assertTrue(foundString,
+      "Error, could not find string '"+stringToFind+"' in '"+stringToSearchVarName+"'!")
+
+
 # Search for a string in a list of stirngs
 def assertFindStringInListOfStrings(
   testObj,

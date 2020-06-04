@@ -892,7 +892,9 @@ if __name__ == '__main__':
       testDataFileName = inOptions.writeTestDataToFile
       print("\nWriting out gathered test data to file "+testDataFileName+" ...")
       testDataLOD = twipLOD + twimLOD + twifLOD + twinrLOD
-      # ToDo: Add the first inOptions.limitTableRows elements of twiofLOD and twoinrLOD ...
+      CDQAR.foreachTransform(testDataLOD,
+        CDQAR.AddCDashTestingDayFunctor(inOptions.date))
+      # ToDo: Add the first inOptions.limitTableRows elements of twiofLOD and twoinrLOD?
       CDQAR.pprintPythonDataToFile(testDataLOD, testDataFileName)
 
   except Exception:

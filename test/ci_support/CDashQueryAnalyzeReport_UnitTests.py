@@ -3019,6 +3019,23 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.addCDashTestingDayFunctor
+#
+#############################################################################
+
+
+class test_addCDashTestingDayFunctor(unittest.TestCase):
+
+  def test_1(self):
+    testDict = { u'testname':u'test1' }
+    addCDashTestingDayFunctor = AddCDashTestingDayFunctor("YYYY-MM-DD")
+    testDict=addCDashTestingDayFunctor(testDict)
+    testDict_expected = { u'testname':u'test1', u'cdash_testing_day':u'YYYY-MM-DD' }
+    self.assertEqual(testDict, testDict_expected)
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.buildHasConfigureFailures()
 #
 #############################################################################
@@ -4039,8 +4056,8 @@ class test_TestsetsReporter(unittest.TestCase):
     testsHtmlReportStr = testsetsReporter.getTestsHtmlReportStr(
       "Status of tests for issue #1236")
     # TODO: REMOVE THIS FILE WRITE!!!
-    with open("testsHtmlReport.html", 'w') as testsHtmlReportFile:
-      testsHtmlReportFile.write(testsHtmlReportStr)
+    #with open("testsHtmlReport.html", 'w') as testsHtmlReportFile:
+    #  testsHtmlReportFile.write(testsHtmlReportStr)
     assertListOfRegexsFoundInLinstOfStrs(self,
       regexList=[
         '<h2>Status of tests for issue #1236</h2>',
@@ -4055,6 +4072,312 @@ class test_TestsetsReporter(unittest.TestCase):
         ],
       stringsList=testsHtmlReportStr.split('\n'),
       stringsListName="testsHtmlReportStr",
+      debugPrint=False
+      )
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getIssueTrackerAndAssertAllSame()
+#
+#############################################################################
+
+
+def tdit(testname, issue_tracker_id, skipUrlField=False):
+  td = { u'testname':unicode(testname) }
+  if issue_tracker_id:
+    td.update({u'issue_tracker':u'#'+issue_tracker_id})
+    if not skipUrlField:
+      td.update({
+        u'issue_tracker_url' :
+          unicode('https://github.com/org/repo/issues/'+issue_tracker_id)})
+  return td
+
+
+class test_getIssueTrackerAndAssertAllSame(unittest.TestCase):
+
+
+  def test_empty(self):
+    testsLOD = []
+    issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+    self.assertEqual(issueTracker, None)
+
+
+  def test_all_matching(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234'),
+      tdit('test3', '1234'),
+      ]
+    issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+    self.assertEqual(issueTracker,
+      (u'#1234', u'https://github.com/org/repo/issues/1234'))
+
+
+  def test_missing_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', None),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {u'testname': u'test2'} at index 1"+\
+        " is missing the 'issue_tracker' field!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_missing_issue_tracker_url_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234', skipUrlField=True),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict"+\
+        " {u'issue_tracker': u'#1234', u'testname': u'test2'} at index 1"+\
+        " is missing the 'issue_tracker_url' field!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_inconsistent_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1235'),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {u'issue_tracker': u'#1235', u'issue_tracker_url':"+\
+        " u'https://github.com/org/repo/issues/1235', u'testname': u'test2'} at"+\
+        " index 1 has a different 'issue_tracker' field '#1235' than the expected"+\
+        " value of '#1234'!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_inconsistent_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234'),
+      tdit('test3', '1234'),
+      ]
+    testsLOD[2]['issue_tracker_url'] = u'https://github.com/org/repo/issues/1236'
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {u'issue_tracker': u'#1234', u'issue_tracker_url':"+\
+        " u'https://github.com/org/repo/issues/1236', u'testname': u'test3'} at"+\
+        " index 2 has a different 'issue_tracker_url' field"+\
+        " 'https://github.com/org/repo/issues/1236' than the expected value of"+\
+        " 'https://github.com/org/repo/issues/1234'!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  #def test_inconsistent_issue_tracker_url_field(self):
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.IssueTrackerTestsStatusReporter
+#
+# NOTE: This also tests the class CDashQueryAnalyzeReport.TestsetsReporter
+#
+#############################################################################
+
+
+def setIssueTrackerFields(testsLOD, issue_tracker, issue_tracker_url):
+  for testDict in testsLOD:
+    testDict['issue_tracker'] = issue_tracker
+    testDict['issue_tracker_url'] = issue_tracker_url
+
+
+class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
+
+
+  def test_empty(self):
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    testsLOD = []
+    okayToCloseIssue = \
+      issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+    self.assertEqual(okayToCloseIssue, True)
+    reportHtml = issueTrackerTestsStatusReporter.getIssueTrackerTestsStatusReport()
+    self.assertEqual(reportHtml, None)
+
+
+  def test_non_matching_issue_tracker_field(self):
+    allTestsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    threwExcept = True
+    try:
+      testsLOD = allTestsLOD
+      okayToCloseIssue = \
+        issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      assertFindListOfStringsInString(self,
+        [
+          "Error, the test dict {",
+          "u'buildName': u'Trilinos-atdm-cee-rhel6-clang-opt-serial'",
+          "u'testname': u'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2'",
+          "} at index 1 has a different 'issue_tracker' field '#3632'"+\
+            " than the expected value of '#3640'!",
+          ],
+        str(errMsg),
+        "errMsg",
+        debugPrint=False,
+        )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_twif_8_twinr_1(self):
+    testsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    setIssueTrackerFields(testsLOD, u'#1234',
+      u'https://github.com/trilinos/Trilinos/issues/1234')
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    okayToCloseIssue = \
+      issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+    self.assertEqual(okayToCloseIssue, False)
+    summaryLineDataNumbersList_expected = \
+      ['twif=8', 'twinr=1']
+    self.assertEqual(
+      issueTrackerTestsStatusReporter.cdashReportData.summaryLineDataNumbersList,
+      summaryLineDataNumbersList_expected)
+    issueTrckerTestsStatusReportHtml = \
+      issueTrackerTestsStatusReporter.getIssueTrackerTestsStatusReport()
+    # TODO: REMOVE THIS FILE WRITE!!!
+    #with open("issueTrckerTestsStatusReport.html", 'w') as testsHtmlReportFile:
+    #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
+    assertListOfRegexsFoundInLinstOfStrs(self,
+      regexList=[
+        '<h2>Test results for issue #1234 as of 2018-10-28</h2>',
+        "<h3><font color=.red.>Tests with issue trackers Failed: twif=8</font></h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\"><font color=\"red\">Failed</font></a></td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/1234\">#1234</a></td>",
+        "<h3><font color=\"orange\">Tests with issue trackers Not Run: twinr=1</font></h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816373&build=4107331\">Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816373&build=4107331\"><font color=\"orange\">Not Run</font></a></td>",
+        "<td align=\"left\">Required Files Missing</td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/1234\">#1234</a></td>",
+        ],
+      stringsList=issueTrckerTestsStatusReportHtml.split('\n'),
+      stringsListName="issueTrckerTestsStatusReportHtml",
+      debugPrint=False
+      )
+
+
+  def test_twip_1_twif_5_twim_2_twinr_1(self):
+    testsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    setIssueTrackerFields(testsLOD, u'#1234',
+      u'https://github.com/trilinos/Trilinos/issues/1234')
+    # Change a test from failing to passing
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    makeTestPassing(testsLOD[testIdx])
+    # Change a from from faling to missing
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    makeTestMissing(testsLOD[testIdx])
+    # Change another a test from failing to missing
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3')
+    makeTestMissing(testsLOD[testIdx])
+    # Run the reporter
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    okayToCloseIssue = \
+      issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+    self.assertEqual(okayToCloseIssue, False)
+    # Check the basic collected
+    summaryLineDataNumbersList_expected = \
+      ['twip=1', 'twim=2', 'twif=5', 'twinr=1']
+    self.assertEqual(
+      issueTrackerTestsStatusReporter.cdashReportData.summaryLineDataNumbersList,
+      summaryLineDataNumbersList_expected)
+    htmlEmailBodyTop_expected = \
+      '<font color="green">Tests with issue trackers Passed: twip=1</font><br>\n'+\
+      '<font color="gray">Tests with issue trackers Missing: twim=2</font><br>\n'+\
+      '<font color="red">Tests with issue trackers Failed: twif=5</font><br>\n'+\
+      '<font color="orange">Tests with issue trackers Not Run: twinr=1</font><br>\n'
+    self.assertEqual(
+      issueTrackerTestsStatusReporter.cdashReportData.htmlEmailBodyTop,
+      htmlEmailBodyTop_expected)
+    assertListOfRegexsFoundInLinstOfStrs(self,
+      regexList=[
+        '<h3><font color="green">Tests with issue trackers Passed: twip=1</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>',
+        '<td align="left"><a href=".*">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>',
+        '<td align="left"><a href=".*"><font color="green">Passed</font></a></td>',
+        '<td align="left">Completed [(]Passed[)]</td>',
+
+        '<h3><font color="gray">Tests with issue trackers Missing: twim=2</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-intel-opt-serial</a></td>',
+        '<td align="left"><a href=".*">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>',
+        '<td align="left"><a href=".*"><font color="gray">Missing</font></a></td>',
+        '<td align="left">Missing</td>',
+
+        '<h3><font color="red">Tests with issue trackers Failed: twif=5</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>',
+        '<td align="left"><a href=".*">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>',
+        '<td align="left"><a href=".*"><font color="red">Failed</font></a></td>',
+        '<td align="left">Completed [(]Failed[)]</td>',
+
+        '<h3><font color="orange">Tests with issue trackers Not Run: twinr=1</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>',
+        '<td align="left"><a href=".*">Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>',
+        '<td align="left"><a href=".*"><font color="orange">Not Run</font></a></td>',
+        '<td align="left">Required Files Missing</td>',
+        ],
+      stringsList=issueTrackerTestsStatusReporter.testsetsReporter.\
+        cdashReportData.htmlEmailBodyBottom.split('\n'),
+      stringsListName="cdashReportData.htmlEmailBodyBottom",
+      debugPrint=False
+      )
+    # Get the summary report
+    issueTrckerTestsStatusReportHtml = \
+      issueTrackerTestsStatusReporter.getIssueTrackerTestsStatusReport()
+    # TODO: REMOVE THIS FILE WRITE!!!
+    #with open("issueTrckerTestsStatusReport.html", 'w') as testsHtmlReportFile:
+    #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
+    assertListOfRegexsFoundInLinstOfStrs(self,
+      regexList=[
+        '<h2>Test results for issue #1234 as of 2018-10-28</h2>',
+        '<font color="green">Tests with issue trackers Passed: twip=1</font><br>',
+        '<font color="gray">Tests with issue trackers Missing: twim=2</font><br>',
+        '<font color="red">Tests with issue trackers Failed: twif=5</font><br>',
+        '<font color="orange">Tests with issue trackers Not Run: twinr=1</font><br>',
+        '<h3><font color="green">Tests with issue trackers Passed: twip=1</font></h3>',
+        '<h3><font color="gray">Tests with issue trackers Missing: twim=2</font></h3>',
+        '<h3><font color="red">Tests with issue trackers Failed: twif=5</font></h3>',
+        '<h3><font color="orange">Tests with issue trackers Not Run: twinr=1</font></h3>',
+        ],
+      stringsList=issueTrckerTestsStatusReportHtml.split('\n'),
+      stringsListName="issueTrckerTestsStatusReportHtml",
       debugPrint=False
       )
 

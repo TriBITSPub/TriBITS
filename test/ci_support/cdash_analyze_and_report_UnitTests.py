@@ -1441,6 +1441,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     self.assertEqual(testDict['testname'], 'MueLu_UnitTestsBlockedEpetra_MPI_1')
     self.assertEqual(testDict['status'], 'Passed')
     self.assertEqual(testDict['details'], 'Completed (Passed)')
+    self.assertEqual(testDict['cdash_testing_day'], u'2018-10-28')
     self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
       '2018-10-28T06:10:33 UTC')
     # Make sure an entry from 'twim' exists!
@@ -1453,6 +1454,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     self.assertEqual(testDict['testname'], 'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
     self.assertEqual(testDict['status'], 'Missing')
     self.assertEqual(testDict['details'], 'Missing')
+    self.assertEqual(testDict['cdash_testing_day'], u'2018-10-28')
     self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
       '2018-10-26T12:00:00 UTC')
     # Make sure an entry from 'twif' exists!
@@ -1465,6 +1467,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     self.assertEqual(testDict['testname'], 'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
     self.assertEqual(testDict['status'], 'Failed')
     self.assertEqual(testDict['details'], 'Completed (Failed)\n')
+    self.assertEqual(testDict['cdash_testing_day'], u'2018-10-28')
     self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
       '2018-10-28T06:10:33 UTC')
 
