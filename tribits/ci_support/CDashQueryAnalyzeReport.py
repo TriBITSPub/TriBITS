@@ -2055,7 +2055,9 @@ def createOverallCDashReportSummaryLine(cdashReportData, buildsetName, date):
 ################################################################################
 
 
-def getFullCDashHtmlReportPageStr(cdashReportData, pageTitle="", pageStyle=""):
+def getFullCDashHtmlReportPageStr(cdashReportData, pageTitle="", pageStyle="",
+    detailsBlockSummary=None,
+  ):
 
   htmlPage = \
     "<html>\n"
@@ -2077,8 +2079,20 @@ def getFullCDashHtmlReportPageStr(cdashReportData, pageTitle="", pageStyle=""):
 
   htmlPage += \
     cdashReportData.htmlEmailBodyTop+\
-    "\n\n"+\
-    cdashReportData.htmlEmailBodyBottom+\
+    "\n\n"
+
+  if detailsBlockSummary:
+    htmlPage += \
+      "<details>\n\n"+\
+      "<summary><b>"+detailsBlockSummary+":</b> (click to expand)</b></summary>\n\n"
+  htmlPage += \
+    cdashReportData.htmlEmailBodyBottom
+
+  if detailsBlockSummary:
+    htmlPage += \
+      "</details>\n"
+
+  htmlPage += \
     "</body>\n"+\
     "</html>\n"
 
@@ -2465,7 +2479,8 @@ class IssueTrackerTestsStatusReporter(object):
       return None
     testsSummaryTitle = \
       "Test results for issue "+self.issueTracker+" as of "+self.cdashTestingDay
-    return self.testsetsReporter.getTestsHtmlReportStr(testsSummaryTitle)
+    return self.testsetsReporter.getTestsHtmlReportStr(testsSummaryTitle,
+      detailsBlockSummary="Detailed test results")
 
 
 # Get the 'issue_tracker' filed from a list of test dicts and assert they are
@@ -2668,12 +2683,15 @@ class TestsetsReporter(object):
 
   # Generate a pass/fail report for all of the testset analyzed by
   # reportTestsets().
-  def getTestsHtmlReportStr(self, testsSummaryTitle):
+  def getTestsHtmlReportStr(self, testsSummaryTitle, useDetailsBlock=False,
+      detailsBlockSummary=None,
+    ):
     cdashReportData = self.cdashReportData
     cdashReportData.htmlEmailBodyTop = \
       "<p>\n" + cdashReportData.htmlEmailBodyTop + "</p>\n"
     return getFullCDashHtmlReportPageStr(
-      cdashReportData, pageTitle=testsSummaryTitle, pageStyle="")
+      cdashReportData, pageTitle=testsSummaryTitle, pageStyle="",
+      detailsBlockSummary=detailsBlockSummary)
 
 
 # Bin a list of test dicts by issue tracker
