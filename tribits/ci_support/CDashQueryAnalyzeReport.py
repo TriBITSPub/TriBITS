@@ -313,15 +313,20 @@ def getStandardTestsetAcroList():
 # * testsetAcro: e.g. 'twoif'
 # * testsetDescr: e.g. "Tests without issue trackers Failed"
 # * testsetTableType: Values: 'nopass', 'pass', 'missing'
-# * testsetColor: e.g.  'red', 'green' (whatever is accepted by colorHtmlText())
-#
+# * testsetColor: e.g.  'red', 'green' (whatever is accepted by function
+#   colorHtmlText())
+# * existanceTriggersGlobalFail: If 'True' and any of tests fall into this
+#   test-set category, then it shoulid trigger a global 'False'
 class TestsetInfo(object):
 
-  def __init__(self, testsetAcro, testsetDescr, testsetTableType, testsetColor):
+  def __init__(self, testsetAcro, testsetDescr, testsetTableType, testsetColor,
+      existanceTriggersGlobalFail=True,
+    ):
     self.testsetAcro = testsetAcro
     self.testsetDescr = testsetDescr
     self.testsetTableType = testsetTableType
     self.testsetColor = testsetColor
+    self.existanceTriggersGlobalFail = existanceTriggersGlobalFail
 
 
 # Return the TestsetInfo object for the standard types of test sets that get
@@ -342,10 +347,10 @@ def getStandardTestsetInfo(testsetAcro, testsetColor=None):
       cdashColorNotRun())
   elif testsetAcro == "twip":
     tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Passed", 'pass',
-      cdashColorPassed())
+      cdashColorPassed(), existanceTriggersGlobalFail=False)
   elif testsetAcro == "twim":
     tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Missing", 'missing',
-      cdashColorMissing())
+      cdashColorMissing(), existanceTriggersGlobalFail=False)
   elif testsetAcro == "twif":
     tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Failed", 'nopass',
       cdashColorFailed())
@@ -2608,7 +2613,7 @@ class SingleTestsetReporter(object):
   #   will be written, along with formatting.
   #
   def reportSingleTestset(self, testsetInfo, testsetTotalSize, testsetLOD,
-      testsetNonzeroSizeTriggerGlobalFail=True, sortTests=True,
+      sortTests=True,
       limitTableRows=None,   # Change to 'int' > 0 to limit table rows
       getTestHistory=False,
     ):
@@ -2623,7 +2628,7 @@ class SingleTestsetReporter(object):
 
     if testsetTotalSize > 0:
 
-      if testsetNonzeroSizeTriggerGlobalFail:
+      if testsetInfo.existanceTriggersGlobalFail:
         self.cdashReportData.globalPass = False
 
       self.cdashReportData.summaryLineDataNumbersList.append(
