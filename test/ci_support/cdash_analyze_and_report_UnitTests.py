@@ -1129,8 +1129,8 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       )
 
 
-  # Test to check the behavior for tests with issue trackers that are passing
-  # and missing
+  # Test to check the behavior for tests with issue trackers are passing and
+  # missing in addition to other categories fo tests.
   #
   # We want to test two use cases for missing tests.  First, we want to
   # display tests with issue trackers that are missing in the current testing
@@ -1142,20 +1142,20 @@ class test_cdash_analyze_and_report(unittest.TestCase):
   # at all (other than in the STDOUT).  Finally, we want to to check tests
   # with issue trackers that are passing in the current testing day.  In order
   # implement this test, we don't want to use any extra data than what already
-  # exists in the twoif_12_twif_9/ test directory.  To
-  # accomplish this, we will remove some of the tests with issue trackers from
-  # the file fullCDashNonpassingTests.json and the ones that we remove will be
-  # for used to represent tests with issue trackers passing and missing tests.
-  # That way, we have the test history for these tests.  We will just need to
+  # exists in the twoif_12_twif_9/ test directory.  To accomplish this, we
+  # will remove some of the tests with issue trackers from the file
+  # fullCDashNonpassingTests.json and the ones that we remove will be for used
+  # to represent tests with issue trackers passing and missing tests.  That
+  # way, we have the test history for these tests.  We will just need to
   # manipulate that test history by deleting some days from the test history
   # files for the missing tests and we will need to change the history for the
   # passing tests to be passed for the current testing day (and a few days
   # before that?).  Also, it is easiest to just manipulate for the existing
   # set of tests with issue trackers so that we don't have to modify the file
   # testsWithIssueTrackers.csv.
-  def test_twip_twim(self):
+  def test_bm_1_twoif_12_twip_2_twim_2_twif_5(self):
 
-    testCaseName = "twip_twim"
+    testCaseName = "bm_1_twoif_12_twip_2_twim_2_twif_5"
 
     # Copy the raw files to get started
     testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
