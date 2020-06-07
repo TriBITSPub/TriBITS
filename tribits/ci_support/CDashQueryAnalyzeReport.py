@@ -317,7 +317,7 @@ def getStandardTestsetAcroList():
 #   colorHtmlText())
 # * existanceTriggersGlobalFail: If 'True' and any of tests fall into this
 #   test-set category, then it shoulid trigger a global 'False'
-class TestsetInfo(object):
+class TestsetTypeInfo(object):
 
   def __init__(self, testsetAcro, testsetDescr, testsetTableType, testsetColor,
       existanceTriggersGlobalFail=True,
@@ -329,7 +329,7 @@ class TestsetInfo(object):
     self.existanceTriggersGlobalFail = existanceTriggersGlobalFail
 
 
-# Return the TestsetInfo object for the standard types of test sets that get
+# Return the TestsetTypeInfo object for the standard types of test sets that get
 # their own tables.
 #
 # testsetArco [in] Acronym for the standard test set (e.g. 'twoif')
@@ -338,24 +338,24 @@ class TestsetInfo(object):
 # header.  If 'None' is passed in (the default), then a standard color is
 # used.  If the empty string is passed in '', then no color will be applied.
 #
-def getStandardTestsetInfo(testsetAcro, testsetColor=None):
+def getStandardTestsetTypeInfo(testsetAcro, testsetColor=None):
   if testsetAcro == "twoif":
-    tsi = TestsetInfo(testsetAcro, "Tests without issue trackers Failed", 'nopass',
+    tsi = TestsetTypeInfo(testsetAcro, "Tests without issue trackers Failed", 'nopass',
       cdashColorFailed())
   elif testsetAcro == "twoinr":
-    tsi = TestsetInfo(testsetAcro, "Tests without issue trackers Not Run", 'nopass',
+    tsi = TestsetTypeInfo(testsetAcro, "Tests without issue trackers Not Run", 'nopass',
       cdashColorNotRun())
   elif testsetAcro == "twip":
-    tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Passed", 'pass',
+    tsi = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Passed", 'pass',
       cdashColorPassed(), existanceTriggersGlobalFail=False)
   elif testsetAcro == "twim":
-    tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Missing", 'missing',
+    tsi = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Missing", 'missing',
       cdashColorMissing(), existanceTriggersGlobalFail=False)
   elif testsetAcro == "twif":
-    tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Failed", 'nopass',
+    tsi = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Failed", 'nopass',
       cdashColorFailed())
   elif testsetAcro == "twinr":
-    tsi = TestsetInfo(testsetAcro, "Tests with issue trackers Not Run",'nopass',
+    tsi = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Not Run",'nopass',
       cdashColorNotRun())
   else:
     raise Excpetion("Error, typesetAcro="+str(testsetAcro)+" not supported!")
@@ -2349,7 +2349,7 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
 
 # Create a tests HTML table string
 #
-# testsetInfo [in]: Information about the testset of type TestsetInfo
+# testsetTypeInfo [in]: Information about the testset of type TestsetTypeInfo
 #
 # testTypeCountNum [in]: Number of total items for the test type, before
 # limiting (e.g. 25)
@@ -2375,7 +2375,7 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
 # htmlTableStyle [in]: Sytle inside of <table ... > (see createHtmlTableStr())
 # (default None)
 #
-def createCDashTestHtmlTableStr(testsetInfo, testTypeCountNum, testsLOD,
+def createCDashTestHtmlTableStr(testsetTypeInfo, testTypeCountNum, testsLOD,
     limitRowsToDisplay=None, htmlStyle=None, htmlTableStyle=None,
   ):
   # Return empty string if no tests
@@ -2384,11 +2384,11 @@ def createCDashTestHtmlTableStr(testsetInfo, testTypeCountNum, testsLOD,
   # Table title
   tableTitle = colorHtmlText(
     getCDashDataSummaryHtmlTableTitleStr(
-      testsetInfo.testsetDescr, testsetInfo.testsetAcro,
+      testsetTypeInfo.testsetDescr, testsetTypeInfo.testsetAcro,
       testTypeCountNum, limitRowsToDisplay ),
-    testsetInfo.testsetColor )
+    testsetTypeInfo.testsetColor )
   # Consecutive nopass/pass/missing column
-  consecCol = getCDashTestHtmlTableConsecColData(testsetInfo.testsetTableType)
+  consecCol = getCDashTestHtmlTableConsecColData(testsetTypeInfo.testsetTableType)
   # Get daysOfHistory out of the data
   daysOfHistory = testsLOD[0]['test_history_num_days']
   # Create column headers
@@ -2599,28 +2599,28 @@ class SingleTestsetReporter(object):
   # Report on a given test-set and write info to self.cdashReportData
   #
   # On output, self.cdashReportData data will be updated with the summary and
-  # table of this given testsetInfo data.  In particular, the following
+  # table of this given testsetTypeInfo data.  In particular, the following
   # cdashReportData fields will be written to:
   #
   #   cdashReportData.summaryLineDataNumbersList: List will be appended with
-  #   the entry ``testsetInfo.testsetAcro+"="+testsetTotalSize``.
+  #   the entry ``testsetTypeInfo.testsetAcro+"="+testsetTotalSize``.
   #
   #   cdashReportData.htmlEmailBodyTop: The name of the table from
-  #   testsetInfo.testsetDescr, the acronym testsetInfo.testsetAcro and the
+  #   testsetTypeInfo.testsetDescr, the acronym testsetTypeInfo.testsetAcro and the
   #   size will be written on one line ending with ``<br>\n``.
   #
   #   cdashReportData.htmlEmailBodyBottom: Summary HTML table (with title)
   #   will be written, along with formatting.
   #
-  def reportSingleTestset(self, testsetInfo, testsetTotalSize, testsetLOD,
+  def reportSingleTestset(self, testsetTypeInfo, testsetTotalSize, testsetLOD,
       sortTests=True,
       limitTableRows=None,   # Change to 'int' > 0 to limit table rows
       getTestHistory=False,
     ):
 
     testsetSummaryStr = \
-      getCDashDataSummaryHtmlTableTitleStr(testsetInfo.testsetDescr,
-        testsetInfo.testsetAcro, testsetTotalSize)
+      getCDashDataSummaryHtmlTableTitleStr(testsetTypeInfo.testsetDescr,
+        testsetTypeInfo.testsetAcro, testsetTotalSize)
 
     if self.verbose:
       print("")
@@ -2628,14 +2628,14 @@ class SingleTestsetReporter(object):
 
     if testsetTotalSize > 0:
 
-      if testsetInfo.existanceTriggersGlobalFail:
+      if testsetTypeInfo.existanceTriggersGlobalFail:
         self.cdashReportData.globalPass = False
 
       self.cdashReportData.summaryLineDataNumbersList.append(
-        testsetInfo.testsetAcro+"="+str(testsetTotalSize))
+        testsetTypeInfo.testsetAcro+"="+str(testsetTotalSize))
 
       self.cdashReportData.htmlEmailBodyTop += \
-        colorHtmlText(testsetSummaryStr, testsetInfo.testsetColor)+"<br>\n"
+        colorHtmlText(testsetSummaryStr, testsetTypeInfo.testsetColor)+"<br>\n"
 
       if sortTests or limitTableRows:
         testsetSortedLimitedLOD = sortAndLimitListOfDicts(
@@ -2647,7 +2647,7 @@ class SingleTestsetReporter(object):
         self.addTestHistoryStrategy.getTestHistory(testsetSortedLimitedLOD)
 
       self.cdashReportData.htmlEmailBodyBottom += createCDashTestHtmlTableStr(
-        testsetInfo, testsetTotalSize, testsetSortedLimitedLOD,
+        testsetTypeInfo, testsetTotalSize, testsetSortedLimitedLOD,
         limitRowsToDisplay=limitTableRows,
         htmlStyle=self.htmlStyle, htmlTableStyle=self.htmlTableStyle )
 
@@ -2679,8 +2679,8 @@ class TestsetsReporter(object):
     for testsetAcro in self.testsetAcroList:
       testsetLOD = testDictsByTestsetAcro.get(testsetAcro, None)
       if testsetLOD:
-        testsetInfo = getStandardTestsetInfo(testsetAcro)
-        self.singleTestsetReporter.reportSingleTestset(testsetInfo,
+        testsetTypeInfo = getStandardTestsetTypeInfo(testsetAcro)
+        self.singleTestsetReporter.reportSingleTestset(testsetTypeInfo,
           len(testsetLOD), testsetLOD)
   # ToDo: Modify the above to assert that there are no unexpected test-set
   # types!

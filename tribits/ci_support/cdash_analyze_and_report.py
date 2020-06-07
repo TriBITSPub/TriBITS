@@ -834,42 +834,42 @@ if __name__ == '__main__':
     #
 
     testsetReporter.reportSingleTestset(
-      CDQAR.getStandardTestsetInfo('twoif'),
+      CDQAR.getStandardTestsetTypeInfo('twoif'),
       len(twoifLOD), twoifLOD,
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True,
       )
 
     testsetReporter.reportSingleTestset(
-      CDQAR.getStandardTestsetInfo('twoinr'),
+      CDQAR.getStandardTestsetTypeInfo('twoinr'),
       len(twoinrLOD), twoinrLOD,
       limitTableRows=inOptions.limitTableRows,
       getTestHistory=True,
       )
 
     testsetReporter.reportSingleTestset(
-      CDQAR.getStandardTestsetInfo('twip'),
+      CDQAR.getStandardTestsetTypeInfo('twip'),
       len(twipLOD), twipLOD,
       limitTableRows=None,
       getTestHistory=False,  # Already got it above!
       )
 
     testsetReporter.reportSingleTestset(
-      CDQAR.getStandardTestsetInfo('twim', ""),
+      CDQAR.getStandardTestsetTypeInfo('twim', ""),
       len(twimLOD), twimLOD,
       limitTableRows=None,
       getTestHistory=False,  # Already got it above!
       )
 
     testsetReporter.reportSingleTestset(
-      CDQAR.getStandardTestsetInfo('twif', ""),
+      CDQAR.getStandardTestsetTypeInfo('twif', ""),
       len(twifLOD), twifLOD,
       limitTableRows=None,
       getTestHistory=True,
       )
 
     testsetReporter.reportSingleTestset(
-      CDQAR.getStandardTestsetInfo('twinr', ""),
+      CDQAR.getStandardTestsetTypeInfo('twinr', ""),
       len(twinrLOD), twinrLOD,
       limitTableRows=None,
       getTestHistory=True,
