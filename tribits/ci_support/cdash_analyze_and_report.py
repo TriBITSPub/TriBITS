@@ -923,26 +923,7 @@ if __name__ == '__main__':
 
   # Finish off the top paragraph of the summary lines
   cdashReportData.htmlEmailBodyTop += \
-    "</p>"
-    
-  # Construct HTML body guts without header or begin/end body.
-  htmlEmaiBodyGuts = \
-    cdashReportData.htmlEmailBodyTop+\
-    "\n\n"+\
-    cdashReportData.htmlEmailBodyBottom
-
-  htmlHeaderAndBeginBody = \
-    "<html>\n"+\
-    "<head>\n"+\
-    CDQAR.getDefaultHtmlPageStyleStr()+\
-    "</head>\n"+\
-    "\n"+\
-    "<body>\n"+\
-    "\n"
-
-  htmlEndBody = \
-    "</body>\n"+\
-    "</html>\n"
+    "</p>\n"
 
   #
   # G) Write HTML body file and/or send HTML email(s)
