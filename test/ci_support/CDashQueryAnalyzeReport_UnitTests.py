@@ -46,6 +46,7 @@ import pprint
 
 from FindCISupportDir import *
 from CDashQueryAnalyzeReport import *
+from CDashQueryAnalyzeReportUnitTestHelpers import *
 
 g_testBaseDir = getScriptBaseDir()
 
@@ -811,6 +812,85 @@ class test_writeTestsLODToCsvFileStructure(unittest.TestCase):
       )
     self.assertEqual(csvFileStruct.headersList, csvFileStruct_expected.headersList)
     self.assertEqual(csvFileStruct.rowsList, csvFileStruct_expected.rowsList)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getAndCacheCDashQueryDataOrReadFromCache()
+#
+#############################################################################
+
+
+class test_getStandardTestsetTypeInfo(unittest.TestCase):
+
+  def test_twoif(self):
+    self.assertEqual(getStandardTestsetTypeInfo('twoif').testsetAcro, 'twoif')
+
+  def test_twip(self):
+    self.assertEqual(getStandardTestsetTypeInfo('twip').testsetAcro, 'twip')
+
+  def test_testsetColor(self):
+    tsti = getStandardTestsetTypeInfo('twif')
+    self.assertEqual(tsti.testsetAcro, 'twif')
+    self.assertEqual(tsti.testsetColor, cdashColorFailed())
+    tsti = getStandardTestsetTypeInfo('twif', testsetColor=cdashColorMissing())
+    self.assertEqual(tsti.testsetAcro, 'twif')
+    self.assertEqual(tsti.testsetColor, cdashColorMissing())
+
+  def test_invalid(self):
+    threwExcept = True
+    try:
+      getStandardTestsetTypeInfo('invalid')
+      threwExcept = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, testsetAcro = 'invalid' is not supported!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getTestsetAcroFromTestDict()
+#
+#############################################################################
+
+
+def tds(status, issue_tracker):
+  td = { u'status' : unicode(status) }
+  if issue_tracker:
+    td.update( { u'issue_tracker' : unicode(issue_tracker) } )
+  return td
+
+
+class test_getTestsetAcroFromTestDict(unittest.TestCase):
+
+  def run_test_case(self, status, issue_tracker, testsetAcro):
+    self.assertEqual(getTestsetAcroFromTestDict(tds(status, issue_tracker)),
+      testsetAcro )
+
+  def test_pass_cases(self):
+    self.run_test_case('Failed', None, 'twoif')
+    self.run_test_case('Not Run', None, 'twoinr')
+    self.run_test_case('Passed', '#1234', 'twip')
+    self.run_test_case('Missing', '#1234', 'twim')
+    self.run_test_case('Missing / Failed', '#1234', 'twim')
+    self.run_test_case('Failed', '#1234', 'twif')
+    self.run_test_case('Not Run', '#1234', 'twinr')
+
+  def test_invalid(self):
+    threwExcept = True
+    try:
+      getTestsetAcroFromTestDict(tds('Passed', None))  # Must have 'issue_tracker'!
+      threwExcept = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, testDict = '{u'status': u'Passed'}' with fields"+\
+        " status = 'Passed' and issue_tracker = 'None'"+\
+        " is not a supported test-set type!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
 
 
 #############################################################################
@@ -3018,6 +3098,23 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.addCDashTestingDayFunctor
+#
+#############################################################################
+
+
+class test_addCDashTestingDayFunctor(unittest.TestCase):
+
+  def test_1(self):
+    testDict = { u'testname':u'test1' }
+    addCDashTestingDayFunctor = AddCDashTestingDayFunctor("YYYY-MM-DD")
+    testDict=addCDashTestingDayFunctor(testDict)
+    testDict_expected = { u'testname':u'test1', u'cdash_testing_day':u'YYYY-MM-DD' }
+    self.assertEqual(testDict, testDict_expected)
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.buildHasConfigureFailures()
 #
 #############################################################################
@@ -3069,7 +3166,6 @@ class test_buildHasBuildFailures(unittest.TestCase):
 #
 #############################################################################
 
-
 def testDictStatus(status):
   testDict = copy.deepcopy(g_testDictFailed)
   testDict['status'] = status
@@ -3086,6 +3182,10 @@ class test_isTestPassed(unittest.TestCase):
   def test_notrun(self):
     self.assertEqual(isTestPassed(testDictStatus('Not Run')), False)
 
+  def test_missing(self):
+    self.assertEqual(isTestPassed(testDictStatus('Missing')), False)
+    self.assertEqual(isTestPassed(testDictStatus('Missing / Failed')), False)
+
 class test_isTestFailed(unittest.TestCase):
 
   def test_passed(self):
@@ -3097,6 +3197,10 @@ class test_isTestFailed(unittest.TestCase):
   def test_notrun(self):
     self.assertEqual(isTestFailed(testDictStatus('Not Run')), False)
 
+  def test_missing(self):
+    self.assertEqual(isTestFailed(testDictStatus('Missing')), False)
+    self.assertEqual(isTestFailed(testDictStatus('Missing / Failed')), False)
+
 class test_isTestNotRun(unittest.TestCase):
 
   def test_passed(self):
@@ -3107,6 +3211,25 @@ class test_isTestNotRun(unittest.TestCase):
 
   def test_notrun(self):
     self.assertEqual(isTestNotRun(testDictStatus('Not Run')), True)
+
+  def test_missing(self):
+    self.assertEqual(isTestNotRun(testDictStatus('Missing')), False)
+    self.assertEqual(isTestNotRun(testDictStatus('Missing / Failed')), False)
+
+class test_isTestMissing(unittest.TestCase):
+
+  def test_passed(self):
+    self.assertEqual(isTestMissing(testDictStatus('Passed')), False)
+
+  def test_failed(self):
+    self.assertEqual(isTestMissing(testDictStatus('Failed')), False)
+
+  def test_notrun(self):
+    self.assertEqual(isTestMissing(testDictStatus('Not Run')), False)
+
+  def test_missing(self):
+    self.assertEqual(isTestMissing(testDictStatus('Missing')), True)
+    self.assertEqual(isTestMissing(testDictStatus('Missing / Failed')), True)
 
 
 
@@ -3292,6 +3415,115 @@ class test_addHtmlSoftWordBreaks(unittest.TestCase):
       "some_&shy;long_&shy;name")
 
 
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getFullCDashHtmlReportPageStr()
+#
+#############################################################################
+
+
+class test_getFullCDashHtmlReportPageStr(unittest.TestCase):
+
+  def setUp(self):
+    cdashReportData = CDashReportData()
+    cdashReportData.htmlEmailBodyTop = "body top\n"
+    cdashReportData.htmlEmailBodyBottom = "body bottom\n"
+    self.cdashReportData = cdashReportData
+
+  def test_defaults(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData)
+    reportHtml_expected = \
+"""<html>
+
+<body>
+
+body top
+
+body bottom
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
+
+  def test_with_title(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData,
+      pageTitle="page title")
+    reportHtml_expected = \
+"""<html>
+
+<body>
+
+<h2>page title</h2>
+
+body top
+
+body bottom
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
+
+  def test_with_title_and_style(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData,
+      pageTitle="page title", pageStyle="<style>my style</style>\n")
+    reportHtml_expected = \
+"""<html>
+
+<head>
+<style>my style</style>
+</head>
+
+<body>
+
+<h2>page title</h2>
+
+body top
+
+body bottom
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
+
+  def test_with_title_and_style_and_details(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData,
+      pageTitle="page title", pageStyle="<style>my style</style>\n",
+      detailsBlockSummary="these are the details")
+    reportHtml_expected = \
+"""<html>
+
+<head>
+<style>my style</style>
+</head>
+
+<body>
+
+<h2>page title</h2>
+
+body top
+
+<details>
+
+<summary><b>these are the details:</b> (click to expand)</b></summary>
+
+body bottom
+
+</details>
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
+
+
 #############################################################################
 #
 # Test CDashQueryAnalyzeReport.createHtmlTableStr()
@@ -3316,7 +3548,7 @@ class test_createHtmlTableStr(unittest.TestCase):
       trd("r3d1", 3, "r3d3"),
       ]
     htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList,
-      htmlStyle="my_style",  # Test custom table style
+      htmlStyle="<style>my_style</style>",  # Test custom table style
       #htmlStyle=None,       # Uncomment to view this style
       #htmlTableStyle="",    # Uncomment to view this style
       )
@@ -3428,7 +3660,7 @@ tr:nth-child(odd) {background-color: #fff;}
     rowDataList[2]['key2_color'] = 'green'
     # Create the table
     htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList,
-      htmlStyle="my_style",  # Test custom table style
+      htmlStyle="",         # No style!
       #htmlStyle=None,       # Uncomment to view this style
       htmlTableStyle="",    # Uncomment to view this style
       )
@@ -3439,8 +3671,7 @@ tr:nth-child(odd) {background-color: #fff;}
     # file write commands to view the formatted table in a browser to see if
     # this gets the data right and you like the default table style.
     htmlTable_expected = \
-r"""<style>my_style</style>
-<h3>My great data</h3>
+r"""<h3>My great data</h3>
 <table >
 
 <tr>
@@ -3597,7 +3828,7 @@ tr:nth-child(odd) {background-color: #fff;}
 # ToDo: Test with limitRowsToDisplay < len(rowDataList)
 
 # ToDo: Test with now rows and therefore now table printed
-      
+
 
 #############################################################################
 #
@@ -3606,6 +3837,537 @@ tr:nth-child(odd) {background-color: #fff;}
 #############################################################################
 
 # ToDo: Add unit tests for createCDashTestHtmlTableStr()!
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.binTestDictsByIssueTracker()
+#
+#############################################################################
+
+def tdwi(site, buildname, testname, issueTrackerNum):
+  testDict = {
+    u'site': unicode(site),
+    u'buildName': unicode(buildname),
+    u'testname': unicode(testname),
+  }
+  if issueTrackerNum:
+    testDict.update(
+       {
+         u'issue_tracker': u'#'+issueTrackerNum,
+         u'issue_tracker_url': u'some.com/site/issue/'+issueTrackerNum,
+         }
+       )
+  return testDict
+
+
+class test_binTestDictsByIssueTracker(unittest.TestCase):
+
+  def test_empty(self):
+    testsLOD =[]
+    (tdbi, twoiLOD) = binTestDictsByIssueTracker(testsLOD)
+    tdbi_expected = {}
+    twoiLOD_expected = []
+    self.assertEqual(tdbi, tdbi_expected)
+    self.assertEqual(twoiLOD, twoiLOD_expected)
+
+  def test_issues_1_noissues_1(self):
+    testsLOD =[
+      tdwi('site1', 'build1', 'test1', '1234'),
+      tdwi('site2', 'build2', 'test2', '1234'),
+      tdwi('site3', 'build3', 'test3', ''),
+      ]
+    (tdbi, twoiLOD) = binTestDictsByIssueTracker(testsLOD)
+    # Check tdbi
+    self.assertEqual(len(tdbi.keys()), 1)
+    self.assertEqual(tdbi['#1234'][0],
+      tdwi('site1', 'build1', 'test1', '1234'))
+    self.assertEqual(tdbi['#1234'][1],
+      tdwi('site2', 'build2', 'test2', '1234'))
+    tdbi_expected = {
+      u'#1234' : [
+        tdwi('site1', 'build1', 'test1', '1234'),
+        tdwi('site2', 'build2', 'test2', '1234'),
+        ],
+      }
+    self.assertEqual(tdbi, tdbi_expected)
+    # Check twoiLOD
+    self.assertEqual(len(twoiLOD), 1)
+    twoiLOD_expected = [
+      tdwi('site3', 'build3', 'test3', ''),
+      ]
+    self.assertEqual(twoiLOD, twoiLOD_expected)
+
+  def test_issues_3_noissues_2(self):
+    testsLOD =[
+      tdwi('site1', 'build1', 'test1', '1234'),
+      tdwi('site1', 'build2', 'test1', ''),
+      tdwi('site2', 'build3', 'test2', '1234'),
+      tdwi('site3', 'build4', 'test3', '1236'),
+      tdwi('site3', 'build5', 'test3', ''),
+      tdwi('site4', 'build6', 'test1', '1235'),
+      ]
+    (tdbi, twoiLOD) = binTestDictsByIssueTracker(testsLOD)
+    tdbi_expected = {
+      '#1234' : [
+        tdwi('site1', 'build1', 'test1', '1234'),
+        tdwi('site2', 'build3', 'test2', '1234'),
+        ],
+      '#1235' : [
+        tdwi('site4', 'build6', 'test1', '1235'),
+        ],
+      '#1236' : [
+        tdwi('site3', 'build4', 'test3', '1236'),
+        ],
+      }
+    twoiLOD_expected = [
+      tdwi('site1', 'build2', 'test1', ''),
+      tdwi('site3', 'build5', 'test3', ''),
+      ]
+    self.assertEqual(tdbi, tdbi_expected)
+    self.assertEqual(twoiLOD, twoiLOD_expected)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.binTestDictsByTestsetAcro()
+#
+#############################################################################
+
+def tdswi(testname, status, issueTrackerNum):
+  testDict = {
+    u'testname': unicode(testname),
+    u'status': unicode(status),
+  }
+  if issueTrackerNum:
+    testDict.update(
+       {
+         u'issue_tracker': u'#'+issueTrackerNum,
+         u'issue_tracker_url': u'some.com/site/issue/'+issueTrackerNum,
+         }
+       )
+  return testDict
+
+
+class test_binTestDictsByTestsetAcro(unittest.TestCase):
+
+  def test_empty(self):
+    testsLOD =[]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    tbtsa_expected = {}
+    self.assertEqual(tbtsa, tbtsa_expected)
+
+  def test_twoif(self):
+    testsLOD =[
+      tdswi('test1', 'Failed', '')
+      ]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    self.assertEqual(len(tbtsa.keys()), 1)
+    self.assertEqual(tbtsa['twoif'],
+      [
+        tdswi('test1', 'Failed', ""),
+        ],
+       )
+
+  def test_twoif_twip(self):
+    testsLOD =[
+      tdswi('test1', 'Failed', ''),
+      tdswi('test2', 'Passed', '1234'),
+      tdswi('test3', 'Failed', ''),
+      ]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    self.assertEqual(len(tbtsa.keys()), 2)
+    self.assertEqual(tbtsa['twoif'],
+      [
+        tdswi('test1', 'Failed', ""),
+        tdswi('test3', 'Failed', ''),
+        ],
+       )
+    self.assertEqual(tbtsa['twip'],
+      [
+        tdswi('test2', 'Passed', '1234'),
+        ],
+       )
+
+  def test_all(self):
+    testsLOD =[
+      tdswi('test1', 'Failed', '1234'),
+      tdswi('test2', 'Failed', ''),
+      tdswi('test3', 'Passed', '1235'),
+      tdswi('test4', 'Failed', '1234'),
+      tdswi('test5', 'Not Run', ''),
+      tdswi('test6', 'Missing', '1235'),
+      tdswi('test7', 'Not Run', '1236'),
+      ]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    self.assertEqual(len(tbtsa.keys()), 6)
+    self.assertEqual(tbtsa['twoif'],
+      [
+        tdswi('test2', 'Failed', ''),
+        ],
+       )
+    self.assertEqual(tbtsa['twoinr'],
+      [
+        tdswi('test5', 'Not Run', ''),
+        ],
+       )
+    self.assertEqual(tbtsa['twip'],
+      [
+        tdswi('test3', 'Passed', '1235'),
+        ],
+       )
+    self.assertEqual(tbtsa['twim'],
+      [
+        tdswi('test6', 'Missing', '1235'),
+        ],
+       )
+    self.assertEqual(tbtsa['twif'],
+      [
+        tdswi('test1', 'Failed', '1234'),
+        tdswi('test4', 'Failed', '1234'),
+        ],
+       )
+    self.assertEqual(tbtsa['twinr'],
+      [
+        tdswi('test7', 'Not Run', '1236'),
+        ],
+       )
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getIssueTrackerFieldsAndAssertAllSame()
+#
+#############################################################################
+
+
+def tdit(testname, issue_tracker_id, skipUrlField=False):
+  td = { u'testname':unicode(testname) }
+  if issue_tracker_id:
+    td.update({u'issue_tracker':u'#'+issue_tracker_id})
+    if not skipUrlField:
+      td.update({
+        u'issue_tracker_url' :
+          unicode('https://github.com/org/repo/issues/'+issue_tracker_id)})
+  return td
+
+
+class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
+
+
+  def test_empty(self):
+    testsLOD = []
+    issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+    self.assertEqual(issueTracker, None)
+
+
+  def test_all_matching(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234'),
+      tdit('test3', '1234'),
+      ]
+    issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+    self.assertEqual(issueTracker,
+      (u'#1234', u'https://github.com/org/repo/issues/1234'))
+
+
+  def test_missing_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', None),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {u'testname': u'test2'} at index 1"+\
+        " is missing the 'issue_tracker' field!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_missing_issue_tracker_url_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234', skipUrlField=True),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict"+\
+        " {u'issue_tracker': u'#1234', u'testname': u'test2'} at index 1"+\
+        " is missing the 'issue_tracker_url' field!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_inconsistent_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1235'),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {u'issue_tracker': u'#1235', u'issue_tracker_url':"+\
+        " u'https://github.com/org/repo/issues/1235', u'testname': u'test2'} at"+\
+        " index 1 has a different 'issue_tracker' field '#1235' than the expected"+\
+        " value of '#1234'!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_inconsistent_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234'),
+      tdit('test3', '1234'),
+      ]
+    testsLOD[2]['issue_tracker_url'] = u'https://github.com/org/repo/issues/1236'
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {u'issue_tracker': u'#1234', u'issue_tracker_url':"+\
+        " u'https://github.com/org/repo/issues/1236', u'testname': u'test3'} at"+\
+        " index 2 has a different 'issue_tracker_url' field"+\
+        " 'https://github.com/org/repo/issues/1236' than the expected value of"+\
+        " 'https://github.com/org/repo/issues/1234'!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  #def test_inconsistent_issue_tracker_url_field(self):
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.IssueTrackerTestsStatusReporter
+#
+#############################################################################
+
+
+cdash_analyze_and_report_dir = g_testBaseDir+'/cdash_analyze_and_report'
+
+
+g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out = \
+  eval(
+    open(cdash_analyze_and_report_dir+'/twoif_10_twoinr2_twif_8_twinr_1/test_data.json',
+    'r').read())
+
+
+def makeTestPassing(testDict):
+  testDict['status'] = u'Passed'
+  testDict['status_color'] = cdashColorPassed()
+  testDict['details'] = u'Completed (Passed)\n'
+
+
+def makeTestMissing(testDict):
+  setTestDictAsMissing(testDict)
+
+
+def setIssueTrackerFields(testsLOD, issue_tracker, issue_tracker_url):
+  for testDict in testsLOD:
+    testDict['issue_tracker'] = issue_tracker
+    testDict['issue_tracker_url'] = issue_tracker_url
+
+
+class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
+
+
+  def test_empty(self):
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    testsLOD = []
+    okayToCloseIssue = \
+      issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+    self.assertEqual(okayToCloseIssue, True)
+    reportHtml = issueTrackerTestsStatusReporter.getIssueTrackerTestsStatusReport()
+    self.assertEqual(reportHtml, None)
+
+
+  def test_non_matching_issue_tracker_field(self):
+    allTestsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    threwExcept = True
+    try:
+      testsLOD = allTestsLOD
+      okayToCloseIssue = \
+        issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      assertFindListOfStringsInString(self,
+        [
+          "Error, the test dict {",
+          "u'buildName': u'Trilinos-atdm-cee-rhel6-clang-opt-serial'",
+          "u'testname': u'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2'",
+          "} at index 1 has a different 'issue_tracker' field '#3632'"+\
+            " than the expected value of '#3640'!",
+          ],
+        str(errMsg),
+        "errMsg",
+        debugPrint=False,
+        )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_twif_8_twinr_1(self):
+    testsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    setIssueTrackerFields(testsLOD, u'#1234',
+      u'https://github.com/trilinos/Trilinos/issues/1234')
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    okayToCloseIssue = \
+      issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+    self.assertEqual(okayToCloseIssue, False)
+    summaryLineDataNumbersList_expected = \
+      ['twif=8', 'twinr=1']
+    self.assertEqual(
+      issueTrackerTestsStatusReporter.cdashReportData.summaryLineDataNumbersList,
+      summaryLineDataNumbersList_expected)
+    issueTrckerTestsStatusReportHtml = \
+      issueTrackerTestsStatusReporter.getIssueTrackerTestsStatusReport()
+    # TODO: REMOVE THIS FILE WRITE!!!
+    #with open("issueTrckerTestsStatusReport.html", 'w') as testsHtmlReportFile:
+    #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
+    assertListOfRegexsFoundInLinstOfStrs(self,
+      regexList=[
+        '<h2>Test results for issue #1234 as of 2018-10-28</h2>',
+        '<details>',
+        '<summary><b>Detailed test results:</b> [(]click to expand[)]</b></summary>',
+        "<h3><font color=.red.>Tests with issue trackers Failed: twif=8</font></h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\"><font color=\"red\">Failed</font></a></td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/1234\">#1234</a></td>",
+        "<h3><font color=\"orange\">Tests with issue trackers Not Run: twinr=1</font></h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816373&build=4107331\">Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816373&build=4107331\"><font color=\"orange\">Not Run</font></a></td>",
+        "<td align=\"left\">Required Files Missing</td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/1234\">#1234</a></td>",
+        '</details>',
+        ],
+      stringsList=issueTrckerTestsStatusReportHtml.split('\n'),
+      stringsListName="issueTrckerTestsStatusReportHtml",
+      debugPrint=False
+      )
+
+
+  def test_twip_1_twif_5_twim_2_twinr_1(self):
+    testsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    setIssueTrackerFields(testsLOD, u'#1234',
+      u'https://github.com/trilinos/Trilinos/issues/1234')
+    # Change a test from failing to passing
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    makeTestPassing(testsLOD[testIdx])
+    # Change a from from faling to missing
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    makeTestMissing(testsLOD[testIdx])
+    # Change another a test from failing to missing
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3')
+    makeTestMissing(testsLOD[testIdx])
+    # Run the reporter
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    okayToCloseIssue = \
+      issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+    self.assertEqual(okayToCloseIssue, False)
+    # Check the basic collected
+    summaryLineDataNumbersList_expected = \
+      ['twip=1', 'twim=2', 'twif=5', 'twinr=1']
+    self.assertEqual(
+      issueTrackerTestsStatusReporter.cdashReportData.summaryLineDataNumbersList,
+      summaryLineDataNumbersList_expected)
+    htmlEmailBodyTop_expected = \
+      '<font color="green">Tests with issue trackers Passed: twip=1</font><br>\n'+\
+      '<font color="gray">Tests with issue trackers Missing: twim=2</font><br>\n'+\
+      '<font color="red">Tests with issue trackers Failed: twif=5</font><br>\n'+\
+      '<font color="orange">Tests with issue trackers Not Run: twinr=1</font><br>\n'
+    self.assertEqual(
+      issueTrackerTestsStatusReporter.cdashReportData.htmlEmailBodyTop,
+      htmlEmailBodyTop_expected)
+    assertListOfRegexsFoundInLinstOfStrs(self,
+      regexList=[
+        '<h3><font color="green">Tests with issue trackers Passed: twip=1</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>',
+        '<td align="left"><a href=".*">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>',
+        '<td align="left"><a href=".*"><font color="green">Passed</font></a></td>',
+        '<td align="left">Completed [(]Passed[)]</td>',
+
+        '<h3><font color="gray">Tests with issue trackers Missing: twim=2</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-intel-opt-serial</a></td>',
+        '<td align="left"><a href=".*">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>',
+        '<td align="left"><a href=".*"><font color="gray">Missing</font></a></td>',
+        '<td align="left">Missing</td>',
+
+        '<h3><font color="red">Tests with issue trackers Failed: twif=5</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>',
+        '<td align="left"><a href=".*">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>',
+        '<td align="left"><a href=".*"><font color="red">Failed</font></a></td>',
+        '<td align="left">Completed [(]Failed[)]</td>',
+
+        '<h3><font color="orange">Tests with issue trackers Not Run: twinr=1</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>',
+        '<td align="left"><a href=".*">Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>',
+        '<td align="left"><a href=".*"><font color="orange">Not Run</font></a></td>',
+        '<td align="left">Required Files Missing</td>',
+        ],
+      stringsList=issueTrackerTestsStatusReporter.testsetsReporter.\
+        cdashReportData.htmlEmailBodyBottom.split('\n'),
+      stringsListName="cdashReportData.htmlEmailBodyBottom",
+      debugPrint=False
+      )
+    # Get the summary report
+    issueTrckerTestsStatusReportHtml = \
+      issueTrackerTestsStatusReporter.getIssueTrackerTestsStatusReport()
+    # TODO: REMOVE THIS FILE WRITE!!!
+    #with open("issueTrckerTestsStatusReport.html", 'w') as testsHtmlReportFile:
+    #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
+    assertListOfRegexsFoundInLinstOfStrs(self,
+      regexList=[
+        '<h2>Test results for issue #1234 as of 2018-10-28</h2>',
+        '<font color="green">Tests with issue trackers Passed: twip=1</font><br>',
+        '<font color="gray">Tests with issue trackers Missing: twim=2</font><br>',
+        '<font color="red">Tests with issue trackers Failed: twif=5</font><br>',
+        '<font color="orange">Tests with issue trackers Not Run: twinr=1</font><br>',
+        '<details>',
+        '<summary><b>Detailed test results:</b> [(]click to expand[)]</b></summary>',
+        '<h3><font color="green">Tests with issue trackers Passed: twip=1</font></h3>',
+        '<h3><font color="gray">Tests with issue trackers Missing: twim=2</font></h3>',
+        '<h3><font color="red">Tests with issue trackers Failed: twif=5</font></h3>',
+        '<h3><font color="orange">Tests with issue trackers Not Run: twinr=1</font></h3>',
+        '</details>',
+        ],
+      stringsList=issueTrckerTestsStatusReportHtml.split('\n'),
+      stringsListName="issueTrckerTestsStatusReportHtml",
+      debugPrint=False
+      )
+
+  # NOTE: The above tests for the class
+  # CDashQueryAnalyzeReport.IssueTrackerTestsStatusReporter also tests the
+  # classes CDashQueryAnalyzeReport.SingleTestsetReporter and
+  # CDashQueryAnalyzeReport.TestsetsReporter.  I just did not want to
+  # duplicate all of those large and complex tests for little added value.
+
 
 
 #

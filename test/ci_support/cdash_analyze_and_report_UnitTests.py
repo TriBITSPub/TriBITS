@@ -47,6 +47,7 @@ import pprint
 
 from FindCISupportDir import *
 import CDashQueryAnalyzeReport as CDQAR
+from CDashQueryAnalyzeReportUnitTestHelpers import *
 
 g_testBaseDir = CDQAR.getScriptBaseDir()
 
@@ -54,83 +55,6 @@ tribitsBaseDir=os.path.abspath(g_testBaseDir+"/../../tribits")
 mockProjectBaseDir=os.path.abspath(tribitsBaseDir+"/examples/MockTrilinos")
 
 g_pp = pprint.PrettyPrinter(indent=4)
-
-
-#
-# Some helper functions
-# 
-
-
-# Find the index of a test in a list of test dicts
-def getIdxOfTestInTestLOD(testsLOD, site, buildName, testname):
-  testIdx = 0
-  for testsDict in testsLOD:
-    if testsDict['site'] == site \
-      and testsDict['buildName'] == buildName \
-      and testsDict['testname'] == testname \
-      :
-      #print(testsDict)
-      break
-    testIdx = testIdx+1
-  return testIdx
-
-
-# Search for a list of regexs in order in a list of strings
-def assertFindStringInListOfStrings(
-  testObj,
-  stringToFind,
-  stringsList,
-  stringsListName,
-  ):
-  foundStringToFind = False
-  for stdoutLine in stringsList:
-    if stdoutLine.find(stringToFind) != -1:
-      foundStringToFind = True
-      break
-  testObj.assertTrue(foundStringToFind,
-    "Error, could not find string '"+stringToFind+"' in "+stringsListName+"!")
-
-
-# Search for a list of regexs in order in a list of strings
-def assertListOfRegexsFoundInLinstOfStrs(
-  testObj,
-  regexList,
-  stringsList,
-  stringsListName,
-  debugPrint=False,
-  ):
-  # Set up for first regex
-  current_regex_idx = 0
-  currentRe = re.compile(regexList[current_regex_idx])
-  # Loop over the lines in the input strings list and look for the regexes in
-  # order!
-  strLine_idx = -1
-  for strLine in stringsList:
-    strLine_idx += 1
-    if current_regex_idx == len(regexList):
-      # Found all the regexes so we are done!
-      break
-    if debugPrint:
-      print("\nstrLine_idx = '"+str(strLine_idx)+"'")
-      print("strLine = '"+strLine+"'")
-      print("regexList["+str(current_regex_idx)+"] = '"+regexList[current_regex_idx]+"'")
-    if currentRe.match(strLine):
-      # Found the current regex being looked for!
-      if debugPrint:
-        print("Found match!")
-      current_regex_idx += 1
-      if current_regex_idx < len(regexList):
-        if debugPrint:
-          print("regexList["+str(current_regex_idx)+"] = '"+regexList[current_regex_idx]+"'")
-        currentRe = re.compile(regexList[current_regex_idx])
-      continue
-  # Look to see if you have found all of the regexes being searched for.  If
-  # the current one has not been found, then report that you could not find
-  # it!
-  if current_regex_idx < len(regexList):
-    testObj.assertTrue(False,
-      "Error, could not find the regex '"+regexList[current_regex_idx]+"'"+\
-      " in "+stringsListName+"!")
 
 
 # Base test directory in the build tree
@@ -1205,8 +1129,8 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       )
 
 
-  # Test to check the behavior for tests with issue trackers that are passing
-  # and missing
+  # Test to check the behavior for tests with issue trackers are passing and
+  # missing in addition to other categories fo tests.
   #
   # We want to test two use cases for missing tests.  First, we want to
   # display tests with issue trackers that are missing in the current testing
@@ -1218,20 +1142,20 @@ class test_cdash_analyze_and_report(unittest.TestCase):
   # at all (other than in the STDOUT).  Finally, we want to to check tests
   # with issue trackers that are passing in the current testing day.  In order
   # implement this test, we don't want to use any extra data than what already
-  # exists in the twoif_12_twif_9/ test directory.  To
-  # accomplish this, we will remove some of the tests with issue trackers from
-  # the file fullCDashNonpassingTests.json and the ones that we remove will be
-  # for used to represent tests with issue trackers passing and missing tests.
-  # That way, we have the test history for these tests.  We will just need to
+  # exists in the twoif_12_twif_9/ test directory.  To accomplish this, we
+  # will remove some of the tests with issue trackers from the file
+  # fullCDashNonpassingTests.json and the ones that we remove will be for used
+  # to represent tests with issue trackers passing and missing tests.  That
+  # way, we have the test history for these tests.  We will just need to
   # manipulate that test history by deleting some days from the test history
   # files for the missing tests and we will need to change the history for the
   # passing tests to be passed for the current testing day (and a few days
   # before that?).  Also, it is easiest to just manipulate for the existing
   # set of tests with issue trackers so that we don't have to modify the file
   # testsWithIssueTrackers.csv.
-  def test_twip_twim(self):
+  def test_bm_1_twoif_12_twip_2_twim_2_twif_5(self):
 
-    testCaseName = "twip_twim"
+    testCaseName = "bm_1_twoif_12_twip_2_twim_2_twif_5"
 
     # Copy the raw files to get started
     testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
@@ -1241,7 +1165,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     nonpassingTestsSLOD = CDQAR.createSearchableListOfTests(nonpassingTestsLOD)
 
     # Mark which tests with issue trackers to remove from the list of
-    # non-passing tests.  (These will be used for passing tests and msising
+    # non-passing tests.  (These will be used for passing tests and missing
     # tests with history)
 
     nonpassingTestsToRemoveIndexes = []
@@ -1517,6 +1441,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     self.assertEqual(testDict['testname'], 'MueLu_UnitTestsBlockedEpetra_MPI_1')
     self.assertEqual(testDict['status'], 'Passed')
     self.assertEqual(testDict['details'], 'Completed (Passed)')
+    self.assertEqual(testDict['cdash_testing_day'], u'2018-10-28')
     self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
       '2018-10-28T06:10:33 UTC')
     # Make sure an entry from 'twim' exists!
@@ -1529,6 +1454,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     self.assertEqual(testDict['testname'], 'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
     self.assertEqual(testDict['status'], 'Missing')
     self.assertEqual(testDict['details'], 'Missing')
+    self.assertEqual(testDict['cdash_testing_day'], u'2018-10-28')
     self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
       '2018-10-26T12:00:00 UTC')
     # Make sure an entry from 'twif' exists!
@@ -1541,8 +1467,242 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     self.assertEqual(testDict['testname'], 'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
     self.assertEqual(testDict['status'], 'Failed')
     self.assertEqual(testDict['details'], 'Completed (Failed)\n')
+    self.assertEqual(testDict['cdash_testing_day'], u'2018-10-28')
     self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
       '2018-10-28T06:10:33 UTC')
+
+
+  # Test to check that when only 'twip' and 'twim' exists, then we consider
+  # this to be global PASSED.
+  #
+  # We use test rseults that exist in the directory twoif_12_twif_9/ to create
+  # these cases.  We copy out and modify the test dicts that we want, modify
+  # them to be passing and missing tests, then write then back to the file
+  # fullCDashNonpassingTests.json
+  #
+  def test_twip_2_twim_2(self):
+
+    testCaseName = "twip_2_twim_2"
+
+    # Copy the raw files to get started
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
+
+    # Remove all of the failing tests
+    testListFilePath = \
+      testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
+    CDQAR.pprintPythonDataToFile( {'builds':[]}, testListFilePath )
+
+    # Write a new tests with issue trackers file just for the passing and missing tests
+    with open(testOutputDir+"/testsWithIssueTrackers.csv", 'w') as testsWithIssueTrackerFile:
+      testsWithIssueTrackerFile.write('''site, buildName, testname, issue_tracker_url, issue_tracker
+cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial, MueLu_UnitTestsBlockedEpetra_MPI_1, https://github.com/trilinos/Trilinos/issues/3640, #3640
+cee-rhel6, Trilinos-atdm-cee-rhel6-intel-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2, https://github.com/trilinos/Trilinos/issues/3632, #3632
+cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2, https://github.com/trilinos/Trilinos/issues/3632, #3632
+cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3, https://github.com/trilinos/Trilinos/issues/3632, #3632
+'''
+        )
+
+    # Change the history for some tests so that they show up correctly as
+    # Passing and Missing
+
+    daysOfHistory = 30
+
+    # Make a test passed
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'MueLu_UnitTestsBlockedEpetra_MPI_1',
+      daysOfHistory)
+    testHistoryLOD = getTestHistoryDictListFromCDashJsonFile(
+      testOutputDir, testHistoryFileName)
+    testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
+    testHistoryLOD[0]['status'] = u'Passed'
+    testHistoryLOD[0]['details'] = u'Completed (Passed)'
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName)
+
+    # Make a test passed
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2',
+      daysOfHistory)
+    testHistoryLOD = getTestHistoryDictListFromCDashJsonFile(
+      testOutputDir, testHistoryFileName)
+    testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
+    testHistoryLOD[0]['status'] = u'Passed'
+    testHistoryLOD[0]['details'] = u'Completed (Passed)'
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName)
+
+    # Make a test missing (here, we need to move the date back)
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2',
+      daysOfHistory)
+    testHistoryLOD = getTestHistoryDictListFromCDashJsonFile(
+      testOutputDir, testHistoryFileName)
+    testHistoryLOD.sort(reverse=True, key=CDQAR.DictSortFunctor(['buildstarttime']))
+    # There is just one day in history so we need to duplicate it
+    testHistoryLOD.append(copy.deepcopy(testHistoryLOD[0]))
+    # Make first non-missing day failed
+    testHistoryLOD[0]['buildstarttime'] = "2018-10-26T12:00:00 UTC"
+    testHistoryLOD[0]['status'] = u'Failed'
+    testHistoryLOD[0]['details'] = u'Completed (Failed)'
+    # Make second non-missing day passed
+    testHistoryLOD[1]['buildstarttime'] = "2018-10-25T12:00:00 UTC"
+    testHistoryLOD[1]['status'] = u'Passed'
+    testHistoryLOD[1]['details'] = u'Completed (Passed)'
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName)
+
+    # Make a test missing (no days of test history)
+    testHistoryFileName = CDQAR.getTestHistoryCacheFileName( "2018-10-28",
+      'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3',
+      daysOfHistory)
+    testHistoryLOD = []
+    writeTestHistoryDictListFromCDashJsonFile(testHistoryLOD, testOutputDir,
+      testHistoryFileName)
+
+    # ToDo: Remove history for missing tests to test different numbers of
+    # missing days.  (This will need to be done once we tablulate "Consecutive
+    # Pass Days" and "Consecutive Missing Days".)
+
+    # Run the script and make sure it outputs the right stuff
+    cdash_analyze_and_report_run_case(
+      self,
+      testCaseName,
+      [ "--limit-test-history-days=30",  # Test that you can set this as int
+        "--write-test-data-to-file=test_data.json",
+        ],
+      0,
+      "PASSED (twip=2, twim=2):"+\
+        " ProjectName Nightly Builds on 2018-10-28",
+      [
+        "Num expected builds = 6",
+        "Num tests with issue trackers = 4",
+        "Num builds = 6",
+        "Num nonpassing tests direct from CDash query = 0",
+        "Num nonpassing tests after removing duplicate tests = 0",
+        "Num nonpassing tests without issue trackers = 0",
+        "Num nonpassing tests with issue trackers = 0",
+        "Num nonpassing tests without issue trackers Failed = 0",
+        "Num nonpassing tests without issue trackers Not Run = 0",
+        "Num nonpassing tests with issue trackers Failed = 0",
+        "Num nonpassing tests with issue trackers Not Run = 0",
+        "Num tests with issue trackers gross passing or missing = 4",
+
+        "Builds Missing: bm=0",
+        "Builds with Configure Failures: cf=0",
+        "Builds with Build Failures: bf=0",
+
+        "Num tests with issue trackers passing or missing matching posted builds = 4",
+
+        "Tests with issue trackers missing that match missing expected builds: num=0",
+
+        "Getting test history for tests with issue trackers passing or missing: num=4",
+        "Getting 30 days of history for MueLu_UnitTestsBlockedEpetra_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file",
+
+        "Num tests with issue trackers Passed = 2",
+        "Num tests with issue trackers Missing = 2",
+
+        "Tests without issue trackers Failed: twoif=0",
+
+        "Tests with issue trackers Passed: twip=2",
+
+        "Tests with issue trackers Missing: twim=2",
+
+        "Tests with issue trackers Failed: twif=0",
+
+        "Tests with issue trackers Not Run: twinr=0",
+
+        ],
+      [
+
+        "<h3><font color=\"green\">Tests with issue trackers Passed: twip=2</font></h3>",
+        # Pin down table headers
+        "<th>Site</th>",
+        "<th>Build Name</th>",
+        "<th>Test Name</th>",
+        "<th>Status</th>",
+        "<th>Details</th>",
+        "<th>Consec&shy;utive Pass Days</th>",
+        "<th>Non-pass Last 30 Days</th>",
+        "<th>Pass Last 30 Days</th>",
+        "<th>Issue Tracker</th>",
+        # Pin down first row
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>",
+        "<td align=\"left\"><a href=\".+\">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\".+\"><font color=\"green\">Passed</font></a></td>",
+        "<td align=\"left\">Completed [(]Passed[)]</td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"green\">1</font></a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"red\">14</font></a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"green\">1</font></a></td>",
+        "<td align=\"right\"><a href=\".+\">#3640</a></td>",
+
+        "<h3>Tests with issue trackers Missing: twim=2</h3>",
+        # Pin down table headers
+        "<th>Site</th>",
+        "<th>Build Name</th>",
+        "<th>Test Name</th>",
+        "<th>Status</th>",
+        "<th>Details</th>",
+        "<th>Consec&shy;utive Missing Days</th>",
+        "<th>Non-pass Last 30 Days</th>",
+        "<th>Pass Last 30 Days</th>",
+        "<th>Issue Tracker</th>",
+        # Pin down first row
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\".+\">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>",
+        "<td align=\"left\">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</td>",
+        "<td align=\"left\"><font color=\"gray\">Missing</font></td>",
+        "<td align=\"left\">Missing</td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"gray\">2</font></a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"red\">1</font></a></td>",
+        "<td align=\"right\"><a href=\".+\"><font color=\"green\">1</font></a></td>",
+        "<td align=\"right\"><a href=\".+\">#3632</a></td>",
+
+        ],
+      #verbose=True,
+      #debugPrint=True,
+      )
+
+    # Read the written file 'test_data.json' and verify that it is correct
+    testDataLOD = eval(open(testOutputDir+"/test_data.json", 'r').read())
+    self.assertEqual(len(testDataLOD), 4)
+    # Make sure an entry from 'twip' exists!
+    testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'MueLu_UnitTestsBlockedEpetra_MPI_1')
+    testDict = testDataLOD[testIdx]
+    self.assertEqual(testDict['site'], 'cee-rhel6')
+    self.assertEqual(testDict['buildName'], 'Trilinos-atdm-cee-rhel6-clang-opt-serial')
+    self.assertEqual(testDict['testname'], 'MueLu_UnitTestsBlockedEpetra_MPI_1')
+    self.assertEqual(testDict['status'], 'Passed')
+    self.assertEqual(testDict['details'], 'Completed (Passed)')
+    self.assertEqual(testDict['cdash_testing_day'], u'2018-10-28')
+    self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
+      '2018-10-28T06:10:33 UTC')
+    # Make sure an entry from 'twim' exists!
+    testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    testDict = testDataLOD[testIdx]
+    self.assertEqual(testDict['site'], 'cee-rhel6')
+    self.assertEqual(testDict['buildName'], 'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial')
+    self.assertEqual(testDict['testname'], 'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    self.assertEqual(testDict['status'], 'Missing')
+    self.assertEqual(testDict['details'], 'Missing')
+    self.assertEqual(testDict['cdash_testing_day'], u'2018-10-28')
+    self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
+      '2018-10-26T12:00:00 UTC')
 
 
 #
