@@ -914,7 +914,7 @@ if __name__ == '__main__':
   # E) Put together final email summary line
   #
 
-  summaryLine = CDQAR.createOverallCDashReportSummaryLine(cdashReportData,
+  summaryLine = CDQAR.getOverallCDashReportSummaryLine(cdashReportData,
     inOptions.buildSetName, inOptions.date)
 
   #

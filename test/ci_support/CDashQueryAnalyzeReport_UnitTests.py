@@ -820,6 +820,85 @@ class test_writeTestsLODToCsvFileStructure(unittest.TestCase):
 #
 #############################################################################
 
+
+class test_getStandardTestsetTypeInfo(unittest.TestCase):
+
+  def test_twoif(self):
+    self.assertEqual(getStandardTestsetTypeInfo('twoif').testsetAcro, 'twoif')
+
+  def test_twip(self):
+    self.assertEqual(getStandardTestsetTypeInfo('twip').testsetAcro, 'twip')
+
+  def test_testsetColor(self):
+    tsti = getStandardTestsetTypeInfo('twif')
+    self.assertEqual(tsti.testsetAcro, 'twif')
+    self.assertEqual(tsti.testsetColor, cdashColorFailed())
+    tsti = getStandardTestsetTypeInfo('twif', testsetColor=cdashColorMissing())
+    self.assertEqual(tsti.testsetAcro, 'twif')
+    self.assertEqual(tsti.testsetColor, cdashColorMissing())
+
+  def test_invalid(self):
+    threwExcept = True
+    try:
+      getStandardTestsetTypeInfo('invalid')
+      threwExcept = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, testsetAcro = 'invalid' is not supported!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getTestsetAcroFromTestDict()
+#
+#############################################################################
+
+
+def tds(status, issue_tracker):
+  td = { u'status' : unicode(status) }
+  if issue_tracker:
+    td.update( { u'issue_tracker' : unicode(issue_tracker) } )
+  return td
+
+
+class test_getTestsetAcroFromTestDict(unittest.TestCase):
+
+  def run_test_case(self, status, issue_tracker, testsetAcro):
+    self.assertEqual(getTestsetAcroFromTestDict(tds(status, issue_tracker)),
+      testsetAcro )
+
+  def test_pass_cases(self):
+    self.run_test_case('Failed', None, 'twoif')
+    self.run_test_case('Not Run', None, 'twoinr')
+    self.run_test_case('Passed', '#1234', 'twip')
+    self.run_test_case('Missing', '#1234', 'twim')
+    self.run_test_case('Missing / Failed', '#1234', 'twim')
+    self.run_test_case('Failed', '#1234', 'twif')
+    self.run_test_case('Not Run', '#1234', 'twinr')
+
+  def test_invalid(self):
+    threwExcept = True
+    try:
+      getTestsetAcroFromTestDict(tds('Passed', None))  # Must have 'issue_tracker'!
+      threwExcept = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, testDict = '{u'status': u'Passed'}' with fields"+\
+        " status = 'Passed' and issue_tracker = 'None'"+\
+        " is not a supported test-set type!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getAndCacheCDashQueryDataOrReadFromCache()
+#
+#############################################################################
+
 g_getAndCacheCDashQueryDataOrReadFromCache_data = {
   'keyname1' : "value1",
   'keyname2' : "value2",
@@ -3285,40 +3364,6 @@ class test_sortAndLimitListOfDicts(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.getTestsetAcroFromTestDict()
-#
-#############################################################################
-
-class test_getTestsetAcroFromTestDict(unittest.TestCase):
-
-  def run_test_case(self, status, issueTracker, testsetAcro_expected):
-    testDict = { u'status' : unicode(status) }
-    if issueTracker:
-      testDict.update({u'issue_tracker' : unicode(issueTracker)})
-    self.assertEqual(getTestsetAcroFromTestDict(testDict), testsetAcro_expected)
-
-  def test_twoif(self):
-    self.run_test_case('Failed', None, 'twoif')
-
-  def test_twoinr(self):
-    self.run_test_case('Not Run', None, 'twoinr')
-
-  def test_twip(self):
-    self.run_test_case('Passed', '#1234', 'twip')
-
-  def test_twim(self):
-    self.run_test_case('Missing', '#1234', 'twim')
-    self.run_test_case('Missing / Failed', '#1234', 'twim')
-
-  def test_twif(self):
-    self.run_test_case('Failed', '#1234', 'twif')
-
-  def test_twinr(self):
-    self.run_test_case('Not Run','#1234', 'twinr')
-
-
-#############################################################################
-#
 # Test CDashQueryAnalyzeReport.colorHtmlText()
 #
 #############################################################################
@@ -3368,6 +3413,115 @@ class test_addHtmlSoftWordBreaks(unittest.TestCase):
   def test_1(self):
     self.assertEqual(addHtmlSoftWordBreaks("some_long_name"),
       "some_&shy;long_&shy;name")
+
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getFullCDashHtmlReportPageStr()
+#
+#############################################################################
+
+
+class test_getFullCDashHtmlReportPageStr(unittest.TestCase):
+
+  def setUp(self):
+    cdashReportData = CDashReportData()
+    cdashReportData.htmlEmailBodyTop = "body top\n"
+    cdashReportData.htmlEmailBodyBottom = "body bottom\n"
+    self.cdashReportData = cdashReportData
+
+  def test_defaults(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData)
+    reportHtml_expected = \
+"""<html>
+
+<body>
+
+body top
+
+body bottom
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
+
+  def test_with_title(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData,
+      pageTitle="page title")
+    reportHtml_expected = \
+"""<html>
+
+<body>
+
+<h2>page title</h2>
+
+body top
+
+body bottom
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
+
+  def test_with_title_and_style(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData,
+      pageTitle="page title", pageStyle="<style>my style</style>\n")
+    reportHtml_expected = \
+"""<html>
+
+<head>
+<style>my style</style>
+</head>
+
+<body>
+
+<h2>page title</h2>
+
+body top
+
+body bottom
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
+
+  def test_with_title_and_style_and_details(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData,
+      pageTitle="page title", pageStyle="<style>my style</style>\n",
+      detailsBlockSummary="these are the details")
+    reportHtml_expected = \
+"""<html>
+
+<head>
+<style>my style</style>
+</head>
+
+<body>
+
+<h2>page title</h2>
+
+body top
+
+<details>
+
+<summary><b>these are the details:</b> (click to expand)</b></summary>
+
+body bottom
+
+</details>
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
 
 
 #############################################################################
@@ -3882,7 +4036,7 @@ class test_binTestDictsByTestsetAcro(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.getIssueTrackerAndAssertAllSame()
+# Test CDashQueryAnalyzeReport.getIssueTrackerFieldsAndAssertAllSame()
 #
 #############################################################################
 
@@ -3898,12 +4052,12 @@ def tdit(testname, issue_tracker_id, skipUrlField=False):
   return td
 
 
-class test_getIssueTrackerAndAssertAllSame(unittest.TestCase):
+class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
 
 
   def test_empty(self):
     testsLOD = []
-    issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+    issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
     self.assertEqual(issueTracker, None)
 
 
@@ -3913,7 +4067,7 @@ class test_getIssueTrackerAndAssertAllSame(unittest.TestCase):
       tdit('test2', '1234'),
       tdit('test3', '1234'),
       ]
-    issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+    issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
     self.assertEqual(issueTracker,
       (u'#1234', u'https://github.com/org/repo/issues/1234'))
 
@@ -3926,7 +4080,7 @@ class test_getIssueTrackerAndAssertAllSame(unittest.TestCase):
       ]
     threwExcept = True
     try:
-      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
       threwExcept = False
     except IssueTrackerFieldError, errMsg:
       self.assertEqual( str(errMsg),
@@ -3944,7 +4098,7 @@ class test_getIssueTrackerAndAssertAllSame(unittest.TestCase):
       ]
     threwExcept = True
     try:
-      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
       threwExcept = False
     except IssueTrackerFieldError, errMsg:
       self.assertEqual( str(errMsg),
@@ -3963,7 +4117,7 @@ class test_getIssueTrackerAndAssertAllSame(unittest.TestCase):
       ]
     threwExcept = True
     try:
-      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
       threwExcept = False
     except IssueTrackerFieldError, errMsg:
       self.assertEqual( str(errMsg),
@@ -3984,7 +4138,7 @@ class test_getIssueTrackerAndAssertAllSame(unittest.TestCase):
     testsLOD[2]['issue_tracker_url'] = u'https://github.com/org/repo/issues/1236'
     threwExcept = True
     try:
-      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
       threwExcept = False
     except IssueTrackerFieldError, errMsg:
       self.assertEqual( str(errMsg),

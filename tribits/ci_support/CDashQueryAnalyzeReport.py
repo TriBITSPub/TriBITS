@@ -306,7 +306,8 @@ def getStandardTestsetAcroList():
   return ['twoif', 'twoinr', 'twip', 'twim', 'twif', 'twinr']
 
 
-# Aggregate info about a test set used for generating the summary and table.
+# Aggregate info about a test set used for generating the summary and table
+# and to determine global pass/fail.
 #
 # Members:
 #
@@ -340,30 +341,30 @@ class TestsetTypeInfo(object):
 #
 def getStandardTestsetTypeInfo(testsetAcro, testsetColor=None):
   if testsetAcro == "twoif":
-    tsi = TestsetTypeInfo(testsetAcro, "Tests without issue trackers Failed", 'nopass',
+    tsti = TestsetTypeInfo(testsetAcro, "Tests without issue trackers Failed", 'nopass',
       cdashColorFailed())
   elif testsetAcro == "twoinr":
-    tsi = TestsetTypeInfo(testsetAcro, "Tests without issue trackers Not Run", 'nopass',
+    tsti = TestsetTypeInfo(testsetAcro, "Tests without issue trackers Not Run", 'nopass',
       cdashColorNotRun())
   elif testsetAcro == "twip":
-    tsi = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Passed", 'pass',
+    tsti = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Passed", 'pass',
       cdashColorPassed(), existanceTriggersGlobalFail=False)
   elif testsetAcro == "twim":
-    tsi = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Missing", 'missing',
+    tsti = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Missing", 'missing',
       cdashColorMissing(), existanceTriggersGlobalFail=False)
   elif testsetAcro == "twif":
-    tsi = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Failed", 'nopass',
+    tsti = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Failed", 'nopass',
       cdashColorFailed())
   elif testsetAcro == "twinr":
-    tsi = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Not Run",'nopass',
+    tsti = TestsetTypeInfo(testsetAcro, "Tests with issue trackers Not Run", 'nopass',
       cdashColorNotRun())
   else:
-    raise Excpetion("Error, typesetAcro="+str(testsetAcro)+" not supported!")
+    raise Exception("Error, testsetAcro = '"+str(testsetAcro)+"' is not supported!")
 
   if testsetColor != None:
-    tsi.testsetColor = testsetColor
+    tsti.testsetColor = testsetColor
 
-  return tsi
+  return tsti
 
 
 # Get the Test-set acronym from the fields of a test dict
@@ -382,7 +383,11 @@ def getTestsetAcroFromTestDict(testDict):
     return 'twif'
   if isTestNotRun(testDict) and issueTracker != None:
     return 'twinr'
-  raise Exception("Error, testDict = '"+str(testDict)+"' not supported!")
+  raise Exception(
+    "Error, testDict = '"+str(testDict)+"' with fields"+\
+    " status = '"+str(testDict.get('status', None))+"' and"+\
+    " issue_tracker = '"+str(testDict.get('issue_tracker', None))+"'"+\
+    " is not a supported test-set type!") 
 
 
 # Returns True if a test has 'status' 'Passed'
@@ -2041,7 +2046,7 @@ def sortAndLimitListOfDicts(listOfDicts, sortKeyList = None,
 #
 # date [in]: Date string in format "YYYY-MM-DD"
 #
-def createOverallCDashReportSummaryLine(cdashReportData, buildsetName, date):
+def getOverallCDashReportSummaryLine(cdashReportData, buildsetName, date):
   if cdashReportData.globalPass:
     summaryLine = "PASSED"
   else:
@@ -2065,18 +2070,16 @@ def getFullCDashHtmlReportPageStr(cdashReportData, pageTitle="", pageStyle="",
   ):
 
   htmlPage = \
-    "<html>\n"
+    "<html>\n\n"
 
   if pageStyle:
     htmlPage += \
       "<head>\n"+\
       pageStyle+\
-      "</head>\n"
+      "</head>\n\n"
 
   htmlPage += \
-    "\n"+\
-    "<body>\n"+\
-    "\n"
+    "<body>\n\n"
 
   if pageTitle:
     htmlPage += \
@@ -2084,21 +2087,22 @@ def getFullCDashHtmlReportPageStr(cdashReportData, pageTitle="", pageStyle="",
 
   htmlPage += \
     cdashReportData.htmlEmailBodyTop+\
-    "\n\n"
+    "\n"
 
   if detailsBlockSummary:
     htmlPage += \
       "<details>\n\n"+\
       "<summary><b>"+detailsBlockSummary+":</b> (click to expand)</b></summary>\n\n"
   htmlPage += \
-    cdashReportData.htmlEmailBodyBottom
+    cdashReportData.htmlEmailBodyBottom+\
+    "\n"
 
   if detailsBlockSummary:
     htmlPage += \
-      "</details>\n"
+      "</details>\n\n"
 
   htmlPage += \
-    "</body>\n"+\
+    "</body>\n\n"+\
     "</html>\n"
 
   return htmlPage
@@ -2437,9 +2441,8 @@ class IssueTrackerTestsStatusReporter(object):
   #
   def __init__(self, verbose=True):
     self.cdashReportData = CDashReportData()
-    self.testsetsReporter = TestsetsReporter(
-      self.cdashReportData, testsetAcroList = ['twip', 'twim', 'twif', 'twinr'],
-      htmlStyle="", verbose=verbose )
+    self.testsetsReporter = TestsetsReporter(self.cdashReportData, htmlStyle="",
+      verbose=verbose )
     self.issueTracker = None
     self.cdashTestingDay = None
 
@@ -2470,7 +2473,7 @@ class IssueTrackerTestsStatusReporter(object):
     if (len(testsLOD) == 0):
       self.issueTracker = None
       return True
-    (self.issueTracker, _) = getIssueTrackerAndAssertAllSame(testsLOD)
+    (self.issueTracker, _) = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
     self.cdashTestingDay = testsLOD[0]['cdash_testing_day']
     self.testsetsReporter.reportTestsets(testsLOD)
     # Return the final status
@@ -2488,7 +2491,7 @@ class IssueTrackerTestsStatusReporter(object):
       detailsBlockSummary="Detailed test results")
 
 
-# Get the 'issue_tracker' filed from a list of test dicts and assert they are
+# Get the issue tracker fields from a list of test dicts and assert they are
 # all the same.
 #
 # Formal Paremeters:
@@ -2506,7 +2509,7 @@ class IssueTrackerTestsStatusReporter(object):
 #   IssueTrackerFieldError: If the 'issue_tracker' or the 'issuer_tracker_url'
 #   fields are missing from a test dict or if they don't match each other.
 #
-def getIssueTrackerAndAssertAllSame(testsLOD):
+def getIssueTrackerFieldsAndAssertAllSame(testsLOD):
   if len(testsLOD) == 0:
     return None
   issue_tracker = None
@@ -2514,7 +2517,7 @@ def getIssueTrackerAndAssertAllSame(testsLOD):
   i = 0
   for testDict in testsLOD:
     (issue_tracker_i, issue_tracker_url_i) = \
-      getIssueTrackerFromTestDict(testDict, i)
+      getIssueTrackerFieldsFromTestDict(testDict, i)
     if issue_tracker == None and issue_tracker_url == None:
       issue_tracker = issue_tracker_i
       issue_tracker_url = issue_tracker_url_i
@@ -2526,7 +2529,7 @@ def getIssueTrackerAndAssertAllSame(testsLOD):
   return (issue_tracker, issue_tracker_url)
 
 
-def getIssueTrackerFromTestDict(testDict, idx):
+def getIssueTrackerFieldsFromTestDict(testDict, idx):
     issue_tracker = testDict.get('issue_tracker', None)
     issue_tracker_url = testDict.get('issue_tracker_url', None)
     if issue_tracker == None:
@@ -2567,7 +2570,7 @@ class IssueTrackerFieldError(Exception):
 #
 # NOTE: The reason this is a class is that the cdashReportData and
 # addTestHistoryStrategy objects are set once and are used for multiple calls
-# to report().
+# to reportSingleTestset().
 #
 class SingleTestsetReporter(object):
 
@@ -2688,15 +2691,16 @@ class TestsetsReporter(object):
 
   # Generate a pass/fail report for all of the testset analyzed by
   # reportTestsets().
-  def getTestsHtmlReportStr(self, testsSummaryTitle, useDetailsBlock=False,
-      detailsBlockSummary=None,
-    ):
+  def getTestsHtmlReportStr(self, testsSummaryTitle, detailsBlockSummary=None):
     cdashReportData = self.cdashReportData
     cdashReportData.htmlEmailBodyTop = \
       "<p>\n" + cdashReportData.htmlEmailBodyTop + "</p>\n"
     return getFullCDashHtmlReportPageStr(
       cdashReportData, pageTitle=testsSummaryTitle, pageStyle="",
       detailsBlockSummary=detailsBlockSummary)
+    # NOTE: Above, cdashReportData is a shallow copy of some fields like lists
+    # and other objects but the string fields are deep copied.  Therefore,
+    # this function does not change the state of 'self' at all.!
 
 
 # Bin a list of test dicts by issue tracker
@@ -2759,7 +2763,7 @@ def binTestDictsByIssueTracker(testsLOD):
   return (testDictsByIssueTracker, testsWithoutIssueTrackersLOD)
 
 
-# Bin a list of test dicts their test-set acronym
+# Bin a list of test dicts based on their test-set acronym
 #
 # Input arguments:
 #
