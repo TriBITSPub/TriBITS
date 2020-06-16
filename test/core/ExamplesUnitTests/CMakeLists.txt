@@ -38,9 +38,26 @@
 # @HEADER
 
 
-#
+########################################################################
+# Helper functions and macros
+########################################################################
+
+
+FUNCTION(GET_REGEX_CORRECT_STRING  INPUT_STR  OUTPUT_STR_VAR_OUT)
+  SET(OUTPUT_STR "${INPUT_STR}")
+  STRING(REPLACE "+" "[+]" OUTPUT_STR "${OUTPUT_STR}")
+  STRING(REPLACE "." "[.]" OUTPUT_STR "${OUTPUT_STR}")
+  SET(${OUTPUT_STR_VAR_OUT} "${OUTPUT_STR}" PARENT_SCOPE)
+ENDFUNCTION()
+
+
+MACRO(GET_REGEX_CORRECT_CMAKE_LANG_COMPILER  LANG)
+  GET_REGEX_CORRECT_STRING("${CMAKE_${LANG}_COMPILER}" CMAKE_${LANG}_COMPILER_FOR_REGEX)
+ENDMACRO()
+
+########################################################################
 # Common arguments for all inner CMake and TriBITS projects
-#
+########################################################################
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/GetCompilerPassthroughArgs.cmake)
 
@@ -49,6 +66,10 @@ IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 ELSE()
   SET(IS_REAL_LINUX_SYSTEM OFF)
 ENDIF()
+
+GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(CXX)
+GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(C)
+GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(Fortran)
 
 
 ########################################################################
@@ -802,8 +823,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
       "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsHelloWorld/TribitsHelloWorldConfig.cmake'"
       "EXPORT_VAR_PREFIX = 'TribitsHelloWorld'"
       "TribitsHelloWorld_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "TribitsHelloWorld_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+      "TribitsHelloWorld_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+      "TribitsHelloWorld_Fortran_COMPILER = ''"
+      "TribitsHelloWorld_FORTRAN_COMPILER = ''"
       "TribitsHelloWorld_CXX_FLAGS = ''"
       "TribitsHelloWorld_C_FLAGS = ''"
+      "TribitsHelloWorld_Fortran_FLAGS = ''"
       "TribitsHelloWorld_FORTRAN_FLAGS = ''"
       "TribitsHelloWorld_EXTRA_LD_FLAGS = ''"
       "TribitsHelloWorld_SHARED_LIB_RPATH_COMMAND = ''"
@@ -1332,9 +1358,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+      "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+      "WithSubpackages_Fortran_COMPILER = ''"
+      "WithSubpackages_FORTRAN_COMPILER = ''"
       "WithSubpackages_CXX_FLAGS = '.*'"
       "WithSubpackages_C_FLAGS = '.*'"
-      "WithSubpackages_FORTRAN_FLAGS = '.*'"
+      "WithSubpackages_Fortran_FLAGS = '.*'"
       "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
       "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
       "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
@@ -1409,9 +1439,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+      "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+      "WithSubpackages_Fortran_COMPILER = ''"
+      "WithSubpackages_FORTRAN_COMPILER = ''"
       "WithSubpackages_CXX_FLAGS = '.*'"
       "WithSubpackages_C_FLAGS = '.*'"
-      "WithSubpackages_FORTRAN_FLAGS = '.*'"
+      "WithSubpackages_Fortran_FLAGS = '.*'"
       "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
       "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
       "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
@@ -1459,9 +1493,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "EXPORT_VAR_PREFIX = 'TribitsExProj'"
       "Including file '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/dummy_client_of_TribitsExProj/../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
       "TribitsExProj_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "TribitsExProj_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+      "TribitsExProj_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+      "TribitsExProj_Fortran_COMPILER = ''"
+      "TribitsExProj_FORTRAN_COMPILER = ''"
       "TribitsExProj_CXX_FLAGS = ''"
       "TribitsExProj_C_FLAGS = ''"
-      "TribitsExProj_FORTRAN_FLAGS = ''"
+      "TribitsExProj_Fortran_FLAGS = ''"
       "TribitsExProj_EXTRA_LD_FLAGS = ''"
       "TribitsExProj_SHARED_LIB_RPATH_COMMAND = ''"
       "TribitsExProj_BUILD_SHARED_LIBS = 'FALSE'"
@@ -5400,5 +5438,61 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       "TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_config_file_compiler_overrides
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Configure replacing the compilers listed in the generated Config.cmake files"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DCMAKE_CXX_COMPILER_FOR_CONFIG_FILE_BUILD_DIR=cxx_wrapper_build_dir
+      -DCMAKE_C_COMPILER_FOR_CONFIG_FILE_BUILD_DIR=c_wrapper_build_dir
+      -DCMAKE_Fortran_COMPILER_FOR_CONFIG_FILE_BUILD_DIR=fortran_wrapper_build_dir
+      -DCMAKE_CXX_COMPILER_FOR_CONFIG_FILE_INSTALL_DIR=cxx_wrapper_install_dir
+      -DCMAKE_C_COMPILER_FOR_CONFIG_FILE_INSTALL_DIR=c_wrapper_install_dir
+      -DCMAKE_Fortran_COMPILER_FOR_CONFIG_FILE_INSTALL_DIR=fortran_wrapper_install_dir
+      -DTribitsExProj_ENABLE_WithSubpackages=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Check complers set in TribitsExProjConfig_install.cmake"
+    CMND grep
+    ARGS _COMPILER TribitsExProjConfig_install.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "SET[(]TribitsExProj_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
+      "SET[(]TribitsExProj_C_COMPILER .c_wrapper_install_dir.[)]"
+      "SET[(]TribitsExProj_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check complers set in WithSubpackagesConfig_install.cmake"
+    CMND grep
+    ARGS _COMPILER packages/with_subpackages/CMakeFiles/WithSubpackagesConfig_install.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
+      "SET[(]WithSubpackages_C_COMPILER .c_wrapper_install_dir.[)]"
+      "SET[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
+      "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_install_dir.[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Check complers set in WithSubpackagesConfig.cmake for build dir"
+    CMND grep
+    ARGS _COMPILER packages/with_subpackages/WithSubpackagesConfig.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_build_dir.[)]"
+      "SET[(]WithSubpackages_C_COMPILER .c_wrapper_build_dir.[)]"
+      "SET[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_build_dir.[)]"
+      "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_build_dir.[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
