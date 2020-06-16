@@ -2271,33 +2271,16 @@ class test_checkCDashTestDictsAreSame(unittest.TestCase):
       checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
       expectedRtn )
 
-  def test_same_except_for_testid_and_small_time_diff(self):
+  def test_same_status_and_details(self):
     testDict_1 = copy.deepcopy(g_cdashTestDict)
     testDict_2 = copy.deepcopy(g_cdashTestDict)
     testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
     testDict_2['time'] = 0.23
+    testDict_2['prettyTime'] = "0.23"
+    testDict_2['procTime'] = 4.0
+    testDict_2['prettyProcTime'] = "4.0"
+    testDict_2['matchingoutput'] = "some different output"
     expectedRtn = (True, None)
-    self.assertEqual(
-      checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
-      expectedRtn )
-
-  def test_same_except_for_testid_and_larger_time_diff(self):
-    testDict_1 = copy.deepcopy(g_cdashTestDict)
-    testDict_2 = copy.deepcopy(g_cdashTestDict)
-    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
-    testDict_2['time'] = 0.65
-    expectedRtn = (True, None)
-    self.assertEqual(
-      checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
-      expectedRtn )
-
-  def test_same_except_for_testid_and_too_large_time_diff(self):
-    testDict_1 = copy.deepcopy(g_cdashTestDict)
-    testDict_2 = copy.deepcopy(g_cdashTestDict)
-    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
-    testDict_2['time'] = 0.70
-    expectedRtn = (False,
-       "testDict_1['time'] = '0.22' != testDict_2['time'] = '0.7'")
     self.assertEqual(
       checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
       expectedRtn )

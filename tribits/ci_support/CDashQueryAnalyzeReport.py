@@ -1523,19 +1523,18 @@ def checkCDashTestDictsAreSame(testDict_1, testDict_1_name,
   if sameBuildIdDifferentTestIds:
     testDict_1_copy.pop('testDetailsLink', None)
     testDict_2_copy.pop('testDetailsLink', None)
-  # If the test 'time' is different by a little bit, then delcare them to be
-  # the same and remove 'time' field from comparison.
-  if testDict_1['time'] != testDict_2['time']:
-    time_1 = testDict_1['time'] 
-    time_2 = testDict_2['time'] 
-    rel_err = abs(time_1 - time_2) / ( (time_1 + time_2 + 1e-5)/2.0 )
-    rel_err_max = 1.0  # ToDo: Make this adjustable?
-    #print("rel_err = "+str(rel_err))
-    #print("rel_err_max = "+str(rel_err_max))
-    if rel_err <= rel_err_max:
-      testDict_1_copy.pop('time', None)
-      testDict_2_copy.pop('time', None)
-    # ToDo: Provide a better error message that prints the diff!
+  # Don't require the same test times
+  testDict_1_copy.pop('time', None)
+  testDict_2_copy.pop('time', None)
+  testDict_1_copy.pop('prettyTime', None)
+  testDict_2_copy.pop('prettyTime', None)
+  testDict_1_copy.pop('procTime', None)
+  testDict_2_copy.pop('procTime', None)
+  testDict_1_copy.pop('prettyProcTime', None)
+  testDict_2_copy.pop('prettyProcTime', None)
+  # Don't require identical matching output
+  testDict_1_copy.pop('matchingoutput', None)
+  testDict_2_copy.pop('matchingoutput', None)
   # Compare what ever fields are left that may be different and just use the
   # standard comparison that will give a good error message for differences.
   return checkDictsAreSame(testDict_1_copy, testDict_1_name,
