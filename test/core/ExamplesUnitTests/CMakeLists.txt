@@ -5402,3 +5402,57 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_config_file_compiler_overrides
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Configure replacing the compilers listed in the generated Config.cmake files"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DCMAKE_CXX_COMPILER_FOR_CONFIG_FILE_BUILD_DIR=cxx_wrapper_build_dir
+      -DCMAKE_C_COMPILER_FOR_CONFIG_FILE_BUILD_DIR=c_wrapper_build_dir
+      -DCMAKE_Fortran_COMPILER_FOR_CONFIG_FILE_BUILD_DIR=fortran_wrapper_build_dir
+      -DCMAKE_CXX_COMPILER_FOR_CONFIG_FILE_INSTALL_DIR=cxx_wrapper_install_dir
+      -DCMAKE_C_COMPILER_FOR_CONFIG_FILE_INSTALL_DIR=c_wrapper_install_dir
+      -DCMAKE_Fortran_COMPILER_FOR_CONFIG_FILE_INSTALL_DIR=fortran_wrapper_install_dir
+      -DTribitsExProj_ENABLE_WithSubpackages=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Check complers set in TribitsExProjConfig_install.cmake"
+    CMND grep
+    ARGS _COMPILER TribitsExProjConfig_install.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "SET[(]TribitsExProj_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
+      "SET[(]TribitsExProj_C_COMPILER .c_wrapper_install_dir.[)]"
+      "SET[(]TribitsExProj_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check complers set in WithSubpackagesConfig_install.cmake"
+    CMND grep
+    ARGS _COMPILER packages/with_subpackages/CMakeFiles/WithSubpackagesConfig_install.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
+      "SET[(]WithSubpackages_C_COMPILER .c_wrapper_install_dir.[)]"
+      "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_install_dir.[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Check complers set in WithSubpackagesConfig.cmake for build dir"
+    CMND grep
+    ARGS _COMPILER packages/with_subpackages/WithSubpackagesConfig.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_build_dir.[)]"
+      "SET[(]WithSubpackages_C_COMPILER .c_wrapper_build_dir.[)]"
+      "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_build_dir.[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
