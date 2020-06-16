@@ -802,8 +802,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
       "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsHelloWorld/TribitsHelloWorldConfig.cmake'"
       "EXPORT_VAR_PREFIX = 'TribitsHelloWorld'"
       "TribitsHelloWorld_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "TribitsHelloWorld_CXX_COMPILER = '${CMAKE_CXX_COMPILER}'"
+      "TribitsHelloWorld_C_COMPILER = '${CMAKE_C_COMPILER}'"
+      "TribitsHelloWorld_Fortran_COMPILER = ''"
+      "TribitsHelloWorld_FORTRAN_COMPILER = ''"
       "TribitsHelloWorld_CXX_FLAGS = ''"
       "TribitsHelloWorld_C_FLAGS = ''"
+      "TribitsHelloWorld_Fortran_FLAGS = ''"
       "TribitsHelloWorld_FORTRAN_FLAGS = ''"
       "TribitsHelloWorld_EXTRA_LD_FLAGS = ''"
       "TribitsHelloWorld_SHARED_LIB_RPATH_COMMAND = ''"
@@ -1332,9 +1337,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER}'"
+      "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER}'"
+      "WithSubpackages_Fortran_COMPILER = ''"
+      "WithSubpackages_FORTRAN_COMPILER = ''"
       "WithSubpackages_CXX_FLAGS = '.*'"
       "WithSubpackages_C_FLAGS = '.*'"
-      "WithSubpackages_FORTRAN_FLAGS = '.*'"
+      "WithSubpackages_Fortran_FLAGS = '.*'"
       "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
       "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
       "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
@@ -1409,9 +1418,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER}'"
+      "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER}'"
+      "WithSubpackages_Fortran_COMPILER = ''"
+      "WithSubpackages_FORTRAN_COMPILER = ''"
       "WithSubpackages_CXX_FLAGS = '.*'"
       "WithSubpackages_C_FLAGS = '.*'"
-      "WithSubpackages_FORTRAN_FLAGS = '.*'"
+      "WithSubpackages_Fortran_FLAGS = '.*'"
       "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
       "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
       "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
@@ -1459,9 +1472,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "EXPORT_VAR_PREFIX = 'TribitsExProj'"
       "Including file '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/dummy_client_of_TribitsExProj/../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
       "TribitsExProj_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "TribitsExProj_CXX_COMPILER = '${CMAKE_CXX_COMPILER}'"
+      "TribitsExProj_C_COMPILER = '${CMAKE_C_COMPILER}'"
+      "TribitsExProj_Fortran_COMPILER = ''"
+      "TribitsExProj_FORTRAN_COMPILER = ''"
       "TribitsExProj_CXX_FLAGS = ''"
       "TribitsExProj_C_FLAGS = ''"
-      "TribitsExProj_FORTRAN_FLAGS = ''"
+      "TribitsExProj_Fortran_FLAGS = ''"
       "TribitsExProj_EXTRA_LD_FLAGS = ''"
       "TribitsExProj_SHARED_LIB_RPATH_COMMAND = ''"
       "TribitsExProj_BUILD_SHARED_LIBS = 'FALSE'"
@@ -5442,6 +5459,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_config_file_compiler_overrides
     PASS_REGULAR_EXPRESSION_ALL
       "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
       "SET[(]WithSubpackages_C_COMPILER .c_wrapper_install_dir.[)]"
+      "SET[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
       "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_install_dir.[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
@@ -5452,6 +5470,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_config_file_compiler_overrides
     PASS_REGULAR_EXPRESSION_ALL
       "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_build_dir.[)]"
       "SET[(]WithSubpackages_C_COMPILER .c_wrapper_build_dir.[)]"
+      "SET[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_build_dir.[)]"
       "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_build_dir.[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
