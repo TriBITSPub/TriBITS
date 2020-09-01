@@ -1815,12 +1815,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
   #   did install will have the correct group and permissions.
 
 
-
-
-
-
-
-
 IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
   SET(TribitsExProj_INSTALL_BASE_DIR "" CACHE FILEPATH
     "Path to a base directory that installs will be made into that is not owned by the current user but is in the same owning group and has group write access"
