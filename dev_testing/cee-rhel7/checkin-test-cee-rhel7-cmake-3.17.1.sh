@@ -26,7 +26,7 @@ echo "
 -DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE
 -DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE
 -DTribitsExProj_INSTALL_BASE_DIR=/tmp/tribits_install_tests
--DTribitsExProj_INSTALL_OWNING_GROUP=wg-atdm-devops
+-DTribitsExProj_INSTALL_OWNING_GROUP=wg-run-as-atdm-devops
 -DTriBITS_ENABLE_REAL_GIT_CLONE_TESTS=ON
 " > MPI_DEBUG_CMake-3.17.1.config
 
@@ -40,7 +40,7 @@ echo "
 -DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE
 -DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE
 -DTribitsExProj_INSTALL_BASE_DIR=/tmp/tribits_install_tests
--DTribitsExProj_INSTALL_OWNING_GROUP=wg-atdm-devops
+-DTribitsExProj_INSTALL_OWNING_GROUP=wg-run-as-atdm-devops
 -DTriBITS_ENABLE_REAL_GIT_CLONE_TESTS=ON \
 " > SERIAL_RELEASE_CMake-3.17.1.config
 
@@ -49,7 +49,7 @@ echo "
 $TRIBITS_BASE_DIR_ABS/checkin-test.py \
 --default-builds= \
 --st-extra-builds=MPI_DEBUG_CMake-3.17.1,SERIAL_RELEASE_CMake-3.17.1 \
---extra-cmake-options="-DPYTHON_EXECUTABLE=/usr/bin/python2.6" \
+--extra-cmake-options="-DPYTHON_EXECUTABLE=/usr/bin/python2.7" \
 --ctest-timeout=180 \
 --skip-case-no-email \
 -j 8 \
