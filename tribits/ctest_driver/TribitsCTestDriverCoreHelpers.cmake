@@ -1402,6 +1402,10 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
 
   ENDIF()
 
+  # Print out values read from project CTestCustom.cmake file
+  PRINT_VAR(CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE)
+  PRINT_VAR(CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE)
+
   #
   # C) Do the build
   #
