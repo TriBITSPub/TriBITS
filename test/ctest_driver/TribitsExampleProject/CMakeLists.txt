@@ -248,6 +248,8 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_PASS
       "SimpleCxx: Configure passed"
       "SimpleCxx: Libs build passed"
       "SimpleCxx: All build passed"
+      "-- CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE='54321'"
+      "-- CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE='123456'"
       "SimpleCxx_HelloWorldProg [.]+ +Passed"
       "MixedLang: Configure passed"
       "MixedLang: Libs build passed"
@@ -816,6 +818,8 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_2
       "MixedLang: File '' does NOT exist so all tests passed"
       "WithSubpackages: Configure passed!"
       "WithSubpackages: Skipping build due to CTEST_DO_BUILD='OFF'"
+      "-- CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE='54321'"
+      "-- CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE='123456'"
       "WithSubpackages: File '' does NOT exist so all tests passed"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
