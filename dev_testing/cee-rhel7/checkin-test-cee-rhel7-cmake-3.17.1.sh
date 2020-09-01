@@ -52,4 +52,5 @@ $TRIBITS_BASE_DIR_ABS/checkin-test.py \
 --extra-cmake-options="-DPYTHON_EXECUTABLE=/usr/bin/python2.6" \
 --ctest-timeout=180 \
 --skip-case-no-email \
+-j 8 \
 "$@"
