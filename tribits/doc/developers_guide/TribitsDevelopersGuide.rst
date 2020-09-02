@@ -6314,29 +6314,29 @@ group on CDash using the CDash GUI interface and then tell the ctest -S local
 driver to submit results to that CDash group.  The steps for doing this are
 given below.
 
-1) Create the new CDash group ``<special_group>`` for CDash project
-``<ProjectName>`` on the targeted CDash site.
+1. Create the new CDash group ``<special_group>`` for CDash project
+   ``<ProjectName>`` on the targeted CDash site.
 
-  If the CDash group ``<special_group>`` is not already created, then one can
-  create it by first logging into CDash with an account that can modify the
-  CDash project ``<ProjectName>``.  Once logged in, go to the project edit
-  page and select "Settings" and "Groups".  From there, create the new group
-  ``<special_group>``.  Set the "Build Type" to either "Daily" or "Latest".
+   If the CDash group ``<special_group>`` is not already created, then one can
+   create it by first logging into CDash with an account that can modify the
+   CDash project ``<ProjectName>``.  Once logged in, go to the project edit
+   page and select "Settings" and "Groups".  From there, create the new group
+   ``<special_group>``.  Set the "Build Type" to either "Daily" or "Latest".
 
-2) Set ``${PROJECT_NAME}_TRACK=<special_group>`` with the CTest -S driver
-script.
+2. Set ``${PROJECT_NAME}_TRACK=<special_group>`` with the CTest -S driver
+   script.
 
-  One can either do that by setting ``SET(${PROJECT_NAME}_TRACK
-  <special_group>)`` in the CTest -S ``*.cmake`` driver script itself or can
-  set it in the environment when running the ctest -S driver script.  For
-  example::
-
-    $ env <Project>_TRACK=<special_group> ... \
-      ctest -V -S <ctest_driver>.cmake
-
-  If the "build type" for the CDash group ``<special_group>`` was set to
-  "Daily", then set `CTEST_TEST_TYPE`_ to ``Nightly``.  Otherwise,
-  ``CTEST_TEST_TYPE`` can be set to ``Continuous`` or ``Experimental``.
+   One can either do that by setting ``SET(${PROJECT_NAME}_TRACK
+   <special_group>)`` in the CTest -S ``*.cmake`` driver script itself or can
+   set it in the environment when running the ctest -S driver script.  For
+   example::
+ 
+     $ env <Project>_TRACK=<special_group> ... \
+       ctest -V -S <ctest_driver>.cmake
+ 
+   If the "build type" for the CDash group ``<special_group>`` was set to
+   "Daily", then set `CTEST_TEST_TYPE`_ to ``Nightly``.  Otherwise,
+   ``CTEST_TEST_TYPE`` can be set to ``Continuous`` or ``Experimental``.
 
 
 Additional Topics
