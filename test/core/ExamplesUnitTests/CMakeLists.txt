@@ -527,11 +527,20 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_1
+    MESSAGE "Verify that set_installed_group_and_permissions.cmake is *not* in build dir"
+    CMND ls ARGS set_installed_group_and_permissions.cmake
+    PASS_REGULAR_EXPRESSION
+      "No such file or directory"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  # NOTE: We don't want running any extra code if we are just using the stock
+  # built-in CMake permissions scheme.  (See trilinos/Trilinos#7881)
+
+  TEST_2
     MESSAGE "Do make to build everything"
     CMND make ARGS ${CTEST_BUILD_FLAGS}
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_2
+  TEST_3
     MESSAGE "Make install with default directory settings"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
     PASS_REGULAR_EXPRESSION_ALL
@@ -540,7 +549,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/bin/hello_world.exe"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_3
+  TEST_4
     MESSAGE "Check some default install directory permissions"
     CMND ls ARGS -ld
       install install/include install/lib install/bin
@@ -555,7 +564,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     # the owner should have read/write/execute on the directories or it could
     # not possibily install anything.
 
-  TEST_4
+  TEST_5
     MESSAGE "Check some default install file permissions"
     CMND ls ARGS -l
       install install/include install/lib install/bin
@@ -567,7 +576,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     # NOTE: The above permissions are the default install permissions of CMake
     # for files that it installs.
 
-  TEST_5
+  TEST_6
     MESSAGE "Reconfigure with <Project>_MAKE_INSTALL_WORLD_READABLE=ON"
     CMND ${CMAKE_COMMAND}
     ARGS
@@ -581,12 +590,19 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "-- CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS = [(]OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_6
+  TEST_7
+    MESSAGE "Verify that set_installed_group_and_permissions.cmake *is* in build dir"
+    CMND ls ARGS set_installed_group_and_permissions.cmake
+    PASS_REGULAR_EXPRESSION
+      "set_installed_group_and_permissions.cmake"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_8
     MESSAGE "Remove the install directory"
     CMND rm ARGS -r install
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_7
+  TEST_9
     MESSAGE "Re-install"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
     PASS_REGULAR_EXPRESSION_ALL
@@ -594,7 +610,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "0: Running: chmod o[+]rX -R /.*/TriBITS_TribitsHelloWorld_install_perms/install"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_8
+  TEST_10
     MESSAGE "Check updated permissions for <Project>_MAKE_INSTALL_WORLD_READABLE=ON"
     CMND ls ARGS -ld
       install install/include install/lib install/bin
@@ -605,7 +621,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "drwxr-xr-x.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_9
+  TEST_11
     MESSAGE "Reconfigure with <Project>_MAKE_INSTALL_GROUP_READABLE=ON and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
     CMND ${CMAKE_COMMAND}
     ARGS
@@ -620,17 +636,17 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "-- CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS = [(]OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_10
+  TEST_12
     MESSAGE "Remove the install directory"
     CMND rm ARGS -r install
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_11
+  TEST_13
     MESSAGE "Re-install"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_12
+  TEST_14
     MESSAGE "Check updated permissions for <Project>_MAKE_INSTALL_GROUP_READABLE=ON and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
     CMND ls ARGS -ld
       install install/include install/lib install/bin
@@ -641,7 +657,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "drwxr-x---.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_13
+  TEST_15
     MESSAGE "Reconfigure with <Project>_MAKE_INSTALL_GROUP_READABLE=OFF and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
     CMND ${CMAKE_COMMAND}
     ARGS
@@ -656,17 +672,17 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "-- CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS = [(]OWNER_READ OWNER_WRITE OWNER_EXECUTE[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_14
+  TEST_16
     MESSAGE "Remove the install directory"
     CMND rm ARGS -r install
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_15
+  TEST_17
     MESSAGE "Re-install"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_16
+  TEST_18
     MESSAGE "Check updated permissions for <Project>_MAKE_INSTALL_GROUP_READABLE=OFF and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
     CMND ls ARGS -ld
       install install/include install/lib install/bin
