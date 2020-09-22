@@ -34,8 +34,13 @@ FUNCTION(SET_DIR_OWNER_AND_PERMS  dirPath  recurseFlag)
   IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     SET(STAT_ARGS "-f%Su")  # MacOSX stat
   ELSE()
-    SET(STAT_ARGS "-c %U")  # BinUtils stat
+    SET(STAT_ARGS "-c%U")  # BinUtils stat
   ENDIF()
+  # NOTE: Above, we can't have a space between the '-f' and '%Su' strings or
+  # the '-c' and '%U' strings.  If you do, then you get a single space at the
+  # beginning of the returned owner name as ' <dirOwner>' instead of
+  # '<dirOwner>'.  The automated tests on Linux and MacOSX don't pass if you
+  # don't have it this way.
 
   EXECUTE_PROCESS(COMMAND stat ${STAT_ARGS} "${dirPath}"
     OUTPUT_STRIP_TRAILING_WHITESPACE
