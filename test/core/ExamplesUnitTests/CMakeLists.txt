@@ -607,7 +607,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
     PASS_REGULAR_EXPRESSION_ALL
       "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/bin/hello_world.exe"
-      "0: Running: chmod o[+]rX -R /.*/TriBITS_TribitsHelloWorld_install_perms/install"
+      "0: Running: chmod -R o[+]rX /.*/TriBITS_TribitsHelloWorld_install_perms/install"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_10
@@ -1611,7 +1611,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
   TEST_1
     MESSAGE "Make TribitsExampleProject source dir user rwX only!"
     CMND chmod
-    ARGS g-rwx,o-rwx -R TribitsExampleProject
+    ARGS -R g-rwx,o-rwx TribitsExampleProject
 
   TEST_2
     MESSAGE "Do initial configure with just libs not tests with default install settings"
@@ -1644,8 +1644,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
       ".*/install_base/install/lib/libpws_c.a"
       "0: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_perms/install_base"
       "0: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_perms/install_base"
-      "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R /.*/TriBITS_TribitsExampleProject_install_perms/install_base/install"
-      "1: Running: chmod g[+]rwX,o[+]rX -R /.*/TriBITS_TribitsExampleProject_install_perms/install_base/install"
+      "1: Running: chgrp -R ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_perms/install_base/install"
+      "1: Running: chmod -R g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_perms/install_base/install"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_5
@@ -1658,12 +1658,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
       install_base/install/lib
       install_base/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/bin"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/include"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/lib"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesB/stuff"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/bin"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/include"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/lib"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesB/stuff"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_6
@@ -1676,13 +1676,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
       install_base/install/bin
       install_base/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
-      "[d]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* wsp_c"
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* C.hpp"
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesC"
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_c.a"
-      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "[d]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* wsp_c"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* C.hpp"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesC"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_c.a"
+      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
     ALWAYS_FAIL_ON_NONZERO_RETURN
     # NOTE: Above, the file Makefile.export.WithSubpackagesC seems to be the
     # last file installed and therefore if it has the right permissions, then
@@ -1732,7 +1732,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
   TEST_2
     MESSAGE "Make TribitsExampleProject source dir user rwX only!"
     CMND chmod
-    ARGS g-rwx,o-rwx -R TribitsExampleProject
+    ARGS -R g-rwx,o-rwx TribitsExampleProject
 
   TEST_3
     MESSAGE "Do initial configure with just libs not tests with default install settings"
@@ -1771,8 +1771,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
       "0: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base"
       "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir"
       "1: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir"
-      "2: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir/install"
-      "2: Running: chmod g[+]rwX,o[+]rX -R /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir/install"
+      "2: Running: chgrp -R ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir/install"
+      "2: Running: chmod -R g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir/install"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   TEST_6
@@ -1786,13 +1786,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
       install_base/subdir/install/lib
       install_base/subdir/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/bin"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/include"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/lib"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/share/WithSubpackagesB/stuff"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/bin"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/include"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/lib"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/share/WithSubpackagesB/stuff"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_7
@@ -1804,12 +1804,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
       install_base/subdir/install/bin
       install_base/subdir/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* B.hpp"
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesB"
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_b.a"
-      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* B.hpp"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesB"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_b.a"
+      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_8
@@ -1861,7 +1861,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_di
   TEST_1
     MESSAGE "Make TribitsExampleProject source dir user rwX only!"
     CMND chmod
-    ARGS g-rwx,o-rwx -R TribitsExampleProject
+    ARGS -R g-rwx,o-rwx TribitsExampleProject
 
   TEST_2
     MESSAGE "Remove existing intermediate base install if exists"
@@ -1900,8 +1900,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_di
       "0: NOTE: Not calling chgrp and chmod on ${installBaseDir} since owner '${TribitsExProj_INSTALL_BASE_OWNING_USER}' != current owner '${TribitsExProj_INSTALL_OWNING_USER}'!"
       "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} ${installPrefixBaseDir}"
       "1: Running: chmod g[+]rwX,o[+]rX ${installPrefixBaseDir}"
-      "2: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R ${installPrefix}"
-      "2: Running: chmod g[+]rwX,o[+]rX -R ${installPrefix}"
+      "2: Running: chgrp -R ${TribitsExProj_INSTALL_OWNING_GROUP} ${installPrefix}"
+      "2: Running: chmod -R g[+]rwX,o[+]rX ${installPrefix}"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_6
@@ -1915,7 +1915,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_di
       ${installPrefix}/lib
       ${installPrefix}/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_BASE_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installBaseDir}"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_BASE_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installBaseDir}"
       "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefixBaseDir}"
       "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}"
       "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/bin"
