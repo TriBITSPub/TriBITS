@@ -793,6 +793,35 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_run
   # install runner for that target set with <Project>_INSTALL_PBP_RUNNER.
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms_windows_error
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Cconfigure with <Project>_MAKE_INSTALL_WORLD_READABLE=ON and Windows"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_MAKE_INSTALL_GROUP_WRITABLE=on
+      -DTribitsHelloWorld_MAKE_INSTALL_GROUP_READABLE=true
+      -DTribitsHelloWorld_MAKE_INSTALL_WORLD_READABLE=TRUE
+      -DTribitsHelloWorld_MAKE_INSTALL_GROUP=dummy-group
+      -DTribitsHelloWorld_HOSTTYPE=Windows
+      -DCMAKE_INSTALL_PREFIX=install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "ERROR: The options"
+      "    TribitsHelloWorld_MAKE_INSTALL_GROUP_WRITABLE='on'"
+      "    TribitsHelloWorld_MAKE_INSTALL_GROUP_READABLE='true'"
+      "    TribitsHelloWorld_MAKE_INSTALL_WORLD_READABLE='TRUE'"
+      "    TribitsHelloWorld_MAKE_INSTALL_GROUP='dummy-group'"
+      "are not supported on Windows!"
+      "Please remove these options and configure from scratch!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  )
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -820,7 +849,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
 
   TEST_2
     MESSAGE "Create and configure a dummy project that includes"
-      " TribitsHelloWorkdConfig.cmake from the install tree" 
+      " TribitsHelloWorkdConfig.cmake from the install tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -1292,7 +1321,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Enabling all SE packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
       "Setting TribitsExProj_ENABLE_SimpleCxx=ON"
       "Setting TribitsExProj_ENABLE_WithSubpackages=ON"
-      "Setting TPL_ENABLE_HeaderOnlyTpl=ON because it is required by the enabled package SimpleCxx" 
+      "Setting TPL_ENABLE_HeaderOnlyTpl=ON because it is required by the enabled package SimpleCxx"
       "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
       "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 5"
       "Final set of enabled TPLs:  ${FINAL_ENABLED_TPLS}"
@@ -1363,7 +1392,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
 
   TEST_4
     MESSAGE "Create and configure a dummy project that includes"
-      " WithSubpackagesConfig.cmake from the build tree" 
+      " WithSubpackagesConfig.cmake from the build tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -1486,7 +1515,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
 
   TEST_7
     MESSAGE "Create and configure a dummy project that includes"
-      " TribitsExProjConfig.cmake from the install tree" 
+      " TribitsExProjConfig.cmake from the install tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -2169,7 +2198,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
 
   TEST_5
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
-      " from the build tree" 
+      " from the build tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -2291,7 +2320,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
 
   TEST_3
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
-      " from the build tree" 
+      " from the build tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -2549,7 +2578,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST
       "WithSubpackagesA_test_of_a .* Passed"
       "WithSubpackagesB_test_of_b .* Passed"
       "WithSubpackagesB_test_of_b_mixed_lang.* Passed"
-      "WithSubpackagesC_test_of_c_util.* Passed" 
+      "WithSubpackagesC_test_of_c_util.* Passed"
       "WithSubpackagesC_test_of_c .* Passed"
       "WithSubpackagesC_test_of_c_b_mixed_lang.* Passed"
       "100% tests passed, 0 tests failed out of 9"
@@ -2604,7 +2633,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibPrefix
       "WithSubpackagesA_test_of_a .* Passed"
       "WithSubpackagesB_test_of_b .* Passed"
       "WithSubpackagesB_test_of_b_mixed_lang.* Passed"
-      "WithSubpackagesC_test_of_c_util.* Passed" 
+      "WithSubpackagesC_test_of_c_util.* Passed"
       "WithSubpackagesC_test_of_c .* Passed"
       "WithSubpackagesC_test_of_c_b_mixed_lang.* Passed"
       "100% tests passed, 0 tests failed out of 9"
@@ -2616,7 +2645,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
-  TEST_0 
+  TEST_0
     MESSAGE "Do the initial configure to get the package enables"
       " and the  env probe in place."
     CMND ${CMAKE_COMMAND}
@@ -2798,7 +2827,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
-  TEST_0 
+  TEST_0
     MESSAGE "Do the initial configure to get the package enables"
       " and the  env probe in place."
     CMND ${CMAKE_COMMAND}
@@ -3509,7 +3538,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
       "which will disable it and will recursively disable all of the"
       "downstream packages that have required dependencies on it."
       "When you reconfigure, just grep the cmake stdout for 'HeaderOnlyTpl'"
-      "and then follow the disables that occur as a result to see what impact" 
+      "and then follow the disables that occur as a result to see what impact"
       "this TPL disable has on the configuration of TribitsExProj."
       "-- ERROR: Failed finding all of the parts of TPL 'HeaderOnlyTpl' .see above., Aborting!"
       "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ .MESSAGE.:"
@@ -3564,7 +3593,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
     MESSAGE "Configure all packages"
     CMND ${CMAKE_COMMAND}
     ARGS
-      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON 
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_TESTS=ON
      .
@@ -3624,7 +3653,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
     CMND ${CMAKE_COMMAND}
     ARGS
       -DTribitsExProj_EXTRA_REPOSITORIES=TargetDefinesPkg
-      -DTribitsExProj_ENABLE_TargetDefinesPkg=ON 
+      -DTribitsExProj_ENABLE_TargetDefinesPkg=ON
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
@@ -3687,8 +3716,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
     CMND ${CMAKE_COMMAND}
     ARGS
       -DTribitsExProj_EXTRA_REPOSITORIES=MixedSharedStaticLibs
-      -DTribitsExProj_ENABLE_SimpleCxx=ON 
-      -DTribitsExProj_ENABLE_MixedSharedStaticLibs=ON 
+      -DTribitsExProj_ENABLE_SimpleCxx=ON
+      -DTribitsExProj_ENABLE_MixedSharedStaticLibs=ON
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
@@ -3775,8 +3804,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
     CMND ${CMAKE_COMMAND}
     ARGS
       -DTribitsExProj_EXTRA_REPOSITORIES=MixedSharedStaticLibs
-      -DTribitsExProj_ENABLE_SimpleCxx=ON 
-      -DTribitsExProj_ENABLE_MixedSharedStaticLibs=ON 
+      -DTribitsExProj_ENABLE_SimpleCxx=ON
+      -DTribitsExProj_ENABLE_MixedSharedStaticLibs=ON
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
@@ -3928,7 +3957,7 @@ SET(TEST_RPATH_COMMON_CONFIG_ARGS
   -DTPL_ENABLE_SimpleTpl=ON
   -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_shared_DIR}/install/include
   -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_shared_DIR}/install/lib
-  )  
+  )
 
 SET(LD_LIBRARY_PATH_ORIG $ENV{LD_LIBRARY_PATH})
 
@@ -4245,7 +4274,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
   TEST_1
     MESSAGE "Copy in dummy cmake/ProjectCompilerPostConfig.cmake."
     CMND cp
-    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/DummyProjectCompilerPostConfig.cmake  
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/DummyProjectCompilerPostConfig.cmake
       TribitsExampleProject/cmake/ProjectCompilerPostConfig.cmake
 
   TEST_2
@@ -4696,7 +4725,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PASS
       "Final set of enabled packages:  PkgWithUserErrors 1"
       "Processing enabled package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
       "Configuring done"
-      "Generating done" 
+      "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_3 CMND make
@@ -4743,7 +4772,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Processing enabled package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
-      "ERROR: Forgot to call TRIBITS_PACKAGE_POSTPROCESS[(][)] .*/TribitsExampleProject/PkgWithUserErrors/CMakeLists.txt" 
+      "ERROR: Forgot to call TRIBITS_PACKAGE_POSTPROCESS[(][)] .*/TribitsExampleProject/PkgWithUserErrors/CMakeLists.txt"
     ALWAYS_FAIL_ON_ZERO_RETURN
   )
 
@@ -5045,7 +5074,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       "Final set of enabled packages:  PkgWithSubpkgsWithUserErrors 1"
       "Processing enabled package: PkgWithSubpkgsWithUserErrors [(]A, B, Tests, Examples[)]"
       "Configuring done"
-      "Generating done" 
+      "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_3 CMND make
