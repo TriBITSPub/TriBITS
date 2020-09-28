@@ -1375,8 +1375,8 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
     IF(NOT TRIBITS_ADD_TEST_ADD_TEST_UNITTEST)
       # Tell CTest to run our script for this test.  Pass the test-type
       # configuration name to the script in the TEST_CONFIG variable.
-      ADD_TEST( ${TEST_NAME}
-        ${CMAKE_COMMAND} "-DTEST_CONFIG=\${CTEST_CONFIGURATION_TYPE}"
+      ADD_TEST( NAME ${TEST_NAME}
+        COMMAND ${CMAKE_COMMAND} "-DTEST_CONFIG=\${CTEST_CONFIGURATION_TYPE}"
         -P "${TEST_SCRIPT_FILE}")
     ENDIF()
 
