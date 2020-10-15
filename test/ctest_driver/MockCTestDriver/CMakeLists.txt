@@ -37,6 +37,13 @@
 # ************************************************************************
 # @HEADER
 
+#
+# These tests check the dependency handling behavior of the
+# TRIBITS_CTEST_DRIVER() function to see what packages will get processed and
+# tested and which will not for a number of different scenarios.  This uses
+# the mock TriBITS project MockTrilinos which does not have any code to build.
+# It just has Dependencies.make files.
+#
 
 
 INCLUDE(CMakeParseArguments)
@@ -113,7 +120,7 @@ FUNCTION(CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
     TEST_${TEST_IDX} CMND env
       ARGS
         ${MOCK_PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
-        CTEST_DEPENDENCY_HANDLING_UNIT_TESTING=ON
+        CTEST_DEPENDENCY_HANDLING_UNIT_TESTING=ON  # Put into unit test mode
         ${MOCK_PROJECT_NAME}_CTEST_COMMAND=${CMAKE_CTEST_COMMAND}
         ${MOCK_PROJECT_NAME}_PACKAGES=  # Set back to default
         CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES= # Set back to default
@@ -599,7 +606,38 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "CONFIGURE_OPTIONS = ..*-DTrilinos_EXTRAREPOS_FILE:STRING=.*/DependencyUnitTests/PreAndExtraRepositoriesList.cmake.*-DTrilinos_ENABLE_preRepoOnePackage:BOOL=ON."
   )
 
-# ToDo: Add subset!
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  PackageEnablesFile_ThyraEpetra
+  ARGS
+    Trilinos_PACKAGE_ENABLES_FILE=${CMAKE_CURRENT_LIST_DIR}/enableThyraEpetra.cmake
+    Trilinos_CTEST_DO_ALL_AT_ONCE=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Explicitly enabled SE packages on input [(]by user[)]:  ThyraEpetra 1"
+    "-- Setting ThyraEpetra_ENABLE_TESTS=ON"
+    "-- Setting ThyraEpetra_ENABLE_EXAMPLES=ON"
+    "-- Setting Trilinos_ENABLE_Thyra=ON because Trilinos_ENABLE_ThyraCoreLibs=ON"
+    "-- Setting Thyra_ENABLE_TESTS=ON because ThyraEpetra_ENABLE_TESTS=ON"
+    "-- Setting Thyra_ENABLE_EXAMPLES=ON because ThyraEpetra_ENABLE_EXAMPLES=ON"
+    "CONFIGURE_OPTIONS = .*[;]-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental[;]-DTrilinos_ENABLE_TESTS:BOOL=ON'"
+    "Final set of enabled packages:  Teuchos RTOp Epetra Thyra 4"
+    "Final set of enabled SE packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraEpetra Thyra 6"
+    "Final set of packages to be explicitly processed by CTest/CDash:  Teuchos RTOp Epetra Thyra 4"
+  )
+  # NOTE: The above is the same use case for the STK enable for the SPARC
+  # Trilinos configuration for the bug described in ATDV-399.  This test
+  # proves this is fixed.
+
+
+CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
+  PackageEnablesFile_ThyraEpetra_and_packages_Teuchos_error
+  ARGS
+    Trilinos_PACKAGES=Teuchos
+    Trilinos_PACKAGE_ENABLES_FILE=${CMAKE_CURRENT_LIST_DIR}/enableThyraEpetra.cmake
+  PASS_REGULAR_EXPRESSION_ALL
+    "CMake Error at .*/tribits/ctest_driver/TribitsCTestDriverCore.cmake"
+    "ERROR: Both Trilinos_PACKAGES and Trilinos_PACKAGE_ENABLES_FILE cannot"
+  )
 
 
 #
@@ -1025,6 +1063,7 @@ IF (PYTHON_EXECUTABLE)
 
 ENDIF(PYTHON_EXECUTABLE)
 
+
 #
 # Test other behavior of TribitsCTestDriverCore
 #
@@ -1036,9 +1075,6 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "Processing current package Teuchos: libs='ON', tests='ON'"
     "CONFIGURE_OPTIONS = '.*-DMPI_EXEC_MAX_NUMPROCS:STRING=6.*'"
   )
-
-
-# ToDo: Test ???
 
 
 #
