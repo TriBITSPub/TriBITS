@@ -48,7 +48,7 @@ echo "
 # Run checkin-test.py
 
 $TRIBITS_BASE_DIR_ABS/checkin-test.py \
---extra-cmake-options="-DPYTHON_EXECUTABLE=/usr/bin/python2.6" \
+--extra-cmake-options="-DPYTHON_EXECUTABLE=/usr/bin/python2.7" \
 --ctest-timeout=180 \
 --skip-case-no-email \
 "$@"
