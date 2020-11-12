@@ -991,30 +991,30 @@ NOTE: These options are ignored when using Makefiles or other CMake
 generators.  They only work for the Ninja generator.
 
 
-Enabling explicit template instantiation for C++
-------------------------------------------------
+Disabling explicit template instantiation for C++
+-------------------------------------------------
 
-To enable explicit template instantiation for C++ code for packages that
-support it, configure with::
+By default, support for optional explicit template instantiation (ETI) for C++
+code is enabled.  To disable support for optional ETI, configure with::
 
-  -D <Project>_ENABLE_EXPLICIT_INSTANTIATION=ON
+  -D <Project>_ENABLE_EXPLICIT_INSTANTIATION=OFF
 
 When ``OFF``, all packages that have templated C++ code will use implicit
-template instantiation.
+template instantiation (unless they have hard-coded usage of ETI).
 
-Explicit template instantiation can be enabled (``ON``) or disabled (``OFF``)
-for individual packages with::
-
+ETI can be enabled (``ON``) or disabled (``OFF``) for individual packages
+with::
 
   -D <TRIBITS_PACKAGE>_ENABLE_EXPLICIT_INSTANTIATION=[ON|OFF]
 
 The default value for ``<TRIBITS_PACKAGE>_ENABLE_EXPLICIT_INSTANTIATION`` is
 set by ``<Project>_ENABLE_EXPLICIT_INSTANTIATION``.
 
-For packages that support it, explicit template instantation can massively
-reduce the compile times for the C++ code involved.  To see what packages
-support explicit instantation just search the CMakeCache.txt file for
-variables with ``ENABLE_EXPLICIT_INSTANTIATION`` in the name.
+For packages that support it, explicit template instantiation can massively
+reduce the compile times for the C++ code involved and can even avoid compiler
+crashes in some cases.  To see what packages support explicit template
+instantiation, just search the CMakeCache.txt file for variables with
+``ENABLE_EXPLICIT_INSTANTIATION`` in the name.
 
 
 Disabling the Fortran compiler and all Fortran code
@@ -3916,3 +3916,5 @@ original configure state.  Even with the all-at-once mode, if one kills the
 with an invalid configuration of the project.  In these cases, one may need to
 configure from scratch to get back to the original state before calling ``make
 dashboard``.
+
+..  LocalWords:  templated instantiation Makefiles CMake
