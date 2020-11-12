@@ -2,6 +2,16 @@
 Release Notes for TriBITS
 ----------------------------------------
 
+2020/11/12:
+
+*) MAJOR: The default for `<Project>_ENABLE_EXPLICIT_INSTANTIATION` (ETI) was
+ changed from `OFF` to `ON`.  This was turned on in practice for almost all
+ users of Trilinos so while this change technically breaks backward
+ compatibility of TriBITS, in practice, this will likely not impact any
+ important customers.  (And new customers of Trilinos and related TriBITS
+ projects will enjoy the benefits of ETI by default.  See
+ trilinos/Trilinos#8130.)
+
 2020/10/08:
 
 *) MAJOR: Tests defined with `TRIBITS_ADD_TEST()` and
@@ -9,8 +19,8 @@ Release Notes for TriBITS
  for non-MPI TPL_ENABLE_MPI=OFF configurations.  Before, the test would get
  added and basically ignore the value of `NUM_MPI_PROCS`.  This change
  together with the change to move to using `add_test(NAME <name> COMMAND
- <command>)` mostly restores backward compatbility for projects using TriBITS.
- For more details, see trilinos/Trilinos#8110.
+ <command>)` mostly restores backward compatibility for projects using
+ TriBITS.  For more details, see trilinos/Trilinos#8110.
 
 2020/09/28:
 
