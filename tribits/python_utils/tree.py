@@ -40,27 +40,22 @@ def tree(dir, padding, options, depth, top_level=False):
 
   padding = padding + ' '
 
+  raw_listdir = listdir(dir)
   files = []
   if print_files:
-    files = listdir(dir)
+    files = raw_listdir
   else:
-    files = [x for x in listdir(dir) if isdir(dir + sep + x)]
-  count = 0
+    files = [x for x in raw_listdir if isdir(dir + sep + x)]
   files.sort()
   for file in files:
-    count += 1
     if not print_compact:
       print(padding + verticalLineChar)
     path = dir + sep + file
     if isdir(path):
-      if count == len(files):
-        tree(path, padding + ' ', options, depth)
+      if (depth == None) or (depth > 0):
+        tree(path, padding + verticalLineChar, options, depth)
       else:
-        if (depth == None) or (depth > 0):
-          tree(path, padding + verticalLineChar, options, depth)
-        else:
-          print(padding + fileDirPrefix + file + "/")
-          
+        print(padding + fileDirPrefix + file + "/")
     else:
       print(padding + fileDirPrefix + file)
 
