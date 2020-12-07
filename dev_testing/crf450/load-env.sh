@@ -1,5 +1,7 @@
 # Env for testing TriBITS on crf450
 
+module purge
+
 export PATH=${PATH_ORIG}
 
 # From ~/load_dev_env.sh
