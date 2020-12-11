@@ -40,3 +40,10 @@ else:
         return x
   def u(x): return x
   def stru(): return ''
+
+
+def csvReaderNext(csvReader):
+  if sys.version_info < (3,):
+    return csvReader.next()
+  else:
+    return next(csvReader)

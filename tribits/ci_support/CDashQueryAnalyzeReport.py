@@ -54,7 +54,7 @@ import csv
 
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
-from Python2and3 import u
+from Python2and3 import u, csvReaderNext
 
 import cdash_build_testing_date as CBTD
 
@@ -434,7 +434,6 @@ def getDefaultTestDictsSortKeyList() : return ['testname', 'buildName', 'site']
 # we can avoid getting call it in any automated tests.
 #
 def extractCDashApiQueryData(cdashApiQueryUrl):
-  #print sys.version_info
   if sys.version_info < (2,7,5):
     raise Exception("Error: Must be using Python 2.7.5 or newer")
   # NOTE: If we use Python 2.6.6. then the urllib2 function crashes!
@@ -512,13 +511,6 @@ def getColumnHeadersFromCsvFileReader(csvFileName, csvReader):
     raise Exception(
       "Error, CSV file '"+csvFileName+"' is empty which is not allowed!"
       )
-
-
-def csvReaderNext(csvReader):
-  if sys.version_info < (3,):
-    return csvReader.next()
-  else:
-    return next(csvReader)
 
 
 def assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersList,
