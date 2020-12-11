@@ -13,13 +13,15 @@ import sys
 # with Python 2, we sometimes need version-specific conversion functions to give
 # us the data type we desire. These functions are:
 #
-#     b(x)    return a byte array of str x, much like b'<string const>' in
-#             Python 3
-#     s(x)    return a version-specific str object equivalent to x
+#     b(x)    Return a byte array of str x, much like b'<string const>' in
+#             Python 3.
+#     s(x)    Return a version-specific str object equivalent to x
 #     u(x)    return a unicode object equivalent to x, much like
-#             u'<string const>' in Python 2
-#     stru()  returns the stirng 'u' if that would be printed in Python 2
-#             where in Python 3 return empty ''
+#             u'<string const>' in Python 2.
+#     stru()  Returns the stirng 'u' if that would be printed in Python 2
+#             where in Python 3 return empty ''.  This is used to build string
+#             representations so as genrated by the str() function converting
+#             a dict to a string.
 #
 if sys.version_info < (3,):
   # Python 2

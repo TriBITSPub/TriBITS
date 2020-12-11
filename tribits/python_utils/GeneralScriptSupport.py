@@ -379,6 +379,15 @@ if cmndInterceptsFile:
 g_dumpAllSysCmnds = "GENERAL_SCRIPT_SUPPORT_DUMD_COMMANDS" in os.environ
 
 
+# Run a command (or the mock of that command) and optionally return the stdout
+#
+# Returns the comamndline exit code or, if 'rtnOutput=True' returns the tuple
+# (rtnCode, cmndOutput).
+#
+# For Python 2, this returns stdout as a standard bite string for the output.
+# For Python 3, the stdout output is converted to standard unicode
+# (i.e. 'utf-8')
+#
 def runSysCmndInterface(cmnd, outFile=None, rtnOutput=False, extraEnv=None, \
   workingDir="", getStdErr=False \
   ):
@@ -416,11 +425,11 @@ def runSysCmndInterface(cmnd, outFile=None, rtnOutput=False, extraEnv=None, \
         child = subprocess.Popen(cmnd, shell=True, stdout=subprocess.PIPE,
           env=fullEnv)
       data = child.stdout.read()
+      if sys.version_info >= (3,):
+        data = data.decode('utf-8')
       child.stdout.close()
-      #print("data = '" + str(data) + "'")
       child.wait()
       rtnCode = child.returncode
-      #print("rtnCode = '" + str(rtnCode) + "'")
       rtnObject = (data, rtnCode)
     else:
       outFileHandle = None
@@ -489,10 +498,14 @@ def echoRunSysCmnd(cmnd, throwExcept=True, outFile=None, msg=None,
   return rtn
 
 
+# Return a shell command's output and optionally its return code
+#
+# For Python 2, this returns a standard bite string for the output.  For
+# Python 3, the output is converted to standard unicode (i.e. 'utf-8')
+#
 def getCmndOutput(cmnd, stripTrailingSpaces=False, throwOnError=True, workingDir="", \
   getStdErr=False, rtnCode=False \
   ):
-  """Run a shell command and return its output"""
   (data, errCode) = runSysCmndInterface(cmnd, rtnOutput=True, workingDir=workingDir,
     getStdErr=getStdErr)
   if errCode != 0:
@@ -614,11 +627,13 @@ def removeDirIfExists(dirName, verbose=False):
 
 
 def writeStrToFile(fileName, fileBodyStr):
-  open(fileName, 'w').write(fileBodyStr)
+  with open(fileName, 'w') as fileHandle:
+    fileHandle.write(fileBodyStr)
 
 
 def readStrFromFile(fileName):
-  return open(fileName, 'r').read()
+  with open(fileName, 'r') as fileHandle:
+    return fileHandle.read()
 
 
 def getFileNamesWithFileTag( baseDir, fileTag ):

@@ -43,7 +43,6 @@
 
 from FindCISupportDir import *
 from GeneralScriptSupport import *
-from Python2and3 import b, s
 from cdash_build_testing_date import *
 
 import sys
@@ -343,7 +342,7 @@ class test_CDashProjectTestingDay(unittest.TestCase):
 def run_cdash_build_testing_date_py_test(testObj, cmndArgs, testingDay_expected):
   cmnd = ciSupportDir+"/cdash_build_testing_date.py "+" ".join(cmndArgs)
   testingDay = getCmndOutput(cmnd, True)
-  testObj.assertEqual(testingDay, b(testingDay_expected))
+  testObj.assertEqual(testingDay, testingDay_expected)
 
 
 #
