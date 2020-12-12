@@ -28,6 +28,9 @@ ${_SCRIPT_DIR}/checkin-test-crf450-cmake-3.11.1.sh \
 ${_SCRIPT_DIR}/checkin-test-crf450-cmake-3.17.0.sh \
 --send-email-to= --configure --build --test
 
+${_SCRIPT_DIR}/checkin-test-crf450-cmake-3.17.0-python-3.5.2.sh \
+--send-email-to= --configure --build --test
+
 $TRIBITS_BASE_DIR_ABS/checkin-test.py \
---st-extra-builds=MPI_DEBUG_CMake-3.17.0,SERIAL_RELEASE_CMake-3.17.0 \
+--st-extra-builds=MPI_DEBUG_CMake-3.17.0,SERIAL_RELEASE_CMake-3.17.0,MPI_DEBUG_CMake-3.17.0_Python-3.5.2 \
 "$@"

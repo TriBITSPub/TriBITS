@@ -635,7 +635,8 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     # correct.
 
     # Read the written file 'test_data.json' and verify that it is correct
-    testDataLOD = eval(open(testOutputDir+"/test_data.json", 'r').read())
+    with open(testOutputDir+"/test_data.json", 'r') as fileHandle:
+      testDataLOD = eval(fileHandle.read())
     self.assertEqual(len(testDataLOD), 9)
     # Make sure an entry from 'twif' exists!
     testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
@@ -1429,7 +1430,8 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       )
 
     # Read the written file 'test_data.json' and verify that it is correct
-    testDataLOD = eval(open(testOutputDir+"/test_data.json", 'r').read())
+    with open(testOutputDir+"/test_data.json", 'r') as fileHandle:
+      testDataLOD = eval(fileHandle.read())
     self.assertEqual(len(testDataLOD), 9)
     # Make sure an entry from 'twip' exists!
     testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
@@ -1675,7 +1677,8 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
       )
 
     # Read the written file 'test_data.json' and verify that it is correct
-    testDataLOD = eval(open(testOutputDir+"/test_data.json", 'r').read())
+    with open(testOutputDir+"/test_data.json", 'r') as fileHandle:
+      testDataLOD = eval(fileHandle.read())
     self.assertEqual(len(testDataLOD), 4)
     # Make sure an entry from 'twip' exists!
     testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',

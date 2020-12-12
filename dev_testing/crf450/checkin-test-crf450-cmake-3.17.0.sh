@@ -51,7 +51,6 @@ echo "
 $TRIBITS_BASE_DIR_ABS/checkin-test.py \
 --default-builds= \
 --st-extra-builds=MPI_DEBUG_CMake-3.17.0,SERIAL_RELEASE_CMake-3.17.0 \
---extra-cmake-options="-DPYTHON_EXECUTABLE=/usr/bin/python2.7" \
 --ctest-timeout=180 \
 --skip-case-no-email \
 "$@"
