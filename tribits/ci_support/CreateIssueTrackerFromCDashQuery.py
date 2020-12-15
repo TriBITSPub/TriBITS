@@ -51,13 +51,26 @@ class CreateIssueTrackerFromCDashQueryDriver:
 
   def runDriver(self):
 
+    print("\n****")
+    print("*** Getting data to create a new issue tracker")
+    print("****\n")
+
     self.getCmndLineOptions()
 
+    print("Downloading full list of nonpassing tests from CDash URL:\n")
+    print("   "+self.options.nonpassingTestsUrl+"\n")
+
     nonpassingTestsLOD = self.downloadNonpassingTestsData()
+    print("\nTotal number of nonpassing tests over all days = "\
+      +str(len(nonpassingTestsLOD)))
 
     uniqNonpassingTestsLOD = getUniqueTestsListOfDicts(nonpassingTestsLOD)
+    print("\nTotal number of unique nonpassing test/build pairs over all days = "\
+          +str(len(uniqNonpassingTestsLOD)))
 
     (testnameList, buildnameList) = getTestnameAndBuildnameLists(uniqNonpassingTestsLOD)
+    print("\nNumber of test names = "+str(len(testnameList)))
+    print("\nNumber of build names = "+str(len(buildnameList)))
 
     testingDayStartNonpassingDate = getTestingDayStartNonpassingDate(
       nonpassingTestsLOD, self.options.cdashProjectStartTimeUtc)
@@ -79,12 +92,14 @@ class CreateIssueTrackerFromCDashQueryDriver:
       self.issueTrackerInfoConsumer.getIssueTrackerText()
 
     if self.options.newIssueTrackerFile:
-      print("\nWriting out '"+self.options.newIssueTrackerFile+"'")
+      print("\nWriting out new issue tracker text to '"\
+        +self.options.newIssueTrackerFile+"'")
       with open(self.options.newIssueTrackerFile, 'w') as fileHandle:
         fileHandle.write(issueTrackerText)
 
     if self.options.newTestsWithIssueTrackersFile:
-      print("\nWriting out '"+self.options.newTestsWithIssueTrackersFile+"'")
+      print("\nWriting out list of test/biuld pairs for CSV file '"\
+        +self.options.newTestsWithIssueTrackersFile+"'")
       csvFileStruct = CDQAR.writeTestsLODToCsvFileStructure(uniqNonpassingTestsLOD,
         self.issueTrackerUrlTemplate, self.issueTrackerTemplate )
       with open(self.options.newTestsWithIssueTrackersFile, 'w') as csvFile:
@@ -93,7 +108,7 @@ class CreateIssueTrackerFromCDashQueryDriver:
 
   def injectExtraCmndLineOptions(self, clp):
     clp.add_argument(
-      "--nonpassing-tests-url", dest="nonpassingTestsUrl", default="",
+      "--nonpassing-tests-url", "-u", dest="nonpassingTestsUrl", default="",
       help="Full CDash queryTest.php URL for the list of nonpassing tests over a"\
         +" time range given as 'begin' and 'end' fields [Required]." )
     clp.add_argument(
@@ -101,14 +116,14 @@ class CreateIssueTrackerFromCDashQueryDriver:
       help="Starting time for the CDash testing day in 'hh:mm' in UTC."\
         + " Check the CDash project settings for the testing day start time." )
     clp.add_argument(
-      "--summary-line", dest="summaryLine", default="",
-      help="The summary line text for the issue tracker [Required]." )
+      "--summary-line", "-s", dest="summaryLine", default="<summary-line>",
+      help="The summary line text for the issue tracker [Default '<summary-line>']." )
     clp.add_argument(
-      "--new-issue-tracker-file", dest="newIssueTrackerFile", default="",
+      "--new-issue-tracker-file", "-i", dest="newIssueTrackerFile", default="",
       help="File created with the new issue tracker text if"\
         +" specified [Default empty '']." )
     clp.add_argument(
-      "--new-tests-with-issue-trackers-file", dest="newTestsWithIssueTrackersFile",
+      "--new-tests-with-issue-trackers-file", "-t", dest="newTestsWithIssueTrackersFile",
       default="",
       help="CSV file created with entries for the list of nonpassing tests "\
         +" if specified [Default empty '']." )
@@ -138,9 +153,6 @@ class CreateIssueTrackerFromCDashQueryDriver:
       sys.exit(1)
     if self.options.cdashProjectStartTimeUtc == "":
       print("Error, the argument --cdash-project-start-time is required (see --help)")
-      sys.exit(1)
-    if self.options.summaryLine == "":
-      print("Error, the argument --summary-line is required (see --help)")
       sys.exit(1)
 
 
