@@ -578,7 +578,9 @@ def getTestsWtihIssueTrackersListFromCsvFile(testsWithIssueTrackersFile):
 # Write list of tests from a Tests LOD to a CSV file structure meant to match
 # tests with issue trackers CSV file.
 #
-def writeTestsLODToCsvFileStructure(testsLOD):
+def writeTestsLODToCsvFileStructure(testsLOD,
+    issueTrackerUrl="", issueTracker="",
+  ):
   csvFileHeadersList = copy.deepcopy(g_testsWithIssueTrackersCsvFileHeadersRequired)
   csvFileRowsList = []
   for testDict in testsLOD:
@@ -586,8 +588,8 @@ def writeTestsLODToCsvFileStructure(testsLOD):
       testDict['site'], 
       testDict['buildName'], 
       testDict['testname'],
-      "",  # issue_tracker_url
-      "",  # issue_tracker
+      issueTrackerUrl,  # issue_tracker_url
+      issueTracker,  # issue_tracker
       )
     csvFileRowsList.append(csvFileRow)
   return CsvFileStructure(csvFileHeadersList, csvFileRowsList)
