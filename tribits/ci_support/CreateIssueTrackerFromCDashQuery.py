@@ -10,27 +10,25 @@ g_pp = pprint.PrettyPrinter(indent=2)
 # Class that is used to create issue trackers for nonpassing tests downloaded
 # from a CDash queryTests.php query.
 #
-# To make this general, the user has to create a class object called
-# 'issueTrackerInfoConsumer' in this class that supports the following
-# functions:
+# To make this general, the user has to create a class object that is passed
+# in as the argument 'issueTrackerInfoConsumer' in this class that supports
+# the following functions.
 #
-# issueTrackerInfoConsumer.acceptIssueTrackerData(nonpassingTestsUrl, uniqNonpassingTestsLOD,
-#   buildnameList, testnameList, testHistoryHtmlTableTextText ):
+# issueTrackerInfoConsumer.acceptIssueTrackerData(issueTrackerData):
 #
-# This function is given data about the nonpasing tests and the object
-# 'issueTrackerInfoConsumeracceptIssueTrackerData' is expected to use it to
-# create the issue issue tracker text.  The only assumption of any formatting
-# is in the 'testHistoryHtmlTableText' argument.  But the object
-# 'issueTrackerInfoConsumer' is free to ignore that table if it can't deal
-# with HTML formatting.
+# This function is given data about the nonpasing tests and the object of type
+# 'IssueTrackerInfoConsumeracceptIssueTrackerData' as the argument
+# 'issueTrackerData' is expected to use it to create the issue issue tracker
+# text.  The object 'issueTrackerInfoConsumer' can format the issue tracker
+# text anyway it wants.
 #
 # issueTrackerInfoConsumer.getIssueTrackerText():
 #
 # This function is expected to return the created text for the issue tracker
 # given the data provided in the above 'acceptIssueTrackerData()' function.
 # The format of this text can be anything such as Markdown, RestructredText,
-# JIRA Issue Markup, etc.  The only assumption about formatted is in the HTML
-# table passed in the arugment 'testHistoryHtmlTableText'
+# JIRA Issue Markup, etc.  The only assumption about formatting is in the HTML
+# table passed in the arugment 'issueTrackerData.testHistoryHtmlTableText'
 # 'acceptIssueTrackerData()' function.
 #
 # ToDo: Finish documentation!
