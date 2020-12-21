@@ -17,11 +17,10 @@ g_pp = pprint.PrettyPrinter(indent=2)
 #
 # issueTrackerFormatter.acceptIssueTrackerData(issueTrackerData):
 #
-# This function is given data about the nonpasing tests and the object of type
-# 'IssueTrackerInfoConsumeracceptIssueTrackerData' as the argument
-# 'issueTrackerData' is expected to use it to create the issue issue tracker
-# text.  The object 'issueTrackerFormatter' can format the issue tracker
-# text anyway it wants.
+# This function is given data about the nonpasing tests through an object of
+# type 'IssueTrackerData' as the argument 'issueTrackerData'.  This data is
+# used to create the issue issue tracker text.  The object
+# 'issueTrackerFormatter' can format the issue tracker text anyway it wants.
 #
 # issueTrackerFormatter.getIssueTrackerText():
 #
@@ -78,13 +77,15 @@ class CreateIssueTrackerFromCDashQueryDriver:
     testHistoryHtmlTableText = ""  # ToDo: Implement!
 
     self.issueTrackerFormatter.acceptIssueTrackerData(
-      summaryLine=self.options.summaryLine,
-      testingDayStartNonpassingDate=testingDayStartNonpassingDate,
-      nonpassingTestsUrl=self.options.nonpassingTestsUrl,
-      uniqNonpassingTestsLOD=uniqNonpassingTestsLOD,
-      buildnameList=buildnameList,
-      testnameList=testnameList,
-      testHistoryHtmlTableText=testHistoryHtmlTableText,
+      IssueTrackerData(
+        summaryLine=self.options.summaryLine,
+        testingDayStartNonpassingDate=testingDayStartNonpassingDate,
+        nonpassingTestsUrl=self.options.nonpassingTestsUrl,
+        uniqNonpassingTestsLOD=uniqNonpassingTestsLOD,
+        buildnameList=buildnameList,
+        testnameList=testnameList,
+        testHistoryHtmlTableText=testHistoryHtmlTableText,
+        )
       )
 
     issueTrackerText = \
@@ -168,6 +169,26 @@ class CreateIssueTrackerFromCDashQueryDriver:
     return nonpassingTestsLOD
 
 
+# Class object for issue tracker data
+#
+class IssueTrackerData:
+
+  def __init__(self,
+      summaryLine=None,
+      testingDayStartNonpassingDate=None,
+      nonpassingTestsUrl=None,
+      uniqNonpassingTestsLOD=None,
+      buildnameList=None,
+      testnameList=None,
+      testHistoryHtmlTableText=None,
+    ):
+    self.summaryLine = summaryLine
+    self.testingDayStartNonpassingDate = testingDayStartNonpassingDate
+    self.nonpassingTestsUrl = nonpassingTestsUrl
+    self.uniqNonpassingTestsLOD = uniqNonpassingTestsLOD
+    self.buildnameList = buildnameList
+    self.testnameList = testnameList
+    self.testHistoryHtmlTableText = testHistoryHtmlTableText
 
 
 #

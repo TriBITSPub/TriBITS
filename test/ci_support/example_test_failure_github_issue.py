@@ -8,7 +8,6 @@ import sys
 # Implementation code
 #
 
-
 # Find the implementation
 tribitsDir = os.environ.get("TRIBITS_DIR", "")
 if tribitsDir:
@@ -39,38 +38,38 @@ def main():
 # NOTE: This was made a nonmember function to put this to the bottom and not
 # obscure the implementing class 'ExampleIssueTrackerFormatter'
 #
-def getGithubIssueBodyMarkdown(summaryLine, testingDayStartNonpassingDate,
-    nonpassingTestsUrl, uniqNonpassingTestsLOD, buildnameList, testnameList,
-    testHistoryHtmlTableText,
-  ):
-  issueTrackerText = \
+def getGithubIssueBodyMarkdown(
+   itd,  # issueTrackerData (type IssueTrackerData)
+ ):
+
+ issueTrackerText = \
 r"""
-SUMMARY: """+summaryLine+" "+testingDayStartNonpassingDate+r"""
+SUMMARY: """+itd.summaryLine+" "+itd.testingDayStartNonpassingDate+r"""
 
 ## Description
 
-As shown in [this query]("""+nonpassingTestsUrl+r""") (click "Shown Matching Output" in upper right) the tests:
+As shown in [this query]("""+itd.nonpassingTestsUrl+r""") (click "Shown Matching Output" in upper right) the tests:
 
-""" + CITFCQ.getMarkdownListStr(testnameList, '`') + \
+""" + CITFCQ.getMarkdownListStr(itd.testnameList, '`') + \
 r"""
 in the builds:
 
-""" + CITFCQ.getMarkdownListStr(buildnameList, '`') + \
+""" + CITFCQ.getMarkdownListStr(itd.buildnameList, '`') + \
 r"""
-started failing on testing day """+testingDayStartNonpassingDate+r""".
+started failing on testing day """+itd.testingDayStartNonpassingDate+r""".
 
 
 ## Current Status on CDash
 
-Run the [above query]("""+nonpassingTestsUrl+r""") adjusting the "Begin" and "End" dates to match today any other date range or just click "CURRENT" in the top bar to see results for the current testing day.
+Run the [above query]("""+itd.nonpassingTestsUrl+r""") adjusting the "Begin" and "End" dates to match today any other date range or just click "CURRENT" in the top bar to see results for the current testing day.
 """
 
 # NOTE: ABOVE: It is important to keep entire paragraphs on one line.
 # Otherwise, GitHub will show the line-breaks and it looks terrible.
 
-  return issueTrackerText
+ return issueTrackerText
 
-# END FUNCTION: getGithubIssueBodyMarkdown()
+# END FUNCTION: getGithubIsseBodyMarkdown()
 
 
 ################################################################################
@@ -91,20 +90,8 @@ class ExampleIssueTrackerFormatter:
     self.issueTrackerText = None
 
 
-  def acceptIssueTrackerData(self, summaryLine, testingDayStartNonpassingDate,
-      nonpassingTestsUrl, uniqNonpassingTestsLOD,  buildnameList, testnameList,
-      testHistoryHtmlTableText,
-    ):
-    self.issueTrackerText = \
-      getGithubIssueBodyMarkdown(
-        summaryLine=summaryLine,
-        testingDayStartNonpassingDate=testingDayStartNonpassingDate,
-        nonpassingTestsUrl=nonpassingTestsUrl,
-        uniqNonpassingTestsLOD=uniqNonpassingTestsLOD,
-        buildnameList=buildnameList,
-        testnameList=testnameList,
-        testHistoryHtmlTableText=testHistoryHtmlTableText,
-        )
+  def acceptIssueTrackerData(self, issueTrackerData):
+    self.issueTrackerText = getGithubIssueBodyMarkdown(issueTrackerData)
 
 
   def getIssueTrackerText(self):
