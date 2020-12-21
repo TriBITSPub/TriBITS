@@ -26,7 +26,7 @@ r"""Stock error message.
 def main():
   issueTrackerCreator = \
     CITFCQ.CreateIssueTrackerFromCDashQueryDriver(
-      ExampleIssueTrackerCreatorAndFormatter(),
+      ExampleIssueTrackerFormatter(),
       cdashProjectStartTimeUtc="6:00", # Midnight MST
       usageHelp=usageHelp,
       issueTrackerUrlTemplate="https://github.com/<group>/<group>/issues/<newissueid>",
@@ -37,7 +37,7 @@ def main():
 # Nonmember function to actually create the body of the new GitHub marddown text
 #
 # NOTE: This was made a nonmember function to put this to the bottom and not
-# obscure the implementing class 'ExampleIssueTrackerCreatorAndFormatter'
+# obscure the implementing class 'ExampleIssueTrackerFormatter'
 #
 def getGithubIssueBodyMarkdown(summaryLine, testingDayStartNonpassingDate,
     nonpassingTestsUrl, uniqNonpassingTestsLOD, buildnameList, testnameList,
@@ -84,7 +84,7 @@ Run the [above query]("""+nonpassingTestsUrl+r""") adjusting the "Begin" and "En
 # Class implementation of callback to fill in the new ATDM Trilinos GitHub
 # issue.
 #
-class ExampleIssueTrackerCreatorAndFormatter:
+class ExampleIssueTrackerFormatter:
 
 
   def __init__(self):

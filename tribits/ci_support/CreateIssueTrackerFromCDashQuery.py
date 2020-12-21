@@ -12,18 +12,18 @@ g_pp = pprint.PrettyPrinter(indent=2)
 # from a CDash queryTests.php query.
 #
 # To make this general, the user has to create a class object that is passed
-# in as the argument 'issueTrackerInfoConsumer' in this class that supports
+# in as the argument 'issueTrackerFormatter' in this class that supports
 # the following functions.
 #
-# issueTrackerInfoConsumer.acceptIssueTrackerData(issueTrackerData):
+# issueTrackerFormatter.acceptIssueTrackerData(issueTrackerData):
 #
 # This function is given data about the nonpasing tests and the object of type
 # 'IssueTrackerInfoConsumeracceptIssueTrackerData' as the argument
 # 'issueTrackerData' is expected to use it to create the issue issue tracker
-# text.  The object 'issueTrackerInfoConsumer' can format the issue tracker
+# text.  The object 'issueTrackerFormatter' can format the issue tracker
 # text anyway it wants.
 #
-# issueTrackerInfoConsumer.getIssueTrackerText():
+# issueTrackerFormatter.getIssueTrackerText():
 #
 # This function is expected to return the created text for the issue tracker
 # given the data provided in the above 'acceptIssueTrackerData()' function.
@@ -37,10 +37,10 @@ g_pp = pprint.PrettyPrinter(indent=2)
 class CreateIssueTrackerFromCDashQueryDriver:
 
 
-  def __init__(self, issueTrackerInfoConsumer, cdashProjectStartTimeUtc=None,
+  def __init__(self, issueTrackerFormatter, cdashProjectStartTimeUtc=None,
       usageHelp="", issueTrackerUrlTemplate="", issueTrackerTemplate="",
     ):
-    self.issueTrackerInfoConsumer = issueTrackerInfoConsumer
+    self.issueTrackerFormatter = issueTrackerFormatter
     self.cdashProjectStartTimeUtc = cdashProjectStartTimeUtc
     self.usageHelp = usageHelp
     self.issueTrackerUrlTemplate = issueTrackerUrlTemplate
@@ -77,7 +77,7 @@ class CreateIssueTrackerFromCDashQueryDriver:
 
     testHistoryHtmlTableText = ""  # ToDo: Implement!
 
-    self.issueTrackerInfoConsumer.acceptIssueTrackerData(
+    self.issueTrackerFormatter.acceptIssueTrackerData(
       summaryLine=self.options.summaryLine,
       testingDayStartNonpassingDate=testingDayStartNonpassingDate,
       nonpassingTestsUrl=self.options.nonpassingTestsUrl,
@@ -88,7 +88,7 @@ class CreateIssueTrackerFromCDashQueryDriver:
       )
 
     issueTrackerText = \
-      self.issueTrackerInfoConsumer.getIssueTrackerText()
+      self.issueTrackerFormatter.getIssueTrackerText()
 
     if self.options.newIssueTrackerFile:
       print("\nWriting out new issue tracker text to '"\
