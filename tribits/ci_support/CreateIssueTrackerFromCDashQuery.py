@@ -254,8 +254,8 @@ def getTestingDayStartNonpassingDate(nonpassingTestsLOD, cdashProjectStartTimeUt
         or (testingDate  < testingDayStartNonpassingDate) \
       :
       testingDayStartNonpassingDate = testingDate
-    #print("testingDayStartNonpassingDate = "+str(testingDayStartNonpassingDate))
-    return testingDayStartNonpassingDate
+  #print("testingDayStartNonpassingDate = "+str(testingDayStartNonpassingDate))
+  return testingDayStartNonpassingDate
 
 
 #

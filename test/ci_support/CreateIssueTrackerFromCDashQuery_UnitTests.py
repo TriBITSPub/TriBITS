@@ -139,7 +139,7 @@ Writing out list of test/biuld pairs for CSV file 'newTestsWithIssueTrackers.csv
 """
 
 g_example_t2_b2_github_issue = r"""
-SUMMARY: dummy_summary 2018-10-29
+SUMMARY: dummy_summary 2018-10-14
 
 ## Description
 
@@ -153,7 +153,7 @@ in the builds:
 * `build_1`
 * `build_2`
 
-started failing on testing day 2018-10-29.
+started failing on testing day 2018-10-14.
 
 
 ## Current Status on CDash
