@@ -4,6 +4,7 @@ import pprint
 
 import CDashQueryAnalyzeReport as CDQAR
 import cdash_build_testing_date as CDBTD
+from Python2and3 import distItems
 
 g_pp = pprint.PrettyPrinter(indent=2)
 
@@ -214,7 +215,7 @@ def getUniqueTestsListOfDicts(cdashTestsLOD):
       } )
   # Get a flat last of test dicts
   uniqNonpassingTestsLOD= []
-  for key, value in uniqTestDict.iteritems():
+  for key, value in distItems(uniqTestDict):
     uniqNonpassingTestsLOD.append(value)
   uniqNonpassingTestsLOD = CDQAR.sortAndLimitListOfDicts(uniqNonpassingTestsLOD,
     CDQAR.getDefaultTestDictsSortKeyList())
