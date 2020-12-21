@@ -230,3 +230,15 @@ def getTestingDayStartNonpassingDate(nonpassingTestsLOD, cdashProjectStartTimeUt
       testingDayStartNonpassingDate = testingDate
     #print("testingDayStartNonpassingDate = "+str(testingDayStartNonpassingDate))
     return testingDayStartNonpassingDate
+
+
+#
+# Helper functions to be used in concrete drivers
+#
+
+
+def getMarkdownListStr(inputList, formatChars):
+  markdownText = ""
+  for item in inputList:
+    markdownText += "* "+formatChars+item+formatChars+"\n"
+  return markdownText

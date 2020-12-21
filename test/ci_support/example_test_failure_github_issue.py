@@ -43,9 +43,7 @@ def getGithubIssueBodyMarkdown(summaryLine, testingDayStartNonpassingDate,
     nonpassingTestsUrl, uniqNonpassingTestsLOD, buildnameList, testnameList,
     testHistoryHtmlTableText,
   ):
-  issueTrackerText = ""
-
-  issueTrackerText += \
+  issueTrackerText = \
 r"""
 SUMMARY: """+summaryLine+" "+testingDayStartNonpassingDate+r"""
 
@@ -53,21 +51,11 @@ SUMMARY: """+summaryLine+" "+testingDayStartNonpassingDate+r"""
 
 As shown in [this query]("""+nonpassingTestsUrl+r""") (click "Shown Matching Output" in upper right) the tests:
 
-"""
-
-  for testname in testnameList:
-    issueTrackerText += "* `"+testname+"`\n"
-
-  issueTrackerText += \
+""" + CITFCQ.getMarkdownListStr(testnameList, '`') + \
 r"""
 in the builds:
 
-"""
-
-  for buildname in buildnameList:
-    issueTrackerText += "* `"+buildname+"`\n"
-
-  issueTrackerText += \
+""" + CITFCQ.getMarkdownListStr(buildnameList, '`') + \
 r"""
 started failing on testing day """+testingDayStartNonpassingDate+r""".
 
