@@ -398,6 +398,15 @@ TRIBITS_ADD_ADVANCED_TEST( cdash_analyze_and_report_UnitTests
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
 
+TRIBITS_ADD_ADVANCED_TEST( CreateIssueTrackerFromCDashQuery_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${PYTHON_EXECUTABLE}
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CreateIssueTrackerFromCDashQuery_UnitTests.py -v
+    PASS_REGULAR_EXPRESSION "OK"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  )
+
 #
 # TribitsExampleProject checkin-test.py tests
 #

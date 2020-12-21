@@ -1,3 +1,4 @@
+import os
 import sys
 import pprint
 
@@ -49,9 +50,9 @@ class CreateIssueTrackerFromCDashQueryDriver:
 
   def runDriver(self):
 
-    print("\n****")
+    print("\n***")
     print("*** Getting data to create a new issue tracker")
-    print("****\n")
+    print("***\n")
 
     self.getCmndLineOptions()
 
@@ -157,8 +158,13 @@ class CreateIssueTrackerFromCDashQueryDriver:
   def downloadNonpassingTestsData(self):
     apiQueryTestsUrl = self.options.nonpassingTestsUrl.replace(
       "/queryTests.php", "/api/v1/queryTests.php")
+    cdashDownloadFileForTesting = \
+      os.environ.get('CREATE_ISSUE_TRACKER_FROM_CDASH_QUERY_FILE_FOR_UNIT_TESTING',
+      '' )
     nonpassingTestsLOD = \
-       CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(apiQueryTestsUrl)
+       CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(apiQueryTestsUrl,
+         fullCDashQueryTestsJsonCacheFile=cdashDownloadFileForTesting,
+         alwaysUseCacheFileIfExists=True )
     return nonpassingTestsLOD
 
 
