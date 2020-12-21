@@ -19,9 +19,7 @@ g_pp = pprint.PrettyPrinter(indent=2)
 #
 # This function is given data about the nonpasing tests through an object of
 # type 'IssueTrackerData' as the argument 'issueTrackerData'.  This data is
-# used to create the issue issue tracker text.  The object
-# 'issueTrackerFormatter' can format the issue tracker text anyway it wants.
-#
+# used to create the issue issue tracker text.
 # issueTrackerFormatter.getIssueTrackerText():
 #
 # This function is expected to return the created text for the issue tracker
@@ -31,7 +29,9 @@ g_pp = pprint.PrettyPrinter(indent=2)
 # table passed in the arugment 'issueTrackerData.testHistoryHtmlTableText'
 # 'acceptIssueTrackerData()' function.
 #
-# ToDo: Finish documentation!
+# The object 'issueTrackerFormatter' can format the issue tracker text anyway
+# it wants.  The object 'issueTrackerFormatter' is stateless w.r.t. this class
+# CreateIssueTrackerFromCDashQueryDriver
 #
 class CreateIssueTrackerFromCDashQueryDriver:
 
@@ -76,7 +76,7 @@ class CreateIssueTrackerFromCDashQueryDriver:
 
     testHistoryHtmlTableText = ""  # ToDo: Implement!
 
-    self.issueTrackerFormatter.acceptIssueTrackerData(
+    issueTrackerText = self.issueTrackerFormatter.createFormattedIssueTracker(
       IssueTrackerData(
         summaryLine=self.options.summaryLine,
         testingDayStartNonpassingDate=testingDayStartNonpassingDate,
@@ -87,9 +87,6 @@ class CreateIssueTrackerFromCDashQueryDriver:
         testHistoryHtmlTableText=testHistoryHtmlTableText,
         )
       )
-
-    issueTrackerText = \
-      self.issueTrackerFormatter.getIssueTrackerText()
 
     if self.options.newIssueTrackerFile:
       print("\nWriting out new issue tracker text to '"\

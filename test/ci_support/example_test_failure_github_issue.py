@@ -86,16 +86,9 @@ Run the [above query]("""+itd.nonpassingTestsUrl+r""") adjusting the "Begin" and
 class ExampleIssueTrackerFormatter:
 
 
-  def __init__(self):
-    self.issueTrackerText = None
+  def createFormattedIssueTracker(self, issueTrackerData):
+    return getGithubIssueBodyMarkdown(issueTrackerData)
 
-
-  def acceptIssueTrackerData(self, issueTrackerData):
-    self.issueTrackerText = getGithubIssueBodyMarkdown(issueTrackerData)
-
-
-  def getIssueTrackerText(self):
-    return self.issueTrackerText
 
 #
 # Execute main if this is being run as a script
