@@ -58,16 +58,15 @@ usageHelp = r"""cdash_analyze_and_report.py [options]
 
 This script takes in CDash URL information and other data as command-line
 arguments and then analyzes it to look for missing expected builds, failed
-tests,q and various types of failures and then reports the findings as an HTML
-file written to disk and/or as HTML-formatted emails sent to one or more email
-addresses.
+tests, and various types of other failures and then reports the findings as an
+HTML file written to disk and/or an HTML-formatted email sent to one or more
+email addresses.  (Other types of output can be produced as well in different
+files.)
 
 If all of the expected builds are found (and all of them have test results)
 and there are no other failures found, then the script returns 0.  Otherwise
 the script returns non-zero.  Therefore, this script can be used to drive
 automated workflows by examining data on CDash.
-
-ToDo: Finish documentation!
 """
 
 
@@ -87,30 +86,30 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "--cdash-project-testing-day-start-time", dest="cdashProjectTestingDayStartTime",
     type="string", default="00:00",
     help="The CDash project testing day build star time in UTC in format '<hh>:<mm>'."+\
-      " [default = '00:00'" )
+      " [default = '00:00']" )
 
   clp.add_option(
     "--cdash-project-name", dest="cdashProjectName", type="string", default="",
-    help="CDash project name (e.g. 'Trilinos'). [REQUIRED] [default = '']" )
+    help="CDash project name (e.g. 'Trilinos'). [REQUIRED]" )
 
   clp.add_option(
     "--build-set-name", dest="buildSetName", type="string", default="",
     help="Name for the set of builds, (e.g. 'Trilinos Nightly Builds)."+\
       "  This used in the email summary line and in the HTML file body"+\
       " to identify the set of builds and tests being examined."+\
-      " [REQUIRED] [default = '']" )
+      " [REQUIRED]" )
 
   clp.add_option(
     "--cdash-site-url", dest="cdashSiteUrl", type="string", default="",
     help="Base CDash site (e.g. 'https://testing.sandia.gov/cdash')."+\
-      " [REQUIRED] [default = '']" )
+      " [REQUIRED]" )
 
   clp.add_option(
     "--cdash-builds-filters", dest="cdashBuildsFilters", type="string",
     default="",
     help="Partial URL fragment for index.php making of the filters for"+\
       " the set of builds (e.g. 'filtercount=1&showfilters=1&field1=groupname&compare1=61&value1=ATDM')."+\
-      " [REQUIRED] [default = '']" )
+      " [REQUIRED]" )
 
   clp.add_option(
     "--cdash-nonpassed-tests-filters", dest="cdashNonpassedTestsFilters", type="string",
@@ -119,9 +118,9 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       " the set of non-passing tests matching this set of builds (e.g."+\
       " 'filtercombine=and&filtercount=1&showfilters=1&filtercombine=and&field1=groupname&compare1=61&value1=ATDM')."+\
       "  This set of filter fields may also filter out extra nonpassing tests"+\
-      " such for know random system failures to avoid flooding the output.  In this"+\
+      " such for known random system failures to avoid flooding the output.  In this"+\
       " case, one should also set --require-test-history-match-nonpassing-tests=off."+\
-      " [REQUIRED] [default = '']" )
+      " [REQUIRED]" )
 
   clp.add_option(
     "--expected-builds-file", dest="expectedBuildsFile", type="string",
@@ -143,7 +142,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "--cdash-queries-cache-dir", dest="cdashQueriesCacheDir", type="string",
     default=cdashQueriesCacheDir_default,
     help="Cache CDash query data this directory." \
-      +" [Default = '"+cdashQueriesCacheDir_default+"']" )
+      +" [default = '"+cdashQueriesCacheDir_default+"']" )
 
   clp.add_option(
     "--cdash-base-cache-files-prefix", dest="cdashBaseCacheFilesPrefix", type="string",
@@ -214,14 +213,14 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
   clp.add_option(
     "--write-failing-tests-without-issue-trackers-to-file",
     dest="writeFailingTestsWithoutIssueTrackersToFile", type="string", default="",
-    help="Write a CSV file with a list of tets with issue trackers failed 'twif'." \
+    help="Write a CSV file with a list of tests with issue trackers failed 'twif'." \
     +"  This is to make it easy to add new entires to the file read by" \
     +" the option --tests-with-issue-trackers-file=<file>. [default = '']" )
 
   clp.add_option(
     "--write-test-data-to-file",
     dest="writeTestDataToFile", type="string", default="",
-    help="Write pretty-printed Python list of dictionaries for tests with" \
+    help="Write pretty-printed Python list of dictionaries for tests" \
     +" with issue trackers.  This includes the history of the tests for" \
     +" --limit-test-history-days=<days> of history.  This contains all of the" \
     +" information that appears in the generated summary tables for tests with" \

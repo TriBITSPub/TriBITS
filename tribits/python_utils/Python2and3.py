@@ -47,3 +47,10 @@ def csvReaderNext(csvReader):
     return csvReader.next()
   else:
     return next(csvReader)
+
+
+def distItems(dist):
+  if sys.version_info < (3,):
+    return dist.iteritems()
+  else:
+    return dist.items()
