@@ -88,19 +88,9 @@ class CreateIssueTrackerFromCDashQueryDriver:
         )
       )
 
-    if self.options.newIssueTrackerFile:
-      print("\nWriting out new issue tracker text to '"\
-        +self.options.newIssueTrackerFile+"'")
-      with open(self.options.newIssueTrackerFile, 'w') as fileHandle:
-        fileHandle.write(issueTrackerText)
+    self.writeNewIssueTrackerFile(issueTrackerText)
 
-    if self.options.newTestsWithIssueTrackersFile:
-      print("\nWriting out list of test/biuld pairs for CSV file '"\
-        +self.options.newTestsWithIssueTrackersFile+"'")
-      csvFileStruct = CDQAR.writeTestsLODToCsvFileStructure(uniqNonpassingTestsLOD,
-        self.issueTrackerUrlTemplate, self.issueTrackerTemplate )
-      with open(self.options.newTestsWithIssueTrackersFile, 'w') as csvFile:
-        csvFile.write(CDQAR.writeCsvFileStructureToStr(csvFileStruct))
+    self.writeNewTestsWithIssueTrackersFile(uniqNonpassingTestsLOD)
 
 
   def injectExtraCmndLineOptions(self, clp):
@@ -164,6 +154,24 @@ class CreateIssueTrackerFromCDashQueryDriver:
          fullCDashQueryTestsJsonCacheFile=cdashDownloadFileForTesting,
          alwaysUseCacheFileIfExists=True )
     return nonpassingTestsLOD
+
+
+  def writeNewIssueTrackerFile(self, issueTrackerText):
+    if self.options.newIssueTrackerFile:
+      print("\nWriting out new issue tracker text to '"\
+        +self.options.newIssueTrackerFile+"'")
+      with open(self.options.newIssueTrackerFile, 'w') as fileHandle:
+        fileHandle.write(issueTrackerText)
+
+
+  def writeNewTestsWithIssueTrackersFile(self, uniqNonpassingTestsLOD):
+    if self.options.newTestsWithIssueTrackersFile:
+      print("\nWriting out list of test/biuld pairs for CSV file '"\
+        +self.options.newTestsWithIssueTrackersFile+"'")
+      csvFileStruct = CDQAR.writeTestsLODToCsvFileStructure(uniqNonpassingTestsLOD,
+        self.issueTrackerUrlTemplate, self.issueTrackerTemplate )
+      with open(self.options.newTestsWithIssueTrackersFile, 'w') as csvFile:
+        csvFile.write(CDQAR.writeCsvFileStructureToStr(csvFileStruct))
 
 
 # Class object for issue tracker data
