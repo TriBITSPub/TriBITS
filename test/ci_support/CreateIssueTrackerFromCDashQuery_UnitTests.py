@@ -71,13 +71,17 @@ def example_test_failure_github_issue_test_case(self, testCaseName, cmndLineArgs
     cdashTestsJsonFile, expectedOutput, expectedIssue,
     expectedTestsWithIssueTrackersCsv,
   ):
+
+  # Create dir to run in
   fullTestDir = os.path.join(g_baseTestDir, testCaseName)
+  if os.path.exists(fullTestDir): shutil.rmtree(fullTestDir)
   os.makedirs(fullTestDir)
   os.chdir(fullTestDir)
+
+  # Run example_test_failure_github_issue.py
   example_exec = os.path.join(testCiSupportDir,
     'example_test_failure_github_issue.py')
   cdashTestsJsonFileFullPath = os.path.join(testCiSupportDir, cdashTestsJsonFile)
-  #print("cdashTestsJsonFileFullPath = "+str(cdashTestsJsonFileFullPath))
   cmnd = example_exec + " " + cmndLineArgsStr + \
     " -i newGitHubIssue.md -t newTestsWithIssueTrackers.csv"
   os.environ['TRIBITS_DIR'] = tribitsDir
@@ -85,6 +89,8 @@ def example_test_failure_github_issue_test_case(self, testCaseName, cmndLineArgs
     os.path.join(testCiSupportDir, cdashTestsJsonFile)
   (output, rtnCode) = getCmndOutput(cmnd, getStdErr=True,
     throwOnError=False, rtnCode=True)
+
+  # Check outputs
   self.maxDiff = None
   self.assertEqual(output, expectedOutput)
   self.assertEqual(rtnCode, 0)
@@ -123,7 +129,7 @@ Downloading full list of nonpassing tests from CDash URL:
    dummy_url
 
   Since the file exists, using cached data from file:
-    /home/rabartl/Trilinos.base/TrilinosATDMStatus/TriBITS/test/ci_support/CreateIssueTrackerFromCDashQuery/test_data_tests_2_builds_2.json
+    """+g_testBaseDir+r"""/CreateIssueTrackerFromCDashQuery/test_data_tests_2_builds_2.json
 
 Total number of nonpassing tests over all days = 4
 
