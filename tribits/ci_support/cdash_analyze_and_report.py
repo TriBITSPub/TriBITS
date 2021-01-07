@@ -240,7 +240,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
 
 
 def validateAndConvertCmndLineOptions(inOptions):
-  
+
   if inOptions.date == "":
     print("Error, can't have empty --date, must pass in --date=YYYY-MM-DD"+\
       " or special values --date=today or --date=yesterday!")
@@ -310,7 +310,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --write-email-to-file='"+io.writeEmailToFile+"'"+lt+\
     "  --email-from-address='"+io.emailFromAddress+"'"+lt+\
     "  --send-email-to='"+io.sendEmailTo+"'"+lt
-  return cmndLineOpts 
+  return cmndLineOpts
 
 
 def echoCmndLineOptions(inOptions):
@@ -413,7 +413,7 @@ if __name__ == '__main__':
 
   try:
 
-    # Beginning of top full bulid and tests CDash links paragraph 
+    # Beginning of top full bulid and tests CDash links paragraph
     cdashReportData.htmlEmailBodyTop += "<p>\n"
 
     #
@@ -473,7 +473,7 @@ if __name__ == '__main__':
     # Test history cache dir
     testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
     if not os.path.exists(testHistoryCacheDir):
-      print("\nCreating new test cache directory '"+testHistoryCacheDir+"'") 
+      print("\nCreating new test cache directory '"+testHistoryCacheDir+"'")
       os.mkdir(testHistoryCacheDir)
 
     #
@@ -489,7 +489,7 @@ if __name__ == '__main__':
       inOptions.cdashBuildsFilters)
 
     print("\nCDash builds browser URL:\n\n  "+cdashIndexBuildsBrowserUrl+"\n")
-   
+
     cdashIndexBuildsQueryUrl = CDQAR.getCDashIndexQueryUrl(
       inOptions.cdashSiteUrl,
       inOptions.cdashProjectName,
@@ -503,9 +503,13 @@ if __name__ == '__main__':
       cdashIndexBuildsQueryUrl,
       fullCDashIndexBuildsJsonCacheFile,
       inOptions.useCachedCDashData )
+
+    # Filter into subset of expected builds
+    buildsLOD = CDQAR.filterLOD(buildsLOD, expectedBuildsLOD, 'buildname')
+
     print("\nNum builds = "+str(len(buildsLOD)))
-  
-    # HTML line "Builds on CDash" 
+
+    # HTML line "Builds on CDash"
     cdashReportData.htmlEmailBodyTop += \
      "<a href=\""+cdashIndexBuildsBrowserUrl+"\">"+\
      "Builds on CDash</a> (num/expected="+\
@@ -542,14 +546,19 @@ if __name__ == '__main__':
     nonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
+
+    # Filter into subset of expected builds
+    nonpassingTestsLOD = CDQAR.filterLOD(nonpassingTestsLOD, expectedBuildsLOD,
+                                         'buildName', 'buildname')
+
     print("\nNum nonpassing tests direct from CDash query = "+\
       str(len(nonpassingTestsLOD)))
-  
+
     # HTML line "Nonpassing Tests on CDash"
     cdashReportData.htmlEmailBodyTop += \
      "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
      "Non-passing Tests on CDash</a> (num="+str(len(nonpassingTestsLOD))+")<br>\n"
-  
+
     # End of full build and test link paragraph and start the next paragraph
     # for the summary of failures and other tables
     cdashReportData.htmlEmailBodyTop += \
@@ -580,6 +589,7 @@ if __name__ == '__main__':
     # D.3) Partition the varous list of tests into different sets that will
     # be displayed in different tables.
     #
+
 
     # Add issue tracker info for all nonpassing tests (including adding empty
     # issue tracker fields for tests that don't have issue trackers)

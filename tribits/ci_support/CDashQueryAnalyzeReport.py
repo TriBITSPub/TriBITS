@@ -1778,6 +1778,19 @@ class AddTestHistoryToTestDictFunctor(object):
     return testDict
 
 
+def filterLOD(LOD, filterLOD, LODkey, filterLODkey=None):
+  newLOD = []
+  if not filterLODkey:
+    filterLODkey = LODkey
+
+  for filt in filterLOD:
+    for entry in LOD:
+      if entry[LODkey] == filt[filterLODkey]:
+        newLOD.append(entry)
+
+  return newLOD
+
+
 def setTestDictAsMissing(testDict):
   testDict['status'] = "Missing"
   testDict['status_color'] = cdashColorMissing()
