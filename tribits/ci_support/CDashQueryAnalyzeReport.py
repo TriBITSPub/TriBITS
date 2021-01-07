@@ -78,7 +78,7 @@ def convertInputDateArgToYYYYMMDD(cdashProjectTestingDayStartTime, dateText,
 
 # Validate a date YYYY-MM-DD string and return a date object for the
 # 'datetime' module.
-# 
+#
 def validateAndConvertYYYYMMDD(dateText):
   try:
     return datetime.datetime.strptime(dateText, '%Y-%m-%d')
@@ -164,7 +164,7 @@ def getCompressedFileNameIfTooLong(inputFileName, prefix="", ext=""):
     if ext: newFileName += "." + ext
     return newFileName
   return inputFileName
-    
+
 
 # Filter and input list and return a list with elements where
 # matchFunctor(inputList[i])==True.
@@ -269,7 +269,7 @@ def writeCsvFileStructureToStr(csvFileStruct):
 
 #
 # Reporting policy, data, and defaults
-# 
+#
 
 
 # Collecton of data used to create the final HTML CDash report that is
@@ -388,7 +388,7 @@ def getTestsetAcroFromTestDict(testDict):
     "Error, testDict = '"+str(testDict)+"' with fields"+\
     " status = '"+str(testDict.get('status', None))+"' and"+\
     " issue_tracker = '"+str(testDict.get('issue_tracker', None))+"'"+\
-    " is not a supported test-set type!") 
+    " is not a supported test-set type!")
 
 
 # Returns True if a test has 'status' 'Passed'
@@ -453,8 +453,8 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 # the returned list of dicts will be:
 #
 #  [
-#    { 'col_0':'val_00', 'col_1':'val_01', 'col_2':'val_02' }, 
-#    { 'col_0':'val_10', 'col_1':'val_11', 'col_2':'val_12' }, 
+#    { 'col_0':'val_00', 'col_1':'val_01', 'col_2':'val_02' },
+#    { 'col_0':'val_10', 'col_1':'val_11', 'col_2':'val_12' },
 #    ]
 #
 # This function can also allow the user to assert that the included columns
@@ -585,8 +585,8 @@ def writeTestsLODToCsvFileStructure(testsLOD,
   csvFileRowsList = []
   for testDict in testsLOD:
     csvFileRow = (
-      testDict['site'], 
-      testDict['buildName'], 
+      testDict['site'],
+      testDict['buildName'],
       testDict['testname'],
       issueTrackerUrl,  # issue_tracker_url
       issueTracker,  # issue_tracker
@@ -664,7 +664,7 @@ def getAndCacheCDashQueryDataOrReadFromCache(
       if verbose:
         print("  Caching data downloaded from CDash to file:\n    "+\
           cdashQueryDataCacheFile)
-      pprintPythonDataToFile(cdashQueryData, cdashQueryDataCacheFile) 
+      pprintPythonDataToFile(cdashQueryData, cdashQueryDataCacheFile)
   return cdashQueryData
 
 
@@ -672,7 +672,7 @@ def getAndCacheCDashQueryDataOrReadFromCache(
 # pieces
 def getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields):
   if date: dateArg = "&date="+date
-  else: dateArg = "" 
+  else: dateArg = ""
   return cdashUrl+"/api/v1/index.php?project="+projectName+dateArg \
     + "&"+filterFields
 
@@ -680,7 +680,7 @@ def getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields):
 # Construct full cdash/index.php browser URL given the pieces
 def getCDashIndexBrowserUrl(cdashUrl, projectName, date, filterFields):
   if date: dateArg = "&date="+date
-  else: dateArg = "" 
+  else: dateArg = ""
   return cdashUrl+"/index.php?project="+projectName+dateArg \
     + "&"+filterFields
 
@@ -688,14 +688,14 @@ def getCDashIndexBrowserUrl(cdashUrl, projectName, date, filterFields):
 # Construct full cdash/api/v1/queryTests.php query URL given the pieces
 def getCDashQueryTestsQueryUrl(cdashUrl, projectName, date, filterFields):
   if date: dateArg = "&date="+date
-  else: dateArg = "" 
+  else: dateArg = ""
   return cdashUrl+"/api/v1/queryTests.php?project="+projectName+dateArg+"&"+filterFields
 
 
 # Construct full cdash/queryTests.php browser URL given the pieces
 def getCDashQueryTestsBrowserUrl(cdashUrl, projectName, date, filterFields):
   if date: dateArg = "&date="+date
-  else: dateArg = "" 
+  else: dateArg = ""
   return cdashUrl+"/queryTests.php?project="+projectName+dateArg+"&"+filterFields
 
 
@@ -1072,7 +1072,7 @@ class SearchableListOfDicts(object):
     if keyMapList:
       if len(listOfKeys) != len(keyMapList):
         raise Exception("Error, listOfKeys="+str(listOfKeys)+\
-          " keyMapList="+str(listOfKeys)+" have different lenghts!" )  
+          " keyMapList="+str(listOfKeys)+" have different lenghts!" )
     self.__listOfDicts = listOfDicts
     self.__listOfKeys = listOfKeys
     self.__keyMapList = keyMapList
@@ -1088,7 +1088,7 @@ class SearchableListOfDicts(object):
       ", listOfKeys="+str(self.__listOfKeys)+", lookupDict="+str(self.__lookupDict)+"}"
     return myStr
 
-  # Return listOfDicts passed into Constructor 
+  # Return listOfDicts passed into Constructor
   def getListOfDicts(self):
     return self.__listOfDicts
 
@@ -1167,7 +1167,7 @@ def createTestToBuildSearchableListOfDicts(buildsLOD,
 # matches one dicts in the input SearchableListOfDicts.
 class MatchDictKeysValuesFunctor(object):
 
-  # Construct with a SearchableListOfDicts object 
+  # Construct with a SearchableListOfDicts object
   def __init__(self, searchableListOfDict):
     self.__searchableListOfDict = searchableListOfDict
 
@@ -1268,7 +1268,7 @@ def testsWithIssueTrackersMatchExpectedBuilds( testsWithIssueTrackersLOD,
 
 # Extract just the date from the testDict['buildstartdate'] field
 def dateFromBuildStartTime(buildStartTime):
-  return buildStartTime.split('T')[0]  
+  return buildStartTime.split('T')[0]
 
 
 # Sort list of test history dicts and get statistics
@@ -1359,7 +1359,7 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
 
   # Remove duplicate tests from list of dicts
   sortedTestHistoryLOD = getUniqueSortedTestsHistoryLOD(sortedTestHistoryLOD)
- 
+
   # Get testing day/time helper object
   testingDayTimeObj = CBTD.CDashProjectTestingDay(currentTestDate, testingDayStartTimeUtc)
   currentTestDateDT = testingDayTimeObj.getCurrentTestingDayDateDT()
@@ -1456,7 +1456,7 @@ def getUniqueSortedTestsHistoryLOD(inputSortedTestHistoryLOD):
   idx = 1
   while idx < len(inputSortedTestHistoryLOD):
     candidateTestDict = inputSortedTestHistoryLOD[idx]
-    
+
     if not checkCDashTestDictsAreSame(candidateTestDict, "a", lastUniqueTestDict, "b")[0]:
       uniqueSortedTestHistoryLOD.append(candidateTestDict)
       lastUniqueTestDict = candidateTestDict
@@ -1478,7 +1478,7 @@ def extractTestIdAndBuildIdFromTestDetailsLink(testDetailsLink):
     testId = testidArgList[1]
     buildId = buildidArgList[1]
   else:
-    # Newer CDash implementations have 
+    # Newer CDash implementations have
     testDetailsLinkList = testDetailsLink.split('/')
     testId = testDetailsLinkList[1]
     buildId = ""
@@ -1628,7 +1628,7 @@ class AddTestHistoryToTestDictFunctor(object):
       "&field1=buildname&compare1=61&value1="+buildName+\
       "&field2=testname&compare2=61&value2="+testname+\
       "&field3=site&compare3=61&value3="+site
-    
+
     # URL used to get the history of the test in JSON form
     testHistoryQueryUrl = \
       getCDashQueryTestsQueryUrl(cdashUrl, projectName, None, testHistoryQueryFilters)
@@ -1684,7 +1684,7 @@ class AddTestHistoryToTestDictFunctor(object):
     (testHistoryLOD, testHistoryStats, testStatus) = sortTestHistoryGetStatistics(
       testHistoryLOD, self.__date, self.__testingDayStartTimeUtc, daysOfHistory)
 
-    # Assert and update the status 
+    # Assert and update the status
 
     #print("\ntestStatus = "+str(testStatus))
     #print("\ntestHistoryLOD[0] = "+str(testHistoryLOD[0]))
@@ -1802,7 +1802,7 @@ class AddCDashTestingDayFunctor(object):
 # Inputs:
 #
 #   buildLookupDict [in]: Lookup dict of build summary dicts gotten off CDash
-#   
+#
 #   expectedBuildsList [in]: List of expected builds dict with fields 'group',
 #   'site', and 'buildname'.
 #
@@ -1908,7 +1908,7 @@ def getMissingExpectedBuildsList(buildsSearchableListOfDicts, expectedBuildsList
 # If alwaysUseCacheFileIfExists==True, then if the file
 # cdashIndexBuildsQueryCacheFile already exists, it will always be read to get
 # data instead of communicating with CDash even if useCachedCDashData==False.
-# 
+#
 # The list of builds pulled off of CDash is flattended and extracted using the
 # function flattenCDashIndexBuildsToListOfDicts().
 #
@@ -1954,7 +1954,7 @@ def downloadBuildsOffCDashAndFlatten(
 # If alwaysUseCacheFileIfExists==True, then if the file
 # cdashIndexBuildsQueryCacheFile already exists, it will always be read to get
 # data instead of communicating with CDash even if useCachedCDashData==False.
-# 
+#
 # The list of tests pulled off CDash is flattended and returned by the
 # function flattenCDashQueryTestsToListOfDicts().
 #
@@ -2151,13 +2151,13 @@ class TableColumnData(object):
 def colorHtmlText(htmlText, color_in):
   if color_in == None or color_in == "":
     return htmlText
-  elif color_in == "red": 
+  elif color_in == "red":
     None # Okay!
-  elif color_in == "green": 
+  elif color_in == "green":
     None # Okay!
-  elif color_in == "gray": 
+  elif color_in == "gray":
     None # Okay!
-  elif color_in == "orange": 
+  elif color_in == "orange":
     None # Okay!
   else:
     raise Exception("Error, color='"+color_in+"' is invalid."+\
@@ -2177,7 +2177,7 @@ def addHtmlSoftWordBreaks(text_in):
 #
 # tableTitle [in]: String for the name of the table included at the top of the
 # table.
-# 
+#
 # colDataList [in]: List of TableColumnData objects where
 #   colDataList[j].dictKey gives the name of the key for that column of data,
 #   colDataList[j].colHeader is the text name for the column header and
@@ -2251,13 +2251,13 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
         raise Exception(
           "Error, column "+str(col_j)+" dict key='"+colData.dictKey+"'"+\
           " row "+str(row_i)+" entry is 'None' which is not allowed!\n\n"+\
-          "Row dict = "+str(rowData))  
+          "Row dict = "+str(rowData))
       # Add soft word breaks to allow line breaks for table compression
       entry = addHtmlSoftWordBreaks(str(entry).strip())
       # Add color if defined for this field
       entryColor = rowData.get(dictKey+"_color", None)
       if entryColor:
-        entry = colorHtmlText(entry, entryColor) 
+        entry = colorHtmlText(entry, entryColor)
       # See if the _url key also exists
       entry_url = rowData.get(dictKey+"_url", None)
       # Set the text for this row/column entry with or without the hyperlink
@@ -2268,7 +2268,7 @@ def createHtmlTableStr(tableTitle, colDataList, rowDataList,
       # Set the row entry in the HTML table
       htmlStr+=\
         "<td align=\""+colData.colAlign+"\">"+entryStr+"</td>\n"
-      col_j += 1  
+      col_j += 1
     htmlStr+="</tr>\n\n"
     row_i += 1
 
@@ -2661,7 +2661,7 @@ class SingleTestsetReporter(object):
 
 # Class to generate the data for an HTML report for all test-sets represented
 # in a list of test dicts.
-# 
+#
 class TestsetsReporter(object):
 
   # Constructor
@@ -2680,7 +2680,7 @@ class TestsetsReporter(object):
 
   # Separate out and report on all of the test-sets in the input list of test
   # dicts.
-  # 
+  #
   def reportTestsets(self, testsLOD):
     testDictsByTestsetAcro = binTestDictsByTestsetAcro(testsLOD)
     for testsetAcro in self.testsetAcroList:
@@ -2829,13 +2829,15 @@ def binTestDictsByTestsetAcro(testsLOD):
 
 #
 # Create an HTML MIME Email
-#  
+#
 
 import smtplib
 
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate
+from email.charset import Charset, QP
+import email.message
 
 
 # Create MINE formatted email object (but don't send it)
@@ -2848,10 +2850,18 @@ def createHtmlMimeEmail(fromAddress, toAddress, subject, textBody, htmlBody):
   msg['To'] = toAddress
   msg['Date'] = formatdate(localtime=True)
   msg['Subject'] = subject
+  msg['Content-Type'] = "text/html; charset=utf-8"
+
+  # RFC 821 states that the text line size including <CRLF> is 1000 characters.
+  # This text line size is causing spaces to be inserted into the email body and
+  # break long hyperlinks. Below, we use quoted-printable
+  # "Content-Transfer-Encoding" to ensure integrity of the data being sent
+  # through the gateway when html text lines are longer than 1000 characters.
+  msg['Content-Transfer-Encoding'] = "quoted-printable"
 
   # Record the MIME types of both parts - text/plain and text/html.
-  part1 = MIMEText(textBody, 'plain')
-  part2 = MIMEText(htmlBody, 'html')
+  part1 = MIMEText(textBody.encode('utf-8'), 'plain', 'utf-8')
+  part2 = MIMEText(htmlBody.encode('utf-8'), 'html', 'utf-8')
 
   # Attach parts into message container.  According to RFC 2046, the last part
   # of a multipart message, in this case the HTML message, is best and
