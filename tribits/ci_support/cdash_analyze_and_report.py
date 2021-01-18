@@ -136,6 +136,18 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "  Each of these tests must have a unique 'site', 'buildName', and 'testname'"+\
     " sets or an error will be raised and the tool will abort.  [default = '']" )
 
+  addOptionParserChoiceOption(
+    "--filter-out-builds-and-tests-not-matching-expected-builds",
+    "filterOutBuildsAndTestsNotMatchingExpectedBuildsStr",
+    ("on", "off"), 1,
+    "Filter out build and test data not matching input list of expected builds."+\
+    "  If set to 'on', this will filter out build and test data downloaded"+\
+    " from CDash that does not match the list of expected builds provided in"+\
+    " --expected-builds-file=<csv-file>.  This will also filter out any tests"+\
+    " with issue trackers listed in"+\
+    " --tests-with-issue-trackers-file=<csv-file>.",
+    clp )
+
   cdashQueriesCacheDir_default=os.getcwd()
 
   clp.add_option(
@@ -256,6 +268,11 @@ def validateAndConvertCmndLineOptions(inOptions):
 
 def setExtraCmndLineOptionsAfterParse(inOptions_inout):
 
+  if inOptions_inout.filterOutBuildsAndTestsNotMatchingExpectedBuildsStr == "on":
+    setattr(inOptions_inout, 'filterOutBuildsAndTestsNotMatchingExpectedBuilds', True)
+  else:
+    setattr(inOptions_inout, 'filterOutBuildsAndTestsNotMatchingExpectedBuilds', False)
+
   if inOptions_inout.useCachedCDashDataStr == "on":
     setattr(inOptions_inout, 'useCachedCDashData', True)
   else:
@@ -298,6 +315,8 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --cdash-nonpassed-tests-filters='"+io.cdashNonpassedTestsFilters+"'"+lt+\
     "  --expected-builds-file='"+io.expectedBuildsFile+"'"+lt+\
     "  --tests-with-issue-trackers-file='"+io.testsWithIssueTrackersFile+"'"+lt+\
+    "  --filter-out-builds-and-tests-not-matching-expected-builds='"+\
+      io.filterOutBuildsAndTestsNotMatchingExpectedBuildsStr+"'"+lt+\
     "  --cdash-queries-cache-dir='"+io.cdashQueriesCacheDir+"'"+lt+\
     "  --cdash-base-cache-files-prefix='"+io.cdashBaseCacheFilesPrefix+"'"+lt+\
     "  --use-cached-cdash-data='"+io.useCachedCDashDataStr+"'"+lt+\
@@ -463,7 +482,7 @@ if __name__ == '__main__':
     testsWithIssueTrackerMatchFunctor = \
       CDQAR.MatchDictKeysValuesFunctor(testsWithIssueTrackersSLOD)
 
-    # Assert they the list of tests with issue trackers matches the list of
+    # Assert that the list of tests with issue trackers matches the list of
     # expected builds
     (allTestsMatch, errMsg) = CDQAR.testsWithIssueTrackersMatchExpectedBuilds(
       testsWithIssueTrackersLOD, testsToExpectedBuildsSLOD)
@@ -504,8 +523,9 @@ if __name__ == '__main__':
       fullCDashIndexBuildsJsonCacheFile,
       inOptions.useCachedCDashData )
 
-    # Filter into subset of expected builds
-    buildsLOD = CDQAR.filterLOD(buildsLOD, expectedBuildsLOD, 'buildname')
+    if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
+      # Filter into subset of expected builds
+      buildsLOD = CDQAR.filterLOD(buildsLOD, expectedBuildsLOD, 'buildname')
 
     print("\nNum builds = "+str(len(buildsLOD)))
 
@@ -547,9 +567,10 @@ if __name__ == '__main__':
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
 
-    # Filter into subset of expected builds
-    nonpassingTestsLOD = CDQAR.filterLOD(nonpassingTestsLOD, expectedBuildsLOD,
-                                         'buildName', 'buildname')
+    if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
+      # Filter into subset of expected builds
+      nonpassingTestsLOD = CDQAR.filterLOD(nonpassingTestsLOD, expectedBuildsLOD,
+        'buildName', 'buildname')
 
     print("\nNum nonpassing tests direct from CDash query = "+\
       str(len(nonpassingTestsLOD)))
