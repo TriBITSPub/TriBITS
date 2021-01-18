@@ -484,7 +484,7 @@ if __name__ == '__main__':
 
     # Assert that the list of tests with issue trackers matches the list of
     # expected builds
-    (allTestsMatch, errMsg) = CDQAR.testsWithIssueTrackersMatchExpectedBuilds(
+    (allTestsMatch, errMsg) = CDQAR.doTestsWithIssueTrackersMatchExpectedBuilds(
       testsWithIssueTrackersLOD, testsToExpectedBuildsSLOD)
     if not allTestsMatch:
       raise Exception(errMsg)

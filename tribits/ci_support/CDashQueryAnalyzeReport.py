@@ -176,8 +176,8 @@ def getFilteredList(inputList, matchFunctor):
   return filteredList
 
 
-# Filter an input list return a two lists (matchList, nomatchList) where the
-# first list has elements where matchFunctor(inputList[i])==True and the
+# Filter an input list returning a two lists (matchList, nomatchList) where
+# the first list has elements where matchFunctor(inputList[i])==True and the
 # second list has elements where matchFunctor(inputList[i])==False.
 #
 def splitListOnMatch(inputList, matchFunctor):
@@ -1164,7 +1164,7 @@ def createTestToBuildSearchableListOfDicts(buildsLOD,
 
 
 # Match functor that returns true if the input dict has key/values that
-# matches one dicts in the input SearchableListOfDicts.
+# matches one of the dicts in the input SearchableListOfDicts.
 class MatchDictKeysValuesFunctor(object):
 
   # Construct with a SearchableListOfDicts object
@@ -1224,33 +1224,53 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
     return testDict_inout
 
 
-# Assert that the list of tests with issue trackers matches the expected
-# builds.
+# Split the a list of Test Dicts based on if they match the set of expected
+# builds or not.
 #
 # testsWithIssueTrackersLOD [in]: List of dicts of tests with issue trackers.
 #   Here, only the fields 'site', 'buildName', and 'testname' are significant.
 #
-# expectedBuildsLOD [in]: List of dicts of expected builds with fields 'site',
-# 'buildname'.  Here, the key/value pairs 'site' and 'buildname' must be
-# unique.  The 'group' field is ignored (because cdash/queryTests.php does not
-# give the 'group' of each test).
+# expectedBuildsLOD [in]: List of dicts of expected builds with fields 'site'
+#   and 'buildname'.  Here, the key/value pairs 'site' and 'buildname' must be
+#   unique.  The 'group' field is ignored (because cdash/queryTests.php does
+#   not give the 'group' of each test).
 #
-# This returns a tuple (matches, errMsg).  If all of the tests match, then
-# 'matches' will be True and errMsg=="".  If one or more of the tests don't
-# match then 'matches' will be False and 'errMsg' will give a message about
-# which tests are missing.
-#
-def testsWithIssueTrackersMatchExpectedBuilds( testsWithIssueTrackersLOD,
+def splitTestsOnMatchExpectedBuilds( testsWithIssueTrackersLOD,
     testToExpectedBuildsSLOD,
   ):
+  return splitListOnMatch(testsWithIssueTrackersLOD,
+    MatchDictKeysValuesFunctor(testToExpectedBuildsSLOD) )
+
+
+# Check if the list of tests with issue trackers matches the expected builds.
+#
+# testsWithIssueTrackersLOD [in]: List of dicts of tests with issue trackers.
+#   Here, only the fields 'site', 'buildName', and 'testname' are significant.
+#
+# expectedBuildsLOD [in]: List of dicts of expected builds with fields 'site'
+#   and 'buildname'.  Here, the key/value pairs 'site' and 'buildname' must be
+#   unique.  The 'group' field is ignored (because cdash/queryTests.php does
+#   not give the 'group' of each test).
+#
+# This returns a tuple (matches, errMsg).  If all of the tests match, then
+# 'matches' will be 'True' and errMsg=="".  If one or more of the tests don't
+# match the expected builds then 'matches' will be 'False' and 'errMsg' will
+# give a message about which tests are missing.
+#
+def doTestsWithIssueTrackersMatchExpectedBuilds( testsWithIssueTrackersLOD,
+    testToExpectedBuildsSLOD,
+  ):
+  # Get list of tests matching and non-matching expected builds (ignoring
+  # matching tests list)
+  (_, nomatchingTestsLOD) = \
+     splitTestsOnMatchExpectedBuilds(testsWithIssueTrackersLOD,
+        testToExpectedBuildsSLOD)
   # Gather up all of the tests that don't match one of the expected builds
   nonmatchingTestsWithIssueTrackersLOD = []
-  for testDict in testsWithIssueTrackersLOD:
-    expectedBuildDict = testToExpectedBuildsSLOD.lookupDictGivenKeyValueDict(testDict)
-    if not expectedBuildDict:
-      nonmatchingTestsWithIssueTrackersLOD.append(
-        {'site':testDict['site'], 'buildName':testDict['buildName'],
-         'testname':testDict['testname']} )
+  for testDict in nomatchingTestsLOD:
+    nonmatchingTestsWithIssueTrackersLOD.append(
+      {'site':testDict['site'], 'buildName':testDict['buildName'],
+       'testname':testDict['testname']} )
   # If all tests matched, return True
   if len(nonmatchingTestsWithIssueTrackersLOD) == 0:
     return (True, "")

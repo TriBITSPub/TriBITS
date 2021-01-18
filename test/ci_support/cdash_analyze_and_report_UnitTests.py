@@ -1477,7 +1477,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
   # Test to check that when only 'twip' and 'twim' exists, then we consider
   # this to be global PASSED.
   #
-  # We use test rseults that exist in the directory twoif_12_twif_9/ to create
+  # We use test results that exist in the directory twoif_12_twif_9/ to create
   # these cases.  We copy out and modify the test dicts that we want, modify
   # them to be passing and missing tests, then write then back to the file
   # fullCDashNonpassingTests.json
@@ -1494,7 +1494,8 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       testOutputDir+"/ProjectName_Nightly_Builds_fullCDashNonpassingTests.json"
     CDQAR.pprintPythonDataToFile( {'builds':[]}, testListFilePath )
 
-    # Write a new tests with issue trackers file just for the passing and missing tests
+    # Write a new tests-with-issue-trackers file just for the passing and
+    # missing tests
     with open(testOutputDir+"/testsWithIssueTrackers.csv", 'w') as testsWithIssueTrackerFile:
       testsWithIssueTrackerFile.write('''site, buildName, testname, issue_tracker_url, issue_tracker
 cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial, MueLu_UnitTestsBlockedEpetra_MPI_1, https://github.com/trilinos/Trilinos/issues/3640, #3640
