@@ -561,9 +561,38 @@ def stripWhiltespaceFromStrList(strListInOut):
   for i in range(len(strListInOut)): strListInOut[i] = strListInOut[i].strip()
 
 
+g_expectedBuildsCsvFileHeadersRequired = \
+  ('group', 'site', 'buildname')
+
+
 def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
   return readCsvFileIntoListOfDicts(expectedBuildsFileName,
-    ['group', 'site', 'buildname'])
+    g_expectedBuildsCsvFileHeadersRequired)
+
+
+# Write list of builds from a builds LOD to a CSV file structure meant to
+# match the expected builds CSV file.
+#
+def expectedBuildsLODToCsvFileStructure(buildsLOD):
+  csvFileHeadersList = copy.deepcopy(g_expectedBuildsCsvFileHeadersRequired)
+  csvFileRowsList = []
+  for buildDict in buildsLOD:
+    csvFileRow = (
+      buildDict['group'],
+      buildDict['site'],
+      buildDict['buildname'],
+      )
+    csvFileRowsList.append(csvFileRow)
+  return CsvFileStructure(csvFileHeadersList, csvFileRowsList)
+
+
+# Write list of builds from a builds LOD to a CSV file meant to match the
+# expected builds CSV file.
+#
+def writeExpectedBuildsLODToCsvFile(buildsLOD, csvFileName):
+  csvFileStruct = expectedBuildsLODToCsvFileStructure(buildsLOD)
+  with open(csvFileName, 'w') as csvFile:
+    csvFile.write(writeCsvFileStructureToStr(csvFileStruct))
 
 
 g_testsWithIssueTrackersCsvFileHeadersRequired = \

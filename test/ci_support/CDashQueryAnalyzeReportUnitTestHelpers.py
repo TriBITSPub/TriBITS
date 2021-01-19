@@ -95,3 +95,9 @@ def assertListOfRegexsFoundInListOfStrs(
     testObj.assertTrue(False,
       "Error, could not find the regex '"+regexList[current_regex_idx]+"'"+\
       " in "+stringsListName+"!")
+
+
+def assertFileContentsAsStringArray(testObj, filename, expecteStrList):
+  with open(filename, 'r') as fileHandle:
+    fileStrList = fileHandle.read().split("\n")
+  testObj.assertEqual(fileStrList, expecteStrList)

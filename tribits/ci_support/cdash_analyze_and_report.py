@@ -222,12 +222,26 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       " file names.",
     clp )
 
+  addOptionParserChoiceOption(
+    "--list-unexpected-builds",
+    "listUnexpectedBuildsStr",
+    ("on", "off"), 1,
+    "List unexpected builds downloaded from CDash but but listed with expected builds'.",
+    clp )
+
+  clp.add_option(
+    "--write-unexpected-builds-to-file",
+    dest="writeUnexpectedBuildsToFile", type="string", default="",
+    help="Write a CSV file with a list of unexpected builds 'bu'." \
+    +"  This is to make it easy to add new entires to the file read by" \
+    +" the option --expected-builds-file=<csv-file>. [default = '']" )
+
   clp.add_option(
     "--write-failing-tests-without-issue-trackers-to-file",
     dest="writeFailingTestsWithoutIssueTrackersToFile", type="string", default="",
     help="Write a CSV file with a list of tests with issue trackers failed 'twif'." \
     +"  This is to make it easy to add new entires to the file read by" \
-    +" the option --tests-with-issue-trackers-file=<file>. [default = '']" )
+    +" the option --tests-with-issue-trackers-file=<csv-file>. [default = '']" )
 
   clp.add_option(
     "--write-test-data-to-file",
@@ -288,6 +302,11 @@ def setExtraCmndLineOptionsAfterParse(inOptions_inout):
   else:
     setattr(inOptions_inout, 'printDetails', False)
 
+  if inOptions_inout.listUnexpectedBuildsStr == "on":
+    setattr(inOptions_inout, 'listUnexpectedBuilds', True)
+  else:
+    setattr(inOptions_inout, 'listUnexpectedBuilds', False)
+
   if inOptions_inout.cdashBaseCacheFilesPrefix == "":
     inOptions_inout.cdashBaseCacheFilesPrefix = \
      CDQAR.getFileNameStrFromText(inOptions_inout.buildSetName)+"_"
@@ -324,6 +343,8 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --limit-table-rows='"+str(io.limitTableRows)+"'"+lt+\
     "  --require-test-history-match-nonpassing-tests='"+io.requireTestHistoryMatchNonpassingTestsStr+"'"+lt+\
     "  --print-details='"+io.printDetailsStr+"'"+lt+\
+    "  --list-unexpected-builds='"+io.listUnexpectedBuildsStr+"'"+lt+\
+    "  --write-unexpected-builds-to-fileo='"+io.writeUnexpectedBuildsToFile+"'"+lt+\
     "  --write-failing-tests-without-issue-trackers-to-file='"+io.writeFailingTestsWithoutIssueTrackersToFile+"'"+lt+\
     "  --write-test-data-to-file='"+io.writeTestDataToFile+"'"+lt+\
     "  --write-email-to-file='"+io.writeEmailToFile+"'"+lt+\
@@ -544,13 +565,17 @@ if __name__ == '__main__':
 
     print("\nNum builds downloaded from CDash = "+str(len(fullBuildsLOD)))
 
+    (buildsExpectedLOD, buildsUnexpectedLOD) = \
+      CDQAR.splitTestsOnMatchExpectedBuilds(fullBuildsLOD, expectedBuildsSLOD)
+
     if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
-      (buildsLOD, buildsNotExpectedLOD) = \
-        CDQAR.splitTestsOnMatchExpectedBuilds(fullBuildsLOD,
-          expectedBuildsSLOD)
-      print("Num builds matching expected builds = "+str(len(buildsLOD)))
+      print("Num builds matching expected builds = "+str(len(buildsExpectedLOD)))
+      buildsLOD = buildsExpectedLOD
     else:
       buildsLOD = fullBuildsLOD
+
+    if inOptions.listUnexpectedBuilds:
+      print("Num builds unexpected = "+str(len(buildsUnexpectedLOD)))
 
     print("Num builds = "+str(len(buildsLOD)))
 
@@ -737,6 +762,17 @@ if __name__ == '__main__':
       )
 
     #
+    # 'bu'
+    #
+
+    if inOptions.listUnexpectedBuilds:
+      buildsetReporter.reportSingleBuildset("Builds Unexpected", "bu",
+        buildsUnexpectedLOD,
+        buildsetGlobalPass=True,
+        buildsetColor=None,
+        )
+
+    #
     # D.5) Analyaize and report the different sets of tests
     #
 
@@ -865,7 +901,18 @@ if __name__ == '__main__':
       )
 
     #
-    # D.6) Write out list twiof to CSV file
+    # D.6) Write out list of unexpected builds to CSV file
+    #
+
+    if inOptions.writeUnexpectedBuildsToFile:
+      unexpectedBuildsCsvFileName = inOptions.writeUnexpectedBuildsToFile
+      print("\nWriting list of unexpected builds to file "\
+        +unexpectedBuildsCsvFileName+" ...")
+      CDQAR.writeExpectedBuildsLODToCsvFile(buildsUnexpectedLOD,
+        unexpectedBuildsCsvFileName)
+
+    #
+    # D.7) Write out list twiof to CSV file
     #
 
     if inOptions.writeFailingTestsWithoutIssueTrackersToFile:
@@ -874,7 +921,7 @@ if __name__ == '__main__':
       CDQAR.writeTestsLODToCsvFile(twoifLOD, twoifCsvFileName)
 
     #
-    # D.7) Write out test data to CSV file
+    # D.8) Write out test data to CSV file
     #
 
     if inOptions.writeTestDataToFile:

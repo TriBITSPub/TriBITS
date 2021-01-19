@@ -254,13 +254,15 @@ class test_cdash_analyze_and_report(unittest.TestCase):
 
     testCaseName = "twoif_12_twif_9"
 
-    cdash_analyze_and_report_setup_test_dir(testCaseName)
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
 
     cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       [ "--print-details=on", # grep for verbose output
         "--limit-table-rows=20", # Let's see all of the twoif tets!
+        "--list-unexpected-builds=on",
+        "--write-unexpected-builds-to-file=unexpectedBuilds.csv"
         ],
       1,
       "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2018-10-28",
@@ -344,6 +346,12 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       #verbose=True,
       #debugPrint=True,
       )
+
+    # Assert it writes just the headers but no rows
+    assertFileContentsAsStringArray( self,
+      testOutputDir+"/unexpectedBuilds.csv",
+      [ 'group, site, buildname',
+        ''] )
 
 
   # Base case for raw CDash data but no expected builds or tests with issue
@@ -1765,9 +1773,11 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
       testCaseName,
       [ "--print-details=on", # grep for verbose output
         "--filter-out-builds-and-tests-not-matching-expected-builds=on",
+        "--list-unexpected-builds=on",
+        "--write-unexpected-builds-to-file=unexpectedBuilds.csv"
         ],
       1,
-      "FAILED (twoif=2, twif=4): ProjectName Nightly Builds on 2018-10-28",
+      "FAILED (bu=2, twoif=2, twif=4): ProjectName Nightly Builds on 2018-10-28",
       [
         "[*][*][*] Query and analyze CDash results for ProjectName Nightly Builds for testing day 2018-10-28",
         "Num expected builds = 4",
@@ -1776,6 +1786,7 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
         "Num tests with issue trackers = 4",
         "Num builds downloaded from CDash = 6",
         "Num builds matching expected builds = 4",
+        "Num builds unexpected = 2",
         "Num builds = 4",
         "Num nonpassing tests direct from CDash query = 21",
         "Num nonpassing tests matching expected builds = 6",
@@ -1792,6 +1803,7 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
         "Builds Missing: bm=0",
         "Builds with Configure Failures: cf=0",
         "Builds with Build Failures: bf=0",
+        "Builds Unexpected: bu=2",
         "Num tests with issue trackers Passed = 0",
         "Num tests with issue trackers Missing = 0",
 
@@ -1817,9 +1829,30 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
 
         # Second paragraph with listing of different types of tables below
         "<p>",
+        "Builds Unexpected: bu=2<br>",
         "<font color=\"red\">Tests without issue trackers Failed: twoif=2</font><br>",
         "Tests with issue trackers Failed: twif=4<br>",
         "</p>",
+
+        # bu table
+        "<h3>Builds Unexpected: bu=2</h3>",
+        "<table .*>",
+        "<tr>",
+        "<th>Group</th>",
+        "<th>Site</th>",
+        "<th>Build Name</th>",
+        "</tr>",
+        "<tr>",
+        "<td align=\"left\">Specialized</td>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\">Trilinos-atdm-cee-rhel6-clang-opt-serial</td>",
+        "</tr>",
+        "<tr>",
+        "<td align=\"left\">Specialized</td>",
+        "<td align=\"left\">mutrino</td>",
+        "<td align=\"left\">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</td>",
+        "</tr>",
+        "</table>",
 
         # twoif table
         "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 10[)]: twoif=2</font></h3>",
@@ -1839,6 +1872,13 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
       #verbose=True,
       #debugPrint=True,
       )
+
+    assertFileContentsAsStringArray( self,
+      testOutputDir+"/unexpectedBuilds.csv",
+      [ 'group, site, buildname',
+        'Specialized, mutrino, Trilinos-atdm-mutrino-intel-opt-openmp-KNL',
+        'Specialized, cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial',
+        ''] )
 
 
 #
