@@ -450,7 +450,7 @@ if __name__ == '__main__':
       expectedBuildsLOD = []
     print("\nNum expected builds = "+str(len(expectedBuildsLOD)))
 
-    # Create a SearchableListOfDict object to help look up expectged builds
+    # Create a SearchableListOfDict object to help look up expected builds
     # given a build dict by key/value pairs 'group', 'site', and 'buildname'
     # (requires unique builds with these key/value pairs)
     expectedBuildsSLOD = CDQAR.createSearchableListOfBuilds(expectedBuildsLOD)

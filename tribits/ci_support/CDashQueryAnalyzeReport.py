@@ -1224,8 +1224,8 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
     return testDict_inout
 
 
-# Split the a list of Test Dicts based on if they match the set of expected
-# builds or not.
+# Split a list of Test Dicts based on if they match the set of expected builds
+# or not.
 #
 # testsWithIssueTrackersLOD [in]: List of dicts of tests with issue trackers.
 #   Here, only the fields 'site', 'buildName', and 'testname' are significant.
