@@ -136,6 +136,18 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "  Each of these tests must have a unique 'site', 'buildName', and 'testname'"+\
     " sets or an error will be raised and the tool will abort.  [default = '']" )
 
+  addOptionParserChoiceOption(
+    "--filter-out-builds-and-tests-not-matching-expected-builds",
+    "filterOutBuildsAndTestsNotMatchingExpectedBuildsStr",
+    ("on", "off"), 1,
+    "Filter out build and test data not matching input list of expected builds."+\
+    "  If set to 'on', this will filter out build and test data downloaded"+\
+    " from CDash that does not match the list of expected builds provided in"+\
+    " --expected-builds-file=<csv-file>.  This will also filter out any tests"+\
+    " with issue trackers listed in"+\
+    " --tests-with-issue-trackers-file=<csv-file>.",
+    clp )
+
   cdashQueriesCacheDir_default=os.getcwd()
 
   clp.add_option(
@@ -240,7 +252,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
 
 
 def validateAndConvertCmndLineOptions(inOptions):
-  
+
   if inOptions.date == "":
     print("Error, can't have empty --date, must pass in --date=YYYY-MM-DD"+\
       " or special values --date=today or --date=yesterday!")
@@ -255,6 +267,11 @@ def validateAndConvertCmndLineOptions(inOptions):
 
 
 def setExtraCmndLineOptionsAfterParse(inOptions_inout):
+
+  if inOptions_inout.filterOutBuildsAndTestsNotMatchingExpectedBuildsStr == "on":
+    setattr(inOptions_inout, 'filterOutBuildsAndTestsNotMatchingExpectedBuilds', True)
+  else:
+    setattr(inOptions_inout, 'filterOutBuildsAndTestsNotMatchingExpectedBuilds', False)
 
   if inOptions_inout.useCachedCDashDataStr == "on":
     setattr(inOptions_inout, 'useCachedCDashData', True)
@@ -298,6 +315,8 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --cdash-nonpassed-tests-filters='"+io.cdashNonpassedTestsFilters+"'"+lt+\
     "  --expected-builds-file='"+io.expectedBuildsFile+"'"+lt+\
     "  --tests-with-issue-trackers-file='"+io.testsWithIssueTrackersFile+"'"+lt+\
+    "  --filter-out-builds-and-tests-not-matching-expected-builds='"+\
+      io.filterOutBuildsAndTestsNotMatchingExpectedBuildsStr+"'"+lt+\
     "  --cdash-queries-cache-dir='"+io.cdashQueriesCacheDir+"'"+lt+\
     "  --cdash-base-cache-files-prefix='"+io.cdashBaseCacheFilesPrefix+"'"+lt+\
     "  --use-cached-cdash-data='"+io.useCachedCDashDataStr+"'"+lt+\
@@ -310,7 +329,7 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --write-email-to-file='"+io.writeEmailToFile+"'"+lt+\
     "  --email-from-address='"+io.emailFromAddress+"'"+lt+\
     "  --send-email-to='"+io.sendEmailTo+"'"+lt
-  return cmndLineOpts 
+  return cmndLineOpts
 
 
 def echoCmndLineOptions(inOptions):
@@ -413,7 +432,7 @@ if __name__ == '__main__':
 
   try:
 
-    # Beginning of top full bulid and tests CDash links paragraph 
+    # Beginning of top full bulid and tests CDash links paragraph
     cdashReportData.htmlEmailBodyTop += "<p>\n"
 
     #
@@ -424,11 +443,17 @@ if __name__ == '__main__':
     #
 
     # Get list of expected builds from input CSV file
-    expectedBuildsLOD = []
     if inOptions.expectedBuildsFile:
       expectedBuildsLOD = \
         CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
+    else:
+      expectedBuildsLOD = []
     print("\nNum expected builds = "+str(len(expectedBuildsLOD)))
+
+    # Create a SearchableListOfDict object to help look up expected builds
+    # given a build dict by key/value pairs 'group', 'site', and 'buildname'
+    # (requires unique builds with these key/value pairs)
+    expectedBuildsSLOD = CDQAR.createSearchableListOfBuilds(expectedBuildsLOD)
 
     # Create a SearchableListOfDicts that will look up an expected build given
     # just a test dict fields ['site', 'buildName']. (The list of tests with
@@ -443,11 +468,24 @@ if __name__ == '__main__':
     # list of expected builds.
 
     # Get list of tests with issue trackers from the input CSV file
-    testsWithIssueTrackersLOD = []
     if inOptions.testsWithIssueTrackersFile:
-      testsWithIssueTrackersLOD = CDQAR.getTestsWtihIssueTrackersListFromCsvFile(
+      fullTestsWithIssueTrackersLOD = CDQAR.getTestsWtihIssueTrackersListFromCsvFile(
         inOptions.testsWithIssueTrackersFile)
-    print("\nNum tests with issue trackers = "+str(len(testsWithIssueTrackersLOD)))
+    else:
+      fullTestsWithIssueTrackersLOD = []
+    print("\nNum tests with issue trackers read from CSV file = "+\
+      str(len(fullTestsWithIssueTrackersLOD)))
+
+    if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
+      (testsWithIssueTrackersLOD, testsWithIssueTrackersNotExpectedLOD) = \
+        CDQAR.splitTestsOnMatchExpectedBuilds(fullTestsWithIssueTrackersLOD,
+          testsToExpectedBuildsSLOD)
+      print("Num tests with issue trackers matching expected builds = "+\
+        str(len(testsWithIssueTrackersLOD)))
+    else:
+      testsWithIssueTrackersLOD = fullTestsWithIssueTrackersLOD
+    print("Num tests with issue trackers = "+\
+      str(len(testsWithIssueTrackersLOD)))
 
     # Get a SearchableListOfDicts for the tests with issue trackers to allow
     # them to be looked up based on matching ['site', 'buildName', 'testname']
@@ -463,9 +501,9 @@ if __name__ == '__main__':
     testsWithIssueTrackerMatchFunctor = \
       CDQAR.MatchDictKeysValuesFunctor(testsWithIssueTrackersSLOD)
 
-    # Assert they the list of tests with issue trackers matches the list of
+    # Assert that the list of tests with issue trackers matches the list of
     # expected builds
-    (allTestsMatch, errMsg) = CDQAR.testsWithIssueTrackersMatchExpectedBuilds(
+    (allTestsMatch, errMsg) = CDQAR.doTestsWithIssueTrackersMatchExpectedBuilds(
       testsWithIssueTrackersLOD, testsToExpectedBuildsSLOD)
     if not allTestsMatch:
       raise Exception(errMsg)
@@ -473,7 +511,7 @@ if __name__ == '__main__':
     # Test history cache dir
     testHistoryCacheDir = inOptions.cdashQueriesCacheDir+"/test_history"
     if not os.path.exists(testHistoryCacheDir):
-      print("\nCreating new test cache directory '"+testHistoryCacheDir+"'") 
+      print("\nCreating new test cache directory '"+testHistoryCacheDir+"'")
       os.mkdir(testHistoryCacheDir)
 
     #
@@ -489,7 +527,7 @@ if __name__ == '__main__':
       inOptions.cdashBuildsFilters)
 
     print("\nCDash builds browser URL:\n\n  "+cdashIndexBuildsBrowserUrl+"\n")
-   
+
     cdashIndexBuildsQueryUrl = CDQAR.getCDashIndexQueryUrl(
       inOptions.cdashSiteUrl,
       inOptions.cdashProjectName,
@@ -499,13 +537,24 @@ if __name__ == '__main__':
     fullCDashIndexBuildsJsonCacheFile = \
       cacheDirAndBaseFilePrefix+"fullCDashIndexBuilds.json"
 
-    buildsLOD = CDQAR.downloadBuildsOffCDashAndFlatten(
+    fullBuildsLOD = CDQAR.downloadBuildsOffCDashAndFlatten(
       cdashIndexBuildsQueryUrl,
       fullCDashIndexBuildsJsonCacheFile,
       inOptions.useCachedCDashData )
-    print("\nNum builds = "+str(len(buildsLOD)))
-  
-    # HTML line "Builds on CDash" 
+
+    print("\nNum builds downloaded from CDash = "+str(len(fullBuildsLOD)))
+
+    if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
+      (buildsLOD, buildsNotExpectedLOD) = \
+        CDQAR.splitTestsOnMatchExpectedBuilds(fullBuildsLOD,
+          expectedBuildsSLOD)
+      print("Num builds matching expected builds = "+str(len(buildsLOD)))
+    else:
+      buildsLOD = fullBuildsLOD
+
+    print("Num builds = "+str(len(buildsLOD)))
+
+    # HTML line "Builds on CDash"
     cdashReportData.htmlEmailBodyTop += \
      "<a href=\""+cdashIndexBuildsBrowserUrl+"\">"+\
      "Builds on CDash</a> (num/expected="+\
@@ -539,17 +588,30 @@ if __name__ == '__main__':
     cdashNonpassingTestsQueryJsonCacheFile = \
       cacheDirAndBaseFilePrefix+"fullCDashNonpassingTests.json"
 
-    nonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
+    fullNonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
+
     print("\nNum nonpassing tests direct from CDash query = "+\
+      str(len(fullNonpassingTestsLOD)))
+
+    if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
+      (nonpassingTestsLOD, nonpassingTestsNotExpectedLOD) = \
+        CDQAR.splitTestsOnMatchExpectedBuilds(fullNonpassingTestsLOD,
+          testsToExpectedBuildsSLOD)
+      print("Num nonpassing tests matching expected builds = "+\
+       str(len(nonpassingTestsLOD)))
+    else:
+      nonpassingTestsLOD = fullNonpassingTestsLOD
+
+    print("Num nonpassing tests = "+\
       str(len(nonpassingTestsLOD)))
-  
+
     # HTML line "Nonpassing Tests on CDash"
     cdashReportData.htmlEmailBodyTop += \
      "<a href=\""+cdashNonpassingTestsBrowserUrl+"\">"+\
      "Non-passing Tests on CDash</a> (num="+str(len(nonpassingTestsLOD))+")<br>\n"
-  
+
     # End of full build and test link paragraph and start the next paragraph
     # for the summary of failures and other tables
     cdashReportData.htmlEmailBodyTop += \
