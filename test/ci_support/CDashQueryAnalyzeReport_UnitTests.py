@@ -1700,7 +1700,7 @@ class test_AddIssueTrackerInfoToTestDictFunctor(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.testsWithIssueTrackersMatchExpectedBuilds()
+# Test CDashQueryAnalyzeReport.doTestsWithIssueTrackersMatchExpectedBuilds()
 #
 #############################################################################
 
@@ -1722,13 +1722,13 @@ g_testsWtihIssueTrackersLOD = [
   sbtiturlit('site2', 'build2', 'test5', 'url5', '#1114'),
   ]
 
-class test_testsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
+class test_doTestsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
 
   def test_all_match(self):
     testToExpectedBuildsSLOD = \
       createTestToBuildSearchableListOfDicts(g_expectedBuildsLOD)
     self.assertEqual(
-      testsWithIssueTrackersMatchExpectedBuilds(
+      doTestsWithIssueTrackersMatchExpectedBuilds(
         g_testsWtihIssueTrackersLOD, testToExpectedBuildsSLOD),
       (True, "")
       )
@@ -1738,7 +1738,7 @@ class test_testsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
     testToExpectedBuildsSLOD = \
       createTestToBuildSearchableListOfDicts(g_expectedBuildsLOD)
     testsWtihIssueTrackersLOD[1]['buildName'] = 'build8'
-    (matches, errMsg) = testsWithIssueTrackersMatchExpectedBuilds(
+    (matches, errMsg) = doTestsWithIssueTrackersMatchExpectedBuilds(
       testsWtihIssueTrackersLOD, testToExpectedBuildsSLOD)
     self.assertEqual(matches, False)
     self.assertEqual(errMsg,
@@ -1752,7 +1752,7 @@ class test_testsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
       createTestToBuildSearchableListOfDicts(g_expectedBuildsLOD)
     testsWtihIssueTrackersLOD[1]['buildName'] = 'build8'
     testsWtihIssueTrackersLOD[3]['site'] = 'site3'
-    (matches, errMsg) = testsWithIssueTrackersMatchExpectedBuilds(
+    (matches, errMsg) = doTestsWithIssueTrackersMatchExpectedBuilds(
       testsWtihIssueTrackersLOD, testToExpectedBuildsSLOD)
     self.assertEqual(matches, False)
     self.assertEqual(errMsg,
