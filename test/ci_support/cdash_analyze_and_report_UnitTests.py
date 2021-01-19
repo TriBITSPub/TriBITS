@@ -990,7 +990,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         "</table>",
 
         # 'c' table (Really pin this down)
-        "<h3>Builds with Configure Failures [(]limited to 15[)]: cf=1</h3>",
+        "<h3>Builds with Configure Failures: cf=1</h3>",
         "<table.*>",
         "<tr>",
         "<th>Group</th>",
@@ -1007,7 +1007,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         # correctly!
 
         # 'b' table (Really pin this down)
-        "<h3>Builds with Build Failures [(]limited to 15[)]: bf=2</h3>",
+        "<h3>Builds with Build Failures: bf=2</h3>",
         "<table.*>",
         "<tr>",
         "<th>Group</th>",
@@ -1033,6 +1033,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         "<h3>Tests with issue trackers Failed: twif=9</h3>",
        ],
       #verbose=True,
+      #debugPrint=True,
       )
   # NOTE: That above test really pin down the contents of the 'bm', 'c', and
   # 'b' tables.  Other tests will not do that to avoid duplication in testing.

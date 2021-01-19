@@ -683,6 +683,8 @@ if __name__ == '__main__':
     # D.4) Process and tabulate lists of builds
     #
 
+    buildsetReporter = CDQAR.SingleBuildsetReporter(cdashReportData)
+
     #
     # 'bm'
     #
@@ -691,40 +693,18 @@ if __name__ == '__main__':
 
     missingExpectedBuildsLOD = CDQAR.getMissingExpectedBuildsList(
       buildsSLOD, expectedBuildsLOD)
-    #print("\nmissingExpectedBuildsLOD:")
-    #pp.pprint(missingExpectedBuildsLOD)
 
-    bmDescr = "Builds Missing"
-    bmAcro = "bm"
-    bmNum = len(missingExpectedBuildsLOD)
-
-    bmSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(bmDescr,  bmAcro, bmNum)
-
-    print(bmSummaryStr)
-
-    if bmNum > 0:
-
-      cdashReportData.globalPass = False
-
-      cdashReportData.summaryLineDataNumbersList.append(bmAcro+"="+str(bmNum))
-
-      cdashReportData.htmlEmailBodyTop += \
-        CDQAR.colorHtmlText(bmSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
-
-      bmColDataList = [
+    buildsetReporter.reportSingleBuildset("Builds Missing", "bm",
+      missingExpectedBuildsLOD,
+      buildsetGlobalPass=False,
+      buildsetColor=CDQAR.cdashColorFailed(),
+      buildsetColDataList=[
         tcd("Group", 'group'),
         tcd("Site", 'site'),
         tcd("Build Name", 'buildname'),
         tcd("Missing Status", 'status'),
-        ]
-
-      cdashReportData.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-         bmDescr,  bmAcro, bmColDataList, missingExpectedBuildsLOD,
-        groupSiteBuildNameSortOrder, None )
-      # NOTE: Above we don't want to limit any missing builds in this table
-      # because that data is not shown on CDash and that list will never be
-      # super big.
+        ],
+      )
 
     #
     # 'cf'
@@ -735,37 +715,11 @@ if __name__ == '__main__':
     buildsWithConfigureFailuresLOD = \
       CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasConfigureFailures)
 
-    cDescr = "Builds with Configure Failures"
-    cAcro = "cf"
-    cNum = len(buildsWithConfigureFailuresLOD)
-
-    cSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(cDescr,  cAcro, cNum)
-
-    print(cSummaryStr)
-
-    if cNum > 0:
-
-      cdashReportData.globalPass = False
-
-      cdashReportData.summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
-
-      cdashReportData.htmlEmailBodyTop += \
-        CDQAR.colorHtmlText(cSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
-
-      cColDataList = [
-        tcd("Group", 'group'),
-        tcd("Site", 'site'),
-        tcd("Build Name", 'buildname'),
-        ]
-
-      cdashReportData.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        cDescr,  cAcro, cColDataList, buildsWithConfigureFailuresLOD,
-        groupSiteBuildNameSortOrder, inOptions.limitTableRows )
-
-      # ToDo: Update to show number of configure failures and the history info
-      # for that build with hyperlinks and don't limit the number of builds
-      # shown.
+    buildsetReporter.reportSingleBuildset("Builds with Configure Failures", "cf",
+      buildsWithConfigureFailuresLOD,
+      buildsetGlobalPass=False,
+      buildsetColor=CDQAR.cdashColorFailed(),
+      )
 
     #
     # 'bf'
@@ -776,37 +730,11 @@ if __name__ == '__main__':
     buildsWithBuildFailuresLOD = \
       CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasBuildFailures)
 
-    bDescr = "Builds with Build Failures"
-    bAcro = "bf"
-    bNum = len(buildsWithBuildFailuresLOD)
-
-    bSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(bDescr,  bAcro, bNum)
-
-    print(bSummaryStr)
-
-    if bNum > 0:
-
-      cdashReportData.globalPass = False
-
-      cdashReportData.summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
-
-      cdashReportData.htmlEmailBodyTop += \
-        CDQAR.colorHtmlText(bSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
-
-      cColDataList = [
-        tcd("Group", 'group'),
-        tcd("Site", 'site'),
-        tcd("Build Name", 'buildname'),
-        ]
-
-      cdashReportData.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        bDescr,  bAcro, cColDataList, buildsWithBuildFailuresLOD,
-        groupSiteBuildNameSortOrder, inOptions.limitTableRows )
-
-      # ToDo: Update to show number of builds failures and the history info
-      # for that build with hyperlinks and don't limit the number of builds
-      # shown.
+    buildsetReporter.reportSingleBuildset("Builds with Build Failures", "bf",
+      buildsWithBuildFailuresLOD,
+      buildsetGlobalPass=False,
+      buildsetColor=CDQAR.cdashColorFailed(),
+      )
 
     #
     # D.5) Analyaize and report the different sets of tests

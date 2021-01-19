@@ -2592,6 +2592,104 @@ class IssueTrackerFieldError(Exception):
   pass
 
 
+# Class to report a single build-set.
+#
+# NOTE: The reason this is a class is that the cdashReportData and
+# addTestHistoryStrategy objects are set once and are used for multiple calls
+# to reportSingleBuildset().
+#
+class SingleBuildsetReporter(object):
+
+  # Constructor
+  #
+  def __init__(self, cdashReportData,
+      htmlStyle=None, htmlTableStyle=None,
+      verbose=True,
+    ):
+    self.cdashReportData = cdashReportData
+    self.htmlStyle = htmlStyle
+    self.htmlTableStyle = htmlTableStyle
+    self.verbose = verbose
+    self.groupSiteBuildNameSortOrder = ['group', 'site', 'buildname']
+
+  # Report on a given build-set and write info to self.cdashReportData
+  #
+  # Input arguments:
+  #
+  #   buildsetDescr [in] Description for the set of builds
+  #
+  #   buildsetAcro [in] Short acronym for the build set
+  #
+  #   buildsetLOD [in] List of builds in this build set
+  #
+  #   buildsetGlobalPass [in] If set to False and len(buildsetLOD) > 0, then
+  #   global pass is set to False (see below).
+  #
+  #   buildsetColor [in] Color used for the text (see cdashColorXXX() values).
+  #
+  #   buildsetColDataList [in] List of TableColumnData entries for each of the
+  #   columns to include in the table.  Default is 'None' which gives a
+  #   default set of entries.
+  #
+  #   verbose [in] If set to True then some more verbose info is printed to
+  #   STDOUT.  If False, then nothing is printed to STDOUT (which is useful
+  #   for unit testsing). The default is True.
+  #
+  # On output, self.cdashReportData data will be updated with the summary and
+  # table of this given build-set.  In particular, the following
+  # cdashReportData fields will be written to:
+  #
+  #   cdashReportData.summaryLineDataNumbersList: List will be appended with
+  #   lines for each build-set in order called.
+  #
+  #   cdashReportData.htmlEmailBodyTop: The name of the table 'buildsetDescr',
+  #   the acronym 'buildsetAcro' and the size will be written on one line
+  #   ending with ``<br>\n``.
+  #
+  #   cdashReportData.htmlEmailBodyBottom: Summary HTML table (with title)
+  #   will be written, along with formatting.
+  #
+  #   cdashReportData.globalPass: Set to False if buildsetGlobalPass==True and
+  #   len(buildsetLOD) > 0.
+  #
+  def reportSingleBuildset(self, buildsetDescr, buildsetAcro, buildsetLOD,
+      buildsetGlobalPass, buildsetColor, buildsetColDataList=None, verbose=True,
+    ):
+
+    buildsetNum = len(buildsetLOD)
+
+    buildsetSummaryStr = \
+      getCDashDataSummaryHtmlTableTitleStr(buildsetDescr,  buildsetAcro,
+        buildsetNum)
+
+    if self.verbose:
+      print(buildsetSummaryStr)
+
+    if buildsetNum > 0:
+
+      if not buildsetGlobalPass:
+        self.cdashReportData.globalPass = False
+
+      self.cdashReportData.summaryLineDataNumbersList.append(
+        buildsetAcro+"="+str(buildsetNum))
+
+      self.cdashReportData.htmlEmailBodyTop += \
+        colorHtmlText(buildsetSummaryStr,buildsetColor)+"<br>\n"
+
+      if not buildsetColDataList:
+        tcd = TableColumnData
+        buildsetColDataList = [
+          tcd("Group", 'group'),
+          tcd("Site", 'site'),
+          tcd("Build Name", 'buildname'),
+          ]
+
+      self.cdashReportData.htmlEmailBodyBottom += \
+        createCDashDataSummaryHtmlTableStr(
+          buildsetDescr,  buildsetAcro, buildsetColDataList, buildsetLOD,
+          self.groupSiteBuildNameSortOrder, None )
+
+
 # Class to optionally get test history and then analyze and report a single
 # test-set.
 #
