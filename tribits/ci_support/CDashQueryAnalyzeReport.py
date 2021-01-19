@@ -1235,6 +1235,9 @@ class AddIssueTrackerInfoToTestDictFunctor(object):
 #   unique.  The 'group' field is ignored (because cdash/queryTests.php does
 #   not give the 'group' of each test).
 #
+# Returns the tuple (testsWithIssueTrackersMatchingExpectedBuildsLOD,
+# testsWithIssueTrackersNotMatchingExpectedBuildsLOD).
+#
 def splitTestsOnMatchExpectedBuilds( testsWithIssueTrackersLOD,
     testToExpectedBuildsSLOD,
   ):
@@ -1796,19 +1799,6 @@ class AddTestHistoryToTestDictFunctor(object):
 
     # Return the updated test dict with the new fields
     return testDict
-
-
-def filterLOD(LOD, filterLOD, LODkey, filterLODkey=None):
-  newLOD = []
-  if not filterLODkey:
-    filterLODkey = LODkey
-
-  for filt in filterLOD:
-    for entry in LOD:
-      if entry[LODkey] == filt[filterLODkey]:
-        newLOD.append(entry)
-
-  return newLOD
 
 
 def setTestDictAsMissing(testDict):

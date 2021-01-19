@@ -443,11 +443,17 @@ if __name__ == '__main__':
     #
 
     # Get list of expected builds from input CSV file
-    expectedBuildsLOD = []
     if inOptions.expectedBuildsFile:
       expectedBuildsLOD = \
         CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
+    else:
+      expectedBuildsLOD = []
     print("\nNum expected builds = "+str(len(expectedBuildsLOD)))
+
+    # Create a SearchableListOfDict object to help look up expectged builds
+    # given a build dict by key/value pairs 'group', 'site', and 'buildname'
+    # (requires unique builds with these key/value pairs)
+    expectedBuildsSLOD = CDQAR.createSearchableListOfBuilds(expectedBuildsLOD)
 
     # Create a SearchableListOfDicts that will look up an expected build given
     # just a test dict fields ['site', 'buildName']. (The list of tests with
@@ -462,11 +468,24 @@ if __name__ == '__main__':
     # list of expected builds.
 
     # Get list of tests with issue trackers from the input CSV file
-    testsWithIssueTrackersLOD = []
     if inOptions.testsWithIssueTrackersFile:
-      testsWithIssueTrackersLOD = CDQAR.getTestsWtihIssueTrackersListFromCsvFile(
+      fullTestsWithIssueTrackersLOD = CDQAR.getTestsWtihIssueTrackersListFromCsvFile(
         inOptions.testsWithIssueTrackersFile)
-    print("\nNum tests with issue trackers = "+str(len(testsWithIssueTrackersLOD)))
+    else:
+      fullTestsWithIssueTrackersLOD = []
+    print("\nNum tests with issue trackers read from CSV file = "+\
+      str(len(fullTestsWithIssueTrackersLOD)))
+
+    if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
+      (testsWithIssueTrackersLOD, testsWithIssueTrackersNotExpectedLOD) = \
+        CDQAR.splitTestsOnMatchExpectedBuilds(fullTestsWithIssueTrackersLOD,
+          testsToExpectedBuildsSLOD)
+      print("Num tests with issue trackers matching expected builds = "+\
+        str(len(testsWithIssueTrackersLOD)))
+    else:
+      testsWithIssueTrackersLOD = fullTestsWithIssueTrackersLOD
+    print("Num tests with issue trackers = "+\
+      str(len(testsWithIssueTrackersLOD)))
 
     # Get a SearchableListOfDicts for the tests with issue trackers to allow
     # them to be looked up based on matching ['site', 'buildName', 'testname']
@@ -518,16 +537,22 @@ if __name__ == '__main__':
     fullCDashIndexBuildsJsonCacheFile = \
       cacheDirAndBaseFilePrefix+"fullCDashIndexBuilds.json"
 
-    buildsLOD = CDQAR.downloadBuildsOffCDashAndFlatten(
+    fullBuildsLOD = CDQAR.downloadBuildsOffCDashAndFlatten(
       cdashIndexBuildsQueryUrl,
       fullCDashIndexBuildsJsonCacheFile,
       inOptions.useCachedCDashData )
 
-    if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
-      # Filter into subset of expected builds
-      buildsLOD = CDQAR.filterLOD(buildsLOD, expectedBuildsLOD, 'buildname')
+    print("\nNum builds downloaded from CDash = "+str(len(fullBuildsLOD)))
 
-    print("\nNum builds = "+str(len(buildsLOD)))
+    if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
+      (buildsLOD, buildsNotExpectedLOD) = \
+        CDQAR.splitTestsOnMatchExpectedBuilds(fullBuildsLOD,
+          expectedBuildsSLOD)
+      print("Num builds matching expected builds = "+str(len(buildsLOD)))
+    else:
+      buildsLOD = fullBuildsLOD
+
+    print("Num builds = "+str(len(buildsLOD)))
 
     # HTML line "Builds on CDash"
     cdashReportData.htmlEmailBodyTop += \
@@ -563,16 +588,23 @@ if __name__ == '__main__':
     cdashNonpassingTestsQueryJsonCacheFile = \
       cacheDirAndBaseFilePrefix+"fullCDashNonpassingTests.json"
 
-    nonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
+    fullNonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,
       inOptions.useCachedCDashData )
 
-    if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
-      # Filter into subset of expected builds
-      nonpassingTestsLOD = CDQAR.filterLOD(nonpassingTestsLOD, expectedBuildsLOD,
-        'buildName', 'buildname')
-
     print("\nNum nonpassing tests direct from CDash query = "+\
+      str(len(fullNonpassingTestsLOD)))
+
+    if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
+      (nonpassingTestsLOD, nonpassingTestsNotExpectedLOD) = \
+        CDQAR.splitTestsOnMatchExpectedBuilds(fullNonpassingTestsLOD,
+          testsToExpectedBuildsSLOD)
+      print("Num nonpassing tests matching expected builds = "+\
+       str(len(nonpassingTestsLOD)))
+    else:
+      nonpassingTestsLOD = fullNonpassingTestsLOD
+
+    print("Num nonpassing tests = "+\
       str(len(nonpassingTestsLOD)))
 
     # HTML line "Nonpassing Tests on CDash"
@@ -610,7 +642,6 @@ if __name__ == '__main__':
     # D.3) Partition the varous list of tests into different sets that will
     # be displayed in different tables.
     #
-
 
     # Add issue tracker info for all nonpassing tests (including adding empty
     # issue tracker fields for tests that don't have issue trackers)

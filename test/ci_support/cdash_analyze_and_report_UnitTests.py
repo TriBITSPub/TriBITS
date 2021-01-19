@@ -130,6 +130,31 @@ def writeNonpassTestsDictListToCDashJsonFile(testsLOD, testOutputDir,
   writeTestsDictListToCDashJsonFile(testsLOD, testOutputDir, testsJsonRelFilePath)
 
 
+# Find an expected build from str list given 'site' and 'buildname'
+#
+def indexOfExpectedBuildFromCsvStrList(expectedBuildsStrList, group, site, buildname):
+  group_site_buildname = group+", "+site+", "+buildname
+  index = 0
+  for expectedBuildLine in expectedBuildsStrList:
+    if expectedBuildLine.find(group_site_buildname) == 0:
+      return index
+    index += 1
+  return -1
+
+
+# Remove a site and build name from the list of expected build from a CSV file
+# string array.
+#
+def removeExpectedBuildFromCsvStrList(expectedBuildsStrList, group, site, buildname):
+  index = indexOfExpectedBuildFromCsvStrList(expectedBuildsStrList,
+    group, site, buildname)
+  if index >= 0:
+    del expectedBuildsStrList[index]
+  else:
+    raise Exception("Error, could not find 'site'='"+site+\
+      ", 'buildname'='"+buildname+"'!")
+
+
 # Run a test case involving the cdash_analyze_and_report.py
 #
 # This function runs a test case involving a the script
@@ -861,8 +886,8 @@ class test_cdash_analyze_and_report(unittest.TestCase):
   # Add some missing builds, some builds with configure failuires, and builds
   # with build failures
   #
-  # Here we just a couple of new builds to the file expectedBuilds.csv that
-  # will become missing expected builds and we modfiy the dicts for a few
+  # Here we just add a couple of new builds to the file expectedBuilds.csv
+  # that will become missing expected builds and we modfiy the dicts for a few
   # builds to change them from passing to failing.
   #
   def test_bm_2_c_1_b_2_twoif_12_twif_9(self):
@@ -1707,6 +1732,109 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
     self.assertEqual(testDict['cdash_testing_day'], u'2018-10-28')
     self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
       '2018-10-26T12:00:00 UTC')
+
+
+  # Pass in a reduced set of expected builds and filter out builds and tests
+  # that don't match those expected builds.
+  #
+  # This test removes a couple of different expected builds.
+  #
+  def test_twoif_2_twif_4_filter_based_on_expected_builds(self):
+
+    testCaseName = "test_twoif_2_twif_4_filter_based_on_expected_builds"
+
+    testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
+
+    # Remove some expected builds
+    expectedBuildsFilePath = testOutputDir+"/expectedBuilds.csv"
+    with open(expectedBuildsFilePath, 'r') as expectedBuildsFile:
+      expectedBuildsStrList = expectedBuildsFile.readlines()
+    removeExpectedBuildFromCsvStrList(expectedBuildsStrList,
+      "Specialized", "cee-rhel6", "Trilinos-atdm-cee-rhel6-clang-opt-serial")
+    removeExpectedBuildFromCsvStrList(expectedBuildsStrList,
+      "Specialized", "mutrino", "Trilinos-atdm-mutrino-intel-opt-openmp-KNL")
+    with open(expectedBuildsFilePath, 'w') as expectedBuildsFile:
+      expectedBuildsFile.write("".join(expectedBuildsStrList))
+
+    cdash_analyze_and_report_run_case(
+      self,
+      testCaseName,
+      [ "--print-details=on", # grep for verbose output
+        "--filter-out-builds-and-tests-not-matching-expected-builds=on",
+        ],
+      1,
+      "FAILED (twoif=2, twif=4): ProjectName Nightly Builds on 2018-10-28",
+      [
+        "[*][*][*] Query and analyze CDash results for ProjectName Nightly Builds for testing day 2018-10-28",
+        "Num expected builds = 4",
+        "Num tests with issue trackers read from CSV file = 9",
+        "Num tests with issue trackers matching expected builds = 4",
+        "Num tests with issue trackers = 4",
+        "Num builds downloaded from CDash = 6",
+        "Num builds matching expected builds = 4",
+        "Num builds = 4",
+        "Num nonpassing tests direct from CDash query = 21",
+        "Num nonpassing tests matching expected builds = 6",
+        "Num nonpassing tests = 6",
+        "Num nonpassing tests after removing duplicate tests = 6",
+        "Num nonpassing tests without issue trackers = 2",
+        "Num nonpassing tests with issue trackers = 4",
+        "Num nonpassing tests without issue trackers Failed = 2",
+        "Num nonpassing tests without issue trackers Not Run = 0",
+        "Num nonpassing tests with issue trackers Failed = 4",
+        "Num nonpassing tests with issue trackers Not Run = 0",
+        "Num tests with issue trackers gross passing or missing = 0",
+
+        "Builds Missing: bm=0",
+        "Builds with Configure Failures: cf=0",
+        "Builds with Build Failures: bf=0",
+        "Num tests with issue trackers Passed = 0",
+        "Num tests with issue trackers Missing = 0",
+
+        "Tests without issue trackers Failed: twoif=2",
+        "Getting 30 days of history for Teko_testdriver_tpetra_MPI_1 in the build Trilinos-atdm-waterman-cuda-9.2-release-debug on waterman",
+        "Getting 30 days of history for Teko_testdriver_tpetra_MPI_4 in the build Trilinos-atdm-waterman-cuda-9.2-release-debug on waterman",
+
+        "Tests with issue trackers Failed: twif=4",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6",
+        "Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6",
+        ],
+      [
+        # Top title
+        "<h2>Build and Test results for ProjectName Nightly Builds on 2018-10-28</h2>",
+
+        # First paragraph with with links to build and nonpassing tests results on cdsah
+        "<p>",
+        "<a href=\"https://something[.]com/cdash/index[.]php[?]project=ProjectName&date=2018-10-28&builds_filters\">Builds on CDash</a> [(]num/expected=4/4[)]<br>",
+        "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&date=2018-10-28&nonpasssing_tests_filters\">Non-passing Tests on CDash</a> [(]num=6[)]<br>",
+        "</p>",
+
+        # Second paragraph with listing of different types of tables below
+        "<p>",
+        "<font color=\"red\">Tests without issue trackers Failed: twoif=2</font><br>",
+        "Tests with issue trackers Failed: twif=4<br>",
+        "</p>",
+
+        # twoif table
+        "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 10[)]: twoif=2</font></h3>",
+        #"Trilinos-atdm-waterman-cuda-9[.]2-release-debug.*Teko_testdriver_tpetra_MPI_1.*waterman",
+        #"Trilinos-atdm-waterman-cuda-9[.]2-release-debug.*Teko_testdriver_tpetra_MPI_4.*waterman",
+        # Can't seem to match above for some reason?
+
+        # twif table
+        "<h3>Tests with issue trackers Failed: twif=4</h3>",
+        #"Trilinos-atdm-cee-rhel6-gnu-4[.]9[.]3-opt-serial.*PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2.*cee-rhel6",
+        #"Trilinos-atdm-cee-rhel6-intel-opt-serial.*PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2.*cee-rhel6",
+        #"Trilinos-atdm-cee-rhel6-gnu-4[.]9[.]3-opt-serial.*PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3.*cee-rhel6",
+        #"Trilinos-atdm-cee-rhel6-intel-opt-serial.*PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3.*cee-rhel6",
+        # Can't seem to match above for some reason?
+
+        ],
+      #verbose=True,
+      #debugPrint=True,
+      )
 
 
 #
