@@ -259,7 +259,9 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     cdash_analyze_and_report_run_case(
       self,
       testCaseName,
-      ["--print-details=on"],  # grep for verbose output
+      [ "--print-details=on", # grep for verbose output
+        "--limit-table-rows=20", # Let's see all of the twoif tets!
+        ],
       1,
       "FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2018-10-28",
       [
@@ -310,7 +312,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         "</p>",
          
         # twoif table
-        "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 10[)]: twoif=12</font></h3>",
+        "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 20[)]: twoif=12</font></h3>",
         # Pin down table headers
         "<th>Site</th>",
         "<th>Build Name</th>",
@@ -362,6 +364,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       [
         "--expected-builds-file=",
         "--tests-with-issue-trackers-file=",
+        "--limit-table-rows=30", # Let's see all of the twoif tets!
         ],
       1,
       "FAILED (twoif=21): ProjectName Nightly Builds on 2018-10-28",
@@ -404,7 +407,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         "</p>",
          
         # twoif table
-        "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 10[)]: twoif=21</font></h3>",
+        "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 30[)]: twoif=21</font></h3>",
         ],
       #verbose=True,
       #debugPrint=True,
@@ -1741,7 +1744,7 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
   #
   def test_twoif_2_twif_4_filter_based_on_expected_builds(self):
 
-    testCaseName = "test_twoif_2_twif_4_filter_based_on_expected_builds"
+    testCaseName = "twoif_2_twif_4_filter_based_on_expected_builds"
 
     testOutputDir = cdash_analyze_and_report_setup_test_dir(testCaseName)
 
