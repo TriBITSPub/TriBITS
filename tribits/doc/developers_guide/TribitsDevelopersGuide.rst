@@ -78,7 +78,7 @@ Documentation`_.  Finally, several bits of information are provided in the
 Background
 ==========
 
-In order to easily find the most appropriate documentation, see the 'TriBITS 
+In order to easily find the most appropriate documentation, see the `TriBITS
 Developer and User Roles`_ guide.  This guide describes the different roles 
 that users of TriBITS may play and offers links to relevant sections of the
 documentation.  Additionally, the reader may wish to review the `CMake Language 
