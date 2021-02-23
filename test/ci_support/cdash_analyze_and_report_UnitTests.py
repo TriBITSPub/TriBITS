@@ -211,7 +211,7 @@ def cdash_analyze_and_report_run_case(
       stdoutStrList = stdout.read().split("\n")
   
     # Grep the STDOUT for other grep strings
-    assertListOfRegexsFoundInLinstOfStrs(testObj, stdoutRegexList,
+    assertListOfRegexsFoundInListOfStrs(testObj, stdoutRegexList,
       stdoutStrList, stdoutFileAbsPath, debugPrint=debugPrint)
   
     # Look for STDOUT for expected summary line
@@ -226,7 +226,7 @@ def cdash_analyze_and_report_run_case(
     # Search for expected regexes and in HTML file
     with open(htmlFileName, 'r') as htmlFile:
       htmlFileStrList = htmlFile.read().split("\n")
-    assertListOfRegexsFoundInLinstOfStrs(testObj, htmlFileRegexList,
+    assertListOfRegexsFoundInListOfStrs(testObj, htmlFileRegexList,
       htmlFileStrList, htmlFileAbsPath, debugPrint=debugPrint)
 
   finally:

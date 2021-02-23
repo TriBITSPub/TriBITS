@@ -56,7 +56,7 @@ def assertFindStringInListOfStrings(
 
 
 # Search for a list of regexs in order in a list of strings
-def assertListOfRegexsFoundInLinstOfStrs(
+def assertListOfRegexsFoundInListOfStrs(
   testObj,
   regexList,
   stringsList,
