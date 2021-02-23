@@ -164,7 +164,7 @@ class CreateIssueTrackerFromCDashQueryDriver:
     if self.options.newTestsWithIssueTrackersFile:
       print("\nWriting out list of test/biuld pairs for CSV file '"\
         +self.options.newTestsWithIssueTrackersFile+"'")
-      csvFileStruct = CDQAR.writeTestsLODToCsvFileStructure(uniqNonpassingTestsLOD,
+      csvFileStruct = CDQAR.writeTestsListOfDictsToCsvFileStructure(uniqNonpassingTestsLOD,
         self.issueTrackerUrlTemplate, self.issueTrackerTemplate )
       with open(self.options.newTestsWithIssueTrackersFile, 'w') as csvFile:
         csvFile.write(CDQAR.writeCsvFileStructureToStr(csvFileStruct))

@@ -769,7 +769,7 @@ class test_getExpectedBuildsListfromCsvFile(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.writeTestsLODToCsvFileStructure()
+# Test CDashQueryAnalyzeReport.writeTestsListOfDictsToCsvFileStructure()
 #
 #############################################################################
 
@@ -777,7 +777,7 @@ class test_writeTestsLODToCsvFileStructure(unittest.TestCase):
 
   def test_tests_0(self):
     testsLOD = []
-    csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+    csvFileStruct = writeTestsListOfDictsToCsvFileStructure(testsLOD)
     csvFileStruct_expected = CsvFileStructure(
       ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'),
       [] )
@@ -788,7 +788,7 @@ class test_writeTestsLODToCsvFileStructure(unittest.TestCase):
     testsLOD = [
       {'site':'site1', 'buildName':'build1', 'testname':'test1'},
       ]
-    csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+    csvFileStruct = writeTestsListOfDictsToCsvFileStructure(testsLOD)
     csvFileStruct_expected = CsvFileStructure(
       ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'),
       [ ('site1', 'build1', 'test1', '', '' ),
@@ -803,7 +803,7 @@ class test_writeTestsLODToCsvFileStructure(unittest.TestCase):
       {'site':'site3', 'buildName':'build3', 'testname':'test3'},
       {'site':'site2', 'buildName':'build2', 'testname':'test2'},
       ]
-    csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+    csvFileStruct = writeTestsListOfDictsToCsvFileStructure(testsLOD)
     csvFileStruct_expected = CsvFileStructure(
       ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'),
       [ ('site1', 'build1', 'test1', '', '' ),
@@ -1777,7 +1777,7 @@ class test_dateFromBuildStartTime(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.getUniqueSortedTestsHistoryLOD()
+# Test CDashQueryAnalyzeReport.getUniqueSortedTestsHistoryListOfDicts()
 #
 #############################################################################
 
@@ -1832,7 +1832,7 @@ class test_getUniqueSortedTestsHistoryLOD(unittest.TestCase):
   def test_empty_entries(self):
     testHistLOD = []
     uniTestHistLOD = \
-      getUniqueSortedTestsHistoryLOD(testHistLOD)
+      getUniqueSortedTestsHistoryListOfDicts(testHistLOD)
     self.assertEqual(len(uniTestHistLOD), 0)
 
   def test_one_entries(self):
@@ -1840,14 +1840,14 @@ class test_getUniqueSortedTestsHistoryLOD(unittest.TestCase):
       getSortedTestHistoryLOD5(['Passed','Passed','Failed','Passed','Failed'])[2]
       ]
     uniTestHistLOD = \
-      getUniqueSortedTestsHistoryLOD(testHistLOD)
+      getUniqueSortedTestsHistoryListOfDicts(testHistLOD)
     self.assertEqual(uniTestHistLOD[0]['buildstarttime'],'2000-12-30T05:54:03 UTC')
 
   def test_unique_entries(self):
     testHistLOD = \
       getSortedTestHistoryLOD5(['Passed','Passed','Failed','Passed','Failed'])
     uniTestHistLOD = \
-      getUniqueSortedTestsHistoryLOD(testHistLOD)
+      getUniqueSortedTestsHistoryListOfDicts(testHistLOD)
     self.assertEqual(uniTestHistLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(uniTestHistLOD[1]['buildstarttime'],'2000-12-31T05:54:03 UTC')
     self.assertEqual(uniTestHistLOD[2]['buildstarttime'],'2000-12-30T05:54:03 UTC')
@@ -1861,7 +1861,7 @@ class test_getUniqueSortedTestsHistoryLOD(unittest.TestCase):
     testHistLOD.insert(2, testHistLOD[2])
     testHistLOD.insert(1, testHistLOD[0])
     uniTestHistLOD = \
-      getUniqueSortedTestsHistoryLOD(testHistLOD)
+      getUniqueSortedTestsHistoryListOfDicts(testHistLOD)
     self.assertEqual(uniTestHistLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(uniTestHistLOD[1]['buildstarttime'],'2000-12-31T05:54:03 UTC')
     self.assertEqual(uniTestHistLOD[2]['buildstarttime'],'2000-12-30T05:54:03 UTC')

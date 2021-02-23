@@ -573,7 +573,7 @@ def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
 # Write list of builds from a builds LOD to a CSV file structure meant to
 # match the expected builds CSV file.
 #
-def expectedBuildsLODToCsvFileStructure(buildsLOD):
+def expectedBuildsListOfDictsToCsvFileStructure(buildsLOD):
   csvFileHeadersList = copy.deepcopy(g_expectedBuildsCsvFileHeadersRequired)
   csvFileRowsList = []
   for buildDict in buildsLOD:
@@ -589,8 +589,8 @@ def expectedBuildsLODToCsvFileStructure(buildsLOD):
 # Write list of builds from a builds LOD to a CSV file meant to match the
 # expected builds CSV file.
 #
-def writeExpectedBuildsLODToCsvFile(buildsLOD, csvFileName):
-  csvFileStruct = expectedBuildsLODToCsvFileStructure(buildsLOD)
+def writeExpectedBuildsListOfDictsToCsvFile(buildsLOD, csvFileName):
+  csvFileStruct = expectedBuildsListOfDictsToCsvFileStructure(buildsLOD)
   with open(csvFileName, 'w') as csvFile:
     csvFile.write(writeCsvFileStructureToStr(csvFileStruct))
 
@@ -607,7 +607,7 @@ def getTestsWtihIssueTrackersListFromCsvFile(testsWithIssueTrackersFile):
 # Write list of tests from a Tests LOD to a CSV file structure meant to match
 # tests with issue trackers CSV file.
 #
-def writeTestsLODToCsvFileStructure(testsLOD,
+def writeTestsListOfDictsToCsvFileStructure(testsLOD,
     issueTrackerUrl="", issueTracker="",
   ):
   csvFileHeadersList = copy.deepcopy(g_testsWithIssueTrackersCsvFileHeadersRequired)
@@ -627,8 +627,8 @@ def writeTestsLODToCsvFileStructure(testsLOD,
 # Write list of tests from a Tests LOD to a CSV file meant to match tests with
 # issue trackers CSV file.
 #
-def writeTestsLODToCsvFile(testsLOD, csvFileName):
-  csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+def writeTestsListOfDictsToCsvFile(testsLOD, csvFileName):
+  csvFileStruct = writeTestsListOfDictsToCsvFileStructure(testsLOD)
   with open(csvFileName, 'w') as csvFile:
     csvFile.write(writeCsvFileStructureToStr(csvFileStruct))
 
@@ -1410,7 +1410,7 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
   sortedTestHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
 
   # Remove duplicate tests from list of dicts
-  sortedTestHistoryLOD = getUniqueSortedTestsHistoryLOD(sortedTestHistoryLOD)
+  sortedTestHistoryLOD = getUniqueSortedTestsHistoryListOfDicts(sortedTestHistoryLOD)
 
   # Get testing day/time helper object
   testingDayTimeObj = CBTD.CDashProjectTestingDay(currentTestDate, testingDayStartTimeUtc)
@@ -1495,7 +1495,7 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
 # The returned list is new and does not modify any of the entires in the input
 # sorted inputSortedTestHistoryLOD object.
 #
-def getUniqueSortedTestsHistoryLOD(inputSortedTestHistoryLOD):
+def getUniqueSortedTestsHistoryListOfDicts(inputSortedTestHistoryLOD):
 
   if len(inputSortedTestHistoryLOD) == 0:
     return inputSortedTestHistoryLOD

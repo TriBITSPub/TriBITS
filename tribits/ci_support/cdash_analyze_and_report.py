@@ -908,7 +908,7 @@ if __name__ == '__main__':
       unexpectedBuildsCsvFileName = inOptions.writeUnexpectedBuildsToFile
       print("\nWriting list of unexpected builds to file "\
         +unexpectedBuildsCsvFileName+" ...")
-      CDQAR.writeExpectedBuildsLODToCsvFile(buildsUnexpectedLOD,
+      CDQAR.writeExpectedBuildsListOfDictsToCsvFile(buildsUnexpectedLOD,
         unexpectedBuildsCsvFileName)
 
     #
@@ -918,7 +918,7 @@ if __name__ == '__main__':
     if inOptions.writeFailingTestsWithoutIssueTrackersToFile:
       twoifCsvFileName = inOptions.writeFailingTestsWithoutIssueTrackersToFile
       print("\nWriting list of 'twiof' to file "+twoifCsvFileName+" ...")
-      CDQAR.writeTestsLODToCsvFile(twoifLOD, twoifCsvFileName)
+      CDQAR.writeTestsListOfDictsToCsvFile(twoifLOD, twoifCsvFileName)
 
     #
     # D.8) Write out test data to CSV file
