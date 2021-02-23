@@ -282,30 +282,20 @@ def validateAndConvertCmndLineOptions(inOptions):
 
 def setExtraCmndLineOptionsAfterParse(inOptions_inout):
 
-  if inOptions_inout.filterOutBuildsAndTestsNotMatchingExpectedBuildsStr == "on":
-    setattr(inOptions_inout, 'filterOutBuildsAndTestsNotMatchingExpectedBuilds', True)
-  else:
-    setattr(inOptions_inout, 'filterOutBuildsAndTestsNotMatchingExpectedBuilds', False)
+  setattr(inOptions_inout, 'filterOutBuildsAndTestsNotMatchingExpectedBuilds',
+    inOptions_inout.filterOutBuildsAndTestsNotMatchingExpectedBuildsStr == "on")
 
-  if inOptions_inout.useCachedCDashDataStr == "on":
-    setattr(inOptions_inout, 'useCachedCDashData', True)
-  else:
-    setattr(inOptions_inout, 'useCachedCDashData', False)
+  setattr(inOptions_inout, 'useCachedCDashData',
+    inOptions_inout.useCachedCDashDataStr == "on")
 
-  if inOptions_inout.requireTestHistoryMatchNonpassingTestsStr == "on":
-    setattr(inOptions_inout, 'requireTestHistoryMatchNonpassingTests', True)
-  else:
-    setattr(inOptions_inout, 'requireTestHistoryMatchNonpassingTests', False)
+  setattr(inOptions_inout, 'requireTestHistoryMatchNonpassingTests',
+    inOptions_inout.requireTestHistoryMatchNonpassingTestsStr == "on")
 
-  if inOptions_inout.printDetailsStr == "on":
-    setattr(inOptions_inout, 'printDetails', True)
-  else:
-    setattr(inOptions_inout, 'printDetails', False)
+  setattr(inOptions_inout, 'printDetails',
+    inOptions_inout.printDetailsStr == "on")
 
-  if inOptions_inout.listUnexpectedBuildsStr == "on":
-    setattr(inOptions_inout, 'listUnexpectedBuilds', True)
-  else:
-    setattr(inOptions_inout, 'listUnexpectedBuilds', False)
+  setattr(inOptions_inout, 'listUnexpectedBuilds',
+    inOptions_inout.listUnexpectedBuildsStr == "on")
 
   if inOptions_inout.cdashBaseCacheFilesPrefix == "":
     inOptions_inout.cdashBaseCacheFilesPrefix = \
