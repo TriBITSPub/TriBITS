@@ -1519,6 +1519,9 @@ class test_cdash_analyze_and_report(unittest.TestCase):
   # them to be passing and missing tests, then write then back to the file
   # fullCDashNonpassingTests.json
   #
+  # Also, this tests passing in the expected builds as two different files to
+  # test that feature.
+  #
   def test_twip_2_twim_2(self):
 
     testCaseName = "twip_2_twim_2"
@@ -1611,11 +1614,19 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
     # missing days.  (This will need to be done once we tablulate "Consecutive
     # Pass Days" and "Consecutive Missing Days".)
 
+    # Set up two expected builds files instead of just one
+    os.remove(testOutputDir+"/expectedBuilds.csv")
+    testCaseSrcDir = testCiSupportDir+"/"+g_baseTestDir+"/"+testCaseName
+    copyFilesListSrcToDestDir(
+      testCaseSrcDir, ("expectedBuilds1.csv", "expectedBuilds2.csv"),
+      testOutputDir)
+
     # Run the script and make sure it outputs the right stuff
     cdash_analyze_and_report_run_case(
       self,
       testCaseName,
       [ "--limit-test-history-days=30",  # Test that you can set this as int
+        "--expected-builds-file=expectedBuilds1.csv,expectedBuilds2.csv",
         "--write-test-data-to-file=test_data.json",
         ],
       0,

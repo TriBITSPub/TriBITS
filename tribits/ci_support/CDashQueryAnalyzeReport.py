@@ -565,9 +565,19 @@ g_expectedBuildsCsvFileHeadersRequired = \
   ('group', 'site', 'buildname')
 
 
-def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
+def getExpectedBuildsListOfDictsfromCsvFile(expectedBuildsFileName):
   return readCsvFileIntoListOfDicts(expectedBuildsFileName,
     g_expectedBuildsCsvFileHeadersRequired)
+
+
+def getExpectedBuildsListOfDictsFromCsvFileArg(expectedBuildsFileArg):
+  expectedBuildsLOD = []
+  if expectedBuildsFileArg:
+    expectedBuildsFilenameList = expectedBuildsFileArg.split(",")
+    for expectedBuildsFilename in expectedBuildsFilenameList:
+      expectedBuildsLOD.extend(
+        getExpectedBuildsListOfDictsfromCsvFile(expectedBuildsFilename))
+  return expectedBuildsLOD
 
 
 # Write list of builds from a builds LOD to a CSV file structure meant to

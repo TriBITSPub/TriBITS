@@ -125,9 +125,10 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
   clp.add_option(
     "--expected-builds-file", dest="expectedBuildsFile", type="string",
     default="",
-    help="Path to CSV file that lists the expected builds.  Each of these builds"+\
+    help="Path to a CSV file that lists the expected builds.  Each of these builds"+\
       " must have unique 'site' and 'buildname' field pairs or an error will be"+\
-      " raised and the tool will abort.  [default = '']" )
+      " raised and the tool will abort.  A list of files is also allowed that are"+\
+      " separated with ',' as <file1>,<file2>,... [default = '']" )
 
   clp.add_option(
     "--tests-with-issue-trackers-file", dest="testsWithIssueTrackersFile",
@@ -454,11 +455,8 @@ if __name__ == '__main__':
     #
 
     # Get list of expected builds from input CSV file
-    if inOptions.expectedBuildsFile:
-      expectedBuildsLOD = \
-        CDQAR.getExpectedBuildsListfromCsvFile(inOptions.expectedBuildsFile)
-    else:
-      expectedBuildsLOD = []
+    expectedBuildsLOD = CDQAR.getExpectedBuildsListOfDictsFromCsvFileArg(
+      inOptions.expectedBuildsFile)
     print("\nNum expected builds = "+str(len(expectedBuildsLOD)))
 
     # Create a SearchableListOfDict object to help look up expected builds

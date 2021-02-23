@@ -6,6 +6,14 @@
 ################################################################################
 
 import re
+import shutil
+
+
+# Copy a list of files from one directory to another
+def copyFilesListSrcToDestDir(origDir, filenameList, destDir):
+  for filename in filenameList:
+    shutil.copyfile(origDir+"/"+filename, destDir+"/"+filename)
+
 
 # Find the index of a test in a list of test dicts
 def getIdxOfTestInTestLOD(testsLOD, site, buildName, testname):
