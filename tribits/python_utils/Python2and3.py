@@ -49,8 +49,8 @@ def csvReaderNext(csvReader):
     return next(csvReader)
 
 
-def distItems(dist):
+def dictItems(dictIn):
   if sys.version_info < (3,):
-    return dist.iteritems()
+    return dictIn.iteritems()
   else:
-    return dist.items()
+    return dictIn.items()

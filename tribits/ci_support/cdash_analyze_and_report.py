@@ -226,7 +226,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "--list-unexpected-builds",
     "listUnexpectedBuildsStr",
     ("on", "off"), 1,
-    "List unexpected builds downloaded from CDash but but listed with expected builds'.",
+    "List unexpected builds downloaded from CDash (i.e. not matching an expected build)'.",
     clp )
 
   clp.add_option(
@@ -282,30 +282,20 @@ def validateAndConvertCmndLineOptions(inOptions):
 
 def setExtraCmndLineOptionsAfterParse(inOptions_inout):
 
-  if inOptions_inout.filterOutBuildsAndTestsNotMatchingExpectedBuildsStr == "on":
-    setattr(inOptions_inout, 'filterOutBuildsAndTestsNotMatchingExpectedBuilds', True)
-  else:
-    setattr(inOptions_inout, 'filterOutBuildsAndTestsNotMatchingExpectedBuilds', False)
+  setattr(inOptions_inout, 'filterOutBuildsAndTestsNotMatchingExpectedBuilds',
+    inOptions_inout.filterOutBuildsAndTestsNotMatchingExpectedBuildsStr == "on")
 
-  if inOptions_inout.useCachedCDashDataStr == "on":
-    setattr(inOptions_inout, 'useCachedCDashData', True)
-  else:
-    setattr(inOptions_inout, 'useCachedCDashData', False)
+  setattr(inOptions_inout, 'useCachedCDashData',
+    inOptions_inout.useCachedCDashDataStr == "on")
 
-  if inOptions_inout.requireTestHistoryMatchNonpassingTestsStr == "on":
-    setattr(inOptions_inout, 'requireTestHistoryMatchNonpassingTests', True)
-  else:
-    setattr(inOptions_inout, 'requireTestHistoryMatchNonpassingTests', False)
+  setattr(inOptions_inout, 'requireTestHistoryMatchNonpassingTests',
+    inOptions_inout.requireTestHistoryMatchNonpassingTestsStr == "on")
 
-  if inOptions_inout.printDetailsStr == "on":
-    setattr(inOptions_inout, 'printDetails', True)
-  else:
-    setattr(inOptions_inout, 'printDetails', False)
+  setattr(inOptions_inout, 'printDetails',
+    inOptions_inout.printDetailsStr == "on")
 
-  if inOptions_inout.listUnexpectedBuildsStr == "on":
-    setattr(inOptions_inout, 'listUnexpectedBuilds', True)
-  else:
-    setattr(inOptions_inout, 'listUnexpectedBuilds', False)
+  setattr(inOptions_inout, 'listUnexpectedBuilds',
+    inOptions_inout.listUnexpectedBuildsStr == "on")
 
   if inOptions_inout.cdashBaseCacheFilesPrefix == "":
     inOptions_inout.cdashBaseCacheFilesPrefix = \
@@ -908,7 +898,7 @@ if __name__ == '__main__':
       unexpectedBuildsCsvFileName = inOptions.writeUnexpectedBuildsToFile
       print("\nWriting list of unexpected builds to file "\
         +unexpectedBuildsCsvFileName+" ...")
-      CDQAR.writeExpectedBuildsLODToCsvFile(buildsUnexpectedLOD,
+      CDQAR.writeExpectedBuildsListOfDictsToCsvFile(buildsUnexpectedLOD,
         unexpectedBuildsCsvFileName)
 
     #
@@ -918,7 +908,7 @@ if __name__ == '__main__':
     if inOptions.writeFailingTestsWithoutIssueTrackersToFile:
       twoifCsvFileName = inOptions.writeFailingTestsWithoutIssueTrackersToFile
       print("\nWriting list of 'twiof' to file "+twoifCsvFileName+" ...")
-      CDQAR.writeTestsLODToCsvFile(twoifLOD, twoifCsvFileName)
+      CDQAR.writeTestsListOfDictsToCsvFile(twoifLOD, twoifCsvFileName)
 
     #
     # D.8) Write out test data to CSV file
