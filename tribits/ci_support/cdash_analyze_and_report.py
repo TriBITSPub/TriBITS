@@ -226,7 +226,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "--list-unexpected-builds",
     "listUnexpectedBuildsStr",
     ("on", "off"), 1,
-    "List unexpected builds downloaded from CDash but but listed with expected builds'.",
+    "List unexpected builds downloaded from CDash (i.e. not matching an expected build)'.",
     clp )
 
   clp.add_option(
