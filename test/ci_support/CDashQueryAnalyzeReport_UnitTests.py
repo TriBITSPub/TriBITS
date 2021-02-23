@@ -4227,7 +4227,7 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
     # TODO: REMOVE THIS FILE WRITE!!!
     #with open("issueTrckerTestsStatusReport.html", 'w') as testsHtmlReportFile:
     #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
-    assertListOfRegexsFoundInLinstOfStrs(self,
+    assertListOfRegexsFoundInListOfStrs(self,
       regexList=[
         '<h2>Test results for issue #1234 as of 2018-10-28</h2>',
         '<details>',
@@ -4289,7 +4289,7 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
     self.assertEqual(
       issueTrackerTestsStatusReporter.cdashReportData.htmlEmailBodyTop,
       htmlEmailBodyTop_expected)
-    assertListOfRegexsFoundInLinstOfStrs(self,
+    assertListOfRegexsFoundInListOfStrs(self,
       regexList=[
         '<h3><font color="green">Tests with issue trackers Passed: twip=1</font></h3>',
         '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>',
@@ -4326,7 +4326,7 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
     # TODO: REMOVE THIS FILE WRITE!!!
     #with open("issueTrckerTestsStatusReport.html", 'w') as testsHtmlReportFile:
     #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
-    assertListOfRegexsFoundInLinstOfStrs(self,
+    assertListOfRegexsFoundInListOfStrs(self,
       regexList=[
         '<h2>Test results for issue #1234 as of 2018-10-28</h2>',
         '<font color="green">Tests with issue trackers Passed: twip=1</font><br>',

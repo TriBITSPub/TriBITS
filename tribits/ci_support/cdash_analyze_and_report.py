@@ -222,12 +222,26 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       " file names.",
     clp )
 
+  addOptionParserChoiceOption(
+    "--list-unexpected-builds",
+    "listUnexpectedBuildsStr",
+    ("on", "off"), 1,
+    "List unexpected builds downloaded from CDash but but listed with expected builds'.",
+    clp )
+
+  clp.add_option(
+    "--write-unexpected-builds-to-file",
+    dest="writeUnexpectedBuildsToFile", type="string", default="",
+    help="Write a CSV file with a list of unexpected builds 'bu'." \
+    +"  This is to make it easy to add new entires to the file read by" \
+    +" the option --expected-builds-file=<csv-file>. [default = '']" )
+
   clp.add_option(
     "--write-failing-tests-without-issue-trackers-to-file",
     dest="writeFailingTestsWithoutIssueTrackersToFile", type="string", default="",
     help="Write a CSV file with a list of tests with issue trackers failed 'twif'." \
     +"  This is to make it easy to add new entires to the file read by" \
-    +" the option --tests-with-issue-trackers-file=<file>. [default = '']" )
+    +" the option --tests-with-issue-trackers-file=<csv-file>. [default = '']" )
 
   clp.add_option(
     "--write-test-data-to-file",
@@ -288,6 +302,11 @@ def setExtraCmndLineOptionsAfterParse(inOptions_inout):
   else:
     setattr(inOptions_inout, 'printDetails', False)
 
+  if inOptions_inout.listUnexpectedBuildsStr == "on":
+    setattr(inOptions_inout, 'listUnexpectedBuilds', True)
+  else:
+    setattr(inOptions_inout, 'listUnexpectedBuilds', False)
+
   if inOptions_inout.cdashBaseCacheFilesPrefix == "":
     inOptions_inout.cdashBaseCacheFilesPrefix = \
      CDQAR.getFileNameStrFromText(inOptions_inout.buildSetName)+"_"
@@ -324,6 +343,8 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --limit-table-rows='"+str(io.limitTableRows)+"'"+lt+\
     "  --require-test-history-match-nonpassing-tests='"+io.requireTestHistoryMatchNonpassingTestsStr+"'"+lt+\
     "  --print-details='"+io.printDetailsStr+"'"+lt+\
+    "  --list-unexpected-builds='"+io.listUnexpectedBuildsStr+"'"+lt+\
+    "  --write-unexpected-builds-to-fileo='"+io.writeUnexpectedBuildsToFile+"'"+lt+\
     "  --write-failing-tests-without-issue-trackers-to-file='"+io.writeFailingTestsWithoutIssueTrackersToFile+"'"+lt+\
     "  --write-test-data-to-file='"+io.writeTestDataToFile+"'"+lt+\
     "  --write-email-to-file='"+io.writeEmailToFile+"'"+lt+\
@@ -544,13 +565,17 @@ if __name__ == '__main__':
 
     print("\nNum builds downloaded from CDash = "+str(len(fullBuildsLOD)))
 
+    (buildsExpectedLOD, buildsUnexpectedLOD) = \
+      CDQAR.splitTestsOnMatchExpectedBuilds(fullBuildsLOD, expectedBuildsSLOD)
+
     if inOptions.filterOutBuildsAndTestsNotMatchingExpectedBuilds:
-      (buildsLOD, buildsNotExpectedLOD) = \
-        CDQAR.splitTestsOnMatchExpectedBuilds(fullBuildsLOD,
-          expectedBuildsSLOD)
-      print("Num builds matching expected builds = "+str(len(buildsLOD)))
+      print("Num builds matching expected builds = "+str(len(buildsExpectedLOD)))
+      buildsLOD = buildsExpectedLOD
     else:
       buildsLOD = fullBuildsLOD
+
+    if inOptions.listUnexpectedBuilds:
+      print("Num builds unexpected = "+str(len(buildsUnexpectedLOD)))
 
     print("Num builds = "+str(len(buildsLOD)))
 
@@ -683,6 +708,8 @@ if __name__ == '__main__':
     # D.4) Process and tabulate lists of builds
     #
 
+    buildsetReporter = CDQAR.SingleBuildsetReporter(cdashReportData)
+
     #
     # 'bm'
     #
@@ -691,40 +718,18 @@ if __name__ == '__main__':
 
     missingExpectedBuildsLOD = CDQAR.getMissingExpectedBuildsList(
       buildsSLOD, expectedBuildsLOD)
-    #print("\nmissingExpectedBuildsLOD:")
-    #pp.pprint(missingExpectedBuildsLOD)
 
-    bmDescr = "Builds Missing"
-    bmAcro = "bm"
-    bmNum = len(missingExpectedBuildsLOD)
-
-    bmSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(bmDescr,  bmAcro, bmNum)
-
-    print(bmSummaryStr)
-
-    if bmNum > 0:
-
-      cdashReportData.globalPass = False
-
-      cdashReportData.summaryLineDataNumbersList.append(bmAcro+"="+str(bmNum))
-
-      cdashReportData.htmlEmailBodyTop += \
-        CDQAR.colorHtmlText(bmSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
-
-      bmColDataList = [
+    buildsetReporter.reportSingleBuildset("Builds Missing", "bm",
+      missingExpectedBuildsLOD,
+      buildsetGlobalPass=False,
+      buildsetColor=CDQAR.cdashColorFailed(),
+      buildsetColDataList=[
         tcd("Group", 'group'),
         tcd("Site", 'site'),
         tcd("Build Name", 'buildname'),
         tcd("Missing Status", 'status'),
-        ]
-
-      cdashReportData.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-         bmDescr,  bmAcro, bmColDataList, missingExpectedBuildsLOD,
-        groupSiteBuildNameSortOrder, None )
-      # NOTE: Above we don't want to limit any missing builds in this table
-      # because that data is not shown on CDash and that list will never be
-      # super big.
+        ],
+      )
 
     #
     # 'cf'
@@ -735,37 +740,11 @@ if __name__ == '__main__':
     buildsWithConfigureFailuresLOD = \
       CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasConfigureFailures)
 
-    cDescr = "Builds with Configure Failures"
-    cAcro = "cf"
-    cNum = len(buildsWithConfigureFailuresLOD)
-
-    cSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(cDescr,  cAcro, cNum)
-
-    print(cSummaryStr)
-
-    if cNum > 0:
-
-      cdashReportData.globalPass = False
-
-      cdashReportData.summaryLineDataNumbersList.append(cAcro+"="+str(cNum))
-
-      cdashReportData.htmlEmailBodyTop += \
-        CDQAR.colorHtmlText(cSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
-
-      cColDataList = [
-        tcd("Group", 'group'),
-        tcd("Site", 'site'),
-        tcd("Build Name", 'buildname'),
-        ]
-
-      cdashReportData.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        cDescr,  cAcro, cColDataList, buildsWithConfigureFailuresLOD,
-        groupSiteBuildNameSortOrder, inOptions.limitTableRows )
-
-      # ToDo: Update to show number of configure failures and the history info
-      # for that build with hyperlinks and don't limit the number of builds
-      # shown.
+    buildsetReporter.reportSingleBuildset("Builds with Configure Failures", "cf",
+      buildsWithConfigureFailuresLOD,
+      buildsetGlobalPass=False,
+      buildsetColor=CDQAR.cdashColorFailed(),
+      )
 
     #
     # 'bf'
@@ -776,37 +755,22 @@ if __name__ == '__main__':
     buildsWithBuildFailuresLOD = \
       CDQAR.getFilteredList(buildsSLOD, CDQAR.buildHasBuildFailures)
 
-    bDescr = "Builds with Build Failures"
-    bAcro = "bf"
-    bNum = len(buildsWithBuildFailuresLOD)
+    buildsetReporter.reportSingleBuildset("Builds with Build Failures", "bf",
+      buildsWithBuildFailuresLOD,
+      buildsetGlobalPass=False,
+      buildsetColor=CDQAR.cdashColorFailed(),
+      )
 
-    bSummaryStr = \
-      CDQAR.getCDashDataSummaryHtmlTableTitleStr(bDescr,  bAcro, bNum)
+    #
+    # 'bu'
+    #
 
-    print(bSummaryStr)
-
-    if bNum > 0:
-
-      cdashReportData.globalPass = False
-
-      cdashReportData.summaryLineDataNumbersList.append(bAcro+"="+str(bNum))
-
-      cdashReportData.htmlEmailBodyTop += \
-        CDQAR.colorHtmlText(bSummaryStr,CDQAR.cdashColorFailed())+"<br>\n"
-
-      cColDataList = [
-        tcd("Group", 'group'),
-        tcd("Site", 'site'),
-        tcd("Build Name", 'buildname'),
-        ]
-
-      cdashReportData.htmlEmailBodyBottom += CDQAR.createCDashDataSummaryHtmlTableStr(
-        bDescr,  bAcro, cColDataList, buildsWithBuildFailuresLOD,
-        groupSiteBuildNameSortOrder, inOptions.limitTableRows )
-
-      # ToDo: Update to show number of builds failures and the history info
-      # for that build with hyperlinks and don't limit the number of builds
-      # shown.
+    if inOptions.listUnexpectedBuilds:
+      buildsetReporter.reportSingleBuildset("Builds Unexpected", "bu",
+        buildsUnexpectedLOD,
+        buildsetGlobalPass=True,
+        buildsetColor=None,
+        )
 
     #
     # D.5) Analyaize and report the different sets of tests
@@ -937,7 +901,18 @@ if __name__ == '__main__':
       )
 
     #
-    # D.6) Write out list twiof to CSV file
+    # D.6) Write out list of unexpected builds to CSV file
+    #
+
+    if inOptions.writeUnexpectedBuildsToFile:
+      unexpectedBuildsCsvFileName = inOptions.writeUnexpectedBuildsToFile
+      print("\nWriting list of unexpected builds to file "\
+        +unexpectedBuildsCsvFileName+" ...")
+      CDQAR.writeExpectedBuildsLODToCsvFile(buildsUnexpectedLOD,
+        unexpectedBuildsCsvFileName)
+
+    #
+    # D.7) Write out list twiof to CSV file
     #
 
     if inOptions.writeFailingTestsWithoutIssueTrackersToFile:
@@ -946,7 +921,7 @@ if __name__ == '__main__':
       CDQAR.writeTestsLODToCsvFile(twoifLOD, twoifCsvFileName)
 
     #
-    # D.7) Write out test data to CSV file
+    # D.8) Write out test data to CSV file
     #
 
     if inOptions.writeTestDataToFile:
