@@ -740,22 +740,22 @@ class test_writeCsvFileStructureToStr(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.getExpectedBuildsListfromCsvFile()
+# Test CDashQueryAnalyzeReport.getExpectedBuildsListOfDictsfromCsvFile()
 #
 #############################################################################
 
-class test_getExpectedBuildsListfromCsvFile(unittest.TestCase):
+class test_getExpectedBuildsListOfDictsfromCsvFile(unittest.TestCase):
 
-  def test_getExpectedBuildsListfromCsvFile(self):
+  def test_getExpectedBuildsListOfDictsfromCsvFile(self):
     expectedBuildsCsvFileStr=\
         "group, site, buildname\n"+\
         "group1, site1, buildname1\n"+\
         "group1, site1, buildname2\n"+\
         "group2, site2, buildname2\n\n\n\n"
-    csvFileName = "test_getExpectedBuildsListfromCsvFile.csv"
+    csvFileName = "test_getExpectedBuildsListOfDictsfromCsvFile.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(expectedBuildsCsvFileStr)
-    expectedBuildsList = getExpectedBuildsListfromCsvFile(csvFileName)
+    expectedBuildsList = getExpectedBuildsListOfDictsfromCsvFile(csvFileName)
     expectedBuildsList_expected = \
       [
         { 'group' : 'group1', 'site' : 'site1', 'buildname' : 'buildname1' },
