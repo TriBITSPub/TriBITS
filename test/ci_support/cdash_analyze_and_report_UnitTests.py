@@ -975,7 +975,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         "Tests with issue trackers Failed: twif=9<br>",
 
         # 'bm' table (Really pin down this table)
-        "<h3>Builds Missing: bm=2</h3>",
+        "<h3><font color=\"red\">Builds Missing: bm=2</font></h3>",
         "<table.*>",  # NOTE: Other unit test code checks the default style!
         "<tr>",
         "<th>Group</th>",
@@ -998,7 +998,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         "</table>",
 
         # 'c' table (Really pin this down)
-        "<h3>Builds with Configure Failures: cf=1</h3>",
+        "<h3><font color=\"red\">Builds with Configure Failures: cf=1</font></h3>",
         "<table.*>",
         "<tr>",
         "<th>Group</th>",
@@ -1015,7 +1015,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         # correctly!
 
         # 'b' table (Really pin this down)
-        "<h3>Builds with Build Failures: bf=2</h3>",
+        "<h3><font color=\"red\">Builds with Build Failures: bf=2</font></h3>",
         "<table.*>",
         "<tr>",
         "<th>Group</th>",

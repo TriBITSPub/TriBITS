@@ -2391,7 +2391,7 @@ def getCDashDataSummaryHtmlTableTitleStr(dataTitle, dataCountAcronym, numItems,
 #
 def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
     colDataList, rowDataList, sortKeyList=None, limitRowsToDisplay=None,
-    htmlStyle=None, htmlTableStyle=None,
+    htmlStyle=None, htmlTableStyle=None, titleColor=None,
   ):
   # If no rows, don't create a table
   if len(rowDataList) == 0:
@@ -2400,8 +2400,10 @@ def createCDashDataSummaryHtmlTableStr( dataTitle, dataCountAcronym,
   rowDataListDisplayed = sortAndLimitListOfDicts(
     rowDataList, sortKeyList, limitRowsToDisplay)
   # Table title
-  tableTitle = getCDashDataSummaryHtmlTableTitleStr(
-    dataTitle, dataCountAcronym, len(rowDataList), limitRowsToDisplay )
+  tableTitle = colorHtmlText(
+    getCDashDataSummaryHtmlTableTitleStr(
+      dataTitle, dataCountAcronym, len(rowDataList), limitRowsToDisplay ),
+    titleColor )
   # Create and return the table
   return createHtmlTableStr( tableTitle,
     colDataList, rowDataListDisplayed, htmlStyle, htmlTableStyle )
@@ -2716,7 +2718,8 @@ class SingleBuildsetReporter(object):
       self.cdashReportData.htmlEmailBodyBottom += \
         createCDashDataSummaryHtmlTableStr(
           buildsetDescr,  buildsetAcro, buildsetColDataList, buildsetLOD,
-          self.groupSiteBuildNameSortOrder, None )
+          sortKeyList=self.groupSiteBuildNameSortOrder,
+          titleColor=buildsetColor)
 
 
 # Class to optionally get test history and then analyze and report a single
