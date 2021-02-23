@@ -149,7 +149,7 @@ SUMMARY: dummy_summary 2018-10-14
 
 ## Description
 
-As shown in [this query](dummy_url) (click "Shown Matching Output" in upper right) the tests:
+As shown in [this query](dummy_url) (click "Show Matching Output" in upper right) the tests:
 
 * `test_1`
 * `test_2`
@@ -169,9 +169,9 @@ Run the [above query](dummy_url) adjusting the "Begin" and "End" dates to match 
 
 g_example_t2_b2_tests_with_issue_trackers_csv = \
 r"""site, buildName, testname, issue_tracker_url, issue_tracker
-site_1, build_1, test_1, https://github.com/<group>/<group>/issues/<newissueid>, #<newissueid>
-site_2, build_2, test_1, https://github.com/<group>/<group>/issues/<newissueid>, #<newissueid>
-site_1, build_1, test_2, https://github.com/<group>/<group>/issues/<newissueid>, #<newissueid>
+site_1, build_1, test_1, https://github.com/<group>/<repo>/issues/<newissueid>, #<newissueid>
+site_2, build_2, test_1, https://github.com/<group>/<repo>/issues/<newissueid>, #<newissueid>
+site_1, build_1, test_2, https://github.com/<group>/<repo>/issues/<newissueid>, #<newissueid>
 """
 
 

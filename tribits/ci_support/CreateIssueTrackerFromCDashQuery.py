@@ -4,7 +4,7 @@ import pprint
 
 import CDashQueryAnalyzeReport as CDQAR
 import cdash_build_testing_date as CDBTD
-from Python2and3 import distItems
+from Python2and3 import dictItems
 
 g_pp = pprint.PrettyPrinter(indent=2)
 
@@ -14,25 +14,20 @@ g_pp = pprint.PrettyPrinter(indent=2)
 #
 # To make this general, the user has to create a class object that is passed
 # in as the argument 'issueTrackerFormatter' in this class that supports
-# the following functions.
+# the following functions:
 #
-# issueTrackerFormatter.acceptIssueTrackerData(issueTrackerData):
+# issueTrackerFormatter.createFormattedIssueTracker((issueTrackerData):
 #
-# This function is given data about the nonpasing tests through an object of
-# type 'IssueTrackerData' as the argument 'issueTrackerData'.  This data is
-# used to create the issue issue tracker text.
-# issueTrackerFormatter.getIssueTrackerText():
-#
-# This function is expected to return the created text for the issue tracker
-# given the data provided in the above 'acceptIssueTrackerData()' function.
-# The format of this text can be anything such as Markdown, RestructredText,
-# JIRA Issue Markup, etc.  The only assumption about formatting is in the HTML
-# table passed in the arugment 'issueTrackerData.testHistoryHtmlTableText'
-# 'acceptIssueTrackerData()' function.
+#   This function is expected to return the created text for the issue tracker
+#   given the data provided by the argument 'issueTrackerData' of type
+#   'IssueTrackerData'.  The format of this text can be anything such as
+#   Markdown, RestructredText, JIRA Issue Markup, etc.  The only assumption
+#   about formatting is in the HTML table passed in the arugment
+#   'issueTrackerData.testHistoryHtmlTableText'.
 #
 # The object 'issueTrackerFormatter' can format the issue tracker text anyway
 # it wants.  The object 'issueTrackerFormatter' is stateless w.r.t. this class
-# CreateIssueTrackerFromCDashQueryDriver
+# CreateIssueTrackerFromCDashQueryDriver.
 #
 class CreateIssueTrackerFromCDashQueryDriver:
 
@@ -202,7 +197,7 @@ class IssueTrackerData:
 #
 
 
-def getUniqueTestsListOfDicts(cdashTestsLOD):
+def getUniqueTestsListOfDicts(cdashTestsLOD): #LOD == "List of Dicts"
   # Get a dict that has just unique keys 'site', 'buildName' and 'testname' values
   uniqTestDict = {}
   for testDict in cdashTestsLOD:
@@ -213,9 +208,9 @@ def getUniqueTestsListOfDicts(cdashTestsLOD):
       site+"_"+buildName+"_"+testname :
         {'site':site, 'buildName':buildName, 'testname':testname}
       } )
-  # Get a flat last of test dicts
+  # Get a flat list of test dicts
   uniqNonpassingTestsLOD= []
-  for key, value in distItems(uniqTestDict):
+  for key, value in dictItems(uniqTestDict):
     uniqNonpassingTestsLOD.append(value)
   uniqNonpassingTestsLOD = CDQAR.sortAndLimitListOfDicts(uniqNonpassingTestsLOD,
     CDQAR.getDefaultTestDictsSortKeyList())
