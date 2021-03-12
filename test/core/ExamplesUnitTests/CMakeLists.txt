@@ -503,17 +503,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_Shared_NoVersion
   )
 
 
-IF (NOT CMAKE_VERSION VERSION_LESS 3.11.0)
-  SET(CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS TRUE)
-ELSE()
-  SET(CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS FALSE)
-ENDIF()
-
-
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
 
   TEST_0
     MESSAGE "Do initial configure with just libs not tests with default install settings"
@@ -700,7 +692,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
 
   TEST_0
     MESSAGE "Do initial configure with just libs"
@@ -747,7 +738,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_runner
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
 
   TEST_0
     MESSAGE "Do initial configure with an install_package_by_package runner"
@@ -912,27 +902,19 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
   #
 
 
-IF (CMAKE_VERSION VERSION_GREATER_EQUAL 3.16)
-  SET(HAS_CTEST_RESOURCE_FILE_SUPPORT TRUE)
-ELSE()
-  SET(HAS_CTEST_RESOURCE_FILE_SUPPORT FALSE)
-ENDIF()
 # NOTE: In the below tests, we are only testing TriBITS support for generating
 # the ctest_resources.json file, setting the RESOURCES_GROUP and ENVIRONMENT
 # test properties, and testing CMake support for recognizing the
 # RESOURCES_GROUP test property and putting it in the CTestTestfile.cmake
 # file.  We are not actually running ctest or looking for the var
 # CTEST_RESOURCE_SPEC_FILE set in the CTestTestfile.cmake file.  (Support for
-# CTEST_RESOURCE_SPEC_FILE will not be in CMake proper until 3.18 which has
-# not even been released yet as of this writing.  But a patched version of
-# CMake 3.17 installed with tribits/devtools_install/install-cmake.py does
-# support CTEST_RESOURCE_SPEC_FILE so we can use this feature right now.)
+# CTEST_RESOURCE_SPEC_FILE was not added proper until 3.18 so we can't rely on
+# it in these tests that work with CMake 3.17.)
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
 
   TEST_0
     MESSAGE "Configure and generate the ctest_resources.json file"
@@ -979,7 +961,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_no_ctest_resources_file
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
 
   TEST_0
     MESSAGE "Configure without any ctest resources file, just enable CUDA"
@@ -1013,7 +994,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_no_ctest_resources_file
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_autogen_on
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
 
   TEST_0
     MESSAGE "Copy in pre-created ctest resource file to make sure it is not overwritten"
@@ -1058,7 +1038,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_auto
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_autogen_on
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
 
   TEST_0
     MESSAGE "Copy in pre-created ctest resource file into the default autogen name and location"
@@ -1098,7 +1077,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_au
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_autogen_off
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
 
   TEST_0
     MESSAGE "Copy in pre-created ctest resource file into the default autogen name and location"
@@ -1247,16 +1225,10 @@ ELSE()
 ENDIF()
 
 
-IF (TribitsExProj_CTEST_USE_NEW_AAO_FEATURES)
-  SET(LabelsForSubprojects_CMND_AND_ARGS
-    grep ARGS "^LabelsForSubprojects:" DartConfiguration.tcl)
-  SET(LabelsForSubprojects_REGEX
-    "LabelsForSubprojects: SimpleCxx[;]MixedLang[;]WithSubpackages[;]WrapExternal")
-ELSE()
-  SET(LabelsForSubprojects_CMND_AND_ARGS
-    echo ARGS "No grep, we don't need to look for anything")
-  SET(LabelsForSubprojects_REGEX "No grep, we don't need to look for anything")
-ENDIF()
+SET(LabelsForSubprojects_CMND_AND_ARGS
+  grep ARGS "^LabelsForSubprojects:" DartConfiguration.tcl)
+SET(LabelsForSubprojects_REGEX
+  "LabelsForSubprojects: SimpleCxx[;]MixedLang[;]WithSubpackages[;]WrapExternal")
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
@@ -1280,7 +1252,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
       -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
-      -DTribitsExProj_CTEST_USE_NEW_AAO_FEATURES=${TribitsExProj_CTEST_USE_NEW_AAO_FEATURES}
       -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
       -DCMAKE_INSTALL_PREFIX=install
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
