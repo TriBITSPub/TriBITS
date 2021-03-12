@@ -7,10 +7,10 @@ export PATH=${PATH_ORIG}
 # From ~/load_dev_env.sh
 
 source ~/load_vera_dev_env.gcc-4.8.3.crf450.sh
-export PATH=/home/vera_env/common_tools/cmake-3.11.1/bin:$PATH
-export PATH=/projects/sems/install/rhel6-x86_64/atdm/utility/ninja_fortran/1.7.2/bin:$PATH
 module load sems-env
 module load sems-git/2.10.1
+module load sems-cmake/3.17.1
+module load sems-ninja_fortran/1.10.0
 
 # Extra stuff for TriBITS
 

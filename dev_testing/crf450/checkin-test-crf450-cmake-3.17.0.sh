@@ -1,6 +1,6 @@
 #!/bin/bash
  
-# Used to test TriBITS on crf450 using the VERA Dev Env with CMake 3.11.1.
+# Used to test TriBITS on crf450 using the VERA Dev Env with CMake 3.17.1
 #
 # You can link this script into any location and it will work out of the box.
 #
@@ -16,7 +16,6 @@ TRIBITS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR)
 
 # Load the env
 source ${_SCRIPT_DIR}/load-env.sh
-export PATH=/home/vera_env/common_tools/cmake-3.17.0/bin:$PATH
 
 # Create extra builds run by this script
 
