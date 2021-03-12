@@ -2968,42 +2968,6 @@ ENDMACRO()
 #
 
 
-# Set up to install <Package>Config.cmake, <Project>Config.cmake, and export
-# makefiles.
-FUNCTION(TRIBITS_ADD_PROJECT_EXPORT_FILE_INSTALL_TARGETS)
-
-  SET(tribits_install_src
-    "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}")
-
-  IF((${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES
-      OR ${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES)
-    AND NOT ${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING
-    )
-
-    INCLUDE(TribitsWriteClientExportFiles)
-
-    TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES()
-
-    IF (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
-      # TEMPORARY: Install a compatibility copy of ${PROJECT_NAME}Config.cmake
-      # where was previously installed to warn and load the new file.
-      SET(COMPATIBILITY_CONFIG_INCLUDE ${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake)
-      CONFIGURE_FILE(
-        "${tribits_install_src}/TribitsConfigInclude.cmake.in"
-        ${COMPATIBILITY_CONFIG_INCLUDE}
-        @ONLY
-        )
-      INSTALL(
-        FILES ${COMPATIBILITY_CONFIG_INCLUDE}
-        DESTINATION "${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}"
-        )
-    ENDIF()
-
-  ENDIF()
-
-ENDFUNCTION()
-
-
 # Create custom 'install_package_by_package' target
 FUNCTION(TRIBITS_ADD_INSTALL_PACKAGE_BY_PACKAGE_TARGET)
 
@@ -3036,10 +3000,13 @@ MACRO(TRIBITS_SETUP_FOR_INSTALLATION)
 
   # Set up to install <Package>Config.cmake, <Project>Config.cmake, and export
   # makefiles.
-  TRIBITS_ADD_PROJECT_EXPORT_FILE_INSTALL_TARGETS()
+  ADD_SUBDIRECTORY(
+    "${${PROJECT_NAME}_TRIBITS_DIR}/core/installation/add_project_install_commands"
+    add_project_install_commands)
 
   # Set up for fixing group and permissions after the install
-  ADD_SUBDIRECTORY("${${PROJECT_NAME}_TRIBITS_DIR}/core/add_install_group_and_perms_fixups"
+  ADD_SUBDIRECTORY(
+    "${${PROJECT_NAME}_TRIBITS_DIR}/core/installation/add_install_group_and_perms_fixups"
     add_install_group_and_perms_fixups)
 
   # Create custom 'install_package_by_package' target
