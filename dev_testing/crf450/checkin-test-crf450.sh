@@ -22,15 +22,13 @@ fi
 TRIBITS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR)
 #echo "TRIBITS_BASE_DIR_ABS = $TRIBITS_BASE_DIR_ABS"
 
-${_SCRIPT_DIR}/checkin-test-crf450-cmake-3.11.1.sh \
---send-email-to= --do-all
-
 ${_SCRIPT_DIR}/checkin-test-crf450-cmake-3.17.0.sh \
---send-email-to= --configure --build --test
+--send-email-to= --do-all
 
 ${_SCRIPT_DIR}/checkin-test-crf450-cmake-3.17.0-python-3.5.2.sh \
 --send-email-to= --configure --build --test
 
 $TRIBITS_BASE_DIR_ABS/checkin-test.py \
+--default-builds= \
 --st-extra-builds=MPI_DEBUG_CMake-3.17.0,SERIAL_RELEASE_CMake-3.17.0,MPI_DEBUG_CMake-3.17.0_Python-3.5.2 \
 "$@"

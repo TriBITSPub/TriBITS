@@ -997,7 +997,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
 ######################################################################
 
 
-FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
+FUNCTION(GENERATE_AAO_TESTS)
 
   SET(TribitsExampleProject_AAO_COMMON_CONFIG_ARGS
     ${TribitsExampleProject_COMMON_CONFIG_ARGS}
@@ -1009,16 +1009,9 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
     TribitsExProj_CTEST_DO_ALL_AT_ONCE=TRUE
     )
 
-  IF (USE_NEW_AAO_CTEST_CDASH_FEATURES)
-    SET(AAO_POSTFIX "P")
-    LIST(APPEND AAO_COMMON_ENV_ARGS
-      TribitsExProj_CTEST_USE_NEW_AAO_FEATURES=TRUE )
-    LIST(APPEND TribitsExampleProject_AAO_COMMON_CONFIG_ARGS
-      -DTribitsExProj_CTEST_USE_NEW_AAO_FEATURES=TRUE )
-  ELSE()
-    SET(AAO_POSTFIX "")
-  ENDIF()
-
+  SET(AAO_POSTFIX "P")
+  # ToDo: Just replace '${AAO_POSTFIX}' with 'P' once the function
+  # GENERATE_AAO_TESTS() is removed!
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -2381,13 +2374,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 ENDFUNCTION()
 
 
-# Run all-at-once-tests *WITHOUT* using new CMake/CTest/CDash features (so
-# packages will *NOT* get split out on CDash)
-GENERATE_AAO_TESTS(FALSE)
-
-
-# Run all-at-once-tests *WITH* using new CMake/CTest/CDash features (so
-# packages will get split out on CDash)
-IF (${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES)
-  GENERATE_AAO_TESTS(TRUE)
-ENDIF()
+GENERATE_AAO_TESTS()
+# ToDo: Remove this function and just have the tests at the top level.  (NOTE:
+# I don't want to do this yet as I don't want to create merge conflicts with
+# another branch I have for TriBITSPub/TriBITS#63.)

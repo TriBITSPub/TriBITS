@@ -5,10 +5,10 @@ dist: trusty
 
 before_install:
   - sudo apt-get update -qq
-  - wget -O cmake.sh https://cmake.org/files/v3.10/cmake-3.10.3-Linux-x86_64.sh 
-  - sudo mkdir /usr/local/cmake-3.10.3
-  - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local/cmake-3.10.3
-  - export PATH=/usr/local/cmake-3.10.3/bin:$PATH
+  - wget -O cmake.sh https://cmake.org/files/v3.17.5/cmake-3.17.5-Linux-x86_64.sh
+  - sudo mkdir /usr/local/cmake-3.17.5
+  - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local/cmake-3.17.5
+  - export PATH=/usr/local/cmake-3.17.5/bin:$PATH
   - sudo apt-get -y install gfortran
   - sudo apt-get -y install valgrind
   - sudo apt-get -y install ninja-build

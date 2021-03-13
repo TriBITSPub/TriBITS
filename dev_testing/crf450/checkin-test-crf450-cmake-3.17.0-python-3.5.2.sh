@@ -16,7 +16,6 @@ TRIBITS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR)
 
 # Load the env
 source ${_SCRIPT_DIR}/load-env-python-3.5.2.sh
-export PATH=/home/vera_env/common_tools/cmake-3.17.0/bin:$PATH
 
 # Create extra builds run by this script
 
