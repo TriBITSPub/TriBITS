@@ -3022,6 +3022,10 @@ def createHtmlMimeEmail(fromAddress, toAddress, subject, textBody, htmlBody):
   # through the gateway when html text lines are longer than 1000 characters.
   msg['Content-Transfer-Encoding'] = "quoted-printable"
 
+  # Remove hidden soft hyphens from htmlBody so triagers can easily copy paste
+  # long build and test names into CDash queries.
+  htmlBody = htmlBody.replace('&shy;','')
+
   # Record the MIME types of both parts - text/plain and text/html.
   part1 = MIMEText(textBody.encode('utf-8'), 'plain', 'utf-8')
   part2 = MIMEText(htmlBody.encode('utf-8'), 'html', 'utf-8')
