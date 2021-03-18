@@ -267,7 +267,7 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
 
   addOptionParserChoiceOption(
     "--email-without-soft-hyphens",
-    "emailWithoutSoftHyphens",
+    "emailWithoutSoftHyphensStr",
     ("on", "off"), 1,
     "Remove soft hyphens from emails.",
     clp )
@@ -309,6 +309,9 @@ def setExtraCmndLineOptionsAfterParse(inOptions_inout):
     inOptions_inout.cdashBaseCacheFilesPrefix = \
      CDQAR.getFileNameStrFromText(inOptions_inout.buildSetName)+"_"
 
+  setattr(inOptions_inout, 'emailWithoutSoftHyphens',
+    inOptions_inout.emailWithoutSoftHyphensStr == "on")
+
 
 def getCmndLineOptions():
   from optparse import OptionParser
@@ -347,7 +350,8 @@ def fwdCmndLineOptions(inOptions, lt=""):
     "  --write-test-data-to-file='"+io.writeTestDataToFile+"'"+lt+\
     "  --write-email-to-file='"+io.writeEmailToFile+"'"+lt+\
     "  --email-from-address='"+io.emailFromAddress+"'"+lt+\
-    "  --send-email-to='"+io.sendEmailTo+"'"+lt
+    "  --send-email-to='"+io.sendEmailTo+"'"+lt+\
+    "  --email-without-soft-hyphens='"+io.emailWithoutSoftHyphensStr+"'"+lt
   return cmndLineOpts
 
 
