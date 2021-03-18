@@ -3005,7 +3005,8 @@ import email.message
 
 # Create MINE formatted email object (but don't send it)
 #
-def createHtmlMimeEmail(fromAddress, toAddress, subject, textBody, htmlBody):
+def createHtmlMimeEmail(fromAddress, toAddress, subject, textBody, htmlBody,
+                        doRemoveSoftHyphens='off'):
 
   # Create message container - the correct MIME type is multipart/alternative.
   msg = MIMEMultipart('alternative')
@@ -3024,7 +3025,8 @@ def createHtmlMimeEmail(fromAddress, toAddress, subject, textBody, htmlBody):
 
   # Remove hidden soft hyphens from htmlBody so triagers can easily copy paste
   # long build and test names into CDash queries.
-  htmlBody = htmlBody.replace('&shy;','')
+  if doRemoveSoftHyphens == 'on':
+    htmlBody = htmlBody.replace('&shy;', '')
 
   # Record the MIME types of both parts - text/plain and text/html.
   part1 = MIMEText(textBody.encode('utf-8'), 'plain', 'utf-8')
