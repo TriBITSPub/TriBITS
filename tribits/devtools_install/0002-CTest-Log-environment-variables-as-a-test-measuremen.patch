@@ -1,0 +1,270 @@
+From 15f7a9c99ed90010eda639a2216f93d3e1990c52 Mon Sep 17 00:00:00 2001
+From: Kyle Edwards <kyle.edwards@kitware.com>
+Date: Mon, 18 May 2020 11:52:38 -0400
+Subject: [PATCH] CTest: Log environment variables as a test measurement
+
+---
+ Help/release/dev/ctest-log-environment.rst         |  8 +++++
+ Source/CTest/cmCTestRunTest.cxx                    | 34 ++++++++++++++++++++--
+ Source/CTest/cmCTestRunTest.h                      |  2 +-
+ Source/CTest/cmCTestTestHandler.cxx                |  6 ++++
+ Source/CTest/cmCTestTestHandler.h                  |  1 +
+ .../CTestResourceAllocation/RunCMakeTest.cmake     |  7 +++++
+ .../process_count-ctest-s-nores-check.cmake        |  4 +++
+ .../process_count-ctest-s-res-check.cmake          |  8 +++++
+ Tests/RunCMake/ctest_test/RunCMakeTest.cmake       | 11 +++++++
+ .../ctest_test/TestEnvironment-check.cmake         | 10 +++++++
+ 10 files changed, 88 insertions(+), 3 deletions(-)
+ create mode 100644 Help/release/dev/ctest-log-environment.rst
+ create mode 100644 Tests/RunCMake/CTestResourceAllocation/process_count-ctest-s-nores-check.cmake
+ create mode 100644 Tests/RunCMake/ctest_test/TestEnvironment-check.cmake
+
+diff --git a/Help/release/dev/ctest-log-environment.rst b/Help/release/dev/ctest-log-environment.rst
+new file mode 100644
+index 0000000..0636a25
+--- /dev/null
++++ b/Help/release/dev/ctest-log-environment.rst
+@@ -0,0 +1,8 @@
++ctest-log-environment
++---------------------
++
++* :manual:`ctest(1)` now logs environment variables that it sets for each test,
++  either due to the :prop_test:`ENVIRONMENT` property or the
++  :ref:`resource allocation <ctest-resource-allocation>` feature, and submits
++  this log to CDash. It does not log environment variables that were set
++  outside of CTest.
+diff --git a/Source/CTest/cmCTestRunTest.cxx b/Source/CTest/cmCTestRunTest.cxx
+index ec54960..24e9a06 100644
+--- a/Source/CTest/cmCTestRunTest.cxx
++++ b/Source/CTest/cmCTestRunTest.cxx
+@@ -413,6 +413,7 @@ void cmCTestRunTest::StartFailure(std::string const& output,
+   this->TestResult.Path = this->TestProperties->Directory;
+   this->TestResult.Output = output;
+   this->TestResult.FullCommandLine.clear();
++  this->TestResult.Environment.clear();
+   this->TestProcess = cm::make_unique<cmProcess>(*this);
+ }
+ 
+@@ -471,6 +472,7 @@ bool cmCTestRunTest::StartTest(size_t completed, size_t total)
+     this->TestProcess = cm::make_unique<cmProcess>(*this);
+     this->TestResult.Output = "Disabled";
+     this->TestResult.FullCommandLine.clear();
++    this->TestResult.Environment.clear();
+     return false;
+   }
+ 
+@@ -491,6 +493,7 @@ bool cmCTestRunTest::StartTest(size_t completed, size_t total)
+     cmCTestLog(this->CTest, HANDLER_OUTPUT, msg << std::endl);
+     this->TestResult.Output = msg;
+     this->TestResult.FullCommandLine.clear();
++    this->TestResult.Environment.clear();
+     this->TestResult.CompletionStatus = "Fixture dependency failed";
+     this->TestResult.Status = cmCTestTestHandler::NOT_RUN;
+     return false;
+@@ -512,6 +515,7 @@ bool cmCTestRunTest::StartTest(size_t completed, size_t total)
+     cmCTestLog(this->CTest, ERROR_MESSAGE, msg << std::endl);
+     this->TestResult.Output = msg;
+     this->TestResult.FullCommandLine.clear();
++    this->TestResult.Environment.clear();
+     this->TestResult.CompletionStatus = "Missing Configuration";
+     this->TestResult.Status = cmCTestTestHandler::NOT_RUN;
+     return false;
+@@ -528,6 +532,7 @@ bool cmCTestRunTest::StartTest(size_t completed, size_t total)
+                  "Unable to find required file: " << file << std::endl);
+       this->TestResult.Output = "Unable to find required file: " + file;
+       this->TestResult.FullCommandLine.clear();
++      this->TestResult.Environment.clear();
+       this->TestResult.CompletionStatus = "Required Files Missing";
+       this->TestResult.Status = cmCTestTestHandler::NOT_RUN;
+       return false;
+@@ -544,6 +549,7 @@ bool cmCTestRunTest::StartTest(size_t completed, size_t total)
+                "Unable to find executable: " << args[1] << std::endl);
+     this->TestResult.Output = "Unable to find executable: " + args[1];
+     this->TestResult.FullCommandLine.clear();
++    this->TestResult.Environment.clear();
+     this->TestResult.CompletionStatus = "Unable to find executable";
+     this->TestResult.Status = cmCTestTestHandler::NOT_RUN;
+     return false;
+@@ -689,25 +695,43 @@ bool cmCTestRunTest::ForkProcess(cmDuration testTimeOut, bool explicitTimeout,
+   cmSystemTools::SaveRestoreEnvironment sre;
+ #endif
+ 
++  std::ostringstream envMeasurement;
+   if (environment && !environment->empty()) {
+     cmSystemTools::AppendEnv(*environment);
++    for (auto const& var : *environment) {
++      envMeasurement << var << std::endl;
++    }
+   }
+ 
+   if (this->UseAllocatedResources) {
+-    this->SetupResourcesEnvironment();
++    std::vector<std::string> envLog;
++    this->SetupResourcesEnvironment(&envLog);
++    for (auto const& var : envLog) {
++      envMeasurement << var << std::endl;
++    }
+   } else {
+     cmSystemTools::UnsetEnv("CTEST_RESOURCE_GROUP_COUNT");
++    // Signify that this variable is being actively unset
++    envMeasurement << "#CTEST_RESOURCE_GROUP_COUNT=" << std::endl;
+   }
+ 
++  this->TestResult.Environment = envMeasurement.str();
++  // Remove last newline
++  this->TestResult.Environment.erase(this->TestResult.Environment.length() -
++                                     1);
++
+   return this->TestProcess->StartProcess(this->MultiTestHandler.Loop,
+                                          affinity);
+ }
+ 
+-void cmCTestRunTest::SetupResourcesEnvironment()
++void cmCTestRunTest::SetupResourcesEnvironment(std::vector<std::string>* log)
+ {
+   std::string processCount = "CTEST_RESOURCE_GROUP_COUNT=";
+   processCount += std::to_string(this->AllocatedResources.size());
+   cmSystemTools::PutEnv(processCount);
++  if (log) {
++    log->push_back(processCount);
++  }
+ 
+   std::size_t i = 0;
+   for (auto const& process : this->AllocatedResources) {
+@@ -733,8 +757,14 @@ void cmCTestRunTest::SetupResourcesEnvironment()
+         var += "id:" + it2.Id + ",slots:" + std::to_string(it2.Slots);
+       }
+       cmSystemTools::PutEnv(var);
++      if (log) {
++        log->push_back(var);
++      }
+     }
+     cmSystemTools::PutEnv(resourceList);
++    if (log) {
++      log->push_back(resourceList);
++    }
+     ++i;
+   }
+ }
+diff --git a/Source/CTest/cmCTestRunTest.h b/Source/CTest/cmCTestRunTest.h
+index 4988839..81da5aa 100644
+--- a/Source/CTest/cmCTestRunTest.h
++++ b/Source/CTest/cmCTestRunTest.h
+@@ -112,7 +112,7 @@ private:
+   // Run post processing of the process output for MemCheck
+   void MemCheckPostProcess();
+ 
+-  void SetupResourcesEnvironment();
++  void SetupResourcesEnvironment(std::vector<std::string>* log = nullptr);
+ 
+   // Returns "completed/total Test #Index: "
+   std::string GetTestPrefix(size_t completed, size_t total) const;
+diff --git a/Source/CTest/cmCTestTestHandler.cxx b/Source/CTest/cmCTestTestHandler.cxx
+index 4f324ea..da012c4 100644
+--- a/Source/CTest/cmCTestTestHandler.cxx
++++ b/Source/CTest/cmCTestTestHandler.cxx
+@@ -1423,6 +1423,12 @@ void cmCTestTestHandler::GenerateDartOutput(cmXMLWriter& xml)
+     xml.Attribute("name", "Command Line");
+     xml.Element("Value", result.FullCommandLine);
+     xml.EndElement(); // NamedMeasurement
++
++    xml.StartElement("NamedMeasurement");
++    xml.Attribute("type", "text/string");
++    xml.Attribute("name", "Environment");
++    xml.Element("Value", result.Environment);
++    xml.EndElement(); // NamedMeasurement
+     for (auto const& measure : result.Properties->Measurements) {
+       xml.StartElement("NamedMeasurement");
+       xml.Attribute("type", "text/string");
+diff --git a/Source/CTest/cmCTestTestHandler.h b/Source/CTest/cmCTestTestHandler.h
+index b1c8755..e596c16 100644
+--- a/Source/CTest/cmCTestTestHandler.h
++++ b/Source/CTest/cmCTestTestHandler.h
+@@ -169,6 +169,7 @@ public:
+     std::string Path;
+     std::string Reason;
+     std::string FullCommandLine;
++    std::string Environment;
+     cmDuration ExecutionTime;
+     std::int64_t ReturnValue;
+     int Status;
+diff --git a/Tests/RunCMake/CTestResourceAllocation/RunCMakeTest.cmake b/Tests/RunCMake/CTestResourceAllocation/RunCMakeTest.cmake
+index 8584786..54ddf08 100644
+--- a/Tests/RunCMake/CTestResourceAllocation/RunCMakeTest.cmake
++++ b/Tests/RunCMake/CTestResourceAllocation/RunCMakeTest.cmake
+@@ -38,6 +38,13 @@ function(run_ctresalloc_verify name tests)
+   run_cmake_command(${name} "${CTRESALLOC_COMMAND}" verify "${RunCMake_SOURCE_DIR}/${name}.log" "${CMAKE_CURRENT_LIST_DIR}/resspec.json" "${tests}")
+ endfunction()
+ 
++function(read_testing_file filename variable)
++  file(READ "${RunCMake_TEST_BINARY_DIR}/Testing/TAG" _tag)
++  string(REGEX REPLACE "^([^\n]*)\n.*$" "\\1" _date "${_tag}")
++  file(READ "${RunCMake_TEST_BINARY_DIR}/Testing/${_date}/${filename}" _contents)
++  set("${variable}" "${_contents}" PARENT_SCOPE)
++endfunction()
++
+ unset(ENV{CTEST_RESOURCE_GROUP_COUNT})
+ set(RunCMake_TEST_NO_CLEAN 1)
+ file(REMOVE_RECURSE "${RunCMake_BINARY_DIR}/ctresalloc-write-proc-good1-build")
+diff --git a/Tests/RunCMake/CTestResourceAllocation/process_count-ctest-s-nores-check.cmake b/Tests/RunCMake/CTestResourceAllocation/process_count-ctest-s-nores-check.cmake
+new file mode 100644
+index 0000000..c6e72bd
+--- /dev/null
++++ b/Tests/RunCMake/CTestResourceAllocation/process_count-ctest-s-nores-check.cmake
+@@ -0,0 +1,4 @@
++read_testing_file("Test.xml" _test_contents)
++if(NOT _test_contents MATCHES "#CTEST_RESOURCE_GROUP_COUNT=")
++  string(APPEND RunCMake_TEST_FAILED "Could not find unset variable CTEST_RESOURCE_GROUP_COUNT in test measurements\n")
++endif()
+diff --git a/Tests/RunCMake/CTestResourceAllocation/process_count-ctest-s-res-check.cmake b/Tests/RunCMake/CTestResourceAllocation/process_count-ctest-s-res-check.cmake
+index ceda72e..585c36b 100644
+--- a/Tests/RunCMake/CTestResourceAllocation/process_count-ctest-s-res-check.cmake
++++ b/Tests/RunCMake/CTestResourceAllocation/process_count-ctest-s-res-check.cmake
+@@ -1 +1,9 @@
+ verify_ctest_resources()
++
++read_testing_file("Test.xml" _test_contents)
++if(NOT _test_contents MATCHES "\nCTEST_RESOURCE_GROUP_0=widgets")
++  string(APPEND RunCMake_TEST_FAILED "Could not find variable CTEST_RESOURCE_GROUP_0 in test measurements\n")
++endif()
++if(NOT _test_contents MATCHES "\nCTEST_RESOURCE_GROUP_0_WIDGETS=id:")
++  string(APPEND RunCMake_TEST_FAILED "Could not find variable CTEST_RESOURCE_GROUP_0_WIDGETS in test measurements\n")
++endif()
+diff --git a/Tests/RunCMake/ctest_test/RunCMakeTest.cmake b/Tests/RunCMake/ctest_test/RunCMakeTest.cmake
+index 84d1d66..cdf9892 100644
+--- a/Tests/RunCMake/ctest_test/RunCMakeTest.cmake
++++ b/Tests/RunCMake/ctest_test/RunCMakeTest.cmake
+@@ -95,3 +95,14 @@ endfunction()
+ run_TestRepeat(UntilFail REPEAT UNTIL_FAIL:3)
+ run_TestRepeat(UntilPass REPEAT UNTIL_PASS:3)
+ run_TestRepeat(AfterTimeout REPEAT AFTER_TIMEOUT:3)
++
++# Make sure environment gets logged
++function(run_environment)
++  set(ENV{BAD_ENVIRONMENT_VARIABLE} "Bad environment variable")
++  set(CASE_CMAKELISTS_SUFFIX_CODE [[
++set_property(TEST RunCMakeVersion PROPERTY ENVIRONMENT "ENV1=env1;ENV2=env2")
++  ]])
++
++  run_ctest(TestEnvironment)
++endfunction()
++run_environment()
+diff --git a/Tests/RunCMake/ctest_test/TestEnvironment-check.cmake b/Tests/RunCMake/ctest_test/TestEnvironment-check.cmake
+new file mode 100644
+index 0000000..91c9731
+--- /dev/null
++++ b/Tests/RunCMake/ctest_test/TestEnvironment-check.cmake
+@@ -0,0 +1,10 @@
++file(READ "${RunCMake_TEST_BINARY_DIR}/Testing/TAG" _tag)
++string(REGEX REPLACE "^([^\n]*)\n.*$" "\\1" _date "${_tag}")
++file(READ "${RunCMake_TEST_BINARY_DIR}/Testing/${_date}/Test.xml" _test_contents)
++
++if(NOT _test_contents MATCHES "<Value>ENV1=env1\nENV2=env2\n#CTEST_RESOURCE_GROUP_COUNT=</Value>")
++  string(APPEND RunCMake_TEST_FAILED "Could not find expected environment variables in Test.xml")
++endif()
++if(_test_contents MATCHES "BAD_ENVIRONMENT_VARIABLE")
++  string(APPEND RunCMake_TEST_FAILED "Found BAD_ENVIRONMENT_VARIABLE in Test.xml")
++endif()
+-- 
+2.7.4
+
