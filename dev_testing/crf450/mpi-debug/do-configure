@@ -39,14 +39,14 @@ ${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-mpi-debug \
 #
 #   -DTriBITS_CTEST_DRIVER_SUBMIT_TO=EXP_CDASH
 
-# To submot to arbitary CDash site (e.g. testing-dev.sandia.gov/cdash) set:
+# To submit to arbitrary CDash site (e.g. testing-dev.sandia.gov/cdash) set:
 #
 #   -DTriBITS_CTEST_DRIVER_SUBMIT_TO=CUSTOM
 #   -DTriBITS_CTEST_DRIVER_SUBMIT_DROP_SITE=testing-dev.sandia.gov
 #   -DTriBITS_CTEST_DRIVER_SUBMIT_DROP_LOCATION="/cdash/submit.php?project=TribitsExProj"
 
 # NOTE: Add -DTriBITS_ENABLE_REAL_GIT_CLONE_TESTS=ON to test cloning TriBITS
-# Exmaple repos and testing the clone features of the various tools.  To get
+# Example repos and testing the clone features of the various tools.  To get
 # this to work on SNL machines, one may need to switch from
 # 'https://github.com/' to 'git@github.com:' using:
 #
@@ -54,16 +54,9 @@ ${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-mpi-debug \
 #
 # before configuring.
 #
-# NOTE: The directrory /tmp/tribits_install_tests above was created beforehand with:
+# NOTE: The directory /tmp/tribits_install_tests above was created beforehand with:
 #
-# $ /home/atdm-devops-admin/tools/run-as-atdm-devops-admin mkdir /tmp/tribits_install_tests
-# $ /home/atdm-devops-admin/tools/run-as-atdm-devops-admin chgrp wg-run-as-atdm-devops /tmp/tribits_install_tests
-# $ /home/atdm-devops-admin/tools/run-as-atdm-devops-admin chmod g+rwX /tmp/tribits_install_tests
+# $ mkdir /tmp/tribits_install_tests
 #
-# which created the directory:
-#
-# $ls -ld /tmp/tribits_install_tests/
-# drwxrwxr-x. 2 atdm-devops-admin wg-run-as-atdm-devops 4096 May  1 11:13 /tmp/tribits_install_tests/
-#
-# That tests a use case where the base install directory is not that of the
-# current user.
+# One can allow another user to create the directory with a shared group for
+# more testing.

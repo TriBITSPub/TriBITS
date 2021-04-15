@@ -1845,6 +1845,16 @@ IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     "${installBaseDir}/TribitsExampleProject_install_perms_nonowning_base_dir")
   SET(installPrefix
     "${installPrefixBaseDir}/install")
+  IF ("${TribitsExProj_INSTALL_BASE_OWNING_USER}"
+    STREQUAL "${TribitsExProj_INSTALL_OWNING_USER}"
+    )
+    SET(CHGRP_CHMOD_BASE_TEXT
+      "0: Running: chgrp wg-sems-users-son /tmp/tribits_install_tests"
+      "0: Running: chmod g[+]rwX,o[+]rX /tmp/tribits_install_tests")
+  ELSE()
+    SET(CHGRP_CHMOD_BASE_TEXT
+      "0: NOTE: Not calling chgrp and chmod on ${installBaseDir} since owner '${TribitsExProj_INSTALL_BASE_OWNING_USER}' != current owner '${TribitsExProj_INSTALL_OWNING_USER}'!")
+  ENDIF()
 ENDIF()
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_dir
@@ -1897,7 +1907,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_di
     PASS_REGULAR_EXPRESSION_ALL
       "${installPrefix}/include/wsp_c/C.hpp"
       "${installPrefix}/lib/libpws_c.a"
-      "0: NOTE: Not calling chgrp and chmod on ${installBaseDir} since owner '${TribitsExProj_INSTALL_BASE_OWNING_USER}' != current owner '${TribitsExProj_INSTALL_OWNING_USER}'!"
+      "${CHGRP_CHMOD_BASE_TEXT}"
       "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} ${installPrefixBaseDir}"
       "1: Running: chmod g[+]rwX,o[+]rX ${installPrefixBaseDir}"
       "2: Running: chgrp -R ${TribitsExProj_INSTALL_OWNING_GROUP} ${installPrefix}"
