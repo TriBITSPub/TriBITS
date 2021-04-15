@@ -838,7 +838,8 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
   # commands we will have
   #
 
-  # Allow for a maximum of 20 (0 through 19) test commands
+  # Set maximum number of TEST_<idx> blocks
+  TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_CMND_IDX_COMPUTE()
   SET(MAX_NUM_TEST_CMND_IDX ${TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_CMND_IDX})
 
   SET(TEST_IDX_LIST "")
