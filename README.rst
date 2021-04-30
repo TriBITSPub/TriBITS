@@ -1,6 +1,6 @@
-.. image:: https://badge.waffle.io/TriBITSPub/TriBITS.png?label=ready&title=Ready 
- :target: https://waffle.io/TriBITSPub/TriBITS
- :alt: 'Stories in Ready'
+.. image:: https://bestpractices.coreinfrastructure.org/projects/4839/badge
+  :target: https://bestpractices.coreinfrastructure.org/projects/4839
+  :alt: CII Best Practices
 
 =================================================
 TriBITS: Tribal Build, Integrate, and Test System
