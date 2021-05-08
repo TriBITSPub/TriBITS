@@ -951,15 +951,15 @@ generator)`_).
 
 .. _<Project>_WRITE_NINJA_MAKEFILES:
 
-In addition, for versions of CMake 3.7.0+, the TriBITS build system will, by
-default, generate Makefiles in every binary directory where there is a
-CMakeLists.txt file in the source tree.  These Makefiles have targets scoped
-to that subdirectory that use ``ninja`` to build targets in that subdirectory
-just like with the native CMake recursive ``-G"Unix Makefiles"`` generator.
-This allows one to ``cd`` into any binary directory and type ``make`` to build
-just the targets in that directory.  These TriBITS-generated Ninja makefiles
-also support ``help`` and ``help-objects`` targets making it easy to build
-individual executables, libraries and object files in any binary subdirectory.
+In addition, the TriBITS build system will, by default, generate Makefiles in
+every binary directory where there is a CMakeLists.txt file in the source
+tree.  These Makefiles have targets scoped to that subdirectory that use
+``ninja`` to build targets in that subdirectory just like with the native
+CMake recursive ``-G "Unix Makefiles"`` generator.  This allows one to ``cd``
+into any binary directory and type ``make`` to build just the targets in that
+directory.  These TriBITS-generated Ninja makefiles also support ``help`` and
+``help-objects`` targets making it easy to build individual executables,
+libraries and object files in any binary subdirectory.
 
 **WARNING:** Using ``make -j<N>`` with these TriBITS-generated Ninja Makefiles
 will **not** result in using ``<N>`` processes to build in parallel and will
@@ -972,10 +972,7 @@ The generation of these Ninja makefiles can be disabled by setting::
   -D<Project>_WRITE_NINJA_MAKEFILES=OFF
 
 (But these Ninja Makefiles get created very quickly even for a very large
-CMake project so there is usually little reason to not generate them.)  Trying
-to set ``-D<Project>_WRITE_NINJA_MAKEFILES=ON`` for versions of CMake older
-than 3.7.0 will not work since features were added to CMake 3.7.0+ that allow
-for the generation of these makefiles.
+CMake project so there is usually little reason to not generate them.)
 
 
 Limiting parallel compile and link jobs for Ninja builds
@@ -2307,12 +2304,10 @@ NOTES:
   for the ``CTEST_RESOURCE_SPEC_FILE`` cache variable was not added until
   CMake 3.18.)
 
-* A patched version of CMake 3.17 can be used to get built-in CMake/CTest
-  support for the ``CTEST_RESOURCE_SPEC_FILE`` cache variable, as installed
-  using the TriBITS-provided ``install-cmake.py`` command (using option
-  ``--cmake-version=3.17``, see `Installing CMake from source [developers and
-  experienced users]`_).  This avoids needing to explicitly pass the ctest
-  resource file to ``ctest`` at runtime for CMake/CTest versions [3.16, 3.18).
+* CMake versions 3.18+ can be used to get built-in CMake/CTest support for the
+  ``CTEST_RESOURCE_SPEC_FILE`` cache variable.  This avoids needing to
+  explicitly pass the ctest resource file to ``ctest`` at runtime for
+  CMake/CTest versions 3.17.z.
 
 * **WARNING:** This currently only works for a single node, not multiple
   nodes.  (CTest needs to be extended to work correctly for multiple nodes
@@ -2491,10 +2486,6 @@ If one really wants a clean slate, then try::
   $ rm -rf `ls | grep -v do-configure`
   $ ./do-configure [options]
 
-WARNING: Later versions of CMake (2.8.10.2+) require that you remove the
-top-level ``CMakeFiles/`` directory whenever you remove the ``CMakeCache.txt``
-file.
-
 
 Viewing configure errors
 -------------------------
@@ -2566,7 +2557,7 @@ This will generate the file ``<Project>Config.cmake`` for the project and the
 files ``<Package>Config.cmake`` for each enabled package in the build tree.
 In addition, this will install versions of these files into the install tree.
 
-To confiugre Makefile export files, configure with::
+To configure Makefile export files, configure with::
 
   -D <Project>_ENABLE_EXPORT_MAKEFILES=ON
 
@@ -3843,13 +3834,12 @@ This can be set in the CMake cache when configuring the project using::
 
 or when running the ``dashboard`` target with::
 
-  $ env <Project>_CTEST_DO_ALL_AT_ONCE=TRUE make dashbaord.
+  $ env <Project>_CTEST_DO_ALL_AT_ONCE=TRUE make dashboard.
 
 Using the ``dashboard`` target, one can also run coverage and memory testing
 and submit to CDash as described below.  But to take full advantage of the
 all-at-once mode and to have results displayed on CDash broken down
-package-by-package, one must be using CMake/CTest 3.17 or newer and be
-submitting to a newer CDash version (from about mid 2018 and newer).
+package-by-package, one must be submitting to a newer CDash version 3.0+.
 
 For submitting line coverage results, once you configure with
 ``-D<Project>_ENABLE_COVERAGE_TESTING=ON``, the environment variable
