@@ -161,18 +161,15 @@ as shown above.
 Basic configuration
 -------------------
 
-A few different approaches for configuring are given below but likely the most
-recommended one for complex environments is to use ``*.cmake`` fragment files
-passed in through the `<Project>_CONFIGURE_OPTIONS_FILE`_ option.
+A few different approaches for configuring are given below.
 
 a) Create a 'do-configure' script such as [Recommended]::
 
-    EXTRA_ARGS=$@
-    
+    #!/bin/bash
     cmake \
       -D CMAKE_BUILD_TYPE=DEBUG \
       -D <Project>_ENABLE_TESTS=ON \
-      $EXTRA_ARGS \
+      "$@" \
       ${SOURCE_BASE}
 
   and then run it with::
@@ -194,16 +191,15 @@ a) Create a 'do-configure' script such as [Recommended]::
 
 .. _<Project>_CONFIGURE_OPTIONS_FILE:
 
-b) Create a CMake file fragment and point to it [Recommended].
+b) Create a ``*.cmake`` file and point to it [Most Recommended].
 
   Create a do-configure script like::
 
-    EXTRA_ARGS=$@
-    
+    #!/bin/bash
     cmake \
       -D <Project>_CONFIGURE_OPTIONS_FILE=MyConfigureOptions.cmake \
       -D <Project>_ENABLE_TESTS=ON \
-      $EXTRA_ARGS \
+      "$@" \
       ${SOURCE_BASE}
      
   where MyConfigureOptions.cmake (in the current working directory) might look
@@ -286,10 +282,14 @@ b) Create a CMake file fragment and point to it [Recommended].
   and instead would have to the full variables names specific for a given
   project.
 
-  4) However, the ``*.cmake`` files specified by
+  4) Non-cache project-level varaibles can be set in a ``*.cmake`` file that
+  will impact the configuration.  When using the ``-C`` option, only varaibles
+  set with ``set(<varName> CACHE <TYPE> ...)`` will impact the configuration.
+
+  5) However, the ``*.cmake`` files specified by
   ``<Project>_CONFIGURE_OPTIONS_FILE`` will only get read in **after** the
   project's ``ProjectName.cmake`` and other ``SET()`` statements are called at
-  the top of the project's top-level ``CMakeLists.txt.` file.  So any CMake
+  the top of the project's top-level ``CMakeLists.txt`` file.  So any CMake
   cache variables that are set in this early CMake code will override cache
   defaults set in the included ``*.cmake`` file.  (This is why TriBITS
   projects must be careful **not** to set default values for cache variables
@@ -301,13 +301,23 @@ b) Create a CMake file fragment and point to it [Recommended].
   and carefully watch cache variable values actually set in the generated
   ``CMakeCache.txt`` file.
 
+  In other words, the context and impact of what get be set from a ``*.cmake``
+  file read in through the ``-C`` argument is more limited while the code
+  listed in the ``*.cmake`` file behaves just like regular CMake statements
+  executed in the project's top-level ``CMakeLists.txt`` file.
+
 c) Using the QT CMake configuration GUI:
 
   On systems where the QT CMake GUI is installed (e.g. Windows) the CMake GUI
   can be a nice way to configure <Project> (or just explore options) if you
   are a user.  To make your configuration easily repeatable, you might want to
   create a fragment file and just load it by setting
-  `<Project>_CONFIGURE_OPTIONS_FILE`_ (see above) in the GUI.
+  `<Project>_CONFIGURE_OPTIONS_FILE`_ in the GUI.
+
+Likely the most recommended approach to manage complex configurations is to
+use ``*.cmake`` fragment files passed in through the
+`<Project>_CONFIGURE_OPTIONS_FILE`_ option.  This offers the greatest
+flexibility and the ability to version-control the configuration settings.
 
 
 Selecting the list of packages to enable
