@@ -3779,13 +3779,14 @@ test and submit with::
 
   $ make dashboard
 
-This invokes the `TRIBITS_CTEST_DRIVER()`_ function to do an experimental
-build for all of the packages that you have enabled tests.  (The packages that
-are implicitly enabled due to package dependencies are not directly processed
-and no rows on CDash will be show up for those packages.)
+This invokes a ``ctest -S`` script that calls the `TRIBITS_CTEST_DRIVER()`_
+function to do an experimental build for all of the enabled packages for which
+you have enabled tests.  (The packages that are implicitly enabled due to
+package dependencies are not directly processed and no rows on CDash will be
+show up for those packages.)
 
-NOTE: This generates a lot of output, so it is typically better to pipe this
-to a file with::
+**NOTE:** This target generates a lot of output, so it is typically better to
+pipe this to a file with::
 
   $ make dashboard &> make.dashboard.out
 
@@ -3793,63 +3794,113 @@ and then watch that file in another terminal with::
 
   $ tail -f make.dashboard.out
 
-There are a number of options that you can set in the cache and/or in the
-environment to control what this script does.  For the full set of options,
-see `TRIBITS_CTEST_DRIVER()`_.  To see the full list of options, and their
-default values, one can run with::
 
-  $ env CTEST_DO_SUBMIT=FALSE CTEST_DEPENDENCY_HANDLING_UNIT_TESTING=TRUE \
+Setting options to change behavior of 'dashboard' target
+--------------------------------------------------------
+
+There are a number of options that you can set in the cache and/or in the
+environment to control what this script does.  Several options must be set in
+the cache in the CMake configure of the project such as the CDash sites where
+results are submitted to with the vars ``CTEST_DROP_METHOD``,
+``CTEST_DROP_SITE``, ``CTEST_DROP_LOCATION``,
+``TRIBITS_2ND_CTEST_DROP_LOCATION``, and ``TRIBITS_2ND_CTEST_DROP_SITE``.
+Other options that control the behavior of the ``dashboard`` target must be
+set in the env when calling ``make dashboard``.  For the full set of options
+that control the ``dashboard`` target, see `TRIBITS_CTEST_DRIVER()`_.  To see
+the full list of options, and their default values, one can run with::
+
+  $ env CTEST_DEPENDENCY_HANDLING_UNIT_TESTING=TRUE \
     make dashboard
 
 This will print the options with their default values and then do a sort of
 mock running of the CTest driver script and point out what it will do with the
 given setup.
 
-One option one might what to set is the build name with::
+Any of the vars that are forwarded to the ``ctest -S`` invocation will be
+shown in the STDOUT of the ``make dashboard`` invocation on the line::
 
-  $ env CTEST_BUILD_NAME=MyBuild make dashboard
+  Running: env [vars passed through env] <path>/ctest ... -S ...
 
-After this finishes running, look for the build 'MyBuild' (or whatever build
-name you used above) in the <Project> CDash dashboard (the CDash URL is
-printed at the end of STDOUT).  It is useful to set ``CTEST_BUILD_NAME`` to
-some unique name to make it easier to find your results in the CDash
-dashboard.  If one does not set ``CTEST_BUILD_NAME``, the name of the binary
-directory is used instead by default (which may not be very descriptive if it
-called ``BUILD`` or something like that).
+Any variables passed through the ``env`` command listed there in ``[vars
+passed through env ]`` can only be changed by setting cache variables in the
+CMake project and can't be overridden in the env when invoking the
+``dashboard`` target.  For example, the variable ``CTEST_DO_SUBMIT`` is
+forwarded to the ``ctest -S`` invocation and can't be overridden with::
+
+  $ env CTEST_DO_SUBMIT=OFF make dashboard
+
+Instead, to change this value, one must reconfigure and then run as::
+
+  $ cmake CTEST_DO_SUBMIT=OFF .
+  $ make dashboard
+
+But any variable that is not listed in ``[vars passed through env ]`` in the
+printed out ``ctest -S`` command that are read in by `TRIBITS_CTEST_DRIVER()`_
+can be set in the env by calling::
+
+  $ env [other vars read by tribits_ctest_driver()] make dashboard
+
+To know that these vars are picked up, grep the STDOUT from ``make dashboard``
+for lines containing::
+
+  -- ENV_<var_name>=
+
+That way, you will know the var was pick up and read correctly.
+
+
+Common options and use cases for the 'dashboard' target
+-------------------------------------------------------
+
+What follows are suggestions on how to use the ``dashboard`` target for
+different use cases.
+
+One option that is useful to set is the build name on CDash at configure time
+with::
+
+  -DCTEST_BUILD_NAME=MyBuild
+
+After ``make dashboard`` finishes running, look for the build 'MyBuild' (or
+whatever build name you used above) in the <Project> CDash dashboard (the
+CDash URL is printed at the end of STDOUT).  It is useful to set
+``CTEST_BUILD_NAME`` to some unique name to make it easier to find your
+results on the CDash dashboard.  If one does not set ``CTEST_BUILD_NAME``,
+then the name of the binary directory is used instead by default (which may
+not be very descriptive if it called something like ``BUILD``).
 
 If there is already a valid configure and build and one does not want to
-submit configure and build results to CDash, then one can run with::
+reconfigure and rebuild or submit configure and build results then one can run
+with::
 
-  $ env CTEST_BUILD_NAME=<build-name> CTEST_DO_CONFIGURE=OFF CTEST_DO_BUILD=OFF \
+  $ env CTEST_DO_CONFIGURE=OFF CTEST_DO_BUILD=OFF \
     make dashboard
 
-which will only run the enabled tests and submit results to the CDash build
-``<build-name>``.
+This will only run the enabled pre-built tests and submit test results to
+CDash.  (But is usually good to reconfigure and rebuild and submit those
+results to CDash as well in order to define more context for the test
+results.)
 
 The configure, builds, and submits are either done package-by-package or
-all-at-once as controlled by the varaible ``<Project>_CTEST_DO_ALL_AT_ONCE``.
+all-at-once as controlled by the variable ``<Project>_CTEST_DO_ALL_AT_ONCE``.
 This can be set in the CMake cache when configuring the project using::
 
   -D<Project>_CTEST_DO_ALL_AT_ONCE=TRUE
-
-or when running the ``dashboard`` target with::
-
-  $ env <Project>_CTEST_DO_ALL_AT_ONCE=TRUE make dashboard.
 
 Using the ``dashboard`` target, one can also run coverage and memory testing
 and submit to CDash as described below.  But to take full advantage of the
 all-at-once mode and to have results displayed on CDash broken down
 package-by-package, one must be submitting to a newer CDash version 3.0+.
 
-For submitting line coverage results, once you configure with
-``-D<Project>_ENABLE_COVERAGE_TESTING=ON``, the environment variable
-``CTEST_DO_COVERAGE_TESTING=TRUE`` is automatically set by the target
-``dashboard`` so you don't have to set this yourself.  Then when you run the
-``dashboard`` target, it will automatically submit coverage results to CDash
-as well.
+For submitting line coverage results, configure with::
+
+  -D<Project>_ENABLE_COVERAGE_TESTING=ON
+
+and the environment variable ``CTEST_DO_COVERAGE_TESTING=TRUE`` is
+automatically set by the target ``dashboard`` so you don't have to set this
+yourself.  Then, when you run the ``dashboard`` target, it will automatically
+submit coverage results to CDash as well.
 
 Doing memory checking running the enabled tests with Valgrind requires that
-you set ``CTEST_DO_MEMORY_TESTING=TRUE`` with the 'env' command when running
+you set ``CTEST_DO_MEMORY_TESTING=TRUE`` with the ``env`` command when running
 the ``dashboard`` target as::
 
   $ env CTEST_DO_MEMORY_TESTING=TRUE make dashboard
@@ -3869,38 +3920,60 @@ The CMake cache variable ``<Project>_DASHBOARD_CTEST_ARGS`` can be set on the
 cmake configure line in order to pass additional arguments to ``ctest -S``
 when invoking the package-by-package CTest driver.  For example::
 
-  -D<Project>_DASHBOARD_CTEST_ARGS="-VV"
+  -D<Project>_DASHBOARD_CTEST_ARGS="-VV" \
 
-will set verbose output with CTest.
+will set very verbose output with CTest that includes the STDOUT for every
+test run.  (The default args are ``-V`` which shows which tests are run but
+not the test STDOUT.)
+
+
+Changing the CDash sites for the 'dashboard' target
+---------------------------------------------------
+
+As described above in `Setting options to change behavior of 'dashboard'
+target`_, one can change the location where configure, build, and test results
+are submitted to one more two CDash sites.  For well-structured TriBITS CMake
+projects defining a flexible ``CTestConfig.cmake`` file, the location of the
+main CDash site can be changed by configuring with::
+
+  -DCTEST_DROP_SITE="some-site.com" \
+  -DCTEST_DROP_LOCATION="/cdash/submit.php?project=<Project>" \
 
 .. _TRIBITS_2ND_CTEST_DROP_SITE:
 .. _TRIBITS_2ND_CTEST_DROP_LOCATION:
 
-Also note that one can submit results to a second CDash site as well by
-setting::
+Also note that one can submit results to a second CDash site by configuring
+with::
 
-  $ env \
-    TRIBITS_2ND_CTEST_DROP_SITE=<second-site> \
-    TRIBITS_2ND_CTEST_DROP_LOCATION=<second-location> \
-    ... \
-    make dashboard
+  -DTRIBITS_2ND_CTEST_DROP_SITE="<second-site>" \
+  -DTRIBITS_2ND_CTEST_DROP_LOCATION="<second-location>" \
 
 If left the same as ``CTEST_DROP_SITE`` or ``CTEST_DROP_LOCATION``, then
-``TRIBITS_2ND_CTEST_DROP_SITE`` and ``TRIBITS_2ND_CTEST_DROP_LOCATION`` can be
-left empty "" and the defaults will be used.  However, the user must set at
+``TRIBITS_2ND_CTEST_DROP_SITE`` and ``TRIBITS_2ND_CTEST_DROP_LOCATION``,
+respectively, can be left empty "" and the defaults will be used.  For
+example, to submit to an experimental CDash site on the same machine, one
+would configure with::
+
+  -DTRIBITS_2ND_CTEST_DROP_LOCATION="/testing/cdash/submit.php?project=<Project>"
+
+and ``CTEST_DROP_SITE`` would be used for ``TRIBITS_2ND_CTEST_DROP_SITE``
+since ``TRIBITS_2ND_CTEST_DROP_SITE`` is empty.  This is a common use case
+when upgrading to a new CDash installation or testing new features for CDash
+before impacting the existing CDash site.  (However, the user must set at
 least one of these variables to non-empty in order to trigger the second
-submit.  For example, to submit to an experimental CDash site on the same
-machine, one would run::
+submit.)
 
-  $ env TRIBITS_2ND_CTEST_DROP_LOCATION="/testing/cdash/submit.php?project=<Project>" \
-    ... \
-    make dashboard
+**NOTE:** If the project is already set up to submit to a second CDash site
+and one wants to turn that off, one can configure with::
 
-and ``TRIBITS_2ND_CTEST_DROP_SITE`` would be used for ``CTEST_DROP_SITE``.
-This is a common use case when upgrading to a new CDash installation or
-testing new features for CDash before impacting the existing CDash site.
+  -DTRIBITS_2ND_CTEST_DROP_SITE=OFF \
+  -DTRIBITS_2ND_CTEST_DROP_LOCATION=OFF \
 
-Finally, note in package-by-package mode
+
+Configuring from scratch needed if 'dashboard' target aborts early
+------------------------------------------------------------------
+
+Finally, note that in package-by-package mode
 (i.e. ``<Project>_CTEST_DO_ALL_AT_ONCE=FALSE``) that if one kills the ``make
 dashboard`` target before it completes, then one must reconfigure from scratch
 in order to get the build directory back into the same state before the
