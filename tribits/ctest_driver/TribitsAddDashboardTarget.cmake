@@ -213,7 +213,9 @@ MACRO(TRIBITS_ADD_DASHBOARD_TARGET)
 
     ADD_CUSTOM_TARGET( dashboard
 
-      VERBATIM
+      USES_TERMINAL  # Allow real-time STDOUT with ninja target
+
+      VERBATIM  # Recommended
 
       # WARNING: The echoed command and the actual commands are duplicated!  You have to reproduce them!
 
