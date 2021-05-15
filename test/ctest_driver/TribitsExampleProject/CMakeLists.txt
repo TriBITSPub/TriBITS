@@ -740,6 +740,54 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO_Dashboard_ForwardArgs
   # TRIBITS_2ND_CTEST_DROP_LOCATION vars (see #370).
 
 
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO_Dashboard_Then_NoConfigDashboard
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the initial configure"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCTEST_BUILD_NAME=${PROJECT_NAME}_CTestDriver_AAO_Dashboard_Then_NoConfigDashboard
+      -DTribitsExProj_CTEST_DO_ALL_AT_ONCE=TRUE
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Finished configuring TribitsExProj"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_1
+    MESSAGE "Run the dashboard target with configure"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=
+      make dashboard
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target dashboard"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_2
+    MESSAGE "Run the dashboard target again without a configure"
+    CMND env
+    ARGS
+      CTEST_DO_CONFIGURE=OFF
+      CTEST_DASHBOARD_ROOT=
+      make dashboard
+    PASS_REGULAR_EXPRESSION_ALL
+      "ENV_CTEST_DO_CONFIGURE='OFF'"
+      "Skipping configure due to CTEST_DO_CONFIGURE='OFF'"
+      "Build PASSED"
+      "File '' does NOT exist so all tests passed"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  )
+  # The above test ensures that you can do a configure, run the dashbaord
+  # target, then run 'env CTEST_DO_CONFIGURE=OFF make dashboard' again and
+  # have it work correctly.  This was a use case that was broken when I tried
+  # it with Trilinos.
+
+
 TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
