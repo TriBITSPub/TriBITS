@@ -903,7 +903,7 @@ IF (PYTHON_EXECUTABLE)
       "Skipping actual ctest_configure.. because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
       "Skipping build because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
       "Skipping testing because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
-      "Done with the all-at-once configure, build, test, ans submit of Trilinos packages"
+      "Done with the all-at-once configure, build, test, and submit of Trilinos packages"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     )
   # NOTE: The above test is for the all-at-once appraoch that checks for the
@@ -933,7 +933,7 @@ IF (PYTHON_EXECUTABLE)
       "Skipping actual ctest_configure.. because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
       "Skipping build because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
       "Skipping testing because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
-      "Done with the all-at-once configure, build, test, ans submit of Trilinos packages"
+      "Done with the all-at-once configure, build, test, and submit of Trilinos packages"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     )
   # NOTE: The above test is for the all-at-once appraoch where

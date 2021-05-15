@@ -1280,7 +1280,7 @@ FUNCTION(GENERATE_AAO_TESTS)
         "Configure FAILED"
 	"Skipping build because configure failed"
 	"Skipping tests because configure failed"
-	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
+	"Done with the all-at-once configure, build, test, and submit of TribitsExProj packages"
 	"Final set of packages that had any failures: 'ALL_PACKAGES'"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
       ALWAYS_FAIL_ON_ZERO_RETURN
@@ -1324,7 +1324,7 @@ FUNCTION(GENERATE_AAO_TESTS)
         "Configure FAILED"
 	"Skipping build because configure failed"
 	"Skipping tests because configure failed"
-	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
+	"Done with the all-at-once configure, build, test, and submit of TribitsExProj packages"
 	"Final set of packages that had any failures: 'SimpleCxx[;]WrapExternal'"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
       ALWAYS_FAIL_ON_ZERO_RETURN
@@ -1550,7 +1550,7 @@ FUNCTION(GENERATE_AAO_TESTS)
 	"Gathering coverage results [.][.][.]"
 	"Performing coverage"   # printed by ctest_coverage()
 	"Percentage Coverage:"  # printed by ctest_coverage()
-	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
+	"Done with the all-at-once configure, build, test, and submit of TribitsExProj packages"
 	"TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1587,7 +1587,7 @@ FUNCTION(GENERATE_AAO_TESTS)
         "MemCheck .+: MixedLang_RayTracerTests [.]+ +Passed"
         "MemCheck .+: WithSubpackagesA_test_of_a [.]+ +Passed"
         "MemCheck .+: WrapExternal_run_external_func [.]+ +Passed"
-	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
+	"Done with the all-at-once configure, build, test, and submit of TribitsExProj packages"
 	"TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
