@@ -73,7 +73,7 @@ MESSAGE("The inner tets project: ${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}
 
 # Includes
 
-INCLUDE(TribitsReadPackageProcessDepenenciesWriteXml)
+INCLUDE(TribitsReadPackagesProcessDepenenciesWriteXml)
 INCLUDE(TribitsAdjustPackageEnables)
 INCLUDE(TribitsProcessTplsLists)
 INCLUDE(UnitTestHelpers)

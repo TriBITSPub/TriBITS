@@ -48,7 +48,7 @@ INCLUDE(TribitsProcessEnabledTpl)
 INCLUDE(TribitsInstallHeaders)
 INCLUDE(TribitsGetVersionDate)
 INCLUDE(TribitsReportInvalidTribitsUsage)
-INCLUDE(TribitsReadPackageProcessDepenenciesWriteXml)
+INCLUDE(TribitsReadPackagesProcessDepenenciesWriteXml)
 
 # Standard TriBITS utilities includes
 INCLUDE(TribitsAddOptionAndDefine)
