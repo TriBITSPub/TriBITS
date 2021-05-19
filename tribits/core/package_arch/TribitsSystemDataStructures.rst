@@ -35,7 +35,7 @@ The sizes of these arrays is given by the variables::
   ${PACKAGE_NAME}_NUM_DEFINED_INTERNAL_PACKAGES
 
 The full list of defined external packages (TPLs) and top-level internal
-packages (TriBITS packages) is storied in the project-level non-cache list
+packages (TriBITS packages) is stored in the project-level non-cache list
 variable::
 
   ${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
