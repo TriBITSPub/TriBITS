@@ -2,7 +2,7 @@
 TriBITS Developers Guide and Reference
 =======================================
 
-:Author: Roscoe A. Bartlett (bartlettra@ornl.gov)
+:Author: Roscoe A. Bartlett (rabartl@sandia.gov)
 :Date: |date|
 :Version: .. include:: TribitsGitVersion.txt
 
