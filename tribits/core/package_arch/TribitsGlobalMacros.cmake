@@ -1102,8 +1102,7 @@ MACRO(TRIBITS_PROJECT_DEFINE_PACKAGING_RUNNER)
 ENDMACRO()
 
 
-#
-# Read in the Project's native repositories.,
+# Read in the Project's native repositories.
 #
 # On output, the variable ${PRJOECT_NAME}_NATIVE_REPOSITORIES is set.
 #
@@ -1127,7 +1126,6 @@ MACRO(TRIBITS_READ_IN_NATIVE_REPOSITORIES)
 ENDMACRO()
 
 
-#
 # Combine native and extra repos lists into a single list.
 #
 # Combines ${PROJECT_NAME}_PRE_REPOSITORIES
@@ -1146,7 +1144,6 @@ MACRO(TRIBITS_COMBINE_NATIVE_AND_EXTRA_REPOS)
 ENDMACRO()
 
 
-#
 # Process extra repo extra options files
 #
 MACRO(TRIBITS_PROCESS_EXTRA_REPOS_OPTIONS_FILES)
@@ -1166,10 +1163,8 @@ MACRO(TRIBITS_PROCESS_EXTRA_REPOS_OPTIONS_FILES)
 ENDMACRO()
 
 
-#
 # Copy an simple text file to the binary dir to be included in the tarball
 #
-
 MACRO(TRIBITS_COPY_INSTALLER_RESOURCE _varname _source _destination)
   SET("${_varname}" "${_destination}")
   IF (EXISTS "${_destination}")
@@ -1181,10 +1176,8 @@ MACRO(TRIBITS_COPY_INSTALLER_RESOURCE _varname _source _destination)
     COPYONLY)
 ENDMACRO()
 
-#
 # Run the git log command to get the verison info for a git rep
 #
-
 FUNCTION(TRIBITS_GENERATE_SINGLE_REPO_VERSION_STRING  GIT_REPO_DIR
    SINGLE_REPO_VERSION_STRING_OUT
   )

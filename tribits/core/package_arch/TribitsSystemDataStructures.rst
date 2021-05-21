@@ -52,12 +52,7 @@ internal packages (TriBITS packages) that are defined in the
 `<repoDir>/PackagesList.cmake`_ files from each processed TriBITS repository,
 read in order.  This list does **not** include any subpackages.
 
-After the function ???`TRIBITS_ADJUST_PACKAGE_ENABLES()`_??? is run the
-following list variable is created::
-
-  ${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
-
-However, some of the packages listed in
+Note that some of the packages listed in
 `${PACKAGE_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES`_ may actually be treated
 as external packages and not build from source code and instead will be found
 out on the system and pre-built packages using
@@ -66,19 +61,22 @@ treated as an internal or external package is determined by the variable::
 
   ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
 
-which gets set by a set of different criteria.  For example, a package that
-has a non-empty variable ``${PACKAGE_NAME}_SOURCE_DIR != ""`` can in fact have
-``${PACKAGE_NAME}_PACKAGE_STATUS=EXTERNAL`` in various use cases.  (One
-example is if the user configured with ``TPL_ENABLE_<Package>=ON`` telling the
-TriBITS project to not build the package ``<Package>`` from source but instead
-to look for a pre-installed version of the package already out on the system.
-Another example is configuring with ``<Package>_ROOT=<path>`` which means the
-same thing as ``TPL_ENABLE_<Package>=ON`` but also provides the location of
-the ``<Package>Config.cmake`` file found by ``find_package(<Package>)``.)
+which gets set by a set of different criteria as described in section
+`Determining if a package is internal or external`_.  This determines what
+pre-built/pre-installed packages must be found out on the system if enabled
+and what internal packages need to be built if enabled.
 
-Once all of this logic has been applied, the final list of enabled external
-packages, internal packages, and all enabled package are given in the list
-variables::
+The set of external packages, internal top-level packages, and internal
+sub-packages are just called the list of "Packages".  When the term "Packages"
+is used with an adjective, it is usually meant in this more general context.
+
+ToDo: Describe the data-structures of all "Packages" which includes
+subpackages as well and the lists of enabled packages.
+
+A set of enable/disable logic is applied in the macro
+`TRIBITS_ADJUST_PACKAGE_ENABLES()`_.  Once all of this logic has been applied,
+the final list of enabled external packages, internal packages, and all
+enabled packages are given in the list variables::
 
   ${PROJECT_NAME}_ALL_ENABLED_EXTERNAL_PACKAGES
   ${PROJECT_NAME}_ALL_ENABLED_INTERNAL_PACKAGES
@@ -95,29 +93,16 @@ where::
 Note that the list ``${PROJECT_NAME}_ALL_ENABLED_EXTERNAL_PACKAGES`` can
 include both regular TPLs which have ``${PACKAGE_NAME}_FINDMOD != ""`` and
 also packages that could be built as internal packages which have
-``${PACKAGE_NAME}_SOURCE_DIR != ""``.  How such non-TPL external packages are
-determined and found is the subject of section ???.
+``${PACKAGE_NAME}_SOURCE_DIR != ""``.  Again, how such non-TPL external
+packages are determined and found is the subject of section `Determining if a
+package is internal or external`_.
 
-When sorting lists of enabled packages, one only needs to considered enabled
-packages, and therefore only the list ``${PROJECT_NAME}_ALL_ENABLED_PACKAGES``
-needs to be considered in those cases.
-
-The set of external packages (TPLs), internal top-level packages, and internal
-sub-packages are just called the list of "Packages".  When the term "Packages"
-is used with an adjective, it is usually meant in this more general context.
-
-ToDo: Describe the data-structures of all "Packages" which includes
-subpackages as well and the lists of enabled packages.
-
-
-
+When sorting lists of packages, one only needs to consider enabled packages,
+and therefore only the list ``${PROJECT_NAME}_ALL_ENABLED_PACKAGES`` needs to
+be considered in those cases.
 
 
 -----------------------------------------------------------------------------------
-
-
-
-
 
 
 ToDo: Deal with old data-structures below after the refactoring for #63 is
@@ -186,13 +171,6 @@ more details.
 
 
 -----------------------------------------------------------------------------------
-
-
-
-
-
-
-
 
 
 
@@ -312,6 +290,7 @@ in ``FindTPL<ExternalPackage>Dependencies.cmake`` files and
 ``<ExternalPackage>_LIB_REQUIRED_DEP_PACKAGES_OVERRIDE`` and
 ``<ExternalPackage>_LIB_OPTIONAL_DEP_PACKAGES_OVERRIDE`` variables that can be
 overridden in the cache.
+
 
 
 List variables defining include directories and libraries
@@ -434,8 +413,24 @@ this functionality in the directory::
   tribits/package_arch/UntiTests/
 
 
+Function call tree for constructing package dependency graph
+------------------------------------------------------------
+
+Below is the CMake macro and function call graph for constructing the packages
+lists and dependency data-structures described above.
+
+| `TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()`_
+|   `TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS()`_
+|     For each ``<repoDir>`` in all defined TriBITS repositories:
+|       ``INCLUDE(`` `<repoDir>/TPLsList.cmake`_ ``)``
+|       `TRIBITS_PROCESS_TPLS_LISTS()`_
+|       ``INCLUDE(`` `<repoDir>/PackagesList.cmake`_ ``)``
+|       `TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS()`_
+|   `TRIBITS_READ_PROJECT_AND_PACKAGE_DEPENDENCIES_CREATE_GRAPH_PRINT_DEPS()`_
+
+
 Notes on dependency logic
-+++++++++++++++++++++++++
+-------------------------
 
 The logic used to define the intra-package linkage variables is complex due to
 a number of factors:

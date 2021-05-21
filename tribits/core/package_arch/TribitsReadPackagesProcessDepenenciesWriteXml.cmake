@@ -49,7 +49,6 @@ INCLUDE(TribitsAdjustPackageEnables)
 INCLUDE(TimingUtils)
 
 
-#
 # @MACRO: TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()
 #
 # Usage::
@@ -59,7 +58,10 @@ INCLUDE(TimingUtils)
 # Macro run at the top project-level scope that reads in packages and TPLs,
 # process dependencies, and (optimally) writes XML files of dependency
 # information.
-# 
+#
+# On output, this creates all of the package lists and dependency
+# data-structures described in `TriBITS System Data Structures and
+# Functions`_.
 #
 MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
 
@@ -91,27 +93,44 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
 ENDMACRO()
 
 
-#
 # @MACRO: TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS()
 #
 # Usage::
 #
 #   TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS()
 #
-# Macro run at the top project-level cope that reads in the contents of all of
-# the `<repoDir>/TPLsList.cmake`_ and `<repoDir>/PackagesList.cmake`_ files to
-# get the list of defined external packages (TPLs) and internal top-level
-# packages.
+# Macro run at the top project-level scope that reads in the contents of all
+# of the `<repoDir>/TPLsList.cmake`_ and `<repoDir>/PackagesList.cmake`_ files
+# to get the list of defined external packages (TPLs) and internal top-level
+# (TriBITS) packages.
 #
-# On output, this produces::
+# On output, this produces the list varaibles::
 #
-#   ${PROJECT_NAME}_PACKAGES
-#   ${PROJECT_NAME}_TPLS
+#   ${PROJECT_NAME}_DEFINED_TPLS
+#   ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
+#   ${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
+#   ${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES
 #
-# and related varaibles.  Calls and sets variables from:
+#   ${PROJECT_NAME}_NUM_DEFINED_TPLS
+#   ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES
+#   ${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES
+#
+#   ${PROJECT_NAME}_PACKAGES (old)
+#   ${PROJECT_NAME}_TPLS (old)
+#
+# and related varaibles.
+#
+# This includes the files:
+#
+#  * `<repoDir>/TPLsList.cmake`_ 
+#  * `<repoDir>/PackagesList.cmake`_
+#
+# and calls the macros:
 #
 #  * `TRIBITS_PROCESS_TPLS_LISTS()`_
 #  * `TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS()`_
+#
+# which set their varaibles.
 #
 MACRO(TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS)
 
@@ -228,9 +247,8 @@ MACRO(TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS)
 ENDMACRO()
 
 
-#
-# Function that will write XML dependnecy files if support for that exists in
-# this installation of TriBITS.
+# Function that writes XML dependnecy files if support for that exists in this
+# installation of TriBITS.
 #
 FUNCTION(TRIBITS_WRITE_XML_DEPENDENCY_FILES_IF_SUPPORTED)
   SET(TRIBITS_PROJECT_CI_SUPPORT_DIR
@@ -244,7 +262,6 @@ FUNCTION(TRIBITS_WRITE_XML_DEPENDENCY_FILES_IF_SUPPORTED)
 ENDFUNCTION()
 
 
-#
 # Macro that sets ${PROJECT_NAME}_ALL_REPOSITORIES from
 # ${PROJECT_NAME}_PRE_REPOSITORIES and ${PROJECT_NAME}_EXTRA_REPOSITORIES if
 # it is not alrady set.  Also, it replaces ',' with ';' in the latter.
@@ -267,7 +284,6 @@ MACRO(TRIBITS_SET_ALL_EXTRA_REPOSITORIES)
 ENDMACRO()
 
 
-#
 # Macro that processes the list of package and TPLs for the set of 'PRE' or
 # 'POST' extra repos.
 #

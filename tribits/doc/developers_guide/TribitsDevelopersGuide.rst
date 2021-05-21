@@ -2377,8 +2377,8 @@ proceeds through the call to `TRIBITS_PROJECT()`_.
 |       * Call macro ``TRIBITS_REPOSITORY_SETUP_EXTRA_OPTIONS()``
 |   9)  Call `TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()`_:
 |     a)  For each ``<repoDir>`` in all defined TriBITS repositories:
-|         * ``INCLUDE(`` `<repoDir>/PackagesList.cmake`_ ``)`` and process list
 |         * ``INCLUDE(`` `<repoDir>/TPLsList.cmake`_ ``)`` and process list
+|         * ``INCLUDE(`` `<repoDir>/PackagesList.cmake`_ ``)`` and process list
 |     b)  For each ``<repoDir>`` in all defined TriBITS repositories:
 |         * ``INCLUDE(`` `<repoDir>/cmake/RepositoryDependenciesSetup.cmake`_ ``)``
 |     c)  ``INCLUDE(`` `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_ ``)``
@@ -2439,8 +2439,8 @@ is described below.
 | 2. ``INCLUDE(`` `<projectDir>/cmake/ExtraRepositoriesList.cmake`_ ``)``
 | 3.  Call ``TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()``:
 |   a)  For each ``<repoDir>`` in all defined TriBITS repositories:
-|       * ``INCLUDE(`` `<repoDir>/PackagesList.cmake`_ ``)``
 |       * ``INCLUDE(`` `<repoDir>/TPLsList.cmake`_ ``)``
+|       * ``INCLUDE(`` `<repoDir>/PackagesList.cmake`_ ``)``
 |   b)  For each ``<repoDir>`` in all defined TriBITS repositories:
 |       * ``INCLUDE(`` `<repoDir>/cmake/RepositoryDependenciesSetup.cmake`_ ``)``
 |   c)  ``INCLUDE(`` `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_ ``)``
