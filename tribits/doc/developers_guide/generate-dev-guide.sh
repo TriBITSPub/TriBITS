@@ -71,6 +71,8 @@ if [ "$TRIBITS_DEV_GUIDE_SKIP_DOCUMENTATION_EXTRACTION" == "" ] ; then
   ../../python_utils/extract_rst_cmake_doc.py \
     --extract-from=../../core/package_arch/,../../core/utils/,../../ctest_driver/ \
     --rst-file-pairs=TribitsMacroFunctionDocTemplate.rst:TribitsMacroFunctionDoc.rst.tmp,UtilsMacroFunctionDocTemplate.rst:UtilsMacroFunctionDoc.rst.tmp,TribitsSystemMacroFunctionDocTemplate.rst:TribitsSystemMacroFunctionDoc.rst.tmp \
+    --show-file-name-line-num \
+    --file-name-path-base-dir=../.. \
     $TRIBITS_DEV_GUIDE_EXTRACT_RST_CMAKE_DOC_EXTRA_ARGS
 
   update_if_different  TribitsMacroFunctionDoc.rst  tmp
