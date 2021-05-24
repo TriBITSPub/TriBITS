@@ -46,6 +46,8 @@ import pprint
 
 from FindCISupportDir import *
 from CDashQueryAnalyzeReport import *
+from CDashQueryAnalyzeReportUnitTestHelpers import *
+from Python2and3 import u, stru
 
 g_testBaseDir = getScriptBaseDir()
 
@@ -594,7 +596,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     try:
       listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1'])
       threwException = False
-    except Exception, errMsg:
+    except Exception as errMsg:
       self.assertEqual( str(errMsg),
         "Error, for CSV file '"+csvFileName+"' the column header 'wrong col'"+\
         " is not in the set of required column headers '['col_0', 'col_1']'"+\
@@ -615,7 +617,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
       listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
         ['col_0', 'col_1', 'col_2', 'col_3'])
       threwException = False
-    except Exception, errMsg:
+    except Exception as errMsg:
       self.assertEqual( str(errMsg),
         "Error, for CSV file '"+csvFileName+"' the required header"+\
         " 'col_3' is missing from the set of included column headers"+\
@@ -657,7 +659,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     try:
       listOfDicts = readCsvFileIntoListOfDicts(csvFileName)
       threwException = False
-    except Exception, errMsg:
+    except Exception as errMsg:
       self.assertEqual( str(errMsg),
         "Error, for CSV file '"+csvFileName+"' the data row 1"+\
         " ['val_10', 'val_11', 'val_12', 'extra'] has 4 entries"+\
@@ -683,7 +685,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     try:
       listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0'])
       threwException = False
-    except Exception, errMsg:
+    except Exception as errMsg:
       self.assertEqual( str(errMsg),
         "Error, CSV file '"+csvFileName+"' is empty which is not allowed!" )
     if not threwException:
@@ -738,22 +740,22 @@ class test_writeCsvFileStructureToStr(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.getExpectedBuildsListfromCsvFile()
+# Test CDashQueryAnalyzeReport.getExpectedBuildsListOfDictsfromCsvFile()
 #
 #############################################################################
 
-class test_getExpectedBuildsListfromCsvFile(unittest.TestCase):
+class test_getExpectedBuildsListOfDictsfromCsvFile(unittest.TestCase):
 
-  def test_getExpectedBuildsListfromCsvFile(self):
+  def test_getExpectedBuildsListOfDictsfromCsvFile(self):
     expectedBuildsCsvFileStr=\
         "group, site, buildname\n"+\
         "group1, site1, buildname1\n"+\
         "group1, site1, buildname2\n"+\
         "group2, site2, buildname2\n\n\n\n"
-    csvFileName = "test_getExpectedBuildsListfromCsvFile.csv"
+    csvFileName = "test_getExpectedBuildsListOfDictsfromCsvFile.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(expectedBuildsCsvFileStr)
-    expectedBuildsList = getExpectedBuildsListfromCsvFile(csvFileName)
+    expectedBuildsList = getExpectedBuildsListOfDictsfromCsvFile(csvFileName)
     expectedBuildsList_expected = \
       [
         { 'group' : 'group1', 'site' : 'site1', 'buildname' : 'buildname1' },
@@ -767,7 +769,7 @@ class test_getExpectedBuildsListfromCsvFile(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.writeTestsLODToCsvFileStructure()
+# Test CDashQueryAnalyzeReport.writeTestsListOfDictsToCsvFileStructure()
 #
 #############################################################################
 
@@ -775,7 +777,7 @@ class test_writeTestsLODToCsvFileStructure(unittest.TestCase):
 
   def test_tests_0(self):
     testsLOD = []
-    csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+    csvFileStruct = writeTestsListOfDictsToCsvFileStructure(testsLOD)
     csvFileStruct_expected = CsvFileStructure(
       ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'),
       [] )
@@ -786,7 +788,7 @@ class test_writeTestsLODToCsvFileStructure(unittest.TestCase):
     testsLOD = [
       {'site':'site1', 'buildName':'build1', 'testname':'test1'},
       ]
-    csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+    csvFileStruct = writeTestsListOfDictsToCsvFileStructure(testsLOD)
     csvFileStruct_expected = CsvFileStructure(
       ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'),
       [ ('site1', 'build1', 'test1', '', '' ),
@@ -801,7 +803,7 @@ class test_writeTestsLODToCsvFileStructure(unittest.TestCase):
       {'site':'site3', 'buildName':'build3', 'testname':'test3'},
       {'site':'site2', 'buildName':'build2', 'testname':'test2'},
       ]
-    csvFileStruct = writeTestsLODToCsvFileStructure(testsLOD)
+    csvFileStruct = writeTestsListOfDictsToCsvFileStructure(testsLOD)
     csvFileStruct_expected = CsvFileStructure(
       ('site', 'buildName', 'testname', 'issue_tracker_url', 'issue_tracker'),
       [ ('site1', 'build1', 'test1', '', '' ),
@@ -811,6 +813,85 @@ class test_writeTestsLODToCsvFileStructure(unittest.TestCase):
       )
     self.assertEqual(csvFileStruct.headersList, csvFileStruct_expected.headersList)
     self.assertEqual(csvFileStruct.rowsList, csvFileStruct_expected.rowsList)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getAndCacheCDashQueryDataOrReadFromCache()
+#
+#############################################################################
+
+
+class test_getStandardTestsetTypeInfo(unittest.TestCase):
+
+  def test_twoif(self):
+    self.assertEqual(getStandardTestsetTypeInfo('twoif').testsetAcro, 'twoif')
+
+  def test_twip(self):
+    self.assertEqual(getStandardTestsetTypeInfo('twip').testsetAcro, 'twip')
+
+  def test_testsetColor(self):
+    tsti = getStandardTestsetTypeInfo('twif')
+    self.assertEqual(tsti.testsetAcro, 'twif')
+    self.assertEqual(tsti.testsetColor, cdashColorFailed())
+    tsti = getStandardTestsetTypeInfo('twif', testsetColor=cdashColorMissing())
+    self.assertEqual(tsti.testsetAcro, 'twif')
+    self.assertEqual(tsti.testsetColor, cdashColorMissing())
+
+  def test_invalid(self):
+    threwExcept = True
+    try:
+      getStandardTestsetTypeInfo('invalid')
+      threwExcept = False
+    except Exception as errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, testsetAcro = 'invalid' is not supported!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getTestsetAcroFromTestDict()
+#
+#############################################################################
+
+
+def tds(status, issue_tracker):
+  td = { u('status') : u(status) }
+  if issue_tracker:
+    td.update( { u('issue_tracker') : u(issue_tracker) } )
+  return td
+
+
+class test_getTestsetAcroFromTestDict(unittest.TestCase):
+
+  def run_test_case(self, status, issue_tracker, testsetAcro):
+    self.assertEqual(getTestsetAcroFromTestDict(tds(status, issue_tracker)),
+      testsetAcro )
+
+  def test_pass_cases(self):
+    self.run_test_case('Failed', None, 'twoif')
+    self.run_test_case('Not Run', None, 'twoinr')
+    self.run_test_case('Passed', '#1234', 'twip')
+    self.run_test_case('Missing', '#1234', 'twim')
+    self.run_test_case('Missing / Failed', '#1234', 'twim')
+    self.run_test_case('Failed', '#1234', 'twif')
+    self.run_test_case('Not Run', '#1234', 'twinr')
+
+  def test_invalid(self):
+    threwExcept = True
+    try:
+      getTestsetAcroFromTestDict(tds('Passed', None))  # Must have 'issue_tracker'!
+      threwExcept = False
+    except Exception as errMsg:
+      self.assertEqual( str(errMsg),
+      "Error, testDict = '{"+stru()+"'status': "+stru()+"'Passed'}' with fields"+\
+        " status = 'Passed' and issue_tracker = 'None'"+\
+        " is not a supported test-set type!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
 
 
 #############################################################################
@@ -1131,7 +1212,7 @@ class test_createLookupDictForListOfDicts(unittest.TestCase):
       buildLookupDict = createLookupDictForListOfDicts(
         listOfDicts, ['group', 'site', 'buildname'] )
       self.assertEqual("Did not throw exception!", "no it did not!")
-    except Exception, errMsg:
+    except Exception as errMsg:
       self.assertEqual( str(errMsg),
         "Error, The element\n\n"+\
         "    listOfDicts[5] =\n\n"+\
@@ -1191,7 +1272,7 @@ class test_lookupDictGivenLookupDict(unittest.TestCase):
       rtn = lookupDictGivenLookupDict(lud, ['group', 'site', 'buildname'],
       ['group1', 'site1'])
       self.assertFalse("Error, did not throw!")
-    except Exception, errMsg:
+    except Exception as errMsg:
       self.assertEqual( str(errMsg),
         "Error, len(listOfKeys)=3 != len(listOfValues)=2 where"+\
         " listOfKeys=['group', 'site', 'buildname'] and"+\
@@ -1310,20 +1391,6 @@ class test_SearchableListOfDicts(unittest.TestCase):
     (dictR,idxR)=slodm.lookupDictGivenKeyValuesList(('site4','build1'), True)
     self.assertEqual((idxR,dictR), (None, None))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   def test_exact_duplicate_ele_with_removal(self):
     listOfDicts = copy.deepcopy(g_buildsListForExpectedBuilds)
     newDictEle = copy.deepcopy(g_buildsListForExpectedBuilds[2])
@@ -1383,26 +1450,93 @@ class test_SearchableListOfDicts(unittest.TestCase):
 # Test CDashQueryAnalyzeReport.getMissingExpectedBuildsList()
 #
 #############################################################################
-     
+
+def gsb_pass(group, site, build):
+  buildDict = {
+    'group':group,
+    'site':site,
+    'buildname':build,
+    'update': {'errors':0},
+    'configure':{'error': 0},
+    'compilation':{'error':0, 'time':'20m10s'},
+    'test': {'pass':1, 'fail':0, 'notrun':0},
+    'extra-stuff':'stuff',
+    'data':'val1' }
+  return buildDict
+
+g_buildsListForMissingExpectedBuilds = [
+  gsb_pass('group1', 'site1', 'build1'),
+  gsb_pass('group1', 'site1', 'build2'),
+  gsb_pass('group1', 'site2', 'build3'),
+  gsb_pass('group2', 'site1', 'build1'),
+  gsb_pass('group2', 'site3', 'build4'),
+  ]
+
+g_expectedBuildsList = [
+  gsb('group1', 'site2', 'build3'),
+  gsb('group2', 'site3', 'build4'),
+  gsb('group2', 'site3', 'build8'),   # This is always a missing expected build
+  ]
+
 class test_getMissingExpectedBuildsList(unittest.TestCase):
 
-  def test_1(self):
-    slob = createSearchableListOfBuilds(copy.deepcopy(g_buildsListForExpectedBuilds))
-    slob.lookupDictGivenKeyValuesList(('group2','site3','build4')).update(
-      {'test':{'pass':1}})
-    expectedBuildsList = [
-      gsb('group1', 'site2', 'build3'),  # Build exists but missing tests
-      gsb('group2', 'site3', 'build4'),  # Build exists and has tests
-      gsb('group2', 'site3', 'build8'),  # Build missing all-together
-      ]
-    missingExpectedBuildsList = getMissingExpectedBuildsList(slob, expectedBuildsList)
+  def test_missing_2_no_conf_no_build_1_notests_1(self):
+    listOfBuilds = copy.deepcopy(g_buildsListForMissingExpectedBuilds)
+    #print("\nlistOfBuilds:"); g_pp.pprint(listOfBuilds)
+    slob = createSearchableListOfBuilds(listOfBuilds)
+    # Remove test results from one of the builds
+    del slob.lookupDictGivenKeyValuesList(('group1','site2','build3'))['test']
+    #print("\nlistOfBuilds:"); g_pp.pprint(listOfBuilds)
+    # Remove build results from one of the builds
+    buildDict = slob.lookupDictGivenKeyValuesList(('group2','site3','build4'))
+    del buildDict['configure']
+    del buildDict['compilation']
+    #print("\nlistOfBuilds:"); g_pp.pprint(listOfBuilds)
+    #
+    missingExpectedBuildsList = getMissingExpectedBuildsList(slob, g_expectedBuildsList)
+    #print("\nmissingExpectedBuildsList:"); g_pp.pprint(missingExpectedBuildsList)
+    self.assertEqual(len(missingExpectedBuildsList), 3)
+    #
+    expectedBuildDict = gsb('group1', 'site2', 'build3')
+    expectedBuildDict.update({'status':"Missing tests"})
+    self.assertEqual(missingExpectedBuildsList[0], expectedBuildDict)
+    #
+    expectedBuildDict = gsb('group2', 'site3', 'build4')
+    expectedBuildDict.update({'status':"Missing configure, build"})
+    self.assertEqual(missingExpectedBuildsList[1], expectedBuildDict)
+    #
+    expectedBuildDict = gsb('group2', 'site3', 'build8')
+    expectedBuildDict.update({'status':"Missing ALL"})
+    self.assertEqual(missingExpectedBuildsList[2], expectedBuildDict)
+
+  def test_compilation_time_zero_1_zero_tests_1(self):
+    listOfBuilds = copy.deepcopy(g_buildsListForMissingExpectedBuilds)
+    slob = createSearchableListOfBuilds(listOfBuilds)
+    # Set test results to 0 passing tests and ensure that this not considered missing
+    slob.lookupDictGivenKeyValuesList(('group1','site2','build3')).update(
+      {'test':{'pass':0}})
+    # Set compilation time to '0s' and remove test results which is a sign
+    # that the build did not happen! (NOTE: This is a heuristic since it is
+    # possible to have a zero build time and still have build results
+    # submitted to CDash.  However, it is unlikely that the build time is zero
+    # and just happens to be missing test results.  In that case, it is likely
+    # that the job that was doing the build died and never submitted build
+    # results in the first place.)
+    buildDict = slob.lookupDictGivenKeyValuesList(('group2','site3','build4'))
+    buildDict.update({'compilation':{'time':'0s'}})
+    del buildDict['test']
+    #
+    missingExpectedBuildsList = getMissingExpectedBuildsList(slob, g_expectedBuildsList)
+    #print("\nmissingExpectedBuildsList:"); g_pp.pprint(missingExpectedBuildsList)
     self.assertEqual(len(missingExpectedBuildsList), 2)
-    self.assertEqual(missingExpectedBuildsList[0],
-      { 'group':'group1', 'site':'site2', 'buildname':'build3',
-        'status':"Build exists but no test results" } )
-    self.assertEqual(missingExpectedBuildsList[1],
-      { 'group':'group2', 'site':'site3', 'buildname':'build8',
-        'status':"Build not found on CDash" } )
+    #
+    expectedBuildDict = gsb('group2', 'site3', 'build4')
+    expectedBuildDict.update({'status':"Missing build, tests"})
+    self.assertEqual(missingExpectedBuildsList[0], expectedBuildDict)
+    #
+    expectedBuildDict = gsb('group2', 'site3', 'build8')
+    expectedBuildDict.update({'status':"Missing ALL"})
+    self.assertEqual(missingExpectedBuildsList[1], expectedBuildDict)
 
 
 #############################################################################
@@ -1558,7 +1692,7 @@ class test_AddIssueTrackerInfoToTestDictFunctor(unittest.TestCase):
     try:
       aitf(dict_inout)
       self.assertEqual("Error, did not thorw exception", "No it did not!")
-    except Exception, errMsg:
+    except Exception as errMsg:
       self.assertEqual(str(errMsg),
         "Error, testDict_inout="+str(dict_inout)+\
         " does not have an assigned issue tracker!" )
@@ -1566,7 +1700,7 @@ class test_AddIssueTrackerInfoToTestDictFunctor(unittest.TestCase):
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.testsWithIssueTrackersMatchExpectedBuilds()
+# Test CDashQueryAnalyzeReport.doTestsWithIssueTrackersMatchExpectedBuilds()
 #
 #############################################################################
 
@@ -1588,13 +1722,13 @@ g_testsWtihIssueTrackersLOD = [
   sbtiturlit('site2', 'build2', 'test5', 'url5', '#1114'),
   ]
 
-class test_testsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
+class test_doTestsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
 
   def test_all_match(self):
     testToExpectedBuildsSLOD = \
       createTestToBuildSearchableListOfDicts(g_expectedBuildsLOD)
     self.assertEqual(
-      testsWithIssueTrackersMatchExpectedBuilds(
+      doTestsWithIssueTrackersMatchExpectedBuilds(
         g_testsWtihIssueTrackersLOD, testToExpectedBuildsSLOD),
       (True, "")
       )
@@ -1604,7 +1738,7 @@ class test_testsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
     testToExpectedBuildsSLOD = \
       createTestToBuildSearchableListOfDicts(g_expectedBuildsLOD)
     testsWtihIssueTrackersLOD[1]['buildName'] = 'build8'
-    (matches, errMsg) = testsWithIssueTrackersMatchExpectedBuilds(
+    (matches, errMsg) = doTestsWithIssueTrackersMatchExpectedBuilds(
       testsWtihIssueTrackersLOD, testToExpectedBuildsSLOD)
     self.assertEqual(matches, False)
     self.assertEqual(errMsg,
@@ -1618,7 +1752,7 @@ class test_testsWithIssueTrackersMatchExpectedBuilds(unittest.TestCase):
       createTestToBuildSearchableListOfDicts(g_expectedBuildsLOD)
     testsWtihIssueTrackersLOD[1]['buildName'] = 'build8'
     testsWtihIssueTrackersLOD[3]['site'] = 'site3'
-    (matches, errMsg) = testsWithIssueTrackersMatchExpectedBuilds(
+    (matches, errMsg) = doTestsWithIssueTrackersMatchExpectedBuilds(
       testsWtihIssueTrackersLOD, testToExpectedBuildsSLOD)
     self.assertEqual(matches, False)
     self.assertEqual(errMsg,
@@ -1638,33 +1772,33 @@ class test_dateFromBuildStartTime(unittest.TestCase):
 
   def test_1(self):
     self.assertEqual(
-      dateFromBuildStartTime(u'2001-01-01T05:54:03 UTC'), u'2001-01-01')
+      dateFromBuildStartTime(u('2001-01-01T05:54:03 UTC')), u('2001-01-01') )
 
 
 #############################################################################
 #
-# Test CDashQueryAnalyzeReport.getUniqueSortedTestsHistoryLOD()
+# Test CDashQueryAnalyzeReport.getUniqueSortedTestsHistoryListOfDicts()
 #
 #############################################################################
 
 g_testDictFailed = {
-  u'buildName': u'build_name',
-  u'buildSummaryLink': u'buildSummary.php?buildid=<buildid>',
-  u'buildstarttime': u'2001-01-01T05:54:03 UTC',
-  u'details': u'Completed (Failed)\n',
-  u'nprocs': 4,
-  u'prettyProcTime': u'40s 400ms',
-  u'prettyTime': u'10s 100ms',
-  u'procTime': 40.4,
-  u'site': u'site_name',
-  u'siteLink': u'viewSite.php?siteid=<site_id>',
-  u'status': u'Failed',
-  u'statusclass': u'error',
-  u'testDetailsLink': u'testDetails.php?test=<testid>&build=<buildid>',
-  u'testname': u'test_name',
-  u'time': 10.1,
-  u'issue_tracker': u'#1234',
-  u'issue_tracker_url': u'some.com/site/issue/1234'
+  u('buildName'): u('build_name'),
+  u('buildSummaryLink'): u('buildSummary.php?buildid=<buildid>'),
+  u('buildstarttime'): u('2001-01-01T05:54:03 UTC'),
+  u('details'): u('Completed (Failed)\n'),
+  u('nprocs'): 4,
+  u('prettyProcTime'): u('40s 400ms'),
+  u('prettyTime'): u('10s 100ms'),
+  u('procTime'): 40.4,
+  u('site'): u('site_name'),
+  u('siteLink'): u('viewSite.php?siteid=<site_id>'),
+  u('status'): u('Failed'),
+  u('statusclass'): u('error'),
+  u('testDetailsLink'): u('testDetails.php?test=<testid>&build=<buildid>'),
+  u('testname'): u('test_name'),
+  u('time'): 10.1,
+  u('issue_tracker'): u('#1234'),
+  u('issue_tracker_url'): u('some.com/site/issue/1234')
   }
 
 def getTestHistoryLOD5(statusListOrderedByDate,
@@ -1672,7 +1806,7 @@ def getTestHistoryLOD5(statusListOrderedByDate,
   timezoneStr = "UTC",
   ):
   testHistoryListLOD = []
-  for i in xrange(5): testHistoryListLOD.append(copy.deepcopy(g_testDictFailed))
+  for i in range(5): testHistoryListLOD.append(copy.deepcopy(g_testDictFailed))
   testHistoryListLOD[1]['buildstarttime'] = '2001-01-01T'+time+' '+timezoneStr
   testHistoryListLOD[1]['status'] = statusListOrderedByDate[0]
   testHistoryListLOD[0]['buildstarttime'] = '2000-12-31T'+time+' '+timezoneStr
@@ -1698,7 +1832,7 @@ class test_getUniqueSortedTestsHistoryLOD(unittest.TestCase):
   def test_empty_entries(self):
     testHistLOD = []
     uniTestHistLOD = \
-      getUniqueSortedTestsHistoryLOD(testHistLOD)
+      getUniqueSortedTestsHistoryListOfDicts(testHistLOD)
     self.assertEqual(len(uniTestHistLOD), 0)
 
   def test_one_entries(self):
@@ -1706,14 +1840,14 @@ class test_getUniqueSortedTestsHistoryLOD(unittest.TestCase):
       getSortedTestHistoryLOD5(['Passed','Passed','Failed','Passed','Failed'])[2]
       ]
     uniTestHistLOD = \
-      getUniqueSortedTestsHistoryLOD(testHistLOD)
+      getUniqueSortedTestsHistoryListOfDicts(testHistLOD)
     self.assertEqual(uniTestHistLOD[0]['buildstarttime'],'2000-12-30T05:54:03 UTC')
 
   def test_unique_entries(self):
     testHistLOD = \
       getSortedTestHistoryLOD5(['Passed','Passed','Failed','Passed','Failed'])
     uniTestHistLOD = \
-      getUniqueSortedTestsHistoryLOD(testHistLOD)
+      getUniqueSortedTestsHistoryListOfDicts(testHistLOD)
     self.assertEqual(uniTestHistLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(uniTestHistLOD[1]['buildstarttime'],'2000-12-31T05:54:03 UTC')
     self.assertEqual(uniTestHistLOD[2]['buildstarttime'],'2000-12-30T05:54:03 UTC')
@@ -1727,7 +1861,7 @@ class test_getUniqueSortedTestsHistoryLOD(unittest.TestCase):
     testHistLOD.insert(2, testHistLOD[2])
     testHistLOD.insert(1, testHistLOD[0])
     uniTestHistLOD = \
-      getUniqueSortedTestsHistoryLOD(testHistLOD)
+      getUniqueSortedTestsHistoryListOfDicts(testHistLOD)
     self.assertEqual(uniTestHistLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
     self.assertEqual(uniTestHistLOD[1]['buildstarttime'],'2000-12-31T05:54:03 UTC')
     self.assertEqual(uniTestHistLOD[2]['buildstarttime'],'2000-12-30T05:54:03 UTC')
@@ -2095,21 +2229,29 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
 #############################################################################
 
 g_cdashTestDict = {
-  u'site' : u'site1',
-  u'buildName' : u'build1',
-  u'testname' : u'test1',
-  u'testDetailsLink' : u'testDetails.php?test=58569474&build=4143620',
-  u'time' : 0.22,
-  u'otherData' : u'dataValue',
+  u('site') : u('site1'),
+  u('buildName') : u('build1'),
+  u('testname') : u('test1'),
+  u('testDetailsLink') : u('testDetails.php?test=58569474&build=4143620'),
+  u('time') : 0.22,
+  u('otherData') : u('dataValue'),
   } 
 
 class test_extractTestIdAndBuildIdFromTestDetailsLink(unittest.TestCase):
 
-  def test_1(self):
+  def test_old_cdash(self):
     self.assertEqual(
       extractTestIdAndBuildIdFromTestDetailsLink(
-        u'testDetails.php?test=58569474&build=4143620'),
-      ("58569474", "4143620") )
+        u('testDetails.php?test=58569474&build=4143620') ),
+      ("58569474", "4143620")
+      )
+
+  def test_new_cdash(self):
+    self.assertEqual(
+      extractTestIdAndBuildIdFromTestDetailsLink(u('test/14614128')),
+      ("14614128", "")
+      )
+
 
 class test_checkCDashTestDictsAreSame(unittest.TestCase):
 
@@ -2124,39 +2266,22 @@ class test_checkCDashTestDictsAreSame(unittest.TestCase):
   def test_same_except_for_testid(self):
     testDict_1 = copy.deepcopy(g_cdashTestDict)
     testDict_2 = copy.deepcopy(g_cdashTestDict)
-    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
+    testDict_2['testDetailsLink'] = u('testDetails.php?test=58569475&build=4143620')
     expectedRtn = (True, None)
     self.assertEqual(
       checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
       expectedRtn )
 
-  def test_same_except_for_testid_and_small_time_diff(self):
+  def test_same_status_and_details(self):
     testDict_1 = copy.deepcopy(g_cdashTestDict)
     testDict_2 = copy.deepcopy(g_cdashTestDict)
-    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
+    testDict_2['testDetailsLink'] = u('testDetails.php?test=58569475&build=4143620')
     testDict_2['time'] = 0.23
+    testDict_2['prettyTime'] = "0.23"
+    testDict_2['procTime'] = 4.0
+    testDict_2['prettyProcTime'] = "4.0"
+    testDict_2['matchingoutput'] = "some different output"
     expectedRtn = (True, None)
-    self.assertEqual(
-      checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
-      expectedRtn )
-
-  def test_same_except_for_testid_and_larger_time_diff(self):
-    testDict_1 = copy.deepcopy(g_cdashTestDict)
-    testDict_2 = copy.deepcopy(g_cdashTestDict)
-    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
-    testDict_2['time'] = 0.65
-    expectedRtn = (True, None)
-    self.assertEqual(
-      checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
-      expectedRtn )
-
-  def test_same_except_for_testid_and_too_large_time_diff(self):
-    testDict_1 = copy.deepcopy(g_cdashTestDict)
-    testDict_2 = copy.deepcopy(g_cdashTestDict)
-    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143620'
-    testDict_2['time'] = 0.70
-    expectedRtn = (False,
-       "testDict_1['time'] = '0.22' != testDict_2['time'] = '0.7'")
     self.assertEqual(
       checkCDashTestDictsAreSame(testDict_1, "testDict_1", testDict_2, "testDict_2"),
       expectedRtn )
@@ -2164,7 +2289,7 @@ class test_checkCDashTestDictsAreSame(unittest.TestCase):
   def test_different_testid_and_buildid(self):
     testDict_1 = copy.deepcopy(g_cdashTestDict)
     testDict_2 = copy.deepcopy(g_cdashTestDict)
-    testDict_2['testDetailsLink'] = u'testDetails.php?test=58569475&build=4143621'
+    testDict_2['testDetailsLink'] = u('testDetails.php?test=58569475&build=4143621')
     expectedRtn = (False,
       "testDict_1['testDetailsLink'] = 'testDetails.php?test=58569474&build=4143620' !="+\
       " testDict_2['testDetailsLink'] = 'testDetails.php?test=58569475&build=4143621'")
@@ -2175,7 +2300,7 @@ class test_checkCDashTestDictsAreSame(unittest.TestCase):
   def test_different_other_key_value_pair(self):
     testDict_1 = copy.deepcopy(g_cdashTestDict)
     testDict_2 = copy.deepcopy(g_cdashTestDict)
-    testDict_2['otherData'] = u'dataValueDiff'
+    testDict_2['otherData'] = u('dataValueDiff')
     expectedRtn = (False,
       "testDict_1['otherData'] = 'dataValue' != testDict_2['otherData'] = 'dataValueDiff'")
     self.assertEqual(
@@ -2225,7 +2350,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+      u('site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2254,6 +2379,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     alwaysUseCacheFileIfExists = False
     verbose = False
     printDetails = False
+    requireMatchTestTopTestHistory = True
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
       testHistoryQueryUrl, {'builds':testHistoryLOD})
 
@@ -2261,25 +2387,26 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
-      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
+      verbose, printDetails, requireMatchTestTopTestHistory,
+      mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
     addTestHistoryFunctor(testDict)
 
-    testHistoryBrowserUrl = u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+    testHistoryBrowserUrl = u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
     # Checkt the set fields out output
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
-      u'site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name'
+      u('site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name')
       )
     self.assertEqual(testDict['testname'], 'test_name')
-    self.assertEqual(testDict['testname_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['testname_url'], u('site.com/cdash/testDetails.php?test=<testid>&build=<buildid>'))
     self.assertEqual(testDict['status'], 'Failed')
     self.assertEqual(testDict['details'], 'Completed (Failed)\n')
-    self.assertEqual(testDict['status_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['status_url'], u('site.com/cdash/testDetails.php?test=<testid>&build=<buildid>'))
     self.assertEqual(testDict['status_color'], 'red')
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
@@ -2333,7 +2460,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-29&end=2001-01-02&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+      u('site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-29&end=2001-01-02&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2364,6 +2491,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     alwaysUseCacheFileIfExists = False
     verbose = False
     printDetails = False
+    requireMatchTestTopTestHistory = True
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
       testHistoryQueryUrl, {'builds':testHistoryLOD})
 
@@ -2371,25 +2499,26 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
-      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
+      verbose, printDetails, requireMatchTestTopTestHistory,
+      mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
     addTestHistoryFunctor(testDict)
 
-    testHistoryBrowserUrl = u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-29&end=2001-01-02&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+    testHistoryBrowserUrl = u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-29&end=2001-01-02&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
     # Checkt the set fields out output
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
-      u'site.com/cdash/index.php?project=projectName&begin=2000-12-29&end=2001-01-02&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name'
+      u('site.com/cdash/index.php?project=projectName&begin=2000-12-29&end=2001-01-02&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name')
       )
     self.assertEqual(testDict['testname'], 'test_name')
-    self.assertEqual(testDict['testname_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['testname_url'], u('site.com/cdash/testDetails.php?test=<testid>&build=<buildid>'))
     self.assertEqual(testDict['status'], 'Failed')
     self.assertEqual(testDict['details'], 'Completed (Failed)\n')
-    self.assertEqual(testDict['status_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['status_url'], u('site.com/cdash/testDetails.php?test=<testid>&build=<buildid>'))
     self.assertEqual(testDict['status_color'], 'red')
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
@@ -2441,16 +2570,16 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     # Initial test dict as it would come from the tests with issue trackers
     # CSV file
     testDict = {
-      u'site': u'site_name',
-      u'buildName': u'build_name',
-      u'testname': u'test_name',
-      u'issue_tracker': u'#1234',
-      u'issue_tracker_url': u'some.com/site/issue/1234'
+      u('site'): u('site_name'),
+      u('buildName'): u('build_name'),
+      u('testname'): u('test_name'),
+      u('issue_tracker'): u('#1234'),
+      u('issue_tracker_url'): u('some.com/site/issue/1234')
     }
     
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+      u('site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2500,16 +2629,16 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
-      u'site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name'
+      u('site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name')
       )
     self.assertEqual(testDict['testname'], 'test_name')
-    self.assertEqual(testDict['testname_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['testname_url'], u('site.com/cdash/testDetails.php?test=<testid>&build=<buildid>'))
     self.assertEqual(testDict['status'], 'Passed')
     self.assertEqual(testDict['details'], 'Completed (Passed)\n')
-    self.assertEqual(testDict['status_url'], u'site.com/cdash/testDetails.php?test=<testid>&build=<buildid>')
+    self.assertEqual(testDict['status_url'], u('site.com/cdash/testDetails.php?test=<testid>&build=<buildid>'))
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
-    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+    self.assertEqual(testDict['test_history_browser_url'], u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
       )
     self.assertEqual(
       testDict['test_history_list'][0]['buildstarttime'], '2001-01-01T05:54:03 UTC')
@@ -2523,7 +2652,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
       testDict['test_history_list'][4]['buildstarttime'], '2000-12-28T05:54:03 UTC')
     self.assertEqual(testDict['nopass_last_x_days'], 3)
     self.assertEqual(testDict['nopass_last_x_days_url'],
-       u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
+       u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name') )
     self.assertEqual(testDict['previous_nopass_date'], '2000-12-30')
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
@@ -2538,16 +2667,16 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     # Initial test dict as it would come from the tests with issue trackers
     # CSV file
     testDict = {
-      u'site': u'site_name',
-      u'buildName': u'build_name',
-      u'testname': u'test_name',
-      u'issue_tracker': u'#1234',
-      u'issue_tracker_url': u'some.com/site/issue/1234'
+      u('site'): u('site_name'),
+      u('buildName'): u('build_name'),
+      u('testname'): u('test_name'),
+      u('issue_tracker'): u('#1234'),
+      u('issue_tracker_url'): u('some.com/site/issue/1234')
     }
     
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+      u('site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2598,7 +2727,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
-      u'site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name'
+      u('site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name')
       )
     self.assertEqual(testDict['testname'], 'test_name')
     self.assertEqual(testDict.get('testname_url',None), None)
@@ -2607,7 +2736,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict.get('status_url', None), None)
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
-    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+    self.assertEqual(testDict['test_history_browser_url'], u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
       )
     self.assertEqual(len(testDict['test_history_list']), 3)
     self.assertEqual(
@@ -2618,7 +2747,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
       testDict['test_history_list'][2]['buildstarttime'], '2000-12-28T05:54:03 UTC')
     self.assertEqual(testDict['nopass_last_x_days'], 3)
     self.assertEqual(testDict['nopass_last_x_days_url'],
-       u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
+       u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name') )
     self.assertEqual(testDict['previous_nopass_date'], '2000-12-30')
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
@@ -2626,7 +2755,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
 
   # Test the case where the testDict just has the minimal fields that come
-  # from the tests with issue trackers CSV file and the tets did not actually
+  # from the tests with issue trackers CSV file and the test did not actually
   # run in the current testing day.  Also, in this case, there is no recent
   # test history.
   def test_empty_test_missing_no_recent_history(self):
@@ -2634,16 +2763,16 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     # Initial test dict as it would come from the tests with issue trackers
     # CSV file
     testDict = {
-      u'site': u'site_name',
-      u'buildName': u'build_name',
-      u'testname': u'test_name',
-      u'issue_tracker': u'#1234',
-      u'issue_tracker_url': u'some.com/site/issue/1234'
+      u('site'): u('site_name'),
+      u('buildName'): u('build_name'),
+      u('testname'): u('test_name'),
+      u('issue_tracker'): u('#1234'),
+      u('issue_tracker_url'): u('some.com/site/issue/1234')
     }
     
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+      u('site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2684,7 +2813,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
-      u'site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name'
+      u('site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=site&compare2=61&value2=site_name')
       )
     self.assertEqual(testDict['testname'], 'test_name')
     self.assertEqual(testDict.get('testname_url',None), None)
@@ -2693,12 +2822,12 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict.get('status_url', None), None)
     self.assertEqual(testDict['test_history_num_days'], 5)
     self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
-    self.assertEqual(testDict['test_history_browser_url'], u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+    self.assertEqual(testDict['test_history_browser_url'], u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
       )
     self.assertEqual(len(testDict['test_history_list']), 0)
     self.assertEqual(testDict['nopass_last_x_days'], 0)
     self.assertEqual(testDict['nopass_last_x_days_url'],
-       u'site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
+       u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name') )
     self.assertEqual(testDict['previous_nopass_date'], 'None')
     #self.assertEqual(testDict['previous_nopass_date_url'], 'DUMMY NO MATCH')
     self.assertEqual(testDict['issue_tracker'], '#1234')
@@ -2715,16 +2844,16 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     # Initial test dict as it would come from the tests with issue trackers
     # CSV file (could be passing or failing, we don't know)
     testDict = {
-      u'site': u'site_name',
-      u'buildName': u'build_name',
-      u'testname': u'test_name',
-      u'issue_tracker': u'#1234',
-      u'issue_tracker_url': u'some.com/site/issue/1234'
+      u('site'): u('site_name'),
+      u('buildName'): u('build_name'),
+      u('testname'): u('test_name'),
+      u('issue_tracker'): u('#1234'),
+      u('issue_tracker_url'): u('some.com/site/issue/1234')
     }
 
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+      u('site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2756,6 +2885,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     alwaysUseCacheFileIfExists = False
     verbose = False
     printDetails = False
+    requireMatchTestTopTestHistory = True
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
       testHistoryQueryUrl, {'builds':testHistoryLOD})
 
@@ -2763,20 +2893,115 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
-      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
+      verbose, printDetails, requireMatchTestTopTestHistory,
+      mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
     try:
       addTestHistoryFunctor(testDict)
       self.assertTrue(False)
-    except Exception, errMsg:
+    except Exception as errMsg:
       self.assertEqual( str(errMsg),
         "Error, test testDict['status'] = 'None' != "+\
         "top test history testStatus = 'Failed'"+\
         " where:\n\n"+\
         "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
         "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
+
+
+  # Check the case where a tracked test with a minimal testDict that is not
+  # failing in the list of global nonpassing tests (and is therefore
+  # considered missing) actually has test history for the current testing day
+  # which will typically be 'Failed'.  This is to support the use case where
+  # random system failures get sorted out of the global list of nonpassing
+  # tests but tracked test may be failing in the current.
+  def test_mismatch_top_test_history_status_allowed(self):
+
+    # Initial test dict as it would come from the tests with issue trackers
+    # CSV file (was not presenet in global nonpassing list of tests due to
+    # matching extra filtering criterial).
+    testDict = {
+      u('site'): u('site_name'),
+      u('buildName'): u('build_name'),
+      u('testname'): u('test_name'),
+      u('issue_tracker'): u('#1234'),
+      u('issue_tracker_url'): u('some.com/site/issue/1234')
+    }
+
+    # Target test date
+    testHistoryQueryUrl = \
+      u('site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
+
+    # Create a subdir for the created cache file
+    testCacheOutputDir = \
+      os.getcwd()+"/AddTestHistoryToTestDictFunctor/test_mismatch_top_test_history_status"
+    if os.path.exists(testCacheOutputDir): shutil.rmtree(testCacheOutputDir)
+    os.makedirs(testCacheOutputDir)
+
+    # Create dummy test history
+    testHistoryLOD = getTestHistoryLOD5(
+      [
+        'Failed',  # This test got filtered out of the global lsit of nonpassing tests 
+        'Failed',
+        'Passed',
+        'Passed',
+        'Not Run',
+        ]
+      )
+
+    # Make it easy to find the top test dict below
+    testHistoryLOD.sort(reverse=True, key=DictSortFunctor(['buildstarttime']))
+
+    # Construct arguments
+    cdashUrl = "site.com/cdash"
+    projectName = "projectName"
+    date = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
+    daysOfHistory = 5
+    useCachedCDashData = False
+    alwaysUseCacheFileIfExists = False
+    verbose = False
+    printDetails = False
+    requireMatchTestTopTestHistory = False
+    mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
+      testHistoryQueryUrl, {'builds':testHistoryLOD})
+
+    # Construct the functor
+    addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
+      cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
+      testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
+      verbose, printDetails, requireMatchTestTopTestHistory,
+      mockExtractCDashApiQueryDataFunctor,
+      )
+
+    # Apply the functor to add the test history to the test dict.  This will
+    # also fill in the missing data for the testDict.
+    addTestHistoryFunctor(testDict)
+
+    # Check the set fields out output
+    self.assertEqual(testDict['site'], 'site_name')
+    self.assertEqual(testDict['buildName'], 'build_name')
+    self.assertEqual(testDict['testname'], 'test_name')
+    self.assertEqual(testDict['testname_url'], u('site.com/cdash/testDetails.php?test=<testid>&build=<buildid>'))
+    self.assertEqual(testDict['status'], 'Missing / Failed')
+    self.assertEqual(testDict['details'], 'Completed (Failed)\n')
+    self.assertEqual(testDict['status_url'], u('site.com/cdash/testDetails.php?test=<testid>&build=<buildid>'))
+    self.assertEqual(testDict['test_history_num_days'], 5)
+    self.assertEqual(testDict['test_history_query_url'], testHistoryQueryUrl)
+    self.assertEqual(
+      testDict['test_history_list'][0]['buildstarttime'], '2001-01-01T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][1]['buildstarttime'], '2000-12-31T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][2]['buildstarttime'], '2000-12-30T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][3]['buildstarttime'], '2000-12-29T05:54:03 UTC')
+    self.assertEqual(
+      testDict['test_history_list'][4]['buildstarttime'], '2000-12-28T05:54:03 UTC')
+    self.assertEqual(testDict['nopass_last_x_days'], 3)
+    self.assertEqual(testDict['issue_tracker'], '#1234')
+    self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
 
 
   # Check error message for case where the 'buildstarttime' of the test
@@ -2791,7 +3016,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Target test date
     testHistoryQueryUrl = \
-      u'site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name'
+      u('site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
     # Create a subdir for the created cache file
     testCacheOutputDir = \
@@ -2815,7 +3040,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     # Add a more recent test that also fails!
     moreRecentTestDict = copy.deepcopy(g_testDictFailed)
-    moreRecentTestDict[u'buildstarttime'] = u'2001-01-01T08:00:00 UTC'
+    moreRecentTestDict[u('buildstarttime')] = u('2001-01-01T08:00:00 UTC')
     testHistoryLOD.insert(0, moreRecentTestDict)
 
     # Construct arguments
@@ -2828,6 +3053,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     alwaysUseCacheFileIfExists = False
     verbose = False
     printDetails = False
+    requireMatchTestTopTestHistory = True
     mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
       testHistoryQueryUrl, {'builds':testHistoryLOD})
 
@@ -2835,7 +3061,8 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
       cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
       testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
-      verbose, printDetails, mockExtractCDashApiQueryDataFunctor,
+      verbose, printDetails, requireMatchTestTopTestHistory, 
+      mockExtractCDashApiQueryDataFunctor,
       )
 
     # Apply the functor to add the test history to the test dict
@@ -2843,7 +3070,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     try:
       addTestHistoryFunctor(testDict)
       self.assertTrue(False)
-    except Exception, errMsg:
+    except Exception as errMsg:
       None
       self.assertEqual( str(errMsg),
         "Error, testDict['buildstarttime'] = '2001-01-01T05:54:03 UTC' != "+\
@@ -2851,6 +3078,23 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
         " where:\n\n"+\
         "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
         "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.addCDashTestingDayFunctor
+#
+#############################################################################
+
+
+class test_addCDashTestingDayFunctor(unittest.TestCase):
+
+  def test_1(self):
+    testDict = { u('testname'):u('test1') }
+    addCDashTestingDayFunctor = AddCDashTestingDayFunctor("YYYY-MM-DD")
+    testDict=addCDashTestingDayFunctor(testDict)
+    testDict_expected = { u('testname'):u('test1'), u('cdash_testing_day'):u('YYYY-MM-DD')}
+    self.assertEqual(testDict, testDict_expected)
 
 
 #############################################################################
@@ -2906,7 +3150,6 @@ class test_buildHasBuildFailures(unittest.TestCase):
 #
 #############################################################################
 
-
 def testDictStatus(status):
   testDict = copy.deepcopy(g_testDictFailed)
   testDict['status'] = status
@@ -2923,6 +3166,10 @@ class test_isTestPassed(unittest.TestCase):
   def test_notrun(self):
     self.assertEqual(isTestPassed(testDictStatus('Not Run')), False)
 
+  def test_missing(self):
+    self.assertEqual(isTestPassed(testDictStatus('Missing')), False)
+    self.assertEqual(isTestPassed(testDictStatus('Missing / Failed')), False)
+
 class test_isTestFailed(unittest.TestCase):
 
   def test_passed(self):
@@ -2934,6 +3181,10 @@ class test_isTestFailed(unittest.TestCase):
   def test_notrun(self):
     self.assertEqual(isTestFailed(testDictStatus('Not Run')), False)
 
+  def test_missing(self):
+    self.assertEqual(isTestFailed(testDictStatus('Missing')), False)
+    self.assertEqual(isTestFailed(testDictStatus('Missing / Failed')), False)
+
 class test_isTestNotRun(unittest.TestCase):
 
   def test_passed(self):
@@ -2944,6 +3195,25 @@ class test_isTestNotRun(unittest.TestCase):
 
   def test_notrun(self):
     self.assertEqual(isTestNotRun(testDictStatus('Not Run')), True)
+
+  def test_missing(self):
+    self.assertEqual(isTestNotRun(testDictStatus('Missing')), False)
+    self.assertEqual(isTestNotRun(testDictStatus('Missing / Failed')), False)
+
+class test_isTestMissing(unittest.TestCase):
+
+  def test_passed(self):
+    self.assertEqual(isTestMissing(testDictStatus('Passed')), False)
+
+  def test_failed(self):
+    self.assertEqual(isTestMissing(testDictStatus('Failed')), False)
+
+  def test_notrun(self):
+    self.assertEqual(isTestMissing(testDictStatus('Not Run')), False)
+
+  def test_missing(self):
+    self.assertEqual(isTestMissing(testDictStatus('Missing')), True)
+    self.assertEqual(isTestMissing(testDictStatus('Missing / Failed')), True)
 
 
 
@@ -3110,7 +3380,7 @@ class test_colorHtmlText(unittest.TestCase):
     try:
       coloredText = colorHtmlText("some text", "badcolor")
       self.assertTrue(False)   # Should not get here!
-    except Exception, errMsg:
+    except Exception as errMsg:
       self.assertEqual(str(errMsg),
         "Error, color='badcolor' is invalid.  Only 'red', 'green',"+\
         " 'gray' and 'orange' are supported!" )
@@ -3127,6 +3397,115 @@ class test_addHtmlSoftWordBreaks(unittest.TestCase):
   def test_1(self):
     self.assertEqual(addHtmlSoftWordBreaks("some_long_name"),
       "some_&shy;long_&shy;name")
+
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getFullCDashHtmlReportPageStr()
+#
+#############################################################################
+
+
+class test_getFullCDashHtmlReportPageStr(unittest.TestCase):
+
+  def setUp(self):
+    cdashReportData = CDashReportData()
+    cdashReportData.htmlEmailBodyTop = "body top\n"
+    cdashReportData.htmlEmailBodyBottom = "body bottom\n"
+    self.cdashReportData = cdashReportData
+
+  def test_defaults(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData)
+    reportHtml_expected = \
+"""<html>
+
+<body>
+
+body top
+
+body bottom
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
+
+  def test_with_title(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData,
+      pageTitle="page title")
+    reportHtml_expected = \
+"""<html>
+
+<body>
+
+<h2>page title</h2>
+
+body top
+
+body bottom
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
+
+  def test_with_title_and_style(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData,
+      pageTitle="page title", pageStyle="<style>my style</style>\n")
+    reportHtml_expected = \
+"""<html>
+
+<head>
+<style>my style</style>
+</head>
+
+<body>
+
+<h2>page title</h2>
+
+body top
+
+body bottom
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
+
+  def test_with_title_and_style_and_details(self):
+    reportHtml = getFullCDashHtmlReportPageStr(self.cdashReportData,
+      pageTitle="page title", pageStyle="<style>my style</style>\n",
+      detailsBlockSummary="these are the details")
+    reportHtml_expected = \
+"""<html>
+
+<head>
+<style>my style</style>
+</head>
+
+<body>
+
+<h2>page title</h2>
+
+body top
+
+<details>
+
+<summary><b>these are the details:</b> (click to expand)</b></summary>
+
+body bottom
+
+</details>
+
+</body>
+
+</html>
+"""
+    self.assertEqual(reportHtml, reportHtml_expected)
 
 
 #############################################################################
@@ -3153,7 +3532,7 @@ class test_createHtmlTableStr(unittest.TestCase):
       trd("r3d1", 3, "r3d3"),
       ]
     htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList,
-      htmlStyle="my_style",  # Test custom table style
+      htmlStyle="<style>my_style</style>",  # Test custom table style
       #htmlStyle=None,       # Uncomment to view this style
       #htmlTableStyle="",    # Uncomment to view this style
       )
@@ -3240,7 +3619,7 @@ tr:nth-child(odd) {background-color: #fff;}
     try:
       htmlTable = createHtmlTableStr("Title", colDataList, rowDataList)
       self.assertEqual("Excpetion did not get thrown!", "No it did not!")
-    except Exception, errMsg:
+    except Exception as errMsg:
       self.assertEqual(str(errMsg),
          "Error, column 0 dict key='badKey' row 0 entry is 'None' which is"+\
          " not allowed!\n\nRow dict = {'key1': 'data1'}")
@@ -3265,7 +3644,7 @@ tr:nth-child(odd) {background-color: #fff;}
     rowDataList[2]['key2_color'] = 'green'
     # Create the table
     htmlTable = createHtmlTableStr("My great data", colDataList, rowDataList,
-      htmlStyle="my_style",  # Test custom table style
+      htmlStyle="",         # No style!
       #htmlStyle=None,       # Uncomment to view this style
       htmlTableStyle="",    # Uncomment to view this style
       )
@@ -3276,8 +3655,7 @@ tr:nth-child(odd) {background-color: #fff;}
     # file write commands to view the formatted table in a browser to see if
     # this gets the data right and you like the default table style.
     htmlTable_expected = \
-r"""<style>my_style</style>
-<h3>My great data</h3>
+r"""<h3>My great data</h3>
 <table >
 
 <tr>
@@ -3434,7 +3812,7 @@ tr:nth-child(odd) {background-color: #fff;}
 # ToDo: Test with limitRowsToDisplay < len(rowDataList)
 
 # ToDo: Test with now rows and therefore now table printed
-      
+
 
 #############################################################################
 #
@@ -3443,6 +3821,537 @@ tr:nth-child(odd) {background-color: #fff;}
 #############################################################################
 
 # ToDo: Add unit tests for createCDashTestHtmlTableStr()!
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.binTestDictsByIssueTracker()
+#
+#############################################################################
+
+def tdwi(site, buildname, testname, issueTrackerNum):
+  testDict = {
+    u('site'): u(site),
+    u('buildName'): u(buildname),
+    u('testname'): u(testname),
+  }
+  if issueTrackerNum:
+    testDict.update(
+       {
+         u('issue_tracker'): u('#')+issueTrackerNum,
+         u('issue_tracker_url'): u('some.com/site/issue/')+issueTrackerNum,
+         }
+       )
+  return testDict
+
+
+class test_binTestDictsByIssueTracker(unittest.TestCase):
+
+  def test_empty(self):
+    testsLOD =[]
+    (tdbi, twoiLOD) = binTestDictsByIssueTracker(testsLOD)
+    tdbi_expected = {}
+    twoiLOD_expected = []
+    self.assertEqual(tdbi, tdbi_expected)
+    self.assertEqual(twoiLOD, twoiLOD_expected)
+
+  def test_issues_1_noissues_1(self):
+    testsLOD =[
+      tdwi('site1', 'build1', 'test1', '1234'),
+      tdwi('site2', 'build2', 'test2', '1234'),
+      tdwi('site3', 'build3', 'test3', ''),
+      ]
+    (tdbi, twoiLOD) = binTestDictsByIssueTracker(testsLOD)
+    # Check tdbi
+    self.assertEqual(len(tdbi.keys()), 1)
+    self.assertEqual(tdbi['#1234'][0],
+      tdwi('site1', 'build1', 'test1', '1234'))
+    self.assertEqual(tdbi['#1234'][1],
+      tdwi('site2', 'build2', 'test2', '1234'))
+    tdbi_expected = {
+      u('#1234') : [
+        tdwi('site1', 'build1', 'test1', '1234'),
+        tdwi('site2', 'build2', 'test2', '1234'),
+        ],
+      }
+    self.assertEqual(tdbi, tdbi_expected)
+    # Check twoiLOD
+    self.assertEqual(len(twoiLOD), 1)
+    twoiLOD_expected = [
+      tdwi('site3', 'build3', 'test3', ''),
+      ]
+    self.assertEqual(twoiLOD, twoiLOD_expected)
+
+  def test_issues_3_noissues_2(self):
+    testsLOD =[
+      tdwi('site1', 'build1', 'test1', '1234'),
+      tdwi('site1', 'build2', 'test1', ''),
+      tdwi('site2', 'build3', 'test2', '1234'),
+      tdwi('site3', 'build4', 'test3', '1236'),
+      tdwi('site3', 'build5', 'test3', ''),
+      tdwi('site4', 'build6', 'test1', '1235'),
+      ]
+    (tdbi, twoiLOD) = binTestDictsByIssueTracker(testsLOD)
+    tdbi_expected = {
+      '#1234' : [
+        tdwi('site1', 'build1', 'test1', '1234'),
+        tdwi('site2', 'build3', 'test2', '1234'),
+        ],
+      '#1235' : [
+        tdwi('site4', 'build6', 'test1', '1235'),
+        ],
+      '#1236' : [
+        tdwi('site3', 'build4', 'test3', '1236'),
+        ],
+      }
+    twoiLOD_expected = [
+      tdwi('site1', 'build2', 'test1', ''),
+      tdwi('site3', 'build5', 'test3', ''),
+      ]
+    self.assertEqual(tdbi, tdbi_expected)
+    self.assertEqual(twoiLOD, twoiLOD_expected)
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.binTestDictsByTestsetAcro()
+#
+#############################################################################
+
+def tdswi(testname, status, issueTrackerNum):
+  testDict = {
+    u('testname'): u(testname),
+    u('status'): u(status),
+  }
+  if issueTrackerNum:
+    testDict.update(
+       {
+         u('issue_tracker'): u('#')+issueTrackerNum,
+         u('issue_tracker_url'): u('some.com/site/issue/')+issueTrackerNum,
+         }
+       )
+  return testDict
+
+
+class test_binTestDictsByTestsetAcro(unittest.TestCase):
+
+  def test_empty(self):
+    testsLOD =[]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    tbtsa_expected = {}
+    self.assertEqual(tbtsa, tbtsa_expected)
+
+  def test_twoif(self):
+    testsLOD =[
+      tdswi('test1', 'Failed', '')
+      ]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    self.assertEqual(len(tbtsa.keys()), 1)
+    self.assertEqual(tbtsa['twoif'],
+      [
+        tdswi('test1', 'Failed', ""),
+        ],
+       )
+
+  def test_twoif_twip(self):
+    testsLOD =[
+      tdswi('test1', 'Failed', ''),
+      tdswi('test2', 'Passed', '1234'),
+      tdswi('test3', 'Failed', ''),
+      ]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    self.assertEqual(len(tbtsa.keys()), 2)
+    self.assertEqual(tbtsa['twoif'],
+      [
+        tdswi('test1', 'Failed', ""),
+        tdswi('test3', 'Failed', ''),
+        ],
+       )
+    self.assertEqual(tbtsa['twip'],
+      [
+        tdswi('test2', 'Passed', '1234'),
+        ],
+       )
+
+  def test_all(self):
+    testsLOD =[
+      tdswi('test1', 'Failed', '1234'),
+      tdswi('test2', 'Failed', ''),
+      tdswi('test3', 'Passed', '1235'),
+      tdswi('test4', 'Failed', '1234'),
+      tdswi('test5', 'Not Run', ''),
+      tdswi('test6', 'Missing', '1235'),
+      tdswi('test7', 'Not Run', '1236'),
+      ]
+    tbtsa = binTestDictsByTestsetAcro(testsLOD)
+    self.assertEqual(len(tbtsa.keys()), 6)
+    self.assertEqual(tbtsa['twoif'],
+      [
+        tdswi('test2', 'Failed', ''),
+        ],
+       )
+    self.assertEqual(tbtsa['twoinr'],
+      [
+        tdswi('test5', 'Not Run', ''),
+        ],
+       )
+    self.assertEqual(tbtsa['twip'],
+      [
+        tdswi('test3', 'Passed', '1235'),
+        ],
+       )
+    self.assertEqual(tbtsa['twim'],
+      [
+        tdswi('test6', 'Missing', '1235'),
+        ],
+       )
+    self.assertEqual(tbtsa['twif'],
+      [
+        tdswi('test1', 'Failed', '1234'),
+        tdswi('test4', 'Failed', '1234'),
+        ],
+       )
+    self.assertEqual(tbtsa['twinr'],
+      [
+        tdswi('test7', 'Not Run', '1236'),
+        ],
+       )
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.getIssueTrackerFieldsAndAssertAllSame()
+#
+#############################################################################
+
+
+def tdit(testname, issue_tracker_id, skipUrlField=False):
+  td = { u('testname'):u(testname) }
+  if issue_tracker_id:
+    td.update( { u('issue_tracker') : u('#')+issue_tracker_id } )
+    if not skipUrlField:
+      td.update( {
+        u('issue_tracker_url') :
+          u('https://github.com/org/repo/issues/')+issue_tracker_id } )
+  return td
+
+
+class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
+
+
+  def test_empty(self):
+    testsLOD = []
+    issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+    self.assertEqual(issueTracker, None)
+
+
+  def test_all_matching(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234'),
+      tdit('test3', '1234'),
+      ]
+    issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+    self.assertEqual(issueTracker,
+      (u('#1234'), u('https://github.com/org/repo/issues/1234')) )
+
+
+  def test_missing_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', None),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError as errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {"+stru()+"'testname': "+stru()+"'test2'} at index 1"+\
+        " is missing the 'issue_tracker' field!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_missing_issue_tracker_url_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234', skipUrlField=True),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError as errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict"+\
+        " {"+stru()+"'issue_tracker': "+stru()+"'#1234', "+stru()+"'testname': "+stru()+"'test2'} at index 1"+\
+        " is missing the 'issue_tracker_url' field!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_inconsistent_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1235'),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError as errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {"+stru()+"'issue_tracker': "+stru()+"'#1235', "+stru()+"'issue_tracker_url':"+\
+        " "+stru()+"'https://github.com/org/repo/issues/1235', "+stru()+"'testname': "+stru()+"'test2'} at"+\
+        " index 1 has a different 'issue_tracker' field '#1235' than the expected"+\
+        " value of '#1234'!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_inconsistent_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234'),
+      tdit('test3', '1234'),
+      ]
+    testsLOD[2]['issue_tracker_url'] = u('https://github.com/org/repo/issues/1236')
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerFieldsAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError as errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {"+stru()+"'issue_tracker': "+stru()+"'#1234', "+stru()+"'issue_tracker_url':"+\
+        " "+stru()+"'https://github.com/org/repo/issues/1236', "+stru()+"'testname': "+stru()+"'test3'} at"+\
+        " index 2 has a different 'issue_tracker_url' field"+\
+        " 'https://github.com/org/repo/issues/1236' than the expected value of"+\
+        " 'https://github.com/org/repo/issues/1234'!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  #def test_inconsistent_issue_tracker_url_field(self):
+
+
+#############################################################################
+#
+# Test CDashQueryAnalyzeReport.IssueTrackerTestsStatusReporter
+#
+#############################################################################
+
+
+cdash_analyze_and_report_dir = g_testBaseDir+'/cdash_analyze_and_report'
+
+
+g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out = \
+  eval(
+    open(cdash_analyze_and_report_dir+'/twoif_10_twoinr2_twif_8_twinr_1/test_data.json',
+    'r').read())
+
+
+def makeTestPassing(testDict):
+  testDict['status'] = u('Passed')
+  testDict['status_color'] = cdashColorPassed()
+  testDict['details'] = u('Completed (Passed)\n')
+
+
+def makeTestMissing(testDict):
+  setTestDictAsMissing(testDict)
+
+
+def setIssueTrackerFields(testsLOD, issue_tracker, issue_tracker_url):
+  for testDict in testsLOD:
+    testDict['issue_tracker'] = issue_tracker
+    testDict['issue_tracker_url'] = issue_tracker_url
+
+
+class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
+
+
+  def test_empty(self):
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    testsLOD = []
+    okayToCloseIssue = \
+      issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+    self.assertEqual(okayToCloseIssue, True)
+    reportHtml = issueTrackerTestsStatusReporter.getIssueTrackerTestsStatusReport()
+    self.assertEqual(reportHtml, None)
+
+
+  def test_non_matching_issue_tracker_field(self):
+    allTestsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    threwExcept = True
+    try:
+      testsLOD = allTestsLOD
+      okayToCloseIssue = \
+        issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError as errMsg:
+      assertFindListOfStringsInString(self,
+        [
+          "Error, the test dict {",
+          u("'buildName': "+stru()+"'Trilinos-atdm-cee-rhel6-clang-opt-serial'"),
+          u("'testname': "+stru()+"'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2'"),
+          "} at index 1 has a different 'issue_tracker' field '#3632'"+\
+            " than the expected value of '#3640'!",
+          ],
+        str(errMsg),
+        "errMsg",
+        debugPrint=False,
+        )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_twif_8_twinr_1(self):
+    testsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    setIssueTrackerFields(testsLOD, u('#1234'),
+      u('https://github.com/trilinos/Trilinos/issues/1234') )
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    okayToCloseIssue = \
+      issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+    self.assertEqual(okayToCloseIssue, False)
+    summaryLineDataNumbersList_expected = \
+      ['twif=8', 'twinr=1']
+    self.assertEqual(
+      issueTrackerTestsStatusReporter.cdashReportData.summaryLineDataNumbersList,
+      summaryLineDataNumbersList_expected)
+    issueTrckerTestsStatusReportHtml = \
+      issueTrackerTestsStatusReporter.getIssueTrackerTestsStatusReport()
+    # TODO: REMOVE THIS FILE WRITE!!!
+    #with open("issueTrckerTestsStatusReport.html", 'w') as testsHtmlReportFile:
+    #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
+    assertListOfRegexsFoundInListOfStrs(self,
+      regexList=[
+        '<h2>Test results for issue #1234 as of 2018-10-28</h2>',
+        '<details>',
+        '<summary><b>Detailed test results:</b> [(]click to expand[)]</b></summary>',
+        "<h3><font color=.red.>Tests with issue trackers Failed: twif=8</font></h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\"><font color=\"red\">Failed</font></a></td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/1234\">#1234</a></td>",
+        "<h3><font color=\"orange\">Tests with issue trackers Not Run: twinr=1</font></h3>",
+        "<td align=\"left\">cee-rhel6</td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816373&build=4107331\">Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>",
+        "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816373&build=4107331\"><font color=\"orange\">Not Run</font></a></td>",
+        "<td align=\"left\">Required Files Missing</td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/1234\">#1234</a></td>",
+        '</details>',
+        ],
+      stringsList=issueTrckerTestsStatusReportHtml.split('\n'),
+      stringsListName="issueTrckerTestsStatusReportHtml",
+      debugPrint=False
+      )
+
+
+  def test_twip_1_twif_5_twim_2_twinr_1(self):
+    testsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    setIssueTrackerFields(testsLOD, u('#1234'),
+      u('https://github.com/trilinos/Trilinos/issues/1234') )
+    # Change a test from failing to passing
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    makeTestPassing(testsLOD[testIdx])
+    # Change a from from faling to missing
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
+    makeTestMissing(testsLOD[testIdx])
+    # Change another a test from failing to missing
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
+      'cee-rhel6', 'Trilinos-atdm-cee-rhel6-intel-opt-serial',
+      'PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3')
+    makeTestMissing(testsLOD[testIdx])
+    # Run the reporter
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
+    okayToCloseIssue = \
+      issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+    self.assertEqual(okayToCloseIssue, False)
+    # Check the basic collected
+    summaryLineDataNumbersList_expected = \
+      ['twip=1', 'twim=2', 'twif=5', 'twinr=1']
+    self.assertEqual(
+      issueTrackerTestsStatusReporter.cdashReportData.summaryLineDataNumbersList,
+      summaryLineDataNumbersList_expected)
+    htmlEmailBodyTop_expected = \
+      '<font color="green">Tests with issue trackers Passed: twip=1</font><br>\n'+\
+      '<font color="gray">Tests with issue trackers Missing: twim=2</font><br>\n'+\
+      '<font color="red">Tests with issue trackers Failed: twif=5</font><br>\n'+\
+      '<font color="orange">Tests with issue trackers Not Run: twinr=1</font><br>\n'
+    self.assertEqual(
+      issueTrackerTestsStatusReporter.cdashReportData.htmlEmailBodyTop,
+      htmlEmailBodyTop_expected)
+    assertListOfRegexsFoundInListOfStrs(self,
+      regexList=[
+        '<h3><font color="green">Tests with issue trackers Passed: twip=1</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>',
+        '<td align="left"><a href=".*">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>',
+        '<td align="left"><a href=".*"><font color="green">Passed</font></a></td>',
+        '<td align="left">Completed [(]Passed[)]</td>',
+
+        '<h3><font color="gray">Tests with issue trackers Missing: twim=2</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-intel-opt-serial</a></td>',
+        '<td align="left"><a href=".*">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>',
+        '<td align="left"><a href=".*"><font color="gray">Missing</font></a></td>',
+        '<td align="left">Missing</td>',
+
+        '<h3><font color="red">Tests with issue trackers Failed: twif=5</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>',
+        '<td align="left"><a href=".*">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>',
+        '<td align="left"><a href=".*"><font color="red">Failed</font></a></td>',
+        '<td align="left">Completed [(]Failed[)]</td>',
+
+        '<h3><font color="orange">Tests with issue trackers Not Run: twinr=1</font></h3>',
+        '<td align="left"><a href=".*">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>',
+        '<td align="left"><a href=".*">Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>',
+        '<td align="left"><a href=".*"><font color="orange">Not Run</font></a></td>',
+        '<td align="left">Required Files Missing</td>',
+        ],
+      stringsList=issueTrackerTestsStatusReporter.testsetsReporter.\
+        cdashReportData.htmlEmailBodyBottom.split('\n'),
+      stringsListName="cdashReportData.htmlEmailBodyBottom",
+      debugPrint=False
+      )
+    # Get the summary report
+    issueTrckerTestsStatusReportHtml = \
+      issueTrackerTestsStatusReporter.getIssueTrackerTestsStatusReport()
+    # TODO: REMOVE THIS FILE WRITE!!!
+    #with open("issueTrckerTestsStatusReport.html", 'w') as testsHtmlReportFile:
+    #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
+    assertListOfRegexsFoundInListOfStrs(self,
+      regexList=[
+        '<h2>Test results for issue #1234 as of 2018-10-28</h2>',
+        '<font color="green">Tests with issue trackers Passed: twip=1</font><br>',
+        '<font color="gray">Tests with issue trackers Missing: twim=2</font><br>',
+        '<font color="red">Tests with issue trackers Failed: twif=5</font><br>',
+        '<font color="orange">Tests with issue trackers Not Run: twinr=1</font><br>',
+        '<details>',
+        '<summary><b>Detailed test results:</b> [(]click to expand[)]</b></summary>',
+        '<h3><font color="green">Tests with issue trackers Passed: twip=1</font></h3>',
+        '<h3><font color="gray">Tests with issue trackers Missing: twim=2</font></h3>',
+        '<h3><font color="red">Tests with issue trackers Failed: twif=5</font></h3>',
+        '<h3><font color="orange">Tests with issue trackers Not Run: twinr=1</font></h3>',
+        '</details>',
+        ],
+      stringsList=issueTrckerTestsStatusReportHtml.split('\n'),
+      stringsListName="issueTrckerTestsStatusReportHtml",
+      debugPrint=False
+      )
+
+  # NOTE: The above tests for the class
+  # CDashQueryAnalyzeReport.IssueTrackerTestsStatusReporter also tests the
+  # classes CDashQueryAnalyzeReport.SingleTestsetReporter and
+  # CDashQueryAnalyzeReport.TestsetsReporter.  I just did not want to
+  # duplicate all of those large and complex tests for little added value.
+
 
 
 #

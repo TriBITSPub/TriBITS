@@ -38,9 +38,26 @@
 # @HEADER
 
 
-#
+########################################################################
+# Helper functions and macros
+########################################################################
+
+
+FUNCTION(GET_REGEX_CORRECT_STRING  INPUT_STR  OUTPUT_STR_VAR_OUT)
+  SET(OUTPUT_STR "${INPUT_STR}")
+  STRING(REPLACE "+" "[+]" OUTPUT_STR "${OUTPUT_STR}")
+  STRING(REPLACE "." "[.]" OUTPUT_STR "${OUTPUT_STR}")
+  SET(${OUTPUT_STR_VAR_OUT} "${OUTPUT_STR}" PARENT_SCOPE)
+ENDFUNCTION()
+
+
+MACRO(GET_REGEX_CORRECT_CMAKE_LANG_COMPILER  LANG)
+  GET_REGEX_CORRECT_STRING("${CMAKE_${LANG}_COMPILER}" CMAKE_${LANG}_COMPILER_FOR_REGEX)
+ENDMACRO()
+
+########################################################################
 # Common arguments for all inner CMake and TriBITS projects
-#
+########################################################################
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/GetCompilerPassthroughArgs.cmake)
 
@@ -49,6 +66,10 @@ IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
 ELSE()
   SET(IS_REAL_LINUX_SYSTEM OFF)
 ENDIF()
+
+GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(CXX)
+GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(C)
+GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(Fortran)
 
 
 ########################################################################
@@ -190,7 +211,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_InSourceBuildErrors
       "exists from a likely prior attempt to do an in-source build"
       ""
     ALWAYS_FAIL_ON_ZERO_RETURN
-  
+
   )
 
 
@@ -482,17 +503,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_Shared_NoVersion
   )
 
 
-IF (NOT CMAKE_VERSION VERSION_LESS 3.11.0)
-  SET(CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS TRUE)
-ELSE()
-  SET(CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS FALSE)
-ENDIF()
-
-
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
 
   TEST_0
     MESSAGE "Do initial configure with just libs not tests with default install settings"
@@ -506,11 +519,20 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_1
+    MESSAGE "Verify that set_installed_group_and_permissions.cmake is *not* in build dir"
+    CMND ls ARGS set_installed_group_and_permissions.cmake
+    PASS_REGULAR_EXPRESSION
+      "No such file or directory"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  # NOTE: We don't want running any extra code if we are just using the stock
+  # built-in CMake permissions scheme.  (See trilinos/Trilinos#7881)
+
+  TEST_2
     MESSAGE "Do make to build everything"
     CMND make ARGS ${CTEST_BUILD_FLAGS}
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_2
+  TEST_3
     MESSAGE "Make install with default directory settings"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
     PASS_REGULAR_EXPRESSION_ALL
@@ -519,7 +541,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/bin/hello_world.exe"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_3
+  TEST_4
     MESSAGE "Check some default install directory permissions"
     CMND ls ARGS -ld
       install install/include install/lib install/bin
@@ -534,7 +556,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     # the owner should have read/write/execute on the directories or it could
     # not possibily install anything.
 
-  TEST_4
+  TEST_5
     MESSAGE "Check some default install file permissions"
     CMND ls ARGS -l
       install install/include install/lib install/bin
@@ -546,7 +568,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
     # NOTE: The above permissions are the default install permissions of CMake
     # for files that it installs.
 
-  TEST_5
+  TEST_6
     MESSAGE "Reconfigure with <Project>_MAKE_INSTALL_WORLD_READABLE=ON"
     CMND ${CMAKE_COMMAND}
     ARGS
@@ -560,17 +582,27 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "-- CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS = [(]OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_6
+  TEST_7
+    MESSAGE "Verify that set_installed_group_and_permissions.cmake *is* in build dir"
+    CMND ls ARGS set_installed_group_and_permissions.cmake
+    PASS_REGULAR_EXPRESSION
+      "set_installed_group_and_permissions.cmake"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_8
     MESSAGE "Remove the install directory"
     CMND rm ARGS -r install
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_7
+  TEST_9
     MESSAGE "Re-install"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/bin/hello_world.exe"
+      "0: Running: chmod -R o[+]rX /.*/TriBITS_TribitsHelloWorld_install_perms/install"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_8
+  TEST_10
     MESSAGE "Check updated permissions for <Project>_MAKE_INSTALL_WORLD_READABLE=ON"
     CMND ls ARGS -ld
       install install/include install/lib install/bin
@@ -581,7 +613,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "drwxr-xr-x.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_9
+  TEST_11
     MESSAGE "Reconfigure with <Project>_MAKE_INSTALL_GROUP_READABLE=ON and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
     CMND ${CMAKE_COMMAND}
     ARGS
@@ -596,17 +628,17 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "-- CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS = [(]OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_10
+  TEST_12
     MESSAGE "Remove the install directory"
     CMND rm ARGS -r install
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_11
+  TEST_13
     MESSAGE "Re-install"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_12
+  TEST_14
     MESSAGE "Check updated permissions for <Project>_MAKE_INSTALL_GROUP_READABLE=ON and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
     CMND ls ARGS -ld
       install install/include install/lib install/bin
@@ -617,7 +649,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "drwxr-x---.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_13
+  TEST_15
     MESSAGE "Reconfigure with <Project>_MAKE_INSTALL_GROUP_READABLE=OFF and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
     CMND ${CMAKE_COMMAND}
     ARGS
@@ -632,17 +664,17 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
       "-- CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS = [(]OWNER_READ OWNER_WRITE OWNER_EXECUTE[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_14
+  TEST_16
     MESSAGE "Remove the install directory"
     CMND rm ARGS -r install
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_15
+  TEST_17
     MESSAGE "Re-install"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_16
+  TEST_18
     MESSAGE "Check updated permissions for <Project>_MAKE_INSTALL_GROUP_READABLE=OFF and <Project>_MAKE_INSTALL_WORLD_READABLE=OFF"
     CMND ls ARGS -ld
       install install/include install/lib install/bin
@@ -660,7 +692,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
 
   TEST_0
     MESSAGE "Do initial configure with just libs"
@@ -707,7 +738,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_runner
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
 
   TEST_0
     MESSAGE "Do initial configure with an install_package_by_package runner"
@@ -753,6 +783,35 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_run
   # install runner for that target set with <Project>_INSTALL_PBP_RUNNER.
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms_windows_error
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Cconfigure with <Project>_MAKE_INSTALL_WORLD_READABLE=ON and Windows"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_MAKE_INSTALL_GROUP_WRITABLE=on
+      -DTribitsHelloWorld_MAKE_INSTALL_GROUP_READABLE=true
+      -DTribitsHelloWorld_MAKE_INSTALL_WORLD_READABLE=TRUE
+      -DTribitsHelloWorld_MAKE_INSTALL_GROUP=dummy-group
+      -DTribitsHelloWorld_HOSTTYPE=Windows
+      -DCMAKE_INSTALL_PREFIX=install
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "ERROR: The options"
+      "    TribitsHelloWorld_MAKE_INSTALL_GROUP_WRITABLE='on'"
+      "    TribitsHelloWorld_MAKE_INSTALL_GROUP_READABLE='true'"
+      "    TribitsHelloWorld_MAKE_INSTALL_WORLD_READABLE='TRUE'"
+      "    TribitsHelloWorld_MAKE_INSTALL_GROUP='dummy-group'"
+      "are not supported on Windows!"
+      "Please remove these options and configure from scratch!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  )
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -780,7 +839,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
 
   TEST_2
     MESSAGE "Create and configure a dummy project that includes"
-      " TribitsHelloWorkdConfig.cmake from the install tree" 
+      " TribitsHelloWorkdConfig.cmake from the install tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -799,14 +858,20 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
       "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsHelloWorld/TribitsHelloWorldConfig.cmake'"
       "EXPORT_VAR_PREFIX = 'TribitsHelloWorld'"
       "TribitsHelloWorld_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "TribitsHelloWorld_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+      "TribitsHelloWorld_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+      "TribitsHelloWorld_Fortran_COMPILER = ''"
+      "TribitsHelloWorld_FORTRAN_COMPILER = ''"
       "TribitsHelloWorld_CXX_FLAGS = ''"
       "TribitsHelloWorld_C_FLAGS = ''"
+      "TribitsHelloWorld_Fortran_FLAGS = ''"
       "TribitsHelloWorld_FORTRAN_FLAGS = ''"
       "TribitsHelloWorld_EXTRA_LD_FLAGS = ''"
       "TribitsHelloWorld_SHARED_LIB_RPATH_COMMAND = ''"
       "TribitsHelloWorld_BUILD_SHARED_LIBS = 'FALSE'"
       "TribitsHelloWorld_LINKER = '.*'"
       "TribitsHelloWorld_AR = '.*'"
+      "TribitsHelloWorld_INSTALL_DIR = '.*/TriBITS_TribitsHelloWorld_install_config_dummy_proj/install'"
       "TribitsHelloWorld_INCLUDE_DIRS = '.*/TriBITS_TribitsHelloWorld_install_config_dummy_proj/install/include'"
       "TribitsHelloWorld_LIBRARY_DIRS = '.*/TriBITS_TribitsHelloWorld_install_config_dummy_proj/install/lib'"
       "TribitsHelloWorld_LIBRARIES = 'hello_world_lib'"
@@ -835,6 +900,216 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
   # * The <Project>Config.cmake file works if there are no TPLs enabled
   #   (defect trilinos/trilinos#5213)
   #
+
+
+# NOTE: In the below tests, we are only testing TriBITS support for generating
+# the ctest_resources.json file, setting the RESOURCES_GROUP and ENVIRONMENT
+# test properties, and testing CMake support for recognizing the
+# RESOURCES_GROUP test property and putting it in the CTestTestfile.cmake
+# file.  We are not actually running ctest or looking for the var
+# CTEST_RESOURCE_SPEC_FILE set in the CTestTestfile.cmake file.  (Support for
+# CTEST_RESOURCE_SPEC_FILE was not added proper until 3.18 so we can't rely on
+# it in these tests that work with CMake 3.17.)
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Configure and generate the ctest_resources.json file"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTribitsHelloWorld_AUTOGENERATE_TEST_RESOURCE_FILE=ON
+      -DTribitsHelloWorld_CUDA_NUM_GPUS=2
+      -DTribitsHelloWorld_CUDA_SLOTS_PER_GPU=3
+      -DTPL_ENABLE_CUDA=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Determine that ctest_resources.json was generated correctly"
+    CMND diff
+    ARGS ctest_resources.json
+      "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/ctest_resources.autogen_2_3_.json"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check that the CTestTestfile.cmake file has the right entries"
+    CMND cat
+    ARGS hello_world/CTestTestfile.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
+      "PROCESSORS .1."
+      "RESOURCE_GROUPS .1,gpus:1."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: The above test ensures that the ctest_resources.json file gets
+  # auto-generated correctly and ensures that the RESOURCE_GROUPS test
+  # property gets set correctly in a CUDA build of a project.  (What is
+  # interesting about the above case is that bare bones TriBITS does not
+  # really do anything special when setting TPL_ENABLE_CUDA=ON.  All of the
+  # special logic for CUDA is handled in Kokkos and Trilinos with the usage of
+  # nvcc_wrapper.)
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_no_ctest_resources_file
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Configure without any ctest resources file, just enable CUDA"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTPL_ENABLE_CUDA=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Check that the CTestTestfile.cmake file has the right entries"
+    CMND cat
+    ARGS hello_world/CTestTestfile.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
+      "PROCESSORS .1."
+      "RESOURCE_GROUPS .1,gpus:1."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: The above test ensures that the RESOURCE_GROUPS test property gets
+  # set correctly in a CUDA build of a project, regardless if a ctest
+  # resources file gets set or not.  (The user can always explicitly pass in a
+  # ctest resources file later directly to ctest.)
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_autogen_on
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy in pre-created ctest resource file to make sure it is not overwritten"
+    CMND cp
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json" .
+
+  TEST_1
+    MESSAGE "Configure pointing to non-default ctest resource file with autogenerate turned on "
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTribitsHelloWorld_AUTOGENERATE_TEST_RESOURCE_FILE=ON
+      -DTribitsHelloWorld_CUDA_NUM_GPUS=2        # Will not get used!
+      -DTribitsHelloWorld_CUDA_SLOTS_PER_GPU=3   # Will not get used!
+      -DTPL_ENABLE_CUDA=ON
+      -DCTEST_RESOURCE_SPEC_FILE=other_ctest_resources.json
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "NOTE: The test resource file CTEST_RESOURCE_SPEC_FILE='.*/TriBITS_TribitsHelloWorld_set_other_ctest_resources_file_autogen_on/other_ctest_resources[.]json' will not be auto-generated even through TribitsHelloWorld_AUTOGENERATE_TEST_RESOURCE_FILE=ON because its location does not match the default location '.*/TriBITS_TribitsHelloWorld_set_other_ctest_resources_file_autogen_on/ctest_resources[.]json'[.]  If you want to auto-generate this file, please clear CTEST_RESOURCE_SPEC_FILE and reconfigure or create that file on your own and clear TribitsHelloWorld_AUTOGENERATE_TEST_RESOURCE_FILE[.]"
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check that the pre-existing other_ctest_resources.json file was not overwritten"
+    CMND diff
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json"
+      other_ctest_resources.json
+
+  TEST_3
+    MESSAGE "Check that default ctest_resources.json file is not generated"
+    CMND ls
+    ARGS ctest_resources.json
+    WILL_FAIL
+
+  )
+  # NOTE: The above test ensures that when CTEST_RESOURCE_SPEC_FILE is set to
+  # the non-default location then the autogenerate feature will not overwrite
+  # the file and will not generate the default ctest_resources.json file.
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_autogen_on
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy in pre-created ctest resource file into the default autogen name and location"
+    CMND cp
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json"
+      ctest_resources.json
+
+  TEST_1
+    MESSAGE "Configure pointing to default ctest resource file with autogenerate turned on"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTribitsHelloWorld_AUTOGENERATE_TEST_RESOURCE_FILE=ON
+      -DTribitsHelloWorld_CUDA_NUM_GPUS=2
+      -DTribitsHelloWorld_CUDA_SLOTS_PER_GPU=3
+      -DTPL_ENABLE_CUDA=ON
+      -DCTEST_RESOURCE_SPEC_FILE=ctest_resources.json
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check that the pre-existing ctest_resources.json file **was** overwritten"
+    CMND diff
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/ctest_resources.autogen_2_3_.json"
+      ctest_resources.json
+
+  )
+  # NOTE: The above test shows that if the user happens to provide a ctest
+  # resources file of the same name and the same location as the default
+  # generated file, then TriBITS will actually overwrite it if the
+  # autogenerate option is enabled!
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_autogen_off
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy in pre-created ctest resource file into the default autogen name and location"
+    CMND cp
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json"
+      ctest_resources.json
+
+  TEST_1
+    MESSAGE "Configure pointing to default ctest resource file with autogenerate turned off"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTribitsHelloWorld_CUDA_NUM_GPUS=2
+      -DTribitsHelloWorld_CUDA_SLOTS_PER_GPU=3
+      -DTPL_ENABLE_CUDA=ON
+      -DCTEST_RESOURCE_SPEC_FILE=ctest_resources.json
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check that the pre-existing ctest_resources.json file was **not** overwritten"
+    CMND diff
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json"
+      ctest_resources.json
+
+  )
+  # NOTE: The above test shows that if the user happens to provide a ctest
+  # resources file of the same name and the same location as the default
+  # generated file, then TriBITS will not overwrite that file if the
+  # autgenerate option is disabled.
 
 
 ########################################################################
@@ -950,16 +1225,10 @@ ELSE()
 ENDIF()
 
 
-IF (TribitsExProj_CTEST_USE_NEW_AAO_FEATURES)
-  SET(LabelsForSubprojects_CMND_AND_ARGS
-    grep ARGS "^LabelsForSubprojects:" DartConfiguration.tcl)
-  SET(LabelsForSubprojects_REGEX
-    "LabelsForSubprojects: SimpleCxx[;]MixedLang[;]WithSubpackages[;]WrapExternal")
-ELSE()
-  SET(LabelsForSubprojects_CMND_AND_ARGS
-    echo ARGS "No grep, we don't need to look for anything")
-  SET(LabelsForSubprojects_REGEX "No grep, we don't need to look for anything")
-ENDIF()
+SET(LabelsForSubprojects_CMND_AND_ARGS
+  grep ARGS "^LabelsForSubprojects:" DartConfiguration.tcl)
+SET(LabelsForSubprojects_REGEX
+  "LabelsForSubprojects: SimpleCxx[;]MixedLang[;]WithSubpackages[;]WrapExternal")
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
@@ -983,7 +1252,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
       -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
-      -DTribitsExProj_CTEST_USE_NEW_AAO_FEATURES=${TribitsExProj_CTEST_USE_NEW_AAO_FEATURES}
       -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
       -DCMAKE_INSTALL_PREFIX=install
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
@@ -1024,7 +1292,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Enabling all SE packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
       "Setting TribitsExProj_ENABLE_SimpleCxx=ON"
       "Setting TribitsExProj_ENABLE_WithSubpackages=ON"
-      "Setting TPL_ENABLE_HeaderOnlyTpl=ON because it is required by the enabled package SimpleCxx" 
+      "Setting TPL_ENABLE_HeaderOnlyTpl=ON because it is required by the enabled package SimpleCxx"
       "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
       "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 5"
       "Final set of enabled TPLs:  ${FINAL_ENABLED_TPLS}"
@@ -1095,7 +1363,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
 
   TEST_4
     MESSAGE "Create and configure a dummy project that includes"
-      " WithSubpackagesConfig.cmake from the build tree" 
+      " WithSubpackagesConfig.cmake from the build tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -1106,14 +1374,19 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+      "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+      "WithSubpackages_Fortran_COMPILER = ''"
+      "WithSubpackages_FORTRAN_COMPILER = ''"
       "WithSubpackages_CXX_FLAGS = '.*'"
       "WithSubpackages_C_FLAGS = '.*'"
-      "WithSubpackages_FORTRAN_FLAGS = '.*'"
+      "WithSubpackages_Fortran_FLAGS = '.*'"
       "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
       "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
       "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
       "WithSubpackages_LINKER = '.+'"
       "WithSubpackages_AR = '.+'"
+      "WithSubpackages_INSTALL_DIR = .*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/install"
       "WithSubpackages_INCLUDE_DIRS = .+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/b/src;.+/TribitsExampleProject/packages/with_subpackages/b/src;.+/TribitsExampleProject/packages/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/simple_cxx/src;.+/TribitsExampleProject/packages/simple_cxx/src;.+/tpls/HeaderOnlyTpl;.+/TribitsExampleProject/packages/with_subpackages/c"
       "WithSubpackages_LIBRARY_DIRS = '.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/simple_cxx/src;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/c'"
       "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
@@ -1182,14 +1455,19 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+      "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+      "WithSubpackages_Fortran_COMPILER = ''"
+      "WithSubpackages_FORTRAN_COMPILER = ''"
       "WithSubpackages_CXX_FLAGS = '.*'"
       "WithSubpackages_C_FLAGS = '.*'"
-      "WithSubpackages_FORTRAN_FLAGS = '.*'"
+      "WithSubpackages_Fortran_FLAGS = '.*'"
       "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
       "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
       "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
       "WithSubpackages_LINKER = '.+'"
       "WithSubpackages_AR = '.+'"
+      "WithSubpackages_INSTALL_DIR = '.+/install'"
       "WithSubpackages_INCLUDE_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../include'"
       "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
       "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
@@ -1208,7 +1486,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
 
   TEST_7
     MESSAGE "Create and configure a dummy project that includes"
-      " TribitsExProjConfig.cmake from the install tree" 
+      " TribitsExProjConfig.cmake from the install tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -1231,14 +1509,19 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "EXPORT_VAR_PREFIX = 'TribitsExProj'"
       "Including file '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/dummy_client_of_TribitsExProj/../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
       "TribitsExProj_CMAKE_BUILD_TYPE = 'RELEASE'"
+      "TribitsExProj_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+      "TribitsExProj_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+      "TribitsExProj_Fortran_COMPILER = ''"
+      "TribitsExProj_FORTRAN_COMPILER = ''"
       "TribitsExProj_CXX_FLAGS = ''"
       "TribitsExProj_C_FLAGS = ''"
-      "TribitsExProj_FORTRAN_FLAGS = ''"
+      "TribitsExProj_Fortran_FLAGS = ''"
       "TribitsExProj_EXTRA_LD_FLAGS = ''"
       "TribitsExProj_SHARED_LIB_RPATH_COMMAND = ''"
       "TribitsExProj_BUILD_SHARED_LIBS = 'FALSE'"
       "TribitsExProj_LINKER = '.*'"
       "TribitsExProj_AR = '.*'"
+      "TribitsExProj_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/install'"
       "TribitsExProj_INCLUDE_DIRS = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/install/include'"
       "TribitsExProj_LIBRARY_DIRS = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/install/lib'"
       "TribitsExProj_LIBRARIES = 'pws_c[;]pws_b[;]pws_a[;]simplecxx'"
@@ -1298,6 +1581,413 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
       "Only in .*/TribitsExampleProject/packages/with_subpackages/b: ExcludeFromRelease.txt"
       "Only in .*/TribitsExampleProject/packages/with_subpackages/b/src: AlsoExcludeFromTarball.txt"
     # NOTE: We don't check return code because diff returns nonzero
+
+  )
+
+
+IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+
+  EXECUTE_PROCESS(COMMAND whoami
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE  TribitsExProj_INSTALL_OWNING_USER)
+
+  IF ("${TribitsExProj_INSTALL_OWNING_GROUP}" STREQUAL "")
+    EXECUTE_PROCESS(COMMAND id -gn
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      OUTPUT_VARIABLE  TribitsExProj_INSTALL_OWNING_GROUP)
+  ENDIF()
+
+ENDIF()
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Windows
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so we can change the source permissions"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Make TribitsExampleProject source dir user rwX only!"
+    CMND chmod
+    ARGS -R g-rwx,o-rwx TribitsExampleProject
+
+  TEST_2
+    MESSAGE "Do initial configure with just libs not tests with default install settings"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_WithSubpackages=ON
+      -DCMAKE_INSTALL_PREFIX=install_base/install
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=install_base
+      -DTribitsExProj_MAKE_INSTALL_WORLD_READABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP_WRITABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP=${TribitsExProj_INSTALL_OWNING_GROUP}
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Do make to build everything"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_4
+    MESSAGE "Make install with fixup of permissions"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      ".*/install_base/install/include/wsp_c/C.hpp"
+      ".*/install_base/install/lib/libpws_c.a"
+      "0: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_perms/install_base"
+      "0: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_perms/install_base"
+      "1: Running: chgrp -R ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_perms/install_base/install"
+      "1: Running: chmod -R g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_perms/install_base/install"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_5
+    MESSAGE "Check some installed directory permissions and the owning group"
+    CMND ls ARGS -ld
+      install_base
+      install_base/install
+      install_base/install/bin
+      install_base/install/include
+      install_base/install/lib
+      install_base/install/share/WithSubpackagesB/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/bin"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/include"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/lib"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesB/stuff"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_6
+    MESSAGE "Check some installed file permissions"
+    CMND ls ARGS -l
+      install_base/install
+      install_base/install/include
+      install_base/install/include/wsp_c
+      install_base/install/lib
+      install_base/install/bin
+      install_base/install/share/WithSubpackagesB/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "[d]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* wsp_c"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* C.hpp"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesC"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_c.a"
+      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+    # NOTE: Above, the file Makefile.export.WithSubpackagesC seems to be the
+    # last file installed and therefore if it has the right permissions, then
+    # this final script set_installed_group_and_permissions.cmake must be
+    # getting called at the very end.
+
+  TEST_7
+    MESSAGE "Make sure that exec_script.sh is exectuable"
+    CMND ./install_base/install/share/WithSubpackagesB/stuff/exec_script.sh
+    PASS_REGULAR_EXPRESSION
+      "exec_script.sh executed and returned this string"
+
+  )
+  # NOTE: The above test checks a few important things:
+  #
+  # * The CMake install machinery will actually create multiple base dirs
+  #   under ${CMAKE_INSTALL_PREFIX} in case they don't already exist.
+  #
+  # * The group ownership actaully will be set correctly starting with
+  #   ${<Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR} which is
+  #   above ${CMAKE_INSTALL_PREFIX}.  This is needed to address systems where
+  #   the group sticky bit is disabled (like we see on some SNL systems, see
+  #   ATDV-241).
+  #
+  # * Even with the source directory permissions being 'rwx------' (i.e. 700),
+  #   the files isntalled under share/WithSubpackagesB/stuff using
+  #   install(DIRECTORY ... USE_SOURCE_PERMISSIONS) will actually have the
+  #   correct group and other permissions set.
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perms
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Windows
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so we can change the source permissions"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Break the WithSubpackagesB so that it will not install"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/packages/with_subpackages/c/C.cpp
+      "C.cpp is broken!"
+
+  TEST_2
+    MESSAGE "Make TribitsExampleProject source dir user rwX only!"
+    CMND chmod
+    ARGS -R g-rwx,o-rwx TribitsExampleProject
+
+  TEST_3
+    MESSAGE "Do initial configure with just libs not tests with default install settings"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_WithSubpackages=ON
+      -DCMAKE_INSTALL_PREFIX=install_base/subdir/install
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=install_base
+      -DTribitsExProj_MAKE_INSTALL_WORLD_READABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP_WRITABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP=${TribitsExProj_INSTALL_OWNING_GROUP}
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_4
+    MESSAGE "Do make -k to build everything that will build"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "C.cpp is broken"
+      "packages/with_subpackages/c/CMakeFiles/pws_c.dir/C.cpp.o.*Error"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_5
+    MESSAGE "Make install_pakage_by_package with fixup of permissions"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install_package_by_package
+    PASS_REGULAR_EXPRESSION_ALL
+      "The global install failed so resorting to package-by-package installs"
+      ".*/install_base/subdir/install/include/B.hpp"
+      ".*/install_base/subdir/install/lib/libpws_b.a"
+      "0: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base"
+      "0: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base"
+      "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir"
+      "1: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir"
+      "2: Running: chgrp -R ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir/install"
+      "2: Running: chmod -R g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir/install"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_6
+    MESSAGE "Check some installed directory permissions and the owning group"
+    CMND ls ARGS -ld
+      install_base
+      install_base/subdir
+      install_base/subdir/install
+      install_base/subdir/install/bin
+      install_base/subdir/install/include
+      install_base/subdir/install/lib
+      install_base/subdir/install/share/WithSubpackagesB/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/bin"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/include"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/lib"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/share/WithSubpackagesB/stuff"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_7
+    MESSAGE "Check some installed file permissions"
+    CMND ls ARGS -l
+      install_base/subdir/install
+      install_base/subdir/install/include
+      install_base/subdir/install/lib
+      install_base/subdir/install/bin
+      install_base/subdir/install/share/WithSubpackagesB/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* B.hpp"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesB"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_b.a"
+      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_8
+    MESSAGE "Make sure that exec_script.sh is exectuable"
+    CMND ./install_base/subdir/install/share/WithSubpackagesB/stuff/exec_script.sh
+    PASS_REGULAR_EXPRESSION
+      "exec_script.sh executed and returned this string"
+
+  )
+  # NOTE: In addition to the same checks performed by the test
+  # TribitsExampleProject_install_perms described above, this above test also:
+  #
+  # * Ensures that the non-recursive group and permisions gets set on
+  # * base-dirs.
+  #
+  # * Ensures that owning group and directory permissions get set even if
+  #   there is a package install failure.  The other packages that did build
+  #   correctly will get installed and all of the files and directories that
+  #   did install will have the correct group and permissions.
+
+
+IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  SET(TribitsExProj_INSTALL_BASE_DIR "" CACHE FILEPATH
+    "Path to a base directory that installs will be made into that is not owned by the current user but is in the same owning group and has group write access"
+    )
+  IF (TribitsExProj_INSTALL_BASE_DIR)
+    EXECUTE_PROCESS(COMMAND stat -c %U "${TribitsExProj_INSTALL_BASE_DIR}"
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      OUTPUT_VARIABLE  TribitsExProj_INSTALL_BASE_OWNING_USER)
+  ENDIF()
+  SET(installBaseDir "${TribitsExProj_INSTALL_BASE_DIR}")
+  SET(installPrefixBaseDir
+    "${installBaseDir}/TribitsExampleProject_install_perms_nonowning_base_dir")
+  SET(installPrefix
+    "${installPrefixBaseDir}/install")
+  IF ("${TribitsExProj_INSTALL_BASE_OWNING_USER}"
+    STREQUAL "${TribitsExProj_INSTALL_OWNING_USER}"
+    )
+    SET(CHGRP_CHMOD_BASE_TEXT
+      "0: Running: chgrp wg-sems-users-son /tmp/tribits_install_tests"
+      "0: Running: chmod g[+]rwX,o[+]rX /tmp/tribits_install_tests")
+  ELSE()
+    SET(CHGRP_CHMOD_BASE_TEXT
+      "0: NOTE: Not calling chgrp and chmod on ${installBaseDir} since owner '${TribitsExProj_INSTALL_BASE_OWNING_USER}' != current owner '${TribitsExProj_INSTALL_OWNING_USER}'!")
+  ENDIF()
+ENDIF()
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_dir
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  EXCLUDE_IF_NOT_TRUE TribitsExProj_INSTALL_BASE_DIR
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Windows
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so we can change the source permissions"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Make TribitsExampleProject source dir user rwX only!"
+    CMND chmod
+    ARGS -R g-rwx,o-rwx TribitsExampleProject
+
+  TEST_2
+    MESSAGE "Remove existing intermediate base install if exists"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/remove-dir-if-exists.sh
+    ARGS ${installPrefixBaseDir}
+
+  TEST_3
+    MESSAGE "Do initial configure with just libs not tests with default install settings"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_WithSubpackages=ON
+      -DCMAKE_INSTALL_PREFIX=${installPrefix}
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=${installBaseDir}
+      -DTribitsExProj_MAKE_INSTALL_WORLD_READABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP_WRITABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP=${TribitsExProj_INSTALL_OWNING_GROUP}
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_4
+    MESSAGE "Do make to build everything"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_5
+    MESSAGE "Make install with fixup of permissions"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      "${installPrefix}/include/wsp_c/C.hpp"
+      "${installPrefix}/lib/libpws_c.a"
+      "${CHGRP_CHMOD_BASE_TEXT}"
+      "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} ${installPrefixBaseDir}"
+      "1: Running: chmod g[+]rwX,o[+]rX ${installPrefixBaseDir}"
+      "2: Running: chgrp -R ${TribitsExProj_INSTALL_OWNING_GROUP} ${installPrefix}"
+      "2: Running: chmod -R g[+]rwX,o[+]rX ${installPrefix}"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_6
+    MESSAGE "Check some installed directory permissions and the owning group"
+    CMND ls ARGS -ld
+      ${installBaseDir}
+      ${installPrefixBaseDir}
+      ${installPrefix}
+      ${installPrefix}/bin
+      ${installPrefix}/include
+      ${installPrefix}/lib
+      ${installPrefix}/share/WithSubpackagesB/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_BASE_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installBaseDir}"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefixBaseDir}"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/bin"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/include"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/lib"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/share/WithSubpackagesB/stuff"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: The above test ensures that if a base dir under
+  # ${TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR} is not
+  # owned by the current user then chgrp will not be run on it and will avoid
+  # an error.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Windows
+
+  TEST_0
+    MESSAGE "Configure with TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR not a base dir of CMAKE_INSTALL_PREFIX "
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_INSTALL_PREFIX=install_base/install
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=non_base_dir
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "ERROR in TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR"
+      "TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=.*/TriBITS_TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir/non_base_dir"
+      "is not a strict base dir of"
+      "CMAKE_INSTALL_PREFIX=.*/TriBITS_TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir/install_base/install"
+    ALWAYS_FAIL_ON_ZERO_RETURN
 
   )
 
@@ -1491,7 +2181,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
 
   TEST_5
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
-      " from the build tree" 
+      " from the build tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -1501,6 +2191,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja/install'"
       "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
       "WithSubpackages_TPL_INCLUDE_DIRS = '.+/tribits/examples/tpls/HeaderOnlyTpl'"
       "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
@@ -1525,6 +2216,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
     PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja/install'"
       "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
       "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
       "WithSubpackages_TPL_INCLUDE_DIRS = '.+/examples/tpls/HeaderOnlyTpl'"
@@ -1611,7 +2303,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
 
   TEST_3
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
-      " from the build tree" 
+      " from the build tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -1621,6 +2313,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles/install'"
       "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
       "WithSubpackages_TPL_INCLUDE_DIRS = '.+/tribits/examples/tpls/HeaderOnlyTpl'"
       "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
@@ -1645,6 +2338,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
     PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles/install'"
       "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
       "WithSubpackages_LIBRARIES = 'pws_c.pws_b.pws_a.simplecxx'"
       "WithSubpackages_TPL_INCLUDE_DIRS = '.+/examples/tpls/HeaderOnlyTpl'"
@@ -1686,7 +2380,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     XHOSTTYPE Darwin
-  
+
     TEST_0 CMND ${CMAKE_COMMAND}
       MESSAGE "Do the initial configure with basic configure timing"
       ARGS
@@ -1709,7 +2403,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         "Total time to configure TribitsExProj: "
         "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
         "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
-  
+
     TEST_1 CMND ${CMAKE_COMMAND}
       MESSAGE "Reconfigure to test out timing of all packages"
       ARGS
@@ -1725,7 +2419,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         "Total time to configure enabled packages: "
         "Total time to set up for CPack packaging: "
         "Total time to configure TribitsExProj: "
-  
+
     TEST_2 CMND ${CMAKE_COMMAND}
       MESSAGE "Reconfigure to test out timing of just one package"
       ARGS
@@ -1741,7 +2435,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         "Total time to configure enabled packages: "
         "Total time to set up for CPack packaging: "
         "Total time to configure TribitsExProj: "
-  
+
     )
 
 ENDIF()
@@ -1812,6 +2506,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
     PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackages_INSTALL_DIR = '.+/install'"
       "WithSubpackages_INCLUDE_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../include'"
       "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
       "WithSubpackages_LIBRARIES = 'pws_a.simplecxx'"
@@ -1866,7 +2561,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST
       "WithSubpackagesA_test_of_a .* Passed"
       "WithSubpackagesB_test_of_b .* Passed"
       "WithSubpackagesB_test_of_b_mixed_lang.* Passed"
-      "WithSubpackagesC_test_of_c_util.* Passed" 
+      "WithSubpackagesC_test_of_c_util.* Passed"
       "WithSubpackagesC_test_of_c .* Passed"
       "WithSubpackagesC_test_of_c_b_mixed_lang.* Passed"
       "100% tests passed, 0 tests failed out of 9"
@@ -1921,7 +2616,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibPrefix
       "WithSubpackagesA_test_of_a .* Passed"
       "WithSubpackagesB_test_of_b .* Passed"
       "WithSubpackagesB_test_of_b_mixed_lang.* Passed"
-      "WithSubpackagesC_test_of_c_util.* Passed" 
+      "WithSubpackagesC_test_of_c_util.* Passed"
       "WithSubpackagesC_test_of_c .* Passed"
       "WithSubpackagesC_test_of_c_b_mixed_lang.* Passed"
       "100% tests passed, 0 tests failed out of 9"
@@ -1933,7 +2628,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
-  TEST_0 
+  TEST_0
     MESSAGE "Do the initial configure to get the package enables"
       " and the  env probe in place."
     CMND ${CMAKE_COMMAND}
@@ -1945,6 +2640,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because PYTHON_EXECUTABLE=''"
@@ -2113,7 +2810,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
-  TEST_0 
+  TEST_0
     MESSAGE "Do the initial configure to get the package enables"
       " and the  env probe in place."
     CMND ${CMAKE_COMMAND}
@@ -2125,6 +2822,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       -DTribitsExProj_LIBRARY_NAME_PREFIX=tep_
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
@@ -2363,6 +3062,118 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
       "Included ConfigOptions1.cmake"
       "Included ConfigOptions2.cmake"
       "Generating done"
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the initial configure with TribitsExProj_SKIP_CTEST_ADD_TEST=ON"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_TRACE_ADD_TEST=ON
+      -DTribitsExProj_SKIP_CTEST_ADD_TEST=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
+      "SimpleCxx_HelloWorldTests: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
+      "SimpleCxx_HelloWorldProg: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
+      "WithSubpackagesA_test_of_a: NOT added test because WithSubpackages_SKIP_CTEST_ADD_TEST='ON'[!]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+    MESSAGE "Build the default 'all' target using raw 'make'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    MESSAGE "Run all the tests with raw 'ctest'"
+    PASS_REGULAR_EXPRESSION_ALL
+      "No tests were found"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whitelist
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the initial configure with TribitsExProj_SKIP_CTEST_ADD_TEST=ON"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_TRACE_ADD_TEST=ON
+      -DSimpleCxx_SKIP_CTEST_ADD_TEST=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
+      "SimpleCxx_HelloWorldTests: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
+      "SimpleCxx_HelloWorldProg: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
+      "WithSubpackagesA_test_of_a: Added test [(]BASIC, .*PROCESSORS=1[)][!]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+    MESSAGE "Build the default 'all' target using raw 'make'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    MESSAGE "Run all the tests with raw 'ctest'"
+    PASS_REGULAR_EXPRESSION_ALL
+      "1/1 Test #1: WithSubpackagesA_test_of_a .* Passed"
+      "100% tests passed, 0 tests failed out of 1"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Blacklist
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the initial configure with TribitsExProj_SKIP_CTEST_ADD_TEST=ON"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_TRACE_ADD_TEST=ON
+      -DTribitsExProj_SKIP_CTEST_ADD_TEST=ON
+      -DSimpleCxx_SKIP_CTEST_ADD_TEST=OFF
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
+      "SimpleCxx_HelloWorldTests.*: Added test [(]BASIC, .*PROCESSORS=1[)][!]"
+      "SimpleCxx_HelloWorldProg.*: Added test [(]BASIC, .*PROCESSORS=1[)][!]"
+      "WithSubpackagesA_test_of_a: NOT added test because WithSubpackages_SKIP_CTEST_ADD_TEST='ON'[!]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+    MESSAGE "Build the default 'all' target using raw 'make'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    MESSAGE "Run all the tests with raw 'ctest'"
+    PASS_REGULAR_EXPRESSION_ALL
+      "1/2 Test #1: SimpleCxx_HelloWorldTests.* .* Passed"
+      "2/2 Test #2: SimpleCxx_HelloWorldProg.* .* Passed"
+      "100% tests passed, 0 tests failed out of 2"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
   )
 
 
@@ -2709,7 +3520,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
       "which will disable it and will recursively disable all of the"
       "downstream packages that have required dependencies on it."
       "When you reconfigure, just grep the cmake stdout for 'HeaderOnlyTpl'"
-      "and then follow the disables that occur as a result to see what impact" 
+      "and then follow the disables that occur as a result to see what impact"
       "this TPL disable has on the configuration of TribitsExProj."
       "-- ERROR: Failed finding all of the parts of TPL 'HeaderOnlyTpl' .see above., Aborting!"
       "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ .MESSAGE.:"
@@ -2764,7 +3575,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
     MESSAGE "Configure all packages"
     CMND ${CMAKE_COMMAND}
     ARGS
-      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON 
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_TESTS=ON
      .
@@ -2824,7 +3635,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
     CMND ${CMAKE_COMMAND}
     ARGS
       -DTribitsExProj_EXTRA_REPOSITORIES=TargetDefinesPkg
-      -DTribitsExProj_ENABLE_TargetDefinesPkg=ON 
+      -DTribitsExProj_ENABLE_TargetDefinesPkg=ON
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
@@ -2887,8 +3698,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
     CMND ${CMAKE_COMMAND}
     ARGS
       -DTribitsExProj_EXTRA_REPOSITORIES=MixedSharedStaticLibs
-      -DTribitsExProj_ENABLE_SimpleCxx=ON 
-      -DTribitsExProj_ENABLE_MixedSharedStaticLibs=ON 
+      -DTribitsExProj_ENABLE_SimpleCxx=ON
+      -DTribitsExProj_ENABLE_MixedSharedStaticLibs=ON
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
@@ -2975,8 +3786,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
     CMND ${CMAKE_COMMAND}
     ARGS
       -DTribitsExProj_EXTRA_REPOSITORIES=MixedSharedStaticLibs
-      -DTribitsExProj_ENABLE_SimpleCxx=ON 
-      -DTribitsExProj_ENABLE_MixedSharedStaticLibs=ON 
+      -DTribitsExProj_ENABLE_SimpleCxx=ON
+      -DTribitsExProj_ENABLE_MixedSharedStaticLibs=ON
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
@@ -3128,7 +3939,7 @@ SET(TEST_RPATH_COMMON_CONFIG_ARGS
   -DTPL_ENABLE_SimpleTpl=ON
   -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_shared_DIR}/install/include
   -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_shared_DIR}/install/lib
-  )  
+  )
 
 SET(LD_LIBRARY_PATH_ORIG $ENV{LD_LIBRARY_PATH})
 
@@ -3445,7 +4256,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
   TEST_1
     MESSAGE "Copy in dummy cmake/ProjectCompilerPostConfig.cmake."
     CMND cp
-    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/DummyProjectCompilerPostConfig.cmake  
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/DummyProjectCompilerPostConfig.cmake
       TribitsExampleProject/cmake/ProjectCompilerPostConfig.cmake
 
   TEST_2
@@ -3896,7 +4707,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PASS
       "Final set of enabled packages:  PkgWithUserErrors 1"
       "Processing enabled package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
       "Configuring done"
-      "Generating done" 
+      "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_3 CMND make
@@ -3943,7 +4754,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Processing enabled package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
-      "ERROR: Forgot to call TRIBITS_PACKAGE_POSTPROCESS[(][)] .*/TribitsExampleProject/PkgWithUserErrors/CMakeLists.txt" 
+      "ERROR: Forgot to call TRIBITS_PACKAGE_POSTPROCESS[(][)] .*/TribitsExampleProject/PkgWithUserErrors/CMakeLists.txt"
     ALWAYS_FAIL_ON_ZERO_RETURN
   )
 
@@ -4245,7 +5056,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       "Final set of enabled packages:  PkgWithSubpkgsWithUserErrors 1"
       "Processing enabled package: PkgWithSubpkgsWithUserErrors [(]A, B, Tests, Examples[)]"
       "Configuring done"
-      "Generating done" 
+      "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_3 CMND make
@@ -4434,6 +5245,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   )
+
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SUBPACKAGE_USER_ERRORS
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -4647,5 +5459,61 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       "TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_config_file_compiler_overrides
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Configure replacing the compilers listed in the generated Config.cmake files"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DCMAKE_CXX_COMPILER_FOR_CONFIG_FILE_BUILD_DIR=cxx_wrapper_build_dir
+      -DCMAKE_C_COMPILER_FOR_CONFIG_FILE_BUILD_DIR=c_wrapper_build_dir
+      -DCMAKE_Fortran_COMPILER_FOR_CONFIG_FILE_BUILD_DIR=fortran_wrapper_build_dir
+      -DCMAKE_CXX_COMPILER_FOR_CONFIG_FILE_INSTALL_DIR=cxx_wrapper_install_dir
+      -DCMAKE_C_COMPILER_FOR_CONFIG_FILE_INSTALL_DIR=c_wrapper_install_dir
+      -DCMAKE_Fortran_COMPILER_FOR_CONFIG_FILE_INSTALL_DIR=fortran_wrapper_install_dir
+      -DTribitsExProj_ENABLE_WithSubpackages=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Check complers set in TribitsExProjConfig_install.cmake"
+    CMND grep
+    ARGS _COMPILER TribitsExProjConfig_install.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "SET[(]TribitsExProj_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
+      "SET[(]TribitsExProj_C_COMPILER .c_wrapper_install_dir.[)]"
+      "SET[(]TribitsExProj_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check complers set in WithSubpackagesConfig_install.cmake"
+    CMND grep
+    ARGS _COMPILER packages/with_subpackages/CMakeFiles/WithSubpackagesConfig_install.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
+      "SET[(]WithSubpackages_C_COMPILER .c_wrapper_install_dir.[)]"
+      "SET[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
+      "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_install_dir.[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Check complers set in WithSubpackagesConfig.cmake for build dir"
+    CMND grep
+    ARGS _COMPILER packages/with_subpackages/WithSubpackagesConfig.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_build_dir.[)]"
+      "SET[(]WithSubpackages_C_COMPILER .c_wrapper_build_dir.[)]"
+      "SET[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_build_dir.[)]"
+      "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_build_dir.[)]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )

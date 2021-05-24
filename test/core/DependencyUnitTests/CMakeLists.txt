@@ -37,6 +37,12 @@
 # ************************************************************************
 # @HEADER
 
+#
+# These tests test the basic dependancy adjustment logic in TriBITS for
+# enabling and disabling packages, subpackages, tests/examples, TPLs, etc.
+# These run very fast because they don't need to actaully configure any code.
+#
+
 SET(TRIBITS_REDUCED_MOCK_TRILINOS_DIR "examples/ReducedMockTrilinos")
 SET(TRIBITS_MOCK_TRILINOS_DIR "examples/MockTrilinos")
 
@@ -274,6 +280,66 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
    PASS_REGULAR_EXPRESSION_ALL
     ${${TEST_NAME}_REGEX_ARRAY}
   )
+
+
+#
+# EnableThyraCoreLibs_EnableTests
+#
+
+SET(TEST_NAME "EnableThyraCoreLibs_EnableTests")
+
+READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+  "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/${TEST_NAME}.txt"
+  ${TEST_NAME}_REGEX_ARRAY
+  )
+
+CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+  ${TEST_NAME}
+  ARGS
+    -DTrilinos_ENABLE_ThyraCoreLibs:BOOL=ON
+    -DTrilinos_ENABLE_TESTS:BOOL=ON
+   PASS_REGULAR_EXPRESSION_ALL
+    ${${TEST_NAME}_REGEX_ARRAY}
+    "-- Setting Trilinos_ENABLE_Thyra=ON because Trilinos_ENABLE_ThyraCoreLibs=ON"
+    "-- Setting Thyra_ENABLE_TESTS=ON because ThyraCoreLibs_ENABLE_TESTS=ON"
+    "-- Setting Thyra_ENABLE_EXAMPLES=ON because ThyraCoreLibs_ENABLE_EXAMPLES=ON"
+    # NOTE: These greps are repeated because they are the major purpose of
+    # this test!
+  )
+# NOTE: The above test verifies that enabling just a subpackage and tests will
+# enable both the parent package (Thyra in this case) and the parent package's
+# tests and examples.
+
+
+#
+# EnableThyraEpetra_EnableTests
+#
+
+SET(TEST_NAME "EnableThyraEpetra_EnableTests")
+
+READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+  "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/${TEST_NAME}.txt"
+  ${TEST_NAME}_REGEX_ARRAY
+  )
+
+CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+  ${TEST_NAME}
+  ARGS
+    -DTrilinos_ENABLE_ThyraEpetra:BOOL=ON
+    -DTrilinos_ENABLE_TESTS:BOOL=ON
+   PASS_REGULAR_EXPRESSION_ALL
+    ${${TEST_NAME}_REGEX_ARRAY}
+    "-- Setting Trilinos_ENABLE_Thyra=ON because Trilinos_ENABLE_ThyraCoreLibs=ON"
+    "-- Setting Thyra_ENABLE_TESTS=ON because ThyraEpetra_ENABLE_TESTS=ON"
+    "-- Setting Thyra_ENABLE_EXAMPLES=ON because ThyraEpetra_ENABLE_EXAMPLES=ON"
+    # NOTE: These greps are repeated because they are the major purpose of
+    # this test!
+  )
+# NOTE: The above test verifies that enabling a mid-level subpackage that
+# triggers the enable of an upstream subpackage in the same parent package
+# (but not that upstream subpackage's tests) will trigger the enable both the
+# parent package (Thyra in this case) and the parent package's tests and
+# examples.
 
 
 #
