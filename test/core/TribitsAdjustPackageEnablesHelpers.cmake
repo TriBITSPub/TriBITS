@@ -45,38 +45,8 @@ SET( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
-INCLUDE(TribitsAdjustPackageEnables)
-INCLUDE(TribitsProcessTplsLists)
-INCLUDE(UnitTestHelpers)
-INCLUDE(GlobalSet)
 
-
-#####################################################################
-#
-# Helper macros for unit tests
-#
-#####################################################################
-
-
-MACRO(UNITTEST_HELPER_READ_AND_PROESS_PACKAGES)
-
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  SET(${PROJECT_NAME}_TPLS_FILE "dummy")
-  TRIBITS_PROCESS_TPLS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  SET(${EXTRA_REPO_NAME}_TPLS_FILE "dummy")
-  TRIBITS_PROCESS_TPLS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()
-  SET_DEFAULT(${PROJECT_NAME}_ENABLE_ALL_PACKAGES OFF)
-  SET_DEFAULT(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
-  SET(DO_PROCESS_MPI_ENABLES ON) # Should not be needed but CMake is not working!
-  FOREACH(SE_PKG ${${PROJECT_NAME}_SE_PACKAGES})
-    GLOBAL_SET(${SE_PKG}_FULL_ENABLED_DEP_PACKAGES)
-  ENDFOREACH()
-  TRIBITS_ADJUST_PACKAGE_ENABLES(TRUE)
-  TRIBITS_SET_UP_ENABLED_ONLY_DEPENDENCIES()
-
-ENDMACRO()
+INCLUDE(PrintVar)
 
 
 #####################################################################
@@ -101,17 +71,31 @@ SET(PROJECT_NAME "Trilinos")
 MESSAGE("The inner test project: PROJECT_NAME = ${PROJECT_NAME}")
 MESSAGE("The inner tets project: ${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 
-SET( Trilinos_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
-  Teuchos             packages/teuchos                PT
-  RTOp                packages/rtop                   PT
-  )
+# Includes
 
-SET(Trilinos_TPLS_FINDMODS_CLASSIFICATIONS
-  MPI            cmake/TPLs/    PT
-  BLAS           cmake/TPLs/    PT
-  LAPACK         cmake/TPLs/    PT
-  Boost          cmake/TPLs/    ST
-  )
+INCLUDE(TribitsReadPackagesProcessDepenenciesWriteXml)
+INCLUDE(TribitsAdjustPackageEnables)
+INCLUDE(TribitsProcessTplsLists)
+INCLUDE(UnitTestHelpers)
+INCLUDE(GlobalSet)
+
+# For Running TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()
+
+SET(${PROJECT_NAME}_NATIVE_REPOSITORIES .)
+
+SET(${PROJECT_NAME}_PACKAGES_FILE_OVERRIDE
+  ${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/PackagesList.cmake)
+SET(${PROJECT_NAME}_TPLS_FILE_OVERRIDE
+  ${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/TPLsList.cmake)
+
+SET(${PROJECT_NAME}_EXTRA_REPOSITORIES extraRepoTwoPackages)
+
+# For running other lower-level functions
+
+SET(REPOSITORY_NAME "Trilinos")
+
+INCLUDE(${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/PackagesList.cmake)
+INCLUDE(${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/TPLsList.cmake)
 
 SET(EXTRA_REPO_NAME extraRepoTwoPackages)
 SET(EXTRA_REPO_DIR extraRepoTwoPackages)
@@ -124,3 +108,39 @@ SET(${EXTRA_REPO_NAME}_TPLS_FINDMODS_CLASSIFICATIONS)
 SET(${PROJECT_NAME}_ALL_REPOSITORIES "." "${EXTRA_REPO_NAME}")
 
 SET( ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES ON )
+
+
+#####################################################################
+#
+# Helper macros for unit tests
+#
+#####################################################################
+
+
+MACRO(UNITTEST_HELPER_READ_PACKAGES_AND_DEPENDENCIES)
+
+  SET(${PROJECT_NAME}_ALL_REPOSITORIES)
+  TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()
+
+ENDMACRO()
+
+
+MACRO(UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES)
+
+  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
+  SET(${PROJECT_NAME}_TPLS_FILE "dummy")
+  TRIBITS_PROCESS_TPLS_LISTS(${PROJECT_NAME} ".")
+  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  SET(${EXTRA_REPO_NAME}_TPLS_FILE "dummy")
+  TRIBITS_PROCESS_TPLS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  TRIBITS_READ_PROJECT_AND_PACKAGE_DEPENDENCIES_CREATE_GRAPH_PRINT_DEPS()
+  SET_DEFAULT(${PROJECT_NAME}_ENABLE_ALL_PACKAGES OFF)
+  SET_DEFAULT(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
+  SET(DO_PROCESS_MPI_ENABLES ON) # Should not be needed but CMake is not working!
+  FOREACH(SE_PKG ${${PROJECT_NAME}_SE_PACKAGES})
+    GLOBAL_SET(${SE_PKG}_FULL_ENABLED_DEP_PACKAGES)
+  ENDFOREACH()
+  TRIBITS_ADJUST_PACKAGE_ENABLES(TRUE)
+  TRIBITS_SET_UP_ENABLED_ONLY_DEPENDENCIES()
+
+ENDMACRO()
