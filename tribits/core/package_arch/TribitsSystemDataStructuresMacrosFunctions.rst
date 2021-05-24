@@ -248,15 +248,11 @@ downstream/forward dependent packages:
 Determining if a package is internal or external
 ++++++++++++++++++++++++++++++++++++++++++++++++
 
-As mentioned above, Some subset of packages listed in
-`${PACKAGE_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES`_ will turn out to be
-external packages.  If a package can be built internally, it will have::
-
-  ${PACKAGE_NAME}_SOURCE_DIR != ""
-
-which means that it could be built internally.  However, even packages that
-could be built internally may be chosen to be treated as external pacakges by
-setting::
+As mentioned above, some subset of packages listed in
+`${PACKAGE_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES`_ (which all have
+``${PACKAGE_NAME}_SOURCE_DIR != ""``) may be chosen to be external packages.
+Packages that could be built internally may be chosen to be treated as
+external packages by setting::
 
   -D TPL_ENABLE_<ExternalPackage>=ON
 
@@ -264,13 +260,14 @@ or::
 
   -D <ExternalPackage>_ROOT=<path>
 
-Therefore, the final status of whether a listed package is an internal package
-or an external package is provided by the variable::
+The final status of whether a listed package is an internal package or an
+external package is provided by the variable::
 
   ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
 
-Every other package upstream from ``<ExternalPackage>`` must therefore be
-treated as an external package automatically.
+As a result, every other package upstream from any of these
+``<ExternalPackage>`` packages must therefore also be treated as external
+packages automatically.
 
 The primary TriBITS file that processes and defines these variables is:
 
@@ -430,7 +427,7 @@ lists and dependency data-structures described above.
 |     `TRIBITS_PROCESS_ALL_REPOSTIORY_DEPENDENCY_SETUP_LOGIC()`_
 |     `TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_LOGIC()`_
 |     `TRIBITS_READ_ALL_PACKAGE_DEPS_AND_CREATE_DEPS_GRAPH()`_
-|       Foreach ``TOPLEVEL_PACKAGE_NAME`` in ``${${PROJECT_NAME}_PACKAGES}``:
+|       Foreach ``TOPLEVEL_PACKAGE``:
 |         `TRIBITS_READ_PACKAGE_DEPENDENCIES()`_
 |           `TRIBITS_PREP_TO_READ_DEPENDENCIES()`_
 |           ``INCLUDE(`` `<packageDir>/cmake/Dependencies.cmake`_ ``)``
@@ -438,8 +435,20 @@ lists and dependency data-structures described above.
 |           `TRIBITS_SAVE_OFF_DEPENDENCIES_VARS()`_
 |           `TRIBITS_PARSE_SUBPACKAGES_AND_APPEND_SE_PACKAGES_AND_ADD_OPTIONS()`_
 |           `TRIBITS_READ_ALL_PACKAGE_SUBPACKAGE_DEPENDENCIES()`_
+|             Foreach ``SUBPACKAGE``:
+|               `TRIBITS_READ_SUBPACKAGE_DEPENDENCIES_AND_ADD_TO_GRAPH()`_
+|                 `TRIBITS_PREP_TO_READ_DEPENDENCIES()`_
+|                 ``INCLUDE(`` `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ ``)``
+|                 `TRIBITS_ASSERT_READ_DEPENDENCY_VARS()`_
+|                 `TRIBITS_PROCESS_PACKAGE_DEPENDENCIES_LISTS()`_
+|                   See same call stack for this macro below
 |           `TRIBITS_READ_BACK_DEPENDENCIES_VARS()`_
 |           `TRIBITS_PROCESS_PACKAGE_DEPENDENCIES_LISTS()`_
+|             `TRIBITS_SET_DEP_PACKAGES()`_
+|               `TRIBITS_ABORT_ON_SELF_DEP()`_
+|               `TRIBITS_ABORT_ON_MISSING_PACKAGE()`_
+|             `TRIBITS_APPEND_FORWARD_DEP_PACKAGES()`_
+|               `TRIBITS_ABORT_ON_MISSING_PACKAGE()`_
 |     `TRIBITS_PRINT_TENTATIVELY_ENABLED_TPLS()`_
 |     `TRIBITS_DUMP_PACKAGE_DEPENDENCIES_INFO()`_
 
@@ -490,4 +499,4 @@ allow it to be efficiently tested outside of the actual build.  But there are
 a number of example projects that are part of the automated TriBITS test suite
 that do test much of the logic used in these variables.
 
-..  LocalWords:  acyclic
+..  LocalWords:  acyclic TriBITS SUBPACKAGES CTEST subpackages
