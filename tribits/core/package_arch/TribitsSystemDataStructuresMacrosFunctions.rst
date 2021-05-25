@@ -418,14 +418,17 @@ lists and dependency data-structures described above.
 
 | `TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()`_
 |   `TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS()`_
-|     For each ``<repoDir>`` in all defined TriBITS repositories:
+|     Foreach ``<repoDir>`` in ``${PROJECT_NAME}_ALL_REPOSITORIES``:
 |       ``INCLUDE(`` `<repoDir>/TPLsList.cmake`_ ``)``
 |       `TRIBITS_PROCESS_TPLS_LISTS()`_
 |       ``INCLUDE(`` `<repoDir>/PackagesList.cmake`_ ``)``
 |       `TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS()`_
 |   `TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()`_
 |     `TRIBITS_PROCESS_ALL_REPOSITORY_DEPENDENCY_SETUP_LOGIC()`_
+|       Foreach ``<repoDir>`` in ``${PROJECT_NAME}_ALL_REPOSITORIES``:
+|         ``INCLUDE(`` `<repoDir>/cmake/RepositoryDependenciesSetup.cmake`_ ``)``
 |     `TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_LOGIC()`_
+|       ``INCLUDE(``  `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_ ``)``
 |     `TRIBITS_READ_ALL_PACKAGE_DEPS_FILES_CREATE_DEPS_GRAPH()`_
 |       Foreach ``TOPLEVEL_PACKAGE``:
 |         `TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH()`_
