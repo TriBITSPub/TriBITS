@@ -55,14 +55,14 @@ read in order.  This list does **not** include any subpackages.
 Note that some of the packages listed in
 `${PACKAGE_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES`_ may actually be treated
 as external packages and not build from source code and instead will be found
-out on the system and pre-built packages using
-``find_package(${PACKAGE_NAME})``.  The final decision for if a package is
-treated as an internal or external package is determined by the variable::
+out on the system as pre-built/pre-installed packages using
+``find_package(<externalPackageName>)``.  The final decision for if a package
+is treated as an internal or external package is determined by the variable::
 
   ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
 
-which gets set by a set of different criteria as described in section
-`Determining if a package is internal or external`_.  This determines what
+which gets set variouscriteria as described in section `Determining if a
+package is internal or external`_.  This varaible determines what
 pre-built/pre-installed packages must be found out on the system if enabled
 and what internal packages need to be built if enabled.
 
@@ -72,6 +72,11 @@ is used with an adjective, it is usually meant in this more general context.
 
 ToDo: Describe the data-structures of all "Packages" which includes
 subpackages as well and the lists of enabled packages.
+
+These data-stractures as well as the package dependencies graph is built up in
+the macro `TRIBITS_READ_ALL_PROJECT_DEPS_FILES_CREATE_DEPS_GRAPH()`_ with the
+call graph described in the section `Function call tree for constructing
+package dependency graph`_.
 
 A set of enable/disable logic is applied in the macro
 `TRIBITS_ADJUST_PACKAGE_ENABLES()`_.  Once all of this logic has been applied,

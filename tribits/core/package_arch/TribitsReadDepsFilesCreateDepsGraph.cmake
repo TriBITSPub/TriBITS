@@ -69,6 +69,8 @@ INCLUDE(DualScopeSet)
 # directed acyclic depenency (DAG) package dependency graph (with navigation
 # up and down the graph).
 #
+# See `Function call tree for constructing package dependency graph`_
+#
 MACRO(TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH)
 
   MESSAGE("")
@@ -88,6 +90,8 @@ ENDMACRO()
 #
 # Process any dependency logic at the repo level by loading
 # `<repoDir>/cmake/RepositoryDependenciesSetup.cmake`_ files.
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 MACRO(TRIBITS_PROCESS_ALL_REPOSITORY_DEPS_SETUP_FILES)
   FOREACH(TIBITS_REPO ${${PROJECT_NAME}_ALL_REPOSITORIES})
@@ -124,6 +128,8 @@ ENDMACRO()
 # Process any dependency logic at the project level by loading the
 # `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_ file
 #
+# See `Function call tree for constructing package dependency graph`_
+#
 MACRO(TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_FILE)
   SET(PROJECT_DEPENDENCIES_SETUP_FILE
     "${PROJECT_SOURCE_DIR}/cmake/ProjectDependenciesSetup.cmake")
@@ -142,6 +148,8 @@ MACRO(TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_FILE)
     ENDIF()
   ENDIF()
 ENDMACRO()
+
+
 # @MACRO: TRIBITS_READ_ALL_PACKAGE_DEPS_FILES_CREATE_DEPS_GRAPH()
 #
 # Usage::
@@ -166,6 +174,8 @@ ENDMACRO()
 # variables defining the package dependencies graph`_ that defines the
 # directed acyclic dependency (DAG) package dependency graph (with navigation
 # up and down the graph).
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 MACRO(TRIBITS_READ_ALL_PACKAGE_DEPS_FILES_CREATE_DEPS_GRAPH)
 
@@ -217,6 +227,8 @@ ENDMACRO()
 # as for the subpackage dependencies under this top-level package are read in
 # order and then this top-level package is appended and dependencies are
 # dependencies are created for them.
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 MACRO(TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH  PACKAGE_NAME)
 
@@ -297,6 +309,8 @@ ENDMACRO()
 # for each of the forward/downstream in `List variables defining the package
 # dependencies graph`_.
 #
+# See `Function call tree for constructing package dependency graph`_
+#
 MACRO(TRIBITS_PREP_TO_READ_DEPENDENCIES  PACKAGE_NAME_IN)
 
   TRIBITS_DECLARE_UNDEFINED(LIB_REQUIRED_DEP_PACKAGES)
@@ -329,6 +343,8 @@ ENDMACRO()
 # `TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()`_ in the file
 # `<packageDir>/cmake/Dependencies.cmake`_ have been set.
 #
+# See `Function call tree for constructing package dependency graph`_
+#
 MACRO(TRIBITS_ASSERT_READ_DEPENDENCY_VARS  PACKAGE_NAME)
 
   TRIBITS_ASSERT_DEFINED_PACKAGE_VAR(LIB_REQUIRED_DEP_PACKAGES ${PACKAGE_NAME})
@@ -351,6 +367,8 @@ ENDMACRO()
 #   TRIBITS_SAVE_OFF_DEPENDENCIES_VARS(<postfix>)
 #
 # Saves off package depeneency varaibles with variable suffix ``_<postfix>``.
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 MACRO(TRIBITS_SAVE_OFF_DEPENDENCIES_VARS  POSTFIX)
 
@@ -375,6 +393,8 @@ ENDMACRO()
 #
 # Read back the local package dependency vars from the saved-off vars with
 # suffix ``_<postfix>``.
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 MACRO(TRIBITS_READ_BACK_DEPENDENCIES_VARS  POSTFIX)
 
@@ -402,6 +422,8 @@ ENDMACRO()
 # package dependencies graph`_.  Note that the downstream/forward dependencies
 # of upstream packages on this package ``<packageName>`` are built up
 # incrimentally.
+#
+# See `Function call tree for constructing package dependency graph`_
 # 
 MACRO(TRIBITS_PROCESS_PACKAGE_DEPENDENCIES_LISTS  PACKAGE_NAME)
 
@@ -444,6 +466,8 @@ ENDMACRO()
 # * A missing upstream dependent package (either error out with
 #   `TRIBITS_ABORT_ON_MISSING_PACKAGE()`_ or allow to be missing and disable
 #   this package if this is a required dependency).
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 FUNCTION(TRIBITS_SET_DEP_PACKAGES  PACKAGE_NAME   LIB_OR_TEST  REQUIRED_OR_OPTIONAL)
 
@@ -532,6 +556,8 @@ ENDFUNCTION()
 # dependencies for a given ``<packageName>`` by the downstream packages that
 # declare dependencies on it.
 #
+# See `Function call tree for constructing package dependency graph`_
+#
 FUNCTION(TRIBITS_APPEND_FORWARD_DEP_PACKAGES PACKAGE_NAME LIST_TYPE)
 
   SET(DEP_PKG_LIST_NAME "${PACKAGE_NAME}_${LIST_TYPE}")
@@ -569,6 +595,8 @@ ENDFUNCTION()
 #
 # Macro that sets a pacakge's regression email address
 # ``${PACKAGE_NAME}_REGRESSION_EMAIL_LIST`` as described in ???.
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 MACRO(TRIBITS_SET_PACAKGE_REGRESSION_EMAIL_LIST PACKAGE_NAME)
 
@@ -619,6 +647,8 @@ ENDMACRO()
 # error message also suggests that the package might be defining an upstream
 # dependency on a downstream dependency (i.e. a circular dependency).
 #
+# See `Function call tree for constructing package dependency graph`_
+#
 FUNCTION(TRIBITS_ABORT_ON_MISSING_PACKAGE   DEP_PKG  PACKAGE_NAME  DEP_PKG_LIST_NAME)
   MULTILINE_SET(ERRMSG
     "Error, the package '${DEP_PKG}' is listed as a dependency of the package"
@@ -641,6 +671,8 @@ ENDFUNCTION()
 #
 # Prints a fatal error message for an attempt for a self dependency
 # declaration and which list it comes from.
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 FUNCTION(TRIBITS_ABORT_ON_SELF_DEP  PACKAGE_NAME  DEP_PKG_LIST_NAME)
   MULTILINE_SET(ERRMSG
@@ -682,6 +714,8 @@ ENDFUNCTION()
 # And it appends for each subpackage to varaible::
 #
 #   ${PROJECT_NAME}_SE_PACKAGES (old)
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 MACRO(TRIBITS_PARSE_SUBPACKAGES_APPEND_SE_PACKAGES_ADD_OPTIONS
   PACKAGE_NAME
@@ -801,6 +835,8 @@ ENDMACRO()
 # Read in subpackages dependencies files and add to dependencies graph
 # variables.
 #
+# See `Function call tree for constructing package dependency graph`_
+#
 MACRO(TRIBITS_READ_PACKAGE_SUBPACKAGE_DEPS_FILES_ADD_TO_GRAPH  PACKAGE_NAME)
 
   #MESSAGE("TRIBITS_READ_PACKAGE_SUBPACKAGE_DEPS_FILES_ADD_TO_GRAPH: ${PACKAGE_NAME}")
@@ -828,6 +864,8 @@ ENDMACRO()
 # Macro that reads in a single subpackage dependencies file
 # `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ and sets up the
 # dependency structure for it.
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 MACRO(TRIBITS_READ_SUBPACKAGE_DEPS_FILE_ADD_TO_GRAPH  PACKAGE_NAME
   SUBPACKAGE_NAME  SUBPACKAGE_DIR
@@ -879,12 +917,6 @@ MACRO(TRIBITS_READ_SUBPACKAGE_DEPS_FILE_ADD_TO_GRAPH  PACKAGE_NAME
   ENDIF()
 
 ENDMACRO()
-
-
-
-
-
-
 
 
 #

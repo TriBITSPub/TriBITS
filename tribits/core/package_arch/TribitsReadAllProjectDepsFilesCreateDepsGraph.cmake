@@ -99,7 +99,6 @@ ENDMACRO()
 #   ${PROJECT_NAME}_DEFINED_TPLS
 #   ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
 #   ${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
-#   ${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES
 #
 #   ${PROJECT_NAME}_NUM_DEFINED_TPLS
 #   ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES
@@ -121,6 +120,8 @@ ENDMACRO()
 #  * `TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS()`_
 #
 # which set their varaibles.
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 MACRO(TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS)
 
@@ -245,6 +246,8 @@ ENDMACRO()
 #
 # Function that writes XML dependnecy files if support for that exists in this
 # instance of TriBITs.
+#
+# See `Function call tree for constructing package dependency graph`_
 #
 FUNCTION(TRIBITS_WRITE_XML_DEPENDENCY_FILES_IF_SUPPORTED)
   SET(TRIBITS_PROJECT_CI_SUPPORT_DIR
