@@ -433,7 +433,7 @@ lists and dependency data-structures described above.
 |           ``INCLUDE(`` `<packageDir>/cmake/Dependencies.cmake`_ ``)``
 |           `TRIBITS_ASSERT_READ_DEPENDENCY_VARS()`_
 |           `TRIBITS_SAVE_OFF_DEPENDENCIES_VARS()`_
-|           `TRIBITS_PARSE_SUBPACKAGES_AND_APPEND_SE_PACKAGES_AND_ADD_OPTIONS()`_
+|           `TRIBITS_PARSE_SUBPACKAGES_APPEND_SE_PACKAGES_ADD_OPTIONS()`_
 |           `TRIBITS_READ_ALL_PACKAGE_SUBPACKAGE_DEPENDENCIES()`_
 |             Foreach ``SUBPACKAGE``:
 |               `TRIBITS_READ_SUBPACKAGE_DEPENDENCIES_AND_ADD_TO_GRAPH()`_
