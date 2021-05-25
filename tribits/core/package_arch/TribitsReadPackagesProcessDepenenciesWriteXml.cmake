@@ -43,7 +43,7 @@ INCLUDE(TribitsConstants)
 INCLUDE(TribitsProcessExtraRepositoriesList)
 INCLUDE(TribitsProcessPackagesAndDirsLists)
 INCLUDE(TribitsProcessTplsLists)
-INCLUDE(TribitsAdjustPackageEnables)
+INCLUDE(TribitsReadDepsFilesCreateDepsGraph)
 INCLUDE(TribitsPrintDependencyInfo)
 
 # Standard TriBITS utilities includes

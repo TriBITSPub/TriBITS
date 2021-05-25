@@ -49,6 +49,7 @@ INCLUDE(TribitsInstallHeaders)
 INCLUDE(TribitsGetVersionDate)
 INCLUDE(TribitsReportInvalidTribitsUsage)
 INCLUDE(TribitsReadPackagesProcessDepenenciesWriteXml)
+INCLUDE(TribitsAdjustPackageEnables)
 
 # Standard TriBITS utilities includes
 INCLUDE(TribitsAddOptionAndDefine)
