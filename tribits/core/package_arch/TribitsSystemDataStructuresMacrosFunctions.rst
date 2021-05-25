@@ -426,7 +426,7 @@ lists and dependency data-structures described above.
 |   `TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()`_
 |     `TRIBITS_PROCESS_ALL_REPOSITORY_DEPENDENCY_SETUP_LOGIC()`_
 |     `TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_LOGIC()`_
-|     `TRIBITS_READ_ALL_PACKAGE_DEPS_AND_CREATE_DEPS_GRAPH()`_
+|     `TRIBITS_READ_ALL_PACKAGE_DEPS_FILES_CREATE_DEPS_GRAPH()`_
 |       Foreach ``TOPLEVEL_PACKAGE``:
 |         `TRIBITS_READ_PACKAGE_DEPENDENCIES()`_
 |           `TRIBITS_PREP_TO_READ_DEPENDENCIES()`_
@@ -441,7 +441,7 @@ lists and dependency data-structures described above.
 |                 ``INCLUDE(`` `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ ``)``
 |                 `TRIBITS_ASSERT_READ_DEPENDENCY_VARS()`_
 |                 `TRIBITS_PROCESS_PACKAGE_DEPENDENCIES_LISTS()`_
-|                   See same call stack for this macro below
+|                   See same call stack for this macro as shown below
 |           `TRIBITS_READ_BACK_DEPENDENCIES_VARS()`_
 |           `TRIBITS_PROCESS_PACKAGE_DEPENDENCIES_LISTS()`_
 |             `TRIBITS_SET_DEP_PACKAGES()`_
