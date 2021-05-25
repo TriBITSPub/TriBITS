@@ -427,7 +427,7 @@ lists and dependency data-structures described above.
 |     `TRIBITS_PROCESS_ALL_REPOSITORY_DEPS_SETUP_FILES()`_
 |       Foreach ``<repoDir>`` in ``${PROJECT_NAME}_ALL_REPOSITORIES``:
 |         ``INCLUDE(`` `<repoDir>/cmake/RepositoryDependenciesSetup.cmake`_ ``)``
-|     `TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_LOGIC()`_
+|     `TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_FILE()`_
 |       ``INCLUDE(``  `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_ ``)``
 |     `TRIBITS_READ_ALL_PACKAGE_DEPS_FILES_CREATE_DEPS_GRAPH()`_
 |       Foreach ``TOPLEVEL_PACKAGE``:
