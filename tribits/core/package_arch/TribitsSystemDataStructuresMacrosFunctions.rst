@@ -451,6 +451,8 @@ lists and dependency data-structures described above.
 |               `TRIBITS_ABORT_ON_MISSING_PACKAGE()`_
 |     `TRIBITS_PRINT_TENTATIVELY_ENABLED_TPLS()`_
 |     `TRIBITS_DUMP_PACKAGE_DEPENDENCIES_INFO()`_
+|   `TRIBITS_WRITE_XML_DEPENDENCY_FILES_IF_SUPPORTED()`_
+|     `TRIBITS_WRITE_XML_DEPENDENCY_FILES()`_
 
 
 Notes on dependency logic

@@ -145,10 +145,15 @@ FUNCTION(TRIBITS_DUMP_DEPS_XML_FILE)
 ENDFUNCTION()
 
 
+# @MACRO: TRIBITS_WRITE_XML_DEPENDENCY_FILES()
 #
-# Macro that ouptuts XML dependency files
+# Usage::
 #
-
+#   TRIBITS_WRITE_XML_DEPENDENCY_FILES()
+#
+# Macro that output XML dependency files if asked based in the global project
+# package dependency graph previously constructed..
+#
 MACRO(TRIBITS_WRITE_XML_DEPENDENCY_FILES)
 
   IF (${PROJECT_NAME}_ENABLE_CONFIGURE_TIMING)
@@ -208,4 +213,3 @@ MACRO(TRIBITS_WRITE_XML_DEPENDENCY_FILES)
   ENDIF()
 
 ENDMACRO()
-
