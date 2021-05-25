@@ -428,7 +428,7 @@ lists and dependency data-structures described above.
 |     `TRIBITS_PROCESS_PROJECT_DEPENDENCY_SETUP_LOGIC()`_
 |     `TRIBITS_READ_ALL_PACKAGE_DEPS_FILES_CREATE_DEPS_GRAPH()`_
 |       Foreach ``TOPLEVEL_PACKAGE``:
-|         `TRIBITS_READ_PACKAGE_DEPENDENCIES()`_
+|         `TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH()`_
 |           `TRIBITS_PREP_TO_READ_DEPENDENCIES()`_
 |           ``INCLUDE(`` `<packageDir>/cmake/Dependencies.cmake`_ ``)``
 |           `TRIBITS_ASSERT_READ_DEPENDENCY_VARS()`_

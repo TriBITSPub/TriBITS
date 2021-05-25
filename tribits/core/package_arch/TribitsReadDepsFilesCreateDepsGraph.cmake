@@ -171,7 +171,7 @@ MACRO(TRIBITS_READ_ALL_PACKAGE_DEPS_FILES_CREATE_DEPS_GRAPH)
   SET(${PROJECT_NAME}_SE_PACKAGES) # Packages and subpackages
 
   FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
-    TRIBITS_READ_PACKAGE_DEPENDENCIES(${TRIBITS_PACKAGE}
+    TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH(${TRIBITS_PACKAGE}
       ${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
   ENDFOREACH()
 
@@ -187,11 +187,11 @@ MACRO(TRIBITS_READ_ALL_PACKAGE_DEPS_FILES_CREATE_DEPS_GRAPH)
 ENDMACRO()
 
 
-# @MACRO: TRIBITS_READ_PACKAGE_DEPENDENCIES()
+# @MACRO: TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH()
 #
 # Usage::
 #
-#  TRIBITS_READ_PACKAGE_DEPENDENCIES(<packageName>)
+#  TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH(<packageName>)
 #
 # Macro that reads in package dependencies for a top-level package from the
 # file `<packageDir>/cmake/Dependencies.cmake`_ and appends the forward
@@ -217,7 +217,7 @@ ENDMACRO()
 # order and then this top-level package is appended and dependencies are
 # dependencies are created for them.
 #
-MACRO(TRIBITS_READ_PACKAGE_DEPENDENCIES  PACKAGE_NAME)
+MACRO(TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH  PACKAGE_NAME)
 
   # A) Get ready to read in the contents of this this pakages's Dependencies.cmake file
 

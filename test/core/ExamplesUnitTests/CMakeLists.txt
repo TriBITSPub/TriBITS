@@ -4974,7 +4974,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       "CMake Error at.*TribitsGeneralMacros.cmake:"
       "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
       "nonsense_jdslkfhlskd"
-      "TRIBITS_READ_PACKAGE_DEPENDENCIES"
+      "TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH"
       "-- Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
