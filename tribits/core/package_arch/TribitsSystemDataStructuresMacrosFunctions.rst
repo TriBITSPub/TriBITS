@@ -416,7 +416,7 @@ Function call tree for constructing package dependency graph
 Below is the CMake macro and function call graph for constructing the packages
 lists and dependency data-structures described above.
 
-| `TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML()`_
+| `TRIBITS_READ_ALL_PROJECT_DEPS_FILES_CREATE_DEPS_GRAPH()`_
 |   `TRIBITS_READ_DEFINED_EXTERNAL_AND_INTENRAL_TOPLEVEL_PACKAGES_LISTS()`_
 |     Foreach ``<repoDir>`` in ``${PROJECT_NAME}_ALL_REPOSITORIES``:
 |       ``INCLUDE(`` `<repoDir>/TPLsList.cmake`_ ``)``
@@ -452,9 +452,6 @@ lists and dependency data-structures described above.
 |               `TRIBITS_ABORT_ON_MISSING_PACKAGE()`_
 |             `TRIBITS_APPEND_FORWARD_DEP_PACKAGES()`_
 |               `TRIBITS_ABORT_ON_MISSING_PACKAGE()`_
-|   `TRIBITS_PRINT_INITIAL_DEPENDENCY_INFO()`_
-|   `TRIBITS_WRITE_XML_DEPENDENCY_FILES_IF_SUPPORTED()`_
-|     `TRIBITS_WRITE_XML_DEPENDENCY_FILES()`_
 
 
 Notes on dependency logic

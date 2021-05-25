@@ -38,7 +38,8 @@
 # @HEADER
 
 INCLUDE(TribitsPackageDefineDependencies)
-
+INCLUDE(SetDefault)
+INCLUDE(DualScopeSet)
 
 # @MACRO: TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
 #

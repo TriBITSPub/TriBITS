@@ -58,48 +58,6 @@ INCLUDE(DualScopeSet)
 INCLUDE(CMakeParseArguments)
 
 
-# @FUNCTION: TRIBITS_SET_ST_FOR_DEV_MODE()
-#
-# Function that allows packages to easily make a feature ``ST`` for
-# development builds and ``PT`` for release builds by default.
-#
-# Usage::
-#
-#   TRIBITS_SET_ST_FOR_DEV_MODE(<outputVar>)
-#
-# This function is typically called in a package's top-level
-# `<packageDir>/CMakeLists.txt`_ file before defining other options for the
-# package.  The output variable ``${<outputVar>}`` is set to ``ON`` or ``OFF``
-# based on the configure state.  In development mode
-# (i.e. ``${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE==ON``), ``${<outputVar>}``
-# will be set to ``ON`` only if ``ST`` code is enabled
-# (i.e. ``${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE==ON``), otherwise it is
-# set to ``OFF``. In release mode
-# (i.e. ``${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE==OFF``), ``${<outputVar>}``
-# is always set to ``ON``.  This allows some parts of a TriBITS package to be
-# considered ``ST`` for development mode (thereby reducing testing time by not
-# enabling the dependent features/tests), while still having important
-# functionality available to users by default in a release of the package.
-#
-FUNCTION(TRIBITS_SET_ST_FOR_DEV_MODE  OUTPUT_VAR)
-  IF(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE)
-    SET(OUTPUT_VAL ${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE})
-  ELSE()
-    SET(OUTPUT_VAL ON)
-  ENDIF()
-  SET(${OUTPUT_VAR} ${OUTPUT_VAL} PARENT_SCOPE)
-ENDFUNCTION()
-
-
-# For backward compatibility
-MACRO(TRIBITS_SET_SS_FOR_DEV_MODE  OUTPUT_VAR)
-  MESSAGE(WARNING
-    "WARNING: TRIBITS_SET_SS_FOR_DEV_MODE() is deprecated,"
-    " use TRIBITS_SET_ST_FOR_DEV_MODE() instead!")
-  TRIBITS_SET_ST_FOR_DEV_MODE(${OUTPUT_VAR})
-ENDMACRO()
-
-
 #
 # Private helper macros
 #
