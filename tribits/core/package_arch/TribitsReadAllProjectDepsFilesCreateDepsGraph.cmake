@@ -63,6 +63,8 @@ INCLUDE(TimingUtils)
 # data-structures described in `TriBITS System Data Structures and
 # Functions`_.
 #
+# See `Function call tree for constructing package dependency graph`_
+#
 MACRO(TRIBITS_READ_ALL_PROJECT_DEPS_FILES_CREATE_DEPS_GRAPH)
 
   TRIBITS_CONFIG_CODE_START_TIMER(SET_UP_DEPENDENCIES_TIME_START_SECONDS)
