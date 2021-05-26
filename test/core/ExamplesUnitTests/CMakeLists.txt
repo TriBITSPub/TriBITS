@@ -2394,7 +2394,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DTribitsExProj_ENABLE_CONFIGURE_TIMING=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
-        "Total time to read in and process all package dependencies: "
+        "Total time to read in all dependencies files and build dependencies graph: "
         "Total time to adjust package and TPL enables: "
         "Total time to probe and setup the environment: "
         "Total time to configure enabled TPLs: "
@@ -2410,7 +2410,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DTribitsExProj_ENABLE_PACKAGE_CONFIGURE_TIMING=ON
         .
       PASS_REGULAR_EXPRESSION_ALL
-        "Total time to read in and process all package dependencies: "
+        "Total time to read in all dependencies files and build dependencies graph: "
         "Total time to adjust package and TPL enables: "
         "Total time to probe and setup the environment: "
         "Total time to configure enabled TPLs: "
@@ -2427,7 +2427,7 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DSimpleCxx_PACKAGE_CONFIGURE_TIMING=ON
         .
       PASS_REGULAR_EXPRESSION_ALL
-        "Total time to read in and process all package dependencies: "
+        "Total time to read in all dependencies files and build dependencies graph: "
         "Total time to adjust package and TPL enables: "
         "Total time to probe and setup the environment: "
         "Total time to configure enabled TPLs: "
@@ -4974,7 +4974,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       "CMake Error at.*TribitsGeneralMacros.cmake:"
       "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
       "nonsense_jdslkfhlskd"
-      "TRIBITS_READ_PACKAGE_DEPENDENCIES"
+      "TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH"
       "-- Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 

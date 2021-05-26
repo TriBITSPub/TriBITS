@@ -93,6 +93,20 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsProcessExtraRepositoriesList_UnitTests
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsReadAllProjectDepsFilesCreateDepsGraph_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS
+      -DPROJECT_NAME=${PROJECT_NAME}
+      -D${PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+      -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraph_UnitTests.cmake"
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final UnitTests Result: num_run = 127"
+      "Final UnitTests Result: PASSED"
+  )
+
+
 TRIBITS_ADD_ADVANCED_TEST( TribitsAdjustPackageEnables_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -102,7 +116,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsAdjustPackageEnables_UnitTests
       -DCMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_SOURCE_DIR}
       -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsAdjustPackageEnables_UnitTests.cmake"
     PASS_REGULAR_EXPRESSION_ALL
-      "Final UnitTests Result: num_run = 224"
+      "Final UnitTests Result: num_run = 97"
       "Final UnitTests Result: PASSED"
   )
 

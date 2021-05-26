@@ -1111,7 +1111,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
     -DTrilinos_ASSERT_MISSING_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "CMake Error at .*/TribitsAdjustPackageEnables.cmake:.+ [(]MESSAGE[)]:"
+    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]MESSAGE[)]:"
     "Error, the package 'Anasazi' is listed as a dependency of the package"
     "'Teko' is in the list 'Trilinos_SE_PACKAGES' but the package 'Anasazi' is"
     "either not defined or is listed later in the package order[.]  This may also"
