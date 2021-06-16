@@ -214,7 +214,7 @@ def getLineEntityTypeAndName(line, fileNameAndLinePrefix, currentRstDocBlockType
   lineEntityName = lineSplit[1].strip().split(" ")[0].strip()
   if lineEntityName[-1] == ")":
     lineEntityName = lineEntityName[0:-1]
-  return (lineEntityType, lineEntityName)
+  return (lineEntityType.upper(), lineEntityName)
 
 
 # Format file name and line number

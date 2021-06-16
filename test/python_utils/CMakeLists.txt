@@ -121,7 +121,7 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_1_block_1_file
       "  --do-trace"
       "Warning: --rst-file-pairs is empty and no RST comment blocks will be set!"
       "Extracting RST documentation blocks in --extract-from:"
-      "Extracting 'MACRO' block 'SOME_MACRO_NAME1..' from .*/simpleDocText1.cmake:7:"
+      "Extracting 'MACRO' block 'some_macro_name1..' from .*/simpleDocText1.cmake:7:"
   )
 
 TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_2_blocks_2_files
@@ -132,7 +132,7 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_2_blocks_2_files
       --extract-from=${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/simpleDocText1.cmake,${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/simpleDocText2.cmake
       --do-trace
     PASS_REGULAR_EXPRESSION_ALL
-      "Extracting 'MACRO' block 'SOME_MACRO_NAME1..' from .*/simpleDocText1.cmake:7:"
+      "Extracting 'MACRO' block 'some_macro_name1..' from .*/simpleDocText1.cmake:7:"
       "Extracting 'FUNCTION' block 'SOME_FUNC_NAME2..' from .*/simpleDocText2.cmake:7:"
   )
 
@@ -144,7 +144,7 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_2_blocks_glob_dir
       --extract-from=${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/
       --do-trace
     PASS_REGULAR_EXPRESSION_ALL
-      "Extracting 'MACRO' block 'SOME_MACRO_NAME1..' from .*/simpleDocText1.cmake:7:"
+      "Extracting 'MACRO' block 'some_macro_name1..' from .*/simpleDocText1.cmake:7:"
       "Extracting 'FUNCTION' block 'SOME_FUNC_NAME2..' from .*/simpleDocText2.cmake:7:"
   )
 
@@ -157,10 +157,10 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_and_replace_2_blocks
       --rst-file-pairs=${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/simpleTemplate1.rst:simple.rst
       --do-trace
     PASS_REGULAR_EXPRESSION_ALL
-      "Extracting 'MACRO' block 'SOME_MACRO_NAME1..' from .*/simpleDocText1.cmake:7"
+      "Extracting 'MACRO' block 'some_macro_name1..' from .*/simpleDocText1.cmake:7"
       "Extracting 'FUNCTION' block 'SOME_FUNC_NAME2..' from .*/simpleDocText2.cmake:7"
       "Replacing 'FUNCTION' block 'SOME_FUNC_NAME2..' in .*/simpleTemplate1.rst:7"
-      "Replacing 'MACRO' block 'SOME_MACRO_NAME1..' in .*/simpleTemplate1.rst:11"
+      "Replacing 'MACRO' block 'some_macro_name1..' in .*/simpleTemplate1.rst:11"
   TEST_1 CMND ${CMAKE_COMMAND}
     ARGS -E compare_files simple.rst
       ${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/test_replace_1_block_1_file.rst.gold

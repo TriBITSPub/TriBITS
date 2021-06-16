@@ -4,10 +4,10 @@ blah blah blah
 something
 
 #
-# @MACRO: SOME_MACRO_NAME1()
+# @MACRO: some_macro_name1()
 #
 # Good documenation
 #
-MACRO(SOME_MACRO_NAME1 ...)
+macro(some_macro_name1 ...)
 some other stuff
 ...
