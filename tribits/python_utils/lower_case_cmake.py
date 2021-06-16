@@ -9,12 +9,25 @@ import re
 # Define regexes for matches
 
 commandCallRegex = \
-  re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*[\s]*\(', re.DOTALL)
+  re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*\(')
+commandCallWithSpacesRegex = \
+  re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*[\s]*\(')
 macroDefRegex = \
-  re.compile(r'[mM][aA][cC][rR][oO][\s]*\([\s]*[a-zA-Z_][a-zA-Z0-9_]*', re.DOTALL)
+  re.compile(r'[mM][aA][cC][rR][oO]\([\s]*[a-zA-Z_][a-zA-Z0-9_]*')
 functionDefRegex = \
-  re.compile(r'[fF][uU][nN][cC][tT][iI][oO][nN][\s]*\([\s]*[a-zA-Z_][a-zA-Z0-9_]*',
-    re.DOTALL)
+  re.compile(r'[fF][uU][nN][cC][tT][iI][oO][nN]\([\s]*[a-zA-Z_][a-zA-Z0-9_]*')
+
+specialCommandNamesList = [
+  r'[sS][eE][tT]',
+  r'[iI][fF]',
+  r'[fF][oO][rR][eE][aA][cC][hH]',
+  r'[wW][hH][iI][lL][eE]',
+  ]
+specialCommandRegexList = []
+for specialCommandName in specialCommandNamesList:
+  specialCommandRegexList.append(
+    re.compile(specialCommandName+r'[\s]*\(') )
+
 andLogicalRegex = re.compile(r'AND[\s]*\(', re.DOTALL)
 orLogicalRegex = re.compile(r'OR[\s]*\(', re.DOTALL)
 notLogicalRegex = re.compile(r'NOT[\s]*\(', re.DOTALL)
@@ -25,7 +38,7 @@ notLogicalRegex = re.compile(r'NOT[\s]*\(', re.DOTALL)
 def makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn):
   cmakeCodeStrOut = cmakeCodeStrIn
   cmakeCodeStrOut = makeRegexMatchesLowerCaseInCMakeStr(cmakeCodeStrOut,
-    commandCallRegex)
+    commandCallWithSpacesRegex)
   cmakeCodeStrOut = makeRegexMatchesLowerCaseInCMakeStr(cmakeCodeStrOut,
     macroDefRegex)
   cmakeCodeStrOut = makeRegexMatchesLowerCaseInCMakeStr(cmakeCodeStrOut,
@@ -65,12 +78,38 @@ def makeRegexMatchesLowerCaseInCMakeStr(cmakeCodeStrIn, regex):
 
 
 def conditionalLowerCaseCMakeGroup(cmakeMatchGroup):
+  cmakeMatchGroupNewCase = None
+  #print("")
+  #print("cmakeMatchGroup = '"+cmakeMatchGroup+"'")
+  if isConditionalCMakeGroup(cmakeMatchGroup):
+    cmakeMatchGroupNewCase = cmakeMatchGroup
+  elif isSpecialCommandNameMatch(cmakeMatchGroup):
+    cmakeMatchGroupNewCase = cmakeMatchGroup.lower()
+  elif commandCallRegex.match(cmakeMatchGroup):
+    cmakeMatchGroupNewCase = cmakeMatchGroup.lower()
+  else:
+    cmakeMatchGroupNewCase = cmakeMatchGroup
+  #print("cmakeMatchGroupNewCase = '"+cmakeMatchGroupNewCase+"'")
+  return cmakeMatchGroupNewCase
+
+
+def isConditionalCMakeGroup(cmakeMatchGroup):
   if andLogicalRegex.match(cmakeMatchGroup) \
     or orLogicalRegex.match(cmakeMatchGroup) \
     or notLogicalRegex.match(cmakeMatchGroup) \
     :
-    return cmakeMatchGroup
-  return cmakeMatchGroup.lower()
+    return True
+  return False
+
+
+def isSpecialCommandNameMatch(cmakeMatchGroup):
+  for specalCommandRegex in specialCommandRegexList:
+    #print("specalCommandRegex.pattern = '"+specalCommandRegex.pattern+"'")
+    m = specalCommandRegex.match(cmakeMatchGroup)
+    if m:
+      #print("MATCH!")
+      return True
+  return False
 
 
 #
@@ -80,8 +119,27 @@ def conditionalLowerCaseCMakeGroup(cmakeMatchGroup):
 
 usageHelp = r"""
 
-Convert the cmake command calls to lower case and macro and function names
-in defintions to lower case in a given file.
+Convert cmake command calls to lower case and macro and function names in
+defintions to lower case in a given file.
+
+The replacements are somewhat conservative in order not to make too many
+replacements in non-CMake code.  That is, in general, any text of the form:
+
+  <identifier>(
+
+will result in '<identifier>' being lower-cased.  However, this does not apply
+for logical operators 'AND, 'OR', and 'NOT'.
+
+Also, certain common CMake commands that often have spaces between
+'<identifer>' and '(' like:
+
+  SET (...)
+  IF (...)
+  FOREACH (...)
+  WHILE (...)
+
+will be lower-cased as well.  (These are less likely to match in regular
+text.)
 """
 
 

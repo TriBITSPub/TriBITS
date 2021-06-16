@@ -49,7 +49,7 @@ class test_makeCmndsLowerCaseInCMakeStr(unittest.TestCase):
       "  # Some comment\n"+\
       "  some_longer_func(SOME_VAR some_value)\n"+\
       "\n"+\
-      "  other_functions\n"+\
+      "  other_functioNS\n"+\
       "    (\n"+\
       "      SOME_VAR some_value)\n"+\
       "\n"
@@ -91,16 +91,16 @@ class test_makeCmndsLowerCaseInCMakeStr(unittest.TestCase):
       "  #some_call()\n"+\
       "endmacro()\n"+\
       "\n"+\
-      "macro (some_macro2)\n"+\
+      "MACRO (Some_Macro2)\n"+\
       "endmacro()\n"+\
       "\n"+\
-      "macro\n"+\
-      "  (some_macro3)\n"+\
+      "macrO\n"+\
+      "  (SOME_MACRO3)\n"+\
       "endmacro()\n"+\
       "\n"+\
-      "macro\n"+\
+      "MACRO\n"+\
       "  (\n"+\
-      "    some_macro4)\n"+\
+      "    SOME_MACRO4)\n"+\
       "endmacro()\n"+\
       "\n"
     cmakeCodeStrOut = LCC.makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn)
@@ -141,16 +141,16 @@ class test_makeCmndsLowerCaseInCMakeStr(unittest.TestCase):
       "  #some_call()\n"+\
       "endfunction()\n"+\
       "\n"+\
-      "function (some_function2)\n"+\
+      "FUNCTION (Some_Function2)\n"+\
       "endfunction()\n"+\
       "\n"+\
       "function\n"+\
-      "  (some_function3)\n"+\
+      "  (SOME_FUNCTION3)\n"+\
       "endfunction()\n"+\
       "\n"+\
-      "function\n"+\
+      "FUNCTION\n"+\
       "  (\n"+\
-      "    some_function4)\n"+\
+      "    SOME_FUNCTION4)\n"+\
       "endfunction()\n"+\
       "\n"
     cmakeCodeStrOut = LCC.makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn)
@@ -176,6 +176,46 @@ class test_makeCmndsLowerCaseInCMakeStr(unittest.TestCase):
       "  if ( (VAR1) AND NOT (VAR2) )\n"+\
       "  if ( (VAR1)AND NOT(VAR2) )\n"+\
       "endfunction()\n"+\
+      "\n"
+    cmakeCodeStrOut = LCC.makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn)
+    self.assertEqual(cmakeCodeStrOut, cmakeCodeStrOut_expected)
+
+  def test_control_statements(self):
+    cmakeCodeStrIn = "\n"+\
+      "IF(var)\n"+\
+      "IF (var)\n"+\
+      "If (var)\n"+\
+      "IF  (var)\n"+\
+      "SET(var)\n"+\
+      "SET (var)\n"+\
+      "Set (var)\n"+\
+      "SET  (var)\n"+\
+      "FOREACH(var)\n"+\
+      "FOREACH (var)\n"+\
+      "Foreach (var)\n"+\
+      "FOREACH  (var)\n"+\
+      "WHILE(var)\n"+\
+      "WHILE (var)\n"+\
+      "While (var)\n"+\
+      "WHILE  (var)\n"+\
+      "\n"
+    cmakeCodeStrOut_expected = "\n"+\
+      "if(var)\n"+\
+      "if (var)\n"+\
+      "if (var)\n"+\
+      "if  (var)\n"+\
+      "set(var)\n"+\
+      "set (var)\n"+\
+      "set (var)\n"+\
+      "set  (var)\n"+\
+      "foreach(var)\n"+\
+      "foreach (var)\n"+\
+      "foreach (var)\n"+\
+      "foreach  (var)\n"+\
+      "while(var)\n"+\
+      "while (var)\n"+\
+      "while (var)\n"+\
+      "while  (var)\n"+\
       "\n"
     cmakeCodeStrOut = LCC.makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn)
     self.assertEqual(cmakeCodeStrOut, cmakeCodeStrOut_expected)
