@@ -160,15 +160,21 @@ class test_makeCmndsLowerCaseInCMakeStr(unittest.TestCase):
     cmakeCodeStrIn = "\n"+\
       "FUNCTION(SOME_FUNCTION)\n"+\
       "  IF ( (VAR1) AND (VAR2) )\n"+\
+      "  IF ((VAR1)AND(VAR2))\n"+\
       "  IF ( (VAR1) OR (VAR2) )\n"+\
+      "  IF ( (VAR1)OR(VAR2) )\n"+\
       "  IF ( (VAR1) AND NOT (VAR2) )\n"+\
+      "  IF ( (VAR1)AND NOT(VAR2) )\n"+\
       "ENDFUNCTION()\n"+\
       "\n"
     cmakeCodeStrOut_expected = "\n"+\
       "function(some_function)\n"+\
       "  if ( (VAR1) AND (VAR2) )\n"+\
+      "  if ((VAR1)AND(VAR2))\n"+\
       "  if ( (VAR1) OR (VAR2) )\n"+\
+      "  if ( (VAR1)OR(VAR2) )\n"+\
       "  if ( (VAR1) AND NOT (VAR2) )\n"+\
+      "  if ( (VAR1)AND NOT(VAR2) )\n"+\
       "endfunction()\n"+\
       "\n"
     cmakeCodeStrOut = LCC.makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn)
