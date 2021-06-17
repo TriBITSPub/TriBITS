@@ -2662,7 +2662,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'simplecxx' in DEPLIBS is not a lib in this SE package"
-      "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2674,7 +2674,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this SE package "
-      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2688,7 +2688,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
       "TribitsExampleProject/packages/with_subpackages/b/cmake/Dependencies.cmake"
-      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2701,7 +2701,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
       "TribitsExampleProject/packages/with_subpackages/c/cmake/Dependencies.cmake"
-      "packages/with_subpackages/c/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2713,7 +2713,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
-      "packages/with_subpackages/c/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2725,7 +2725,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'm' in DEPLIBS is not a lib defined in the current cmake "
-      "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2741,7 +2741,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "ERROR: TESTONLY lib 'b_test_utils' not allowed with INSTALLABLE executable"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_8
@@ -2752,7 +2752,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       " ERROR: 'simplecxx' in TESTONLYLIBS not a TESTONLY lib"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_9
@@ -2763,7 +2763,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this SE package"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_10
@@ -2774,7 +2774,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing TESTONLY lib 'b_mixed_lang' through DEPLIBS is deprecated"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2786,7 +2786,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing non-TESTONLY lib 'pws_b' through DEPLIBS is deprecated"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2798,7 +2798,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing external lib 'm' through DEPLIBS is deprecated"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2844,7 +2844,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'simplecxx' in DEPLIBS is not a lib in this SE package"
-      "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2856,7 +2856,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this SE package "
-      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2870,7 +2870,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
       "TribitsExampleProject/packages/with_subpackages/b/cmake/Dependencies.cmake"
-      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2883,7 +2883,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
       "TribitsExampleProject/packages/with_subpackages/c/cmake/Dependencies.cmake"
-      "packages/with_subpackages/c/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2895,7 +2895,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
-      "packages/with_subpackages/c/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2907,7 +2907,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'm' in DEPLIBS is not a lib defined in the current cmake "
-      "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2923,7 +2923,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "ERROR: TESTONLY lib 'b_test_utils' not allowed with INSTALLABLE executable"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_8
@@ -2934,7 +2934,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       " ERROR: 'simplecxx' in TESTONLYLIBS not a TESTONLY lib"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_9
@@ -2945,7 +2945,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this SE package"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_10
@@ -2956,7 +2956,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing TESTONLY lib 'b_mixed_lang' through DEPLIBS is deprecated"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2968,7 +2968,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing non-TESTONLY lib 'pws_b' through DEPLIBS is deprecated"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -3471,7 +3471,7 @@ tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
       "When you reconfigure, just grep the cmake stdout for 'HeaderOnlyTpl'"
       "and then follow the disables that occur as a result to see what impact"
       "this TPL disable has on the configuration of TribitsExProj."
-      "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ .MESSAGE.:"
+      "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ [(]message[)]:"
       "  ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
       "Call Stack .most recent call first.:"
       "-- Configuring incomplete, errors occurred!"
@@ -3523,7 +3523,7 @@ tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
       "and then follow the disables that occur as a result to see what impact"
       "this TPL disable has on the configuration of TribitsExProj."
       "-- ERROR: Failed finding all of the parts of TPL 'HeaderOnlyTpl' .see above., Aborting!"
-      "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ .MESSAGE.:"
+      "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ [(]message[)]:"
       "  ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
       "Call Stack .most recent call first.:"
       "-- Configuring incomplete, errors occurred!"
@@ -3561,7 +3561,7 @@ tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
       .
     PASS_REGULAR_EXPRESSION_ALL
       "Error, the package InsertedPkg directory .+/TribitsExampleProject/InsertedPkg does not exist!"
-      "CMake Error at .+/TribitsProcessPackagesAndDirsLists.cmake:[0-9]+ .MESSAGE.:"
+      "CMake Error at .+/TribitsProcessPackagesAndDirsLists.cmake:[0-9]+ [(]message[)]:"
       "Configuring incomplete, errors occurred!"
 
   TEST_3
@@ -4754,7 +4754,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Processing enabled package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
-      "ERROR: Forgot to call TRIBITS_PACKAGE_POSTPROCESS[(][)] .*/TribitsExampleProject/PkgWithUserErrors/CMakeLists.txt"
+      "ERROR: Forgot to call tribits_package_postprocess[(][)] .*/TribitsExampleProject/PkgWithUserErrors/CMakeLists.txt"
     ALWAYS_FAIL_ON_ZERO_RETURN
   )
 
@@ -4786,7 +4786,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DPkgWithUserErrors_ADD_LIBRARY_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE[(][)] or TRIBITS_PACKAGE_DECL[(][)] before\n  TRIBITS_ADD_LIBRARY[(][)] in"
+      "Must call tribits_package[(][)] or tribits_package_decl[(][)] before\n  tribits_add_library[(][)] in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4804,7 +4804,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DPkgWithUserErrors_ADD_EXECUTABLE_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE[(][)] or TRIBITS_PACKAGE_DECL[(][)] before\n  TRIBITS_ADD_EXECUTABLE[(][)] in"
+      "Must call tribits_package[(][)] or tribits_package_decl[(][)] before\n  tribits_add_executable[(][)] in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4823,8 +4823,8 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DPkgWithUserErrors_POSTPROCESS_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE[(][)] or TRIBITS_PACKAGE_DEF[(][)]"
-      "TRIBITS_PACKAGE_POSTPROCESS[(][)]"
+      "Must call tribits_package[(][)] or tribits_package_def[(][)]"
+      "tribits_package_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4862,7 +4862,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "The TriBITS Package 'PkgWithUserErrors' does not have any subpackages[.]"
-      "Therefore, you are not allowed to call TRIBITS_PROCESS_SUBPACKAGES[(][)]!"
+      "Therefore, you are not allowed to call tribits_process_subpackages[(][)]!"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4897,7 +4897,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
       -DPkgWithUserErrors_ADD_LIBRARY_after_POSTPROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_ADD_LIBRARY[(][)] before TRIBITS_PACKAGE_POSTPROCESS[(][)] in"
+      "Must call tribits_add_library[(][)] before tribits_package_postprocess[(][)] in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4916,7 +4916,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
       -DPkgWithUserErrors_ADD_EXECUTABLE_after_POSTPROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_ADD_EXECUTABLE[(][)] before TRIBITS_PACKAGE_POSTPROCESS[(][)] in"
+      "Must call tribits_add_executable[(][)] before tribits_package_postprocess[(][)] in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4936,7 +4936,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
       -DPkgWithUserErrors_multiple_calls_to_POSTPROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "TRIBITS_PACKAGE_POSTPROCESS[(][)] has been called more than once in"
+      "tribits_package_postprocess[(][)] has been called more than once in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4974,7 +4974,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       "CMake Error at.*TribitsGeneralMacros.cmake:"
       "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
       "nonsense_jdslkfhlskd"
-      "TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH"
+      "tribits_read_toplevel_package_deps_files_add_to_graph"
       "-- Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4996,7 +4996,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       "CMake Error at.*TribitsGeneralMacros.cmake:"
       "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
       "this_shouldnt_be_here"
-      "PkgWithUserErrors/CMakeLists.txt.*TRIBITS_ADD_LIBRARY"
+      "PkgWithUserErrors/CMakeLists.txt.*tribits_add_library"
       "-- Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5019,7 +5019,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       "CMake Error at.*TribitsGeneralMacros.cmake:"
       "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
       "misspelled_argument"
-      "PkgWithUserErrors/CMakeLists.txt.*TRIBITS_ADD_EXECUTABLE"
+      "PkgWithUserErrors/CMakeLists.txt.*tribits_add_executable"
       "-- Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
   )
@@ -5104,7 +5104,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_no_PACKAGE_DECL_before_PROCESS_SUBPACKAGES=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE_DECL[(][)] before TRIBITS_PROCESS_SUBPACKAGES[(][)]"
+      "Must call tribits_package_decl[(][)] before tribits_process_subpackages[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5115,12 +5115,12 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_POSTPROCESS_before_SUBPACKAGES=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      " Must call TRIBITS_PACKAGE_DECL[(][)], TRIBITS_PROCESS_SUBPACKAGES[(][)]and"
-      " TRIBITS_PACKAGE_DEF before TRIBITS_PACKAGE_POSTPROCESS[(][)].  Because this"
-      " package has subpackages you cannot use TRIBITS_PACKAGE[(][)] you must call"
-      " these in the following order: TRIBITS_PACKAGE_DECL"
-      " TRIBITS_PROCESS_SUBPACKAGES TRIBITS_PACKAGE_DEF TRIBITS_PACKAGE_POSTPROCESS"
-      " in file:"
+      " Must call tribits_package_decl[(][)], tribits_process_subpackages[(][)] and"
+      " tribits_package_def[(][)] before tribits_package_postprocess[(][)].  Because this"
+      " package has subpackages you cannot use tribits_package[(][)] you must call"
+      " these in the following order: tribits_package_decl[(][)]"
+      " tribits_process_subpackages[(][)] tribits_package_def[(][)]"
+      " tribits_package_postprocess[(][)] in:"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5131,7 +5131,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_PACKAGE_DEF_before_SUBPACKAGES=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE_DEF[(][)] after TRIBITS_PROCESS_SUBPACKAGES[(][)]"
+      "Must call tribits_package_def[(][)] after tribits_process_subpackages[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5142,7 +5142,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_multiple_calls_to_PACKAGE_DECL=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "TRIBITS_PACKAGE_DECL[(][)] called more than once"
+      "tribits_package_decl[(][)] called more than once"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5153,7 +5153,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_multiple_calls_to_PACKAGE_DEF=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "TRIBITS_PACKAGE_DEF was called more than once"
+      "tribits_package_def[(][)] was called more than once"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5164,12 +5164,12 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_PACKAGE_from_package_with_subpackages=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "This package has subpackages so you cannot use TRIBITS_PACKAGE"
+      "This package has subpackages so you cannot use tribits_package[(][)]"
       "Instead use the following call order:"
-      "TRIBITS_PROJECT_DECL[(]PkgWithSubpkgsWithUserErrors[)]"
-      "TRIBITS_PROCESS_SUBPACKAGES"
-      "TRIBITS_PACKAGE_DEF"
-      "TRIBITS_PACKAGE_POSTPROCESS"
+      "tribits_project_decl[(]PkgWithSubpkgsWithUserErrors[)]"
+      "tribits_process_subpackages[(][)]"
+      "tribits_package_def[(][)]"
+      "tribits_package_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5180,12 +5180,12 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_PACKAGE_after_PROCESS_SUBPACKAGES=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "This package has subpackages so you cannot use TRIBITS_PACKAGE[(][)]"
+      "This package has subpackages so you cannot use tribits_package[(][)]"
       "Instead use the following call order"
-      "TRIBITS_PROJECT_DECL[(]PkgWithSubpkgsWithUserErrors[)]"
-      "TRIBITS_PROCESS_SUBPACKAGES[(][)]"
-      "TRIBITS_PACKAGE_DEF[(][)]"
-      "TRIBITS_PACKAGE_POSTPROCESS[(][)]"
+      "tribits_project_decl[(]PkgWithSubpkgsWithUserErrors[)]"
+      "tribits_process_subpackages[(][)]"
+      "tribits_package_def[(][)]"
+      "tribits_package_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5196,12 +5196,12 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_everthing_except_PROCESS_SUBPACKAGES=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      " Must call TRIBITS_PACKAGE_DECL[(][)], TRIBITS_PROCESS_SUBPACKAGES[(][)]and"
-      " TRIBITS_PACKAGE_DEF before TRIBITS_PACKAGE_POSTPROCESS[(][)].  Because this"
-      " package has subpackages you cannot use TRIBITS_PACKAGE[(][)] you must call"
-      " these in the following order: TRIBITS_PACKAGE_DECL"
-      " TRIBITS_PROCESS_SUBPACKAGES TRIBITS_PACKAGE_DEF TRIBITS_PACKAGE_POSTPROCESS"
-      " in file:"
+      " Must call tribits_package_decl[(][)], tribits_process_subpackages[(][)] and"
+      " tribits_package_def[(][)] before tribits_package_postprocess[(][)].  Because this"
+      " package has subpackages you cannot use tribits_package[(][)] you must call"
+      " these in the following order: tribits_package_decl[(][)]"
+      " tribits_process_subpackages[(][)] tribits_package_def[(][)]"
+      " tribits_package_postprocess[(][)] in:"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5212,12 +5212,12 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_PACKAGE_DECL_only=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      " Must call TRIBITS_PACKAGE_DECL[(][)], TRIBITS_PROCESS_SUBPACKAGES[(][)]and"
-      " TRIBITS_PACKAGE_DEF before TRIBITS_PACKAGE_POSTPROCESS[(][)].  Because this"
-      " package has subpackages you cannot use TRIBITS_PACKAGE[(][)] you must call"
-      " these in the following order: TRIBITS_PACKAGE_DECL"
-      " TRIBITS_PROCESS_SUBPACKAGES TRIBITS_PACKAGE_DEF TRIBITS_PACKAGE_POSTPROCESS"
-      " in file:"
+      " Must call tribits_package_decl[(][)], tribits_process_subpackages[(][)] and"
+      " tribits_package_def[(][)] before tribits_package_postprocess[(][)].  Because this"
+      " package has subpackages you cannot use tribits_package[(][)] you must call"
+      " these in the following order: tribits_package_decl[(][)]"
+      " tribits_process_subpackages[(][)] tribits_package_def[(][)]"
+      " tribits_package_postprocess[(][)] in:"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5228,7 +5228,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_SUBPACKAGE_from_package_with_subpackages=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_SUBPACKAGE[(][)] from a package.  Use TRIBITS_PACKAGE[(][)]"
+      "Cannot call tribits_subpackage[(][)] from a package.  Use tribits_package[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5239,8 +5239,8 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_SUBPACKAGE_POSTPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_SUBPACKAGE_POSTPROCESS[(][)] from a package.  Use"
-      " TRIBITS_PACKAGE_POSTPROCESS[(][)] instead"
+      "Cannot call tribits_subpackage_postprocess[(][)] from a package.  Use"
+      " tribits_package_postprocess[(][)] instead"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5276,7 +5276,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_PACKAGE=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_PACKAGE[(][)] in a subpackage"
+      "Cannot call tribits_package[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5287,7 +5287,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_PACKAGE_DECL=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_PACKAGE_DECL[(][)] in a subpackage"
+      "Cannot call tribits_package_decl[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5298,7 +5298,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_PACKAGE_DEF=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_PACKAGE_DEF[(][)] in a subpackage"
+      "Cannot call tribits_package_def[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5309,7 +5309,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_PROCESS_SUBPACKAGES=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_PROCESS_SUBPACKAGES[(][)] in a subpackage"
+      "Cannot call tribits_process_subpackages[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5320,7 +5320,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_PROCESS_SUBPACKAGES=FALSE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_PACKAGE_POSTPROCESS[(][)] in a subpackage"
+      "Cannot call tribits_package_postprocess[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5331,7 +5331,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_DOUBLE_SUBPACKAGE_INIT=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Already called TRIBITS_SUBPACKGE[(][)] for the PkgWithSubpkgsWithUserErrors"
+      "Already called tribits_subpackge[(][)] for the PkgWithSubpkgsWithUserErrors"
       "subpackage A"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
@@ -5343,7 +5343,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPAckageA_DOUBLE_SUBPACKAGE_POSTPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Already called TRIBITS_SUBPACKGE_POSTPROCESS[(][)] for the"
+      "Already called tribits_subpackge_postprocess[(][)] for the"
       "PkgWithSubpkgsWithUserErrors subpackage A"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
@@ -5355,7 +5355,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPAckageA_DOUBLE_SUBPACKAGE_POSTPROCESS=FALSE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "TRIBITS_SUBPACKAGE[(][)] must be called before TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "tribits_subpackage[(][)] must be called before tribits_subpackage_postprocess[(][)]"
       " for the PkgWithSubpkgsWithUserErrors"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
@@ -5369,7 +5369,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       .
     PASS_REGULAR_EXPRESSION_ALL
       "Adding library in subpackage after post process"
-      "Must call TRIBITS_ADD_LIBRARY[(][)] before TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "Must call tribits_add_library[(][)] before tribits_subpackage_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5382,7 +5382,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       .
     PASS_REGULAR_EXPRESSION_ALL
       "Adding executable in subpackage after post process"
-      "Must call TRIBITS_ADD_EXECUTABLE[(][)] before TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "Must call tribits_add_executable[(][)] before tribits_subpackage_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5394,7 +5394,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_add_lib_no_PREPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_LIBRARY[(][)]"
+      "Must call tribits_subpackage[(][)] before tribits_add_library[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5406,7 +5406,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_add_exe_no_PREPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_EXECUTABLE[(][)]"
+      "Must call tribits_subpackage[(][)] before tribits_add_executable[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5418,7 +5418,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_ADD_TEST_DIRECTORY_without_SUBPACKAGE=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_TEST_DIRECTORIES[(][)]"
+      "Must call tribits_subpackage[(][)] before tribits_add_test_directories[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5430,8 +5430,8 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_ADD_TEST_DIRECTORY_after_POSTPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_ADD_TEST_DIRECTORIES[(][)] before"
-      "TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "Must call tribits_add_test_directories[(][)] before"
+      "tribits_subpackage_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5443,7 +5443,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_ADD_EXAMPLE_DIRECTORY_without_SUBPACKAGE=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_EXAMPLE_DIRECTORIES[(][)]"
+      "Must call tribits_subpackage[(][)] before tribits_add_example_directories[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5455,8 +5455,8 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_ADD_EXAMPLE_DIRECTORY_after_POSTPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_ADD_EXAMPLE_DIRECTORIES[(][)] before"
-      "TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "Must call tribits_add_example_directories[(][)] before"
+      "tribits_subpackage_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5489,9 +5489,9 @@ tribits_add_advanced_test( TribitsExampleProject_config_file_compiler_overrides
     CMND grep
     ARGS _COMPILER TribitsExProjConfig_install.cmake
     PASS_REGULAR_EXPRESSION_ALL
-      "SET[(]TribitsExProj_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
-      "SET[(]TribitsExProj_C_COMPILER .c_wrapper_install_dir.[)]"
-      "SET[(]TribitsExProj_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
+      "set[(]TribitsExProj_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
+      "set[(]TribitsExProj_C_COMPILER .c_wrapper_install_dir.[)]"
+      "set[(]TribitsExProj_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_2
@@ -5499,10 +5499,10 @@ tribits_add_advanced_test( TribitsExampleProject_config_file_compiler_overrides
     CMND grep
     ARGS _COMPILER packages/with_subpackages/CMakeFiles/WithSubpackagesConfig_install.cmake
     PASS_REGULAR_EXPRESSION_ALL
-      "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
-      "SET[(]WithSubpackages_C_COMPILER .c_wrapper_install_dir.[)]"
-      "SET[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
-      "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_install_dir.[)]"
+      "set[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
+      "set[(]WithSubpackages_C_COMPILER .c_wrapper_install_dir.[)]"
+      "set[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
+      "set[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_install_dir.[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_3
@@ -5510,10 +5510,10 @@ tribits_add_advanced_test( TribitsExampleProject_config_file_compiler_overrides
     CMND grep
     ARGS _COMPILER packages/with_subpackages/WithSubpackagesConfig.cmake
     PASS_REGULAR_EXPRESSION_ALL
-      "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_build_dir.[)]"
-      "SET[(]WithSubpackages_C_COMPILER .c_wrapper_build_dir.[)]"
-      "SET[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_build_dir.[)]"
-      "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_build_dir.[)]"
+      "set[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_build_dir.[)]"
+      "set[(]WithSubpackages_C_COMPILER .c_wrapper_build_dir.[)]"
+      "set[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_build_dir.[)]"
+      "set[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_build_dir.[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )

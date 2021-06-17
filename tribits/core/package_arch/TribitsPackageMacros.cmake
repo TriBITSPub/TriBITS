@@ -199,10 +199,10 @@ macro(tribits_package_decl PACKAGE_NAME_IN)
   if(${PACKAGE_NAME}_TRIBITS_PACKAGE_DECL_CALLED)
     tribits_report_invalid_tribits_usage(
       "tribits_package_decl() called more than once in Package ${PACKAGE_NAME}"
-      " This may be because TRIBITS_PACKAGE_DECL was expicitly called more than once or"
+      " This may be because tribits_package_decl() was expicitly called more than once or"
       " TRIBITS_PACKAGE_DECL was called after TRIBITS_PACKAGE. You do not need both."
       " If your package has subpackages then do not call tribits_package() instead call:"
-      " TRIBITS_PACAKGE_DECL then TRIBITS_PROCESS_SUBPACKAGES then TRIBITS PACKAGE_DEF"
+      " tribits_pacakge_decl() then tribits_process_subpackages() then tribits package_def()"
     )
   endif()
 
@@ -317,7 +317,7 @@ macro(tribits_package_def)
   # check that this is not called morethan once in a package
   if (${PACKAGE_NAME}_TRIBITS_PACKAGE_DEF_CALLED)
     tribits_report_invalid_tribits_usage(
-      "TRIBITS_PACKAGE_DEF was called more than once in"
+      "tribits_package_def() was called more than once in"
       "${CURRENT_SUBPACKAGE_CMAKELIST_FILE}")
   endif()
 
@@ -432,8 +432,9 @@ macro(tribits_add_test_directories)
 
     if(${SUBPACKAGE_FULLNAME}_TRIBITS_SUBPACKAGE_POSTPROCESS_CALLED)
       tribits_report_invalid_tribits_usage(
-        "Must call tribits_add_test_directories() before "
-        " tribits_subpackage_postprocess() in ${CURRENT_SUBPACKAGE_CMAKELIST_FILE}")
+        "Must call tribits_add_test_directories() before"
+        " tribits_subpackage_postprocess() in"
+        " ${CURRENT_SUBPACKAGE_CMAKELIST_FILE}")
     endif()
 
   else()
@@ -756,14 +757,14 @@ macro(tribits_package_postprocess)
 
       tribits_report_invalid_tribits_usage(
 	"Must call tribits_package_decl(), tribits_process_subpackages()"
-        "and TRIBITS_PACKAGE_DEF before tribits_package_postprocess()."
-        " Because this package has subpackages you cannot use tribits_package()"
+        " and tribits_package_def() before tribits_package_postprocess()."
+        "  Because this package has subpackages you cannot use tribits_package()"
         " you must call these in the following order:"
-        " TRIBITS_PACKAGE_DECL"
-        " TRIBITS_PROCESS_SUBPACKAGES"
-        " TRIBITS_PACKAGE_DEF"
-        " TRIBITS_PACKAGE_POSTPROCESS"
-        " in file: "
+        " tribits_package_decl()"
+        " tribits_process_subpackages()"
+        " tribits_package_def()"
+        " tribits_package_postprocess()"
+        " in: "
         "${TRIBITS_PACKAGE_CMAKELIST_FILE}"
         )
     endif()
@@ -789,10 +790,10 @@ macro(tribits_package_postprocess)
   
   if(NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_DEF_CALLED)
     tribits_report_invalid_tribits_usage(
-      "Must call tribits_package() before tribits_package_postprocess()" 
-      "Or if your package has subpackages you must first call TRIBITS_PACKAGE_DECL, "
-      "then TRIBITS_PROCESS_SUBPACKAGES, then TRIBITS_PACKAGE_DEF, then"
-      " TRIBITS_PACKAGE_POSTPROCESS"
+      "Must call tribits_package() before tribits_package_postprocess()." 
+      "  Or if your package has subpackages you must first call tribits_package_decl(),"
+      " then tribits_process_subpackages(), then tribits_package_def(), then"
+      " tribits_package_postprocess() in"
       " ${TRIBITS_PACKAGE_CMAKELIST_FILE}"
       )
   endif()
@@ -859,7 +860,7 @@ macro(tribits_process_subpackages)
   if (NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_DECL_CALLED)
     tribits_report_invalid_tribits_usage(
       "Must call tribits_package_decl() before tribits_process_subpackages()"
-       "in ${TRIBITS_PACKAGE_CMAKELIST_FILE}")
+      " in ${TRIBITS_PACKAGE_CMAKELIST_FILE}")
   endif()
 
   if (${PACKAGE_NAME}_TRIBITS_PACKAGE_DEF_CALLED)
