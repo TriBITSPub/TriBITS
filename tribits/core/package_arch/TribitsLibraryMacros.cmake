@@ -149,18 +149,18 @@ function(tribits_configure_file  PACKAGE_NAME_CONFIG_FILE)
       "\n"
       "#ifndef ${PARENT_PACKAGE_NAME_UC}_DEPRECATED_MSG\n"
       "#  if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5))\n"
-      "#    define ${PARENT_PACKAGE_NAME_UC}_deprecated_msg(MSG)  __attribute__((__deprecated__ (#MSG) ))\n"
+      "#    define ${PARENT_PACKAGE_NAME_UC}_DEPRECATED_MSG(MSG)  __attribute__((__deprecated__ (#MSG) ))\n"
       "#  elif (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))\n"
-      "#    define ${PARENT_PACKAGE_NAME_UC}_deprecated_msg(MSG)  __attribute__((__deprecated__))\n"
+      "#    define ${PARENT_PACKAGE_NAME_UC}_DEPRECATED_MSG(MSG)  __attribute__((__deprecated__))\n"
       "#  else\n"
-      "#    define ${PARENT_PACKAGE_NAME_UC}_deprecated_msg(MSG)\n"
+      "#    define ${PARENT_PACKAGE_NAME_UC}_DEPRECATED_MSG(MSG)\n"
       "#  endif\n"
       "#endif\n"
       )
   else()
     multiline_set(${PARENT_PACKAGE_NAME_UC}_DEPRECATED_DECLARATIONS
       "#define ${PARENT_PACKAGE_NAME_UC}_DEPRECATED\n"
-      "#define ${PARENT_PACKAGE_NAME_UC}_deprecated_msg(MSG)\n"
+      "#define ${PARENT_PACKAGE_NAME_UC}_DEPRECATED_MSG(MSG)\n"
       )
   endif()
 
