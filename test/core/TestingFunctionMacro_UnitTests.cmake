@@ -2278,14 +2278,14 @@ function(unittest_tribits_add_advanced_test_basic)
     REGEX_STRINGS
       "TEST_0_CMND \"ls\""
       "NUM_CMNDS 1"
-      "SET[(]SKIP_CLEAN_OVERALL_WORKING_DIRECTORY .FALSE.[)]"
-      "SET[(]SHOW_START_END_DATE_TIME ON[)]"
-      "SET[(]SHOW_MACHINE_LOAD OFF[)]"
-      "SET[(]CATEGORIES [)]"
-      "SET[(]PROCESSORS 4[)]"
-      "SET[(]TIMEOUT 333.2[)]"
-      "SET[(] TEST_0_WORKING_DIRECTORY .someSubdir. [)]"
-      "SET[(] TEST_0_SKIP_CLEAN_WORKING_DIRECTORY FALSE [)]"
+      "set[(]SKIP_CLEAN_OVERALL_WORKING_DIRECTORY .FALSE.[)]"
+      "set[(]SHOW_START_END_DATE_TIME ON[)]"
+      "set[(]SHOW_MACHINE_LOAD OFF[)]"
+      "set[(]CATEGORIES [)]"
+      "set[(]PROCESSORS 4[)]"
+      "set[(]TIMEOUT 333.2[)]"
+      "set[(] TEST_0_WORKING_DIRECTORY .someSubdir. [)]"
+      "set[(] TEST_0_SKIP_CLEAN_WORKING_DIRECTORY FALSE [)]"
     )
 
   message("***\n*** Add a single package executable with no arguments (and check other stuff)\n***")
@@ -2308,8 +2308,8 @@ function(unittest_tribits_add_advanced_test_basic)
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
-      "SET[(]SHOW_START_END_DATE_TIME OFF[)]"
-      "SET[(]SHOW_MACHINE_LOAD ON[)]"
+      "set[(]SHOW_START_END_DATE_TIME OFF[)]"
+      "set[(]SHOW_MACHINE_LOAD ON[)]"
     )
 
   message("***\n*** Use a test name with '/' in the name\n***")
@@ -2334,8 +2334,8 @@ function(unittest_tribits_add_advanced_test_basic)
       "OVERALL_WORKING_DIRECTORY \"${PACKAGE_NAME}_TAAT_basic__exec__1_args_0\""
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
-      "SET[(]SHOW_START_END_DATE_TIME OFF[)]"
-      "SET[(]SHOW_MACHINE_LOAD ON[)]"
+      "set[(]SHOW_START_END_DATE_TIME OFF[)]"
+      "set[(]SHOW_MACHINE_LOAD ON[)]"
     )
 
   message("***\n*** Add a single basic command with two arguments\n***")
@@ -2361,14 +2361,14 @@ function(unittest_tribits_add_advanced_test_basic)
     REGEX_STRINGS
       "TEST_0_CMND \"ls\" \"CMakeLists.txt\" \"CMakeFiles\""
       "NUM_CMNDS 1"
-      "SET[(]OVERALL_WORKING_DIRECTORY .PackageA_TAAT_basic_cmnd_1_args_2.[)]"
-      "SET[(]SKIP_CLEAN_OVERALL_WORKING_DIRECTORY .TRUE.[)]"
+      "set[(]OVERALL_WORKING_DIRECTORY .PackageA_TAAT_basic_cmnd_1_args_2.[)]"
+      "set[(]SKIP_CLEAN_OVERALL_WORKING_DIRECTORY .TRUE.[)]"
       "CMAKE_MODULE_PATH"
-      "SET[(]SHOW_START_END_DATE_TIME OFF[)]"
-      "SET[(] TEST_0_WORKING_DIRECTORY .someSubdir. [)]"
-      "SET[(] TEST_0_SKIP_CLEAN_WORKING_DIRECTORY TRUE [)]"
+      "set[(]SHOW_START_END_DATE_TIME OFF[)]"
+      "set[(] TEST_0_WORKING_DIRECTORY .someSubdir. [)]"
+      "set[(] TEST_0_SKIP_CLEAN_WORKING_DIRECTORY TRUE [)]"
       "DriveAdvancedTest"
-      "DRIVE_ADVANCED_TEST"
+      "drive_advanced_test"
     )
 
   message("***\n*** Add a single package executable with three arguments\n***")
@@ -2560,7 +2560,7 @@ function(unittest_tribits_add_advanced_test_categories)
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
-      "SET.CATEGORIES HEAVY."
+      "set[(]CATEGORIES HEAVY."
     )
 
   message("Test empty CATEGORIES *not* matching PERFORMANCE category set by client")
