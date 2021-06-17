@@ -4,7 +4,7 @@ something 1
 
 other
 
-@FUNCTION: SOME_FUNC_NAME2() -
+@FUNCTION: some_func_name2() -
 
 something 2
 

@@ -1,9 +1,9 @@
-IF(PkgWithUserErrors_UNPARSED_ARGS_DEFINE_DEPENDENCIES)
+if(PkgWithUserErrors_UNPARSED_ARGS_DEFINE_DEPENDENCIES)
 
-  TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(
+  tribits_package_define_dependencies(
   nonsense_jdslkfhlskd
   )
 
-ELSE()
-  TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()
-ENDIF()
+else()
+  tribits_package_define_dependencies()
+endif()

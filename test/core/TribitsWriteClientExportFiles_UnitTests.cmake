@@ -37,11 +37,11 @@
 # ************************************************************************
 # @HEADER
 
-MESSAGE("CURRENT_TEST_DIRECTORY = ${CURRENT_TEST_DIRECTORY}")
+message("CURRENT_TEST_DIRECTORY = ${CURRENT_TEST_DIRECTORY}")
 
-INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsAdjustPackageEnablesHelpers.cmake)
-INCLUDE(TribitsPackageMacros)
-INCLUDE(TribitsWriteClientExportFiles)
+include(${CMAKE_CURRENT_LIST_DIR}/TribitsAdjustPackageEnablesHelpers.cmake)
+include(TribitsPackageMacros)
+include(TribitsWriteClientExportFiles)
 
 
 #####################################################################
@@ -51,25 +51,25 @@ INCLUDE(TribitsWriteClientExportFiles)
 #####################################################################
 
 
-MACRO(SETUP_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_TEST_STUFF)
+macro(setup_write_specialized_package_export_makefile_test_stuff)
 
   # These would be set the TriBITS env probing code or by CMake
-  SET(${PROJECT_NAME}_ENABLE_C ON)
-  SET(${PROJECT_NAME}_ENABLE_CXX ON)
-  SET(${PROJECT_NAME}_ENABLE_Fortran ON)
+  set(${PROJECT_NAME}_ENABLE_C ON)
+  set(${PROJECT_NAME}_ENABLE_CXX ON)
+  set(${PROJECT_NAME}_ENABLE_Fortran ON)
 
   # These would be set automatically by CMake if we were not in script mode!
-  SET(CMAKE_LINK_LIBRARY_FLAG -l)
-  SET(CMAKE_LIBRARY_PATH_FLAG -L)
+  set(CMAKE_LINK_LIBRARY_FLAG -l)
+  set(CMAKE_LIBRARY_PATH_FLAG -L)
 
   # Make sure this is defined!
-  ASSERT_DEFINED(${PROJECT_NAME}_TRIBITS_DIR)
+  assert_defined(${PROJECT_NAME}_TRIBITS_DIR)
 
   # Need to define these:
-  SET(${PROJECT_NAME}_INSTALL_LIB_DIR "dummy_install_lib_dir")
-  SET(${PROJECT_NAME}_INSTALL_INCLUDE_DIR "dummy_install_include_dir")
+  set(${PROJECT_NAME}_INSTALL_LIB_DIR "dummy_install_lib_dir")
+  set(${PROJECT_NAME}_INSTALL_INCLUDE_DIR "dummy_install_include_dir")
 
-ENDMACRO()
+endmacro()
 
 
 #
@@ -77,56 +77,56 @@ ENDMACRO()
 #
 
 
-FUNCTION(UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_BEFORE_LIBS)
+function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the generation of a specialized export makefile for RTOp *before* libs")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the generation of a specialized export makefile for RTOp *before* libs")
+  message("***\n")
 
-  SETUP_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_TEST_STUFF()
+  setup_write_specialized_package_export_makefile_test_stuff()
 
   # Debugging
-  SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  SET(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
+  set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  set(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
 
-  SET(${PROJECT_NAME}_ENABLE_RTOp ON)
-  SET(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
+  set(${PROJECT_NAME}_ENABLE_RTOp ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
 
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
+  unittest_helper_read_and_process_packages()
 
   # These are basic global VARS we want to pass along
-  SET(CMAKE_BUILD_TYPE DEBUG)
+  set(CMAKE_BUILD_TYPE DEBUG)
 
   # These vars would be set up by the FindTPL<TPLNAME>.cmake modules if they
   # were called
-  SET(TPL_BLAS_LIBRARIES "blaspath/lib/libblas.a")
-  SET(TPL_BLAS_LIBRARY_DIRS "blashpath/lib")
-  SET(TPL_BLAS_INCLUDE_DIRS "blaspath/include")
-  SET(TPL_LAPACK_LIBRARIES "lapackpath/lib/liblapack.a")
-  SET(TPL_LAPACK_LIBRARY_DIRS "lapackhpath/lib")
-  SET(TPL_LAPACK_INCLUDE_DIRS "lapackhpath/include")
+  set(TPL_BLAS_LIBRARIES "blaspath/lib/libblas.a")
+  set(TPL_BLAS_LIBRARY_DIRS "blashpath/lib")
+  set(TPL_BLAS_INCLUDE_DIRS "blaspath/include")
+  set(TPL_LAPACK_LIBRARIES "lapackpath/lib/liblapack.a")
+  set(TPL_LAPACK_LIBRARY_DIRS "lapackhpath/lib")
+  set(TPL_LAPACK_INCLUDE_DIRS "lapackhpath/include")
 
-  # These vars should be generated automatically by TRIBITS_PACKAGE() that
+  # These vars should be generated automatically by tribits_package() that
   # begins with the upstreams packages.
-  SET(Teuchos_LIBRARY_DIRS "teuchos/core/src;teuchos/numeric/src")
-  SET(Teuchos_INCLUDE_DIRS "teuchos/core/include;teuchos/numeric/include")
-  SET(Teuchos_LIBRARIES "teuchoscore;teuchosnumeric")
-  SET(Teuchos_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
+  set(Teuchos_LIBRARY_DIRS "teuchos/core/src;teuchos/numeric/src")
+  set(Teuchos_INCLUDE_DIRS "teuchos/core/include;teuchos/numeric/include")
+  set(Teuchos_LIBRARIES "teuchoscore;teuchosnumeric")
+  set(Teuchos_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
 
-  SET(GENERATED_EXPORT_CONFIG
+  set(GENERATED_EXPORT_CONFIG
     "${CURRENT_TEST_DIRECTORY}/RTOpBeforeConfig.cmake")
 
-  SET(GENERATED_EXPORT_MAKEFILE
+  set(GENERATED_EXPORT_MAKEFILE
     "${CURRENT_TEST_DIRECTORY}/Makefile.export.RTOp.before")
 
-  TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES(
+  tribits_write_flexible_package_client_export_files(
     PACKAGE_NAME RTOp
     EXPORT_FILE_VAR_PREFIX RTOp1
     WRITE_CMAKE_CONFIG_FILE "${GENERATED_EXPORT_CONFIG}"
     WRITE_EXPORT_MAKEFILE "${GENERATED_EXPORT_MAKEFILE}"
     )
 
-  UNITTEST_FILE_REGEX("${GENERATED_EXPORT_CONFIG}"
+  unittest_file_regex("${GENERATED_EXPORT_CONFIG}"
     REGEX_STRINGS
       "SET.RTOp1_CMAKE_BUILD_TYPE .DEBUG."
       "IF .RTOp1_CONFIG_INCLUDED."
@@ -141,7 +141,7 @@ FUNCTION(UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_BEFORE_LIBS)
       "SET.RTOp1_TPL_LIST .LAPACK.BLAS.."
     )
 
-  UNITTEST_FILE_REGEX("${GENERATED_EXPORT_MAKEFILE}"
+  unittest_file_regex("${GENERATED_EXPORT_MAKEFILE}"
     REGEX_STRINGS
       "RTOp1_INCLUDE_DIRS= -Iteuchos/core/include -Iteuchos/numeric/include"
       "RTOp1_LIBRARY_DIRS= -Lteuchos/core/src -Lteuchos/numeric/src"
@@ -152,63 +152,63 @@ FUNCTION(UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_BEFORE_LIBS)
       "RTOp1_TPL_LIST= LAPACK BLAS"
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_AFTER_LIBS)
+function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the generation of a specialized export makefile for RTOp *after* libs")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the generation of a specialized export makefile for RTOp *after* libs")
+  message("***\n")
 
-  SETUP_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_TEST_STUFF()
+  setup_write_specialized_package_export_makefile_test_stuff()
 
   # Debugging
-  SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  SET(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
+  set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  set(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
 
-  SET(${PROJECT_NAME}_ENABLE_RTOp ON)
-  SET(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
+  set(${PROJECT_NAME}_ENABLE_RTOp ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
 
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
+  unittest_helper_read_and_process_packages()
 
   # These are basic global VARS we want to pass along
-  SET(CMAKE_BUILD_TYPE RELEASE)
+  set(CMAKE_BUILD_TYPE RELEASE)
 
   # These vars would be set up by the FindTPL<TPLNAME>.cmake modules if they
   # were called
-  SET(TPL_BLAS_LIBRARIES "blaspath/lib/libblas.a")
-  SET(TPL_BLAS_LIBRARY_DIRS "blashpath/lib")
-  SET(TPL_BLAS_INCLUDE_DIRS "blaspath/include")
-  SET(TPL_LAPACK_LIBRARIES "lapackpath/lib/liblapack.a")
-  SET(TPL_LAPACK_LIBRARY_DIRS "lapackhpath/lib")
-  SET(TPL_LAPACK_INCLUDE_DIRS "lapackhpath/include")
+  set(TPL_BLAS_LIBRARIES "blaspath/lib/libblas.a")
+  set(TPL_BLAS_LIBRARY_DIRS "blashpath/lib")
+  set(TPL_BLAS_INCLUDE_DIRS "blaspath/include")
+  set(TPL_LAPACK_LIBRARIES "lapackpath/lib/liblapack.a")
+  set(TPL_LAPACK_LIBRARY_DIRS "lapackhpath/lib")
+  set(TPL_LAPACK_INCLUDE_DIRS "lapackhpath/include")
 
-  # These vars should be generated automatically by TRIBITS_PACKAGE() that
+  # These vars should be generated automatically by tribits_package() that
   # begins with the upstreams packages.
-  SET(Teuchos_LIBRARY_DIRS "teuchos/core/src;teuchos/numeric/src")
-  SET(Teuchos_INCLUDE_DIRS "teuchos/core/include;teuchos/numeric/include")
-  SET(Teuchos_LIBRARIES "teuchoscore;teuchosnumeric")
-  SET(Teuchos_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
-  SET(RTOp_LIBRARY_DIRS "rtop/src;teuchos/core/src;teuchos/numeric/src")
-  SET(RTOp_INCLUDE_DIRS "rtop/include;teuchos/core/include;teuchos/numeric/include")
-  SET(RTOp_LIBRARIES "rtop")
-  SET(RTOp_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
+  set(Teuchos_LIBRARY_DIRS "teuchos/core/src;teuchos/numeric/src")
+  set(Teuchos_INCLUDE_DIRS "teuchos/core/include;teuchos/numeric/include")
+  set(Teuchos_LIBRARIES "teuchoscore;teuchosnumeric")
+  set(Teuchos_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
+  set(RTOp_LIBRARY_DIRS "rtop/src;teuchos/core/src;teuchos/numeric/src")
+  set(RTOp_INCLUDE_DIRS "rtop/include;teuchos/core/include;teuchos/numeric/include")
+  set(RTOp_LIBRARIES "rtop")
+  set(RTOp_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
 
-  SET(GENERATED_EXPORT_CONFIG
+  set(GENERATED_EXPORT_CONFIG
     "${CURRENT_TEST_DIRECTORY}/RTOpAfterConfig.cmake")
 
-  SET(GENERATED_EXPORT_MAKEFILE
+  set(GENERATED_EXPORT_MAKEFILE
     "${CURRENT_TEST_DIRECTORY}/Makefile.export.RTOp.after")
 
-  TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES(
+  tribits_write_flexible_package_client_export_files(
     PACKAGE_NAME RTOp
     EXPORT_FILE_VAR_PREFIX RTOp2
     WRITE_CMAKE_CONFIG_FILE "${GENERATED_EXPORT_CONFIG}"
     WRITE_EXPORT_MAKEFILE "${GENERATED_EXPORT_MAKEFILE}"
     )
 
-  UNITTEST_FILE_REGEX("${GENERATED_EXPORT_CONFIG}"
+  unittest_file_regex("${GENERATED_EXPORT_CONFIG}"
     REGEX_STRINGS
       "SET.RTOp2_CMAKE_BUILD_TYPE .RELEASE."
       "IF .RTOp2_CONFIG_INCLUDED."
@@ -223,7 +223,7 @@ FUNCTION(UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_AFTER_LIBS)
       "SET.RTOp2_TPL_LIST .LAPACK.BLAS.."
     )
 
-  UNITTEST_FILE_REGEX("${GENERATED_EXPORT_MAKEFILE}"
+  unittest_file_regex("${GENERATED_EXPORT_MAKEFILE}"
     REGEX_STRINGS
       "RTOp2_INCLUDE_DIRS= -Irtop/include -Iteuchos/core/include -Iteuchos/numeric/include"
       "RTOp2_LIBRARY_DIRS= -Lrtop/src -Lteuchos/core/src -Lteuchos/numeric/src"
@@ -234,7 +234,7 @@ FUNCTION(UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_AFTER_LIBS)
       "RTOp2_TPL_LIST= LAPACK BLAS"
     )
 
-ENDFUNCTION()
+endfunction()
 
 
 #####################################################################
@@ -244,16 +244,16 @@ ENDFUNCTION()
 #####################################################################
 
 # Assume that all unit tests will pass by default
-GLOBAL_SET(UNITTEST_OVERALL_PASS TRUE)
-GLOBAL_SET(UNITTEST_OVERALL_NUMPASSED 0)
-GLOBAL_SET(UNITTEST_OVERALL_NUMRUN 0)
+global_set(UNITTEST_OVERALL_PASS TRUE)
+global_set(UNITTEST_OVERALL_NUMPASSED 0)
+global_set(UNITTEST_OVERALL_NUMRUN 0)
 
 #
 # Run the unit tests
 #
 
-UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_BEFORE_LIBS()
-UNITTEST_WRITE_SPECIALIZED_PACKAGE_EXPORT_MAKEFILE_RTOP_AFTER_LIBS()
+unittest_write_specialized_package_export_makefile_rtop_before_libs()
+unittest_write_specialized_package_export_makefile_rtop_after_libs()
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(36)
+unittest_final_result(36)

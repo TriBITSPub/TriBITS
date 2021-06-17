@@ -1,30 +1,30 @@
-IF (FIND_ONE_IN_SET_OF_HEADERS_1)
-  SET(REQUIRED_HEADERS
+if (FIND_ONE_IN_SET_OF_HEADERS_1)
+  set(REQUIRED_HEADERS
     "MissingHeader1.hpp HeadersAndLibsTpl_header1.hpp"
     "MissingHeader2.hpp HeadersAndLibsTpl_header2.hpp"
     )
-ELSE()
-  SET(REQUIRED_HEADERS HeadersAndLibsTpl_header1.hpp HeadersAndLibsTpl_header2.hpp)
-ENDIF()
+else()
+  set(REQUIRED_HEADERS HeadersAndLibsTpl_header1.hpp HeadersAndLibsTpl_header2.hpp)
+endif()
 
-IF (FIND_ONE_IN_SET_OF_LIBS_1)
-  SET(REQUIRED_LIBS_NAMES
+if (FIND_ONE_IN_SET_OF_LIBS_1)
+  set(REQUIRED_LIBS_NAMES
     "missinglib1 haltpl1"
     "missinglib2 haltpl2"
     )
-ELSE()
-  SET(REQUIRED_LIBS_NAMES  haltpl1  haltpl2)
-ENDIF()
+else()
+  set(REQUIRED_LIBS_NAMES  haltpl1  haltpl2)
+endif()
 
-IF (NOT NOT_MUST_FIND_ALL_HEADERS)
-  SET(MUST_FIND_ALL_HEADERS_ARG  MUST_FIND_ALL_HEADERS)
-ENDIF()
+if (NOT NOT_MUST_FIND_ALL_HEADERS)
+  set(MUST_FIND_ALL_HEADERS_ARG  MUST_FIND_ALL_HEADERS)
+endif()
 
-IF (NOT NOT_MUST_FIND_ALL_LIBS)
-  SET(MUST_FIND_ALL_LIBS_ARG  MUST_FIND_ALL_LIBS)
-ENDIF()
+if (NOT NOT_MUST_FIND_ALL_LIBS)
+  set(MUST_FIND_ALL_LIBS_ARG  MUST_FIND_ALL_LIBS)
+endif()
 
-TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( HeadersAndLibsTpl
+tribits_tpl_find_include_dirs_and_libraries( HeadersAndLibsTpl
   REQUIRED_HEADERS  ${REQUIRED_HEADERS}
   ${MUST_FIND_ALL_HEADERS_ARG}
   REQUIRED_LIBS_NAMES  ${REQUIRED_LIBS_NAMES}

@@ -83,17 +83,17 @@
 #
 ###############################################################################
 
-SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO ""
+set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO ""
   CACHE STRING
   "Determines where CTestDriver test results are submitted to CDash (chose '' (nowhere), 'MY_CDASH', 'TRILINOS_CDASH', or 'EXP_CDASH'"
   )
 
-SET(${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS OFF
+set(${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS OFF
   CACHE BOOL
   "Determine if coverage CTestDriver tests are run (requires gcov on local system)"
   )
 
-SET(${PACKAGE_NAME}_CTEST_DRIVER_MEMORY_TESTS OFF
+set(${PACKAGE_NAME}_CTEST_DRIVER_MEMORY_TESTS OFF
   CACHE BOOL
   "Determine if memory CTestDriver tests are run (requires valgrind on local system)"
   )
@@ -102,9 +102,9 @@ SET(${PACKAGE_NAME}_CTEST_DRIVER_MEMORY_TESTS OFF
 # Set up common vars/args for all direct CTest Driver tests
 #
 
-SET(TribitsExProj_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject")
+set(TribitsExProj_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject")
 
-SET(PBP_COMMON_ENV_ARGS
+set(PBP_COMMON_ENV_ARGS
   # Set back to default in case set in env
   CTEST_TEST_TYPE=
   TribitsExProj_PACKAGES=
@@ -122,7 +122,7 @@ SET(PBP_COMMON_ENV_ARGS
   CTEST_DO_SUBMIT=OFF
   )
 
-SET(CTEST_S_SCRIPT_ARGS
+set(CTEST_S_SCRIPT_ARGS
   ${CMAKE_CTEST_COMMAND} -V -S
     ${TribitsExProj_DIR}/cmake/ctest/general_gcc/ctest_serial_debug.cmake
   )
@@ -131,68 +131,68 @@ SET(CTEST_S_SCRIPT_ARGS
 # Set up to submit to CDash if reqeusted
 #
 
-IF ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "") 
-  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO
+if ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "") 
+  set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO
     $ENV{${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO} )
-ENDIF()
+endif()
 
-IF ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "")
-  SET(CTEST_DROP_SITE_ENV_ARGS
+if ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "")
+  set(CTEST_DROP_SITE_ENV_ARGS
     CTEST_DO_SUBMIT=OFF
     )
-ELSEIF (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "TESTING_SANDIA_CDASH")
-  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE "testing.sandia.gov")
-  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME "TribitsExProj")
-  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION "/cdash/submit.php?project=TribitsExProj" )
-ELSEIF (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "TESTING_DEV_SANDIA_CDASH")
-  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE "testing-dev.sandia.gov")
-  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME "TribitsExProj")
-  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION "/cdash/submit.php?project=TribitsExProj" )
-ELSEIF (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "EXP_CDASH")
-  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE "exp.cdash.org")
-  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME "TribitsExProj")
-  SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION "/submit.php?project=TribitsExProj")
-ELSEIF (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "CUSTOM")
-  IF ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE}" STREQUAL "")
-    SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE
+elseif (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "TESTING_SANDIA_CDASH")
+  set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE "testing.sandia.gov")
+  set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME "TribitsExProj")
+  set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION "/cdash/submit.php?project=TribitsExProj" )
+elseif (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "TESTING_DEV_SANDIA_CDASH")
+  set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE "testing-dev.sandia.gov")
+  set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME "TribitsExProj")
+  set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION "/cdash/submit.php?project=TribitsExProj" )
+elseif (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "EXP_CDASH")
+  set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE "exp.cdash.org")
+  set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME "TribitsExProj")
+  set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION "/submit.php?project=TribitsExProj")
+elseif (${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO STREQUAL "CUSTOM")
+  if ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE}" STREQUAL "")
+    set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE
       $ENV{${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE} )
-  ENDIF()
-  IF ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME}" STREQUAL "")
-    SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME
+  endif()
+  if ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME}" STREQUAL "")
+    set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME
       $ENV{${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME} )
-  ENDIF()
-  IF ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME}" STREQUAL "")
-    SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME TribitsExProj)
-  ENDIF()
-  IF ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION}" STREQUAL "")
-    SET(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION
+  endif()
+  if ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME}" STREQUAL "")
+    set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME TribitsExProj)
+  endif()
+  if ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION}" STREQUAL "")
+    set(${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION
       $ENV{${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION} )
-  ENDIF()
-ELSE()
-  MESSAGE(FATAL_ERROR "Error, the value"
+  endif()
+else()
+  message(FATAL_ERROR "Error, the value"
     " ${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO='${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}'"
     " is invalid!  Valid choices are '', 'MY_CDASH', 'TRILINOS_CDASH', 'EXP_CDASH',"
     " and 'TESTING_VM_SANDIA_CDASH'!"
    ) 
-ENDIF()
+endif()
 
-IF (NOT "${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "")
+if (NOT "${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "")
 
-  MESSAGE(
+  message(
     "\nNOTE: The tests ${PACKAGE_NAME}_CTestDriver_XXX are set up to submit CDash at:\n"
     "    CTEST_DROP_SITE='${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE}'\n"
     "    CTEST_PROJECT_NAME='${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME}'\n"
     "    CTEST_DROP_LOCATION='${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION}'\n"
     )
 
-  SET(CTEST_DROP_SITE_ENV_ARGS
+  set(CTEST_DROP_SITE_ENV_ARGS
     CTEST_DO_SUBMIT=TRUE
     CTEST_DROP_SITE="${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_SITE}"
     CTEST_PROJECT_NAME="${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_PROJECT_NAME}"
     CTEST_DROP_LOCATION="${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_DROP_LOCATION}"
     )
 
-ENDIF()
+endif()
 
 
 #
@@ -200,15 +200,15 @@ ENDIF()
 # 'dashboard' target.
 #
 
-INCLUDE("${CMAKE_CURRENT_LIST_DIR}/../../core/ExamplesUnitTests/GetCompilerPassthroughArgs.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../../core/ExamplesUnitTests/GetCompilerPassthroughArgs.cmake")
 
 
-SET(CTEST_DROP_SITE_CONFIG_ARGS)
-FOREACH (CTEST_DROP_SITE_ENV_ARG ${CTEST_DROP_SITE_ENV_ARGS})
-  LIST(APPEND CTEST_DROP_SITE_CONFIG_ARGS "-D${CTEST_DROP_SITE_ENV_ARG}")
-ENDFOREACH()
+set(CTEST_DROP_SITE_CONFIG_ARGS)
+foreach (CTEST_DROP_SITE_ENV_ARG ${CTEST_DROP_SITE_ENV_ARGS})
+  list(APPEND CTEST_DROP_SITE_CONFIG_ARGS "-D${CTEST_DROP_SITE_ENV_ARG}")
+endforeach()
 
-SET(TribitsExampleProject_COMMON_CONFIG_ARGS
+set(TribitsExampleProject_COMMON_CONFIG_ARGS
   ${COMMON_ENV_ARGS_PASSTHROUGH}
   -DTribitsExProj_ENABLE_Fortran=${${PROJECT_NAME}_ENABLE_Fortran}
   -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
@@ -223,7 +223,7 @@ SET(TribitsExampleProject_COMMON_CONFIG_ARGS
 ######################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_PASS
+tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -275,7 +275,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_PASS
   # non-zero return code is mandated.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_GlobalConfigureFail
+tribits_add_advanced_test( CTestDriver_PBP_GlobalConfigureFail
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -308,7 +308,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_GlobalConfigureFail
   # configure for all of the packages that are tried.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
+tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -351,7 +351,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
   # downstream packages.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
+tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -396,7 +396,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
   # optional upstream package in downstream packages.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
+tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -443,7 +443,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
   # downstream packages in any way and does not disable the upstream package.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakTestPkg
+tribits_add_advanced_test( CTestDriver_PBP_ST_BreakTestPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -491,7 +491,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakTestPkg
   # and reported correctly.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
+tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -539,7 +539,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
   # downstream packages.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_COVERAGE
+tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_COVERAGE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS
   OVERALL_NUM_MPI_PROCS 1
@@ -572,7 +572,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_COVERAGE
   # NOTE: The above test is the only coverage test for PBP.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_MEMORY
+tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_MEMORY
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_MEMORY_TESTS
   OVERALL_NUM_MPI_PROCS 1
@@ -609,7 +609,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_MEMORY
   # NOTE: The above test is the only memory test for PBP.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_ALL_PASS
+tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_ALL_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -664,11 +664,11 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_ALL_PASS
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
   # The above test does a lot of checking to really pin down the behavior of
-  # the TRIBITS_CTEST_DRIVER() function run from the basic 'dashboard' target.
+  # the tribits_ctest_driver() function run from the basic 'dashboard' target.
   # Follow-on tests will not check so much output.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO_Dashboard_ForwardArgs
+tribits_add_advanced_test( CTestDriver_AAO_Dashboard_ForwardArgs
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -740,7 +740,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO_Dashboard_ForwardArgs
   # TRIBITS_2ND_CTEST_DROP_LOCATION vars (see #370).
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO_Dashboard_Then_NoConfigDashboard
+tribits_add_advanced_test( CTestDriver_AAO_Dashboard_Then_NoConfigDashboard
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -788,7 +788,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO_Dashboard_Then_NoConfigDashboard
   # it with Trilinos.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
+tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -842,7 +842,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
-  # The above test makes sure that TRIBITS_CTEST_DRIVER() function run from
+  # The above test makes sure that tribits_ctest_driver() function run from
   # the basic 'dashboard' target only tests the explicitly enabled and tested
   # packages.  It also makes sure that when the project is reconfigured at the
   # end, that it gives the same set of package enables.
@@ -853,7 +853,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
 #
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_2
+tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_2
 
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -951,7 +951,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_2
 # configure.  But this very nicely submits to CDash.  Very nice!
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
+tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
 
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -1117,23 +1117,23 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
 ######################################################################
 
 
-FUNCTION(GENERATE_AAO_TESTS)
+function(generate_aao_tests)
 
-  SET(TribitsExampleProject_AAO_COMMON_CONFIG_ARGS
+  set(TribitsExampleProject_AAO_COMMON_CONFIG_ARGS
     ${TribitsExampleProject_COMMON_CONFIG_ARGS}
     -DTribitsExProj_CTEST_DO_ALL_AT_ONCE=TRUE
     )
 
-  SET( AAO_COMMON_ENV_ARGS
+  set( AAO_COMMON_ENV_ARGS
     ${PBP_COMMON_ENV_ARGS}
     TribitsExProj_CTEST_DO_ALL_AT_ONCE=TRUE
     )
 
-  SET(AAO_POSTFIX "P")
+  set(AAO_POSTFIX "P")
   # ToDo: Just replace '${AAO_POSTFIX}' with 'P' once the function
-  # GENERATE_AAO_TESTS() is removed!
+  # generate_aao_tests() is removed!
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
@@ -1189,7 +1189,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # without being noticed.  Follow-on tests will not check all of that.
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_SKIP_CTEST_ADD_TEST
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_SKIP_CTEST_ADD_TEST
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
 
@@ -1227,7 +1227,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     )
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_INNER_ENABLE_TESTS
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_INNER_ENABLE_TESTS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
 
@@ -1262,7 +1262,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     )
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_SimpleCxx_PASS
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_SimpleCxx_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
@@ -1327,7 +1327,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # that here but this submits the data so we can inspect that on CDash.
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_PASS
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
@@ -1376,7 +1376,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # dependency testing in the file ../MockCTestDriver/CMakeLists.txt.
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_GlobalConfigureFail
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_GlobalConfigureFail
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
@@ -1417,7 +1417,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # interpreted and processed.
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_GlobalConfigureFail
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_GlobalConfigureFail
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
@@ -1453,7 +1453,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # interpreted and processed.
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakWithSubpackagesALib
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakWithSubpackagesALib
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
@@ -1513,7 +1513,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # important for CI servers.
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_BreakWithSubpackagesALib
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_BreakWithSubpackagesALib
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
@@ -1557,7 +1557,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # though that upstream package is not directly shown on CDash.
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestBuild
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestBuild
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
@@ -1601,7 +1601,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # packages and tests.
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestRun
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestRun
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
@@ -1644,7 +1644,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # packages and tests.
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_COVERAGE
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_COVERAGE
     OVERALL_WORKING_DIRECTORY TEST_NAME
     EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS
     OVERALL_NUM_MPI_PROCS 1
@@ -1678,7 +1678,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # NOTE: The above test is the only coverage test for AAO mode!
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_MEMORY
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_MEMORY
     OVERALL_WORKING_DIRECTORY TEST_NAME
     EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_MEMORY_TESTS
     OVERALL_NUM_MPI_PROCS 1
@@ -1715,7 +1715,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # NOTE: The above test is the only memory test for AAO mode!
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_ALL_PASS
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_ALL_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -1759,7 +1759,7 @@ FUNCTION(GENERATE_AAO_TESTS)
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_SimpleCxx_PASS
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_SimpleCxx_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -1807,7 +1807,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     # This local checking here can't determine that but it uploads the data on
     # CDash where it can be inspected.
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_PackagesSubset_PASS
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_PackagesSubset_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -1866,7 +1866,7 @@ FUNCTION(GENERATE_AAO_TESTS)
   #
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2
 
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1952,7 +1952,7 @@ FUNCTION(GENERATE_AAO_TESTS)
   # the tests in teh second ctest -S invocation.
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_update_fail
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_update_fail
 
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -2007,7 +2007,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     )
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_config_fail
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_config_fail
 
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -2065,7 +2065,7 @@ FUNCTION(GENERATE_AAO_TESTS)
     )
 
 
-  TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_4
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_4
 
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -2188,9 +2188,9 @@ FUNCTION(GENERATE_AAO_TESTS)
   # Test CTEST_DO_INSTALL
   #
 
-  SET(TEST_NAME_BODY CTestDriver_AAO${AAO_POSTFIX}_CTEST_DO_INSTALL_PASS)
-  SET(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_BODY})
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME_BODY}
+  set(TEST_NAME_BODY CTestDriver_AAO${AAO_POSTFIX}_CTEST_DO_INSTALL_PASS)
+  set(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_BODY})
+  tribits_add_advanced_test( ${TEST_NAME_BODY}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
@@ -2246,11 +2246,11 @@ FUNCTION(GENERATE_AAO_TESTS)
     )
 
 
-  SET(TEST_NAME_BODY
+  set(TEST_NAME_BODY
     CTestDriver_AAO${AAO_POSTFIX}_CTEST_DO_INSTALL_FAIL_bad_intall_filename)
-  SET(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_BODY})
-  SET(TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}")
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME_BODY}
+  set(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_BODY})
+  set(TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}")
+  tribits_add_advanced_test( ${TEST_NAME_BODY}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
 
@@ -2264,7 +2264,7 @@ FUNCTION(GENERATE_AAO_TESTS)
       CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
       ARGS
         ${TEST_DIR}/TribitsExampleProject/packages/mixed_lang/src/CMakeLists.txt
-        "\nINSTALL(FILES does_not_exist.txt DESTINATION dummy_intall_dir COMPONENT SimpleCxx)\n"
+        "\ninstall(FILES does_not_exist.txt DESTINATION dummy_intall_dir COMPONENT SimpleCxx)\n"
 
     TEST_2
       MESSAGE "Run ctest -S driver which includes the install which should fail."
@@ -2366,11 +2366,11 @@ FUNCTION(GENERATE_AAO_TESTS)
     #
 
 
-  SET(TEST_NAME_BODY
+  set(TEST_NAME_BODY
     CTestDriver_AAO${AAO_POSTFIX}_CTEST_DO_INSTALL_FAIL_build_failed)
-  SET(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_BODY})
-  SET(TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}")
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME_BODY}
+  set(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_BODY})
+  set(TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}")
+  tribits_add_advanced_test( ${TEST_NAME_BODY}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
 
@@ -2384,7 +2384,7 @@ FUNCTION(GENERATE_AAO_TESTS)
       CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
       ARGS
         ${TEST_DIR}/TribitsExampleProject/packages/mixed_lang/src/CMakeLists.txt
-        "\nINSTALL(FILES does_not_exist.txt DESTINATION dummy_intall_dir COMPONENT SimpleCxx)\n"
+        "\ninstall(FILES does_not_exist.txt DESTINATION dummy_intall_dir COMPONENT SimpleCxx)\n"
 
     TEST_2
       MESSAGE "Break the library build WithSubpackageC"
@@ -2491,10 +2491,10 @@ FUNCTION(GENERATE_AAO_TESTS)
     #
 
  
-ENDFUNCTION()
+endfunction()
 
 
-GENERATE_AAO_TESTS()
+generate_aao_tests()
 # ToDo: Remove this function and just have the tests at the top level.  (NOTE:
 # I don't want to do this yet as I don't want to create merge conflicts with
 # another branch I have for TriBITSPub/TriBITS#63.)

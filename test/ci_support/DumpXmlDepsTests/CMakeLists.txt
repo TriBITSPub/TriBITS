@@ -37,12 +37,12 @@
 # ************************************************************************
 # @HEADER
 
-SET(TRIBITS_MOCK_TRILINOS_DIR "examples/MockTrilinos")
+set(TRIBITS_MOCK_TRILINOS_DIR "examples/MockTrilinos")
 
 
 # MockTrilinos project
-SET(MOCK_PROJECT_NAME Trilinos)
-SET(MOCK_TRILINOS_DIR
+set(MOCK_PROJECT_NAME Trilinos)
+set(MOCK_TRILINOS_DIR
   ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_MOCK_TRILINOS_DIR})
 
 
@@ -52,13 +52,13 @@ SET(MOCK_TRILINOS_DIR
 #
 # NOTE: In the below error message regextes, '[ \t\r\n]+' are used to match
 # whitespace chars instead of just a space ' ' since CMake wraps error
-# messages from MESSAGE(FATAL_ERROR ...) on multiple lines and we can't
+# messages from message(FATAL_ERROR ...) on multiple lines and we can't
 # predict the link breaks.  Also, we can't use the REGEX '\s' since CMake does
 # not allow it.
 #
 
 
-TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_NoProjectSourceDir
+tribits_add_advanced_test( DepXmlDumpTests_NoProjectSourceDir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -77,7 +77,7 @@ TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_NoProjectSourceDir
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_BadProjectSourceDir
+tribits_add_advanced_test( DepXmlDumpTests_BadProjectSourceDir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND "${CMAKE_COMMAND}"
@@ -90,7 +90,7 @@ TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_BadProjectSourceDir
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_InputProjectSourceDir
+tribits_add_advanced_test( DepXmlDumpTests_InputProjectSourceDir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -117,7 +117,7 @@ TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_InputProjectSourceDir
 
 
 
-TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_MissingDepsXmlOutputFile
+tribits_add_advanced_test( DepXmlDumpTests_MissingDepsXmlOutputFile
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND "${CMAKE_COMMAND}"
@@ -130,7 +130,7 @@ TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_MissingDepsXmlOutputFile
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_DefaultProjectSourceDir
+tribits_add_advanced_test( DepXmlDumpTests_DefaultProjectSourceDir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -172,9 +172,9 @@ TRIBITS_ADD_ADVANCED_TEST( DepXmlDumpTests_DefaultProjectSourceDir
 #####################################################################
 
 
-FUNCTION(CREATE_DEPENDENCY_XML_DUMP_TEST_CASE TEST_NAME)
+function(create_dependency_xml_dump_test_case TEST_NAME)
 
-  CMAKE_PARSE_ARGUMENTS(
+  cmake_parse_arguments(
      #prefix
      PARSE
      #options
@@ -186,13 +186,13 @@ FUNCTION(CREATE_DEPENDENCY_XML_DUMP_TEST_CASE TEST_NAME)
      ${ARGN}
      )
 
-  SET(EXTENDED_TEST_NAME DepXmlDumpTests_${TEST_NAME})
-  SET(FULL_TEST_NAME ${PACKAGE_NAME}_${EXTENDED_TEST_NAME})
+  set(EXTENDED_TEST_NAME DepXmlDumpTests_${TEST_NAME})
+  set(FULL_TEST_NAME ${PACKAGE_NAME}_${EXTENDED_TEST_NAME})
 
-  SET(TEST_OUTPUT_REL_DIR ${FULL_TEST_NAME})
-  SET(TEST_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/${TEST_OUTPUT_REL_DIR})
+  set(TEST_OUTPUT_REL_DIR ${FULL_TEST_NAME})
+  set(TEST_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/${TEST_OUTPUT_REL_DIR})
 
-  TRIBITS_ADD_ADVANCED_TEST( ${EXTENDED_TEST_NAME}
+  tribits_add_advanced_test( ${EXTENDED_TEST_NAME}
     OVERALL_WORKING_DIRECTORY ${TEST_OUTPUT_REL_DIR}
     OVERALL_NUM_MPI_PROCS 1
     TEST_0 CMND "${CMAKE_COMMAND}"
@@ -215,10 +215,10 @@ FUNCTION(CREATE_DEPENDENCY_XML_DUMP_TEST_CASE TEST_NAME)
     XHOSTTYPE Windows
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
+create_dependency_xml_dump_test_case(
   BasePackagesTpls
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_PACKAGES='24'"
@@ -228,7 +228,7 @@ CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
+create_dependency_xml_dump_test_case(
   WithPreCopyrightTrilinos
   ARGS
     -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
@@ -247,7 +247,7 @@ CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
 # testing this dump script.
 
 
-CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
+create_dependency_xml_dump_test_case(
   WithPreCopyrightTrilinosExtraTrilinosRepo
   ARGS
     -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo
@@ -259,7 +259,7 @@ CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
+create_dependency_xml_dump_test_case(
   WithExtraRepoOnePackage
   ARGS
     -DTrilinos_EXTRA_REPOSITORIES=extraRepoOnePackage
@@ -271,7 +271,7 @@ CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_XML_DUMP_TEST_CASE(
+create_dependency_xml_dump_test_case(
   WithPreRepoOnePackagePreCopyrightTrilinos
   ARGS
     -DTrilinos_PRE_REPOSITORIES=preRepoOnePackage

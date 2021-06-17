@@ -4,23 +4,23 @@
 #                                                                              #
 ################################################################################
 
-IF (NOT TRIBITS_PROCESSING_PACKAGE)
+if (NOT TRIBITS_PROCESSING_PACKAGE)
   # This CMakeLists.txt file is being processed as the TriBITS projects's base
   # CMakeLists.txt file!  (See comments at bottom of this file.)
-  CMAKE_MINIMUM_REQUIRED(VERSION 3.17.0 FATAL_ERROR)
-  INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake")
-  PROJECT(${PROJECT_NAME} NONE)
-  SET(${PROJECT_NAME}_TRIBITS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tribits" CACHE PATH "")
-  INCLUDE("${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake")
-  SET(${PROJECT_NAME}_ENABLE_TESTS ON CACHE BOOL "Enable tests by default.")
-  INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/cmake/AssertSameVersionFile.cmake")
-  TRIBITS_PROJECT_ENABLE_ALL()
-ELSE()
+  cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+  include("${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake")
+  project(${PROJECT_NAME} NONE)
+  set(${PROJECT_NAME}_TRIBITS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tribits" CACHE PATH "")
+  include("${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake")
+  set(${PROJECT_NAME}_ENABLE_TESTS ON CACHE BOOL "Enable tests by default.")
+  include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/AssertSameVersionFile.cmake")
+  tribits_project_enable_all()
+else()
   # This CMakeLists.txt file is being processed as the TriBITS package file.
-  TRIBITS_PACKAGE(TriBITS  DISABLE_CIRCULAR_REF_DETECTION_FAILURE)
-  TRIBITS_ADD_TEST_DIRECTORIES(test)
-  TRIBITS_PACKAGE_POSTPROCESS()
-ENDIF()
+  tribits_package(TriBITS  DISABLE_CIRCULAR_REF_DETECTION_FAILURE)
+  tribits_add_test_directories(test)
+  tribits_package_postprocess()
+endif()
 
 # NOTE: In order to allow the `TriBITS/` directory to be both a TriBITS
 # package (for inclusion in other TriBITS projects) and to be a TriBITS

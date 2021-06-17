@@ -44,9 +44,9 @@
 #
 ################################################################################
 
-INCLUDE("${CMAKE_CURRENT_LIST_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraphHelpers.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraphHelpers.cmake")
 
-INCLUDE(TribitsPackageDefineDependencies)
+include(TribitsPackageDefineDependencies)
 
 
 ################################################################################
@@ -56,253 +56,253 @@ INCLUDE(TribitsPackageDefineDependencies)
 ################################################################################
 
 
-FUNCTION(UNITEST_TRIBITS_DEFINE_REPOSITORY_PACKAGES_DIRS_CLASSIFICATIONS_EMPTY)
+function(unitest_tribits_define_repository_packages_dirs_classifications_empty)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_REPOSITORY_DEFINE_PACKAGES() empty")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_repository_define_packages() empty")
+  message("***\n")
 
-  SET(REPOSITORY_NAME RepoName)
-  TRIBITS_REPOSITORY_DEFINE_PACKAGES()
+  set(REPOSITORY_NAME RepoName)
+  tribits_repository_define_packages()
 
-  UNITTEST_COMPARE_CONST(${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS "")
+  unittest_compare_const(${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS "")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_TRIBITS_DEFINE_REPOSITORY_PACKAGES_DIRS_CLASSIFICATIONS_1_PACKAGE)
+function(unitest_tribits_define_repository_packages_dirs_classifications_1_package)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_REPOSITORY_DEFINE_PACKAGES() 1 package")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_repository_define_packages() 1 package")
+  message("***\n")
 
-  SET(REPOSITORY_NAME RepoName)
-  TRIBITS_REPOSITORY_DEFINE_PACKAGES(
+  set(REPOSITORY_NAME RepoName)
+  tribits_repository_define_packages(
     Package1  .  PT
     )
 
-  UNITTEST_COMPARE_CONST(${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
+  unittest_compare_const(${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
     "Package1;.;PT")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_TRIBITS_DEFINE_REPOSITORY_PACKAGES_DIRS_CLASSIFICATIONS_2_PACKAGES)
+function(unitest_tribits_define_repository_packages_dirs_classifications_2_packages)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_REPOSITORY_DEFINE_PACKAGES() 1 package")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_repository_define_packages() 1 package")
+  message("***\n")
 
-  SET(REPOSITORY_NAME RepoName)
-  TRIBITS_REPOSITORY_DEFINE_PACKAGES(
+  set(REPOSITORY_NAME RepoName)
+  tribits_repository_define_packages(
     Package_a  packages/a  ST
     Package_b  packages/b  EX,UM
     )
 
-  UNITTEST_COMPARE_CONST(${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
+  unittest_compare_const(${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
     "Package_a;packages/a;ST;Package_b;packages/b;EX,UM")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_TRIBITS_DEFINE_REPOSITORY_TPLS_FINDMODS_CLASSIFICATIONS_EMPTY)
+function(unitest_tribits_define_repository_tpls_findmods_classifications_empty)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_REPOSITORY_DEFINE_TPLS() empty")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_repository_define_tpls() empty")
+  message("***\n")
 
-  SET(REPOSITORY_NAME RepoName)
-  TRIBITS_REPOSITORY_DEFINE_TPLS()
+  set(REPOSITORY_NAME RepoName)
+  tribits_repository_define_tpls()
 
-  UNITTEST_COMPARE_CONST(${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS "")
+  unittest_compare_const(${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS "")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_TRIBITS_DEFINE_REPOSITORY_TPLS_FINDMODS_CLASSIFICATIONS_1_TPL)
+function(unitest_tribits_define_repository_tpls_findmods_classifications_1_tpl)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_REPOSITORY_DEFINE_TPLS() 1 TPL")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_repository_define_tpls() 1 TPL")
+  message("***\n")
 
-  SET(REPOSITORY_NAME RepoName)
-  TRIBITS_REPOSITORY_DEFINE_TPLS(
+  set(REPOSITORY_NAME RepoName)
+  tribits_repository_define_tpls(
     TplName   cmake/TPLs/   PT
     )
 
-  UNITTEST_COMPARE_CONST(${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS
+  unittest_compare_const(${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS
     "TplName;cmake/TPLs/;PT")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_TRIBITS_DEFINE_REPOSITORY_TPLS_FINDMODS_CLASSIFICATIONS_2_TPLS)
+function(unitest_tribits_define_repository_tpls_findmods_classifications_2_tpls)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_REPOSITORY_DEFINE_TPLS() 2 TPLS")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_repository_define_tpls() 2 TPLS")
+  message("***\n")
 
-  SET(REPOSITORY_NAME RepoName)
-  TRIBITS_REPOSITORY_DEFINE_TPLS(
+  set(REPOSITORY_NAME RepoName)
+  tribits_repository_define_tpls(
     TPL1   tpls/FindTPLTPL1.cmake   ST
     TPL2   tpls/   EX
     )
 
-  UNITTEST_COMPARE_CONST(${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS
+  unittest_compare_const(${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS
     "TPL1;tpls/FindTPLTPL1.cmake;ST;TPL2;tpls/;EX")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_TRIBITS_SET_ST_FOR_DEV_MODE)
+function(unitest_tribits_set_st_for_dev_mode)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_SET_ST_FOR_DEV_MODE()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_set_st_for_dev_mode()")
+  message("***\n")
 
-  MESSAGE("\nTest in dev mode, ST off ...")
-  SET(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE ON)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
-  TRIBITS_SET_ST_FOR_DEV_MODE(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE)
-  UNITTEST_COMPARE_CONST(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE OFF)
+  message("\nTest in dev mode, ST off ...")
+  set(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
+  tribits_set_st_for_dev_mode(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE)
+  unittest_compare_const(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE OFF)
 
-  MESSAGE("\nTest in dev mode, ST on ...")
-  SET(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE ON)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  TRIBITS_SET_ST_FOR_DEV_MODE(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE)
-  UNITTEST_COMPARE_CONST(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE ON)
+  message("\nTest in dev mode, ST on ...")
+  set(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  tribits_set_st_for_dev_mode(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE)
+  unittest_compare_const(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE ON)
 
-  MESSAGE("\nTest in rel mode, ST off ...")
-  SET(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE OFF)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
-  TRIBITS_SET_ST_FOR_DEV_MODE(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE)
-  UNITTEST_COMPARE_CONST(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE ON)
+  message("\nTest in rel mode, ST off ...")
+  set(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE OFF)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
+  tribits_set_st_for_dev_mode(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE)
+  unittest_compare_const(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE ON)
 
-  MESSAGE("\nTest in rel mode, ST on ...")
-  SET(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE OFF)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  TRIBITS_SET_ST_FOR_DEV_MODE(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE)
-  UNITTEST_COMPARE_CONST(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE ON)
+  message("\nTest in rel mode, ST on ...")
+  set(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE OFF)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  tribits_set_st_for_dev_mode(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE)
+  unittest_compare_const(ENABLE_ST_FOR_DEV_PS_FOR_RELEASE ON)
 
-ENDFUNCTION()
-
-
-FUNCTION(UNITEST_TRIBITS_SET_SS_FOR_DEV_MODE_BACKWARD_COMPATIBLE)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_SET_SS_FOR_DEV_MODE() backward compatibility")
-  MESSAGE("***\n")
-
-  MESSAGE("\nTest in dev mode, ST off ...")
-  SET(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE ON)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
-  TRIBITS_SET_SS_FOR_DEV_MODE(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE)
-  UNITTEST_COMPARE_CONST(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE OFF)
-
-  MESSAGE("\nTest in dev mode, ST on ...")
-  SET(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE ON)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  TRIBITS_SET_SS_FOR_DEV_MODE(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE)
-  UNITTEST_COMPARE_CONST(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE ON)
-
-  MESSAGE("\nTest in rel mode, ST off ...")
-  SET(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE OFF)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
-  TRIBITS_SET_SS_FOR_DEV_MODE(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE)
-  UNITTEST_COMPARE_CONST(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE ON)
-
-  MESSAGE("\nTest in rel mode, ST on ...")
-  SET(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE OFF)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  TRIBITS_SET_SS_FOR_DEV_MODE(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE)
-  UNITTEST_COMPARE_CONST(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE ON)
-
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_TRIBITS_DEFINE_PACKAGE_DEPENDENCIES_NONE)
+function(unitest_tribits_set_ss_for_dev_mode_backward_compatible)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_set_ss_for_dev_mode() backward compatibility")
+  message("***\n")
 
-  TRIBITS_PREP_TO_READ_DEPENDENCIES(DUMMY_PKG)
-  SET(REGRESSION_EMAIL_LIST NOT_SET)
-  SET(SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS NOT_SET)
+  message("\nTest in dev mode, ST off ...")
+  set(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
+  tribits_set_ss_for_dev_mode(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE)
+  unittest_compare_const(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE OFF)
 
-  TRIBITS_PACKAGE_DEFINE_DEPENDENCIES()
+  message("\nTest in dev mode, ST on ...")
+  set(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  tribits_set_ss_for_dev_mode(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE)
+  unittest_compare_const(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE ON)
 
-  UNITTEST_COMPARE_CONST(LIB_REQUIRED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(LIB_OPTIONAL_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(TEST_REQUIRED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(TEST_OPTIONAL_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(LIB_REQUIRED_DEP_TPLS "")
-  UNITTEST_COMPARE_CONST(LIB_OPTIONAL_DEP_TPLS "")
-  UNITTEST_COMPARE_CONST(TEST_REQUIRED_DEP_TPLS "")
-  UNITTEST_COMPARE_CONST(TEST_OPTIONAL_DEP_TPLS "")
-  UNITTEST_COMPARE_CONST(DUMMY_PKG_FORWARD_LIB_REQUIRED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(DUMMY_PKG_FORWARD_LIB_OPTIONAL_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(DUMMY_PKG_FORWARD_TEST_REQUIRED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(DUMMY_PKG_FORWARD_TEST_OPTIONAL_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(REGRESSION_EMAIL_LIST "")
-  UNITTEST_COMPARE_CONST(SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS "")
+  message("\nTest in rel mode, ST off ...")
+  set(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE OFF)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
+  tribits_set_ss_for_dev_mode(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE)
+  unittest_compare_const(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE ON)
 
-ENDFUNCTION()
+  message("\nTest in rel mode, ST on ...")
+  set(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE OFF)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  tribits_set_ss_for_dev_mode(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE)
+  unittest_compare_const(ENABLE_SS_FOR_DEV_PS_FOR_RELEASE ON)
 
-
-FUNCTION(UNITEST_TRIBITS_DEFINE_PACKAGE_DEPENDENCIES_LIBS_REQUIRED_PACKAGES_1)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(LIB_REQUIRED_PACKAGES PKG1)")
-  MESSAGE("***\n")
-
-  TRIBITS_PREP_TO_READ_DEPENDENCIES(DUMMY_PKG)
-
-  TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(LIB_REQUIRED_PACKAGES PKG1)
-
-  UNITTEST_COMPARE_CONST(LIB_REQUIRED_DEP_PACKAGES "PKG1")
-  UNITTEST_COMPARE_CONST(LIB_OPTIONAL_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(TEST_REQUIRED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(TEST_OPTIONAL_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(LIB_REQUIRED_DEP_TPLS "")
-  UNITTEST_COMPARE_CONST(LIB_OPTIONAL_DEP_TPLS "")
-  UNITTEST_COMPARE_CONST(TEST_REQUIRED_DEP_TPLS "")
-  UNITTEST_COMPARE_CONST(TEST_OPTIONAL_DEP_TPLS "")
-
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_TRIBITS_DEFINE_PACKAGE_DEPENDENCIES_LIBS_REQUIRED_PACKAGES_2)
+function(unitest_tribits_define_package_dependencies_none)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(LIB_REQUIRED_PACKAGES PKG2 PKG1)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_package_define_dependencies()")
+  message("***\n")
 
-  TRIBITS_PREP_TO_READ_DEPENDENCIES(DUMMY_PKG)
+  tribits_prep_to_read_dependencies(DUMMY_PKG)
+  set(REGRESSION_EMAIL_LIST NOT_SET)
+  set(SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS NOT_SET)
 
-  TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(LIB_REQUIRED_PACKAGES PKG2 PKG1)
+  tribits_package_define_dependencies()
 
-  UNITTEST_COMPARE_CONST(LIB_REQUIRED_DEP_PACKAGES "PKG2;PKG1")
-  UNITTEST_COMPARE_CONST(LIB_OPTIONAL_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(TEST_REQUIRED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(TEST_OPTIONAL_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(LIB_REQUIRED_DEP_TPLS "")
-  UNITTEST_COMPARE_CONST(LIB_OPTIONAL_DEP_TPLS "")
-  UNITTEST_COMPARE_CONST(TEST_REQUIRED_DEP_TPLS "")
-  UNITTEST_COMPARE_CONST(TEST_OPTIONAL_DEP_TPLS "")
+  unittest_compare_const(LIB_REQUIRED_DEP_PACKAGES "")
+  unittest_compare_const(LIB_OPTIONAL_DEP_PACKAGES "")
+  unittest_compare_const(TEST_REQUIRED_DEP_PACKAGES "")
+  unittest_compare_const(TEST_OPTIONAL_DEP_PACKAGES "")
+  unittest_compare_const(LIB_REQUIRED_DEP_TPLS "")
+  unittest_compare_const(LIB_OPTIONAL_DEP_TPLS "")
+  unittest_compare_const(TEST_REQUIRED_DEP_TPLS "")
+  unittest_compare_const(TEST_OPTIONAL_DEP_TPLS "")
+  unittest_compare_const(DUMMY_PKG_FORWARD_LIB_REQUIRED_DEP_PACKAGES "")
+  unittest_compare_const(DUMMY_PKG_FORWARD_LIB_OPTIONAL_DEP_PACKAGES "")
+  unittest_compare_const(DUMMY_PKG_FORWARD_TEST_REQUIRED_DEP_PACKAGES "")
+  unittest_compare_const(DUMMY_PKG_FORWARD_TEST_OPTIONAL_DEP_PACKAGES "")
+  unittest_compare_const(REGRESSION_EMAIL_LIST "")
+  unittest_compare_const(SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS "")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_TRIBITS_DEFINE_PACKAGE_DEPENDENCIES_ALL)
+function(unitest_tribits_define_package_dependencies_libs_required_packages_1)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_PACKAGE_DEFINE_DEPENDENCIES( ... all ...)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_package_define_dependencies(LIB_REQUIRED_PACKAGES PKG1)")
+  message("***\n")
 
-  TRIBITS_PREP_TO_READ_DEPENDENCIES(DUMMY_PKG)
+  tribits_prep_to_read_dependencies(DUMMY_PKG)
 
-  TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(
+  tribits_package_define_dependencies(LIB_REQUIRED_PACKAGES PKG1)
+
+  unittest_compare_const(LIB_REQUIRED_DEP_PACKAGES "PKG1")
+  unittest_compare_const(LIB_OPTIONAL_DEP_PACKAGES "")
+  unittest_compare_const(TEST_REQUIRED_DEP_PACKAGES "")
+  unittest_compare_const(TEST_OPTIONAL_DEP_PACKAGES "")
+  unittest_compare_const(LIB_REQUIRED_DEP_TPLS "")
+  unittest_compare_const(LIB_OPTIONAL_DEP_TPLS "")
+  unittest_compare_const(TEST_REQUIRED_DEP_TPLS "")
+  unittest_compare_const(TEST_OPTIONAL_DEP_TPLS "")
+
+endfunction()
+
+
+function(unitest_tribits_define_package_dependencies_libs_required_packages_2)
+
+  message("\n***")
+  message("*** Testing tribits_package_define_dependencies(LIB_REQUIRED_PACKAGES PKG2 PKG1)")
+  message("***\n")
+
+  tribits_prep_to_read_dependencies(DUMMY_PKG)
+
+  tribits_package_define_dependencies(LIB_REQUIRED_PACKAGES PKG2 PKG1)
+
+  unittest_compare_const(LIB_REQUIRED_DEP_PACKAGES "PKG2;PKG1")
+  unittest_compare_const(LIB_OPTIONAL_DEP_PACKAGES "")
+  unittest_compare_const(TEST_REQUIRED_DEP_PACKAGES "")
+  unittest_compare_const(TEST_OPTIONAL_DEP_PACKAGES "")
+  unittest_compare_const(LIB_REQUIRED_DEP_TPLS "")
+  unittest_compare_const(LIB_OPTIONAL_DEP_TPLS "")
+  unittest_compare_const(TEST_REQUIRED_DEP_TPLS "")
+  unittest_compare_const(TEST_OPTIONAL_DEP_TPLS "")
+
+endfunction()
+
+
+function(unitest_tribits_define_package_dependencies_all)
+
+  message("\n***")
+  message("*** Testing tribits_package_define_dependencies( ... all ...)")
+  message("***\n")
+
+  tribits_prep_to_read_dependencies(DUMMY_PKG)
+
+  tribits_package_define_dependencies(
     LIB_REQUIRED_PACKAGES PKG1 PKG2
     LIB_OPTIONAL_PACKAGES PKG3 PKG4
     TEST_REQUIRED_PACKAGES PKG5 PKG6
@@ -317,419 +317,419 @@ FUNCTION(UNITEST_TRIBITS_DEFINE_PACKAGE_DEPENDENCIES_ALL)
        SPKG2  utils/spkg2  PT,PM  OPTIONAL
     )
 
-  UNITTEST_COMPARE_CONST(LIB_REQUIRED_DEP_PACKAGES "PKG1;PKG2")
-  UNITTEST_COMPARE_CONST(LIB_OPTIONAL_DEP_PACKAGES "PKG3;PKG4")
-  UNITTEST_COMPARE_CONST(TEST_REQUIRED_DEP_PACKAGES "PKG5;PKG6")
-  UNITTEST_COMPARE_CONST(TEST_OPTIONAL_DEP_PACKAGES "PKG7;PKG8")
-  UNITTEST_COMPARE_CONST(LIB_REQUIRED_DEP_TPLS "TPL1;TPL2")
-  UNITTEST_COMPARE_CONST(LIB_OPTIONAL_DEP_TPLS "TPL3;TPL4")
-  UNITTEST_COMPARE_CONST(TEST_REQUIRED_DEP_TPLS "TPL5;TPL6")
-  UNITTEST_COMPARE_CONST(TEST_OPTIONAL_DEP_TPLS "TPL7;TPL8")
-  UNITTEST_COMPARE_CONST(REGRESSION_EMAIL_LIST "email-address5")
-  UNITTEST_COMPARE_CONST(SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS
+  unittest_compare_const(LIB_REQUIRED_DEP_PACKAGES "PKG1;PKG2")
+  unittest_compare_const(LIB_OPTIONAL_DEP_PACKAGES "PKG3;PKG4")
+  unittest_compare_const(TEST_REQUIRED_DEP_PACKAGES "PKG5;PKG6")
+  unittest_compare_const(TEST_OPTIONAL_DEP_PACKAGES "PKG7;PKG8")
+  unittest_compare_const(LIB_REQUIRED_DEP_TPLS "TPL1;TPL2")
+  unittest_compare_const(LIB_OPTIONAL_DEP_TPLS "TPL3;TPL4")
+  unittest_compare_const(TEST_REQUIRED_DEP_TPLS "TPL5;TPL6")
+  unittest_compare_const(TEST_OPTIONAL_DEP_TPLS "TPL7;TPL8")
+  unittest_compare_const(REGRESSION_EMAIL_LIST "email-address5")
+  unittest_compare_const(SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS
     "SPKG1;spkg1;EX;REQUIRED;SPKG2;utils/spkg2;PT,PM;OPTIONAL")
 
-ENDFUNCTION()
+endfunction()
 
 
 ################################################################################
 #
-# Unit tests for TRIBITS_READ_ALL_PROJECT_DEPS_FILES_CREATE_DEPS_GRAPH()
+# Unit tests for tribits_read_all_project_deps_files_create_deps_graph()
 #
 ################################################################################
 
-FUNCTION(UNITTEST_READ_PACKAGES_LIST_WITH_EXTRA_REPO)
+function(unittest_read_packages_list_with_extra_repo)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the reading of packages list with extra repo")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the reading of packages list with extra repo")
+  message("***\n")
 
   # Debugging
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_NUM_PACKAGES 4 )
+  unittest_compare_const( ${PROJECT_NAME}_NUM_PACKAGES 4 )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_READ_TPLS_LISTS_WTIH_DUPLICATE_TPLS)
+function(unittest_read_tpls_lists_wtih_duplicate_tpls)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the reading of TPL lists with duplicate TPLs ")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the reading of TPL lists with duplicate TPLs ")
+  message("***\n")
 
   # Debugging
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  TRIBITS_REPOSITORY_DEFINE_TPLS(
+  tribits_repository_define_tpls(
     EXTPL2       tpls/    EX
     Boost        tpls/    PT
   )
 
-  SET(${PROJECT_NAME}_TPLS_FILE "dummy")
-  SET(${EXTRA_REPO_NAME}_TPLS_FILE "dummy")
-  TRIBITS_PROCESS_TPLS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_TPLS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  set(${PROJECT_NAME}_TPLS_FILE "dummy")
+  set(${EXTRA_REPO_NAME}_TPLS_FILE "dummy")
+  tribits_process_tpls_lists(${PROJECT_NAME} ".")
+  tribits_process_tpls_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
   # The TPL is not added again
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost;EXTPL2")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_NUM_TPLS "5" )
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_REVERSE_TPLS "EXTPL2;Boost;LAPACK;BLAS;MPI" )
-  UNITTEST_COMPARE_CONST( MPI_FINDMOD "cmake/TPLs/FindTPLMPI.cmake" )
-  UNITTEST_COMPARE_CONST( MPI_TESTGROUP "PT" )
-  UNITTEST_COMPARE_CONST( BLAS_FINDMOD "cmake/TPLs/FindTPLBLAS.cmake" )
-  UNITTEST_COMPARE_CONST( BLAS_TESTGROUP "PT" )
+  unittest_compare_const( ${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost;EXTPL2")
+  unittest_compare_const( ${PROJECT_NAME}_NUM_TPLS "5" )
+  unittest_compare_const( ${PROJECT_NAME}_REVERSE_TPLS "EXTPL2;Boost;LAPACK;BLAS;MPI" )
+  unittest_compare_const( MPI_FINDMOD "cmake/TPLs/FindTPLMPI.cmake" )
+  unittest_compare_const( MPI_TESTGROUP "PT" )
+  unittest_compare_const( BLAS_FINDMOD "cmake/TPLs/FindTPLBLAS.cmake" )
+  unittest_compare_const( BLAS_TESTGROUP "PT" )
 
   # The find module is overridden in extra repo
-  UNITTEST_COMPARE_CONST( Boost_FINDMOD "${EXTRA_REPO_NAME}/tpls/FindTPLBoost.cmake" )
+  unittest_compare_const( Boost_FINDMOD "${EXTRA_REPO_NAME}/tpls/FindTPLBoost.cmake" )
 
   # The classification is not overridden in extra repo
-  UNITTEST_COMPARE_CONST( Boost_TESTGROUP "ST" )
+  unittest_compare_const( Boost_TESTGROUP "ST" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_READ_PACKAGES_AND_DEPENDENCIES)
+function(unittest_read_packages_and_dependencies)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing basic TRIBITS_READ_ALL_PROJECT_DEPS_FILES_CREATE_DEPS_GRAPH() functioning")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing basic tribits_read_all_project_deps_files_create_deps_graph() functioning")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  UNITTEST_HELPER_READ_PACKAGES_AND_DEPENDENCIES()
+  unittest_helper_read_packages_and_dependencies()
 
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost")
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
 
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES "MPI;BLAS;LAPACK;Boost;Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES 8)
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES "MPI;BLAS;LAPACK;Boost;Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES 8)
 
   # ToDo: Add checks for ${PACKAGE_NAME}_REL_SOURCE_DIR,,
   # ${PACKAGE_NAME}_SOURCE_DIR, ${PACKAGE_NAME}_TESTGROUP and other vars set
-  # by TRIBITS_READ_ALL_PROJECT_DEPS_FILES_CREATE_DEPS_GRAPH() (#63)
+  # by tribits_read_all_project_deps_files_create_deps_graph() (#63)
 
-ENDFUNCTION()
-
-
-FUNCTION(UNITTEST_STANDARD_PROJECT_DEFAULT_EMAIL_ADDRESS_BASE)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the case where the TriBITS project has a default email address base and uses standard package regression email list names")
-  MESSAGE("***\n")
-
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
-
-  UNITTEST_COMPARE_CONST(Teuchos_REGRESSION_EMAIL_LIST teuchos-regression@repo.site.gov)
-  UNITTEST_COMPARE_CONST(RTOp_REGRESSION_EMAIL_LIST thyra-regression@software.sandia.gov)
-  UNITTEST_COMPARE_CONST(Ex2Package1_REGRESSION_EMAIL_LIST ex2-package1-override@some.ornl.gov)
-  UNITTEST_COMPARE_CONST(Ex2Package2_REGRESSION_EMAIL_LIST ex2package2-regression@project.site.gov)
-
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_SINGLE_REPOSITORY_EMAIL_LIST)
+function(unittest_standard_project_default_email_address_base)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test setting a single regression email address for all the packages in the first repo but defer to hard-coded package email addresses")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the case where the TriBITS project has a default email address base and uses standard package regression email list names")
+  message("***\n")
 
-  # Debugging
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  SET(${PROJECT_NAME}_REPOSITORY_MASTER_EMAIL_ADDRESS "my-repo@some.url.com")
-  SET(${PROJECT_NAME}_REPOSITORY_EMAIL_URL_ADDRESS_BASE OFF) # Will cause to be ignored!
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_read_deps_files_create_deps_graph()
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
+  unittest_compare_const(Teuchos_REGRESSION_EMAIL_LIST teuchos-regression@repo.site.gov)
+  unittest_compare_const(RTOp_REGRESSION_EMAIL_LIST thyra-regression@software.sandia.gov)
+  unittest_compare_const(Ex2Package1_REGRESSION_EMAIL_LIST ex2-package1-override@some.ornl.gov)
+  unittest_compare_const(Ex2Package2_REGRESSION_EMAIL_LIST ex2package2-regression@project.site.gov)
 
-  UNITTEST_COMPARE_CONST(Teuchos_REGRESSION_EMAIL_LIST "my-repo@some.url.com")
-  UNITTEST_COMPARE_CONST(RTOp_REGRESSION_EMAIL_LIST thyra-regression@software.sandia.gov)
-  UNITTEST_COMPARE_CONST(Ex2Package1_REGRESSION_EMAIL_LIST ex2-package1-override@some.ornl.gov)
-  UNITTEST_COMPARE_CONST(Ex2Package2_REGRESSION_EMAIL_LIST ex2package2-regression@project.site.gov)
-
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_SINGLE_REPOSITORY_EMAIL_LIST_OVERRIDE_0)
+function(unittest_single_repository_email_list)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test setting a single regression email address for all the packages in the first repo with override")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Test setting a single regression email address for all the packages in the first repo but defer to hard-coded package email addresses")
+  message("***\n")
 
   # Debugging
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  SET(${PROJECT_NAME}_REPOSITORY_OVERRIDE_PACKAGE_EMAIL_LIST "my-repo@some.url.com")
+  set(${PROJECT_NAME}_REPOSITORY_MASTER_EMAIL_ADDRESS "my-repo@some.url.com")
+  set(${PROJECT_NAME}_REPOSITORY_EMAIL_URL_ADDRESS_BASE OFF) # Will cause to be ignored!
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_read_deps_files_create_deps_graph()
 
-  UNITTEST_COMPARE_CONST(Teuchos_REGRESSION_EMAIL_LIST "my-repo@some.url.com")
-  UNITTEST_COMPARE_CONST(RTOp_REGRESSION_EMAIL_LIST "my-repo@some.url.com")
-  UNITTEST_COMPARE_CONST(Ex2Package1_REGRESSION_EMAIL_LIST ex2-package1-override@some.ornl.gov)
-  UNITTEST_COMPARE_CONST(Ex2Package2_REGRESSION_EMAIL_LIST ex2package2-regression@project.site.gov)
+  unittest_compare_const(Teuchos_REGRESSION_EMAIL_LIST "my-repo@some.url.com")
+  unittest_compare_const(RTOp_REGRESSION_EMAIL_LIST thyra-regression@software.sandia.gov)
+  unittest_compare_const(Ex2Package1_REGRESSION_EMAIL_LIST ex2-package1-override@some.ornl.gov)
+  unittest_compare_const(Ex2Package2_REGRESSION_EMAIL_LIST ex2package2-regression@project.site.gov)
 
-ENDFUNCTION()
-
-
-FUNCTION(UNITTEST_SINGLE_REPOSITORY_EMAIL_LIST_OVERRIDE_1)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Test setting a single regression email address for all the packages in the second repo with override")
-  MESSAGE("***\n")
-
-  # Debugging
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-
-  SET(${EXTRA_REPO_NAME}_REPOSITORY_OVERRIDE_PACKAGE_EMAIL_LIST "extra-repo@some.url.com")
-
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
-
-  UNITTEST_COMPARE_CONST(Teuchos_REGRESSION_EMAIL_LIST teuchos-regression@repo.site.gov)
-  UNITTEST_COMPARE_CONST(RTOp_REGRESSION_EMAIL_LIST thyra-regression@software.sandia.gov)
-  UNITTEST_COMPARE_CONST(Ex2Package1_REGRESSION_EMAIL_LIST extra-repo@some.url.com)
-  UNITTEST_COMPARE_CONST(Ex2Package2_REGRESSION_EMAIL_LIST extra-repo@some.url.com)
-
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_SINGLE_PROJECT_EMAIL_LIST)
+function(unittest_single_repository_email_list_override_0)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test setting a single regression email address for all the packages in a TriBITS Project but defer to hard-coded package email addresses")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Test setting a single regression email address for all the packages in the first repo with override")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  SET(${PROJECT_NAME}_PROJECT_MASTER_EMAIL_ADDRESS "my-project@some.url.com")
-  SET(${PROJECT_NAME}_PROJECT_EMAIL_URL_ADDRESS_BASE OFF)
-  SET(${PROJECT_NAME}_REPOSITORY_EMAIL_URL_ADDRESS_BASE OFF)
+  set(${PROJECT_NAME}_REPOSITORY_OVERRIDE_PACKAGE_EMAIL_LIST "my-repo@some.url.com")
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_read_deps_files_create_deps_graph()
 
-  UNITTEST_COMPARE_CONST(Teuchos_REGRESSION_EMAIL_LIST "my-project@some.url.com")
-  UNITTEST_COMPARE_CONST(RTOp_REGRESSION_EMAIL_LIST thyra-regression@software.sandia.gov)
-  UNITTEST_COMPARE_CONST(Ex2Package1_REGRESSION_EMAIL_LIST ex2-package1-override@some.ornl.gov)
-  UNITTEST_COMPARE_CONST(Ex2Package2_REGRESSION_EMAIL_LIST my-project@some.url.com)
+  unittest_compare_const(Teuchos_REGRESSION_EMAIL_LIST "my-repo@some.url.com")
+  unittest_compare_const(RTOp_REGRESSION_EMAIL_LIST "my-repo@some.url.com")
+  unittest_compare_const(Ex2Package1_REGRESSION_EMAIL_LIST ex2-package1-override@some.ornl.gov)
+  unittest_compare_const(Ex2Package2_REGRESSION_EMAIL_LIST ex2package2-regression@project.site.gov)
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_SINGLE_PROJECT_EMAIL_LIST_OVERRIDE)
+function(unittest_single_repository_email_list_override_1)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test setting a single regression email address for all the packages in a TriBITS Project and overriding hard-coded package email addresses")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Test setting a single regression email address for all the packages in the second repo with override")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  SET(${PROJECT_NAME}_PROJECT_MASTER_EMAIL_ADDRESS "my-project@some.url.com")
-  SET(${PROJECT_NAME}_REPOSITORY_OVERRIDE_PACKAGE_EMAIL_LIST
+  set(${EXTRA_REPO_NAME}_REPOSITORY_OVERRIDE_PACKAGE_EMAIL_LIST "extra-repo@some.url.com")
+
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_read_deps_files_create_deps_graph()
+
+  unittest_compare_const(Teuchos_REGRESSION_EMAIL_LIST teuchos-regression@repo.site.gov)
+  unittest_compare_const(RTOp_REGRESSION_EMAIL_LIST thyra-regression@software.sandia.gov)
+  unittest_compare_const(Ex2Package1_REGRESSION_EMAIL_LIST extra-repo@some.url.com)
+  unittest_compare_const(Ex2Package2_REGRESSION_EMAIL_LIST extra-repo@some.url.com)
+
+endfunction()
+
+
+function(unittest_single_project_email_list)
+
+  message("\n***")
+  message("*** Test setting a single regression email address for all the packages in a TriBITS Project but defer to hard-coded package email addresses")
+  message("***\n")
+
+  # Debugging
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+
+  set(${PROJECT_NAME}_PROJECT_MASTER_EMAIL_ADDRESS "my-project@some.url.com")
+  set(${PROJECT_NAME}_PROJECT_EMAIL_URL_ADDRESS_BASE OFF)
+  set(${PROJECT_NAME}_REPOSITORY_EMAIL_URL_ADDRESS_BASE OFF)
+
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_read_deps_files_create_deps_graph()
+
+  unittest_compare_const(Teuchos_REGRESSION_EMAIL_LIST "my-project@some.url.com")
+  unittest_compare_const(RTOp_REGRESSION_EMAIL_LIST thyra-regression@software.sandia.gov)
+  unittest_compare_const(Ex2Package1_REGRESSION_EMAIL_LIST ex2-package1-override@some.ornl.gov)
+  unittest_compare_const(Ex2Package2_REGRESSION_EMAIL_LIST my-project@some.url.com)
+
+endfunction()
+
+
+function(unittest_single_project_email_list_override)
+
+  message("\n***")
+  message("*** Test setting a single regression email address for all the packages in a TriBITS Project and overriding hard-coded package email addresses")
+  message("***\n")
+
+  # Debugging
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+
+  set(${PROJECT_NAME}_PROJECT_MASTER_EMAIL_ADDRESS "my-project@some.url.com")
+  set(${PROJECT_NAME}_REPOSITORY_OVERRIDE_PACKAGE_EMAIL_LIST
     "${${PROJECT_NAME}_PROJECT_MASTER_EMAIL_ADDRESS}")
-  SET(${EXTRA_REPO_NAME}_REPOSITORY_OVERRIDE_PACKAGE_EMAIL_LIST
+  set(${EXTRA_REPO_NAME}_REPOSITORY_OVERRIDE_PACKAGE_EMAIL_LIST
     "${${PROJECT_NAME}_PROJECT_MASTER_EMAIL_ADDRESS}")
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_read_deps_files_create_deps_graph()
 
-  UNITTEST_COMPARE_CONST(Teuchos_REGRESSION_EMAIL_LIST "my-project@some.url.com")
-  UNITTEST_COMPARE_CONST(RTOp_REGRESSION_EMAIL_LIST my-project@some.url.com)
-  UNITTEST_COMPARE_CONST(Ex2Package1_REGRESSION_EMAIL_LIST my-project@some.url.com)
-  UNITTEST_COMPARE_CONST(Ex2Package2_REGRESSION_EMAIL_LIST my-project@some.url.com)
+  unittest_compare_const(Teuchos_REGRESSION_EMAIL_LIST "my-project@some.url.com")
+  unittest_compare_const(RTOp_REGRESSION_EMAIL_LIST my-project@some.url.com)
+  unittest_compare_const(Ex2Package1_REGRESSION_EMAIL_LIST my-project@some.url.com)
+  unittest_compare_const(Ex2Package2_REGRESSION_EMAIL_LIST my-project@some.url.com)
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_EXTRA_REPO_MISSING_OPTIONAL_PACKAGE)
+function(unittest_extra_repo_missing_optional_package)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the reading of packages list with extra repo with missing optional upstream package")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the reading of packages list with extra repo with missing optional upstream package")
+  message("***\n")
 
-  SET(EXTRA_REPO_INCLUDE_MISSING_OPTIONAL_DEP_PACKAGE ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
+  set(EXTRA_REPO_INCLUDE_MISSING_OPTIONAL_DEP_PACKAGE ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
 
   # Debugging
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)  							
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
+  global_set(MESSAGE_WRAPPER_INPUT)  							
+  tribits_read_deps_files_create_deps_graph()
 
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_EXTRA_REPO_MISSING_OPTIONAL_PACKAGE_VERBOSE)
+function(unittest_extra_repo_missing_optional_package_verbose)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the reading of packages list with extra repo with missing optional upstream package")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the reading of packages list with extra repo with missing optional upstream package")
+  message("***\n")
 
-  SET(${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES  ON)
+  set(${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES  ON)
 
-  SET(EXTRA_REPO_INCLUDE_MISSING_OPTIONAL_DEP_PACKAGE ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
+  set(EXTRA_REPO_INCLUDE_MISSING_OPTIONAL_DEP_PACKAGE ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
 
   # Debugging
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)  							
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
+  global_set(MESSAGE_WRAPPER_INPUT)  							
+  tribits_read_deps_files_create_deps_graph()
 
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
-  UNITTEST_COMPARE_CONST(Ex2Package1_ENABLE_MissingUpstreamPackage "OFF")
-ENDFUNCTION()
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
+  unittest_compare_const(Ex2Package1_ENABLE_MissingUpstreamPackage "OFF")
+endfunction()
 
 
-FUNCTION(UNITTEST_EXTRA_REPO_MISSING_REQUIRED_PACKAGE)
+function(unittest_extra_repo_missing_required_package)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the reading of packages list with extra repo with missing required upstream package")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the reading of packages list with extra repo with missing required upstream package")
+  message("***\n")
 
-  SET(EXTRA_REPO_INCLUDE_MISSING_REQUIRED_DEP_PACKAGE ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
+  set(EXTRA_REPO_INCLUDE_MISSING_REQUIRED_DEP_PACKAGE ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
 
   # Debugging
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)  							
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
+  global_set(MESSAGE_WRAPPER_INPUT)  							
+  tribits_read_deps_files_create_deps_graph()
 
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
-  UNITTEST_COMPARE_CONST(Ex2Package1_ENABLE_MissingUpstreamPackage "OFF")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
+  unittest_compare_const(Ex2Package1_ENABLE_MissingUpstreamPackage "OFF")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_EXTRA_REPO_MISSING_REQUIRED_PACKAGE_VERBOSE)
+function(unittest_extra_repo_missing_required_package_verbose)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the reading of packages list with extra repo with missing required upstream package (verbose mode)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the reading of packages list with extra repo with missing required upstream package (verbose mode)")
+  message("***\n")
 
-  SET(${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES  ON)
+  set(${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES  ON)
 
-  SET(EXTRA_REPO_INCLUDE_MISSING_REQUIRED_DEP_PACKAGE ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
+  set(EXTRA_REPO_INCLUDE_MISSING_REQUIRED_DEP_PACKAGE ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
 
   # Debugging
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)  							
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
+  global_set(MESSAGE_WRAPPER_INPUT)  							
+  tribits_read_deps_files_create_deps_graph()
 
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
-  UNITTEST_COMPARE_CONST(Ex2Package1_ENABLE_MissingUpstreamPackage "OFF")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
+  unittest_compare_const(Ex2Package1_ENABLE_MissingUpstreamPackage "OFF")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_ELEVATE_SUBPACKAGES_ST_TO_PT)
+function(unittest_elevate_subpackages_st_to_pt)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing elevating packages and subpackages from ST to PT")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing elevating packages and subpackages from ST to PT")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(TRIBITS_SET_DEP_PACKAGES_DEBUG_DUMP ON)
-  #SET(TRIBITS_INSERT_STANDARD_PACKAGE_OPTIONS_DEBUG ON)
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_SET_DEP_PACKAGES_DEBUG_DUMP ON)
+  #set(TRIBITS_INSERT_STANDARD_PACKAGE_OPTIONS_DEBUG ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
 
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
 
-  SET(${PROJECT_NAME}_ELEVATE_ST_TO_PT TRUE)
+  set(${PROJECT_NAME}_ELEVATE_ST_TO_PT TRUE)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
 
-  SET(REPOSITORY_NAME extraRepoOnePackageThreeSubpackages)
-  INCLUDE(${PROJECT_SOURCE_DIR}/extraRepoOnePackageThreeSubpackages/PackagesList.cmake)
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(extraRepoOnePackageThreeSubpackages
+  set(REPOSITORY_NAME extraRepoOnePackageThreeSubpackages)
+  include(${PROJECT_SOURCE_DIR}/extraRepoOnePackageThreeSubpackages/PackagesList.cmake)
+  tribits_process_packages_and_dirs_lists(extraRepoOnePackageThreeSubpackages
     extraRepoOnePackageThreeSubpackages)
 
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
+  tribits_read_deps_files_create_deps_graph()
 
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_SE_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_SE_PACKAGES
     "Teuchos;RTOp;extraRepoOnePackageThreeSubpackagesSP1;extraRepoOnePackageThreeSubpackagesSP2;extraRepoOnePackageThreeSubpackagesSP3;extraRepoOnePackageThreeSubpackages")
-  UNITTEST_COMPARE_CONST(extraRepoOnePackageThreeSubpackagesSP1_SOURCE_DIR ${PROJECT_SOURCE_DIR}/extraRepoOnePackageThreeSubpackages/sp1)
-  UNITTEST_COMPARE_CONST(extraRepoOnePackageThreeSubpackagesSP2_SOURCE_DIR ${PROJECT_SOURCE_DIR}/extraRepoOnePackageThreeSubpackages/sp2)
-  UNITTEST_COMPARE_CONST(extraRepoOnePackageThreeSubpackagesSP3_SOURCE_DIR ${PROJECT_SOURCE_DIR}/extraRepoOnePackageThreeSubpackages/sp3)
-  UNITTEST_COMPARE_CONST(extraRepoOnePackageThreeSubpackagesSP1_REL_SOURCE_DIR extraRepoOnePackageThreeSubpackages/sp1)
-  UNITTEST_COMPARE_CONST(extraRepoOnePackageThreeSubpackagesSP2_REL_SOURCE_DIR extraRepoOnePackageThreeSubpackages/sp2)
-  UNITTEST_COMPARE_CONST(extraRepoOnePackageThreeSubpackagesSP3_REL_SOURCE_DIR extraRepoOnePackageThreeSubpackages/sp3)
-  UNITTEST_COMPARE_CONST(extraRepoOnePackageThreeSubpackagesSP1_TESTGROUP PT)
-  UNITTEST_COMPARE_CONST(extraRepoOnePackageThreeSubpackagesSP2_TESTGROUP PT)
-  UNITTEST_COMPARE_CONST(extraRepoOnePackageThreeSubpackagesSP3_TESTGROUP EX)
+  unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP1_SOURCE_DIR ${PROJECT_SOURCE_DIR}/extraRepoOnePackageThreeSubpackages/sp1)
+  unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP2_SOURCE_DIR ${PROJECT_SOURCE_DIR}/extraRepoOnePackageThreeSubpackages/sp2)
+  unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP3_SOURCE_DIR ${PROJECT_SOURCE_DIR}/extraRepoOnePackageThreeSubpackages/sp3)
+  unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP1_REL_SOURCE_DIR extraRepoOnePackageThreeSubpackages/sp1)
+  unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP2_REL_SOURCE_DIR extraRepoOnePackageThreeSubpackages/sp2)
+  unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP3_REL_SOURCE_DIR extraRepoOnePackageThreeSubpackages/sp3)
+  unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP1_TESTGROUP PT)
+  unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP2_TESTGROUP PT)
+  unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP3_TESTGROUP EX)
 
-ENDFUNCTION()
+endfunction()
 
 
 ################################################################################
@@ -739,39 +739,39 @@ ENDFUNCTION()
 ################################################################################
 
 # Assume that all unit tests will pass by default
-GLOBAL_SET(UNITTEST_OVERALL_PASS TRUE)
-GLOBAL_SET(UNITTEST_OVERALL_NUMPASSED 0)
-GLOBAL_SET(UNITTEST_OVERALL_NUMRUN 0)
+global_set(UNITTEST_OVERALL_PASS TRUE)
+global_set(UNITTEST_OVERALL_NUMPASSED 0)
+global_set(UNITTEST_OVERALL_NUMRUN 0)
 
 # Unit tests for code macros that are used to declare/define dependenies
-UNITEST_TRIBITS_DEFINE_REPOSITORY_PACKAGES_DIRS_CLASSIFICATIONS_EMPTY()
-UNITEST_TRIBITS_DEFINE_REPOSITORY_PACKAGES_DIRS_CLASSIFICATIONS_1_PACKAGE()
-UNITEST_TRIBITS_DEFINE_REPOSITORY_PACKAGES_DIRS_CLASSIFICATIONS_2_PACKAGES()
-UNITEST_TRIBITS_DEFINE_REPOSITORY_TPLS_FINDMODS_CLASSIFICATIONS_EMPTY()
-UNITEST_TRIBITS_DEFINE_REPOSITORY_TPLS_FINDMODS_CLASSIFICATIONS_1_TPL()
-UNITEST_TRIBITS_DEFINE_REPOSITORY_TPLS_FINDMODS_CLASSIFICATIONS_2_TPLS()
-UNITEST_TRIBITS_SET_ST_FOR_DEV_MODE()
-UNITEST_TRIBITS_SET_SS_FOR_DEV_MODE_BACKWARD_COMPATIBLE()
-UNITEST_TRIBITS_DEFINE_PACKAGE_DEPENDENCIES_NONE()
-UNITEST_TRIBITS_DEFINE_PACKAGE_DEPENDENCIES_LIBS_REQUIRED_PACKAGES_1()
-UNITEST_TRIBITS_DEFINE_PACKAGE_DEPENDENCIES_LIBS_REQUIRED_PACKAGES_2()
-UNITEST_TRIBITS_DEFINE_PACKAGE_DEPENDENCIES_ALL()
+unitest_tribits_define_repository_packages_dirs_classifications_empty()
+unitest_tribits_define_repository_packages_dirs_classifications_1_package()
+unitest_tribits_define_repository_packages_dirs_classifications_2_packages()
+unitest_tribits_define_repository_tpls_findmods_classifications_empty()
+unitest_tribits_define_repository_tpls_findmods_classifications_1_tpl()
+unitest_tribits_define_repository_tpls_findmods_classifications_2_tpls()
+unitest_tribits_set_st_for_dev_mode()
+unitest_tribits_set_ss_for_dev_mode_backward_compatible()
+unitest_tribits_define_package_dependencies_none()
+unitest_tribits_define_package_dependencies_libs_required_packages_1()
+unitest_tribits_define_package_dependencies_libs_required_packages_2()
+unitest_tribits_define_package_dependencies_all()
 
-# Unit tests for TRIBITS_READ_ALL_PROJECT_DEPS_FILES_CREATE_DEPS_GRAPH()
-UNITTEST_READ_PACKAGES_LIST_WITH_EXTRA_REPO()
-UNITTEST_READ_TPLS_LISTS_WTIH_DUPLICATE_TPLS()
-UNITTEST_READ_PACKAGES_AND_DEPENDENCIES()
-UNITTEST_STANDARD_PROJECT_DEFAULT_EMAIL_ADDRESS_BASE()
-UNITTEST_SINGLE_REPOSITORY_EMAIL_LIST()
-UNITTEST_SINGLE_REPOSITORY_EMAIL_LIST_OVERRIDE_0()
-UNITTEST_SINGLE_REPOSITORY_EMAIL_LIST_OVERRIDE_1()
-UNITTEST_SINGLE_PROJECT_EMAIL_LIST()
-UNITTEST_SINGLE_PROJECT_EMAIL_LIST_OVERRIDE()
-UNITTEST_EXTRA_REPO_MISSING_OPTIONAL_PACKAGE()
-UNITTEST_EXTRA_REPO_MISSING_OPTIONAL_PACKAGE_VERBOSE()
-UNITTEST_EXTRA_REPO_MISSING_REQUIRED_PACKAGE()
-UNITTEST_EXTRA_REPO_MISSING_REQUIRED_PACKAGE_VERBOSE()
-UNITTEST_ELEVATE_SUBPACKAGES_ST_TO_PT()
+# Unit tests for tribits_read_all_project_deps_files_create_deps_graph()
+unittest_read_packages_list_with_extra_repo()
+unittest_read_tpls_lists_wtih_duplicate_tpls()
+unittest_read_packages_and_dependencies()
+unittest_standard_project_default_email_address_base()
+unittest_single_repository_email_list()
+unittest_single_repository_email_list_override_0()
+unittest_single_repository_email_list_override_1()
+unittest_single_project_email_list()
+unittest_single_project_email_list_override()
+unittest_extra_repo_missing_optional_package()
+unittest_extra_repo_missing_optional_package_verbose()
+unittest_extra_repo_missing_required_package()
+unittest_extra_repo_missing_required_package_verbose()
+unittest_elevate_subpackages_st_to_pt()
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(127)
+unittest_final_result(127)

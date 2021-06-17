@@ -1,10 +1,10 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.17.0)
-SET(PROJECT_NAME TAATDriver)
-PROJECT(${PROJECT_NAME} NONE)
+cmake_minimum_required(VERSION 3.17.0)
+set(PROJECT_NAME TAATDriver)
+project(${PROJECT_NAME} NONE)
 
-INCLUDE(${CMAKE_CURRENT_LIST_DIR}/../CommonTAATDriverBoilerPlate.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../CommonTAATDriverBoilerPlate.cmake)
 
-TRIBITS_ADD_ADVANCED_TEST(
+tribits_add_advanced_test(
   TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 COPY_FILES_TO_TEST_DIR  this_file_does_not_exist.txt

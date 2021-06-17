@@ -37,8 +37,8 @@
 # ************************************************************************
 # @HEADER
 
-INCLUDE("${CMAKE_CURRENT_LIST_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraphHelpers.cmake")
-INCLUDE(TribitsAdjustPackageEnables)
+include("${CMAKE_CURRENT_LIST_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraphHelpers.cmake")
+include(TribitsAdjustPackageEnables)
 
 
 #####################################################################
@@ -48,22 +48,22 @@ INCLUDE(TribitsAdjustPackageEnables)
 #####################################################################
 
 
-MACRO(UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES)
+macro(unittest_helper_read_and_process_packages)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  SET(${PROJECT_NAME}_TPLS_FILE "dummy")
-  TRIBITS_PROCESS_TPLS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  SET(${EXTRA_REPO_NAME}_TPLS_FILE "dummy")
-  TRIBITS_PROCESS_TPLS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  TRIBITS_READ_DEPS_FILES_CREATE_DEPS_GRAPH()
-  SET_DEFAULT(${PROJECT_NAME}_ENABLE_ALL_PACKAGES OFF)
-  SET_DEFAULT(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
-  SET(DO_PROCESS_MPI_ENABLES ON) # Should not be needed but CMake is not working!
-  FOREACH(SE_PKG ${${PROJECT_NAME}_SE_PACKAGES})
-    GLOBAL_SET(${SE_PKG}_FULL_ENABLED_DEP_PACKAGES)
-  ENDFOREACH()
-  TRIBITS_ADJUST_PACKAGE_ENABLES(TRUE)
-  TRIBITS_SET_UP_ENABLED_ONLY_DEPENDENCIES()
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  set(${PROJECT_NAME}_TPLS_FILE "dummy")
+  tribits_process_tpls_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  set(${EXTRA_REPO_NAME}_TPLS_FILE "dummy")
+  tribits_process_tpls_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_read_deps_files_create_deps_graph()
+  set_default(${PROJECT_NAME}_ENABLE_ALL_PACKAGES OFF)
+  set_default(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
+  set(DO_PROCESS_MPI_ENABLES ON) # Should not be needed but CMake is not working!
+  foreach(SE_PKG ${${PROJECT_NAME}_SE_PACKAGES})
+    global_set(${SE_PKG}_FULL_ENABLED_DEP_PACKAGES)
+  endforeach()
+  tribits_adjust_package_enables(TRUE)
+  tribits_set_up_enabled_only_dependencies()
 
-ENDMACRO()
+endmacro()

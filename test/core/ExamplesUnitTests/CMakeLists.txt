@@ -43,33 +43,33 @@
 ########################################################################
 
 
-FUNCTION(GET_REGEX_CORRECT_STRING  INPUT_STR  OUTPUT_STR_VAR_OUT)
-  SET(OUTPUT_STR "${INPUT_STR}")
-  STRING(REPLACE "+" "[+]" OUTPUT_STR "${OUTPUT_STR}")
-  STRING(REPLACE "." "[.]" OUTPUT_STR "${OUTPUT_STR}")
-  SET(${OUTPUT_STR_VAR_OUT} "${OUTPUT_STR}" PARENT_SCOPE)
-ENDFUNCTION()
+function(get_regex_correct_string  INPUT_STR  OUTPUT_STR_VAR_OUT)
+  set(OUTPUT_STR "${INPUT_STR}")
+  string(REPLACE "+" "[+]" OUTPUT_STR "${OUTPUT_STR}")
+  string(REPLACE "." "[.]" OUTPUT_STR "${OUTPUT_STR}")
+  set(${OUTPUT_STR_VAR_OUT} "${OUTPUT_STR}" PARENT_SCOPE)
+endfunction()
 
 
-MACRO(GET_REGEX_CORRECT_CMAKE_LANG_COMPILER  LANG)
-  GET_REGEX_CORRECT_STRING("${CMAKE_${LANG}_COMPILER}" CMAKE_${LANG}_COMPILER_FOR_REGEX)
-ENDMACRO()
+macro(get_regex_correct_cmake_lang_compiler  LANG)
+  get_regex_correct_string("${CMAKE_${LANG}_COMPILER}" CMAKE_${LANG}_COMPILER_FOR_REGEX)
+endmacro()
 
 ########################################################################
 # Common arguments for all inner CMake and TriBITS projects
 ########################################################################
 
-INCLUDE(${CMAKE_CURRENT_LIST_DIR}/GetCompilerPassthroughArgs.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/GetCompilerPassthroughArgs.cmake)
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(IS_REAL_LINUX_SYSTEM ON)
-ELSE()
-  SET(IS_REAL_LINUX_SYSTEM OFF)
-ENDIF()
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(IS_REAL_LINUX_SYSTEM ON)
+else()
+  set(IS_REAL_LINUX_SYSTEM OFF)
+endif()
 
-GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(CXX)
-GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(C)
-GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(Fortran)
+get_regex_correct_cmake_lang_compiler(CXX)
+get_regex_correct_cmake_lang_compiler(C)
+get_regex_correct_cmake_lang_compiler(Fortran)
 
 
 ########################################################################
@@ -77,7 +77,7 @@ GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(Fortran)
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
+tribits_add_advanced_test( RawHelloWorld
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -107,11 +107,11 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
 ########################################################################
 
 
-SET(TribitsHelloWorld_COMMON_CONFIG_ARGS
+set(TribitsHelloWorld_COMMON_CONFIG_ARGS
   ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
+tribits_add_advanced_test( TribitsHelloWorld
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -140,7 +140,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_EXE_DISABLE
+tribits_add_advanced_test( TribitsHelloWorld_EXE_DISABLE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -167,11 +167,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_EXE_DISABLE
       "50% tests passed, 1 tests failed out of 2"
   )
   # NOTE: Above we are testing the <exec_name>_EXE_DISABLE option in a full
-  # configure and build case because the TRIBITS_ADD_EXECUTABLE() command is
+  # configure and build case because the tribits_add_executable() command is
   # not set up for unit-testing mode.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_InSourceBuildErrors
+tribits_add_advanced_test( TribitsHelloWorld_InSourceBuildErrors
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -215,7 +215,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_InSourceBuildErrors
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout
+tribits_add_advanced_test( TribitsHelloWorld_DefaultGlobalTimeout
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -251,7 +251,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout_ScaleTimeout
+tribits_add_advanced_test( TribitsHelloWorld_DefaultGlobalTimeout_ScaleTimeout
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -288,7 +288,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout_ScaleTimeout
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_FirstConfig
+tribits_add_advanced_test( TribitsHelloWorld_ScaleTimeout_FirstConfig
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -326,7 +326,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_FirstConfig
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_Reconfig
+tribits_add_advanced_test( TribitsHelloWorld_ScaleTimeout_Reconfig
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -375,15 +375,15 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_Reconfig
   )
 
 
-IF (TriBITS_EANBLE_Fortran)
- SET(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX
+if (TriBITS_EANBLE_Fortran)
+ set(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX
     "-- XSDK: Setting CMAKE_Fortran_COMPILER from env var FC=")
-ELSE()
- SET(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX)
-ENDIF()
+else()
+ set(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX)
+endif()
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
+tribits_add_advanced_test( TribitsHelloWorld_XSDK_DEFAULTS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -413,7 +413,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
+tribits_add_advanced_test( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -476,7 +476,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_Shared_NoVersion
+tribits_add_advanced_test( TribitsHelloWorld_Shared_NoVersion
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   OVERALL_NUM_MPI_PROCS 1
@@ -503,7 +503,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_Shared_NoVersion
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
+tribits_add_advanced_test( TribitsHelloWorld_install_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -689,7 +689,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
   # NOTE: Above we are testing different directory install options.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package
+tribits_add_advanced_test( TribitsHelloWorld_install_package_by_package
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -735,7 +735,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package
   # without using an install runner.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_runner
+tribits_add_advanced_test( TribitsHelloWorld_install_package_by_package_with_runner
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -783,7 +783,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_run
   # install runner for that target set with <Project>_INSTALL_PBP_RUNNER.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms_windows_error
+tribits_add_advanced_test( TribitsHelloWorld_install_perms_windows_error
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -812,7 +812,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms_windows_error
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
+tribits_add_advanced_test( TribitsHelloWorld_install_config_dummy_proj
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -912,7 +912,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
 # it in these tests that work with CMake 3.17.)
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
+tribits_add_advanced_test( TribitsHelloWorld_ctest_resources_file_autogen_2_3
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -958,7 +958,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
   # nvcc_wrapper.)
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_no_ctest_resources_file
+tribits_add_advanced_test( TribitsHelloWorld_no_ctest_resources_file
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -991,7 +991,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_no_ctest_resources_file
   # ctest resources file later directly to ctest.)
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_autogen_on
+tribits_add_advanced_test( TribitsHelloWorld_set_other_ctest_resources_file_autogen_on
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -1035,7 +1035,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_auto
   # the file and will not generate the default ctest_resources.json file.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_autogen_on
+tribits_add_advanced_test( TribitsHelloWorld_set_default_ctest_resources_file_autogen_on
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -1074,7 +1074,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_au
   # autogenerate option is enabled!
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_autogen_off
+tribits_add_advanced_test( TribitsHelloWorld_set_default_ctest_resources_file_autogen_off
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -1117,7 +1117,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_au
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( RawAndTribitsHelloWorld_Raw
+tribits_add_advanced_test( RawAndTribitsHelloWorld_Raw
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -1142,7 +1142,7 @@ TRIBITS_ADD_ADVANCED_TEST( RawAndTribitsHelloWorld_Raw
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( RawAndTribitsHelloWorld_Tribits
+tribits_add_advanced_test( RawAndTribitsHelloWorld_Tribits
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -1178,60 +1178,60 @@ TRIBITS_ADD_ADVANCED_TEST( RawAndTribitsHelloWorld_Tribits
 ########################################################################
 
 
-SET(TribitsExampleProject_COMMON_CONFIG_ARGS
+set(TribitsExampleProject_COMMON_CONFIG_ARGS
   ${COMMON_ENV_ARGS_PASSTHROUGH}
   -DTribitsExProj_ENABLE_Fortran=${${PROJECT_NAME}_ENABLE_Fortran}
   )
 
 
-ASSERT_DEFINED(TPL_ENABLE_MPI)
-IF (TPL_ENABLE_MPI)
-  SET(TPL_MPI_FILE_TRACE
+assert_defined(TPL_ENABLE_MPI)
+if (TPL_ENABLE_MPI)
+  set(TPL_MPI_FILE_TRACE
     "-- File Trace: TPL        INCLUDE    .*/core/std_tpls/FindTPLMPI.cmake")
-  SET(FINAL_ENABLED_TPLS "MPI HeaderOnlyTpl 2")
-ELSE()
-  SET(TPL_MPI_FILE_TRACE "")
-  SET(FINAL_ENABLED_TPLS "HeaderOnlyTpl 1")
-ENDIF()
+  set(FINAL_ENABLED_TPLS "MPI HeaderOnlyTpl 2")
+else()
+  set(TPL_MPI_FILE_TRACE "")
+  set(FINAL_ENABLED_TPLS "HeaderOnlyTpl 1")
+endif()
 
 
-IF (EXISTS "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject/.gitignore")
-  SET(REGEX_FOR_GITIGNORE "Only in .*/TribitsExampleProject: .gitignore")
-ELSE()
-  SET(REGEX_FOR_GITIGNORE)
-ENDIF()
+if (EXISTS "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject/.gitignore")
+  set(REGEX_FOR_GITIGNORE "Only in .*/TribitsExampleProject: .gitignore")
+else()
+  set(REGEX_FOR_GITIGNORE)
+endif()
 
 
-IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
-  SET(DEPRECATED_WARNING_1_STR
+if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+  set(DEPRECATED_WARNING_1_STR
     "‘int SimpleCxx::HelloWorld::someOldFunc.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:"
     )
-  IF (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.5)
+  if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.5)
     # Only versions 4.5+ support this feature
-    SET(DEPRECATED_MSG_STR ".* .Just don't call this function at all please!")
-  ELSE()
-    SET(DEPRECATED_MSG_STR)
-  ENDIF()
-  SET(DEPRECATED_WARNING_2_STR
+    set(DEPRECATED_MSG_STR ".* .Just don't call this function at all please!")
+  else()
+    set(DEPRECATED_MSG_STR)
+  endif()
+  set(DEPRECATED_WARNING_2_STR
     "‘int SimpleCxx::HelloWorld::someOldFunc2.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:${DEPRECATED_MSG_STR}"
     )
-ELSE()
-  SET(DEPRECATED_WARNING_1_STR
+else()
+  set(DEPRECATED_WARNING_1_STR
     ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*int SimpleCxx::HelloWorld::someOldFunc.. const.* is deprecated"
     )
-  SET(DEPRECATED_WARNING_2_STR
+  set(DEPRECATED_WARNING_2_STR
     ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*int SimpleCxx::HelloWorld::someOldFunc2.. const.* is deprecated: .Just don.t call this function at all please."
     )
-ENDIF()
+endif()
 
 
-SET(LabelsForSubprojects_CMND_AND_ARGS
+set(LabelsForSubprojects_CMND_AND_ARGS
   grep ARGS "^LabelsForSubprojects:" DartConfiguration.tcl)
-SET(LabelsForSubprojects_REGEX
+set(LabelsForSubprojects_REGEX
   "LabelsForSubprojects: SimpleCxx[;]MixedLang[;]WithSubpackages[;]WrapExternal")
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
@@ -1585,22 +1585,22 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   )
 
 
-IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
-  EXECUTE_PROCESS(COMMAND whoami
+  execute_process(COMMAND whoami
     OUTPUT_STRIP_TRAILING_WHITESPACE
     OUTPUT_VARIABLE  TribitsExProj_INSTALL_OWNING_USER)
 
-  IF ("${TribitsExProj_INSTALL_OWNING_GROUP}" STREQUAL "")
-    EXECUTE_PROCESS(COMMAND id -gn
+  if ("${TribitsExProj_INSTALL_OWNING_GROUP}" STREQUAL "")
+    execute_process(COMMAND id -gn
       OUTPUT_STRIP_TRAILING_WHITESPACE
       OUTPUT_VARIABLE  TribitsExProj_INSTALL_OWNING_GROUP)
-  ENDIF()
+  endif()
 
-ENDIF()
+endif()
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
+tribits_add_advanced_test( TribitsExampleProject_install_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Windows
@@ -1715,7 +1715,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
   #   correct group and other permissions set.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perms
+tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Windows
@@ -1833,33 +1833,33 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
   #   did install will have the correct group and permissions.
 
 
-IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  SET(TribitsExProj_INSTALL_BASE_DIR "" CACHE FILEPATH
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(TribitsExProj_INSTALL_BASE_DIR "" CACHE FILEPATH
     "Path to a base directory that installs will be made into that is not owned by the current user but is in the same owning group and has group write access"
     )
-  IF (TribitsExProj_INSTALL_BASE_DIR)
-    EXECUTE_PROCESS(COMMAND stat -c %U "${TribitsExProj_INSTALL_BASE_DIR}"
+  if (TribitsExProj_INSTALL_BASE_DIR)
+    execute_process(COMMAND stat -c %U "${TribitsExProj_INSTALL_BASE_DIR}"
       OUTPUT_STRIP_TRAILING_WHITESPACE
       OUTPUT_VARIABLE  TribitsExProj_INSTALL_BASE_OWNING_USER)
-  ENDIF()
-  SET(installBaseDir "${TribitsExProj_INSTALL_BASE_DIR}")
-  SET(installPrefixBaseDir
+  endif()
+  set(installBaseDir "${TribitsExProj_INSTALL_BASE_DIR}")
+  set(installPrefixBaseDir
     "${installBaseDir}/TribitsExampleProject_install_perms_nonowning_base_dir")
-  SET(installPrefix
+  set(installPrefix
     "${installPrefixBaseDir}/install")
-  IF ("${TribitsExProj_INSTALL_BASE_OWNING_USER}"
+  if ("${TribitsExProj_INSTALL_BASE_OWNING_USER}"
     STREQUAL "${TribitsExProj_INSTALL_OWNING_USER}"
     )
-    SET(CHGRP_CHMOD_BASE_TEXT
+    set(CHGRP_CHMOD_BASE_TEXT
       "0: Running: chgrp wg-sems-users-son /tmp/tribits_install_tests"
       "0: Running: chmod g[+]rwX,o[+]rX /tmp/tribits_install_tests")
-  ELSE()
-    SET(CHGRP_CHMOD_BASE_TEXT
+  else()
+    set(CHGRP_CHMOD_BASE_TEXT
       "0: NOTE: Not calling chgrp and chmod on ${installBaseDir} since owner '${TribitsExProj_INSTALL_BASE_OWNING_USER}' != current owner '${TribitsExProj_INSTALL_OWNING_USER}'!")
-  ENDIF()
-ENDIF()
+  endif()
+endif()
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_dir
+tribits_add_advanced_test( TribitsExampleProject_install_perms_nonowning_base_dir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE TribitsExProj_INSTALL_BASE_DIR
   OVERALL_NUM_MPI_PROCS 1
@@ -1968,7 +1968,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_di
 
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir
+tribits_add_advanced_test( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Windows
@@ -1992,7 +1992,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_IN
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
@@ -2110,10 +2110,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_enable_install
 
 
 # Find ninja so we can test TriBITS using ninja as well
-FIND_PROGRAM(NINJA_EXE ninja)
+find_program(NINJA_EXE ninja)
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE  NINJA_EXE
@@ -2252,7 +2252,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE  NINJA_EXE
@@ -2374,9 +2374,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
   )
 
 
-IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
+if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
 
-  TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran_ConfigTiming
+  tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran_ConfigTiming
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     XHOSTTYPE Darwin
@@ -2438,10 +2438,10 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
 
     )
 
-ENDIF()
+endif()
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
+tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -2514,7 +2514,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -2568,7 +2568,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibPrefix
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibPrefix
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -2623,7 +2623,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibPrefix
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -2652,7 +2652,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_LIBRARY()
+  # Testing pasing libs to tribits_add_library()
   #
 
   TEST_1
@@ -2730,7 +2730,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_EXECUTABLE()
+  # Testing pasing libs to tribits_add_executable()
   #
 
   TEST_7
@@ -2805,7 +2805,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -2834,7 +2834,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_LIBRARY()
+  # Testing pasing libs to tribits_add_library()
   #
 
   TEST_1
@@ -2912,7 +2912,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_EXECUTABLE()
+  # Testing pasing libs to tribits_add_executable()
   #
 
   TEST_7
@@ -2975,7 +2975,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
+tribits_add_advanced_test( TribitsExampleProject_SimpleCxx_DEBUG_int64
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -3006,7 +3006,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
+tribits_add_advanced_test( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -3065,7 +3065,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
+tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3101,7 +3101,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whitelist
+tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whitelist
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3138,7 +3138,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whi
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Blacklist
+tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Blacklist
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3177,7 +3177,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Bla
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
+tribits_add_advanced_test( TribitsExampleProject_WrapExternal
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -3283,7 +3283,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure
+tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3354,7 +3354,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir
+tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
@@ -3435,7 +3435,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
+tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3495,7 +3495,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
+tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3530,7 +3530,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
+tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
@@ -3602,7 +3602,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
+tribits_add_advanced_test( TribitsExampleProject_TargetDefinesPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3661,7 +3661,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
+tribits_add_advanced_test( TribitsExampleProject_MixedSharedStaticLibs_shared
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   OVERALL_NUM_MPI_PROCS 1
@@ -3744,12 +3744,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
 
   )
   # NOTE: The above test make sure that you can build a static library with
-  # TRIBITS_ADD_LIBRARY( ... STATIC ...) in project that is defaulted to use
+  # tribits_add_library( ... STATIC ...) in project that is defaulted to use
   # shared libs with BUILD_SHARED_LIBS=ON.  This also tests that the correct
   # soversion links are created as well.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
+tribits_add_advanced_test( TribitsExampleProject_MixedSharedStaticLibs_static
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   OVERALL_NUM_MPI_PROCS 1
@@ -3814,11 +3814,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
 
   )
   # NOTE: The above test make sure that you can build a shared library with
-  # TRIBITS_ADD_LIBRARY( ... SHARED ...) in project that is defaulted to use
+  # tribits_add_library( ... SHARED ...) in project that is defaulted to use
   # static libs with BUILD_SHARED_LIBS=OFF.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableWithSubpackagesB
+tribits_add_advanced_test( TribitsExampleProject_DisableWithSubpackagesB_EnableWithSubpackagesB
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3857,39 +3857,39 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableW
 ##################################
 
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(SHARED_LIB_EXT "dylib")
-  SET(RPATH_INSPECT_CMND "otool")
-  SET(RPATH_INSPECT_ARG "-L")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(SHARED_LIB_EXT "so")
-  SET(RPATH_INSPECT_CMND "objdump")
-  SET(RPATH_INSPECT_ARG "-x")
-ENDIF()
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(SHARED_LIB_EXT "dylib")
+  set(RPATH_INSPECT_CMND "otool")
+  set(RPATH_INSPECT_ARG "-L")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(SHARED_LIB_EXT "so")
+  set(RPATH_INSPECT_CMND "objdump")
+  set(RPATH_INSPECT_ARG "-x")
+endif()
 
 
 #
 # SimpleTpl_install_shared
 #
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(THIS_RPATH_INSPECT_CMND "${RPATH_INSPECT_CMND}")
-  SET(THIS_RPATH_INSPECT_ARG "${RPATH_INSPECT_ARG}")
-  SET(RPATH_GREP_STR "@rpath/libsimpletpl.dylib")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(THIS_RPATH_INSPECT_CMND "ls")
-  SET(THIS_RPATH_INSPECT_ARG "")
-  SET(RPATH_GREP_STR "libsimpletpl")
-ELSE()
-  SET(THIS_RPATH_INSPECT_CMND "")
-  SET(THIS_RPATH_INSPECT_ARG "")
-  SET(RPATH_GREP_STR "")
-ENDIF()
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(THIS_RPATH_INSPECT_CMND "${RPATH_INSPECT_CMND}")
+  set(THIS_RPATH_INSPECT_ARG "${RPATH_INSPECT_ARG}")
+  set(RPATH_GREP_STR "@rpath/libsimpletpl.dylib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(THIS_RPATH_INSPECT_CMND "ls")
+  set(THIS_RPATH_INSPECT_ARG "")
+  set(RPATH_GREP_STR "libsimpletpl")
+else()
+  set(THIS_RPATH_INSPECT_CMND "")
+  set(THIS_RPATH_INSPECT_ARG "")
+  set(RPATH_GREP_STR "")
+endif()
 
-SET(SimpleTpl_install_shared_DIR
+set(SimpleTpl_install_shared_DIR
   ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_SimpleTpl_install_shared)
 
-TRIBITS_ADD_ADVANCED_TEST( SimpleTpl_install_shared
+tribits_add_advanced_test( SimpleTpl_install_shared
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE THIS_RPATH_INSPECT_CMND
@@ -3929,7 +3929,7 @@ TRIBITS_ADD_ADVANCED_TEST( SimpleTpl_install_shared
 # TribitsExampleProject_SimpleTpl_RPATH_XXX tests.
 #
 
-SET(TEST_RPATH_COMMON_CONFIG_ARGS
+set(TEST_RPATH_COMMON_CONFIG_ARGS
   ${TribitsExampleProject_COMMON_CONFIG_ARGS}
   -DBUILD_SHARED_LIBS=ON
   -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
@@ -3941,26 +3941,26 @@ SET(TEST_RPATH_COMMON_CONFIG_ARGS
   -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_shared_DIR}/install/lib
   )
 
-SET(LD_LIBRARY_PATH_ORIG $ENV{LD_LIBRARY_PATH})
+set(LD_LIBRARY_PATH_ORIG $ENV{LD_LIBRARY_PATH})
 
 
 #
 # Test default TriBITS RPATH setting
 #
 
-SET(RPATH_CURRENT_TEST_DIR
+set(RPATH_CURRENT_TEST_DIR
   ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_default)
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(RPATH_GREP_STR
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(RPATH_GREP_STR
     "R.*PATH *${RPATH_CURRENT_TEST_DIR}/install/lib:${SimpleTpl_install_shared_DIR}/install/lib")
   # NOTE: Above matches both RPATH and RUNPATH which are used on differnt
   # Linux systems.
-ENDIF()
+endif()
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_default
+tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_default
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
@@ -4010,10 +4010,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_default
 
   ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
   )
-IF (RPATH_CURRENT_TEST_NAME_NAME)
-  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+if (RPATH_CURRENT_TEST_NAME_NAME)
+  set_tests_properties(${RPATH_CURRENT_TEST_NAME_NAME}
     PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
-ENDIF()
+endif()
 
 
 # NOTE: The above test does some more detailed checking for this first test
@@ -4025,17 +4025,17 @@ ENDIF()
 # Test setting <project>_SET_INSTALL_RPATH=FALSE
 #
 
-SET(RPATH_CURRENT_TEST_DIR
+set(RPATH_CURRENT_TEST_DIR
   ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH)
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(RPATH_GREP_STR
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(RPATH_GREP_STR
     "R.*PATH *${SimpleTpl_install_shared_DIR}/install/lib")
-ENDIF()
+endif()
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH
+tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
@@ -4067,14 +4067,14 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_
 
   ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
   )
-IF (RPATH_CURRENT_TEST_NAME_NAME)
-  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+if (RPATH_CURRENT_TEST_NAME_NAME)
+  set_tests_properties(${RPATH_CURRENT_TEST_NAME_NAME}
     PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
-ENDIF()
+endif()
 
 
 # Run the exectuable built and installed above setting LD_LIBRARY_PATH
-TRIBITS_ADD_TEST(
+tribits_add_test(
   simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
     DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install2/bin
   NAME TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run
@@ -4083,30 +4083,30 @@ TRIBITS_ADD_TEST(
     LD_LIBRARY_PATH=${RPATH_CURRENT_TEST_DIR}/install2/lib:${LD_LIBRARY_PATH_ORIG}
   ADDED_TESTS_NAMES_OUT TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES
   )
-IF (TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES
+if (TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES
   AND RPATH_CURRENT_TEST_NAME_NAME
   )
-  SET_TESTS_PROPERTIES(
+  set_tests_properties(
     ${TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES}
     PROPERTIES DEPENDS ${RPATH_CURRENT_TEST_NAME_NAME} )
-ENDIF()
+endif()
 
 
 #
 # Test setting CMAKE_INSTALL_RPATH="<path0>:<path1>:..."
 #
 
-SET(RPATH_CURRENT_TEST_DIR
+set(RPATH_CURRENT_TEST_DIR
   ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_RPATH)
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(RPATH_GREP_STR
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(RPATH_GREP_STR
     "R.*PATH *${RPATH_CURRENT_TEST_DIR}/install2/nonstd_lib_location:${SimpleTpl_install_shared_DIR}/install/lib")
-ENDIF()
+endif()
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_RPATH
+tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_RPATH
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
@@ -4156,26 +4156,26 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_R
 
   ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
   )
-IF (RPATH_CURRENT_TEST_NAME_NAME)
-  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+if (RPATH_CURRENT_TEST_NAME_NAME)
+  set_tests_properties(${RPATH_CURRENT_TEST_NAME_NAME}
     PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
-ENDIF()
+endif()
 
 
 #
 # Test setting -DCMAKE_SKIP_INSTALL_RPATH=TRUE
 #
 
-SET(RPATH_CURRENT_TEST_DIR
+set(RPATH_CURRENT_TEST_DIR
   ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH)
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(RPATH_GREP_STR "") # Can't look for RPATH at all
-ENDIF()
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(RPATH_GREP_STR "") # Can't look for RPATH at all
+endif()
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH
+tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
@@ -4212,14 +4212,14 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INST
 
   ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
   )
-IF (RPATH_CURRENT_TEST_NAME_NAME)
-  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+if (RPATH_CURRENT_TEST_NAME_NAME)
+  set_tests_properties(${RPATH_CURRENT_TEST_NAME_NAME}
     PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
-ENDIF()
+endif()
 
 
 # Run the exectuable built and installed above setting LD_LIBRARY_PATH
-TRIBITS_ADD_TEST(
+tribits_add_test(
   simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
     DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install3/bin
   NAME TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run
@@ -4230,20 +4230,20 @@ TRIBITS_ADD_TEST(
     LD_LIBRARY_PATH=${RPATH_CURRENT_TEST_DIR}/install3/lib:${SimpleTpl_install_shared_DIR}/install/lib:${LD_LIBRARY_PATH_ORIG}
   ADDED_TESTS_NAMES_OUT TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES
   )
-IF (TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES
+if (TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES
   AND RPATH_CURRENT_TEST_NAME_NAME
   )
-  SET_TESTS_PROPERTIES(
+  set_tests_properties(
     ${TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES}
     PROPERTIES DEPENDS ${RPATH_CURRENT_TEST_NAME_NAME} )
-ENDIF()
+endif()
 
 
 #
 # Test cmake/ProjectCompilerPostConfig.cmake
 #
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
+tribits_add_advanced_test( TribitsExampleProject_ProjectCompilerPostConfig
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
@@ -4292,7 +4292,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TribitsExampleProjectAddons
+tribits_add_advanced_test( TribitsExampleProject_TribitsExampleProjectAddons
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4385,7 +4385,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TribitsExampleProjectAddons
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProjectAddons
+tribits_add_advanced_test( TribitsExampleProjectAddons
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4477,7 +4477,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProjectAddons
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_Empty
+tribits_add_advanced_test( TribitsExampleMetaProject_Empty
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4506,7 +4506,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_Empty
 # it should be handled smoothly.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject
+tribits_add_advanced_test( TribitsExampleMetaProject
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4605,7 +4605,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_version_date_undef
+tribits_add_advanced_test( TribitsExampleMetaProject_version_date_undef
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4676,7 +4676,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_version_date_undef
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PASS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4724,7 +4724,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PASS
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_PROCESS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_PROCESS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4758,7 +4758,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_
     ALWAYS_FAIL_ON_ZERO_RETURN
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4868,7 +4868,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
 
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPROCESS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPROCESS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4942,7 +4942,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
 
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -5025,7 +5025,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PASS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -5075,7 +5075,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PACKAGE_USER_ERRORS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PACKAGE_USER_ERRORS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -5247,7 +5247,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SUBPACKAGE_USER_ERRORS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SUBPACKAGE_USER_ERRORS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -5463,7 +5463,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_config_file_compiler_overrides
+tribits_add_advanced_test( TribitsExampleProject_config_file_compiler_overrides
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 

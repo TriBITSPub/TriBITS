@@ -38,10 +38,10 @@
 # @HEADER
 
 
-ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_MPI)
+assert_defined(${PACKAGE_NAME}_ENABLE_MPI)
 
 
-TRIBITS_ADD_ADVANCED_TEST( TestingFunctionMacro_UnitTests
+tribits_add_advanced_test( TestingFunctionMacro_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -54,7 +54,7 @@ TRIBITS_ADD_ADVANCED_TEST( TestingFunctionMacro_UnitTests
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( CompilerOptions_UnitTests
+tribits_add_advanced_test( CompilerOptions_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -67,7 +67,7 @@ TRIBITS_ADD_ADVANCED_TEST( CompilerOptions_UnitTests
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsProcessPackagesAndDirsLists_UnitTests
+tribits_add_advanced_test( TribitsProcessPackagesAndDirsLists_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -80,7 +80,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsProcessPackagesAndDirsLists_UnitTests
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsProcessExtraRepositoriesList_UnitTests
+tribits_add_advanced_test( TribitsProcessExtraRepositoriesList_UnitTests
   OVERALL_WORKING_DIRECTORY  TEST_NAME
   TEST_0  CMND  ${CMAKE_COMMAND}
     ARGS
@@ -93,7 +93,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsProcessExtraRepositoriesList_UnitTests
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsReadAllProjectDepsFilesCreateDepsGraph_UnitTests
+tribits_add_advanced_test( TribitsReadAllProjectDepsFilesCreateDepsGraph_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -107,7 +107,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsReadAllProjectDepsFilesCreateDepsGraph_UnitTes
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsAdjustPackageEnables_UnitTests
+tribits_add_advanced_test( TribitsAdjustPackageEnables_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -121,7 +121,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsAdjustPackageEnables_UnitTests
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsWriteClientExportFiles_UnitTests
+tribits_add_advanced_test( TribitsWriteClientExportFiles_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -136,8 +136,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsWriteClientExportFiles_UnitTests
   )
 
 
-ADD_SUBDIRECTORY(tribits_get_version_date)
-ADD_SUBDIRECTORY(CTestScriptsUnitTests)
-ADD_SUBDIRECTORY(DependencyUnitTests)
-ADD_SUBDIRECTORY(ProcessEnabledTpls)
-ADD_SUBDIRECTORY(ExamplesUnitTests)
+add_subdirectory(tribits_get_version_date)
+add_subdirectory(CTestScriptsUnitTests)
+add_subdirectory(DependencyUnitTests)
+add_subdirectory(ProcessEnabledTpls)
+add_subdirectory(ExamplesUnitTests)

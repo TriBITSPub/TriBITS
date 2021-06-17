@@ -37,7 +37,7 @@
 # ************************************************************************
 # @HEADER
 
-TRIBITS_ADD_ADVANCED_TEST( GeneralScriptSupport_UnitTests
+tribits_add_advanced_test( GeneralScriptSupport_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -45,7 +45,7 @@ TRIBITS_ADD_ADVANCED_TEST( GeneralScriptSupport_UnitTests
     PASS_REGULAR_EXPRESSION "OK"
   )
 
-TRIBITS_ADD_ADVANCED_TEST( mockprogram_UnitTests
+tribits_add_advanced_test( mockprogram_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -54,7 +54,7 @@ TRIBITS_ADD_ADVANCED_TEST( mockprogram_UnitTests
   XHOST travis-ci-server-linux
   )
 
-TRIBITS_ADD_ADVANCED_TEST( lower_case_cmake_UnitTests
+tribits_add_advanced_test( lower_case_cmake_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -63,7 +63,7 @@ TRIBITS_ADD_ADVANCED_TEST( lower_case_cmake_UnitTests
   XHOST travis-ci-server-linux
   )
 
-TRIBITS_ADD_ADVANCED_TEST( gitdist_UnitTests
+tribits_add_advanced_test( gitdist_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -72,7 +72,7 @@ TRIBITS_ADD_ADVANCED_TEST( gitdist_UnitTests
   XHOST travis-ci-server-linux
   )
 
-TRIBITS_ADD_ADVANCED_TEST( SnapshotDir_UnitTests
+tribits_add_advanced_test( SnapshotDir_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -80,7 +80,7 @@ TRIBITS_ADD_ADVANCED_TEST( SnapshotDir_UnitTests
     PASS_REGULAR_EXPRESSION "OK"
   )
 
-TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_UnitTests
+tribits_add_advanced_test( extract_rst_cmake_doc_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -88,13 +88,13 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_UnitTests
     PASS_REGULAR_EXPRESSION "OK"
   )
 
-SET(EXTRACT_RST_CMAKE_DOC
+set(EXTRACT_RST_CMAKE_DOC
   ${${PROJECT_NAME}_TRIBITS_DIR}/python_utils/extract_rst_cmake_doc.py)
 
-SET(EXTRACT_RST_CMAKE_DOC_DATA_DIR
+set(EXTRACT_RST_CMAKE_DOC_DATA_DIR
   ${CMAKE_CURRENT_SOURCE_DIR}/extract_rst_cmake_doc)
 
-TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_help
+tribits_add_advanced_test( extract_rst_cmake_doc_help
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -105,7 +105,7 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_help
       "This script implements a system to extract RST-formatted"
   )
 
-TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_1_block_1_file
+tribits_add_advanced_test( extract_rst_cmake_doc_extract_1_block_1_file
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -124,7 +124,7 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_1_block_1_file
       "Extracting 'MACRO' block 'some_macro_name1..' from .*/simpleDocText1.cmake:7:"
   )
 
-TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_2_blocks_2_files
+tribits_add_advanced_test( extract_rst_cmake_doc_extract_2_blocks_2_files
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -136,7 +136,7 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_2_blocks_2_files
       "Extracting 'FUNCTION' block 'SOME_FUNC_NAME2..' from .*/simpleDocText2.cmake:7:"
   )
 
-TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_2_blocks_glob_dir
+tribits_add_advanced_test( extract_rst_cmake_doc_extract_2_blocks_glob_dir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -148,7 +148,7 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_2_blocks_glob_dir
       "Extracting 'FUNCTION' block 'SOME_FUNC_NAME2..' from .*/simpleDocText2.cmake:7:"
   )
 
-TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_and_replace_2_blocks
+tribits_add_advanced_test( extract_rst_cmake_doc_extract_and_replace_2_blocks
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 
@@ -166,7 +166,7 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_and_replace_2_blocks
       ${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/test_replace_1_block_1_file.rst.gold
   )
 
-TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_and_replace_2_blocks_notrace
+tribits_add_advanced_test( extract_rst_cmake_doc_extract_and_replace_2_blocks_notrace
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE} 

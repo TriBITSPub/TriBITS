@@ -39,9 +39,9 @@
 
 
 
-INCLUDE(CMakeParseArguments)
+include(CMakeParseArguments)
 
-SET(MOCK_PROJECT_NAME DummyProj)
+set(MOCK_PROJECT_NAME DummyProj)
 
 
 #####################################################################
@@ -52,9 +52,9 @@ SET(MOCK_PROJECT_NAME DummyProj)
 #####################################################################
 
 
-FUNCTION(CREATE_PROCESS_ENABLED_TPLS_TEST_CASE  TEST_NAME)
+function(create_process_enabled_tpls_test_case  TEST_NAME)
 
-  CMAKE_PARSE_ARGUMENTS(
+  cmake_parse_arguments(
      #prefix
      PARSE
      #options
@@ -68,11 +68,11 @@ FUNCTION(CREATE_PROCESS_ENABLED_TPLS_TEST_CASE  TEST_NAME)
 
    # Do a reconfiugre as TEST_2 if requested through setting the "RC"
    # arguments.
-   IF (PARSE_RC_INCLUDE_DIRS OR PARSE_RC_LIBRARY_DIRS OR
+   if (PARSE_RC_INCLUDE_DIRS OR PARSE_RC_LIBRARY_DIRS OR
      PARSE_RC_PASS_REGULAR_EXPRESSION_ALL OR PARSE_RC_EXTRA_ARGS
      )
 
-     SET(TEST_2_ARGS
+     set(TEST_2_ARGS
        TEST_2 CMND "${CMAKE_COMMAND}"
          ARGS
            -DPROJECT_NAME=${MOCK_PROJECT_NAME}
@@ -88,14 +88,14 @@ FUNCTION(CREATE_PROCESS_ENABLED_TPLS_TEST_CASE  TEST_NAME)
          PASS_REGULAR_EXPRESSION_ALL ${PARSE_RC_PASS_REGULAR_EXPRESSION_ALL}
        )
 
-   ELSE()
+   else()
 
-     SET(TEST_2_ARGS)
+     set(TEST_2_ARGS)
 
-   ENDIF()
+   endif()
 
 
-  TRIBITS_ADD_ADVANCED_TEST( ProcessEnabledTpl_${TEST_NAME}
+  tribits_add_advanced_test( ProcessEnabledTpl_${TEST_NAME}
     OVERALL_WORKING_DIRECTORY TEST_NAME
 
     TEST_0
@@ -125,19 +125,19 @@ FUNCTION(CREATE_PROCESS_ENABLED_TPLS_TEST_CASE  TEST_NAME)
 
     )
 
-ENDFUNCTION()
+endfunction()
 
 #
 # Test with HeadersOnlyTpl
 #
 
 
-SET(HeaderOnlyTpl_BASE_DIR ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl)
-SET(HeaderOnlyTpl_FINDMOD
+set(HeaderOnlyTpl_BASE_DIR ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl)
+set(HeaderOnlyTpl_FINDMOD
   ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject/cmake/tpls/FindTPLHeaderOnlyTpl.cmake)
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeaderOnlyTpl_FindAll
   TPL_NAME  HeaderOnlyTpl
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
@@ -158,7 +158,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeaderOnlyTpl_FindAll_TentativeEnable
   TPL_NAME  HeaderOnlyTpl
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
@@ -175,7 +175,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
     "Exported TPL_HeaderOnlyTpl_LIBRARIES=''"
   )
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeaderOnlyTpl_TplIncludeDirsOverride
   TPL_NAME  HeaderOnlyTpl
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
@@ -189,7 +189,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeaderOnlyTpl_BadPath_ImplicitEnable
   TPL_NAME  HeaderOnlyTpl
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
@@ -228,7 +228,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeaderOnlyTpl_BadPath_ExplicitEnable
   TPL_NAME  HeaderOnlyTpl
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
@@ -249,7 +249,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeaderOnlyTpl_BadPath_TentativeEnable
   TPL_NAME  HeaderOnlyTpl
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
@@ -276,7 +276,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeaderOnlyTpl_BadPath_FailThenPass
   TPL_NAME  HeaderOnlyTpl
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
@@ -306,11 +306,11 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
 #
 
 
-SET(HeadersAndLibsTpl_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tpls/HeadersAndLibsTpl)
-SET(HeadersAndLibsTpl_FINDMOD ${HeadersAndLibsTpl_BASE_DIR}/FindTPLHeadersAndLibsTpl.cmake)
+set(HeadersAndLibsTpl_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tpls/HeadersAndLibsTpl)
+set(HeadersAndLibsTpl_FINDMOD ${HeadersAndLibsTpl_BASE_DIR}/FindTPLHeadersAndLibsTpl.cmake)
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Shared_FindAll
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -344,7 +344,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Shared_FindAll_sets1
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -383,7 +383,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Static_FindAll
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -405,7 +405,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Static_OverrideLibNames
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -418,7 +418,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Static_SkipLibsOverride
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -430,7 +430,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_OverrideAll
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -444,7 +444,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Static_BadLibPath
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -486,7 +486,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Static_BadLibPath_NotMustFindAllLibs
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -508,7 +508,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Static_BadLibName1_MustFind
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -531,7 +531,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Static_BadLibName1_NotMustFind
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -550,7 +550,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Static_BadLibName2_MustFind
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -568,7 +568,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Static_BadLibName2_NotMustFind
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -588,7 +588,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Static_BadLibName2_NotMustFind_ProjectMustFindAllTplLibs
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -608,7 +608,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Shared_BadIncludeDir_NotMustFindAllHeaders
   TPL_NAME  HeadersAndLibsTpl
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
@@ -631,7 +631,7 @@ CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
   )
 
 
-CREATE_PROCESS_ENABLED_TPLS_TEST_CASE(
+create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Shared_BadLibPath_ThenPass
   TPL_NAME  HeadersAndLibsTpl
   TPL_FIND_SHARED_LIBS

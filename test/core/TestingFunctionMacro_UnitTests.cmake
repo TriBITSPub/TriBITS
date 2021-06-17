@@ -37,41 +37,41 @@
 # ************************************************************************
 # @HEADER
 
-MESSAGE("PROJECT_NAME = ${PROJECT_NAME}")
-MESSAGE("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
+message("PROJECT_NAME = ${PROJECT_NAME}")
+message("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 
-SET( CMAKE_MODULE_PATH
+set( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
-SET(TRIBITS_ADD_EXECUTABLE_UNIT_TESTING ON)
+set(TRIBITS_ADD_EXECUTABLE_UNIT_TESTING ON)
 
-INCLUDE(MessageWrapper)
-INCLUDE(TribitsTestCategories)
-INCLUDE(TribitsAddTest)
-INCLUDE(TribitsAddAdvancedTest)
-INCLUDE(TribitsAddExecutableAndTest)
-INCLUDE(TribitsETISupport)
-INCLUDE(TribitsFindPythonInterp)
-INCLUDE(TribitsStripQuotesFromStr)
-INCLUDE(TribitsStandardizePaths)
-INCLUDE(TribitsFilepathHelpers)
-INCLUDE(TribitsGetVersionDate)
-INCLUDE(TribitsTplFindIncludeDirsAndLibraries)
-INCLUDE(TribitsReportInvalidTribitsUsage)
-INCLUDE(UnitTestHelpers)
-INCLUDE(GlobalSet)
-INCLUDE(GlobalNullSet)
-INCLUDE(AppendStringVar)
+include(MessageWrapper)
+include(TribitsTestCategories)
+include(TribitsAddTest)
+include(TribitsAddAdvancedTest)
+include(TribitsAddExecutableAndTest)
+include(TribitsETISupport)
+include(TribitsFindPythonInterp)
+include(TribitsStripQuotesFromStr)
+include(TribitsStandardizePaths)
+include(TribitsFilepathHelpers)
+include(TribitsGetVersionDate)
+include(TribitsTplFindIncludeDirsAndLibraries)
+include(TribitsReportInvalidTribitsUsage)
+include(UnitTestHelpers)
+include(GlobalSet)
+include(GlobalNullSet)
+include(AppendStringVar)
 
 
 #####################################################################
 #
-# Unit tests for TRIBITS_ADD_XXX(...) CMake commands run as CMake code
+# Unit tests for tribits_add_xxx(...) CMake commands run as CMake code
 #
 # This file contains a set of unit tests for the package_arch macros
-# TRIBITS_ADD_XXX(...) functions.  These unit tests are written in CMake
+# tribits_add_xxx(...) functions.  These unit tests are written in CMake
 # itself.  This is not a very advanced unit testing system and it not that
 # easy to work with.  However, it does perform some pretty strong testing and
 # is much better than doing nothing.
@@ -90,1185 +90,1185 @@ INCLUDE(AppendStringVar)
 #
 
 
-FUNCTION(UNITTEST_APPEND_STRING_VAR)
+function(unittest_append_string_var)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing APPEND_STRING_VAR()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing append_string_var()")
+  message("***\n")
 
-  MESSAGE("APPEND_STRING_VAR(): Testing simple concatenation")
-  SET(SOME_STRING_VAR "")
-  APPEND_STRING_VAR(SOME_STRING_VAR
+  message("append_string_var(): Testing simple concatenation")
+  set(SOME_STRING_VAR "")
+  append_string_var(SOME_STRING_VAR
      "begin\n" )
-  APPEND_STRING_VAR(SOME_STRING_VAR
+  append_string_var(SOME_STRING_VAR
      "middle1" " middile2" " middle3\n" )
-  APPEND_STRING_VAR(SOME_STRING_VAR
+  append_string_var(SOME_STRING_VAR
      "end\n" )
-  UNITTEST_COMPARE_CONST(SOME_STRING_VAR
+  unittest_compare_const(SOME_STRING_VAR
     "begin\nmiddle1 middile2 middle3\nend\n")
 
-  MESSAGE("APPEND_STRING_VAR(): Testing with [] and {} which messes up ;")
-  SET(SOME_STRING_VAR "")
-  APPEND_STRING_VAR(SOME_STRING_VAR
+  message("append_string_var(): Testing with [] and {} which messes up ;")
+  set(SOME_STRING_VAR "")
+  append_string_var(SOME_STRING_VAR
      "[\n" )
-  APPEND_STRING_VAR(SOME_STRING_VAR
+  append_string_var(SOME_STRING_VAR
      "{middle1" " middile2" " middle3}\n" )
-  APPEND_STRING_VAR(SOME_STRING_VAR
+  append_string_var(SOME_STRING_VAR
      "]\n" )
-  UNITTEST_COMPARE_CONST(SOME_STRING_VAR
+  unittest_compare_const(SOME_STRING_VAR
     "[\n;{middle1; middile2; middle3}\n;]\n")
 
-  MESSAGE("APPEND_STRING_VAR_EXT(): Testing with [] and {} which ignores ;")
-  SET(SOME_STRING_VAR "")
-  APPEND_STRING_VAR_EXT(SOME_STRING_VAR
+  message("append_string_var_ext(): Testing with [] and {} which ignores ;")
+  set(SOME_STRING_VAR "")
+  append_string_var_ext(SOME_STRING_VAR
      "[\n" )
-  APPEND_STRING_VAR_EXT(SOME_STRING_VAR
+  append_string_var_ext(SOME_STRING_VAR
      "{middle1 middile2 middle3}\n" )
-  APPEND_STRING_VAR_EXT(SOME_STRING_VAR
+  append_string_var_ext(SOME_STRING_VAR
      "]\n" )
-  UNITTEST_COMPARE_CONST(SOME_STRING_VAR
+  unittest_compare_const(SOME_STRING_VAR
     "[\n{middle1 middile2 middle3}\n]\n")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_FIND_PYTHON_INTERP)
+function(unittest_tribits_find_python_interp)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_FIND_PYTHON_INTERP()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_find_python_interp()")
+  message("***\n")
 
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
-  SET(TRIBITS_FIND_PYTHON_UNITTEST  TRUE)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
+  set(TRIBITS_FIND_PYTHON_UNITTEST  TRUE)
 
-  MESSAGE("TRIBITS_FIND_PYTHON_INTERP(): ${PROJECT_NAME}_USES_PYTHON=FALSE")
-  SET(${PROJECT_NAME}_USES_PYTHON  FALSE)
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  TRIBITS_FIND_PYTHON_INTERP()
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_find_python_interp(): ${PROJECT_NAME}_USES_PYTHON=FALSE")
+  set(${PROJECT_NAME}_USES_PYTHON  FALSE)
+  global_set(MESSAGE_WRAPPER_INPUT)
+  tribits_find_python_interp()
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ;NOTE: Skipping check for Python because; ${PROJECT_NAME}_USES_PYTHON='FALSE'")
-  UNITTEST_COMPARE_CONST(FIND_PythonInterp_ARGS
+  unittest_compare_const(FIND_PythonInterp_ARGS
     "")
 
-  MESSAGE("TRIBITS_FIND_PYTHON_INTERP(): ${PROJECT_NAME}_USES_PYTHON=")
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  SET(${PROJECT_NAME}_USES_PYTHON)
-  SET(PYTHON_EXECUTABLE_UNITTEST_VAL /path/to/python2.4)
-  TRIBITS_FIND_PYTHON_INTERP()
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_find_python_interp(): ${PROJECT_NAME}_USES_PYTHON=")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(${PROJECT_NAME}_USES_PYTHON)
+  set(PYTHON_EXECUTABLE_UNITTEST_VAL /path/to/python2.4)
+  tribits_find_python_interp()
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ;PYTHON_EXECUTABLE='/path/to/python2.4'")
 
-  MESSAGE("TRIBITS_FIND_PYTHON_INTERP(): ${PROJECT_NAME}_USES_PYTHON=TRUE")
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  SET(${PROJECT_NAME}_USES_PYTHON TRUE)
-  GLOBAL_SET(PYTHON_EXECUTABLE_UNITTEST_VAL /path/to/python2.4)
-  TRIBITS_FIND_PYTHON_INTERP()
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_find_python_interp(): ${PROJECT_NAME}_USES_PYTHON=TRUE")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(${PROJECT_NAME}_USES_PYTHON TRUE)
+  global_set(PYTHON_EXECUTABLE_UNITTEST_VAL /path/to/python2.4)
+  tribits_find_python_interp()
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ;PYTHON_EXECUTABLE='/path/to/python2.4'")
-  UNITTEST_COMPARE_CONST(FIND_PythonInterp_ARGS
+  unittest_compare_const(FIND_PythonInterp_ARGS
     "PythonInterp")
 
-  MESSAGE("TRIBITS_FIND_PYTHON_INTERP(): ${PROJECT_NAME}_REQUIRES_PYTHON=TRUE")
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  SET(${PROJECT_NAME}_USES_PYTHON FALSE)
-  SET(${PROJECT_NAME}_REQUIRES_PYTHON TRUE)
-  SET(PYTHON_EXECUTABLE_UNITTEST_VAL /path/to/python2.4)
-  TRIBITS_FIND_PYTHON_INTERP()
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_find_python_interp(): ${PROJECT_NAME}_REQUIRES_PYTHON=TRUE")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(${PROJECT_NAME}_USES_PYTHON FALSE)
+  set(${PROJECT_NAME}_REQUIRES_PYTHON TRUE)
+  set(PYTHON_EXECUTABLE_UNITTEST_VAL /path/to/python2.4)
+  tribits_find_python_interp()
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ;PYTHON_EXECUTABLE='/path/to/python2.4'")
-  UNITTEST_COMPARE_CONST(FIND_PythonInterp_ARGS
+  unittest_compare_const(FIND_PythonInterp_ARGS
     "PythonInterp;REQUIRED")
 
-  MESSAGE("TRIBITS_FIND_PYTHON_INTERP(): PythonInterp_FIND_VERSION=2.3")
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  SET(PythonInterp_FIND_VERSION 2.3)
-  SET(PYTHON_EXECUTABLE_UNITTEST_VAL /dummy)
-  TRIBITS_FIND_PYTHON_INTERP()
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_find_python_interp(): PythonInterp_FIND_VERSION=2.3")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(PythonInterp_FIND_VERSION 2.3)
+  set(PYTHON_EXECUTABLE_UNITTEST_VAL /dummy)
+  tribits_find_python_interp()
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;Error,; PythonInterp_FIND_VERSION=2.3 < 2.6; is not allowed!;-- ;PYTHON_EXECUTABLE='/dummy'")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_STANDARDIZE_ABS_PATHS)
+function(unittest_tribits_standardize_abs_paths)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_STANDARDIZE_ABS_PATHS()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_standardize_abs_paths()")
+  message("***\n")
 
-  TRIBITS_STANDARDIZE_ABS_PATHS(STANDARDIZED_ABS_PATHS
+  tribits_standardize_abs_paths(STANDARDIZED_ABS_PATHS
     "/okay/abs/path"
     "/abs/rel/path/../../other/path"
     "/final/okay/path"
     )
-  UNITTEST_COMPARE_CONST(STANDARDIZED_ABS_PATHS
+  unittest_compare_const(STANDARDIZED_ABS_PATHS
     "/okay/abs/path;/abs/other/path;/final/okay/path")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(TRIBITS_DIR_IS_BASEDIR_TEST_CASE  absBaseDir  absFullDir  expectedIsBaseDir)
-  MESSAGE("\nTRIBITS_DIR_IS_BASEDIR(\"${absBaseDir}\" \"${absFullDir}\" isBaseDir)")
-  TRIBITS_DIR_IS_BASEDIR("${absBaseDir}" "${absFullDir}" isBaseDir)
-  UNITTEST_COMPARE_CONST(isBaseDir ${expectedIsBaseDir})
-ENDFUNCTION()
+function(tribits_dir_is_basedir_test_case  absBaseDir  absFullDir  expectedIsBaseDir)
+  message("\ntribits_dir_is_basedir(\"${absBaseDir}\" \"${absFullDir}\" isBaseDir)")
+  tribits_dir_is_basedir("${absBaseDir}" "${absFullDir}" isBaseDir)
+  unittest_compare_const(isBaseDir ${expectedIsBaseDir})
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_DIR_IS_BASEDIR)
+function(unittest_tribits_dir_is_basedir)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_DIR_IS_BASEDIR()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_dir_is_basedir()")
+  message("***\n")
 
-  TRIBITS_DIR_IS_BASEDIR_TEST_CASE(
+  tribits_dir_is_basedir_test_case(
     "/some/base/path" "/some/base/path" TRUE)
 
-  TRIBITS_DIR_IS_BASEDIR_TEST_CASE(
+  tribits_dir_is_basedir_test_case(
     "/some/base/path" "/some/base/path/more" TRUE)
 
-  TRIBITS_DIR_IS_BASEDIR_TEST_CASE(
+  tribits_dir_is_basedir_test_case(
     "/some/base/path" "/some/base/pathes" FALSE)
 
-  TRIBITS_DIR_IS_BASEDIR_TEST_CASE(
+  tribits_dir_is_basedir_test_case(
     "/some/base/path/more" "/some/base/path" FALSE)
 
-  TRIBITS_DIR_IS_BASEDIR_TEST_CASE(
+  tribits_dir_is_basedir_test_case(
     "/some/base/path" "/some/other/path" FALSE)
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(TRIBITS_GET_DIR_ARRAY_BELOW_BASE_DIR_TEST_CASE  absBaseDir  absFullDir
+function(tribits_get_dir_array_below_base_dir_test_case  absBaseDir  absFullDir
   expectedTrailingDirArrayVar
   )
-  MESSAGE("\nTRIBITS_GET_DIR_ARRAY_BELOW_BASE_DIR(\"${absBaseDir}\" \"${absFullDir}\" trailingDirArray)")
-  TRIBITS_GET_DIR_ARRAY_BELOW_BASE_DIR("${absBaseDir}" "${absFullDir}" trailingDirArray)
-  UNITTEST_COMPARE_CONST(trailingDirArray "${expectedTrailingDirArrayVar}")
-ENDFUNCTION()
+  message("\ntribits_get_dir_array_below_base_dir(\"${absBaseDir}\" \"${absFullDir}\" trailingDirArray)")
+  tribits_get_dir_array_below_base_dir("${absBaseDir}" "${absFullDir}" trailingDirArray)
+  unittest_compare_const(trailingDirArray "${expectedTrailingDirArrayVar}")
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_GET_DIR_ARRAY_BELOW_BASE_DIR)
+function(unittest_tribits_get_dir_array_below_base_dir)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_GET_DIR_ARRAY_BELOW_BASE_DIR()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_get_dir_array_below_base_dir()")
+  message("***\n")
 
-  TRIBITS_GET_DIR_ARRAY_BELOW_BASE_DIR_TEST_CASE(
+  tribits_get_dir_array_below_base_dir_test_case(
     "/some/base/path" "/some/base/path" "")
 
-  TRIBITS_GET_DIR_ARRAY_BELOW_BASE_DIR_TEST_CASE(
+  tribits_get_dir_array_below_base_dir_test_case(
     "/some/base/path" "/some/base/path/subdir" "subdir")
 
-  TRIBITS_GET_DIR_ARRAY_BELOW_BASE_DIR_TEST_CASE(
+  tribits_get_dir_array_below_base_dir_test_case(
     "/some/base/path" "/some/base/path/subdir1/subdir2" "subdir1;subdir2")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_MISC)
+function(unittest_tribits_misc)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing miscellaneous TriBITS macro functionality")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing miscellaneous TriBITS macro functionality")
+  message("***\n")
 
-  MESSAGE("Testing MESSAGE_WRAPPER(...) without capture")
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT "Dummy")
-  MESSAGE_WRAPPER("Some message that should get printed and not intercepted")
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT "Dummy")
+  message("Testing message_wrapper(...) without capture")
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+  global_set(MESSAGE_WRAPPER_INPUT "Dummy")
+  message_wrapper("Some message that should get printed and not intercepted")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "Dummy")
 
-  MESSAGE("Testing MESSAGE_WRAPPER(...) with capture")
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT "Dummy")
-  MESSAGE_WRAPPER("Some message that should get intercepted")
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT "Dummy;Some message that should get intercepted")
+  message("Testing message_wrapper(...) with capture")
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  global_set(MESSAGE_WRAPPER_INPUT "Dummy")
+  message_wrapper("Some message that should get intercepted")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "Dummy;Some message that should get intercepted")
 
-  MESSAGE("Testing FIND_LIST_ELEMENT(${PROJECT_NAME}_VALID_CATEGORIES BASIC ELEMENT_FOUND)")
-  FIND_LIST_ELEMENT(${PROJECT_NAME}_VALID_CATEGORIES BASIC ELEMENT_FOUND)
-  UNITTEST_COMPARE_CONST(ELEMENT_FOUND "TRUE")
+  message("Testing find_list_element(${PROJECT_NAME}_VALID_CATEGORIES BASIC ELEMENT_FOUND)")
+  find_list_element(${PROJECT_NAME}_VALID_CATEGORIES BASIC ELEMENT_FOUND)
+  unittest_compare_const(ELEMENT_FOUND "TRUE")
 
-  MESSAGE("Testing FIND_LIST_ELEMENT(${PROJECT_NAME}_VALID_CATEGORIES BADCAT ELEMENT_FOUND)")
-  FIND_LIST_ELEMENT(${PROJECT_NAME}_VALID_CATEGORIES BADCAT ELEMENT_FOUND)
-  UNITTEST_COMPARE_CONST(ELEMENT_FOUND "FALSE")
+  message("Testing find_list_element(${PROJECT_NAME}_VALID_CATEGORIES BADCAT ELEMENT_FOUND)")
+  find_list_element(${PROJECT_NAME}_VALID_CATEGORIES BADCAT ELEMENT_FOUND)
+  unittest_compare_const(ELEMENT_FOUND "FALSE")
 
-  MESSAGE("Testing TRIBITS_GET_INVALID_CATEGORIES( ... BADCAT)")
-  TRIBITS_GET_INVALID_CATEGORIES(INVALID_CATEGORIES BADCAT)
-  UNITTEST_COMPARE_CONST( INVALID_CATEGORIES "BADCAT" )
+  message("Testing tribits_get_invalid_categories( ... BADCAT)")
+  tribits_get_invalid_categories(INVALID_CATEGORIES BADCAT)
+  unittest_compare_const( INVALID_CATEGORIES "BADCAT" )
 
-  MESSAGE("Testing TRIBITS_GET_INVALID_CATEGORIES( ... BADCAT BASIC)")
-  TRIBITS_GET_INVALID_CATEGORIES(INVALID_CATEGORIES BADCAT BASIC)
-  UNITTEST_COMPARE_CONST( INVALID_CATEGORIES "BADCAT" )
+  message("Testing tribits_get_invalid_categories( ... BADCAT BASIC)")
+  tribits_get_invalid_categories(INVALID_CATEGORIES BADCAT BASIC)
+  unittest_compare_const( INVALID_CATEGORIES "BADCAT" )
 
-  MESSAGE("Testing TRIBITS_GET_INVALID_CATEGORIES( ... BASIC BADCAT)")
-  TRIBITS_GET_INVALID_CATEGORIES(INVALID_CATEGORIES BASIC BADCAT)
-  UNITTEST_COMPARE_CONST( INVALID_CATEGORIES "BADCAT" )
+  message("Testing tribits_get_invalid_categories( ... BASIC BADCAT)")
+  tribits_get_invalid_categories(INVALID_CATEGORIES BASIC BADCAT)
+  unittest_compare_const( INVALID_CATEGORIES "BADCAT" )
 
-  MESSAGE("Testing TRIBITS_GET_INVALID_CATEGORIES( ... BADCAT1 BADCAT2)")
-  TRIBITS_GET_INVALID_CATEGORIES(INVALID_CATEGORIES BADCAT1 BADCAT2)
-  UNITTEST_COMPARE_CONST( INVALID_CATEGORIES "BADCAT1;BADCAT2" )
+  message("Testing tribits_get_invalid_categories( ... BADCAT1 BADCAT2)")
+  tribits_get_invalid_categories(INVALID_CATEGORIES BADCAT1 BADCAT2)
+  unittest_compare_const( INVALID_CATEGORIES "BADCAT1;BADCAT2" )
 
-  MESSAGE("Testing TRIBITS_GET_INVALID_CATEGORIES( ... BASIC BADCAT1 NIGHTLY BADCAT2 PERFORMANCE)")
-  TRIBITS_GET_INVALID_CATEGORIES(INVALID_CATEGORIES BASIC BADCAT1 NIGHTLY BADCAT2 PERFORMANCE)
-  UNITTEST_COMPARE_CONST( INVALID_CATEGORIES "BADCAT1;BADCAT2" )
+  message("Testing tribits_get_invalid_categories( ... BASIC BADCAT1 NIGHTLY BADCAT2 PERFORMANCE)")
+  tribits_get_invalid_categories(INVALID_CATEGORIES BASIC BADCAT1 NIGHTLY BADCAT2 PERFORMANCE)
+  unittest_compare_const( INVALID_CATEGORIES "BADCAT1;BADCAT2" )
 
-  MESSAGE("Testing TRIBITS_FILTER_AND_ASSERT_CATEGORIES( ... BADCAT1 BASIC BADCAT2)")
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  SET(CATEGORIES BADCAT1 BASIC BADCAT2)
-  TRIBITS_FILTER_AND_ASSERT_CATEGORIES(CATEGORIES)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("Testing tribits_filter_and_assert_categories( ... BADCAT1 BASIC BADCAT2)")
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(CATEGORIES BADCAT1 BASIC BADCAT2)
+  tribits_filter_and_assert_categories(CATEGORIES)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "SEND_ERROR;Error: The categories 'BADCAT1;BADCAT2' are not; in the list of valid categories '${${PROJECT_NAME}_VALID_CATEGORIES_STR}'!")
-  UNITTEST_COMPARE_CONST(CATEGORIES "BADCAT1;BASIC;BADCAT2")
+  unittest_compare_const(CATEGORIES "BADCAT1;BASIC;BADCAT2")
 
-  MESSAGE("Testing TRIBITS_FILTER_AND_ASSERT_CATEGORIES( ... BASIC)")
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT "Dummy")
-  SET(CATEGORIES BASIC)
-  TRIBITS_FILTER_AND_ASSERT_CATEGORIES(CATEGORIES)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT "Dummy")
-  UNITTEST_COMPARE_CONST(CATEGORIES "BASIC")
+  message("Testing tribits_filter_and_assert_categories( ... BASIC)")
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  global_set(MESSAGE_WRAPPER_INPUT "Dummy")
+  set(CATEGORIES BASIC)
+  tribits_filter_and_assert_categories(CATEGORIES)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "Dummy")
+  unittest_compare_const(CATEGORIES "BASIC")
 
-  MESSAGE("Testing TRIBITS_FILTER_AND_ASSERT_CATEGORIES( ... BASIC NIGHTLY)")
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT "Dummy")
-  SET(CATEGORIES BASIC NIGHTLY)
-  TRIBITS_FILTER_AND_ASSERT_CATEGORIES(CATEGORIES)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT "Dummy")
-  UNITTEST_COMPARE_CONST(CATEGORIES "BASIC;NIGHTLY")
+  message("Testing tribits_filter_and_assert_categories( ... BASIC NIGHTLY)")
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  global_set(MESSAGE_WRAPPER_INPUT "Dummy")
+  set(CATEGORIES BASIC NIGHTLY)
+  tribits_filter_and_assert_categories(CATEGORIES)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "Dummy")
+  unittest_compare_const(CATEGORIES "BASIC;NIGHTLY")
 
-  MESSAGE("Testing TRIBITS_FILTER_AND_ASSERT_CATEGORIES( ... BASIC WEEKLY NIGHTLY)")
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT "")
-  SET(CATEGORIES BASIC WEEKLY NIGHTLY)
-  TRIBITS_FILTER_AND_ASSERT_CATEGORIES(CATEGORIES)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("Testing tribits_filter_and_assert_categories( ... BASIC WEEKLY NIGHTLY)")
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  set(CATEGORIES BASIC WEEKLY NIGHTLY)
+  tribits_filter_and_assert_categories(CATEGORIES)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "WARNING;Warning: The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.")
-  UNITTEST_COMPARE_CONST(CATEGORIES "BASIC;HEAVY;NIGHTLY")
+  unittest_compare_const(CATEGORIES "BASIC;HEAVY;NIGHTLY")
 
-  MESSAGE("Testing TRIBITS_FILTER_AND_ASSERT_CATEGORIES( ... HEAVY)")
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT "Dummy")
-  SET(CATEGORIES HEAVY)
-  TRIBITS_FILTER_AND_ASSERT_CATEGORIES(CATEGORIES)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT "Dummy")
-  UNITTEST_COMPARE_CONST(CATEGORIES "HEAVY")
+  message("Testing tribits_filter_and_assert_categories( ... HEAVY)")
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  global_set(MESSAGE_WRAPPER_INPUT "Dummy")
+  set(CATEGORIES HEAVY)
+  tribits_filter_and_assert_categories(CATEGORIES)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "Dummy")
+  unittest_compare_const(CATEGORIES "HEAVY")
 
-  MESSAGE("Testing TRIBITS_FILTER_AND_ASSERT_CATEGORIES( ... BASIC HEAVY)")
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT "Dummy")
-  SET(CATEGORIES BASIC HEAVY)
-  TRIBITS_FILTER_AND_ASSERT_CATEGORIES(CATEGORIES)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT "Dummy")
-  UNITTEST_COMPARE_CONST(CATEGORIES "BASIC;HEAVY")
+  message("Testing tribits_filter_and_assert_categories( ... BASIC HEAVY)")
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  global_set(MESSAGE_WRAPPER_INPUT "Dummy")
+  set(CATEGORIES BASIC HEAVY)
+  tribits_filter_and_assert_categories(CATEGORIES)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "Dummy")
+  unittest_compare_const(CATEGORIES "BASIC;HEAVY")
 
-ENDFUNCTION()
-
-
-MACRO(UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS  TPL_NAME)
-  SET(${TPL_NAME}_INCLUDE_DIRS "")
-  SET(${TPL_NAME}_LIBRARY_NAMES "")
-  SET(${TPL_NAME}_LIBRARY_DIRS "")
-  SET(${TPL_NAME}_FORCE_PRE_FIND_PACKAGE FALSE)
-  SET(TPL_${TPL_NAME}_INCLUDE_DIRS "")
-  SET(TPL_${TPL_NAME}_LIBRARIES "")
-  SET(TPL_${TPL_NAME}_LIBRARY_DIRS "")
-ENDMACRO()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_STRIP_QUOTES_FROM_STR)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_STRIP_QUOTES_FROM_STR()")
-  MESSAGE("***\n")
-
-  MESSAGE("Testing TRIBITS_STRIP_QUOTES_FROM_STR() with str with quotes")
-  TRIBITS_STRIP_QUOTES_FROM_STR("\"some string in quotes\"" STR_OUT)
-  UNITTEST_COMPARE_CONST(STR_OUT "some string in quotes")
-
-  MESSAGE("Testing TRIBITS_STRIP_QUOTES_FROM_STR() with just '\"'")
-  TRIBITS_STRIP_QUOTES_FROM_STR("\"" STR_OUT)
-  UNITTEST_COMPARE_CONST(STR_OUT "\"")
-
-  MESSAGE("Testing TRIBITS_STRIP_QUOTES_FROM_STR() with just '\"\"'")
-  TRIBITS_STRIP_QUOTES_FROM_STR("\"\"" STR_OUT)
-  UNITTEST_COMPARE_CONST(STR_OUT "")
-
-  MESSAGE("Testing TRIBITS_STRIP_QUOTES_FROM_STR() with str with quote only on front")
-  TRIBITS_STRIP_QUOTES_FROM_STR("\"some string in quotes" STR_OUT)
-  UNITTEST_COMPARE_CONST(STR_OUT "\"some string in quotes")
-
-  MESSAGE("Testing TRIBITS_STRIP_QUOTES_FROM_STR() with str with quote only on back")
-  TRIBITS_STRIP_QUOTES_FROM_STR("some string in quotes\"" STR_OUT)
-  UNITTEST_COMPARE_CONST(STR_OUT "some string in quotes\"")
-
-ENDFUNCTION()
+macro(unittest_tribits_tpl_allow_pre_find_package_unset_vars  TPL_NAME)
+  set(${TPL_NAME}_INCLUDE_DIRS "")
+  set(${TPL_NAME}_LIBRARY_NAMES "")
+  set(${TPL_NAME}_LIBRARY_DIRS "")
+  set(${TPL_NAME}_FORCE_PRE_FIND_PACKAGE FALSE)
+  set(TPL_${TPL_NAME}_INCLUDE_DIRS "")
+  set(TPL_${TPL_NAME}_LIBRARIES "")
+  set(TPL_${TPL_NAME}_LIBRARY_DIRS "")
+endmacro()
 
 
-FUNCTION(UNITTEST_TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME)
+function(unittest_tribits_strip_quotes_from_str)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_strip_quotes_from_str()")
+  message("***\n")
 
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  SET(TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME_UNIT_TEST_MODE TRUE)
+  message("Testing tribits_strip_quotes_from_str() with str with quotes")
+  tribits_strip_quotes_from_str("\"some string in quotes\"" STR_OUT)
+  unittest_compare_const(STR_OUT "some string in quotes")
 
-  MESSAGE("Testing TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME() no GIT_EXECUTABLE")
-  GLOBAL_NULL_SET(MESSAGE_WRAPPER_INPUT)
-  TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME( dummy_base_repo dummy_commit_ref
+  message("Testing tribits_strip_quotes_from_str() with just '\"'")
+  tribits_strip_quotes_from_str("\"" STR_OUT)
+  unittest_compare_const(STR_OUT "\"")
+
+  message("Testing tribits_strip_quotes_from_str() with just '\"\"'")
+  tribits_strip_quotes_from_str("\"\"" STR_OUT)
+  unittest_compare_const(STR_OUT "")
+
+  message("Testing tribits_strip_quotes_from_str() with str with quote only on front")
+  tribits_strip_quotes_from_str("\"some string in quotes" STR_OUT)
+  unittest_compare_const(STR_OUT "\"some string in quotes")
+
+  message("Testing tribits_strip_quotes_from_str() with str with quote only on back")
+  tribits_strip_quotes_from_str("some string in quotes\"" STR_OUT)
+  unittest_compare_const(STR_OUT "some string in quotes\"")
+
+endfunction()
+
+
+function(unittest_tribits_get_raw_git_commit_utc_time)
+
+  message("\n***")
+  message("*** Testing tribits_get_raw_git_commit_utc_time()")
+  message("***\n")
+
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME_UNIT_TEST_MODE TRUE)
+
+  message("Testing tribits_get_raw_git_commit_utc_time() no GIT_EXECUTABLE")
+  global_null_set(MESSAGE_WRAPPER_INPUT)
+  tribits_get_raw_git_commit_utc_time( dummy_base_repo dummy_commit_ref
     git_commit_utc_time )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;Error, GIT_EXECUTABLE not set!;FATAL_ERROR;Error, GIT_VERSION_STRING not set!;FATAL_ERROR;Error, GIT_VERSION_STRING= < 2.10.0!"
     )
 
-  SET(GIT_EXECUTABLE dummy_git)
+  set(GIT_EXECUTABLE dummy_git)
 
-  MESSAGE("Testing TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME() no GIT_VERSION_STRING")
-  GLOBAL_NULL_SET(MESSAGE_WRAPPER_INPUT)
-  TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME( dummy_base_repo dummy_commit_ref
+  message("Testing tribits_get_raw_git_commit_utc_time() no GIT_VERSION_STRING")
+  global_null_set(MESSAGE_WRAPPER_INPUT)
+  tribits_get_raw_git_commit_utc_time( dummy_base_repo dummy_commit_ref
     git_commit_utc_time )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;Error, GIT_VERSION_STRING not set!;FATAL_ERROR;Error, GIT_VERSION_STRING= < 2.10.0!"
     )
 
-  SET(GIT_VERSION_STRING "2.6.1")
+  set(GIT_VERSION_STRING "2.6.1")
 
-  MESSAGE("Testing TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME() GIT_VERSION_STRING too low")
-  GLOBAL_NULL_SET(MESSAGE_WRAPPER_INPUT)
-  TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME( dummy_base_repo dummy_commit_ref
+  message("Testing tribits_get_raw_git_commit_utc_time() GIT_VERSION_STRING too low")
+  global_null_set(MESSAGE_WRAPPER_INPUT)
+  tribits_get_raw_git_commit_utc_time( dummy_base_repo dummy_commit_ref
     git_commit_utc_time )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;Error, GIT_VERSION_STRING=2.6.1 < 2.10.0!"
     )
 
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
 
   # NOTE: The actual git commit and post-processing behavior in
-  # TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME() is tested in
+  # tribits_get_raw_git_commit_utc_time() is tested in
   # tribits_get_version_date/CMakeLists.txt.
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME)
+function(unittest_tribits_get_version_date_from_raw_git_commit_utc_time)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_get_version_date_from_raw_git_commit_utc_time()")
+  message("***\n")
 
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  MESSAGE("Testing TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME() good input 1")
-  GLOBAL_NULL_SET(MESSAGE_WRAPPER_INPUT)
-  TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME(
+  message("Testing tribits_get_version_date_from_raw_git_commit_utc_time() good input 1")
+  global_null_set(MESSAGE_WRAPPER_INPUT)
+  tribits_get_version_date_from_raw_git_commit_utc_time(
     "2019-03-02 02:34:15 +0000" VERSION_DATE)
-  UNITTEST_COMPARE_CONST(VERSION_DATE "2019030202")
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT "")
+  unittest_compare_const(VERSION_DATE "2019030202")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
-  MESSAGE("Testing TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME() good input 2")
-  GLOBAL_NULL_SET(MESSAGE_WRAPPER_INPUT)
-  TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME(
+  message("Testing tribits_get_version_date_from_raw_git_commit_utc_time() good input 2")
+  global_null_set(MESSAGE_WRAPPER_INPUT)
+  tribits_get_version_date_from_raw_git_commit_utc_time(
     "2024-12-13 12:10:15 +0000" VERSION_DATE)
-  UNITTEST_COMPARE_CONST(VERSION_DATE "2024121312")
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT "")
+  unittest_compare_const(VERSION_DATE "2024121312")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
-  MESSAGE("Testing TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME() bad offset")
-  GLOBAL_NULL_SET(MESSAGE_WRAPPER_INPUT)
-  TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME(
+  message("Testing tribits_get_version_date_from_raw_git_commit_utc_time() bad offset")
+  global_null_set(MESSAGE_WRAPPER_INPUT)
+  tribits_get_version_date_from_raw_git_commit_utc_time(
     "2024-12-13 12:10:15 -0600" VERSION_DATE)
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR, '2024-12-13 12:10:15 -0600' is NOT; in UTC which would have offset '+0000'!"
     )
 
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE)
+function(unittest_tribits_tpl_allow_pre_find_package)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_tpl_allow_pre_find_package()")
+  message("***\n")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): No vars set")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
+  message("tribits_tpl_allow_pre_find_package(): No vars set")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set SomeTpl_INCLUDE_DIRS")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(SomeTpl_INCLUDE_DIRS "/some/include/dir")
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
+  message("tribits_tpl_allow_pre_find_package(): Set SomeTpl_INCLUDE_DIRS")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(SomeTpl_INCLUDE_DIRS "/some/include/dir")
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set SomeTpl_LIBRARY_NAMES")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(SomeTpl_LIBRARY_NAMES "lib1;lib2")
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
+  message("tribits_tpl_allow_pre_find_package(): Set SomeTpl_LIBRARY_NAMES")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(SomeTpl_LIBRARY_NAMES "lib1;lib2")
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set SomeTpl_LIBRARY_DIRS")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(SomeTpl_LIBRARY_DIRS "/some/lib/dir")
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
+  message("tribits_tpl_allow_pre_find_package(): Set SomeTpl_LIBRARY_DIRS")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(SomeTpl_LIBRARY_DIRS "/some/lib/dir")
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set SomeTpl_[INCLUDE_DIRS,LIBRARY_NAMES,LIBRARY_DIRS]")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(SomeTpl_INCLUDE_DIRS "/some/include/dir")
-  SET(SomeTpl_LIBRARY_NAMES "lib1;lib2")
-  SET(SomeTpl_LIBRARY_DIRS "/some/lib/dir")
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
+  message("tribits_tpl_allow_pre_find_package(): Set SomeTpl_[INCLUDE_DIRS,LIBRARY_NAMES,LIBRARY_DIRS]")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(SomeTpl_INCLUDE_DIRS "/some/include/dir")
+  set(SomeTpl_LIBRARY_NAMES "lib1;lib2")
+  set(SomeTpl_LIBRARY_DIRS "/some/lib/dir")
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
 
-  #SET(TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_DEBUG TRUE)
+  #set(TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_DEBUG TRUE)
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): No vars set (2)")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
+  message("tribits_tpl_allow_pre_find_package(): No vars set (2)")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set SomeTpl_INCLUDE_DIRS (force prefind)")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(SomeTpl_INCLUDE_DIRS "/some/include/dir")
-  SET(SomeTpl_FORCE_PRE_FIND_PACKAGE TRUE)
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
+  message("tribits_tpl_allow_pre_find_package(): Set SomeTpl_INCLUDE_DIRS (force prefind)")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(SomeTpl_INCLUDE_DIRS "/some/include/dir")
+  set(SomeTpl_FORCE_PRE_FIND_PACKAGE TRUE)
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set SomeTpl_LIBRARY_NAMES (force prefind)")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(SomeTpl_LIBRARY_NAMES "lib1;lib2")
-  SET(SomeTpl_FORCE_PRE_FIND_PACKAGE TRUE)
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
+  message("tribits_tpl_allow_pre_find_package(): Set SomeTpl_LIBRARY_NAMES (force prefind)")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(SomeTpl_LIBRARY_NAMES "lib1;lib2")
+  set(SomeTpl_FORCE_PRE_FIND_PACKAGE TRUE)
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set SomeTpl_LIBRARY_DIRS (force prefind)")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(SomeTpl_LIBRARY_DIRS "/some/lib/dir")
-  SET(SomeTpl_FORCE_PRE_FIND_PACKAGE TRUE)
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
+  message("tribits_tpl_allow_pre_find_package(): Set SomeTpl_LIBRARY_DIRS (force prefind)")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(SomeTpl_LIBRARY_DIRS "/some/lib/dir")
+  set(SomeTpl_FORCE_PRE_FIND_PACKAGE TRUE)
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set SomeTpl_[INCLUDE_DIRS,LIBRARY_NAMES,LIBRARY_DIRS] (force prefind)")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(SomeTpl_INCLUDE_DIRS "/some/include/dir")
-  SET(SomeTpl_LIBRARY_NAMES "lib1;lib2")
-  SET(SomeTpl_LIBRARY_DIRS "/some/lib/dir")
-  SET(SomeTpl_FORCE_PRE_FIND_PACKAGE TRUE)
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
+  message("tribits_tpl_allow_pre_find_package(): Set SomeTpl_[INCLUDE_DIRS,LIBRARY_NAMES,LIBRARY_DIRS] (force prefind)")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(SomeTpl_INCLUDE_DIRS "/some/include/dir")
+  set(SomeTpl_LIBRARY_NAMES "lib1;lib2")
+  set(SomeTpl_LIBRARY_DIRS "/some/lib/dir")
+  set(SomeTpl_FORCE_PRE_FIND_PACKAGE TRUE)
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): No vars set (3)")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
+  message("tribits_tpl_allow_pre_find_package(): No vars set (3)")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set TPL_SomeTpl_INCLUDE_DIRS")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(TPL_SomeTpl_INCLUDE_DIRS "/some/include/dir")
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
+  message("tribits_tpl_allow_pre_find_package(): Set TPL_SomeTpl_INCLUDE_DIRS")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(TPL_SomeTpl_INCLUDE_DIRS "/some/include/dir")
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set TPL_SomeTpl_LIBRARIES")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(TPL_SomeTpl_LIBRARIES "/some/include/dir")
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
+  message("tribits_tpl_allow_pre_find_package(): Set TPL_SomeTpl_LIBRARIES")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(TPL_SomeTpl_LIBRARIES "/some/include/dir")
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set TPL_SomeTpl_LIBRARY_DIRS")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(TPL_SomeTpl_LIBRARY_DIRS "/some/lib/dir")
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
+  message("tribits_tpl_allow_pre_find_package(): Set TPL_SomeTpl_LIBRARY_DIRS")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(TPL_SomeTpl_LIBRARY_DIRS "/some/lib/dir")
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set TPL_SomeTpl_[INCLUDE_DIRS,LIBRARIES,LIBRARY_DIRS]")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(TPL_SomeTpl_INCLUDE_DIRS "/some/include/dir")
-  SET(TPL_SomeTpl_LIBRARIES "/some/include/dir")
-  SET(TPL_SomeTpl_LIBRARY_DIRS "/some/lib/dir")
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
+  message("tribits_tpl_allow_pre_find_package(): Set TPL_SomeTpl_[INCLUDE_DIRS,LIBRARIES,LIBRARY_DIRS]")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(TPL_SomeTpl_INCLUDE_DIRS "/some/include/dir")
+  set(TPL_SomeTpl_LIBRARIES "/some/include/dir")
+  set(TPL_SomeTpl_LIBRARY_DIRS "/some/lib/dir")
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): Set SomeTpl_INCLUDE_DIRS and TPL_SomeTpl_INCLUDE_DIRS (force update)")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  SET(SomeTpl_INCLUDE_DIRS "/some/include/dir")
-  SET(TPL_SomeTpl_INCLUDE_DIRS "/some/include/dir")
-  SET(SomeTpl_FORCE_PRE_FIND_PACKAGE TRUE)
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
+  message("tribits_tpl_allow_pre_find_package(): Set SomeTpl_INCLUDE_DIRS and TPL_SomeTpl_INCLUDE_DIRS (force update)")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  set(SomeTpl_INCLUDE_DIRS "/some/include/dir")
+  set(TPL_SomeTpl_INCLUDE_DIRS "/some/include/dir")
+  set(SomeTpl_FORCE_PRE_FIND_PACKAGE TRUE)
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "FALSE")
 
-  #SET(TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_DEBUG TRUE)
+  #set(TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_DEBUG TRUE)
 
   # ToDo: Test that "force prefind" does not affect TPL_${TPL_NAME}_XXX logic
 
-  MESSAGE("TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(): No vars set (4)")
-  UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE_UNSET_VARS(SomeTpl)
-  TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
-  UNITTEST_COMPARE_CONST(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
+  message("tribits_tpl_allow_pre_find_package(): No vars set (4)")
+  unittest_tribits_tpl_allow_pre_find_package_unset_vars(SomeTpl)
+  tribits_tpl_allow_pre_find_package(SomeTpl  SomeTpl_ALLOW_PACKAGE_PREFIND)
+  unittest_compare_const(SomeTpl_ALLOW_PACKAGE_PREFIND  "TRUE")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_REPORT_INVALID_TRIBITS_USAGE)
+function(unittest_tribits_report_invalid_tribits_usage)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_REPORT_INVALID_TRIBITS_USAGE()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_report_invalid_tribits_usage()")
+  message("***\n")
 
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
-  SET(PROJECT_NAME TRITU_PROJECT)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
+  set(PROJECT_NAME TRITU_PROJECT)
 
-  MESSAGE("TRIBITS_REPORT_INVALID_TRIBITS_USAGE(): Default (FATAL_ERROR)")
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  TRIBITS_REPORT_INVALID_TRIBITS_USAGE("Something went" " very wrong" " I think 1!")
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_report_invalid_tribits_usage(): Default (FATAL_ERROR)")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  tribits_report_invalid_tribits_usage("Something went" " very wrong" " I think 1!")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;Something went; very wrong; I think 1!")
 
-  MESSAGE("TRIBITS_REPORT_INVALID_TRIBITS_USAGE(): FATAL_ERROR")
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  SET(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE FATAL_ERROR)
-  TRIBITS_REPORT_INVALID_TRIBITS_USAGE("Something went" " very wrong" " I think 2!")
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_report_invalid_tribits_usage(): FATAL_ERROR")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE FATAL_ERROR)
+  tribits_report_invalid_tribits_usage("Something went" " very wrong" " I think 2!")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;Something went; very wrong; I think 2!")
 
-  MESSAGE("TRIBITS_REPORT_INVALID_TRIBITS_USAGE(): SEND_ERROR")
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  SET(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE SEND_ERROR)
-  TRIBITS_REPORT_INVALID_TRIBITS_USAGE("Something went very wrong I think 3!")
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_report_invalid_tribits_usage(): SEND_ERROR")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE SEND_ERROR)
+  tribits_report_invalid_tribits_usage("Something went very wrong I think 3!")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "SEND_ERROR;Something went very wrong I think 3!")
 
-  MESSAGE("TRIBITS_REPORT_INVALID_TRIBITS_USAGE(): WARNING")
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  SET(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE WARNING)
-  TRIBITS_REPORT_INVALID_TRIBITS_USAGE("Something went very wrong I think 4!")
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_report_invalid_tribits_usage(): WARNING")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE WARNING)
+  tribits_report_invalid_tribits_usage("Something went very wrong I think 4!")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "WARNING;Something went very wrong I think 4!")
 
-  MESSAGE("TRIBITS_REPORT_INVALID_TRIBITS_USAGE(): IGNORE")
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  SET(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE IGNORE)
-  TRIBITS_REPORT_INVALID_TRIBITS_USAGE("Something went very wrong I think 5!")
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_report_invalid_tribits_usage(): IGNORE")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE IGNORE)
+  tribits_report_invalid_tribits_usage("Something went very wrong I think 5!")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "")
 
-  MESSAGE("TRIBITS_REPORT_INVALID_TRIBITS_USAGE(): INVALID_ARGUMENT")
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
-  SET(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE INVALID_ARGUMENT)
-  TRIBITS_REPORT_INVALID_TRIBITS_USAGE("Something went very wrong I think 6!")
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("tribits_report_invalid_tribits_usage(): INVALID_ARGUMENT")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE INVALID_ARGUMENT)
+  tribits_report_invalid_tribits_usage("Something went very wrong I think 6!")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;Error, invalid value for; TRITU_PROJECT_ASSERT_CORRECT_TRIBITS_USAGE =; 'INVALID_ARGUMENT'!;  Value values include 'FATAL_ERROR', 'SEND_ERROR', 'WARNING', and 'IGNORE'!")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_TEST_BASIC)
+function(unittest_tribits_add_test_basic)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing basic functionality of TRIBITS_ADD_TEST(...)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing basic functionality of tribits_add_test(...)")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(PARENT_PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(PARENT_PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN})
-  SET(PACKEXEN_PATH "${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe")
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN})
+  set(PACKEXEN_PATH "${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe")
 
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
   #
   # Add basic test with and without tracing
   #
 
-  MESSAGE("Unconditionally add test (no tracing)")
-  TRIBITS_ADD_TEST( ${EXEN} ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Unconditionally add test (no tracing)")
+  tribits_add_test( ${EXEN} ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( # Don't trace by default
+  unittest_compare_const( # Don't trace by default
     MESSAGE_WRAPPER_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( # Don't capture unless I want to
+  unittest_compare_const( # Don't capture unless I want to
     TRIBITS_SET_TEST_PROPERTIES_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
 
-  MESSAGE("Unconditionally add test (with tracing)")
-  TRIBITS_ADD_TEST( ${EXEN} ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Unconditionally add test (with tracing)")
+  tribits_add_test( ${EXEN} ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST( # Don't capture unless I want to
+  unittest_compare_const( # Don't capture unless I want to
     TRIBITS_SET_TEST_PROPERTIES_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
   #
   # <Package>_ENABLE_TESTS=OFF
   #
 
-  MESSAGE("Tests not enabled")
-  SET(${PACKAGE_NAME}_ENABLE_TESTS OFF)
-  TRIBITS_ADD_TEST( ${EXEN} ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Tests not enabled")
+  set(${PACKAGE_NAME}_ENABLE_TESTS OFF)
+  tribits_add_test( ${EXEN} ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- PackageA_SomeExec: NOT added test because PackageA_ENABLE_TESTS='OFF'."
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "" )
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "" )
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   #
   # Test different nubmers and types of arguments
   #
 
-  MESSAGE("Add a single basic test with no arguments")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Add a single basic test with no arguments")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
-  MESSAGE("Add a single basic test with a single argument")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS arg1 )
-  UNITTEST_COMPARE_CONST(
+  message("Add a single basic test with a single argument")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS arg1 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH};arg1"
     )
 
-  MESSAGE("Add a single basic test with a single argument that is '0'")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS 0 )
-  UNITTEST_COMPARE_CONST(
+  message("Add a single basic test with a single argument that is '0'")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS 0 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH};0"
     )
 
-  MESSAGE("Add a single basic test with a single argument that is 'N'")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS N )
-  UNITTEST_COMPARE_CONST(
+  message("Add a single basic test with a single argument that is 'N'")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS N )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH};N"
     )
 
-  MESSAGE("Add a single basic test with two arguments")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Add a single basic test with two arguments")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH};arg1;arg2"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
-  MESSAGE("Add two tests with simple arguments")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1" "arg2 arg3"
+  message("Add two tests with simple arguments")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1" "arg2 arg3"
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_0;COMMAND;${PACKEXEN_PATH};arg1;NAME;${PACKEXEN}_1;COMMAND;${PACKEXEN_PATH};arg2;arg3"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}_0;${PACKEXEN}_1" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}_0;${PACKEXEN}_1" )
 
-  MESSAGE("Add a double quoted input argument")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "--arg1=\"bob and cats\"" )
-  UNITTEST_COMPARE_CONST(
+  message("Add a double quoted input argument")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "--arg1=\"bob and cats\"" )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH};--arg1=\"bob and cats\""
     )
 
-  MESSAGE("Add a double quoted with single quotes input argument")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "--arg1=\"'bob' and 'cats'\"" )
-  UNITTEST_COMPARE_CONST(
+  message("Add a double quoted with single quotes input argument")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "--arg1=\"'bob' and 'cats'\"" )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH};--arg1=\"'bob' and 'cats'\""
     )
 
-  MESSAGE("Add two tests with different postfixes and arguments")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN}
+  message("Add two tests with different postfixes and arguments")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN}
     POSTFIX_AND_ARGS_0  pf_arg1  arg1
     POSTFIX_AND_ARGS_1  pf_arg23  arg2  arg3
     ADDED_TESTS_NAMES_OUT  ${EXEN}_TEST_NAMES
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_pf_arg1;COMMAND;${PACKEXEN_PATH};arg1;NAME;${PACKEXEN}_pf_arg23;COMMAND;${PACKEXEN_PATH};arg2;arg3"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}_pf_arg1;${PACKEXEN}_pf_arg23" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}_pf_arg1;${PACKEXEN}_pf_arg23" )
 
-  MESSAGE("Add two tests with different postfixes and arguments with '0' and 'N'")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN}
+  message("Add two tests with different postfixes and arguments with '0' and 'N'")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN}
     POSTFIX_AND_ARGS_0  pf_arg1  0
     POSTFIX_AND_ARGS_1  pf_arg23  N  0
     ADDED_TESTS_NAMES_OUT  ${EXEN}_TEST_NAMES
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_pf_arg1;COMMAND;${PACKEXEN_PATH};0;NAME;${PACKEXEN}_pf_arg23;COMMAND;${PACKEXEN_PATH};N;0"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}_pf_arg1;${PACKEXEN}_pf_arg23" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}_pf_arg1;${PACKEXEN}_pf_arg23" )
 
-  MESSAGE("Add an executable with no prefix")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NOEXEPREFIX ARGS arg1 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an executable with no prefix")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NOEXEPREFIX ARGS arg1 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${EXEN}.exe;arg1"
     )
 
-  MESSAGE("Add an executable with no suffix")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NOEXESUFFIX ARGS arg1 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an executable with no suffix")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NOEXESUFFIX ARGS arg1 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN};arg1"
     )
 
-  MESSAGE("Add an executable with no prefix and no suffix")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NOEXEPREFIX NOEXESUFFIX ARGS arg1 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an executable with no prefix and no suffix")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NOEXEPREFIX NOEXESUFFIX ARGS arg1 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${EXEN};arg1"
     )
 
-  MESSAGE("Add a test with a different name from the executable")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NAME SomeOtherName ARGS arg1 )
-  UNITTEST_COMPARE_CONST(
+  message("Add a test with a different name from the executable")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NAME SomeOtherName ARGS arg1 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKAGE_NAME}_SomeOtherName;COMMAND;${PACKEXEN_PATH};arg1"
     )
 
-  MESSAGE("Add a test with with a postfix appended to the executable name")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NAME_POSTFIX somePostfix ARGS arg1
+  message("Add a test with with a postfix appended to the executable name")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NAME_POSTFIX somePostfix ARGS arg1
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_somePostfix;COMMAND;${PACKEXEN_PATH};arg1"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}_somePostfix" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}_somePostfix" )
 
   #
   # HOST, XHOST, HOSTTYPE, XHOSTTYPE
   #
 
-  MESSAGE("Test in HOST")
-  SET(${PROJECT_NAME}_HOSTNAME MyHost)
-  TRIBITS_ADD_TEST( ${EXEN} HOST MyHost ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Test in HOST")
+  set(${PROJECT_NAME}_HOSTNAME MyHost)
+  tribits_add_test( ${EXEN} HOST MyHost ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( # Don't capture unless I want to
+  unittest_compare_const( # Don't capture unless I want to
     TRIBITS_SET_TEST_PROPERTIES_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
-  MESSAGE("Test not in HOST")
-  SET(${PROJECT_NAME}_HOSTNAME TheHost)
-  TRIBITS_ADD_TEST( ${EXEN} HOST MyHost ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Test not in HOST")
+  set(${PROJECT_NAME}_HOSTNAME TheHost)
+  tribits_add_test( ${EXEN} HOST MyHost ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because ${PROJECT_NAME}_HOSTNAME='TheHost' does not match list HOST='MyHost'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "" )
 
-  MESSAGE("Test in XHOST")
-  SET(${PROJECT_NAME}_HOSTNAME MyHost)
-  TRIBITS_ADD_TEST( ${EXEN} XHOST MyHost ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Test in XHOST")
+  set(${PROJECT_NAME}_HOSTNAME MyHost)
+  tribits_add_test( ${EXEN} XHOST MyHost ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because ${PROJECT_NAME}_HOSTNAME='MyHost' matches list XHOST='MyHost'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "" )
 
-  MESSAGE("Test not in XHOST")
-  SET(${PROJECT_NAME}_HOSTNAME TheHost)
-  TRIBITS_ADD_TEST( ${EXEN} XHOST MyHost ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Test not in XHOST")
+  set(${PROJECT_NAME}_HOSTNAME TheHost)
+  tribits_add_test( ${EXEN} XHOST MyHost ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
-  MESSAGE("Test in HOSTTYPE")
-  SET(CMAKE_HOST_SYSTEM_NAME MyHostType)
-  TRIBITS_ADD_TEST( ${EXEN} HOSTTYPE MyHostType ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Test in HOSTTYPE")
+  set(CMAKE_HOST_SYSTEM_NAME MyHostType)
+  tribits_add_test( ${EXEN} HOSTTYPE MyHostType ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
-  MESSAGE("Test not in HOSTTYPE")
-  SET(CMAKE_HOST_SYSTEM_NAME TheHostType)
-  TRIBITS_ADD_TEST( ${EXEN} HOSTTYPE MyHostType ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Test not in HOSTTYPE")
+  set(CMAKE_HOST_SYSTEM_NAME TheHostType)
+  tribits_add_test( ${EXEN} HOSTTYPE MyHostType ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because CMAKE_HOST_SYSTEM_NAME='TheHostType' does not match list HOSTTYPE='MyHostType'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "" )
 
-  MESSAGE("Test in XHOSTTYPE")
-  SET(CMAKE_HOST_SYSTEM_NAME MyHostType)
-  TRIBITS_ADD_TEST( ${EXEN} XHOSTTYPE MyHostType ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Test in XHOSTTYPE")
+  set(CMAKE_HOST_SYSTEM_NAME MyHostType)
+  tribits_add_test( ${EXEN} XHOSTTYPE MyHostType ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because CMAKE_HOST_SYSTEM_NAME='MyHostType' matches list XHOSTTYPE='MyHostType'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "" )
 
-  MESSAGE("Test not in XHOSTTYPE")
-  SET(CMAKE_HOST_SYSTEM_NAME TheHostType)
-  TRIBITS_ADD_TEST( ${EXEN} XHOSTTYPE MyHostType ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Test not in XHOSTTYPE")
+  set(CMAKE_HOST_SYSTEM_NAME TheHostType)
+  tribits_add_test( ${EXEN} XHOSTTYPE MyHostType ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
   #
   # EXCLUDE_IF_NOT_TRUE
   #
 
-  MESSAGE("EXCLUDE_IF_NOT_TRUE <true>")
-  SET(VAR_THAT_IS_TRUE TRUE)
-  TRIBITS_ADD_TEST( ${EXEN} EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_TRUE
+  message("EXCLUDE_IF_NOT_TRUE <true>")
+  set(VAR_THAT_IS_TRUE TRUE)
+  tribits_add_test( ${EXEN} EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_TRUE
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
-  MESSAGE("EXCLUDE_IF_NOT_TRUE <true> <true>")
-  SET(VAR_THAT_IS_TRUE1 TRUE)
-  SET(VAR_THAT_IS_TRUE2 TRUE)
-  TRIBITS_ADD_TEST( ${EXEN} EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_TRUE1 VAR_THAT_IS_TRUE2
+  message("EXCLUDE_IF_NOT_TRUE <true> <true>")
+  set(VAR_THAT_IS_TRUE1 TRUE)
+  set(VAR_THAT_IS_TRUE2 TRUE)
+  tribits_add_test( ${EXEN} EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_TRUE1 VAR_THAT_IS_TRUE2
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
-  MESSAGE("EXCLUDE_IF_NOT_TRUE <false>")
-  SET(VAR_THAT_IS_FALSE FALSE)
-  TRIBITS_ADD_TEST( ${EXEN} EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_FALSE
+  message("EXCLUDE_IF_NOT_TRUE <false>")
+  set(VAR_THAT_IS_FALSE FALSE)
+  tribits_add_test( ${EXEN} EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_FALSE
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because EXCLUDE_IF_NOT_TRUE VAR_THAT_IS_FALSE='FALSE'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "" )
 
-  MESSAGE("EXCLUDE_IF_NOT_TRUE <false> <true>")
-  SET(VAR_THAT_IS_TRUE TRUE)
-  SET(VAR_THAT_IS_FALSE FALSE)
-  TRIBITS_ADD_TEST( ${EXEN} EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_FALSE  VAR_THAT_IS_TRUE
+  message("EXCLUDE_IF_NOT_TRUE <false> <true>")
+  set(VAR_THAT_IS_TRUE TRUE)
+  set(VAR_THAT_IS_FALSE FALSE)
+  tribits_add_test( ${EXEN} EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_FALSE  VAR_THAT_IS_TRUE
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because EXCLUDE_IF_NOT_TRUE VAR_THAT_IS_FALSE='FALSE'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "" )
 
-  MESSAGE("EXCLUDE_IF_NOT_TRUE <true> <false>")
-  SET(VAR_THAT_IS_TRUE TRUE)
-  SET(VAR_THAT_IS_FALSE FALSE)
-  TRIBITS_ADD_TEST( ${EXEN} EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_TRUE  VAR_THAT_IS_FALSE
+  message("EXCLUDE_IF_NOT_TRUE <true> <false>")
+  set(VAR_THAT_IS_TRUE TRUE)
+  set(VAR_THAT_IS_FALSE FALSE)
+  tribits_add_test( ${EXEN} EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_TRUE  VAR_THAT_IS_FALSE
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because EXCLUDE_IF_NOT_TRUE VAR_THAT_IS_FALSE='FALSE'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "" )
 
   #
   # DISABLED, DISABLED_AND_MSG
   #
 
-  MESSAGE("DISABLED <msg> (trace add test)")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON) 
-  TRIBITS_ADD_TEST( ${EXEN}
+  message("DISABLED <msg> (trace add test)")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON) 
+  tribits_add_test( ${EXEN}
     DISABLED "Disabled because of B and C"
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "PackageA_SomeExec" )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_SomeExec: Added test (BASIC, PROCESSORS=1, DISABLED)!;--  => Reason DISABLED: Disabled because of B and C" )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
 
-  MESSAGE("DISABLED <msg> (no trace add test)")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON) 
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST OFF)
-  TRIBITS_ADD_TEST( ${EXEN}
+  message("DISABLED <msg> (no trace add test)")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON) 
+  set(${PROJECT_NAME}_TRACE_ADD_TEST OFF)
+  tribits_add_test( ${EXEN}
     DISABLED "Disabled because of C and D"
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "PackageA_SomeExec" )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT "" )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT "" )
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
 
-  MESSAGE("DISABLED FALSE (trace add test)")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
-  TRIBITS_ADD_TEST( ${EXEN}
+  message("DISABLED FALSE (trace add test)")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  tribits_add_test( ${EXEN}
     DISABLED FALSE
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "PackageA_SomeExec" )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_SomeExec: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_NOT_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_not_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
 
-  MESSAGE("DISABLED no (trace add test)")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
-  TRIBITS_ADD_TEST( ${EXEN}
+  message("DISABLED no (trace add test)")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  tribits_add_test( ${EXEN}
     DISABLED no
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "PackageA_SomeExec" )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_SomeExec: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_NOT_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_not_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
 
-  MESSAGE("<fullTestName>_SET_DISABLED_AND_MSG=<msg>")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
-  SET(${PACKEXEN}_SET_DISABLED_AND_MSG "Disabled because of D and E")
-  TRIBITS_ADD_TEST( ${EXEN}
+  message("<fullTestName>_SET_DISABLED_AND_MSG=<msg>")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(${PACKEXEN}_SET_DISABLED_AND_MSG "Disabled because of D and E")
+  tribits_add_test( ${EXEN}
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "PackageA_SomeExec" )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_SomeExec: Added test (BASIC, PROCESSORS=1, DISABLED)!;--  => Reason DISABLED: Disabled because of D and E" )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
 
-  MESSAGE("<fullTestName>_SET_DISABLED_AND_MSG=<msg> with NAME_POSTFIX and POSTFIX_AND_ARGS_<IDX>")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
-  SET(THIS_TEST_NAME ${PACKEXEN}_mypostfix_argpostfix0)
-  SET(${THIS_TEST_NAME}_SET_DISABLED_AND_MSG "Disabled because of F and G")
-  TRIBITS_ADD_TEST( ${EXEN} NAME_POSTFIX mypostfix POSTFIX_AND_ARGS_0 argpostfix0 arg0
+  message("<fullTestName>_SET_DISABLED_AND_MSG=<msg> with NAME_POSTFIX and POSTFIX_AND_ARGS_<IDX>")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(THIS_TEST_NAME ${PACKEXEN}_mypostfix_argpostfix0)
+  set(${THIS_TEST_NAME}_SET_DISABLED_AND_MSG "Disabled because of F and G")
+  tribits_add_test( ${EXEN} NAME_POSTFIX mypostfix POSTFIX_AND_ARGS_0 argpostfix0 arg0
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "${THIS_TEST_NAME}" )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${THIS_TEST_NAME};COMMAND;${PACKEXEN_PATH};arg0"
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${THIS_TEST_NAME}: Added test (BASIC, PROCESSORS=1, DISABLED)!;--  => Reason DISABLED: Disabled because of F and G")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
 
-  MESSAGE("DISABLED <msg> input arg and <fullTestName>_SET_DISABLED_AND_MSG=false")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
-  SET(${PACKEXEN}_SET_DISABLED_AND_MSG false) # Ovesrrides DISABLED option to TAT()!
-  TRIBITS_ADD_TEST( ${EXEN}
+  message("DISABLED <msg> input arg and <fullTestName>_SET_DISABLED_AND_MSG=false")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(${PACKEXEN}_SET_DISABLED_AND_MSG false) # Ovesrrides DISABLED option to tat()!
+  tribits_add_test( ${EXEN}
     DISABLED "Disabled by default (but this will be re-enabled by var)"
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "PackageA_SomeExec" )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_SomeExec: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_NOT_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_not_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED")  # Make sure DISABLED prop not even set!
 
-  MESSAGE("<fullTestName>_SET_DISABLED_AND_MSG with NAME_POSTFIX and POSTFIX_AND_ARGS_<IDX>")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
-  SET(THIS_TEST_NAME ${PACKEXEN}_mypostfix_argpostfix0)
-  SET(${THIS_TEST_NAME}_SET_DISABLED_AND_MSG "Disabled because of H and I")
-  TRIBITS_ADD_TEST( ${EXEN} NAME_POSTFIX mypostfix POSTFIX_AND_ARGS_0 argpostfix0 arg0
+  message("<fullTestName>_SET_DISABLED_AND_MSG with NAME_POSTFIX and POSTFIX_AND_ARGS_<IDX>")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(THIS_TEST_NAME ${PACKEXEN}_mypostfix_argpostfix0)
+  set(${THIS_TEST_NAME}_SET_DISABLED_AND_MSG "Disabled because of H and I")
+  tribits_add_test( ${EXEN} NAME_POSTFIX mypostfix POSTFIX_AND_ARGS_0 argpostfix0 arg0
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "${THIS_TEST_NAME}" )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${THIS_TEST_NAME};COMMAND;${PACKEXEN_PATH};arg0"
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${THIS_TEST_NAME}: Added test (BASIC, PROCESSORS=1, DISABLED)!;--  => Reason DISABLED: Disabled because of H and I" )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
 
   #
   # RUN_SERIAL
   #
 
-  MESSAGE("<fullTestName>_SET_RUN_SERIAL=ON")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
-  SET(${PACKEXEN}_SET_RUN_SERIAL ON)
-  TRIBITS_ADD_TEST( ${EXEN}
+  message("<fullTestName>_SET_RUN_SERIAL=ON")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(${PACKEXEN}_SET_RUN_SERIAL ON)
+  tribits_add_test( ${EXEN}
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "PackageA_SomeExec" )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_SomeExec: Added test (BASIC, PROCESSORS=1, RUN_SERIAL)!" )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "RUN_SERIAL;ON")
 
-  MESSAGE("Set RUN_SERIAL input option")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
-  SET(${PACKEXEN}_SET_RUN_SERIAL "")
-  TRIBITS_ADD_TEST( ${EXEN} RUN_SERIAL
+  message("Set RUN_SERIAL input option")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(${PACKEXEN}_SET_RUN_SERIAL "")
+  tribits_add_test( ${EXEN} RUN_SERIAL
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "PackageA_SomeExec" )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_SomeExec: Added test (BASIC, PROCESSORS=1, RUN_SERIAL)!" )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "RUN_SERIAL;ON")
 
-  MESSAGE("Set RUN_SERIAL input option but set <fullTestName>_SET_RUN_SERIAL=OFF")
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
-  SET(${PACKEXEN}_SET_RUN_SERIAL OFF)  # Overrides the input option RUN_SERIAL!
-  TRIBITS_ADD_TEST( ${EXEN} RUN_SERIAL
+  message("Set RUN_SERIAL input option but set <fullTestName>_SET_RUN_SERIAL=OFF")
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(${PACKEXEN}_SET_RUN_SERIAL OFF)  # Overrides the input option RUN_SERIAL!
+  tribits_add_test( ${EXEN} RUN_SERIAL
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "PackageA_SomeExec" )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH}"
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_SomeExec: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_NOT_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_not_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "RUN_SERIAL") # Make sure that RUN_SERIAL prop not even set!
 
   #
   # DIRECTORY
   #
 
-  MESSAGE("Add a test with the relative directory overridden")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} DIRECTORY "../somedir" ARGS arg1 )
-  UNITTEST_COMPARE_CONST(
+  message("Add a test with the relative directory overridden")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} DIRECTORY "../somedir" ARGS arg1 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/../somedir/${PACKEXEN}.exe;arg1"
     )
 
-  MESSAGE("Add a test with the absolute directory overridden")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} DIRECTORY "/some/abs/path" ARGS arg1 )
-  UNITTEST_COMPARE_CONST(
+  message("Add a test with the absolute directory overridden")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} DIRECTORY "/some/abs/path" ARGS arg1 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;/some/abs/path/${PACKEXEN}.exe;arg1"
     )
@@ -1277,509 +1277,509 @@ FUNCTION(UNITTEST_TRIBITS_ADD_TEST_BASIC)
   # <fullTestName>_EXTRA_ARGS
   #
 
-  MESSAGE("Test <TestName>_EXTRA_ARGS with on ARGS")
-  SET(${PACKEXEN}_EXTRA_ARGS "--extra_arg1;something;-extra_arg2;-R")
-  TRIBITS_ADD_TEST( ${EXEN} )
-  UNITTEST_COMPARE_CONST(
+  message("Test <TestName>_EXTRA_ARGS with on ARGS")
+  set(${PACKEXEN}_EXTRA_ARGS "--extra_arg1;something;-extra_arg2;-R")
+  tribits_add_test( ${EXEN} )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH};--extra_arg1;something;-extra_arg2;-R"
     )
 
-  MESSAGE("Add arbitrary command-line arguments in <TestName>_EXTRA_ARGS with one ARG")
-  SET(${PACKEXEN}_EXTRA_ARGS "--extra_arg1;something")
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "orig_arg orig_val" )
-  UNITTEST_COMPARE_CONST(
+  message("Add arbitrary command-line arguments in <TestName>_EXTRA_ARGS with one ARG")
+  set(${PACKEXEN}_EXTRA_ARGS "--extra_arg1;something")
+  tribits_add_test( ${EXEN} ARGS "orig_arg orig_val" )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH};orig_arg;orig_val;--extra_arg1;something"
     )
 
-  MESSAGE("Test <TestName>_EXTRA_ARGS with two ARGS")
-  SET(${PACKEXEN}_0_EXTRA_ARGS "--extra_arg1;something1")
-  SET(${PACKEXEN}_1_EXTRA_ARGS "--extra_arg2;something2")
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "--orig_arg1 orig_val1" "--orig_arg2" )
-  UNITTEST_COMPARE_CONST(
+  message("Test <TestName>_EXTRA_ARGS with two ARGS")
+  set(${PACKEXEN}_0_EXTRA_ARGS "--extra_arg1;something1")
+  set(${PACKEXEN}_1_EXTRA_ARGS "--extra_arg2;something2")
+  tribits_add_test( ${EXEN} ARGS "--orig_arg1 orig_val1" "--orig_arg2" )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_0;COMMAND;${PACKEXEN_PATH};--orig_arg1;orig_val1;--extra_arg1;something1;NAME;${PACKEXEN}_1;COMMAND;${PACKEXEN_PATH};--orig_arg2;--extra_arg2;something2"
     )
 
-  MESSAGE("Test <TestName>_EXTRA_ARGS for POSTFIX_AND_ARGS_0 ")
-  SET(${PACKEXEN}_extra_postfix_EXTRA_ARGS "--extra_arg1;something")
-  TRIBITS_ADD_TEST( ${EXEN} POSTFIX_AND_ARGS_0 extra_postfix --orig_arg orig_val )
-  UNITTEST_COMPARE_CONST(
+  message("Test <TestName>_EXTRA_ARGS for POSTFIX_AND_ARGS_0 ")
+  set(${PACKEXEN}_extra_postfix_EXTRA_ARGS "--extra_arg1;something")
+  tribits_add_test( ${EXEN} POSTFIX_AND_ARGS_0 extra_postfix --orig_arg orig_val )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_extra_postfix;COMMAND;${PACKEXEN_PATH};--orig_arg;orig_val;--extra_arg1;something"
     )
 
-  MESSAGE("Test <TestName>_EXTRA_ARGS for POSTFIX_AND_ARGS_0 and POSTFIX_AND_ARGS_1 ")
-  SET(${PACKEXEN}_extra_postfix1_EXTRA_ARGS "--extra_arg1;something1")
-  SET(${PACKEXEN}_extra_postfix2_EXTRA_ARGS "--extra_arg2;something2")
-  TRIBITS_ADD_TEST( ${EXEN}
+  message("Test <TestName>_EXTRA_ARGS for POSTFIX_AND_ARGS_0 and POSTFIX_AND_ARGS_1 ")
+  set(${PACKEXEN}_extra_postfix1_EXTRA_ARGS "--extra_arg1;something1")
+  set(${PACKEXEN}_extra_postfix2_EXTRA_ARGS "--extra_arg2;something2")
+  tribits_add_test( ${EXEN}
     POSTFIX_AND_ARGS_0 extra_postfix1 --orig_arg1 orig_val1
     POSTFIX_AND_ARGS_1 extra_postfix2 --orig_arg2 orig_val2 )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_extra_postfix1;COMMAND;${PACKEXEN_PATH};--orig_arg1;orig_val1;--extra_arg1;something1;NAME;${PACKEXEN}_extra_postfix2;COMMAND;${PACKEXEN_PATH};--orig_arg2;orig_val2;--extra_arg2;something2"
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_TEST_DISABLE)
+function(unittest_tribits_add_test_disable)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing test-by-test disable of TRIBITS_ADD_TEST(...)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing test-by-test disable of tribits_add_test(...)")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(PARENT_PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(PARENT_PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN})
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN})
 
-  MESSAGE("Check that TRIBITS_ADD_TEST(...) adds test")
-  TRIBITS_ADD_TEST( ${EXEN} )
-  UNITTEST_COMPARE_CONST(
+  message("Check that tribits_add_test(...) adds test")
+  tribits_add_test( ${EXEN} )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Check that TRIBITS_ADD_ADVANCED_TEST(...) adds test (no tracing)")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( SomeCmnd
+  message("Check that tribits_add_advanced_test(...) adds test (no tracing)")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( SomeCmnd
     TEST_0 CMND someCmnd
     ADDED_TEST_NAME_OUT  SomeCmnd_TEST_NAME
     )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT "")
-  UNITTEST_COMPARE_CONST(SomeCmnd_TEST_NAME "${PACKAGE_NAME}_SomeCmnd")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+  unittest_compare_const(SomeCmnd_TEST_NAME "${PACKAGE_NAME}_SomeCmnd")
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"someCmnd\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
 
-  MESSAGE("Check that PackageA_SomeExec_DISABLE=ON disables TRIBITS_ADD_TEST(...) (no tracing)")
-  SET(PackageA_SomeExec_DISABLE ON)
-  TRIBITS_ADD_TEST( ${EXEN} )
-  SET(PackageA_SomeExec_DISABLE OFF)
-  UNITTEST_COMPARE_CONST(
+  message("Check that PackageA_SomeExec_DISABLE=ON disables tribits_add_test(...) (no tracing)")
+  set(PackageA_SomeExec_DISABLE ON)
+  tribits_add_test( ${EXEN} )
+  set(PackageA_SomeExec_DISABLE OFF)
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Check that PackageA_SomeCmnd_DISABLE=ON disables TRIBITS_ADD_ADVANCED_TEST(...) (no tracing)")
-  SET(PackageA_SomeCmnd_DISABLE ON)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( SomeCmnd
+  message("Check that PackageA_SomeCmnd_DISABLE=ON disables tribits_add_advanced_test(...) (no tracing)")
+  set(PackageA_SomeCmnd_DISABLE ON)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( SomeCmnd
     TEST_0 CMND someCmnd
     ADDED_TEST_NAME_OUT  SomeCmnd_TEST_NAME
     )
-  SET(PackageA_SomeCmnd_DISABLE OFF)
-  UNITTEST_COMPARE_CONST(
+  set(PackageA_SomeCmnd_DISABLE OFF)
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
-  UNITTEST_COMPARE_CONST(SomeCmnd_TEST_NAME "")
+  unittest_compare_const(SomeCmnd_TEST_NAME "")
 
   # Turn on tracing
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  MESSAGE("Check that TRIBITS_ADD_ADVANCED_TEST(...) adds test (with tracing)")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( SomeCmnd
+  message("Check that tribits_add_advanced_test(...) adds test (with tracing)")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( SomeCmnd
     TEST_0 CMND someCmnd
     ADDED_TEST_NAME_OUT  SomeCmnd_TEST_NAME
     )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_SomeCmnd: Added test (BASIC, PROCESSORS=1)!")
-  UNITTEST_COMPARE_CONST(SomeCmnd_TEST_NAME "${PACKAGE_NAME}_SomeCmnd")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(SomeCmnd_TEST_NAME "${PACKAGE_NAME}_SomeCmnd")
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"someCmnd\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
 
-  MESSAGE("Check that PackageA_SomeExec_DISABLE=ON disables TRIBITS_ADD_TEST(...)")
-  SET(PackageA_SomeExec_DISABLE ON)
-  TRIBITS_ADD_TEST( ${EXEN} )
-  SET(PackageA_SomeExec_DISABLE OFF)
-  UNITTEST_COMPARE_CONST(
+  message("Check that PackageA_SomeExec_DISABLE=ON disables tribits_add_test(...)")
+  set(PackageA_SomeExec_DISABLE ON)
+  tribits_add_test( ${EXEN} )
+  set(PackageA_SomeExec_DISABLE OFF)
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because PackageA_SomeExec_DISABLE='ON'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Check that PackageA_SomeCmnd_DISABLE=ON disables TRIBITS_ADD_ADVANCED_TEST(...)")
-  SET(PackageA_SomeCmnd_DISABLE ON)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( SomeCmnd
+  message("Check that PackageA_SomeCmnd_DISABLE=ON disables tribits_add_advanced_test(...)")
+  set(PackageA_SomeCmnd_DISABLE ON)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( SomeCmnd
     TEST_0 CMND someCmnd
     ADDED_TEST_NAME_OUT  SomeCmnd_TEST_NAME
     )
-  SET(PackageA_SomeCmnd_DISABLE OFF)
-  UNITTEST_COMPARE_CONST(
+  set(PackageA_SomeCmnd_DISABLE OFF)
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_SomeCmnd: NOT added test because PackageA_SomeCmnd_DISABLE='ON'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
-  UNITTEST_COMPARE_CONST(SomeCmnd_TEST_NAME "")
+  unittest_compare_const(SomeCmnd_TEST_NAME "")
 
   # Test PackageA_SKIP_CTEST_ADD_TEST
 
-  SET(PackageA_SKIP_CTEST_ADD_TEST ON)
+  set(PackageA_SKIP_CTEST_ADD_TEST ON)
 
-  MESSAGE("Check that PackageA_SKIP_CTEST_ADD_TEST=ON disables TRIBITS_ADD_TEST(...)")
-  TRIBITS_ADD_TEST(${EXEN})
-  UNITTEST_COMPARE_CONST(
+  message("Check that PackageA_SKIP_CTEST_ADD_TEST=ON disables tribits_add_test(...)")
+  tribits_add_test(${EXEN})
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because PackageA_SKIP_CTEST_ADD_TEST='ON'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Check that PackageA_SKIP_CTEST_ADD_TEST=ON disables TRIBITS_ADD_ADVANCED_TEST(...)")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( SomeCmnd
+  message("Check that PackageA_SKIP_CTEST_ADD_TEST=ON disables tribits_add_advanced_test(...)")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( SomeCmnd
     TEST_0 CMND someCmnd
     ADDED_TEST_NAME_OUT  SomeCmnd_TEST_NAME
     )
-  SET(PackageA_SomeCmnd_DISABLE OFF)
-  UNITTEST_COMPARE_CONST(
+  set(PackageA_SomeCmnd_DISABLE OFF)
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_SomeCmnd: NOT added test because PackageA_SKIP_CTEST_ADD_TEST='ON'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
-  UNITTEST_COMPARE_CONST(SomeCmnd_TEST_NAME "")
+  unittest_compare_const(SomeCmnd_TEST_NAME "")
 
-  UNSET(PackageA_SKIP_CTEST_ADD_TEST)
+  unset(PackageA_SKIP_CTEST_ADD_TEST)
 
   # Test ParentPackage_SKIP_CTEST_ADD_TEST
 
-  SET(PARENT_PACKAGE_NAME ParentPackage)
-  SET(ParentPackage_SKIP_CTEST_ADD_TEST ON)
+  set(PARENT_PACKAGE_NAME ParentPackage)
+  set(ParentPackage_SKIP_CTEST_ADD_TEST ON)
 
-  MESSAGE("Check that ParentPackage_SKIP_CTEST_ADD_TEST=ON disables TRIBITS_ADD_TEST(...)")
-  TRIBITS_ADD_TEST(${EXEN})
-  UNITTEST_COMPARE_CONST(
+  message("Check that ParentPackage_SKIP_CTEST_ADD_TEST=ON disables tribits_add_test(...)")
+  tribits_add_test(${EXEN})
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because ParentPackage_SKIP_CTEST_ADD_TEST='ON'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Check that ParentPackage_SKIP_CTEST_ADD_TEST=ON disables TRIBITS_ADD_ADVANCED_TEST(...)")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( SomeCmnd
+  message("Check that ParentPackage_SKIP_CTEST_ADD_TEST=ON disables tribits_add_advanced_test(...)")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( SomeCmnd
     TEST_0 CMND someCmnd
     ADDED_TEST_NAME_OUT  SomeCmnd_TEST_NAME
     )
-  SET(PackageA_SomeCmnd_DISABLE OFF)
-  UNITTEST_COMPARE_CONST(
+  set(PackageA_SomeCmnd_DISABLE OFF)
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_SomeCmnd: NOT added test because ParentPackage_SKIP_CTEST_ADD_TEST='ON'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
-  UNITTEST_COMPARE_CONST(SomeCmnd_TEST_NAME "")
+  unittest_compare_const(SomeCmnd_TEST_NAME "")
 
-  SET(PARENT_PACKAGE_NAME ${PACKAGE_NAME})
-  UNSET(ParentPackage_SKIP_CTEST_ADD_TEST)
+  set(PARENT_PACKAGE_NAME ${PACKAGE_NAME})
+  unset(ParentPackage_SKIP_CTEST_ADD_TEST)
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_TEST_CATEGORIES)
+function(unittest_tribits_add_test_categories)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_ADD_TEST( ... CATEGORIES ... )")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_add_test( ... CATEGORIES ... )")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
-  SET(${PROJECT_NAME}_TEST_CATEGORIES "")
+  set(${PROJECT_NAME}_TEST_CATEGORIES "")
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN})
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN})
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  MESSAGE("Test no category matching NIGHTLY category set by client")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
-  TRIBITS_ADD_TEST( ${EXEN} )
-  UNITTEST_COMPARE_CONST(
+  message("Test no category matching NIGHTLY category set by client")
+  set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+  tribits_add_test( ${EXEN} )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Test no category matching BASIC category set by client")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
-  TRIBITS_ADD_TEST( ${EXEN} )
-  UNITTEST_COMPARE_CONST(
+  message("Test no category matching BASIC category set by client")
+  set(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
+  tribits_add_test( ${EXEN} )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Test NIGHTLY category matching NIGHTLY category set by client")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
-  TRIBITS_ADD_TEST( ${EXEN} CATEGORIES NIGHTLY )
-  UNITTEST_COMPARE_CONST(
+  message("Test NIGHTLY category matching NIGHTLY category set by client")
+  set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+  tribits_add_test( ${EXEN} CATEGORIES NIGHTLY )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (NIGHTLY, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Test HEAVY category matching HEAVY category set by client")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
-  TRIBITS_ADD_TEST( ${EXEN} CATEGORIES HEAVY )
-  UNITTEST_COMPARE_CONST(
+  message("Test HEAVY category matching HEAVY category set by client")
+  set(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
+  tribits_add_test( ${EXEN} CATEGORIES HEAVY )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (HEAVY, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Test WEEKLY category matching HEAVY category set by client")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
-  TRIBITS_ADD_TEST( ${EXEN} CATEGORIES WEEKLY )
-  UNITTEST_COMPARE_CONST(
+  message("Test WEEKLY category matching HEAVY category set by client")
+  set(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
+  tribits_add_test( ${EXEN} CATEGORIES WEEKLY )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "WARNING;Warning: The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.;-- PackageA_SomeExec: Added test (HEAVY, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Test NIGHTLY category *not* matching BASIC category set by client")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
-  TRIBITS_ADD_TEST( ${EXEN} CATEGORIES NIGHTLY )
-  UNITTEST_COMPARE_CONST(
+  message("Test NIGHTLY category *not* matching BASIC category set by client")
+  set(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
+  tribits_add_test( ${EXEN} CATEGORIES NIGHTLY )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='${${PROJECT_NAME}_TEST_CATEGORIES}' does not match this test's CATEGORIES='NIGHTLY'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Test BASIC category matching BASIC category set by client")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
-  TRIBITS_ADD_TEST( ${EXEN} CATEGORIES BASIC )
-  UNITTEST_COMPARE_CONST(
+  message("Test BASIC category matching BASIC category set by client")
+  set(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
+  tribits_add_test( ${EXEN} CATEGORIES BASIC )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Test no category *not* matching PERFORMANCE category set by client")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
-  TRIBITS_ADD_TEST( ${EXEN} )
-  UNITTEST_COMPARE_CONST(
+  message("Test no category *not* matching PERFORMANCE category set by client")
+  set(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
+  tribits_add_test( ${EXEN} )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='${${PROJECT_NAME}_TEST_CATEGORIES}' does not match this test's CATEGORIES='BASIC'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Test PERFORMANCE category matching PERFORMANCE category set by client")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
-  TRIBITS_ADD_TEST( ${EXEN} CATEGORIES PERFORMANCE )
-  UNITTEST_COMPARE_CONST(
+  message("Test PERFORMANCE category matching PERFORMANCE category set by client")
+  set(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
+  tribits_add_test( ${EXEN} CATEGORIES PERFORMANCE )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (PERFORMANCE, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Test NIGHTLY, PERFORMANCE category matching PERFORMANCE category set by client")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
-  TRIBITS_ADD_TEST( ${EXEN} CATEGORIES NIGHTLY PERFORMANCE )
-  UNITTEST_COMPARE_CONST(
+  message("Test NIGHTLY, PERFORMANCE category matching PERFORMANCE category set by client")
+  set(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
+  tribits_add_test( ${EXEN} CATEGORIES NIGHTLY PERFORMANCE )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (NIGHTLY, PERFORMANCE, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Test invalid BADCAT category not matching anything and resulting in error")
-  SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  GLOBAL_SET(MESSAGE_WRAPPER_INPUT "")
-  TRIBITS_ADD_TEST( ${EXEN} CATEGORIES BADCAT )
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("Test invalid BADCAT category not matching anything and resulting in error")
+  set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  tribits_add_test( ${EXEN} CATEGORIES BADCAT )
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "SEND_ERROR;Error: The categories 'BADCAT' are not; in the list of valid categories '${${PROJECT_NAME}_VALID_CATEGORIES_STR}'!;-- PackageA_SomeExec: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='NIGHTLY' does not match this test's CATEGORIES='BADCAT'!")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_TEST_COMM)
+function(unittest_tribits_add_test_comm)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_ADD_TEST( ... COMM ... )")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_add_test( ... COMM ... )")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_TEST(...)
-  SET(PACKAGE_NAME PackageB)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_test(...)
+  set(PACKAGE_NAME PackageB)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   #
   # A) Doing default serial mode
   #
 
   # In serial mode, these vars are not even set!
-  UNSET(MPI_EXEC_MAX_NUMPROCS)
-  UNSET(MPI_EXEC_DEFAULT_NUMPROCS)
+  unset(MPI_EXEC_MAX_NUMPROCS)
+  unset(MPI_EXEC_DEFAULT_NUMPROCS)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN})
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN})
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
 
-  MESSAGE("Add a test for serial with no COMM input")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} )
-  UNITTEST_COMPARE_CONST(
+  message("Add a test for serial with no COMM input")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Try to add a serial test but with MPI_EXEC_DEFAULT_NUMPROCS=3 > 1")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  SET(MPI_EXEC_DEFAULT_NUMPROCS 3)
-  TRIBITS_ADD_TEST( ${EXEN} )
-  UNSET(MPI_EXEC_DEFAULT_NUMPROCS)
-  UNITTEST_COMPARE_CONST(
+  message("Try to add a serial test but with MPI_EXEC_DEFAULT_NUMPROCS=3 > 1")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  set(MPI_EXEC_DEFAULT_NUMPROCS 3)
+  tribits_add_test( ${EXEN} )
+  unset(MPI_EXEC_DEFAULT_NUMPROCS)
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Do not add serial with COMM mpi")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} COMM mpi )
-  UNITTEST_COMPARE_CONST(
+  message("Do not add serial with COMM mpi")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} COMM mpi )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because TPL_ENABLE_MPI='' and COMM='mpi'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Add a serial test with NUM_MPI_PROCS=2 > 1")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} COMM serial mpi NUM_MPI_PROCS 2 )
-  UNITTEST_COMPARE_CONST(
+  message("Add a serial test with NUM_MPI_PROCS=2 > 1")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} COMM serial mpi NUM_MPI_PROCS 2 )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because NUM_MPI_PROCS='2' > MPI_EXEC_MAX_NUMPROCS='1'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
   # Add serial tests where MPI_EXEC_MAX_NUMPROCS  > 1 is sets by the user!
-  SET(MPI_EXEC_MAX_NUMPROCS 5)
+  set(MPI_EXEC_MAX_NUMPROCS 5)
 
-  MESSAGE("Add a serial test with NUM_MPI_PROCS=2 > 1 and MPI_EXEC_MAX_NUMPROCS=5 set by user!")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} COMM serial mpi NUM_MPI_PROCS 2 )
-  UNITTEST_COMPARE_CONST(
+  message("Add a serial test with NUM_MPI_PROCS=2 > 1 and MPI_EXEC_MAX_NUMPROCS=5 set by user!")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} COMM serial mpi NUM_MPI_PROCS 2 )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because NUM_MPI_PROCS='2' > MPI_EXEC_MAX_NUMPROCS='1'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Add a serial test with NUM_TOTAL_CORES_USED > MPI_EXEC_MAX_NUMPROCS")
-   GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NUM_TOTAL_CORES_USED 6 )
-   UNITTEST_COMPARE_CONST(
+  message("Add a serial test with NUM_TOTAL_CORES_USED > MPI_EXEC_MAX_NUMPROCS")
+   global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NUM_TOTAL_CORES_USED 6 )
+   unittest_compare_const(
      MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because NUM_TOTAL_CORES_USED='6' > MPI_EXEC_MAX_NUMPROCS='5'!"
      )
-   UNITTEST_COMPARE_CONST(
+   unittest_compare_const(
      TRIBITS_ADD_TEST_ADD_TEST_INPUT
      ""
      )
@@ -1788,298 +1788,298 @@ FUNCTION(UNITTEST_TRIBITS_ADD_TEST_COMM)
   # B) Doing MPI mode
   #
 
-  SET(TPL_ENABLE_MPI ON)
-  SET(MPI_EXEC_MAX_NUMPROCS 5)
-  SET(MPI_EXEC_DEFAULT_NUMPROCS 3)
-  SET(MPI_EXEC mpiexec)
-  SET(MPI_EXEC_PRE_NUMPROCS_FLAGS "--pre-num-procs-flags1;--pre-num-procs-flags2")
-  SET(MPI_EXEC_NUMPROCS_FLAG --num-procs)
-  SET(MPI_EXEC_POST_NUMPROCS_FLAGS "--post-num-procs-flags1;--post-num-procs-flags2")
+  set(TPL_ENABLE_MPI ON)
+  set(MPI_EXEC_MAX_NUMPROCS 5)
+  set(MPI_EXEC_DEFAULT_NUMPROCS 3)
+  set(MPI_EXEC mpiexec)
+  set(MPI_EXEC_PRE_NUMPROCS_FLAGS "--pre-num-procs-flags1;--pre-num-procs-flags2")
+  set(MPI_EXEC_NUMPROCS_FLAG --num-procs)
+  set(MPI_EXEC_POST_NUMPROCS_FLAGS "--post-num-procs-flags1;--post-num-procs-flags2")
 
-  MESSAGE("Add a test for MPI with no COMM input")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} )
-  UNITTEST_COMPARE_CONST(
+  message("Add a test for MPI with no COMM input")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}_MPI_${MPI_EXEC_DEFAULT_NUMPROCS}: Added test (BASIC, NUM_MPI_PROCS=3, PROCESSORS=3)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_${MPI_EXEC_DEFAULT_NUMPROCS};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};${MPI_EXEC_DEFAULT_NUMPROCS};${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Add a test for MPI with no COMM input but with some args")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" )
-  UNITTEST_COMPARE_CONST(
+  message("Add a test for MPI with no COMM input but with some args")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}_MPI_${MPI_EXEC_DEFAULT_NUMPROCS}: Added test (BASIC, NUM_MPI_PROCS=3, PROCESSORS=3)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_${MPI_EXEC_DEFAULT_NUMPROCS};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};${MPI_EXEC_DEFAULT_NUMPROCS};${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg1;arg2"
     )
 
-  MESSAGE("Add a serial-only in an MPI-only build (adds no test)")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} COMM serial )
-  UNITTEST_COMPARE_CONST(
+  message("Add a serial-only in an MPI-only build (adds no test)")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} COMM serial )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because TPL_ENABLE_MPI='ON' and COMM='serial'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Add a test for MPI with 'COMM mpi'")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" COMM mpi )
-  UNITTEST_COMPARE_CONST(
+  message("Add a test for MPI with 'COMM mpi'")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" COMM mpi )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}_MPI_${MPI_EXEC_DEFAULT_NUMPROCS}: Added test (BASIC, NUM_MPI_PROCS=3, PROCESSORS=3)!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_${MPI_EXEC_DEFAULT_NUMPROCS};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};${MPI_EXEC_DEFAULT_NUMPROCS};${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg1;arg2"
     )
 
-  MESSAGE("Add an MPI test with 2 procs")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 2 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test with 2 procs")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 2 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_2;COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};2;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg1;arg2"
     )
 
-  MESSAGE("Add an MPI test with 4 procs (greater than default, less than max)")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 4 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test with 4 procs (greater than default, less than max)")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 4 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_4;COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};4;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg1;arg2"
     )
 
-  MESSAGE("Add an MPI test with the exact number of max processes")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 5 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test with the exact number of max processes")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 5 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_5;COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};5;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg1;arg2"
     )
 
-  MESSAGE("Add an MPI test with one more than the number of allowed processors (will not be added)")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 6 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test with one more than the number of allowed processors (will not be added)")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 6 )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because NUM_MPI_PROCS='6' > MPI_EXEC_MAX_NUMPROCS='5'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Add an MPI test with NUM_PROCS 1-10 (will be max num procs)")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 1-10 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test with NUM_PROCS 1-10 (will be max num procs)")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 1-10 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_${MPI_EXEC_MAX_NUMPROCS};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};${MPI_EXEC_MAX_NUMPROCS};${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg1;arg2"
     )
 
-  MESSAGE("Add an MPI test with NUM_PROCS 3-10 (will be max num procs)")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 3-10 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test with NUM_PROCS 3-10 (will be max num procs)")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS 3-10 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_${MPI_EXEC_MAX_NUMPROCS};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};${MPI_EXEC_MAX_NUMPROCS};${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg1;arg2"
     )
 
-  MESSAGE("Add an MPI test with NUM_PROCS ${MPI_EXEC_MAX_NUMPROCS}-10 (will be max num procs)")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS ${MPI_EXEC_MAX_NUMPROCS}-10 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test with NUM_PROCS ${MPI_EXEC_MAX_NUMPROCS}-10 (will be max num procs)")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" COMM mpi NUM_MPI_PROCS ${MPI_EXEC_MAX_NUMPROCS}-10 )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_${MPI_EXEC_MAX_NUMPROCS};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};${MPI_EXEC_MAX_NUMPROCS};${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg1;arg2"
     )
 
-  MESSAGE("Add an MPI test where the default num processes is same as of max num processes")
-  SET(MPI_EXEC_DEFAULT_NUMPROCS 5)
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" COMM mpi)
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test where the default num processes is same as of max num processes")
+  set(MPI_EXEC_DEFAULT_NUMPROCS 5)
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" COMM mpi)
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_5;COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};5;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg1;arg2"
     )
 
-  MESSAGE("Add an MPI test where the default num processes is one more than of max num processes (will not added test)")
-  SET(MPI_EXEC_DEFAULT_NUMPROCS 6)
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} ARGS "arg1 arg2" COMM mpi)
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test where the default num processes is one more than of max num processes (will not added test)")
+  set(MPI_EXEC_DEFAULT_NUMPROCS 6)
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ARGS "arg1 arg2" COMM mpi)
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because MPI_EXEC_DEFAULT_NUMPROCS='6' > MPI_EXEC_MAX_NUMPROCS='5'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Add an MPI test with NUM_TOTAL_CORES_USED < MPI_EXEC_MAX_NUMPROCS")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NUM_MPI_PROCS 1 NUM_TOTAL_CORES_USED 4 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test with NUM_TOTAL_CORES_USED < MPI_EXEC_MAX_NUMPROCS")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NUM_MPI_PROCS 1 NUM_TOTAL_CORES_USED 4 )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}_MPI_1: Added test (BASIC, NUM_MPI_PROCS=1, PROCESSORS=4)!"
     )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKEXEN}_MPI_1;PROPERTIES;PROCESSORS;4")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_1;COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};1;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Add an MPI test with NUM_TOTAL_CORES_USED == MPI_EXEC_MAX_NUMPROCS")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NUM_MPI_PROCS 1 NUM_TOTAL_CORES_USED 5 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test with NUM_TOTAL_CORES_USED == MPI_EXEC_MAX_NUMPROCS")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NUM_MPI_PROCS 1 NUM_TOTAL_CORES_USED 5 )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}_MPI_1: Added test (BASIC, NUM_MPI_PROCS=1, PROCESSORS=5)!"
     )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKEXEN}_MPI_1;PROPERTIES;PROCESSORS;5")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_1;COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};1;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Add an MPI test with NUM_TOTAL_CORES_USED > MPI_EXEC_MAX_NUMPROCS")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NUM_MPI_PROCS 1 NUM_TOTAL_CORES_USED 6 )
-  UNITTEST_COMPARE_CONST(
+  message("Add an MPI test with NUM_TOTAL_CORES_USED > MPI_EXEC_MAX_NUMPROCS")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NUM_MPI_PROCS 1 NUM_TOTAL_CORES_USED 6 )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}_MPI_1: NOT added test because NUM_TOTAL_CORES_USED='6' > MPI_EXEC_MAX_NUMPROCS='5'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  MESSAGE("Add a test with NUM_MPI_PROCS > NUM_TOTAL_CORES_USED")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NUM_MPI_PROCS 3 NUM_TOTAL_CORES_USED 2 )
-  UNITTEST_COMPARE_CONST(
+  message("Add a test with NUM_MPI_PROCS > NUM_TOTAL_CORES_USED")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NUM_MPI_PROCS 3 NUM_TOTAL_CORES_USED 2 )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: ${PACKEXEN}_MPI_3: NUM_MPI_PROCS='3' > NUM_TOTAL_CORES_USED='2' not allowed!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
 
-  SET(MPI_EXEC_DEFAULT_NUMPROCS 3)
+  set(MPI_EXEC_DEFAULT_NUMPROCS 3)
 
   #
   # Doing serial mode
   #
 
-  SET(TPL_ENABLE_MPI OFF)
+  set(TPL_ENABLE_MPI OFF)
 
-  MESSAGE("Add a test for serial mode with 'COMM serial'")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} COMM serial ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Add a test for serial mode with 'COMM serial'")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} COMM serial ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
-  MESSAGE("Add a test for serial mode with 'COMM mpi (adds no test)")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} COMM mpi ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  message("Add a test for serial mode with 'COMM mpi (adds no test)")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} COMM mpi ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: NOT added test because TPL_ENABLE_MPI='OFF' and COMM='mpi'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     ""
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES  "" )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "" )
 
-  MESSAGE("Add a test with MPI and NAME_POSTFIX")
-  SET(TPL_ENABLE_MPI ON)
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NAME_POSTFIX mypostfix1
+  message("Add a test with MPI and NAME_POSTFIX")
+  set(TPL_ENABLE_MPI ON)
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NAME_POSTFIX mypostfix1
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_mypostfix1_MPI_${MPI_EXEC_DEFAULT_NUMPROCS};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};${MPI_EXEC_DEFAULT_NUMPROCS};${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "${PACKEXEN}_mypostfix1_MPI_${MPI_EXEC_DEFAULT_NUMPROCS}" )
 
-  MESSAGE("Add a test with MPI and NAME")
-  SET(TPL_ENABLE_MPI ON)
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NAME ${EXEN}_mypostfix2
+  message("Add a test with MPI and NAME")
+  set(TPL_ENABLE_MPI ON)
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NAME ${EXEN}_mypostfix2
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_mypostfix2_MPI_${MPI_EXEC_DEFAULT_NUMPROCS};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};${MPI_EXEC_DEFAULT_NUMPROCS};${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "${PACKEXEN}_mypostfix2_MPI_${MPI_EXEC_DEFAULT_NUMPROCS}" )
 
-  MESSAGE("Add a test with MPI, two arguments, and NAME_POSTFIX")
-  SET(TPL_ENABLE_MPI ON)
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NAME_POSTFIX mypostfix3 ARGS "arg1" "arg2"
+  message("Add a test with MPI, two arguments, and NAME_POSTFIX")
+  set(TPL_ENABLE_MPI ON)
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NAME_POSTFIX mypostfix3 ARGS "arg1" "arg2"
     ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_mypostfix3_0_MPI_${MPI_EXEC_DEFAULT_NUMPROCS};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};${MPI_EXEC_DEFAULT_NUMPROCS};${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg1;NAME;${PACKEXEN}_mypostfix3_1_MPI_${MPI_EXEC_DEFAULT_NUMPROCS};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};${MPI_EXEC_DEFAULT_NUMPROCS};${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg2"
     )
-  UNITTEST_COMPARE_CONST( ${EXEN}_TEST_NAMES
+  unittest_compare_const( ${EXEN}_TEST_NAMES
     "${PACKEXEN}_mypostfix3_0_MPI_${MPI_EXEC_DEFAULT_NUMPROCS};${PACKEXEN}_mypostfix3_1_MPI_${MPI_EXEC_DEFAULT_NUMPROCS}" )
 
   #
   # RUN_SERIAL
   #
 
-  MESSAGE("<fullTestName>_SET_RUN_SERIAL=ON with MPI enabled")
-  SET(${PACKEXEN}_MPI_1_SET_RUN_SERIAL ON)
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NUM_MPI_PROCS 1)
-  UNITTEST_COMPARE_CONST(
+  message("<fullTestName>_SET_RUN_SERIAL=ON with MPI enabled")
+  set(${PACKEXEN}_MPI_1_SET_RUN_SERIAL ON)
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NUM_MPI_PROCS 1)
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}_MPI_1: Added test (BASIC, NUM_MPI_PROCS=1, PROCESSORS=1, RUN_SERIAL)!"
     )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKEXEN}_MPI_1;PROPERTIES;PROCESSORS;1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "RUN_SERIAL;ON")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_1;COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};1;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("<fullTestName>_SET_RUN_SERIAL=ON with NAME_POSTFIX, POSTFIX_AND_ARGS_<IDX> and MPI enabled")
-  SET(THIS_TEST_NAME ${PACKEXEN}_mypostfix3_argpostfix0_MPI_1)
-  SET(${THIS_TEST_NAME}_SET_RUN_SERIAL ON)
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NUM_MPI_PROCS 1
+  message("<fullTestName>_SET_RUN_SERIAL=ON with NAME_POSTFIX, POSTFIX_AND_ARGS_<IDX> and MPI enabled")
+  set(THIS_TEST_NAME ${PACKEXEN}_mypostfix3_argpostfix0_MPI_1)
+  set(${THIS_TEST_NAME}_SET_RUN_SERIAL ON)
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NUM_MPI_PROCS 1
      NAME_POSTFIX mypostfix3 POSTFIX_AND_ARGS_0 argpostfix0 arg0)
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${THIS_TEST_NAME}: Added test (BASIC, NUM_MPI_PROCS=1, PROCESSORS=1, RUN_SERIAL)!"
     )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${THIS_TEST_NAME};PROPERTIES;PROCESSORS;1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "RUN_SERIAL;ON")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${THIS_TEST_NAME};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};1;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg0"
     )
@@ -2088,192 +2088,192 @@ FUNCTION(UNITTEST_TRIBITS_ADD_TEST_COMM)
   # DISABLED, DISABLED_AND_MSG
   #
 
-  MESSAGE("<fullTestName>_SET_DISABLED_AND_MSG with MPI enabled")
-  SET(THIS_TEST_NAME ${PACKEXEN}_MPI_1)
-  SET(${THIS_TEST_NAME}_SET_RUN_SERIAL "")  # Turn off for DISABLED tests
-  SET(${THIS_TEST_NAME}_SET_DISABLED_AND_MSG "Disabled because of DAM and MPI")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NUM_MPI_PROCS 1)
-  UNITTEST_COMPARE_CONST(
+  message("<fullTestName>_SET_DISABLED_AND_MSG with MPI enabled")
+  set(THIS_TEST_NAME ${PACKEXEN}_MPI_1)
+  set(${THIS_TEST_NAME}_SET_RUN_SERIAL "")  # Turn off for DISABLED tests
+  set(${THIS_TEST_NAME}_SET_DISABLED_AND_MSG "Disabled because of DAM and MPI")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NUM_MPI_PROCS 1)
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${THIS_TEST_NAME}: Added test (BASIC, NUM_MPI_PROCS=1, PROCESSORS=1, DISABLED)!;--  => Reason DISABLED: Disabled because of DAM and MPI"
     )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${THIS_TEST_NAME};PROPERTIES;PROCESSORS;1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${THIS_TEST_NAME};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};1;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("<fullTestName>_SET_DISABLED_AND_MSG with NAME_POSTFIX, POSTFIX_AND_ARGS_<IDX> and MPI enabled")
-  SET(THIS_TEST_NAME ${PACKEXEN}_mypostfix4_argpostfix0_MPI_1)
-  SET(${THIS_TEST_NAME}_SET_DISABLED_AND_MSG "Disabled because of DAM, NP, PAA, and MPI")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NUM_MPI_PROCS 1
+  message("<fullTestName>_SET_DISABLED_AND_MSG with NAME_POSTFIX, POSTFIX_AND_ARGS_<IDX> and MPI enabled")
+  set(THIS_TEST_NAME ${PACKEXEN}_mypostfix4_argpostfix0_MPI_1)
+  set(${THIS_TEST_NAME}_SET_DISABLED_AND_MSG "Disabled because of DAM, NP, PAA, and MPI")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NUM_MPI_PROCS 1
      NAME_POSTFIX mypostfix4 POSTFIX_AND_ARGS_0 argpostfix0 arg0)
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${THIS_TEST_NAME}: Added test (BASIC, NUM_MPI_PROCS=1, PROCESSORS=1, DISABLED)!;--  => Reason DISABLED: Disabled because of DAM, NP, PAA, and MPI"
     )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${THIS_TEST_NAME};PROPERTIES;PROCESSORS;1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${THIS_TEST_NAME};COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};1;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe;arg0"
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_TEST_PROPERTIES)
+function(unittest_tribits_add_test_properties)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the setting of test properties with TRIBITS_ADD_TEST(...)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the setting of test properties with tribits_add_test(...)")
+  message("***\n")
 
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
 
-  # Needed by TRIBITS_ADD_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN})
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN})
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  MESSAGE("Test setting of default properties")
-  TRIBITS_ADD_TEST(${EXEN})
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("Test setting of default properties")
+  tribits_add_test(${EXEN})
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_TEST_ADD_TEST_INPUT
+  unittest_compare_const(TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
-  UNITTEST_COMPARE_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTIES;REQUIRED_FILES;${CMAKE_CURRENT_BINARY_DIR}/PackageA_SomeExec.exe;PackageA_SomeExec;PROPERTIES;PROCESSORS;1;PackageA_SomeExec;APPEND;PROPERTY;LABELS"
     )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;APPEND;PROPERTY;LABELS")
 
-  MESSAGE("Test setting integer TIMEOUT with no scaling (not even defined)")
-  TRIBITS_ADD_TEST(${EXEN} TIMEOUT 200)
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("Test setting integer TIMEOUT with no scaling (not even defined)")
+  tribits_add_test(${EXEN} TIMEOUT 200)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1, TIMEOUT=200)!" )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTIES;TIMEOUT;200")
 
-  MESSAGE("Test setting non-integer TIMEOUT with no scaling (not even defined)")
-  TRIBITS_ADD_TEST(${EXEN} TIMEOUT 200.50)
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  message("Test setting non-integer TIMEOUT with no scaling (not even defined)")
+  tribits_add_test(${EXEN} TIMEOUT 200.50)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1, TIMEOUT=200.50)!" )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTIES;TIMEOUT;200.50")
   # NOTE: No truncation in TIMEOUT in this case!
 
-  MESSAGE("Test setting integer TIMEOUT with no scaling (default 1.0)")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
-  TRIBITS_ADD_TEST(${EXEN} TIMEOUT 200)
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  message("Test setting integer TIMEOUT with no scaling (default 1.0)")
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
+  tribits_add_test(${EXEN} TIMEOUT 200)
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTIES;TIMEOUT;200")
 
-  MESSAGE("Test setting non-integer TIMEOUT with no scaling (default 1.0)")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
-  TRIBITS_ADD_TEST(${EXEN} TIMEOUT 200.50)
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  message("Test setting non-integer TIMEOUT with no scaling (default 1.0)")
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
+  tribits_add_test(${EXEN} TIMEOUT 200.50)
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTIES;TIMEOUT;200.50")
 
-  MESSAGE("Test setting integer TIMEOUT with no scaling (non-default integral 1")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1)
-  TRIBITS_ADD_TEST(${EXEN} TIMEOUT 200)
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  message("Test setting integer TIMEOUT with no scaling (non-default integral 1")
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1)
+  tribits_add_test(${EXEN} TIMEOUT 200)
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTIES;TIMEOUT;200")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
 
-  MESSAGE("Test setting non-integer TIMEOUT with no scaling (non-default integral 1)")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1)
-  TRIBITS_ADD_TEST(${EXEN} TIMEOUT 200.50)
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  message("Test setting non-integer TIMEOUT with no scaling (non-default integral 1)")
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1)
+  tribits_add_test(${EXEN} TIMEOUT 200.50)
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTIES;TIMEOUT;200")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
   # NOTE: TIMEOUT is truncated in this case!
 
-  MESSAGE("Test integral scaling 2 of non-integer TIMEOUT")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 2)
-  TRIBITS_ADD_TEST(${EXEN} TIMEOUT 300.0)
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  message("Test integral scaling 2 of non-integer TIMEOUT")
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 2)
+  tribits_add_test(${EXEN} TIMEOUT 300.0)
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTIES;TIMEOUT;600")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
 
-  MESSAGE("Test non-integral scaling 1.5 of non-integer TIMEOUT")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.5)
-  TRIBITS_ADD_TEST(${EXEN} TIMEOUT 300.0)
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  message("Test non-integral scaling 1.5 of non-integer TIMEOUT")
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.5)
+  tribits_add_test(${EXEN} TIMEOUT 300.0)
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTIES;TIMEOUT;450")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
 
-  MESSAGE("Test non-integral scaling 1.57 of non-integer TIMEOUT")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.57)
-  TRIBITS_ADD_TEST(${EXEN} TIMEOUT 300.0)
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  message("Test non-integral scaling 1.57 of non-integer TIMEOUT")
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.57)
+  tribits_add_test(${EXEN} TIMEOUT 300.0)
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTIES;TIMEOUT;450")
   # NOTE: 1.57 is truncated to 1.5 as part of the scaling algorithm
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
 
-  MESSAGE("Test setting ENVIRONMENT")
-  TRIBITS_ADD_TEST(${EXEN} ENVIRONMENT var1=val1 var2=val2 )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  message("Test setting ENVIRONMENT")
+  tribits_add_test(${EXEN} ENVIRONMENT var1=val1 var2=val2 )
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTY;ENVIRONMENT;var1=val1;var2=val2")
 
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT OFF)
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT OFF)
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_BASIC)
+function(unittest_tribits_add_advanced_test_basic)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing basic functionality of TRIBITS_ADD_ADVANCED_TEST(...)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing basic functionality of tribits_add_advanced_test(...)")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_ADVANCED_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(PARENT_PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_advanced_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(PARENT_PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
-  SET(CMNDN ls)
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
+  set(CMNDN ls)
 
-  MESSAGE("***\n*** Add a single basic command with no arguments (and check other parts)\n***")
-  SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME ON)
-  SET(${PROJECT_NAME}_SHOW_MACHINE_LOAD_IN_TEST OFF)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_cmnd_1_args_0
+  message("***\n*** Add a single basic command with no arguments (and check other parts)\n***")
+  set(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME ON)
+  set(${PROJECT_NAME}_SHOW_MACHINE_LOAD_IN_TEST OFF)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_cmnd_1_args_0
     OVERALL_NUM_TOTAL_CORES_USED 4
     TIMEOUT 333.2
     TEST_0 CMND ${CMNDN}
       WORKING_DIRECTORY "someSubdir"
     ADDED_TEST_NAME_OUT  TAAT_basic_cmnd_1_args_0_TEST_NAME
     )
-  UNITTEST_COMPARE_CONST(TAAT_basic_cmnd_1_args_0_TEST_NAME
+  unittest_compare_const(TAAT_basic_cmnd_1_args_0_TEST_NAME
     "${PACKAGE_NAME}_TAAT_basic_cmnd_1_args_0")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"${CMNDN}\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TAAT_basic_cmnd_1_args_0.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"ls\""
@@ -2288,22 +2288,22 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_BASIC)
       "SET[(] TEST_0_SKIP_CLEAN_WORKING_DIRECTORY FALSE [)]"
     )
 
-  MESSAGE("***\n*** Add a single package executable with no arguments (and check other stuff)\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME OFF) # Above test was ON
-  SET(${PROJECT_NAME}_SHOW_MACHINE_LOAD_IN_TEST ON) # Above test was OFF
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_exec_1_args_0
+  message("***\n*** Add a single package executable with no arguments (and check other stuff)\n***")
+  tribits_add_advanced_test_unittest_reset()
+  set(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME OFF) # Above test was ON
+  set(${PROJECT_NAME}_SHOW_MACHINE_LOAD_IN_TEST ON) # Above test was OFF
+  tribits_add_advanced_test( TAAT_basic_exec_1_args_0
     TEST_0 EXEC ${EXEN}
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TAAT_basic_exec_1_args_0.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
@@ -2312,23 +2312,23 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_BASIC)
       "SET[(]SHOW_MACHINE_LOAD ON[)]"
     )
 
-  MESSAGE("***\n*** Use a test name with '/' in the name\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME OFF) # Above test was ON
-  SET(${PROJECT_NAME}_SHOW_MACHINE_LOAD_IN_TEST ON) # Above test was OFF
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic/exec/1_args_0
+  message("***\n*** Use a test name with '/' in the name\n***")
+  tribits_add_advanced_test_unittest_reset()
+  set(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME OFF) # Above test was ON
+  set(${PROJECT_NAME}_SHOW_MACHINE_LOAD_IN_TEST ON) # Above test was OFF
+  tribits_add_advanced_test( TAAT_basic/exec/1_args_0
     OVERALL_WORKING_DIRECTORY TEST_NAME
     TEST_0 EXEC ${EXEN}
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TAAT_basic__exec__1_args_0.cmake"
     REGEX_STRINGS
       "OVERALL_WORKING_DIRECTORY \"${PACKAGE_NAME}_TAAT_basic__exec__1_args_0\""
@@ -2338,25 +2338,25 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_BASIC)
       "SET[(]SHOW_MACHINE_LOAD ON[)]"
     )
 
-  MESSAGE("***\n*** Add a single basic command with two arguments\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  SET(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME OFF)
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_cmnd_1_args_2
+  message("***\n*** Add a single basic command with two arguments\n***")
+  tribits_add_advanced_test_unittest_reset()
+  set(${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME OFF)
+  tribits_add_advanced_test( TAAT_basic_cmnd_1_args_2
     OVERALL_WORKING_DIRECTORY  TEST_NAME
     SKIP_CLEAN_OVERALL_WORKING_DIRECTORY
     TEST_0 CMND ${CMNDN} ARGS CMakeLists.txt CMakeFiles
       WORKING_DIRECTORY "someSubdir"
       SKIP_CLEAN_WORKING_DIRECTORY
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"${CMNDN}\" \"CMakeLists.txt\" \"CMakeFiles\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TAAT_basic_cmnd_1_args_2.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"ls\" \"CMakeLists.txt\" \"CMakeFiles\""
@@ -2371,45 +2371,45 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_BASIC)
       "DRIVE_ADVANCED_TEST"
     )
 
-  MESSAGE("***\n*** Add a single package executable with three arguments\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_exec_1_args_3
+  message("***\n*** Add a single package executable with three arguments\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_exec_1_args_3
     TEST_0 EXEC ${EXEN} ARGS arg1 arg2 arg3
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\" \"arg1\" \"arg2\" \"arg3\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TAAT_basic_exec_1_args_3.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\" \"arg1\" \"arg2\" \"arg3\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("***\n*** Add two basic commands with 1 and two arguments\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_cmnd_2_args_1_2
+  message("***\n*** Add two basic commands with 1 and two arguments\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_cmnd_2_args_1_2
     TEST_0 CMND echo ARGS "Cats and Dogs"
     TEST_1 CMND ls ARGS Cats
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     2
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"echo\" \"Cats and Dogs\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_1
     "\"ls\" \"Cats\""
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TAAT_basic_cmnd_2_args_1_2.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"echo\" \"Cats and Dogs\""
@@ -2417,145 +2417,145 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_BASIC)
       "NUM_CMNDS 2"
     )
 
-  MESSAGE("***\n*** Add a single basic command matching HOST\n***")
-  SET(${PROJECT_NAME}_HOSTNAME MyHost)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_host
+  message("***\n*** Add a single basic command matching HOST\n***")
+  set(${PROJECT_NAME}_HOSTNAME MyHost)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_host
     TEST_0 CMND ${CMNDN}
     HOST MyHost
     ADDED_TEST_NAME_OUT  TAAT_basic_host_TEST_NAME
     )
-  UNITTEST_COMPARE_CONST(TAAT_basic_host_TEST_NAME
+  unittest_compare_const(TAAT_basic_host_TEST_NAME
     "${PACKAGE_NAME}_TAAT_basic_host")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"${CMNDN}\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TAAT_basic_host.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"ls\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("***\n*** Add a single basic command not matching HOST\n***")
-  SET(${PROJECT_NAME}_HOSTNAME MyHost)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_host
+  message("***\n*** Add a single basic command not matching HOST\n***")
+  set(${PROJECT_NAME}_HOSTNAME MyHost)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_host
     TEST_0 CMND ${CMNDN}
     HOST NotMyHost
     ADDED_TEST_NAME_OUT  TAAT_basic_host_TEST_NAME
     )
-  UNITTEST_COMPARE_CONST(TAAT_basic_host_TEST_NAME "")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(TAAT_basic_host_TEST_NAME "")
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
   # ToDo: Add 6 more tests testing XHOST, HOSTTYPE, and XHOSTTYPE
 
-  MESSAGE("***\n*** Tests not enabled\n***")
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS OFF)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_tests_disabled
+  message("***\n*** Tests not enabled\n***")
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(${PACKAGE_NAME}_ENABLE_TESTS OFF)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_tests_disabled
     TEST_0 CMND ${CMNDN}
     ADDED_TEST_NAME_OUT  TAAT_tests_disabled_TEST_NAME
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- PackageA_TAAT_tests_disabled: NOT added test because PackageA_ENABLE_TESTS='OFF'."
     )
-  UNITTEST_COMPARE_CONST(TAAT_tests_disabled_TEST_NAME "")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(TAAT_tests_disabled_TEST_NAME "")
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_CATEGORIES)
+function(unittest_tribits_add_advanced_test_categories)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_ADD_ADVANCED_TEST( ... CATEGORIES ... )")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_add_advanced_test( ... CATEGORIES ... )")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
-  SET(${PROJECT_NAME}_TEST_CATEGORIES "")
+  set(${PROJECT_NAME}_TEST_CATEGORIES "")
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  MESSAGE("\n*** Test empty CATEGORIES matching the BASIC category\n")
+  message("\n*** Test empty CATEGORIES matching the BASIC category\n")
 
-  MESSAGE("Test empty CATEGORIES matching CONTINUOUS category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Empty_Nightly)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} )
-  UNITTEST_FILE_REGEX(
+  message("Test empty CATEGORIES matching CONTINUOUS category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Empty_Nightly)
+  set(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test empty CATEGORIES matching NIGHTLY category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Empty_Nightly)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} )
-  UNITTEST_COMPARE_CONST(
+  message("Test empty CATEGORIES matching NIGHTLY category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Empty_Nightly)
+  set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test empty CATEGORIES matching HEAVY category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Empty_Heavy)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} )
-  UNITTEST_FILE_REGEX(
+  message("Test empty CATEGORIES matching HEAVY category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Empty_Heavy)
+  set(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test WEEKLY category becomes HEAVY")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Empty_Weekly)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES WEEKLY )
-  UNITTEST_FILE_REGEX(
+  message("Test WEEKLY category becomes HEAVY")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Empty_Weekly)
+  set(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES WEEKLY )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
@@ -2563,461 +2563,461 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_CATEGORIES)
       "SET.CATEGORIES HEAVY."
     )
 
-  MESSAGE("Test empty CATEGORIES *not* matching PERFORMANCE category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Empty_Performance)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} )
-  UNITTEST_COMPARE_CONST(
+  message("Test empty CATEGORIES *not* matching PERFORMANCE category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Empty_Performance)
+  set(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='${${PROJECT_NAME}_TEST_CATEGORIES}' does not match this test's CATEGORIES='BASIC'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("\n*** Test CATEGORIES BASIC\n")
+  message("\n*** Test CATEGORIES BASIC\n")
 
-  MESSAGE("Test CATEGORIES BASIC matching BASIC category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_BASIC_BASIC)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES BASIC )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES BASIC matching BASIC category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_BASIC_BASIC)
+  set(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES BASIC )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test CATEGORIES BASIC matching CONTINUOUS category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_BASIC_CONTINUOUS)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES BASIC )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES BASIC matching CONTINUOUS category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_BASIC_CONTINUOUS)
+  set(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES BASIC )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test CATEGORIES BASIC matching NIGHTLY category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_BASIC_NIGHTLY)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES BASIC )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES BASIC matching NIGHTLY category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_BASIC_NIGHTLY)
+  set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES BASIC )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: Added test (BASIC, PROCESSORS=1)!"
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test CATEGORIES BASIC matching HEAVY category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_BASIC_HEAVY)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES BASIC )
-  UNITTEST_FILE_REGEX(
+  message("Test CATEGORIES BASIC matching HEAVY category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_BASIC_HEAVY)
+  set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES BASIC )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("\n*** Test CATEGORIES CONTINUOUS\n")
+  message("\n*** Test CATEGORIES CONTINUOUS\n")
 
-  MESSAGE("Test CATEGORIES CONTINUOUS *not* matching BASIC category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_CONTINUOUS_BASIC)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES CONTINUOUS )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES CONTINUOUS *not* matching BASIC category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_CONTINUOUS_BASIC)
+  set(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES CONTINUOUS )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='BASIC' does not match this test's CATEGORIES='CONTINUOUS'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("Test CATEGORIES CONTINUOUS matching CONTINUOUS category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_CONTINUOUS_CONTINUOUS)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES CONTINUOUS )
-  UNITTEST_FILE_REGEX(
+  message("Test CATEGORIES CONTINUOUS matching CONTINUOUS category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_CONTINUOUS_CONTINUOUS)
+  set(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES CONTINUOUS )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test CATEGORIES CONTINUOUS matching NIGHTLY category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_CONTINUOUS_NIGHTLY)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES CONTINUOUS )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES CONTINUOUS matching NIGHTLY category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_CONTINUOUS_NIGHTLY)
+  set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES CONTINUOUS )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: Added test (CONTINUOUS, PROCESSORS=1)!"
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("\n*** Test CATEGORIES NIGHTLY\n")
+  message("\n*** Test CATEGORIES NIGHTLY\n")
 
-  MESSAGE("Test CATEGORIES NIGHTLY *not* matching BASIC category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_NIGHTLY_BASIC)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES NIGHTLY )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES NIGHTLY *not* matching BASIC category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_NIGHTLY_BASIC)
+  set(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES NIGHTLY )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='BASIC' does not match this test's CATEGORIES='NIGHTLY'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("Test CATEGORIES NIGHTLY *not* matching CONTINUOUS category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_NIGHTLY_CONTINUOUS)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES NIGHTLY )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES NIGHTLY *not* matching CONTINUOUS category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_NIGHTLY_CONTINUOUS)
+  set(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES NIGHTLY )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='CONTINUOUS' does not match this test's CATEGORIES='NIGHTLY'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("Test CATEGORIES NIGHTLY matching NIGHTLY category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_NIGHTLY_NIGHTLY)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES NIGHTLY )
-  UNITTEST_FILE_REGEX(
+  message("Test CATEGORIES NIGHTLY matching NIGHTLY category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_NIGHTLY_NIGHTLY)
+  set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES NIGHTLY )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test CATEGORIES NIGHTLY matching HEAVY category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_NIGHTLY_HEAVY)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES NIGHTLY )
-  UNITTEST_FILE_REGEX(
+  message("Test CATEGORIES NIGHTLY matching HEAVY category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_NIGHTLY_HEAVY)
+  set(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES NIGHTLY )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("\n*** Test CATEGORIES HEAVY\n")
+  message("\n*** Test CATEGORIES HEAVY\n")
 
-  MESSAGE("Test CATEGORIES HEAVY *not* matching BASIC category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_HEAVY_BASIC)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES HEAVY *not* matching BASIC category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_HEAVY_BASIC)
+  set(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='BASIC' does not match this test's CATEGORIES='HEAVY'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("Test CATEGORIES HEAVY *not* matching CONTINUOUS category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_HEAVY_CONTINUOUS)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES HEAVY *not* matching CONTINUOUS category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_HEAVY_CONTINUOUS)
+  set(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='CONTINUOUS' does not match this test's CATEGORIES='HEAVY'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("Test CATEGORIES HEAVY *not* matching NIGHTLY category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_HEAVY_NIGHTLY)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES HEAVY *not* matching NIGHTLY category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_HEAVY_NIGHTLY)
+  set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='NIGHTLY' does not match this test's CATEGORIES='HEAVY'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("Test CATEGORIES HEAVY matching HEAVY category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_HEAVY_HEAVY)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY )
-  UNITTEST_FILE_REGEX(
+  message("Test CATEGORIES HEAVY matching HEAVY category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_HEAVY_HEAVY)
+  set(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("\n*** Test CATEGORIES PERFORMANCE\n")
+  message("\n*** Test CATEGORIES PERFORMANCE\n")
 
-  MESSAGE("Test CATEGORIES PERFORMANCE *not* matching BASIC category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Empty_Performance)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES PERFORMANCE )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES PERFORMANCE *not* matching BASIC category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Empty_Performance)
+  set(${PROJECT_NAME}_TEST_CATEGORIES BASIC)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES PERFORMANCE )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='BASIC' does not match this test's CATEGORIES='PERFORMANCE'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("Test CATEGORIES PERFORMANCE *not* matching CONTINUOUS category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Empty_Performance)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES PERFORMANCE )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES PERFORMANCE *not* matching CONTINUOUS category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Empty_Performance)
+  set(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES PERFORMANCE )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='CONTINUOUS' does not match this test's CATEGORIES='PERFORMANCE'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("Test CATEGORIES PERFORMANCE *not* matching NIGHTLY category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Empty_Performance)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES PERFORMANCE )
-  UNITTEST_COMPARE_CONST(
+  message("Test CATEGORIES PERFORMANCE *not* matching NIGHTLY category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Empty_Performance)
+  set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES PERFORMANCE )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='NIGHTLY' does not match this test's CATEGORIES='PERFORMANCE'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("Test PERFORMANCE category matching PERFORMANCE category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Performance_Performance)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES PERFORMANCE )
-  UNITTEST_COMPARE_CONST(
+  message("Test PERFORMANCE category matching PERFORMANCE category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Performance_Performance)
+  set(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES PERFORMANCE )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: Added test (PERFORMANCE, PROCESSORS=1)!"
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test PERFORMANCE category matching HEAVY, PERFORMANCE category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Performance_Heavy_Performance)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY PERFORMANCE )
-  UNITTEST_COMPARE_CONST(
+  message("Test PERFORMANCE category matching HEAVY, PERFORMANCE category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Performance_Heavy_Performance)
+  set(${PROJECT_NAME}_TEST_CATEGORIES PERFORMANCE)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY PERFORMANCE )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: Added test (HEAVY, PERFORMANCE, PROCESSORS=1)!"
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test HEAVY category matching CONTINUOUS, PERFORMANCE category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Heavy_Continuous_Performance)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES CONTINUOUS PERFORMANCE )
-  UNITTEST_COMPARE_CONST(
+  message("Test HEAVY category matching CONTINUOUS, PERFORMANCE category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Heavy_Continuous_Performance)
+  set(${PROJECT_NAME}_TEST_CATEGORIES HEAVY)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES CONTINUOUS PERFORMANCE )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: Added test (CONTINUOUS, PERFORMANCE, PROCESSORS=1)!"
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("Test CONTINUOUS category *not* matching HEAVY, PERFORMANCE category set by client")
-  SET(TEST_NAME PackageAddAdvancedTestCategory_Continuous_Heavy_Performance)
-  SET(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY PERFORMANCE )
-  UNITTEST_COMPARE_CONST(
+  message("Test CONTINUOUS category *not* matching HEAVY, PERFORMANCE category set by client")
+  set(TEST_NAME PackageAddAdvancedTestCategory_Continuous_Heavy_Performance)
+  set(${PROJECT_NAME}_TEST_CATEGORIES CONTINUOUS)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} CATEGORIES HEAVY PERFORMANCE )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_${TEST_NAME}: NOT added test because ${PROJECT_NAME}_TEST_CATEGORIES='CONTINUOUS' does not match this test's CATEGORIES='HEAVY;PERFORMANCE'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
   # NOTE: The above tests ensure that the CATEGORIES argument is accepted and
   # processed correctly.  The unit tests in
-  # UNITTEST_TRIBITS_ADD_TEST_CATEGORIES() test the behavior of the logic for
+  # unittest_tribits_add_test_categories() test the behavior of the logic for
   # selecting tests based on CATEGORIES.
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_COMM)
+function(unittest_tribits_add_advanced_test_comm)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_ADD_ADVANCED_TEST( ... COMM ... )")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_add_advanced_test( ... COMM ... )")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_ADVANCED_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_advanced_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN})
-  SET(CMNDN ls)
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN})
+  set(CMNDN ls)
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  SET(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
+  set(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
 
   #
   # A) Default serial mode
   #
 
-  SET(TPL_ENABLE_MPI OFF)
+  set(TPL_ENABLE_MPI OFF)
 
-  MESSAGE("***\n*** Add a test with no COMM argument\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( DummyTest
+  message("***\n*** Add a test with no COMM argument\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( DummyTest
     TEST_0 CMND ${CMNDN}
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"${CMNDN}\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
 
-  MESSAGE("***\n*** Add a 'COMM serial' test with TPL_ENABLE_MPI=OFF\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( DummyTest
+  message("***\n*** Add a 'COMM serial' test with TPL_ENABLE_MPI=OFF\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( DummyTest
     TEST_0 CMND ${CMNDN}
     COMM serial
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     "\"${CMNDN}\""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
 
-  MESSAGE("***\n*** Add a 'COMM serial' test with NUM_MPI_PROCS=2 (will not add test)\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
+  message("***\n*** Add a 'COMM serial' test with NUM_MPI_PROCS=2 (will not add test)\n***")
+  tribits_add_advanced_test_unittest_reset()
   set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  TRIBITS_ADD_ADVANCED_TEST( DummyTest
+  tribits_add_advanced_test( DummyTest
     TEST_0 EXEC ${CMNDN} NUM_MPI_PROCS 2
     COMM serial
     )
   unset(${PROJECT_NAME}_VERBOSE_CONFIGURE)
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_DummyTest: NOT added test because NUM_MPI_PROCS='2' > MPI_EXEC_MAX_NUMPROCS='1'!" )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
@@ -3026,139 +3026,139 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_COMM)
   # B) Doing MPI mode
   #
 
-  SET(TPL_ENABLE_MPI ON)
-  SET(MPI_EXEC_MAX_NUMPROCS 5)
-  SET(MPI_EXEC_DEFAULT_NUMPROCS 3)
-  SET(MPI_EXEC mpiexec)
-  SET(MPI_EXEC_PRE_NUMPROCS_FLAGS "--pre-num-procs-flags1;--pre-num-procs-flags2")
-  SET(MPI_EXEC_NUMPROCS_FLAG --num-procs)
-  SET(MPI_EXEC_POST_NUMPROCS_FLAGS "--post-num-procs-flags1;--post-num-procs-flags1;")
+  set(TPL_ENABLE_MPI ON)
+  set(MPI_EXEC_MAX_NUMPROCS 5)
+  set(MPI_EXEC_DEFAULT_NUMPROCS 3)
+  set(MPI_EXEC mpiexec)
+  set(MPI_EXEC_PRE_NUMPROCS_FLAGS "--pre-num-procs-flags1;--pre-num-procs-flags2")
+  set(MPI_EXEC_NUMPROCS_FLAG --num-procs)
+  set(MPI_EXEC_POST_NUMPROCS_FLAGS "--post-num-procs-flags1;--post-num-procs-flags1;")
 
-  MESSAGE("***\n*** Add serial-only test with TPL_ENABLE_MPI=ON (will not add the test)\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( DummyTest
+  message("***\n*** Add serial-only test with TPL_ENABLE_MPI=ON (will not add the test)\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( DummyTest
     TEST_0 CMND ${CMNDN}
     COMM serial
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ""
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("***\n*** Add an advanced test for MPI with no COMM input but with two args\n***")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_1_args_2
+  message("***\n*** Add an advanced test for MPI with no COMM input but with two args\n***")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_advanced_test( TAAT_mpi_exec_1_args_2
     TEST_0 EXEC ${EXEN} ARGS arg1 arg2 )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     1
     )
-  TRIBITS_JOIN_EXEC_PROCESS_SET_ARGS(TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0_EXPECTED
+  tribits_join_exec_process_set_args(TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0_EXPECTED
     ${MPI_EXEC} ${MPI_EXEC_PRE_NUMPROCS_FLAGS} ${MPI_EXEC_NUMPROCS_FLAG}
     ${MPI_EXEC_DEFAULT_NUMPROCS} ${MPI_EXEC_POST_NUMPROCS_FLAGS}
     ${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe arg1 arg2 )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
     ${TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0_EXPECTED} )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_NUM_MPI_PROCS)
+function(unittest_tribits_add_advanced_test_num_mpi_procs)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_ADD_ADVANCED_TEST( ... [OVERALL_]_NUM_MPI_PROCS ... )")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_add_advanced_test( ... [OVERALL_]_NUM_MPI_PROCS ... )")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_ADVANCED_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_advanced_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN})
-  SET(MPI_EXEC_MAX_NUMPROCS 5)
-  SET(MPI_EXEC_DEFAULT_NUMPROCS 3)
-  SET(MPI_EXEC mpiexec)
-  SET(MPI_EXEC_PRE_NUMPROCS_FLAGS "--pre-num-procs-flags1;--pre-num-procs-flags2")
-  SET(MPI_EXEC_NUMPROCS_FLAG --num-procs)
-  SET(MPI_EXEC_POST_NUMPROCS_FLAGS "--post-num-procs-flags1;--post-num-procs-flags1;")
-  SET(CMNDN ls)
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN})
+  set(MPI_EXEC_MAX_NUMPROCS 5)
+  set(MPI_EXEC_DEFAULT_NUMPROCS 3)
+  set(MPI_EXEC mpiexec)
+  set(MPI_EXEC_PRE_NUMPROCS_FLAGS "--pre-num-procs-flags1;--pre-num-procs-flags2")
+  set(MPI_EXEC_NUMPROCS_FLAG --num-procs)
+  set(MPI_EXEC_POST_NUMPROCS_FLAGS "--post-num-procs-flags1;--post-num-procs-flags1;")
+  set(CMNDN ls)
 
-  SET(TPL_ENABLE_MPI ON)
+  set(TPL_ENABLE_MPI ON)
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  SET(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
 
-  MESSAGE("***\n*** CMND-only test and verify PROCESSORS=1\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** CMND-only test and verify PROCESSORS=1\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1;PROPERTIES;PROCESSORS;1")
 
-  MESSAGE("***\n*** CMND-only test with OVERALL_NUM_MPI_PROCS=2 and verify PROCESSORS=2\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** CMND-only test with OVERALL_NUM_MPI_PROCS=2 and verify PROCESSORS=2\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     OVERALL_NUM_MPI_PROCS 2 TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=2)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1;PROPERTIES;PROCESSORS;2")
 
-  MESSAGE("***\n*** Mix of EXEC and CMND test cases and verify PROCESSORS\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_exec_1
+  message("***\n*** Mix of EXEC and CMND test cases and verify PROCESSORS\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_exec_1
     OVERALL_NUM_MPI_PROCS 2 # Set as the default PROCESSORS
     TEST_0 CMND someCmnd TEST_1 EXEC someExec NUM_MPI_PROCS 4 )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_exec_1: Added test (BASIC, NUM_MPI_PROCS=4, PROCESSORS=4)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0_exec_1;PROPERTIES;PROCESSORS;4")
 
-  MESSAGE("***\n*** Two EXEC test cases (first num_procs larger) and verify PROCESSORS\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_exec_1
+  message("***\n*** Two EXEC test cases (first num_procs larger) and verify PROCESSORS\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_exec_1
     OVERALL_NUM_MPI_PROCS 2 # Set as the default PROCESSORS
     TEST_0 EXEC someExec0 NUM_MPI_PROCS 4 TEST_1 EXEC someExec1 NUM_MPI_PROCS 3 )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_exec_1: Added test (BASIC, NUM_MPI_PROCS=4, PROCESSORS=4)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0_exec_1;PROPERTIES;PROCESSORS;4")
 
-  MESSAGE("***\n*** Two EXEC test cases (second num_procs larger) and verify PROCESSORS\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_exec_1
+  message("***\n*** Two EXEC test cases (second num_procs larger) and verify PROCESSORS\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_exec_1
     OVERALL_NUM_MPI_PROCS 2 # Set as the default PROCESSORS
     TEST_0 EXEC someExec0 NUM_MPI_PROCS 3 TEST_1 EXEC someExec1 NUM_MPI_PROCS 4 )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_exec_1: Added test (BASIC, NUM_MPI_PROCS=4, PROCESSORS=4)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0_exec_1;PROPERTIES;PROCESSORS;4")
 
-  MESSAGE("***\n*** Two EXEC test cases (overall_num_procs larger) and verify PROCESSORS\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_exec_1
+  message("***\n*** Two EXEC test cases (overall_num_procs larger) and verify PROCESSORS\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_exec_1
     OVERALL_NUM_MPI_PROCS 5 # Set as the default PROCESSORS
     TEST_0 EXEC someExec0 NUM_MPI_PROCS 3 TEST_1 EXEC someExec1 NUM_MPI_PROCS 4 )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_exec_1: Added test (BASIC, NUM_MPI_PROCS=5, PROCESSORS=5)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0_exec_1;PROPERTIES;PROCESSORS;5")
 
   # ToDo: Add EXEC test where OVERALL_NUM_MPI_PROCS < MPI_EXEC_MAX_NUMPROCS
@@ -3169,208 +3169,208 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_NUM_MPI_PROCS)
 
   # ToDo: Add EXEC test where NUM_MPI_PROCS == MPI_EXEC_MAX_NUMPROCS
 
-  MESSAGE("***\n*** Add EXEC test where OVERALL_NUM_MPI_PROCS > MPI_EXEC_MAX_NUMPROCS\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_0_exec_1
+  message("***\n*** Add EXEC test where OVERALL_NUM_MPI_PROCS > MPI_EXEC_MAX_NUMPROCS\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_exec_0_exec_1
     OVERALL_NUM_MPI_PROCS 6 TEST_0 EXEC someExec TEST_1 EXEC someOtherExec )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_exec_0_exec_1: NOT added test because OVERALL_NUM_MPI_PROCS='6' > MPI_EXEC_MAX_NUMPROCS='5'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("***\n*** Add EXEC test where NUM_MPI_PROCS > MPI_EXEC_MAX_NUMPROCS\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_0_exec_1
+  message("***\n*** Add EXEC test where NUM_MPI_PROCS > MPI_EXEC_MAX_NUMPROCS\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_exec_0_exec_1
     OVERALL_NUM_MPI_PROCS 2 TEST_0 EXEC someExec TEST_1 EXEC someOtherExec NUM_MPI_PROCS 7 )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_exec_0_exec_1: NOT added test because NUM_MPI_PROCS='7' > MPI_EXEC_MAX_NUMPROCS='5'!"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
     ""
     )
 
-  MESSAGE("***\n*** Add CMND test setting OVERALL_NUM_TOTAL_CORES_USED\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0
+  message("***\n*** Add CMND test setting OVERALL_NUM_TOTAL_CORES_USED\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0
     OVERALL_NUM_TOTAL_CORES_USED 4 TEST_0 CMND someCmnd )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0: Added test (BASIC, PROCESSORS=4)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0;PROPERTIES;PROCESSORS;4")
 
-  MESSAGE("***\n*** Add CMND test setting OVERALL_NUM_TOTAL_CORES_USED and NUM_TOTAL_CORES_USED\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0
+  message("***\n*** Add CMND test setting OVERALL_NUM_TOTAL_CORES_USED and NUM_TOTAL_CORES_USED\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0
     OVERALL_NUM_TOTAL_CORES_USED 2 TEST_0 CMND someCmnd NUM_TOTAL_CORES_USED 3 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0: Added test (BASIC, PROCESSORS=3)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0;PROPERTIES;PROCESSORS;3")
 
-  MESSAGE("***\n*** Add CMDN 2 test setting OVERALL_NUM_TOTAL_CORES_USED and NUM_TOTAL_CORES_USED \n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0
+  message("***\n*** Add CMDN 2 test setting OVERALL_NUM_TOTAL_CORES_USED and NUM_TOTAL_CORES_USED \n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0
     OVERALL_NUM_TOTAL_CORES_USED 1
        TEST_0 CMND someCmnd1 NUM_TOTAL_CORES_USED 2
        TEST_1 CMND someCmnd2 NUM_TOTAL_CORES_USED 3 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0: Added test (BASIC, PROCESSORS=3)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0;PROPERTIES;PROCESSORS;3")
 
-  MESSAGE("***\n*** Add CMDN 2 test setting OVERALL_NUM_TOTAL_CORES_USED and NUM_TOTAL_CORES_USED \n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0
+  message("***\n*** Add CMDN 2 test setting OVERALL_NUM_TOTAL_CORES_USED and NUM_TOTAL_CORES_USED \n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0
     OVERALL_NUM_TOTAL_CORES_USED 1
        TEST_0 CMND someCmnd1 NUM_TOTAL_CORES_USED 3
        TEST_1 CMND someCmnd2 NUM_TOTAL_CORES_USED 2 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0: Added test (BASIC, PROCESSORS=3)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0;PROPERTIES;PROCESSORS;3")
 
-  MESSAGE("***\n*** Add CMDN 2 test setting OVERALL_NUM_TOTAL_CORES_USED and NUM_TOTAL_CORES_USED \n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0
+  message("***\n*** Add CMDN 2 test setting OVERALL_NUM_TOTAL_CORES_USED and NUM_TOTAL_CORES_USED \n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0
     OVERALL_NUM_TOTAL_CORES_USED 3
        TEST_0 CMND someCmnd1 NUM_TOTAL_CORES_USED 1
        TEST_1 CMND someCmnd2 NUM_TOTAL_CORES_USED 2 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0: Added test (BASIC, PROCESSORS=2)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0;PROPERTIES;PROCESSORS;2")
 
-  MESSAGE("***\n*** Add EXEC test setting OVERALL_NUM_TOTAL_CORES_USED > NUM_MPI_PROCS\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_0
+  message("***\n*** Add EXEC test setting OVERALL_NUM_TOTAL_CORES_USED > NUM_MPI_PROCS\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_exec_0
     OVERALL_NUM_TOTAL_CORES_USED 4 TEST_0 EXEC someExec NUM_MPI_PROCS 2 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_exec_0: Added test (BASIC, PROCESSORS=4)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_exec_0;PROPERTIES;PROCESSORS;4")
 
-  MESSAGE("***\n*** Add EXEC test setting OVERALL_NUM_TOTAL_CORES_USED < NUM_MPI_PROCS\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_0
+  message("***\n*** Add EXEC test setting OVERALL_NUM_TOTAL_CORES_USED < NUM_MPI_PROCS\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_exec_0
     OVERALL_NUM_TOTAL_CORES_USED 1 TEST_0 EXEC someExec NUM_MPI_PROCS 2 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: ${PACKAGE_NAME}_TAAT_mpi_exec_0: NUM_MPI_PROCS='2' > OVERALL_NUM_TOTAL_CORES_USED='1' not allowed!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
 
-  MESSAGE("***\n*** Add EXEC test setting OVERALL_NUM_TOTAL_CORES_USED and NUM_TOTAL_CORES_USED\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_0
+  message("***\n*** Add EXEC test setting OVERALL_NUM_TOTAL_CORES_USED and NUM_TOTAL_CORES_USED\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_exec_0
     OVERALL_NUM_TOTAL_CORES_USED 1
        TEST_0 EXEC someExec NUM_MPI_PROCS 2 NUM_TOTAL_CORES_USED 3 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_exec_0: Added test (BASIC, PROCESSORS=3)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_exec_0;PROPERTIES;PROCESSORS;3")
 
-  MESSAGE("***\n*** Add EXEC test setting OVERALL_NUM_MPI_PROCS < NUM_TOTAL_CORES_USED\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_0
+  message("***\n*** Add EXEC test setting OVERALL_NUM_MPI_PROCS < NUM_TOTAL_CORES_USED\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_exec_0
     OVERALL_NUM_TOTAL_CORES_USED 4  OVERALL_NUM_MPI_PROCS 2
        TEST_0 EXEC someExec )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_exec_0: Added test (BASIC, NUM_MPI_PROCS=2, PROCESSORS=4)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_exec_0;PROPERTIES;PROCESSORS;4")
 
-  MESSAGE("***\n*** Add EXEC test setting OVERALL_NUM_MPI_PROCS > NUM_TOTAL_CORES_USED\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_0
+  message("***\n*** Add EXEC test setting OVERALL_NUM_MPI_PROCS > NUM_TOTAL_CORES_USED\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_exec_0
     OVERALL_NUM_TOTAL_CORES_USED 2  OVERALL_NUM_MPI_PROCS 3
        TEST_0 EXEC someExec )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: ${PACKAGE_NAME}_TAAT_mpi_exec_0: OVERALL_NUM_MPI_PROCS='3' > OVERALL_NUM_TOTAL_CORES_USED='2' not allowed!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
 
-  MESSAGE("***\n*** Add CMND test setting OVERALL_NUM_MPI_PROCS < NUM_TOTAL_CORES_USED\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0
+  message("***\n*** Add CMND test setting OVERALL_NUM_MPI_PROCS < NUM_TOTAL_CORES_USED\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0
     OVERALL_NUM_TOTAL_CORES_USED 4  OVERALL_NUM_MPI_PROCS 2
        TEST_0 CMND someCmnd )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0: Added test (BASIC, PROCESSORS=4)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0;PROPERTIES;PROCESSORS;4")
 
-  MESSAGE("***\n*** Add CMDN test setting OVERALL_NUM_MPI_PROCS > OVERALL_NUM_TOTAL_CORES_USED\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0
+  message("***\n*** Add CMDN test setting OVERALL_NUM_MPI_PROCS > OVERALL_NUM_TOTAL_CORES_USED\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0
     OVERALL_NUM_TOTAL_CORES_USED 2  OVERALL_NUM_MPI_PROCS 3
        TEST_0 CMND someCmnd )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: ${PACKAGE_NAME}_TAAT_mpi_cmnd_0: OVERALL_NUM_MPI_PROCS='3' > OVERALL_NUM_TOTAL_CORES_USED='2' not allowed!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
 
-  MESSAGE("***\n*** Add EXEC test setting OVERALL_NUM_MPI_PROCS > NUM_TOTAL_CORES_USED\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_0
+  message("***\n*** Add EXEC test setting OVERALL_NUM_MPI_PROCS > NUM_TOTAL_CORES_USED\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_exec_0
     OVERALL_NUM_MPI_PROCS 3
        TEST_0 EXEC someExec NUM_TOTAL_CORES_USED 2 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: ${PACKAGE_NAME}_TAAT_mpi_exec_0: OVERALL_NUM_MPI_PROCS='3' > NUM_TOTAL_CORES_USED='2' not allowed!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
 
-  MESSAGE("***\n*** Add EXEC test setting NUM_MPI_PROCS > NUM_TOTAL_CORES_USED\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_0
+  message("***\n*** Add EXEC test setting NUM_MPI_PROCS > NUM_TOTAL_CORES_USED\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_exec_0
        TEST_0 EXEC someExec NUM_MPI_PROCS 3 NUM_TOTAL_CORES_USED 2 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: ${PACKAGE_NAME}_TAAT_mpi_exec_0: NUM_MPI_PROCS='3' > NUM_TOTAL_CORES_USED='2' not allowed!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
 
-  MESSAGE("***\n*** Add EXEC test setting NUM_MPI_PROCS > OVERALL_NUM_TOTAL_CORES_USED\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_exec_0
+  message("***\n*** Add EXEC test setting NUM_MPI_PROCS > OVERALL_NUM_TOTAL_CORES_USED\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_exec_0
        OVERALL_NUM_TOTAL_CORES_USED 2
        TEST_0 EXEC someExec NUM_MPI_PROCS 3 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: ${PACKAGE_NAME}_TAAT_mpi_exec_0: NUM_MPI_PROCS='3' > OVERALL_NUM_TOTAL_CORES_USED='2' not allowed!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
 
-ENDFUNCTION()
-
-
-FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_DIRECTROY)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_ADD_ADVANCED_TEST( ... DIRECTORY ... )")
-  MESSAGE("***\n")
+endfunction()
 
 
-  # Needed by TRIBITS_ADD_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+function(unittest_tribits_add_advanced_test_directroy)
 
-  SET(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT FALSE)
+  message("\n***")
+  message("*** Testing tribits_add_advanced_test( ... DIRECTORY ... )")
+  message("***\n")
+
+
+  # Needed by tribits_add_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
+
+  set(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT FALSE)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
 
-  MESSAGE("\n*** Two tests with no DIRECTORY argument \n")
-  SET(TEST_NAME PackageAddAdvancedTestDirectory_None)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} TEST_1 EXEC ${EXEN} )
-  UNITTEST_FILE_REGEX(
+  message("\n*** Two tests with no DIRECTORY argument \n")
+  set(TEST_NAME PackageAddAdvancedTestDirectory_None)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} TEST_1 EXEC ${EXEN} )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
@@ -3378,11 +3378,11 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_DIRECTROY)
       "NUM_CMNDS 2"
     )
 
-  MESSAGE("\n*** Two tests, first test with DIRECTORY argument \n")
-  SET(TEST_NAME PackageAddAdvancedTestDirectory_None)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} DIRECTORY ../dir1 TEST_1 EXEC ${EXEN} )
-  UNITTEST_FILE_REGEX(
+  message("\n*** Two tests, first test with DIRECTORY argument \n")
+  set(TEST_NAME PackageAddAdvancedTestDirectory_None)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} DIRECTORY ../dir1 TEST_1 EXEC ${EXEN} )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/../dir1/${PACKEXEN}\""
@@ -3390,11 +3390,11 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_DIRECTROY)
       "NUM_CMNDS 2"
     )
 
-  MESSAGE("\n*** Two tests, second test with relative DIRECTORY argument \n")
-  SET(TEST_NAME PackageAddAdvancedTestDirectory_None)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} TEST_1 EXEC ${EXEN} DIRECTORY ../dir2 )
-  UNITTEST_FILE_REGEX(
+  message("\n*** Two tests, second test with relative DIRECTORY argument \n")
+  set(TEST_NAME PackageAddAdvancedTestDirectory_None)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} TEST_1 EXEC ${EXEN} DIRECTORY ../dir2 )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
@@ -3403,11 +3403,11 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_DIRECTROY)
     )
 
 
-  MESSAGE("\n*** Two tests, second test with absolute DIRECTORY argument \n")
-  SET(TEST_NAME PackageAddAdvancedTestDirectory_None)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} TEST_1 EXEC ${EXEN} DIRECTORY /some/abs/path )
-  UNITTEST_FILE_REGEX(
+  message("\n*** Two tests, second test with absolute DIRECTORY argument \n")
+  set(TEST_NAME PackageAddAdvancedTestDirectory_None)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} TEST_1 EXEC ${EXEN} DIRECTORY /some/abs/path )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\""
@@ -3415,11 +3415,11 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_DIRECTROY)
       "NUM_CMNDS 2"
     )
 
-  MESSAGE("\n*** Two tests, both tests with DIRECTORY argument \n")
-  SET(TEST_NAME PackageAddAdvancedTestDirectory_None)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME} TEST_0 EXEC ${EXEN} DIRECTORY ../dir1 TEST_1 EXEC ${EXEN} DIRECTORY ../dir2 )
-  UNITTEST_FILE_REGEX(
+  message("\n*** Two tests, both tests with DIRECTORY argument \n")
+  set(TEST_NAME PackageAddAdvancedTestDirectory_None)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME} TEST_0 EXEC ${EXEN} DIRECTORY ../dir1 TEST_1 EXEC ${EXEN} DIRECTORY ../dir2 )
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/../dir1/${PACKEXEN}\""
@@ -3427,174 +3427,174 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_DIRECTROY)
       "NUM_CMNDS 2"
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_PROPERTIES)
+function(unittest_tribits_add_advanced_test_properties)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the setting of test properties with TRIBITS_ADD_ADVANCED_TEST(...)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the setting of test properties with tribits_add_advanced_test(...)")
+  message("***\n")
 
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
-  SET(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
 
-  # Needed by TRIBITS_ADD_ADVANCED_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_advanced_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
-  SET(CMNDN someCmnd)
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
+  set(CMNDN someCmnd)
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  MESSAGE("Test setting default properites")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_cmnd_1_args_0
+  message("Test setting default properites")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_cmnd_1_args_0
     TEST_0 CMND ${CMNDN}
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_TAAT_basic_cmnd_1_args_0;PROPERTY;REQUIRED_FILES;someCmnd;PackageA_TAAT_basic_cmnd_1_args_0;APPEND;PROPERTY;LABELS;PackageA_TAAT_basic_cmnd_1_args_0;PROPERTIES;PROCESSORS;1;PackageA_TAAT_basic_cmnd_1_args_0;PROPERTIES;PASS_REGULAR_EXPRESSION;OVERALL FINAL RESULT: TEST PASSED .PackageA_TAAT_basic_cmnd_1_args_0."
     )
-  # NOTE: Above, in unit test mode, TRIBITS_ADD_ADVANCED_TEST() changes is
+  # NOTE: Above, in unit test mode, tribits_add_advanced_test() changes is
   # final pass expression so as to not match the outer run of
-  # TRIBITS_ADD_ADVANCED_TEST() that looks for it.  Otherwise, the outer
-  # TRIBITS_ADD_ADVANCED_TEST() always thinks these unit tests pass!
+  # tribits_add_advanced_test() that looks for it.  Otherwise, the outer
+  # tribits_add_advanced_test() always thinks these unit tests pass!
 
-  MESSAGE("Test setting non-integer TIMEOUT with no scaling (not even defined)")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_cmnd_1_args_0
+  message("Test setting non-integer TIMEOUT with no scaling (not even defined)")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_cmnd_1_args_0
     TEST_0 CMND ${CMNDN} TIMEOUT 333.0 )
-  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- PackageA_TAAT_basic_cmnd_1_args_0: Added test (BASIC, PROCESSORS=1, TIMEOUT=333.0)!" )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_TAAT_basic_cmnd_1_args_0;PROPERTIES;TIMEOUT;333.0")
 
-  MESSAGE("Test non-integral scaling 1.5 of non-integer TIMEOUT")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.5)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_cmnd_1_args_0
+  message("Test non-integral scaling 1.5 of non-integer TIMEOUT")
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.5)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_cmnd_1_args_0
     TEST_0 CMND ${CMNDN} TIMEOUT 200.0 )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_TAAT_basic_cmnd_1_args_0;PROPERTIES;TIMEOUT;300")
-  SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
+  set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0)
 
-  MESSAGE("Test setting ENVIRONMENT")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_basic_cmnd_1_args_0
+  message("Test setting ENVIRONMENT")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_cmnd_1_args_0
     TEST_0 CMND ${CMNDN} ENVIRONMENT var1=val1 var2=val2 )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_TAAT_basic_cmnd_1_args_0;PROPERTY;ENVIRONMENT;var1=val1;var2=val2")
 
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT OFF)
-  SET(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT OFF)
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT OFF)
+  set(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT OFF)
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_TEST_CUDA_GPU_CTEST_RESOURCES)
+function(unittest_tribits_add_test_cuda_gpu_ctest_resources)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_ADD_TEST() for CUDA GPU limiting")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_add_test() for CUDA GPU limiting")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_TEST(...)
-  SET(PACKAGE_NAME PackageB)
-  SET(PARENT_PACKAGE_NAME PackageB)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_test(...)
+  set(PACKAGE_NAME PackageB)
+  set(PARENT_PACKAGE_NAME PackageB)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Put into using testing mode
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
 
   # Setup for CUDA
-  SET(TPL_ENABLE_CUDA ON)
-  TRIBITS_ADD_TEST_HELPERS_INIT()
+  set(TPL_ENABLE_CUDA ON)
+  tribits_add_test_helpers_init()
 
   # Used locally
-  SET(TPL_ENABLE_MPI ON)
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN})
-  SET(MPI_EXEC_MAX_NUMPROCS 5)
-  SET(MPI_EXEC_DEFAULT_NUMPROCS 3)
-  SET(MPI_EXEC mpiexec)
-  SET(MPI_EXEC_PRE_NUMPROCS_FLAGS "--pre-num-procs-flags1;--pre-num-procs-flags2")
-  SET(MPI_EXEC_NUMPROCS_FLAG --num-procs)
-  SET(MPI_EXEC_POST_NUMPROCS_FLAGS "--post-num-procs-flags1;--post-num-procs-flags2")
+  set(TPL_ENABLE_MPI ON)
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN})
+  set(MPI_EXEC_MAX_NUMPROCS 5)
+  set(MPI_EXEC_DEFAULT_NUMPROCS 3)
+  set(MPI_EXEC mpiexec)
+  set(MPI_EXEC_PRE_NUMPROCS_FLAGS "--pre-num-procs-flags1;--pre-num-procs-flags2")
+  set(MPI_EXEC_NUMPROCS_FLAG --num-procs)
+  set(MPI_EXEC_POST_NUMPROCS_FLAGS "--post-num-procs-flags1;--post-num-procs-flags2")
 
-  MESSAGE("Call TRIBITS_ADD_TEST( ... NUM_MPI_PROCS 4 ... ) with GPU limiting")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_TEST( ${EXEN} NUM_MPI_PROCS 4 )
-  UNITTEST_COMPARE_CONST(
+  message("Call tribits_add_test( ... NUM_MPI_PROCS 4 ... ) with GPU limiting")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} NUM_MPI_PROCS 4 )
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- ${PACKEXEN}_MPI_4: Added test (BASIC, NUM_MPI_PROCS=4, PROCESSORS=4)!"
     )
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKEXEN}.exe;${PACKEXEN}_MPI_4;PROPERTIES;PROCESSORS;4")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKEXEN}_MPI_4;APPEND;PROPERTY;ENVIRONMENT;CTEST_KOKKOS_DEVICE_TYPE=gpus")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKEXEN}_MPI_4;PROPERTIES;RESOURCE_GROUPS;4,gpus:1")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
     "NAME;${PACKEXEN}_MPI_4;COMMAND;${MPI_EXEC};${MPI_EXEC_PRE_NUMPROCS_FLAGS};${MPI_EXEC_NUMPROCS_FLAG};4;${MPI_EXEC_POST_NUMPROCS_FLAGS};${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}.exe"
     )
 
-  MESSAGE("Call TRIBITS_ADD_ADVANCED_TEST( ... NUM_MPI_PROCS 3 ... ) with GPU limiting")
-  GLOBAL_SET(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_cmnd_1_args_0
+  message("Call tribits_add_advanced_test( ... NUM_MPI_PROCS 3 ... ) with GPU limiting")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_advanced_test( TAAT_cmnd_1_args_0
      TEST_0 EXEC ${EXEN} NUM_MPI_PROCS 3 )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "-- PackageB_TAAT_cmnd_1_args_0: Added test (BASIC, PROCESSORS=3)!"
     )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "1")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageB_TAAT_cmnd_1_args_0;PROPERTIES;PROCESSORS;3")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageB_TAAT_cmnd_1_args_0;APPEND;PROPERTY;ENVIRONMENT;CTEST_KOKKOS_DEVICE_TYPE=gpus")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "RESOURCE_GROUPS;3,gpus:1")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_COPY_FILES_TO_TEST_DIR)
+function(unittest_tribits_add_advanced_test_copy_files_to_test_dir)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing COPY_FILES_TO_TEST_DIR with TRIBITS_ADD_ADVANCED_TEST(...)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing COPY_FILES_TO_TEST_DIR with tribits_add_advanced_test(...)")
+  message("***\n")
 
-  SET(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT FALSE)
+  set(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT FALSE)
 
-  # Needed by TRIBITS_ADD_ADVANCED_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_advanced_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
-  SET(CMNDN someCmnd)
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
+  set(CMNDN someCmnd)
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  MESSAGE("\n*** Test basic copy of a couple of files\n")
-  SET(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_1_test_explicit_dirs)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME}
+  message("\n*** Test basic copy of a couple of files\n")
+  set(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_1_test_explicit_dirs)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME}
     TEST_0 COPY_FILES_TO_TEST_DIR file1 file2
       SOURCE_DIR /the/source/dir
       DEST_DIR /the/dest/dir
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_COPY_FILES_TO_TEST_DIR \"file1,file2\""
@@ -3603,15 +3603,15 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_COPY_FILES_TO_TEST_DIR)
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("\n*** Test basic copy of files to dest dir under working dir with test name\n")
-  SET(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_1_test_explicit_dirs)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME}
+  message("\n*** Test basic copy of files to dest dir under working dir with test name\n")
+  set(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_1_test_explicit_dirs)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     TEST_0 COPY_FILES_TO_TEST_DIR file1 file2
       SOURCE_DIR /the/source/dir
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_COPY_FILES_TO_TEST_DIR \"file1,file2\""
@@ -3620,15 +3620,15 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_COPY_FILES_TO_TEST_DIR)
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("\n*** Test basic copy of files to dest dir under special-named working dir\n")
-  SET(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_1_test_explicit_dirs)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME}
+  message("\n*** Test basic copy of files to dest dir under special-named working dir\n")
+  set(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_1_test_explicit_dirs)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME}
     OVERALL_WORKING_DIRECTORY ${TEST_NAME}_other
     TEST_0 COPY_FILES_TO_TEST_DIR file1 file2
       SOURCE_DIR /the/source/dir
     )
-  UNITTEST_FILE_REGEX(
+  unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_${TEST_NAME}.cmake"
     REGEX_STRINGS
       "TEST_0_COPY_FILES_TO_TEST_DIR \"file1,file2\""
@@ -3637,306 +3637,306 @@ FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_COPY_FILES_TO_TEST_DIR)
       "NUM_CMNDS 1"
     )
 
-  MESSAGE("\n*** Test using an empty COPY_FILES_TO_TEST_DIR values\n")
-  SET(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_missing_files)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME}
+  message("\n*** Test using an empty COPY_FILES_TO_TEST_DIR values\n")
+  set(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_missing_files)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME}
     TEST_0 COPY_FILES_TO_TEST_DIR
       SOURCE_DIR /the/source/dir
       DEST_DIR /the/dest/dir
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: COPY_FILES_TO_TEST_DIR must have at least one value!" )
 
-  MESSAGE("\n*** Test using two SOURCE_DIR values\n")
-  SET(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_SORUCE_DIR_two_vals)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME}
+  message("\n*** Test using two SOURCE_DIR values\n")
+  set(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_SORUCE_DIR_two_vals)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME}
     TEST_0 COPY_FILES_TO_TEST_DIR file1
       SOURCE_DIR /the/source/dir /another/source/dir
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: SOURCE_DIR='/the/source/dir;/another/source/dir' can not have more than one value!" )
 
-  MESSAGE("\n*** Test using two DEST_DIR values\n")
-  SET(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_SORUCE_DIR_two_vals)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( ${TEST_NAME}
+  message("\n*** Test using two DEST_DIR values\n")
+  set(TEST_NAME TAAT_COPY_FILES_TO_TEST_DIR_SORUCE_DIR_two_vals)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( ${TEST_NAME}
     TEST_0 COPY_FILES_TO_TEST_DIR file1
       DEST_DIR /the/dest/dir /another/dest/dir
     )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: DEST_DIR='/the/dest/dir;/another/dest/dir' can not have more than one value!" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_EXCLUDES)
+function(unittest_tribits_add_advanced_test_excludes)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing excluding TRIBITS_ADD_ADVANCED_TEST(...) based on different criteria")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing excluding tribits_add_advanced_test(...) based on different criteria")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  SET(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
 
-  MESSAGE("***\n*** EXCLUDE_IF_NOT_TRUE <true>\n***")
-  SET(VAR_THAT_IS_TRUE TRUE)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** EXCLUDE_IF_NOT_TRUE <true>\n***")
+  set(VAR_THAT_IS_TRUE TRUE)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
      EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_TRUE
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1;PROPERTIES;PROCESSORS;1")
 
   #
   # EXCLUDE_IF_NOT_TRUE
   #
 
-  MESSAGE("***\n*** EXCLUDE_IF_NOT_TRUE <true> <true>\n***")
-  SET(VAR_THAT_IS_TRUE1 TRUE)
-  SET(VAR_THAT_IS_TRUE2 TRUE)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** EXCLUDE_IF_NOT_TRUE <true> <true>\n***")
+  set(VAR_THAT_IS_TRUE1 TRUE)
+  set(VAR_THAT_IS_TRUE2 TRUE)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
      EXCLUDE_IF_NOT_TRUE VAR_THAT_IS_TRUE1 VAR_THAT_IS_TRUE2
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1;PROPERTIES;PROCESSORS;1")
 
-  MESSAGE("***\n*** EXCLUDE_IF_NOT_TRUE <false>\n***")
-  SET(VAR_THAT_IS_FALSE FALSE)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** EXCLUDE_IF_NOT_TRUE <false>\n***")
+  set(VAR_THAT_IS_FALSE FALSE)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_FALSE
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1: NOT added test because EXCLUDE_IF_NOT_TRUE VAR_THAT_IS_FALSE='FALSE'!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "")
 
-  MESSAGE("***\n*** EXCLUDE_IF_NOT_TRUE <true> <false>\n***")
-  SET(VAR_THAT_IS_TRUE TRUE)
-  SET(VAR_THAT_IS_FALSE FALSE)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** EXCLUDE_IF_NOT_TRUE <true> <false>\n***")
+  set(VAR_THAT_IS_TRUE TRUE)
+  set(VAR_THAT_IS_FALSE FALSE)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_TRUE  VAR_THAT_IS_FALSE
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1: NOT added test because EXCLUDE_IF_NOT_TRUE VAR_THAT_IS_FALSE='FALSE'!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "")
 
-  MESSAGE("***\n*** EXCLUDE_IF_NOT_TRUE <false> <true>\n***")
-  SET(VAR_THAT_IS_TRUE TRUE)
-  SET(VAR_THAT_IS_FALSE FALSE)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** EXCLUDE_IF_NOT_TRUE <false> <true>\n***")
+  set(VAR_THAT_IS_TRUE TRUE)
+  set(VAR_THAT_IS_FALSE FALSE)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     EXCLUDE_IF_NOT_TRUE  VAR_THAT_IS_FALSE  VAR_THAT_IS_TRUE
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1: NOT added test because EXCLUDE_IF_NOT_TRUE VAR_THAT_IS_FALSE='FALSE'!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "")
 
   #
   # DISABLED, DISABLED_AND_MSG
   #
 
-  MESSAGE("***\n*** DISABLED <msg> (trace add test on)\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** DISABLED <msg> (trace add test on)\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     DISABLED "Disabled because of A and B"
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1, DISABLED)!;--  => Reason DISABLED: Disabled because of A and B" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
 
-  MESSAGE("***\n*** DISABLED <msg> (trace add test off)\n***")
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST OFF)
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** DISABLED <msg> (trace add test off)\n***")
+  set(${PROJECT_NAME}_TRACE_ADD_TEST OFF)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     DISABLED "Disabled because of C and B"
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT "")
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT "")
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
 
-  MESSAGE("***\n*** DISABLED FALSE\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** DISABLED FALSE\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     DISABLED FALSE
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_NOT_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_not_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
 
-  MESSAGE("***\n*** DISABLED no\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** DISABLED no\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     DISABLED no
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_NOT_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_not_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
 
-  MESSAGE("***\n*** <fullTestName>_SET_DISABLED_AND_MSG=<msg>\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  SET(${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1_SET_DISABLED_AND_MSG
+  message("***\n*** <fullTestName>_SET_DISABLED_AND_MSG=<msg>\n***")
+  tribits_add_advanced_test_unittest_reset()
+  set(${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1_SET_DISABLED_AND_MSG
     "Disabled using cache var")
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1, DISABLED)!;--  => Reason DISABLED: Disabled using cache var" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED;ON")
 
-  MESSAGE("***\n*** DISABLED <msg> then <fullTestName>_SET_DISABLED_AND_MSG=false\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  SET(${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1_SET_DISABLED_AND_MSG false)
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** DISABLED <msg> then <fullTestName>_SET_DISABLED_AND_MSG=false\n***")
+  tribits_add_advanced_test_unittest_reset()
+  set(${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1_SET_DISABLED_AND_MSG false)
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     DISABLED "Disabled because of blah blash (but not really due to above var)"
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_NOT_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_not_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "DISABLED")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_RUN_SERIAL)
+function(unittest_tribits_add_advanced_test_run_serial)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing excluding TRIBITS_ADD_ADVANCED_TEST(...) with RUN_SERIAL")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing excluding tribits_add_advanced_test(...) with RUN_SERIAL")
+  message("***\n")
 
-  # Needed by TRIBITS_ADD_TEST(...)
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  # Needed by tribits_add_test(...)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  SET(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
 
   # Used locally
-  SET(EXEN SomeExec)
-  SET(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
+  set(EXEN SomeExec)
+  set(PACKEXEN ${PACKAGE_NAME}_${EXEN}.exe)
 
-  MESSAGE("***\n*** <fullTestName>_SET_RUN_SERIAL=ON\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  SET(${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1_SET_RUN_SERIAL ON)
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1
+  message("***\n*** <fullTestName>_SET_RUN_SERIAL=ON\n***")
+  tribits_add_advanced_test_unittest_reset()
+  set(${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1_SET_RUN_SERIAL ON)
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1, RUN_SERIAL)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "RUN_SERIAL;ON")
 
-  MESSAGE("***\n*** Set RUN_SERIAL input option\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  SET(${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1_SET_RUN_SERIAL "")
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1 RUN_SERIAL
+  message("***\n*** Set RUN_SERIAL input option\n***")
+  tribits_add_advanced_test_unittest_reset()
+  set(${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1_SET_RUN_SERIAL "")
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1 RUN_SERIAL
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1, RUN_SERIAL)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "RUN_SERIAL;ON")
 
-  MESSAGE("***\n*** Set RUN_SERIAL input option but set <fullTestName>_SET_RUN_SERIAL=OFF\n***")
-  TRIBITS_ADD_ADVANCED_TEST_UNITTEST_RESET()
-  SET(${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1_SET_RUN_SERIAL OFF) # Overrides RUN_SERIAL!
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_mpi_cmnd_0_cmnd_1 RUN_SERIAL
+  message("***\n*** Set RUN_SERIAL input option but set <fullTestName>_SET_RUN_SERIAL=OFF\n***")
+  tribits_add_advanced_test_unittest_reset()
+  set(${PACKAGE_NAME}_TAAT_mpi_cmnd_0_cmnd_1_SET_RUN_SERIAL OFF) # Overrides RUN_SERIAL!
+  tribits_add_advanced_test( TAAT_mpi_cmnd_0_cmnd_1 RUN_SERIAL
     TEST_0 CMND someCmnd TEST_1 CMND someOtherCmnd )
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- PackageA_TAAT_mpi_cmnd_0_cmnd_1: Added test (BASIC, PROCESSORS=1)!" )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
-  UNITTEST_NOT_HAS_SUBSTR_CONST(TRIBITS_SET_TEST_PROPERTIES_INPUT
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_not_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "RUN_SERIAL")  # Make sure RUN_SERIAL prop not even set!
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ADVANCED_TEST_CHANGE_MAX_NUM_TEST_BLOCKS)
+function(unittest_tribits_add_advanced_test_change_max_num_test_blocks)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing TRIBITS_ADD_ADVANCED_TEST(...) changing TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_BLOCKS")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_add_advanced_test(...) changing TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_BLOCKS")
+  message("***\n")
 
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   # Turn on tracing for the rest of the tests!
-  SET(${PROJECT_NAME}_TRACE_ADD_TEST ON)
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
-  SET(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
-  SET(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
+  set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  set(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT TRUE)
+  set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT ON)
 
   # Test changing TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_BLOCKS
-  SET(TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_BLOCKS 2)
+  set(TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_BLOCKS 2)
 
   # Test with just two TEST_<idx> blocks that passes
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_test_blocks_2
+  tribits_add_advanced_test( TAAT_test_blocks_2
     TEST_0 CMND someCmnd0
     TEST_1 CMND someCmnd1 )
-  UNITTEST_COMPARE_CONST(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
+  unittest_compare_const(TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS "2")
 
   # Test with three TEST_<idx> blocks that will fail
-  TRIBITS_ADD_ADVANCED_TEST( TAAT_test_blocks_3
+  tribits_add_advanced_test( TAAT_test_blocks_3
     TEST_0 CMND someCmnd0
     TEST_1 CMND someCmnd1
     TEST_2 CMND someCmnd2 )
-  UNITTEST_HAS_SUBSTR_CONST( MESSAGE_WRAPPER_INPUT
-    "FATAL_ERROR;PackageA_TAAT_test_blocks_3: ERROR: Test block TEST_2 exceeds the max allowed test block TEST_1 as allowed by TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_BLOCKS=2.  To fix this, call set(TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_BLOCKS <larger-num>) before calling TRIBITS_ADD_ADVANCED_TEST()")
+  unittest_has_substr_const( MESSAGE_WRAPPER_INPUT
+    "FATAL_ERROR;PackageA_TAAT_test_blocks_3: ERROR: Test block TEST_2 exceeds the max allowed test block TEST_1 as allowed by TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_BLOCKS=2.  To fix this, call set(TRIBITS_ADD_ADVANCED_TEST_MAX_NUM_TEST_BLOCKS <larger-num>) before calling tribits_add_advanced_test()")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_EXECUTABLE_AND_TEST)
+function(unittest_tribits_add_executable_and_test)
 
-  SET(TRIBITS_ADD_EXECUTABLE_AND_TEST_TEST_MODE ON)
+  set(TRIBITS_ADD_EXECUTABLE_AND_TEST_TEST_MODE ON)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test passing basic arguments to TRIBITS_ADD_EXECUTABLE_AND_TEST( ... )")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Test passing basic arguments to tribits_add_executable_and_test( ... )")
+  message("***\n")
 
-  SET(PACKAGE_NAME PackageA)
-  SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+  set(PACKAGE_NAME PackageA)
+  set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  tribits_add_executable_and_test(
     execName
     SOURCES src1 src2
     NAME testName
@@ -3970,222 +3970,222 @@ FUNCTION(UNITTEST_TRIBITS_ADD_EXECUTABLE_AND_TEST)
     ADDED_EXE_TARGET_NAME_OUT execName_TARGET_NAME
     ADDED_TESTS_NAMES_OUT execName_TEST_NAME
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_EXECUTABLE_CAPTURE_ARGS
     "execName;COMM;serial;mpi;CATEGORIES;category1;category2;HOST;host1;host2;XHOST;host1;host2;HOSTTYPE;hosttype1;hosttype2;XHOSTTYPE;hosttype1;hosttype2;EXCLUDE_IF_NOT_TRUE;var1;var2;NOEXEPREFIX;NOEXESUFFIX;SOURCES;src1;src2;DEPLIBS;lib1;lib2;TESTONLYLIBS;tolib1;tolib2;IMPORTEDLIBS;ilib1;ilib2;DIRECTORY;dir;ADD_DIR_TO_NAME;LINKER_LANGUAGE;C;TARGET_DEFINES;-DSOMEDEFINE1;DEFINES;-DSOMEDEFINE2;ADDED_EXE_TARGET_NAME_OUT;ADDED_EXE_TARGET_NAME"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_CAPTURE_ARGS
     "execName;COMM;serial;mpi;CATEGORIES;category1;category2;HOST;host1;host2;XHOST;host1;host2;HOSTTYPE;hosttype1;hosttype2;XHOSTTYPE;hosttype1;hosttype2;EXCLUDE_IF_NOT_TRUE;var1;var2;NOEXEPREFIX;NOEXESUFFIX;NAME;testName;NAME_POSTFIX;testNamePostfix;DIRECTORY;dir;KEYWORDS;keyword1;keyword2;NUM_MPI_PROCS;numProcs;PASS_REGULAR_EXPRESSION;regex1;regex2;FAIL_REGULAR_EXPRESSION;regex1;regex2;ENVIRONMENT;env1=envval1;env2=envval2;DISABLED;Disable this test because I said;STANDARD_PASS_OUTPUT;WILL_FAIL;TIMEOUT;11.5;ADD_DIR_TO_NAME;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES"
     )
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test passing in XHOST_TEST and XHOSTTYPE_TEST into TRIBITS_ADD_EXECUTABLE_AND_TEST(...)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Test passing in XHOST_TEST and XHOSTTYPE_TEST into tribits_add_executable_and_test(...)")
+  message("***\n")
 
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  tribits_add_executable_and_test(
     execName
     SOURCES src1 src2
     XHOST_TEST host1 host2
     XHOSTTYPE_TEST hosttype1 hosttype2
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_EXECUTABLE_CAPTURE_ARGS
     "execName;SOURCES;src1;src2"
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     TRIBITS_ADD_TEST_CAPTURE_ARGS
     "execName;XHOST;host1;host2;XHOSTTYPE;hosttype1;hosttype2"
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ETI_TYPE_EXPANSION)
+function(unittest_tribits_eti_type_expansion)
 
-  MESSAGE("*** Test passing invalid arguments to TRIBITS_ETI_TYPE_EXPANSION( ... )\n")
+  message("*** Test passing invalid arguments to tribits_eti_type_expansion( ... )\n")
 
-  SET(result "This is left over from other module!")  # See #199
+  set(result "This is left over from other module!")  # See #199
 
-  UNSET(expansion)
-  TRIBITS_ETI_TYPE_EXPANSION(expansion "badformat")
-  UNITTEST_COMPARE_CONST(
+  unset(expansion)
+  tribits_eti_type_expansion(expansion "badformat")
+  unittest_compare_const(
     expansion
     "TRIBITS_ETI_BAD_ARGUMENTS"
     )
 
-  MESSAGE("*** Test passing valid arguments to TRIBITS_ETI_TYPE_EXPANSION( ... )\n")
+  message("*** Test passing valid arguments to tribits_eti_type_expansion( ... )\n")
 
   # test rank-one
-  UNSET(expansion)
-  TRIBITS_ETI_TYPE_EXPANSION(expansion "f1=ta|tb")
-  UNITTEST_COMPARE_CONST(
+  unset(expansion)
+  tribits_eti_type_expansion(expansion "f1=ta|tb")
+  unittest_compare_const(
     expansion
     "f1={ta};f1={tb}"
     )
 
   # test accumulation into ${expansion}
-  TRIBITS_ETI_TYPE_EXPANSION(expansion "f2=tc|td|te")
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_type_expansion(expansion "f2=tc|td|te")
+  unittest_compare_const(
     expansion
     "f1={ta};f1={tb};f2={tc};f2={td};f2={te}"
     )
 
   # test rank-two
-  UNSET(expansion)
-  TRIBITS_ETI_TYPE_EXPANSION(expansion "f1=ta|tb" "f2=tc")
-  UNITTEST_COMPARE_CONST(
+  unset(expansion)
+  tribits_eti_type_expansion(expansion "f1=ta|tb" "f2=tc")
+  unittest_compare_const(
     expansion
     "f1={ta} f2={tc};f1={tb} f2={tc}"
     )
 
   # test rank-three
-  UNSET(expansion)
-  TRIBITS_ETI_TYPE_EXPANSION(expansion "f1=ta|tb" "f2=tc" "f3=td|te")
-  UNITTEST_COMPARE_CONST(
+  unset(expansion)
+  tribits_eti_type_expansion(expansion "f1=ta|tb" "f2=tc" "f3=td|te")
+  unittest_compare_const(
     expansion
     "f1={ta} f2={tc} f3={td};f1={ta} f2={tc} f3={te};f1={tb} f2={tc} f3={td};f1={tb} f2={tc} f3={te}"
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ETI_CHECK_EXCLUSION)
+function(unittest_tribits_eti_check_exclusion)
 
-  MESSAGE("*** Test passing valid arguments to TRIBITS_ETI_CHECK_EXCLUSION( ... )\n")
+  message("*** Test passing valid arguments to tribits_eti_check_exclusion( ... )\n")
 
   message("empty exclusion list...")
-  TRIBITS_ETI_CHECK_EXCLUSION("" "ta|tb|tc" result)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_check_exclusion("" "ta|tb|tc" result)
+  unittest_compare_const(
     result
     OFF
   )
 
   message("inst not excluded (no match)...")
-  TRIBITS_ETI_CHECK_EXCLUSION("td|te|tf" "ta|tb|tc" result)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_check_exclusion("td|te|tf" "ta|tb|tc" result)
+  unittest_compare_const(
     result
     OFF
   )
 
   message("matches only on present types...")
-  TRIBITS_ETI_CHECK_EXCLUSION("ta|ta|tb" "ta|TYPE-MISSING|tb" result)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_check_exclusion("ta|ta|tb" "ta|TYPE-MISSING|tb" result)
+  unittest_compare_const(
     result
     ON
   )
 
   message("no match: exclusion has the wrong rank (not an error)...")
-  TRIBITS_ETI_CHECK_EXCLUSION("ta|ta" "ta|tb|tc" result)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_check_exclusion("ta|ta" "ta|tb|tc" result)
+  unittest_compare_const(
     result
     OFF
   )
 
   message("inst not excluded (partial match)...")
-  TRIBITS_ETI_CHECK_EXCLUSION("ta|tb|ta;tb|tb|tc;ta|ta|tc" "ta|tb|tc" result)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_check_exclusion("ta|tb|ta;tb|tb|tc;ta|ta|tc" "ta|tb|tc" result)
+  unittest_compare_const(
     result
     OFF
   )
 
   message("inst exluded (full explicit)...")
-  TRIBITS_ETI_CHECK_EXCLUSION("abcdf;ta|tb|tc" "ta|tb|tc" result)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_check_exclusion("abcdf;ta|tb|tc" "ta|tb|tc" result)
+  unittest_compare_const(
     result
     ON
   )
 
   message("inst exluded (full regex)...")
-  TRIBITS_ETI_CHECK_EXCLUSION("abcdf;.*|.*|.*" "ta|tb|tc" result)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_check_exclusion("abcdf;.*|.*|.*" "ta|tb|tc" result)
+  unittest_compare_const(
     result
     ON
   )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ETI_INDEX_MACRO_FIELDS)
+function(unittest_tribits_eti_index_macro_fields)
 
-  MESSAGE("*** Test passing valid arguments to TRIBITS_ETI_INDEX_MACRO_FIELDS( ... )\n")
+  message("*** Test passing valid arguments to tribits_eti_index_macro_fields( ... )\n")
 
   # check simple
-  TRIBITS_ETI_INDEX_MACRO_FIELDS("F1;F2;F3" "F3" var)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_index_macro_fields("F1;F2;F3" "F3" var)
+  unittest_compare_const(
     var
     "2"
     )
 
   # check complex
-  TRIBITS_ETI_INDEX_MACRO_FIELDS("F1;F2;F3" "F3;F2;F1" var)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_index_macro_fields("F1;F2;F3" "F3;F2;F1" var)
+  unittest_compare_const(
     var
     "2;1;0"
     )
 
   # check complex with spaces
-  TRIBITS_ETI_INDEX_MACRO_FIELDS("F1;F2;F3" " F2 ;   F2 ; F2 " var)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_index_macro_fields("F1;F2;F3" " F2 ;   F2 ; F2 " var)
+  unittest_compare_const(
     var
     "1;1;1"
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ETI_INSTANTIATIONS_INITIAL)
+function(unittest_tribits_add_eti_instantiations_initial)
 
-  MESSAGE("*** Testing TRIBITS_ADD_ETI_INSTANTIATIONS... )\n")
+  message("*** Testing TRIBITS_ADD_ETI_INSTANTIATIONS... )\n")
 
-  SET(package ${PROJECT_NAME}Framework)
-  GLOBAL_NULL_SET(${package}_ETI_LIBRARYSET)
-  TRIBITS_ADD_ETI_INSTANTIATIONS(${package} "someinst")
-  UNITTEST_COMPARE_CONST(
+  set(package ${PROJECT_NAME}Framework)
+  global_null_set(${package}_ETI_LIBRARYSET)
+  tribits_add_eti_instantiations(${package} "someinst")
+  unittest_compare_const(
     ${package}_ETI_LIBRARYSET
     "someinst"
     )
 
-ENDFUNCTION()
+endfunction()
 
-FUNCTION(UNITTEST_TRIBITS_ADD_ETI_INSTANTIATIONS_CUMULATIVE)
+function(unittest_tribits_add_eti_instantiations_cumulative)
 
-  SET(package ${PROJECT_NAME}Framework)
-  TRIBITS_ADD_ETI_INSTANTIATIONS(${package} "anotherinst")
-  UNITTEST_COMPARE_CONST(
+  set(package ${PROJECT_NAME}Framework)
+  tribits_add_eti_instantiations(${package} "anotherinst")
+  unittest_compare_const(
     ${package}_ETI_LIBRARYSET
     "someinst;anotherinst"
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ETI_EXPLODE)
+function(unittest_tribits_eti_explode)
 
-  MESSAGE("*** Test passing valid arguments to TRIBITS_ETI_EXPLODE( ... )\n")
+  message("*** Test passing valid arguments to tribits_eti_explode( ... )\n")
 
   # no fields -> no results
-  SET(FIELDS "")
-  TRIBITS_ETI_EXPLODE("${FIELDS}" "F1=type1 F2=type2 F3=type3" parsed)
-  UNITTEST_COMPARE_CONST(
+  set(FIELDS "")
+  tribits_eti_explode("${FIELDS}" "F1=type1 F2=type2 F3=type3" parsed)
+  unittest_compare_const(
     parsed
     ""
     )
 
   # order doesn't matter; also, results should be bracketed
-  SET(FIELDS F FF G)
-  TRIBITS_ETI_EXPLODE("${FIELDS}" "F=type1 FF=type2 G={type3}" parsed)
-  UNITTEST_COMPARE_CONST(
+  set(FIELDS F FF G)
+  tribits_eti_explode("${FIELDS}" "F=type1 FF=type2 G={type3}" parsed)
+  unittest_compare_const(
     parsed
     "type1|type2|type3"
     )
-  TRIBITS_ETI_EXPLODE("${FIELDS}" "FF=type2 F={type1} G=type3" parsed)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_explode("${FIELDS}" "FF=type2 F={type1} G=type3" parsed)
+  unittest_compare_const(
     parsed
     "type1|type2|type3"
     )
-  TRIBITS_ETI_EXPLODE("${FIELDS}" "G=type3 FF=type2 F={type1}" parsed)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_explode("${FIELDS}" "G=type3 FF=type2 F={type1}" parsed)
+  unittest_compare_const(
     parsed
     "type1|type2|type3"
     )
@@ -4193,252 +4193,252 @@ FUNCTION(UNITTEST_TRIBITS_ETI_EXPLODE)
   # empty for missing fields
 
   # missing field handled properly, extra fields ignored
-  SET(FIELDS F FF G)
-  TRIBITS_ETI_EXPLODE("${FIELDS}" "F=type1 G=type3 H=type4" parsed)
-  UNITTEST_COMPARE_CONST(
+  set(FIELDS F FF G)
+  tribits_eti_explode("${FIELDS}" "F=type1 G=type3 H=type4" parsed)
+  unittest_compare_const(
     parsed
     "type1|TYPE-MISSING|type3"
     )
 
   # bad bracketing doesn't work
-  TRIBITS_ETI_EXPLODE("F" "F=typea}" parsed)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_explode("F" "F=typea}" parsed)
+  unittest_compare_const(
     parsed
     "TRIBITS_ETI_BAD_PARSE"
     )
-  TRIBITS_ETI_EXPLODE("F" "F={typea" parsed)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_explode("F" "F={typea" parsed)
+  unittest_compare_const(
     parsed
     "TRIBITS_ETI_BAD_PARSE"
     )
-  TRIBITS_ETI_EXPLODE("F" "F={typea}}" parsed)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_explode("F" "F={typea}}" parsed)
+  unittest_compare_const(
     parsed
     "TRIBITS_ETI_BAD_PARSE"
     )
-  TRIBITS_ETI_EXPLODE("F" "F={{typea}" parsed)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_explode("F" "F={{typea}" parsed)
+  unittest_compare_const(
     parsed
     "TRIBITS_ETI_BAD_PARSE"
     )
-  TRIBITS_ETI_EXPLODE("F" "F=typeaG=typeb" parsed)
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_explode("F" "F=typeaG=typeb" parsed)
+  unittest_compare_const(
     parsed
     "TRIBITS_ETI_BAD_PARSE"
     )
 
-ENDFUNCTION()
+endfunction()
 
-FUNCTION(UNITTEST_TRIBITS_ETI_MANGLE_SYMBOL)
+function(unittest_tribits_eti_mangle_symbol)
 
-  MESSAGE("*** Testing ETI Mangling ***")
+  message("*** Testing ETI Mangling ***")
 
   # this one is ugly...
-  TRIBITS_ETI_MANGLE_SYMBOL(mangled "std::pair< std::complex< double > , std::complex< float > >")
-  UNITTEST_COMPARE_CONST(
+  tribits_eti_mangle_symbol(mangled "std::pair< std::complex< double > , std::complex< float > >")
+  unittest_compare_const(
     mangled
     "std_pair2std_complex1double1_std_complex0float02")
 
   # test that POD isn't mangled, and that the method accumulates into the typedef list
-  SET(defs_orig "do not delete")
-  SET(defs "${defs_orig}")
-  SET(symbol "double")
-  SET(mangling_list "")
-  TRIBITS_ETI_MANGLE_SYMBOL_AUGMENT_MACRO(defs symbol mangling_list)
-  UNITTEST_COMPARE_CONST(
+  set(defs_orig "do not delete")
+  set(defs "${defs_orig}")
+  set(symbol "double")
+  set(mangling_list "")
+  tribits_eti_mangle_symbol_augment_macro(defs symbol mangling_list)
+  unittest_compare_const(
     symbol
     "double")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     defs
     "${defs_orig}")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     mangling_list
     "")
 
   # this is more like what we expect
-  SET(defs "")
-  SET(mangling_list "")
+  set(defs "")
+  set(mangling_list "")
   #
-  SET(symbol "std::complex<float>")
-  TRIBITS_ETI_MANGLE_SYMBOL_AUGMENT_MACRO(defs symbol mangling_list)
-  UNITTEST_COMPARE_CONST(
+  set(symbol "std::complex<float>")
+  tribits_eti_mangle_symbol_augment_macro(defs symbol mangling_list)
+  unittest_compare_const(
     symbol
     "std_complex0float0")
   #
-  SET(symbol "std::pair<float,float>")
-  TRIBITS_ETI_MANGLE_SYMBOL_AUGMENT_MACRO(defs symbol mangling_list)
-  UNITTEST_COMPARE_CONST(
+  set(symbol "std::pair<float,float>")
+  tribits_eti_mangle_symbol_augment_macro(defs symbol mangling_list)
+  unittest_compare_const(
     symbol
     "std_pair0float_float0")
   #
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     mangling_list
     "std_complex0float0;std_pair0float_float0")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     defs
     "typedef std::complex<float> std_complex0float0;typedef std::pair<float,float> std_pair0float_float0")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_TRIBITS_ETI_GENERATE_MACROS)
+function(unittest_tribits_eti_generate_macros)
 
-  MESSAGE("*** Test TRIBITS_ETI_GENERATE_MACROS( ... )\n")
+  message("*** Test tribits_eti_generate_macros( ... )\n")
 
-  TRIBITS_ETI_TYPE_EXPANSION(
+  tribits_eti_type_expansion(
     etiset
     "F1=Teuchos::ArrayRCP<Teuchos::ArrayRCP<double> > | double"
     "F2=int | long"
     "F3=float"
   )
-  TRIBITS_ETI_TYPE_EXPANSION(
+  tribits_eti_type_expansion(
     exclset
     "F1=.*"
     "F2=long"
     "F3=.*"
   )
-  TRIBITS_ETI_GENERATE_MACROS(
+  tribits_eti_generate_macros(
     "F1|F2|F3"
     "${etiset}"
     "${exclset}"
     mangling_list     typedef_list
-    "F1(F1)"          macro_f1_var
-    "F312(F3,F1,F2)"  macro_f312_var
+    "f1(F1)"          macro_f1_var
+    "f312(F3,F1,F2)"  macro_f312_var
   )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     macro_f1_var
-"#define F1(INSTMACRO)\\
-\tINSTMACRO( Teuchos_ArrayRCP1Teuchos_ArrayRCP0double01 )\\
-\tINSTMACRO( double )
+"#define f1(INSTMACRO)\\
+\tinstmacro( Teuchos_ArrayRCP1Teuchos_ArrayRCP0double01 )\\
+\tinstmacro( double )
 "
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     macro_f312_var
-"#define F312(INSTMACRO)\\
-\tINSTMACRO( float , Teuchos_ArrayRCP1Teuchos_ArrayRCP0double01 , int )\\
-\tINSTMACRO( float , double , int )
+"#define f312(INSTMACRO)\\
+\tinstmacro( float , Teuchos_ArrayRCP1Teuchos_ArrayRCP0double01 , int )\\
+\tinstmacro( float , double , int )
 "
     )
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     typedef_list
     "typedef Teuchos::ArrayRCP<Teuchos::ArrayRCP<double> > Teuchos_ArrayRCP1Teuchos_ArrayRCP0double01")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     mangling_list
     "Teuchos_ArrayRCP1Teuchos_ArrayRCP0double01")
 
-  SET(mangling_list "")
-  SET(typedef_list  "")
-  TRIBITS_ETI_GENERATE_MACROS(
+  set(mangling_list "")
+  set(typedef_list  "")
+  tribits_eti_generate_macros(
     "F1|F2"
     "F1=a F2=b;F2=c;G1=d G2=e;G3=f"
     ""
     mangling_list     typedef_list
-    "F2(F2)"          macro_f2_var
-    "F12(F1,F2)"      macro_f12_var
+    "f2(F2)"          macro_f2_var
+    "f12(F1,F2)"      macro_f12_var
   )
-  UNITTEST_COMPARE_CONST( typedef_list "")
-  UNITTEST_COMPARE_CONST( mangling_list "")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const( typedef_list "")
+  unittest_compare_const( mangling_list "")
+  unittest_compare_const(
     macro_f2_var
-"#define F2(INSTMACRO)\\
-\tINSTMACRO( b )\\
-\tINSTMACRO( c )
+"#define f2(INSTMACRO)\\
+\tinstmacro( b )\\
+\tinstmacro( c )
 ")
-  UNITTEST_COMPARE_CONST(
+  unittest_compare_const(
     macro_f12_var
-"#define F12(INSTMACRO)\\
-\tINSTMACRO( a , b )
+"#define f12(INSTMACRO)\\
+\tinstmacro( a , b )
 ")
 
-ENDFUNCTION()
+endfunction()
 
 #
 # Execute the unit tests
 #
 
 # Set up some global environment stuff
-SET(${PROJECT_NAME}_HOSTNAME testhost.nowhere.com)
-SET(CMAKE_HOST_SYSTEM_NAME UnspecifiedHostSystemName)
+set(${PROJECT_NAME}_HOSTNAME testhost.nowhere.com)
+set(CMAKE_HOST_SYSTEM_NAME UnspecifiedHostSystemName)
 
 # Assume that all unit tests will pass by default
-GLOBAL_SET(UNITTEST_OVERALL_PASS TRUE)
-GLOBAL_SET(UNITTEST_OVERALL_NUMPASSED 0)
-GLOBAL_SET(UNITTEST_OVERALL_NUMRUN 0)
+global_set(UNITTEST_OVERALL_PASS TRUE)
+global_set(UNITTEST_OVERALL_NUMPASSED 0)
+global_set(UNITTEST_OVERALL_NUMRUN 0)
 
-# Set up the TRIBITS_ADD_TEST(...) and TRIBITS_ADD_ADVANCED_TEST() functions
+# Set up the tribits_add_test(...) and tribits_add_advanced_test() functions
 # for unit test mode.
-SET( TRIBITS_ADD_TEST_ADD_TEST_UNITTEST TRUE )
+set( TRIBITS_ADD_TEST_ADD_TEST_UNITTEST TRUE )
 
-# Capture the ADD_TEST() arguments for TRIBITS_ADD_TEST().
-SET( TRIBITS_ADD_TEST_ADD_TEST_CAPTURE TRUE )
+# Capture the add_test() arguments for tribits_add_test().
+set( TRIBITS_ADD_TEST_ADD_TEST_CAPTURE TRUE )
 
-MESSAGE("\n***")
-MESSAGE("*** Running little bits of tests")
-MESSAGE("***\n")
+message("\n***")
+message("*** Running little bits of tests")
+message("***\n")
 
-UNITTEST_APPEND_STRING_VAR()
-UNITTEST_TRIBITS_FIND_PYTHON_INTERP()
-UNITTEST_TRIBITS_STANDARDIZE_ABS_PATHS()
-UNITTEST_TRIBITS_DIR_IS_BASEDIR()
-UNITTEST_TRIBITS_GET_DIR_ARRAY_BELOW_BASE_DIR()
-UNITTEST_TRIBITS_MISC()
-UNITTEST_TRIBITS_STRIP_QUOTES_FROM_STR()
-UNITTEST_TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME()
-UNITTEST_TRIBITS_GET_RAW_GIT_COMMIT_UTC_TIME()
-UNITTEST_TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE()
-UNITTEST_TRIBITS_REPORT_INVALID_TRIBITS_USAGE()
+unittest_append_string_var()
+unittest_tribits_find_python_interp()
+unittest_tribits_standardize_abs_paths()
+unittest_tribits_dir_is_basedir()
+unittest_tribits_get_dir_array_below_base_dir()
+unittest_tribits_misc()
+unittest_tribits_strip_quotes_from_str()
+unittest_tribits_get_version_date_from_raw_git_commit_utc_time()
+unittest_tribits_get_raw_git_commit_utc_time()
+unittest_tribits_tpl_allow_pre_find_package()
+unittest_tribits_report_invalid_tribits_usage()
 
 # Set the default test categories
-SET(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
+set(${PROJECT_NAME}_TEST_CATEGORIES NIGHTLY)
 
-MESSAGE("\n***")
-MESSAGE("*** Testing TRIBITS_ADD_TEST(...)")
-MESSAGE("***\n")
+message("\n***")
+message("*** Testing tribits_add_test(...)")
+message("***\n")
 
-UNITTEST_TRIBITS_ADD_TEST_BASIC()
-UNITTEST_TRIBITS_ADD_TEST_DISABLE()
-UNITTEST_TRIBITS_ADD_TEST_CATEGORIES()
-UNITTEST_TRIBITS_ADD_TEST_COMM()
-UNITTEST_TRIBITS_ADD_TEST_PROPERTIES()
+unittest_tribits_add_test_basic()
+unittest_tribits_add_test_disable()
+unittest_tribits_add_test_categories()
+unittest_tribits_add_test_comm()
+unittest_tribits_add_test_properties()
 
-MESSAGE("\n***")
-MESSAGE("*** Testing TRIBITS_ADD_ADVANCED_TEST(...)")
-MESSAGE("***\n")
+message("\n***")
+message("*** Testing tribits_add_advanced_test(...)")
+message("***\n")
 
-UNITTEST_TRIBITS_ADD_ADVANCED_TEST_BASIC()
-UNITTEST_TRIBITS_ADD_ADVANCED_TEST_CATEGORIES()
-UNITTEST_TRIBITS_ADD_ADVANCED_TEST_COMM()
-UNITTEST_TRIBITS_ADD_ADVANCED_TEST_NUM_MPI_PROCS()
-UNITTEST_TRIBITS_ADD_ADVANCED_TEST_DIRECTROY()
-UNITTEST_TRIBITS_ADD_ADVANCED_TEST_PROPERTIES()
-UNITTEST_TRIBITS_ADD_TEST_CUDA_GPU_CTEST_RESOURCES()
-UNITTEST_TRIBITS_ADD_ADVANCED_TEST_COPY_FILES_TO_TEST_DIR()
-UNITTEST_TRIBITS_ADD_ADVANCED_TEST_EXCLUDES()
-UNITTEST_TRIBITS_ADD_ADVANCED_TEST_RUN_SERIAL()
-UNITTEST_TRIBITS_ADD_ADVANCED_TEST_CHANGE_MAX_NUM_TEST_BLOCKS()
+unittest_tribits_add_advanced_test_basic()
+unittest_tribits_add_advanced_test_categories()
+unittest_tribits_add_advanced_test_comm()
+unittest_tribits_add_advanced_test_num_mpi_procs()
+unittest_tribits_add_advanced_test_directroy()
+unittest_tribits_add_advanced_test_properties()
+unittest_tribits_add_test_cuda_gpu_ctest_resources()
+unittest_tribits_add_advanced_test_copy_files_to_test_dir()
+unittest_tribits_add_advanced_test_excludes()
+unittest_tribits_add_advanced_test_run_serial()
+unittest_tribits_add_advanced_test_change_max_num_test_blocks()
 
-MESSAGE("\n***")
-MESSAGE("*** Testing TRIBITS_ADD_EXECUTABLE_AND_TEST(...)")
-MESSAGE("***\n")
+message("\n***")
+message("*** Testing tribits_add_executable_and_test(...)")
+message("***\n")
 
-UNITTEST_TRIBITS_ADD_EXECUTABLE_AND_TEST()
+unittest_tribits_add_executable_and_test()
 
-MESSAGE("\n***")
-MESSAGE("*** Testing Explicit Template Instantiation functionality")
-MESSAGE("***\n")
+message("\n***")
+message("*** Testing Explicit Template Instantiation functionality")
+message("***\n")
 
-UNITTEST_TRIBITS_ETI_EXPLODE()
-UNITTEST_TRIBITS_ETI_TYPE_EXPANSION()
-UNITTEST_TRIBITS_ETI_CHECK_EXCLUSION()
-UNITTEST_TRIBITS_ETI_INDEX_MACRO_FIELDS()
-UNITTEST_TRIBITS_ADD_ETI_INSTANTIATIONS_INITIAL()
-UNITTEST_TRIBITS_ADD_ETI_INSTANTIATIONS_CUMULATIVE()
-UNITTEST_TRIBITS_ETI_MANGLE_SYMBOL()
-UNITTEST_TRIBITS_ETI_GENERATE_MACROS()
+unittest_tribits_eti_explode()
+unittest_tribits_eti_type_expansion()
+unittest_tribits_eti_check_exclusion()
+unittest_tribits_eti_index_macro_fields()
+unittest_tribits_add_eti_instantiations_initial()
+unittest_tribits_add_eti_instantiations_cumulative()
+unittest_tribits_eti_mangle_symbol()
+unittest_tribits_eti_generate_macros()
 
-MESSAGE("\n***")
-MESSAGE("*** Determine final result of all unit tests")
-MESSAGE("***\n")
+message("\n***")
+message("*** Determine final result of all unit tests")
+message("***\n")
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(675)
+unittest_final_result(675)

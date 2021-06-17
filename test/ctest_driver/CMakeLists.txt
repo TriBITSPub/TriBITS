@@ -1,4 +1,4 @@
-TRIBITS_ADD_ADVANCED_TEST( CTestDriverUnitTests
+tribits_add_advanced_test( CTestDriverUnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -11,7 +11,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriverUnitTests
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsGetCTestTestXmlDir
+tribits_add_advanced_test( TribitsGetCTestTestXmlDir
   OVERALL_WORKING_DIRECTORY TEST_NAME
 
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -25,18 +25,18 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsGetCTestTestXmlDir
   )
 
 
-ADD_SUBDIRECTORY(MockCTestDriver)
+add_subdirectory(MockCTestDriver)
 
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  ADD_SUBDIRECTORY(TribitsExampleProject)
-ENDIF()
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  add_subdirectory(TribitsExampleProject)
+endif()
 
-SET(${PROJECT_NAME}_ENABLE_REAL_GIT_CLONE_TESTS OFF CACHE BOOL
+set(${PROJECT_NAME}_ENABLE_REAL_GIT_CLONE_TESTS OFF CACHE BOOL
   "If TRUE, then perform tests that do real clones of repos from GitHub.")
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux" AND
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux" AND
     ${PROJECT_NAME}_ENABLE_REAL_GIT_CLONE_TESTS
   )
-  ADD_SUBDIRECTORY(TribitsExampleMetaProject)
-ENDIF()
+  add_subdirectory(TribitsExampleMetaProject)
+endif()

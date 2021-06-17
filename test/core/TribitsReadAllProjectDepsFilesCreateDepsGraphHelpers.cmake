@@ -37,16 +37,16 @@
 # ************************************************************************
 # @HEADER
 
-MESSAGE("The outer project: PROJECT_NAME = ${PROJECT_NAME}")
-MESSAGE("The outer project: ${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
+message("The outer project: PROJECT_NAME = ${PROJECT_NAME}")
+message("The outer project: ${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 
-SET( CMAKE_MODULE_PATH
+set( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
 
-INCLUDE(PrintVar)
+include(PrintVar)
 
 
 #####################################################################
@@ -55,58 +55,58 @@ INCLUDE(PrintVar)
 #
 #####################################################################
 
-SET(PROJECT_SOURCE_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/examples/MockTrilinos")
-PRINT_VAR(PROJECT_SOURCE_DIR)
-SET(REPOSITORY_DIR ".")
-PRINT_VAR(REPOSITORY_DIR)
+set(PROJECT_SOURCE_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/examples/MockTrilinos")
+print_var(PROJECT_SOURCE_DIR)
+set(REPOSITORY_DIR ".")
+print_var(REPOSITORY_DIR)
 
 # Before we change the project name, we have to set the TRIBITS_DIR so that it
 # will point in the right place.  There is TriBITS code being called that must
 # have this variable set!
 
-SET(Trilinos_TRIBITS_DIR ${${PROJECT_NAME}_TRIBITS_DIR})
+set(Trilinos_TRIBITS_DIR ${${PROJECT_NAME}_TRIBITS_DIR})
 
 # Set the mock project name last to override the outer project
-SET(PROJECT_NAME "Trilinos")
-MESSAGE("The inner test project: PROJECT_NAME = ${PROJECT_NAME}")
-MESSAGE("The inner tets project: ${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
+set(PROJECT_NAME "Trilinos")
+message("The inner test project: PROJECT_NAME = ${PROJECT_NAME}")
+message("The inner tets project: ${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 
 # Includes
 
-INCLUDE(TribitsReadAllProjectDepsFilesCreateDepsGraph)
-INCLUDE(TribitsProcessTplsLists)
-INCLUDE(UnitTestHelpers)
-INCLUDE(GlobalSet)
+include(TribitsReadAllProjectDepsFilesCreateDepsGraph)
+include(TribitsProcessTplsLists)
+include(UnitTestHelpers)
+include(GlobalSet)
 
-# For Running TRIBITS_READ_ALL_PROJECT_DEPS_FILES_CREATE_DEPS_GRAPH()
+# For Running tribits_read_all_project_deps_files_create_deps_graph()
 
-SET(${PROJECT_NAME}_NATIVE_REPOSITORIES .)
+set(${PROJECT_NAME}_NATIVE_REPOSITORIES .)
 
-SET(${PROJECT_NAME}_PACKAGES_FILE_OVERRIDE
+set(${PROJECT_NAME}_PACKAGES_FILE_OVERRIDE
   ${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/PackagesList.cmake)
-SET(${PROJECT_NAME}_TPLS_FILE_OVERRIDE
+set(${PROJECT_NAME}_TPLS_FILE_OVERRIDE
   ${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/TPLsList.cmake)
 
-SET(${PROJECT_NAME}_EXTRA_REPOSITORIES extraRepoTwoPackages)
+set(${PROJECT_NAME}_EXTRA_REPOSITORIES extraRepoTwoPackages)
 
 # For running other lower-level functions
 
-SET(REPOSITORY_NAME "Trilinos")
+set(REPOSITORY_NAME "Trilinos")
 
-INCLUDE(${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/PackagesList.cmake)
-INCLUDE(${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/TPLsList.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/PackagesList.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/TPLsList.cmake)
 
-SET(EXTRA_REPO_NAME extraRepoTwoPackages)
-SET(EXTRA_REPO_DIR extraRepoTwoPackages)
+set(EXTRA_REPO_NAME extraRepoTwoPackages)
+set(EXTRA_REPO_DIR extraRepoTwoPackages)
 
-SET(REPOSITORY_NAME ${EXTRA_REPO_NAME})
-INCLUDE(${PROJECT_SOURCE_DIR}/${EXTRA_REPO_NAME}/PackagesList.cmake)
+set(REPOSITORY_NAME ${EXTRA_REPO_NAME})
+include(${PROJECT_SOURCE_DIR}/${EXTRA_REPO_NAME}/PackagesList.cmake)
 
-SET(${EXTRA_REPO_NAME}_TPLS_FINDMODS_CLASSIFICATIONS)
+set(${EXTRA_REPO_NAME}_TPLS_FINDMODS_CLASSIFICATIONS)
 
-SET(${PROJECT_NAME}_ALL_REPOSITORIES "." "${EXTRA_REPO_NAME}")
+set(${PROJECT_NAME}_ALL_REPOSITORIES "." "${EXTRA_REPO_NAME}")
 
-SET( ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES ON )
+set( ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES ON )
 
 
 #####################################################################
@@ -116,9 +116,9 @@ SET( ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES ON )
 #####################################################################
 
 
-MACRO(UNITTEST_HELPER_READ_PACKAGES_AND_DEPENDENCIES)
+macro(unittest_helper_read_packages_and_dependencies)
 
-  SET(${PROJECT_NAME}_ALL_REPOSITORIES)
-  TRIBITS_READ_ALL_PROJECT_DEPS_FILES_CREATE_DEPS_GRAPH()
+  set(${PROJECT_NAME}_ALL_REPOSITORIES)
+  tribits_read_all_project_deps_files_create_deps_graph()
 
-ENDMACRO()
+endmacro()

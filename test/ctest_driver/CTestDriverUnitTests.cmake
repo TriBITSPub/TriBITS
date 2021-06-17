@@ -37,53 +37,53 @@
 # ************************************************************************
 # @HEADER
 
-MESSAGE("PROJECT_NAME = ${PROJECT_NAME}")
-MESSAGE("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
+message("PROJECT_NAME = ${PROJECT_NAME}")
+message("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 
-SET( CMAKE_MODULE_PATH
+set( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   "${${PROJECT_NAME}_TRIBITS_DIR}/ctest_driver"
   )
 
-INCLUDE(GlobalSet)
-INCLUDE(TribitsReadTagFile)
-INCLUDE(UnitTestHelpers)
+include(GlobalSet)
+include(TribitsReadTagFile)
+include(UnitTestHelpers)
 
 
-FUNCTION(UNITTEST_READ_CTEST_TAG_FILE)
+function(unittest_read_ctest_tag_file)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing tribits_read_ctest_tag_file()")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing tribits_read_ctest_tag_file()")
+  message("***\n")
 
-  SET(TAG_FILE_IN "${CMAKE_CURRENT_LIST_DIR}/data/dummy_build_dir/Testing/TAG")
+  set(TAG_FILE_IN "${CMAKE_CURRENT_LIST_DIR}/data/dummy_build_dir/Testing/TAG")
 
-  TRIBITS_READ_CTEST_TAG_FILE(${TAG_FILE_IN} BUILD_START_TIME_OUT CDASH_TRACK_OUT)
+  tribits_read_ctest_tag_file(${TAG_FILE_IN} BUILD_START_TIME_OUT CDASH_TRACK_OUT)
 
-  UNITTEST_COMPARE_CONST(BUILD_START_TIME_OUT
+  unittest_compare_const(BUILD_START_TIME_OUT
     "20101015-1112")
 
-  UNITTEST_COMPARE_CONST(CDASH_TRACK_OUT
+  unittest_compare_const(CDASH_TRACK_OUT
     "My CDash Track")  # NOTE: Spaces are important to test here!
 
-ENDFUNCTION()
+endfunction()
 
 #
 # Execute the unit tests
 #
 
 # Assume that all unit tests will pass by default
-GLOBAL_SET(UNITTEST_OVERALL_PASS TRUE)
-GLOBAL_SET(UNITTEST_OVERALL_NUMPASSED 0)
-GLOBAL_SET(UNITTEST_OVERALL_NUMRUN 0)
+global_set(UNITTEST_OVERALL_PASS TRUE)
+global_set(UNITTEST_OVERALL_NUMPASSED 0)
+global_set(UNITTEST_OVERALL_NUMRUN 0)
 
 # Run the unit test functions
-UNITTEST_READ_CTEST_TAG_FILE()
+unittest_read_ctest_tag_file()
 
-MESSAGE("\n***")
-MESSAGE("*** Determine final result of all unit tests")
-MESSAGE("***\n")
+message("\n***")
+message("*** Determine final result of all unit tests")
+message("***\n")
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(2)
+unittest_final_result(2)

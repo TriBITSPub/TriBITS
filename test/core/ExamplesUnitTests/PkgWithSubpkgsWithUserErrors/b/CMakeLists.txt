@@ -1,7 +1,7 @@
-TRIBITS_SUBPACKAGE(B)
+tribits_subpackage(B)
 
-ADD_SUBDIRECTORY(src)
+add_subdirectory(src)
 
-TRIBITS_ADD_TEST_DIRECTORIES(tests)
+tribits_add_test_directories(tests)
 
-TRIBITS_SUBPACKAGE_POSTPROCESS()
+tribits_subpackage_postprocess()

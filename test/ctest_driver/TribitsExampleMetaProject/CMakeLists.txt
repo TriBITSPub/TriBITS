@@ -49,9 +49,9 @@
 # Set up common vars/args for all direct CTest Driver tests
 #
 
-SET(TribitsExMetaProj_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleMetaProject")
+set(TribitsExMetaProj_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleMetaProject")
 
-SET(COMMON_ENV_ARGS
+set(COMMON_ENV_ARGS
   # Set back to default in case set in env
   CTEST_TEST_TYPE=
   TribitsExMetaProj_PACKAGES=
@@ -66,7 +66,7 @@ SET(COMMON_ENV_ARGS
   CTEST_DO_SUBMIT=OFF
   )
 
-SET(CTEST_S_SCRIPT_ARGS
+set(CTEST_S_SCRIPT_ARGS
   ${CMAKE_CTEST_COMMAND} -V -S
     ${TribitsExMetaProj_DIR}/cmake/ctest/general_gcc/ctest_serial_debug.cmake
   )
@@ -76,9 +76,9 @@ SET(CTEST_S_SCRIPT_ARGS
 # the 'dashboard' target.
 #
 
-INCLUDE("${CMAKE_CURRENT_LIST_DIR}/../../core/ExamplesUnitTests/GetCompilerPassthroughArgs.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../../core/ExamplesUnitTests/GetCompilerPassthroughArgs.cmake")
 
-SET(TribitsExampleMetaProject_COMMON_CONFIG_ARGS
+set(TribitsExampleMetaProject_COMMON_CONFIG_ARGS
   ${COMMON_ENV_ARGS_PASSTHROUGH}
   -DTribitsExMetaProj_ENABLE_Fortran=${${PROJECT_NAME}_ENABLE_Fortran}
   ${CTEST_DROP_SITE_CONFIG_ARGS}
@@ -86,7 +86,7 @@ SET(TribitsExampleMetaProject_COMMON_CONFIG_ARGS
 
 ##########################################################################################
 #
-# Test TRIBITS_CTEST_DRIVER() using real git clones
+# Test tribits_ctest_driver() using real git clones
 #
 # NOTE: To get these tests to work on some systems, one may need to switch
 # away from 'https://github.com/' to using 'git@github.com:' using:
@@ -98,7 +98,7 @@ SET(TribitsExampleMetaProject_COMMON_CONFIG_ARGS
 ##########################################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_remote
+tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_remote
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -323,7 +323,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   # to avoid this cost.
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_custom_branch_remote
+tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_custom_branch_remote
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -521,16 +521,16 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
   #
 
 
-IF (NOT GIT_VERSION_STRING VERSION_LESS "2.10.0")
-  SET(GIT_SUPPORTS_VERSION_DATE TRUE)
-ELSE()
-  SET(GIT_SUPPORTS_VERSION_DATE FASLE)
-ENDIF()
+if (NOT GIT_VERSION_STRING VERSION_LESS "2.10.0")
+  set(GIT_SUPPORTS_VERSION_DATE TRUE)
+else()
+  set(GIT_SUPPORTS_VERSION_DATE FASLE)
+endif()
 
-SET(FULL_TEST_BINARY_DIR
+set(FULL_TEST_BINARY_DIR
   "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestDriver_TribitsExMetaProj_version_date")
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
+tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_version_date
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE GIT_SUPPORTS_VERSION_DATE
@@ -699,7 +699,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_TribitsExMetaProj_version_date
 
 
 # ToDo: Move the extra repo cloning and updating code into being called by
-# cmake -P script inside of CTEST_UPDATE() so that any update failure can be
+# cmake -P script inside of ctest_update() so that any update failure can be
 # reported to CDash!  Also, don't do the configure, build, or tests if there
 # is an update failure.
 
