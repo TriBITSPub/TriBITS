@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-#################################
-# Unit testing code for gitdist #
-#################################
+################################################################################
+# Unit testing code for lower_case_cmake.py                                    #
+################################################################################
+
 
 import sys
 import imp
@@ -52,6 +53,38 @@ class test_makeCmndsLowerCaseInCMakeStr(unittest.TestCase):
       "  other_functioNS\n"+\
       "    (\n"+\
       "      SOME_VAR some_value)\n"+\
+      "\n"
+    cmakeCodeStrOut = LCC.makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn)
+    self.assertEqual(cmakeCodeStrOut, cmakeCodeStrOut_expected)
+
+  def test_notmacro(self):
+    cmakeCodeStrIn = "\n"+\
+      "# This is a macro defintion!\n"+\
+      "MACRO(ARG1 ARG2)\n"+\
+      "# This is not a macro defintion!\n"+\
+      "NOTMACRO(ARG1 ARG2)\n"+\
+      "\n"
+    cmakeCodeStrOut_expected = "\n"+\
+      "# This is a macro defintion!\n"+\
+      "macro(arg1 ARG2)\n"+\
+      "# This is not a macro defintion!\n"+\
+      "notmacro(ARG1 ARG2)\n"+\
+      "\n"
+    cmakeCodeStrOut = LCC.makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn)
+    self.assertEqual(cmakeCodeStrOut, cmakeCodeStrOut_expected)
+
+  def test_notfunction(self):
+    cmakeCodeStrIn = "\n"+\
+      "# This is a function defintion!\n"+\
+      "FUNCTION(ARG1 ARG2)\n"+\
+      "# This is not a function defintion!\n"+\
+      "NOTFUNCTION(ARG1 ARG2)\n"+\
+      "\n"
+    cmakeCodeStrOut_expected = "\n"+\
+      "# This is a function defintion!\n"+\
+      "function(arg1 ARG2)\n"+\
+      "# This is not a function defintion!\n"+\
+      "notfunction(ARG1 ARG2)\n"+\
       "\n"
     cmakeCodeStrOut = LCC.makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn)
     self.assertEqual(cmakeCodeStrOut, cmakeCodeStrOut_expected)
@@ -182,14 +215,18 @@ class test_makeCmndsLowerCaseInCMakeStr(unittest.TestCase):
 
   def test_control_statements(self):
     cmakeCodeStrIn = "\n"+\
-      "IF(var)\n"+\
-      "IF (var)\n"+\
-      "If (var)\n"+\
-      "IF  (var)\n"+\
       "SET(var)\n"+\
       "SET (var)\n"+\
       "Set (var)\n"+\
       "SET  (var)\n"+\
+      "IF(var)\n"+\
+      "IF (var)\n"+\
+      "If (var)\n"+\
+      "IF  (var)\n"+\
+      "ELSEIF(var)\n"+\
+      "ELSEIF (var)\n"+\
+      "ElseIf (var)\n"+\
+      "ELSEIF  (var)\n"+\
       "FOREACH(var)\n"+\
       "FOREACH (var)\n"+\
       "Foreach (var)\n"+\
@@ -200,14 +237,18 @@ class test_makeCmndsLowerCaseInCMakeStr(unittest.TestCase):
       "WHILE  (var)\n"+\
       "\n"
     cmakeCodeStrOut_expected = "\n"+\
-      "if(var)\n"+\
-      "if (var)\n"+\
-      "if (var)\n"+\
-      "if  (var)\n"+\
       "set(var)\n"+\
       "set (var)\n"+\
       "set (var)\n"+\
       "set  (var)\n"+\
+      "if(var)\n"+\
+      "if (var)\n"+\
+      "if (var)\n"+\
+      "if  (var)\n"+\
+      "elseif(var)\n"+\
+      "elseif (var)\n"+\
+      "elseif (var)\n"+\
+      "elseif  (var)\n"+\
       "foreach(var)\n"+\
       "foreach (var)\n"+\
       "foreach (var)\n"+\

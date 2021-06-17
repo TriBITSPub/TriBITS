@@ -13,13 +13,14 @@ commandCallRegex = \
 commandCallWithSpacesRegex = \
   re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*[\s]*\(')
 macroDefRegex = \
-  re.compile(r'[mM][aA][cC][rR][oO]\([\s]*[a-zA-Z_][a-zA-Z0-9_]*')
+  re.compile(r'[^a-zA-Z_][mM][aA][cC][rR][oO]\([\s]*[a-zA-Z_][a-zA-Z0-9_]*')
 functionDefRegex = \
-  re.compile(r'[fF][uU][nN][cC][tT][iI][oO][nN]\([\s]*[a-zA-Z_][a-zA-Z0-9_]*')
+  re.compile(r'[^a-zA-Z_][fF][uU][nN][cC][tT][iI][oO][nN]\([\s]*[a-zA-Z_][a-zA-Z0-9_]*')
 
 specialCommandNamesList = [
   r'[sS][eE][tT]',
   r'[iI][fF]',
+  r'[eE][lL][sS][eE][iI][fF]',
   r'[fF][oO][rR][eE][aA][cC][hH]',
   r'[wW][hH][iI][lL][eE]',
   ]
@@ -55,6 +56,8 @@ def makeRegexMatchesLowerCaseInCMakeStr(cmakeCodeStrIn, regex):
   while cmakeCodeStrStartSearchIdx < cmakeCodeStrInLen:
     m = regex.search(cmakeCodeStrIn[cmakeCodeStrStartSearchIdx:])
     if m:
+      #print("")
+      #print("m.group() = '"+str(m.group())+"'")
       # Get the substr for the match
       cmakeCodeStrMatchStartIdx = cmakeCodeStrStartSearchIdx + m.start() 
       cmakeCodeStrMatchEndIdx = cmakeCodeStrStartSearchIdx + m.end() 
@@ -82,12 +85,18 @@ def conditionalLowerCaseCMakeGroup(cmakeMatchGroup):
   #print("")
   #print("cmakeMatchGroup = '"+cmakeMatchGroup+"'")
   if isConditionalCMakeGroup(cmakeMatchGroup):
+    #print("Is a conditional expression")
     cmakeMatchGroupNewCase = cmakeMatchGroup
   elif isSpecialCommandNameMatch(cmakeMatchGroup):
+    #print("Is special command name!")
+    cmakeMatchGroupNewCase = cmakeMatchGroup.lower()
+  elif isMacroOrFunctionGroup(cmakeMatchGroup):
     cmakeMatchGroupNewCase = cmakeMatchGroup.lower()
   elif commandCallRegex.match(cmakeMatchGroup):
+    #print("Is standard command call!")
     cmakeMatchGroupNewCase = cmakeMatchGroup.lower()
   else:
+    #print("Does not match known cases so don't lower case!")
     cmakeMatchGroupNewCase = cmakeMatchGroup
   #print("cmakeMatchGroupNewCase = '"+cmakeMatchGroupNewCase+"'")
   return cmakeMatchGroupNewCase
@@ -109,6 +118,14 @@ def isSpecialCommandNameMatch(cmakeMatchGroup):
     if m:
       #print("MATCH!")
       return True
+  return False
+
+
+def isMacroOrFunctionGroup(cmakeMatchGroup):
+  if macroDefRegex.match(cmakeMatchGroup):
+    return True
+  if functionDefRegex.match(cmakeMatchGroup):
+    return True
   return False
 
 
@@ -135,6 +152,7 @@ Also, certain common CMake commands that often have spaces between
 
   SET (...)
   IF (...)
+  ELSEIF (...)
   FOREACH (...)
   WHILE (...)
 
