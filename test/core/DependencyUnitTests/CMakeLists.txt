@@ -1111,14 +1111,14 @@ create_dependency_handling_test_case(
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
     -DTrilinos_ASSERT_MISSING_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]MESSAGE[)]:"
+    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
     "Error, the package 'Anasazi' is listed as a dependency of the package"
     "'Teko' is in the list 'Trilinos_SE_PACKAGES' but the package 'Anasazi' is"
     "either not defined or is listed later in the package order[.]  This may also"
     "be an attempt to create a circular dependency between the packages"
     "'Anasazi' and 'Teko' [(]which is not allowed[)][.]  Check the spelling of"
     "'Anasazi' or see how it is listed in a call to"
-    "TRIBITS_REPOSITORY_DEFINE_PACKAGES[(][)] in relation to 'Teko'[.]"
+    "tribits_repository_define_packages[(][)] in relation to 'Teko'[.]"
   )
 
 
