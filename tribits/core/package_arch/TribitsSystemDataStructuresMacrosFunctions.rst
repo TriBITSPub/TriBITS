@@ -1,5 +1,5 @@
-TriBITS System Data Structures and Functions
---------------------------------------------
+TriBITS System Data Structures
+------------------------------
 
 This section describes the global CMake variables that make up the
 data-structures and the functions that create them that define the TriBITS
@@ -9,6 +9,13 @@ therefore are recomputed on every reconfigure).  These variables define a
 graph of external packages (i.e. TPLs) and internal packages (i.e. buildable
 CMake packages).  This information is meant for maintainers of the TriBITS
 system itself and should not need to be known by TriBITS Project maintainers.
+
+In addition to the variables listed below are the variables documented in:
+
+* `TriBITS Project Core Variables`_
+* `TriBITS Repository Core Variables`_
+* `TriBITS Package Core Variables`_
+* `TriBITS Subpackage Core Variables`_
 
 
 Lists of external and internal packages
