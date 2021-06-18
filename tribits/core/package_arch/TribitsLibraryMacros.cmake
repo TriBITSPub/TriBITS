@@ -178,9 +178,9 @@ function(tribits_configure_file  PACKAGE_NAME_CONFIG_FILE)
       "#ifndef ${FUNC_TIME_MONITOR_MACRO_NAME}\n"
       "#  define ${TIME_MONITOR_DEFINE_NAME}\n"
       "#  define ${FUNC_TIME_MONITOR_MACRO_NAME}(FUNCNAME) \\\n"
-      "     teuchos_func_time_monitor_diff(FUNCNAME, ${PARENT_PACKAGE_NAME_UC})\n"
+      "     TEUCHOS_FUNC_TIME_MONITOR_DIFF(FUNCNAME, ${PARENT_PACKAGE_NAME_UC})\n"
       "#  define ${FUNC_TIME_MONITOR_DIFF_MACRO_NAME}(FUNCNAME, DIFF) \\\n"
-      "     teuchos_func_time_monitor_diff(FUNCNAME, DIFF)\n"
+      "     TEUCHOS_FUNC_TIME_MONITOR_DIFF(FUNCNAME, DIFF)\n"
       "#endif\n"
       )
   else()
