@@ -1748,7 +1748,7 @@ A packages' core variables are broken down into the following categories:
 
 .. _TriBITS Package Local Variables:
 
-The following locally scoped *TriBITS Package Local Variables* are defined
+The following locally scoped **TriBITS Package Local Variables** are defined
 when the files for a given TriBITS Package (or any SE package for that matter)
 are being processed:
 
@@ -1777,7 +1777,7 @@ are being processed:
 .. _TriBITS Package Top-Level Local Variables:
 
 Once all of the TriBITS SE package's ``Dependencies.cmake`` files have been
-processed, the following *TriBITS Package Top-Level Local Variables* are
+processed, the following **TriBITS Package Top-Level Local Variables** are
 defined:
 
   .. _${PACKAGE_NAME}_SOURCE_DIR:
@@ -1830,7 +1830,7 @@ defined:
 
 .. _TriBITS Package Cache Variables:
 
-In addition, the following user-settable *TriBITS Package Cache Variables* are
+In addition, the following user-settable **TriBITS Package Cache Variables** are
 defined before a (SE) Package's ``CMakeLists.txt`` file is processed:
 
   .. _${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}:
@@ -1897,7 +1897,7 @@ Logic`_.
 
 .. _TriBITS Package Optional Dependency Macro Variables:
 
-The following local *TriBITS Package Optional Dependency Macro Variables* are
+The following local **TriBITS Package Optional Dependency Macro Variables** are
 defined in the top-level project scope before a (SE) Package's
 ``CMakeLists.txt`` file is processed:
 
@@ -2126,17 +2126,19 @@ TriBITS Subpackage Core Variables
 .................................
 
 The core variables associated with a subpackage are identical to the `TriBITS
-Package Core Variables`_.  The only difference is that a subpackage may need
-to refer to its parent package where a top-level package does not have a
-parent package.  The extra variables that are defined when processing a
-subpackage's files are:
+Package Core Variables`_.  In addition, a subpackage may need to refer to its
+top-level parent package where a top-level package does not have a parent
+package.  These additional variables that are defined for subpackages are
+broken down into the following categories:
 
-  .. _${PACKAGE_NAME}_PARENT_PACKAGE:
+* `TriBITS Subpackage Local Variables`_
+* `TriBITS Subpackage Top-Level Local Variables`_
 
-  ``${PACKAGE_NAME}_PARENT_PACKAGE``
+.. _TriBITS Subpackage Local Variables:
 
-    The name of the parent package.  (NOTE: If this is empty "", then
-    ``${PACKAGE_NAME}`` is actually a parent package and not a subpackage.)
+In addition to the `TriBITS Package Local Variables`_, the following locally
+scoped **TriBITS Subpackage Local Variables** are defined when the files for a
+given TriBITS Subpackage are being processed:
 
   .. _PARENT_PACKAGE_NAME:
 
@@ -2151,6 +2153,20 @@ subpackage's files are:
   ``PARENT_PACKAGE_BINARY_DIR``
 
     The absolute path to the parent package's base binary directory.
+
+
+.. _TriBITS Subpackage Top-Level Local Variables:
+
+In addition to the `TriBITS Package Top-Level Local Variables`_, once all of a
+TriBITS subpackage's ``Dependencies.cmake`` files have been processed, the
+following **TriBITS Subpackage Top-Level Local Variables** are defined:
+
+  .. _${PACKAGE_NAME}_PARENT_PACKAGE:
+
+  ``${PACKAGE_NAME}_PARENT_PACKAGE``
+
+    The name of the parent package.  (NOTE: If this is empty "", then
+    ``${PACKAGE_NAME}`` is actually a parent package and not a subpackage.)
 
 
 How is a TriBITS Subpackage different from a TriBITS Package?

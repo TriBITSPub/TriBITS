@@ -59,10 +59,16 @@ include(TimingUtils)
 # and TPLs and creates the packages dependency graph.
 #
 # On output, this creates all of the package lists and dependency
-# data-structures described in `TriBITS System Data Structures and
-# Functions`_.
+# data-structures described in the section `TriBITS System Data Structures`_
+# and more specifically the sections:
 #
-# See `Function call tree for constructing package dependency graph`_
+# * `Lists of external and internal packages`_
+# * `List variables defining the package dependencies graph`_
+# * `TriBITS Package Top-Level Local Variables`_
+# * `TriBITS Subpackage Top-Level Local Variables`_
+# * `TriBITS Package Cache Variables`_
+#
+# See `Function call tree for constructing package dependency graph`_.
 #
 macro(tribits_read_all_project_deps_files_create_deps_graph)
 

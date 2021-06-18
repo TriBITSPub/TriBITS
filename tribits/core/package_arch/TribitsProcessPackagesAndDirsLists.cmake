@@ -381,20 +381,22 @@ endfunction()
 #   ${PROJECT_NAME}_REVERSE_PACKAGES
 #
 # For each of the listed top-level (parent) packages ${PACKAGE_NAME}, it also
-# sets up constant variables like:
+# sets up constant variables defined in `TriBITS Package Top-Level Local
+# Variables`_ like:
 #
 # * `${PACKAGE_NAME}_SOURCE_DIR`_
 # * `${PACKAGE_NAME}_REL_SOURCE_DIR`_
 # * `${PACKAGE_NAME}_TESTGROUP`_
 #
-# and sets up some standard enable/diable vars with default values like:
+# and sets up some standard enable/diable vars with default values as defined
+# in `TriBITS Package Cache Variables`_ like::
 #
 #   ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}
 #
-# NOTE: Set TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE=TRUE to see really
-# verbose debug ouptut from this macro.
+# NOTE: Set ``TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE=TRUE`` to see
+# really verbose debug ouptut from this macro.
 #
-# See `Function call tree for constructing package dependency graph`_
+# See `Function call tree for constructing package dependency graph`_.
 #
 macro(tribits_process_packages_and_dirs_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
