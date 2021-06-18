@@ -38,7 +38,7 @@
 # @HEADER
 
 
-INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsAdjustPackageEnablesHelpers.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/TribitsAdjustPackageEnablesHelpers.cmake)
 
 
 
@@ -54,92 +54,92 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsAdjustPackageEnablesHelpers.cmake)
 #
 
 
-FUNCTION(UNITTEST_ENABLE_NO_PACKAGES)
+function(unittest_enable_no_packages)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test enabling no packages (the default)")
-  MESSAGE("***\n")
-
-  # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
-
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
-
-#  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
-#  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
-#  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-#  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES 4)
-#  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ALL_DEFINED_PACKAGES "MPI;BLAS;LAPACK;Boost;Teuchos;RTOp;Ex2Package1;Ex2Package2")
-#  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_ALL_DEFINED_PACKAGES 8)
-
-  UNITTEST_COMPARE_CONST(TPL_ENABLE_MPI "")
-  UNITTEST_COMPARE_CONST(TPL_ENABLE_BLAS "")
-  UNITTEST_COMPARE_CONST(TPL_ENABLE_LAPACK "")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Teuchos "")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_RTOp "")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
-
-ENDFUNCTION()
-
-
-FUNCTION(UNITTEST_ENABLE_ALL_PACKAGES)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Test enabling all packages")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Test enabling no packages (the default)")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
-  SET(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
+  unittest_helper_read_and_process_packages()
 
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
+  unittest_compare_const(${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost")
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
 
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(TPL_ENABLE_MPI "")
-  UNITTEST_COMPARE_CONST(TPL_ENABLE_BLAS ON)
-  UNITTEST_COMPARE_CONST(TPL_ENABLE_LAPACK ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Teuchos ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_RTOp ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
+#  unittest_compare_const(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
+#  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
+#  unittest_compare_const(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
+#  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES 4)
+#  unittest_compare_const(${PROJECT_NAME}_ALL_DEFINED_PACKAGES "MPI;BLAS;LAPACK;Boost;Teuchos;RTOp;Ex2Package1;Ex2Package2")
+#  unittest_compare_const(${PROJECT_NAME}_NUM_ALL_DEFINED_PACKAGES 8)
 
-ENDFUNCTION()
+  unittest_compare_const(TPL_ENABLE_MPI "")
+  unittest_compare_const(TPL_ENABLE_BLAS "")
+  unittest_compare_const(TPL_ENABLE_LAPACK "")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos "")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp "")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
+
+endfunction()
 
 
-FUNCTION(UNITTEST_ENABLE_ALL_PACKAGES_ST)
+function(unittest_enable_all_packages)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test enabling all secondary tested packages")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Test enabling all packages")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
 
-  SET(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
 
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
+  unittest_helper_read_and_process_packages()
 
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(TPL_ENABLE_MPI "")
-  UNITTEST_COMPARE_CONST(TPL_ENABLE_BLAS ON)
-  UNITTEST_COMPARE_CONST(TPL_ENABLE_LAPACK ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Teuchos ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_RTOp ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package2 ON)
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(TPL_ENABLE_MPI "")
+  unittest_compare_const(TPL_ENABLE_BLAS ON)
+  unittest_compare_const(TPL_ENABLE_LAPACK ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
 
-ENDFUNCTION()
+endfunction()
+
+
+function(unittest_enable_all_packages_st)
+
+  message("\n***")
+  message("*** Test enabling all secondary tested packages")
+  message("***\n")
+
+  # Debugging
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+
+  set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+
+  unittest_helper_read_and_process_packages()
+
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(TPL_ENABLE_MPI "")
+  unittest_compare_const(TPL_ENABLE_BLAS ON)
+  unittest_compare_const(TPL_ENABLE_LAPACK ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 ON)
+
+endfunction()
 
 
 #
@@ -147,141 +147,141 @@ ENDFUNCTION()
 #
 
 
-FUNCTION(UNITTEST_ENABLE_ALL_GENERATE_EXPORT_DEPS)
+function(unittest_enable_all_generate_export_deps)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test generation of export dependencies enabling all PT")
-  MESSAGE("***\n")
-
-  # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
-
-  SET(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
-  SET(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
-
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
-
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
-  UNITTEST_COMPARE_CONST(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "Teuchos")
-  UNITTEST_COMPARE_CONST(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "")
-
-ENDFUNCTION()
-
-
-FUNCTION(UNITTEST_ENABLE_ALL_ST_GENERATE_EXPORT_DEPS)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Test generation of export dependencies enabling all ST")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Test generation of export dependencies enabling all PT")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
 
-  SET(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  SET(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
+  set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
 
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
+  unittest_helper_read_and_process_packages()
 
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
-  UNITTEST_COMPARE_CONST(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "Teuchos")
-  UNITTEST_COMPARE_CONST(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "Ex2Package1;Teuchos")
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
+  unittest_compare_const(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "Teuchos")
+  unittest_compare_const(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "")
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_ENABLE_ALL_ST_GENERATE_EXPORT_DEPS_ONLY_Ex2Package1)
+function(unittest_enable_all_st_generate_export_deps)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test generation of export dependencies only up to Ex2Package1")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Test generation of export dependencies enabling all ST")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
 
-  SET(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  SET(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
-  SET(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
+  set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
+
+  unittest_helper_read_and_process_packages()
+
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
+  unittest_compare_const(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "Teuchos")
+  unittest_compare_const(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "Ex2Package1;Teuchos")
+
+endfunction()
+
+
+function(unittest_enable_all_st_generate_export_deps_only_ex2package1)
+
+  message("\n***")
+  message("*** Test generation of export dependencies only up to Ex2Package1")
+  message("***\n")
+
+  # Debugging
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
+
+  set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
     Ex2Package1 RTOp)
 
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
+  unittest_helper_read_and_process_packages()
 
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
-  UNITTEST_COMPARE_CONST(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "Teuchos")
-  UNITTEST_COMPARE_CONST(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
+  unittest_compare_const(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "Teuchos")
+  unittest_compare_const(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "")
 
-ENDFUNCTION()
-
-
-FUNCTION(UNITTEST_ENABLE_RTOp_GENERATE_EXPORT_DEPS_ONLY_Ex2Package1)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Test generation of export dependencies only up to Ex2Package1, only enable RTOp")
-  MESSAGE("***\n")
-
-  # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
-
-  SET(${PROJECT_NAME}_ENABLE_RTOp ON)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  SET(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
-  SET(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
-    Ex2Package1 RTOp)
-
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
-
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_RTOp "ON")
-  UNITTEST_COMPARE_CONST(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
-  UNITTEST_COMPARE_CONST(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "")
-
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_ENABLE_Teuchos_GENERATE_EXPORT_DEPS_ONLY_Ex2Package1)
+function(unittest_enable_rtop_generate_export_deps_only_ex2package1)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Test generation of export dependencies only up to Ex2Package1, only enable Teuchos")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Test generation of export dependencies only up to Ex2Package1, only enable RTOp")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
 
-  SET(${PROJECT_NAME}_ENABLE_Teuchos ON)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  SET(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
-  SET(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
+  set(${PROJECT_NAME}_ENABLE_RTOp ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
     Ex2Package1 RTOp)
 
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
+  unittest_helper_read_and_process_packages()
 
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Teuchos "ON")
-  UNITTEST_COMPARE_CONST(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(RTOp_FULL_ENABLED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "")
-  UNITTEST_COMPARE_CONST(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp "ON")
+  unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
+  unittest_compare_const(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "")
 
-ENDFUNCTION()
+endfunction()
+
+
+function(unittest_enable_teuchos_generate_export_deps_only_ex2package1)
+
+  message("\n***")
+  message("*** Test generation of export dependencies only up to Ex2Package1, only enable Teuchos")
+  message("***\n")
+
+  # Debugging
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
+
+  set(${PROJECT_NAME}_ENABLE_Teuchos ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
+    Ex2Package1 RTOp)
+
+  unittest_helper_read_and_process_packages()
+
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos "ON")
+  unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "")
+
+endfunction()
 
 
 #
@@ -289,150 +289,150 @@ ENDFUNCTION()
 #
 
 
-FUNCTION(UNITTEST_ENABLE_TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE)
+function(unittest_enable_tribits_is_primary_meta_project_package)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Unit testing primary meta-project packages, no Trilinos, enable all")
-  MESSAGE("***\n")
-
-  # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
-
-  SET(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
-  #SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  SET(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES ON)
-
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
-
-  TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE(Teuchos  Teuchos_is_PMP)
-  UNITTEST_COMPARE_CONST(Teuchos_is_PMP  FALSE)
-
-  TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE(RTOp  RTOp_is_PMP)
-  UNITTEST_COMPARE_CONST(RTOp_is_PMP  FALSE)
-
-  TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE(Ex2Package1  Ex2Package1_is_PMP)
-  UNITTEST_COMPARE_CONST(Ex2Package1_is_PMP  TRUE)
-
-  TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE(Ex2Package2  Ex2Package2_is_PMP)
-  UNITTEST_COMPARE_CONST(Ex2Package2_is_PMP  TRUE)
-
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Teuchos ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_RTOp "")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
-
-ENDFUNCTION()
-
-
-FUNCTION(UNITTEST_ENABLE_TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE_EXCLUDE_RTOP_ST)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Unit testing primary meta-project packages, no Trilinos, exclude RTOp, enable all ST")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Unit testing primary meta-project packages, no Trilinos, enable all")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
 
-  SET(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
-  SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  SET(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES ON)
-  SET(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT  RTOp)
+  set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
+  #set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES ON)
 
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
+  unittest_helper_read_and_process_packages()
 
-  TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE(Teuchos  Teuchos_is_PMP)
-  UNITTEST_COMPARE_CONST(Teuchos_is_PMP  FALSE)
+  tribits_is_primary_meta_project_package(Teuchos  Teuchos_is_PMP)
+  unittest_compare_const(Teuchos_is_PMP  FALSE)
 
-  TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE(RTOp  RTOp_is_PMP)
-  UNITTEST_COMPARE_CONST(RTOp_is_PMP  TRUE)
+  tribits_is_primary_meta_project_package(RTOp  RTOp_is_PMP)
+  unittest_compare_const(RTOp_is_PMP  FALSE)
 
-  TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE(Ex2Package1  Ex2Package1_is_PMP)
-  UNITTEST_COMPARE_CONST(Ex2Package1_is_PMP  TRUE)
+  tribits_is_primary_meta_project_package(Ex2Package1  Ex2Package1_is_PMP)
+  unittest_compare_const(Ex2Package1_is_PMP  TRUE)
 
-  TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE(Ex2Package2  Ex2Package2_is_PMP)
-  UNITTEST_COMPARE_CONST(Ex2Package2_is_PMP  TRUE)
+  tribits_is_primary_meta_project_package(Ex2Package2  Ex2Package2_is_PMP)
+  unittest_compare_const(Ex2Package2_is_PMP  TRUE)
 
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_PACKAGES 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_NUM_TPLS 4)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Teuchos ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_RTOp ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package2 ON)
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp "")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
 
-ENDFUNCTION()
-
-
-FUNCTION(UNITTEST_ENABLE_TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE_ENABLE_Teuchos_FORWARD)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Unit testing primary meta-project packages, enable Teuchos, enable forward")
-  MESSAGE("***\n")
-
-  # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
-
-  #SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  SET(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES ON)
-  SET(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT  RTOp)
-
-  SET(${PROJECT_NAME}_ENABLE_TESTS ON)
-  SET(${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES ON)
-  SET(${PROJECT_NAME}_ENABLE_Teuchos ON)
-
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
-
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Teuchos ON)
-  UNITTEST_COMPARE_CONST(Teuchos_ENABLE_TESTS "")
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_RTOp ON)
-  UNITTEST_COMPARE_CONST(RTOp_ENABLE_TESTS ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
-  UNITTEST_COMPARE_CONST(Ex2Package1_ENABLE_TESTS ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
-  UNITTEST_COMPARE_CONST(Ex2Package2_ENABLE_TESTS "")
-
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_ENABLE_TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE_ENABLE_Teuchos_Tests_RTOp_FORWARD)
+function(unittest_enable_tribits_is_primary_meta_project_package_exclude_rtop_st)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Unit testing primary meta-project packages, enable Teuchos tests, enable RTOp, enable forward")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Unit testing primary meta-project packages, no Trilinos, exclude RTOp, enable all ST")
+  message("***\n")
 
   # Debugging
-  #SET(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
 
-  #SET(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
-  SET(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES ON)
-  SET(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT  RTOp)
+  set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES ON)
+  set(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT  RTOp)
 
-  SET(${PROJECT_NAME}_ENABLE_TESTS ON)
-  SET(${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES ON)
+  unittest_helper_read_and_process_packages()
 
-  SET(${PROJECT_NAME}_ENABLE_Teuchos ON)
-  SET(Teuchos_ENABLE_TESTS ON)  # Must be explicitly turned on!
+  tribits_is_primary_meta_project_package(Teuchos  Teuchos_is_PMP)
+  unittest_compare_const(Teuchos_is_PMP  FALSE)
 
-  SET(${PROJECT_NAME}_ENABLE_RTOp ON)
+  tribits_is_primary_meta_project_package(RTOp  RTOp_is_PMP)
+  unittest_compare_const(RTOp_is_PMP  TRUE)
+
+  tribits_is_primary_meta_project_package(Ex2Package1  Ex2Package1_is_PMP)
+  unittest_compare_const(Ex2Package1_is_PMP  TRUE)
+
+  tribits_is_primary_meta_project_package(Ex2Package2  Ex2Package2_is_PMP)
+  unittest_compare_const(Ex2Package2_is_PMP  TRUE)
+
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 ON)
+
+endfunction()
+
+
+function(unittest_enable_tribits_is_primary_meta_project_package_enable_teuchos_forward)
+
+  message("\n***")
+  message("*** Unit testing primary meta-project packages, enable Teuchos, enable forward")
+  message("***\n")
+
+  # Debugging
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
+
+  #set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES ON)
+  set(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT  RTOp)
+
+  set(${PROJECT_NAME}_ENABLE_TESTS ON)
+  set(${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES ON)
+  set(${PROJECT_NAME}_ENABLE_Teuchos ON)
+
+  unittest_helper_read_and_process_packages()
+
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
+  unittest_compare_const(Teuchos_ENABLE_TESTS "")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp ON)
+  unittest_compare_const(RTOp_ENABLE_TESTS ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
+  unittest_compare_const(Ex2Package1_ENABLE_TESTS ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
+  unittest_compare_const(Ex2Package2_ENABLE_TESTS "")
+
+endfunction()
+
+
+function(unittest_enable_tribits_is_primary_meta_project_package_enable_teuchos_tests_rtop_forward)
+
+  message("\n***")
+  message("*** Unit testing primary meta-project packages, enable Teuchos tests, enable RTOp, enable forward")
+  message("***\n")
+
+  # Debugging
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
+
+  #set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES ON)
+  set(Trilinos_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT  RTOp)
+
+  set(${PROJECT_NAME}_ENABLE_TESTS ON)
+  set(${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES ON)
+
+  set(${PROJECT_NAME}_ENABLE_Teuchos ON)
+  set(Teuchos_ENABLE_TESTS ON)  # Must be explicitly turned on!
+
+  set(${PROJECT_NAME}_ENABLE_RTOp ON)
   # Tests will get turned on automatically because RTOp is a it is a PMPP
 
-  UNITTEST_HELPER_READ_AND_PROCESS_PACKAGES()
+  unittest_helper_read_and_process_packages()
 
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Teuchos ON)
-  UNITTEST_COMPARE_CONST(Teuchos_ENABLE_TESTS ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_RTOp ON)
-  UNITTEST_COMPARE_CONST(RTOp_ENABLE_TESTS ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
-  UNITTEST_COMPARE_CONST(Ex2Package1_ENABLE_TESTS ON)
-  UNITTEST_COMPARE_CONST(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
-  UNITTEST_COMPARE_CONST(Ex2Package2_ENABLE_TESTS "")
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
+  unittest_compare_const(Teuchos_ENABLE_TESTS ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp ON)
+  unittest_compare_const(RTOp_ENABLE_TESTS ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
+  unittest_compare_const(Ex2Package1_ENABLE_TESTS ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
+  unittest_compare_const(Ex2Package2_ENABLE_TESTS "")
 
-ENDFUNCTION()
+endfunction()
 
 
 #####################################################################
@@ -442,27 +442,27 @@ ENDFUNCTION()
 #####################################################################
 
 # Assume that all unit tests will pass by default
-GLOBAL_SET(UNITTEST_OVERALL_PASS TRUE)
-GLOBAL_SET(UNITTEST_OVERALL_NUMPASSED 0)
-GLOBAL_SET(UNITTEST_OVERALL_NUMRUN 0)
+global_set(UNITTEST_OVERALL_PASS TRUE)
+global_set(UNITTEST_OVERALL_NUMPASSED 0)
+global_set(UNITTEST_OVERALL_NUMRUN 0)
 
 # A) Test enabled/disable logic
-UNITTEST_ENABLE_NO_PACKAGES()
-UNITTEST_ENABLE_ALL_PACKAGES()
-UNITTEST_ENABLE_ALL_PACKAGES_ST()
+unittest_enable_no_packages()
+unittest_enable_all_packages()
+unittest_enable_all_packages_st()
 
 # B) Test generation of export file information
-UNITTEST_ENABLE_ALL_GENERATE_EXPORT_DEPS()
-UNITTEST_ENABLE_ALL_ST_GENERATE_EXPORT_DEPS()
-UNITTEST_ENABLE_ALL_ST_GENERATE_EXPORT_DEPS_ONLY_Ex2Package1()
-UNITTEST_ENABLE_RTOp_GENERATE_EXPORT_DEPS_ONLY_Ex2Package1()
-UNITTEST_ENABLE_Teuchos_GENERATE_EXPORT_DEPS_ONLY_Ex2Package1()
+unittest_enable_all_generate_export_deps()
+unittest_enable_all_st_generate_export_deps()
+unittest_enable_all_st_generate_export_deps_only_ex2package1()
+unittest_enable_rtop_generate_export_deps_only_ex2package1()
+unittest_enable_teuchos_generate_export_deps_only_ex2package1()
 
 # C) Test primary meta-project package enable/disable logic
-UNITTEST_ENABLE_TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE()
-UNITTEST_ENABLE_TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE_EXCLUDE_RTOP_ST()
-UNITTEST_ENABLE_TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE_ENABLE_Teuchos_FORWARD()
-UNITTEST_ENABLE_TRIBITS_IS_PRIMARY_META_PROJECT_PACKAGE_ENABLE_Teuchos_Tests_RTOp_FORWARD()
+unittest_enable_tribits_is_primary_meta_project_package()
+unittest_enable_tribits_is_primary_meta_project_package_exclude_rtop_st()
+unittest_enable_tribits_is_primary_meta_project_package_enable_teuchos_forward()
+unittest_enable_tribits_is_primary_meta_project_package_enable_teuchos_tests_rtop_forward()
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(97)
+unittest_final_result(97)

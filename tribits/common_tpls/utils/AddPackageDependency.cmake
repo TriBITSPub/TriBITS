@@ -41,7 +41,7 @@
 # Based on version from MSTK which is from Amanzi open source code -
 # https://software.lanl.gov/ascem/trac)
 #
-#       ADD_PACKAGE_DEPENDENCY(<PACKNAME> DEPENDS_ON <req_pack>)
+#       add_package_dependency(<PACKNAME> DEPENDS_ON <req_pack>)
 #
 
 # CMake module
@@ -50,11 +50,11 @@ include(CMakeParseArguments)
 # MSTK modules
 include(ParseLibraryList)
 
-function(ADD_PACKAGE_DEPENDENCY)
+function(add_package_dependency)
 
     # Macro: _print_usage
     macro(_print_usage)
-        message("\nADD_PACKAGE_DEPENDENCY(<target_package> DEPENDS_ON <req_package>)\n"
+        message("\nadd_package_dependency(<target_package> DEPENDS_ON <req_package>)\n"
                 " Add req_package to target_package dependencies.\n")
     endmacro(_print_usage)
 

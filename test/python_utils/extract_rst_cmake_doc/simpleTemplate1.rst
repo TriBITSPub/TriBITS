@@ -8,7 +8,7 @@ other
 
 something 2
 
-@MACRO: SOME_MACRO_NAME1() +
+@MACRO: some_macro_name1() +
 
 something else
 

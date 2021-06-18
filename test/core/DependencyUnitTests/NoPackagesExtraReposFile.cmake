@@ -37,7 +37,7 @@
 # ************************************************************************
 # @HEADER
 
-TRIBITS_PROJECT_DEFINE_EXTRA_REPOSITORIES(
+tribits_project_define_extra_repositories(
   dummyRepo1  ""  GIT  url1:/git/dummyRepo1  NOPACKAGES   Continuous
   preCopyrightTrilinos  ""  GIT  url1:/git/preCopyrightTrilinos  ""   Continuous
   )

@@ -1,10 +1,10 @@
-ADD_SUBDIRECTORY(core)
+add_subdirectory(core)
 
-IF (PYTHON_EXECUTABLE)
-  ADD_SUBDIRECTORIES(
+if (PYTHON_EXECUTABLE)
+  add_subdirectories(
     python_utils
     ci_support
     ctest_driver
     devtools_install
     )
-ENDIF()
+endif()

@@ -43,13 +43,13 @@
 # These run very fast because they don't need to actaully configure any code.
 #
 
-SET(TRIBITS_REDUCED_MOCK_TRILINOS_DIR "examples/ReducedMockTrilinos")
-SET(TRIBITS_MOCK_TRILINOS_DIR "examples/MockTrilinos")
+set(TRIBITS_REDUCED_MOCK_TRILINOS_DIR "examples/ReducedMockTrilinos")
+set(TRIBITS_MOCK_TRILINOS_DIR "examples/MockTrilinos")
 
 
 # MockTrilinos project
-SET(MOCK_PROJECT_NAME Trilinos)
-SET(MOCK_TRILINOS_DIR
+set(MOCK_PROJECT_NAME Trilinos)
+set(MOCK_TRILINOS_DIR
   ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_MOCK_TRILINOS_DIR})
 
 
@@ -60,12 +60,12 @@ SET(MOCK_TRILINOS_DIR
 #####################################################################
 
 # Reduced MockTrilinos project
-SET(REDUCED_MOCK_PROJECT_NAME Trilinos)
-SET(REDUCED_MOCK_TRILINOS_DIR
+set(REDUCED_MOCK_PROJECT_NAME Trilinos)
+set(REDUCED_MOCK_TRILINOS_DIR
   ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_REDUCED_MOCK_TRILINOS_DIR})
 
 # Expected output files directory
-SET(REDUCED_MOCK_TRILINOS_OUTPUT_DIR
+set(REDUCED_MOCK_TRILINOS_OUTPUT_DIR
   "${${PROJECT_NAME}_TRIBITS_DIR}/doc/developers_guide/ReducedMockTrilinosOutput")
 
 #
@@ -79,9 +79,9 @@ SET(REDUCED_MOCK_TRILINOS_OUTPUT_DIR
 #
 
 
-FUNCTION(CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
+function(create_reduced_dependency_handling_test_case TEST_NAME)
 
-  CMAKE_PARSE_ARGUMENTS(
+  cmake_parse_arguments(
      #prefix
      PARSE
      #options
@@ -93,7 +93,7 @@ FUNCTION(CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
      ${ARGN}
      )
 
-  TRIBITS_ADD_ADVANCED_TEST( DepTestReduced_${TEST_NAME}
+  tribits_add_advanced_test( DepTestReduced_${TEST_NAME}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0 CMND "${CMAKE_COMMAND}"
@@ -103,7 +103,7 @@ FUNCTION(CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
       PASS_REGULAR_EXPRESSION_ALL ${PARSE_PASS_REGULAR_EXPRESSION_ALL}
     )
 
-ENDFUNCTION()
+endfunction()
 
 
 #
@@ -111,29 +111,29 @@ ENDFUNCTION()
 # checking test results.
 #
 
-FUNCTION(READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY  EXPECTED_OUTPUT_FILE
+function(read_expected_output_file_into_regex_array  EXPECTED_OUTPUT_FILE
   EXPECTED_OUTPUT_REGEX_ARRAY_OUT
   )
-  FILE(READ ${EXPECTED_OUTPUT_FILE} EXPECTED_RAW_STR_ALL)
-  #PRINT_VAR(EXPECTED_RAW_STR_ALL)
-  SPLIT("${EXPECTED_RAW_STR_ALL}" "\n" EXPECTED_RAW_STR_ARRAY)
-  #PRINT_VAR(EXPECTED_RAW_STR_ARRAY)
-  SET(EXPECTED_REGEX_ARRAY)
-  FOREACH(EXPECTED_RAW_STR ${EXPECTED_RAW_STR_ARRAY})
-    #PRINT_VAR(EXPECTED_RAW_STR)
-    IF (NOT "${EXPECTED_RAW_STR}" STREQUAL "")
-      SET(EXPECTED_REGEX_STR "${EXPECTED_RAW_STR}")
-      STRING(REPLACE "(" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      STRING(REPLACE ")" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      STRING(REPLACE "[" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      STRING(REPLACE "]" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      STRING(REPLACE "*" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      LIST(APPEND EXPECTED_REGEX_ARRAY "${EXPECTED_REGEX_STR}")
-      #PRINT_VAR(EXPECTED_REGEX_ARRAY)
-    ENDIF()
-  ENDFOREACH()
-  SET(${EXPECTED_OUTPUT_REGEX_ARRAY_OUT} ${EXPECTED_REGEX_ARRAY} PARENT_SCOPE)
-ENDFUNCTION()
+  file(READ ${EXPECTED_OUTPUT_FILE} EXPECTED_RAW_STR_ALL)
+  #print_var(EXPECTED_RAW_STR_ALL)
+  split("${EXPECTED_RAW_STR_ALL}" "\n" EXPECTED_RAW_STR_ARRAY)
+  #print_var(EXPECTED_RAW_STR_ARRAY)
+  set(EXPECTED_REGEX_ARRAY)
+  foreach(EXPECTED_RAW_STR ${EXPECTED_RAW_STR_ARRAY})
+    #print_var(EXPECTED_RAW_STR)
+    if (NOT "${EXPECTED_RAW_STR}" STREQUAL "")
+      set(EXPECTED_REGEX_STR "${EXPECTED_RAW_STR}")
+      string(REPLACE "(" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
+      string(REPLACE ")" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
+      string(REPLACE "[" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
+      string(REPLACE "]" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
+      string(REPLACE "*" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
+      list(APPEND EXPECTED_REGEX_ARRAY "${EXPECTED_REGEX_STR}")
+      #print_var(EXPECTED_REGEX_ARRAY)
+    endif()
+  endforeach()
+  set(${EXPECTED_OUTPUT_REGEX_ARRAY_OUT} ${EXPECTED_REGEX_ARRAY} PARENT_SCOPE)
+endfunction()
 
 
 
@@ -141,14 +141,14 @@ ENDFUNCTION()
 # NoEnables
 #
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/NoEnables.txt"
   RMT_NoEnables_REGEX_ARRAY
   )
-#PRINT_VAR(REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY)
+#print_var(REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY)
 
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   NoEnables
   ARGS
   PASS_REGULAR_EXPRESSION_ALL
@@ -160,12 +160,12 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 # EnableThyra_EnableTests
 #
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/EnableThyra_EnableTests.txt"
   EnableThyra_EnableTests_REGEX_ARRAY
   )
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableThyra_EnableTests
   ARGS
     -DTrilinos_ENABLE_Thyra:BOOL=ON
@@ -179,12 +179,12 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 # EnableThyra_EnableTests_EnableBoost_ST
 #
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/EnableThyra_EnableTests_EnableBoost_ST.txt"
   EnableThyra_EnableTests_EnableBoost_ST_REGEX_ARRAY
   )
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableThyra_EnableTests_EnableBoost_ST
   ARGS
     -DTPL_ENABLE_Boost:BOOL=ON
@@ -200,12 +200,12 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 # EnableThyra_EnableTests_EnableBoost_ST_RequiredOnly
 #
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/EnableThyra_EnableTests_EnableBoost_ST_RequiredOnly.txt"
   EnableThyra_EnableTests_EnableBoost_ST_RequiredOnly_REGEX_ARRAY
   )
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableThyra_EnableTests_EnableBoost_ST_RequiredOnly
   ARGS
     -DTPL_ENABLE_Boost:BOOL=ON
@@ -222,12 +222,12 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 # EnableThyra_DisableEpetra_EnableTests
 #
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/EnableThyra_DisableEpetra_EnableTests.txt"
   EnableThyra_DisableEpetra_EnableTests_REGEX_ARRAY
   )
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableThyra_DisableEpetra_EnableTests
   ARGS
     -DTrilinos_ENABLE_Thyra:BOOL=ON
@@ -241,14 +241,14 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 # EnableEpetra_EnableRTOp_DisableTeuchos
 #
 
-SET(TEST_NAME "EnableEpetra_EnableRTOp_DisableTeuchos")
+set(TEST_NAME "EnableEpetra_EnableRTOp_DisableTeuchos")
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/${TEST_NAME}.txt"
   ${TEST_NAME}_REGEX_ARRAY
   )
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   ${TEST_NAME}
   ARGS
     -DTrilinos_ENABLE_Epetra:BOOL=ON
@@ -263,14 +263,14 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 # EnableEpetra_EnableRTOp_DisableTeuchos_DisableEnabledFwdDepPackages
 #
 
-SET(TEST_NAME "EnableEpetra_EnableRTOp_DisableTeuchos_DisableEnabledFwdDepPackages")
+set(TEST_NAME "EnableEpetra_EnableRTOp_DisableTeuchos_DisableEnabledFwdDepPackages")
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/${TEST_NAME}.txt"
   ${TEST_NAME}_REGEX_ARRAY
   )
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   ${TEST_NAME}
   ARGS
     -DTrilinos_ENABLE_Epetra:BOOL=ON
@@ -286,14 +286,14 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 # EnableThyraCoreLibs_EnableTests
 #
 
-SET(TEST_NAME "EnableThyraCoreLibs_EnableTests")
+set(TEST_NAME "EnableThyraCoreLibs_EnableTests")
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/${TEST_NAME}.txt"
   ${TEST_NAME}_REGEX_ARRAY
   )
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   ${TEST_NAME}
   ARGS
     -DTrilinos_ENABLE_ThyraCoreLibs:BOOL=ON
@@ -315,14 +315,14 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 # EnableThyraEpetra_EnableTests
 #
 
-SET(TEST_NAME "EnableThyraEpetra_EnableTests")
+set(TEST_NAME "EnableThyraEpetra_EnableTests")
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/${TEST_NAME}.txt"
   ${TEST_NAME}_REGEX_ARRAY
   )
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   ${TEST_NAME}
   ARGS
     -DTrilinos_ENABLE_ThyraEpetra:BOOL=ON
@@ -346,19 +346,19 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 # EnableAllPackages_DumpDependencies
 #
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/ExpectedDependencies.txt"
   REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY
   )
-#PRINT_VAR(REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY)
+#print_var(REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY)
 
-READ_EXPECTED_OUTPUT_FILE_INTO_REGEX_ARRAY(
+read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/EnableAllPackages.txt"
   REDUCED_EnableAllPackages_REGEX_ARRAY
   )
-#PRINT_VAR(REDUCED_EnableAllPackages_REGEX_ARRAY)
+#print_var(REDUCED_EnableAllPackages_REGEX_ARRAY)
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableAllPackages_DumpDependencies
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
@@ -372,7 +372,7 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
     "Final set of non-enabled SE packages:  Triutils EpetraExt ThyraGoodStuff ThyraCrazyStuff ThyraEpetraExt 5"
   )
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableAllPackages_VerboseConfigure
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
@@ -401,7 +401,7 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 #
 
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableAllPackages_RequiredOnly
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
@@ -414,7 +414,7 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableAllPackages_ST_TestRequiredTpl_DisableAMD
   ARGS
     -DSHOW_TEST_REQUIRED_TPL_DEP=ON
@@ -433,7 +433,7 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableAllPackages_ST_TestRequiredPackage_DisableTriutils
   ARGS
     -DSHOW_TEST_REQUIRED_PACKAGE_DEP=ON
@@ -453,7 +453,7 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableAllPackages_ST_EpetraExtEnableTriutilsOff
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES=ON
@@ -465,7 +465,7 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
   EnableAllPackages_ST_EpetraExtEnableTriutilsOn
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES=ON
@@ -477,7 +477,7 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
+create_reduced_dependency_handling_test_case(
  ST_EnableEpetraExt_DisableTriutils_EpetraExtEnableTriutilsOn
   ARGS
     -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
@@ -497,9 +497,9 @@ CREATE_REDUCED_DEPENDENCY_HANDLING_TEST_CASE(
 #####################################################################
 
 
-FUNCTION(CREATE_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
+function(create_dependency_handling_test_case TEST_NAME)
 
-  CMAKE_PARSE_ARGUMENTS(
+  cmake_parse_arguments(
      #prefix
      PARSE
      #options
@@ -511,7 +511,7 @@ FUNCTION(CREATE_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
      ${ARGN}
      )
 
-  TRIBITS_ADD_ADVANCED_TEST( DepTests_${TEST_NAME}
+  tribits_add_advanced_test( DepTests_${TEST_NAME}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     TEST_0 CMND "${CMAKE_COMMAND}"
@@ -528,10 +528,10 @@ FUNCTION(CREATE_DEPENDENCY_HANDLING_TEST_CASE TEST_NAME)
       PASS_REGULAR_EXPRESSION_ALL ${PARSE_PASS_REGULAR_EXPRESSION_ALL}
     )
 
-ENDFUNCTION()
+endfunction()
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableAllPackages
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -540,7 +540,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableAllPackages_EnableTests
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTrilinos_ENABLE_TESTS:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -554,7 +554,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   DisableEpetra_EnableAllPackages
   ARGS -DTrilinos_ENABLE_Epetra:BOOL=OFF -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -562,7 +562,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   TestTrueFalse
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES=TRUE -DTrilinos_ENABLE_Zoltan=TRUE
     -DTrilinos_ENABLE_TEST=TRUE -DTPL_ENABLE_BLAS=FALSE
@@ -582,7 +582,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 # vars.
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableEpetra_DisableTeuchos_EnableAllForwardPackages
   ARGS -DTrilinos_ENABLE_Epetra:BOOL=ON -DTrilinos_ENABLE_Teuchos:BOOL=OFF
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
@@ -592,7 +592,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   DisableEpetra_DisableTeuchos_EnableAllPackages
   ARGS -DTrilinos_ENABLE_Epetra:BOOL=OFF -DTrilinos_ENABLE_Teuchos:BOOL=OFF -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -600,7 +600,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableTeuchos_EnableAllForwardPackages
   ARGS -DTrilinos_ENABLE_Teuchos:BOOL=ON -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -608,7 +608,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableEpetraExt_EnableAllForwardPackages
   ARGS -DTrilinos_ENABLE_EpetraExt:BOOL=ON -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -616,7 +616,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableEpetraExt
   ARGS -DTrilinos_ENABLE_EpetraExt:BOOL=ON -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
   PASS_REGULAR_EXPRESSION_ALL
@@ -624,7 +624,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableEpetraExt_EnableAllOptionalPackages
   ARGS -DTrilinos_ENABLE_EpetraExt:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -632,7 +632,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableEpetraExt_DisableAztecOO_EnableAllForwardPackages
   ARGS -DTrilinos_ENABLE_EpetraExt:BOOL=ON -DTrilinos_ENABLE_AztecOO:BOOL=OFF
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
@@ -643,7 +643,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableAmesos_DisableZoltan_EnableAllForwardPackages
   ARGS -DTrilinos_ENABLE_Amesos:BOOL=ON -DTrilinos_ENABLE_Zoltan:BOOL=OFF
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
@@ -652,7 +652,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableThyraCoreLibs_EnableTests
   ARGS -DTrilinos_ENABLE_ThyraCoreLibs:BOOL=ON -DTrilinos_ENABLE_TESTS:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -664,7 +664,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableThyra_EnableAllForwardPackages
   ARGS -DTrilinos_ENABLE_Thyra:BOOL=ON -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -681,7 +681,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableThyra_DisableThyraEpetraExt
   ARGS -DTrilinos_ENABLE_Thyra:BOOL=ON -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=OFF
   PASS_REGULAR_EXPRESSION_ALL
@@ -698,7 +698,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableThyraEpetraExt
   ARGS -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -713,7 +713,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   DisableThyra_EnableThyraEpetraExt
   ARGS -DTrilinos_ENABLE_Thyra:BOOL=OFF -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -723,7 +723,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableThyra_DisableThyraEpetra_EnableThyraEpetraExt_DisableEnabledDownstreamPackages
   ARGS -DTrilinos_ENABLE_Thyra:BOOL=ON -DTrilinos_ENABLE_ThyraEpetra:BOOL=OFF
     -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON
@@ -739,7 +739,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableThyra_DisableEpetra_EnableThyraEpetraExt_DisableEnabledDownstreamPackages
   ARGS -DTrilinos_ENABLE_Thyra:BOOL=ON -DTrilinos_ENABLE_Epetra:BOOL=OFF
     -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON 
@@ -755,7 +755,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableStratimikos_DisableThyra
   ARGS -DTrilinos_ENABLE_Stratimikos=ON -DTrilinos_ENABLE_Thyra=OFF
   PASS_REGULAR_EXPRESSION_ALL
@@ -768,7 +768,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableStratimikos_DisableThyra_DisableEnabledDownstreamPackages
   ARGS -DTrilinos_ENABLE_Stratimikos=ON -DTrilinos_ENABLE_Thyra=OFF
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
@@ -784,7 +784,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableEpetra_DisableThyraCoreLibs_EnableAllForwardPackages
   ARGS -DTrilinos_ENABLE_Epetra:BOOL=ON -DTrilinos_ENABLE_ThyraCoreLibs:BOOL=OFF
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
@@ -793,7 +793,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableAllPackages_DefaultTPLs
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -802,7 +802,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableAllPackages_EnableBoost
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -810,7 +810,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableAllPackages_EnableBoostParMETIS
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
     -DTPL_ENABLE_ParMETIS:BOOL=ON
@@ -819,7 +819,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableAllPackages_EnableBoost_TeuchosEnableBoostOff
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
     -DTeuchos_ENABLE_Boost=OFF
@@ -829,7 +829,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableAllPackages_EnableBoost_TeuchosEnableBoostOn
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
     -DTeuchos_ENABLE_Boost=ON
@@ -838,7 +838,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableZoltan_ZoltanEnableParMETIS
   ARGS  -DTrilinos_ENABLE_Zoltan=ON -DZoltan_ENABLE_ParMETIS=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -847,7 +847,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableZoltan_ZoltanEnableParMETIS_TplDisableParMETIS
   ARGS -DTrilinos_ENABLE_Zoltan=ON -DZoltan_ENABLE_ParMETIS=ON -DTPL_ENABLE_ParMETIS=OFF
   PASS_REGULAR_EXPRESSION_ALL
@@ -856,7 +856,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnablePanzer_DefaultMPI
   ARGS  -DTrilinos_ENABLE_Panzer=ON
     -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
@@ -865,7 +865,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnablePanzer_EnableMPI
   ARGS  -DTrilinos_ENABLE_Panzer=ON
     -DTPL_ENABLE_MPI:BOOL=ON
@@ -875,7 +875,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnablePanzer_DisableMPI
   ARGS  -DTrilinos_ENABLE_Panzer=ON
     -DTPL_ENABLE_MPI:BOOL=OFF
@@ -886,7 +886,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnablePanzer_DisableMPI_DisableEnabledDownstreamPackages
   ARGS  -DTrilinos_ENABLE_Panzer=ON
     -DTPL_ENABLE_MPI:BOOL=OFF
@@ -899,7 +899,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableTpetra_EnableAllForwardPackages
   ARGS  -DTrilinos_ENABLE_Tpetra=ON
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
@@ -909,7 +909,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableAllPackages_EnableSecondaryTestedCode_EnableAllOptionalPackges
   ARGS  -DTrilinos_ENABLE_ALL_PACKAGES=ON -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
   PASS_REGULAR_EXPRESSION_ALL
@@ -918,7 +918,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableStratimikos_EnableAllOptionalPackages_BadSystem1
   ARGS  -DTrilinos_ENABLE_Stratimikos=ON
     -DTrilinos_HOSTTYPE:STRING=BadSystem1
@@ -931,7 +931,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableStratimikos_EnableAllOptionalPackages_BadSystem2
   ARGS  -DTrilinos_ENABLE_Stratimikos=ON
     -DTrilinos_HOSTTYPE:STRING=BadSystem2
@@ -945,7 +945,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   EnableStratimikos_EnableIfpack_EnableAllOptionalPackages_BadSystem2
   ARGS  -DTrilinos_ENABLE_Stratimikos=ON -DTrilinos_ENABLE_Ifpack=ON
     -DTrilinos_HOSTTYPE:STRING=BadSystem2
@@ -957,7 +957,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   preCopyrightTrilinos_EnableTeko
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DTrilinos_ENABLE_Teko=ON
@@ -975,7 +975,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   preCopyrightTrilinos_EnableTeko_InconsistentExtraReposFile
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/NoPackagesExtraReposFile.cmake
@@ -991,7 +991,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   DefaultExtraReposFile_EnableAllPackages_TraceFileProcessing
   ARGS 
     -DTrilinos_EXTRAREPOS_FILE=${MOCK_TRILINOS_DIR}/cmake/ExtraRepositoriesList.cmake
@@ -1025,7 +1025,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   PreAndExtraReposFile_Nightly_EnableAllPackages
   ARGS 
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
@@ -1047,7 +1047,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 # their packages are listed before packages in the native project.
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   PreAndExtraReposFile_Continuous_EnableAllPackages
   ARGS 
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
@@ -1069,7 +1069,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 # printed out as not being processed!
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   PreAndExtraReposFile_Continuous_AssertMissing_EnableAllPackages
   ARGS 
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
@@ -1090,7 +1090,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
 # configuration and that it prints the right header message!
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   preCopyrightTrilinos_EnableStalix
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DTrilinos_ENABLE_Stalix=ON
@@ -1105,24 +1105,24 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidPackageNameError
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
     -DTrilinos_ASSERT_MISSING_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]MESSAGE[)]:"
+    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
     "Error, the package 'Anasazi' is listed as a dependency of the package"
     "'Teko' is in the list 'Trilinos_SE_PACKAGES' but the package 'Anasazi' is"
     "either not defined or is listed later in the package order[.]  This may also"
     "be an attempt to create a circular dependency between the packages"
     "'Anasazi' and 'Teko' [(]which is not allowed[)][.]  Check the spelling of"
     "'Anasazi' or see how it is listed in a call to"
-    "TRIBITS_REPOSITORY_DEFINE_PACKAGES[(][)] in relation to 'Teko'[.]"
+    "tribits_repository_define_packages[(][)] in relation to 'Teko'[.]"
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidPackageSelfDependency
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_SELF_PACKAGE_DEPENDENCY_ERROR=ON
@@ -1133,7 +1133,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidSubpackageSelfDependency
   ARGS
     -DSHOW_SELF_SUBPACKAGE_DEPENDENCY_ERROR=ON
@@ -1144,7 +1144,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   MissingExtraRepositoryFail
   ARGS -DTrilinos_EXTRA_REPOSITORIES=MissingExtraRepo
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=OFF
@@ -1155,7 +1155,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   MissingExtraRepositoryIgnore
   ARGS -DTrilinos_EXTRA_REPOSITORIES=MissingExtraRepo
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=ON
@@ -1169,7 +1169,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   NativeRepositoriesList1_EnableAllPackages_ST
   ARGS -DTrilinos_NATIVE_REPO_FILE_OVERRRIDE=cmake/NativeRepositoriesList1.cmake
     -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON
@@ -1184,7 +1184,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   extraTrilinosRepo_EnableExtraPack
   ARGS "-DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo"
     -DTrilinos_ENABLE_ExtraPack=ON
@@ -1201,7 +1201,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   extraTrilinosRepo_EnableExtraPack_EnableExtraTPL1
   ARGS "-DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo"
     -DTrilinos_ENABLE_ExtraPack=ON -DTPL_ENABLE_ExtraTPL1=ON
@@ -1212,7 +1212,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   extraTrilinosRepo_ReplacePackagesList
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DpreCopyrightTrilinos_PACKAGES_LIST_FILE=cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake
@@ -1223,7 +1223,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   ENABLE_KNOWN_EXTERNAL_REPOS_TYPE_CI_EnableTeko
   ARGS -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Continuous
    -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=ON
@@ -1239,7 +1239,7 @@ CREATE_DEPENDENCY_HANDLING_TEST_CASE(
   )
 
 
-CREATE_DEPENDENCY_HANDLING_TEST_CASE(
+create_dependency_handling_test_case(
   ENABLE_KNOWN_EXTERNAL_REPOS_TYPE_Nightly_EnableExtraPack
   ARGS  -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Nightly
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=ON

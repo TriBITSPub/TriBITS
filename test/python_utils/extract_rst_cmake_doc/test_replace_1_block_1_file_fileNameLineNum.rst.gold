@@ -20,7 +20,7 @@ In: simpleDocText1.cmake:23
 
 something 2
 
-SOME_MACRO_NAME1()
+some_macro_name1()
 ++++++++++++++++++
 
 Good documenation

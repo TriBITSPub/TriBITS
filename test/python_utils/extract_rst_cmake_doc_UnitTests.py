@@ -82,17 +82,17 @@ blah blah blah
 something
 
 #
-# @MACRO: SOME_MACRO_NAME1()
+# @MACRO: some_macro_name1()
 #
 # Good documenation
 # 
-MACRO(SOME_MACRO_NAME1 ...)
+macro(some_macro_name1 ...)
 some other stuff 
 ...
 """
 
 simpleDocText1_rstDocBlocks_expected = {
-  "SOME_MACRO_NAME1()" : {
+  "some_macro_name1()" : {
     "type" : "MACRO",
     "body" : "\nGood documenation\n\n",
     "fileNameLineNum": "simpleDocText1.cmake:7",
@@ -100,7 +100,7 @@ simpleDocText1_rstDocBlocks_expected = {
   }
 
 test_extract_1_block_simple_1_rstDocBlocks_expected = {
-  "SOME_MACRO_NAME1()" : {
+  "some_macro_name1()" : {
     "type" : "MACRO",
     "body" : "\nGood documenation\n\n",
     "fileNameLineNum": "test_extract_1_block_simple_1.cmake:7",
@@ -115,11 +115,11 @@ blah blah blah
 something
 
 #
-# @MACRO :   SOME_MACRO_NAME1()
+# @MACRO :   some_macro_name1()
 #
 # Good documenation
 #
-MACRO(  SOME_MACRO_NAME1 ...)
+macro(  some_macro_name1 ...)
 some other stuff 
 ...
 """
@@ -132,11 +132,11 @@ blah blah blah
 something
 
 #
-# @MACRO: SOME_MACRO_NAME1()
+# @MACRO: some_macro_name1()
 #
 # Good documenation
 #
-MACRO(SOME_MACRO_NAME1)
+macro(some_macro_name1)
 some other stuff 
 ...
 """
@@ -373,7 +373,7 @@ other
 
 something 2
 
-@MACRO: SOME_MACRO_NAME1() +
+@MACRO: some_macro_name1() +
 
 something else
 
@@ -391,7 +391,7 @@ other
 
 something 2
 
-@MACRO  :   SOME_MACRO_NAME1()  +
+@MACRO  :   some_macro_name1()  +
 
 something else
 
@@ -409,7 +409,7 @@ other
 
 something 2
 
-@MACRO:SOME_MACRO_NAME1() +
+@MACRO:some_macro_name1() +
 
 something else
 
@@ -436,7 +436,7 @@ Usage::
 
 something 2
 
-SOME_MACRO_NAME1()
+some_macro_name1()
 ++++++++++++++++++
 
 Good documenation
@@ -469,7 +469,7 @@ In: simpleDocText1.cmake:23
 
 something 2
 
-SOME_MACRO_NAME1()
+some_macro_name1()
 ++++++++++++++++++
 
 Good documenation

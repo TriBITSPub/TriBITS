@@ -37,6 +37,6 @@
 # ************************************************************************
 # @HEADER
 
-TRIBITS_PROJECT_DEFINE_EXTRA_REPOSITORIES(
+tribits_project_define_extra_repositories(
   ExtraTeuchosRepo  packages/teuchos/extrastuff SVN  url3.com:/ExtraStuff  NOPACKAGES  Continuous
   )

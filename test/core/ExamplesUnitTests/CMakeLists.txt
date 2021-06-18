@@ -43,33 +43,33 @@
 ########################################################################
 
 
-FUNCTION(GET_REGEX_CORRECT_STRING  INPUT_STR  OUTPUT_STR_VAR_OUT)
-  SET(OUTPUT_STR "${INPUT_STR}")
-  STRING(REPLACE "+" "[+]" OUTPUT_STR "${OUTPUT_STR}")
-  STRING(REPLACE "." "[.]" OUTPUT_STR "${OUTPUT_STR}")
-  SET(${OUTPUT_STR_VAR_OUT} "${OUTPUT_STR}" PARENT_SCOPE)
-ENDFUNCTION()
+function(get_regex_correct_string  INPUT_STR  OUTPUT_STR_VAR_OUT)
+  set(OUTPUT_STR "${INPUT_STR}")
+  string(REPLACE "+" "[+]" OUTPUT_STR "${OUTPUT_STR}")
+  string(REPLACE "." "[.]" OUTPUT_STR "${OUTPUT_STR}")
+  set(${OUTPUT_STR_VAR_OUT} "${OUTPUT_STR}" PARENT_SCOPE)
+endfunction()
 
 
-MACRO(GET_REGEX_CORRECT_CMAKE_LANG_COMPILER  LANG)
-  GET_REGEX_CORRECT_STRING("${CMAKE_${LANG}_COMPILER}" CMAKE_${LANG}_COMPILER_FOR_REGEX)
-ENDMACRO()
+macro(get_regex_correct_cmake_lang_compiler  LANG)
+  get_regex_correct_string("${CMAKE_${LANG}_COMPILER}" CMAKE_${LANG}_COMPILER_FOR_REGEX)
+endmacro()
 
 ########################################################################
 # Common arguments for all inner CMake and TriBITS projects
 ########################################################################
 
-INCLUDE(${CMAKE_CURRENT_LIST_DIR}/GetCompilerPassthroughArgs.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/GetCompilerPassthroughArgs.cmake)
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(IS_REAL_LINUX_SYSTEM ON)
-ELSE()
-  SET(IS_REAL_LINUX_SYSTEM OFF)
-ENDIF()
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(IS_REAL_LINUX_SYSTEM ON)
+else()
+  set(IS_REAL_LINUX_SYSTEM OFF)
+endif()
 
-GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(CXX)
-GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(C)
-GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(Fortran)
+get_regex_correct_cmake_lang_compiler(CXX)
+get_regex_correct_cmake_lang_compiler(C)
+get_regex_correct_cmake_lang_compiler(Fortran)
 
 
 ########################################################################
@@ -77,7 +77,7 @@ GET_REGEX_CORRECT_CMAKE_LANG_COMPILER(Fortran)
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
+tribits_add_advanced_test( RawHelloWorld
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -107,11 +107,11 @@ TRIBITS_ADD_ADVANCED_TEST( RawHelloWorld
 ########################################################################
 
 
-SET(TribitsHelloWorld_COMMON_CONFIG_ARGS
+set(TribitsHelloWorld_COMMON_CONFIG_ARGS
   ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
+tribits_add_advanced_test( TribitsHelloWorld
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -140,7 +140,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_EXE_DISABLE
+tribits_add_advanced_test( TribitsHelloWorld_EXE_DISABLE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -167,11 +167,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_EXE_DISABLE
       "50% tests passed, 1 tests failed out of 2"
   )
   # NOTE: Above we are testing the <exec_name>_EXE_DISABLE option in a full
-  # configure and build case because the TRIBITS_ADD_EXECUTABLE() command is
+  # configure and build case because the tribits_add_executable() command is
   # not set up for unit-testing mode.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_InSourceBuildErrors
+tribits_add_advanced_test( TribitsHelloWorld_InSourceBuildErrors
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -215,7 +215,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_InSourceBuildErrors
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout
+tribits_add_advanced_test( TribitsHelloWorld_DefaultGlobalTimeout
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -251,7 +251,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout_ScaleTimeout
+tribits_add_advanced_test( TribitsHelloWorld_DefaultGlobalTimeout_ScaleTimeout
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -288,7 +288,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_DefaultGlobalTimeout_ScaleTimeout
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_FirstConfig
+tribits_add_advanced_test( TribitsHelloWorld_ScaleTimeout_FirstConfig
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -326,7 +326,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_FirstConfig
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_Reconfig
+tribits_add_advanced_test( TribitsHelloWorld_ScaleTimeout_Reconfig
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -375,15 +375,15 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ScaleTimeout_Reconfig
   )
 
 
-IF (TriBITS_EANBLE_Fortran)
- SET(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX
+if (TriBITS_EANBLE_Fortran)
+ set(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX
     "-- XSDK: Setting CMAKE_Fortran_COMPILER from env var FC=")
-ELSE()
- SET(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX)
-ENDIF()
+else()
+ set(TribitsHelloWorld_XSDK_DEFAULTS_Fortran_REGEX)
+endif()
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
+tribits_add_advanced_test( TribitsHelloWorld_XSDK_DEFAULTS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -413,7 +413,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_XSDK_DEFAULTS
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
+tribits_add_advanced_test( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -476,7 +476,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_Shared_NoVersion
+tribits_add_advanced_test( TribitsHelloWorld_Shared_NoVersion
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   OVERALL_NUM_MPI_PROCS 1
@@ -503,7 +503,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_Shared_NoVersion
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
+tribits_add_advanced_test( TribitsHelloWorld_install_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -689,7 +689,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
   # NOTE: Above we are testing different directory install options.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package
+tribits_add_advanced_test( TribitsHelloWorld_install_package_by_package
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -735,7 +735,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package
   # without using an install runner.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_runner
+tribits_add_advanced_test( TribitsHelloWorld_install_package_by_package_with_runner
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -783,7 +783,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_package_by_package_with_run
   # install runner for that target set with <Project>_INSTALL_PBP_RUNNER.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms_windows_error
+tribits_add_advanced_test( TribitsHelloWorld_install_perms_windows_error
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -812,7 +812,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms_windows_error
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
+tribits_add_advanced_test( TribitsHelloWorld_install_config_dummy_proj
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -912,7 +912,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
 # it in these tests that work with CMake 3.17.)
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
+tribits_add_advanced_test( TribitsHelloWorld_ctest_resources_file_autogen_2_3
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -958,7 +958,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
   # nvcc_wrapper.)
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_no_ctest_resources_file
+tribits_add_advanced_test( TribitsHelloWorld_no_ctest_resources_file
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -991,7 +991,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_no_ctest_resources_file
   # ctest resources file later directly to ctest.)
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_autogen_on
+tribits_add_advanced_test( TribitsHelloWorld_set_other_ctest_resources_file_autogen_on
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -1035,7 +1035,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_auto
   # the file and will not generate the default ctest_resources.json file.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_autogen_on
+tribits_add_advanced_test( TribitsHelloWorld_set_default_ctest_resources_file_autogen_on
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -1074,7 +1074,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_au
   # autogenerate option is enabled!
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_autogen_off
+tribits_add_advanced_test( TribitsHelloWorld_set_default_ctest_resources_file_autogen_off
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -1117,7 +1117,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_au
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( RawAndTribitsHelloWorld_Raw
+tribits_add_advanced_test( RawAndTribitsHelloWorld_Raw
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -1142,7 +1142,7 @@ TRIBITS_ADD_ADVANCED_TEST( RawAndTribitsHelloWorld_Raw
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( RawAndTribitsHelloWorld_Tribits
+tribits_add_advanced_test( RawAndTribitsHelloWorld_Tribits
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -1178,60 +1178,60 @@ TRIBITS_ADD_ADVANCED_TEST( RawAndTribitsHelloWorld_Tribits
 ########################################################################
 
 
-SET(TribitsExampleProject_COMMON_CONFIG_ARGS
+set(TribitsExampleProject_COMMON_CONFIG_ARGS
   ${COMMON_ENV_ARGS_PASSTHROUGH}
   -DTribitsExProj_ENABLE_Fortran=${${PROJECT_NAME}_ENABLE_Fortran}
   )
 
 
-ASSERT_DEFINED(TPL_ENABLE_MPI)
-IF (TPL_ENABLE_MPI)
-  SET(TPL_MPI_FILE_TRACE
+assert_defined(TPL_ENABLE_MPI)
+if (TPL_ENABLE_MPI)
+  set(TPL_MPI_FILE_TRACE
     "-- File Trace: TPL        INCLUDE    .*/core/std_tpls/FindTPLMPI.cmake")
-  SET(FINAL_ENABLED_TPLS "MPI HeaderOnlyTpl 2")
-ELSE()
-  SET(TPL_MPI_FILE_TRACE "")
-  SET(FINAL_ENABLED_TPLS "HeaderOnlyTpl 1")
-ENDIF()
+  set(FINAL_ENABLED_TPLS "MPI HeaderOnlyTpl 2")
+else()
+  set(TPL_MPI_FILE_TRACE "")
+  set(FINAL_ENABLED_TPLS "HeaderOnlyTpl 1")
+endif()
 
 
-IF (EXISTS "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject/.gitignore")
-  SET(REGEX_FOR_GITIGNORE "Only in .*/TribitsExampleProject: .gitignore")
-ELSE()
-  SET(REGEX_FOR_GITIGNORE)
-ENDIF()
+if (EXISTS "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject/.gitignore")
+  set(REGEX_FOR_GITIGNORE "Only in .*/TribitsExampleProject: .gitignore")
+else()
+  set(REGEX_FOR_GITIGNORE)
+endif()
 
 
-IF (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
-  SET(DEPRECATED_WARNING_1_STR
+if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+  set(DEPRECATED_WARNING_1_STR
     "‘int SimpleCxx::HelloWorld::someOldFunc.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:"
     )
-  IF (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.5)
+  if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.5)
     # Only versions 4.5+ support this feature
-    SET(DEPRECATED_MSG_STR ".* .Just don't call this function at all please!")
-  ELSE()
-    SET(DEPRECATED_MSG_STR)
-  ENDIF()
-  SET(DEPRECATED_WARNING_2_STR
+    set(DEPRECATED_MSG_STR ".* .Just don't call this function at all please!")
+  else()
+    set(DEPRECATED_MSG_STR)
+  endif()
+  set(DEPRECATED_WARNING_2_STR
     "‘int SimpleCxx::HelloWorld::someOldFunc2.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:${DEPRECATED_MSG_STR}"
     )
-ELSE()
-  SET(DEPRECATED_WARNING_1_STR
+else()
+  set(DEPRECATED_WARNING_1_STR
     ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*int SimpleCxx::HelloWorld::someOldFunc.. const.* is deprecated"
     )
-  SET(DEPRECATED_WARNING_2_STR
+  set(DEPRECATED_WARNING_2_STR
     ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*int SimpleCxx::HelloWorld::someOldFunc2.. const.* is deprecated: .Just don.t call this function at all please."
     )
-ENDIF()
+endif()
 
 
-SET(LabelsForSubprojects_CMND_AND_ARGS
+set(LabelsForSubprojects_CMND_AND_ARGS
   grep ARGS "^LabelsForSubprojects:" DartConfiguration.tcl)
-SET(LabelsForSubprojects_REGEX
+set(LabelsForSubprojects_REGEX
   "LabelsForSubprojects: SimpleCxx[;]MixedLang[;]WithSubpackages[;]WrapExternal")
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
@@ -1585,22 +1585,22 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   )
 
 
-IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
-  EXECUTE_PROCESS(COMMAND whoami
+  execute_process(COMMAND whoami
     OUTPUT_STRIP_TRAILING_WHITESPACE
     OUTPUT_VARIABLE  TribitsExProj_INSTALL_OWNING_USER)
 
-  IF ("${TribitsExProj_INSTALL_OWNING_GROUP}" STREQUAL "")
-    EXECUTE_PROCESS(COMMAND id -gn
+  if ("${TribitsExProj_INSTALL_OWNING_GROUP}" STREQUAL "")
+    execute_process(COMMAND id -gn
       OUTPUT_STRIP_TRAILING_WHITESPACE
       OUTPUT_VARIABLE  TribitsExProj_INSTALL_OWNING_GROUP)
-  ENDIF()
+  endif()
 
-ENDIF()
+endif()
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
+tribits_add_advanced_test( TribitsExampleProject_install_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Windows
@@ -1715,7 +1715,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
   #   correct group and other permissions set.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perms
+tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Windows
@@ -1833,33 +1833,33 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
   #   did install will have the correct group and permissions.
 
 
-IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  SET(TribitsExProj_INSTALL_BASE_DIR "" CACHE FILEPATH
+if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  set(TribitsExProj_INSTALL_BASE_DIR "" CACHE FILEPATH
     "Path to a base directory that installs will be made into that is not owned by the current user but is in the same owning group and has group write access"
     )
-  IF (TribitsExProj_INSTALL_BASE_DIR)
-    EXECUTE_PROCESS(COMMAND stat -c %U "${TribitsExProj_INSTALL_BASE_DIR}"
+  if (TribitsExProj_INSTALL_BASE_DIR)
+    execute_process(COMMAND stat -c %U "${TribitsExProj_INSTALL_BASE_DIR}"
       OUTPUT_STRIP_TRAILING_WHITESPACE
       OUTPUT_VARIABLE  TribitsExProj_INSTALL_BASE_OWNING_USER)
-  ENDIF()
-  SET(installBaseDir "${TribitsExProj_INSTALL_BASE_DIR}")
-  SET(installPrefixBaseDir
+  endif()
+  set(installBaseDir "${TribitsExProj_INSTALL_BASE_DIR}")
+  set(installPrefixBaseDir
     "${installBaseDir}/TribitsExampleProject_install_perms_nonowning_base_dir")
-  SET(installPrefix
+  set(installPrefix
     "${installPrefixBaseDir}/install")
-  IF ("${TribitsExProj_INSTALL_BASE_OWNING_USER}"
+  if ("${TribitsExProj_INSTALL_BASE_OWNING_USER}"
     STREQUAL "${TribitsExProj_INSTALL_OWNING_USER}"
     )
-    SET(CHGRP_CHMOD_BASE_TEXT
+    set(CHGRP_CHMOD_BASE_TEXT
       "0: Running: chgrp wg-sems-users-son /tmp/tribits_install_tests"
       "0: Running: chmod g[+]rwX,o[+]rX /tmp/tribits_install_tests")
-  ELSE()
-    SET(CHGRP_CHMOD_BASE_TEXT
+  else()
+    set(CHGRP_CHMOD_BASE_TEXT
       "0: NOTE: Not calling chgrp and chmod on ${installBaseDir} since owner '${TribitsExProj_INSTALL_BASE_OWNING_USER}' != current owner '${TribitsExProj_INSTALL_OWNING_USER}'!")
-  ENDIF()
-ENDIF()
+  endif()
+endif()
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_dir
+tribits_add_advanced_test( TribitsExampleProject_install_perms_nonowning_base_dir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE TribitsExProj_INSTALL_BASE_DIR
   OVERALL_NUM_MPI_PROCS 1
@@ -1968,7 +1968,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms_nonowning_base_di
 
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir
+tribits_add_advanced_test( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Windows
@@ -1992,7 +1992,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_IN
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
@@ -2110,10 +2110,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_enable_install
 
 
 # Find ninja so we can test TriBITS using ninja as well
-FIND_PROGRAM(NINJA_EXE ninja)
+find_program(NINJA_EXE ninja)
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE  NINJA_EXE
@@ -2252,7 +2252,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE  NINJA_EXE
@@ -2374,9 +2374,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
   )
 
 
-IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
+if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
 
-  TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran_ConfigTiming
+  tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran_ConfigTiming
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     XHOSTTYPE Darwin
@@ -2438,10 +2438,10 @@ IF (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
 
     )
 
-ENDIF()
+endif()
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
+tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -2514,7 +2514,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_PT_NoFortran
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -2568,7 +2568,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibPrefix
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibPrefix
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -2623,7 +2623,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibPrefix
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -2652,7 +2652,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_LIBRARY()
+  # Testing pasing libs to tribits_add_library()
   #
 
   TEST_1
@@ -2662,7 +2662,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'simplecxx' in DEPLIBS is not a lib in this SE package"
-      "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2674,7 +2674,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this SE package "
-      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2688,7 +2688,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
       "TribitsExampleProject/packages/with_subpackages/b/cmake/Dependencies.cmake"
-      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2701,7 +2701,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
       "TribitsExampleProject/packages/with_subpackages/c/cmake/Dependencies.cmake"
-      "packages/with_subpackages/c/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2713,7 +2713,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
-      "packages/with_subpackages/c/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2725,12 +2725,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'm' in DEPLIBS is not a lib defined in the current cmake "
-      "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_EXECUTABLE()
+  # Testing pasing libs to tribits_add_executable()
   #
 
   TEST_7
@@ -2741,7 +2741,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "ERROR: TESTONLY lib 'b_test_utils' not allowed with INSTALLABLE executable"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_8
@@ -2752,7 +2752,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       " ERROR: 'simplecxx' in TESTONLYLIBS not a TESTONLY lib"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_9
@@ -2763,7 +2763,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this SE package"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_10
@@ -2774,7 +2774,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing TESTONLY lib 'b_mixed_lang' through DEPLIBS is deprecated"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2786,7 +2786,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing non-TESTONLY lib 'pws_b' through DEPLIBS is deprecated"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
@@ -2798,14 +2798,14 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing external lib 'm' through DEPLIBS is deprecated"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
+tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -2834,7 +2834,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_LIBRARY()
+  # Testing pasing libs to tribits_add_library()
   #
 
   TEST_1
@@ -2844,7 +2844,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'simplecxx' in DEPLIBS is not a lib in this SE package"
-      "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2856,7 +2856,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this SE package "
-      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2870,7 +2870,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
       "TribitsExampleProject/packages/with_subpackages/b/cmake/Dependencies.cmake"
-      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2883,7 +2883,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
       "TribitsExampleProject/packages/with_subpackages/c/cmake/Dependencies.cmake"
-      "packages/with_subpackages/c/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2895,7 +2895,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
-      "packages/with_subpackages/c/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2907,12 +2907,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'm' in DEPLIBS is not a lib defined in the current cmake "
-      "packages/with_subpackages/b/src/CMakeLists.txt:.* .TRIBITS_ADD_LIBRARY."
+      "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_EXECUTABLE()
+  # Testing pasing libs to tribits_add_executable()
   #
 
   TEST_7
@@ -2923,7 +2923,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "ERROR: TESTONLY lib 'b_test_utils' not allowed with INSTALLABLE executable"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_8
@@ -2934,7 +2934,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       " ERROR: 'simplecxx' in TESTONLYLIBS not a TESTONLY lib"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_9
@@ -2945,7 +2945,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this SE package"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
   TEST_10
@@ -2956,7 +2956,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing TESTONLY lib 'b_mixed_lang' through DEPLIBS is deprecated"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
@@ -2968,14 +2968,14 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing non-TESTONLY lib 'pws_b' through DEPLIBS is deprecated"
-      "packages/with_subpackages/b/tests/CMakeLists.txt:.* .TRIBITS_ADD_EXECUTABLE_AND_TEST."
+      "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
+tribits_add_advanced_test( TribitsExampleProject_SimpleCxx_DEBUG_int64
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -3006,7 +3006,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleCxx_DEBUG_int64
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
+tribits_add_advanced_test( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -3065,7 +3065,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
+tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3101,7 +3101,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whitelist
+tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whitelist
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3138,7 +3138,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whi
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Blacklist
+tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Blacklist
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3177,7 +3177,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Bla
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
+tribits_add_advanced_test( TribitsExampleProject_WrapExternal
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -3283,7 +3283,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure
+tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3354,7 +3354,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir
+tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
@@ -3435,7 +3435,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
+tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3471,7 +3471,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
       "When you reconfigure, just grep the cmake stdout for 'HeaderOnlyTpl'"
       "and then follow the disables that occur as a result to see what impact"
       "this TPL disable has on the configuration of TribitsExProj."
-      "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ .MESSAGE.:"
+      "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ [(]message[)]:"
       "  ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
       "Call Stack .most recent call first.:"
       "-- Configuring incomplete, errors occurred!"
@@ -3495,7 +3495,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
+tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3523,14 +3523,14 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
       "and then follow the disables that occur as a result to see what impact"
       "this TPL disable has on the configuration of TribitsExProj."
       "-- ERROR: Failed finding all of the parts of TPL 'HeaderOnlyTpl' .see above., Aborting!"
-      "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ .MESSAGE.:"
+      "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ [(]message[)]:"
       "  ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
       "Call Stack .most recent call first.:"
       "-- Configuring incomplete, errors occurred!"
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
+tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
@@ -3561,7 +3561,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
       .
     PASS_REGULAR_EXPRESSION_ALL
       "Error, the package InsertedPkg directory .+/TribitsExampleProject/InsertedPkg does not exist!"
-      "CMake Error at .+/TribitsProcessPackagesAndDirsLists.cmake:[0-9]+ .MESSAGE.:"
+      "CMake Error at .+/TribitsProcessPackagesAndDirsLists.cmake:[0-9]+ [(]message[)]:"
       "Configuring incomplete, errors occurred!"
 
   TEST_3
@@ -3602,7 +3602,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_InsertedPkg
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
+tribits_add_advanced_test( TribitsExampleProject_TargetDefinesPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3661,7 +3661,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TargetDefinesPkg
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
+tribits_add_advanced_test( TribitsExampleProject_MixedSharedStaticLibs_shared
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   OVERALL_NUM_MPI_PROCS 1
@@ -3744,12 +3744,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_shared
 
   )
   # NOTE: The above test make sure that you can build a static library with
-  # TRIBITS_ADD_LIBRARY( ... STATIC ...) in project that is defaulted to use
+  # tribits_add_library( ... STATIC ...) in project that is defaulted to use
   # shared libs with BUILD_SHARED_LIBS=ON.  This also tests that the correct
   # soversion links are created as well.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
+tribits_add_advanced_test( TribitsExampleProject_MixedSharedStaticLibs_static
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
   OVERALL_NUM_MPI_PROCS 1
@@ -3814,11 +3814,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_MixedSharedStaticLibs_static
 
   )
   # NOTE: The above test make sure that you can build a shared library with
-  # TRIBITS_ADD_LIBRARY( ... SHARED ...) in project that is defaulted to use
+  # tribits_add_library( ... SHARED ...) in project that is defaulted to use
   # static libs with BUILD_SHARED_LIBS=OFF.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableWithSubpackagesB
+tribits_add_advanced_test( TribitsExampleProject_DisableWithSubpackagesB_EnableWithSubpackagesB
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3857,39 +3857,39 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_DisableWithSubpackagesB_EnableW
 ##################################
 
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(SHARED_LIB_EXT "dylib")
-  SET(RPATH_INSPECT_CMND "otool")
-  SET(RPATH_INSPECT_ARG "-L")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(SHARED_LIB_EXT "so")
-  SET(RPATH_INSPECT_CMND "objdump")
-  SET(RPATH_INSPECT_ARG "-x")
-ENDIF()
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(SHARED_LIB_EXT "dylib")
+  set(RPATH_INSPECT_CMND "otool")
+  set(RPATH_INSPECT_ARG "-L")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(SHARED_LIB_EXT "so")
+  set(RPATH_INSPECT_CMND "objdump")
+  set(RPATH_INSPECT_ARG "-x")
+endif()
 
 
 #
 # SimpleTpl_install_shared
 #
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(THIS_RPATH_INSPECT_CMND "${RPATH_INSPECT_CMND}")
-  SET(THIS_RPATH_INSPECT_ARG "${RPATH_INSPECT_ARG}")
-  SET(RPATH_GREP_STR "@rpath/libsimpletpl.dylib")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(THIS_RPATH_INSPECT_CMND "ls")
-  SET(THIS_RPATH_INSPECT_ARG "")
-  SET(RPATH_GREP_STR "libsimpletpl")
-ELSE()
-  SET(THIS_RPATH_INSPECT_CMND "")
-  SET(THIS_RPATH_INSPECT_ARG "")
-  SET(RPATH_GREP_STR "")
-ENDIF()
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(THIS_RPATH_INSPECT_CMND "${RPATH_INSPECT_CMND}")
+  set(THIS_RPATH_INSPECT_ARG "${RPATH_INSPECT_ARG}")
+  set(RPATH_GREP_STR "@rpath/libsimpletpl.dylib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(THIS_RPATH_INSPECT_CMND "ls")
+  set(THIS_RPATH_INSPECT_ARG "")
+  set(RPATH_GREP_STR "libsimpletpl")
+else()
+  set(THIS_RPATH_INSPECT_CMND "")
+  set(THIS_RPATH_INSPECT_ARG "")
+  set(RPATH_GREP_STR "")
+endif()
 
-SET(SimpleTpl_install_shared_DIR
+set(SimpleTpl_install_shared_DIR
   ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_SimpleTpl_install_shared)
 
-TRIBITS_ADD_ADVANCED_TEST( SimpleTpl_install_shared
+tribits_add_advanced_test( SimpleTpl_install_shared
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE THIS_RPATH_INSPECT_CMND
@@ -3929,7 +3929,7 @@ TRIBITS_ADD_ADVANCED_TEST( SimpleTpl_install_shared
 # TribitsExampleProject_SimpleTpl_RPATH_XXX tests.
 #
 
-SET(TEST_RPATH_COMMON_CONFIG_ARGS
+set(TEST_RPATH_COMMON_CONFIG_ARGS
   ${TribitsExampleProject_COMMON_CONFIG_ARGS}
   -DBUILD_SHARED_LIBS=ON
   -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
@@ -3941,26 +3941,26 @@ SET(TEST_RPATH_COMMON_CONFIG_ARGS
   -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_shared_DIR}/install/lib
   )
 
-SET(LD_LIBRARY_PATH_ORIG $ENV{LD_LIBRARY_PATH})
+set(LD_LIBRARY_PATH_ORIG $ENV{LD_LIBRARY_PATH})
 
 
 #
 # Test default TriBITS RPATH setting
 #
 
-SET(RPATH_CURRENT_TEST_DIR
+set(RPATH_CURRENT_TEST_DIR
   ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_default)
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(RPATH_GREP_STR
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(RPATH_GREP_STR
     "R.*PATH *${RPATH_CURRENT_TEST_DIR}/install/lib:${SimpleTpl_install_shared_DIR}/install/lib")
   # NOTE: Above matches both RPATH and RUNPATH which are used on differnt
   # Linux systems.
-ENDIF()
+endif()
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_default
+tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_default
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
@@ -4010,10 +4010,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_default
 
   ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
   )
-IF (RPATH_CURRENT_TEST_NAME_NAME)
-  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+if (RPATH_CURRENT_TEST_NAME_NAME)
+  set_tests_properties(${RPATH_CURRENT_TEST_NAME_NAME}
     PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
-ENDIF()
+endif()
 
 
 # NOTE: The above test does some more detailed checking for this first test
@@ -4025,17 +4025,17 @@ ENDIF()
 # Test setting <project>_SET_INSTALL_RPATH=FALSE
 #
 
-SET(RPATH_CURRENT_TEST_DIR
+set(RPATH_CURRENT_TEST_DIR
   ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH)
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(RPATH_GREP_STR
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(RPATH_GREP_STR
     "R.*PATH *${SimpleTpl_install_shared_DIR}/install/lib")
-ENDIF()
+endif()
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH
+tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
@@ -4067,14 +4067,14 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_
 
   ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
   )
-IF (RPATH_CURRENT_TEST_NAME_NAME)
-  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+if (RPATH_CURRENT_TEST_NAME_NAME)
+  set_tests_properties(${RPATH_CURRENT_TEST_NAME_NAME}
     PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
-ENDIF()
+endif()
 
 
 # Run the exectuable built and installed above setting LD_LIBRARY_PATH
-TRIBITS_ADD_TEST(
+tribits_add_test(
   simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
     DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install2/bin
   NAME TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run
@@ -4083,30 +4083,30 @@ TRIBITS_ADD_TEST(
     LD_LIBRARY_PATH=${RPATH_CURRENT_TEST_DIR}/install2/lib:${LD_LIBRARY_PATH_ORIG}
   ADDED_TESTS_NAMES_OUT TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES
   )
-IF (TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES
+if (TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES
   AND RPATH_CURRENT_TEST_NAME_NAME
   )
-  SET_TESTS_PROPERTIES(
+  set_tests_properties(
     ${TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH_run_NAMES}
     PROPERTIES DEPENDS ${RPATH_CURRENT_TEST_NAME_NAME} )
-ENDIF()
+endif()
 
 
 #
 # Test setting CMAKE_INSTALL_RPATH="<path0>:<path1>:..."
 #
 
-SET(RPATH_CURRENT_TEST_DIR
+set(RPATH_CURRENT_TEST_DIR
   ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_RPATH)
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(RPATH_GREP_STR
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(RPATH_GREP_STR
     "R.*PATH *${RPATH_CURRENT_TEST_DIR}/install2/nonstd_lib_location:${SimpleTpl_install_shared_DIR}/install/lib")
-ENDIF()
+endif()
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_RPATH
+tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_RPATH
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
@@ -4156,26 +4156,26 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_R
 
   ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
   )
-IF (RPATH_CURRENT_TEST_NAME_NAME)
-  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+if (RPATH_CURRENT_TEST_NAME_NAME)
+  set_tests_properties(${RPATH_CURRENT_TEST_NAME_NAME}
     PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
-ENDIF()
+endif()
 
 
 #
 # Test setting -DCMAKE_SKIP_INSTALL_RPATH=TRUE
 #
 
-SET(RPATH_CURRENT_TEST_DIR
+set(RPATH_CURRENT_TEST_DIR
   ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH)
 
-IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
-  SET(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
-ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-  SET(RPATH_GREP_STR "") # Can't look for RPATH at all
-ENDIF()
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+  set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
+elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(RPATH_GREP_STR "") # Can't look for RPATH at all
+endif()
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH
+tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   EXCLUDE_IF_NOT_TRUE RPATH_INSPECT_CMND
@@ -4212,14 +4212,14 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INST
 
   ADDED_TEST_NAME_OUT RPATH_CURRENT_TEST_NAME_NAME
   )
-IF (RPATH_CURRENT_TEST_NAME_NAME)
-  SET_TESTS_PROPERTIES(${RPATH_CURRENT_TEST_NAME_NAME}
+if (RPATH_CURRENT_TEST_NAME_NAME)
+  set_tests_properties(${RPATH_CURRENT_TEST_NAME_NAME}
     PROPERTIES DEPENDS ${SimpleTpl_install_shared_NAME} )
-ENDIF()
+endif()
 
 
 # Run the exectuable built and installed above setting LD_LIBRARY_PATH
-TRIBITS_ADD_TEST(
+tribits_add_test(
   simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
     DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install3/bin
   NAME TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run
@@ -4230,20 +4230,20 @@ TRIBITS_ADD_TEST(
     LD_LIBRARY_PATH=${RPATH_CURRENT_TEST_DIR}/install3/lib:${SimpleTpl_install_shared_DIR}/install/lib:${LD_LIBRARY_PATH_ORIG}
   ADDED_TESTS_NAMES_OUT TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES
   )
-IF (TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES
+if (TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES
   AND RPATH_CURRENT_TEST_NAME_NAME
   )
-  SET_TESTS_PROPERTIES(
+  set_tests_properties(
     ${TribitsExampleProject_SimpleTpl_RPATH_CMAKE_SKIP_INSTALL_RPATH_run_NAMES}
     PROPERTIES DEPENDS ${RPATH_CURRENT_TEST_NAME_NAME} )
-ENDIF()
+endif()
 
 
 #
 # Test cmake/ProjectCompilerPostConfig.cmake
 #
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
+tribits_add_advanced_test( TribitsExampleProject_ProjectCompilerPostConfig
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
@@ -4292,7 +4292,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCompilerPostConfig
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TribitsExampleProjectAddons
+tribits_add_advanced_test( TribitsExampleProject_TribitsExampleProjectAddons
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4385,7 +4385,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_TribitsExampleProjectAddons
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProjectAddons
+tribits_add_advanced_test( TribitsExampleProjectAddons
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4477,7 +4477,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProjectAddons
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_Empty
+tribits_add_advanced_test( TribitsExampleMetaProject_Empty
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4506,7 +4506,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_Empty
 # it should be handled smoothly.
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject
+tribits_add_advanced_test( TribitsExampleMetaProject
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4605,7 +4605,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_version_date_undef
+tribits_add_advanced_test( TribitsExampleMetaProject_version_date_undef
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4676,7 +4676,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleMetaProject_version_date_undef
 ########################################################################
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PASS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4724,7 +4724,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PASS
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_PROCESS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_PROCESS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4754,11 +4754,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Processing enabled package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
-      "ERROR: Forgot to call TRIBITS_PACKAGE_POSTPROCESS[(][)] .*/TribitsExampleProject/PkgWithUserErrors/CMakeLists.txt"
+      "ERROR: Forgot to call tribits_package_postprocess[(][)] .*/TribitsExampleProject/PkgWithUserErrors/CMakeLists.txt"
     ALWAYS_FAIL_ON_ZERO_RETURN
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4786,7 +4786,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DPkgWithUserErrors_ADD_LIBRARY_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE[(][)] or TRIBITS_PACKAGE_DECL[(][)] before\n  TRIBITS_ADD_LIBRARY[(][)] in"
+      "Must call tribits_package[(][)] or tribits_package_decl[(][)] before\n  tribits_add_library[(][)] in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4804,7 +4804,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DPkgWithUserErrors_ADD_EXECUTABLE_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE[(][)] or TRIBITS_PACKAGE_DECL[(][)] before\n  TRIBITS_ADD_EXECUTABLE[(][)] in"
+      "Must call tribits_package[(][)] or tribits_package_decl[(][)] before\n  tribits_add_executable[(][)] in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4823,8 +4823,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DPkgWithUserErrors_POSTPROCESS_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE[(][)] or TRIBITS_PACKAGE_DEF[(][)]"
-      "TRIBITS_PACKAGE_POSTPROCESS[(][)]"
+      "Must call tribits_package[(][)] or tribits_package_def[(][)]"
+      "tribits_package_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4862,13 +4862,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "The TriBITS Package 'PkgWithUserErrors' does not have any subpackages[.]"
-      "Therefore, you are not allowed to call TRIBITS_PROCESS_SUBPACKAGES[(][)]!"
+      "Therefore, you are not allowed to call tribits_process_subpackages[(][)]!"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPROCESS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPROCESS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4897,7 +4897,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
       -DPkgWithUserErrors_ADD_LIBRARY_after_POSTPROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_ADD_LIBRARY[(][)] before TRIBITS_PACKAGE_POSTPROCESS[(][)] in"
+      "Must call tribits_add_library[(][)] before tribits_package_postprocess[(][)] in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4916,7 +4916,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
       -DPkgWithUserErrors_ADD_EXECUTABLE_after_POSTPROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_ADD_EXECUTABLE[(][)] before TRIBITS_PACKAGE_POSTPROCESS[(][)] in"
+      "Must call tribits_add_executable[(][)] before tribits_package_postprocess[(][)] in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4936,13 +4936,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
       -DPkgWithUserErrors_multiple_calls_to_POSTPROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "TRIBITS_PACKAGE_POSTPROCESS[(][)] has been called more than once in"
+      "tribits_package_postprocess[(][)] has been called more than once in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -4974,7 +4974,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       "CMake Error at.*TribitsGeneralMacros.cmake:"
       "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
       "nonsense_jdslkfhlskd"
-      "TRIBITS_READ_TOPLEVEL_PACKAGE_DEPS_FILES_ADD_TO_GRAPH"
+      "tribits_read_toplevel_package_deps_files_add_to_graph"
       "-- Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -4996,7 +4996,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       "CMake Error at.*TribitsGeneralMacros.cmake:"
       "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
       "this_shouldnt_be_here"
-      "PkgWithUserErrors/CMakeLists.txt.*TRIBITS_ADD_LIBRARY"
+      "PkgWithUserErrors/CMakeLists.txt.*tribits_add_library"
       "-- Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5019,13 +5019,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       "CMake Error at.*TribitsGeneralMacros.cmake:"
       "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
       "misspelled_argument"
-      "PkgWithUserErrors/CMakeLists.txt.*TRIBITS_ADD_EXECUTABLE"
+      "PkgWithUserErrors/CMakeLists.txt.*tribits_add_executable"
       "-- Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PASS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -5075,7 +5075,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PACKAGE_USER_ERRORS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PACKAGE_USER_ERRORS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -5104,7 +5104,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_no_PACKAGE_DECL_before_PROCESS_SUBPACKAGES=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE_DECL[(][)] before TRIBITS_PROCESS_SUBPACKAGES[(][)]"
+      "Must call tribits_package_decl[(][)] before tribits_process_subpackages[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5115,12 +5115,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_POSTPROCESS_before_SUBPACKAGES=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      " Must call TRIBITS_PACKAGE_DECL[(][)], TRIBITS_PROCESS_SUBPACKAGES[(][)]and"
-      " TRIBITS_PACKAGE_DEF before TRIBITS_PACKAGE_POSTPROCESS[(][)].  Because this"
-      " package has subpackages you cannot use TRIBITS_PACKAGE[(][)] you must call"
-      " these in the following order: TRIBITS_PACKAGE_DECL"
-      " TRIBITS_PROCESS_SUBPACKAGES TRIBITS_PACKAGE_DEF TRIBITS_PACKAGE_POSTPROCESS"
-      " in file:"
+      " Must call tribits_package_decl[(][)], tribits_process_subpackages[(][)] and"
+      " tribits_package_def[(][)] before tribits_package_postprocess[(][)].  Because this"
+      " package has subpackages you cannot use tribits_package[(][)] you must call"
+      " these in the following order: tribits_package_decl[(][)]"
+      " tribits_process_subpackages[(][)] tribits_package_def[(][)]"
+      " tribits_package_postprocess[(][)] in:"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5131,7 +5131,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_PACKAGE_DEF_before_SUBPACKAGES=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_PACKAGE_DEF[(][)] after TRIBITS_PROCESS_SUBPACKAGES[(][)]"
+      "Must call tribits_package_def[(][)] after tribits_process_subpackages[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5142,7 +5142,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_multiple_calls_to_PACKAGE_DECL=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "TRIBITS_PACKAGE_DECL[(][)] called more than once"
+      "tribits_package_decl[(][)] called more than once"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5153,7 +5153,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_multiple_calls_to_PACKAGE_DEF=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "TRIBITS_PACKAGE_DEF was called more than once"
+      "tribits_package_def[(][)] was called more than once"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5164,12 +5164,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_PACKAGE_from_package_with_subpackages=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "This package has subpackages so you cannot use TRIBITS_PACKAGE"
+      "This package has subpackages so you cannot use tribits_package[(][)]"
       "Instead use the following call order:"
-      "TRIBITS_PROJECT_DECL[(]PkgWithSubpkgsWithUserErrors[)]"
-      "TRIBITS_PROCESS_SUBPACKAGES"
-      "TRIBITS_PACKAGE_DEF"
-      "TRIBITS_PACKAGE_POSTPROCESS"
+      "tribits_project_decl[(]PkgWithSubpkgsWithUserErrors[)]"
+      "tribits_process_subpackages[(][)]"
+      "tribits_package_def[(][)]"
+      "tribits_package_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5180,12 +5180,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_PACKAGE_after_PROCESS_SUBPACKAGES=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "This package has subpackages so you cannot use TRIBITS_PACKAGE[(][)]"
+      "This package has subpackages so you cannot use tribits_package[(][)]"
       "Instead use the following call order"
-      "TRIBITS_PROJECT_DECL[(]PkgWithSubpkgsWithUserErrors[)]"
-      "TRIBITS_PROCESS_SUBPACKAGES[(][)]"
-      "TRIBITS_PACKAGE_DEF[(][)]"
-      "TRIBITS_PACKAGE_POSTPROCESS[(][)]"
+      "tribits_project_decl[(]PkgWithSubpkgsWithUserErrors[)]"
+      "tribits_process_subpackages[(][)]"
+      "tribits_package_def[(][)]"
+      "tribits_package_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5196,12 +5196,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_everthing_except_PROCESS_SUBPACKAGES=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      " Must call TRIBITS_PACKAGE_DECL[(][)], TRIBITS_PROCESS_SUBPACKAGES[(][)]and"
-      " TRIBITS_PACKAGE_DEF before TRIBITS_PACKAGE_POSTPROCESS[(][)].  Because this"
-      " package has subpackages you cannot use TRIBITS_PACKAGE[(][)] you must call"
-      " these in the following order: TRIBITS_PACKAGE_DECL"
-      " TRIBITS_PROCESS_SUBPACKAGES TRIBITS_PACKAGE_DEF TRIBITS_PACKAGE_POSTPROCESS"
-      " in file:"
+      " Must call tribits_package_decl[(][)], tribits_process_subpackages[(][)] and"
+      " tribits_package_def[(][)] before tribits_package_postprocess[(][)].  Because this"
+      " package has subpackages you cannot use tribits_package[(][)] you must call"
+      " these in the following order: tribits_package_decl[(][)]"
+      " tribits_process_subpackages[(][)] tribits_package_def[(][)]"
+      " tribits_package_postprocess[(][)] in:"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5212,12 +5212,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_PACKAGE_DECL_only=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      " Must call TRIBITS_PACKAGE_DECL[(][)], TRIBITS_PROCESS_SUBPACKAGES[(][)]and"
-      " TRIBITS_PACKAGE_DEF before TRIBITS_PACKAGE_POSTPROCESS[(][)].  Because this"
-      " package has subpackages you cannot use TRIBITS_PACKAGE[(][)] you must call"
-      " these in the following order: TRIBITS_PACKAGE_DECL"
-      " TRIBITS_PROCESS_SUBPACKAGES TRIBITS_PACKAGE_DEF TRIBITS_PACKAGE_POSTPROCESS"
-      " in file:"
+      " Must call tribits_package_decl[(][)], tribits_process_subpackages[(][)] and"
+      " tribits_package_def[(][)] before tribits_package_postprocess[(][)].  Because this"
+      " package has subpackages you cannot use tribits_package[(][)] you must call"
+      " these in the following order: tribits_package_decl[(][)]"
+      " tribits_process_subpackages[(][)] tribits_package_def[(][)]"
+      " tribits_package_postprocess[(][)] in:"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5228,7 +5228,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_SUBPACKAGE_from_package_with_subpackages=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_SUBPACKAGE[(][)] from a package.  Use TRIBITS_PACKAGE[(][)]"
+      "Cannot call tribits_subpackage[(][)] from a package.  Use tribits_package[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5239,15 +5239,15 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DPkgWithSubpkgsWithUserErrors_call_SUBPACKAGE_POSTPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_SUBPACKAGE_POSTPROCESS[(][)] from a package.  Use"
-      " TRIBITS_PACKAGE_POSTPROCESS[(][)] instead"
+      "Cannot call tribits_subpackage_postprocess[(][)] from a package.  Use"
+      " tribits_package_postprocess[(][)] instead"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SUBPACKAGE_USER_ERRORS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SUBPACKAGE_USER_ERRORS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -5276,7 +5276,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_PACKAGE=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_PACKAGE[(][)] in a subpackage"
+      "Cannot call tribits_package[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5287,7 +5287,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_PACKAGE_DECL=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_PACKAGE_DECL[(][)] in a subpackage"
+      "Cannot call tribits_package_decl[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5298,7 +5298,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_PACKAGE_DEF=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_PACKAGE_DEF[(][)] in a subpackage"
+      "Cannot call tribits_package_def[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5309,7 +5309,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_PROCESS_SUBPACKAGES=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_PROCESS_SUBPACKAGES[(][)] in a subpackage"
+      "Cannot call tribits_process_subpackages[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5320,7 +5320,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_PROCESS_SUBPACKAGES=FALSE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Cannot call TRIBITS_PACKAGE_POSTPROCESS[(][)] in a subpackage"
+      "Cannot call tribits_package_postprocess[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5331,7 +5331,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_DOUBLE_SUBPACKAGE_INIT=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Already called TRIBITS_SUBPACKGE[(][)] for the PkgWithSubpkgsWithUserErrors"
+      "Already called tribits_subpackge[(][)] for the PkgWithSubpkgsWithUserErrors"
       "subpackage A"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
@@ -5343,7 +5343,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPAckageA_DOUBLE_SUBPACKAGE_POSTPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Already called TRIBITS_SUBPACKGE_POSTPROCESS[(][)] for the"
+      "Already called tribits_subpackge_postprocess[(][)] for the"
       "PkgWithSubpkgsWithUserErrors subpackage A"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
@@ -5355,7 +5355,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPAckageA_DOUBLE_SUBPACKAGE_POSTPROCESS=FALSE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "TRIBITS_SUBPACKAGE[(][)] must be called before TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "tribits_subpackage[(][)] must be called before tribits_subpackage_postprocess[(][)]"
       " for the PkgWithSubpkgsWithUserErrors"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
@@ -5369,7 +5369,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       .
     PASS_REGULAR_EXPRESSION_ALL
       "Adding library in subpackage after post process"
-      "Must call TRIBITS_ADD_LIBRARY[(][)] before TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "Must call tribits_add_library[(][)] before tribits_subpackage_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5382,7 +5382,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       .
     PASS_REGULAR_EXPRESSION_ALL
       "Adding executable in subpackage after post process"
-      "Must call TRIBITS_ADD_EXECUTABLE[(][)] before TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "Must call tribits_add_executable[(][)] before tribits_subpackage_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5394,7 +5394,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_add_lib_no_PREPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_LIBRARY[(][)]"
+      "Must call tribits_subpackage[(][)] before tribits_add_library[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5406,7 +5406,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_add_exe_no_PREPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_EXECUTABLE[(][)]"
+      "Must call tribits_subpackage[(][)] before tribits_add_executable[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5418,7 +5418,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_ADD_TEST_DIRECTORY_without_SUBPACKAGE=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_TEST_DIRECTORIES[(][)]"
+      "Must call tribits_subpackage[(][)] before tribits_add_test_directories[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5430,8 +5430,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_ADD_TEST_DIRECTORY_after_POSTPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_ADD_TEST_DIRECTORIES[(][)] before"
-      "TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "Must call tribits_add_test_directories[(][)] before"
+      "tribits_subpackage_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5443,7 +5443,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_ADD_EXAMPLE_DIRECTORY_without_SUBPACKAGE=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_EXAMPLE_DIRECTORIES[(][)]"
+      "Must call tribits_subpackage[(][)] before tribits_add_example_directories[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
@@ -5455,15 +5455,15 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SU
       -DsubPackageA_call_ADD_EXAMPLE_DIRECTORY_after_POSTPROCESS=TRUE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Must call TRIBITS_ADD_EXAMPLE_DIRECTORIES[(][)] before"
-      "TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "Must call tribits_add_example_directories[(][)] before"
+      "tribits_subpackage_postprocess[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_config_file_compiler_overrides
+tribits_add_advanced_test( TribitsExampleProject_config_file_compiler_overrides
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -5489,9 +5489,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_config_file_compiler_overrides
     CMND grep
     ARGS _COMPILER TribitsExProjConfig_install.cmake
     PASS_REGULAR_EXPRESSION_ALL
-      "SET[(]TribitsExProj_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
-      "SET[(]TribitsExProj_C_COMPILER .c_wrapper_install_dir.[)]"
-      "SET[(]TribitsExProj_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
+      "set[(]TribitsExProj_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
+      "set[(]TribitsExProj_C_COMPILER .c_wrapper_install_dir.[)]"
+      "set[(]TribitsExProj_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_2
@@ -5499,10 +5499,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_config_file_compiler_overrides
     CMND grep
     ARGS _COMPILER packages/with_subpackages/CMakeFiles/WithSubpackagesConfig_install.cmake
     PASS_REGULAR_EXPRESSION_ALL
-      "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
-      "SET[(]WithSubpackages_C_COMPILER .c_wrapper_install_dir.[)]"
-      "SET[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
-      "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_install_dir.[)]"
+      "set[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_install_dir.[)]"
+      "set[(]WithSubpackages_C_COMPILER .c_wrapper_install_dir.[)]"
+      "set[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_install_dir.[)]"
+      "set[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_install_dir.[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_3
@@ -5510,10 +5510,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_config_file_compiler_overrides
     CMND grep
     ARGS _COMPILER packages/with_subpackages/WithSubpackagesConfig.cmake
     PASS_REGULAR_EXPRESSION_ALL
-      "SET[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_build_dir.[)]"
-      "SET[(]WithSubpackages_C_COMPILER .c_wrapper_build_dir.[)]"
-      "SET[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_build_dir.[)]"
-      "SET[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_build_dir.[)]"
+      "set[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_build_dir.[)]"
+      "set[(]WithSubpackages_C_COMPILER .c_wrapper_build_dir.[)]"
+      "set[(]WithSubpackages_Fortran_COMPILER .fortran_wrapper_build_dir.[)]"
+      "set[(]WithSubpackages_FORTRAN_COMPILER .fortran_wrapper_build_dir.[)]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )

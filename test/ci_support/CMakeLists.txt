@@ -41,29 +41,29 @@
 # Test generation of package dependency and related XML and related files
 #
 
-ADD_SUBDIRECTORY(DumpXmlDepsTests)
+add_subdirectory(DumpXmlDepsTests)
 
 # In case the project has ${PROJECT_NAME}_TRIBITS_DIR pointing to a symlink,
 # use the TriBITS implenetation in these test (which should be the same)
-SET(THIS_TRIBITS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../tribits")
+set(THIS_TRIBITS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../tribits")
 
 
 # The mock test project
-SET(MOCK_PROJECT_NAME Trilinos)
+set(MOCK_PROJECT_NAME Trilinos)
 
-SET(TRIBITS_MOCK_TRILINOS_DIR "examples/MockTrilinos")
+set(TRIBITS_MOCK_TRILINOS_DIR "examples/MockTrilinos")
 
-SET(MOCK_TRILINOS_DIR ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_MOCK_TRILINOS_DIR})
-
-
-IF (WIN23 AND NOT CYGWIN)
-  SET(DIFF_COMMAND_STUFF "${CMAKE_COMMAND}" ARGS -E compare_files)
-ELSE()
-  SET(DIFF_COMMAND_STUFF diff ARGS)
-ENDIF()
+set(MOCK_TRILINOS_DIR ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_MOCK_TRILINOS_DIR})
 
 
-TRIBITS_ADD_ADVANCED_TEST( XmlHtmlCDashOutputTest
+if (WIN23 AND NOT CYGWIN)
+  set(DIFF_COMMAND_STUFF "${CMAKE_COMMAND}" ARGS -E compare_files)
+else()
+  set(DIFF_COMMAND_STUFF diff ARGS)
+endif()
+
+
+tribits_add_advanced_test( XmlHtmlCDashOutputTest
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -90,7 +90,7 @@ TRIBITS_ADD_ADVANCED_TEST( XmlHtmlCDashOutputTest
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsDependencies_UnitTests
+tribits_add_advanced_test( TribitsDependencies_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE}
@@ -99,7 +99,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsDependencies_UnitTests
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsPackageFilePathUtils_UnitTests
+tribits_add_advanced_test( TribitsPackageFilePathUtils_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE}
@@ -108,7 +108,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsPackageFilePathUtils_UnitTests
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsPackageTestNameUtils_UnitTests
+tribits_add_advanced_test( TribitsPackageTestNameUtils_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE}
@@ -120,7 +120,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsPackageTestNameUtils_UnitTests
 # Test the get-tribits-packages.py script
 #
 
-TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_default
+tribits_add_advanced_test( get_tribits_packages_default
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -132,7 +132,7 @@ TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_default
       "^TrilinosFramework,Teuchos,.*,Sacado,Thyra,Isorropia,.*,Phalanx,Panzer\n"
   )
 
-TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_only_toplevel_packages
+tribits_add_advanced_test( get_tribits_packages_only_toplevel_packages
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -145,7 +145,7 @@ TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_only_toplevel_packages
       "^TrilinosFramework,Teuchos,.*,Sacado,Thyra,Isorropia,.*,Phalanx,Panzer\n"
   )
 
-TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_all_se_packages
+tribits_add_advanced_test( get_tribits_packages_all_se_packages
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -162,7 +162,7 @@ TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_all_se_packages
 # Test the get-tribits-packages-from-last-tests-failed.py script
 #
 
-TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_from_last_tests_failed_1
+tribits_add_advanced_test( get_tribits_packages_from_last_tests_failed_1
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -179,7 +179,7 @@ TRIBITS_ADD_ADVANCED_TEST( get_tribits_packages_from_last_tests_failed_1
 # Test TribitsExampleProject/cmake/ProjectCiFileChangeLogic.py
 #
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCiFileChangeLogic_UnitTests
+tribits_add_advanced_test( TribitsExampleProject_ProjectCiFileChangeLogic_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE}
@@ -193,11 +193,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ProjectCiFileChangeLogic_UnitTe
 # standard location.
 #
 
-FUNCTION(Test_TribitsExampleProject_get_tribits_packages_from_files_list
+function(test_tribitsexampleproject_get_tribits_packages_from_files_list
   TEST_POSTFIX  CHANGED_FILES_NAME  MATCH_REGEX
   )
 
-  TRIBITS_ADD_ADVANCED_TEST(
+  tribits_add_advanced_test(
     TribitsExampleProject_get_tribits_packages_from_files_list_${TEST_POSTFIX}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -227,18 +227,18 @@ FUNCTION(Test_TribitsExampleProject_get_tribits_packages_from_files_list
 
     )
 
-ENDFUNCTION()
+endfunction()
 
-Test_TribitsExampleProject_get_tribits_packages_from_files_list(
+test_tribitsexampleproject_get_tribits_packages_from_files_list(
   1  tribits-example-project-changed-files-1.txt  "^ALL_PACKAGES,SimpleCxx\n" )
 
-Test_TribitsExampleProject_get_tribits_packages_from_files_list(
+test_tribitsexampleproject_get_tribits_packages_from_files_list(
   2  tribits-example-project-changed-files-2.txt  "^ALL_PACKAGES,WithSubpackagesC\n" )
 
-Test_TribitsExampleProject_get_tribits_packages_from_files_list(
+test_tribitsexampleproject_get_tribits_packages_from_files_list(
   3  tribits-example-project-changed-files-3.txt  "^ALL_PACKAGES,MixedLang\n" )
 
-Test_TribitsExampleProject_get_tribits_packages_from_files_list(
+test_tribitsexampleproject_get_tribits_packages_from_files_list(
   4  tribits-example-project-changed-files-4.txt  "^WithSubpackages\n" )
 
 #
@@ -247,11 +247,11 @@ Test_TribitsExampleProject_get_tribits_packages_from_files_list(
 # we can leave off the --project-dir argument.
 #
 
-FUNCTION(Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list
+function(test_tribitsexampleproject_w_tribits_get_tribits_packages_from_files_list
   TEST_POSTFIX  CHANGED_FILES_NAME  MATCH_REGEX
   )
 
-  TRIBITS_ADD_ADVANCED_TEST(
+  tribits_add_advanced_test(
     TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list_${TEST_POSTFIX}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -291,18 +291,18 @@ FUNCTION(Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_li
 
     )
 
-ENDFUNCTION()
+endfunction()
 
-Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list(
+test_tribitsexampleproject_w_tribits_get_tribits_packages_from_files_list(
   1  tribits-example-project-changed-files-1.txt  "^ALL_PACKAGES,SimpleCxx\n" )
 
-Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list(
+test_tribitsexampleproject_w_tribits_get_tribits_packages_from_files_list(
   2  tribits-example-project-changed-files-2.txt  "^ALL_PACKAGES,WithSubpackagesC\n" )
 
-Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list(
+test_tribitsexampleproject_w_tribits_get_tribits_packages_from_files_list(
   3  tribits-example-project-changed-files-3.txt  "^ALL_PACKAGES,MixedLang\n" )
 
-Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list(
+test_tribitsexampleproject_w_tribits_get_tribits_packages_from_files_list(
   4  tribits-example-project-changed-files-4.txt  "^WithSubpackages\n" )
 
 
@@ -310,7 +310,7 @@ Test_TribitsExampleProject_w_tribits_get_tribits_packages_from_files_list(
 # Test checkin-test.py script
 #
 
-TRIBITS_ADD_ADVANCED_TEST( clone_extra_repos_UnitTests
+tribits_add_advanced_test( clone_extra_repos_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE}
@@ -320,7 +320,7 @@ TRIBITS_ADD_ADVANCED_TEST( clone_extra_repos_UnitTests
     PASS_REGULAR_EXPRESSION "OK"
   )
 
-TRIBITS_ADD_ADVANCED_TEST( CheckinTest_UnitTests
+tribits_add_advanced_test( CheckinTest_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE}
@@ -336,7 +336,7 @@ TRIBITS_ADD_ADVANCED_TEST( CheckinTest_UnitTests
 #
 
 
-TRIBITS_ADD_ADVANCED_TEST( cdash_build_testing_date_UnitTests
+tribits_add_advanced_test( cdash_build_testing_date_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE}
@@ -347,10 +347,10 @@ TRIBITS_ADD_ADVANCED_TEST( cdash_build_testing_date_UnitTests
 
 
 #
-# TRIBITS_STRIP_COMMENTS_FROM_CMAKE_CACHE_FILE()
+# tribits_strip_comments_from_cmake_cache_file()
 #
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsStripCommentsFromCMakeCacheFile_small
+tribits_add_advanced_test( TribitsStripCommentsFromCMakeCacheFile_small
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -365,7 +365,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsStripCommentsFromCMakeCacheFile_small
       CMakeCache.small.clean.txt
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsStripCommentsFromCMakeCacheFile_large
+tribits_add_advanced_test( TribitsStripCommentsFromCMakeCacheFile_large
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
@@ -380,7 +380,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsStripCommentsFromCMakeCacheFile_large
       CMakeCache.large.clean.txt
   )
 
-TRIBITS_ADD_ADVANCED_TEST( CDashQueryAnalyzeReport_UnitTests
+tribits_add_advanced_test( CDashQueryAnalyzeReport_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE}
@@ -389,7 +389,7 @@ TRIBITS_ADD_ADVANCED_TEST( CDashQueryAnalyzeReport_UnitTests
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
 
-TRIBITS_ADD_ADVANCED_TEST( cdash_analyze_and_report_UnitTests
+tribits_add_advanced_test( cdash_analyze_and_report_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE}
@@ -398,7 +398,7 @@ TRIBITS_ADD_ADVANCED_TEST( cdash_analyze_and_report_UnitTests
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
 
-TRIBITS_ADD_ADVANCED_TEST( CreateIssueTrackerFromCDashQuery_UnitTests
+tribits_add_advanced_test( CreateIssueTrackerFromCDashQuery_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${PYTHON_EXECUTABLE}
@@ -412,7 +412,7 @@ TRIBITS_ADD_ADVANCED_TEST( CreateIssueTrackerFromCDashQuery_UnitTests
 #
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_checkin_test
+tribits_add_advanced_test( TribitsExampleProject_checkin_test
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 

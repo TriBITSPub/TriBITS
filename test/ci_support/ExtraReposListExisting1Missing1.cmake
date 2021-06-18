@@ -37,7 +37,7 @@
 # ************************************************************************
 # @HEADER
 
-TRIBITS_PROJECT_DEFINE_EXTRA_REPOSITORIES(
+tribits_project_define_extra_repositories(
   preCopyrightTrilinos  ""  GIT  url1.com:/git/preCopyrightTrilinos  ""   Continuous
   MissingRepo  ""  GIT  someusrl  ""      Continuous
   )
