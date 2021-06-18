@@ -469,8 +469,7 @@ NOTE: The purpose of this TriBITS Developers Guide document is not teach
 basic software engineering so these various principles will not be expanded on
 further.  However, interested readers are strongly encouraged to read
 [`Agile Software Development, 2003`_] as one of the better software
-engineering books out there (see
-http://web.ornl.gov/~8vt/readingList.html#Most_Recommended_SE_Books).
+engineering books out there (see https://bartlettroscoe.github.io/reading-list/#most_recommended_se_books).
 
 TriBITS Project Structure
 =========================
@@ -2174,7 +2173,7 @@ subpackages are tested along with their peer subpackages with the parent
 package as part of `TriBITS CTest/CDash Driver`_.  This effectively means that if a
 build failure is detected in any subpackage, then that will effectively
 disable the parent package and all of its other subpackages in downstream
-testing.  This is a type of "all for one and all for one" when it comes to the
+testing.  This is a type of "all for one and one for all" when it comes to the
 relationship between the subpackages within a single parent package.  These
 are some of the issues to consider when breaking up software into packages and
 subpackages that will be mentioned in other sections as well.
@@ -8140,7 +8139,7 @@ Practices)*. Prentice Hall. 2003.
 
 Bartlett, Roscoe. *Integration Strategies for Computational Science &
 Engineering Software*.  2009-0655, Second International Workshop on Software
-Engineering for Computational Science and Engineering, 2009.  http://web.ornl.gov/~8vt/CSE_SoftwareIntegration_Strategies.pdf.
+Engineering for Computational Science and Engineering, 2009.  https://bartlettroscoe.github.io/publications/CSE_SoftwareIntegration_Strategies.pdf.
 
 .. _SCALE, 2011:
 
