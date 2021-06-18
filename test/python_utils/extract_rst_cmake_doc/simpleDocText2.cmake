@@ -4,15 +4,15 @@ blah blah blah
 something
 
 #
-# @FUNCTION: some_func_name2()
+# @FUNCTION: SOME_FUNC_NAME2()
 # Better documenation
 #
 # Usage::
 #
-#   some_func_name2(blah
+#   SOME_FUNC_NAME2(blah
 #     goat
 #     )
 #
-function(some_func_name2 ...)
+FUNCTION(SOME_FUNC_NAME2 ...)
 some other stuff
 ...
