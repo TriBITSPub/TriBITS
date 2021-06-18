@@ -55,9 +55,8 @@ include(TimingUtils)
 #
 #   tribits_read_all_project_deps_files_create_deps_graph()
 #
-# Macro run at the top project-level scope that reads in packages and TPLs,
-# process dependencies, and (optimally) writes XML files of dependency
-# information.
+# Macro run at the top project-level scope that reads the lists of packages
+# and TPLs and creates the packages dependency graph.
 #
 # On output, this creates all of the package lists and dependency
 # data-structures described in `TriBITS System Data Structures and
