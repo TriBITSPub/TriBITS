@@ -4308,15 +4308,15 @@ function(unittest_tribits_eti_generate_macros)
   unittest_compare_const(
     macro_f1_var
 "#define f1(INSTMACRO)\\
-\tinstmacro( Teuchos_ArrayRCP1Teuchos_ArrayRCP0double01 )\\
-\tinstmacro( double )
+\tINSTMACRO( Teuchos_ArrayRCP1Teuchos_ArrayRCP0double01 )\\
+\tINSTMACRO( double )
 "
     )
   unittest_compare_const(
     macro_f312_var
 "#define f312(INSTMACRO)\\
-\tinstmacro( float , Teuchos_ArrayRCP1Teuchos_ArrayRCP0double01 , int )\\
-\tinstmacro( float , double , int )
+\tINSTMACRO( float , Teuchos_ArrayRCP1Teuchos_ArrayRCP0double01 , int )\\
+\tINSTMACRO( float , double , int )
 "
     )
   unittest_compare_const(
@@ -4341,13 +4341,13 @@ function(unittest_tribits_eti_generate_macros)
   unittest_compare_const(
     macro_f2_var
 "#define f2(INSTMACRO)\\
-\tinstmacro( b )\\
-\tinstmacro( c )
+\tINSTMACRO( b )\\
+\tINSTMACRO( c )
 ")
   unittest_compare_const(
     macro_f12_var
 "#define f12(INSTMACRO)\\
-\tinstmacro( a , b )
+\tINSTMACRO( a , b )
 ")
 
 endfunction()
