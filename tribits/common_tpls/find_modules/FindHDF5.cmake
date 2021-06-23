@@ -73,7 +73,7 @@ macro(_hdf5_boolean_convert _var)
   else()
     set(${_var} FALSE)
   endif()  
-endmacro(_HDF5_BOOLEAN_CONVERT)
+endmacro()
 
 
 
@@ -87,7 +87,7 @@ function(_hdf5_chomp_string old_str new_str_var)
 
   set(${new_str_var} ${_tmp} PARENT_SCOPE)
 
-endfunction(_HDF5_CHOMP_STRING)
+endfunction()
 
 
 
@@ -115,7 +115,7 @@ function(_hdf5_parse_settings_file _file _key _value)
   
   set(${_value} ${_tmp} PARENT_SCOPE)
 
-endfunction(_HDF5_PARSE_SETTINGS_FILE)
+endfunction()
 
 
 
@@ -126,7 +126,7 @@ function(_hdf5_define_version _file _var)
 
   set(${_var} ${_tmp} PARENT_SCOPE)
   
-endfunction(_HDF5_DEFINE_VERSION _var)
+endfunction()
 
 
 
@@ -138,7 +138,7 @@ function(_hdf5_define_parallel_build _file _var)
 
   set(${_var} ${_tmp} PARENT_SCOPE)
 
-endfunction(_HDF5_DEFINE_PARALLEL_BUILD _file _var)
+endfunction()
 
 
 
@@ -171,7 +171,7 @@ function(_hdf5_extra_library_dirs _file _var)
   endif()  
   set(${_var} ${_directories} PARENT_SCOPE)
 
-endfunction(_HDF5_EXTRA_LIBRARY_DIRS _file _var)
+endfunction()
 
 function(_hdf5_library_path _file _var)
 
@@ -181,7 +181,7 @@ function(_hdf5_library_path _file _var)
   _hdf5_parse_settings_file(${_file} ${_search_key} _tmp)
 
   set(${_var} ${_tmp} PARENT_SCOPE)
-endfunction(_HDF5_LIBRARY_PATH _file _var)
+endfunction()
 
 
 
@@ -231,7 +231,7 @@ function(_hdf5_extra_libraries _file _var)
 
   set(${_var} ${_return_list} PARENT_SCOPE)
 
-endfunction(_HDF5_EXTRA_LIBRARIES _file _var)
+endfunction()
 
 
 
@@ -275,7 +275,7 @@ function(_hdf5_extra_include_dirs _file _var)
   endif()  
   set(${_var} ${_directories} PARENT_SCOPE)
 
-endfunction(_HDF5_EXTRA_INCLUDE_DIRS _file _var)
+endfunction()
 
 #
 # End Functions/Macros
