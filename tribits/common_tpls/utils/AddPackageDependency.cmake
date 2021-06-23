@@ -56,7 +56,7 @@ function(add_package_dependency)
     macro(_print_usage)
         message("\nadd_package_dependency(<target_package> DEPENDS_ON <req_package>)\n"
                 " Add req_package to target_package dependencies.\n")
-    endmacro(_print_usage)
+    endmacro()
 
     # Parse the arguments
     set(_options "")
@@ -172,4 +172,4 @@ function(add_package_dependency)
 
     endif()    
 
-endfunction(ADD_PACKAGE_DEPENDENCY)
+endfunction()

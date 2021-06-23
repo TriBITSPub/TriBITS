@@ -112,5 +112,5 @@ function(parse_library_list)
         set(${PARSE_ARGS_FOUND} FALSE PARENT_SCOPE)
     endif()    
 
-endfunction(PARSE_LIBRARY_LIST)
+endfunction()
 
