@@ -19,8 +19,13 @@ all: $(BASE_NAME).html
 $(BASE_NAME).html: $(EXTRA_FILES) $(COMMON_DEPENDENT_FILES)
 	../../../python_utils/generate-docutils-output.py \
 	--file-base=$(BASE_NAME) \
-	--generate-latex-options="--stylesheet-path=rst2latex.tex" \
+	--generate-latex= --generate-pdf= \
 	$(EXTRA_ARGS)
+
+# 	  --generate-latex-options="--stylesheet-path=rst2latex.tex" \
+
+# NOTE: Can't build PDF anymore because it hangs.  Will have to debug later if
+# we want PDF again.
 
 clean:
 	-rm -f $(BASE_NAME).html
