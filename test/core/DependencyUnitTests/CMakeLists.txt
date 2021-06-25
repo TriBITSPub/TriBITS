@@ -66,16 +66,16 @@ set(REDUCED_MOCK_TRILINOS_DIR
 
 # Expected output files directory
 set(REDUCED_MOCK_TRILINOS_OUTPUT_DIR
-  "${${PROJECT_NAME}_TRIBITS_DIR}/doc/developers_guide/ReducedMockTrilinosOutput")
+  "${${PROJECT_NAME}_TRIBITS_DIR}/doc/guides/ReducedMockTrilinosOutput")
 
 #
 # NOTE: These tests compare against expected output stored in files under the
-# in the developers_guide/ReducedMockTrilinosOuptut/ directory and are used in
-# the TribitsDevelopersGuide.rst document.  Therefore, if the behavior of
-# TriBITS changes in such a way as to break these tests, then if any of the
-# contents of the files under this directory need to change, then one must
-# also look at the TribitsDevelopersGuilde.rst document and update it for the
-# new behvior of TriBITs!
+# in the guides/ReducedMockTrilinosOuptut/ directory and are used in the
+# TribitsUsersGuide.rst document.  Therefore, if the behavior of TriBITS
+# changes in such a way as to break these tests, then if any of the contents
+# of the files under this directory need to change, then one must also look at
+# the TribitsUsersGuilde.rst document and update it for the new behvior of
+# TriBITs!
 #
 
 
