@@ -7933,10 +7933,10 @@ headers/libraries/executables for a version of the project, then this
 constitutes *backward compatibility testing* which also includes installation
 testing of course.
 
-ToDo: Describe how the installation testing and backward compatibility testing
-process works with some examples.
+.. ToDo: Describe how the installation testing and backward compatibility
+.. testing process works with some examples.
 
-ToDo: Discuss how this fits into the TriBITS lifecycle model.
+.. ToDo: Discuss how this fits into the TriBITS lifecycle model.
 
 
 Wrapping Externally Configured/Built Software
