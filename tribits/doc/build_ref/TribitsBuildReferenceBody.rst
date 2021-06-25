@@ -1,12 +1,14 @@
 .. Common references to other documents
 
-.. _Package Dependencies and Enable/Disable Logic: https://tribits.org/doc/TribitsDevelopersGuide.html l#package-dependencies-and-enable-disable-logic
+.. _TriBITS Users Guide and Reference: TribitsUsersGuide.html
 
-.. _TriBITS Dependency Handling Behaviors: https://tribits.org/doc/TribitsDevelopersGuide.html#tribits-dependency-handling-behaviors
+.. _Package Dependencies and Enable/Disable Logic: TribitsUsersGuide.html#package-dependencies-and-enable-disable-logic
 
-.. _tribits_tpl_find_include_dirs_and_libraries(): https://tribits.org/doc/TribitsDevelopersGuide.html#tribits-tpl-find-include-dirs-and-libraries
+.. _TriBITS Dependency Handling Behaviors: TribitsUsersGuide.html#tribits-dependency-handling-behaviors
 
-.. _tribits_ctest_driver(): https://tribits.org/doc/TribitsDevelopersGuide.html#tribits-ctest-driver
+.. _tribits_tpl_find_include_dirs_and_libraries(): TribitsUsersGuide.html#tribits-tpl-find-include-dirs-and-libraries
+
+.. _tribits_ctest_driver(): TribitsUsersGuide.html#tribits-ctest-driver
 
 .. _Ninja: https://ninja-build.org
 
