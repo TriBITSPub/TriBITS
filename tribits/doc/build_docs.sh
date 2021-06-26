@@ -13,16 +13,18 @@ _BASE_DIR=$PWD
 
 echo
 echo "***"
-echo "*** Generating TribitsDevelopersGuide.[rst,html,pdf] ..."
+echo "*** Generating Users and Maintainers guides ..."
 echo "***"
 echo
 
-cd $_BASE_DIR/developers_guide
-./generate-dev-guide.sh 
+cd $_BASE_DIR/guides/
+./generate-guide.sh all 
+cd -
 echo
 echo "See generated files:"
 echo
-ls $_BASE_DIR/developers_guide/TribitsDevelopersGuide.*
+ls $_BASE_DIR/guides/users_guide/TribitsUsersGuide.*
+ls $_BASE_DIR/guides/maintainers_guide/TribitsMaintainersGuide.*
 
 echo
 echo "***"

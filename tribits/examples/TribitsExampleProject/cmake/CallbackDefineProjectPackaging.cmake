@@ -1,8 +1,8 @@
 macro(TRIBITS_PROJECT_DEFINE_PACKAGING)
 
     tribits_copy_installer_resource(TribitsExProj_README
-      "${TribitsExProj_SOURCE_DIR}/README"
-      "${TribitsExProj_BINARY_DIR}/README.txt")
+      "${TribitsExProj_SOURCE_DIR}/README.md"
+      "${TribitsExProj_BINARY_DIR}/README.md")
     tribits_copy_installer_resource(TribitsExProj_LICENSE
       "${TribitsExProj_SOURCE_DIR}/LICENSE"
       "${TribitsExProj_BINARY_DIR}/LICENSE.txt")
