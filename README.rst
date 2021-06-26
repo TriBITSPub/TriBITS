@@ -93,4 +93,4 @@ see `Contributing to TriBITS`_).
 
 .. _Report them: https://github.com/TriBITSPub/TriBITS/issues
 
-.. _TriBITS System Developer: https://tribits.org/doc/TribitsDevelopersGuide.html#tribits-developer-and-user-roles
+.. _TriBITS System Developer: https://tribits.org/doc/TribitsMaintainersGuide.html#tribits-system-developer
