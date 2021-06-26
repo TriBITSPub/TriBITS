@@ -20,7 +20,8 @@ Contributions to TriBITS are welcomed.  However, there are some [requirements](#
 2. **GitHub Issue:** All non-trivial changes should have a [GitHub Issue created](#process_create_issue) for them and all associated commits should list the GitHub Issue ID in the commit logs.
 3. **Documentation:** Any new feature or change in the behavior of an existing feature must be fully documented before it is accepted.  This documentation is generally added to one or more of the following places:
    * Implementation `*.cmake` file itself (formatted with restructuredText and pulled out automatically into the TriBITS Developers Guide, see existing examples)
-   * `TribitsDevelopersGuide.rst` document (under `tribits/doc/developers_guide/`)
+   * `TribitsUsersGuide.rst` document (under `tribits/doc/guides/users_guide/`)
+   * `TribitsMaintainersGuide.rst` document (under `tribits/doc/guides/maintainers_guide/`)
    * `TribitsBuildReferenceBody.rst` document (under `tribits/doc/build_ref/`)
 
 **NOTE**: All of these tasks may not need to be done by a external contributor.  It is just that *someone* will need to do all of this before a contibution can be merged into the 'master' branch of the TriBITS repo.
@@ -48,7 +49,7 @@ The details are given in the next section.
 
 The following roles are mentioned on the process descriptions:
 * **TriBITS Maintainer**: Individual with push rights to the main TriBITS repo (i.e. [@bartlettroscoe](https://github.com/bartlettroscoe)).  Must review all issues and suggested changes and accept pull-requests.
-* **TriBITS Developer**: Someone who knows how to built TriBITS as a project with its tests, add tests, make acceptable changes, create pull-requests, etc. but can't directly push to the main TriBITS github 'master' branch (see the role of [TriBITS System Developer](https://tribits.org/doc/TribitsDevelopersGuide.html#tribits-developer-and-user-roles)).  This might be the Issue Reporter.
+* **TriBITS Developer**: Someone who knows how to built TriBITS as a project with its tests, add tests, make acceptable changes, create pull-requests, etc. but can't directly push to the main TriBITS github 'master' branch (see the role of [TriBITS System Developer](https://tribits.org/doc/TribitsMaintainersGuide.html#tribits-system-developer)).  This might be the Issue Reporter.
 * **Issue Reporter**: A person who first reports an issue with TriBITS and would like some type of change to happen (i.e. to fix a defect, implement a new feature, etc.).  This might be a TriBITS Developer.
 
 With those definitions in place, the recommended/preferred process for contributing to TriBITS is:
