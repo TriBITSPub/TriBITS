@@ -1,4 +1,5 @@
 import os
+from shutil import copyfile
 import subprocess
 import sys
 
@@ -91,6 +92,10 @@ class SphinxRstGenerator:
                     if len(splitted_line) > path_index:
                         new_line = splitted_line[:path_index]
                         abs_path = os.path.abspath(os.path.join(src_file_path, splitted_line[path_index]))
+                        if os.path.islink(abs_path):
+                            real_path = os.path.realpath(abs_path)
+                            os.remove(abs_path)
+                            copyfile(src=real_path, dst=abs_path, follow_symlinks=False)
                         if self.is_rst_file(file_path=abs_path):
                             include_file_list.add((abs_path, src_file_path))
                         rel_path_from_sphinx_dir = os.path.relpath(path=abs_path, start=start_path)
