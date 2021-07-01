@@ -5,7 +5,7 @@ on:
     branches: [ 386-Build-TriBITS-Documentation-with-Sphinx-and-ReadTheDocs ]
 
 jobs:
-  build_and_deploy_docs:
+  build-and-deploy-docs:
 
     runs-on: ubuntu-latest
     env:
@@ -32,3 +32,8 @@ jobs:
       - name: Generate html output
         working-directory: ${{env.working-directory}}
         run: make html
+      - name: Deploy docs
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: docs
+          folder: ${{env.working-directory}}/_build/html
