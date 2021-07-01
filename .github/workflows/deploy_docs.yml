@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt install python3-pip
-          sudo apt install python-pip
+          which pip2
           python2 -m pip install --upgrade pip
           pip2 install -r requiremnts.txt
           python3 -m pip install --upgrade pip
