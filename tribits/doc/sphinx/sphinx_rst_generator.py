@@ -159,4 +159,4 @@ class SphinxRstGenerator:
 
 
 if __name__ == '__main__':
-    SphinxRstGenerator(numbering=False).main()
+    SphinxRstGenerator(numbering=True).main()
