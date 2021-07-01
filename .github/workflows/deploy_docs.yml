@@ -37,3 +37,4 @@ jobs:
         with:
           branch: docs
           folder: ${{env.working-directory}}/_build/html
+          clean: true
