@@ -8,6 +8,9 @@ jobs:
   build_and_deploy_docs:
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [2.7, 3.9]
     env:
       working-directory: ./tribits/doc/sphinx
 
@@ -16,14 +19,18 @@ jobs:
       - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
+          python-version: ${{ matrix.python-version }}
           architecture: 'x64'
-      - name: Install dependencies
+      - name: Display Python version
         run: |
-          curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
-          sudo python2 get-pip.py
-          pip2 install sphinx sphinx-rtd-theme
-          pip3 install sphinx sphinx-rtd-theme
+          python -c "import sys; print(sys.version)"
+          python3 -c "import sys; print(sys.version)"
+#      - name: Install dependencies
+#        run: |
+#          curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+#          sudo python2 get-pip.py
+#          pip2 install sphinx sphinx-rtd-theme
+#          pip3 install sphinx sphinx-rtd-theme
       - name: Build documentation
         working-directory: ${{env.working-directory}}
         run: python3 sphinx_rst_generator.py
