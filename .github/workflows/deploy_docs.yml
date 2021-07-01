@@ -24,7 +24,7 @@ jobs:
           python3 -c "import sys; print(sys.version)"
       - name: Install dependencies
         run: |
-          pip2 install sphinx sphinx-rtd-theme
+          pip2 install docutils
           pip3 install sphinx sphinx-rtd-theme
       - name: Build documentation
         working-directory: ${{env.working-directory}}
