@@ -22,7 +22,7 @@ jobs:
         run: |
           python -c "import sys; print(sys.version)"
           python3 -c "import sys; print(sys.version)"
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           pip2 install docutils
           pip3 install sphinx sphinx-rtd-theme
