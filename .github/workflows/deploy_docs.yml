@@ -20,8 +20,8 @@ jobs:
           architecture: 'x64'
       - name: Install dependencies
         run: |
-          apt install python3-pip
-          apt install python-pip
+          sudo apt install python3-pip
+          sudo apt install python-pip
           python2 -m pip install --upgrade pip
           pip2 install -r requiremnts.txt
           python3 -m pip install --upgrade pip
