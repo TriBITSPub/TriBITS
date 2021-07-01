@@ -20,3 +20,4 @@ jobs:
         run: |
           python3 -c "import sys; print(sys.version)"
           python2 -c "import sys; print sys.version"
+          ls -la
