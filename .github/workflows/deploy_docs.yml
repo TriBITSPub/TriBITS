@@ -1,0 +1,22 @@
+name: Deploy docs
+
+on:
+  push:
+    branches: [ 386-Build-TriBITS-Documentation-with-Sphinx-and-ReadTheDocs ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+          architecture: 'x64'
+      - name: Display Python version
+        run: |
+          python3 -c "import sys; print(sys.version)"
+          python2 -c "import sys; print sys.version"
