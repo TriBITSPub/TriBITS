@@ -21,15 +21,15 @@ class SphinxRstGenerator:
             'mainteiners_guide': {
                 'src': os.path.join(doc_path, 'guides', 'maintainers_guide', 'TribitsMaintainersGuide.rst'),
                 'src_path': os.path.join(doc_path, 'guides', 'maintainers_guide'),
-                'final_path': os.path.join(doc_path, 'sphinx', 'maintainers_guide_rst.rst')},
+                'final_path': os.path.join(doc_path, 'sphinx', 'maintainers_guide.rst')},
             'users_guide': {
                 'src': os.path.join(doc_path, 'guides', 'users_guide', 'TribitsUsersGuide.rst'),
                 'src_path': os.path.join(doc_path, 'guides', 'users_guide'),
-                'final_path': os.path.join(doc_path, 'sphinx', 'users_guide_rst.rst')},
+                'final_path': os.path.join(doc_path, 'sphinx', 'users_guide.rst')},
             'build_ref': {
                 'src': os.path.join(doc_path, 'build_ref', 'TribitsBuildReference.rst'),
                 'src_path': os.path.join(doc_path, 'build_ref'),
-                'final_path': os.path.join(doc_path, 'sphinx', 'build_ref_rst.rst')}}
+                'final_path': os.path.join(doc_path, 'sphinx', 'build_ref.rst')}}
         self.sphinx_path = os.path.abspath(os.path.join(doc_path, 'sphinx'))
         self.already_modified_files = set()
         self.build_docs()
