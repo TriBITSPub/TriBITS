@@ -1,6 +1,10 @@
 Welcome to TriBITS's documentation!
 ===================================
 
+:Author: Roscoe A. Bartlett (rabartl@sandia.gov)
+:Date: |date|
+.. |date| date::
+
 .. toctree::
    :maxdepth: 3
    :caption: Project, Build, Test, and Install:
