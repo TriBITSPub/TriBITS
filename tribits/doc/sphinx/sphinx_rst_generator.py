@@ -97,7 +97,7 @@ class SphinxRstGenerator:
                             os.remove(abs_path)
                             copyfile(src=real_path, dst=abs_path, follow_symlinks=False)
                         if self.is_rst_file(file_path=abs_path):
-                            include_file_list.add((abs_path, src_file_path))
+                            include_file_list.add(abs_path)
                         rel_path_from_sphinx_dir = os.path.relpath(path=abs_path, start=start_path)
                         new_line.append(rel_path_from_sphinx_dir)
                         new_line = ' '.join(new_line)
@@ -142,15 +142,14 @@ class SphinxRstGenerator:
 
         grand_child_rst = set()
         for child in child_rst_lst:
-            includes_grand = self.generate_rst(source_file=child[0], src_path=os.path.split(child[0])[0],
+            includes_grand = self.generate_rst(source_file=child, src_path=os.path.split(child)[0],
                                                start_path=self.sphinx_path)
             grand_child_rst.update(includes_grand)
         grand_child_rst_lst = [gc_rst for gc_rst in grand_child_rst if gc_rst not in self.already_modified_files]
 
         grand_grand_child_rst = set()
         for grand_child in grand_child_rst_lst:
-            includes_grand_grand = self.generate_rst(source_file=grand_child[0],
-                                                     src_path=os.path.split(grand_child[0])[0],
+            includes_grand_grand = self.generate_rst(source_file=grand_child, src_path=os.path.split(grand_child)[0],
                                                      start_path=self.sphinx_path)
             grand_grand_child_rst.update(includes_grand_grand)
 
