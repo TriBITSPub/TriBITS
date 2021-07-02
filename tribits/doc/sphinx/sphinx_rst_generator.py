@@ -16,7 +16,7 @@ except Exception as e:
 class SphinxRstGenerator:
     """ Changes include paths to relative to Sphinx build dir. Saves three main .rst docs files inside Sphinx dir.
     """
-    def __init__(self, numbering: bool = False):
+    def __init__(self):
         self.paths = {
             'mainteiners_guide': {
                 'src': os.path.join(doc_path, 'guides', 'maintainers_guide', 'TribitsMaintainersGuide.rst'),
@@ -31,7 +31,6 @@ class SphinxRstGenerator:
                 'src_path': os.path.join(doc_path, 'build_ref'),
                 'final_path': os.path.join(doc_path, 'sphinx', 'build_ref_rst.rst')}}
         self.sphinx_path = os.path.abspath(os.path.join(doc_path, 'sphinx'))
-        self.numbering = numbering
         self.already_modified_files = set()
         self.build_docs()
 
@@ -111,18 +110,24 @@ class SphinxRstGenerator:
 
         return abs_path_str, include_file_list
 
-    def remove_numbering_from_docs(self) -> None:
+    def remove_title_numbering(self) -> None:
         """ Removes numbering from docs.
         """
         for doc_name, sources in self.paths.items():
 
-            str_to_replace = [':depth: 2', '.. sectnum::']
+            str_to_replace = '.. rubric::'
             with open(sources.get('final_path'), 'r') as src_file:
                 org_str = src_file.read()
-                for repl_str in str_to_replace:
-                    org_str = org_str.replace(repl_str, '')
+                org_list = org_str.split('\n')
+                if org_list[0].startswith('====='):
+                    del org_list[0]
+                if org_list[1].startswith('====='):
+                    del org_list[1]
+                org_list[0] = f'{str_to_replace} {org_list[0]}'
+                mod_str = '\n'.join(org_list)
+
             with open(sources.get('final_path'), 'w') as dst_file:
-                dst_file.write(org_str)
+                dst_file.write(mod_str)
 
     def main(self):
         """ Main routine goes for nested .rst docs
@@ -154,9 +159,8 @@ class SphinxRstGenerator:
         else:
             print('NOT DONE!')
 
-        if not self.numbering:
-            self.remove_numbering_from_docs()
+        self.remove_title_numbering()
 
 
 if __name__ == '__main__':
-    SphinxRstGenerator(numbering=True).main()
+    SphinxRstGenerator().main()
