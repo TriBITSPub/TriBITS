@@ -8,6 +8,7 @@ Welcome to TriBITS's documentation!
 
 .. toctree::
    :titlesonly:
+   :maxdepth: 3
    :caption: Project, Build, Test, and Install:
 
    build_ref
@@ -16,6 +17,7 @@ Provides a general project-independent reference on how to configure, build, tes
 
 .. toctree::
    :titlesonly:
+   :maxdepth: 3
    :caption: Users Guide:
 
    users_guide
@@ -24,6 +26,7 @@ This document describes the usage of TriBITS to build, test, and deploy complex 
 
 .. toctree::
    :titlesonly:
+   :maxdepth: 3
    :caption: Maintainers Guide:
 
    maintainers_guide
