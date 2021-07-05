@@ -13,8 +13,8 @@ Welcome to TriBITS's documentation!
 
    build_ref
 
-Project, Build, Test, and Install:
-----------------------------------
+`Project, Build, Test, and Install: <./build_ref.html>`_
+--------------------------------------------------------
 
 :Abstract: Provides a general project-independent reference on how to configure, build, test, and install a project that uses the TriBITS CMake build system.  The primary audience of this particular build of this document are TriBITS project developers themselves.  A project-specific version of this document should be created and accessed by users of a particular TriBITS-based project.
 
