@@ -1,0 +1,75 @@
+
+name: Draft Action
+
+# Controls when the action will run. 
+# Triggers the workflow on push or pull request
+# for the master and develop branch 
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+
+jobs:
+  build:
+
+    strategy:
+      matrix:
+        config:
+        - { os: ubuntu-latest, cc: gcc-9,  cxx: g++-9,  fc: gfortran-9,  python: "3.8"}
+        - { os: ubuntu-latest, cc: gcc-10, cxx: g++-10, fc: gfortran-10, python: "3.8"}
+
+    runs-on: ${{ matrix.config.os }}
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Update OS environnement
+      run: |
+        sudo apt-get update
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.config.python }}
+
+    - name: get-cmake
+      uses: lukka/get-cmake@v3.20.1
+
+    - name: Setup env vars
+      run: |
+        echo "SRC_DIR=$(pwd)" >> $GITHUB_ENV
+        echo "BUILD_DIR=$(pwd)/../build" >> $GITHUB_ENV
+        ${{ matrix.config.requirements }}
+
+    - name: Configure
+      env:
+        CC: ${{ matrix.config.cc }}
+        CXX: ${{ matrix.config.cxx }}
+        FC: ${{ matrix.config.fc }}
+
+      run: |
+        echo ${{ env.BUILD_DIR }}
+        echo "Compilers:"
+        $CC --version
+
+        mkdir ${{ env.BUILD_DIR }} 
+        cd ${{ env.BUILD_DIR }}
+        cmake \
+         -D TPL_ENABLE_MPI=OFF \
+         -D CMAKE_C_COMPILER=gcc \
+         -D CMAKE_CXX_COMPILER=g++ \
+         -D CMAKE_FC_COMPILER=gfortran \
+         -D TriBITS_ENABLE_Fortran=ON \
+         -D TriBITS_ENABLE_TESTS=ON \
+         ${{ env.SRC_DIR }}
+
+    - name: Build
+      run: |
+        cd ${{ env.BUILD_DIR }}
+        make -j4
+
+    - name: Run CTest
+      run: |
+        cd ${{ env.BUILD_DIR }}
+        ctest -j4
