@@ -2,7 +2,7 @@ name: Deploy docs
 
 on:
   push:
-    branches: [ 386-Build-TriBITS-Documentation-with-Sphinx-and-ReadTheDocs ]
+    branches: [ master ]
 
 jobs:
   build-and-deploy-docs:
