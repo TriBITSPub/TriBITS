@@ -160,6 +160,9 @@ class SphinxRstGenerator:
 
         self.remove_title_numbering()
 
+        with open(os.path.join(self.sphinx_path), '.check_file') as check_file:
+            check_file.write('')
+
 
 if __name__ == '__main__':
     SphinxRstGenerator().main()

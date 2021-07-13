@@ -13,8 +13,11 @@
 import datetime
 import os
 import sys
+from sphinx_rst_generator import SphinxRstGenerator
 sys.path.insert(0, os.path.abspath('.'))
 
+if not os.path.isfile(os.path.join(f"{os.sep}".join(os.path.abspath(__file__).split(os.sep)[:-1]), '.check_file')):
+    SphinxRstGenerator().main()
 
 # -- Project information -----------------------------------------------------
 
