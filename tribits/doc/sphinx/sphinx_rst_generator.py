@@ -1,5 +1,5 @@
 import os
-from shutil import copyfile
+from shutil import copyfile, copytree
 import subprocess
 import sys
 
@@ -33,7 +33,6 @@ class SphinxRstGenerator:
                 'src_path': os.path.join(doc_path, 'build_ref'),
                 'final_path': os.path.join(doc_path, 'sphinx', 'build_ref', 'index.rst'),
                 'sphinx_path': os.path.join(doc_path, 'sphinx', 'build_ref')}}
-        self.sphinx_path = os.path.abspath(os.path.join(doc_path, 'sphinx'))
         self.already_modified_files = set()
         self.build_docs()
 
@@ -44,6 +43,24 @@ class SphinxRstGenerator:
         build_script_path = os.path.join(doc_path, 'build_docs.sh')
         current_working_dir = os.path.split(build_script_path)[0]
         subprocess.call(build_script_path, cwd=current_working_dir)
+
+    @staticmethod
+    def run_sphinx(cwd: str) -> None:
+        """ Runs Sphinx for each documentation
+        """
+        sphinx_command = ["make", "html"]
+        subprocess.call(sphinx_command, cwd=cwd)
+
+    @staticmethod
+    def combine_documentation(docs_dir: str) -> None:
+        """ Renames and moves directory of generated static pages into combined directory
+        """
+        static_dir = os.path.join(doc_path, 'sphinx', 'combined_docs')
+        new_name = os.path.split(docs_dir)[-1]
+        dir_to_rename = os.path.join(docs_dir, '_build', 'html')
+        new_name_path = os.path.join(docs_dir, '_build', new_name)
+        os.rename(src=dir_to_rename, dst=new_name_path)
+        copytree(src=new_name_path, dst=static_dir)
 
     @staticmethod
     def is_rst_file(file_path: str) -> bool:
@@ -163,6 +180,13 @@ class SphinxRstGenerator:
             print('NOT DONE!')
 
         self.remove_title_numbering()
+
+        print('===> Generating Sphinx documentation:')
+        for doc_name, sources in self.paths.items():
+            cwd = sources.get('sphinx_path')
+            print(f'===> Generating {doc_name}')
+            self.run_sphinx(cwd=cwd)
+            self.combine_documentation(docs_dir=cwd)
 
 
 if __name__ == '__main__':
