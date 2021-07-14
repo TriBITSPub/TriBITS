@@ -21,15 +21,18 @@ class SphinxRstGenerator:
             'mainteiners_guide': {
                 'src': os.path.join(doc_path, 'guides', 'maintainers_guide', 'TribitsMaintainersGuide.rst'),
                 'src_path': os.path.join(doc_path, 'guides', 'maintainers_guide'),
-                'final_path': os.path.join(doc_path, 'sphinx', 'maintainers_guide.rst')},
+                'final_path': os.path.join(doc_path, 'sphinx', 'maintainers_guide', 'index.rst'),
+                'sphinx_path': os.path.join(doc_path, 'sphinx', 'maintainers_guide')},
             'users_guide': {
                 'src': os.path.join(doc_path, 'guides', 'users_guide', 'TribitsUsersGuide.rst'),
                 'src_path': os.path.join(doc_path, 'guides', 'users_guide'),
-                'final_path': os.path.join(doc_path, 'sphinx', 'users_guide.rst')},
+                'final_path': os.path.join(doc_path, 'sphinx', 'users_guide', 'index.rst'),
+                'sphinx_path': os.path.join(doc_path, 'sphinx', 'users_guide')},
             'build_ref': {
                 'src': os.path.join(doc_path, 'build_ref', 'TribitsBuildReference.rst'),
                 'src_path': os.path.join(doc_path, 'build_ref'),
-                'final_path': os.path.join(doc_path, 'sphinx', 'build_ref.rst')}}
+                'final_path': os.path.join(doc_path, 'sphinx', 'build_ref', 'index.rst'),
+                'sphinx_path': os.path.join(doc_path, 'sphinx', 'build_ref')}}
         self.sphinx_path = os.path.abspath(os.path.join(doc_path, 'sphinx'))
         self.already_modified_files = set()
         self.build_docs()
@@ -135,22 +138,23 @@ class SphinxRstGenerator:
         child_rst = set()
         for doc_name, sources in self.paths.items():
             includes = self.generate_rst(source_file=sources.get('src'), src_path=sources.get('src_path'),
-                                         final_path=sources.get('final_path'), start_path=self.sphinx_path)
+                                         final_path=sources.get('final_path'), start_path=sources.get('sphinx_path'))
             child_rst.update(includes)
         self.already_modified_files.update(child_rst)
         child_rst_lst = list(child_rst)
 
+        sphinx_rel_path = self.paths.get('mainteiners_guide').get('sphinx_path')
         grand_child_rst = set()
         for child in child_rst_lst:
             includes_grand = self.generate_rst(source_file=child, src_path=os.path.split(child)[0],
-                                               start_path=self.sphinx_path)
+                                               start_path=sphinx_rel_path)
             grand_child_rst.update(includes_grand)
         grand_child_rst_lst = [gc_rst for gc_rst in grand_child_rst if gc_rst not in self.already_modified_files]
 
         grand_grand_child_rst = set()
         for grand_child in grand_child_rst_lst:
             includes_grand_grand = self.generate_rst(source_file=grand_child, src_path=os.path.split(grand_child)[0],
-                                                     start_path=self.sphinx_path)
+                                                     start_path=sphinx_rel_path)
             grand_grand_child_rst.update(includes_grand_grand)
 
         if not grand_grand_child_rst:

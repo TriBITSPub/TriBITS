@@ -22,7 +22,7 @@ copyright = f'{datetime.datetime.now().year}, Roscoe A. Bartlett'
 author = 'Roscoe A. Bartlett'
 
 # The full version, including alpha/beta/rc tags
-doc_path = f"{os.sep}".join(os.path.abspath(__file__).split(os.sep)[:-2])
+doc_path = f"{os.sep}".join(os.path.abspath(__file__).split(os.sep)[:-3])
 git_ver = os.path.join(doc_path, 'build_ref', 'TribitsGitVersion.txt')
 with open(git_ver, 'r') as git_file:
     release = git_file.read().split('\n')[0]
