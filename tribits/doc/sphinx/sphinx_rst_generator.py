@@ -73,7 +73,7 @@ class SphinxRstGenerator:
             index_str = index_read.read()
         repl_url = index_str.replace('<a href="#" class="icon icon-home"> TriBITS',
                                      '<a href="../index.html" class="icon icon-home"> TriBITS')
-        with open(index_html, 'r') as index_write:
+        with open(index_html, 'w') as index_write:
             index_write.write(repl_url)
 
     @staticmethod
