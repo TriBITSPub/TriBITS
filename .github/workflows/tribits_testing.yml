@@ -5,7 +5,7 @@ name: TriBITS Testing
 # for the master and develop branch
 on:
   push:
-    branches: [ 377-provide-feedback-on-TriBITS-package-dependencies-data-structures-CI ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
