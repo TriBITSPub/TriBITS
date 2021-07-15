@@ -6,5 +6,6 @@ if (PYTHON_EXECUTABLE)
     ci_support
     ctest_driver
     devtools_install
+    doc
     )
 endif()
