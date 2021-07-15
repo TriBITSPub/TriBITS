@@ -16,6 +16,7 @@ except Exception as e:
 class SphinxRstGenerator:
     """ Changes include paths to relative to Sphinx build dir. Saves three main .rst docs files inside Sphinx dir.
     """
+
     def __init__(self):
         self.paths = {
             'mainteiners_guide': {
@@ -51,16 +52,29 @@ class SphinxRstGenerator:
         sphinx_command = ["make", "html"]
         subprocess.call(sphinx_command, cwd=cwd)
 
-    @staticmethod
-    def combine_documentation(docs_dir: str) -> None:
+    def combine_documentation(self, docs_dir: str, change_url_to_landing_page: bool = True) -> None:
         """ Renames and moves directory of generated static pages into combined directory
         """
-        static_dir = os.path.join(doc_path, 'sphinx', 'combined_docs')
         new_name = os.path.split(docs_dir)[-1]
         dir_to_rename = os.path.join(docs_dir, '_build', 'html')
         new_name_path = os.path.join(docs_dir, '_build', new_name)
         os.rename(src=dir_to_rename, dst=new_name_path)
+        static_dir = os.path.join(doc_path, 'sphinx', 'combined_docs', new_name)
         copytree(src=new_name_path, dst=static_dir)
+        if change_url_to_landing_page:
+            self.change_url_to_landing_page(docs_static_dir=static_dir)
+
+    @staticmethod
+    def change_url_to_landing_page(docs_static_dir: str) -> None:
+        """ Changes home url of documentation page, so it points to landing page
+        """
+        index_html = os.path.join(docs_static_dir, 'index.html')
+        with open(index_html, 'r') as index_read:
+            index_str = index_read.read()
+        repl_url = index_str.replace('<a href="#" class="icon icon-home"> TriBITS',
+                                     '<a href="../index.html" class="icon icon-home"> TriBITS')
+        with open(index_html, 'r') as index_write:
+            index_write.write(repl_url)
 
     @staticmethod
     def is_rst_file(file_path: str) -> bool:
@@ -175,16 +189,16 @@ class SphinxRstGenerator:
             grand_grand_child_rst.update(includes_grand_grand)
 
         if not grand_grand_child_rst:
-            print('DONE! ALL GOOD!')
+            print('DONE! ALL GOOD!\n')
         else:
-            print('NOT DONE!')
+            print('NOT DONE!\n')
 
         self.remove_title_numbering()
 
-        print('===> Generating Sphinx documentation:')
+        print('===> Generating Sphinx documentation:\n')
         for doc_name, sources in self.paths.items():
             cwd = sources.get('sphinx_path')
-            print(f'===> Generating {doc_name}')
+            print(f'===> Generating {doc_name}\n')
             self.run_sphinx(cwd=cwd)
             self.combine_documentation(docs_dir=cwd)
 

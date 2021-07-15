@@ -29,15 +29,12 @@ jobs:
       - name: Build documentation
         working-directory: ${{env.working-directory}}
         run: python3 sphinx_rst_generator.py
-      - name: Generate html output
-        working-directory: ${{env.working-directory}}
-        run: make html
       - name: Generate nojekyll file
         working-directory: ${{env.working-directory}}/_build/html
         run: touch .nojekyll
       - name: Deploy docs
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
-          branch: docs
-          folder: ${{env.working-directory}}/_build/html
+          branch: deploy-doc-site
+          folder: ${{env.working-directory}}/combined_docs
           clean: true
