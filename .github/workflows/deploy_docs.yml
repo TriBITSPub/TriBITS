@@ -30,7 +30,7 @@ jobs:
         working-directory: ${{env.working-directory}}
         run: python3 sphinx_rst_generator.py
       - name: Generate nojekyll file
-        working-directory: ${{env.working-directory}}/_build/html
+        working-directory: ${{env.working-directory}}/combined_docs
         run: touch .nojekyll
       - name: Deploy docs
         uses: JamesIves/github-pages-deploy-action@4.1.4
