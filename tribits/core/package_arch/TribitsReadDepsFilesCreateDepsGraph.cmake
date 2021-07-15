@@ -53,7 +53,7 @@ include(DualScopeSet)
 # and `<projectDir>/cmake/ProjectDependenciesSetup.cmake`_ and then reads in
 # all of the `<packageDir>/cmake/Dependencies.cmake`_ and
 # `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ files and builds the
-# package depenency graph varibles.
+# package dependency graph variables.
 #
 # This macro reads from the variables::
 #
@@ -64,9 +64,9 @@ include(DualScopeSet)
 #
 #   ${PROJECT_NAME}_SE_PACKAGES (old)
 #
-# as well creates the package dependency varaibles described in `List
+# as well creates the package dependency variables described in `List
 # variables defining the package dependencies graph`_ that defines the
-# directed acyclic depenency (DAG) package dependency graph (with navigation
+# directed acyclic dependency (DAG) package dependency graph (with navigation
 # up and down the graph).
 #
 # See `Function call tree for constructing package dependency graph`_
@@ -220,7 +220,7 @@ endmacro()
 #   ${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES
 #   ${PACKAGE_NAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES
 #
-# It also appends the list varaible::
+# It also appends the list variable::
 #
 #   ${PROJECT_NAME}_SE_PACKAGES (old)
 #
@@ -236,7 +236,7 @@ macro(tribits_read_toplevel_package_deps_files_add_to_graph  PACKAGE_NAME)
 
   tribits_prep_to_read_dependencies(${PACKAGE_NAME})
 
-  # Listing of subpakages
+  # Listing of subpackages
   set(SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS) # Allow to be empty
 
   # B) Read in this package's Dependencies file and save off read dependency vars.
@@ -366,7 +366,7 @@ endmacro()
 #
 #   tribits_save_off_dependencies_vars(<postfix>)
 #
-# Saves off package depeneency varaibles with variable suffix ``_<postfix>``.
+# Saves off package dependency variables with variable suffix ``_<postfix>``.
 #
 # See `Function call tree for constructing package dependency graph`_
 #
@@ -417,11 +417,11 @@ endmacro()
 #
 #   tribits_process_package_dependencies_lists(<packageName>)
 #
-# Sets up the upstsream and downstream/forward package dependency list
-# varaibles for ``<packageName>`` descrdibed in `List variables defining the
+# Sets up the upstream and downstream/forward package dependency list
+# variables for ``<packageName>`` described in `List variables defining the
 # package dependencies graph`_.  Note that the downstream/forward dependencies
 # of upstream packages on this package ``<packageName>`` are built up
-# incrimentally.
+# incrementally.
 #
 # See `Function call tree for constructing package dependency graph`_
 # 
@@ -711,7 +711,7 @@ endfunction()
 #   <subpackageFullName>_PARENT_PACKAGE
 #   <subpackageFullName>_PARENT_REPOSITORY
 #
-# And it appends for each subpackage to varaible::
+# And it appends for each subpackage to variable::
 #
 #   ${PROJECT_NAME}_SE_PACKAGES (old)
 #
@@ -876,7 +876,7 @@ macro(tribits_read_subpackage_deps_file_add_to_graph  PACKAGE_NAME
   set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${SUBPACKAGE_NAME})
 
   #
-  # A) Get ready to read in the contents of this this subpakages's
+  # A) Get ready to read in the contents of this this subpackage's
   # Dependencies.cmake file
   #
 
@@ -924,7 +924,7 @@ endmacro()
 #
 
 
-# Function that sets a varaible to DECLARED-UNDEFINED
+# Function that sets a variable to DECLARED-UNDEFINED
 #
 function(tribits_declare_undefined  VAR_NAME)
   set(${VAR_NAME}  DECLARED-UNDEFINED  PARENT_SCOPE)

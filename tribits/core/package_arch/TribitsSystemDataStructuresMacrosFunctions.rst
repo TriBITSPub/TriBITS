@@ -69,7 +69,7 @@ is treated as an internal or external package is determined by the variable::
   ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
 
 which gets set variouscriteria as described in section `Determining if a
-package is internal or external`_.  This varaible determines what
+package is internal or external`_.  This variable determines what
 pre-built/pre-installed packages must be found out on the system if enabled
 and what internal packages need to be built if enabled.
 
@@ -80,7 +80,7 @@ is used with an adjective, it is usually meant in this more general context.
 ToDo: Describe the data-structures of all "Packages" which includes
 subpackages as well and the lists of enabled packages.
 
-These data-stractures as well as the package dependencies graph is built up in
+These data-structures as well as the package dependencies graph is built up in
 the macro `tribits_read_all_project_deps_files_create_deps_graph()`_ with the
 call graph described in the section `Function call tree for constructing
 package dependency graph`_.
@@ -141,7 +141,7 @@ files for the top-level packages read and processed in the macro
   TribitsAdjustPackageEnables.cmake
 
 One can determine if a package in this list is a top-level parent package or a
-sub-subpackage based on the value of the varaible
+sub-subpackage based on the value of the variable
 `${PACKAGE_NAME}_PARENT_PACKAGE`_.  If the value is non empty, then
 ``${PACKAGE_NAME}`` is a subpackage.  If the value is empty "", then
 ``${PACKAGE_NAME}`` is a parent package.
