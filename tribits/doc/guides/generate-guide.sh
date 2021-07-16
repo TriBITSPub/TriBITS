@@ -56,6 +56,7 @@
 
 generate_maintainers_guide=0
 generate_users_guide=0
+skip_final_generation=0
 
 while (( "$#" )); do
   case "$1" in
@@ -71,6 +72,14 @@ while (( "$#" )); do
       generate_maintainers_guide=1
       generate_users_guide=1
       shift
+      ;;
+    --skip-final-generation)
+      skip_final_generation=1
+      shift
+      ;;
+    *)
+      echo "Error: The argument '$1' is not supported!"
+      exit 1
       ;;
   esac
 done
@@ -232,6 +241,21 @@ function tribits_extract_other_doc {
 }
 
 
+function make_final_doc_in_subdir {
+  dir_name=$1
+  if [[ "${skip_final_generation}" == "0" ]] ; then
+    cd $dir_name
+    echo $PWD
+    make
+    cd -
+  else
+    echo
+    echo "Skipping final generation of '${dir_name}' on request!"
+    echo
+  fi
+}
+
+
 #
 # Executable code
 #
@@ -248,10 +272,7 @@ if [[ "${generate_users_guide}" == "1" ]] ; then
 
   tribits_extract_rst_cmake_doc  users_guide
 
-  cd users_guide
-  echo $PWD
-  make
-  cd -
+  make_final_doc_in_subdir  users_guide
 
 fi
 
@@ -263,9 +284,6 @@ if [[ "${generate_maintainers_guide}" == "1" ]] ; then
 
   tribits_extract_rst_cmake_doc  maintainers_guide --show-file-name-line-num
 
-  cd maintainers_guide
-  echo $PWD
-  make
-  cd -
+  make_final_doc_in_subdir  maintainers_guide
 
 fi
