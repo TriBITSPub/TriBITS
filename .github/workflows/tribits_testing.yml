@@ -67,4 +67,4 @@ jobs:
           cd ..
           mkdir tribits-build
           cd tribits-build
-          ctest -V -S ../TriBITS/cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
+          env CTEST_DO_SUBMIT=OFF ctest -V -S ../TriBITS/cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
