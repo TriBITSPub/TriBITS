@@ -37,7 +37,13 @@ jobs:
           sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local/
       - name: Install packages
         run: |
+          sudo update-alternatives --remove-all gcc
+          sudo update-alternatives --remove-all g++
+          sudo update-alternatives --remove-all gfortran
           sudo apt-get install -y ${{ matrix.config.cc }} ${{ matrix.config.cxx }} ${{ matrix.config.fc }}
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${{ matrix.config.cc }} 10
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/${{ matrix.config.cxx }} 10
+          sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/${{ matrix.config.fc }} 10
           sudo apt-get -y install valgrind
           sudo apt-get -y install ninja-build
       - name: Set up Python
@@ -46,7 +52,6 @@ jobs:
           python-version: ${{ matrix.config.python }}
       - name: Version checks
         run: |
-          which gcc
           echo "Checking Cmake path and version"
           which cmake
           cmake --version
