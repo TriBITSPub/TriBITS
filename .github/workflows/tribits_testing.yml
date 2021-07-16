@@ -46,6 +46,7 @@ jobs:
           python-version: ${{ matrix.config.python }}
       - name: Version checks
         run: |
+          which gcc
           echo "Checking Cmake path and version"
           which cmake
           cmake --version
