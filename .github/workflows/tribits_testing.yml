@@ -46,6 +46,8 @@ jobs:
         run: |
           echo "Creating gcc alias"
           alias gcc=${{ matrix.config.cc }}
+          which gcc
+          gcc --version
           echo "Creating g++ alias"
           alias g++=${{ matrix.config.cxx }}
           echo "Creating gfortran alias"
