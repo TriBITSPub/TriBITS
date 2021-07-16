@@ -27,10 +27,6 @@ jobs:
       - name: Update OS
         run: |
           sudo apt-get update -y
-      - name: Remove packages
-        run: |
-          sudo apt-get remove gcc g++ gfortran -y
-          sudo apt-get update -y
       - name: Install CMake
         run: |
           wget -O cmake.sh https://github.com/Kitware/CMake/releases/download/v${{ matrix.config.cmake }}/cmake-${{ matrix.config.cmake }}-Linux-x86_64.sh
@@ -44,6 +40,12 @@ jobs:
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${{ matrix.config.cc }} 10
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/${{ matrix.config.cxx }} 10
           sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/${{ matrix.config.fc }} 10
+          sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 20
+          sudo update-alternatives --set cc /usr/bin/gcc
+          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 20
+          sudo update-alternatives --set c++ /usr/bin/g++
+          sudo update-alternatives --install /usr/bin/fortrann fortrann /usr/bin/gfortran 20
+          sudo update-alternatives --set fortrann /usr/bin/gfortran
           sudo apt-get -y install valgrind
           sudo apt-get -y install ninja-build
       - name: Set up Python
