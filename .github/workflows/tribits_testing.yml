@@ -12,6 +12,7 @@ on:
 jobs:
   build:
     strategy:
+      max-parallel: 1
       matrix:
         config:
           - { os: ubuntu-latest, cc: gcc-8,  cxx: g++-8,  fc: gfortran-8,  python: "2.7", cmake: "3.17.0" }
@@ -60,7 +61,7 @@ jobs:
           echo "Checking g++ path and version"
           which ${{ matrix.config.cxx }}
           ${{ matrix.config.cxx }} --version
-          if [ ${{ matrix.config.fc }} = "" ]; then echo "No fortran compiler"; else echo "Checking gfortran path and version" && which ${{ matrix.config.fc }} && ${{ matrix.config.fc }} --version; fi
+          if [ "${{ matrix.config.fc }}" = "" ]; then echo "No fortran compiler"; else echo "Checking gfortran path and version" && which ${{ matrix.config.fc }} && ${{ matrix.config.fc }} --version; fi
       - name: Run script
         run: |
           cd ..
