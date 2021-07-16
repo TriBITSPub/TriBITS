@@ -14,10 +14,10 @@ jobs:
     strategy:
       matrix:
         config:
-          - { os: ubuntu-latest, cc: gcc-9,  cxx: g++-9,  fc: gfortran-9,  python: "3.8" }
-          - { os: ubuntu-latest, cc: gcc-10, cxx: g++-10, fc: gfortran-10, python: "3.8" }
-          - { os: ubuntu-latest, cc: gcc-9,  cxx: g++-9,  python: "3.8" }
-          - { os: ubuntu-latest, cc: gcc-10, cxx: g++-10, python: "3.8" }
+          - { os: ubuntu-latest, cc: gcc-8,  cxx: g++-8,  fc: gfortran-8,  python: "2.7", cmake: "3.17.0" }
+          - { os: ubuntu-latest, cc: gcc-9, cxx: g++-9, fc: gfortran-9, python: "3.8", cmake: "3.21.0" }
+          - { os: ubuntu-latest, cc: gcc-10,  cxx: g++-10, fc: gfortran-10, python: "3.8", cmake: "3.17.0" }
+          - { os: ubuntu-latest, cc: gcc-11, cxx: g++-11, python: "3.8", cmake: "3.17.0" }
 
     runs-on: ${{ matrix.config.os }}
 
@@ -27,7 +27,7 @@ jobs:
       - name: Update OS and install packages
         run: |
           sudo apt-get update -y && sudo apt-get upgrade -y
-          wget -O cmake.sh https://github.com/Kitware/CMake/releases/download/v3.17.0/cmake-3.17.0-Linux-x86_64.sh
+          wget -O cmake.sh https://github.com/Kitware/CMake/releases/download/v${{ matrix.config.cmake }}/cmake-${{ matrix.config.cmake }}-Linux-x86_64.sh
           sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local/
           sudo apt-get -y install valgrind
           sudo apt-get -y install ninja-build
