@@ -5,7 +5,7 @@ name: TriBITS Testing
 # for the master and develop branch
 on:
   push:
-    branches: [ 377-provide-feedback-on-TriBITS-package-dependencies-data-structures-CI ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -27,6 +27,8 @@ jobs:
       - name: Update OS and install packages
         run: |
           sudo apt-get update -y && sudo apt-get upgrade -y
+          sudo apt-get remove gcc g++ gfortran -y
+          sudo apt-get install -y ${{ matrix.config.cc }} ${{ matrix.config.cxx }} ${{ matrix.config.fc }}
           wget -O cmake.sh https://github.com/Kitware/CMake/releases/download/v${{ matrix.config.cmake }}/cmake-${{ matrix.config.cmake }}-Linux-x86_64.sh
           sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local/
           sudo apt-get -y install valgrind
