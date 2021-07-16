@@ -42,31 +42,21 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.config.python }}
-      - name: Prepare compiler aliases
-        run: |
-          echo "Creating gcc alias"
-          alias gcc=${{ matrix.config.cc }}
-          which gcc
-          gcc --version
-          echo "Creating g++ alias"
-          alias g++=${{ matrix.config.cxx }}
-          echo "Creating gfortran alias"
-          alias gfortran=${{ matrix.config.fc }}
       - name: Version checks
         run: |
           echo "Checking Cmake path and version"
           which cmake
           cmake --version
           echo "Checking gcc path and version"
-          which gcc
-          gcc --version
+          which ${{ matrix.config.cc }}
+          ${{ matrix.config.cc }} --version
           echo "Checking g++ path and version"
-          which g++
-          g++ --version
+          which ${{ matrix.config.cxx }}
+          ${{ matrix.config.cxx }} --version
           if [ ${{ matrix.config.fc }} == "" ]; then echo "No fortran compiler"; else echo "Checking gfortran path and version" && which gfortran && gfortran --version; fi
       - name: Run script
         run: |
           cd ..
           mkdir tribits-build
           cd tribits-build
-          ctest -V -S ../TriBITS/cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
+          ctest -D CMAKE_C_COMPILER=${{ matrix.config.cc }} -D CMAKE_CXX_COMPILER=${{ matrix.config.cxx }} -D CMAKE_FC_COMPILER=${{ matrix.config.fc }} -V -S ../TriBITS/cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
