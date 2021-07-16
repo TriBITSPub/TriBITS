@@ -24,10 +24,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Update OS and install packages
+      - name: Update OS
         run: |
           sudo apt-get update -y && sudo apt-get upgrade -y
+      - name: Remove packages
+        run: |
           sudo apt-get remove gcc g++ gfortran -y
+          sudo apt-get update -y
+      - name: Install packages
+        run: |
           sudo apt-get install -y ${{ matrix.config.cc }} ${{ matrix.config.cxx }} ${{ matrix.config.fc }}
           wget -O cmake.sh https://github.com/Kitware/CMake/releases/download/v${{ matrix.config.cmake }}/cmake-${{ matrix.config.cmake }}-Linux-x86_64.sh
           sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local/
