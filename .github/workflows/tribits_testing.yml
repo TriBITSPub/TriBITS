@@ -24,6 +24,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Check fot testing purposes
+        run: |
+          echo "Checking gcc path and version"
+          gcc-8 --version
+          gcc-9 --version
+          gcc-10 --version
+          gcc-11 --version
+          echo "Checking g++ path and version"
+          g++-8 --version
+          g++-9 --version
+          g++-10 --version
+          g++-11 --version
+          echo "Checking gfortran path and version"
+          gfortran-8 --version
+          gfortran-9 --version
+          gfortran-10 --version
+          gfortran-11 --version
       - name: Update OS
         run: |
           sudo apt-get update -y && sudo apt-get upgrade -y
@@ -48,14 +65,14 @@ jobs:
           which cmake
           cmake --version
           echo "Checking gcc path and version"
-          which gcc
-          gcc --version
+          which ${{ matrix.config.cc }}
+          ${{ matrix.config.cc }} --version
           echo "Checking g++ path and version"
-          which g++
-          g++ --version
+          which ${{ matrix.config.cxx }}
+          ${{ matrix.config.cxx }} --version
           echo "Checking gfortran path and version"
-          which gfortran
-          gfortran --version
+          which ${{ matrix.config.fc }}
+          ${{ matrix.config.fc }} --version
       - name: Run script
         run: |
           cd ..
