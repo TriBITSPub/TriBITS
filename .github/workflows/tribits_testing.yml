@@ -5,7 +5,7 @@ name: TriBITS Testing
 # for the master and develop branch
 on:
   push:
-    branches: [ master ]
+    branches: [ 377-provide-feedback-on-TriBITS-package-dependencies-data-structures-CI ]
   pull_request:
     branches: [ master ]
 
@@ -35,11 +35,23 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.config.python }}
+      - name: Version checks
+        run: |
+          echo "Checking Cmake path and version"
+          which cmake
+          cmake --version
+          echo "Checking gcc path and version"
+          which gcc
+          gcc --version
+          echo "Checking g++ path and version"
+          which g++
+          g++ --version
+          echo "Checking gfortran path and version"
+          which gfortran
+          gfortran --version
       - name: Run script
         run: |
           cd ..
           mkdir tribits-build
           cd tribits-build
-          which cmake
-          cmake --version
           ctest -V -S ../TriBITS/cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
