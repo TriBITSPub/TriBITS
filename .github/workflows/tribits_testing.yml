@@ -31,11 +31,13 @@ jobs:
         run: |
           sudo apt-get remove gcc g++ gfortran -y
           sudo apt-get update -y
+      - name: Install CMake
+        run: |
+          wget -O cmake.sh https://github.com/Kitware/CMake/releases/download/v${{ matrix.config.cmake }}/cmake-${{ matrix.config.cmake }}-Linux-x86_64.sh
+          sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local/
       - name: Install packages
         run: |
           sudo apt-get install -y ${{ matrix.config.cc }} ${{ matrix.config.cxx }} ${{ matrix.config.fc }}
-          wget -O cmake.sh https://github.com/Kitware/CMake/releases/download/v${{ matrix.config.cmake }}/cmake-${{ matrix.config.cmake }}-Linux-x86_64.sh
-          sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local/
           sudo apt-get -y install valgrind
           sudo apt-get -y install ninja-build
       - name: Set up Python
@@ -53,7 +55,7 @@ jobs:
           echo "Checking g++ path and version"
           which ${{ matrix.config.cxx }}
           ${{ matrix.config.cxx }} --version
-          if [ ${{ matrix.config.fc }} == "" ]; then echo "No fortran compiler"; else echo "Checking gfortran path and version" && which gfortran && gfortran --version; fi
+          if [ ${{ matrix.config.fc }} = "" ]; then echo "No fortran compiler"; else echo "Checking gfortran path and version" && which gfortran && gfortran --version; fi
       - name: Run script
         run: |
           cd ..
