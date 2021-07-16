@@ -19,7 +19,7 @@ class SphinxRstGenerator:
 
     def __init__(self):
         self.paths = {
-            'mainteiners_guide': {
+            'maintainers_guide': {
                 'src': os.path.join(doc_path, 'guides', 'maintainers_guide', 'TribitsMaintainersGuide.rst'),
                 'src_path': os.path.join(doc_path, 'guides', 'maintainers_guide'),
                 'final_path': os.path.join(doc_path, 'sphinx', 'maintainers_guide', 'index.rst'),
@@ -174,7 +174,7 @@ class SphinxRstGenerator:
         self.already_modified_files.update(child_rst)
         child_rst_lst = list(child_rst)
 
-        sphinx_rel_path = self.paths.get('mainteiners_guide').get('sphinx_path')
+        sphinx_rel_path = self.paths.get('maintainers_guide').get('sphinx_path')
         grand_child_rst = set()
         for child in child_rst_lst:
             includes_grand = self.generate_rst(source_file=child, src_path=os.path.split(child)[0],
