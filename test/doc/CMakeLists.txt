@@ -6,22 +6,23 @@ advanced_set( ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS OFF
 tribits_add_advanced_test( build_docs
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS
     GIT_EXECUTABLE
-  OVERALL_WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tribits/doc
-  SKIP_CLEAN_OVERALL_WORKING_DIRECTORY  # Don't delete our source tree!
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 MESSAGE "Clean out any prior build of the docs"
     CMND ${GIT_EXECUTABLE} ARGS clean -xdf
-    SKIP_CLEAN_WORKING_DIRECTORY
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tribits/doc
+    SKIP_CLEAN_WORKING_DIRECTORY  # Don't delete our source tree!
   TEST_1 MESSAGE "Build the documentation"
-    CMND bash ARGS build_docs.sh
-    SKIP_CLEAN_WORKING_DIRECTORY
-  TEST_2 CMND ls ARGS build_ref/TribitsBuildReference.html
+    CMND bash ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/build_docs.sh
+  TEST_2 CMND ls
+    ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/build_ref/TribitsBuildReference.html
     PASS_REGULAR_EXPRESSION build_ref/TribitsBuildReference.html
     ALWAYS_FAIL_ON_NONZERO_RETURN
-  TEST_3 CMND ls ARGS guides/users_guide/TribitsUsersGuide.html
+  TEST_3 CMND ls
+    ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/guides/users_guide/TribitsUsersGuide.html
     PASS_REGULAR_EXPRESSION guides/users_guide/TribitsUsersGuide.html
     ALWAYS_FAIL_ON_NONZERO_RETURN
-  TEST_4 CMND ls ARGS guides/maintainers_guide/TribitsMaintainersGuide.html
+  TEST_4 CMND ls
+    ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/guides/maintainers_guide/TribitsMaintainersGuide.html
     PASS_REGULAR_EXPRESSION guides/maintainers_guide/TribitsMaintainersGuide.html
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
