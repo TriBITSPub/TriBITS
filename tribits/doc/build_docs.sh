@@ -1,15 +1,18 @@
 #!/bin/bash -e
-
 #
 # Build all of the TriBITS-related documentation
 #
-# To build this documentation, just do:
+# To build this documentation, from any directory, run:
 #
-#   cd <thisDir>
-#   ./build_docs
+#   <base-dir>/build_docs.sh
 #
 
-_BASE_DIR=$PWD
+if [ "$TRIBITS_BASE_DIR" == "" ] ; then
+  _ABS_FILE_PATH=`readlink -f $0`
+  _BASE_DIR=`dirname $_ABS_FILE_PATH`
+fi
+
+cd $_BASE_DIR
 
 echo
 echo "***"
