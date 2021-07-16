@@ -67,4 +67,4 @@ jobs:
           cd ..
           mkdir tribits-build
           cd tribits-build
-          ctest -D CMAKE_C_COMPILER=${{ matrix.config.cc }} -D CMAKE_CXX_COMPILER=${{ matrix.config.cxx }} -D CMAKE_FC_COMPILER=${{ matrix.config.fc }} -V -S ../TriBITS/cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
+          ctest -V -S ../TriBITS/cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
