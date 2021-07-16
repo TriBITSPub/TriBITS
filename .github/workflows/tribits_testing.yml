@@ -42,20 +42,26 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.config.python }}
+      - name: Prepare compiler aliases
+        run: |
+          echo "Creating gcc alias"
+          alias gcc=${{ matrix.config.cc }}
+          echo "Creating g++ alias"
+          alias g++=${{ matrix.config.cxx }}
+          echo "Creating gfortran alias"
+          alias gfortran=${{ matrix.config.fc }}
       - name: Version checks
         run: |
           echo "Checking Cmake path and version"
           which cmake
           cmake --version
           echo "Checking gcc path and version"
-          which ${{ matrix.config.cc }}
-          ${{ matrix.config.cc }} --version
+          which gcc
+          gcc --version
           echo "Checking g++ path and version"
-          which ${{ matrix.config.cxx }}
-          ${{ matrix.config.cxx }} --version
-          echo "Checking gfortran path and version"
-          which ${{ matrix.config.fc }}
-          ${{ matrix.config.fc }} --version
+          which g++
+          g++ --version
+          if [ ${{ matrix.config.fc }} == "" ]; then echo "No fortran compiler"; else echo "Checking gfortran path and version" && which gfortran && gfortran --version; fi
       - name: Run script
         run: |
           cd ..
