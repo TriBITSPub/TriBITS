@@ -70,5 +70,5 @@ jobs:
             --cmake-ver ${{ matrix.config.cmake }} \
             --generator ${{ matrix.config.generator }} \
             --python-ver ${{ matrix.config.python }} \
-            --cxx-comiler-and-ver ${{ matrix.config.cxx }} \
+            --cxx-compiler-and-ver ${{ matrix.config.cxx }} \
             --fortran-compiler-and-ver ${{ matrix.config.cxx }}

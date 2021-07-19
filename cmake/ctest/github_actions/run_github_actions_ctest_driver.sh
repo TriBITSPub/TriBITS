@@ -12,7 +12,7 @@
 #     --os <os> --cmake-ver <cmake-ver> \
 #     --generator ninja|makefiles \
 #     --python-ver <python-ver> \
-#     --cxx-comiler-and-ver <cxx-compiler-and-ver> \
+#     --cxx-compiler-and-ver <cxx-compiler-and-ver> \
 #     [ --fortran-compiler-and-ver <fortran-comiler-and-ver> ]
 #
 # This is called by the GitHub Actions script:
