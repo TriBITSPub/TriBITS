@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     strategy:
-      max-parallel: 1
+      max-parallel: 4  # Only limit to 1 for debugging?
       matrix:
         config:
           - { os: ubuntu-latest, cc: gcc-8,  cxx: g++-8,  fc: gfortran-8,  python: "2.7", cmake: "3.17.0", generator: "makefiles" }
