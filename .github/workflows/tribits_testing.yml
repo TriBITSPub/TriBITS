@@ -62,9 +62,13 @@ jobs:
           which ${{ matrix.config.cxx }}
           ${{ matrix.config.cxx }} --version
           if [ "${{ matrix.config.fc }}" = "" ]; then echo "No fortran compiler"; else echo "Checking gfortran path and version" && which ${{ matrix.config.fc }} && ${{ matrix.config.fc }} --version; fi
-      - name: Run script
+      - name: Run configure, build, test, and submit to CDash
         run: |
           cd ..
-          mkdir tribits-build
-          cd tribits-build
-          env CTEST_DO_SUBMIT=OFF ctest -V -S ../TriBITS/cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
+          ../TriBITS/cmake/ctest/github_actions/run_github_actions_ctest_driver.sh \
+            --os ${{ matrix.config.os }} \
+            --cmake-ver ${{ matrix.config.cmake }} \
+            --generator ${{ matrix.config.generator }} \
+            --python-ver ${{ matrix.config.python }} \
+            --cxx-comiler-and-ver ${{ matrix.config.cxx }} \
+            --fortran-compiler-and-ver ${{ matrix.config.cxx }}
