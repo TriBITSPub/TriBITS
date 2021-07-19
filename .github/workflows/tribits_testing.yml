@@ -65,7 +65,7 @@ jobs:
       - name: Run configure, build, test, and submit to CDash
         run: |
           cd ..
-          ../TriBITS/cmake/ctest/github_actions/run_github_actions_ctest_driver.sh \
+          ./TriBITS/cmake/ctest/github_actions/run_github_actions_ctest_driver.sh \
             --os ${{ matrix.config.os }} \
             --cmake-ver ${{ matrix.config.cmake }} \
             --generator ${{ matrix.config.generator }} \
