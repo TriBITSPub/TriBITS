@@ -71,4 +71,4 @@ jobs:
             --generator ${{ matrix.config.generator }} \
             --python-ver ${{ matrix.config.python }} \
             --cxx-compiler-and-ver ${{ matrix.config.cxx }} \
-            --fortran-compiler-and-ver ${{ matrix.config.cxx }}
+            --fortran-compiler-and-ver ${{ matrix.config.fc }}
