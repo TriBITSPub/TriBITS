@@ -13,10 +13,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python 2.7
+      - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
-          python-version: '2.7'
+          python-version: '3.9'
           architecture: 'x64'
       - name: Display Python version
         run: |
@@ -24,7 +24,6 @@ jobs:
           python3 -c "import sys; print(sys.version)"
       - name: Install Python dependencies
         run: |
-          pip2 install docutils
           pip3 install sphinx sphinx-rtd-theme
       - name: Build documentation
         working-directory: ${{env.working-directory}}
