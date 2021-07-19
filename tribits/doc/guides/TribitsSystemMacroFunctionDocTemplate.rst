@@ -25,7 +25,7 @@ understand the internals of TriBITS.
 @MACRO:    tribits_read_all_package_deps_files_create_deps_graph() +
 @MACRO:    tribits_read_package_subpackage_deps_files_add_to_graph() +
 @MACRO:    tribits_read_back_dependencies_vars() +
-@MACRO:    tribits_read_defined_external_and_intenral_toplevel_packages_lists() +
+@MACRO:    tribits_read_defined_external_and_internal_toplevel_packages_lists() +
 @MACRO:    tribits_read_all_project_deps_files_create_deps_graph() +
 @MACRO:    tribits_read_toplevel_package_deps_files_add_to_graph() +
 @MACRO:    tribits_read_subpackage_deps_file_add_to_graph() +

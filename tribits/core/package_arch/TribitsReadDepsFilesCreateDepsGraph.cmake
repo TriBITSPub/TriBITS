@@ -254,7 +254,7 @@ macro(tribits_read_toplevel_package_deps_files_add_to_graph  PACKAGE_NAME)
   # B.1) Set up the mail addresses (one regression email list for the package
   # and all subpackages)
 
-  tribits_set_pacakge_regression_email_list(${PACKAGE_NAME})
+  tribits_set_package_regression_email_list(${PACKAGE_NAME})
 
   # B.2) Process this package's subpackages first *before* finishing this packages!
 
@@ -587,18 +587,18 @@ function(tribits_append_forward_dep_packages PACKAGE_NAME LIST_TYPE)
 endfunction()
 
 
-# @MACRO: tribits_set_pacakge_regression_email_list()
+# @MACRO: tribits_set_package_regression_email_list()
 #
 # Usage::
 #
-#  tribits_set_pacakge_regression_email_list(<packageName>)
+#  tribits_set_package_regression_email_list(<packageName>)
 #
 # Macro that sets a pacakge's regression email address
 # ``${PACKAGE_NAME}_REGRESSION_EMAIL_LIST`` as described in ???.
 #
 # See `Function call tree for constructing package dependency graph`_
 #
-macro(tribits_set_pacakge_regression_email_list PACKAGE_NAME)
+macro(tribits_set_package_regression_email_list PACKAGE_NAME)
 
   # Lower-case package name To be used with auto email naming based on base email address
   string(TOLOWER "${PACKAGE_NAME}" LPACKAGE)
@@ -698,7 +698,7 @@ endfunction()
 # `tribits_package_define_dependencies()`_ , add subpackages to the list of
 # defined packages, and define user cache var options for those subpackages.
 #
-# This sets the list varaibles for the parent package ``<toplevelPackageName>``::
+# This sets the list variables for the parent package ``<toplevelPackageName>``::
 #
 #   <parentPackageName>_SUBPACKAGES
 #   <parentPackageName>_SUBPACKAGE_DIRS
