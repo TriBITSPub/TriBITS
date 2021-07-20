@@ -38,12 +38,21 @@ class SphinxRstGenerator:
                 'final_path': os.path.join(doc_path, 'sphinx', 'build_ref', 'index.rst'),
                 'sphinx_path': os.path.join(doc_path, 'sphinx', 'build_ref'),
                 'title': 'TriBITS Project, Build, Test, and Install Reference Guide'}}
+        self.rst_dir = os.path.join(doc_path, 'sphinx', 'copied_files')
         self.already_modified_files = set()
+        self.create_rst_dir()
         self.build_docs()
+
+    def create_rst_dir(self) -> None:
+        """ Creates copied_files directory in Sphinx directory. All include files will be copy there.
+        """
+        if self.rst_dir is not None:
+            if not os.path.exists(self.rst_dir):
+                os.makedirs(self.rst_dir)
 
     @staticmethod
     def build_docs() -> None:
-        """ Builds TriBITS documentation based on shell scripts
+        """ Builds TriBITS documentation based on shell scripts.
         """
         build_script_path = os.path.join(doc_path, 'build_docs.sh')
         current_working_dir = os.path.split(build_script_path)[0]
@@ -51,7 +60,7 @@ class SphinxRstGenerator:
 
     @staticmethod
     def run_sphinx(cwd: str) -> None:
-        """ Runs Sphinx for each documentation
+        """ Runs Sphinx for each documentation.
         """
         sphinx_command = ["make", "html"]
         subprocess.call(sphinx_command, cwd=cwd)
@@ -73,7 +82,7 @@ class SphinxRstGenerator:
 
     @staticmethod
     def change_url_to_landing_page(docs_static_dir: str) -> None:
-        """ Changes home url of documentation page, so it points to landing page
+        """ Changes home url of documentation page, so it points to landing page.
         """
         index_html = os.path.join(docs_static_dir, 'index.html')
         with open(index_html, 'r') as index_read:
@@ -85,7 +94,7 @@ class SphinxRstGenerator:
 
     @staticmethod
     def change_title_of_docs_main_page(docs_static_dir: str, new_title: str) -> None:
-        """ Changes home url of documentation page, so it points to landing page
+        """ Changes home url of documentation page, so it points to landing page.
         """
         index_html = os.path.join(docs_static_dir, 'index.html')
         with open(index_html, 'r') as index_read:
@@ -97,7 +106,7 @@ class SphinxRstGenerator:
 
     @staticmethod
     def is_rst_file(file_path: str) -> bool:
-        """ Checks if file_path has .rst extension and if file_path is a file
+        """ Checks if file_path has .rst extension and if file_path is a file.
         """
         if os.path.splitext(file_path)[-1] == '.rst' and os.path.isfile(file_path):
             return True
@@ -145,13 +154,13 @@ class SphinxRstGenerator:
                     if len(splitted_line) > path_index:
                         new_line = splitted_line[:path_index]
                         abs_path = os.path.abspath(os.path.join(src_file_path, splitted_line[path_index]))
-                        if os.path.islink(abs_path):
-                            real_path = os.path.realpath(abs_path)
-                            os.remove(abs_path)
-                            copyfile(src=real_path, dst=abs_path, follow_symlinks=False)
-                        if self.is_rst_file(file_path=abs_path):
+                        file_name = os.path.split(abs_path)[-1]
+                        new_path = os.path.join(self.rst_dir, file_name)
+                        if not os.path.isfile(new_path):
+                            copyfile(src=abs_path, dst=new_path, follow_symlinks=True)
+                        if self.is_rst_file(file_path=new_path):
                             include_file_list.add(abs_path)
-                        rel_path_from_sphinx_dir = os.path.relpath(path=abs_path, start=start_path)
+                        rel_path_from_sphinx_dir = os.path.relpath(path=new_path, start=start_path)
                         new_line.append(rel_path_from_sphinx_dir)
                         new_line = ' '.join(new_line)
                         source_file_list.append(new_line)
@@ -196,14 +205,20 @@ class SphinxRstGenerator:
         sphinx_rel_path = self.paths.get('maintainers_guide').get('sphinx_path')
         grand_child_rst = set()
         for child in child_rst_lst:
-            includes_grand = self.generate_rst(source_file=child, src_path=os.path.split(child)[0],
+            file_name = os.path.split(child)[-1]
+            final_path = os.path.join(self.rst_dir, file_name)
+            src_path = os.path.split(child)[0]
+            includes_grand = self.generate_rst(source_file=child, src_path=src_path, final_path=final_path,
                                                start_path=sphinx_rel_path)
             grand_child_rst.update(includes_grand)
         grand_child_rst_lst = [gc_rst for gc_rst in grand_child_rst if gc_rst not in self.already_modified_files]
 
         grand_grand_child_rst = set()
         for grand_child in grand_child_rst_lst:
-            includes_grand_grand = self.generate_rst(source_file=grand_child, src_path=os.path.split(grand_child)[0],
+            file_name = os.path.split(grand_child)[-1]
+            final_path = os.path.join(self.rst_dir, file_name)
+            src_path = os.path.split(grand_child)[0]
+            includes_grand_grand = self.generate_rst(source_file=grand_child, src_path=src_path, final_path=final_path,
                                                      start_path=sphinx_rel_path)
             grand_grand_child_rst.update(includes_grand_grand)
 
