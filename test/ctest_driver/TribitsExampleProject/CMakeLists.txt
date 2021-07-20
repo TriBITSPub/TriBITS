@@ -226,6 +226,7 @@ set(TribitsExampleProject_COMMON_CONFIG_ARGS
 tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
   TEST_0
     MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
     CMND ln
@@ -311,6 +312,7 @@ tribits_add_advanced_test( CTestDriver_PBP_GlobalConfigureFail
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
   TEST_0
     MESSAGE "Copy the project dir so I can break it!"
     CMND cp
@@ -354,6 +356,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
   TEST_0
     MESSAGE "Copy the project dir so I can break it!"
     CMND cp
@@ -399,6 +402,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
   TEST_0
     MESSAGE "Copy the project dir so I can break it!"
     CMND cp
@@ -446,6 +450,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakTestPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
   TEST_0
     MESSAGE "Copy the project dir so I can break it!"
     CMND cp
@@ -494,6 +499,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakTestPkg
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
   TEST_0
     MESSAGE "Copy the project dir so I can break it!"
     CMND cp
@@ -542,6 +548,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
 tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_COVERAGE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS
+    ${PROJECT_NAME}_ENABLE_Fortran
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
     MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -575,6 +582,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_COVERAGE
 tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_MEMORY
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_MEMORY_TESTS
+    ${PROJECT_NAME}_ENABLE_Fortran
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
     MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -668,6 +676,14 @@ tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_ALL_PASS
   # Follow-on tests will not check so much output.
 
 
+if ( ${PROJECT_NAME}_ENABLE_Fortran )
+  set(TribitsExProj_PACKAGES_list
+    "SimpleCxx[;]MixedLang[;]WithSubpackagesA[;]WithSubpackages")
+else()
+  set(TribitsExProj_PACKAGES_list
+    "SimpleCxx[;]WithSubpackagesA[;]WithSubpackages")
+endif()
+
 tribits_add_advanced_test( CTestDriver_AAO_Dashboard_ForwardArgs
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -712,7 +728,7 @@ tribits_add_advanced_test( CTestDriver_AAO_Dashboard_ForwardArgs
       CTEST_DASHBOARD_ROOT=
       make dashboard
     PASS_REGULAR_EXPRESSION_ALL
-      "Running: env TRIBITS_PROJECT_ROOT=.*/tribits/examples/TribitsExampleProject TribitsExProj_TRIBITS_DIR=.*/tribits TribitsExProj_WARNINGS_AS_ERRORS_FLAGS='' TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=OFF TribitsExProj_CTEST_DO_ALL_AT_ONCE=TRUE CTEST_BUILD_NAME=MyCustomBuildName CTEST_DO_COVERAGE_TESTING=FALSE CTEST_BUILD_FLAGS='-j6' CTEST_PARALLEL_LEVEL=10 CTEST_DO_SUBMIT=FALSE CTEST_DROP_METHOD=OFF CTEST_DROP_SITE=OFF CTEST_DROP_LOCATION=OFF CTEST_DROP_SITE_COVERAGE=FALSE CTEST_DROP_LOCATION_COVERAGE=FALSE TRIBITS_2ND_CTEST_DROP_LOCATION=FALSE TRIBITS_2ND_CTEST_DROP_SITE=FALSE TribitsExProj_EXTRAREPOS_FILE=FALSE TribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=NONE TribitsExProj_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE TribitsExProj_EXTRA_REPOSITORIES=DummyRepo1,DummyRepo2,DummyRepo3 TribitsExProj_PACKAGES=SimpleCxx[;]MixedLang[;]WithSubpackagesA[;]WithSubpackages PROJECT_SOURCE_DIR=.*/tribits/examples/TribitsExampleProject .*/ctest -VV -S .*/tribits/ctest_driver/experimental_build_test.cmake"
+      "Running: env TRIBITS_PROJECT_ROOT=.*/tribits/examples/TribitsExampleProject TribitsExProj_TRIBITS_DIR=.*/tribits TribitsExProj_WARNINGS_AS_ERRORS_FLAGS='' TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=OFF TribitsExProj_CTEST_DO_ALL_AT_ONCE=TRUE CTEST_BUILD_NAME=MyCustomBuildName CTEST_DO_COVERAGE_TESTING=FALSE CTEST_BUILD_FLAGS='-j6' CTEST_PARALLEL_LEVEL=10 CTEST_DO_SUBMIT=FALSE CTEST_DROP_METHOD=OFF CTEST_DROP_SITE=OFF CTEST_DROP_LOCATION=OFF CTEST_DROP_SITE_COVERAGE=FALSE CTEST_DROP_LOCATION_COVERAGE=FALSE TRIBITS_2ND_CTEST_DROP_LOCATION=FALSE TRIBITS_2ND_CTEST_DROP_SITE=FALSE TribitsExProj_EXTRAREPOS_FILE=FALSE TribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=NONE TribitsExProj_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE TribitsExProj_EXTRA_REPOSITORIES=DummyRepo1,DummyRepo2,DummyRepo3 TribitsExProj_PACKAGES=${TribitsExProj_PACKAGES_list} PROJECT_SOURCE_DIR=.*/tribits/examples/TribitsExampleProject .*/ctest -VV -S .*/tribits/ctest_driver/experimental_build_test.cmake"
 
       "ENV_PROJECT_SOURCE_DIR='.*/tribits/examples/TribitsExampleProject'"
       "ENV_CTEST_BUILD_NAME='MyCustomBuildName'"
@@ -723,7 +739,7 @@ tribits_add_advanced_test( CTestDriver_AAO_Dashboard_ForwardArgs
       "ENV_CTEST_DO_COVERAGE_TESTING='FALSE'"
       "ENV_CTEST_DO_SUBMIT='FALSE'"
       "ENV_TribitsExProj_ENABLE_SECONDARY_TESTED_CODE='OFF'"
-      "ENV_TribitsExProj_PACKAGES='SimpleCxx[;]MixedLang[;]WithSubpackagesA[;]WithSubpackages'"
+      "ENV_TribitsExProj_PACKAGES='${TribitsExProj_PACKAGES_list}'"
       "ENV_TribitsExProj_EXTRAREPOS_FILE='FALSE'"
       "ENV_TribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE='NONE'"
       "ENV_TribitsExProj_EXTRA_REPOSITORIES='DummyRepo1,DummyRepo2,DummyRepo3'"
@@ -857,6 +873,7 @@ tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_2
 
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
     MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -955,6 +972,7 @@ tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
 
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
     MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -1136,6 +1154,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
     TEST_0
       MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
       CMND ln
@@ -1192,6 +1211,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_SKIP_CTEST_ADD_TEST
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
     TEST_0
       MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -1230,6 +1250,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_INNER_ENABLE_TESTS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
     TEST_0
       MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -1265,6 +1286,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_SimpleCxx_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
     TEST_0
       MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
       CMND ln
@@ -1330,6 +1352,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
     TEST_0
       MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
       CMND ln
@@ -1456,6 +1479,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakWithSubpackagesALib
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
     TEST_0
       MESSAGE "Copy the project dir so I can break it!"
       CMND cp
@@ -1516,6 +1540,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_BreakWithSubpackagesALib
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
     TEST_0
       MESSAGE "Copy the project dir so I can break it!"
       CMND cp
@@ -1560,6 +1585,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestBuild
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
     TEST_0
       MESSAGE "Copy the project dir so I can break it!"
       CMND cp
@@ -1604,6 +1630,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestRun
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
     TEST_0
       MESSAGE "Copy the project dir so I can break it!"
       CMND cp
@@ -1647,6 +1674,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_COVERAGE
     OVERALL_WORKING_DIRECTORY TEST_NAME
     EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS
+      ${PROJECT_NAME}_ENABLE_Fortran
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
       MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -1681,6 +1709,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_MEMORY
     OVERALL_WORKING_DIRECTORY TEST_NAME
     EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_MEMORY_TESTS
+      ${PROJECT_NAME}_ENABLE_Fortran
     OVERALL_NUM_MPI_PROCS 1
     TEST_0
       MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -1870,6 +1899,7 @@ function(generate_aao_tests)
 
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
     TEST_0
       MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -2069,6 +2099,7 @@ function(generate_aao_tests)
 
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
     TEST_0
       MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
@@ -2193,6 +2224,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( ${TEST_NAME_BODY}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
     TEST_0
       MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
       CMND ln
@@ -2253,6 +2285,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( ${TEST_NAME_BODY}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
     TEST_0
       MESSAGE "Copy TribitsExampleProject in so we can break it the install."
@@ -2289,7 +2322,7 @@ function(generate_aao_tests)
         "CONFIGURE_OPTIONS = '.*[;]-DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON[;].*[;]-DCMAKE_INSTALL_PREFIX=install[;]-DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON'"
         "Build PASSED!"
         "Installing [(]i.e. building target 'install_package_by_package'[)] [.][.][.]"
-        "Build install output: BUILD_INSTALL_NUM_ERRORS='1',BUILD_INSTALL_RETURN_VAL='2'"
+        "Build install output: BUILD_INSTALL_NUM_ERRORS='(1|2)',BUILD_INSTALL_RETURN_VAL='2'"
 	"Install FAILED!"
         "File '' does NOT exist so all tests passed!"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
@@ -2373,6 +2406,7 @@ function(generate_aao_tests)
   tribits_add_advanced_test( ${TEST_NAME_BODY}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
     TEST_0
       MESSAGE "Copy TribitsExampleProject in so we can break it the install."

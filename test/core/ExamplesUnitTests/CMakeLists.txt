@@ -444,7 +444,7 @@ tribits_add_advanced_test( TribitsHelloWorld_CONFIGURE_OPTIONS_FILE
     ARGS -DTribitsHelloWorld_CONFIGURE_OPTIONS_FILE=ConfigOptions1.cmake
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "(include|INCLUDE) could not find load file"
+      "(include|INCLUDE) could not find (load|requested) file"
       "TriBITS_TribitsHelloWorld_CONFIGURE_OPTIONS_FILE/ConfigOptions1.cmake"
     # NOTE: Above shows that FILEPATH type causes relative paths to be
     # evaluated w.r.t. the current working directory.
@@ -599,7 +599,7 @@ tribits_add_advanced_test( TribitsHelloWorld_install_perms
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
     PASS_REGULAR_EXPRESSION_ALL
       "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/bin/hello_world.exe"
-      "0: Running: chmod -R o[+]rX /.*/TriBITS_TribitsHelloWorld_install_perms/install"
+      "0: Running: chmod -R g[+]rX,o[+]rX /.*/TriBITS_TribitsHelloWorld_install_perms/install"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_10
@@ -1600,6 +1600,13 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 
+if ( ${PROJECT_NAME}_ENABLE_Fortran )
+  set(mixedLangHeaderRegex
+    "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp")
+else()
+  set(mixedLangHeaderRegex "")
+endif()
+
 tribits_add_advanced_test( TribitsExampleProject_install_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -1678,7 +1685,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
       install_base/install/bin
       install_base/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "${mixedLangHeaderRegex}"
       "[d]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* wsp_c"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* C.hpp"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesC"
@@ -1714,6 +1721,13 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
   #   install(DIRECTORY ... USE_SOURCE_PERMISSIONS) will actually have the
   #   correct group and other permissions set.
 
+if ( ${PROJECT_NAME}_ENABLE_Fortran )
+  set(mixedLangHeaderRegex
+    "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp")
+
+else()
+  set(mixedLangHeaderRegex "")
+endif()
 
 tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -1806,7 +1820,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perm
       install_base/subdir/install/bin
       install_base/subdir/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "${mixedLangHeaderRegex}"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* B.hpp"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesB"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_b.a"
@@ -2112,6 +2126,11 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_enable_install
 # Find ninja so we can test TriBITS using ninja as well
 find_program(NINJA_EXE ninja)
 
+if ( CMAKE_VERSION VERSION_LESS 3.18.0 )
+  set(rulesNinjaFilePath "rules.ninja")
+else()
+  set(rulesNinjaFilePath "CMakeFiles/rules.ninja")
+endif()
 
 tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -2145,14 +2164,14 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
 
   TEST_1
     MESSAGE "Verify TribitsExProj_PARALLEL_COMPILE_JOBS_LIMIT=3 has correct effect"
-    CMND grep ARGS -A 1 compile_job_pool rules.ninja
+    CMND grep ARGS -A 1 compile_job_pool ${rulesNinjaFilePath}
     PASS_REGULAR_EXPRESSION
       "depth *= *3"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_2
     MESSAGE "Verify TribitsExProj_PARALLEL_LINK_JOBS_LIMIT=2 has correct effect"
-    CMND grep ARGS -A 1 link_job_pool rules.ninja
+    CMND grep ARGS -A 1 link_job_pool ${rulesNinjaFilePath}
     PASS_REGULAR_EXPRESSION
       "depth *= *2"
     ALWAYS_FAIL_ON_NONZERO_RETURN
