@@ -76,7 +76,9 @@ function(tribits_configure_set_installed_group_and_perms_file  TARGET_FILE)
   set(group_perms "")
   if (${PROJECT_NAME}_MAKE_INSTALL_GROUP_WRITABLE)
     set(group_perms "g+rwX")
-  elseif (${PROJECT_NAME}_MAKE_INSTALL_GROUP_READABLE)
+  elseif (${PROJECT_NAME}_MAKE_INSTALL_GROUP_READABLE
+    OR ${PROJECT_NAME}_MAKE_INSTALL_WORLD_READABLE
+    )
     set(group_perms "g+rX")
   endif()
 

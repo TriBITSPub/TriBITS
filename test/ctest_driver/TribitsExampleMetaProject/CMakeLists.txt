@@ -101,6 +101,7 @@ set(TribitsExampleMetaProject_COMMON_CONFIG_ARGS
 tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_remote
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
     MESSAGE "Run ctest driver with intial clone of the repos on the default branch 'master' and remote 'origin'"
@@ -326,6 +327,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
 tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_custom_branch_remote
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
     MESSAGE "Run ctest driver with intial clone of the repos on the default branch 'master' and remote 'origin'"
@@ -531,9 +533,9 @@ set(FULL_TEST_BINARY_DIR
   "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestDriver_TribitsExMetaProj_version_date")
 
 tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_version_date
-  OVERALL_WORKING_DIRECTORY TEST_NAME
-  OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE GIT_SUPPORTS_VERSION_DATE
+  OVERALL_WORKING_DIRECTORY  TEST_NAME
+  OVERALL_NUM_MPI_PROCS  1
+  EXCLUDE_IF_NOT_TRUE  GIT_SUPPORTS_VERSION_DATE  ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
     MESSAGE "Run ctest driver with intial clone and generate version date files and install"
