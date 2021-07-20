@@ -1600,6 +1600,13 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 
+if ( ${PROJECT_NAME}_ENABLE_Fortran )
+  set(mixedLangHeaderRegex
+    "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp")
+else()
+  set(mixedLangHeaderRegex "")
+endif()
+
 tribits_add_advanced_test( TribitsExampleProject_install_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -1678,7 +1685,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
       install_base/install/bin
       install_base/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "${mixedLangHeaderRegex}"
       "[d]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* wsp_c"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* C.hpp"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesC"
@@ -1714,6 +1721,13 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
   #   install(DIRECTORY ... USE_SOURCE_PERMISSIONS) will actually have the
   #   correct group and other permissions set.
 
+if ( ${PROJECT_NAME}_ENABLE_Fortran )
+  set(mixedLangHeaderRegex
+    "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp")
+
+else()
+  set(mixedLangHeaderRegex "")
+endif()
 
 tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -1806,7 +1820,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perm
       install_base/subdir/install/bin
       install_base/subdir/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "${mixedLangHeaderRegex}"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* B.hpp"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesB"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_b.a"

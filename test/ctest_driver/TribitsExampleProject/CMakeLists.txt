@@ -668,6 +668,14 @@ tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_ALL_PASS
   # Follow-on tests will not check so much output.
 
 
+if ( ${PROJECT_NAME}_ENABLE_Fortran )
+  set(TribitsExProj_PACKAGES_list
+    "SimpleCxx[;]MixedLang[;]WithSubpackagesA[;]WithSubpackages")
+else()
+  set(TribitsExProj_PACKAGES_list
+    "SimpleCxx[;]WithSubpackagesA[;]WithSubpackages")
+endif()
+
 tribits_add_advanced_test( CTestDriver_AAO_Dashboard_ForwardArgs
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -712,7 +720,7 @@ tribits_add_advanced_test( CTestDriver_AAO_Dashboard_ForwardArgs
       CTEST_DASHBOARD_ROOT=
       make dashboard
     PASS_REGULAR_EXPRESSION_ALL
-      "Running: env TRIBITS_PROJECT_ROOT=.*/tribits/examples/TribitsExampleProject TribitsExProj_TRIBITS_DIR=.*/tribits TribitsExProj_WARNINGS_AS_ERRORS_FLAGS='' TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=OFF TribitsExProj_CTEST_DO_ALL_AT_ONCE=TRUE CTEST_BUILD_NAME=MyCustomBuildName CTEST_DO_COVERAGE_TESTING=FALSE CTEST_BUILD_FLAGS='-j6' CTEST_PARALLEL_LEVEL=10 CTEST_DO_SUBMIT=FALSE CTEST_DROP_METHOD=OFF CTEST_DROP_SITE=OFF CTEST_DROP_LOCATION=OFF CTEST_DROP_SITE_COVERAGE=FALSE CTEST_DROP_LOCATION_COVERAGE=FALSE TRIBITS_2ND_CTEST_DROP_LOCATION=FALSE TRIBITS_2ND_CTEST_DROP_SITE=FALSE TribitsExProj_EXTRAREPOS_FILE=FALSE TribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=NONE TribitsExProj_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE TribitsExProj_EXTRA_REPOSITORIES=DummyRepo1,DummyRepo2,DummyRepo3 TribitsExProj_PACKAGES=SimpleCxx[;]MixedLang[;]WithSubpackagesA[;]WithSubpackages PROJECT_SOURCE_DIR=.*/tribits/examples/TribitsExampleProject .*/ctest -VV -S .*/tribits/ctest_driver/experimental_build_test.cmake"
+      "Running: env TRIBITS_PROJECT_ROOT=.*/tribits/examples/TribitsExampleProject TribitsExProj_TRIBITS_DIR=.*/tribits TribitsExProj_WARNINGS_AS_ERRORS_FLAGS='' TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=OFF TribitsExProj_CTEST_DO_ALL_AT_ONCE=TRUE CTEST_BUILD_NAME=MyCustomBuildName CTEST_DO_COVERAGE_TESTING=FALSE CTEST_BUILD_FLAGS='-j6' CTEST_PARALLEL_LEVEL=10 CTEST_DO_SUBMIT=FALSE CTEST_DROP_METHOD=OFF CTEST_DROP_SITE=OFF CTEST_DROP_LOCATION=OFF CTEST_DROP_SITE_COVERAGE=FALSE CTEST_DROP_LOCATION_COVERAGE=FALSE TRIBITS_2ND_CTEST_DROP_LOCATION=FALSE TRIBITS_2ND_CTEST_DROP_SITE=FALSE TribitsExProj_EXTRAREPOS_FILE=FALSE TribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=NONE TribitsExProj_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE TribitsExProj_EXTRA_REPOSITORIES=DummyRepo1,DummyRepo2,DummyRepo3 TribitsExProj_PACKAGES=${TribitsExProj_PACKAGES_list} PROJECT_SOURCE_DIR=.*/tribits/examples/TribitsExampleProject .*/ctest -VV -S .*/tribits/ctest_driver/experimental_build_test.cmake"
 
       "ENV_PROJECT_SOURCE_DIR='.*/tribits/examples/TribitsExampleProject'"
       "ENV_CTEST_BUILD_NAME='MyCustomBuildName'"
@@ -723,7 +731,7 @@ tribits_add_advanced_test( CTestDriver_AAO_Dashboard_ForwardArgs
       "ENV_CTEST_DO_COVERAGE_TESTING='FALSE'"
       "ENV_CTEST_DO_SUBMIT='FALSE'"
       "ENV_TribitsExProj_ENABLE_SECONDARY_TESTED_CODE='OFF'"
-      "ENV_TribitsExProj_PACKAGES='SimpleCxx[;]MixedLang[;]WithSubpackagesA[;]WithSubpackages'"
+      "ENV_TribitsExProj_PACKAGES='${TribitsExProj_PACKAGES_list}'"
       "ENV_TribitsExProj_EXTRAREPOS_FILE='FALSE'"
       "ENV_TribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE='NONE'"
       "ENV_TribitsExProj_EXTRA_REPOSITORIES='DummyRepo1,DummyRepo2,DummyRepo3'"
