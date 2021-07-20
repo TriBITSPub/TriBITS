@@ -1,4 +1,5 @@
 import os
+import re
 from shutil import copyfile, copytree
 import subprocess
 import sys
@@ -23,17 +24,20 @@ class SphinxRstGenerator:
                 'src': os.path.join(doc_path, 'guides', 'maintainers_guide', 'TribitsMaintainersGuide.rst'),
                 'src_path': os.path.join(doc_path, 'guides', 'maintainers_guide'),
                 'final_path': os.path.join(doc_path, 'sphinx', 'maintainers_guide', 'index.rst'),
-                'sphinx_path': os.path.join(doc_path, 'sphinx', 'maintainers_guide')},
+                'sphinx_path': os.path.join(doc_path, 'sphinx', 'maintainers_guide'),
+                'title': 'TriBITS Maintainers Guide and Reference'},
             'users_guide': {
                 'src': os.path.join(doc_path, 'guides', 'users_guide', 'TribitsUsersGuide.rst'),
                 'src_path': os.path.join(doc_path, 'guides', 'users_guide'),
                 'final_path': os.path.join(doc_path, 'sphinx', 'users_guide', 'index.rst'),
-                'sphinx_path': os.path.join(doc_path, 'sphinx', 'users_guide')},
+                'sphinx_path': os.path.join(doc_path, 'sphinx', 'users_guide'),
+                'title': 'TriBITS Users Guide and Reference'},
             'build_ref': {
                 'src': os.path.join(doc_path, 'build_ref', 'TribitsBuildReference.rst'),
                 'src_path': os.path.join(doc_path, 'build_ref'),
                 'final_path': os.path.join(doc_path, 'sphinx', 'build_ref', 'index.rst'),
-                'sphinx_path': os.path.join(doc_path, 'sphinx', 'build_ref')}}
+                'sphinx_path': os.path.join(doc_path, 'sphinx', 'build_ref'),
+                'title': 'TriBITS Project, Build, Test, and Install Reference Guide'}}
         self.already_modified_files = set()
         self.build_docs()
 
@@ -52,7 +56,8 @@ class SphinxRstGenerator:
         sphinx_command = ["make", "html"]
         subprocess.call(sphinx_command, cwd=cwd)
 
-    def combine_documentation(self, docs_dir: str, change_url_to_landing_page: bool = True) -> None:
+    def combine_documentation(self, docs_dir: str, change_url_to_landing_page: bool = True,
+                              change_title_of_docs_main_page: bool = True, title: str = '') -> None:
         """ Renames and moves directory of generated static pages into combined directory
         """
         new_name = os.path.split(docs_dir)[-1]
@@ -63,6 +68,8 @@ class SphinxRstGenerator:
         copytree(src=new_name_path, dst=static_dir)
         if change_url_to_landing_page:
             self.change_url_to_landing_page(docs_static_dir=static_dir)
+        if change_title_of_docs_main_page:
+            self.change_title_of_docs_main_page(docs_static_dir=static_dir, new_title=title)
 
     @staticmethod
     def change_url_to_landing_page(docs_static_dir: str) -> None:
@@ -73,6 +80,18 @@ class SphinxRstGenerator:
             index_str = index_read.read()
         repl_url = index_str.replace('<a href="#" class="icon icon-home"> TriBITS',
                                      '<a href="../index.html" class="icon icon-home"> TriBITS')
+        with open(index_html, 'w') as index_write:
+            index_write.write(repl_url)
+
+    @staticmethod
+    def change_title_of_docs_main_page(docs_static_dir: str, new_title: str) -> None:
+        """ Changes home url of documentation page, so it points to landing page
+        """
+        index_html = os.path.join(docs_static_dir, 'index.html')
+        with open(index_html, 'r') as index_read:
+            index_str = index_read.read()
+        repl_url = re.sub('(<title>1 Introduction &mdash;).+(documentation</title>)', f'<title>{new_title}</title>',
+                          index_str)
         with open(index_html, 'w') as index_write:
             index_write.write(repl_url)
 
@@ -200,7 +219,7 @@ class SphinxRstGenerator:
             cwd = sources.get('sphinx_path')
             print(f'===> Generating {doc_name}\n')
             self.run_sphinx(cwd=cwd)
-            self.combine_documentation(docs_dir=cwd)
+            self.combine_documentation(docs_dir=cwd, title=sources.get('title'))
 
 
 if __name__ == '__main__':
