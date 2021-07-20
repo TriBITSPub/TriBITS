@@ -2322,7 +2322,7 @@ function(generate_aao_tests)
         "CONFIGURE_OPTIONS = '.*[;]-DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON[;].*[;]-DCMAKE_INSTALL_PREFIX=install[;]-DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON'"
         "Build PASSED!"
         "Installing [(]i.e. building target 'install_package_by_package'[)] [.][.][.]"
-        "Build install output: BUILD_INSTALL_NUM_ERRORS='1',BUILD_INSTALL_RETURN_VAL='2'"
+        "Build install output: BUILD_INSTALL_NUM_ERRORS='(1|2)',BUILD_INSTALL_RETURN_VAL='2'"
 	"Install FAILED!"
         "File '' does NOT exist so all tests passed!"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
