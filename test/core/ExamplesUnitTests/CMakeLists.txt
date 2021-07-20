@@ -599,7 +599,7 @@ tribits_add_advanced_test( TribitsHelloWorld_install_perms
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
     PASS_REGULAR_EXPRESSION_ALL
       "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/bin/hello_world.exe"
-      "0: Running: chmod -R o[+]rX /.*/TriBITS_TribitsHelloWorld_install_perms/install"
+      "0: Running: chmod -R g[+]rX,o[+]rX /.*/TriBITS_TribitsHelloWorld_install_perms/install"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_10
