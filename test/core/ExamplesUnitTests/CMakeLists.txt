@@ -2126,6 +2126,11 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_enable_install
 # Find ninja so we can test TriBITS using ninja as well
 find_program(NINJA_EXE ninja)
 
+if ( CMAKE_VERSION VERSION_LESS 3.18.0 )
+  set(rulesNinjaFilePath "rules.ninja")
+else()
+  set(rulesNinjaFilePath "CMakeFiles/rules.ninja")
+endif()
 
 tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -2159,14 +2164,14 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
 
   TEST_1
     MESSAGE "Verify TribitsExProj_PARALLEL_COMPILE_JOBS_LIMIT=3 has correct effect"
-    CMND grep ARGS -A 1 compile_job_pool rules.ninja
+    CMND grep ARGS -A 1 compile_job_pool ${rulesNinjaFilePath}
     PASS_REGULAR_EXPRESSION
       "depth *= *3"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_2
     MESSAGE "Verify TribitsExProj_PARALLEL_LINK_JOBS_LIMIT=2 has correct effect"
-    CMND grep ARGS -A 1 link_job_pool rules.ninja
+    CMND grep ARGS -A 1 link_job_pool ${rulesNinjaFilePath}
     PASS_REGULAR_EXPRESSION
       "depth *= *2"
     ALWAYS_FAIL_ON_NONZERO_RETURN
