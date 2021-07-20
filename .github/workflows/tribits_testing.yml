@@ -19,9 +19,7 @@ jobs:
       fail-fast: false  # Allow each job to run to completion even if other jobs fail first
       matrix:
         config:
-          - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "2.7", cc: gcc-8,  cxx: g++-8,  fc: gfortran-8  }
-          - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "3.8", cc: gcc-10, cxx: g++-10, fc: gfortran-10 }
-          - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "3.8", cc: gcc-11, cxx: g++-11                  }
+          - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9,  fc: gfortran-9  }
           - { os: ubuntu-latest, cmake: "3.21.0", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9,  fc: gfortran-9  }
 
     runs-on: ${{ matrix.config.os }}

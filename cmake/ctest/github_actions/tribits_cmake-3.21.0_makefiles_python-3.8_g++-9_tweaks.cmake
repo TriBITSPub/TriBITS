@@ -7,14 +7,14 @@ function(set_test_disables)
 endfunction()
 
 set_test_disables(
-  TriBITS_CTestDriver_PBP_PT_ALL_PASS_CALLS_2
-  TriBITS_CTestDriver_PBP_PT_ALL_PASS_CALLS_4
-  TriBITS_CTestDriver_PBP_ST_ALL_COVERAGE
-  TriBITS_CTestDriver_PBP_ST_ALL_MEMORY
-  TriBITS_CTestDriver_PBP_ST_ALL_PASS
-  TriBITS_CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
-  TriBITS_CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
-  TriBITS_CTestDriver_PBP_ST_BreakConfigureOptionalPkg
-  TriBITS_CTestDriver_PBP_ST_BreakConfigureRequiredPkg
-  TriBITS_CTestDriver_PBP_ST_BreakTestPkg
+#  TriBITS_CTestDriver_PBP_PT_ALL_PASS_CALLS_2
+#  TriBITS_CTestDriver_PBP_PT_ALL_PASS_CALLS_4
+#  TriBITS_CTestDriver_PBP_ST_ALL_COVERAGE
+#  TriBITS_CTestDriver_PBP_ST_ALL_MEMORY
+#  TriBITS_CTestDriver_PBP_ST_ALL_PASS
+#  TriBITS_CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
+#  TriBITS_CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
+#  TriBITS_CTestDriver_PBP_ST_BreakConfigureOptionalPkg
+#  TriBITS_CTestDriver_PBP_ST_BreakConfigureRequiredPkg
+#  TriBITS_CTestDriver_PBP_ST_BreakTestPkg
   )
