@@ -15,7 +15,16 @@ else()
   set(enableFortranStr "-DTriBITS_ENABLE_Fortran=ON")
 endif()
 
+set(buildTweaksFile "${CMAKE_CURRENT_LIST_DIR}/${CTEST_BUILD_NAME}_tweaks.cmake")
+if (EXISTS "${buildTweaksFile}")
+  set(configureOptionsFilesStr
+    "-DTriBITS_CONFIGURE_OPTIONS_FILE=${buildTweaksFile}")
+else()
+  set(configureOptionsFilesStr "")
+endif()
+
 set( EXTRA_CONFIGURE_OPTIONS
+  "${configureOptionsFilesStr}"
   "-DBUILD_SHARED_LIBS:BOOL=ON"
   "-DCMAKE_BUILD_TYPE=DEBUG"
   "-DCMAKE_C_COMPILER=gcc"
