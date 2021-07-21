@@ -1,11 +1,8 @@
 name: TriBITS Testing
 
-# Controls when the action will run.
-# Triggers the workflow on push or pull request
-# for the master and develop branch
 on:
   schedule:
-    - cron: '10  16  *  *  *' # Run 10 minutes after midnight
+    - cron: '10  04  *  *  *' # Run 10 minutes after midnight EDT (4:10 UTC)
   push:
     branches: [ master ]
   pull_request:
