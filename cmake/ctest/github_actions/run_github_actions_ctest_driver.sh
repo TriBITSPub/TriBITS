@@ -21,6 +21,13 @@
 #
 # but can also be run locally to develop on and debug.
 #
+# A suffix can be added the each build name by setting the env var:
+#
+#   export CTEST_BUILD_NAME_SUFFIX=<suffix>
+#
+# This will add the suffix as `<build-name><suffix>` so if you want a `_` or
+# `-` then you must add it manually as part of `<suffix>`.
+#
 # NOTE: This will create the subdir 'tribits-build' under $PWD if that
 # directory does not already exist.  But it will not delete an existing
 # directly 'tribits-build' if it already exists (but that is usually fine to
@@ -33,11 +40,13 @@
 #   env CTEST_DO_SUBMIT=OFF <this-dir>/run_github_actions_ctest_driver.sh [options]
 #
 
-# Get locaiton of TriBITS
-if [ "$TRIBITS_BASE_DIR" == "" ] ; then
+# Get locaiton of TriBITS and this dir under TriBITS
+if [[ "$TRIBITS_BASE_DIR" == "" ]] ; then
   _ABS_FILE_PATH=`readlink -f $0`
-  _BASE_DIR=`dirname $_ABS_FILE_PATH`
-  TRIBITS_BASE_DIR=`realpath $_BASE_DIR/../../..` 
+  THIS_BASE_DIR=`dirname $_ABS_FILE_PATH`
+  TRIBITS_BASE_DIR=`realpath $THIS_BASE_DIR/../../..`
+else
+  THIS_BASE_DIR="${TRIBITS_BASE_DIR}/cmake/ctest/github_actions"
 fi
 
 
@@ -145,6 +154,17 @@ if [[ "${fortran_compiler_and_ver}" == "" ]] ; then
   CTEST_BUILD_NAME=${CTEST_BUILD_NAME}_nofortran
 fi
 export CTEST_BUILD_NAME
+echo "CTEST_BUILD_NAME = '${CTEST_BUILD_NAME}'"
+
+# TRIBITS_BUILD_TWEAKS_FILE
+export TRIBITS_BUILD_TWEAKS_FILE="${THIS_BASE_DIR}/${CTEST_BUILD_NAME}_tweaks.cmake"
+echo "TRIBITS_BUILD_TWEAKS_FILE = '${TRIBITS_BUILD_TWEAKS_FILE}'"
+
+# Update CTEST_BUILD_NAME with suffix (after getting the tweaks file name)
+echo "CTEST_BUILD_NAME_SUFFIX = '${CTEST_BUILD_NAME_SUFFIX}'"
+if [[ "${CTEST_BUILD_NAME_SUFFIX}" != "" ]] ; then
+  export CTEST_BUILD_NAME="${CTEST_BUILD_NAME}${CTEST_BUILD_NAME_SUFFIX}"
+fi
 echo "CTEST_BUILD_NAME = '${CTEST_BUILD_NAME}'"
 
 # CTEST_CMAKE_GENERATOR

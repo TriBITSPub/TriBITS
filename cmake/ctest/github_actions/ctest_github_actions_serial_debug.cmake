@@ -15,7 +15,7 @@ else()
   set(enableFortranStr "-DTriBITS_ENABLE_Fortran=ON")
 endif()
 
-set(buildTweaksFile "${CMAKE_CURRENT_LIST_DIR}/${CTEST_BUILD_NAME}_tweaks.cmake")
+set(buildTweaksFile "$ENV{TRIBITS_BUILD_TWEAKS_FILE}")
 if (EXISTS "${buildTweaksFile}")
   set(configureOptionsFilesStr
     "-DTriBITS_CONFIGURE_OPTIONS_FILE=${buildTweaksFile}")

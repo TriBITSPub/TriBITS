@@ -12,8 +12,8 @@ on:
     branches: [ master ]
   workflow_dispatch:
     inputs:
-      ctest_build_name:
-        description: 'CTEST_BUILD_NAME'
+      ctest_build_name_suffix:
+        description: 'Add a suffix to bulid names on CDash'
         required: false
 jobs:
   build:
@@ -75,6 +75,7 @@ jobs:
       - name: Run configure, build, test, and submit to CDash
         run: |
           cd ..
+          env CTEST_BUILD_NAME_SUFFIX=${{ github.event.inputs.ctest_build_name_suffix }} \
           ./TriBITS/cmake/ctest/github_actions/run_github_actions_ctest_driver.sh \
             --os ${{ matrix.config.os }} \
             --cmake-ver ${{ matrix.config.cmake }} \
