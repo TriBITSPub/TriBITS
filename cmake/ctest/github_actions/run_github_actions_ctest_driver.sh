@@ -126,6 +126,7 @@ assert_required_option_set --python-ver "${python_ver}"
 assert_required_option_set --cxx-compiler-and-ver "${cxx_compiler_and_ver}"
 # NOTE: Fortran is not required!
 
+
 #
 # B) Set up options for running build
 #
@@ -157,6 +158,18 @@ else
 fi
 export CTEST_CMAKE_GENERATOR
 echo "CTEST_CMAKE_GENERATOR = '${CTEST_CMAKE_GENERATOR}'"
+
+# CTEST_TEST_TYPE
+if [[ "${GITHUB_EVENT_NAME}" == "schedule" ]]; then
+  CTEST_TEST_TYPE=Nightly
+elif [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+  CTEST_TEST_TYPE=Continuous
+else
+  CTEST_TEST_TYPE=Experimental
+fi
+export CTEST_TEST_TYPE
+echo "CTEST_TEST_TYPE = '${CTEST_TEST_TYPE}'"
+
 
 #
 # C) Run the local configure, build, test and submit using exported vars above
