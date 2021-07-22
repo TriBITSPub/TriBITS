@@ -171,7 +171,9 @@ echo "CTEST_BUILD_NAME = '${CTEST_BUILD_NAME}'"
 if [[ "${GITHUB_EVENT_PATH}" != "" ]] ; then
   pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
   echo "pull_number = '${pull_number}'"
-  export CTEST_BUILD_NAME="pr-${pull_number}_${CTEST_BUILD_NAME}${CTEST_BUILD_NAME_SUFFIX}"
+  if [[ "${pull_number}" != "null" ]] ; then
+    export CTEST_BUILD_NAME="pr-${pull_number}_${CTEST_BUILD_NAME}${CTEST_BUILD_NAME_SUFFIX}"
+  fi
 fi
 echo "CTEST_BUILD_NAME = '${CTEST_BUILD_NAME}'"
 
