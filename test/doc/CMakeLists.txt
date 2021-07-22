@@ -25,4 +25,49 @@ tribits_add_advanced_test( build_docs
     ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/guides/maintainers_guide/TribitsMaintainersGuide.html
     PASS_REGULAR_EXPRESSION guides/maintainers_guide/TribitsMaintainersGuide.html
     ALWAYS_FAIL_ON_NONZERO_RETURN
+  ADDED_TEST_NAME_OUT build_docs_test_name
   )
+
+
+tribits_add_advanced_test( build_sphinx_docs
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS
+    GIT_EXECUTABLE
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 MESSAGE "Clean out any prior build of the docs"
+    CMND ${GIT_EXECUTABLE} ARGS clean -xdf
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tribits/doc
+    SKIP_CLEAN_WORKING_DIRECTORY  # Don't delete our source tree!
+  TEST_1 MESSAGE "Build the sphinx documentation"
+    CMND python3 ARGS sphinx_rst_generator.py
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx
+    SKIP_CLEAN_WORKING_DIRECTORY  # Don't delete our source tree!
+  TEST_2 CMND ls
+    ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx/combined_docs/index.html
+    PASS_REGULAR_EXPRESSION sphinx/combined_docs/index.html
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_3 CMND ls
+    ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx/combined_docs/build_ref/index.html
+    PASS_REGULAR_EXPRESSION sphinx/combined_docs/build_ref/index.html
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_4 CMND ls
+    ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx/combined_docs/users_guide/index.html
+    PASS_REGULAR_EXPRESSION sphinx/combined_docs/users_guide/index.html
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_5 CMND ls
+    ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx/combined_docs/maintainers_guide/index.html
+    PASS_REGULAR_EXPRESSION sphinx/combined_docs/maintainers_guide/index.html
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  ADDED_TEST_NAME_OUT build_sphinx_docs_test_name
+  )
+
+if (build_docs_test_name AND build_sphinx_docs_test_name)
+  set_tests_properties( ${build_sphinx_docs_test_name}
+    PROPERTIES DEPENDS ${build_docs_test_name})
+  # Above sets a dependency of testing the build the sphinx documentation to
+  # come after testing the build of the regular docutils documentation.  The
+  # latter does not really depend on the fommer but both of these clean out
+  # the uncommitted files under tribits/doc/ and we don't want these two tests
+  # stomping on each other.  We also don't want to label these two tests with
+  # RUN_SERIAL because they take a long time to run and we don't want to stop
+  # other TriBITS tests from running at the same time as these two.
+endif()
