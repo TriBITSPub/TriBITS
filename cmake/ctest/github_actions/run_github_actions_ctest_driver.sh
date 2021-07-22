@@ -167,6 +167,14 @@ if [[ "${CTEST_BUILD_NAME_SUFFIX}" != "" ]] ; then
 fi
 echo "CTEST_BUILD_NAME = '${CTEST_BUILD_NAME}'"
 
+# Update CTEST_BUILD_NAME with PR ID (after getting the tweaks file name)
+if [[ "${GITHUB_EVENT_PATH}" != "" ]] ; then
+  pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+  echo "pull_number = '${pull_number}'"
+  export CTEST_BUILD_NAME="pr-${pull_number}_${CTEST_BUILD_NAME}${CTEST_BUILD_NAME_SUFFIX}"
+fi
+echo "CTEST_BUILD_NAME = '${CTEST_BUILD_NAME}'"
+
 # CTEST_CMAKE_GENERATOR
 if [[ "${cmake_generator}" == "ninja" ]] ; then
   CTEST_CMAKE_GENERATOR=Ninja
@@ -179,16 +187,22 @@ fi
 export CTEST_CMAKE_GENERATOR
 echo "CTEST_CMAKE_GENERATOR = '${CTEST_CMAKE_GENERATOR}'"
 
-# CTEST_TEST_TYPE
+# CTEST_TEST_TYPE, TriBITS_TRACK
+TriBITS_TRACK=
 if [[ "${GITHUB_EVENT_NAME}" == "schedule" ]]; then
-  CTEST_TEST_TYPE=Nightly
+  CTEST_TEST_TYPE=Nightly  # Only allows one build with a given site name and build name
 elif [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
   CTEST_TEST_TYPE=Continuous
+elif [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+  CTEST_TEST_TYPE=Continuous  # Allows multiple builds with same site name and build name
+  TriBITS_TRACK="Pull Request"
 else
   CTEST_TEST_TYPE=Experimental
 fi
 export CTEST_TEST_TYPE
+export TriBITS_TRACK
 echo "CTEST_TEST_TYPE = '${CTEST_TEST_TYPE}'"
+echo "TriBITS_TRACK = '${TriBITS_TRACK}'"
 
 
 #
