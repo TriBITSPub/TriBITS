@@ -59,9 +59,12 @@ jobs:
           pip3 install sphinx sphinx-rtd-theme # For testing doc build
       - name: Version checks
         run: |
-          echo "Checking Cmake path and version"
+          echo "Checking cmake path and version"
           which cmake
           cmake --version
+          echo "Checking ninja path and version"
+          which ninja
+          ninja --version
           echo "Checking gcc path and version"
           which ${{ matrix.config.cc }}
           ${{ matrix.config.cc }} --version
