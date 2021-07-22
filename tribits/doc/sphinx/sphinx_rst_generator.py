@@ -37,7 +37,7 @@ class SphinxRstGenerator:
                 'src_path': os.path.join(doc_path, 'build_ref'),
                 'final_path': os.path.join(doc_path, 'sphinx', 'build_ref', 'index.rst'),
                 'sphinx_path': os.path.join(doc_path, 'sphinx', 'build_ref'),
-                'title': 'TriBITS Project, Build, Test, and Install Reference Guide'}}
+                'title': 'Generic TriBITS Project, Build, Test, and Install Reference Guide'}}
         self.rst_dir = os.path.join(doc_path, 'sphinx', 'copied_files')
         self.already_modified_files = set()
         self.create_rst_dir()
