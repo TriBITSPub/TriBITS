@@ -20,6 +20,9 @@ jobs:
       matrix:
         config:
           - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9,  fc: gfortran-9  }
+          - { os: ubuntu-latest, cmake: "3.18.6", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9,  fc: gfortran-9  }
+          - { os: ubuntu-latest, cmake: "3.19.8", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9,  fc: gfortran-9  }
+          - { os: ubuntu-latest, cmake: "3.20.5", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9,  fc: gfortran-9  }
           - { os: ubuntu-latest, cmake: "3.21.0", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9,  fc: gfortran-9  }
 
     runs-on: ${{ matrix.config.os }}
