@@ -55,9 +55,7 @@ class SphinxRstGenerator:
         """ Builds TriBITS documentation based on shell scripts.
         """
         build_script_path = os.path.join(doc_path, 'build_docs.sh')
-        current_working_dir = os.path.split(build_script_path)[0]
-        subprocess.call([build_script_path, '--skip-final-generation'],
-                        cwd=current_working_dir)
+        subprocess.call([build_script_path, '--skip-final-generation'])
 
     @staticmethod
     def run_sphinx(cwd: str) -> None:
