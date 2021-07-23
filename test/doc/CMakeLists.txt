@@ -71,3 +71,21 @@ if (build_docs_test_name AND build_sphinx_docs_test_name)
   # RUN_SERIAL because they take a long time to run and we don't want to stop
   # other TriBITS tests from running at the same time as these two.
 endif()
+
+
+if (PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
+  set(HAS_PYTHON3 TRUE)
+else()
+  set(HAS_PYTHON3 FALSE)
+endif()
+
+
+tribits_add_advanced_test( sphinx_rst_generator_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE HAS_PYTHON3
+  TEST_0 CMND ${PYTHON_EXECUTABLE}
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/sphinx_rst_generator_UnitTests.py -v
+    PASS_REGULAR_EXPRESSION "OK"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  )
