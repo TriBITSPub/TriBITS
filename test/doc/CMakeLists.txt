@@ -38,9 +38,7 @@ tribits_add_advanced_test( build_sphinx_docs
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tribits/doc
     SKIP_CLEAN_WORKING_DIRECTORY  # Don't delete our source tree!
   TEST_1 MESSAGE "Build the sphinx documentation"
-    CMND python3 ARGS sphinx_rst_generator.py
-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx
-    SKIP_CLEAN_WORKING_DIRECTORY  # Don't delete our source tree!
+    CMND bash ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx/build_sphinx_docs.sh
   TEST_2 CMND ls
     ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx/combined_docs/index.html
     PASS_REGULAR_EXPRESSION sphinx/combined_docs/index.html
@@ -57,6 +55,8 @@ tribits_add_advanced_test( build_sphinx_docs
     ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx/combined_docs/maintainers_guide/index.html
     PASS_REGULAR_EXPRESSION sphinx/combined_docs/maintainers_guide/index.html
     ALWAYS_FAIL_ON_NONZERO_RETURN
+  TEST_6 MESSAGE "Rebuld the sphinx documentation to show you can without error"
+    CMND bash ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx/build_sphinx_docs.sh
   ADDED_TEST_NAME_OUT build_sphinx_docs_test_name
   )
 
