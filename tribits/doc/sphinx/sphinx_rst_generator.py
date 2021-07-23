@@ -38,7 +38,11 @@ def change_paths_and_get_includes(source_file: str, src_file_path: str,
         incl_index = splitted_line.index('include::')
         path_index = incl_index + 1
         if len(splitted_line) > path_index:
-          new_line = splitted_line[:path_index]
+          new_line = []
+          spaces_indented = line.find('.') # Below 'join()' statement adds a space!
+          if spaces_indented > 0:
+            new_line.append(' '*(spaces_indented-1))
+          new_line.extend(splitted_line[:path_index])
           abs_path = os.path.abspath(os.path.join(src_file_path,
             splitted_line[path_index]))
           file_name = os.path.split(abs_path)[-1]
