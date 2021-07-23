@@ -14,6 +14,52 @@ except Exception as e:
   exit(1)
 
 
+def is_rst_file(file_path: str) -> bool:
+  """ Checks if file_path has .rst extension and if file_path is a file.
+  """
+  if os.path.splitext(file_path)[-1] == '.rst' and os.path.isfile(file_path):
+    return True
+  return False
+
+
+def change_paths_and_get_includes(source_file: str, src_file_path: str,
+    start_path: str, rst_dir: str) -> tuple:
+  """ Changes paths in source file, to be relative to sphinx_path or parent .rst
+    document.
+    Returns a tuple with .rst file content and includes(absolute_path, relative_to)
+  """
+  with open(source_file, 'r') as src_file:
+    source_file_str = src_file.read()
+    source_file_list = list()
+    include_file_list = set()
+    for line in source_file_str.split('\n'):
+      splitted_line = line.split()
+      if 'include::' in splitted_line:
+        incl_index = splitted_line.index('include::')
+        path_index = incl_index + 1
+        if len(splitted_line) > path_index:
+          new_line = splitted_line[:path_index]
+          abs_path = os.path.abspath(os.path.join(src_file_path,
+            splitted_line[path_index]))
+          file_name = os.path.split(abs_path)[-1]
+          new_path = os.path.join(rst_dir, file_name)
+          if not os.path.isfile(new_path):
+            copyfile(src=abs_path, dst=new_path, follow_symlinks=True)
+          if is_rst_file(file_path=new_path):
+            include_file_list.add(abs_path)
+          rel_path_from_sphinx_dir = os.path.relpath(path=new_path, start=start_path)
+          new_line.append(rel_path_from_sphinx_dir)
+          new_line = ' '.join(new_line)
+          source_file_list.append(new_line)
+        else:
+          source_file_list.append(line)
+      else:
+        source_file_list.append(line)
+    abs_path_str = '\n'.join(source_file_list)
+
+  return abs_path_str, include_file_list
+
+
 class SphinxRstGenerator:
   """ Changes include paths to relative to Sphinx build dir. Saves three main .rst docs
     files inside Sphinx dir.
@@ -108,14 +154,6 @@ class SphinxRstGenerator:
       index_write.write(repl_url)
 
   @staticmethod
-  def is_rst_file(file_path: str) -> bool:
-    """ Checks if file_path has .rst extension and if file_path is a file.
-    """
-    if os.path.splitext(file_path)[-1] == '.rst' and os.path.isfile(file_path):
-      return True
-    return False
-
-  @staticmethod
   def save_rst(file_path: str, file_content: str) -> None:
     """ Saves .rst file with given pathh and content
     """
@@ -131,8 +169,8 @@ class SphinxRstGenerator:
     else:
       overwrite_source = False
 
-    file_content, includes = self.change_paths_and_get_includes(source_file=source_file,
-      src_file_path=src_path, start_path=start_path)
+    file_content, includes = change_paths_and_get_includes(source_file=source_file,
+      src_file_path=src_path, start_path=start_path, rst_dir=self.rst_dir)
 
     if overwrite_source:
       self.save_rst(file_path=source_file, file_content=file_content)
@@ -140,43 +178,6 @@ class SphinxRstGenerator:
       self.save_rst(file_path=final_path, file_content=file_content)
 
     return includes
-
-  def change_paths_and_get_includes(self, source_file: str, src_file_path: str,
-      start_path: str) -> tuple:
-    """ Changes paths in source file, to be relative to sphinx_path or parent .rst
-      document.
-      Returns a tuple with .rst file content and includes(absolute_path, relative_to)
-    """
-    with open(source_file, 'r') as src_file:
-      source_file_str = src_file.read()
-      source_file_list = list()
-      include_file_list = set()
-      for line in source_file_str.split('\n'):
-        splitted_line = line.split()
-        if 'include::' in splitted_line:
-          incl_index = splitted_line.index('include::')
-          path_index = incl_index + 1
-          if len(splitted_line) > path_index:
-            new_line = splitted_line[:path_index]
-            abs_path = os.path.abspath(os.path.join(src_file_path, 
-              splitted_line[path_index]))
-            file_name = os.path.split(abs_path)[-1]
-            new_path = os.path.join(self.rst_dir, file_name)
-            if not os.path.isfile(new_path):
-              copyfile(src=abs_path, dst=new_path, follow_symlinks=True)
-            if self.is_rst_file(file_path=new_path):
-              include_file_list.add(abs_path)
-            rel_path_from_sphinx_dir = os.path.relpath(path=new_path, start=start_path)
-            new_line.append(rel_path_from_sphinx_dir)
-            new_line = ' '.join(new_line)
-            source_file_list.append(new_line)
-          else:
-            source_file_list.append(line)
-        else:
-          source_file_list.append(line)
-      abs_path_str = '\n'.join(source_file_list)
-
-    return abs_path_str, include_file_list
 
   def remove_title_numbering(self) -> None:
     """ Removes numbering from docs.
