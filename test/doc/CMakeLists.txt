@@ -3,6 +3,17 @@ advanced_set( ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS OFF
   "Enable testing for the build of the documentation.  Requries docutils and will blow away and rebuild the existing documentation in the source tree since the documentation builds in place." )
 
 
+tribits_add_advanced_test( sphinx_rst_generator_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE HAS_PYTHON3
+  TEST_0 CMND ${PYTHON_EXECUTABLE}
+    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/sphinx_rst_generator_UnitTests.py -v
+    PASS_REGULAR_EXPRESSION "OK"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  )
+
+
 tribits_add_advanced_test( build_docs
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS
     GIT_EXECUTABLE
@@ -78,14 +89,3 @@ if (PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
 else()
   set(HAS_PYTHON3 FALSE)
 endif()
-
-
-tribits_add_advanced_test( sphinx_rst_generator_UnitTests
-  OVERALL_WORKING_DIRECTORY TEST_NAME
-  OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE HAS_PYTHON3
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
-    ARGS ${CMAKE_CURRENT_SOURCE_DIR}/sphinx_rst_generator_UnitTests.py -v
-    PASS_REGULAR_EXPRESSION "OK"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
-  )

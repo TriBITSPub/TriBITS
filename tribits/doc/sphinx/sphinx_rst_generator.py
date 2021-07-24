@@ -23,7 +23,7 @@ def is_rst_file(file_path: str) -> bool:
 
 
 def change_paths_and_get_includes(source_file: str, src_file_path: str,
-    start_path: str, rst_dir: str) -> tuple:
+    start_path: str, rst_dir: str, copy_file: bool = True) -> tuple:
   """ Changes paths in source file, to be relative to sphinx_path or parent .rst
     document.
     Returns a tuple with .rst file content and includes(absolute_path, relative_to)
@@ -47,7 +47,7 @@ def change_paths_and_get_includes(source_file: str, src_file_path: str,
             splitted_line[path_index]))
           file_name = os.path.split(abs_path)[-1]
           new_path = os.path.join(rst_dir, file_name)
-          if not os.path.isfile(new_path):
+          if not os.path.isfile(new_path) and copy_file:
             copyfile(src=abs_path, dst=new_path, follow_symlinks=True)
           if is_rst_file(file_path=new_path):
             include_file_list.add(abs_path)
