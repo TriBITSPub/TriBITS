@@ -40,6 +40,7 @@ if [[ "${skip_final_generation}" == "0" ]] ; then
   make
 else
   echo
-  echo "Skipping geneation of HTML and PDF files on request!"
+  echo "Only generating the file TribitsBuildReference.rst on request!"
   echo
+  make TribitsBuildReference.rst
 fi

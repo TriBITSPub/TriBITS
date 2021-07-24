@@ -1,0 +1,39 @@
+name: Deploy docs
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-and-deploy-docs:
+
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./tribits/doc/sphinx
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+          architecture: 'x64'
+      - name: Display Python version
+        run: |
+          python -c "import sys; print(sys.version)"
+          python3 -c "import sys; print(sys.version)"
+      - name: Install Python dependencies
+        run: |
+          pip3 install sphinx sphinx-rtd-theme
+      - name: Build documentation
+        working-directory: ${{env.working-directory}}
+        run: python3 sphinx_rst_generator.py
+      - name: Generate nojekyll file
+        working-directory: ${{env.working-directory}}/combined_docs
+        run: touch .nojekyll
+      - name: Deploy docs
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          branch: deploy-doc-site
+          folder: ${{env.working-directory}}/combined_docs
+          clean: true
