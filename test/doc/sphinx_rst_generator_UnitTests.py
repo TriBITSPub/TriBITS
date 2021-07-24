@@ -43,9 +43,6 @@
 # Unit testing code for sphinx_rst_generator.py #
 #################################################
 
-import sys
-import imp
-import shutil
 import unittest
 
 from FindTestDocDir import *
