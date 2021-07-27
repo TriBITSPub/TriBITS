@@ -361,6 +361,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``CTEST_BINARY_DIRECTORY`` (`Source and Binary Directory Locations (tribits_ctest_driver())`_)
 # * ``CTEST_BUILD_FLAGS`` (`Determining what testing-related actions are performed (tribits_ctest_driver())`_)
 # * ``CTEST_BUILD_NAME`` (`Determining how the results are displayed on CDash (tribits_ctest_driver())`_)
+# * ``CTEST_CHANGE_ID`` (`Determining how the results are displayed on CDash (tribits_ctest_driver())`_)
 # * ``CTEST_CMAKE_GENERATOR`` (`Other CTest Driver options (tribits_ctest_driver())`_)
 # * ``CTEST_CONFIGURATION_UNIT_TESTING`` (`Other CTest Driver options (tribits_ctest_driver())`_)
 # * ``CTEST_COVERAGE_COMMAND`` (`Determining what testing-related actions are performed (tribits_ctest_driver())`_)
@@ -379,6 +380,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``CTEST_GENERATE_OUTER_DEPS_XML_OUTPUT_FILE`` (`Determining what testing-related actions are performed (tribits_ctest_driver())`_)
 # * ``CTEST_MEMORYCHECK_COMMAND_OPTIONS`` (`Determining what testing-related actions are performed (tribits_ctest_driver())`_)
 # * ``CTEST_MEMORYCHECK_COMMAND`` (`Determining what testing-related actions are performed (tribits_ctest_driver())`_)
+# * ``CTEST_NOTES_FILES`` (`Determining how the results are displayed on CDash (tribits_ctest_driver())`_)
 # * ``CTEST_PARALLEL_LEVEL`` (`Determining what testing-related actions are performed (tribits_ctest_driver())`_)
 # * ``CTEST_SITE`` (`Determining how the results are displayed on CDash (tribits_ctest_driver())`_)
 # * ``CTEST_SOURCE_DIRECTORY`` (`Source and Binary Directory Locations (tribits_ctest_driver())`_)
@@ -1032,9 +1034,10 @@ include(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # **Determining how the results are displayed on CDash (tribits_ctest_driver()):**
 #
 # These options all primarily determine how VC update, configure, build, test,
-# and other results and submitted and displayed on CDash (but not what CDash
-# site(s) or project(s) they are submitted to).  These options can all be set
-# in the CTest -S script using ``set()`` statements before
+# and other results submitted are displayed on CDash (but not what CDash
+# site(s) or project(s) to which they are submitted, see `Specifying where the
+# results go to CDash (tribits_ctest_driver())`_).  These options can all be
+# set in the CTest -S script using ``set()`` statements before
 # ``tribits_ctest_driver()`` is called and can be overridden in the env when
 # running the CTest -S driver script.
 #
@@ -1120,6 +1123,19 @@ include(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     their output which are run by ``ctest_update()`` in the base git repo),
 #     and the file ``${PROJECT_NAME}RepoVersion.txt`` (gives version of all
 #     the git repos being tested).
+#
+#   .. _CTEST_CHANGE_ID:
+#
+#   ``CTEST_CHANGE_ID``
+#
+#     Built-in CTest variable that can be used to set to an integer for the
+#     GitHub Pull Request (PR) ID or GitLab Merge Request (MR) ID (or other
+#     such repository and development management system's change control ID).
+#     If the CDash project is properly configured to point to the GitHub or
+#     GitLab (or other supported) repository for the project, then CDash will
+#     put a hyper-linked icon beside the build name that links back to the PR
+#     or MR issue with that ID.  It may also be used for other purposes as
+#     well in the future.
 #
 # .. _Specifying where the results go to CDash (tribits_ctest_driver()):
 #
@@ -1588,6 +1604,10 @@ function(tribits_ctest_driver)
 
   # Do an update only to show the version
   set_default_and_from_env( CTEST_UPDATE_VERSION_ONLY FALSE )
+
+  # Set the GitHub PR or GitLab MR ID (will provide link in CDash back to the
+  # GitHub PR or GitLab MR)
+  set_default_and_from_env( CTEST_CHANGE_ID "" )
  
   # Do all-at-once configure, build, test and submit (or package-by-package)
   if ("${${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE_DEFAULT}" STREQUAL "")
