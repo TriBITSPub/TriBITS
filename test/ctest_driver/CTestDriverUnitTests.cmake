@@ -51,7 +51,7 @@ include(TribitsReadTagFile)
 include(UnitTestHelpers)
 
 
-function(unittest_read_ctest_tag_file)
+function(unittest_tribits_read_ctest_tag_file)
 
   message("\n***")
   message("*** Testing tribits_read_ctest_tag_file()")
@@ -59,15 +59,17 @@ function(unittest_read_ctest_tag_file)
 
   set(TAG_FILE_IN "${CMAKE_CURRENT_LIST_DIR}/data/dummy_build_dir/Testing/TAG")
 
-  tribits_read_ctest_tag_file(${TAG_FILE_IN} BUILD_START_TIME_OUT CDASH_TRACK_OUT)
+  tribits_read_ctest_tag_file(${TAG_FILE_IN} buildStartTime cdashGroup cdashModel)
 
-  unittest_compare_const(BUILD_START_TIME_OUT
+  unittest_compare_const(buildStartTime
     "20101015-1112")
-
-  unittest_compare_const(CDASH_TRACK_OUT
-    "My CDash Track")  # NOTE: Spaces are important to test here!
+  unittest_compare_const(cdashGroup
+    "My CDash Group")  # NOTE: Spaces are important to test here!
+  unittest_compare_const(cdashModel
+    "The Model")  # NOTE: Spaces are important to test here!
 
 endfunction()
+
 
 #
 # Execute the unit tests
@@ -79,11 +81,11 @@ global_set(UNITTEST_OVERALL_NUMPASSED 0)
 global_set(UNITTEST_OVERALL_NUMRUN 0)
 
 # Run the unit test functions
-unittest_read_ctest_tag_file()
+unittest_tribits_read_ctest_tag_file()
 
 message("\n***")
 message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(2)
+unittest_final_result(3)
