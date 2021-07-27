@@ -387,6 +387,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # * ``CTEST_SUBMIT_CDASH_SUBPROJECTS_DEPS_FILE`` (`Determining what testing-related actions are performed (tribits_ctest_driver())`_)
 # * ``CTEST_TEST_TYPE`` (`Determining how the results are displayed on CDash (tribits_ctest_driver())`_)
 # * ``CTEST_UPDATE_ARGS`` (`Determining what testing-related actions are performed (tribits_ctest_driver())`_)
+# * ``CTEST_UPDATE_VERSION_ONLY`` (`Determining what testing-related actions are performed (tribits_ctest_driver())`_)
 # * ``CTEST_WIPE_CACHE`` (`Determining what testing-related actions are performed (tribits_ctest_driver())`_)
 # * ``EXTRA_CONFIGURE_OPTIONS`` (`Setting variables in the inner CMake configure (tribits_ctest_driver())`_)
 # * ``EXTRA_SYSTEM_CONFIGURE_OPTIONS`` (`Setting variables in the inner CMake configure (tribits_ctest_driver())`_)
@@ -810,6 +811,21 @@ include(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     Any extra arguments to use with ``git clone`` to clone the base git repo.
 #     The default value is empty "".  This is only used for the base git repo
 #     (not the extra repos).
+#
+#   .. _CTEST_UPDATE_VERSION_ONLY:
+#
+#   ``CTEST_UPDATE_VERSION_ONLY``:
+#
+#    Built-in CTest variable that if set to ``TRUE`` will change the default
+#    behavior of ``ctest_update()`` such that it will not clone or pull from
+#    the remove repo or update the local branch in any way.  This also skips
+#    any actions on extra repos and skips the creation of the ``Updates.txt``
+#    or ``UpdateCommandsOutput.txt`` files.  Setting this to ``TRUE`` along
+#    with ``CTEST_DO_UPDATES=ON`` and doing a submit to CDash will result
+#    "Revision" column being present with the Git SHA1 of the base repo (and a
+#    hyperlink to the commit in the public git repo).  This is useful when
+#    using with a CI testing system that handles all of the git repo
+#    manipulation like GitHub Actions, GitLab CI, or Jenkins.
 #
 #   .. _CTEST_START_WITH_EMPTY_BINARY_DIRECTORY:
 #
@@ -1569,6 +1585,9 @@ function(tribits_ctest_driver)
 
   # Flags used on update when doing a Git update
   set_default_and_from_env( CTEST_UPDATE_OPTIONS "")
+
+  # Do an update only to show the version
+  set_default_and_from_env( CTEST_UPDATE_VERSION_ONLY FALSE )
  
   # Do all-at-once configure, build, test and submit (or package-by-package)
   if ("${${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE_DEFAULT}" STREQUAL "")
@@ -1912,7 +1931,9 @@ function(tribits_ctest_driver)
       # if the repo does not already exist!
     else()
       message("${CTEST_SOURCE_DIRECTORY} exists so skipping the initial checkout.")
-      set(CREATE_VC_UPDATE_FILE TRUE)
+      if (NOT CTEST_UPDATE_VERSION_ONLY)
+        set(CREATE_VC_UPDATE_FILE TRUE)
+      endif()
     endif()
 
     #
@@ -1928,18 +1949,22 @@ function(tribits_ctest_driver)
     # "'${GIT_EXECUTABLE}'" or "\"${GIT_EXECUTABLE}\"" or it will not work and
     # ctest_update() will return failed!
 
-    # Provide a custom command to do the update
-
-    set(CTEST_GIT_UPDATE_CUSTOM
-      "${CMAKE_COMMAND}"
-      -DGIT_EXE=${GIT_EXECUTABLE}
-      -DREMOTE_NAME=${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}
-      -DBRANCH=${${PROJECT_NAME}_BRANCH}
-      -DUNIT_TEST_MODE=${CTEST_DEPENDENCY_HANDLING_UNIT_TESTING}
-      -DOUTPUT_FILE=${CTEST_UPDATE_COMMANDS_OUTPUT_FILE}
-      -P ${THIS_CMAKE_CURRENT_LIST_DIR}/tribits_ctest_update_commands_wrapper.cmake
-      )
-    message("CTEST_GIT_UPDATE_CUSTOM=${CTEST_GIT_UPDATE_CUSTOM}")
+    if (NOT CTEST_UPDATE_VERSION_ONLY)
+      # Provide a custom command to do the update
+      set(CTEST_GIT_UPDATE_CUSTOM
+        "${CMAKE_COMMAND}"
+        -DGIT_EXE=${GIT_EXECUTABLE}
+        -DREMOTE_NAME=${${PROJECT_NAME}_GIT_REPOSITORY_REMOTE}
+        -DBRANCH=${${PROJECT_NAME}_BRANCH}
+        -DUNIT_TEST_MODE=${CTEST_DEPENDENCY_HANDLING_UNIT_TESTING}
+        -DOUTPUT_FILE=${CTEST_UPDATE_COMMANDS_OUTPUT_FILE}
+        -P ${THIS_CMAKE_CURRENT_LIST_DIR}/tribits_ctest_update_commands_wrapper.cmake
+        )
+      message("CTEST_GIT_UPDATE_CUSTOM=${CTEST_GIT_UPDATE_CUSTOM}")
+    else()
+      # CTest will just report the version already checked out in
+      # ctest_update().
+    endif()
 
   endif()
 
@@ -2063,6 +2088,10 @@ function(tribits_ctest_driver)
       return()
     endif()
 
+    if (EXISTS "${CTEST_UPDATE_COMMANDS_OUTPUT_FILE}")
+      file(REMOVE "${CTEST_UPDATE_COMMANDS_OUTPUT_FILE}")
+    endif()
+
     message("\nCalling ctest_update() to update base source repo '${CTEST_SOURCE_DIRECTORY}' ...")
     ctest_update_wrapper( SOURCE "${CTEST_SOURCE_DIRECTORY}"
       RETURN_VALUE  CTEST_UPDATE_RETURN_VAL)
@@ -2080,9 +2109,11 @@ function(tribits_ctest_driver)
       message("------------------------------------------------------------------------\n")
     endif()
 
-    tribits_clone_or_update_extra_repos(${CTEST_UPDATE_RETURN_VAL}  LOC_UPDATE_FAILED)
-    if (LOC_UPDATE_FAILED)
-      set(UPDATE_FAILED TRUE)
+    if (NOT CTEST_UPDATE_VERSION_ONLY)
+      tribits_clone_or_update_extra_repos(${CTEST_UPDATE_RETURN_VAL}  LOC_UPDATE_FAILED)
+      if (LOC_UPDATE_FAILED)
+        set(UPDATE_FAILED TRUE)
+      endif()
     endif()
 
     if (CREATE_VC_UPDATE_FILE)
