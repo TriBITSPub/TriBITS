@@ -38,7 +38,9 @@
 # @HEADER
 
 
-#
+include(TribitsGetCDashUrlFromTagFile)
+
+
 # Wrapper used for unit testing purposes
 #
 macro(extrarepo_execute_process_wrapper)
@@ -56,7 +58,6 @@ macro(extrarepo_execute_process_wrapper)
 endmacro()
 
 
-#
 # Update an existing git repo
 #
 function(tribits_update_git_extrarepo  GIT_EXE  EXTRAREPO_SRC_DIR)
@@ -104,7 +105,6 @@ function(tribits_update_git_extrarepo  GIT_EXE  EXTRAREPO_SRC_DIR)
 endfunction()
 
 
-#
 # Update or clone a single extra repo
 #
 function(tribits_clone_or_update_extrarepo  EXTRAREPO_NAME_IN  EXTRAREPO_DIR_IN
@@ -166,7 +166,6 @@ function(tribits_clone_or_update_extrarepo  EXTRAREPO_NAME_IN  EXTRAREPO_DIR_IN
 endfunction()
 
 
-#
 # Clone or update all of the extra repos and put them on the right branch.
 #
 # NOTE: The base repo is cloned by ctest_start() and updated by ctest_update()
@@ -202,7 +201,6 @@ function(tribits_clone_or_update_extra_repos  CTEST_UPDATE_RETURN_VAL
 endfunction()
 
 
-#
 # Create the Updates.txt file
 #
 function(tribits_create_repo_updates_file)
@@ -217,7 +215,6 @@ function(tribits_create_repo_updates_file)
 endfunction()
 
 
-#
 # Select the set of extra repositories
 #
 macro(tribits_setup_extrarepos)
@@ -234,7 +231,6 @@ macro(tribits_setup_extrarepos)
 endmacro()
 
 
-#
 # Select the list of packages
 #
 # OUTPUT: Sets ${PROJECT_NAME}_DEFAULT_PACKAGES
@@ -312,7 +308,6 @@ macro(enable_package_if_not_explicitly_excluded  TRIBITS_PACKAGE)
 endmacro()
 
 
-#
 # Select packages set by the input
 #
 macro(enable_user_selected_packages)
@@ -342,7 +337,6 @@ macro(enable_user_selected_packages)
 endmacro()
 
 
-#
 # Extract the list of changed files for the main repo on put into an
 # modified files file.
 #
@@ -361,7 +355,6 @@ macro(tribits_get_modified_files  WORKING_DIR_IN  MODIFIED_FILES_FILE_NAME_IN)
 endmacro()
 
 
-#
 # Select only packages that are modified or failed in the last CI iteration
 #
 macro(enable_only_modified_packages)
@@ -528,7 +521,6 @@ macro(enable_only_modified_packages)
 endmacro()
 
 
-#
 # Exclude disabled packages from ${PROJECT_NAME}_EXCLUDE_PACKAGES
 #
 # NOTE: These disables need to dominate over the above enables so this code is
@@ -543,7 +535,6 @@ macro(disable_excluded_packages)
 endmacro()
 
 
-#
 # Remove packages that are only implicitly enabled but don't have tests
 # enabled.
 #
@@ -574,7 +565,6 @@ macro(select_final_set_of_packages_to_directly_test)
 endmacro()
 
 
-#
 # Set mapping of labels to subprojects (i.e. TriBITS packages) for CDash.
 #
 # NOTE: Unlike for the inner CMake configure, only subprojects that are
@@ -591,7 +581,6 @@ macro(tribits_ctest_driver_set_labels_to_subprojects_mapping)
 endmacro()
 
 
-#
 # Select the default generator.
 #
 macro(select_default_generator)
@@ -610,7 +599,6 @@ macro(select_default_generator)
 endmacro()
 
 
-#
 # Call INITIALIZE_ERROR_QUEUE once at the top of TRIBITS_CTEST_DRIVER
 #
 macro(initialize_error_queue)
@@ -618,7 +606,6 @@ macro(initialize_error_queue)
 endmacro()
 
 
-#
 # QUEUE_ERROR should be called only for errors that are not already reported to
 # the dashboard in some other way. For example, if calling ctest_submit fails,
 # then that failure does NOT show up on the dashboard, so it is appropriate to
@@ -635,7 +622,6 @@ macro(queue_error err_msg)
 endmacro()
 
 
-#
 # Call report_queued_errors() once at the bottom of tribits_ctest_driver()
 #
 macro(report_queued_errors)
@@ -650,7 +636,6 @@ macro(report_queued_errors)
 endmacro()
 
 
-#
 # Setup for tracking if a configure is being attempted to keep memory if it
 # will pass or not.
 #
@@ -686,7 +671,6 @@ endmacro()
 # scope.  This is needed so the below functions will see them set.
 
 
-#
 # Determine if a past configure was attempted but did not pass
 #
 function(tribits_previous_configure_attempted_but_not_passsed
@@ -712,14 +696,76 @@ function(tribits_previous_configure_attempted_but_not_passsed
 endfunction()
 
 
-#
 # Remember that the configure passed for later ctest -S invocations
 #
 function(tribits_remember_configure_passed)
   file(WRITE "${CONFIGURE_PASSED_FILE}" "Configure Passed!")
 endfunction()
 
+
+
+# Construct the build URL on CDash given the site name, buildname, and
+# buildstamp (take from the TAG file).
 #
+# Usage::
+#
+#   tribits_get_build_url_and_write_to_file(
+#     <cdashBuildUrlOut>
+#     <cdashBuldUrlFile>
+#     )
+#
+# Here, ``<cdashBuildUrlOut>`` returns the CDash Build URL constructed from
+# the CMake vars:
+#
+#   * ``CTEST_DROP_SITE``
+#   * ``CTEST_DROP_LOCATION`` (``submit.php`` is replaced with ``index.php``)
+#   * ``CTEST_PROJECT_NAME``
+#   * ``CTEST_SITE``
+#   * ``CTEST_BUILD_NAME``
+#
+# and the buildstamp read in from the file
+# ``${CTEST_BINARY_DIRECTORY}/Testing/TAG``.
+#
+# Note that ``<cdashBuildUrlOut>`` will have ``https://`` added to the
+# beginning of it so that GitHub Actions and other systems will put in a link
+# to them.
+#
+# If the file name ``<cdashBuldUrlFile>`` is non-empty, then that CDash URL
+# will be written to the file as a single line.
+#
+function(tribits_get_build_url_and_write_to_file  cdashBuildUrlOut  cdashBuildUrlFile)
+  tribits_get_cdash_index_php_from_drop_site_and_location(
+    CTEST_DROP_SITE "${CTEST_DROP_SITE}"
+    CTEST_DROP_LOCATION "${CTEST_DROP_LOCATION}"
+    INDEX_PHP_URL_OUT indexPhpUrl
+    )
+  tribits_get_cdash_build_url_from_tag_file(
+    INDEX_PHP_URL "${indexPhpUrl}"
+    PROJECT_NAME "${CTEST_PROJECT_NAME}"
+    SITE_NAME "${CTEST_SITE}"
+    BUILD_NAME "${CTEST_BUILD_NAME}"
+    TAG_FILE "${CTEST_BINARY_DIRECTORY}/Testing/TAG"
+    CDASH_BUILD_URL_OUT cdashBuildUrl
+    )
+  set(cdashBuildUrl "https://${cdashBuildUrl}")
+  if (cdashBuildUrlFile)
+    file(WRITE "${cdashBuildUrlFile}" "${cdashBuildUrl}")
+  endif()
+  set(${cdashBuildUrlOut} "${cdashBuildUrl}" PARENT_SCOPE)
+endfunction()
+
+
+# Print the URL on CDash where build results can be found.
+#
+# This will print regardless of the value of CTEST_DO_SUBMIT so not that if
+# that is set to FALSE, then no results will actually be submitted there.
+#
+function(tribits_print_build_url  msg  cdashBuildUrl)
+  message("\n${msg}\n")
+  message("    ${cdashBuildUrl}\n")
+endfunction()
+
+
 # Override CTEST_SUBMIT to drive multiple submits and to detect failed
 # submissions and track them as queued errors.
 #
@@ -795,7 +841,6 @@ macro(tribits_ctest_submit_driver)
 endmacro()
 
 
-#
 # Wrapper for ctest_update(...) for unit testing
 #
 macro(ctest_update_wrapper)
@@ -808,7 +853,6 @@ macro(ctest_update_wrapper)
 endmacro()
 
 
-#
 # Helper macros to pass through common CMake configure arguments used by both
 # package-by-pacakge approach and all-at-once approach
 #
@@ -908,7 +952,6 @@ function(tribits_get_failed_packages_from_failed_tests
 endfunction()
 
 
-#
 # Drive the configure, build, test, and submit package-by-package
 #
 # Sets ${PROJECT_NAME}_FAILED_PACKAGES as an indication if there are any
@@ -1274,7 +1317,6 @@ macro(tribits_ctest_package_by_package)
 endmacro()
 
 
-#
 # Drive the configure, build, test, and submit all at once for all of the
 # enabled packages.
 #
@@ -1660,12 +1702,12 @@ macro(tribits_ctest_all_at_once)
     # those will never cause test failures.  Therefore, if there are any build
     # or install failures, we just have to assume that any tested package
     # could have failed.  Hense, we set the above just like for a (global)
-    # configure failures.  Perhaps we couild read the generated *.xml files to
+    # configure failures.  Perhaps we could read the generated *.xml files to
     # figure that out but that is not worth the work righ now.  The only bad
     # consequence of this is that a CI build would end up building and testing
     # every package even if only one dowstream package had a build failure,
     # for example.  That is just one of the downsides of the all-at-once
-    # appraoch vs the package-by-package appraoch.
+    # appraoch vs. the package-by-package appraoch.
   elseif (FAILED_TEST_LOG_FILE)
     tribits_get_failed_packages_from_failed_tests("${FAILED_TEST_LOG_FILE}"
       ${PROJECT_NAME}_FAILED_PACKAGES )

@@ -146,6 +146,7 @@ set( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support"
+  "${${PROJECT_NAME}_TRIBITS_DIR}/ctest_driver"
   )
 
 include(TribitsConstants)
@@ -206,7 +207,7 @@ site_name(CTEST_SITE_DEFAULT)
 
 # Get helper functions
 
-include(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
+include(TribitsCTestDriverCoreHelpers)
 
 
 #
@@ -2092,6 +2093,9 @@ function(tribits_ctest_driver)
   ctest_start(${CTEST_START_ARGS})
 
   tribits_remember_if_configure_attempted()
+  tribits_get_build_url_and_write_to_file(CDASH_BUILD_URL
+    "${CTEST_BINARY_DIRECTORY}/CDashBuildUrl.txt")
+  tribits_print_build_url("Results will be submitted on CDash at:" "${CDASH_BUILD_URL}")
 
   message(
     "\n***"
@@ -2365,18 +2369,7 @@ function(tribits_ctest_driver)
 
   report_queued_errors()
 
-  string(REPLACE "submit.php"
-       "index.php" CDASH_PROJECT_LOCATION
-       "${CTEST_DROP_LOCATION}")
-  multiline_set( SEE_CDASH_LINK_STR
-    "\nSee results for:\n"
-    "  Site: ${CTEST_SITE}\n"
-    "  Build Name: ${CTEST_BUILD_NAME}\n"
-    "at:\n"
-    "  http://${CTEST_DROP_SITE}${CDASH_PROJECT_LOCATION}&display=project\n"
-    )
-  # ToDo: Above: We would love to provide the buildID to point to the exact
-  # URL but CTest does not currently give that to you.
+  tribits_print_build_url("See results submitted on CDash at:" "${CDASH_BUILD_URL}")
 
   if ((NOT UPDATE_FAILED) AND ("${${PROJECT_NAME}_FAILED_PACKAGES}" STREQUAL ""))
     message(
