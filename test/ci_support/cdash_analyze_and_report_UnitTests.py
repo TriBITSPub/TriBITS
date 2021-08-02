@@ -243,7 +243,7 @@ def cdash_analyze_and_report_run_case(
 class test_cdash_analyze_and_report(unittest.TestCase):
 
 
-  # Base case for raw CDash data we happened to choose for all fo tests tests
+  # Base case for raw CDash data we happened to choose for all of tests tests
   #
   # This first test checks several parts of the STDOUT and HTML output that
   # other tests will not check.  In particular, this really pins down the
