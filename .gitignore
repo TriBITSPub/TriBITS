@@ -20,3 +20,9 @@ build/
 
 # Ignore the standard local gitdist override file
 /.gitdist
+
+# Python environment
+venv
+
+# Pycharm settings
+.idea

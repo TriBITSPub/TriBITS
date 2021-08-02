@@ -37,17 +37,17 @@
 # ************************************************************************
 # @HEADER
 
-MESSAGE("PROJECT_NAME = ${PROJECT_NAME}")
-MESSAGE("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
+message("PROJECT_NAME = ${PROJECT_NAME}")
+message("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 
-SET( CMAKE_MODULE_PATH
+set( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
-INCLUDE(TribitsProcessPackagesAndDirsLists)
-INCLUDE(UnitTestHelpers)
-INCLUDE(GlobalSet)
+include(TribitsProcessPackagesAndDirsLists)
+include(UnitTestHelpers)
+include(GlobalSet)
 
 
 #####################################################################
@@ -57,161 +57,161 @@ INCLUDE(GlobalSet)
 #####################################################################
 
 
-FUNCTION(UNITTEST_BASIC_PACKAGE_LIST_READ)
+function(unittest_basic_package_list_read)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the basic reading of packages list")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the basic reading of packages list")
+  message("***\n")
 
-  SET( ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
+  set( ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
     Package0     packages/package0  PT
     Package1     packages/package1  ST
     Package2     packages/package2  EX
     )
 
-  SET(PACKAGE_ABS_DIR "DummyBase")
-  SET(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
+  set(PACKAGE_ABS_DIR "DummyBase")
+  set(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
 
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
     "Package0;Package1;Package2")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGE_DIRS
-    "packages/package0;packages/package1;packages/package2")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_NUM_PACKAGES 3 )
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_LAST_PACKAGE_IDX 2 )
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_REVERSE_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_NUM_PACKAGES 3 )
+  unittest_compare_const( ${PROJECT_NAME}_LAST_PACKAGE_IDX 2 )
+  unittest_compare_const( ${PROJECT_NAME}_REVERSE_PACKAGES
     "Package2;Package1;Package0")
-  UNITTEST_COMPARE_CONST( Package0_TESTGROUP PT)
-  UNITTEST_COMPARE_CONST( Package1_TESTGROUP ST)
-  UNITTEST_COMPARE_CONST( Package2_TESTGROUP EX)
+  unittest_compare_const( Package0_SOURCE_DIR ${PROJECT_SOURCE_DIR}/packages/package0 )
+  unittest_compare_const( Package1_SOURCE_DIR ${PROJECT_SOURCE_DIR}/packages/package1 )
+  unittest_compare_const( Package2_SOURCE_DIR ${PROJECT_SOURCE_DIR}/packages/package2 )
+  unittest_compare_const( Package0_REL_SOURCE_DIR packages/package0 )
+  unittest_compare_const( Package1_REL_SOURCE_DIR packages/package1 )
+  unittest_compare_const( Package2_REL_SOURCE_DIR packages/package2 )
+  unittest_compare_const( Package0_TESTGROUP PT )
+  unittest_compare_const( Package1_TESTGROUP ST )
+  unittest_compare_const( Package2_TESTGROUP EX )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_BASIC_PACKAGE_LIST_READ_ABS_PACAKGE_DIR)
+function(unittest_basic_package_list_read_abs_pacakge_dir)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the basic reading of packages list with abs package dir")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the basic reading of packages list with abs package dir")
+  message("***\n")
 
-  SET( ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
+  set( ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
     Package0     packages/package0  PT
     Package1     ${PROJECT_SOURCE_DIR}/Package1  ST
     Package2     /home/me/Package2  EX
     )
 
-  #SET(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
+  #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE ON)
 
-  SET(PACKAGE_ABS_DIR "DummyBase")
-  SET(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
+  set(PACKAGE_ABS_DIR "DummyBase")
+  set(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
 
-  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
 
-  UNITTEST_COMPARE_CONST( MESSAGE_WRAPPER_INPUT
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
     "-- ;PROJECT_SOURCE_DIR_BASE_MATCH='/home/me/DummyProject';FATAL_ERROR;Error: The package 'Package2' was given an absolute directory '/home/me/Package2' which is *not* under the project's source directory '/home/me/DummyProject/'!;-- ;DummyProject_NUM_PACKAGES='3'"
     )
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
     "Package0;Package1;Package2")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGE_DIRS
-    "packages/package0;Package1;ERROR-BAD-PACKAGE-ABS-DIR")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_NUM_PACKAGES 3 )
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_LAST_PACKAGE_IDX 2 )
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_REVERSE_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_NUM_PACKAGES 3 )
+  unittest_compare_const( ${PROJECT_NAME}_LAST_PACKAGE_IDX 2 )
+  unittest_compare_const( ${PROJECT_NAME}_REVERSE_PACKAGES
     "Package2;Package1;Package0")
-  UNITTEST_COMPARE_CONST( Package0_TESTGROUP PT)
-  UNITTEST_COMPARE_CONST( Package1_TESTGROUP ST)
-  UNITTEST_COMPARE_CONST( Package2_TESTGROUP EX)
+  unittest_compare_const( Package0_TESTGROUP PT)
+  unittest_compare_const( Package1_TESTGROUP ST)
+  unittest_compare_const( Package2_TESTGROUP EX)
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_BASIC_PACKAGE_LIST_READ_PS_SS_BACKWARD_COMPATIBLE)
+function(unittest_basic_package_list_read_ps_ss_backward_compatible)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing the basic reading of packages list (backward compatible)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing the basic reading of packages list (backward compatible)")
+  message("***\n")
 
-  SET( ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
+  set( ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
     Package0     packages/package0  PS
     Package1     packages/package1  SS
     Package2     packages/package2  EX
     )
 
-  SET(PACKAGE_ABS_DIR "DummyBase")
-  SET(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
+  set(PACKAGE_ABS_DIR "DummyBase")
+  set(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
 
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
     "Package0;Package1;Package2")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_PACKAGE_DIRS
-    "packages/package0;packages/package1;packages/package2")
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_NUM_PACKAGES 3 )
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_LAST_PACKAGE_IDX 2 )
-  UNITTEST_COMPARE_CONST( ${PROJECT_NAME}_REVERSE_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_NUM_PACKAGES 3 )
+  unittest_compare_const( ${PROJECT_NAME}_LAST_PACKAGE_IDX 2 )
+  unittest_compare_const( ${PROJECT_NAME}_REVERSE_PACKAGES
     "Package2;Package1;Package0")
-  UNITTEST_COMPARE_CONST( Package0_TESTGROUP PT)
-  UNITTEST_COMPARE_CONST( Package1_TESTGROUP ST)
-  UNITTEST_COMPARE_CONST( Package2_TESTGROUP EX)
+  unittest_compare_const( Package0_TESTGROUP PT)
+  unittest_compare_const( Package1_TESTGROUP ST)
+  unittest_compare_const( Package2_TESTGROUP EX)
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_ELEVATE_ST_TO_PT)
+function(unittest_elevate_st_to_pt)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing elevating ST packages to PT packages")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing elevating ST packages to PT packages")
+  message("***\n")
 
-  SET( ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
+  set( ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
     Package0     packages/package0  PS
     Package1     packages/package1  SS
     Package2     packages/package2  EX
     )
 
-  SET(PACKAGE_ABS_DIR "DummyBase")
-  SET(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
+  set(PACKAGE_ABS_DIR "DummyBase")
+  set(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
 
   # Make all ST packages PT packages!
-  SET(${PROJECT_NAME}_ELEVATE_ST_TO_PT TRUE)
+  set(${PROJECT_NAME}_ELEVATE_ST_TO_PT TRUE)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
 
-  UNITTEST_COMPARE_CONST( Package0_TESTGROUP PT)
-  UNITTEST_COMPARE_CONST( Package1_TESTGROUP PT)
-  UNITTEST_COMPARE_CONST( Package2_TESTGROUP EX)
+  unittest_compare_const( Package0_TESTGROUP PT)
+  unittest_compare_const( Package1_TESTGROUP PT)
+  unittest_compare_const( Package2_TESTGROUP EX)
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITTEST_ELEVATE_SS_TO_PS_BACKWARD_COMPATIBLE)
+function(unittest_elevate_ss_to_ps_backward_compatible)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing elevating SS packages to PS packages (backward compatible)")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing elevating SS packages to PS packages (backward compatible)")
+  message("***\n")
 
-  SET( ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
+  set( ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
     Package0     packages/package0  PS
     Package1     packages/package1  SS
     Package2     packages/package2  EX
     )
 
-  SET(PACKAGE_ABS_DIR "DummyBase")
-  SET(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
+  set(PACKAGE_ABS_DIR "DummyBase")
+  set(${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK TRUE)
 
   # Make all ST packages PT packages!
-  SET(${PROJECT_NAME}_ELEVATE_SS_TO_PS TRUE)
+  set(${PROJECT_NAME}_ELEVATE_SS_TO_PS TRUE)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
 
-  UNITTEST_COMPARE_CONST( Package0_TESTGROUP PT)
-  UNITTEST_COMPARE_CONST( Package1_TESTGROUP PT)
-  UNITTEST_COMPARE_CONST( Package2_TESTGROUP EX)
+  unittest_compare_const( Package0_TESTGROUP PT)
+  unittest_compare_const( Package1_TESTGROUP PT)
+  unittest_compare_const( Package2_TESTGROUP EX)
 
-ENDFUNCTION()
+endfunction()
 
 
 
@@ -222,19 +222,19 @@ ENDFUNCTION()
 #####################################################################
 
 # Assume that all unit tests will pass by default
-GLOBAL_SET(UNITTEST_OVERALL_PASS TRUE)
-GLOBAL_SET(UNITTEST_OVERALL_NUMPASSED 0)
-GLOBAL_SET(UNITTEST_OVERALL_NUMRUN 0)
+global_set(UNITTEST_OVERALL_PASS TRUE)
+global_set(UNITTEST_OVERALL_NUMPASSED 0)
+global_set(UNITTEST_OVERALL_NUMRUN 0)
 
 # Set common/base options
-SET(PROJECT_NAME "DummyProject")
-SET(PROJECT_SOURCE_DIR "/home/me/DummyProject")
+set(PROJECT_NAME "DummyProject")
+set(PROJECT_SOURCE_DIR "/home/me/DummyProject")
 
-UNITTEST_BASIC_PACKAGE_LIST_READ()
-UNITTEST_BASIC_PACKAGE_LIST_READ_ABS_PACAKGE_DIR()
-UNITTEST_BASIC_PACKAGE_LIST_READ_PS_SS_BACKWARD_COMPATIBLE()
-UNITTEST_ELEVATE_ST_TO_PT()
-UNITTEST_ELEVATE_SS_TO_PS_BACKWARD_COMPATIBLE()
+unittest_basic_package_list_read()
+unittest_basic_package_list_read_abs_pacakge_dir()
+unittest_basic_package_list_read_ps_ss_backward_compatible()
+unittest_elevate_st_to_pt()
+unittest_elevate_ss_to_ps_backward_compatible()
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(31)
+unittest_final_result(34)

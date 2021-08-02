@@ -77,7 +77,7 @@ class test_mockprogram(unittest.TestCase):
     try:
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = b"Error: .mockprogram_inout.txt is missing!\n"
+      expected_output = "Error: .mockprogram_inout.txt is missing!\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 1)
     finally:
@@ -87,10 +87,11 @@ class test_mockprogram(unittest.TestCase):
   def test_empty_mockprogram_file(self):
     testDir = createAndMoveIntoTestDir("empty_mockprogram_file")
     try:
-      open('.mockprogram_inout.txt', 'w').write("")
+      with open('.mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write("")
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = b"Error: .mockprogram_inout.txt has less than three lines:\n-------------\n-------------\n"
+      expected_output = "Error: .mockprogram_inout.txt has less than three lines:\n-------------\n-------------\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 2)
     finally:
@@ -100,14 +101,15 @@ class test_mockprogram(unittest.TestCase):
   def test_missing_program_input(self):
     testDir = createAndMoveIntoTestDir("missing_program_input")
     try:
-      open('.mockprogram_inout.txt', 'w').write(
-        "MOCK_PROGRAM_INPUTS: some input\n" \
-        "MOCK_PROGRAM_OUTPUT: some output\n" \
-        "more output\n" \
-        )
+      with open('.mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUTS: some input\n" \
+          "MOCK_PROGRAM_OUTPUT: some output\n" \
+          "more output\n" \
+          )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = b"Error, first line = 'MOCK_PROGRAM_INPUTS: some input', does not match ^MOCK_PROGRAM_INPUT:\n"
+      expected_output = "Error, first line = 'MOCK_PROGRAM_INPUTS: some input', does not match ^MOCK_PROGRAM_INPUT:\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 3)
     finally:
@@ -117,14 +119,15 @@ class test_mockprogram(unittest.TestCase):
   def test_input_not_matching(self):
     testDir = createAndMoveIntoTestDir("input_not_matching")
     try:
-      open('.mockprogram_inout.txt', 'w').write(
-        "MOCK_PROGRAM_INPUT: some other input\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: some output\n" \
-        )
+      with open('.mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: some other input\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: some output\n" \
+          )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = b"Error, input args='some input' does not match expected='some other input'\n"
+      expected_output = "Error, input args='some input' does not match expected='some other input'\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 4)
     finally:
@@ -134,14 +137,15 @@ class test_mockprogram(unittest.TestCase):
   def test_missing_program_return(self):
     testDir = createAndMoveIntoTestDir("missing_program_return")
     try:
-      open('.mockprogram_inout.txt', 'w').write(
-        "MOCK_PROGRAM_INPUT: some input\n" \
-        "MOCK_PROGRAM_OUTPUT: some output\n" \
-        "more output\n" \
-        )
+      with open('.mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: some input\n" \
+          "MOCK_PROGRAM_OUTPUT: some output\n" \
+          "more output\n" \
+          )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = b"Error, second line = 'MOCK_PROGRAM_OUTPUT: some output', does not match ^MOCK_PROGRAM_RETURN:\n"
+      expected_output = "Error, second line = 'MOCK_PROGRAM_OUTPUT: some output', does not match ^MOCK_PROGRAM_RETURN:\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 5)
     finally:
@@ -151,14 +155,15 @@ class test_mockprogram(unittest.TestCase):
   def test_missing_program_output(self):
     testDir = createAndMoveIntoTestDir("missing_program_output")
     try:
-      open('.mockprogram_inout.txt', 'w').write(
-        "MOCK_PROGRAM_INPUT: some input\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "more output\n" \
-        )
+      with open('.mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: some input\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "more output\n" \
+          )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = b"Error, third line = 'more output', does not match ^MOCK_PROGRAM_OUTPUT:\n"
+      expected_output = "Error, third line = 'more output', does not match ^MOCK_PROGRAM_OUTPUT:\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 6)
     finally:
@@ -168,17 +173,19 @@ class test_mockprogram(unittest.TestCase):
   def test_call_1(self):
     testDir = createAndMoveIntoTestDir("call_1")
     try:
-      open('.mockprogram_inout.txt', 'w').write(
-        "MOCK_PROGRAM_INPUT: some input\n" \
-        "MOCK_PROGRAM_RETURN: 11\n" \
-        "MOCK_PROGRAM_OUTPUT: some output\n" \
-        )
+      with open('.mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: some input\n" \
+          "MOCK_PROGRAM_RETURN: 11\n" \
+          "MOCK_PROGRAM_OUTPUT: some output\n" \
+          )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = b"some output\n"
+      expected_output = "some output\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 11)
-      remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
+      with open('.mockprogram_inout.txt', 'r') as fileHandle:
+        remainingMockFileStr = fileHandle.read()
       self.assertEqual(remainingMockFileStr, "")
     finally:
       os.chdir(testBaseDir)
@@ -188,18 +195,20 @@ class test_mockprogram(unittest.TestCase):
     testDir = createAndMoveIntoTestDir("call_1")
     try:
       os.mkdir("subdir")
-      open('subdir/mockprogram_inout.txt', 'w').write(
-        "MOCK_PROGRAM_INPUT: some input\n" \
-        "MOCK_PROGRAM_RETURN: 11\n" \
-        "MOCK_PROGRAM_OUTPUT: some output\n" \
-        )
+      with open('subdir/mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: some input\n" \
+          "MOCK_PROGRAM_RETURN: 11\n" \
+          "MOCK_PROGRAM_OUTPUT: some output\n" \
+          )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True,
         extraEnv={"MOCKPROGRAM_INOUT_FILE_OVERRIDE":"subdir/mockprogram_inout.txt"} )
-      expected_output = b"some output\n"
+      expected_output = "some output\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 11)
-      remainingMockFileStr = open("subdir/mockprogram_inout.txt", 'r').read()
+      with open("subdir/mockprogram_inout.txt", 'r') as fileHandle:
+        remainingMockFileStr = fileHandle.read()
       self.assertEqual(remainingMockFileStr, "")
     finally:
       os.chdir(testBaseDir)
@@ -208,19 +217,21 @@ class test_mockprogram(unittest.TestCase):
   def test_call_1_multiline_out(self):
     testDir = createAndMoveIntoTestDir("call_1_multiline_out")
     try:
-      open('.mockprogram_inout.txt', 'w').write(
-        "MOCK_PROGRAM_INPUT: some input\n" \
-        "MOCK_PROGRAM_RETURN: 11\n" \
-        "MOCK_PROGRAM_OUTPUT: some output\n" \
-        "another line of output\n" \
-        "last output line\n"
-        )
+      with open('.mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: some input\n" \
+          "MOCK_PROGRAM_RETURN: 11\n" \
+          "MOCK_PROGRAM_OUTPUT: some output\n" \
+          "another line of output\n" \
+          "last output line\n"
+          )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = b"some output\nanother line of output\nlast output line\n"
+      expected_output = "some output\nanother line of output\nlast output line\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 11)
-      remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
+      with open('.mockprogram_inout.txt', 'r') as fileHandle:
+        remainingMockFileStr = fileHandle.read()
       self.assertEqual(remainingMockFileStr, "")
     finally:
       os.chdir(testBaseDir)
@@ -229,25 +240,27 @@ class test_mockprogram(unittest.TestCase):
   def test_call_2(self):
     testDir = createAndMoveIntoTestDir("call_2")
     try:
-      open('.mockprogram_inout.txt', 'w').write(
-        "MOCK_PROGRAM_INPUT: some input 1\n" \
-        "MOCK_PROGRAM_RETURN: 13\n" \
-        "MOCK_PROGRAM_OUTPUT: some output 1\n" \
-        "MOCK_PROGRAM_INPUT: some input 2\n" \
-        "MOCK_PROGRAM_RETURN: 15\n" \
-        "MOCK_PROGRAM_OUTPUT: some output 2\n" \
-        )
+      with open('.mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: some input 1\n" \
+          "MOCK_PROGRAM_RETURN: 13\n" \
+          "MOCK_PROGRAM_OUTPUT: some output 1\n" \
+          "MOCK_PROGRAM_INPUT: some input 2\n" \
+          "MOCK_PROGRAM_RETURN: 15\n" \
+          "MOCK_PROGRAM_OUTPUT: some output 2\n" \
+          )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 1", rtnOutput=True)
-      expected_output = b"some output 1\n"
+      expected_output = "some output 1\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 13)
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 2", rtnOutput=True)
-      expected_output = b"some output 2\n"
+      expected_output = "some output 2\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 15)
-      remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
+      with open('.mockprogram_inout.txt', 'r') as fileHandle:
+        remainingMockFileStr = fileHandle.read()
       self.assertEqual(remainingMockFileStr, "")
     finally:
       os.chdir(testBaseDir)
@@ -257,27 +270,29 @@ class test_mockprogram(unittest.TestCase):
     testDir = createAndMoveIntoTestDir("call_2")
     try:
       os.mkdir("subdir")
-      open('subdir/mockprogram_inout.txt', 'w').write(
-        "MOCK_PROGRAM_INPUT: some input 1\n" \
-        "MOCK_PROGRAM_RETURN: 13\n" \
-        "MOCK_PROGRAM_OUTPUT: some output 1\n" \
-        "MOCK_PROGRAM_INPUT: some input 2\n" \
-        "MOCK_PROGRAM_RETURN: 15\n" \
-        "MOCK_PROGRAM_OUTPUT: some output 2\n" \
-        )
+      with open('subdir/mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: some input 1\n" \
+          "MOCK_PROGRAM_RETURN: 13\n" \
+          "MOCK_PROGRAM_OUTPUT: some output 1\n" \
+          "MOCK_PROGRAM_INPUT: some input 2\n" \
+          "MOCK_PROGRAM_RETURN: 15\n" \
+          "MOCK_PROGRAM_OUTPUT: some output 2\n" \
+          )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 1", rtnOutput=True,
         extraEnv={"MOCKPROGRAM_INOUT_FILE_OVERRIDE":"subdir/mockprogram_inout.txt"} )
-      expected_output = b"some output 1\n"
+      expected_output = "some output 1\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 13)
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 2", rtnOutput=True,
         extraEnv={"MOCKPROGRAM_INOUT_FILE_OVERRIDE":"subdir/mockprogram_inout.txt"} )
-      expected_output = b"some output 2\n"
+      expected_output = "some output 2\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 15)
-      remainingMockFileStr = open('subdir/mockprogram_inout.txt', 'r').read()
+      with open('subdir/mockprogram_inout.txt', 'r') as fileHandle:
+        remainingMockFileStr = fileHandle.read()
       self.assertEqual(remainingMockFileStr, "")
     finally:
       os.chdir(testBaseDir)
@@ -286,27 +301,29 @@ class test_mockprogram(unittest.TestCase):
   def test_call_2_multiline_output_1(self):
     testDir = createAndMoveIntoTestDir("call_2_multiline_output_1")
     try:
-      open('.mockprogram_inout.txt', 'w').write(
-        "MOCK_PROGRAM_INPUT: some input 1\n" \
-        "MOCK_PROGRAM_RETURN: 13\n" \
-        "MOCK_PROGRAM_OUTPUT: some output 1\n" \
-        "another line of output\n" \
-        "last output line\n"
-        "MOCK_PROGRAM_INPUT: some input 2\n" \
-        "MOCK_PROGRAM_RETURN: 15\n" \
-        "MOCK_PROGRAM_OUTPUT: some output 2\n" \
-        )
+      with open('.mockprogram_inout.txt', 'w') as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: some input 1\n" \
+          "MOCK_PROGRAM_RETURN: 13\n" \
+          "MOCK_PROGRAM_OUTPUT: some output 1\n" \
+          "another line of ouput\n" \
+          "last ouptut line\n"
+          "MOCK_PROGRAM_INPUT: some input 2\n" \
+          "MOCK_PROGRAM_RETURN: 15\n" \
+          "MOCK_PROGRAM_OUTPUT: some output 2\n" \
+          )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 1", rtnOutput=True)
-      expected_output = b"some output 1\nanother line of output\nlast output line\n"
+      expected_output = "some output 1\nanother line of output\nlast output line\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 13)
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 2", rtnOutput=True)
-      expected_output = b"some output 2\n"
+      expected_output = "some output 2\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 15)
-      remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
+      with open('.mockprogram_inout.txt', 'r') as fileHandle:
+        remainingMockFileStr = fileHandle.read()
       self.assertEqual(remainingMockFileStr, "")
     finally:
       os.chdir(testBaseDir)

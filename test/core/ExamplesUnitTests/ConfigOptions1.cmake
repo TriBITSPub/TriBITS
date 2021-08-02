@@ -1,1 +1,1 @@
-MESSAGE("-- Included ConfigOptions1.cmake")
+message("-- Included ConfigOptions1.cmake")

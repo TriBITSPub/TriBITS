@@ -38,10 +38,10 @@
 # @HEADER
 
 
-ASSERT_DEFINED(${PACKAGE_NAME}_ENABLE_MPI)
+assert_defined(${PACKAGE_NAME}_ENABLE_MPI)
 
 
-TRIBITS_ADD_ADVANCED_TEST( TestingFunctionMacro_UnitTests
+tribits_add_advanced_test( TestingFunctionMacro_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -49,12 +49,12 @@ TRIBITS_ADD_ADVANCED_TEST( TestingFunctionMacro_UnitTests
       -D${PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -P "${CMAKE_CURRENT_SOURCE_DIR}/TestingFunctionMacro_UnitTests.cmake"
     PASS_REGULAR_EXPRESSION_ALL
-      "Final UnitTests Result: num_run = 527"
+      "Final UnitTests Result: num_run = 675"
       "Final UnitTests Result: PASSED"
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( CompilerOptions_UnitTests
+tribits_add_advanced_test( CompilerOptions_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -67,7 +67,7 @@ TRIBITS_ADD_ADVANCED_TEST( CompilerOptions_UnitTests
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsProcessPackagesAndDirsLists_UnitTests
+tribits_add_advanced_test( TribitsProcessPackagesAndDirsLists_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -75,12 +75,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsProcessPackagesAndDirsLists_UnitTests
       -D${PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsProcessPackagesAndDirsLists_UnitTests.cmake"
     PASS_REGULAR_EXPRESSION_ALL
-      "Final UnitTests Result: num_run = 31"
+      "Final UnitTests Result: num_run = 34"
       "Final UnitTests Result: PASSED"
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsProcessExtraRepositoriesList_UnitTests
+tribits_add_advanced_test( TribitsProcessExtraRepositoriesList_UnitTests
   OVERALL_WORKING_DIRECTORY  TEST_NAME
   TEST_0  CMND  ${CMAKE_COMMAND}
     ARGS
@@ -93,7 +93,21 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsProcessExtraRepositoriesList_UnitTests
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsAdjustPackageEnables_UnitTests
+tribits_add_advanced_test( TribitsReadAllProjectDepsFilesCreateDepsGraph_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS
+      -DPROJECT_NAME=${PROJECT_NAME}
+      -D${PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+      -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraph_UnitTests.cmake"
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final UnitTests Result: num_run = 127"
+      "Final UnitTests Result: PASSED"
+  )
+
+
+tribits_add_advanced_test( TribitsAdjustPackageEnables_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -102,12 +116,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsAdjustPackageEnables_UnitTests
       -DCMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_SOURCE_DIR}
       -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsAdjustPackageEnables_UnitTests.cmake"
     PASS_REGULAR_EXPRESSION_ALL
-      "Final UnitTests Result: num_run = 203"
+      "Final UnitTests Result: num_run = 97"
       "Final UnitTests Result: PASSED"
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsWriteClientExportFiles_UnitTests
+tribits_add_advanced_test( TribitsWriteClientExportFiles_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -122,7 +136,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsWriteClientExportFiles_UnitTests
   )
 
 
-ADD_SUBDIRECTORY(CTestScriptsUnitTests)
-ADD_SUBDIRECTORY(DependencyUnitTests)
-ADD_SUBDIRECTORY(ProcessEnabledTpls)
-ADD_SUBDIRECTORY(ExamplesUnitTests)
+add_subdirectory(tribits_get_version_date)
+add_subdirectory(CTestScriptsUnitTests)
+add_subdirectory(DependencyUnitTests)
+add_subdirectory(ProcessEnabledTpls)
+add_subdirectory(ExamplesUnitTests)

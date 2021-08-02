@@ -119,7 +119,7 @@ g_gitClean = "IT: git clean -xdf; 0; 'clean passed'\n"
 
 g_rsync = "IT: rsync -cav --delete --exclude=.* dummy/orig-dir/ dummy/dest-dir/; 0; 'sync passed'\n"
 
-g_gitLogSha1 = "IT: git log -1 --pretty=format:'.h'; 0; 'abc123'\n"
+g_gitLogSha1 = "IT: git log -1 --pretty=format:'.h' -- [.]; 0; 'abc123'\n"
 
 g_gitAdd = "IT: git add \.; 0; 'added some files'\n"
 
@@ -142,6 +142,20 @@ class test_snapshot_dir(unittest.TestCase):
         "Script: snapshot-dir\.py",
         "--orig-dir='dummy/orig/dir/'",
         "--dest-dir='dummy/dest/dir/'"
+        ]
+      )
+
+
+  def test_show_defaults_with_exclude(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--show-defaults", "--exclude", "foo", "bar*", "baz/"],
+      [],
+      [
+        "Script: snapshot-dir\.py",
+        "--orig-dir='dummy/orig/dir/'",
+        "--dest-dir='dummy/dest/dir/'",
+        "--exclude foo bar\* baz/"
         ]
       )
 
@@ -185,6 +199,37 @@ class test_snapshot_dir(unittest.TestCase):
         "Origin repo remote tracking branch: 'remotename/remotebranch'",
         "Origin repo remote repo URL: 'remotename = some-url-location'",
         "one commit msg"
+        ]
+     )
+
+  def test_snapshot_default_with_exclude(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--orig-dir=dummy/orig-dir/", "--dest-dir=dummy/dest-dir/",
+       "--exclude", "foo", "bar*", "baz/"],
+      [
+        g_gitDiffHead,
+        g_gitDiffHead,
+        g_gitRevParse,
+        g_gitRemote,
+        g_gitLog,
+        g_rsync,
+        g_gitLogSha1,
+        g_gitAdd,
+        g_gitCommit,
+        ],
+      [
+        "Script: snapshot-dir\.py",
+        "--orig-dir='dummy/orig-dir/'",
+        "--dest-dir='dummy/dest-dir/'",
+        "origin remote name = 'remotename'",
+        "origin remote branch = 'remotebranch'",
+        "origin remote URL = 'some-url-location'",
+        "Automatic snapshot commit from orig-dir at abc123",
+        "Origin repo remote tracking branch: 'remotename/remotebranch'",
+        "Origin repo remote repo URL: 'remotename = some-url-location'",
+        "one commit msg",
+        "Excluding files/directories/globs: foo bar\* baz/"
         ]
      )
 

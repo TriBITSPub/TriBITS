@@ -37,4 +37,4 @@
 # ************************************************************************
 # @HEADER
 
-MESSAGE("PASS_IN_FROM_ENV_VAR: $ENV{PASS_IN_FROM_ENV_VAR}")
+message("PASS_IN_FROM_ENV_VAR: $ENV{PASS_IN_FROM_ENV_VAR}")

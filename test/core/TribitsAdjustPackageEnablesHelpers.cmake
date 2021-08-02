@@ -37,18 +37,8 @@
 # ************************************************************************
 # @HEADER
 
-MESSAGE("The outer project: PROJECT_NAME = ${PROJECT_NAME}")
-MESSAGE("The outer project: ${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
-
-SET( CMAKE_MODULE_PATH
-  "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
-  "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
-  )
-
-INCLUDE(TribitsAdjustPackageEnables)
-INCLUDE(TribitsProcessTplsLists)
-INCLUDE(UnitTestHelpers)
-INCLUDE(GlobalSet)
+include("${CMAKE_CURRENT_LIST_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraphHelpers.cmake")
+include(TribitsAdjustPackageEnables)
 
 
 #####################################################################
@@ -58,69 +48,22 @@ INCLUDE(GlobalSet)
 #####################################################################
 
 
-MACRO(UNITTEST_HELPER_READ_AND_PROESS_PACKAGES)
+macro(unittest_helper_read_and_process_packages)
 
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${PROJECT_NAME} ".")
-  SET(${PROJECT_NAME}_TPLS_FILE "dummy")
-  TRIBITS_PROCESS_TPLS_LISTS(${PROJECT_NAME} ".")
-  TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  SET(${EXTRA_REPO_NAME}_TPLS_FILE "dummy")
-  TRIBITS_PROCESS_TPLS_LISTS(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()
-  SET_DEFAULT(${PROJECT_NAME}_ENABLE_ALL_PACKAGES OFF)
-  SET_DEFAULT(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
-  SET(DO_PROCESS_MPI_ENABLES ON) # Should not be needed but CMake is not working!
-  FOREACH(SE_PKG ${${PROJECT_NAME}_SE_PACKAGES})
-    GLOBAL_SET(${SE_PKG}_FULL_ENABLED_DEP_PACKAGES)
-  ENDFOREACH()
-  TRIBITS_ADJUST_PACKAGE_ENABLES(TRUE)
-  TRIBITS_SET_UP_ENABLED_ONLY_DEPENDENCIES()
+  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
+  set(${PROJECT_NAME}_TPLS_FILE "dummy")
+  tribits_process_tpls_lists(${PROJECT_NAME} ".")
+  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  set(${EXTRA_REPO_NAME}_TPLS_FILE "dummy")
+  tribits_process_tpls_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
+  tribits_read_deps_files_create_deps_graph()
+  set_default(${PROJECT_NAME}_ENABLE_ALL_PACKAGES OFF)
+  set_default(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
+  set(DO_PROCESS_MPI_ENABLES ON) # Should not be needed but CMake is not working!
+  foreach(SE_PKG ${${PROJECT_NAME}_SE_PACKAGES})
+    global_set(${SE_PKG}_FULL_ENABLED_DEP_PACKAGES)
+  endforeach()
+  tribits_adjust_package_enables(TRUE)
+  tribits_set_up_enabled_only_dependencies()
 
-ENDMACRO()
-
-
-#####################################################################
-#
-# Set common/base options
-#
-#####################################################################
-
-SET(PROJECT_SOURCE_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/examples/MockTrilinos")
-PRINT_VAR(PROJECT_SOURCE_DIR)
-SET(REPOSITORY_DIR ".")
-PRINT_VAR(REPOSITORY_DIR)
-
-# Before we change the project name, we have to set the TRIBITS_DIR so that it
-# will point in the right place.  There is TriBITS code being called that must
-# have this variable set!
-
-SET(Trilinos_TRIBITS_DIR ${${PROJECT_NAME}_TRIBITS_DIR})
-
-# Set the mock project name last to override the outer project
-SET(PROJECT_NAME "Trilinos")
-MESSAGE("The inner test project: PROJECT_NAME = ${PROJECT_NAME}")
-MESSAGE("The inner tets project: ${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
-
-SET( Trilinos_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
-  Teuchos             packages/teuchos                PT
-  RTOp                packages/rtop                   PT
-  )
-
-SET(Trilinos_TPLS_FINDMODS_CLASSIFICATIONS
-  MPI            cmake/TPLs/    PT
-  BLAS           cmake/TPLs/    PT
-  LAPACK         cmake/TPLs/    PT
-  Boost          cmake/TPLs/    ST
-  )
-
-SET(EXTRA_REPO_NAME extraRepoTwoPackages)
-SET(EXTRA_REPO_DIR extraRepoTwoPackages)
-
-SET(REPOSITORY_NAME ${EXTRA_REPO_NAME})
-INCLUDE(${PROJECT_SOURCE_DIR}/${EXTRA_REPO_NAME}/PackagesList.cmake)
-
-SET(${EXTRA_REPO_NAME}_TPLS_FINDMODS_CLASSIFICATIONS)
-
-SET(${PROJECT_NAME}_ALL_REPOSITORIES "." "${EXTRA_REPO_NAME}")
-
-SET( ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES ON )
+endmacro()

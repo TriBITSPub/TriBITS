@@ -37,19 +37,19 @@
 # ************************************************************************
 # @HEADER
 
-MESSAGE("PROJECT_NAME = ${PROJECT_NAME}")
-MESSAGE("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
+message("PROJECT_NAME = ${PROJECT_NAME}")
+message("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 
-SET( CMAKE_MODULE_PATH
+set( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
-INCLUDE(MessageWrapper)
-INCLUDE(TribitsSetupBasicCompileLinkFlags)
-INCLUDE(TribitsPackageSetupCompilerFlags)
-INCLUDE(UnitTestHelpers)
-INCLUDE(GlobalSet)
+include(MessageWrapper)
+include(TribitsSetupBasicCompileLinkFlags)
+include(TribitsPackageSetupCompilerFlags)
+include(UnitTestHelpers)
+include(GlobalSet)
 
 
 #####################################################################
@@ -70,182 +70,173 @@ INCLUDE(GlobalSet)
 #
 
 
-MACRO(TRIBITS_SET_ALL_COMPILER_ID ID)
-  SET(CMAKE_C_COMPILER_ID ${ID})
-  SET(CMAKE_CXX_COMPILER_ID ${ID})
-  SET(CMAKE_Fortran_COMPILER_ID ${ID})
-ENDMACRO()
+macro(tribits_set_all_compiler_id ID)
+  set(CMAKE_C_COMPILER_ID ${ID})
+  set(CMAKE_CXX_COMPILER_ID ${ID})
+  set(CMAKE_Fortran_COMPILER_ID ${ID})
+endmacro()
 
 
-MACRO(TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS)
-  IF (NOT PACKAGE_NAME)
-    SET(PACKAGE_NAME "DummyPackage")
-  ENDIF()
-  TRIBITS_SETUP_BASIC_COMPILE_LINK_FLAGS()
-  TRIBITS_SETUP_COMPILER_FLAGS(${PACKAGE_NAME})
-ENDMACRO()
+macro(tribits_compile_options_common_actions)
+  if (NOT PACKAGE_NAME)
+    set(PACKAGE_NAME "DummyPackage")
+  endif()
+  tribits_setup_basic_compile_link_flags()
+  tribits_setup_compiler_flags(${PACKAGE_NAME})
+endmacro()
 
 
-FUNCTION(UNITEST_GCC_BASE_OPTIONS)
+function(unitest_gcc_base_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC base compiler options")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC base compiler options")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
+  body_unitest_gcc_base_options()
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+endfunction()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+macro(body_unitest_gcc_base_options)
+
+  tribits_set_all_compiler_id(GNU)
+
+  tribits_compile_options_common_actions()
+
+  unittest_compare_const( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
-
-ENDFUNCTION()
-
-
-FUNCTION(UNITEST_GCC_STD_OVERRIDE_OPTIONS)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC compiler options with override of c standard to c34")
-  MESSAGE("***\n")
-
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(${PROJECT_NAME}_C_Standard "c34" )
-
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
-
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c34" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
-
-ENDFUNCTION()
-
-
-FUNCTION(UNITEST_GCC_ENABLE_CXX11_OPTIONS)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC with C++11 enabled")
-  MESSAGE("***\n")
-
-  SET(${PROJECT_NAME}_ENABLE_CXX11 ON)
-
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
-
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c99" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
+  unittest_compare_const( CMAKE_CXX_FLAGS
     " -pedantic -Wall -Wno-long-long -Wwrite-strings" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endmacro()
 
 
-FUNCTION(UNITEST_GCC_PROJECT_DEFINED_STRONG_C_OPTIONS)
+function(unitest_gcc_std_override_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing package defined strong C compiler options")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC compiler options with override of c standard to c34")
+  message("***\n")
 
-  MULTILINE_SET(DummyProject_COMMON_STRONG_COMPILE_WARNING_FLAGS
+  tribits_set_all_compiler_id(GNU)
+  set(${PROJECT_NAME}_C_Standard "c34" )
+
+  tribits_compile_options_common_actions()
+
+  unittest_compare_const( CMAKE_C_FLAGS
+    " -pedantic -Wall -Wno-long-long -std=c34" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+
+endfunction()
+
+
+function(unitest_gcc_enable_cxx11_options)
+
+  message("\n***")
+  message("*** Testing GCC with C++11 enabled")
+  message("***\n")
+
+  # This option has been removed.  Test that it has no effect.
+  set(${PROJECT_NAME}_ENABLE_CXX11 ON)
+
+  body_unitest_gcc_base_options()
+
+endfunction()
+
+
+function(unitest_gcc_project_defined_strong_c_options)
+
+  message("\n***")
+  message("*** Testing package defined strong C compiler options")
+  message("***\n")
+
+  multiline_set(DummyProject_COMMON_STRONG_COMPILE_WARNING_FLAGS
     " -common-opt1"
     " -common-opt2"
     )
 
-  MULTILINE_SET(DummyProject_C_STRONG_COMPILE_WARNING_FLAGS
+  multiline_set(DummyProject_C_STRONG_COMPILE_WARNING_FLAGS
     ${DummyProject_COMMON_STRONG_COMPILE_WARNING_FLAGS}
     " -std=cverygood"
     )
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
+  tribits_set_all_compiler_id(GNU)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     " -common-opt1 -common-opt2 -std=cverygood" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -common-opt1 -common-opt2 -std=c++98 -Wwrite-strings" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -common-opt1 -common-opt2 -Wwrite-strings" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_PROJECT_DEFINED_STRONG_CXX_OPTIONS)
+function(unitest_gcc_project_defined_strong_cxx_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing package defined strong CXX compiler options")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing package defined strong CXX compiler options")
+  message("***\n")
 
-  MULTILINE_SET(DummyProject_CXX_STRONG_COMPILE_WARNING_FLAGS
-    " -std=c++98" # C++98 standard code
+  multiline_set(DummyProject_CXX_STRONG_COMPILE_WARNING_FLAGS
     " -pedantic" # Adds more static checking to remove non-ANSI GNU extensions
     " -Wall" # Enable a bunch of default warnings
     " -Wno-long-long" # Allow long long int since it is used by MPI, SWIG, etc.
   )
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
+  tribits_set_all_compiler_id(GNU)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -std=c++98 -pedantic -Wall -Wno-long-long" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -pedantic -Wall -Wno-long-long" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_PROJECT_DEFINED_STRONG_C_CXX_OPTIONS)
+function(unitest_gcc_project_defined_strong_c_cxx_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing package defined strong C and CXX compiler options")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing package defined strong C and CXX compiler options")
+  message("***\n")
 
-  MULTILINE_SET(DummyProject_C_STRONG_COMPILE_WARNING_FLAGS
+  multiline_set(DummyProject_C_STRONG_COMPILE_WARNING_FLAGS
     "-std=c99" # Check for C99
     " -pedantic" # Adds more static checking to remove non-ANSI GNU extensions
     " -Wall" # Enable a bunch of default warnings
     " -Wno-long-long" # Allow long long int since it is used by MPI, SWIG, etc.
   )
 
-  MULTILINE_SET(DummyProject_CXX_STRONG_COMPILE_WARNING_FLAGS
-    "-std=c++98" # C++98 standard code
+  multiline_set(DummyProject_CXX_STRONG_COMPILE_WARNING_FLAGS
     " -pedantic" # Adds more static checking to remove non-ANSI GNU extensions
     " -Wall" # Enable a bunch of default warnings
     " -Wno-long-long" # Allow long long int since it is used by MPI, SWIG, etc.
@@ -253,554 +244,554 @@ FUNCTION(UNITEST_GCC_PROJECT_DEFINED_STRONG_C_CXX_OPTIONS)
   )
 
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
+  tribits_set_all_compiler_id(GNU)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     "-std=c99 -pedantic -Wall -Wno-long-long" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    "-std=c++98 -pedantic -Wall -Wno-long-long -Wwrite-strings" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_WITH_SHADOW_OPTIONS)
+function(unitest_gcc_with_shadow_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC base compiler options with shadow warnings")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC base compiler options with shadow warnings")
+  message("***\n")
 
-  SET(CMAKE_BUILD_TYPE DEBUG)
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(PARSE_ENABLE_SHADOWING_WARNINGS TRUE)
+  set(CMAKE_BUILD_TYPE DEBUG)
+  tribits_set_all_compiler_id(GNU)
+  set(PARSE_ENABLE_SHADOWING_WARNINGS TRUE)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings -Wshadow -Woverloaded-virtual" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings -Wshadow -Woverloaded-virtual" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_GLOBAL_ENABLE_SHADOW_OPTIONS)
+function(unitest_gcc_global_enable_shadow_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC base compiler with global enable of shadow warnings")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC base compiler with global enable of shadow warnings")
+  message("***\n")
 
-  SET(CMAKE_BUILD_TYPE DEBUG)
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(${PROJECT_NAME}_ENABLE_SHADOW_WARNINGS ON)
-  SET(PARSE_ENABLE_SHADOWING_WARNINGS OFF)
+  set(CMAKE_BUILD_TYPE DEBUG)
+  tribits_set_all_compiler_id(GNU)
+  set(${PROJECT_NAME}_ENABLE_SHADOW_WARNINGS ON)
+  set(PARSE_ENABLE_SHADOWING_WARNINGS OFF)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings -Wshadow -Woverloaded-virtual" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings -Wshadow -Woverloaded-virtual" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_GLOBAL_DISABLE_SHADOW_OPTIONS)
+function(unitest_gcc_global_disable_shadow_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC base compiler with global disable of shadow warnings")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC base compiler with global disable of shadow warnings")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(${PROJECT_NAME}_ENABLE_SHADOW_WARNINGS OFF)
-  SET(PARSE_ENABLE_SHADOWING_WARNINGS ON)
+  tribits_set_all_compiler_id(GNU)
+  set(${PROJECT_NAME}_ENABLE_SHADOW_WARNINGS OFF)
+  set(PARSE_ENABLE_SHADOWING_WARNINGS ON)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_WITH_COVERAGE_OPTIONS)
+function(unitest_gcc_with_coverage_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC base compiler options with coverage flags")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC base compiler options with coverage flags")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING ON)
+  tribits_set_all_compiler_id(GNU)
+  set(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING ON)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99 -fprofile-arcs -ftest-coverage" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings -fprofile-arcs -ftest-coverage" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings -fprofile-arcs -ftest-coverage" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS
     "-fprofile-arcs -ftest-coverage" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_WITH_CHECKED_STL_OPTIONS)
+function(unitest_gcc_with_checked_stl_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC base compiler options with checked STL enables")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC base compiler options with checked STL enables")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(${PROJECT_NAME}_ENABLE_CHECKED_STL ON)
+  tribits_set_all_compiler_id(GNU)
+  set(${PROJECT_NAME}_ENABLE_CHECKED_STL ON)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99  -D_GLIBCXX_DEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings  -D_GLIBCXX_DEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS " -D_GLIBCXX_DEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings  -D_GLIBCXX_DEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS " -D_GLIBCXX_DEBUG" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_WITH_CLEANED_OPTIONS)
+function(unitest_gcc_with_cleaned_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC base compiler options warnings as errors")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC base compiler options warnings as errors")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(PARSE_CLEANED TRUE)
+  tribits_set_all_compiler_id(GNU)
+  set(PARSE_CLEANED TRUE)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -std=c99" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -Wwrite-strings" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
-
-
-FUNCTION(UNITEST_GCC_NO_STRONG_WARNINGS_OPTIONS)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC without strong warnings")
-  MESSAGE("***\n")
-
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(${PROJECT_NAME}_ENABLE_STRONG_C_COMPILE_WARNINGS FALSE)
-  SET(${PROJECT_NAME}_ENABLE_STRONG_CXX_COMPILE_WARNINGS FALSE)
-  SET(${PROJECT_NAME}_ENABLE_STRONG_Fortran_COMPILE_WARNINGS FALSE)
-
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
-
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
-
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_NO_PACKAGE_STRONG_WARNINGS_OPTIONS)
+function(unitest_gcc_no_strong_warnings_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC without strong warnings for a package")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC without strong warnings")
+  message("***\n")
 
-  SET(PACKAGE_NAME "MyPackage")
+  tribits_set_all_compiler_id(GNU)
+  set(${PROJECT_NAME}_ENABLE_STRONG_C_COMPILE_WARNINGS FALSE)
+  set(${PROJECT_NAME}_ENABLE_STRONG_CXX_COMPILE_WARNINGS FALSE)
+  set(${PROJECT_NAME}_ENABLE_STRONG_Fortran_COMPILE_WARNINGS FALSE)
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(${PACKAGE_NAME}_DISABLE_STRONG_WARNINGS TRUE)
+  tribits_compile_options_common_actions()
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  unittest_compare_const( CMAKE_C_FLAGS "" )
+  unittest_compare_const( CMAKE_CXX_FLAGS "" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
-
-ENDFUNCTION()
-
-
-FUNCTION(UNITEST_GCC_PACKAGE_COMPILER_FLAGS)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Testing setting package-specific compiler options")
-  MESSAGE("***\n")
-
-  SET(PACKAGE_NAME "MyPackage")
-
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(${PACKAGE_NAME}_DISABLE_STRONG_WARNINGS TRUE)
-
-  SET(${PACKAGE_NAME}_C_FLAGS "--pkg-c-flags1 --pkg-c-flags2")
-  SET(${PACKAGE_NAME}_CXX_FLAGS "--pkg-cxx-flags1 --pkg-cxx-flags2")
-  SET(${PACKAGE_NAME}_Fortran_FLAGS "--pkg-f-flags1 --pkg-f-flags2")
-
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
-
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS "--pkg-c-flags1 --pkg-c-flags2" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS "--pkg-cxx-flags1 --pkg-cxx-flags2" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "--pkg-f-flags1 --pkg-f-flags2" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
-
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_GLOBAL_AND_PACKAGE_COMPILER_FLAGS)
+function(unitest_gcc_no_package_strong_warnings_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing setting global and package-specific compiler options")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC without strong warnings for a package")
+  message("***\n")
 
-  SET(PACKAGE_NAME "MyPackage")
+  set(PACKAGE_NAME "MyPackage")
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(${PACKAGE_NAME}_DISABLE_STRONG_WARNINGS TRUE)
+  tribits_set_all_compiler_id(GNU)
+  set(${PACKAGE_NAME}_DISABLE_STRONG_WARNINGS TRUE)
 
-  SET(CMAKE_C_FLAGS "--global-c-flags1 --global-c-flags2")
-  SET(CMAKE_CXX_FLAGS "--global-cxx-flags1 --global-cxx-flags2")
-  SET(CMAKE_Fortran_FLAGS "--global-f-flags1 --global-f-flags2")
-  SET(${PACKAGE_NAME}_C_FLAGS "--pkg-c-flags1 --pkg-c-flags2")
-  SET(${PACKAGE_NAME}_CXX_FLAGS "--pkg-cxx-flags1 --pkg-cxx-flags2")
-  SET(${PACKAGE_NAME}_Fortran_FLAGS "--pkg-f-flags1 --pkg-f-flags2")
+  tribits_compile_options_common_actions()
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  unittest_compare_const( CMAKE_C_FLAGS "" )
+  unittest_compare_const( CMAKE_CXX_FLAGS "" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+endfunction()
+
+
+function(unitest_gcc_package_compiler_flags)
+
+  message("\n***")
+  message("*** Testing setting package-specific compiler options")
+  message("***\n")
+
+  set(PACKAGE_NAME "MyPackage")
+
+  tribits_set_all_compiler_id(GNU)
+  set(${PACKAGE_NAME}_DISABLE_STRONG_WARNINGS TRUE)
+
+  set(${PACKAGE_NAME}_C_FLAGS "--pkg-c-flags1 --pkg-c-flags2")
+  set(${PACKAGE_NAME}_CXX_FLAGS "--pkg-cxx-flags1 --pkg-cxx-flags2")
+  set(${PACKAGE_NAME}_Fortran_FLAGS "--pkg-f-flags1 --pkg-f-flags2")
+
+  tribits_compile_options_common_actions()
+
+  unittest_compare_const( CMAKE_C_FLAGS "--pkg-c-flags1 --pkg-c-flags2" )
+  unittest_compare_const( CMAKE_CXX_FLAGS "--pkg-cxx-flags1 --pkg-cxx-flags2" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "--pkg-f-flags1 --pkg-f-flags2" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+
+endfunction()
+
+
+function(unitest_gcc_global_and_package_compiler_flags)
+
+  message("\n***")
+  message("*** Testing setting global and package-specific compiler options")
+  message("***\n")
+
+  set(PACKAGE_NAME "MyPackage")
+
+  tribits_set_all_compiler_id(GNU)
+  set(${PACKAGE_NAME}_DISABLE_STRONG_WARNINGS TRUE)
+
+  set(CMAKE_C_FLAGS "--global-c-flags1 --global-c-flags2")
+  set(CMAKE_CXX_FLAGS "--global-cxx-flags1 --global-cxx-flags2")
+  set(CMAKE_Fortran_FLAGS "--global-f-flags1 --global-f-flags2")
+  set(${PACKAGE_NAME}_C_FLAGS "--pkg-c-flags1 --pkg-c-flags2")
+  set(${PACKAGE_NAME}_CXX_FLAGS "--pkg-cxx-flags1 --pkg-cxx-flags2")
+  set(${PACKAGE_NAME}_Fortran_FLAGS "--pkg-f-flags1 --pkg-f-flags2")
+
+  tribits_compile_options_common_actions()
+
+  unittest_compare_const( CMAKE_C_FLAGS
     "  --global-c-flags1 --global-c-flags2 --pkg-c-flags1 --pkg-c-flags2" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
+  unittest_compare_const( CMAKE_CXX_FLAGS
     "  --global-cxx-flags1 --global-cxx-flags2 --pkg-cxx-flags1 --pkg-cxx-flags2" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS
+  unittest_compare_const( CMAKE_Fortran_FLAGS
     "  --global-f-flags1 --global-f-flags2 --pkg-f-flags1 --pkg-f-flags2" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
-
-
+endfunction()
 
 
 
 
-FUNCTION(UNITEST_GCC_WITH_SHADOW_CLEANED_CHECKED_STL_COVERAGE_OPTIONS)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC base compiler options with shadow warnings,"
+
+function(unitest_gcc_with_shadow_cleaned_checked_stl_coverage_options)
+
+  message("\n***")
+  message("*** Testing GCC base compiler options with shadow warnings,"
     " warnings as errors, checked stl, and coverage tests")
-  MESSAGE("***\n")
+  message("***\n")
 
-  SET(CMAKE_BUILD_TYPE DEBUG)
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(PARSE_ENABLE_SHADOWING_WARNINGS TRUE)
-  SET(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING ON)
-  SET(${PROJECT_NAME}_ENABLE_CHECKED_STL ON)
-  SET(PARSE_CLEANED TRUE)
+  set(CMAKE_BUILD_TYPE DEBUG)
+  tribits_set_all_compiler_id(GNU)
+  set(PARSE_ENABLE_SHADOWING_WARNINGS TRUE)
+  set(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING ON)
+  set(${PROJECT_NAME}_ENABLE_CHECKED_STL ON)
+  set(PARSE_CLEANED TRUE)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -std=c99 -fprofile-arcs -ftest-coverage -D_GLIBCXX_DEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings -Wshadow -Woverloaded-virtual -fprofile-arcs -ftest-coverage -D_GLIBCXX_DEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "-fprofile-arcs -ftest-coverage -D_GLIBCXX_DEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    "--warnings_as_errors_placeholder  -pedantic -Wall -Wno-long-long -Wwrite-strings -Wshadow -Woverloaded-virtual -fprofile-arcs -ftest-coverage -D_GLIBCXX_DEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "-fprofile-arcs -ftest-coverage -D_GLIBCXX_DEBUG" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_ADDITIONAL_USER_OPTIONS)
+function(unitest_gcc_additional_user_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC base compiler options with user amended options")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC base compiler options with user amended options")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
+  tribits_set_all_compiler_id(GNU)
   # These flags stay at the end of CMAKE_<LANG>_FLAGS
-  SET(CMAKE_C_FLAGS "--additional-user-c-flags")
-  SET(CMAKE_CXX_FLAGS "--additional-user-cxx-flags")
-  SET(CMAKE_Fortran_FLAGS "--additional-user-fortran-flags")
+  set(CMAKE_C_FLAGS "--additional-user-c-flags")
+  set(CMAKE_CXX_FLAGS "--additional-user-cxx-flags")
+  set(CMAKE_Fortran_FLAGS "--additional-user-fortran-flags")
   # These flags don't stay in CMAKE_<LANG>_FLAGS_<BUILDTYPE>
-  SET(CMAKE_C_FLAGS_DEBUG "--additional-user-c-flags-dbg")
-  SET(CMAKE_CXX_FLAGS_DEBUG "--additional-user-cxx-flags-dbg")
-  SET(CMAKE_Fortran_FLAGS_DEBUG "--additional-user-fortran-flags-dbg")
-  SET(CMAKE_C_FLAGS_RELEASE "--additional-user-c-flags-rel")
-  SET(CMAKE_CXX_FLAGS_RELEASE "--additional-user-cxx-flags-rel")
-  SET(CMAKE_Fortran_FLAGS_RELEASE "--additional-user-fortran-flags-rel")
+  set(CMAKE_C_FLAGS_DEBUG "--additional-user-c-flags-dbg")
+  set(CMAKE_CXX_FLAGS_DEBUG "--additional-user-cxx-flags-dbg")
+  set(CMAKE_Fortran_FLAGS_DEBUG "--additional-user-fortran-flags-dbg")
+  set(CMAKE_C_FLAGS_RELEASE "--additional-user-c-flags-rel")
+  set(CMAKE_CXX_FLAGS_RELEASE "--additional-user-cxx-flags-rel")
+  set(CMAKE_Fortran_FLAGS_RELEASE "--additional-user-fortran-flags-rel")
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99   --additional-user-c-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings   --additional-user-cxx-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "  --additional-user-fortran-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings   --additional-user-cxx-flags" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "  --additional-user-fortran-flags" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
-
-
-FUNCTION(UNITEST_GCC_USER_DEBUG_OVERRIDE_OPTIONS)
-
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC with user override of debug options")
-  MESSAGE("***\n")
-
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-
-  SET(CMAKE_C_FLAGS_DEBUG_OVERRIDE "--additional-user-c-flags-dbg")
-  SET(CMAKE_CXX_FLAGS_DEBUG_OVERRIDE "--additional-user-cxx-flags-dbg")
-  SET(CMAKE_Fortran_FLAGS_DEBUG_OVERRIDE "--additional-user-fortran-flags-dbg")
-
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
-
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "--additional-user-c-flags-dbg" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "--additional-user-cxx-flags-dbg" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "--additional-user-fortran-flags-dbg" )
-
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_USER_RELEASE_OVERRIDE_OPTIONS)
+function(unitest_gcc_user_debug_override_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC with user override of release options")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC with user override of debug options")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
+  tribits_set_all_compiler_id(GNU)
 
-  SET(CMAKE_C_FLAGS_RELEASE_OVERRIDE "--additional-user-c-flags-rel")
-  SET(CMAKE_CXX_FLAGS_RELEASE_OVERRIDE "--additional-user-cxx-flags-rel")
-  SET(CMAKE_Fortran_FLAGS_RELEASE_OVERRIDE "--additional-user-fortran-flags-rel")
+  set(CMAKE_C_FLAGS_DEBUG_OVERRIDE "--additional-user-c-flags-dbg")
+  set(CMAKE_CXX_FLAGS_DEBUG_OVERRIDE "--additional-user-cxx-flags-dbg")
+  set(CMAKE_Fortran_FLAGS_DEBUG_OVERRIDE "--additional-user-fortran-flags-dbg")
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "--additional-user-c-flags-rel" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "--additional-user-cxx-flags-rel" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "--additional-user-fortran-flags-rel" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "--additional-user-c-flags-dbg" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "--additional-user-cxx-flags-dbg" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "--additional-user-fortran-flags-dbg" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_USER_OVERRIDE_OPTIONS)
+function(unitest_gcc_user_release_override_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC with fully user overridden options")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC with user override of release options")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
+  tribits_set_all_compiler_id(GNU)
+
+  set(CMAKE_C_FLAGS_RELEASE_OVERRIDE "--additional-user-c-flags-rel")
+  set(CMAKE_CXX_FLAGS_RELEASE_OVERRIDE "--additional-user-cxx-flags-rel")
+  set(CMAKE_Fortran_FLAGS_RELEASE_OVERRIDE "--additional-user-fortran-flags-rel")
+
+  tribits_compile_options_common_actions()
+
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "--additional-user-c-flags-rel" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "--additional-user-cxx-flags-rel" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "--additional-user-fortran-flags-rel" )
+
+endfunction()
+
+
+function(unitest_gcc_user_override_options)
+
+  message("\n***")
+  message("*** Testing GCC with fully user overridden options")
+  message("***\n")
+
+  tribits_set_all_compiler_id(GNU)
   # These flags stay at the end of CMAKE_<LANG>_FLAGS
-  SET(CMAKE_C_FLAGS "--additional-user-c-flags")
-  SET(CMAKE_CXX_FLAGS "--additional-user-cxx-flags")
-  SET(CMAKE_Fortran_FLAGS "--additional-user-fortran-flags")
+  set(CMAKE_C_FLAGS "--additional-user-c-flags")
+  set(CMAKE_CXX_FLAGS "--additional-user-cxx-flags")
+  set(CMAKE_Fortran_FLAGS "--additional-user-fortran-flags")
   # These flags don't stay in CMAKE_<LANG>_FLAGS_<BUILDTYPE>
-  SET(CMAKE_C_FLAGS_DEBUG "--additional-user-c-flags-dbg")
-  SET(CMAKE_CXX_FLAGS_DEBUG "--additional-user-cxx-flags-dbg")
-  SET(CMAKE_Fortran_FLAGS_DEBUG "--additional-user-fortran-flags-dbg")
-  SET(CMAKE_C_FLAGS_RELEASE "--additional-user-c-flags-rel")
-  SET(CMAKE_CXX_FLAGS_RELEASE "--additional-user-cxx-flags-rel")
-  SET(CMAKE_Fortran_FLAGS_RELEASE "--additional-user-fortran-flags-rel")
+  set(CMAKE_C_FLAGS_DEBUG "--additional-user-c-flags-dbg")
+  set(CMAKE_CXX_FLAGS_DEBUG "--additional-user-cxx-flags-dbg")
+  set(CMAKE_Fortran_FLAGS_DEBUG "--additional-user-fortran-flags-dbg")
+  set(CMAKE_C_FLAGS_RELEASE "--additional-user-c-flags-rel")
+  set(CMAKE_CXX_FLAGS_RELEASE "--additional-user-cxx-flags-rel")
+  set(CMAKE_Fortran_FLAGS_RELEASE "--additional-user-fortran-flags-rel")
   # Turn off internal options
-  #SET(CMAKE_BUILD_TYPE NONE) This just affects what CMake uses
-  SET(${PROJECT_NAME}_ENABLE_STRONG_C_COMPILE_WARNINGS OFF)
-  SET(${PROJECT_NAME}_ENABLE_STRONG_CXX_COMPILE_WARNINGS OFF)
+  #set(CMAKE_BUILD_TYPE NONE) This just affects what CMake uses
+  set(${PROJECT_NAME}_ENABLE_STRONG_C_COMPILE_WARNINGS OFF)
+  set(${PROJECT_NAME}_ENABLE_STRONG_CXX_COMPILE_WARNINGS OFF)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     "  --additional-user-c-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
+  unittest_compare_const( CMAKE_CXX_FLAGS
     "  --additional-user-cxx-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "  --additional-user-fortran-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_NONE "" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_NONE "" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_NONE "" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "  --additional-user-fortran-flags" )
+  unittest_compare_const( CMAKE_C_FLAGS_NONE "" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_NONE "" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_NONE "" )
   # Since CMAKE_BUILD_TYPE=NONE, these are not actually used
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_GCC_WITH_DEBUG_SYMBOLES_OPTIONS)
+function(unitest_gcc_with_debug_symboles_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing GCC base compiler options with debut symboles")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing GCC base compiler options with debut symboles")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(GNU)
-  SET(${PROJECT_NAME}_ENABLE_DEBUG_SYMBOLS ON)
+  tribits_set_all_compiler_id(GNU)
+  set(${PROJECT_NAME}_ENABLE_DEBUG_SYMBOLS ON)
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS
+  unittest_compare_const( CMAKE_C_FLAGS
     " -pedantic -Wall -Wno-long-long -std=c99  -g" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS
-    " -pedantic -Wall -Wno-long-long -std=c++98 -Wwrite-strings  -g" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS " -g" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
+  unittest_compare_const( CMAKE_CXX_FLAGS
+    " -pedantic -Wall -Wno-long-long -Wwrite-strings  -g" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS " -g" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "-g -O0" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "-O3" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_OTHER_WITH_SHADOW_CLEANED_CHECKED_STL_COVERAGE_OPTIONS)
+function(unitest_other_with_shadow_cleaned_checked_stl_coverage_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing OTHER base compiler options with shadow warnings,"
+  message("\n***")
+  message("*** Testing OTHER base compiler options with shadow warnings,"
     " warnings as errors, checked stl, and coverage tests")
-  MESSAGE("***\n")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(OTHER)
-  SET(PARSE_ENABLE_SHADOWING_WARNINGS TRUE)
-  SET(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING ON)
-  SET(${PROJECT_NAME}_ENABLE_CHECKED_STL ON)
-  SET(PARSE_CLEANED TRUE)
-  SET(CMAKE_C_FLAGS "--default-c-flags")
-  SET(CMAKE_CXX_FLAGS "--default-cxx-flags")
-  SET(CMAKE_Fortran_FLAGS "--default-fortran-flags")
-  SET(CMAKE_C_FLAGS_DEBUG "--default-c-flags-dbg")
-  SET(CMAKE_CXX_FLAGS_DEBUG "--default-cxx-flags-dbg")
-  SET(CMAKE_Fortran_FLAGS_DEBUG "--default-fortran-flags-dbg")
-  SET(CMAKE_C_FLAGS_RELEASE "--default-c-flags-rel")
-  SET(CMAKE_CXX_FLAGS_RELEASE "--default-cxx-flags-rel")
-  SET(CMAKE_Fortran_FLAGS_RELEASE "--default-fortran-flags-rel")
+  tribits_set_all_compiler_id(OTHER)
+  set(PARSE_ENABLE_SHADOWING_WARNINGS TRUE)
+  set(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING ON)
+  set(${PROJECT_NAME}_ENABLE_CHECKED_STL ON)
+  set(PARSE_CLEANED TRUE)
+  set(CMAKE_C_FLAGS "--default-c-flags")
+  set(CMAKE_CXX_FLAGS "--default-cxx-flags")
+  set(CMAKE_Fortran_FLAGS "--default-fortran-flags")
+  set(CMAKE_C_FLAGS_DEBUG "--default-c-flags-dbg")
+  set(CMAKE_CXX_FLAGS_DEBUG "--default-cxx-flags-dbg")
+  set(CMAKE_Fortran_FLAGS_DEBUG "--default-fortran-flags-dbg")
+  set(CMAKE_C_FLAGS_RELEASE "--default-c-flags-rel")
+  set(CMAKE_CXX_FLAGS_RELEASE "--default-cxx-flags-rel")
+  set(CMAKE_Fortran_FLAGS_RELEASE "--default-fortran-flags-rel")
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS "--warnings_as_errors_placeholder --default-c-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS "--warnings_as_errors_placeholder --default-cxx-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "--default-fortran-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "--default-c-flags-dbg" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "--default-cxx-flags-dbg" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "--default-fortran-flags-dbg" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "--default-c-flags-rel" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "--default-cxx-flags-rel" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "--default-fortran-flags-rel" )
+  unittest_compare_const( CMAKE_C_FLAGS "--warnings_as_errors_placeholder --default-c-flags" )
+  unittest_compare_const( CMAKE_CXX_FLAGS "--warnings_as_errors_placeholder --default-cxx-flags" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "--default-fortran-flags" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "--default-c-flags-dbg" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "--default-cxx-flags-dbg" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "--default-fortran-flags-dbg" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "--default-c-flags-rel" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "--default-cxx-flags-rel" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "--default-fortran-flags-rel" )
 
-ENDFUNCTION()
+endfunction()
 
 
-FUNCTION(UNITEST_OTHER_BASE_OPTIONS)
+function(unitest_other_base_options)
 
-  MESSAGE("\n***")
-  MESSAGE("*** Testing OTHER base compiler options")
-  MESSAGE("***\n")
+  message("\n***")
+  message("*** Testing OTHER base compiler options")
+  message("***\n")
 
-  TRIBITS_SET_ALL_COMPILER_ID(OTHER)
-  SET(CMAKE_C_FLAGS "--default-c-flags")
-  SET(CMAKE_CXX_FLAGS "--default-cxx-flags")
-  SET(CMAKE_Fortran_FLAGS "--default-fortran-flags")
-  SET(CMAKE_C_FLAGS_DEBUG "--default-c-flags-dbg")
-  SET(CMAKE_CXX_FLAGS_DEBUG "--default-cxx-flags-dbg")
-  SET(CMAKE_Fortran_FLAGS_DEBUG "--default-fortran-flags-dbg")
-  SET(CMAKE_C_FLAGS_RELEASE "--default-c-flags-rel")
-  SET(CMAKE_CXX_FLAGS_RELEASE "--default-cxx-flags-rel")
-  SET(CMAKE_Fortran_FLAGS_RELEASE "--default-fortran-flags-rel")
+  tribits_set_all_compiler_id(OTHER)
+  set(CMAKE_C_FLAGS "--default-c-flags")
+  set(CMAKE_CXX_FLAGS "--default-cxx-flags")
+  set(CMAKE_Fortran_FLAGS "--default-fortran-flags")
+  set(CMAKE_C_FLAGS_DEBUG "--default-c-flags-dbg")
+  set(CMAKE_CXX_FLAGS_DEBUG "--default-cxx-flags-dbg")
+  set(CMAKE_Fortran_FLAGS_DEBUG "--default-fortran-flags-dbg")
+  set(CMAKE_C_FLAGS_RELEASE "--default-c-flags-rel")
+  set(CMAKE_CXX_FLAGS_RELEASE "--default-cxx-flags-rel")
+  set(CMAKE_Fortran_FLAGS_RELEASE "--default-fortran-flags-rel")
 
-  TRIBITS_COMPILE_OPTIONS_COMMON_ACTIONS()
+  tribits_compile_options_common_actions()
 
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS "--default-c-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS "--default-cxx-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS "--default-fortran-flags" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_DEBUG "--default-c-flags-dbg" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_DEBUG "--default-cxx-flags-dbg" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_DEBUG "--default-fortran-flags-dbg" )
-  UNITTEST_COMPARE_CONST( CMAKE_C_FLAGS_RELEASE "--default-c-flags-rel" )
-  UNITTEST_COMPARE_CONST( CMAKE_CXX_FLAGS_RELEASE "--default-cxx-flags-rel" )
-  UNITTEST_COMPARE_CONST( CMAKE_Fortran_FLAGS_RELEASE "--default-fortran-flags-rel" )
+  unittest_compare_const( CMAKE_C_FLAGS "--default-c-flags" )
+  unittest_compare_const( CMAKE_CXX_FLAGS "--default-cxx-flags" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS "--default-fortran-flags" )
+  unittest_compare_const( CMAKE_C_FLAGS_DEBUG "--default-c-flags-dbg" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_DEBUG "--default-cxx-flags-dbg" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_DEBUG "--default-fortran-flags-dbg" )
+  unittest_compare_const( CMAKE_C_FLAGS_RELEASE "--default-c-flags-rel" )
+  unittest_compare_const( CMAKE_CXX_FLAGS_RELEASE "--default-cxx-flags-rel" )
+  unittest_compare_const( CMAKE_Fortran_FLAGS_RELEASE "--default-fortran-flags-rel" )
 
-ENDFUNCTION()
+endfunction()
 
 
 # OTHER with shadow, warnings as errors, checked STL, and coverage
@@ -817,56 +808,56 @@ ENDFUNCTION()
 #####################################################################
 
 # Assume that all unit tests will pass by default
-GLOBAL_SET(UNITTEST_OVERALL_PASS TRUE)
-GLOBAL_SET(UNITTEST_OVERALL_NUMPASSED 0)
-GLOBAL_SET(UNITTEST_OVERALL_NUMRUN 0)
+global_set(UNITTEST_OVERALL_PASS TRUE)
+global_set(UNITTEST_OVERALL_NUMPASSED 0)
+global_set(UNITTEST_OVERALL_NUMRUN 0)
 
 # Set common/base options
-SET(PROJECT_NAME "DummyProject")
-SET(${PROJECT_NAME}_ENABLE_C TRUE)
-SET(${PROJECT_NAME}_ENABLE_CXX TRUE)
-SET(${PROJECT_NAME}_ENABLE_Fortran TRUE)
-SET(${PROJECT_NAME}_ENABLE_C_DEBUG_COMPILE_FLAGS TRUE)
-SET(${PROJECT_NAME}_ENABLE_CXX_DEBUG_COMPILE_FLAGS TRUE)
-SET(${PROJECT_NAME}_ENABLE_Fortran_DEBUG_COMPILE_FLAGS TRUE)
-SET(${PROJECT_NAME}_ENABLE_STRONG_C_COMPILE_WARNINGS TRUE)
-SET(${PROJECT_NAME}_ENABLE_STRONG_CXX_COMPILE_WARNINGS TRUE)
-SET(${PROJECT_NAME}_ENABLE_STRONG_Fortran_COMPILE_WARNINGS TRUE)
-SET(${PROJECT_NAME}_WARNINGS_AS_ERRORS_FLAGS "--warnings_as_errors_placeholder")
-SET(${PROJECT_NAME}_ENABLE_SHADOW_WARNINGS "")
-SET(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING OFF)
-SET(${PROJECT_NAME}_ENABLE_CHECKED_STL OFF)
-SET(${PROJECT_NAME}_ENABLE_DEBUG_SYMBOLS OFF)
-SET(${PROJECT_NAME}_VERBOSE_CONFIGURE TRUE)
-SET(PARSE_DISABLE_STRONG_WARNINGS FALSE)
-SET(PARSE_ENABLE_SHADOWING_WARNINGS FALSE)
-SET(PARSE_CLEANED FALSE)
-SET(CMAKE_BUILD_TYPE DEBUG)
+set(PROJECT_NAME "DummyProject")
+set(${PROJECT_NAME}_ENABLE_C TRUE)
+set(${PROJECT_NAME}_ENABLE_CXX TRUE)
+set(${PROJECT_NAME}_ENABLE_Fortran TRUE)
+set(${PROJECT_NAME}_ENABLE_C_DEBUG_COMPILE_FLAGS TRUE)
+set(${PROJECT_NAME}_ENABLE_CXX_DEBUG_COMPILE_FLAGS TRUE)
+set(${PROJECT_NAME}_ENABLE_Fortran_DEBUG_COMPILE_FLAGS TRUE)
+set(${PROJECT_NAME}_ENABLE_STRONG_C_COMPILE_WARNINGS TRUE)
+set(${PROJECT_NAME}_ENABLE_STRONG_CXX_COMPILE_WARNINGS TRUE)
+set(${PROJECT_NAME}_ENABLE_STRONG_Fortran_COMPILE_WARNINGS TRUE)
+set(${PROJECT_NAME}_WARNINGS_AS_ERRORS_FLAGS "--warnings_as_errors_placeholder")
+set(${PROJECT_NAME}_ENABLE_SHADOW_WARNINGS "")
+set(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING OFF)
+set(${PROJECT_NAME}_ENABLE_CHECKED_STL OFF)
+set(${PROJECT_NAME}_ENABLE_DEBUG_SYMBOLS OFF)
+set(${PROJECT_NAME}_VERBOSE_CONFIGURE TRUE)
+set(PARSE_DISABLE_STRONG_WARNINGS FALSE)
+set(PARSE_ENABLE_SHADOWING_WARNINGS FALSE)
+set(PARSE_CLEANED FALSE)
+set(CMAKE_BUILD_TYPE DEBUG)
 
-UNITEST_GCC_ENABLE_CXX11_OPTIONS()
-UNITEST_GCC_BASE_OPTIONS()
-UNITEST_GCC_STD_OVERRIDE_OPTIONS()
-UNITEST_GCC_PROJECT_DEFINED_STRONG_C_OPTIONS()
-UNITEST_GCC_PROJECT_DEFINED_STRONG_CXX_OPTIONS()
-UNITEST_GCC_PROJECT_DEFINED_STRONG_C_CXX_OPTIONS()
-UNITEST_GCC_WITH_SHADOW_OPTIONS()
-UNITEST_GCC_GLOBAL_ENABLE_SHADOW_OPTIONS()
-UNITEST_GCC_GLOBAL_DISABLE_SHADOW_OPTIONS()
-UNITEST_GCC_WITH_COVERAGE_OPTIONS()
-UNITEST_GCC_WITH_CHECKED_STL_OPTIONS()
-UNITEST_GCC_WITH_CLEANED_OPTIONS()
-UNITEST_GCC_NO_STRONG_WARNINGS_OPTIONS()
-UNITEST_GCC_NO_PACKAGE_STRONG_WARNINGS_OPTIONS()
-UNITEST_GCC_PACKAGE_COMPILER_FLAGS()
-UNITEST_GCC_GLOBAL_AND_PACKAGE_COMPILER_FLAGS()
-UNITEST_GCC_WITH_SHADOW_CLEANED_CHECKED_STL_COVERAGE_OPTIONS()
-UNITEST_GCC_ADDITIONAL_USER_OPTIONS()
-UNITEST_GCC_USER_DEBUG_OVERRIDE_OPTIONS()
-UNITEST_GCC_USER_RELEASE_OVERRIDE_OPTIONS()
-UNITEST_GCC_USER_OVERRIDE_OPTIONS()
-UNITEST_GCC_WITH_DEBUG_SYMBOLES_OPTIONS()
-UNITEST_OTHER_BASE_OPTIONS()
-UNITEST_OTHER_WITH_SHADOW_CLEANED_CHECKED_STL_COVERAGE_OPTIONS()
+unitest_gcc_enable_cxx11_options()
+unitest_gcc_base_options()
+unitest_gcc_std_override_options()
+unitest_gcc_project_defined_strong_c_options()
+unitest_gcc_project_defined_strong_cxx_options()
+unitest_gcc_project_defined_strong_c_cxx_options()
+unitest_gcc_with_shadow_options()
+unitest_gcc_global_enable_shadow_options()
+unitest_gcc_global_disable_shadow_options()
+unitest_gcc_with_coverage_options()
+unitest_gcc_with_checked_stl_options()
+unitest_gcc_with_cleaned_options()
+unitest_gcc_no_strong_warnings_options()
+unitest_gcc_no_package_strong_warnings_options()
+unitest_gcc_package_compiler_flags()
+unitest_gcc_global_and_package_compiler_flags()
+unitest_gcc_with_shadow_cleaned_checked_stl_coverage_options()
+unitest_gcc_additional_user_options()
+unitest_gcc_user_debug_override_options()
+unitest_gcc_user_release_override_options()
+unitest_gcc_user_override_options()
+unitest_gcc_with_debug_symboles_options()
+unitest_other_base_options()
+unitest_other_with_shadow_cleaned_checked_stl_coverage_options()
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(207)
+unittest_final_result(207)

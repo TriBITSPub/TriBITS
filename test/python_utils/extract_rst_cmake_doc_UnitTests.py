@@ -47,6 +47,7 @@ from extract_rst_cmake_doc import *
 
 import unittest
 import filecmp
+import copy
 
 
 scriptBaseDir = getScriptBaseDir()
@@ -81,19 +82,28 @@ blah blah blah
 something
 
 #
-# @MACRO: SOME_MACRO_NAME1()
+# @MACRO: some_macro_name1()
 #
 # Good documentation
 # 
-MACRO(SOME_MACRO_NAME1 ...)
+macro(some_macro_name1 ...)
 some other stuff 
 ...
 """
 
 simpleDocText1_rstDocBlocks_expected = {
-  "SOME_MACRO_NAME1()" : {
+  "some_macro_name1()" : {
     "type" : "MACRO",
-    "body" : "\nGood documentation\n\n"
+    "body" : "\nGood documenation\n\n",
+    "fileNameLineNum": "simpleDocText1.cmake:7",
+    }
+  }
+
+test_extract_1_block_simple_1_rstDocBlocks_expected = {
+  "some_macro_name1()" : {
+    "type" : "MACRO",
+    "body" : "\nGood documentation\n\n",
+    "fileNameLineNum": "test_extract_1_block_simple_1.cmake:7",
     }
   }
 
@@ -105,11 +115,11 @@ blah blah blah
 something
 
 #
-# @MACRO :   SOME_MACRO_NAME1()
+# @MACRO :   some_macro_name1()
 #
 # Good documentation
 #
-MACRO(  SOME_MACRO_NAME1 ...)
+macro(  some_macro_name1 ...)
 some other stuff 
 ...
 """
@@ -122,11 +132,11 @@ blah blah blah
 something
 
 #
-# @MACRO: SOME_MACRO_NAME1()
+# @MACRO: some_macro_name1()
 #
 # Good documentation
 #
-MACRO(SOME_MACRO_NAME1)
+macro(some_macro_name1)
 some other stuff 
 ...
 """
@@ -155,7 +165,8 @@ some other stuff
 simpleDocText2_rstDocBlocks_expected = {
   "SOME_FUNC_NAME2()" : {
     "type" : "FUNCTION",
-    "body" : "Better documentation\n\nUsage::\n\n  SOME_FUNC_NAME2(blah\n    goat\n    )\n\n"
+    "body" : "Better documentation\n\nUsage::\n\n  SOME_FUNC_NAME2(blah\n    goat\n    )\n\n",
+    "fileNameLineNum" : "simpleDocText2.cmake:7",
     }
   }
 
@@ -164,8 +175,12 @@ simpleDocText1_and_2 = simpleDocText1 + "\n\n\n" + simpleDocText2
 
 
 simpleDocText1_and_2_rstDocBlocks_expected = {}
-simpleDocText1_and_2_rstDocBlocks_expected.update(simpleDocText1_rstDocBlocks_expected)
-simpleDocText1_and_2_rstDocBlocks_expected.update(simpleDocText2_rstDocBlocks_expected)
+simpleDocText1_and_2_rstDocBlocks_expected.update(
+  copy.deepcopy(simpleDocText1_rstDocBlocks_expected))
+simpleDocText1_and_2_rstDocBlocks_expected.update(
+  copy.deepcopy(simpleDocText2_rstDocBlocks_expected))
+simpleDocText1_and_2_rstDocBlocks_expected['SOME_FUNC_NAME2()']['fileNameLineNum'] = \
+  'simpleDocText1.cmake:23'
 
 
 # This results in an error where the comment block is not extracted
@@ -245,27 +260,32 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
 
 
   def test_extract_1_block_simple_1(self):
-    rstDocBlocks = extractRstDocBlocksFromText(simpleDocText1, rstBlockTypes, "")
+    rstDocBlocks = extractRstDocBlocksFromText(simpleDocText1, rstBlockTypes,
+      "simpleDocText1.cmake")
     self.assertEqual(rstDocBlocks, simpleDocText1_rstDocBlocks_expected)
 
 
   def test_extract_1_block_simple_2(self):
-    rstDocBlocks = extractRstDocBlocksFromText(simpleDocText2, rstBlockTypes, "")
+    rstDocBlocks = extractRstDocBlocksFromText(simpleDocText2, rstBlockTypes,
+      "simpleDocText2.cmake")
     self.assertEqual(rstDocBlocks, simpleDocText2_rstDocBlocks_expected)
 
 
   def test_extract_2_blocks_simle_1_2(self):
-    rstDocBlocks = extractRstDocBlocksFromText(simpleDocText1_and_2, rstBlockTypes, "")
+    rstDocBlocks = extractRstDocBlocksFromText(simpleDocText1_and_2, rstBlockTypes,
+      "simpleDocText1.cmake")
     self.assertEqual(rstDocBlocks, simpleDocText1_and_2_rstDocBlocks_expected)
 
 
   def test_extract_1_block_simple_with_spaces_1(self):
-    rstDocBlocks = extractRstDocBlocksFromText(simpleDocWithSpacesText1, rstBlockTypes, "")
+    rstDocBlocks = extractRstDocBlocksFromText(simpleDocWithSpacesText1, rstBlockTypes,
+      "simpleDocText1.cmake")
     self.assertEqual(rstDocBlocks, simpleDocText1_rstDocBlocks_expected)
 
 
   def test_extract_1_block_simple_no_args_1(self):
-    rstDocBlocks = extractRstDocBlocksFromText(simpleDocNoArgsText1, rstBlockTypes, "")
+    rstDocBlocks = extractRstDocBlocksFromText(simpleDocNoArgsText1, rstBlockTypes,
+      "simpleDocText1.cmake")
     self.assertEqual(rstDocBlocks, simpleDocText1_rstDocBlocks_expected)
 
 
@@ -353,7 +373,7 @@ other
 
 something 2
 
-@MACRO: SOME_MACRO_NAME1() +
+@MACRO: some_macro_name1() +
 
 something else
 
@@ -371,7 +391,7 @@ other
 
 something 2
 
-@MACRO  :   SOME_MACRO_NAME1()  +
+@MACRO  :   some_macro_name1()  +
 
 something else
 
@@ -389,7 +409,7 @@ other
 
 something 2
 
-@MACRO:SOME_MACRO_NAME1() +
+@MACRO:some_macro_name1() +
 
 something else
 
@@ -416,10 +436,46 @@ Usage::
 
 something 2
 
-SOME_MACRO_NAME1()
+some_macro_name1()
+++++++++++++++++++
+
+Good documenation
+
+
+something else
+"""
+
+
+# NOTE that this adds what looks like an extra line after each replacement!
+replacedText1_fileNameLineNum_expected = """
+
+something 1
+
+other
+
+SOME_FUNC_NAME2()
+-----------------
+Better documenation
+
+Usage::
+
+  SOME_FUNC_NAME2(blah
+    goat
+    )
+
+
+In: simpleDocText1.cmake:23
+
+
+something 2
+
+some_macro_name1()
 ++++++++++++++++++
 
 Good documentation
+
+
+In: simpleDocText1.cmake:7
 
 
 something else
@@ -487,6 +543,14 @@ class test_replaceWithRstDocBlocksInText(unittest.TestCase):
       rstBlockTypes, simpleDocText1_and_2_rstDocBlocks_expected, "")
     lineByLineCompareAssert(self, replacedText, replacedText1_expected)
     self.assertEqual(replacedText, replacedText1_expected)
+
+
+  def test_replace_1_with_fileNameLineNum(self):
+    replacedText = replaceWithRstDocBlocksInText(textToReplace1,
+      rstBlockTypes, simpleDocText1_and_2_rstDocBlocks_expected, "",
+      includeFileNameLineNum=True )
+    lineByLineCompareAssert(self, replacedText, replacedText1_fileNameLineNum_expected)
+    self.assertEqual(replacedText, replacedText1_fileNameLineNum_expected)
  
 
   def test_replace_with_spaces_1(self):
@@ -646,8 +710,7 @@ class test_extractRstDocBlocksFromFileList(unittest.TestCase):
     fileList = ["test_extract_1_block_simple_1.cmake"]
     open(fileList[0], 'w').write(simpleDocText1)
     rstDocBlocks = extractRstDocBlocksFromFileList(fileList, rstBlockTypes)
-    self.assertEqual(rstDocBlocks, simpleDocText1_rstDocBlocks_expected)
-
+    self.assertEqual(rstDocBlocks, test_extract_1_block_simple_1_rstDocBlocks_expected)
 
 
 #
@@ -655,16 +718,26 @@ class test_extractRstDocBlocksFromFileList(unittest.TestCase):
 #
 
 
-class test_replaceWithRstDocBlocksInTemplateFile(unittest.TestCase):
+class test_replaceWithRstDocBlocksInTemplateFileList(unittest.TestCase):
 
   def test_replace_1_block_1_file(self):
     baseDir = testPythonUtilsDir+"/extract_rst_cmake_doc"
     templateFileName = baseDir+"/simpleTemplate1.rst"
     fileName = "test_replace_1_block_1_file.rst"
+    rstFileList = [ [templateFileName , fileName] ]
+    if os.path.exists(fileName): os.remove(fileName)
+    replaceWithRstDocBlocksInTemplateFileList(rstFileList, rstBlockTypes,
+      simpleDocText1_and_2_rstDocBlocks_expected )
+    self.assertTrue(filecmp.cmp(fileName, baseDir+"/"+fileName+".gold"))
+
+  def test_replace_1_block_1_fileNameLineNum_file(self):
+    baseDir = testPythonUtilsDir+"/extract_rst_cmake_doc"
+    templateFileName = baseDir+"/simpleTemplate1.rst"
+    fileName = "test_replace_1_block_1_file_fileNameLineNum.rst"
     rstFileList = [ [templateFileName , fileName] ] 
     if os.path.exists(fileName): os.remove(fileName)
     replaceWithRstDocBlocksInTemplateFileList(rstFileList, rstBlockTypes,
-      simpleDocText1_and_2_rstDocBlocks_expected)
+      simpleDocText1_and_2_rstDocBlocks_expected, includeFileNameLineNum=True )
     self.assertTrue(filecmp.cmp(fileName, baseDir+"/"+fileName+".gold"))
 
 

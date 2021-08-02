@@ -128,7 +128,7 @@ class test_InstallProgramDriver(unittest.TestCase):
 
   def test_default(self):
     ipd = InstallProgramDriver(DummyInstall())
-    sys.argv = ["scriptName"]
+    sys.argv = ["scriptName", "--install-dir=/some/install/path"]
     self.assertEqual(ipd.runDriver(), None)
 
 

@@ -2,12 +2,12 @@
 # test a passing call order, will be run by default turn this 
 # off when you turn on one of the other sections
 ###############################################################
-IF(NOT subpackageA_turn_off_passing_call_order)
+if(NOT subpackageA_turn_off_passing_call_order)
   #
   # A) Define the subpackage
   #
 
-  TRIBITS_SUBPACKAGE(A)
+  tribits_subpackage(A)
 
   #
   # B) Set up subpackage-specific options
@@ -19,177 +19,177 @@ IF(NOT subpackageA_turn_off_passing_call_order)
   # C) Add the libraries, tests, and examples
   #
 
-  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-  TRIBITS_ADD_LIBRARY(pwswue_a
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  tribits_add_library(pwswue_a
     SOURCES A.cpp
     HEADERS A.hpp
     NOINSTALLHEADERS 
   )
 
-  TRIBITS_ADD_TEST_DIRECTORIES(tests)
+  tribits_add_test_directories(tests)
 
   #
   # D) Do standard post processing
   #
 
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-ENDIF()
+  tribits_subpackage_postprocess()
+endif()
 
 
 ###############################################################
 # Add a library after the postprocess call
 ###############################################################
-IF(subPackageA_ADD_LIBRARY_AFTER_POST_PROCESS)
-  MESSAGE("Adding library in subpackage after post process")
+if(subPackageA_ADD_LIBRARY_AFTER_POST_PROCESS)
+  message("Adding library in subpackage after post process")
   
-  TRIBITS_SUBPACKAGE(A)
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-  TRIBITS_ADD_LIBRARY(lib_after_post_process
+  tribits_subpackage(A)
+  tribits_subpackage_postprocess()
+  tribits_add_library(lib_after_post_process
     SOURCES A.cpp
     HEADERS A.hpp
     NOINSTALLHEADERS 
   )
-ENDIF()
+endif()
 
 
 ###############################################################
 # Add an executable after the postprocess call
 ###############################################################
-IF(subPackageA_ADD_EXECUTABLE_AFTER_POST_PROCESS)
-  MESSAGE("Adding executable in subpackage after post process")
+if(subPackageA_ADD_EXECUTABLE_AFTER_POST_PROCESS)
+  message("Adding executable in subpackage after post process")
 
-  TRIBITS_SUBPACKAGE(A)
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-  TRIBITS_ADD_EXECUTABLE(exe_after_post_process
+  tribits_subpackage(A)
+  tribits_subpackage_postprocess()
+  tribits_add_executable(exe_after_post_process
     SOURCES A.cpp
     HEADERS A.hpp
   )
-ENDIF()
+endif()
 
 
 ###############################################################
 # no subpackage call before adding librbary
 ###############################################################
-IF(subPackageA_add_lib_no_PREPROCESS)
-  TRIBITS_ADD_LIBRARY(lib_after_post_process
+if(subPackageA_add_lib_no_PREPROCESS)
+  tribits_add_library(lib_after_post_process
     SOURCES A.cpp
     HEADERS A.hpp
     NOINSTALLHEADERS 
   )
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-ENDIF()
+  tribits_subpackage_postprocess()
+endif()
 
 
 ###############################################################
 # no subpackage call before adding executable
 ###############################################################
-IF(subPackageA_add_exe_no_PREPROCESS)
-  TRIBITS_ADD_EXECUTABLE(exe_after_post_process
+if(subPackageA_add_exe_no_PREPROCESS)
+  tribits_add_executable(exe_after_post_process
     SOURCES A.cpp
     HEADERS A.hpp
   )
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-ENDIF()
+  tribits_subpackage_postprocess()
+endif()
 
 
 ###############################################################
 # Multiple calls to SUBPACKAGE
 ###############################################################
-IF(subPackageA_DOUBLE_SUBPACKAGE_INIT)
-  TRIBITS_SUBPACKAGE(A)
-  TRIBITS_SUBPACKAGE(A)
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-ENDIF()
+if(subPackageA_DOUBLE_SUBPACKAGE_INIT)
+  tribits_subpackage(A)
+  tribits_subpackage(A)
+  tribits_subpackage_postprocess()
+endif()
 
 
 ###############################################################
 # Multiple calls to SUBPACKAGE_POSTPROCESS
 ###############################################################
-IF(subPAckageA_DOUBLE_SUBPACKAGE_POSTPROCESS)
-  TRIBITS_SUBPACKAGE(A)
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-ENDIF()
+if(subPAckageA_DOUBLE_SUBPACKAGE_POSTPROCESS)
+  tribits_subpackage(A)
+  tribits_subpackage_postprocess()
+  tribits_subpackage_postprocess()
+endif()
 
 
 ###############################################################
 # no call to SUBPACKAGE before SUBPACKAGE_POSTPROCESS
 ###############################################################
-IF(subPackageA_no_SUBPACKAGE_before_POSTPROCESS)
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-ENDIF()
+if(subPackageA_no_SUBPACKAGE_before_POSTPROCESS)
+  tribits_subpackage_postprocess()
+endif()
 
 
 ###############################################################
 # call PACKAGE from a subpackage file
 ###############################################################
-IF(subPackageA_call_PACKAGE)
-  TRIBITS_PACKAGE(A)
-ENDIF()
+if(subPackageA_call_PACKAGE)
+  tribits_package(A)
+endif()
 
 ###############################################################
 # call PACKAGE_DECL from a subpackage file
 ###############################################################
-IF(subPackageA_call_PACKAGE_DECL)
-  TRIBITS_PACKAGE_DECL(A)
-ENDIF()
+if(subPackageA_call_PACKAGE_DECL)
+  tribits_package_decl(A)
+endif()
 
 ###############################################################
 # call PACKAGE_DEF from a subpackage file
 ###############################################################
-IF(subPackageA_call_PACKAGE_DEF)
-  TRIBITS_PACKAGE_DEF(A)
-ENDIF()
+if(subPackageA_call_PACKAGE_DEF)
+  tribits_package_def(A)
+endif()
 
 
 ###############################################################
 # call PACKAGE_POSTPROCESS from a subpackage file
 ###############################################################
-IF(subPackageA_call_PACKAGE_POSTPROCESS)
-  TRIBITS_SUBPACKAGE(A)
-  TRIBITS_PACKAGE_POSTPROCESS()
-ENDIF()
+if(subPackageA_call_PACKAGE_POSTPROCESS)
+  tribits_subpackage(A)
+  tribits_package_postprocess()
+endif()
 
 
 ###############################################################
 # call PROCESS_SUBPACKAGES from a subpackage file
 ###############################################################
-IF(subPackageA_call_PROCESS_SUBPACKAGES)
-  TRIBITS_SUBPACKAGE(A)
-  TRIBITS_PROCESS_SUBPACKAGES()
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-ENDIF()
+if(subPackageA_call_PROCESS_SUBPACKAGES)
+  tribits_subpackage(A)
+  tribits_process_subpackages()
+  tribits_subpackage_postprocess()
+endif()
 
 ###############################################################
 # ADD_TEST_DIRECTORIES without SUBPACKAGE call
 ###############################################################
-IF(subPackageA_call_ADD_TEST_DIRECTORY_without_SUBPACKAGE)
-  TRIBITS_ADD_TEST_DIRECTORIES(tests)
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-ENDIF()
+if(subPackageA_call_ADD_TEST_DIRECTORY_without_SUBPACKAGE)
+  tribits_add_test_directories(tests)
+  tribits_subpackage_postprocess()
+endif()
 
 ###############################################################
 # ADD_TEST_DIRECTORIES after POSTPROCESS
 ###############################################################
-IF(subPackageA_call_ADD_TEST_DIRECTORY_after_POSTPROCESS)
-  TRIBITS_SUBPACKAGE(A)
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-  TRIBITS_ADD_TEST_DIRECTORIES(tests)
-ENDIF()
+if(subPackageA_call_ADD_TEST_DIRECTORY_after_POSTPROCESS)
+  tribits_subpackage(A)
+  tribits_subpackage_postprocess()
+  tribits_add_test_directories(tests)
+endif()
 
 ###############################################################
 # ADD_EXAMPLE_DIRECTORIES without SUBPACKAGE call
 ###############################################################
-IF(subPackageA_call_ADD_EXAMPLE_DIRECTORY_without_SUBPACKAGE)
-  TRIBITS_ADD_EXAMPLE_DIRECTORIES(tests)
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-ENDIF()
+if(subPackageA_call_ADD_EXAMPLE_DIRECTORY_without_SUBPACKAGE)
+  tribits_add_example_directories(tests)
+  tribits_subpackage_postprocess()
+endif()
 
 ###############################################################
 # ADD_EXAMPLE_DIRECTORIES after POSTPROCESS
 ###############################################################
-IF(subPackageA_call_ADD_EXAMPLE_DIRECTORY_after_POSTPROCESS)
-  TRIBITS_SUBPACKAGE(A)
-  TRIBITS_SUBPACKAGE_POSTPROCESS()
-  TRIBITS_ADD_EXAMPLE_DIRECTORIES(tests)
-ENDIF()
+if(subPackageA_call_ADD_EXAMPLE_DIRECTORY_after_POSTPROCESS)
+  tribits_subpackage(A)
+  tribits_subpackage_postprocess()
+  tribits_add_example_directories(tests)
+endif()

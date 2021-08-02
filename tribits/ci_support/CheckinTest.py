@@ -68,6 +68,7 @@ from CheckinTestConstants import *
 from TribitsDependencies import getProjectDependenciesFromXmlFile
 from TribitsDependencies import getDefaultDepsXmlInFile
 from TribitsPackageFilePathUtils import *
+from Python2and3 import s
 import gitdist
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -293,7 +294,7 @@ def getReposStats(inOptions, tribitsGitRepos):
     repoStatTableDirName = getRepoStatTableDirName(inOptions, gitRepo.repoDir)
     repoStatTable.insertRepoStat(repoStatTableDirName, gitRepo.gitRepoStats, repoIdx)
     repoIdx += 1
-  print(gitdist.createAsciiTable(repoStatTable.getTableData()))
+  print(gitdist.createTable(repoStatTable.getTableData()))
   return hasChangesToPush
   # NOTE: Above, we could just call 'gitdist dist-repo-status' but by
   # printing the table here with the actually gitRepoStat data, we ensure
@@ -2730,7 +2731,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
               # Get then final commit message
               finalCommitEmailBodyStr = lastCommitMessageStr
               finalCommitEmailBodyStr += getAutomatedStatusSummaryHeaderStr()
-              finalCommitEmailBodyStr += shortCommitEmailBodyExtra.encode("utf8")
+              finalCommitEmailBodyStr += shortCommitEmailBodyExtra
               finalCommitEmailBodyStr += localCommitSHA1ListStr
               if forcedCommitPush:
                 finalCommitEmailBodyStr += "WARNING: Forced the push!\n"

@@ -193,7 +193,9 @@ else(NetCDF_LIBRARIES AND NetCDF_INCLUDE_DIRS)
                   NO_DEFAULT_PATH)
         if(meta_path)
 	   # Search meta for NC_HAS_PARALLEL setting...
-	   file(STRINGS "${meta_path}/netcdf_meta.h" netcdf_par_string REGEX "NC_HAS_PARALLEL")
+	   # Note that there is both NC_HAS_PARALLEL4 and NC_HAS_PARALLEL, only want NC_HAS_PARALLEL
+	   # so add a space to end to avoid getting NC_HAS_PARALLEL4
+	   file(STRINGS "${meta_path}/netcdf_meta.h" netcdf_par_string REGEX "NC_HAS_PARALLEL ")
 	   string(REGEX REPLACE "[^0-9]" "" netcdf_par_val "${netcdf_par_string}")
 	   # NOTE: The line for NC_HAS_PARALLEL has an hdf5 string in it which results
            #       netcdf_par_val being set to 05 or 15 above...
@@ -286,7 +288,7 @@ else(NetCDF_LIBRARIES AND NetCDF_INCLUDE_DIRS)
 
     # Need to find the NetCDF config script to check for HDF5
     if ( NetCDF_ROOT OR NetCDF_BIN_DIR )
-        MESSAGE(STATUS "\tNetCDF_ROOT is ${NetCDF_ROOT}")
+        message(STATUS "\tNetCDF_ROOT is ${NetCDF_ROOT}")
         find_program(netcdf_config nc-config 
                        PATHS ${NetCDF_ROOT}/bin ${NetCDF_BIN_DIR}
 		       NO_DEFAULT_PATH

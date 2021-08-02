@@ -1,49 +1,39 @@
-#
-# Set the locations of things for this project
-#
-
-SET(TRIBITS_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../..")
-SET(TriBITS_TRIBITS_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../tribits")
-
-#
-# Include the TriBITS file to get other modules included
-#
-
-INCLUDE("${CMAKE_CURRENT_LIST_DIR}/../../../tribits/ctest_driver/TribitsCTestDriverCore.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../TribitsProjCTestDriver.cmake")
 
 #
 # Set the options specific to this build case
 #
 
-SET(COMM_TYPE SERIAL)
-SET(BUILD_TYPE DEBUG)
-SET(BUILD_DIR_NAME ${COMM_TYPE}_${BUILD_TYPE}_TravisCI)
-SET(CTEST_SITE TravisCI)
-SET(CTEST_TEST_TIMEOUT 60)
+set(COMM_TYPE SERIAL)
+set(BUILD_TYPE DEBUG)
+set(BUILD_DIR_NAME ${COMM_TYPE}_${BUILD_TYPE}_TravisCI)
+set(CTEST_SITE TravisCI)
+set(CTEST_TEST_TIMEOUT 60)
+set(CTEST_DO_UPDATES OFF)
 
-SET_DEFAULT_AND_FROM_ENV( CTEST_BUILD_FLAGS "-j1 -i" )
+set_default_and_from_env( CTEST_BUILD_FLAGS "-j1 -i" )
 
-SET_DEFAULT_AND_FROM_ENV( CTEST_PARALLEL_LEVEL "1" )
+set_default_and_from_env( CTEST_PARALLEL_LEVEL "1" )
 
-SET( EXTRA_CONFIGURE_OPTIONS
+set( EXTRA_CONFIGURE_OPTIONS
   "-DBUILD_SHARED_LIBS:BOOL=ON"
   "-DCMAKE_BUILD_TYPE=DEBUG"
   "-DCMAKE_C_COMPILER=gcc"
   "-DCMAKE_CXX_COMPILER=g++"
   "-DCMAKE_Fortran_COMPILER=gfortran"
   "-DTriBITS_ENABLE_Fortran=ON"
+  "-DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE"
+  "-DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE"
+  "-DTriBITS_ENABLE_REAL_GIT_CLONE_TESTS=TRUE"
   "-DTriBITS_TRACE_ADD_TEST=ON"
+  "-DTriBITS_SHOW_TEST_START_END_DATE_TIME=ON"
   "-DTriBITS_HOSTNAME=${CTEST_SITE}"
-  "-DTriBITS_CTestDriver_AAO_ST_PackagesSubset_PASS_DISABLE=ON"
-  "-DTriBITS_CTestDriver_AAO_ST_SimpleCxx_PASS_DISABLE=ON"
-  "-DTriBITS_CTestDriver_AAO_ST_ALL_PASS_DISABLE=ON"
-  "-DTriBITS_CTestDriver_PBP_ST_ALL_PASS_DISABLE=ON"
   )
 
-SET(CTEST_TEST_TYPE Continuous)
+set(CTEST_TEST_TYPE Continuous)
 
 #
 # Run the CTest driver and submit to CDash
 #
 
-TRIBITS_CTEST_DRIVER()
+tribits_proj_ctest_driver()

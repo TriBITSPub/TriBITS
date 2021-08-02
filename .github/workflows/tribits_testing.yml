@@ -1,0 +1,85 @@
+name: TriBITS Testing
+
+on:
+  schedule:
+    - cron: '10  04  *  *  *' # Run 10 minutes after midnight EDT (4:10 UTC)
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+    inputs:
+      ctest_build_name_suffix:
+        description: 'Add a suffix to bulid names on CDash'
+        required: false
+jobs:
+  build:
+    strategy:
+      max-parallel: 4  # Only limit to 1 for debugging?
+      fail-fast: false  # Allow each job to run to completion even if other jobs fail first
+      matrix:
+        config:
+          - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "2.7", cc: gcc-8,  cxx: g++-8,  fc: gfortran-8  }
+          - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "3.8", cc: gcc-10, cxx: g++-10, fc: gfortran-10 }
+          - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "3.8", cc: gcc-11, cxx: g++-11                  }
+          - { os: ubuntu-latest, cmake: "3.21.0", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9,  fc: gfortran-9  }
+
+    runs-on: ${{ matrix.config.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Update OS
+        run: |
+          sudo apt-get update -y
+      - name: Install CMake
+        run: |
+          wget -O cmake.sh https://github.com/Kitware/CMake/releases/download/v${{ matrix.config.cmake }}/cmake-${{ matrix.config.cmake }}-Linux-x86_64.sh
+          sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local/
+      - name: Install packages
+        run: |
+          sudo apt-get install -y ${{ matrix.config.cc }} ${{ matrix.config.cxx }} ${{ matrix.config.fc }}
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/${{ matrix.config.cc }} 10
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/${{ matrix.config.cxx }} 10
+          sudo update-alternatives --install /usr/bin/gfortran gfortran /usr/bin/${{ matrix.config.fc }} 10
+          sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 20
+          sudo update-alternatives --set cc /usr/bin/gcc
+          sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 20
+          sudo update-alternatives --set c++ /usr/bin/g++
+          sudo update-alternatives --install /usr/bin/fortrann fortrann /usr/bin/gfortran 20
+          sudo update-alternatives --set fortrann /usr/bin/gfortran
+          sudo apt-get -y install valgrind
+          sudo apt-get -y install ninja-build
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.config.python }}
+      - name: Install Python packages
+        run: |
+          pip3 install sphinx sphinx-rtd-theme # For testing doc build
+      - name: Version checks
+        run: |
+          echo "Checking cmake path and version"
+          which cmake
+          cmake --version
+          echo "Checking ninja path and version"
+          which ninja
+          ninja --version
+          echo "Checking gcc path and version"
+          which ${{ matrix.config.cc }}
+          ${{ matrix.config.cc }} --version
+          echo "Checking g++ path and version"
+          which ${{ matrix.config.cxx }}
+          ${{ matrix.config.cxx }} --version
+          if [ "${{ matrix.config.fc }}" = "" ]; then echo "No fortran compiler"; else echo "Checking gfortran path and version" && which ${{ matrix.config.fc }} && ${{ matrix.config.fc }} --version; fi
+      - name: Run configure, build, test, and submit to CDash
+        run: |
+          cd ..
+          env CTEST_BUILD_NAME_SUFFIX=${{ github.event.inputs.ctest_build_name_suffix }} \
+          ./TriBITS/cmake/ctest/github_actions/run_github_actions_ctest_driver.sh \
+            --os ${{ matrix.config.os }} \
+            --cmake-ver ${{ matrix.config.cmake }} \
+            --generator ${{ matrix.config.generator }} \
+            --python-ver ${{ matrix.config.python }} \
+            --cxx-compiler-and-ver ${{ matrix.config.cxx }} \
+            --fortran-compiler-and-ver ${{ matrix.config.fc }}

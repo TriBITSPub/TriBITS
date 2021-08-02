@@ -37,6 +37,6 @@
 # ************************************************************************
 # @HEADER
 
-TRIBITS_PROJECT_DEFINE_EXTRA_REPOSITORIES(
+tribits_project_define_extra_repositories(
   ExtraRepo1  ""  GIT  someurl.com:/SomeExtraRepo1  ""  WrongCategory
   )

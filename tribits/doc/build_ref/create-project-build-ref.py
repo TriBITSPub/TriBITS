@@ -38,7 +38,6 @@ import sys
 import os
 import stat
 import subprocess
-import commands
 
 from optparse import OptionParser
 
@@ -96,8 +95,8 @@ clp.add_option(
 clp.add_option(
   "--min-cmake-version", dest="minCMakeVersion", type="string",
   help="Minimum version of CMake needed for given project" \
-    " [Default '2.8.11']",
-  default="2.8.11" )
+    " [Default '3.17.0']",
+  default="3.17.0" )
 
 GenerateDocUtilsOutput.addCmndLineOptions(clp)
 
@@ -159,7 +158,7 @@ projectBuildReferenceStr = \
   + substitutedTribitsBuildReferenceBodyStr
 
 outputRstFile = options.fileBase+".rst"
-print "Writing rst file ..."
+print("Writing rst file ...")
 GenerateDocUtilsOutput.openWriteFilePermissions(outputRstFile)
 writeStrToFile(outputRstFile, projectBuildReferenceStr)
 GenerateDocUtilsOutput.setGeneratedFilePermissions(outputRstFile)

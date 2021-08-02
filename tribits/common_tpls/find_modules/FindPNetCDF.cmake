@@ -258,7 +258,7 @@ if ( NOT PNetCDF_FIND_QUIETLY )
 
 endif()
 # For compatibility with TriBITS:
-SET(DOCSTR "List of semi-colon separated paths to look for the TPL PNetCDF")
+set(DOCSTR "List of semi-colon separated paths to look for the TPL PNetCDF")
 
 set(TPL_PNetCDF_LIBRARIES ${PNetCDF_LIBRARIES} CACHE PATH ${DOCSTR})
 set(TPL_PNetCDF_INCLUDE_DIRS ${PNetCDF_INCLUDE_DIRS} CACHE PATH ${DOCSTR})
