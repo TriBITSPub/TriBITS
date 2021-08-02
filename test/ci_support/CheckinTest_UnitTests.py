@@ -2647,7 +2647,7 @@ class test_checkin_test(unittest.TestCase):
          ]
       )
     # NOTE: Above, we set GITDIST_UNIT_TEST_STTY_SIZE=120 so that
-    # checkin-test.py will print the full table reguardless what the terminal
+    # checkin-test.py will print the full table regardless what the terminal
     # size is in the env where this runs.
 
 

@@ -294,7 +294,7 @@ endif()
 # For compatibility with TriBITS:
 SET(DOCSTR "List of semi-colon separated paths to look for the TPL CGNS")
 =======
-# For compatability with TriBITS:
+# For compatibility with TriBITS:
 set(DOCSTR "List of semi-colon separated paths to look for the TPL CGNS")
 >>>>>>> upstream/master
 

@@ -38,9 +38,9 @@
 # @HEADER
 
 #
-# These tests test the basic dependancy adjustment logic in TriBITS for
+# These tests test the basic dependency adjustment logic in TriBITS for
 # enabling and disabling packages, subpackages, tests/examples, TPLs, etc.
-# These run very fast because they don't need to actaully configure any code.
+# These run very fast because they don't need to actually configure any code.
 #
 
 set(TRIBITS_REDUCED_MOCK_TRILINOS_DIR "examples/ReducedMockTrilinos")

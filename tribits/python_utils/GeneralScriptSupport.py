@@ -353,7 +353,7 @@ g_dumpAllSysCmnds = "GENERAL_SCRIPT_SUPPORT_DUMD_COMMANDS" in os.environ
 
 # Run a command (or the mock of that command) and optionally return the stdout
 #
-# Returns the comamndline exit code or, if 'rtnOutput=True' returns the tuple
+# Returns the commandline exit code or, if 'rtnOutput=True' returns the tuple
 # (rtnCode, cmndOutput).
 #
 # For Python 2, this returns stdout as a standard ASCII byte array for the

@@ -95,7 +95,7 @@ endmacro()
 # to get the list of defined external packages (TPLs) and internal top-level
 # (TriBITS) packages.
 #
-# On output, this produces the list varaibles::
+# On output, this produces the list variables::
 #
 #   ${PROJECT_NAME}_DEFINED_TPLS
 #   ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
@@ -108,7 +108,7 @@ endmacro()
 #   ${PROJECT_NAME}_PACKAGES (old)
 #   ${PROJECT_NAME}_TPLS (old)
 #
-# and related varaibles.
+# and related variables.
 #
 # This includes the files:
 #
@@ -120,7 +120,7 @@ endmacro()
 #  * `tribits_process_tpls_lists()`_
 #  * `tribits_process_packages_and_dirs_lists()`_
 #
-# which set their varaibles.
+# which set their variables.
 #
 # See `Function call tree for constructing package dependency graph`_
 #
@@ -264,7 +264,7 @@ endfunction()
 
 # Macro that sets ${PROJECT_NAME}_ALL_REPOSITORIES from
 # ${PROJECT_NAME}_PRE_REPOSITORIES and ${PROJECT_NAME}_EXTRA_REPOSITORIES if
-# it is not alrady set.  Also, it replaces ',' with ';' in the latter.
+# it is not already set.  Also, it replaces ',' with ';' in the latter.
 #
 # This function is needed in use cases where extra repos are used where the
 # extra repos are not read in through an ExtraRepositoriesList.cmake file and
@@ -272,7 +272,7 @@ endfunction()
 #
 macro(tribits_set_all_extra_repositories)
   if ("${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES}"   STREQUAL  "")
-    # Allow list to be seprated by ',' instead of just by ';'.  This is needed
+    # Allow list to be separated by ',' instead of just by ';'.  This is needed
     # by the unit test driver code
     split("${${PROJECT_NAME}_PRE_REPOSITORIES}"  ","
       ${PROJECT_NAME}_PRE_REPOSITORIES)

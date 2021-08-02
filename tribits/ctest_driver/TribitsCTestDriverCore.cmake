@@ -746,7 +746,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     A yet additional list of extra cmake configure options to be passed to
 #     the inner CMake configure after all of the others.  Unlike the above
 #     options, this var is read from the env and allows the user to set
-#     arbitary configure options that overrides all others. **WARNING:** Do
+#     arbitrary configure options that overrides all others. **WARNING:** Do
 #     not include any semicolons ';' in these arguments (see below WARNING).
 #
 # These configure options are passed into the ``ctest_configure()`` command in

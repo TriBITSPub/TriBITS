@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       ctest_build_name_suffix:
-        description: 'Add a suffix to bulid names on CDash'
+        description: 'Add a suffix to build names on CDash'
         required: false
 jobs:
   build:

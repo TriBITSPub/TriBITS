@@ -94,7 +94,7 @@ some other stuff
 simpleDocText1_rstDocBlocks_expected = {
   "some_macro_name1()" : {
     "type" : "MACRO",
-    "body" : "\nGood documenation\n\n",
+    "body" : "\nGood documentation\n\n",
     "fileNameLineNum": "simpleDocText1.cmake:7",
     }
   }
@@ -439,7 +439,7 @@ something 2
 some_macro_name1()
 ++++++++++++++++++
 
-Good documenation
+Good documentation
 
 
 something else
@@ -455,7 +455,7 @@ other
 
 SOME_FUNC_NAME2()
 -----------------
-Better documenation
+Better documentation
 
 Usage::
 

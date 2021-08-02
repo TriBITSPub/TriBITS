@@ -557,7 +557,7 @@ if __name__ == '__main__':
     "--file-name-path-base-dir", dest="fileNamePathBaseDir", type="string",
     default="",
     help="Base path stripped off of file names reported when --show-file-name-line-num is set."+\
-      "  NOTE: This path should be relative to the paths in --extract-from and may be realtive paths." )
+      "  NOTE: This path should be relative to the paths in --extract-from and may be relative paths." )
 
   clp.add_option(
     "--dump-rst-blocks", dest="dumpRstBlocks", action="store_true",

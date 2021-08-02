@@ -258,7 +258,7 @@ macro(tribits_define_global_options_and_define_extra_repos)
     "Enable examples (exec and ctest add_test()) in all packages  (set to ON, OFF, or leave empty).  If left empty, then this will be set to ON if ${PROJECT_NAME}_ENABLE_TESTS=ON" )
 
   set(${PROJECT_NAME}_SKIP_CTEST_ADD_TEST OFF CACHE BOOL
-    "Skipp ctest add_test() for all defined tests (but still build any enabled test or example executable targets)." )
+    "Skip ctest add_test() for all defined tests (but still build any enabled test or example executable targets)." )
 
   if (${PROJECT_NAME}_ENABLE_TESTS AND ${PROJECT_NAME}_ENABLE_EXAMPLES STREQUAL "")
     message(STATUS "Setting ${PROJECT_NAME}_ENABLE_EXAMPLES=ON because ${PROJECT_NAME}_ENABLE_TESTS=ON")
@@ -1257,7 +1257,7 @@ macro(tribits_copy_installer_resource _varname _source _destination)
     COPYONLY)
 endmacro()
 
-# Run the git log command to get the verison info for a git repo
+# Run the git log command to get the version info for a git repo
 #
 function(tribits_generate_single_repo_version_string  GIT_REPO_DIR
    SINGLE_REPO_VERSION_STRING_OUT
@@ -2677,7 +2677,7 @@ macro(tribits_exclude_files)
       "ERROR: tribits_exclude_files() was called in a subpackage CmakeLists.txt file!"
       "  Instead, move this call to the file"
       " ${${${PACKAGE_NAME}_PARENT_PACKAGE}_SOURCE_DIR}/CMakeLists.txt"
-      " and adjust the paths accodingly!" )
+      " and adjust the paths accordingly!" )
   endif()
 
   set(FILES_TO_EXCLUDE ${ARGN})

@@ -234,7 +234,7 @@ macro(tribits_private_disable_optional_package_enables
     # Always disable the conditional enable but only print the message if the package is enabled.
     #message("--  Disable ${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME} ...")
     if (${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME})
-      if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})  # is explicity try already!
+      if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})  # is explicitly try already!
         message("-- "
           "NOTE: Setting ${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}=OFF"
           " which was ${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}}"
@@ -1092,7 +1092,7 @@ macro(tribits_adjust_package_enables)
 
   if (${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES)
     message("")
-    message("Setting to empty '' all enabled packages on reqeust ...")
+    message("Setting to empty '' all enabled packages on request ...")
     message("")
     foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
       if (${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE})

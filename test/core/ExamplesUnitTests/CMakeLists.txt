@@ -554,7 +554,7 @@ tribits_add_advanced_test( TribitsHelloWorld_install_perms
     # NOTE: Above we can't change the default group or other permissions
     # because that depends on the user's umask when the run these tests.  But
     # the owner should have read/write/execute on the directories or it could
-    # not possibily install anything.
+    # not possibly install anything.
 
   TEST_5
     MESSAGE "Check some default install file permissions"
@@ -1699,7 +1699,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
     # getting called at the very end.
 
   TEST_7
-    MESSAGE "Make sure that exec_script.sh is exectuable"
+    MESSAGE "Make sure that exec_script.sh is executable"
     CMND ./install_base/install/share/WithSubpackagesB/stuff/exec_script.sh
     PASS_REGULAR_EXPRESSION
       "exec_script.sh executed and returned this string"
@@ -1710,7 +1710,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
   # * The CMake install machinery will actually create multiple base dirs
   #   under ${CMAKE_INSTALL_PREFIX} in case they don't already exist.
   #
-  # * The group ownership actaully will be set correctly starting with
+  # * The group ownership actually will be set correctly starting with
   #   ${<Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR} which is
   #   above ${CMAKE_INSTALL_PREFIX}.  This is needed to address systems where
   #   the group sticky bit is disabled (like we see on some SNL systems, see
@@ -1829,7 +1829,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perm
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_8
-    MESSAGE "Make sure that exec_script.sh is exectuable"
+    MESSAGE "Make sure that exec_script.sh is executable"
     CMND ./install_base/subdir/install/share/WithSubpackagesB/stuff/exec_script.sh
     PASS_REGULAR_EXPRESSION
       "exec_script.sh executed and returned this string"
@@ -1838,7 +1838,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perm
   # NOTE: In addition to the same checks performed by the test
   # TribitsExampleProject_install_perms described above, this above test also:
   #
-  # * Ensures that the non-recursive group and permisions gets set on
+  # * Ensures that the non-recursive group and permissions gets set on
   # * base-dirs.
   #
   # * Ensures that owning group and directory permissions get set even if

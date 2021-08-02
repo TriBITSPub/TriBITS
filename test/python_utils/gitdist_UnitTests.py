@@ -414,7 +414,7 @@ class test_createMarkdownTable(unittest.TestCase):
                   "2019-10-17 16:32:15"]},
       {"label": "Author", "align": "L",
        "fields": ["user@domain.com", "wile.e.coyote@acme.com",
-                  "someone@somwhere.com"]},
+                  "someone@somewhere.com"]},
       {"label": "Summary", "align": "L",
        "fields": ["Merge Pull Request #1234 from user/repo/branch",
                   "Fixed a Bug", "Did Some Work"]}
@@ -431,7 +431,7 @@ class test_createMarkdownTable(unittest.TestCase):
       "|:-------------- |:-------:|:------------------- |:---------------------- |:---------------------------------------------- |\n" \
       "| MockProjectDir | e2dc488 | 2019-10-23 10:16:07 | user@domain.com        | Merge Pull Request #1234 from user/repo/branch |\n" \
       "| ExtraRepo1     | f671414 | 2019-10-22 11:18:47 | wile.e.coyote@acme.com | Fixed a Bug                                    |\n" \
-      "| ExtraRepo2     | 50bbf3e | 2019-10-17 16:32:15 | someone@somwhere.com   | Did Some Work                                  |"
+      "| ExtraRepo2     | 50bbf3e | 2019-10-17 16:32:15 | someone@somewhere.com   | Did Some Work                                  |"
     self.assertEqual(table, table_expected)
 
 
@@ -841,7 +841,7 @@ def writeGitMockProgram_dist_repo_versions_table():
       "MOCK_PROGRAM_OUTPUT: 2019-10-17 16:32:15\n" \
       "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%ae\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
-      "MOCK_PROGRAM_OUTPUT: someone@somwhere.com\n" \
+      "MOCK_PROGRAM_OUTPUT: someone@somewhere.com\n" \
       "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: Did Some Work\n" \
@@ -904,7 +904,7 @@ def writeGitMockProgram_dist_repo_versions_table_1_change_base():
       "MOCK_PROGRAM_OUTPUT: 2019-10-17 16:32:15\n" \
       "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%ae\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
-      "MOCK_PROGRAM_OUTPUT: someone@somwhere.com\n" \
+      "MOCK_PROGRAM_OUTPUT: someone@somewhere.com\n" \
       "MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: Did Some Work\n" \
@@ -1730,7 +1730,7 @@ class test_gitdist(unittest.TestCase):
         "|:-------------- |:-------:|:------------------- |:---------------------- |:---------------------------------------------- |\n" \
         "| MockProjectDir | e2dc488 | 2019-10-23 10:16:07 | user@domain.com        | Merge Pull Request #1234 from user/repo/branch |\n" \
         "| ExtraRepo1     | f671414 | 2019-10-22 11:18:47 | wile.e.coyote@acme.com | Fixed a Bug                                    |\n" \
-        "| ExtraRepo2     | 50bbf3e | 2019-10-17 16:32:15 | someone@somwhere.com   | Did Some Work                                  |\n"
+        "| ExtraRepo2     | 50bbf3e | 2019-10-17 16:32:15 | someone@somewhere.com   | Did Some Work                                  |\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
     finally:

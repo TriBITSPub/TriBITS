@@ -284,8 +284,8 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   and instead would have to the full variables names specific for a given
   project.
 
-  4) Non-cache project-level varaibles can be set in a ``*.cmake`` file that
-  will impact the configuration.  When using the ``-C`` option, only varaibles
+  4) Non-cache project-level variables can be set in a ``*.cmake`` file that
+  will impact the configuration.  When using the ``-C`` option, only variables
   set with ``set(<varName> CACHE <TYPE> ...)`` will impact the configuration.
 
   5) However, the ``*.cmake`` files specified by
@@ -458,7 +458,7 @@ The enable tests for explicitly enabled packages, configure with::
   -D <Project>_ENABLE_<TRIBITS_PACKAGE_2>=ON \
   -D <Project>_ENABLE_TESTS=ON \
 
-This wil result in the enable of the test suites for any package that
+This will result in the enable of the test suites for any package that
 explicitly enabled with ``-D <Project>_ENABLE_<TRIBITS_PACKAGE>=ON``.  Note
 that his will **not** result in the enable of the test suites for any packages
 that may only be implicitly enabled in order to build the explicitly enabled
@@ -696,9 +696,9 @@ verbose output without reconfiguring`_).  (NOTE: One can also see the exact
 set of flags used for each target in the generated ``build.ninja`` file when
 using the Ninja generator.) One cannot just look at the cache variables for
 ``CMAKE_<LANG>_FLAGS`` and ``CMAKE_<LANG>_FLAGS_<CMAKE_BUILD_TYPE>`` in the
-file ``CMakeCache.txt`` and see the full set of flags are actaully being used.
-These varaibles can override the cache varables by TriBITS as project-level
-local non-cache varaibles as described below (see `Overriding CMAKE_BUILD_TYPE
+file ``CMakeCache.txt`` and see the full set of flags are actually being used.
+These variables can override the cache variables by TriBITS as project-level
+local non-cache variables as described below (see `Overriding CMAKE_BUILD_TYPE
 debug/release compiler options`_).
 
 The <Project> TriBITS CMake build system will set up default compile flags for
@@ -1962,7 +1962,7 @@ configure time by setting::
 
 where ``<fullTestName>`` must exactly match the test listed out by ``ctest
 -N``.  This will result in the printing of a line for the excluded test when
-`Trace test addition or exclusion`_ is enabled and the test wil not be added
+`Trace test addition or exclusion`_ is enabled and the test will not be added
 with ``add_test()`` and therefore CTest (and CDash) will never see the
 disabled test.
 

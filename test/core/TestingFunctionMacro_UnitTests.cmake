@@ -227,7 +227,7 @@ function(unittest_tribits_dir_is_basedir)
     "/some/base/path" "/some/base/path/more" TRUE)
 
   tribits_dir_is_basedir_test_case(
-    "/some/base/path" "/some/base/pathes" FALSE)
+    "/some/base/path" "/some/base/paths" FALSE)
 
   tribits_dir_is_basedir_test_case(
     "/some/base/path/more" "/some/base/path" FALSE)
@@ -745,7 +745,7 @@ function(unittest_tribits_add_test_basic)
   set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   #
-  # Test different nubmers and types of arguments
+  # Test different numbers and types of arguments
   #
 
   message("Add a single basic test with no arguments")

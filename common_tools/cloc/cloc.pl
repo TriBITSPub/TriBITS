@@ -5487,7 +5487,7 @@ pattern name    =>  [qw /comment Fortran fixed/],
 
 
 # http://www.csis.ul.ie/cobol/Course/COBOLIntro.htm
-# Traditionally, comments in COBOL were indicated with an asteriks in
+# Traditionally, comments in COBOL were indicated with an asterisk in
 # the seventh column. Modern compilers may be more lenient.
 pattern name    =>  [qw /comment COBOL/],
         create  =>  '(?<=^......)(?k:(?k:[*])(?k:[^\n]*)(?k:\n))',

@@ -590,7 +590,7 @@ endfunction()
 # allow you to call the routine, even if you if() it out!
 =======
 # The install() commands must be in a different subroutine or CMake will not
-# allow you to call the rountine, even if you if() it out!
+# allow you to call the routine, even if you if() it out!
 >>>>>>> upstream/master
 #
 

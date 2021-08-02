@@ -229,7 +229,7 @@ include(PrintVar)
 #   ``RUN_SERIAL``
 #
 #     If specified, then no other tests will be allowed to run while this test
-#     is running. See the ``RUN_SERIAL`` argument in the fucntion
+#     is running. See the ``RUN_SERIAL`` argument in the function
 #     `tribits_add_test()`_ for more details.
 #
 #   ``COMM [serial] [mpi]``

@@ -6,7 +6,7 @@ other
 
 SOME_FUNC_NAME2()
 -----------------
-Better documenation
+Better documentation
 
 Usage::
 
@@ -23,7 +23,7 @@ something 2
 some_macro_name1()
 ++++++++++++++++++
 
-Good documenation
+Good documentation
 
 
 In: simpleDocText1.cmake:7

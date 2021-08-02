@@ -306,8 +306,8 @@ class test_mockprogram(unittest.TestCase):
           "MOCK_PROGRAM_INPUT: some input 1\n" \
           "MOCK_PROGRAM_RETURN: 13\n" \
           "MOCK_PROGRAM_OUTPUT: some output 1\n" \
-          "another line of ouput\n" \
-          "last ouptut line\n"
+          "another line of output\n" \
+          "last output line\n"
           "MOCK_PROGRAM_INPUT: some input 2\n" \
           "MOCK_PROGRAM_RETURN: 15\n" \
           "MOCK_PROGRAM_OUTPUT: some output 2\n" \

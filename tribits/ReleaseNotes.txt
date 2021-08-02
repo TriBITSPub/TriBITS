@@ -6,7 +6,7 @@ Release Notes for TriBITS
 
 (*) MINOR: Added tool tribits/python_utils/lower_case_cmake.py and driver
     tribits/refactoring/lower-case-cmake-tree.sh that can make CMake command
-    calls lower-case and make macro and function defintion names lowe case.
+    calls lower-case and make macro and function definition names lowe case.
     This was applied to the entire TriBITS repository (and then minor
     modifications for fix a few issues).  This should not impact users of
     TriBITS but it does change the case of commands in the TriBITS error

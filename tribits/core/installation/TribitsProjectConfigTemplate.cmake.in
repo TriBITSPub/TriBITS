@@ -164,7 +164,7 @@ endif()
 
 # NOTE: It is *NOT* safe to try to remove duplicate in
 # ${PROJECT_NAME}_TPL_LIBRARIES because these can be specified as -L, -l, etc.
-# Actaully, we should think about that.
+# Actually, we should think about that.
 
 ## ---------------------------------------------------------------------------
 ## MPI specific variables
