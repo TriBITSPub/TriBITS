@@ -817,7 +817,7 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     "--disable-packages", dest="disablePackages", type="string", default="",
     help="List of comma separated packages to explicitly disable" \
     +" (example, 'Tpetra,NOX').  This list of disables will be appended after" \
-    +" all of the listed enables no mater how they are determined (see" \
+    +" all of the listed enables no matter how they are determined (see" \
     +" --enable-packages option).  NOTE: Only use this option to remove packages" \
     +" that will not build for some reason.  You can disable tests that run" \
     +" by using the CTest option -E passed through the --ctest-options argument" \
@@ -898,7 +898,7 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
   clp.add_option(
     "--use-ninja", dest="useNinja", action="store_true",
     help="If set, then -GNinja used for backend build tool." \
-    +" Note: The comamnd 'ninja' must be in the default path." ,
+    +" Note: The command 'ninja' must be in the default path." ,
     default=False )
 
   clp.add_option(

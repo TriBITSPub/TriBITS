@@ -6,7 +6,7 @@ other
 
 SOME_FUNC_NAME2()
 -----------------
-Better documenation
+Better documentation
 
 Usage::
 
@@ -20,7 +20,7 @@ something 2
 SOME_MACRO_NAME1()
 ++++++++++++++++++
 
-Good documenation
+Good documentation
 
 
 something else

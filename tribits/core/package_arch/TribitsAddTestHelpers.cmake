@@ -316,7 +316,7 @@ FUNCTION(TRIBITS_ADD_TEST_PROCESS_CATEGORIES  ADD_THE_TEST_OUT)
 
   SET(ADD_THE_TEST FALSE)
 
-  # Set the default test-specific cateogry to basic if it is not set
+  # Set the default test-specific category to basic if it is not set
   IF (NOT PARSE_CATEGORIES)
     SET (PARSE_CATEGORIES BASIC)
   ENDIF()

@@ -135,7 +135,7 @@ FUNCTION(TRIBITS_ABORT_ON_MISSING_PACKAGE   DEP_PKG  PACKAGE_NAME  DEP_PKG_LIST_
     "Error, the package '${DEP_PKG}' is listed as a dependency of the package"
     " '${PACKAGE_NAME}' is in the list '${DEP_PKG_LIST_NAME}' but the package"
     " '${DEP_PKG}' is either not defined or is listed later in the package order."
-    "  This may also be an attempt to create a cicular dependency between"
+    "  This may also be an attempt to create a circular dependency between"
     " the packages '${DEP_PKG}' and '${PACKAGE_NAME}' (which is not allowed)."
     "  Check the spelling of '${DEP_PKG}' or see how it is listed in"
     " ${PROJECT_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS in relationship to"
@@ -567,10 +567,10 @@ ENDMACRO()
 
 
 #
-# Parse the read-in varaible SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS, add
+# Parse the read-in variable SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS, add
 # read subpackages to list of defined SE packages, and define options.
 #
-# NOTE: Directly reads varaibles ${PACKAGE_NAME} and
+# NOTE: Directly reads variables ${PACKAGE_NAME} and
 # ${SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS} defined in
 # TRIBITS_READ_PACKAGE_DEPENDENCIES
 #
@@ -1050,7 +1050,7 @@ ENDMACRO()
 
 
 #
-# Function that sets a varaible to DECLARED-UNDEFINED
+# Function that sets a variable to DECLARED-UNDEFINED
 #
 
 FUNCTION(DECLARE_UNDEFINED VAR)
@@ -1121,7 +1121,7 @@ MACRO(TRIBITS_PRIVATE_DISABLE_TPL_REQUIRED_PACKAGE_ENABLE
   #MESSAGE("TRIBITS_PRIVATE_DISABLE_TPL_REQUIRED_PACKAGE_ENABLE"
   #  " ${TPL_NAME} ${PACKAGE_NAME} ${LIBRARY_DEP}")
 
-  # Only turn off PACKAGE_NAME libraries and test/eamples if it
+  # Only turn off PACKAGE_NAME libraries and test/examples if it
   # is currently enabled or could be enabled.
 
   ASSERT_DEFINED(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
@@ -1191,7 +1191,7 @@ MACRO(TRIBITS_PRIVATE_DISABLE_REQUIRED_PACKAGE_ENABLES
   #MESSAGE("TRIBITS_PRIVATE_DISABLE_REQUIRED_PACKAGE_ENABLES"
   #  " ${FORWARD_DEP_PACKAGE_NAME} ${LIBRARY_DEP}")
 
-  # Only turn off FORWARD_DEP_PACKAGE libraries and test/eamples if it
+  # Only turn off FORWARD_DEP_PACKAGE libraries and test/examples if it
   # is currently enabled or could be enabled
 
   ASSERT_DEFINED(${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME})
@@ -1249,7 +1249,7 @@ MACRO(TRIBITS_PRIVATE_DISABLE_OPTIONAL_PACKAGE_ENABLES
     # Always disable the conditional enable but only print the message if the package is enabled.
     #MESSAGE("--  Disasble ${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME} ...")
     IF (${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME})
-      IF (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})  # is explicity try already!
+      IF (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})  # is explicitly try already!
         MESSAGE("-- "
           "NOTE: Setting ${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}=OFF"
           " which was ${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}}"
@@ -1673,7 +1673,7 @@ ENDMACRO()
 
 
 #
-# Macro that post-processes optional dependancies after all other
+# Macro that post-processes optional dependencies after all other
 # dependencies have been worked out
 #
 
@@ -1955,7 +1955,7 @@ MACRO(TRIBITS_PRIVATE_ENABLE_DEP_PACKAGE  PACKAGE_NAME  DEP_PACKAGE_NAME
     ELSEIF (${PACKAGE_NAME}_ENABLE_${DEP_PACKAGE_NAME})
 
       # Enable the upstream package if the user directly specified the
-      # optional package enable reguardless if it is PT or ST or even EX.
+      # optional package enable regardless if it is PT or ST or even EX.
 
       MESSAGE("-- " "Setting ${PROJECT_NAME}_ENABLE_${DEP_PACKAGE_NAME}=ON"
         " because ${PACKAGE_NAME}_ENABLE_${DEP_PACKAGE_NAME}=ON")
@@ -2106,7 +2106,7 @@ ENDMACRO()
 #
 # Get the list of explicitly enabled entries
 #
-# These is the list of entires in ${LISTVAR} for which:
+# These is the list of entries in ${LISTVAR} for which:
 #
 #   IF (${ENABLED_PREFIX}_ENABLE_{ENTRY})
 #
@@ -2135,7 +2135,7 @@ ENDFUNCTION()
 #
 # Get the list non-disabled entries
 #
-# These is the list of entires in ${LISTVAR} for which:
+# These is the list of entries in ${LISTVAR} for which:
 #
 #   IF (
 #     (${ENABLED_PREFIX}_ENABLE_{ENTRY})
@@ -2168,7 +2168,7 @@ ENDFUNCTION()
 #
 # Get the list of explicitly disabled entries
 #
-# These is the list of entires in ${LISTVAR} for which:
+# These is the list of entries in ${LISTVAR} for which:
 #
 #   IF (
 #     (NOT ${ENABLED_PREFIX}_ENABLE_{ENTRY})
@@ -2201,7 +2201,7 @@ ENDFUNCTION()
 #
 # Get the list of non-enabled entries
 #
-# These is the list of entires in ${LISTVAR} for which:
+# These is the list of entries in ${LISTVAR} for which:
 #
 #   IF (NOT ${ENABLED_PREFIX}_ENABLE_{ENTRY})
 
@@ -2272,7 +2272,7 @@ MACRO(TRIBITS_ADJUST_PACKAGE_ENABLES)
 
   IF (${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES)
     MESSAGE("")
-    MESSAGE("Setting to empty '' all enabled packages on reqeust ...")
+    MESSAGE("Setting to empty '' all enabled packages on request ...")
     MESSAGE("")
     FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
       IF (${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE})
@@ -2313,7 +2313,7 @@ MACRO(TRIBITS_ADJUST_PACKAGE_ENABLES)
 
   MESSAGE("")
   MESSAGE("Disabling forward required SE packages and optional intra-package"
-    " support that have a dependancy on disabled SE packages"
+    " support that have a dependency on disabled SE packages"
     " ${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>=OFF ...")
   MESSAGE("")
   FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})

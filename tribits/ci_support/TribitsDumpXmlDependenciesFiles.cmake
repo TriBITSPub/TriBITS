@@ -153,7 +153,7 @@ ENDFUNCTION()
 
 
 #
-# Macro that ouptuts XML dependency files
+# Macro that outputs XML dependency files
 #
 
 MACRO(TRIBITS_WRITE_XML_DEPENDENCY_FILES)

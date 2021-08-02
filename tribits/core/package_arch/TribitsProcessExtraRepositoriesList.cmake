@@ -242,8 +242,8 @@ FUNCTION(TRIBITS_PARSE_EXTRAREPO_PACKSTAT  PACKSTAT_IN
 ENDFUNCTION()
 
 #
-# Macro that processes the list varaible contents in
-# ${PROJECT_NAME}_EXTRAREPOS_DIR_VCTYPE_REPOURL_PACKSTAT_CATEGORY into sperate arrays:
+# Macro that processes the list variable contents in
+# ${PROJECT_NAME}_EXTRAREPOS_DIR_VCTYPE_REPOURL_PACKSTAT_CATEGORY into separate arrays:
 #
 #   ${PROJECT_NAME}_PRE_REPOSITORIES_DEFAULT
 #   ${PROJECT_NAME}_EXTRA_REPOSITORIES_DEFAULT
@@ -443,10 +443,10 @@ ENDMACRO()
 
 
 #
-# Assert the existance and the order of the list of extra repositories in
+# Assert the existence and the order of the list of extra repositories in
 # ${PROJECT_NAME}_PRE_REPOSITORIES listed in
 # ${PROJECT_NAME}_EXTRA_REPOSITORIES according to the list read in from the
-# extra repos file as determined by the varaible
+# extra repos file as determined by the variable
 # ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DEFAULT.
 #
 FUNCTION(TRIBITS_EXTRA_REPOSITORIES_ASSERT_SUBSET_AND_ORDER_WRT_FILE)
@@ -498,7 +498,7 @@ ENDFUNCTION()
 # If ${PROJECT_NAME}_IGNORE_MISSING_EXTRA_REPOSITORIES==TRUE, then the set of
 # repos will be filtered based on what repos are present.  If
 # ${PROJECT_NAME}_IGNORE_MISSING_EXTRA_REPOSITORIES==FALSE, then all of the
-# repos must exist or MESSSAGE(FATAL_ERROR ...) is called and will fail the
+# repos must exist or MESSAGE(FATAL_ERROR ...) is called and will fail the
 # configure.
 #
 # On output the variables:
@@ -727,7 +727,7 @@ ENDFUNCTION()
 #   ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_HASPKGS
 #   ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_CATEGORIES
 #
-# On output, the following varaibles are set:
+# On output, the following variables are set:
 #
 #   ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES
 #   ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIRS

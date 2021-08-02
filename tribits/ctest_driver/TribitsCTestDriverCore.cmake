@@ -130,7 +130,7 @@ ENDIF()
 # Set default for CTEST_BINARY_DIRECTORY
 #
 IF ("${CTEST_BINARY_DIRECTORY}" STREQUAL "")
-  MESSAGE("Set defualt for CTEST_BINARY_DIRECTORY to $PWD/BUILD='$ENV{PWD}/BUILD'")
+  MESSAGE("Set default for CTEST_BINARY_DIRECTORY to $PWD/BUILD='$ENV{PWD}/BUILD'")
   SET(CTEST_BINARY_DIRECTORY $ENV{PWD}/BUILD)
 ENDIF()
 
@@ -224,7 +224,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #   # Set some basic vars and include TRIBITS_CTEST_DRIVER()
 #   SET(TRIBITS_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../..")
-#   INLCUDE(
+#   INCLUDE(
 #     "${TRIBITS_PROJECT_ROOT}/cmake/tribits/ctest_driver/TribitsCTestDriverCore.cmake")
 #
 #   # Set variables that define this build
@@ -794,7 +794,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #   ``CTEST_DO_CONFIGURE``
 #
 #     If ``TRUE``, then the selected packages will be configured.  If
-#     ``FALSE``, it is assumed that a relavent configure is already in place
+#     ``FALSE``, it is assumed that a relevant configure is already in place
 #     in the binary directory if a build or running tests is to be done.  Note
 #     that for the package-by-package mode, a configure is always done if a
 #     build or any testing is to be done but results will not be sent to CDash
@@ -815,14 +815,14 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #   ``CTEST_DO_BUILD``
 #
 #     If ``TRUE``, then the selected packages will be build.  If ``FALSE``, it
-#     is assumed that a relavent build is already in place in the binary
+#     is assumed that a relevant build is already in place in the binary
 #     directory if any testing is to be done.  Default ``TRUE``.
 #
 #   .. _CTEST_BUILD_FLAGS:
 #
 #   ``CTEST_BUILD_FLAGS``
 #
-#     Build-in CTest variable that gives the flags passed to the build command
+#     Built-in CTest variable that gives the flags passed to the build command
 #     called inside of the built-in CTest command ``CTEST_BUILD()``.  The
 #     default is ``-j2`` when `CTEST_CMAKE_GENERATOR`_ is set to ``Unix
 #     Makefiles``.  Otherwise, the default is empty "".  Useful options to set
@@ -1101,7 +1101,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # .. _Mutiple ctest -S invocations (TRIBITS_CTEST_DRIVER()):
 #
-# **Mutiple ctest -S invocations (TRIBITS_CTEST_DRIVER()):**
+# **Multiple ctest -S invocations (TRIBITS_CTEST_DRIVER()):**
 #
 # By default, this function is meant to be used in a single invocation of the
 # ``ctest -S <script>.cmake`` command in order to do everything from the
@@ -2102,7 +2102,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
     # NOTE: FATAL_ERROR is needed so that the ctest -S script returns != 0
     # Also, it is critical to dislplay the "See results" in this
     # MESSAGE(FATAL_ERROR ...) command in order for it to be printed last.
-    # Otherwise, if you run with ctest -V -S, then the ouptut from
+    # Otherwise, if you run with ctest -V -S, then the output from
     # CTEST_TEST() will be printed last :-(
   ENDIF()
 

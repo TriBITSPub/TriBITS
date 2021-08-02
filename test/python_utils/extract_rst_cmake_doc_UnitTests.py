@@ -83,7 +83,7 @@ something
 #
 # @MACRO: SOME_MACRO_NAME1()
 #
-# Good documenation
+# Good documentation
 # 
 MACRO(SOME_MACRO_NAME1 ...)
 some other stuff 
@@ -93,7 +93,7 @@ some other stuff
 simpleDocText1_rstDocBlocks_expected = {
   "SOME_MACRO_NAME1()" : {
     "type" : "MACRO",
-    "body" : "\nGood documenation\n\n"
+    "body" : "\nGood documentation\n\n"
     }
   }
 
@@ -107,7 +107,7 @@ something
 #
 # @MACRO :   SOME_MACRO_NAME1()
 #
-# Good documenation
+# Good documentation
 #
 MACRO(  SOME_MACRO_NAME1 ...)
 some other stuff 
@@ -124,7 +124,7 @@ something
 #
 # @MACRO: SOME_MACRO_NAME1()
 #
-# Good documenation
+# Good documentation
 #
 MACRO(SOME_MACRO_NAME1)
 some other stuff 
@@ -139,7 +139,7 @@ something
 
 #
 # @FUNCTION: SOME_FUNC_NAME2()
-# Better documenation
+# Better documentation
 #
 # Usage::
 #
@@ -155,7 +155,7 @@ some other stuff
 simpleDocText2_rstDocBlocks_expected = {
   "SOME_FUNC_NAME2()" : {
     "type" : "FUNCTION",
-    "body" : "Better documenation\n\nUsage::\n\n  SOME_FUNC_NAME2(blah\n    goat\n    )\n\n"
+    "body" : "Better documentation\n\nUsage::\n\n  SOME_FUNC_NAME2(blah\n    goat\n    )\n\n"
     }
   }
 
@@ -270,7 +270,7 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
 
 
   def test_func_mussing_colon(self):
-    exceptMessage = "NO EXCEPTION WAS THOWN"
+    exceptMessage = "NO EXCEPTION WAS THROWN"
     try:
       rstDocBlocks = extractRstDocBlocksFromText(funcMissingColon, rstBlockTypes,
         "someFile1.cmake")
@@ -281,7 +281,7 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
 
 
   def test_func_terminate_on_macro(self):
-    exceptMessage = "NO EXCEPTION WAS THOWN"
+    exceptMessage = "NO EXCEPTION WAS THROWN"
     try:
       rstDocBlocks = extractRstDocBlocksFromText(funcTerminateOnMacroText, rstBlockTypes,
         "someFile1.cmake")
@@ -292,7 +292,7 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
 
 
   def test_func_name_mismatch(self):
-    exceptMessage = "NO EXCEPTION WAS THOWN"
+    exceptMessage = "NO EXCEPTION WAS THROWN"
     try:
       rstDocBlocks = extractRstDocBlocksFromText(funcNameMistmatchText, rstBlockTypes,
         "someFile2.cmake")
@@ -303,7 +303,7 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
 
 
   def test_bad_vertical_space_in_comment_block(self):
-    exceptMessage = "NO EXCEPTION WAS THOWN"
+    exceptMessage = "NO EXCEPTION WAS THROWN"
     try:
       rstDocBlocks = extractRstDocBlocksFromText(badVerticalSpaceInCommentBlockText, rstBlockTypes,
         "someFile3.cmake")
@@ -314,7 +314,7 @@ class test_extractRstDocBlocksFromText(unittest.TestCase):
 
 
   def test_missing_horizontal_space_in_comment_block(self):
-    exceptMessage = "NO EXCEPTION WAS THOWN"
+    exceptMessage = "NO EXCEPTION WAS THROWN"
     try:
       rstDocBlocks = extractRstDocBlocksFromText(msisingHorizontalSpaceInCommentBlockText,
          rstBlockTypes, "someFile4.cmake")
@@ -405,7 +405,7 @@ other
 
 SOME_FUNC_NAME2()
 -----------------
-Better documenation
+Better documentation
 
 Usage::
 
@@ -419,7 +419,7 @@ something 2
 SOME_MACRO_NAME1()
 ++++++++++++++++++
 
-Good documenation
+Good documentation
 
 
 something else
@@ -510,7 +510,7 @@ class test_replaceWithRstDocBlocksInText(unittest.TestCase):
  
 
   def test_missing_sec_char(self):
-    exceptMessage = "NO EXCEPTION WAS THOWN"
+    exceptMessage = "NO EXCEPTION WAS THROWN"
     try:
       replacedText = replaceWithRstDocBlocksInText(textMissingSecChar,
        rstBlockTypes, simpleDocText1_and_2_rstDocBlocks_expected, "someFile1.cmake")
@@ -521,7 +521,7 @@ class test_replaceWithRstDocBlocksInText(unittest.TestCase):
 
 
   def test_sec_char_too_long(self):
-    exceptMessage = "NO EXCEPTION WAS THOWN"
+    exceptMessage = "NO EXCEPTION WAS THROWN"
     try:
       replacedText = replaceWithRstDocBlocksInText(textSepCharTooLong,
        rstBlockTypes, simpleDocText1_and_2_rstDocBlocks_expected, "someFile2.cmake")
@@ -532,7 +532,7 @@ class test_replaceWithRstDocBlocksInText(unittest.TestCase):
 
 
   def test_wrong_block_type(self):
-    exceptMessage = "NO EXCEPTION WAS THOWN"
+    exceptMessage = "NO EXCEPTION WAS THROWN"
     try:
       replacedText = replaceWithRstDocBlocksInText(textWrongBlockType,
        rstBlockTypes, simpleDocText1_and_2_rstDocBlocks_expected, "someFile3.cmake")
@@ -543,7 +543,7 @@ class test_replaceWithRstDocBlocksInText(unittest.TestCase):
 
 
   def test_wrong_block_type(self):
-    exceptMessage = "NO EXCEPTION WAS THOWN"
+    exceptMessage = "NO EXCEPTION WAS THROWN"
     try:
       replacedText = replaceWithRstDocBlocksInText(textMisspelledOrMissingBlockName,
        rstBlockTypes, simpleDocText1_and_2_rstDocBlocks_expected, "someFile4.cmake")
@@ -554,7 +554,7 @@ class test_replaceWithRstDocBlocksInText(unittest.TestCase):
 
 
 #
-# Mock comamndline options
+# Mock commandline options
 #
 
 

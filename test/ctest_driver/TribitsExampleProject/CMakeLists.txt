@@ -120,7 +120,7 @@ SET(CTEST_S_SCRIPT_ARGS
   )
 
 #
-# Set up to submit to CDash if reqeusted
+# Set up to submit to CDash if requested
 #
 
 IF ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "") 
@@ -206,7 +206,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_PASS
     CMND ln
     ARGS -s ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Run ctest driver testing everyting but no push."
+    MESSAGE "Run ctest driver testing everything but no push."
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -289,7 +289,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
     CMND cp
     ARGS -r ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Break the confgiure for just the optional MixLang package"
+    MESSAGE "Break the configure for just the optional MixLang package"
     CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
     ARGS TribitsExampleProject/packages/mixed_lang/CMakeLists.txt
       "Configure of mixed_lang is broken!"
@@ -337,7 +337,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
     ARGS TribitsExampleProject/packages/mixed_lang/src/MixedLang.cpp
       "Build mixed_lang lib is broken!"
   TEST_2
-    MESSAGE "Run ctest driver which should show a failed libray build for just the MixedLang package!"
+    MESSAGE "Run ctest driver which should show a failed library build for just the MixedLang package!"
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -472,7 +472,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
     CMND cp
     ARGS -r ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Break the confgiure for just the required SimpleCxx package"
+    MESSAGE "Break the configure for just the required SimpleCxx package"
     CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
     ARGS TribitsExampleProject/packages/simple_cxx/CMakeLists.txt
       "Configure of SimpleCxx is broken!"
@@ -521,7 +521,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_COVERAGE
     CMND ln
     ARGS -s ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Run ctest driver testing everyting but no push."
+    MESSAGE "Run ctest driver testing everything but no push."
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -554,7 +554,7 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_PBP_ST_ALL_MEMORY
     CMND ln
     ARGS -s ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Run ctest driver testing everyting but no push."
+    MESSAGE "Run ctest driver testing everything but no push."
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -997,7 +997,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       CMND ln
       ARGS -s ${TribitsExProj_DIR} .
     TEST_1
-      MESSAGE "Run ctest driver testing everyting but no push."
+      MESSAGE "Run ctest driver testing everything but no push."
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1050,7 +1050,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       CMND ln
       ARGS -s ${TribitsExProj_DIR} .
     TEST_1
-      MESSAGE "Run ctest driver testing everyting but no push."
+      MESSAGE "Run ctest driver testing everything but no push."
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1095,7 +1095,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       CMND ln
       ARGS -s ${TribitsExProj_DIR} .
     TEST_1
-      MESSAGE "Run ctest driver testing everyting but no push."
+      MESSAGE "Run ctest driver testing everything but no push."
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1159,7 +1159,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "Configure FAILED"
 	"Skipping build because configure failed"
 	"Skipping tests because configure failed"
-	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
+	"Done with the all-at-once configure, build, test, and submit of TribitsExProj packages"
 	"Final set packages that had any failures: 'ALL_PACKAGES'"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
       ALWAYS_FAIL_ON_ZERO_RETURN
@@ -1202,7 +1202,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "Configure FAILED"
 	"Skipping build because configure failed"
 	"Skipping tests because configure failed"
-	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
+	"Done with the all-at-once configure, build, test, and submit of TribitsExProj packages"
 	"Final set packages that had any failures: 'SimpleCxx[;]WrapExternal'"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
       ALWAYS_FAIL_ON_ZERO_RETURN
@@ -1223,7 +1223,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       ARGS TribitsExampleProject/packages/with_subpackages/a/A.cpp
         "Build of A.cpp lib is broken!"
     TEST_2
-      MESSAGE "Run ctest driver which should show a failed libray build for just the MixedLang package!"
+      MESSAGE "Run ctest driver which should show a failed library build for just the MixedLang package!"
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1282,7 +1282,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       ARGS TribitsExampleProject/packages/with_subpackages/a/A.cpp
         "Build of A.cpp lib is broken!"
     TEST_2
-      MESSAGE "Run ctest driver which should show a failed libray build for just the MixedLang package!"
+      MESSAGE "Run ctest driver which should show a failed library build for just the MixedLang package!"
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1368,7 +1368,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
       ARGS TribitsExampleProject/packages/simple_cxx/test/CMakeLists.txt
         "Hello World" "Hellos World"
     TEST_2
-      MESSAGE "Run ctest driver which should show a failed libray build for just the MixedLang package!"
+      MESSAGE "Run ctest driver which should show a failed library build for just the MixedLang package!"
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1423,7 +1423,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 	"Gathering coverage results [.][.][.]"
 	"Performing coverage"   # printed by ctest_coverage()
 	"Percentage Coverage:"  # printed by ctest_coverage()
-	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
+	"Done with the all-at-once configure, build, test, and submit of TribitsExProj packages"
 	"TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1459,7 +1459,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
         "MemCheck .+: MixedLang_RayTracerTests [.]+ +Passed"
         "MemCheck .+: WithSubpackagesA_test_of_a [.]+ +Passed"
         "MemCheck .+: WrapExternal_run_external_func [.]+ +Passed"
-	"Done with the all-at-once configure, build, test, ans submit of TribitsExProj packages"
+	"Done with the all-at-once configure, build, test, and submit of TribitsExProj packages"
 	"TRIBITS_CTEST_DRIVER_ERROR_QUEUE is empty. All is well."
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1698,7 +1698,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 
     )
   # NOTE: The above test does the build in the first ctest -S invocation and
-  # the tests in teh second ctest -S invocation.
+  # the tests in the second ctest -S invocation.
 
 
   TRIBITS_ADD_ADVANCED_TEST( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_4
@@ -1817,7 +1817,7 @@ FUNCTION(GENERATE_AAO_TESTS  USE_NEW_AAO_CTEST_CDASH_FEATURES)
 
     )
   # NOTE: The above test does the build in the first ctest -S invocation and
-  # the tests in teh second ctest -S invocation.
+  # the tests in the second ctest -S invocation.
 
  
 ENDFUNCTION()

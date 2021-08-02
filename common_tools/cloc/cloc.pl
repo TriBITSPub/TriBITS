@@ -160,7 +160,7 @@ Usage: $script [options] <file(s)/dir(s)> | <set 1> <set 2> | <report files>
                              name per line.  See also --exclude-list-file.
    --unicode                 Check binary files to see if they contain Unicode
                              expanded ASCII text.  This causes performance to
-                             drop noticably.
+                             drop noticeably.
 
  ${BB}Processing Options${NN}
    --autoconf                Count .in files (as processed by GNU autoconf) of 
@@ -2757,7 +2757,7 @@ sub classify_file {                          # {{{1
       foreach my $extension (@extension_list) {
         if ($Not_Code_Extension{$extension} and 
            !$Forced_Extension{$extension}) {
-           # If .1 (for example) is an extention that would ordinarily be
+           # If .1 (for example) is an extension that would ordinarily be
            # ignored but the user has insisted this be counted with the
            # --force-lang option, then go ahead and count it.
             $rh_ignored->{$full_file} = 
@@ -6653,7 +6653,7 @@ printf ".m:  ;      obj C=% 2d  matlab=% 2d  mumps=% 2d\n", $objective_C_points,
             # Objective C without a doubt
             $objective_C_points = 1;
             $matlab_points      = 0;
-printf ".m: #includ obj C=% 2d  matlab=% 2d  mumps=% 2d\n", $objective_C_points, $matlab_points, $mumps_points if $DEBUG;
+printf ".m: #include obj C=% 2d  matlab=% 2d  mumps=% 2d\n", $objective_C_points, $matlab_points, $mumps_points if $DEBUG;
             last;
         } elsif (m{^\s*@(interface|implementation|protocol|public|protected|private|end)\s}o) {
             # Objective C without a doubt
@@ -8184,7 +8184,7 @@ sub really_is_incpascal {                    # {{{1
 
 # The heuristic is as follows: it is Pacal if any of the following:
 # 1. really_is_pascal returns true
-# 2. Any usual reserverd word is found (program, unit, const, begin...)
+# 2. Any usual reserved word is found (program, unit, const, begin...)
 
  # If the general routine for Pascal files works, we have it
  if (&really_is_pascal ($filename)) { 

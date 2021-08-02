@@ -3,7 +3,7 @@
 #  The FindHDF5 module with the CMake distribution will not work if
 #  the HDF5 compilers are not installed or if more the one hdf5 is on the
 #  system. The search logic also depends on an environment variable
-#  HDF5_ROOT. This module removes both requirements and insteead relies on the 
+#  HDF5_ROOT. This module removes both requirements and instead relies on the 
 #  libhdf5.settings file found in the library installation directory
 #
 #  This module will ONLY work for HDF5 configured through the GNU 
@@ -472,7 +472,7 @@ else()
                          LINK_INTERFACE_LIBRARIES "${HDF5_LINK_LIBRARIES}")
     set(HDF5_C_LIBRARY ${HDF5_C_TARGET})		       
 
-    # --- Search for the other possible compnent libraries
+    # --- Search for the other possible component libraries
 
     # Search for the high-level (HL) library
     find_library(_HDF5_HL_LIBRARY
@@ -593,7 +593,7 @@ if ( NOT HDF5_FIND_QUIETLY )
   message(STATUS "\tHDF5_TOOLS_FOUND: ${HDF5_TOOLS_FOUND}")
 
 endif()
-# For compatability with TriBITS:
+# For compatibility with TriBITS:
 set(TPL_HDF5_LIBRARY_DIRS ${_hdf5_LIBRARY_SEARCH_DIRS})
 set(TPL_HDF5_LIBRARIES ${HDF5_LIBRARIES})
 set(TPL_HDF5_INCLUDE_DIRS ${HDF5_INCLUDE_DIRS})

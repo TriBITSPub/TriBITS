@@ -311,7 +311,7 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
       ENDIF()
       SET(${PROJECT_NAME}_WRITE_NINJA_MAKEFILES
         ${${PROJECT_NAME}_WRITE_NINJA_MAKEFILES_DEFAULT} CACHE BOOL
-        "Generate dummy makefiles to call ninja in every bulid subdirectory (requires CMake 3.7.0 or newer)." )
+        "Generate dummy makefiles to call ninja in every build subdirectory (requires CMake 3.7.0 or newer)." )
     ELSE()
       MESSAGE("-- NOTE: CMAKE_VERSION=${CMAKE_VERSION} < 3.7.0: Can not generate"
         " dummy makefiles for Ninja generator!")
@@ -344,7 +344,7 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
   ADVANCED_SET(${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS
     ${${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS_DEFAULT}
     CACHE STRING
-    "Determins how unparsed arguments for TriBITS functions that use CMAKE_PARASE_ARUMENTS() internally are handled.  Valid choices are 'WARNING', 'SEND_ERROR', and 'FATAL_ERROR'.  The default is 'SEND_ERROR'."
+    "Determines how unparsed arguments for TriBITS functions that use CMAKE_PARASE_ARUMENTS() internally are handled.  Valid choices are 'WARNING', 'SEND_ERROR', and 'FATAL_ERROR'.  The default is 'SEND_ERROR'."
     )
   IF (
     (NOT ${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS STREQUAL "WARNING")
@@ -577,7 +577,7 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
     )
   # NOTE: 1500 is the CMake default set in Modules/CTest.cmake.  We need to
   # set the default here because we need to be able to scale it correctly in
-  # case the user does not explicilty set this var in the cache.
+  # case the user does not explicitly set this var in the cache.
 
   ADVANCED_SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0 CACHE STRING
     "Scale factor for global DART_TESTING_TIMEOUT and individual test TIMEOUT (default 1.0)."
@@ -1077,7 +1077,7 @@ MACRO(TRIBITS_COPY_INSTALLER_RESOURCE _varname _source _destination)
 ENDMACRO()
 
 #
-# Run the git log command to get the verison info for a git rep
+# Run the git log command to get the version info for a git rep
 #
 
 FUNCTION(TRIBITS_GENERATE_SINGLE_REPO_VERSION_STRING  GIT_REPO_DIR
@@ -1228,7 +1228,7 @@ ENDFUNCTION()
 # filled out!
 #
 # NOTE: This function can not be called in a cmake -P script because it has a
-# call to INSTALL()!  That is why this function is seprated out from
+# call to INSTALL()!  That is why this function is separated out from
 # TRIBITS_GENERATE_REPO_VERSION_OUTPUT_AND_FILE().
 #
 
@@ -1280,7 +1280,7 @@ ENDFUNCTION()
 #
 # Sets ${PROJECT_NAME}_EXTRA_REPOSITORIES from
 # ${PROJECT_NAME}_EXTRA_REPOSITORIES and ${PROJECT_NAME}_EXTRA_REPOSITORIES if
-# it is not alrady set.  Also, it replaces ',' with ';' in the latter.
+# it is not already set.  Also, it replaces ',' with ';' in the latter.
 #
 # This function is needed in use cases where extra repos are used where the
 # extra repos are not read in through an ExtraRepositoriesList.cmake file and
@@ -1288,7 +1288,7 @@ ENDFUNCTION()
 #
 MACRO(TRIBITS_SET_ALL_EXTRA_REPOSITORIES)
   IF ("${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES}"   STREQUAL  "")
-    # Allow list to be seprated by ',' instead of just by ';'.  This is needed
+    # Allow list to be separated by ',' instead of just by ';'.  This is needed
     # by the unit test driver code
     SPLIT("${${PROJECT_NAME}_PRE_REPOSITORIES}"  ","
       ${PROJECT_NAME}_PRE_REPOSITORIES)
@@ -2002,7 +2002,7 @@ MACRO(TRIBITS_SETUP_ENV)
   ENDIF()
 
   # Check for Doxygen/dot - We can use variables set in this check to
-  # enable/disable the grapical dependency graphs in doxygen Doxyfiles.
+  # enable/disable the graphical dependency graphs in doxygen Doxyfiles.
   INCLUDE(FindDoxygen)
 
   # Set the hack library to get link options on
@@ -2272,8 +2272,8 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
   GLOBAL_NULL_SET(${PROJECT_NAME}_ETI_PACKAGES)
 
   #
-  # B) Define the source and binary directories for all of the pacakges that
-  # have been enbaled.  These are used to allow packages to refer to each
+  # B) Define the source and binary directories for all of the packages that
+  # have been enabled.  These are used to allow packages to refer to each
   # other even downstream packages (which is pretty messed up really).
   #
 
@@ -2562,7 +2562,7 @@ MACRO(TRIBITS_SETUP_PACKAGING_AND_DISTRIBUTION)
       # ToDo: Repalce the above O(N) LIST(FIND ...) with a O(1) lookup ...
 
       # Checking if we have a relative path to the package's files. Since the
-      # exclude is a regular expression any "../" will be interpretted as <any
+      # exclude is a regular expression any "../" will be interpreted as <any
       # char><any char>/ which would never match the package's actual
       # directory. There isn't a direct way in cmake to convert a relative
       # path into an absolute path with string operations so as a way of
@@ -2621,7 +2621,7 @@ MACRO(TRIBITS_SETUP_PACKAGING_AND_DISTRIBUTION)
     #message("${PKG} depends on : ${${PKG}_LIB_REQUIRED_DEP_PACKAGES}")
   ENDFOREACH()
 
-  # K.4) Resetting the name to avoid overwriting registery keys when installing
+  # K.4) Resetting the name to avoid overwriting registry keys when installing
 
   IF(WIN32)
     SET(CPACK_PACKAGE_NAME "${CPACK_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}")

@@ -4233,7 +4233,7 @@ subsections.
 
 The first type of test-related classification is for extra repositories
 defined in the file `<projectDir>/cmake/ExtraRepositoriesList.cmake`_ (pulled
-in trough the `${PROJECT_NAME}_EXTRAREPOS_FILE`_ cache variable) using the
+in through the `${PROJECT_NAME}_EXTRAREPOS_FILE`_ cache variable) using the
 ``REPO_CLASSIFICATION`` field in the macro call
 `TRIBITS_PROJECT_DEFINE_EXTRA_REPOSITORIES()`_.  These classifications map to
 the standard CTest dashboard types ``Continuous``, ``Nightly``, and
@@ -5131,7 +5131,7 @@ Once cloned, the directories would be laid out as::
 .. _clone_extra_repos.py:
 
 The tool **clone_extra_repos.py** is used to clone the extra repositories for
-a multi-repositories TriBITS proejct.  It reads the repository URLs and
+a multi-repositories TriBITS project.  It reads the repository URLs and
 destination directories from the file
 `<projectDir>/cmake/ExtraRepositoriesList.cmake`_ and does the clones.  For
 example, to clone all the repos for the ``MetaProject`` project, one would use
@@ -6753,7 +6753,7 @@ shown by::
   $ cat ../git_bisect_log.log | grep "\(good:\|bad:\)" | sed "s/[a-z0-9]\{30\}\]/]/g"
   # bad: [605b91b012] Merge branch 'master' of software.sandia.gov:/git/Trilinos
   # good: [d44c17d5d2] Merge branch 'master' of software.sandia.gov:/space/git/Trilinos
-  # good: [7e13a95774] Ifpack2: If the user does not provide the bandwith of the banded [...]
+  # good: [7e13a95774] Ifpack2: If the user does not provide the bandwidth of the banded [...]
   # bad: [7335d8bc92] MueLu: fix documentation
   # bad: [9997ecf0ba] Belos::LSQRSolMgr: Fixed bug in setParameters.
   # bad: [b6e0453224] MueLu: add a nightly test for the combination of semicoarsening [...]

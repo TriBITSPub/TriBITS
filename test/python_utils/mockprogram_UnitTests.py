@@ -212,12 +212,12 @@ class test_mockprogram(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: some input\n" \
         "MOCK_PROGRAM_RETURN: 11\n" \
         "MOCK_PROGRAM_OUTPUT: some output\n" \
-        "another line of ouput\n" \
-        "last ouptut line\n"
+        "another line of output\n" \
+        "last output line\n"
         )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input", rtnOutput=True)
-      expected_output = b"some output\nanother line of ouput\nlast ouptut line\n"
+      expected_output = b"some output\nanother line of output\nlast output line\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 11)
       remainingMockFileStr = open('.mockprogram_inout.txt', 'r').read()
@@ -290,15 +290,15 @@ class test_mockprogram(unittest.TestCase):
         "MOCK_PROGRAM_INPUT: some input 1\n" \
         "MOCK_PROGRAM_RETURN: 13\n" \
         "MOCK_PROGRAM_OUTPUT: some output 1\n" \
-        "another line of ouput\n" \
-        "last ouptut line\n"
+        "another line of output\n" \
+        "last output line\n"
         "MOCK_PROGRAM_INPUT: some input 2\n" \
         "MOCK_PROGRAM_RETURN: 15\n" \
         "MOCK_PROGRAM_OUTPUT: some output 2\n" \
         )
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(
         mockProgramPath+" some input 1", rtnOutput=True)
-      expected_output = b"some output 1\nanother line of ouput\nlast ouptut line\n"
+      expected_output = b"some output 1\nanother line of output\nlast output line\n"
       self.assertEqual(output, expected_output)
       self.assertEqual(errorCode, 13)
       (output, errorCode) = GeneralScriptSupport.runSysCmndInterface(

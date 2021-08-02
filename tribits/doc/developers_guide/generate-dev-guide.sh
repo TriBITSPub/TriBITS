@@ -8,7 +8,7 @@
 #   ./generate-dev-guide.sh
 #
 # If you want to override what utils are used to generate the files, you can
-# pass in, for exmaple:
+# pass in, for example:
 #
 #   ./generate-dev-guide.sh \
 #      --generate-html=rst2html.py --generate-latex=rst2latex.py

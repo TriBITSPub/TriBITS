@@ -310,7 +310,7 @@ INCLUDE(TribitsAddTestHelpers)
 #     send to stdout.  Otherwise, the test will fail.  This is set using the
 #     built-in CTest property ``PASS_REGULAR_EXPRESSION``.  Consult standard
 #     CMake documentation for full behavior.  TIPS: Replace ';' with '[;]' or
-#     CMake will interpretet this as a array eleemnt boundary.  To match '.',
+#     CMake will interpreted this as a array element boundary.  To match '.',
 #     use '[.]'.
 #
 #   ``FAIL_REGULAR_EXPRESSION "<regex0>;<regex1>;..."``
@@ -742,7 +742,7 @@ INCLUDE(TribitsAddTestHelpers)
 #
 # These extra command-line arguments are added after any arguments passed in
 # through ``ARGS "<oarg0> <oarg1> ..."`` or ``POSTFIX_AND_ARGS_<IDX> <oarg0>
-# <oarg1> ...``.  This allows these extra arguments to override the ealier
+# <oarg1> ...``.  This allows these extra arguments to override the earlier
 # arguments.
 #
 # The primary motivating use case for ``<fullTestName>_EXTRA_ARGS`` is to

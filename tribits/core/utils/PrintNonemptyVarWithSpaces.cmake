@@ -54,8 +54,8 @@ INCLUDE(AppendStringVarWithSep)
 #
 #    <varName>: <ele0> <ele1> ...
 #
-# If ``$<printedVarInOut>`` is ``TRUE`` on input, then the varible is not
-# touched. If however, the varible ``$<printedVarInOut>`` is not ``TRUE`` on
+# If ``$<printedVarInOut>`` is ``TRUE`` on input, then the variable is not
+# touched. If however, the variable ``$<printedVarInOut>`` is not ``TRUE`` on
 # input, then it is set to ``TRUE`` on output.
 #
 FUNCTION(PRINT_NONEMPTY_VAR_WITH_SPACES  VARIBLE_NAME  PRINTED_VAR_OUT)

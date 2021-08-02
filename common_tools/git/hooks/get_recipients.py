@@ -53,7 +53,7 @@ else:
 
 
 #
-# B) Pick out recipients based on matches to directories chagned 
+# B) Pick out recipients based on matches to directories changed 
 # 
 
 output=commands.getoutput("git diff --name-only %s %s" % (oldrev, newrev))

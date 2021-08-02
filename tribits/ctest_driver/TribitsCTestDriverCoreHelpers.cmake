@@ -1138,7 +1138,7 @@ MACRO(TRIBITS_CTEST_PACKAGE_BY_PACKAGE)
 
     IF (NOT PBP_BUILD_LIBS_PASSED AND CTEST_DO_TEST)
 
-      MESSAGE("\n${TRIBITS_PACKAGE}: Skipping tests since libray build failed!\n")
+      MESSAGE("\n${TRIBITS_PACKAGE}: Skipping tests since library build failed!\n")
 
       SET(PBP_TESTS_PASSED FALSE)
 
@@ -1210,7 +1210,7 @@ MACRO(TRIBITS_CTEST_PACKAGE_BY_PACKAGE)
     IF (NOT PBP_BUILD_LIBS_PASSED AND CTEST_DO_MEMORY_TESTING)
 
       MESSAGE("\n${TRIBITS_PACKAGE}: Skipping running memory checking"
-	 "tests since libray build failed!\n")
+	 "tests since library build failed!\n")
 
     ELSEIF (NOT CTEST_DO_MEMORY_TESTING)
 
@@ -1591,6 +1591,6 @@ MACRO(TRIBITS_CTEST_ALL_AT_ONCE)
   ENDIF()
   # ToDo: Optionally determine pass/fail based 
 
-  MESSAGE("\nDone with the all-at-once configure, build, test, ans submit of ${PROJECT_NAME} packages!\n")
+  MESSAGE("\nDone with the all-at-once configure, build, test, and submit of ${PROJECT_NAME} packages!\n")
 
 ENDMACRO()

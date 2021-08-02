@@ -238,7 +238,7 @@ def sorted_dict_str(d):
 
 
 ##############################################
-# System command unit testing utiltities
+# System command unit testing utilities
 ##############################################
 
 
@@ -434,7 +434,7 @@ def runSysCmndInterface(cmnd, outFile=None, rtnOutput=False, extraEnv=None, \
 
 
 ######################################
-# System interaction utilties
+# System interaction utilities
 ######################################
 
 

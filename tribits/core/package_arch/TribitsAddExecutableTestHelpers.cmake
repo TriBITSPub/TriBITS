@@ -102,7 +102,7 @@ FUNCTION( TRIBITS_CREATE_NAME_FROM_CURRENT_SOURCE_DIRECTORY DIRECTORY_NAME )
     STRING(REGEX REPLACE ${PACKAGE_SOURCE_DIR} "" unique_dir_path
       ${CMAKE_CURRENT_SOURCE_DIR})
 
-    #strip off the preceeding "/"
+    #strip off the preceding "/"
     STRING(LENGTH ${unique_dir_path} udp_length)
     MATH(EXPR last_index "${udp_length}-1")
     STRING(SUBSTRING ${unique_dir_path} 1 ${last_index} unique_dir_path)

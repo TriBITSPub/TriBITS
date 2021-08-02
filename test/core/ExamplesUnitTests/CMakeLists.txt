@@ -155,7 +155,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_InSourceBuildErrors
       TribitsHelloWorld
 
   TEST_1
-    MESSAGE "Try an in-source configure and check errror message"
+    MESSAGE "Try an in-source configure and check error message"
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
@@ -1302,7 +1302,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_LIBRARY()
+  # Testing passing libs to TRIBITS_ADD_LIBRARY()
   #
 
   TEST_1
@@ -1380,7 +1380,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_EXECUTABLE()
+  # Testing passing libs to TRIBITS_ADD_EXECUTABLE()
   #
 
   TEST_7
@@ -1482,7 +1482,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_LIBRARY()
+  # Testing passing libs to TRIBITS_ADD_LIBRARY()
   #
 
   TEST_1
@@ -1560,7 +1560,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   #
-  # Testing pasing libs to TRIBITS_ADD_EXECUTABLE()
+  # Testing passing libs to TRIBITS_ADD_EXECUTABLE()
   #
 
   TEST_7
@@ -1658,7 +1658,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
-    MESSAGE "Do the initial configure with no opions file"
+    MESSAGE "Do the initial configure with no options file"
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
@@ -2440,7 +2440,7 @@ TRIBITS_ADD_ADVANCED_TEST( SimpleTpl_install_shared
 
 
 #
-# Common configure arugments for all for the
+# Common configure arguments for all for the
 # TribitsExampleProject_SimpleTpl_RPATH_XXX tests.
 #
 
@@ -2471,7 +2471,7 @@ IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
 ELSEIF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   SET(RPATH_GREP_STR
     "R.*PATH *${RPATH_CURRENT_TEST_DIR}/install/lib:${SimpleTpl_install_shared_DIR}/install/lib")
-  # NOTE: Above matches both RPATH and RUNPATH which are used on differnt
+  # NOTE: Above matches both RPATH and RUNPATH which are used on different
   # Linux systems.
 ENDIF()
 
@@ -2588,7 +2588,7 @@ IF (RPATH_CURRENT_TEST_NAME_NAME)
 ENDIF()
 
 
-# Run the exectuable built and installed above setting LD_LIBRARY_PATH
+# Run the executable built and installed above setting LD_LIBRARY_PATH
 TRIBITS_ADD_TEST(
   simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
     DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install2/bin
@@ -2732,7 +2732,7 @@ IF (RPATH_CURRENT_TEST_NAME_NAME)
 ENDIF()
 
 
-# Run the exectuable built and installed above setting LD_LIBRARY_PATH
+# Run the executable built and installed above setting LD_LIBRARY_PATH
 TRIBITS_ADD_TEST(
   simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
     DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install3/bin

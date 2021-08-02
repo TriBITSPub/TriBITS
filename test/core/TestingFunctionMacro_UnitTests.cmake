@@ -3154,14 +3154,14 @@ FUNCTION(UNITTEST_TRIBITS_ETI_CHECK_EXCLUSION)
     OFF
   )
 
-  message("inst exluded (full explicit)...")
+  message("inst excluded (full explicit)...")
   TRIBITS_ETI_CHECK_EXCLUSION("abcdf;ta|tb|tc" "ta|tb|tc" result)
   UNITTEST_COMPARE_CONST(
     result
     ON
   )
 
-  message("inst exluded (full regex)...")
+  message("inst excluded (full regex)...")
   TRIBITS_ETI_CHECK_EXCLUSION("abcdf;.*|.*|.*" "ta|tb|tc" result)
   UNITTEST_COMPARE_CONST(
     result

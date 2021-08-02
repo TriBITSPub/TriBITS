@@ -145,7 +145,7 @@ FUNCTION(TRIBITS_PROCESS_ENABLED_TPL  TPL_NAME)
         "ERROR: TPL_${TPL_NAME}_NOT_FOUND=${TPL_${TPL_NAME}_NOT_FOUND}, aborting!")
     ENDIF()
 
-    # Assert that the TPL correctly defined all of these varaibles.
+    # Assert that the TPL correctly defined all of these variables.
     ASSERT_DEFINED(TPL_${TPL_NAME}_INCLUDE_DIRS)
     ASSERT_DEFINED(TPL_${TPL_NAME}_LIBRARIES)
     ASSERT_DEFINED(TPL_${TPL_NAME}_LIBRARY_DIRS)

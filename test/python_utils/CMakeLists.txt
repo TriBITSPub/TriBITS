@@ -172,7 +172,7 @@ TRIBITS_ADD_ADVANCED_TEST( extract_rst_cmake_doc_extract_and_replace_2_blocks_no
 # ToDo: Put in test extracts a single RST block and writes a single RST
 # template file.
 
-# ToDo: Put in test that extracts mutiple RST blocks from multiple *.cmake
+# ToDo: Put in test that extracts multiple RST blocks from multiple *.cmake
 # files and writes to multiple RST template files.
 
 # ToDo: Put in test that does not write all of the extracted RST blocks and

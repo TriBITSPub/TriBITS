@@ -174,7 +174,7 @@ FUNCTION(TRIBITS_FIND_MOST_RECENT_FILE_TIMESTAMP)
       ENDFOREACH()
 
       # Get the time stamp and the file name of the most recently modified file
-      # in currnet directory.
+      # in current directory.
       EXECUTE_PROCESS(
         WORKING_DIRECTORY "${BASE_DIR}"
         COMMAND find . -type f -printf "%T@ %p\n"

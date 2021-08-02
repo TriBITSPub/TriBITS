@@ -105,8 +105,8 @@ FUNCTION(TRIBITS_INSTALL_HEADERS)
   TRIBITS_CHECK_FOR_UNPARSED_ARGUMENTS()
 
   # ToDo: Assert PARSE_HEADERS has at least one argument!
-  # ToDo: Assert PARSE_INSTALL_DIR has 0 or 1 argumnets!
-  # ToDo: Assert PARSE_COMONENT has 0 or 1 argumnets!
+  # ToDo: Assert PARSE_INSTALL_DIR has 0 or 1 arguments!
+  # ToDo: Assert PARSE_COMONENT has 0 or 1 arguments!
   
   IF (PARSE_INSTALL_SUBDIR)
     SET(INSTALL_DIR "${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}/${PARSE_INSTALL_SUBDIR}")

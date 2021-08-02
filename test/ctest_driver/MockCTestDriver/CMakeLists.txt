@@ -280,7 +280,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "0. Processing current package Epetra: libs=.ON., tests=.ON."
     "1. Processing current package Thyra: libs=.ON., tests=.ON."
   )
-# NOTE: The above test shows that ony 
+# NOTE: The above test shows that only 
 
 
 CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
@@ -358,7 +358,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "Processing current package Teuchos: libs='ON', tests='ON'"
     "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Teuchos:BOOL=ON"
   COMPARE_DEPS_FILE
-     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Continuos.xml"
+     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Continuous.xml"
   )
 
 
@@ -378,7 +378,7 @@ CREATE_CTEST_DEPENDENCY_HANDLING_TEST_CASE(
     "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Teuchos:BOOL=ON"
     "Processing current package Phalanx: libs='ON', tests='ON'"
   COMPARE_DEPS_FILE
-     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Continuos.xml"
+     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Continuous.xml"
   )
 
 
@@ -844,7 +844,7 @@ IF (PYTHON_EXECUTABLE)
       "Skipping actual ctest_configure.. because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
       "Skipping build because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
       "Skipping testing because CTEST_DEPENDENCY_HANDLING_UNIT_TESTING='ON'"
-      "Done with the all-at-once configure, build, test, ans submit of Trilinos packages"
+      "Done with the all-at-once configure, build, test, and submit of Trilinos packages"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
     )
   # NOTE: The above test is for the all-at-once appraoch that checks for the

@@ -3,7 +3,7 @@
 Included in this directory is a snapshot of the GPL Perl script cloc.pl.  This
 is a source code line counting tool.  Also contained in this directory are the
 files cloc.<LANGUAGE_TYPE>.in that defines specializations of the default cloc
-langauge definitions for TriBITS software.  Adding a language definition file
+language definitions for TriBITS software.  Adding a language definition file
 directly to TriBITS aids in trying to help standardize the names of language
 files a little.
 
@@ -19,10 +19,10 @@ Here, the different language definition files are:
    $TRIBITS_DIR/common_tools/cloc/cloc.core-languages.in
    $TRIBITS_DIR/common_tools/cloc/cloc.script-languages.in
 
-Different TriBITS projects can copy these langauge definition files and define
+Different TriBITS projects can copy these language definition files and define
 their own language standards.  However, for the purposes of TriBITS meta build
 across projects, it would be beneficial if all TriBITS projects could use a
 single standard for language file extensions.
 
-This will print statisitics to the screen.  See cloc.pl --help for other
+This will print statistics to the screen.  See cloc.pl --help for other
 useful option.

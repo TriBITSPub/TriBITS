@@ -379,7 +379,7 @@ ENDFUNCTION()
 # default enables/disables.
 #
 # NOTE: Set TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE=TRUE to see really verbose
-# debug ouptut from this macro.
+# debug output from this macro.
 #
 
 MACRO(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS  REPOSITORY_NAME  REPOSITORY_DIR)
@@ -488,9 +488,9 @@ MACRO(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS  REPOSITORY_NAME  REPOSITORY_DIR)
             REPOSITORY_AND_PACKAGE_DIR)
         ELSE()
           MESSAGE_WRAPPER(FATAL_ERROR
-            "Error: The pacakge '${TRIBITS_PACKAGE}' was given an absolute directory '${PACKAGE_ABS_DIR}' which is *not* under the project's source directory '${PROJECT_SOURCE_DIR}/'!")
+            "Error: The package '${TRIBITS_PACKAGE}' was given an absolute directory '${PACKAGE_ABS_DIR}' which is *not* under the project's source directory '${PROJECT_SOURCE_DIR}/'!")
           SET(REPOSITORY_AND_PACKAGE_DIR "ERROR-BAD-PACKAGE-ABS-DIR")
-          # ToDo: We could just put in a relative path but that requries
+          # ToDo: We could just put in a relative path but that requires
           # knowing the common path between the two directory paths but CMake
           # does not give an easy way to determine that.  I would have to
           # write that function myself.

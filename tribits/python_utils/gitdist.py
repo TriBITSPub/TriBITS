@@ -882,7 +882,7 @@ def getCmndOutput(cmnd, rtnCode=False):
   return s(output)
 
 
-# Run a command and syncronize the output
+# Run a command and synchronize the output
 def runCmnd(options, cmnd):
   if options.debug:
     print("*** Running command: %s" % cmnd)
@@ -1574,7 +1574,7 @@ if __name__ == '__main__':
     distRepoStatus = True
     if len(otherArgs) > 0:
       print("Error, passing in extra git commands/args ='" + " ".join(otherArgs)
-            + "' with special comamnd 'dist-repo-status is not allowed!")
+            + "' with special command 'dist-repo-status is not allowed!")
       sys.exit(1)
   else:
     distRepoStatus = False

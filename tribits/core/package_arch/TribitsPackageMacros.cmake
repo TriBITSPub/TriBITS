@@ -69,10 +69,10 @@ INCLUDE(TribitsCopyFilesToBinaryDir)
 
 
 #
-# Macro that defines the package architecture system varaibles used to link
+# Macro that defines the package architecture system variables used to link
 # different SE packages together
 #
-# See README.DEPENDENCIES for information on what these varaibles mean and how
+# See README.DEPENDENCIES for information on what these variables mean and how
 # they are used.
 #
 MACRO(TRIBITS_DEFINE_LINKAGE_VARS PACKAGE_NAME_IN)
@@ -84,7 +84,7 @@ ENDMACRO()
 
 
 #
-# Macro that defines varaibles that create global targets
+# Macro that defines variables that create global targets
 #
 MACRO(TRIBITS_DEFINE_TARGET_VARS PARENT_PACKAGE_NAME_IN)
   GLOBAL_NULL_SET(${PARENT_PACKAGE_NAME_IN}_LIB_TARGETS)
@@ -92,7 +92,7 @@ MACRO(TRIBITS_DEFINE_TARGET_VARS PARENT_PACKAGE_NAME_IN)
 ENDMACRO()
 
 #
-# Set up some common varaibles used in the creation of an SE package
+# Set up some common variables used in the creation of an SE package
 #
 
 MACRO(TRIBITS_SET_COMMON_VARS PACKAGE_NAME_IN)
@@ -196,7 +196,7 @@ MACRO(TRIBITS_PACKAGE_DECL PACKAGE_NAME_IN)
 
   IF(${PACKAGE_NAME}_TRIBITS_PACKAGE_DECL_CALLED)
     MESSAGE(FATAL_ERROR "TRIBITS_PACKAGE_DECL() called more than once in Package ${PACKAGE_NAME}"
-    "This may be because TRIBITS_PACKAGE_DECL was expicitly called more than once or"
+    "This may be because TRIBITS_PACKAGE_DECL was explicitly called more than once or"
     "TRIBITS_PACKAGE_DECL was called after TRIBITS_PACKAGE. You do not need both."
     "If your package has subpackages then do not call TRIBITS_PACKAGE() instead call:"
     "TRIBITS_PACAKGE_DECL then TRIBITS_PROCESS_SUBPACKAGES then TRIBITS PACKAGE_DEF"
@@ -238,7 +238,7 @@ MACRO(TRIBITS_PACKAGE_DECL PACKAGE_NAME_IN)
 
   #
   # C) Set up the CMake support for this ${PROJECT_NAME} package and define some
-  # top-level varaibles.
+  # top-level variables.
   #
 
   TRIBITS_SET_COMMON_VARS(${PACKAGE_NAME_IN})
@@ -258,7 +258,7 @@ MACRO(TRIBITS_PACKAGE_DECL PACKAGE_NAME_IN)
     SET(${PACKAGE_NAME}_ENABLE_CIRCULAR_REF_DETECTION_FAILURE ON)
   ENDIF()
 
-  # Set up parent package linkage varaibles
+  # Set up parent package linkage variables
   TRIBITS_DEFINE_TARGET_VARS(${PACKAGE_NAME})
 
   IF (${PROJECT_NAME}_CTEST_USE_NEW_AAO_FEATURES)
@@ -333,7 +333,7 @@ MACRO(TRIBITS_PACKAGE_DEF)
   # Reset in case were changed by subpackages
   TRIBITS_SET_COMMON_VARS(${PACKAGE_NAME})
 
-  # Define package linkage varaibles
+  # Define package linkage variables
   TRIBITS_DEFINE_LINKAGE_VARS(${PACKAGE_NAME})
 
   SET(${PACKAGE_NAME}_TRIBITS_PACKAGE_DEF_CALLED TRUE)
@@ -651,7 +651,7 @@ FUNCTION(TRIBITS_PACKAGE_FINALIZE_DEPENDENCY_VARS)
     # libraries or any include directories, we need to not call
     # LIST(REMOVE_DUPLICATES ...).
 
-    # NOTE: There can't be any dupicate libraries in PARENT_PACKAGE_LIBRARIES
+    # NOTE: There can't be any duplicate libraries in PARENT_PACKAGE_LIBRARIES
     # so no need to remove them.
 
     GLOBAL_SET(${PACKAGE_NAME}_INCLUDE_DIRS "${PARENT_PACKAGE_INCLUDE_DIRS}")
@@ -914,7 +914,7 @@ ENDMACRO()
 #   ${PARENT_PACKAGE_NAME}_LIB_TARGETS
 #   ${PARENT_PACKAGE_NAME}_ALL_TARGETS
 #
-# without carefully studying the documentation in README.DEPENENCIES and then
+# without carefully studying the documentation in README.DEPENDENCIES and then
 # carefully studying all of the code and issues that modify these variables!
 #
 # ToDo: Write some good unit tests that pin down the behavior of all of this!

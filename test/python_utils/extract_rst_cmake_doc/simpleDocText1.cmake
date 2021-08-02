@@ -6,7 +6,7 @@ something
 #
 # @MACRO: SOME_MACRO_NAME1()
 #
-# Good documenation
+# Good documentation
 #
 MACRO(SOME_MACRO_NAME1 ...)
 some other stuff

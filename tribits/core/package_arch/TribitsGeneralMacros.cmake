@@ -86,7 +86,7 @@ ENDFUNCTION()
 # As a side effect of calling this function, INCLUDE_DIRECTORIES(...) to set
 # all of the include directories for a given set of enabled Packages/TPLs.
 #
-# NOTE: The Packages/TPLs should be sorted in decending dependency order
+# NOTE: The Packages/TPLs should be sorted in descending dependency order
 # before calling this function.
 #
 

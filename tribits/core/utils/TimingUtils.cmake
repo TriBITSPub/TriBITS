@@ -194,7 +194,7 @@ ENDFUNCTION()
 
 
 #
-# Reform the formated seconds in the form <sec>.<nanasec> from the combined
+# Reform the formatted seconds in the form <sec>.<nanasec> from the combined
 # int form.
 #
 FUNCTION(TIMER_GET_DECIMAL_NUM_FRUM_TRUNCATED_COMBINED_INT

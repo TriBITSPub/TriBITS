@@ -1424,7 +1424,7 @@ class test_gitdist(unittest.TestCase):
         rtnCode=True)
       #print(cmndOut)
       cmndOut_expected = \
-        "Error, passing in extra git commands/args ='--name-status' with special comamnd 'dist-repo-status is not allowed!\n"
+        "Error, passing in extra git commands/args ='--name-status' with special command 'dist-repo-status is not allowed!\n"
       self.assertEqual(cmndOut, s(cmndOut_expected))
       self.assertEqual(errOut, 1)
 

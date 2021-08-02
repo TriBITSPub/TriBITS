@@ -39,7 +39,7 @@ These variables are defined in the file:
 
    TribitsGlobalMacros.cmake
 
-The way that packages are enabled depending on the above user cache varaibles
+The way that packages are enabled depending on the above user cache variables
 is described in the TribitsDevelopersGuide.rst document.
 
 This dependency logic is executed in the TriBITS file:

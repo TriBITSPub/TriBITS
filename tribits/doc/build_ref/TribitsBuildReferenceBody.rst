@@ -562,7 +562,7 @@ However, on Linux systems, the observed algorithm appears to be:
    to the C compiler given in the variable ``CMAKE_C_COMPILER``.  The first
    compiler that is found is set to ``CMAKE_CXX_COMPILER``.
 
-**WARNING:** While this build-in CMake compiler search algorithm may seems
+**WARNING:** While this built-in CMake compiler search algorithm may seems
 reasonable, it fails to find the correct compilers in many cases for a non-MPI
 serial build.  For example, if a newer version of GCC is installed and is put
 first in ``PATH``, then CMake will fail to find the updated ``gcc`` compiler
@@ -737,7 +737,7 @@ and to override default release options use::
 NOTES: The TriBITS CMake cache variable
 ``CMAKE_<LANG>_FLAGS_<CMAKE_BUILD_TYPE>_OVERRIDE`` is used and not
 ``CMAKE_<LANG>_FLAGS_<CMAKE_BUILD_TYPE>`` because is given a default
-internally by CMake and the new varaible is needed to make the override
+internally by CMake and the new variable is needed to make the override
 explicit.
 
 Appending arbitrary libraries and link flags every executable
@@ -933,9 +933,9 @@ for individual packages with::
 The default value for ``<TRIBITS_PACKAGE>_ENABLE_EXPLICIT_INSTANTIATION`` is
 set by ``<Project>_ENABLE_EXPLICIT_INSTANTIATION``.
 
-For packages that support it, explicit template instantation can massively
+For packages that support it, explicit template instantiation can massively
 reduce the compile times for the C++ code involved.  To see what packages
-support explicit instantation just search the CMakeCache.txt file for
+support explicit instantiation just search the CMakeCache.txt file for
 variables with ``ENABLE_EXPLICIT_INSTANTIATION`` in the name.
 
 
@@ -1938,7 +1938,7 @@ NOTES:
   would not otherwise occur.
 
 * The value of ``DART_TESTING_TIMEOUT`` and the timeouts for individual tests
-  can be scaled up or down using the cache varaible
+  can be scaled up or down using the cache variable
   `<Project>_SCALE_TEST_TIMEOUT`_.
 
 * To set or override the default global test timeout limit at runtime, see
@@ -2905,7 +2905,7 @@ be run without needing to set ``LD_LIBRARY_PATH`` or any other system
 environment variables.  However, this setting does not allow the installed
 libraries and executables to be easily moved or relocated.  There are several
 built-in CMake variables that control how RPATH is handled related to
-installations.  The build-in CMake variables that control RPATH handling
+installations.  The built-in CMake variables that control RPATH handling
 include ``CMAKE_INSTALL_RPATH``, ``CMAKE_SKIP_BUILD_RPATH``,
 ``CMAKE_SKIP_INSTALL_RPATH``, ``CMAKE_SKIP_RPATH``,
 ``CMAKE_BUILD_WITH_INSTALL_RPATH``, ``CMAKE_INSTALL_RPATH_USE_LINK_PATH``.
@@ -3272,14 +3272,14 @@ which will only run the enabled tests and submit results to the CDash build
 ``<build-name>``.
 
 The configure, builds, and submits are either done package-by-package or
-all-at-once as controlled by the varaible ``<Project>_CTEST_DO_ALL_AT_ONCE``.
+all-at-once as controlled by the variable ``<Project>_CTEST_DO_ALL_AT_ONCE``.
 This can be set in the CMake cache when configuring the project using::
 
   -D<Project>_CTEST_DO_ALL_AT_ONCE=TRUE
 
 or when running the ``dashboard`` target with::
 
-  $ env <Project>_CTEST_DO_ALL_AT_ONCE=TRUE make dashbaord.
+  $ env <Project>_CTEST_DO_ALL_AT_ONCE=TRUE make dashboard.
 
 Using the ``dashboard`` target, one can also run coverage and memory testing
 and submit to CDash as described below.  But to take full advantage of the

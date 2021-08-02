@@ -65,7 +65,7 @@ INCLUDE(PrintVar)
 #  ADDITIONAL_OUTPUT_DIRS
 #
 #    If set, then the files will be copied to an additional output
-#    directories as well.  These must be abolute paths.
+#    directories as well.  These must be absolute paths.
 #
 # The default file extensions are:
 #
@@ -143,7 +143,7 @@ FUNCTION(TRIBITS_CREATE_CLIENT_TEMPLATE_HEADERS BASE_DIR)
     SET(WRITE_NEW_HEADER_FILE TRUE)
     IF (EXISTS "${BIN_HEADER_FILE}")
       # See if the file is the same and if it is, skip writing it again to avoid
-      # unecessarily rebuilding object code.
+      # unnecessarily rebuilding object code.
       FILE(READ "${BIN_HEADER_FILE}" EXISTING_BIN_HEADER_STR)
       IF (CLIENT_HEADER_STR STREQUAL EXISTING_BIN_HEADER_STR)
         SET(WRITE_NEW_HEADER_FILE FALSE)

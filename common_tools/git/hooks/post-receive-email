@@ -41,7 +41,7 @@
 # ------------------------------------
 # If you care... The original script jumped through extra hoops to make sure
 # the log info for commit messages was only ever sent once.  For example, if
-# a push added existing commits to a different branch, it would not list thos
+# a push added existing commits to a different branch, it would not list those
 # commit messages in the email.  Here, we always list the commit messages for
 # all the commits that change a branch.
 #
@@ -251,7 +251,7 @@ generate_update_branch_email()
 	#
 	#  git rev-parse --not --all | grep -v $(git rev-parse $refname)
 	#
-	# Get's us to something pretty safe (apart from the small time
+	# Gets us to something pretty safe (apart from the small time
 	# between refname being read, and git rev-parse running - for that,
 	# I give up)
 	#
@@ -340,7 +340,7 @@ generate_update_branch_email()
 			echo "            \\"
 			echo "             O -- O -- O ($oldrev)"
 			echo ""
-			echo "The removed revisions are not necessarilly gone - if another reference"
+			echo "The removed revisions are not necessarily gone - if another reference"
 			echo "still refers to them they will stay in the repository."
 			echo ""
 			rewind_only=1

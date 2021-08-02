@@ -149,7 +149,7 @@ FUNCTION(CTestScripts_fail_regular_exprssion_w_circular_ref_detection_tests)
   TRIBITS_ADD_TEST( GenericDriver
     NAME CTestScripts_fail_regular_exprssion_w_circular_ref_detection_2
     POSTFIX_AND_ARGS_0 test1 "Some stuff\n\nThe following Teuchos::RCPNode objects were created\n\nsome other stuff" 0
-    FAIL_REGULAR_EXPRESSION "Some other bad outptut taht does not match"
+    FAIL_REGULAR_EXPRESSION "Some other bad outptut that does not match"
     WILL_FAIL
     NUM_MPI_PROCS 1
     )

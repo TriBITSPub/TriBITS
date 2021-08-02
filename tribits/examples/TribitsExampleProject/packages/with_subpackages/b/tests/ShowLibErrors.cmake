@@ -1,4 +1,4 @@
-# Define these vars (one at a time) in your input cach to see invalid usage
+# Define these vars (one at a time) in your input cache to see invalid usage
 # checking and the errors and warnings printed!
 IF (SPKB_SHOW_TESTONLY_INSTALLABLE_ERROR)
   SET(TAEAT_EXTRALIB_ARGS INSTALLABLE)
