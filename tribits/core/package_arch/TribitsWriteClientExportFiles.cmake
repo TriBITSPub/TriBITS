@@ -585,13 +585,8 @@ endfunction()
 #
 # Set the install targets for the package config and export makefiles.
 #
-<<<<<<< HEAD
-# The INSTALL() commands must be in a different subroutine or CMake will not
-# allow you to call the routine, even if you if() it out!
-=======
 # The install() commands must be in a different subroutine or CMake will not
 # allow you to call the routine, even if you if() it out!
->>>>>>> upstream/master
 #
 
 function(tribits_write_project_client_export_files_install_targets PACKAGE_NAME)
