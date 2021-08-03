@@ -864,7 +864,7 @@ def extractPackageEnablesFromChangeStatus(changedFileDiffOutputStr, inOptions_in
       :
       if inOptions_inout.enableAllPackages == 'auto':
         if verbose:
-          print("\nModifed file: '" + modifiedFileFullPath + "'\n" +
+          print("\nModified file: '" + modifiedFileFullPath + "'\n" +
                 "  => Enabling all " + inOptions_inout.projectName +
                 " packages!")
         inOptions_inout.enableAllPackages = 'on'
@@ -2566,7 +2566,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
            atLeastOneConfigureBuildAttemptPassed = True
 
       if not atLeastOneConfigureBuildAttemptPassed:
-        print("\nThere were no successfully attempts to configure/build/test!")
+        print("\nThere were no successful attempts to configure/build/test!")
         okayToCommit = False
 
       if not okayToCommit:

@@ -6653,7 +6653,7 @@ printf ".m:  ;      obj C=% 2d  matlab=% 2d  mumps=% 2d\n", $objective_C_points,
             # Objective C without a doubt
             $objective_C_points = 1;
             $matlab_points      = 0;
-printf ".m: #include obj C=% 2d  matlab=% 2d  mumps=% 2d\n", $objective_C_points, $matlab_points, $mumps_points if $DEBUG;
+printf ".m: #includ obj C=% 2d  matlab=% 2d  mumps=% 2d\n", $objective_C_points, $matlab_points, $mumps_points if $DEBUG;
             last;
         } elsif (m{^\s*@(interface|implementation|protocol|public|protected|private|end)\s}o) {
             # Objective C without a doubt

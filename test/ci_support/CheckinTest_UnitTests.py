@@ -2150,7 +2150,7 @@ class test_checkin_test(unittest.TestCase):
       \
       testName,
       \
-      "",  # Just the default the readiness check!
+      "",  # Just the default readiness check!
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
