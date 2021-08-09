@@ -6,7 +6,7 @@ tribits_add_advanced_test( CTestDriverUnitTests
       -D${PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -P "${CMAKE_CURRENT_SOURCE_DIR}/CTestDriverUnitTests.cmake"
     PASS_REGULAR_EXPRESSION_ALL
-      "Final UnitTests Result: num_run = 4"
+      "Final UnitTests Result: num_run = 5"
       "Final UnitTests Result: PASSED"
   )
 

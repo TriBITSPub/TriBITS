@@ -94,6 +94,29 @@ function(unittest_tribits_get_cdash_build_url_from_parts)
 endfunction()
 
 
+function(unittest_tribits_get_cdash_build_url_from_tag_file)
+
+  message("\n***")
+  message("*** Testing tribits_get_cdash_build_url_from_tag_file()")
+  message("***\n")
+
+  set(TAG_FILE "${CMAKE_CURRENT_LIST_DIR}/data/dummy_build_dir/Testing/TAG")
+
+  tribits_get_cdash_build_url_from_tag_file(
+    INDEX_PHP_URL "mycdash/index.php"
+    PROJECT_NAME "my project"
+    SITE_NAME "my site"
+    BUILD_NAME "my buildname g++-2.5"
+    TAG_FILE "${TAG_FILE}"
+    CDASH_BUILD_URL_OUT cdashBuildUrl
+    )
+
+  unittest_compare_const(cdashBuildUrl
+     "mycdash/index.php?project=my%20project&filtercount=3&showfilters=1&filtercombine=and&field1=site&compare1=61&value1=my%20site&field2=buildname&compare2=61&value2=my%20buildname%20g%2B%2B-2.5&field3=buildstamp&compare3=61&value3=20101015-1112-My%20CDash%20Group") 
+
+endfunction()
+
+
 #
 # Execute the unit tests
 #
@@ -106,10 +129,11 @@ global_set(UNITTEST_OVERALL_NUMRUN 0)
 # Run the unit test functions
 unittest_tribits_read_ctest_tag_file()
 unittest_tribits_get_cdash_build_url_from_parts()
+unittest_tribits_get_cdash_build_url_from_tag_file()
 
 message("\n***")
 message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(4)
+unittest_final_result(5)

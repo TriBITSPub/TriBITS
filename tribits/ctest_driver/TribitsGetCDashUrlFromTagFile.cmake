@@ -20,7 +20,27 @@ include(TribitsReadTagFile)
 # will be handled correctly to produce a valid URL.
 #
 function(tribits_get_cdash_build_url_from_tag_file)
-  # ToDo: Implement!
+  # Get arguments
+  cmake_parse_arguments(
+    PREFIX #prefix
+    "" #options
+    "INDEX_PHP_URL;PROJECT_NAME;SITE_NAME;BUILD_NAME;TAG_FILE;CDASH_BUILD_URL_OUT" #one_value_keywords
+    "" #multi_value_keytowrds
+    ${ARGN}
+    )
+  # Read in the tag file and get the build stamp from that
+  tribits_read_ctest_tag_file(${PREFIX_TAG_FILE} buildStartTime cdashGroup cdashModel)
+  set(buildstamp "${buildStartTime}-${cdashGroup}")
+  # Build the URL and return it
+  tribits_get_cdash_build_url_from_parts(
+    INDEX_PHP_URL "${PREFIX_INDEX_PHP_URL}"
+    PROJECT_NAME "${PREFIX_PROJECT_NAME}"
+    SITE_NAME "${PREFIX_SITE_NAME}"
+    BUILD_NAME "${PREFIX_BUILD_NAME}"
+    BUILD_STAMP "${buildstamp}"
+    CDASH_BUILD_URL_OUT cdashBuildUrl
+    )
+  set(${PREFIX_CDASH_BUILD_URL_OUT} "${cdashBuildUrl}" PARENT_SCOPE)
 endfunction()
 
 
