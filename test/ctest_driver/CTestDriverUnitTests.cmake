@@ -47,8 +47,10 @@ set( CMAKE_MODULE_PATH
   )
 
 include(GlobalSet)
-include(TribitsReadTagFile)
 include(UnitTestHelpers)
+
+include(TribitsReadTagFile)
+include(TribitsGetCDashUrlFromTagFile)
 
 
 function(unittest_tribits_read_ctest_tag_file)
@@ -71,6 +73,27 @@ function(unittest_tribits_read_ctest_tag_file)
 endfunction()
 
 
+function(unittest_tribits_get_cdash_build_url_from_parts)
+
+  message("\n***")
+  message("*** Testing tribits_get_cdash_build_url_from_parts()")
+  message("***\n")
+
+  tribits_get_cdash_build_url_from_parts(
+    INDEX_PHP_URL "mycdash/index.php"
+    PROJECT_NAME "my project"
+    SITE_NAME "my site"
+    BUILD_NAME "my buildname g++-2.5"
+    BUILD_STAMP "20210729-0024-My Group"
+    CDASH_BUILD_URL_OUT cdashBuildUrlOut
+    )
+
+  unittest_compare_const(cdashBuildUrlOut
+     "mycdash/index.php?project=my%20project&filtercount=3&showfilters=1&filtercombine=and&field1=site&compare1=61&value1=my%20site&field2=buildname&compare2=61&value2=my%20buildname%20g%2B%2B-2.5&field3=buildstamp&compare3=61&value3=20210729-0024-My%20Group") 
+
+endfunction()
+
+
 #
 # Execute the unit tests
 #
@@ -82,10 +105,11 @@ global_set(UNITTEST_OVERALL_NUMRUN 0)
 
 # Run the unit test functions
 unittest_tribits_read_ctest_tag_file()
+unittest_tribits_get_cdash_build_url_from_parts()
 
 message("\n***")
 message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(3)
+unittest_final_result(4)
