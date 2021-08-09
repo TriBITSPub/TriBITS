@@ -44,6 +44,27 @@ function(tribits_get_cdash_build_url_from_tag_file)
 endfunction()
 
 
+# @FUNCTION: tribits_get_cdash_index_php_from_drop_site_and_location()
+#
+# Get the CDash index.php URL from the input CTEST_DROP_SITE and
+# CTEST_DROP_LOCATION vars used in a ctest -S script.
+#
+function(tribits_get_cdash_index_php_from_drop_site_and_location)
+  cmake_parse_arguments(
+    PREFIX #prefix
+    "" #options
+    "CTEST_DROP_SITE;CTEST_DROP_LOCATION;INDEX_PHP_URL_OUT" #one_value_keywords
+    "" #multi_value_keywords
+    ${ARGN}
+    )
+  string(FIND "${PREFIX_CTEST_DROP_LOCATION}" "?" endOfSubmitPhpIdx)
+  string(SUBSTRING "${PREFIX_CTEST_DROP_LOCATION}" 0 ${endOfSubmitPhpIdx} submitPhpPart)
+  string(REPLACE "submit.php" "index.php" indexPhpPart "${submitPhpPart}")
+  set(indexPhpUrl "${PREFIX_CTEST_DROP_SITE}${indexPhpPart}")
+  SET(${PREFIX_INDEX_PHP_URL_OUT} "${indexPhpUrl}" PARENT_SCOPE)
+endfunction()
+
+
 # @FUNCTION: tribits_get_cdash_build_url_from_parts()
 #
 # Create CDash index.php URL from the build parts.

@@ -73,6 +73,23 @@ function(unittest_tribits_read_ctest_tag_file)
 endfunction()
 
 
+function(unittest_tribits_get_cdash_index_php_from_drop_site_and_location)
+
+  message("\n***")
+  message("*** Testing tribits_get_cdash_index_php_from_drop_site_and_location()")
+  message("***\n")
+
+  tribits_get_cdash_index_php_from_drop_site_and_location(
+    CTEST_DROP_SITE "some.site.com"
+    CTEST_DROP_LOCATION "/cdash/submit.php?project=SomeProject"
+    INDEX_PHP_URL_OUT indexPhpUrl
+    )
+
+  unittest_compare_const(indexPhpUrl "some.site.com/cdash/index.php")
+
+endfunction()
+
+
 function(unittest_tribits_get_cdash_build_url_from_parts)
 
   message("\n***")
@@ -128,6 +145,7 @@ global_set(UNITTEST_OVERALL_NUMRUN 0)
 
 # Run the unit test functions
 unittest_tribits_read_ctest_tag_file()
+unittest_tribits_get_cdash_index_php_from_drop_site_and_location()
 unittest_tribits_get_cdash_build_url_from_parts()
 unittest_tribits_get_cdash_build_url_from_tag_file()
 
@@ -136,4 +154,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(5)
+unittest_final_result(6)
