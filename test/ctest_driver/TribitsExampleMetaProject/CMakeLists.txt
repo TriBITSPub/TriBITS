@@ -453,7 +453,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
       TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       TribitsExMetaProj_GIT_REPOSITORY_REMOTE=github
       TribitsExMetaProj_BRANCH=for-testing
-      CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_default_branch_remote
+      CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_custom_branch_remote
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "-- ENV_TribitsExMetaProj_BRANCH='for-testing'"
