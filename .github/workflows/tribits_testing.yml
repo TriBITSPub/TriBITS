@@ -83,3 +83,9 @@ jobs:
             --python-ver ${{ matrix.config.python }} \
             --cxx-compiler-and-ver ${{ matrix.config.cxx }} \
             --fortran-compiler-and-ver ${{ matrix.config.fc }}
+      - name: URL to results on CDash
+        run: |
+          cd ..
+          echo "Result on CDash are posted at:"
+          echo
+          cat tribits-build/BUILD/CDashBuildUrl.txt
