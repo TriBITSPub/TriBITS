@@ -264,7 +264,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_11
-    MESSAGE "Run ctest driver with an on branch 'for-testing'"
+    MESSAGE "Run ctest driver on branch 'for-testing'"
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -315,7 +315,11 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   # * Makes sure some git commit SHA1s are shown in 'Old/New revision of
   #   repository' printouts from ctest_update().
   #
-  # * ???
+  # NOTE: The reason that so many tests are done in a single ctest test is the
+  # cost of the initial configure which checks the compilers which is very
+  # expensive.  The other runs use
+  # CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE and CTEST_WIPE_CACHE=FALSE
+  # to avoid this cost.
   #
   # NOTE: The reason that so many tests are done in a single ctest test is the
   # cost of the initial configure which checks the compilers which is very
