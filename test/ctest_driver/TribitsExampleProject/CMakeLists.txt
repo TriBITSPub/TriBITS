@@ -1207,6 +1207,60 @@ function(generate_aao_tests)
     # CONFIGURE_OPTIONS list is checked to make sure that it does not change
     # without being noticed.  Follow-on tests will not check all of that.
 
+  set(cdash_url_expected_regex
+    "https://cdash[.]site[.]com/cdash/index[.]php[?]project=CustomTribitsExProj&filtercount=3&showfilters=1&filtercombine=and&field1=site&compare1=61&value1=My%20Site&field2=buildname&compare2=61&value2=TriBITS_CTestDriver_AAOP_CDASH_URL&field3=buildstamp&compare3=61&value3=[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-Custom%20CDash%20Group" )
+  # NOTE: Above, we have to repeat [0-9] 8 times and 4 times for the regex for
+  # the number of digits in the buildstarttime.  CMake regex does not support
+  # \d{8}-\d{4} :-(
+
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_CDASH_URL
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+    TEST_0
+      MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
+      CMND ln
+      ARGS -s ${TribitsExProj_DIR} .
+    TEST_1
+      MESSAGE "Run ctest driver testing everyting but no push."
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        CTEST_PARALLEL_LEVEL=3
+        CTEST_DO_SUBMIT=OFF  # Never submit this
+        CTEST_SITE="My Site"
+        CTEST_DROP_SITE="cdash.site.com"
+        CTEST_PROJECT_NAME="CustomTribitsExProj"
+        CTEST_DROP_LOCATION="/cdash/submit.php?project=CustomTribitsExProj"
+        TribitsExProj_PACKAGES=SimpleCxx
+        CTEST_TEST_TYPE=Continuous
+        TribitsExProj_TRACK="Custom CDash Group" # Does not need to exist!
+        CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_CDASH_URL
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "NONE does not exist, skipping extra repositories"
+        "Final set of enabled packages:  SimpleCxx 1"
+        "Final set of enabled SE packages:  SimpleCxx 1"
+        "Results will be submitted on CDash at:"
+        "File '' does NOT exist so all tests passed"
+        "See results submitted on CDash at:"
+        "${cdash_url_expected_regex}"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_2
+      MESSAGE "Check that CDashBuildUrl.txt exists and lists the right URL."
+      CMND cat ARGS BUILD/CDashBuildUrl.txt
+      PASS_REGULAR_EXPRESSION_ALL
+        "${cdash_url_expected_regex}"
+    )
+    # NOTE: The above test is never actually submitted to CDash, even when
+    # ${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO is set.  This is so we can
+    # exactly control the CDash location vars and do a good test of the
+    # construction of the CDash URL.  Note that we don't know the actual
+    # buildstamp because the buildstarttime changes everytime the test runs.
+    # We only know it is [8 digits]-[4 digits].
+
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_SKIP_CTEST_ADD_TEST
     OVERALL_WORKING_DIRECTORY TEST_NAME

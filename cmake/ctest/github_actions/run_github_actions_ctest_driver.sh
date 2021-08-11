@@ -173,6 +173,7 @@ if [[ "${GITHUB_EVENT_PATH}" != "" ]] ; then
   echo "pull_number = '${pull_number}'"
   if [[ "${pull_number}" != "null" ]] ; then
     export CTEST_BUILD_NAME="pr-${pull_number}_${CTEST_BUILD_NAME}${CTEST_BUILD_NAME_SUFFIX}"
+    export CTEST_CHANGE_ID=${pull_number}
   fi
 fi
 echo "CTEST_BUILD_NAME = '${CTEST_BUILD_NAME}'"
@@ -205,7 +206,6 @@ export CTEST_TEST_TYPE
 export TriBITS_TRACK
 echo "CTEST_TEST_TYPE = '${CTEST_TEST_TYPE}'"
 echo "TriBITS_TRACK = '${TriBITS_TRACK}'"
-
 
 #
 # C) Run the local configure, build, test and submit using exported vars above

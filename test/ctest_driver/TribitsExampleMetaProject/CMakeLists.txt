@@ -264,7 +264,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_11
-    MESSAGE "Run ctest driver with an on branch 'for-testing'"
+    MESSAGE "Run ctest driver on branch 'for-testing'"
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -315,7 +315,76 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   # * Makes sure some git commit SHA1s are shown in 'Old/New revision of
   #   repository' printouts from ctest_update().
   #
-  # * ???
+  # NOTE: The reason that so many tests are done in a single ctest test is the
+  # cost of the initial configure which checks the compilers which is very
+  # expensive.  The other runs use
+  # CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE and CTEST_WIPE_CACHE=FALSE
+  # to avoid this cost.
+
+
+tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_remote_CTEST_UPDATE_VERSION_ONLY
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+
+  TEST_0
+    MESSAGE "Run ctest driver with intial clone only of the repos on the default branch 'master' and remote 'origin'"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      CTEST_DO_CONFIGURE=OFF
+      CTEST_DO_BUILD=OFF
+      CTEST_DO_TEST=OFF
+      CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_default_branch_remote_CTEST_UPDATE_VERSION_ONLY
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "CTEST_NOTES_FILES=''"
+      "First perform the initial checkout: .*/git. clone -o origin .*github.com.tribits/TribitsExampleMetaProject.git"
+      "Perform checkout in directory: .*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote_CTEST_UPDATE_VERSION_ONLY"
+      "Calling ctest_update[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote_CTEST_UPDATE_VERSION_ONLY/TribitsExampleMetaProject"
+      "Old revision of repository is: [a-z0-9]+"
+      "New revision of repository is: [a-z0-9]+"
+      "ctest_update[(][.][.][.][)] returned '0'"
+      "cmake -P tribits_ctest_update_commands[.]cmake"
+      "Git Update PASSED!"
+      "TribitsExampleProject: Doing initial GIT clone/checkout from URL '.*github[.]com.tribits/TribitsExampleProject.git' to dir 'TribitsExampleProject' [.][.][.]"
+      "Cloning into 'TribitsExampleProject'[.][.][.]"
+      "TribitsExampleProjectAddons: Doing initial GIT clone/checkout from URL '.*github[.]com.tribits/TribitsExampleProjectAddons.git' to dir 'TribitsExampleProjectAddons' [.][.][.]"
+      "Cloning into 'TribitsExampleProjectAddons'[.][.][.]"
+      "CTEST_NOTES_FILES_WO_CACHE='.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote_CTEST_UPDATE_VERSION_ONLY/BUILD/UpdateCommandsOutput.txt'"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Run ctest driver again but this time with CTEST_UPDATE_VERSION_ONLY=ON"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${COMMON_ENV_ARGS}
+      CTEST_START_WITH_EMPTY_BINARY_DIRECTORY=FALSE
+      CTEST_WIPE_CACHE=FALSE
+      TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      CTEST_UPDATE_VERSION_ONLY=ON
+      CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_default_branch_remote_CTEST_UPDATE_VERSION_ONLY
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- CTEST_NOTES_FILES=''"
+      "-- ENV_CTEST_UPDATE_VERSION_ONLY='ON'"
+      "-- CTEST_UPDATE_VERSION_ONLY='ON'"
+      "Calling ctest_update[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote_CTEST_UPDATE_VERSION_ONLY/TribitsExampleMetaProject"
+      "ctest_update[(][.][.][.][)] returned '0'"
+      "Configure PASSED!"
+      "Build PASSED!"
+      "100% tests passed, 0 tests failed out of 11"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # The above test checks:
+  #
+  # * Tests the option CTEST_UPDATE_VERSION_ONLY=ON that requires all of the
+  #   repos to be cloned and already be in the correct git state.
   #
   # NOTE: The reason that so many tests are done in a single ctest test is the
   # cost of the initial configure which checks the compilers which is very
@@ -453,7 +522,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
       TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       TribitsExMetaProj_GIT_REPOSITORY_REMOTE=github
       TribitsExMetaProj_BRANCH=for-testing
-      CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_default_branch_remote
+      CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_custom_branch_remote
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "-- ENV_TribitsExMetaProj_BRANCH='for-testing'"
