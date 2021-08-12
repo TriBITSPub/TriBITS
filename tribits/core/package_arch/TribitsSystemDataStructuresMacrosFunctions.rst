@@ -68,8 +68,8 @@ is treated as an internal or external package is determined by the variable::
 
   ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
 
-which gets set variouscriteria as described in section `Determining if a
-package is internal or external`_.  This varaible determines what
+which gets set various criteria as described in section `Determining if a
+package is internal or external`_.  This variable determines what
 pre-built/pre-installed packages must be found out on the system if enabled
 and what internal packages need to be built if enabled.
 
@@ -80,7 +80,7 @@ is used with an adjective, it is usually meant in this more general context.
 ToDo: Describe the data-structures of all "Packages" which includes
 subpackages as well and the lists of enabled packages.
 
-These data-stractures as well as the package dependencies graph is built up in
+These data-structures as well as the package dependencies graph is built up in
 the macro `tribits_read_all_project_deps_files_create_deps_graph()`_ with the
 call graph described in the section `Function call tree for constructing
 package dependency graph`_.
@@ -141,7 +141,7 @@ files for the top-level packages read and processed in the macro
   TribitsAdjustPackageEnables.cmake
 
 One can determine if a package in this list is a top-level parent package or a
-sub-subpackage based on the value of the varaible
+sub-subpackage based on the value of the variable
 `${PACKAGE_NAME}_PARENT_PACKAGE`_.  If the value is non empty, then
 ``${PACKAGE_NAME}`` is a subpackage.  If the value is empty "", then
 ``${PACKAGE_NAME}`` is a parent package.
@@ -168,7 +168,6 @@ The full list of defined TPLs is stored in the variable::
 This list is created from the `<repoDir>/TPLsList.cmake`_ files from each
 defined TriBITS Repository.  Along with this, the following variables for each
 of these TriBITS TPLs are defined::
-
 * `${TPL_NAME}_FINDMOD`_
 * `${TPL_NAME}_TESTGROUP`_
 
@@ -429,7 +428,7 @@ Below is the CMake macro and function call graph for constructing the packages
 lists and dependency data-structures described above.
 
 | `tribits_read_all_project_deps_files_create_deps_graph()`_
-|   `tribits_read_defined_external_and_intenral_toplevel_packages_lists()`_
+|   `tribits_read_defined_external_and_internal_toplevel_packages_lists()`_
 |     Foreach ``<repoDir>`` in ``${PROJECT_NAME}_ALL_REPOSITORIES``:
 |       ``include(`` `<repoDir>/TPLsList.cmake`_ ``)``
 |       `tribits_process_tpls_lists()`_
@@ -447,7 +446,7 @@ lists and dependency data-structures described above.
 |           `tribits_prep_to_read_dependencies()`_
 |           ``include(`` `<packageDir>/cmake/Dependencies.cmake`_ ``)``
 |           `tribits_assert_read_dependency_vars()`_
-|           `tribits_save_off_dependencies_vars()`_
+|           `tribits_save_off_dependency_vars()`_
 |           `tribits_parse_subpackages_append_se_packages_add_options()`_
 |           `tribits_read_package_subpackage_deps_files_add_to_graph()`_
 |             Foreach ``SUBPACKAGE``:
