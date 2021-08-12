@@ -994,6 +994,8 @@ macro(tribits_ctest_package_by_package)
         "-D${PROJECT_NAME}_ENABLE_${${PROJECT_NAME}_LAST_CONFIGURED_PACKAGE}:BOOL=")
       set(${PROJECT_NAME}_LAST_CONFIGURED_PACKAGE)
     endif()
+    list(APPEND CONFIGURE_OPTIONS
+      "-D${PROJECT_NAME}_DEFINE_MISSING_PACKAGE_LIBS_TARGETS=ON")
     foreach(FAILED_PACKAGE ${${PROJECT_NAME}_FAILED_LIB_BUILD_PACKAGES})
       list(APPEND CONFIGURE_OPTIONS
         "-D${PROJECT_NAME}_ENABLE_${FAILED_PACKAGE}:BOOL=OFF")
@@ -1315,6 +1317,23 @@ macro(tribits_ctest_package_by_package)
     " ${PROJECT_NAME} packages!\n")
 
 endmacro()
+# NOTE: Above, the option
+# ${PROJECT_NAME}_DEFINE_MISSING_PACKAGE_LIBS_TARGETS=ON is passed down
+# through to the inner CMake TriBITS configure to trigger the creation of
+# dummy targets <PackageName>_libs for all the packages for the case where a
+# package is disabled due to a disabled upstream package and
+# ${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON but the target
+# <thePackage>_libs is attempted to be built anyway and we expect it to build
+# nothing and result in no error.  (The outer ctest -S driver is not smart
+# enough to know all the lgoic for if a package will actaully be enabled or
+# not.  That is the job of the inner TriBITS dependency logic and
+# ${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.) Otherwise, with
+# CMake 3.19+, cmake_build() catches errors in undefined global build targets
+# like this and reports them correctly.  This workaround allows the
+# package-by-package mode to gracefully disable downstream packages that can't
+# be enabled due to the disable of a broken upstream packages.  See the test
+# TriBITS_CTestDriver_PBP_ST_BreakConfigureRequiredPkg that exercises this use
+# case.
 
 
 # Drive the configure, build, test, and submit all at once for all of the
