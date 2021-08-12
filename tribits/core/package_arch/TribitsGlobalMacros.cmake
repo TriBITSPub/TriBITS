@@ -2403,6 +2403,21 @@ macro(tribits_configure_enabled_packages)
       add_dependencies(libs ${ENABLED_PACKAGE_LIBS_TARGETS})
     endif()
 
+    # Add empty <PackageName>_libs targets for top-level packages if asked
+    if (${PROJECT_NAME}_DEFINE_MISSING_PACKAGE_LIBS_TARGETS)
+      foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
+        if (NOT TARGET ${TRIBITS_PACKAGE}_libs)
+          add_custom_target(${TRIBITS_PACKAGE}_libs
+            COMMENT "Dummy target for ${TRIBITS_PACKAGE}_libs that builds nothing!")
+        endif()
+      endforeach()
+    endif()
+    # NOTE: For motivation for above, see the comment about the setting of
+    # ${PROJECT_NAME}_DEFINE_MISSING_PACKAGE_LIBS_TARGETS=ON in
+    # package-by-package mode in tribits_ctest_driver().  This option is
+    # purposefully not documented and not defined as a cache variable since it
+    # is an internal TriBITS implementation detail.
+
   endif()
 
   tribits_config_code_stop_timer(CONFIGURE_PACKAGES_TIME_START_SECONDS
@@ -2702,3 +2717,12 @@ macro(tribits_exclude_autotools_files) # PACKAGE_NAME LIST_RETURN)
   tribits_exclude_files(${FILES_TO_EXCLUDE})
 
 endmacro()
+
+#  LocalWords:
+#  LocalWords: Sandia SANDIA Redistributions
+#  LocalWords: tribits TriBITS TRIBITS
+#  LocalWords: cmake CMake CMAKE CMakeCache CMakeFiles
+#  LocalWords: ctest CPACK
+#  LocalWords: foreach endforeach endif endmacro
+#  LocalWords: BOOL
+#  LocalWords: libs LIBS config PackageName SUBPACKAGES nonenabled

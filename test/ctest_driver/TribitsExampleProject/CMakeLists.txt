@@ -505,7 +505,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
     CMND cp
     ARGS -r ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Break the confgiure for just the required SimpleCxx package"
+    MESSAGE "Break the configure for just the required SimpleCxx package"
     CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
     ARGS TribitsExampleProject/packages/simple_cxx/CMakeLists.txt
       "Configure of SimpleCxx is broken!"
@@ -542,7 +542,64 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
   # NOTE: The above test ensures that the configure failure of an upstream
   # optional package does not break the configure, build, or tests of
   # downstream packages.  It only disables the broken upstream package in
-  # downstream packages.
+  # downstream packages.  This provides a robust package-by-package mode where
+  # configure errors in required upstream packages result in the graceful
+  # disable of downstream packages so that they don't report errors for those
+  # packages when the problem is really in upstream packages.  See the var
+  # ${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES that is passed
+  # through in package-by-package mode and GitHub PR TriBITSPub/TriBITS#394.
+
+
+tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibRequiredPkg
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break the build of a lib for the required SimpleCxx package"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp
+      "Build of the SimpleCxx library is broken!"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a failed lib build for just the SimpleCxx package!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${PBP_COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CTEST_DROP_SITE_ENV_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildLibRequiredPkg
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "SimpleCxx: Configure passed"
+      "FAILED library build for package 'SimpleCxx'"
+      "SimpleCxx: Skipping tests since libray build failed"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=ON'"
+      "MixedLang: Configure passed"
+      "MixedLang: Libs build passed"
+      "MixedLang_RayTracerTests [.]+ +Passed"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WithSubpackages:BOOL=ON'"
+      "WithSubpackages: Configure passed"
+      "WithSubpackages: Libs build passed"
+      "WithSubpackages: All build passed"
+      "No tests were found"  # Can't tell which package :-(
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WrapExternal:BOOL=ON'"
+      "WrapExternal: Configure passed"
+      "WrapExternal: All build passed"
+      "Final set packages that failed to configure or have the libraries build: 'SimpleCxx'"
+      "Final set of packages that had any failures: 'SimpleCxx'"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+  # NOTE: The above test is similar to the test
+  # CTestDriver_PBP_ST_BreakConfigureRequiredPkg except the above test is for
+  # the case where a library in a required upstream package does not build and
+  # we want those downstream packages with a required dependency on that
+  # package to be gracefully disabled.
 
 
 tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_COVERAGE
