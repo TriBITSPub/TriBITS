@@ -249,7 +249,7 @@ macro(tribits_read_toplevel_package_deps_files_add_to_graph  PACKAGE_NAME)
 
   tribits_assert_read_dependency_vars(${PACKAGE_NAME})
 
-  tribits_save_off_dependencies_vars(PARENTPACK)
+  tribits_save_off_dependency_vars(PARENTPACK)
 
   # B.1) Set up the mail addresses (one regression email list for the package
   # and all subpackages)
@@ -360,17 +360,17 @@ macro(tribits_assert_read_dependency_vars  PACKAGE_NAME)
 endmacro()
 
 
-# @MACRO: tribits_save_off_dependencies_vars()
+# @MACRO: tribits_save_off_dependency_vars()
 #
 # Usage::
 #
-#   tribits_save_off_dependencies_vars(<postfix>)
+#   tribits_save_off_dependency_vars(<postfix>)
 #
 # Saves off package dependency variables with variable suffix ``_<postfix>``.
 #
 # See `Function call tree for constructing package dependency graph`_
 #
-macro(tribits_save_off_dependencies_vars  POSTFIX)
+macro(tribits_save_off_dependency_vars  POSTFIX)
 
   set(LIB_REQUIRED_DEP_PACKAGES_${POSTFIX} ${LIB_REQUIRED_DEP_PACKAGES})
   set(LIB_OPTIONAL_DEP_PACKAGES_${POSTFIX} ${LIB_OPTIONAL_DEP_PACKAGES})

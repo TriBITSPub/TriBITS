@@ -446,7 +446,7 @@ lists and dependency data-structures described above.
 |           `tribits_prep_to_read_dependencies()`_
 |           ``include(`` `<packageDir>/cmake/Dependencies.cmake`_ ``)``
 |           `tribits_assert_read_dependency_vars()`_
-|           `tribits_save_off_dependencies_vars()`_
+|           `tribits_save_off_dependency_vars()`_
 |           `tribits_parse_subpackages_append_se_packages_add_options()`_
 |           `tribits_read_package_subpackage_deps_files_add_to_graph()`_
 |             Foreach ``SUBPACKAGE``:
