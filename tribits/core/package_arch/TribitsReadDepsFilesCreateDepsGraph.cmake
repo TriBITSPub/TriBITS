@@ -236,7 +236,7 @@ macro(tribits_read_toplevel_package_deps_files_add_to_graph  PACKAGE_NAME)
 
   tribits_prep_to_read_dependencies(${PACKAGE_NAME})
 
-  # Listing of subpakages
+  # Listing of subpackages
   set(SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS) # Allow to be empty
 
   # B) Read in this package's Dependencies file and save off read dependency vars.
@@ -249,12 +249,12 @@ macro(tribits_read_toplevel_package_deps_files_add_to_graph  PACKAGE_NAME)
 
   tribits_assert_read_dependency_vars(${PACKAGE_NAME})
 
-  tribits_save_off_dependencies_vars(PARENTPACK)
+  tribits_save_off_dependency_vars(PARENTPACK)
 
   # B.1) Set up the mail addresses (one regression email list for the package
   # and all subpackages)
 
-  tribits_set_pacakge_regression_email_list(${PACKAGE_NAME})
+  tribits_set_package_regression_email_list(${PACKAGE_NAME})
 
   # B.2) Process this package's subpackages first *before* finishing this packages!
 
@@ -360,17 +360,17 @@ macro(tribits_assert_read_dependency_vars  PACKAGE_NAME)
 endmacro()
 
 
-# @MACRO: tribits_save_off_dependencies_vars()
+# @MACRO: tribits_save_off_dependency_vars()
 #
 # Usage::
 #
-#   tribits_save_off_dependencies_vars(<postfix>)
+#   tribits_save_off_dependency_vars(<postfix>)
 #
-# Saves off package depeneency variables with variable suffix ``_<postfix>``.
+# Saves off package dependency variables with variable suffix ``_<postfix>``.
 #
 # See `Function call tree for constructing package dependency graph`_
 #
-macro(tribits_save_off_dependencies_vars  POSTFIX)
+macro(tribits_save_off_dependency_vars  POSTFIX)
 
   set(LIB_REQUIRED_DEP_PACKAGES_${POSTFIX} ${LIB_REQUIRED_DEP_PACKAGES})
   set(LIB_OPTIONAL_DEP_PACKAGES_${POSTFIX} ${LIB_OPTIONAL_DEP_PACKAGES})
@@ -417,11 +417,11 @@ endmacro()
 #
 #   tribits_process_package_dependencies_lists(<packageName>)
 #
-# Sets up the upstsream and downstream/forward package dependency list
-# variables for ``<packageName>`` descrdibed in `List variables defining the
+# Sets up the upstream and downstream/forward package dependency list
+# variables for ``<packageName>`` described in `List variables defining the
 # package dependencies graph`_.  Note that the downstream/forward dependencies
 # of upstream packages on this package ``<packageName>`` are built up
-# incrimentally.
+# incrementally.
 #
 # See `Function call tree for constructing package dependency graph`_
 # 
@@ -587,18 +587,18 @@ function(tribits_append_forward_dep_packages PACKAGE_NAME LIST_TYPE)
 endfunction()
 
 
-# @MACRO: tribits_set_pacakge_regression_email_list()
+# @MACRO: tribits_set_package_regression_email_list()
 #
 # Usage::
 #
-#  tribits_set_pacakge_regression_email_list(<packageName>)
+#  tribits_set_package_regression_email_list(<packageName>)
 #
 # Macro that sets a pacakge's regression email address
 # ``${PACKAGE_NAME}_REGRESSION_EMAIL_LIST`` as described in ???.
 #
 # See `Function call tree for constructing package dependency graph`_
 #
-macro(tribits_set_pacakge_regression_email_list PACKAGE_NAME)
+macro(tribits_set_package_regression_email_list PACKAGE_NAME)
 
   # Lower-case package name To be used with auto email naming based on base email address
   string(TOLOWER "${PACKAGE_NAME}" LPACKAGE)
@@ -876,7 +876,7 @@ macro(tribits_read_subpackage_deps_file_add_to_graph  PACKAGE_NAME
   set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${SUBPACKAGE_NAME})
 
   #
-  # A) Get ready to read in the contents of this this subpakages's
+  # A) Get ready to read in the contents of this this subpackage's
   # Dependencies.cmake file
   #
 

@@ -47,11 +47,13 @@ set( CMAKE_MODULE_PATH
   )
 
 include(GlobalSet)
-include(TribitsReadTagFile)
 include(UnitTestHelpers)
 
+include(TribitsReadTagFile)
+include(TribitsGetCDashUrlFromTagFile)
 
-function(unittest_read_ctest_tag_file)
+
+function(unittest_tribits_read_ctest_tag_file)
 
   message("\n***")
   message("*** Testing tribits_read_ctest_tag_file()")
@@ -59,15 +61,78 @@ function(unittest_read_ctest_tag_file)
 
   set(TAG_FILE_IN "${CMAKE_CURRENT_LIST_DIR}/data/dummy_build_dir/Testing/TAG")
 
-  tribits_read_ctest_tag_file(${TAG_FILE_IN} BUILD_START_TIME_OUT CDASH_TRACK_OUT)
+  tribits_read_ctest_tag_file(${TAG_FILE_IN} buildStartTime cdashGroup cdashModel)
 
-  unittest_compare_const(BUILD_START_TIME_OUT
+  unittest_compare_const(buildStartTime
     "20101015-1112")
-
-  unittest_compare_const(CDASH_TRACK_OUT
-    "My CDash Track")  # NOTE: Spaces are important to test here!
+  unittest_compare_const(cdashGroup
+    "My CDash Group")  # NOTE: Spaces are important to test here!
+  unittest_compare_const(cdashModel
+    "The Model")  # NOTE: Spaces are important to test here!
 
 endfunction()
+
+
+function(unittest_tribits_get_cdash_index_php_from_drop_site_and_location)
+
+  message("\n***")
+  message("*** Testing tribits_get_cdash_index_php_from_drop_site_and_location()")
+  message("***\n")
+
+  tribits_get_cdash_index_php_from_drop_site_and_location(
+    CTEST_DROP_SITE "some.site.com"
+    CTEST_DROP_LOCATION "/cdash/submit.php?project=SomeProject"
+    INDEX_PHP_URL_OUT indexPhpUrl
+    )
+
+  unittest_compare_const(indexPhpUrl "some.site.com/cdash/index.php")
+
+endfunction()
+
+
+function(unittest_tribits_get_cdash_build_url_from_parts)
+
+  message("\n***")
+  message("*** Testing tribits_get_cdash_build_url_from_parts()")
+  message("***\n")
+
+  tribits_get_cdash_build_url_from_parts(
+    INDEX_PHP_URL "mycdash/index.php"
+    PROJECT_NAME "my project"
+    SITE_NAME "my site"
+    BUILD_NAME "my buildname g++-2.5"
+    BUILD_STAMP "20210729-0024-My Group"
+    CDASH_BUILD_URL_OUT cdashBuildUrlOut
+    )
+
+  unittest_compare_const(cdashBuildUrlOut
+     "mycdash/index.php?project=my%20project&filtercount=3&showfilters=1&filtercombine=and&field1=site&compare1=61&value1=my%20site&field2=buildname&compare2=61&value2=my%20buildname%20g%2B%2B-2.5&field3=buildstamp&compare3=61&value3=20210729-0024-My%20Group") 
+
+endfunction()
+
+
+function(unittest_tribits_get_cdash_build_url_from_tag_file)
+
+  message("\n***")
+  message("*** Testing tribits_get_cdash_build_url_from_tag_file()")
+  message("***\n")
+
+  set(TAG_FILE "${CMAKE_CURRENT_LIST_DIR}/data/dummy_build_dir/Testing/TAG")
+
+  tribits_get_cdash_build_url_from_tag_file(
+    INDEX_PHP_URL "mycdash/index.php"
+    PROJECT_NAME "my project"
+    SITE_NAME "my site"
+    BUILD_NAME "my buildname g++-2.5"
+    TAG_FILE "${TAG_FILE}"
+    CDASH_BUILD_URL_OUT cdashBuildUrl
+    )
+
+  unittest_compare_const(cdashBuildUrl
+     "mycdash/index.php?project=my%20project&filtercount=3&showfilters=1&filtercombine=and&field1=site&compare1=61&value1=my%20site&field2=buildname&compare2=61&value2=my%20buildname%20g%2B%2B-2.5&field3=buildstamp&compare3=61&value3=20101015-1112-My%20CDash%20Group") 
+
+endfunction()
+
 
 #
 # Execute the unit tests
@@ -79,11 +144,14 @@ global_set(UNITTEST_OVERALL_NUMPASSED 0)
 global_set(UNITTEST_OVERALL_NUMRUN 0)
 
 # Run the unit test functions
-unittest_read_ctest_tag_file()
+unittest_tribits_read_ctest_tag_file()
+unittest_tribits_get_cdash_index_php_from_drop_site_and_location()
+unittest_tribits_get_cdash_build_url_from_parts()
+unittest_tribits_get_cdash_build_url_from_tag_file()
 
 message("\n***")
 message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(2)
+unittest_final_result(6)

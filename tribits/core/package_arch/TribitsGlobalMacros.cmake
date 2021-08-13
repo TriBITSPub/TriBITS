@@ -80,8 +80,7 @@ include(TribitsTplDeclareLibraries) # Deprecated
 # projects stop using it.
 
 
-#
-# Assert and setup project binary directory and other project variables.
+# Assert and setup project binary directory and other project variables
 #
 macro(tribits_assert_and_setup_project_and_static_system_vars)
 
@@ -136,8 +135,7 @@ macro(tribits_assert_and_setup_project_and_static_system_vars)
 endmacro()
 
 
-#
-# Set up some really basic system variables.
+# Set up some really basic system variables
 #
 # This macro needs to be called *before* the user *.cmake option files are
 # read in so that there is an opportunity to override these.
@@ -159,11 +157,9 @@ macro(tribits_setup_basic_system_vars)
 endmacro()
 
 
+# Define an option to include a file that reads in a bunch of options and read
+# those files
 #
-# Define an option to include a file that reads in a bunch of options
-#
-#
-
 macro(tribits_read_in_options_from_file)
 
   set( ${PROJECT_NAME}_CONFIGURE_OPTIONS_FILE "" CACHE FILEPATH
@@ -187,11 +183,9 @@ macro(tribits_read_in_options_from_file)
 endmacro()
 
 
-#
 # Assert ${PROJECT_NAME}_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR set
 # correctly
 #
-
 function(assert_project_set_group_and_permissions_on_install_base_dir)
 
   if (
@@ -225,10 +219,8 @@ function(assert_project_set_group_and_permissions_on_install_base_dir)
 endfunction()
 
 
-#
 # Define all of the standard global package architecture options.
 #
-
 macro(tribits_define_global_options_and_define_extra_repos)
 
   set( ${PROJECT_NAME}_ENABLE_ALL_PACKAGES OFF CACHE BOOL
@@ -1084,7 +1076,7 @@ endmacro()
 
 
 #
-# Repository specializaiton call-back functions
+# Macros to process repository specializaiton call-back functions
 #
 # NOTE: The Tribits system promises to only include these call-back files once
 # (in order) and to only the call call-back macros they provide once (in
@@ -1327,10 +1319,8 @@ function(tribits_generate_single_repo_version_string  GIT_REPO_DIR
 endfunction()
 
 
-#
 # Get the versions of all the git repos
 #
-
 function(tribits_generate_repo_version_file_string  PROJECT_REPO_VERSION_FILE_STRING_OUT)
 
   set(REPO_VERSION_FILE_STR "")
@@ -1377,13 +1367,11 @@ function(tribits_generate_repo_version_file_string  PROJECT_REPO_VERSION_FILE_ST
 endfunction()
 
 
-#
 # Generate the project repos version file and print to stdout
 #
 # This function is designed so that it can be unit tested from inside of a
 # cmake -P script.
 #
-
 function(tribits_generate_repo_version_output_and_file)
   # Get the repos versions
   tribits_generate_repo_version_file_string(PROJECT_REPO_VERSION_FILE_STRING)
@@ -1400,17 +1388,15 @@ function(tribits_generate_repo_version_output_and_file)
 endfunction()
 
 
-#
-# Create project dependencies file and create install target
+# Create project dependencies file and create install target for these
 #
 # NOTE: Before calling this function, the extra repos datastructure must be
 # filled out!
 #
-# NOTE: This function can not be called in a cmake -P script because it has a
+# NOTE: This function cannot be called in a cmake -P script because it has a
 # call to install()!  That is why this function is separated out from
 # tribits_generate_repo_version_output_and_file().
 #
-
 function(tribits_generate_repo_version_output_and_file_and_install)
 
   #
@@ -1449,11 +1435,9 @@ function(tribits_generate_repo_version_output_and_file_and_install)
 
   endif()
 
-
 endfunction()
 
 
-#
 # Print out a list with white-space separators with an initial doc string
 #
 function(tribits_print_prefix_string_and_list  DOCSTRING   LIST_TO_PRINT)
@@ -1467,9 +1451,8 @@ function(tribits_print_prefix_string_and_list  DOCSTRING   LIST_TO_PRINT)
 endfunction()
 
 
-#
-# Function that prints the current set of enabled/disabled packages given
-# input list of packages.
+# Print the current set of enabled/disabled packages given input list of
+# packages
 #
 function(tribits_print_enabled_packages_list_from_var  PACKAGES_LIST_VAR
   DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY
@@ -1491,8 +1474,7 @@ function(tribits_print_enabled_packages_list_from_var  PACKAGES_LIST_VAR
 endfunction()
 
 
-#
-# Function that prints the current set of enabled/disabled packages
+# Prints the current set of enabled/disabled packages
 #
 function(tribits_print_enabled_package_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
   tribits_print_enabled_packages_list_from_var( ${PROJECT_NAME}_PACKAGES
@@ -1500,8 +1482,7 @@ function(tribits_print_enabled_package_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EM
 endfunction()
 
 
-#
-# Function that prints the current set of enabled/disabled SE packages
+# Prints the current set of enabled/disabled SE packages
 #
 function(tribits_print_enabled_se_package_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
   if (ENABLED_FLAG AND NOT INCLUDE_EMPTY)
@@ -1521,8 +1502,7 @@ function(tribits_print_enabled_se_package_list  DOCSTRING  ENABLED_FLAG  INCLUDE
 endfunction()
 
 
-#
-# Function that prints the current set of enabled/disabled TPLs
+# Print the current set of enabled/disabled TPLs
 #
 function(tribits_print_enabled_tpl_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
   if (ENABLED_FLAG AND NOT INCLUDE_EMPTY)
@@ -1542,7 +1522,6 @@ function(tribits_print_enabled_tpl_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
 endfunction()
 
 
-#
 # Adjust package enable logic and print out before and after state
 #
 # On output sets:
@@ -1591,10 +1570,8 @@ macro(tribits_adjust_and_print_package_dependencies)
 endmacro()
 
 
+# Gather information from enabled TPLs
 #
-# Macro that gathers information from enabled TPLs
-#
-
 macro(tribits_process_enabled_tpls)
 
   tribits_config_code_start_timer(CONFIGURE_TPLS_TIME_START_SECONDS)
@@ -1926,9 +1903,8 @@ macro(tribits_set_openmp_flags  LANG)
 endmacro()
 
 
-#
 # Set mapping of labels to subprojects (i.e. TriBITS packages) for local CTest
-# only.
+# only
 #
 # NOTE: This macro is only used define mapping of labels to subprojects for
 # running ctest locally.  This results in summarizing the tests run for each
@@ -1936,16 +1912,13 @@ endmacro()
 # harmless to define the mapping for every TriBITS package.  Only TriBITS
 # packages will be listed in the summary if they had one or more tests run.
 #
-
 macro(tribits_set_labels_to_subprojects_mapping)
   set(CTEST_LABELS_FOR_SUBPROJECTS ${${PROJECT_NAME}_PACKAGES})
 endmacro()
 
 
-#
 # Macro to turn on CTest support
 #
-
 macro(tribits_include_ctest_support)
 
   set(DART_TESTING_TIMEOUT_IN ${DART_TESTING_TIMEOUT})
@@ -1995,10 +1968,8 @@ endmacro()
 # that with a set( ... CACHE ...) statement in an input *.cmake file.
 
 
+# Determines if a package should be processed
 #
-# Function that determines if a package should be processed
-#
-
 function(tribits_determine_if_process_package  PACKAGE_NAME
   PROCESS_PACKAGE_OUT  PACKAGE_ENABLE_STR_OUT
   )
@@ -2007,7 +1978,7 @@ function(tribits_determine_if_process_package  PACKAGE_NAME
   set(PACKAGE_ENABLE_STR "")
 
   if (${PACKAGE_NAME}_SUBPACKAGES)
-    # Process the package if any of the the subpackages are enable
+    # Process the package if any of the subpackages are enable
     foreach(TRIBITS_SUBPACKAGE ${${PACKAGE_NAME}_SUBPACKAGES})
       set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${TRIBITS_SUBPACKAGE})
       if (${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
@@ -2039,10 +2010,8 @@ function(tribits_determine_if_process_package  PACKAGE_NAME
 endfunction()
 
 
+# Reads in the project's version file into the current scope
 #
-# Macro that reads in the project's version file into the current scope
-#
-
 macro(tribits_project_read_version_file  PROJECT_SOURCE_DIR_IN)
   set(PROJECT_VERSION_FILE ${PROJECT_SOURCE_DIR_IN}/Version.cmake)
   if (EXISTS ${PROJECT_VERSION_FILE})
@@ -2054,9 +2023,8 @@ macro(tribits_project_read_version_file  PROJECT_SOURCE_DIR_IN)
 endmacro()
 
 
-#
-# Function that reads in and the Repository's specific Version.cmake file and
-# then configures its ${REPO_NAME}_version.h file.
+# Read in and the Repository's specific Version.cmake file and then configure
+# its ${REPO_NAME}_version.h file.
 #
 # The file ${REPO_NAME}_version.h is only configured if the repository contains
 # the files Version.cmake and Copyright.txt
@@ -2115,10 +2083,8 @@ function(tribits_repository_configure_version_header_file
 endfunction()
 
 
+# Configure each of the Repositories' version header file
 #
-# Configure each of the Repositories version header files
-#
-
 function(tribits_repository_configure_all_version_header_files)
   #print_var(ARGN)
   foreach(REPO ${ARGN})
@@ -2132,9 +2098,8 @@ function(tribits_repository_configure_all_version_header_files)
 endfunction()
 
 
-#
-# Function that generates the VersionDate.cmake and
-# ${REPO_NAME}_version_date.h files.
+# Generate the VersionDate.cmake and ${REPO_NAME}_version_date.h files for a
+# TriBITS Repository
 #
 # NOTE: This is done as a function so that the read-in version variables don't
 # bleed into the outer scope.
@@ -2203,10 +2168,8 @@ function(tribits_repository_configure_version_date_files
 endfunction()
 
 
+# Configure each of the Repositories' version date files
 #
-# Configure each of the Repositories version date files
-#
-
 function(tribits_repository_configure_all_version_date_files)
   #print_var(ARGN)
   if (${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES)
@@ -2221,8 +2184,10 @@ function(tribits_repository_configure_all_version_date_files)
 endfunction()
 
 
+# Configure the enabled packages
 #
-# Macro that does the final set of package configurations
+# This macro actally calls add_subdirectory(<packageDir>) on the enabled
+# TriBITS packages.
 #
 macro(tribits_configure_enabled_packages)
 
@@ -2437,6 +2402,21 @@ macro(tribits_configure_enabled_packages)
       add_dependencies(libs ${ENABLED_PACKAGE_LIBS_TARGETS})
     endif()
 
+    # Add empty <PackageName>_libs targets for top-level packages if asked
+    if (${PROJECT_NAME}_DEFINE_MISSING_PACKAGE_LIBS_TARGETS)
+      foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
+        if (NOT TARGET ${TRIBITS_PACKAGE}_libs)
+          add_custom_target(${TRIBITS_PACKAGE}_libs
+            COMMENT "Dummy target for ${TRIBITS_PACKAGE}_libs that builds nothing!")
+        endif()
+      endforeach()
+    endif()
+    # NOTE: For motivation for above, see the comment about the setting of
+    # ${PROJECT_NAME}_DEFINE_MISSING_PACKAGE_LIBS_TARGETS=ON in
+    # package-by-package mode in tribits_ctest_driver().  This option is
+    # purposefully not documented and not defined as a cache variable since it
+    # is an internal TriBITS implementation detail.
+
   endif()
 
   tribits_config_code_stop_timer(CONFIGURE_PACKAGES_TIME_START_SECONDS
@@ -2445,7 +2425,6 @@ macro(tribits_configure_enabled_packages)
 endmacro()
 
 
-#
 # Set up for packaging and distribution
 #
 macro(tribits_setup_packaging_and_distribution)
@@ -2594,6 +2573,7 @@ endmacro()
 
 
 # Create custom 'install_package_by_package' target
+#
 function(tribits_add_install_package_by_package_target)
 
   set(TRIBITS_ENABLED_PACKAGES_BINARY_DIRS)
@@ -2640,7 +2620,6 @@ macro(tribits_setup_for_installation)
 endmacro()
 
 
-#
 # @MACRO: tribits_exclude_files()
 #
 # Exclude package files/dirs from the source distribution by appending
@@ -2716,9 +2695,7 @@ macro(tribits_exclude_files)
 endmacro()
 
 
-#
-#  Macro for helping set up exclude files only for the packages that will not
-#  be supporting autotools.
+# Exclude files only for the packages that will not be supporting autotools.
 #
 macro(tribits_exclude_autotools_files) # PACKAGE_NAME LIST_RETURN)
   set(AUTOTOOLS_FILES
@@ -2739,3 +2716,12 @@ macro(tribits_exclude_autotools_files) # PACKAGE_NAME LIST_RETURN)
   tribits_exclude_files(${FILES_TO_EXCLUDE})
 
 endmacro()
+
+#  LocalWords:
+#  LocalWords: Sandia SANDIA Redistributions
+#  LocalWords: tribits TriBITS TRIBITS
+#  LocalWords: cmake CMake CMAKE CMakeCache CMakeFiles
+#  LocalWords: ctest CPACK
+#  LocalWords: foreach endforeach endif endmacro
+#  LocalWords: BOOL
+#  LocalWords: libs LIBS config PackageName SUBPACKAGES nonenabled

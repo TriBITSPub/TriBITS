@@ -542,7 +542,64 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
   # NOTE: The above test ensures that the configure failure of an upstream
   # optional package does not break the configure, build, or tests of
   # downstream packages.  It only disables the broken upstream package in
-  # downstream packages.
+  # downstream packages.  This provides a robust package-by-package mode where
+  # configure errors in required upstream packages result in the graceful
+  # disable of downstream packages so that they don't report errors for those
+  # packages when the problem is really in upstream packages.  See the var
+  # ${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES that is passed
+  # through in package-by-package mode and GitHub PR TriBITSPub/TriBITS#394.
+
+
+tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibRequiredPkg
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+  TEST_0
+    MESSAGE "Copy the project dir so I can break it!"
+    CMND cp
+    ARGS -r ${TribitsExProj_DIR} .
+  TEST_1
+    MESSAGE "Break the build of a lib for the required SimpleCxx package"
+    CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
+    ARGS TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp
+      "Build of the SimpleCxx library is broken!"
+  TEST_2
+    MESSAGE "Run ctest driver which should show a failed lib build for just the SimpleCxx package!"
+    CMND env
+    ARGS
+      CTEST_DASHBOARD_ROOT=PWD
+      ${PBP_COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CTEST_DROP_SITE_ENV_ARGS}
+      CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildLibRequiredPkg
+      ${CTEST_S_SCRIPT_ARGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "SimpleCxx: Configure passed"
+      "FAILED library build for package 'SimpleCxx'"
+      "SimpleCxx: Skipping tests since library build failed"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=ON'"
+      "MixedLang: Configure passed"
+      "MixedLang: Libs build passed"
+      "MixedLang_RayTracerTests [.]+ +Passed"
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WithSubpackages:BOOL=ON'"
+      "WithSubpackages: Configure passed"
+      "WithSubpackages: Libs build passed"
+      "WithSubpackages: All build passed"
+      "No tests were found"  # Can't tell which package :-(
+      "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_WrapExternal:BOOL=ON'"
+      "WrapExternal: Configure passed"
+      "WrapExternal: All build passed"
+      "Final set packages that failed to configure or have the libraries build: 'SimpleCxx'"
+      "Final set of packages that had any failures: 'SimpleCxx'"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL FAILED"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+  )
+  # NOTE: The above test is similar to the test
+  # CTestDriver_PBP_ST_BreakConfigureRequiredPkg except the above test is for
+  # the case where a library in a required upstream package does not build and
+  # we want those downstream packages with a required dependency on that
+  # package to be gracefully disabled.
 
 
 tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_COVERAGE
@@ -1206,6 +1263,60 @@ function(generate_aao_tests)
     # run and pass.  And a non-zero return code is mandated.  Also, the full
     # CONFIGURE_OPTIONS list is checked to make sure that it does not change
     # without being noticed.  Follow-on tests will not check all of that.
+
+  set(cdash_url_expected_regex
+    "https://cdash[.]site[.]com/cdash/index[.]php[?]project=CustomTribitsExProj&filtercount=3&showfilters=1&filtercombine=and&field1=site&compare1=61&value1=My%20Site&field2=buildname&compare2=61&value2=TriBITS_CTestDriver_AAOP_CDASH_URL&field3=buildstamp&compare3=61&value3=[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-Custom%20CDash%20Group" )
+  # NOTE: Above, we have to repeat [0-9] 8 times and 4 times for the regex for
+  # the number of digits in the buildstarttime.  CMake regex does not support
+  # \d{8}-\d{4} :-(
+
+  tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_CDASH_URL
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+    TEST_0
+      MESSAGE "Symlink TribitsExampleProject so no need to clone (which would not work)."
+      CMND ln
+      ARGS -s ${TribitsExProj_DIR} .
+    TEST_1
+      MESSAGE "Run ctest driver testing everyting but no push."
+      CMND env
+      ARGS
+        CTEST_DASHBOARD_ROOT=PWD
+        ${AAO_COMMON_ENV_ARGS}
+        CTEST_PARALLEL_LEVEL=3
+        CTEST_DO_SUBMIT=OFF  # Never submit this
+        CTEST_SITE="My Site"
+        CTEST_DROP_SITE="cdash.site.com"
+        CTEST_PROJECT_NAME="CustomTribitsExProj"
+        CTEST_DROP_LOCATION="/cdash/submit.php?project=CustomTribitsExProj"
+        TribitsExProj_PACKAGES=SimpleCxx
+        CTEST_TEST_TYPE=Continuous
+        TribitsExProj_TRACK="Custom CDash Group" # Does not need to exist!
+        CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_CDASH_URL
+        ${CTEST_S_SCRIPT_ARGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "NONE does not exist, skipping extra repositories"
+        "Final set of enabled packages:  SimpleCxx 1"
+        "Final set of enabled SE packages:  SimpleCxx 1"
+        "Results will be submitted on CDash at:"
+        "File '' does NOT exist so all tests passed"
+        "See results submitted on CDash at:"
+        "${cdash_url_expected_regex}"
+        "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_2
+      MESSAGE "Check that CDashBuildUrl.txt exists and lists the right URL."
+      CMND cat ARGS BUILD/CDashBuildUrl.txt
+      PASS_REGULAR_EXPRESSION_ALL
+        "${cdash_url_expected_regex}"
+    )
+    # NOTE: The above test is never actually submitted to CDash, even when
+    # ${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO is set.  This is so we can
+    # exactly control the CDash location vars and do a good test of the
+    # construction of the CDash URL.  Note that we don't know the actual
+    # buildstamp because the buildstarttime changes everytime the test runs.
+    # We only know it is [8 digits]-[4 digits].
 
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_SKIP_CTEST_ADD_TEST

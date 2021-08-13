@@ -3,7 +3,8 @@ include("${CMAKE_CURRENT_LIST_DIR}/../TribitsProjCTestDriver.cmake")
 set(CTEST_BUILD_NAME $ENV{CTEST_BUILD_NAME})
 
 set(CTEST_TEST_TIMEOUT 60)
-set(CTEST_DO_UPDATES OFF)
+set(CTEST_DO_UPDATES TRUE)
+set(CTEST_UPDATE_VERSION_ONLY TRUE)
 set_default_and_from_env(CTEST_BUILD_FLAGS "-j2")
 set_default_and_from_env(CTEST_PARALLEL_LEVEL "2")
 

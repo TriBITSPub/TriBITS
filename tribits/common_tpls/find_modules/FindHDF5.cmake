@@ -156,7 +156,7 @@ function(_hdf5_extra_library_dirs _file _var)
   endforeach()  
 
   # Now match all the -L flags
-  string(REGEX MATCHALL "-l([^\" ]+|\"[^\"]+\")" _lib_path_flags ${_ldflags})
+  string(REGEX MATCHALL "-L([^\" ]+|\"[^\"]+\")" _lib_path_flags ${_ldflags})
 
   # Loop through each
   set(_directories)
@@ -259,7 +259,7 @@ function(_hdf5_extra_include_dirs _file _var)
 
   # Now match all the -I flags
   if (${_cflags}) 
-    string(REGEX MATCHALL "-i([^\" ]+|\"[^\"]+\")" _inc_path_flags ${_cflags})
+    string(REGEX MATCHALL "-I([^\" ]+|\"[^\"]+\")" _inc_path_flags ${_cflags})
 
     # Loop through each
     set(_directories)

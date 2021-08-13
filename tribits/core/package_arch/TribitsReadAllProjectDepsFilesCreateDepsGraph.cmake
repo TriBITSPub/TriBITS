@@ -74,7 +74,7 @@ macro(tribits_read_all_project_deps_files_create_deps_graph)
 
   tribits_config_code_start_timer(SET_UP_DEPENDENCIES_TIME_START_SECONDS)
 
-  tribits_read_defined_external_and_intenral_toplevel_packages_lists()
+  tribits_read_defined_external_and_internal_toplevel_packages_lists()
 
   tribits_read_deps_files_create_deps_graph()
 
@@ -84,11 +84,11 @@ macro(tribits_read_all_project_deps_files_create_deps_graph)
 endmacro()
 
 
-# @MACRO: tribits_read_defined_external_and_intenral_toplevel_packages_lists()
+# @MACRO: tribits_read_defined_external_and_internal_toplevel_packages_lists()
 #
 # Usage::
 #
-#   tribits_read_defined_external_and_intenral_toplevel_packages_lists()
+#   tribits_read_defined_external_and_internal_toplevel_packages_lists()
 #
 # Macro run at the top project-level scope that reads in the contents of all
 # of the `<repoDir>/TPLsList.cmake`_ and `<repoDir>/PackagesList.cmake`_ files
@@ -124,7 +124,7 @@ endmacro()
 #
 # See `Function call tree for constructing package dependency graph`_
 #
-macro(tribits_read_defined_external_and_intenral_toplevel_packages_lists)
+macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
 
   tribits_set_all_extra_repositories()
 
@@ -245,7 +245,7 @@ endmacro()
 #
 #   tribits_write_xml_dependency_files_if_supported()
 #
-# Function that writes XML dependnecy files if support for that exists in this
+# Function that writes XML dependency files if support for that exists in this
 # instance of TriBITs.
 #
 # See `Function call tree for constructing package dependency graph`_

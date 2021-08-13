@@ -190,7 +190,7 @@ create_ctest_dependency_handling_test_case(
     "Final set of enabled packages:  Teuchos 1"
     "Final set of non-enabled packages:  TrilinosFramework RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 23"
     "Processing current package Teuchos: libs='ON', tests='ON'"
-    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+.-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.*./MockTrilinos/cmake.ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_TESTS:BOOL=ON.-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+[;]-DCTEST_USE_LAUNCHERS:BOOL=1[;]-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON[;]-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags[;]-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON[;]-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON[;]-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF[;]-DTrilinos_EXTRAREPOS_FILE:STRING=.*./MockTrilinos/cmake.ExtraRepositoriesList.cmake[;]-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON[;]-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental[;]-DTrilinos_ENABLE_TESTS:BOOL=ON[;]-DTrilinos_DEFINE_MISSING_PACKAGE_LIBS_TARGETS=ON[;]-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
   )
 # NOTE: The above test pins down the form of the configure options passed to
 # different package configures to make sure everything in there.
@@ -245,10 +245,10 @@ create_ctest_dependency_handling_test_case(
     "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra 8"
     "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 16"
     "Processing current package Teuchos: libs='ON', tests=''"
-    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_TESTS:BOOL=.-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1[;]-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON[;]-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags[;]-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON[;]-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON[;]-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF[;]-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake[;]-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON[;]-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental[;]-DTrilinos_ENABLE_TESTS:BOOL=[;]-DTrilinos_DEFINE_MISSING_PACKAGE_LIBS_TARGETS=ON[;]-DTrilinos_ENABLE_Teuchos:BOOL=ON'"
     "Processing current package Epetra: libs='ON', tests=''"
     "Processing current package Thyra: libs='ON', tests='ON'"
-    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1.-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON.-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags.-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON.-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON.-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF.-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake.-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON.-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental.-DTrilinos_ENABLE_TESTS:BOOL=ON.-DTrilinos_ENABLE_EpetraExt:BOOL=.-DTrilinos_ENABLE_Thyra:BOOL=ON'"
+    "CONFIGURE_OPTIONS = '-DTrilinos_TRIBITS_DIR=.+-DCTEST_USE_LAUNCHERS:BOOL=1[;]-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON[;]-DTrilinos_WARNINGS_AS_ERRORS_FLAGS:STRING=-DummyErrFlags[;]-DTrilinos_ALLOW_NO_PACKAGES:BOOL=ON[;]-DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON[;]-DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=OFF[;]-DTrilinos_EXTRAREPOS_FILE:STRING=.+/examples/MockTrilinos/cmake/ExtraRepositoriesList.cmake[;]-DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES:BOOL=ON[;]-DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE:STRING=Experimental[;]-DTrilinos_ENABLE_TESTS:BOOL=ON[;]-DTrilinos_ENABLE_EpetraExt:BOOL=[;]-DTrilinos_DEFINE_MISSING_PACKAGE_LIBS_TARGETS=ON[;]-DTrilinos_ENABLE_Thyra:BOOL=ON'"
   )
 # NOTE: The above test pins down the form of the configure options passed to
 # different package configures to make sure everything in there.
@@ -1162,5 +1162,3 @@ tribits_add_advanced_test( CTestDriver_tribits_ctest_update_commands_wrapper_def
       "Git Update PASSED!"
 
    )
-
-
