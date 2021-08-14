@@ -2,7 +2,7 @@
 
 # This script checks gnome.org policy about how people are supposed to
 # use git; the intent of the policy is to keep people from shooting
-# themselve in the foot.
+# themselves in the foot.
 #
 # Eventually, we'd like to have an ability to override policy; one way
 # it could work is that if you did 'git push --exec=force' and you
@@ -134,7 +134,7 @@ EOF
 	    #
 	    # Expression here is same as in post-receive-notify-cia; we take 
 	    # all the branches in the repo, as "^/ref/heads/branchname", other
-            # than the branch we are actualy committing to, and exclude commits
+            # than the branch we are actually committing to, and exclude commits
             # already on those branches from the list of commits between
             # $oldrev and $newrev.
 

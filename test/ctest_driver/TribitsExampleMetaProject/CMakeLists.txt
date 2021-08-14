@@ -104,7 +104,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
-    MESSAGE "Run ctest driver with intial clone of the repos on the default branch 'master' and remote 'origin'"
+    MESSAGE "Run ctest driver with initial clone of the repos on the default branch 'master' and remote 'origin'"
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -399,7 +399,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
-    MESSAGE "Run ctest driver with intial clone of the repos on the default branch 'master' and remote 'origin'"
+    MESSAGE "Run ctest driver with initial clone of the repos on the default branch 'master' and remote 'origin'"
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -607,7 +607,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_version_date
   EXCLUDE_IF_NOT_TRUE  GIT_SUPPORTS_VERSION_DATE  ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
-    MESSAGE "Run ctest driver with intial clone and generate version date files and install"
+    MESSAGE "Run ctest driver with initial clone and generate version date files and install"
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -629,7 +629,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_version_date
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_1
-    MESSAGE "Check that the TribitsExMetaProjec_version_date.h matches expected entrie file"
+    MESSAGE "Check that the TribitsExMetaProjec_version_date.h matches expected entire file"
     CMND diff
     ARGS
       "${CMAKE_CURRENT_SOURCE_DIR}/data/TribitsExMetaProj_version_date.for-testing.h"
@@ -639,7 +639,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_version_date
     # check other entire files like this, only the version date macro.
 
   TEST_2
-    MESSAGE "Check that the VersionDAte matches expected entrie file."
+    MESSAGE "Check that the VersionDAte matches expected entire file."
     CMND diff
     ARGS
       "${CMAKE_CURRENT_SOURCE_DIR}/data/VersionDate.TribitsExMetaProj.cmake"
@@ -677,7 +677,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_version_date
       "set[(]TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE 2019021913[)]"
 
   TEST_7
-    MESSAGE "Check that installed TribitsExMetaProjec_version_date.h matches expected entrie file!"
+    MESSAGE "Check that installed TribitsExMetaProjec_version_date.h matches expected entire file!"
     CMND diff
     ARGS
       "${CMAKE_CURRENT_SOURCE_DIR}/data/TribitsExMetaProj_version_date.for-testing.h"

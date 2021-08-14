@@ -250,7 +250,7 @@ macro(tribits_define_global_options_and_define_extra_repos)
     "Enable examples (exec and ctest add_test()) in all packages  (set to ON, OFF, or leave empty).  If left empty, then this will be set to ON if ${PROJECT_NAME}_ENABLE_TESTS=ON" )
 
   set(${PROJECT_NAME}_SKIP_CTEST_ADD_TEST OFF CACHE BOOL
-    "Skipp ctest add_test() for all defined tests (but still build any enabled test or example executable targets)." )
+    "Skip ctest add_test() for all defined tests (but still build any enabled test or example executable targets)." )
 
   if (${PROJECT_NAME}_ENABLE_TESTS AND ${PROJECT_NAME}_ENABLE_EXAMPLES STREQUAL "")
     message(STATUS "Setting ${PROJECT_NAME}_ENABLE_EXAMPLES=ON because ${PROJECT_NAME}_ENABLE_TESTS=ON")
@@ -384,7 +384,7 @@ macro(tribits_define_global_options_and_define_extra_repos)
     endif()
     set(${PROJECT_NAME}_WRITE_NINJA_MAKEFILES
       ${${PROJECT_NAME}_WRITE_NINJA_MAKEFILES_DEFAULT} CACHE BOOL
-      "Generate dummy makefiles to call ninja in every bulid subdirectory (requires CMake 3.7.0 or newer)." )
+      "Generate dummy makefiles to call ninja in every build subdirectory (requires CMake 3.7.0 or newer)." )
   endif()
   if ("${${PROJECT_NAME}_WRITE_NINJA_MAKEFILES}" STREQUAL "")
     set(${PROJECT_NAME}_WRITE_NINJA_MAKEFILES OFF)
@@ -693,7 +693,7 @@ macro(tribits_define_global_options_and_define_extra_repos)
     )
   # NOTE: 1500 is the CMake default set in Modules/CTest.cmake.  We need to
   # set the default here because we need to be able to scale it correctly in
-  # case the user does not explicilty set this var in the cache.
+  # case the user does not explicitly set this var in the cache.
 
   advanced_set(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0 CACHE STRING
     "Scale factor for global DART_TESTING_TIMEOUT and individual test TIMEOUT (default 1.0)."
@@ -1249,8 +1249,7 @@ macro(tribits_copy_installer_resource _varname _source _destination)
     COPYONLY)
 endmacro()
 
-
-# Run the git log command to get the verison info for a git rep
+# Run the git log command to get the version info for a git repo
 #
 function(tribits_generate_single_repo_version_string  GIT_REPO_DIR
    SINGLE_REPO_VERSION_STRING_OUT
@@ -1395,7 +1394,7 @@ endfunction()
 # filled out!
 #
 # NOTE: This function cannot be called in a cmake -P script because it has a
-# call to install()!  That is why this function is seprated out from
+# call to install()!  That is why this function is separated out from
 # tribits_generate_repo_version_output_and_file().
 #
 function(tribits_generate_repo_version_output_and_file_and_install)
@@ -1847,7 +1846,7 @@ macro(tribits_setup_env)
   endif()
 
   # Check for Doxygen/dot - We can use variables set in this check to
-  # enable/disable the grapical dependency graphs in doxygen Doxyfiles.
+  # enable/disable the graphical dependency graphs in doxygen Doxyfiles.
   include(FindDoxygen)
 
   # Set the hack library to get link options on
@@ -2204,8 +2203,8 @@ macro(tribits_configure_enabled_packages)
   global_null_set(${PROJECT_NAME}_ETI_PACKAGES)
 
   #
-  # B) Define the source and binary directories for all of the pacakges that
-  # have been enbaled.  These are used to allow packages to refer to each
+  # B) Define the source and binary directories for all of the packages that
+  # have been enabled.  These are used to allow packages to refer to each
   # other even downstream packages (which is pretty messed up really).
   #
 
@@ -2460,7 +2459,7 @@ macro(tribits_setup_packaging_and_distribution)
     if (NOT TRIBITS_PACKAGE_DONT_IGNORE)
 
       # Checking if we have a relative path to the package's files. Since the
-      # exclude is a regular expression any "../" will be interpretted as <any
+      # exclude is a regular expression any "../" will be interpreted as <any
       # char><any char>/ which would never match the package's actual
       # directory. There isn't a direct way in cmake to convert a relative
       # path into an absolute path with string operations so as a way of
@@ -2522,7 +2521,7 @@ macro(tribits_setup_packaging_and_distribution)
     #message("${PKG} depends on : ${${PKG}_LIB_REQUIRED_DEP_PACKAGES}")
   endforeach()
 
-  # K.4) Resetting the name to avoid overwriting registery keys when installing
+  # K.4) Resetting the name to avoid overwriting registry keys when installing
 
   if(WIN32)
     set(CPACK_PACKAGE_NAME "${CPACK_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}")
@@ -2657,7 +2656,7 @@ macro(tribits_exclude_files)
       "ERROR: tribits_exclude_files() was called in a subpackage CmakeLists.txt file!"
       "  Instead, move this call to the file"
       " ${${${PACKAGE_NAME}_PARENT_PACKAGE}_SOURCE_DIR}/CMakeLists.txt"
-      " and adjust the paths accodingly!" )
+      " and adjust the paths accordingly!" )
   endif()
 
   set(FILES_TO_EXCLUDE ${ARGN})

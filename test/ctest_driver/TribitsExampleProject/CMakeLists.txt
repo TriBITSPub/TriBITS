@@ -128,7 +128,7 @@ set(CTEST_S_SCRIPT_ARGS
   )
 
 #
-# Set up to submit to CDash if reqeusted
+# Set up to submit to CDash if requested
 #
 
 if ("${${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO}" STREQUAL "") 
@@ -232,7 +232,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_PASS
     CMND ln
     ARGS -s ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Run ctest driver testing everyting but no push."
+    MESSAGE "Run ctest driver testing everything but no push."
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -318,7 +318,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
     CMND cp
     ARGS -r ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Break the confgiure for just the optional MixLang package"
+    MESSAGE "Break the configure for just the optional MixLang package"
     CMND ${CMAKE_CURRENT_SOURCE_DIR}/append_file_with_line.sh
     ARGS TribitsExampleProject/packages/mixed_lang/CMakeLists.txt
       "Configure of mixed_lang is broken!"
@@ -367,7 +367,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
     ARGS TribitsExampleProject/packages/mixed_lang/src/MixedLang.cpp
       "Build mixed_lang lib is broken!"
   TEST_2
-    MESSAGE "Run ctest driver which should show a failed libray build for just the MixedLang package!"
+    MESSAGE "Run ctest driver which should show a failed library build for just the MixedLang package!"
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -577,7 +577,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibRequiredPkg
       "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "SimpleCxx: Configure passed"
       "FAILED library build for package 'SimpleCxx'"
-      "SimpleCxx: Skipping tests since libray build failed"
+      "SimpleCxx: Skipping tests since library build failed"
       "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=ON'"
       "MixedLang: Configure passed"
       "MixedLang: Libs build passed"
@@ -612,7 +612,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_COVERAGE
     CMND ln
     ARGS -s ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Run ctest driver testing everyting but no push."
+    MESSAGE "Run ctest driver testing everything but no push."
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -646,7 +646,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_MEMORY
     CMND ln
     ARGS -s ${TribitsExProj_DIR} .
   TEST_1
-    MESSAGE "Run ctest driver testing everyting but no push."
+    MESSAGE "Run ctest driver testing everything but no push."
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -855,7 +855,7 @@ tribits_add_advanced_test( CTestDriver_AAO_Dashboard_Then_NoConfigDashboard
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
-  # The above test ensures that you can do a configure, run the dashbaord
+  # The above test ensures that you can do a configure, run the dashboard
   # target, then run 'env CTEST_DO_CONFIGURE=OFF make dashboard' again and
   # have it work correctly.  This was a use case that was broken when I tried
   # it with Trilinos.
@@ -1217,7 +1217,7 @@ function(generate_aao_tests)
       CMND ln
       ARGS -s ${TribitsExProj_DIR} .
     TEST_1
-      MESSAGE "Run ctest driver testing everyting but no push."
+      MESSAGE "Run ctest driver testing everything but no push."
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1330,7 +1330,7 @@ function(generate_aao_tests)
       ARGS -s ${TribitsExProj_DIR} .
 
     TEST_1
-      MESSAGE "Run ctest driver testing everyting but no push."
+      MESSAGE "Run ctest driver testing everything but no push."
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1369,7 +1369,7 @@ function(generate_aao_tests)
       ARGS -s ${TribitsExProj_DIR} .
 
     TEST_1
-      MESSAGE "Run ctest driver testing everyting but no push."
+      MESSAGE "Run ctest driver testing everything but no push."
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1469,7 +1469,7 @@ function(generate_aao_tests)
       CMND ln
       ARGS -s ${TribitsExProj_DIR} .
     TEST_1
-      MESSAGE "Run ctest driver testing everyting but no push."
+      MESSAGE "Run ctest driver testing everything but no push."
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1601,7 +1601,7 @@ function(generate_aao_tests)
       ARGS TribitsExampleProject/packages/with_subpackages/a/A.cpp
         "Build of A.cpp lib is broken!"
     TEST_2
-      MESSAGE "Run ctest driver which should show a failed libray build for just the MixedLang package!"
+      MESSAGE "Run ctest driver which should show a failed library build for just the MixedLang package!"
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1662,7 +1662,7 @@ function(generate_aao_tests)
       ARGS TribitsExampleProject/packages/with_subpackages/a/A.cpp
         "Build of A.cpp lib is broken!"
     TEST_2
-      MESSAGE "Run ctest driver which should show a failed libray build for just the MixedLang package!"
+      MESSAGE "Run ctest driver which should show a failed library build for just the MixedLang package!"
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1752,7 +1752,7 @@ function(generate_aao_tests)
       ARGS TribitsExampleProject/packages/simple_cxx/test/CMakeLists.txt
         "Hello World" "Hellos World"
     TEST_2
-      MESSAGE "Run ctest driver which should show a failed libray build for just the MixedLang package!"
+      MESSAGE "Run ctest driver which should show a failed library build for just the MixedLang package!"
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -2090,7 +2090,7 @@ function(generate_aao_tests)
 
     )
   # NOTE: The above test does the build in the first ctest -S invocation and
-  # the tests in teh second ctest -S invocation.
+  # the tests in the second ctest -S invocation.
 
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_update_fail
@@ -2323,7 +2323,7 @@ function(generate_aao_tests)
 
     )
   # NOTE: The above test does the build in the first ctest -S invocation and
-  # the tests in teh second ctest -S invocation.
+  # the tests in the second ctest -S invocation.
 
 
   #
@@ -2341,7 +2341,7 @@ function(generate_aao_tests)
       CMND ln
       ARGS -s ${TribitsExProj_DIR} .
     TEST_1
-      MESSAGE "Run ctest driver testing everyting but no submit to CDash."
+      MESSAGE "Run ctest driver testing everything but no submit to CDash."
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -2496,7 +2496,7 @@ function(generate_aao_tests)
       "-- Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    # ToDo: Add another dummy project for the case where componets are
+    # ToDo: Add another dummy project for the case where components are
     # required and assure that TribitsExProj_FOUND = 'FALSE'.
 
     )
@@ -2504,7 +2504,7 @@ function(generate_aao_tests)
     #
     # * Install failures due to missing files will be caught and reported.
     #
-    # * If an install failure occures in one package, it will not impact
+    # * If an install failure occurs in one package, it will not impact
     #   installs in other packages due to the custom
     #   'install_package_by_package' target.
     #
@@ -2583,7 +2583,7 @@ function(generate_aao_tests)
 
   TEST_5
     MESSAGE "Create and configure a dummy project that includes"
-      " TribitsExProjConfig.cmake where componets are optional" 
+      " TribitsExProjConfig.cmake where components are optional" 
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
@@ -2613,7 +2613,7 @@ function(generate_aao_tests)
       "-- Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    # ToDo: Add another dummy project for the case where componets are
+    # ToDo: Add another dummy project for the case where components are
     # required and assure that TribitsExProj_FOUND = 'FALSE'.
 
     )
@@ -2625,13 +2625,13 @@ function(generate_aao_tests)
     #   This checks that -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON is set
     #   correctly in the inner configure.
     #
-    # * If an install failure occures in one package, it will not impact
+    # * If an install failure occurs in one package, it will not impact
     #   installs in other packages due to the custom
     #   'install_package_by_package' target.
     #
     # * Even if one package breaks, one can still use the
     #   <Project>Config.cmake file if one does not request a broken package
-    #   (or any package downstream from a broken package) in specifing
+    #   (or any package downstream from a broken package) in specifying
     #   COMPONENTS.
     #
 

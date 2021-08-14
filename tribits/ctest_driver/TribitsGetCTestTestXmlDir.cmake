@@ -1,6 +1,6 @@
 #
 # cmake -P script to get the CTest testing XML directory
-# <build>/Testing/<buildstarttime> given just the <bulid> directory path.
+# <build>/Testing/<buildstarttime> given just the <build> directory path.
 #
 # Usage:
 #

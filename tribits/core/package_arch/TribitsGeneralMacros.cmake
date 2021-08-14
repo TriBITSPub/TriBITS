@@ -142,7 +142,7 @@ function(tribits_set_base_repo_dir  BASE_DIR  REPO_DIR  BASE_REPO_DIR_OUT)
 endfunction()
 # Get the list of explicitly enabled entries
 #
-# These is the list of entires in ${LISTVAR} for which:
+# These is the list of entries in ${LISTVAR} for which:
 #
 #   if (${ENABLED_PREFIX}_ENABLE_{ENTRY})
 #
@@ -170,7 +170,7 @@ endfunction()
 
 # Get the list non-disabled entries
 #
-# These is the list of entires in ${LISTVAR} for which:
+# These is the list of entries in ${LISTVAR} for which:
 #
 #   if (
 #     (${ENABLED_PREFIX}_ENABLE_{ENTRY})
@@ -202,7 +202,7 @@ endfunction()
 
 # Get the list of explicitly disabled entries
 #
-# These is the list of entires in ${LISTVAR} for which:
+# These is the list of entries in ${LISTVAR} for which:
 #
 #   if (
 #     (NOT ${ENABLED_PREFIX}_ENABLE_{ENTRY})
@@ -234,7 +234,7 @@ endfunction()
 
 # Get the list of non-enabled entries
 #
-# These is the list of entires in ${LISTVAR} for which:
+# These is the list of entries in ${LISTVAR} for which:
 #
 #   if (NOT ${ENABLED_PREFIX}_ENABLE_{ENTRY})
 #
@@ -378,7 +378,7 @@ endfunction()
 # As a side effect of calling this function, include_directories(...) to set
 # all of the include directories for a given set of enabled Packages/TPLs.
 #
-# NOTE: The Packages/TPLs should be sorted in decending dependency order
+# NOTE: The Packages/TPLs should be sorted in descending dependency order
 # before calling this function.
 #
 # NOTE: Because this function may be called in cases where a package's

@@ -28,7 +28,7 @@ hostname=`hostname -f`
 
 CURRENT=$(df ${partition} | grep ${partition} | awk '{ print $5}' | sed 's/%//g')
 
-usage_str="${hostname}:${partition} ${CURRENT}% full, threashold ${percentage_usage_warn}%"
+usage_str="${hostname}:${partition} ${CURRENT}% full, threshold ${percentage_usage_warn}%"
 
 df_h_output=$(df -h ${partition})
 

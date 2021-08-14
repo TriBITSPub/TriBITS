@@ -603,7 +603,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
         " or optional column headers '[]'!"
         )
     if not threwException:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
   def test_too_many_required_headers_fail(self):
     csvFileStr=\
@@ -623,7 +623,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
         " 'col_3' is missing from the set of included column headers"+\
         " '['col_0', 'col_1', 'col_2']'!" )
     if not threwException:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
   def test_wrong_required_col_0_fail(self):
     csvFileStr=\
@@ -665,7 +665,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
         " ['val_10', 'val_11', 'val_12', 'extra'] has 4 entries"+\
         " which does not macth the number of column headers 3!" )
     if not threwException:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
   def test_col_3_row_0_required_cols_pass(self):
     csvFileStr=\
@@ -689,7 +689,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
       self.assertEqual( str(errMsg),
         "Error, CSV file '"+csvFileName+"' is empty which is not allowed!" )
     if not threwException:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
 #############################################################################
@@ -847,7 +847,7 @@ class test_getStandardTestsetTypeInfo(unittest.TestCase):
       self.assertEqual( str(errMsg),
         "Error, testsetAcro = 'invalid' is not supported!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
 
@@ -891,7 +891,7 @@ class test_getTestsetAcroFromTestDict(unittest.TestCase):
         " status = 'Passed' and issue_tracker = 'None'"+\
         " is not a supported test-set type!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
 #############################################################################
@@ -2442,7 +2442,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['issue_tracker'], '#1234')
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
 
-    # Check for the existance of the created Cache file
+    # Check for the existence of the created Cache file
     cacheFile = \
       testCacheOutputDir+"/2001-01-01-site_name-build_name-test_name-HIST-5.json"
     self.assertEqual(os.path.exists(testCacheOutputDir), True)
@@ -2554,7 +2554,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['issue_tracker'], '#1234')
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
 
-    # Check for the existance of the created Cache file
+    # Check for the existence of the created Cache file
     cacheFile = \
       testCacheOutputDir+"/2001-01-01-site_name-build_name-test_name-HIST-5.json"
     self.assertEqual(os.path.exists(testCacheOutputDir), True)
@@ -2942,7 +2942,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     # Create dummy test history
     testHistoryLOD = getTestHistoryLOD5(
       [
-        'Failed',  # This test got filtered out of the global lsit of nonpassing tests 
+        'Failed',  # This test got filtered out of the global list of nonpassing tests 
         'Failed',
         'Passed',
         'Passed',
@@ -3618,7 +3618,7 @@ tr:nth-child(odd) {background-color: #fff;}
     rowDataList = [ {'key1':'data1'} ]
     try:
       htmlTable = createHtmlTableStr("Title", colDataList, rowDataList)
-      self.assertEqual("Excpetion did not get thrown!", "No it did not!")
+      self.assertEqual("Exception did not get throw!", "No it did not!")
     except Exception as errMsg:
       self.assertEqual(str(errMsg),
          "Error, column 0 dict key='badKey' row 0 entry is 'None' which is"+\
@@ -4071,7 +4071,7 @@ class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
         "Error, the test dict {"+stru()+"'testname': "+stru()+"'test2'} at index 1"+\
         " is missing the 'issue_tracker' field!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
   def test_missing_issue_tracker_url_field(self):
@@ -4090,7 +4090,7 @@ class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
         " {"+stru()+"'issue_tracker': "+stru()+"'#1234', "+stru()+"'testname': "+stru()+"'test2'} at index 1"+\
         " is missing the 'issue_tracker_url' field!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
   def test_inconsistent_issue_tracker_field(self):
@@ -4110,7 +4110,7 @@ class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
         " index 1 has a different 'issue_tracker' field '#1235' than the expected"+\
         " value of '#1234'!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
   def test_inconsistent_issue_tracker_field(self):
@@ -4132,7 +4132,7 @@ class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
         " 'https://github.com/org/repo/issues/1236' than the expected value of"+\
         " 'https://github.com/org/repo/issues/1234'!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
   #def test_inconsistent_issue_tracker_url_field(self):
@@ -4206,7 +4206,7 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
         debugPrint=False,
         )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
   def test_twif_8_twinr_1(self):

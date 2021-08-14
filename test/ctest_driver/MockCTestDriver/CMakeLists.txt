@@ -288,7 +288,7 @@ create_ctest_dependency_handling_test_case(
     "0. Processing current package Epetra: libs=.ON., tests=.ON."
     "1. Processing current package Thyra: libs=.ON., tests=.ON."
   )
-# NOTE: The above test shows that ony 
+# NOTE: The above test shows that only 
 
 
 create_ctest_dependency_handling_test_case(
@@ -366,7 +366,7 @@ create_ctest_dependency_handling_test_case(
     "Processing current package Teuchos: libs='ON', tests='ON'"
     "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Teuchos:BOOL=ON"
   COMPARE_DEPS_FILE
-     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Continuos.xml"
+     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Continuous.xml"
   )
 
 
@@ -386,7 +386,7 @@ create_ctest_dependency_handling_test_case(
     "CONFIGURE_OPTIONS.+Trilinos_ENABLE_Teuchos:BOOL=ON"
     "Processing current package Phalanx: libs='ON', tests='ON'"
   COMPARE_DEPS_FILE
-     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Continuos.xml"
+     "${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.Continuous.xml"
   )
 
 

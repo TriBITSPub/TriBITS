@@ -58,7 +58,7 @@ import unittest
 
 #
 # Test out the TribitsExampleProject logic for changes requiring a global
-# rebulid
+# rebuild
 #
 
 class test_TribitsExampleProject_ProjectCiFileChangeLogic(unittest.TestCase):

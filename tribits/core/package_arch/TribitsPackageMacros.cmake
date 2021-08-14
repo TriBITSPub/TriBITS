@@ -70,10 +70,10 @@ include(TribitsReportInvalidTribitsUsage)
 
 
 #
-# Macro that defines the package architecture system varaibles used to link
+# Macro that defines the package architecture system variables used to link
 # different SE packages together
 #
-# See README.DEPENDENCIES for information on what these varaibles mean and how
+# See README.DEPENDENCIES for information on what these variables mean and how
 # they are used.
 #
 macro(tribits_define_linkage_vars PACKAGE_NAME_IN)
@@ -85,7 +85,7 @@ endmacro()
 
 
 #
-# Macro that defines varaibles that create global targets
+# Macro that defines variables that create global targets
 #
 macro(tribits_define_target_vars PARENT_PACKAGE_NAME_IN)
   global_null_set(${PARENT_PACKAGE_NAME_IN}_LIB_TARGETS)
@@ -93,7 +93,7 @@ macro(tribits_define_target_vars PARENT_PACKAGE_NAME_IN)
 endmacro()
 
 #
-# Set up some common varaibles used in the creation of an SE package
+# Set up some common variables used in the creation of an SE package
 #
 
 macro(tribits_set_common_vars PACKAGE_NAME_IN)
@@ -199,7 +199,7 @@ macro(tribits_package_decl PACKAGE_NAME_IN)
   if(${PACKAGE_NAME}_TRIBITS_PACKAGE_DECL_CALLED)
     tribits_report_invalid_tribits_usage(
       "tribits_package_decl() called more than once in Package ${PACKAGE_NAME}"
-      " This may be because tribits_package_decl() was expicitly called more than once or"
+      " This may be because tribits_package_decl() was explicitly called more than once or"
       " TRIBITS_PACKAGE_DECL was called after TRIBITS_PACKAGE. You do not need both."
       " If your package has subpackages then do not call tribits_package() instead call:"
       " tribits_pacakge_decl() then tribits_process_subpackages() then tribits package_def()"
@@ -241,7 +241,7 @@ macro(tribits_package_decl PACKAGE_NAME_IN)
 
   #
   # C) Set up the CMake support for this ${PROJECT_NAME} package and define some
-  # top-level varaibles.
+  # top-level variables.
   #
 
   tribits_set_common_vars(${PACKAGE_NAME_IN})
@@ -261,7 +261,7 @@ macro(tribits_package_decl PACKAGE_NAME_IN)
     set(${PACKAGE_NAME}_ENABLE_CIRCULAR_REF_DETECTION_FAILURE ON)
   endif()
 
-  # Set up parent package linkage varaibles
+  # Set up parent package linkage variables
   tribits_define_target_vars(${PACKAGE_NAME})
 
   # Define this as a CMake/CTest "Subproject"
@@ -335,7 +335,7 @@ macro(tribits_package_def)
   # Reset in case were changed by subpackages
   tribits_set_common_vars(${PACKAGE_NAME})
 
-  # Define package linkage varaibles
+  # Define package linkage variables
   tribits_define_linkage_vars(${PACKAGE_NAME})
 
   set(${PACKAGE_NAME}_TRIBITS_PACKAGE_DEF_CALLED TRUE)
@@ -664,7 +664,7 @@ function(tribits_package_finalize_dependency_vars)
     # libraries or any include directories, we need to not call
     # list(REMOVE_DUPLICATES ...).
 
-    # NOTE: There can't be any dupicate libraries in PARENT_PACKAGE_LIBRARIES
+    # NOTE: There can't be any duplicate libraries in PARENT_PACKAGE_LIBRARIES
     # so no need to remove them.
 
     global_set(${PACKAGE_NAME}_INCLUDE_DIRS "${PARENT_PACKAGE_INCLUDE_DIRS}")
@@ -934,7 +934,7 @@ endmacro()
 #   ${PARENT_PACKAGE_NAME}_LIB_TARGETS
 #   ${PARENT_PACKAGE_NAME}_ALL_TARGETS
 #
-# without carefully studying the documentation in README.DEPENENCIES and then
+# without carefully studying the documentation in README.DEPENDENCIES and then
 # carefully studying all of the code and issues that modify these variables!
 #
 # ToDo: Write some good unit tests that pin down the behavior of all of this!

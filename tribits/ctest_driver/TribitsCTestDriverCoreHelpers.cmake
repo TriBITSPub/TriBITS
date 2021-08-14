@@ -1118,7 +1118,7 @@ macro(tribits_ctest_package_by_package)
 
     if (NOT PBP_BUILD_LIBS_PASSED AND CTEST_DO_TEST)
 
-      message("\n${TRIBITS_PACKAGE}: Skipping tests since libray build failed!\n")
+      message("\n${TRIBITS_PACKAGE}: Skipping tests since library build failed!\n")
 
       set(PBP_TESTS_PASSED FALSE)
 
@@ -1190,7 +1190,7 @@ macro(tribits_ctest_package_by_package)
     if (NOT PBP_BUILD_LIBS_PASSED AND CTEST_DO_MEMORY_TESTING)
 
       message("\n${TRIBITS_PACKAGE}: Skipping running memory checking"
-	 "tests since libray build failed!\n")
+	 "tests since library build failed!\n")
 
     elseif (NOT CTEST_DO_MEMORY_TESTING)
 
@@ -1314,7 +1314,7 @@ macro(tribits_ctest_all_at_once)
       list(APPEND CONFIGURE_OPTIONS
         "-D${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE}=OFF" )
     endforeach()
-    # NOTE: Above we have to explicitly set disables for the excluded pacakges
+    # NOTE: Above we have to explicitly set disables for the excluded packages
     # since we are pssing in ${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON.  This is
     # effectively the "black-listing" approach.
   else()

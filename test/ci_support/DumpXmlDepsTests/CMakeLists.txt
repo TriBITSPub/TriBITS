@@ -167,7 +167,7 @@ tribits_add_advanced_test( DepXmlDumpTests_DefaultProjectSourceDir
 
 #####################################################################
 #
-# Unit tests for just creating the depencency XML files
+# Unit tests for just creating the dependency XML files
 #
 #####################################################################
 

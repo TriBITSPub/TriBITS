@@ -18,7 +18,7 @@ module load sems-ninja_fortran/1.10.0
 export PATH=/home/vera_env/common_tools/ccache-3.7.9/bin:${PATH}
 
 # Make default install permissions 700 so that we can test that TriBITS will
-# use recusive chmod to open up permissions.
+# use recursive chmod to open up permissions.
 umask g-rwx,o-rwx
 
 export TribitsExMetaProj_GIT_URL_REPO_BASE=git@github.com:tribits/

@@ -5,7 +5,7 @@ something
 
 #
 # @FUNCTION: SOME_FUNC_NAME2()
-# Better documenation
+# Better documentation
 #
 # Usage::
 #

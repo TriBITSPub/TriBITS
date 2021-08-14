@@ -59,15 +59,15 @@ class test_makeCmndsLowerCaseInCMakeStr(unittest.TestCase):
 
   def test_notmacro(self):
     cmakeCodeStrIn = "\n"+\
-      "# This is a macro defintion!\n"+\
+      "# This is a macro definition!\n"+\
       "MACRO(ARG1 ARG2)\n"+\
-      "# This is not a macro defintion!\n"+\
+      "# This is not a macro definition!\n"+\
       "NOTMACRO(ARG1 ARG2)\n"+\
       "\n"
     cmakeCodeStrOut_expected = "\n"+\
-      "# This is a macro defintion!\n"+\
+      "# This is a macro definition!\n"+\
       "macro(arg1 ARG2)\n"+\
-      "# This is not a macro defintion!\n"+\
+      "# This is not a macro definition!\n"+\
       "notmacro(ARG1 ARG2)\n"+\
       "\n"
     cmakeCodeStrOut = LCC.makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn)
@@ -75,15 +75,15 @@ class test_makeCmndsLowerCaseInCMakeStr(unittest.TestCase):
 
   def test_notfunction(self):
     cmakeCodeStrIn = "\n"+\
-      "# This is a function defintion!\n"+\
+      "# This is a function definition!\n"+\
       "FUNCTION(ARG1 ARG2)\n"+\
-      "# This is not a function defintion!\n"+\
+      "# This is not a function definition!\n"+\
       "NOTFUNCTION(ARG1 ARG2)\n"+\
       "\n"
     cmakeCodeStrOut_expected = "\n"+\
-      "# This is a function defintion!\n"+\
+      "# This is a function definition!\n"+\
       "function(arg1 ARG2)\n"+\
-      "# This is not a function defintion!\n"+\
+      "# This is not a function definition!\n"+\
       "notfunction(ARG1 ARG2)\n"+\
       "\n"
     cmakeCodeStrOut = LCC.makeCmndsLowerCaseInCMakeStr(cmakeCodeStrIn)

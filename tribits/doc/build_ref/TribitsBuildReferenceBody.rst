@@ -284,8 +284,8 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   and instead would have to the full variables names specific for a given
   project.
 
-  4) Non-cache project-level varaibles can be set in a ``*.cmake`` file that
-  will impact the configuration.  When using the ``-C`` option, only varaibles
+  4) Non-cache project-level variables can be set in a ``*.cmake`` file that
+  will impact the configuration.  When using the ``-C`` option, only variables
   set with ``set(<varName> CACHE <TYPE> ...)`` will impact the configuration.
 
   5) However, the ``*.cmake`` files specified by
@@ -458,7 +458,7 @@ The enable tests for explicitly enabled packages, configure with::
   -D <Project>_ENABLE_<TRIBITS_PACKAGE_2>=ON \
   -D <Project>_ENABLE_TESTS=ON \
 
-This wil result in the enable of the test suites for any package that
+This will result in the enable of the test suites for any package that
 explicitly enabled with ``-D <Project>_ENABLE_<TRIBITS_PACKAGE>=ON``.  Note
 that his will **not** result in the enable of the test suites for any packages
 that may only be implicitly enabled in order to build the explicitly enabled
@@ -645,7 +645,7 @@ However, on Linux systems, the observed algorithm appears to be:
    to the C compiler given in the variable ``CMAKE_C_COMPILER``.  The first
    compiler that is found is set to ``CMAKE_Fortran_COMPILER``.
 
-**WARNING:** While this build-in CMake compiler search algorithm may seems
+**WARNING:** While this built-in CMake compiler search algorithm may seems
 reasonable, it fails to find the correct compilers in many cases for a non-MPI
 serial build.  For example, if a newer version of GCC is installed and is put
 first in ``PATH``, then CMake will fail to find the updated ``gcc`` compiler
@@ -696,9 +696,9 @@ verbose output without reconfiguring`_).  (NOTE: One can also see the exact
 set of flags used for each target in the generated ``build.ninja`` file when
 using the Ninja generator.) One cannot just look at the cache variables for
 ``CMAKE_<LANG>_FLAGS`` and ``CMAKE_<LANG>_FLAGS_<CMAKE_BUILD_TYPE>`` in the
-file ``CMakeCache.txt`` and see the full set of flags are actaully being used.
-These varaibles can override the cache varables by TriBITS as project-level
-local non-cache varaibles as described below (see `Overriding CMAKE_BUILD_TYPE
+file ``CMakeCache.txt`` and see the full set of flags are actually being used.
+These variables can override the cache variables by TriBITS as project-level
+local non-cache variables as described below (see `Overriding CMAKE_BUILD_TYPE
 debug/release compiler options`_).
 
 The <Project> TriBITS CMake build system will set up default compile flags for
@@ -826,7 +826,7 @@ and to override default release options use::
 NOTES: The TriBITS CMake cache variable
 ``CMAKE_<LANG>_FLAGS_<CMAKE_BUILD_TYPE>_OVERRIDE`` is used and not
 ``CMAKE_<LANG>_FLAGS_<CMAKE_BUILD_TYPE>`` because is given a default
-internally by CMake and the new varaible is needed to make the override
+internally by CMake and the new variable is needed to make the override
 explicit.
 
 
@@ -1962,7 +1962,7 @@ configure time by setting::
 
 where ``<fullTestName>`` must exactly match the test listed out by ``ctest
 -N``.  This will result in the printing of a line for the excluded test when
-`Trace test addition or exclusion`_ is enabled and the test wil not be added
+`Trace test addition or exclusion`_ is enabled and the test will not be added
 with ``add_test()`` and therefore CTest (and CDash) will never see the
 disabled test.
 
@@ -2162,7 +2162,7 @@ NOTES:
   would not otherwise occur.
 
 * The value of ``DART_TESTING_TIMEOUT`` and the timeouts for individual tests
-  can be scaled up or down using the cache varaible
+  can be scaled up or down using the cache variable
   `<Project>_SCALE_TEST_TIMEOUT`_.
 
 * To set or override the default global test timeout limit at runtime, see
@@ -3410,7 +3410,7 @@ be run without needing to set ``LD_LIBRARY_PATH`` or any other system
 environment variables.  However, this setting does not allow the installed
 libraries and executables to be easily moved or relocated.  There are several
 built-in CMake variables that control how RPATH is handled related to
-installations.  The build-in CMake variables that control RPATH handling
+installations.  The built-in CMake variables that control RPATH handling
 include ``CMAKE_INSTALL_RPATH``, ``CMAKE_SKIP_BUILD_RPATH``,
 ``CMAKE_SKIP_INSTALL_RPATH``, ``CMAKE_SKIP_RPATH``,
 ``CMAKE_BUILD_WITH_INSTALL_RPATH``, ``CMAKE_INSTALL_RPATH_USE_LINK_PATH``.

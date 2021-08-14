@@ -166,7 +166,7 @@ class SphinxRstGenerator:
 
   def generate_rst(self, source_file: str, final_path: str = None, src_path: str = None,
       start_path: str = None) -> set:
-    """ Generate corect links in .rst files, so Sphinx can find them
+    """ Generate correct links in .rst files, so Sphinx can find them
     """
     if final_path is None:
       overwrite_source = True

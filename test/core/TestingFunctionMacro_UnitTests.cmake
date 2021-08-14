@@ -227,7 +227,7 @@ function(unittest_tribits_dir_is_basedir)
     "/some/base/path" "/some/base/path/more" TRUE)
 
   tribits_dir_is_basedir_test_case(
-    "/some/base/path" "/some/base/pathes" FALSE)
+    "/some/base/path" "/some/base/paths" FALSE)
 
   tribits_dir_is_basedir_test_case(
     "/some/base/path/more" "/some/base/path" FALSE)
@@ -745,7 +745,7 @@ function(unittest_tribits_add_test_basic)
   set(${PACKAGE_NAME}_ENABLE_TESTS ON)
 
   #
-  # Test different nubmers and types of arguments
+  # Test different numbers and types of arguments
   #
 
   message("Add a single basic test with no arguments")
@@ -4089,14 +4089,14 @@ function(unittest_tribits_eti_check_exclusion)
     OFF
   )
 
-  message("inst exluded (full explicit)...")
+  message("inst excluded (full explicit)...")
   tribits_eti_check_exclusion("abcdf;ta|tb|tc" "ta|tb|tc" result)
   unittest_compare_const(
     result
     ON
   )
 
-  message("inst exluded (full regex)...")
+  message("inst excluded (full regex)...")
   tribits_eti_check_exclusion("abcdf;.*|.*|.*" "ta|tb|tc" result)
   unittest_compare_const(
     result

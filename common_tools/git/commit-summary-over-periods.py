@@ -57,7 +57,7 @@ usageHelp = r"""commit-summary-over-periods.py [OPTION]
 
 This script collects statistics for the number of commit by the given authors
 over a number of time periods (default months) and produces a summary table
-sutable for import and plotting.
+suitable for import and plotting.
 """
 
 from optparse import OptionParser

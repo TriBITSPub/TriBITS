@@ -57,7 +57,6 @@ include(MessageWrapper)
 include(DualScopeSet)
 include(CMakeParseArguments)
 
-
 #
 # Private helper macros
 #
@@ -107,7 +106,7 @@ macro(tribits_private_disable_tpl_required_package_enable
   #message("TRIBITS_PRIVATE_DISABLE_TPL_REQUIRED_PACKAGE_ENABLE"
   #  " ${TPL_NAME} ${PACKAGE_NAME} ${LIBRARY_DEP}")
 
-  # Only turn off PACKAGE_NAME libraries and test/eamples if it
+  # Only turn off PACKAGE_NAME libraries and test/examples if it
   # is currently enabled or could be enabled.
 
   assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
@@ -177,7 +176,7 @@ macro(tribits_private_disable_required_package_enables
   #message("TRIBITS_PRIVATE_DISABLE_REQUIRED_PACKAGE_ENABLES"
   #  " ${FORWARD_DEP_PACKAGE_NAME} ${LIBRARY_DEP}")
 
-  # Only turn off FORWARD_DEP_PACKAGE libraries and test/eamples if it
+  # Only turn off FORWARD_DEP_PACKAGE libraries and test/examples if it
   # is currently enabled or could be enabled
 
   assert_defined(${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME})
@@ -233,9 +232,9 @@ macro(tribits_private_disable_optional_package_enables
   #assert_defined(${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})
   if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME} OR "${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}}" STREQUAL "")
     # Always disable the conditional enable but only print the message if the package is enabled.
-    #message("--  Disasble ${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME} ...")
+    #message("--  Disable ${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME} ...")
     if (${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME})
-      if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})  # is explicity try already!
+      if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})  # is explicitly try already!
         message("-- "
           "NOTE: Setting ${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}=OFF"
           " which was ${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}}"
@@ -654,7 +653,7 @@ macro(tribits_private_postprocess_optional_tpl_enable  PACKAGE_NAME  OPTIONAL_DE
 endmacro()
 
 
-# Macro that post-processes optional dependancies after all other
+# Macro that post-processes optional dependencies after all other
 # dependencies have been worked out
 #
 macro(tribits_postprocess_optional_package_enables PACKAGE_NAME)
@@ -937,7 +936,7 @@ macro(tribits_private_enable_dep_package  PACKAGE_NAME  DEP_PACKAGE_NAME
     elseif (${PACKAGE_NAME}_ENABLE_${DEP_PACKAGE_NAME})
 
       # Enable the upstream package if the user directly specified the
-      # optional package enable reguardless if it is PT or ST or even EX.
+      # optional package enable regardless if it is PT or ST or even EX.
 
       message("-- " "Setting ${PROJECT_NAME}_ENABLE_${DEP_PACKAGE_NAME}=ON"
         " because ${PACKAGE_NAME}_ENABLE_${DEP_PACKAGE_NAME}=ON")
@@ -1093,7 +1092,7 @@ macro(tribits_adjust_package_enables)
 
   if (${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES)
     message("")
-    message("Setting to empty '' all enabled packages on reqeust ...")
+    message("Setting to empty '' all enabled packages on request ...")
     message("")
     foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
       if (${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE})
@@ -1134,7 +1133,7 @@ macro(tribits_adjust_package_enables)
 
   message("")
   message("Disabling forward required SE packages and optional intra-package"
-    " support that have a dependancy on disabled SE packages"
+    " support that have a dependency on disabled SE packages"
     " ${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>=OFF ...")
   message("")
   foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})

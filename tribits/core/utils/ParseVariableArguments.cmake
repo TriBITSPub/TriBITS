@@ -250,10 +250,10 @@ endmacro()
 # are a few things that could be done to improve performance.  One thing you
 # could do is repalce the o(len(arg_names)) and o(len(option_names)) lookups
 # with o(1) lookups by creating CMake variables of the name
-# ${OUTER_FUNC_NAME}_arg_<argNamei> and then just look of that varible exists
+# ${OUTER_FUNC_NAME}_arg_<argNamei> and then just look of that variable exists
 # or not.  That should use a hash function.  That might actually slow things
 # down for short lists however so we would have to measure, measure,
 # measure. I would have to pass in the function/macro name to disabiguate
-# the varible names.  It would really be better if cmake would provide a
+# the variable names.  It would really be better if cmake would provide a
 # sorted list find operation.  That would make this much faster for large
 # numbers of argument and option names.

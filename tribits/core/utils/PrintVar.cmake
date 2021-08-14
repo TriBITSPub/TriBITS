@@ -71,4 +71,4 @@ endfunction()
 # was removing the ';' in array arguments.  This broke a bunch of unit tests.
 # Therefore, I have to duplicate code and call it in two separate places.  I
 # have to admit that CMake behavior surprises me many times.  This is not a
-# great programming langauge.
+# great programming language.
