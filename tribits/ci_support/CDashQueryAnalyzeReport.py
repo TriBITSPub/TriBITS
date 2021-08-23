@@ -368,6 +368,15 @@ def getStandardTestsetTypeInfo(testsetAcro, testsetColor=None):
   return tsti
 
 
+# Return the 'status' field from a test dict
+#
+# Return 'Not Run' if the 'status' field is missing.  (This happens with one
+# customer's tests apparently, see SESW-383.)
+#
+def getTestDictStatusField(testDict):
+  return testDict.get('status', 'Not Run')
+
+
 # Get the Test-set acronym from the fields of a test dict
 #
 def getTestsetAcroFromTestDict(testDict):
@@ -1447,10 +1456,10 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
 
   # testStatus (for this test based on history)
   if topTestDictTestingDayDT == currentTestDateDT:
-    testStatus = topTestDict['status']
+    testStatus = getTestDictStatusField(topTestDict)
   else:
     testStatus = "Missing"
-  #print("testStatus = "+testStatus)
+  #print("testStatus = '"+testStatus+"'")
 
   # testHistoryStats
 
@@ -1474,7 +1483,7 @@ def sortTestHistoryGetStatistics(testHistoryLOD,
 
   # Loop over test history for each of the kth entries and update quantities
   for pastTestDict_k in sortedTestHistoryLOD:
-    pastTestStatus_k = pastTestDict_k['status']
+    pastTestStatus_k = getTestDictStatusField(pastTestDict_k)
     pastTestDateUtc_k = testingDayTimeObj.getTestingDayDateFromBuildStartTimeStr(
       pastTestDict_k['buildstarttime'])
     # Count the initial consecutive streaks for passing and nonpassing

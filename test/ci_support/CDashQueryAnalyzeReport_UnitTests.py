@@ -2229,6 +2229,27 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-30') # Shifted!
     self.assertEqual(testStatus, 'Missing')
 
+  def test_empty_1_pass_2_failed_2(self):
+    testHistoryLOD = getTestHistoryLOD5(['ToBeRemoved','Passed','Failed','Passed','Failed'])
+    testDictWithStatusToBeRemoved = \
+      next((item for item in testHistoryLOD if item['status']=='ToBeRemoved'), None)
+    del testDictWithStatusToBeRemoved['status']
+    currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 3)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 1)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-30')
+    self.assertEqual(testStatus, 'Not Run')
+
 
 #############################################################################
 #
