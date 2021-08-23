@@ -1003,6 +1003,14 @@ class test_CDashQueryAnalyzeReport_UrlFuncs(unittest.TestCase):
       "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
+  def test_getCDashQueryTestsQueryUrl_project_name_space(self):
+    cdashIndexQueryUrl = getCDashQueryTestsQueryUrl(
+      "site.com/cdash", "project name", "2015-12-21", "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/api/v1/queryTests.php?project=project%20name&date=2015-12-21"+\
+      "&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
   def test_getCDashQueryTestsQueryUrl_no_date(self):
     cdashIndexQueryUrl = getCDashQueryTestsQueryUrl(
       "site.com/cdash", "project-name", None, "filtercount=1&morestuff" )

@@ -728,7 +728,16 @@ def getCDashIndexBrowserUrl(cdashUrl, projectName, date, filterFields):
 def getCDashQueryTestsQueryUrl(cdashUrl, projectName, date, filterFields):
   if date: dateArg = "&date="+date
   else: dateArg = ""
-  return cdashUrl+"/api/v1/queryTests.php?project="+projectName+dateArg+"&"+filterFields
+  cdashTestUrl = cdashUrl+"/api/v1/queryTests.php?project="+projectName+dateArg+"&"+filterFields
+  return replaceNonUrlCharsInUrl(cdashTestUrl)
+
+
+# Replace non-URL chars and return new URL string
+def replaceNonUrlCharsInUrl(url):
+  urlNew = url
+  urlNew = urlNew.replace(' ', '%20')
+  # ToDo: Replace other chars as needed
+  return urlNew
 
 
 # Construct full cdash/queryTests.php browser URL given the pieces
