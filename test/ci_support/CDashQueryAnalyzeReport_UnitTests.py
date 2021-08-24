@@ -927,14 +927,16 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
       extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFunctor
       )
     self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
-    cdashQueryData_cache = eval(open(outputCacheFile, 'r').read())
+    with open(outputCacheFile, 'r') as inFile:
+      cdashQueryData_cache = eval(inFile.read())
     self.assertEqual(cdashQueryData_cache, g_getAndCacheCDashQueryDataOrReadFromCache_data)
 
   def test_getAndCacheCDashQueryDataOrReadFromCache_read_cache(self):
     outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_read_cache"
     outputCacheFile=outputCacheDir+"/cachedCDashQueryData.json"
     deleteThenCreateTestDir(outputCacheDir)
-    open(outputCacheFile, 'w').write(str(g_getAndCacheCDashQueryDataOrReadFromCache_data))
+    with open(outputCacheFile, 'w') as outFile:
+      outFile.write(str(g_getAndCacheCDashQueryDataOrReadFromCache_data))
     cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
       "dummy-cdash-url", outputCacheFile,
       useCachedCDashData=True,
@@ -946,7 +948,8 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
     outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_always_read_cache"
     outputCacheFile=outputCacheDir+"/cachedCDashQueryData.json"
     deleteThenCreateTestDir(outputCacheDir)
-    open(outputCacheFile, 'w').write(str(g_getAndCacheCDashQueryDataOrReadFromCache_data))
+    with open(outputCacheFile, 'w') as outFile:
+      outFile.write(str(g_getAndCacheCDashQueryDataOrReadFromCache_data))
     cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
       "dummy-cdash-url", outputCacheFile,
       useCachedCDashData=True,
