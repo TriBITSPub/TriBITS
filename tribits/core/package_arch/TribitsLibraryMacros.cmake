@@ -730,7 +730,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
         "  TriBITS takes care of linking against libraries in dependent upstream"
         " SE packages.  If you want to link to a library in an upstream SE"
         " package then add the SE package name to the appropriate category"
-        " in this SE package's depencencies file: "
+        " in this SE package's dependencies file: "
         " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
       endif()
       # ToDo: Assert that this is not a test-only lib
@@ -782,7 +782,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
       # NOTE: Adding these directories serves two purposes.  First, so that the includes
       # get added the the sources that get built for this library.  Second, so
       # that list full list of include directories can be extracted as a
-      # propery and set on ${PACKAGE_NAME}_INCLUDE_DIRS
+      # property and set on ${PACKAGE_NAME}_INCLUDE_DIRS
       #
 
       tribits_sort_and_append_package_include_and_link_dirs_and_libs(

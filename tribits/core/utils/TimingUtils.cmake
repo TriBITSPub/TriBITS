@@ -194,7 +194,7 @@ endfunction()
 
 
 #
-# Reform the formated seconds in the form <sec>.<nanasec> from the combined
+# Reform the formatted seconds in the form <sec>.<nanasec> from the combined
 # int form.
 #
 function(timer_get_decimal_num_frum_truncated_combined_int

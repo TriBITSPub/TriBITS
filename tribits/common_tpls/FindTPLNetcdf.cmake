@@ -76,7 +76,7 @@ if (Netcdf_ALLOW_PREFIND)
     set(TPL_Netcdf_LIBRARY_DIRS ${_hdf5_LIBRARY_SEARCH_DIRS} CACHE PATH
       "${DOCSTR} library files")
     set(TPL_Netcdf_LIBRARIES ${NetCDF_LIBRARIES} CACHE PATH
-      "List of semi-colon seprated library names (not 'lib' or extension).")
+      "List of semi-colon separated library names (not 'lib' or extension).")
     set(TPL_Netcdf_INCLUDE_DIRS ${NetCDF_INCLUDE_DIRS} CACHE PATH
       "${DOCSTR} header files.")
   endif()

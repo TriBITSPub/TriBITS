@@ -1,6 +1,6 @@
 advanced_set( ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS OFF
   CACHE BOOL
-  "Enable testing for the build of the documentation.  Requries docutils and will blow away and rebuild the existing documentation in the source tree since the documentation builds in place." )
+  "Enable testing for the build of the documentation.  Requires docutils and will blow away and rebuild the existing documentation in the source tree since the documentation builds in place." )
 
 
 tribits_add_advanced_test( sphinx_rst_generator_UnitTests
@@ -66,7 +66,7 @@ tribits_add_advanced_test( build_sphinx_docs
     ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx/combined_docs/maintainers_guide/index.html
     PASS_REGULAR_EXPRESSION sphinx/combined_docs/maintainers_guide/index.html
     ALWAYS_FAIL_ON_NONZERO_RETURN
-  TEST_6 MESSAGE "Rebuld the sphinx documentation to show you can without error"
+  TEST_6 MESSAGE "Rebuild the sphinx documentation to show you can without error"
     CMND bash ARGS ${PROJECT_SOURCE_DIR}/tribits/doc/sphinx/build_sphinx_docs.sh
   ADDED_TEST_NAME_OUT build_sphinx_docs_test_name
   )

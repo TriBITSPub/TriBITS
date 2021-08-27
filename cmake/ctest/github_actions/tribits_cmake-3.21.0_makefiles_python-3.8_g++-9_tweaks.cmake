@@ -15,6 +15,5 @@ set_test_disables(
 #  TriBITS_CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
 #  TriBITS_CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
 #  TriBITS_CTestDriver_PBP_ST_BreakConfigureOptionalPkg
-#  TriBITS_CTestDriver_PBP_ST_BreakConfigureRequiredPkg
 #  TriBITS_CTestDriver_PBP_ST_BreakTestPkg
   )

@@ -210,7 +210,7 @@ function(tribits_write_flexible_package_client_export_files)
   tribits_check_for_unparsed_arguments()
 
   if (NOT ${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES)
-    message(SEND_ERROR "Error: Can't generate export depenency files because"
+    message(SEND_ERROR "Error: Can't generate export dependency files because"
       " ${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES is not ON!")
     return()
   endif()
@@ -586,7 +586,7 @@ endfunction()
 # Set the install targets for the package config and export makefiles.
 #
 # The install() commands must be in a different subroutine or CMake will not
-# allow you to call the rountine, even if you if() it out!
+# allow you to call the routine, even if you if() it out!
 #
 
 function(tribits_write_project_client_export_files_install_targets PACKAGE_NAME)

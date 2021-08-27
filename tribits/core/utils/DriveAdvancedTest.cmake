@@ -354,7 +354,7 @@ function(drive_advanced_test)
   message("\n${ADVANDED_TEST_SEP}\n")
   message("Advanced Test: ${TEST_NAME}\n")
 
-  message("Selected Test/CTest Propeties:")
+  message("Selected Test/CTest Properties:")
   tribits_get_categories_string("${CATEGORIES}" CATEGORIES_IN_COMMAS)
   message("  CATEGORIES = ${CATEGORIES_IN_COMMAS}")
   message("  PROCESSORS = ${PROCESSORS}")

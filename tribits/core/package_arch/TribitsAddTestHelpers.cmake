@@ -331,7 +331,7 @@ function(tribits_add_test_process_categories  ADD_THE_TEST_OUT)
 
   set(ADD_THE_TEST FALSE)
 
-  # Set the default test-specific cateogry to basic if it is not set
+  # Set the default test-specific category to basic if it is not set
   if (NOT PARSE_CATEGORIES)
     set (PARSE_CATEGORIES BASIC)
   endif()

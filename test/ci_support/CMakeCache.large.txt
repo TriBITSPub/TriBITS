@@ -1645,10 +1645,10 @@ MPI_C_LINK_FLAGS:STRING= -Wl,-rpath  -Wl,/projects/vera/gcc-4.8.3/toolset/mpich-
 //Where can one of the mpiexec or mpirun libraries be found
 MPI_EXEC:FILEPATH=/projects/vera/gcc-4.8.3/toolset/mpich-3.1.3/bin/mpiexec
 
-//The default mumber of processes to use when running MPI programs.
+//The default number of processes to use when running MPI programs.
 MPI_EXEC_DEFAULT_NUMPROCS:STRING=4
 
-//The maximum mumber of processes to use when running MPI programs.
+//The maximum number of processes to use when running MPI programs.
 //  Tests with more procs are excluded.
 MPI_EXEC_MAX_NUMPROCS:STRING=12
 
@@ -3889,7 +3889,7 @@ TPL_QT_INCLUDE_DIRS:PATH=/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/include/QtDe
 TPL_QT_LIBRARIES:PATH=/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtXmlPatterns.so;/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtNetwork.so;optimized;/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtSql.so;debug;/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtSql_debug.so;/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtGui.so;optimized;/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtTest.so;debug;/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtTest_debug.so;optimized;/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtXml.so;debug;/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtXml_debug.so;optimized;/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtCore.so;debug;/projects/vera/gcc-4.8.3/tpls/opt/qt-4.8.2/lib/libQtCore_debug.so;pthread
 
 //A FindTPLQT.cmake specific variable that defines where the Qt
-// Qmake Execuatable is
+// Qmake Executable is
 TPL_QT_QMAKE_EXECUTABLE:STRING=
 
 //List of semi-colon separated paths to append to the compile invocations
@@ -4276,7 +4276,7 @@ Tpetra_INST_COMPLEX_FLOAT:BOOL=OFF
 Tpetra_INST_CUDA:BOOL=OFF
 
 //Instantiate and/or test Tpetra classes over Scalar = dd_real
-// (requries TPL QD).  This option is OFF by default.
+// (requires TPL QD).  This option is OFF by default.
 Tpetra_INST_DD_REAL:BOOL=OFF
 
 //Set by default in vera-core-enables.disables.cmake
@@ -4316,7 +4316,7 @@ Tpetra_INST_OPENMP:BOOL=OFF
 Tpetra_INST_PTHREAD:BOOL=OFF
 
 //Instantiate and/or test Tpetra classes over Scalar = qd_real
-// (requries TPL QD).  This option is OFF by default.
+// (requires TPL QD).  This option is OFF by default.
 Tpetra_INST_QD_REAL:BOOL=OFF
 
 //Set by default in vera-core-enables.disables.cmake

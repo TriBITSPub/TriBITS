@@ -703,69 +703,6 @@ function(tribits_remember_configure_passed)
 endfunction()
 
 
-
-# Construct the build URL on CDash given the site name, buildname, and
-# buildstamp (take from the TAG file).
-#
-# Usage::
-#
-#   tribits_get_build_url_and_write_to_file(
-#     <cdashBuildUrlOut>
-#     <cdashBuldUrlFile>
-#     )
-#
-# Here, ``<cdashBuildUrlOut>`` returns the CDash Build URL constructed from
-# the CMake vars:
-#
-#   * ``CTEST_DROP_SITE``
-#   * ``CTEST_DROP_LOCATION`` (``submit.php`` is replaced with ``index.php``)
-#   * ``CTEST_PROJECT_NAME``
-#   * ``CTEST_SITE``
-#   * ``CTEST_BUILD_NAME``
-#
-# and the buildstamp read in from the file
-# ``${CTEST_BINARY_DIRECTORY}/Testing/TAG``.
-#
-# Note that ``<cdashBuildUrlOut>`` will have ``https://`` added to the
-# beginning of it so that GitHub Actions and other systems will put in a link
-# to them.
-#
-# If the file name ``<cdashBuldUrlFile>`` is non-empty, then that CDash URL
-# will be written to the file as a single line.
-#
-function(tribits_get_build_url_and_write_to_file  cdashBuildUrlOut  cdashBuildUrlFile)
-  tribits_get_cdash_index_php_from_drop_site_and_location(
-    CTEST_DROP_SITE "${CTEST_DROP_SITE}"
-    CTEST_DROP_LOCATION "${CTEST_DROP_LOCATION}"
-    INDEX_PHP_URL_OUT indexPhpUrl
-    )
-  tribits_get_cdash_build_url_from_tag_file(
-    INDEX_PHP_URL "${indexPhpUrl}"
-    PROJECT_NAME "${CTEST_PROJECT_NAME}"
-    SITE_NAME "${CTEST_SITE}"
-    BUILD_NAME "${CTEST_BUILD_NAME}"
-    TAG_FILE "${CTEST_BINARY_DIRECTORY}/Testing/TAG"
-    CDASH_BUILD_URL_OUT cdashBuildUrl
-    )
-  set(cdashBuildUrl "https://${cdashBuildUrl}")
-  if (cdashBuildUrlFile)
-    file(WRITE "${cdashBuildUrlFile}" "${cdashBuildUrl}")
-  endif()
-  set(${cdashBuildUrlOut} "${cdashBuildUrl}" PARENT_SCOPE)
-endfunction()
-
-
-# Print the URL on CDash where build results can be found.
-#
-# This will print regardless of the value of CTEST_DO_SUBMIT so not that if
-# that is set to FALSE, then no results will actually be submitted there.
-#
-function(tribits_print_build_url  msg  cdashBuildUrl)
-  message("\n${msg}\n")
-  message("    ${cdashBuildUrl}\n")
-endfunction()
-
-
 # Override CTEST_SUBMIT to drive multiple submits and to detect failed
 # submissions and track them as queued errors.
 #
@@ -1181,7 +1118,7 @@ macro(tribits_ctest_package_by_package)
 
     if (NOT PBP_BUILD_LIBS_PASSED AND CTEST_DO_TEST)
 
-      message("\n${TRIBITS_PACKAGE}: Skipping tests since libray build failed!\n")
+      message("\n${TRIBITS_PACKAGE}: Skipping tests since library build failed!\n")
 
       set(PBP_TESTS_PASSED FALSE)
 
@@ -1253,7 +1190,7 @@ macro(tribits_ctest_package_by_package)
     if (NOT PBP_BUILD_LIBS_PASSED AND CTEST_DO_MEMORY_TESTING)
 
       message("\n${TRIBITS_PACKAGE}: Skipping running memory checking"
-	 "tests since libray build failed!\n")
+	 "tests since library build failed!\n")
 
     elseif (NOT CTEST_DO_MEMORY_TESTING)
 
@@ -1377,7 +1314,7 @@ macro(tribits_ctest_all_at_once)
       list(APPEND CONFIGURE_OPTIONS
         "-D${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE}=OFF" )
     endforeach()
-    # NOTE: Above we have to explicitly set disables for the excluded pacakges
+    # NOTE: Above we have to explicitly set disables for the excluded packages
     # since we are pssing in ${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON.  This is
     # effectively the "black-listing" approach.
   else()

@@ -115,7 +115,7 @@ function(unittest_basic_package_list_read_abs_pacakge_dir)
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
 
   unittest_compare_const( MESSAGE_WRAPPER_INPUT
-    "-- ;PROJECT_SOURCE_DIR_BASE_MATCH='/home/me/DummyProject';FATAL_ERROR;Error: The pacakge 'Package2' was given an absolute directory '/home/me/Package2' which is *not* under the project's source directory '/home/me/DummyProject/'!;-- ;DummyProject_NUM_PACKAGES='3'"
+    "-- ;PROJECT_SOURCE_DIR_BASE_MATCH='/home/me/DummyProject';FATAL_ERROR;Error: The package 'Package2' was given an absolute directory '/home/me/Package2' which is *not* under the project's source directory '/home/me/DummyProject/'!;-- ;DummyProject_NUM_PACKAGES='3'"
     )
   unittest_compare_const( ${PROJECT_NAME}_PACKAGES
     "Package0;Package1;Package2")

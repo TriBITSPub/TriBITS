@@ -13,7 +13,7 @@ module load sems-cmake/3.17.1
 module load sems-git/2.10.1
 
 # Make default install permissions 700 so that we can test that TriBITS will
-# use recusive chmod to open up permissions.
+# use recursive chmod to open up permissions.
 umask g-rwx,o-rwx
 
 export TribitsExMetaProj_GIT_URL_REPO_BASE=git@github.com:tribits/

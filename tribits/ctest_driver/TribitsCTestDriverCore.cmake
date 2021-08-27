@@ -133,7 +133,7 @@ endif()
 # Set default for CTEST_BINARY_DIRECTORY
 #
 if ("${CTEST_BINARY_DIRECTORY}" STREQUAL "")
-  message("Set defualt for CTEST_BINARY_DIRECTORY to $PWD/BUILD='$ENV{PWD}/BUILD'")
+  message("Set default for CTEST_BINARY_DIRECTORY to $PWD/BUILD='$ENV{PWD}/BUILD'")
   set(CTEST_BINARY_DIRECTORY $ENV{PWD}/BUILD)
 endif()
 
@@ -220,7 +220,7 @@ include(TribitsCTestDriverCoreHelpers)
 #
 #   # Set some basic vars and include tribits_ctest_driver()
 #   set(TRIBITS_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../..")
-#   inlcude(
+#   include(
 #     "${TRIBITS_PROJECT_ROOT}/cmake/tribits/ctest_driver/TribitsCTestDriverCore.cmake")
 #
 #   # Set variables that define this build
@@ -750,7 +750,7 @@ include(TribitsCTestDriverCoreHelpers)
 #     A yet additional list of extra cmake configure options to be passed to
 #     the inner CMake configure after all of the others.  Unlike the above
 #     options, this var is read from the env and allows the user to set
-#     arbitary configure options that overrides all others. **WARNING:** Do
+#     arbitrary configure options that overrides all others. **WARNING:** Do
 #     not include any semicolons ';' in these arguments (see below WARNING).
 #
 # These configure options are passed into the ``ctest_configure()`` command in
@@ -847,7 +847,7 @@ include(TribitsCTestDriverCoreHelpers)
 #   ``CTEST_DO_CONFIGURE=[TRUE|FALSE]``
 #
 #     If ``TRUE``, then the selected packages will be configured.  If
-#     ``FALSE``, it is assumed that a relavent configure is already in place
+#     ``FALSE``, it is assumed that a relevant configure is already in place
 #     in the binary directory if a build or running tests is to be done.  Note
 #     that for the package-by-package mode, a configure is always done if a
 #     build or any testing is to be done but results will not be sent to CDash
@@ -868,14 +868,14 @@ include(TribitsCTestDriverCoreHelpers)
 #   ``CTEST_DO_BUILD=[TRUE|FALSE]``
 #
 #     If ``TRUE``, then the selected packages will be build.  If ``FALSE``, it
-#     is assumed that a relavent build is already in place in the binary
+#     is assumed that a relevant build is already in place in the binary
 #     directory if any testing is to be done.  Default ``TRUE``.
 #
 #   .. _CTEST_BUILD_FLAGS:
 #
 #   ``CTEST_BUILD_FLAGS``
 #
-#     Build-in CTest variable that gives the flags passed to the build command
+#     Built-in CTest variable that gives the flags passed to the build command
 #     called inside of the built-in CTest command ``ctest_build()``.  The
 #     default is ``-j2`` when `CTEST_CMAKE_GENERATOR`_ is set to ``Unix
 #     Makefiles``.  Otherwise, the default is empty "".  Useful options to set
@@ -1237,9 +1237,9 @@ include(TribitsCTestDriverCoreHelpers)
 # CDash server for the all-at-once mode will break down build and test results
 # on a package-by-package basis on CDash together.
 #
-# .. _Mutiple ctest -S invocations (tribits_ctest_driver()):
+# .. _Multiple ctest -S invocations (tribits_ctest_driver()):
 #
-# **Mutiple ctest -S invocations (tribits_ctest_driver()):**
+# **Multiple ctest -S invocations (tribits_ctest_driver()):**
 #
 # By default, this function is meant to be used in a single invocation of the
 # ``ctest -S <script>.cmake`` command in order to do everything from the

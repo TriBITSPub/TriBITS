@@ -31,7 +31,7 @@
 # NOTE: This will create the subdir 'tribits-build' under $PWD if that
 # directory does not already exist.  But it will not delete an existing
 # directly 'tribits-build' if it already exists (but that is usually fine to
-# do rebulids).
+# do rebuilds).
 #
 # NOTE: One can control various behaviors and other options as documented with
 # tribits_ctest_driver() including not submitting to CDash to do testing
@@ -40,7 +40,7 @@
 #   env CTEST_DO_SUBMIT=OFF <this-dir>/run_github_actions_ctest_driver.sh [options]
 #
 
-# Get locaiton of TriBITS and this dir under TriBITS
+# Get location of TriBITS and this dir under TriBITS
 if [[ "$TRIBITS_BASE_DIR" == "" ]] ; then
   _ABS_FILE_PATH=`readlink -f $0`
   THIS_BASE_DIR=`dirname $_ABS_FILE_PATH`

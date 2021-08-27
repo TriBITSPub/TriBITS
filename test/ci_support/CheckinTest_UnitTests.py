@@ -1728,7 +1728,7 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
     os.environ['GENERAL_SCRIPT_SUPPORT_CMND_INTERCEPTS_FILE']=""
 
 
-# Helper test case that is used as the inital case for other tests
+# Helper test case that is used as the initial case for other tests
 def g_test_do_all_default_builds_mpi_debug_pass(testObject, testName):
   checkin_test_run_case(
     \
@@ -2142,7 +2142,7 @@ class test_checkin_test(unittest.TestCase):
     assertFileNotExists(self, serialReleaseDir+"/email.success")
     assertFileNotExists(self, serialReleaseDir+"/email.out")
 
-    # Make sure that the readyness check after the push reports the right
+    # Make sure that the readiness check after the push reports the right
     # status.
     checkin_test_run_case(
       \
@@ -2150,7 +2150,7 @@ class test_checkin_test(unittest.TestCase):
       \
       testName,
       \
-      "",  # Just the default the readyness check!
+      "",  # Just the default readiness check!
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
@@ -2167,7 +2167,7 @@ class test_checkin_test(unittest.TestCase):
       +"REQUESTED ACTIONS: FAILED\n" \
       )
 
-    # Make sure that the readyness check ignoring no --pull returns the right
+    # Make sure that the readiness check ignoring no --pull returns the right
     # status status.
     checkin_test_run_case(
       \
@@ -2513,7 +2513,7 @@ class test_checkin_test(unittest.TestCase):
       +"1) SERIAL_RELEASE => Skipped configure, build, test due to no enabled packages! => Does not affect push readiness!\n" \
       +"MPI_DEBUG: Skipping sending build/test case email because there were no enables and --abort-gracefully-if-no-enables was set!\n"
       +"SERIAL_RELEASE: Skipping sending build/test case email because there were no enables and --abort-gracefully-if-no-enables was set!\n"
-      +"There were no successfuly attempts to configure/build/test!\n" \
+      +"There were no successful attempts to configure/build/test!\n" \
       +"Skipping sending final email because there were no enables and --abort-gracefully-if-no-enables was set!\n" \
       +"ABORTED DUE TO NO ENABLES: Trilinos:\n" \
       +"REQUESTED ACTIONS: PASSED\n" \
@@ -2647,7 +2647,7 @@ class test_checkin_test(unittest.TestCase):
          ]
       )
     # NOTE: Above, we set GITDIST_UNIT_TEST_STTY_SIZE=120 so that
-    # checkin-test.py will print the full table reguardless what the terminal
+    # checkin-test.py will print the full table regardless what the terminal
     # size is in the env where this runs.
 
 
@@ -3250,7 +3250,7 @@ class test_checkin_test(unittest.TestCase):
       "Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"Did not pull any changes from this repo!\n" \
       +"No changes were pulled!\n" \
-      +"Not perfoming any build cases because there are no local changes to push" \
+      +"Not performing any build cases because there are no local changes to push" \
         " and --abort-gracefully-if-no-changes-to-push!\n" \
       +"Skipping sending final email because there are no local changes to push" \
           " and --abort-gracefully-if-no-changes-to-push was set!\n" \
@@ -3889,7 +3889,7 @@ class test_checkin_test(unittest.TestCase):
       "Full package enable list: \[Teuchos,RTOp,Thyra\]\n" \
       )
     # Above, the --enable-extra-packages option leave on the check of the modified
-    # files ahd just appends the set of enabled pacakges
+    # files ahd just appends the set of enabled packages
 
 
   def test_disable_packages(self):
@@ -3962,7 +3962,7 @@ class test_checkin_test(unittest.TestCase):
       "--enable-all-packages=auto",
       "\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n",
       modifiedFilesStr="CMakeLists.txt", # Will not trigger TrilinosFramework!
-      extraPassRegexStr="Modifed file: .CMakeLists.txt.\n"\
+      extraPassRegexStr="Modified file: .CMakeLists.txt.\n"\
       +"Enabling all Trilinos packages!\n",
       )
 
@@ -4734,7 +4734,7 @@ class test_checkin_test(unittest.TestCase):
       "ThyraCrazyStuff of type EX is being excluded because it is not in the valid list of package types .PT,ST.\n" \
       +"passed: Trilinos/MPI_DEBUG: skipped configure, build, test due to no enabled packages\n" \
       +"passed: Trilinos/MPI_DEBUG_ST: skipped configure, build, test due to no enabled packages\n" \
-      +"There were no successfuly attempts to configure/build/test!\n" \
+      +"There were no successful attempts to configure/build/test!\n" \
       +"  => A PUSH IS .NOT. READY TO BE PERFORMED!\n" \
       +"^PUSH FAILED\n" \
       +"^REQUESTED ACTIONS: FAILED\n" \
@@ -5424,7 +5424,7 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedCommonOptionsSummary \
       +"A PUSH IS READY TO BE PERFORMED!\n" \
       +"Final pull passed!\n" \
-      +"Attempting to amend the final commmit message ...\n" \
+      +"Attempting to amend the final commit message ...\n" \
       +"Appending test results to last commit failed!\n" \
       +"Not performing push due to prior errors!\n" \
       +"AMEND COMMIT FAILED: Trilinos:\n" \

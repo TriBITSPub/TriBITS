@@ -145,7 +145,7 @@ function(tribits_process_enabled_tpl  TPL_NAME)
         "ERROR: TPL_${TPL_NAME}_NOT_FOUND=${TPL_${TPL_NAME}_NOT_FOUND}, aborting!")
     endif()
 
-    # Assert that the TPL correctly defined all of these varaibles.
+    # Assert that the TPL correctly defined all of these variables
     assert_defined(TPL_${TPL_NAME}_INCLUDE_DIRS)
     assert_defined(TPL_${TPL_NAME}_LIBRARIES)
     assert_defined(TPL_${TPL_NAME}_LIBRARY_DIRS)

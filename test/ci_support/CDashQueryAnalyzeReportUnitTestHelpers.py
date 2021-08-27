@@ -47,7 +47,7 @@ def assertFindListOfStringsInString(
       "Error, could not find string '"+stringToFind+"' in '"+stringToSearchVarName+"'!")
 
 
-# Search for a string in a list of stirngs
+# Search for a string in a list of strings
 def assertFindStringInListOfStrings(
   testObj,
   stringToFind,

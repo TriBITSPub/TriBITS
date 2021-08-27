@@ -243,7 +243,7 @@ def cdash_analyze_and_report_run_case(
 class test_cdash_analyze_and_report(unittest.TestCase):
 
 
-  # Base case for raw CDash data we happened to choose for all fo tests tests
+  # Base case for raw CDash data we happened to choose for all of tests tests
   #
   # This first test checks several parts of the STDOUT and HTML output that
   # other tests will not check.  In particular, this really pins down the
@@ -665,7 +665,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
         'issue_tracker': '',
         }
       )
-    # NOTE: Don't need to bother checking other entires.  There are good unit
+    # NOTE: Don't need to bother checking other entries.  There are good unit
     # tests for the guts of what is being called.  Just want to macke sure the
     # right number of tests are being written and the first and last are
     # correct.
@@ -898,7 +898,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
   # with build failures
   #
   # Here we just add a couple of new builds to the file expectedBuilds.csv
-  # that will become missing expected builds and we modfiy the dicts for a few
+  # that will become missing expected builds and we modify the dicts for a few
   # builds to change them from passing to failing.
   #
   def test_bm_2_c_1_b_2_twoif_12_twif_9(self):
@@ -1168,7 +1168,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
 
 
   # Test to check the behavior for tests with issue trackers are passing and
-  # missing in addition to other categories fo tests.
+  # missing in addition to other categories of tests.
   #
   # We want to test two use cases for missing tests.  First, we want to
   # display tests with issue trackers that are missing in the current testing
@@ -1251,7 +1251,7 @@ class test_cdash_analyze_and_report(unittest.TestCase):
 
     # Add some dummy builds to the list of expected builds so that some new
     # added dummy matching tests will be missing but not listed in the table
-    # fo missing tests.
+    # of missing tests.
     expectedBuildsFilePath = testOutputDir+"/expectedBuilds.csv"
     with open(expectedBuildsFilePath, 'r') as expectedBuildsFile:
       expectedBuildsStrList = expectedBuildsFile.readlines()

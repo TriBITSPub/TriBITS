@@ -94,12 +94,12 @@ function(tribits_get_version_date_from_raw_git_commit_utc_time
     message_wrapper(FATAL_ERROR "ERROR, '${git_raw_commit_time_utc}' is NOT"
       " in UTC which would have offset '+0000'!")
   endif()
-  # Split YYYY-MM-DD into its componets
+  # Split YYYY-MM-DD into its components
   string(REPLACE "-" ";" YYYY_MM_DD_array "${YYYY_MM_DD}")
   list(GET YYYY_MM_DD_array 0 YYYY)
   list(GET YYYY_MM_DD_array 1 MM)
   list(GET YYYY_MM_DD_array 2 DD)
-  # Split hh:mm:ss into its componets
+  # Split hh:mm:ss into its components
   string(REPLACE ":" ";" hh_mm_ss_array "${hh_mm_ss}")
   list(GET hh_mm_ss_array 0 hh)
   # Form the full YYYYMMDDhhmm integer and return

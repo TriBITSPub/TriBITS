@@ -603,7 +603,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
         " or optional column headers '[]'!"
         )
     if not threwException:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
   def test_too_many_required_headers_fail(self):
     csvFileStr=\
@@ -623,7 +623,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
         " 'col_3' is missing from the set of included column headers"+\
         " '['col_0', 'col_1', 'col_2']'!" )
     if not threwException:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
   def test_wrong_required_col_0_fail(self):
     csvFileStr=\
@@ -665,7 +665,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
         " ['val_10', 'val_11', 'val_12', 'extra'] has 4 entries"+\
         " which does not macth the number of column headers 3!" )
     if not threwException:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
   def test_col_3_row_0_required_cols_pass(self):
     csvFileStr=\
@@ -689,7 +689,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
       self.assertEqual( str(errMsg),
         "Error, CSV file '"+csvFileName+"' is empty which is not allowed!" )
     if not threwException:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
 #############################################################################
@@ -847,7 +847,7 @@ class test_getStandardTestsetTypeInfo(unittest.TestCase):
       self.assertEqual( str(errMsg),
         "Error, testsetAcro = 'invalid' is not supported!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
 
@@ -891,7 +891,7 @@ class test_getTestsetAcroFromTestDict(unittest.TestCase):
         " status = 'Passed' and issue_tracker = 'None'"+\
         " is not a supported test-set type!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
 #############################################################################
@@ -927,14 +927,16 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
       extractCDashApiQueryData_in=mockExtractCDashApiQueryDataFunctor
       )
     self.assertEqual(cdashQueryData, g_getAndCacheCDashQueryDataOrReadFromCache_data)
-    cdashQueryData_cache = eval(open(outputCacheFile, 'r').read())
+    with open(outputCacheFile, 'r') as inFile:
+      cdashQueryData_cache = eval(inFile.read())
     self.assertEqual(cdashQueryData_cache, g_getAndCacheCDashQueryDataOrReadFromCache_data)
 
   def test_getAndCacheCDashQueryDataOrReadFromCache_read_cache(self):
     outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_read_cache"
     outputCacheFile=outputCacheDir+"/cachedCDashQueryData.json"
     deleteThenCreateTestDir(outputCacheDir)
-    open(outputCacheFile, 'w').write(str(g_getAndCacheCDashQueryDataOrReadFromCache_data))
+    with open(outputCacheFile, 'w') as outFile:
+      outFile.write(str(g_getAndCacheCDashQueryDataOrReadFromCache_data))
     cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
       "dummy-cdash-url", outputCacheFile,
       useCachedCDashData=True,
@@ -946,7 +948,8 @@ class test_getAndCacheCDashQueryDataOrReadFromCache(unittest.TestCase):
     outputCacheDir="test_getAndCacheCDashQueryDataOrReadFromCache_always_read_cache"
     outputCacheFile=outputCacheDir+"/cachedCDashQueryData.json"
     deleteThenCreateTestDir(outputCacheDir)
-    open(outputCacheFile, 'w').write(str(g_getAndCacheCDashQueryDataOrReadFromCache_data))
+    with open(outputCacheFile, 'w') as outFile:
+      outFile.write(str(g_getAndCacheCDashQueryDataOrReadFromCache_data))
     cdashQueryData = getAndCacheCDashQueryDataOrReadFromCache(
       "dummy-cdash-url", outputCacheFile,
       useCachedCDashData=True,
@@ -1000,6 +1003,14 @@ class test_CDashQueryAnalyzeReport_UrlFuncs(unittest.TestCase):
       "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
     cdashIndexQueryUrl_expected = \
       "site.com/cdash/api/v1/queryTests.php?project=project-name&date=2015-12-21"+\
+      "&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+  def test_getCDashQueryTestsQueryUrl_project_name_space(self):
+    cdashIndexQueryUrl = getCDashQueryTestsQueryUrl(
+      "site.com/cdash", "project name", "2015-12-21", "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/api/v1/queryTests.php?project=project%20name&date=2015-12-21"+\
       "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
@@ -2221,6 +2232,27 @@ class test_sortTestHistoryGetStatistics(unittest.TestCase):
     self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-30') # Shifted!
     self.assertEqual(testStatus, 'Missing')
 
+  def test_empty_1_pass_2_failed_2(self):
+    testHistoryLOD = getTestHistoryLOD5(['ToBeRemoved','Passed','Failed','Passed','Failed'])
+    testDictWithStatusToBeRemoved = \
+      next((item for item in testHistoryLOD if item['status']=='ToBeRemoved'), None)
+    del testDictWithStatusToBeRemoved['status']
+    currentTestDate = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
+    daysOfHistory = 5
+    (sortedTestHistoryLOD, testHistoryStats, testStatus) = \
+      sortTestHistoryGetStatistics(testHistoryLOD, currentTestDate,
+         testingDayStartTimeUtc, daysOfHistory)
+    self.assertEqual(sortedTestHistoryLOD[0]['buildstarttime'],'2001-01-01T05:54:03 UTC')
+    self.assertEqual(testHistoryStats['pass_last_x_days'], 2)
+    self.assertEqual(testHistoryStats['nopass_last_x_days'], 3)
+    self.assertEqual(testHistoryStats['missing_last_x_days'], 0)
+    self.assertEqual(testHistoryStats['consec_pass_days'], 0)
+    self.assertEqual(testHistoryStats['consec_nopass_days'], 1)
+    self.assertEqual(testHistoryStats['consec_missing_days'], 0)
+    self.assertEqual(testHistoryStats['previous_nopass_date'], '2000-12-30')
+    self.assertEqual(testStatus, 'Not Run')
+
 
 #############################################################################
 #
@@ -2442,7 +2474,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['issue_tracker'], '#1234')
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
 
-    # Check for the existance of the created Cache file
+    # Check for the existence of the created Cache file
     cacheFile = \
       testCacheOutputDir+"/2001-01-01-site_name-build_name-test_name-HIST-5.json"
     self.assertEqual(os.path.exists(testCacheOutputDir), True)
@@ -2554,7 +2586,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     self.assertEqual(testDict['issue_tracker'], '#1234')
     self.assertEqual(testDict['issue_tracker_url'], 'some.com/site/issue/1234')
 
-    # Check for the existance of the created Cache file
+    # Check for the existence of the created Cache file
     cacheFile = \
       testCacheOutputDir+"/2001-01-01-site_name-build_name-test_name-HIST-5.json"
     self.assertEqual(os.path.exists(testCacheOutputDir), True)
@@ -2942,7 +2974,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
     # Create dummy test history
     testHistoryLOD = getTestHistoryLOD5(
       [
-        'Failed',  # This test got filtered out of the global lsit of nonpassing tests 
+        'Failed',  # This test got filtered out of the global list of nonpassing tests 
         'Failed',
         'Passed',
         'Passed',
@@ -3618,7 +3650,7 @@ tr:nth-child(odd) {background-color: #fff;}
     rowDataList = [ {'key1':'data1'} ]
     try:
       htmlTable = createHtmlTableStr("Title", colDataList, rowDataList)
-      self.assertEqual("Excpetion did not get thrown!", "No it did not!")
+      self.assertEqual("Exception did not get throw!", "No it did not!")
     except Exception as errMsg:
       self.assertEqual(str(errMsg),
          "Error, column 0 dict key='badKey' row 0 entry is 'None' which is"+\
@@ -4071,7 +4103,7 @@ class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
         "Error, the test dict {"+stru()+"'testname': "+stru()+"'test2'} at index 1"+\
         " is missing the 'issue_tracker' field!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
   def test_missing_issue_tracker_url_field(self):
@@ -4090,7 +4122,7 @@ class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
         " {"+stru()+"'issue_tracker': "+stru()+"'#1234', "+stru()+"'testname': "+stru()+"'test2'} at index 1"+\
         " is missing the 'issue_tracker_url' field!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
   def test_inconsistent_issue_tracker_field(self):
@@ -4110,7 +4142,7 @@ class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
         " index 1 has a different 'issue_tracker' field '#1235' than the expected"+\
         " value of '#1234'!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
   def test_inconsistent_issue_tracker_field(self):
@@ -4132,7 +4164,7 @@ class test_getIssueTrackerFieldsAndAssertAllSame(unittest.TestCase):
         " 'https://github.com/org/repo/issues/1236' than the expected value of"+\
         " 'https://github.com/org/repo/issues/1234'!" )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
   #def test_inconsistent_issue_tracker_url_field(self):
@@ -4206,7 +4238,7 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
         debugPrint=False,
         )
     if not threwExcept:
-      self.assertFalse("ERROR: Did not thown an excpetion")
+      self.assertFalse("ERROR: Did not throw an exception")
 
 
   def test_twif_8_twinr_1(self):

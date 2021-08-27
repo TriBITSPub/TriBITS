@@ -182,7 +182,7 @@ tribits_add_advanced_test( TribitsHelloWorld_InSourceBuildErrors
       TribitsHelloWorld
 
   TEST_1
-    MESSAGE "Try an in-source configure and check errror message"
+    MESSAGE "Try an in-source configure and check error message"
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
@@ -554,7 +554,7 @@ tribits_add_advanced_test( TribitsHelloWorld_install_perms
     # NOTE: Above we can't change the default group or other permissions
     # because that depends on the user's umask when the run these tests.  But
     # the owner should have read/write/execute on the directories or it could
-    # not possibily install anything.
+    # not possibly install anything.
 
   TEST_5
     MESSAGE "Check some default install file permissions"
@@ -1699,7 +1699,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
     # getting called at the very end.
 
   TEST_7
-    MESSAGE "Make sure that exec_script.sh is exectuable"
+    MESSAGE "Make sure that exec_script.sh is executable"
     CMND ./install_base/install/share/WithSubpackagesB/stuff/exec_script.sh
     PASS_REGULAR_EXPRESSION
       "exec_script.sh executed and returned this string"
@@ -1710,7 +1710,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
   # * The CMake install machinery will actually create multiple base dirs
   #   under ${CMAKE_INSTALL_PREFIX} in case they don't already exist.
   #
-  # * The group ownership actaully will be set correctly starting with
+  # * The group ownership actually will be set correctly starting with
   #   ${<Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR} which is
   #   above ${CMAKE_INSTALL_PREFIX}.  This is needed to address systems where
   #   the group sticky bit is disabled (like we see on some SNL systems, see
@@ -1829,7 +1829,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perm
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_8
-    MESSAGE "Make sure that exec_script.sh is exectuable"
+    MESSAGE "Make sure that exec_script.sh is executable"
     CMND ./install_base/subdir/install/share/WithSubpackagesB/stuff/exec_script.sh
     PASS_REGULAR_EXPRESSION
       "exec_script.sh executed and returned this string"
@@ -1838,7 +1838,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perm
   # NOTE: In addition to the same checks performed by the test
   # TribitsExampleProject_install_perms described above, this above test also:
   #
-  # * Ensures that the non-recursive group and permisions gets set on
+  # * Ensures that the non-recursive group and permissions gets set on
   # * base-dirs.
   #
   # * Ensures that owning group and directory permissions get set even if
@@ -2671,7 +2671,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   #
-  # Testing pasing libs to tribits_add_library()
+  # Testing passing libs to tribits_add_library()
   #
 
   TEST_1
@@ -2749,7 +2749,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   #
-  # Testing pasing libs to tribits_add_executable()
+  # Testing passing libs to tribits_add_executable()
   #
 
   TEST_7
@@ -2853,7 +2853,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   #
-  # Testing pasing libs to tribits_add_library()
+  # Testing passing libs to tribits_add_library()
   #
 
   TEST_1
@@ -2931,7 +2931,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   #
-  # Testing pasing libs to tribits_add_executable()
+  # Testing passing libs to tribits_add_executable()
   #
 
   TEST_7
@@ -3029,7 +3029,7 @@ tribits_add_advanced_test( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 CMND ${CMAKE_COMMAND}
-    MESSAGE "Do the initial configure with no opions file"
+    MESSAGE "Do the initial configure with no options file"
     ARGS
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
@@ -3944,7 +3944,7 @@ tribits_add_advanced_test( SimpleTpl_install_shared
 
 
 #
-# Common configure arugments for all for the
+# Common configure arguments for all for the
 # TribitsExampleProject_SimpleTpl_RPATH_XXX tests.
 #
 
@@ -3975,7 +3975,7 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(RPATH_GREP_STR
     "R.*PATH *${RPATH_CURRENT_TEST_DIR}/install/lib:${SimpleTpl_install_shared_DIR}/install/lib")
-  # NOTE: Above matches both RPATH and RUNPATH which are used on differnt
+  # NOTE: Above matches both RPATH and RUNPATH which are used on different
   # Linux systems.
 endif()
 
@@ -4092,7 +4092,7 @@ if (RPATH_CURRENT_TEST_NAME_NAME)
 endif()
 
 
-# Run the exectuable built and installed above setting LD_LIBRARY_PATH
+# Run the executable built and installed above setting LD_LIBRARY_PATH
 tribits_add_test(
   simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
     DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install2/bin
@@ -4237,7 +4237,7 @@ if (RPATH_CURRENT_TEST_NAME_NAME)
 endif()
 
 
-# Run the exectuable built and installed above setting LD_LIBRARY_PATH
+# Run the executable built and installed above setting LD_LIBRARY_PATH
 tribits_add_test(
   simplecxx-helloworld  NOEXEPREFIX  NOEXESUFFIX
     DIRECTORY ${RPATH_CURRENT_TEST_DIR}/install3/bin

@@ -18,7 +18,7 @@
 # 1) Removed the division by /1024 because it did not allow printing smaller
 # sizes.  Now the script reports sizes in bytes, not kilobites
 #
-# 2) Accept number <N> in command-line arugment for number of files to report
+# 2) Accept number <N> in command-line argument for number of files to report
 # sizes for.
  
 # set the internal field spereator to line break, so that we can iterate easily over the verify-pack output

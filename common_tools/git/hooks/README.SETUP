@@ -15,7 +15,7 @@ Set up email notification hooks
 
   $ cd GIT_REPO_BASE_DIR
   $ echo "
-      base_dir_1/subdir email1@somthing.com,email2@somthing.com
+      base_dir_1/subdir email1@something.com,email2@something.com
       base_dir_1 email3@something.com
       ...
       .+ defaultemail@something.com

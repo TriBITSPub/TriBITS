@@ -137,19 +137,19 @@ function(tribits_update_ps_pt_ss_st  THING_TYPE  THING_NAME  TESTGROUP_VAR)
 
   if (TESTGROUP_IN STREQUAL PS)
     if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      message("-- " "WARNING: ${THING_TYPE} ${THING_NAME} TESTGROUP 'PS' is depricated."
+      message("-- " "WARNING: ${THING_TYPE} ${THING_NAME} TESTGROUP 'PS' is deprecated."
         "  Use 'PT' instead!")
     endif()
     set(TESTGROUP_OUT PT)
   elseif (TESTGROUP_IN STREQUAL SS)
     if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      message("-- " "WARNING: ${THING_TYPE} ${THING_NAME} TESTGROUP 'SS' is depricated."
+      message("-- " "WARNING: ${THING_TYPE} ${THING_NAME} TESTGROUP 'SS' is deprecated."
         "  Use 'ST' instead!")
     endif()
     set(TESTGROUP_OUT ST)
   elseif (TESTGROUP_IN STREQUAL TS)
     if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      message("-- " "WARNING: ${THING_TYPE} ${THING_NAME} TESTGROUP 'TS' is depricated."
+      message("-- " "WARNING: ${THING_TYPE} ${THING_NAME} TESTGROUP 'TS' is deprecated."
         "  Use 'TT' instead!")
     endif()
     set(TESTGROUP_OUT TT)

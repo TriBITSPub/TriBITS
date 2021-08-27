@@ -150,7 +150,7 @@ if(${PACKAGE_NAME}_UNPARSED_ARGS_ADD_EXECUTABLE)
   message("unparsed arguments in ADD_EXECUTABLE")
   tribits_package(PkgWithUserErrors)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-  message("building exectuable")
+  message("building executable")
   tribits_add_executable(
     usererrorexec
     misspelled_argument
