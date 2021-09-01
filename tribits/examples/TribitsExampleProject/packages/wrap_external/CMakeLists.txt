@@ -116,8 +116,10 @@ add_custom_target( build_external_func
 # E.1) Create an imported library target and set up the dependencies to it
 # custom target and command.
 add_library(external_func INTERFACE)
-target_link_libraries(external_func
+target_link_options(external_func
   INTERFACE ${EXTERNAL_FUNC_LIB_FILE}
+  )
+target_link_libraries(external_func
   INTERFACE ${MixedLang_LIBRARIES}
   INTERFACE ${WithSubpackagesA_LIBRARIES}
   )
