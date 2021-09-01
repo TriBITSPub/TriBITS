@@ -116,8 +116,15 @@ add_custom_target( build_external_func
 # E.1) Create an imported library target and set up the dependencies to it
 # custom target and command.
 add_library(external_func STATIC IMPORTED GLOBAL)
-set_property(TARGET external_func PROPERTY IMPORTED_LOCATION
-  ${EXTERNAL_FUNC_LIB_FILE})
+set_property(TARGET external_func PROPERTY IMPORTED_LOCATION ${EXTERNAL_FUNC_LIB_FILE})
+install(TARGETS external_func
+  EXPORT ${PACKAGE_NAME}
+  RUNTIME DESTINATION "${${PROJECT_NAME}_INSTALL_RUNTIME_DIR}"
+  LIBRARY DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}"
+  ARCHIVE DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}"
+  COMPONENT ${PACKAGE_NAME}
+  )
+global_set(${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
 add_dependencies(external_func build_external_func)
 # NOTE: Above, you have to use the custom target associated with the
 # generation command and add it as a dependency of the imported library
