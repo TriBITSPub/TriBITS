@@ -115,9 +115,21 @@ add_custom_target( build_external_func
 
 # E.1) Create an imported library target and set up the dependencies to it
 # custom target and command.
-add_library(external_func STATIC IMPORTED GLOBAL)
-set_property(TARGET external_func PROPERTY IMPORTED_LOCATION
-  ${EXTERNAL_FUNC_LIB_FILE})
+add_library(external_func INTERFACE)
+target_link_options(external_func
+  INTERFACE ${EXTERNAL_FUNC_LIB_FILE}
+  )
+target_link_libraries(external_func
+  INTERFACE ${MixedLang_LIBRARIES}
+  INTERFACE ${WithSubpackagesA_LIBRARIES}
+  )
+install(TARGETS external_func
+  EXPORT ${PACKAGE_NAME}
+  RUNTIME DESTINATION "${${PROJECT_NAME}_INSTALL_RUNTIME_DIR}"
+  LIBRARY DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}"
+  ARCHIVE DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}"
+  COMPONENT ${PACKAGE_NAME}
+  )
 add_dependencies(external_func build_external_func)
 # NOTE: Above, you have to use the custom target associated with the
 # generation command and add it as a dependency of the imported library
@@ -131,6 +143,7 @@ add_dependencies(build_external_func pws_a)
 
 # E.3) Update the TriBITS variables
 append_set(${PACKAGE_NAME}_LIB_TARGETS external_func)
+global_set(${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
 global_set(${PACKAGE_NAME}_LIBRARIES external_func pws_a)
 global_set(${PACKAGE_NAME}_INCLUDE_DIRS ${EXTERNAL_FUNC_SOURCE_DIR})
 global_set(${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES ON)
