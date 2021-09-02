@@ -861,7 +861,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
       message("-- ${LIBRARY_NAME_IN}:LINK_LIBS='${LINK_LIBS}'")
     endif()
 
-    target_link_libraries(${LIBRARY_NAME}  ${LINK_LIBS})
+    target_link_libraries(${LIBRARY_NAME} PUBLIC ${LINK_LIBS})
 
     if (${PROJECT_NAME}_CXX_STANDARD_FEATURE)
       target_compile_features(${LIBRARY_NAME} PUBLIC "${${PROJECT_NAME}_CXX_STANDARD_FEATURE}")

@@ -175,7 +175,7 @@ include(CMakeParseArguments)
 #   ``TESTONLYLIBS <lib0> <lib1> ...``
 #
 #     Specifies extra test-only libraries defined in this CMake project that
-#     will be linked to the executable using ``target_link_library()``.  Note
+#     will be linked to the executable using ``target_link_libraries()``.  Note
 #     that regular libraries (i.e. not ``TESTONLY``) defined in the current SE
 #     package or any upstream SE packages can *NOT* be listed!  TriBITS
 #     automatically links non ``TESTONLY`` libraries in this package and
@@ -197,7 +197,7 @@ include(CMakeParseArguments)
 #   ``IMPORTEDLIBS <lib0> <lib1> ...``
 #
 #     Specifies extra external libraries that will be linked to the executable
-#     using ``target_link_library()``.  This can only be used for libraries
+#     using ``target_link_libraries()``.  This can only be used for libraries
 #     that are built external from this CMake project and are not provided
 #     through a proper `TriBITS TPL`_.  The latter usage of passing in
 #     external libraries is not recommended.  External libraries should be
@@ -646,7 +646,7 @@ function(tribits_add_executable EXE_NAME)
       message("-- ${EXE_NAME}:LINK_LIBS='${LINK_LIBS}'")
   endif()
 
-  target_link_libraries(${EXE_BINARY_NAME} ${LINK_LIBS})
+  target_link_libraries(${EXE_BINARY_NAME} PUBLIC ${LINK_LIBS})
 
   assert_defined(${PROJECT_NAME}_LINK_SEARCH_START_STATIC)
   if (${PROJECT_NAME}_LINK_SEARCH_START_STATIC)
