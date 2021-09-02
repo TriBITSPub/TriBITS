@@ -2063,7 +2063,7 @@ tribits_add_advanced_test( TribitsExampleProject_WrapExternal
   TEST_14 CMND make ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Generating external_func/libexternal_func.a"
-      "Linking CXX executable WrapExternal_run_external_func.exe"
+      "Built target WrapExternal_run_external_func"
 
   TEST_15 CMND ${CMAKE_COMMAND} ARGS TribitsExampleProject
      MESSAGE "Recofigure with no changes that will not do anything"

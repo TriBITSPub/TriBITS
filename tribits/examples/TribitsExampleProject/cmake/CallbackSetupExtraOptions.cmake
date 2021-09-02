@@ -2,15 +2,15 @@ macro(TRIBITS_REPOSITORY_SETUP_EXTRA_OPTIONS)
 
   assert_defined(${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
 
-#  if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
-#    message(
-#      "\n***"
-#      "\n*** NOTE: Setting ${PROJECT_NAME}_ENABLE_WrapExternal=OFF"
-#      " because ${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES='${${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES}'!"
-#      "\n***\n"
-#      )
-#    set(${PROJECT_NAME}_ENABLE_WrapExternal OFF)
-#  endif()
+  if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
+    message(
+      "\n***"
+      "\n*** NOTE: Setting ${PROJECT_NAME}_ENABLE_WrapExternal=OFF"
+      " because ${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES='${${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES}'!"
+      "\n***\n"
+      )
+    set(${PROJECT_NAME}_ENABLE_WrapExternal OFF)
+  endif()
 
   if ("${PYTHON_EXECUTABLE}" STREQUAL "")
     message(
