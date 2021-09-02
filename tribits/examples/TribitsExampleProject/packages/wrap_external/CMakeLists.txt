@@ -116,8 +116,9 @@ add_custom_target( build_external_func
 # E.1) Create an imported library target and set up the dependencies to it
 # custom target and command.
 add_library(external_func STATIC IMPORTED GLOBAL)
-set_property(TARGET external_func PROPERTY IMPORTED_LOCATION
-  ${EXTERNAL_FUNC_LIB_FILE})
+#set_property(TARGET external_func PROPERTY IMPORTED_LOCATION ${EXTERNAL_FUNC_LIB_FILE})
+set_property(TARGET external_func PROPERTY
+  IMPORTED_LOCATION "-lexternal_func -L${EXTERNAL_FUNC_BINARY_DIR}")
 add_dependencies(external_func build_external_func)
 # NOTE: Above, you have to use the custom target associated with the
 # generation command and add it as a dependency of the imported library
