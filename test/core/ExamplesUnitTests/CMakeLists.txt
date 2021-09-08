@@ -4540,6 +4540,93 @@ TribitsExampleApp_ALL_ST_test(ByPackage STATIC)
 TribitsExampleApp_ALL_ST_test(ByPackage SHARED)
 
 
+function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
+
+  if (sharedOrStatic STREQUAL "SHARED")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
+  elseif (sharedOrStatic STREQUAL "STATIC")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
+  else()
+    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
+  endif()
+
+  tribits_add_advanced_test( TribitsExampleApp_ALL_ST_buildtree_${sharedOrStatic}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+    XHOSTTYPE Darwin
+
+    TEST_0
+      MESSAGE "Do the configure of TribitsExampleProject"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=ON
+        -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        ${buildSharedLibsArg}
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+
+    TEST_1
+      MESSAGE "Build TribitsExampleProject only (no install)"
+      CMND make ARGS ${CTEST_BUILD_FLAGS}
+
+    TEST_2
+      MESSAGE "Configure TribitsExampleApp locally"
+      WORKING_DIRECTORY app_build
+      CMND ${CMAKE_COMMAND} ARGS
+        -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=TRUE
+        -DTribitsExApp_FIND_UNDER_BUILD_DIR=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleApp_ALL_ST_buildtree_${sharedOrStatic}
+        -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang
+        ${findByProjectOrPackageArg}
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
+      PASS_REGULAR_EXPRESSION_ALL
+        "Found SimpleCxx"
+        "Found MixedLang"
+        "-- Configuring done"
+        "-- Generating done"
+        "-- Build files have been written to: .*/TriBITS_TribitsExampleApp_ALL_ST_buildtree_${sharedOrStatic}/app_build"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_3
+      MESSAGE "Build and install TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Built target app"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_4
+      MESSAGE "Test TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      PASS_REGULAR_EXPRESSION_ALL
+        "Full Deps: MixedLang:Mixed Language[;] SimpleCxx:no_deps"
+        "app_test [.]+   Passed"
+        "100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    )
+
+endfunction()
+#
+# NOTE: The test above only pulls in top-level packages that don't have any
+# subpackages SimpleCxx and MixedLang.  It seems that whoever implemented the
+# <Package>Config.cmake files in the build dir only got this working for
+# top-level packages that don't have any subpackages.  This test above at
+# least (partially) pins down what already works.  (Later, these
+# <Package>Config.cmake files in the build dir will need to be fixed up so
+# that they work for top-level packages with subpackages as well and then this
+# test can be expanded for that case too.)
+
+
+TribitsExampleApp_ALL_ST_buildtree_test(STATIC)
+TribitsExampleApp_ALL_ST_buildtree_test(SHARED)
+
+
 ########################################################################
 # TribitsExampleProjectAddons
 ########################################################################

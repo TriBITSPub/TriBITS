@@ -6,8 +6,17 @@ macro(getTribitsExProjStuff)
   set(${PROJECT_NAME}_FIND_INDIVIDUAL_PACKAGES OFF CACHE BOOL
     "Set to TRUE to find individual packages and OFF to find project TribitsExProj")
 
+  set(${PROJECT_NAME}_FIND_UNDER_BUILD_DIR "" CACHE STRING
+    "Find <Package>Config.cmake files under this build dir instead of under install dir")
+  get_filename_component(${PROJECT_NAME}_FIND_UNDER_BUILD_DIR
+    "${${PROJECT_NAME}_FIND_UNDER_BUILD_DIR}" ABSOLUTE)
+
   if (${PROJECT_NAME}_FIND_INDIVIDUAL_PACKAGES)
-    getTribitsExProjStuffByPackage()
+    if (${PROJECT_NAME}_FIND_UNDER_BUILD_DIR)
+      getTribitsExProjStuffByPackageUnderBuildDir()
+    else()
+      getTribitsExProjStuffByPackage()
+    endif()
   else()
     getTribitsExProjStuffByProject()
   endif()
@@ -16,7 +25,38 @@ endmacro()
 
 
 # Get TribitsExProj stuff with find_package(<Package>) for each
+# package/component from a build dir.
+#
+macro(getTribitsExProjStuffByPackageUnderBuildDir)
+
+  # Get the list of all of package build dirs that have <Package>Config.cmake
+  # files in the build tree.
+  file(GLOB_RECURSE allPackageConfigFiles
+    "${${PROJECT_NAME}_FIND_UNDER_BUILD_DIR}/packages/*Config.cmake")
+  #print_var(allPackageConfigFiles)
+  set(allPackageBuildDirs "")
+  foreach (packageConfigFile IN LISTS allPackageConfigFiles)
+    get_filename_component(packageBuildDir "${packageConfigFile}" DIRECTORY)
+    list(APPEND allPackageBuildDirs "${packageBuildDir}")
+  endforeach()
+  #print_var(allPackageBuildDirs)
+  list(PREPEND CMAKE_PREFIX_PATH "${allPackageBuildDirs}")
+
+  # Now find those <Package>Config.cmake files and process them just like they
+  # were in the install tree.
+  getTribitsExProjStuffByPackage()
+
+endmacro()
+# NOTE: Above, having to get all of the package build dirs for each package is
+# pretty ridiculous and not very scalable but that is what you have to do
+# currently.
+
+
+# Get TribitsExProj stuff with find_package(<Package>) for each
 # package/component.
+#
+# NOTE: This expects that CMAKE_PREFIX_PATH is already set up to find the
+# <Package>Config.cmake files correctly.
 #
 macro(getTribitsExProjStuffByPackage)
 
@@ -33,10 +73,6 @@ macro(getTribitsExProjStuffByPackage)
     list(APPEND APP_DEPS_TPL_INCLUDE_DIRS ${${packageName}_TPL_INCLUDE_DIRS})
     list(APPEND APP_DEPS_PACKAGE_LIBRARIES ${${packageName}_LIBRARIES})
     list(APPEND APP_DEPS_TPL_LIBRARIES ${${packageName}_TPL_LIBRARIES})
-    #print_var(APP_DEPS_PACKAGE_INCLUDE_DIRS)
-    #print_var(APP_DEPS_TPL_INCLUDE_DIRS)
-    #print_var(APP_DEPS_PACKAGE_LIBRARIES)
-    #print_var(APP_DEPS_TPL_LIBRARIES)
   endforeach()
 
   # Get the full list of include dirs and libs
@@ -44,8 +80,6 @@ macro(getTribitsExProjStuffByPackage)
     ${APP_DEPS_PACKAGE_INCLUDE_DIRS} ${APP_DEPS_TPL_INCLUDE_DIRS})
   set(APP_DEPS_LIBRARIES
     ${APP_DEPS_PACKAGE_LIBRARIES} ${APP_DEPS_TPL_LIBRARIES})
-  #print_var(APP_DEPS_INCLUDE_DIRS)
-  #print_var(APP_DEPS_LIBRARIES)
 
   # Remove duplicates
   list(REVERSE APP_DEPS_INCLUDE_DIRS)
@@ -58,7 +92,6 @@ macro(getTribitsExProjStuffByPackage)
   print_var(APP_DEPS_LIBRARIES)
 
 endmacro()
-
 
 
 # Get TribitsExProj stuff from find_package(TribitsExProj)
