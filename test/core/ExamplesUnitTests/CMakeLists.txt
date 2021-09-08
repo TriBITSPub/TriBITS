@@ -4375,6 +4375,82 @@ tribits_add_advanced_test( TribitsExampleProject_TribitsExampleProjectAddons
 
 
 ########################################################################
+# TribitsExampleApp
+########################################################################
+
+
+function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
+
+  if (sharedOrStatic STREQUAL "SHARED")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
+  else()
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
+  endif()
+
+  tribits_add_advanced_test( TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    XHOSTTYPE Darwin
+
+    TEST_0
+      MESSAGE "Do the configure of TribitsExampleProject"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=OFF
+        -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        ${buildSharedLibsArg}
+        -DCMAKE_INSTALL_PREFIX=install
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+
+    TEST_1
+      MESSAGE "Build and install TribitsExampleProject locally"
+      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+
+    TEST_2
+      MESSAGE "Configure TribitsExampleApp locally"
+      WORKING_DIRECTORY app_build
+      CMND ${CMAKE_COMMAND} ARGS
+        -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic}/install
+        -DTribitsExApp_USE_COMPONENTS=SimpleCxx,WithSubpackages
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
+      PASS_REGULAR_EXPRESSION_ALL
+        "-- Configuring done"
+        "-- Generating done"
+        "-- Build files have been written to: .*/TriBITS_TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic}/app_build"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_3
+      MESSAGE "Build and install TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Built target app"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_4
+      MESSAGE "Test TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND}
+      PASS_REGULAR_EXPRESSION_ALL
+        "app_test [.]+   Passed"
+        "100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+    )
+
+endfunction()
+
+
+TribitsExampleApp_ALL_ST_NoFortran_test(STATIC)
+TribitsExampleApp_ALL_ST_NoFortran_test(SHARED)
+
+
+########################################################################
 # TribitsExampleProjectAddons
 ########################################################################
 
