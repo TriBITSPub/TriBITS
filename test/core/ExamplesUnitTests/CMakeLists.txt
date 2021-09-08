@@ -4436,8 +4436,9 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
       MESSAGE "Test TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
-      CMND ${CMAKE_CTEST_COMMAND}
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
+        "Full Deps: WithSubpackages:B A no_deps no_deps[;] SimpleCxx:no_deps"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
