@@ -4451,15 +4451,27 @@ TribitsExampleApp_ALL_ST_NoFortran_test(STATIC)
 TribitsExampleApp_ALL_ST_NoFortran_test(SHARED)
 
 
-function(TribitsExampleApp_ALL_ST_test sharedOrStatic)
+function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
+
+  if (byProjectOrPackage STREQUAL "ByProject")
+    set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
+    set(foundProjectOrPackageStr "Found TribitsExProj")
+  elseif (byProjectOrPackage STREQUAL "ByPackage")
+    set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=ON)
+    set(foundProjectOrPackageStr "Found SimpleCxx")
+  else()
+    message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
+  endif()
 
   if (sharedOrStatic STREQUAL "SHARED")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-  else()
+  elseif (sharedOrStatic STREQUAL "STATIC")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
+  else()
+    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
 
-  tribits_add_advanced_test( TribitsExampleApp_ALL_ST_${sharedOrStatic}
+  tribits_add_advanced_test( TribitsExampleApp_ALL_ST_${byProjectOrPackage}_${sharedOrStatic}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
@@ -4487,13 +4499,15 @@ function(TribitsExampleApp_ALL_ST_test sharedOrStatic)
       MESSAGE "Configure TribitsExampleApp locally"
       WORKING_DIRECTORY app_build
       CMND ${CMAKE_COMMAND} ARGS
-        -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleApp_ALL_ST_${sharedOrStatic}/install
+        -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleApp_ALL_ST_${byProjectOrPackage}_${sharedOrStatic}/install
         -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang,WithSubpackages
+        ${findByProjectOrPackageArg}
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
       PASS_REGULAR_EXPRESSION_ALL
+        "${foundProjectOrPackageStr}"
         "-- Configuring done"
         "-- Generating done"
-        "-- Build files have been written to: .*/TriBITS_TribitsExampleApp_ALL_ST_${sharedOrStatic}/app_build"
+        "-- Build files have been written to: .*/TriBITS_TribitsExampleApp_ALL_ST_${byProjectOrPackage}_${sharedOrStatic}/app_build"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_3
@@ -4520,8 +4534,10 @@ function(TribitsExampleApp_ALL_ST_test sharedOrStatic)
 endfunction()
 
 
-TribitsExampleApp_ALL_ST_test(STATIC)
-TribitsExampleApp_ALL_ST_test(SHARED)
+TribitsExampleApp_ALL_ST_test(ByProject STATIC)
+TribitsExampleApp_ALL_ST_test(ByProject SHARED)
+TribitsExampleApp_ALL_ST_test(ByPackage STATIC)
+TribitsExampleApp_ALL_ST_test(ByPackage SHARED)
 
 
 ########################################################################
