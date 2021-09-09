@@ -4403,6 +4403,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
       CMND ${CMAKE_COMMAND}
       ARGS
         ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
+        -DCMAKE_BUILD_TYPE=RelWithDepInfo
         -DCMAKE_INSTALL_PREFIX=install
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/SimpleTpl
 
