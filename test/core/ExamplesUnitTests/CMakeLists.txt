@@ -3896,6 +3896,8 @@ tribits_add_advanced_test( SimpleTpl_install_shared
       -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
       -DCMAKE_MACOSX_RPATH=TRUE
       -DCMAKE_INSTALL_PREFIX=${SimpleTpl_install_shared_DIR}/install
+      -DCMAKE_INSTALL_INCLUDEDIR=include
+      -DCMAKE_INSTALL_LIBDIR=lib
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/SimpleTpl
     PASS_REGULAR_EXPRESSION_ALL
       "Configuring done"
