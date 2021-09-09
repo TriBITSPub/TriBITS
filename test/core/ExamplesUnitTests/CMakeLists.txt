@@ -4387,12 +4387,30 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
   endif()
 
+  set(buildDir
+    ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic})
+
   tribits_add_advanced_test( TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     XHOSTTYPE Darwin
 
     TEST_0
+      MESSAGE "Configure SimpleTpl to be installed for TribitsExampleProject"
+      WORKING_DIRECTORY simpletpl_build
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
+        -DCMAKE_INSTALL_PREFIX=install
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/SimpleTpl
+
+    TEST_1
+      MESSAGE "Build and install SimpleTpl locally"
+      WORKING_DIRECTORY simpletpl_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+
+    TEST_2
       MESSAGE "Do the configure of TribitsExampleProject"
       CMND ${CMAKE_COMMAND}
       ARGS
@@ -4402,28 +4420,31 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
         -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        -DTPL_ENABLE_SimpleTpl=ON
+        -DSimpleTpl_INCLUDE_DIRS=${buildDir}/simpletpl_build/install/include
+        -DSimpleTpl_LIBRARY_DIRS=${buildDir}/simpletpl_build/install/lib
         ${buildSharedLibsArg}
         -DCMAKE_INSTALL_PREFIX=install
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
 
-    TEST_1
+    TEST_3
       MESSAGE "Build and install TribitsExampleProject locally"
       CMND make ARGS ${CTEST_BUILD_FLAGS} install
 
-    TEST_2
+    TEST_4
       MESSAGE "Configure TribitsExampleApp locally"
       WORKING_DIRECTORY app_build
       CMND ${CMAKE_COMMAND} ARGS
-        -DCMAKE_PREFIX_PATH=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic}/install
+        -DCMAKE_PREFIX_PATH=${buildDir}/install
         -DTribitsExApp_USE_COMPONENTS=SimpleCxx,WithSubpackages
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
       PASS_REGULAR_EXPRESSION_ALL
         "-- Configuring done"
         "-- Generating done"
-        "-- Build files have been written to: .*/TriBITS_TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic}/app_build"
+        "-- Build files have been written to: .*/${PACKAGE_NAME}_TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic}/app_build"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_3
+    TEST_5
       MESSAGE "Build and install TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
@@ -4432,7 +4453,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
         "Built target app"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_4
+    TEST_6
       MESSAGE "Test TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
@@ -4442,6 +4463,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
     )
 
 endfunction()
