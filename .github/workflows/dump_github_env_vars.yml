@@ -1,0 +1,14 @@
+name: Dump GitHub aCTIONS Env Vars
+
+on:
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  dump_env:
+     steps:
+       - name: Print GitHub Actions Environment Variables
+         run: |
+           set | grep "^CI_"
+           set | GREP "^GITHUB_"
