@@ -4404,6 +4404,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
       ARGS
         ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
         -DCMAKE_BUILD_TYPE=RelWithDepInfo
+        ${buildSharedLibsArg}
         -DCMAKE_INSTALL_PREFIX=install
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/SimpleTpl
 
@@ -4462,7 +4463,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A no_deps no_deps[;] SimpleCxx:no_deps"
+        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] SimpleCxx:simpletpl headeronlytpl"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -4550,7 +4551,7 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A no_deps no_deps[;] MixedLang:Mixed Language[;] SimpleCxx:no_deps"
+        "Full Deps: WithSubpackages:B A headeronlytpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:headeronlytpl"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -4630,7 +4631,7 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: MixedLang:Mixed Language[;] SimpleCxx:no_deps"
+        "Full Deps: MixedLang:Mixed Language[;] SimpleCxx:headeronlytpl"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN

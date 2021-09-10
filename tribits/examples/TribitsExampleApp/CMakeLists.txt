@@ -44,10 +44,17 @@ enable_testing()
 #  PASS_REGULAR_EXPRESSION "DUMMY NO MATCH"
 #  )
 
+if ("SimpleTpl" IN_LIST SimpleCxx_TPL_LIST)
+  set(simpleCxxDeps "simpletpl ")
+else()
+  set(simpleCxxDeps "")
+endif()
+set(simpleCxxDeps "${simpleCxxDeps}headeronlytpl")
+
 set(depsStr "")
-appendTestDepsStr("WithSubpackages" depsStr "WithSubpackages:B A no_deps no_deps")
+appendTestDepsStr("WithSubpackages" depsStr "WithSubpackages:B A ${simpleCxxDeps} ${simpleCxxDeps}")
 appendTestDepsStr("MixedLang" depsStr "MixedLang:Mixed Language")
-appendTestDepsStr("SimpleCxx" depsStr "SimpleCxx:no_deps")
+appendTestDepsStr("SimpleCxx" depsStr "SimpleCxx:${simpleCxxDeps}")
 
 add_test(app_test app)
 set_tests_properties(app_test PROPERTIES
