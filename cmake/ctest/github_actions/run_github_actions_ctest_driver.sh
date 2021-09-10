@@ -14,6 +14,7 @@
 #     --python-ver <python-ver> \
 #     --cxx-compiler-and-ver <cxx-compiler-and-ver> \
 #     [ --fortran-compiler-and-ver <fortran-comiler-and-ver> ]
+#     [ --github-repo-match-to-submit <github-repo-match-to-submit> ]
 #
 # This is called by the GitHub Actions script:
 #
@@ -38,6 +39,15 @@
 # output spamming CDash by running with:
 #
 #   env CTEST_DO_SUBMIT=OFF <this-dir>/run_github_actions_ctest_driver.sh [options]
+#
+# NOTE: One can turn off submits by default by setting:
+#
+#   --github-repo-match-to-submit <github-repo-match-to-submit>
+#
+# and submits to CDash will be disabled setting CTEST_DO_SUBMIT=OFF if
+# ${GITHUB_REPOSITORY} does not match <github-repo-match-to-submit>.  This is
+# set the the GitHub Actions job by default to avoid submitting from froks of
+# the repo (see TriBITSPub/TriBITS#415).
 #
 
 # Get location of TriBITS and this dir under TriBITS
@@ -85,6 +95,7 @@ cmake_generator=
 python_ver=
 cxx_compiler_and_ver=
 fortran_compiler_and_ver=
+github_repo_match_to_submit=
 
 while (( "$#" )); do
   case "$1" in
@@ -116,6 +127,14 @@ while (( "$#" )); do
     --fortran-compiler-and-ver)
       if [[ -n "$2" ]] && [[ ${2:0:1} != "-" ]]; then
         fortran_compiler_and_ver=$2
+        shift 2
+      else
+        shift 1
+      fi
+      ;;
+    --github-repo-match-to-submit)
+      if [[ -n "$2" ]] && [[ ${2:0:1} != "-" ]]; then
+        github_repo_match_to_submit=$2
         shift 2
       else
         shift 1
@@ -206,6 +225,15 @@ export CTEST_TEST_TYPE
 export TriBITS_TRACK
 echo "CTEST_TEST_TYPE = '${CTEST_TEST_TYPE}'"
 echo "TriBITS_TRACK = '${TriBITS_TRACK}'"
+
+# CTETS_DO_SUBMIT
+if [[ "${github_repo_match_to_submit}" != "" ]] \
+  && [[  "${GITHUB_REPOSITORY}" != "${github_repo_match_to_submit}" ]] ; then
+  echo "NOTE: Setting CTEST_DO_SUBMIT=OFF since GITHUB_REPOSITORY='${GITHUB_REPOSITORY}' != '${github_repo_match_to_submit}'!"
+  export CTEST_DO_SUBMIT=OFF
+fi
+echo "CTEST_DO_SUBMIT = '${CTEST_DO_SUBMIT}'"
+
 
 #
 # C) Run the local configure, build, test and submit using exported vars above
