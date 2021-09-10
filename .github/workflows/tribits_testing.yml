@@ -2,7 +2,7 @@ name: TriBITS Testing
 
 on:
   schedule:
-    - cron: '10  04  *  *  *' # Run 10 minutes after midnight EDT (4:10 UTC)
+    - cron: '10  6  *  *  *' # Run 10 minutes after 2 AM EDT (6:10 UTC)
   push:
     branches: [ master ]
   pull_request:
