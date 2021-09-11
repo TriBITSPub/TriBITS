@@ -4380,6 +4380,16 @@ tribits_add_advanced_test( TribitsExampleProject_TribitsExampleProjectAddons
 # TribitsExampleApp
 ########################################################################
 
+if (NOT "$ENV{TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL}" STREQUAL "")
+  set(TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_DEFAULT
+    $ENV{TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL})
+else()
+  set($ENV{TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL} OFF)
+endif()
+advanced_set(TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL
+  ${TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_DEFAULT} CACHE BOOL
+  "Set to TRUE to add LD_LIBRARY_PATH to libsimpletpl.so for platforms where RPATH not working")
+
 
 function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
 
@@ -4392,6 +4402,21 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
   set(testBaseName TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(buildDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  if (TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL)
+    set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG
+      ENVIRONMENT LD_LIBRARY_PATH=${buildDir}/simpletpl_build/install/lib)
+  else()
+    set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG "")
+  endif()
+  # NOTE: Above, we have to set LD_LIBRARY_PATH to pick up the
+  # libsimpletpl.so because CMake 3.17.5 and 3.21.2 with the GitHub Actions
+  # Umbuntu build is refusing to put in the RPATH for libsimpletpl.so into
+  # libsimplecxx.so even through CMAKE_INSTALL_RPATH_USE_LINK_PATH=ON is
+  # set.  This is not needed for the RHEL 7 builds that I have tried where
+  # CMake is behaving correctly and putting in RPATH correctly.  But because
+  # I can't log into this system, it is very hard and time consuming to
+  # debug this so I am just giving up at this point.
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -4469,6 +4494,8 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
+    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG}
+
     )
 
 endfunction()
@@ -4501,6 +4528,14 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
   set(testBaseName TribitsExampleApp_ALL_ST_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(buildDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  if (TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL)
+    set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG
+      ENVIRONMENT LD_LIBRARY_PATH=${buildDir}/simpletpl_build/install/lib)
+  else()
+    set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG "")
+  endif()
+  # NOTE: Above, see comment above!
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -4580,6 +4615,9 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG}
+
     )
 
 endfunction()
@@ -4604,6 +4642,14 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
   set(testBaseName TribitsExampleApp_ALL_ST_buildtree_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(buildDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  if (TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL)
+    set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG
+      ENVIRONMENT LD_LIBRARY_PATH=${buildDir}/simpletpl_build/install/lib)
+  else()
+    set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG "")
+  endif()
+  # NOTE: Above, see comment above!
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -4664,6 +4710,9 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG}
+
     )
 
 endfunction()
