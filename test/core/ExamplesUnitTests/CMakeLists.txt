@@ -4494,7 +4494,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
 
   set(testBaseName TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
-  set(buildDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+  set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -4502,7 +4502,15 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
     XHOSTTYPE Darwin
 
     TEST_0
+      MESSAGE "Copy source for TribitsExampleProject"
+      CMND ${CMAKE_COMMAND}
+      ARGS -E copy_directory
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+      WORKING_DIRECTORY TribitsExampleProject
+
+    TEST_1
       MESSAGE "Do the configure of TribitsExampleProject"
+      WORKING_DIRECTORY BUILD
       CMND ${CMAKE_COMMAND}
       ARGS
         ${TribitsExampleProject_COMMON_CONFIG_ARGS}
@@ -4515,18 +4523,24 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
         -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/include
         -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib
         ${buildSharedLibsArg}
-        -DCMAKE_INSTALL_PREFIX=install
-        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
-
-    TEST_1
-      MESSAGE "Build and install TribitsExampleProject locally"
-      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install
+        ${testDir}/TribitsExampleProject
 
     TEST_2
+      MESSAGE "Build and install TribitsExampleProject locally"
+      WORKING_DIRECTORY BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+
+    TEST_3
+      MESSAGE "Delete source and build directory for TribitsExampleProject"
+      CMND ${CMAKE_COMMAND} ARGS -E rm -rf TribitsExampleProject BUILD
+
+    TEST_4
       MESSAGE "Configure TribitsExampleApp locally"
       WORKING_DIRECTORY app_build
       CMND ${CMAKE_COMMAND} ARGS
-        -DCMAKE_PREFIX_PATH=${buildDir}/install
+        -DCMAKE_PREFIX_PATH=${testDir}/install
         -DTribitsExApp_USE_COMPONENTS=SimpleCxx,WithSubpackages
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
       PASS_REGULAR_EXPRESSION_ALL
@@ -4535,7 +4549,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
         "-- Build files have been written to: .*/${testName}/app_build"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_3
+    TEST_5
       MESSAGE "Build TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
@@ -4544,7 +4558,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
         "Built target app"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_4
+    TEST_6
       MESSAGE "Test TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
@@ -4559,6 +4573,9 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
+  # NOTE: Above test deletes the source and build dir for
+  # TribitsExampleProject after the install to ensure that the install dir is
+  # stand-alone.
 
   if (${testNameBase}_NAME)
     set_tests_properties(${${testNameBase}_NAME}
@@ -4594,7 +4611,7 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
 
   set(testBaseName TribitsExampleApp_ALL_ST_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
-  set(buildDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+  set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -4603,7 +4620,15 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
     XHOSTTYPE Darwin
 
     TEST_0
+      MESSAGE "Copy source for TribitsExampleProject"
+      CMND ${CMAKE_COMMAND}
+      ARGS -E copy_directory
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+      WORKING_DIRECTORY TribitsExampleProject
+
+    TEST_1
       MESSAGE "Do the configure of TribitsExampleProject"
+      WORKING_DIRECTORY BUILD
       CMND ${CMAKE_COMMAND}
       ARGS
         ${TribitsExampleProject_COMMON_CONFIG_ARGS}
@@ -4616,18 +4641,24 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
         -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/include
         -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib
         ${buildSharedLibsArg}
-        -DCMAKE_INSTALL_PREFIX=install
-        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
-
-    TEST_1
-      MESSAGE "Build and install TribitsExampleProject locally"
-      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install
+        ${testDir}/TribitsExampleProject
 
     TEST_2
+      MESSAGE "Build and install TribitsExampleProject locally"
+      WORKING_DIRECTORY BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+
+    TEST_3
+      MESSAGE "Delete source and build directory for TribitsExampleProject"
+      CMND ${CMAKE_COMMAND} ARGS -E rm -rf TribitsExampleProject BUILD
+
+    TEST_4
       MESSAGE "Configure TribitsExampleApp locally"
       WORKING_DIRECTORY app_build
       CMND ${CMAKE_COMMAND} ARGS
-        -DCMAKE_PREFIX_PATH=${buildDir}/install
+        -DCMAKE_PREFIX_PATH=${testDir}/install
         -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang,WithSubpackages
         ${findByProjectOrPackageArg}
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
@@ -4638,7 +4669,7 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
         "-- Build files have been written to: .*/${testName}/app_build"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_3
+    TEST_5
       MESSAGE "Build TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
@@ -4647,7 +4678,7 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
         "Built target app"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_4
+    TEST_6
       MESSAGE "Test TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
@@ -4689,7 +4720,7 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
 
   set(testBaseName TribitsExampleApp_ALL_ST_buildtree_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
-  set(buildDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+  set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -4719,7 +4750,7 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
       WORKING_DIRECTORY app_build
       CMND ${CMAKE_COMMAND} ARGS
         -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=TRUE
-        -DTribitsExApp_FIND_UNDER_BUILD_DIR=${buildDir}
+        -DTribitsExApp_FIND_UNDER_BUILD_DIR=${testDir}
         -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang
         ${findByProjectOrPackageArg}
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
@@ -4755,10 +4786,10 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
 endfunction()
 #
 # NOTE: The test above only pulls in top-level packages that don't have any
-# subpackages SimpleCxx and MixedLang.  It seems that whoever implemented the
-# <Package>Config.cmake files in the build dir only got this working for
-# top-level packages that don't have any subpackages.  This test above at
-# least (partially) pins down what already works.  (Later, these
+# subpackages which are SimpleCxx and MixedLang.  It seems that whoever
+# implemented the <Package>Config.cmake files in the build dir only got this
+# working for top-level packages that don't have any subpackages.  This test
+# above at least (partially) pins down what already works.  (Later, these
 # <Package>Config.cmake files in the build dir will need to be fixed up so
 # that they work for top-level packages with subpackages as well and then this
 # test can be expanded for that case too.)
