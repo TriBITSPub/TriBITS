@@ -65,21 +65,18 @@ macro(getTribitsExProjStuffByPackage)
   set(APP_DEPS_PACKAGE_INCLUDE_DIRS "")
   set(APP_DEPS_TPL_INCLUDE_DIRS "")
   set(APP_DEPS_PACKAGE_LIBRARIES "")
-  set(APP_DEPS_TPL_LIBRARIES "")
   foreach (packageName IN LISTS ${PROJECT_NAME}_USE_COMPONENTS)
     find_package(${packageName} REQUIRED)
     message("Found ${packageName}!")
     list(APPEND APP_DEPS_PACKAGE_INCLUDE_DIRS ${${packageName}_INCLUDE_DIRS})
     list(APPEND APP_DEPS_TPL_INCLUDE_DIRS ${${packageName}_TPL_INCLUDE_DIRS})
     list(APPEND APP_DEPS_PACKAGE_LIBRARIES ${${packageName}_LIBRARIES})
-    list(APPEND APP_DEPS_TPL_LIBRARIES ${${packageName}_TPL_LIBRARIES})
   endforeach()
 
   # Get the full list of include dirs and libs
   set(APP_DEPS_INCLUDE_DIRS
     ${APP_DEPS_PACKAGE_INCLUDE_DIRS} ${APP_DEPS_TPL_INCLUDE_DIRS})
-  set(APP_DEPS_LIBRARIES
-    ${APP_DEPS_PACKAGE_LIBRARIES} ${APP_DEPS_TPL_LIBRARIES})
+  set(APP_DEPS_LIBRARIES ${APP_DEPS_PACKAGE_LIBRARIES})
 
   # Remove duplicates
   list(REVERSE APP_DEPS_INCLUDE_DIRS)
@@ -126,8 +123,7 @@ macro(getTribitsExProjStuffByProject)
   # Get the include directories and libraries for building and linking
   set(APP_DEPS_INCLUDE_DIRS
     ${TribitsExProj_INCLUDE_DIRS} ${TribitsExProj_TPL_INCLUDE_DIRS})
-  set(APP_DEPS_LIBRARIES
-    ${TribitsExProj_LIBRARIES} ${TribitsExProj_TPL_LIBRARIES})
+  set(APP_DEPS_LIBRARIES ${TribitsExProj_LIBRARIES})
 
 endmacro()
 
