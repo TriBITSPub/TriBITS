@@ -33,28 +33,23 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# ************************************************************************
+# @HEADER
+
+########################################################################
+# Helper functions and macros
+########################################################################
 
 
-include(HelperFunctionsAndMacros.cmake)
+function(get_regex_correct_string  INPUT_STR  OUTPUT_STR_VAR_OUT)
+  set(OUTPUT_STR "${INPUT_STR}")
+  string(REPLACE "+" "[+]" OUTPUT_STR "${OUTPUT_STR}")
+  string(REPLACE "." "[.]" OUTPUT_STR "${OUTPUT_STR}")
+  set(${OUTPUT_STR_VAR_OUT} "${OUTPUT_STR}" PARENT_SCOPE)
+endfunction()
 
-include(CommonArgumentsCMakeProjects.cmake)
 
-include(HelloWorld_Tests.cmake)
-
-include(TribitsHelloWorld_Tests.cmake)
-
-include(RawAndTribitsHelloWorld_Tests.cmake)
-
-include(SetupForRPATH.cmake)
-
-include(SimpleTpl_installs_Tests.cmake)
-
-include(TribitsExampleProject_Tests.cmake)
-
-include(RPATH_Handling_Tests.cmake)
-
-include(TribitsExampleProject_TribitsExampleProjectAddons_Tests.cmake)
-
-include(TribitsExampleApp_Tests.cmake)
-
-include(UserErrorChecking_Tests.cmake)
+macro(get_regex_correct_cmake_lang_compiler  LANG)
+  get_regex_correct_string("${CMAKE_${LANG}_COMPILER}" CMAKE_${LANG}_COMPILER_FOR_REGEX)
+endmacro()

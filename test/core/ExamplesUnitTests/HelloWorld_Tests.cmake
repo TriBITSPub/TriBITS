@@ -33,28 +33,36 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# ************************************************************************
+# @HEADER
 
 
-include(HelperFunctionsAndMacros.cmake)
+########################################################################
+# RawHelloWorld
+########################################################################
 
-include(CommonArgumentsCMakeProjects.cmake)
 
-include(HelloWorld_Tests.cmake)
-
-include(TribitsHelloWorld_Tests.cmake)
-
-include(RawAndTribitsHelloWorld_Tests.cmake)
-
-include(SetupForRPATH.cmake)
-
-include(SimpleTpl_installs_Tests.cmake)
-
-include(TribitsExampleProject_Tests.cmake)
-
-include(RPATH_Handling_Tests.cmake)
-
-include(TribitsExampleProject_TribitsExampleProjectAddons_Tests.cmake)
-
-include(TribitsExampleApp_Tests.cmake)
-
-include(UserErrorChecking_Tests.cmake)
+tribits_add_advanced_test( RawHelloWorld
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS
+      ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/RawHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+      "Generating done"
+      "Build files have been written to: .*ExamplesUnitTests/TriBITS_RawHelloWorld"
+  TEST_1 CMND make
+    ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target hello_world_lib"
+      "Built target hello_world"
+      "Built target unit_tests"
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    PASS_REGULAR_EXPRESSION_ALL
+      ": test .*  Passed"
+      ": unit_test .*  Passed"
+      "100% tests passed, 0 tests failed out of 2"
+  )
