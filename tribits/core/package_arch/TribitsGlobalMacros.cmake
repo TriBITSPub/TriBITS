@@ -572,20 +572,6 @@ macro(tribits_define_global_options_and_define_extra_repos)
     "Install libraries and headers (default is ${${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS_DEFAULT}).  NOTE: Shared libraries are always installed since they are needed by executables."
     )
 
-  if ("${${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES_DEFAULT}" STREQUAL "")
-    if(WIN32 AND NOT CYGWIN)
-      set(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES_DEFAULT OFF)
-    else()
-      set(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES_DEFAULT ON)
-    endif()
-  endif()
-
-  advanced_set(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES
-    ${${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES_DEFAULT}
-    CACHE BOOL
-    "Determines if export makefiles will be created and installed."
-    )
-
   # Creating <Package>Config.cmake files is currently *very* expensive for large
   # TriBITS projects so we disable this by default for TriBITS.
   if ("${${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES_DEFAULT}" STREQUAL "")
@@ -601,9 +587,7 @@ macro(tribits_define_global_options_and_define_extra_repos)
   if (NOT ${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES_DEFAULT)
     # We need to generate the dependency logic for export dependency files if
     # asked.
-    if (${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES OR
-      ${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES
-      )
+    if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
       set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES_DEFAULT ON)
     else()
       set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES_DEFAULT OFF)

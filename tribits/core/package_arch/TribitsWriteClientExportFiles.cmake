@@ -44,7 +44,6 @@ include(TribitsGeneralMacros)
 ### TribitsPackageMacros.cmake!
 ###
 
-#
 #  This function will take a list and turn it into a space separated string
 #  adding the prefix to the front of every entry.
 #
@@ -58,7 +57,6 @@ function(tribits_list_to_string LIST PREFIX OUTPUT_STRING)
   set(${OUTPUT_STRING} ${LIST_STRING} PARENT_SCOPE)
 endfunction()
 
-#
 #  This function will take a list of libraries and turn it into a space
 #  separated string. In this case though the prefix is not always added
 #  to the front of each entry as libraries can be specified either as a
@@ -81,7 +79,7 @@ function(tribits_library_list_to_string LIST PREFIX OUTPUT_STRING)
   set(${OUTPUT_STRING} ${LIST_STRING} PARENT_SCOPE)
 endfunction()
 
-#
+
 # CMAKE_CURRENT_LIST_DIR is not defined in CMake versions < 2.8.3, but the
 # Trilinos writes paths that use the value of that variable to this file.
 # Make sure it is available at *find_package* time. Note that all variable
@@ -113,13 +111,11 @@ endif()
 endfunction()
 
 
-#
 # @FUNCTION: tribits_write_flexible_package_client_export_files()
 #
-# Utility function for writing ``${PACKAGE_NAME}Config.cmake`` and/or the
-# ``Makefile.export.${PACKAGE_NAME}`` files for package ``${PACKAGE_NAME}``
-# with some greater flexibility than what is provided by the function
-# ``tribits_write_package_client_export_files()``.
+# Utility function for writing ``${PACKAGE_NAME}Config.cmake`` files for
+# package ``${PACKAGE_NAME}`` with some greater flexibility than what is
+# provided by the function ``tribits_write_package_client_export_files()``.
 #
 # Usage::
 #
@@ -127,9 +123,7 @@ endfunction()
 #     PACKAGE_NAME <packageName>
 #     [EXPORT_FILE_VAR_PREFIX <exportFileVarPrefix>]
 #     [WRITE_CMAKE_CONFIG_FILE <cmakeConfigFileFullPath>]
-#     [WRITE_EXPORT_MAKEFILE <exportMakefileFileFullPath>]
 #     [WRITE_INSTALL_CMAKE_CONFIG_FILE]
-#     [WRITE_INSTALL_EXPORT_MAKEFILE]
 #     )
 #
 # The arguments are:
@@ -152,33 +146,11 @@ endfunction()
 #     the file ``<cmakeConfigFileFullPath>``.  NOTE: the argument should be
 #     the full path!
 #
-#   ``WRITE_EXPORT_MAKEFILE <exportMakefileFileFullPath>``
-#
-#     If specified, then the package's (``<packageName>``) export makefile for
-#     use by external Makefile client projects will be created in the file
-#     <exportMakefileFileFullPath>.  NOTE: the argument should be the full
-#     path!
-#
 #   ``WRITE_INSTALL_CMAKE_CONFIG_FILE``
 #
 #     If specified, then the package's (``<packageName>``) install cmake
 #     configured export file will be installed in to the install tree as well.
 #     The name and location of this file is hard-coded.
-#
-#   ``WRITE_INSTALL_EXPORT_MAKEFILE``
-#
-#     If specified, then the package's (``<packageName>``) install export
-#     makefile to be installed into the install tree as well.  The name and
-#     location of this file is hard-coded.
-#
-# NOTE: The arguments to this function may look strange but the motivation is
-# to support very specialized use cases such as when a TriBITS package needs
-# to generate an export makefile for a given package but the name of the
-# export makefile must be different and use different variable name prefixes.
-# The particular use case is when wrapping an external autotools project that
-# depends on Trilinos and needs to read in the ``Makefile.export.Trilinos``
-# file but this file needs to be generated for a subset of enabled packages on
-# the fly during a one-pass configure.
 #
 # NOTE: This function does *not* contain the ``install()`` commands because
 # CMake will not allow those to even be present in scripting mode that is used
@@ -199,11 +171,11 @@ function(tribits_write_flexible_package_client_export_files)
      #prefix
      PARSE
      #options
-     "WRITE_INSTALL_CMAKE_CONFIG_FILE;WRITE_INSTALL_EXPORT_MAKEFILE"
+     "WRITE_INSTALL_CMAKE_CONFIG_FILE"
      #one_value_keywords
      ""
      #multi_value_keywords
-     "PACKAGE_NAME;WRITE_CMAKE_CONFIG_FILE;WRITE_EXPORT_MAKEFILE;EXPORT_FILE_VAR_PREFIX"
+     "PACKAGE_NAME;WRITE_CMAKE_CONFIG_FILE;EXPORT_FILE_VAR_PREFIX"
      ${ARGN}
      )
 
@@ -447,43 +419,7 @@ include(\"${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}Targets.cmake\")"
   endif()
 
   #
-  # G) Create the export makefile for the build tree
-  #
-  # This is the equivalent of the cmake version only slightly changed so that
-  # it can be directly imported into a Makefile.
-  #
-
-  if(PARSE_WRITE_EXPORT_MAKEFILE)
-
-    tribits_list_to_string("${FULL_LIBRARY_SET}" ${CMAKE_LINK_LIBRARY_FLAG} MAKEFILE_FULL_LIBRARY_SET)
-    tribits_list_to_string("${FULL_LIBRARY_DIRS_SET}" ${CMAKE_LIBRARY_PATH_FLAG} MAKEFILE_LIBRARY_DIRS)
-    tribits_list_to_string("${FULL_INCLUDE_DIRS_SET}" "-I" MAKEFILE_INCLUDE_DIRS)
-    tribits_list_to_string("${${PACKAGE_NAME}_TPL_INCLUDE_DIRS}" "-I" MAKEFILE_${PACKAGE_NAME}_TPL_INCLUDE_DIRS)
-    tribits_list_to_string("${${PACKAGE_NAME}_TPL_LIBRARY_DIRS}" ${CMAKE_LIBRARY_PATH_FLAG} MAKEFILE_${PACKAGE_NAME}_TPL_LIBRARY_DIRS)
-    #the TPL library names have to be treated differently
-    tribits_library_list_to_string("${${PACKAGE_NAME}_TPL_LIBRARIES}" ${CMAKE_LINK_LIBRARY_FLAG} MAKEFILE_${PACKAGE_NAME}_TPL_LIBRARIES)
-
-    tribits_library_list_to_string("${${TPL_MPI_LIBRARIES}}" ${CMAKE_LINK_LIBRARY_FLAG} "MAKEFILE_TPL_MPI_LIBRARIES")
-    tribits_list_to_string("${${TPL_MPI_LIBRARY_DIRS}}" ${CMAKE_LIBRARY_PATH_FLAG} "MAKEFILE_TPL_MPI_LIBRARY_DIRS")
-    tribits_list_to_string("${${TPL_MPI_INCLUDE_DIRS}}" "-I" "MAKEFILE_TPL_MPI_INCLUDE_DIRS")
-
-    tribits_list_to_string("${FULL_PACKAGE_SET}" "" MAKEFILE_FULL_PACKAGE_SET)
-    tribits_list_to_string("${ORDERED_FULL_TPL_SET}" "" MAKEFILE_ORDERED_FULL_TPL_SET)
-
-    # create an upper case name of the package so that we can make deprecated
-    # versions of them to help people transistioning from the autotools
-    # version diagnose any missed variables.
-    string(TOUPPER ${EXPORT_FILE_VAR_PREFIX} EXPORT_FILE_VAR_PREFIX_UPPER)
-
-    assert_defined(${PROJECT_NAME}_TRIBITS_DIR)
-    configure_file(
-      ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsPackageConfigTemplate.export.in
-      "${PARSE_WRITE_EXPORT_MAKEFILE}"
-      )
-  endif()
-
-  #
-  # H) Create the cmake Config.cmake file for the install tree.
+  # G) Create the cmake Config.cmake file for the install tree.
   #
 
   # This file isn't generally useful inside the build tree so it is being
@@ -556,39 +492,14 @@ include(\"\${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}Targets.cmake\")"
 
   endif()
 
-  #
-  # I) Write the export makefile for the install tree
-  #
-
-  if (PARSE_WRITE_INSTALL_EXPORT_MAKEFILE)
-
-    # Generated Make imports must use CMAKE_INSTALL_PREFIX, rather
-    # than the more platform friendly method of locating the libraries
-    # and includes using the config file path above. The underlying
-    # assumption here is that a generator that uses
-    # CMAKE_INSTALL_PREFIX is being used.
-    set(FULL_LIBRARY_DIRS_SET ${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_LIB_DIR})
-    set(FULL_INCLUDE_DIRS_SET ${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR})
-
-    tribits_list_to_string("${FULL_LIBRARY_DIRS_SET}" ${CMAKE_LIBRARY_PATH_FLAG} MAKEFILE_LIBRARY_DIRS)
-    tribits_list_to_string("${FULL_INCLUDE_DIRS_SET}" "-I" MAKEFILE_INCLUDE_DIRS)
-
-    configure_file(
-      ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsPackageConfigTemplate.export.in
-      ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/Makefile.export.${PACKAGE_NAME}_install
-      )
-  endif()
-
 endfunction()
 
 
-#
 # Set the install targets for the package config and export makefiles.
 #
 # The install() commands must be in a different subroutine or CMake will not
 # allow you to call the routine, even if you if() it out!
 #
-
 function(tribits_write_project_client_export_files_install_targets PACKAGE_NAME)
 
   if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
@@ -607,25 +518,13 @@ function(tribits_write_project_client_export_files_install_targets PACKAGE_NAME)
     endif()
   endif()
 
-  if(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES)
-
-    install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/Makefile.export.${PACKAGE_NAME}_install
-      DESTINATION "${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}"
-      RENAME Makefile.export.${PACKAGE_NAME}
-      )
-  endif()
-
 endfunction()
 
 
-#
-# Generate the ${PACKAGE_NAME}Config.cmake and/or the Makefile.export.${PACKAGE_NAME}
-# for package PACKAGE_NAME.
+# Generate the ${PACKAGE_NAME}Config.cmake file for package PACKAGE_NAME.
 #
 # ToDo: Finish documentation!
 #
-
 function(tribits_write_package_client_export_files PACKAGE_NAME)
 
   if(${PROJECT_NAME}_VERBOSE_CONFIGURE)
@@ -645,17 +544,6 @@ function(tribits_write_package_client_export_files PACKAGE_NAME)
       WRITE_INSTALL_CMAKE_CONFIG_FILE)
   endif()
 
-  if(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES)
-    set(WRITE_EXPORT_MAKEFILE
-      ${CMAKE_CURRENT_BINARY_DIR}/Makefile.export.${PACKAGE_NAME})
-    if(${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      message("For package ${PACKAGE_NAME} creating ${WRITE_EXPORT_MAKEFILE}")
-    endif()
-    append_set(EXPORT_FILES_ARGS
-      WRITE_EXPORT_MAKEFILE "${WRITE_EXPORT_MAKEFILE}"
-      WRITE_INSTALL_EXPORT_MAKEFILE)
-  endif()
-
   tribits_write_flexible_package_client_export_files(${EXPORT_FILES_ARGS})
 
   tribits_write_project_client_export_files_install_targets(${PACKAGE_NAME})
@@ -663,7 +551,6 @@ function(tribits_write_package_client_export_files PACKAGE_NAME)
 endfunction()
 
 
-#
 # Write the outer TriBITS project configure and/or export makefiles
 #
 # If ${PROJECT_NAME}_VERSION is not set or is '' on input, then it will be set
@@ -671,7 +558,6 @@ endfunction()
 #
 # ToDo: Finish documentation!
 #
-
 function(tribits_write_project_client_export_files)
 
   set(EXPORT_FILE_VAR_PREFIX ${PROJECT_NAME})
@@ -799,42 +685,6 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
       ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake )
   endif()
 
-  if(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES)
-    ######
-    # Create a Makefile.export.<project_name> for the build tree. This is the equivalent
-    # of the cmake version only slightly changed so that it can be directly imported into
-    # a Makefile.
-    ######
-
-    tribits_list_to_string("${${PROJECT_NAME}_CONFIG_LIBRARIES}" ${CMAKE_LINK_LIBRARY_FLAG} MAKEFILE_${PROJECT_NAME}_CONFIG_LIBRARIES)
-    tribits_list_to_string("${${PROJECT_NAME}_CONFIG_LIBRARY_DIRS}" ${CMAKE_LIBRARY_PATH_FLAG} MAKEFILE_${PROJECT_NAME}_CONFIG_LIBRARY_DIRS)
-    tribits_list_to_string("${${PROJECT_NAME}_CONFIG_INCLUDE_DIRS}" "-I" MAKEFILE_${PROJECT_NAME}_CONFIG_INCLUDE_DIRS)
-    tribits_list_to_string("${${PROJECT_NAME}_CONFIG_TPL_INCLUDE_DIRS}" "-I" MAKEFILE_${PROJECT_NAME}_CONFIG_TPL_INCLUDE_DIRS)
-    tribits_list_to_string("${${PROJECT_NAME}_CONFIG_TPL_LIBRARY_DIRS}" ${CMAKE_LIBRARY_PATH_FLAG} MAKEFILE_${PROJECT_NAME}_CONFIG_TPL_LIBRARY_DIRS)
-    #the TPL library names have to be treated differently
-    tribits_library_list_to_string("${${PROJECT_NAME}_CONFIG_TPL_LIBRARIES}" ${CMAKE_LINK_LIBRARY_FLAG} MAKEFILE_${PROJECT_NAME}_CONFIG_TPL_LIBRARIES)
-
-    tribits_library_list_to_string("${${TPL_MPI_LIBRARIES}}" ${CMAKE_LINK_LIBRARY_FLAG} "MAKEFILE_TPL_MPI_LIBRARIES")
-    tribits_list_to_string("${${TPL_MPI_LIBRARY_DIRS}}" ${CMAKE_LIBRARY_PATH_FLAG} "MAKEFILE_TPL_MPI_LIBRARY_DIRS")
-    tribits_list_to_string("${${TPL_MPI_INCLUDE_DIRS}}" "-I" "MAKEFILE_TPL_MPI_INCLUDE_DIRS")
-
-    tribits_list_to_string("${FULL_PACKAGE_SET}" "" MAKEFILE_FULL_PACKAGE_SET)
-    tribits_list_to_string("${FULL_TPL_SET}" "" MAKEFILE_FULL_TPL_SET)
-
-    if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
-      # In TribitsProjectConfigTemplate.cmake.in, we would like to preserve
-      # ${}-variables after the conversion to
-      # TribitsProjectConfigTemplate.cmake. To this end, one typically uses the
-      # @-syntax for variables. That doesn't support nested variables, however.
-      # Use ${PDOLLAR} as a workaround, cf.
-      # <http://www.cmake.org/pipermail/cmake/2013-April/054341.html>.
-      set(PDOLLAR "$")
-      configure_file(
-        ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsProjectConfigTemplate.export.in
-        ${PROJECT_BINARY_DIR}/Makefile.export.${PROJECT_NAME})
-    endif()
-  endif()
-
   ######
   # Create a configure file for the install tree and set the install target for it. This
   # file isn't generally useful inside the build tree. It will be placed in the base
@@ -882,35 +732,6 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
       FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config_install.cmake
       DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PROJECT_NAME}"
       RENAME ${PROJECT_NAME}Config.cmake
-      )
-  endif()
-
-  if(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES)
-    ######
-    # Create a Makefile.export.<project_name> for the install tree. This is the equivalent
-    # of the cmake version only slightly changed so that it can be directly imported into
-    # a Makefile.
-    ######
-
-    # Generated Make imports must use CMAKE_INSTALL_PREFIX, rather
-    # than the more platform friendly method of locating the libraries
-    # and includes using the config file path above. The underlying
-    # assumption here is that a generator that uses
-    # CMAKE_INSTALL_PREFIX is being used.
-    set(${PROJECT_NAME}_CONFIG_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR})
-    set(${PROJECT_NAME}_CONFIG_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_LIB_DIR})
-
-    tribits_list_to_string("${${PROJECT_NAME}_CONFIG_LIBRARY_DIRS}" ${CMAKE_LIBRARY_PATH_FLAG} MAKEFILE_${PROJECT_NAME}_CONFIG_LIBRARY_DIRS)
-    tribits_list_to_string("${${PROJECT_NAME}_CONFIG_INCLUDE_DIRS}" "-I" MAKEFILE_${PROJECT_NAME}_CONFIG_INCLUDE_DIRS)
-
-    configure_file(
-      ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsProjectConfigTemplate.export.in
-      ${PROJECT_BINARY_DIR}/Makefile.export.${PROJECT_NAME}_install )
-
-    install(
-      FILES ${PROJECT_BINARY_DIR}/Makefile.export.${PROJECT_NAME}_install
-      DESTINATION "${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}"
-      RENAME Makefile.export.${PROJECT_NAME}
       )
   endif()
 

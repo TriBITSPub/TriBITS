@@ -458,7 +458,6 @@ tribits_add_advanced_test( TribitsHelloWorld_install_perms
       install install/include install/lib install/bin
     PASS_REGULAR_EXPRESSION_ALL
       "[-]rwxr-xr-x.* .* hello_world.exe"
-      "[-]rw-r--r--.* .* Makefile.export.HelloWorld"
       "[-]rw-r--r--.* .* .* libhello_world_lib.a"
     ALWAYS_FAIL_ON_NONZERO_RETURN
     # NOTE: The above permissions are the default install permissions of CMake

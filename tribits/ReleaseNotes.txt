@@ -2,6 +2,15 @@
 Release Notes for TriBITS
 ----------------------------------------
 
+2021/09/13:
+
+(*) MAJOR: Support for generation and installation of Makefile.export.* files
+    has been removed along with the cache variable
+    <Project>_ENABLE_EXPORT_MAKEFILES.  This is to allow the refactoring of
+    TriBITS to use modern CMake targets that propagate all information and
+    removing complex dependency tracking inforamtion from TriBITS (see
+    TriBITSPub/TriBITS#63 and TriBITSPub/TriBITS#299).
+
 2021/06/17:
 
 (*) MINOR: Added tool tribits/python_utils/lower_case_cmake.py and driver
