@@ -116,14 +116,10 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
   set(GENERATED_EXPORT_CONFIG
     "${CURRENT_TEST_DIRECTORY}/RTOpBeforeConfig.cmake")
 
-  set(GENERATED_EXPORT_MAKEFILE
-    "${CURRENT_TEST_DIRECTORY}/Makefile.export.RTOp.before")
-
   tribits_write_flexible_package_client_export_files(
     PACKAGE_NAME RTOp
     EXPORT_FILE_VAR_PREFIX RTOp1
     WRITE_CMAKE_CONFIG_FILE "${GENERATED_EXPORT_CONFIG}"
-    WRITE_EXPORT_MAKEFILE "${GENERATED_EXPORT_MAKEFILE}"
     )
 
   unittest_file_regex("${GENERATED_EXPORT_CONFIG}"
@@ -139,17 +135,6 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
       "set[(]RTOp1_TPL_LIBRARIES .lapackpath/lib/liblapack.a.blaspath/lib/libblas.a.."
       "set[(]RTOp1_PACKAGE_LIST .Teuchos.."
       "set[(]RTOp1_TPL_LIST .LAPACK.BLAS.."
-    )
-
-  unittest_file_regex("${GENERATED_EXPORT_MAKEFILE}"
-    REGEX_STRINGS
-      "RTOp1_INCLUDE_DIRS= -Iteuchos/core/include -Iteuchos/numeric/include"
-      "RTOp1_LIBRARY_DIRS= -Lteuchos/core/src -Lteuchos/numeric/src"
-      "RTOp1_LIBRARIES= -lteuchoscore -lteuchosnumeric"
-      "RTOp1_TPL_INCLUDE_DIRS= -Ilapackhpath/include -Iblaspath/include"
-      "RTOp1_TPL_LIBRARIES= -llapackpath/lib/liblapack.a -lblaspath/lib/libblas.a"
-      "RTOp1_PACKAGE_LIST= Teuchos"
-      "RTOp1_TPL_LIST= LAPACK BLAS"
     )
 
 endfunction()
@@ -198,14 +183,10 @@ function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
   set(GENERATED_EXPORT_CONFIG
     "${CURRENT_TEST_DIRECTORY}/RTOpAfterConfig.cmake")
 
-  set(GENERATED_EXPORT_MAKEFILE
-    "${CURRENT_TEST_DIRECTORY}/Makefile.export.RTOp.after")
-
   tribits_write_flexible_package_client_export_files(
     PACKAGE_NAME RTOp
     EXPORT_FILE_VAR_PREFIX RTOp2
     WRITE_CMAKE_CONFIG_FILE "${GENERATED_EXPORT_CONFIG}"
-    WRITE_EXPORT_MAKEFILE "${GENERATED_EXPORT_MAKEFILE}"
     )
 
   unittest_file_regex("${GENERATED_EXPORT_CONFIG}"
@@ -221,17 +202,6 @@ function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
       "set[(]RTOp2_TPL_LIBRARIES .lapackpath/lib/liblapack.a.blaspath/lib/libblas.a.."
       "set[(]RTOp2_PACKAGE_LIST .RTOp.Teuchos.."
       "set[(]RTOp2_TPL_LIST .LAPACK.BLAS.."
-    )
-
-  unittest_file_regex("${GENERATED_EXPORT_MAKEFILE}"
-    REGEX_STRINGS
-      "RTOp2_INCLUDE_DIRS= -Irtop/include -Iteuchos/core/include -Iteuchos/numeric/include"
-      "RTOp2_LIBRARY_DIRS= -Lrtop/src -Lteuchos/core/src -Lteuchos/numeric/src"
-      "RTOp2_LIBRARIES= -lrtop -lteuchoscore -lteuchosnumeric"
-      "RTOp2_TPL_INCLUDE_DIRS= -Ilapackhpath/include -Iblaspath/include"
-      "RTOp2_TPL_LIBRARIES= -llapackpath/lib/liblapack.a -lblaspath/lib/libblas.a"
-      "RTOp2_PACKAGE_LIST= RTOp Teuchos"
-      "RTOp2_TPL_LIST= LAPACK BLAS"
     )
 
 endfunction()
@@ -256,4 +226,4 @@ unittest_write_specialized_package_export_makefile_rtop_before_libs()
 unittest_write_specialized_package_export_makefile_rtop_after_libs()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(36)
+unittest_final_result(22)

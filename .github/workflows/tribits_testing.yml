@@ -2,7 +2,7 @@ name: TriBITS Testing
 
 on:
   schedule:
-    - cron: '10  04  *  *  *' # Run 10 minutes after midnight EDT (4:10 UTC)
+    - cron: '10  6  *  *  *' # Run 10 minutes after 2 AM EDT (6:10 UTC)
   push:
     branches: [ master ]
   pull_request:
@@ -28,6 +28,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Print GitHub Actions Environment Variables
+        run: |
+          set | grep "^GITHUB_"
 
       - name: Update OS
         run: |
@@ -76,13 +80,15 @@ jobs:
         run: |
           cd ..
           env CTEST_BUILD_NAME_SUFFIX=${{ github.event.inputs.ctest_build_name_suffix }} \
+            TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL=ON \
           ./TriBITS/cmake/ctest/github_actions/run_github_actions_ctest_driver.sh \
             --os ${{ matrix.config.os }} \
             --cmake-ver ${{ matrix.config.cmake }} \
             --generator ${{ matrix.config.generator }} \
             --python-ver ${{ matrix.config.python }} \
             --cxx-compiler-and-ver ${{ matrix.config.cxx }} \
-            --fortran-compiler-and-ver ${{ matrix.config.fc }}
+            --fortran-compiler-and-ver ${{ matrix.config.fc }} \
+            --github-repo-match-to-submit TriBITSPub/TriBITS
       - name: URL to results on CDash
         run: |
           cd ..

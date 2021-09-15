@@ -33,28 +33,23 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# ************************************************************************
+# @HEADER
 
 
-include(HelperFunctionsAndMacros.cmake)
+########################################################################
+# Common arguments for all inner CMake and TriBITS projects
+########################################################################
 
-include(CommonArgumentsCMakeProjects.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/GetCompilerPassthroughArgs.cmake)
 
-include(HelloWorld_Tests.cmake)
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  set(IS_REAL_LINUX_SYSTEM ON)
+else()
+  set(IS_REAL_LINUX_SYSTEM OFF)
+endif()
 
-include(TribitsHelloWorld_Tests.cmake)
-
-include(RawAndTribitsHelloWorld_Tests.cmake)
-
-include(SetupForRPATH.cmake)
-
-include(SimpleTpl_installs_Tests.cmake)
-
-include(TribitsExampleProject_Tests.cmake)
-
-include(RPATH_Handling_Tests.cmake)
-
-include(TribitsExampleProject_TribitsExampleProjectAddons_Tests.cmake)
-
-include(TribitsExampleApp_Tests.cmake)
-
-include(UserErrorChecking_Tests.cmake)
+get_regex_correct_cmake_lang_compiler(CXX)
+get_regex_correct_cmake_lang_compiler(C)
+get_regex_correct_cmake_lang_compiler(Fortran)
