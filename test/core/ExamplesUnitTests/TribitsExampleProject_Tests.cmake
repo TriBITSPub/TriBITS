@@ -75,7 +75,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
       -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
       -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
       -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
       -DCMAKE_INSTALL_PREFIX=install
@@ -90,7 +89,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
       "-- CMAKE_HOST_SYSTEM_NAME="
       "-- TribitsExProj_HOSTNAME="
 
-      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because TribitsExProj_ENABLE_EXPORT_MAKEFILES"
+      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because TribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES='ON'"
       "NOTE: Setting TribitsExProj_ENABLE_MixedLang=OFF because TribitsExProj_ENABLE_Fortran"
       "Printing package dependencies ..."
       "-- TribitsExProj_PACKAGES: SimpleCxx MixedLang WithSubpackages WrapExternal"
@@ -236,35 +235,29 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
     PASS_REGULAR_EXPRESSION_ALL
       "Installing: .+/install/include/TribitsExProj_version.h"
       "Installing: .+/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake"
-      "Installing: .+/install/include/Makefile.export.TribitsExProj"
       "Installing: .+/install/lib/cmake/TribitsExProj/TribitsExProjConfigVersion.cmake"
       "Installing: .+/install/include/TribitsExProjConfig.cmake"
       "Installing: .+/install/lib/cmake/SimpleCxx/SimpleCxxConfig.cmake"
       "Installing: .+/install/lib/cmake/SimpleCxx/SimpleCxxTargets.cmake"
       "Installing: .+/install/lib/cmake/SimpleCxx/SimpleCxxTargets-release.cmake"
-      "Installing: .+/install/include/Makefile.export.SimpleCxx"
       "Installing: .+/install/lib/libsimplecxx.a"
       "Installing: .+/install/include/SimpleCxx_HelloWorld.hpp"
       "Installing: .+/install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake"
-      "Installing: .+/install/include/Makefile.export.WithSubpackages"
       "Installing: .+/install/lib/libpws_a.a"
       "Installing: .+/install/include/A.hpp"
       "Installing: .+/install/lib/cmake/WithSubpackagesA/WithSubpackagesAConfig.cmake"
       "Installing: .+/install/lib/cmake/WithSubpackagesA/WithSubpackagesATargets.cmake"
       "Installing: .+/install/lib/cmake/WithSubpackagesA/WithSubpackagesATargets-release.cmake"
-      "Installing: .+/install/include/Makefile.export.WithSubpackagesA"
       "Installing: .+/install/lib/libpws_b.a"
       "Installing: .+/install/include/B.hpp"
       "Installing: .+/install/lib/cmake/WithSubpackagesB/WithSubpackagesBConfig.cmake"
       "Installing: .+/install/lib/cmake/WithSubpackagesB/WithSubpackagesBTargets.cmake"
       "Installing: .+/install/lib/cmake/WithSubpackagesB/WithSubpackagesBTargets-release.cmake"
-      "Installing: .+/install/include/Makefile.export.WithSubpackagesB"
       "Installing: .+/install/lib/libpws_c.a"
       "Installing: .+/install/include/wsp_c/C.hpp"
       "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCConfig.cmake"
       "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets.cmake"
       "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets-release.cmake"
-      "Installing: .+/install/include/Makefile.export.WithSubpackagesC"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_6
@@ -513,15 +506,10 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
       "${mixedLangHeaderRegex}"
       "[d]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* wsp_c"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* C.hpp"
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesC"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_c.a"
       "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
     ALWAYS_FAIL_ON_NONZERO_RETURN
-    # NOTE: Above, the file Makefile.export.WithSubpackagesC seems to be the
-    # last file installed and therefore if it has the right permissions, then
-    # this final script set_installed_group_and_permissions.cmake must be
-    # getting called at the very end.
 
   TEST_7
     MESSAGE "Make sure that exec_script.sh is executable"
@@ -647,7 +635,6 @@ tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perm
     PASS_REGULAR_EXPRESSION_ALL
       "${mixedLangHeaderRegex}"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* B.hpp"
-      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesB"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_b.a"
       "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
@@ -831,7 +818,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_enable_install
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing/install
       TribitsExampleProject
@@ -883,7 +869,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_enable_install
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DTribitsExProj_ENABLE_INSTALLATION_TESTING=ON
       -DTribitsExProj_INSTALLATION_DIR=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing/install
@@ -951,7 +936,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
       -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DTribitsExProj_PARALLEL_COMPILE_JOBS_LIMIT=3
       -DTribitsExProj_PARALLEL_LINK_JOBS_LIMIT=2
@@ -1089,7 +1073,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
       -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DCMAKE_INSTALL_PREFIX=install
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
@@ -1209,7 +1192,6 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_TESTS=ON
         -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
-        -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
         -DTribitsExProj_ENABLE_CONFIGURE_TIMING=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
@@ -1273,7 +1255,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
       -DTribitsExProj_SHOW_DEPRECATED_WARNINGS=OFF
@@ -1313,7 +1294,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran
     MESSAGE "Build 'install' target using raw 'make'"
     PASS_REGULAR_EXPRESSION_ALL
       "Installing: .+/install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake"
-      "Installing: .+/install/include/Makefile.export.WithSubpackages"
 
   TEST_4 CMND ${CMAKE_COMMAND}
     ARGS
@@ -1346,7 +1326,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
@@ -1400,7 +1379,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibPrefix
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DTribitsExProj_LIBRARY_NAME_PREFIX=tep_
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
@@ -1459,7 +1437,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
@@ -1641,7 +1618,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       -DTribitsExProj_LIBRARY_NAME_PREFIX=tep_
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
@@ -2012,7 +1988,6 @@ tribits_add_advanced_test( TribitsExampleProject_WrapExternal
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_DEBUG=OFF
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       -DTribitsExProj_ENABLE_WrapExternal=ON
       -DTribitsExProj_ENABLE_TESTS=ON
@@ -2114,7 +2089,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_DEBUG=OFF
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
@@ -2202,7 +2176,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_DEBUG=OFF
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES=OFF
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
@@ -2649,7 +2622,6 @@ tribits_add_advanced_test( TribitsExampleProject_DisableWithSubpackagesB_EnableW
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
-      -DTribitsExProj_ENABLE_EXPORT_MAKEFILES_DEFAULT=OFF
       -DTribitsExProj_SHORTCIRCUIT_AFTER_DEPENDENCY_HANDLING=ON
       -DTribitsExProj_ENABLE_WithSubpackagesA=OFF
       -DTribitsExProj_ENABLE_WithSubpackagesB=ON

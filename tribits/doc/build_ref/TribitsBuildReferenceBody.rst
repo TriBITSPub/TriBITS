@@ -2559,15 +2559,6 @@ This will generate the file ``<Project>Config.cmake`` for the project and the
 files ``<Package>Config.cmake`` for each enabled package in the build tree.
 In addition, this will install versions of these files into the install tree.
 
-To configure Makefile export files, configure with::
-
-  -D <Project>_ENABLE_EXPORT_MAKEFILES=ON
-
-which will generate the file ``Makefile.export.<Project>`` for the project and
-the files ``Makefile.export.<Package>`` for each enabled package in the build
-tree.  In addition, this will install versions of these files into the install
-tree.
-
 The list of export files generated can be reduced by specifying the exact list
 of packages the files are requested for with::
 

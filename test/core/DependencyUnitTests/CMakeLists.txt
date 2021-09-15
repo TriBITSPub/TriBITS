@@ -378,12 +378,6 @@ create_reduced_dependency_handling_test_case(
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
     -DTrilinos_VERBOSE_CONFIGURE:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Teuchos_FULL_ENABLED_DEP_PACKAGES=''"
-    "RTOp_FULL_ENABLED_DEP_PACKAGES='Teuchos'"
-    "Epetra_FULL_ENABLED_DEP_PACKAGES=''"
-    "ThyraCoreLibs_FULL_ENABLED_DEP_PACKAGES='RTOp.Teuchos'"
-    "ThyraEpetra_FULL_ENABLED_DEP_PACKAGES='ThyraCoreLibs.Epetra.RTOp.Teuchos'"
-    "Thyra_FULL_ENABLED_DEP_PACKAGES='ThyraEpetra.ThyraCoreLibs.Epetra.RTOp.Teuchos'"
     "MPI_FINDMOD='.*/ReducedMockTrilinos/../../core/std_tpls/FindTPLMPI.cmake'"
     "MPI_TESTGROUP='PT'"
     "MPI_TPLS_LIST_FILE='.*/ReducedMockTrilinos/TPLsList.cmake'"

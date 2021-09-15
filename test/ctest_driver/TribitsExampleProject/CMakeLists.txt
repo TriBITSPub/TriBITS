@@ -2379,10 +2379,6 @@ function(generate_aao_tests)
       PASS_REGULAR_EXPRESSION_ALL
         "A.hpp"
         "B.hpp"
-        "Makefile.export.MixedLang"
-        "Makefile.export.SimpleCxx"
-        "Makefile.export.TribitsExProj"
-        "Makefile.export.WithSubpackages"
         "MixedLang.hpp"
         "SimpleCxx_HelloWorld.hpp"
       ALWAYS_FAIL_ON_NONZERO_RETURN

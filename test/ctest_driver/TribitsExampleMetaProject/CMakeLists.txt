@@ -196,7 +196,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "-- TribitsExMetaProj_BRANCH='for-testing'"
       "Calling ctest_update[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/TribitsExampleMetaProject"
       "Old revision of repository is: [a-z0-9]+"
-      "New revision of repository is: e12aad94c7514b42d059a7aa0488346dc0a8a9c0"
+      "New revision of repository is: 863461e3035d24c632e175c087761e83db28bdc3"
       "ctest_update[(][.][.][.][)] returned '[0-9]+'"
       "cmake -P tribits_ctest_update_commands[.]cmake"
       "Running: .*/git checkout -B for-testing --track origin/for-testing"
@@ -258,9 +258,9 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
     SKIP_CLEAN_WORKING_DIRECTORY
     PASS_REGULAR_EXPRESSION_ALL
       "[*][*][*] Base Git Repo: TribitsExampleMetaProject"
-      "HEAD is now at 56877b3 Update more settings go get automated testing working [(]#278[)]"
+      "HEAD is now at e12aad9 Merge branch 'tribits-github-snapshot' [(]TriBITSPub/TriBITS#309[)]"
       "[*][*][*] Git Repo: TribitsExampleProject"
-      "HEAD is now at 348adfa Update the README file some [(]tribitspub/tribits#278[)]"
+      "HEAD is now at 59c7057 Merge branch 'tribits-github-snapshot'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_11
@@ -280,11 +280,11 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "-- ENV_TribitsExMetaProj_BRANCH='for-testing'"
       "-- TribitsExMetaProj_BRANCH='for-testing'"
       "Calling ctest_update[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/TribitsExampleMetaProject"
-      "Old revision of repository is: 56877b3b3dd06f41dfb27cedcedc2693aafaef03"
-      "New revision of repository is: e12aad94c7514b42d059a7aa0488346dc0a8a9c0"
-      "ctest_update[(][.][.][.][)] returned '7'"
+      "Old revision of repository is: e12aad94c7514b42d059a7aa0488346dc0a8a9c0"
+      "New revision of repository is: 863461e3035d24c632e175c087761e83db28bdc3"
+      "ctest_update[(][.][.][.][)] returned '10'"
       "cmake -P tribits_ctest_update_commands[.]cmake"
-      "HEAD is now at 56877b3 Update more settings go get automated testing working [(]#278[)]"
+      "HEAD is now at e12aad9 Merge branch 'tribits-github-snapshot' [(]TriBITSPub/TriBITS#309[)]"
       "Git Update PASSED!"
       "For extra repos, doing switch to branch for-testing"
       "TribitsExampleProject: Doing GIT update from URL '.*github[.]com.tribits/TribitsExampleProject[.]git' to dir '.*/TribitsExampleProject' [.][.][.]"
@@ -414,8 +414,8 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
       "First perform the initial checkout: .*/git. clone -b for-testing -o github .*github.com.tribits/TribitsExampleMetaProject.git"
       "Perform checkout in directory: .*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote"
       "Calling ctest_update[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/TribitsExampleMetaProject"
-      "Old revision of repository is: e12aad94c7514b42d059a7aa0488346dc0a8a9c0"
-      "New revision of repository is: e12aad94c7514b42d059a7aa0488346dc0a8a9c0"
+      "Old revision of repository is: 863461e3035d24c632e175c087761e83db28bdc3"
+      "New revision of repository is: 863461e3035d24c632e175c087761e83db28bdc3"
       "ctest_update[(][.][.][.][)] returned '0'"
       "cmake -P tribits_ctest_update_commands[.]cmake"
       "Git Update PASSED!"
@@ -528,11 +528,11 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
       "-- ENV_TribitsExMetaProj_BRANCH='for-testing'"
       "-- TribitsExMetaProj_BRANCH='for-testing'"
       "Calling ctest_update[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/TribitsExampleMetaProject"
-      "Old revision of repository is: 56877b3b3dd06f41dfb27cedcedc2693aafaef03"
-      "New revision of repository is: e12aad94c7514b42d059a7aa0488346dc0a8a9c0"
-      "ctest_update[(][.][.][.][)] returned '7'"
+      "Old revision of repository is: e12aad94c7514b42d059a7aa0488346dc0a8a9c0"
+      "New revision of repository is: 863461e3035d24c632e175c087761e83db28bdc3"
+      "ctest_update[(][.][.][.][)] returned '10'"
       "cmake -P tribits_ctest_update_commands[.]cmake"
-      "HEAD is now at 56877b3 Update more settings go get automated testing working [(]#278[)]"
+      "HEAD is now at e12aad9 Merge branch 'tribits-github-snapshot' [(]TriBITSPub/TriBITS#309[)]"
       "Git Update PASSED!"
       "For extra repos, doing switch to branch for-testing"
       "TribitsExampleProject: Doing GIT update from URL '.*github[.]com.tribits/TribitsExampleProject[.]git' to dir '.*/TribitsExampleProject' [.][.][.]"
@@ -653,28 +653,28 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_version_date
     CMND cat
     ARGS BUILD/TribitsExampleProject/TribitsExampleProject_version_date.h
     PASS_REGULAR_EXPRESSION
-      "#define TRIBITSEXAMPLEPROJECT_VERSION_DATE 2020121123"
+      "#define TRIBITSEXAMPLEPROJECT_VERSION_DATE 2021091421"
 
   TEST_4
     MESSAGE "Check TribitsExampleProject/VersionDate.cmake"
     CMND cat
     ARGS BUILD/TribitsExampleProject/VersionDate.cmake
     PASS_REGULAR_EXPRESSION
-      "set[(]TRIBITSEXAMPLEPROJECT_VERSION_DATE 2020121123[)]"
+      "set[(]TRIBITSEXAMPLEPROJECT_VERSION_DATE 2021091421[)]"
 
   TEST_5
     MESSAGE "Check just macro in TribitsExampleProjectAddons_version_date.h"
     CMND cat
     ARGS BUILD/TribitsExampleProjectAddons/TribitsExampleProjectAddons_version_date.h
     PASS_REGULAR_EXPRESSION
-      "#define TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE 2019021913"
+      "#define TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE 2021091421"
 
   TEST_6
     MESSAGE "Check TribitsExampleProjectAddons/VersionDate.cmake"
     CMND cat
     ARGS BUILD/TribitsExampleProjectAddons/VersionDate.cmake
     PASS_REGULAR_EXPRESSION
-      "set[(]TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE 2019021913[)]"
+      "set[(]TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE 2021091421[)]"
 
   TEST_7
     MESSAGE "Check that installed TribitsExMetaProjec_version_date.h matches expected entire file!"
@@ -688,14 +688,14 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_version_date
     CMND cat
     ARGS BUILD/install/include/TribitsExampleProject_version_date.h
     PASS_REGULAR_EXPRESSION
-      "#define TRIBITSEXAMPLEPROJECT_VERSION_DATE 2020121123"
+      "#define TRIBITSEXAMPLEPROJECT_VERSION_DATE 2021091421"
 
   TEST_9
     MESSAGE "Check just the version date macro in installed TribitsExampleProjectAddons_version_date.h"
     CMND cat
     ARGS BUILD/install/include/TribitsExampleProjectAddons_version_date.h
     PASS_REGULAR_EXPRESSION
-      "#define TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE 2019021913"
+      "#define TRIBITSEXAMPLEPROJECTADDONS_VERSION_DATE 2021091421"
 
   TEST_10
     MESSAGE "Reconfigure to see the tracking of the includes of VersionDate.cmake files"
