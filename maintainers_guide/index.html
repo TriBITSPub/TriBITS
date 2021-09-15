@@ -394,7 +394,7 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2021-09-13
+<dd class="field-even"><p>2021-09-15
 :Version: .. include:: ../copied_files/TribitsGitVersion.txt</p>
 </dd>
 </dl>
@@ -1342,9 +1342,8 @@ set(PROJECT_NAME TribitsExProj)
 # Turn on export dependency generation for WrapExteranl package
 set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES_DEFAULT ON)
 
-# Turn on by default the gneration of the export files
+# Turn on by default the generation of the export files
 set(${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES_DEFAULT ON)
-set(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES_DEFAULT ON)
 </pre></div>
 </div>
 <p>A meta-project’s <code class="docutils literal notranslate"><span class="pre">ProjectName.cmake</span></code> file might have a number of other
@@ -2169,15 +2168,13 @@ them to be enabled.  For example, Trilinos disables the package
 <p>which currently looks like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>macro(TRIBITS_REPOSITORY_SETUP_EXTRA_OPTIONS)
 
-  assert_defined(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES)
   assert_defined(${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
 
   if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
     message(
       &quot;\n***&quot;
       &quot;\n*** NOTE: Setting ${PROJECT_NAME}_ENABLE_WrapExternal=OFF&quot;
-      &quot; because ${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES or&quot;
-      &quot; ${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES is ON!&quot;
+      &quot; because ${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES=&#39;${${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES}&#39;!&quot;
       &quot;\n***\n&quot;
       )
     set(${PROJECT_NAME}_ENABLE_WrapExternal OFF)
@@ -3752,9 +3749,8 @@ set(PROJECT_NAME TribitsExProj)
 # Turn on export dependency generation for WrapExteranl package
 set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES_DEFAULT ON)
 
-# Turn on by default the gneration of the export files
+# Turn on by default the generation of the export files
 set(${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES_DEFAULT ON)
-set(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES_DEFAULT ON)
 </pre></div>
 </div>
 <p>The variable <code class="docutils literal notranslate"><span class="pre">PROJECT_NAME=TribitsExProj</span></code> is used to prefix (using
@@ -9376,7 +9372,6 @@ a given TriBITS project are:</p>
 <li><p><a class="reference internal" href="#project-name-enable-cxx">${PROJECT_NAME}_ENABLE_CXX</a></p></li>
 <li><p><a class="reference internal" href="#project-name-enable-c">${PROJECT_NAME}_ENABLE_C</a></p></li>
 <li><p><a class="reference internal" href="#project-name-enable-development-mode">${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE</a></p></li>
-<li><p><a class="reference internal" href="#project-name-enable-export-makefiles">${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES</a></p></li>
 <li><p><a class="reference internal" href="#project-name-enable-fortran">${PROJECT_NAME}_ENABLE_Fortran</a></p></li>
 <li><p><a class="reference internal" href="#project-name-enable-install-cmake-config-files">${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES</a></p></li>
 <li><p><a class="reference internal" href="#project-name-enable-secondary-tested-code">${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE</a></p></li>
@@ -9633,21 +9628,6 @@ default in release mode.  In addition, strong compiler warnings are enabled
 by default in development mode but are disabled by default in release mode.
 This variable also affects the behavior of <a class="reference internal" href="#tribits-set-st-for-dev-mode">tribits_set_st_for_dev_mode()</a>.</p>
 </div></blockquote>
-<p id="project-name-enable-export-makefiles"><strong>${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES</strong></p>
-<blockquote>
-<div><p>If <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES</span></code> is <code class="docutils literal notranslate"><span class="pre">ON</span></code>, then
-<code class="docutils literal notranslate"><span class="pre">Makefile.export.&lt;PackageName&gt;</span></code> will get created at configure time in the
-build tree and installed into the install tree.  See <a class="reference external" href="TribitsBuildReference.html">TribitsBuildReference</a>
-for details.  The TriBITS default is <code class="docutils literal notranslate"><span class="pre">ON</span></code> but a project can decide to turn
-this off by default by setting:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>set(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES_DEFAULT OFF)
-</pre></div>
-</div>
-<p>A project might want to disable the generation of export makefiles by default
-if its main purpose is to provide executables.  There is no reason to provide
-an export makefile if libraries and headers are not actually installed (see
-<a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a>)</p>
-</div></blockquote>
 <p id="project-name-enable-fortran"><strong>${PROJECT_NAME}_ENABLE_Fortran</strong></p>
 <blockquote>
 <div><p>If <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_Fortran</span></code> is <code class="docutils literal notranslate"><span class="pre">ON</span></code>, then Fortran support for
@@ -9720,13 +9700,12 @@ TriBITS default is <code class="docutils literal notranslate"><span class="pre">
 <p id="project-name-generate-export-file-dependencies"><strong>${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES</strong></p>
 <blockquote>
 <div><p>If <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES</span></code> is <code class="docutils literal notranslate"><span class="pre">ON</span></code>, then the
-data-structures needed to generate <code class="docutils literal notranslate"><span class="pre">Makefile.export.&lt;PackageName&gt;</span></code> and
-<code class="docutils literal notranslate"><span class="pre">&lt;PackageName&gt;Config.cmake</span></code> are created.  These data structures are also
-needed in order to generate export makefiles on demand using the function
+data-structures needed to generate <code class="docutils literal notranslate"><span class="pre">&lt;PackageName&gt;Config.cmake</span></code> files are
+created.  These data structures are also needed in order to generate export
+makefiles on demand using the function
 <a class="reference internal" href="#tribits-write-flexible-package-client-export-files">tribits_write_flexible_package_client_export_files()</a>.  The default in
 TriBITS is to turn this <code class="docutils literal notranslate"><span class="pre">ON</span></code> automatically by default if
-<code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES</span></code> or
-<code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES</span></code> are <code class="docutils literal notranslate"><span class="pre">ON</span></code>.  Else, by
+<code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES</span></code> is <code class="docutils literal notranslate"><span class="pre">ON</span></code>.  Else, by
 default, TriBITS sets this to <code class="docutils literal notranslate"><span class="pre">OFF</span></code>.  The only reason for the project to
 override the default is to set it to <code class="docutils literal notranslate"><span class="pre">ON</span></code> as with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES_DEFAULT ON)
@@ -14552,18 +14531,15 @@ an explicit “– ” line prefix so that it prints nice even on Windows CMake.
 </section>
 <section id="tribits-write-flexible-package-client-export-files">
 <h3><a class="toc-backref" href="#id159">tribits_write_flexible_package_client_export_files()</a><a class="headerlink" href="#tribits-write-flexible-package-client-export-files" title="Permalink to this headline"></a></h3>
-<p>Utility function for writing <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}Config.cmake</span></code> and/or the
-<code class="docutils literal notranslate"><span class="pre">Makefile.export.${PACKAGE_NAME}</span></code> files for package <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code>
-with some greater flexibility than what is provided by the function
-<code class="docutils literal notranslate"><span class="pre">tribits_write_package_client_export_files()</span></code>.</p>
+<p>Utility function for writing <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}Config.cmake</span></code> files for
+package <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code> with some greater flexibility than what is
+provided by the function <code class="docutils literal notranslate"><span class="pre">tribits_write_package_client_export_files()</span></code>.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_write_flexible_package_client_export_files</span><span class="p">(</span>
   <span class="n">PACKAGE_NAME</span> <span class="o">&lt;</span><span class="n">packageName</span><span class="o">&gt;</span>
   <span class="p">[</span><span class="n">EXPORT_FILE_VAR_PREFIX</span> <span class="o">&lt;</span><span class="n">exportFileVarPrefix</span><span class="o">&gt;</span><span class="p">]</span>
   <span class="p">[</span><span class="n">WRITE_CMAKE_CONFIG_FILE</span> <span class="o">&lt;</span><span class="n">cmakeConfigFileFullPath</span><span class="o">&gt;</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">WRITE_EXPORT_MAKEFILE</span> <span class="o">&lt;</span><span class="n">exportMakefileFileFullPath</span><span class="o">&gt;</span><span class="p">]</span>
   <span class="p">[</span><span class="n">WRITE_INSTALL_CMAKE_CONFIG_FILE</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">WRITE_INSTALL_EXPORT_MAKEFILE</span><span class="p">]</span>
   <span class="p">)</span>
 </pre></div>
 </div>
@@ -14587,34 +14563,13 @@ export file for use by external CMake client projects will be created as
 the file <code class="docutils literal notranslate"><span class="pre">&lt;cmakeConfigFileFullPath&gt;</span></code>.  NOTE: the argument should be
 the full path!</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">WRITE_EXPORT_MAKEFILE</span> <span class="pre">&lt;exportMakefileFileFullPath&gt;</span></code></p>
-<blockquote>
-<div><p>If specified, then the package’s (<code class="docutils literal notranslate"><span class="pre">&lt;packageName&gt;</span></code>) export makefile for
-use by external Makefile client projects will be created in the file
-&lt;exportMakefileFileFullPath&gt;.  NOTE: the argument should be the full
-path!</p>
-</div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">WRITE_INSTALL_CMAKE_CONFIG_FILE</span></code></p>
 <blockquote>
 <div><p>If specified, then the package’s (<code class="docutils literal notranslate"><span class="pre">&lt;packageName&gt;</span></code>) install cmake
 configured export file will be installed in to the install tree as well.
 The name and location of this file is hard-coded.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">WRITE_INSTALL_EXPORT_MAKEFILE</span></code></p>
-<blockquote>
-<div><p>If specified, then the package’s (<code class="docutils literal notranslate"><span class="pre">&lt;packageName&gt;</span></code>) install export
-makefile to be installed into the install tree as well.  The name and
-location of this file is hard-coded.</p>
 </div></blockquote>
-</div></blockquote>
-<p>NOTE: The arguments to this function may look strange but the motivation is
-to support very specialized use cases such as when a TriBITS package needs
-to generate an export makefile for a given package but the name of the
-export makefile must be different and use different variable name prefixes.
-The particular use case is when wrapping an external autotools project that
-depends on Trilinos and needs to read in the <code class="docutils literal notranslate"><span class="pre">Makefile.export.Trilinos</span></code>
-file but this file needs to be generated for a subset of enabled packages on
-the fly during a one-pass configure.</p>
 <p>NOTE: This function does <em>not</em> contain the <code class="docutils literal notranslate"><span class="pre">install()</span></code> commands because
 CMake will not allow those to even be present in scripting mode that is used
 for unit testing this function.  Instead, the files to be installed are only
@@ -14652,6 +14607,7 @@ code).</p>
 <span class="o">...</span>
 </pre></div>
 </div>
+<p>In: core/utils/AddSubdirectories.cmake:41</p>
 </section>
 <section id="advanced-option">
 <h3><a class="toc-backref" href="#id162">advanced_option()</a><a class="headerlink" href="#advanced-option" title="Permalink to this headline"></a></h3>
@@ -14666,6 +14622,7 @@ duplication).</p>
 <span class="n">mark_as_advanced</span><span class="p">(</span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>In: core/utils/AdvancedOption.cmake:41</p>
 </section>
 <section id="advanced-set">
 <h3><a class="toc-backref" href="#id163">advanced_set()</a><a class="headerlink" href="#advanced-set" title="Permalink to this headline"></a></h3>
@@ -14680,6 +14637,7 @@ and duplication).</p>
 <span class="n">mark_as_advanced</span><span class="p">(</span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>In: core/utils/AdvancedSet.cmake:42</p>
 </section>
 <section id="append-cmndline-args">
 <h3><a class="toc-backref" href="#id164">append_cmndline_args()</a><a class="headerlink" href="#append-cmndline-args" title="Permalink to this headline"></a></h3>
@@ -14692,6 +14650,7 @@ command-line arguments.</p>
 <p>This function just appends the command-line arguments in the string
 <code class="docutils literal notranslate"><span class="pre">&quot;&lt;extraArgs&gt;&quot;</span></code> but does not add an extra space if <code class="docutils literal notranslate"><span class="pre">&lt;var&gt;</span></code> is empty on
 input.  This just makes the formatting of command-line arguments easier.</p>
+<p>In: core/utils/AppendCmndlineArgs.cmake:41</p>
 </section>
 <section id="append-glob">
 <h3><a class="toc-backref" href="#id165">append_glob()</a><a class="headerlink" href="#append-glob" title="Permalink to this headline"></a></h3>
@@ -14702,6 +14661,7 @@ input.  This just makes the formatting of command-line arguments easier.</p>
 </pre></div>
 </div>
 <p>On output, <code class="docutils literal notranslate"><span class="pre">&lt;fileListVar&gt;</span></code> will have the list of glob files appended.</p>
+<p>In: core/utils/AppendGlob.cmake:43</p>
 </section>
 <section id="append-global-set">
 <h3><a class="toc-backref" href="#id166">append_global_set()</a><a class="headerlink" href="#append-global-set" title="Permalink to this headline"></a></h3>
@@ -14713,6 +14673,7 @@ boiler-plate code and mistakes).</p>
 </div>
 <p>NOTE: The variable <code class="docutils literal notranslate"><span class="pre">&lt;varName&gt;</span></code> must exist before calling this function.
 To set it empty initially use <a class="reference internal" href="#global-null-set">global_null_set()</a>.</p>
+<p>In: core/utils/AppendGlobalSet.cmake:44</p>
 </section>
 <section id="append-set">
 <h3><a class="toc-backref" href="#id167">append_set()</a><a class="headerlink" href="#append-set" title="Permalink to this headline"></a></h3>
@@ -14728,6 +14689,7 @@ code).</p>
 </div>
 <p>There is better error reporting if one misspells <code class="docutils literal notranslate"><span class="pre">APPEND_SET</span></code> than if one
 misspells <code class="docutils literal notranslate"><span class="pre">APPEND</span></code>.</p>
+<p>In: core/utils/AppendSet.cmake:41</p>
 </section>
 <section id="append-string-var">
 <h3><a class="toc-backref" href="#id168">append_string_var()</a><a class="headerlink" href="#append-string-var" title="Permalink to this headline"></a></h3>
@@ -14741,6 +14703,7 @@ reduces mistakes).</p>
 taken by CMake to bypass the meaning of ‘;’ to separate string characters.
 If one wants to ignore the meaning of these special characters and are okay
 with just adding one string at a time, then use <a class="reference internal" href="#append-string-var-ext">append_string_var_ext()</a>.</p>
+<p>In: core/utils/AppendStringVar.cmake:44</p>
 </section>
 <section id="append-string-var-ext">
 <h3><a class="toc-backref" href="#id169">append_string_var_ext()</a><a class="headerlink" href="#append-string-var-ext" title="Permalink to this headline"></a></h3>
@@ -14752,6 +14715,7 @@ boiler-place code and reduces mistakes).</p>
 </div>
 <p>Simply sets <code class="docutils literal notranslate"><span class="pre">&lt;stringVar&gt;</span> <span class="pre">=</span> <span class="pre">&quot;${&lt;stringVar&gt;}&lt;string&gt;&quot;</span></code> and leaves in <code class="docutils literal notranslate"><span class="pre">';'</span></code>
 without creating new array elements.</p>
+<p>In: core/utils/AppendStringVar.cmake:68</p>
 </section>
 <section id="append-string-var-with-sep">
 <h3><a class="toc-backref" href="#id170">append_string_var_with_sep()</a><a class="headerlink" href="#append-string-var-with-sep" title="Permalink to this headline"></a></h3>
@@ -14763,6 +14727,7 @@ string.</p>
 </div>
 <p>Each of the strings <code class="docutils literal notranslate"><span class="pre">&lt;stri&gt;</span></code> are appended to <code class="docutils literal notranslate"><span class="pre">&lt;stringVar&gt;</span></code> using the
 separation string <code class="docutils literal notranslate"><span class="pre">&lt;sepStr&gt;</span></code>.</p>
+<p>In: core/utils/AppendStringVarWithSep.cmake:43</p>
 </section>
 <section id="assert-defined">
 <h3><a class="toc-backref" href="#id171">assert_defined()</a><a class="headerlink" href="#assert-defined" title="Permalink to this headline"></a></h3>
@@ -14798,6 +14763,7 @@ variable name in the following if statement but typically one would always
 just copy and paste between the two statements so these names are always the
 same.  This is the best that can be done in CMake unfortunately to catch
 usage of misspelled undefined variables.</p>
+<p>In: core/utils/AssertDefined.cmake:41</p>
 </section>
 <section id="combined-option">
 <h3><a class="toc-backref" href="#id172">combined_option()</a><a class="headerlink" href="#combined-option" title="Permalink to this headline"></a></h3>
@@ -14819,6 +14785,7 @@ error and all processing stops.</p>
 <p>This is used by a CMake project to automatically turn on a feature that
 requires a set of other features (when they are all enabled) but allows a
 user to disable the feature if desired.</p>
+<p>In: core/utils/CombinedOption.cmake:46</p>
 </section>
 <section id="concat-strings">
 <h3><a class="toc-backref" href="#id173">concat_strings()</a><a class="headerlink" href="#concat-strings" title="Permalink to this headline"></a></h3>
@@ -14829,6 +14796,7 @@ user to disable the feature if desired.</p>
 </div>
 <p>On output, <code class="docutils literal notranslate"><span class="pre">&lt;outputVar&gt;</span></code> is set to <code class="docutils literal notranslate"><span class="pre">&quot;&lt;str0&gt;&lt;str1&gt;...&quot;</span></code>.  This makes it
 easier to format a long string over multiple CMake source code lines.</p>
+<p>In: core/utils/ConcatStrings.cmake:44</p>
 </section>
 <section id="dual-scope-append-cmndline-args">
 <h3><a class="toc-backref" href="#id174">dual_scope_append_cmndline_args()</a><a class="headerlink" href="#dual-scope-append-cmndline-args" title="Permalink to this headline"></a></h3>
@@ -14839,6 +14807,7 @@ command-line options and sets the result in current scope and parent scope.</p>
 </pre></div>
 </div>
 <p>Just calls <a class="reference internal" href="#append-cmndline-args">append_cmndline_args()</a> and then <code class="docutils literal notranslate"><span class="pre">set(&lt;var&gt;</span> <span class="pre">${&lt;var&gt;}</span> <span class="pre">PARENT_SCOPE)</span></code>.</p>
+<p>In: core/utils/DualScopeAppendCmndlineArgs.cmake:44</p>
 </section>
 <section id="dual-scope-prepend-cmndline-args">
 <h3><a class="toc-backref" href="#id175">dual_scope_prepend_cmndline_args()</a><a class="headerlink" href="#dual-scope-prepend-cmndline-args" title="Permalink to this headline"></a></h3>
@@ -14850,6 +14819,7 @@ scope.</p>
 </pre></div>
 </div>
 <p>Just calls <a class="reference internal" href="#prepend-cmndline-args">prepend_cmndline_args()</a> and then <code class="docutils literal notranslate"><span class="pre">set(&lt;var&gt;</span> <span class="pre">${&lt;var&gt;}</span> <span class="pre">PARENT_SCOPE)</span></code>.</p>
+<p>In: core/utils/DualScopePrependCmndlineArgs.cmake:44</p>
 </section>
 <section id="dual-scope-set">
 <h3><a class="toc-backref" href="#id176">dual_scope_set()</a><a class="headerlink" href="#dual-scope-set" title="Permalink to this headline"></a></h3>
@@ -14874,6 +14844,7 @@ the global variable.  However, if one sets the global cache value with
 <code class="docutils literal notranslate"><span class="pre">set(SOMEVAR</span> <span class="pre">someValue</span> <span class="pre">CACHE</span> <span class="pre">INTERNAL</span> <span class="pre">&quot;&quot;)</span></code>, then the value will get
 changed in the current subordinate scope and in all parent scopes all in one
 shot!</p>
+<p>In: core/utils/DualScopeSet.cmake:42</p>
 </section>
 <section id="global-null-set">
 <h3><a class="toc-backref" href="#id177">global_null_set()</a><a class="headerlink" href="#global-null-set" title="Permalink to this headline"></a></h3>
@@ -14888,6 +14859,7 @@ boiler-plate code).</p>
 </pre></div>
 </div>
 <p>This avoid problems with misspelling <code class="docutils literal notranslate"><span class="pre">CACHE</span></code>.</p>
+<p>In: core/utils/GlobalNullSet.cmake:41</p>
 </section>
 <section id="global-set">
 <h3><a class="toc-backref" href="#id178">global_set()</a><a class="headerlink" href="#global-set" title="Permalink to this headline"></a></h3>
@@ -14902,6 +14874,7 @@ code).</p>
 </pre></div>
 </div>
 <p>This avoid misspelling <code class="docutils literal notranslate"><span class="pre">CACHE</span></code>.</p>
+<p>In: core/utils/GlobalSet.cmake:42</p>
 </section>
 <section id="join">
 <h3><a class="toc-backref" href="#id179">join()</a><a class="headerlink" href="#join" title="Permalink to this headline"></a></h3>
@@ -14948,6 +14921,7 @@ arguments given a CMake array like:</p>
 </div>
 <p>WARNING: Be careful to quote string arguments that have spaces because CMake
 interprets those as array boundaries.</p>
+<p>In: core/utils/Join.cmake:42</p>
 </section>
 <section id="message-wrapper">
 <h3><a class="toc-backref" href="#id180">message_wrapper()</a><a class="headerlink" href="#message-wrapper" title="Permalink to this headline"></a></h3>
@@ -14972,6 +14946,7 @@ function).</p>
 functions that call this function to catch error conditions without stopping
 the CMake program.  Otherwise, this is used to capture print messages to
 verify that they say the right thing.</p>
+<p>In: core/utils/MessageWrapper.cmake:48</p>
 </section>
 <section id="multiline-set">
 <h3><a class="toc-backref" href="#id181">multiline_set()</a><a class="headerlink" href="#multiline-set" title="Permalink to this headline"></a></h3>
@@ -14992,6 +14967,7 @@ verify that they say the right thing.</p>
 multiple lines.</p>
 <p>This function is exactly the same as <a class="reference internal" href="#concat-strings">concat_strings()</a> and should not even
 exist :-(</p>
+<p>In: core/utils/MultilineSet.cmake:42</p>
 </section>
 <section id="prepend-cmndline-args">
 <h3><a class="toc-backref" href="#id182">prepend_cmndline_args()</a><a class="headerlink" href="#prepend-cmndline-args" title="Permalink to this headline"></a></h3>
@@ -15004,6 +14980,7 @@ command-line arguments.</p>
 <p>This function just prepends the command-line arguments in the string
 <code class="docutils literal notranslate"><span class="pre">&quot;&lt;extraArgs&gt;&quot;</span></code> but does not add an extra space if <code class="docutils literal notranslate"><span class="pre">&lt;var&gt;</span></code> is empty on
 input.</p>
+<p>In: core/utils/PrependCmndlineArgs.cmake:41</p>
 </section>
 <section id="prepend-global-set">
 <h3><a class="toc-backref" href="#id183">prepend_global_set()</a><a class="headerlink" href="#prepend-global-set" title="Permalink to this headline"></a></h3>
@@ -15015,6 +14992,7 @@ boiler-plate code and mistakes).</p>
 </div>
 <p>The variable <code class="docutils literal notranslate"><span class="pre">&lt;varName&gt;</span></code> must exist before calling this function.  To set
 it empty initially use <a class="reference internal" href="#global-null-set">global_null_set()</a>.</p>
+<p>In: core/utils/PrependGlobalSet.cmake:44</p>
 </section>
 <section id="print-nonempty-var">
 <h3><a class="toc-backref" href="#id184">print_nonempty_var()</a><a class="headerlink" href="#print-nonempty-var" title="Permalink to this headline"></a></h3>
@@ -15024,6 +15002,7 @@ it empty initially use <a class="reference internal" href="#global-null-set">glo
 </pre></div>
 </div>
 <p>Calls <code class="docutils literal notranslate"><span class="pre">print_var(&lt;varName&gt;)</span></code> if <code class="docutils literal notranslate"><span class="pre">${&lt;varName&gt;}</span></code> is not empty.</p>
+<p>In: core/utils/PrintNonemptyVar.cmake:45</p>
 </section>
 <section id="print-nonempty-var-with-spaces">
 <h3><a class="toc-backref" href="#id185">print_nonempty_var_with_spaces()</a><a class="headerlink" href="#print-nonempty-var-with-spaces" title="Permalink to this headline"></a></h3>
@@ -15040,6 +15019,7 @@ instead of <code class="docutils literal notranslate"><span class="pre">';'</spa
 <p>If <code class="docutils literal notranslate"><span class="pre">$&lt;printedVarInOut&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on input, then the variable is not
 touched. If however, the variable <code class="docutils literal notranslate"><span class="pre">$&lt;printedVarInOut&gt;</span></code> is not <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on
 input, then it is set to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on output.</p>
+<p>In: core/utils/PrintNonemptyVarWithSpaces.cmake:44</p>
 </section>
 <section id="print-var">
 <h3><a class="toc-backref" href="#id186">print_var()</a><a class="headerlink" href="#print-var" title="Permalink to this headline"></a></h3>
@@ -15054,6 +15034,7 @@ input, then it is set to <code class="docutils literal notranslate"><span class=
 </div>
 <p>The variable <code class="docutils literal notranslate"><span class="pre">&lt;varName&gt;</span></code> can be defined or undefined or empty.  This uses
 an explicit “– ” line prefix so that it prints nice even on Windows CMake.</p>
+<p>In: core/utils/PrintVar.cmake:46</p>
 </section>
 <section id="remove-global-duplicates">
 <h3><a class="toc-backref" href="#id187">remove_global_duplicates()</a><a class="headerlink" href="#remove-global-duplicates" title="Permalink to this headline"></a></h3>
@@ -15070,6 +15051,7 @@ variable!  That is a fun bug to track down!  The variable
 <code class="docutils literal notranslate"><span class="pre">&lt;globalVarName&gt;</span></code> must be defined before this function is called.  If
 <code class="docutils literal notranslate"><span class="pre">&lt;globalVarName&gt;</span></code> is actually not a global cache variable before this
 function is called it will be after it completes.</p>
+<p>In: core/utils/RemoveGlobalDuplicates.cmake:44</p>
 </section>
 <section id="set-and-inc-dirs">
 <h3><a class="toc-backref" href="#id188">set_and_inc_dirs()</a><a class="headerlink" href="#set-and-inc-dirs" title="Permalink to this headline"></a></h3>
@@ -15081,6 +15063,7 @@ function is called it will be after it completes.</p>
 </div></blockquote>
 <p>On output, this sets <code class="docutils literal notranslate"><span class="pre">&lt;dirVarName&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">&lt;includeDir&gt;</span></code> in the local scope
 and calls <code class="docutils literal notranslate"><span class="pre">include_directories(&lt;includeDir&gt;)</span></code>.</p>
+<p>In: core/utils/SetAndIncDirs.cmake:41</p>
 </section>
 <section id="set-cache-on-off-empty">
 <h3><a class="toc-backref" href="#id189">set_cache_on_off_empty()</a><a class="headerlink" href="#set-cache-on-off-empty" title="Permalink to this headline"></a></h3>
@@ -15091,6 +15074,7 @@ and calls <code class="docutils literal notranslate"><span class="pre">include_d
 <p>Sets a special string cache variable with possible values “”, “ON”, or
 “OFF”.  This results in a nice drop-down box in the CMake cache manipulation
 GUIs.</p>
+<p>In: core/utils/SetCacheOnOffEmpty.cmake:42</p>
 </section>
 <section id="set-default">
 <h3><a class="toc-backref" href="#id190">set_default()</a><a class="headerlink" href="#set-default" title="Permalink to this headline"></a></h3>
@@ -15103,6 +15087,7 @@ set.</p>
 <p>If on input <code class="docutils literal notranslate"><span class="pre">&quot;${&lt;varName&gt;}&quot;==&quot;&quot;</span></code>, then <code class="docutils literal notranslate"><span class="pre">&lt;varName&gt;</span></code> is set to the given
 default <code class="docutils literal notranslate"><span class="pre">&lt;arg0&gt;</span> <span class="pre">&lt;arg1&gt;</span> <span class="pre">...</span></code>.  Otherwise, the existing non-empty value is
 preserved.</p>
+<p>In: core/utils/SetDefault.cmake:41</p>
 </section>
 <section id="set-default-and-from-env">
 <h3><a class="toc-backref" href="#id191">set_default_and_from_env()</a><a class="headerlink" href="#set-default-and-from-env" title="Permalink to this headline"></a></h3>
@@ -15119,6 +15104,7 @@ the value of the local variable <code class="docutils literal notranslate"><span
 value of CMake variables.  Older versions of <code class="docutils literal notranslate"><span class="pre">ctest</span></code> did not support the
 option <code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">&lt;var&gt;:&lt;type&gt;=&lt;value&gt;</span></code> to allow variables to be set through the
 command-line like <code class="docutils literal notranslate"><span class="pre">cmake</span></code> always allowed.</p>
+<p>In: core/utils/SetDefaultAndFromEnv.cmake:46</p>
 </section>
 <section id="split">
 <h3><a class="toc-backref" href="#id192">split()</a><a class="headerlink" href="#split" title="Permalink to this headline"></a></h3>
@@ -15133,6 +15119,7 @@ occurrences of <code class="docutils literal notranslate"><span class="pre">&lt;
 <p>WARNING: <code class="docutils literal notranslate"><span class="pre">&lt;sepStr&gt;</span></code> is interpreted as a regular expression (regex) so keep
 that in mind when considering special regex chars like <code class="docutils literal notranslate"><span class="pre">'*'</span></code>, <code class="docutils literal notranslate"><span class="pre">'.'</span></code>,
 etc!</p>
+<p>In: core/utils/Split.cmake:41</p>
 </section>
 <section id="timer-get-raw-seconds">
 <h3><a class="toc-backref" href="#id193">timer_get_raw_seconds()</a><a class="headerlink" href="#timer-get-raw-seconds" title="Permalink to this headline"></a></h3>
@@ -15153,6 +15140,7 @@ systems that have a standard <code class="docutils literal notranslate"><span cl
 course-grained operations (i.e. that take longer than a second).  If the
 <cite>date</cite> command does not exist, then ${&lt;rawSecondsVar&gt;} will be empty on
 output!</p>
+<p>In: core/utils/TimingUtils.cmake:50</p>
 </section>
 <section id="timer-get-rel-seconds">
 <h3><a class="toc-backref" href="#id194">timer_get_rel_seconds()</a><a class="headerlink" href="#timer-get-rel-seconds" title="Permalink to this headline"></a></h3>
@@ -15165,6 +15153,7 @@ output!</p>
 <code class="docutils literal notranslate"><span class="pre">&lt;startSeconds&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;endSeconds&gt;</span></code> (returned from
 <a class="reference internal" href="#timer-get-raw-seconds">timer_get_raw_seconds()</a>) and sets the result in the local variable
 <code class="docutils literal notranslate"><span class="pre">&lt;relSecondsOutVar&gt;</span></code>.</p>
+<p>In: core/utils/TimingUtils.cmake:80</p>
 </section>
 <section id="timer-print-rel-time">
 <h3><a class="toc-backref" href="#id195">timer_print_rel_time()</a><a class="headerlink" href="#timer-print-rel-time" title="Permalink to this headline"></a></h3>
@@ -15193,6 +15182,7 @@ timer_print_rel_time(${REAL_EXPENSIVE_START} ${REAL_EXPENSIVE_END}
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">real_expensive</span><span class="p">()</span> <span class="n">time</span><span class="p">:</span> <span class="mi">0</span><span class="n">m5</span><span class="mf">.235</span><span class="n">s</span>
 </pre></div>
 </div>
+<p>In: core/utils/TimingUtils.cmake:118</p>
 </section>
 <section id="tribits-strip-quotes-from-str">
 <h3><a class="toc-backref" href="#id196">tribits_strip_quotes_from_str()</a><a class="headerlink" href="#tribits-strip-quotes-from-str" title="Permalink to this headline"></a></h3>
@@ -15203,6 +15193,7 @@ timer_print_rel_time(${REAL_EXPENSIVE_START} ${REAL_EXPENSIVE_END}
 </div>
 <p>If <code class="docutils literal notranslate"><span class="pre">&lt;str_in&gt;</span></code> does not contain a quote char <code class="docutils literal notranslate"><span class="pre">'&quot;'</span></code> as the first and last
 char, then the original <code class="docutils literal notranslate"><span class="pre">&lt;str_in&gt;</span></code> is returned in <code class="docutils literal notranslate"><span class="pre">&lt;str_var_out&gt;</span></code>.</p>
+<p>In: core/utils/TribitsStripQuotesFromStr.cmake:2</p>
 </section>
 <section id="unittest-compare-const">
 <h3><a class="toc-backref" href="#id197">unittest_compare_const()</a><a class="headerlink" href="#unittest-compare-const" title="Permalink to this headline"></a></h3>
@@ -15216,6 +15207,7 @@ fails.  This prints the variable name and values and shows the test result.</p>
 <p>This updates the global variables <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMRUN</span></code>,
 <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMPASSED</span></code>, and <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_PASS</span></code> which are used
 by the unit test harness system to assess overall pass/fail.</p>
+<p>In: core/utils/UnitTestHelpers.cmake:45</p>
 </section>
 <section id="unittest-has-substr-const">
 <h3><a class="toc-backref" href="#id198">unittest_has_substr_const()</a><a class="headerlink" href="#unittest-has-substr-const" title="Permalink to this headline"></a></h3>
@@ -15231,6 +15223,7 @@ shows the test result.</p>
 <p>This updates the global variables <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMRUN</span></code>,
 <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMPASSED</span></code>, and <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_PASS</span></code> which are used
 by the unit test harness system to assess overall pass/fail.</p>
+<p>In: core/utils/UnitTestHelpers.cmake:144</p>
 </section>
 <section id="unittest-not-has-substr-const">
 <h3><a class="toc-backref" href="#id199">unittest_not_has_substr_const()</a><a class="headerlink" href="#unittest-not-has-substr-const" title="Permalink to this headline"></a></h3>
@@ -15246,6 +15239,7 @@ shows the test result.</p>
 <p>This updates the global variables <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMRUN</span></code>,
 <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMPASSED</span></code>, and <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_PASS</span></code> which are used
 by the unit test harness system to assess overall pass/fail.</p>
+<p>In: core/utils/UnitTestHelpers.cmake:191</p>
 </section>
 <section id="unittest-string-regex">
 <h3><a class="toc-backref" href="#id200">unittest_string_regex()</a><a class="headerlink" href="#unittest-string-regex" title="Permalink to this headline"></a></h3>
@@ -15262,6 +15256,7 @@ by the unit test harness system to assess overall pass/fail.</p>
 <p>This updates the global variables <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMRUN</span></code>,
 <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMPASSED</span></code>, and <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_PASS</span></code> which are used
 by the unit test harness system to assess overall pass/fail.</p>
+<p>In: core/utils/UnitTestHelpers.cmake:87</p>
 </section>
 <section id="unittest-file-regex">
 <h3><a class="toc-backref" href="#id201">unittest_file_regex()</a><a class="headerlink" href="#unittest-file-regex" title="Permalink to this headline"></a></h3>
@@ -15275,6 +15270,7 @@ by the unit test harness system to assess overall pass/fail.</p>
 </div>
 <p>The contents of <code class="docutils literal notranslate"><span class="pre">&lt;inputFileName&gt;</span></code> are read into a string and then passed
 to <a class="reference internal" href="#unittest-string-regex">unittest_string_regex()</a> to assess pass/fail.</p>
+<p>In: core/utils/UnitTestHelpers.cmake:238</p>
 </section>
 <section id="unittest-final-result">
 <h3><a class="toc-backref" href="#id202">unittest_final_result()</a><a class="headerlink" href="#unittest-final-result" title="Permalink to this headline"></a></h3>
@@ -15299,6 +15295,7 @@ failed, the string:</p>
 as an extra precaution to make sure that important unit tests are not left
 out.  CMake is a very loosely typed language and it pays to be a little
 paranoid.</p>
+<p>In: core/utils/UnitTestHelpers.cmake:260</p>
 </section>
 </section>
 </section>
@@ -15594,8 +15591,7 @@ to compile client code against this (sub)packages sources and it’s
 upstream packages and TPL sources.  This variable is used whenever
 building downstream code including downstream libraries or executables in
 the same package, or libraries or executables in downstream packages.  It
-is also used to list out in ${PACKAGE_NAME}Config.cmake and
-Makefile.export.${PACKAGE_NAME} files.</p>
+is also used to list out in ${PACKAGE_NAME}Config.cmake files.</p>
 <p>ToDo: Look to eliminate this variable and just add it to the package’s
 library targets with target_include_directories().</p>
 <p>ToDo: Split off ${PACKAGE_NAME}_TPL_INCLUDE_DIRS</p>
@@ -15606,8 +15602,8 @@ library targets with target_include_directories().</p>
 libraries for this packages and it’s upstream packages and TPLs.  Adding
 these library directories to the CMake link line is unnecessary and would
 cause link-line too long errors on some systems.  Instead, this list of
-library directories is used when creating ${PACKAGE_NAME}Config.cmake and
-Makefile.export.${PACKAGE_NAME} files.</p>
+library directories is used when creating ${PACKAGE_NAME}Config.cmake
+files.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIBRARIES</span></code></p>
 <blockquote>
@@ -15633,13 +15629,12 @@ duplicate libraries on the link line.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES</span></code></p>
 <blockquote>
-<div><p>Lists out, in order, all of the enabled upstream packages that the
-given package depends on and support that package is enabled in the given
+<div><p>Lists out, in order, all of the enabled upstream packages that the given
+package depends on and support that package is enabled in the given
 package.  This is only computed if
-${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES=ON.  This is needed to
-generate the export makefile Makefile.export.${PACKAGE_NAME}.  NOTE: This
-list does <em>not</em> include the package itself.  This list is created after
-all of the enable/disable logic is applied.</p>
+${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES=ON.  NOTE: This list
+does <em>not</em> include the package itself.  This list is created after all of
+the enable/disable logic is applied.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">${PARENT_PACKAGE_NAME}_LIB_TARGETS</span></code></p>
 <blockquote>
