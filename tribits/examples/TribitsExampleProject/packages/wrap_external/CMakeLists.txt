@@ -128,16 +128,21 @@ add_custom_target( build_external_func
 
 # E.1) Create an imported library target and set up the dependencies to it
 # custom target and command.
-add_library(external_func INTERFACE IMPORTED)
-#set_property(TARGET external_func PROPERTY IMPORTED_LOCATION ${EXTERNAL_FUNC_LIB_FILE})
-set_property(TARGET external_func PROPERTY
+add_library(external_func_libname INTERFACE IMPORTED)
+set_property(TARGET external_func_libname PROPERTY
   IMPORTED_LIBNAME external_func)
+target_link_libraries(external_func_libname
+  INTERFACE pws_a)
+if (${PACKAGE_NAME}_ENABLE_MixedLang)
+  target_link_libraries(external_func_libname
+    INTERFACE mixedlang)
+endif()
+add_dependencies(external_func_libname build_external_func)
+add_library(external_func INTERFACE)
+target_link_libraries(external_func
+  INTERFACE external_func_libname)
 target_link_options(external_func
   INTERFACE "-L${EXTERNAL_FUNC_BINARY_DIR}")
-add_dependencies(external_func build_external_func)
-# NOTE: Above, you have to use the custom target associated with the
-# generation command and add it as a dependency of the imported library
-# target.
 
 # E.2) Make sure before we build the external library, we first build the
 # libraries.
