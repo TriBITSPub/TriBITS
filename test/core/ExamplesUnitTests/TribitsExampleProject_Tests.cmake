@@ -2068,7 +2068,7 @@ tribits_add_advanced_test( TribitsExampleProject_WrapExternal
   TEST_15 CMND ${CMAKE_COMMAND} ARGS TribitsExampleProject
      MESSAGE "Recofigure with no changes that will not do anything"
     PASS_REGULAR_EXPRESSION_ALL
-      "This package's most recent binary file ./WrapExternal_run_external_func.exe is more recent than its upstream SE package source or binary files or this package's source files"
+      "This package's most recent binary file (./WrapExternal_run_external_func.exe|./external_func/libexternal_func.a) is more recent than its upstream SE package source or binary files or this package's source files"
   TEST_16 CMND make ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Built target build_external_func"
