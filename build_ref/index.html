@@ -206,7 +206,7 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date</dt>
-<dd class="field-odd"><p>2021-09-15
+<dd class="field-odd"><p>2021-09-17
 :Version: .. include:: ../copied_files/TribitsGitVersion.txt</p>
 </dd>
 </dl>
@@ -1679,13 +1679,14 @@ sure that these files and directories exist before these are used in the
 compiles and links.  (This can actually be a feature in rare cases the
 libraries and header files don’t actually get created until after the
 configure step is complete but before the build step.)</p>
-<p><strong>WARNING:</strong> Do <strong>not</strong> try to hack the system and set, for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TPL_BLAS_LIBRARIES</span><span class="o">=</span><span class="s2">&quot;-L/some/dir -llib1 -llib2 ...&quot;</span>
+<p><strong>WARNING:</strong> It is <strong>not recommended</strong> to specify the TPLs libraries as just a set
+of link options as, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TPL_SomeTPL_LIBRARIES</span><span class="o">=</span><span class="s2">&quot;-L/some/dir;-llib1;-llib2;...&quot;</span>
 </pre></div>
 </div>
 <p>This is not compatible with proper CMake usage and it not guaranteed to be
-supported for all use cases or all platforms!  You should instead always use
-the full library paths when setting <code class="docutils literal notranslate"><span class="pre">TPL_&lt;TPLNAME&gt;_LIBRARIES</span></code>.</p>
+supported for all use cases or all platforms.  (CMake really wants to have
+full library paths when linking.)</p>
 <p>When the variables <code class="docutils literal notranslate"><span class="pre">TPL_&lt;TPLNAME&gt;_INCLUDE_DIRS</span></code> and
 <code class="docutils literal notranslate"><span class="pre">TPL_&lt;TPLNAME&gt;_LIBRARIES</span></code> are not specified, then most
 <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;TPLNAME&gt;.cmake</span></code> modules use a default find operation.  Some will
@@ -1715,6 +1716,18 @@ order.</p></li>
 <p>Most <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;TPLNAME&gt;.cmake</span></code> modules will define a default set of libraries
 to look for and therefore <code class="docutils literal notranslate"><span class="pre">&lt;TPLNAME&gt;_LIBRARY_NAMES</span></code> can typically be left
 off.</p>
+<p>Therefore, to find the same set of libraries for <code class="docutils literal notranslate"><span class="pre">SimpleTPL</span></code> shown
+above, one would specify:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">SomeTPL_LIBRARY_DIRS</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{LIB_BASE}</span><span class="s2">/lib&quot;</span>
+</pre></div>
+</div>
+<p>and if the set of libraries to be found is different than the default, one can
+override that using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">SomeTPL_LIBRARY_NAMES</span><span class="o">=</span><span class="s2">&quot;lib1;lib2&quot;</span>
+</pre></div>
+</div>
+<p>Therefore, this is in fact the preferred way to specify the libraries for a
+TPL.</p>
 <p>In order to allow a TPL that normally requires one or more libraries to ignore
 the libraries, one can set <code class="docutils literal notranslate"><span class="pre">&lt;TPLNAME&gt;_LIBRARY_NAMES</span></code> to empty, for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;</span><span class="n">_LIBRARY_NAMES</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
@@ -1725,7 +1738,7 @@ the libraries, one can set <code class="docutils literal notranslate"><span clas
 </pre></div>
 </div>
 <p>This gives the user full control over what TPLs are supported by which package
-independently.</p>
+independent of whether the TPL is enabled or not.</p>
 <p>Support for an optional TPL can also be turned on implicitly by setting:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE</span><span class="o">&gt;</span><span class="n">_ENABLE_</span><span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;=</span><span class="n">ON</span>
 </pre></div>
@@ -1734,14 +1747,14 @@ independently.</p>
 dependency on <code class="docutils literal notranslate"><span class="pre">&lt;TPLNAME&gt;</span></code>.  That will result in setting
 <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_&lt;TPLNAME&gt;=ON</span></code> internally (but not set in the cache) if
 <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_&lt;TPLNAME&gt;=OFF</span></code> is not already set.</p>
-<p>If all the parts of a TPL are not found on an initial configure the configure
+<p>If all the parts of a TPL are not found on an initial configure, the configure
 will error out with a helpful error message.  In that case, one can change the
 variables <code class="docutils literal notranslate"><span class="pre">&lt;TPLNAME&gt;_INCLUDE_DIRS</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;TPLNAME&gt;_LIBRARY_NAMES</span></code>, and/or
 <code class="docutils literal notranslate"><span class="pre">&lt;TPLNAME&gt;_LIBRARY_DIRS</span></code> in order to help fund the parts of the TPL.  One
-can do this over and over until the TPL is found. By reconfiguring, one avoid
+can do this over and over until the TPL is found. By reconfiguring, one avoids
 a complete configure from scratch which saves time.  Or, one can avoid the
 find operations by directly setting <code class="docutils literal notranslate"><span class="pre">TPL_&lt;TPLNAME&gt;_INCLUDE_DIRS</span></code> and
-<code class="docutils literal notranslate"><span class="pre">TPL_&lt;TPLNAME&gt;_LIBRARIES</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">TPL_&lt;TPLNAME&gt;_LIBRARIES</span></code> as described above.</p>
 <p><strong>WARNING:</strong> The cmake cache variable <code class="docutils literal notranslate"><span class="pre">TPL_&lt;TPLNAME&gt;_LIBRARY_DIRS</span></code> does
 <strong>not</strong> control where libraries are found.  Instead, this variable is set
 during the find processes and is not actually used in the CMake build system
@@ -1802,7 +1815,7 @@ search for, and in what order.</p>
 is usually given in several libraries.  The exact set of libraries needed
 depends on the version of MKL, whether 32bit or 64bit libraries are needed,
 etc.  Figuring out the correct set and ordering of these libraries for a given
-platform may not be trivial.  But once the set and the order of the libraries
+platform may be non-trivial.  But once the set and the order of the libraries
 is known, then one can provide the correct list at configure time.</p>
 <p>For example, suppose one wants to use the threaded MKL libraries listed in the
 directories:</p>
