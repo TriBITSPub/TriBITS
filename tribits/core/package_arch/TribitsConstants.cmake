@@ -100,7 +100,7 @@ if(${CMAKE_HOST_SYSTEM_NAME} STREQUAL "Windows")
   #Apparently FIND_PROGRAM looks for an exact match of the file name.
   #So even though "git clone ..." is valid to use on windows we need to give the
   #full name of the command we want to run.
-  SET(GIT_NAME git.cmd)
+  set(GIT_NAME git.cmd)
 else()
-  SET(GIT_NAME git)
+  set(GIT_NAME git)
 endif()
