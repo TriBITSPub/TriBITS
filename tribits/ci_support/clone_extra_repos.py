@@ -436,7 +436,7 @@ def cloneExtraRepo(inOptions, extraRepoDict):
             "' already exists.  Skipping clone!")
     return
   if not repoVcType in commandMap:
-    print "\n  ==> ERROR: Repo type '"+repoVcType+"' not supported!"
+    print("\n  ==> ERROR: Repo type '"+repoVcType+"' not supported!")
     sys.exit(1)
   cmnd = commandMap[repoVcType]+" "+repoUrl+" "+repoDir
   if inOptions.doOp:
