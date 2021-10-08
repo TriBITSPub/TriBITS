@@ -80,37 +80,6 @@ function(tribits_library_list_to_string LIST PREFIX OUTPUT_STRING)
 endfunction()
 
 
-# CMAKE_CURRENT_LIST_DIR is not defined in CMake versions < 2.8.3, but the
-# Trilinos writes paths that use the value of that variable to this file.
-# Make sure it is available at *find_package* time. Note that all variable
-# references in the code snippet are escaped. This is to keep them from
-# being evaluated until they are actually in the install tree. This is
-# done to handle movable install trees.
-#
-# This function defines the variable
-# DEFINE_CMAKE_CURRENT_LIST_DIR_CODE_CODE_SNIPPET in the caller's scope
-# as a string that can be referenced from CONFIGURE_FILE input files
-# to ensure that the CMAKE_CURRENT_LIST_DIR will be defined on the installation
-# target machine, even if it has an older version of cmake.
-#
-function(tribits_set_define_cmake_current_list_dir_code_snippet)
-  set(DEFINE_CMAKE_CURRENT_LIST_DIR_CODE_SNIPPET "
-# Include guard
-if (${EXPORT_FILE_VAR_PREFIX}_CONFIG_INCLUDED)
-  return()
-endif()
-set(${EXPORT_FILE_VAR_PREFIX}_CONFIG_INCLUDED TRUE)
-
-# Make sure CMAKE_CURRENT_LIST_DIR is usable
-if (NOT DEFINED CMAKE_CURRENT_LIST_DIR)
-  get_filename_component(_THIS_SCRIPT_PATH \${CMAKE_CURRENT_LIST_FILE} PATH)
-  set(CMAKE_CURRENT_LIST_DIR \${_THIS_SCRIPT_PATH})
-endif()
-"
-  PARENT_SCOPE )
-endfunction()
-
-
 # @FUNCTION: tribits_write_flexible_package_client_export_files()
 #
 # Utility function for writing ``${PACKAGE_NAME}Config.cmake`` files for
@@ -199,8 +168,6 @@ function(tribits_write_flexible_package_client_export_files)
   if (TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP)
     print_var(EXPORT_FILE_VAR_PREFIX)
   endif()
-
-  tribits_set_define_cmake_current_list_dir_code_snippet()
 
   #
   # B) Get the set of upstream packages for this package that are enabled,
@@ -448,8 +415,10 @@ include(\"${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}Targets.cmake\")"
   foreach(PATH ${PATH_LIST})
     set(RELATIVE_PATH "${RELATIVE_PATH}/..")
   endforeach()
-  set(FULL_LIBRARY_DIRS_SET "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_LIB_DIR}")
-  set(FULL_INCLUDE_DIRS_SET "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
+  set(FULL_LIBRARY_DIRS_SET
+    "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_LIB_DIR}")
+  set(FULL_INCLUDE_DIRS_SET
+    "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
 
   # Custom code in configuration file.
   set(PACKAGE_CONFIG_CODE "")
@@ -461,35 +430,34 @@ include(\"${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}Targets.cmake\")"
   foreach(DEP_PACKAGE ${${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES})
     set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
 include(\"\${CMAKE_CURRENT_LIST_DIR}/../${DEP_PACKAGE}/${DEP_PACKAGE}Config.cmake\")"
-)
+      )
   endforeach()
-  if(${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES)
+  if (${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES)
     set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}\n")
   endif()
 
   # Import install tree targets into applications.
   get_property(HAS_INSTALL_TARGETS GLOBAL PROPERTY ${PACKAGE_NAME}_HAS_INSTALL_TARGETS)
-  if(HAS_INSTALL_TARGETS)
+  if (HAS_INSTALL_TARGETS)
     set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
 # Import ${PACKAGE_NAME} targets
 include(\"\${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}Targets.cmake\")"
 )
   endif()
 
-  # Write the specification of the rpath if necessary. This is only needed if we're building shared libraries.
-  if(BUILD_SHARED_LIBS)
+  # Write the specification of the rpath if necessary. This is only needed if
+  # we're building shared libraries.
+  if (BUILD_SHARED_LIBS)
     set(SHARED_LIB_RPATH_COMMAND ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG}${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_LIB_DIR})
   endif()
 
   tribits_set_compiler_vars_for_config_file(INSTALL_DIR)
 
   if (PARSE_WRITE_INSTALL_CMAKE_CONFIG_FILE)
-
     configure_file(
-      ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsPackageConfigTemplate.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PACKAGE_NAME}Config_install.cmake
+      "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsPackageConfigTemplate.cmake.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PACKAGE_NAME}Config_install.cmake"
       )
-
   endif()
 
 endfunction()
@@ -561,7 +529,6 @@ endfunction()
 function(tribits_write_project_client_export_files)
 
   set(EXPORT_FILE_VAR_PREFIX ${PROJECT_NAME})
-  tribits_set_define_cmake_current_list_dir_code_snippet()
 
   # Reversing the package list so that libraries will be produced in order of
   # most dependent to least dependent.
@@ -622,19 +589,23 @@ function(tribits_write_project_client_export_files)
   set(${PROJECT_NAME}_CONFIG_TPL_LIBRARIES ${FULL_TPL_LIBRARY_SET})
 
   #
-  # Configure two files for finding ${PROJECT_NAME}. One for the build tree and one for installing
+  # Configure two files for finding ${PROJECT_NAME}. One for the build tree
+  # and one for installing
   #
 
   # Generate a note discouraging editing of the <package>Config.cmake file
   set(DISCOURAGE_EDITING "Do not edit: This file was generated automatically by CMake.")
 
-  #Config file for setting variables and finding include/library paths from the build directory
+  # Config file for setting variables and finding include/library paths from
+  # the build directory
   set(${PROJECT_NAME}_CONFIG_INCLUDE_DIRS ${FULL_INCLUDE_DIRS_SET})
   set(${PROJECT_NAME}_CONFIG_LIBRARY_DIRS ${FULL_LIBRARY_DIRS_SET})
 
-  # Write the specification of the rpath if necessary. This is only needed if we're building shared libraries.
+  # Write the specification of the rpath if necessary. This is only needed if
+  # we're building shared libraries.
   if(BUILD_SHARED_LIBS)
-    string(REPLACE ";" ":" SHARED_LIB_RPATH_COMMAND "${${PROJECT_NAME}_CONFIG_LIBRARY_DIRS}")
+    string(REPLACE ";" ":" SHARED_LIB_RPATH_COMMAND
+     "${${PROJECT_NAME}_CONFIG_LIBRARY_DIRS}")
     set(SHARED_LIB_RPATH_COMMAND ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG}${SHARED_LIB_RPATH_COMMAND})
   endif()
 
@@ -710,12 +681,17 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
   foreach(PATH ${PATH_LIST})
     set(RELATIVE_PATH "${RELATIVE_PATH}/..")
   endforeach()
-  set(${PROJECT_NAME}_CONFIG_INCLUDE_DIRS "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
-  set(${PROJECT_NAME}_CONFIG_LIBRARY_DIRS "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_LIB_DIR}")
+  set(${PROJECT_NAME}_CONFIG_INCLUDE_DIRS
+    "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
+  set(${PROJECT_NAME}_CONFIG_LIBRARY_DIRS
+    "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_LIB_DIR}")
 
-  # Write the specification of the rpath if necessary. This is only needed if we're building shared libraries.
+  # Write the specification of the rpath if necessary. This is only needed if
+  # we're building shared libraries.
   if(BUILD_SHARED_LIBS)
-    set(SHARED_LIB_RPATH_COMMAND ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG}${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_LIB_DIR})
+    set(SHARED_LIB_RPATH_COMMAND
+       "${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG}${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_LIB_DIR}"
+      )
   endif()
 
   # Custom code in configuration file.
@@ -725,11 +701,12 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
 
   if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
     configure_file(
-      ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsProjectConfigTemplate.cmake.in
-      ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config_install.cmake )
+      "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsProjectConfigTemplate.cmake.in"
+      "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config_install.cmake"
+      )
 
     install(
-      FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config_install.cmake
+      FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config_install.cmake"
       DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PROJECT_NAME}"
       RENAME ${PROJECT_NAME}Config.cmake
       )
@@ -748,7 +725,7 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
     COMPATIBILITY SameMajorVersion
     )
   install(
-    FILES ${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
+    FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
     DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PROJECT_NAME}"
     )
 
