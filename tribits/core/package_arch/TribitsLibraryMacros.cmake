@@ -575,7 +575,8 @@ function(tribits_add_library LIBRARY_NAME_IN)
 
     # Add whatever include directories have been defined so far
 
-    include_directories(AFTER ${${PACKAGE_NAME}_INCLUDE_DIRS})
+    #include_directories(AFTER ${${PACKAGE_NAME}_INCLUDE_DIRS})
+    # ToDo: #299: Remove the above once final cleanup is performed for #299.
 
     # Add whatever link directories have been added so far
 
@@ -837,6 +838,12 @@ function(tribits_add_library LIBRARY_NAME_IN)
       set(${PARSE_ADDED_LIB_TARGET_NAME_OUT} ${LIBRARY_NAME} PARENT_SCOPE)
     endif()
 
+    target_include_directories( ${LIBRARY_NAME}
+      PUBLIC ${${PACKAGE_NAME}_INCLUDE_DIRS} )
+    # ToDo: #299: In the final refactoring, this list of include directories
+    # should be extracted from the directory property INCLUDE_DIRECTORIES and
+    # then set INTERFACE instead of PUBLIC.
+
     set_property(
       TARGET ${LIBRARY_NAME}
       APPEND PROPERTY
@@ -912,6 +919,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
       install(
         TARGETS ${LIBRARY_NAME}
         EXPORT ${PACKAGE_NAME}
+        INCLUDES DESTINATION "${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}"
         RUNTIME DESTINATION "${${PROJECT_NAME}_INSTALL_RUNTIME_DIR}"
         LIBRARY DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}"
         ARCHIVE DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}"
