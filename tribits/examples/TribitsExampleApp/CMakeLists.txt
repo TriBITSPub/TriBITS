@@ -26,8 +26,6 @@ endif()
 
 # Build the APP and link to TribitsExProj
 add_executable(app ${CMAKE_CURRENT_SOURCE_DIR}/app.cpp)
-target_include_directories(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-  ${APP_DEPS_INCLUDE_DIRS})
 target_link_libraries(app PRIVATE ${APP_DEPS_LIBRARIES})
 addAppDepCompileDefines()
 
