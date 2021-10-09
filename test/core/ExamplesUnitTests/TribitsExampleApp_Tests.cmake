@@ -337,7 +337,7 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
       CMND ${CMAKE_COMMAND} ARGS
         -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=TRUE
         -DTribitsExApp_FIND_UNDER_BUILD_DIR=${testDir}
-        -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang
+        -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang,WithSubpackages
         ${findByProjectOrPackageArg}
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
       PASS_REGULAR_EXPRESSION_ALL
@@ -363,7 +363,7 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: MixedLang:Mixed Language[;] SimpleCxx:headeronlytpl"
+        "Full Deps: WithSubpackages:B A headeronlytpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:headeronlytpl"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN

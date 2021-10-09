@@ -84,15 +84,16 @@ endfunction()
 #
 # Utility function for writing ``${PACKAGE_NAME}Config.cmake`` files for
 # package ``${PACKAGE_NAME}`` with some greater flexibility than what is
-# provided by the function ``tribits_write_package_client_export_files()``.
+# provided by the function ``tribits_write_package_client_export_files()`` and
+# to allow unit testing the generation of these files..
 #
 # Usage::
 #
 #   tribits_write_flexible_package_client_export_files(
 #     PACKAGE_NAME <packageName>
 #     [EXPORT_FILE_VAR_PREFIX <exportFileVarPrefix>]
-#     [WRITE_CMAKE_CONFIG_FILE <cmakeConfigFileFullPath>]
-#     [WRITE_INSTALL_CMAKE_CONFIG_FILE]
+#     [PACKAGE_CONFIG_FOR_BUILD_BASE_DIR <packageConfigForBuildBaseDir>]
+#     [PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR <packageConfigForInstallBaseDir>]
 #     )
 #
 # The arguments are:
@@ -108,23 +109,30 @@ endfunction()
 #     will be prefixed with ``<exportFileVarPrefix>_`` instead of
 #     ``<packageName>_``.
 #
-#   ``WRITE_CMAKE_CONFIG_FILE <cmakeConfigFileFullPath>``
+#   ``PACKAGE_CONFIG_FOR_BUILD_BASE_DIR <packageConfigForBuildBaseDir>``
 #
-#     If specified, then the package's (``<packageName>``) cmake configure
-#     export file for use by external CMake client projects will be created as
-#     the file ``<cmakeConfigFileFullPath>``.  NOTE: the argument should be
-#     the full path!
+#     If specified, then the package's ``<packageName>Config.cmake`` file and
+#     supporting files will be written under the directory
+#     ``<packageConfigForBuildBaseDir>/`` (and any subdirs that does exist
+#     will be created).  The generated file ``<packageName>Config.cmake`` is
+#     for usage of the package in the build tree (not the install tree) and
+#     points to include directories and libraries in the build tree.
 #
-#   ``WRITE_INSTALL_CMAKE_CONFIG_FILE``
+#   ``PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR <packageConfigForInstallBaseDir>``
 #
-#     If specified, then the package's (``<packageName>``) install cmake
-#     configured export file will be installed in to the install tree as well.
-#     The name and location of this file is hard-coded.
+#     If specified, then the package's ``<packageName>Config_install.cmake``
+#     file and supporting files will be written under the directory
+#     ``<packageConfigForInstallBaseDir>/`` (and any subdirs that does exist
+#     will be created).  The file ``${PACKAGE_NAME}Config_install.cmake`` is
+#     meant to be installed renamed as ``<packageName>Config.cmake`` in the
+#     install tree and it points to installed include directories and
+#     libraries.
 #
-# NOTE: This function does *not* contain the ``install()`` commands because
-# CMake will not allow those to even be present in scripting mode that is used
-# for unit testing this function.  Instead, the files to be installed are only
-# generated in the build tree and the install targets are added else where.
+# NOTE: This function does *not* contain any ``install()`` command itself
+# because CMake will not allow those to even be present in scripting mode that
+# is used for unit testing this function.  Instead, the commands to install
+# the files are added by the function
+# ``tribits_write_package_client_export_files_install_targets()``.
 #
 function(tribits_write_flexible_package_client_export_files)
 
@@ -142,9 +150,9 @@ function(tribits_write_flexible_package_client_export_files)
      #options
      "WRITE_INSTALL_CMAKE_CONFIG_FILE"
      #one_value_keywords
-     ""
+     "PACKAGE_NAME;EXPORT_FILE_VAR_PREFIX;PACKAGE_CONFIG_FOR_BUILD_BASE_DIR;PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR"
      #multi_value_keywords
-     "PACKAGE_NAME;WRITE_CMAKE_CONFIG_FILE;EXPORT_FILE_VAR_PREFIX"
+     ""
      ${ARGN}
      )
 
@@ -332,15 +340,20 @@ function(tribits_write_flexible_package_client_export_files)
   endif()
 
   #
-  # F) Create the contents of the cmake Config.cmake file for the build tree
+  # F) Create the contents of the <Package>Config.cmake file for the build tree
   #
-  # Creating this file in the base dir of the package since it is possible
-  # that the cmake returned path where the file was found would be useful for
-  # a package, and having to dig through the hiding that is done wouldn't be
-  # nice.
+  # These get placed under <buildDir>/cmake_packages/<packageName>/
+  #
+  # That makes them easy to find by find_package() by adding
+  # <buildDir>/cmake_packages/ to CMAKE_PREFIX_PATH.
   #
 
-  if (PARSE_WRITE_CMAKE_CONFIG_FILE)
+  set(BUILD_DIR_CMAKE_PKGS_DIR
+     "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_CMAKE_PKGS_DIR}")
+
+  if (PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR
+      OR PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR
+    )
     # Custom code in configuration file.
     set(PACKAGE_CONFIG_CODE "")
 
@@ -349,7 +362,7 @@ function(tribits_write_flexible_package_client_export_files)
       # Could use file(RELATIVE_PATH ...), but probably not necessary
       # since unlike install trees, build trees need not be relocatable
       set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
-include(\"${${DEP_PACKAGE}_BINARY_DIR}/${DEP_PACKAGE}Config.cmake\")"
+include(\"${BUILD_DIR_CMAKE_PKGS_DIR}/${DEP_PACKAGE}/${DEP_PACKAGE}Config.cmake\")"
         )
     endforeach()
 
@@ -362,13 +375,15 @@ include(\"${${DEP_PACKAGE}_BINARY_DIR}/${DEP_PACKAGE}Config.cmake\")"
     # are sub-packages.  We'd like to export per-package, but deps
     # won't be satisfied, so we export one file for the project for
     # now...
-    if(${TRIBITS_PACKAGE}_HAS_NATIVE_LIBRARIES_TO_INSTALL)
-      export(TARGETS ${${PACKAGE_NAME}_LIBRARIES} FILE
-	"${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}Targets.cmake" APPEND)
+    if (${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL
+        AND PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR
+      )
+      tribits_get_package_config_build_dir_targets_file(${PACKAGE_NAME}
+        "${PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}" packageConfigBuildDirTargetsFile )
       set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
 # Import ${PACKAGE_NAME} targets
-include(\"${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}Targets.cmake\")"
-      )
+include(\"${packageConfigBuildDirTargetsFile}\")"
+        )
     endif()
 
     tribits_set_compiler_vars_for_config_file(BUILD_DIR)
@@ -379,23 +394,23 @@ include(\"${${PROJECT_NAME}_BINARY_DIR}/${PROJECT_NAME}Targets.cmake\")"
       # Replace " by \".
       string(REGEX REPLACE "\"" "\\\\\"" CMAKE_CXX_FLAGS_ESCAPED ${CMAKE_CXX_FLAGS})
     endif()
+    set(tribitsConfigFilesDir
+      "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}")
     configure_file(
-      ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsPackageConfigTemplate.cmake.in
-      "${PARSE_WRITE_CMAKE_CONFIG_FILE}"
+      "${tribitsConfigFilesDir}/TribitsPackageConfigTemplate.cmake.in"
+      "${PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}/${PACKAGE_NAME}Config.cmake"
       )
   endif()
 
   #
-  # G) Create the cmake Config.cmake file for the install tree.
+  # G) Create <Package>Config_install.cmake file for the install tree.
   #
 
   # This file isn't generally useful inside the build tree so it is being
-  # "hidden" in the CMakeFiles directory. It will be placed in the base
-  # install directory for ${PROJECT_NAME} when installed.
-
-  # NOTE: The install target is added in a different function to allow this
-  # function to be unit tested in a cmake -P script.
-
+  # "hidden" in the CMakeFiles directory.  It gets installed in a separate
+  # function.  (NOTE: The install target is added in a different function to
+  # allow this function to be unit tested in a cmake -P script.)
+  #
   # Set the include and library directories relative to the location
   # at which the ${PROJECT_NAME}Config.cmake file is going to be
   # installed. Note the variable reference below is escaped so it
@@ -448,44 +463,94 @@ include(\"\${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}Targets.cmake\")"
   # Write the specification of the rpath if necessary. This is only needed if
   # we're building shared libraries.
   if (BUILD_SHARED_LIBS)
-    set(SHARED_LIB_RPATH_COMMAND ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG}${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_LIB_DIR})
+    set(SHARED_LIB_RPATH_COMMAND
+      ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG}${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_LIB_DIR}
+      )
   endif()
 
   tribits_set_compiler_vars_for_config_file(INSTALL_DIR)
 
-  if (PARSE_WRITE_INSTALL_CMAKE_CONFIG_FILE)
+  if (PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR)
     configure_file(
       "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsPackageConfigTemplate.cmake.in"
-      "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PACKAGE_NAME}Config_install.cmake"
+      "${PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR}/${PACKAGE_NAME}Config_install.cmake"
       )
   endif()
 
 endfunction()
 
 
-# Set the install targets for the package config and export makefiles.
+# @FUNCTION: tribits_write_package_client_export_files_install_targets()
+#
+# Create the ``<Package>ConfigTargets.cmake`` file and install rules and the
+# install() target for the previously generated
+# ``<Package>Config_install.cmake`` files generated by the
+# `tribits_write_flexible_package_client_export_files()`_ function.
+#
+# Usage::
+#
+#   tribits_write_package_client_export_files_install_targets(
+#     PACKAGE_NAME <packageName>
+#     PACKAGE_CONFIG_FOR_BUILD_BASE_DIR <packageConfigForBuildBaseDir>
+#     PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR <packageConfigForInstallBaseDir>
+#     )
 #
 # The install() commands must be in a different subroutine or CMake will not
 # allow you to call the routine, even if you if() it out!
 #
-function(tribits_write_project_client_export_files_install_targets PACKAGE_NAME)
+function(tribits_write_package_client_export_files_install_targets)
 
-  if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
+  cmake_parse_arguments(
+     #prefix
+     PARSE
+     #options
+     ""
+     #one_value_keywords
+     "PACKAGE_NAME;PACKAGE_CONFIG_FOR_BUILD_BASE_DIR;PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR"
+     #multi_value_keywords
+     ""
+     ${ARGN}
+     )
+
+  set(PACKAGE_NAME ${PARSE_PACKAGE_NAME})
+
+  if (${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL
+      AND PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR
+    )
+    tribits_get_package_config_build_dir_targets_file(${PACKAGE_NAME}
+      "${PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}" packageConfigBuildDirTargetsFile )
+    export(
+      EXPORT ${PACKAGE_NAME}
+      FILE "${packageConfigBuildDirTargetsFile}" )
+  endif()
+
+  if (PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR)
     install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${PACKAGE_NAME}Config_install.cmake
+      FILES
+        "${PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR}/${PACKAGE_NAME}Config_install.cmake"
       DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PACKAGE_NAME}"
       RENAME ${PACKAGE_NAME}Config.cmake
       )
-
     if(${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL)
       install(
         EXPORT ${PACKAGE_NAME}
         DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PACKAGE_NAME}"
-        FILE ${PACKAGE_NAME}Targets.cmake
-        )
+        FILE "${PACKAGE_NAME}Targets.cmake" )
     endif()
   endif()
 
+endfunction()
+
+
+# Function to return the full path the targets file for the
+# <Package>Config.cmake file in the build tree.
+#
+function(tribits_get_package_config_build_dir_targets_file  PACKAGE_NAME
+    packageConfigForBuildBaseDir  packageConfigBuildDirTargetsFileOut
+  )
+  set(${packageConfigBuildDirTargetsFileOut}
+    "${PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}/${PACKAGE_NAME}Targets.cmake"
+    PARENT_SCOPE )
 endfunction()
 
 
@@ -499,27 +564,33 @@ function(tribits_write_package_client_export_files PACKAGE_NAME)
     message("\nTRIBITS_WRITE_PACKAGE_CLIENT_EXPORT_FILES: ${PACKAGE_NAME}")
   endif()
 
+  set(BUILD_DIR_CMAKE_PKGS_DIR
+     "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_CMAKE_PKGS_DIR}")
+
   set(EXPORT_FILES_ARGS PACKAGE_NAME ${PACKAGE_NAME})
 
   if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
-    set(WRITE_CMAKE_CONFIG_FILE
-      ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}Config.cmake)
     if(${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      message("For package ${PACKAGE_NAME} creating ${WRITE_CMAKE_CONFIG_FILE}")
+      message("For package ${PACKAGE_NAME} creating ${PACKAGE_NAME}Config.cmake")
     endif()
+    set(PACKAGE_CONFIG_FOR_BUILD_BASE_DIR
+      "${BUILD_DIR_CMAKE_PKGS_DIR}/${PACKAGE_NAME}" )
+    set(PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR
+      "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles" )
     append_set(EXPORT_FILES_ARGS
-      WRITE_CMAKE_CONFIG_FILE "${WRITE_CMAKE_CONFIG_FILE}"
-      WRITE_INSTALL_CMAKE_CONFIG_FILE)
+      PACKAGE_CONFIG_FOR_BUILD_BASE_DIR "${PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}"
+      PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR "${PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR}"
+      )
   endif()
 
   tribits_write_flexible_package_client_export_files(${EXPORT_FILES_ARGS})
 
-  tribits_write_project_client_export_files_install_targets(${PACKAGE_NAME})
+  tribits_write_package_client_export_files_install_targets(${EXPORT_FILES_ARGS})
 
 endfunction()
 
 
-# Write the outer TriBITS project configure and/or export makefiles
+# Write the outer TriBITS <Project>Config.cmake file
 #
 # If ${PROJECT_NAME}_VERSION is not set or is '' on input, then it will be set
 # to 0.0.0 in order to create the ${PROJECT_NAME}ConfigVersion.cmake file.

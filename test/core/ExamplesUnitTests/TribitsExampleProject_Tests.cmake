@@ -193,7 +193,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
       -DDUMMY_PROJECT_NAME=DummyProject
       -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
       -DEXPORT_VAR_PREFIX=WithSubpackages
-      -DEXPORT_CONFIG_FILE=../packages/with_subpackages/WithSubpackagesConfig.cmake
+      -DEXPORT_CONFIG_FILE=../cmake_packages/WithSubpackages/WithSubpackagesConfig.cmake
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
@@ -990,7 +990,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       -DDUMMY_PROJECT_NAME=DummyProject
       -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
       -DEXPORT_VAR_PREFIX=WithSubpackages
-      -DEXPORT_CONFIG_FILE=../packages/with_subpackages/WithSubpackagesConfig.cmake
+      -DEXPORT_CONFIG_FILE=../cmake_packages/WithSubpackages/WithSubpackagesConfig.cmake
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
@@ -1111,7 +1111,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
       -DDUMMY_PROJECT_NAME=DummyProject
       -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
       -DEXPORT_VAR_PREFIX=WithSubpackages
-      -DEXPORT_CONFIG_FILE=../packages/with_subpackages/WithSubpackagesConfig.cmake
+      -DEXPORT_CONFIG_FILE=../cmake_packages/WithSubpackages/WithSubpackagesConfig.cmake
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL

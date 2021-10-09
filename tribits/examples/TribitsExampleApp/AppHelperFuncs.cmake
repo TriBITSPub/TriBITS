@@ -29,21 +29,9 @@ endmacro()
 #
 macro(getTribitsExProjStuffByPackageUnderBuildDir)
 
-  # Get the list of all of package build dirs that have <Package>Config.cmake
-  # files in the build tree.
-  file(GLOB_RECURSE allPackageConfigFiles
-    "${${PROJECT_NAME}_FIND_UNDER_BUILD_DIR}/packages/*Config.cmake")
-  #print_var(allPackageConfigFiles)
-  set(allPackageBuildDirs "")
-  foreach (packageConfigFile IN LISTS allPackageConfigFiles)
-    get_filename_component(packageBuildDir "${packageConfigFile}" DIRECTORY)
-    list(APPEND allPackageBuildDirs "${packageBuildDir}")
-  endforeach()
-  #print_var(allPackageBuildDirs)
-  list(PREPEND CMAKE_PREFIX_PATH "${allPackageBuildDirs}")
+  list(PREPEND CMAKE_PREFIX_PATH
+    "${${PROJECT_NAME}_FIND_UNDER_BUILD_DIR}/cmake_packages")
 
-  # Now find those <Package>Config.cmake files and process them just like they
-  # were in the install tree.
   getTribitsExProjStuffByPackage()
 
 endmacro()
