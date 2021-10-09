@@ -69,7 +69,6 @@ include(TribitsReportInvalidTribitsUsage)
 #
 
 
-#
 # Macro that defines the package architecture system variables used to link
 # different SE packages together
 #
@@ -84,7 +83,6 @@ macro(tribits_define_linkage_vars PACKAGE_NAME_IN)
 endmacro()
 
 
-#
 # Macro that defines variables that create global targets
 #
 macro(tribits_define_target_vars PARENT_PACKAGE_NAME_IN)
@@ -92,7 +90,7 @@ macro(tribits_define_target_vars PARENT_PACKAGE_NAME_IN)
   global_null_set(${PARENT_PACKAGE_NAME_IN}_ALL_TARGETS)
 endmacro()
 
-#
+
 # Set up some common variables used in the creation of an SE package
 #
 
@@ -111,7 +109,6 @@ macro(tribits_set_common_vars PACKAGE_NAME_IN)
 endmacro()
 
 
-#
 # @MACRO: tribits_package_decl()
 #
 # Macro called at the very beginning of a package's top-level
@@ -277,7 +274,6 @@ macro(tribits_package_decl PACKAGE_NAME_IN)
 endmacro()
 
 
-#
 # @MACRO: tribits_package_def()
 #
 # Macro called in `<packageDir>/CMakeLists.txt`_ after subpackages are
@@ -343,7 +339,6 @@ macro(tribits_package_def)
 endmacro()
 
 
-#
 # @MACRO: tribits_package()
 #
 # Macro called at the very beginning of a package's top-level
@@ -397,7 +392,6 @@ macro(tribits_package PACKAGE_NAME_IN)
 endmacro()
 
 
-#
 # @MACRO: tribits_add_test_directories()
 #
 # Macro called to add a set of test directories for an SE package.
@@ -471,7 +465,6 @@ endmacro()
 #
 
 
-#
 # @MACRO: tribits_add_debug_option()
 #
 # Add the standard cache variable option ``${PACKAGE_NAME}_ENABLE_DEBUG`` for
@@ -505,7 +498,6 @@ macro(tribits_add_enable_teuchos_time_monitor_option)
 endmacro()
 
 
-#
 # @MACRO: tribits_add_show_deprecated_warnings_option()
 #
 # Add the standard option ``${PACKAGE_NAME}_SHOW_DEPRECATED_WARNINGS`` for the
@@ -551,7 +543,6 @@ macro(tribits_add_eti_support)
 endmacro()
 
 
-#
 # @MACRO: tribits_add_example_directories()
 #
 # Macro called to conditionally add a set of example directories for an SE
@@ -619,11 +610,9 @@ macro(tribits_add_example_directories)
 endmacro()
 
 
-#
 # Utility function that sets up package linkage linkage variables in case the
 # package has no libraries.
 #
-
 function(tribits_package_finalize_dependency_vars)
 
   if(${PACKAGE_NAME}_SUBPACKAGES)
@@ -694,7 +683,6 @@ function(tribits_package_finalize_dependency_vars)
 endfunction()
 
 
-#
 # Helper macro for [SUB]tribits_package_postprocess()
 #
 macro(tribits_package_postprocess_common)
@@ -718,7 +706,6 @@ macro(tribits_package_postprocess_common)
 endmacro()
 
 
-#
 # @MACRO: tribits_package_postprocess()
 #
 # Macro called at the very end of a package's top-level
@@ -825,7 +812,6 @@ macro(tribits_package_postprocess)
 endmacro()
 
 
-#
 # @MACRO: tribits_process_subpackages()
 #
 # Macro that processes the `TriBITS Subpackages`_ for a parent `TriBITS
