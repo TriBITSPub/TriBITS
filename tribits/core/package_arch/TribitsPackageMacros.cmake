@@ -48,6 +48,7 @@ include(PrintVar)
 include(PrependSet)
 include(PrependGlobalSet)
 include(RemoveGlobalDuplicates)
+include(TribitsGatherBuildTargets)
 
 include(TribitsAddOptionAndDefine)
 include(TribitsLibraryMacros)
@@ -93,7 +94,6 @@ endmacro()
 
 # Set up some common variables used in the creation of an SE package
 #
-
 macro(tribits_set_common_vars PACKAGE_NAME_IN)
 
   string(TOUPPER ${PACKAGE_NAME_IN} PACKAGE_NAME_UC)
@@ -700,8 +700,62 @@ macro(tribits_package_postprocess_common)
     tribits_write_package_client_export_files(${PACKAGE_NAME})
   endif()
 
+  tribits_package_create_all_libs_interface_library()
+
   set(${PACKAGE_NAME}_FINISHED_FIRST_CONFIGURE TRUE
     CACHE INTERNAL "")
+
+endmacro()
+
+
+# Macro to create the ${PACKAGE_NAME}::all_libs INTERFACE target
+#
+macro(tribits_package_create_all_libs_interface_library)
+
+  if (NOT TARGET ${PACKAGE_NAME}_all_libs)
+
+    # Find all of the non-TESTONLY library targets
+    tribits_get_all_build_targets_including_in_subdirs("${CMAKE_CURRENT_SOURCE_DIR}"
+      "STATIC_LIBRARY;SHARED_LIBRARY"
+      allPackageBuildableLibTargetsList )
+    #print_var(allPackageBuildableLibTargetsList)
+    set(packageLibsInAllLibsList)
+    foreach (libTarget IN LISTS allPackageBuildableLibTargetsList)
+      get_target_property(isTestOnlyLib ${libTarget} TRIBITS_TESTONLY_LIB)
+      #print_var(isTestOnlyLib)
+      if (NOT isTestOnlyLib)
+        list(APPEND packageLibsInAllLibsList ${libTarget})
+      endif()
+    endforeach()
+    #print_var(packageLibsInAllLibsList)
+
+    # Create the ${PACKAGE_NAME}_all_libs INTERFACE interface target
+    add_library(${PACKAGE_NAME}_all_libs INTERFACE)
+    target_link_libraries(${PACKAGE_NAME}_all_libs
+      INTERFACE ${packageLibsInAllLibsList} )
+
+    # Install the interface target (makes sure it gets put in
+    # <Package>Targets.cmake file)
+    install(
+      TARGETS ${PACKAGE_NAME}_all_libs
+      EXPORT ${PACKAGE_NAME}
+      INCLUDES DESTINATION "${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}"
+      RUNTIME DESTINATION "${${PROJECT_NAME}_INSTALL_RUNTIME_DIR}"
+      LIBRARY DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}"
+      ARCHIVE DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}"
+      COMPONENT ${PACKAGE_NAME}
+      )
+
+    if (NOT TARGET ${PACKAGE_NAME}::all_libs)
+      # Create ALIAS ${PACKAGE_NAME}::all_libs target
+      add_library(${PACKAGE_NAME}::all_libs ALIAS ${PACKAGE_NAME}_all_libs)
+    endif()
+
+  endif()
+
+  #include(CMakePrintHelpers)
+  #cmake_print_properties(TARGETS ${PACKAGE_NAME}_all_libs ${PACKAGE_NAME}::all_libs
+  #  PROPERTIES TYPE ALIASED_TARGET INTERFACE_LINK_LIBRARIES)
 
 endmacro()
 
@@ -715,6 +769,10 @@ endmacro()
 # Usage::
 #
 #   tribits_package_postprocess()
+#
+# NOTE: This creates the aliased target ``${PACKAGE_NAME}::all_libs`` for all
+# libraries in all subdirectories that don't have the TRIBITS_TESTONLY_LIB
+# target property set on them.
 #
 # NOTE: It is unfortunate that this macro must be called in a packages's
 # top-level ``CMakeLists.txt`` file but limitations of the CMake language make

@@ -202,7 +202,9 @@ endfunction()
 #
 # @FUNCTION: tribits_add_library()
 #
-# Function used to add a CMake library and target using ``add_library()``.
+# Function used to add a CMake library and target using ``add_library()`` and
+# also the ALIAS target ``${PACKAGE_NAME}::<libname>`` (where ``<libname>`` is
+# the full CMake target name as returned from ``${<libTargetName>}``).
 #
 # Usage::
 #
@@ -333,7 +335,10 @@ endfunction()
 #     not be added.  In this case, the current include directories will be set
 #     in the global variable ``<libTargetName>_INCLUDE_DIR`` which will be
 #     used in `tribits_add_executable()`_ when a test-only library is linked
-#     in through its ``DEPLIBS`` argument.
+#     in through its ``DEPLIBS`` argument.  Also, the custom property
+#     ``TRIBITS_TESTONLY_LIB`` will be set to ``TRUE`` which will ensure that
+#     this library will not be added to the ``${PACKAGE_NAME}::all_libs``
+#     target.
 #
 #   ``NO_INSTALL_LIB_OR_HEADERS``
 #
@@ -843,6 +848,11 @@ function(tribits_add_library LIBRARY_NAME_IN)
     # ToDo: #299: In the final refactoring, this list of include directories
     # should be extracted from the directory property INCLUDE_DIRECTORIES and
     # then set INTERFACE instead of PUBLIC.
+
+    if (PARSE_TESTONLY)
+      set_target_properties(${LIBRARY_NAME} PROPERTIES
+        TRIBITS_TESTONLY_LIB TRUE)
+    endif()
 
     set_property(
       TARGET ${LIBRARY_NAME}
