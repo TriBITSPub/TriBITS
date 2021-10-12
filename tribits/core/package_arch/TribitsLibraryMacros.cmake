@@ -969,6 +969,13 @@ function(tribits_add_library LIBRARY_NAME_IN)
       endif()
 
     endif()
+
+    #
+    # Add ALIAS library <PackageName>::<libname>
+    #
+
+    add_library(${PACKAGE_NAME}::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
+
   endif() #if not in installation testing mode
 
   #
