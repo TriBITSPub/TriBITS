@@ -843,12 +843,6 @@ function(tribits_add_library LIBRARY_NAME_IN)
       set(${PARSE_ADDED_LIB_TARGET_NAME_OUT} ${LIBRARY_NAME} PARENT_SCOPE)
     endif()
 
-    target_include_directories( ${LIBRARY_NAME}
-      PUBLIC ${${PACKAGE_NAME}_INCLUDE_DIRS} )
-    # ToDo: #299: In the final refactoring, this list of include directories
-    # should be extracted from the directory property INCLUDE_DIRECTORIES and
-    # then set INTERFACE instead of PUBLIC.
-
     if (PARSE_TESTONLY)
       set_target_properties(${LIBRARY_NAME} PROPERTIES
         TRIBITS_TESTONLY_LIB TRUE)
@@ -979,6 +973,19 @@ function(tribits_add_library LIBRARY_NAME_IN)
       endif()
 
     endif()
+
+    # Set INTERFACE_INCLUDE_DIRECTOIRES property for added library and must
+    # only do for the build interface (not the install interface).
+    set(buildInterfaceIncludeDirs)
+    foreach (includeDir IN LISTS ${PACKAGE_NAME}_INCLUDE_DIRS)
+      list(APPEND buildInterfaceIncludeDirs "$<BUILD_INTERFACE:${includeDir}>")
+    endforeach()
+    target_include_directories( ${LIBRARY_NAME} PUBLIC ${buildInterfaceIncludeDirs} )
+    # ToDo: #299: In the final refactoring, the list of include directories
+    # for this library should be extracted from the directory property
+    # INCLUDE_DIRECTORIES and then set INTERFACE instead of PUBLIC above.  The
+    # rest of the include directories from upstream packages should come from
+    # the targets that have their INTERFACE_INCLUDE_DIRECTORIES property set.
 
     #
     # Add ALIAS library <PackageName>::<libname>

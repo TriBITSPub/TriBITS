@@ -26,14 +26,6 @@ endif()
 
 # Build the APP and link to TribitsExProj
 add_executable(app ${CMAKE_CURRENT_SOURCE_DIR}/app.cpp)
-if (${PROJECT_NAME}_FIND_UNDER_BUILD_DIR)
-  target_include_directories(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
-    ${APP_DEPS_INCLUDE_DIRS})
-endif()
-# NOTE: Above, as of CMake 3.21.3 does not set INTERFACE_INCLUDE_DIRECTORIES
-# for IMPORTED libraries for generated <Project>Targets.cmake files using
-# export(EXPORT ...) for the build tree so currently we have to manually set
-# the include dirs :-(
 target_link_libraries(app PRIVATE ${APP_DEPS_LIBRARIES})
 addAppDepCompileDefines()
 
