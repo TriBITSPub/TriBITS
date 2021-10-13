@@ -521,6 +521,7 @@ function(tribits_write_package_client_export_files_install_targets)
       "${PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}" packageConfigBuildDirTargetsFile )
     export(
       EXPORT ${PACKAGE_NAME}
+      NAMESPACE ${PACKAGE_NAME}::
       FILE "${packageConfigBuildDirTargetsFile}" )
   endif()
 
@@ -534,6 +535,7 @@ function(tribits_write_package_client_export_files_install_targets)
     if(${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL)
       install(
         EXPORT ${PACKAGE_NAME}
+        NAMESPACE ${PACKAGE_NAME}::
         DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PACKAGE_NAME}"
         FILE "${PACKAGE_NAME}Targets.cmake" )
     endif()

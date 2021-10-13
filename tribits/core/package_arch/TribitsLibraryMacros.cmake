@@ -632,7 +632,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
       set(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${LIB}")
 
       # LIB_IN_SE_PKG?
-      list(FIND ${PACKAGE_NAME}_LIBRARIES ${PREFIXED_LIB} FOUND_IDX)
+      list(FIND ${PACKAGE_NAME}_LIBRARIES "${PACKAGE_NAME}::${PREFIXED_LIB}" FOUND_IDX)
       if (FOUND_IDX GREATER -1)
         set(LIB_IN_SE_PKG TRUE)
       else()
@@ -717,14 +717,15 @@ function(tribits_add_library LIBRARY_NAME_IN)
 
     foreach(IMPORTEDLIB ${PARSE_IMPORTEDLIBS})
       set(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${IMPORTEDLIB}")
-      list(FIND ${PACKAGE_NAME}_LIBRARIES ${PREFIXED_LIB} FOUND_IDX)
+      list(FIND ${PACKAGE_NAME}_LIBRARIES "${PACKAGE_NAME}::${PREFIXED_LIB}"
+        FOUND_IMPORTEDLIB_IN_LIBRARIES_IDX)
       if (${PREFIXED_LIB}_INCLUDE_DIRS)
         message(WARNING "WARNING: '${IMPORTEDLIB}' in IMPORTEDLIBS is a TESTONLY lib"
           " and it is illegal to pass in through IMPORTEDLIBS!"
           "  Such usage is deprecated (and this warning will soon become an error)!"
           "  Should '${IMPORTEDLIB}' instead be passed through DEPLIBS?")
         # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code
-      elseif (FOUND_IDX GREATER -1)
+      elseif (FOUND_IMPORTEDLIB_IN_LIBRARIES_IDX GREATER -1)
         message(WARNING "WARNING: Lib '${IMPORTEDLIB}' in IMPORTEDLIBS is in"
         " this SE package and is *not* an external lib!"
         "  TriBITS takes care of linking against libs the current"
@@ -948,7 +949,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
 
       prepend_global_set(${PACKAGE_NAME}_INCLUDE_DIRS  ${INCLUDE_DIRS_CURRENT})
       prepend_global_set(${PACKAGE_NAME}_LIBRARY_DIRS  ${LIBRARY_DIRS_CURRENT})
-      prepend_global_set(${PACKAGE_NAME}_LIBRARIES  ${LIBRARY_NAME})
+      prepend_global_set(${PACKAGE_NAME}_LIBRARIES  ${PACKAGE_NAME}::${LIBRARY_NAME})
 
       remove_global_duplicates(${PACKAGE_NAME}_INCLUDE_DIRS)
       remove_global_duplicates(${PACKAGE_NAME}_LIBRARY_DIRS)

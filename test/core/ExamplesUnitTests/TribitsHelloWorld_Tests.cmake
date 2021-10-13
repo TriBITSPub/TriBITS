@@ -769,7 +769,7 @@ tribits_add_advanced_test( TribitsHelloWorld_install_config_dummy_proj
       "TribitsHelloWorld_INSTALL_DIR = '.*/TriBITS_TribitsHelloWorld_install_config_dummy_proj/install'"
       "TribitsHelloWorld_INCLUDE_DIRS = '.*/TriBITS_TribitsHelloWorld_install_config_dummy_proj/install/include'"
       "TribitsHelloWorld_LIBRARY_DIRS = '.*/TriBITS_TribitsHelloWorld_install_config_dummy_proj/install/lib'"
-      "TribitsHelloWorld_LIBRARIES = 'hello_world_lib'"
+      "TribitsHelloWorld_LIBRARIES = 'HelloWorld::hello_world_lib'"
       "TribitsHelloWorld_TPL_INCLUDE_DIRS = '"
       "TribitsHelloWorld_TPL_LIBRARY_DIRS = ''"
       "TribitsHelloWorld_TPL_LIBRARIES = ''"

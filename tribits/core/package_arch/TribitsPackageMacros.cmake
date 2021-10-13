@@ -733,6 +733,8 @@ macro(tribits_package_create_all_libs_interface_library)
     add_library(${PACKAGE_NAME}_all_libs INTERFACE)
     target_link_libraries(${PACKAGE_NAME}_all_libs
       INTERFACE ${packageLibsInAllLibsList} )
+    set_target_properties(${PACKAGE_NAME}_all_libs PROPERTIES
+      EXPORT_NAME all_libs)
 
     # Install the interface target (makes sure it gets put in
     # <Package>Targets.cmake file)
