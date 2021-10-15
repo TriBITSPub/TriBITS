@@ -3690,7 +3690,7 @@ build, and install just the libraries and header files using::
   $ cd BUILD_LIBS/
 
   $ cmake \
-    -DCMAKE_INSTLAL_PREFIX=<install-dir> \
+    -DCMAKE_INSTALL_PREFIX=<install-dir> \
     -D<Project>_ENABLE_ALL_PACKAGES=ON \
     -D<Project>_ENABLE_TESTS=OFF \
     [other options] \
