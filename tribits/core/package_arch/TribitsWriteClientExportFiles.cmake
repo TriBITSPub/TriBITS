@@ -375,9 +375,7 @@ include(\"${BUILD_DIR_CMAKE_PKGS_DIR}/${DEP_PACKAGE}/${DEP_PACKAGE}Config.cmake\
     # are sub-packages.  We'd like to export per-package, but deps
     # won't be satisfied, so we export one file for the project for
     # now...
-    if (${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL
-        AND PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR
-      )
+    if (PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR)
       tribits_get_package_config_build_dir_targets_file(${PACKAGE_NAME}
         "${PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}" packageConfigBuildDirTargetsFile )
       set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
@@ -451,14 +449,11 @@ include(\"\${CMAKE_CURRENT_LIST_DIR}/../${DEP_PACKAGE}/${DEP_PACKAGE}Config.cmak
     set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}\n")
   endif()
 
-  # Import install tree targets into applications.
-  get_property(HAS_INSTALL_TARGETS GLOBAL PROPERTY ${PACKAGE_NAME}_HAS_INSTALL_TARGETS)
-  if (HAS_INSTALL_TARGETS)
-    set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
+  # Import install
+  set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
 # Import ${PACKAGE_NAME} targets
 include(\"\${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}Targets.cmake\")"
-)
-  endif()
+    )
 
   # Write the specification of the rpath if necessary. This is only needed if
   # we're building shared libraries.
@@ -514,9 +509,7 @@ function(tribits_write_package_client_export_files_install_targets)
 
   set(PACKAGE_NAME ${PARSE_PACKAGE_NAME})
 
-  if (${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL
-      AND PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR
-    )
+  if (PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR)
     tribits_get_package_config_build_dir_targets_file(${PACKAGE_NAME}
       "${PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}" packageConfigBuildDirTargetsFile )
     export(
@@ -532,13 +525,11 @@ function(tribits_write_package_client_export_files_install_targets)
       DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PACKAGE_NAME}"
       RENAME ${PACKAGE_NAME}Config.cmake
       )
-    if(${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL)
-      install(
-        EXPORT ${PACKAGE_NAME}
-        NAMESPACE ${PACKAGE_NAME}::
-        DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PACKAGE_NAME}"
-        FILE "${PACKAGE_NAME}Targets.cmake" )
-    endif()
+    install(
+      EXPORT ${PACKAGE_NAME}
+      NAMESPACE ${PACKAGE_NAME}::
+      DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PACKAGE_NAME}"
+      FILE "${PACKAGE_NAME}Targets.cmake" )
   endif()
 
 endfunction()
@@ -724,9 +715,11 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
     # support nested variables, however.  Use ${PDOLLAR} as a workaround, cf.
     # <http://www.cmake.org/pipermail/cmake/2013-April/054341.html>.
     set(PDOLLAR "$")
+    set(tribitsInstallationDir
+      "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}")
     configure_file(
-      ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsProjectConfigTemplate.cmake.in
-      ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake )
+      "${tribitsInstallationDir}/TribitsProjectConfigTemplate.cmake.in"
+      "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" )
   endif()
 
   ######

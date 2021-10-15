@@ -694,13 +694,13 @@ macro(tribits_package_postprocess_common)
     print_var(${PACKAGE_NAME}_LIBRARIES)
   endif()
 
+  tribits_package_create_all_libs_interface_library()
+
   if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
     # Create the configure file so external projects can find packages with a
     # call to find_package(<package_name>).
     tribits_write_package_client_export_files(${PACKAGE_NAME})
   endif()
-
-  tribits_package_create_all_libs_interface_library()
 
   set(${PACKAGE_NAME}_FINISHED_FIRST_CONFIGURE TRUE
     CACHE INTERNAL "")

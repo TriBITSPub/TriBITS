@@ -70,15 +70,27 @@ set_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(SHARED)
 # debug this so I am just giving up at this point.
 
 
-function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
+function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic fullOrComponents)
 
   if (sharedOrStatic STREQUAL "SHARED")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-  else()
+  elseif (sharedOrStatic STREQUAL "STATIC")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
+  else()
+    message(FATAL_ERROR "Invalid value of buildSharedLibsArg='${buildSharedLibsArg}'!")
   endif()
 
-  set(testBaseName TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic})
+  if (fullOrComponents STREQUAL "FULL")
+    set(tribitsExProjUseComponentsArg "")
+  elseif (fullOrComponents STREQUAL "COMPONENTS")
+    set(tribitsExProjUseComponentsArg
+      -DTribitsExApp_USE_COMPONENTS=SimpleCxx,WithSubpackages)
+  else()
+    message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
+  endif()
+
+  set(testBaseName
+    TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic}_${fullOrComponents})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -127,7 +139,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
       WORKING_DIRECTORY app_build
       CMND ${CMAKE_COMMAND} ARGS
         -DCMAKE_PREFIX_PATH=${testDir}/install
-        -DTribitsExApp_USE_COMPONENTS=SimpleCxx,WithSubpackages
+        ${tribitsExProjUseComponentsArg}
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
       PASS_REGULAR_EXPRESSION_ALL
         "-- Configuring done"
@@ -171,8 +183,11 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
 endfunction()
 
 
-TribitsExampleApp_ALL_ST_NoFortran_test(STATIC)
-TribitsExampleApp_ALL_ST_NoFortran_test(SHARED)
+TribitsExampleApp_ALL_ST_NoFortran_test(STATIC FULL)
+TribitsExampleApp_ALL_ST_NoFortran_test(STATIC COMPONENTS)
+TribitsExampleApp_ALL_ST_NoFortran_test(SHARED COMPONENTS)
+# NOTE: We don't need to test the permutation SHARED FULL as well.  That does
+# not really test anything new.
 
 
 function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
