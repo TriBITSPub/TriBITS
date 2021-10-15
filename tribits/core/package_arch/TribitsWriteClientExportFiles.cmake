@@ -767,12 +767,13 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
       )
   endif()
 
-  # Custom code in configuration file.
-  set(PROJECT_CONFIG_CODE "")
-
-  tribits_set_compiler_vars_for_config_file(INSTALL_DIR)
-
   if (${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES)
+
+    tribits_set_compiler_vars_for_config_file(INSTALL_DIR)
+
+    # Custom code in configuration file.
+    set(PROJECT_CONFIG_CODE "")
+
     configure_file(
       "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsProjectConfigTemplate.cmake.in"
       "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config_install.cmake"
@@ -803,6 +804,7 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
     )
 
 endfunction()
+
 
 
 macro(tribits_set_compiler_var_for_config_file LANG FOR_DIR)
