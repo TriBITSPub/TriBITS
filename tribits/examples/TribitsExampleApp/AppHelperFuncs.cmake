@@ -1,74 +1,63 @@
+include(CMakePrintHelpers)
+
+
 # Find TribitsExProj package(s), load compilers and compiler options, and get
 # CMake lib targets (which have include dirs also) to link against.
 #
-macro(getTribitsExProjStuff)
+# On return, sets the vars in the current scope:
+#
+# * TribitsExProj_SELECTED_PACKAGE_LIST: List of all of the packages pulled in
+# * from the TribtsExProj.
+#
+# * APP_DEPS_LIB_TARGETS: List of all of the IMPORTED CMake targets that 'app'
+#   must link against
+#
+# * CMAKE_<LANG>_COMPILER and CMAKE_<LANG>_FLAGS pulled in from the
+#   TribitsExProjConfig.config or a <Package>Config.cmake file
+#
+macro(getTribitsExProjStuffForApp)
 
   set(${PROJECT_NAME}_FIND_INDIVIDUAL_PACKAGES OFF CACHE BOOL
     "Set to TRUE to find individual packages and OFF to find project TribitsExProj")
 
-  set(${PROJECT_NAME}_FIND_UNDER_BUILD_DIR "" CACHE STRING
-    "Find <Package>Config.cmake files under this build dir instead of under install dir")
-  get_filename_component(${PROJECT_NAME}_FIND_UNDER_BUILD_DIR
-    "${${PROJECT_NAME}_FIND_UNDER_BUILD_DIR}" ABSOLUTE)
-
   if (${PROJECT_NAME}_FIND_INDIVIDUAL_PACKAGES)
-    if (${PROJECT_NAME}_FIND_UNDER_BUILD_DIR)
-      getTribitsExProjStuffByPackageUnderBuildDir()
-    else()
-      getTribitsExProjStuffByPackage()
-    endif()
+    getTribitsExProjStuffForAppByPackage()
   else()
-    getTribitsExProjStuffByProject()
+    getTribitsExProjStuffForAppByProject()
   endif()
 
 endmacro()
 
 
 # Get TribitsExProj stuff with find_package(<Package>) for each
-# package/component from a build dir.
+# package/component independently.
 #
-macro(getTribitsExProjStuffByPackageUnderBuildDir)
+macro(getTribitsExProjStuffForAppByPackage)
 
-  list(PREPEND CMAKE_PREFIX_PATH
-    "${${PROJECT_NAME}_FIND_UNDER_BUILD_DIR}/cmake_packages")
-
-  getTribitsExProjStuffByPackage()
-
-endmacro()
-# NOTE: Above, having to get all of the package build dirs for each package is
-# pretty ridiculous and not very scalable but that is what you have to do
-# currently.
-
-
-# Get TribitsExProj stuff with find_package(<Package>) for each
-# package/component.
-#
-# NOTE: This expects that CMAKE_PREFIX_PATH is already set up to find the
-# <Package>Config.cmake files correctly.
-#
-macro(getTribitsExProjStuffByPackage)
-
-  # Find each package and gather up all the <Package>::all_libs targets.
-  set(APP_DEPS_PACKAGE_LIB_TARGETS "")
+  # Find each package and gather up all the <Package>::all_libs targets
+  set(APP_DEPS_LIB_TARGETS "")
   foreach (packageName IN LISTS ${PROJECT_NAME}_USE_COMPONENTS)
     find_package(${packageName} REQUIRED)
     message("Found ${packageName}!")
-    list(APPEND APP_DEPS_PACKAGE_LIB_TARGETS ${packageName}::all_libs)
+    list(APPEND APP_DEPS_LIB_TARGETS ${packageName}::all_libs)
   endforeach()
-
-  # Get the full list libs
-  set(APP_DEPS_LIB_TARGETS ${APP_DEPS_PACKAGE_LIB_TARGETS})
   print_var(APP_DEPS_LIB_TARGETS)
 
   # Set TribitsExProj_SELECTED_PACKAGE_LIST
   set(TribitsExProj_SELECTED_PACKAGE_LIST ${${PROJECT_NAME}_USE_COMPONENTS})
+  # NOTE: We are setting his here since TribitsExProjConfig.cmake is not being
+  # read in in this case.
+
+  # Get compilers from first package listed
+  list(GET ${PROJECT_NAME}_USE_COMPONENTS 0 firstPkg)
+  setCompilersForAppFromConfigFileCompilers(${firstPkg})
 
 endmacro()
 
 
 # Get TribitsExProj stuff from find_package(TribitsExProj)
 #
-macro(getTribitsExProjStuffByProject)
+macro(getTribitsExProjStuffForAppByProject)
 
   find_package(TribitsExProj REQUIRED COMPONENTS ${${PROJECT_NAME}_USE_COMPONENTS})
 
@@ -81,13 +70,7 @@ macro(getTribitsExProjStuffByProject)
   message("End of TribitsExProj details\n")
 
   # Make sure to use same compilers and flags as TribitsExProj
-  set(CMAKE_CXX_COMPILER ${TribitsExProj_CXX_COMPILER} )
-  set(CMAKE_C_COMPILER ${TribitsExProj_C_COMPILER} )
-  set(CMAKE_Fortran_COMPILER ${TribitsExProj_Fortran_COMPILER} )
-
-  set(CMAKE_CXX_FLAGS "${TribitsExProj_CXX_COMPILER_FLAGS} ${CMAKE_CXX_FLAGS}")
-  set(CMAKE_C_FLAGS "${TribitsExProj_C_COMPILER_FLAGS} ${CMAKE_C_FLAGS}")
-  set(CMAKE_Fortran_FLAGS "${TribitsExProj_Fortran_COMPILER_FLAGS} ${CMAKE_Fortran_FLAGS}")
+  setCompilersForAppFromConfigFileCompilers(TribitsExProj)
 
   # Get the libraries for building and linking
   if (${PROJECT_NAME}_USE_COMPONENTS)
@@ -99,6 +82,37 @@ macro(getTribitsExProjStuffByProject)
 endmacro()
 
 
+# Get compilers and compiler flags from the imported
+# ``TribitsExProjConfig.cmake`` or ``<Package>Config.cmake`` file.
+#
+# Here ``prefix`` is the prefix for the variables read in from the
+# *Config.cmake file.
+#
+macro(setCompilersForAppFromConfigFileCompilers prefix)
+
+  message("-- Setting compilers and flags read in from '${prefix}Config.cmake' file:")
+
+  set(CMAKE_CXX_COMPILER ${${prefix}_CXX_COMPILER} )
+  set(CMAKE_C_COMPILER ${${prefix}_C_COMPILER} )
+  set(CMAKE_Fortran_COMPILER ${${prefix}_Fortran_COMPILER} )
+
+  set(CMAKE_CXX_FLAGS "${${prefix}_CXX_COMPILER_FLAGS} ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_C_FLAGS "${${prefix}_C_COMPILER_FLAGS} ${CMAKE_C_FLAGS}")
+  set(CMAKE_Fortran_FLAGS "${${prefix}_Fortran_COMPILER_FLAGS} ${CMAKE_Fortran_FLAGS}")
+
+  cmake_print_variables(CMAKE_CXX_COMPILER)
+  cmake_print_variables(CMAKE_C_COMPILER)
+  cmake_print_variables(CMAKE_Fortran_COMPILER)
+  cmake_print_variables(CMAKE_CXX_FLAGS)
+  cmake_print_variables(CMAKE_C_FLAGS)
+  cmake_print_variables(CMAKE_Fortran_FLAGS)
+
+endmacro()
+
+
+# Add compiler defines to the ``app`` target for optionally supported packages
+# from upstream TribitExProj
+#
 function(addAppDepCompileDefines)
   addAppDepCompileDefine("SimpleCxx")
   addAppDepCompileDefine("MixedLang")
@@ -114,7 +128,31 @@ function(addAppDepCompileDefine componentName)
 endfunction()
 
 
-function(appendTestDepsStr componentName depsStrOut str)
+# Return the extended dependency string from the app at runtime given the
+# enabled packages from TribitsExProj.
+#
+function(getExpectedAppDepsStr expectedDepsStrOut)
+
+  if ("SimpleTpl" IN_LIST SimpleCxx_TPL_LIST)
+    set(simpleCxxDeps "simpletpl ")
+  else()
+    set(simpleCxxDeps "")
+  endif()
+  set(simpleCxxDeps "${simpleCxxDeps}headeronlytpl")
+
+  set(depsStr "")
+  appendExpectedAppDepsStr("WithSubpackages"
+    "WithSubpackages:B A ${simpleCxxDeps} ${simpleCxxDeps}"
+    depsStr)
+  appendExpectedAppDepsStr("MixedLang" "MixedLang:Mixed Language" depsStr)
+  appendExpectedAppDepsStr("SimpleCxx" "SimpleCxx:${simpleCxxDeps}" depsStr)
+
+  set(${expectedDepsStrOut} "${depsStr}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(appendExpectedAppDepsStr componentName str depsStrOut)
   set(depsStr "${${depsStrOut}}")  # Should be value of var in parent scope!
   #message("-- depsStr (inner) = '${depsStr}'")
   if (${componentName} IN_LIST TribitsExProj_SELECTED_PACKAGE_LIST)

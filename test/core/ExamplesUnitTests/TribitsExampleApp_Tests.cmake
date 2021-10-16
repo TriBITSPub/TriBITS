@@ -350,8 +350,8 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
       MESSAGE "Configure TribitsExampleApp locally"
       WORKING_DIRECTORY app_build
       CMND ${CMAKE_COMMAND} ARGS
+        -DCMAKE_PREFIX_PATH=${testDir}/cmake_packages
         -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=TRUE
-        -DTribitsExApp_FIND_UNDER_BUILD_DIR=${testDir}
         -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang,WithSubpackages
         ${findByProjectOrPackageArg}
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp

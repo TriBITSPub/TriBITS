@@ -12,8 +12,6 @@
 #include <iostream>
 #include <string>
 
-//#include <mpi.h>
-
 
 void appendDepsStr(std::string &depsStr, const std::string &str)
 {
@@ -27,14 +25,6 @@ void appendDepsStr(std::string &depsStr, const std::string &str)
 
 
 int main(int argc, char *argv[]) {
-  //MPI_Init(&argc, &argv);
-  //MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  // Make sure MPI works
-  //int oneVal = 1;
-  //int numProcs = 0;
-  //MPI_Reduce(&onVal, &numProcs, MPI_SUM, 0, MPI_COMM_WORLD);
-  const int rank = 0; 
-
   // Get deps down the deps graph
   std::string depsStr;
 #ifdef TRIBITSEXAPP_HAVE_WITHSUBPACKAGES
@@ -50,9 +40,7 @@ int main(int argc, char *argv[]) {
   // both the header files be found at compile time and the libraries be found
   // at link time and runtime for this these function calls to work.
 
-  if (rank == 0) {
-    std::cout << "Full Deps: " << depsStr << "\n";
-  }
+  std::cout << "Full Deps: " << depsStr << "\n";
 
   return 0;
 }
