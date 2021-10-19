@@ -45,7 +45,7 @@
 #
 ##############################################################################
 
-${DEFINE_CMAKE_CURRENT_LIST_DIR_CODE_SNIPPET}
+include_guard()
 
 ## ---------------------------------------------------------------------------
 ## Compilers used by ${PROJECT_NAME}/${PACKAGE_NAME} build

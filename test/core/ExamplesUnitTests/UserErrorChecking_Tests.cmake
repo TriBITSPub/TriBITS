@@ -835,7 +835,7 @@ tribits_add_advanced_test( TribitsExampleProject_config_file_compiler_overrides
   TEST_3
     MESSAGE "Check complers set in WithSubpackagesConfig.cmake for build dir"
     CMND grep
-    ARGS _COMPILER packages/with_subpackages/WithSubpackagesConfig.cmake
+    ARGS _COMPILER cmake_packages/WithSubpackages/WithSubpackagesConfig.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "set[(]WithSubpackages_CXX_COMPILER .cxx_wrapper_build_dir.[)]"
       "set[(]WithSubpackages_C_COMPILER .c_wrapper_build_dir.[)]"

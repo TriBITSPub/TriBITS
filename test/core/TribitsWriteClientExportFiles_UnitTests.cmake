@@ -80,7 +80,7 @@ endmacro()
 function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
 
   message("\n***")
-  message("*** Testing the generation of a specialized export makefile for RTOp *before* libs")
+  message("*** Testing the generation of RTOpConfig.cmake file *before* libs")
   message("***\n")
 
   setup_write_specialized_package_export_makefile_test_stuff()
@@ -113,22 +113,44 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
   set(Teuchos_LIBRARIES "teuchoscore;teuchosnumeric")
   set(Teuchos_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
 
-  set(GENERATED_EXPORT_CONFIG
-    "${CURRENT_TEST_DIRECTORY}/RTOpBeforeConfig.cmake")
+  set(GENERATED_EXPORT_CONFIG_FOR_BUILD_BASE_DIR
+    "${CURRENT_TEST_DIRECTORY}/RTOpBeforeConfig_for_build" )
+  set(GENERATED_EXPORT_CONFIG_FOR_BUILD
+    "${GENERATED_EXPORT_CONFIG_FOR_BUILD_BASE_DIR}/RTOpConfig.cmake")
+  set(GENERATED_EXPORT_CONFIG_FOR_INSTALL_BASE_DIR
+    "${CURRENT_TEST_DIRECTORY}/RTOpBeforeConfig_for_install" )
+  set(GENERATED_EXPORT_CONFIG_FOR_INSTALL
+    "${GENERATED_EXPORT_CONFIG_FOR_INSTALL_BASE_DIR}/RTOpConfig_install.cmake")
 
   tribits_write_flexible_package_client_export_files(
     PACKAGE_NAME RTOp
     EXPORT_FILE_VAR_PREFIX RTOp1
-    WRITE_CMAKE_CONFIG_FILE "${GENERATED_EXPORT_CONFIG}"
+    PACKAGE_CONFIG_FOR_BUILD_BASE_DIR
+      "${GENERATED_EXPORT_CONFIG_FOR_BUILD_BASE_DIR}"
+    PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR
+      "${GENERATED_EXPORT_CONFIG_FOR_INSTALL_BASE_DIR}"
     )
 
-  unittest_file_regex("${GENERATED_EXPORT_CONFIG}"
+  unittest_file_regex("${GENERATED_EXPORT_CONFIG_FOR_BUILD}"
     REGEX_STRINGS
+      "include_guard[(][)]"
       "set[(]RTOp1_CMAKE_BUILD_TYPE .DEBUG."
-      "if [(]RTOp1_CONFIG_INCLUDED."
-      "set[(]RTOp1_CONFIG_INCLUDED TRUE."
       "set[(]RTOp1_INCLUDE_DIRS .teuchos/core/include.teuchos/numeric/include.."
       "set[(]RTOp1_LIBRARY_DIRS .teuchos/core/src.teuchos/numeric/src.."
+      "set[(]RTOp1_LIBRARIES .teuchoscore.teuchosnumeric.."
+      "set[(]RTOp1_TPL_INCLUDE_DIRS .lapackhpath/include.blaspath/include.."
+      "set[(]RTOp1_TPL_LIBRARY_DIRS .lapackhpath/lib.blashpath/lib.."
+      "set[(]RTOp1_TPL_LIBRARIES .lapackpath/lib/liblapack.a.blaspath/lib/libblas.a.."
+      "set[(]RTOp1_PACKAGE_LIST .Teuchos.."
+      "set[(]RTOp1_TPL_LIST .LAPACK.BLAS.."
+    )
+
+  unittest_file_regex("${GENERATED_EXPORT_CONFIG_FOR_INSTALL}"
+    REGEX_STRINGS
+      "include_guard[(][)]"
+      "set[(]RTOp1_CMAKE_BUILD_TYPE .DEBUG."
+      "set[(]RTOp1_INCLUDE_DIRS .*/dummy_install_include_dir"
+      "set[(]RTOp1_LIBRARY_DIRS .*/dummy_install_lib_dir"
       "set[(]RTOp1_LIBRARIES .teuchoscore.teuchosnumeric.."
       "set[(]RTOp1_TPL_INCLUDE_DIRS .lapackhpath/include.blaspath/include.."
       "set[(]RTOp1_TPL_LIBRARY_DIRS .lapackhpath/lib.blashpath/lib.."
@@ -143,7 +165,7 @@ endfunction()
 function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
 
   message("\n***")
-  message("*** Testing the generation of a specialized export makefile for RTOp *after* libs")
+  message("*** Testing the generation RTOpConfig.cmake *after* libs")
   message("***\n")
 
   setup_write_specialized_package_export_makefile_test_stuff()
@@ -180,20 +202,28 @@ function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
   set(RTOp_LIBRARIES "rtop")
   set(RTOp_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
 
-  set(GENERATED_EXPORT_CONFIG
-    "${CURRENT_TEST_DIRECTORY}/RTOpAfterConfig.cmake")
+  set(GENERATED_EXPORT_CONFIG_FOR_BUILD_BASE_DIR
+    "${CURRENT_TEST_DIRECTORY}/RTOpAfterConfig_for_build" )
+  set(GENERATED_EXPORT_CONFIG_FOR_BUILD
+    "${GENERATED_EXPORT_CONFIG_FOR_BUILD_BASE_DIR}/RTOpConfig.cmake")
+  set(GENERATED_EXPORT_CONFIG_FOR_INSTALL_BASE_DIR
+    "${CURRENT_TEST_DIRECTORY}/RTOpAfterConfig_for_install" )
+  set(GENERATED_EXPORT_CONFIG_FOR_INSTALL
+    "${GENERATED_EXPORT_CONFIG_FOR_INSTALL_BASE_DIR}/RTOpConfig_install.cmake")
 
   tribits_write_flexible_package_client_export_files(
     PACKAGE_NAME RTOp
     EXPORT_FILE_VAR_PREFIX RTOp2
-    WRITE_CMAKE_CONFIG_FILE "${GENERATED_EXPORT_CONFIG}"
+    PACKAGE_CONFIG_FOR_BUILD_BASE_DIR
+      "${GENERATED_EXPORT_CONFIG_FOR_BUILD_BASE_DIR}"
+    PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR
+      "${GENERATED_EXPORT_CONFIG_FOR_INSTALL_BASE_DIR}"
     )
 
-  unittest_file_regex("${GENERATED_EXPORT_CONFIG}"
+  unittest_file_regex("${GENERATED_EXPORT_CONFIG_FOR_BUILD}"
     REGEX_STRINGS
+      "include_guard[(][)]"
       "set[(]RTOp2_CMAKE_BUILD_TYPE .RELEASE."
-      "if [(]RTOp2_CONFIG_INCLUDED."
-      "set[(]RTOp2_CONFIG_INCLUDED TRUE."
       "set[(]RTOp2_INCLUDE_DIRS .rtop/include.teuchos/core/include.teuchos/numeric/include.."
       "set[(]RTOp2_LIBRARY_DIRS .rtop/src.teuchos/core/src.teuchos/numeric/src.."
       "set[(]RTOp2_LIBRARIES .rtop.teuchoscore.teuchosnumeric.."
@@ -203,6 +233,8 @@ function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
       "set[(]RTOp2_PACKAGE_LIST .RTOp.Teuchos.."
       "set[(]RTOp2_TPL_LIST .LAPACK.BLAS.."
     )
+
+  # ToDo: Check the generated RTOpConfig_install.cmake file!
 
 endfunction()
 
@@ -226,4 +258,4 @@ unittest_write_specialized_package_export_makefile_rtop_before_libs()
 unittest_write_specialized_package_export_makefile_rtop_after_libs()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(22)
+unittest_final_result(30)
