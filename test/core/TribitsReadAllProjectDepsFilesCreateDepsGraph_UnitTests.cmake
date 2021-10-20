@@ -738,10 +738,7 @@ endfunction()
 #
 ################################################################################
 
-# Assume that all unit tests will pass by default
-global_set(UNITTEST_OVERALL_PASS TRUE)
-global_set(UNITTEST_OVERALL_NUMPASSED 0)
-global_set(UNITTEST_OVERALL_NUMRUN 0)
+unittest_initialize_vars()
 
 # Unit tests for code macros that are used to declare/define dependencies
 unitest_tribits_define_repository_packages_dirs_classifications_empty()

@@ -50,7 +50,7 @@ include(CMakeParseArguments)
 include(SetNotFound)
 include(Split)
 
-#
+
 # @FUNCTION: tribits_tpl_allow_pre_find_package()
 #
 # Function that determines if a TriBITS find module file
@@ -142,7 +142,6 @@ function(tribits_tpl_allow_pre_find_package  TPL_NAME  ALLOW_PACKAGE_PREFIND_OUT
 endfunction()
 
 
-#
 # @FUNCTION: tribits_tpl_find_include_dirs_and_libraries()
 #
 # Function that sets up cache variables for users to specify where to find a
@@ -679,7 +678,6 @@ function(tribits_tpl_find_include_dirs_and_libraries TPL_NAME)
 endfunction()
 
 
-#
 # @FUNCTION: tribits_tpl_tentatively_enable()
 #
 # Function that sets up for an optionally enabled TPL that is attempted to be
@@ -724,10 +722,8 @@ function(tribits_tpl_tentatively_enable  TPL_NAME)
 endfunction()
 
 
+# Set find error and print error message
 #
-# Utility macro
-#
-
 macro(tribits_tpl_find_include_dirs_and_libraries_handle_fail) 
   set(_${TPL_NAME}_ENABLE_SUCCESS FALSE)
   global_set(TPL_${TPL_NAME}_NOT_FOUND TRUE)

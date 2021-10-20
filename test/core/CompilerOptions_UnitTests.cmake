@@ -807,10 +807,7 @@ endfunction()
 #
 #####################################################################
 
-# Assume that all unit tests will pass by default
-global_set(UNITTEST_OVERALL_PASS TRUE)
-global_set(UNITTEST_OVERALL_NUMPASSED 0)
-global_set(UNITTEST_OVERALL_NUMRUN 0)
+unittest_initialize_vars()
 
 # Set common/base options
 set(PROJECT_NAME "DummyProject")

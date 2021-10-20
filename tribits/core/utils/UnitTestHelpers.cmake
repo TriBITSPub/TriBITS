@@ -41,7 +41,22 @@ include(CMakeParseArguments)
 include(GlobalSet)
 
 
+# @MACRO: unittest_initialize_vars()
 #
+# Call to initialize the unit test variables before running unit tests.
+#
+# Usage::
+#
+#   unittest_initialize_vars()
+#
+macro(unittest_initialize_vars)
+  # Assume that all unit tests will pass by default
+  global_set(UNITTEST_OVERALL_PASS TRUE)
+  global_set(UNITTEST_OVERALL_NUMPASSED 0)
+  global_set(UNITTEST_OVERALL_NUMRUN 0)
+endmacro()
+
+
 # @FUNCTION: unittest_compare_const()
 #
 # Perform a single unit test equality check and update overall test statistics
@@ -83,7 +98,6 @@ function(unittest_compare_const VAR_NAME CONST_VAL)
 endfunction()
 
 
-#
 # @FUNCTION: unittest_string_regex()
 #
 # Perform a series regexes of given strings and update overall test statistics.
@@ -140,7 +154,6 @@ function(unittest_string_regex INPUT_STRING)
 endfunction()
 
 
-#
 # @FUNCTION: unittest_has_substr_const()
 #
 # Check that a given string var contains the given substring and update
@@ -187,7 +200,6 @@ function(unittest_has_substr_const VAR_NAME SUBSTR_VAL)
 endfunction()
 
 
-#
 # @FUNCTION: unittest_not_has_substr_const()
 #
 # Check that a given string var does **NOT** contains the given substring and
@@ -234,7 +246,6 @@ function(unittest_not_has_substr_const VAR_NAME SUBSTR_VAL)
 endfunction()
 
 
-#
 # @FUNCTION: unittest_file_regex()
 #
 # Perform a series regexes of given strings and update overall test statistics.
@@ -256,7 +267,6 @@ function(unittest_file_regex  INPUT_FILE)
 endfunction()
 
 
-#
 # @FUNCTION: unittest_final_result()
 #
 # Print final statistics from all tests and assert final pass/fail
