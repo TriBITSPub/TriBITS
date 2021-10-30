@@ -138,10 +138,7 @@ endfunction()
 # Execute the unit tests
 #
 
-# Assume that all unit tests will pass by default
-global_set(UNITTEST_OVERALL_PASS TRUE)
-global_set(UNITTEST_OVERALL_NUMPASSED 0)
-global_set(UNITTEST_OVERALL_NUMRUN 0)
+unittest_initialize_vars()
 
 # Run the unit test functions
 unittest_tribits_read_ctest_tag_file()

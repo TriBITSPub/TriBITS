@@ -4360,10 +4360,7 @@ endfunction()
 set(${PROJECT_NAME}_HOSTNAME testhost.nowhere.com)
 set(CMAKE_HOST_SYSTEM_NAME UnspecifiedHostSystemName)
 
-# Assume that all unit tests will pass by default
-global_set(UNITTEST_OVERALL_PASS TRUE)
-global_set(UNITTEST_OVERALL_NUMPASSED 0)
-global_set(UNITTEST_OVERALL_NUMRUN 0)
+unittest_initialize_vars()
 
 # Set up the tribits_add_test(...) and tribits_add_advanced_test() functions
 # for unit test mode.

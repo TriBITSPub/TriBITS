@@ -84,7 +84,7 @@ include(TribitsTplDeclareLibraries) # Deprecated
 #
 macro(tribits_assert_and_setup_project_and_static_system_vars)
 
-  append_string_var(IN_SOURCE_ERROR_COMMON_MSG
+  string(APPEND IN_SOURCE_ERROR_COMMON_MSG
     "\nYou must now run something like:\n"
     "  $ cd ${CMAKE_CURRENT_SOURCE_DIR}/\n"
     "  $ rm -r CMakeCache.txt CMakeFiles/"
@@ -1312,7 +1312,7 @@ function(tribits_generate_repo_version_file_string  PROJECT_REPO_VERSION_FILE_ST
   tribits_generate_single_repo_version_string(
      ${CMAKE_CURRENT_SOURCE_DIR}
      SINGLE_REPO_VERSION)
-  append_string_var(REPO_VERSION_FILE_STR
+  string(APPEND REPO_VERSION_FILE_STR
     "*** Base Git Repo: ${PROJECT_NAME}\n"
     "${SINGLE_REPO_VERSION}\n" )
 
@@ -1336,7 +1336,7 @@ function(tribits_generate_repo_version_file_string  PROJECT_REPO_VERSION_FILE_ST
     tribits_generate_single_repo_version_string(
        "${CMAKE_CURRENT_SOURCE_DIR}/${EXTRAREPO_DIR}"
        SINGLE_REPO_VERSION)
-    append_string_var(REPO_VERSION_FILE_STR
+    string(APPEND REPO_VERSION_FILE_STR
       "*** Git Repo: ${EXTRAREPO_DIR}\n"
       "${SINGLE_REPO_VERSION}\n" )
 
