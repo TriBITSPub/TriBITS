@@ -51,12 +51,20 @@ advanced_set(TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL
   "Set to TRUE to add LD_LIBRARY_PATH to libsimpletpl.so for platforms where RPATH not working")
 
 function(set_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG sharedOrStatic)
+  set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON
+    ENVIRONMENT LD_LIBRARY_PATH=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib)
   if (TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL)
     set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG
-      ENVIRONMENT LD_LIBRARY_PATH=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib)
+      ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON})
   else()
     set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG "")
   endif()
+  set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON
+    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON}
+    PARENT_SCOPE)
+  set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG
+    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG}
+    PARENT_SCOPE)
 endfunction()
 set_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(STATIC)
 set_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(SHARED)
@@ -307,6 +315,136 @@ TribitsExampleApp_ALL_ST_test(ByProject STATIC)
 TribitsExampleApp_ALL_ST_test(ByProject SHARED)
 TribitsExampleApp_ALL_ST_test(ByPackage STATIC)
 TribitsExampleApp_ALL_ST_test(ByPackage SHARED)
+
+
+function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage sharedOrStatic)
+
+  if (byProjectOrPackage STREQUAL "ByProject")
+    set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
+    set(foundProjectOrPackageStr "Found TribitsExProj")
+  elseif (byProjectOrPackage STREQUAL "ByPackage")
+    set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=ON)
+    set(foundProjectOrPackageStr "Found SimpleCxx")
+  else()
+    message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
+  endif()
+
+  if (sharedOrStatic STREQUAL "SHARED")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
+  elseif (sharedOrStatic STREQUAL "STATIC")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
+  else()
+    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
+  endif()
+
+  set(testBaseName
+    TribitsExampleApp_ALL_ST_tpl_link_options_${byProjectOrPackage}_${sharedOrStatic})
+  set(testName ${PACKAGE_NAME}_${testBaseName})
+  set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  tribits_add_advanced_test( ${testBaseName}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+    XHOSTTYPE Darwin
+
+    TEST_0
+      MESSAGE "Copy source for TribitsExampleProject"
+      CMND ${CMAKE_COMMAND}
+      ARGS -E copy_directory
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+      WORKING_DIRECTORY TribitsExampleProject
+
+    TEST_1
+      MESSAGE "Write configuration fragment file to deal with semi-colon problem"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -DSIMPLE_TPL_INSTALL_BASE=${SimpleTpl_install_${sharedOrStatic}_DIR}/install
+        -DLIBDIR_NAME=lib
+        -DOUTPUT_CMAKE_FRAG_FILE="${testDir}/SimpleTplOpts.cmake"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/write_simple_tpl_link_options_spec.cmake"
+
+    TEST_2
+      MESSAGE "Do the configure of TribitsExampleProject"
+      WORKING_DIRECTORY BUILD
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -C "${testDir}/SimpleTplOpts.cmake"
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=ON
+        -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        ${buildSharedLibsArg}
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install
+        ${testDir}/TribitsExampleProject
+
+    TEST_3
+      MESSAGE "Build and install TribitsExampleProject locally"
+      WORKING_DIRECTORY BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+
+    TEST_4
+      MESSAGE "Delete source and build directory for TribitsExampleProject"
+      CMND ${CMAKE_COMMAND} ARGS -E rm -rf TribitsExampleProject BUILD
+
+    TEST_5
+      MESSAGE "Configure TribitsExampleApp locally"
+      WORKING_DIRECTORY app_build
+      CMND ${CMAKE_COMMAND} ARGS
+        -DCMAKE_PREFIX_PATH=${testDir}/install
+        -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang,WithSubpackages
+        ${findByProjectOrPackageArg}
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
+      PASS_REGULAR_EXPRESSION_ALL
+        "${foundProjectOrPackageStr}"
+        "-- Configuring done"
+        "-- Generating done"
+        "-- Build files have been written to: .*/${testName}/app_build"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_6
+      MESSAGE "Build TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Built target app"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_7
+      MESSAGE "Test TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      PASS_REGULAR_EXPRESSION_ALL
+        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:simpletpl headeronlytpl"
+        "app_test [.]+   Passed"
+        "100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON}
+
+    ADDED_TEST_NAME_OUT ${testNameBase}_NAME
+    )
+
+  if (${testNameBase}_NAME)
+    set_tests_properties(${${testNameBase}_NAME}
+      PROPERTIES DEPENDS ${SimpleTpl_install_${sharedOrStatic}_NAME} )
+  endif()
+
+endfunction()
+# NOTE: Above, it seems you always have to set LD_LIBRARY_PATH because CMake
+# does not put in RPATH if you only specifiy the TPL directory using -L<dir>.
+# If you use the entire library file, CMake will put in RPATH correctly.
+
+
+TribitsExampleApp_ALL_ST_tpl_link_options_test(ByProject STATIC)
+TribitsExampleApp_ALL_ST_tpl_link_options_test(ByProject SHARED)
+TribitsExampleApp_ALL_ST_tpl_link_options_test(ByPackage STATIC)
+TribitsExampleApp_ALL_ST_tpl_link_options_test(ByPackage SHARED)
 
 
 function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)

@@ -136,6 +136,20 @@ tribits_add_advanced_test( TribitsWriteClientExportFiles_UnitTests
   )
 
 
+tribits_add_advanced_test( TribitsExternalPackageWriteConfigFile_UnitTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  TEST_0 CMND ${CMAKE_COMMAND}
+    ARGS
+      -DPROJECT_NAME=${PROJECT_NAME}
+      -D${PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCURRENT_TEST_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}
+      -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsExternalPackageWriteConfigFile_UnitTests.cmake"
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final UnitTests Result: num_run = 28"
+      "Final UnitTests Result: PASSED"
+  )
+
+
 add_subdirectory(tribits_get_version_date)
 add_subdirectory(CTestScriptsUnitTests)
 add_subdirectory(DependencyUnitTests)
