@@ -8,7 +8,7 @@ Release Notes for TriBITS
     the build directory tree have been moved from
     `<buildDir>/packages/<packageDir>/` to
     `<buildDir>/cmake_packages/<PackageName>/`.  This makes it easy for
-    `find_package(<PackageName>)` to fine these files by simply adding the
+    `find_package(<PackageName>)` to find these files by simply adding the
     directory ``<buildDir>/cmake_packages` to `CMAKE_PREFIX_PATH` and then
     `<Package>Config.cmake` for any enabled package will be found
     automatically found by CMake.
@@ -19,7 +19,7 @@ Release Notes for TriBITS
     has been removed along with the cache variable
     <Project>_ENABLE_EXPORT_MAKEFILES.  This is to allow the refactoring of
     TriBITS to use modern CMake targets that propagate all information and
-    removing complex dependency tracking inforamtion from TriBITS (see
+    removing complex dependency tracking information from TriBITS (see
     TriBITSPub/TriBITS#63 and TriBITSPub/TriBITS#299).
 
 2021/06/17:
