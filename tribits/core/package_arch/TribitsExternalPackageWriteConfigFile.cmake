@@ -42,6 +42,7 @@ include(TribitsGeneralMacros)
 
 include(MessageWrapper)
 
+cmake_policy(SET CMP0057 NEW) # Support if ( ... IN_LIST ... )
 
 # @FUNCTION: tribits_external_package_write_config_file()
 #
@@ -296,7 +297,6 @@ function(tribits_external_package_process_libraries_list_full_lib_path
   set(configFileStr ${${configFileStrInOut}})
   # Should be an absolute library path
   get_filename_component(full_libname "${libentry}" NAME_WLE)
-  #print_var(full_libname)
   # Assert is a valid lib name and get lib name
   string(LENGTH "${full_libname}" full_libname_len)
   if (full_libname_len LESS 0)
@@ -307,25 +307,27 @@ function(tribits_external_package_process_libraries_list_full_lib_path
     tribits_print_invalid_lib_name(${tplName} "${full_libname}")
   endif()
   string(SUBSTRING "${full_libname}" 3 -1 libname)
-  #print_var(libname)
-  # Create IMPORTED library target
-  string(APPEND configFileStr
-    "add_library(${tplName}::${libname} IMPORTED UNKNOWN GLOBAL)\n"
-    "set_target_properties(${tplName}::${libname} PROPERTIES\n"
-    "  IMPORTED_LOCATION \"${libentry}\")\n"
-    )
-  # Set dependency on previous library
-  if (lastLib)
+  set(prefixed_libname "${tplName}::${libname}")
+  if (NOT (prefixed_libname IN_LIST libTargets))
+    # Create IMPORTED library target
     string(APPEND configFileStr
-      "target_link_libraries(${tplName}::${libname}\n"
-      "  INTERFACE ${tplName}::${lastLib})\n"
+      "add_library(${tplName}::${libname} IMPORTED UNKNOWN GLOBAL)\n"
+      "set_target_properties(${tplName}::${libname} PROPERTIES\n"
+      "  IMPORTED_LOCATION \"${libentry}\")\n"
       )
+    # Set dependency on previous library
+    if (lastLib)
+      string(APPEND configFileStr
+        "target_link_libraries(${tplName}::${libname}\n"
+        "  INTERFACE ${tplName}::${lastLib})\n"
+        )
+    endif()
+    string(APPEND configFileStr
+      "\n")
+    # Update for next loop
+    set(lastLib ${libname})
+    list(APPEND libTargets ${prefixed_libname})
   endif()
-  string(APPEND configFileStr
-    "\n")
-  # Update for next loop
-  set(lastLib ${libname})
-  list(APPEND libTargets "${tplName}::${libname}")
   # Set output vars
   set(${libTargetsInOut} ${libTargets} PARENT_SCOPE)
   set(${lastLibInOut} ${lastLib} PARENT_SCOPE)
@@ -351,24 +353,27 @@ function(tribits_external_package_process_libraries_list_lib_name_link_option
   endif()
   # Get <libname> from -l<libname>
   string(SUBSTRING "${libentry}" 2 -1 libname)
-  # Create IMPORTED library target
-  string(APPEND configFileStr
-    "add_library(${tplName}::${libname} IMPORTED INTERFACE GLOBAL)\n"
-    "set_target_properties(${tplName}::${libname} PROPERTIES\n"
-    "  IMPORTED_LIBNAME \"${libname}\")\n"
-    )
-  # Set dependency on previous library
-  if (lastLib)
+  set(prefixed_libname "${tplName}::${libname}")
+  if (NOT (prefixed_libname IN_LIST libTargets))
+    # Create IMPORTED library target
     string(APPEND configFileStr
-      "target_link_libraries(${tplName}::${libname}\n"
-      "  INTERFACE ${tplName}::${lastLib})\n"
+      "add_library(${tplName}::${libname} IMPORTED INTERFACE GLOBAL)\n"
+      "set_target_properties(${tplName}::${libname} PROPERTIES\n"
+      "  IMPORTED_LIBNAME \"${libname}\")\n"
       )
+    # Set dependency on previous library
+    if (lastLib)
+      string(APPEND configFileStr
+        "target_link_libraries(${tplName}::${libname}\n"
+        "  INTERFACE ${tplName}::${lastLib})\n"
+        )
+    endif()
+    string(APPEND configFileStr
+      "\n")
+    # Update for next loop
+    set(lastLib ${libname})
+    list(APPEND libTargets ${prefixed_libname})
   endif()
-  string(APPEND configFileStr
-    "\n")
-  # Update for next loop
-  set(lastLib ${libname})
-  list(APPEND libTargets "${tplName}::${libname}")
   # Set output vars
   set(${libTargetsInOut} ${libTargets} PARENT_SCOPE)
   set(${lastLibInOut} ${lastLib} PARENT_SCOPE)
