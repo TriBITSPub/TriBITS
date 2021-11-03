@@ -403,6 +403,63 @@ target_link_libraries(SomeTpl::lib3
 endfunction()
 
 
+function(unittest_tribits_external_package_process_libraries_list_duplicate_libs)
+
+  message("\n***")
+  message("*** Testing tribits_external_package_process_libraries_list(): duplicate libs")
+  message("***\n")
+
+  set(tplName SomeTpl)
+  set(TPL_${tplName}_LIBRARIES
+    -llib3 -L/some/explicit/path3
+    /some/other/path/to/libsomelib.a
+    -llib3 -L/some/explicit/path3
+    /some/other/path/to/libsomelib.a
+    -llib1 -L/some/explicit/path1
+    )
+
+  set(configFileFragStr "#beginning\n\n")
+
+  tribits_external_package_process_libraries_list( ${tplName}
+    LIB_TARGETS_LIST_OUT libTargetsList
+    LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
+    CONFIG_FILE_STR_INOUT configFileFragStr
+    )
+
+  unittest_compare_const( libTargetsList
+    "SomeTpl::lib1;SomeTpl::somelib;SomeTpl::lib3"
+    )
+
+  unittest_compare_const( libLinkFlagsList
+    "-L/some/explicit/path3;-L/some/explicit/path3;-L/some/explicit/path1"
+    )
+
+  unittest_string_block_compare( configFileFragStr
+[=[
+#beginning
+
+add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
+set_target_properties(SomeTpl::lib1 PROPERTIES
+  IMPORTED_LIBNAME "lib1")
+
+add_library(SomeTpl::somelib IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::somelib PROPERTIES
+  IMPORTED_LOCATION "/some/other/path/to/libsomelib.a")
+target_link_libraries(SomeTpl::somelib
+  INTERFACE SomeTpl::lib1)
+
+add_library(SomeTpl::lib3 IMPORTED INTERFACE GLOBAL)
+set_target_properties(SomeTpl::lib3 PROPERTIES
+  IMPORTED_LIBNAME "lib3")
+target_link_libraries(SomeTpl::lib3
+  INTERFACE SomeTpl::somelib)
+
+]=]
+    )
+
+endfunction()
+
+
 #
 # Tests for tribits_external_package_write_config_file_str()
 #
@@ -694,6 +751,7 @@ unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_1_
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2()
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_3_3()
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2_lib_files_1()
+unittest_tribits_external_package_process_libraries_list_duplicate_libs()
 
 unittest_tribits_external_package_write_config_file_str_incl_dirs_0_lib_files_1()
 unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_0()
@@ -703,4 +761,4 @@ unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2
 unittest_tribits_external_package_write_config_file_str_incl_dirs_1_bad_lib_args()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(28)
+unittest_final_result(31)
