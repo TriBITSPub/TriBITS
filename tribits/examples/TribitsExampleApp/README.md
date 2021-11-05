@@ -68,7 +68,7 @@ That essentially results in calling:
     )
 ```
 
-(but does so with a loop and a list internally obviously).
+(but does so with a loop and a list internally).
 
 
 ## Pulling in packages from the build tree
