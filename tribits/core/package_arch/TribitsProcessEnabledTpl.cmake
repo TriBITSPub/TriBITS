@@ -103,7 +103,18 @@ function(tribits_process_enabled_tpl  TPL_NAME)
 
     # Process the FindTPL${TPL_NAME}.cmake module
     tribits_trace_file_processing(TPL  INCLUDE  "${CURRENT_TPL_PATH}")
+    set(TRIBITS_FINDING_RAW_${TPL_NAME}_PACKAGE_FIRST TRUE)
     include("${CURRENT_TPL_PATH}")
+    unset(TRIBITS_FINDING_RAW_${TPL_NAME}_PACKAGE_FIRST)
+    # NOTE: Above, setting TRIBITS_FINDING_RAW_${TPL_NAME}_PACKAGE_FIRST=TRUE
+    # triggers special logic in the TriBITS-created
+    # ${TPL_NAME}ConfigVersion.cmake file to set
+    # PACKAGE_VERSION_COMPATIBLE=FALSE and result in find_package(${TPL_NAME})
+    # that may be called inside of ${TPL_NAME}_FINDMOD to not find a
+    # TriBITS-generated ${TPL_NAME}Config.cmake file.  This allows
+    # find_package(${TPL_NAME}) to usae a proper non-TriBITS
+    # Find${TPL_NAME}.cmake module or find a non-TriBITS
+    # ${TPL_NAME}Config.cmake module.
 
     if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
       print_var(TPL_${TPL_NAME}_NOT_FOUND)

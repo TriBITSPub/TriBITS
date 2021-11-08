@@ -681,11 +681,16 @@ function(tribits_tpl_find_include_dirs_and_libraries TPL_NAME)
     "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_CMAKE_PKGS_DIR}")
   set(tplConfigFile
     "${buildDirCMakePkgsDir}/${TPL_NAME}/${TPL_NAME}Config.cmake")
+  set(tplConfigVersionFile
+    "${buildDirCMakePkgsDir}/${TPL_NAME}/${TPL_NAME}ConfigVersion.cmake")
   tribits_external_package_write_config_file(${TPL_NAME} "${tplConfigFile}")
+  tribits_external_package_write_config_version_file(${TPL_NAME} "${tplConfigVersionFile}")
   if (NOT ${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING)
     include("${tplConfigFile}")
   endif()
   tribits_external_package_install_config_file(${TPL_NAME} "${tplConfigFile}")
+  tribits_external_package_install_config_version_file(${TPL_NAME}
+    "${tplConfigVersionFile}")
 
 endfunction()
 
