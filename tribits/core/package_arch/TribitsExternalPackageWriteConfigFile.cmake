@@ -128,7 +128,7 @@ endfunction()
 function(tribits_external_package_install_config_file  tplName  tplConfigFile)
  install(
     FILES "${tplConfigFile}"
-    DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${tplName}"
+    DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/external_packages/${tplName}"
     )
 endfunction()
 
@@ -155,7 +155,7 @@ function(tribits_external_package_install_config_version_file  tplName
   )
  install(
     FILES "${tplConfigVersionFile}"
-    DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${tplName}"
+    DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/external_packages/${tplName}"
     )
 endfunction()
 

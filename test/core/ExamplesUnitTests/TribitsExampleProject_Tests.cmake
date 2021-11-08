@@ -233,6 +233,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
     MESSAGE "Build 'install' target using raw 'make'"
     CMND make ARGS install ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
+      "Install configuration: .RELEASE."
+      "Installing: .*/install/lib/external_packages/HeaderOnlyTpl/HeaderOnlyTplConfig.cmake"
+      "Installing: .*/install/lib/external_packages/HeaderOnlyTpl/HeaderOnlyTplConfigVersion.cmake"
       "Installing: .+/install/include/TribitsExProj_version.h"
       "Installing: .+/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake"
       "Installing: .+/install/lib/cmake/TribitsExProj/TribitsExProjConfigVersion.cmake"
