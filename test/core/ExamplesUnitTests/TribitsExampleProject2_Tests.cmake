@@ -12,37 +12,19 @@ set(TribitsExampleProject2_COMMON_CONFIG_ARGS
 
 ########################################################################
 
-set(testBaseName TribitsExampleProject2_install_config_again)
-set(testName ${PACKAGE_NAME}_${testBaseName})
+set(testNameBase TribitsExampleProject2_install_config_again)
+set(testName ${PACKAGE_NAME}_${testNameBase})
 set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
 
-tribits_add_advanced_test( ${testBaseName}
-
+tribits_add_advanced_test( ${testNameBase}
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
   ENVIRONMENT
-    "CMAKE_PREFIX_PATH=${testDir}/install_tpl1"
+    "CMAKE_PREFIX_PATH=${TribitsExampleProject2_Tpls_install_STATIC_DIR}/install"
 
   TEST_0
-    MESSAGE "Configure Tpl1 to install"
-    CMND ${CMAKE_COMMAND}
-    WORKING_DIRECTORY build_tpl1
-    ARGS
-      ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
-      -DCMAKE_BUILD_TYPE=Release
-      -DCMAKE_INSTALL_PREFIX=../install_tpl1
-      -DCMAKE_INSTALL_LIBDIR=lib
-      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/Tpl1
-
-  TEST_1
-    MESSAGE "Make and install Tpl1"
-    WORKING_DIRECTORY build_tpl1
-    SKIP_CLEAN_WORKING_DIRECTORY
-    CMND make ARGS install
-
-  TEST_2
-    MESSAGE "Configure TribitsExampleProject2 against Tpl1"
+    MESSAGE "Configure TribitsExampleProject2 against pre-installed Tpl1"
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
@@ -54,18 +36,18 @@ tribits_add_advanced_test( ${testBaseName}
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "Using find_package[(]Tpl1 [.][.][.][)] [.][.][.]"
-      "Found Tpl1_DIR='.*/${testName}/install_tpl1/lib/cmake/Tpl1'"
+      "Found Tpl1_DIR='.*TribitsExampleProject2_Tpls_install_STATIC/install/lib/cmake/Tpl1'"
       "-- Configuring done"
       "-- Generating done"
 
-  TEST_3
+  TEST_1
     MESSAGE "Build Package2 and tests"
     CMND make
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "package1-helloworld"
 
-  TEST_4
+  TEST_2
     MESSAGE "Run tests for Package2"
     CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -73,22 +55,21 @@ tribits_add_advanced_test( ${testBaseName}
       "Test.*Package1_HelloWorldProg.*Passed"
       "100% tests passed, 0 tests failed"
 
-  TEST_5
+  TEST_3
     MESSAGE "Install Package 2"
     CMND make ARGS install
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "Tpl1Config.cmake"
 
-  TEST_6
+  TEST_4
     MESSAGE "Remove configuration files for TribitsExampleProject2"
     CMND rm ARGS -r CMakeCache.txt CMakeFiles
 
-  TEST_7
+  TEST_5
     MESSAGE "Configure  TribitsExampleProject2 against from scratch with install dir first in path"
     CMND ${CMAKE_COMMAND}
     ARGS
-      #-C "${${testName}_CMAKE_PREFIX_PATH_file}"
       ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
       -DCMAKE_BUILD_TYPE=DEBUG
       -DTribitsExProj2_ENABLE_TESTS=ON
@@ -99,10 +80,11 @@ tribits_add_advanced_test( ${testBaseName}
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "Using find_package[(]Tpl1 [.][.][.][)] [.][.][.]"
-      "Found Tpl1_DIR='.*/${testName}/install_tpl1/lib/cmake/Tpl1'"
+      "Found Tpl1_DIR='.*TribitsExampleProject2_Tpls_install_STATIC/install/lib/cmake/Tpl1'"
       "-- Configuring done"
       "-- Generating done"
 
+  ADDED_TEST_NAME_OUT ${testNameBase}_NAME
   )
   # Above, we set the cache var CMAKE_PREFIX_PATH=install and the env var
   # CMAKE_PREFIX_PATH=install_tpl1 so that find_package(Tpl1) will look in
@@ -120,3 +102,8 @@ tribits_add_advanced_test( ${testBaseName}
   # searches install_tpl1/ to simulate that scenario.  This test ensures that
   # find_package(Tpl1) will not does not find Tpl1Config.cmake just because
   # CMAKE_PREFIX_PATH is in the search path.
+
+if (${testNameBase}_NAME)
+  set_tests_properties(${${testNameBase}_NAME}
+    PROPERTIES DEPENDS ${TribitsExampleProject2_Tpls_install_STATIC_NAME} )
+endif()
