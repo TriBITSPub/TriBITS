@@ -204,6 +204,7 @@ tribits_add_advanced_test( ${testNameBase}
     ARGS
       ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
       -DCMAKE_BUILD_TYPE=DEBUG
+      -DTpl1_EXTRACT_INFO_AFTER_FIND_PACKAGE=ON
       -DTribitsExProj2_ENABLE_TESTS=ON
       -DCMAKE_INSTALL_PREFIX=install
       -DTribitsExProj2_ENABLE_Package1=ON
@@ -212,6 +213,7 @@ tribits_add_advanced_test( ${testNameBase}
     PASS_REGULAR_EXPRESSION_ALL
       "Using find_package[(]Tpl1 [.][.][.][)] [.][.][.]"
       "Found Tpl1_DIR='.*TribitsExampleProject2_Tpls_install_STATIC/install/lib/cmake/Tpl1'"
+      "Extracting include dirs and libraries from target tpl1::tpl1"
       "-- Configuring done"
       "-- Generating done"
 
@@ -247,6 +249,7 @@ tribits_add_advanced_test( ${testNameBase}
     ARGS
       ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
       -DCMAKE_BUILD_TYPE=DEBUG
+      -DTpl1_EXTRACT_INFO_AFTER_FIND_PACKAGE=ON
       -DTribitsExProj2_ENABLE_TESTS=ON
       -DCMAKE_PREFIX_PATH="${testDir}/install"
       -DCMAKE_INSTALL_PREFIX=install
