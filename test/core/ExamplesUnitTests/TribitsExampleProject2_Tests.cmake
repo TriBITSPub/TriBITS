@@ -12,6 +12,94 @@ set(TribitsExampleProject2_COMMON_CONFIG_ARGS
 
 ########################################################################
 
+
+function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
+
+  if (sharedOrStatic STREQUAL "SHARED")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
+    set(libExt so)
+  elseif (sharedOrStatic STREQUAL "STATIC")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
+    set(libExt a)
+  else()
+    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
+  endif()
+
+  set(testNameBase TribitsExampleProject2_find_tpl_parts_${sharedOrStatic})
+  set(testName ${PACKAGE_NAME}_${testNameBase})
+  set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
+
+  tribits_add_advanced_test( ${testNameBase}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+
+    TEST_0
+      MESSAGE "Configure TribitsExampleProject2 against pre-installed Tpl1"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
+        -DCMAKE_BUILD_TYPE=DEBUG
+        "-DTpl1_INCLUDE_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install/include"
+        "-DTpl1_LIBRARY_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install/lib"
+        -DTribitsExProj2_ENABLE_TESTS=ON
+        -DCMAKE_INSTALL_PREFIX=install
+        -DTribitsExProj2_ENABLE_Package1=ON
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      PASS_REGULAR_EXPRESSION_ALL
+        "Searching for libs in Tpl1_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib'"
+        "Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib/libtpl1.${libExt}'"
+        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib/libtpl1.${libExt}'"
+        "Searching for headers in Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/include'"
+        "Found header '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/include/Tpl1.hpp'"
+        "TPL_Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/include'"
+        "-- Configuring done"
+        "-- Generating done"
+
+    TEST_1
+      MESSAGE "Build Package1 and tests"
+      CMND make
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      PASS_REGULAR_EXPRESSION_ALL
+        "package1-helloworld"
+
+    TEST_2
+      MESSAGE "Run tests for Package1"
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      PASS_REGULAR_EXPRESSION_ALL
+        "Test.*Package1_HelloWorldProg.*Passed"
+        "100% tests passed, 0 tests failed"
+
+    TEST_3
+      MESSAGE "Install Package1"
+      CMND make ARGS install
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      PASS_REGULAR_EXPRESSION_ALL
+        "Tpl1Config.cmake"
+
+    TEST_4
+      MESSAGE "Remove configuration files for TribitsExampleProject2"
+      CMND rm ARGS -r CMakeCache.txt CMakeFiles
+
+    ADDED_TEST_NAME_OUT ${testNameBase}_NAME
+    )
+  # NOTE: The above test ensures that the basic TriBITS TPL find operations
+  # work and it does not call find_package().
+
+  if (${testNameBase}_NAME)
+    set_tests_properties(${${testNameBase}_NAME}
+      PROPERTIES DEPENDS ${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME} )
+  endif()
+
+endfunction()
+
+TribitsExampleProject2_find_tpl_parts_test(STATIC)
+TribitsExampleProject2_find_tpl_parts_test(SHARED)
+
+
+########################################################################
+
 set(testNameBase TribitsExampleProject2_install_config_again)
 set(testName ${PACKAGE_NAME}_${testNameBase})
 set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
@@ -41,14 +129,14 @@ tribits_add_advanced_test( ${testNameBase}
       "-- Generating done"
 
   TEST_1
-    MESSAGE "Build Package2 and tests"
+    MESSAGE "Build Package1 and tests"
     CMND make
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "package1-helloworld"
 
   TEST_2
-    MESSAGE "Run tests for Package2"
+    MESSAGE "Run tests for Package1"
     CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
@@ -56,7 +144,7 @@ tribits_add_advanced_test( ${testNameBase}
       "100% tests passed, 0 tests failed"
 
   TEST_3
-    MESSAGE "Install Package 2"
+    MESSAGE "Install Package1"
     CMND make ARGS install
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
