@@ -73,7 +73,7 @@ function(SimpleTpl_install_test sharedOrStatic)
       ARGS
         ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
         ${buildSharedLibsArg}
-        -DCMAKE_BUILD_TYPE=RelWithDepInfo
+        -DCMAKE_BUILD_TYPE=Release
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
         -DCMAKE_INSTALL_INCLUDEDIR=include
         -DCMAKE_INSTALL_LIBDIR=lib
@@ -87,10 +87,9 @@ function(SimpleTpl_install_test sharedOrStatic)
       MESSAGE "Build and install SimpleTpl"
       WORKING_DIRECTORY BUILD
       SKIP_CLEAN_WORKING_DIRECTORY
-      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+      CMND ${CMAKE_COMMAND} ARGS --build . --config Release --target install
       PASS_REGULAR_EXPRESSION_ALL
-        "Built target simpletpl"
-        "Installing: ${testDir}/install/lib/libsimpletpl[.]"
+        "Installing: ${testDir}/install/.*simpletpl[.]"
         "Installing: ${testDir}/install/include/SimpleTpl.hpp"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
