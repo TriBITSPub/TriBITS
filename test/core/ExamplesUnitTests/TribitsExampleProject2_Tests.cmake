@@ -84,6 +84,8 @@ function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
   # work and it does not call find_package().
 
   if (${testNameBase}_NAME)
+    set(${testNameBase}_NAME ${${testNameBase}_NAME} PARENT_SCOPE)
+    set(${testNameBase}_INSTALL_DIR "${testDir}/install" PARENT_SCOPE)
     set_tests_properties(${${testNameBase}_NAME}
       PROPERTIES DEPENDS ${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME} )
   endif()
@@ -166,6 +168,8 @@ function(TribitsExampleProject2_explicit_tpl_vars_test sharedOrStatic)
   # TPL_<tplName>_LIBRARIES bypasses calling the inner find_package().
 
   if (${testNameBase}_NAME)
+    set(${testNameBase}_NAME ${${testNameBase}_NAME} PARENT_SCOPE)
+    set(${testNameBase}_INSTALL_DIR "${testDir}/install" PARENT_SCOPE)
     set_tests_properties(${${testNameBase}_NAME}
       PROPERTIES DEPENDS ${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME} )
   endif()
@@ -251,6 +255,8 @@ function(TribitsExampleProject2_find_package_test sharedOrStatic)
   # building of the target .
 
   if (${testNameBase}_NAME)
+    set(${testNameBase}_NAME ${${testNameBase}_NAME} PARENT_SCOPE)
+    set(${testNameBase}_INSTALL_DIR "${testDir}/install" PARENT_SCOPE)
     set_tests_properties(${${testNameBase}_NAME}
       PROPERTIES DEPENDS ${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME} )
   endif()

@@ -51,10 +51,6 @@ include(SimpleTpl_installs_Tests.cmake)
 
 include(TribitsExampleProject_Tests.cmake)
 
-include(TribitsExampleProject2_Tpls_Install_Tests.cmake)
-
-include(TribitsExampleProject2_Tests.cmake)
-
 include(RPATH_Handling_Tests.cmake)
 
 include(TribitsExampleProject_TribitsExampleProjectAddons_Tests.cmake)
@@ -68,3 +64,9 @@ include(TribitsExampleProjectAddons_Tests.cmake)
 include(TribitsExampleMetaProject_Tests.cmake)
 
 include(UserErrorChecking_Tests.cmake)
+
+include(TribitsExampleProject2_Tpls_Install_Tests.cmake)
+
+include(TribitsExampleProject2_Tests.cmake)
+
+include(TribitsExampleApp2_Tests.cmake)
