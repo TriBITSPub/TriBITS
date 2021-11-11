@@ -74,6 +74,7 @@ function(SimpleTpl_install_test sharedOrStatic)
         ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
         ${buildSharedLibsArg}
         -DCMAKE_BUILD_TYPE=Release
+	-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
         -DCMAKE_INSTALL_INCLUDEDIR=include
         -DCMAKE_INSTALL_LIBDIR=lib
