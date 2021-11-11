@@ -94,6 +94,7 @@ function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
 
 endfunction()
 
+
 TribitsExampleProject2_find_tpl_parts_test(STATIC)
 TribitsExampleProject2_find_tpl_parts_test(SHARED)
 
@@ -182,6 +183,95 @@ endfunction()
 
 TribitsExampleProject2_explicit_tpl_vars_test(STATIC)
 TribitsExampleProject2_explicit_tpl_vars_test(SHARED)
+
+
+########################################################################
+
+
+function(TribitsExampleProject2_find_package_test sharedOrStatic)
+
+  if (sharedOrStatic STREQUAL "SHARED")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
+    set(libExt so)
+  elseif (sharedOrStatic STREQUAL "STATIC")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
+    set(libExt a)
+  else()
+    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
+  endif()
+
+  set(testNameBase TribitsExampleProject2_find_package_${sharedOrStatic})
+  set(testName ${PACKAGE_NAME}_${testNameBase})
+  set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
+
+  tribits_add_advanced_test( ${testNameBase}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+
+    ENVIRONMENT
+      "CMAKE_PREFIX_PATH=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install"
+
+    TEST_0
+      MESSAGE "Configure TribitsExampleProject2 against pre-installed Tpl1"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
+        -DCMAKE_BUILD_TYPE=DEBUG
+        -DTribitsExProj2_ENABLE_TESTS=ON
+        -DCMAKE_INSTALL_PREFIX=install
+        -DTribitsExProj2_ENABLE_Package1=ON
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      PASS_REGULAR_EXPRESSION_ALL
+        "Using find_package[(]Tpl1 [.][.][.][)] [.][.][.]"
+        "Found Tpl1_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib/cmake/Tpl1'"
+        "TPL_Tpl1_LIBRARIES='Tpl1::all_libs'"
+        "TPL_Tpl1_INCLUDE_DIRS=''"
+        "-- Configuring done"
+        "-- Generating done"
+
+    TEST_1
+      MESSAGE "Build Package1 and tests"
+      CMND make
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      PASS_REGULAR_EXPRESSION_ALL
+        "package1-helloworld"
+
+    TEST_2
+      MESSAGE "Run tests for Package1"
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      PASS_REGULAR_EXPRESSION_ALL
+        "Test.*Package1_HelloWorldProg.*Passed"
+        "100% tests passed, 0 tests failed"
+
+    TEST_3
+      MESSAGE "Install Package1"
+      CMND make ARGS install
+      PASS_REGULAR_EXPRESSION_ALL
+        "Tpl1Config.cmake"
+        "Tpl1ConfigVersion.cmake"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_4
+      MESSAGE "Remove configuration files for TribitsExampleProject2"
+      CMND rm ARGS -r CMakeCache.txt CMakeFiles
+
+    ADDED_TEST_NAME_OUT ${testNameBase}_NAME
+    )
+  # NOTE: The above test ensures that find_package() works with manual
+  # building of the target .
+
+  if (${testNameBase}_NAME)
+    set_tests_properties(${${testNameBase}_NAME}
+      PROPERTIES DEPENDS ${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME} )
+  endif()
+
+endfunction()
+
+
+TribitsExampleProject2_find_package_test(STATIC)
+TribitsExampleProject2_find_package_test(SHARED)
 
 
 ########################################################################
