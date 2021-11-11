@@ -78,10 +78,6 @@ function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
       PASS_REGULAR_EXPRESSION_ALL
         "Tpl1Config.cmake"
 
-    TEST_4
-      MESSAGE "Remove configuration files for TribitsExampleProject2"
-      CMND rm ARGS -r CMakeCache.txt CMakeFiles
-
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
   # NOTE: The above test ensures that the basic TriBITS TPL find operations
@@ -163,10 +159,6 @@ function(TribitsExampleProject2_explicit_tpl_vars_test sharedOrStatic)
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "Tpl1Config.cmake"
-
-    TEST_4
-      MESSAGE "Remove configuration files for TribitsExampleProject2"
-      CMND rm ARGS -r CMakeCache.txt CMakeFiles
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
@@ -252,10 +244,6 @@ function(TribitsExampleProject2_find_package_test sharedOrStatic)
         "Tpl1Config.cmake"
         "Tpl1ConfigVersion.cmake"
       ALWAYS_FAIL_ON_NONZERO_RETURN
-
-    TEST_4
-      MESSAGE "Remove configuration files for TribitsExampleProject2"
-      CMND rm ARGS -r CMakeCache.txt CMakeFiles
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
