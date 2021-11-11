@@ -15,8 +15,8 @@ build, and run the tests with:
   ctest
 ```
 
-That will call `find_package(TribitsExaProj)` and will set the compilers
-pulled in from the found `TribitsExaProjConfig.cmake` file.
+That will call `find_package(TribitsExProj)` and will set the compilers
+pulled in from the found `TribitsExProjConfig.cmake` file.
 
 
 ## Pulling in only a subset of packages
