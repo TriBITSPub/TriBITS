@@ -1,5 +1,5 @@
-#ifndef PACKAGE1_HELLO_WOLRD_HPP
-#define PACKAGE1_HELLO_WOLRD_HPP
+#ifndef PACKAGE1_HPP
+#define PACKAGE1_HPP
 
 
 #include <ostream>
@@ -13,4 +13,4 @@ std::string deps();
 } // namespace Package1
 
 
-#endif // PACKAGE1_HELLO_WOLRD_HPP
+#endif // PACKAGE1_HPP

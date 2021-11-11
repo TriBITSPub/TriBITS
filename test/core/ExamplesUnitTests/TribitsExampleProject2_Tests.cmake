@@ -61,14 +61,14 @@ function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
       CMND make
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "package1-helloworld"
+        "package1-prg"
 
     TEST_2
       MESSAGE "Run tests for Package1"
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "Test.*Package1_HelloWorldProg.*Passed"
+        "Test.*Package1_Prg.*Passed"
         "100% tests passed, 0 tests failed"
 
     TEST_3
@@ -143,14 +143,14 @@ function(TribitsExampleProject2_explicit_tpl_vars_test sharedOrStatic)
       CMND make
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "package1-helloworld"
+        "package1-prg"
 
     TEST_2
       MESSAGE "Run tests for Package1"
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "Test.*Package1_HelloWorldProg.*Passed"
+        "Test.*Package1_Prg.*Passed"
         "100% tests passed, 0 tests failed"
 
     TEST_3
@@ -227,14 +227,14 @@ function(TribitsExampleProject2_find_package_test sharedOrStatic)
       CMND make
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "package1-helloworld"
+        "package1-prg"
 
     TEST_2
       MESSAGE "Run tests for Package1"
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "Test.*Package1_HelloWorldProg.*Passed"
+        "Test.*Package1_Prg.*Passed"
         "100% tests passed, 0 tests failed"
 
     TEST_3
@@ -300,14 +300,14 @@ tribits_add_advanced_test( ${testNameBase}
     CMND make
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
-      "package1-helloworld"
+      "package1-prg"
 
   TEST_2
     MESSAGE "Run tests for Package1"
     CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
-      "Test.*Package1_HelloWorldProg.*Passed"
+      "Test.*Package1_Prg.*Passed"
       "100% tests passed, 0 tests failed"
 
   TEST_3

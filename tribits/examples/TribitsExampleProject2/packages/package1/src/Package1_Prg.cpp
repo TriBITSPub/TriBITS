@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Package1_HelloWorld.hpp"
+#include "Package1.hpp"
 
 int main()
 {
