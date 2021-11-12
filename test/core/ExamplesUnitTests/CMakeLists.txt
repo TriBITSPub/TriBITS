@@ -64,3 +64,9 @@ include(TribitsExampleProjectAddons_Tests.cmake)
 include(TribitsExampleMetaProject_Tests.cmake)
 
 include(UserErrorChecking_Tests.cmake)
+
+include(TribitsExampleProject2_Tpls_Install_Tests.cmake)
+
+include(TribitsExampleProject2_Tests.cmake)
+
+include(TribitsExampleApp2_Tests.cmake)
