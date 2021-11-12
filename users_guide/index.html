@@ -350,7 +350,7 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2021-11-05
+<dd class="field-even"><p>2021-11-12
 :Version: .. include:: ../copied_files/TribitsGitVersion.txt</p>
 </dd>
 </dl>
@@ -3026,11 +3026,12 @@ applied math and computational science community and are not likely to clash.</p
 <p>Using a TriBITS TPL is to be preferred over using raw CMake
 <code class="docutils literal notranslate"><span class="pre">find_package(&lt;someCMakePackage&gt;)</span></code> because the TriBITS system guarantees
 that only a single unique version of TPL of the same version will be used by
-multiple packages.  Also, by defining a TriBITS TPL, automatic enable/disable
-logic will be applied as described in <a class="reference internal" href="#package-dependencies-and-enable-disable-logic">Package Dependencies and Enable/Disable
-Logic</a>.  For example, if a TPL is explicitly disabled, all of the downstream
-packages that depend on that TPL will be automatically disabled as well (see
-<a class="reference internal" href="#tpl-disable-triggers-auto-disables-of-downstream-dependencies">TPL disable triggers auto-disables of downstream dependencies</a>).</p>
+multiple packages that uses the TPL.  Also, by defining a TriBITS TPL,
+automatic enable/disable logic will be applied as described in <a class="reference internal" href="#package-dependencies-and-enable-disable-logic">Package
+Dependencies and Enable/Disable Logic</a>.  For example, if a TPL is explicitly
+disabled, all of the downstream packages that depend on that TPL will be
+automatically disabled as well (see <a class="reference internal" href="#tpl-disable-triggers-auto-disables-of-downstream-dependencies">TPL disable triggers auto-disables of
+downstream dependencies</a>).</p>
 <p>For each TPL referenced in a <a class="reference internal" href="#repodir-tplslist-cmake">&lt;repoDir&gt;/TPLsList.cmake</a> file using the macro
 <a class="reference internal" href="#tribits-repository-define-tpls">tribits_repository_define_tpls()</a>, there must exist a file, typically called
 <code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code>, that once processed, produces the variables
@@ -3048,11 +3049,12 @@ module which is currently:</p>
 <p>Some concrete <code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code> files actually do use
 <code class="docutils literal notranslate"><span class="pre">find_package()</span></code> and a standard CMake package find module to fill in the
 guts of finding at TPL which is perfectly fine.  In this case, the purpose for
-the wrapping <code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code> file is to standardize the output
-variables <code class="docutils literal notranslate"><span class="pre">TPL_${TPL_NAME}_INCLUDE_DIRS</span></code> and <code class="docutils literal notranslate"><span class="pre">TPL_${TPL_NAME}_LIBRARIES</span></code>.
-For more details on properly using <code class="docutils literal notranslate"><span class="pre">find_package()</span></code> to define a
-<code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code> file, see <a class="reference internal" href="#how-to-use-find-package-for-a-tribits-tpl">How to use find_package() for a
-TriBITS TPL</a>.</p>
+the wrapping <code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code> file is to ensure the definition of
+the complete target <code class="docutils literal notranslate"><span class="pre">${TPL_NAME}::all_libs</span></code> which contains all usage
+requirements for the external package/TPL (i.e. all of the libraries, include
+directories, etc.).  For more details on properly using <code class="docutils literal notranslate"><span class="pre">find_package()</span></code> to
+define a <code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code> file, see <a class="reference internal" href="#how-to-use-find-package-for-a-tribits-tpl">How to use find_package() for
+a TriBITS TPL</a>.</p>
 <p>Once the <a class="reference internal" href="#repodir-tplslist-cmake">&lt;repoDir&gt;/TPLsList.cmake</a> files are all processed, then each
 defined TPL <code class="docutils literal notranslate"><span class="pre">TPL_NAME</span></code> is assigned the following global non-cache variables:</p>
 <blockquote>
@@ -6470,14 +6472,22 @@ configure, test, etc.</p></li>
 </section>
 <section id="how-to-use-find-package-for-a-tribits-tpl">
 <h2><a class="toc-backref" href="#id63"><span class="sectnum">9.5</span> How to use find_package() for a TriBITS TPL</a><a class="headerlink" href="#how-to-use-find-package-for-a-tribits-tpl" title="Permalink to this headline"></a></h2>
-<p>When defining a <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file, it is possible (and
-encouraged) to utilize <code class="docutils literal notranslate"><span class="pre">find_package(&lt;tplName&gt;</span> <span class="pre">...)</span></code> to provide the default
-find operation.  In order for the resulting <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> to
-behave consistently between all the various TriBITS TPLs (and allow the
-standard TriBITS TPL find overrides) one must use the TriBITS function
+<p>When defining a <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file, it is possible and encouraged
+to utilize <code class="docutils literal notranslate"><span class="pre">find_package(&lt;tplName&gt;</span> <span class="pre">...)</span></code> to provide the default find
+operation.  However, most <code class="docutils literal notranslate"><span class="pre">Find&lt;tplName&gt;.cmake</span></code> modules and even some
+<code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;Config.cmake</span></code> config files don’t provide all of the required
+features needed by downstream TriBITS packages.  Specifically, these modules
+and config files usually don’t provide a complete <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::all_libs</span></code>
+target that contains all usage requirements (such as the
+<code class="docutils literal notranslate"><span class="pre">INTERFACE_INCLUDE_DIRECTORIES</span></code> and <code class="docutils literal notranslate"><span class="pre">INTERFACE_LINK_LIBRARIES</span></code> target
+properties) for the external package/TPL libraries.  Also, in order for the
+resulting <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> module to behave consistently between all
+the various TriBITS TPLs (and allow the standard TriBITS TPL find overrides)
+and maintain backwards compatibility, one must use the TriBITS function
 <a class="reference internal" href="#tribits-tpl-allow-pre-find-package">tribits_tpl_allow_pre_find_package()</a> in combination with the function
-<a class="reference internal" href="#tribits-tpl-find-include-dirs-and-libraries">tribits_tpl_find_include_dirs_and_libraries()</a>.  The basic form of the
-resulting TriBITS TPL module file <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> looks like:</p>
+<a class="reference internal" href="#tribits-tpl-find-include-dirs-and-libraries">tribits_tpl_find_include_dirs_and_libraries()</a>.  One basic form of the
+resulting TriBITS TPL module file <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> that uses a list
+of include directories and library files locations looks like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span># First, set up the variables for the (backward-compatible) TriBITS way of
 # finding &lt;tplName&gt;.  These are used in case find_package(&lt;tplName&gt; ...) is
 # not called or does not find &lt;tplName&gt;.  Also, these variables need to be
@@ -6526,8 +6536,9 @@ use <code class="docutils literal notranslate"><span class="pre">FORCE</span></c
   <span class="s2">&quot;Always first call find_package(&lt;tplName&gt; ...) unless explicit override&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>at the top of the <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> and it will ignore these
-variables.  This avoids name classes with the variables
+<p>at the top of the file <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> and
+<code class="docutils literal notranslate"><span class="pre">tribits_tpl_allow_pre_find_package()</span></code> will ignore these variables and
+return <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>.  This avoids name classes with the variables
 <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_INCLUDE_DIRS</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_DIRS</span></code> which are often used
 in the concrete CMake <code class="docutils literal notranslate"><span class="pre">Find&lt;tplName&gt;.cmake</span></code> module files themselves.</p>
 <p>For a slightly more complex (but real-life) example, see <code class="docutils literal notranslate"><span class="pre">FindTPLHDF5.cmake</span></code>
@@ -6622,6 +6633,130 @@ specialized <code class="docutils literal notranslate"><span class="pre">FindTPL
 <a class="reference internal" href="#tribits-tpl-allow-pre-find-package">tribits_tpl_allow_pre_find_package()</a> function like shown above.  Such
 find modules cannot completely adhere to the standard behavior described in
 <a class="reference external" href="TribitsBuildReference.html#enabling-support-for-an-optional-third-party-library-tpl">Enabling support for an optional Third-Party Library (TPL)</a>.</p>
+<p>One issue to be made aware of is that code in <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> must
+generate the file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">buildDir</span><span class="o">&gt;/</span><span class="n">external_packages</span><span class="o">/&lt;</span><span class="n">tplName</span><span class="o">&gt;/&lt;</span><span class="n">tplName</span><span class="o">&gt;</span><span class="n">Config</span><span class="o">.</span><span class="n">cmake</span>
+</pre></div>
+</div>
+<p>where <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;Config.cmake</span></code> defines the <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::all_libs</span></code> target.
+The function <a class="reference internal" href="#tribits-tpl-find-include-dirs-and-libraries">tribits_tpl_find_include_dirs_and_libraries()</a> creates these
+files automatically when working with the lists <code class="docutils literal notranslate"><span class="pre">TPL_&lt;tplName&gt;_INCLUDE_DIRS</span></code>
+and <code class="docutils literal notranslate"><span class="pre">TPL_&lt;tplName&gt;_LIBRARIES</span></code> as shown in the examples above.  But in cases
+where the inner <code class="docutils literal notranslate"><span class="pre">find_package(&lt;tplName&gt;</span> <span class="pre">...)</span></code> call actually generates a set
+of modern CMake IMPORTED targets, the code in <code class="docutils literal notranslate"><span class="pre">Find&lt;tplName&gt;.cmake</span></code> will
+need to skip calling <code class="docutils literal notranslate"><span class="pre">tribits_tpl_find_include_dirs_and_libraries()</span></code> and
+will instead need to build the target <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::all_libs</span></code> itself and will
+need to build the and write the wrapper file <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;Config.cmake</span></code>
+manually into <code class="docutils literal notranslate"><span class="pre">&lt;buildDir&gt;/external_packages/&lt;tplName&gt;/</span></code> that does the right
+thing when they are included by downstream <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> files.</p>
+<p>An example of a custom <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file that calls
+<code class="docutils literal notranslate"><span class="pre">find_package(&lt;tplName&gt;</span> <span class="pre">...)</span></code> which produces modern CMake targets that
+manually creates the <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::all_libs</span></code> target is given in
+<code class="docutils literal notranslate"><span class="pre">TribitsExampleProject2/cmake/tpls/FindTPLTpl1.cmake</span></code> which is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>include(TribitsGetImportedLocationProperty)
+
+
+#
+# Functions
+#
+
+function(tpl1_write_config_file tpl1Dir)
+  set(configFileStr &quot;&quot;)
+  string(APPEND configFileStr
+    &quot;include(CMakeFindDependencyMacro)\n&quot;
+    &quot;set(Tpl1_DIR \&quot;${tpl1Dir}\&quot;)\n&quot;
+    &quot;find_dependency(Tpl1)\n&quot;
+    &quot;add_library(Tpl1::all_libs INTERFACE IMPORTED GLOBAL)\n&quot;
+    &quot;target_link_libraries(Tpl1::all_libs INTERFACE tpl1::tpl1)\n&quot;
+    )
+  set(buildDirExternalPkgsDir
+    &quot;${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_EXTERNAL_PKGS_DIR}&quot;)
+  set(tplConfigFile
+    &quot;${buildDirExternalPkgsDir}/${TPL_NAME}/${TPL_NAME}Config.cmake&quot;)
+  file(WRITE &quot;${tplConfigFile}&quot; &quot;${configFileStr}&quot;)
+
+endfunction()
+
+
+#
+# Executable Code
+#
+
+set(REQUIRED_HEADERS Tpl1.hpp)
+set(REQUIRED_LIBS_NAMES tpl1)
+
+tribits_tpl_allow_pre_find_package(Tpl1  Tpl1_ALLOW_PREFIND)
+
+if (Tpl1_ALLOW_PREFIND)
+  message(&quot;-- Using find_package(Tpl1 ...) ...&quot;)
+  find_package(Tpl1)
+  if (Tpl1_FOUND)
+    message(&quot;-- Found Tpl1_DIR=&#39;${Tpl1_DIR}&#39;&quot;)
+    if (Tpl1_EXTRACT_INFO_AFTER_FIND_PACKAGE)
+      message(&quot;-- Extracting include dirs and libraries from target tpl1::tpl1&quot;)
+      get_target_property(inclDirs tpl1::tpl1 INTERFACE_INCLUDE_DIRECTORIES)
+      tribits_get_imported_location_property(tpl1::tpl1 libfile)
+      set(TPL_Tpl1_INCLUDE_DIRS &quot;${inclDirs}&quot; CACHE PATH &quot;Include dirs for Tpl1&quot;)
+      set(TPL_Tpl1_LIBRARIES &quot;${libfile}&quot; CACHE PATH &quot;Libraries for Tpl1&quot;)
+    else()
+      # Create imported target Tpl1::all_libs
+      add_library(Tpl1::all_libs INTERFACE IMPORTED GLOBAL)
+      target_link_libraries(Tpl1::all_libs INTERFACE tpl1::tpl1)
+      set(TPL_Tpl1_LIBRARIES Tpl1::all_libs CACHE STRING
+        &quot;Set in ${CMAKE_CURRENT_LIST_FILE}&quot;)
+      set(TPL_Tpl1_INCLUDE_DIRS &quot;&quot; CACHE STRING
+        &quot;Set in ${CMAKE_CURRENT_LIST_FILE}&quot;)
+      set(TPL_Tpl1_LIBRARY_DIRS &quot;&quot; CACHE STRING
+        &quot;Set in ${CMAKE_CURRENT_LIST_FILE}&quot;)
+      print_var(TPL_Tpl1_LIBRARIES)
+      print_var(TPL_Tpl1_INCLUDE_DIRS)
+      # Write a specialized Tpl1Config.cmake file
+      tpl1_write_config_file(&quot;${Tpl1_DIR}&quot;)
+    endif()
+  endif()
+endif()
+
+if (NOT TARGET Tpl1::all_libs)
+  tribits_tpl_find_include_dirs_and_libraries( Tpl1
+    REQUIRED_HEADERS ${REQUIRED_HEADERS}
+    REQUIRED_LIBS_NAMES ${REQUIRED_LIBS_NAMES}
+    )
+endif()
+</pre></div>
+</div>
+<p>Another issue that comes up with external packages/TPLs like HDF5 that needs
+to be discussed here is the fact that TriBITS generates and installs files of
+the name <code class="docutils literal notranslate"><span class="pre">HDF5Config.cmake</span></code> that can be found by calls to
+<code class="docutils literal notranslate"><span class="pre">find_package(HDF5)</span></code>.  These TriBITS-generated <code class="docutils literal notranslate"><span class="pre">HDF5Config.cmake</span></code> files
+are primarily meant to be included by and provide targets for downstream
+TriBITS package <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> files.  These TriBITS-generated
+<code class="docutils literal notranslate"><span class="pre">HDF5Config.cmake</span></code> files may not behave the same way that a more general
+<code class="docutils literal notranslate"><span class="pre">FindHDF5.config</span></code> modules or <code class="docutils literal notranslate"><span class="pre">HDF5Config.camke</span></code> configure files would
+behave as expected when found by <code class="docutils literal notranslate"><span class="pre">find_package(HDF5)</span></code> commands called in
+some arbitrary downstream raw CMake project.</p>
+<p>Therefore, to avoid having an installed TriBITS-generated <code class="docutils literal notranslate"><span class="pre">HDF5Config.cmake</span></code>
+file, for example, being found by the inner call to <code class="docutils literal notranslate"><span class="pre">find_package(HDF5</span> <span class="pre">...)</span></code>
+in the file <code class="docutils literal notranslate"><span class="pre">FindTPLHDF5.cmake</span></code> (which would be disastrous), TriBITS employs
+two safeguards.  First, TriBITS-generated <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;Config.cmake</span></code> files are
+placed into the build directory <code class="docutils literal notranslate"><span class="pre">&lt;buildDir&gt;/external_packages/</span></code> and
+installed into the directory <code class="docutils literal notranslate"><span class="pre">&lt;installDir&gt;/lib/external_packages/</span></code> so they
+will not be found by default when <code class="docutils literal notranslate"><span class="pre">&lt;buildDir&gt;/cmake_packages</span></code> and/or
+<code class="docutils literal notranslate"><span class="pre">&lt;installDir&gt;</span></code>, respectively, are added to <code class="docutils literal notranslate"><span class="pre">CMake_PREFIX_PATH</span></code>.  Also,
+even if <code class="docutils literal notranslate"><span class="pre">&lt;installDir&gt;/lib/external_packages</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&lt;buildDir&gt;/external_packages</span></code> do get added to the search path somehow
+(e.g. through <code class="docutils literal notranslate"><span class="pre">CMAKE_INSTALL_PREFIX</span></code>), the TriBITS framework will set the
+variable <code class="docutils literal notranslate"><span class="pre">TRIBITS_FINDING_RAW_&lt;tplName&gt;_PACKAGE_FIRST=TRUE</span></code> before including
+<code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> and there is special logic in the TriBITS-generated
+<code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;ConfigVersion.cmake</span></code> file that will set
+<code class="docutils literal notranslate"><span class="pre">PACKAGE_VERSION_COMPATIBLE=OFF</span></code> and result in <code class="docutils literal notranslate"><span class="pre">find_package(&lt;tplName&gt;)</span></code>
+not selecting <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;Config.cmake</span></code>.  (It turns out that CMake’s
+<code class="docutils literal notranslate"><span class="pre">find_package(&lt;Package&gt;)</span></code> command always includes the file
+<code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;ConfigVersion.cmake</span></code>, even if no version information is passed to
+the command <code class="docutils literal notranslate"><span class="pre">find_package(&lt;Package&gt;)</span></code>.  This allows special logic to be
+placed in the file <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;ConfigVersion.cmake</span></code> to determine if
+<code class="docutils literal notranslate"><span class="pre">find_package(&lt;Package&gt;)</span></code> will select a given <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> file
+that is in the search path based on a number of different criteria such as in
+this case.)</p>
 </section>
 <section id="how-to-add-a-new-tribits-repository">
 <h2><a class="toc-backref" href="#id64"><span class="sectnum">9.6</span> How to add a new TriBITS Repository</a><a class="headerlink" href="#how-to-add-a-new-tribits-repository" title="Permalink to this headline"></a></h2>
@@ -13987,7 +14122,7 @@ called in the parent packages top-level <a class="reference internal" href="#pac
 <section id="tribits-process-enabled-tpl">
 <h3><a class="toc-backref" href="#id146">tribits_process_enabled_tpl()</a><a class="headerlink" href="#tribits-process-enabled-tpl" title="Permalink to this headline"></a></h3>
 <p>Process an enabled TPL’s FindTPL${TPL_NAME}.cmake module.</p>
-<p>In: core/package_arch/TribitsProcessEnabledTpl.cmake:51</p>
+<p>In: core/package_arch/TribitsProcessEnabledTpl.cmake:52</p>
 </section>
 <section id="id2">
 <h3><a class="toc-backref" href="#id147">tribits_project()</a><a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
@@ -14504,7 +14639,7 @@ be explicitly set on input, i.e. if <code class="docutils literal notranslate"><
 TPL has been explicitly enabled (i.e. <code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">TPL_ENABLE_&lt;tplName&gt;=ON</span></code>) or
 disabled (i.e. <code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">TPL_ENABLE_&lt;tplName&gt;=OFF</span></code>), then this function has no
 effect and the TPL will be unconditionally enabled or disabled.</p>
-<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:693</p>
+<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:695</p>
 </section>
 <section id="tribits-write-flexible-package-client-export-files">
 <h3><a class="toc-backref" href="#id158">tribits_write_flexible_package_client_export_files()</a><a class="headerlink" href="#tribits-write-flexible-package-client-export-files" title="Permalink to this headline"></a></h3>
