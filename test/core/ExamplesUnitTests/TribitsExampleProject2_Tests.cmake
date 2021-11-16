@@ -13,17 +13,82 @@ set(TribitsExampleProject2_COMMON_CONFIG_ARGS
 ########################################################################
 
 
-function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
+if (NOT "$ENV{TRIBITS_ADD_ENV_PATH_HACK_FOR_TPL1}" STREQUAL "")
+  set(TRIBITS_ADD_ENV_PATH_HACK_FOR_TPL1_DEFAULT
+    $ENV{TRIBITS_ADD_ENV_PATH_HACK_FOR_TPL1})
+else()
+  set($ENV{TRIBITS_ADD_ENV_PATH_HACK_FOR_TPL1} OFF)
+endif()
+advanced_set(TRIBITS_ADD_ENV_PATH_HACK_FOR_TPL1
+  ${TRIBITS_ADD_ENV_PATH_HACK_FOR_TPL1_DEFAULT} CACHE BOOL
+  "Set to TRUE to add LD_LIBRARY_PATH to libtpl1.so for platforms where RPATH not working")
 
+function(set_ENV_PATH_HACK_FOR_TPL1_ARG sharedOrStatic)
+  if (sharedOrStatic STREQUAL "SHARED")
+    if (WIN32)
+      set(ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG_ON
+        ENVIRONMENT
+	LD_LIBRARY_PATH=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install/lib)
+    else()
+      set(ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG_ON
+        ENVIRONMENT
+	PATH=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install/bin:$ENV{PATH})
+    endif()
+  else()
+    set(ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG_ON "")
+  endif()
+  if (TRIBITS_ADD_ENV_PATH_HACK_FOR_TPL1)
+    set(ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG
+      ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG_ON})
+  else()
+    set(ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG "")
+  endif()
+  set(ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG_ON
+    ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG_ON}
+    PARENT_SCOPE)
+  set(ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG
+    ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
+    PARENT_SCOPE)
+endfunction()
+set_ENV_PATH_HACK_FOR_TPL1_ARG(STATIC)
+set_ENV_PATH_HACK_FOR_TPL1_ARG(SHARED)
+# NOTE: Above, we have to set LD_LIBRARY_PATH to pick up the
+# libtpl1.so because CMake 3.17.5 and 3.21.2 with the GitHub Actions
+# Umbuntu build is refusing to put in the RPATH for libtpl1.so into
+# libsimplecxx.so even through CMAKE_INSTALL_RPATH_USE_LINK_PATH=ON is
+# set.  This is not needed for the RHEL 7 builds that I have tried where
+# CMake is behaving correctly and putting in RPATH correctly.  But because
+# I can't log into this system, it is very hard and time consuming to
+# debug this so I am just giving up at this point.
+
+
+
+########################################################################
+
+
+macro(TribitsExampleProject2_test_setup_header)
   if (sharedOrStatic STREQUAL "SHARED")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-    set(libExt so)
+    if (CYGWIN)
+      set(libtpl_name "libtpl1.dll.a")
+    else()
+      set(libtpl_name "libtpl1.so")
+    endif()
   elseif (sharedOrStatic STREQUAL "STATIC")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-    set(libExt a)
+      set(libtpl_name "libtpl1.a")
   else()
     message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
+endmacro()
+
+
+########################################################################
+
+
+function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
+
+  TribitsExampleProject2_test_setup_header()
 
   set(testNameBase TribitsExampleProject2_find_tpl_parts_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testNameBase})
@@ -48,8 +113,8 @@ function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "Searching for libs in Tpl1_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib'"
-        "Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib/libtpl1.${libExt}'"
-        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib/libtpl1.${libExt}'"
+        "Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib/${libtpl_name}'"
+        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib/${libtpl_name}'"
         "Searching for headers in Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/include'"
         "Found header '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/include/Tpl1.hpp'"
         "TPL_Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/include'"
@@ -78,6 +143,8 @@ function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
       PASS_REGULAR_EXPRESSION_ALL
         "Tpl1Config.cmake"
 
+    ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
+
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
   # NOTE: The above test ensures that the basic TriBITS TPL find operations
@@ -102,15 +169,7 @@ TribitsExampleProject2_find_tpl_parts_test(SHARED)
 
 function(TribitsExampleProject2_explicit_tpl_vars_test sharedOrStatic)
 
-  if (sharedOrStatic STREQUAL "SHARED")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-    set(libExt so)
-  elseif (sharedOrStatic STREQUAL "STATIC")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-    set(libExt a)
-  else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
-  endif()
+  TribitsExampleProject2_test_setup_header()
 
   set(testNameBase TribitsExampleProject2_explicit_tpl_vars_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testNameBase})
@@ -128,14 +187,14 @@ function(TribitsExampleProject2_explicit_tpl_vars_test sharedOrStatic)
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
         -DCMAKE_BUILD_TYPE=DEBUG
         "-DTPL_Tpl1_INCLUDE_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install/include"
-        "-DTPL_Tpl1_LIBRARIES=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install/lib/libtpl1.${libExt}"
+        "-DTPL_Tpl1_LIBRARIES=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install/lib/${libtpl_name}"
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DCMAKE_INSTALL_PREFIX=install
         -DTribitsExProj2_ENABLE_Package1=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib/libtpl1.${libExt}'"
+        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/lib/${libtpl_name}'"
         "TPL_Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install/include'"
         "-- Configuring done"
         "-- Generating done"
@@ -162,6 +221,8 @@ function(TribitsExampleProject2_explicit_tpl_vars_test sharedOrStatic)
       PASS_REGULAR_EXPRESSION_ALL
         "Tpl1Config.cmake"
 
+    ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
+
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
   # NOTE: The above test ensures that setting TPL_<tplName>_INCLUDE_DIRS and
@@ -186,15 +247,7 @@ TribitsExampleProject2_explicit_tpl_vars_test(SHARED)
 
 function(TribitsExampleProject2_find_package_test sharedOrStatic)
 
-  if (sharedOrStatic STREQUAL "SHARED")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-    set(libExt so)
-  elseif (sharedOrStatic STREQUAL "STATIC")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-    set(libExt a)
-  else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
-  endif()
+  TribitsExampleProject2_test_setup_header()
 
   set(testNameBase TribitsExampleProject2_find_package_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testNameBase})
@@ -248,6 +301,8 @@ function(TribitsExampleProject2_find_package_test sharedOrStatic)
         "Tpl1Config.cmake"
         "Tpl1ConfigVersion.cmake"
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
