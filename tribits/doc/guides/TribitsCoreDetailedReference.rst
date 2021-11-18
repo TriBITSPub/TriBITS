@@ -368,6 +368,10 @@ These options are described below.
 
   This default can be set in `<projectDir>/ProjectName.cmake`_ or `<projectDir>/CMakeLists.txt`_.
 
+  On WIN32 sytems, the default for ``${PROJECT_NAME}_ENABLE_Fortran_DEFAULT``
+  is set to ``OFF`` since it can be difficult to get a Fortran compiler for
+  native Windows.
+
   Given that a native Fortran compiler is not supported by default on Windows
   and on most Mac OSX systems, projects that have optional Fortran code may
   decide to set the default depending on the platform by setting, for example::

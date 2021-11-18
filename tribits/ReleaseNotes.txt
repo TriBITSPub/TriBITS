@@ -2,6 +2,12 @@
 Release Notes for TriBITS
 ----------------------------------------
 
+2021/11/18:
+
+(*) MAJOR: The default value for <Project>_ENABLE_Fortran is set to OFF on
+    WIN32 systems.  (Getting a Fortran compiler for native Windows is not
+    typically very easy.)
+
 2021/10/11:
 
 (*) MAJOR: The `<Package>Config.cmake` for each enabled package generated in

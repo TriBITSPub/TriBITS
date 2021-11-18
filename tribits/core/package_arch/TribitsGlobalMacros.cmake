@@ -291,7 +291,11 @@ macro(tribits_define_global_options_and_define_extra_repos)
   set(${PROJECT_NAME}_ENABLE_CXX11 ON)
 
   if ("${${PROJECT_NAME}_ENABLE_Fortran_DEFAULT}" STREQUAL "")
-    set(${PROJECT_NAME}_ENABLE_Fortran_DEFAULT ON)
+    if (WIN32)
+      set(${PROJECT_NAME}_ENABLE_Fortran_DEFAULT OFF)
+    else()
+      set(${PROJECT_NAME}_ENABLE_Fortran_DEFAULT ON)
+    endif()
   endif()
 
   option(${PROJECT_NAME}_ENABLE_Fortran
