@@ -483,6 +483,12 @@ These options are described below.
     set(${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE_DEFAULT ON)
 
   in the `<projectDir>/ProjectName.cmake`_ file.
+
+  Note that if a ``git`` exectauble cannot be found at configure time, then
+  the default ``${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE_DEFAULT`` will be
+  overridden to ``OFF``.  But if the user sets
+  ``${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE=ON`` in the cache and ``git``
+  can't be found, then an configure-time error will occur.
   
 .. _${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS:
 

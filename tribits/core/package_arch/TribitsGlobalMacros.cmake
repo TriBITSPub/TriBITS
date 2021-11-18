@@ -653,7 +653,9 @@ macro(tribits_define_global_options_and_define_extra_repos)
     )
   tribits_get_invalid_categories(${PROJECT_NAME}_TEST_CATEGORIES)
 
-  if ("${${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE_DEFAULT}" STREQUAL "" )
+  if (NOT GIT_EXECUTABLE)
+    set(${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE_DEFAULT OFF)
+  elseif ("${${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE_DEFAULT}" STREQUAL "" )
     set(${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE_DEFAULT OFF)
   endif()
   advanced_set(
@@ -1391,6 +1393,7 @@ function(tribits_generate_repo_version_output_and_file_and_install)
   # A) Create the ${PROJECT_NAME}RepoVersion.txt file if requested
   #
 
+  print_var(${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE)
   if (${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE)
 
     # A) Make sure that there is a .git dir in the project before generating
