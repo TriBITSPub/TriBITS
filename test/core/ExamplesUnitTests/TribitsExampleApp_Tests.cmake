@@ -35,9 +35,9 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-########################################################################
+################################################################################
 # TribitsExampleApp
-########################################################################
+################################################################################
 
 
 if (NOT "$ENV{TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL}" STREQUAL "")
@@ -50,24 +50,24 @@ advanced_set(TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL
   ${TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_DEFAULT} CACHE BOOL
   "Set to TRUE to add LD_LIBRARY_PATH to libsimpletpl.so for platforms where RPATH not working")
 
-function(set_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG sharedOrStatic)
-  set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON
+function(set_ENV_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG sharedOrStatic)
+  set(ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON
     ENVIRONMENT LD_LIBRARY_PATH=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib)
   if (TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL)
-    set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG
-      ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON})
+    set(ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG
+      ${ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON})
   else()
-    set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG "")
+    set(ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG "")
   endif()
-  set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON
-    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON}
+  set(ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON
+    ${ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON}
     PARENT_SCOPE)
-  set(LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG
-    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG}
+  set(ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG
+    ${ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG}
     PARENT_SCOPE)
 endfunction()
-set_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(STATIC)
-set_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(SHARED)
+set_ENV_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(STATIC)
+set_ENV_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(SHARED)
 # NOTE: Above, we have to set LD_LIBRARY_PATH to pick up the
 # libsimpletpl.so because CMake 3.17.5 and 3.21.2 with the GitHub Actions
 # Umbuntu build is refusing to put in the RPATH for libsimpletpl.so into
@@ -76,6 +76,50 @@ set_LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(SHARED)
 # CMake is behaving correctly and putting in RPATH correctly.  But because
 # I can't log into this system, it is very hard and time consuming to
 # debug this so I am just giving up at this point.
+
+
+################################################################################
+
+
+# Macro to set up ENVIRONMENT arg as var 'TEST_ENV_ARG' for
+# tribits_add_advanced_test() for below TribitsExampleApp tests so that
+# upstream shared libs can be found in variety of situations.
+#
+# Usage:
+#
+#   TribitsExampleApp_set_test_env_var([ALWAYS_SET_ENV_VARS])
+#
+# Must be alled after 'testDir' is defined!
+#
+macro(TribitsExampleApp_set_test_env_var)
+
+  cmake_parse_arguments(
+     PARSE  #prefix
+     "ALWAYS_SET_ENV_VARS"  #options
+     ""  #one_value_keywords
+     ""  #multi_value_keywords
+     ${ARGN}
+     )
+  tribits_check_for_unparsed_arguments()
+
+  if (CYGWIN)
+    set(TEST_ENV_ARG
+      ENVIRONMENT
+      "PATH=${testDir}/install/bin:${SimpleTpl_install_${sharedOrStatic}_DIR}/install/bin:$ENV{PATH}")
+  else()
+    if (PARSE_ALWAYS_SET_ENV_VARS)
+      set(TEST_ENV_ARG
+        ${ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON})
+    else()
+      set(TEST_ENV_ARG
+        ${ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG})
+    endif()
+  endif()
+
+endmacro()
+
+
+################################################################################
 
 
 function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic fullOrComponents)
@@ -101,6 +145,8 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic fullOrComponents
     TribitsExampleApp_ALL_ST_NoFortran_${sharedOrStatic}_${fullOrComponents})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  TribitsExampleApp_set_test_env_var()
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -175,7 +221,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic fullOrComponents
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG}
+    ${TEST_ENV_ARG}
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
@@ -221,6 +267,8 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
   set(testBaseName TribitsExampleApp_ALL_ST_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  TribitsExampleApp_set_test_env_var()
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -298,7 +346,7 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG}
+    ${TEST_ENV_ARG}
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
@@ -341,6 +389,10 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage share
     TribitsExampleApp_ALL_ST_tpl_link_options_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  TribitsExampleApp_set_test_env_var(ALWAYS_SET_ENV_VARS)
+  # Above, must always set up runtime paths to find upstream TPL since RPATH
+  # will not be set with -L<dir> option!
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -425,7 +477,7 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage share
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG_ON}
+    ${TEST_ENV_ARG}
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
@@ -457,15 +509,24 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
     message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
 
+  if ( (CYGWIN OR WIN32) AND sharedOrStatic STREQUAL "SHARED")
+    set(NOT_CYGWIN_OR_WIN32_SHARED FALSE)
+  else()
+    set(NOT_CYGWIN_OR_WIN32_SHARED TRUE)
+  endif()
+  # NOTE: It is just too hard and hard to maintain to prepend all the
+  # directories to PATH for all of the upstream TribitsExProj libraries
+  # scattered around the build tree when you are on Windows and have DLLs.
+
   set(testBaseName TribitsExampleApp_ALL_ST_buildtree_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
   tribits_add_advanced_test( ${testBaseName}
-    OVERALL_WORKING_DIRECTORY TEST_NAME
-    OVERALL_NUM_MPI_PROCS 1
-    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
-    XHOSTTYPE Darwin
+    OVERALL_WORKING_DIRECTORY  TEST_NAME
+    OVERALL_NUM_MPI_PROCS  1
+    EXCLUDE_IF_NOT_TRUE  ${PROJECT_NAME}_ENABLE_Fortran  NOT_CYGWIN_OR_WIN32_SHARED
+    XHOSTTYPE  Darwin
 
     TEST_0
       MESSAGE "Do the configure of TribitsExampleProject"
@@ -520,18 +581,18 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
-    )
+
+      ${ENV_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG}
+
+      )
 
 endfunction()
 #
-# NOTE: The test above only pulls in top-level packages that don't have any
-# subpackages which are SimpleCxx and MixedLang.  It seems that whoever
-# implemented the <Package>Config.cmake files in the build dir only got this
-# working for top-level packages that don't have any subpackages.  This test
-# above at least (partially) pins down what already works.  (Later, these
-# <Package>Config.cmake files in the build dir will need to be fixed up so
-# that they work for top-level packages with subpackages as well and then this
-# test can be expanded for that case too.)
+# NOTE: The test above validates that <Package>Config.cmake files work from
+# the build tree.  But we don't run the test for SHARED builds on Cygwin
+# because having to append all of the paths to the libraries in the build tree
+# of TribitsExProj2 is just too much work.  The testing on Linux systems is
+# enough I think.
 
 
 TribitsExampleApp_ALL_ST_buildtree_test(STATIC)
