@@ -40,47 +40,6 @@
 ########################################################################
 
 
-if (NOT "$ENV{TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_TPL1}" STREQUAL "")
-  set(TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_TPL1_DEFAULT
-    $ENV{TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_TPL1})
-else()
-  set($ENV{TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_TPL1} OFF)
-endif()
-advanced_set(TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_TPL1
-  ${TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_TPL1_DEFAULT} CACHE BOOL
-  "Set to TRUE to add LD_LIBRARY_PATH to libtpl1.so for platforms where RPATH not working")
-
-function(set_LD_LIBRARY_PATH_HACK_FOR_TPL1_ENVIRONMENT_ARG sharedOrStatic)
-  set(LD_LIBRARY_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ENVIRONMENT_ARG_ON
-    ENVIRONMENT LD_LIBRARY_PATH=${Tpl1_install_${sharedOrStatic}_DIR}/install/lib)
-  if (TRIBITS_ADD_LD_LIBRARY_PATH_HACK_FOR_TPL1)
-    set(LD_LIBRARY_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ENVIRONMENT_ARG
-      ${LD_LIBRARY_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ENVIRONMENT_ARG_ON})
-  else()
-    set(LD_LIBRARY_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ENVIRONMENT_ARG "")
-  endif()
-  set(LD_LIBRARY_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ENVIRONMENT_ARG_ON
-    ${LD_LIBRARY_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ENVIRONMENT_ARG_ON}
-    PARENT_SCOPE)
-  set(LD_LIBRARY_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ENVIRONMENT_ARG
-    ${LD_LIBRARY_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ENVIRONMENT_ARG}
-    PARENT_SCOPE)
-endfunction()
-set_LD_LIBRARY_PATH_HACK_FOR_TPL1_ENVIRONMENT_ARG(STATIC)
-set_LD_LIBRARY_PATH_HACK_FOR_TPL1_ENVIRONMENT_ARG(SHARED)
-# NOTE: Above, we have to set LD_LIBRARY_PATH to pick up the
-# libtpl1.so because CMake 3.17.5 and 3.21.2 with the GitHub Actions
-# Umbuntu build is refusing to put in the RPATH for libtpl1.so into
-# libsimplecxx.so even through CMAKE_INSTALL_RPATH_USE_LINK_PATH=ON is
-# set.  This is not needed for the RHEL 7 builds that I have tried where
-# CMake is behaving correctly and putting in RPATH correctly.  But because
-# I can't log into this system, it is very hard and time consuming to
-# debug this so I am just giving up at this point.
-
-
-################################################################################
-
-
 set(tribitsExProj2TestNameBaseBase TribitsExampleProject2_find_tpl_parts)
 set(sharedOrStatic STATIC)
 set(fullOrComponents COMPONENTS)
@@ -107,7 +66,7 @@ tribits_add_advanced_test( ${testBaseName}
       "-- Configuring incomplete, errors occurred"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
-  ${LD_LIBRARY_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ENVIRONMENT_ARG}
+  ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
 
   ADDED_TEST_NAME_OUT ${testNameBase}_NAME
   )
@@ -187,7 +146,7 @@ function(TribitsExampleApp2_test  tribitsExProj2TestNameBaseBase
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    ${LD_LIBRARY_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ENVIRONMENT_ARG}
+    ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
@@ -209,5 +168,6 @@ TribitsExampleApp2_test(TribitsExampleProject2_find_tpl_parts STATIC FULL)
 TribitsExampleApp2_test(TribitsExampleProject2_find_tpl_parts STATIC COMPONENTS)
 TribitsExampleApp2_test(TribitsExampleProject2_find_tpl_parts SHARED COMPONENTS)
 TribitsExampleApp2_test(TribitsExampleProject2_explicit_tpl_vars STATIC COMPONENTS)
+TribitsExampleApp2_test(TribitsExampleProject2_explicit_tpl_vars SHARED COMPONENTS)
 TribitsExampleApp2_test(TribitsExampleProject2_find_package SHARED COMPONENTS)
 TribitsExampleApp2_test(TribitsExampleProject2_find_package STATIC COMPONENTS)

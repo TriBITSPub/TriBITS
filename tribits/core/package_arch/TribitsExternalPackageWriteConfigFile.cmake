@@ -437,11 +437,17 @@ function(tribits_external_package_get_libname_from_full_lib_path  full_lib_path
   if (full_libname_len LESS 0)
     tribits_print_invalid_lib_name(${tplName} "${full_libname}")
   endif()
-  string(SUBSTRING "${full_libname}" 0 3 libPart)
-  if (NOT libPart STREQUAL "lib")
-    tribits_print_invalid_lib_name(${tplName} "${full_libname}")
+  if (WIN32)
+    # Native windows compilers does not prepend library names with 'lib'
+    set(libname "${full_libname}")
+  else()
+    # Every other system prepends the library name with 'lib'
+    string(SUBSTRING "${full_libname}" 0 3 libPart)
+    if (NOT libPart STREQUAL "lib")
+      tribits_print_invalid_lib_name(${tplName} "${full_libname}")
+    endif()
+    string(SUBSTRING "${full_libname}" 3 -1 libname)
   endif()
-  string(SUBSTRING "${full_libname}" 3 -1 libname)
   set(${libnameOut} ${libname} PARENT_SCOPE)
 endfunction()
 
