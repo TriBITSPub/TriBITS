@@ -163,13 +163,6 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
     message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
   endif()
 
-  if ( WIN32 AND sharedOrStatic STREQUAL "SHARED")
-    set(NOT_WIN32_SHARED FALSE)
-  else()
-    set(NOT_WIN32_SHARED TRUE)
-  endif()
-  # NOTE: Doing a SHARED build on Windows means exporting specific
-
   set(testBaseName
     TribitsExampleApp_NoFortran_${sharedOrStatic}_${fullOrComponents})
   set(testName ${PACKAGE_NAME}_${testBaseName})
@@ -177,10 +170,23 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
 
   TribitsExampleApp_set_test_env_var()
 
+  if (WIN32 AND sharedOrStatic STREQUAL "SHARED")
+    set(copyDllsCmndArgs
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -D FROM_DIRS="${testDir}/install/bin,${SimpleTpl_install_${sharedOrStatic}_DIR}/install/bin"
+        -D GLOB_EXPR="*.dll"
+	-D TO_DIR="app_build/Release"
+	-P "${CMAKE_CURRENT_SOURCE_DIR}/copy_files_glob.cmake"
+      )
+  else()
+    set(copyDllsCmndArgs 
+      CMND ${CMAKE_COMMAND} ARGS -E echo "skipped")
+  endif()
+
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
-    #EXCLUDE_IF_NOT_TRUE  NOT_WIN32_SHARED
     XHOSTTYPE Darwin
 
     TEST_0
@@ -240,8 +246,12 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND  ${CMAKE_COMMAND} ARGS --build . --config Release
-
+      
     TEST_6
+      MESSAGE "Copy dlls on Windows platforms (only)"
+      ${copyDllsCmndArgs}
+      
+    TEST_7
       MESSAGE "Test TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
