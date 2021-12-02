@@ -469,6 +469,12 @@ function(TribitsExampleApp_NoOptionalPackages_test byProjectOrPackage sharedOrSt
         ${buildSharedLibsArg}
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      PASS_REGULAR_EXPRESSION_ALL
+        "-- Setting TribitsExProj_ENABLE_WithSubpackages=ON because TribitsExProj_ENABLE_WithSubpackagesA=ON"
+        "-- Setting WithSubpackages_ENABLE_WithSubpackagesA=ON because TribitsExProj_ENABLE_WithSubpackagesA=ON"
+        "-- Setting WithSubpackages_ENABLE_WithSubpackagesB=ON because TribitsExProj_ENABLE_WithSubpackagesB=ON"
+        "-- Setting WithSubpackages_ENABLE_WithSubpackagesC=ON because TribitsExProj_ENABLE_WithSubpackagesC=ON"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_1
       MESSAGE "Build and install TribitsExampleProject locally"
