@@ -285,6 +285,9 @@ TribitsExampleApp_NoFortran_test(SHARED COMPONENTS)
 # not really test anything new.
 
 
+################################################################################
+
+
 function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
 
   if (byProjectOrPackage STREQUAL "ByProject")
@@ -391,6 +394,9 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
+  # NOTE: Above test deletes the source and build dir for
+  # TribitsExampleProject after the install to ensure that the install dir is
+  # stand-alone.
 
   if (${testNameBase}_NAME)
     set_tests_properties(${${testNameBase}_NAME}
@@ -404,6 +410,130 @@ TribitsExampleApp_ALL_ST_test(ByProject STATIC)
 TribitsExampleApp_ALL_ST_test(ByProject SHARED)
 TribitsExampleApp_ALL_ST_test(ByPackage STATIC)
 TribitsExampleApp_ALL_ST_test(ByPackage SHARED)
+
+
+
+################################################################################
+
+
+function(TribitsExampleApp_NoOptionalPackages_test byProjectOrPackage sharedOrStatic)
+
+  if (byProjectOrPackage STREQUAL "ByProject")
+    set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
+    set(foundProjectOrPackageStr "Found TribitsExProj")
+  elseif (byProjectOrPackage STREQUAL "ByPackage")
+    set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=ON)
+    set(foundProjectOrPackageStr "Found SimpleCxx")
+  else()
+    message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
+  endif()
+
+  if (sharedOrStatic STREQUAL "SHARED")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
+  elseif (sharedOrStatic STREQUAL "STATIC")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
+  else()
+    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
+  endif()
+
+  set(testBaseName TribitsExampleApp_NoOptionalPackages_${byProjectOrPackage}_${sharedOrStatic})
+  set(testName ${PACKAGE_NAME}_${testBaseName})
+  set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  TribitsExampleApp_set_test_env_var()
+
+  tribits_add_advanced_test( ${testBaseName}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+    XHOSTTYPE Darwin
+
+    TEST_0
+      MESSAGE "Do the configure of TribitsExampleProject"
+      WORKING_DIRECTORY BUILD
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=ON
+        -DTribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=OFF
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj_ENABLE_MixedLang=ON
+        -DTribitsExProj_ENABLE_WithSubpackagesA=ON
+        -DTribitsExProj_ENABLE_WithSubpackagesB=ON
+        -DTribitsExProj_ENABLE_WithSubpackagesC=ON
+        -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        -DTPL_ENABLE_SimpleTpl=ON
+        -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/include
+        -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib
+        ${buildSharedLibsArg}
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+
+    TEST_1
+      MESSAGE "Build and install TribitsExampleProject locally"
+      WORKING_DIRECTORY BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+
+    TEST_2
+      MESSAGE "Configure TribitsExampleApp locally"
+      WORKING_DIRECTORY app_build
+      CMND ${CMAKE_COMMAND} ARGS
+        -DCMAKE_PREFIX_PATH=${testDir}/install
+        -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang,WithSubpackages
+        ${findByProjectOrPackageArg}
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
+      PASS_REGULAR_EXPRESSION_ALL
+        "${foundProjectOrPackageStr}"
+        "-- Configuring done"
+        "-- Generating done"
+        "-- Build files have been written to: .*/${testName}/app_build"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_3
+      MESSAGE "Build TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Built target app"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_4
+      MESSAGE "Test TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      PASS_REGULAR_EXPRESSION_ALL
+        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:simpletpl headeronlytpl"
+        "app_test [.]+   Passed"
+        "100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${TEST_ENV_ARG}
+
+    ADDED_TEST_NAME_OUT ${testNameBase}_NAME
+    )
+  # NOTE: The above test ensures that the <ParentPackage>Config.cmake file for
+  # a parent package with subpackages gets constructed correctly when optional
+  # packages are disabled and when only the subpackages are explicitly enabled
+  # (see trilinos/Trilinos#9972 and trilinos/Trilinos#9973).
+
+  if (${testNameBase}_NAME)
+    set_tests_properties(${${testNameBase}_NAME}
+      PROPERTIES DEPENDS ${SimpleTpl_install_${sharedOrStatic}_NAME} )
+  endif()
+
+endfunction()
+
+
+TribitsExampleApp_NoOptionalPackages_test(ByProject STATIC)
+TribitsExampleApp_NoOptionalPackages_test(ByPackage SHARED)
+#  Don't need to test all the permulations here
+
+
+################################################################################
 
 
 function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage sharedOrStatic)
@@ -538,6 +668,9 @@ TribitsExampleApp_ALL_ST_tpl_link_options_test(ByProject STATIC)
 TribitsExampleApp_ALL_ST_tpl_link_options_test(ByProject SHARED)
 TribitsExampleApp_ALL_ST_tpl_link_options_test(ByPackage STATIC)
 TribitsExampleApp_ALL_ST_tpl_link_options_test(ByPackage SHARED)
+
+
+################################################################################
 
 
 function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
