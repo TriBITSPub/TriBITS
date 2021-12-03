@@ -894,6 +894,22 @@ create_dependency_handling_test_case(
 
 
 create_dependency_handling_test_case(
+  NoOptionalPackages_EnableSubpackagesOnly
+  ARGS
+    -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
+    -DTrilinos_ENABLE_ThyraEpetra=ON
+    -DTrilinos_ENABLE_ThyraGoodStuff=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- Setting Trilinos_ENABLE_Thyra=ON because Trilinos_ENABLE_ThyraCoreLibs=ON"
+    "-- Setting Thyra_ENABLE_ThyraCoreLibs=ON because Trilinos_ENABLE_ThyraCoreLibs=ON"
+    "-- Setting Thyra_ENABLE_ThyraGoodStuff=ON because Trilinos_ENABLE_ThyraGoodStuff=ON"
+    "-- Setting Thyra_ENABLE_ThyraEpetra=ON because Trilinos_ENABLE_ThyraEpetra=ON"
+    "Final set of enabled packages:  Teuchos RTOp Epetra Thyra 4"
+    "Final set of enabled SE packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraGoodStuff ThyraEpetra Thyra 7"
+  )
+
+
+create_dependency_handling_test_case(
   EnableTpetra_EnableAllForwardPackages
   ARGS  -DTrilinos_ENABLE_Tpetra=ON
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
