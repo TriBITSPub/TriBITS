@@ -2485,6 +2485,56 @@ tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
 ########################################################################
 
 
+tribits_add_advanced_test( TribitsExampleProject_SimpleTpl
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Darwin
+
+  TEST_0
+    MESSAGE "Configure with SimpleTpl enabled"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ENABLE_Fortran=ON
+      -DTPL_ENABLE_MPI=OFF
+      -DTPL_ENABLE_SimpleTpl=ON
+      -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_STATIC_DIR}/install/include
+      -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_STATIC_DIR}/install/lib
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "Final set of enabled TPLs:  HeaderOnlyTpl SimpleTpl 2"
+      "TPL_SimpleTpl_LIBRARIES='.*/TriBITS_SimpleTpl_install_STATIC/install/lib/libsimpletpl.a'"
+      "TPL_SimpleTpl_INCLUDE_DIRS='.*/TriBITS_SimpleTpl_install_STATIC/install/include'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND}
+    PASS_REGULAR_EXPRESSION_ALL
+      "100% tests passed, 0 tests failed out of"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  ADDED_TEST_NAME_OUT TribitsExampleProject_SimpleTpl_NAME
+  )
+# NOTE: The above test checks that the TribitsExampleProject test suite passes
+# when the SimpleTpl TPL is enabled.
+
+if (TribitsExampleProject_SimpleTpl_NAME)
+  set_tests_properties(${TribitsExampleProject_SimpleTpl_NAME}
+    PROPERTIES DEPENDS ${SimpleTpl_install_STATIC_NAME} )
+endif()
+
+
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_TargetDefinesPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
