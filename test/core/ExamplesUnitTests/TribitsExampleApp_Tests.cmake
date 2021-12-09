@@ -413,6 +413,126 @@ TribitsExampleApp_NoFortran_test(SHARED COMPONENTS)
 ################################################################################
 
 
+function(TribitsExampleApp_EnableSingleSubpackage sharedOrStatic fullOrComponents)
+
+  TribitsExampleApp_ProcessStandardInputArgs()
+
+  set(testBaseName
+    ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}_${fullOrComponents})
+  set(testName ${PACKAGE_NAME}_${testBaseName})
+  set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  TribitsExampleApp_set_test_env_var()
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx WithSubpackagesA WithSubpackagesB)
+
+  tribits_add_advanced_test( ${testBaseName}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    XHOSTTYPE Darwin
+
+    TEST_0
+      MESSAGE "Copy source for TribitsExampleProject"
+      CMND ${CMAKE_COMMAND}
+      ARGS -E copy_directory
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+      WORKING_DIRECTORY TribitsExampleProject
+
+    TEST_1
+      MESSAGE "Make Withsubpackages OPTIONAL subpackages REQUIRED"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -D FILE="TribitsExampleProject/packages/with_subpackages/cmake/Dependencies.cmake"
+        -D STRING_TO_REPLACE=OPTIONAL
+        -D REPLACEMENT_STRING=REQUIRED
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/replace_string.cmake
+
+    TEST_2
+      MESSAGE "Do the configure of TribitsExampleProject with just one subpackage"
+      WORKING_DIRECTORY BUILD
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DCMAKE_BUILD_TYPE=Release
+	-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
+        -DTribitsExProj_ENABLE_Fortran=OFF
+        -DTribitsExProj_ENABLE_WithSubpackagesB=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        -DTPL_ENABLE_SimpleTpl=ON
+        -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/include
+        -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib
+        ${buildSharedLibsArg}
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install
+        ${testDir}/TribitsExampleProject
+      PASS_REGULAR_EXPRESSION_ALL
+        "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
+        "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
+        "Final set of non-enabled packages:  MixedLang WrapExternal 2"
+        "Final set of non-enabled SE packages:  MixedLang WithSubpackagesC WrapExternal 3"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_3
+      MESSAGE "Build and install TribitsExampleProject locally"
+      WORKING_DIRECTORY BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_COMMAND} ARGS --build . --config Release --target install
+
+    TEST_4
+      MESSAGE "Configure TribitsExampleApp locally"
+      WORKING_DIRECTORY app_build
+      CMND ${CMAKE_COMMAND} ARGS
+        -DCMAKE_PREFIX_PATH=${testDir}/install
+        -DCMAKE_BUILD_TYPE=Release
+        ${tribitsExProjUseComponentsArg}
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
+      PASS_REGULAR_EXPRESSION_ALL
+        "-- Configuring done"
+        "-- Generating done"
+        "-- Build files have been written to: .*/${testName}/app_build"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_5
+      MESSAGE "Build TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND  ${CMAKE_COMMAND} ARGS --build . --config Release
+
+    TEST_6
+      MESSAGE "Test TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      PASS_REGULAR_EXPRESSION_ALL
+        "Full Deps: ${fullDepsStr}"
+        "app_test [.]+   Passed"
+        "100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${TEST_ENV_ARG}
+
+    ADDED_TEST_NAME_OUT ${testNameBase}_NAME
+    )
+  # NOTE: The above test changes all of the subpackages in WithSubpackages to
+  # be 'REQUIRED' and then only enables a subset of its required subpackages
+  # and checks that the <Package>Config.cmake files get created correctly.
+
+  if (${testNameBase}_NAME)
+    set_tests_properties(${${testNameBase}_NAME}
+      PROPERTIES DEPENDS ${SimpleTpl_install_${sharedOrStatic}_NAME} )
+  endif()
+
+endfunction()
+
+
+TribitsExampleApp_EnableSingleSubpackage(STATIC FULL)
+
+
+################################################################################
+
+
 function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
 
   if (byProjectOrPackage STREQUAL "ByProject")
