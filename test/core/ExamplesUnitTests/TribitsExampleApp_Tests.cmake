@@ -145,9 +145,9 @@ function(convertCMakePathsToNativePaths  pathsListIn  pathsListVarOut)
 endfunction()
 
 
-# Macro to handle the sharedOrStatic and fullOrComponents arguemnts
+# Macro to handle the 'sharedOrStatic' arguemnt
 #
-macro(TribitsExampleApp_ProcessStandardInputArgs)
+macro(TribitsExampleApp_process_sharedOrStatic_arg)
 
   if (sharedOrStatic STREQUAL "SHARED")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
@@ -155,15 +155,6 @@ macro(TribitsExampleApp_ProcessStandardInputArgs)
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
   else()
     message(FATAL_ERROR "Invalid value of buildSharedLibsArg='${buildSharedLibsArg}'!")
-  endif()
-
-  if (fullOrComponents STREQUAL "FULL")
-    set(tribitsExProjUseComponentsArg "")
-  elseif (fullOrComponents STREQUAL "COMPONENTS")
-    set(tribitsExProjUseComponentsArg
-      -DTribitsExApp_USE_COMPONENTS=SimpleCxx,WithSubpackages)
-  else()
-    message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
   endif()
 
 endmacro()
@@ -266,15 +257,7 @@ endfunction()
 ################################################################################
 
 
-function(TribitsExampleApp_NoFortran sharedOrStatic fullOrComponents)
-
-  if (sharedOrStatic STREQUAL "SHARED")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-  elseif (sharedOrStatic STREQUAL "STATIC")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-  else()
-    message(FATAL_ERROR "Invalid value of buildSharedLibsArg='${buildSharedLibsArg}'!")
-  endif()
+function(TribitsExampleApp_NoFortran fullOrComponents sharedOrStatic)
 
   if (fullOrComponents STREQUAL "FULL")
     set(tribitsExProjUseComponentsArg "")
@@ -285,7 +268,9 @@ function(TribitsExampleApp_NoFortran sharedOrStatic fullOrComponents)
     message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
   endif()
 
-  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}_${fullOrComponents})
+  TribitsExampleApp_process_sharedOrStatic_arg()
+
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${fullOrComponents}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -402,9 +387,9 @@ function(TribitsExampleApp_NoFortran sharedOrStatic fullOrComponents)
 endfunction()
 
 
-TribitsExampleApp_NoFortran(STATIC FULL)
-TribitsExampleApp_NoFortran(STATIC COMPONENTS)
-TribitsExampleApp_NoFortran(SHARED COMPONENTS)
+TribitsExampleApp_NoFortran(FULL STATIC)
+TribitsExampleApp_NoFortran(COMPONENTS STATIC)
+TribitsExampleApp_NoFortran(COMPONENTS SHARED)
 # NOTE: We don't need to test the permutation SHARED FULL as well.  That does
 # not really test anything new.
 
@@ -412,12 +397,21 @@ TribitsExampleApp_NoFortran(SHARED COMPONENTS)
 ################################################################################
 
 
-function(TribitsExampleApp_EnableSingleSubpackage sharedOrStatic fullOrComponents)
+function(TribitsExampleApp_EnableSingleSubpackage fullOrComponents sharedOrStatic)
 
-  TribitsExampleApp_ProcessStandardInputArgs()
+  if (fullOrComponents STREQUAL "FULL")
+    set(tribitsExProjUseComponentsArg "")
+  elseif (fullOrComponents STREQUAL "COMPONENTS")
+    set(tribitsExProjUseComponentsArg
+      -DTribitsExApp_USE_COMPONENTS=SimpleCxx,WithSubpackages)
+  else()
+    message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
+  endif()
+
+  TribitsExampleApp_process_sharedOrStatic_arg()
 
   set(testBaseName
-    ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}_${fullOrComponents})
+    ${CMAKE_CURRENT_FUNCTION}_${fullOrComponents}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -526,7 +520,7 @@ function(TribitsExampleApp_EnableSingleSubpackage sharedOrStatic fullOrComponent
 endfunction()
 
 
-TribitsExampleApp_EnableSingleSubpackage(STATIC FULL)
+TribitsExampleApp_EnableSingleSubpackage(FULL STATIC)
 
 
 ################################################################################
@@ -544,13 +538,7 @@ function(TribitsExampleApp_ALL_ST byProjectOrPackage sharedOrStatic)
     message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
   endif()
 
-  if (sharedOrStatic STREQUAL "SHARED")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-  elseif (sharedOrStatic STREQUAL "STATIC")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-  else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
-  endif()
+  TribitsExampleApp_process_sharedOrStatic_arg()
 
   set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
@@ -675,13 +663,7 @@ function(TribitsExampleApp_NoOptionalPackages byProjectOrPackage sharedOrStatic)
     message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
   endif()
 
-  if (sharedOrStatic STREQUAL "SHARED")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-  elseif (sharedOrStatic STREQUAL "STATIC")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-  else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
-  endif()
+  TribitsExampleApp_process_sharedOrStatic_arg()
 
   set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
@@ -804,13 +786,7 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options byProjectOrPackage sharedOrSt
     message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
   endif()
 
-  if (sharedOrStatic STREQUAL "SHARED")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-  elseif (sharedOrStatic STREQUAL "STATIC")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-  else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
-  endif()
+  TribitsExampleApp_process_sharedOrStatic_arg()
 
   set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
@@ -933,13 +909,7 @@ TribitsExampleApp_ALL_ST_tpl_link_options(ByPackage SHARED)
 
 function(TribitsExampleApp_ALL_ST_buildtree sharedOrStatic)
 
-  if (sharedOrStatic STREQUAL "SHARED")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-  elseif (sharedOrStatic STREQUAL "STATIC")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-  else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
-  endif()
+  TribitsExampleApp_process_sharedOrStatic_arg()
 
   if ( (CYGWIN OR WIN32) AND sharedOrStatic STREQUAL "SHARED")
     set(NOT_CYGWIN_OR_WIN32_SHARED FALSE)
