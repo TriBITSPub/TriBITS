@@ -1,5 +1,12 @@
 ########################################################################
-# TribitsExampleProject
+#
+# TribitsExampleProject Tests
+#
+########################################################################
+
+
+########################################################################
+# Helper vars and macros
 ########################################################################
 
 
@@ -54,6 +61,9 @@ set(LabelsForSubprojects_CMND_AND_ARGS
   grep ARGS "^LabelsForSubprojects:" DartConfiguration.tcl)
 set(LabelsForSubprojects_REGEX
   "LabelsForSubprojects: SimpleCxx[;]MixedLang[;]WithSubpackages[;]WrapExternal")
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
@@ -406,6 +416,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
   )
 
 
+########################################################################
+
+
 if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
   execute_process(COMMAND whoami
@@ -427,6 +440,7 @@ if ( ${PROJECT_NAME}_ENABLE_Fortran )
 else()
   set(mixedLangHeaderRegex "")
 endif()
+
 
 tribits_add_advanced_test( TribitsExampleProject_install_perms
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -536,6 +550,10 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
   #   the files isntalled under share/WithSubpackagesB/stuff using
   #   install(DIRECTORY ... USE_SOURCE_PERMISSIONS) will actually have the
   #   correct group and other permissions set.
+
+
+########################################################################
+
 
 if ( ${PROJECT_NAME}_ENABLE_Fortran )
   set(mixedLangHeaderRegex
@@ -662,6 +680,9 @@ tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perm
   #   did install will have the correct group and permissions.
 
 
+########################################################################
+
+
 if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
   set(TribitsExProj_INSTALL_BASE_DIR "" CACHE FILEPATH
     "Path to a base directory that installs will be made into that is not owned by the current user but is in the same owning group and has group write access"
@@ -687,6 +708,10 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
       "0: NOTE: Not calling chgrp and chmod on ${installBaseDir} since owner '${TribitsExProj_INSTALL_BASE_OWNING_USER}' != current owner '${TribitsExProj_INSTALL_OWNING_USER}'!")
   endif()
 endif()
+
+
+########################################################################
+
 
 tribits_add_advanced_test( TribitsExampleProject_install_perms_nonowning_base_dir
   OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -772,6 +797,9 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms_nonowning_base_di
   # an error.
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -794,6 +822,9 @@ tribits_add_advanced_test( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_IN
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   )
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing
@@ -909,6 +940,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_enable_install
 # you will see that build of the project fails because we removed some source
 # files that are needed.  This proves that they are being used from the
 # install tree!
+
+
+########################################################################
 
 
 # Find ninja so we can test TriBITS using ninja as well
@@ -1058,6 +1092,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
   )
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -1179,6 +1216,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
   )
 
 
+########################################################################
+
+
 if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
 
   tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran_ConfigTiming
@@ -1243,6 +1283,9 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
     )
 
 endif()
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran
@@ -1316,6 +1359,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran
   )
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_ALL_ST
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -1367,6 +1413,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST
       "WithSubpackagesC_test_of_c_b_mixed_lang.* Passed"
       "100% tests passed, 0 tests failed out of 9"
   )
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibPrefix
@@ -1421,6 +1470,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibPrefix
       "WithSubpackagesC_test_of_c_b_mixed_lang.* Passed"
       "100% tests passed, 0 tests failed out of 9"
   )
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
@@ -1604,6 +1656,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
   )
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -1773,6 +1828,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
   )
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_SimpleCxx_DEBUG_int64
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -1863,6 +1921,9 @@ tribits_add_advanced_test( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
   )
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -1897,6 +1958,9 @@ tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whitelist
@@ -1936,6 +2000,9 @@ tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whi
   )
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Blacklist
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -1973,6 +2040,9 @@ tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Bla
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_WrapExternal
@@ -2080,6 +2150,9 @@ tribits_add_advanced_test( TribitsExampleProject_WrapExternal
   )
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -2148,6 +2221,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
       "-- run_external_func:LINK_LIBS='external_func[;]pws_a'"
 
   )
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir
@@ -2230,6 +2306,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
   )
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -2290,6 +2369,9 @@ tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
   )
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -2323,6 +2405,9 @@ tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
       "Call Stack .most recent call first.:"
       "-- Configuring incomplete, errors occurred!"
   )
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
@@ -2397,6 +2482,9 @@ tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
   )
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_TargetDefinesPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -2454,6 +2542,9 @@ tribits_add_advanced_test( TribitsExampleProject_TargetDefinesPkg
       "100% tests passed, 0 tests failed out of 8"
 
   )
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_MixedSharedStaticLibs_shared
@@ -2544,6 +2635,9 @@ tribits_add_advanced_test( TribitsExampleProject_MixedSharedStaticLibs_shared
   # soversion links are created as well.
 
 
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_MixedSharedStaticLibs_static
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE IS_REAL_LINUX_SYSTEM
@@ -2611,6 +2705,9 @@ tribits_add_advanced_test( TribitsExampleProject_MixedSharedStaticLibs_static
   # NOTE: The above test make sure that you can build a shared library with
   # tribits_add_library( ... SHARED ...) in project that is defaulted to use
   # static libs with BUILD_SHARED_LIBS=OFF.
+
+
+########################################################################
 
 
 tribits_add_advanced_test( TribitsExampleProject_DisableWithSubpackagesB_EnableWithSubpackagesB
