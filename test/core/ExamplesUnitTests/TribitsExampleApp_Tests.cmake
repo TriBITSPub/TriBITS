@@ -135,6 +135,16 @@ macro(TribitsExampleApp_set_test_env_var)
 endmacro()
 
 
+function(convertCMakePathsToNativePaths  pathsListIn  pathsListVarOut)
+  set(pathsListOut)
+  foreach (pathIn "${pathsListIn}")
+    file(TO_NATIVE_PATH "${pathIn}" pathOut)
+    list(APPEND pathsListOut "${pathOut}")
+  endforeach()
+  set(${pathsListVarOut} "${pathsListOut}" PARENT_SCOPE)
+endfunction()
+
+
 # Macro to handle the sharedOrStatic and fullOrComponents arguemnts
 #
 macro(TribitsExampleApp_ProcessStandardInputArgs)
@@ -157,16 +167,6 @@ macro(TribitsExampleApp_ProcessStandardInputArgs)
   endif()
 
 endmacro()
-
-
-function(convertCMakePathsToNativePaths  pathsListIn  pathsListVarOut)
-  set(pathsListOut)
-  foreach (pathIn "${pathsListIn}")
-    file(TO_NATIVE_PATH "${pathIn}" pathOut)
-    list(APPEND pathsListOut "${pathOut}")
-  endforeach()
-  set(${pathsListVarOut} "${pathsListOut}" PARENT_SCOPE)
-endfunction()
 
 
 # Create the expected string of full dependencies given a list of enabled TPLs
