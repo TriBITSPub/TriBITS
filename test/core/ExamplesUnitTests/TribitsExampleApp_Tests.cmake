@@ -266,7 +266,7 @@ endfunction()
 ################################################################################
 
 
-function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
+function(TribitsExampleApp_NoFortran sharedOrStatic fullOrComponents)
 
   if (sharedOrStatic STREQUAL "SHARED")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
@@ -285,8 +285,7 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
     message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
   endif()
 
-  set(testBaseName
-    TribitsExampleApp_NoFortran_${sharedOrStatic}_${fullOrComponents})
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}_${fullOrComponents})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -403,9 +402,9 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
 endfunction()
 
 
-TribitsExampleApp_NoFortran_test(STATIC FULL)
-TribitsExampleApp_NoFortran_test(STATIC COMPONENTS)
-TribitsExampleApp_NoFortran_test(SHARED COMPONENTS)
+TribitsExampleApp_NoFortran(STATIC FULL)
+TribitsExampleApp_NoFortran(STATIC COMPONENTS)
+TribitsExampleApp_NoFortran(SHARED COMPONENTS)
 # NOTE: We don't need to test the permutation SHARED FULL as well.  That does
 # not really test anything new.
 
@@ -533,7 +532,7 @@ TribitsExampleApp_EnableSingleSubpackage(STATIC FULL)
 ################################################################################
 
 
-function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
+function(TribitsExampleApp_ALL_ST byProjectOrPackage sharedOrStatic)
 
   if (byProjectOrPackage STREQUAL "ByProject")
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
@@ -553,7 +552,7 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
     message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
 
-  set(testBaseName TribitsExampleApp_ALL_ST_${byProjectOrPackage}_${sharedOrStatic})
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -654,17 +653,17 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
 endfunction()
 
 
-TribitsExampleApp_ALL_ST_test(ByProject STATIC)
-TribitsExampleApp_ALL_ST_test(ByProject SHARED)
-TribitsExampleApp_ALL_ST_test(ByPackage STATIC)
-TribitsExampleApp_ALL_ST_test(ByPackage SHARED)
+TribitsExampleApp_ALL_ST(ByProject STATIC)
+TribitsExampleApp_ALL_ST(ByProject SHARED)
+TribitsExampleApp_ALL_ST(ByPackage STATIC)
+TribitsExampleApp_ALL_ST(ByPackage SHARED)
 
 
 
 ################################################################################
 
 
-function(TribitsExampleApp_NoOptionalPackages_test byProjectOrPackage sharedOrStatic)
+function(TribitsExampleApp_NoOptionalPackages byProjectOrPackage sharedOrStatic)
 
   if (byProjectOrPackage STREQUAL "ByProject")
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
@@ -684,7 +683,7 @@ function(TribitsExampleApp_NoOptionalPackages_test byProjectOrPackage sharedOrSt
     message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
 
-  set(testBaseName TribitsExampleApp_NoOptionalPackages_${byProjectOrPackage}_${sharedOrStatic})
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -785,15 +784,15 @@ function(TribitsExampleApp_NoOptionalPackages_test byProjectOrPackage sharedOrSt
 endfunction()
 
 
-TribitsExampleApp_NoOptionalPackages_test(ByProject STATIC)
-TribitsExampleApp_NoOptionalPackages_test(ByPackage SHARED)
+TribitsExampleApp_NoOptionalPackages(ByProject STATIC)
+TribitsExampleApp_NoOptionalPackages(ByPackage SHARED)
 #  Don't need to test all the permulations here
 
 
 ################################################################################
 
 
-function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage sharedOrStatic)
+function(TribitsExampleApp_ALL_ST_tpl_link_options byProjectOrPackage sharedOrStatic)
 
   if (byProjectOrPackage STREQUAL "ByProject")
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
@@ -813,8 +812,7 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage share
     message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
 
-  set(testBaseName
-    TribitsExampleApp_ALL_ST_tpl_link_options_${byProjectOrPackage}_${sharedOrStatic})
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -924,16 +922,16 @@ endfunction()
 # If you use the entire library file, CMake will put in RPATH correctly.
 
 
-TribitsExampleApp_ALL_ST_tpl_link_options_test(ByProject STATIC)
-TribitsExampleApp_ALL_ST_tpl_link_options_test(ByProject SHARED)
-TribitsExampleApp_ALL_ST_tpl_link_options_test(ByPackage STATIC)
-TribitsExampleApp_ALL_ST_tpl_link_options_test(ByPackage SHARED)
+TribitsExampleApp_ALL_ST_tpl_link_options(ByProject STATIC)
+TribitsExampleApp_ALL_ST_tpl_link_options(ByProject SHARED)
+TribitsExampleApp_ALL_ST_tpl_link_options(ByPackage STATIC)
+TribitsExampleApp_ALL_ST_tpl_link_options(ByPackage SHARED)
 
 
 ################################################################################
 
 
-function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
+function(TribitsExampleApp_ALL_ST_buildtree sharedOrStatic)
 
   if (sharedOrStatic STREQUAL "SHARED")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
@@ -952,7 +950,7 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
   # directories to PATH for all of the upstream TribitsExProj libraries
   # scattered around the build tree when you are on Windows and have DLLs.
 
-  set(testBaseName TribitsExampleApp_ALL_ST_buildtree_${sharedOrStatic})
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -1032,5 +1030,5 @@ endfunction()
 # enough I think.
 
 
-TribitsExampleApp_ALL_ST_buildtree_test(STATIC)
-TribitsExampleApp_ALL_ST_buildtree_test(SHARED)
+TribitsExampleApp_ALL_ST_buildtree(STATIC)
+TribitsExampleApp_ALL_ST_buildtree(SHARED)
