@@ -36,7 +36,14 @@
 
 
 ################################################################################
-# TribitsExampleApp
+#
+# TribitsExampleApp Testing
+#
+################################################################################
+
+
+################################################################################
+# TribitsExampleApp helper functions
 ################################################################################
 
 
@@ -76,9 +83,6 @@ set_ENV_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(SHARED)
 # CMake is behaving correctly and putting in RPATH correctly.  But because
 # I can't log into this system, it is very hard and time consuming to
 # debug this so I am just giving up at this point.
-
-
-################################################################################
 
 
 # Macro to set up ENVIRONMENT arg as var 'TEST_ENV_ARG' for
@@ -131,6 +135,30 @@ macro(TribitsExampleApp_set_test_env_var)
 endmacro()
 
 
+# Macro to handle the sharedOrStatic and fullOrComponents arguemnts
+#
+macro(TribitsExampleApp_ProcessStandardInputArgs)
+
+  if (sharedOrStatic STREQUAL "SHARED")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
+  elseif (sharedOrStatic STREQUAL "STATIC")
+    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
+  else()
+    message(FATAL_ERROR "Invalid value of buildSharedLibsArg='${buildSharedLibsArg}'!")
+  endif()
+
+  if (fullOrComponents STREQUAL "FULL")
+    set(tribitsExProjUseComponentsArg "")
+  elseif (fullOrComponents STREQUAL "COMPONENTS")
+    set(tribitsExProjUseComponentsArg
+      -DTribitsExApp_USE_COMPONENTS=SimpleCxx,WithSubpackages)
+  else()
+    message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
+  endif()
+
+endmacro()
+
+
 function(convertCMakePathsToNativePaths  pathsListIn  pathsListVarOut)
   set(pathsListOut)
   foreach (pathIn "${pathsListIn}")
@@ -138,6 +166,100 @@ function(convertCMakePathsToNativePaths  pathsListIn  pathsListVarOut)
     list(APPEND pathsListOut "${pathOut}")
   endforeach()
   set(${pathsListVarOut} "${pathsListOut}" PARENT_SCOPE)
+endfunction()
+
+
+# Create the expected string of full dependencies given a list of enabled TPLs
+# and packages.
+#
+# Usage:
+#
+#   TribitsExampleApp_GetExpectedAppFullDeps( <fullDepsStrOut>
+#     <pkg1> <pkg2> ...)
+#
+function(TribitsExampleApp_GetExpectedAppFullDeps  fullDepsStrOut)
+
+  if ("SimpleTpl" IN_LIST ARGN)
+    set(simpletplText "simpletpl ")
+  else()
+    set(simpletplText)
+  endif()
+
+  if ("SimpleCxx" IN_LIST ARGN)
+    set(EXPECTED_SIMPLECXX_DEPS
+      "${simpletplText}headeronlytpl")
+    set(EXPECTED_SIMPLECXX_AND_DEPS
+      "SimpleCxx ${EXPECTED_SIMPLECXX_DEPS}")
+  else()
+    set(EXPECTED_SIMPLECXX_DEPS "")
+    set(EXPECTED_SIMPLECXX_AND_DEPS "")
+  endif()
+
+  if ("WithSubpackagesA" IN_LIST ARGN)
+    set(EXPECTED_A_DEPS "${EXPECTED_SIMPLECXX_AND_DEPS}")
+    set(EXPECTED_A_AND_DEPS "A ${EXPECTED_A_DEPS}")
+    set(EXPECTED_A_AND_DEPS_STR "${EXPECTED_A_AND_DEPS} ")
+  else()
+    set(EXPECTED_A_DEPS "")
+    set(EXPECTED_A_AND_DEPS "")
+    set(EXPECTED_A_AND_DEPS_STR "")
+  endif()
+
+  if ("WithSubpackagesB" IN_LIST ARGN)
+    set(EXPECTED_B_DEPS
+      "${EXPECTED_A_AND_DEPS_STR}${EXPECTED_SIMPLECXX_AND_DEPS}")
+    set(EXPECTED_B_AND_DEPS
+      "B ${EXPECTED_B_DEPS}")
+    set(EXPECTED_B_AND_DEPS_STR
+      "${EXPECTED_B_AND_DEPS} ")
+  else()
+    set(EXPECTED_B_DEPS "")
+    set(EXPECTED_B_AND_DEPS "")
+    set(EXPECTED_B_AND_DEPS_STR "")
+  endif()
+
+  if ("WithSubpackagesC" IN_LIST ARGN)
+    set(EXPECTED_C_DEPS
+      "${EXPECTED_B_AND_DEPS_STR}${EXPECTED_A_AND_DEPS}")
+  else()
+    set(EXPECTED_C_DEPS "")
+  endif()
+
+  set(fullDepsStr "")
+  if (EXPECTED_C_DEPS)
+    appendStrWithGlue(fullDepsStr "[;] "
+      "WithSubpackagesC:${EXPECTED_C_DEPS}")
+  endif()
+  if (EXPECTED_B_DEPS)
+    appendStrWithGlue(fullDepsStr "[;] "
+      "WithSubpackagesB:${EXPECTED_B_DEPS}")
+  endif()
+  if (EXPECTED_A_DEPS)
+    appendStrWithGlue(fullDepsStr "[;] "
+      "WithSubpackagesA:${EXPECTED_A_DEPS}")
+  endif()
+  if ("MixedLang" IN_LIST ARGN)
+    appendStrWithGlue(fullDepsStr "[;] "
+      "MixedLang:Mixed Language")
+  endif()
+  if (EXPECTED_SIMPLECXX_DEPS)
+    appendStrWithGlue(fullDepsStr "[;] "
+      "SimpleCxx:${EXPECTED_SIMPLECXX_DEPS}")
+  endif()
+
+  set(${fullDepsStrOut} "${fullDepsStr}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(appendStrWithGlue  strVarNameInOut   glueStr  str)
+  set(strVar "${${strVarNameInOut}}")
+  if (strVar)
+    string(APPEND strVar "${glueStr}${str}")
+  else()
+    set(strVar "${str}")
+  endif()
+  set(${strVarNameInOut} "${strVar}" PARENT_SCOPE)
 endfunction()
 
 
@@ -176,13 +298,16 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
       ARGS
         -D FROM_DIRS="${testDir}/install/bin,${SimpleTpl_install_${sharedOrStatic}_DIR}/install/bin"
         -D GLOB_EXPR="*.dll"
-	-D TO_DIR="app_build/Release"
-	-P "${CMAKE_CURRENT_SOURCE_DIR}/copy_files_glob.cmake"
+        -D TO_DIR="app_build/Release"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/copy_files_glob.cmake"
       )
   else()
     set(copyDllsCmndArgs 
       CMND ${CMAKE_COMMAND} ARGS -E echo "skipped")
   endif()
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC)
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -257,7 +382,7 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] SimpleCxx:simpletpl headeronlytpl"
+        "Full Deps: ${fullDepsStr}"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -313,6 +438,9 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
   TribitsExampleApp_set_test_env_var()
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC)
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -385,7 +513,7 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:simpletpl headeronlytpl"
+        "Full Deps: ${fullDepsStr}"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -441,6 +569,9 @@ function(TribitsExampleApp_NoOptionalPackages_test byProjectOrPackage sharedOrSt
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
   TribitsExampleApp_set_test_env_var()
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC)
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -512,7 +643,7 @@ function(TribitsExampleApp_NoOptionalPackages_test byProjectOrPackage sharedOrSt
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:simpletpl headeronlytpl"
+        "Full Deps: ${fullDepsStr}"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -570,6 +701,9 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage share
   TribitsExampleApp_set_test_env_var(ALWAYS_SET_ENV_VARS)
   # Above, must always set up runtime paths to find upstream TPL since RPATH
   # will not be set with -L<dir> option!
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC)
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -649,7 +783,7 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage share
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:simpletpl headeronlytpl"
+        "Full Deps: ${fullDepsStr}"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -701,6 +835,9 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
   set(testBaseName TribitsExampleApp_ALL_ST_buildtree_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC)
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY  TEST_NAME
@@ -757,7 +894,7 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A headeronlytpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:headeronlytpl"
+        "Full Deps: ${fullDepsStr}"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN

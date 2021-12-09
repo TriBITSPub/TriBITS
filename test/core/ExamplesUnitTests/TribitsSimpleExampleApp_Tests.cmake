@@ -123,7 +123,7 @@ function(TribitsSimpleExampleApp_ALL_ST_test sharedOrStatic)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:simpletpl headeronlytpl"
+        "Full Deps: WithSubpackages:B A SimpleCxx simpletpl headeronlytpl SimpleCxx simpletpl headeronlytpl A SimpleCxx simpletpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:simpletpl headeronlytpl"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -132,6 +132,12 @@ function(TribitsSimpleExampleApp_ALL_ST_test sharedOrStatic)
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
+  # NOTE: That above test uses a raw string regex for 'Full Deps'.  This is an
+  # insurance policy in case the function
+  # TribitsExampleApp_GetExpectedAppFullDeps() used in
+  # TribitsExampleApp_Tests.cmake does not construct the right expected string
+  # (but that risk is small given that is uses a different implementation from
+  # TribitsExampleApp/app.cpp to construct that list of dependencies.
 
   if (${testNameBase}_NAME)
     set_tests_properties(${${testNameBase}_NAME}
