@@ -36,7 +36,14 @@
 
 
 ################################################################################
-# TribitsExampleApp
+#
+# TribitsExampleApp Testing
+#
+################################################################################
+
+
+################################################################################
+# TribitsExampleApp helper functions
 ################################################################################
 
 
@@ -76,9 +83,6 @@ set_ENV_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(SHARED)
 # CMake is behaving correctly and putting in RPATH correctly.  But because
 # I can't log into this system, it is very hard and time consuming to
 # debug this so I am just giving up at this point.
-
-
-################################################################################
 
 
 # Macro to set up ENVIRONMENT arg as var 'TEST_ENV_ARG' for
@@ -141,10 +145,9 @@ function(convertCMakePathsToNativePaths  pathsListIn  pathsListVarOut)
 endfunction()
 
 
-################################################################################
-
-
-function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
+# Macro to handle the 'sharedOrStatic' arguemnt
+#
+macro(TribitsExampleApp_process_sharedOrStatic_arg)
 
   if (sharedOrStatic STREQUAL "SHARED")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
@@ -153,6 +156,108 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
   else()
     message(FATAL_ERROR "Invalid value of buildSharedLibsArg='${buildSharedLibsArg}'!")
   endif()
+
+endmacro()
+
+
+# Create the expected string of full dependencies given a list of enabled TPLs
+# and packages.
+#
+# Usage:
+#
+#   TribitsExampleApp_GetExpectedAppFullDeps( <fullDepsStrOut>
+#     <pkg1> <pkg2> ...)
+#
+function(TribitsExampleApp_GetExpectedAppFullDeps  fullDepsStrOut)
+
+  if ("SimpleTpl" IN_LIST ARGN)
+    set(simpletplText "simpletpl ")
+  else()
+    set(simpletplText)
+  endif()
+
+  if ("SimpleCxx" IN_LIST ARGN)
+    set(EXPECTED_SIMPLECXX_DEPS
+      "${simpletplText}headeronlytpl")
+    set(EXPECTED_SIMPLECXX_AND_DEPS
+      "SimpleCxx ${EXPECTED_SIMPLECXX_DEPS}")
+  else()
+    set(EXPECTED_SIMPLECXX_DEPS "")
+    set(EXPECTED_SIMPLECXX_AND_DEPS "")
+  endif()
+
+  if ("WithSubpackagesA" IN_LIST ARGN)
+    set(EXPECTED_A_DEPS "${EXPECTED_SIMPLECXX_AND_DEPS}")
+    set(EXPECTED_A_AND_DEPS "A ${EXPECTED_A_DEPS}")
+    set(EXPECTED_A_AND_DEPS_STR "${EXPECTED_A_AND_DEPS} ")
+  else()
+    set(EXPECTED_A_DEPS "")
+    set(EXPECTED_A_AND_DEPS "")
+    set(EXPECTED_A_AND_DEPS_STR "")
+  endif()
+
+  if ("WithSubpackagesB" IN_LIST ARGN)
+    set(EXPECTED_B_DEPS
+      "${EXPECTED_A_AND_DEPS_STR}${EXPECTED_SIMPLECXX_AND_DEPS}")
+    set(EXPECTED_B_AND_DEPS
+      "B ${EXPECTED_B_DEPS}")
+    set(EXPECTED_B_AND_DEPS_STR
+      "${EXPECTED_B_AND_DEPS} ")
+  else()
+    set(EXPECTED_B_DEPS "")
+    set(EXPECTED_B_AND_DEPS "")
+    set(EXPECTED_B_AND_DEPS_STR "")
+  endif()
+
+  if ("WithSubpackagesC" IN_LIST ARGN)
+    set(EXPECTED_C_DEPS
+      "${EXPECTED_B_AND_DEPS_STR}${EXPECTED_A_AND_DEPS}")
+  else()
+    set(EXPECTED_C_DEPS "")
+  endif()
+
+  set(fullDepsStr "")
+  if (EXPECTED_C_DEPS)
+    appendStrWithGlue(fullDepsStr "[;] "
+      "WithSubpackagesC:${EXPECTED_C_DEPS}")
+  endif()
+  if (EXPECTED_B_DEPS)
+    appendStrWithGlue(fullDepsStr "[;] "
+      "WithSubpackagesB:${EXPECTED_B_DEPS}")
+  endif()
+  if (EXPECTED_A_DEPS)
+    appendStrWithGlue(fullDepsStr "[;] "
+      "WithSubpackagesA:${EXPECTED_A_DEPS}")
+  endif()
+  if ("MixedLang" IN_LIST ARGN)
+    appendStrWithGlue(fullDepsStr "[;] "
+      "MixedLang:Mixed Language")
+  endif()
+  if (EXPECTED_SIMPLECXX_DEPS)
+    appendStrWithGlue(fullDepsStr "[;] "
+      "SimpleCxx:${EXPECTED_SIMPLECXX_DEPS}")
+  endif()
+
+  set(${fullDepsStrOut} "${fullDepsStr}" PARENT_SCOPE)
+
+endfunction()
+
+
+function(appendStrWithGlue  strVarNameInOut   glueStr  str)
+  set(strVar "${${strVarNameInOut}}")
+  if (strVar)
+    string(APPEND strVar "${glueStr}${str}")
+  else()
+    set(strVar "${str}")
+  endif()
+  set(${strVarNameInOut} "${strVar}" PARENT_SCOPE)
+endfunction()
+
+
+################################################################################
+
+
+function(TribitsExampleApp_NoFortran fullOrComponents sharedOrStatic)
 
   if (fullOrComponents STREQUAL "FULL")
     set(tribitsExProjUseComponentsArg "")
@@ -163,8 +268,9 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
     message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
   endif()
 
-  set(testBaseName
-    TribitsExampleApp_NoFortran_${sharedOrStatic}_${fullOrComponents})
+  TribitsExampleApp_process_sharedOrStatic_arg()
+
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${fullOrComponents}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -176,13 +282,16 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
       ARGS
         -D FROM_DIRS="${testDir}/install/bin,${SimpleTpl_install_${sharedOrStatic}_DIR}/install/bin"
         -D GLOB_EXPR="*.dll"
-	-D TO_DIR="app_build/Release"
-	-P "${CMAKE_CURRENT_SOURCE_DIR}/copy_files_glob.cmake"
+        -D TO_DIR="app_build/Release"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/copy_files_glob.cmake"
       )
   else()
     set(copyDllsCmndArgs 
       CMND ${CMAKE_COMMAND} ARGS -E echo "skipped")
   endif()
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC)
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -257,7 +366,7 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] SimpleCxx:simpletpl headeronlytpl"
+        "Full Deps: ${fullDepsStr}"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -278,14 +387,146 @@ function(TribitsExampleApp_NoFortran_test sharedOrStatic fullOrComponents)
 endfunction()
 
 
-TribitsExampleApp_NoFortran_test(STATIC FULL)
-TribitsExampleApp_NoFortran_test(STATIC COMPONENTS)
-TribitsExampleApp_NoFortran_test(SHARED COMPONENTS)
+TribitsExampleApp_NoFortran(FULL STATIC)
+TribitsExampleApp_NoFortran(COMPONENTS STATIC)
+TribitsExampleApp_NoFortran(COMPONENTS SHARED)
 # NOTE: We don't need to test the permutation SHARED FULL as well.  That does
 # not really test anything new.
 
 
-function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
+################################################################################
+
+
+function(TribitsExampleApp_EnableSingleSubpackage fullOrComponents sharedOrStatic)
+
+  if (fullOrComponents STREQUAL "FULL")
+    set(tribitsExProjUseComponentsArg "")
+  elseif (fullOrComponents STREQUAL "COMPONENTS")
+    set(tribitsExProjUseComponentsArg
+      -DTribitsExApp_USE_COMPONENTS=SimpleCxx,WithSubpackages)
+  else()
+    message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
+  endif()
+
+  TribitsExampleApp_process_sharedOrStatic_arg()
+
+  set(testBaseName
+    ${CMAKE_CURRENT_FUNCTION}_${fullOrComponents}_${sharedOrStatic})
+  set(testName ${PACKAGE_NAME}_${testBaseName})
+  set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  TribitsExampleApp_set_test_env_var()
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx WithSubpackagesA WithSubpackagesB)
+
+  tribits_add_advanced_test( ${testBaseName}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    XHOSTTYPE Darwin
+
+    TEST_0
+      MESSAGE "Copy source for TribitsExampleProject"
+      CMND ${CMAKE_COMMAND}
+      ARGS -E copy_directory
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+      WORKING_DIRECTORY TribitsExampleProject
+
+    TEST_1
+      MESSAGE "Make Withsubpackages OPTIONAL subpackages REQUIRED"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -D FILE="TribitsExampleProject/packages/with_subpackages/cmake/Dependencies.cmake"
+        -D STRING_TO_REPLACE=OPTIONAL
+        -D REPLACEMENT_STRING=REQUIRED
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/replace_string.cmake
+
+    TEST_2
+      MESSAGE "Do the configure of TribitsExampleProject with just one subpackage"
+      WORKING_DIRECTORY BUILD
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DCMAKE_BUILD_TYPE=Release
+	-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
+        -DTribitsExProj_ENABLE_Fortran=OFF
+        -DTribitsExProj_ENABLE_WithSubpackagesB=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        -DTPL_ENABLE_SimpleTpl=ON
+        -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/include
+        -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib
+        ${buildSharedLibsArg}
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install
+        ${testDir}/TribitsExampleProject
+      PASS_REGULAR_EXPRESSION_ALL
+        "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
+        "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
+        "Final set of non-enabled packages:  MixedLang WrapExternal 2"
+        "Final set of non-enabled SE packages:  MixedLang WithSubpackagesC WrapExternal 3"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_3
+      MESSAGE "Build and install TribitsExampleProject locally"
+      WORKING_DIRECTORY BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_COMMAND} ARGS --build . --config Release --target install
+
+    TEST_4
+      MESSAGE "Configure TribitsExampleApp locally"
+      WORKING_DIRECTORY app_build
+      CMND ${CMAKE_COMMAND} ARGS
+        -DCMAKE_PREFIX_PATH=${testDir}/install
+        -DCMAKE_BUILD_TYPE=Release
+        ${tribitsExProjUseComponentsArg}
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
+      PASS_REGULAR_EXPRESSION_ALL
+        "-- Configuring done"
+        "-- Generating done"
+        "-- Build files have been written to: .*/${testName}/app_build"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_5
+      MESSAGE "Build TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND  ${CMAKE_COMMAND} ARGS --build . --config Release
+
+    TEST_6
+      MESSAGE "Test TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      PASS_REGULAR_EXPRESSION_ALL
+        "Full Deps: ${fullDepsStr}"
+        "app_test [.]+   Passed"
+        "100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${TEST_ENV_ARG}
+
+    ADDED_TEST_NAME_OUT ${testNameBase}_NAME
+    )
+  # NOTE: The above test changes all of the subpackages in WithSubpackages to
+  # be 'REQUIRED' and then only enables a subset of its required subpackages
+  # and checks that the <Package>Config.cmake files get created correctly.
+
+  if (${testNameBase}_NAME)
+    set_tests_properties(${${testNameBase}_NAME}
+      PROPERTIES DEPENDS ${SimpleTpl_install_${sharedOrStatic}_NAME} )
+  endif()
+
+endfunction()
+
+
+TribitsExampleApp_EnableSingleSubpackage(FULL STATIC)
+
+
+################################################################################
+
+
+function(TribitsExampleApp_ALL_ST byProjectOrPackage sharedOrStatic)
 
   if (byProjectOrPackage STREQUAL "ByProject")
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
@@ -297,19 +538,16 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
     message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
   endif()
 
-  if (sharedOrStatic STREQUAL "SHARED")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-  elseif (sharedOrStatic STREQUAL "STATIC")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-  else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
-  endif()
+  TribitsExampleApp_process_sharedOrStatic_arg()
 
-  set(testBaseName TribitsExampleApp_ALL_ST_${byProjectOrPackage}_${sharedOrStatic})
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
   TribitsExampleApp_set_test_env_var()
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC)
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -382,7 +620,7 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:simpletpl headeronlytpl"
+        "Full Deps: ${fullDepsStr}"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -391,6 +629,9 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
+  # NOTE: Above test deletes the source and build dir for
+  # TribitsExampleProject after the install to ensure that the install dir is
+  # stand-alone.
 
   if (${testNameBase}_NAME)
     set_tests_properties(${${testNameBase}_NAME}
@@ -400,13 +641,17 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
 endfunction()
 
 
-TribitsExampleApp_ALL_ST_test(ByProject STATIC)
-TribitsExampleApp_ALL_ST_test(ByProject SHARED)
-TribitsExampleApp_ALL_ST_test(ByPackage STATIC)
-TribitsExampleApp_ALL_ST_test(ByPackage SHARED)
+TribitsExampleApp_ALL_ST(ByProject STATIC)
+TribitsExampleApp_ALL_ST(ByProject SHARED)
+TribitsExampleApp_ALL_ST(ByPackage STATIC)
+TribitsExampleApp_ALL_ST(ByPackage SHARED)
 
 
-function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage sharedOrStatic)
+
+################################################################################
+
+
+function(TribitsExampleApp_NoOptionalPackages byProjectOrPackage sharedOrStatic)
 
   if (byProjectOrPackage STREQUAL "ByProject")
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
@@ -418,22 +663,141 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage share
     message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
   endif()
 
-  if (sharedOrStatic STREQUAL "SHARED")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-  elseif (sharedOrStatic STREQUAL "STATIC")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-  else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
+  TribitsExampleApp_process_sharedOrStatic_arg()
+
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic})
+  set(testName ${PACKAGE_NAME}_${testBaseName})
+  set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  TribitsExampleApp_set_test_env_var()
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC)
+
+  tribits_add_advanced_test( ${testBaseName}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+    XHOSTTYPE Darwin
+
+    TEST_0
+      MESSAGE "Do the configure of TribitsExampleProject"
+      WORKING_DIRECTORY BUILD
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=ON
+        -DTribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=OFF
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj_ENABLE_MixedLang=ON
+        -DTribitsExProj_ENABLE_WithSubpackagesA=ON
+        -DTribitsExProj_ENABLE_WithSubpackagesB=ON
+        -DTribitsExProj_ENABLE_WithSubpackagesC=ON
+        -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        -DTPL_ENABLE_SimpleTpl=ON
+        -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/include
+        -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib
+        ${buildSharedLibsArg}
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      PASS_REGULAR_EXPRESSION_ALL
+        "-- Setting TribitsExProj_ENABLE_WithSubpackages=ON because TribitsExProj_ENABLE_WithSubpackagesA=ON"
+        "-- Setting WithSubpackages_ENABLE_WithSubpackagesA=ON because TribitsExProj_ENABLE_WithSubpackagesA=ON"
+        "-- Setting WithSubpackages_ENABLE_WithSubpackagesB=ON because TribitsExProj_ENABLE_WithSubpackagesB=ON"
+        "-- Setting WithSubpackages_ENABLE_WithSubpackagesC=ON because TribitsExProj_ENABLE_WithSubpackagesC=ON"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_1
+      MESSAGE "Build and install TribitsExampleProject locally"
+      WORKING_DIRECTORY BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+
+    TEST_2
+      MESSAGE "Configure TribitsExampleApp locally"
+      WORKING_DIRECTORY app_build
+      CMND ${CMAKE_COMMAND} ARGS
+        -DCMAKE_PREFIX_PATH=${testDir}/install
+        -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang,WithSubpackages
+        ${findByProjectOrPackageArg}
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
+      PASS_REGULAR_EXPRESSION_ALL
+        "${foundProjectOrPackageStr}"
+        "-- Configuring done"
+        "-- Generating done"
+        "-- Build files have been written to: .*/${testName}/app_build"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_3
+      MESSAGE "Build TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Built target app"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_4
+      MESSAGE "Test TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      PASS_REGULAR_EXPRESSION_ALL
+        "Full Deps: ${fullDepsStr}"
+        "app_test [.]+   Passed"
+        "100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${TEST_ENV_ARG}
+
+    ADDED_TEST_NAME_OUT ${testNameBase}_NAME
+    )
+  # NOTE: The above test ensures that the <ParentPackage>Config.cmake file for
+  # a parent package with subpackages gets constructed correctly when optional
+  # packages are disabled and when only the subpackages are explicitly enabled
+  # (see trilinos/Trilinos#9972 and trilinos/Trilinos#9973).
+
+  if (${testNameBase}_NAME)
+    set_tests_properties(${${testNameBase}_NAME}
+      PROPERTIES DEPENDS ${SimpleTpl_install_${sharedOrStatic}_NAME} )
   endif()
 
-  set(testBaseName
-    TribitsExampleApp_ALL_ST_tpl_link_options_${byProjectOrPackage}_${sharedOrStatic})
+endfunction()
+
+
+TribitsExampleApp_NoOptionalPackages(ByProject STATIC)
+TribitsExampleApp_NoOptionalPackages(ByPackage SHARED)
+#  Don't need to test all the permulations here
+
+
+################################################################################
+
+
+function(TribitsExampleApp_ALL_ST_tpl_link_options byProjectOrPackage sharedOrStatic)
+
+  if (byProjectOrPackage STREQUAL "ByProject")
+    set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
+    set(foundProjectOrPackageStr "Found TribitsExProj")
+  elseif (byProjectOrPackage STREQUAL "ByPackage")
+    set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=ON)
+    set(foundProjectOrPackageStr "Found SimpleCxx")
+  else()
+    message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
+  endif()
+
+  TribitsExampleApp_process_sharedOrStatic_arg()
+
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
   TribitsExampleApp_set_test_env_var(ALWAYS_SET_ENV_VARS)
   # Above, must always set up runtime paths to find upstream TPL since RPATH
   # will not be set with -L<dir> option!
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC)
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -513,7 +877,7 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options_test byProjectOrPackage share
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A simpletpl headeronlytpl simpletpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:simpletpl headeronlytpl"
+        "Full Deps: ${fullDepsStr}"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -534,21 +898,18 @@ endfunction()
 # If you use the entire library file, CMake will put in RPATH correctly.
 
 
-TribitsExampleApp_ALL_ST_tpl_link_options_test(ByProject STATIC)
-TribitsExampleApp_ALL_ST_tpl_link_options_test(ByProject SHARED)
-TribitsExampleApp_ALL_ST_tpl_link_options_test(ByPackage STATIC)
-TribitsExampleApp_ALL_ST_tpl_link_options_test(ByPackage SHARED)
+TribitsExampleApp_ALL_ST_tpl_link_options(ByProject STATIC)
+TribitsExampleApp_ALL_ST_tpl_link_options(ByProject SHARED)
+TribitsExampleApp_ALL_ST_tpl_link_options(ByPackage STATIC)
+TribitsExampleApp_ALL_ST_tpl_link_options(ByPackage SHARED)
 
 
-function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
+################################################################################
 
-  if (sharedOrStatic STREQUAL "SHARED")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
-  elseif (sharedOrStatic STREQUAL "STATIC")
-    set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-  else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
-  endif()
+
+function(TribitsExampleApp_ALL_ST_buildtree sharedOrStatic)
+
+  TribitsExampleApp_process_sharedOrStatic_arg()
 
   if ( (CYGWIN OR WIN32) AND sharedOrStatic STREQUAL "SHARED")
     set(NOT_CYGWIN_OR_WIN32_SHARED FALSE)
@@ -559,9 +920,12 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
   # directories to PATH for all of the upstream TribitsExProj libraries
   # scattered around the build tree when you are on Windows and have DLLs.
 
-  set(testBaseName TribitsExampleApp_ALL_ST_buildtree_${sharedOrStatic})
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC)
 
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY  TEST_NAME
@@ -618,7 +982,7 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: WithSubpackages:B A headeronlytpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:headeronlytpl"
+        "Full Deps: ${fullDepsStr}"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -636,5 +1000,5 @@ endfunction()
 # enough I think.
 
 
-TribitsExampleApp_ALL_ST_buildtree_test(STATIC)
-TribitsExampleApp_ALL_ST_buildtree_test(SHARED)
+TribitsExampleApp_ALL_ST_buildtree(STATIC)
+TribitsExampleApp_ALL_ST_buildtree(SHARED)
