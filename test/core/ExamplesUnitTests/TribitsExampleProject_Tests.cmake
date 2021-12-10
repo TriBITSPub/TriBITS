@@ -2488,6 +2488,7 @@ tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
 tribits_add_advanced_test( TribitsExampleProject_SimpleTpl
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
   XHOSTTYPE Darwin
 
   TEST_0
