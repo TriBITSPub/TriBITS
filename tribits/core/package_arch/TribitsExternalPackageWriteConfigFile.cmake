@@ -230,7 +230,7 @@ endfunction()
 #
 # Read the ``TPL_<tplName>_LIBRARIES` list variable and produce the string for
 # the IMPORTED targets commands and return list of targets and left over
-# linker flags..
+# linker flags.
 #
 # Usage::
 #
@@ -243,17 +243,17 @@ endfunction()
 #
 # The arguments are:
 #
-#   ``<tplName>``: Name of the external package/TPL
+#   ``<tplName>``: [In] Name of the external package/TPL
 #
-#   ``<libTargetsListOut>``: Name of list variable that will be set with the
-#   list of IMPORTED library targets generated from this list.
+#   ``<libTargetsListOut>``: [Out] Name of list variable that will be set with
+#   the list of IMPORTED library targets generated from this list.
 #
-#   ``<libLinkFlagsListOut>``: Name of list variable that will be set with the
-#   list of ``-L<dir>`` library directoy paths.
+#   ``<libLinkFlagsListOut>``: [Out] Name of list variable that will be set
+#   with the list of ``-L<dir>`` library directoy paths.
 #
-#   ``<configFileFragStrInOut>``: A string variable that will be appended with
-#   the IMPORTED library commands for the list of targts given in
-#   ``<libTargetsList>``.
+#   ``<configFileFragStrInOut>``: [Inout] A string variable that will be
+#   appended with the IMPORTED library commands for the list of targts given
+#   in ``<libTargetsList>``.
 #
 function(tribits_external_package_process_libraries_list  tplName)
 
@@ -294,6 +294,9 @@ function(tribits_external_package_process_libraries_list  tplName)
         "ERROR: Can't handle argument '${libentry}' in list TPL_${tplName}_LIBRARIES")
     elseif (libEntryType STREQUAL "LIB_DIR_LINK_OPTION")
       list(APPEND libLinkFlagsList "${libentry}")
+    elseif (libEntryType STREQUAL "GENERAL_LINK_OPTION")
+      message_wrapper("NOTE: Moving the general link argument '${libentry}' in TPL_${tplName}_LIBRARIES forward on the link line which may change the link and break the link!")
+      list(APPEND libLinkFlagsList "${libentry}")
     else()
       tribits_external_package_process_libraries_list_library_entry(
         ${tplName}  "${libentry}"  ${libEntryType}  libTargets  lastLib  configFileStr )
@@ -329,14 +332,20 @@ endfunction()
 #   ``LIB_DIR_LINK_OPTION``: A library directory search option of the form
 #   ``-L<dir>``
 #
+#   ``GENERAL_LINK_OPTION``: Some other general link option that starts with
+#   ``-`` but is not ``-l`` or ``-L``.
+#
 #   ``UNSUPPORTED_LIB_ENTRY``: An unsupported lib option
 #
 function(tribits_tpl_libraries_entry_type  libentry  libEntryTypeOut)
+  string(SUBSTRING "${libentry}" 0 1 firstCharLibEntry)
   string(SUBSTRING "${libentry}" 0 2 firstTwoCharsLibEntry)
   if (firstTwoCharsLibEntry STREQUAL "-l")
     set(libEntryType LIB_NAME_LINK_OPTION)
   elseif (firstTwoCharsLibEntry STREQUAL "-L")
     set(libEntryType LIB_DIR_LINK_OPTION)
+  elseif (firstCharLibEntry STREQUAL "-")
+    set(libEntryType GENERAL_LINK_OPTION)
   elseif (IS_ABSOLUTE "${libentry}")
     set(libEntryType FULL_LIB_PATH)
   else()

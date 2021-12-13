@@ -348,6 +348,48 @@ target_link_libraries(SomeTpl::lib3
 endfunction()
 
 
+function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_link_opt_1)
+
+  message("\n***")
+  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, link opt 1")
+  message("***\n")
+
+  set(tplName SomeTpl)
+  set(TPL_${tplName}_LIBRARIES "-mkl")
+
+  set(configFileFragStr "#beginning\n\n")
+
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
+  global_null_set(MESSAGE_WRAPPER_INPUT)
+
+  tribits_external_package_process_libraries_list( ${tplName}
+    LIB_TARGETS_LIST_OUT libTargetsList
+    LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
+    CONFIG_FILE_STR_INOUT configFileFragStr
+    )
+
+  unittest_compare_const( MESSAGE_WRAPPER_INPUT
+    "NOTE: Moving the general link argument '-mkl' in TPL_${tplName}_LIBRARIES forward on the link line which may change the link and break the link!"
+    )
+
+  unittest_compare_const( libTargetsList
+    ""
+    )
+
+  unittest_compare_const( libLinkFlagsList
+    "-mkl"
+    )
+
+  unittest_string_block_compare( configFileFragStr
+[=[
+#beginning
+
+]=]
+    )
+
+endfunction()
+
+
 function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2_lib_files_1)
 
   message("\n***")
@@ -692,7 +734,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_1_bad
     tplConfigFileStr )
 
   unittest_compare_const( MESSAGE_WRAPPER_INPUT
-    "SEND_ERROR;ERROR: Can't handle argument 'some-other-option' in list TPL_SomeTpl_LIBRARIES;SEND_ERROR;ERROR: Can't handle argument '-o' in list TPL_SomeTpl_LIBRARIES"
+    "SEND_ERROR;ERROR: Can't handle argument 'some-other-option' in list TPL_SomeTpl_LIBRARIES;NOTE: Moving the general link argument '-o' in TPL_SomeTpl_LIBRARIES forward on the link line which may change the link and break the link!"
     )
 
   unittest_string_block_compare( tplConfigFileStr
@@ -723,6 +765,7 @@ target_include_directories(SomeTpl::all_libs SYSTEM
   )
 target_link_options(SomeTpl::all_libs
   INTERFACE "-L/some/explicit/path2"
+  INTERFACE "-o"
   INTERFACE "-L/some/explicit/path1"
   )
 
@@ -751,6 +794,7 @@ unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_1_
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2()
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_3_3()
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2_lib_files_1()
+unittest_tribits_external_package_process_libraries_list_incl_dirs_0_link_opt_1()
 unittest_tribits_external_package_process_libraries_list_duplicate_libs()
 
 unittest_tribits_external_package_write_config_file_str_incl_dirs_0_lib_files_1()
@@ -761,4 +805,4 @@ unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2
 unittest_tribits_external_package_write_config_file_str_incl_dirs_1_bad_lib_args()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(31)
+unittest_final_result(35)
