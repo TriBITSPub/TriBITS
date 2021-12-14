@@ -329,6 +329,8 @@ endfunction()
 #   ``LIB_NAME_LINK_OPTION``: A library name link option of the form
 #   ``-l<libname>``
 #
+#   ``LIB_NAME``: A library name of the form ``<libname>``
+#
 #   ``LIB_DIR_LINK_OPTION``: A library directory search option of the form
 #   ``-L<dir>``
 #
@@ -348,12 +350,15 @@ function(tribits_tpl_libraries_entry_type  libentry  libEntryTypeOut)
     set(libEntryType GENERAL_LINK_OPTION)
   elseif (IS_ABSOLUTE "${libentry}")
     set(libEntryType FULL_LIB_PATH)
+  elseif (libentry MATCHES "^[a-zA-Z_][a-zA-Z0-9_-]*$")
+    set(libEntryType LIB_NAME)
   else()
     set(libEntryType UNSUPPORTED_LIB_ENTRY)
   endif()
   set(${libEntryTypeOut} ${libEntryType} PARENT_SCOPE)
 endfunction()
-
+# NOTE: Above, if libentry is only 1 char long, then firstTwoCharsLibEntry is
+# also 1 char long and the above logic still works.
 
 # Function to process a library inside of loop over TPL_<tplName>_LIBRARIES
 # in the function tribits_external_package_process_libraries_list()
@@ -404,6 +409,9 @@ function(tribits_external_package_get_libname_and_path_from_libentry
   elseif (libEntryType STREQUAL "LIB_NAME_LINK_OPTION")
     tribits_external_package_get_libname_from_lib_name_link_option("${libentry}" libname)
     set(libpath "")
+  elseif (libEntryType STREQUAL "LIB_NAME")
+    set(libname "${libentry}")
+    set(libpath "")
   else()
     message(FATAL_ERROR "Error libEntryType='${libEntryType}' not supported here!")
   endif()
@@ -423,7 +431,10 @@ function(tribits_external_package_append_add_library_str
       "set_target_properties(${prefixed_libname} PROPERTIES\n"
       "  IMPORTED_LOCATION \"${libpath}\")\n"
       )
-  elseif (libEntryType STREQUAL "LIB_NAME_LINK_OPTION")
+  elseif (
+      (libEntryType STREQUAL "LIB_NAME_LINK_OPTION")
+      OR (libEntryType STREQUAL "LIB_NAME")
+    )
     string(APPEND configFileStr
       "add_library(${prefixed_libname} IMPORTED INTERFACE GLOBAL)\n"
       "set_target_properties(${prefixed_libname} PROPERTIES\n"
