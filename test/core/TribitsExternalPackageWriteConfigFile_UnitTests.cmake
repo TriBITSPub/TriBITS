@@ -369,7 +369,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
     )
 
   unittest_compare_const( MESSAGE_WRAPPER_INPUT
-    "NOTE: Moving the general link argument '-mkl' in TPL_${tplName}_LIBRARIES forward on the link line which may change the link and break the link!"
+    "-- NOTE: Moving the general link argument '-mkl' in TPL_${tplName}_LIBRARIES forward on the link line which may change the link and break the link!"
     )
 
   unittest_compare_const( libTargetsList
@@ -415,7 +415,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
     )
 
   unittest_compare_const( MESSAGE_WRAPPER_INPUT
-    "NOTE: Moving the general link argument '-' in TPL_SomeTpl_LIBRARIES forward on the link line which may change the link and break the link!"
+    "-- NOTE: Moving the general link argument '-' in TPL_SomeTpl_LIBRARIES forward on the link line which may change the link and break the link!"
     )
 
   unittest_compare_const( libTargetsList
@@ -791,7 +791,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_1_bad
     tplConfigFileStr )
 
   unittest_compare_const( MESSAGE_WRAPPER_INPUT
-    "SEND_ERROR;ERROR: Can't handle argument 'some=nonsupported-opt' in list TPL_SomeTpl_LIBRARIES;NOTE: Moving the general link argument '-o' in TPL_SomeTpl_LIBRARIES forward on the link line which may change the link and break the link!"
+    "SEND_ERROR;ERROR: Can't handle argument 'some=nonsupported-opt' in list TPL_SomeTpl_LIBRARIES;-- NOTE: Moving the general link argument '-o' in TPL_SomeTpl_LIBRARIES forward on the link line which may change the link and break the link!"
     )
 
   unittest_string_block_compare( tplConfigFileStr
