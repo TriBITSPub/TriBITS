@@ -16,6 +16,7 @@ endif()
 
 if (CTEST_DROP_METHOD STREQUAL "http" OR CTEST_DROP_METHOD STREQUAL "https")
   set_default_and_from_env(CTEST_DROP_SITE "testing.sandia.gov")
+  set_default_and_from_env(TRIBITS_2ND_CTEST_DROP_SITE "testing-dev.sandia.gov")
   set_default_and_from_env(CTEST_PROJECT_NAME "TriBITS")
   set_default_and_from_env(CTEST_DROP_LOCATION "/cdash/submit.php?project=TriBITS")
   set_default_and_from_env(CTEST_TRIGGER_SITE "")
