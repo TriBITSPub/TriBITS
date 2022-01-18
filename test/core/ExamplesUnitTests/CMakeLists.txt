@@ -59,6 +59,8 @@ include(TribitsExampleApp_Tests.cmake)
 
 include(TribitsSimpleExampleApp_Tests.cmake)
 
+include(TribitsOldSimpleExampleApp_Tests.cmake)
+
 include(TribitsExampleProjectAddons_Tests.cmake)
 
 include(TribitsExampleMetaProject_Tests.cmake)
