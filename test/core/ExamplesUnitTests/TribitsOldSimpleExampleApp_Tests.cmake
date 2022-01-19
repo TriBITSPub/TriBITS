@@ -39,10 +39,13 @@
 # TribitsOldSimpleExampleApp
 ########################################################################
 
+set(
+  TribitsOldSimpleExampleApp_TribitsExampleProject_TRIBITS_DIR_default
+  "${${PROJECT_NAME}_TRIBITS_DIR}" )
 
 set_default_and_from_env(
   TribitsOldSimpleExampleApp_TribitsExampleProject_TRIBITS_DIR
-  "${${PROJECT_NAME}_TRIBITS_DIR}"
+  "${TribitsOldSimpleExampleApp_TribitsExampleProject_TRIBITS_DIR_default}"
   )
 # NOTE: The above var can be overridden to use an older version of TriBITS and
 # TribitsExampleProject to build and install and test against this
@@ -50,6 +53,8 @@ set_default_and_from_env(
 
 
 function(TribitsOldSimpleExampleApp sharedOrStatic useDeprecatedTargets)
+
+  set(appConfigurePassRegexAll "")
 
   if (sharedOrStatic STREQUAL "SHARED")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
@@ -61,6 +66,19 @@ function(TribitsOldSimpleExampleApp sharedOrStatic useDeprecatedTargets)
 
   if (useDeprecatedTargets STREQUAL "USE_DEPRECATED_TARGETS")
     set(useDeprecatedTargetsArg -DTribitsOldSimpleExApp_USE_DEPRECATED_TARGETS=ON)
+    if (TribitsOldSimpleExampleApp_TribitsExampleProject_TRIBITS_DIR STREQUAL
+      TribitsOldSimpleExampleApp_TribitsExampleProject_TRIBITS_DIR_default
+      )
+      list(APPEND appConfigurePassRegexAll
+        "The library that is being linked to, pws_b, is marked as being deprecated"
+        "WARNING: The non-namespaced target 'pws_b' is deprecated"
+        "'WithSubpackagesB::pws_b'"
+        "'WithSubpackagesB::all_libs'"
+        "package 'WithSubpackagesB'"
+        "project 'TribitsExProj'"
+        "'WithSubpackagesB_LIBRARIES'"
+        )
+    endif()
   elseif (useDeprecatedTargets STREQUAL "USE_NEW_TARGETS")
     set(useDeprecatedTargetsArg "")
   else()
@@ -83,7 +101,6 @@ function(TribitsOldSimpleExampleApp sharedOrStatic useDeprecatedTargets)
       CMND ${CMAKE_COMMAND}
       ARGS
         ${TribitsExampleProject_COMMON_CONFIG_ARGS}
-        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj_ENABLE_Fortran=ON
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
@@ -110,6 +127,7 @@ function(TribitsOldSimpleExampleApp sharedOrStatic useDeprecatedTargets)
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsOldSimpleExampleApp
       PASS_REGULAR_EXPRESSION_ALL
         "${foundProjectOrPackageStr}"
+        "${appConfigurePassRegexAll}"
         "-- Configuring done"
         "-- Generating done"
         "-- Build files have been written to: .*/${testName}/app_build"
