@@ -123,9 +123,11 @@ function(TribitsSimpleExampleApp_ALL_ST_test sharedOrStatic)
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
+        "Util Deps: B A SimpleCxx simpletpl headeronlytpl SimpleCxx simpletpl headeronlytpl"
         "Full Deps: WithSubpackages:B A SimpleCxx simpletpl headeronlytpl SimpleCxx simpletpl headeronlytpl A SimpleCxx simpletpl headeronlytpl[;] MixedLang:Mixed Language[;] SimpleCxx:simpletpl headeronlytpl"
+        "util_test [.]+   Passed"
         "app_test [.]+   Passed"
-        "100% tests passed, 0 tests failed out of 1"
+        "100% tests passed, 0 tests failed out of 2"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     ${LD_LIBRARY_PATH_HACK_FOR_SIMPLETPL_${sharedOrStatic}_ENVIRONMENT_ARG}
