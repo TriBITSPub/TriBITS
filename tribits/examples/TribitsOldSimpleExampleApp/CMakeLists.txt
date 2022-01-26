@@ -27,7 +27,7 @@ if (CMAKE_Fortran_COMPILER)
   enable_language(Fortran)
 endif()
 
-# Build a utility and link to libraries from SimpleCxx package
+# Build a utility and link to libraries from WithSubpackagesB
 add_executable(util util.cpp)
 if (${PROJECT_NAME}_USE_DEPRECATED_TARGETS)
   target_link_libraries(util PRIVATE pws_b)
