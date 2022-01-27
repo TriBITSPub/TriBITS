@@ -20,12 +20,12 @@ After that configure pointing to some value TriBITS source dir <tribits-dir>
 ```
   cd BUILDS/SERIAL/ 
 
-  cmake -D \
+  cmake \
     -DTribitsExProj_TRIBITS_DIR=<tribits-dir> \
     -DTribitsExProj_ENABLE_TESTS=ON \
     -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
     -DCMAKE_CXX_COMPILER=g++ \
-    ../../examples/TribitsExampleProject
+    ../..
 ```
 
 and then build and test with:
