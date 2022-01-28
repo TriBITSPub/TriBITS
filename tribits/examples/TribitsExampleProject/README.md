@@ -5,31 +5,22 @@ provide a simple example to demonstrate how to use the TriBITS system to
 create a CMake build, test, and deployment system using a package-based
 architecture.
 
-To get started building you can create a directory structure with the source
-and build directories side-by-side like:
+To build and test the project, one must first create a build directory and
+configure by pointing to the TriBITS source dir `<tribits-dir>`
+(i.e. `TriBITS/tribits`) and the `TribitsExampleProject` project source dir
+with:
 
 ```
-    <some-base-dir>/
-        TribitsExampleProject/   # This directory
-        BUILDS/
-          SERIAL/
-```
-
-For example, one could copy, clone, or symlink the `TribitsExampleProject` source
-dir (depending on where it came from) under `<some-base-dir>/`.
-
-First, configure by pointing to the TriBITS source dir `<tribits-dir>`
-(i.e. `TriBITS/tribits`) and the project source dir with:
-
-```
-  cd <some-base-dir>/BUILDS/SERIAL/ 
-
+  mkdir <build-dir>
+  
+  cd <build-dir>
+  
   cmake \
     -DTribitsExProj_TRIBITS_DIR=<tribits-dir> \
     -DTribitsExProj_ENABLE_TESTS=ON \
     -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
     -DCMAKE_CXX_COMPILER=g++ \
-    ../../TribitsExampleProject
+    <path-to-TribitsExampleProject>
 ```
 
 and then build and test with:
