@@ -1,31 +1,26 @@
 # TribitsExampleProject Documentation
 
-The project TribitsExampleProject defines a TriBITS CMake project designed to
+The project `TribitsExampleProject` defines a TriBITS CMake project designed to
 provide a simple example to demonstrate how to use the TriBITS system to
 create a CMake build, test, and deployment system using a package-based
 architecture.
 
-To get started building you can create a directory structure like:
+To build and test the project, one must first create a build directory and
+configure by pointing to the TriBITS source dir `<tribits-dir>`
+(i.e. `TriBITS/tribits`) and the `TribitsExampleProject` project source dir
+with:
 
 ```
-    ~/TribitsExampleProject.base/
-        TribitsExampleProject/   # This directory
-        BUILDS/
-          SERIAL/
-```
-
-After that configure pointing to some value TriBITS source dir <tribits-dir>
-(i.e. TriBITS/tribits) with:
-
-```
-  cd BUILDS/SERIAL/ 
-
-  cmake -D \
+  mkdir <build-dir>
+  
+  cd <build-dir>
+  
+  cmake \
     -DTribitsExProj_TRIBITS_DIR=<tribits-dir> \
     -DTribitsExProj_ENABLE_TESTS=ON \
     -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
     -DCMAKE_CXX_COMPILER=g++ \
-    ../../examples/TribitsExampleProject
+    <path-to-TribitsExampleProject>
 ```
 
 and then build and test with:
