@@ -3738,7 +3738,7 @@ CMake project's ``CMakeLists.txt`` file as usual using, for example::
     PRIVATE <Package2>::all_libs
     )
 
-Note that in this case, ``<target_link_libraries>`` ensures that the include
+Note that in this case, ``target_link_libraries()`` ensures that the include
 directories and other imported compiler options from the source tree and the
 build tree are automatically injected into the build targets associated with
 the ``<downstream-target>`` object compile lines and link lines.
