@@ -208,7 +208,7 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date</dt>
-<dd class="field-odd"><p>2022-01-28
+<dd class="field-odd"><p>2022-02-02
 :Version: .. include:: ../copied_files/TribitsGitVersion.txt</p>
 </dd>
 </dl>
@@ -3678,10 +3678,10 @@ CMake project’s <code class="docutils literal notranslate"><span class="pre">C
   <span class="p">)</span>
 </pre></div>
 </div>
-<p>Note that in this case, the include directories and other imported compiler
-options from the source tree and the build tree are automatically injected
-into the build targets associated with the <code class="docutils literal notranslate"><span class="pre">&lt;downstream-target&gt;</span></code> object
-compile lines and link lines.</p>
+<p>Note that in this case, <code class="docutils literal notranslate"><span class="pre">target_link_libraries()</span></code> ensures that the include
+directories and other imported compiler options from the source tree and the
+build tree are automatically injected into the build targets associated with
+the <code class="docutils literal notranslate"><span class="pre">&lt;downstream-target&gt;</span></code> object compile lines and link lines.</p>
 <p>Also note that package config files for all of the enabled external
 packages/TPLs will also be written into the build tree under
 <code class="docutils literal notranslate"><span class="pre">&lt;upstreamBuildDir&gt;/external_packages</span></code>.  These contain modern CMake targets
