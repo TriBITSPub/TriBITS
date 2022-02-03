@@ -3,7 +3,8 @@
 The project `TribitsExampleProject` defines a TriBITS CMake project designed to
 provide a simple example to demonstrate how to use the TriBITS system to
 create a CMake build, test, and deployment system using a package-based
-architecture. To build `TribitsExampleProject` Fortran compiler is needed.
+architecture. To build all of the packages from `TribitsExampleProject`,
+a Fortran compiler is needed.
 
 To build and test the project, one must first create a build directory and
 configure by pointing to the TriBITS source dir `<tribits-dir>`
