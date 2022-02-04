@@ -201,7 +201,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "cmake -P tribits_ctest_update_commands[.]cmake"
       "Running: .*/git checkout -B for-testing --track origin/for-testing"
       "Switched to a new branch 'for-testing'"
-      "Branch '*for-testing'* set up to track remote branch '*for-testing'* from '*origin'*."
+      "[Bb]ranch '*for-testing'* set up to track .*for-testing"
       "Git Update PASSED!"
       "For extra repos, doing switch to branch for-testing"
       "TribitsExampleProject: Doing GIT update from URL '.*github[.]com.tribits/TribitsExampleProject[.]git' to dir '.*/TribitsExampleProject' [.][.][.]"
