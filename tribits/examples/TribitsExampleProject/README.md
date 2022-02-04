@@ -18,6 +18,7 @@ with:
   
   cmake \
     -DTribitsExProj_TRIBITS_DIR=<tribits-dir> \
+    -DCMAKE_INSTALL_PREFIX=<TribitsExampleProject-install-dir>
     -DTribitsExProj_ENABLE_TESTS=ON \
     -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
     -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON \
@@ -34,12 +35,12 @@ then build and test with:
 and then install:
 
 ```
-  make DESTDIR=<path-to-install-dir> install
+  make install
 ```
 
 `TribitsExampleProject` will be installed to 
-`<path-to-install-dir>/usr/local/` and this path should be then used 
-to point `-DCMAKE_PREFIX_PATH=<path-to-install-dir>/usr/local/` when
+`<TribitsExampleProject-install-dir>` and this path should be then used 
+to point `-DCMAKE_PREFIX_PATH=<TribitsExampleProject-install-dir>` when
 building e.g. `TribitsExampleApp`
 
 The layout of a TriBITS project is described in:
