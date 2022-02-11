@@ -389,15 +389,17 @@ def snapshotDir(inOptions):
     print("Skipping on request!")
 
   #
-  print("\nD) Get info from git commit from origDir [optional]\n")
+  print("\nD) Get info for git commit from origDir [optional]\n")
   #
 
   # Get the repo for origin
   (remoteRepoName, remoteBranch, remoteRepoUrl) = \
-     getGitRepoUrl(inOptions.origDir)
+     getGitRepoRemoteNameBranchAndUrl(inOptions.origDir)
   print("origin remote name = '" + remoteRepoName + "'")
   print("origin remote branch = '" + remoteBranch + "'")
   print("origin remote URL = '" + remoteRepoUrl + "'")
+  gitDescribe = getGitDescribe(inOptions.origDir)
+  print("Git describe = '" + gitDescribe + "'")
 
   # Get the last commit message
   originLastCommitMsg = getLastCommitMsg(inOptions.origDir)
@@ -444,9 +446,18 @@ def snapshotDir(inOptions):
 
   commitMessage = \
     "Automatic snapshot commit from "+origDirLast+" at "+origSha1+"\n"+\
-    "\n"+\
-    "Origin repo remote tracking branch: '"+remoteRepoName+"/"+remoteBranch+"'\n"+\
-    "Origin repo remote repo URL: '"+remoteRepoName+" = "+remoteRepoUrl+"'\n"+\
+    "\n"
+
+  if remoteBranch:
+    commitMessage += \
+      "Origin repo remote tracking branch: '"+remoteRepoName+"/"+remoteBranch+"'\n"+\
+      "Origin repo remote repo URL: '"+remoteRepoName+" = "+remoteRepoUrl+"'\n"
+  else:
+    commitMessage += \
+      "Origin repo remote repo URL: '"+remoteRepoName+" = "+remoteRepoUrl+"'\n"
+
+  commitMessage += \
+    "Git describe: "+gitDescribe+"\n" +\
     "\n"+\
     "At commit:\n"+\
     "\n"+\
@@ -541,17 +552,22 @@ def getCommitSha1(gitDir):
   return getCmndOutput("git log -1 --pretty=format:'%h' -- .", workingDir=gitDir).strip()
 
 
-def getGitRepoUrl(gitDir):
+def getGitRepoRemoteNameBranchAndUrl(gitDir):
 
   remoteRepoName = ""
   remoteBranch = ""
   remoteRepoUrl = ""
 
   # Get the remote tracking branch
-  trackingBranchStr = getCmndOutput(
-     "git rev-parse --abbrev-ref --symbolic-full-name @{u}", workingDir=gitDir)
+  (trackingBranchStr, trackingBranchErrCode) = getCmndOutput(
+     "git rev-parse --abbrev-ref --symbolic-full-name @{u}", workingDir=gitDir,
+     throwOnError=False, rtnCode=True)
 
-  (remoteRepoName, remoteBranch) = trackingBranchStr.strip().split("/")
+  if trackingBranchErrCode == 0:
+    (remoteRepoName, remoteBranch) = trackingBranchStr.strip().split("/")
+  else:
+    remoteRepoName = ""
+    remoteBranch = ""
 
   # Get the list of remote repos
   remoteReposListStr = getCmndOutput("git remote -v", workingDir=gitDir)
@@ -580,14 +596,27 @@ def getGitRepoUrl(gitDir):
     #print("repoName = '" + repoName + "'")
     #print("repoUrl  = '" + repoUrl  + "'")
 
-    # Grab the URL if the remote name matches
-    if repoName == remoteRepoName:
+    if remoteRepoName:
+      # Grab the URL if the remote name matches
+      if repoName == remoteRepoName:
+        remoteRepoUrl = repoUrl
+        break
+    else:
+      # Just grab the first remote name you find if there is no tracking branch
+      remoteRepoName = repoName
       remoteRepoUrl = repoUrl
       break
 
   # end for
 
   return (remoteRepoName, remoteBranch, remoteRepoUrl)
+
+
+def getGitDescribe(gitDir):
+
+  gitDescribe = getCmndOutput( "git describe", workingDir=gitDir, stripTrailingSpaces=True)
+
+  return gitDescribe
 
 
 def getLastCommitMsg(gitDir):
