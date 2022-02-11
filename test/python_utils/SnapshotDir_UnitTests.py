@@ -123,7 +123,9 @@ g_gitLogSha1 = "IT: git log -1 --pretty=format:'.h' -- [.]; 0; 'abc123'\n"
 
 g_gitAdd = "IT: git add \.; 0; 'added some files'\n"
 
-g_gitCommit = "IT: git commit .+; 0; 'did a commit'\n"
+g_gitCommit = "IT: git commit -m .+; 0; 'did a commit'\n"
+
+g_gitCommit_no_verify = "IT: git commit --no-verify -m .+; 0; 'did a commit'\n"
 
 
 #
@@ -202,6 +204,7 @@ class test_snapshot_dir(unittest.TestCase):
         ]
      )
 
+
   def test_snapshot_default_with_exclude(self):
     runSnapshotDirTestCase(
       self,
@@ -233,6 +236,7 @@ class test_snapshot_dir(unittest.TestCase):
         ]
      )
 
+
   def test_snapshot_clean_ignored(self):
     runSnapshotDirTestCase(
       self,
@@ -254,6 +258,29 @@ class test_snapshot_dir(unittest.TestCase):
         "git clean -xdf"
         ]
      )
+
+
+  def test_snapshot_no_verify_commit(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--orig-dir=dummy/orig-dir/", "--dest-dir=dummy/dest-dir/",
+        "--no-verify-commit"],
+      [
+        g_gitDiffHead,
+        g_gitDiffHead,
+        g_gitRevParse,
+        g_gitRemote,
+        g_gitLog,
+        g_rsync,
+        g_gitLogSha1,
+        g_gitAdd,
+        g_gitCommit_no_verify,
+        ],
+      [
+        "Running: git commit --no-verify -m"
+        ]
+     )
+
 
   # ToDo: Test assert failure of clean origDir ...
 

@@ -286,6 +286,14 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
     clp.add_argument(
       "--skip-commit", dest="doCommit", action="store_false",
       help="Skip the commit." )
+
+    clp.add_argument(
+      "--verify-commit", dest="noVerifyCommit", action="store_false",
+      default=False,
+      help="Do not pass --no-verify to git commit.  [default]" )
+    clp.add_argument(
+      "--no-verify-commit", dest="noVerifyCommit", action="store_true",
+      help="Pass --no-verify to git commit." )
     
     options = clp.parse_args(cmndLineArgs)
   
@@ -321,6 +329,10 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
       print("  --do-commit \\")
     else:
       print("  --skip-commit \\")
+    if options.noVerifyCommit:
+      print("  --no-verify-commit \\")
+    else:
+      print("  --verify-commit \\")
   
     if options.showDefaults:
       return  # All done!
@@ -446,9 +458,14 @@ def snapshotDir(inOptions):
       "git add .",
       workingDir=inOptions.destDir
       )
-  
+
+    if inOptions.noVerifyCommit:
+      noVerifyCommitArgStr = " --no-verify"
+    else:
+      noVerifyCommitArgStr = ""
+
     echoRunSysCmnd(
-      "git commit -m \""+commitMessage+"\" -- .",
+      "git commit"+noVerifyCommitArgStr+" -m \""+commitMessage+"\" -- .",
       workingDir=inOptions.destDir
       )
 
