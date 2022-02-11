@@ -350,7 +350,7 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-02-06
+<dd class="field-even"><p>2022-02-11
 :Version: .. include:: ../copied_files/TribitsGitVersion.txt</p>
 </dd>
 </dl>
@@ -17116,18 +17116,19 @@ snapshotting</a>.</p>
                        [--clean-ignored-files-orig-dir]
                        [--no-clean-ignored-files-orig-dir] [--do-rsync]
                        [--skip-rsync] [--do-commit] [--skip-commit]
+                       [--verify-commit] [--no-verify-commit]
 
 This tool snapshots the contents of an origin directory (&#39;orig-dir&#39;) to
-destination directory (&#39;dest-dir&#39;) and creates linkages between the two git
-repos in the commit message in the &#39;dest-dir&#39; git branch.  The command &#39;git&#39;
-must be in the path for this script to be used.
+destination directory (&#39;dest-dir&#39;) and logs version information between the
+two git repos in the commit message in the &#39;dest-dir&#39; git commit.  The command
+&#39;git&#39; must be in the path for this script to be used.
 
 To sync between any two arbitrary directories invoking this script from any
 directory location, one can do:
 
   $ &lt;some-base-dir&gt;/snapshot-dir.py \
-    --orig-dir=&lt;some-orig-dir&gt;/ \
-    --dest-dir=&lt;some-dest-dir&gt;/
+    --orig-dir=&lt;some-orig-dir&gt; \
+    --dest-dir=&lt;some-dest-dir&gt;
 
 To describe how this script is used, consider the desire to snapshot the
 directory tree:
@@ -17139,9 +17140,9 @@ and duplicate it in the directory tree
   &lt;some-dest-base-dir&gt;/dest-dir/
 
 Here, the directories can be any two directories from local git repos with any
-names as long as they are given a final &#39;/&#39; at the end.  Otherwise, if you are
-missing the final &#39;/&#39;, then rsync will copy the contents from &#39;orig-dir&#39; into
-a subdir of &#39;dest-dir&#39; which is usually not what you want.
+names. (Note if the paths don&#39;t end with &#39;/&#39;, then it will be added or rsync
+will copy the contents from &#39;orig-dir&#39; into a subdir of &#39;dest-dir&#39; which is
+usually not what you want.)
 
 A typical case is to have snapshot-dir.py soft linked into orig-dir/ to allow
 a simple sync process.  This is the case, for example, with the &#39;tribits&#39;
@@ -17160,8 +17161,6 @@ By default, this assumes that git repos are used for both the &#39;orig-dir&#39;
 &#39;orig-dir&#39; is recorded in the commit message of the &#39;dest-dir&#39; git repo to
 provide tractability for the versions (see below).
 
-Note the trailing &#39;/&#39; is critical for the correct functioning of rsync.
-
 By default, this script does the following:
 
 1) Assert that the git repo for &#39;orig-dir&#39; is clean (i.e. no uncommitted
@@ -17169,7 +17168,8 @@ By default, this script does the following:
    --allow-dirty-orig-dir.)
 
 2) Assert that the git repo for &lt;some-dest-dir&gt;/ is clean (see above).  (Can
-be disabled by passing in --allow-dirty-dest-dir.)
+   be disabled by passing in --allow-dirty-dest-dir.  Also, this must be
+   skipped on the initial snaphsot where &lt;some-dist-dir&gt;/ does not exist.)
 
 3) Clean out the ignored files from &lt;some-source-dir&gt;/orig-dir using &#39;git
    clean -xdf&#39; run in that directory.  (Only if --clean-ignored-files-orig-dir
@@ -17198,6 +17198,10 @@ be disabled by passing in --allow-dirty-dest-dir.)
 
 NOTES:
 
+* On the first creation of &lt;some-dest-dir&gt;/, one must pass in
+  --allow-dirty-dest-dir to avoid checks of &lt;some-dest-dir&gt;/.  This will allow
+  the creation of &lt;some-dest-dir&gt;/ by rsync.
+
 * This script allows the syncing between base git repos or subdirs within git
   repos.  This is allowed because the rsync command is told to ignore the
   .git/ directory when syncing.
@@ -17217,21 +17221,20 @@ NOTES:
   branch into the main branch (e.g. &#39;master&#39;) in &#39;dest-dir&#39; repo.  As long as
   there are no merge conflicts, this will preserve local changes for the
   mirrored directories and files.  This strategy can work well as a way to
-  allow for local modifications but still do the snapshotting..
+  allow for local modifications but still do the snapshotting.
 
 optional arguments:
   -h, --help            show this help message and exit
   --show-defaults       Show the default option values and do nothing at all.
   --orig-dir ORIGDIR    Original directory that is the source for the
-                        snapshotted directory. Note that it is important to
-                        add a final /&#39; to the directory name. The default is
-                        the directory where this script lives (or is soft-
-                        linked). [default: &#39;&lt;orig-dir&gt;&#39;]
+                        snapshotted directory. If a trailing &#39;/&#39; is missing
+                        then it will be added. The default is the directory
+                        where this script lives (or is soft-linked). [default:
+                        &#39;&lt;orig-dir&gt;&#39;]
   --dest-dir DESTDIR    Destination directory that is the target for the
-                        snapshoted directory. Note that a final &#39;/&#39; just be
-                        added or the origin will be added as subdir. The
-                        default dest-dir is current working directory.
-                        [default: &#39;&lt;dest-dir&gt;&#39;]
+                        snapshoted directory. If a trailing &#39;/&#39; is missing
+                        then it will be added. The default dest-dir is current
+                        working directory. [default: &#39;&lt;dest-dir&gt;&#39;]
   --exclude [EXCLUDE ...]
                         List of files/directories/globs to exclude from orig-
                         dir when snapshotting.
@@ -17253,6 +17256,8 @@ optional arguments:
   --skip-rsync          Skip the rsync (testing only?).
   --do-commit           Actually do the commit. [default]
   --skip-commit         Skip the commit.
+  --verify-commit       Do not pass --no-verify to git commit. [default]
+  --no-verify-commit    Pass --no-verify to git commit.
 </pre></div>
 </div>
 </section>
