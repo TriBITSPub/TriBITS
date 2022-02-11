@@ -205,6 +205,29 @@ class test_snapshot_dir(unittest.TestCase):
      )
 
 
+  def test_snapshot_default_missing_trailing_slash(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--orig-dir=dummy/orig-dir", "--dest-dir=dummy/dest-dir"],
+      [
+        g_gitDiffHead,
+        g_gitDiffHead,
+        g_gitRevParse,
+        g_gitRemote,
+        g_gitLog,
+        g_rsync,
+        g_gitLogSha1,
+        g_gitAdd,
+        g_gitCommit,
+        ],
+      [
+        "Script: snapshot-dir\.py",
+        "--orig-dir='dummy/orig-dir'",
+        "--dest-dir='dummy/dest-dir'",
+        ]
+     )
+
+
   def test_snapshot_default_with_exclude(self):
     runSnapshotDirTestCase(
       self,

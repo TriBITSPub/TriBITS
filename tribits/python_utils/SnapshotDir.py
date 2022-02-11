@@ -64,8 +64,8 @@ class DefaultOptions:
     self.destDir = ""
 
   def setDefaultDefaults(self):
-    self.origDir = os.path.abspath(os.path.dirname(sys.argv[0])) + "/"
-    self.destDir = os.getcwd() + "/"
+    self.origDir = addTrailingSlashToPath(os.path.abspath(os.path.dirname(sys.argv[0])))
+    self.destDir = addTrailingSlashToPath(os.getcwd())
 
   def setDefaultOrigDir(self, origDirIn):
     self.origDir = origDirIn
@@ -94,8 +94,8 @@ To sync between any two arbitrary directories invoking this script from any
 directory location, one can do:
 
   $ <some-base-dir>/snapshot-dir.py \
-    --orig-dir=<some-orig-dir>/ \
-    --dest-dir=<some-dest-dir>/
+    --orig-dir=<some-orig-dir> \
+    --dest-dir=<some-dest-dir>
 
 To describe how this script is used, consider the desire to snapshot the
 directory tree:
@@ -107,9 +107,9 @@ and duplicate it in the directory tree
   <some-dest-base-dir>/dest-dir/
 
 Here, the directories can be any two directories from local git repos with any
-names as long as they are given a final '/' at the end.  Otherwise, if you are
-missing the final '/', then rsync will copy the contents from 'orig-dir' into
-a subdir of 'dest-dir' which is usually not what you want.
+names. (Note if the paths don't end with '/', then it will be added or rsync
+will copy the contents from 'orig-dir' into a subdir of 'dest-dir' which is
+usually not what you want.)
 
 A typical case is to have snapshot-dir.py soft linked into orig-dir/ to allow
 a simple sync process.  This is the case, for example, with the 'tribits'
@@ -127,8 +127,6 @@ By default, this assumes that git repos are used for both the 'orig-dir' and
 'dest-dir' locations.  The info about the origin of the snapshot from
 'orig-dir' is recorded in the commit message of the 'dest-dir' git repo to
 provide tractability for the versions (see below).
-
-Note the trailing '/' is critical for the correct functioning of rsync.
 
 By default, this script does the following:
 
@@ -234,7 +232,7 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
       "--orig-dir", dest="origDir",
       default=defaultOptions.getDefaultOrigDir(),
       help="Original directory that is the source for the snapshotted directory." \
-      +"  Note that it is important to add a final /' to the directory name." \
+      +"  If a trailing '/' is missing then it will be added." \
       +"  The default is the directory where this script lives (or is soft-linked)." \
       +"  [default: '"+defaultOptions.getDefaultOrigDir()+"']")
 
@@ -242,7 +240,7 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
       "--dest-dir", dest="destDir",
       default=defaultOptions.getDefaultDestDir(),
       help="Destination directory that is the target for the snapshoted directory." \
-      +"  Note that a final '/' just be added or the origin will be added as subdir." \
+      +"  If a trailing '/' is missing then it will be added." \
       +"  The default dest-dir is current working directory." \
       +"  [default: '"+defaultOptions.getDefaultDestDir()+"']" \
       )
@@ -358,6 +356,8 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
 #
 
 def snapshotDir(inOptions):
+
+  addTrailingSlashToPaths(inOptions)
 
   #
   print("\nA) Assert that orig-dir is 100% clean with all changes committed\n")
@@ -488,6 +488,17 @@ def snapshotDir(inOptions):
 #
 # Helper functions
 #
+
+
+def addTrailingSlashToPath(path):
+  if path[-1] != "/":
+    return path + "/"
+  return path
+
+
+def addTrailingSlashToPaths(options):
+  options.origDir = addTrailingSlashToPath(options.origDir)
+  options.destDir = addTrailingSlashToPath(options.destDir)
 
 
 def assertCleanGitDir(dirPath, dirName, explanation):
