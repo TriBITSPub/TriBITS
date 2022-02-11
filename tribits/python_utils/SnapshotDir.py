@@ -64,8 +64,8 @@ class DefaultOptions:
     self.destDir = ""
 
   def setDefaultDefaults(self):
-    self.origDir = os.path.abspath(os.path.dirname(sys.argv[0])) + "/"
-    self.destDir = os.getcwd() + "/"
+    self.origDir = addTrailingSlashToPath(os.path.abspath(os.path.dirname(sys.argv[0])))
+    self.destDir = addTrailingSlashToPath(os.getcwd())
 
   def setDefaultOrigDir(self, origDirIn):
     self.origDir = origDirIn
@@ -86,16 +86,16 @@ class DefaultOptions:
 
 usageHelp = r"""
 This tool snapshots the contents of an origin directory ('orig-dir') to
-destination directory ('dest-dir') and creates linkages between the two git
-repos in the commit message in the 'dest-dir' git branch.  The command 'git'
-must be in the path for this script to be used.
+destination directory ('dest-dir') and logs version information between the
+two git repos in the commit message in the 'dest-dir' git commit.  The command
+'git' must be in the path for this script to be used.
 
 To sync between any two arbitrary directories invoking this script from any
 directory location, one can do:
 
   $ <some-base-dir>/snapshot-dir.py \
-    --orig-dir=<some-orig-dir>/ \
-    --dest-dir=<some-dest-dir>/
+    --orig-dir=<some-orig-dir> \
+    --dest-dir=<some-dest-dir>
 
 To describe how this script is used, consider the desire to snapshot the
 directory tree:
@@ -107,9 +107,9 @@ and duplicate it in the directory tree
   <some-dest-base-dir>/dest-dir/
 
 Here, the directories can be any two directories from local git repos with any
-names as long as they are given a final '/' at the end.  Otherwise, if you are
-missing the final '/', then rsync will copy the contents from 'orig-dir' into
-a subdir of 'dest-dir' which is usually not what you want.
+names. (Note if the paths don't end with '/', then it will be added or rsync
+will copy the contents from 'orig-dir' into a subdir of 'dest-dir' which is
+usually not what you want.)
 
 A typical case is to have snapshot-dir.py soft linked into orig-dir/ to allow
 a simple sync process.  This is the case, for example, with the 'tribits'
@@ -128,8 +128,6 @@ By default, this assumes that git repos are used for both the 'orig-dir' and
 'orig-dir' is recorded in the commit message of the 'dest-dir' git repo to
 provide tractability for the versions (see below).
 
-Note the trailing '/' is critical for the correct functioning of rsync.
-
 By default, this script does the following:
 
 1) Assert that the git repo for 'orig-dir' is clean (i.e. no uncommitted
@@ -137,7 +135,8 @@ By default, this script does the following:
    --allow-dirty-orig-dir.)
 
 2) Assert that the git repo for <some-dest-dir>/ is clean (see above).  (Can
-be disabled by passing in --allow-dirty-dest-dir.)
+   be disabled by passing in --allow-dirty-dest-dir.  Also, this must be
+   skipped on the initial snaphsot where <some-dist-dir>/ does not exist.)
 
 3) Clean out the ignored files from <some-source-dir>/orig-dir using 'git
    clean -xdf' run in that directory.  (Only if --clean-ignored-files-orig-dir
@@ -166,6 +165,10 @@ be disabled by passing in --allow-dirty-dest-dir.)
 
 NOTES:
 
+* On the first creation of <some-dest-dir>/, one must pass in
+  --allow-dirty-dest-dir to avoid checks of <some-dest-dir>/.  This will allow
+  the creation of <some-dest-dir>/ by rsync.
+
 * This script allows the syncing between base git repos or subdirs within git
   repos.  This is allowed because the rsync command is told to ignore the
   .git/ directory when syncing.
@@ -185,7 +188,7 @@ NOTES:
   branch into the main branch (e.g. 'master') in 'dest-dir' repo.  As long as
   there are no merge conflicts, this will preserve local changes for the
   mirrored directories and files.  This strategy can work well as a way to
-  allow for local modifications but still do the snapshotting..
+  allow for local modifications but still do the snapshotting.
 """
 
 
@@ -229,7 +232,7 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
       "--orig-dir", dest="origDir",
       default=defaultOptions.getDefaultOrigDir(),
       help="Original directory that is the source for the snapshotted directory." \
-      +"  Note that it is important to add a final /' to the directory name." \
+      +"  If a trailing '/' is missing then it will be added." \
       +"  The default is the directory where this script lives (or is soft-linked)." \
       +"  [default: '"+defaultOptions.getDefaultOrigDir()+"']")
 
@@ -237,7 +240,7 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
       "--dest-dir", dest="destDir",
       default=defaultOptions.getDefaultDestDir(),
       help="Destination directory that is the target for the snapshoted directory." \
-      +"  Note that a final '/' just be added or the origin will be added as subdir." \
+      +"  If a trailing '/' is missing then it will be added." \
       +"  The default dest-dir is current working directory." \
       +"  [default: '"+defaultOptions.getDefaultDestDir()+"']" \
       )
@@ -286,6 +289,14 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
     clp.add_argument(
       "--skip-commit", dest="doCommit", action="store_false",
       help="Skip the commit." )
+
+    clp.add_argument(
+      "--verify-commit", dest="noVerifyCommit", action="store_false",
+      default=False,
+      help="Do not pass --no-verify to git commit.  [default]" )
+    clp.add_argument(
+      "--no-verify-commit", dest="noVerifyCommit", action="store_true",
+      help="Pass --no-verify to git commit." )
     
     options = clp.parse_args(cmndLineArgs)
   
@@ -321,6 +332,10 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
       print("  --do-commit \\")
     else:
       print("  --skip-commit \\")
+    if options.noVerifyCommit:
+      print("  --no-verify-commit \\")
+    else:
+      print("  --verify-commit \\")
   
     if options.showDefaults:
       return  # All done!
@@ -341,6 +356,8 @@ def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
 #
 
 def snapshotDir(inOptions):
+
+  addTrailingSlashToPaths(inOptions)
 
   #
   print("\nA) Assert that orig-dir is 100% clean with all changes committed\n")
@@ -446,9 +463,14 @@ def snapshotDir(inOptions):
       "git add .",
       workingDir=inOptions.destDir
       )
-  
+
+    if inOptions.noVerifyCommit:
+      noVerifyCommitArgStr = " --no-verify"
+    else:
+      noVerifyCommitArgStr = ""
+
     echoRunSysCmnd(
-      "git commit -m \""+commitMessage+"\" -- .",
+      "git commit"+noVerifyCommitArgStr+" -m \""+commitMessage+"\" -- .",
       workingDir=inOptions.destDir
       )
 
@@ -466,6 +488,17 @@ def snapshotDir(inOptions):
 #
 # Helper functions
 #
+
+
+def addTrailingSlashToPath(path):
+  if path[-1] != "/":
+    return path + "/"
+  return path
+
+
+def addTrailingSlashToPaths(options):
+  options.origDir = addTrailingSlashToPath(options.origDir)
+  options.destDir = addTrailingSlashToPath(options.destDir)
 
 
 def assertCleanGitDir(dirPath, dirName, explanation):
