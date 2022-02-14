@@ -212,6 +212,38 @@ class test_snapshot_dir(unittest.TestCase):
      )
 
 
+  def test_snapshot_default_no_op(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--orig-dir=dummy/orig-dir/", "--dest-dir=dummy/dest-dir/", "--no-op"],
+      [
+        g_gitDiffHead,
+        g_gitDiffHead,
+        g_gitRevParse,
+        g_gitRemote,
+        g_gitDescribe,
+        g_gitLog,
+        g_gitLogSha1,
+        ],
+      [
+        "Script: snapshot-dir\.py",
+        "--orig-dir='dummy/orig-dir/'",
+        "--dest-dir='dummy/dest-dir/'",
+        "origin remote name = 'remotename'",
+        "origin remote branch = 'remotebranch'",
+        "origin remote URL = 'some-url-location'",
+        "Git describe = 'v1.2.3-225-g9877045'",
+        "Would be running: rsync -cav --delete --exclude=\\\[.]git dummy/orig-dir/ dummy/dest-dir/",
+        "Automatic snapshot commit from orig-dir at abc123",
+        "Origin repo remote tracking branch: 'remotename/remotebranch'",
+        "Origin repo remote repo URL: 'remotename = some-url-location'",
+        "one commit msg",
+        "Would be running: git add .",
+        "Would be running: git commit -m \"<commit-msg>\"",
+        ]
+     )
+
+
   def test_snapshot_detached_head(self):
     runSnapshotDirTestCase(
       self,
