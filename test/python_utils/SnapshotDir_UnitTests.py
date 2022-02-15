@@ -91,6 +91,7 @@ def runSnapshotDirTestCase(testObject, cmndLineArgsList, cmndInterceptList,
   sout = WriteToString()
 
   rtn = snapshotDirMainDriver(cmndLineArgsList, defaultOptions, sout)
+  g_sysCmndInterceptor.assertAllCommandsRun()
   ostr = sout.getStr()
   #print("ostr =", ostr)
   for passRegexExpr in passRegexExpressionsList:
