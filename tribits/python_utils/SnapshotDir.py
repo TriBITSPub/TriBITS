@@ -235,7 +235,7 @@ WARNINGS:
 * Make sure that the top commit in orig-dir has been pushed (or will be
   pushed) to the listed remote git repo showed in the output line 'origin
   remote name' or 'origin remote URL'.  Otherwise, others will not be able to
-  trace that exact version by cloning that repo and tracability is lost.
+  trace that exact version by cloning that repo and traceability is lost.
 
 * Make sure that dest-dir is a non-ignored subdir of the destination git repo
   and does not contain any ignored subdirs or files that you don't care if
@@ -244,13 +244,22 @@ WARNINGS:
   files in dest-dir are not under version control, they will not be
   recoverable.)
 
+* As a corollary to the above warnings about ignored files and directories, do
+  not snapshot from an orig-dir or to a dest-dir that contain build
+  directories or other generated files that you want to keep!  Even if those
+  files and directories are ignored in copied-over .gitignore files, the copy
+  of those ignored files will still occur. (Just another reason to keep your
+  build directories completely outside of the source tree!)
+
 """
 
 
-#
 # Direct script driver (taking in command-line arguments)
 #
-
+# This runs given a set of command-line arguments and a stream to do
+# outputting to.  This allows running an a unit testing environment very
+# efficiently.
+#
 def snapshotDirMainDriver(cmndLineArgs, defaultOptionsIn = None, stdout = None):
 
   oldstdout = sys.stdout
@@ -699,3 +708,5 @@ def getLastCommitMsg(gitDir):
     +" -1 -- .",
     workingDir=gitDir
     )
+
+#  LocalWords:  traceability TriBITS Snapshotting snapshotting
