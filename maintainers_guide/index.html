@@ -395,7 +395,7 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-02-11
+<dd class="field-even"><p>2022-02-15
 :Version: .. include:: ../copied_files/TribitsGitVersion.txt</p>
 </dd>
 </dl>
@@ -10881,6 +10881,7 @@ tribits_add_advanced_test(
   )
 </pre></div>
 </div>
+<p>In: core/package_arch/TribitsAddAdvancedTest.cmake:49</p>
 </section>
 <section id="tribits-add-debug-option">
 <h3><a class="toc-backref" href="#id119">tribits_add_debug_option()</a><a class="headerlink" href="#tribits-add-debug-option" title="Permalink to this headline"></a></h3>
@@ -10894,6 +10895,7 @@ the package.</p>
 true, will set the variable <code class="docutils literal notranslate"><span class="pre">HAVE_${PACKAGE_NAME_UC}_DEBUG</span></code> (to be used in
 the package’s configured header file).  This macro is typically called in
 the package’s <a class="reference internal" href="#packagedir-cmakelists-txt">&lt;packageDir&gt;/CMakeLists.txt</a> file.</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:468</p>
 </section>
 <section id="tribits-add-example-directories">
 <h3><a class="toc-backref" href="#id120">tribits_add_example_directories()</a><a class="headerlink" href="#tribits-add-example-directories" title="Permalink to this headline"></a></h3>
@@ -10913,6 +10915,7 @@ up example directories any way one would like.</p>
 <code class="docutils literal notranslate"><span class="pre">${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES</span></code> are true. However, this macro may
 be extended in the future in order to modify behavior related to adding
 tests and examples in a uniform way.</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:546</p>
 </section>
 <section id="tribits-add-executable">
 <h3><a class="toc-backref" href="#id121">tribits_add_executable()</a><a class="headerlink" href="#tribits-add-executable" title="Permalink to this headline"></a></h3>
@@ -11171,6 +11174,7 @@ CMake command <code class="docutils literal notranslate"><span class="pre">insta
 the built executable into the <code class="docutils literal notranslate"><span class="pre">${CMAKE_INSTALL_PREFIX}/bin/</span></code> directory
 (actual install directory path is determined by
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_INSTALL_RUNTIME_DIR</span></code>, see <a class="reference external" href="TribitsBuildReference.html#setting-the-install-prefix">Setting the install prefix</a>).</p>
+<p>In: core/package_arch/TribitsAddExecutable.cmake:58</p>
 </section>
 <section id="tribits-add-executable-and-test">
 <h3><a class="toc-backref" href="#id122">tribits_add_executable_and_test()</a><a class="headerlink" href="#tribits-add-executable-and-test" title="Permalink to this headline"></a></h3>
@@ -11236,6 +11240,7 @@ executable for the test.  These are just passed in through the
 that either takes no arguments or just a simple set of arguments passed in
 through <code class="docutils literal notranslate"><span class="pre">ARGS</span></code>.  For more flexibility, just use
 <code class="docutils literal notranslate"><span class="pre">tribits_add_executable()</span></code> followed by <code class="docutils literal notranslate"><span class="pre">tribits_add_test()</span></code>.</p>
+<p>In: core/package_arch/TribitsAddExecutableAndTest.cmake:82</p>
 </section>
 <section id="tribits-add-library">
 <h3><a class="toc-backref" href="#id123">tribits_add_library()</a><a class="headerlink" href="#tribits-add-library" title="Permalink to this headline"></a></h3>
@@ -11493,6 +11498,7 @@ will <strong>NOT</strong> be set when code in peer directories (e.g. a downstrea
 packages) compiles that may include these header files.  To add defines that
 affect header files, please use a configured header file (see
 <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a>).</p>
+<p>In: core/package_arch/TribitsLibraryMacros.cmake:203</p>
 </section>
 <section id="tribits-add-option-and-define">
 <h3><a class="toc-backref" href="#id124">tribits_add_option_and_define()</a><a class="headerlink" href="#tribits-add-option-and-define" title="Permalink to this headline"></a></h3>
@@ -11511,6 +11517,7 @@ package’s configure file (see <a class="reference internal" href="#tribits-con
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#cmakedefine &lt;macroDefineName&gt;</span>
 </pre></div>
 </div>
+<p>In: core/package_arch/TribitsAddOptionAndDefine.cmake:44</p>
 </section>
 <section id="tribits-add-show-deprecated-warnings-option">
 <h3><a class="toc-backref" href="#id125">tribits_add_show_deprecated_warnings_option()</a><a class="headerlink" href="#tribits-add-show-deprecated-warnings-option" title="Permalink to this headline"></a></h3>
@@ -11525,6 +11532,7 @@ file.  This option is given the default value
 <code class="docutils literal notranslate"><span class="pre">${${PROJECT_NAME}_SHOW_DEPRECATED_WARNINGS}</span></code>.  This option is then looked
 for in <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a> to add macros to add deprecated warnings
 to deprecated parts of a package.</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:501</p>
 </section>
 <section id="tribits-add-test">
 <h3><a class="toc-backref" href="#id126">tribits_add_test()</a><a class="headerlink" href="#tribits-add-test" title="Permalink to this headline"></a></h3>
@@ -12196,6 +12204,7 @@ GTest executable such as with:</p>
 </div>
 <p>For example, this would be an alternative to disabling an entire unit
 testing executable using <code class="docutils literal notranslate"><span class="pre">-D&lt;fullTestName&gt;_DISABLE=ON</span></code> as described above.</p>
+<p>In: core/package_arch/TribitsAddTest.cmake:44</p>
 </section>
 <section id="tribits-add-test-directories">
 <h3><a class="toc-backref" href="#id127">tribits_add_test_directories()</a><a class="headerlink" href="#tribits-add-test-directories" title="Permalink to this headline"></a></h3>
@@ -12213,6 +12222,7 @@ if <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_
 <code class="docutils literal notranslate"><span class="pre">${PARENT_PACKAGE_NAME}_ENABLE_TESTS</span></code> are <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>. However, this macro
 may be extended in the future in order to modify behavior related to adding
 tests and examples in a uniform way.</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:395</p>
 </section>
 <section id="tribits-allow-missing-external-packages">
 <h3><a class="toc-backref" href="#id128">tribits_allow_missing_external_packages()</a><a class="headerlink" href="#tribits-allow-missing-external-packages" title="Permalink to this headline"></a></h3>
@@ -12261,6 +12271,7 @@ package into an upstream repo</a>).</p></li>
 <p>For some meta-projects that composes packages from may different TriBITS
 repositories, one might need to also call this function from the file
 <a class="reference internal" href="#projectdir-cmake-projectdependenciessetup-cmake">&lt;projectDir&gt;/cmake/ProjectDependenciesSetup.cmake</a>.</p>
+<p>In: core/package_arch/TribitsProcessPackagesAndDirsLists.cmake:143</p>
 </section>
 <section id="tribits-configure-file">
 <h3><a class="toc-backref" href="#id129">tribits_configure_file()</a><a class="headerlink" href="#tribits-configure-file" title="Permalink to this headline"></a></h3>
@@ -12313,6 +12324,7 @@ classes, etc., for example, using:</p>
 <p>If the particular compiler does not support deprecated warnings, then this
 macro is defined to be empty.  See <a class="reference internal" href="#regulated-backward-compatibility-and-deprecated-code">Regulated Backward Compatibility and
 Deprecated Code</a> for more details.</p>
+<p>In: core/package_arch/TribitsLibraryMacros.cmake:76</p>
 </section>
 <section id="tribits-copy-files-to-binary-dir">
 <h3><a class="toc-backref" href="#id130">tribits_copy_files_to_binary_dir()</a><a class="headerlink" href="#tribits-copy-files-to-binary-dir" title="Permalink to this headline"></a></h3>
@@ -12432,6 +12444,7 @@ executable target is built that these files will also be copied as well.</p>
 appended to the arguments in the <code class="docutils literal notranslate"><span class="pre">EXEDEPS</span></code> list.</p>
 </div></blockquote>
 </div></blockquote>
+<p>In: core/package_arch/TribitsCopyFilesToBinaryDir.cmake:46</p>
 </section>
 <section id="tribits-ctest-driver">
 <h3><a class="toc-backref" href="#id131">tribits_ctest_driver()</a><a class="headerlink" href="#tribits-ctest-driver" title="Permalink to this headline"></a></h3>
@@ -13572,6 +13585,7 @@ that require all passing builds and tests.</p>
 <p>ToDo: Add another mode that will return 0 if no errors are reported in the
 ctest -S driver script but ignore configure, build, and test failures that
 are submitted to a CDash site (and therefore will be reported there).</p>
+<p>In: ctest_driver/TribitsCTestDriverCore.cmake:214</p>
 </section>
 <section id="tribits-determine-if-current-package-needs-rebuilt">
 <h3><a class="toc-backref" href="#id132">tribits_determine_if_current_package_needs_rebuilt()</a><a class="headerlink" href="#tribits-determine-if-current-package-needs-rebuilt" title="Permalink to this headline"></a></h3>
@@ -13630,6 +13644,7 @@ This will, however, result in changes in non-dependent subpackages being
 considered as well.</p>
 <p>See the demonstration of the usage of this function in the <code class="docutils literal notranslate"><span class="pre">WrapExternal</span></code>
 package in <a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>.</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:475</p>
 </section>
 <section id="tribits-disable-package-on-platforms">
 <h3><a class="toc-backref" href="#id133">tribits_disable_package_on_platforms()</a><a class="headerlink" href="#tribits-disable-package-on-platforms" title="Permalink to this headline"></a></h3>
@@ -13645,6 +13660,7 @@ package in <a class="reference internal" href="#tribitsexampleproject">TribitsEx
 the package test group classification to <code class="docutils literal notranslate"><span class="pre">EX</span></code> results in the package being
 disabled by default (see <a class="reference internal" href="#ex-se-packages-disabled-by-default">EX SE packages disabled by default</a>).  However,
 an explicit enable can still enable the package.</p>
+<p>In: core/package_arch/TribitsListHelpers.cmake:85</p>
 </section>
 <section id="tribits-exclude-files">
 <h3><a class="toc-backref" href="#id134">tribits_exclude_files()</a><a class="headerlink" href="#tribits-exclude-files" title="Permalink to this headline"></a></h3>
@@ -13671,6 +13687,7 @@ never get added to <code class="docutils literal notranslate"><span class="pre">
 and one must be very careful to understand how CPack will use these regexes
 to match files that get excluded from the tarball.  For more details, see
 <a class="reference internal" href="#creating-source-distributions">Creating Source Distributions</a>.</p>
+<p>In: core/package_arch/TribitsGlobalMacros.cmake:2614</p>
 </section>
 <section id="tribits-find-most-recent-binary-file-timestamp">
 <h3><a class="toc-backref" href="#id135">tribits_find_most_recent_binary_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-binary-file-timestamp" title="Permalink to this headline"></a></h3>
@@ -13692,6 +13709,7 @@ its timestamp.</p>
 passing in a set of basic exclude regexes like <code class="docutils literal notranslate"><span class="pre">CMakeFiles/</span></code>,
 <code class="docutils literal notranslate"><span class="pre">[.]cmake$</span></code>, and <code class="docutils literal notranslate"><span class="pre">/Makefile$</span></code>, etc.  These types of files usually don’t
 impact the build of downstream software in CMake projects.</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:385</p>
 </section>
 <section id="tribits-find-most-recent-file-timestamp">
 <h3><a class="toc-backref" href="#id136">tribits_find_most_recent_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-file-timestamp" title="Permalink to this headline"></a></h3>
@@ -13771,6 +13789,7 @@ all directories.</p>
 all of the directories and prints and returns in the variables
 <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentTimestamp&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentFilepathBaseDir&gt;</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentRelativeFilePath&gt;</span></code>.</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:44</p>
 </section>
 <section id="tribits-find-most-recent-source-file-timestamp">
 <h3><a class="toc-backref" href="#id137">tribits_find_most_recent_source_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-source-file-timestamp" title="Permalink to this headline"></a></h3>
@@ -13792,6 +13811,7 @@ its timestamp.</p>
 passing in a set of basic exclude regexes like <code class="docutils literal notranslate"><span class="pre">[.]git/</span></code>, <code class="docutils literal notranslate"><span class="pre">[.]svn/</span></code>,
 etc.  These types of version control files can not possibly directly impact
 the source code.</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:298</p>
 </section>
 <section id="tribits-install-headers">
 <h3><a class="toc-backref" href="#id138">tribits_install_headers()</a><a class="headerlink" href="#tribits-install-headers" title="Permalink to this headline"></a></h3>
@@ -13830,6 +13850,7 @@ be installed under <code class="docutils literal notranslate"><span class="pre">
 </div></blockquote>
 <p>If <a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a> is <code class="docutils literal notranslate"><span class="pre">FASLE</span></code>, then the
 headers will not get installed.</p>
+<p>In: core/package_arch/TribitsInstallHeaders.cmake:45</p>
 </section>
 <section id="tribits-include-directories">
 <h3><a class="toc-backref" href="#id139">tribits_include_directories()</a><a class="headerlink" href="#tribits-include-directories" title="Permalink to this headline"></a></h3>
@@ -13854,6 +13875,7 @@ should come from the installation we are building against.  There is an
 exception to this and that is when there are test only headers that are
 needed.  For that case <code class="docutils literal notranslate"><span class="pre">REQUIRED_DURING_INSTALLATION_TESTING</span></code> must be
 passed in to ensure the include paths are added for installation testing.</p>
+<p>In: core/package_arch/TribitsIncludeDirectories.cmake:44</p>
 </section>
 <section id="id1">
 <h3><a class="toc-backref" href="#id140">tribits_package()</a><a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
@@ -13872,6 +13894,7 @@ passed in to ensure the include paths are added for installation testing.</p>
 <p>See <a class="reference internal" href="#tribits-package-decl">tribits_package_decl()</a> for the documentation for the arguments and
 <a class="reference internal" href="#tribits-package-decl">tribits_package_decl()</a> and <a class="reference internal" href="#id1">tribits_package()</a> for a description the
 side-effects (and variables set) after calling this macro.</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:342</p>
 </section>
 <section id="tribits-package-decl">
 <h3><a class="toc-backref" href="#id141">tribits_package_decl()</a><a class="headerlink" href="#tribits-package-decl" title="Permalink to this headline"></a></h3>
@@ -13940,6 +13963,7 @@ the <code class="docutils literal notranslate"><span class="pre">*.cmake</span><
 </ul>
 <p>If the package does not have subpackages, just call <a class="reference internal" href="#id1">tribits_package()</a>
 which calls this macro.</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:112</p>
 </section>
 <section id="tribits-package-def">
 <h3><a class="toc-backref" href="#id142">tribits_package_def()</a><a class="headerlink" href="#tribits-package-def" title="Permalink to this headline"></a></h3>
@@ -13959,6 +13983,7 @@ package’s <code class="docutils literal notranslate"><span class="pre">CMakeLi
 <li><p>The intra-package dependency variables (i.e. list of include directories,
 list of libraries, etc.) are initialized to empty.</p></li>
 </ul>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:277</p>
 </section>
 <section id="tribits-package-define-dependencies">
 <h3><a class="toc-backref" href="#id143">tribits_package_define_dependencies()</a><a class="headerlink" href="#tribits-package-define-dependencies" title="Permalink to this headline"></a></h3>
@@ -14131,6 +14156,7 @@ dependencies that exist.  Otherwise, the <code class="docutils literal notransla
 need to set all of the above local variables, even those that are empty.
 This is an error checking property of the TriBITS system to avoid misspelling
 the names of these variables.</p>
+<p>In: core/package_arch/TribitsPackageDefineDependencies.cmake:43</p>
 </section>
 <section id="tribits-package-postprocess">
 <h3><a class="toc-backref" href="#id144">tribits_package_postprocess()</a><a class="headerlink" href="#tribits-package-postprocess" title="Permalink to this headline"></a></h3>
@@ -14147,6 +14173,7 @@ target property set on them.</p>
 <p>NOTE: It is unfortunate that this macro must be called in a packages’s
 top-level <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file but limitations of the CMake language make
 it necessary to do so.</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:767</p>
 </section>
 <section id="tribits-process-subpackages">
 <h3><a class="toc-backref" href="#id145">tribits_process_subpackages()</a><a class="headerlink" href="#tribits-process-subpackages" title="Permalink to this headline"></a></h3>
@@ -14159,10 +14186,12 @@ called in the parent packages top-level <a class="reference internal" href="#pac
 </div>
 <p>This macro must be called after <a class="reference internal" href="#tribits-package-decl">tribits_package_decl()</a> but before
 <a class="reference internal" href="#tribits-package-def">tribits_package_def()</a>.</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:877</p>
 </section>
 <section id="tribits-process-enabled-tpl">
 <h3><a class="toc-backref" href="#id146">tribits_process_enabled_tpl()</a><a class="headerlink" href="#tribits-process-enabled-tpl" title="Permalink to this headline"></a></h3>
 <p>Process an enabled TPL’s FindTPL${TPL_NAME}.cmake module.</p>
+<p>In: core/package_arch/TribitsProcessEnabledTpl.cmake:52</p>
 </section>
 <section id="id2">
 <h3><a class="toc-backref" href="#id147">tribits_project()</a><a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
@@ -14179,6 +14208,7 @@ the variable <a class="reference internal" href="#project-name-tribits-dir">${PR
 <p>This macro then adds all of the necessary paths to <code class="docutils literal notranslate"><span class="pre">CMAKE_MODULE_PATH</span></code> and
 then performs all processing of the TriBITS project files (see <a class="reference internal" href="#full-tribits-project-configuration">Full TriBITS
 Project Configuration</a>).</p>
+<p>In: core/package_arch/TribitsProject.cmake:74</p>
 </section>
 <section id="tribits-project-define-extra-repositories">
 <h3><a class="toc-backref" href="#id148">tribits_project_define_extra_repositories()</a><a class="headerlink" href="#tribits-project-define-extra-repositories" title="Permalink to this headline"></a></h3>
@@ -14276,6 +14306,7 @@ one misspells the name of a macro, it is an immediate error in CMake.  A
 misspelled set variable is just ignored.</p></li>
 <li><p>The variable name can change in the future as an implementation detail.</p></li>
 </ul>
+<p>In: core/package_arch/TribitsProcessExtraRepositoriesList.cmake:51</p>
 </section>
 <section id="tribits-project-enable-all">
 <h3><a class="toc-backref" href="#id149">tribits_project_enable_all()</a><a class="headerlink" href="#tribits-project-enable-all" title="Permalink to this headline"></a></h3>
@@ -14290,6 +14321,7 @@ misspelled set variable is just ignored.</p></li>
 TriBITS projects that have just a single package or by default just want to
 enable all packages.  This is especially useful when you have a TriBITS
 project with just a single package.</p>
+<p>In: core/package_arch/TribitsProjectImpl.cmake:327</p>
 </section>
 <section id="tribits-repository-define-packages">
 <h3><a class="toc-backref" href="#id150">tribits_repository_define_packages()</a><a class="headerlink" href="#tribits-repository-define-packages" title="Permalink to this headline"></a></h3>
@@ -14365,6 +14397,7 @@ repo subdirs).</p></li>
 <code class="docutils literal notranslate"><span class="pre">${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS</span></code>.  If one
 misspells the name of the macro, it is an immediate error in CMake.</p></li>
 </ul>
+<p>In: core/package_arch/TribitsProcessPackagesAndDirsLists.cmake:56</p>
 </section>
 <section id="tribits-repository-define-tpls">
 <h3><a class="toc-backref" href="#id151">tribits_repository_define_tpls()</a><a class="headerlink" href="#tribits-repository-define-tpls" title="Permalink to this headline"></a></h3>
@@ -14430,6 +14463,7 @@ repo subdirs).</p></li>
 <code class="docutils literal notranslate"><span class="pre">${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS</span></code>.  If one misspells
 the name of a macro, it is an immediate error in CMake.</p></li>
 </ul>
+<p>In: core/package_arch/TribitsProcessTplsLists.cmake:48</p>
 </section>
 <section id="tribits-set-st-for-dev-mode">
 <h3><a class="toc-backref" href="#id152">tribits_set_st_for_dev_mode()</a><a class="headerlink" href="#tribits-set-st-for-dev-mode" title="Permalink to this headline"></a></h3>
@@ -14452,6 +14486,7 @@ is always set to <code class="docutils literal notranslate"><span class="pre">ON
 considered <code class="docutils literal notranslate"><span class="pre">ST</span></code> for development mode (thereby reducing testing time by not
 enabling the dependent features/tests), while still having important
 functionality available to users by default in a release of the package.</p>
+<p>In: core/package_arch/TribitsGeneralMacros.cmake:299</p>
 </section>
 <section id="id3">
 <h3><a class="toc-backref" href="#id153">tribits_subpackage()</a><a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
@@ -14483,6 +14518,7 @@ package name at the beginning,
 <div><p>Inside the subpackage, the same as <code class="docutils literal notranslate"><span class="pre">SUBPACKAGE_FULLNAME</span></code>.</p>
 </div></blockquote>
 </div></blockquote>
+<p>In: core/package_arch/TribitsSubPackageMacros.cmake:45</p>
 </section>
 <section id="tribits-subpackage-postprocess">
 <h3><a class="toc-backref" href="#id154">tribits_subpackage_postprocess()</a><a class="headerlink" href="#tribits-subpackage-postprocess" title="Permalink to this headline"></a></h3>
@@ -14498,6 +14534,7 @@ libraries in all subdirectories that don’t have the TRIBITS_TESTONLY_LIB
 target property set on them.</p>
 <p>NOTE: It is unfortunate that a Subpackages’s CMakeLists.txt file must call
 this macro but limitations of the CMake language make it necessary to do so.</p>
+<p>In: core/package_arch/TribitsSubPackageMacros.cmake:135</p>
 </section>
 <section id="tribits-tpl-allow-pre-find-package">
 <h3><a class="toc-backref" href="#id155">tribits_tpl_allow_pre_find_package()</a><a class="headerlink" href="#tribits-tpl-allow-pre-find-package" title="Permalink to this headline"></a></h3>
@@ -14538,6 +14575,7 @@ value <code class="docutils literal notranslate"><span class="pre">FALSE</span><
 <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> modules.</p>
 <p>See <a class="reference internal" href="#how-to-use-find-package-for-a-tribits-tpl">How to use find_package() for a TriBITS TPL</a> for details in how to use
 this function to create a <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> module file.</p>
+<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:56</p>
 </section>
 <section id="tribits-tpl-find-include-dirs-and-libraries">
 <h3><a class="toc-backref" href="#id156">tribits_tpl_find_include_dirs_and_libraries()</a><a class="headerlink" href="#tribits-tpl-find-include-dirs-and-libraries" title="Permalink to this headline"></a></h3>
@@ -14645,6 +14683,7 @@ libraries and when a find is successful and when it is not.</p>
 <p>Note, if <code class="docutils literal notranslate"><span class="pre">TPL_TENTATIVE_ENABLE_&lt;tplName&gt;=ON</span></code>, then if all of the parts of
 the TPL can’t be found, then <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_&lt;tplName&gt;</span></code> will be (forced) set
 to <code class="docutils literal notranslate"><span class="pre">OFF</span></code> in the cache.  See <a class="reference internal" href="#tribits-tpl-tentatively-enable">tribits_tpl_tentatively_enable()</a>.</p>
+<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:147</p>
 </section>
 <section id="tribits-tpl-tentatively-enable">
 <h3><a class="toc-backref" href="#id157">tribits_tpl_tentatively_enable()</a><a class="headerlink" href="#tribits-tpl-tentatively-enable" title="Permalink to this headline"></a></h3>
@@ -14669,6 +14708,7 @@ be explicitly set on input, i.e. if <code class="docutils literal notranslate"><
 TPL has been explicitly enabled (i.e. <code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">TPL_ENABLE_&lt;tplName&gt;=ON</span></code>) or
 disabled (i.e. <code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">TPL_ENABLE_&lt;tplName&gt;=OFF</span></code>), then this function has no
 effect and the TPL will be unconditionally enabled or disabled.</p>
+<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:695</p>
 </section>
 <section id="tribits-write-flexible-package-client-export-files">
 <h3><a class="toc-backref" href="#id158">tribits_write_flexible_package_client_export_files()</a><a class="headerlink" href="#tribits-write-flexible-package-client-export-files" title="Permalink to this headline"></a></h3>
@@ -14723,6 +14763,7 @@ because CMake will not allow those to even be present in scripting mode that
 is used for unit testing this function.  Instead, the commands to install
 the files are added by the function
 <code class="docutils literal notranslate"><span class="pre">tribits_write_package_client_export_files_install_targets()</span></code>.</p>
+<p>In: core/package_arch/TribitsWriteClientExportFiles.cmake:83</p>
 </section>
 <section id="tribits-verbose-print-var">
 <h3><a class="toc-backref" href="#id159">tribits_verbose_print_var()</a><a class="headerlink" href="#tribits-verbose-print-var" title="Permalink to this headline"></a></h3>
@@ -14738,6 +14779,7 @@ the files are added by the function
 </div>
 <p>The variable <code class="docutils literal notranslate"><span class="pre">&lt;varName&gt;</span></code> can be defined or undefined or empty.  This uses
 an explicit “– ” line prefix so that it prints nice even on Windows CMake.</p>
+<p>In: core/package_arch/TribitsVerbosePrintVar.cmake:44</p>
 </section>
 </section>
 <section id="general-utility-macros-and-functions">
@@ -18177,41 +18219,50 @@ snapshotting</a>.</p>
                        [--assert-clean-orig-dir] [--allow-dirty-orig-dir]
                        [--assert-clean-dest-dir] [--allow-dirty-dest-dir]
                        [--clean-ignored-files-orig-dir]
-                       [--no-clean-ignored-files-orig-dir] [--do-rsync]
-                       [--skip-rsync] [--do-commit] [--skip-commit]
-                       [--verify-commit] [--no-verify-commit]
+                       [--no-clean-ignored-files-orig-dir] [--do-commit]
+                       [--skip-commit] [--verify-commit] [--no-verify-commit]
+                       [--no-op]
 
-This tool snapshots the contents of an origin directory (&#39;orig-dir&#39;) to
-destination directory (&#39;dest-dir&#39;) and logs version information between the
-two git repos in the commit message in the &#39;dest-dir&#39; git commit.  The command
-&#39;git&#39; must be in the path for this script to be used.
+This tool uses rsync and some git commands to snapshot the contents of an
+origin directory (&#39;orig-dir&#39;) in one Git repo to destination directory
+(&#39;dest-dir&#39;) in another Git repo and logs version information in a new Git
+commit message.
 
-To sync between any two arbitrary directories invoking this script from any
-directory location, one can do:
+WARNING: Because this tool uses &#39;rsync --delete&#39;, it can be quite destructive
+to the contents of dest-dir if one is not careful and selects the wrong
+orig-dir or wrong dest-dir!  Therefore, please carefully read this entire help
+message and especially the warnings given below and always start by running
+with --no-op!
+
+To sync between any two arbitrary directories between two different git repos
+invoking this script from any directory location, one can do:
 
   $ &lt;some-base-dir&gt;/snapshot-dir.py \
-    --orig-dir=&lt;some-orig-dir&gt; \
-    --dest-dir=&lt;some-dest-dir&gt;
+    --orig-dir=&lt;dest-dir&gt; \
+    --dest-dir=&lt;dest-dir&gt; \
+    [--no-op]
+
+(where --no-op should be used on the initial trial run to check that the
+correct rsync and other commands will be run, see below).
 
 To describe how this script is used, consider the desire to snapshot the
-directory tree:
+directory tree from one git repo:
 
   &lt;some-orig-base-dir&gt;/orig-dir/
 
-and duplicate it in the directory tree
+and exactly duplicate it in another git repo under:
 
   &lt;some-dest-base-dir&gt;/dest-dir/
 
 Here, the directories can be any two directories from local git repos with any
-names. (Note if the paths don&#39;t end with &#39;/&#39;, then it will be added or rsync
-will copy the contents from &#39;orig-dir&#39; into a subdir of &#39;dest-dir&#39; which is
-usually not what you want.)
+names. (Note if the paths don&#39;t end with &#39;/&#39;, then &#39;/&#39; will be added.
+Otherwise, rsync will copy the contents from &#39;orig-dir&#39; into a subdir of
+&#39;dest-dir&#39; which is usually not what you want.)
 
 A typical case is to have snapshot-dir.py soft linked into orig-dir/ to allow
-a simple sync process.  This is the case, for example, with the &#39;tribits&#39;
-source tree.  The linked-in location of snapshot-dir.py gives the default
-&#39;orig-dir&#39; directory automatically (but can be overridden with --orig-dir
-option).
+a simple sync process.  The linked-in location of snapshot-dir.py gives the
+default &#39;orig-dir&#39; directory automatically (but can be overridden with
+--orig-dir=&lt;orig-dir&gt; option).
 
 When snapshot-dir.py is soft-linked into the &#39;orig-dir&#39; directory base, the
 way to run this script would be:
@@ -18226,56 +18277,72 @@ provide tractability for the versions (see below).
 
 By default, this script does the following:
 
-1) Assert that the git repo for &#39;orig-dir&#39; is clean (i.e. no uncommitted
-   files, no unknown files, etc.).  (Can be disabled by passing in
-   --allow-dirty-orig-dir.)
+1) Assert that &#39;orig-dir&#39; in its git repo is clean (i.e. no uncommitted
+   files).  (Can be disabled by passing in --allow-dirty-orig-dir.)
 
-2) Assert that the git repo for &lt;some-dest-dir&gt;/ is clean (see above).  (Can
-   be disabled by passing in --allow-dirty-dest-dir.  Also, this must be
-   skipped on the initial snaphsot where &lt;some-dist-dir&gt;/ does not exist.)
+2) Assert that &lt;dest-dir&gt;/ in its git repo is clean (same checks as for
+   &#39;orig-dir&#39; above).  (Can be disabled by passing in --allow-dirty-dest-dir.
+   Also, this must be skipped on the initial snapshot where &lt;some-dist-dir&gt;/
+   does not exist yet.)
 
 3) Clean out the ignored files from &lt;some-source-dir&gt;/orig-dir using &#39;git
    clean -xdf&#39; run in that directory.  (Only if --clean-ignored-files-orig-dir
-   is specified.)
+   is passed.)
 
-4) Run &#39;rsync -cav --delete&#39; to copy the contents from &#39;orig-dir&#39; to
-   &#39;dest-dir&#39;, excluding the &#39;.git/&#39; directory if it exists in either git repo
-   dir.  After this runs, &lt;some-dest-dir&gt;/ should be an exact duplicate of
-   &lt;some-orig-dir&gt;/ (except for otherwise noted excluded files).  This rsync
-   will delete any files in &#39;dest-dir&#39; that are not in &#39;orig-dir&#39;.  Note that
-   if there are ignored untracked files, then the copied .gitignore files
-   should avoid showing them as tracked or unknown files in the &#39;dest-dir&#39; git
-   repo as well.
+4) Run &#39;rsync -cav --delete [other options] &lt;orig-dir&gt;/ &lt;dest-dir&gt;/&#39; to copy
+   the contents from &#39;orig-dir&#39; to &#39;dest-dir&#39;, excluding the &#39;.git/&#39; directory
+   if it exists in either git repo dir.  After this runs, &lt;dest-dir&gt;/ should
+   be an exact duplicate of &lt;orig-dir&gt;/ (except for otherwise noted excluded
+   files).  This rsync will delete any files in &#39;dest-dir&#39; that are not in
+   &#39;orig-dir&#39;.  Note that if there are any ignored untracked files in
+   &#39;orig-dir&#39; that get copied over, then the copied .gitignore files should
+   avoid treating them as tracked files in the &#39;dest-dir&#39; git repo.  (The
+   rsync command is skipped if the argument --no-op is passed.)
 
-5) Run &#39;git add .&#39; in &lt;some-dest-dir&gt;/ to stage any new files.  Note that git
-   will automatically stage deletes for any files removed by the &#39;rsync -cav
-   --delete&#39; command!
+5) Run &#39;git add .&#39; in &lt;dest-dir&gt;/ to stage any files copied over.  (Note that
+   git will automatically stage deletes for any files removed by the &#39;rsync
+   -cav --delete&#39; command.  Also note that any untracked, unknown or ignored
+   files in &#39;orig-dir&#39; that get copied over and are not ignored in &#39;dist-dir&#39;
+   in the copied-over &#39;.gitignore&#39; files, or other git ignore files in
+   &#39;dist-dir&#39;, then they will be added to the new commit in &#39;dist-dir&#39;.)
 
 6) Get the git remote URL from the orig-dir git repo, and the git log for the
-   last commit for the directory from orig-dir.  This information is used to
-   define perfect tracing of the version info when doing the snapshot.
+   last commit for the directory orig-dir from its git repo.  (If the orig-dir
+   repo is on a tracking branch, then this remote will be guaranteed to be
+   correct.  However, if the orig-dir repo not on a tracking branch, then the
+   first remote returned from &#39;git remote -v&#39; will be used. This information
+   is used to provide tractability of the version info back to the originating
+   git repo in the commit created in the dest-dir repo.)
 
 7) Commit the updated dest-dir directory using a commit message with the
-   orig-dir repo URL and log info.  This will only commit files in &#39;dest-dir&#39;
-   and not in other directories in the destination git repo!
+   orig-dir snapshot version info.  (This will only commit files in &#39;dest-dir&#39;
+   and not in other directories in the destination git repo!)  (The &#39;git
+   commit&#39; will be skipped if the options --skip-commit or --no-op are
+   passed.)
 
 NOTES:
 
-* On the first creation of &lt;some-dest-dir&gt;/, one must pass in
-  --allow-dirty-dest-dir to avoid checks of &lt;some-dest-dir&gt;/.  This will allow
-  the creation of &lt;some-dest-dir&gt;/ by rsync.
+* When first running this tool, use the --no-op option to see what commands
+  would be run without actually performing any mutable operations.  Especially
+  pay attention to the rsync command that would be run and make sure it is
+  operating on the desired directories.
+
+* On the first creation of &lt;dest-dir&gt;/, one must pass in
+  --allow-dirty-dest-dir to avoid checks of &lt;dest-dir&gt;/ (because it does not yet
+  exist).
 
 * This script allows the syncing between base git repos or subdirs within git
   repos.  This is allowed because the rsync command is told to ignore the
   .git/ directory when syncing.
 
-* The cleaning of the orig-dir/ using &#39;git clean -xdf&#39; may be somewhat
-  dangerous but it is recommended that it be performed by passing in
-  --clean-ignored-files-orig-dir to avoid copying locally-ignored files in
-  orig-dir/ (e.g. ignored in .git/info/excludes but not in a committed
-  .gitignore file) that get copied to and then committed in the dest-dir/
-  repo.  Therefore, be sure you don&#39;t have any ignored files in orig-dir/ that
-  you want to keep before you run this script!
+* The cleaning of orig-dir/ using &#39;git clean -xdf&#39; may be somewhat dangerous
+  but it is recommended by passing in --clean-ignored-files-orig-dir to avoid
+  copying locally-ignored files in orig-dir/ (e.g. ignored in
+  .git/info/excludes and not ignored in a committed .gitignore file in
+  orig-dir/) that get copied to and then committed in the dest-dir/ repo.
+  Therefore, be sure you don&#39;t have any of these type of ignored files in
+  orig-dir/ that you want to keep before you run this tool with the option
+  --clean-ignored-files-orig-dir!
 
 * Snapshotting with this script will create an exact duplicate of &#39;orig-dir&#39;
   in &#39;dest-dir&#39; and therefore if there are any local changes to the files or
@@ -18284,7 +18351,42 @@ NOTES:
   branch into the main branch (e.g. &#39;master&#39;) in &#39;dest-dir&#39; repo.  As long as
   there are no merge conflicts, this will preserve local changes for the
   mirrored directories and files.  This strategy can work well as a way to
-  allow for local modifications but still do the snapshotting.
+  allow for local modifications but still do snapshotting.
+
+WARNINGS:
+
+* Make sure that orig-dir is a non-ignored subdir of the origin git repo and
+  that it does not contain any ignored subdirs and files that are ignored by
+  listing them in the .git/info/exclude file instead of .gitignore files that
+  would get copied over to dist-dir.  (If ignored files are ignored using
+  .gitignore files within orig-dir, then those files will be copied by the
+  rsync command along with the rest of the files from orig-dir and those files
+  will also be ignored after being copied to dest-dir.  However, if these
+  files and dirs are ignored because of being listed in the .git/info/exclude
+  file in orig-dir, then those files will not be ignored when copied over to
+  dest-dir and will therefore be added to the git commit in the dist-dir git
+  repo.  That is why it is recommended to run with
+  --clean-ignored-files-orig-dir to ensure that all ignore files are removed
+  from orig-dir before doing the rsync.)
+
+* Make sure that the top commit in orig-dir has been pushed (or will be
+  pushed) to the listed remote git repo showed in the output line &#39;origin
+  remote name&#39; or &#39;origin remote URL&#39;.  Otherwise, others will not be able to
+  trace that exact version by cloning that repo and traceability is lost.
+
+* Make sure that dest-dir is a non-ignored subdir of the destination git repo
+  and does not contain any ignored subdirs or files that you don&#39;t care if
+  they are deleted.  (Otherwise, the &#39;rsync --delete&#39; command will delete any
+  files in dest-dir that are not also in orig-dir and since these non-ignored
+  files in dest-dir are not under version control, they will not be
+  recoverable.)
+
+* As a corollary to the above warnings about ignored files and directories, do
+  not snapshot from an orig-dir or to a dest-dir that contain build
+  directories or other generated files that you want to keep!  Even if those
+  files and directories are ignored in copied-over .gitignore files, the copy
+  of those ignored files will still occur. (Just another reason to keep your
+  build directories completely outside of the source tree!)
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -18315,12 +18417,13 @@ optional arguments:
   --no-clean-ignored-files-orig-dir
                         Do not clean out orig-dir/ ignored files before
                         snapshotting. [default]
-  --do-rsync            Actually do the rsync. [default]
-  --skip-rsync          Skip the rsync (testing only?).
   --do-commit           Actually do the commit. [default]
   --skip-commit         Skip the commit.
   --verify-commit       Do not pass --no-verify to git commit. [default]
   --no-verify-commit    Pass --no-verify to git commit.
+  --no-op               Don&#39;t actaully run any commands that would change the
+                        state other (other than the natural side-effects of
+                        running git query commands)
 </pre></div>
 </div>
 </section>
