@@ -701,8 +701,8 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     STREQUAL "${TribitsExProj_INSTALL_OWNING_USER}"
     )
     set(CHGRP_CHMOD_BASE_TEXT
-      "0: Running: chgrp wg-sems-users-son /tmp/tribits_install_tests"
-      "0: Running: chmod g[+]rwX,o[+]rX /tmp/tribits_install_tests")
+      "0: Running: chgrp wg-sems-users-son ${${PROJECT_NAME}_INSTALL_BASE_DIR}"
+      "0: Running: chmod g[+]rwX,o[+]rX ${${PROJECT_NAME}_INSTALL_BASE_DIR}")
   else()
     set(CHGRP_CHMOD_BASE_TEXT
       "0: NOTE: Not calling chgrp and chmod on ${installBaseDir} since owner '${TribitsExProj_INSTALL_BASE_OWNING_USER}' != current owner '${TribitsExProj_INSTALL_OWNING_USER}'!")
