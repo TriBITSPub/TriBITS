@@ -383,6 +383,27 @@ class test_snapshot_dir(unittest.TestCase):
      )
 
 
+  def test_snapshot_skip_commit(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--orig-dir=dummy/orig-dir/", "--dest-dir=dummy/dest-dir/",
+        "--skip-commit"],
+      [
+        g_gitDiffHead,
+        g_gitDiffHead,
+        g_gitRevParse,
+        g_gitRemote,
+        g_gitDescribe,
+        g_gitLog,
+        g_rsync,
+        g_gitLogSha1,
+        ],
+      [
+        "Skipping commit on request"
+        ]
+     )
+
+
   # ToDo: Test assert failure of clean origDir ...
 
   # ToDo: Test skipping test of clean origDir ...
@@ -395,13 +416,7 @@ class test_snapshot_dir(unittest.TestCase):
 
   # ToDo: Test failure to acquire origin commit ...
 
-  # ToDo: Test skipping getting origin info ...
-
-  # ToDo: Test failing rsync ...
-
   # ToDo: Test failing to create commit in dest repo ...
-
-  # ToDo: Test skipping creation of commit in dest repo ...
 
 
 if __name__ == '__main__':
