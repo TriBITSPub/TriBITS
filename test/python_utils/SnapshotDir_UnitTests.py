@@ -37,6 +37,7 @@
 # ************************************************************************
 # @HEADER
 
+
 ########################################
 # Unit testing code for SnapshotDir.py #
 ########################################
@@ -74,6 +75,9 @@ def getDummyDefaultOptions():
   return dummyDefaultOptions
 
 
+# Run a snapshot-dir.py test case using mock commands all in memory without
+# actually doing anyting on the disk or the filesystem.
+#
 def runSnapshotDirTestCase(testObject, cmndLineArgsList, cmndInterceptList,
   passRegexExpressionsList, defaultOptions=None \
   ):
@@ -90,6 +94,7 @@ def runSnapshotDirTestCase(testObject, cmndLineArgsList, cmndInterceptList,
   sout = WriteToString()
 
   rtn = snapshotDirMainDriver(cmndLineArgsList, defaultOptions, sout)
+  g_sysCmndInterceptor.assertAllCommandsRun()
   ostr = sout.getStr()
   #print("ostr =", ostr)
   for passRegexExpr in passRegexExpressionsList:
@@ -111,7 +116,11 @@ g_gitDiffHead = "IT: git diff --name-status HEAD -- \.; 0;''\n"
 
 g_gitRevParse = "IT: git rev-parse --abbrev-ref --symbolic-full-name ..u.; 0; 'remotename/remotebranch'\n"
 
+g_gitRevParseDetailedHead = "IT: git rev-parse --abbrev-ref --symbolic-full-name ..u.; 1; ''\n"
+
 g_gitRemote = "IT: git remote -v; 0; 'remotename\tsome-url-location (fetch)'\n"
+
+g_gitDescribe = "IT: git describe; 0; 'v1.2.3-225-g9877045'\n"
 
 g_gitLog = "IT: git log  --pretty=.*; 0; 'one commit msg'\n"
 
@@ -184,6 +193,7 @@ class test_snapshot_dir(unittest.TestCase):
         g_gitDiffHead,
         g_gitRevParse,
         g_gitRemote,
+        g_gitDescribe,
         g_gitLog,
         g_rsync,
         g_gitLogSha1,
@@ -197,8 +207,72 @@ class test_snapshot_dir(unittest.TestCase):
         "origin remote name = 'remotename'",
         "origin remote branch = 'remotebranch'",
         "origin remote URL = 'some-url-location'",
+        "Git describe = 'v1.2.3-225-g9877045'",
         "Automatic snapshot commit from orig-dir at abc123",
         "Origin repo remote tracking branch: 'remotename/remotebranch'",
+        "Origin repo remote repo URL: 'remotename = some-url-location'",
+        "one commit msg"
+        ]
+     )
+
+
+  def test_snapshot_default_no_op(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--orig-dir=dummy/orig-dir/", "--dest-dir=dummy/dest-dir/", "--no-op"],
+      [
+        g_gitDiffHead,
+        g_gitDiffHead,
+        g_gitRevParse,
+        g_gitRemote,
+        g_gitDescribe,
+        g_gitLog,
+        g_gitLogSha1,
+        ],
+      [
+        "Script: snapshot-dir\.py",
+        "--orig-dir='dummy/orig-dir/'",
+        "--dest-dir='dummy/dest-dir/'",
+        "origin remote name = 'remotename'",
+        "origin remote branch = 'remotebranch'",
+        "origin remote URL = 'some-url-location'",
+        "Git describe = 'v1.2.3-225-g9877045'",
+        "Would be running: rsync -cav --delete --exclude=\\\[.]git dummy/orig-dir/ dummy/dest-dir/",
+        "Automatic snapshot commit from orig-dir at abc123",
+        "Origin repo remote tracking branch: 'remotename/remotebranch'",
+        "Origin repo remote repo URL: 'remotename = some-url-location'",
+        "one commit msg",
+        "Would be running: git add .",
+        "Would be running: git commit -m \"<commit-msg>\"",
+        ]
+     )
+
+
+  def test_snapshot_detached_head(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--orig-dir=dummy/orig-dir/", "--dest-dir=dummy/dest-dir/"],
+      [
+        g_gitDiffHead,
+        g_gitDiffHead,
+        g_gitRevParseDetailedHead,
+        g_gitRemote,
+        g_gitDescribe,
+        g_gitLog,
+        g_rsync,
+        g_gitLogSha1,
+        g_gitAdd,
+        g_gitCommit,
+        ],
+      [
+        "Script: snapshot-dir\.py",
+        "--orig-dir='dummy/orig-dir/'",
+        "--dest-dir='dummy/dest-dir/'",
+        "origin remote name = 'remotename'",
+        "origin remote branch = ''",
+        "origin remote URL = 'some-url-location'",
+        "Git describe = 'v1.2.3-225-g9877045'",
+        "Automatic snapshot commit from orig-dir at abc123",
         "Origin repo remote repo URL: 'remotename = some-url-location'",
         "one commit msg"
         ]
@@ -214,6 +288,7 @@ class test_snapshot_dir(unittest.TestCase):
         g_gitDiffHead,
         g_gitRevParse,
         g_gitRemote,
+        g_gitDescribe,
         g_gitLog,
         g_rsync,
         g_gitLogSha1,
@@ -238,6 +313,7 @@ class test_snapshot_dir(unittest.TestCase):
         g_gitDiffHead,
         g_gitRevParse,
         g_gitRemote,
+        g_gitDescribe,
         g_gitLog,
         g_rsync,
         g_gitLogSha1,
@@ -271,6 +347,7 @@ class test_snapshot_dir(unittest.TestCase):
         g_gitClean,
         g_gitRevParse,
         g_gitRemote,
+        g_gitDescribe,
         g_gitLog,
         g_rsync,
         g_gitLogSha1,
@@ -293,6 +370,7 @@ class test_snapshot_dir(unittest.TestCase):
         g_gitDiffHead,
         g_gitRevParse,
         g_gitRemote,
+        g_gitDescribe,
         g_gitLog,
         g_rsync,
         g_gitLogSha1,
@@ -301,6 +379,27 @@ class test_snapshot_dir(unittest.TestCase):
         ],
       [
         "Running: git commit --no-verify -m"
+        ]
+     )
+
+
+  def test_snapshot_skip_commit(self):
+    runSnapshotDirTestCase(
+      self,
+      ["--orig-dir=dummy/orig-dir/", "--dest-dir=dummy/dest-dir/",
+        "--skip-commit"],
+      [
+        g_gitDiffHead,
+        g_gitDiffHead,
+        g_gitRevParse,
+        g_gitRemote,
+        g_gitDescribe,
+        g_gitLog,
+        g_rsync,
+        g_gitLogSha1,
+        ],
+      [
+        "Skipping commit on request"
         ]
      )
 
@@ -317,13 +416,7 @@ class test_snapshot_dir(unittest.TestCase):
 
   # ToDo: Test failure to acquire origin commit ...
 
-  # ToDo: Test skipping getting origin info ...
-
-  # ToDo: Test failing rsync ...
-
   # ToDo: Test failing to create commit in dest repo ...
-
-  # ToDo: Test skipping creation of commit in dest repo ...
 
 
 if __name__ == '__main__':
