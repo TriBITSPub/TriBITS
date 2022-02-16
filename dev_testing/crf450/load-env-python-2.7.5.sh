@@ -4,13 +4,7 @@ module purge
 
 export PATH=${PATH_ORIG}
 
-# From ~/load_dev_env.sh
-
-source ~/load_vera_dev_env.gcc-4.8.3.crf450.sh
-module load sems-env
-module load sems-git/2.10.1
-module load sems-cmake/3.17.1
-module load sems-ninja_fortran/1.10.0
+. ~/load_dev_env.sh
 
 # Extra stuff for TriBITS
 
