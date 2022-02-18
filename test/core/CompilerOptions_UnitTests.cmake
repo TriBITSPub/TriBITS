@@ -542,10 +542,6 @@ function(unitest_gcc_global_and_package_compiler_flags)
 endfunction()
 
 
-
-
-
-
 function(unitest_gcc_with_shadow_cleaned_checked_stl_coverage_options)
 
   message("\n***")
