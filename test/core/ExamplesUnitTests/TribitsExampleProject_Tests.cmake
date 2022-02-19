@@ -2792,3 +2792,146 @@ tribits_add_advanced_test( TribitsExampleProject_DisableWithSubpackagesB_EnableW
 # parent package is enabled at the end if any of its subpackages are enabled!
 # This is also the only test that looks for the output that an optional
 # package enable is not set.
+
+
+########################################################################
+
+
+tribits_add_advanced_test( TribitsExampleProject_compiler_flags
+  OVERALL_WORKING_DIRECTORY  TEST_NAME
+  OVERALL_NUM_MPI_PROCS  1
+  EXCLUDE_IF_NOT_TRUE  IS_REAL_LINUX_SYSTEM  COMPILER_IS_GNU
+    ${PROJECT_NAME}_ENABLE_Fortran
+
+  TEST_0
+    MESSAGE "Configure by setting targets compiler flags for some packages"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=ON
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_PRINT_PACKAGE_COMPILER_FLAGS=ON
+      -DCMAKE_C_FLAGS=-O2
+      -DCMAKE_CXX_FLAGS=-Og
+      -DCMAKE_Fortran_FLAGS=-Ofast
+      -DSimpleCxx_C_FLAGS="--scxx-c-flags1 --scxx-c-flags2"
+      -DSimpleCxx_CXX_FLAGS="--scxx-cxx-flags1 --scxx-cxx-flags2"
+      -DSimpleCxx_Fortran_FLAGS="--scxx-f-flags1 --scxx-f-flags2"
+      -DMixedLang_Fortran_FLAGS="--ml-f-flags1 --ml-f-flags2"
+      -DWithSubpackages_C_FLAGS="--wsp-c-flags1 --wsp-c-flags2"
+      -DWithSubpackages_CXX_FLAGS="--wsp-cxx-flags1 --wsp-cxx-flags2"
+      -DWithSubpackages_Fortran_FLAGS="--wsp-f-flags1 --wsp-f-flags2"
+      -DWithSubpackagesB_C_FLAGS="--wspb-c-flags1 --wspb-c-flags2"
+      -DWithSubpackagesB_CXX_FLAGS="--wspb-cxx-flags1 --wspb-cxx-flags2"
+      -DWithSubpackagesB_Fortarn_FLAGS="--wspb-f-flags1 --wspb-f-flags2"
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- SimpleCxx: CMAKE_C_FLAGS=.  -pedantic -Wall -Wno-long-long -std=c99  *-O2 --scxx-c-flags1 --scxx-c-flags2."
+      "-- SimpleCxx: CMAKE_C_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- SimpleCxx: CMAKE_CXX_FLAGS=.  -pedantic -Wall -Wno-long-long -Wwrite-strings -Wshadow -Woverloaded-virtual  *-Og --scxx-cxx-flags1 --scxx-cxx-flags2."
+      "-- SimpleCxx: CMAKE_CXX_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- SimpleCxx: CMAKE_Fortran_FLAGS=. *-Ofast --scxx-f-flags1 --scxx-f-flags2."
+      "-- SimpleCxx: CMAKE_Fortran_FLAGS_RELEASE=.-O3."
+      "-- Performing Test HAVE_SIMPLECXX___INT64"
+      "-- Performing Test HAVE_SIMPLECXX___INT64 - Failed"
+      "-- MixedLang: CMAKE_C_FLAGS=.  -pedantic -Wall -Wno-long-long -std=c99."
+      "-- MixedLang: CMAKE_C_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- MixedLang: CMAKE_CXX_FLAGS=.  -pedantic -Wall -Wno-long-long -Wwrite-strings -Wshadow -Woverloaded-virtual  *-Og."
+      "-- MixedLang: CMAKE_CXX_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- MixedLang: CMAKE_Fortran_FLAGS=. *-Ofast ."
+      "-- MixedLang: CMAKE_Fortran_FLAGS_RELEASE=.-O3."
+      "-- WithSubpackages: CMAKE_C_FLAGS=. -pedantic -Wall -Wno-long-long -std=c99  *-O2 --wsp-c-flags1 --wsp-c-flags2."
+      "-- WithSubpackages: CMAKE_C_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- WithSubpackages: CMAKE_CXX_FLAGS=. -pedantic -Wall -Wno-long-long -Wwrite-strings  *-Og --wsp-cxx-flags1 --wsp-cxx-flags2."
+      "-- WithSubpackages: CMAKE_CXX_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- WithSubpackages: CMAKE_Fortran_FLAGS=. *-Ofast --wsp-f-flags1 --wsp-f-flags2."
+      "-- WithSubpackages: CMAKE_Fortran_FLAGS_RELEASE=.-O3."
+      "-- WithSubpackagesA: CMAKE_C_FLAGS=. -pedantic -Wall -Wno-long-long -std=c99  *-O2 --wsp-c-flags1 --wsp-c-flags2."
+      "-- WithSubpackagesA: CMAKE_C_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- WithSubpackagesA: CMAKE_CXX_FLAGS=. -pedantic -Wall -Wno-long-long -Wwrite-strings  *-Og --wsp-cxx-flags1 --wsp-cxx-flags2."
+      "-- WithSubpackagesA: CMAKE_CXX_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- WithSubpackagesA: CMAKE_Fortran_FLAGS=. *-Ofast --wsp-f-flags1 --wsp-f-flags2."
+      "-- WithSubpackagesA: CMAKE_Fortran_FLAGS_RELEASE=.-O3."
+      "-- WithSubpackagesB: CMAKE_C_FLAGS=. -pedantic -Wall -Wno-long-long -std=c99  *-O2 --wsp-c-flags1 --wsp-c-flags2 --wspb-c-flags1 --wspb-c-flags2."
+      "-- WithSubpackagesB: CMAKE_C_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- WithSubpackagesB: CMAKE_CXX_FLAGS=. -pedantic -Wall -Wno-long-long -Wwrite-strings  *-Og --wsp-cxx-flags1 --wsp-cxx-flags2 --wspb-cxx-flags1 --wspb-cxx-flags2."
+      "-- WithSubpackagesB: CMAKE_CXX_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- WithSubpackagesB: CMAKE_Fortran_FLAGS=. *-Ofast --wsp-f-flags1 --wsp-f-flags2."
+      "-- WithSubpackagesB: CMAKE_Fortran_FLAGS_RELEASE=.-O3."
+      "-- WithSubpackagesC: CMAKE_C_FLAGS=. -pedantic -Wall -Wno-long-long -std=c99  *-O2 --wsp-c-flags1 --wsp-c-flags2."
+      "-- WithSubpackagesC: CMAKE_C_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- WithSubpackagesC: CMAKE_CXX_FLAGS=. -pedantic -Wall -Wno-long-long -Wwrite-strings  *-Og --wsp-cxx-flags1 --wsp-cxx-flags2."
+      "-- WithSubpackagesC: CMAKE_CXX_FLAGS_RELEASE=.-O3 -DNDEBUG."
+      "-- WithSubpackagesC: CMAKE_Fortran_FLAGS=. *-Ofast --wsp-f-flags1 --wsp-f-flags2."
+      "-- WithSubpackagesC: CMAKE_Fortran_FLAGS_RELEASE=.-O3."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  # NOTE: Above, we have to use real compiler options for CMAKE_<LANG>_FLAGS
+  # or the configure-time checks will not even work.  We can only use dummy
+  # compiler options for the packages themselves.
+
+  TEST_1
+    MESSAGE "Build a SimpleCxx C++ file and check the compiler operations (we know build will fail)"
+    WORKING_DIRECTORY  packages/simple_cxx/src
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make
+    ARGS
+      VERBOSE=1 SimpleCxx_HelloWorld.o
+    PASS_REGULAR_EXPRESSION_ALL
+      "-pedantic -Wall -Wno-long-long -Wwrite-strings -Wshadow -Woverloaded-virtual  *-Og --scxx-cxx-flags1 --scxx-cxx-flags2 -O3 -DNDEBUG *-std=c[+][+]11"
+
+  TEST_2
+    MESSAGE "Build a MixedLang Fortran file and check the compiler operations (we know build will fail)"
+    WORKING_DIRECTORY  packages/mixed_lang/src
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make
+    ARGS
+      VERBOSE=1 Parameters.o
+    PASS_REGULAR_EXPRESSION_ALL
+      "--ml-f-flags1 --ml-f-flags2 -O3  *-c"
+
+  TEST_3
+    MESSAGE "Build a WithSubpackagesA C++ file and check the compiler operations (we know build will fail)"
+    WORKING_DIRECTORY  packages/with_subpackages/a
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make
+    ARGS
+      VERBOSE=1 A.o
+    PASS_REGULAR_EXPRESSION_ALL
+      "-pedantic -Wall -Wno-long-long -Wwrite-strings  *-Og --wsp-cxx-flags1 --wsp-cxx-flags2 -O3 -DNDEBUG *-std=c[+][+]11"
+    # NOTE: Above regex ensures that flags for WithSubpackagesB are not listed
+
+  TEST_4
+    MESSAGE "Build a WithSubpackagesB C++ file and check the compiler operations (we know build will fail)"
+    WORKING_DIRECTORY  packages/with_subpackages/b/src
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make
+    ARGS
+      VERBOSE=1 B.o
+    PASS_REGULAR_EXPRESSION_ALL
+      "-pedantic -Wall -Wno-long-long -Wwrite-strings  *-Og --wsp-cxx-flags1 --wsp-cxx-flags2 --wspb-cxx-flags1 --wspb-cxx-flags2 -O3 -DNDEBUG *-std=c[+][+]11"
+      # NOTE: Above regex ensures subpackage flags come after parent package flags
+
+  TEST_5
+    MESSAGE "Build a WithSubpackagesC C++ file and check the compiler operations (we know build will fail)"
+    WORKING_DIRECTORY  packages/with_subpackages/c
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make
+    ARGS
+      VERBOSE=1 C.o
+    PASS_REGULAR_EXPRESSION_ALL
+      "-pedantic -Wall -Wno-long-long -Wwrite-strings  *-Og --wsp-cxx-flags1 --wsp-cxx-flags2 -O3 -DNDEBUG *-std=c[+][+]11"
+    # NOTE: Above regex ensures that flags for WithSubpackagesB are not listed
+
+  )
+# NOTE: The above tests checks the compiler flags that are set by TriBITS for
+# the various use cases.  This is a hard test to make portable because we
+# really need to check that the comiler options are set all the way down.  To
+# make this more portable, we only do this on Linux systems and only with GCC.
+#
+# We actaully build known targets with 'make VERBOSE=1 <target>' and then grep
+# the output to make sure the compiler flags drill down all the way to the
+# actual targets.
+#
+# Note that we expect that as TriBITS evolves that the exact compiler options
+# we be changed.  But that is okay.
