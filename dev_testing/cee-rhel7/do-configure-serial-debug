@@ -13,19 +13,23 @@ if [ "$TRIBITS_BASE_DIR" == "" ] ; then
   TRIBITS_BASE_DIR=$_SCRIPT_DIR/../..
 fi
 
-${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-mpi-debug \
--DCTEST_PARALLEL_LEVEL=8 \
+${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-serial-debug-gcc \
+-DDART_TESTING_TIMEOUT=300 \
+-DCTEST_PARALLEL_LEVEL=12 \
 -DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE \
 -DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE \
 -DTriBITS_ENABLE_CONFIGURE_TIMING=ON \
+-DTriBITS_ENABLE_PACKAGE_CONFIGURE_TIMING=ON \
 -DTribitsExProj_INSTALL_BASE_DIR=/fgs/${USER}/tribits_install_tests \
--DTribitsExProj_INSTALL_OWNING_GROUP=wg-run-as-atdm-devops \
+-DTribitsExProj_INSTALL_OWNING_GROUP=wg-sems-users-son \
 -DTriBITS_ENABLE_REAL_GIT_CLONE_TESTS=ON \
--DDART_TESTING_TIMEOUT=60 \
+-DTriBITS_SHOW_TEST_START_END_DATE_TIME=ON \
 "$@"
 
 #-DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE \
 #-DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE \
+
+#-DTriBITS_ENABLE_DOC_GENERATION_TESTS=ON
 
 # To submit to testing.sandia.gov/cdash set:
 #
@@ -39,7 +43,7 @@ ${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-mpi-debug \
 #
 #   -DTriBITS_CTEST_DRIVER_SUBMIT_TO=EXP_CDASH
 
-# To submot to arbitrary CDash site (e.g. testing-dev.sandia.gov/cdash) set:
+# To submit to arbitrary CDash site (e.g. testing-dev.sandia.gov/cdash) set:
 #
 #   -DTriBITS_CTEST_DRIVER_SUBMIT_TO=CUSTOM
 #   -DTriBITS_CTEST_DRIVER_SUBMIT_DROP_SITE=testing-dev.sandia.gov
@@ -54,17 +58,10 @@ ${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-mpi-debug \
 #
 # before configuring.
 #
-# NOTE: The directory /fgs/${USER}/tribits_install_tests above was created beforehand with:
+# NOTE: The directory /fgs/${USER}/tribits_install_tests above must be created
+# beforehand with:
 #
-# $ /home/atdm-devops-admin/tools/run-as-atdm-devops-admin mkdir /fgs/${USER}/tribits_install_tests
-# $ /home/atdm-devops-admin/tools/run-as-atdm-devops-admin chgrp wg-run-as-atdm-devops /fgs/${USER}/tribits_install_tests
-# $ /home/atdm-devops-admin/tools/run-as-atdm-devops-admin chmod g+rwX /fgs/${USER}/tribits_install_tests
-# $ /home/atdm-devops-admin/tools/run-as-atdm-devops-admin chmod o+rX /fgs/${USER}/tribits_install_tests
+# $ mkdir /fgs/${USER}/tribits_install_tests
 #
-# which created the directory:
-#
-# $ ls -ld /fgs/${USER}/tribits_install_tests/
-# drwxrwxr-x. 2 atdm-devops-admin wg-run-as-atdm-devops 4096 May  1 11:13 /fgs/${USER}/tribits_install_tests/
-#
-# That tests a use case where the base install directory is not that of the
-# current user.
+# One can allow another user to create the directory with a shared group for
+# more testing.
