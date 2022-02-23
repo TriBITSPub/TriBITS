@@ -2,6 +2,13 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-03-02:
+
+* **Added:** Added project-level cache varaible `<Project>_IMPORTED_NO_SYSTEM`
+  to set the `IMPORTED_NO_SYSTEM` property on the exported IMPORTED library
+  targets in the installed `<Package>Config.cmake` files (see updated TriBITS
+  documentation for `<Project>_IMPORTED_NO_SYSTEM`).
+
 ## 2021-11-18:
 
 * **Changed:** The default `<Project>_GENERATE_REPO_VERSION_FILE_DEFAULT` will
