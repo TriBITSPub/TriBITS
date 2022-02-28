@@ -17,11 +17,41 @@ ChangeLog for TriBITS
 * **Changed:** The `<Package>Config.cmake` for each enabled package generated
   in the build directory tree have been moved from
   `<buildDir>/packages/<packageDir>/` to
-  `<buildDir>/cmake_packages/<PackageName>/`.  This makes it easy for
+  `<buildDir>/cmake_packages/<PackageName>/`.  (This makes it easy for
   `find_package(<PackageName>)` to find these files by simply adding the
   directory `<buildDir>/cmake_packages` to `CMAKE_PREFIX_PATH` and then
   `<Package>Config.cmake` for any enabled package will be found automatically
-  found by CMake.
+  found by CMake.)
+
+* **Added/Changed:** Added the include directories for each library target
+  with `target_include_directories()`.  This makes the usage of the variables
+  `<Package>_INCLUDE_DIRS`, `<Package>_TPL_INCLUDE_DIRS`,
+  `<Project>_INCLUDE_DIRS`, and `<Project>_TPL_INCLUDE_DIRS` unnecessary by
+  downstream CMake projects. (See the changes to the
+  `TribitsExampleApp/CmakeLists.txt` file that remove calls to
+  `include_directories()`.)  However, this change will also cause downstream
+  CMake projects to pull in include directories as `SYSTEM` (e.g. using
+  `-isystem` instead of `-I`) from IMPORTED library targets.  This changes how
+  these include directories are searched and could break some fragile build
+  environments that have the same header file names in multiple include
+  directories searched by the compiler.  Also, this will silence any regular
+  compiler warnings from headers found under these include
+  directories. ***Workarounds:*** One workaround for this is for the
+  downstream CMake project to set the cache variable
+  `CMAKE_NO_SYSTEM_FROM_IMPORTED=TRUE` which will restore the include
+  directories for the IMPORTED library targets for the TriBITS project as
+  non-SYSTEM include directories (i.e. `-I`) but it will also cause all
+  include directories for all IMPORTED library targets to be non-SYSTEM
+  (i.e. `-I`) even if they were being handled as SYSTEM include directories
+  before.  Therefore, that could still break the downstream project as it
+  might change what header files are found for these other IMPORTED library
+  targets and may expose many new warnings (which may have been silenced by
+  their include directories being pulled in using `-isystem`).  The other
+  workaround would be to clean up the list of include directories or delete
+  some header files in those include directories so that only the correct
+  header files can be found (regardless of the search order).  For more
+  details, see
+  [TriBITSPub/TriBITS#443](https://github.com/TriBITSPub/TriBITS/issues/443).
 
 ## 2021-09-13
 
