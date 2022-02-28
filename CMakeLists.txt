@@ -4,6 +4,8 @@
 #                                                                              #
 ################################################################################
 
+message(FATAL_ERROR "intentional error")
+
 if (NOT TRIBITS_PROCESSING_PACKAGE)
   # This CMakeLists.txt file is being processed as the TriBITS projects's base
   # CMakeLists.txt file!  (See comments at bottom of this file.)
