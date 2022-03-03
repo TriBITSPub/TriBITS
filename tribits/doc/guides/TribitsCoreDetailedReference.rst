@@ -79,6 +79,7 @@ a given TriBITS project are:
 * `${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES`_
 * `${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES`_
 * `${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE`_
+* `${PROJECT_NAME}_IMPORTED_NO_SYSTEM`_
 * `${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS`_
 * `${PROJECT_NAME}_MAKE_INSTALL_GROUP_READABLE`_
 * `${PROJECT_NAME}_MAKE_INSTALL_GROUP_WRITABLE`_
@@ -489,7 +490,33 @@ These options are described below.
   overridden to ``OFF``.  But if the user sets
   ``${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE=ON`` in the cache and ``git``
   can't be found, then an configure-time error will occur.
-  
+
+
+.. _${PROJECT_NAME}_IMPORTED_NO_SYSTEM:
+
+**${PROJECT_NAME}_IMPORTED_NO_SYSTEM**
+
+  By default, include directories from IMPORTED library targets from the
+  TriBITS project's installed ``<Project>Config.cmake`` files will be
+  considered ``SYSTEM`` headers and therefore be included on the compile lines
+  of downstream CMake projects with ``-isystem`` with most compilers.
+  However, if ``${PROJECT_NAME}_IMPORTED_NO_SYSTEM`` is set to ``ON``, then
+  all of the IMPORTED library targets exported into the set of installed
+  ``<Package>Config.cmake`` files will have the ``IMPORTED_NO_SYSTEM``
+  property set.  This will cause downstream customer CMake projects to apply
+  the include directories from these IMPORTED library targets as non-system
+  include directories.  On most compilers, that means that the include
+  directories will be listed on the compile lines with ``-I`` instead of with
+  ``-isystem``.
+
+  The default is ``OFF`` but a TriBITS project can set a different default by
+  setting::
+
+    set(${PROJECT_NAME}_IMPORTED_NO_SYSTEM_DEFAULT ON)
+
+  in the `<projectDir>/ProjectName.cmake`_ file.
+
+
 .. _${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS:
 
 **${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS**

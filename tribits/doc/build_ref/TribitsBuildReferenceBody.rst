@@ -1401,6 +1401,26 @@ search for extra required libraries (such as the mpi library and the gfortran
 library for gnu compilers) to locate static versions.
 
 
+Changing include directories in downstream CMake projects to non-system
+-----------------------------------------------------------------------
+
+By default, include directories from IMPORTED library targets from the
+<Project>'s installed ``<Project>Config.cmake`` files will be considered
+``SYSTEM`` headers and therefore be included on the compile lines of
+downstream CMake projects with ``-isystem`` with most compilers.  However,
+if::
+
+  -D ${PROJECT_NAME}_IMPORTED_NO_SYSTEM=ON
+
+is set, then all of the IMPORTED library targets exported into the set of
+installed ``<Package>Config.cmake`` files will have the ``IMPORTED_NO_SYSTEM``
+target property set.  This will cause downstream customer CMake projects to
+apply the include directories from these IMPORTED library targets as
+non-system include directories.  On most compilers, that means that the
+include directories will be listed on the compile lines with ``-I`` instead of
+with ``-isystem``.
+
+
 Enabling the usage of resource files to reduce length of build lines
 --------------------------------------------------------------------
 

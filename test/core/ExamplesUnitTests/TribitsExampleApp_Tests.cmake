@@ -647,6 +647,151 @@ TribitsExampleApp_ALL_ST(ByPackage STATIC)
 TribitsExampleApp_ALL_ST(ByPackage SHARED)
 
 
+################################################################################
+
+
+function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoSystem)
+
+  if (byProjectOrPackage STREQUAL "ByProject")
+    set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
+    set(foundProjectOrPackageStr "Found TribitsExProj")
+  elseif (byProjectOrPackage STREQUAL "ByPackage")
+    set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=ON)
+    set(foundProjectOrPackageStr "Found SimpleCxx")
+  else()
+    message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
+  endif()
+
+  TribitsExampleApp_process_sharedOrStatic_arg()
+
+  if (importedNoSystem STREQUAL "IMPORTED_NO_SYSTEM")
+    set(importedNoSystemArg -DTribitsExProj_IMPORTED_NO_SYSTEM=ON)
+    set(importedNoSystemNameSuffix "_${importedNoSystem}")
+  elseif (importedNoSystem STREQUAL "")
+    set(importedNoSystemArg "")
+    set(importedNoSystemNameSuffix "")
+  else()
+    message(FATAL_ERROR "Invaid value for importedNoSystem='${importedNoSystem}'!")
+  endif()
+
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic}${importedNoSystemNameSuffix})
+  set(testName ${PACKAGE_NAME}_${testBaseName})
+  set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
+
+  TribitsExampleApp_set_test_env_var()
+
+  TribitsExampleApp_GetExpectedAppFullDeps(fullDepsStr
+    SimpleTpl SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC)
+
+  if (importedNoSystem STREQUAL "IMPORTED_NO_SYSTEM")
+    set(tribitExProjIncludeRegex "[-]I${testDir}/install")
+  elseif (importedNoSystem STREQUAL "")
+    set(tribitExProjIncludeRegex "[-]isystem ${testDir}/install")
+  else()
+    message(FATAL_ERROR "Invaid value for importedNoSystem='${importedNoSystem}'!")
+  endif()
+
+  if (CMAKE_VERSION  VERSION_GREATER_EQUAL  3.23)
+    set(CMAKE_VERSION_2_23 TRUE)
+  else()
+    set(CMAKE_VERSION_2_23 FALSE)
+  endif()
+
+  tribits_add_advanced_test( ${testBaseName}
+    OVERALL_WORKING_DIRECTORY  TEST_NAME
+    OVERALL_NUM_MPI_PROCS  1
+    EXCLUDE_IF_NOT_TRUE  ${PROJECT_NAME}_ENABLE_Fortran  COMPILER_IS_GNU
+      CMAKE_VERSION_2_23  NINJA_EXE
+    XHOSTTYPE  Darwin
+
+    TEST_0
+      MESSAGE "Do the configure of TribitsExampleProject"
+      WORKING_DIRECTORY BUILD
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj_ENABLE_Fortran=ON
+        -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        -DTPL_ENABLE_SimpleTpl=ON
+        -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/include
+        -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib
+        ${buildSharedLibsArg}
+        ${importedNoSystemArg}
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+
+    TEST_1
+      MESSAGE "Build and install TribitsExampleProject locally"
+      WORKING_DIRECTORY BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_COMMAND} ARGS --build . --target install
+
+    TEST_2
+      MESSAGE "Configure TribitsExampleApp locally"
+      WORKING_DIRECTORY app_build
+      CMND ${CMAKE_COMMAND} ARGS
+        -GNinja
+        -DCMAKE_PREFIX_PATH=${testDir}/install
+        -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang,WithSubpackages
+        ${findByProjectOrPackageArg}
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
+      PASS_REGULAR_EXPRESSION_ALL
+        "${foundProjectOrPackageStr}"
+        "-- Configuring done"
+        "-- Generating done"
+        "-- Build files have been written to: .*/${testName}/app_build"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_3
+      MESSAGE "Build TribitsExampleApp verbose to see include dirs"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_COMMAND} ARGS --build . -v
+      PASS_REGULAR_EXPRESSION_ALL
+        "${tribitExProjIncludeRegex}"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_4
+      MESSAGE "Test TribitsExampleApp"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      PASS_REGULAR_EXPRESSION_ALL
+        "Full Deps: ${fullDepsStr}"
+        "app_test [.]+   Passed"
+        "100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${TEST_ENV_ARG}
+
+    ADDED_TEST_NAME_OUT ${testNameBase}_NAME
+    )
+  # NOTE: Above test checks that the IMPORTED_NO_SYSTEM property is set
+  # correctly and CMake is handling it correctly.  NOTE: Above, we had to
+  # switch to Ninja and 'cmake --build . -v [--target <target>] in order to
+  # get verbose output when run inside of a cmake -S script with CMake
+  # 3.23-rc2.  Not sure why this is but this is better anyway.
+
+  if (${testNameBase}_NAME)
+    set_tests_properties(${${testNameBase}_NAME}
+      PROPERTIES DEPENDS ${SimpleTpl_install_${sharedOrStatic}_NAME} )
+  endif()
+
+endfunction()
+
+
+TribitsExampleApp_INCLUDE(ByProject STATIC "")
+TribitsExampleApp_INCLUDE(ByProject SHARED IMPORTED_NO_SYSTEM)
+TribitsExampleApp_INCLUDE(ByProject STATIC IMPORTED_NO_SYSTEM)
+TribitsExampleApp_INCLUDE(ByPackage SHARED IMPORTED_NO_SYSTEM)
+TribitsExampleApp_INCLUDE(ByPackage STATIC IMPORTED_NO_SYSTEM)
+# NOTE: Above, we are checking that all of the targets defined by the
+# <Project>Config.cmake and <Package>Config.cmake files all result in -I
+# includes for TribitsExProj when setting -D<Project>_IMPORTED_NO_SYSTEM=ON.
+
 
 ################################################################################
 

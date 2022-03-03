@@ -2801,12 +2801,13 @@ tribits_add_advanced_test( TribitsExampleProject_compiler_flags
   OVERALL_WORKING_DIRECTORY  TEST_NAME
   OVERALL_NUM_MPI_PROCS  1
   EXCLUDE_IF_NOT_TRUE  IS_REAL_LINUX_SYSTEM  COMPILER_IS_GNU
-    ${PROJECT_NAME}_ENABLE_Fortran
+    ${PROJECT_NAME}_ENABLE_Fortran  NINJA_EXE
 
   TEST_0
     MESSAGE "Configure by setting targets compiler flags for some packages"
     CMND ${CMAKE_COMMAND}
     ARGS
+      -GNinja
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=ON
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
@@ -2872,56 +2873,42 @@ tribits_add_advanced_test( TribitsExampleProject_compiler_flags
 
   TEST_1
     MESSAGE "Build a SimpleCxx C++ file and check the compiler operations (we know build will fail)"
-    WORKING_DIRECTORY  packages/simple_cxx/src
-    SKIP_CLEAN_WORKING_DIRECTORY
-    CMND make
-    ARGS
-      VERBOSE=1 SimpleCxx_HelloWorld.o
+    CMND ${CMAKE_COMMAND} ARGS --build . -v --target packages/simple_cxx/src/CMakeFiles/simplecxx.dir/SimpleCxx_HelloWorld.cpp.o
     PASS_REGULAR_EXPRESSION_ALL
       "-pedantic -Wall -Wno-long-long -Wwrite-strings -Wshadow -Woverloaded-virtual  *-Og --scxx-cxx-flags1 --scxx-cxx-flags2 -O3 -DNDEBUG *-std=c[+][+]11"
 
   TEST_2
     MESSAGE "Build a MixedLang Fortran file and check the compiler operations (we know build will fail)"
-    WORKING_DIRECTORY  packages/mixed_lang/src
-    SKIP_CLEAN_WORKING_DIRECTORY
-    CMND make
-    ARGS
-      VERBOSE=1 Parameters.o
+    CMND ${CMAKE_COMMAND} ARGS --build . -v --target packages/mixed_lang/src/CMakeFiles/mixedlang.dir/Parameters.f90.o
     PASS_REGULAR_EXPRESSION_ALL
-      "--ml-f-flags1 --ml-f-flags2 -O3  *-c"
+      "--ml-f-flags1 --ml-f-flags2 -O3"
+    FAIL_REGULAR_EXPRESSION
+      "--wspb-cxx-flags1 --wspb-cxx-flags2"
 
   TEST_3
     MESSAGE "Build a WithSubpackagesA C++ file and check the compiler operations (we know build will fail)"
-    WORKING_DIRECTORY  packages/with_subpackages/a
-    SKIP_CLEAN_WORKING_DIRECTORY
-    CMND make
-    ARGS
-      VERBOSE=1 A.o
+    CMND ${CMAKE_COMMAND} ARGS --build . -v --target packages/with_subpackages/a/CMakeFiles/pws_a.dir/A.cpp.o
     PASS_REGULAR_EXPRESSION_ALL
       "-pedantic -Wall -Wno-long-long -Wwrite-strings  *-Og --wsp-cxx-flags1 --wsp-cxx-flags2 -O3 -DNDEBUG *-std=c[+][+]11"
-    # NOTE: Above regex ensures that flags for WithSubpackagesB are not listed
+    FAIL_REGULAR_EXPRESSION
+      "--wspb-cxx-flags1 --wspb-cxx-flags2"
+    # NOTE: Above regexes ensures that flags for WithSubpackagesB are not listed
 
   TEST_4
     MESSAGE "Build a WithSubpackagesB C++ file and check the compiler operations (we know build will fail)"
-    WORKING_DIRECTORY  packages/with_subpackages/b/src
-    SKIP_CLEAN_WORKING_DIRECTORY
-    CMND make
-    ARGS
-      VERBOSE=1 B.o
+    CMND ${CMAKE_COMMAND} ARGS --build . -v --target packages/with_subpackages/b/src/CMakeFiles/pws_b.dir/B.cpp.o
     PASS_REGULAR_EXPRESSION_ALL
       "-pedantic -Wall -Wno-long-long -Wwrite-strings  *-Og --wsp-cxx-flags1 --wsp-cxx-flags2 --wspb-cxx-flags1 --wspb-cxx-flags2 -O3 -DNDEBUG *-std=c[+][+]11"
       # NOTE: Above regex ensures subpackage flags come after parent package flags
 
   TEST_5
     MESSAGE "Build a WithSubpackagesC C++ file and check the compiler operations (we know build will fail)"
-    WORKING_DIRECTORY  packages/with_subpackages/c
-    SKIP_CLEAN_WORKING_DIRECTORY
-    CMND make
-    ARGS
-      VERBOSE=1 C.o
+    CMND ${CMAKE_COMMAND} ARGS --build . -v --target packages/with_subpackages/c/CMakeFiles/pws_c.dir/C.cpp.o
     PASS_REGULAR_EXPRESSION_ALL
       "-pedantic -Wall -Wno-long-long -Wwrite-strings  *-Og --wsp-cxx-flags1 --wsp-cxx-flags2 -O3 -DNDEBUG *-std=c[+][+]11"
-    # NOTE: Above regex ensures that flags for WithSubpackagesB are not listed
+    FAIL_REGULAR_EXPRESSION
+      "--wspb-cxx-flags1 --wspb-cxx-flags2"
+    # NOTE: Above regexes ensures that flags for WithSubpackagesB are not listed
 
   )
 # NOTE: The above tests checks the compiler flags that are set by TriBITS for
@@ -2935,3 +2922,7 @@ tribits_add_advanced_test( TribitsExampleProject_compiler_flags
 #
 # Note that we expect that as TriBITS evolves that the exact compiler options
 # we be changed.  But that is okay.
+#
+# NOTE: Above, we had to switch to Ninja and 'cmake --build . -v [--target
+# <target>] in order to get verbose output when run inside of a cmake -S
+# script with CMake 3.23-rc2.  Not sure why this is but this is better anyway.
