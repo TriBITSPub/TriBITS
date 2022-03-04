@@ -4,10 +4,23 @@ ChangeLog for TriBITS
 
 ## 2022-03-02:
 
-* **Added:** Added project-level cache varaible `<Project>_IMPORTED_NO_SYSTEM`
-  to set the `IMPORTED_NO_SYSTEM` property on the exported IMPORTED library
-  targets in the installed `<Package>Config.cmake` files (see updated TriBITS
-  documentation for `<Project>_IMPORTED_NO_SYSTEM`).
+* **Added:** The project-level cache variable `<Project>_IMPORTED_NO_SYSTEM`
+  was added to set the `IMPORTED_NO_SYSTEM` property (CMake versions 3.23+
+  only) on the exported IMPORTED library targets in the installed
+  `<Package>Config.cmake` files (see updated TriBITS users guide and build
+  reference documentation for `<Project>_IMPORTED_NO_SYSTEM`).  Setting this
+  to `ON` results in the include directories for this project's IMPORTED
+  library targets to be listed on the compile lines in downstream CMake
+  projects using `-I` instead of the default `-isystem` for IMPORTED library
+  targets.  Therefore, setting this option to `ON` returns backward
+  compatibility for the move to modern CMake targets which involved setting
+  the include directories on the IMPORTED library targets using
+  `target_include_directories()` described below (which changed the include
+  directories from being listed as `-I` to `-isystem` by default).<br>
+  **Workaround:** As a workaround for CMake versions less than 3.23,
+  downstream CMake projects can set `CMAKE_NO_SYSTEM_FROM_IMPORTED=TRUE` in
+  their CMake configure as described below.<br> For more details, see
+  [TriBITSPub/TriBITS#443](https://github.com/TriBITSPub/TriBITS/issues/443).
 
 ## 2021-11-18:
 
@@ -43,7 +56,7 @@ ChangeLog for TriBITS
   environments that have the same header file names in multiple include
   directories searched by the compiler.  Also, this will silence any regular
   compiler warnings from headers found under these include
-  directories. ***Workarounds:*** One workaround for this is for the
+  directories.<br> ***Workarounds:*** One workaround for this is for the
   downstream CMake project to set the cache variable
   `CMAKE_NO_SYSTEM_FROM_IMPORTED=TRUE` which will restore the include
   directories for the IMPORTED library targets for the TriBITS project as
