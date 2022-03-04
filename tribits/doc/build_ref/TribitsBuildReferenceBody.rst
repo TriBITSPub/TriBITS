@@ -1410,12 +1410,12 @@ considered ``SYSTEM`` headers and therefore will be included on the compile
 lines of downstream CMake projects with ``-isystem`` with most compilers.
 However, when using CMake 3.23+, by configuring with::
 
-  -D ${PROJECT_NAME}_IMPORTED_NO_SYSTEM=ON
+  -D <Project>_IMPORTED_NO_SYSTEM=ON
 
-then all of the IMPORTED library targets exported into the set of installed
+then all of the IMPORTED library targets in the set of installed
 ``<Package>Config.cmake`` files will have the ``IMPORTED_NO_SYSTEM`` target
 property set.  This will cause downstream customer CMake projects to apply the
-include directories from these IMPORTED library targets as non-system include
+include directories from these IMPORTED library targets as non-SYSTEM include
 directories.  On most compilers, that means that the include directories will
 be listed on the compile lines with ``-I`` instead of with ``-isystem`` (for
 compilers that support the ``-isystem`` option).  (Changing from ``-isystem
@@ -1425,7 +1425,7 @@ header files emitting compiler warnings that would other otherwise be silenced
 when the headers were found in include directories pulled in with
 ``-isystem``.)
 
-**NOTE:** Setting ``${PROJECT_NAME}_IMPORTED_NO_SYSTEM=ON`` when using a CMake
+**NOTE:** Setting ``<Project>_IMPORTED_NO_SYSTEM=ON`` when using a CMake
 version less than 3.23 will result in a fatal configure error (so don't do
 that).
 
@@ -1440,8 +1440,8 @@ compile lines using ``-I`` instead of ``-isystem``, and not just for the
 IMPORTED library targets from this <Project> project's installed
 ``<Package>Config.cmake`` files!
 
-**NOTE:** Setting ``CMAKE_NO_SYSTEM_FROM_IMPORTED=TRUE`` the <Project> CMake
-configure will **not** result in changing how include directories from
+**NOTE:** Setting ``CMAKE_NO_SYSTEM_FROM_IMPORTED=TRUE`` in the <Project>
+CMake configure will **not** result in changing how include directories from
 <Project>'s IMPORTED targets are handled in a downstream customer CMake
 project!  It will only change how include directories from upstream package's
 IMPORTED targets are handled in the <Project> CMake project build itself.

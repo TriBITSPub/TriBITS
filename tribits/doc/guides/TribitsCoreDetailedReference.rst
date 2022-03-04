@@ -507,10 +507,11 @@ These options are described below.
   downstream customer CMake projects to apply the include directories from
   these IMPORTED library targets as non-system include directories.  On most
   compilers, that means that the include directories will be listed on the
-  compile lines with ``-I`` instead of with ``-isystem``.
+  compile lines with ``-I`` instead of with ``-isystem``.  (See more details
+  in the TriBITS Build Reference for ``<Project>_IMPORTED_NO_SYSTEM``.)
 
-  The default is ``OFF`` but a TriBITS project can default to ``ON`` by
-  adding::
+  The default value set by TriBITS itself is ``OFF`` but a TriBITS project can
+  change the default value to ``ON`` by adding::
 
     if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.23)
       set(${PROJECT_NAME}_IMPORTED_NO_SYSTEM_DEFAULT ON)
