@@ -210,7 +210,7 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date</dt>
-<dd class="field-odd"><p>2022-03-03
+<dd class="field-odd"><p>2022-03-07
 :Version: .. include:: ../copied_files/TribitsGitVersion.txt</p>
 </dd>
 </dl>
@@ -1620,20 +1620,43 @@ library for gnu compilers) to locate static versions.</p>
 <section id="changing-include-directories-in-downstream-cmake-projects-to-non-system">
 <h2><a class="toc-backref" href="#id41"><span class="sectnum">4.14</span> Changing include directories in downstream CMake projects to non-system</a><a class="headerlink" href="#changing-include-directories-in-downstream-cmake-projects-to-non-system" title="Permalink to this headline"></a></h2>
 <p>By default, include directories from IMPORTED library targets from the
-&lt;Project&gt;’s installed <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;Config.cmake</span></code> files will be considered
-<code class="docutils literal notranslate"><span class="pre">SYSTEM</span></code> headers and therefore be included on the compile lines of
-downstream CMake projects with <code class="docutils literal notranslate"><span class="pre">-isystem</span></code> with most compilers.  However,
-if:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>-D ${PROJECT_NAME}_IMPORTED_NO_SYSTEM=ON
+&lt;Project&gt; project’s installed <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> files will be
+considered <code class="docutils literal notranslate"><span class="pre">SYSTEM</span></code> headers and therefore will be included on the compile
+lines of downstream CMake projects with <code class="docutils literal notranslate"><span class="pre">-isystem</span></code> with most compilers.
+However, when using CMake 3.23+, by configuring with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_IMPORTED_NO_SYSTEM</span><span class="o">=</span><span class="n">ON</span>
 </pre></div>
 </div>
-<p>is set, then all of the IMPORTED library targets exported into the set of
-installed <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> files will have the <code class="docutils literal notranslate"><span class="pre">IMPORTED_NO_SYSTEM</span></code>
-target property set.  This will cause downstream customer CMake projects to
-apply the include directories from these IMPORTED library targets as
-non-system include directories.  On most compilers, that means that the
-include directories will be listed on the compile lines with <code class="docutils literal notranslate"><span class="pre">-I</span></code> instead of
-with <code class="docutils literal notranslate"><span class="pre">-isystem</span></code>.</p>
+<p>then all of the IMPORTED library targets in the set of installed
+<code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> files will have the <code class="docutils literal notranslate"><span class="pre">IMPORTED_NO_SYSTEM</span></code> target
+property set.  This will cause downstream customer CMake projects to apply the
+include directories from these IMPORTED library targets as non-SYSTEM include
+directories.  On most compilers, that means that the include directories will
+be listed on the compile lines with <code class="docutils literal notranslate"><span class="pre">-I</span></code> instead of with <code class="docutils literal notranslate"><span class="pre">-isystem</span></code> (for
+compilers that support the <code class="docutils literal notranslate"><span class="pre">-isystem</span></code> option).  (Changing from <code class="docutils literal notranslate"><span class="pre">-isystem</span>
+<span class="pre">&lt;incl-dir&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">-I</span> <span class="pre">&lt;incl-dir&gt;</span></code> moves <code class="docutils literal notranslate"><span class="pre">&lt;incl-dir&gt;</span></code> forward in the
+compiler’s include directory search order and could also result in the found
+header files emitting compiler warnings that would other otherwise be silenced
+when the headers were found in include directories pulled in with
+<code class="docutils literal notranslate"><span class="pre">-isystem</span></code>.)</p>
+<p><strong>NOTE:</strong> Setting <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_IMPORTED_NO_SYSTEM=ON</span></code> when using a CMake
+version less than 3.23 will result in a fatal configure error (so don’t do
+that).</p>
+<p><strong>A workaround for CMake versions less than 3.23</strong> is for <strong>downstream
+customer CMake projects</strong> to set the native CMake cache variable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_NO_SYSTEM_FROM_IMPORTED</span><span class="o">=</span><span class="n">TRUE</span>
+</pre></div>
+</div>
+<p>This will result in <strong>all</strong> include directories from <strong>all</strong> IMPORTED library
+targets used in the downstream customer CMake project to be listed on the
+compile lines using <code class="docutils literal notranslate"><span class="pre">-I</span></code> instead of <code class="docutils literal notranslate"><span class="pre">-isystem</span></code>, and not just for the
+IMPORTED library targets from this &lt;Project&gt; project’s installed
+<code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> files!</p>
+<p><strong>NOTE:</strong> Setting <code class="docutils literal notranslate"><span class="pre">CMAKE_NO_SYSTEM_FROM_IMPORTED=TRUE</span></code> in the &lt;Project&gt;
+CMake configure will <strong>not</strong> result in changing how include directories from
+&lt;Project&gt;’s IMPORTED targets are handled in a downstream customer CMake
+project!  It will only change how include directories from upstream package’s
+IMPORTED targets are handled in the &lt;Project&gt; CMake project build itself.</p>
 </section>
 <section id="enabling-the-usage-of-resource-files-to-reduce-length-of-build-lines">
 <h2><a class="toc-backref" href="#id42"><span class="sectnum">4.15</span> Enabling the usage of resource files to reduce length of build lines</a><a class="headerlink" href="#enabling-the-usage-of-resource-files-to-reduce-length-of-build-lines" title="Permalink to this headline"></a></h2>
