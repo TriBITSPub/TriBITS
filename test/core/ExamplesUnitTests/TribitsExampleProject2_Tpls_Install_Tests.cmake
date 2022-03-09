@@ -76,7 +76,7 @@ function(TribitsExampleProject2_Tpls_install_tests sharedOrStatic)
         ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
         ${buildSharedLibsArg}
         -DCMAKE_BUILD_TYPE=RelWithDepInfo
-        -DCMAKE_INSTALL_PREFIX=${testDir}/install
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install_tpl1
         -DCMAKE_INSTALL_INCLUDEDIR=include
         -DCMAKE_INSTALL_LIBDIR=lib
         ${testDir}/Tpl1
@@ -92,8 +92,8 @@ function(TribitsExampleProject2_Tpls_install_tests sharedOrStatic)
       CMND make ARGS ${CTEST_BUILD_FLAGS} install
       PASS_REGULAR_EXPRESSION_ALL
         "Built target tpl1"
-        "Installing: ${testDir}/install/lib/libtpl1[.]"
-        "Installing: ${testDir}/install/include/Tpl1.hpp"
+        "Installing: ${testDir}/install_tpl1/lib/libtpl1[.]"
+        "Installing: ${testDir}/install_tpl1/include/Tpl1.hpp"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_3
@@ -103,6 +103,9 @@ function(TribitsExampleProject2_Tpls_install_tests sharedOrStatic)
       ADDED_TEST_NAME_OUT
         TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME
     )
+    # NOTE: The above test installs each TPL into its own install directory.
+    # This is too increase the testing effect downstream to ensure that
+    # include directories are handled correctly in the tests and with TriBITS.
 
   # Name of added test to use to create test dependencies
   set(TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME
