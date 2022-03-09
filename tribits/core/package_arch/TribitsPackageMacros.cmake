@@ -727,7 +727,6 @@ macro(tribits_package_create_all_libs_interface_library)
         list(APPEND packageLibsInAllLibsList ${libTarget})
       endif()
     endforeach()
-    #print_var(packageLibsInAllLibsList)
     global_set(${PACKAGE_NAME}_EXPORTED_PACKAGE_LIBS_NAMES
       ${packageLibsInAllLibsList})
 

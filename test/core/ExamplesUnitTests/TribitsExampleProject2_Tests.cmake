@@ -78,7 +78,7 @@ macro(TribitsExampleProject2_test_setup_header)
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
       set(libtpl_name "libtpl1.a")
   else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
+    message(FATAL_ERROR "Invalid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
 endmacro()
 
