@@ -141,6 +141,45 @@ function(TribitsExampleProject2_Tpls_install_tests sharedOrStatic)
       MESSAGE "Delete source and build directory for Tpl2"
       CMND ${CMAKE_COMMAND} ARGS -E rm -rf Tpl2 build_tpl2
 
+    TEST_8
+      MESSAGE "Copy source for Tpl3"
+      CMND ${CMAKE_COMMAND}
+      ARGS -E copy_directory ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/Tpl3 .
+      WORKING_DIRECTORY Tpl3
+
+    TEST_9
+      MESSAGE "Configure Tpl3"
+      WORKING_DIRECTORY build_tpl3
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
+        ${buildSharedLibsArg}
+        -DCMAKE_PREFIX_PATH="${testDir}/install_tpl2"
+        -DCMAKE_BUILD_TYPE=RelWithDepInfo
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install_tpl3
+        -DCMAKE_INSTALL_INCLUDEDIR=include
+        -DCMAKE_INSTALL_LIBDIR=lib
+        ${testDir}/Tpl3
+      PASS_REGULAR_EXPRESSION_ALL
+        "Configuring done"
+        "Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_10
+      MESSAGE "Build and install Tpl3"
+      WORKING_DIRECTORY build_tpl3
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+      PASS_REGULAR_EXPRESSION_ALL
+        "Built target tpl3"
+        "Installing: ${testDir}/install_tpl3/lib/libtpl3[.]"
+        "Installing: ${testDir}/install_tpl3/include/Tpl3.hpp"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_11
+      MESSAGE "Delete source and build directory for Tpl3"
+      CMND ${CMAKE_COMMAND} ARGS -E rm -rf Tpl3 build_tpl3
+
       ADDED_TEST_NAME_OUT
         TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME
     )
