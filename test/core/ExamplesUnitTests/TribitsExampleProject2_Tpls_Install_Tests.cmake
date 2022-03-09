@@ -49,7 +49,7 @@ function(TribitsExampleProject2_Tpls_install_tests sharedOrStatic)
   elseif (sharedOrStatic STREQUAL "STATIC")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
   else()
-    message(FATAL_ERROR "Invaid value for sharedOrStatic='${sharedOrStatic}'!")
+    message(FATAL_ERROR "Invalid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
 
   # A) Build and install Tpl1, ???

@@ -535,7 +535,7 @@ function(TribitsExampleApp_ALL_ST byProjectOrPackage sharedOrStatic)
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=ON)
     set(foundProjectOrPackageStr "Found SimpleCxx")
   else()
-    message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
+    message(FATAL_ERROR "Invalid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
   endif()
 
   TribitsExampleApp_process_sharedOrStatic_arg()
@@ -659,7 +659,7 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=ON)
     set(foundProjectOrPackageStr "Found SimpleCxx")
   else()
-    message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
+    message(FATAL_ERROR "Invalid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
   endif()
 
   TribitsExampleApp_process_sharedOrStatic_arg()
@@ -671,7 +671,7 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
     set(importedNoSystemArg "")
     set(importedNoSystemNameSuffix "")
   else()
-    message(FATAL_ERROR "Invaid value for importedNoSystem='${importedNoSystem}'!")
+    message(FATAL_ERROR "Invalid value for importedNoSystem='${importedNoSystem}'!")
   endif()
 
   set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic}${importedNoSystemNameSuffix})
@@ -688,7 +688,7 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
   elseif (importedNoSystem STREQUAL "")
     set(tribitExProjIncludeRegex "[-]isystem ${testDir}/install")
   else()
-    message(FATAL_ERROR "Invaid value for importedNoSystem='${importedNoSystem}'!")
+    message(FATAL_ERROR "Invalid value for importedNoSystem='${importedNoSystem}'!")
   endif()
 
   if (CMAKE_VERSION  VERSION_GREATER_EQUAL  3.23)
@@ -805,7 +805,7 @@ function(TribitsExampleApp_NoOptionalPackages byProjectOrPackage sharedOrStatic)
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=ON)
     set(foundProjectOrPackageStr "Found SimpleCxx")
   else()
-    message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
+    message(FATAL_ERROR "Invalid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
   endif()
 
   TribitsExampleApp_process_sharedOrStatic_arg()
@@ -928,7 +928,7 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options byProjectOrPackage sharedOrSt
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=ON)
     set(foundProjectOrPackageStr "Found SimpleCxx")
   else()
-    message(FATAL_ERROR "Invaid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
+    message(FATAL_ERROR "Invalid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
   endif()
 
   TribitsExampleApp_process_sharedOrStatic_arg()
