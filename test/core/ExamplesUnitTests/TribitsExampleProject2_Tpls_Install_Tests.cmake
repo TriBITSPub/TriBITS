@@ -52,7 +52,7 @@ function(TribitsExampleProject2_Tpls_install_tests sharedOrStatic)
     message(FATAL_ERROR "Invalid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
 
-  # A) Build and install Tpl1, ???
+  # A) Build and install Tpl1, Tpl2, Tpl3
 
   set(testNameBase TribitsExampleProject2_Tpls_install_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testNameBase})
@@ -99,6 +99,47 @@ function(TribitsExampleProject2_Tpls_install_tests sharedOrStatic)
     TEST_3
       MESSAGE "Delete source and build directory for Tpl1"
       CMND ${CMAKE_COMMAND} ARGS -E rm -rf Tpl1 build_tpl1
+
+    TEST_4
+      MESSAGE "Copy source for Tpl2"
+      CMND ${CMAKE_COMMAND}
+      ARGS -E copy_directory ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/Tpl2 .
+      WORKING_DIRECTORY Tpl2
+
+    TEST_5
+      MESSAGE "Configure Tpl2"
+      WORKING_DIRECTORY build_tpl2
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
+        ${buildSharedLibsArg}
+        -DCMAKE_PREFIX_PATH="${testDir}/install_tpl1"
+        -DCMAKE_BUILD_TYPE=RelWithDepInfo
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install_tpl2
+        -DCMAKE_INSTALL_INCLUDEDIR=include
+        -DCMAKE_INSTALL_LIBDIR=lib
+        ${testDir}/Tpl2
+      PASS_REGULAR_EXPRESSION_ALL
+        "Configuring done"
+        "Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_6
+      MESSAGE "Build and install Tpl2"
+      WORKING_DIRECTORY build_tpl2
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+      PASS_REGULAR_EXPRESSION_ALL
+        "Built target tpl2"
+        "Installing: ${testDir}/install_tpl2/lib/libtpl2a[.]"
+        "Installing: ${testDir}/install_tpl2/include/Tpl2a.hpp"
+        "Installing: ${testDir}/install_tpl2/lib/libtpl2b[.]"
+        "Installing: ${testDir}/install_tpl2/include/Tpl2b.hpp"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_7
+      MESSAGE "Delete source and build directory for Tpl2"
+      CMND ${CMAKE_COMMAND} ARGS -E rm -rf Tpl2 build_tpl2
 
       ADDED_TEST_NAME_OUT
         TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME
