@@ -80,11 +80,12 @@ endfunction()
 # Wrapper function for set_property(TEST ...) to be used in unit testing
 #
 function(tribits_set_test_property)
+  cmake_parse_arguments(PARSE_ARGV 0 FWD "" "" "")
   if (NOT TRIBITS_ADD_TEST_ADD_TEST_UNITTEST)
-    set_property(TEST ${ARGN})
+    set_property(TEST ${FWD_UNPARSED_ARGUMENTS})
   endif()
   if (TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT)
-    append_global_set(TRIBITS_SET_TEST_PROPERTIES_INPUT ${ARGN})
+    append_global_set(TRIBITS_SET_TEST_PROPERTIES_INPUT ${FWD_UNPARSED_ARGUMENTS})
   endif()
 endfunction()
 
@@ -761,7 +762,10 @@ endfunction()
 function(tribits_private_add_test_set_environment  TEST_NAME_IN)
 
   if (PARSE_ENVIRONMENT)
-    tribits_set_test_property(${TEST_NAME_IN} PROPERTY ENVIRONMENT ${PARSE_ENVIRONMENT})
+    string(REPLACE "${PARSE_LIST_SEPARATOR}" "\\;" PARSE_ENVIRONMENT
+      "${PARSE_ENVIRONMENT}")
+    tribits_set_test_property(${TEST_NAME_IN} PROPERTY ENVIRONMENT
+      "${PARSE_ENVIRONMENT}")
   endif()
 
 endfunction()

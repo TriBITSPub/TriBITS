@@ -297,11 +297,18 @@ include(PrintVar)
 #     by CMake, then the test will be added by ctest but the ``DISABLED`` test
 #     property will be set (see `tribits_add_test()`_).
 #
-#   ``ENVIRONMENT <var1>=<value1> <var2>=<value2> ..``.
+#   ``ENVIRONMENT "<var1>=<value1>" "<var2>=<value2>" ...``.
 #
-#     If passed in, the listed environment variables will be set before
-#     calling the test.  This is set using the built-in CTest test property
-#     ``ENVIRONMENT``.
+#     If passed in, the listed environment variables will be set by CTest
+#     before calling the test.  This is set using the built-in CTest test
+#     property ``ENVIRONMENT``.  Note, if the env var values contain
+#     semi-colons ``';'``, then replace the semi-colons ``';'`` with another
+#     separator ``'<sep>'`` and pass in ``LIST_SEPARATOR <sep>`` so ``<sep>``
+#     will be replaced with ``';'`` at point of usage.  If the env var values
+#     contain any spaces, also quote the entire variable/value pair as
+#     ``"<vari>=<valuei>"``.  For example, the evn var and value
+#     ``my_env_var="arg1 b;arg2;I have spaces"`` would need to be passed as
+#     ``"my_env_var=arg1 b<sep>arg2<sep>I have spaces"``.
 #
 #   ``TIMEOUT <maxSeconds>``
 #
