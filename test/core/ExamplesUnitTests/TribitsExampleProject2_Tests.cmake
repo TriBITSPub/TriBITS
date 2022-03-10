@@ -70,13 +70,13 @@ macro(TribitsExampleProject2_test_setup_header)
   if (sharedOrStatic STREQUAL "SHARED")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
     if (CYGWIN)
-      set(libtpl_name "libtpl1.dll.a")
+      set(libext ".dll.a")
     else()
-      set(libtpl_name "libtpl1.so")
+      set(libext ".so")
     endif()
   elseif (sharedOrStatic STREQUAL "STATIC")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
-      set(libtpl_name "libtpl1.a")
+    set(libext ".a")
   else()
     message(FATAL_ERROR "Invalid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
@@ -97,6 +97,7 @@ function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
   tribits_add_advanced_test( ${testNameBase}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    LIST_SEPARATOR "<semicolon>"
 
     TEST_0
       MESSAGE "Configure TribitsExampleProject2 against pre-installed Tpl1"
@@ -106,18 +107,34 @@ function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
         -DCMAKE_BUILD_TYPE=DEBUG
         "-DTpl1_INCLUDE_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl1/include"
         "-DTpl1_LIBRARY_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl1/lib"
+        -DTPL_ENABLE_Tpl3=ON
+        "-DTpl3_INCLUDE_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl3/include"
+        "-DTpl3_LIBRARY_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl3/lib<semicolon>${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl2/lib"
+        "-DTpl3_LIBRARY_NAMES=tpl3<semicolon>tpl2a<semicolon>tpl2b"
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DCMAKE_INSTALL_PREFIX=install
         -DTribitsExProj2_ENABLE_Package1=ON
+        -DTribitsExProj2_ENABLE_Package2=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
+        "Final set of enabled packages:  Package1 Package2 2"
+	"Final set of enabled TPLs:  Tpl1 Tpl3 2"
         "Searching for libs in Tpl1_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib'"
-        "Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/${libtpl_name}'"
-        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/${libtpl_name}'"
+        "Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/libtpl1${libext}'"
+        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/libtpl1${libext}'"
         "Searching for headers in Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/include'"
         "Found header '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/include/Tpl1.hpp'"
         "TPL_Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/include'"
+	"Tpl3_LIBRARY_NAMES='tpl3[;]tpl2a[;]tpl2b'"
+	"Searching for libs in Tpl3_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/lib[;].*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib'"
+        "Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/lib/libtpl3${libext}'"
+	"Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib/libtpl2a${libext}'"
+	"Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib/libtpl2b${libext}'"
+	"TPL_Tpl3_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/lib/libtpl3${libext}[;].*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib/libtpl2a${libext}[;].*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib/libtpl2b${libext}'"
+	"Searching for headers in Tpl3_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/include'"
+	"Found header '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/include/Tpl3.hpp'"
+	"TPL_Tpl3_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/include'"
         "-- Configuring done"
         "-- Generating done"
 
@@ -187,14 +204,14 @@ function(TribitsExampleProject2_explicit_tpl_vars_test sharedOrStatic)
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
         -DCMAKE_BUILD_TYPE=DEBUG
         "-DTPL_Tpl1_INCLUDE_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl1/include"
-        "-DTPL_Tpl1_LIBRARIES=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl1/lib/${libtpl_name}"
+        "-DTPL_Tpl1_LIBRARIES=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl1/lib/libtpl1${libext}"
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DCMAKE_INSTALL_PREFIX=install
         -DTribitsExProj2_ENABLE_Package1=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/${libtpl_name}'"
+        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/libtpl1${libext}'"
         "TPL_Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/include'"
         "-- Configuring done"
         "-- Generating done"
