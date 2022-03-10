@@ -6,14 +6,14 @@
 
 std::string Tpl3::itsme()
 {
-  return "tpl3";
+  return "Tpl3";
 }
 
 std::string Tpl3::deps()
 {
   std::ostringstream oss;
   oss
-    << Tpl2::a_itsme() << " " << Tpl2::a_deps()
-    << Tpl2::b_itsme() << " " << Tpl2::b_deps();
+    << Tpl2::a_itsme() << "{" << Tpl2::a_deps() << "}"
+    << ", " << Tpl2::b_itsme() << "{" << Tpl2::b_deps() << "}";
   return oss.str();
 }

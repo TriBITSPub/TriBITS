@@ -1,12 +1,11 @@
-#include "Tpl1.hpp"
-#include "Tpl2a.hpp"
+#include "Tpl2b.hpp"
 
-std::string Tpl2::a_itsme()
+std::string Tpl2::b_itsme()
 {
-  return "tpl2a";
+  return "Tpl2b";
 }
 
-std::string Tpl2::a_deps()
+std::string Tpl2::b_deps()
 {
-  return Tpl1::itsme();
+  return "no deps";
 }
