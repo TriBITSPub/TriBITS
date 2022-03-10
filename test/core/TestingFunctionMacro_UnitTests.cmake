@@ -1417,7 +1417,7 @@ function(unittest_tribits_add_test_disable)
   set(${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS CUSTOM_FAILURE_MODE)
   tribits_add_advanced_test( SomeCmnd
      "unparsedarg1" "unparsedarg2"
-    TEST_0 "unparsedarg3" "unparsedarg4" CMND someCmnd ARGS "arg1;arg2"
+    TEST_0 "unparsedarg3" "unparsedarg4" CMND someCmnd ARGS "arg1<semicol>arg2"
     ADDED_TEST_NAME_OUT  SomeCmnd_TEST_NAME
     )
   unittest_compare_const(
@@ -1426,7 +1426,7 @@ function(unittest_tribits_add_test_disable)
     )
   unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
-    "\"someCmnd\" \"arg1<semicolon>arg2\""
+    "\"someCmnd\" \"arg1<semicol>arg2\""
     )
   unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
@@ -2415,7 +2415,8 @@ function(unittest_tribits_add_advanced_test_basic)
   message("***\n*** Add a single package executable with quoted arguments containing semi-colons\n***")
   tribits_add_advanced_test_unittest_reset()
   tribits_add_advanced_test( TAAT_basic_exec_1_args_3_quotes_semicolons
-    TEST_0 EXEC ${EXEN} ARGS "arg1=val1;val2" arg2 arg3
+    TEST_0 EXEC ${EXEN} ARGS "arg1=val1<semicolon>val2" arg2 arg3
+    LIST_SEPARATOR "<semicolon>"
     )
   unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0

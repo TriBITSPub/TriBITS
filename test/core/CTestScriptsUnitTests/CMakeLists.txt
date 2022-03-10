@@ -215,9 +215,10 @@ tribits_add_advanced_test(
 
 tribits_add_advanced_test(
   CTestScripts_cmnd_1_args_with_semicolon
-  TEST_0 EXEC GenericDriver ARGS "arg;with;a;few;semicolons" 0
+  TEST_0 EXEC GenericDriver ARGS "arg<sep>with<sep>a<sep>few<sep>semicolons" 0
     OUTPUT_FILE cmnd_1_args_1_print_msg_out_file_outputFile.out
     PASS_REGULAR_EXPRESSION "arg[;]with[;]a;few[;]semicolons"
+  LIST_SEPARATOR "<sep>"
   OVERALL_NUM_MPI_PROCS 1
   )
 

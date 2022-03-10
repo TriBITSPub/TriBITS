@@ -18,12 +18,13 @@ ChangeLog for TriBITS
 
   ToDo: Change from '<semicolon>' to explicit `LIST_SEPARATOR` argument like
   `ExternalProject_Add()` uses in and tribits_add_advanced_test() and remove
-  update of `tribits_parse_arguments_from_list()` and update documentation and
-  tests for both.
+  usage of `tribits_parse_arguments_from_list()` and update documentation and
+  tests.
 
-  ToDo: Try removing usage of tribits_copy_list_vars()
+  ToDo: Remove tribits_parse_arguments_from_list() and
+  tribits_copy_list_vars().
 
-  ToDo: Remove commented out and debug code
+  ToDo: Remove commented-out and debug code
 
   ToDo: Add support and tests for using semi-colons ';' in ENVIRONMENT
   variable and other arguments where you might want to .

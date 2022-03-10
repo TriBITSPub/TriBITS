@@ -77,10 +77,11 @@ include(PrintVar)
 #     [XHOSTTYPE <hosttype0> <hosttype1> ...]
 #     [EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...]
 #     [DISABLED <messageWhyDisabled>]
-#     [FINAL_PASS_REGULAR_EXPRESSION <regex> |
-#       FINAL_FAIL_REGULAR_EXPRESSION <regex>]
+#     [FINAL_PASS_REGULAR_EXPRESSION "<regex>" |
+#       FINAL_FAIL_REGULAR_EXPRESSION "<regex>"]
 #     [ENVIRONMENT <var1>=<value1> <var2>=<value2> ...]
 #     [TIMEOUT <maxSeconds>]
+#     [LIST_SEPARATOR <sep>]
 #     [ADDED_TEST_NAME_OUT <testName>]
 #     )
 #
@@ -104,7 +105,7 @@ include(PrintVar)
 #      (EXEC <exeRootName> [NOEXEPREFIX] [NOEXESUFFIX] [ADD_DIR_TO_NAME]
 #             [DIRECTORY <dir>]
 #         | CMND <cmndExec>)
-#      [ARGS <arg1> <arg2> ... <argn>]
+#      [ARGS "<arg0>" "<arg1>" ... "<argn>"]
 #      [MESSAGE "<message>"]
 #      [WORKING_DIRECTORY <workingDir>]
 #      [SKIP_CLEAN_WORKING_DIRECTORY]
@@ -310,6 +311,18 @@ include(PrintVar)
 #     tests (tribits_add_test())`_).  This is for the full CTest test, not
 #     individual ``TEST_<idx>`` commands!
 #
+#   ``LIST_SEPARATOR <sep>``
+#
+#     String used as placeholder for the semi-colon char ``';'`` in order to
+#     allow pass-through.  For example, if arguments to the ``ARGS`` or
+#     ``ENVIRONMENT`` need to use semi-colons, then replace ``';'`` with
+#     ``'<semicolon>'`` (for example) such as with
+#     ``"somearg=arg1<semicolon>arg2"``, then at the point of usage,
+#     ``'<semicolon>'`` will be replaced with ``';'`` and it will be passed to
+#     the final command as ``"somearg=arg1;arg2"`` (with as many preceding
+#     escape backslashes ``'\'`` in front of ``';'`` as is needed for the
+#     given usage context).
+#
 #   ``ADDED_TEST_NAME_OUT <testName>``
 #
 #     If specified, then on output the variable ``<testName>`` will be set
@@ -360,13 +373,22 @@ include(PrintVar)
 #     ``my_python_test.py`` with ``/usr/bin/env pyhton`` at the top, you can't
 #     just use::
 #
-#       CMND <path>/my_python_test.py ARGS <arg0> <arg1> ...
+#       CMND <path>/my_python_test.py ARGS "<arg0>" "<arg1>" ...
 #
 #     The same goes for Perl or any other scripting language.
 #
 #     Instead, you have to use::
 #
 #       CMND ${PYTHON_EXECUTABLE} ARGS <path>/my_python_test.py <arg0> <arg1> ...
+#
+#  ``ARGS "<arg0>" "<arg1>" ... "<argN>"``
+#
+#    The list of command-line arguments to pass to the ``CMND`` command or
+#    ``EXEC`` executable.  Put each argument ``<argi>`` in quotes ``"<argi>"``
+#    if it contains any spaces.  Also, of any of the individual arguments need
+#    to contain semi-colons ``';'`` such as ``--my-arg=a;b a;c;d``, then pass
+#    that quoted as ``"--my-arg=a<sep>b a<sep>c<sep>d"`` where ``<sep>``
+#    matches the ``<sep>`` argument to the input ``LIST_SEPARATOR <sep>``.
 #
 # By default, the output (stdout/stderr) for each test command is captured and
 # is then echoed to stdout for the overall test.  This is done in order to be
@@ -639,12 +661,12 @@ include(PrintVar)
 #
 # **Argument Parsing and Ordering (tribits_add_advanced_test())**
 #
-# The basic tool used for parsing the arguments to this function is the macro
-# ``cmake_parse_arguments()`` which has a certain set of behaviors.  The
-# parsing using ``cmake_parse_arguments()`` is actually done in two phases.
-# There is a top-level parsing of the "overall" arguments listed in `Overall
-# Arguments (tribits_add_advanced_test())`_ that also pulls out the test
-# blocks.  Then there is a second level of parsing using
+# The basic tool used for parsing the arguments to this function is the
+# command ``cmake_parse_arguments()`` which has a certain set of behaviors.
+# The parsing using ``cmake_parse_arguments()`` is actually done in two
+# phases.  There is a top-level parsing of the "overall" arguments listed in
+# `Overall Arguments (tribits_add_advanced_test())`_ that also pulls out the
+# test blocks.  Then there is a second level of parsing using
 # ``cmake_parse_arguments()`` for each of the ``TEST_<idx>`` blocks.  Because
 # of this usage, there are a few restrictions that one needs to be aware of
 # when using ``tribits_add_advanced_test()``.  This short sections tries to
@@ -854,22 +876,28 @@ function(tribits_add_advanced_test TEST_NAME_IN)
   foreach( TEST_CMND_IDX RANGE ${MAX_NUM_TEST_CMND_IDX})
     list( APPEND TEST_IDX_LIST TEST_${TEST_CMND_IDX} )
   endforeach()
-  #print_var(TEST_IDX_LIST)
 
-  cmake_parse_arguments(
-    PARSE_ARGV 1  # NOTE: One named argument!
-    #prefix
-    PARSE
-    #options
-    "FAIL_FAST;RUN_SERIAL;SKIP_CLEAN_OVERALL_WORKING_DIRECTORY"
-    # one_value_keywords
-    "DISABLED"
-    # multi_value_keywords
-    "${TEST_IDX_LIST};OVERALL_WORKING_DIRECTORY;KEYWORDS;COMM;OVERALL_NUM_MPI_PROCS;OVERALL_NUM_TOTAL_CORES_USED;FINAL_PASS_REGULAR_EXPRESSION;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;FINAL_FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TEST_NAME_OUT"
+  set(optionsList  FAIL_FAST  RUN_SERIAL  SKIP_CLEAN_OVERALL_WORKING_DIRECTORY)
+
+  set(oneValueKeywordsList  DISABLED)
+
+  set(multiValueKeywordsList
+    ${TEST_IDX_LIST}  OVERALL_WORKING_DIRECTORY
+    LIST_SEPARATOR
+    OVERALL_NUM_MPI_PROCS  OVERALL_NUM_TOTAL_CORES_USED
+    CATEGORIES  COMM  HOST  XHOST  HOSTTYPE  XHOSTTYPE  EXCLUDE_IF_NOT_TRUE
+    FINAL_PASS_REGULAR_EXPRESSION  FINAL_FAIL_REGULAR_EXPRESSION
+    TIMEOUT  ENVIRONMENT  KEYWORDS
+    ADDED_TEST_NAME_OUT
     )
 
-  #print_var(PARSE_TEST_0)
-  #print_var(PARSE_UNPARSED_ARGUMENTS)
+  cmake_parse_arguments(
+    PARSE_ARGV 1  # NOTE: One named argument to skip over
+    PARSE  # prefix
+    "${optionsList}"
+    "${oneValueKeywordsList}"
+    "${multiValueKeywordsList}"
+    )
 
   tribits_check_for_unparsed_arguments()
   tribits_add_advanced_test_check_exceed_max_num_test_blocks()
@@ -966,6 +994,7 @@ function(tribits_add_advanced_test TEST_NAME_IN)
     "#\n"
     "\n"
     "set( TEST_NAME ${TEST_NAME} )\n"
+    "set( LIST_SEPARATOR \"${PARSE_LIST_SEPARATOR}\" )\n"
     )
 
   # Loop through each test case
@@ -1007,8 +1036,6 @@ function(tribits_add_advanced_test TEST_NAME_IN)
 
     # Parse the test command case
 
-    #print_var(PARSE_TEST_${TEST_CMND_IDX})
-
     # Search to see if we are copying files or not for this TEST_<IDX> block ...
 
     set(PARSE_COPY_FILES_TO_TEST_DIR)
@@ -1048,52 +1075,23 @@ function(tribits_add_advanced_test TEST_NAME_IN)
 
       # Parse TEST_<IDX> block args for types EXEC and CMND
 
-      #message("${TEST_NAME}:")
+      set(testBlockOptionsList  NOEXEPREFIX  NOEXESUFFIX  NO_ECHO_OUTPUT  PASS_ANY
+	STANDARD_PASS_OUTPUT  ALWAYS_FAIL_ON_NONZERO_RETURN  ALWAYS_FAIL_ON_ZERO_RETURN
+	WILL_FAIL  ADD_DIR_TO_NAME  SKIP_CLEAN_WORKING_DIRECTORY
+        )
 
-      #tribits_print_list(PARSE_TEST_${TEST_CMND_IDX})
+      set(testBlockMultiValueKeywordsList  EXEC  CMND  ARGS  DIRECTORY  MESSAGE
+	WORKING_DIRECTORY  OUTPUT_FILE  NUM_MPI_PROCS  NUM_TOTAL_CORES_USED
+	PASS_REGULAR_EXPRESSION_ALL  FAIL_REGULAR_EXPRESSION  PASS_REGULAR_EXPRESSION
+	)
 
-      #set(TRIBITS_PARSE_ARGUMENTS_FROM_LIST_DUMP_OUTPUT_ENABLED TRUE)
-
-      set(testBlockOptions "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ALWAYS_FAIL_ON_NONZERO_RETURN;ALWAYS_FAIL_ON_ZERO_RETURN;WILL_FAIL;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY")
-      set(testBlockArgs "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION")
-
-      tribits_parse_arguments_from_list(
-         #prefix
-         PARSE
-         #options
-         "${testBlockOptions}"
-         # arguments
-         "${testBlockArgs}"
-         PARSE_TEST_${TEST_CMND_IDX}
+      cmake_parse_arguments(
+         PARSE  #prefix
+	 "${testBlockOptionsList}"
+	 ""     # one_value_keywords
+	 "${testBlockMultiValueKeywordsList}"
+         ${PARSE_TEST_${TEST_CMND_IDX}}
          )
-
-      #print_var(PARSE_UNPARSED_ARGUMENTS)
-
-      # Repalce '<semicolon>' with ';' for all args *except* PARSE_ARGS
-      foreach(arg IN LISTS testBlockArgs)
-        if (NOT arg STREQUAL "ARGS")
-          string(REPLACE "<semicolon>" ";" PARSE_${arg} "${PARSE_${arg}}") 
-        endif()
-      endforeach()
-
-#       foreach (opt IN LISTS testBlockOptions)
-#         print_var(PARSE_${opt})
-#       endforeach()
-#       foreach (arg IN LISTS testBlockArgs)
-#         tribits_print_list(PARSE_${arg})
-#       endforeach()
-
-#      cmake_parse_arguments(
-#         #prefix
-#         PARSE
-#         #options
-#          "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ALWAYS_FAIL_ON_NONZERO_RETURN;ALWAYS_FAIL_ON_ZERO_RETURN;WILL_FAIL;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY"
-#         # one_value_keywords
-#         ""
-#         # multi_value_keywords
-#         "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION"
-#         ${PARSE_TEST_${TEST_CMND_IDX}}
-#         )
 
       tribits_check_for_unparsed_arguments(PARSE) # ToDo: Use a different prefix!
 
@@ -1104,10 +1102,6 @@ function(tribits_add_advanced_test TEST_NAME_IN)
     #
 
     set(ARGS_STR "${PARSE_ARGS}")
-    #print_var(ARGS_STR)
-    #if (PARSE_ARGS)
-    #  tribits_join_exec_process_set_args( ARGS_STR ${PARSE_ARGS} )
-    #endif()
 
     if (PARSE_EXEC)
 
@@ -1172,7 +1166,6 @@ function(tribits_add_advanced_test TEST_NAME_IN)
 
       tribits_add_test_get_test_cmnd_array( TEST_CMND_ARRAY
         "${EXECUTABLE_PATH}" "${NUM_PROCS_USED}" ${ARGS_STR} )
-      #print_var(TEST_CMND_ARRAY)
 
     elseif (PARSE_CMND)
 
@@ -1302,8 +1295,7 @@ function(tribits_add_advanced_test TEST_NAME_IN)
       # Write the command to be run for EXEC and CMND blocks ...
 
       tribits_join_exec_process_set_args( TEST_CMND_STR "${TEST_CMND_ARRAY}" )
-      #print_var(TEST_CMND_STR)
-  
+
       string(APPEND  TEST_SCRIPT_STR
         "\n"
         "set( TEST_${TEST_CMND_IDX}_CMND ${TEST_CMND_STR} )\n"
