@@ -43,7 +43,7 @@ include(CMakeParseArguments)
 # natively implemented function cmake_parse_arguments() will get used!
 
 macro(parse_arguments_deprecated_warning)
-  message(WARNING "parse_arguments() is deprecated and should not be used."
+  message(DEPRECATION "parse_arguments() is deprecated and should not be used."
      " Instead use cmake_parse_arguments()")
 endmacro()
 
@@ -57,7 +57,7 @@ function(parse_arguments_dump_output  OUTPUT_STR)
   endif()
 endfunction()
 
-#
+
 # @MACRO: parse_arguments()
 #
 # Parse a set of macro/function input arguments into different lists.  This
