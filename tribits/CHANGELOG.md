@@ -2,6 +2,43 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-03-10:
+
+* **Changed:** The `tribits_add_advanced_test()` command now correctly reports
+  unparsed/unrecognized arguments.  This will break some sloppy usages. (One
+  TriBITS test had to be fixed.)
+
+* **Added/Changed:** The `tribits_add_advanced_test()` command now correctly
+  handles CMND/EXEC ARGS with semi-colons ';' in the quoted arguments.  This
+  expands the types of tests that can be defined but it may break backward
+  compatibility as it is possible that poorly defined tests that worked before
+  will be interpreted differently and now be broken.  (NOTE: None of the
+  TriBITS tests needed to be updated which has some advanced usaged of
+  tribits_add_advanded_test().)
+
+  ToDo: Change from '<semicolon>' to explicit `LIST_SEPARATOR` argument like
+  `ExternalProject_Add()` uses in and tribits_add_advanced_test() and remove
+  update of `tribits_parse_arguments_from_list()` and update documentation and
+  tests for both.
+
+  ToDo: Try removing usage of tribits_copy_list_vars()
+
+  ToDo: Remove commented out and debug code
+
+  ToDo: Add support and tests for using semi-colons ';' in ENVIRONMENT
+  variable and other arguments where you might want to .
+
+  ToDo: Document the usage of semi-colons ';' and `<semicolon>` in ARGS and
+  '[;]' in regex expressions in tribits_add_advanded_test()
+
+  ToDo: Add tribits_parse_arguments_from_list() and tribits_print_list() to
+  generated users/maintainers guide documentation
+
+  ToDo: Seprate out commit for ParseVariableArguments.cmake
+
+  ToDo: Do a performance test of the TriBITS test suite configure with the old
+  implementation and the new implemenation
+
 ## 2022-03-02:
 
 * **Added:** The project-level cache variable `<Project>_IMPORTED_NO_SYSTEM`

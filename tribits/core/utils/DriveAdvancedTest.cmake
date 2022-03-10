@@ -160,10 +160,12 @@ macro(setup_and_run_test_idx_cmnd_block)
 
   # Set up the TEST_<IDX> command block
   join( TEST_CMND_STR " " TRUE ${TEST_${CMND_IDX}_CMND} )
+  string(REPLACE "<semicolon>" ";" TEST_CMND_STR "${TEST_CMND_STR}")
   message("Running: ${TEST_CMND_STR}\n")
   set(EXEC_CMND COMMAND ${TEST_${CMND_IDX}_CMND})
+  string(REPLACE "<semicolon>" "\\\;" EXEC_CMND "${EXEC_CMND}")
 
-  # Set up the workig directory that this TEST_<IDX> CMND block will run in
+  # Set up the working directory that this TEST_<IDX> CMND block will run in
 
   set(WORKING_DIR_SET)
   if (TEST_${CMND_IDX}_WORKING_DIRECTORY)

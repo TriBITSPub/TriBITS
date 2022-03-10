@@ -41,6 +41,8 @@
 include(TribitsAddAdvancedTestHelpers)
 include(TribitsConstants)
 
+include(TribitsParseArgumentsFromList)
+include(TribitsPrintList)
 include(AppendStringVar)
 include(PrintVar)
 
@@ -855,17 +857,21 @@ function(tribits_add_advanced_test TEST_NAME_IN)
   #print_var(TEST_IDX_LIST)
 
   cmake_parse_arguments(
-     #prefix
-     PARSE
-     #options
-     "FAIL_FAST;RUN_SERIAL;SKIP_CLEAN_OVERALL_WORKING_DIRECTORY"
-     # one_value_keywords
-     "DISABLED"
-     # multi_value_keywords
-     "${TEST_IDX_LIST};OVERALL_WORKING_DIRECTORY;KEYWORDS;COMM;OVERALL_NUM_MPI_PROCS;OVERALL_NUM_TOTAL_CORES_USED;FINAL_PASS_REGULAR_EXPRESSION;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;FINAL_FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TEST_NAME_OUT"
-     ${ARGN}
-     )
+    PARSE_ARGV 1  # NOTE: One named argument!
+    #prefix
+    PARSE
+    #options
+    "FAIL_FAST;RUN_SERIAL;SKIP_CLEAN_OVERALL_WORKING_DIRECTORY"
+    # one_value_keywords
+    "DISABLED"
+    # multi_value_keywords
+    "${TEST_IDX_LIST};OVERALL_WORKING_DIRECTORY;KEYWORDS;COMM;OVERALL_NUM_MPI_PROCS;OVERALL_NUM_TOTAL_CORES_USED;FINAL_PASS_REGULAR_EXPRESSION;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;FINAL_FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TEST_NAME_OUT"
+    )
 
+  #print_var(PARSE_TEST_0)
+  #print_var(PARSE_UNPARSED_ARGUMENTS)
+
+  tribits_check_for_unparsed_arguments()
   tribits_add_advanced_test_check_exceed_max_num_test_blocks()
 
   if(PARSE_ADDED_TEST_NAME_OUT)
@@ -1035,26 +1041,61 @@ function(tribits_add_advanced_test TEST_NAME_IN)
       tribits_assert_parse_arg_zero_or_one_value(PARSE SOURCE_DIR)
       tribits_assert_parse_arg_zero_or_one_value(PARSE DEST_DIR)
 
-      set(PARSE_EXEC)
-      set(PARSE_CMND)
+      set(PARSE_EXEC "")
+      set(PARSE_CMND "")
 
     else()
 
       # Parse TEST_<IDX> block args for types EXEC and CMND
 
-      cmake_parse_arguments(
+      #message("${TEST_NAME}:")
+
+      #tribits_print_list(PARSE_TEST_${TEST_CMND_IDX})
+
+      #set(TRIBITS_PARSE_ARGUMENTS_FROM_LIST_DUMP_OUTPUT_ENABLED TRUE)
+
+      set(testBlockOptions "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ALWAYS_FAIL_ON_NONZERO_RETURN;ALWAYS_FAIL_ON_ZERO_RETURN;WILL_FAIL;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY")
+      set(testBlockArgs "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION")
+
+      tribits_parse_arguments_from_list(
          #prefix
          PARSE
          #options
-          "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ALWAYS_FAIL_ON_NONZERO_RETURN;ALWAYS_FAIL_ON_ZERO_RETURN;WILL_FAIL;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY"
-         # one_value_keywords
-         ""
-         # multi_value_keywords
-         "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION"
-         ${PARSE_TEST_${TEST_CMND_IDX}}
+         "${testBlockOptions}"
+         # arguments
+         "${testBlockArgs}"
+         PARSE_TEST_${TEST_CMND_IDX}
          )
-  
-      tribits_check_for_unparsed_arguments()
+
+      #print_var(PARSE_UNPARSED_ARGUMENTS)
+
+      # Repalce '<semicolon>' with ';' for all args *except* PARSE_ARGS
+      foreach(arg IN LISTS testBlockArgs)
+        if (NOT arg STREQUAL "ARGS")
+          string(REPLACE "<semicolon>" ";" PARSE_${arg} "${PARSE_${arg}}") 
+        endif()
+      endforeach()
+
+#       foreach (opt IN LISTS testBlockOptions)
+#         print_var(PARSE_${opt})
+#       endforeach()
+#       foreach (arg IN LISTS testBlockArgs)
+#         tribits_print_list(PARSE_${arg})
+#       endforeach()
+
+#      cmake_parse_arguments(
+#         #prefix
+#         PARSE
+#         #options
+#          "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ALWAYS_FAIL_ON_NONZERO_RETURN;ALWAYS_FAIL_ON_ZERO_RETURN;WILL_FAIL;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY"
+#         # one_value_keywords
+#         ""
+#         # multi_value_keywords
+#         "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION"
+#         ${PARSE_TEST_${TEST_CMND_IDX}}
+#         )
+
+      tribits_check_for_unparsed_arguments(PARSE) # ToDo: Use a different prefix!
 
     endif()
 
@@ -1062,7 +1103,7 @@ function(tribits_add_advanced_test TEST_NAME_IN)
     # Set up the command that will be written into the cmake -P *.cmake file
     #
 
-    set(ARGS_STR ${PARSE_ARGS})
+    set(ARGS_STR "${PARSE_ARGS}")
     #print_var(ARGS_STR)
     #if (PARSE_ARGS)
     #  tribits_join_exec_process_set_args( ARGS_STR ${PARSE_ARGS} )

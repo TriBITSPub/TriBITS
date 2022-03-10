@@ -214,6 +214,14 @@ tribits_add_advanced_test(
   )
 
 tribits_add_advanced_test(
+  CTestScripts_cmnd_1_args_with_semicolon
+  TEST_0 EXEC GenericDriver ARGS "arg;with;a;few;semicolons" 0
+    OUTPUT_FILE cmnd_1_args_1_print_msg_out_file_outputFile.out
+    PASS_REGULAR_EXPRESSION "arg[;]with[;]a;few[;]semicolons"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+tribits_add_advanced_test(
   CTestScripts_cmnd_1_args_1_pass_any_test_0
   TEST_0 EXEC GenericDriver ARGS "Dummy msg" 7
     PASS_ANY
@@ -362,7 +370,6 @@ endif()
 
 tribits_add_advanced_test(
   CTestScripts_cmnd_3_args_1_overall_working_directory
-  MESSAGE "NOTE: This test does not check the order of STDOUT and STDERR, only that both exist in the output file.  It seems that execute_process() and MPI do not behave well together w.r.t. to STDOUT and STDERR outputting.  The fault may be with the MPI implementation.  Also, even in serial it would seem that the order of STDOUT and STDERR gets messed up when the machine is loaded."
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 EXEC GenericDriver
     ARGS "This is a crazy test!" 0 "This is a bad crazy test!"
@@ -375,6 +382,13 @@ tribits_add_advanced_test(
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Windows
   )
+# NOTE: The above test does not check the order of STDOUT and STDERR, only
+# that both exist in the output file.  It seems that execute_process() and MPI
+# do not behave well together w.r.t. to STDOUT and STDERR outputting.  The
+# fault may be with the MPI implementation.  Also, even in serial it would
+# seem that the order of STDOUT and STDERR gets messed up when the machine is
+# loaded.
+#
 # NOTE: The above test does not run on Windows because it relies on the 'cat'
 # command.  The form of this test is needed in order to check that both STDOUT
 # and STDERR output are both in the output file but we can't rely on the

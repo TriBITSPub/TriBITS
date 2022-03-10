@@ -98,6 +98,50 @@ function(unittest_compare_const VAR_NAME CONST_VAL)
 endfunction()
 
 
+# @FUNCTION: unittest_compare_list_ele_const()
+#
+# Perform a single unit test equality check for a single list element
+#
+# Usage::
+#
+#   unittest_compare_list_ele_const(<listName> <idx> <expectedConstValue>)
+#
+# If ``${<listName>[<idx>]} == <expectedValue>``, then the check passes, otherwise it
+# fails.  This prints the variable name and values and shows the test result.
+#
+# This updates the global variables ``UNITTEST_OVERALL_NUMRUN``,
+# ``UNITTEST_OVERALL_NUMPASSED``, and ``UNITTEST_OVERALL_PASS`` which are used
+# by the unit test harness system to assess overall pass/fail.
+#
+function(unittest_compare_list_ele_const  listName  idx  expectedConstValue)
+
+  math( EXPR NUMRUN ${UNITTEST_OVERALL_NUMRUN}+1 )
+  global_set(UNITTEST_OVERALL_NUMRUN ${NUMRUN})
+
+  list(GET "${listName}" ${idx} listEleIdx)
+  set(listNameAndIdx "${listName}[${idx}]")
+
+  message(
+    "\nCheck:\n"
+    "    ${listNameAndIdx} =\n"
+    "    [${listEleIdx}]\n"
+    "  EQUALS:\n"
+    "    [${expectedConstValue}]"
+    )
+
+  if ("${listEleIdx}" STREQUAL "${expectedConstValue}")
+    message("  [PASSED]\n")
+    math( EXPR NUMPASSED ${UNITTEST_OVERALL_NUMPASSED}+1 )
+    global_set(UNITTEST_OVERALL_NUMPASSED ${NUMPASSED})
+  else()
+    message("  [FAILED]\n")
+    global_set(UNITTEST_OVERALL_PASS FALSE)
+    message(WARNING "Stack trace for failed unit test")
+  endif()
+
+endfunction()
+
+
 # @FUNCTION: unittest_string_block_compare()
 #
 # Compare two string blocks (with multiple newlines '\n') line-by-line and

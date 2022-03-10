@@ -1412,6 +1412,27 @@ function(unittest_tribits_add_test_disable)
     1
     )
 
+  message("Check that tribits_add_advanced_test(...) produces FATAL_ERROR with unparsed args")
+  tribits_add_advanced_test_unittest_reset()
+  set(${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS CUSTOM_FAILURE_MODE)
+  tribits_add_advanced_test( SomeCmnd
+     "unparsedarg1" "unparsedarg2"
+    TEST_0 "unparsedarg3" "unparsedarg4" CMND someCmnd ARGS "arg1;arg2"
+    ADDED_TEST_NAME_OUT  SomeCmnd_TEST_NAME
+    )
+  unittest_compare_const(
+    MESSAGE_WRAPPER_INPUT
+    "CUSTOM_FAILURE_MODE;Arguments passed in unrecognized.  PARSE_UNPARSED_ARGUMENTS = 'unparsedarg1;unparsedarg2';CUSTOM_FAILURE_MODE;Arguments passed in unrecognized.  PARSE_UNPARSED_ARGUMENTS = 'unparsedarg3;unparsedarg4';-- PackageA_SomeCmnd: Added test (BASIC, PROCESSORS=1)!"
+    )
+  unittest_compare_const(
+    TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
+    "\"someCmnd\" \"arg1<semicolon>arg2\""
+    )
+  unittest_compare_const(
+    TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
+    1
+    )
+
   message("Check that PackageA_SomeExec_DISABLE=ON disables tribits_add_test(...)")
   set(PackageA_SomeExec_DISABLE ON)
   tribits_add_test( ${EXEN} )
@@ -2388,6 +2409,26 @@ function(unittest_tribits_add_advanced_test_basic)
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TAAT_basic_exec_1_args_3.cmake"
     REGEX_STRINGS
       "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\" \"arg1\" \"arg2\" \"arg3\""
+      "NUM_CMNDS 1"
+    )
+
+  message("***\n*** Add a single package executable with quoted arguments containing semi-colons\n***")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_exec_1_args_3_quotes_semicolons
+    TEST_0 EXEC ${EXEN} ARGS "arg1=val1;val2" arg2 arg3
+    )
+  unittest_compare_const(
+    TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
+    "\"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\" \"arg1=val1<semicolon>val2\" \"arg2\" \"arg3\""
+    )
+  unittest_compare_const(
+    TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
+    1
+    )
+  unittest_file_regex(
+    "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TAAT_basic_exec_1_args_3_quotes_semicolons.cmake"
+    REGEX_STRINGS
+      "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\" \"arg1=val1<semicolon>val2\" \"arg2\" \"arg3\""
       "NUM_CMNDS 1"
     )
 
@@ -4438,4 +4479,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(675)
+unittest_final_result(682)
