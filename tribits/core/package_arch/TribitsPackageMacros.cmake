@@ -780,7 +780,7 @@ endmacro()
 # libraries in all subdirectories that don't have the TRIBITS_TESTONLY_LIB
 # target property set on them.
 #
-# NOTE: It is unfortunate that this macro must be called in a packages's
+# NOTE: It is unfortunate that this macro must be called in a package's
 # top-level ``CMakeLists.txt`` file but limitations of the CMake language make
 # it necessary to do so.
 #

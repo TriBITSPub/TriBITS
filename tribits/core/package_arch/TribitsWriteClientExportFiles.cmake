@@ -553,9 +553,9 @@ function(tribits_append_dependent_package_config_file_includes packageName)
       string(APPEND configFileStr
         "include(\"${cmakeTplDir}/${depPkg}Config.cmake\")\n")
     endif()
-    # NOTE: Above, a required dependent package may not actaully be enabled if
+    # NOTE: Above, a required dependent package may not actually be enabled if
     # it is a required subpackage of a parent package and the parent package
-    # itself is not actaully enabled (very tricky).
+    # itself is not actually enabled (very tricky).
   endforeach()
   foreach(depPkg IN LISTS ${packageName}_LIB_OPTIONAL_DEP_PACKAGES)
     if (${packageName}_ENABLE_${depPkg} AND ${PROJECT_NAME}_ENABLE_${depPkg})
