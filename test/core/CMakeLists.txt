@@ -41,19 +41,6 @@
 assert_defined(${PACKAGE_NAME}_ENABLE_MPI)
 
 
-tribits_add_advanced_test( TribitsParseArgumentsFromList_UnitTests
-  OVERALL_WORKING_DIRECTORY TEST_NAME
-  TEST_0 CMND ${CMAKE_COMMAND}
-    ARGS
-      -DPROJECT_NAME=${PROJECT_NAME}
-      -D${PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
-      -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsParseArgumentsFromList_UnitTests.cmake"
-    PASS_REGULAR_EXPRESSION_ALL
-      "Final UnitTests Result: num_run = 26"
-      "Final UnitTests Result: PASSED"
-  )
-
-
 tribits_add_advanced_test( TestingFunctionMacro_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}

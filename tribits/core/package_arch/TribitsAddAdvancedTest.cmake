@@ -41,7 +41,6 @@
 include(TribitsAddAdvancedTestHelpers)
 include(TribitsConstants)
 
-include(TribitsParseArgumentsFromList)
 include(TribitsPrintList)
 include(AppendStringVar)
 include(PrintVar)

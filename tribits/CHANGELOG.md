@@ -16,16 +16,6 @@ ChangeLog for TriBITS
   TriBITS tests needed to be updated which has some advanced usaged of
   tribits_add_advanded_test().)
 
-  ToDo: Change from '<semicolon>' to explicit `LIST_SEPARATOR` argument like
-  `ExternalProject_Add()` uses in and tribits_add_advanced_test() and remove
-  usage of `tribits_parse_arguments_from_list()` and update documentation and
-  tests.
-
-  ToDo: Remove tribits_parse_arguments_from_list() and
-  tribits_copy_list_vars().
-
-  ToDo: Remove commented-out and debug code
-
   ToDo: Add support and tests for using semi-colons ';' in ENVIRONMENT
   variable and other arguments where you might want to .
 
