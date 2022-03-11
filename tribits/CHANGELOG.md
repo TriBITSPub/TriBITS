@@ -8,10 +8,17 @@ ChangeLog for TriBITS
   unparsed/unrecognized arguments.  This will break some sloppy usages. (One
   TriBITS test had to be fixed.)
 
-* **Added:** The `tribits_add_advanced_test()` command now correctly handles
-  CMND/EXEC ARGS and ENVIRONMENT variable values with semi-colons ';' in the
-  quoted arguments by adding a `LIST_SEPARATOR <sep>` argument.  This expands
-  the types of tests that can be defined.
+* **Added:** The `tribits_add_test()` and `tribits_add_advanced_test()`
+  functions now allow handling semi-colons ';' in the quoted arguments to
+  CMND/EXEC `ARGS` and `ENVIRONMENT` variable values by adding a
+  `LIST_SEPARATOR <sep>` argument (same as for `ExternalProject_Add()`).
+
+* **Changed:** The `tribits_add_test()` `tribits_add_advanced_test()`
+  functions switched over from using `cmake_parse_arguments(... ${ARGN})` to
+  using `cmake_parse_arguments(PARSE_ARGV ...)` and, therefore, now will no
+  longer ignore empty arguments.  This will break backward compatibility for
+  cases where empty quoted arguments like `"${SomeVar}"` are passed in where
+  the variable `SomeVar` is empty.
 
 ## 2022-03-02:
 

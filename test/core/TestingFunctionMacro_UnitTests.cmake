@@ -816,6 +816,18 @@ function(unittest_tribits_add_test_basic)
     "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH};--arg1=\"'bob' and 'cats'\""
     )
 
+  message("Add one test using POSTFIX_AND_ARGS_0 with empty postfix")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN}
+    POSTFIX_AND_ARGS_0  ""  arg1
+    ADDED_TESTS_NAMES_OUT  ${EXEN}_TEST_NAMES
+    )
+  unittest_compare_const(
+    TRIBITS_ADD_TEST_ADD_TEST_INPUT
+    "NAME;${PACKEXEN};COMMAND;${PACKEXEN_PATH};arg1"
+    )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
+
   message("Add two tests with different postfixes and arguments")
   global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
   tribits_add_test( ${EXEN}
@@ -4480,4 +4492,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(682)
+unittest_final_result(684)

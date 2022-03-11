@@ -68,11 +68,12 @@ endmacro()
 # Wrapper function for set_tests_properties() to be used in unit testing.
 #
 function(tribits_set_tests_properties)
+  cmake_parse_arguments(PARSE_ARGV 0 FWD "" "" "")
   if (NOT TRIBITS_ADD_TEST_ADD_TEST_UNITTEST)
-    set_tests_properties(${ARGN})
+    set_tests_properties(${FWD_UNPARSED_ARGUMENTS})
   endif()
   if (TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT)
-    append_global_set(TRIBITS_SET_TEST_PROPERTIES_INPUT ${ARGN})
+    append_global_set(TRIBITS_SET_TEST_PROPERTIES_INPUT ${FWD_UNPARSED_ARGUMENTS})
   endif()
 endfunction()
 
@@ -684,12 +685,14 @@ endfunction()
 #
 function(tribits_add_test_add_test TEST_NAME EXE_NAME)
 
+  string(REPLACE "${PARSE_LIST_SEPARATOR}" "\\;" args "${ARGN}")
+
   if (TRIBITS_ADD_TEST_ADD_TEST_CAPTURE)
-    append_global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT NAME ${TEST_NAME} COMMAND ${ARGN})
+    append_global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT NAME ${TEST_NAME} COMMAND ${args})
   endif()
 
   if (NOT TRIBITS_ADD_TEST_ADD_TEST_UNITTEST)
-    add_test(NAME ${TEST_NAME} COMMAND ${ARGN})
+    add_test(NAME ${TEST_NAME} COMMAND ${args})
   endif()
 
   tribits_set_tests_properties(${TEST_NAME} PROPERTIES REQUIRED_FILES ${EXE_NAME})
@@ -712,7 +715,7 @@ function(tribits_private_add_test_set_passfail_properties TEST_NAME_IN)
 
   if (PARSE_PASS_REGULAR_EXPRESSION)
     tribits_set_tests_properties(${TEST_NAME_IN} PROPERTIES PASS_REGULAR_EXPRESSION
-      ${PARSE_PASS_REGULAR_EXPRESSION})
+      "${PARSE_PASS_REGULAR_EXPRESSION}")
   endif()
 
   if (PARSE_WILL_FAIL)
