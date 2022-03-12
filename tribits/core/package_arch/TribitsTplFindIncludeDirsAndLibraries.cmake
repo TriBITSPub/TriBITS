@@ -290,11 +290,30 @@ function(tribits_tpl_find_include_dirs_and_libraries TPL_NAME)
     set(ERROR_MSG_MODE SEND_ERROR)
   endif()
 
+  # Allow user override for finding libraries even if REQUIRED_LIBS_NAMES is
+  # empty on input
+
+  multiline_set(DOCSTR
+    "List of semi-colon separated names of libraries needed to link to for"
+    " the TPL ${TPL_NAME}.  This list of libraries will be search for in"
+    " find_library(...) calls along with the directories specified with"
+    " ${TPL_NAME}_LIBRARY_DIRS.  NOTE: This is not the final list of libraries"
+    " used for linking.  That is specified by TPL_${TPL_NAME}_LIBRARIES!"
+    )
+  advanced_set(${TPL_NAME}_LIBRARY_NAMES ${PARSE_REQUIRED_LIBS_NAMES}
+    CACHE STRING ${DOCSTR})
+  split("${${TPL_NAME}_LIBRARY_NAMES}" "," ${TPL_NAME}_LIBRARY_NAMES)
+  print_var(${TPL_NAME}_LIBRARY_NAMES)
+
+  # Let the user override what the names of the libraries which might
+  # actually mean that no libraries are searched for.
+  set(REQUIRED_LIBS_NAMES ${${TPL_NAME}_LIBRARY_NAMES})
+
   #
   # User options
   #
 
-  if (PARSE_REQUIRED_LIBS_NAMES)
+  if (REQUIRED_LIBS_NAMES)
 
     # Library directories
 
@@ -314,22 +333,6 @@ function(tribits_tpl_find_include_dirs_and_libraries TPL_NAME)
     endif()
 
     # Libraries
-
-    multiline_set(DOCSTR
-      "List of semi-colon separated names of libraries needed to link to for"
-      " the TPL ${TPL_NAME}.  This list of libraries will be search for in"
-      " find_library(...) calls along with the directories specified with"
-      " ${TPL_NAME}_LIBRARY_DIRS.  NOTE: This is not the final list of libraries"
-      " used for linking.  That is specified by TPL_${TPL_NAME}_LIBRARIES!"
-      )
-    advanced_set(${TPL_NAME}_LIBRARY_NAMES ${PARSE_REQUIRED_LIBS_NAMES}
-      CACHE STRING ${DOCSTR})
-    split("${${TPL_NAME}_LIBRARY_NAMES}" "," ${TPL_NAME}_LIBRARY_NAMES)
-    print_var(${TPL_NAME}_LIBRARY_NAMES)
-
-    # Let the user override what the names of the libraries which might
-    # actually mean that no libraries are searched for.
-    set(REQUIRED_LIBS_NAMES ${${TPL_NAME}_LIBRARY_NAMES})
 
     if (${PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS)
       set(MUST_FIND_ALL_LIBS TRUE) 
@@ -420,7 +423,7 @@ function(tribits_tpl_find_include_dirs_and_libraries TPL_NAME)
 
       set(LIBRARIES_FOUND)
 
-      foreach(LIBNAME_SET ${${TPL_NAME}_LIBRARY_NAMES})
+      foreach(LIBNAME_SET ${REQUIRED_LIBS_NAMES})
 
         message("-- Searching for a lib in the set \"${LIBNAME_SET}\":")
 
