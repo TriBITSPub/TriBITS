@@ -71,12 +71,15 @@ macro(TribitsExampleProject2_test_setup_header)
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=ON)
     if (CYGWIN)
       set(libext ".dll.a")
+      set(libextregex "[.]dll.a")
     else()
       set(libext ".so")
+      set(libextregex "[.]so")
     endif()
   elseif (sharedOrStatic STREQUAL "STATIC")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
     set(libext ".a")
+    set(libextregex "[.]a")
   else()
     message(FATAL_ERROR "Invalid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
@@ -86,13 +89,16 @@ endmacro()
 ########################################################################
 
 
-function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
+function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
 
   TribitsExampleProject2_test_setup_header()
 
-  set(testNameBase TribitsExampleProject2_find_tpl_parts_${sharedOrStatic})
+  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testNameBase})
   set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
+
+  set(tplInstallBaseDir
+    "${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}")
 
   tribits_add_advanced_test( ${testNameBase}
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -105,60 +111,105 @@ function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
       ARGS
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
         -DCMAKE_BUILD_TYPE=DEBUG
-        "-DTpl1_INCLUDE_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl1/include"
-        "-DTpl1_LIBRARY_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl1/lib"
+        "-DTpl1_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl1/include"
+        "-DTpl1_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl1/lib"
+        "-DTpl2_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl2/include"
+        "-DTpl2_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl2/lib<semicolon>${tplInstallBaseDir}/install_tpl1/lib"
+        "-DTpl2_LIBRARY_NAMES=tpl2a<semicolon>tpl2b<semicolon>tpl1"
         -DTPL_ENABLE_Tpl3=ON
-        "-DTpl3_INCLUDE_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl3/include"
-        "-DTpl3_LIBRARY_DIRS=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl3/lib<semicolon>${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl2/lib"
+        "-DTpl3_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl3/include"
+        "-DTpl3_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl3/lib<semicolon>${tplInstallBaseDir}/install_tpl2/lib"
         "-DTpl3_LIBRARY_NAMES=tpl3<semicolon>tpl2a<semicolon>tpl2b"
+        -DTPL_ENABLE_Tpl4=ON
+        "-DTpl4_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl4/include"
+        "-DTpl4_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl4/lib<semicolon>${tplInstallBaseDir}/install_tpl3/lib<semicolon>${tplInstallBaseDir}/install_tpl2/lib<semicolon>${tplInstallBaseDir}/install_tpl1/lib"
+        "-DTpl4_LIBRARY_NAMES=tpl3<semicolon>tpl2b<semicolon>tpl2a<semicolon>tpl1"
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DCMAKE_INSTALL_PREFIX=install
-        -DTribitsExProj2_ENABLE_Package1=ON
-        -DTribitsExProj2_ENABLE_Package2=ON
+        -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "Final set of enabled packages:  Package1 Package2 2"
-	"Final set of enabled TPLs:  Tpl1 Tpl3 2"
-        "Searching for libs in Tpl1_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib'"
-        "Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/libtpl1${libext}'"
-        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/libtpl1${libext}'"
-        "Searching for headers in Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/include'"
-        "Found header '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/include/Tpl1.hpp'"
-        "TPL_Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/include'"
+        "Final set of enabled packages:  Package1 Package2 Package3"
+        "Final set of enabled TPLs:  Tpl1 Tpl2 Tpl3 Tpl4 4"
+
+        "Tpl1_LIBRARY_NAMES='tpl1'"
+        "Searching for libs in Tpl1_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl1/lib'"
+        "Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+        "TPL_Tpl1_LIBRARIES='${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+        "Searching for headers in Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"
+        "Found header '${tplInstallBaseDir}/install_tpl1/include/Tpl1.hpp'"
+        "TPL_Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"
+
+        "Tpl2_LIBRARY_NAMES='tpl2a[;]tpl2b[;]tpl1'"
+        "Searching for libs in Tpl2_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl2/lib[;]${tplInstallBaseDir}/install_tpl1/lib'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+        "Searching for headers in Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
+        "    Found header '${tplInstallBaseDir}/install_tpl2/include/Tpl2a.hpp'"
+        "Found TPL 'Tpl2' include dirs '${tplInstallBaseDir}/install_tpl2/include'"
+        "TPL_Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
+
 	"Tpl3_LIBRARY_NAMES='tpl3[;]tpl2a[;]tpl2b'"
-	"Searching for libs in Tpl3_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/lib[;].*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib'"
-        "Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/lib/libtpl3${libext}'"
-	"Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib/libtpl2a${libext}'"
-	"Found lib '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib/libtpl2b${libext}'"
-	"TPL_Tpl3_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/lib/libtpl3${libext}[;].*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib/libtpl2a${libext}[;].*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib/libtpl2b${libext}'"
-	"Searching for headers in Tpl3_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/include'"
-	"Found header '.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/include/Tpl3.hpp'"
-	"TPL_Tpl3_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/include'"
+	"Searching for libs in Tpl3_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl3/lib[;]${tplInstallBaseDir}/install_tpl2/lib'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
+	"    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
+	"    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
+        "Tpl3_LIBRARY_NAMES='tpl3[;]tpl2a[;]tpl2b'"
+        "Searching for libs in Tpl3_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl3/lib[;]${tplInstallBaseDir}/install_tpl2/lib'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
+        "TPL_Tpl3_LIBRARIES='${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
+        "Searching for headers in Tpl3_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl3/include'"
+        "    Found header '${tplInstallBaseDir}/install_tpl3/include/Tpl3.hpp'"
+	"TPL_Tpl3_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl3/include'"
+
+        "Tpl4_LIBRARY_NAMES='tpl3[;]tpl2b[;]tpl2a[;]tpl1'"
+        "Searching for libs in Tpl4_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl4/lib[;]${tplInstallBaseDir}/install_tpl3/lib[;]${tplInstallBaseDir}/install_tpl2/lib[;]${tplInstallBaseDir}/install_tpl1/lib'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+        "TPL_Tpl4_LIBRARIES='${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}[;]${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+
         "-- Configuring done"
         "-- Generating done"
 
     TEST_1
       MESSAGE "Build Package1 and tests"
-      CMND make
-      ALWAYS_FAIL_ON_NONZERO_RETURN
+      CMND ${CMAKE_COMMAND} ARGS --build .
       PASS_REGULAR_EXPRESSION_ALL
         "package1-prg"
+        "package2-prg"
+        "package3-prg"
 
     TEST_2
-      MESSAGE "Run tests for Package1"
+      MESSAGE "Run tests"
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
-        "100% tests passed, 0 tests failed"
+        "Test.*Package2_Prg.*Passed"
+        "Test.*Package3_Prg.*Passed"
+        "100% tests passed, 0 tests failed out of 3"
 
     TEST_3
-      MESSAGE "Install Package1"
-      CMND make ARGS install
+      MESSAGE "Install"
+      CMND ${CMAKE_COMMAND} ARGS --build . --target install
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "Tpl1Config.cmake"
+        "Tpl2Config.cmake"
+        "Tpl3Config.cmake"
+        "Tpl4Config.cmake"
+        "Package1Config.cmake"
+        "Package1Targets.cmake"
+        "Package2Config.cmake"
+        "Package2Targets.cmake"
+        "Package3Config.cmake"
+        "Package3Targets.cmake"
 
     ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
 
@@ -177,8 +228,8 @@ function(TribitsExampleProject2_find_tpl_parts_test sharedOrStatic)
 endfunction()
 
 
-TribitsExampleProject2_find_tpl_parts_test(STATIC)
-TribitsExampleProject2_find_tpl_parts_test(SHARED)
+TribitsExampleProject2_find_tpl_parts(STATIC)
+TribitsExampleProject2_find_tpl_parts(SHARED)
 
 
 ########################################################################
@@ -211,7 +262,7 @@ function(TribitsExampleProject2_explicit_tpl_vars_test sharedOrStatic)
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/libtpl1${libext}'"
+        "TPL_Tpl1_LIBRARIES='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/libtpl1${libextregex}'"
         "TPL_Tpl1_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/include'"
         "-- Configuring done"
         "-- Generating done"

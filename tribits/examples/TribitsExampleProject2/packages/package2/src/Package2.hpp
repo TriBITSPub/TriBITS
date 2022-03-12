@@ -8,6 +8,9 @@
 namespace Package2 {
 
 /** \brief . */
+std::string itsme();
+
+/** \brief . */
 std::string deps();
 
 } // namespace Package2

@@ -5,6 +5,11 @@
 #include "Tpl3.hpp"
 #include "Package1.hpp"
 
+std::string  Package2::itsme()
+{
+  return "Package2";
+}
+
 std::string Package2::deps()
 {
   std::ostringstream oss_deps;
