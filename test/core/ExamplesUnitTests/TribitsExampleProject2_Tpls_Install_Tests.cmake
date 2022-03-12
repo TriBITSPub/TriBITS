@@ -52,7 +52,7 @@ function(TribitsExampleProject2_Tpls_install_tests sharedOrStatic)
     message(FATAL_ERROR "Invalid value for sharedOrStatic='${sharedOrStatic}'!")
   endif()
 
-  # A) Build and install Tpl1, Tpl2, Tpl3
+  # A) Build and install Tpl1, Tpl2, Tpl3, Tpl4
 
   set(testNameBase TribitsExampleProject2_Tpls_install_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testNameBase})
@@ -179,6 +179,46 @@ function(TribitsExampleProject2_Tpls_install_tests sharedOrStatic)
     TEST_11
       MESSAGE "Delete source and build directory for Tpl3"
       CMND ${CMAKE_COMMAND} ARGS -E rm -rf Tpl3 build_tpl3
+
+    TEST_12
+      MESSAGE "Copy source for Tpl4"
+      CMND ${CMAKE_COMMAND}
+      ARGS -E copy_directory ${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/Tpl4 .
+      WORKING_DIRECTORY Tpl4
+
+    TEST_13
+      MESSAGE "Configure Tpl4"
+      WORKING_DIRECTORY build_tpl4
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
+        ${buildSharedLibsArg}
+        -DCMAKE_PREFIX_PATH="${testDir}/install_tpl3<semicolon>${testDir}/install_tpl2"
+        -DCMAKE_BUILD_TYPE=RelWithDepInfo
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install_tpl4
+        -DCMAKE_INSTALL_INCLUDEDIR=include
+        -DCMAKE_INSTALL_LIBDIR=lib
+        ${testDir}/Tpl4
+      PASS_REGULAR_EXPRESSION_ALL
+        "Configuring done"
+        "Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_14
+      MESSAGE "Build and install Tpl4"
+      WORKING_DIRECTORY build_tpl4
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+      PASS_REGULAR_EXPRESSION_ALL
+      "Installing: .*/install_tpl4/lib/cmake/Tpl4/Tpl4ConfigTargets[.]cmake"
+      "Installing: .*/install_tpl4/lib/cmake/Tpl4/Tpl4Config[.]cmake"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_15
+      MESSAGE "Delete source and build directory for Tpl4"
+      CMND ${CMAKE_COMMAND} ARGS -E rm -rf Tpl4 build_tpl4
+
+     LIST_SEPARATOR <semicolon>
 
       ADDED_TEST_NAME_OUT
         TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME
