@@ -828,6 +828,24 @@ function(unittest_tribits_add_test_basic)
     )
   unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}" )
 
+  message("Add two tests using POSTFIX_AND_ARGS_0 with spaces and semi-colons")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN}
+    POSTFIX_AND_ARGS_0  "test0"  "has some<sep>spaces" "--and semi<sep>colons too"
+    POSTFIX_AND_ARGS_1  "test1"  "has2 some<sep>spaces" "--and2 semi<sep>colons too"
+    LIST_SEPARATOR "<sep>"
+    ADDED_TESTS_NAMES_OUT  ${EXEN}_TEST_NAMES
+    )
+  unittest_compare_const(
+    TRIBITS_ADD_TEST_ADD_TEST_INPUT
+    "NAME;PackageA_SomeExec_test0;COMMAND;${PACKEXEN_PATH};has some;spaces;--and semi;colons too;NAME;PackageA_SomeExec_test1;COMMAND;${PACKEXEN_PATH};has2 some;spaces;--and2 semi;colons too"
+    )
+  unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}_test0;${PACKEXEN}_test1" )
+  # NOTE: There is a test under CTestScriptsUnitTests/ that actaully runs an
+  # real test and command that verifies the correct handling of semi-colons.
+  # The mashing that CMake above is doing to these replaced semicolons does
+  # not do them justice.
+
   message("Add two tests with different postfixes and arguments")
   global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
   tribits_add_test( ${EXEN}
@@ -3992,37 +4010,38 @@ function(unittest_tribits_add_executable_and_test)
 
   tribits_add_executable_and_test(
     execName
-    SOURCES src1 src2
-    NAME testName
-    NAME_POSTFIX testNamePostfix
-    CATEGORIES category1 category2
-    HOST host1 host2
-    DEPLIBS lib1 lib2  # Deprecated
-    XHOST host1 host2
-    HOSTTYPE hosttype1 hosttype2
-    XHOSTTYPE hosttype1 hosttype2
-    EXCLUDE_IF_NOT_TRUE var1 var2
-    DISABLED "Disable this test because I said"
-    NOEXEPREFIX
-    NOEXESUFFIX
-    IMPORTEDLIBS ilib1 ilib2
-    TESTONLYLIBS tolib1 tolib2
-    DIRECTORY dir
-    COMM serial mpi
-    NUM_MPI_PROCS numProcs
-    LINKER_LANGUAGE C
-    ADD_DIR_TO_NAME
-    TARGET_DEFINES -DSOMEDEFINE1
-    DEFINES -DSOMEDEFINE2
-    KEYWORDS keyword1 keyword2
-    STANDARD_PASS_OUTPUT
-    PASS_REGULAR_EXPRESSION "regex1;regex2"
-    FAIL_REGULAR_EXPRESSION "regex1;regex2"
-    ENVIRONMENT env1=envval1 env2=envval2
-    WILL_FAIL
-    TIMEOUT 11.5
-    ADDED_EXE_TARGET_NAME_OUT execName_TARGET_NAME
     ADDED_TESTS_NAMES_OUT execName_TEST_NAME
+    ADDED_EXE_TARGET_NAME_OUT execName_TARGET_NAME
+    LIST_SEPARATOR <semicolon>
+    TIMEOUT 11.5
+    WILL_FAIL
+    ENVIRONMENT env1=envval1 env2=envval2
+    FAIL_REGULAR_EXPRESSION "regex1;regex2"
+    PASS_REGULAR_EXPRESSION "regex1;regex2"
+    STANDARD_PASS_OUTPUT
+    KEYWORDS keyword1 keyword2
+    DEFINES -DSOMEDEFINE2
+    TARGET_DEFINES -DSOMEDEFINE1
+    ADD_DIR_TO_NAME
+    LINKER_LANGUAGE C
+    NUM_MPI_PROCS numProcs
+    COMM serial mpi
+    DIRECTORY dir
+    TESTONLYLIBS tolib1 tolib2
+    IMPORTEDLIBS ilib1 ilib2
+    NOEXESUFFIX
+    NOEXEPREFIX
+    DISABLED "Disable this test because I said"
+    EXCLUDE_IF_NOT_TRUE var1 var2
+    XHOSTTYPE hosttype1 hosttype2
+    HOSTTYPE hosttype1 hosttype2
+    XHOST host1 host2
+    DEPLIBS lib1 lib2  # Deprecated
+    HOST host1 host2
+    CATEGORIES category1 category2
+    NAME_POSTFIX testNamePostfix
+    NAME testName
+    SOURCES src1 src2
     )
   unittest_compare_const(
     TRIBITS_ADD_EXECUTABLE_CAPTURE_ARGS
@@ -4030,8 +4049,10 @@ function(unittest_tribits_add_executable_and_test)
     )
   unittest_compare_const(
     TRIBITS_ADD_TEST_CAPTURE_ARGS
-    "execName;COMM;serial;mpi;CATEGORIES;category1;category2;HOST;host1;host2;XHOST;host1;host2;HOSTTYPE;hosttype1;hosttype2;XHOSTTYPE;hosttype1;hosttype2;EXCLUDE_IF_NOT_TRUE;var1;var2;NOEXEPREFIX;NOEXESUFFIX;NAME;testName;NAME_POSTFIX;testNamePostfix;DIRECTORY;dir;KEYWORDS;keyword1;keyword2;NUM_MPI_PROCS;numProcs;PASS_REGULAR_EXPRESSION;regex1;regex2;FAIL_REGULAR_EXPRESSION;regex1;regex2;ENVIRONMENT;env1=envval1;env2=envval2;DISABLED;Disable this test because I said;STANDARD_PASS_OUTPUT;WILL_FAIL;TIMEOUT;11.5;ADD_DIR_TO_NAME;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES"
+    "execName;COMM;serial;mpi;CATEGORIES;category1;category2;HOST;host1;host2;XHOST;host1;host2;HOSTTYPE;hosttype1;hosttype2;XHOSTTYPE;hosttype1;hosttype2;EXCLUDE_IF_NOT_TRUE;var1;var2;NOEXEPREFIX;NOEXESUFFIX;NAME;testName;NAME_POSTFIX;testNamePostfix;DIRECTORY;dir;KEYWORDS;keyword1;keyword2;NUM_MPI_PROCS;numProcs;PASS_REGULAR_EXPRESSION;regex1;regex2;FAIL_REGULAR_EXPRESSION;regex1;regex2;ENVIRONMENT;env1=envval1;env2=envval2;DISABLED;Disable this test because I said;STANDARD_PASS_OUTPUT;WILL_FAIL;TIMEOUT;11.5;LIST_SEPARATOR;<semicolon>;ADD_DIR_TO_NAME;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES"
     )
+  # NOTE: Above, we input the list in reverse order to prove that the
+  # arguments are handled correctly internally.
 
   message("\n***")
   message("*** Test passing in XHOST_TEST and XHOSTTYPE_TEST into tribits_add_executable_and_test(...)")
@@ -4492,4 +4513,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(684)
+unittest_final_result(686)
