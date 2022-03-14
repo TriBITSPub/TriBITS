@@ -59,3 +59,12 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 else()
   set(COMPILER_IS_GNU FALSE)
 endif()
+
+# Find ninja so we can test TriBITS using ninja as well
+find_program(NINJA_EXE ninja)
+
+if ( CMAKE_VERSION VERSION_LESS 3.18.0 )
+  set(rulesNinjaFilePath "rules.ninja")
+else()
+  set(rulesNinjaFilePath "CMakeFiles/rules.ninja")
+endif()
