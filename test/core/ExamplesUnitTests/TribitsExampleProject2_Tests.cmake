@@ -103,6 +103,7 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
   tribits_add_advanced_test( ${testNameBase}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE  NINJA_EXE
     LIST_SEPARATOR "<semicolon>"
 
     TEST_0
@@ -110,16 +111,17 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
       CMND ${CMAKE_COMMAND}
       ARGS
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
+        -GNinja
         -DCMAKE_BUILD_TYPE=DEBUG
         "-DTpl1_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl1/include"
         "-DTpl1_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl1/lib"
         "-DTpl2_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl2/include"
         "-DTpl2_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl2/lib<semicolon>${tplInstallBaseDir}/install_tpl1/lib"
-        "-DTpl2_LIBRARY_NAMES=tpl2a<semicolon>tpl2b<semicolon>tpl1"
+        "-DTpl2_LIBRARY_NAMES=tpl2b<semicolon>tpl2a<semicolon>tpl1"
         -DTPL_ENABLE_Tpl3=ON
         "-DTpl3_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl3/include"
-        "-DTpl3_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl3/lib<semicolon>${tplInstallBaseDir}/install_tpl2/lib"
-        "-DTpl3_LIBRARY_NAMES=tpl3<semicolon>tpl2a<semicolon>tpl2b"
+        "-DTpl3_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl3/lib<semicolon>${tplInstallBaseDir}/install_tpl2/lib<semicolon>${tplInstallBaseDir}/install_tpl1/lib"
+        "-DTpl3_LIBRARY_NAMES=tpl3<semicolon>tpl2b<semicolon>tpl2a<semicolon>tpl1"
         -DTPL_ENABLE_Tpl4=ON
         "-DTpl4_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl4/include"
         "-DTpl4_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl4/lib<semicolon>${tplInstallBaseDir}/install_tpl3/lib<semicolon>${tplInstallBaseDir}/install_tpl2/lib<semicolon>${tplInstallBaseDir}/install_tpl1/lib"
@@ -141,27 +143,24 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
         "Found header '${tplInstallBaseDir}/install_tpl1/include/Tpl1.hpp'"
         "TPL_Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"
 
-        "Tpl2_LIBRARY_NAMES='tpl2a[;]tpl2b[;]tpl1'"
+        "Tpl2_LIBRARY_NAMES='tpl2b[;]tpl2a[;]tpl1'"
         "Searching for libs in Tpl2_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl2/lib[;]${tplInstallBaseDir}/install_tpl1/lib'"
-        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
         "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
+        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
         "    Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+        "TPL_Tpl2_LIBRARIES='${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}[;]${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
         "Searching for headers in Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
         "    Found header '${tplInstallBaseDir}/install_tpl2/include/Tpl2a.hpp'"
         "Found TPL 'Tpl2' include dirs '${tplInstallBaseDir}/install_tpl2/include'"
         "TPL_Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
 
-	"Tpl3_LIBRARY_NAMES='tpl3[;]tpl2a[;]tpl2b'"
-	"Searching for libs in Tpl3_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl3/lib[;]${tplInstallBaseDir}/install_tpl2/lib'"
+	"Tpl3_LIBRARY_NAMES='tpl3[;]tpl2b[;]tpl2a[;]tpl1'"
+	"Searching for libs in Tpl3_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl3/lib[;]${tplInstallBaseDir}/install_tpl2/lib[;]${tplInstallBaseDir}/install_tpl1/lib'"
         "    Found lib '${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
-	"    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
 	"    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
-        "Tpl3_LIBRARY_NAMES='tpl3[;]tpl2a[;]tpl2b'"
-        "Searching for libs in Tpl3_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl3/lib[;]${tplInstallBaseDir}/install_tpl2/lib'"
-        "    Found lib '${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
-        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
-        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
-        "TPL_Tpl3_LIBRARIES='${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
+	"    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
+	"    Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+        "TPL_Tpl3_LIBRARIES='${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}[;]${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
         "Searching for headers in Tpl3_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl3/include'"
         "    Found header '${tplInstallBaseDir}/install_tpl3/include/Tpl3.hpp'"
 	"TPL_Tpl3_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl3/include'"
@@ -178,12 +177,12 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
         "-- Generating done"
 
     TEST_1
-      MESSAGE "Build Package1 and tests"
-      CMND ${CMAKE_COMMAND} ARGS --build .
+      MESSAGE "Build verbose to check the link line of Package3"
+      CMND ${CMAKE_COMMAND} ARGS --build . -v
       PASS_REGULAR_EXPRESSION_ALL
-        "package1-prg"
-        "package2-prg"
-        "package3-prg"
+        "[-]o packages/package1/src/package1-prg .* ${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
+        "[-]o packages/package2/src/package2-prg .* ${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex} +${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
+        "[-]o packages/package3/src/package3-prg .* ${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex} +${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
 
     TEST_2
       MESSAGE "Run tests"
@@ -216,7 +215,8 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
   # NOTE: The above test ensures that the basic TriBITS TPL find operations
-  # work and it does not call find_package().
+  # work and it does not call find_package().  It also ensures that the found
+  # TPL libraries appear on the link line in the correct order.
 
   if (${testNameBase}_NAME)
     set(${testNameBase}_NAME ${${testNameBase}_NAME} PARENT_SCOPE)
