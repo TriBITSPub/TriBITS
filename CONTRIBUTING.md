@@ -10,7 +10,7 @@ Contributions to TriBITS are welcomed.  However, there are some [requirements](#
 
 **NOTE:** See GitHub documentation for overviews and the mechanical steps to create a [GitHub fork](https://help.github.com/articles/about-forks/), [push topic branches](https://help.github.com/articles/pushing-to-a-remote/), and [create pull requests](https://help.github.com/articles/creating-a-pull-request/).  That documentation and links should provide everything you should need to know about how to perform those standard GitHub tasks.  Those mechanical steps are **not** repeated here.
 
-**NOTE:** All contributions that are submitted are assumed to be given under the **[3-clause BSD-like TriBITS License](https://github.com/TriBITSPub/TriBITS/blob/master/tribits/Copyright.txt).**
+**NOTE:** All contributions that are submitted are assumed to be given under the **[3-clause BSD-like TriBITS License](https://github.com/TriBITSPub/TriBITS/blob/master/tribits/Copyright.txt).**  (By submitting a Pull Request, the contributor is implicitly putting their contribution under this license.)
 
 <a name="requirements"/>
 
@@ -50,6 +50,7 @@ The details are given in the next section.
 The following roles are mentioned on the process descriptions:
 * **TriBITS Maintainer**: Individual with push rights to the main TriBITS repo (i.e. [@bartlettroscoe](https://github.com/bartlettroscoe)).  Must review all issues and suggested changes and accept pull-requests.
 * **TriBITS Developer**: Someone who knows how to built TriBITS as a project with its tests, add tests, make acceptable changes, create pull-requests, etc. but can't directly push to the main TriBITS github 'master' branch (see the role of [TriBITS System Developer](https://tribits.org/doc/TribitsMaintainersGuide.html#tribits-system-developer)).  This might be the Issue Reporter.
+* **TriBITS Reviewer**: A member of the TriBITS Collaborators who have permission to review and approve Pull Requests (and change other aspects of a Pull Request).
 * **Issue Reporter**: A person who first reports an issue with TriBITS and would like some type of change to happen (i.e. to fix a defect, implement a new feature, etc.).  This might be a TriBITS Developer.
 
 With those definitions in place, the recommended/preferred process for contributing to TriBITS is:
@@ -60,21 +61,26 @@ With those definitions in place, the recommended/preferred process for contribut
 
 <a name="process_create_pull_request"/>
 
-2. **Create Pull-Request:** After the proposed change is approved in the GitHub Issue by the TriBITS Maintainer, then the TriBITS Developer should create a Pull-Request performing the following steps:
-    * **Create a topic/feature branch** using a descriptive name containing the Issue ID (e.g. `123-some-great-feature`),
-    * **Create commits with logs messages referencing the Issue ID** (e.g. `fix that thing (#123)`),
-    * **Issue a pull-request (PR)** by [pushing the topic branch to your fork](https://help.github.com/articles/pushing-to-a-remote/) and then [creating the pull request](https://help.github.com/articles/creating-a-pull-request/).
-    * The **changes in the PR will automatically be tested** using [Travis CI](https://travis-ci.org/TriBITSPub/TriBITS).  Also, the PR allows for a well managed code review (comments for each line of the change, for example).  The pull request should then reference the original GitHub Issue in a comment  (i.e. `Addressess #123`).  (NOTE: A partial set of changes is just fine in the PR, just enough to start the code review process.)
-    * **NOTE:** The TriBITS Maintainers should be given push access to the topic-branch used to create the PR.  That way, the contributors, TriBITS Developers and the TriBITS Maintainer can all push new commits to that branch in a more collaborative way and have the PR Issue get updated automatically.
+2. **Create Pull-Request:** After the concept/plan for the proposed change is approved in the GitHub Issue by the TriBITS Maintainer, then the TriBITS Developer should create a Pull-Request performing the following steps:
+    1. **Create a topic/feature branch** using a descriptive name containing the Issue ID (e.g. `123-some-great-feature`),
+    2. **Create commits with logs messages referencing the Issue ID** (e.g. `fix that thing (#123)`),
+    3. **Issue a pull-request (PR)** by [pushing the topic branch to your fork](https://help.github.com/articles/pushing-to-a-remote/) and then [creating the pull request](https://help.github.com/articles/creating-a-pull-request/) against the 'master' branch of the main TriBITS GitHub repository.
+    4. The **changes in the PR will automatically be tested** using [GitHub Actions](https://github.com/TriBITSPub/TriBITS/wiki/TriBITS-CDash-Dashboard#github-actions-pull-request-testing).  Also, the PR allows for a well managed code review (comments for each line of the change, for example).  The pull request should then reference the original GitHub Issue in a comment  (i.e. `Addressess #123`).  (NOTE: A partial set of changes in a PR is fine to open it, just enough to start the code review process.)
+    5. **NOTE:** The TriBITS Maintainers should be given push access to the topic-branch used to create the PR.  That way, the contributors, TriBITS Developers and the TriBITS Maintainer can all push new commits to that branch in a more collaborative way and have the PR Issue get updated automatically.
 
 <a name="process_code_review"/>
 
-3. **Perform Code Review:** A code review process is performed by the TriBITS Maintainer and continued changes are made by the TriBITS Developer and comments are added to the new PR or the original Issue (whatever makes sense but usually comments specific to changes should be added to the PR while more general comments not specific to the PR should go into the associated GitHub Issue).  New updates to the branch can be pushed by the TriBITS Developer as changes are made to address issues with the changes.
+3. **Perform Code Review:**
+   1. The TriBITS Maintainer moves the PR to the "In Review" column to the [appropriate Kanban Project Board](https://github.com/TriBITSPub/TriBITS/projects?type=beta) and  assigsn the PR one or more TriBITS Reviewers **and** assign thesm to the PR Reviewers list.  (The TriBITS Maintainer should 
+   2. When the TriBITS Reviewer accepts the review and starts the review, they must add a comment to the PR stating "I accept the review" and/or "I am starting my review" to notifiy those subscribed to the PR.
+   3. A code review process is performed by the TriBITS Reviewers, continued changes are made by the TriBITS Developer to address feedback, and comments are added to the PR or the original Issue to drive the completion of the PR (whatever makes sense, but usually comments specific to the changes should be added to the PR while more general comments not specific to the PR should go into the associated GitHub Issue).  New updates to the PR branch can be pushed by the TriBITS Developer as changes are made to address feedback.  Each TriBITS Reviewer must post their offical PR review (using the GitHub PR review feature, not as a single comment).
 
 <a name="process_accept_pull_request"/>
 
-4. **Accept Pull-Request:** The TriBITS maintainer will then either accept the PR (by optionally rebasing and merging the branch to main development branch) or will state what further issues must be resolved before the change can be incorporated.
+4. **Accept Pull-Request:**
+   1. The TriBITS Maintainer will then either accept the PR (by optionally rebasing and merging the branch to main development branch) or will state what further issues must be resolved before the change can be incorporated.
+   2. If the TriBITS Maintainer accepts the PR, they merge the PR 
 
-**NOTE:** Very simple changes can be attached to a GitHub Issue which are generated using `git format-patch` but the above process involving pull requests is preferred. 
+**NOTE:** Very simple changes can be attached to a GitHub Issue generated using `git format-patch` but the above process involving PRs is preferred. 
 
 **NOTE:** The above process is just a suggested process.  What is important are the [requirements](#requirements) listed above.
