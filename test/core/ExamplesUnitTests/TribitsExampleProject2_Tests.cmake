@@ -113,19 +113,17 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
         -GNinja
         -DCMAKE_BUILD_TYPE=DEBUG
+        -DTPL_ENABLE_Tpl1=ON
         "-DTpl1_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl1/include"
         "-DTpl1_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl1/lib"
+        -DTPL_ENABLE_Tpl2=ON
         "-DTpl2_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl2/include"
-        "-DTpl2_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl2/lib<semicolon>${tplInstallBaseDir}/install_tpl1/lib"
-        "-DTpl2_LIBRARY_NAMES=tpl2b<semicolon>tpl2a<semicolon>tpl1"
+        "-DTpl2_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl2/lib"
         -DTPL_ENABLE_Tpl3=ON
         "-DTpl3_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl3/include"
-        "-DTpl3_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl3/lib<semicolon>${tplInstallBaseDir}/install_tpl2/lib<semicolon>${tplInstallBaseDir}/install_tpl1/lib"
-        "-DTpl3_LIBRARY_NAMES=tpl3<semicolon>tpl2b<semicolon>tpl2a<semicolon>tpl1"
+        "-DTpl3_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl3/lib"
         -DTPL_ENABLE_Tpl4=ON
         "-DTpl4_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl4/include"
-        "-DTpl4_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl4/lib<semicolon>${tplInstallBaseDir}/install_tpl3/lib<semicolon>${tplInstallBaseDir}/install_tpl2/lib<semicolon>${tplInstallBaseDir}/install_tpl1/lib"
-        "-DTpl4_LIBRARY_NAMES=tpl3<semicolon>tpl2b<semicolon>tpl2a<semicolon>tpl1"
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DCMAKE_INSTALL_PREFIX=install
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
@@ -143,35 +141,27 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
         "Found header '${tplInstallBaseDir}/install_tpl1/include/Tpl1.hpp'"
         "TPL_Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"
 
-        "Tpl2_LIBRARY_NAMES='tpl2b[;]tpl2a[;]tpl1'"
-        "Searching for libs in Tpl2_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl2/lib[;]${tplInstallBaseDir}/install_tpl1/lib'"
+        "Tpl2_LIBRARY_NAMES='tpl2b[;]tpl2a'"
+        "Searching for libs in Tpl2_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl2/lib'"
         "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
         "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
-        "    Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
-        "TPL_Tpl2_LIBRARIES='${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}[;]${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+        "TPL_Tpl2_LIBRARIES='${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
         "Searching for headers in Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
         "    Found header '${tplInstallBaseDir}/install_tpl2/include/Tpl2a.hpp'"
         "Found TPL 'Tpl2' include dirs '${tplInstallBaseDir}/install_tpl2/include'"
         "TPL_Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
 
-	"Tpl3_LIBRARY_NAMES='tpl3[;]tpl2b[;]tpl2a[;]tpl1'"
-	"Searching for libs in Tpl3_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl3/lib[;]${tplInstallBaseDir}/install_tpl2/lib[;]${tplInstallBaseDir}/install_tpl1/lib'"
+	"Tpl3_LIBRARY_NAMES='tpl3'"
+	"Searching for libs in Tpl3_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl3/lib'"
         "    Found lib '${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
-	"    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
-	"    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
-	"    Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
-        "TPL_Tpl3_LIBRARIES='${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}[;]${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+        "TPL_Tpl3_LIBRARIES='${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
         "Searching for headers in Tpl3_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl3/include'"
         "    Found header '${tplInstallBaseDir}/install_tpl3/include/Tpl3.hpp'"
 	"TPL_Tpl3_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl3/include'"
 
-        "Tpl4_LIBRARY_NAMES='tpl3[;]tpl2b[;]tpl2a[;]tpl1'"
-        "Searching for libs in Tpl4_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl4/lib[;]${tplInstallBaseDir}/install_tpl3/lib[;]${tplInstallBaseDir}/install_tpl2/lib[;]${tplInstallBaseDir}/install_tpl1/lib'"
-        "    Found lib '${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
-        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
-        "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
-        "    Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
-        "TPL_Tpl4_LIBRARIES='${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}[;]${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+	"Searching for headers in Tpl4_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl4/include"
+	"    Found header '${tplInstallBaseDir}/install_tpl4/include/Tpl4.hpp'"
+	"TPL_Tpl4_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl4/include'"
 
         "-- Configuring done"
         "-- Generating done"
