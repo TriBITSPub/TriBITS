@@ -44,8 +44,8 @@ def change_paths_and_get_includes(source_file: str, src_file_path: str,
                     new_line.extend(splitted_line[:path_index])
                     abs_path = os.path.abspath(os.path.join(src_file_path,
                                                             splitted_line[path_index]))
-                    path_elem = abs_path.split(os.sep)[-3:]
-                    new_path = os.path.join(rst_dir, path_elem[0], path_elem[1], path_elem[2])
+                    path_elem = abs_path.split(os.sep)[1:]
+                    new_path = os.path.join(rst_dir, *path_elem)
                     os.makedirs(os.path.dirname(new_path), exist_ok=True)
                     if not os.path.isfile(new_path) and copy_file:
                         copyfile(src=abs_path, dst=new_path, follow_symlinks=True)
@@ -216,8 +216,8 @@ class SphinxRstGenerator:
         sphinx_rel_path = self.paths.get('maintainers_guide').get('sphinx_path')
         grand_child_rst = set()
         for child in child_rst_lst:
-            path_elem = child.split(os.sep)[-3:]
-            final_path = os.path.join(self.rst_dir, path_elem[0], path_elem[1], path_elem[2])
+            path_elem = child.split(os.sep)[1:]
+            final_path = os.path.join(self.rst_dir, *path_elem)
             os.makedirs(os.path.dirname(final_path), exist_ok=True)
             src_path = os.path.split(child)[0]
             includes_grand = self.generate_rst(source_file=child, src_path=src_path,
@@ -227,8 +227,8 @@ class SphinxRstGenerator:
 
         grand_grand_child_rst = set()
         for grand_child in grand_child_rst_lst:
-            path_elem = grand_child.split(os.sep)[-3:]
-            final_path = os.path.join(self.rst_dir, path_elem[0], path_elem[1], path_elem[2])
+            path_elem = grand_child.split(os.sep)[1:]
+            final_path = os.path.join(self.rst_dir, *path_elem)
             os.makedirs(os.path.dirname(final_path), exist_ok=True)
             src_path = os.path.split(grand_child)[0]
             includes_grand_grand = self.generate_rst(source_file=grand_child, src_path=src_path,
