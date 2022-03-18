@@ -248,7 +248,7 @@ endmacro()
 
 # NOTE: If the above function turns out to be a performance bottle neck, there
 # are a few things that could be done to improve performance.  One thing you
-# could do is repalce the o(len(arg_names)) and o(len(option_names)) lookups
+# could do is replace the o(len(arg_names)) and o(len(option_names)) lookups
 # with o(1) lookups by creating CMake variables of the name
 # ${OUTER_FUNC_NAME}_arg_<argNamei> and then just look of that variable exists
 # or not.  That should use a hash function.  That might actually slow things

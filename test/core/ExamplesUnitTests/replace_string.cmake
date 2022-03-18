@@ -1,4 +1,4 @@
-# CMake -P script to repalce a string in a text file with another string.
+# CMake -P script to replace a string in a text file with another string.
 #
 # Usage:
 #

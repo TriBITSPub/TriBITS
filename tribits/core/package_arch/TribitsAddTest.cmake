@@ -204,7 +204,7 @@ include(TribitsAddTestHelpers)
 #     Tests (tribits_add_test())`_ for more details and examples.
 #
 #     Note that one of the `<postfix>` arguments can be empty, in which case
-#     the basse test name is not appended so::
+#     the base test name is not appended so::
 #
 #       POSTIFX_AND_ARGS_0 "" --arg1 --arg2=dummy
 #
@@ -371,7 +371,7 @@ include(TribitsAddTestHelpers)
 #     separator ``'<sep>'`` and pass in ``LIST_SEPARATOR <sep>`` so ``<sep>``
 #     will be replaced with ``';'`` at point of usage.  If the env var values
 #     contain any spaces, also quote the entire variable/value pair as
-#     ``"<vari>=<valuei>"``.  For example, the evn var and value
+#     ``"<vari>=<valuei>"``.  For example, the env var and value
 #     ``my_env_var="arg1 b;arg2;I have spaces"`` would need to be passed as
 #     ``"my_env_var=arg1 b<sep>arg2<sep>I have spaces"``.
 #
