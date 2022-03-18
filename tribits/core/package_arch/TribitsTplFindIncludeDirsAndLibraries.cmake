@@ -78,12 +78,13 @@ include(Split)
 # the search for the library components and just specify the absolute
 # locations.  The function will also set ``<allowPackagePrefindOut>`` to
 # ``FALSE`` if ``<tplName>_INCLUDE_DIRS``, ``<tplName>_LIBRARY_NAMES``, or
-# ``<tplName>_LIBRARY_DIRS`` is set and ``<tplName>_FORCE_PRE_FIND_PACKAGE`` is
-# set to ``FALSE``.  Otherwise, if ``<tplName>_FORCE_PRE_FIND_PACKAGE`` is set
-# to ``TRUE``, the function will not return ``FALSE`` for
+# ``<tplName>_LIBRARY_DIRS`` is set and ``<tplName>_FORCE_PRE_FIND_PACKAGE``
+# is set to ``FALSE``.  Otherwise, if ``<tplName>_FORCE_PRE_FIND_PACKAGE`` is
+# set to ``TRUE``, the function will not return ``FALSE`` for
 # ``<allowPackagePrefindOut>`` no matter what the values of
 # ``<tplName>_INCLUDE_DIRS``, ``<tplName>_LIBRARY_NAMES``, or
-# ``<tplName>_LIBRARY_DIRS``.
+# ``<tplName>_LIBRARY_DIRS``.  Finally, ``<allowPackagePrefindOut>`` is set to
+# ``FALSE`` if ``<tplName>_ALLOW_PACKAGE_PREFIND=OFF`` is set in the cache.
 #
 # The variable ``<tplName>_FORCE_PRE_FIND_PACKAGE`` is needed to allow users
 # (or the ``FindTPL<tplName>.cmake`` module itself) to avoid name clashes with
@@ -93,6 +94,10 @@ include(Split)
 # sets ``<tplName>_FORCE_PRE_FIND_PACKAGE`` as a cache variable with default
 # value ``FALSE`` to maintain backward compatibility with existing
 # ``FindTPL<tplName>.cmake`` modules.
+#
+# The cache variable ``<tplName>_ALLOW_PACKAGE_PREFIND`` is to allow the user
+# to disable the prefind call to ``find_package()`` even if it would be
+# allowed otherwise.
 #
 # See `How to use find_package() for a TriBITS TPL`_ for details in how to use
 # this function to create a ``FindTPL<tplName>.cmake`` module file.
@@ -112,9 +117,15 @@ function(tribits_tpl_allow_pre_find_package  TPL_NAME  ALLOW_PACKAGE_PREFIND_OUT
     "Determines if the variables ${TPL_NAME}_[INCLUDE_DIRS,LIBRARY_NAMES,LIBRARY_DIRS] should be ignored and the pre-find find_package(${TPL_NAME} should be performed anyway.  But this will *not* do the pre-find if any of the TPL_${TPL_NAME}_[INCLUDE_DIRS,LIBRARY_NAMES,LIBRARY_DIRS] vars are set." )
 
   # Start out with TRUE and set to FALSE in logic below
+  set(${TPL_NAME}_ALLOW_PACKAGE_PREFIND TRUE CACHE BOOL
+     "Set to FALSE to skip find_package() prefind for the TriBITS TPL '${TPL_NAME}'")
+
+  # Start out with TRUE and set to FALSE in logic below
   set(ALLOW_PACKAGE_PREFIND TRUE)
 
-  if (
+  if (NOT ${TPL_NAME}_ALLOW_PACKAGE_PREFIND)
+    set(ALLOW_PACKAGE_PREFIND FALSE)
+  elseif (
     (NOT "${TPL_${TPL_NAME}_INCLUDE_DIRS}" STREQUAL "")
     OR (NOT "${TPL_${TPL_NAME}_LIBRARIES}" STREQUAL "")
     OR (NOT "${TPL_${TPL_NAME}_LIBRARY_DIRS}" STREQUAL "")
