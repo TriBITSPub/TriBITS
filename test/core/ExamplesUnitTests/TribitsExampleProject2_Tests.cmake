@@ -62,7 +62,6 @@ set_ENV_PATH_HACK_FOR_TPL1_ARG(SHARED)
 # debug this so I am just giving up at this point.
 
 
-
 ########################################################################
 
 
@@ -89,22 +88,68 @@ endmacro()
 ########################################################################
 
 
-function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
+function(TribitsExampleProject2_find_tpl_parts sharedOrStatic findingTplsMethod)
 
   TribitsExampleProject2_test_setup_header()
 
-  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic})
-  set(testName ${PACKAGE_NAME}_${testNameBase})
-  set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
-
   set(tplInstallBaseDir
     "${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}")
+
+  set(testNameSuffix "")
+  set(tplLibAndIncDirsArgs "")
+  set(cmakePrefixPathCacheArg "")
+  set(cmakePrefixPathEnvArg "")
+
+  set(cmakePrefixPath
+    "${tplInstallBaseDir}/install_tpl4<semicolon>${tplInstallBaseDir}/install_tpl3<semicolon>${tplInstallBaseDir}/install_tpl2<semicolon>${tplInstallBaseDir}/install_tpl1"
+    )
+
+  if (findingTplsMethod STREQUAL "TPL_LIBRARY_AND_INCLUDE_DIRS")
+    set(tplLibAndIncDirsArgs
+      "-DTpl1_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl1/include"
+      "-DTpl1_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl1/lib"
+      "-DTpl2_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl2/include"
+      "-DTpl2_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl2/lib"
+      "-DTpl3_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl3/include"
+      "-DTpl3_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl3/lib"
+      "-DTpl4_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl4/include"
+      )
+    set(searchingTplLibAndINcDirsRegexes
+      "Searching for libs in Tpl1_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl1/lib'"
+      "Searching for headers in Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"
+      "Searching for libs in Tpl2_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl2/lib'"
+      "Searching for headers in Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
+      "Searching for libs in Tpl3_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl3/lib'"
+      "Searching for headers in Tpl3_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl3/include'"
+      "Searching for headers in Tpl4_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl4/include"
+      )
+  elseif (findingTplsMethod STREQUAL "CMAKE_PREFIX_PATH_CACHE")
+    set(testNameSuffix "_CMAKE_PREFIX_PATH_CACHE")
+    set(cmakePrefixPathCacheArg "-DCMAKE_PREFIX_PATH=${cmakePrefixPath}")
+    set(tplLibAndIncDirsArgs "-DTpl1_ALLOW_PACKAGE_PREFIND=OFF")
+    set(searchingTplLibAndINcDirsRegexes "")
+  elseif (findingTplsMethod STREQUAL "CMAKE_PREFIX_PATH_ENV")
+    set(testNameSuffix "_CMAKE_PREFIX_PATH_ENV")
+    string(REPLACE "<semicolon>" ":" cmakePrefixPathEnv "${cmakePrefixPath}")
+    set(cmakePrefixPathEnvArg ENVIRONMENT CMAKE_PREFIX_PATH=${cmakePrefixPathEnv})
+    set(tplLibAndIncDirsArgs "-DTpl1_ALLOW_PACKAGE_PREFIND=OFF")
+    set(searchingTplLibAndINcDirsRegexes "")
+  else()
+    message(FATAL_ERROR
+      "Error, findingTplsMethod='${findingTplsMethod}' is invalid!")
+  endif()
+
+  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}${testNameSuffix})
+  set(testName ${PACKAGE_NAME}_${testNameBase})
+  set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
 
   tribits_add_advanced_test( ${testNameBase}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     EXCLUDE_IF_NOT_TRUE  NINJA_EXE
     LIST_SEPARATOR "<semicolon>"
+
+    ${cmakePrefixPathEnvArg}
 
     TEST_0
       MESSAGE "Configure TribitsExampleProject2 against pre-installed Tpl1"
@@ -114,16 +159,11 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
         -GNinja
         -DCMAKE_BUILD_TYPE=DEBUG
         -DTPL_ENABLE_Tpl1=ON
-        "-DTpl1_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl1/include"
-        "-DTpl1_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl1/lib"
         -DTPL_ENABLE_Tpl2=ON
-        "-DTpl2_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl2/include"
-        "-DTpl2_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl2/lib"
         -DTPL_ENABLE_Tpl3=ON
-        "-DTpl3_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl3/include"
-        "-DTpl3_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl3/lib"
         -DTPL_ENABLE_Tpl4=ON
-        "-DTpl4_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl4/include"
+        ${tplLibAndIncDirsArgs}
+        ${cmakePrefixPathCacheArg}
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DCMAKE_INSTALL_PREFIX=install
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
@@ -134,34 +174,29 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
         "Final set of enabled TPLs:  Tpl1 Tpl2 Tpl3 Tpl4 4"
 
         "Tpl1_LIBRARY_NAMES='tpl1'"
-        "Searching for libs in Tpl1_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl1/lib'"
         "Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
         "TPL_Tpl1_LIBRARIES='${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
-        "Searching for headers in Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"
         "Found header '${tplInstallBaseDir}/install_tpl1/include/Tpl1.hpp'"
         "TPL_Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"
 
         "Tpl2_LIBRARY_NAMES='tpl2b[;]tpl2a'"
-        "Searching for libs in Tpl2_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl2/lib'"
         "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
         "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
         "TPL_Tpl2_LIBRARIES='${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
-        "Searching for headers in Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
         "    Found header '${tplInstallBaseDir}/install_tpl2/include/Tpl2a.hpp'"
         "Found TPL 'Tpl2' include dirs '${tplInstallBaseDir}/install_tpl2/include'"
         "TPL_Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
 
 	"Tpl3_LIBRARY_NAMES='tpl3'"
-	"Searching for libs in Tpl3_LIBRARY_DIRS='${tplInstallBaseDir}/install_tpl3/lib'"
         "    Found lib '${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
         "TPL_Tpl3_LIBRARIES='${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
-        "Searching for headers in Tpl3_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl3/include'"
         "    Found header '${tplInstallBaseDir}/install_tpl3/include/Tpl3.hpp'"
 	"TPL_Tpl3_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl3/include'"
 
-	"Searching for headers in Tpl4_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl4/include"
 	"    Found header '${tplInstallBaseDir}/install_tpl4/include/Tpl4.hpp'"
 	"TPL_Tpl4_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl4/include'"
+
+        ${searchingTplLibAndINcDirsRegexes}
 
         "-- Configuring done"
         "-- Generating done"
@@ -218,8 +253,12 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic)
 endfunction()
 
 
-TribitsExampleProject2_find_tpl_parts(STATIC)
-TribitsExampleProject2_find_tpl_parts(SHARED)
+TribitsExampleProject2_find_tpl_parts(STATIC  TPL_LIBRARY_AND_INCLUDE_DIRS)
+TribitsExampleProject2_find_tpl_parts(SHARED  TPL_LIBRARY_AND_INCLUDE_DIRS)
+TribitsExampleProject2_find_tpl_parts(STATIC  CMAKE_PREFIX_PATH_CACHE)
+TribitsExampleProject2_find_tpl_parts(SHARED  CMAKE_PREFIX_PATH_CACHE)
+TribitsExampleProject2_find_tpl_parts(STATIC  CMAKE_PREFIX_PATH_ENV)
+TribitsExampleProject2_find_tpl_parts(SHARED  CMAKE_PREFIX_PATH_ENV)
 
 
 ########################################################################
