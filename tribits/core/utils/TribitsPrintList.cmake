@@ -41,7 +41,7 @@ include_guard()
 
 # @FUNCTION: tribits_print_list()
 #
-# Unconditionally the name and values of a listg var.
+# Unconditionally the name and values of a list var.
 #
 # Usage::
 #

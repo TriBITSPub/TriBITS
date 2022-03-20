@@ -566,8 +566,6 @@ endfunction()
 #
 function(tribits_check_for_unparsed_arguments)
 
-  #print_var(ARGC)
-
   if ("${ARGC}" GREATER 1)
     MESSAGE(FATAL_ERROR
       "ERROR tribits_check_for_unparsed_arguments() passed arguments '${ARGV}' but only accepts 0 or 1 arguments (for the <prefix>)")
@@ -577,9 +575,6 @@ function(tribits_check_for_unparsed_arguments)
   foreach(arg ${ARGV})
     set(prefix "${arg}")
   endforeach()
-  #print_var(prefix)
-
-  #print_var(${prefix}_UNPARSED_ARGUMENTS)
 
   if( NOT "${${prefix}_UNPARSED_ARGUMENTS}" STREQUAL "")
     message_wrapper(
