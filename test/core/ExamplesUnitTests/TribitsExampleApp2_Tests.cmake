@@ -40,6 +40,9 @@
 ########################################################################
 
 
+########################################################################
+
+
 set(tribitsExProj2TestNameBaseBase TribitsExampleProject2_find_tpl_parts)
 set(sharedOrStatic STATIC)
 set(fullOrComponents COMPONENTS)
@@ -71,7 +74,7 @@ tribits_add_advanced_test( ${testBaseName}
   ADDED_TEST_NAME_OUT ${testNameBase}_NAME
   )
 # NOTE: Above test checks that searched-for required components that are not
-# founds emit the correct error message from CMake
+# found emit the correct error message from CMake
 
 if (${testNameBase}_NAME)
   set_tests_properties(${${testNameBase}_NAME}
@@ -82,7 +85,7 @@ endif()
 ################################################################################
 
 
-function(TribitsExampleApp2_test  tribitsExProj2TestNameBaseBase
+function(TribitsExampleApp2  tribitsExProj2TestNameBaseBase
     sharedOrStatic  fullOrComponents
   )
 
@@ -94,17 +97,28 @@ function(TribitsExampleApp2_test  tribitsExProj2TestNameBaseBase
     message(FATAL_ERROR "Invalid value of buildSharedLibsArg='${buildSharedLibsArg}'!")
   endif()
 
+  set(fullDepsRegex "Full Deps: Package3{Package2{Package1{tpl1}, Tpl3{Tpl2a{tpl1}, Tpl2b{no deps}}}, Package1{tpl1}, Tpl4{Tpl3{Tpl2a{tpl1}, Tpl2b{no deps}}, Tpl2a{tpl1}, Tpl2b{no deps}}, Tpl2a{tpl1}, Tpl2b{no deps}}")
+
   if (fullOrComponents STREQUAL "FULL")
     set(tribitsExProjUseComponentsArg "")
   elseif (fullOrComponents STREQUAL "COMPONENTS")
-    set(tribitsExProjUseComponentsArg
-      -DTribitsExApp2_USE_COMPONENTS=Package1)
+    if (tribitsExProj2TestNameBaseBase STREQUAL "TribitsExampleProject2_find_package")
+      # ToDo: Remove this special case once the test
+      # TribitsExampleProject2_find_package enables all the packages!
+      set(tribitsExProjUseComponentsArg
+        -DTribitsExApp2_USE_COMPONENTS="Package1")
+      set(fullDepsRegex "Full Deps: Package1{tpl1}")
+    else()
+      set(tribitsExProjUseComponentsArg
+        -DTribitsExApp2_USE_COMPONENTS="Package1,Package2,Package3")
+    endif()
   else()
     message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
   endif()
 
+  set(testSuffix ${sharedOrStatic}_${fullOrComponents})
   set(testBaseName
-    TribitsExampleApp2_${tribitsExProj2TestNameBaseBase}_${sharedOrStatic}_${fullOrComponents})
+    ${CMAKE_CURRENT_FUNCTION}_${tribitsExProj2TestNameBaseBase}_${testSuffix})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -141,7 +155,7 @@ function(TribitsExampleApp2_test  tribitsExProj2TestNameBaseBase
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
-        "Full Deps: Package1: tpl1"
+        "${fullDepsRegex}"
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -162,12 +176,12 @@ function(TribitsExampleApp2_test  tribitsExProj2TestNameBaseBase
 endfunction()
 
 
-TribitsExampleApp2_test(TribitsExampleProject2_find_tpl_parts STATIC FULL)
+TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts STATIC FULL)
 # NOTE: We don't need to test the permutation SHARED FULL as well.  That does
 # not really test anything new given that shared is tested with COMPONENTS.
-TribitsExampleApp2_test(TribitsExampleProject2_find_tpl_parts STATIC COMPONENTS)
-TribitsExampleApp2_test(TribitsExampleProject2_find_tpl_parts SHARED COMPONENTS)
-TribitsExampleApp2_test(TribitsExampleProject2_explicit_tpl_vars STATIC COMPONENTS)
-TribitsExampleApp2_test(TribitsExampleProject2_explicit_tpl_vars SHARED COMPONENTS)
-TribitsExampleApp2_test(TribitsExampleProject2_find_package SHARED COMPONENTS)
-TribitsExampleApp2_test(TribitsExampleProject2_find_package STATIC COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts STATIC COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts SHARED COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_explicit_tpl_vars STATIC COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_explicit_tpl_vars SHARED COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_package SHARED COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_package STATIC COMPONENTS)
