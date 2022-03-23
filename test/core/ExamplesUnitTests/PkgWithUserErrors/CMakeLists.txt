@@ -127,7 +127,7 @@ endif()
 ###############################################################
 # unparsed arguments in ADD_LIBRARY
 ###############################################################
-if(${PACKAGE_NAME}_UNPARSED_ARGS_ADD_LIBRARY)
+if(${PACKAGE_NAME}_UNPARSED_ARGUMENTS_ADD_LIBRARY)
   message("unparsed arguments in ADD_LIBRARY")
   tribits_package(PkgWithUserErrors)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -146,7 +146,7 @@ endif()
 ###############################################################
 # unparsed arguments in ADD_EXECUTABLE
 ###############################################################
-if(${PACKAGE_NAME}_UNPARSED_ARGS_ADD_EXECUTABLE)
+if(${PACKAGE_NAME}_UNPARSED_ARGUMENTS_ADD_EXECUTABLE)
   message("unparsed arguments in ADD_EXECUTABLE")
   tribits_package(PkgWithUserErrors)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})

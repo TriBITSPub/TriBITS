@@ -213,6 +213,102 @@ tribits_add_advanced_test(
   OVERALL_NUM_MPI_PROCS 1
   )
 
+tribits_add_test(GenericDriver
+  NAME CTestScripts_tat_args_with_semicolon
+  ARGS "arg<sep>with<sep>a<sep>few<sep>semicolons 0"
+  PASS_REGULAR_EXPRESSION "arg[;]with[;]a;few[;]semicolons"
+  LIST_SEPARATOR "<sep>"
+  NUM_MPI_PROCS 1
+  )
+
+tribits_add_test(GenericDriver
+  NAME CTestScripts_tat_args_with_semicolon_and_spaces
+  POSTFIX_AND_ARGS_0 ""
+    "arg<sep>with<sep>semicolons and<sep>several spaces"
+    0
+  PASS_REGULAR_EXPRESSION "arg[;]with[;]semicolons and[;]several spaces"
+  LIST_SEPARATOR "<sep>"
+  NUM_MPI_PROCS 1
+  )
+
+tribits_add_advanced_test(
+  CTestScripts_taat_cmnd_1_args_with_semicolon
+  TEST_0 EXEC GenericDriver ARGS "arg<sep>with<sep>a<sep>few<sep>semicolons" 0
+    PASS_REGULAR_EXPRESSION "arg[;]with[;]a;few[;]semicolons"
+  LIST_SEPARATOR "<sep>"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+tribits_add_advanced_test(
+  CTestScripts_taat_cmnd_1_args_with_semicolon_and_spaces
+  TEST_0 EXEC GenericDriver ARGS "arg<sep>with<sep>semicolons and<sep>several spaces" 0
+    PASS_REGULAR_EXPRESSION "arg[;]with[;]semicolons and[;]several spaces"
+  LIST_SEPARATOR "<sep>"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+tribits_add_test("${CMAKE_COMMAND}" NOEXEPREFIX NOEXESUFFIX
+  NAME CTestScripts_tat_env_vars_with_semicolon
+  POSTFIX_AND_ARGS_0 ""
+    -DENV_VAR_0=MY_ENV_VAR_0
+    -DENV_VAR_1=MY_ENV_VAR_1
+    -P "${CMAKE_CURRENT_LIST_DIR}/echoEnvVars.cmake"
+  PASS_REGULAR_EXPRESSION
+      "MY_ENV_VAR_0 = 'val0a[;]val0b[;]val0c'\nMY_ENV_VAR_1 = 'val1a[;]val1b[;]val1c'"
+  ENVIRONMENT
+    MY_ENV_VAR_0=val0a<semicol>val0b<semicol>val0c
+    MY_ENV_VAR_1=val1a<semicol>val1b<semicol>val1c
+  LIST_SEPARATOR "<semicol>"
+  NUM_MPI_PROCS 1
+  )
+
+tribits_add_test("${CMAKE_COMMAND}" NOEXEPREFIX NOEXESUFFIX
+  NAME CTestScripts_tat_env_vars_with_semicolon_and_spaces
+  POSTFIX_AND_ARGS_0 ""
+    -DENV_VAR_0=MY_ENV_VAR_0
+    -DENV_VAR_1=MY_ENV_VAR_1
+    -P "${CMAKE_CURRENT_LIST_DIR}/echoEnvVars.cmake"
+  PASS_REGULAR_EXPRESSION
+      "MY_ENV_VAR_0 = 'val 0a[;]val 0b[;]val 0c'\nMY_ENV_VAR_1 = 'val 1a[;]val 1b[;]val 1c'"
+  ENVIRONMENT
+    "MY_ENV_VAR_0=val 0a<semicol>val 0b<semicol>val 0c"
+    "MY_ENV_VAR_1=val 1a<semicol>val 1b<semicol>val 1c"
+  LIST_SEPARATOR "<semicol>"
+  NUM_MPI_PROCS 1
+  )
+
+tribits_add_advanced_test(
+  CTestScripts_taat_cmnd_1_env_vars_with_semicolon
+  TEST_0 CMND "${CMAKE_COMMAND}" ARGS
+    -DENV_VAR_0=MY_ENV_VAR_0
+    -DENV_VAR_1=MY_ENV_VAR_1
+    -P "${CMAKE_CURRENT_LIST_DIR}/echoEnvVars.cmake"
+    PASS_REGULAR_EXPRESSION_ALL
+      "MY_ENV_VAR_0 = 'val0a[;]val0b[;]val0c'"
+      "MY_ENV_VAR_1 = 'val1a[;]val1b[;]val1c'"
+  ENVIRONMENT
+    MY_ENV_VAR_0=val0a<semicol>val0b<semicol>val0c
+    MY_ENV_VAR_1=val1a<semicol>val1b<semicol>val1c
+  LIST_SEPARATOR "<semicol>"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+tribits_add_advanced_test(
+  CTestScripts_taat_cmnd_1_env_vars_with_semicolon_and_spaces
+  TEST_0 CMND "${CMAKE_COMMAND}" ARGS
+    -DENV_VAR_0=MY_ENV_VAR_0
+    -DENV_VAR_1=MY_ENV_VAR_1
+    -P "${CMAKE_CURRENT_LIST_DIR}/echoEnvVars.cmake"
+    PASS_REGULAR_EXPRESSION_ALL
+      "MY_ENV_VAR_0 = 'val 0a[;]val 0b[;]val 0c'"
+      "MY_ENV_VAR_1 = 'val 1a[;]val 1b[;]val 1c'"
+  ENVIRONMENT
+    "MY_ENV_VAR_0=val 0a<semicol>val 0b<semicol>val 0c"
+    "MY_ENV_VAR_1=val 1a<semicol>val 1b<semicol>val 1c"
+  LIST_SEPARATOR "<semicol>"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
 tribits_add_advanced_test(
   CTestScripts_cmnd_1_args_1_pass_any_test_0
   TEST_0 EXEC GenericDriver ARGS "Dummy msg" 7
@@ -362,7 +458,6 @@ endif()
 
 tribits_add_advanced_test(
   CTestScripts_cmnd_3_args_1_overall_working_directory
-  MESSAGE "NOTE: This test does not check the order of STDOUT and STDERR, only that both exist in the output file.  It seems that execute_process() and MPI do not behave well together w.r.t. to STDOUT and STDERR outputting.  The fault may be with the MPI implementation.  Also, even in serial it would seem that the order of STDOUT and STDERR gets messed up when the machine is loaded."
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 EXEC GenericDriver
     ARGS "This is a crazy test!" 0 "This is a bad crazy test!"
@@ -375,6 +470,13 @@ tribits_add_advanced_test(
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Windows
   )
+# NOTE: The above test does not check the order of STDOUT and STDERR, only
+# that both exist in the output file.  It seems that execute_process() and MPI
+# do not behave well together w.r.t. to STDOUT and STDERR outputting.  The
+# fault may be with the MPI implementation.  Also, even in serial it would
+# seem that the order of STDOUT and STDERR gets messed up when the machine is
+# loaded.
+#
 # NOTE: The above test does not run on Windows because it relies on the 'cat'
 # command.  The form of this test is needed in order to check that both STDOUT
 # and STDERR output are both in the output file but we can't rely on the

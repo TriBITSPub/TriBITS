@@ -269,7 +269,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
 
   )
 
-tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
+tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGUMENTS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -294,12 +294,12 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
-      -DPkgWithUserErrors_UNPARSED_ARGS_DEFINE_DEPENDENCIES=ON
+      -DPkgWithUserErrors_UNPARSED_ARGUMENTS_DEFINE_DEPENDENCIES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "CMake Error at.*TribitsGeneralMacros.cmake:"
-      "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
+      "Arguments passed in unrecognized.  PARSE_UNPARSED_ARGUMENTS ="
       "nonsense_jdslkfhlskd"
       "tribits_read_toplevel_package_deps_files_add_to_graph"
       "-- Configuring incomplete, errors occurred!"
@@ -314,14 +314,14 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
-      -DPkgWithUserErrors_UNPARSED_ARGS_DEFINE_DEPENDENCIES=OFF
+      -DPkgWithUserErrors_UNPARSED_ARGUMENTS_DEFINE_DEPENDENCIES=OFF
       -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
-      -DPkgWithUserErrors_UNPARSED_ARGS_ADD_LIBRARY=ON
+      -DPkgWithUserErrors_UNPARSED_ARGUMENTS_ADD_LIBRARY=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "CMake Error at.*TribitsGeneralMacros.cmake:"
-      "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
+      "Arguments passed in unrecognized.  PARSE_UNPARSED_ARGUMENTS ="
       "this_shouldnt_be_here"
       "PkgWithUserErrors/CMakeLists.txt.*tribits_add_library"
       "-- Configuring incomplete, errors occurred!"
@@ -336,15 +336,15 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
-      -DPkgWithUserErrors_UNPARSED_ARGS_DEFINE_DEPENDENCIES=OFF
+      -DPkgWithUserErrors_UNPARSED_ARGUMENTS_DEFINE_DEPENDENCIES=OFF
       -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
-      -DPkgWithUserErrors_UNPARSED_ARGS_ADD_LIBRARY=OFF
-      -DPkgWithUserErrors_UNPARSED_ARGS_ADD_EXECUTABLE=ON
+      -DPkgWithUserErrors_UNPARSED_ARGUMENTS_ADD_LIBRARY=OFF
+      -DPkgWithUserErrors_UNPARSED_ARGUMENTS_ADD_EXECUTABLE=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "CMake Error at.*TribitsGeneralMacros.cmake:"
-      "Arguments are being passed in but not used.  UNPARSED_ARGUMENTS ="
+      "Arguments passed in unrecognized.  PARSE_UNPARSED_ARGUMENTS ="
       "misspelled_argument"
       "PkgWithUserErrors/CMakeLists.txt.*tribits_add_executable"
       "-- Configuring incomplete, errors occurred!"

@@ -555,19 +555,35 @@ function(tribits_trace_file_processing  TYPE_IN  PROCESSING_TYPE_IN  FILE_PATH)
 endfunction()
 
 
-# Check to see if there are unparsed arguments after calling CMAKE_PARSE_ARGUMENTS
+# Check to see if there are unparsed arguments after calling
+# cmake_parse_arguments() or tribits_parse_arguments_from_lsit()
 #
-macro(tribits_check_for_unparsed_arguments)
+# Usage::
+#
+#   tribits_check_for_unparsed_arguments([<prefix>])
+#
+# If `<prefix>` is not given, it is assumed to be `PARSE`.
+#
+function(tribits_check_for_unparsed_arguments)
 
-  if( NOT "${PARSE_UNPARSED_ARGUMENTS}" STREQUAL "")
-    message(
+  if ("${ARGC}" GREATER 1)
+    MESSAGE(FATAL_ERROR
+      "ERROR tribits_check_for_unparsed_arguments() passed arguments '${ARGV}' but only accepts 0 or 1 arguments (for the <prefix>)")
+  endif()
+
+  set(prefix "PARSE")
+  foreach(arg ${ARGV})
+    set(prefix "${arg}")
+  endforeach()
+
+  if( NOT "${${prefix}_UNPARSED_ARGUMENTS}" STREQUAL "")
+    message_wrapper(
       ${${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS}
-      "Arguments are being passed in but not used. UNPARSED_ARGUMENTS ="
-      " ${PARSE_UNPARSED_ARGUMENTS}"
+      "Arguments passed in unrecognized.  ${prefix}_UNPARSED_ARGUMENTS = '${${prefix}_UNPARSED_ARGUMENTS}'"
       )
   endif()
 
-endmacro()
+endfunction()
 
 
 # Check that a parase argument has at least one value

@@ -37,50 +37,37 @@
 # ************************************************************************
 # @HEADER
 
+include_guard()
+
+# @FUNCTION: tribits_print_list()
 #
-# @FUNCTION: assert_defined()
-#
-# Assert that a variable is defined and if not call ``message(SEND_ERROR
-# ...)``.
+# Unconditionally the name and values of a list var.
 #
 # Usage::
 #
-#   assert_defined(<varName>)
+#   tribits_print_list(<listName>)
 #
-# This is used to get around the problem of CMake not asserting the
-# dereferencing of undefined variables.  For example, how does one know if one
-# did not misspell the name of a variable in an if statement like::
+# This prints::
 #
-#   if (SOME_VARBLE)
-#     ...
-#   endif()
+#   -- <listName> (size=<len>):
+#   --   <val0>
+#   --   <val1>
+#   ...
+#   --   <valN>
 #
-# ?
+# The variable ``<listName>`` can be defined or undefined or empty.  This uses
+# an explicit "-- " line prefix so that it prints nice even on Windows CMake.
 #
-#  If one misspelled the variable ``SOME_VARBLE`` (which is likely in this
-#  case), then the if statement will always be false!  To avoid this problem
-#  when one always expects that a variable is explicitly set, instead do::
-#
-#   assert_defined(SOME_VARBLE)
-#   if (SOME_VARBLE)
-#     ...
-#   endif()
-#
-# Now if one misspells this variable, then CMake will asset and stop
-# processing.  This is not a perfect solution since one can misspell the
-# variable name in the following if statement but typically one would always
-# just copy and paste between the two statements so these names are always the
-# same.  This is the best that can be done in CMake unfortunately to catch
-# usage of misspelled undefined variables.
-#
-function(assert_defined VARS)
-  foreach(VAR ${VARS})
-    if(NOT DEFINED ${VAR})
-      message(SEND_ERROR "Error, the variable ${VAR} is not defined!")
-    endif()
+function(tribits_print_list listName)
+  list(LENGTH ${listName} len)
+  message("-- " "${listName} (size=${len})")
+  foreach(ele IN LISTS ${listName})
+    message("-- " "  '${ele}'")
   endforeach()
 endfunction()
 
-# ToDo: The VARS arg This really needs to be replaced with ${ARGV}.  I fear
-# that only the first arg passed in is asserted.  However, to change this now
-# is breaking backward compatibility.
+# NOTE: Above, I was not able to call message_wrapper() directly because it
+# was removing the ';' in array arguments.  This broke a bunch of unit tests.
+# Therefore, I have to duplicate code and call it in two separate places.  I
+# have to admit that CMake behavior surprises me many times.  This is not a
+# great programming language.
