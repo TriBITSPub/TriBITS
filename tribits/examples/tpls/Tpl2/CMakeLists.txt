@@ -17,7 +17,6 @@ target_link_libraries(tpl2a PRIVATE tpl1::tpl1)
 add_library(tpl2b Tpl2b.hpp Tpl2b.cpp)
 target_include_directories(tpl2b
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
-target_link_libraries(tpl2b PRIVATE tpl1::tpl1)
 
 # NOTE: The above libs tpl2a and tpl2b do not depend on each other.  They just
 # depend on tpl1::tpl1.

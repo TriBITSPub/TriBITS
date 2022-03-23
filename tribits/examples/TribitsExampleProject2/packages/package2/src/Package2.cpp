@@ -15,6 +15,7 @@ std::string Package2::deps()
   std::ostringstream oss_deps;
   oss_deps
     << Package1::itsme() << "{" << Package1::deps() << "}"
-    << ", " << Tpl3::itsme() << "{" << Tpl3::deps() << "}";
+    << ", "
+    << Tpl3::itsme() << "{" << Tpl3::deps() << "}";
   return oss_deps.str();
 }

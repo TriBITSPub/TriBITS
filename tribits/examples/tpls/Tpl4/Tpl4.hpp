@@ -23,7 +23,8 @@ inline std::string deps()
     << Tpl3::itsme() << "{" << Tpl3::deps() << "}"
     << ", "
     << Tpl2::a_itsme() << "{" << Tpl2::a_deps() << "}"
-    << ", " << Tpl2::b_itsme() << "{" << Tpl2::b_deps() << "}";
+    << ", "
+    << Tpl2::b_itsme() << "{" << Tpl2::b_deps() << "}";
   return oss.str();
 }
 
