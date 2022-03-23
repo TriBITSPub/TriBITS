@@ -395,7 +395,7 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-03-16
+<dd class="field-even"><p>2022-03-23
 :Version: .. include:: ../copied_files/TribitsGitVersion.txt</p>
 </dd>
 </dl>
@@ -10226,10 +10226,11 @@ script with very flexible pass/fail criteria.</p>
   <span class="p">[</span><span class="n">XHOSTTYPE</span> <span class="o">&lt;</span><span class="n">hosttype0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">hosttype1</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
   <span class="p">[</span><span class="n">EXCLUDE_IF_NOT_TRUE</span> <span class="o">&lt;</span><span class="n">varname0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">varname1</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
   <span class="p">[</span><span class="n">DISABLED</span> <span class="o">&lt;</span><span class="n">messageWhyDisabled</span><span class="o">&gt;</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">FINAL_PASS_REGULAR_EXPRESSION</span> <span class="o">&lt;</span><span class="n">regex</span><span class="o">&gt;</span> <span class="o">|</span>
-    <span class="n">FINAL_FAIL_REGULAR_EXPRESSION</span> <span class="o">&lt;</span><span class="n">regex</span><span class="o">&gt;</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">FINAL_PASS_REGULAR_EXPRESSION</span> <span class="s2">&quot;&lt;regex&gt;&quot;</span> <span class="o">|</span>
+    <span class="n">FINAL_FAIL_REGULAR_EXPRESSION</span> <span class="s2">&quot;&lt;regex&gt;&quot;</span><span class="p">]</span>
   <span class="p">[</span><span class="n">ENVIRONMENT</span> <span class="o">&lt;</span><span class="n">var1</span><span class="o">&gt;=&lt;</span><span class="n">value1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">var2</span><span class="o">&gt;=&lt;</span><span class="n">value2</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
   <span class="p">[</span><span class="n">TIMEOUT</span> <span class="o">&lt;</span><span class="n">maxSeconds</span><span class="o">&gt;</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">LIST_SEPARATOR</span> <span class="o">&lt;</span><span class="n">sep</span><span class="o">&gt;</span><span class="p">]</span>
   <span class="p">[</span><span class="n">ADDED_TEST_NAME_OUT</span> <span class="o">&lt;</span><span class="n">testName</span><span class="o">&gt;</span><span class="p">]</span>
   <span class="p">)</span>
 </pre></div>
@@ -10251,7 +10252,7 @@ form:</p>
    <span class="p">(</span><span class="n">EXEC</span> <span class="o">&lt;</span><span class="n">exeRootName</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">NOEXEPREFIX</span><span class="p">]</span> <span class="p">[</span><span class="n">NOEXESUFFIX</span><span class="p">]</span> <span class="p">[</span><span class="n">ADD_DIR_TO_NAME</span><span class="p">]</span>
           <span class="p">[</span><span class="n">DIRECTORY</span> <span class="o">&lt;</span><span class="nb">dir</span><span class="o">&gt;</span><span class="p">]</span>
       <span class="o">|</span> <span class="n">CMND</span> <span class="o">&lt;</span><span class="n">cmndExec</span><span class="o">&gt;</span><span class="p">)</span>
-   <span class="p">[</span><span class="n">ARGS</span> <span class="o">&lt;</span><span class="n">arg1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">arg2</span><span class="o">&gt;</span> <span class="o">...</span> <span class="o">&lt;</span><span class="n">argn</span><span class="o">&gt;</span><span class="p">]</span>
+   <span class="p">[</span><span class="n">ARGS</span> <span class="s2">&quot;&lt;arg0&gt;&quot;</span> <span class="s2">&quot;&lt;arg1&gt;&quot;</span> <span class="o">...</span> <span class="s2">&quot;&lt;argn&gt;&quot;</span><span class="p">]</span>
    <span class="p">[</span><span class="n">MESSAGE</span> <span class="s2">&quot;&lt;message&gt;&quot;</span><span class="p">]</span>
    <span class="p">[</span><span class="n">WORKING_DIRECTORY</span> <span class="o">&lt;</span><span class="n">workingDir</span><span class="o">&gt;</span><span class="p">]</span>
    <span class="p">[</span><span class="n">SKIP_CLEAN_WORKING_DIRECTORY</span><span class="p">]</span>
@@ -10437,11 +10438,18 @@ true, or the test will not be added (see <a class="reference internal" href="#tr
 by CMake, then the test will be added by ctest but the <code class="docutils literal notranslate"><span class="pre">DISABLED</span></code> test
 property will be set (see <a class="reference internal" href="#tribits-add-test">tribits_add_test()</a>).</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">ENVIRONMENT</span> <span class="pre">&lt;var1&gt;=&lt;value1&gt;</span> <span class="pre">&lt;var2&gt;=&lt;value2&gt;</span> <span class="pre">..</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ENVIRONMENT</span> <span class="pre">&quot;&lt;var1&gt;=&lt;value1&gt;&quot;</span> <span class="pre">&quot;&lt;var2&gt;=&lt;value2&gt;&quot;</span> <span class="pre">...</span></code>.</p>
 <blockquote>
-<div><p>If passed in, the listed environment variables will be set before
-calling the test.  This is set using the built-in CTest test property
-<code class="docutils literal notranslate"><span class="pre">ENVIRONMENT</span></code>.</p>
+<div><p>If passed in, the listed environment variables will be set by CTest
+before calling the test.  This is set using the built-in CTest test
+property <code class="docutils literal notranslate"><span class="pre">ENVIRONMENT</span></code>.  Note, if the env var values contain
+semi-colons <code class="docutils literal notranslate"><span class="pre">';'</span></code>, then replace the semi-colons <code class="docutils literal notranslate"><span class="pre">';'</span></code> with another
+separator <code class="docutils literal notranslate"><span class="pre">'&lt;sep&gt;'</span></code> and pass in <code class="docutils literal notranslate"><span class="pre">LIST_SEPARATOR</span> <span class="pre">&lt;sep&gt;</span></code> so <code class="docutils literal notranslate"><span class="pre">&lt;sep&gt;</span></code>
+will be replaced with <code class="docutils literal notranslate"><span class="pre">';'</span></code> at point of usage.  If the env var values
+contain any spaces, also quote the entire variable/value pair as
+<code class="docutils literal notranslate"><span class="pre">&quot;&lt;vari&gt;=&lt;valuei&gt;&quot;</span></code>.  For example, the env var and value
+<code class="docutils literal notranslate"><span class="pre">my_env_var=&quot;arg1</span> <span class="pre">b;arg2;I</span> <span class="pre">have</span> <span class="pre">spaces&quot;</span></code> would need to be passed as
+<code class="docutils literal notranslate"><span class="pre">&quot;my_env_var=arg1</span> <span class="pre">b&lt;sep&gt;arg2&lt;sep&gt;I</span> <span class="pre">have</span> <span class="pre">spaces&quot;</span></code>.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span> <span class="pre">&lt;maxSeconds&gt;</span></code></p>
 <blockquote>
@@ -10449,6 +10457,18 @@ calling the test.  This is set using the built-in CTest test property
 to run before being timed-out and killed (see <a class="reference internal" href="#setting-timeouts-for-tests-tribits-add-test">Setting timeouts for
 tests (tribits_add_test())</a>).  This is for the full CTest test, not
 individual <code class="docutils literal notranslate"><span class="pre">TEST_&lt;idx&gt;</span></code> commands!</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">LIST_SEPARATOR</span> <span class="pre">&lt;sep&gt;</span></code></p>
+<blockquote>
+<div><p>String used as placeholder for the semi-colon char <code class="docutils literal notranslate"><span class="pre">';'</span></code> in order to
+allow pass-through.  For example, if arguments to the <code class="docutils literal notranslate"><span class="pre">ARGS</span></code> or
+<code class="docutils literal notranslate"><span class="pre">ENVIRONMENT</span></code> need to use semi-colons, then replace <code class="docutils literal notranslate"><span class="pre">';'</span></code> with
+<code class="docutils literal notranslate"><span class="pre">'&lt;semicolon&gt;'</span></code> (for example) such as with
+<code class="docutils literal notranslate"><span class="pre">&quot;somearg=arg1&lt;semicolon&gt;arg2&quot;</span></code>, then at the point of usage,
+<code class="docutils literal notranslate"><span class="pre">'&lt;semicolon&gt;'</span></code> will be replaced with <code class="docutils literal notranslate"><span class="pre">';'</span></code> and it will be passed to
+the final command as <code class="docutils literal notranslate"><span class="pre">&quot;somearg=arg1;arg2&quot;</span></code> (with as many preceding
+escape backslashes <code class="docutils literal notranslate"><span class="pre">'\'</span></code> in front of <code class="docutils literal notranslate"><span class="pre">';'</span></code> as is needed for the
+given usage context).</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">ADDED_TEST_NAME_OUT</span> <span class="pre">&lt;testName&gt;</span></code></p>
 <blockquote>
@@ -10465,6 +10485,7 @@ test executable or some general command executable and is defined as either
 <code class="docutils literal notranslate"><span class="pre">EXEC</span> <span class="pre">&lt;exeRootName&gt;</span></code> or an arbitrary command <code class="docutils literal notranslate"><span class="pre">CMND</span> <span class="pre">&lt;cmndExec&gt;</span></code> with the
 arguments:</p>
 <blockquote>
+<div><blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">EXEC</span> <span class="pre">&lt;exeRootName&gt;</span> <span class="pre">[NOEXEPREFIX]</span> <span class="pre">[NOEXESUFFIX]</span> <span class="pre">[ADD_DIR_TO_NAME]</span>
 <span class="pre">[DIRECTORY</span> <span class="pre">&lt;dir&gt;]</span></code></p>
 <blockquote>
@@ -10496,7 +10517,7 @@ have to use the raw executable as the <code class="docutils literal notranslate"
 the script.  For example, if you have a python script
 <code class="docutils literal notranslate"><span class="pre">my_python_test.py</span></code> with <code class="docutils literal notranslate"><span class="pre">/usr/bin/env</span> <span class="pre">pyhton</span></code> at the top, you can’t
 just use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CMND</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;/</span><span class="n">my_python_test</span><span class="o">.</span><span class="n">py</span> <span class="n">ARGS</span> <span class="o">&lt;</span><span class="n">arg0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">arg1</span><span class="o">&gt;</span> <span class="o">...</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CMND</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;/</span><span class="n">my_python_test</span><span class="o">.</span><span class="n">py</span> <span class="n">ARGS</span> <span class="s2">&quot;&lt;arg0&gt;&quot;</span> <span class="s2">&quot;&lt;arg1&gt;&quot;</span> <span class="o">...</span>
 </pre></div>
 </div>
 <p>The same goes for Perl or any other scripting language.</p>
@@ -10504,6 +10525,16 @@ just use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>CMND ${PYTHON_EXECUTABLE} ARGS &lt;path&gt;/my_python_test.py &lt;arg0&gt; &lt;arg1&gt; ...
 </pre></div>
 </div>
+</div></blockquote>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">ARGS</span> <span class="pre">&quot;&lt;arg0&gt;&quot;</span> <span class="pre">&quot;&lt;arg1&gt;&quot;</span> <span class="pre">...</span> <span class="pre">&quot;&lt;argN&gt;&quot;</span></code></p>
+<blockquote>
+<div><p>The list of command-line arguments to pass to the <code class="docutils literal notranslate"><span class="pre">CMND</span></code> command or
+<code class="docutils literal notranslate"><span class="pre">EXEC</span></code> executable.  Put each argument <code class="docutils literal notranslate"><span class="pre">&lt;argi&gt;</span></code> in quotes <code class="docutils literal notranslate"><span class="pre">&quot;&lt;argi&gt;&quot;</span></code>
+if it contains any spaces.  Also, of any of the individual arguments need
+to contain semi-colons <code class="docutils literal notranslate"><span class="pre">';'</span></code> such as <code class="docutils literal notranslate"><span class="pre">--my-arg=a;b</span> <span class="pre">a;c;d</span></code>, then pass
+that quoted as <code class="docutils literal notranslate"><span class="pre">&quot;--my-arg=a&lt;sep&gt;b</span> <span class="pre">a&lt;sep&gt;c&lt;sep&gt;d&quot;</span></code> where <code class="docutils literal notranslate"><span class="pre">&lt;sep&gt;</span></code>
+matches the <code class="docutils literal notranslate"><span class="pre">&lt;sep&gt;</span></code> argument to the input <code class="docutils literal notranslate"><span class="pre">LIST_SEPARATOR</span> <span class="pre">&lt;sep&gt;</span></code>.</p>
 </div></blockquote>
 </div></blockquote>
 <p>By default, the output (stdout/stderr) for each test command is captured and
@@ -10765,12 +10796,12 @@ is applied is given by:</p>
 </div></blockquote>
 </div></blockquote>
 <p id="argument-parsing-and-ordering-tribits-add-advanced-test"><strong>Argument Parsing and Ordering (tribits_add_advanced_test())</strong></p>
-<p>The basic tool used for parsing the arguments to this function is the macro
-<code class="docutils literal notranslate"><span class="pre">cmake_parse_arguments()</span></code> which has a certain set of behaviors.  The
-parsing using <code class="docutils literal notranslate"><span class="pre">cmake_parse_arguments()</span></code> is actually done in two phases.
-There is a top-level parsing of the “overall” arguments listed in <a class="reference internal" href="#overall-arguments-tribits-add-advanced-test">Overall
-Arguments (tribits_add_advanced_test())</a> that also pulls out the test
-blocks.  Then there is a second level of parsing using
+<p>The basic tool used for parsing the arguments to this function is the
+command <code class="docutils literal notranslate"><span class="pre">cmake_parse_arguments()</span></code> which has a certain set of behaviors.
+The parsing using <code class="docutils literal notranslate"><span class="pre">cmake_parse_arguments()</span></code> is actually done in two
+phases.  There is a top-level parsing of the “overall” arguments listed in
+<a class="reference internal" href="#overall-arguments-tribits-add-advanced-test">Overall Arguments (tribits_add_advanced_test())</a> that also pulls out the
+test blocks.  Then there is a second level of parsing using
 <code class="docutils literal notranslate"><span class="pre">cmake_parse_arguments()</span></code> for each of the <code class="docutils literal notranslate"><span class="pre">TEST_&lt;idx&gt;</span></code> blocks.  Because
 of this usage, there are a few restrictions that one needs to be aware of
 when using <code class="docutils literal notranslate"><span class="pre">tribits_add_advanced_test()</span></code>.  This short sections tries to
@@ -10910,7 +10941,6 @@ tribits_add_advanced_test(
   )
 </pre></div>
 </div>
-<p>In: core/package_arch/TribitsAddAdvancedTest.cmake:49</p>
 </section>
 <section id="tribits-add-debug-option">
 <h3><a class="toc-backref" href="#id119">tribits_add_debug_option()</a><a class="headerlink" href="#tribits-add-debug-option" title="Permalink to this headline"></a></h3>
@@ -10924,7 +10954,6 @@ the package.</p>
 true, will set the variable <code class="docutils literal notranslate"><span class="pre">HAVE_${PACKAGE_NAME_UC}_DEBUG</span></code> (to be used in
 the package’s configured header file).  This macro is typically called in
 the package’s <a class="reference internal" href="#packagedir-cmakelists-txt">&lt;packageDir&gt;/CMakeLists.txt</a> file.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:468</p>
 </section>
 <section id="tribits-add-example-directories">
 <h3><a class="toc-backref" href="#id120">tribits_add_example_directories()</a><a class="headerlink" href="#tribits-add-example-directories" title="Permalink to this headline"></a></h3>
@@ -10944,7 +10973,6 @@ up example directories any way one would like.</p>
 <code class="docutils literal notranslate"><span class="pre">${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES</span></code> are true. However, this macro may
 be extended in the future in order to modify behavior related to adding
 tests and examples in a uniform way.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:546</p>
 </section>
 <section id="tribits-add-executable">
 <h3><a class="toc-backref" href="#id121">tribits_add_executable()</a><a class="headerlink" href="#tribits-add-executable" title="Permalink to this headline"></a></h3>
@@ -11203,7 +11231,6 @@ CMake command <code class="docutils literal notranslate"><span class="pre">insta
 the built executable into the <code class="docutils literal notranslate"><span class="pre">${CMAKE_INSTALL_PREFIX}/bin/</span></code> directory
 (actual install directory path is determined by
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_INSTALL_RUNTIME_DIR</span></code>, see <a class="reference external" href="TribitsBuildReference.html#setting-the-install-prefix">Setting the install prefix</a>).</p>
-<p>In: core/package_arch/TribitsAddExecutable.cmake:58</p>
 </section>
 <section id="tribits-add-executable-and-test">
 <h3><a class="toc-backref" href="#id122">tribits_add_executable_and_test()</a><a class="headerlink" href="#tribits-add-executable-and-test" title="Permalink to this headline"></a></h3>
@@ -11237,6 +11264,7 @@ the built executable into the <code class="docutils literal notranslate"><span c
   <span class="p">[</span><span class="n">ENVIRONMENT</span> <span class="o">&lt;</span><span class="n">var0</span><span class="o">&gt;=&lt;</span><span class="n">value0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">var1</span><span class="o">&gt;=&lt;</span><span class="n">value1</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
   <span class="p">[</span><span class="n">INSTALLABLE</span><span class="p">]</span>
   <span class="p">[</span><span class="n">TIMEOUT</span> <span class="o">&lt;</span><span class="n">maxSeconds</span><span class="o">&gt;</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">LIST_SEPARATOR</span> <span class="o">&lt;</span><span class="n">sep</span><span class="o">&gt;</span><span class="p">]</span>
   <span class="p">[</span><span class="n">ADDED_EXE_TARGET_NAME_OUT</span> <span class="o">&lt;</span><span class="n">exeTargetName</span><span class="o">&gt;</span><span class="p">]</span>
   <span class="p">[</span><span class="n">ADDED_TESTS_NAMES_OUT</span> <span class="o">&lt;</span><span class="n">testsNames</span><span class="o">&gt;</span><span class="p">]</span>
   <span class="p">)</span>
@@ -11269,7 +11297,6 @@ executable for the test.  These are just passed in through the
 that either takes no arguments or just a simple set of arguments passed in
 through <code class="docutils literal notranslate"><span class="pre">ARGS</span></code>.  For more flexibility, just use
 <code class="docutils literal notranslate"><span class="pre">tribits_add_executable()</span></code> followed by <code class="docutils literal notranslate"><span class="pre">tribits_add_test()</span></code>.</p>
-<p>In: core/package_arch/TribitsAddExecutableAndTest.cmake:82</p>
 </section>
 <section id="tribits-add-library">
 <h3><a class="toc-backref" href="#id123">tribits_add_library()</a><a class="headerlink" href="#tribits-add-library" title="Permalink to this headline"></a></h3>
@@ -11527,7 +11554,6 @@ will <strong>NOT</strong> be set when code in peer directories (e.g. a downstrea
 packages) compiles that may include these header files.  To add defines that
 affect header files, please use a configured header file (see
 <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a>).</p>
-<p>In: core/package_arch/TribitsLibraryMacros.cmake:203</p>
 </section>
 <section id="tribits-add-option-and-define">
 <h3><a class="toc-backref" href="#id124">tribits_add_option_and_define()</a><a class="headerlink" href="#tribits-add-option-and-define" title="Permalink to this headline"></a></h3>
@@ -11546,7 +11572,6 @@ package’s configure file (see <a class="reference internal" href="#tribits-con
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#cmakedefine &lt;macroDefineName&gt;</span>
 </pre></div>
 </div>
-<p>In: core/package_arch/TribitsAddOptionAndDefine.cmake:44</p>
 </section>
 <section id="tribits-add-show-deprecated-warnings-option">
 <h3><a class="toc-backref" href="#id125">tribits_add_show_deprecated_warnings_option()</a><a class="headerlink" href="#tribits-add-show-deprecated-warnings-option" title="Permalink to this headline"></a></h3>
@@ -11561,7 +11586,6 @@ file.  This option is given the default value
 <code class="docutils literal notranslate"><span class="pre">${${PROJECT_NAME}_SHOW_DEPRECATED_WARNINGS}</span></code>.  This option is then looked
 for in <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a> to add macros to add deprecated warnings
 to deprecated parts of a package.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:501</p>
 </section>
 <section id="tribits-add-test">
 <h3><a class="toc-backref" href="#id126">tribits_add_test()</a><a class="headerlink" href="#tribits-add-test" title="Permalink to this headline"></a></h3>
@@ -11593,6 +11617,7 @@ to deprecated parts of a package.</p>
   <span class="p">[</span><span class="n">WILL_FAIL</span><span class="p">]</span>
   <span class="p">[</span><span class="n">ENVIRONMENT</span> <span class="o">&lt;</span><span class="n">var0</span><span class="o">&gt;=&lt;</span><span class="n">value0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">var1</span><span class="o">&gt;=&lt;</span><span class="n">value1</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
   <span class="p">[</span><span class="n">TIMEOUT</span> <span class="o">&lt;</span><span class="n">maxSeconds</span><span class="o">&gt;</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">LIST_SEPARATOR</span> <span class="o">&lt;</span><span class="n">sep</span><span class="o">&gt;</span><span class="p">]</span>
   <span class="p">[</span><span class="n">ADDED_TESTS_NAMES_OUT</span> <span class="o">&lt;</span><span class="n">testsNames</span><span class="o">&gt;</span><span class="p">]</span>
   <span class="p">)</span>
 </pre></div>
@@ -11706,9 +11731,9 @@ Multiple Tests (tribits_add_test())</a> for more details and examples.</p>
 arguments lists for different tests (up to <code class="docutils literal notranslate"><span class="pre">POSTFIX_AND_ARGS_19</span></code>).
 For example, a set of three different tests with argument lists can be
 specified as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POSTIFX_AND_ARGS_0</span> <span class="n">postfix0</span> <span class="o">--</span><span class="n">arg1</span> <span class="o">--</span><span class="n">arg2</span><span class="o">=</span><span class="s2">&quot;dummy&quot;</span>
-<span class="n">POSTIFX_AND_ARGS_1</span> <span class="n">postfix1</span>  <span class="o">--</span><span class="n">arg2</span><span class="o">=</span><span class="s2">&quot;fly&quot;</span>
-<span class="n">POSTIFX_AND_ARGS_2</span> <span class="n">postfix2</span>  <span class="o">--</span><span class="n">arg2</span><span class="o">=</span><span class="s2">&quot;bags&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POSTIFX_AND_ARGS_0</span> <span class="n">postfix0</span> <span class="o">--</span><span class="n">arg1</span> <span class="o">--</span><span class="n">arg2</span><span class="o">=</span><span class="n">dummy</span>
+<span class="n">POSTIFX_AND_ARGS_1</span> <span class="n">postfix1</span>  <span class="o">--</span><span class="n">arg2</span><span class="o">=</span><span class="n">fly</span>
+<span class="n">POSTIFX_AND_ARGS_2</span> <span class="n">postfix2</span>  <span class="o">--</span><span class="n">arg2</span><span class="o">=</span><span class="n">bags</span>
 </pre></div>
 </div>
 <p>This will create three different test cases with the postfix names
@@ -11719,6 +11744,12 @@ that one can give a meaningful name to each test case and one can
 specify multiple arguments without having to quote them and one can
 allow long argument lists to span multiple lines.  See <a class="reference internal" href="#adding-multiple-tests-tribits-add-test">Adding Multiple
 Tests (tribits_add_test())</a> for more details and examples.</p>
+<p>Note that one of the <cite>&lt;postfix&gt;</cite> arguments can be empty, in which case
+the base test name is not appended so:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">POSTIFX_AND_ARGS_0</span> <span class="s2">&quot;&quot;</span> <span class="o">--</span><span class="n">arg1</span> <span class="o">--</span><span class="n">arg2</span><span class="o">=</span><span class="n">dummy</span>
+</pre></div>
+</div>
+<p>would create one test without appending the test name.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">COMM</span> <span class="pre">[serial]</span> <span class="pre">[mpi]</span></code></p>
 <blockquote>
@@ -11872,11 +11903,18 @@ documentation for full behavior (and see above tips for
 using the built-in CTest property <code class="docutils literal notranslate"><span class="pre">WILL_FAIL</span></code>.  Consult standard CMake
 documentation for full behavior.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">ENVIRONMENT</span> <span class="pre">&lt;var0&gt;=&lt;value0&gt;</span> <span class="pre">&lt;var1&gt;=&lt;value1&gt;</span> <span class="pre">...</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">ENVIRONMENT</span> <span class="pre">&quot;&lt;var1&gt;=&lt;value1&gt;&quot;</span> <span class="pre">&quot;&lt;var2&gt;=&lt;value2&gt;&quot;</span> <span class="pre">...</span></code>.</p>
 <blockquote>
-<div><p>If passed in, the listed environment variables will be set before
-calling the test.  This is set using the built-in CTest property
-<code class="docutils literal notranslate"><span class="pre">ENVIRONMENT</span></code>.</p>
+<div><p>If passed in, the listed environment variables will be set by CTest
+before calling the test.  This is set using the built-in CTest test
+property <code class="docutils literal notranslate"><span class="pre">ENVIRONMENT</span></code>.  Note, if the env var values contain
+semi-colons <code class="docutils literal notranslate"><span class="pre">';'</span></code>, then replace the semi-colons <code class="docutils literal notranslate"><span class="pre">';'</span></code> with another
+separator <code class="docutils literal notranslate"><span class="pre">'&lt;sep&gt;'</span></code> and pass in <code class="docutils literal notranslate"><span class="pre">LIST_SEPARATOR</span> <span class="pre">&lt;sep&gt;</span></code> so <code class="docutils literal notranslate"><span class="pre">&lt;sep&gt;</span></code>
+will be replaced with <code class="docutils literal notranslate"><span class="pre">';'</span></code> at point of usage.  If the env var values
+contain any spaces, also quote the entire variable/value pair as
+<code class="docutils literal notranslate"><span class="pre">&quot;&lt;vari&gt;=&lt;valuei&gt;&quot;</span></code>.  For example, the env var and value
+<code class="docutils literal notranslate"><span class="pre">my_env_var=&quot;arg1</span> <span class="pre">b;arg2;I</span> <span class="pre">have</span> <span class="pre">spaces&quot;</span></code> would need to be passed as
+<code class="docutils literal notranslate"><span class="pre">&quot;my_env_var=arg1</span> <span class="pre">b&lt;sep&gt;arg2&lt;sep&gt;I</span> <span class="pre">have</span> <span class="pre">spaces&quot;</span></code>.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">TIMEOUT</span> <span class="pre">&lt;maxSeconds&gt;</span></code></p>
 <blockquote>
@@ -11890,6 +11928,18 @@ test, please try to either make the test run faster or relegate the test
 to being run less often (i.e. set <code class="docutils literal notranslate"><span class="pre">CATEGORIES</span> <span class="pre">NIGHTLY</span></code> or even
 <code class="docutils literal notranslate"><span class="pre">HEAVY</span></code> for extremely expensive tests).  Expensive tests are one of
 the worse forms of technical debt that a project can have!</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">LIST_SEPARATOR</span> <span class="pre">&lt;sep&gt;</span></code></p>
+<blockquote>
+<div><p>String used as placeholder for the semi-colon char <code class="docutils literal notranslate"><span class="pre">';'</span></code> in order to
+allow pass-through.  For example, if arguments to the <code class="docutils literal notranslate"><span class="pre">ARGS</span></code> or
+<code class="docutils literal notranslate"><span class="pre">ENVIRONMENT</span></code> need to use semi-colons, then replace <code class="docutils literal notranslate"><span class="pre">';'</span></code> with
+<code class="docutils literal notranslate"><span class="pre">'&lt;semicolon&gt;'</span></code> (for example) such as with
+<code class="docutils literal notranslate"><span class="pre">&quot;somearg=arg1&lt;semicolon&gt;arg2&quot;</span></code>, then at the point of usage,
+<code class="docutils literal notranslate"><span class="pre">'&lt;semicolon&gt;'</span></code> will be replaced with <code class="docutils literal notranslate"><span class="pre">';'</span></code> and it will be passed to
+the final command as <code class="docutils literal notranslate"><span class="pre">&quot;somearg=arg1;arg2&quot;</span></code> (with as many preceding
+escape backslashes <code class="docutils literal notranslate"><span class="pre">'\'</span></code> in front of <code class="docutils literal notranslate"><span class="pre">';'</span></code> as is needed for the
+given usage context).</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">ADDED_TESTS_NAMES_OUT</span> <span class="pre">&lt;testsNames&gt;</span></code></p>
 <blockquote>
@@ -12233,7 +12283,6 @@ GTest executable such as with:</p>
 </div>
 <p>For example, this would be an alternative to disabling an entire unit
 testing executable using <code class="docutils literal notranslate"><span class="pre">-D&lt;fullTestName&gt;_DISABLE=ON</span></code> as described above.</p>
-<p>In: core/package_arch/TribitsAddTest.cmake:44</p>
 </section>
 <section id="tribits-add-test-directories">
 <h3><a class="toc-backref" href="#id127">tribits_add_test_directories()</a><a class="headerlink" href="#tribits-add-test-directories" title="Permalink to this headline"></a></h3>
@@ -12251,7 +12300,6 @@ if <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_
 <code class="docutils literal notranslate"><span class="pre">${PARENT_PACKAGE_NAME}_ENABLE_TESTS</span></code> are <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>. However, this macro
 may be extended in the future in order to modify behavior related to adding
 tests and examples in a uniform way.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:395</p>
 </section>
 <section id="tribits-allow-missing-external-packages">
 <h3><a class="toc-backref" href="#id128">tribits_allow_missing_external_packages()</a><a class="headerlink" href="#tribits-allow-missing-external-packages" title="Permalink to this headline"></a></h3>
@@ -12300,7 +12348,6 @@ package into an upstream repo</a>).</p></li>
 <p>For some meta-projects that composes packages from may different TriBITS
 repositories, one might need to also call this function from the file
 <a class="reference internal" href="#projectdir-cmake-projectdependenciessetup-cmake">&lt;projectDir&gt;/cmake/ProjectDependenciesSetup.cmake</a>.</p>
-<p>In: core/package_arch/TribitsProcessPackagesAndDirsLists.cmake:143</p>
 </section>
 <section id="tribits-configure-file">
 <h3><a class="toc-backref" href="#id129">tribits_configure_file()</a><a class="headerlink" href="#tribits-configure-file" title="Permalink to this headline"></a></h3>
@@ -12353,7 +12400,6 @@ classes, etc., for example, using:</p>
 <p>If the particular compiler does not support deprecated warnings, then this
 macro is defined to be empty.  See <a class="reference internal" href="#regulated-backward-compatibility-and-deprecated-code">Regulated Backward Compatibility and
 Deprecated Code</a> for more details.</p>
-<p>In: core/package_arch/TribitsLibraryMacros.cmake:76</p>
 </section>
 <section id="tribits-copy-files-to-binary-dir">
 <h3><a class="toc-backref" href="#id130">tribits_copy_files_to_binary_dir()</a><a class="headerlink" href="#tribits-copy-files-to-binary-dir" title="Permalink to this headline"></a></h3>
@@ -12473,7 +12519,6 @@ executable target is built that these files will also be copied as well.</p>
 appended to the arguments in the <code class="docutils literal notranslate"><span class="pre">EXEDEPS</span></code> list.</p>
 </div></blockquote>
 </div></blockquote>
-<p>In: core/package_arch/TribitsCopyFilesToBinaryDir.cmake:46</p>
 </section>
 <section id="tribits-ctest-driver">
 <h3><a class="toc-backref" href="#id131">tribits_ctest_driver()</a><a class="headerlink" href="#tribits-ctest-driver" title="Permalink to this headline"></a></h3>
@@ -13614,7 +13659,6 @@ that require all passing builds and tests.</p>
 <p>ToDo: Add another mode that will return 0 if no errors are reported in the
 ctest -S driver script but ignore configure, build, and test failures that
 are submitted to a CDash site (and therefore will be reported there).</p>
-<p>In: ctest_driver/TribitsCTestDriverCore.cmake:214</p>
 </section>
 <section id="tribits-determine-if-current-package-needs-rebuilt">
 <h3><a class="toc-backref" href="#id132">tribits_determine_if_current_package_needs_rebuilt()</a><a class="headerlink" href="#tribits-determine-if-current-package-needs-rebuilt" title="Permalink to this headline"></a></h3>
@@ -13673,7 +13717,6 @@ This will, however, result in changes in non-dependent subpackages being
 considered as well.</p>
 <p>See the demonstration of the usage of this function in the <code class="docutils literal notranslate"><span class="pre">WrapExternal</span></code>
 package in <a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:475</p>
 </section>
 <section id="tribits-disable-package-on-platforms">
 <h3><a class="toc-backref" href="#id133">tribits_disable_package_on_platforms()</a><a class="headerlink" href="#tribits-disable-package-on-platforms" title="Permalink to this headline"></a></h3>
@@ -13689,7 +13732,6 @@ package in <a class="reference internal" href="#tribitsexampleproject">TribitsEx
 the package test group classification to <code class="docutils literal notranslate"><span class="pre">EX</span></code> results in the package being
 disabled by default (see <a class="reference internal" href="#ex-se-packages-disabled-by-default">EX SE packages disabled by default</a>).  However,
 an explicit enable can still enable the package.</p>
-<p>In: core/package_arch/TribitsListHelpers.cmake:85</p>
 </section>
 <section id="tribits-exclude-files">
 <h3><a class="toc-backref" href="#id134">tribits_exclude_files()</a><a class="headerlink" href="#tribits-exclude-files" title="Permalink to this headline"></a></h3>
@@ -13716,7 +13758,6 @@ never get added to <code class="docutils literal notranslate"><span class="pre">
 and one must be very careful to understand how CPack will use these regexes
 to match files that get excluded from the tarball.  For more details, see
 <a class="reference internal" href="#creating-source-distributions">Creating Source Distributions</a>.</p>
-<p>In: core/package_arch/TribitsGlobalMacros.cmake:2626</p>
 </section>
 <section id="tribits-find-most-recent-binary-file-timestamp">
 <h3><a class="toc-backref" href="#id135">tribits_find_most_recent_binary_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-binary-file-timestamp" title="Permalink to this headline"></a></h3>
@@ -13738,7 +13779,6 @@ its timestamp.</p>
 passing in a set of basic exclude regexes like <code class="docutils literal notranslate"><span class="pre">CMakeFiles/</span></code>,
 <code class="docutils literal notranslate"><span class="pre">[.]cmake$</span></code>, and <code class="docutils literal notranslate"><span class="pre">/Makefile$</span></code>, etc.  These types of files usually don’t
 impact the build of downstream software in CMake projects.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:385</p>
 </section>
 <section id="tribits-find-most-recent-file-timestamp">
 <h3><a class="toc-backref" href="#id136">tribits_find_most_recent_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-file-timestamp" title="Permalink to this headline"></a></h3>
@@ -13818,7 +13858,6 @@ all directories.</p>
 all of the directories and prints and returns in the variables
 <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentTimestamp&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentFilepathBaseDir&gt;</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentRelativeFilePath&gt;</span></code>.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:44</p>
 </section>
 <section id="tribits-find-most-recent-source-file-timestamp">
 <h3><a class="toc-backref" href="#id137">tribits_find_most_recent_source_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-source-file-timestamp" title="Permalink to this headline"></a></h3>
@@ -13840,7 +13879,6 @@ its timestamp.</p>
 passing in a set of basic exclude regexes like <code class="docutils literal notranslate"><span class="pre">[.]git/</span></code>, <code class="docutils literal notranslate"><span class="pre">[.]svn/</span></code>,
 etc.  These types of version control files can not possibly directly impact
 the source code.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:298</p>
 </section>
 <section id="tribits-install-headers">
 <h3><a class="toc-backref" href="#id138">tribits_install_headers()</a><a class="headerlink" href="#tribits-install-headers" title="Permalink to this headline"></a></h3>
@@ -13879,7 +13917,6 @@ be installed under <code class="docutils literal notranslate"><span class="pre">
 </div></blockquote>
 <p>If <a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a> is <code class="docutils literal notranslate"><span class="pre">FASLE</span></code>, then the
 headers will not get installed.</p>
-<p>In: core/package_arch/TribitsInstallHeaders.cmake:45</p>
 </section>
 <section id="tribits-include-directories">
 <h3><a class="toc-backref" href="#id139">tribits_include_directories()</a><a class="headerlink" href="#tribits-include-directories" title="Permalink to this headline"></a></h3>
@@ -13904,7 +13941,6 @@ should come from the installation we are building against.  There is an
 exception to this and that is when there are test only headers that are
 needed.  For that case <code class="docutils literal notranslate"><span class="pre">REQUIRED_DURING_INSTALLATION_TESTING</span></code> must be
 passed in to ensure the include paths are added for installation testing.</p>
-<p>In: core/package_arch/TribitsIncludeDirectories.cmake:44</p>
 </section>
 <section id="id1">
 <h3><a class="toc-backref" href="#id140">tribits_package()</a><a class="headerlink" href="#id1" title="Permalink to this headline"></a></h3>
@@ -13923,7 +13959,6 @@ passed in to ensure the include paths are added for installation testing.</p>
 <p>See <a class="reference internal" href="#tribits-package-decl">tribits_package_decl()</a> for the documentation for the arguments and
 <a class="reference internal" href="#tribits-package-decl">tribits_package_decl()</a> and <a class="reference internal" href="#id1">tribits_package()</a> for a description the
 side-effects (and variables set) after calling this macro.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:342</p>
 </section>
 <section id="tribits-package-decl">
 <h3><a class="toc-backref" href="#id141">tribits_package_decl()</a><a class="headerlink" href="#tribits-package-decl" title="Permalink to this headline"></a></h3>
@@ -13992,7 +14027,6 @@ the <code class="docutils literal notranslate"><span class="pre">*.cmake</span><
 </ul>
 <p>If the package does not have subpackages, just call <a class="reference internal" href="#id1">tribits_package()</a>
 which calls this macro.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:112</p>
 </section>
 <section id="tribits-package-def">
 <h3><a class="toc-backref" href="#id142">tribits_package_def()</a><a class="headerlink" href="#tribits-package-def" title="Permalink to this headline"></a></h3>
@@ -14012,7 +14046,6 @@ package’s <code class="docutils literal notranslate"><span class="pre">CMakeLi
 <li><p>The intra-package dependency variables (i.e. list of include directories,
 list of libraries, etc.) are initialized to empty.</p></li>
 </ul>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:277</p>
 </section>
 <section id="tribits-package-define-dependencies">
 <h3><a class="toc-backref" href="#id143">tribits_package_define_dependencies()</a><a class="headerlink" href="#tribits-package-define-dependencies" title="Permalink to this headline"></a></h3>
@@ -14185,7 +14218,6 @@ dependencies that exist.  Otherwise, the <code class="docutils literal notransla
 need to set all of the above local variables, even those that are empty.
 This is an error checking property of the TriBITS system to avoid misspelling
 the names of these variables.</p>
-<p>In: core/package_arch/TribitsPackageDefineDependencies.cmake:43</p>
 </section>
 <section id="tribits-package-postprocess">
 <h3><a class="toc-backref" href="#id144">tribits_package_postprocess()</a><a class="headerlink" href="#tribits-package-postprocess" title="Permalink to this headline"></a></h3>
@@ -14202,7 +14234,6 @@ target property set on them.</p>
 <p>NOTE: It is unfortunate that this macro must be called in a package’s
 top-level <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file but limitations of the CMake language make
 it necessary to do so.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:769</p>
 </section>
 <section id="tribits-process-subpackages">
 <h3><a class="toc-backref" href="#id145">tribits_process_subpackages()</a><a class="headerlink" href="#tribits-process-subpackages" title="Permalink to this headline"></a></h3>
@@ -14215,12 +14246,10 @@ called in the parent packages top-level <a class="reference internal" href="#pac
 </div>
 <p>This macro must be called after <a class="reference internal" href="#tribits-package-decl">tribits_package_decl()</a> but before
 <a class="reference internal" href="#tribits-package-def">tribits_package_def()</a>.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:879</p>
 </section>
 <section id="tribits-process-enabled-tpl">
 <h3><a class="toc-backref" href="#id146">tribits_process_enabled_tpl()</a><a class="headerlink" href="#tribits-process-enabled-tpl" title="Permalink to this headline"></a></h3>
 <p>Process an enabled TPL’s FindTPL${TPL_NAME}.cmake module.</p>
-<p>In: core/package_arch/TribitsProcessEnabledTpl.cmake:52</p>
 </section>
 <section id="id2">
 <h3><a class="toc-backref" href="#id147">tribits_project()</a><a class="headerlink" href="#id2" title="Permalink to this headline"></a></h3>
@@ -14237,7 +14266,6 @@ the variable <a class="reference internal" href="#project-name-tribits-dir">${PR
 <p>This macro then adds all of the necessary paths to <code class="docutils literal notranslate"><span class="pre">CMAKE_MODULE_PATH</span></code> and
 then performs all processing of the TriBITS project files (see <a class="reference internal" href="#full-tribits-project-configuration">Full TriBITS
 Project Configuration</a>).</p>
-<p>In: core/package_arch/TribitsProject.cmake:74</p>
 </section>
 <section id="tribits-project-define-extra-repositories">
 <h3><a class="toc-backref" href="#id148">tribits_project_define_extra_repositories()</a><a class="headerlink" href="#tribits-project-define-extra-repositories" title="Permalink to this headline"></a></h3>
@@ -14335,7 +14363,6 @@ one misspells the name of a macro, it is an immediate error in CMake.  A
 misspelled set variable is just ignored.</p></li>
 <li><p>The variable name can change in the future as an implementation detail.</p></li>
 </ul>
-<p>In: core/package_arch/TribitsProcessExtraRepositoriesList.cmake:51</p>
 </section>
 <section id="tribits-project-enable-all">
 <h3><a class="toc-backref" href="#id149">tribits_project_enable_all()</a><a class="headerlink" href="#tribits-project-enable-all" title="Permalink to this headline"></a></h3>
@@ -14350,7 +14377,6 @@ misspelled set variable is just ignored.</p></li>
 TriBITS projects that have just a single package or by default just want to
 enable all packages.  This is especially useful when you have a TriBITS
 project with just a single package.</p>
-<p>In: core/package_arch/TribitsProjectImpl.cmake:327</p>
 </section>
 <section id="tribits-repository-define-packages">
 <h3><a class="toc-backref" href="#id150">tribits_repository_define_packages()</a><a class="headerlink" href="#tribits-repository-define-packages" title="Permalink to this headline"></a></h3>
@@ -14426,7 +14452,6 @@ repo subdirs).</p></li>
 <code class="docutils literal notranslate"><span class="pre">${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS</span></code>.  If one
 misspells the name of the macro, it is an immediate error in CMake.</p></li>
 </ul>
-<p>In: core/package_arch/TribitsProcessPackagesAndDirsLists.cmake:56</p>
 </section>
 <section id="tribits-repository-define-tpls">
 <h3><a class="toc-backref" href="#id151">tribits_repository_define_tpls()</a><a class="headerlink" href="#tribits-repository-define-tpls" title="Permalink to this headline"></a></h3>
@@ -14492,7 +14517,6 @@ repo subdirs).</p></li>
 <code class="docutils literal notranslate"><span class="pre">${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS</span></code>.  If one misspells
 the name of a macro, it is an immediate error in CMake.</p></li>
 </ul>
-<p>In: core/package_arch/TribitsProcessTplsLists.cmake:48</p>
 </section>
 <section id="tribits-set-st-for-dev-mode">
 <h3><a class="toc-backref" href="#id152">tribits_set_st_for_dev_mode()</a><a class="headerlink" href="#tribits-set-st-for-dev-mode" title="Permalink to this headline"></a></h3>
@@ -14515,7 +14539,6 @@ is always set to <code class="docutils literal notranslate"><span class="pre">ON
 considered <code class="docutils literal notranslate"><span class="pre">ST</span></code> for development mode (thereby reducing testing time by not
 enabling the dependent features/tests), while still having important
 functionality available to users by default in a release of the package.</p>
-<p>In: core/package_arch/TribitsGeneralMacros.cmake:299</p>
 </section>
 <section id="id3">
 <h3><a class="toc-backref" href="#id153">tribits_subpackage()</a><a class="headerlink" href="#id3" title="Permalink to this headline"></a></h3>
@@ -14547,7 +14570,6 @@ package name at the beginning,
 <div><p>Inside the subpackage, the same as <code class="docutils literal notranslate"><span class="pre">SUBPACKAGE_FULLNAME</span></code>.</p>
 </div></blockquote>
 </div></blockquote>
-<p>In: core/package_arch/TribitsSubPackageMacros.cmake:44</p>
 </section>
 <section id="tribits-subpackage-postprocess">
 <h3><a class="toc-backref" href="#id154">tribits_subpackage_postprocess()</a><a class="headerlink" href="#tribits-subpackage-postprocess" title="Permalink to this headline"></a></h3>
@@ -14563,7 +14585,6 @@ libraries in all subdirectories that don’t have the TRIBITS_TESTONLY_LIB
 target property set on them.</p>
 <p>NOTE: It is unfortunate that a Subpackages’s CMakeLists.txt file must call
 this macro but limitations of the CMake language make it necessary to do so.</p>
-<p>In: core/package_arch/TribitsSubPackageMacros.cmake:143</p>
 </section>
 <section id="tribits-tpl-allow-pre-find-package">
 <h3><a class="toc-backref" href="#id155">tribits_tpl_allow_pre_find_package()</a><a class="headerlink" href="#tribits-tpl-allow-pre-find-package" title="Permalink to this headline"></a></h3>
@@ -14604,7 +14625,6 @@ value <code class="docutils literal notranslate"><span class="pre">FALSE</span><
 <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> modules.</p>
 <p>See <a class="reference internal" href="#how-to-use-find-package-for-a-tribits-tpl">How to use find_package() for a TriBITS TPL</a> for details in how to use
 this function to create a <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> module file.</p>
-<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:56</p>
 </section>
 <section id="tribits-tpl-find-include-dirs-and-libraries">
 <h3><a class="toc-backref" href="#id156">tribits_tpl_find_include_dirs_and_libraries()</a><a class="headerlink" href="#tribits-tpl-find-include-dirs-and-libraries" title="Permalink to this headline"></a></h3>
@@ -14712,7 +14732,6 @@ libraries and when a find is successful and when it is not.</p>
 <p>Note, if <code class="docutils literal notranslate"><span class="pre">TPL_TENTATIVE_ENABLE_&lt;tplName&gt;=ON</span></code>, then if all of the parts of
 the TPL can’t be found, then <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_&lt;tplName&gt;</span></code> will be (forced) set
 to <code class="docutils literal notranslate"><span class="pre">OFF</span></code> in the cache.  See <a class="reference internal" href="#tribits-tpl-tentatively-enable">tribits_tpl_tentatively_enable()</a>.</p>
-<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:147</p>
 </section>
 <section id="tribits-tpl-tentatively-enable">
 <h3><a class="toc-backref" href="#id157">tribits_tpl_tentatively_enable()</a><a class="headerlink" href="#tribits-tpl-tentatively-enable" title="Permalink to this headline"></a></h3>
@@ -14737,7 +14756,6 @@ be explicitly set on input, i.e. if <code class="docutils literal notranslate"><
 TPL has been explicitly enabled (i.e. <code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">TPL_ENABLE_&lt;tplName&gt;=ON</span></code>) or
 disabled (i.e. <code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">TPL_ENABLE_&lt;tplName&gt;=OFF</span></code>), then this function has no
 effect and the TPL will be unconditionally enabled or disabled.</p>
-<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:695</p>
 </section>
 <section id="tribits-write-flexible-package-client-export-files">
 <h3><a class="toc-backref" href="#id158">tribits_write_flexible_package_client_export_files()</a><a class="headerlink" href="#tribits-write-flexible-package-client-export-files" title="Permalink to this headline"></a></h3>
@@ -14792,7 +14810,6 @@ because CMake will not allow those to even be present in scripting mode that
 is used for unit testing this function.  Instead, the commands to install
 the files are added by the function
 <code class="docutils literal notranslate"><span class="pre">tribits_write_package_client_export_files_install_targets()</span></code>.</p>
-<p>In: core/package_arch/TribitsWriteClientExportFiles.cmake:83</p>
 </section>
 <section id="tribits-verbose-print-var">
 <h3><a class="toc-backref" href="#id159">tribits_verbose_print_var()</a><a class="headerlink" href="#tribits-verbose-print-var" title="Permalink to this headline"></a></h3>
@@ -14808,7 +14825,6 @@ the files are added by the function
 </div>
 <p>The variable <code class="docutils literal notranslate"><span class="pre">&lt;varName&gt;</span></code> can be defined or undefined or empty.  This uses
 an explicit “– ” line prefix so that it prints nice even on Windows CMake.</p>
-<p>In: core/package_arch/TribitsVerbosePrintVar.cmake:44</p>
 </section>
 </section>
 <section id="general-utility-macros-and-functions">
