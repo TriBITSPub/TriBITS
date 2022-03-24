@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       working-directory: ./tribits/doc/sphinx
+      tribits-base-dir: /home/runner/work/TriBITS/TriBITS
 
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +28,7 @@ jobs:
           pip3 install sphinx sphinx-rtd-theme
       - name: Build documentation
         working-directory: ${{env.working-directory}}
-        run: python3 sphinx_rst_generator.py
+        run: python3 sphinx_rst_generator.py --copy-base-dir=${{env.tribits-base-dir}}
       - name: Generate nojekyll file
         working-directory: ${{env.working-directory}}/combined_docs
         run: touch .nojekyll
