@@ -1,3 +1,4 @@
+import argparse
 import os
 import re
 from shutil import copyfile, copytree
@@ -22,8 +23,8 @@ def is_rst_file(file_path: str) -> bool:
     return False
 
 
-def change_paths_and_get_includes(source_file: str, src_file_path: str,
-                                  start_path: str, rst_dir: str, copy_file: bool = True) -> tuple:
+def change_paths_and_get_includes(source_file: str, src_file_path: str, start_path: str, rst_dir: str,
+                                  tribits_base_dir: str, copy_file: bool = True) -> tuple:
     """ Changes paths in source file, to be relative to sphinx_path or parent .rst document.
         Returns a tuple with .rst file content and includes(absolute_path, relative_to).
     """
@@ -44,7 +45,8 @@ def change_paths_and_get_includes(source_file: str, src_file_path: str,
                     new_line.extend(splitted_line[:path_index])
                     abs_path = os.path.abspath(os.path.join(src_file_path,
                                                             splitted_line[path_index]))
-                    path_elem = abs_path.split(os.sep)[1:]
+                    tbd = tribits_base_dir.split(os.sep)[1:]
+                    path_elem = abs_path.split(os.sep)[len(tbd) + 1:]
                     new_path = os.path.join(rst_dir, *path_elem)
                     os.makedirs(os.path.dirname(new_path), exist_ok=True)
                     if not os.path.isfile(new_path) and copy_file:
@@ -92,9 +94,23 @@ class SphinxRstGenerator:
                 'sphinx_path': os.path.join(doc_path, 'sphinx', 'build_ref'),
                 'title': 'Generic TriBITS Project, Build, Test, and Install Reference Guide'}}
         self.rst_dir = os.path.join(doc_path, 'sphinx', 'copied_files')
+        self.tribits_base_dir = self._cli()
         self.already_modified_files = set()
         self.create_rst_dir()
         self.build_docs()
+
+    @staticmethod
+    def _cli() -> str:
+        """ Support for common line arguments. """
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--copy-base-dir", help="Path to TriBITS base directory")
+        args = parser.parse_args()
+        abs_path = os.path.abspath(args.copy_base_dir)
+        if not abs_path or not os.path.exists(abs_path):
+            print(f"\n==> Path: `{abs_path}` is not correct!")
+            sys.exit(1)
+        print(f"Provided TriBITS base dir: {abs_path}")
+        return abs_path
 
     def create_rst_dir(self) -> None:
         """ Creates copied_files directory in Sphinx directory. All include files will be copy
@@ -174,7 +190,8 @@ class SphinxRstGenerator:
             overwrite_source = False
 
         file_content, includes = change_paths_and_get_includes(source_file=source_file, src_file_path=src_path,
-                                                               start_path=start_path, rst_dir=self.rst_dir)
+                                                               start_path=start_path, rst_dir=self.rst_dir,
+                                                               tribits_base_dir=self.tribits_base_dir)
 
         if overwrite_source:
             self.save_rst(file_path=source_file, file_content=file_content)
@@ -211,12 +228,13 @@ class SphinxRstGenerator:
                                          final_path=sources.get('final_path'), start_path=sources.get('sphinx_path'))
             child_rst.update(includes)
         self.already_modified_files.update(child_rst)
+        tbd = self.tribits_base_dir.split(os.sep)[1:]
         child_rst_lst = list(child_rst)
 
         sphinx_rel_path = self.paths.get('maintainers_guide').get('sphinx_path')
         grand_child_rst = set()
         for child in child_rst_lst:
-            path_elem = child.split(os.sep)[1:]
+            path_elem = child.split(os.sep)[len(tbd) + 1:]
             final_path = os.path.join(self.rst_dir, *path_elem)
             os.makedirs(os.path.dirname(final_path), exist_ok=True)
             src_path = os.path.split(child)[0]
@@ -227,7 +245,7 @@ class SphinxRstGenerator:
 
         grand_grand_child_rst = set()
         for grand_child in grand_child_rst_lst:
-            path_elem = grand_child.split(os.sep)[1:]
+            path_elem = grand_child.split(os.sep)[len(tbd) + 1:]
             final_path = os.path.join(self.rst_dir, *path_elem)
             os.makedirs(os.path.dirname(final_path), exist_ok=True)
             src_path = os.path.split(grand_child)[0]
