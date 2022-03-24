@@ -2,7 +2,8 @@
 
 :Author: Roscoe A. Bartlett (rabartl@sandia.gov)
 :Date: |date|
-          :Version: .. include:: ../copied_files/TribitsGitVersion.txt
+:Version:
+   .. include:: ../copied_files/tribits/doc/guides/TribitsGitVersion.txt
 
 .. |date| date::
 
@@ -73,28 +74,28 @@ Documentation`_.  Finally, several bits of information are provided in the
 `Appendix`_.
 
 
-.. include:: ../copied_files/TribitsGuidesBody.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsGuidesBody.rst
 
 
-.. include:: ../copied_files/TribitsCoreDetailedReference.rst
+.. include:: ../copied_files/tribits/doc/guides/users_guide/TribitsCoreDetailedReference.rst
 
 
-.. include:: ../copied_files/TribitsGuidesReferences.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsGuidesReferences.rst
 
 
-.. include:: ../copied_files/TribitsFAQ.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsFAQ.rst
 
 
 Appendix
 ========
 
-.. include:: ../copied_files/TribitsHistory.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsHistory.rst
 
-.. include:: ../copied_files/TribitsPackageNotCMakePackage.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsPackageNotCMakePackage.rst
 
-.. include:: ../copied_files/TribitsDesignConsiderations.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsDesignConsiderations.rst
 
-.. include:: ../copied_files/TribitsToolsDocumentation.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsToolsDocumentation.rst
 
 
 .. ***

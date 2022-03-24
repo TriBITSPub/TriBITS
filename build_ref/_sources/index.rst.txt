@@ -3,7 +3,8 @@
 :Author: Roscoe A. Bartlett
 :Contact: bartlett.roscoe@gmail.com
 :Date: |date|
-          :Version: .. include:: ../copied_files/TribitsGitVersion.txt
+:Version:
+   .. include:: ../copied_files/tribits/doc/build_ref/TribitsGitVersion.txt
 
 .. |date| date::
 

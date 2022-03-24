@@ -350,9 +350,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-03-23
-:Version: .. include:: ../copied_files/TribitsGitVersion.txt</p>
+<dd class="field-even"><p>2022-03-24</p>
 </dd>
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p></p></dd>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Abstract</dt>
@@ -2341,11 +2342,11 @@ dependencies file:</p>
 </div></blockquote>
 <p>which is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_package_define_dependencies</span><span class="p">(</span>
-  <span class="n">LIB_REQUIRED_PACKAGES</span> <span class="n">Teuchos</span> <span class="n">Sacado</span> <span class="n">Phalanx</span> <span class="n">Intrepid</span> <span class="n">Thyra</span>
-    <span class="n">Tpetra</span> <span class="n">Epetra</span> <span class="n">EpetraExt</span>
-  <span class="n">LIB_OPTIONAL_PACKAGES</span> <span class="n">Stokhos</span>
-  <span class="n">TEST_OPTIONAL_PACKAGES</span> <span class="n">Stratimikos</span>
-  <span class="n">LIB_REQUIRED_TPLS</span> <span class="n">MPI</span> <span class="n">Boost</span>
+  <span class="n">SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS</span>
+    <span class="n">A</span>   <span class="n">a</span>   <span class="n">PT</span>  <span class="n">REQUIRED</span>
+    <span class="n">B</span>   <span class="n">b</span>   <span class="n">ST</span>  <span class="n">OPTIONAL</span>
+    <span class="n">C</span>   <span class="n">c</span>   <span class="n">ST</span>  <span class="n">OPTIONAL</span>
+  <span class="n">REGRESSION_EMAIL_LIST</span> <span class="n">with_packages</span><span class="o">-</span><span class="n">regressions</span><span class="nd">@someurl</span><span class="o">.</span><span class="n">none</span>
   <span class="p">)</span>
 </pre></div>
 </div>
@@ -2359,13 +2360,7 @@ such as with:</p>
 <div><p><a class="reference internal" href="#tribitshelloworld">TribitsHelloWorld</a>/<code class="docutils literal notranslate"><span class="pre">hello_world/cmake/Dependencies.cmake:</span></code></p>
 </div></blockquote>
 <p>which contains:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_package_define_dependencies</span><span class="p">(</span>
-  <span class="n">LIB_REQUIRED_PACKAGES</span> <span class="n">Teuchos</span> <span class="n">Sacado</span> <span class="n">Phalanx</span> <span class="n">Intrepid</span> <span class="n">Thyra</span>
-    <span class="n">Tpetra</span> <span class="n">Epetra</span> <span class="n">EpetraExt</span>
-  <span class="n">LIB_OPTIONAL_PACKAGES</span> <span class="n">Stokhos</span>
-  <span class="n">TEST_OPTIONAL_PACKAGES</span> <span class="n">Stratimikos</span>
-  <span class="n">LIB_REQUIRED_TPLS</span> <span class="n">MPI</span> <span class="n">Boost</span>
-  <span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_package_define_dependencies</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Other TriBITS macros/functions that can be called in this file include
@@ -2390,52 +2385,44 @@ shown in:</p>
 <div><p><a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>/<code class="docutils literal notranslate"><span class="pre">packages/simple_cxx/CMakeLists.txt</span></code></p>
 </div></blockquote>
 <p>which is:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>################################################################################
-#                                                                              #
-#                        TribitsExampleProject                                 #
-#                                                                              #
-################################################################################
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#</span>
+<span class="c1"># A) Define the package</span>
+<span class="c1">#</span>
+<span class="n">tribits_package</span><span class="p">(</span> <span class="n">SimpleCxx</span>  <span class="n">ENABLE_SHADOWING_WARNINGS</span>  <span class="n">CLEANED</span> <span class="p">)</span>
 
-# To be safe, define your minimum CMake version.  This may be newer than the
-# min required by TriBITS.
-cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+<span class="c1">#</span>
+<span class="c1"># B) Platform-specific checks</span>
+<span class="c1">#</span>
+<span class="n">include</span><span class="p">(</span><span class="n">CheckFor__int64</span><span class="p">)</span>
+<span class="n">check_for___int64</span><span class="p">(</span><span class="n">HAVE_SIMPLECXX___INT64</span><span class="p">)</span>
 
-# Make CMake set WIN32 with CYGWIN for older CMake versions.  CMake requires
-# this to be in the top-level CMakeLists.txt file and not an include file :-(
-set(CMAKE_LEGACY_CYGWIN_WIN32 1 CACHE BOOL &quot;&quot; FORCE)
+<span class="c1">#</span>
+<span class="c1"># C) Set up package-specific options</span>
+<span class="c1">#</span>
+<span class="n">tribits_add_debug_option</span><span class="p">()</span>
+<span class="n">tribits_add_show_deprecated_warnings_option</span><span class="p">()</span>
 
-#
-# A) Define your project name and set up major project options
-#
-# NOTE: Don&#39;t set options that would impact what packages get defined or
-# enabled/disabled in this file as that would not impact other tools that
-# don&#39;t process this file.
-#
+<span class="c1">#</span>
+<span class="c1"># D) Add the libraries, tests, and examples</span>
+<span class="c1">#</span>
+<span class="n">add_subdirectory</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+<span class="n">tribits_add_test_directories</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
 
-# Get PROJECT_NAME (must be in a file for other parts of system to read)
-include(&quot;${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake&quot;)
+<span class="c1"># Set a variable that will be used in downstream packages</span>
 
-# CMake requires that you declare the CMake project in the top-level file and
-# not in an include file :-(
-project(${PROJECT_NAME} NONE)
+<span class="k">if</span> <span class="p">(</span><span class="n">SimpleCxx_ENABLE_SimpleTpl</span><span class="p">)</span>
+  <span class="nb">set</span><span class="p">(</span><span class="n">simpletplText</span> <span class="s2">&quot;simpletpl &quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">()</span>
+  <span class="nb">set</span><span class="p">(</span><span class="n">simpletplText</span><span class="p">)</span>
+<span class="n">endif</span><span class="p">()</span>
 
-#
-# B) Pull in the TriBITS system and execute
-#
+<span class="n">global_set</span><span class="p">(</span><span class="n">EXPECTED_SIMPLECXX_AND_DEPS</span>
+  <span class="s2">&quot;SimpleCxx $</span><span class="si">{simpletplText}</span><span class="s2">headeronlytpl&quot;</span><span class="p">)</span>
 
-set(${PROJECT_NAME}_TRIBITS_DIR
-   &quot;${CMAKE_CURRENT_LIST_DIR}/../..&quot;  CACHE  STRING
-  &quot;TriBITS base directory (default assumes in TriBITS source tree)&quot;)
-include(&quot;${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake&quot;)
-
-# Set default location for header-only TPL to make easy to configure out of
-# the TriBITS source tree.
-set(HeaderOnlyTpl_INCLUDE_DIRS
-  &quot;${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl&quot; 
-  CACHE PATH &quot;Default set by TriBITS/CMakeLists.txt&quot; )
-
-# Do all of the processing for this Tribits project
-tribits_project()
+<span class="c1">#</span>
+<span class="c1"># E) Do standard post processing</span>
+<span class="c1">#</span>
+<span class="n">tribits_package_postprocess</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>The first command at the top of the file is a call to <a class="reference internal" href="#id1">tribits_package()</a>
@@ -2471,52 +2458,20 @@ for a <strong>package with subpackages</strong> is shown in:</p>
 <div><p><a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>/<code class="docutils literal notranslate"><span class="pre">packages/with_subpackages/CMakeLists.txt</span></code></p>
 </div></blockquote>
 <p>which contains:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>################################################################################
-#                                                                              #
-#                        TribitsExampleProject                                 #
-#                                                                              #
-################################################################################
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_package_decl</span><span class="p">(</span><span class="n">WithSubpackages</span><span class="p">)</span>
 
-# To be safe, define your minimum CMake version.  This may be newer than the
-# min required by TriBITS.
-cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+<span class="n">tribits_add_debug_option</span><span class="p">()</span>
 
-# Make CMake set WIN32 with CYGWIN for older CMake versions.  CMake requires
-# this to be in the top-level CMakeLists.txt file and not an include file :-(
-set(CMAKE_LEGACY_CYGWIN_WIN32 1 CACHE BOOL &quot;&quot; FORCE)
+<span class="n">tribits_process_subpackages</span><span class="p">()</span>
 
-#
-# A) Define your project name and set up major project options
-#
-# NOTE: Don&#39;t set options that would impact what packages get defined or
-# enabled/disabled in this file as that would not impact other tools that
-# don&#39;t process this file.
-#
+<span class="n">tribits_exclude_files</span><span class="p">(</span>
+  <span class="n">b</span><span class="o">/</span><span class="n">ExcludeFromRelease</span><span class="o">.</span><span class="n">txt</span>
+  <span class="n">b</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">AlsoExcludeFromTarball</span><span class="o">.</span><span class="n">txt</span>
+  <span class="p">)</span>
 
-# Get PROJECT_NAME (must be in a file for other parts of system to read)
-include(&quot;${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake&quot;)
+<span class="n">tribits_package_def</span><span class="p">()</span>
 
-# CMake requires that you declare the CMake project in the top-level file and
-# not in an include file :-(
-project(${PROJECT_NAME} NONE)
-
-#
-# B) Pull in the TriBITS system and execute
-#
-
-set(${PROJECT_NAME}_TRIBITS_DIR
-   &quot;${CMAKE_CURRENT_LIST_DIR}/../..&quot;  CACHE  STRING
-  &quot;TriBITS base directory (default assumes in TriBITS source tree)&quot;)
-include(&quot;${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake&quot;)
-
-# Set default location for header-only TPL to make easy to configure out of
-# the TriBITS source tree.
-set(HeaderOnlyTpl_INCLUDE_DIRS
-  &quot;${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl&quot; 
-  CACHE PATH &quot;Default set by TriBITS/CMakeLists.txt&quot; )
-
-# Do all of the processing for this Tribits project
-tribits_project()
+<span class="n">tribits_package_postprocess</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>What is different about <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> files for packages without
@@ -2817,11 +2772,9 @@ simple example is for the example subpackage <code class="docutils literal notra
 </div></blockquote>
 <p>which is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_package_define_dependencies</span><span class="p">(</span>
-  <span class="n">LIB_REQUIRED_PACKAGES</span> <span class="n">Teuchos</span> <span class="n">Sacado</span> <span class="n">Phalanx</span> <span class="n">Intrepid</span> <span class="n">Thyra</span>
-    <span class="n">Tpetra</span> <span class="n">Epetra</span> <span class="n">EpetraExt</span>
-  <span class="n">LIB_OPTIONAL_PACKAGES</span> <span class="n">Stokhos</span>
-  <span class="n">TEST_OPTIONAL_PACKAGES</span> <span class="n">Stratimikos</span>
-  <span class="n">LIB_REQUIRED_TPLS</span> <span class="n">MPI</span> <span class="n">Boost</span>
+  <span class="n">LIB_REQUIRED_PACKAGES</span>  <span class="n">SimpleCxx</span>
+  <span class="n">LIB_OPTIONAL_PACKAGES</span>  <span class="n">WithSubpackagesA</span>  <span class="n">InsertedPkg</span> 
+  <span class="n">TEST_OPTIONAL_PACKAGES</span>  <span class="n">MixedLang</span>
   <span class="p">)</span>
 </pre></div>
 </div>
@@ -2844,11 +2797,7 @@ the <code class="docutils literal notranslate"><span class="pre">SimpleCxx</span
 </div></blockquote>
 <p>which is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_package_define_dependencies</span><span class="p">(</span>
-  <span class="n">LIB_REQUIRED_PACKAGES</span> <span class="n">Teuchos</span> <span class="n">Sacado</span> <span class="n">Phalanx</span> <span class="n">Intrepid</span> <span class="n">Thyra</span>
-    <span class="n">Tpetra</span> <span class="n">Epetra</span> <span class="n">EpetraExt</span>
-  <span class="n">LIB_OPTIONAL_PACKAGES</span> <span class="n">Stokhos</span>
-  <span class="n">TEST_OPTIONAL_PACKAGES</span> <span class="n">Stratimikos</span>
-  <span class="n">LIB_REQUIRED_TPLS</span> <span class="n">MPI</span> <span class="n">Boost</span>
+  <span class="n">LIB_REQUIRED_PACKAGES</span> <span class="n">SimpleCxx</span>
   <span class="p">)</span>
 </pre></div>
 </div>
@@ -2882,52 +2831,34 @@ difference is that the commands <a class="reference internal" href="#id1">tribit
 <div><p><a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>/<code class="docutils literal notranslate"><span class="pre">packages/with_subpackages/a/CMakeLists.txt</span></code></p>
 </div></blockquote>
 <p>which contains:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>################################################################################
-#                                                                              #
-#                        TribitsExampleProject                                 #
-#                                                                              #
-################################################################################
-
-# To be safe, define your minimum CMake version.  This may be newer than the
-# min required by TriBITS.
-cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
-
-# Make CMake set WIN32 with CYGWIN for older CMake versions.  CMake requires
-# this to be in the top-level CMakeLists.txt file and not an include file :-(
-set(CMAKE_LEGACY_CYGWIN_WIN32 1 CACHE BOOL &quot;&quot; FORCE)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#
+# A) Define the subpackage
+#
+tribits_subpackage(A)
 
 #
-# A) Define your project name and set up major project options
+# B) Set up subpackage-specific options
 #
-# NOTE: Don&#39;t set options that would impact what packages get defined or
-# enabled/disabled in this file as that would not impact other tools that
-# don&#39;t process this file.
-#
-
-# Get PROJECT_NAME (must be in a file for other parts of system to read)
-include(&quot;${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake&quot;)
-
-# CMake requires that you declare the CMake project in the top-level file and
-# not in an include file :-(
-project(${PROJECT_NAME} NONE)
+# Typically there are none or are few as most options are picked up from the
+# parent package&#39;s CMakeLists.txt file!
 
 #
-# B) Pull in the TriBITS system and execute
+# C) Add the libraries, tests, and examples
 #
 
-set(${PROJECT_NAME}_TRIBITS_DIR
-   &quot;${CMAKE_CURRENT_LIST_DIR}/../..&quot;  CACHE  STRING
-  &quot;TriBITS base directory (default assumes in TriBITS source tree)&quot;)
-include(&quot;${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake&quot;)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+tribits_add_library(pws_a
+  SOURCES A.cpp
+  HEADERS A.hpp
+  NOINSTALLHEADERS 
+)
 
-# Set default location for header-only TPL to make easy to configure out of
-# the TriBITS source tree.
-set(HeaderOnlyTpl_INCLUDE_DIRS
-  &quot;${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl&quot; 
-  CACHE PATH &quot;Default set by TriBITS/CMakeLists.txt&quot; )
+tribits_add_test_directories(tests)
 
-# Do all of the processing for this Tribits project
-tribits_project()
+#
+# D) Do standard post processing
+#
+tribits_subpackage_postprocess()
 </pre></div>
 </div>
 <p>Unlike <a class="reference internal" href="#id1">tribits_package()</a>, <a class="reference internal" href="#id3">tribits_subpackage()</a> does not take any extra
@@ -3422,15 +3353,8 @@ the TriBITS test project <a class="reference internal" href="#mocktrilinos">Mock
 <code class="docutils literal notranslate"><span class="pre">extraRepoOnePackage</span></code> are the same directory.  In this case, the file
 <code class="docutils literal notranslate"><span class="pre">extraRepoOnePackage/PackagesList.cmake</span></code> looks like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_repository_define_packages</span><span class="p">(</span>
-  <span class="n">SimpleCxx</span>          <span class="n">packages</span><span class="o">/</span><span class="n">simple_cxx</span>         <span class="n">PT</span>
-  <span class="n">MixedLang</span>          <span class="n">packages</span><span class="o">/</span><span class="n">mixed_lang</span>         <span class="n">PT</span>
-  <span class="n">InsertedPkg</span>        <span class="n">InsertedPkg</span>                 <span class="n">ST</span>
-  <span class="n">WithSubpackages</span>    <span class="n">packages</span><span class="o">/</span><span class="n">with_subpackages</span>   <span class="n">PT</span>
-  <span class="n">WrapExternal</span>       <span class="n">packages</span><span class="o">/</span><span class="n">wrap_external</span>      <span class="n">ST</span>
+  <span class="n">extraRepoOnePackage</span>   <span class="o">.</span>     <span class="n">ST</span>
   <span class="p">)</span>
-
-<span class="n">tribits_disable_package_on_platforms</span><span class="p">(</span><span class="n">WrapExternal</span> <span class="n">Windows</span><span class="p">)</span>
-<span class="n">tribits_allow_missing_external_packages</span><span class="p">(</span><span class="n">InsertedPkg</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>(Note the dot <code class="docutils literal notranslate"><span class="pre">'.'</span></code> for the package directory.)</p>
@@ -3602,52 +3526,15 @@ Overview</a> document.</p>
 Repository Core Files</a>, and <a class="reference internal" href="#tribits-package-core-files">TriBITS Package Core Files</a>.  It just builds a
 simple library, a simple executable, a test executable, and the tests them as
 shown by the file <code class="docutils literal notranslate"><span class="pre">TribitsHelloWorld/hello_world/CMakeLists.txt</span></code> which is:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>################################################################################
-#                                                                              #
-#                        TribitsExampleProject                                 #
-#                                                                              #
-################################################################################
-
-# To be safe, define your minimum CMake version.  This may be newer than the
-# min required by TriBITS.
-cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
-
-# Make CMake set WIN32 with CYGWIN for older CMake versions.  CMake requires
-# this to be in the top-level CMakeLists.txt file and not an include file :-(
-set(CMAKE_LEGACY_CYGWIN_WIN32 1 CACHE BOOL &quot;&quot; FORCE)
-
-#
-# A) Define your project name and set up major project options
-#
-# NOTE: Don&#39;t set options that would impact what packages get defined or
-# enabled/disabled in this file as that would not impact other tools that
-# don&#39;t process this file.
-#
-
-# Get PROJECT_NAME (must be in a file for other parts of system to read)
-include(&quot;${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake&quot;)
-
-# CMake requires that you declare the CMake project in the top-level file and
-# not in an include file :-(
-project(${PROJECT_NAME} NONE)
-
-#
-# B) Pull in the TriBITS system and execute
-#
-
-set(${PROJECT_NAME}_TRIBITS_DIR
-   &quot;${CMAKE_CURRENT_LIST_DIR}/../..&quot;  CACHE  STRING
-  &quot;TriBITS base directory (default assumes in TriBITS source tree)&quot;)
-include(&quot;${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake&quot;)
-
-# Set default location for header-only TPL to make easy to configure out of
-# the TriBITS source tree.
-set(HeaderOnlyTpl_INCLUDE_DIRS
-  &quot;${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl&quot; 
-  CACHE PATH &quot;Default set by TriBITS/CMakeLists.txt&quot; )
-
-# Do all of the processing for this Tribits project
-tribits_project()
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_package</span><span class="p">(</span><span class="n">HelloWorld</span><span class="p">)</span>
+<span class="n">tribits_add_library</span><span class="p">(</span><span class="n">hello_world_lib</span>
+  <span class="n">HEADERS</span> <span class="n">hello_world_lib</span><span class="o">.</span><span class="n">hpp</span> <span class="n">SOURCES</span> <span class="n">hello_world_lib</span><span class="o">.</span><span class="n">cpp</span><span class="p">)</span>
+<span class="n">tribits_add_executable</span><span class="p">(</span><span class="n">hello_world</span> <span class="n">NOEXEPREFIX</span> <span class="n">SOURCES</span> <span class="n">hello_world_main</span><span class="o">.</span><span class="n">cpp</span>
+  <span class="n">INSTALLABLE</span><span class="p">)</span>
+<span class="n">tribits_add_test</span><span class="p">(</span><span class="n">hello_world</span> <span class="n">NOEXEPREFIX</span> <span class="n">PASS_REGULAR_EXPRESSION</span> <span class="s2">&quot;Hello World&quot;</span><span class="p">)</span>
+<span class="n">tribits_add_executable_and_test</span><span class="p">(</span><span class="n">unit_tests</span> <span class="n">SOURCES</span> <span class="n">hello_world_unit_tests</span><span class="o">.</span><span class="n">cpp</span>
+  <span class="n">PASS_REGULAR_EXPRESSION</span> <span class="s2">&quot;All unit tests passed&quot;</span><span class="p">)</span>
+<span class="n">tribits_package_postprocess</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>The build and test of this simple project is tested in the <a class="reference internal" href="#the-tribits-test-package">The TriBITS Test
@@ -3780,11 +3667,11 @@ as the name suggests, is broken down into subpackages.  The
 </div>
 <p>with contents:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_package_define_dependencies</span><span class="p">(</span>
-  <span class="n">LIB_REQUIRED_PACKAGES</span> <span class="n">Teuchos</span> <span class="n">Sacado</span> <span class="n">Phalanx</span> <span class="n">Intrepid</span> <span class="n">Thyra</span>
-    <span class="n">Tpetra</span> <span class="n">Epetra</span> <span class="n">EpetraExt</span>
-  <span class="n">LIB_OPTIONAL_PACKAGES</span> <span class="n">Stokhos</span>
-  <span class="n">TEST_OPTIONAL_PACKAGES</span> <span class="n">Stratimikos</span>
-  <span class="n">LIB_REQUIRED_TPLS</span> <span class="n">MPI</span> <span class="n">Boost</span>
+  <span class="n">SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS</span>
+    <span class="n">A</span>   <span class="n">a</span>   <span class="n">PT</span>  <span class="n">REQUIRED</span>
+    <span class="n">B</span>   <span class="n">b</span>   <span class="n">ST</span>  <span class="n">OPTIONAL</span>
+    <span class="n">C</span>   <span class="n">c</span>   <span class="n">ST</span>  <span class="n">OPTIONAL</span>
+  <span class="n">REGRESSION_EMAIL_LIST</span> <span class="n">with_packages</span><span class="o">-</span><span class="n">regressions</span><span class="nd">@someurl</span><span class="o">.</span><span class="n">none</span>
   <span class="p">)</span>
 </pre></div>
 </div>
@@ -3848,15 +3735,39 @@ version of the Trilinos project from May 2009.  The list of packages in:</p>
 </div>
 <p>is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_repository_define_packages</span><span class="p">(</span>
-  <span class="n">SimpleCxx</span>          <span class="n">packages</span><span class="o">/</span><span class="n">simple_cxx</span>         <span class="n">PT</span>
-  <span class="n">MixedLang</span>          <span class="n">packages</span><span class="o">/</span><span class="n">mixed_lang</span>         <span class="n">PT</span>
-  <span class="n">InsertedPkg</span>        <span class="n">InsertedPkg</span>                 <span class="n">ST</span>
-  <span class="n">WithSubpackages</span>    <span class="n">packages</span><span class="o">/</span><span class="n">with_subpackages</span>   <span class="n">PT</span>
-  <span class="n">WrapExternal</span>       <span class="n">packages</span><span class="o">/</span><span class="n">wrap_external</span>      <span class="n">ST</span>
+  <span class="n">TrilinosFramework</span>   <span class="n">cmake</span>                           <span class="n">PT</span>
+  <span class="n">Teuchos</span>             <span class="n">packages</span><span class="o">/</span><span class="n">teuchos</span>                <span class="n">PT</span>
+  <span class="n">RTOp</span>                <span class="n">packages</span><span class="o">/</span><span class="n">rtop</span>                   <span class="n">PT</span>
+  <span class="n">Epetra</span>              <span class="n">packages</span><span class="o">/</span><span class="n">epetra</span>                 <span class="n">PT</span>
+  <span class="n">Zoltan</span>              <span class="n">packages</span><span class="o">/</span><span class="n">zoltan</span>                 <span class="n">PT</span>
+  <span class="n">Shards</span>              <span class="n">packages</span><span class="o">/</span><span class="n">shards</span>                 <span class="n">PT</span>
+  <span class="n">Triutils</span>            <span class="n">packages</span><span class="o">/</span><span class="n">triutils</span>               <span class="n">PT</span>
+  <span class="n">Tpetra</span>              <span class="n">packages</span><span class="o">/</span><span class="n">tpetra</span>                 <span class="n">PT</span>
+  <span class="n">EpetraExt</span>           <span class="n">packages</span><span class="o">/</span><span class="n">epetraext</span>              <span class="n">PT</span>
+  <span class="n">Stokhos</span>             <span class="n">packages</span><span class="o">/</span><span class="n">stokhos</span>                <span class="n">EX</span>
+  <span class="n">Sacado</span>              <span class="n">packages</span><span class="o">/</span><span class="n">sacado</span>                 <span class="n">ST</span>
+  <span class="n">Thyra</span>               <span class="n">packages</span><span class="o">/</span><span class="n">thyra</span>                  <span class="n">PT</span>
+  <span class="n">Isorropia</span>           <span class="n">packages</span><span class="o">/</span><span class="n">isorropia</span>              <span class="n">PT</span>
+  <span class="n">AztecOO</span>             <span class="n">packages</span><span class="o">/</span><span class="n">aztecoo</span>                <span class="n">PT</span>
+  <span class="n">Galeri</span>              <span class="n">packages</span><span class="o">/</span><span class="n">galeri</span>                 <span class="n">PT</span>
+  <span class="n">Amesos</span>              <span class="n">packages</span><span class="o">/</span><span class="n">amesos</span>                 <span class="n">PT</span>
+  <span class="n">Intrepid</span>            <span class="n">packages</span><span class="o">/</span><span class="n">intrepid</span>               <span class="n">PT</span>
+  <span class="n">Ifpack</span>              <span class="n">packages</span><span class="o">/</span><span class="n">ifpack</span>                 <span class="n">PT</span>
+  <span class="n">ML</span>                  <span class="n">packages</span><span class="o">/</span><span class="n">ml</span>                     <span class="n">PT</span>
+  <span class="n">Belos</span>               <span class="n">packages</span><span class="o">/</span><span class="n">belos</span>                  <span class="n">ST</span>
+  <span class="n">Stratimikos</span>         <span class="n">packages</span><span class="o">/</span><span class="n">stratimikos</span>            <span class="n">PT</span>
+  <span class="n">RBGen</span>               <span class="n">packages</span><span class="o">/</span><span class="n">rbgen</span>                  <span class="n">PT</span>
+  <span class="n">Phalanx</span>             <span class="n">packages</span><span class="o">/</span><span class="n">phalanx</span>                <span class="n">ST</span>
+  <span class="n">Panzer</span>              <span class="n">packages</span><span class="o">/</span><span class="n">panzer</span>                 <span class="n">ST</span>
+  <span class="n">AlwaysMissing</span>       <span class="n">AlwaysMissing</span>                   <span class="n">PT</span>
   <span class="p">)</span>
 
-<span class="n">tribits_disable_package_on_platforms</span><span class="p">(</span><span class="n">WrapExternal</span> <span class="n">Windows</span><span class="p">)</span>
-<span class="n">tribits_allow_missing_external_packages</span><span class="p">(</span><span class="n">InsertedPkg</span><span class="p">)</span>
+<span class="c1"># NOTE: Sacado was really PT but for testing purpose it is made ST</span>
+<span class="c1"># NOTE: Belos was really PT but for testing purpose it is made ST</span>
+
+<span class="n">tribits_allow_missing_external_packages</span><span class="p">(</span><span class="n">AlwaysMissing</span><span class="p">)</span>
+<span class="n">tribits_disable_package_on_platforms</span><span class="p">(</span><span class="n">ML</span> <span class="n">BadSystem1</span><span class="p">)</span>
+<span class="n">tribits_disable_package_on_platforms</span><span class="p">(</span><span class="n">Ifpack</span> <span class="n">BadSystem1</span> <span class="n">BadSystem2</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>All of the package directories listed above have
@@ -3919,15 +3830,13 @@ TriBITS system not tested in other tests.</p>
 </div>
 <p>is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_repository_define_packages</span><span class="p">(</span>
-  <span class="n">SimpleCxx</span>          <span class="n">packages</span><span class="o">/</span><span class="n">simple_cxx</span>         <span class="n">PT</span>
-  <span class="n">MixedLang</span>          <span class="n">packages</span><span class="o">/</span><span class="n">mixed_lang</span>         <span class="n">PT</span>
-  <span class="n">InsertedPkg</span>        <span class="n">InsertedPkg</span>                 <span class="n">ST</span>
-  <span class="n">WithSubpackages</span>    <span class="n">packages</span><span class="o">/</span><span class="n">with_subpackages</span>   <span class="n">PT</span>
-  <span class="n">WrapExternal</span>       <span class="n">packages</span><span class="o">/</span><span class="n">wrap_external</span>      <span class="n">ST</span>
+  <span class="n">Teuchos</span>             <span class="n">packages</span><span class="o">/</span><span class="n">teuchos</span>                <span class="n">PT</span>
+  <span class="n">RTOp</span>                <span class="n">packages</span><span class="o">/</span><span class="n">rtop</span>                   <span class="n">PT</span>
+  <span class="n">Epetra</span>              <span class="n">packages</span><span class="o">/</span><span class="n">epetra</span>                 <span class="n">PT</span>
+  <span class="n">Triutils</span>            <span class="n">packages</span><span class="o">/</span><span class="n">triutils</span>               <span class="n">ST</span>
+  <span class="n">EpetraExt</span>           <span class="n">packages</span><span class="o">/</span><span class="n">epetraext</span>              <span class="n">ST</span>
+  <span class="n">Thyra</span>               <span class="n">packages</span><span class="o">/</span><span class="n">thyra</span>                  <span class="n">PT</span>
   <span class="p">)</span>
-
-<span class="n">tribits_disable_package_on_platforms</span><span class="p">(</span><span class="n">WrapExternal</span> <span class="n">Windows</span><span class="p">)</span>
-<span class="n">tribits_allow_missing_external_packages</span><span class="p">(</span><span class="n">InsertedPkg</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>All of the listed packages are standard TriBITS packages except for the mock
@@ -4026,15 +3935,13 @@ small simple <a class="reference internal" href="#reducedmocktrilinos">ReducedMo
 this project is defined in the file <code class="docutils literal notranslate"><span class="pre">ReducedMockTrilinos/PackagesList.cmake</span></code>
 (see <a class="reference internal" href="#repodir-packageslist-cmake">&lt;repoDir&gt;/PackagesList.cmake</a>) which contents:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_repository_define_packages</span><span class="p">(</span>
-  <span class="n">SimpleCxx</span>          <span class="n">packages</span><span class="o">/</span><span class="n">simple_cxx</span>         <span class="n">PT</span>
-  <span class="n">MixedLang</span>          <span class="n">packages</span><span class="o">/</span><span class="n">mixed_lang</span>         <span class="n">PT</span>
-  <span class="n">InsertedPkg</span>        <span class="n">InsertedPkg</span>                 <span class="n">ST</span>
-  <span class="n">WithSubpackages</span>    <span class="n">packages</span><span class="o">/</span><span class="n">with_subpackages</span>   <span class="n">PT</span>
-  <span class="n">WrapExternal</span>       <span class="n">packages</span><span class="o">/</span><span class="n">wrap_external</span>      <span class="n">ST</span>
+  <span class="n">Teuchos</span>             <span class="n">packages</span><span class="o">/</span><span class="n">teuchos</span>                <span class="n">PT</span>
+  <span class="n">RTOp</span>                <span class="n">packages</span><span class="o">/</span><span class="n">rtop</span>                   <span class="n">PT</span>
+  <span class="n">Epetra</span>              <span class="n">packages</span><span class="o">/</span><span class="n">epetra</span>                 <span class="n">PT</span>
+  <span class="n">Triutils</span>            <span class="n">packages</span><span class="o">/</span><span class="n">triutils</span>               <span class="n">ST</span>
+  <span class="n">EpetraExt</span>           <span class="n">packages</span><span class="o">/</span><span class="n">epetraext</span>              <span class="n">ST</span>
+  <span class="n">Thyra</span>               <span class="n">packages</span><span class="o">/</span><span class="n">thyra</span>                  <span class="n">PT</span>
   <span class="p">)</span>
-
-<span class="n">tribits_disable_package_on_platforms</span><span class="p">(</span><span class="n">WrapExternal</span> <span class="n">Windows</span><span class="p">)</span>
-<span class="n">tribits_allow_missing_external_packages</span><span class="p">(</span><span class="n">InsertedPkg</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>All of the listed packages are standard TriBITS packages except for the mock
@@ -4042,11 +3949,12 @@ this project is defined in the file <code class="docutils literal notranslate"><
 <code class="docutils literal notranslate"><span class="pre">packages/thyra/cmake/Dependnecies.cmake</span></code> (see
 <a class="reference internal" href="#packagedir-cmake-dependencies-cmake">&lt;packageDir&gt;/cmake/Dependencies.cmake</a>) which is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_package_define_dependencies</span><span class="p">(</span>
-  <span class="n">LIB_REQUIRED_PACKAGES</span> <span class="n">Teuchos</span> <span class="n">Sacado</span> <span class="n">Phalanx</span> <span class="n">Intrepid</span> <span class="n">Thyra</span>
-    <span class="n">Tpetra</span> <span class="n">Epetra</span> <span class="n">EpetraExt</span>
-  <span class="n">LIB_OPTIONAL_PACKAGES</span> <span class="n">Stokhos</span>
-  <span class="n">TEST_OPTIONAL_PACKAGES</span> <span class="n">Stratimikos</span>
-  <span class="n">LIB_REQUIRED_TPLS</span> <span class="n">MPI</span> <span class="n">Boost</span>
+  <span class="n">SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS</span>
+    <span class="n">CoreLibs</span>      <span class="n">src</span>                  <span class="n">PT</span>  <span class="n">REQUIRED</span>
+    <span class="n">GoodStuff</span>     <span class="n">good_stuff</span>           <span class="n">ST</span>  <span class="n">OPTIONAL</span>
+    <span class="n">CrazyStuff</span>    <span class="n">crazy_stuff</span>          <span class="n">EX</span>  <span class="n">OPTIONAL</span>
+    <span class="n">Epetra</span>        <span class="n">adapters</span><span class="o">/</span><span class="n">epetra</span>      <span class="n">PT</span>  <span class="n">OPTIONAL</span>
+    <span class="n">EpetraExt</span>     <span class="n">adapters</span><span class="o">/</span><span class="n">epetraext</span>   <span class="n">ST</span>  <span class="n">OPTIONAL</span>
   <span class="p">)</span>
 </pre></div>
 </div>
@@ -7073,103 +6981,66 @@ and otherwise does nothing for a raw CMake build.</p></li>
 </ol>
 <p>The top file <code class="docutils literal notranslate"><span class="pre">RawAndTribitsHelloWorld/CMakeLists.txt</span></code> file demonstrates the
 basic approach:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>################################################################################
-#                                                                              #
-#                        TribitsExampleProject                                 #
-#                                                                              #
-################################################################################
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+include(${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake)
 
-# To be safe, define your minimum CMake version.  This may be newer than the
-# min required by TriBITS.
-cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+# Called at the top of every CMakeLists.txt file
+macro(include_tribits_build)
+  if (${PROJECT_NAME}_TRIBITS_DIR)
+    include(&quot;${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.tribits.cmake&quot;)
+    return()
+  endif()
+endmacro()
 
-# Make CMake set WIN32 with CYGWIN for older CMake versions.  CMake requires
-# this to be in the top-level CMakeLists.txt file and not an include file :-(
-set(CMAKE_LEGACY_CYGWIN_WIN32 1 CACHE BOOL &quot;&quot; FORCE)
+if (${PROJECT_NAME}_TRIBITS_DIR)
 
-#
-# A) Define your project name and set up major project options
-#
-# NOTE: Don&#39;t set options that would impact what packages get defined or
-# enabled/disabled in this file as that would not impact other tools that
-# don&#39;t process this file.
-#
+  # TriBITS CMake project
+  project(${PROJECT_NAME} NONE)
+  include(&quot;${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake&quot;)
+  # Only one package in this simple project so just enable it :-)
+  set(${PROJECT_NAME}_ENABLE_HelloWorld ON CACHE BOOL &quot;&quot; FORCE)
+  tribits_project()
 
-# Get PROJECT_NAME (must be in a file for other parts of system to read)
-include(&quot;${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake&quot;)
+else()
 
-# CMake requires that you declare the CMake project in the top-level file and
-# not in an include file :-(
-project(${PROJECT_NAME} NONE)
+  # Raw CMake project
+  project(RawHelloWorld)
+  enable_testing()
+  add_subdirectory(hello_world)
 
-#
-# B) Pull in the TriBITS system and execute
-#
+endif()
 
-set(${PROJECT_NAME}_TRIBITS_DIR
-   &quot;${CMAKE_CURRENT_LIST_DIR}/../..&quot;  CACHE  STRING
-  &quot;TriBITS base directory (default assumes in TriBITS source tree)&quot;)
-include(&quot;${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake&quot;)
-
-# Set default location for header-only TPL to make easy to configure out of
-# the TriBITS source tree.
-set(HeaderOnlyTpl_INCLUDE_DIRS
-  &quot;${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl&quot; 
-  CACHE PATH &quot;Default set by TriBITS/CMakeLists.txt&quot; )
-
-# Do all of the processing for this Tribits project
-tribits_project()
+# NOTE: The cmake_minimum_required() and project() commands must be executed
+# in the base CMakeLists.txt file and *NOT* in an included 
 </pre></div>
 </div>
 <p>Then every raw <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file starts with the command
 <code class="docutils literal notranslate"><span class="pre">include_tribits_build()</span></code> at the very top as shown in the example file
 <code class="docutils literal notranslate"><span class="pre">RawAndTribitsHelloWorld/hello_world/CMakeLists.txt</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>################################################################################
-#                                                                              #
-#                        TribitsExampleProject                                 #
-#                                                                              #
-################################################################################
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>include_tribits_build()
 
-# To be safe, define your minimum CMake version.  This may be newer than the
-# min required by TriBITS.
-cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+# Build and install library
+set(HEADERS hello_world_lib.hpp)
+set(SOURCES hello_world_lib.cpp)
+add_library(hello_world_lib ${SOURCES})
+install(TARGETS hello_world_lib DESTINATION lib)
+install(FILES ${HEADERS} DESTINATION include)
 
-# Make CMake set WIN32 with CYGWIN for older CMake versions.  CMake requires
-# this to be in the top-level CMakeLists.txt file and not an include file :-(
-set(CMAKE_LEGACY_CYGWIN_WIN32 1 CACHE BOOL &quot;&quot; FORCE)
+# Build and install user executable
+add_executable(hello_world hello_world_main.cpp)
+target_link_libraries(hello_world hello_world_lib)
+install(TARGETS hello_world DESTINATION bin)
 
-#
-# A) Define your project name and set up major project options
-#
-# NOTE: Don&#39;t set options that would impact what packages get defined or
-# enabled/disabled in this file as that would not impact other tools that
-# don&#39;t process this file.
-#
+# Test the executable
+add_test(test ${CMAKE_CURRENT_BINARY_DIR}/hello_world)
+set_tests_properties(test PROPERTIES PASS_REGULAR_EXPRESSION &quot;Hello World&quot;)
 
-# Get PROJECT_NAME (must be in a file for other parts of system to read)
-include(&quot;${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake&quot;)
-
-# CMake requires that you declare the CMake project in the top-level file and
-# not in an include file :-(
-project(${PROJECT_NAME} NONE)
-
-#
-# B) Pull in the TriBITS system and execute
-#
-
-set(${PROJECT_NAME}_TRIBITS_DIR
-   &quot;${CMAKE_CURRENT_LIST_DIR}/../..&quot;  CACHE  STRING
-  &quot;TriBITS base directory (default assumes in TriBITS source tree)&quot;)
-include(&quot;${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake&quot;)
-
-# Set default location for header-only TPL to make easy to configure out of
-# the TriBITS source tree.
-set(HeaderOnlyTpl_INCLUDE_DIRS
-  &quot;${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl&quot; 
-  CACHE PATH &quot;Default set by TriBITS/CMakeLists.txt&quot; )
-
-# Do all of the processing for this Tribits project
-tribits_project()
+# Build and run some unit tests  
+add_executable(unit_tests hello_world_unit_tests.cpp)
+target_link_libraries(unit_tests hello_world_lib)
+add_test(unit_test ${CMAKE_CURRENT_BINARY_DIR}/unit_tests)
+set_tests_properties(unit_test
+  PROPERTIES PASS_REGULAR_EXPRESSION &quot;All unit tests passed&quot;)
 </pre></div>
 </div>
 <p>To configure the project as a raw CMake project, just configure it as with any

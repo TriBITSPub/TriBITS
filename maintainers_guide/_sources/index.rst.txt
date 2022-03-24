@@ -2,7 +2,8 @@
 
 :Author: Roscoe A. Bartlett (rabartl@sandia.gov)
 :Date: |date|
-          :Version: .. include:: ../copied_files/TribitsGitVersion.txt
+:Version:
+   .. include:: ../copied_files/tribits/doc/guides/TribitsGitVersion.txt
 
 .. |date| date::
 
@@ -39,10 +40,10 @@ source code when developing on TriBITS itself or just trying to understand its
 implementation.
 
 
-.. include:: ../copied_files/TribitsGuidesBody.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsGuidesBody.rst
 
 
-.. include:: ../copied_files/TribitsCoreDetailedReference.rst
+.. include:: ../copied_files/tribits/doc/guides/maintainers_guide/TribitsCoreDetailedReference.rst
 
 
 TriBITS System Maintainers Documentation
@@ -54,25 +55,25 @@ understand and manipulate the data-structures and macros/functions that make
 up internal implementation of TriBITS.
 
 
-.. include:: ../copied_files/TribitsSystemDataStructuresMacrosFunctions.rst
+.. include:: ../copied_files/tribits/core/package_arch/TribitsSystemDataStructuresMacrosFunctions.rst
 
 
-.. include:: ../copied_files/TribitsSystemMacroFunctionDoc.rst
+.. include:: ../copied_files/tribits/doc/guides/maintainers_guide/TribitsSystemMacroFunctionDoc.rst
 
 
-.. include:: ../copied_files/TribitsGuidesReferences.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsGuidesReferences.rst
 
 
-.. include:: ../copied_files/TribitsFAQ.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsFAQ.rst
 
 
 Appendix
 ========
 
-.. include:: ../copied_files/TribitsHistory.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsHistory.rst
 
-.. include:: ../copied_files/TribitsPackageNotCMakePackage.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsPackageNotCMakePackage.rst
 
-.. include:: ../copied_files/TribitsDesignConsiderations.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsDesignConsiderations.rst
 
-.. include:: ../copied_files/TribitsToolsDocumentation.rst
+.. include:: ../copied_files/tribits/doc/guides/TribitsToolsDocumentation.rst
