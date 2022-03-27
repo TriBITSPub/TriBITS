@@ -474,10 +474,12 @@ endmacro()
 #
 #   tribits_add_debug_option()
 #
-# This option is given the default ``${${PROJECT_NAME}_ENABLE_DEBUG}`` and if
-# true, will set the variable ``HAVE_${PACKAGE_NAME_UC}_DEBUG`` (to be used in
-# the package's configured header file).  This macro is typically called in
-# the package's `<packageDir>/CMakeLists.txt`_ file.
+# This option is given the default value ``${${PROJECT_NAME}_ENABLE_DEBUG}``,
+# and if true, this macro will set the variable
+# ``HAVE_${PACKAGE_NAME_UC}_DEBUG`` (to be used in the package's configured
+# header file `<packageDir>/cmake/<packageName>_config.h.in`_).  This macro is
+# typically called in the package's `<packageDir>/CMakeLists.txt`_ file (see
+# the example ``SimpleCxx/CMakeLists.txt``).
 #
 macro(tribits_add_debug_option)
   tribits_add_option_and_define(
