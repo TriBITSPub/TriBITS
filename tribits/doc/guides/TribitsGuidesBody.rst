@@ -1578,7 +1578,24 @@ Other TriBITS macros/functions that can be called in this file include
 configured header file.  This file will contain placeholders for variables
 that will be substitute at configure time with `tribits_configure_file()`_.
 This includes usage of ``#cmakedefine <varName>`` and other standard CMake
-file configuration features.
+file configuration features used by CMake's ``configure_file()`` command.
+
+An example of this file is shown in:
+
+  `TribitsExampleProject`_/``packages/simple_cxx/cmake/SimpleCxx_config.h.in``
+
+which is:
+
+.. include:: ../../examples/TribitsExampleProject/packages/simple_cxx/cmake/SimpleCxx_config.h.in
+   :literal:
+
+The variable ``HAVE_SIMPLECXX___INT64`` is set up in the base file
+``SimpleCxx/CMakeLists.txt`` (see `<packageDir>/CMakeLists.txt`_ below).  For
+an explanation of ``HAVE_SIMPLECXX_DEBUG``, see `tribits_add_debug_option()`_.
+For an explanation of ``HAVE_SIMPLECXX_SIMPLETPL``, see `How to add a new
+TriBITS TPL dependency`_.  For an explanation of
+``@SIMPLECXX_DEPRECATED_DECLARATIONS@``, see `Setting up support for
+deprecated code handling`_.
 
 **NOTE:** The file name ``<packageName>_config.h.in`` is not at all fixed and
 the package can call this file anything it wants.  Also, a package can
