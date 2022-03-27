@@ -395,10 +395,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-03-24</p>
+<dd class="field-even"><p>2022-03-27</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2819-g04275739</p>
+<dd class="field-odd"><p>tribits_start-2821-g9bac3068</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -2432,7 +2432,27 @@ such as with:</p>
 configured header file.  This file will contain placeholders for variables
 that will be substitute at configure time with <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a>.
 This includes usage of <code class="docutils literal notranslate"><span class="pre">#cmakedefine</span> <span class="pre">&lt;varName&gt;</span></code> and other standard CMake
-file configuration features.</p>
+file configuration features used by CMake’s <code class="docutils literal notranslate"><span class="pre">configure_file()</span></code> command.</p>
+<p>An example of this file is shown in:</p>
+<blockquote>
+<div><p><a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>/<code class="docutils literal notranslate"><span class="pre">packages/simple_cxx/cmake/SimpleCxx_config.h.in</span></code></p>
+</div></blockquote>
+<p>which is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#cmakedefine HAVE_SIMPLECXX___INT64</span>
+
+<span class="c1">#cmakedefine HAVE_SIMPLECXX_DEBUG</span>
+<span class="c1">#cmakedefine HAVE_SIMPLECXX_SIMPLETPL</span>
+
+<span class="nd">@SIMPLECXX_DEPRECATED_DECLARATIONS</span><span class="o">@</span>
+</pre></div>
+</div>
+<p>The variable <code class="docutils literal notranslate"><span class="pre">HAVE_SIMPLECXX___INT64</span></code> is set up in the base file
+<code class="docutils literal notranslate"><span class="pre">SimpleCxx/CMakeLists.txt</span></code> (see <a class="reference internal" href="#packagedir-cmakelists-txt">&lt;packageDir&gt;/CMakeLists.txt</a> below).  For
+an explanation of <code class="docutils literal notranslate"><span class="pre">HAVE_SIMPLECXX_DEBUG</span></code>, see <a class="reference internal" href="#tribits-add-debug-option">tribits_add_debug_option()</a>.
+For an explanation of <code class="docutils literal notranslate"><span class="pre">HAVE_SIMPLECXX_SIMPLETPL</span></code>, see <a class="reference internal" href="#how-to-add-a-new-tribits-tpl-dependency">How to add a new
+TriBITS TPL dependency</a>.  For an explanation of
+<code class="docutils literal notranslate"><span class="pre">&#64;SIMPLECXX_DEPRECATED_DECLARATIONS&#64;</span></code>, see <a class="reference internal" href="#setting-up-support-for-deprecated-code-handling">Setting up support for
+deprecated code handling</a>.</p>
 <p><strong>NOTE:</strong> The file name <code class="docutils literal notranslate"><span class="pre">&lt;packageName&gt;_config.h.in</span></code> is not at all fixed and
 the package can call this file anything it wants.  Also, a package can
 configure multiple header files in different directories for different
@@ -10823,10 +10843,12 @@ the package.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_add_debug_option</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>This option is given the default <code class="docutils literal notranslate"><span class="pre">${${PROJECT_NAME}_ENABLE_DEBUG}</span></code> and if
-true, will set the variable <code class="docutils literal notranslate"><span class="pre">HAVE_${PACKAGE_NAME_UC}_DEBUG</span></code> (to be used in
-the package’s configured header file).  This macro is typically called in
-the package’s <a class="reference internal" href="#packagedir-cmakelists-txt">&lt;packageDir&gt;/CMakeLists.txt</a> file.</p>
+<p>This option is given the default value <code class="docutils literal notranslate"><span class="pre">${${PROJECT_NAME}_ENABLE_DEBUG}</span></code>,
+and if true, this macro will set the variable
+<code class="docutils literal notranslate"><span class="pre">HAVE_${PACKAGE_NAME_UC}_DEBUG</span></code> (to be used in the package’s configured
+header file <a class="reference internal" href="#packagedir-cmake-packagename-config-h-in">&lt;packageDir&gt;/cmake/&lt;packageName&gt;_config.h.in</a>).  This macro is
+typically called in the package’s <a class="reference internal" href="#packagedir-cmakelists-txt">&lt;packageDir&gt;/CMakeLists.txt</a> file (see
+the example <code class="docutils literal notranslate"><span class="pre">SimpleCxx/CMakeLists.txt</span></code>).</p>
 <p>In: core/package_arch/TribitsPackageMacros.cmake:468</p>
 </section>
 <section id="tribits-add-example-directories">
@@ -10847,7 +10869,7 @@ up example directories any way one would like.</p>
 <code class="docutils literal notranslate"><span class="pre">${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES</span></code> are true. However, this macro may
 be extended in the future in order to modify behavior related to adding
 tests and examples in a uniform way.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:546</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:548</p>
 </section>
 <section id="tribits-add-executable">
 <h3><a class="toc-backref" href="#id121">tribits_add_executable()</a><a class="headerlink" href="#tribits-add-executable" title="Permalink to this headline"></a></h3>
@@ -11465,7 +11487,7 @@ file.  This option is given the default value
 <code class="docutils literal notranslate"><span class="pre">${${PROJECT_NAME}_SHOW_DEPRECATED_WARNINGS}</span></code>.  This option is then looked
 for in <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a> to add macros to add deprecated warnings
 to deprecated parts of a package.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:501</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:503</p>
 </section>
 <section id="tribits-add-test">
 <h3><a class="toc-backref" href="#id126">tribits_add_test()</a><a class="headerlink" href="#tribits-add-test" title="Permalink to this headline"></a></h3>
@@ -14132,7 +14154,7 @@ target property set on them.</p>
 <p>NOTE: It is unfortunate that this macro must be called in a package’s
 top-level <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file but limitations of the CMake language make
 it necessary to do so.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:769</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:771</p>
 </section>
 <section id="tribits-process-subpackages">
 <h3><a class="toc-backref" href="#id145">tribits_process_subpackages()</a><a class="headerlink" href="#tribits-process-subpackages" title="Permalink to this headline"></a></h3>
@@ -14145,7 +14167,7 @@ called in the parent packages top-level <a class="reference internal" href="#pac
 </div>
 <p>This macro must be called after <a class="reference internal" href="#tribits-package-decl">tribits_package_decl()</a> but before
 <a class="reference internal" href="#tribits-package-def">tribits_package_def()</a>.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:879</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:881</p>
 </section>
 <section id="tribits-process-enabled-tpl">
 <h3><a class="toc-backref" href="#id146">tribits_process_enabled_tpl()</a><a class="headerlink" href="#tribits-process-enabled-tpl" title="Permalink to this headline"></a></h3>
