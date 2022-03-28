@@ -533,11 +533,12 @@ tribits_add_advanced_test( ${testNameBase}
   )
   # Above, we set the cache var CMAKE_PREFIX_PATH=install_tpl1 and the env var
   # CMAKE_PREFIX_PATH=install_tpl1 so that find_package(Tpl1) will look in
-  # install_tpl1/ first for Tpl1Config.cmake before looking in install/.
-  # (Note that we have to set the cache var CMAKE_PREFIX_PATH=install_tpl1 to
-  # put install_tpl1/ in the search path ahead of install/ for this simulation
-  # since CMAKE_INSTALL_PREFIX, which initializes CMAKE_SYSTEM_PREFIX_PATH, is
-  # searched after the env var CMAKE_PREFIX_PATH.)
+  # install_tpl1/ first for Tpl1Config.cmake before looking in
+  # CMAKE_INSTALL_PREFIX=install/.  (Note that we have to set the cache var
+  # CMAKE_PREFIX_PATH=install_tpl1 to put install_tpl1/ in the search path
+  # ahead of install/ for this simulation since CMAKE_INSTALL_PREFIX, which
+  # initializes CMAKE_SYSTEM_PREFIX_PATH, is searched after the env var
+  # CMAKE_PREFIX_PATH.)
   #
   # This test simulates the situation in bug #427 where CMAKE_INSTALL_PREFIX
   # (which initializes CMAKE_SYSTEM_PREFIX_PATH) is searched before PATH and
