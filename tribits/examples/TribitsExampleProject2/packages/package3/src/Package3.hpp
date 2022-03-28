@@ -2,6 +2,8 @@
 #define PACKAGE3_HPP
 
 
+#include "Package3_config.h"
+
 #include <ostream>
 
 

@@ -2,8 +2,8 @@
 #define PACKAGE2_HPP
 
 
+#include "Package2_config.h"
 #include <ostream>
-
 
 namespace Package2 {
 
