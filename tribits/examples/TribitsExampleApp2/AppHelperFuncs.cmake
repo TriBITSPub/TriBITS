@@ -140,8 +140,26 @@ function(getExpectedAppDepsStr expectedDepsStrOut)
   set(tpl4 "Tpl4{${tpl3}, ${tpl2a}, ${tpl2b}}")
 
   set(package1 "Package1{${tpl1}}")
-  set(package2 "Package2{${package1}, ${tpl3}}")
-  set(package3 "Package3{${package2}, ${package1}, ${tpl4}, ${tpl2a}, ${tpl2b}")
+
+  if (Package2_ENABLE_Tpl3)
+    set(package2_tpl3_deps_str ", ${tpl3}")
+  else()
+    set(package2_tpl3_deps_str "")
+  endif()
+  set(package2 "Package2{${package1}${package2_tpl3_deps_str}}")
+
+  if (Package3_ENABLE_Package2)
+    set(package3_package2_deps_str "${package2}, ")
+  else()
+    set(package3_package2_deps_str "")
+  endif()
+  if (Package3_ENABLE_Tpl4)
+    set(package3_tpl4_deps_str "${tpl4}, ")
+  else()
+    set(package3_tpl4_deps_str "")
+  endif()
+  set(package3
+    "Package3{${package3_package2_deps_str}${package1}, ${package3_tpl4_deps_str}${tpl2a}, ${tpl2b}}")
 
   if (TARGET Package3::all_libs)
     set(depsStr "${package3}")

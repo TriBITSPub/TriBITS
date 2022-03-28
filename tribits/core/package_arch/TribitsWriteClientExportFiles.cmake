@@ -343,13 +343,15 @@ function(tribits_write_flexible_package_client_export_files)
   # F) Create the contents of the <Package>Config.cmake file for the build tree
   #
 
-  tribits_generate_package_config_file_for_build_tree(${PACKAGE_NAME})
+  tribits_generate_package_config_file_for_build_tree(${PACKAGE_NAME}
+    EXPORT_FILE_VAR_PREFIX ${EXPORT_FILE_VAR_PREFIX})
 
   #
   # G) Create <Package>Config_install.cmake file for the install tree
   #
 
-  tribits_generate_package_config_file_for_install_tree(${PACKAGE_NAME})
+  tribits_generate_package_config_file_for_install_tree(${PACKAGE_NAME}
+    EXPORT_FILE_VAR_PREFIX ${EXPORT_FILE_VAR_PREFIX})
 
 endfunction()
 
@@ -362,7 +364,9 @@ endfunction()
 #
 # Usage::
 #
-#   tribits_generate_package_config_file_for_build_tree(<packageName>)
+#   tribits_generate_package_config_file_for_build_tree( <packageName>
+#     [EXPORT_FILE_VAR_PREFIX <exportFileVarPrefix>]
+#     )
 #
 # These files get placed under <buildDir>/cmake_packages/<packageName>/
 #
@@ -370,6 +374,24 @@ endfunction()
 # <buildDir>/cmake_packages/ to CMAKE_PREFIX_PATH.
 #
 function(tribits_generate_package_config_file_for_build_tree  packageName)
+
+  if (TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP)
+    message("tribits_generate_package_config_file_for_build_tree(${ARGV})")
+  endif()
+
+  cmake_parse_arguments(
+     PARSE  #prefix
+     ""    #options
+     "EXPORT_FILE_VAR_PREFIX"  #one_value_keywords
+     "" #multi_value_keywords
+     ${ARGN}
+     )
+
+   if (PARSE_EXPORT_FILE_VAR_PREFIX)
+     set(EXPORT_FILE_VAR_PREFIX ${PARSE_EXPORT_FILE_VAR_PREFIX})
+   else()
+     set(EXPORT_FILE_VAR_PREFIX ${packageName})
+   endif()
 
   set(buildDirExtPkgsDir
      "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_EXTERNAL_PKGS_DIR}")
@@ -383,7 +405,8 @@ function(tribits_generate_package_config_file_for_build_tree  packageName)
     # below)
     set(PACKAGE_CONFIG_CODE "")
 
-    tribits_append_dependent_package_config_file_includes(${packageName}
+    tribits_append_dependent_package_config_file_includes_and_enables(${packageName}
+      EXPORT_FILE_VAR_PREFIX ${EXPORT_FILE_VAR_PREFIX}
       EXT_PKG_CONFIG_FILE_BASE_DIR "${buildDirExtPkgsDir}"
       PKG_CONFIG_FILE_BASE_DIR "${buildDirCMakePkgsDir}"
       CONFIG_FILE_STR_INOUT PACKAGE_CONFIG_CODE )
@@ -438,7 +461,9 @@ endfunction()
 #
 # Usage::
 #
-#   tribits_generate_package_config_file_for_install_tree(<packageName>)
+#   tribits_generate_package_config_file_for_install_tree( <packageName>
+#     [EXPORT_FILE_VAR_PREFIX <exportFileVarPrefix>]
+#     )
 #
 # The export files are typically installed in
 #     <install-dir>/<lib-path>/cmake/<package-name>/.
@@ -449,6 +474,24 @@ endfunction()
 # allow this function to be unit tested in a cmake -P script.)
 #
 function(tribits_generate_package_config_file_for_install_tree  packageName)
+
+  if (TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP)
+    message("tribits_generate_package_config_file_for_install_tree(${ARGV})")
+  endif()
+
+  cmake_parse_arguments(
+     PARSE  #prefix
+     ""    #options
+     "EXPORT_FILE_VAR_PREFIX"  #one_value_keywords
+     "" #multi_value_keywords
+     ${ARGN}
+     )
+
+   if (PARSE_EXPORT_FILE_VAR_PREFIX)
+     set(EXPORT_FILE_VAR_PREFIX ${PARSE_EXPORT_FILE_VAR_PREFIX})
+   else()
+     set(EXPORT_FILE_VAR_PREFIX ${packageName})
+   endif()
 
   # Set the include and library directories relative to the location
   # at which the ${PROJECT_NAME}Config.cmake file is going to be
@@ -477,7 +520,8 @@ function(tribits_generate_package_config_file_for_install_tree  packageName)
   # Custom code in configuration file.
   set(PACKAGE_CONFIG_CODE "")
 
-  tribits_append_dependent_package_config_file_includes(${packageName}
+  tribits_append_dependent_package_config_file_includes_and_enables(${packageName}
+    EXPORT_FILE_VAR_PREFIX ${EXPORT_FILE_VAR_PREFIX}
     EXT_PKG_CONFIG_FILE_BASE_DIR
       "\${CMAKE_CURRENT_LIST_DIR}/../../${${PROJECT_NAME}_BUILD_DIR_EXTERNAL_PKGS_DIR}"
     PKG_CONFIG_FILE_BASE_DIR "\${CMAKE_CURRENT_LIST_DIR}/.."
@@ -512,21 +556,27 @@ function(tribits_generate_package_config_file_for_install_tree  packageName)
 endfunction()
 
 
-# @FUNCTION: tribits_append_dependent_package_config_file_includes()
+# @FUNCTION: tribits_append_dependent_package_config_file_includes_and_enables()
 #
 # Append the includes for upstream external packages (TPLs) and internal
-# packages to a `<Package>Config.cmake` file string.
+# packages as well as the enables/disables for upstream dependencies to an
+# output `<Package>Config.cmake` file string.
 #
 # Usage::
 #
-#   tribits_append_dependent_package_config_file_includes(
+#   tribits_append_dependent_package_config_file_includes_and_enables(
 #     <packageName>
+#     EXPORT_FILE_VAR_PREFIX <exportFileVarPrefix>
 #     EXT_PKG_CONFIG_FILE_BASE_DIR <extPkgconfigFileBaseDir>
 #     PKG_CONFIG_FILE_BASE_DIR <pkgConfigFileBaseDir>
 #     CONFIG_FILE_STR_INOUT <configFileStrInOut>
 #     )
 #
-function(tribits_append_dependent_package_config_file_includes packageName)
+function(tribits_append_dependent_package_config_file_includes_and_enables packageName)
+
+  if (TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP)
+    message("tribits_append_dependent_package_config_file_includes_and_enables(${ARGV})")
+  endif()
 
   # Parse input
 
@@ -534,28 +584,74 @@ function(tribits_append_dependent_package_config_file_includes packageName)
      PARSE  #prefix
      ""  #options
      #one_value_keywords
-     "EXT_PKG_CONFIG_FILE_BASE_DIR;PKG_CONFIG_FILE_BASE_DIR;CONFIG_FILE_STR_INOUT"
+     "EXPORT_FILE_VAR_PREFIX;EXT_PKG_CONFIG_FILE_BASE_DIR;PKG_CONFIG_FILE_BASE_DIR;CONFIG_FILE_STR_INOUT"
      "" #multi_value_keywords
      ${ARGN}
      )
   tribits_check_for_unparsed_arguments()
 
+   if (PARSE_EXPORT_FILE_VAR_PREFIX)
+     set(EXPORT_FILE_VAR_PREFIX ${PARSE_EXPORT_FILE_VAR_PREFIX})
+   else()
+     set(EXPORT_FILE_VAR_PREFIX ${packageName})
+   endif()
+
   set(extPkgConfigFileBaseDir "${PARSE_EXT_PKG_CONFIG_FILE_BASE_DIR}")
   set(pkgConfigFileBaseDir "${PARSE_PKG_CONFIG_FILE_BASE_DIR}")
   set(configFileStr "${${PARSE_CONFIG_FILE_STR_INOUT}}")
 
+  # Add set of enables/disables for all upstream dependencies.
+  string(APPEND configFileStr
+    "# Enables/Disables for upstream package dependencies\n")
+  foreach(depPkg IN LISTS ${packageName}_LIB_REQUIRED_DEP_PACKAGES)
+    if (${PROJECT_NAME}_ENABLE_${depPkg})
+      set(enableVal ON)
+    else()
+      set(enableVal OFF)
+    endif()
+    string(APPEND configFileStr
+      "set(${EXPORT_FILE_VAR_PREFIX}_ENABLE_${depPkg} ${enableVal})\n")
+    # NOTE: Above, a required dependent package may not actually be enabled if
+    # it is a required subpackage of a parent package and that parent package
+    # itself is not actually enabled (very tricky).
+  endforeach()
+  foreach(depPkg IN LISTS ${packageName}_LIB_OPTIONAL_DEP_PACKAGES)
+    if (${packageName}_ENABLE_${depPkg} AND ${PROJECT_NAME}_ENABLE_${depPkg})
+      set(enableVal ON)
+    else()
+      set(enableVal OFF)
+    endif()
+    string(APPEND configFileStr
+      "set(${EXPORT_FILE_VAR_PREFIX}_ENABLE_${depPkg} ${enableVal})\n")
+  endforeach()
+  foreach(depTpl IN LISTS ${packageName}_LIB_REQUIRED_DEP_TPLS)
+    if (TARGET ${depTpl}::all_libs)
+      set(enableVal ON)
+    else()
+      set(enableVal OFF)
+    endif()
+    string(APPEND configFileStr
+      "set(${EXPORT_FILE_VAR_PREFIX}_ENABLE_${depTpl} ${enableVal})\n")
+  endforeach()
+  foreach(depTpl IN LISTS ${packageName}_LIB_OPTIONAL_DEP_TPLS)
+    if (${packageName}_ENABLE_${depTpl} AND TARGET ${depTpl}::all_libs)
+      set(enableVal ON)
+    else()
+      set(enableVal OFF)
+    endif()
+    string(APPEND configFileStr
+      "set(${EXPORT_FILE_VAR_PREFIX}_ENABLE_${depTpl} ${enableVal})\n")
+  endforeach()
+
   # Include configurations of dependent packages
   string(APPEND configFileStr
-    "# Include configuration of dependent packages\n")
+    "\n# Include configuration of dependent packages\n")
   foreach(depPkg IN LISTS ${packageName}_LIB_REQUIRED_DEP_PACKAGES)
     if (${PROJECT_NAME}_ENABLE_${depPkg})
       set(cmakeTplDir "${pkgConfigFileBaseDir}/${depPkg}")
       string(APPEND configFileStr
         "include(\"${cmakeTplDir}/${depPkg}Config.cmake\")\n")
     endif()
-    # NOTE: Above, a required dependent package may not actually be enabled if
-    # it is a required subpackage of a parent package and the parent package
-    # itself is not actually enabled (very tricky).
   endforeach()
   foreach(depPkg IN LISTS ${packageName}_LIB_OPTIONAL_DEP_PACKAGES)
     if (${packageName}_ENABLE_${depPkg} AND ${PROJECT_NAME}_ENABLE_${depPkg})
@@ -567,7 +663,7 @@ function(tribits_append_dependent_package_config_file_includes packageName)
 
   # Include configurations of dependent external packages/TPLs
   string(APPEND configFileStr
-    "\n# Include configuration of dependent external packages/TPls\n")
+    "\n# Include configuration of dependent external packages/TPLs\n")
   foreach(depTpl IN LISTS ${packageName}_LIB_REQUIRED_DEP_TPLS)
     if (TARGET ${depTpl}::all_libs)
       set(cmakeTplDir "${extPkgConfigFileBaseDir}/${depTpl}")
@@ -585,7 +681,8 @@ function(tribits_append_dependent_package_config_file_includes packageName)
   # NOTE: Above, every TPL does not have a <tplName>Config.cmake file written
   # for it.  For example, special TPLs like "MPI" don't have this file created
   # or have an MPI::all_libs target corrected.  Therefore, we check for the
-  # defintion <tplName>::all_libs before we include the file above.
+  # definition of the target <tplName>::all_libs before we include the file
+  # above.
 
   # Set the output
   set(${PARSE_CONFIG_FILE_STR_INOUT} "${configFileStr}" PARENT_SCOPE)
