@@ -8171,6 +8171,7 @@ See `install_devtools.py --help`_ for more details.
 .. LocalWords:  NativeRepositoriesList ExtraRepositoriesList
 .. LocalWords:  TribitsCTestDriverCore
 .. LocalWords:  TribitsExampleProject TribitsExProj DTribitsExProj SimpleCXX MixedLang
+.. LocalWords:  MockTrilinos
 .. LocalWords:  WithSubpackages WithSubpackagesA WithSubpackagesB WithSubpackagesC 
 
 .. General CMake words:
@@ -8184,5 +8185,5 @@ See `install_devtools.py --help`_ for more details.
 
 .. Other general words:
 
-.. LocalWords:  Trilinos executables Versioning
-.. LocalWords:  Namespaced namespaced symlinks
+.. LocalWords:  Trilinos executables Versioning versioning
+.. LocalWords:  Namespaced namespaced symlinks initializations
