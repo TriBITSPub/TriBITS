@@ -91,7 +91,7 @@ entire TriBITS system, the design philosophy that provides the foundation for
 TriBITS and be an expert in CMake, CTest, and CDash.  Much of what needs to be
 known by a TriBITS System Developer and a TriBITS System Architect is
 contained in the document `TriBITS Maintainers Guide and Reference`_.  The
-rest of the the primary documentation for these roles will be in the TriBITS
+rest of the primary documentation for these roles will be in the TriBITS
 CMake source code and various unit tests itself defined in `The TriBITS Test
 Package`_.  At the time of this writing, there is currently there is only one
 TriBITS System Architect (who also happens to be the primary author of this
@@ -328,7 +328,7 @@ CMake language behavior with respect to case sensitivity is also strange:
   to use mixed case with underscores (e.g. ``CMAKE_Fortran_FLAGS``).  TriBITS
   tends to use a similar naming convention where variables have mostly
   upper-case letters except for parts that are proper nouns like the project,
-  package or TPL name (e.g. ``TribitsProj_TRIBITS_DIR``,
+  package or TPL name (e.g. ``TribitsExProj_TRIBITS_DIR``,
   ``TriBITS_SOURCE_DIR``, ``Boost_INCLUDE_DIRS``).
 
 I don't know of any other programming language that uses different case
@@ -700,7 +700,7 @@ The minimum CMake version must also be declared in the top-level
 version avoids strange errors that can occur when someone tries to build the
 project using a version of CMake that is too old.  The project should set the
 minimum CMake version based on the CMake features used in that project's own
-CMake files.  The minimum CMake version required by TriBITS is defined in in
+CMake files.  The minimum CMake version required by TriBITS is defined in
 the variable ``TRIBITS_CMAKE_MINIMUM_REQUIRED`` (the current minimum version
 of CMake required by TriBITS is given at in `Getting set up to use CMake`_) .
 For example, the ``VERA/CMakeLists.txt`` file lists as its first line::
@@ -8157,3 +8157,32 @@ and then the installed versions of GCC, MPICH, CMake, and `gitdist`_ are
 placed in one's path.
 
 See `install_devtools.py --help`_ for more details.
+
+
+.. Words specific to this documentation collection:
+
+.. LocalWords:  projectDir packageDir
+
+.. TriBITS words:
+
+.. LocalWords:  TRIBITS TriBITS tribits TPL TPLs
+.. LocalWords:  Subpackages subpackages Subpackage subpackage
+.. LocalWords:  PackagesList TPLsList
+.. LocalWords:  NativeRepositoriesList ExtraRepositoriesList
+.. LocalWords:  TribitsCTestDriverCore
+.. LocalWords:  TribitsExampleProject TribitsExProj DTribitsExProj SimpleCXX MixedLang
+.. LocalWords:  WithSubpackages WithSubpackagesA WithSubpackagesB WithSubpackagesC 
+
+.. General CMake words:
+
+.. LocalWords:  CMAKE CMake cmake CTEST CTest ctest CDash
+.. LocalWords:  CMakeLists CMakeCache CTestConfig
+.. LocalWords:  Kitware
+.. LocalWords:  endif foreach endforeach endmacro subdirectory
+.. LocalWords:  Fortran
+
+
+.. Other general words:
+
+.. LocalWords:  Trilinos executables Versioning
+.. LocalWords:  Namespaced namespaced symlinks
