@@ -210,10 +210,10 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date</dt>
-<dd class="field-odd"><p>2022-03-27</p>
+<dd class="field-odd"><p>2022-03-29</p>
 </dd>
 <dt class="field-even">Version</dt>
-<dd class="field-even"><p>tribits_start-2821-g9bac3068</p>
+<dd class="field-even"><p>tribits_start-2822-ga6dc64ce</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -568,7 +568,7 @@ control of configure options.  Using the comment <code class="docutils literal n
 <span class="pre">MyConfigureOptions.cmake&quot;</span></code> makes it easy see where that variable got set
 when looking an the generated <code class="docutils literal notranslate"><span class="pre">CMakeCache.txt</span></code> file.  Also, when this
 <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> fragment file changes, CMake will automatically trigger a
-reconfgure during a make (because it knows about the file and will check its
+reconfigure during a make (because it knows about the file and will check its
 time stamp, unlike when using <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">&lt;file-name&gt;.cmake</span></code>, see below).</p>
 <p>One can use the <code class="docutils literal notranslate"><span class="pre">FORCE</span></code> option in the <code class="docutils literal notranslate"><span class="pre">set()</span></code> commands shown above and
 that will override any value of the options that might already be set.
@@ -621,7 +621,7 @@ automatically be reprocessed, then one should use
 <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE</span></code>.  But if one does not want to have the
 contents of the <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> file reread on reconfigures, then one would want
 to use <code class="docutils literal notranslate"><span class="pre">-C</span></code>.</p>
-<p>3) One can create and use parametrized <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files that can be used
+<p>3) One can create and use parameterized <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files that can be used
 with multiple TriBITS projects.  For example, one can have set statements
 like <code class="docutils literal notranslate"><span class="pre">set(${PROJECT_NAME}_ENABLE_Fortran</span> <span class="pre">OFF</span> <span class="pre">...)</span></code> since <code class="docutils literal notranslate"><span class="pre">PROJECT_NAME</span></code>
 is known before the file is included.  One can’t do that with <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">-C</span></code>
@@ -822,7 +822,7 @@ pre-push testing.</p>
 </section>
 <section id="enable-all-packages-and-optionally-all-tests">
 <h3><a class="toc-backref" href="#id18"><span class="sectnum">4.3.6</span> Enable all packages (and optionally all tests)</a><a class="headerlink" href="#enable-all-packages-and-optionally-all-tests" title="Permalink to this headline"></a></h3>
-<p>To enable all defined packages and subpakages add the configure option:</p>
+<p>To enable all defined packages and subpackages add the configure option:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_ALL_PACKAGES</span><span class="o">=</span><span class="n">ON</span> \
 </pre></div>
 </div>
@@ -1082,7 +1082,7 @@ those for its parent package <code class="docutils literal notranslate"><span cl
 <p>That way, compiler options for a subpackage override flags set for the parent
 package.</p>
 <p>NOTES:</p>
-<p>1) Setting <code class="docutils literal notranslate"><span class="pre">CMAKE_&lt;LANG&gt;_FLAGS</span></code> as a cache varible by the user on input be
+<p>1) Setting <code class="docutils literal notranslate"><span class="pre">CMAKE_&lt;LANG&gt;_FLAGS</span></code> as a cache variable by the user on input be
 listed after and therefore override, but will not replace, any internally set
 flags in <code class="docutils literal notranslate"><span class="pre">CMAKE_&lt;LANG&gt;_FLAGS</span></code> defined by the &lt;Project&gt; CMake system.  To get
 rid of these project/TriBITS set compiler flags/options, see the below items.</p>
@@ -2668,7 +2668,7 @@ mangling determination, and other CMake-specific information.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_CONFIGURE_TIMING</span><span class="o">=</span><span class="n">ON</span>
 </pre></div>
 </div>
-<p>This will do baulk timing for the major configure steps which is independent
+<p>This will do bulk timing for the major configure steps which is independent
 of the number of packages in the project.</p>
 <p>To additionally add timing for the configure of individual packages, configure
 with:</p>
@@ -2841,7 +2841,7 @@ printed by configuring with:</p>
 trigger warnings in CDash) about missing inserted/external packages will print
 regardless of the setting for <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ASSERT_MISSING_PACKAGES</span></code>.</p>
 <p>Finally, <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ENABLE_DEVELOPMENT_MODE=ON</span></code> results in a number of
-checks for invalid usage of TriBITS in the project’s <code class="docutils literal notranslate"><span class="pre">CMakeList.txt</span></code> files
+checks for invalid usage of TriBITS in the project’s <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> files
 and will abort configure with a fatal error on the first check failure. This
 is appropriate for development mode when a project is clean of all such
 invalid usage patterns but there are times when it makes sense to report these
@@ -3769,7 +3769,7 @@ packages/TPLs will also be written into the build tree under
 <code class="docutils literal notranslate"><span class="pre">&lt;upstreamBuildDir&gt;/external_packages</span></code>.  These contain modern CMake targets
 that are pulled in by the downstream <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> files under
 <code class="docutils literal notranslate"><span class="pre">&lt;upstreamBuildDir&gt;/external_packages</span></code>.  These external package/TPL config
-files are placed in a seprate directory to avoid being found by accident.</p>
+files are placed in a separate directory to avoid being found by accident.</p>
 </section>
 </section>
 <section id="installation-testing">
@@ -3879,7 +3879,7 @@ release mode, i.e. <code class="docutils literal notranslate"><span class="pre">
 <section id="dashboard-submissions">
 <h1><a class="toc-backref" href="#id110"><span class="sectnum">11</span> Dashboard submissions</a><a class="headerlink" href="#dashboard-submissions" title="Permalink to this headline"></a></h1>
 <p>All TriBITS projects have built-in support for submitting configure, build,
-and test results to CDash using the custom <code class="docutils literal notranslate"><span class="pre">dashbaord</span></code> target.  This uses
+and test results to CDash using the custom <code class="docutils literal notranslate"><span class="pre">dashboard</span></code> target.  This uses
 the <a class="reference external" href="TribitsUsersGuide.html#tribits-ctest-driver">tribits_ctest_driver()</a> function internally set up to work correctly
 from an existing binary directory with a valid initial configure.  The few of
 the advantages of using the custom TriBITS-enabled <code class="docutils literal notranslate"><span class="pre">dashboard</span></code> target over
