@@ -353,7 +353,7 @@
 <dd class="field-even"><p>2022-03-29</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2838-g3ed17ae3</p>
+<dd class="field-odd"><p>tribits_start-2840-g7b11edf4</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -787,7 +787,7 @@ entire TriBITS system, the design philosophy that provides the foundation for
 TriBITS and be an expert in CMake, CTest, and CDash.  Much of what needs to be
 known by a TriBITS System Developer and a TriBITS System Architect is
 contained in the document <a class="reference external" href="TribitsMaintainersGuide.html">TriBITS Maintainers Guide and Reference</a>.  The
-rest of the the primary documentation for these roles will be in the TriBITS
+rest of the primary documentation for these roles will be in the TriBITS
 CMake source code and various unit tests itself defined in <a class="reference internal" href="#the-tribits-test-package">The TriBITS Test
 Package</a>.  At the time of this writing, there is currently there is only one
 TriBITS System Architect (who also happens to be the primary author of this
@@ -1005,7 +1005,7 @@ variables.  Built-in CMake variables tend use all caps with underscores
 to use mixed case with underscores (e.g. <code class="docutils literal notranslate"><span class="pre">CMAKE_Fortran_FLAGS</span></code>).  TriBITS
 tends to use a similar naming convention where variables have mostly
 upper-case letters except for parts that are proper nouns like the project,
-package or TPL name (e.g. <code class="docutils literal notranslate"><span class="pre">TribitsProj_TRIBITS_DIR</span></code>,
+package or TPL name (e.g. <code class="docutils literal notranslate"><span class="pre">TribitsExProj_TRIBITS_DIR</span></code>,
 <code class="docutils literal notranslate"><span class="pre">TriBITS_SOURCE_DIR</span></code>, <code class="docutils literal notranslate"><span class="pre">Boost_INCLUDE_DIRS</span></code>).</p></li>
 </ul>
 <p>I don’t know of any other programming language that uses different case
@@ -1385,7 +1385,7 @@ don’t need to have this variable set.  In Trilinos, the include line is just:<
 version avoids strange errors that can occur when someone tries to build the
 project using a version of CMake that is too old.  The project should set the
 minimum CMake version based on the CMake features used in that project’s own
-CMake files.  The minimum CMake version required by TriBITS is defined in in
+CMake files.  The minimum CMake version required by TriBITS is defined in
 the variable <code class="docutils literal notranslate"><span class="pre">TRIBITS_CMAKE_MINIMUM_REQUIRED</span></code> (the current minimum version
 of CMake required by TriBITS is given at in <a class="reference external" href="TribitsBuildReference.html#getting-set-up-to-use-cmake">Getting set up to use CMake</a>) .
 For example, the <code class="docutils literal notranslate"><span class="pre">VERA/CMakeLists.txt</span></code> file lists as its first line:</p>
