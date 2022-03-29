@@ -944,16 +944,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_enable_install
 
 ########################################################################
 
-
-# Find ninja so we can test TriBITS using ninja as well
-find_program(NINJA_EXE ninja)
-
-if ( CMAKE_VERSION VERSION_LESS 3.18.0 )
-  set(rulesNinjaFilePath "rules.ninja")
-else()
-  set(rulesNinjaFilePath "CMakeFiles/rules.ninja")
-endif()
-
 tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
