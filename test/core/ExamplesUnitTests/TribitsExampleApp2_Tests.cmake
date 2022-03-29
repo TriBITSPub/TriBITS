@@ -116,6 +116,10 @@ function(TribitsExampleApp2  tribitsExProj2TestNameBaseBase
     message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
   endif()
 
+  if (tribitsExProj2TestNameBaseBase STREQUAL "TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls")
+    set(fullDepsRegex "Full Deps: TODO SET MATCH")
+  endif()
+
   set(testSuffix ${sharedOrStatic}_${fullOrComponents})
   set(testBaseName
     ${CMAKE_CURRENT_FUNCTION}_${tribitsExProj2TestNameBaseBase}_${testSuffix})
@@ -181,6 +185,8 @@ TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts STATIC FULL)
 # not really test anything new given that shared is tested with COMPONENTS.
 TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts STATIC COMPONENTS)
 TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts SHARED COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls STATIC COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls SHARED COMPONENTS)
 TribitsExampleApp2(TribitsExampleProject2_explicit_tpl_vars STATIC COMPONENTS)
 TribitsExampleApp2(TribitsExampleProject2_explicit_tpl_vars SHARED COMPONENTS)
 TribitsExampleApp2(TribitsExampleProject2_find_package SHARED COMPONENTS)
