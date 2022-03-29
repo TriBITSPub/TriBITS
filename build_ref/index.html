@@ -213,7 +213,7 @@
 <dd class="field-odd"><p>2022-03-29</p>
 </dd>
 <dt class="field-even">Version</dt>
-<dd class="field-even"><p>tribits_start-2822-ga6dc64ce</p>
+<dd class="field-even"><p>tribits_start-2838-g3ed17ae3</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1779,7 +1779,12 @@ full library paths when linking.)</p>
 call <code class="docutils literal notranslate"><span class="pre">find_package(&lt;TPLNAME&gt;)</span></code> internally by default and some may implement
 the default find in some other way.  To know for sure, see the documentation
 for the specific TPL (e.g. looking in the <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;TPLNAME&gt;.cmake</span></code> file to
-be sure).</p>
+be sure).  NOTE: if a given <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;TPLNAME&gt;.cmake</span></code> would use
+<code class="docutils literal notranslate"><span class="pre">find_package(&lt;TPLNAME&gt;)</span></code> by default, this can be disabled by configuring
+with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;</span><span class="n">_ALLOW_PACKAGE_PREFIND</span><span class="o">=</span><span class="n">OFF</span>
+</pre></div>
+</div>
 <p>Most TPLs, however, use a standard system for finding include directories
 and/or libraries based on the function
 <a class="reference external" href="TribitsUsersGuide.html#tribits-tpl-find-include-dirs-and-libraries">tribits_tpl_find_include_dirs_and_libraries()</a>.  These simple standard

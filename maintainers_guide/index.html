@@ -398,7 +398,7 @@
 <dd class="field-even"><p>2022-03-29</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2822-ga6dc64ce</p>
+<dd class="field-odd"><p>tribits_start-2838-g3ed17ae3</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -14540,12 +14540,13 @@ or <code class="docutils literal notranslate"><span class="pre">TPL_&lt;tplName&
 the search for the library components and just specify the absolute
 locations.  The function will also set <code class="docutils literal notranslate"><span class="pre">&lt;allowPackagePrefindOut&gt;</span></code> to
 <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> if <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_INCLUDE_DIRS</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_NAMES</span></code>, or
-<code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_DIRS</span></code> is set and <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_FORCE_PRE_FIND_PACKAGE</span></code> is
-set to <code class="docutils literal notranslate"><span class="pre">FALSE</span></code>.  Otherwise, if <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_FORCE_PRE_FIND_PACKAGE</span></code> is set
-to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>, the function will not return <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> for
+<code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_DIRS</span></code> is set and <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_FORCE_PRE_FIND_PACKAGE</span></code>
+is set to <code class="docutils literal notranslate"><span class="pre">FALSE</span></code>.  Otherwise, if <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_FORCE_PRE_FIND_PACKAGE</span></code> is
+set to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>, the function will not return <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> for
 <code class="docutils literal notranslate"><span class="pre">&lt;allowPackagePrefindOut&gt;</span></code> no matter what the values of
 <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_INCLUDE_DIRS</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_NAMES</span></code>, or
-<code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_DIRS</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_DIRS</span></code>.  Finally, <code class="docutils literal notranslate"><span class="pre">&lt;allowPackagePrefindOut&gt;</span></code> is set to
+<code class="docutils literal notranslate"><span class="pre">FALSE</span></code> if <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_ALLOW_PACKAGE_PREFIND=OFF</span></code> is set in the cache.</p>
 <p>The variable <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_FORCE_PRE_FIND_PACKAGE</span></code> is needed to allow users
 (or the <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> module itself) to avoid name clashes with
 the variables <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_INCLUDE_DIRS</span></code> or <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_DIRS</span></code> in
@@ -14554,6 +14555,9 @@ the usage of <code class="docutils literal notranslate"><span class="pre">find_p
 sets <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_FORCE_PRE_FIND_PACKAGE</span></code> as a cache variable with default
 value <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> to maintain backward compatibility with existing
 <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> modules.</p>
+<p>The cache variable <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_ALLOW_PACKAGE_PREFIND</span></code> is to allow the user
+to disable the prefind call to <code class="docutils literal notranslate"><span class="pre">find_package()</span></code> even if it would be
+allowed otherwise.</p>
 <p>See <a class="reference internal" href="#how-to-use-find-package-for-a-tribits-tpl">How to use find_package() for a TriBITS TPL</a> for details in how to use
 this function to create a <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> module file.</p>
 <p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:56</p>
@@ -14664,7 +14668,7 @@ libraries and when a find is successful and when it is not.</p>
 <p>Note, if <code class="docutils literal notranslate"><span class="pre">TPL_TENTATIVE_ENABLE_&lt;tplName&gt;=ON</span></code>, then if all of the parts of
 the TPL can’t be found, then <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_&lt;tplName&gt;</span></code> will be (forced) set
 to <code class="docutils literal notranslate"><span class="pre">OFF</span></code> in the cache.  See <a class="reference internal" href="#tribits-tpl-tentatively-enable">tribits_tpl_tentatively_enable()</a>.</p>
-<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:147</p>
+<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:158</p>
 </section>
 <section id="tribits-tpl-tentatively-enable">
 <h3><a class="toc-backref" href="#id157">tribits_tpl_tentatively_enable()</a><a class="headerlink" href="#tribits-tpl-tentatively-enable" title="Permalink to this headline"></a></h3>
@@ -14689,7 +14693,7 @@ be explicitly set on input, i.e. if <code class="docutils literal notranslate"><
 TPL has been explicitly enabled (i.e. <code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">TPL_ENABLE_&lt;tplName&gt;=ON</span></code>) or
 disabled (i.e. <code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">TPL_ENABLE_&lt;tplName&gt;=OFF</span></code>), then this function has no
 effect and the TPL will be unconditionally enabled or disabled.</p>
-<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:695</p>
+<p>In: core/package_arch/TribitsTplFindIncludeDirsAndLibraries.cmake:709</p>
 </section>
 <section id="tribits-write-flexible-package-client-export-files">
 <h3><a class="toc-backref" href="#id158">tribits_write_flexible_package_client_export_files()</a><a class="headerlink" href="#tribits-write-flexible-package-client-export-files" title="Permalink to this headline"></a></h3>

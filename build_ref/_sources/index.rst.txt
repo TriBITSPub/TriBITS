@@ -1618,7 +1618,11 @@ When the variables ``TPL_<TPLNAME>_INCLUDE_DIRS`` and
 call ``find_package(<TPLNAME>)`` internally by default and some may implement
 the default find in some other way.  To know for sure, see the documentation
 for the specific TPL (e.g. looking in the ``FindTPL<TPLNAME>.cmake`` file to
-be sure).
+be sure).  NOTE: if a given ``FindTPL<TPLNAME>.cmake`` would use
+``find_package(<TPLNAME>)`` by default, this can be disabled by configuring
+with::
+
+  -D<TPLNAME>_ALLOW_PACKAGE_PREFIND=OFF
 
 Most TPLs, however, use a standard system for finding include directories
 and/or libraries based on the function
