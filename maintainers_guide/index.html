@@ -398,7 +398,7 @@
 <dd class="field-even"><p>2022-04-12</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2843-gc7b7dcad</p>
+<dd class="field-odd"><p>tribits_start-2847-g30e0a422</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -2438,12 +2438,17 @@ file configuration features used by CMake’s <code class="docutils literal notr
 <div><p><a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>/<code class="docutils literal notranslate"><span class="pre">packages/simple_cxx/cmake/SimpleCxx_config.h.in</span></code></p>
 </div></blockquote>
 <p>which is:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#cmakedefine HAVE_SIMPLECXX___INT64</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#ifndef SIMPLECXX_CONFIG_H</span>
+<span class="c1">#define SIMPLECXX_CONFIG_H</span>
+
+<span class="c1">#cmakedefine HAVE_SIMPLECXX___INT64</span>
 
 <span class="c1">#cmakedefine HAVE_SIMPLECXX_DEBUG</span>
 <span class="c1">#cmakedefine HAVE_SIMPLECXX_SIMPLETPL</span>
 
 <span class="nd">@SIMPLECXX_DEPRECATED_DECLARATIONS</span><span class="o">@</span>
+
+<span class="c1">#endif /** SIMPLECXX_CONFIG_H **/</span>
 </pre></div>
 </div>
 <p>The variable <code class="docutils literal notranslate"><span class="pre">HAVE_SIMPLECXX___INT64</span></code> is set up in the base file
@@ -16471,7 +16476,7 @@ install() target for the previously generated
 </div>
 <p>The install() commands must be in a different subroutine or CMake will not
 allow you to call the routine, even if you if() it out!</p>
-<p>In: core/package_arch/TribitsWriteClientExportFiles.cmake:596</p>
+<p>In: core/package_arch/TribitsWriteClientExportFiles.cmake:693</p>
 </section>
 <section id="tribits-write-xml-dependency-files">
 <h3><a class="toc-backref" href="#id240">tribits_write_xml_dependency_files()</a><a class="headerlink" href="#tribits-write-xml-dependency-files" title="Permalink to this headline"></a></h3>
