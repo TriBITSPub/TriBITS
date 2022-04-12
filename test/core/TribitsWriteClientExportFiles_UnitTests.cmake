@@ -143,6 +143,8 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
       "set[(]RTOp1_TPL_LIBRARIES .lapackpath/lib/liblapack.a.blaspath/lib/libblas.a.."
       "set[(]RTOp1_PACKAGE_LIST .Teuchos.."
       "set[(]RTOp1_TPL_LIST .LAPACK.BLAS.."
+      "set[(]RTOp1_ENABLE_Teuchos ON[)]"
+
     )
 
   unittest_file_regex("${GENERATED_EXPORT_CONFIG_FOR_INSTALL}"
@@ -157,6 +159,7 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
       "set[(]RTOp1_TPL_LIBRARIES .lapackpath/lib/liblapack.a.blaspath/lib/libblas.a.."
       "set[(]RTOp1_PACKAGE_LIST .Teuchos.."
       "set[(]RTOp1_TPL_LIST .LAPACK.BLAS.."
+      "set[(]RTOp1_ENABLE_Teuchos ON[)]"
     )
 
 endfunction()
@@ -232,6 +235,7 @@ function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
       "set[(]RTOp2_TPL_LIBRARIES .lapackpath/lib/liblapack.a.blaspath/lib/libblas.a.."
       "set[(]RTOp2_PACKAGE_LIST .RTOp.Teuchos.."
       "set[(]RTOp2_TPL_LIST .LAPACK.BLAS.."
+      "set[(]RTOp2_ENABLE_Teuchos ON[)]"
     )
 
   # ToDo: Check the generated RTOpConfig_install.cmake file!
@@ -255,4 +259,4 @@ unittest_write_specialized_package_export_makefile_rtop_before_libs()
 unittest_write_specialized_package_export_makefile_rtop_after_libs()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(30)
+unittest_final_result(33)

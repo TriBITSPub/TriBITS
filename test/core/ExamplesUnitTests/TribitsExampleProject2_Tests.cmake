@@ -202,6 +202,17 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic findingTplsMethod)
         "-- Generating done"
 
     TEST_1
+      MESSAGE "Check Package3Config.cmake for build tree"
+      CMND cat ARGS cmake_packages/Package3/Package3Config.cmake
+      PASS_REGULAR_EXPRESSION_ALL
+        "set[(]Package3_ENABLE_Package1 ON[)]"
+        "set[(]Package3_ENABLE_Package2 ON[)]"
+        "set[(]Package3_ENABLE_Tpl2 ON[)]"
+        "set[(]Package3_ENABLE_Tpl1 ON[)]"
+        "set[(]Package3_ENABLE_Tpl4 ON[)]"
+        "set[(]Package3_ENABLE_Tpl3 ON[)]"
+
+    TEST_2
       MESSAGE "Build verbose to check the link line of Package3"
       CMND ${CMAKE_COMMAND} ARGS --build . -v
       PASS_REGULAR_EXPRESSION_ALL
@@ -209,7 +220,7 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic findingTplsMethod)
         "[-]o packages/package2/src/package2-prg .* ${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex} +${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
         "[-]o packages/package3/src/package3-prg .* ${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex} +${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
 
-    TEST_2
+    TEST_3
       MESSAGE "Run tests"
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -219,7 +230,7 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic findingTplsMethod)
         "Test.*Package3_Prg.*Passed"
         "100% tests passed, 0 tests failed out of 3"
 
-    TEST_3
+    TEST_4
       MESSAGE "Install"
       CMND ${CMAKE_COMMAND} ARGS --build . --target install
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -234,6 +245,17 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic findingTplsMethod)
         "Package2Targets.cmake"
         "Package3Config.cmake"
         "Package3Targets.cmake"
+
+    TEST_5
+      MESSAGE "Check Package3Config.cmake in install tree"
+      CMND cat ARGS install/lib/cmake/Package3/Package3Config.cmake
+      PASS_REGULAR_EXPRESSION_ALL
+        "set[(]Package3_ENABLE_Package1 ON[)]"
+        "set[(]Package3_ENABLE_Package2 ON[)]"
+        "set[(]Package3_ENABLE_Tpl2 ON[)]"
+        "set[(]Package3_ENABLE_Tpl1 ON[)]"
+        "set[(]Package3_ENABLE_Tpl4 ON[)]"
+        "set[(]Package3_ENABLE_Tpl3 ON[)]"
 
     ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
 
@@ -259,6 +281,123 @@ TribitsExampleProject2_find_tpl_parts(STATIC  CMAKE_PREFIX_PATH_CACHE)
 TribitsExampleProject2_find_tpl_parts(SHARED  CMAKE_PREFIX_PATH_CACHE)
 TribitsExampleProject2_find_tpl_parts(STATIC  CMAKE_PREFIX_PATH_ENV)
 TribitsExampleProject2_find_tpl_parts(SHARED  CMAKE_PREFIX_PATH_ENV)
+
+
+########################################################################
+
+
+function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls sharedOrStatic)
+
+  TribitsExampleProject2_test_setup_header()
+
+  set(tplInstallBaseDir
+    "${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}")
+
+  set(cmakePrefixPath
+    "${tplInstallBaseDir}/install_tpl4<semicolon>${tplInstallBaseDir}/install_tpl3<semicolon>${tplInstallBaseDir}/install_tpl2<semicolon>${tplInstallBaseDir}/install_tpl1"
+    )
+
+  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic})
+  set(testName ${PACKAGE_NAME}_${testNameBase})
+  set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
+
+  tribits_add_advanced_test( ${testNameBase}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE  NINJA_EXE
+    LIST_SEPARATOR "<semicolon>"
+
+    TEST_0
+      MESSAGE "Configure TribitsExampleProject2 with all optional packages/tpls disabled"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
+        -GNinja
+        -DCMAKE_BUILD_TYPE=DEBUG
+	"-DCMAKE_PREFIX_PATH=${cmakePrefixPath}"
+	-DTpl1_ALLOW_PACKAGE_PREFIND=OFF
+        -DTribitsExProj2_ENABLE_ALL_OPTIONAL_PACKAGES=OFF
+        -DPackage3_ENABLE_Package2=OFF
+        -DTribitsExProj2_ENABLE_TESTS=ON
+        -DCMAKE_INSTALL_PREFIX=install
+        -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      PASS_REGULAR_EXPRESSION_ALL
+        "NOTE: Package3_ENABLE_Package2=OFF is already set so not enabling even though TribitsExProj2_ENABLE_Package2=ON is set"
+        "Final set of enabled packages:  Package1 Package2 Package3"
+        "Final set of enabled TPLs:  Tpl1 Tpl2 2"
+	"Final set of non-enabled TPLs:  Tpl3 Tpl4 2"
+
+        "TPL_Tpl1_LIBRARIES='${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
+        "TPL_Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"
+
+        "TPL_Tpl2_LIBRARIES='${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
+        "TPL_Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
+
+        "-- Configuring done"
+        "-- Generating done"
+
+    TEST_1
+      MESSAGE "Check Package3Config.cmake for build tree"
+      CMND cat ARGS cmake_packages/Package3/Package3Config.cmake
+      PASS_REGULAR_EXPRESSION_ALL
+        "set[(]Package3_ENABLE_Package1 ON[)]"
+        "set[(]Package3_ENABLE_Package2 OFF[)]"
+        "set[(]Package3_ENABLE_Tpl2 ON[)]"
+        "set[(]Package3_ENABLE_Tpl1 ON[)]"
+        "set[(]Package3_ENABLE_Tpl4 OFF[)]"
+        "set[(]Package3_ENABLE_Tpl3 OFF[)]"
+
+    TEST_2
+      MESSAGE "Build verbose to check the link line of Package3"
+      CMND ${CMAKE_COMMAND} ARGS --build . -v
+      PASS_REGULAR_EXPRESSION_ALL
+        "[-]o packages/package1/src/package1-prg .* ${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
+        "[-]o packages/package2/src/package2-prg .* ${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
+        "[-]o packages/package3/src/package3-prg .* ${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex} +${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
+
+    TEST_3
+      MESSAGE "Run tests"
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      PASS_REGULAR_EXPRESSION_ALL
+        "Test.*Package1_Prg.*Passed"
+        "Test.*Package2_Prg.*Passed"
+        "Test.*Package3_Prg.*Passed"
+        "100% tests passed, 0 tests failed out of 3"
+
+    TEST_4
+      MESSAGE "Install"
+      CMND ${CMAKE_COMMAND} ARGS --build . --target install
+
+    TEST_5
+      MESSAGE "Check Package3Config.cmake in install tree"
+      CMND cat ARGS install/lib/cmake/Package3/Package3Config.cmake
+      PASS_REGULAR_EXPRESSION_ALL
+        "set[(]Package3_ENABLE_Package1 ON[)]"
+        "set[(]Package3_ENABLE_Package2 OFF[)]"
+        "set[(]Package3_ENABLE_Tpl2 ON[)]"
+        "set[(]Package3_ENABLE_Tpl1 ON[)]"
+        "set[(]Package3_ENABLE_Tpl4 OFF[)]"
+        "set[(]Package3_ENABLE_Tpl3 OFF[)]"
+
+    ADDED_TEST_NAME_OUT ${testNameBase}_NAME
+    )
+  # NOTE: The above test checks that things work with all optional packages
+  # and TPLs disabled.
+
+  if (${testNameBase}_NAME)
+    set(${testNameBase}_NAME ${${testNameBase}_NAME} PARENT_SCOPE)
+    set(${testNameBase}_INSTALL_DIR "${testDir}/install" PARENT_SCOPE)
+    set_tests_properties(${${testNameBase}_NAME}
+      PROPERTIES DEPENDS ${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME} )
+  endif()
+
+endfunction()
+
+TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls(STATIC)
+TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls(SHARED)
 
 
 ########################################################################
