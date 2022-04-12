@@ -293,16 +293,11 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls sharedO
   set(tplInstallBaseDir
     "${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}")
 
-  set(testNameSuffix "")
-  set(tplLibAndIncDirsArgs "")
-  set(cmakePrefixPathCacheArg "")
-  set(cmakePrefixPathEnvArg "")
-
   set(cmakePrefixPath
     "${tplInstallBaseDir}/install_tpl4<semicolon>${tplInstallBaseDir}/install_tpl3<semicolon>${tplInstallBaseDir}/install_tpl2<semicolon>${tplInstallBaseDir}/install_tpl1"
     )
 
-  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}${testNameSuffix})
+  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testNameBase})
   set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
 
@@ -311,8 +306,6 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls sharedO
     OVERALL_NUM_MPI_PROCS 1
     EXCLUDE_IF_NOT_TRUE  NINJA_EXE
     LIST_SEPARATOR "<semicolon>"
-
-    ${cmakePrefixPathEnvArg}
 
     TEST_0
       MESSAGE "Configure TribitsExampleProject2 with all optional packages/tpls disabled"
