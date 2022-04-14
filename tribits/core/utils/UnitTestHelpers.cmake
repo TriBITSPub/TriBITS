@@ -211,7 +211,7 @@ function(unittest_string_block_compare  stringVar  stringExpected)
       list(GET stringList ${stringExpectedLen} nextLine)
       message(
         "  Error: ${stringVar} has ${stringLen} lines where expected string has"
-        "only ${stringExpectedLen} lines and the next extra line is:\n"
+        " only ${stringExpectedLen} lines and the next extra line is:\n"
         "    '${nextLine}'\n"
         "  [FAILED]\n"
         )
