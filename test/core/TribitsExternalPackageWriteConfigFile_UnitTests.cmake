@@ -1004,12 +1004,33 @@ endif()
 
 include(CMakeFindDependencyMacro)
 
+# Don't allow find_dependency() to search anything other than <upstreamTplName>_DIR
+set(SomeTpl_SearchNoOtherPathsArgs
+  NO_DEFAULT_PATH
+  NO_PACKAGE_ROOT_PATH NO_CMAKE_PATH
+  NO_CMAKE_ENVIRONMENT_PATH
+  NO_SYSTEM_ENVIRONMENT_PATH
+  NO_CMAKE_PACKAGE_REGISTRY
+  NO_CMAKE_SYSTEM_PATH
+  NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
+  CMAKE_FIND_ROOT_PATH_BOTH
+  ONLY_CMAKE_FIND_ROOT_PATH
+  NO_CMAKE_FIND_ROOT_PATH
+  )
+
 set(PublicTpl_DIR "<public-tpl-dir>")
-find_dependency(PublicTpl)
+find_dependency(PublicTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
+unset(PublicTpl_DIR)
+
 set(PrivateTpl_DIR "<private-tpl-dir>")
-find_dependency(PrivateTpl)
+find_dependency(PrivateTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
+unset(PrivateTpl_DIR)
+
 set(DefaultVisTpl_DIR "<default-vis-tpl-dir>")
-find_dependency(DefaultVisTpl)
+find_dependency(DefaultVisTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
+unset(DefaultVisTpl_DIR)
+
+unset(SomeTpl_SearchNoOtherPathsArgs)
 
 add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib1 PROPERTIES

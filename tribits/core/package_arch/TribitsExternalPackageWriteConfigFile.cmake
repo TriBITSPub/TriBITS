@@ -256,6 +256,20 @@ function(tribits_external_package_add_find_upstream_dependencies_str
     string(APPEND configFileFragStr
       "include(CMakeFindDependencyMacro)\n"
       "\n"
+      "# Don't allow find_dependency() to search anything other than <upstreamTplName>_DIR\n"
+      "set(${tplName}_SearchNoOtherPathsArgs\n"
+      "  NO_DEFAULT_PATH\n"
+      "  NO_PACKAGE_ROOT_PATH NO_CMAKE_PATH\n"
+      "  NO_CMAKE_ENVIRONMENT_PATH\n"
+      "  NO_SYSTEM_ENVIRONMENT_PATH\n"
+      "  NO_CMAKE_PACKAGE_REGISTRY\n"
+      "  NO_CMAKE_SYSTEM_PATH\n"
+      "  NO_CMAKE_SYSTEM_PACKAGE_REGISTRY\n"
+      "  CMAKE_FIND_ROOT_PATH_BOTH\n"
+      "  ONLY_CMAKE_FIND_ROOT_PATH\n"
+      "  NO_CMAKE_FIND_ROOT_PATH\n"
+      "  )\n"
+      "\n"
      )
     foreach (upstreamTplDepEntry IN LISTS TPL_${tplName}_DEPENDENCIES)
       tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
@@ -265,10 +279,13 @@ function(tribits_external_package_add_find_upstream_dependencies_str
       endif()
       string(APPEND configFileFragStr
         "set(${upstreamTplDepName}_DIR \"${${upstreamTplDepName}_DIR}\")\n"
-        "find_dependency(${upstreamTplDepName})\n"
+        "find_dependency(${upstreamTplDepName} REQUIRED CONFIG \${${tplName}_SearchNoOtherPathsArgs})\n"
+	"unset(${upstreamTplDepName}_DIR)\n"
+	"\n"
         )
     endforeach()
     string(APPEND configFileFragStr
+      "unset(${tplName}_SearchNoOtherPathsArgs)\n"
       "\n"
      )
     set(${configFileFragStrInOut} "${configFileFragStr}" PARENT_SCOPE)
