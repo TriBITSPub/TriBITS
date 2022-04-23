@@ -630,19 +630,46 @@ endfunction()
 # libraries being listed on link lines for downstsream library and exec links.
 
 
+# @FUNCTION: tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis()
+#
+# Extract ``<PkgName>`` and ``<Vis>`` from ``<PkgName>[:<Vis>]`` input with
+# default ``<Vis>`` of `PRIVATE`.
+#
+# Usage::
+#
+#   tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
+#     upstreamTplDepEntry  upstreamTplDepNameOut  upstreamTplDepVisOut)
+#
 function(tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis
     upstreamTplDepEntry  upstreamTplDepNameOut  upstreamTplDepVisOut
   )
+  cmake_policy(SET CMP0057 NEW)
+  # Split on ':' to get <PkgName>[:<Vis>]
   string(REPLACE ":" ";" upstreamTplAndVisList  "${upstreamTplDepEntry}")
   list(LENGTH upstreamTplAndVisList upstreamTplAndVisListLen)
-  # ToDo: Validate that 1 <= upstreamTplAndVisListLen <= 2
+  # Validate one or two entries only
+  if (upstreamTplAndVisListLen GREATER 2)
+    math(EXPR numColons "${upstreamTplAndVisListLen}-1")
+    message_wrapper(FATAL_ERROR
+      "ERROR: '${upstreamTplDepEntry}' has ${numColons} ':' but only 1 is allowed!")
+  endif()
+  # Set <PkgName>
   list(GET upstreamTplAndVisList 0 upstreamTplDepName)
-  if (upstreamTplAndVisListLen GREATER 1)
+  # Set <Vis>
+  if (upstreamTplAndVisListLen EQUAL 2)
     list(GET upstreamTplAndVisList 1 upstreamTplDepVis)
   else()
     set(upstreamTplDepVis PRIVATE)
   endif()
-  # ToDo: Validate value of upstreamTplDepVis!
+  # Assert valid <Vis>
+  set(validVisValues "PUBLIC" "PRIVATE")
+  if (NOT upstreamTplDepVis IN_LIST validVisValues)
+    message_wrapper(FATAL_ERROR
+      "ERROR: '${upstreamTplDepEntry}' has invalid visibility '${upstreamTplDepVis}'."
+      "  Only 'PUBLIC' or 'PRIVATE' allowed!")
+    return()  # Only executed in unit-test mode!
+  endif()
+  # Set outputs
   set(${upstreamTplDepNameOut} ${upstreamTplDepName} PARENT_SCOPE)
   set(${upstreamTplDepVisOut} ${upstreamTplDepVis} PARENT_SCOPE)
 endfunction()
