@@ -74,8 +74,8 @@ set(REDUCED_MOCK_TRILINOS_OUTPUT_DIR
 # TribitsUsersGuide.rst document.  Therefore, if the behavior of TriBITS
 # changes in such a way as to break these tests, then if any of the contents
 # of the files under this directory need to change, then one must also look at
-# the TribitsUsersGuilde.rst document and update it for the new behvior of
-# TriBITs!
+# the TribitsUsersGuilde.rst document and update it for the new behavior of
+# TriBITS!
 #
 
 
@@ -145,7 +145,7 @@ read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/NoEnables.txt"
   RMT_NoEnables_REGEX_ARRAY
   )
-#print_var(REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY)
+#print_var(REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY)
 
 
 create_reduced_dependency_handling_test_case(
@@ -348,9 +348,9 @@ create_reduced_dependency_handling_test_case(
 
 read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/ExpectedDependencies.txt"
-  REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY
+  REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY
   )
-#print_var(REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY)
+#print_var(REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY)
 
 read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/EnableAllPackages.txt"
@@ -364,7 +364,7 @@ create_reduced_dependency_handling_test_case(
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
     -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    ${REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY}
+    ${REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY}
     ${REDUCED_EnableAllPackages_REGEX_ARRAY}
     "Final set of enabled packages:  Teuchos RTOp Epetra Thyra 4"
     "Final set of enabled SE packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraEpetra Thyra 6"
