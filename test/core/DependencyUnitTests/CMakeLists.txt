@@ -536,9 +536,53 @@ create_dependency_handling_test_case(
   )
 
 
+read_expected_output_file_into_regex_array(
+  "${CMAKE_CURRENT_LIST_DIR}/DepTests_EnableAllPackages_DumpDependencies.txt"
+  EnableAllPackages_DumpDependencies_REGEX_ARRAY
+  )
+#print_var(EnableAllPackages_DumpDependencies_REGEX_ARRAY)
+
+create_dependency_handling_test_case(
+  EnableAllPackages_DumpDependencies
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
+    -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+-DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "${EnableAllPackages_DumpDependencies_REGEX_ARRAY}"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "NOTE: MissingPackage is being ignored since its directory is missing and MissingPackage_ALLOW_MISSING_EXTERNAL_PACKAGE = TRUE"
+  )
+
+
 create_dependency_handling_test_case(
   EnableAllPackages_EnableTests
-  ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTrilinos_ENABLE_TESTS:BOOL=ON
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
+     -DTrilinos_ENABLE_TESTS:BOOL=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "Setting Teuchos_ENABLE_TESTS=ON"
+    "Setting RTOp_ENABLE_TESTS=ON"
+    "Setting Epetra_ENABLE_TESTS=ON"
+    "Setting ML_ENABLE_TESTS=ON"
+    "Setting Stratimikos_ENABLE_TESTS=ON"
+    "Setting RBGen_ENABLE_TESTS=ON"
+  )
+
+
+read_expected_output_file_into_regex_array(
+  "${CMAKE_CURRENT_LIST_DIR}/DepTests_EnableAllPackages_EnableTests_DumpDependencies.txt"
+  EnableAllPackages_EnableTests_DumpDependencies_REGEX_ARRAY
+  )
+#print_var(EnableAllPackages_DumpDependencies_REGEX_ARRAY)
+
+create_dependency_handling_test_case(
+  EnableAllPackages_EnableTests_DumpDependencies
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
+    -DTrilinos_ENABLE_TESTS:BOOL=ON
+    -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
     "Setting Teuchos_ENABLE_TESTS=ON"

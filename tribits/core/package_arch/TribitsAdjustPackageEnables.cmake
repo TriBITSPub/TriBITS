@@ -396,7 +396,7 @@ endmacro()
 #
 macro(tribits_print_package_dependencies PACKAGE_NAME)
 
-  set(PRINTED_VAR)
+  set(PRINTED_VAR "")
 
   print_nonempty_var_with_spaces(${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES PRINTED_VAR)
   print_nonempty_var_with_spaces(${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES PRINTED_VAR)
@@ -551,6 +551,133 @@ macro(tribits_set_up_optional_package_enables_and_cache_vars PACKAGE_NAME)
   endforeach()
 
 endmacro()
+
+
+# Macro that sets up the flat list of direct package dependencies and enabled
+# package dependencies
+#
+# This makes it easy to just loop over all of the direct upstream dependencies
+# for a package or just the enabled dependencies.
+#
+# NOTES:
+#
+#  * ${packageName}_LIB_ALL_DEPENDENCIES will be set regardless if ${packageName}
+#    is enabled or not.
+#
+#  * ${packageName}_LIB_ENABLED_DEPENDENCIES is only set if ${packageName} is
+#    enabled and will only contain the names of direct library upstream
+#    internal and external packages ${depPkg} that are required or are
+#    optional and ${packageName}_ENABLE_${depPkg} is set to ON.
+#
+#  * ${packageName}_TEST_ALL_DEPENDENCIES will be set regardless if
+#    ${packageName} is enabled or not.
+#
+#  * ${packageName}_TEST_ENABLED_DEPENDENCIES is only set if ${packageName} is
+#    enabled and will only contain the names of direct test/example upstream
+#    internal and external packages ${depPkg} that are required or are
+#    optional and ${packageName}_ENABLE_${depPkg} is set to ON.
+#
+macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars packageName)
+
+  # LIB dependencies
+
+  set(${packageName}_LIB_ALL_DEPENDENCIES "")
+  set(${packageName}_LIB_ENABLED_DEPENDENCIES "")
+
+  foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_PACKAGES})
+    list(APPEND ${packageName}_LIB_ALL_DEPENDENCIES ${depPkg})
+    if (${PROJECT_NAME}_ENABLE_${packageName} AND ${PROJECT_NAME}_ENABLE_${depPkg})
+      set(${packageName}_ENABLE_${depPkg} ON)
+      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+  # See below NOTE about required subpackage dependencies not being enabled in
+  # some cases!
+
+  foreach(depPkg ${${packageName}_LIB_OPTIONAL_DEP_PACKAGES})
+    list(APPEND ${packageName}_LIB_ALL_DEPENDENCIES ${depPkg})
+    if (${PROJECT_NAME}_ENABLE_${packageName} AND ${packageName}_ENABLE_${depPkg})
+      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_TPLS})
+    list(APPEND ${packageName}_LIB_ALL_DEPENDENCIES ${depPkg})
+    if (${PROJECT_NAME}_ENABLE_${packageName})
+      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  foreach(depPkg ${${packageName}_LIB_OPTIONAL_DEP_TPLS})
+    list(APPEND ${packageName}_LIB_ALL_DEPENDENCIES ${depPkg})
+    if (${PROJECT_NAME}_ENABLE_${packageName} AND ${packageName}_ENABLE_${depPkg})
+      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  # TEST dependencies
+
+  set(${packageName}_TEST_ALL_DEPENDENCIES "")
+  set(${packageName}_TEST_ENABLED_DEPENDENCIES "")
+
+  if (${PROJECT_NAME}_ENABLE_${packageName}
+      AND
+      (${packageName}_ENABLE_TESTS OR ${packageName}_ENABLE_EXAMPLES)
+    )
+    set(enablePkgAndTestsOrExamples ON)
+  else()
+    set(enablePkgAndTestsOrExamples OFF)
+  endif()
+
+  foreach(depPkg ${${packageName}_TEST_REQUIRED_DEP_PACKAGES})
+    list(APPEND ${packageName}_TEST_ALL_DEPENDENCIES ${depPkg})
+    if (enablePkgAndTestsOrExamples)
+      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  foreach(depPkg ${${packageName}_TEST_OPTIONAL_DEP_PACKAGES})
+    list(APPEND ${packageName}_TEST_ALL_DEPENDENCIES ${depPkg})
+    if (enablePkgAndTestsOrExamples AND ${packageName}_ENABLE_${depPkg})
+      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  foreach(depPkg ${${packageName}_TEST_REQUIRED_DEP_TPLS})
+    list(APPEND ${packageName}_TEST_ALL_DEPENDENCIES ${depPkg})
+    if (enablePkgAndTestsOrExamples)
+      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  foreach(depPkg ${${packageName}_TEST_OPTIONAL_DEP_TPLS})
+    list(APPEND ${packageName}_TEST_ALL_DEPENDENCIES ${depPkg})
+    if (enablePkgAndTestsOrExamples AND ${packageName}_ENABLE_${depPkg})
+      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+endmacro()
+# NOTE: Above, a required dependency of an enabled package may not actually be
+# enabled if it is a required subpackage of a parent package and the parent
+# package was not actually enabled due to a dependency but the shell of the
+# parent package was only enabled at the very end.  This is one of the more
+# confusing aspects of the TriBITS dependency system.
+
+
+# Function to print the direct package dependency lists
+#
+function(tribits_print_direct_package_dependencies_lists packageName)
+
+  set(PRINTED_VAR "")
+
+  message("")
+  print_nonempty_var_with_spaces(${packageName}_LIB_ENABLED_DEPENDENCIES PRINTED_VAR)
+  print_nonempty_var_with_spaces(${packageName}_LIB_ALL_DEPENDENCIES PRINTED_VAR)
+  print_nonempty_var_with_spaces(${packageName}_TEST_ENABLED_DEPENDENCIES PRINTED_VAR)
+  print_nonempty_var_with_spaces(${packageName}_TEST_ALL_DEPENDENCIES PRINTED_VAR)
+
+endfunction()
 
 
 #
@@ -1332,6 +1459,23 @@ macro(tribits_adjust_package_enables)
   # dependencies will be enabled.
 
   tribits_set_up_enabled_lists_and_se_pkg_idx()
+
+  #
+  # H) Set up flat list of direct package dependencies (even for non-enabled
+  # packages) and enabled package dependencies for enabled packages
+  #
+
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
+    tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars(
+      ${TRIBITS_PACKAGE})
+  endforeach()
+
+  if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
+    message("\nDumping direct dependencies for each SE package ...")
+    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
+      tribits_print_direct_package_dependencies_lists(${TRIBITS_PACKAGE})
+    endforeach()
+  endif()
 
 endmacro()
 
