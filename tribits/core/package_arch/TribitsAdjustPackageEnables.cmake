@@ -150,8 +150,8 @@ macro(tribits_private_disable_tpl_required_package_enable
 
       # NOTE: We can't assert that ${PACKAGE_NAME}_ENABLE_TESTS or
       # ${PACKAGE_NAME}_ENABLE_EXAMPLES exists yet because
-      # tribits_add_optional_package_enables() which defines them is not
-      # called until after the final package enables are set.
+      # tribits_set_up_optional_package_enables_and_cache_vars() which defines
+      # them is not called until after the final package enables are set.
 
     endif()
 
@@ -486,9 +486,12 @@ macro(tribits_private_add_optional_tpl_enable PACKAGE_NAME OPTIONAL_DEP_TPL
 endmacro()
 
 
-# Macro that enables optional package interdependencies
+# Macro that sets cache vars for optional package interdependencies
 #
-macro(tribits_add_optional_package_enables PACKAGE_NAME)
+# This also will set ${PACKAGE_NAME}_ENABLE_TESTS and
+# ${PACKAGE_NAME}_ENABLE_EXAMPLES to empty non-cache vars
+#
+macro(tribits_set_up_optional_package_enables_and_cache_vars PACKAGE_NAME)
 
   #message("\nPACKAGE_ARCH_ADD_OPTIONAL_PACKAGE_ENABLES: ${PACKAGE_NAME}")
 
@@ -1311,7 +1314,7 @@ macro(tribits_adjust_package_enables)
   message("Set cache entries for optional packages/TPLs and tests/examples for packages actually enabled ...")
   message("")
   foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
-    tribits_add_optional_package_enables(${TRIBITS_PACKAGE})
+    tribits_set_up_optional_package_enables_and_cache_vars(${TRIBITS_PACKAGE})
   endforeach()
 
   #
@@ -1333,12 +1336,14 @@ macro(tribits_adjust_package_enables)
 endmacro()
 
 
-# Function that sets up the full package dependencies for each enabled
-# package.
+# Function that sets up the full package dependencies for each enabled package
+# including all of its indirect upstream package dependencies.
 #
 # This is needed in several different parts of the TriBITS implementation.
 #
 function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
+
+  set(PACKAGE_FULL_DEPS_LIST "")
 
   foreach(DEP_PKG ${${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES})
     if (${PROJECT_NAME}_ENABLE_${DEP_PKG})
@@ -1363,7 +1368,7 @@ function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
     list(REMOVE_DUPLICATES PACKAGE_FULL_DEPS_LIST)
   endif()
 
-  set(ORDERED_PACKAGE_FULL_DEPS_LIST)
+  set(ORDERED_PACKAGE_FULL_DEPS_LIST "")
 
   foreach(DEP_PACKAGE  ${PACKAGE_FULL_DEPS_LIST})
 
