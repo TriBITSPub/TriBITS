@@ -554,15 +554,16 @@ endmacro()
 
 
 # Macro that sets up the flat list of direct package dependencies and enabled
-# package dependencies
+# package dependencies and sets ${packageName}_ENABLE_${depPkg} for LIB
+# dependencies
 #
 # This makes it easy to just loop over all of the direct upstream dependencies
 # for a package or just the enabled dependencies.
 #
 # NOTES:
 #
-#  * ${packageName}_LIB_ALL_DEPENDENCIES will be set regardless if ${packageName}
-#    is enabled or not.
+#  * ${packageName}_LIB_ALL_DEPENDENCIES will be set regardless if
+#    ${packageName} is enabled or not.
 #
 #  * ${packageName}_LIB_ENABLED_DEPENDENCIES is only set if ${packageName} is
 #    enabled and will only contain the names of direct library upstream
@@ -576,6 +577,14 @@ endmacro()
 #    enabled and will only contain the names of direct test/example upstream
 #    internal and external packages ${depPkg} that are required or are
 #    optional and ${packageName}_ENABLE_${depPkg} is set to ON.
+#
+#  * Sets ${packageName}_ENABLE_${depPkg}=ON for every required dep package
+#    for LIB dependencies (but not TEST dependencies).  This allows looping
+#    over just ${packageName}_LIB_ALL_DEPENDENCIES looking at
+#    ${packageName}_ENABLE_${depPkg} to see if the package is enable or not.
+#    This also includes special logic for required subpackages for parent
+#    packages where only the shell of the parent package is enabled and not
+#    all of its required subpackages are enabled.
 #
 macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars packageName)
 
@@ -604,6 +613,7 @@ macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_va
   foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_TPLS})
     list(APPEND ${packageName}_LIB_ALL_DEPENDENCIES ${depPkg})
     if (${PROJECT_NAME}_ENABLE_${packageName})
+      set(${packageName}_ENABLE_${depPkg} ON)
       list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
     endif()
   endforeach()
