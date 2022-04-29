@@ -6,6 +6,6 @@ tribits_repository_define_tpls(
   )
 
 # Temp hack for setting up TPL dependencies
-set(TPL_Tpl2_DEPENDENCIES Tpl1 CACHE STRING "Tpl2 upstream dependencies")
-set(TPL_Tpl3_DEPENDENCIES Tpl2 CACHE STRING "Tpl3 upstream dependencies")
-set(TPL_Tpl4_DEPENDENCIES "Tpl2;Tpl3" CACHE STRING "Tpl4 upstream dependencies")
+set(Tpl2_LIB_ENABLED_DEPENDENCIES Tpl1 CACHE STRING "Tpl2 upstream dependencies")
+set(Tpl3_LIB_ENABLED_DEPENDENCIES Tpl2 CACHE STRING "Tpl3 upstream dependencies")
+set(Tpl4_LIB_ENABLED_DEPENDENCIES "Tpl2;Tpl3" CACHE STRING "Tpl4 upstream dependencies")

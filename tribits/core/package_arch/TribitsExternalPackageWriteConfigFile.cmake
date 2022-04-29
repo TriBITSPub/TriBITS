@@ -178,12 +178,12 @@ endfunction()
 #   for the config file on output.
 #
 # This function reads from the variables ``TPL_<tplName>_INCLUDE_DIRS``
-# ``TPL_<tplName>_LIBRARIES``, and ``TPL_<tplName>_DEPENDENCIES`` (which must
-# already be set) and uses that information to produce the contents of the
-# ``<tplName>Config.cmake`` which is returned as a string variable that
-# contains IMPORTED targets to represent these libraries and include
-# directories as well as ``find_dependency()`` calls for upstream packages
-# listed in ``TPL_<tplName>_DEPENDENCIES``
+# ``TPL_<tplName>_LIBRARIES``, and ``<tplName>_LIB_ENABLED_DEPENDENCIES``
+# (which must already be set) and uses that information to produce the
+# contents of the ``<tplName>Config.cmake`` which is returned as a string
+# variable that contains IMPORTED targets to represent these libraries and
+# include directories as well as ``find_dependency()`` calls for upstream
+# packages listed in ``<tplName>_LIB_ENABLED_DEPENDENCIES``
 #
 # ToDo: Flesh out more documentation for behavior as more features are added
 # for handling:
@@ -238,7 +238,7 @@ endfunction()
 # @FUNCTION: tribits_external_package_add_find_upstream_dependencies_str()
 #
 # Add code to call find_dependency() for all upstream external packages/TPLs
-# listed in ``TPL_<tplName>_DEPENDENCIES``.
+# listed in ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
 # Usage::
 #
@@ -246,12 +246,12 @@ endfunction()
 #     configFileFragStrInOut)
 #
 # NOTE: This also requires that `<upstreamTplName>_DIR` be set for each
-# external package/TPL listed in ``TPL_<tplName>_DEPENDENCIES``.
+# external package/TPL listed in ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
 function(tribits_external_package_add_find_upstream_dependencies_str
     tplName  configFileFragStrInOut
   )
-  if (NOT "${TPL_${tplName}_DEPENDENCIES}" STREQUAL "")
+  if (NOT "${${tplName}_LIB_ENABLED_DEPENDENCIES}" STREQUAL "")
     set(configFileFragStr "${${configFileFragStrInOut}}")
     string(APPEND configFileFragStr
       "include(CMakeFindDependencyMacro)\n"
@@ -271,7 +271,7 @@ function(tribits_external_package_add_find_upstream_dependencies_str
       "  )\n"
       "\n"
      )
-    foreach (upstreamTplDepEntry IN LISTS TPL_${tplName}_DEPENDENCIES)
+    foreach (upstreamTplDepEntry IN LISTS ${tplName}_LIB_ENABLED_DEPENDENCIES)
       tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
 	"${upstreamTplDepEntry}"  upstreamTplDepName  upstreamTplDepVis)
       if ("${${upstreamTplDepName}_DIR}" STREQUAL "")
@@ -312,9 +312,10 @@ endfunction()
 
 # @FUNCTION: tribits_external_package_process_libraries_list()
 #
-# Read the ``TPL_<tplName>_LIBRARIES`` and ``TPL_<tplName>_DEPENDENCIES`` list
-# variables and produce the string for the IMPORTED targets commands with
-# upstream linkages and return list of targets and left over linker flags.
+# Read the ``TPL_<tplName>_LIBRARIES`` and
+# ``<tplName>_LIB_ENABLED_DEPENDENCIES`` list variables and produce the string
+# for the IMPORTED targets commands with upstream linkages and return list of
+# targets and left over linker flags.
 #
 # Usage::
 #
@@ -451,7 +452,7 @@ endfunction()
 # tribits_external_package_process_libraries_list().
 #
 # This also puts in linkages to upstream TPLs ``<tplName>::all_libs`` listed
-# in ``TPL_<tplName>_DEPENDENCIES``.
+# in ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
 function(tribits_external_package_process_libraries_list_library_entry
     tplName  libentry  libEntryType
@@ -598,10 +599,10 @@ function(tribits_external_package_append_upstream_target_link_libraries_str
     tplName  prefix_libname  configFileStrInOut
   )
   set(configFileStr "${${configFileStrInOut}}")
-  if (TPL_${tplName}_DEPENDENCIES)
+  if (${tplName}_LIB_ENABLED_DEPENDENCIES)
     string(APPEND configFileStr
       "target_link_libraries(${prefix_libname}\n")
-    foreach (upstreamTplDepEntry IN LISTS TPL_${tplName}_DEPENDENCIES)
+    foreach (upstreamTplDepEntry IN LISTS ${tplName}_LIB_ENABLED_DEPENDENCIES)
       tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
 	"${upstreamTplDepEntry}"  upstreamTplDepName  upstreamTplDepVis)
       if (upstreamTplDepVis STREQUAL "PUBLIC")
