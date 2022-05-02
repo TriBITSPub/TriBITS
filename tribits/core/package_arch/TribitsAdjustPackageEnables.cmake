@@ -1496,6 +1496,9 @@ endmacro()
 #
 # This is needed in several different parts of the TriBITS implementation.
 #
+# ToDo: #63: Remove this function since we should not need a full list of
+# direct and indirect package dependencies!
+#
 function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
 
   set(PACKAGE_FULL_DEPS_LIST "")
@@ -1565,6 +1568,9 @@ endfunction()
 
 
 # Function that creates enable-only dependency data-structures
+#
+# ToDo: #63: Remove this function since we should not need a full list of
+# direct and indirect package dependencies!
 #
 function(tribits_set_up_enabled_only_dependencies)
 

@@ -600,89 +600,47 @@ function(tribits_append_dependent_package_config_file_includes_and_enables packa
   set(pkgConfigFileBaseDir "${PARSE_PKG_CONFIG_FILE_BASE_DIR}")
   set(configFileStr "${${PARSE_CONFIG_FILE_STR_INOUT}}")
 
-  # Add set of enables/disables for all upstream dependencies.
+  # Add set of enables/disables for all upstream dependencies
   string(APPEND configFileStr
     "# Enables/Disables for upstream package dependencies\n")
-  foreach(depPkg IN LISTS ${packageName}_LIB_REQUIRED_DEP_PACKAGES)
-    if (${PROJECT_NAME}_ENABLE_${depPkg})
+  foreach(depPkg IN LISTS ${packageName}_LIB_ALL_DEPENDENCIES)
+    if (${packageName}_ENABLE_${depPkg})
       set(enableVal ON)
     else()
       set(enableVal OFF)
     endif()
     string(APPEND configFileStr
       "set(${EXPORT_FILE_VAR_PREFIX}_ENABLE_${depPkg} ${enableVal})\n")
-    # NOTE: Above, a required dependent package may not actually be enabled if
-    # it is a required subpackage of a parent package and that parent package
-    # itself is not actually enabled (very tricky).
-  endforeach()
-  foreach(depPkg IN LISTS ${packageName}_LIB_OPTIONAL_DEP_PACKAGES)
-    if (${packageName}_ENABLE_${depPkg} AND ${PROJECT_NAME}_ENABLE_${depPkg})
-      set(enableVal ON)
-    else()
-      set(enableVal OFF)
-    endif()
-    string(APPEND configFileStr
-      "set(${EXPORT_FILE_VAR_PREFIX}_ENABLE_${depPkg} ${enableVal})\n")
-  endforeach()
-  foreach(depTpl IN LISTS ${packageName}_LIB_REQUIRED_DEP_TPLS)
-    if (TARGET ${depTpl}::all_libs)
-      set(enableVal ON)
-    else()
-      set(enableVal OFF)
-    endif()
-    string(APPEND configFileStr
-      "set(${EXPORT_FILE_VAR_PREFIX}_ENABLE_${depTpl} ${enableVal})\n")
-  endforeach()
-  foreach(depTpl IN LISTS ${packageName}_LIB_OPTIONAL_DEP_TPLS)
-    if (${packageName}_ENABLE_${depTpl} AND TARGET ${depTpl}::all_libs)
-      set(enableVal ON)
-    else()
-      set(enableVal OFF)
-    endif()
-    string(APPEND configFileStr
-      "set(${EXPORT_FILE_VAR_PREFIX}_ENABLE_${depTpl} ${enableVal})\n")
   endforeach()
 
   # Include configurations of dependent packages
   string(APPEND configFileStr
     "\n# Include configuration of dependent packages\n")
-  foreach(depPkg IN LISTS ${packageName}_LIB_REQUIRED_DEP_PACKAGES)
-    if (${PROJECT_NAME}_ENABLE_${depPkg})
-      set(cmakeTplDir "${pkgConfigFileBaseDir}/${depPkg}")
+  foreach(depPkg IN LISTS ${packageName}_LIB_ENABLED_DEPENDENCIES)
+    set(packageConfigBaseDir "") # Initially, no add include()
+    if (${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "INTERNAL")
+      set(packageConfigBaseDir "${pkgConfigFileBaseDir}/${depPkg}")
+    elseif (${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL")
+      if (TARGET ${depPkg}::all_libs)  # See below NOTE for this if() statement
+        set(packageConfigBaseDir "${extPkgConfigFileBaseDir}/${depPkg}")
+      endif()
+    else()
+      message(FATAL_ERROR "ERROR: ${depPkg}_PACKAGE_BUILD_STATUS='${${depPkg}_PACKAGE_BUILD_STATUS}' invalid!")
+    endif()
+    if (packageConfigBaseDir)
       string(APPEND configFileStr
-        "include(\"${cmakeTplDir}/${depPkg}Config.cmake\")\n")
+        "include(\"${packageConfigBaseDir}/${depPkg}Config.cmake\")\n")
     endif()
   endforeach()
-  foreach(depPkg IN LISTS ${packageName}_LIB_OPTIONAL_DEP_PACKAGES)
-    if (${packageName}_ENABLE_${depPkg} AND ${PROJECT_NAME}_ENABLE_${depPkg})
-      set(cmakeTplDir "${pkgConfigFileBaseDir}/${depPkg}")
-      string(APPEND configFileStr
-        "include(\"${cmakeTplDir}/${depPkg}Config.cmake\")\n")
-    endif()
-  endforeach()
-
-  # Include configurations of dependent external packages/TPLs
-  string(APPEND configFileStr
-    "\n# Include configuration of dependent external packages/TPLs\n")
-  foreach(depTpl IN LISTS ${packageName}_LIB_REQUIRED_DEP_TPLS)
-    if (TARGET ${depTpl}::all_libs)
-      set(cmakeTplDir "${extPkgConfigFileBaseDir}/${depTpl}")
-      string(APPEND configFileStr
-        "include(\"${cmakeTplDir}/${depTpl}Config.cmake\")\n")
-    endif()
-  endforeach()
-  foreach(depTpl IN LISTS ${packageName}_LIB_OPTIONAL_DEP_TPLS)
-    if (${packageName}_ENABLE_${depTpl} AND TARGET ${depTpl}::all_libs)
-      set(cmakeTplDir "${extPkgConfigFileBaseDir}/${depTpl}")
-      string(APPEND configFileStr
-        "include(\"${cmakeTplDir}/${depTpl}Config.cmake\")\n")
-    endif()
-  endforeach()
-  # NOTE: Above, every TPL does not have a <tplName>Config.cmake file written
-  # for it.  For example, special TPLs like "MPI" don't have this file created
-  # or have an MPI::all_libs target corrected.  Therefore, we check for the
-  # definition of the target <tplName>::all_libs before we include the file
-  # above.
+  # NOTE: Above, every external package/TPL does not have a
+  # <tplName>Config.cmake file written for it.  For example, special TPLs like
+  # "MPI" don't have this file created or have an MPI::all_libs target
+  # created.  Therefore, we check for the definition of the target
+  # <tplName>::all_libs before we include the file above.  Also, note that in
+  # the future, compliant external packages that don't need a wrapper
+  # <tplName>Config.cmake file created for them will not have a wrapper
+  # located under "${extPkgConfigFileBaseDir}/".  In that case, we will need
+  # to refactor the code to set <tplName>_DIR and then run find_dependency().
 
   # Set the output
   set(${PARSE_CONFIG_FILE_STR_INOUT} "${configFileStr}" PARENT_SCOPE)

@@ -86,8 +86,9 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
   setup_write_specialized_package_export_makefile_test_stuff()
 
   # Debugging
-  set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  set(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
+  set(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
 
   set(${PROJECT_NAME}_ENABLE_RTOp ON)
   set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
@@ -174,8 +175,8 @@ function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
   setup_write_specialized_package_export_makefile_test_stuff()
 
   # Debugging
-  set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  set(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
 
   set(${PROJECT_NAME}_ENABLE_RTOp ON)
   set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
