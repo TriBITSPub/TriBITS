@@ -49,7 +49,6 @@ include(TribitsAdjustPackageEnables)
 
 
 macro(unittest_helper_read_and_process_packages)
-
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
   set(${PROJECT_NAME}_TPLS_FILE "dummy")
   tribits_process_tpls_lists(${PROJECT_NAME} ".")
@@ -63,7 +62,8 @@ macro(unittest_helper_read_and_process_packages)
   foreach(SE_PKG ${${PROJECT_NAME}_SE_PACKAGES})
     global_set(${SE_PKG}_FULL_ENABLED_DEP_PACKAGES)
   endforeach()
+  tribits_print_enables_before_adjust_package_enables()
   tribits_adjust_package_enables(TRUE)
+  tribits_print_enables_after_adjust_package_enables()
   tribits_set_up_enabled_only_dependencies()
-
 endmacro()

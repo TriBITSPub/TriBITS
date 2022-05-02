@@ -41,6 +41,7 @@
 include(TribitsProcessPackagesAndDirsLists)
 include(TribitsAddOptionAndDefine)
 include(TribitsGeneralMacros)
+include(TribitsPrintEnabledPackagesLists)
 
 include(AdvancedOption)
 include(AdvancedSet)
