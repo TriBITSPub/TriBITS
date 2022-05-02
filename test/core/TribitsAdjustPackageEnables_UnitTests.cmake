@@ -86,15 +86,24 @@ function(unittest_enable_no_packages)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
 
+  unittest_compare_const(MPI_PACKAGE_BUILD_STATUS "EXTERNAL")
+  unittest_compare_const(BLAS_PACKAGE_BUILD_STATUS "EXTERNAL")
+  unittest_compare_const(LAPACK_PACKAGE_BUILD_STATUS "EXTERNAL")
+  unittest_compare_const(Boost_PACKAGE_BUILD_STATUS "EXTERNAL")
+
+  unittest_compare_const(Teuchos_PACKAGE_BUILD_STATUS "INTERNAL")
   unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "")
   unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
 
+  unittest_compare_const(RTOp_PACKAGE_BUILD_STATUS "INTERNAL")
   unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "")
   unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
 
+  unittest_compare_const(Ex2Package1_PACKAGE_BUILD_STATUS "INTERNAL")
   unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "")
   unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
 
+  unittest_compare_const(Ex2Package2_PACKAGE_BUILD_STATUS "INTERNAL")
   unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "")
   unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
 
@@ -629,4 +638,4 @@ unittest_enable_tribits_is_primary_meta_project_package_enable_teuchos_forward()
 unittest_enable_tribits_is_primary_meta_project_package_enable_teuchos_tests_rtop_forward()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(168)
+unittest_final_result(176)

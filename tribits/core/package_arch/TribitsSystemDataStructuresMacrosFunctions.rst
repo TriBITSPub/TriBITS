@@ -66,7 +66,7 @@ out on the system as pre-built/pre-installed packages using
 ``find_package(<externalPackageName>)``.  The final decision for if a package
 is treated as an internal or external package is determined by the variable::
 
-  ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
+  ${PACKAGE_NAME}_PACKAGE_BUILD_STATUS=[INTERNAL|EXTERNAL]
 
 which gets set various criteria as described in section `Determining if a
 package is internal or external`_.  This variable determines what
@@ -274,7 +274,7 @@ or::
 The final status of whether a listed package is an internal package or an
 external package is provided by the variable::
 
-  ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
+  ${PACKAGE_NAME}_PACKAGE_BUILD_STATUS=[INTERNAL|EXTERNAL]
 
 As a result, every other package upstream from any of these
 ``<ExternalPackage>`` packages must therefore also be treated as external
