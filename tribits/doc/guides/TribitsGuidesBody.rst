@@ -315,21 +315,20 @@ CMake language behavior with respect to case sensitivity is also strange:
 * Calls of built-in and user-defined macros and functions is *case
   insensitive*!  That is ``set(...)``, ``set(...)``, ``set()``, and all other
   combinations of upper and lower case characters for 'S', 'E', 'T' all call
-  the built-in ``set()`` function.  The convention in TriBITS is to use all
-  caps for functions and macros (which was adopted by following the
-  conventions used in the early versions of TriBITS, see the `History of
-  TriBITS`_).  The convention in CMake literature from Kitware seems to use
-  lower-case letters for functions and macros.
+  the built-in ``set()`` function.  The convention in TriBITS is to use
+  ``lower_case_with_underscores()`` for functions and macros.
 
 * However, the names of CMake (local or cache/global) variables are *case
   sensitive*!  That is, ``SOME_VAR`` and ``some_var`` are *different*
   variables.  Built-in CMake variables tend use all caps with underscores
   (e.g. ``CMAKE_CURRENT_SOURCE_DIR``) but other built-in CMake variables tend
   to use mixed case with underscores (e.g. ``CMAKE_Fortran_FLAGS``).  TriBITS
-  tends to use a similar naming convention where variables have mostly
-  upper-case letters except for parts that are proper nouns like the project,
-  package or TPL name (e.g. ``TribitsExProj_TRIBITS_DIR``,
-  ``TriBITS_SOURCE_DIR``, ``Boost_INCLUDE_DIRS``).
+  tends to use a similar naming convention where project-level and cache
+  variables have mostly upper-case letters except for parts that are proper
+  nouns like the project, package or TPL name
+  (e.g. ``TribitsExProj_TRIBITS_DIR``, ``TriBITS_SOURCE_DIR``,
+  ``Boost_INCLUDE_DIRS``).  Local variables and function/macro parameters can
+  use camelCase or lower_case_with_underscores.
 
 I don't know of any other programming language that uses different case
 sensitivity rules for variables and functions.  However, because we must parse
@@ -341,7 +340,7 @@ keyword-based arguments.
 Other mistakes that people make result from not understanding how CMake scopes
 variables and other entities.  CMake defines a global scope (i.e. "cache"
 variables) and several nested local scopes that are created by
-``add_subdirectory()`` and entering FUNCTIONS.  See `dual_scope_set()`_ for a
+``add_subdirectory()`` and entering functions.  See `dual_scope_set()`_ for a
 short discussion of these scoping rules.  And it is not just variables that
 can have local and global scoping rules.  Other entities, like defines set
 with the built-in command ``add_definitions()`` only apply to the local scope
