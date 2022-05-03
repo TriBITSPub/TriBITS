@@ -132,6 +132,8 @@ function(read_expected_output_file_into_regex_array  EXPECTED_OUTPUT_FILE
       #print_var(EXPECTED_REGEX_ARRAY)
     endif()
   endforeach()
+  set_property(DIRECTORY APPEND
+    PROPERTY CMAKE_CONFIGURE_DEPENDS "${EXPECTED_OUTPUT_FILE}")
   set(${EXPECTED_OUTPUT_REGEX_ARRAY_OUT} ${EXPECTED_REGEX_ARRAY} PARENT_SCOPE)
 endfunction()
 
