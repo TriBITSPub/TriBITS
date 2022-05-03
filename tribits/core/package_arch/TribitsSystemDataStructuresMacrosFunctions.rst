@@ -509,4 +509,5 @@ allow it to be efficiently tested outside of the actual build.  But there are
 a number of example projects that are part of the automated TriBITS test suite
 that do test much of the logic used in these variables.
 
-..  LocalWords:  acyclic TriBITS SUBPACKAGES CTEST subpackages
+..  LocalWords:  acyclic TriBITS SUBPACKAGES CTEST subpackages buildable TPLs TPLS
+..  LocalWords:  Subpackage CMake CMakeLists
