@@ -77,9 +77,9 @@ include(TribitsReportInvalidTribitsUsage)
 # they are used.
 #
 macro(tribits_define_linkage_vars PACKAGE_NAME_IN)
-  global_null_set(${PACKAGE_NAME_IN}_INCLUDE_DIRS)
-  global_null_set(${PACKAGE_NAME_IN}_LIBRARY_DIRS)
-  global_null_set(${PACKAGE_NAME_IN}_LIBRARIES)
+  global_null_set(${PACKAGE_NAME_IN}_INCLUDE_DIRS "")
+  global_null_set(${PACKAGE_NAME_IN}_LIBRARY_DIRS "")
+  global_null_set(${PACKAGE_NAME_IN}_LIBRARIES "")
   global_set(${PACKAGE_NAME_IN}_HAS_NATIVE_LIBRARIES_TO_INSTALL FALSE)
 endmacro()
 
@@ -622,9 +622,9 @@ function(tribits_package_finalize_dependency_vars)
     # A package with subpackages should get all of its dependency vars from
     # its enabled subpackages.
 
-    set(PARENT_PACKAGE_INCLUDE_DIRS)
-    set(PARENT_PACKAGE_LIBRARY_DIRS)
-    set(PARENT_PACKAGE_LIBRARIES)
+    set(PARENT_PACKAGE_INCLUDE_DIRS "")
+    set(PARENT_PACKAGE_LIBRARY_DIRS "")
+    set(PARENT_PACKAGE_LIBRARIES "")
 
     set(SUBPACKAGE_IDX 0)
     foreach(TRIBITS_SUBPACKAGE ${${PARENT_PACKAGE_NAME}_SUBPACKAGES})

@@ -2087,10 +2087,10 @@ macro(tribits_configure_enabled_packages)
   # A) Global variable initialization
   #
 
-  global_null_set(${PROJECT_NAME}_INCLUDE_DIRS)
-  global_null_set(${PROJECT_NAME}_LIBRARY_DIRS)
-  global_null_set(${PROJECT_NAME}_LIBRARIES)
-  global_null_set(${PROJECT_NAME}_ETI_PACKAGES)
+  global_null_set(${PROJECT_NAME}_INCLUDE_DIRS "")
+  global_null_set(${PROJECT_NAME}_LIBRARY_DIRS "")
+  global_null_set(${PROJECT_NAME}_LIBRARIES "")
+  global_null_set(${PROJECT_NAME}_ETI_PACKAGES "")
 
   #
   # B) Define the source and binary directories for all of the packages that
