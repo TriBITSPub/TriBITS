@@ -280,14 +280,14 @@ As a result, every other package upstream from any of these
 ``<ExternalPackage>`` packages must therefore also be treated as external
 packages automatically.
 
-The primary TriBITS file that processes and defines these variables is:
+The primary TriBITS file that processes and defines these variables is::
 
   TribitsAdjustPackageEnables.cmake
 
 There are pretty good unit and regression tests to demonstrate and protect
-this functionality in the directory:
+this functionality in the directory::
 
-  tribits/package_arch/UntiTests/
+  TriBITS/test/core/
 
 
 External package dependencies
@@ -416,7 +416,7 @@ Logic`_.
 There are pretty good unit and regression tests to demonstrate and protect
 this functionality in the directory::
 
-  tribits/package_arch/UntiTests/
+  TriBITS/test/core/
 
 
 Function call tree for constructing package dependency graph
