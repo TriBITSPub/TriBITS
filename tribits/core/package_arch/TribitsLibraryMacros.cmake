@@ -56,7 +56,6 @@ include(SetAndIncDirs)
 ###
 
 
-#
 # Macro that configures the package's main config.h file
 #
 function(tribits_add_config_define DEFINE)
@@ -72,7 +71,6 @@ function(tribits_add_config_define DEFINE)
 endfunction()
 
 
-#
 # @FUNCTION: tribits_configure_file()
 #
 # Macro that configures the package's main configured header file (typically
@@ -199,7 +197,6 @@ function(tribits_configure_file  PACKAGE_NAME_CONFIG_FILE)
 endfunction()
 
 
-#
 # @FUNCTION: tribits_add_library()
 #
 # Function used to add a CMake library and target using ``add_library()`` and
