@@ -652,7 +652,27 @@ function(tribits_add_executable EXE_NAME)
       message("-- ${EXE_NAME}:LINK_LIBS='${LINK_LIBS}'")
   endif()
 
-  target_link_libraries(${EXE_BINARY_NAME} PUBLIC ${LINK_LIBS})
+  #
+  # Link ${EXE_BINARY_NAME} to direct upstream libraries
+  #
+
+  target_link_libraries(${EXE_BINARY_NAME} PUBLIC ${${PACKAGE_NAME}_LIBRARIES})
+  foreach(depPkg IN LISTS ${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES)
+    if (TARGET ${depPkg}::all_libs)
+      target_link_libraries(${EXE_BINARY_NAME} PUBLIC ${depPkg}::all_libs)
+    endif()
+  endforeach()
+  foreach(depPkg IN LISTS ${PACKAGE_NAME}_TEST_ENABLED_DEPENDENCIES)
+    if (TARGET ${depPkg}::all_libs)
+      target_link_libraries(${EXE_BINARY_NAME} PUBLIC ${depPkg}::all_libs)
+    endif()
+  endforeach()
+  foreach(testOnlyLib ${PARSE_TESTONLYLIBS})
+    target_link_libraries(${EXE_BINARY_NAME} PUBLIC
+      "${LIBRARY_NAME_PREFIX}${testOnlyLib}")
+  endforeach()
+
+  #target_link_libraries(${EXE_BINARY_NAME} PUBLIC ${LINK_LIBS})
 
   assert_defined(${PROJECT_NAME}_LINK_SEARCH_START_STATIC)
   if (${PROJECT_NAME}_LINK_SEARCH_START_STATIC)

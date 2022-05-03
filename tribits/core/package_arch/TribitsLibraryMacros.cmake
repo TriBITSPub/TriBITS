@@ -867,7 +867,36 @@ function(tribits_add_library LIBRARY_NAME_IN)
       message("-- ${LIBRARY_NAME_IN}:LINK_LIBS='${LINK_LIBS}'")
     endif()
 
-    target_link_libraries(${LIBRARY_NAME} PUBLIC ${LINK_LIBS})
+    #
+    # Link ${LIBRARY_NAME} to direct upstream libraries
+    #
+
+    # DEPLIBS
+    foreach(depLib ${PARSE_DEPLIBS})
+      target_link_libraries(${LIBRARY_NAME} PUBLIC "${LIBRARY_NAME_PREFIX}${depLib}")
+    endforeach()
+    # ${PACKAGE_NAME}_LIBRARIES
+    target_link_libraries(${LIBRARY_NAME} PUBLIC ${${PACKAGE_NAME}_LIBRARIES})
+    # ${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES
+    foreach(depPkg IN LISTS ${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES)
+      if (TARGET ${depPkg}::all_libs)
+        target_link_libraries(${LIBRARY_NAME} PUBLIC ${depPkg}::all_libs)
+      endif()
+    endforeach()
+    # ${PACKAGE_NAME}_TEST_ENABLED_DEPENDENCIES
+    foreach(depPkg IN LISTS ${PACKAGE_NAME}_TEST_ENABLED_DEPENDENCIES)
+      if (TARGET ${depPkg}::all_libs)
+        target_link_libraries(${LIBRARY_NAME} PUBLIC ${depPkg}::all_libs)
+      endif()
+    endforeach()
+    # IMPORTEDLIBS
+    foreach(importedLib ${PARSE_IMPORTEDLIBS})
+      target_link_libraries(${LIBRARY_NAME} PUBLIC "${importedLib}")
+    endforeach()
+
+    # ToDo: #63: Above, allow for other link visibilities other than 'PUBLIC'!
+
+    #target_link_libraries(${LIBRARY_NAME} PUBLIC ${LINK_LIBS})
 
     if (${PROJECT_NAME}_CXX_STANDARD_FEATURE)
       target_compile_features(${LIBRARY_NAME} PUBLIC "${${PROJECT_NAME}_CXX_STANDARD_FEATURE}")
