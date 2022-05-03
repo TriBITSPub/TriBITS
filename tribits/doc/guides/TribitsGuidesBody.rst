@@ -1781,7 +1781,13 @@ defined before a (SE) Package's ``CMakeLists.txt`` file is processed:
 
   ``${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}``
 
-    Set to ``ON`` if the package is enabled and is to be processed.
+    Set to ``ON`` if the package is enabled and is to be processed or will be
+    set to ``ON`` or ``OFF`` automatically during enable/disable logic.  For a
+    parent package that is not directly enabled but were one of its
+    subpackages is enabled, this will get set to ``ON`` (but that is not the
+    same as the parent package being directly enabled and therefore does not
+    imply that all of the required subpackages will be enabled, only that the
+    parent package will be processed).
 
   .. _${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}:
 
@@ -1803,6 +1809,10 @@ defined before a (SE) Package's ``CMakeLists.txt`` file is processed:
     turned off by the user even through the packages ``${PACKAGE_NAME}`` and
     ``${OPTIONAL_DEP_PACKAGE_NAME}`` are both enabled at the project level!
     See `Support for optional SE package/TPL can be explicitly disabled`_.
+
+    **NOTE:** This variable will also be set for required dependencies as well
+    to allow for uniform processing such as when looping over the items in
+    `${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES`_.
 
   .. _${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}:
 
@@ -3489,8 +3499,16 @@ In more detail, these rules/behaviors are:
     `downstream`_ package declares a dependency on the SE package
     ``ThyraEpetra``, but not the parent package ``Thyra``, then the ``Thyra``
     package (and its other subpackages and their dependencies) will not get
-    auto-enabled.  This is a key aspect of the TriBITS SE package management
-    system.
+    auto-enabled.  Also note that enabling a subset of the required
+    subpackages for a parent package does not require the enable of the other
+    required subpackages.  For example, if both ``ThyraEpetra`` and
+    ``ThyraCore`` were both required subpackages of the parent package
+    ``Thyra``, then enabling ``ThyraCore`` does not require the enabling of
+    ``ThyraEpetra``.  In these cases where one of a parent package's
+    subpackages is enabled for some reason, the final value of
+    ``${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}`` will be set to ``ON`` (but this
+    does imply that all of the required subpackages will be enabled, only that
+    the parent package will be processed.)
 
 .. _Support for optional SE package/TPL is enabled by default:
 
