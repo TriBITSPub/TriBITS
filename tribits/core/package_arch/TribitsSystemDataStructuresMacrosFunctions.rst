@@ -10,13 +10,19 @@ graph of external packages (i.e. TPLs) and internal packages (i.e. buildable
 CMake packages).  This information is meant for maintainers of the TriBITS
 system itself and should not need to be known by TriBITS Project maintainers.
 
-In addition to the variables listed below are the variables documented in:
+Basic TriBITS Project, Repository, Package, and Subpackage Core Variables
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The basic variables that define a TriBITS Project, Repository, Package and
+Subpackage are listed at the below links:
 
 * `TriBITS Project Core Variables`_
 * `TriBITS Repository Core Variables`_
 * `TriBITS Package Core Variables`_
 * `TriBITS Subpackage Core Variables`_
 
+These are variables that can be accessed by `TriBITS Project Developers`_ but
+are also used in the internal implementation of TriBITS functionality.
 
 Lists of external and internal packages
 +++++++++++++++++++++++++++++++++++++++
