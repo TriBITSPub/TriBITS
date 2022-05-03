@@ -527,8 +527,8 @@ function(tribits_add_library LIBRARY_NAME_IN)
   endif()
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    print_var(${PACKAGE_NAME}_INCLUDE_DIRS)
-    print_var(${PACKAGE_NAME}_LIBRARY_DIRS)
+    #print_var(${PACKAGE_NAME}_INCLUDE_DIRS)
+    #print_var(${PACKAGE_NAME}_LIBRARY_DIRS)
     print_var(${PACKAGE_NAME}_LIBRARIES)
   endif()
 
@@ -568,8 +568,8 @@ function(tribits_add_library LIBRARY_NAME_IN)
 
     # Add the link directory for this library.
 
-    set_property(DIRECTORY  APPEND  PROPERTY  PACKAGE_LIBRARY_DIRS
-      ${CMAKE_CURRENT_BINARY_DIR})
+    #set_property(DIRECTORY  APPEND  PROPERTY  PACKAGE_LIBRARY_DIRS
+    #  ${CMAKE_CURRENT_BINARY_DIR})
 
     # NOTE: Above, this link path not really used here for anything.
     # Instead it is just added to the other set link library directories
@@ -583,8 +583,8 @@ function(tribits_add_library LIBRARY_NAME_IN)
 
     # Add whatever link directories have been added so far
 
-    set_property(DIRECTORY  APPEND  PROPERTY  PACKAGE_LIBRARY_DIRS
-      ${${PACKAGE_NAME}_LIBRARY_DIRS})
+    #set_property(DIRECTORY  APPEND  PROPERTY  PACKAGE_LIBRARY_DIRS
+    #  ${${PACKAGE_NAME}_LIBRARY_DIRS})
 
     # Local variable to hold all of the libraries that will be directly linked
     # to this library.
@@ -659,11 +659,11 @@ function(tribits_add_library LIBRARY_NAME_IN)
         # this case we just hope that this SE package correctly specified a
         # TEST dependency on the upstream SE package that owns this upstream
         # TESTONLY library.
-        if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-          message("-- "
-            "Adding include directories for TESTONLY ${PREFIXED_LIB}_INCLUDE_DIRS ...")
-        endif()
-        include_directories(${${PREFIXED_LIB}_INCLUDE_DIRS})
+        #if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+        #  message("-- "
+        #    "Adding include directories for TESTONLY ${PREFIXED_LIB}_INCLUDE_DIRS ...")
+        #endif()
+        #include_directories(${${PREFIXED_LIB}_INCLUDE_DIRS})
       elseif (NOT PARSE_TESTONLY AND libIsTestOnlyLib) # LIB_IN_SE_PKG=TRUE/FASLE
         message(WARNING "WARNING: '${LIB}' in DEPLIBS is a TESTONLY lib"
           " and it is illegal to link to this non-TESTONLY library '${LIBRARY_NAME}'."
@@ -754,11 +754,11 @@ function(tribits_add_library LIBRARY_NAME_IN)
           " for TEST dependencies ...")
       endif()
 
-      tribits_sort_and_append_package_include_and_link_dirs_and_libs(
-        ${PACKAGE_NAME}  TEST  LINK_LIBS)
-
-      tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
-        ${PACKAGE_NAME}  TEST  LINK_LIBS)
+      #tribits_sort_and_append_package_include_and_link_dirs_and_libs(
+      #  ${PACKAGE_NAME}  TEST  LINK_LIBS)
+      #
+      #tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
+      #  ${PACKAGE_NAME}  TEST  LINK_LIBS)
 
     endif()
 
@@ -787,11 +787,11 @@ function(tribits_add_library LIBRARY_NAME_IN)
       # property and set on ${PACKAGE_NAME}_INCLUDE_DIRS
       #
 
-      tribits_sort_and_append_package_include_and_link_dirs_and_libs(
-        ${PACKAGE_NAME}  LIB  LINK_LIBS)
-
-      tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
-        ${PACKAGE_NAME}  LIB  LINK_LIBS)
+      #tribits_sort_and_append_package_include_and_link_dirs_and_libs(
+      #  ${PACKAGE_NAME}  LIB  LINK_LIBS)
+      #
+      #tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
+      #  ${PACKAGE_NAME}  LIB  LINK_LIBS)
 
     endif()
 
@@ -966,16 +966,16 @@ function(tribits_add_library LIBRARY_NAME_IN)
     # Append the new include dirs, library dirs, and libraries to this package's lists
 
     get_directory_property(INCLUDE_DIRS_CURRENT  INCLUDE_DIRECTORIES)
-    get_directory_property(LIBRARY_DIRS_CURRENT  PACKAGE_LIBRARY_DIRS)
+    #get_directory_property(LIBRARY_DIRS_CURRENT  PACKAGE_LIBRARY_DIRS)
 
     if (APPEND_LIB_AND_HEADERS_TO_PACKAGE)
 
-      prepend_global_set(${PACKAGE_NAME}_INCLUDE_DIRS  ${INCLUDE_DIRS_CURRENT})
-      prepend_global_set(${PACKAGE_NAME}_LIBRARY_DIRS  ${LIBRARY_DIRS_CURRENT})
+      #prepend_global_set(${PACKAGE_NAME}_INCLUDE_DIRS  ${INCLUDE_DIRS_CURRENT})
+      #prepend_global_set(${PACKAGE_NAME}_LIBRARY_DIRS  ${LIBRARY_DIRS_CURRENT})
       prepend_global_set(${PACKAGE_NAME}_LIBRARIES  ${PACKAGE_NAME}::${LIBRARY_NAME})
 
-      remove_global_duplicates(${PACKAGE_NAME}_INCLUDE_DIRS)
-      remove_global_duplicates(${PACKAGE_NAME}_LIBRARY_DIRS)
+      #remove_global_duplicates(${PACKAGE_NAME}_INCLUDE_DIRS)
+      #remove_global_duplicates(${PACKAGE_NAME}_LIBRARY_DIRS)
       remove_global_duplicates(${PACKAGE_NAME}_LIBRARIES)
 
       if (INSTALL_LIB)
@@ -990,26 +990,21 @@ function(tribits_add_library LIBRARY_NAME_IN)
       endif()
 
       list(REMOVE_DUPLICATES INCLUDE_DIRS_CURRENT)
-      global_set(${LIBRARY_NAME}_INCLUDE_DIRS ${INCLUDE_DIRS_CURRENT})
+      #global_set(${LIBRARY_NAME}_INCLUDE_DIRS ${INCLUDE_DIRS_CURRENT})
 
-      if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        print_var(${LIBRARY_NAME}_INCLUDE_DIRS)
-      endif()
+      #if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      #  print_var(${LIBRARY_NAME}_INCLUDE_DIRS)
+      #endif()
 
     endif()
 
     # Set INTERFACE_INCLUDE_DIRECTOIRES property for added library and must
     # only do for the build interface (not the install interface).
     set(buildInterfaceIncludeDirs)
-    foreach (includeDir IN LISTS ${PACKAGE_NAME}_INCLUDE_DIRS)
+    foreach (includeDir IN LISTS INCLUDE_DIRS_CURRENT)
       list(APPEND buildInterfaceIncludeDirs "$<BUILD_INTERFACE:${includeDir}>")
     endforeach()
     target_include_directories( ${LIBRARY_NAME} PUBLIC ${buildInterfaceIncludeDirs} )
-    # ToDo: #299: In the final refactoring, the list of include directories
-    # for this library should be extracted from the directory property
-    # INCLUDE_DIRECTORIES and then set INTERFACE instead of PUBLIC above.  The
-    # rest of the include directories from upstream packages should come from
-    # the targets that have their INTERFACE_INCLUDE_DIRECTORIES property set.
 
     # Add ALIAS library <PackageName>::<libname>
     add_library(${PACKAGE_NAME}::${LIBRARY_NAME} ALIAS ${LIBRARY_NAME})
@@ -1035,17 +1030,17 @@ function(tribits_add_library LIBRARY_NAME_IN)
         "  Please disable package ${PACKAGE_NAME} or install it.")
     endif()
 
-    include_directories(REQUIRED_DURING_INSTALLATION_TESTING  BEFORE
-       ${${PACKAGE_NAME}_INSTALLATION_INCLUDE_DIRS}
-       ${${TRIBITS_PACKAGE}_INSTALLATION_TPL_INCLUDE_DIRS})
-    set_property(DIRECTORY APPEND PROPERTY PACKAGE_LIBRARY_DIRS
-      ${${PACKAGE_NAME}_INSTALLATION_LIBRARY_DIRS})
+    #include_directories(REQUIRED_DURING_INSTALLATION_TESTING  BEFORE
+    #   ${${PACKAGE_NAME}_INSTALLATION_INCLUDE_DIRS}
+    #   ${${TRIBITS_PACKAGE}_INSTALLATION_TPL_INCLUDE_DIRS})
+    #set_property(DIRECTORY APPEND PROPERTY PACKAGE_LIBRARY_DIRS
+    #  ${${PACKAGE_NAME}_INSTALLATION_LIBRARY_DIRS})
 
-    get_directory_property(INCLUDE_DIRS_CURRENT INCLUDE_DIRECTORIES)
-    get_directory_property(LIBRARY_DIRS_CURRENT PACKAGE_LIBRARY_DIRS)
+    #get_directory_property(INCLUDE_DIRS_CURRENT INCLUDE_DIRECTORIES)
+    #get_directory_property(LIBRARY_DIRS_CURRENT PACKAGE_LIBRARY_DIRS)
 
-    global_set(${PACKAGE_NAME}_INCLUDE_DIRS ${INCLUDE_DIRS_CURRENT})
-    global_set(${PACKAGE_NAME}_LIBRARY_DIRS ${LIBRARY_DIRS_CURRENT})
+    #global_set(${PACKAGE_NAME}_INCLUDE_DIRS ${INCLUDE_DIRS_CURRENT})
+    #global_set(${PACKAGE_NAME}_LIBRARY_DIRS ${LIBRARY_DIRS_CURRENT})
     global_set(${PACKAGE_NAME}_LIBRARIES    ${${PACKAGE_NAME}_INSTALLATION_LIBRARIES})
 
   endif() #installation testing mode
@@ -1055,8 +1050,8 @@ function(tribits_add_library LIBRARY_NAME_IN)
   #
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    print_var(${PACKAGE_NAME}_INCLUDE_DIRS)
-    print_var(${PACKAGE_NAME}_LIBRARY_DIRS)
+    #print_var(${PACKAGE_NAME}_INCLUDE_DIRS)
+    #print_var(${PACKAGE_NAME}_LIBRARY_DIRS)
     print_var(${PACKAGE_NAME}_LIBRARIES)
   endif()
 

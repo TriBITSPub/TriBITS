@@ -2087,8 +2087,8 @@ macro(tribits_configure_enabled_packages)
   # A) Global variable initialization
   #
 
-  global_null_set(${PROJECT_NAME}_INCLUDE_DIRS "")
-  global_null_set(${PROJECT_NAME}_LIBRARY_DIRS "")
+  #global_null_set(${PROJECT_NAME}_INCLUDE_DIRS "")
+  #global_null_set(${PROJECT_NAME}_LIBRARY_DIRS "")
   global_null_set(${PROJECT_NAME}_LIBRARIES "")
   global_null_set(${PROJECT_NAME}_ETI_PACKAGES "")
 
@@ -2192,8 +2192,8 @@ macro(tribits_configure_enabled_packages)
         endif()
 
         list(APPEND ENABLED_PACKAGE_LIBS_TARGETS ${TRIBITS_PACKAGE}_libs)
-        list(APPEND ${PROJECT_NAME}_INCLUDE_DIRS ${${TRIBITS_PACKAGE}_INCLUDE_DIRS})
-        list(APPEND ${PROJECT_NAME}_LIBRARY_DIRS ${${TRIBITS_PACKAGE}_LIBRARY_DIRS})
+        #list(APPEND ${PROJECT_NAME}_INCLUDE_DIRS ${${TRIBITS_PACKAGE}_INCLUDE_DIRS})
+        #list(APPEND ${PROJECT_NAME}_LIBRARY_DIRS ${${TRIBITS_PACKAGE}_LIBRARY_DIRS})
         list(APPEND ${PROJECT_NAME}_LIBRARIES ${${TRIBITS_PACKAGE}_LIBRARIES})
 
         tribits_package_config_code_stop_timer(PROCESS_THIS_PACKAGE_TIME_START_SECONDS
@@ -2272,8 +2272,8 @@ macro(tribits_configure_enabled_packages)
 
   if (NOT ${PROJECT_NAME}_TRACE_DEPENDENCY_HANDLING_ONLY)
 
-    remove_global_duplicates(${PROJECT_NAME}_INCLUDE_DIRS)
-    remove_global_duplicates(${PROJECT_NAME}_LIBRARY_DIRS)
+    #remove_global_duplicates(${PROJECT_NAME}_INCLUDE_DIRS)
+    #remove_global_duplicates(${PROJECT_NAME}_LIBRARY_DIRS)
     remove_global_duplicates(${PROJECT_NAME}_LIBRARIES)
 
     # Add global 'libs' target

@@ -78,8 +78,8 @@ include(TribitsReportInvalidTribitsUsage)
 # they are used.
 #
 macro(tribits_define_linkage_vars PACKAGE_NAME_IN)
-  global_null_set(${PACKAGE_NAME_IN}_INCLUDE_DIRS "")
-  global_null_set(${PACKAGE_NAME_IN}_LIBRARY_DIRS "")
+  #global_null_set(${PACKAGE_NAME_IN}_INCLUDE_DIRS "")
+  #global_null_set(${PACKAGE_NAME_IN}_LIBRARY_DIRS "")
   global_null_set(${PACKAGE_NAME_IN}_LIBRARIES "")
   global_set(${PACKAGE_NAME_IN}_HAS_NATIVE_LIBRARIES_TO_INSTALL FALSE)
 endmacro()
@@ -623,8 +623,8 @@ function(tribits_package_finalize_dependency_vars)
     # A package with subpackages should get all of its dependency vars from
     # its enabled subpackages.
 
-    set(PARENT_PACKAGE_INCLUDE_DIRS "")
-    set(PARENT_PACKAGE_LIBRARY_DIRS "")
+    #set(PARENT_PACKAGE_INCLUDE_DIRS "")
+    #set(PARENT_PACKAGE_LIBRARY_DIRS "")
     set(PARENT_PACKAGE_LIBRARIES "")
 
     set(SUBPACKAGE_IDX 0)
@@ -634,10 +634,10 @@ function(tribits_package_finalize_dependency_vars)
       set(SUBPACKAGE_FULLNAME ${PARENT_PACKAGE_NAME}${TRIBITS_SUBPACKAGE})
 
       if (${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
-        prepend_set(PARENT_PACKAGE_INCLUDE_DIRS
-          ${${SUBPACKAGE_FULLNAME}_INCLUDE_DIRS})
-        prepend_set(PARENT_PACKAGE_LIBRARY_DIRS
-          ${${SUBPACKAGE_FULLNAME}_LIBRARY_DIRS})
+        #prepend_set(PARENT_PACKAGE_INCLUDE_DIRS
+        #  ${${SUBPACKAGE_FULLNAME}_INCLUDE_DIRS})
+        #prepend_set(PARENT_PACKAGE_LIBRARY_DIRS
+        #  ${${SUBPACKAGE_FULLNAME}_LIBRARY_DIRS})
         prepend_set(PARENT_PACKAGE_LIBRARIES
           ${${SUBPACKAGE_FULLNAME}_LIBRARIES})
       endif()
@@ -646,12 +646,12 @@ function(tribits_package_finalize_dependency_vars)
 
     endforeach()
 
-    if (PARENT_PACKAGE_INCLUDE_DIRS)
-      list(REMOVE_DUPLICATES PARENT_PACKAGE_INCLUDE_DIRS)
-    endif()
-    if (PARENT_PACKAGE_LIBRARY_DIRS)
-      list(REMOVE_DUPLICATES PARENT_PACKAGE_LIBRARY_DIRS)
-    endif()
+    #if (PARENT_PACKAGE_INCLUDE_DIRS)
+    #  list(REMOVE_DUPLICATES PARENT_PACKAGE_INCLUDE_DIRS)
+    #endif()
+    #if (PARENT_PACKAGE_LIBRARY_DIRS)
+    #  list(REMOVE_DUPLICATES PARENT_PACKAGE_LIBRARY_DIRS)
+    #endif()
     # NOTE: Above, in the rare case that none of the subpackages contain any
     # libraries or any include directories, we need to not call
     # list(REMOVE_DUPLICATES ...).
@@ -659,27 +659,27 @@ function(tribits_package_finalize_dependency_vars)
     # NOTE: There can't be any duplicate libraries in PARENT_PACKAGE_LIBRARIES
     # so no need to remove them.
 
-    global_set(${PACKAGE_NAME}_INCLUDE_DIRS "${PARENT_PACKAGE_INCLUDE_DIRS}")
-    global_set(${PACKAGE_NAME}_LIBRARY_DIRS "${PARENT_PACKAGE_LIBRARY_DIRS}")
+    #global_set(${PACKAGE_NAME}_INCLUDE_DIRS "${PARENT_PACKAGE_INCLUDE_DIRS}")
+    #global_set(${PACKAGE_NAME}_LIBRARY_DIRS "${PARENT_PACKAGE_LIBRARY_DIRS}")
     global_set(${PACKAGE_NAME}_LIBRARIES "${PARENT_PACKAGE_LIBRARIES}")
 
-  elseif(NOT ${PACKAGE_NAME}_INCLUDE_DIRS)
+#  elseif(NOT ${PACKAGE_NAME}_INCLUDE_DIRS)
 
     # No libraries have been defined for this package so we are going to set
     # them based on this package's dependencies.
 
-    tribits_sort_and_append_package_include_and_link_dirs_and_libs(
-      ${PACKAGE_NAME}  LIB  LINK_LIBS)
+    #tribits_sort_and_append_package_include_and_link_dirs_and_libs(
+    #  ${PACKAGE_NAME}  LIB  LINK_LIBS)
+    #
+    #tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
+    #  ${PACKAGE_NAME}  LIB  LINK_LIBS)
 
-    tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
-      ${PACKAGE_NAME}  LIB  LINK_LIBS)
+    #get_directory_property(INCLUDE_DIRS_CURRENT  INCLUDE_DIRECTORIES)
+    #get_directory_property(LIBRARY_DIRS_CURRENT  PACKAGE_LIBRARY_DIRS)
 
-    get_directory_property(INCLUDE_DIRS_CURRENT  INCLUDE_DIRECTORIES)
-    get_directory_property(LIBRARY_DIRS_CURRENT  PACKAGE_LIBRARY_DIRS)
-
-    prepend_global_set(${PACKAGE_NAME}_INCLUDE_DIRS  ${INCLUDE_DIRS_CURRENT})
-    prepend_global_set(${PACKAGE_NAME}_LIBRARY_DIRS  ${LIBRARY_DIRS_CURRENT})
-    prepend_global_set(${PACKAGE_NAME}_LIBRARIES  ${LINK_LIBS})
+    #prepend_global_set(${PACKAGE_NAME}_INCLUDE_DIRS  ${INCLUDE_DIRS_CURRENT})
+    #prepend_global_set(${PACKAGE_NAME}_LIBRARY_DIRS  ${LIBRARY_DIRS_CURRENT})
+    #prepend_global_set(${PACKAGE_NAME}_LIBRARIES  ${LINK_LIBS})
 
   endif()
 
@@ -692,8 +692,8 @@ macro(tribits_package_postprocess_common)
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
     message("\nTRIBITS_PACKAGE_POSTPROCESS_COMMON: ${PACKAGE_NAME}")
-    print_var(${PACKAGE_NAME}_INCLUDE_DIRS)
-    print_var(${PACKAGE_NAME}_LIBRARY_DIRS)
+    #print_var(${PACKAGE_NAME}_INCLUDE_DIRS)
+    #print_var(${PACKAGE_NAME}_LIBRARY_DIRS)
     print_var(${PACKAGE_NAME}_LIBRARIES)
   endif()
 

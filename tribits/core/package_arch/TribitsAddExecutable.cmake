@@ -427,8 +427,8 @@ function(tribits_add_executable EXE_NAME)
   set(LIBRARY_NAME_PREFIX "${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}")
 
   if (NOT TRIBITS_ADD_EXECUTABLE_UNIT_TESTING)
-    tribits_include_directories(REQUIRED_DURING_INSTALLATION_TESTING
-      ${${PACKAGE_NAME}_INCLUDE_DIRS})
+    #tribits_include_directories(REQUIRED_DURING_INSTALLATION_TESTING
+    #  ${${PACKAGE_NAME}_INCLUDE_DIRS})
 #    set_property(DIRECTORY APPEND PROPERTY PACKAGE_LIBRARY_DIRS
 #      ${${PACKAGE_NAME}_LIBRARY_DIRS})
   endif()
@@ -556,10 +556,10 @@ function(tribits_add_executable EXE_NAME)
     set(TESTONLYLIB "${LIBRARY_NAME_PREFIX}${TESTONLYLIB_IN}")
     tribits_lib_is_testonly(${TESTONLYLIB} libIsTestOnlyLib)
     if (libIsTestOnlyLib)
-      if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        message(STATUS "Adding include directories ${TESTONLYLIB}_INCLUDE_DIRS ...")
-      endif()
-      include_directories(${${TESTONLYLIB}_INCLUDE_DIRS})
+      #if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      #  message(STATUS "Adding include directories ${TESTONLYLIB}_INCLUDE_DIRS ...")
+      #endif()
+      #include_directories(${${TESTONLYLIB}_INCLUDE_DIRS})
     endif()
   endforeach()
 
@@ -622,23 +622,23 @@ function(tribits_add_executable EXE_NAME)
   # dependent Packages and TPLs and accumulate the list of libraries that will
   # need to be linked to.
 
-  if(NOT ${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING
-    AND NOT ${PACKAGE_NAME}_INCLUDE_DIRS
-    )
-    # No libraries have been added for this package so
-    # add the upstream package and TPL includes and libraries
-    tribits_sort_and_append_package_include_and_link_dirs_and_libs(
-      ${PACKAGE_NAME}  LIB  LINK_LIBS)
-    tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
-      ${PACKAGE_NAME}  LIB  LINK_LIBS)
-  endif()
+#  if(NOT ${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING
+#    AND NOT ${PACKAGE_NAME}_INCLUDE_DIRS
+#    )
+#    # No libraries have been added for this package so
+#    # add the upstream package and TPL includes and libraries
+#    #tribits_sort_and_append_package_include_and_link_dirs_and_libs(
+#    #  ${PACKAGE_NAME}  LIB  LINK_LIBS)
+#    #tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
+#    #  ${PACKAGE_NAME}  LIB  LINK_LIBS)
+#  endif()
 
-  tribits_sort_and_append_package_include_and_link_dirs_and_libs(
-    ${PACKAGE_NAME}  TEST  LINK_LIBS)
+  #tribits_sort_and_append_package_include_and_link_dirs_and_libs(
+  #  ${PACKAGE_NAME}  TEST  LINK_LIBS)
 
   if(NOT ${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING)
-    tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
-      ${PACKAGE_NAME}  TEST  LINK_LIBS)
+    #tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
+    #  ${PACKAGE_NAME}  TEST  LINK_LIBS)
   else()
     list(APPEND LINK_LIBS ${${PACKAGE_NAME}_INSTALLATION_TPL_LIBRARIES})
   endif()
