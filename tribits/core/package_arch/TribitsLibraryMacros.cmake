@@ -38,6 +38,7 @@
 # @HEADER
 
 include(TribitsCreateClientTemplateHeaders)
+include(TribitsLibIsTestOnly)
 include(CMakeParseArguments)
 include(GlobalSet)
 include(AppendSet)
@@ -636,27 +637,23 @@ function(tribits_add_library LIBRARY_NAME_IN)
         set(LIB_IN_SE_PKG FALSE)
       endif()
 
-      # PREFIXED_LIB_IS_TESTONLY?
-      if (${PREFIXED_LIB}_INCLUDE_DIRS)
-        set(LIB_TESTONLY TRUE)
-      else()
-        set(LIB_TESTONLY FALSE)
-      endif()
+      # ${PREFIXED_LIB" is TESTONLY?
+      tribits_lib_is_testonly(${PREFIXED_LIB} libIsTestOnlyLib)
 
       # Check for valid usage (sorted by most common to least common)
-      if (LIB_IN_SE_PKG AND NOT LIB_TESTONLY) #PARSE_TESTONLY=TRUE/FASLE
+      if (LIB_IN_SE_PKG AND NOT libIsTestOnlyLib) #PARSE_TESTONLY=TRUE/FASLE
         # The library being created here is a library dependent on a regular
         # (non-TESTONLY) lib in this SE package.  This is valid usage of
         # DEPLIBS.  There is no need to link this new lib to the SE package's
         # upstream dependent SE package and TPL libraries because thse are
         # already linked into the lib ${LIB}.
         set(ADD_DEP_PACKAGE_AND_TPL_LIBS FALSE)
-      elseif (PARSE_TESTONLY AND LIB_IN_SE_PKG AND NOT LIB_TESTONLY)
+      elseif (PARSE_TESTONLY AND LIB_IN_SE_PKG AND NOT libIsTestOnlyLib)
         # The library being created here is TESTONLY library and is
         # dependent on a regular (non-TESTONLY) lib.  This is valid usage of
         # DEPLIBS.  In the case of test-only libraries, we always link in
         # the upstream libs.
-      elseif (PARSE_TESTONLY AND LIB_TESTONLY) # LIB_IN_SE_PKG=TRUE/FASLE
+      elseif (PARSE_TESTONLY AND libIsTestOnlyLib) # LIB_IN_SE_PKG=TRUE/FASLE
         # The library being created here is TESTONLY library and is dependent
         # on another TESTONLY library.  This is valid usage of DEPLIBS.  In
         # this case we just hope that this SE package correctly specified a
@@ -667,7 +664,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
             "Adding include directories for TESTONLY ${PREFIXED_LIB}_INCLUDE_DIRS ...")
         endif()
         include_directories(${${PREFIXED_LIB}_INCLUDE_DIRS})
-      elseif (NOT PARSE_TESTONLY AND LIB_TESTONLY) # LIB_IN_SE_PKG=TRUE/FASLE
+      elseif (NOT PARSE_TESTONLY AND libIsTestOnlyLib) # LIB_IN_SE_PKG=TRUE/FASLE
         message(WARNING "WARNING: '${LIB}' in DEPLIBS is a TESTONLY lib"
           " and it is illegal to link to this non-TESTONLY library '${LIBRARY_NAME}'."
           "  Such usage is deprecated (and this warning will soon become an error)!"
@@ -698,7 +695,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
           " through a proper TriBITS TPL is the C math library 'm'.")
       else()
         message(WARNING "WARNING: The case PARSE_TESTONLY=${PARSE_TESTONLY},"
-          " LIB_IN_SE_PKG=${LIB_IN_SE_PKG}, LIB_TESTONLY=${LIB_TESTONLY}, has"
+          " LIB_IN_SE_PKG=${LIB_IN_SE_PKG}, libIsTestOnlyLib=${libIsTestOnlyLib}, has"
           " not yet been handled!")
       endif()
 
@@ -716,7 +713,8 @@ function(tribits_add_library LIBRARY_NAME_IN)
       set(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${IMPORTEDLIB}")
       list(FIND ${PACKAGE_NAME}_LIBRARIES "${PACKAGE_NAME}::${PREFIXED_LIB}"
         FOUND_IMPORTEDLIB_IN_LIBRARIES_IDX)
-      if (${PREFIXED_LIB}_INCLUDE_DIRS)
+      tribits_lib_is_testonly(${PREFIXED_LIB} libIsTestOnlyLib)
+      if (libIsTestOnlyLib)
         message(WARNING "WARNING: '${IMPORTEDLIB}' in IMPORTEDLIBS is a TESTONLY lib"
           " and it is illegal to pass in through IMPORTEDLIBS!"
           "  Such usage is deprecated (and this warning will soon become an error)!"
@@ -842,8 +840,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
     endif()
 
     if (PARSE_TESTONLY)
-      set_target_properties(${LIBRARY_NAME} PROPERTIES
-        TRIBITS_TESTONLY_LIB TRUE)
+      tribits_set_lib_is_testonly(${LIBRARY_NAME})
     endif()
 
     set_property(

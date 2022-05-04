@@ -42,6 +42,7 @@ include(TribitsAddExecutableTestHelpers)
 include(TribitsCommonArgsHelpers)
 include(TribitsAddTestHelpers)
 include(TribitsGeneralMacros)
+include(TribitsLibIsTestOnly)
 include(TribitsReportInvalidTribitsUsage)
 
 include(PrintVar)
@@ -473,7 +474,8 @@ function(tribits_add_executable EXE_NAME)
   # Assert that TESTONLYLIBS only contains TESTONLY libs!
   foreach(TESTONLYLIB ${PARSE_TESTONLYLIBS})
     set(PREFIXED_LIB "${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}${TESTONLYLIB}")
-    if (NOT ${PREFIXED_LIB}_INCLUDE_DIRS)
+    tribits_lib_is_testonly(${PREFIXED_LIB} libIsTestOnlyLib)
+    if (NOT libIsTestOnlyLib)
       message(FATAL_ERROR "ERROR: '${TESTONLYLIB}' in TESTONLYLIBS not a TESTONLY lib!"
         "  If this a regular library in this SE package or in an dependent upstream SE"
         " package then TriBITS will link automatically to it.  If you remove this and it"
@@ -493,7 +495,8 @@ function(tribits_add_executable EXE_NAME)
   # libs!
   foreach(IMPORTEDLIB ${PARSE_IMPORTEDLIBS})
     set(PREFIXED_LIB "${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}${IMPORTEDLIB}")
-    if (${PREFIXED_LIB}_INCLUDE_DIRS)
+    tribits_lib_is_testonly(${PREFIXED_LIB} libIsTestOnlyLib)
+    if (libIsTestOnly)
       message(FATAL_ERROR
         "ERROR: Lib '${IMPORTEDLIB}' being passed through"
         " IMPORTEDLIBS is not allowed to be a TESTONLY lib!"
@@ -523,7 +526,8 @@ function(tribits_add_executable EXE_NAME)
   # Convert from old DEPLIBS to TESTONLYLIBS and IMPORTEDLIBS
   foreach(DEPLIB ${PARSE_DEPLIBS})
     set(PREFIXED_LIB "${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}${DEPLIB}")
-    if (${PREFIXED_LIB}_INCLUDE_DIRS)
+    tribits_lib_is_testonly(${PREFIXED_LIB} libIsTestOnlyLib)
+    if (libIsTestOnlyLib)
       message(WARNING "WARNING: Passing TESTONLY lib '${DEPLIB}' through DEPLIBS"
         " is deprecated!  Instead, please pass through TESTONLYLIBS instead!"
         "  DEPLIBS is deprecated!")
@@ -550,7 +554,8 @@ function(tribits_add_executable EXE_NAME)
 
   foreach(TESTONLYLIB_IN ${PARSE_TESTONLYLIBS})
     set(TESTONLYLIB "${LIBRARY_NAME_PREFIX}${TESTONLYLIB_IN}")
-    if (${TESTONLYLIB}_INCLUDE_DIRS)
+    tribits_lib_is_testonly(${TESTONLYLIB} libIsTestOnlyLib)
+    if (libIsTestOnlyLib)
       if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
         message(STATUS "Adding include directories ${TESTONLYLIB}_INCLUDE_DIRS ...")
       endif()
