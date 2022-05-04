@@ -131,6 +131,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
       "Dumping direct dependencies for each SE package ..."
       "-- SimpleCxx_LIB_ENABLED_DEPENDENCIES: HeaderOnlyTpl"
       "-- SimpleCxx_LIB_ALL_DEPENDENCIES: HeaderOnlyTpl SimpleTpl"
+      "-- MixedLang_LIB_ALL_DEPENDENCIES: "
       "-- WithSubpackagesA_LIB_ENABLED_DEPENDENCIES: SimpleCxx"
       "-- WithSubpackagesA_LIB_ALL_DEPENDENCIES: SimpleCxx"
       "-- WithSubpackagesB_LIB_ENABLED_DEPENDENCIES: SimpleCxx WithSubpackagesA"

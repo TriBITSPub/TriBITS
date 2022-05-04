@@ -50,6 +50,7 @@ include(CMakeBuildTypesList)
 include(FindListElement)
 include(GlobalNullSet)
 include(PrintNonemptyVar)
+include(PrintVarWithSpaces)
 include(PrintNonemptyVarWithSpaces)
 include(PrintVar)
 include(RemoveGlobalDuplicates)
@@ -679,15 +680,12 @@ endmacro()
 # Function to print the direct package dependency lists
 #
 function(tribits_print_direct_package_dependencies_lists packageName)
-
   set(PRINTED_VAR "")
-
   message("")
   print_nonempty_var_with_spaces(${packageName}_LIB_ENABLED_DEPENDENCIES PRINTED_VAR)
-  print_nonempty_var_with_spaces(${packageName}_LIB_ALL_DEPENDENCIES PRINTED_VAR)
+  print_var_with_spaces(${packageName}_LIB_ALL_DEPENDENCIES PRINTED_VAR)
   print_nonempty_var_with_spaces(${packageName}_TEST_ENABLED_DEPENDENCIES PRINTED_VAR)
   print_nonempty_var_with_spaces(${packageName}_TEST_ALL_DEPENDENCIES PRINTED_VAR)
-
 endfunction()
 
 
