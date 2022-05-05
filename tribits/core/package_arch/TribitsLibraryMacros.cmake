@@ -388,8 +388,6 @@ function(tribits_add_library LIBRARY_NAME_IN)
   endif()
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    #print_var(${PACKAGE_NAME}_INCLUDE_DIRS)
-    #print_var(${PACKAGE_NAME}_LIBRARY_DIRS)
     print_var(${PACKAGE_NAME}_LIBRARIES)
   endif()
 
@@ -427,30 +425,6 @@ function(tribits_add_library LIBRARY_NAME_IN)
 
   if (NOT ${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING OR PARSE_TESTONLY)
 
-    # Add the link directory for this library.
-
-    #set_property(DIRECTORY  APPEND  PROPERTY  PACKAGE_LIBRARY_DIRS
-    #  ${CMAKE_CURRENT_BINARY_DIR})
-
-    # NOTE: Above, this link path not really used here for anything.
-    # Instead it is just added to the other set link library directories
-    # that are already set.  These link directories are then extracted
-    # and stored into stored in ${PACKAGE_NAME}_LIBRARY_DIRS.
-
-    # Add whatever include directories have been defined so far
-
-    #include_directories(AFTER ${${PACKAGE_NAME}_INCLUDE_DIRS})
-    # ToDo: #299: Remove the above once final cleanup is performed for #299.
-
-    # Add whatever link directories have been added so far
-
-    #set_property(DIRECTORY  APPEND  PROPERTY  PACKAGE_LIBRARY_DIRS
-    #  ${${PACKAGE_NAME}_LIBRARY_DIRS})
-
-    # Local variable to hold all of the libraries that will be directly linked
-    # to this library.
-    set(LINK_LIBS)
-
     # Add dependent libraries passed directly in
 
     if (PARSE_DEPLIBS AND ${PROJECT_NAME}_VERBOSE_CONFIGURE)
@@ -461,16 +435,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
     endif()
 
     #
-    # Add the DEPLIBS to the LINK_LIBS, assert correct usage of DEPLIBS, and
-    # see if we need to link in the upstream SE package and TPL libs.
-    #
-    # We only want to link to the upstream dependent SE package and TPL
-    # libraries if needed.  We only need to link to these upstream dependent
-    # libraries when this is the first library being created for this SE
-    # package or if this library does not depend on other libraries created
-    # for this package.  Otherwise, we don't need to add the include
-    # directories or link libraries because a dependent lib specified in
-    # PARSE_DEPLIBS already has everything that we need.
+    # Loop over and assert DEPLIBS
     #
     # We also need to make special considerations for test libraries since
     # things need to be handled a little bit differently (but not much).  In the
@@ -481,8 +446,6 @@ function(tribits_add_library LIBRARY_NAME_IN)
     # ToDo: Turn the below deprecated WARNING messages to FATAL_ERROR once we
     # give enough time for people to clean up their codes.
     #
-
-    set(ADD_DEP_PACKAGE_AND_TPL_LIBS TRUE)
 
     set(PREFIXED_DEPLIBS)
 
@@ -508,7 +471,6 @@ function(tribits_add_library LIBRARY_NAME_IN)
         # DEPLIBS.  There is no need to link this new lib to the SE package's
         # upstream dependent SE package and TPL libraries because thse are
         # already linked into the lib ${LIB}.
-        set(ADD_DEP_PACKAGE_AND_TPL_LIBS FALSE)
       elseif (PARSE_TESTONLY AND LIB_IN_SE_PKG AND NOT libIsTestOnlyLib)
         # The library being created here is TESTONLY library and is
         # dependent on a regular (non-TESTONLY) lib.  This is valid usage of
@@ -520,11 +482,6 @@ function(tribits_add_library LIBRARY_NAME_IN)
         # this case we just hope that this SE package correctly specified a
         # TEST dependency on the upstream SE package that owns this upstream
         # TESTONLY library.
-        #if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        #  message("-- "
-        #    "Adding include directories for TESTONLY ${PREFIXED_LIB}_INCLUDE_DIRS ...")
-        #endif()
-        #include_directories(${${PREFIXED_LIB}_INCLUDE_DIRS})
       elseif (NOT PARSE_TESTONLY AND libIsTestOnlyLib) # LIB_IN_SE_PKG=TRUE/FASLE
         message(WARNING "WARNING: '${LIB}' in DEPLIBS is a TESTONLY lib"
           " and it is illegal to link to this non-TESTONLY library '${LIBRARY_NAME}'."
@@ -564,8 +521,6 @@ function(tribits_add_library LIBRARY_NAME_IN)
 
     endforeach()
 
-    append_set(LINK_LIBS ${PREFIXED_DEPLIBS})
-
     #
     # Check IMPORTEDLIBS
     #
@@ -596,69 +551,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
         " in this SE package's dependencies file: "
         " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
       endif()
-      # ToDo: Assert that this is not a test-only lib
-      list(APPEND LINK_LIBS ${IMPORTEDLIB})
     endforeach()
-
-    #
-    # Link in the upstream TEST SE package and TPL libs
-    #
-    # We link these before those in the LIB SE package and TPL libs because
-    # the TEST dependencies tend to be higher in the dependency tree.  It
-    # should not really matter but it looks better on the link line.
-    #
-
-    if (PARSE_TESTONLY)
-
-      if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        message("-- " "Pulling in header and libraries dependencies"
-          " for TEST dependencies ...")
-      endif()
-
-      #tribits_sort_and_append_package_include_and_link_dirs_and_libs(
-      #  ${PACKAGE_NAME}  TEST  LINK_LIBS)
-      #
-      #tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
-      #  ${PACKAGE_NAME}  TEST  LINK_LIBS)
-
-    endif()
-
-    #
-    # Add the dependent LIB SE package and TPL libs
-    #
-
-    if (ADD_DEP_PACKAGE_AND_TPL_LIBS)
-
-      # If there are no dependent libs passed in, then this library can not
-      # possibly depend on the package's other libraries so we must link to
-      # the dependent libraries in dependent libraries and TPLs.
-
-      if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        message("-- " "Pulling in header and libraries dependencies"
-          " for LIB dependencies ...")
-      endif()
-
-      #
-      # Call include_directories() and link_directories(...) for all upstream
-      # dependent Packages and TPLs and accumulate the libraries to link against.
-      #
-      # NOTE: Adding these directories serves two purposes.  First, so that the includes
-      # get added the the sources that get built for this library.  Second, so
-      # that list full list of include directories can be extracted as a
-      # property and set on ${PACKAGE_NAME}_INCLUDE_DIRS
-      #
-
-      #tribits_sort_and_append_package_include_and_link_dirs_and_libs(
-      #  ${PACKAGE_NAME}  LIB  LINK_LIBS)
-      #
-      #tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
-      #  ${PACKAGE_NAME}  LIB  LINK_LIBS)
-
-    endif()
-
-    if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      print_var(LINK_LIBS)
-    endif()
 
     # Add the library and all the dependencies
 
@@ -724,10 +617,6 @@ function(tribits_add_library LIBRARY_NAME_IN)
     prepend_global_set(${PARENT_PACKAGE_NAME}_LIB_TARGETS ${LIBRARY_NAME})
     prepend_global_set(${PARENT_PACKAGE_NAME}_ALL_TARGETS ${LIBRARY_NAME})
 
-    if (${PROJECT_NAME}_DUMP_LINK_LIBS)
-      message("-- ${LIBRARY_NAME_IN}:LINK_LIBS='${LINK_LIBS}'")
-    endif()
-
     #
     # Link ${LIBRARY_NAME} to direct upstream libraries
     #
@@ -756,8 +645,6 @@ function(tribits_add_library LIBRARY_NAME_IN)
     endforeach()
 
     # ToDo: #63: Above, allow for other link visibilities other than 'PUBLIC'!
-
-    #target_link_libraries(${LIBRARY_NAME} PUBLIC ${LINK_LIBS})
 
     if (${PROJECT_NAME}_CXX_STANDARD_FEATURE)
       target_compile_features(${LIBRARY_NAME} PUBLIC "${${PROJECT_NAME}_CXX_STANDARD_FEATURE}")
@@ -831,12 +718,8 @@ function(tribits_add_library LIBRARY_NAME_IN)
 
     if (APPEND_LIB_AND_HEADERS_TO_PACKAGE)
 
-      #prepend_global_set(${PACKAGE_NAME}_INCLUDE_DIRS  ${INCLUDE_DIRS_CURRENT})
-      #prepend_global_set(${PACKAGE_NAME}_LIBRARY_DIRS  ${LIBRARY_DIRS_CURRENT})
       prepend_global_set(${PACKAGE_NAME}_LIBRARIES  ${PACKAGE_NAME}::${LIBRARY_NAME})
 
-      #remove_global_duplicates(${PACKAGE_NAME}_INCLUDE_DIRS)
-      #remove_global_duplicates(${PACKAGE_NAME}_LIBRARY_DIRS)
       remove_global_duplicates(${PACKAGE_NAME}_LIBRARIES)
 
       if (INSTALL_LIB)
@@ -849,13 +732,6 @@ function(tribits_add_library LIBRARY_NAME_IN)
         message("-- " "Skipping augmentation of package's lists of include"
           " directories and libraries! ...")
       endif()
-
-      list(REMOVE_DUPLICATES INCLUDE_DIRS_CURRENT)
-      #global_set(${LIBRARY_NAME}_INCLUDE_DIRS ${INCLUDE_DIRS_CURRENT})
-
-      #if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      #  print_var(${LIBRARY_NAME}_INCLUDE_DIRS)
-      #endif()
 
     endif()
 
@@ -891,28 +767,15 @@ function(tribits_add_library LIBRARY_NAME_IN)
         "  Please disable package ${PACKAGE_NAME} or install it.")
     endif()
 
-    #include_directories(REQUIRED_DURING_INSTALLATION_TESTING  BEFORE
-    #   ${${PACKAGE_NAME}_INSTALLATION_INCLUDE_DIRS}
-    #   ${${TRIBITS_PACKAGE}_INSTALLATION_TPL_INCLUDE_DIRS})
-    #set_property(DIRECTORY APPEND PROPERTY PACKAGE_LIBRARY_DIRS
-    #  ${${PACKAGE_NAME}_INSTALLATION_LIBRARY_DIRS})
+    global_set(${PACKAGE_NAME}_LIBRARIES  ${${PACKAGE_NAME}_INSTALLATION_LIBRARIES})
 
-    #get_directory_property(INCLUDE_DIRS_CURRENT INCLUDE_DIRECTORIES)
-    #get_directory_property(LIBRARY_DIRS_CURRENT PACKAGE_LIBRARY_DIRS)
-
-    #global_set(${PACKAGE_NAME}_INCLUDE_DIRS ${INCLUDE_DIRS_CURRENT})
-    #global_set(${PACKAGE_NAME}_LIBRARY_DIRS ${LIBRARY_DIRS_CURRENT})
-    global_set(${PACKAGE_NAME}_LIBRARIES    ${${PACKAGE_NAME}_INSTALLATION_LIBRARIES})
-
-  endif() #installation testing mode
+  endif()
 
   #
   # Print the updates to the linkage variables
   #
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    #print_var(${PACKAGE_NAME}_INCLUDE_DIRS)
-    #print_var(${PACKAGE_NAME}_LIBRARY_DIRS)
     print_var(${PACKAGE_NAME}_LIBRARIES)
   endif()
 

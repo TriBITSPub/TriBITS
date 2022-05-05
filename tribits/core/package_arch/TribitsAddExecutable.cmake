@@ -426,13 +426,6 @@ function(tribits_add_executable EXE_NAME)
 
   set(LIBRARY_NAME_PREFIX "${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}")
 
-  if (NOT TRIBITS_ADD_EXECUTABLE_UNIT_TESTING)
-    #tribits_include_directories(REQUIRED_DURING_INSTALLATION_TESTING
-    #  ${${PACKAGE_NAME}_INCLUDE_DIRS})
-#    set_property(DIRECTORY APPEND PROPERTY PACKAGE_LIBRARY_DIRS
-#      ${${PACKAGE_NAME}_LIBRARY_DIRS})
-  endif()
-
   set (EXE_SOURCES)
   set(EXE_BINARY_NAME ${EXE_NAME})
 
@@ -552,17 +545,6 @@ function(tribits_add_executable EXE_NAME)
     endif()
   endforeach()
 
-  foreach(TESTONLYLIB_IN ${PARSE_TESTONLYLIBS})
-    set(TESTONLYLIB "${LIBRARY_NAME_PREFIX}${TESTONLYLIB_IN}")
-    tribits_lib_is_testonly(${TESTONLYLIB} libIsTestOnlyLib)
-    if (libIsTestOnlyLib)
-      #if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      #  message(STATUS "Adding include directories ${TESTONLYLIB}_INCLUDE_DIRS ...")
-      #endif()
-      #include_directories(${${TESTONLYLIB}_INCLUDE_DIRS})
-    endif()
-  endforeach()
-
   if (PARSE_DEFINES)
     message(WARNING "WARNING: Passing extra defines through 'DEFINES' ${PARSE_DEFINES}"
       " is deprecated.  Instead, pass them through 'TARGET_DEFINES'.  The 'DEFINES'"
@@ -597,61 +579,6 @@ function(tribits_add_executable EXE_NAME)
   tribits_set_linker_language_from_arg( ${EXE_BINARY_NAME}
     "${PARSE_LINKER_LANGUAGE}" )
 
-  set(LINK_LIBS)
-
-  # First, add in the passed in TESTONLY dependent libraries
-  if (PARSE_TESTONLYLIBS)
-    foreach(LIB ${PARSE_TESTONLYLIBS})
-      list(APPEND LINK_LIBS "${LIBRARY_NAME_PREFIX}${LIB}")
-    endforeach()
-  endif()
-
-  # Second, add the package's own regular libraries
-  if(NOT ${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING)
-    list(APPEND LINK_LIBS ${${PACKAGE_NAME}_LIBRARIES})
-  else()
-    list(APPEND LINK_LIBS ${${PACKAGE_NAME}_INSTALLATION_LIBRARIES})
-  endif()
-
-  # Third, add the IMPORTEDLIBS
-  if (PARSE_IMPORTEDLIBS)
-    list(APPEND LINK_LIBS ${PARSE_IMPORTEDLIBS})
-  endif()
-
-  # Call include_directories() and link_directories(...) for upstream
-  # dependent Packages and TPLs and accumulate the list of libraries that will
-  # need to be linked to.
-
-#  if(NOT ${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING
-#    AND NOT ${PACKAGE_NAME}_INCLUDE_DIRS
-#    )
-#    # No libraries have been added for this package so
-#    # add the upstream package and TPL includes and libraries
-#    #tribits_sort_and_append_package_include_and_link_dirs_and_libs(
-#    #  ${PACKAGE_NAME}  LIB  LINK_LIBS)
-#    #tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
-#    #  ${PACKAGE_NAME}  LIB  LINK_LIBS)
-#  endif()
-
-  #tribits_sort_and_append_package_include_and_link_dirs_and_libs(
-  #  ${PACKAGE_NAME}  TEST  LINK_LIBS)
-
-  if(NOT ${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING)
-    #tribits_sort_and_append_tpl_include_and_link_dirs_and_libs(
-    #  ${PACKAGE_NAME}  TEST  LINK_LIBS)
-  else()
-    list(APPEND LINK_LIBS ${${PACKAGE_NAME}_INSTALLATION_TPL_LIBRARIES})
-  endif()
-
-  # Last, add last_lib to get extra link options on the link line
-  if (${PROJECT_NAME}_EXTRA_LINK_FLAGS)
-    list(APPEND LINK_LIBS last_lib)
-  endif()
-
-  if (${PROJECT_NAME}_DUMP_LINK_LIBS)
-      message("-- ${EXE_NAME}:LINK_LIBS='${LINK_LIBS}'")
-  endif()
-
   #
   # Link ${EXE_BINARY_NAME} to direct upstream libraries
   #
@@ -671,8 +598,6 @@ function(tribits_add_executable EXE_NAME)
     target_link_libraries(${EXE_BINARY_NAME} PUBLIC
       "${LIBRARY_NAME_PREFIX}${testOnlyLib}")
   endforeach()
-
-  #target_link_libraries(${EXE_BINARY_NAME} PUBLIC ${LINK_LIBS})
 
   assert_defined(${PROJECT_NAME}_LINK_SEARCH_START_STATIC)
   if (${PROJECT_NAME}_LINK_SEARCH_START_STATIC)
@@ -697,21 +622,3 @@ function(tribits_add_executable EXE_NAME)
     )
   endif()
 endfunction()
-
-
-#
-# Setup include directories and library dependencies
-#
-
-#if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-#  message("TribitsAddExecutable.cmake")
-#  print_var(${PACKAGE_NAME}_INCLUDE_DIRS)
-#  print_var(${PACKAGE_NAME}_LIBRARY_DIRS)
-#endif()
-#
-#if (NOT TRIBITS_ADD_EXECUTABLE_UNIT_TESTING)
-#  include_directories(REQUIRED_DURING_INSTALLATION_TESTING
-#    ${${PACKAGE_NAME}_INCLUDE_DIRS})
-#  set_property(DIRECTORY APPEND PROPERTY PACKAGE_LIBRARY_DIRS
-#    ${${PACKAGE_NAME}_LIBRARY_DIRS})
-#endif()
