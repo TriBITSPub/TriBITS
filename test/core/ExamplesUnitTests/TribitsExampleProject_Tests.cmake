@@ -1512,31 +1512,31 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
   #
 
   TEST_1
-    MESSAGE "Show deprecated warning when trying to link lib from upstream SE package."
+    MESSAGE "Show deprecated warning when trying to link lib from upstream package."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=ON
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this SE package"
+      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this package"
       "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   TEST_2
-    MESSAGE "Show deprecated warning when passing a lib from this SE package through IMPORTEDLIBS."
+    MESSAGE "Show deprecated warning when passing a lib from this package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
       -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this SE package "
+      "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this package "
       "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   TEST_3
     MESSAGE "Show deprecated warning when passing a lib from upstream"
-      " SE package through IMPORTEDLIBS."
+      " package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
       -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
@@ -1612,7 +1612,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       "Configuring incomplete, errors occurred!"
 
   TEST_9
-    MESSAGE "Show error when trying to link SE package lib using TESTONLYLIBS"
+    MESSAGE "Show error when trying to link package lib using TESTONLYLIBS"
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=ON
       -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=
@@ -1696,31 +1696,31 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
   #
 
   TEST_1
-    MESSAGE "Show deprecated warning when trying to link lib from upstream SE package."
+    MESSAGE "Show deprecated warning when trying to link lib from upstream package."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=ON
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this SE package"
+      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this package"
       "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   TEST_2
-    MESSAGE "Show deprecated warning when passing a lib from this SE package through IMPORTEDLIBS."
+    MESSAGE "Show deprecated warning when passing a lib from this package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
       -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this SE package "
+      "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this package "
       "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   TEST_3
     MESSAGE "Show deprecated warning when passing a lib from upstream"
-      " SE package through IMPORTEDLIBS."
+      " package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
       -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
@@ -1796,7 +1796,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       "Configuring incomplete, errors occurred!"
 
   TEST_9
-    MESSAGE "Show error when trying to link SE package lib using TESTONLYLIBS"
+    MESSAGE "Show error when trying to link package lib using TESTONLYLIBS"
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=ON
       -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=

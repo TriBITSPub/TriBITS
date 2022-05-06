@@ -334,45 +334,11 @@ include(SetAndIncDirs)
 # affect header files, please use a configured header file (see
 # `tribits_configure_file()`_).
 #
-function(tribits_add_library LIBRARY_NAME_IN)
+function(tribits_add_library  LIBRARY_NAME_IN)
 
-  #
-  # Confirm that package and subpackage macros/functions have been called in the correct order
-  #
+  tribits_add_library_assert_correct_call_context()
 
-  if (CURRENTLY_PROCESSING_SUBPACKAGE)
-
-    # This is a subpackage being processed
-
-    if(NOT ${SUBPACKAGE_FULLNAME}_TRIBITS_SUBPACKAGE_CALLED)
-      tribits_report_invalid_tribits_usage(
-        "Must call tribits_subpackage() before tribits_add_library()"
-        " in ${CURRENT_SUBPACKAGE_CMAKELIST_FILE}")
-    endif()
-
-    if(${SUBPACKAGE_FULLNAME}_TRIBITS_SUBPACKAGE_POSTPROCESS_CALLED)
-      tribits_report_invalid_tribits_usage(
-        "Must call tribits_add_library() before "
-        " tribits_subpackage_postprocess() in ${CURRENT_SUBPACKAGE_CMAKELIST_FILE}")
-    endif()
-
-  else()
-
-    # This is a package being processed
-
-    if(NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_DECL_CALLED)
-      tribits_report_invalid_tribits_usage(
-        "Must call tribits_package() or tribits_package_decl() before"
-        " tribits_add_library() in ${TRIBITS_PACKAGE_CMAKELIST_FILE}")
-    endif()
-
-    if(${PACKAGE_NAME}_TRIBITS_PACKAGE_POSTPROCESS_CALLED)
-      tribits_report_invalid_tribits_usage(
-        "Must call tribits_add_library() before "
-        " tribits_package_postprocess() in ${TRIBITS_PACKAGE_CMAKELIST_FILE}")
-    endif()
-
-  endif()
+  # Set library prefix and name
 
   set(LIBRARY_NAME_PREFIX "${${PROJECT_NAME}_LIBRARY_NAME_PREFIX}")
   set(LIBRARY_NAME ${LIBRARY_NAME_PREFIX}${LIBRARY_NAME_IN})
@@ -383,11 +349,10 @@ function(tribits_add_library LIBRARY_NAME_IN)
       message("\n${PACKAGE_NAME}_LIBRARIES In installation testing mode,"
         " libraries will be found instead of created.")
     endif()
-  endif()
-
-  if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
     print_var(${PACKAGE_NAME}_LIBRARIES)
   endif()
+
+  # Parse input args
 
   cmake_parse_arguments(
     #prefix
@@ -413,17 +378,17 @@ function(tribits_add_library LIBRARY_NAME_IN)
     list(REMOVE_DUPLICATES PARSE_SOURCES)
   endif()
 
+  # Library not added by default
   if(PARSE_ADDED_LIB_TARGET_NAME_OUT)
-    set(${PARSE_ADDED_LIB_TARGET_NAME_OUT} PARENT_SCOPE)
+    set(${PARSE_ADDED_LIB_TARGET_NAME_OUT} "" PARENT_SCOPE)
   endif()
 
-  # ToDo: Deprecate and remove the usage of DEFINES!  People should be putting
-  # defines into configured header files, not adding -D<macroName> to the
-  # compile lines!
+  #
+  # Create library target if not doing installation testing or if this is a
+  # TESTONLY library.
+  #
 
   if (NOT ${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING OR PARSE_TESTONLY)
-
-    # Add dependent libraries passed directly in
 
     if (PARSE_DEPLIBS AND ${PROJECT_NAME}_VERBOSE_CONFIGURE)
       message("-- " "DEPLIBS = ${PARSE_DEPLIBS}")
@@ -432,124 +397,10 @@ function(tribits_add_library LIBRARY_NAME_IN)
       message("-- " "IMPORTEDLIBS = ${PARSE_IMPORTEDLIBS}")
     endif()
 
-    #
-    # Loop over and assert DEPLIBS
-    #
-    # We also need to make special considerations for test libraries since
-    # things need to be handled a little bit differently (but not much).  In the
-    # case of test libraries, we need to also pull the test-only dependencies.
-    # In this case, we will always assume that we will add in the test
-    # libraries.
-    #
-    # ToDo: Turn the below deprecated WARNING messages to FATAL_ERROR once we
-    # give enough time for people to clean up their codes.
-    #
+    # Assert DEPLIBS and IMPORTEDLIBS
 
-    set(PREFIXED_DEPLIBS)
-
-    foreach(LIB ${PARSE_DEPLIBS})
-
-      set(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${LIB}")
-
-      # LIB_IN_SE_PKG?
-      list(FIND ${PACKAGE_NAME}_LIBRARIES "${PACKAGE_NAME}::${PREFIXED_LIB}" FOUND_IDX)
-      if (FOUND_IDX GREATER -1)
-        set(LIB_IN_SE_PKG TRUE)
-      else()
-        set(LIB_IN_SE_PKG FALSE)
-      endif()
-
-      # ${PREFIXED_LIB" is TESTONLY?
-      tribits_lib_is_testonly(${PREFIXED_LIB} libIsTestOnlyLib)
-
-      # Check for valid usage (sorted by most common to least common)
-      if (LIB_IN_SE_PKG AND NOT libIsTestOnlyLib) #PARSE_TESTONLY=TRUE/FASLE
-        # The library being created here is a library dependent on a regular
-        # (non-TESTONLY) lib in this SE package.  This is valid usage of
-        # DEPLIBS.  There is no need to link this new lib to the SE package's
-        # upstream dependent SE package and TPL libraries because thse are
-        # already linked into the lib ${LIB}.
-      elseif (PARSE_TESTONLY AND LIB_IN_SE_PKG AND NOT libIsTestOnlyLib)
-        # The library being created here is TESTONLY library and is
-        # dependent on a regular (non-TESTONLY) lib.  This is valid usage of
-        # DEPLIBS.  In the case of test-only libraries, we always link in
-        # the upstream libs.
-      elseif (PARSE_TESTONLY AND libIsTestOnlyLib) # LIB_IN_SE_PKG=TRUE/FASLE
-        # The library being created here is TESTONLY library and is dependent
-        # on another TESTONLY library.  This is valid usage of DEPLIBS.  In
-        # this case we just hope that this SE package correctly specified a
-        # TEST dependency on the upstream SE package that owns this upstream
-        # TESTONLY library.
-      elseif (NOT PARSE_TESTONLY AND libIsTestOnlyLib) # LIB_IN_SE_PKG=TRUE/FASLE
-        message(WARNING "WARNING: '${LIB}' in DEPLIBS is a TESTONLY lib"
-          " and it is illegal to link to this non-TESTONLY library '${LIBRARY_NAME}'."
-          "  Such usage is deprecated (and this warning will soon become an error)!"
-          "  If this is a regular library in this SE package or in an dependent upstream SE"
-          " package then TriBITS will link automatically to it.  If you remove this and it"
-          " does not link, then you need to add a new SE package dependency to"
-          " this SE package's dependencies file"
-          " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
-        # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code
-      elseif (NOT LIB_IN_SE_PKG AND TARGET ${PREFIXED_LIB} ) # PARSE_TESTONLY=TRUE/FALSE
-        message(WARNING "WARNING: '${LIB}' in DEPLIBS is not"
-          " a lib in this SE package but is a library defined in the current"
-          " cmake project!  Such usage is  deprecated (and"
-          " will result in a configure error soon).  If this is a library in"
-          " a dependent upstream SE package, then simply remove it from this list."
-          "  TriBITS automatically links in libraries in upstream SE packages."
-          "  If you remove '${LIB}' from DEPLIBS and your code does"
-          " not link, then you need to add a new SE package dependency to"
-          " this SE package's dependencies file"
-          " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
-      elseif (NOT LIB_IN_SE_PKG AND NOT TARGET ${PREFIXED_LIB} )
-        message(WARNING "WARNING: '${LIB}' in DEPLIBS is not"
-          " a lib defined in the current cmake project!  Such usage is deprecated (and"
-          " will result in a configure error soon).  If this is an external"
-          " lib you are trying to link in, it should likely be handled as a TriBITS"
-          " TPL.  Otherwise, it should be passed in through IMPORTEDLIBS.  However,"
-          " the only case we have found where IMPORTEDLIBS had to be used instead of"
-          " through a proper TriBITS TPL is the C math library 'm'.")
-      else()
-        message(WARNING "WARNING: The case PARSE_TESTONLY=${PARSE_TESTONLY},"
-          " LIB_IN_SE_PKG=${LIB_IN_SE_PKG}, libIsTestOnlyLib=${libIsTestOnlyLib}, has"
-          " not yet been handled!")
-      endif()
-
-      list(APPEND PREFIXED_DEPLIBS "${LIBRARY_NAME_PREFIX}${LIB}")
-
-    endforeach()
-
-    #
-    # Check IMPORTEDLIBS
-    #
-
-    foreach(IMPORTEDLIB ${PARSE_IMPORTEDLIBS})
-      set(PREFIXED_LIB "${LIBRARY_NAME_PREFIX}${IMPORTEDLIB}")
-      list(FIND ${PACKAGE_NAME}_LIBRARIES "${PACKAGE_NAME}::${PREFIXED_LIB}"
-        FOUND_IMPORTEDLIB_IN_LIBRARIES_IDX)
-      tribits_lib_is_testonly(${PREFIXED_LIB} libIsTestOnlyLib)
-      if (libIsTestOnlyLib)
-        message(WARNING "WARNING: '${IMPORTEDLIB}' in IMPORTEDLIBS is a TESTONLY lib"
-          " and it is illegal to pass in through IMPORTEDLIBS!"
-          "  Such usage is deprecated (and this warning will soon become an error)!"
-          "  Should '${IMPORTEDLIB}' instead be passed through DEPLIBS?")
-        # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code
-      elseif (FOUND_IMPORTEDLIB_IN_LIBRARIES_IDX GREATER -1)
-        message(WARNING "WARNING: Lib '${IMPORTEDLIB}' in IMPORTEDLIBS is in"
-        " this SE package and is *not* an external lib!"
-        "  TriBITS takes care of linking against libs the current"
-        " SE package automatically.  Please remove it from IMPORTEDLIBS!")
-      elseif (TARGET ${PREFIXED_LIB})
-        message(WARNING "WARNING: Lib '${IMPORTEDLIB}' being passed through"
-        " IMPORTEDLIBS is *not* an external library but instead is a library"
-        " defined in this CMake project!"
-        "  TriBITS takes care of linking against libraries in dependent upstream"
-        " SE packages.  If you want to link to a library in an upstream SE"
-        " package then add the SE package name to the appropriate category"
-        " in this SE package's dependencies file: "
-        " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
-      endif()
-    endforeach()
+    tribits_add_library_assert_deplibs()
+    tribits_add_library_assert_importedlibs()
 
     # Add the library and all the dependencies
 
@@ -560,13 +411,13 @@ function(tribits_add_library LIBRARY_NAME_IN)
     if (PARSE_STATIC)
       set(STATIC_KEYWORD "STATIC")
     else()
-      set(STATIC_KEYWORD)
+      set(STATIC_KEYWORD "")
     endif()
 
     if (PARSE_SHARED)
       set(SHARED_KEYWORD "SHARED")
     else()
-      set(SHARED_KEYWORD)
+      set(SHARED_KEYWORD "")
     endif()
 
     if (NOT PARSE_CUDALIBRARY)
@@ -642,54 +493,25 @@ function(tribits_add_library LIBRARY_NAME_IN)
       target_link_libraries(${LIBRARY_NAME} PUBLIC "${importedLib}")
     endforeach()
 
+    # ToDo: #299: Above, Handle 'last_lib' from ${PROJECT_NAME}_EXTRA_LINK_FLAGS!
     # ToDo: #63: Above, allow for other link visibilities other than 'PUBLIC'!
 
     if (${PROJECT_NAME}_CXX_STANDARD_FEATURE)
-      target_compile_features(${LIBRARY_NAME} PUBLIC "${${PROJECT_NAME}_CXX_STANDARD_FEATURE}")
-    ENDIF ()
+      target_compile_features(${LIBRARY_NAME} PUBLIC
+        "${${PROJECT_NAME}_CXX_STANDARD_FEATURE}")
+    endif()
 
     # Add to the install target
 
-    set(INSTALL_LIB ON)
-    set(INSTALL_HEADERS ON)
-    set(APPEND_LIB_AND_HEADERS_TO_PACKAGE ON)
+    tribits_add_library_determine_install_lib_and_or_headers(
+      installLib  installHeaders  appendLibAndHeadersToPackageVars)
 
-    if (PARSE_TESTONLY)
-      if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        message("-- " "Skipping installation hooks for this library"
-          " because 'TESTONLY' was passed in ...")
-      endif()
-      set(INSTALL_LIB OFF)
-      set(INSTALL_HEADERS OFF)
-      set(APPEND_LIB_AND_HEADERS_TO_PACKAGE OFF)
-    elseif (PARSE_NO_INSTALL_LIB_OR_HEADERS)
-      if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        message("-- " "Skipping installation hooks for this library"
-          " because 'NO_INSTALL_LIB_OR_HEADERS' was passed in ...")
-      endif()
-      set(INSTALL_LIB OFF)
-      set(INSTALL_HEADERS OFF)
-    elseif (NOT ${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS AND NOT BUILD_SHARED_LIBS)
-      if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        message("-- " "Skipping installation of headers and libraries"
-          " because ${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS=FALSE and BUILD_SHARED_LIBS=FALSE  ...")
-      endif()
-      set(INSTALL_LIB OFF)
-      set(INSTALL_HEADERS OFF)
-    elseif (NOT ${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS AND BUILD_SHARED_LIBS)
-      if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        message("-- " "Skipping installation of headers but installing libraries"
-          " because ${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS=FALSE and BUILD_SHARED_LIBS=TRUE  ...")
-      endif()
-      set(INSTALL_HEADERS OFF)
-    endif()
-
-    if (INSTALL_LIB OR INSTALL_HEADERS)
+    if (installLib OR installHeaders)
       set_property(GLOBAL PROPERTY ${PROJECT_NAME}_HAS_INSTALL_TARGETS ON)
       set_property(GLOBAL PROPERTY ${PACKAGE_NAME}_HAS_INSTALL_TARGETS ON)
     endif()
 
-    if (INSTALL_LIB)
+    if (installLib)
       install(
         TARGETS ${LIBRARY_NAME}
         EXPORT ${PACKAGE_NAME}
@@ -701,7 +523,7 @@ function(tribits_add_library LIBRARY_NAME_IN)
         )
     endif()
 
-    if (INSTALL_HEADERS)
+    if (installHeaders)
       tribits_install_headers(
         HEADERS  ${PARSE_HEADERS}
         INSTALL_SUBDIR  ${PARSE_HEADERS_INSTALL_SUBDIR}
@@ -709,32 +531,23 @@ function(tribits_add_library LIBRARY_NAME_IN)
         )
     endif()
 
-    # Append the new include dirs, library dirs, and libraries to this package's lists
+    # Append the new libraries to this package's lists
 
-    get_directory_property(INCLUDE_DIRS_CURRENT  INCLUDE_DIRECTORIES)
-    #get_directory_property(LIBRARY_DIRS_CURRENT  PACKAGE_LIBRARY_DIRS)
-
-    if (APPEND_LIB_AND_HEADERS_TO_PACKAGE)
-
+    if (appendLibAndHeadersToPackageVars)
       prepend_global_set(${PACKAGE_NAME}_LIBRARIES  ${PACKAGE_NAME}::${LIBRARY_NAME})
-
       remove_global_duplicates(${PACKAGE_NAME}_LIBRARIES)
-
-      if (INSTALL_LIB)
+      if (installLib)
         global_set(${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL TRUE)
       endif()
-
     else()
-
       if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-        message("-- " "Skipping augmentation of package's lists of include"
-          " directories and libraries! ...")
+        message("-- " "Skipping augmentation of package's lists of libraries! ...")
       endif()
-
     endif()
 
-    # Set INTERFACE_INCLUDE_DIRECTOIRES property for added library and must
+    # Set INTERFACE_INCLUDE_DIRECTORIES property for added library and must
     # only do for the build interface (not the install interface).
+    get_directory_property(INCLUDE_DIRS_CURRENT  INCLUDE_DIRECTORIES)
     set(buildInterfaceIncludeDirs)
     foreach (includeDir IN LISTS INCLUDE_DIRS_CURRENT)
       list(APPEND buildInterfaceIncludeDirs "$<BUILD_INTERFACE:${includeDir}>")
@@ -751,12 +564,9 @@ function(tribits_add_library LIBRARY_NAME_IN)
 
   endif() #if not in installation testing mode
 
-  #
   # Adjust for installation testing
-  #
 
   if (${PROJECT_NAME}_ENABLE_INSTALLATION_TESTING)
-
     list(FIND ${PROJECT_NAME}_INSTALLATION_PACKAGE_LIST ${PACKAGE_NAME}
       ${PACKAGE_NAME}_WAS_INSTALLED)
     if(${${PACKAGE_NAME}_WAS_INSTALLED} EQUAL -1)
@@ -764,17 +574,242 @@ function(tribits_add_library LIBRARY_NAME_IN)
         "The package ${PACKAGE_NAME} was not installed with ${PROJECT_NAME}!"
         "  Please disable package ${PACKAGE_NAME} or install it.")
     endif()
-
     global_set(${PACKAGE_NAME}_LIBRARIES  ${${PACKAGE_NAME}_INSTALLATION_LIBRARIES})
-
   endif()
 
-  #
   # Print the updates to the linkage variables
-  #
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
     print_var(${PACKAGE_NAME}_LIBRARIES)
   endif()
+
+endfunction()
+#
+# ToDo:, above Deprecate and remove the usage of DEFINES!  People should be
+# putting defines into configured header files, not adding -D<macroName> to
+# the compile lines!
+
+
+# Function that asserts that tribits_add_library() is called in the correct
+# context
+#
+function(tribits_add_library_assert_correct_call_context)
+
+  if (CURRENTLY_PROCESSING_SUBPACKAGE)
+
+    # This is a subpackage being processed
+
+    if(NOT ${SUBPACKAGE_FULLNAME}_TRIBITS_SUBPACKAGE_CALLED)
+      tribits_report_invalid_tribits_usage(
+        "Must call tribits_subpackage() before tribits_add_library()"
+        " in ${CURRENT_SUBPACKAGE_CMAKELIST_FILE}")
+    endif()
+
+    if(${SUBPACKAGE_FULLNAME}_TRIBITS_SUBPACKAGE_POSTPROCESS_CALLED)
+      tribits_report_invalid_tribits_usage(
+        "Must call tribits_add_library() before "
+        " tribits_subpackage_postprocess() in ${CURRENT_SUBPACKAGE_CMAKELIST_FILE}")
+    endif()
+
+  else()
+
+    # This is a package being processed
+
+    if(NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_DECL_CALLED)
+      tribits_report_invalid_tribits_usage(
+        "Must call tribits_package() or tribits_package_decl() before"
+        " tribits_add_library() in ${TRIBITS_PACKAGE_CMAKELIST_FILE}")
+    endif()
+
+    if(${PACKAGE_NAME}_TRIBITS_PACKAGE_POSTPROCESS_CALLED)
+      tribits_report_invalid_tribits_usage(
+        "Must call tribits_add_library() before "
+        " tribits_package_postprocess() in ${TRIBITS_PACKAGE_CMAKELIST_FILE}")
+    endif()
+
+  endif()
+
+endfunction()
+
+
+# Assert correct DEPSLIB passed to tribits_add_library()
+#
+# NOTE: This accesses vars from the enclosed calling function
+# tribits_add_library() but does not set any variables in that scope!
+#
+# We also need to make special considerations for test libraries since
+# things need to be handled a little bit differently (but not much).  In the
+# case of test libraries, we need to also pull the test-only dependencies.
+# In this case, we will always assume that we will add in the test
+# libraries.
+#
+# ToDo: Turn the below deprecated WARNING messages to FATAL_ERROR once we
+# give enough time for people to clean up their codes.
+#
+function(tribits_add_library_assert_deplibs)
+
+  foreach(depLib ${PARSE_DEPLIBS})
+
+    set(prefixedDepLib "${LIBRARY_NAME_PREFIX}${depLib}")
+
+    # Is this lib already listed in ${PACKAGE_NAME}_LIBS?
+    list(FIND ${PACKAGE_NAME}_LIBRARIES "${PACKAGE_NAME}::${prefixedDepLib}" FOUND_IDX)
+    if (FOUND_IDX GREATER -1)
+      set(depLibAlreadyInPkgLibs TRUE)
+    else()
+      set(depLibAlreadyInPkgLibs FALSE)
+    endif()
+
+    # ${PREFIXED_LIB" is TESTONLY?
+    tribits_lib_is_testonly(${prefixedDepLib} depLibIsTestOnlyLib)
+
+    # Check for valid usage (sorted by most common to least common)
+    if (depLibAlreadyInPkgLibs AND NOT depLibIsTestOnlyLib) # PARSE_TESTONLY=any
+      # The library being created here is a (regular or testonly) library
+      # dependent on a regular (non-TESTONLY) lib in this package.  This is
+      # valid usage of DEPLIBS.  There is no need to link this new lib to
+      # the package's upstream dependent package and TPL libraries because
+      # these are already linked into one of the of the package's own
+      # upstream libs.
+    elseif (PARSE_TESTONLY AND depLibAlreadyInPkgLibs AND NOT depLibIsTestOnlyLib)
+      # The library being created here is TESTONLY library and is
+      # dependent on a regular (non-TESTONLY) lib.  This is valid usage of
+      # DEPLIBS.  In the case of test-only libraries, we always link in
+      # the upstream libs.
+    elseif (PARSE_TESTONLY AND depLibIsTestOnlyLib) # any depLibAlreadyInPkgLibs
+      # The library being created here is TESTONLY library and is dependent
+      # on another TESTONLY library.  This is valid usage of DEPLIBS.  In
+      # this case we just hope that this package correctly specified a TEST
+      # dependency on the upstream package that owns this upstream TESTONLY
+      # library if it comes from an upstream package.
+    elseif (NOT PARSE_TESTONLY AND depLibIsTestOnlyLib) # any depLibAlreadyInPkgLibs
+      message(WARNING "WARNING: '${depLib}' in DEPLIBS is a TESTONLY lib"
+        " and it is illegal to link to this non-TESTONLY library '${LIBRARY_NAME}'."
+        "  Such usage is deprecated (and this warning will soon become an error)!"
+        "  If this is a regular library in this package or in an dependent upstream"
+        " package then TriBITS will link automatically to it.  If you remove this and it"
+        " does not link, then you need to add a new package dependency to"
+        " this package's dependencies file"
+        " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake")
+      # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code
+    elseif (NOT depLibAlreadyInPkgLibs AND TARGET ${prefixedDepLib}) # any PARSE_TESTONLY
+      message(WARNING "WARNING: '${depLib}' in DEPLIBS is not"
+        " a lib in this package but is a library defined in the current"
+        " cmake project!  Such usage is deprecated (and"
+        " will result in a configure error soon).  If this is a library in"
+        " a dependent upstream package, then simply remove '${depLib}' from this list."
+        "  TriBITS automatically links in libraries in upstream packages."
+        "  If you remove '${depLib}' from DEPLIBS and your code does"
+        " not link, then you need to add a new package dependency to"
+        " this package's dependencies file"
+        " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake.")
+    elseif (NOT depLibAlreadyInPkgLibs AND NOT TARGET ${prefixedDepLib} )
+      message(WARNING "WARNING: '${depLib}' in DEPLIBS is not"
+        " a lib defined in the current cmake project!  Such usage is deprecated (and"
+        " will result in a configure error soon).  If this is an external"
+        " lib you are trying to link in, it should likely be handled as a TriBITS"
+        " TPL.  Otherwise, it should be passed in through IMPORTEDLIBS.  However,"
+        " the only case we have found where IMPORTEDLIBS had to be used instead of"
+        " through a proper TriBITS TPL is the C math library 'm'.")
+    else()
+      message(WARNING "WARNING: The case PARSE_TESTONLY=${PARSE_TESTONLY},"
+        " depLibAlreadyInPkgLibs=${depLibAlreadyInPkgLibs},"
+	  " depLibIsTestOnlyLib=${depLibIsTestOnlyLib}, has"
+        " not yet been handled!")
+    endif()
+
+  endforeach()
+
+endfunction()
+
+
+# Assert correct IMPORTEDLIBS passed to tribits_add_library()
+#
+# NOTE: This accesses vars from the enclosed calling function
+# tribits_add_library() but does not set any variables in that scope!
+#
+# ToDo: Turn the below deprecated WARNING messages to FATAL_ERROR once we
+# give enough time for people to clean up their codes.
+#
+function(tribits_add_library_assert_importedlibs)
+  foreach(importedLib ${PARSE_IMPORTEDLIBS})
+    set(prefixedImportedLib "${LIBRARY_NAME_PREFIX}${importedLib}")
+    list(FIND ${PACKAGE_NAME}_LIBRARIES "${PACKAGE_NAME}::${prefixedImportedLib}"
+      FOUND_IMPORTEDLIB_IN_LIBRARIES_IDX)
+    tribits_lib_is_testonly(${prefixedImportedLib}  importedLibIsTestOnlyLib)
+    if (importedLibIsTestOnlyLib)
+      message(WARNING "WARNING: '${importedLib}' in IMPORTEDLIBS is a TESTONLY lib"
+        " and it is illegal to pass in through IMPORTEDLIBS!"
+        "  Such usage is deprecated (and this warning will soon become an error)!"
+        "  Should '${importedLib}' instead be passed through DEPLIBS?")
+      # ToDo: Turn the above to FATAL_ERROR after dropping deprecated code
+    elseif (FOUND_IMPORTEDLIB_IN_LIBRARIES_IDX GREATER -1)
+      message(WARNING "WARNING: Lib '${importedLib}' in IMPORTEDLIBS is in"
+      " this package and is *not* an external lib!"
+      "  Please move '${importedLib}' from the list IMPORTEDLIBS to DEPLIBS.")
+    elseif (TARGET ${prefixedImportedLib})
+      message(WARNING "WARNING: Lib '${importedLib}' being passed through"
+      " IMPORTEDLIBS is *not* an external library but instead is a library"
+      " defined in this CMake project!"
+      "  TriBITS takes care of linking against libraries in dependent upstream"
+      " packages.  If you want to link to a library in an upstream"
+      " package then add the package name to the appropriate category"
+      " in this package's dependencies file: "
+      " ${${PACKAGE_NAME}_SOURCE_DIR}/cmake/Dependencies.cmake.")
+    endif()
+  endforeach()
+endfunction()
+
+
+# Determine lib and/or headers should be installed and if the package vars
+# should be updated
+#
+# NOTE: This reads the parsed arguments (prefixed with ``PARSE_``) from the
+# calling tribits_add_library() function from the enclosing scope.
+#
+function(tribits_add_library_determine_install_lib_and_or_headers
+    installLibOut  installHeadersOut  appendLibAndHeadersToPackageVarsOut
+  )
+
+  set(installLib ON)
+  set(installHeaders ON)
+  set(appendLibAndHeadersToPackageVars ON)
+
+  if (PARSE_TESTONLY)
+    if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      message("-- " "Skipping installation hooks for this library"
+        " because 'TESTONLY' was passed in ...")
+    endif()
+    set(installLib OFF)
+    set(installHeaders OFF)
+    set(appendLibAndHeadersToPackageVars OFF)
+  elseif (PARSE_NO_INSTALL_LIB_OR_HEADERS)
+    if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      message("-- " "Skipping installation hooks for this library"
+        " because 'NO_INSTALL_LIB_OR_HEADERS' was passed in ...")
+    endif()
+    set(installLib OFF)
+    set(installHeaders OFF)
+  elseif (NOT ${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS AND NOT BUILD_SHARED_LIBS)
+    if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      message("-- " "Skipping installation of headers and libraries"
+        " because ${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS=FALSE and"
+	  " BUILD_SHARED_LIBS=FALSE ...")
+    endif()
+    set(installLib OFF)
+    set(installHeaders OFF)
+  elseif (NOT ${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS AND BUILD_SHARED_LIBS)
+    if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      message("-- " "Skipping installation of headers but installing libraries"
+        " because ${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS=FALSE and"
+	  " BUILD_SHARED_LIBS=TRUE ...")
+    endif()
+    set(installHeaders OFF)
+  endif()
+
+  set(${installLibOut} ${installLib} PARENT_SCOPE)
+  set(${installHeadersOut} ${installHeaders} PARENT_SCOPE)
+  set(${appendLibAndHeadersToPackageVarsOut} ${appendLibAndHeadersToPackageVars}
+    PARENT_SCOPE)
 
 endfunction()
