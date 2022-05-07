@@ -61,11 +61,6 @@ include(TribitsCopyFilesToBinaryDir)
 include(TribitsReportInvalidTribitsUsage)
 
 
-###
-### WARNING: See "NOTES TO DEVELOPERS" at the bottom of file!
-###
-
-
 #
 # Utility macros
 #
@@ -926,25 +921,3 @@ macro(tribits_process_subpackages)
   set(${PACKAGE_NAME}_TRIBITS_PROCESS_SUBPACKAGES_CALLED TRUE)
 
 endmacro()
-
-
-##################################################################
-#
-#                    NOTES TO DEVELOPERS
-#
-# Don't even attempt to touch the logic that goes into setting up and
-# modifying the variables:
-#
-#   ${PACKAGE_NAME}_INCLUDE_DIRS
-#   ${PACKAGE_NAME}_LIBRARY_DIRS
-#   ${PACKAGE_NAME}_LIBRARIES
-#   ${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES_TO_INSTALL
-#   ${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES
-#   ${PARENT_PACKAGE_NAME}_LIB_TARGETS
-#   ${PARENT_PACKAGE_NAME}_ALL_TARGETS
-#
-# without carefully studying the documentation in README.DEPENDENCIES and then
-# carefully studying all of the code and issues that modify these variables!
-#
-# ToDo: Write some good unit tests that pin down the behavior of all of this!
-#

@@ -51,12 +51,6 @@ include(TribitsReportInvalidTribitsUsage)
 include(SetAndIncDirs)
 
 
-###
-### WARNING: See "NOTES TO DEVELOPERS" at the bottom of the file
-### TribitsPackageMacros.cmake!
-###
-
-
 # @FUNCTION: tribits_add_library()
 #
 # Function used to add a CMake library and target using ``add_library()`` and

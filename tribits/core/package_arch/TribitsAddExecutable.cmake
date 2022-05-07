@@ -49,13 +49,7 @@ include(PrintVar)
 include(AppendSet)
 include(CMakeParseArguments)
 
-###
-### WARNING: See "NOTES TO DEVELOPERS" at the bottom of the file
-### TribitsPackageMacros.cmake before trying to change anything in this file!
-###
 
-
-#
 # @FUNCTION: tribits_add_executable()
 #
 # Function used to create an executable (typically for a test or example),
