@@ -258,12 +258,8 @@ include(SetAndIncDirs)
 #
 # The function ``tribits_add_library()`` will grab the list of all of the
 # include directories in scope from prior calls to ``include_directories()``
-# and will append these to the variable ``${PACKAGE_NAME}_INCLUDE_DIRS``.
-# This list of include directories is exported to downstream SE packages so
-# they appear on the compile lines of all downstream object file compiles.
-# This is a critical part of the "glue" that allows TriBITS packages to link
-# up automatically (just by clearing dependencies in
-# `<packageDir>/cmake/Dependencies.cmake`_ files).
+# and will add this to the generated library target using
+# ``target_link_libraries()`` so that they get propagated downstream as well.
 #
 # .. _Install Targets (tribits_add_library()):
 #

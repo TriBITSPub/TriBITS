@@ -175,19 +175,7 @@ include(CMakeParseArguments)
 #     package or any upstream SE packages can *NOT* be listed!  TriBITS
 #     automatically links non ``TESTONLY`` libraries in this package and
 #     upstream packages to the executable.  The only libraries that should be
-#     listed in this argument are either ``TESTONLY`` libraries.  The include
-#     directories for each test-only library will automatically be added
-#     using::
-#
-#       include_directories(${<libi>_INCLUDE_DIRS})
-#
-#     where ``<libi>_INCLUDE_DIRS`` was set by::
-#
-#       tribits_add_library(<libi> ... TESTONLY ...)
-#
-#     Therefore, to link to a defined ``TESTONLY`` library in any upstream
-#     enabled package, one just needs to pass in the library name through
-#     ``TESTONLYLIBS ... <libi> ...`` and that is it!
+#     listed in this argument are either ``TESTONLY`` libraries.
 #
 #   ``IMPORTEDLIBS <lib0> <lib1> ...``
 #

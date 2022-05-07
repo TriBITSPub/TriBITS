@@ -76,22 +76,14 @@ function(tribits_process_enabled_tpl  TPL_NAME)
     if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
       print_var(${TPL_NAME}_FINDMOD)
     endif()
-    #print_var(${TPL_NAME}_FINDMOD)
     if (${TPL_NAME}_FINDMOD STREQUAL "TRIBITS_PKG")
       set(TPL_${TPL_NAME}_PARTS_ALREADY_SET FALSE)  # ToDo: Take out?
       if (NOT TPL_${TPL_NAME}_PARTS_ALREADY_SET)
         find_package(${TPL_NAME} CONFIG REQUIRED)
-        #print_var(${TPL_NAME}_INCLUDE_DIRS)
-        #print_var(${TPL_NAME}_LIBRARIES)
-        tribits_standardize_abs_paths(THIS_TPL_INCLUDE_DIRS
-          ${${TPL_NAME}_INCLUDE_DIRS} ${${TPL_NAME}_TPL_INCLUDE_DIRS})
-        global_set(TPL_${TPL_NAME}_INCLUDE_DIRS ${THIS_TPL_INCLUDE_DIRS})
         global_set(TPL_${TPL_NAME}_LIBRARIES
           "${${TPL_NAME}_LIBRARIES}" "${${TPL_NAME}_TPL_LIBRARIES}")
         global_set(TPL_${TPL_NAME}_PARTS_ALREADY_SET TRUE)
       endif()
-      #print_var(TPL_${TPL_NAME}_INCLUDE_DIRS)
-      #print_var(TPL_${TPL_NAME}_LIBRARIES)
       return()
     elseif (IS_ABSOLUTE ${${TPL_NAME}_FINDMOD})
       #message("${${TPL_NAME}_FINDMOD} is absolute!")
@@ -158,11 +150,7 @@ function(tribits_process_enabled_tpl  TPL_NAME)
     endif()
 
     # Assert that the TPL correctly defined all of these variables
-    assert_defined(TPL_${TPL_NAME}_INCLUDE_DIRS)
     assert_defined(TPL_${TPL_NAME}_LIBRARIES)
-    assert_defined(TPL_${TPL_NAME}_LIBRARY_DIRS)
-    # ToDo: Make TPL_${TPL_NAME}_LIBRARY_DIRS go away.  It is not needed for
-    # anything.
 
     # Generate the <tplName>ConfigVersion.cmake file if it has not been
     # created yet and add install targets for <tplName>Config[Version].cmake
