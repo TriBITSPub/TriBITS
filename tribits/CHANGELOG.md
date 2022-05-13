@@ -4,6 +4,25 @@ ChangeLog for TriBITS
 
 ## 2022-05-16:
 
+* **Changed:** All compliant external packages (TPLs) must now set the
+  imported target `<tplName>::all_libs` in their `FindTPL<tplName>.cmake`
+  files instead of the variables `TPL_<tplName>_INCLUDE` and
+  `TPL_<tplName>_LIBRARIES`.
+
+* **Changed:** The project-level variables `<Project>_INCLUDE_DIRS`,
+  `<Project>_TPL_INCLUDE_DIRS`, `<Project>_LIBRARY_DIRS` and
+  `<Project>_TPL_LIBRARY_DIRS` from the file `<Project>Config.cmake` and
+  package-level variables `<Package>_INCLUDE_DIRS`,
+  `<Package>_TPL_INCLUDE_DIRS`, `<Package>_LIBRARY_DIRS` and
+  `<Package>_TPL_LIBRARY_DIRS` from the installed files
+  `<Package>Config.cmake` are now set to empty.  Downstream CMake projects
+  will need to link against the exported project-level target
+  `<Project>::all_libs` or `<Project>::all_selected_libs` or the package-level
+  targets `<Package>::all_libs` in order to get the list of include
+  directories that are propagated through those targets by CMake.
+
+## 2022-05-16:
+
 * **Added:** The function `tribits_add_advanced_test(`) now correctly accepts
   a list of regexes for `PASS_REGULAR_EXPRESSION` and
   `FAIL_REGULAR_EXPRESSION` and behave the same as the raw CTest properties of
