@@ -113,10 +113,10 @@ include(PrintVar)
 #      [OUTPUT_FILE <outputFile>]
 #      [NO_ECHO_OUTPUT]]
 #      [PASS_ANY
-#        | PASS_REGULAR_EXPRESSION "<regex>"
-#        | PASS_REGULAR_EXPRESSION_ALL "<regex1>" "<regex2>" ... "<regexn>"
+#        | PASS_REGULAR_EXPRESSION "<regex0>" "<regex1>" ...
+#        | PASS_REGULAR_EXPRESSION_ALL "<regex0>" "<regex1>" ...
 #        | STANDARD_PASS_OUTPUT ]
-#      [FAIL_REGULAR_EXPRESSION "<regex>"]
+#      [FAIL_REGULAR_EXPRESSION "<regex0>" "<regex1>" ...]
 #      [ALWAYS_FAIL_ON_NONZERO_RETURN | ALWAYS_FAIL_ON_ZERO_RETURN]
 #      [WILL_FAIL]
 #
@@ -493,17 +493,17 @@ include(PrintVar)
 #     that is to follow will determine pass or fail based on output from this
 #     command in some way.
 #
-#   ``PASS_REGULAR_EXPRESSION "<regex>"``
+#   ``PASS_REGULAR_EXPRESSION "<regex0>"  "<regex1>" ...``
 #
-#     If specified, the test command will be assumed to pass if it matches the
-#     given regular expression.  Otherwise, it is assumed to fail.  TIPS:
-#     Replace ';' with '[;]' or CMake will interpret this as an array element
-#     boundary.  To match '.', use '[.]'.
+#     If specified, the test command will be assumed to pass if it matches
+#     **any** of the given regular expressions.  Otherwise, it is assumed to
+#     fail.  TIPS: Replace ';' with '[;]' or CMake will interpret this as an
+#     array element boundary.  To match '.', use '[.]'.
 #
-#   ``PASS_REGULAR_EXPRESSION_ALL "<regex1>" "<regex2>" ... "<regexn>"``
+#   ``PASS_REGULAR_EXPRESSION_ALL "<regex0>" "<regex1>" ...``
 #
 #     If specified, the test command will be assumed to pass if the output
-#     matches all of the provided regular expressions.  Note that this is not
+#     matches **all** of the provided regular expressions.  Note that this is not
 #     a capability of raw ctest and represents an extension provided by
 #     TriBITS.  NOTE: It is critical that you replace ';' with '[;]' or CMake
 #     will interpret this as an array element boundary.
@@ -515,14 +515,14 @@ include(PrintVar)
 #     This as the result of directly passing in ``PASS_REGULAR_EXPRESSION
 #     "End Result: TEST PASSED"``.
 #
-#   ``FAIL_REGULAR_EXPRESSION "<regex>"``
+#   ``FAIL_REGULAR_EXPRESSION "<regex0>" "<regex1>" ...``
 #
-#     If specified, the test command will be assumed to fail if it matches the
-#     given regular expression.  Otherwise, it is assumed to pass.  This will
-#     be applied and take precedence over other above pass criteria.  For
-#     example, if even if ``PASS_REGULAR_EXPRESSION`` or
-#     ``PASS_REGULAR_EXPRESSION_ALL`` match, then the test will be marked as
-#     failed if this fail regex matches the output.
+#     If specified, the test command will be assumed to fail if it matches
+#     **any** of the given regular expressions.  This will be applied and take
+#     precedence over other above pass criteria.  For example, if even if
+#     ``PASS_REGULAR_EXPRESSION`` or ``PASS_REGULAR_EXPRESSION_ALL`` match,
+#     then the test will be marked as failed if this fail regex matches the
+#     output.
 #
 #   ``ALWAYS_FAIL_ON_NONZERO_RETURN``
 #
@@ -602,6 +602,15 @@ include(PrintVar)
 #
 # **Test case Pass/Fail (tribits_add_advanced_test())**
 #
+# The logic given below can be used to determine pass/fail criteria for a test
+# case both based on what is printed in the test output **and** the return
+# code for the test block command.  Raw CTest, as of version 3.23, does not
+# allow that.  With raw CTest, one can only set determine pass/fail based the
+# test output **or** the return code, but not both.  This make
+# `tribits_add_advanced_test()`_ more attractive to use than
+# `tribits_add_test()`_ or raw ``add_test()`` in cases where it is important
+# to check both.
+#
 # The logic for how pass/fail for a ``TEST_<IDX>`` ``EXEC`` or ``CMND`` case
 # is applied is given by::
 #
@@ -609,13 +618,19 @@ include(PrintVar)
 #   TEST_CASE_PASSED = FALSE
 #   If PASS_ANY specified:
 #     TEST_CASE_PASSED = TRUE
-#   Else If PASS_REGULAR_EXPRESSION specified and "<regex>" matches:
-#     TEST_CASE_PASSED = TRUE
+#   Else If PASS_REGULAR_EXPRESSION is specified:
+#     For each "<regexi>" in PASS_REGULAR_EXPRESSION:
+#       If "<regexi>" matches STDOUT:
+#         TEST_CASE_PASSED = TRUE
+#       Endif
+#     Endforeach
 #   Else if PASS_REGULAR_EXPRESSION_ALL specified:
 #     TEST_CASE_PASSED = TRUE
-#     For each "<regexi>":
-#       If "<regixi>" does not match:
+#     For each "<regexi>" in PASS_REGULAR_EXPRESSION_ALL:
+#       If "<regexi>" does not match STDOUT:
 #         TEST_CASE_PASSED = FALSE
+#       Endif
+#     Endforeach
 #   Else
 #     If command return code == 0:
 #       TEST_CASE_PASSED = TRUE
@@ -623,14 +638,18 @@ include(PrintVar)
 #   Endif
 #
 #   # B) Check for failing regex matching?
-#   If FAIL_REGULAR_EXPRESSION specified and "<regex>" matches:
-#     TEST_CASE_PASSED = FALSE
+#   If FAIL_REGULAR_EXPRESSION specified:
+#     For each "<regexi>" in FAIL_REGULAR_EXPRESSION:
+#       If "<regexi>" matches STDOUT:
+#         TEST_CASE_PASSED = FALSE
+#       Endif
+#     Endforeach
 #   Endif
 #
 #   # C) Check for return code always 0 or !=0?
 #   If ALWAYS_FAIL_ON_NONZERO_RETURN specified and return code != 0:
 #     TEST_CASE_PASSED = FALSE
-#   ElseIf ALWAYS_FAIL_ON_ZERO_RETURN specified and return code == 0:
+#   Else If ALWAYS_FAIL_ON_ZERO_RETURN specified and return code == 0:
 #     TEST_CASE_PASSED = FALSE
 #   Endif
 #
@@ -643,6 +662,13 @@ include(PrintVar)
 #     Endif
 #   Endif
 #
+# Note that the above is the exact same logic that CTest uses to determine
+# pass/fail w.r.t. to the CTest properties ``PASS_REGULAR_EXPRESSION``,
+# ``FAIL_REGULAR_EXPRESSION`` and ``WILL_FAIL``.  (It is just that raw
+# CMake/CTest, as of version 3.23, does not support any pass/fail criteria
+# like ``PASS_REGULAR_EXPRESSION_ALL`` or
+# ``ALWAYS_FAIL_ON_NONZERO_RETURN``/``ALWAYS_FAIL_ON_ZERO_RETURN``.)
+#
 # .. _Overall Pass/Fail (tribits_add_advanced_test()):
 #
 # **Overall Pass/Fail (tribits_add_advanced_test())**
@@ -653,15 +679,26 @@ include(PrintVar)
 #
 # However, this can be changed by setting one of the following optional arguments:
 #
-#   ``FINAL_PASS_REGULAR_EXPRESSION <regex>``
+#   ``FINAL_PASS_REGULAR_EXPRESSION "<regex0>" "<regex1>" ...``
 #
 #     If specified, the test will be assumed to pass if the output matches
-#     ``<regex>``.  Otherwise, it will be assumed to fail.
+#     **any** of the provided regular expressions ``<regexi>``.  Otherwise, it
+#     will be assumed to fail.  (Sets the CTest property
+#     ``PASS_REGULAR_EXPRESSION`` for the overall test.)
 #
-#   ``FINAL_FAIL_REGULAR_EXPRESSION <regex>``
+#   ``FINAL_FAIL_REGULAR_EXPRESSION "<regex0>" "<regex1>" ...``
 #
 #     If specified, the test will be assumed to fail if the output matches
-#     ``<regex>``.  Otherwise, it will be assumed to fail.
+#     **any** of the provided regular expressions ``<regexi>`` regardless if
+#     other criteria would have the test passing.  (Sets the CTest property
+#     ``FAIL_REGULAR_EXPRESSION`` for the overall test.)
+#
+# **NOTE:** It is **not** recommended to set ``FINAL_PASS_REGULAR_EXPRESSION``
+# or ``FINAL_FAIL_REGULAR_EXPRESSION`` directly, but instead to determine
+# pass/fail for each test case individually as described in `TEST_<idx>
+# EXEC/CMND Test Blocks and Arguments (tribits_add_advanced_test())`_ and
+# `Test case Pass/Fail (tribits_add_advanced_test())`_.  Otherwise, the test
+# will confuse most people and the output behavior will seem very strange.
 #
 # .. _Argument Parsing and Ordering (tribits_add_advanced_test()):
 #

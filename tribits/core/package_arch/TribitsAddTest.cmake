@@ -68,8 +68,8 @@ include(TribitsAddTestHelpers)
 #     [EXCLUDE_IF_NOT_TRUE <varname0> <varname1> ...]
 #     [DISABLED <messageWhyDisabled>]
 #     [STANDARD_PASS_OUTPUT
-#       | PASS_REGULAR_EXPRESSION "<regex0>;<regex1>;..."]
-#     [FAIL_REGULAR_EXPRESSION "<regex0>;<regex1>;..."]
+#       | PASS_REGULAR_EXPRESSION "<regex0>" "<regex1>" ...]
+#     [FAIL_REGULAR_EXPRESSION "<regex0>" "<regex1>" ...]
 #     [WILL_FAIL]
 #     [ENVIRONMENT <var0>=<value0> <var1>=<value1> ...]
 #     [TIMEOUT <maxSeconds>]
@@ -337,7 +337,7 @@ include(TribitsAddTestHelpers)
 #     MPI executables is unreliable.  This is set using the built-in CTest
 #     property ``PASS_REGULAR_EXPRESSION``.
 #
-#   ``PASS_REGULAR_EXPRESSION "<regex0>;<regex1>;..."``
+#   ``PASS_REGULAR_EXPRESSION "<regex0>" "<regex1>" ...``
 #
 #     If specified, then the test will be assumed to pass only if one of the
 #     regular expressions ``<regex0>``, ``<regex1>`` etc. match the output
@@ -347,7 +347,7 @@ include(TribitsAddTestHelpers)
 #     CMake will interpret this as an array element boundary.  To match '.',
 #     use '[.]'.
 #
-#   ``FAIL_REGULAR_EXPRESSION "<regex0>;<regex1>;..."``
+#   ``FAIL_REGULAR_EXPRESSION "<regex0>" "<regex1>" ...``
 #
 #     If specified, then a test will be assumed to fail if one of the regular
 #     expressions ``<regex0>``, ``<regex1>`` etc. match the output send to
