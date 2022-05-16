@@ -2,11 +2,27 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-05-16:
+
+* **Added:** The function `tribits_add_advanced_test(`) now correctly accepts
+  a list of regexes for `PASS_REGULAR_EXPRESSION` and
+  `FAIL_REGULAR_EXPRESSION` and behave the same as the raw CTest properties of
+  the same names.
+
 ## 2022-03-10:
 
 * **Changed:** The `tribits_add_advanced_test()` command now correctly reports
   unparsed/unrecognized arguments.  This will break some sloppy usages. (One
   TriBITS test had to be fixed.)
+
+* **Changed:** The `tribits_add_test()` and `tribits_add_advanced_test()`
+  behave differently with data passed in with explicit colon arguments.  For
+  example, before `PASS_REGULAR_EXPRESSION "<regex0>;<regex1>"` could be used
+  to pass in a list of regular expressions but with the new handling of
+  function arguments, this now gets set as a single regex
+  `"<regex0>\\;<regex1>"` which is not the same.  The fix (that also works
+  with older versions of TriBITS) is to pass in multiple regexes as separate
+  arguments as `PASS_REGULAR_EXPRESSION "<regex0>" "<regex1>"`.
 
 * **Added:** The `tribits_add_test()`, `tribits_add_advanced_test()`, and
   `tribits_add_executable_and_test()` functions now allow handling semi-colons

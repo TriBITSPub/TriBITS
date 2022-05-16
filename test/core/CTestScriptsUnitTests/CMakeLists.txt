@@ -76,9 +76,16 @@ tribits_add_test( GenericDriver
   )
 
 tribits_add_test( GenericDriver
-  NAME CTestScripts_simple_pass_regex
+  NAME CTestScripts_simple_pass_regex_1
   ARGS "\"This is a crazy test!\" 1"
   PASS_REGULAR_EXPRESSION "[^=]This is a crazy test"
+  NUM_MPI_PROCS 1
+  )
+
+tribits_add_test( GenericDriver
+  NAME CTestScripts_simple_pass_regex_2
+  POSTFIX_AND_ARGS_0 test1 "This is a crazy test!" 1
+  PASS_REGULAR_EXPRESSION "does not match" "This is a crazy test"
   NUM_MPI_PROCS 1
   )
 
@@ -143,6 +150,14 @@ tribits_add_test( GenericDriver
   # "failed".  If you comment out FAIL_REGULAR_EXPRESSION, the final result
   # will be "failed".
 
+tribits_add_test( GenericDriver
+  NAME CTestScripts_pass_regular_expression_fail_regular_exprssion_2_will_fail
+  POSTFIX_AND_ARGS_0 test1 "This says PASS!  This says FAIL!" 1
+  PASS_REGULAR_EXPRESSION "This says PASS"
+  FAIL_REGULAR_EXPRESSION "Does not match" "This says FAIL"
+  WILL_FAIL
+  NUM_MPI_PROCS 1
+  )
 
 function(ctestscripts_fail_regular_exprssion_w_circular_ref_detection_tests)
 
@@ -206,10 +221,28 @@ tribits_add_advanced_test(
   )
 
 tribits_add_advanced_test(
-  CTestScripts_cmnd_1_args_1_print_msg_out_file
+  CTestScripts_cmnd_1_args_1_print_msg_out_file_pass_regex_1
   TEST_0 EXEC GenericDriver ARGS "This is a crazy test!" 5
     OUTPUT_FILE cmnd_1_args_1_print_msg_out_file_outputFile.out
     PASS_REGULAR_EXPRESSION "This is a crazy test"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+tribits_add_advanced_test(
+  CTestScripts_cmnd_1_args_1_print_msg_out_file_pass_regex_2
+  TEST_0 EXEC GenericDriver ARGS "This is a crazy test!" 5
+    OUTPUT_FILE cmnd_1_args_1_print_msg_out_file_outputFile.out
+    PASS_REGULAR_EXPRESSION "does not match" "This is a crazy test"
+  OVERALL_NUM_MPI_PROCS 1
+  )
+
+tribits_add_advanced_test(
+  CTestScripts_cmnd_1_args_1_print_msg_out_file_fail_regex_2_will_fail
+  TEST_0 EXEC GenericDriver ARGS "This is a crazy test!" 0
+    OUTPUT_FILE cmnd_1_args_1_print_msg_out_file_outputFile.out
+    PASS_REGULAR_EXPRESSION "This is a crazy test"
+    FAIL_REGULAR_EXPRESSION "Does not match" "This is a crazy test"
+    WILL_FAIL
   OVERALL_NUM_MPI_PROCS 1
   )
 
@@ -346,7 +379,7 @@ tribits_add_advanced_test(
     ARGS "This is a crazy test\n\nThis is not the best test" 5
     OUTPUT_FILE cmnd_1_args_1_pass_regular_expression_all_compare_1_outputFile.out
     PASS_REGULAR_EXPRESSION_ALL "This is a crazy test" "This is not the best test"
-  FINAL_PASS_REGULAR_EXPRESSION "TEST_0: Pass criteria = Match REGEX {This is a crazy test} [^a]PASSED[^a]"
+  FINAL_PASS_REGULAR_EXPRESSION "TEST_0: Pass criteria = Match all REGEX {This is a crazy test} [^a]PASSED[^a]"
   OVERALL_NUM_MPI_PROCS 1
   )
 
@@ -356,7 +389,7 @@ tribits_add_advanced_test(
     ARGS "This is a crazy test\n\nThis is not the best test" 5
     OUTPUT_FILE cmnd_1_args_1_pass_regular_expression_all_compare_2_outputFile.out
     PASS_REGULAR_EXPRESSION_ALL "This is a crazy test" "This is not the best test"
-  FINAL_PASS_REGULAR_EXPRESSION "TEST_0: Pass criteria = Match REGEX {This is not the best test} [^a]PASSED[^a]"
+  FINAL_PASS_REGULAR_EXPRESSION "TEST_0: Pass criteria = Match all REGEX {This is not the best test} [^a]PASSED[^a]"
   OVERALL_NUM_MPI_PROCS 1
   )
 
@@ -805,7 +838,7 @@ tribits_add_advanced_test(
       "TEST_1: Result = PASSED"
       "This is Test File A"
       "TEST_2: Return code = 0"
-      "TEST_2: Pass criteria = Match REGEX .This is Test File A. .PASSED."
+      "TEST_2: Pass criteria = Match any REGEX .This is Test File A. .PASSED."
       "TEST_2: Result = PASSED"                                
       "OVERALL FINAL RESULT: TEST FAILED [(]TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_file_name[)]"
   )
@@ -841,7 +874,7 @@ tribits_add_advanced_test(
       "TEST_3: Result = PASSED"
       "This is Test File A"
       "TEST_4: Return code = 0"
-      "TEST_4: Pass criteria = Match REGEX .This is Test File A. .PASSED."
+      "TEST_4: Pass criteria = Match any REGEX .This is Test File A. .PASSED."
       "TEST_4: Result = PASSED"                                
       "OVERALL FINAL RESULT: TEST FAILED [(]TAATDriver_TAAT_COPY_FILES_TO_TEST_DIR_bad_dest_dir[)]"
   )

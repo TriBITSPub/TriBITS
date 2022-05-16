@@ -2214,6 +2214,32 @@ function(unittest_tribits_add_test_properties)
   unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;APPEND;PROPERTY;LABELS")
 
+  message("Test setting PASS_REGULAR_EXPRESSION")
+  tribits_add_test(${EXEN} PASS_REGULAR_EXPRESSION
+     "[^a-zA-Z0-9_]My first pass Regex" "*/second pass regex")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
+    "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!" )
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
+    "PackageA_SomeExec;PROPERTIES;PASS_REGULAR_EXPRESSION;[^a-zA-Z0-9_]My first pass Regex;*/second pass regex;")
+
+  message("Test setting FAIL_REGULAR_EXPRESSION")
+  tribits_add_test(${EXEN} FAIL_REGULAR_EXPRESSION
+     "[^a-zA-Z0-9_]My first fail Regex" "*/second fail regex")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
+    "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!" )
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
+    "PackageA_SomeExec;APPEND;PROPERTY;FAIL_REGULAR_EXPRESSION;[^a-zA-Z0-9_]My first fail Regex;*/second fail regex;")
+
+  message("Test setting WILL_FAIL")
+  tribits_add_test(${EXEN} WILL_FAIL FAIL_REGULAR_EXPRESSION
+     "[^a-zA-Z0-9_]1ST fail Regex" "*/2nd fail regex")
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
+    "-- ${PACKEXEN}: Added test (BASIC, PROCESSORS=1)!" )
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
+    "PackageA_SomeExec;PROPERTIES;WILL_FAIL;ON;")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
+    "PackageA_SomeExec;APPEND;PROPERTY;FAIL_REGULAR_EXPRESSION;[^a-zA-Z0-9_]1ST fail Regex;*/2nd fail regex;")
+
   message("Test setting integer TIMEOUT with no scaling (not even defined)")
   tribits_add_test(${EXEN} TIMEOUT 200)
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
@@ -3539,6 +3565,21 @@ function(unittest_tribits_add_advanced_test_properties)
   # tribits_add_advanced_test() that looks for it.  Otherwise, the outer
   # tribits_add_advanced_test() always thinks these unit tests pass!
 
+  message("Test setting FINAL_PASS_REGULAR_EXPRESSION")
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_final_pass_regular_expression
+    TEST_0 CMND ${CMNDN} FINAL_PASS_REGULAR_EXPRESSION
+     "[^a-zA-Z0-9_]My first pass Regex" "*/second pass regex")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
+    "PackageA_TAAT_final_pass_regular_expression;PROPERTIES;PASS_REGULAR_EXPRESSION;[^a-zA-Z0-9_]My first pass Regex;*/second pass regex")
+
+  message("Test setting FINAL_FAIL_REGULAR_EXPRESSION")
+  tribits_add_advanced_test( TAAT_final_fail_regular_expression
+    TEST_0 CMND ${CMNDN} FINAL_FAIL_REGULAR_EXPRESSION
+     "[^a-zA-Z0-9_]My first fail Regex" "*/second fail regex")
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
+    "PackageA_TAAT_final_fail_regular_expression;PROPERTIES;FAIL_REGULAR_EXPRESSION;[^a-zA-Z0-9_]My first fail Regex;*/second fail regex")
+
   message("Test setting non-integer TIMEOUT with no scaling (not even defined)")
   tribits_add_advanced_test_unittest_reset()
   tribits_add_advanced_test( TAAT_basic_cmnd_1_args_0
@@ -4514,4 +4555,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(686)
+unittest_final_result(695)
