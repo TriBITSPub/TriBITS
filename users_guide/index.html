@@ -350,10 +350,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-05-07</p>
+<dd class="field-even"><p>2022-05-16</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2853-g769f615f</p>
+<dd class="field-odd"><p>tribits_start-2855-g2f3633af</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -10097,10 +10097,10 @@ form:</p>
    <span class="p">[</span><span class="n">OUTPUT_FILE</span> <span class="o">&lt;</span><span class="n">outputFile</span><span class="o">&gt;</span><span class="p">]</span>
    <span class="p">[</span><span class="n">NO_ECHO_OUTPUT</span><span class="p">]]</span>
    <span class="p">[</span><span class="n">PASS_ANY</span>
-     <span class="o">|</span> <span class="n">PASS_REGULAR_EXPRESSION</span> <span class="s2">&quot;&lt;regex&gt;&quot;</span>
-     <span class="o">|</span> <span class="n">PASS_REGULAR_EXPRESSION_ALL</span> <span class="s2">&quot;&lt;regex1&gt;&quot;</span> <span class="s2">&quot;&lt;regex2&gt;&quot;</span> <span class="o">...</span> <span class="s2">&quot;&lt;regexn&gt;&quot;</span>
+     <span class="o">|</span> <span class="n">PASS_REGULAR_EXPRESSION</span> <span class="s2">&quot;&lt;regex0&gt;&quot;</span> <span class="s2">&quot;&lt;regex1&gt;&quot;</span> <span class="o">...</span>
+     <span class="o">|</span> <span class="n">PASS_REGULAR_EXPRESSION_ALL</span> <span class="s2">&quot;&lt;regex0&gt;&quot;</span> <span class="s2">&quot;&lt;regex1&gt;&quot;</span> <span class="o">...</span>
      <span class="o">|</span> <span class="n">STANDARD_PASS_OUTPUT</span> <span class="p">]</span>
-   <span class="p">[</span><span class="n">FAIL_REGULAR_EXPRESSION</span> <span class="s2">&quot;&lt;regex&gt;&quot;</span><span class="p">]</span>
+   <span class="p">[</span><span class="n">FAIL_REGULAR_EXPRESSION</span> <span class="s2">&quot;&lt;regex0&gt;&quot;</span> <span class="s2">&quot;&lt;regex1&gt;&quot;</span> <span class="o">...</span><span class="p">]</span>
    <span class="p">[</span><span class="n">ALWAYS_FAIL_ON_NONZERO_RETURN</span> <span class="o">|</span> <span class="n">ALWAYS_FAIL_ON_ZERO_RETURN</span><span class="p">]</span>
    <span class="p">[</span><span class="n">WILL_FAIL</span><span class="p">]</span>
 </pre></div>
@@ -10469,17 +10469,17 @@ the return value or any other output.  This would be used when a command
 that is to follow will determine pass or fail based on output from this
 command in some way.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex&gt;&quot;</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span>&#160; <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>
-<div><p>If specified, the test command will be assumed to pass if it matches the
-given regular expression.  Otherwise, it is assumed to fail.  TIPS:
-Replace ‘;’ with ‘[;]’ or CMake will interpret this as an array element
-boundary.  To match ‘.’, use ‘[.]’.</p>
+<div><p>If specified, the test command will be assumed to pass if it matches
+<strong>any</strong> of the given regular expressions.  Otherwise, it is assumed to
+fail.  TIPS: Replace ‘;’ with ‘[;]’ or CMake will interpret this as an
+array element boundary.  To match ‘.’, use ‘[.]’.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION_ALL</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">&quot;&lt;regex2&gt;&quot;</span> <span class="pre">...</span> <span class="pre">&quot;&lt;regexn&gt;&quot;</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION_ALL</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>
 <div><p>If specified, the test command will be assumed to pass if the output
-matches all of the provided regular expressions.  Note that this is not
+matches <strong>all</strong> of the provided regular expressions.  Note that this is not
 a capability of raw ctest and represents an extension provided by
 TriBITS.  NOTE: It is critical that you replace ‘;’ with ‘[;]’ or CMake
 will interpret this as an array element boundary.</p>
@@ -10491,14 +10491,14 @@ expression “Final Result: PASSED” is found in the output for the test.
 This as the result of directly passing in <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span>
 <span class="pre">&quot;End</span> <span class="pre">Result:</span> <span class="pre">TEST</span> <span class="pre">PASSED&quot;</span></code>.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">FAIL_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex&gt;&quot;</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">FAIL_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>
-<div><p>If specified, the test command will be assumed to fail if it matches the
-given regular expression.  Otherwise, it is assumed to pass.  This will
-be applied and take precedence over other above pass criteria.  For
-example, if even if <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code> or
-<code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION_ALL</span></code> match, then the test will be marked as
-failed if this fail regex matches the output.</p>
+<div><p>If specified, the test command will be assumed to fail if it matches
+<strong>any</strong> of the given regular expressions.  This will be applied and take
+precedence over other above pass criteria.  For example, if even if
+<code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code> or <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION_ALL</span></code> match,
+then the test will be marked as failed if this fail regex matches the
+output.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">ALWAYS_FAIL_ON_NONZERO_RETURN</span></code></p>
 <blockquote>
@@ -10572,19 +10572,33 @@ created (including several directory levels deep if needed).</p>
 </div></blockquote>
 </div></blockquote>
 <p id="test-case-pass-fail-tribits-add-advanced-test"><strong>Test case Pass/Fail (tribits_add_advanced_test())</strong></p>
+<p>The logic given below can be used to determine pass/fail criteria for a test
+case both based on what is printed in the test output <strong>and</strong> the return
+code for the test block command.  Raw CTest, as of version 3.23, does not
+allow that.  With raw CTest, one can only set determine pass/fail based the
+test output <strong>or</strong> the return code, but not both.  This make
+<a class="reference internal" href="#tribits-add-advanced-test">tribits_add_advanced_test()</a> more attractive to use than
+<a class="reference internal" href="#tribits-add-test">tribits_add_test()</a> or raw <code class="docutils literal notranslate"><span class="pre">add_test()</span></code> in cases where it is important
+to check both.</p>
 <p>The logic for how pass/fail for a <code class="docutils literal notranslate"><span class="pre">TEST_&lt;IDX&gt;</span></code> <code class="docutils literal notranslate"><span class="pre">EXEC</span></code> or <code class="docutils literal notranslate"><span class="pre">CMND</span></code> case
 is applied is given by:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># A) Apply first set of pass/fail logic</span>
 <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">FALSE</span>
 <span class="n">If</span> <span class="n">PASS_ANY</span> <span class="n">specified</span><span class="p">:</span>
   <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">TRUE</span>
-<span class="n">Else</span> <span class="n">If</span> <span class="n">PASS_REGULAR_EXPRESSION</span> <span class="n">specified</span> <span class="ow">and</span> <span class="s2">&quot;&lt;regex&gt;&quot;</span> <span class="n">matches</span><span class="p">:</span>
-  <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">TRUE</span>
+<span class="n">Else</span> <span class="n">If</span> <span class="n">PASS_REGULAR_EXPRESSION</span> <span class="ow">is</span> <span class="n">specified</span><span class="p">:</span>
+  <span class="n">For</span> <span class="n">each</span> <span class="s2">&quot;&lt;regexi&gt;&quot;</span> <span class="ow">in</span> <span class="n">PASS_REGULAR_EXPRESSION</span><span class="p">:</span>
+    <span class="n">If</span> <span class="s2">&quot;&lt;regexi&gt;&quot;</span> <span class="n">matches</span> <span class="n">STDOUT</span><span class="p">:</span>
+      <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">TRUE</span>
+    <span class="n">Endif</span>
+  <span class="n">Endforeach</span>
 <span class="n">Else</span> <span class="k">if</span> <span class="n">PASS_REGULAR_EXPRESSION_ALL</span> <span class="n">specified</span><span class="p">:</span>
   <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">TRUE</span>
-  <span class="n">For</span> <span class="n">each</span> <span class="s2">&quot;&lt;regexi&gt;&quot;</span><span class="p">:</span>
-    <span class="n">If</span> <span class="s2">&quot;&lt;regixi&gt;&quot;</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+  <span class="n">For</span> <span class="n">each</span> <span class="s2">&quot;&lt;regexi&gt;&quot;</span> <span class="ow">in</span> <span class="n">PASS_REGULAR_EXPRESSION_ALL</span><span class="p">:</span>
+    <span class="n">If</span> <span class="s2">&quot;&lt;regexi&gt;&quot;</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">match</span> <span class="n">STDOUT</span><span class="p">:</span>
       <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">FALSE</span>
+    <span class="n">Endif</span>
+  <span class="n">Endforeach</span>
 <span class="n">Else</span>
   <span class="n">If</span> <span class="n">command</span> <span class="k">return</span> <span class="n">code</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">TRUE</span>
@@ -10592,14 +10606,18 @@ is applied is given by:</p>
 <span class="n">Endif</span>
 
 <span class="c1"># B) Check for failing regex matching?</span>
-<span class="n">If</span> <span class="n">FAIL_REGULAR_EXPRESSION</span> <span class="n">specified</span> <span class="ow">and</span> <span class="s2">&quot;&lt;regex&gt;&quot;</span> <span class="n">matches</span><span class="p">:</span>
-  <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">FALSE</span>
+<span class="n">If</span> <span class="n">FAIL_REGULAR_EXPRESSION</span> <span class="n">specified</span><span class="p">:</span>
+  <span class="n">For</span> <span class="n">each</span> <span class="s2">&quot;&lt;regexi&gt;&quot;</span> <span class="ow">in</span> <span class="n">FAIL_REGULAR_EXPRESSION</span><span class="p">:</span>
+    <span class="n">If</span> <span class="s2">&quot;&lt;regexi&gt;&quot;</span> <span class="n">matches</span> <span class="n">STDOUT</span><span class="p">:</span>
+      <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">FALSE</span>
+    <span class="n">Endif</span>
+  <span class="n">Endforeach</span>
 <span class="n">Endif</span>
 
 <span class="c1"># C) Check for return code always 0 or !=0?</span>
 <span class="n">If</span> <span class="n">ALWAYS_FAIL_ON_NONZERO_RETURN</span> <span class="n">specified</span> <span class="ow">and</span> <span class="k">return</span> <span class="n">code</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
   <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">FALSE</span>
-<span class="n">ElseIf</span> <span class="n">ALWAYS_FAIL_ON_ZERO_RETURN</span> <span class="n">specified</span> <span class="ow">and</span> <span class="k">return</span> <span class="n">code</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<span class="n">Else</span> <span class="n">If</span> <span class="n">ALWAYS_FAIL_ON_ZERO_RETURN</span> <span class="n">specified</span> <span class="ow">and</span> <span class="k">return</span> <span class="n">code</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
   <span class="n">TEST_CASE_PASSED</span> <span class="o">=</span> <span class="n">FALSE</span>
 <span class="n">Endif</span>
 
@@ -10613,6 +10631,12 @@ is applied is given by:</p>
 <span class="n">Endif</span>
 </pre></div>
 </div>
+<p>Note that the above is the exact same logic that CTest uses to determine
+pass/fail w.r.t. to the CTest properties <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code>,
+<code class="docutils literal notranslate"><span class="pre">FAIL_REGULAR_EXPRESSION</span></code> and <code class="docutils literal notranslate"><span class="pre">WILL_FAIL</span></code>.  (It is just that raw
+CMake/CTest, as of version 3.23, does not support any pass/fail criteria
+like <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION_ALL</span></code> or
+<code class="docutils literal notranslate"><span class="pre">ALWAYS_FAIL_ON_NONZERO_RETURN</span></code>/<code class="docutils literal notranslate"><span class="pre">ALWAYS_FAIL_ON_ZERO_RETURN</span></code>.)</p>
 <p id="overall-pass-fail-tribits-add-advanced-test"><strong>Overall Pass/Fail (tribits_add_advanced_test())</strong></p>
 <p>By default, the overall test will be assumed to pass if it prints:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;OVERALL FINAL RESULT: TEST PASSED (&lt;testName&gt;)&quot;</span>
@@ -10620,17 +10644,27 @@ is applied is given by:</p>
 </div>
 <p>However, this can be changed by setting one of the following optional arguments:</p>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">FINAL_PASS_REGULAR_EXPRESSION</span> <span class="pre">&lt;regex&gt;</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">FINAL_PASS_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>
 <div><p>If specified, the test will be assumed to pass if the output matches
-<code class="docutils literal notranslate"><span class="pre">&lt;regex&gt;</span></code>.  Otherwise, it will be assumed to fail.</p>
+<strong>any</strong> of the provided regular expressions <code class="docutils literal notranslate"><span class="pre">&lt;regexi&gt;</span></code>.  Otherwise, it
+will be assumed to fail.  (Sets the CTest property
+<code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code> for the overall test.)</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">FINAL_FAIL_REGULAR_EXPRESSION</span> <span class="pre">&lt;regex&gt;</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">FINAL_FAIL_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>
 <div><p>If specified, the test will be assumed to fail if the output matches
-<code class="docutils literal notranslate"><span class="pre">&lt;regex&gt;</span></code>.  Otherwise, it will be assumed to fail.</p>
+<strong>any</strong> of the provided regular expressions <code class="docutils literal notranslate"><span class="pre">&lt;regexi&gt;</span></code> regardless if
+other criteria would have the test passing.  (Sets the CTest property
+<code class="docutils literal notranslate"><span class="pre">FAIL_REGULAR_EXPRESSION</span></code> for the overall test.)</p>
 </div></blockquote>
 </div></blockquote>
+<p><strong>NOTE:</strong> It is <strong>not</strong> recommended to set <code class="docutils literal notranslate"><span class="pre">FINAL_PASS_REGULAR_EXPRESSION</span></code>
+or <code class="docutils literal notranslate"><span class="pre">FINAL_FAIL_REGULAR_EXPRESSION</span></code> directly, but instead to determine
+pass/fail for each test case individually as described in <a class="reference internal" href="#test-idx-exec-cmnd-test-blocks-and-arguments-tribits-add-advanced-test">TEST_&lt;idx&gt;
+EXEC/CMND Test Blocks and Arguments (tribits_add_advanced_test())</a> and
+<a class="reference internal" href="#test-case-pass-fail-tribits-add-advanced-test">Test case Pass/Fail (tribits_add_advanced_test())</a>.  Otherwise, the test
+will confuse most people and the output behavior will seem very strange.</p>
 <p id="argument-parsing-and-ordering-tribits-add-advanced-test"><strong>Argument Parsing and Ordering (tribits_add_advanced_test())</strong></p>
 <p>The basic tool used for parsing the arguments to this function is the
 command <code class="docutils literal notranslate"><span class="pre">cmake_parse_arguments()</span></code> which has a certain set of behaviors.
@@ -11450,8 +11484,8 @@ to deprecated parts of a package.</p>
   <span class="p">[</span><span class="n">EXCLUDE_IF_NOT_TRUE</span> <span class="o">&lt;</span><span class="n">varname0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">varname1</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
   <span class="p">[</span><span class="n">DISABLED</span> <span class="o">&lt;</span><span class="n">messageWhyDisabled</span><span class="o">&gt;</span><span class="p">]</span>
   <span class="p">[</span><span class="n">STANDARD_PASS_OUTPUT</span>
-    <span class="o">|</span> <span class="n">PASS_REGULAR_EXPRESSION</span> <span class="s2">&quot;&lt;regex0&gt;;&lt;regex1&gt;;...&quot;</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">FAIL_REGULAR_EXPRESSION</span> <span class="s2">&quot;&lt;regex0&gt;;&lt;regex1&gt;;...&quot;</span><span class="p">]</span>
+    <span class="o">|</span> <span class="n">PASS_REGULAR_EXPRESSION</span> <span class="s2">&quot;&lt;regex0&gt;&quot;</span> <span class="s2">&quot;&lt;regex1&gt;&quot;</span> <span class="o">...</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">FAIL_REGULAR_EXPRESSION</span> <span class="s2">&quot;&lt;regex0&gt;&quot;</span> <span class="s2">&quot;&lt;regex1&gt;&quot;</span> <span class="o">...</span><span class="p">]</span>
   <span class="p">[</span><span class="n">WILL_FAIL</span><span class="p">]</span>
   <span class="p">[</span><span class="n">ENVIRONMENT</span> <span class="o">&lt;</span><span class="n">var0</span><span class="o">&gt;=&lt;</span><span class="n">value0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">var1</span><span class="o">&gt;=&lt;</span><span class="n">value1</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
   <span class="p">[</span><span class="n">TIMEOUT</span> <span class="o">&lt;</span><span class="n">maxSeconds</span><span class="o">&gt;</span><span class="p">]</span>
@@ -11716,7 +11750,7 @@ is needed for MPI tests on some platforms since the return value from
 MPI executables is unreliable.  This is set using the built-in CTest
 property <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code>.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;;&lt;regex1&gt;;...&quot;</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>
 <div><p>If specified, then the test will be assumed to pass only if one of the
 regular expressions <code class="docutils literal notranslate"><span class="pre">&lt;regex0&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;regex1&gt;</span></code> etc. match the output
@@ -11726,7 +11760,7 @@ CMake documentation for full behavior.  TIPS: Replace ‘;’ with ‘[;]’ or
 CMake will interpret this as an array element boundary.  To match ‘.’,
 use ‘[.]’.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">FAIL_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;;&lt;regex1&gt;;...&quot;</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">FAIL_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>
 <div><p>If specified, then a test will be assumed to fail if one of the regular
 expressions <code class="docutils literal notranslate"><span class="pre">&lt;regex0&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;regex1&gt;</span></code> etc. match the output send to
