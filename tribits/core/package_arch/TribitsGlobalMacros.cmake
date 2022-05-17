@@ -1441,135 +1441,22 @@ function(tribits_generate_repo_version_output_and_file_and_install)
 endfunction()
 
 
-# Print out a list with white-space separators with an initial doc string
-#
-function(tribits_print_prefix_string_and_list  DOCSTRING   LIST_TO_PRINT)
-  string(REPLACE ";" " " LIST_TO_PRINT_STR "${LIST_TO_PRINT}")
-  list(LENGTH  LIST_TO_PRINT  NUM_ELEMENTS)
-  if (NUM_ELEMENTS GREATER "0")
-    message("${DOCSTRING}:  ${LIST_TO_PRINT_STR} ${NUM_ELEMENTS}")
-  else()
-    message("${DOCSTRING}:  ${NUM_ELEMENTS}")
-  endif()
-endfunction()
-
-
-# Print the current set of enabled/disabled packages given input list of
-# packages
-#
-function(tribits_print_enabled_packages_list_from_var  PACKAGES_LIST_VAR
-  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY
-  )
-  if (ENABLED_FLAG AND NOT INCLUDE_EMPTY)
-    tribits_get_enabled_list(${PACKAGES_LIST_VAR}  ${PROJECT_NAME}
-      ENABLED_PACKAGES  NUM_ENABLED)
-  elseif (ENABLED_FLAG AND INCLUDE_EMPTY)
-    tribits_get_nondisabled_list(${PACKAGES_LIST_VAR}  ${PROJECT_NAME}
-      ENABLED_PACKAGES  NUM_ENABLED)
-  elseif (NOT ENABLED_FLAG AND NOT INCLUDE_EMPTY)
-    tribits_get_disabled_list(${PACKAGES_LIST_VAR}  ${PROJECT_NAME}
-      ENABLED_PACKAGES  NUM_ENABLED)
-  else() # NOT ENABLED_FLAG AND INCLUDE_EMPTY
-    tribits_get_nonenabled_list(${PACKAGES_LIST_VAR}  ${PROJECT_NAME}
-      ENABLED_PACKAGES  NUM_ENABLED)
-  endif()
-  tribits_print_prefix_string_and_list("${DOCSTRING}"  "${ENABLED_PACKAGES}")
-endfunction()
-
-
-# Prints the current set of enabled/disabled packages
-#
-function(tribits_print_enabled_package_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
-  tribits_print_enabled_packages_list_from_var( ${PROJECT_NAME}_PACKAGES
-    "${DOCSTRING}" ${ENABLED_FLAG} ${INCLUDE_EMPTY} )
-endfunction()
-
-
-# Prints the current set of enabled/disabled SE packages
-#
-function(tribits_print_enabled_se_package_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
-  if (ENABLED_FLAG AND NOT INCLUDE_EMPTY)
-    tribits_get_enabled_list( ${PROJECT_NAME}_SE_PACKAGES  ${PROJECT_NAME}
-      ENABLED_SE_PACKAGES  NUM_ENABLED)
-  elseif (ENABLED_FLAG AND INCLUDE_EMPTY)
-    tribits_get_nondisabled_list( ${PROJECT_NAME}_SE_PACKAGES  ${PROJECT_NAME}
-      ENABLED_SE_PACKAGES  NUM_ENABLED)
-  elseif (NOT ENABLED_FLAG AND NOT INCLUDE_EMPTY)
-    tribits_get_disabled_list( ${PROJECT_NAME}_SE_PACKAGES  ${PROJECT_NAME}
-      ENABLED_SE_PACKAGES  NUM_ENABLED)
-  else() # NOT ENABLED_FLAG AND INCLUDE_EMPTY
-    tribits_get_nonenabled_list( ${PROJECT_NAME}_SE_PACKAGES  ${PROJECT_NAME}
-      ENABLED_SE_PACKAGES  NUM_ENABLED)
-  endif()
-  tribits_print_prefix_string_and_list("${DOCSTRING}"  "${ENABLED_SE_PACKAGES}")
-endfunction()
-
-
-# Print the current set of enabled/disabled TPLs
-#
-function(tribits_print_enabled_tpl_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
-  if (ENABLED_FLAG AND NOT INCLUDE_EMPTY)
-    tribits_get_enabled_list( ${PROJECT_NAME}_TPLS  TPL
-      ENABLED_TPLS  NUM_ENABLED)
-  elseif (ENABLED_FLAG AND INCLUDE_EMPTY)
-    tribits_get_nondisabled_list( ${PROJECT_NAME}_TPLS  TPL
-      ENABLED_TPLS  NUM_ENABLED)
-  elseif (NOT ENABLED_FLAG AND NOT INCLUDE_EMPTY)
-    tribits_get_disabled_list( ${PROJECT_NAME}_TPLS  TPL
-      ENABLED_TPLS  NUM_ENABLED)
-  else() # NOT ENABLED_FLAG AND INCLUDE_EMPTY
-    tribits_get_nonenabled_list( ${PROJECT_NAME}_TPLS  TPL
-       ENABLED_TPLS  NUM_ENABLED)
-  endif()
-  tribits_print_prefix_string_and_list("${DOCSTRING}"  "${ENABLED_TPLS}")
-endfunction()
-
-
 # Adjust package enable logic and print out before and after state
 #
 # On output sets:
 #
-#    ${PROJECT_NAME}_NUM_ENABLED_PACKAGES: Number of enabled packages (local variable)
-#    ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}: Enable status of PACKAGE_NAME (local variable)
+# * ${PROJECT_NAME}_NUM_ENABLED_PACKAGES: Number of enabled packages (local variable)
+# * ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}: Enable status of PACKAGE_NAME (local variable)
 #    ToDo: Fill in others as well!
 #
 macro(tribits_adjust_and_print_package_dependencies)
-
   tribits_config_code_start_timer(ADJUST_PACKAGE_DEPS_TIME_START_SECONDS)
-
-  tribits_print_enabled_package_list(
-    "\nExplicitly enabled packages on input (by user)" ON FALSE)
-  tribits_print_enabled_se_package_list(
-    "\nExplicitly enabled SE packages on input (by user)" ON FALSE)
-  tribits_print_enabled_package_list(
-    "\nExplicitly disabled packages on input (by user or by default)" OFF FALSE)
-  tribits_print_enabled_se_package_list(
-    "\nExplicitly disabled SE packages on input (by user or by default)" OFF FALSE)
-  tribits_print_enabled_tpl_list(
-    "\nExplicitly enabled TPLs on input (by user)" ON FALSE)
-  tribits_print_enabled_tpl_list(
-    "\nExplicitly disabled TPLs on input (by user or by default)" OFF FALSE)
-
+  tribits_print_enables_before_adjust_package_enables()
   tribits_adjust_package_enables()
-
-  tribits_print_prefix_string_and_list(
-    "\nFinal set of enabled packages" "${${PROJECT_NAME}_ENABLED_PACKAGES}")
-  tribits_print_prefix_string_and_list(
-    "\nFinal set of enabled SE packages" "${${PROJECT_NAME}_ENABLED_SE_PACKAGES}")
-  tribits_print_enabled_package_list(
-    "\nFinal set of non-enabled packages" OFF TRUE)
-  tribits_print_enabled_se_package_list(
-    "\nFinal set of non-enabled SE packages" OFF TRUE)
-  tribits_print_enabled_tpl_list(
-    "\nFinal set of enabled TPLs" ON FALSE)
-  tribits_print_enabled_tpl_list(
-    "\nFinal set of non-enabled TPLs" OFF TRUE)
-
+  tribits_print_enables_after_adjust_package_enables()
   tribits_set_up_enabled_only_dependencies()
-
   tribits_config_code_stop_timer(ADJUST_PACKAGE_DEPS_TIME_START_SECONDS
     "\nTotal time to adjust package and TPL enables")
-
 endmacro()
 
 

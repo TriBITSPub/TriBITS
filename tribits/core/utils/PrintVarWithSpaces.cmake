@@ -37,33 +37,30 @@
 # ************************************************************************
 # @HEADER
 
-include("${CMAKE_CURRENT_LIST_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraphHelpers.cmake")
-include(TribitsAdjustPackageEnables)
+include(AssertDefined)
+include(AppendStringVarWithSep)
 
-
-#####################################################################
 #
-# Helper macros for unit tests
+# @FUNCTION: print_var_with_spaces()
 #
-#####################################################################
-
-
-macro(unittest_helper_read_and_process_packages)
-  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
-  set(${PROJECT_NAME}_TPLS_FILE "dummy")
-  tribits_process_tpls_lists(${PROJECT_NAME} ".")
-  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  set(${EXTRA_REPO_NAME}_TPLS_FILE "dummy")
-  tribits_process_tpls_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  tribits_read_deps_files_create_deps_graph()
-  set_default(${PROJECT_NAME}_ENABLE_ALL_PACKAGES OFF)
-  set_default(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
-  set(DO_PROCESS_MPI_ENABLES ON) # Should not be needed but CMake is not working!
-  foreach(SE_PKG ${${PROJECT_NAME}_SE_PACKAGES})
-    global_set(${SE_PKG}_FULL_ENABLED_DEP_PACKAGES)
-  endforeach()
-  tribits_print_enables_before_adjust_package_enables()
-  tribits_adjust_package_enables(TRUE)
-  tribits_print_enables_after_adjust_package_enables()
-  tribits_set_up_enabled_only_dependencies()
-endmacro()
+# Print a defined variable giving its name then value printed with spaces
+# instead of ``';'``.
+#
+# Usage::
+#
+#    print_var_with_spaces(<varName>  <printedVarInOut>)
+#
+# Prints the variable as::
+#
+#    <varName>: <ele0> <ele1> ...
+#
+# If ``$<printedVarInOut>`` is ``TRUE`` on input, then the variable is not
+# touched. If however, the variable ``$<printedVarInOut>`` is not ``TRUE`` on
+# input, then it is set to ``TRUE`` on output.
+#
+function(print_var_with_spaces  VARIBLE_NAME  PRINTED_VAR_OUT)
+  assert_defined(VARIBLE_NAME)
+  string(REPLACE ";" " " OUTSTR "${${VARIBLE_NAME}}")
+  message("-- ${VARIBLE_NAME}: ${OUTSTR}")
+  set(${PRINTED_VAR_OUT} TRUE PARENT_SCOPE)
+endfunction()

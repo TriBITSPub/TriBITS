@@ -80,10 +80,32 @@ function(unittest_enable_no_packages)
   unittest_compare_const(TPL_ENABLE_MPI "")
   unittest_compare_const(TPL_ENABLE_BLAS "")
   unittest_compare_const(TPL_ENABLE_LAPACK "")
+  unittest_compare_const(TPL_ENABLE_Boost "")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos "")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp "")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
+
+  unittest_compare_const(MPI_PACKAGE_BUILD_STATUS "EXTERNAL")
+  unittest_compare_const(BLAS_PACKAGE_BUILD_STATUS "EXTERNAL")
+  unittest_compare_const(LAPACK_PACKAGE_BUILD_STATUS "EXTERNAL")
+  unittest_compare_const(Boost_PACKAGE_BUILD_STATUS "EXTERNAL")
+
+  unittest_compare_const(Teuchos_PACKAGE_BUILD_STATUS "INTERNAL")
+  unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+
+  unittest_compare_const(RTOp_PACKAGE_BUILD_STATUS "INTERNAL")
+  unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
+
+  unittest_compare_const(Ex2Package1_PACKAGE_BUILD_STATUS "INTERNAL")
+  unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
+
+  unittest_compare_const(Ex2Package2_PACKAGE_BUILD_STATUS "INTERNAL")
+  unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
 
 endfunction()
 
@@ -107,10 +129,24 @@ function(unittest_enable_all_packages)
   unittest_compare_const(TPL_ENABLE_MPI "")
   unittest_compare_const(TPL_ENABLE_BLAS ON)
   unittest_compare_const(TPL_ENABLE_LAPACK ON)
+  unittest_compare_const(TPL_ENABLE_Boost ON)
+  unittest_compare_const(TPL_ENABLE_MPI "")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp ON)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
+
+  unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "BLAS;LAPACK;Boost")
+  unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+
+  unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
+
+  unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
+
+  unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
 
 endfunction()
 
@@ -134,10 +170,149 @@ function(unittest_enable_all_packages_st)
   unittest_compare_const(TPL_ENABLE_MPI "")
   unittest_compare_const(TPL_ENABLE_BLAS ON)
   unittest_compare_const(TPL_ENABLE_LAPACK ON)
+  unittest_compare_const(TPL_ENABLE_Boost ON)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp ON)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 ON)
+
+  unittest_compare_const(Teuchos_ENABLE_BLAS ON)
+  unittest_compare_const(Teuchos_ENABLE_LAPACK ON)
+  unittest_compare_const(Teuchos_ENABLE_Boost ON)
+  unittest_compare_const(Teuchos_ENABLE_MPI "")
+  unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "BLAS;LAPACK;Boost")
+  unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+  unittest_compare_const(Teuchos_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Teuchos_TEST_ALL_DEPENDENCIES "")
+
+  unittest_compare_const(RTOp_ENABLE_Teuchos ON)
+  unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(RTOp_TEST_ALL_DEPENDENCIES "")
+
+  unittest_compare_const(Ex2Package1_ENABLE_Teuchos ON)
+  unittest_compare_const(Ex2Package1_ENABLE_Boost ON)
+  unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package1_TEST_ALL_DEPENDENCIES "")
+
+  unittest_compare_const(Ex2Package2_ENABLE_Teuchos ON)
+  unittest_compare_const(Ex2Package2_ENABLE_Ex2Package1 ON)
+  unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package2_TEST_ALL_DEPENDENCIES "")
+
+endfunction()
+
+
+function(unittest_enable_all_packages_st_extra_test_deps)
+
+  message("\n***")
+  message("*** Test enabling all secondary tested packages and extra Packag2 test deps")
+  message("***\n")
+
+  # Debugging
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+
+  set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(EXTRA_REPO_PACKAGE2_ADD_TEST_DEPS ON)
+  set(TPL_ENABLE_MPI TRUE)  # Allow testing of those if-statments
+
+  unittest_helper_read_and_process_packages()
+
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(TPL_ENABLE_MPI TRUE)
+  unittest_compare_const(TPL_ENABLE_BLAS ON)
+  unittest_compare_const(TPL_ENABLE_LAPACK ON)
+  unittest_compare_const(TPL_ENABLE_Boost ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 ON)
+
+  unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+  unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+  unittest_compare_const(Teuchos_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Teuchos_TEST_ALL_DEPENDENCIES "")
+
+  unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(RTOp_TEST_ALL_DEPENDENCIES "")
+
+  unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package1_TEST_ALL_DEPENDENCIES "")
+
+  unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package2_TEST_ALL_DEPENDENCIES
+    "Teuchos;RTOp;Ex2Package1;Boost;MPI;Boost")
+
+endfunction()
+
+
+function(unittest_enable_all_packages_st_enable_tests_extra_test_deps)
+
+  message("\n***")
+  message("*** Test enabling all secondary tested packages and extra Packag2 test deps")
+  message("***\n")
+
+  # Debugging
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+
+  set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(${PROJECT_NAME}_ENABLE_TESTS ON)
+  set(EXTRA_REPO_PACKAGE2_ADD_TEST_DEPS ON)
+  set(TPL_ENABLE_MPI TRUE)  # Allow testing of those if-statments
+
+  unittest_helper_read_and_process_packages()
+
+  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(TPL_ENABLE_MPI TRUE)
+  unittest_compare_const(TPL_ENABLE_BLAS ON)
+  unittest_compare_const(TPL_ENABLE_LAPACK ON)
+  unittest_compare_const(TPL_ENABLE_Boost ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
+  unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 ON)
+
+  unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+  unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+  unittest_compare_const(Teuchos_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Teuchos_TEST_ALL_DEPENDENCIES "")
+
+  unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(RTOp_TEST_ALL_DEPENDENCIES "")
+
+  unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_TEST_ENABLED_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package1_TEST_ALL_DEPENDENCIES "")
+
+  unittest_compare_const(Ex2Package2_ENABLE_Teuchos ON)
+  unittest_compare_const(Ex2Package2_ENABLE_Ex2Package1 ON)
+  unittest_compare_const(Ex2Package2_ENABLE_RTOp "") # We don't set for TEST deps
+  unittest_compare_const(Ex2Package2_ENABLE_Boost "") # ""
+  unittest_compare_const(Ex2Package2_ENABLE_MPI "") # ""
+  unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_TEST_ENABLED_DEPENDENCIES
+    "Teuchos;RTOp;Ex2Package1;Boost;MPI;Boost")
+  unittest_compare_const(Ex2Package2_TEST_ALL_DEPENDENCIES
+    "Teuchos;RTOp;Ex2Package1;Boost;MPI;Boost")
 
 endfunction()
 
@@ -447,6 +622,7 @@ unittest_initialize_vars()
 unittest_enable_no_packages()
 unittest_enable_all_packages()
 unittest_enable_all_packages_st()
+unittest_enable_all_packages_st_extra_test_deps()
 
 # B) Test generation of export file information
 unittest_enable_all_generate_export_deps()
@@ -462,4 +638,4 @@ unittest_enable_tribits_is_primary_meta_project_package_enable_teuchos_forward()
 unittest_enable_tribits_is_primary_meta_project_package_enable_teuchos_tests_rtop_forward()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(97)
+unittest_final_result(176)

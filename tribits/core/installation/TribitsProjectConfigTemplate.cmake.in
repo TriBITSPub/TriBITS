@@ -46,8 +46,6 @@
 #
 ##############################################################################
 
-include_guard()
-
 ## ---------------------------------------------------------------------------
 ## Compilers used by ${PROJECT_NAME} build
 ## ---------------------------------------------------------------------------
@@ -207,19 +205,23 @@ set(${PROJECT_NAME}_TPL_LIST "${FULL_TPL_SET}")
 ## ---------------------------------------------------------------------------
 
 # ${PROJECT_NAME}::all_libs  (Does *not* depend on COMPONENTS)
-set(${PROJECT_NAME}_ALL_PACKAGES_TARGETS)
-foreach (pkg IN ITEMS ${FULL_PACKAGE_SET})
-  list(APPEND ${PROJECT_NAME}_ALL_PACKAGES_TARGETS ${PDOLLAR}{pkg}::all_libs)
-endforeach()
-add_library(${PROJECT_NAME}::all_libs IMPORTED INTERFACE GLOBAL)
-target_link_libraries(${PROJECT_NAME}::all_libs
+if (NOT TARGET ${PROJECT_NAME}::all_libs)
+  set(${PROJECT_NAME}_ALL_PACKAGES_TARGETS)
+  foreach (pkg IN ITEMS ${FULL_PACKAGE_SET})
+    list(APPEND ${PROJECT_NAME}_ALL_PACKAGES_TARGETS ${PDOLLAR}{pkg}::all_libs)
+  endforeach()
+  add_library(${PROJECT_NAME}::all_libs IMPORTED INTERFACE GLOBAL)
+  target_link_libraries(${PROJECT_NAME}::all_libs
   INTERFACE ${PDOLLAR}{${PROJECT_NAME}_ALL_PACKAGES_TARGETS} )
+endif()
 
 # ${PROJECT_NAME}::all_selected_libs  (Depend on COMPONENTS)
-set(${PROJECT_NAME}_ALL_SELECTED_PACKAGES_TARGETS)
-foreach (pkg IN ITEMS ${PDOLLAR}{COMPONENTS_LIST})
-  list(APPEND ${PROJECT_NAME}_ALL_SELECTED_PACKAGES_TARGETS ${PDOLLAR}{pkg}::all_libs)
-endforeach()
-add_library(${PROJECT_NAME}::all_selected_libs IMPORTED INTERFACE GLOBAL)
-target_link_libraries(${PROJECT_NAME}::all_selected_libs
-  INTERFACE ${PDOLLAR}{${PROJECT_NAME}_ALL_SELECTED_PACKAGES_TARGETS} )
+if (NOT TARGET ${PROJECT_NAME}::all_selected_libs)
+  set(${PROJECT_NAME}_ALL_SELECTED_PACKAGES_TARGETS)
+  foreach (pkg IN ITEMS ${PDOLLAR}{COMPONENTS_LIST})
+    list(APPEND ${PROJECT_NAME}_ALL_SELECTED_PACKAGES_TARGETS ${PDOLLAR}{pkg}::all_libs)
+  endforeach()
+  add_library(${PROJECT_NAME}::all_selected_libs IMPORTED INTERFACE GLOBAL)
+  target_link_libraries(${PROJECT_NAME}::all_selected_libs
+    INTERFACE ${PDOLLAR}{${PROJECT_NAME}_ALL_SELECTED_PACKAGES_TARGETS} )
+endif()

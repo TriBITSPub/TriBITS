@@ -86,8 +86,9 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
   setup_write_specialized_package_export_makefile_test_stuff()
 
   # Debugging
-  set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  set(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
+  set(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
 
   set(${PROJECT_NAME}_ENABLE_RTOp ON)
   set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
@@ -133,7 +134,6 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
 
   unittest_file_regex("${GENERATED_EXPORT_CONFIG_FOR_BUILD}"
     REGEX_STRINGS
-      "include_guard[(][)]"
       "set[(]RTOp1_CMAKE_BUILD_TYPE .DEBUG."
       "set[(]RTOp1_INCLUDE_DIRS .teuchos/core/include.teuchos/numeric/include.."
       "set[(]RTOp1_LIBRARY_DIRS .teuchos/core/src.teuchos/numeric/src.."
@@ -149,7 +149,6 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
 
   unittest_file_regex("${GENERATED_EXPORT_CONFIG_FOR_INSTALL}"
     REGEX_STRINGS
-      "include_guard[(][)]"
       "set[(]RTOp1_CMAKE_BUILD_TYPE .DEBUG."
       "set[(]RTOp1_INCLUDE_DIRS .*/dummy_install_include_dir"
       "set[(]RTOp1_LIBRARY_DIRS .*/dummy_install_lib_dir"
@@ -174,8 +173,8 @@ function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
   setup_write_specialized_package_export_makefile_test_stuff()
 
   # Debugging
-  set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
-  set(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP ON)
 
   set(${PROJECT_NAME}_ENABLE_RTOp ON)
   set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
@@ -225,7 +224,6 @@ function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
 
   unittest_file_regex("${GENERATED_EXPORT_CONFIG_FOR_BUILD}"
     REGEX_STRINGS
-      "include_guard[(][)]"
       "set[(]RTOp2_CMAKE_BUILD_TYPE .RELEASE."
       "set[(]RTOp2_INCLUDE_DIRS .rtop/include.teuchos/core/include.teuchos/numeric/include.."
       "set[(]RTOp2_LIBRARY_DIRS .rtop/src.teuchos/core/src.teuchos/numeric/src.."
@@ -259,4 +257,4 @@ unittest_write_specialized_package_export_makefile_rtop_before_libs()
 unittest_write_specialized_package_export_makefile_rtop_after_libs()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(33)
+unittest_final_result(30)

@@ -635,7 +635,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 
   set(tplName SomeTpl)
   set(TPL_${tplName}_LIBRARIES "/some/explicit/path/libsomelib.so")
-  set(TPL_${tplName}_DEPENDENCIES PublicTpl:PUBLIC PrivateTpl:PRIVATE DefaultVisTpl)
+  set(${tplName}_LIB_ENABLED_DEPENDENCIES PublicTpl:PUBLIC PrivateTpl:PRIVATE DefaultVisTpl)
 
   set(configFileFragStr "#beginning\n\n")
 
@@ -683,7 +683,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
     "/some/explicit/path/libsomelib3.so"
     "/some/explicit/path/libsomelib2.so"
     "/some/explicit/path/libsomelib1.so")
-  set(TPL_${tplName}_DEPENDENCIES PublicTpl:PUBLIC PrivateTpl:PRIVATE  DefaultVisTpl)
+  set(${tplName}_LIB_ENABLED_DEPENDENCIES PublicTpl:PUBLIC PrivateTpl:PRIVATE  DefaultVisTpl)
 
   set(configFileFragStr "#beginning\n\n")
 
@@ -1045,7 +1045,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib
     -llib2 -L/some/explicit/path2
     -llib1 -L/some/explicit/path1
     )
-  set(TPL_${tplName}_DEPENDENCIES
+  set(${tplName}_LIB_ENABLED_DEPENDENCIES
     PublicTpl:PUBLIC PrivateTpl:PRIVATE DefaultVisTpl)
   set(PublicTpl_DIR "<public-tpl-dir>")
   set(PrivateTpl_DIR "<private-tpl-dir>")

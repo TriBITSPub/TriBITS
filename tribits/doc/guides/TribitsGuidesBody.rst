@@ -315,21 +315,20 @@ CMake language behavior with respect to case sensitivity is also strange:
 * Calls of built-in and user-defined macros and functions is *case
   insensitive*!  That is ``set(...)``, ``set(...)``, ``set()``, and all other
   combinations of upper and lower case characters for 'S', 'E', 'T' all call
-  the built-in ``set()`` function.  The convention in TriBITS is to use all
-  caps for functions and macros (which was adopted by following the
-  conventions used in the early versions of TriBITS, see the `History of
-  TriBITS`_).  The convention in CMake literature from Kitware seems to use
-  lower-case letters for functions and macros.
+  the built-in ``set()`` function.  The convention in TriBITS is to use
+  ``lower_case_with_underscores()`` for functions and macros.
 
 * However, the names of CMake (local or cache/global) variables are *case
   sensitive*!  That is, ``SOME_VAR`` and ``some_var`` are *different*
   variables.  Built-in CMake variables tend use all caps with underscores
   (e.g. ``CMAKE_CURRENT_SOURCE_DIR``) but other built-in CMake variables tend
   to use mixed case with underscores (e.g. ``CMAKE_Fortran_FLAGS``).  TriBITS
-  tends to use a similar naming convention where variables have mostly
-  upper-case letters except for parts that are proper nouns like the project,
-  package or TPL name (e.g. ``TribitsExProj_TRIBITS_DIR``,
-  ``TriBITS_SOURCE_DIR``, ``Boost_INCLUDE_DIRS``).
+  tends to use a similar naming convention where project-level and cache
+  variables have mostly upper-case letters except for parts that are proper
+  nouns like the project, package or TPL name
+  (e.g. ``TribitsExProj_TRIBITS_DIR``, ``TriBITS_SOURCE_DIR``,
+  ``Boost_INCLUDE_DIRS``).  Local variables and function/macro parameters can
+  use camelCase or lower_case_with_underscores.
 
 I don't know of any other programming language that uses different case
 sensitivity rules for variables and functions.  However, because we must parse
@@ -341,7 +340,7 @@ keyword-based arguments.
 Other mistakes that people make result from not understanding how CMake scopes
 variables and other entities.  CMake defines a global scope (i.e. "cache"
 variables) and several nested local scopes that are created by
-``add_subdirectory()`` and entering FUNCTIONS.  See `dual_scope_set()`_ for a
+``add_subdirectory()`` and entering functions.  See `dual_scope_set()`_ for a
 short discussion of these scoping rules.  And it is not just variables that
 can have local and global scoping rules.  Other entities, like defines set
 with the built-in command ``add_definitions()`` only apply to the local scope
@@ -1782,7 +1781,13 @@ defined before a (SE) Package's ``CMakeLists.txt`` file is processed:
 
   ``${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}``
 
-    Set to ``ON`` if the package is enabled and is to be processed.
+    Set to ``ON`` if the package is enabled and is to be processed or will be
+    set to ``ON`` or ``OFF`` automatically during enable/disable logic.  For a
+    parent package that is not directly enabled but were one of its
+    subpackages is enabled, this will get set to ``ON`` (but that is not the
+    same as the parent package being directly enabled and therefore does not
+    imply that all of the required subpackages will be enabled, only that the
+    parent package will be processed).
 
   .. _${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}:
 
@@ -1804,6 +1809,10 @@ defined before a (SE) Package's ``CMakeLists.txt`` file is processed:
     turned off by the user even through the packages ``${PACKAGE_NAME}`` and
     ``${OPTIONAL_DEP_PACKAGE_NAME}`` are both enabled at the project level!
     See `Support for optional SE package/TPL can be explicitly disabled`_.
+
+    **NOTE:** This variable will also be set for required dependencies as well
+    to allow for uniform processing such as when looping over the items in
+    `${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES`_.
 
   .. _${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}:
 
@@ -3490,8 +3499,16 @@ In more detail, these rules/behaviors are:
     `downstream`_ package declares a dependency on the SE package
     ``ThyraEpetra``, but not the parent package ``Thyra``, then the ``Thyra``
     package (and its other subpackages and their dependencies) will not get
-    auto-enabled.  This is a key aspect of the TriBITS SE package management
-    system.
+    auto-enabled.  Also note that enabling a subset of the required
+    subpackages for a parent package does not require the enable of the other
+    required subpackages.  For example, if both ``ThyraEpetra`` and
+    ``ThyraCore`` were both required subpackages of the parent package
+    ``Thyra``, then enabling ``ThyraCore`` does not require the enabling of
+    ``ThyraEpetra``.  In these cases where one of a parent package's
+    subpackages is enabled for some reason, the final value of
+    ``${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}`` will be set to ``ON`` (but this
+    does imply that all of the required subpackages will be enabled, only that
+    the parent package will be processed.)
 
 .. _Support for optional SE package/TPL is enabled by default:
 

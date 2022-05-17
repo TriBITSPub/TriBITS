@@ -74,8 +74,8 @@ set(REDUCED_MOCK_TRILINOS_OUTPUT_DIR
 # TribitsUsersGuide.rst document.  Therefore, if the behavior of TriBITS
 # changes in such a way as to break these tests, then if any of the contents
 # of the files under this directory need to change, then one must also look at
-# the TribitsUsersGuilde.rst document and update it for the new behvior of
-# TriBITs!
+# the TribitsUsersGuilde.rst document and update it for the new behavior of
+# TriBITS!
 #
 
 
@@ -132,6 +132,8 @@ function(read_expected_output_file_into_regex_array  EXPECTED_OUTPUT_FILE
       #print_var(EXPECTED_REGEX_ARRAY)
     endif()
   endforeach()
+  set_property(DIRECTORY APPEND
+    PROPERTY CMAKE_CONFIGURE_DEPENDS "${EXPECTED_OUTPUT_FILE}")
   set(${EXPECTED_OUTPUT_REGEX_ARRAY_OUT} ${EXPECTED_REGEX_ARRAY} PARENT_SCOPE)
 endfunction()
 
@@ -145,7 +147,7 @@ read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/NoEnables.txt"
   RMT_NoEnables_REGEX_ARRAY
   )
-#print_var(REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY)
+#print_var(REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY)
 
 
 create_reduced_dependency_handling_test_case(
@@ -348,9 +350,9 @@ create_reduced_dependency_handling_test_case(
 
 read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/ExpectedDependencies.txt"
-  REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY
+  REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY
   )
-#print_var(REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY)
+#print_var(REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY)
 
 read_expected_output_file_into_regex_array(
   "${REDUCED_MOCK_TRILINOS_OUTPUT_DIR}/EnableAllPackages.txt"
@@ -364,7 +366,7 @@ create_reduced_dependency_handling_test_case(
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
     -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    ${REDUCED_EXPECTED_DEPENDENICES_REGEX_ARRAY}
+    ${REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY}
     ${REDUCED_EnableAllPackages_REGEX_ARRAY}
     "Final set of enabled packages:  Teuchos RTOp Epetra Thyra 4"
     "Final set of enabled SE packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraEpetra Thyra 6"
@@ -534,9 +536,53 @@ create_dependency_handling_test_case(
   )
 
 
+read_expected_output_file_into_regex_array(
+  "${CMAKE_CURRENT_LIST_DIR}/DepTests_EnableAllPackages_DumpDependencies.txt"
+  EnableAllPackages_DumpDependencies_REGEX_ARRAY
+  )
+#print_var(EnableAllPackages_DumpDependencies_REGEX_ARRAY)
+
+create_dependency_handling_test_case(
+  EnableAllPackages_DumpDependencies
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
+    -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+-DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "${EnableAllPackages_DumpDependencies_REGEX_ARRAY}"
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "NOTE: MissingPackage is being ignored since its directory is missing and MissingPackage_ALLOW_MISSING_EXTERNAL_PACKAGE = TRUE"
+  )
+
+
 create_dependency_handling_test_case(
   EnableAllPackages_EnableTests
-  ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTrilinos_ENABLE_TESTS:BOOL=ON
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
+     -DTrilinos_ENABLE_TESTS:BOOL=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "Setting Teuchos_ENABLE_TESTS=ON"
+    "Setting RTOp_ENABLE_TESTS=ON"
+    "Setting Epetra_ENABLE_TESTS=ON"
+    "Setting ML_ENABLE_TESTS=ON"
+    "Setting Stratimikos_ENABLE_TESTS=ON"
+    "Setting RBGen_ENABLE_TESTS=ON"
+  )
+
+
+read_expected_output_file_into_regex_array(
+  "${CMAKE_CURRENT_LIST_DIR}/DepTests_EnableAllPackages_EnableTests_DumpDependencies.txt"
+  EnableAllPackages_EnableTests_DumpDependencies_REGEX_ARRAY
+  )
+#print_var(EnableAllPackages_DumpDependencies_REGEX_ARRAY)
+
+create_dependency_handling_test_case(
+  EnableAllPackages_EnableTests_DumpDependencies
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
+    -DTrilinos_ENABLE_TESTS:BOOL=ON
+    -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
     "Setting Teuchos_ENABLE_TESTS=ON"
