@@ -21,6 +21,16 @@ ChangeLog for TriBITS
   targets `<Package>::all_libs` in order to get the list of include
   directories that are propagated through those targets by CMake.
 
+* **Changed:** The function `tribits_add_library()` no longer sets the
+  directory property `INCLUDE_DIRECTORIES` and instead passes include
+  directory information between targets directly using the
+  `INTERFACE_INCLUDE_DIRECTORIES` target property.  This may result in
+  situations where include directories were getting set through the directory
+  property `INCLUDE_DIRECTORIES` and getting picked up in the builds of
+  targets that lacked the proper library dependencies.  Therefore, this is
+  technically a break in backward compatibility, but not for well-formed
+  TriBITS projects.
+
 ## 2022-05-16:
 
 * **Added:** The function `tribits_add_advanced_test(`) now correctly accepts
