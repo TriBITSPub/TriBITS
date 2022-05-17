@@ -31,6 +31,18 @@ ChangeLog for TriBITS
   technically a break in backward compatibility, but not for well-formed
   TriBITS projects.
 
+* **Changed:** Variables `${PACKAGE_NAME}_ENABLE_<depPkg>` are now set to
+  `TRUE` for required upstream internal and external packages/TPLs `<depPkg>`
+  (in order to simplify internal TriBITS logic).  However, a side-effect of
+  this change is that CMake code that was ifed out with an `if
+  (${PACKAGE_NAME}_ENABLE_<depPkg>)` statement (because that variable was not
+  defined and therefore defaults to `FLASE`) for a required upstream
+  dependency `<depPkg>` will now be enabled.  (This mistake can happen when an
+  optional dependency `<depPkg>` is changed to a required dependency but the
+  `if()` statements based on `${PACKAGE_NAME}_ENABLE_<depPkg>` are not
+  removed.  Well-formed TriBITS projects and packages should not experience
+  this problem or notice any change.)
+
 ## 2022-05-16:
 
 * **Added:** The function `tribits_add_advanced_test(`) now correctly accepts
