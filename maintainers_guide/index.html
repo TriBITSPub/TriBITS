@@ -268,6 +268,7 @@
 <li><a class="reference internal" href="#print-nonempty-var">print_nonempty_var()</a></li>
 <li><a class="reference internal" href="#print-nonempty-var-with-spaces">print_nonempty_var_with_spaces()</a></li>
 <li><a class="reference internal" href="#print-var">print_var()</a></li>
+<li><a class="reference internal" href="#print-var-with-spaces">print_var_with_spaces()</a></li>
 <li><a class="reference internal" href="#remove-global-duplicates">remove_global_duplicates()</a></li>
 <li><a class="reference internal" href="#set-and-inc-dirs">set_and_inc_dirs()</a></li>
 <li><a class="reference internal" href="#set-cache-on-off-empty">set_cache_on_off_empty()</a></li>
@@ -290,10 +291,12 @@
 </li>
 <li><a class="reference internal" href="#tribits-system-maintainers-documentation"><span class="sectnum">12</span> TriBITS System Maintainers Documentation</a><ul>
 <li><a class="reference internal" href="#tribits-system-data-structures"><span class="sectnum">12.1</span> TriBITS System Data Structures</a><ul>
+<li><a class="reference internal" href="#basic-tribits-project-repository-package-and-subpackage-core-variables">Basic TriBITS Project, Repository, Package, and Subpackage Core Variables</a></li>
 <li><a class="reference internal" href="#lists-of-external-and-internal-packages">Lists of external and internal packages</a></li>
 <li><a class="reference internal" href="#list-variables-defining-the-package-dependencies-graph">List variables defining the package dependencies graph</a></li>
 <li><a class="reference internal" href="#determining-if-a-package-is-internal-or-external">Determining if a package is internal or external</a></li>
 <li><a class="reference internal" href="#external-package-dependencies">External package dependencies</a></li>
+<li><a class="reference internal" href="#flat-lists-of-direct-package-dependencies">Flat lists of direct package dependencies</a></li>
 <li><a class="reference internal" href="#list-variables-defining-include-directories-and-libraries">List variables defining include directories and libraries</a></li>
 <li><a class="reference internal" href="#user-enable-disable-cache-variables">User enable/disable cache variables</a></li>
 </ul>
@@ -395,10 +398,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-05-16</p>
+<dd class="field-even"><p>2022-05-17</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2855-g2f3633af</p>
+<dd class="field-odd"><p>tribits_start-2873-gb5a46a2f</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -666,104 +669,107 @@
 <li><p><a class="reference internal" href="#print-nonempty-var" id="id184">print_nonempty_var()</a></p></li>
 <li><p><a class="reference internal" href="#print-nonempty-var-with-spaces" id="id185">print_nonempty_var_with_spaces()</a></p></li>
 <li><p><a class="reference internal" href="#print-var" id="id186">print_var()</a></p></li>
-<li><p><a class="reference internal" href="#remove-global-duplicates" id="id187">remove_global_duplicates()</a></p></li>
-<li><p><a class="reference internal" href="#set-and-inc-dirs" id="id188">set_and_inc_dirs()</a></p></li>
-<li><p><a class="reference internal" href="#set-cache-on-off-empty" id="id189">set_cache_on_off_empty()</a></p></li>
-<li><p><a class="reference internal" href="#set-default" id="id190">set_default()</a></p></li>
-<li><p><a class="reference internal" href="#set-default-and-from-env" id="id191">set_default_and_from_env()</a></p></li>
-<li><p><a class="reference internal" href="#split" id="id192">split()</a></p></li>
-<li><p><a class="reference internal" href="#timer-get-raw-seconds" id="id193">timer_get_raw_seconds()</a></p></li>
-<li><p><a class="reference internal" href="#timer-get-rel-seconds" id="id194">timer_get_rel_seconds()</a></p></li>
-<li><p><a class="reference internal" href="#timer-print-rel-time" id="id195">timer_print_rel_time()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-strip-quotes-from-str" id="id196">tribits_strip_quotes_from_str()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-compare-const" id="id197">unittest_compare_const()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-has-substr-const" id="id198">unittest_has_substr_const()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-not-has-substr-const" id="id199">unittest_not_has_substr_const()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-string-regex" id="id200">unittest_string_regex()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-file-regex" id="id201">unittest_file_regex()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-final-result" id="id202">unittest_final_result()</a></p></li>
+<li><p><a class="reference internal" href="#print-var-with-spaces" id="id187">print_var_with_spaces()</a></p></li>
+<li><p><a class="reference internal" href="#remove-global-duplicates" id="id188">remove_global_duplicates()</a></p></li>
+<li><p><a class="reference internal" href="#set-and-inc-dirs" id="id189">set_and_inc_dirs()</a></p></li>
+<li><p><a class="reference internal" href="#set-cache-on-off-empty" id="id190">set_cache_on_off_empty()</a></p></li>
+<li><p><a class="reference internal" href="#set-default" id="id191">set_default()</a></p></li>
+<li><p><a class="reference internal" href="#set-default-and-from-env" id="id192">set_default_and_from_env()</a></p></li>
+<li><p><a class="reference internal" href="#split" id="id193">split()</a></p></li>
+<li><p><a class="reference internal" href="#timer-get-raw-seconds" id="id194">timer_get_raw_seconds()</a></p></li>
+<li><p><a class="reference internal" href="#timer-get-rel-seconds" id="id195">timer_get_rel_seconds()</a></p></li>
+<li><p><a class="reference internal" href="#timer-print-rel-time" id="id196">timer_print_rel_time()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-strip-quotes-from-str" id="id197">tribits_strip_quotes_from_str()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-compare-const" id="id198">unittest_compare_const()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-has-substr-const" id="id199">unittest_has_substr_const()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-not-has-substr-const" id="id200">unittest_not_has_substr_const()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-string-regex" id="id201">unittest_string_regex()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-file-regex" id="id202">unittest_file_regex()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-final-result" id="id203">unittest_final_result()</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#tribits-system-maintainers-documentation" id="id203"><span class="sectnum">12</span> TriBITS System Maintainers Documentation</a></p>
+<li><p><a class="reference internal" href="#tribits-system-maintainers-documentation" id="id204"><span class="sectnum">12</span> TriBITS System Maintainers Documentation</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#tribits-system-data-structures" id="id204"><span class="sectnum">12.1</span> TriBITS System Data Structures</a></p>
+<li><p><a class="reference internal" href="#tribits-system-data-structures" id="id205"><span class="sectnum">12.1</span> TriBITS System Data Structures</a></p>
 <ul>
-<li><p><a class="reference internal" href="#lists-of-external-and-internal-packages" id="id205">Lists of external and internal packages</a></p></li>
-<li><p><a class="reference internal" href="#list-variables-defining-the-package-dependencies-graph" id="id206">List variables defining the package dependencies graph</a></p></li>
-<li><p><a class="reference internal" href="#determining-if-a-package-is-internal-or-external" id="id207">Determining if a package is internal or external</a></p></li>
-<li><p><a class="reference internal" href="#external-package-dependencies" id="id208">External package dependencies</a></p></li>
-<li><p><a class="reference internal" href="#list-variables-defining-include-directories-and-libraries" id="id209">List variables defining include directories and libraries</a></p></li>
-<li><p><a class="reference internal" href="#user-enable-disable-cache-variables" id="id210">User enable/disable cache variables</a></p></li>
+<li><p><a class="reference internal" href="#basic-tribits-project-repository-package-and-subpackage-core-variables" id="id206">Basic TriBITS Project, Repository, Package, and Subpackage Core Variables</a></p></li>
+<li><p><a class="reference internal" href="#lists-of-external-and-internal-packages" id="id207">Lists of external and internal packages</a></p></li>
+<li><p><a class="reference internal" href="#list-variables-defining-the-package-dependencies-graph" id="id208">List variables defining the package dependencies graph</a></p></li>
+<li><p><a class="reference internal" href="#determining-if-a-package-is-internal-or-external" id="id209">Determining if a package is internal or external</a></p></li>
+<li><p><a class="reference internal" href="#external-package-dependencies" id="id210">External package dependencies</a></p></li>
+<li><p><a class="reference internal" href="#flat-lists-of-direct-package-dependencies" id="id211">Flat lists of direct package dependencies</a></p></li>
+<li><p><a class="reference internal" href="#list-variables-defining-include-directories-and-libraries" id="id212">List variables defining include directories and libraries</a></p></li>
+<li><p><a class="reference internal" href="#user-enable-disable-cache-variables" id="id213">User enable/disable cache variables</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph" id="id211"><span class="sectnum">12.2</span> Function call tree for constructing package dependency graph</a></p></li>
-<li><p><a class="reference internal" href="#notes-on-dependency-logic" id="id212"><span class="sectnum">12.3</span> Notes on dependency logic</a></p></li>
-<li><p><a class="reference internal" href="#tribits-system-macros-and-functions" id="id213"><span class="sectnum">12.4</span> TriBITS System Macros and Functions</a></p>
+<li><p><a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph" id="id214"><span class="sectnum">12.2</span> Function call tree for constructing package dependency graph</a></p></li>
+<li><p><a class="reference internal" href="#notes-on-dependency-logic" id="id215"><span class="sectnum">12.3</span> Notes on dependency logic</a></p></li>
+<li><p><a class="reference internal" href="#tribits-system-macros-and-functions" id="id216"><span class="sectnum">12.4</span> TriBITS System Macros and Functions</a></p>
 <ul>
-<li><p><a class="reference internal" href="#tribits-abort-on-missing-package" id="id214">tribits_abort_on_missing_package()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-abort-on-self-dep" id="id215">tribits_abort_on_self_dep()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-adjust-package-enables" id="id216">tribits_adjust_package_enables()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-append-forward-dep-packages" id="id217">tribits_append_forward_dep_packages()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-assert-read-dependency-vars" id="id218">tribits_assert_read_dependency_vars()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-dump-package-dependencies-info" id="id219">tribits_dump_package_dependencies_info()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-print-initial-dependency-info" id="id220">tribits_print_initial_dependency_info()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-print-tentatively-enabled-tpls" id="id221">tribits_print_tentatively_enabled_tpls()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-process-all-repository-deps-setup-files" id="id222">tribits_process_all_repository_deps_setup_files()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-process-packages-and-dirs-lists" id="id223">tribits_process_packages_and_dirs_lists()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-process-project-dependency-setup-file" id="id224">tribits_process_project_dependency_setup_file()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-process-tpls-lists" id="id225">tribits_process_tpls_lists()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-read-all-package-deps-files-create-deps-graph" id="id226">tribits_read_all_package_deps_files_create_deps_graph()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-read-package-subpackage-deps-files-add-to-graph" id="id227">tribits_read_package_subpackage_deps_files_add_to_graph()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-read-back-dependencies-vars" id="id228">tribits_read_back_dependencies_vars()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-read-defined-external-and-internal-toplevel-packages-lists" id="id229">tribits_read_defined_external_and_internal_toplevel_packages_lists()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-read-all-project-deps-files-create-deps-graph" id="id230">tribits_read_all_project_deps_files_create_deps_graph()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-read-toplevel-package-deps-files-add-to-graph" id="id231">tribits_read_toplevel_package_deps_files_add_to_graph()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-read-subpackage-deps-file-add-to-graph" id="id232">tribits_read_subpackage_deps_file_add_to_graph()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-parse-subpackages-append-se-packages-add-options" id="id233">tribits_parse_subpackages_append_se_packages_add_options()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-prep-to-read-dependencies" id="id234">tribits_prep_to_read_dependencies()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-process-package-dependencies-lists" id="id235">tribits_process_package_dependencies_lists()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-read-deps-files-create-deps-graph" id="id236">tribits_read_deps_files_create_deps_graph()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-save-off-dependency-vars" id="id237">tribits_save_off_dependency_vars()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-set-dep-packages" id="id238">tribits_set_dep_packages()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-write-package-client-export-files-install-targets" id="id239">tribits_write_package_client_export_files_install_targets()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-write-xml-dependency-files" id="id240">tribits_write_xml_dependency_files()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-write-xml-dependency-files-if-supported" id="id241">tribits_write_xml_dependency_files_if_supported()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-abort-on-missing-package" id="id217">tribits_abort_on_missing_package()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-abort-on-self-dep" id="id218">tribits_abort_on_self_dep()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-adjust-package-enables" id="id219">tribits_adjust_package_enables()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-append-forward-dep-packages" id="id220">tribits_append_forward_dep_packages()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-assert-read-dependency-vars" id="id221">tribits_assert_read_dependency_vars()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-dump-package-dependencies-info" id="id222">tribits_dump_package_dependencies_info()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-print-initial-dependency-info" id="id223">tribits_print_initial_dependency_info()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-print-tentatively-enabled-tpls" id="id224">tribits_print_tentatively_enabled_tpls()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-process-all-repository-deps-setup-files" id="id225">tribits_process_all_repository_deps_setup_files()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-process-packages-and-dirs-lists" id="id226">tribits_process_packages_and_dirs_lists()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-process-project-dependency-setup-file" id="id227">tribits_process_project_dependency_setup_file()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-process-tpls-lists" id="id228">tribits_process_tpls_lists()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-read-all-package-deps-files-create-deps-graph" id="id229">tribits_read_all_package_deps_files_create_deps_graph()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-read-package-subpackage-deps-files-add-to-graph" id="id230">tribits_read_package_subpackage_deps_files_add_to_graph()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-read-back-dependencies-vars" id="id231">tribits_read_back_dependencies_vars()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-read-defined-external-and-internal-toplevel-packages-lists" id="id232">tribits_read_defined_external_and_internal_toplevel_packages_lists()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-read-all-project-deps-files-create-deps-graph" id="id233">tribits_read_all_project_deps_files_create_deps_graph()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-read-toplevel-package-deps-files-add-to-graph" id="id234">tribits_read_toplevel_package_deps_files_add_to_graph()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-read-subpackage-deps-file-add-to-graph" id="id235">tribits_read_subpackage_deps_file_add_to_graph()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-parse-subpackages-append-se-packages-add-options" id="id236">tribits_parse_subpackages_append_se_packages_add_options()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-prep-to-read-dependencies" id="id237">tribits_prep_to_read_dependencies()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-process-package-dependencies-lists" id="id238">tribits_process_package_dependencies_lists()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-read-deps-files-create-deps-graph" id="id239">tribits_read_deps_files_create_deps_graph()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-save-off-dependency-vars" id="id240">tribits_save_off_dependency_vars()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-set-dep-packages" id="id241">tribits_set_dep_packages()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-write-package-client-export-files-install-targets" id="id242">tribits_write_package_client_export_files_install_targets()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-write-xml-dependency-files" id="id243">tribits_write_xml_dependency_files()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-write-xml-dependency-files-if-supported" id="id244">tribits_write_xml_dependency_files_if_supported()</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#references" id="id242"><span class="sectnum">13</span> References</a></p></li>
-<li><p><a class="reference internal" href="#faq" id="id243"><span class="sectnum">14</span> FAQ</a></p></li>
-<li><p><a class="reference internal" href="#appendix" id="id244"><span class="sectnum">15</span> Appendix</a></p>
+<li><p><a class="reference internal" href="#references" id="id245"><span class="sectnum">13</span> References</a></p></li>
+<li><p><a class="reference internal" href="#faq" id="id246"><span class="sectnum">14</span> FAQ</a></p></li>
+<li><p><a class="reference internal" href="#appendix" id="id247"><span class="sectnum">15</span> Appendix</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#history-of-tribits" id="id245"><span class="sectnum">15.1</span> History of TriBITS</a></p></li>
-<li><p><a class="reference internal" href="#why-a-tribits-package-is-not-a-cmake-package" id="id246"><span class="sectnum">15.2</span> Why a TriBITS Package is not a CMake Package</a></p></li>
-<li><p><a class="reference internal" href="#design-considerations-for-tribits" id="id247"><span class="sectnum">15.3</span> Design Considerations for TriBITS</a></p></li>
-<li><p><a class="reference internal" href="#clone-extra-repos-py-help" id="id248"><span class="sectnum">15.4</span> clone_extra_repos.py –help</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-documentation" id="id249"><span class="sectnum">15.5</span> gitdist documentation</a></p>
+<li><p><a class="reference internal" href="#history-of-tribits" id="id248"><span class="sectnum">15.1</span> History of TriBITS</a></p></li>
+<li><p><a class="reference internal" href="#why-a-tribits-package-is-not-a-cmake-package" id="id249"><span class="sectnum">15.2</span> Why a TriBITS Package is not a CMake Package</a></p></li>
+<li><p><a class="reference internal" href="#design-considerations-for-tribits" id="id250"><span class="sectnum">15.3</span> Design Considerations for TriBITS</a></p></li>
+<li><p><a class="reference internal" href="#clone-extra-repos-py-help" id="id251"><span class="sectnum">15.4</span> clone_extra_repos.py –help</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-documentation" id="id252"><span class="sectnum">15.5</span> gitdist documentation</a></p>
 <ul>
-<li><p><a class="reference internal" href="#gitdist-help" id="id250">gitdist –help</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-overview" id="id251">gitdist –dist-help=overview</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-repo-selection-and-setup" id="id252">gitdist –dist-help=repo-selection-and-setup</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-dist-repo-status" id="id253">gitdist –dist-help=dist-repo-status</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-repo-versions" id="id254">gitdist –dist-help=repo-versions</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-aliases" id="id255">gitdist –dist-help=aliases</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-default-branch" id="id256">gitdist –dist-help=default-branch</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-move-to-base-dir" id="id257">gitdist –dist-help=move-to-base-dir</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-usage-tips" id="id258">gitdist –dist-help=usage-tips</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-script-dependencies" id="id259">gitdist –dist-help=script-dependencies</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-all" id="id260">gitdist –dist-help=all</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-help" id="id253">gitdist –help</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-overview" id="id254">gitdist –dist-help=overview</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-repo-selection-and-setup" id="id255">gitdist –dist-help=repo-selection-and-setup</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-dist-repo-status" id="id256">gitdist –dist-help=dist-repo-status</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-repo-versions" id="id257">gitdist –dist-help=repo-versions</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-aliases" id="id258">gitdist –dist-help=aliases</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-default-branch" id="id259">gitdist –dist-help=default-branch</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-move-to-base-dir" id="id260">gitdist –dist-help=move-to-base-dir</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-usage-tips" id="id261">gitdist –dist-help=usage-tips</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-script-dependencies" id="id262">gitdist –dist-help=script-dependencies</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-all" id="id263">gitdist –dist-help=all</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#snapshot-dir-py-help" id="id261"><span class="sectnum">15.6</span> snapshot-dir.py –help</a></p></li>
-<li><p><a class="reference internal" href="#checkin-test-py-help" id="id262"><span class="sectnum">15.7</span> checkin-test.py –help</a></p></li>
-<li><p><a class="reference internal" href="#is-checkin-tested-commit-py-help" id="id263"><span class="sectnum">15.8</span> is_checkin_tested_commit.py –help</a></p></li>
-<li><p><a class="reference internal" href="#get-tribits-packages-from-files-list-py-help" id="id264"><span class="sectnum">15.9</span> get-tribits-packages-from-files-list.py –help</a></p></li>
-<li><p><a class="reference internal" href="#get-tribits-packages-from-last-tests-failed-py-help" id="id265"><span class="sectnum">15.10</span> get-tribits-packages-from-last-tests-failed.py –help</a></p></li>
-<li><p><a class="reference internal" href="#filter-packages-list-py-help" id="id266"><span class="sectnum">15.11</span> filter-packages-list.py –help</a></p></li>
-<li><p><a class="reference internal" href="#install-devtools-py-help" id="id267"><span class="sectnum">15.12</span> install_devtools.py –help</a></p></li>
+<li><p><a class="reference internal" href="#snapshot-dir-py-help" id="id264"><span class="sectnum">15.6</span> snapshot-dir.py –help</a></p></li>
+<li><p><a class="reference internal" href="#checkin-test-py-help" id="id265"><span class="sectnum">15.7</span> checkin-test.py –help</a></p></li>
+<li><p><a class="reference internal" href="#is-checkin-tested-commit-py-help" id="id266"><span class="sectnum">15.8</span> is_checkin_tested_commit.py –help</a></p></li>
+<li><p><a class="reference internal" href="#get-tribits-packages-from-files-list-py-help" id="id267"><span class="sectnum">15.9</span> get-tribits-packages-from-files-list.py –help</a></p></li>
+<li><p><a class="reference internal" href="#get-tribits-packages-from-last-tests-failed-py-help" id="id268"><span class="sectnum">15.10</span> get-tribits-packages-from-last-tests-failed.py –help</a></p></li>
+<li><p><a class="reference internal" href="#filter-packages-list-py-help" id="id269"><span class="sectnum">15.11</span> filter-packages-list.py –help</a></p></li>
+<li><p><a class="reference internal" href="#install-devtools-py-help" id="id270"><span class="sectnum">15.12</span> install_devtools.py –help</a></p></li>
 </ul>
 </li>
 </ul>
@@ -1054,20 +1060,19 @@ magical things it can do.</p>
 <li><p>Calls of built-in and user-defined macros and functions is <em>case
 insensitive</em>!  That is <code class="docutils literal notranslate"><span class="pre">set(...)</span></code>, <code class="docutils literal notranslate"><span class="pre">set(...)</span></code>, <code class="docutils literal notranslate"><span class="pre">set()</span></code>, and all other
 combinations of upper and lower case characters for ‘S’, ‘E’, ‘T’ all call
-the built-in <code class="docutils literal notranslate"><span class="pre">set()</span></code> function.  The convention in TriBITS is to use all
-caps for functions and macros (which was adopted by following the
-conventions used in the early versions of TriBITS, see the <a class="reference internal" href="#history-of-tribits">History of
-TriBITS</a>).  The convention in CMake literature from Kitware seems to use
-lower-case letters for functions and macros.</p></li>
+the built-in <code class="docutils literal notranslate"><span class="pre">set()</span></code> function.  The convention in TriBITS is to use
+<code class="docutils literal notranslate"><span class="pre">lower_case_with_underscores()</span></code> for functions and macros.</p></li>
 <li><p>However, the names of CMake (local or cache/global) variables are <em>case
 sensitive</em>!  That is, <code class="docutils literal notranslate"><span class="pre">SOME_VAR</span></code> and <code class="docutils literal notranslate"><span class="pre">some_var</span></code> are <em>different</em>
 variables.  Built-in CMake variables tend use all caps with underscores
 (e.g. <code class="docutils literal notranslate"><span class="pre">CMAKE_CURRENT_SOURCE_DIR</span></code>) but other built-in CMake variables tend
 to use mixed case with underscores (e.g. <code class="docutils literal notranslate"><span class="pre">CMAKE_Fortran_FLAGS</span></code>).  TriBITS
-tends to use a similar naming convention where variables have mostly
-upper-case letters except for parts that are proper nouns like the project,
-package or TPL name (e.g. <code class="docutils literal notranslate"><span class="pre">TribitsExProj_TRIBITS_DIR</span></code>,
-<code class="docutils literal notranslate"><span class="pre">TriBITS_SOURCE_DIR</span></code>, <code class="docutils literal notranslate"><span class="pre">Boost_INCLUDE_DIRS</span></code>).</p></li>
+tends to use a similar naming convention where project-level and cache
+variables have mostly upper-case letters except for parts that are proper
+nouns like the project, package or TPL name
+(e.g. <code class="docutils literal notranslate"><span class="pre">TribitsExProj_TRIBITS_DIR</span></code>, <code class="docutils literal notranslate"><span class="pre">TriBITS_SOURCE_DIR</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Boost_INCLUDE_DIRS</span></code>).  Local variables and function/macro parameters can
+use camelCase or lower_case_with_underscores.</p></li>
 </ul>
 <p>I don’t know of any other programming language that uses different case
 sensitivity rules for variables and functions.  However, because we must parse
@@ -1078,7 +1083,7 @@ keyword-based arguments.</p>
 <p>Other mistakes that people make result from not understanding how CMake scopes
 variables and other entities.  CMake defines a global scope (i.e. “cache”
 variables) and several nested local scopes that are created by
-<code class="docutils literal notranslate"><span class="pre">add_subdirectory()</span></code> and entering FUNCTIONS.  See <a class="reference internal" href="#dual-scope-set">dual_scope_set()</a> for a
+<code class="docutils literal notranslate"><span class="pre">add_subdirectory()</span></code> and entering functions.  See <a class="reference internal" href="#dual-scope-set">dual_scope_set()</a> for a
 short discussion of these scoping rules.  And it is not just variables that
 can have local and global scoping rules.  Other entities, like defines set
 with the built-in command <code class="docutils literal notranslate"><span class="pre">add_definitions()</span></code> only apply to the local scope
@@ -2667,7 +2672,13 @@ defined before a (SE) Package’s <code class="docutils literal notranslate"><sp
 <blockquote>
 <div><p id="project-name-enable-package-name"><code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}</span></code></p>
 <blockquote>
-<div><p>Set to <code class="docutils literal notranslate"><span class="pre">ON</span></code> if the package is enabled and is to be processed.</p>
+<div><p>Set to <code class="docutils literal notranslate"><span class="pre">ON</span></code> if the package is enabled and is to be processed or will be
+set to <code class="docutils literal notranslate"><span class="pre">ON</span></code> or <code class="docutils literal notranslate"><span class="pre">OFF</span></code> automatically during enable/disable logic.  For a
+parent package that is not directly enabled but were one of its
+subpackages is enabled, this will get set to <code class="docutils literal notranslate"><span class="pre">ON</span></code> (but that is not the
+same as the parent package being directly enabled and therefore does not
+imply that all of the required subpackages will be enabled, only that the
+parent package will be processed).</p>
 </div></blockquote>
 <p id="package-name-enable-optional-dep-package-name"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}</span></code></p>
 <blockquote>
@@ -2686,6 +2697,9 @@ package-level variable
 turned off by the user even through the packages <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code> and
 <code class="docutils literal notranslate"><span class="pre">${OPTIONAL_DEP_PACKAGE_NAME}</span></code> are both enabled at the project level!
 See <a class="reference internal" href="#support-for-optional-se-package-tpl-can-be-explicitly-disabled">Support for optional SE package/TPL can be explicitly disabled</a>.</p>
+<p><strong>NOTE:</strong> This variable will also be set for required dependencies as well
+to allow for uniform processing such as when looping over the items in
+<a class="reference internal" href="#package-name-lib-all-dependencies">${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES</a>.</p>
 </div></blockquote>
 <p id="package-name-enable-optional-dep-tpl-name"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}</span></code></p>
 <blockquote>
@@ -4112,6 +4126,35 @@ TriBITS dependency system handles enables and disables.</p>
 <span class="o">--</span> <span class="n">Thyra_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="n">ThyraCoreLibs</span>
 <span class="o">--</span> <span class="n">Thyra_LIB_OPTIONAL_DEP_PACKAGES</span><span class="p">:</span> <span class="n">ThyraGoodStuff</span> <span class="n">ThyraCrazyStuff</span> <span class="n">ThyraEpetra</span> <span class="n">ThyraEpetraExt</span>
 
+<span class="n">Dumping</span> <span class="n">direct</span> <span class="n">dependencies</span> <span class="k">for</span> <span class="n">each</span> <span class="n">SE</span> <span class="n">package</span> <span class="o">...</span>
+
+<span class="o">--</span> <span class="n">Teuchos_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">BLAS</span> <span class="n">LAPACK</span>
+<span class="o">--</span> <span class="n">Teuchos_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">BLAS</span> <span class="n">LAPACK</span> <span class="n">Boost</span> <span class="n">MPI</span>
+
+<span class="o">--</span> <span class="n">RTOp_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Teuchos</span>
+<span class="o">--</span> <span class="n">RTOp_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">Teuchos</span>
+
+<span class="o">--</span> <span class="n">Epetra_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">BLAS</span> <span class="n">LAPACK</span>
+<span class="o">--</span> <span class="n">Epetra_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">BLAS</span> <span class="n">LAPACK</span> <span class="n">MPI</span>
+
+<span class="o">--</span> <span class="n">Triutils_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">Epetra</span>
+
+<span class="o">--</span> <span class="n">EpetraExt_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="n">Epetra</span> <span class="n">Triutils</span> <span class="n">UMFPACK</span> <span class="n">AMD</span> <span class="n">PETSC</span>
+
+<span class="o">--</span> <span class="n">ThyraCoreLibs_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="n">RTOp</span>
+<span class="o">--</span> <span class="n">ThyraCoreLibs_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="n">RTOp</span>
+
+<span class="o">--</span> <span class="n">ThyraGoodStuff_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">ThyraCoreLibs</span>
+
+<span class="o">--</span> <span class="n">ThyraCrazyStuff_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">ThyraGoodStuff</span>
+
+<span class="o">--</span> <span class="n">ThyraEpetra_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Epetra</span> <span class="n">ThyraCoreLibs</span>
+<span class="o">--</span> <span class="n">ThyraEpetra_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">Epetra</span> <span class="n">ThyraCoreLibs</span>
+
+<span class="o">--</span> <span class="n">ThyraEpetraExt_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">ThyraEpetra</span> <span class="n">EpetraExt</span>
+
+<span class="o">--</span> <span class="n">Thyra_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">ThyraCoreLibs</span> <span class="n">ThyraEpetra</span>
+<span class="o">--</span> <span class="n">Thyra_LIB_ALL_DEPENDENCIES</span><span class="p">:</span> <span class="n">ThyraCoreLibs</span> <span class="n">ThyraGoodStuff</span> <span class="n">ThyraCrazyStuff</span> <span class="n">ThyraEpetra</span> <span class="n">ThyraEpetraExt</span>
 </pre></div>
 </div>
 <p>The above dependency structure printout is produced by configuring with
@@ -4436,8 +4479,16 @@ an example, see <a class="reference internal" href="#explicit-enable-of-a-subpac
 <a class="reference internal" href="#downstream">downstream</a> package declares a dependency on the SE package
 <code class="docutils literal notranslate"><span class="pre">ThyraEpetra</span></code>, but not the parent package <code class="docutils literal notranslate"><span class="pre">Thyra</span></code>, then the <code class="docutils literal notranslate"><span class="pre">Thyra</span></code>
 package (and its other subpackages and their dependencies) will not get
-auto-enabled.  This is a key aspect of the TriBITS SE package management
-system.</p></li>
+auto-enabled.  Also note that enabling a subset of the required
+subpackages for a parent package does not require the enable of the other
+required subpackages.  For example, if both <code class="docutils literal notranslate"><span class="pre">ThyraEpetra</span></code> and
+<code class="docutils literal notranslate"><span class="pre">ThyraCore</span></code> were both required subpackages of the parent package
+<code class="docutils literal notranslate"><span class="pre">Thyra</span></code>, then enabling <code class="docutils literal notranslate"><span class="pre">ThyraCore</span></code> does not require the enabling of
+<code class="docutils literal notranslate"><span class="pre">ThyraEpetra</span></code>.  In these cases where one of a parent package’s
+subpackages is enabled for some reason, the final value of
+<code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}</span></code> will be set to <code class="docutils literal notranslate"><span class="pre">ON</span></code> (but this
+does imply that all of the required subpackages will be enabled, only that
+the parent package will be processed.)</p></li>
 </ol>
 <ol class="arabic simple" id="support-for-optional-se-package-tpl-is-enabled-by-default" start="13">
 <li><p><strong>Support for optional SE package/TPL is enabled by default</strong>: For an SE
@@ -13707,7 +13758,7 @@ never get added to <code class="docutils literal notranslate"><span class="pre">
 and one must be very careful to understand how CPack will use these regexes
 to match files that get excluded from the tarball.  For more details, see
 <a class="reference internal" href="#creating-source-distributions">Creating Source Distributions</a>.</p>
-<p>In: core/package_arch/TribitsGlobalMacros.cmake:2626</p>
+<p>In: core/package_arch/TribitsGlobalMacros.cmake:2513</p>
 </section>
 <section id="tribits-find-most-recent-binary-file-timestamp">
 <h3><a class="toc-backref" href="#id135">tribits_find_most_recent_binary_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-binary-file-timestamp" title="Permalink to this headline"></a></h3>
@@ -15270,8 +15321,25 @@ input, then it is set to <code class="docutils literal notranslate"><span class=
 an explicit “– ” line prefix so that it prints nice even on Windows CMake.</p>
 <p>In: core/utils/PrintVar.cmake:42</p>
 </section>
+<section id="print-var-with-spaces">
+<h3><a class="toc-backref" href="#id187">print_var_with_spaces()</a><a class="headerlink" href="#print-var-with-spaces" title="Permalink to this headline"></a></h3>
+<p>Print a defined variable giving its name then value printed with spaces
+instead of <code class="docutils literal notranslate"><span class="pre">';'</span></code>.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">print_var_with_spaces</span><span class="p">(</span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span>  <span class="o">&lt;</span><span class="n">printedVarInOut</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Prints the variable as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">ele0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">ele1</span><span class="o">&gt;</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">$&lt;printedVarInOut&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on input, then the variable is not
+touched. If however, the variable <code class="docutils literal notranslate"><span class="pre">$&lt;printedVarInOut&gt;</span></code> is not <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on
+input, then it is set to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on output.</p>
+<p>In: core/utils/PrintVarWithSpaces.cmake:44</p>
+</section>
 <section id="remove-global-duplicates">
-<h3><a class="toc-backref" href="#id187">remove_global_duplicates()</a><a class="headerlink" href="#remove-global-duplicates" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id188">remove_global_duplicates()</a><a class="headerlink" href="#remove-global-duplicates" title="Permalink to this headline"></a></h3>
 <p>Remove duplicate elements from a global list variable (removes boiler-plate
 code and errors).</p>
 <p>Usage:</p>
@@ -15288,7 +15356,7 @@ function is called it will be after it completes.</p>
 <p>In: core/utils/RemoveGlobalDuplicates.cmake:44</p>
 </section>
 <section id="set-and-inc-dirs">
-<h3><a class="toc-backref" href="#id188">set_and_inc_dirs()</a><a class="headerlink" href="#set-and-inc-dirs" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id189">set_and_inc_dirs()</a><a class="headerlink" href="#set-and-inc-dirs" title="Permalink to this headline"></a></h3>
 <p>Set a variable to an include directory and call <code class="docutils literal notranslate"><span class="pre">include_directories()</span></code>
 (removes boiler-plate code).</p>
 <p>Usage:</p>
@@ -15300,7 +15368,7 @@ and calls <code class="docutils literal notranslate"><span class="pre">include_d
 <p>In: core/utils/SetAndIncDirs.cmake:41</p>
 </section>
 <section id="set-cache-on-off-empty">
-<h3><a class="toc-backref" href="#id189">set_cache_on_off_empty()</a><a class="headerlink" href="#set-cache-on-off-empty" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id190">set_cache_on_off_empty()</a><a class="headerlink" href="#set-cache-on-off-empty" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">set_cache_on_off_empty</span><span class="p">(</span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">initialVal</span><span class="o">&gt;</span> <span class="s2">&quot;&lt;docString&gt;&quot;</span> <span class="p">[</span><span class="n">FORCE</span><span class="p">])</span>
 </pre></div>
@@ -15311,7 +15379,7 @@ GUIs.</p>
 <p>In: core/utils/SetCacheOnOffEmpty.cmake:42</p>
 </section>
 <section id="set-default">
-<h3><a class="toc-backref" href="#id190">set_default()</a><a class="headerlink" href="#set-default" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id191">set_default()</a><a class="headerlink" href="#set-default" title="Permalink to this headline"></a></h3>
 <p>Give a local variable a default value if a non-empty value is not already
 set.</p>
 <p>Usage:</p>
@@ -15324,7 +15392,7 @@ preserved.</p>
 <p>In: core/utils/SetDefault.cmake:41</p>
 </section>
 <section id="set-default-and-from-env">
-<h3><a class="toc-backref" href="#id191">set_default_and_from_env()</a><a class="headerlink" href="#set-default-and-from-env" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id192">set_default_and_from_env()</a><a class="headerlink" href="#set-default-and-from-env" title="Permalink to this headline"></a></h3>
 <p>Set a default value for a local variable and override from an environment
 variable of the same name if it is set.</p>
 <p>Usage:</p>
@@ -15341,7 +15409,7 @@ command-line like <code class="docutils literal notranslate"><span class="pre">c
 <p>In: core/utils/SetDefaultAndFromEnv.cmake:46</p>
 </section>
 <section id="split">
-<h3><a class="toc-backref" href="#id192">split()</a><a class="headerlink" href="#split" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id193">split()</a><a class="headerlink" href="#split" title="Permalink to this headline"></a></h3>
 <p>Split a string variable into a string array/list variable.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&lt;inputStr&gt;&quot;</span> <span class="s2">&quot;&lt;sepStr&gt;&quot;</span> <span class="o">&lt;</span><span class="n">outputStrListVar</span><span class="o">&gt;</span><span class="p">)</span>
@@ -15356,7 +15424,7 @@ etc!</p>
 <p>In: core/utils/Split.cmake:41</p>
 </section>
 <section id="timer-get-raw-seconds">
-<h3><a class="toc-backref" href="#id193">timer_get_raw_seconds()</a><a class="headerlink" href="#timer-get-raw-seconds" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id194">timer_get_raw_seconds()</a><a class="headerlink" href="#timer-get-raw-seconds" title="Permalink to this headline"></a></h3>
 <p>Return the raw time in seconds (nano-second accuracy) since epoch, i.e.,
 since 1970-01-01 00:00:00 UTC.</p>
 <p>Usage:</p>
@@ -15377,7 +15445,7 @@ output!</p>
 <p>In: core/utils/TimingUtils.cmake:50</p>
 </section>
 <section id="timer-get-rel-seconds">
-<h3><a class="toc-backref" href="#id194">timer_get_rel_seconds()</a><a class="headerlink" href="#timer-get-rel-seconds" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id195">timer_get_rel_seconds()</a><a class="headerlink" href="#timer-get-rel-seconds" title="Permalink to this headline"></a></h3>
 <p>Return the relative time between start and stop seconds.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">timer_get_rel_seconds</span><span class="p">(</span><span class="o">&lt;</span><span class="n">startSeconds</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">endSeconds</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">relSecondsOutVar</span><span class="o">&gt;</span><span class="p">)</span>
@@ -15390,7 +15458,7 @@ output!</p>
 <p>In: core/utils/TimingUtils.cmake:80</p>
 </section>
 <section id="timer-print-rel-time">
-<h3><a class="toc-backref" href="#id195">timer_print_rel_time()</a><a class="headerlink" href="#timer-print-rel-time" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id196">timer_print_rel_time()</a><a class="headerlink" href="#timer-print-rel-time" title="Permalink to this headline"></a></h3>
 <p>Print the relative time between start and stop timers in <code class="docutils literal notranslate"><span class="pre">&lt;min&gt;m&lt;sec&gt;s</span></code>
 format.</p>
 <p>Usage:</p>
@@ -15419,7 +15487,7 @@ timer_print_rel_time(${REAL_EXPENSIVE_START} ${REAL_EXPENSIVE_END}
 <p>In: core/utils/TimingUtils.cmake:118</p>
 </section>
 <section id="tribits-strip-quotes-from-str">
-<h3><a class="toc-backref" href="#id196">tribits_strip_quotes_from_str()</a><a class="headerlink" href="#tribits-strip-quotes-from-str" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id197">tribits_strip_quotes_from_str()</a><a class="headerlink" href="#tribits-strip-quotes-from-str" title="Permalink to this headline"></a></h3>
 <p>Remove one set of quotes from the outside of a string if they exist.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_strip_quotes_from_str</span><span class="p">(</span><span class="o">&lt;</span><span class="n">str_in</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">str_var_out</span><span class="o">&gt;</span><span class="p">)</span>
@@ -15430,7 +15498,7 @@ char, then the original <code class="docutils literal notranslate"><span class="
 <p>In: core/utils/TribitsStripQuotesFromStr.cmake:2</p>
 </section>
 <section id="unittest-compare-const">
-<h3><a class="toc-backref" href="#id197">unittest_compare_const()</a><a class="headerlink" href="#unittest-compare-const" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id198">unittest_compare_const()</a><a class="headerlink" href="#unittest-compare-const" title="Permalink to this headline"></a></h3>
 <p>Perform a single unit test equality check and update overall test statistics</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unittest_compare_const</span><span class="p">(</span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">expectedValue</span><span class="o">&gt;</span><span class="p">)</span>
@@ -15444,7 +15512,7 @@ by the unit test harness system to assess overall pass/fail.</p>
 <p>In: core/utils/UnitTestHelpers.cmake:60</p>
 </section>
 <section id="unittest-has-substr-const">
-<h3><a class="toc-backref" href="#id198">unittest_has_substr_const()</a><a class="headerlink" href="#unittest-has-substr-const" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id199">unittest_has_substr_const()</a><a class="headerlink" href="#unittest-has-substr-const" title="Permalink to this headline"></a></h3>
 <p>Check that a given string var contains the given substring and update
 overall test statistics</p>
 <p>Usage:</p>
@@ -15460,7 +15528,7 @@ by the unit test harness system to assess overall pass/fail.</p>
 <p>In: core/utils/UnitTestHelpers.cmake:297</p>
 </section>
 <section id="unittest-not-has-substr-const">
-<h3><a class="toc-backref" href="#id199">unittest_not_has_substr_const()</a><a class="headerlink" href="#unittest-not-has-substr-const" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id200">unittest_not_has_substr_const()</a><a class="headerlink" href="#unittest-not-has-substr-const" title="Permalink to this headline"></a></h3>
 <p>Check that a given string var does <strong>NOT</strong> contains the given substring and
 update overall test statistics</p>
 <p>Usage:</p>
@@ -15476,7 +15544,7 @@ by the unit test harness system to assess overall pass/fail.</p>
 <p>In: core/utils/UnitTestHelpers.cmake:343</p>
 </section>
 <section id="unittest-string-regex">
-<h3><a class="toc-backref" href="#id200">unittest_string_regex()</a><a class="headerlink" href="#unittest-string-regex" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id201">unittest_string_regex()</a><a class="headerlink" href="#unittest-string-regex" title="Permalink to this headline"></a></h3>
 <p>Perform a series regexes of given strings and update overall test statistics.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unittest_string_regex</span><span class="p">(</span>
@@ -15493,7 +15561,7 @@ by the unit test harness system to assess overall pass/fail.</p>
 <p>In: core/utils/UnitTestHelpers.cmake:241</p>
 </section>
 <section id="unittest-file-regex">
-<h3><a class="toc-backref" href="#id201">unittest_file_regex()</a><a class="headerlink" href="#unittest-file-regex" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id202">unittest_file_regex()</a><a class="headerlink" href="#unittest-file-regex" title="Permalink to this headline"></a></h3>
 <p>Perform a series regexes of given strings and update overall test statistics.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unittest_file_regex</span><span class="p">(</span>
@@ -15507,7 +15575,7 @@ to <a class="reference internal" href="#unittest-string-regex">unittest_string_r
 <p>In: core/utils/UnitTestHelpers.cmake:389</p>
 </section>
 <section id="unittest-final-result">
-<h3><a class="toc-backref" href="#id202">unittest_final_result()</a><a class="headerlink" href="#unittest-final-result" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id203">unittest_final_result()</a><a class="headerlink" href="#unittest-final-result" title="Permalink to this headline"></a></h3>
 <p>Print final statistics from all tests and assert final pass/fail</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unittest_final_result</span><span class="p">(</span><span class="o">&lt;</span><span class="n">expectedNumPassed</span><span class="o">&gt;</span><span class="p">)</span>
@@ -15534,13 +15602,13 @@ paranoid.</p>
 </section>
 </section>
 <section id="tribits-system-maintainers-documentation">
-<h1><a class="toc-backref" href="#id203"><span class="sectnum">12</span> TriBITS System Maintainers Documentation</a><a class="headerlink" href="#tribits-system-maintainers-documentation" title="Permalink to this headline"></a></h1>
+<h1><a class="toc-backref" href="#id204"><span class="sectnum">12</span> TriBITS System Maintainers Documentation</a><a class="headerlink" href="#tribits-system-maintainers-documentation" title="Permalink to this headline"></a></h1>
 <p>This section contains more detailed information about the internal
 implementation of TriBITS.  This information is meant to make it easier to
 understand and manipulate the data-structures and macros/functions that make
 up internal implementation of TriBITS.</p>
 <section id="tribits-system-data-structures">
-<h2><a class="toc-backref" href="#id204"><span class="sectnum">12.1</span> TriBITS System Data Structures</a><a class="headerlink" href="#tribits-system-data-structures" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id205"><span class="sectnum">12.1</span> TriBITS System Data Structures</a><a class="headerlink" href="#tribits-system-data-structures" title="Permalink to this headline"></a></h2>
 <p>This section describes the global CMake variables that make up the
 data-structures and the functions that create them that define the TriBITS
 package dependency system.  These variables all exist at the base
@@ -15549,15 +15617,21 @@ therefore are recomputed on every reconfigure).  These variables define a
 graph of external packages (i.e. TPLs) and internal packages (i.e. buildable
 CMake packages).  This information is meant for maintainers of the TriBITS
 system itself and should not need to be known by TriBITS Project maintainers.</p>
-<p>In addition to the variables listed below are the variables documented in:</p>
+<section id="basic-tribits-project-repository-package-and-subpackage-core-variables">
+<h3><a class="toc-backref" href="#id206">Basic TriBITS Project, Repository, Package, and Subpackage Core Variables</a><a class="headerlink" href="#basic-tribits-project-repository-package-and-subpackage-core-variables" title="Permalink to this headline"></a></h3>
+<p>The basic variables that define a TriBITS Project, Repository, Package and
+Subpackage are listed at the below links:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#tribits-project-core-variables">TriBITS Project Core Variables</a></p></li>
 <li><p><a class="reference internal" href="#tribits-repository-core-variables">TriBITS Repository Core Variables</a></p></li>
 <li><p><a class="reference internal" href="#tribits-package-core-variables">TriBITS Package Core Variables</a></p></li>
 <li><p><a class="reference internal" href="#tribits-subpackage-core-variables">TriBITS Subpackage Core Variables</a></p></li>
 </ul>
+<p>These are variables that can be accessed by <a class="reference internal" href="#tribits-project-developers">TriBITS Project Developers</a> but
+are also used in the internal implementation of TriBITS functionality.</p>
+</section>
 <section id="lists-of-external-and-internal-packages">
-<h3><a class="toc-backref" href="#id205">Lists of external and internal packages</a><a class="headerlink" href="#lists-of-external-and-internal-packages" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id207">Lists of external and internal packages</a><a class="headerlink" href="#lists-of-external-and-internal-packages" title="Permalink to this headline"></a></h3>
 <p id="project-name-defined-tpls">The original list of all defined external packages (TPLs) read from the
 processed <a class="reference internal" href="#repodir-tplslist-cmake">&lt;repoDir&gt;/TPLsList.cmake</a> files is given in the list variable:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${PROJECT_NAME}_DEFINED_TPLS
@@ -15596,7 +15670,7 @@ as external packages and not build from source code and instead will be found
 out on the system as pre-built/pre-installed packages using
 <code class="docutils literal notranslate"><span class="pre">find_package(&lt;externalPackageName&gt;)</span></code>.  The final decision for if a package
 is treated as an internal or external package is determined by the variable:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${PACKAGE_NAME}_PACKAGE_BUILD_STATUS=[INTERNAL|EXTERNAL]
 </pre></div>
 </div>
 <p>which gets set various criteria as described in section <a class="reference internal" href="#determining-if-a-package-is-internal-or-external">Determining if a
@@ -15700,7 +15774,7 @@ more details.</p>
 </section>
 <hr class="docutils" />
 <section id="list-variables-defining-the-package-dependencies-graph">
-<h3><a class="toc-backref" href="#id206">List variables defining the package dependencies graph</a><a class="headerlink" href="#list-variables-defining-the-package-dependencies-graph" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id208">List variables defining the package dependencies graph</a><a class="headerlink" href="#list-variables-defining-the-package-dependencies-graph" title="Permalink to this headline"></a></h3>
 <p>The following top-level non-cache variables are defined after reading in each
 top-level package and subpackage <code class="docutils literal notranslate"><span class="pre">Dependencies.cmake</span></code> files and they are
 used to define the basic dependencies that exist between packages in a project
@@ -15713,24 +15787,24 @@ a package’s <a class="reference internal" href="#packagedir-cmake-dependencies
 should <strong>not</strong> contain any <em>indirect</em> dependencies as the dependency system
 already handles these automatically.)</p>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES</span></code></p>
+<div><p id="package-name-lib-required-dep-packages"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES</span></code></p>
 <blockquote>
 <div><p>List of <em>direct</em> package dependencies that are required for the libraries
 and non-test executables built by <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code>.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES</span></code></p>
+<p id="package-name-lib-optional-dep-packages"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES</span></code></p>
 <blockquote>
 <div><p>List of <em>direct</em> package dependencies that are only optional for the
 libraries and non-test executables built by <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code>.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES</span></code></p>
+<p id="package-name-test-required-dep-packages"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES</span></code></p>
 <blockquote>
 <div><p>List of <em>direct</em> package dependencies that are required for the
 tests/examples built by <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code>.  This list should <strong>not</strong>
 contain any of the packages already listed in
 <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES</span></code>.</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES`</span></code></p>
+<p id="package-name-test-optional-dep-packages"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES`</span></code></p>
 <blockquote>
 <div><p>List of <em>direct</em> package dependencies that are optional for the
 tests/examples built by <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code>.  This list should <strong>not</strong>
@@ -15771,7 +15845,7 @@ their <code class="docutils literal notranslate"><span class="pre">${FORWARD_PAC
 </div></blockquote>
 </section>
 <section id="determining-if-a-package-is-internal-or-external">
-<h3><a class="toc-backref" href="#id207">Determining if a package is internal or external</a><a class="headerlink" href="#determining-if-a-package-is-internal-or-external" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id209">Determining if a package is internal or external</a><a class="headerlink" href="#determining-if-a-package-is-internal-or-external" title="Permalink to this headline"></a></h3>
 <p>As mentioned above, some subset of packages listed in
 <a class="reference internal" href="#package-name-defined-internal-toplevel-packages">${PACKAGE_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES</a> (which all have
 <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_SOURCE_DIR</span> <span class="pre">!=</span> <span class="pre">&quot;&quot;</span></code>) may be chosen to be external packages.
@@ -15786,32 +15860,90 @@ external packages by setting:</p>
 </div>
 <p>The final status of whether a listed package is an internal package or an
 external package is provided by the variable:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${PACKAGE_NAME}_PACKAGE_BUILD_STATUS=[INTERNAL|EXTERNAL]
 </pre></div>
 </div>
 <p>As a result, every other package upstream from any of these
 <code class="docutils literal notranslate"><span class="pre">&lt;ExternalPackage&gt;</span></code> packages must therefore also be treated as external
 packages automatically.</p>
 <p>The primary TriBITS file that processes and defines these variables is:</p>
-<blockquote>
-<div><p>TribitsAdjustPackageEnables.cmake</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TribitsAdjustPackageEnables</span><span class="o">.</span><span class="n">cmake</span>
+</pre></div>
+</div>
 <p>There are pretty good unit and regression tests to demonstrate and protect
 this functionality in the directory:</p>
-<blockquote>
-<div><p>tribits/package_arch/UntiTests/</p>
-</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TriBITS</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="n">core</span><span class="o">/</span>
+</pre></div>
+</div>
 </section>
 <section id="external-package-dependencies">
-<h3><a class="toc-backref" href="#id208">External package dependencies</a><a class="headerlink" href="#external-package-dependencies" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id210">External package dependencies</a><a class="headerlink" href="#external-package-dependencies" title="Permalink to this headline"></a></h3>
 <p>ToDo: Document how dependencies between external packages/TPLs are determined
 in <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;ExternalPackage&gt;Dependencies.cmake</span></code> files and
 <code class="docutils literal notranslate"><span class="pre">&lt;ExternalPackage&gt;_LIB_REQUIRED_DEP_PACKAGES_OVERRIDE</span></code> and
 <code class="docutils literal notranslate"><span class="pre">&lt;ExternalPackage&gt;_LIB_OPTIONAL_DEP_PACKAGES_OVERRIDE</span></code> variables that can be
 overridden in the cache.</p>
 </section>
+<section id="flat-lists-of-direct-package-dependencies">
+<h3><a class="toc-backref" href="#id211">Flat lists of direct package dependencies</a><a class="headerlink" href="#flat-lists-of-direct-package-dependencies" title="Permalink to this headline"></a></h3>
+<p>TriBITS sets up the following lists of dependencies for each internal and
+external package/TPL:</p>
+<blockquote>
+<div><p id="package-name-lib-all-dependencies"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES</span></code></p>
+<blockquote>
+<div><p>The list of all <strong>direct</strong> required and optional upstream internal and
+external packages/TPL dependencies, regardless if they are enabled or not.
+This is concatenation of lists
+<a class="reference internal" href="#package-name-lib-required-dep-packages">${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES</a>,
+<a class="reference internal" href="#package-name-lib-optional-dep-packages">${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES</a>,
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIB_REQUIRED_DEP_TPLS</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS</span></code> (with the latter two lists soon
+to disappear as part of #63).  To determine if a given direct upstream
+package <code class="docutils literal notranslate"><span class="pre">&lt;depPkg&gt;</span></code> in this list is enabled/supported or not for this
+package <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code>, check the value of
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_&lt;depPkg&gt;</span></code>.  NOTE: The variables
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_&lt;depPkg&gt;</span></code> will be set even for required upstream
+internal and external packages/tpls to allow for uniform loops involving
+required and optional upstream dependencies.  (And for a parent package
+with subpackages, it is possible for a required subpackage to <strong>not</strong> be
+enabled and for <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_&lt;depPkg&gt;</span></code> to be <code class="docutils literal notranslate"><span class="pre">OFF</span></code> as
+explained in <a class="reference internal" href="#subpackage-enable-does-not-auto-enable-the-parent-package">Subpackage enable does not auto-enable the parent
+package</a>.)  This list will be set regardless of if the package
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code> is enabled or not.</p>
+</div></blockquote>
+<p id="package-name-lib-enabled-dependencies"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES</span></code></p>
+<blockquote>
+<div><p>List of all <strong>enabled</strong> <strong>direct</strong> required and optional upstream internal
+and external packages/TPL dependencies.  This is strict subset
+<a class="reference internal" href="#package-name-lib-all-dependencies">${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES</a> (i.e. all of the <code class="docutils literal notranslate"><span class="pre">&lt;depPkg&gt;</span></code>
+items in this list will have <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_&lt;depPkg&gt;</span></code> set to
+<code class="docutils literal notranslate"><span class="pre">ON</span></code>).</p>
+</div></blockquote>
+<p id="package-name-test-all-dependencies"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_TEST_ALL_DEPENDENCIES</span></code></p>
+<blockquote>
+<div><p>This list of all <strong>direct</strong> extra package test required and optional
+upstream internal and external packages/TPLs.  This list includes just the
+extra dependencies not already listed in
+<a class="reference internal" href="#package-name-lib-all-dependencies">${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES</a>.  This is a concatenation of the
+lists <a class="reference internal" href="#package-name-test-required-dep-packages">${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES</a>,
+<a class="reference internal" href="#package-name-test-optional-dep-packages">${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES</a>,
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_TEST_REQUIRED_DEP_TPLS</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS</span></code> (with the latter two lists soon
+to disappear as part of #63).  This list is set regardless if the package
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code> is enabled or not.</p>
+</div></blockquote>
+<p id="package-name-test-enabled-dependencies"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_TEST_ENABLED_DEPENDENCIES</span></code></p>
+<blockquote>
+<div><p>The list of all <strong>enabled</strong> <strong>direct</strong> extra required and optional
+upstream internal and external packages/TPL dependencies.  This is a
+strict subset of <a class="reference internal" href="#package-name-test-all-dependencies">${PACKAGE_NAME}_TEST_ALL_DEPENDENCIES</a>.  This list
+includes just the extra dependencies not already listed in
+<a class="reference internal" href="#package-name-lib-enabled-dependencies">${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES</a>.</p>
+</div></blockquote>
+</div></blockquote>
+</section>
 <section id="list-variables-defining-include-directories-and-libraries">
-<h3><a class="toc-backref" href="#id209">List variables defining include directories and libraries</a><a class="headerlink" href="#list-variables-defining-include-directories-and-libraries" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id212">List variables defining include directories and libraries</a><a class="headerlink" href="#list-variables-defining-include-directories-and-libraries" title="Permalink to this headline"></a></h3>
 <p>ToDo: Eliminate this section and these variables once we move to modern CMake
 targets as part of #299.</p>
 <p>The following global internal cache variables are used to communicate the
@@ -15893,7 +16025,7 @@ variable defined for them.</p>
 </div></blockquote>
 </section>
 <section id="user-enable-disable-cache-variables">
-<h3><a class="toc-backref" href="#id210">User enable/disable cache variables</a><a class="headerlink" href="#user-enable-disable-cache-variables" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id213">User enable/disable cache variables</a><a class="headerlink" href="#user-enable-disable-cache-variables" title="Permalink to this headline"></a></h3>
 <p>The following variables can be set by the user to determine what packages get
 enabled or disabled:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${PROJECT_NAME}_ENABLE_ALL_PACKAGES
@@ -15919,13 +16051,13 @@ ${PACKAGE_NAME}_ENABLE_EXAMPLES
 Logic</a>.</p>
 <p>There are pretty good unit and regression tests to demonstrate and protect
 this functionality in the directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits</span><span class="o">/</span><span class="n">package_arch</span><span class="o">/</span><span class="n">UntiTests</span><span class="o">/</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TriBITS</span><span class="o">/</span><span class="n">test</span><span class="o">/</span><span class="n">core</span><span class="o">/</span>
 </pre></div>
 </div>
 </section>
 </section>
 <section id="function-call-tree-for-constructing-package-dependency-graph">
-<h2><a class="toc-backref" href="#id211"><span class="sectnum">12.2</span> Function call tree for constructing package dependency graph</a><a class="headerlink" href="#function-call-tree-for-constructing-package-dependency-graph" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id214"><span class="sectnum">12.2</span> Function call tree for constructing package dependency graph</a><a class="headerlink" href="#function-call-tree-for-constructing-package-dependency-graph" title="Permalink to this headline"></a></h2>
 <p>Below is the CMake macro and function call graph for constructing the packages
 lists and dependency data-structures described above.</p>
 <div class="line-block">
@@ -16002,7 +16134,7 @@ lists and dependency data-structures described above.</p>
 </div>
 </section>
 <section id="notes-on-dependency-logic">
-<h2><a class="toc-backref" href="#id212"><span class="sectnum">12.3</span> Notes on dependency logic</a><a class="headerlink" href="#notes-on-dependency-logic" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id215"><span class="sectnum">12.3</span> Notes on dependency logic</a><a class="headerlink" href="#notes-on-dependency-logic" title="Permalink to this headline"></a></h2>
 <p>The logic used to define the intra-package linkage variables is complex due to
 a number of factors:</p>
 <ol class="arabic simple">
@@ -16043,12 +16175,12 @@ a number of example projects that are part of the automated TriBITS test suite
 that do test much of the logic used in these variables.</p>
 </section>
 <section id="tribits-system-macros-and-functions">
-<h2><a class="toc-backref" href="#id213"><span class="sectnum">12.4</span> TriBITS System Macros and Functions</a><a class="headerlink" href="#tribits-system-macros-and-functions" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id216"><span class="sectnum">12.4</span> TriBITS System Macros and Functions</a><a class="headerlink" href="#tribits-system-macros-and-functions" title="Permalink to this headline"></a></h2>
 <p>These are key macros and functions that are used to implement the guts of
 TriBITS that TriBITS System Maintainers need to know about in order to
 understand the internals of TriBITS.</p>
 <section id="tribits-abort-on-missing-package">
-<h3><a class="toc-backref" href="#id214">tribits_abort_on_missing_package()</a><a class="headerlink" href="#tribits-abort-on-missing-package" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id217">tribits_abort_on_missing_package()</a><a class="headerlink" href="#tribits-abort-on-missing-package" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_abort_on_missing_package</span><span class="p">(</span><span class="o">&lt;</span><span class="n">depPkg</span><span class="o">&gt;</span>  <span class="o">&lt;</span><span class="n">packageName</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">depPkgListName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -16060,7 +16192,7 @@ dependency on a downstream dependency (i.e. a circular dependency).</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:640</p>
 </section>
 <section id="tribits-abort-on-self-dep">
-<h3><a class="toc-backref" href="#id215">tribits_abort_on_self_dep()</a><a class="headerlink" href="#tribits-abort-on-self-dep" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id218">tribits_abort_on_self_dep()</a><a class="headerlink" href="#tribits-abort-on-self-dep" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_abort_on_self_dep</span><span class="p">(</span><span class="o">&lt;</span><span class="n">packageName</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">depPkgListName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -16071,17 +16203,17 @@ declaration and which list it comes from.</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:666</p>
 </section>
 <section id="tribits-adjust-package-enables">
-<h3><a class="toc-backref" href="#id216">tribits_adjust_package_enables()</a><a class="headerlink" href="#tribits-adjust-package-enables" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id219">tribits_adjust_package_enables()</a><a class="headerlink" href="#tribits-adjust-package-enables" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <blockquote>
 <div><p>tribits_adjust_package_enables()</p>
 </div></blockquote>
 <p>Macro that adjusts all of the package enables from what the user input to
 the final set that will be used to enable packages.</p>
-<p>In: core/package_arch/TribitsAdjustPackageEnables.cmake:1105</p>
+<p>In: core/package_arch/TribitsAdjustPackageEnables.cmake:1244</p>
 </section>
 <section id="tribits-append-forward-dep-packages">
-<h3><a class="toc-backref" href="#id217">tribits_append_forward_dep_packages()</a><a class="headerlink" href="#tribits-append-forward-dep-packages" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id220">tribits_append_forward_dep_packages()</a><a class="headerlink" href="#tribits-append-forward-dep-packages" title="Permalink to this headline"></a></h3>
 <p>Usage: tribits_append_forward_dep_packages(&lt;packageName&gt; &lt;listType&gt;)</p>
 <p>Function that helps to set up forward package dependency lists for an
 upstream package given that a downstream package declared a dependency on
@@ -16098,7 +16230,7 @@ declare dependencies on it.</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:542</p>
 </section>
 <section id="tribits-assert-read-dependency-vars">
-<h3><a class="toc-backref" href="#id218">tribits_assert_read_dependency_vars()</a><a class="headerlink" href="#tribits-assert-read-dependency-vars" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id221">tribits_assert_read_dependency_vars()</a><a class="headerlink" href="#tribits-assert-read-dependency-vars" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_assert_read_dependency_vars</span><span class="p">(</span><span class="o">&lt;</span><span class="n">packageName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -16110,7 +16242,7 @@ declare dependencies on it.</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:336</p>
 </section>
 <section id="tribits-dump-package-dependencies-info">
-<h3><a class="toc-backref" href="#id219">tribits_dump_package_dependencies_info()</a><a class="headerlink" href="#tribits-dump-package-dependencies-info" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id222">tribits_dump_package_dependencies_info()</a><a class="headerlink" href="#tribits-dump-package-dependencies-info" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <blockquote>
 <div><p>tribits_dump_package_dependencies_info()</p>
@@ -16121,7 +16253,7 @@ declare dependencies on it.</p>
 <p>In: core/package_arch/TribitsPrintDependencyInfo.cmake:83</p>
 </section>
 <section id="tribits-print-initial-dependency-info">
-<h3><a class="toc-backref" href="#id220">tribits_print_initial_dependency_info()</a><a class="headerlink" href="#tribits-print-initial-dependency-info" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id223">tribits_print_initial_dependency_info()</a><a class="headerlink" href="#tribits-print-initial-dependency-info" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_print_initial_dependency_info</span><span class="p">()</span>
 </pre></div>
@@ -16138,7 +16270,7 @@ the package dependency graph but <strong>before</strong> the call of
 <p>In: core/package_arch/TribitsPrintDependencyInfo.cmake:41</p>
 </section>
 <section id="tribits-print-tentatively-enabled-tpls">
-<h3><a class="toc-backref" href="#id221">tribits_print_tentatively_enabled_tpls()</a><a class="headerlink" href="#tribits-print-tentatively-enabled-tpls" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id224">tribits_print_tentatively_enabled_tpls()</a><a class="headerlink" href="#tribits-print-tentatively-enabled-tpls" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_print_tentatively_enabled_tpls</span><span class="p">()</span>
 </pre></div>
@@ -16148,14 +16280,14 @@ the package dependency graph but <strong>before</strong> the call of
 <p>In: core/package_arch/TribitsPrintDependencyInfo.cmake:63</p>
 </section>
 <section id="tribits-process-all-repository-deps-setup-files">
-<h3><a class="toc-backref" href="#id222">tribits_process_all_repository_deps_setup_files()</a><a class="headerlink" href="#tribits-process-all-repository-deps-setup-files" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id225">tribits_process_all_repository_deps_setup_files()</a><a class="headerlink" href="#tribits-process-all-repository-deps-setup-files" title="Permalink to this headline"></a></h3>
 <p>Process any dependency logic at the repo level by loading
 <a class="reference internal" href="#repodir-cmake-repositorydependenciessetup-cmake">&lt;repoDir&gt;/cmake/RepositoryDependenciesSetup.cmake</a> files.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a></p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:89</p>
 </section>
 <section id="tribits-process-packages-and-dirs-lists">
-<h3><a class="toc-backref" href="#id223">tribits_process_packages_and_dirs_lists()</a><a class="headerlink" href="#tribits-process-packages-and-dirs-lists" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id226">tribits_process_packages_and_dirs_lists()</a><a class="headerlink" href="#tribits-process-packages-and-dirs-lists" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_process_packages_and_dirs_lists</span><span class="p">()</span>
 </pre></div>
@@ -16191,14 +16323,14 @@ really verbose debug output from this macro.</p>
 <p>In: core/package_arch/TribitsProcessPackagesAndDirsLists.cmake:365</p>
 </section>
 <section id="tribits-process-project-dependency-setup-file">
-<h3><a class="toc-backref" href="#id224">tribits_process_project_dependency_setup_file()</a><a class="headerlink" href="#tribits-process-project-dependency-setup-file" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id227">tribits_process_project_dependency_setup_file()</a><a class="headerlink" href="#tribits-process-project-dependency-setup-file" title="Permalink to this headline"></a></h3>
 <p>Process any dependency logic at the project level by loading the
 <a class="reference internal" href="#projectdir-cmake-projectdependenciessetup-cmake">&lt;projectDir&gt;/cmake/ProjectDependenciesSetup.cmake</a> file</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a></p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:126</p>
 </section>
 <section id="tribits-process-tpls-lists">
-<h3><a class="toc-backref" href="#id225">tribits_process_tpls_lists()</a><a class="headerlink" href="#tribits-process-tpls-lists" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id228">tribits_process_tpls_lists()</a><a class="headerlink" href="#tribits-process-tpls-lists" title="Permalink to this headline"></a></h3>
 <p>This macro that processes the project-level variable:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS
 </pre></div>
@@ -16218,7 +16350,7 @@ ${TPL_NAME}_TESTGROUP
 <p>In: core/package_arch/TribitsProcessTplsLists.cmake:124</p>
 </section>
 <section id="tribits-read-all-package-deps-files-create-deps-graph">
-<h3><a class="toc-backref" href="#id226">tribits_read_all_package_deps_files_create_deps_graph()</a><a class="headerlink" href="#tribits-read-all-package-deps-files-create-deps-graph" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id229">tribits_read_all_package_deps_files_create_deps_graph()</a><a class="headerlink" href="#tribits-read-all-package-deps-files-create-deps-graph" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_read_all_package_deps_files_create_deps_graph</span><span class="p">()</span>
 </pre></div>
@@ -16244,7 +16376,7 @@ up and down the graph).</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:153</p>
 </section>
 <section id="tribits-read-package-subpackage-deps-files-add-to-graph">
-<h3><a class="toc-backref" href="#id227">tribits_read_package_subpackage_deps_files_add_to_graph()</a><a class="headerlink" href="#tribits-read-package-subpackage-deps-files-add-to-graph" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id230">tribits_read_package_subpackage_deps_files_add_to_graph()</a><a class="headerlink" href="#tribits-read-package-subpackage-deps-files-add-to-graph" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_read_package_subpackage_deps_files_add_to_graph</span><span class="p">(</span><span class="o">&lt;</span><span class="n">toplevelPackageName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -16252,10 +16384,10 @@ up and down the graph).</p>
 <p>Read in subpackages dependencies files and add to dependencies graph
 variables.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a></p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:829</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:831</p>
 </section>
 <section id="tribits-read-back-dependencies-vars">
-<h3><a class="toc-backref" href="#id228">tribits_read_back_dependencies_vars()</a><a class="headerlink" href="#tribits-read-back-dependencies-vars" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id231">tribits_read_back_dependencies_vars()</a><a class="headerlink" href="#tribits-read-back-dependencies-vars" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_read_back_dependencies_vars</span><span class="p">(</span><span class="o">&lt;</span><span class="n">postfix</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -16266,7 +16398,7 @@ suffix <code class="docutils literal notranslate"><span class="pre">_&lt;postfix
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:388</p>
 </section>
 <section id="tribits-read-defined-external-and-internal-toplevel-packages-lists">
-<h3><a class="toc-backref" href="#id229">tribits_read_defined_external_and_internal_toplevel_packages_lists()</a><a class="headerlink" href="#tribits-read-defined-external-and-internal-toplevel-packages-lists" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id232">tribits_read_defined_external_and_internal_toplevel_packages_lists()</a><a class="headerlink" href="#tribits-read-defined-external-and-internal-toplevel-packages-lists" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_read_defined_external_and_internal_toplevel_packages_lists</span><span class="p">()</span>
 </pre></div>
@@ -16308,7 +16440,7 @@ ${PROJECT_NAME}_TPLS (old)
 <p>In: core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake:87</p>
 </section>
 <section id="tribits-read-all-project-deps-files-create-deps-graph">
-<h3><a class="toc-backref" href="#id230">tribits_read_all_project_deps_files_create_deps_graph()</a><a class="headerlink" href="#tribits-read-all-project-deps-files-create-deps-graph" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id233">tribits_read_all_project_deps_files_create_deps_graph()</a><a class="headerlink" href="#tribits-read-all-project-deps-files-create-deps-graph" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_read_all_project_deps_files_create_deps_graph</span><span class="p">()</span>
 </pre></div>
@@ -16329,7 +16461,7 @@ and more specifically the sections:</p>
 <p>In: core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake:52</p>
 </section>
 <section id="tribits-read-toplevel-package-deps-files-add-to-graph">
-<h3><a class="toc-backref" href="#id231">tribits_read_toplevel_package_deps_files_add_to_graph()</a><a class="headerlink" href="#tribits-read-toplevel-package-deps-files-add-to-graph" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id234">tribits_read_toplevel_package_deps_files_add_to_graph()</a><a class="headerlink" href="#tribits-read-toplevel-package-deps-files-add-to-graph" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_read_toplevel_package_deps_files_add_to_graph</span><span class="p">(</span><span class="o">&lt;</span><span class="n">packageName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -16360,7 +16492,7 @@ dependencies are created for them.</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:201</p>
 </section>
 <section id="tribits-read-subpackage-deps-file-add-to-graph">
-<h3><a class="toc-backref" href="#id232">tribits_read_subpackage_deps_file_add_to_graph()</a><a class="headerlink" href="#tribits-read-subpackage-deps-file-add-to-graph" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id235">tribits_read_subpackage_deps_file_add_to_graph()</a><a class="headerlink" href="#tribits-read-subpackage-deps-file-add-to-graph" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_read_subpackage_deps_file_add_to_graph</span><span class="p">(</span><span class="o">&lt;</span><span class="n">toplevelPackageName</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="n">subpackageName</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">subpackageDir</span><span class="o">&gt;</span><span class="p">)</span>
@@ -16370,10 +16502,10 @@ dependencies are created for them.</p>
 <a class="reference internal" href="#packagedir-spkgdir-cmake-dependencies-cmake">&lt;packageDir&gt;/&lt;spkgDir&gt;/cmake/Dependencies.cmake</a> and sets up the
 dependency structure for it.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a></p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:857</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:859</p>
 </section>
 <section id="tribits-parse-subpackages-append-se-packages-add-options">
-<h3><a class="toc-backref" href="#id233">tribits_parse_subpackages_append_se_packages_add_options()</a><a class="headerlink" href="#tribits-parse-subpackages-append-se-packages-add-options" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id236">tribits_parse_subpackages_append_se_packages_add_options()</a><a class="headerlink" href="#tribits-parse-subpackages-append-se-packages-add-options" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_parse_subpackages_append_se_packages_add_options</span><span class="p">(</span><span class="o">&lt;</span><span class="n">toplevelPackageName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -16403,7 +16535,7 @@ defined packages, and define user cache var options for those subpackages.</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:690</p>
 </section>
 <section id="tribits-prep-to-read-dependencies">
-<h3><a class="toc-backref" href="#id234">tribits_prep_to_read_dependencies()</a><a class="headerlink" href="#tribits-prep-to-read-dependencies" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id237">tribits_prep_to_read_dependencies()</a><a class="headerlink" href="#tribits-prep-to-read-dependencies" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_prep_to_read_dependencies</span><span class="p">(</span><span class="o">&lt;</span><span class="n">packageName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -16420,7 +16552,7 @@ dependencies graph</a>.</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:296</p>
 </section>
 <section id="tribits-process-package-dependencies-lists">
-<h3><a class="toc-backref" href="#id235">tribits_process_package_dependencies_lists()</a><a class="headerlink" href="#tribits-process-package-dependencies-lists" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id238">tribits_process_package_dependencies_lists()</a><a class="headerlink" href="#tribits-process-package-dependencies-lists" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_process_package_dependencies_lists</span><span class="p">(</span><span class="o">&lt;</span><span class="n">packageName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -16434,7 +16566,7 @@ incrementally.</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:414</p>
 </section>
 <section id="tribits-read-deps-files-create-deps-graph">
-<h3><a class="toc-backref" href="#id236">tribits_read_deps_files_create_deps_graph()</a><a class="headerlink" href="#tribits-read-deps-files-create-deps-graph" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id239">tribits_read_deps_files_create_deps_graph()</a><a class="headerlink" href="#tribits-read-deps-files-create-deps-graph" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_read_deps_files_create_deps_graph</span><span class="p">()</span>
 </pre></div>
@@ -16463,7 +16595,7 @@ up and down the graph).</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:44</p>
 </section>
 <section id="tribits-save-off-dependency-vars">
-<h3><a class="toc-backref" href="#id237">tribits_save_off_dependency_vars()</a><a class="headerlink" href="#tribits-save-off-dependency-vars" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id240">tribits_save_off_dependency_vars()</a><a class="headerlink" href="#tribits-save-off-dependency-vars" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_save_off_dependency_vars</span><span class="p">(</span><span class="o">&lt;</span><span class="n">postfix</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
@@ -16473,7 +16605,7 @@ up and down the graph).</p>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:363</p>
 </section>
 <section id="tribits-set-dep-packages">
-<h3><a class="toc-backref" href="#id238">tribits_set_dep_packages()</a><a class="headerlink" href="#tribits-set-dep-packages" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id241">tribits_set_dep_packages()</a><a class="headerlink" href="#tribits-set-dep-packages" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_set_dep_packages</span><span class="p">(</span><span class="o">&lt;</span><span class="n">packageName</span><span class="o">&gt;</span>  <span class="n">LIB</span><span class="o">|</span><span class="n">TEST</span>  <span class="n">REQUIRED</span><span class="o">|</span><span class="n">OPTIONAL</span><span class="p">)</span>
 </pre></div>
@@ -16495,7 +16627,7 @@ this package if this is a required dependency).</p></li>
 <p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:448</p>
 </section>
 <section id="tribits-write-package-client-export-files-install-targets">
-<h3><a class="toc-backref" href="#id239">tribits_write_package_client_export_files_install_targets()</a><a class="headerlink" href="#tribits-write-package-client-export-files-install-targets" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id242">tribits_write_package_client_export_files_install_targets()</a><a class="headerlink" href="#tribits-write-package-client-export-files-install-targets" title="Permalink to this headline"></a></h3>
 <p>Create the <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;ConfigTargets.cmake</span></code> file and install rules and the
 install() target for the previously generated
 <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config_install.cmake</span></code> files generated by the
@@ -16510,10 +16642,10 @@ install() target for the previously generated
 </div>
 <p>The install() commands must be in a different subroutine or CMake will not
 allow you to call the routine, even if you if() it out!</p>
-<p>In: core/package_arch/TribitsWriteClientExportFiles.cmake:693</p>
+<p>In: core/package_arch/TribitsWriteClientExportFiles.cmake:651</p>
 </section>
 <section id="tribits-write-xml-dependency-files">
-<h3><a class="toc-backref" href="#id240">tribits_write_xml_dependency_files()</a><a class="headerlink" href="#tribits-write-xml-dependency-files" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id243">tribits_write_xml_dependency_files()</a><a class="headerlink" href="#tribits-write-xml-dependency-files" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_write_xml_dependency_files</span><span class="p">()</span>
 </pre></div>
@@ -16523,7 +16655,7 @@ package dependency graph previously constructed..</p>
 <p>In: ci_support/TribitsWriteXmlDependenciesFiles.cmake:148</p>
 </section>
 <section id="tribits-write-xml-dependency-files-if-supported">
-<h3><a class="toc-backref" href="#id241">tribits_write_xml_dependency_files_if_supported()</a><a class="headerlink" href="#tribits-write-xml-dependency-files-if-supported" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id244">tribits_write_xml_dependency_files_if_supported()</a><a class="headerlink" href="#tribits-write-xml-dependency-files-if-supported" title="Permalink to this headline"></a></h3>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_write_xml_dependency_files_if_supported</span><span class="p">()</span>
 </pre></div>
@@ -16536,7 +16668,7 @@ instance of TriBITs.</p>
 </section>
 </section>
 <section id="references">
-<h1><a class="toc-backref" href="#id242"><span class="sectnum">13</span> References</a><a class="headerlink" href="#references" title="Permalink to this headline"></a></h1>
+<h1><a class="toc-backref" href="#id245"><span class="sectnum">13</span> References</a><a class="headerlink" href="#references" title="Permalink to this headline"></a></h1>
 <p id="agile-software-development-2003">Martin, Robert. <em>Agile Software Development (Principles, Patterns, and
 Practices)</em>. Prentice Hall. 2003.</p>
 <p id="integration-strategies-for-cse-2009">Bartlett, Roscoe. <em>Integration Strategies for Computational Science &amp;
@@ -16547,7 +16679,7 @@ Engineering for Computational Science and Engineering, 2009.  <a class="referenc
 <p id="livev"><em>LiveV</em>  <a class="reference external" href="https://github.com/lifev/cmake">https://github.com/lifev/cmake</a></p>
 </section>
 <section id="faq">
-<h1><a class="toc-backref" href="#id243"><span class="sectnum">14</span> FAQ</a><a class="headerlink" href="#faq" title="Permalink to this headline"></a></h1>
+<h1><a class="toc-backref" href="#id246"><span class="sectnum">14</span> FAQ</a><a class="headerlink" href="#faq" title="Permalink to this headline"></a></h1>
 <p><strong>Q:</strong> Why does not TriBITS just use the standard CMake <code class="docutils literal notranslate"><span class="pre">Find&lt;PACKAGE_NAME&gt;.cmake</span></code>
 modules and the standard <code class="docutils literal notranslate"><span class="pre">find_package()</span></code> function to find TPLs?</p>
 <p><strong>A:</strong> The different “standard” CMake <code class="docutils literal notranslate"><span class="pre">Find&lt;PACKAGE_NAME&gt;.cmake</span></code> modules do not
@@ -16555,9 +16687,9 @@ have a standard set of outputs and therefore, can’t be handled in a uniform
 way.  For example,</p>
 </section>
 <section id="appendix">
-<h1><a class="toc-backref" href="#id244"><span class="sectnum">15</span> Appendix</a><a class="headerlink" href="#appendix" title="Permalink to this headline"></a></h1>
+<h1><a class="toc-backref" href="#id247"><span class="sectnum">15</span> Appendix</a><a class="headerlink" href="#appendix" title="Permalink to this headline"></a></h1>
 <section id="history-of-tribits">
-<h2><a class="toc-backref" href="#id245"><span class="sectnum">15.1</span> History of TriBITS</a><a class="headerlink" href="#history-of-tribits" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id248"><span class="sectnum">15.1</span> History of TriBITS</a><a class="headerlink" href="#history-of-tribits" title="Permalink to this headline"></a></h2>
 <p>TriBITS started development in November 2007 as a set of helper macros to
 provide a CMake build system for a small subset of packages in Trilinos.  The
 initial goal was to support a native Windows build (using Visual C++) to
@@ -16601,7 +16733,7 @@ project (see [<a class="reference internal" href="#livev">LiveV</a>]) which was 
 independently.</p>
 </section>
 <section id="why-a-tribits-package-is-not-a-cmake-package">
-<h2><a class="toc-backref" href="#id246"><span class="sectnum">15.2</span> Why a TriBITS Package is not a CMake Package</a><a class="headerlink" href="#why-a-tribits-package-is-not-a-cmake-package" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id249"><span class="sectnum">15.2</span> Why a TriBITS Package is not a CMake Package</a><a class="headerlink" href="#why-a-tribits-package-is-not-a-cmake-package" title="Permalink to this headline"></a></h2>
 <p>Note that a <a class="reference internal" href="#tribits-package">TriBITS Package</a> is not the same thing as a “Package” in raw
 CMake terminology.  In raw CMake, a “Package” is some externally provided bit
 of software or other utility for which the current CMake project has an
@@ -16622,7 +16754,7 @@ definition of a “Package” according to <a class="reference internal" href="#
 Principles</a>.</p>
 </section>
 <section id="design-considerations-for-tribits">
-<h2><a class="toc-backref" href="#id247"><span class="sectnum">15.3</span> Design Considerations for TriBITS</a><a class="headerlink" href="#design-considerations-for-tribits" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id250"><span class="sectnum">15.3</span> Design Considerations for TriBITS</a><a class="headerlink" href="#design-considerations-for-tribits" title="Permalink to this headline"></a></h2>
 <p>Some of the basic requirements and design goals for TriBITS are outlined in
 the <a class="reference external" href="../overview/TribitsOverview.pdf">TriBITS Overview</a> document.</p>
 <p>As stated in <a class="reference internal" href="#tribits-dependency-handling-behaviors">TriBITS Dependency Handling Behaviors</a>, <a class="reference internal" href="#no-circular-dependencies-of-any-kind-are-allowed">No circular
@@ -16642,7 +16774,7 @@ are proven and well established in the SE community (for example, see [<a class=
 Software Development, 2003</a>]).</p>
 </section>
 <section id="clone-extra-repos-py-help">
-<h2><a class="toc-backref" href="#id248"><span class="sectnum">15.4</span> clone_extra_repos.py –help</a><a class="headerlink" href="#clone-extra-repos-py-help" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id251"><span class="sectnum">15.4</span> clone_extra_repos.py –help</a><a class="headerlink" href="#clone-extra-repos-py-help" title="Permalink to this headline"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">clone_extra_repos.py</span> <span class="pre">--help</span></code>.  For
 more details on the usage of <code class="docutils literal notranslate"><span class="pre">clone_extra_repos.py</span></code>, see <a class="reference internal" href="#multi-repository-support">Multi-Repository
 Support</a> and <a class="reference internal" href="#multi-repository-development-workflow">Multi-Repository Development Workflow</a>.</p>
@@ -16760,7 +16892,7 @@ Options:
 </div>
 </section>
 <section id="gitdist-documentation">
-<h2><a class="toc-backref" href="#id249"><span class="sectnum">15.5</span> gitdist documentation</a><a class="headerlink" href="#gitdist-documentation" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id252"><span class="sectnum">15.5</span> gitdist documentation</a><a class="headerlink" href="#gitdist-documentation" title="Permalink to this headline"></a></h2>
 <p>The sections below show snapshots of the output from the <a class="reference internal" href="#gitdist">gitdist</a> tool from
 <a class="reference internal" href="#gitdist-help">gitdist –help</a> and <code class="docutils literal notranslate"><span class="pre">gitdist</span> <span class="pre">--dist-help=&lt;topic&gt;</span></code>:</p>
 <ul class="simple">
@@ -16779,7 +16911,7 @@ Options:
 <p>For more details on the usage of <code class="docutils literal notranslate"><span class="pre">gitdist</span></code>, see <a class="reference internal" href="#multi-repository-support">Multi-Repository Support</a>
 and <a class="reference internal" href="#multi-repository-development-workflow">Multi-Repository Development Workflow</a>.</p>
 <section id="gitdist-help">
-<h3><a class="toc-backref" href="#id250">gitdist –help</a><a class="headerlink" href="#gitdist-help" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id253">gitdist –help</a><a class="headerlink" href="#gitdist-help" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span> <span class="n">gitdist</span> <span class="p">[</span><span class="n">gitdist</span> <span class="n">arguments</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">raw</span><span class="o">-</span><span class="n">git</span><span class="o">-</span><span class="n">command</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">git</span> <span class="n">arguments</span><span class="p">]</span>
        <span class="n">gitdist</span> <span class="p">[</span><span class="n">gitdist</span> <span class="n">arguments</span><span class="p">]</span> <span class="n">dist</span><span class="o">-</span><span class="n">repo</span><span class="o">-</span><span class="n">status</span>
        <span class="n">gitdist</span> <span class="p">[</span><span class="n">gitdist</span> <span class="n">arguments</span><span class="p">]</span> <span class="n">dist</span><span class="o">-</span><span class="n">repo</span><span class="o">-</span><span class="n">versions</span><span class="o">-</span><span class="n">table</span>
@@ -16869,7 +17001,7 @@ and <a class="reference internal" href="#multi-repository-development-workflow">
 </div>
 </section>
 <section id="gitdist-dist-help-overview">
-<h3><a class="toc-backref" href="#id251">gitdist –dist-help=overview</a><a class="headerlink" href="#gitdist-dist-help-overview" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id254">gitdist –dist-help=overview</a><a class="headerlink" href="#gitdist-dist-help-overview" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 OVERVIEW:
 
@@ -16978,7 +17110,7 @@ python 2.6+ packages so it can be copied to anywhere and used.
 </div>
 </section>
 <section id="gitdist-dist-help-repo-selection-and-setup">
-<h3><a class="toc-backref" href="#id252">gitdist –dist-help=repo-selection-and-setup</a><a class="headerlink" href="#gitdist-dist-help-repo-selection-and-setup" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id255">gitdist –dist-help=repo-selection-and-setup</a><a class="headerlink" href="#gitdist-dist-help-repo-selection-and-setup" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 REPO SELECTION AND SETUP:
 
@@ -17111,7 +17243,7 @@ repos are processed at any time).
 </div>
 </section>
 <section id="gitdist-dist-help-dist-repo-status">
-<h3><a class="toc-backref" href="#id253">gitdist –dist-help=dist-repo-status</a><a class="headerlink" href="#gitdist-dist-help-dist-repo-status" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id256">gitdist –dist-help=dist-repo-status</a><a class="headerlink" href="#gitdist-dist-help-dist-repo-status" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 SUMMARY OF REPO STATUS:
 
@@ -17171,7 +17303,7 @@ repos with changes out of a large number of local repos (i.e. 10s and even
 </div>
 </section>
 <section id="gitdist-dist-help-repo-versions">
-<h3><a class="toc-backref" href="#id254">gitdist –dist-help=repo-versions</a><a class="headerlink" href="#gitdist-dist-help-repo-versions" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id257">gitdist –dist-help=repo-versions</a><a class="headerlink" href="#gitdist-dist-help-repo-versions" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 REPO VERSION FILES:
 
@@ -17263,7 +17395,7 @@ exclude them with:
 </div>
 </section>
 <section id="gitdist-dist-help-aliases">
-<h3><a class="toc-backref" href="#id255">gitdist –dist-help=aliases</a><a class="headerlink" href="#gitdist-dist-help-aliases" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id258">gitdist –dist-help=aliases</a><a class="headerlink" href="#gitdist-dist-help-aliases" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 USEFUL ALIASES:
 
@@ -17305,7 +17437,7 @@ or
 </div>
 </section>
 <section id="gitdist-dist-help-default-branch">
-<h3><a class="toc-backref" href="#id256">gitdist –dist-help=default-branch</a><a class="headerlink" href="#gitdist-dist-help-default-branch" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id259">gitdist –dist-help=default-branch</a><a class="headerlink" href="#gitdist-dist-help-default-branch" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 <span class="n">DEFAULT</span> <span class="n">BRANCH</span> <span class="n">SPECIFICATION</span><span class="p">:</span>
 
@@ -17348,7 +17480,7 @@ or
 </div>
 </section>
 <section id="gitdist-dist-help-move-to-base-dir">
-<h3><a class="toc-backref" href="#id257">gitdist –dist-help=move-to-base-dir</a><a class="headerlink" href="#gitdist-dist-help-move-to-base-dir" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id260">gitdist –dist-help=move-to-base-dir</a><a class="headerlink" href="#gitdist-dist-help-move-to-base-dir" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 <span class="n">MOVE</span> <span class="n">TO</span> <span class="n">BASE</span> <span class="n">DIRECTORY</span><span class="p">:</span>
 
@@ -17413,7 +17545,7 @@ or
 </div>
 </section>
 <section id="gitdist-dist-help-usage-tips">
-<h3><a class="toc-backref" href="#id258">gitdist –dist-help=usage-tips</a><a class="headerlink" href="#gitdist-dist-help-usage-tips" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id261">gitdist –dist-help=usage-tips</a><a class="headerlink" href="#gitdist-dist-help-usage-tips" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 USAGE TIPS:
 
@@ -17549,7 +17681,7 @@ Other usage tips:
 </div>
 </section>
 <section id="gitdist-dist-help-script-dependencies">
-<h3><a class="toc-backref" href="#id259">gitdist –dist-help=script-dependencies</a><a class="headerlink" href="#gitdist-dist-help-script-dependencies" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id262">gitdist –dist-help=script-dependencies</a><a class="headerlink" href="#gitdist-dist-help-script-dependencies" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 <span class="n">SCRIPT</span> <span class="n">DEPENDENCIES</span><span class="p">:</span>
 
@@ -17562,7 +17694,7 @@ Other usage tips:
 </div>
 </section>
 <section id="gitdist-dist-help-all">
-<h3><a class="toc-backref" href="#id260">gitdist –dist-help=all</a><a class="headerlink" href="#gitdist-dist-help-all" title="Permalink to this headline"></a></h3>
+<h3><a class="toc-backref" href="#id263">gitdist –dist-help=all</a><a class="headerlink" href="#gitdist-dist-help-all" title="Permalink to this headline"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 OVERVIEW:
 
@@ -18233,7 +18365,7 @@ versions of git starting as far back as git 1.6+).
 </section>
 </section>
 <section id="snapshot-dir-py-help">
-<span id="snapshot-dir-py"></span><h2><a class="toc-backref" href="#id261"><span class="sectnum">15.6</span> snapshot-dir.py –help</a><a class="headerlink" href="#snapshot-dir-py-help" title="Permalink to this headline"></a></h2>
+<span id="snapshot-dir-py"></span><h2><a class="toc-backref" href="#id264"><span class="sectnum">15.6</span> snapshot-dir.py –help</a><a class="headerlink" href="#snapshot-dir-py-help" title="Permalink to this headline"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">snapshot-dir.py</span> <span class="pre">--help</span></code>.  For more
 details on the usage of <code class="docutils literal notranslate"><span class="pre">snapshot-dir.py</span></code>, specifically for snapshotting the
 <a class="reference internal" href="#projectdir-cmake-tribits">&lt;projectDir&gt;/cmake/tribits/</a> directory, see <a class="reference internal" href="#tribits-directory-snapshotting">TriBITS directory
@@ -18452,7 +18584,7 @@ optional arguments:
 </div>
 </section>
 <section id="checkin-test-py-help">
-<h2><a class="toc-backref" href="#id262"><span class="sectnum">15.7</span> checkin-test.py –help</a><a class="headerlink" href="#checkin-test-py-help" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id265"><span class="sectnum">15.7</span> checkin-test.py –help</a><a class="headerlink" href="#checkin-test-py-help" title="Permalink to this headline"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">checkin-test.py</span> <span class="pre">--help</span></code>.  This
 <code class="docutils literal notranslate"><span class="pre">--help</span></code> output contains a lot of information about the recommended
 development workflow (mostly related to pushing commits) and outlines a number
@@ -19422,7 +19554,7 @@ Options:
 </div>
 </section>
 <section id="is-checkin-tested-commit-py-help">
-<span id="is-checkin-tested-commit-py"></span><h2><a class="toc-backref" href="#id263"><span class="sectnum">15.8</span> is_checkin_tested_commit.py –help</a><a class="headerlink" href="#is-checkin-tested-commit-py-help" title="Permalink to this headline"></a></h2>
+<span id="is-checkin-tested-commit-py"></span><h2><a class="toc-backref" href="#id266"><span class="sectnum">15.8</span> is_checkin_tested_commit.py –help</a><a class="headerlink" href="#is-checkin-tested-commit-py-help" title="Permalink to this headline"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">is_checkin_tested_commit.py</span> <span class="pre">--help</span></code>.
 For more details see <a class="reference internal" href="#using-git-bisect-with-checkin-test-py-workflows">Using Git Bisect with checkin-test.py workflows</a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  File &quot;/home/runner/work/TriBITS/TriBITS/tribits/doc/guides/../../ci_support/is_checkin_tested_commit.py&quot;, line 57
@@ -19433,7 +19565,7 @@ SyntaxError: Missing parentheses in call to &#39;print&#39;. Did you mean print(
 </div>
 </section>
 <section id="get-tribits-packages-from-files-list-py-help">
-<span id="get-tribits-packages-from-files-list-py"></span><h2><a class="toc-backref" href="#id264"><span class="sectnum">15.9</span> get-tribits-packages-from-files-list.py –help</a><a class="headerlink" href="#get-tribits-packages-from-files-list-py-help" title="Permalink to this headline"></a></h2>
+<span id="get-tribits-packages-from-files-list-py"></span><h2><a class="toc-backref" href="#id267"><span class="sectnum">15.9</span> get-tribits-packages-from-files-list.py –help</a><a class="headerlink" href="#get-tribits-packages-from-files-list-py-help" title="Permalink to this headline"></a></h2>
 <p>Below is a snapshot of the output from
 <code class="docutils literal notranslate"><span class="pre">get-tribits-packages-from-files-list.py</span> <span class="pre">--help</span></code>.  For more details see
 <a class="reference internal" href="#tribits-project-dependencies-xml-file-and-tools">TriBITS Project Dependencies XML file and tools</a>.</p>
@@ -19481,7 +19613,7 @@ SyntaxError: Missing parentheses in call to &#39;print&#39;. Did you mean print(
 </div>
 </section>
 <section id="get-tribits-packages-from-last-tests-failed-py-help">
-<span id="get-tribits-packages-from-last-tests-failed-py"></span><h2><a class="toc-backref" href="#id265"><span class="sectnum">15.10</span> get-tribits-packages-from-last-tests-failed.py –help</a><a class="headerlink" href="#get-tribits-packages-from-last-tests-failed-py-help" title="Permalink to this headline"></a></h2>
+<span id="get-tribits-packages-from-last-tests-failed-py"></span><h2><a class="toc-backref" href="#id268"><span class="sectnum">15.10</span> get-tribits-packages-from-last-tests-failed.py –help</a><a class="headerlink" href="#get-tribits-packages-from-last-tests-failed-py-help" title="Permalink to this headline"></a></h2>
 <p>Below is a snapshot of the output from
 <code class="docutils literal notranslate"><span class="pre">get-tribits-packages-from-last-tests-failed.py</span> <span class="pre">--help</span></code>.  For more details
 see <a class="reference internal" href="#tribits-project-dependencies-xml-file-and-tools">TriBITS Project Dependencies XML file and tools</a>.</p>
@@ -19505,7 +19637,7 @@ see <a class="reference internal" href="#tribits-project-dependencies-xml-file-a
 </div>
 </section>
 <section id="filter-packages-list-py-help">
-<span id="filter-packages-list-py"></span><h2><a class="toc-backref" href="#id266"><span class="sectnum">15.11</span> filter-packages-list.py –help</a><a class="headerlink" href="#filter-packages-list-py-help" title="Permalink to this headline"></a></h2>
+<span id="filter-packages-list-py"></span><h2><a class="toc-backref" href="#id269"><span class="sectnum">15.11</span> filter-packages-list.py –help</a><a class="headerlink" href="#filter-packages-list-py-help" title="Permalink to this headline"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">filter-packages-list.py</span> <span class="pre">--help</span></code>.
 For more details see <a class="reference internal" href="#tribits-project-dependencies-xml-file-and-tools">TriBITS Project Dependencies XML file and tools</a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span> <span class="nb">filter</span><span class="o">-</span><span class="n">packages</span><span class="o">-</span><span class="nb">list</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">deps</span><span class="o">-</span><span class="n">xml</span><span class="o">-</span><span class="n">file</span><span class="o">=&lt;</span><span class="n">PROJECT_DEPS_FILE</span><span class="o">&gt;</span> \
@@ -19548,7 +19680,7 @@ For more details see <a class="reference internal" href="#tribits-project-depend
 </div>
 </section>
 <section id="install-devtools-py-help">
-<h2><a class="toc-backref" href="#id267"><span class="sectnum">15.12</span> install_devtools.py –help</a><a class="headerlink" href="#install-devtools-py-help" title="Permalink to this headline"></a></h2>
+<h2><a class="toc-backref" href="#id270"><span class="sectnum">15.12</span> install_devtools.py –help</a><a class="headerlink" href="#install-devtools-py-help" title="Permalink to this headline"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">install_devtools.py</span> <span class="pre">--help</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Usage: install-devtools.py [OPTIONS]
 
