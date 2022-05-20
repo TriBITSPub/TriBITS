@@ -55,6 +55,7 @@ set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 tribits_add_advanced_test( ${testBaseName}
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE  NINJA_EXE
   XHOSTTYPE Darwin
 
   TEST_0
@@ -129,6 +130,7 @@ function(TribitsExampleApp2  tribitsExProj2TestNameBaseBase
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
+    EXCLUDE_IF_NOT_TRUE  NINJA_EXE
     XHOSTTYPE Darwin
 
     TEST_0
