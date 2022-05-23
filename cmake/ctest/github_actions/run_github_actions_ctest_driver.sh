@@ -14,6 +14,7 @@
 #     --python-ver <python-ver> \
 #     --cxx-compiler-and-ver <cxx-compiler-and-ver> \
 #     [ --fortran-compiler-and-ver <fortran-comiler-and-ver> ]
+#     [ --no-have-ninja <no-have-ninja> ]
 #     [ --github-repo-match-to-submit <github-repo-match-to-submit> ]
 #
 # This is called by the GitHub Actions script:
@@ -95,6 +96,7 @@ cmake_generator=
 python_ver=
 cxx_compiler_and_ver=
 fortran_compiler_and_ver=
+no_have_ninja=
 github_repo_match_to_submit=
 
 while (( "$#" )); do
@@ -132,6 +134,14 @@ while (( "$#" )); do
         shift 1
       fi
       ;;
+    --no-have-ninja)
+      if [[ -n "$2" ]] && [[ ${2:0:1} != "-" ]]; then
+        no_have_ninja=$2
+        shift 2
+      else
+        shift 1
+      fi
+      ;;
     --github-repo-match-to-submit)
       if [[ -n "$2" ]] && [[ ${2:0:1} != "-" ]]; then
         github_repo_match_to_submit=$2
@@ -153,7 +163,7 @@ assert_required_option_set --generator "${cmake_generator}"
 assert_required_option_set --python-ver "${python_ver}"
 assert_required_option_set --cxx-compiler-and-ver "${cxx_compiler_and_ver}"
 # NOTE: Fortran is not required!
-
+# NOTE: Ninja is not required
 
 #
 # B) Set up options for running build
@@ -171,6 +181,9 @@ echo "CTEST_SITE = '${CTEST_SITE}'"
 CTEST_BUILD_NAME=tribits_cmake-${cmake_ver}_${cmake_generator}_python-${python_ver}_${cxx_compiler_and_ver}
 if [[ "${fortran_compiler_and_ver}" == "" ]] ; then
   CTEST_BUILD_NAME=${CTEST_BUILD_NAME}_nofortran
+fi
+if [[ "${no_have_ninja}" == "no-ninja" ]] ; then
+  CTEST_BUILD_NAME=${CTEST_BUILD_NAME}_noninja
 fi
 export CTEST_BUILD_NAME
 echo "CTEST_BUILD_NAME = '${CTEST_BUILD_NAME}'"
