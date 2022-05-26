@@ -2918,10 +2918,10 @@ tribits_add_advanced_test( TribitsExampleProject_compiler_flags
   )
 # NOTE: The above tests checks the compiler flags that are set by TriBITS for
 # the various use cases.  This is a hard test to make portable because we
-# really need to check that the comiler options are set all the way down.  To
+# really need to check that the compiler options are set all the way down.  To
 # make this more portable, we only do this on Linux systems and only with GCC.
 #
-# We actaully build known targets with 'make VERBOSE=1 <target>' and then grep
+# We actually build known targets with 'make VERBOSE=1 <target>' and then grep
 # the output to make sure the compiler flags drill down all the way to the
 # actual targets.
 #
