@@ -483,7 +483,6 @@ function(tribits_add_library  LIBRARY_NAME_IN)
       target_link_libraries(${LIBRARY_NAME} PUBLIC "${importedLib}")
     endforeach()
 
-    # ToDo: #299: Above, Handle 'last_lib' from ${PROJECT_NAME}_EXTRA_LINK_FLAGS!
     # ToDo: #63: Above, allow for other link visibilities other than 'PUBLIC'!
 
     if (${PROJECT_NAME}_CXX_STANDARD_FEATURE)

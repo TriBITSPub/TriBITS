@@ -2895,3 +2895,62 @@ tribits_add_advanced_test( TribitsExampleProject_compiler_flags
 # NOTE: Above, we had to switch to Ninja and 'cmake --build . -v [--target
 # <target>] in order to get verbose output when run inside of a cmake -S
 # script with CMake 3.23-rc2.  Not sure why this is but this is better anyway.
+
+
+###################################################################################
+
+
+tribits_add_advanced_test( TribitsExampleProject_extra_link_flags
+  OVERALL_WORKING_DIRECTORY  TEST_NAME
+  OVERALL_NUM_MPI_PROCS  1
+  EXCLUDE_IF_NOT_TRUE  IS_REAL_LINUX_SYSTEM  ${PROJECT_NAME}_ENABLE_Fortran
+    NINJA_EXE
+
+  TEST_0
+    MESSAGE "Configure by setting <Project>_EXTRA_LINK_FLAGS"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -GNinja
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTPL_ENABLE_SimpleTpl=ON
+      -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_STATIC_DIR}/install/include
+      -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_STATIC_DIR}/install/lib
+      -DTribitsExProj_EXTRA_LINK_FLAGS="-lgfortran -ldl"
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Processing enabled TPL: TribitsExProjTribitsLastLib"
+      "TPL_TribitsExProjTribitsLastLib_LIBRARIES='-lgfortran[;]-ldl'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  # NOTE: Above, we use two libraries to ensure that the logic in TriBITS can
+  # handle these correctly.
+
+  TEST_1
+    MESSAGE "Build verbose to check the link lines"
+    CMND ${CMAKE_COMMAND} ARGS --build . -v
+    PASS_REGULAR_EXPRESSION_ALL
+      "-o packages/simple_cxx/src/simplecxx-helloworld .* packages/simple_cxx/src/libsimplecxx.a +${SimpleTpl_install_STATIC_DIR}/install/lib/libsimpletpl.a +-lgfortran +-ldl"
+      "-o packages/mixed_lang/test/MixedLang_RayTracerTests.exe  packages/mixed_lang/src/libmixedlang.a +-lgfortran +-ldl"
+      "-o packages/with_subpackages/c/c_util +packages/with_subpackages/b/src/libpws_b.a +packages/with_subpackages/a/libpws_a.a +packages/simple_cxx/src/libsimplecxx.a +${SimpleTpl_install_STATIC_DIR}/install/lib/libsimpletpl.a + packages/mixed_lang/src/libmixedlang.a +-lgfortran +-ldl"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  ADDED_TEST_NAME_OUT TribitsExampleProject_extra_link_flags_NAME
+  )
+  # NOTE: The above test ensures that <Project>_EXTRA_LINK_FLAGS is handled
+  # correctly.  Note that the package MixedLang has no TPL dependencies so
+  # that fact that the extra libs gets tacked on to the end proves that they
+  # get sets even for packages without TPLs.  The package SimpleCxx that
+  # depends on SimpleTPL proves that the extra libs get tacked on after the
+  # TPL's libs.  Also, the fact that the extra libs are tacked on at the very
+  # end of the link lik for the 'c_util' exec shows that CMake is respecting
+  # the dependency of libmixedlang.a on these extra libs.  This test also
+  # shows that TriBITS and CMake do a good job of not listing the same libs
+  # more than once.
+
+if (TribitsExampleProject_extra_link_flags_NAME)
+  set_tests_properties(${TribitsExampleProject_extra_link_flags_NAME}
+    PROPERTIES DEPENDS ${SimpleTpl_install_STATIC_NAME} )
+endif()

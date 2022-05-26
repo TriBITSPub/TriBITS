@@ -1454,9 +1454,51 @@ macro(tribits_adjust_and_print_package_dependencies)
   tribits_print_enables_before_adjust_package_enables()
   tribits_adjust_package_enables()
   tribits_print_enables_after_adjust_package_enables()
+  tribits_handle_project_extra_link_flags_as_a_tpl()
   tribits_set_up_enabled_only_dependencies()
   tribits_config_code_stop_timer(ADJUST_PACKAGE_DEPS_TIME_START_SECONDS
     "\nTotal time to adjust package and TPL enables")
+endmacro()
+
+
+# Tack on ${PROJECT_NAME}_EXTRA_LINK_LIBS as a TPL that every downstream
+# external and internal package depends on
+#
+macro(tribits_handle_project_extra_link_flags_as_a_tpl)
+
+  if (${PROJECT_NAME}_EXTRA_LINK_FLAGS)
+
+    set(lastLibTplName ${PROJECT_NAME}TribitsLastLib)
+
+    # Define the TPL ${PROJECT_NAME}TribitsLastLib and its find module
+    set(${lastLibTplName}_FINDMOD
+      "${${PROJECT_NAME}_TRIBITS_DIR}/common_tpls/FindTPLProjectLastLib.cmake")
+
+    # Tack on ${PROJECT_NAME}TribitsLastLib as a dependency to all enabled
+    # external packages/TPLs
+    foreach(TPL_NAME ${${PROJECT_NAME}_TPLS})
+      list(APPEND ${TPL_NAME}_LIB_ALL_DEPENDENCIES ${lastLibTplName})
+      if (TPL_ENABLE_${TPL_NAME})
+        list(APPEND ${TPL_NAME}_LIB_ENABLED_DEPENDENCIES ${lastLibTplName})
+      endif()
+    endforeach()
+
+    # Prepend ${PROJECT_NAME}TribitsLastLib to the list of external packages/TPLs
+    list(PREPEND ${PROJECT_NAME}_TPLS ${lastLibTplName})
+    set(TPL_ENABLE_${lastLibTplName} ON)
+    set(${lastLibTplName}_PACKAGE_BUILD_STATUS EXTERNAL)
+
+    # Tack on ${PROJECT_NAME}TribitsLastLib as a dependency to all enabled
+    # internal packages
+    foreach(PACKAGE_NAME ${${PROJECT_NAME}_PACKAGES})
+      list(APPEND ${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES ${lastLibTplName})
+      if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+        list(APPEND ${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES ${lastLibTplName})
+      endif()
+    endforeach()
+
+  endif()
+
 endmacro()
 
 
@@ -1738,21 +1780,6 @@ macro(tribits_setup_env)
   # Check for Doxygen/dot - We can use variables set in this check to
   # enable/disable the graphical dependency graphs in doxygen Doxyfiles.
   include(FindDoxygen)
-
-  # Set the hack library to get link options on
-
-  if (${PROJECT_NAME}_EXTRA_LINK_FLAGS)
-    if (TRIBITS_SETUP_ENV_DEBUG)
-      message(STATUS "Creating dummy last_lib for appending the link flags: "
-        "${${PROJECT_NAME}_EXTRA_LINK_FLAGS}")
-    endif()
-    if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/last_lib_dummy.c)
-      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/last_lib_dummy.c
-        "typedef int last_lib_dummy_t;\n")
-    endif()
-    add_library(last_lib STATIC ${CMAKE_CURRENT_BINARY_DIR}/last_lib_dummy.c)
-    target_link_libraries(last_lib ${${PROJECT_NAME}_EXTRA_LINK_FLAGS})
-  endif()
 
   # You have to override the configuration types for MSVS after the compiler
   # checks!
@@ -2274,10 +2301,6 @@ macro(tribits_configure_enabled_packages)
     if(ENABLED_PACKAGE_LIBS_TARGETS)
       list(REVERSE ENABLED_PACKAGE_LIBS_TARGETS)
       # Make it so when no packages are enabled it is not a cmake error
-      if (${PROJECT_NAME}_EXTRA_LINK_FLAGS)
-        append_set(ENABLED_PACKAGE_LIBS_TARGETS last_lib)
-      endif()
-      #print_var(ENABLED_PACKAGE_LIBS_TARGETS)
       if (NOT TARGET ${PROJECT_NAME}_libs)
         add_custom_target(${PROJECT_NAME}_libs)
         add_dependencies(${PROJECT_NAME}_libs ${ENABLED_PACKAGE_LIBS_TARGETS})
