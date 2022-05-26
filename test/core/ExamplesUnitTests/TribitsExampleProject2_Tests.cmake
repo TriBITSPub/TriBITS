@@ -213,7 +213,7 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic findingTplsMethod)
         "set[(]Package3_ENABLE_Tpl3 ON[)]"
 
     TEST_2
-      MESSAGE "Build verbose to check the link line of Package3"
+      MESSAGE "Build verbose to check the link lines"
       CMND ${CMAKE_COMMAND} ARGS --build . -v
       PASS_REGULAR_EXPRESSION_ALL
         "[-]o packages/package1/src/package1-prg .* ${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
