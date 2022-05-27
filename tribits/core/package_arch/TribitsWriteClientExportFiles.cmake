@@ -831,6 +831,7 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
     set(PDOLLAR "$")
     set(tribitsInstallationDir
       "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}")
+    set(TRIBITS_PROJECT_INSTALL_INCLUDE_DIR "")
     configure_file(
       "${tribitsInstallationDir}/TribitsProjectConfigTemplate.cmake.in"
       "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" )
@@ -878,6 +879,13 @@ include(\"${${TRIBITS_PACKAGE}_BINARY_DIR}/${TRIBITS_PACKAGE}Config.cmake\")")
     set(PROJECT_CONFIG_CODE "")
 
     set(PDOLLAR "$")  # Hack used in configure file below
+
+    if (IS_ABSOLUTE "${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
+      set(TRIBITS_PROJECT_INSTALL_INCLUDE_DIR "${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
+    else()
+      set(TRIBITS_PROJECT_INSTALL_INCLUDE_DIR
+	"${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
+    endif()
 
     configure_file(
       "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsProjectConfigTemplate.cmake.in"

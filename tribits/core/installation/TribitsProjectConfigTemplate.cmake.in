@@ -126,7 +126,7 @@ foreach (comp IN ITEMS ${PDOLLAR}{COMPONENTS_LIST})
 endforeach()
 
 # Deprecated (see #299)!
-set(${PROJECT_NAME}_INCLUDE_DIRS "")
+set(${PROJECT_NAME}_INCLUDE_DIRS "${TRIBITS_PROJECT_INSTALL_INCLUDE_DIR}")
 
 # Deprecated (see #299)!
 set(${PROJECT_NAME}_LIBRARY_DIRS "")
