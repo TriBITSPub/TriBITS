@@ -154,19 +154,17 @@ function(tribits_process_enabled_tpl  TPL_NAME)
 
     # Generate the <tplName>ConfigVersion.cmake file if it has not been
     # created yet and add install targets for <tplName>Config[Version].cmake
-    if (TARGET ${TPL_NAME}::all_libs)
-      set(buildDirExternalPkgsDir
-        "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_EXTERNAL_PKGS_DIR}")
-      set(tplConfigFile
-        "${buildDirExternalPkgsDir}/${TPL_NAME}/${TPL_NAME}Config.cmake")
-      set(tplConfigVersionFile
-        "${buildDirExternalPkgsDir}/${TPL_NAME}/${TPL_NAME}ConfigVersion.cmake")
-      tribits_external_package_write_config_version_file(${TPL_NAME}
-        "${tplConfigVersionFile}")
-      tribits_external_package_install_config_file(${TPL_NAME} "${tplConfigFile}")
-      tribits_external_package_install_config_version_file(${TPL_NAME}
-        "${tplConfigVersionFile}")
-    endif()
+    set(buildDirExternalPkgsDir
+      "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_EXTERNAL_PKGS_DIR}")
+    set(tplConfigFile
+      "${buildDirExternalPkgsDir}/${TPL_NAME}/${TPL_NAME}Config.cmake")
+    set(tplConfigVersionFile
+      "${buildDirExternalPkgsDir}/${TPL_NAME}/${TPL_NAME}ConfigVersion.cmake")
+    tribits_external_package_write_config_version_file(${TPL_NAME}
+      "${tplConfigVersionFile}")
+    tribits_external_package_install_config_file(${TPL_NAME} "${tplConfigFile}")
+    tribits_external_package_install_config_version_file(${TPL_NAME}
+      "${tplConfigVersionFile}")
 
   endif()
 

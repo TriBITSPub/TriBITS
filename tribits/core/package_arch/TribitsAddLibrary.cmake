@@ -468,15 +468,11 @@ function(tribits_add_library  LIBRARY_NAME_IN)
     target_link_libraries(${LIBRARY_NAME} PUBLIC ${${PACKAGE_NAME}_LIBRARIES})
     # ${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES
     foreach(depPkg IN LISTS ${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES)
-      if (TARGET ${depPkg}::all_libs)
-        target_link_libraries(${LIBRARY_NAME} PUBLIC ${depPkg}::all_libs)
-      endif()
+      target_link_libraries(${LIBRARY_NAME} PUBLIC ${depPkg}::all_libs)
     endforeach()
     # ${PACKAGE_NAME}_TEST_ENABLED_DEPENDENCIES
     foreach(depPkg IN LISTS ${PACKAGE_NAME}_TEST_ENABLED_DEPENDENCIES)
-      if (TARGET ${depPkg}::all_libs)
-        target_link_libraries(${LIBRARY_NAME} PUBLIC ${depPkg}::all_libs)
-      endif()
+      target_link_libraries(${LIBRARY_NAME} PUBLIC ${depPkg}::all_libs)
     endforeach()
     # IMPORTEDLIBS
     foreach(importedLib ${PARSE_IMPORTEDLIBS})

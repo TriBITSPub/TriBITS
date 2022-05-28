@@ -585,9 +585,7 @@ function(tribits_append_dependent_package_config_file_includes_and_enables packa
     if (${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "INTERNAL")
       set(packageConfigBaseDir "${pkgConfigFileBaseDir}/${depPkg}")
     elseif (${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL")
-      if (TARGET ${depPkg}::all_libs)  # See below NOTE for this if() statement
-        set(packageConfigBaseDir "${extPkgConfigFileBaseDir}/${depPkg}")
-      endif()
+      set(packageConfigBaseDir "${extPkgConfigFileBaseDir}/${depPkg}")
     else()
       message(FATAL_ERROR "ERROR: ${depPkg}_PACKAGE_BUILD_STATUS='${${depPkg}_PACKAGE_BUILD_STATUS}' invalid!")
     endif()
@@ -596,15 +594,6 @@ function(tribits_append_dependent_package_config_file_includes_and_enables packa
         "include(\"${packageConfigBaseDir}/${depPkg}Config.cmake\")\n")
     endif()
   endforeach()
-  # NOTE: Above, every external package/TPL does not have a
-  # <tplName>Config.cmake file written for it.  For example, special TPLs like
-  # "MPI" don't have this file created or have an MPI::all_libs target
-  # created.  Therefore, we check for the definition of the target
-  # <tplName>::all_libs before we include the file above.  Also, note that in
-  # the future, compliant external packages that don't need a wrapper
-  # <tplName>Config.cmake file created for them will not have a wrapper
-  # located under "${extPkgConfigFileBaseDir}/".  In that case, we will need
-  # to refactor the code to set <tplName>_DIR and then run find_dependency().
 
   # Set the output
   set(${PARSE_CONFIG_FILE_STR_INOUT} "${configFileStr}" PARENT_SCOPE)
