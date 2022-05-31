@@ -50,7 +50,7 @@ include(GlobalSet)
 include(UnitTestHelpers)
 
 include(TribitsReadTagFile)
-include(TribitsGetCDashUrlFromTagFile)
+include(TribitsGetCDashUrlsInsideCTestS)
 
 
 function(unittest_tribits_read_ctest_tag_file)
