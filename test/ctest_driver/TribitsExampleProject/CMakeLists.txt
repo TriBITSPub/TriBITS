@@ -1299,9 +1299,9 @@ function(generate_aao_tests)
         "NONE does not exist, skipping extra repositories"
         "Final set of enabled packages:  SimpleCxx 1"
         "Final set of enabled SE packages:  SimpleCxx 1"
-        "Results will be submitted on CDash at:"
+        "Results will be submitted to CDash at:"
         "File '' does NOT exist so all tests passed"
-        "See results submitted on CDash at:"
+        "See results submitted to CDash at:"
         "${cdash_url_expected_regex}"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN

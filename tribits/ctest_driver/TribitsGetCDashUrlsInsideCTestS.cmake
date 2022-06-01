@@ -53,17 +53,17 @@ function(tribits_get_build_url_and_write_to_file  cdashBuildUrlOut  cdashBuildUr
 endfunction()
 
 
-# @FUNCTION: tribits_print_build_url()
+# @FUNCTION: tribits_print_cdash_url()
 #
 # Print the URL on CDash where build results can be found.
 #
 # Usage::
 #
-#   tribits_print_build_url( <msg> <cdashBuildUrl> )
+#   tribits_print_cdash_url( <msg> <cdashUrl> )
 #
-function(tribits_print_build_url  msg  cdashBuildUrl)
+function(tribits_print_cdash_url  msg  cdashUrl)
   message("\n${msg}\n")
-  message("    ${cdashBuildUrl}\n")
+  message("    ${cdashUrl}\n")
 endfunction()
 
 
