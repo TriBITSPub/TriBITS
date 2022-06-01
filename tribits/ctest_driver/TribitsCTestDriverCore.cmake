@@ -2095,7 +2095,8 @@ function(tribits_ctest_driver)
   tribits_remember_if_configure_attempted()
   tribits_get_build_url_and_write_to_file(CDASH_BUILD_URL
     "${CTEST_BINARY_DIRECTORY}/CDashBuildUrl.txt")
-  tribits_print_build_url("Results will be submitted on CDash at:" "${CDASH_BUILD_URL}")
+  tribits_print_cdash_url("Results will be submitted to CDash at:"
+    "${CDASH_BUILD_URL}")
 
   message(
     "\n***"
@@ -2369,7 +2370,8 @@ function(tribits_ctest_driver)
 
   report_queued_errors()
 
-  tribits_print_build_url("See results submitted on CDash at:" "${CDASH_BUILD_URL}")
+  tribits_print_cdash_url("See results submitted to CDash at:"
+    "${CDASH_BUILD_URL}")
 
   if ((NOT UPDATE_FAILED) AND ("${${PROJECT_NAME}_FAILED_PACKAGES}" STREQUAL ""))
     message(
