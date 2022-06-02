@@ -40,6 +40,7 @@
 include(AppendSet)
 include(AssertDefined)
 include(MessageWrapper)
+include(TribitsParseArgumentsHelpers)
 include(TribitsSortListAccordingToMasterList)
 
 
@@ -411,62 +412,3 @@ function(tribits_trace_file_processing  TYPE_IN  PROCESSING_TYPE_IN  FILE_PATH)
 endfunction()
 
 
-# Check to see if there are unparsed arguments after calling
-# cmake_parse_arguments() or tribits_parse_arguments_from_lsit()
-#
-# Usage::
-#
-#   tribits_check_for_unparsed_arguments([<prefix>])
-#
-# If `<prefix>` is not given, it is assumed to be `PARSE`.
-#
-function(tribits_check_for_unparsed_arguments)
-
-  if ("${ARGC}" GREATER 1)
-    MESSAGE(FATAL_ERROR
-      "ERROR tribits_check_for_unparsed_arguments() passed arguments '${ARGV}' but only accepts 0 or 1 arguments (for the <prefix>)")
-  endif()
-
-  set(prefix "PARSE")
-  foreach(arg ${ARGV})
-    set(prefix "${arg}")
-  endforeach()
-
-  if( NOT "${${prefix}_UNPARSED_ARGUMENTS}" STREQUAL "")
-    message_wrapper(
-      ${${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS}
-      "Arguments passed in unrecognized.  ${prefix}_UNPARSED_ARGUMENTS = '${${prefix}_UNPARSED_ARGUMENTS}'"
-      )
-  endif()
-
-endfunction()
-
-
-# Check that a parase argument has at least one value
-#
-macro(tribits_assert_parse_arg_one_or_more_values  PREFIX  ARGNAME)
-  set(PREFIX_ARGNAME "${PREFIX}_${ARGNAME}")
-  list( LENGTH ${PREFIX_ARGNAME} ARG_NUM_VALS )
-  if (ARG_NUM_VALS LESS 1)
-    message_wrapper(FATAL_ERROR
-      "ERROR: ${ARGNAME} must have at least one value!" )
-    return()
-    # NOTE: The return is needed in unit testing mode
-  endif()
-endmacro()
-
-
-# Check that a parase argument has zero or one value
-#
-macro(tribits_assert_parse_arg_zero_or_one_value  PREFIX  ARGNAME)
-  set(PREFIX_ARGNAME "${PREFIX}_${ARGNAME}")
-  if (NOT "${${PREFIX_ARGNAME}}" STREQUAL "")
-    list( LENGTH ${PREFIX_ARGNAME} ARG_NUM_VALS )
-    if (ARG_NUM_VALS GREATER 1)
-      message_wrapper(FATAL_ERROR
-        "ERROR: ${ARGNAME}='${${PREFIX_ARGNAME}}' can not have more than one value!" )
-      return()
-      # NOTE: The return is needed in unit testing mode
-    endif()
-  endif()
-endmacro()
