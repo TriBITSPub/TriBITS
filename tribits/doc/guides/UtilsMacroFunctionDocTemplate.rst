@@ -44,5 +44,6 @@
 @FUNCTION: unittest_has_substr_const() +
 @FUNCTION: unittest_not_has_substr_const() +
 @FUNCTION: unittest_string_regex() +
+@FUNCTION: unittest_string_var_regex() +
 @FUNCTION: unittest_file_regex() +
 @FUNCTION: unittest_final_result() +
