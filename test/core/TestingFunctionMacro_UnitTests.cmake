@@ -66,28 +66,23 @@ include(GlobalNullSet)
 include(AppendStringVar)
 
 
-#####################################################################
+################################################################################
 #
-# Unit tests for tribits_add_xxx(...) CMake commands run as CMake code
+# Unit tests for a collection of TriBITS Core CMake code
 #
-# This file contains a set of unit tests for the package_arch macros
-# tribits_add_xxx(...) functions.  These unit tests are written in CMake
-# itself.  This is not a very advanced unit testing system and it not that
-# easy to work with.  However, it does perform some pretty strong testing and
-# is much better than doing nothing.
+# These unit tests are written in CMake itself.  This is not a very advanced
+# unit testing system and it not that easy to work with.  However, it does
+# perform some pretty strong testing and is much better than doing nothing.
+# Each set of tests is in a function scope so as not to impact other tests.
 #
-#####################################################################
+################################################################################
 
 
+################################################################################
 #
-# Set up unit test functions that will be called below to actually run the
-# unit tests.
+# Testing misc functions and macros
 #
-# The reason that we use functions is so that we can change variables just
-# inside of the functions that have their own variable scoping.  In that way,
-# we can keep variables that are set in one unit test from affecting the
-# others.
-#
+################################################################################
 
 
 function(unittest_append_string_var)
@@ -668,6 +663,13 @@ function(unittest_tribits_report_invalid_tribits_usage)
     "FATAL_ERROR;Error, invalid value for; TRITU_PROJECT_ASSERT_CORRECT_TRIBITS_USAGE =; 'INVALID_ARGUMENT'!;  Value values include 'FATAL_ERROR', 'SEND_ERROR', 'WARNING', and 'IGNORE'!")
 
 endfunction()
+
+
+################################################################################
+#
+# Testing tribits_add_test()
+#
+################################################################################
 
 
 function(unittest_tribits_add_test_basic)
@@ -2312,6 +2314,13 @@ function(unittest_tribits_add_test_properties)
   set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT OFF)
 
 endfunction()
+
+
+################################################################################
+#
+# Testing tribits_add_advanced_test()
+#
+################################################################################
 
 
 function(unittest_tribits_add_advanced_test_basic)
@@ -4118,6 +4127,13 @@ function(unittest_tribits_add_executable_and_test)
 endfunction()
 
 
+################################################################################
+#
+# Testing TriBITS ETI support code
+#
+################################################################################
+
+
 function(unittest_tribits_eti_type_expansion)
 
   message("*** Test passing invalid arguments to tribits_eti_type_expansion( ... )\n")
@@ -4265,6 +4281,7 @@ function(unittest_tribits_add_eti_instantiations_initial)
 
 endfunction()
 
+
 function(unittest_tribits_add_eti_instantiations_cumulative)
 
   set(package ${PROJECT_NAME}Framework)
@@ -4345,6 +4362,7 @@ function(unittest_tribits_eti_explode)
     )
 
 endfunction()
+
 
 function(unittest_tribits_eti_mangle_symbol)
 
@@ -4469,9 +4487,12 @@ function(unittest_tribits_eti_generate_macros)
 
 endfunction()
 
+
+################################################################################
 #
 # Execute the unit tests
 #
+################################################################################
 
 # Set up some global environment stuff
 set(${PROJECT_NAME}_HOSTNAME testhost.nowhere.com)
@@ -4487,7 +4508,7 @@ set( TRIBITS_ADD_TEST_ADD_TEST_UNITTEST TRUE )
 set( TRIBITS_ADD_TEST_ADD_TEST_CAPTURE TRUE )
 
 message("\n***")
-message("*** Running little bits of tests")
+message("*** Testing misc TriBITS functions and macros")
 message("***\n")
 
 unittest_append_string_var()
