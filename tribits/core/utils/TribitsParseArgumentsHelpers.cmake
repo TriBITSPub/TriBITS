@@ -84,65 +84,71 @@ endfunction()
 
 # @MACRO: tribits_assert_parse_arg_one_or_more_values()
 #
-# Assert that a parase argument has at least one value
+# Assert that a set of parse argument have at least one value
 #
 # Usage::
 #
-#   tribits_assert_parse_arg_one_or_more_values(<prefix> <argname>)
+#   tribits_assert_parse_arg_one_or_more_values(<prefix> <argname0> <argname1> ...)
 #
-macro(tribits_assert_parse_arg_one_or_more_values  PREFIX  ARGNAME)
-  set(PREFIX_ARGNAME "${PREFIX}_${ARGNAME}")
-  list( LENGTH ${PREFIX_ARGNAME} ARG_NUM_VALS )
-  if (ARG_NUM_VALS LESS 1)
-    message_wrapper(FATAL_ERROR
-      "ERROR: ${ARGNAME} must have at least one value!" )
-    return()
-    # NOTE: The return() is needed in unit testing mode
-  endif()
+macro(tribits_assert_parse_arg_one_or_more_values  PREFIX)
+  foreach(ARGNAME ${ARGN})
+    set(PREFIX_ARGNAME "${PREFIX}_${ARGNAME}")
+    list( LENGTH ${PREFIX_ARGNAME} ARG_NUM_VALS )
+    if (ARG_NUM_VALS LESS 1)
+      message_wrapper(FATAL_ERROR
+        "ERROR: ${ARGNAME} must have at least one value!" )
+      return()
+      # NOTE: The return() is needed in unit testing mode
+    endif()
+  endforeach()
 endmacro()
 
 
 # @MACRO: tribits_assert_parse_arg_zero_or_one_value()
 #
-# Assert that a parase argument has zero or one value
+# Assert a set of parse arguments have zero or one value
 #
 # Usage::
 #
-#   tribits_assert_parse_arg_zero_or_one_value(<prefix> <argname>)
+#   tribits_assert_parse_arg_zero_or_one_value(<prefix> <argname0> <argname1> ...)
 #
-macro(tribits_assert_parse_arg_zero_or_one_value  PREFIX  ARGNAME)
-  set(PREFIX_ARGNAME "${PREFIX}_${ARGNAME}")
-  if (NOT "${${PREFIX_ARGNAME}}" STREQUAL "")
-    list( LENGTH ${PREFIX_ARGNAME} ARG_NUM_VALS )
-    if (ARG_NUM_VALS GREATER 1)
-      message_wrapper(FATAL_ERROR
-        "ERROR: ${ARGNAME}='${${PREFIX_ARGNAME}}' can not have more than one value!" )
-      return()
-      # NOTE: The macro return() is needed in unit testing mode
+macro(tribits_assert_parse_arg_zero_or_one_value  PREFIX)
+  foreach(ARGNAME ${ARGN})
+    set(PREFIX_ARGNAME "${PREFIX}_${ARGNAME}")
+    if (NOT "${${PREFIX_ARGNAME}}" STREQUAL "")
+      list( LENGTH ${PREFIX_ARGNAME} ARG_NUM_VALS )
+      if (ARG_NUM_VALS GREATER 1)
+        message_wrapper(FATAL_ERROR
+          "ERROR: ${ARGNAME}='${${PREFIX_ARGNAME}}' can not have more than one value!" )
+        return()
+        # NOTE: The macro return() is needed in unit testing mode
+      endif()
     endif()
-  endif()
+  endforeach()
 endmacro()
 
 
 # @MACRO: tribits_assert_parse_arg_one_value()
 #
-# Assert that a parse argument has exactly one value
+# Assert that a set of parse arguments have exactly one value
 #
 # Usage::
 #
-#   tribits_assert_parse_arg_one_value(<prefix> <argname>)
+#   tribits_assert_parse_arg_one_value(<prefix> <argname0> <argname1> ...)
 #
-macro(tribits_assert_parse_arg_one_value  PREFIX  ARGNAME)
-  set(PREFIX_ARGNAME "${PREFIX}_${ARGNAME}")
-  if (NOT "${${PREFIX_ARGNAME}}" STREQUAL "")
-    list( LENGTH ${PREFIX_ARGNAME} ARG_NUM_VALS )
-    if (NOT ARG_NUM_VALS EQUAL 1)
-      message_wrapper(FATAL_ERROR
-        "ERROR: ${ARGNAME}='${${PREFIX_ARGNAME}}' Must have exactly one value!" )
-      return()
-      # NOTE: The macro return() is needed in unit testing mode
+macro(tribits_assert_parse_arg_one_value  PREFIX)
+  foreach(ARGNAME ${ARGN})
+    set(PREFIX_ARGNAME "${PREFIX}_${ARGNAME}")
+    if (NOT "${${PREFIX_ARGNAME}}" STREQUAL "")
+      list( LENGTH ${PREFIX_ARGNAME} ARG_NUM_VALS )
+      if (NOT ARG_NUM_VALS EQUAL 1)
+        message_wrapper(FATAL_ERROR
+          "ERROR: ${ARGNAME}='${${PREFIX_ARGNAME}}' Must have exactly one value!" )
+        return()
+        # NOTE: The macro return() is needed in unit testing mode
+      endif()
     endif()
-  endif()
+  endforeach()
 endmacro()
 
 
