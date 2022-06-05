@@ -53,6 +53,42 @@ include(TribitsReadTagFile)
 include(TribitsGetCDashUrlsInsideCTestS)
 
 
+function(unittest_tribits_get_cdash_revision_builds_url)
+
+  message("\n***")
+  message("*** Testing tribits_get_cdash_revision_builds_url()")
+  message("***\n")
+
+  tribits_get_cdash_revision_builds_url(
+     CDASH_SITE_URL "somesite.com/my-cdash"
+     PROJECT_NAME  goodProject
+     GIT_REPO_SHA1 "abc123"
+     CDASH_REVISION_BUILDS_URL_OUT  cdashRevesionBuildsUrlOut
+     )
+  unittest_compare_const(cdashRevesionBuildsUrlOut
+    "somesite.com/my-cdash/index.php?project=goodProject&filtercount=1&showfilters=1&field1=revision&compare1=61&value1=abc123")
+
+endfunction()
+
+
+function(unittest_tribits_get_cdash_revision_nonpassing_tests_url)
+
+  message("\n***")
+  message("*** Testing tribits_get_cdash_revision_nonpassing_tests_url()")
+  message("***\n")
+
+  tribits_get_cdash_revision_nonpassing_tests_url(
+     CDASH_SITE_URL "somesite.com/my-cdash"
+     PROJECT_NAME  goodProject
+     GIT_REPO_SHA1 "abc123"
+     CDASH_REVISION_NONPASSING_TESTS_URL_OUT  cdashRevisionNonpassingTestsUrlOut
+     )
+  unittest_compare_const(cdashRevisionNonpassingTestsUrlOut
+    "somesite.com/my-cdash/queryTests.php?project=goodProject&filtercount=2&showfilters=1&filtercombine=and&field1=revision&compare1=61&value1=abc123&field2=status&compare2=62&value2=passed")
+
+endfunction()
+
+
 function(unittest_tribits_read_ctest_tag_file)
 
   message("\n***")
@@ -158,6 +194,8 @@ endfunction()
 unittest_initialize_vars()
 
 # Run the unit test functions
+unittest_tribits_get_cdash_revision_builds_url()
+unittest_tribits_get_cdash_revision_nonpassing_tests_url()
 unittest_tribits_read_ctest_tag_file()
 unittest_tribits_get_cdash_site_from_drop_site_and_location()
 unittest_tribits_get_cdash_index_php_from_drop_site_and_location()
