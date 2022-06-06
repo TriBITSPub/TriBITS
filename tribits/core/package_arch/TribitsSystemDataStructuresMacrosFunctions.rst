@@ -389,29 +389,6 @@ targets as part of #299.
 The following global internal cache variables are used to communicate the
 required header directory paths and libraries needed to build and link against
 a given package's capabilities:
-
-  ``${PACKAGE_NAME}_INCLUDE_DIRS``
-
-    Defines a list of include paths needed to find all of the headers needed
-    to compile client code against this (sub)packages sources and it's
-    upstream packages and TPL sources.  This variable is used whenever
-    building downstream code including downstream libraries or executables in
-    the same package, or libraries or executables in downstream packages.  It
-    is also used to list out in ${PACKAGE_NAME}Config.cmake files.
-
-    ToDo: Look to eliminate this variable and just add it to the package's
-    library targets with target_include_directories().
-
-    ToDo: Split off ${PACKAGE_NAME}_TPL_INCLUDE_DIRS
-  
-  ``${PACKAGE_NAME}_LIBRARY_DIRS``
-  
-    Defines as list of the link directories needed to find all of the
-    libraries for this packages and it's upstream packages and TPLs.  Adding
-    these library directories to the CMake link line is unnecessary and would
-    cause link-line too long errors on some systems.  Instead, this list of
-    library directories is used when creating ${PACKAGE_NAME}Config.cmake
-    files.
   
   ``${PACKAGE_NAME}_LIBRARIES``
   

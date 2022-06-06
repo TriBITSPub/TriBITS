@@ -10,6 +10,7 @@
 function(tribits_read_ctest_tag_file  tagFileIn
     buildStartTimeOut  cdashGroupOut  cdashModelOut
   )
+  cmake_policy(SET CMP0007 NEW)
   file(READ "${tagFileIn}" tagFileStr)
   string(REPLACE "\n" ";" tagFileStrList "${tagFileStr}")
   list(GET tagFileStrList 0 buildStartTime)

@@ -298,7 +298,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGU
       -DTribitsExProj_ENABLE_TESTS=ON
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "CMake Error at.*TribitsGeneralMacros.cmake:"
+      "CMake Error at.*TribitsParseArgumentsHelpers.cmake:"
       "Arguments passed in unrecognized.  PARSE_UNPARSED_ARGUMENTS ="
       "nonsense_jdslkfhlskd"
       "tribits_read_toplevel_package_deps_files_add_to_graph"
@@ -320,7 +320,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGU
       -DTribitsExProj_ENABLE_TESTS=ON
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "CMake Error at.*TribitsGeneralMacros.cmake:"
+      "CMake Error at.*TribitsParseArgumentsHelpers.cmake:"
       "Arguments passed in unrecognized.  PARSE_UNPARSED_ARGUMENTS ="
       "this_shouldnt_be_here"
       "PkgWithUserErrors/CMakeLists.txt.*tribits_add_library"
@@ -343,7 +343,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGU
       -DTribitsExProj_ENABLE_TESTS=ON
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "CMake Error at.*TribitsGeneralMacros.cmake:"
+      "CMake Error at.*TribitsParseArgumentsHelpers.cmake:"
       "Arguments passed in unrecognized.  PARSE_UNPARSED_ARGUMENTS ="
       "misspelled_argument"
       "PkgWithUserErrors/CMakeLists.txt.*tribits_add_executable"

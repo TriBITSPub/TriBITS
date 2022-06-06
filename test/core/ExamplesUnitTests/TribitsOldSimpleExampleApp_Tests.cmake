@@ -52,7 +52,7 @@ set_default_and_from_env(
 # TribitsOldSimpleExampleApp.
 
 
-function(TribitsOldSimpleExampleApp sharedOrStatic useDeprecatedTargets)
+function(TribitsOldSimpleExampleApp  sharedOrStatic  serialOrMpi  useDeprecatedTargets)
 
   set(appConfigurePassRegexAll "")
 
@@ -61,7 +61,15 @@ function(TribitsOldSimpleExampleApp sharedOrStatic useDeprecatedTargets)
   elseif (sharedOrStatic STREQUAL "STATIC")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
   else()
-    message(FATAL_ERROR "Invalid value for sharedOrStatic='${sharedOrStatic}'!")
+    message(FATAL_ERROR "Invalid value sharedOrStatic='${sharedOrStatic}'!")
+  endif()
+
+  if (serialOrMpi STREQUAL "SERIAL")
+    set(tplEnableMpiArg -DTPL_ENABLE_MPI=OFF)
+  elseif (serialOrMpi STREQUAL "MPI")
+    set(tplEnableMpiArg -DTPL_ENABLE_MPI=ON)
+  else()
+    message(FATAL_ERROR "Invalid value tplEnableMpiArg='${tplEnableMpiArg}'!")
   endif()
 
   if (useDeprecatedTargets STREQUAL "USE_DEPRECATED_TARGETS")
@@ -82,10 +90,11 @@ function(TribitsOldSimpleExampleApp sharedOrStatic useDeprecatedTargets)
   elseif (useDeprecatedTargets STREQUAL "USE_NEW_TARGETS")
     set(useDeprecatedTargetsArg "")
   else()
-    message(FATAL_ERROR "Invalid value for useDeprecatedTargets='${useDeprecatedTargets}'!")
+    message(FATAL_ERROR "Invalid value useDeprecatedTargets='${useDeprecatedTargets}'!")
   endif()
 
-  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}_${useDeprecatedTargets})
+  set(testBaseName
+    ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}_${serialOrMpi}_${useDeprecatedTargets})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -109,6 +118,7 @@ function(TribitsOldSimpleExampleApp sharedOrStatic useDeprecatedTargets)
         -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/include
         -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib
         ${buildSharedLibsArg}
+        ${tplEnableMpiArg}
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
         ${TribitsOldSimpleExampleApp_TribitsExampleProject_TRIBITS_DIR}/examples/TribitsExampleProject
 
@@ -169,5 +179,6 @@ function(TribitsOldSimpleExampleApp sharedOrStatic useDeprecatedTargets)
 endfunction()
 
 
-TribitsOldSimpleExampleApp(STATIC USE_DEPRECATED_TARGETS)
-TribitsOldSimpleExampleApp(SHARED USE_NEW_TARGETS)
+TribitsOldSimpleExampleApp(STATIC  MPI  USE_DEPRECATED_TARGETS)
+TribitsOldSimpleExampleApp(STATIC  SERIAL  USE_DEPRECATED_TARGETS)
+TribitsOldSimpleExampleApp(SHARED  SERIAL USE_NEW_TARGETS)

@@ -4,6 +4,47 @@ ChangeLog for TriBITS
 
 ## 2022-05-16:
 
+* **Changed:** All compliant external packages (TPLs) must now set the
+  imported target `<tplName>::all_libs` in their `FindTPL<tplName>.cmake`
+  files instead of the variables `TPL_<tplName>_INCLUDE` and
+  `TPL_<tplName>_LIBRARIES`.
+
+* **Changed:** The project-level variables `<Project>_INCLUDE_DIRS`,
+  `<Project>_TPL_INCLUDE_DIRS`, `<Project>_LIBRARY_DIRS` and
+  `<Project>_TPL_LIBRARY_DIRS` from the file `<Project>Config.cmake` and
+  package-level variables `<Package>_INCLUDE_DIRS`,
+  `<Package>_TPL_INCLUDE_DIRS`, `<Package>_LIBRARY_DIRS` and
+  `<Package>_TPL_LIBRARY_DIRS` from the installed files
+  `<Package>Config.cmake` are now set to empty.  Downstream CMake projects
+  will need to link against the exported project-level target
+  `<Project>::all_libs` or `<Project>::all_selected_libs` or the package-level
+  targets `<Package>::all_libs` in order to get the list of include
+  directories that are propagated through those targets by CMake.
+
+* **Changed:** The function `tribits_add_library()` no longer sets the
+  directory property `INCLUDE_DIRECTORIES` and instead passes include
+  directory information between targets directly using the
+  `INTERFACE_INCLUDE_DIRECTORIES` target property.  This may result in
+  situations where include directories were getting set through the directory
+  property `INCLUDE_DIRECTORIES` and getting picked up in the builds of
+  targets that lacked the proper library dependencies.  Therefore, this is
+  technically a break in backward compatibility, but not for well-formed
+  TriBITS projects.
+
+* **Changed:** Variables `${PACKAGE_NAME}_ENABLE_<depPkg>` are now set to
+  `TRUE` for required upstream internal and external packages/TPLs `<depPkg>`
+  (in order to simplify internal TriBITS logic).  However, a side-effect of
+  this change is that CMake code that was ifed out with an `if
+  (${PACKAGE_NAME}_ENABLE_<depPkg>)` statement (because that variable was not
+  defined and therefore defaults to `FLASE`) for a required upstream
+  dependency `<depPkg>` will now be enabled.  (This mistake can happen when an
+  optional dependency `<depPkg>` is changed to a required dependency but the
+  `if()` statements based on `${PACKAGE_NAME}_ENABLE_<depPkg>` are not
+  removed.  Well-formed TriBITS projects and packages should not experience
+  this problem or notice any change.)
+
+## 2022-05-16:
+
 * **Added:** The function `tribits_add_advanced_test(`) now correctly accepts
   a list of regexes for `PASS_REGULAR_EXPRESSION` and
   `FAIL_REGULAR_EXPRESSION` and behave the same as the raw CTest properties of

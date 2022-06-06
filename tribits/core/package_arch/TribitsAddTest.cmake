@@ -877,20 +877,20 @@ function(tribits_add_test EXE_NAME)
 
   # If requested create a modifier for the name that will be inserted between
   # the package name and the given name or exe_name for the test
-  set(DIRECTORY_NAME "")
-  if(PARSE_ADD_DIR_TO_NAME)
-    tribits_create_name_from_current_source_directory(DIRECTORY_NAME)
-    set(DIRECTORY_NAME "${DIRECTORY_NAME}_")
+  set(directoryName "")
+  if (PARSE_ADD_DIR_TO_NAME)
+    tribits_create_name_from_current_source_directory(directoryName)
+    set(directoryName "${directoryName}_")
   endif()
 
   #message("TRIBITS_ADD_TEST: ${EXE_NAME}: EXE_BINARY_NAME = ${EXE_BINARY_NAME}")
 
   if (PARSE_NAME)
-    set(TEST_NAME "${DIRECTORY_NAME}${PARSE_NAME}")
+    set(TEST_NAME "${directoryName}${PARSE_NAME}")
   elseif (PARSE_NAME_POSTFIX)
-    set(TEST_NAME "${DIRECTORY_NAME}${EXE_NAME}_${PARSE_NAME_POSTFIX}")
+    set(TEST_NAME "${directoryName}${EXE_NAME}_${PARSE_NAME_POSTFIX}")
   else()
-    set(TEST_NAME "${DIRECTORY_NAME}${EXE_NAME}")
+    set(TEST_NAME "${directoryName}${EXE_NAME}")
   endif()
 
   set(TEST_NAME "${PACKAGE_NAME}_${TEST_NAME}")

@@ -208,12 +208,10 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic findingTplsMethod)
         "set[(]Package3_ENABLE_Package1 ON[)]"
         "set[(]Package3_ENABLE_Package2 ON[)]"
         "set[(]Package3_ENABLE_Tpl2 ON[)]"
-        "set[(]Package3_ENABLE_Tpl1 ON[)]"
         "set[(]Package3_ENABLE_Tpl4 ON[)]"
-        "set[(]Package3_ENABLE_Tpl3 ON[)]"
 
     TEST_2
-      MESSAGE "Build verbose to check the link line of Package3"
+      MESSAGE "Build verbose to check the link lines"
       CMND ${CMAKE_COMMAND} ARGS --build . -v
       PASS_REGULAR_EXPRESSION_ALL
         "[-]o packages/package1/src/package1-prg .* ${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
@@ -253,9 +251,7 @@ function(TribitsExampleProject2_find_tpl_parts sharedOrStatic findingTplsMethod)
         "set[(]Package3_ENABLE_Package1 ON[)]"
         "set[(]Package3_ENABLE_Package2 ON[)]"
         "set[(]Package3_ENABLE_Tpl2 ON[)]"
-        "set[(]Package3_ENABLE_Tpl1 ON[)]"
         "set[(]Package3_ENABLE_Tpl4 ON[)]"
-        "set[(]Package3_ENABLE_Tpl3 ON[)]"
 
     ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
 
@@ -345,9 +341,7 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls sharedO
         "set[(]Package3_ENABLE_Package1 ON[)]"
         "set[(]Package3_ENABLE_Package2 OFF[)]"
         "set[(]Package3_ENABLE_Tpl2 ON[)]"
-        "set[(]Package3_ENABLE_Tpl1 ON[)]"
         "set[(]Package3_ENABLE_Tpl4 OFF[)]"
-        "set[(]Package3_ENABLE_Tpl3 OFF[)]"
 
     TEST_2
       MESSAGE "Build verbose to check the link line of Package3"
@@ -378,9 +372,7 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls sharedO
         "set[(]Package3_ENABLE_Package1 ON[)]"
         "set[(]Package3_ENABLE_Package2 OFF[)]"
         "set[(]Package3_ENABLE_Tpl2 ON[)]"
-        "set[(]Package3_ENABLE_Tpl1 ON[)]"
         "set[(]Package3_ENABLE_Tpl4 OFF[)]"
-        "set[(]Package3_ENABLE_Tpl3 OFF[)]"
 
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )

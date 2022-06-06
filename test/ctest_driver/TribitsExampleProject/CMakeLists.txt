@@ -704,7 +704,7 @@ tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_ALL_PASS
       "Running package-by-package experimental dashboard"
       "A[)] Clean out the list of packages"
       "B[)] Run the dashboard command setting the list of packages"
-      "Running: env TRIBITS_PROJECT_ROOT=.*/tribits/examples/TribitsExampleProject TribitsExProj_TRIBITS_DIR=.*/tribits TribitsExProj_WARNINGS_AS_ERRORS_FLAGS='' TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON TribitsExProj_CTEST_DO_ALL_AT_ONCE=FALSE CTEST_DO_COVERAGE_TESTING=OFF CTEST_DO_SUBMIT=.* CTEST_DROP_METHOD=.* CTEST_DROP_SITE=.* CTEST_DROP_LOCATION=.* TribitsExProj_EXTRAREPOS_FILE=.*/tribits/examples/TribitsExampleProject/cmake/ExtraRepositoriesList.cmake TribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE= TribitsExProj_IGNORE_MISSING_EXTRA_REPOSITORIES=FALSE TribitsExProj_EXTRA_REPOSITORIES= TribitsExProj_PACKAGES=SimpleCxx[;]MixedLang[;]WithSubpackagesA[;]WithSubpackagesB[;]WithSubpackagesC[;]WithSubpackages[;]WrapExternal PROJECT_SOURCE_DIR=.*/tribits/examples/TribitsExampleProject .*/bin/ctest -V -S .*/tribits/ctest_driver/experimental_build_test.cmake"
+      "Running: env TRIBITS_PROJECT_ROOT=.*/tribits/examples/TribitsExampleProject TribitsExProj_TRIBITS_DIR=.*/tribits TribitsExProj_WARNINGS_AS_ERRORS_FLAGS='' TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON CTEST_DO_UPDATES=OFF TribitsExProj_CTEST_DO_ALL_AT_ONCE=FALSE CTEST_DO_COVERAGE_TESTING=OFF CTEST_DO_SUBMIT=.* CTEST_DROP_METHOD=.* CTEST_DROP_SITE=.* CTEST_DROP_LOCATION=.* TribitsExProj_EXTRAREPOS_FILE=.*/tribits/examples/TribitsExampleProject/cmake/ExtraRepositoriesList.cmake TribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE= TribitsExProj_IGNORE_MISSING_EXTRA_REPOSITORIES=FALSE TribitsExProj_EXTRA_REPOSITORIES= TribitsExProj_PACKAGES=SimpleCxx[;]MixedLang[;]WithSubpackagesA[;]WithSubpackagesB[;]WithSubpackagesC[;]WithSubpackages[;]WrapExternal PROJECT_SOURCE_DIR=.*/tribits/examples/TribitsExampleProject .*/bin/ctest -V -S .*/tribits/ctest_driver/experimental_build_test.cmake"
       "-- ENV_TribitsExProj_ENABLE_SECONDARY_TESTED_CODE='ON'"
       "TribitsExProj_ENABLE_SECONDARY_TESTED_CODE='ON'"
       "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
@@ -785,7 +785,7 @@ tribits_add_advanced_test( CTestDriver_AAO_Dashboard_ForwardArgs
       CTEST_DASHBOARD_ROOT=
       make dashboard
     PASS_REGULAR_EXPRESSION_ALL
-      "Running: env TRIBITS_PROJECT_ROOT=.*/tribits/examples/TribitsExampleProject TribitsExProj_TRIBITS_DIR=.*/tribits TribitsExProj_WARNINGS_AS_ERRORS_FLAGS='' TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=OFF TribitsExProj_CTEST_DO_ALL_AT_ONCE=TRUE CTEST_BUILD_NAME=MyCustomBuildName CTEST_DO_COVERAGE_TESTING=FALSE CTEST_BUILD_FLAGS='-j6' CTEST_PARALLEL_LEVEL=10 CTEST_DO_SUBMIT=FALSE CTEST_DROP_METHOD=OFF CTEST_DROP_SITE=OFF CTEST_DROP_LOCATION=OFF CTEST_DROP_SITE_COVERAGE=FALSE CTEST_DROP_LOCATION_COVERAGE=FALSE TRIBITS_2ND_CTEST_DROP_LOCATION=FALSE TRIBITS_2ND_CTEST_DROP_SITE=FALSE TribitsExProj_EXTRAREPOS_FILE=FALSE TribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=NONE TribitsExProj_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE TribitsExProj_EXTRA_REPOSITORIES=DummyRepo1,DummyRepo2,DummyRepo3 TribitsExProj_PACKAGES=${TribitsExProj_PACKAGES_list} PROJECT_SOURCE_DIR=.*/tribits/examples/TribitsExampleProject .*/ctest -VV -S .*/tribits/ctest_driver/experimental_build_test.cmake"
+      "Running: env TRIBITS_PROJECT_ROOT=.*/tribits/examples/TribitsExampleProject TribitsExProj_TRIBITS_DIR=.*/tribits TribitsExProj_WARNINGS_AS_ERRORS_FLAGS='' TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=OFF CTEST_DO_UPDATES=OFF TribitsExProj_CTEST_DO_ALL_AT_ONCE=TRUE CTEST_BUILD_NAME=MyCustomBuildName CTEST_DO_COVERAGE_TESTING=FALSE CTEST_BUILD_FLAGS='-j6' CTEST_PARALLEL_LEVEL=10 CTEST_DO_SUBMIT=FALSE CTEST_DROP_METHOD=OFF CTEST_DROP_SITE=OFF CTEST_DROP_LOCATION=OFF CTEST_DROP_SITE_COVERAGE=FALSE CTEST_DROP_LOCATION_COVERAGE=FALSE TRIBITS_2ND_CTEST_DROP_LOCATION=FALSE TRIBITS_2ND_CTEST_DROP_SITE=FALSE TribitsExProj_EXTRAREPOS_FILE=FALSE TribitsExProj_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=NONE TribitsExProj_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE TribitsExProj_EXTRA_REPOSITORIES=DummyRepo1,DummyRepo2,DummyRepo3 TribitsExProj_PACKAGES=${TribitsExProj_PACKAGES_list} PROJECT_SOURCE_DIR=.*/tribits/examples/TribitsExampleProject .*/ctest -VV -S .*/tribits/ctest_driver/experimental_build_test.cmake"
 
       "ENV_PROJECT_SOURCE_DIR='.*/tribits/examples/TribitsExampleProject'"
       "ENV_CTEST_BUILD_NAME='MyCustomBuildName'"
@@ -1264,7 +1264,8 @@ function(generate_aao_tests)
     # CONFIGURE_OPTIONS list is checked to make sure that it does not change
     # without being noticed.  Follow-on tests will not check all of that.
 
-  set(cdash_url_expected_regex
+
+  set(cdash_build_url_expected_regex
     "https://cdash[.]site[.]com/cdash/index[.]php[?]project=CustomTribitsExProj&filtercount=3&showfilters=1&filtercombine=and&field1=site&compare1=61&value1=My%20Site&field2=buildname&compare2=61&value2=TriBITS_CTestDriver_AAOP_CDASH_URL&field3=buildstamp&compare3=61&value3=[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-Custom%20CDash%20Group" )
   # NOTE: Above, we have to repeat [0-9] 8 times and 4 times for the regex for
   # the number of digits in the buildstarttime.  CMake regex does not support
@@ -1285,7 +1286,7 @@ function(generate_aao_tests)
         CTEST_DASHBOARD_ROOT=PWD
         ${AAO_COMMON_ENV_ARGS}
         CTEST_PARALLEL_LEVEL=3
-        CTEST_DO_SUBMIT=OFF  # Never submit this
+        CTEST_DO_SUBMIT=OFF  # Never submit this (see below note)
         CTEST_SITE="My Site"
         CTEST_DROP_SITE="cdash.site.com"
         CTEST_PROJECT_NAME="CustomTribitsExProj"
@@ -1299,17 +1300,19 @@ function(generate_aao_tests)
         "NONE does not exist, skipping extra repositories"
         "Final set of enabled packages:  SimpleCxx 1"
         "Final set of enabled SE packages:  SimpleCxx 1"
-        "Results will be submitted on CDash at:"
+        "Results will be submitted on CDash at the following links:"
+        "Link to this build's results on CDash:"
+        "${cdash_build_url_expected_regex}"
         "File '' does NOT exist so all tests passed"
-        "See results submitted on CDash at:"
-        "${cdash_url_expected_regex}"
+        "See results submitted on CDash at the following links:"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     TEST_2
-      MESSAGE "Check that CDashBuildUrl.txt exists and lists the right URL."
-      CMND cat ARGS BUILD/CDashBuildUrl.txt
+      MESSAGE "Check that CDashResults.txt exists and lists the right URL."
+      CMND cat ARGS BUILD/CDashResults.txt
       PASS_REGULAR_EXPRESSION_ALL
-        "${cdash_url_expected_regex}"
+        "Link to this build's results on CDash:"
+        "${cdash_build_url_expected_regex}"
     )
     # NOTE: The above test is never actually submitted to CDash, even when
     # ${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO is set.  This is so we can
@@ -2477,7 +2480,7 @@ function(generate_aao_tests)
       "EXPORT_CONFIG_FILE = '../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
       "TribitsExProj_FIND_COMPONENTS = 'SimpleCxx[;]WithSubpackagesA[;]WrapExternal'"
       "TribitsExProj_LIBRARIES = 'WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "TribitsExProj_TPL_INCLUDE_DIRS = '.*/examples/tpls/HeaderOnlyTpl'"
+      "TribitsExProj_TPL_INCLUDE_DIRS = ''"
       "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]MixedLang[;]SimpleCxx'"
       "TribitsExProj_TPL_LIST = 'HeaderOnlyTpl'"
       "TribitsExProj_WithSubpackages_FOUND = ''"
@@ -2595,7 +2598,7 @@ function(generate_aao_tests)
       "EXPORT_CONFIG_FILE = '../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
       "TribitsExProj_FIND_COMPONENTS = 'SimpleCxx[;]WithSubpackagesA'"
       "TribitsExProj_LIBRARIES = 'WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "TribitsExProj_TPL_INCLUDE_DIRS = '.*/examples/tpls/HeaderOnlyTpl'"
+      "TribitsExProj_TPL_INCLUDE_DIRS = ''"
       "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]MixedLang[;]SimpleCxx'"
       "TribitsExProj_TPL_LIST = 'HeaderOnlyTpl'"
       "TribitsExProj_WithSubpackages_FOUND = ''"
