@@ -38,6 +38,8 @@
 # @HEADER
 
 
+include(PrintVar)
+include(TribitsParseArgumentsHelpers)
 include(TribitsReadTagFile)
 
 
@@ -85,7 +87,7 @@ function(tribits_get_build_url_and_write_to_file  cdashBuildUrlOut  cdashBuildUr
     TAG_FILE "${CTEST_BINARY_DIRECTORY}/Testing/TAG"
     CDASH_BUILD_URL_OUT cdashBuildUrl
     )
-  set(cdashBuildUrl "https://${cdashBuildUrl}")
+  set(cdashBuildUrl "${cdashBuildUrl}")
   if (cdashBuildUrlFile)
     file(WRITE "${cdashBuildUrlFile}" "${cdashBuildUrl}")
   endif()
@@ -165,11 +167,45 @@ function(tribits_get_cdash_index_php_from_drop_site_and_location)
     "" #multi_value_keywords
     ${ARGN}
     )
+  tribits_get_cdash_site_from_drop_site_and_location(
+    CTEST_DROP_SITE  ${PREFIX_CTEST_DROP_SITE}
+    CTEST_DROP_LOCATION  ${PREFIX_CTEST_DROP_LOCATION}
+    CDASH_SITE_URL_OUT  cdashSiteUrl )
+  SET(${PREFIX_INDEX_PHP_URL_OUT} "${cdashSiteUrl}/index.php" PARENT_SCOPE)
+endfunction()
+
+
+# @FUNCTION: tribits_get_cdash_site_from_drop_site_and_location()
+#
+# Get the full CDash site base URL from the input CTEST_DROP_SITE and
+# CTEST_DROP_LOCATION vars used in a ctest -S script.
+#
+# Usage::
+#
+#   tribits_get_cdash_site_from_drop_site_and_location(
+#     CTEST_DROP_SITE <ctestDropSite>
+#     CTEST_DROP_LOCATION  <ctestDropLocation>
+#     CDASH_SITE_URL_OUT  <cdashSiteUrlOut>
+#     )
+#
+function(tribits_get_cdash_site_from_drop_site_and_location)
+  # Parse args
+  cmake_parse_arguments(PARSE_ARGV 0
+    PREFIX #prefix
+    "" #options
+    "CTEST_DROP_SITE;CTEST_DROP_LOCATION;CDASH_SITE_URL_OUT" #one_value_keywords
+    "" #multi_value_keywords
+    )
+  tribits_check_for_unparsed_arguments(PREFIX)
+  tribits_assert_parse_arg_one_value(PREFIX  CTEST_DROP_SITE)
+  tribits_assert_parse_arg_one_value(PREFIX  CTEST_DROP_LOCATION)
+  tribits_assert_parse_arg_one_value(PREFIX  CDASH_SITE_URL_OUT)
+  # Get the full CDash site from parts
   string(FIND "${PREFIX_CTEST_DROP_LOCATION}" "?" endOfSubmitPhpIdx)
   string(SUBSTRING "${PREFIX_CTEST_DROP_LOCATION}" 0 ${endOfSubmitPhpIdx} submitPhpPart)
-  string(REPLACE "submit.php" "index.php" indexPhpPart "${submitPhpPart}")
-  set(indexPhpUrl "${PREFIX_CTEST_DROP_SITE}${indexPhpPart}")
-  SET(${PREFIX_INDEX_PHP_URL_OUT} "${indexPhpUrl}" PARENT_SCOPE)
+  string(REPLACE "/submit.php" "" endCDashUrl "${submitPhpPart}")
+  set(cdashSiteUrl "${PREFIX_CTEST_DROP_SITE}${endCDashUrl}")
+  set(${PREFIX_CDASH_SITE_URL_OUT} "https://${cdashSiteUrl}" PARENT_SCOPE)
 endfunction()
 
 
