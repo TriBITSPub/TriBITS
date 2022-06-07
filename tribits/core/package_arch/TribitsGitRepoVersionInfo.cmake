@@ -44,6 +44,74 @@
 ################################################################################
 
 
+# @FUNCTION: tribits_git_repo_sha1()
+#
+# Get the Git repo version SHA1.
+#
+# Usage::
+#
+#   tribits_git_repo_sha1(<gitRepoDir> <gitRepoSha1Out>
+#     FAILURE_MESSAGE_OUT <failureMsgOut>)
+#
+# If ``<failureMsgOut>`` is non-empty on input, then the variable
+# ``<failureMsgOut>`` will be set to a non-empty value on output with the
+# error message if an error occurs and the SHA1 for ``<gitRepoDir>`` can not
+# be computed.  If ``<failureMsgOut>`` is empty in input, and there is an
+# error, a ``FATAL_ERROR`` will be raised.
+#
+# NOTE: To get the SHA1 for the Git repo ``<gitRepoDir>``, it must contain the
+# ``.git/`` directory and the ``git`` executable var ``GIT_EXECUTABLE`` must
+# be set.  Otherwise, it is an error.
+#
+function(tribits_git_repo_sha1  gitRepoDir  gitRepoSha1Out)
+
+  cmake_parse_arguments( PARSE_ARGV 2
+    PARSE "" "" # prefix, options, one_value_keywords
+    "FAILURE_MESSAGE_OUT" # multi_value_keywords
+    )
+  tribits_check_for_unparsed_arguments()
+  tribits_assert_parse_arg_zero_or_one_value(PARSE  FAILURE_MESSAGE_OUT)
+
+  set(failureMsg "")
+
+  if (NOT GIT_EXECUTABLE)
+    set(failureMsg "ERROR: The program '${GIT_NAME}' could not be found!")
+  elseif (NOT IS_DIRECTORY "${gitRepoDir}/.git")
+    set(failureMsg "ERROR: The directory ${gitRepoDir}/.git does not exist!")
+  endif()
+
+  set(gitRepoSha1 "")
+  if (failureMsg STREQUAL "")
+    execute_process(
+      COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:"%H"
+      WORKING_DIRECTORY  ${gitRepoDir}
+      RESULT_VARIABLE  gitCmndRtn  OUTPUT_VARIABLE  gitCmndOutput
+      )
+    # NOTE: Above we have to add quotes '"' or CMake will not accept the
+    # command.  However, git will put those quotes in the output so we have to
+    # strip them out below!
+
+    if (NOT gitCmndRtn STREQUAL 0)
+      set(failureMsg "ERROR: ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0 for repo ${gitRepoDir}!")
+    else()
+      # Strip the quotes off :-(
+      string(LENGTH "${gitCmndOutput}" gitCmndOutputLen)
+      math(EXPR outputNumCharsToKeep "${gitCmndOutputLen}-2")
+      string(SUBSTRING "${gitCmndOutput}" 1 ${outputNumCharsToKeep} gitRepoSha1)
+    endif()
+  endif()
+  # ToDo: Factor above out into its own function!
+
+  if (NOT  failureMsg  STREQUAL "" AND  PARSE_FAILURE_MESSAGE_OUT  STREQUAL "")
+    message(FATAL_ERROR "${failureMsg}")
+  elseif (PARSE_FAILURE_MESSAGE_OUT)
+    set(${PARSE_FAILURE_MESSAGE_OUT} "${failureMsg}" PARENT_SCOPE)
+  endif()
+  set(${gitRepoSha1Out} "${gitRepoSha1}" PARENT_SCOPE)
+
+endfunction()
+
+
 # Run the git log command to get the version info for a git repo
 #
 function(tribits_generate_single_repo_version_string  gitRepoDir

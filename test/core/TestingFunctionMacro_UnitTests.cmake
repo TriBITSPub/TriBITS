@@ -60,6 +60,7 @@ include(TribitsFilepathHelpers)
 include(TribitsGetVersionDate)
 include(TribitsTplFindIncludeDirsAndLibraries)
 include(TribitsReportInvalidTribitsUsage)
+include(TribitsGitRepoVersionInfo)
 include(UnitTestHelpers)
 include(GlobalSet)
 include(GlobalNullSet)
@@ -483,6 +484,55 @@ function(unittest_tribits_get_version_date_from_raw_git_commit_utc_time)
     )
 
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
+
+endfunction()
+
+
+function(unittest_tribits_git_repo_sha1)
+
+  message("\n***")
+  message("*** Testing tribits_git_repo_sha1()")
+  message("***\n")
+
+  find_program(GIT_EXECUTABLE ${GIT_NAME})
+
+  set(tribitsProjDir "${${PROJECT_NAME}_TRIBITS_DIR}/..")
+
+  # Matches any 40-char SHA1
+  set(anySha1Regex "")
+  foreach(i RANGE 0 39)
+    string(APPEND anySha1Regex "[a-z0-9]")
+  endforeach()
+
+  if (IS_DIRECTORY "${tribitsProjDir}/.git")
+
+    message("Testing tribits_git_repo_sha1() with the base TriBITS project (without FAILURE_MESSAGE_OUT)\n")
+    tribits_git_repo_sha1("${tribitsProjDir}" gitRepoSha1)
+    unittest_string_var_regex(gitRepoSha1 REGEX_STRINGS "${anySha1Regex}")
+
+    message("Testing tribits_git_repo_sha1() with the base TriBITS project (with FAILURE_MESSAGE_OUT)\n")
+    tribits_git_repo_sha1("${tribitsProjDir}" gitRepoSha1
+      FAILURE_MESSAGE_OUT  failureMsg)
+    unittest_string_var_regex(gitRepoSha1 REGEX_STRINGS "${anySha1Regex}")
+    unittest_compare_const(failureMsg "")
+
+  endif()
+
+   message("Testing tribits_git_repo_sha1(): No GIT_EXECUTABLE (with FAILURE_MESSAGE_OUT)\n")
+  set(GIT_EXECUTABLE_SAVED "${GIT_EXECUTABLE}")
+  set(GIT_EXECUTABLE "")
+  tribits_git_repo_sha1("${tribitsProjDir}" gitRepoSha1
+    FAILURE_MESSAGE_OUT  failureMsg)
+  unittest_compare_const(gitRepoSha1 "")
+  unittest_compare_const(failureMsg "ERROR: The program 'git' could not be found!")
+  set(GIT_EXECUTABLE "${GIT_EXECUTABLE_SAVED}")
+  unset(GIT_EXECUTABLE_SAVED)
+
+   message("Testing tribits_git_repo_sha1(): Invalid repo dir (with FAILURE_MESSAGE_OUT)\n")
+  tribits_git_repo_sha1("/repo/does/not/exist" gitRepoSha1
+    FAILURE_MESSAGE_OUT  failureMsg)
+  unittest_compare_const(gitRepoSha1 "")
+  unittest_compare_const(failureMsg "ERROR: The directory /repo/does/not/exist/.git does not exist!")
 
 endfunction()
 
@@ -4520,6 +4570,7 @@ unittest_tribits_misc()
 unittest_tribits_strip_quotes_from_str()
 unittest_tribits_get_version_date_from_raw_git_commit_utc_time()
 unittest_tribits_get_raw_git_commit_utc_time()
+unittest_tribits_git_repo_sha1()
 unittest_tribits_tpl_allow_pre_find_package()
 unittest_tribits_report_invalid_tribits_usage()
 
@@ -4576,4 +4627,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(695)
+unittest_final_result(702)
