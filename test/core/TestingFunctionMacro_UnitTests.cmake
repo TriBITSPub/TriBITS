@@ -60,34 +60,30 @@ include(TribitsFilepathHelpers)
 include(TribitsGetVersionDate)
 include(TribitsTplFindIncludeDirsAndLibraries)
 include(TribitsReportInvalidTribitsUsage)
+include(TribitsGitRepoVersionInfo)
 include(UnitTestHelpers)
 include(GlobalSet)
 include(GlobalNullSet)
 include(AppendStringVar)
 
 
-#####################################################################
+################################################################################
 #
-# Unit tests for tribits_add_xxx(...) CMake commands run as CMake code
+# Unit tests for a collection of TriBITS Core CMake code
 #
-# This file contains a set of unit tests for the package_arch macros
-# tribits_add_xxx(...) functions.  These unit tests are written in CMake
-# itself.  This is not a very advanced unit testing system and it not that
-# easy to work with.  However, it does perform some pretty strong testing and
-# is much better than doing nothing.
+# These unit tests are written in CMake itself.  This is not a very advanced
+# unit testing system and it not that easy to work with.  However, it does
+# perform some pretty strong testing and is much better than doing nothing.
+# Each set of tests is in a function scope so as not to impact other tests.
 #
-#####################################################################
+################################################################################
 
 
+################################################################################
 #
-# Set up unit test functions that will be called below to actually run the
-# unit tests.
+# Testing misc functions and macros
 #
-# The reason that we use functions is so that we can change variables just
-# inside of the functions that have their own variable scoping.  In that way,
-# we can keep variables that are set in one unit test from affecting the
-# others.
-#
+################################################################################
 
 
 function(unittest_append_string_var)
@@ -492,6 +488,55 @@ function(unittest_tribits_get_version_date_from_raw_git_commit_utc_time)
 endfunction()
 
 
+function(unittest_tribits_git_repo_sha1)
+
+  message("\n***")
+  message("*** Testing tribits_git_repo_sha1()")
+  message("***\n")
+
+  find_program(GIT_EXECUTABLE ${GIT_NAME})
+
+  set(tribitsProjDir "${${PROJECT_NAME}_TRIBITS_DIR}/..")
+
+  # Matches any 40-char SHA1
+  set(anySha1Regex "")
+  foreach(i RANGE 0 39)
+    string(APPEND anySha1Regex "[a-z0-9]")
+  endforeach()
+
+  if (IS_DIRECTORY "${tribitsProjDir}/.git")
+
+    message("Testing tribits_git_repo_sha1() with the base TriBITS project (without FAILURE_MESSAGE_OUT)\n")
+    tribits_git_repo_sha1("${tribitsProjDir}" gitRepoSha1)
+    unittest_string_var_regex(gitRepoSha1 REGEX_STRINGS "${anySha1Regex}")
+
+    message("Testing tribits_git_repo_sha1() with the base TriBITS project (with FAILURE_MESSAGE_OUT)\n")
+    tribits_git_repo_sha1("${tribitsProjDir}" gitRepoSha1
+      FAILURE_MESSAGE_OUT  failureMsg)
+    unittest_string_var_regex(gitRepoSha1 REGEX_STRINGS "${anySha1Regex}")
+    unittest_compare_const(failureMsg "")
+
+  endif()
+
+   message("Testing tribits_git_repo_sha1(): No GIT_EXECUTABLE (with FAILURE_MESSAGE_OUT)\n")
+  set(GIT_EXECUTABLE_SAVED "${GIT_EXECUTABLE}")
+  set(GIT_EXECUTABLE "")
+  tribits_git_repo_sha1("${tribitsProjDir}" gitRepoSha1
+    FAILURE_MESSAGE_OUT  failureMsg)
+  unittest_compare_const(gitRepoSha1 "")
+  unittest_compare_const(failureMsg "ERROR: The program 'git' could not be found!")
+  set(GIT_EXECUTABLE "${GIT_EXECUTABLE_SAVED}")
+  unset(GIT_EXECUTABLE_SAVED)
+
+   message("Testing tribits_git_repo_sha1(): Invalid repo dir (with FAILURE_MESSAGE_OUT)\n")
+  tribits_git_repo_sha1("/repo/does/not/exist" gitRepoSha1
+    FAILURE_MESSAGE_OUT  failureMsg)
+  unittest_compare_const(gitRepoSha1 "")
+  unittest_compare_const(failureMsg "ERROR: The directory /repo/does/not/exist/.git does not exist!")
+
+endfunction()
+
+
 function(unittest_tribits_tpl_allow_pre_find_package)
 
   message("\n***")
@@ -668,6 +713,13 @@ function(unittest_tribits_report_invalid_tribits_usage)
     "FATAL_ERROR;Error, invalid value for; TRITU_PROJECT_ASSERT_CORRECT_TRIBITS_USAGE =; 'INVALID_ARGUMENT'!;  Value values include 'FATAL_ERROR', 'SEND_ERROR', 'WARNING', and 'IGNORE'!")
 
 endfunction()
+
+
+################################################################################
+#
+# Testing tribits_add_test()
+#
+################################################################################
 
 
 function(unittest_tribits_add_test_basic)
@@ -2312,6 +2364,13 @@ function(unittest_tribits_add_test_properties)
   set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT OFF)
 
 endfunction()
+
+
+################################################################################
+#
+# Testing tribits_add_advanced_test()
+#
+################################################################################
 
 
 function(unittest_tribits_add_advanced_test_basic)
@@ -4118,6 +4177,13 @@ function(unittest_tribits_add_executable_and_test)
 endfunction()
 
 
+################################################################################
+#
+# Testing TriBITS ETI support code
+#
+################################################################################
+
+
 function(unittest_tribits_eti_type_expansion)
 
   message("*** Test passing invalid arguments to tribits_eti_type_expansion( ... )\n")
@@ -4265,6 +4331,7 @@ function(unittest_tribits_add_eti_instantiations_initial)
 
 endfunction()
 
+
 function(unittest_tribits_add_eti_instantiations_cumulative)
 
   set(package ${PROJECT_NAME}Framework)
@@ -4345,6 +4412,7 @@ function(unittest_tribits_eti_explode)
     )
 
 endfunction()
+
 
 function(unittest_tribits_eti_mangle_symbol)
 
@@ -4469,9 +4537,12 @@ function(unittest_tribits_eti_generate_macros)
 
 endfunction()
 
+
+################################################################################
 #
 # Execute the unit tests
 #
+################################################################################
 
 # Set up some global environment stuff
 set(${PROJECT_NAME}_HOSTNAME testhost.nowhere.com)
@@ -4487,7 +4558,7 @@ set( TRIBITS_ADD_TEST_ADD_TEST_UNITTEST TRUE )
 set( TRIBITS_ADD_TEST_ADD_TEST_CAPTURE TRUE )
 
 message("\n***")
-message("*** Running little bits of tests")
+message("*** Testing misc TriBITS functions and macros")
 message("***\n")
 
 unittest_append_string_var()
@@ -4499,6 +4570,7 @@ unittest_tribits_misc()
 unittest_tribits_strip_quotes_from_str()
 unittest_tribits_get_version_date_from_raw_git_commit_utc_time()
 unittest_tribits_get_raw_git_commit_utc_time()
+unittest_tribits_git_repo_sha1()
 unittest_tribits_tpl_allow_pre_find_package()
 unittest_tribits_report_invalid_tribits_usage()
 
@@ -4555,4 +4627,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(695)
+unittest_final_result(702)

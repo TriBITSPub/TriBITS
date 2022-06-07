@@ -92,6 +92,9 @@ jobs:
       - name: URL to results on CDash
         run: |
           cd ..
-          echo "Result on CDash are posted at:"
+          echo "See results posted on CDash:"
+          echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
           echo
-          cat tribits-build/BUILD/CDashBuildUrl.txt
+          cat tribits-build/BUILD/CDashResults.txt
+          echo
+          echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
