@@ -2989,7 +2989,7 @@ tribits_add_advanced_test( TribitsExampleProject_extra_link_flags
     PASS_REGULAR_EXPRESSION_ALL
       "-o packages/simple_cxx/src/simplecxx-helloworld .* packages/simple_cxx/src/libsimplecxx.a +${SimpleTpl_install_STATIC_DIR}/install/lib/libsimpletpl.a +-lgfortran +-ldl"
       "-o packages/mixed_lang/test/MixedLang_RayTracerTests.exe  packages/mixed_lang/src/libmixedlang.a +-lgfortran +-ldl"
-      "-o packages/with_subpackages/c/c_util +packages/with_subpackages/b/src/libpws_b.a +packages/with_subpackages/a/libpws_a.a +packages/simple_cxx/src/libsimplecxx.a +${SimpleTpl_install_STATIC_DIR}/install/lib/libsimpletpl.a + packages/mixed_lang/src/libmixedlang.a +-lgfortran +-ldl"
+      "-o packages/with_subpackages/c/c_util +packages/with_subpackages/b/src/libpws_b.a +packages/with_subpackages/a/libpws_a.a +packages/simple_cxx/src/libsimplecxx.a +${SimpleTpl_install_STATIC_DIR}/install/lib/libsimpletpl.a +-lgfortran +-ldl"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   ADDED_TEST_NAME_OUT TribitsExampleProject_extra_link_flags_NAME
