@@ -66,8 +66,10 @@ function(TribitsOldSimpleExampleApp  sharedOrStatic  serialOrMpi  useDeprecatedT
 
   if (serialOrMpi STREQUAL "SERIAL")
     set(tplEnableMpiArg -DTPL_ENABLE_MPI=OFF)
+    set(excludeIfNotTrueVarList "")
   elseif (serialOrMpi STREQUAL "MPI")
     set(tplEnableMpiArg -DTPL_ENABLE_MPI=ON)
+    set(excludeIfNotTrueVarList "TriBITS_PROJECT_MPI_IS_ENABLED")
   else()
     message(FATAL_ERROR "Invalid value tplEnableMpiArg='${tplEnableMpiArg}'!")
   endif()
@@ -101,7 +103,7 @@ function(TribitsOldSimpleExampleApp  sharedOrStatic  serialOrMpi  useDeprecatedT
   tribits_add_advanced_test( ${testBaseName}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
-    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+    EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran ${excludeIfNotTrueVarList}
     XHOSTTYPE Darwin
 
     TEST_0

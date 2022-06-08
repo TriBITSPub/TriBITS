@@ -83,6 +83,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
 
   if (serialOrMpi STREQUAL "SERIAL")
     set(tplEnableMpiArg -DTPL_ENABLE_MPI=OFF)
+    set(excludeIfNotTrueVarList "")
     set(TPL_MPI_FILE_TRACE "")
     set(FINAL_ENABLED_TPLS "HeaderOnlyTpl 1")
     set(TEST_MPI_1_SUFFIX "")
@@ -93,6 +94,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
     set(TribitsExProj_SHARED_LIB_RPATH_COMMAND_REGEX "")
   elseif (serialOrMpi STREQUAL "MPI")
     set(tplEnableMpiArg -DTPL_ENABLE_MPI=ON)
+    set(excludeIfNotTrueVarList "TriBITS_PROJECT_MPI_IS_ENABLED")
     set(TPL_MPI_FILE_TRACE
       "-- File Trace: TPL        INCLUDE    .*/core/std_tpls/FindTPLMPI.cmake")
     set(FINAL_ENABLED_TPLS "MPI HeaderOnlyTpl 2")
@@ -111,6 +113,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
     XHOSTTYPE Darwin
+    EXCLUDE_IF_NOT_TRUE ${excludeIfNotTrueVarList}
 
     TEST_0
       MESSAGE "Do the initial configure (and test a lot of things at once)"
