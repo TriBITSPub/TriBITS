@@ -400,10 +400,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-06-07</p>
+<dd class="field-even"><p>2022-06-08</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2891-g57755dd9</p>
+<dd class="field-odd"><p>tribits_start-2927-gf2b7dbaa</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -3069,12 +3069,11 @@ automatically disabled as well (see <a class="reference internal" href="#tpl-dis
 downstream dependencies</a>).</p>
 <p>For each TPL referenced in a <a class="reference internal" href="#repodir-tplslist-cmake">&lt;repoDir&gt;/TPLsList.cmake</a> file using the macro
 <a class="reference internal" href="#tribits-repository-define-tpls">tribits_repository_define_tpls()</a>, there must exist a file, typically called
-<code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code>, that once processed, produces the variables
-<code class="docutils literal notranslate"><span class="pre">TPL_${TPL_NAME}_LIBRARIES</span></code> and <code class="docutils literal notranslate"><span class="pre">TPL_${TPL_NAME}_INCLUDE_DIRS</span></code>.  Most
-<code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code> files just use the function
-<a class="reference internal" href="#tribits-tpl-find-include-dirs-and-libraries">tribits_tpl_find_include_dirs_and_libraries()</a> the define the TriBITS TPL.
-A simple example of such a file is the common TriBITS <code class="docutils literal notranslate"><span class="pre">FindTPLPETSC.cmake</span></code>
-module which is currently:</p>
+<code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code>, that once processed, produces the target
+<code class="docutils literal notranslate"><span class="pre">`${TPL_NAME}::all_libs</span></code>.  Most <code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code> files just use
+the function <a class="reference internal" href="#tribits-tpl-find-include-dirs-and-libraries">tribits_tpl_find_include_dirs_and_libraries()</a> to define the
+TriBITS TPL.  A simple example of such a file is the common TriBITS
+<code class="docutils literal notranslate"><span class="pre">FindTPLPETSC.cmake</span></code> module which is currently:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_tpl_find_include_dirs_and_libraries</span><span class="p">(</span> <span class="n">PETSC</span>
   <span class="n">REQUIRED_HEADERS</span> <span class="n">petsc</span><span class="o">.</span><span class="n">h</span>
   <span class="n">REQUIRED_LIBS_NAMES</span> <span class="n">petsc</span>
@@ -3132,11 +3131,10 @@ override and specialize how a TPL’s include directories and libraries are
 determined.  However, note that the TriBITS system does not require the usage
 of the function <code class="docutils literal notranslate"><span class="pre">tribits_tpl_find_include_dirs_and_libraries()</span></code> and does not
 even care about the TPL module name <code class="docutils literal notranslate"><span class="pre">FindTPL${TPL_NAME}.cmake</span></code>.  All that is
-required is that some CMake file fragment exist that once included, will
-define the variables <code class="docutils literal notranslate"><span class="pre">${TPL_NAME}_LIBRARIES</span></code> and
-<code class="docutils literal notranslate"><span class="pre">${TPL_NAME}_INCLUDE_DIRS</span></code>.  However, to be user friendly, such a CMake file
-should respond to the same variables as accepted by the standard
-<code class="docutils literal notranslate"><span class="pre">tribits_tpl_find_include_dirs_and_libraries()</span></code> function.</p>
+required is that some CMake file fragment exist such that, once included, will
+define the target <code class="docutils literal notranslate"><span class="pre">${TPL_NAME}::all_libs</span></code>.  However, to be user friendly,
+such a CMake file should respond to the same variables as accepted by the
+standard <code class="docutils literal notranslate"><span class="pre">tribits_tpl_find_include_dirs_and_libraries()</span></code> function.</p>
 <p>The core variables related to an enabled TPL are <code class="docutils literal notranslate"><span class="pre">${TPL_NAME}_LIBRARIES</span></code>,
 <code class="docutils literal notranslate"><span class="pre">${TPL_NAME}_INCLUDE_DIRS</span></code>, and <code class="docutils literal notranslate"><span class="pre">${TPL_NAME}_TESTGROUP</span></code> as defined in
 <a class="reference internal" href="#tribits-tpl-find-include-dirs-and-libraries">tribits_tpl_find_include_dirs_and_libraries()</a> need to be defined.  For more
@@ -3547,6 +3545,7 @@ into a single meta-project.</p>
 <span class="n">FindTPLNetcdf</span><span class="o">.</span><span class="n">cmake</span>
 <span class="n">FindTPLPETSC</span><span class="o">.</span><span class="n">cmake</span>
 <span class="n">FindTPLPnetcdf</span><span class="o">.</span><span class="n">cmake</span>
+<span class="n">FindTPLProjectLastLib</span><span class="o">.</span><span class="n">cmake</span>
 <span class="n">find_modules</span>
 <span class="n">utils</span>
 </pre></div>
@@ -10942,7 +10941,7 @@ and if true, this macro will set the variable
 header file <a class="reference internal" href="#packagedir-cmake-packagename-config-h-in">&lt;packageDir&gt;/cmake/&lt;packageName&gt;_config.h.in</a>).  This macro is
 typically called in the package’s <a class="reference internal" href="#packagedir-cmakelists-txt">&lt;packageDir&gt;/CMakeLists.txt</a> file (see
 the example <code class="docutils literal notranslate"><span class="pre">SimpleCxx/CMakeLists.txt</span></code>).</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:468</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:462</p>
 </section>
 <section id="tribits-add-example-directories">
 <h3><a class="toc-backref" href="#id120">tribits_add_example_directories()</a><a class="headerlink" href="#tribits-add-example-directories" title="Permalink to this heading"></a></h3>
@@ -10962,7 +10961,7 @@ up example directories any way one would like.</p>
 <code class="docutils literal notranslate"><span class="pre">${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES</span></code> are true. However, this macro may
 be extended in the future in order to modify behavior related to adding
 tests and examples in a uniform way.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:548</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:542</p>
 </section>
 <section id="tribits-add-executable">
 <h3><a class="toc-backref" href="#id121">tribits_add_executable()</a><a class="headerlink" href="#tribits-add-executable" title="Permalink to this heading"></a></h3>
@@ -11086,19 +11085,7 @@ that regular libraries (i.e. not <code class="docutils literal notranslate"><spa
 package or any upstream SE packages can <em>NOT</em> be listed!  TriBITS
 automatically links non <code class="docutils literal notranslate"><span class="pre">TESTONLY</span></code> libraries in this package and
 upstream packages to the executable.  The only libraries that should be
-listed in this argument are either <code class="docutils literal notranslate"><span class="pre">TESTONLY</span></code> libraries.  The include
-directories for each test-only library will automatically be added
-using:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>include_directories(${&lt;libi&gt;_INCLUDE_DIRS})
-</pre></div>
-</div>
-<p>where <code class="docutils literal notranslate"><span class="pre">&lt;libi&gt;_INCLUDE_DIRS</span></code> was set by:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_add_library</span><span class="p">(</span><span class="o">&lt;</span><span class="n">libi</span><span class="o">&gt;</span> <span class="o">...</span> <span class="n">TESTONLY</span> <span class="o">...</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Therefore, to link to a defined <code class="docutils literal notranslate"><span class="pre">TESTONLY</span></code> library in any upstream
-enabled package, one just needs to pass in the library name through
-<code class="docutils literal notranslate"><span class="pre">TESTONLYLIBS</span> <span class="pre">...</span> <span class="pre">&lt;libi&gt;</span> <span class="pre">...</span></code> and that is it!</p>
+listed in this argument are either <code class="docutils literal notranslate"><span class="pre">TESTONLY</span></code> libraries.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">IMPORTEDLIBS</span> <span class="pre">&lt;lib0&gt;</span> <span class="pre">&lt;lib1&gt;</span> <span class="pre">...</span></code></p>
 <blockquote>
@@ -11221,7 +11208,7 @@ CMake command <code class="docutils literal notranslate"><span class="pre">insta
 the built executable into the <code class="docutils literal notranslate"><span class="pre">${CMAKE_INSTALL_PREFIX}/bin/</span></code> directory
 (actual install directory path is determined by
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_INSTALL_RUNTIME_DIR</span></code>, see <a class="reference external" href="TribitsBuildReference.html#setting-the-install-prefix">Setting the install prefix</a>).</p>
-<p>In: core/package_arch/TribitsAddExecutable.cmake:58</p>
+<p>In: core/package_arch/TribitsAddExecutable.cmake:53</p>
 </section>
 <section id="tribits-add-executable-and-test">
 <h3><a class="toc-backref" href="#id122">tribits_add_executable_and_test()</a><a class="headerlink" href="#tribits-add-executable-and-test" title="Permalink to this heading"></a></h3>
@@ -11491,12 +11478,8 @@ generated as a byproduct of compiling F90+ source files (that contain one or
 more Fortran module declarations).</p>
 <p>The function <code class="docutils literal notranslate"><span class="pre">tribits_add_library()</span></code> will grab the list of all of the
 include directories in scope from prior calls to <code class="docutils literal notranslate"><span class="pre">include_directories()</span></code>
-and will append these to the variable <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_INCLUDE_DIRS</span></code>.
-This list of include directories is exported to downstream SE packages so
-they appear on the compile lines of all downstream object file compiles.
-This is a critical part of the “glue” that allows TriBITS packages to link
-up automatically (just by clearing dependencies in
-<a class="reference internal" href="#packagedir-cmake-dependencies-cmake">&lt;packageDir&gt;/cmake/Dependencies.cmake</a> files).</p>
+and will add this to the generated library target using
+<code class="docutils literal notranslate"><span class="pre">target_link_libraries()</span></code> so that they get propagated downstream as well.</p>
 <p id="install-targets-tribits-add-library"><strong>Install Targets (tribits_add_library())</strong></p>
 <p>By default, an install target for the library is created using
 <code class="docutils literal notranslate"><span class="pre">install(TARGETS</span> <span class="pre">&lt;libTargetName&gt;</span> <span class="pre">...)</span></code> to install into the directory
@@ -11546,7 +11529,7 @@ will <strong>NOT</strong> be set when code in peer directories (e.g. a downstrea
 packages) compiles that may include these header files.  To add defines that
 affect header files, please use a configured header file (see
 <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a>).</p>
-<p>In: core/package_arch/TribitsLibraryMacros.cmake:203</p>
+<p>In: core/package_arch/TribitsAddLibrary.cmake:54</p>
 </section>
 <section id="tribits-add-option-and-define">
 <h3><a class="toc-backref" href="#id124">tribits_add_option_and_define()</a><a class="headerlink" href="#tribits-add-option-and-define" title="Permalink to this heading"></a></h3>
@@ -11580,7 +11563,7 @@ file.  This option is given the default value
 <code class="docutils literal notranslate"><span class="pre">${${PROJECT_NAME}_SHOW_DEPRECATED_WARNINGS}</span></code>.  This option is then looked
 for in <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a> to add macros to add deprecated warnings
 to deprecated parts of a package.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:503</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:497</p>
 </section>
 <section id="tribits-add-test">
 <h3><a class="toc-backref" href="#id126">tribits_add_test()</a><a class="headerlink" href="#tribits-add-test" title="Permalink to this heading"></a></h3>
@@ -12296,7 +12279,7 @@ if <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_
 <code class="docutils literal notranslate"><span class="pre">${PARENT_PACKAGE_NAME}_ENABLE_TESTS</span></code> are <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>. However, this macro
 may be extended in the future in order to modify behavior related to adding
 tests and examples in a uniform way.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:395</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:389</p>
 </section>
 <section id="tribits-allow-missing-external-packages">
 <h3><a class="toc-backref" href="#id128">tribits_allow_missing_external_packages()</a><a class="headerlink" href="#tribits-allow-missing-external-packages" title="Permalink to this heading"></a></h3>
@@ -12398,7 +12381,7 @@ classes, etc., for example, using:</p>
 <p>If the particular compiler does not support deprecated warnings, then this
 macro is defined to be empty.  See <a class="reference internal" href="#regulated-backward-compatibility-and-deprecated-code">Regulated Backward Compatibility and
 Deprecated Code</a> for more details.</p>
-<p>In: core/package_arch/TribitsLibraryMacros.cmake:76</p>
+<p>In: core/package_arch/TribitsConfigureFile.cmake:57</p>
 </section>
 <section id="tribits-copy-files-to-binary-dir">
 <h3><a class="toc-backref" href="#id130">tribits_copy_files_to_binary_dir()</a><a class="headerlink" href="#tribits-copy-files-to-binary-dir" title="Permalink to this heading"></a></h3>
@@ -13809,7 +13792,7 @@ never get added to <code class="docutils literal notranslate"><span class="pre">
 and one must be very careful to understand how CPack will use these regexes
 to match files that get excluded from the tarball.  For more details, see
 <a class="reference internal" href="#creating-source-distributions">Creating Source Distributions</a>.</p>
-<p>In: core/package_arch/TribitsGlobalMacros.cmake:2445</p>
+<p>In: core/package_arch/TribitsGlobalMacros.cmake:2462</p>
 </section>
 <section id="tribits-find-most-recent-binary-file-timestamp">
 <h3><a class="toc-backref" href="#id135">tribits_find_most_recent_binary_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-binary-file-timestamp" title="Permalink to this heading"></a></h3>
@@ -14016,7 +13999,7 @@ passed in to ensure the include paths are added for installation testing.</p>
 <p>See <a class="reference internal" href="#tribits-package-decl">tribits_package_decl()</a> for the documentation for the arguments and
 <a class="reference internal" href="#tribits-package-decl">tribits_package_decl()</a> and <a class="reference internal" href="#id1">tribits_package()</a> for a description the
 side-effects (and variables set) after calling this macro.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:342</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:336</p>
 </section>
 <section id="tribits-package-decl">
 <h3><a class="toc-backref" href="#id141">tribits_package_decl()</a><a class="headerlink" href="#tribits-package-decl" title="Permalink to this heading"></a></h3>
@@ -14085,7 +14068,7 @@ the <code class="docutils literal notranslate"><span class="pre">*.cmake</span><
 </ul>
 <p>If the package does not have subpackages, just call <a class="reference internal" href="#id1">tribits_package()</a>
 which calls this macro.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:112</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:106</p>
 </section>
 <section id="tribits-package-def">
 <h3><a class="toc-backref" href="#id142">tribits_package_def()</a><a class="headerlink" href="#tribits-package-def" title="Permalink to this heading"></a></h3>
@@ -14105,7 +14088,7 @@ package’s <code class="docutils literal notranslate"><span class="pre">CMakeLi
 <li><p>The intra-package dependency variables (i.e. list of include directories,
 list of libraries, etc.) are initialized to empty.</p></li>
 </ul>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:277</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:271</p>
 </section>
 <section id="tribits-package-define-dependencies">
 <h3><a class="toc-backref" href="#id143">tribits_package_define_dependencies()</a><a class="headerlink" href="#tribits-package-define-dependencies" title="Permalink to this heading"></a></h3>
@@ -14295,7 +14278,7 @@ target property set on them.</p>
 <p>NOTE: It is unfortunate that this macro must be called in a package’s
 top-level <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file but limitations of the CMake language make
 it necessary to do so.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:771</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:726</p>
 </section>
 <section id="tribits-process-subpackages">
 <h3><a class="toc-backref" href="#id145">tribits_process_subpackages()</a><a class="headerlink" href="#tribits-process-subpackages" title="Permalink to this heading"></a></h3>
@@ -14308,7 +14291,7 @@ called in the parent packages top-level <a class="reference internal" href="#pac
 </div>
 <p>This macro must be called after <a class="reference internal" href="#tribits-package-decl">tribits_package_decl()</a> but before
 <a class="reference internal" href="#tribits-package-def">tribits_package_def()</a>.</p>
-<p>In: core/package_arch/TribitsPackageMacros.cmake:881</p>
+<p>In: core/package_arch/TribitsPackageMacros.cmake:836</p>
 </section>
 <section id="tribits-process-enabled-tpl">
 <h3><a class="toc-backref" href="#id146">tribits_process_enabled_tpl()</a><a class="headerlink" href="#tribits-process-enabled-tpl" title="Permalink to this heading"></a></h3>
@@ -16020,28 +16003,7 @@ targets as part of #299.</p>
 required header directory paths and libraries needed to build and link against
 a given package’s capabilities:</p>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_INCLUDE_DIRS</span></code></p>
-<blockquote>
-<div><p>Defines a list of include paths needed to find all of the headers needed
-to compile client code against this (sub)packages sources and it’s
-upstream packages and TPL sources.  This variable is used whenever
-building downstream code including downstream libraries or executables in
-the same package, or libraries or executables in downstream packages.  It
-is also used to list out in ${PACKAGE_NAME}Config.cmake files.</p>
-<p>ToDo: Look to eliminate this variable and just add it to the package’s
-library targets with target_include_directories().</p>
-<p>ToDo: Split off ${PACKAGE_NAME}_TPL_INCLUDE_DIRS</p>
-</div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIBRARY_DIRS</span></code></p>
-<blockquote>
-<div><p>Defines as list of the link directories needed to find all of the
-libraries for this packages and it’s upstream packages and TPLs.  Adding
-these library directories to the CMake link line is unnecessary and would
-cause link-line too long errors on some systems.  Instead, this list of
-library directories is used when creating ${PACKAGE_NAME}Config.cmake
-files.</p>
-</div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIBRARIES</span></code></p>
+<div><p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_LIBRARIES</span></code></p>
 <blockquote>
 <div><p>Defines list of <em>only</em> the libraries associated with the given
 (sub)package and does <em>not</em> list libraries in upstream packages.  Linkages
@@ -16712,7 +16674,7 @@ install() target for the previously generated
 </div>
 <p>The install() commands must be in a different subroutine or CMake will not
 allow you to call the routine, even if you if() it out!</p>
-<p>In: core/package_arch/TribitsWriteClientExportFiles.cmake:651</p>
+<p>In: core/package_arch/TribitsWriteClientExportFiles.cmake:604</p>
 </section>
 <section id="tribits-write-xml-dependency-files">
 <h3><a class="toc-backref" href="#id244">tribits_write_xml_dependency_files()</a><a class="headerlink" href="#tribits-write-xml-dependency-files" title="Permalink to this heading"></a></h3>
