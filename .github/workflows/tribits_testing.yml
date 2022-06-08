@@ -21,8 +21,8 @@ jobs:
         config:
           - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "2.7", cc: gcc-8,  cxx: g++-8,  fc: gfortran-8  }
           - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "3.8", cc: gcc-10, cxx: g++-10, fc: gfortran-10 }
-          - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "3.8", cc: gcc-11, cxx: g++-11                  }
-          - { os: ubuntu-latest, cmake: "3.21.2", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9,  fc: gfortran-9  }
+          - { os: ubuntu-latest, cmake: "3.17.5", generator: "makefiles", python: "3.8", cc: gcc-11, cxx: g++-11 }
+          - { os: ubuntu-latest, cmake: "3.21.2", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9, fc: gfortran-9, no_have_ninja: no-ninja }
           - { os: ubuntu-latest, cmake: "3.23.1", generator: "makefiles", python: "3.8", cc: gcc-9,  cxx: g++-9,  fc: gfortran-9  }
 
     runs-on: ${{ matrix.config.os }}
@@ -54,7 +54,7 @@ jobs:
           sudo update-alternatives --install /usr/bin/fortrann fortrann /usr/bin/gfortran 20
           sudo update-alternatives --set fortrann /usr/bin/gfortran
           sudo apt-get -y install valgrind
-          sudo apt-get -y install ninja-build
+          if [[ "${{ matrix.config.no_have_ninja }}" != "no-ninja" ]] ; then sudo apt-get -y install ninja-build ; fi
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -67,9 +67,7 @@ jobs:
           echo "Checking cmake path and version"
           which cmake
           cmake --version
-          echo "Checking ninja path and version"
-          which ninja
-          ninja --version
+          if [[ "${{ matrix.config.no_have_ninja }}" != "no-ninja" ]] ; then echo "Checking ninja path and version" ; which ninja ; ninja --version ; fi
           echo "Checking gcc path and version"
           which ${{ matrix.config.cc }}
           ${{ matrix.config.cc }} --version
@@ -89,10 +87,14 @@ jobs:
             --python-ver ${{ matrix.config.python }} \
             --cxx-compiler-and-ver ${{ matrix.config.cxx }} \
             --fortran-compiler-and-ver ${{ matrix.config.fc }} \
+            --no-have-ninja ${{ matrix.config.no_have_ninja }} \
             --github-repo-match-to-submit TriBITSPub/TriBITS
       - name: URL to results on CDash
         run: |
           cd ..
-          echo "Result on CDash are posted at:"
+          echo "See results posted on CDash:"
+          echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
           echo
-          cat tribits-build/BUILD/CDashBuildUrl.txt
+          cat tribits-build/BUILD/CDashResults.txt
+          echo
+          echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

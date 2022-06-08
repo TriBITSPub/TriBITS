@@ -50,6 +50,7 @@ include(TribitsGetVersionDate)
 include(TribitsReportInvalidTribitsUsage)
 include(TribitsReadAllProjectDepsFilesCreateDepsGraph)
 include(TribitsAdjustPackageEnables)
+include(TribitsGitRepoVersionInfo)
 
 # Standard TriBITS utilities includes
 include(TribitsAddOptionAndDefine)
@@ -1250,75 +1251,6 @@ macro(tribits_copy_installer_resource _varname _source _destination)
     "${_destination}"
     COPYONLY)
 endmacro()
-
-# Run the git log command to get the version info for a git repo
-#
-function(tribits_generate_single_repo_version_string  GIT_REPO_DIR
-   SINGLE_REPO_VERSION_STRING_OUT
-  )
-
-  if (NOT GIT_EXECUTABLE)
-    message(SEND_ERROR "ERROR, the program '${GIT_NAME}' could not be found!"
-      "  We can not generate the repo version file!")
-  endif()
-
-  # A) Get the basic version info.
-
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:"%h [%ad] <%ae>"
-    WORKING_DIRECTORY ${GIT_REPO_DIR}
-    RESULT_VARIABLE GIT_RETURN
-    OUTPUT_VARIABLE GIT_OUTPUT
-    )
-  # NOTE: Above we have to add quotes '"' or CMake will not accept the
-  # command.  However, git will put those quotes in the output so we have to
-  # strip them out later :-(
-
-  if (NOT GIT_RETURN STREQUAL 0)
-    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${GIT_RETURN}!=0"
-      " for extra repo ${GIT_REPO_DIR}!")
-    set(GIT_VERSION_INFO "Error, could not get version info!")
-  else()
-    # Strip the quotes off :-(
-    string(LENGTH "${GIT_OUTPUT}" GIT_OUTPUT_LEN)
-    math(EXPR OUTPUT_NUM_CHARS_TO_KEEP "${GIT_OUTPUT_LEN}-2")
-    string(SUBSTRING "${GIT_OUTPUT}" 1 ${OUTPUT_NUM_CHARS_TO_KEEP}
-      GIT_VERSION_INFO)
-  endif()
-
-  # B) Get the first 80 chars of the summary message for more info
-
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:"%s"
-    WORKING_DIRECTORY ${GIT_REPO_DIR}
-    RESULT_VARIABLE GIT_RETURN
-    OUTPUT_VARIABLE GIT_OUTPUT
-    )
-
-  if (NOT GIT_RETURN STREQUAL 0)
-    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${GIT_RETURN}!=0"
-      " for extra repo ${GIT_REPO_DIR}!")
-    set(GIT_VERSION_SUMMARY "Error, could not get version summary!")
-  else()
-    # Strip ouf quotes and quote the 80 char string
-    set(MAX_SUMMARY_LEN 80)
-    math(EXPR MAX_SUMMARY_LEN_PLUS_2 "${MAX_SUMMARY_LEN}+2")
-    string(LENGTH "${GIT_OUTPUT}" GIT_OUTPUT_LEN)
-    math(EXPR OUTPUT_NUM_CHARS_TO_KEEP "${GIT_OUTPUT_LEN}-2")
-    string(SUBSTRING "${GIT_OUTPUT}" 1 ${OUTPUT_NUM_CHARS_TO_KEEP}
-      GIT_OUTPUT_STRIPPED)
-    if (GIT_OUTPUT_LEN GREATER ${MAX_SUMMARY_LEN_PLUS_2})
-      string(SUBSTRING "${GIT_OUTPUT_STRIPPED}" 0 ${MAX_SUMMARY_LEN}
-         GIT_SUMMARY_STR)
-    else()
-      set(GIT_SUMMARY_STR "${GIT_OUTPUT_STRIPPED}")
-    endif()
-  endif()
-
-  set(${SINGLE_REPO_VERSION_STRING_OUT}
-    "${GIT_VERSION_INFO}\n${GIT_SUMMARY_STR}" PARENT_SCOPE)
-
-endfunction()
 
 
 # Get the versions of all the git repos

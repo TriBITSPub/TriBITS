@@ -98,6 +98,19 @@ set(TribitsExampleMetaProject_COMMON_CONFIG_ARGS
 ##########################################################################################
 
 
+  set(cdash_build_url_expected_regex
+    "https://testing[.]sandia[.]gov/cdash/index[.]php[?]project=TribitsExampleMetaProject&filtercount=3&showfilters=1&filtercombine=and&field1=site&compare1=61&value1=CustomSite&field2=buildname&compare2=61&value2=CTestDriver_TribitsExMetaProj_clone_default_branch_remote&field3=buildstamp&compare3=61&value3=[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-Continuous" )
+  # NOTE: Above, we have to repeat [0-9] 8 times and 4 times for the regex for
+  # the number of digits in the buildstarttime.  CMake regex does not support
+  # \d{8}-\d{4} :-(
+
+  set(cdash_revisions_builds_url_expected_regex
+     "https://testing[.]sandia[.]gov/cdash/index.php[?]project=TribitsExampleMetaProject&filtercount=1&showfilters=1&field1=revision&compare1=61&value1=863461e3035d24c632e175c087761e83db28bdc3")
+
+  set(cdash_revisions_nonpassing_tests_expected_regex
+    "https://testing[.]sandia[.]gov/cdash/queryTests.php[?]project=TribitsExampleMetaProject&filtercount=2&showfilters=1&filtercombine=and&field1=revision&compare1=61&value1=863461e3035d24c632e175c087761e83db28bdc3&field2=status&compare2=62&value2=passed" )
+
+
 tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_remote
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -111,11 +124,19 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       ${COMMON_ENV_ARGS}
       TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_default_branch_remote
+      CTEST_SITE=CustomSite
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
       "CTEST_NOTES_FILES=''"
       "First perform the initial checkout: .*/git. clone -o origin .*github.com.tribits/TribitsExampleMetaProject.git"
       "Perform checkout in directory: .*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote"
+      "Results will be submitted on CDash at the following links:"
+      "Link to this build's results on CDash:"
+      "${cdash_build_url_expected_regex}"
+      "Link to all builds for this repo version on CDash:"
+      "${cdash_revisions_builds_url_expected_regex}"
+      "Link to all nonpassing tests for all builds for this repo version on CDash:"
+      "${cdash_revisions_nonpassing_tests_expected_regex}"
       "Calling ctest_update[(][)] to update base source repo '.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/TribitsExampleMetaProject"
       "Old revision of repository is: [a-z0-9]+"
       "New revision of repository is: [a-z0-9]+"
@@ -314,6 +335,11 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   #
   # * Makes sure some git commit SHA1s are shown in 'Old/New revision of
   #   repository' printouts from ctest_update().
+  #
+  # * Checks that CDash URLs that get produced, including for all builds with
+  # * the same repo version.  (This check has to be here since the base
+  # * project repo must have a .git/ directory and we must know the exact SHA1
+  # * of that repo for the test, which we don in this case.)
   #
   # NOTE: The reason that so many tests are done in a single ctest test is the
   # cost of the initial configure which checks the compilers which is very
