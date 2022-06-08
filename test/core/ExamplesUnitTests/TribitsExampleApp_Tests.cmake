@@ -526,7 +526,7 @@ TribitsExampleApp_EnableSingleSubpackage(FULL STATIC)
 ################################################################################
 
 
-function(TribitsExampleApp_ALL_ST byProjectOrPackage sharedOrStatic)
+function(TribitsExampleApp_ALL_ST  byProjectOrPackage  sharedOrStatic  serialOrMpi)
 
   if (byProjectOrPackage STREQUAL "ByProject")
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=OFF)
@@ -535,12 +535,21 @@ function(TribitsExampleApp_ALL_ST byProjectOrPackage sharedOrStatic)
     set(findByProjectOrPackageArg -DTribitsExApp_FIND_INDIVIDUAL_PACKAGES=ON)
     set(foundProjectOrPackageStr "Found SimpleCxx")
   else()
-    message(FATAL_ERROR "Invalid value for findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
+    message(FATAL_ERROR
+      "Invalid value findByProjectOrPackageArg='${findByProjectOrPackageArg}'!")
   endif()
 
   TribitsExampleApp_process_sharedOrStatic_arg()
 
-  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic})
+  if (serialOrMpi STREQUAL "SERIAL")
+    set(tplEnableMpiArg -DTPL_ENABLE_MPI=OFF)
+  elseif (serialOrMpi STREQUAL "MPI")
+    set(tplEnableMpiArg -DTPL_ENABLE_MPI=ON)
+  else()
+    message(FATAL_ERROR "Invalid value tplEnableMpiArg='${tplEnableMpiArg}'!")
+  endif()
+
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${byProjectOrPackage}_${sharedOrStatic}_${serialOrMpi})
   set(testName ${PACKAGE_NAME}_${testBaseName})
   set(testDir ${CMAKE_CURRENT_BINARY_DIR}/${testName})
 
@@ -577,6 +586,7 @@ function(TribitsExampleApp_ALL_ST byProjectOrPackage sharedOrStatic)
         -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/include
         -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_${sharedOrStatic}_DIR}/install/lib
         ${buildSharedLibsArg}
+        ${tplEnableMpiArg}
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
         ${testDir}/TribitsExampleProject
 
@@ -641,10 +651,10 @@ function(TribitsExampleApp_ALL_ST byProjectOrPackage sharedOrStatic)
 endfunction()
 
 
-TribitsExampleApp_ALL_ST(ByProject STATIC)
-TribitsExampleApp_ALL_ST(ByProject SHARED)
-TribitsExampleApp_ALL_ST(ByPackage STATIC)
-TribitsExampleApp_ALL_ST(ByPackage SHARED)
+TribitsExampleApp_ALL_ST(ByProject  STATIC  SERIAL)
+TribitsExampleApp_ALL_ST(ByProject  SHARED  MPI)
+TribitsExampleApp_ALL_ST(ByPackage  STATIC  MPI)
+TribitsExampleApp_ALL_ST(ByPackage  SHARED  SERIAL)
 
 
 ################################################################################

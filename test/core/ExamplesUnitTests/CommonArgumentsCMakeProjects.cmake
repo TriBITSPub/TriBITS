@@ -68,3 +68,11 @@ if ( CMAKE_VERSION VERSION_LESS 3.18.0 )
 else()
   set(rulesNinjaFilePath "CMakeFiles/rules.ninja")
 endif()
+
+# Single variable if MPI is enabled or not in outer TriBIITS project to be
+# used with EXCLUDE_IF_NOT_TRUE
+if (TPL_ENABLE_MPI)
+  set(TriBITS_PROJECT_MPI_IS_ENABLED TRUE)
+else()
+  set(TriBITS_PROJECT_MPI_IS_ENABLED FALSE)
+endif()

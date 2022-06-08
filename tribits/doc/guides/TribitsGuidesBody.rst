@@ -2185,12 +2185,11 @@ downstream dependencies`_).
 
 For each TPL referenced in a `<repoDir>/TPLsList.cmake`_ file using the macro
 `tribits_repository_define_tpls()`_, there must exist a file, typically called
-``FindTPL${TPL_NAME}.cmake``, that once processed, produces the variables
-``TPL_${TPL_NAME}_LIBRARIES`` and ``TPL_${TPL_NAME}_INCLUDE_DIRS``.  Most
-``FindTPL${TPL_NAME}.cmake`` files just use the function
-`tribits_tpl_find_include_dirs_and_libraries()`_ the define the TriBITS TPL.
-A simple example of such a file is the common TriBITS ``FindTPLPETSC.cmake``
-module which is currently:
+``FindTPL${TPL_NAME}.cmake``, that once processed, produces the target
+```${TPL_NAME}::all_libs``.  Most ``FindTPL${TPL_NAME}.cmake`` files just use
+the function `tribits_tpl_find_include_dirs_and_libraries()`_ to define the
+TriBITS TPL.  A simple example of such a file is the common TriBITS
+``FindTPLPETSC.cmake`` module which is currently:
 
 .. include:: ../../common_tpls/FindTPLPETSC.cmake
    :literal:
@@ -2253,11 +2252,10 @@ override and specialize how a TPL's include directories and libraries are
 determined.  However, note that the TriBITS system does not require the usage
 of the function ``tribits_tpl_find_include_dirs_and_libraries()`` and does not
 even care about the TPL module name ``FindTPL${TPL_NAME}.cmake``.  All that is
-required is that some CMake file fragment exist that once included, will
-define the variables ``${TPL_NAME}_LIBRARIES`` and
-``${TPL_NAME}_INCLUDE_DIRS``.  However, to be user friendly, such a CMake file
-should respond to the same variables as accepted by the standard
-``tribits_tpl_find_include_dirs_and_libraries()`` function.
+required is that some CMake file fragment exist such that, once included, will
+define the target ``${TPL_NAME}::all_libs``.  However, to be user friendly,
+such a CMake file should respond to the same variables as accepted by the
+standard ``tribits_tpl_find_include_dirs_and_libraries()`` function.
 
 The core variables related to an enabled TPL are ``${TPL_NAME}_LIBRARIES``,
 ``${TPL_NAME}_INCLUDE_DIRS``, and ``${TPL_NAME}_TESTGROUP`` as defined in

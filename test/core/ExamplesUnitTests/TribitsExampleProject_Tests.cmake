@@ -66,369 +66,422 @@ set(LabelsForSubprojects_REGEX
 ########################################################################
 
 
-tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran
-  OVERALL_WORKING_DIRECTORY TEST_NAME
-  OVERALL_NUM_MPI_PROCS 1
-  XHOSTTYPE Darwin
+function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
 
-  TEST_0
-    MESSAGE "Do the initial configure (and test a lot of things at once)"
-    CMND ${CMAKE_COMMAND}
-    ARGS
-      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
-      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
-      -DTribitsExProj_ENABLE_Fortran=OFF
-      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
-      -DTribitsExProj_ENABLE_TESTS=ON
-      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-      -DTribitsExProj_TRACE_FILE_PROCESSING=ON
-      -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
-      -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
-      -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
-      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
-      -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
-      -DCMAKE_INSTALL_PREFIX=install
-      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
-    PASS_REGULAR_EXPRESSION_ALL
-      "Configuring TribitsExProj build directory"
-      "-- PROJECT_SOURCE_DIR="
-      "-- PROJECT_BINARY_DIR="
-      "-- TribitsExProj_TRIBITS_DIR="
-      "-- TriBITS_VERSION_STRING="
-      "-- CMAKE_VERSION="
-      "-- CMAKE_HOST_SYSTEM_NAME="
-      "-- TribitsExProj_HOSTNAME="
+  set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}_${serialOrMpi})
+  set(testName ${PACKAGE_NAME}_${testBaseName})
 
-      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because TribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES='ON'"
-      "NOTE: Setting TribitsExProj_ENABLE_MixedLang=OFF because TribitsExProj_ENABLE_Fortran"
-      "Printing package dependencies ..."
-      "-- TribitsExProj_PACKAGES: SimpleCxx MixedLang WithSubpackages WrapExternal"
-      "-- TribitsExProj_SE_PACKAGES: SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
+  if (sharedOrStatic STREQUAL "SHARED")
+    set(BUILD_SHARED_LIBS_VAL ON)
+    set(libExtRegex "[.]so[.].*")
+  elseif (sharedOrStatic STREQUAL "STATIC")
+    set(BUILD_SHARED_LIBS_VAL OFF)
+    set(libExtRegex "[.]a")
+  else()
+    message(FATAL_ERROR "Invalid value sharedOrStatic='${sharedOrStatic}'!")
+  endif()
 
-      "-- SimpleCxx_LIB_REQUIRED_DEP_TPLS: HeaderOnlyTpl"
-      "-- MixedLang: No dependencies!"
-      "-- WithSubpackagesA_LIB_REQUIRED_DEP_PACKAGES: SimpleCxx"
-      "-- WithSubpackagesB_LIB_REQUIRED_DEP_PACKAGES: SimpleCxx"
-      "-- WithSubpackagesB_LIB_OPTIONAL_DEP_PACKAGES: WithSubpackagesA"
-      "-- WithSubpackagesB_TEST_OPTIONAL_DEP_PACKAGES: MixedLang"
-      "-- WithSubpackagesC_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesA WithSubpackagesB"
-      "-- WithSubpackages_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesA"
-      "-- WithSubpackages_LIB_OPTIONAL_DEP_PACKAGES: WithSubpackagesB WithSubpackagesC"
-      "-- WrapExternal_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesA"
-      "-- WrapExternal_LIB_OPTIONAL_DEP_PACKAGES: MixedLang"
-      "-- SimpleCxx: No library dependencies!"
-      "-- WithSubpackagesA_FULL_ENABLED_DEP_PACKAGES: SimpleCxx"
-      "-- WithSubpackagesB_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesA SimpleCxx"
-      "-- WithSubpackagesC_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesB WithSubpackagesA SimpleCxx"
-      "-- WithSubpackages_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesC WithSubpackagesB WithSubpackagesA SimpleCxx"
-      "Explicitly enabled packages on input .by user.:  0"
-      "Explicitly disabled packages on input .by user or by default.:  MixedLang WrapExternal 2"
-      "Enabling all SE packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
-      "Setting TribitsExProj_ENABLE_SimpleCxx=ON"
-      "Setting TribitsExProj_ENABLE_WithSubpackages=ON"
-      "Setting TPL_ENABLE_HeaderOnlyTpl=ON because it is required by the enabled package SimpleCxx"
-      "Set cache entries for optional packages/TPLs and tests/examples for packages actually enabled ..."
-      "Dumping direct dependencies for each SE package ..."
-      "-- SimpleCxx_LIB_ENABLED_DEPENDENCIES: HeaderOnlyTpl"
-      "-- SimpleCxx_LIB_ALL_DEPENDENCIES: HeaderOnlyTpl SimpleTpl"
-      "-- MixedLang_LIB_ALL_DEPENDENCIES: "
-      "-- WithSubpackagesA_LIB_ENABLED_DEPENDENCIES: SimpleCxx"
-      "-- WithSubpackagesA_LIB_ALL_DEPENDENCIES: SimpleCxx"
-      "-- WithSubpackagesB_LIB_ENABLED_DEPENDENCIES: SimpleCxx WithSubpackagesA"
-      "-- WithSubpackagesB_LIB_ALL_DEPENDENCIES: SimpleCxx WithSubpackagesA"
-      "-- WithSubpackagesB_TEST_ALL_DEPENDENCIES: MixedLang"
-      "-- WithSubpackagesC_LIB_ENABLED_DEPENDENCIES: WithSubpackagesA WithSubpackagesB"
-      "-- WithSubpackagesC_LIB_ALL_DEPENDENCIES: WithSubpackagesA WithSubpackagesB"
-      "-- WithSubpackages_LIB_ENABLED_DEPENDENCIES: WithSubpackagesA WithSubpackagesB WithSubpackagesC"
-      "-- WithSubpackages_LIB_ALL_DEPENDENCIES: WithSubpackagesA WithSubpackagesB WithSubpackagesC"
-      "-- WrapExternal_LIB_ALL_DEPENDENCIES: WithSubpackagesA MixedLang"
-      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
-      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 5"
-      "Final set of enabled TPLs:  ${FINAL_ENABLED_TPLS}"
-      "Final set of non-enabled packages:  MixedLang WrapExternal 2"
-      "Processing enabled TPL: HeaderOnlyTpl"
-      "-- File Trace: TPL        INCLUDE    .+/TribitsExampleProject/cmake/tpls/FindTPLHeaderOnlyTpl.cmake"
-      "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
-      "Performing Test HAVE_SIMPLECXX___INT64"
-      "Configuring done"
-      "Generating done"
-      "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran"
-      "-- File Trace: PROJECT    INCLUDE    .*/TribitsExampleProject/Version.cmake"
-      "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/cmake/CallbackSetupExtraOptions.cmake"
-      "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/PackagesList.cmake"
-      "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/TPLsList.cmake"
-      "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/simple_cxx/cmake/Dependencies.cmake"
-      "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/mixed_lang/cmake/Dependencies.cmake"
-      "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/with_subpackages/cmake/Dependencies.cmake"
-      "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/with_subpackages/a/cmake/Dependencies.cmake"
-      "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/with_subpackages/b/cmake/Dependencies.cmake"
-      "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/with_subpackages/c/cmake/Dependencies.cmake"
-      "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/wrap_external/cmake/Dependencies.cmake"
-      "-- File Trace: PROJECT    CONFIGURE  .*/TribitsExampleProject/cmake/ctest/CTestCustom.cmake.in"
-      "-- File Trace: REPOSITORY READ       .*/TribitsExampleProject/Copyright.txt"
-      "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/Version.cmake"
-      "${TPL_MPI_FILE_TRACE}"
-      "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/simple_cxx/CMakeLists.txt"
-      "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/simple_cxx/test/CMakeLists.txt"
-      "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/CMakeLists.txt"
-      "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/a/CMakeLists.txt"
-      "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/a/tests/CMakeLists.txt"
-      "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/b/CMakeLists.txt"
-      "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/b/tests/CMakeLists.txt"
-      "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/c/CMakeLists.txt"
-      "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/c/tests/CMakeLists.txt"
-      "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/cmake/CallbackDefineRepositoryPackaging.cmake"
-      "-- File Trace: PROJECT    INCLUDE    .*/TribitsExampleProject/cmake/CallbackDefineProjectPackaging.cmake"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+  if (serialOrMpi STREQUAL "SERIAL")
+    set(tplEnableMpiArg -DTPL_ENABLE_MPI=OFF)
+    set(excludeIfNotTrueVarList "")
+    set(TPL_MPI_FILE_TRACE "")
+    set(FINAL_ENABLED_TPLS "HeaderOnlyTpl 1")
+    set(TEST_MPI_1_SUFFIX "")
+    set(WithSubpackages_TPL_LIBRARIES HeaderOnlyTpl::all_libs)
+    set(WithSubpackages_TPL_LIST HeaderOnlyTpl)
+    set(TribitsExProj_TPL_LIBRARIES HeaderOnlyTpl::all_libs)
+    set(TribitsExProj_TPL_LIST HeaderOnlyTpl)
+    set(TribitsExProj_SHARED_LIB_RPATH_COMMAND_REGEX "")
+  elseif (serialOrMpi STREQUAL "MPI")
+    set(tplEnableMpiArg -DTPL_ENABLE_MPI=ON)
+    set(excludeIfNotTrueVarList "TriBITS_PROJECT_MPI_IS_ENABLED")
+    set(TPL_MPI_FILE_TRACE
+      "-- File Trace: TPL        INCLUDE    .*/core/std_tpls/FindTPLMPI.cmake")
+    set(FINAL_ENABLED_TPLS "MPI HeaderOnlyTpl 2")
+    set(TEST_MPI_1_SUFFIX "_MPI_1")
+    set(WithSubpackages_TPL_LIBRARIES "HeaderOnlyTpl::all_libs;MPI::all_libs")
+    set(WithSubpackages_TPL_LIST "HeaderOnlyTpl;MPI")
+    set(TribitsExProj_TPL_LIBRARIES "HeaderOnlyTpl::all_libs;MPI::all_libs")
+    set(TribitsExProj_TPL_LIST "HeaderOnlyTpl;MPI")
+    set(TribitsExProj_SHARED_LIB_RPATH_COMMAND_REGEX
+      "-Wl,-rpath,.*/${testName}/install/lib")
+  else()
+    message(FATAL_ERROR "Invalid value tplEnableMpiArg='${tplEnableMpiArg}'!")
+  endif()
 
-  TEST_1
-    MESSAGE "Make sure that 'LabelsForSubprojects' is set to list of packages"
-    CMND ${LabelsForSubprojects_CMND_AND_ARGS}
-    PASS_REGULAR_EXPRESSION "${LabelsForSubprojects_REGEX}"
+  tribits_add_advanced_test( ${testBaseName}
+    OVERALL_WORKING_DIRECTORY TEST_NAME
+    OVERALL_NUM_MPI_PROCS 1
+    XHOSTTYPE Darwin
+    EXCLUDE_IF_NOT_TRUE ${excludeIfNotTrueVarList}
 
-  TEST_2
-    MESSAGE "Build the default 'all' target using raw 'make'"
-    CMND make ARGS ${CTEST_BUILD_FLAGS}
-    PASS_REGULAR_EXPRESSION_ALL
-      "Built target simplecxx"
-      "${DEPRECATED_WARNING_1_STR}"
-      "${DEPRECATED_WARNING_2_STR}"
-      "Built target pws_a"
-      "Built target pws_b"
-      "Built target pws_c"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_0
+      MESSAGE "Do the initial configure (and test a lot of things at once)"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS_VAL}
+        ${tplEnableMpiArg}
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+        -DTribitsExProj_ENABLE_Fortran=OFF
+        -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+        -DTribitsExProj_ENABLE_TESTS=ON
+        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj_TRACE_FILE_PROCESSING=ON
+        -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
+        -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
+        -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
+        -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+        -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
+        -DCMAKE_INSTALL_PREFIX=install
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      PASS_REGULAR_EXPRESSION_ALL
+        "Configuring TribitsExProj build directory"
+        "-- PROJECT_SOURCE_DIR="
+        "-- PROJECT_BINARY_DIR="
+        "-- TribitsExProj_TRIBITS_DIR="
+        "-- TriBITS_VERSION_STRING="
+        "-- CMAKE_VERSION="
+        "-- CMAKE_HOST_SYSTEM_NAME="
+        "-- TribitsExProj_HOSTNAME="
 
-  TEST_3
-    MESSAGE "Run all the tests with raw 'ctest'"
-    CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
-    PASS_REGULAR_EXPRESSION_ALL
-      "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
-      "WithSubpackagesA_test_of_a .* Passed"
-      "WithSubpackagesB_test_of_b .* Passed"
-      "WithSubpackagesC_test_of_c .* Passed"
-      "WithSubpackagesC_test_of_c_util.* Passed"
-      "100% tests passed, 0 tests failed out of 6"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+        "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because TribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES='ON'"
+        "NOTE: Setting TribitsExProj_ENABLE_MixedLang=OFF because TribitsExProj_ENABLE_Fortran"
+        "Printing package dependencies ..."
+        "-- TribitsExProj_PACKAGES: SimpleCxx MixedLang WithSubpackages WrapExternal"
+        "-- TribitsExProj_SE_PACKAGES: SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
 
-  TEST_4
-    MESSAGE "Create and configure a dummy project that includes"
-      " WithSubpackagesConfig.cmake from the build tree"
-    CMND ${CMAKE_COMMAND}
-    ARGS
-      -DDUMMY_PROJECT_NAME=DummyProject
-      -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
-      -DEXPORT_VAR_PREFIX=WithSubpackages
-      -DEXPORT_CONFIG_FILE=../cmake_packages/WithSubpackages/WithSubpackagesConfig.cmake
-      -DCMAKE_COMMAND=${CMAKE_COMMAND}
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
-    PASS_REGULAR_EXPRESSION_ALL
-      "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
-      "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
-      "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
-      "WithSubpackages_Fortran_COMPILER = ''"
-      "WithSubpackages_FORTRAN_COMPILER = ''"
-      "WithSubpackages_CXX_FLAGS = '.*'"
-      "WithSubpackages_C_FLAGS = '.*'"
-      "WithSubpackages_Fortran_FLAGS = '.*'"
-      "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
-      "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
-      "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
-      "WithSubpackages_LINKER = '.+'"
-      "WithSubpackages_AR = '.+'"
-      "WithSubpackages_INSTALL_DIR = .*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/install"
-      "WithSubpackages_INCLUDE_DIRS = .+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/b/src;.+/TribitsExampleProject/packages/with_subpackages/b/src;.+/TribitsExampleProject/packages/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/simple_cxx/src;.+/TribitsExampleProject/packages/simple_cxx/src;.+/tpls/HeaderOnlyTpl;.+/TribitsExampleProject/packages/with_subpackages/c"
-      "WithSubpackages_LIBRARY_DIRS = '.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/simple_cxx/src;.+/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/packages/with_subpackages/c'"
-      "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/tribits/examples/tpls/HeaderOnlyTpl'"
-      "WithSubpackages_TPL_LIBRARY_DIRS = ''"
-      "WithSubpackages_TPL_LIBRARIES = ''"
-      "WithSubpackages_MPI_LIBRARIES = ''"
-      "WithSubpackages_MPI_LIBRARY_DIRS = ''"
-      "WithSubpackages_MPI_INCLUDE_DIRS = ''"
-      "WithSubpackages_MPI_EXEC = '${MPI_EXEC}'"
-      "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
-      "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
-      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
-      "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
-      "-- Configuring done"
-      "-- Generating done"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+        "-- SimpleCxx_LIB_REQUIRED_DEP_TPLS: HeaderOnlyTpl"
+        "-- MixedLang: No dependencies!"
+        "-- WithSubpackagesA_LIB_REQUIRED_DEP_PACKAGES: SimpleCxx"
+        "-- WithSubpackagesB_LIB_REQUIRED_DEP_PACKAGES: SimpleCxx"
+        "-- WithSubpackagesB_LIB_OPTIONAL_DEP_PACKAGES: WithSubpackagesA"
+        "-- WithSubpackagesB_TEST_OPTIONAL_DEP_PACKAGES: MixedLang"
+        "-- WithSubpackagesC_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesA WithSubpackagesB"
+        "-- WithSubpackages_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesA"
+        "-- WithSubpackages_LIB_OPTIONAL_DEP_PACKAGES: WithSubpackagesB WithSubpackagesC"
+        "-- WrapExternal_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesA"
+        "-- WrapExternal_LIB_OPTIONAL_DEP_PACKAGES: MixedLang"
+        "-- SimpleCxx: No library dependencies!"
+        "-- WithSubpackagesA_FULL_ENABLED_DEP_PACKAGES: SimpleCxx"
+        "-- WithSubpackagesB_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesA SimpleCxx"
+        "-- WithSubpackagesC_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesB WithSubpackagesA SimpleCxx"
+        "-- WithSubpackages_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesC WithSubpackagesB WithSubpackagesA SimpleCxx"
+        "Explicitly enabled packages on input .by user.:  0"
+        "Explicitly disabled packages on input .by user or by default.:  MixedLang WrapExternal 2"
+        "Enabling all SE packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
+        "Setting TribitsExProj_ENABLE_SimpleCxx=ON"
+        "Setting TribitsExProj_ENABLE_WithSubpackages=ON"
+        "Setting TPL_ENABLE_HeaderOnlyTpl=ON because it is required by the enabled package SimpleCxx"
+        "Set cache entries for optional packages/TPLs and tests/examples for packages actually enabled ..."
+        "Dumping direct dependencies for each SE package ..."
+        "-- SimpleCxx_LIB_ENABLED_DEPENDENCIES: HeaderOnlyTpl"
+        "-- SimpleCxx_LIB_ALL_DEPENDENCIES: HeaderOnlyTpl SimpleTpl"
+        "-- MixedLang_LIB_ALL_DEPENDENCIES: "
+        "-- WithSubpackagesA_LIB_ENABLED_DEPENDENCIES: SimpleCxx"
+        "-- WithSubpackagesA_LIB_ALL_DEPENDENCIES: SimpleCxx"
+        "-- WithSubpackagesB_LIB_ENABLED_DEPENDENCIES: SimpleCxx WithSubpackagesA"
+        "-- WithSubpackagesB_LIB_ALL_DEPENDENCIES: SimpleCxx WithSubpackagesA"
+        "-- WithSubpackagesB_TEST_ALL_DEPENDENCIES: MixedLang"
+        "-- WithSubpackagesC_LIB_ENABLED_DEPENDENCIES: WithSubpackagesA WithSubpackagesB"
+        "-- WithSubpackagesC_LIB_ALL_DEPENDENCIES: WithSubpackagesA WithSubpackagesB"
+        "-- WithSubpackages_LIB_ENABLED_DEPENDENCIES: WithSubpackagesA WithSubpackagesB WithSubpackagesC"
+        "-- WithSubpackages_LIB_ALL_DEPENDENCIES: WithSubpackagesA WithSubpackagesB WithSubpackagesC"
+        "-- WrapExternal_LIB_ALL_DEPENDENCIES: WithSubpackagesA MixedLang"
+        "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
+        "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 5"
+        "Final set of enabled TPLs:  ${FINAL_ENABLED_TPLS}"
+        "Final set of non-enabled packages:  MixedLang WrapExternal 2"
+        "Processing enabled TPL: HeaderOnlyTpl"
+        "-- File Trace: TPL        INCLUDE    .+/TribitsExampleProject/cmake/tpls/FindTPLHeaderOnlyTpl.cmake"
+        "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
+        "Performing Test HAVE_SIMPLECXX___INT64"
+        "Configuring done"
+        "Generating done"
+        "Build files have been written to: .*ExamplesUnitTests/${testName}"
+        "-- File Trace: PROJECT    INCLUDE    .*/TribitsExampleProject/Version.cmake"
+        "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/cmake/CallbackSetupExtraOptions.cmake"
+        "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/PackagesList.cmake"
+        "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/TPLsList.cmake"
+        "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/simple_cxx/cmake/Dependencies.cmake"
+        "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/mixed_lang/cmake/Dependencies.cmake"
+        "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/with_subpackages/cmake/Dependencies.cmake"
+        "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/with_subpackages/a/cmake/Dependencies.cmake"
+        "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/with_subpackages/b/cmake/Dependencies.cmake"
+        "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/with_subpackages/c/cmake/Dependencies.cmake"
+        "-- File Trace: PACKAGE    INCLUDE    .*/TribitsExampleProject/packages/wrap_external/cmake/Dependencies.cmake"
+        "-- File Trace: PROJECT    CONFIGURE  .*/TribitsExampleProject/cmake/ctest/CTestCustom.cmake.in"
+        "-- File Trace: REPOSITORY READ       .*/TribitsExampleProject/Copyright.txt"
+        "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/Version.cmake"
+        "${TPL_MPI_FILE_TRACE}"
+        "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/simple_cxx/CMakeLists.txt"
+        "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/simple_cxx/test/CMakeLists.txt"
+        "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/CMakeLists.txt"
+        "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/a/CMakeLists.txt"
+        "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/a/tests/CMakeLists.txt"
+        "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/b/CMakeLists.txt"
+        "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/b/tests/CMakeLists.txt"
+        "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/c/CMakeLists.txt"
+        "-- File Trace: PACKAGE    ADD_SUBDIR .*/TribitsExampleProject/packages/with_subpackages/c/tests/CMakeLists.txt"
+        "-- File Trace: REPOSITORY INCLUDE    .*/TribitsExampleProject/cmake/CallbackDefineRepositoryPackaging.cmake"
+        "-- File Trace: PROJECT    INCLUDE    .*/TribitsExampleProject/cmake/CallbackDefineProjectPackaging.cmake"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_5
-    MESSAGE "Build 'install' target using raw 'make'"
-    CMND make ARGS install ${CTEST_BUILD_FLAGS}
-    PASS_REGULAR_EXPRESSION_ALL
-      "Install configuration: .RELEASE."
-      "Installing: .*/install/lib/external_packages/HeaderOnlyTpl/HeaderOnlyTplConfig.cmake"
-      "Installing: .*/install/lib/external_packages/HeaderOnlyTpl/HeaderOnlyTplConfigVersion.cmake"
-      "Installing: .+/install/include/TribitsExProj_version.h"
-      "Installing: .+/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake"
-      "Installing: .+/install/lib/cmake/TribitsExProj/TribitsExProjConfigVersion.cmake"
-      "Installing: .+/install/include/TribitsExProjConfig.cmake"
-      "Installing: .+/install/lib/cmake/SimpleCxx/SimpleCxxConfig.cmake"
-      "Installing: .+/install/lib/cmake/SimpleCxx/SimpleCxxTargets.cmake"
-      "Installing: .+/install/lib/cmake/SimpleCxx/SimpleCxxTargets-release.cmake"
-      "Installing: .+/install/lib/libsimplecxx.a"
-      "Installing: .+/install/include/SimpleCxx_HelloWorld.hpp"
-      "Installing: .+/install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake"
-      "Installing: .+/install/lib/libpws_a.a"
-      "Installing: .+/install/include/A.hpp"
-      "Installing: .+/install/lib/cmake/WithSubpackagesA/WithSubpackagesAConfig.cmake"
-      "Installing: .+/install/lib/cmake/WithSubpackagesA/WithSubpackagesATargets.cmake"
-      "Installing: .+/install/lib/cmake/WithSubpackagesA/WithSubpackagesATargets-release.cmake"
-      "Installing: .+/install/lib/libpws_b.a"
-      "Installing: .+/install/include/B.hpp"
-      "Installing: .+/install/lib/cmake/WithSubpackagesB/WithSubpackagesBConfig.cmake"
-      "Installing: .+/install/lib/cmake/WithSubpackagesB/WithSubpackagesBTargets.cmake"
-      "Installing: .+/install/lib/cmake/WithSubpackagesB/WithSubpackagesBTargets-release.cmake"
-      "Installing: .+/install/lib/libpws_c.a"
-      "Installing: .+/install/include/wsp_c/C.hpp"
-      "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCConfig.cmake"
-      "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets.cmake"
-      "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets-release.cmake"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_1
+      MESSAGE "Make sure that 'LabelsForSubprojects' is set to list of packages"
+      CMND ${LabelsForSubprojects_CMND_AND_ARGS}
+      PASS_REGULAR_EXPRESSION "${LabelsForSubprojects_REGEX}"
 
-  TEST_6
-    MESSAGE "Create and configure a dummy project that includes"
-      " WithSubpackagesConfig.cmake from the install tree"
-    CMND ${CMAKE_COMMAND}
-    ARGS
-      -DDUMMY_PROJECT_NAME=DummyProject
-      -DDUMMY_PROJECT_DIR=dummy_client_of_WithSubpackages
-      -DEXPORT_VAR_PREFIX=WithSubpackages
-      -DEXPORT_CONFIG_FILE=../install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake
-      -DCMAKE_COMMAND=${CMAKE_COMMAND}
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
-    PASS_REGULAR_EXPRESSION_ALL
-      "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
-      "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
-      "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
-      "WithSubpackages_Fortran_COMPILER = ''"
-      "WithSubpackages_FORTRAN_COMPILER = ''"
-      "WithSubpackages_CXX_FLAGS = '.*'"
-      "WithSubpackages_C_FLAGS = '.*'"
-      "WithSubpackages_Fortran_FLAGS = '.*'"
-      "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
-      "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
-      "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
-      "WithSubpackages_LINKER = '.+'"
-      "WithSubpackages_AR = '.+'"
-      "WithSubpackages_INSTALL_DIR = '.+/install'"
-      "WithSubpackages_INCLUDE_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../include'"
-      "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
-      "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/examples/tpls/HeaderOnlyTpl'"
-      "WithSubpackages_TPL_LIBRARY_DIRS = ''"
-      "WithSubpackages_TPL_LIBRARIES = ''"
-      "WithSubpackages_MPI_LIBRARIES = ''"
-      "WithSubpackages_MPI_LIBRARY_DIRS = ''"
-      "WithSubpackages_MPI_INCLUDE_DIRS = ''"
-      "WithSubpackages_MPI_EXEC = '${MPI_EXEC}'"
-      "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
-      "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
-      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
-      "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_2
+      MESSAGE "Build the default 'all' target using raw 'make'"
+      CMND make ARGS ${CTEST_BUILD_FLAGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Built target simplecxx"
+        "${DEPRECATED_WARNING_1_STR}"
+        "${DEPRECATED_WARNING_2_STR}"
+        "Built target pws_a"
+        "Built target pws_b"
+        "Built target pws_c"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_7
-    MESSAGE "Create and configure a dummy project that includes"
-      " TribitsExProjConfig.cmake from the install tree"
-    CMND ${CMAKE_COMMAND}
-    ARGS
-      -DDUMMY_PROJECT_NAME=DummyProject
-      -DDUMMY_PROJECT_DIR=dummy_client_of_TribitsExProj
-      -DEXPORT_VAR_PREFIX=TribitsExProj
-      -DEXPORT_CONFIG_FILE=../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake
-      -DCMAKE_COMMAND=${CMAKE_COMMAND}
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
-    PASS_REGULAR_EXPRESSION_ALL
-      "DUMMY_PROJECT_NAME = 'DummyProject'"
-      "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsExProj'"
-      "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
-      "EXPORT_VAR_PREFIX = 'TribitsExProj'"
-      "CMAKE_COMMAND = '${CMAKE_COMMAND}"
-      "Create the dummy client directory ..."
-      "Create dummy dummy_client_of_TribitsExProj/CMakeLists.txt file ..."
-      "Configure the dummy project to print the variables in .*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/dummy_client_of_TribitsExProj ..."
-      "DUMMY_PROJECT_NAME = 'DummyProject'"
-      "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
-      "EXPORT_VAR_PREFIX = 'TribitsExProj'"
-      "Including file '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/dummy_client_of_TribitsExProj/../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
-      "TribitsExProj_CMAKE_BUILD_TYPE = 'RELEASE'"
-      "TribitsExProj_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
-      "TribitsExProj_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
-      "TribitsExProj_Fortran_COMPILER = ''"
-      "TribitsExProj_FORTRAN_COMPILER = ''"
-      "TribitsExProj_CXX_FLAGS = ''"
-      "TribitsExProj_C_FLAGS = ''"
-      "TribitsExProj_Fortran_FLAGS = ''"
-      "TribitsExProj_EXTRA_LD_FLAGS = ''"
-      "TribitsExProj_SHARED_LIB_RPATH_COMMAND = ''"
-      "TribitsExProj_BUILD_SHARED_LIBS = 'FALSE'"
-      "TribitsExProj_LINKER = '.*'"
-      "TribitsExProj_AR = '.*'"
-      "TribitsExProj_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/install'"
-      "TribitsExProj_INCLUDE_DIRS = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/install/include'"
-      "TribitsExProj_LIBRARY_DIRS = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/install/lib'"
-      "TribitsExProj_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "TribitsExProj_TPL_INCLUDE_DIRS = '.*/examples/tpls/HeaderOnlyTpl"
-      "TribitsExProj_TPL_LIBRARY_DIRS = ''"
-      "TribitsExProj_TPL_LIBRARIES = ''"
-      "TribitsExProj_MPI_LIBRARIES = ''"
-      "TribitsExProj_MPI_LIBRARY_DIRS = ''"
-      "TribitsExProj_MPI_INCLUDE_DIRS = ''"
-      "TribitsExProj_MPI_EXEC = '.*'"
-      "TribitsExProj_MPI_EXEC_MAX_NUMPROCS = '[1-9]*'"  # Is null for an MPI build
-      "TribitsExProj_MPI_EXEC_NUMPROCS_FLAG = '.*'"
-      "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]SimpleCxx'"
-      "TribitsExProj_TPL_LIST = 'HeaderOnlyTpl"  # Must work for no MPI too
-      "-- Configuring done"
-      "-- Generating done"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_3
+      MESSAGE "Run all the tests with raw 'ctest'"
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+      PASS_REGULAR_EXPRESSION_ALL
+        "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
+        "WithSubpackagesA_test_of_a .* Passed"
+        "WithSubpackagesB_test_of_b .* Passed"
+        "WithSubpackagesC_test_of_c .* Passed"
+        "WithSubpackagesC_test_of_c_util.* Passed"
+        "100% tests passed, 0 tests failed out of 6"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Add test for the components parts of <Project>Config.cmake ...
+    TEST_4
+      MESSAGE "Create and configure a dummy project that includes"
+        " WithSubpackagesConfig.cmake from the build tree"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -DDUMMY_PROJECT_NAME=DummyProject
+        -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
+        -DEXPORT_VAR_PREFIX=WithSubpackages
+        -DEXPORT_CONFIG_FILE=../cmake_packages/WithSubpackages/WithSubpackagesConfig.cmake
+        -DCMAKE_COMMAND=${CMAKE_COMMAND}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
+      PASS_REGULAR_EXPRESSION_ALL
+        "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
+        "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+        "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+        "WithSubpackages_Fortran_COMPILER = ''"
+        "WithSubpackages_FORTRAN_COMPILER = ''"
+        "WithSubpackages_CXX_FLAGS = '.*'"
+        "WithSubpackages_C_FLAGS = '.*'"
+        "WithSubpackages_Fortran_FLAGS = '.*'"
+        "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
+        "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
+        "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
+        "WithSubpackages_LINKER = '.+'"
+        "WithSubpackages_AR = '.+'"
+        "WithSubpackages_INSTALL_DIR = .*/${testName}/install"
+        "WithSubpackages_INCLUDE_DIRS = ''"
+        "WithSubpackages_LIBRARY_DIRS = ''"
+        "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
+        "WithSubpackages_TPL_INCLUDE_DIRS = ''"
+        "WithSubpackages_TPL_LIBRARY_DIRS = ''"
+        "WithSubpackages_TPL_LIBRARIES = '${WithSubpackages_TPL_LIBRARIES}'"
+        "WithSubpackages_MPI_LIBRARIES = ''"
+        "WithSubpackages_MPI_LIBRARY_DIRS = ''"
+        "WithSubpackages_MPI_INCLUDE_DIRS = ''"
+        "WithSubpackages_MPI_EXEC = '${MPI_EXEC}'"
+        "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
+        "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
+        "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
+        "WithSubpackages_TPL_LIST = '${WithSubpackages_TPL_LIST}'"
+        "-- Configuring done"
+        "-- Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Add test that actually builds a C++ project and links to these libs
-  # to make sure this works!
+    TEST_5
+      MESSAGE "Build 'install' target using raw 'make'"
+      CMND make ARGS install ${CTEST_BUILD_FLAGS}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Install configuration: .RELEASE."
+        "Installing: .*/install/lib/external_packages/HeaderOnlyTpl/HeaderOnlyTplConfig.cmake"
+        "Installing: .*/install/lib/external_packages/HeaderOnlyTpl/HeaderOnlyTplConfigVersion.cmake"
+        "Installing: .+/install/include/TribitsExProj_version.h"
+        "Installing: .+/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake"
+        "Installing: .+/install/lib/cmake/TribitsExProj/TribitsExProjConfigVersion.cmake"
+        "Installing: .+/install/include/TribitsExProjConfig.cmake"
+        "Installing: .+/install/lib/cmake/SimpleCxx/SimpleCxxConfig.cmake"
+        "Installing: .+/install/lib/cmake/SimpleCxx/SimpleCxxTargets.cmake"
+        "Installing: .+/install/lib/cmake/SimpleCxx/SimpleCxxTargets-release.cmake"
+        "Installing: .+/install/lib/libsimplecxx${libExtRegex}"
+        "Installing: .+/install/include/SimpleCxx_HelloWorld.hpp"
+        "Installing: .+/install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake"
+        "Installing: .+/install/lib/libpws_a${libExtRegex}"
+        "Installing: .+/install/include/A.hpp"
+        "Installing: .+/install/lib/cmake/WithSubpackagesA/WithSubpackagesAConfig.cmake"
+        "Installing: .+/install/lib/cmake/WithSubpackagesA/WithSubpackagesATargets.cmake"
+        "Installing: .+/install/lib/cmake/WithSubpackagesA/WithSubpackagesATargets-release.cmake"
+        "Installing: .+/install/lib/libpws_b${libExtRegex}"
+        "Installing: .+/install/include/B.hpp"
+        "Installing: .+/install/lib/cmake/WithSubpackagesB/WithSubpackagesBConfig.cmake"
+        "Installing: .+/install/lib/cmake/WithSubpackagesB/WithSubpackagesBTargets.cmake"
+        "Installing: .+/install/lib/cmake/WithSubpackagesB/WithSubpackagesBTargets-release.cmake"
+        "Installing: .+/install/lib/libpws_c${libExtRegex}"
+        "Installing: .+/install/include/wsp_c/C.hpp"
+        "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCConfig.cmake"
+        "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets.cmake"
+        "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets-release.cmake"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_8
-    MESSAGE "Create the tarball"
-    CMND make ARGS package_source
-    PASS_REGULAR_EXPRESSION_ALL
-      "Run CPack packaging tool for source..."
-      "CPack: Create package using TGZ"
-      "CPack: Install projects"
-      "CPack: - Install directory: .*/examples/TribitsExampleProject"
-      "CPack: Create package"
-      "CPack: - package: .*/ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/tribitsexproj-1.1-Source.tar.gz generated."
-      "CPack: Create package using TBZ2"
-      "CPack: Install projects"
-      "CPack: - Install directory: .*/examples/TribitsExampleProject"
-      "CPack: Create package"
-      "CPack: - package: .*/ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran/tribitsexproj-1.1-Source.tar.bz2 generated."
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_6
+      MESSAGE "Create and configure a dummy project that includes"
+        " WithSubpackagesConfig.cmake from the install tree"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -DDUMMY_PROJECT_NAME=DummyProject
+        -DDUMMY_PROJECT_DIR=dummy_client_of_WithSubpackages
+        -DEXPORT_VAR_PREFIX=WithSubpackages
+        -DEXPORT_CONFIG_FILE=../install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake
+        -DCMAKE_COMMAND=${CMAKE_COMMAND}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
+      PASS_REGULAR_EXPRESSION_ALL
+        "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
+        "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+        "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+        "WithSubpackages_Fortran_COMPILER = ''"
+        "WithSubpackages_FORTRAN_COMPILER = ''"
+        "WithSubpackages_CXX_FLAGS = '.*'"
+        "WithSubpackages_C_FLAGS = '.*'"
+        "WithSubpackages_Fortran_FLAGS = '.*'"
+        "WithSubpackages_EXTRA_LD_FLAGS = '.*'"
+        "WithSubpackages_SHARED_LIB_RPATH_COMMAND = '.*'"
+        "WithSubpackages_BUILD_SHARED_LIBS = '.*'"
+        "WithSubpackages_LINKER = '.+'"
+        "WithSubpackages_AR = '.+'"
+        "WithSubpackages_INSTALL_DIR = '.+/install'"
+        "WithSubpackages_INCLUDE_DIRS = ''"
+        "WithSubpackages_LIBRARY_DIRS = ''"
+        "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
+        "WithSubpackages_TPL_INCLUDE_DIRS = ''"
+        "WithSubpackages_TPL_LIBRARY_DIRS = ''"
+        "WithSubpackages_TPL_LIBRARIES = '${WithSubpackages_TPL_LIBRARIES}'"
+        "WithSubpackages_MPI_LIBRARIES = ''"
+        "WithSubpackages_MPI_LIBRARY_DIRS = ''"
+        "WithSubpackages_MPI_INCLUDE_DIRS = ''"
+        "WithSubpackages_MPI_EXEC = '${MPI_EXEC}'"
+        "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
+        "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
+        "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
+        "WithSubpackages_TPL_LIST = '${WithSubpackages_TPL_LIST}'"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_9
-    MESSAGE "Untar the tarball"
-    CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+    TEST_7
+      MESSAGE "Create and configure a dummy project that includes"
+        " TribitsExProjConfig.cmake from the install tree"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -DDUMMY_PROJECT_NAME=DummyProject
+        -DDUMMY_PROJECT_DIR=dummy_client_of_TribitsExProj
+        -DEXPORT_VAR_PREFIX=TribitsExProj
+        -DEXPORT_CONFIG_FILE=../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake
+        -DCMAKE_COMMAND=${CMAKE_COMMAND}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
+      PASS_REGULAR_EXPRESSION_ALL
+        "DUMMY_PROJECT_NAME = 'DummyProject'"
+        "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsExProj'"
+        "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
+        "EXPORT_VAR_PREFIX = 'TribitsExProj'"
+        "CMAKE_COMMAND = '${CMAKE_COMMAND}"
+        "Create the dummy client directory ..."
+        "Create dummy dummy_client_of_TribitsExProj/CMakeLists.txt file ..."
+        "Configure the dummy project to print the variables in .*/${testName}/dummy_client_of_TribitsExProj ..."
+        "DUMMY_PROJECT_NAME = 'DummyProject'"
+        "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
+        "EXPORT_VAR_PREFIX = 'TribitsExProj'"
+        "Including file '.*/${testName}/dummy_client_of_TribitsExProj/../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
+        "TribitsExProj_CMAKE_BUILD_TYPE = 'RELEASE'"
+        "TribitsExProj_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
+        "TribitsExProj_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
+        "TribitsExProj_Fortran_COMPILER = ''"
+        "TribitsExProj_FORTRAN_COMPILER = ''"
+        "TribitsExProj_CXX_FLAGS = ''"
+        "TribitsExProj_C_FLAGS = ''"
+        "TribitsExProj_Fortran_FLAGS = ''"
+        "TribitsExProj_EXTRA_LD_FLAGS = ''"
+        "TribitsExProj_SHARED_LIB_RPATH_COMMAND = '${TribitsExProj_SHARED_LIB_RPATH_COMMAND_REGEX}'"
+        "TribitsExProj_BUILD_SHARED_LIBS = '${BUILD_SHARED_LIBS_VAL}'"
+        "TribitsExProj_LINKER = '.*'"
+        "TribitsExProj_AR = '.*'"
+        "TribitsExProj_INSTALL_DIR = '.*/${testName}/install'"
+        "TribitsExProj_INCLUDE_DIRS = '.*/${testName}/install/include'"
+        "TribitsExProj_LIBRARY_DIRS = ''"
+        "TribitsExProj_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
+        "TribitsExProj_TPL_INCLUDE_DIRS = ''"
+        "TribitsExProj_TPL_LIBRARY_DIRS = ''"
+        "TribitsExProj_TPL_LIBRARIES = '${TribitsExProj_TPL_LIBRARIES}'"
+        "TribitsExProj_MPI_LIBRARIES = ''"
+        "TribitsExProj_MPI_LIBRARY_DIRS = ''"
+        "TribitsExProj_MPI_INCLUDE_DIRS = ''"
+        "TribitsExProj_MPI_EXEC = '.*'"
+        "TribitsExProj_MPI_EXEC_MAX_NUMPROCS = '[1-9]*'"  # Is null for an MPI build
+        "TribitsExProj_MPI_EXEC_NUMPROCS_FLAG = '.*'"
+        "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]SimpleCxx'"
+        "TribitsExProj_TPL_LIST = '${TribitsExProj_TPL_LIST}'"
+        "-- Configuring done"
+        "-- Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_10
-    MESSAGE "Make sure right directoires are excluced"
-    CMND diff
-    ARGS -qr
-      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
-      tribitsexproj-1.1-Source
-    PASS_REGULAR_EXPRESSION_ALL
-      "Only in .*/TribitsExampleProject/cmake: ctest"
-      ${REGEX_FOR_GITIGNORE}
-      "Only in .*/TribitsExampleProject/packages: mixed_lang"
-      "Only in .*/TribitsExampleProject/packages: wrap_external"
-      "Only in .*/TribitsExampleProject/packages/with_subpackages/b: ExcludeFromRelease.txt"
-      "Only in .*/TribitsExampleProject/packages/with_subpackages/b/src: AlsoExcludeFromTarball.txt"
-    # NOTE: We don't check return code because diff returns nonzero
+    # ToDo: Add test for the components parts of <Project>Config.cmake ...
 
-  )
+    # ToDo: Add test that actually builds a C++ project and links to these libs
+    # to make sure this works!
+
+    TEST_8
+      MESSAGE "Create the tarball"
+      CMND make ARGS package_source
+      PASS_REGULAR_EXPRESSION_ALL
+        "Run CPack packaging tool for source..."
+        "CPack: Create package using TGZ"
+        "CPack: Install projects"
+        "CPack: - Install directory: .*/examples/TribitsExampleProject"
+        "CPack: Create package"
+        "CPack: - package: .*/ExamplesUnitTests/${testName}/tribitsexproj-1.1-Source.tar.gz generated."
+        "CPack: Create package using TBZ2"
+        "CPack: Install projects"
+        "CPack: - Install directory: .*/examples/TribitsExampleProject"
+        "CPack: Create package"
+        "CPack: - package: .*/ExamplesUnitTests/${testName}/tribitsexproj-1.1-Source.tar.bz2 generated."
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_9
+      MESSAGE "Untar the tarball"
+      CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_10
+      MESSAGE "Make sure right directoires are excluced"
+      CMND diff
+      ARGS -qr
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+        tribitsexproj-1.1-Source
+      PASS_REGULAR_EXPRESSION_ALL
+        "Only in .*/TribitsExampleProject/cmake: ctest"
+        ${REGEX_FOR_GITIGNORE}
+        "Only in .*/TribitsExampleProject/packages: mixed_lang"
+        "Only in .*/TribitsExampleProject/packages: wrap_external"
+        "Only in .*/TribitsExampleProject/packages/with_subpackages/b: ExcludeFromRelease.txt"
+        "Only in .*/TribitsExampleProject/packages/with_subpackages/b/src: AlsoExcludeFromTarball.txt"
+      # NOTE: We don't check return code because diff returns nonzero
+
+    )
+
+endfunction()
+
+TribitsExampleProject_ALL_ST_NoFortran(STATIC  SERIAL)
+TribitsExampleProject_ALL_ST_NoFortran(SHARED  MPI)
 
 
 ########################################################################
@@ -972,6 +1025,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       -DTribitsExProj_WRITE_NINJA_MAKEFILES=OFF
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTPL_ENABLE_MPI=OFF
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
@@ -1017,7 +1071,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
   TEST_4 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
-      "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
+      "SimpleCxx_HelloWorldTests .* Passed"
       "WithSubpackagesA_test_of_a .* Passed"
       "WithSubpackagesB_test_of_b .* Passed"
       "WithSubpackagesC_test_of_c .* Passed"
@@ -1038,7 +1092,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja/install'"
       "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/tribits/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackages_TPL_INCLUDE_DIRS = ''"
       "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1062,9 +1116,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja/install'"
-      "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
+      "WithSubpackages_LIBRARY_DIRS = ''"
       "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackages_TPL_INCLUDE_DIRS = ''"
       "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1112,6 +1166,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
       -GNinja
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTPL_ENABLE_MPI=OFF
       -DTribitsExProj_ENABLE_Fortran=OFF
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
@@ -1141,7 +1196,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
   TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
-      "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
+      "SimpleCxx_HelloWorldTests .* Passed"
       "WithSubpackagesA_test_of_a .* Passed"
       "WithSubpackagesB_test_of_b .* Passed"
       "WithSubpackagesC_test_of_c .* Passed"
@@ -1162,7 +1217,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles/install'"
       "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/tribits/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackages_TPL_INCLUDE_DIRS = ''"
       "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1186,9 +1241,9 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles/install'"
-      "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
+      "WithSubpackages_LIBRARY_DIRS = ''"
       "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = '.+/examples/tpls/HeaderOnlyTpl'"
+      "WithSubpackages_TPL_INCLUDE_DIRS = ''"
       "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1357,8 +1412,8 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran
     MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_INSTALL_DIR = '.+/install'"
-      "WithSubpackages_INCLUDE_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../include'"
-      "WithSubpackages_LIBRARY_DIRS = '.+/install/lib/cmake/WithSubpackages/../../../lib'"
+      "WithSubpackages_INCLUDE_DIRS = ''"
+      "WithSubpackages_LIBRARY_DIRS = ''"
       "WithSubpackages_LIBRARIES = 'WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
       "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesA.SimpleCxx'"
   )
@@ -1512,31 +1567,31 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
   #
 
   TEST_1
-    MESSAGE "Show deprecated warning when trying to link lib from upstream SE package."
+    MESSAGE "Show deprecated warning when trying to link lib from upstream package."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=ON
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this SE package"
+      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this package"
       "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   TEST_2
-    MESSAGE "Show deprecated warning when passing a lib from this SE package through IMPORTEDLIBS."
+    MESSAGE "Show deprecated warning when passing a lib from this package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
       -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this SE package "
+      "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this package "
       "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
 
   TEST_3
     MESSAGE "Show deprecated warning when passing a lib from upstream"
-      " SE package through IMPORTEDLIBS."
+      " package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
       -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
@@ -1612,7 +1667,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       "Configuring incomplete, errors occurred!"
 
   TEST_9
-    MESSAGE "Show error when trying to link SE package lib using TESTONLYLIBS"
+    MESSAGE "Show error when trying to link package lib using TESTONLYLIBS"
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=ON
       -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=
@@ -1696,31 +1751,31 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
   #
 
   TEST_1
-    MESSAGE "Show deprecated warning when trying to link lib from upstream SE package."
+    MESSAGE "Show deprecated warning when trying to link lib from upstream package."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=ON
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this SE package"
+      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this package"
       "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   TEST_2
-    MESSAGE "Show deprecated warning when passing a lib from this SE package through IMPORTEDLIBS."
+    MESSAGE "Show deprecated warning when passing a lib from this package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
       -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this SE package "
+      "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this package "
       "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
 
   TEST_3
     MESSAGE "Show deprecated warning when passing a lib from upstream"
-      " SE package through IMPORTEDLIBS."
+      " package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
       -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
@@ -1796,7 +1851,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       "Configuring incomplete, errors occurred!"
 
   TEST_9
-    MESSAGE "Show error when trying to link SE package lib using TESTONLYLIBS"
+    MESSAGE "Show error when trying to link package lib using TESTONLYLIBS"
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=ON
       -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=
@@ -2183,47 +2238,22 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
       "HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
       "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
 
-      "SimpleCxx_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl'"
-      "SimpleCxx_LIBRARY_DIRS='.+/packages/simple_cxx/src'"
       "SimpleCxx_LIBRARIES='SimpleCxx::simplecxx'"
 
-      "WithSubpackagesA_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl'"
-      "WithSubpackagesA_LIBRARY_DIRS='.+/packages/with_subpackages/a[;].+/packages/simple_cxx/src'"
       "WithSubpackagesA_LIBRARIES='WithSubpackagesA::pws_a'"
 
-      "b_test_utils_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl[;].+/TribitsExampleProject/packages/with_subpackages/b/tests/testlib'"
-
-      "WithSubpackagesB_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl'"
-      "WithSubpackagesB_LIBRARY_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src'"
       "WithSubpackagesB_LIBRARIES='WithSubpackagesB::pws_b'"
 
-      "WithSubpackagesC_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl[;].+/TribitsExampleProject/packages/with_subpackages/c'"
-      "WithSubpackagesC_LIBRARY_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/c'"
       "WithSubpackagesC_LIBRARIES='WithSubpackagesC::pws_c'"
 
-      "WithSubpackages_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/b/src[;].+/TribitsExampleProject/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl[;].+/TribitsExampleProject/packages/with_subpackages/c'"
-      "WithSubpackages_LIBRARY_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/b/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/simple_cxx/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_WrapExternal_VerboseConfigure/packages/with_subpackages/c'"
       "WithSubpackages_LIBRARIES='WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a'"
 
-      "WrapExternal_INCLUDE_DIRS='.+/packages/wrap_external/external_func'"
-      "WrapExternal_LIBRARY_DIRS=''"
       "WrapExternal_LIBRARIES='external_func[;]pws_a'"
 
       "pws_b_TARGET_NAME='pws_b'"
       "b_test_TARGET_NAME='WithSubpackagesB_b_test'"
       "test_of_b_TEST_NAME='WithSubpackagesB_test_of_b'"
       "c_util_TEST_NAME='WithSubpackagesC_test_of_c_util${TEST_MPI_1_SUFFIX}'"
-
-      "-- simplecxx:LINK_LIBS=''"
-      "-- HelloWorldTests:LINK_LIBS='SimpleCxx::simplecxx'"
-      "-- pws_a:LINK_LIBS='SimpleCxx::simplecxx'"
-      "-- a_test:LINK_LIBS='WithSubpackagesA::pws_a'"
-      "-- pws_b:LINK_LIBS='WithSubpackagesA::pws_a;SimpleCxx::simplecxx'"
-      "-- b_test:LINK_LIBS='WithSubpackagesB::pws_b'"
-      "-- c_util:LINK_LIBS='WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a'"
-      "-- pws_c:LINK_LIBS='WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a'"
-      "-- c_test:LINK_LIBS='WithSubpackagesC::pws_c'"
-      "-- run_external_func:LINK_LIBS='external_func[;]pws_a'"
 
   )
 
@@ -2282,22 +2312,11 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a/CMakeLists[.]txt"
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a/tests/CMakeLists[.]txt"
 
-      "-- WithSubpackagesA_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl'"
-
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/CMakeLists[.]txt"
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/tests/CMakeLists[.]txt"
 
-      "-- WithSubpackagesB_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src[;].+/examples/tpls/HeaderOnlyTpl'"
-      "-- WithSubpackagesB_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/a[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src'"
-
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/c/CMakeLists[.]txt"
       "-- File Trace: PACKAGE    ADD_SUBDIR .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/c/tests/CMakeLists[.]txt"
-
-      "-- WithSubpackagesC_INCLUDE_DIRS='.*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/c'"
-      "-- WithSubpackagesC_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/a[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/c'"
-
-     "-- WithSubpackages_INCLUDE_DIRS='.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/b/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/packages/simple_cxx/src;.+/examples/tpls/HeaderOnlyTpl;.+/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/c'"
-      "-- WithSubpackages_LIBRARY_DIRS='.*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/b/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/a[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/packages/simple_cxx/src[;].*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/with_subpackages/c'"
 
   TEST_4 CMND make
     ARGS ${CTEST_BUILD_FLAGS}
@@ -2918,10 +2937,10 @@ tribits_add_advanced_test( TribitsExampleProject_compiler_flags
   )
 # NOTE: The above tests checks the compiler flags that are set by TriBITS for
 # the various use cases.  This is a hard test to make portable because we
-# really need to check that the comiler options are set all the way down.  To
+# really need to check that the compiler options are set all the way down.  To
 # make this more portable, we only do this on Linux systems and only with GCC.
 #
-# We actaully build known targets with 'make VERBOSE=1 <target>' and then grep
+# We actually build known targets with 'make VERBOSE=1 <target>' and then grep
 # the output to make sure the compiler flags drill down all the way to the
 # actual targets.
 #
@@ -2931,3 +2950,62 @@ tribits_add_advanced_test( TribitsExampleProject_compiler_flags
 # NOTE: Above, we had to switch to Ninja and 'cmake --build . -v [--target
 # <target>] in order to get verbose output when run inside of a cmake -S
 # script with CMake 3.23-rc2.  Not sure why this is but this is better anyway.
+
+
+###################################################################################
+
+
+tribits_add_advanced_test( TribitsExampleProject_extra_link_flags
+  OVERALL_WORKING_DIRECTORY  TEST_NAME
+  OVERALL_NUM_MPI_PROCS  1
+  EXCLUDE_IF_NOT_TRUE  IS_REAL_LINUX_SYSTEM  ${PROJECT_NAME}_ENABLE_Fortran
+    NINJA_EXE
+
+  TEST_0
+    MESSAGE "Configure by setting <Project>_EXTRA_LINK_FLAGS"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -GNinja
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTPL_ENABLE_SimpleTpl=ON
+      -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_STATIC_DIR}/install/include
+      -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_STATIC_DIR}/install/lib
+      -DTribitsExProj_EXTRA_LINK_FLAGS="-lgfortran -ldl"
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Processing enabled TPL: TribitsExProjTribitsLastLib"
+      "TPL_TribitsExProjTribitsLastLib_LIBRARIES='-lgfortran[;]-ldl'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+  # NOTE: Above, we use two libraries to ensure that the logic in TriBITS can
+  # handle these correctly.
+
+  TEST_1
+    MESSAGE "Build verbose to check the link lines"
+    CMND ${CMAKE_COMMAND} ARGS --build . -v
+    PASS_REGULAR_EXPRESSION_ALL
+      "-o packages/simple_cxx/src/simplecxx-helloworld .* packages/simple_cxx/src/libsimplecxx.a +${SimpleTpl_install_STATIC_DIR}/install/lib/libsimpletpl.a +-lgfortran +-ldl"
+      "-o packages/mixed_lang/test/MixedLang_RayTracerTests.exe  packages/mixed_lang/src/libmixedlang.a +-lgfortran +-ldl"
+      "-o packages/with_subpackages/c/c_util +packages/with_subpackages/b/src/libpws_b.a +packages/with_subpackages/a/libpws_a.a +packages/simple_cxx/src/libsimplecxx.a +${SimpleTpl_install_STATIC_DIR}/install/lib/libsimpletpl.a +-lgfortran +-ldl"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  ADDED_TEST_NAME_OUT TribitsExampleProject_extra_link_flags_NAME
+  )
+  # NOTE: The above test ensures that <Project>_EXTRA_LINK_FLAGS is handled
+  # correctly.  Note that the package MixedLang has no TPL dependencies so
+  # that fact that the extra libs gets tacked on to the end proves that they
+  # get sets even for packages without TPLs.  The package SimpleCxx that
+  # depends on SimpleTPL proves that the extra libs get tacked on after the
+  # TPL's libs.  Also, the fact that the extra libs are tacked on at the very
+  # end of the link lik for the 'c_util' exec shows that CMake is respecting
+  # the dependency of libmixedlang.a on these extra libs.  This test also
+  # shows that TriBITS and CMake do a good job of not listing the same libs
+  # more than once.
+
+if (TribitsExampleProject_extra_link_flags_NAME)
+  set_tests_properties(${TribitsExampleProject_extra_link_flags_NAME}
+    PROPERTIES DEPENDS ${SimpleTpl_install_STATIC_NAME} )
+endif()

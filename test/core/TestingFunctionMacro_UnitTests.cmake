@@ -1356,6 +1356,23 @@ function(unittest_tribits_add_test_basic)
     "NAME;${PACKEXEN};COMMAND;/some/abs/path/${PACKEXEN}.exe;arg1"
     )
 
+
+  #
+  # ADD_DIR_TO_NAME
+  #
+
+  message("Add a test with ADD_DIR_TO_NAME")
+  set(PACKAGE_SOURCE_DIR "/base/project/package/mypackage")
+  set(CMAKE_CURRENT_SOURCE_DIR "/base/project/package/mypackage/tests/unit-tests/test1")
+  global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
+  tribits_add_test( ${EXEN} ADD_DIR_TO_NAME ARGS arg1 )
+  unittest_compare_const(
+    TRIBITS_ADD_TEST_ADD_TEST_INPUT
+    "NAME;${PACKAGE_NAME}_tests_unit-tests_test1_${EXEN};COMMAND;${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_tests_unit-tests_test1_${EXEN}.exe;arg1"
+    )
+  unset(PACKAGE_SOURCE_DIR)
+  unset(CMAKE_CURRENT_SOURCE_DIR)
+
   #
   # <fullTestName>_EXTRA_ARGS
   #
@@ -4627,4 +4644,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(702)
+unittest_final_result(703)
