@@ -416,10 +416,9 @@ function(tribits_add_executable EXE_NAME)
   #
 
   target_link_libraries(${EXE_BINARY_NAME} PUBLIC ${${PACKAGE_NAME}_LIBRARIES})
-  foreach(depPkg IN LISTS ${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES)
-    target_link_libraries(${EXE_BINARY_NAME} PUBLIC ${depPkg}::all_libs)
-  endforeach()
-  foreach(depPkg IN LISTS ${PACKAGE_NAME}_TEST_ENABLED_DEPENDENCIES)
+  foreach(depPkg IN LISTS ${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES
+      ${PACKAGE_NAME}_TEST_ENABLED_DEPENDENCIES
+    )
     target_link_libraries(${EXE_BINARY_NAME} PUBLIC ${depPkg}::all_libs)
   endforeach()
   foreach(testOnlyLib ${PARSE_TESTONLYLIBS})
