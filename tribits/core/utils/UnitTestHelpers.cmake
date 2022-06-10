@@ -40,6 +40,8 @@
 include(CMakeParseArguments)
 include(GlobalSet)
 
+cmake_policy(SET CMP0007 NEW)
+
 
 # @MACRO: unittest_initialize_vars()
 #
@@ -159,11 +161,6 @@ endfunction()
 #
 function(unittest_string_block_compare  stringVar  stringExpected)
 
-  # Don't ignore empty elements in list() operations (they are very important
-  # here)
-  cmake_policy(PUSH)
-  cmake_policy(SET CMP0007 NEW)
-
   message("\nCheck: ${stringVar} equals expected string:")
 
   math( EXPR NUMRUN ${UNITTEST_OVERALL_NUMRUN}+1 )
@@ -232,8 +229,6 @@ function(unittest_string_block_compare  stringVar  stringExpected)
     math( EXPR NUMPASSED ${UNITTEST_OVERALL_NUMPASSED}+1 )
     global_set(UNITTEST_OVERALL_NUMPASSED ${NUMPASSED})
   endif()
-
-  cmake_policy(POP)
 
 endfunction()
 

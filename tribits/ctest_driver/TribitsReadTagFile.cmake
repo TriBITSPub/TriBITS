@@ -1,3 +1,6 @@
+cmake_policy(SET CMP0007 NEW)
+
+
 # @FUNCTION: tribits_read_ctest_tag_file()
 #
 # Read in the <build>/Testing/TAG file contents
@@ -10,7 +13,6 @@
 function(tribits_read_ctest_tag_file  tagFileIn
     buildStartTimeOut  cdashGroupOut  cdashModelOut
   )
-  cmake_policy(SET CMP0007 NEW)
   file(READ "${tagFileIn}" tagFileStr)
   string(REPLACE "\n" ";" tagFileStrList "${tagFileStr}")
   list(GET tagFileStrList 0 buildStartTime)
