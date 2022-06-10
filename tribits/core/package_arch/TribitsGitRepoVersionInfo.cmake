@@ -83,24 +83,17 @@ function(tribits_git_repo_sha1  gitRepoDir  gitRepoSha1Out)
   set(gitRepoSha1 "")
   if (failureMsg STREQUAL "")
     execute_process(
-      COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:"%H"
+      COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%H"
       WORKING_DIRECTORY  ${gitRepoDir}
       RESULT_VARIABLE  gitCmndRtn  OUTPUT_VARIABLE  gitCmndOutput
       )
-    # NOTE: Above we have to add quotes '"' or CMake will not accept the
-    # command.  However, git will put those quotes in the output so we have to
-    # strip them out below!
 
     if (NOT gitCmndRtn STREQUAL 0)
       set(failureMsg "ERROR: ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0 for repo ${gitRepoDir}!")
     else()
-      # Strip the quotes off :-(
-      string(LENGTH "${gitCmndOutput}" gitCmndOutputLen)
-      math(EXPR outputNumCharsToKeep "${gitCmndOutputLen}-2")
-      string(SUBSTRING "${gitCmndOutput}" 1 ${outputNumCharsToKeep} gitRepoSha1)
+      set(gitRepoSha1 "${gitCmndOutput}")
     endif()
   endif()
-  # ToDo: Factor above out into its own function!
 
   if (NOT  failureMsg  STREQUAL "" AND  PARSE_FAILURE_MESSAGE_OUT  STREQUAL "")
     message(FATAL_ERROR "${failureMsg}")
