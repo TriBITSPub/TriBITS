@@ -48,7 +48,6 @@ include(AppendStringVar)
 include(TribitsStandardizePaths)
 
 
-#
 # @FUNCTION: tribits_process_enabled_tpl()
 #
 # Process an enabled TPL's FindTPL${TPL_NAME}.cmake module.

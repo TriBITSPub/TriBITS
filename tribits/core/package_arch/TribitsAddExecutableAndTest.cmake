@@ -78,7 +78,7 @@ macro(tribits_add_test_wrapper)
   endif()
 endmacro()
 
-#
+
 # @FUNCTION: tribits_add_executable_and_test()
 #
 # Add an executable and a test (or several tests) all in one shot (just calls
