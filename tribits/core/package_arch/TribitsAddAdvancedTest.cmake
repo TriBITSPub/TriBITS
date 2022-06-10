@@ -46,7 +46,13 @@ include(AppendStringVar)
 include(PrintVar)
 
 
-#
+# Avoid quoted strings lookup variables
+cmake_policy(SET CMP0054 NEW)
+# NOTE: For some reason, setting this policy at the top level with TriBITS
+# in TribitsCMakePolices.cmake does not affect this function.  Therefore, I
+# have to set it again here.
+
+
 # @FUNCTION: tribits_add_advanced_test()
 #
 # Function that creates an advanced test defined by stringing together one or
@@ -900,11 +906,6 @@ function(tribits_add_advanced_test TEST_NAME_IN)
     set(TEST_NAME ${TEST_NAME_IN})
   endif()
 
-  # Avoid quoted strings lookup variables
-  cmake_policy(SET CMP0054 NEW)
-  # NOTE: For some reason, setting this policy at the top level with TriBITS
-  # in TribitsCMakePolices.cmake does not affect this function.  Therefore, I
-  # have to set it again here.
 
   #
   # A) Parse the overall arguments and figure out how many tests

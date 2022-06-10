@@ -39,6 +39,8 @@
 
 include(TribitsAddTestHelpers)
 
+cmake_policy(SET CMP0007 NEW) # Don't ignore empty list elements
+
 
 # @FUNCTION: tribits_add_test()
 #
@@ -814,8 +816,6 @@ function(tribits_add_test EXE_NAME)
     message("")
     message("TRIBITS_ADD_TEST: ${EXE_NAME} ${ARGN}")
   endif()
-
-  cmake_policy(SET CMP0007 NEW) # Don't ignore empty list elements
 
   global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
   global_set(TRIBITS_SET_TEST_PROPERTIES_INPUT)

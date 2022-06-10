@@ -41,6 +41,8 @@ include(TribitsGeneralMacros)
 
 include(MessageWrapper)
 
+cmake_policy(SET CMP0057 NEW) # Support if ( ... IN_LIST ... )
+
 
 # @FUNCTION: tribits_external_package_write_config_file()
 #
@@ -458,7 +460,6 @@ function(tribits_external_package_process_libraries_list_library_entry
     tplName  libentry  libEntryType
     libTargetsInOut  lastLibProcessedInOut  configFileStrInOut
   )
-  cmake_policy(SET CMP0057 NEW) # Support if ( ... IN_LIST ... )
   # Set local vars for inout vars
   set(libTargets ${${libTargetsInOut}})
   set(lastLibProcessed ${${lastLibProcessedInOut}})
@@ -644,7 +645,6 @@ endfunction()
 function(tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis
     upstreamTplDepEntry  upstreamTplDepNameOut  upstreamTplDepVisOut
   )
-  cmake_policy(SET CMP0057 NEW)
   # Split on ':' to get <PkgName>[:<Vis>]
   string(REPLACE ":" ";" upstreamTplAndVisList  "${upstreamTplDepEntry}")
   list(LENGTH upstreamTplAndVisList upstreamTplAndVisListLen)

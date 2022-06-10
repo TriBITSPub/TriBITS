@@ -84,7 +84,7 @@ endfunction()
 
 # @MACRO: tribits_assert_parse_arg_one_or_more_values()
 #
-# Assert that a set of parse argument have at least one value
+# Assert that a set of parse arguments have at least one value
 #
 # Usage::
 #

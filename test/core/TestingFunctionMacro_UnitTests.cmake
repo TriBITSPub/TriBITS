@@ -494,7 +494,7 @@ function(unittest_tribits_git_repo_sha1)
   message("*** Testing tribits_git_repo_sha1()")
   message("***\n")
 
-  find_program(GIT_EXECUTABLE ${GIT_NAME})
+  find_package(Git REQUIRED)
 
   set(tribitsProjDir "${${PROJECT_NAME}_TRIBITS_DIR}/..")
 
