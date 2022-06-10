@@ -37,7 +37,7 @@
 # ************************************************************************
 # @HEADER
 
-#
+
 # @FUNCTION: assert_defined()
 #
 # Assert that a variable is defined and if not call ``message(SEND_ERROR

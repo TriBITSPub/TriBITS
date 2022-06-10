@@ -210,7 +210,6 @@ site_name(CTEST_SITE_DEFAULT)
 include(TribitsCTestDriverCoreHelpers)
 
 
-#
 # @FUNCTION: tribits_ctest_driver()
 #
 # Universal platform-independent CTest/CDash driver function for CTest -S
