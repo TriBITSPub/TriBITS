@@ -116,31 +116,24 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
   # A) Get the basic version info.
 
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:"%h [%ad] <%ae>"
+    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%h [%ad] <%ae>"
     WORKING_DIRECTORY ${gitRepoDir}
     RESULT_VARIABLE gitCmndRtn
     OUTPUT_VARIABLE gitCmndOutput
     )
-  # NOTE: Above we have to add quotes '"' or CMake will not accept the
-  # command.  However, git will put those quotes in the output so we have to
-  # strip them out later :-(
 
   if (NOT gitCmndRtn STREQUAL 0)
     message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
       " for repo ${gitRepoDir}!")
     set(gitVersionLine "Error, could not get version info!")
   else()
-    # Strip the quotes off :-(
-    string(LENGTH "${gitCmndOutput}" gitCmndOutputLen)
-    math(EXPR outputNumCharsToKeep "${gitCmndOutputLen}-2")
-    string(SUBSTRING "${gitCmndOutput}" 1 ${outputNumCharsToKeep}
-      gitVersionLine)
+    set(gitVersionLine "${gitCmndOutput}")
   endif()
 
   # B) Get the first 80 chars of the summary message for more info
 
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:"%s"
+    COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:%s
     WORKING_DIRECTORY ${gitRepoDir}
     RESULT_VARIABLE gitCmndRtn
     OUTPUT_VARIABLE gitCmndOutput
@@ -151,25 +144,16 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
       " for extra repo ${gitRepoDir}!")
     set(gitSummaryStr "Error, could not get version summary!")
   else()
-    # Strip off quotes and quote the 80 char string
     set(maxSummaryLen 80)
-    math(EXPR maxSummaryLen_PLUS_2 "${maxSummaryLen}+2")
-    string(LENGTH "${gitCmndOutput}" gitCmndOutputLen)
-    math(EXPR outputNumCharsToKeep "${gitCmndOutputLen}-2")
-    string(SUBSTRING "${gitCmndOutput}" 1 ${outputNumCharsToKeep}
-      gitCmndOutputStripped)
-    if (gitCmndOutputLen GREATER ${maxSummaryLen_PLUS_2})
-      string(SUBSTRING "${gitCmndOutputStripped}" 0 ${maxSummaryLen}
-         gitSummaryStr)
-    else()
-      set(gitSummaryStr "${gitCmndOutputStripped}")
-    endif()
+    string(SUBSTRING "${gitCmndOutput}" 0 ${maxSummaryLen} gitSummaryStr)
   endif()
 
   set(${repoVersionStringOut}
     "${gitVersionLine}\n${gitSummaryStr}" PARENT_SCOPE)
 
 endfunction()
+# NOTE: Above, it is fine if ${maxSummaryLen} > len(${gitCmndOutput}) as
+# string(SUBSTRING ...) will just shorten this to the lenght of the string.
 
 
 function(tribits_assert_git_executable)
