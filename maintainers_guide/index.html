@@ -400,10 +400,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-06-08</p>
+<dd class="field-even"><p>2022-06-10</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2927-gf2b7dbaa</p>
+<dd class="field-odd"><p>tribits_start-2929-g912691c3</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -11548,7 +11548,7 @@ package’s configure file (see <a class="reference internal" href="#tribits-con
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#cmakedefine &lt;macroDefineName&gt;</span>
 </pre></div>
 </div>
-<p>In: core/package_arch/TribitsAddOptionAndDefine.cmake:44</p>
+<p>In: core/package_arch/TribitsAddOptionAndDefine.cmake:43</p>
 </section>
 <section id="tribits-add-show-deprecated-warnings-option">
 <h3><a class="toc-backref" href="#id125">tribits_add_show_deprecated_warnings_option()</a><a class="headerlink" href="#tribits-add-show-deprecated-warnings-option" title="Permalink to this heading"></a></h3>
@@ -12261,7 +12261,7 @@ GTest executable such as with:</p>
 </div>
 <p>For example, this would be an alternative to disabling an entire unit
 testing executable using <code class="docutils literal notranslate"><span class="pre">-D&lt;fullTestName&gt;_DISABLE=ON</span></code> as described above.</p>
-<p>In: core/package_arch/TribitsAddTest.cmake:44</p>
+<p>In: core/package_arch/TribitsAddTest.cmake:43</p>
 </section>
 <section id="tribits-add-test-directories">
 <h3><a class="toc-backref" href="#id127">tribits_add_test_directories()</a><a class="headerlink" href="#tribits-add-test-directories" title="Permalink to this heading"></a></h3>
@@ -12501,7 +12501,7 @@ executable target is built that these files will also be copied as well.</p>
 appended to the arguments in the <code class="docutils literal notranslate"><span class="pre">EXEDEPS</span></code> list.</p>
 </div></blockquote>
 </div></blockquote>
-<p>In: core/package_arch/TribitsCopyFilesToBinaryDir.cmake:46</p>
+<p>In: core/package_arch/TribitsCopyFilesToBinaryDir.cmake:45</p>
 </section>
 <section id="tribits-ctest-driver">
 <h3><a class="toc-backref" href="#id131">tribits_ctest_driver()</a><a class="headerlink" href="#tribits-ctest-driver" title="Permalink to this heading"></a></h3>
@@ -13690,7 +13690,7 @@ that require all passing builds and tests.</p>
 <p>ToDo: Add another mode that will return 0 if no errors are reported in the
 ctest -S driver script but ignore configure, build, and test failures that
 are submitted to a CDash site (and therefore will be reported there).</p>
-<p>In: ctest_driver/TribitsCTestDriverCore.cmake:214</p>
+<p>In: ctest_driver/TribitsCTestDriverCore.cmake:213</p>
 </section>
 <section id="tribits-determine-if-current-package-needs-rebuilt">
 <h3><a class="toc-backref" href="#id132">tribits_determine_if_current_package_needs_rebuilt()</a><a class="headerlink" href="#tribits-determine-if-current-package-needs-rebuilt" title="Permalink to this heading"></a></h3>
@@ -13749,7 +13749,7 @@ This will, however, result in changes in non-dependent subpackages being
 considered as well.</p>
 <p>See the demonstration of the usage of this function in the <code class="docutils literal notranslate"><span class="pre">WrapExternal</span></code>
 package in <a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:475</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:471</p>
 </section>
 <section id="tribits-disable-package-on-platforms">
 <h3><a class="toc-backref" href="#id133">tribits_disable_package_on_platforms()</a><a class="headerlink" href="#tribits-disable-package-on-platforms" title="Permalink to this heading"></a></h3>
@@ -13765,7 +13765,7 @@ package in <a class="reference internal" href="#tribitsexampleproject">TribitsEx
 the package test group classification to <code class="docutils literal notranslate"><span class="pre">EX</span></code> results in the package being
 disabled by default (see <a class="reference internal" href="#ex-se-packages-disabled-by-default">EX SE packages disabled by default</a>).  However,
 an explicit enable can still enable the package.</p>
-<p>In: core/package_arch/TribitsListHelpers.cmake:85</p>
+<p>In: core/package_arch/TribitsListHelpers.cmake:84</p>
 </section>
 <section id="tribits-exclude-files">
 <h3><a class="toc-backref" href="#id134">tribits_exclude_files()</a><a class="headerlink" href="#tribits-exclude-files" title="Permalink to this heading"></a></h3>
@@ -13814,7 +13814,7 @@ its timestamp.</p>
 passing in a set of basic exclude regexes like <code class="docutils literal notranslate"><span class="pre">CMakeFiles/</span></code>,
 <code class="docutils literal notranslate"><span class="pre">[.]cmake$</span></code>, and <code class="docutils literal notranslate"><span class="pre">/Makefile$</span></code>, etc.  These types of files usually don’t
 impact the build of downstream software in CMake projects.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:385</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:382</p>
 </section>
 <section id="tribits-find-most-recent-file-timestamp">
 <h3><a class="toc-backref" href="#id136">tribits_find_most_recent_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-file-timestamp" title="Permalink to this heading"></a></h3>
@@ -13894,7 +13894,7 @@ all directories.</p>
 all of the directories and prints and returns in the variables
 <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentTimestamp&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentFilepathBaseDir&gt;</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentRelativeFilePath&gt;</span></code>.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:44</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:43</p>
 </section>
 <section id="tribits-find-most-recent-source-file-timestamp">
 <h3><a class="toc-backref" href="#id137">tribits_find_most_recent_source_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-source-file-timestamp" title="Permalink to this heading"></a></h3>
@@ -13916,7 +13916,7 @@ its timestamp.</p>
 passing in a set of basic exclude regexes like <code class="docutils literal notranslate"><span class="pre">[.]git/</span></code>, <code class="docutils literal notranslate"><span class="pre">[.]svn/</span></code>,
 etc.  These types of version control files can not possibly directly impact
 the source code.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:298</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:296</p>
 </section>
 <section id="tribits-install-headers">
 <h3><a class="toc-backref" href="#id138">tribits_install_headers()</a><a class="headerlink" href="#tribits-install-headers" title="Permalink to this heading"></a></h3>
@@ -13955,7 +13955,7 @@ be installed under <code class="docutils literal notranslate"><span class="pre">
 </div></blockquote>
 <p>If <a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a> is <code class="docutils literal notranslate"><span class="pre">FASLE</span></code>, then the
 headers will not get installed.</p>
-<p>In: core/package_arch/TribitsInstallHeaders.cmake:45</p>
+<p>In: core/package_arch/TribitsInstallHeaders.cmake:44</p>
 </section>
 <section id="tribits-include-directories">
 <h3><a class="toc-backref" href="#id139">tribits_include_directories()</a><a class="headerlink" href="#tribits-include-directories" title="Permalink to this heading"></a></h3>
@@ -13980,7 +13980,7 @@ should come from the installation we are building against.  There is an
 exception to this and that is when there are test only headers that are
 needed.  For that case <code class="docutils literal notranslate"><span class="pre">REQUIRED_DURING_INSTALLATION_TESTING</span></code> must be
 passed in to ensure the include paths are added for installation testing.</p>
-<p>In: core/package_arch/TribitsIncludeDirectories.cmake:44</p>
+<p>In: core/package_arch/TribitsIncludeDirectories.cmake:43</p>
 </section>
 <section id="id1">
 <h3><a class="toc-backref" href="#id140">tribits_package()</a><a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
@@ -14296,7 +14296,7 @@ called in the parent packages top-level <a class="reference internal" href="#pac
 <section id="tribits-process-enabled-tpl">
 <h3><a class="toc-backref" href="#id146">tribits_process_enabled_tpl()</a><a class="headerlink" href="#tribits-process-enabled-tpl" title="Permalink to this heading"></a></h3>
 <p>Process an enabled TPL’s FindTPL${TPL_NAME}.cmake module.</p>
-<p>In: core/package_arch/TribitsProcessEnabledTpl.cmake:52</p>
+<p>In: core/package_arch/TribitsProcessEnabledTpl.cmake:51</p>
 </section>
 <section id="id2">
 <h3><a class="toc-backref" href="#id147">tribits_project()</a><a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
@@ -14313,7 +14313,7 @@ the variable <a class="reference internal" href="#project-name-tribits-dir">${PR
 <p>This macro then adds all of the necessary paths to <code class="docutils literal notranslate"><span class="pre">CMAKE_MODULE_PATH</span></code> and
 then performs all processing of the TriBITS project files (see <a class="reference internal" href="#full-tribits-project-configuration">Full TriBITS
 Project Configuration</a>).</p>
-<p>In: core/package_arch/TribitsProject.cmake:74</p>
+<p>In: core/package_arch/TribitsProject.cmake:73</p>
 </section>
 <section id="tribits-project-define-extra-repositories">
 <h3><a class="toc-backref" href="#id148">tribits_project_define_extra_repositories()</a><a class="headerlink" href="#tribits-project-define-extra-repositories" title="Permalink to this heading"></a></h3>
@@ -14411,7 +14411,7 @@ one misspells the name of a macro, it is an immediate error in CMake.  A
 misspelled set variable is just ignored.</p></li>
 <li><p>The variable name can change in the future as an implementation detail.</p></li>
 </ul>
-<p>In: core/package_arch/TribitsProcessExtraRepositoriesList.cmake:51</p>
+<p>In: core/package_arch/TribitsProcessExtraRepositoriesList.cmake:50</p>
 </section>
 <section id="tribits-project-enable-all">
 <h3><a class="toc-backref" href="#id149">tribits_project_enable_all()</a><a class="headerlink" href="#tribits-project-enable-all" title="Permalink to this heading"></a></h3>
@@ -14426,7 +14426,7 @@ misspelled set variable is just ignored.</p></li>
 TriBITS projects that have just a single package or by default just want to
 enable all packages.  This is especially useful when you have a TriBITS
 project with just a single package.</p>
-<p>In: core/package_arch/TribitsProjectImpl.cmake:327</p>
+<p>In: core/package_arch/TribitsProjectImpl.cmake:326</p>
 </section>
 <section id="tribits-repository-define-packages">
 <h3><a class="toc-backref" href="#id150">tribits_repository_define_packages()</a><a class="headerlink" href="#tribits-repository-define-packages" title="Permalink to this heading"></a></h3>
@@ -14952,7 +14952,7 @@ and duplication).</p>
 <span class="n">mark_as_advanced</span><span class="p">(</span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In: core/utils/AdvancedSet.cmake:42</p>
+<p>In: core/utils/AdvancedSet.cmake:41</p>
 </section>
 <section id="append-cmndline-args">
 <h3><a class="toc-backref" href="#id164">append_cmndline_args()</a><a class="headerlink" href="#append-cmndline-args" title="Permalink to this heading"></a></h3>
@@ -15034,7 +15034,7 @@ boiler-place code and reduces mistakes).</p>
 </div>
 <p>Simply sets <code class="docutils literal notranslate"><span class="pre">&lt;stringVar&gt;</span> <span class="pre">=</span> <span class="pre">&quot;${&lt;stringVar&gt;}&lt;string&gt;&quot;</span></code> and leaves in <code class="docutils literal notranslate"><span class="pre">';'</span></code>
 without creating new array elements.</p>
-<p>In: core/utils/AppendStringVar.cmake:72</p>
+<p>In: core/utils/AppendStringVar.cmake:71</p>
 </section>
 <section id="append-string-var-with-sep">
 <h3><a class="toc-backref" href="#id170">append_string_var_with_sep()</a><a class="headerlink" href="#append-string-var-with-sep" title="Permalink to this heading"></a></h3>
@@ -15104,7 +15104,7 @@ error and all processing stops.</p>
 <p>This is used by a CMake project to automatically turn on a feature that
 requires a set of other features (when they are all enabled) but allows a
 user to disable the feature if desired.</p>
-<p>In: core/utils/CombinedOption.cmake:46</p>
+<p>In: core/utils/CombinedOption.cmake:45</p>
 </section>
 <section id="concat-strings">
 <h3><a class="toc-backref" href="#id173">concat_strings()</a><a class="headerlink" href="#concat-strings" title="Permalink to this heading"></a></h3>
@@ -15115,7 +15115,7 @@ user to disable the feature if desired.</p>
 </div>
 <p>On output, <code class="docutils literal notranslate"><span class="pre">&lt;outputVar&gt;</span></code> is set to <code class="docutils literal notranslate"><span class="pre">&quot;&lt;str0&gt;&lt;str1&gt;...&quot;</span></code>.  This makes it
 easier to format a long string over multiple CMake source code lines.</p>
-<p>In: core/utils/ConcatStrings.cmake:44</p>
+<p>In: core/utils/ConcatStrings.cmake:43</p>
 </section>
 <section id="dual-scope-append-cmndline-args">
 <h3><a class="toc-backref" href="#id174">dual_scope_append_cmndline_args()</a><a class="headerlink" href="#dual-scope-append-cmndline-args" title="Permalink to this heading"></a></h3>
@@ -15163,7 +15163,7 @@ the global variable.  However, if one sets the global cache value with
 <code class="docutils literal notranslate"><span class="pre">set(SOMEVAR</span> <span class="pre">someValue</span> <span class="pre">CACHE</span> <span class="pre">INTERNAL</span> <span class="pre">&quot;&quot;)</span></code>, then the value will get
 changed in the current subordinate scope and in all parent scopes all in one
 shot!</p>
-<p>In: core/utils/DualScopeSet.cmake:42</p>
+<p>In: core/utils/DualScopeSet.cmake:41</p>
 </section>
 <section id="global-null-set">
 <h3><a class="toc-backref" href="#id177">global_null_set()</a><a class="headerlink" href="#global-null-set" title="Permalink to this heading"></a></h3>
@@ -15193,7 +15193,7 @@ code).</p>
 </pre></div>
 </div>
 <p>This avoid misspelling <code class="docutils literal notranslate"><span class="pre">CACHE</span></code>.</p>
-<p>In: core/utils/GlobalSet.cmake:42</p>
+<p>In: core/utils/GlobalSet.cmake:41</p>
 </section>
 <section id="join">
 <h3><a class="toc-backref" href="#id179">join()</a><a class="headerlink" href="#join" title="Permalink to this heading"></a></h3>
@@ -15240,7 +15240,7 @@ arguments given a CMake array like:</p>
 </div>
 <p>WARNING: Be careful to quote string arguments that have spaces because CMake
 interprets those as array boundaries.</p>
-<p>In: core/utils/Join.cmake:42</p>
+<p>In: core/utils/Join.cmake:41</p>
 </section>
 <section id="message-wrapper">
 <h3><a class="toc-backref" href="#id180">message_wrapper()</a><a class="headerlink" href="#message-wrapper" title="Permalink to this heading"></a></h3>
@@ -15286,7 +15286,7 @@ verify that they say the right thing.</p>
 multiple lines.</p>
 <p>This function is exactly the same as <a class="reference internal" href="#concat-strings">concat_strings()</a> and should not even
 exist :-(</p>
-<p>In: core/utils/MultilineSet.cmake:42</p>
+<p>In: core/utils/MultilineSet.cmake:41</p>
 </section>
 <section id="prepend-cmndline-args">
 <h3><a class="toc-backref" href="#id182">prepend_cmndline_args()</a><a class="headerlink" href="#prepend-cmndline-args" title="Permalink to this heading"></a></h3>
@@ -15321,7 +15321,7 @@ it empty initially use <a class="reference internal" href="#global-null-set">glo
 </pre></div>
 </div>
 <p>Calls <code class="docutils literal notranslate"><span class="pre">print_var(&lt;varName&gt;)</span></code> if <code class="docutils literal notranslate"><span class="pre">${&lt;varName&gt;}</span></code> is not empty.</p>
-<p>In: core/utils/PrintNonemptyVar.cmake:45</p>
+<p>In: core/utils/PrintNonemptyVar.cmake:44</p>
 </section>
 <section id="print-nonempty-var-with-spaces">
 <h3><a class="toc-backref" href="#id185">print_nonempty_var_with_spaces()</a><a class="headerlink" href="#print-nonempty-var-with-spaces" title="Permalink to this heading"></a></h3>
@@ -15410,7 +15410,7 @@ and calls <code class="docutils literal notranslate"><span class="pre">include_d
 <p>Sets a special string cache variable with possible values “”, “ON”, or
 “OFF”.  This results in a nice drop-down box in the CMake cache manipulation
 GUIs.</p>
-<p>In: core/utils/SetCacheOnOffEmpty.cmake:42</p>
+<p>In: core/utils/SetCacheOnOffEmpty.cmake:41</p>
 </section>
 <section id="set-default">
 <h3><a class="toc-backref" href="#id191">set_default()</a><a class="headerlink" href="#set-default" title="Permalink to this heading"></a></h3>
@@ -15440,7 +15440,7 @@ the value of the local variable <code class="docutils literal notranslate"><span
 value of CMake variables.  Older versions of <code class="docutils literal notranslate"><span class="pre">ctest</span></code> did not support the
 option <code class="docutils literal notranslate"><span class="pre">-D</span> <span class="pre">&lt;var&gt;:&lt;type&gt;=&lt;value&gt;</span></code> to allow variables to be set through the
 command-line like <code class="docutils literal notranslate"><span class="pre">cmake</span></code> always allowed.</p>
-<p>In: core/utils/SetDefaultAndFromEnv.cmake:46</p>
+<p>In: core/utils/SetDefaultAndFromEnv.cmake:45</p>
 </section>
 <section id="split">
 <h3><a class="toc-backref" href="#id193">split()</a><a class="headerlink" href="#split" title="Permalink to this heading"></a></h3>
@@ -15489,7 +15489,7 @@ output!</p>
 <code class="docutils literal notranslate"><span class="pre">&lt;startSeconds&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;endSeconds&gt;</span></code> (returned from
 <a class="reference internal" href="#timer-get-raw-seconds">timer_get_raw_seconds()</a>) and sets the result in the local variable
 <code class="docutils literal notranslate"><span class="pre">&lt;relSecondsOutVar&gt;</span></code>.</p>
-<p>In: core/utils/TimingUtils.cmake:80</p>
+<p>In: core/utils/TimingUtils.cmake:79</p>
 </section>
 <section id="timer-print-rel-time">
 <h3><a class="toc-backref" href="#id196">timer_print_rel_time()</a><a class="headerlink" href="#timer-print-rel-time" title="Permalink to this heading"></a></h3>
@@ -15518,7 +15518,7 @@ timer_print_rel_time(${REAL_EXPENSIVE_START} ${REAL_EXPENSIVE_END}
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">real_expensive</span><span class="p">()</span> <span class="n">time</span><span class="p">:</span> <span class="mi">0</span><span class="n">m5</span><span class="mf">.235</span><span class="n">s</span>
 </pre></div>
 </div>
-<p>In: core/utils/TimingUtils.cmake:118</p>
+<p>In: core/utils/TimingUtils.cmake:116</p>
 </section>
 <section id="tribits-strip-quotes-from-str">
 <h3><a class="toc-backref" href="#id197">tribits_strip_quotes_from_str()</a><a class="headerlink" href="#tribits-strip-quotes-from-str" title="Permalink to this heading"></a></h3>
@@ -15529,7 +15529,7 @@ timer_print_rel_time(${REAL_EXPENSIVE_START} ${REAL_EXPENSIVE_END}
 </div>
 <p>If <code class="docutils literal notranslate"><span class="pre">&lt;str_in&gt;</span></code> does not contain a quote char <code class="docutils literal notranslate"><span class="pre">'&quot;'</span></code> as the first and last
 char, then the original <code class="docutils literal notranslate"><span class="pre">&lt;str_in&gt;</span></code> is returned in <code class="docutils literal notranslate"><span class="pre">&lt;str_var_out&gt;</span></code>.</p>
-<p>In: core/utils/TribitsStripQuotesFromStr.cmake:2</p>
+<p>In: core/utils/TribitsStripQuotesFromStr.cmake:1</p>
 </section>
 <section id="unittest-compare-const">
 <h3><a class="toc-backref" href="#id198">unittest_compare_const()</a><a class="headerlink" href="#unittest-compare-const" title="Permalink to this heading"></a></h3>
