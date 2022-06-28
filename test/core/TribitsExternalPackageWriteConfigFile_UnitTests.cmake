@@ -71,21 +71,39 @@ function(unittest_tribits_external_package_get_libname_from_full_lib_path_linux)
   message("*** Testing tribits_external_package_get_libname_from_full_lib_path() for Linux")
   message("***\n")
 
-  tribits_external_package_get_libname_from_full_lib_path(
-    "/some/base/path/libsomelib.a" libname)
-  unittest_compare_const( libname "somelib" )
+  set(tplName "SomeTpl")
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
 
+  global_set(MESSAGE_WRAPPER_INPUT "")
   tribits_external_package_get_libname_from_full_lib_path(
-    "/some/base/path/libsomelib.so" libname)
-  unittest_compare_const( libname "somelib" )
+    "/some/base/path/libsomelib1.a" libname)
+  unittest_compare_const( libname "somelib1" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
+  global_set(MESSAGE_WRAPPER_INPUT "")
   tribits_external_package_get_libname_from_full_lib_path(
-    "/some/base/path/libsomelib.so.1.2.3" libname)
-  unittest_compare_const( libname "somelib" )
+    "/some/base/path/libsomelib2.so" libname)
+  unittest_compare_const( libname "somelib2" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
+  global_set(MESSAGE_WRAPPER_INPUT "")
   tribits_external_package_get_libname_from_full_lib_path(
-    "/some/base/path/libsomelib.any-extension" libname)
-  unittest_compare_const( libname "somelib" )
+    "/some/base/path/libsomelib3.so.1.2.3" libname)
+  unittest_compare_const( libname "somelib3" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/libsomelib4.any.extension" libname)
+  unittest_compare_const( libname "somelib4" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/somelib5.any.extension" libname)
+  unittest_compare_const( libname "" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
+    "SEND_ERROR;ERROR: TPL_SomeTpl_LIBRARIES entry 'somelib5' not a valid lib file name!")
 
 endfunction()
 
@@ -99,20 +117,62 @@ function(unittest_tribits_external_package_get_libname_from_full_lib_path_win32)
   set(WIN32 TRUE)
 
   tribits_external_package_get_libname_from_full_lib_path(
-    "/some/base/path/somelib.a" libname)
-  unittest_compare_const( libname "somelib" )
+    "/some/base/path/somelib1.a" libname)
+  unittest_compare_const( libname "somelib1" )
 
   tribits_external_package_get_libname_from_full_lib_path(
-    "/some/base/path/somelib.dll" libname)
-  unittest_compare_const( libname "somelib" )
+    "/some/base/path/somelib2.dll" libname)
+  unittest_compare_const( libname "somelib2" )
 
   tribits_external_package_get_libname_from_full_lib_path(
-    "/some/base/path/somelib.any-extension" libname)
-  unittest_compare_const( libname "somelib" )
+    "/some/base/path/somelib3.any-extension" libname)
+  unittest_compare_const( libname "somelib3" )
 
   tribits_external_package_get_libname_from_full_lib_path(
-    "/some/base/path/libsomelib.any-extension" libname)
-  unittest_compare_const( libname "libsomelib" )
+    "/some/base/path/libsomelib4.any-extension" libname)
+  unittest_compare_const( libname "libsomelib4" )
+
+endfunction()
+
+
+function(unittest_tribits_external_package_get_libname_from_full_lib_path_apple)
+
+  message("\n***")
+  message("*** Testing tribits_external_package_get_libname_from_full_lib_path() for APPLE")
+  message("***\n")
+
+  set(APPLE TRUE)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
+
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/libsomelib1.a" libname)
+  unittest_compare_const( libname "somelib1" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/libsomelib2.so" libname)
+  unittest_compare_const( libname "somelib2" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/libsomelib3.tbd" libname)
+  unittest_compare_const( libname "somelib3" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/libsomelib4.any-extension" libname)
+  unittest_compare_const( libname "somelib4" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/Accelerate.framework" libname)
+  unittest_compare_const( libname "Accelerate" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
 endfunction()
 
@@ -1201,6 +1261,7 @@ unittest_initialize_vars()
 
 unittest_tribits_external_package_get_libname_from_full_lib_path_linux()
 unittest_tribits_external_package_get_libname_from_full_lib_path_win32()
+unittest_tribits_external_package_get_libname_from_full_lib_path_apple()
 
 unittest_tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis()
 
@@ -1228,4 +1289,4 @@ unittest_tribits_external_package_write_config_file_str_incl_dirs_1_bad_lib_args
 unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2_deps_3()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(57)
+unittest_final_result(81)
