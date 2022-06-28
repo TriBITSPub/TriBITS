@@ -497,6 +497,7 @@ endfunction()
 # imported targets <tplName>::<libnamei> for this TPL are linked to this first
 # <tplName>::<libname0> which has the needed dependencies.
 
+
 function(tribits_external_package_get_libname_and_path_from_libentry
     libentry  libEntryType  libnameOut  libpathOut
   )
@@ -548,7 +549,7 @@ function(tribits_external_package_get_libname_from_full_lib_path  full_lib_path
     libnameOut
   )
   # Should be an absolute library path
-  get_filename_component(full_libname "${full_lib_path}" NAME_WLE)
+  get_filename_component(full_libname "${full_lib_path}" NAME_WE)
   # Assert is a valid lib name and get lib name
   string(LENGTH "${full_libname}" full_libname_len)
   if (full_libname_len LESS 0)

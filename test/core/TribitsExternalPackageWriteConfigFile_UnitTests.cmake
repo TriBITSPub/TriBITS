@@ -61,6 +61,63 @@ include(GlobalNullSet)
 
 
 #
+# Tests for tribits_external_package_get_libname_from_full_lib_path()
+#
+
+
+function(unittest_tribits_external_package_get_libname_from_full_lib_path_linux)
+
+  message("\n***")
+  message("*** Testing tribits_external_package_get_libname_from_full_lib_path() for Linux")
+  message("***\n")
+
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/libsomelib.a" libname)
+  unittest_compare_const( libname "somelib" )
+
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/libsomelib.so" libname)
+  unittest_compare_const( libname "somelib" )
+
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/libsomelib.so.1.2.3" libname)
+  unittest_compare_const( libname "somelib" )
+
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/libsomelib.any-extension" libname)
+  unittest_compare_const( libname "somelib" )
+
+endfunction()
+
+
+function(unittest_tribits_external_package_get_libname_from_full_lib_path_win32)
+
+  message("\n***")
+  message("*** Testing tribits_external_package_get_libname_from_full_lib_path() for WIN32")
+  message("***\n")
+
+  set(WIN32 TRUE)
+
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/somelib.a" libname)
+  unittest_compare_const( libname "somelib" )
+
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/somelib.dll" libname)
+  unittest_compare_const( libname "somelib" )
+
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/somelib.any-extension" libname)
+  unittest_compare_const( libname "somelib" )
+
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/libsomelib.any-extension" libname)
+  unittest_compare_const( libname "libsomelib" )
+
+endfunction()
+
+
+#
 # Test for tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis()
 #
 
@@ -1141,6 +1198,9 @@ unittest_initialize_vars()
 #
 # Run the unit tests
 #
+
+unittest_tribits_external_package_get_libname_from_full_lib_path_linux()
+unittest_tribits_external_package_get_libname_from_full_lib_path_win32()
 
 unittest_tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis()
 
