@@ -556,7 +556,7 @@ function(tribits_external_package_get_libname_from_full_lib_path  full_lib_path
   set(libname "")
   string(LENGTH "${full_libname}" full_libname_len)
   if (full_libname_len LESS 0)
-    tribits_print_invalid_lib_name(${tplName} "${full_libname}")
+    tribits_print_invalid_lib_name(${tplName} "${full_lib_path}")
   endif()
   if (WIN32)
     # Native windows compilers does not prepend library names with 'lib'
@@ -567,13 +567,19 @@ function(tribits_external_package_get_libname_from_full_lib_path  full_lib_path
     if (beginsWithLib)
       string(SUBSTRING "${full_libname}" 3 -1 libname)
     else()
-      set(libname "${full_libname}")
+      # Must be a framework dir with extension .framework
+      get_filename_component(last_ext "${full_lib_path}" LAST_EXT)
+      if (last_ext  STREQUAL ".framework")
+        set(libname "${full_libname}")
+      else()
+        tribits_print_invalid_lib_name(${tplName} "${full_lib_path}")
+      endif()
     endif()
   else() # I.e. Linux
     # Every other system (i.e. Linux) prepends the library name with 'lib' so
     # assert for that
     if (NOT beginsWithLib)
-      tribits_print_invalid_lib_name(${tplName} "${full_libname}")
+      tribits_print_invalid_lib_name(${tplName} "${full_lib_path}")
     else()
       string(SUBSTRING "${full_libname}" 3 -1 libname)
     endif()

@@ -103,7 +103,7 @@ function(unittest_tribits_external_package_get_libname_from_full_lib_path_linux)
     "/some/base/path/somelib5.any.extension" libname)
   unittest_compare_const( libname "" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "SEND_ERROR;ERROR: TPL_SomeTpl_LIBRARIES entry 'somelib5' not a valid lib file name!")
+    "SEND_ERROR;ERROR: TPL_SomeTpl_LIBRARIES entry '/some/base/path/somelib5.any.extension' not a valid lib file name!")
 
 endfunction()
 
@@ -142,6 +142,7 @@ function(unittest_tribits_external_package_get_libname_from_full_lib_path_apple)
   message("***\n")
 
   set(APPLE TRUE)
+  set(tplName "SomeTpl")
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
 
   global_set(MESSAGE_WRAPPER_INPUT "")
@@ -173,6 +174,19 @@ function(unittest_tribits_external_package_get_libname_from_full_lib_path_apple)
     "/some/base/path/Accelerate.framework" libname)
   unittest_compare_const( libname "Accelerate" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/someNameWithExtraDots.a.b.framework" libname)
+  unittest_compare_const( libname "someNameWithExtraDots" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+
+  global_set(MESSAGE_WRAPPER_INPUT "")
+  tribits_external_package_get_libname_from_full_lib_path(
+    "/some/base/path/SomeBase.any.extension" libname)
+  unittest_compare_const( libname "" )
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
+    "SEND_ERROR;ERROR: TPL_SomeTpl_LIBRARIES entry '/some/base/path/SomeBase.any.extension' not a valid lib file name!")
 
 endfunction()
 
@@ -1289,4 +1303,4 @@ unittest_tribits_external_package_write_config_file_str_incl_dirs_1_bad_lib_args
 unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2_deps_3()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(81)
+unittest_final_result(85)
