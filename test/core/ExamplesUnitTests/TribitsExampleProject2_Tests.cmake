@@ -504,11 +504,11 @@ TribitsExampleProject2_explicit_tpl_vars(SHARED)
 ########################################################################
 
 
-function(TribitsExampleProject2_find_package_test sharedOrStatic)
+function(TribitsExampleProject2_find_package  sharedOrStatic)
 
   TribitsExampleProject2_test_setup_header()
 
-  set(testNameBase TribitsExampleProject2_find_package_${sharedOrStatic})
+  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testNameBase})
   set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
 
@@ -578,8 +578,8 @@ function(TribitsExampleProject2_find_package_test sharedOrStatic)
 endfunction()
 
 
-TribitsExampleProject2_find_package_test(STATIC)
-TribitsExampleProject2_find_package_test(SHARED)
+TribitsExampleProject2_find_package(STATIC)
+TribitsExampleProject2_find_package(SHARED)
 
 
 ########################################################################
