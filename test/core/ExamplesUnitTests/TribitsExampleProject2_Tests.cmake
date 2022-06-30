@@ -88,7 +88,7 @@ endmacro()
 ########################################################################
 
 
-function(TribitsExampleProject2_find_tpl_parts sharedOrStatic findingTplsMethod)
+function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMethod)
 
   TribitsExampleProject2_test_setup_header()
 
@@ -282,7 +282,7 @@ TribitsExampleProject2_find_tpl_parts(SHARED  CMAKE_PREFIX_PATH_ENV)
 ########################################################################
 
 
-function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls sharedOrStatic)
+function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls  sharedOrStatic)
 
   TribitsExampleProject2_test_setup_header()
 
@@ -395,7 +395,7 @@ TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls(SHARED)
 ########################################################################
 
 
-function(TribitsExampleProject2_explicit_tpl_vars sharedOrStatic)
+function(TribitsExampleProject2_explicit_tpl_vars  sharedOrStatic)
 
   TribitsExampleProject2_test_setup_header()
 
