@@ -20,6 +20,7 @@
 @FUNCTION: tribits_determine_if_current_package_needs_rebuilt() +
 @MACRO:    tribits_disable_package_on_platforms() +
 @MACRO:    tribits_exclude_files() +
+@FUNCTION: tribits_external_package_create_imported_all_libs_target_and_config_file() +
 @FUNCTION: tribits_find_most_recent_binary_file_timestamp() +
 @FUNCTION: tribits_find_most_recent_file_timestamp() +
 @FUNCTION: tribits_find_most_recent_source_file_timestamp() +

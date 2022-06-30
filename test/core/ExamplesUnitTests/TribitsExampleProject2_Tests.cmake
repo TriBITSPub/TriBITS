@@ -531,10 +531,9 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
-        "Using find_package[(]Tpl1 [.][.][.][)] [.][.][.]"
-        "Found Tpl1_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/cmake/Tpl1'"
-        "TPL_Tpl1_LIBRARIES='Tpl1::all_libs'"
-        "TPL_Tpl1_INCLUDE_DIRS=''"
+        "-- Using find_package[(]Tpl1 [.][.][.][)] [.][.][.]"
+        "-- Found Tpl1_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/cmake/Tpl1'"
+        "-- Generating Tpl1::all_libs and Tpl1Config.cmake"
         "-- Configuring done"
         "-- Generating done"
 
