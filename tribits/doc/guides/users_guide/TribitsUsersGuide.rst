@@ -104,3 +104,5 @@ Appendix
 .. ***
 
 .. _tribits_read_all_project_deps_files_create_deps_graph(): TribitsMaintainersGuide.html#tribits-read-all-project-deps-files-create-deps-graph
+
+.. _${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES: TribitsMaintainersGuide.html#package-name-lib-enabled-dependencies
