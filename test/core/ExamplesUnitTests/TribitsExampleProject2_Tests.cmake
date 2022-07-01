@@ -104,6 +104,13 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
     "${tplInstallBaseDir}/install_tpl4<semicolon>${tplInstallBaseDir}/install_tpl3<semicolon>${tplInstallBaseDir}/install_tpl2<semicolon>${tplInstallBaseDir}/install_tpl1"
     )
 
+  set(allTplsNoPrefindArgs
+    "-DTpl1_ALLOW_PACKAGE_PREFIND=OFF"
+    "-DTpl2_ALLOW_PACKAGE_PREFIND=OFF"
+    "-DTpl3_ALLOW_PACKAGE_PREFIND=OFF"
+    "-DTpl4_ALLOW_PACKAGE_PREFIND=OFF"
+    )
+
   if (findingTplsMethod STREQUAL "TPL_LIBRARY_AND_INCLUDE_DIRS")
     set(tplLibAndIncDirsArgs
       "-DTpl1_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl1/include"
@@ -126,13 +133,13 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
   elseif (findingTplsMethod STREQUAL "CMAKE_PREFIX_PATH_CACHE")
     set(testNameSuffix "_CMAKE_PREFIX_PATH_CACHE")
     set(cmakePrefixPathCacheArg "-DCMAKE_PREFIX_PATH=${cmakePrefixPath}")
-    set(tplLibAndIncDirsArgs "-DTpl1_ALLOW_PACKAGE_PREFIND=OFF")
+    set(tplLibAndIncDirsArgs "${allTplsNoPrefindArgs}")
     set(searchingTplLibAndINcDirsRegexes "")
   elseif (findingTplsMethod STREQUAL "CMAKE_PREFIX_PATH_ENV")
     set(testNameSuffix "_CMAKE_PREFIX_PATH_ENV")
     string(REPLACE "<semicolon>" ":" cmakePrefixPathEnv "${cmakePrefixPath}")
     set(cmakePrefixPathEnvArg ENVIRONMENT CMAKE_PREFIX_PATH=${cmakePrefixPathEnv})
-    set(tplLibAndIncDirsArgs "-DTpl1_ALLOW_PACKAGE_PREFIND=OFF")
+    set(tplLibAndIncDirsArgs "${allTplsNoPrefindArgs}")
     set(searchingTplLibAndINcDirsRegexes "")
   else()
     message(FATAL_ERROR
@@ -312,6 +319,9 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls  shared
         -DCMAKE_BUILD_TYPE=DEBUG
 	"-DCMAKE_PREFIX_PATH=${cmakePrefixPath}"
 	-DTpl1_ALLOW_PACKAGE_PREFIND=OFF
+	-DTpl2_ALLOW_PACKAGE_PREFIND=OFF
+	-DTpl3_ALLOW_PACKAGE_PREFIND=OFF
+	-DTpl4_ALLOW_PACKAGE_PREFIND=OFF
         -DTribitsExProj2_ENABLE_ALL_OPTIONAL_PACKAGES=OFF
         -DPackage3_ENABLE_Package2=OFF
         -DTribitsExProj2_ENABLE_TESTS=ON
@@ -512,52 +522,71 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
   set(testName ${PACKAGE_NAME}_${testNameBase})
   set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
 
+  set(tplInstallBaseDir "${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}")
+
   tribits_add_advanced_test( ${testNameBase}
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
-
-    ENVIRONMENT
-      "CMAKE_PREFIX_PATH=${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}/install_tpl1"
+    LIST_SEPARATOR "<semicolon>"
 
     TEST_0
-      MESSAGE "Configure TribitsExampleProject2 against pre-installed Tpl1"
+      MESSAGE "Configure TribitsExampleProject2 against pre-installed TPLs"
       CMND ${CMAKE_COMMAND}
       ARGS
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
         -DCMAKE_BUILD_TYPE=DEBUG
+        -DTPL_ENABLE_Tpl3=ON
+        -DTPL_ENABLE_Tpl4=ON
+        -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DCMAKE_INSTALL_PREFIX=install
-        -DTribitsExProj2_ENABLE_Package1=ON
+        -D CMAKE_PREFIX_PATH="${tplInstallBaseDir}/install_tpl1<semicolon>${tplInstallBaseDir}/install_tpl2<semicolon>${tplInstallBaseDir}/install_tpl3<semicolon>${tplInstallBaseDir}/install_tpl4"
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "-- Using find_package[(]Tpl1 [.][.][.][)] [.][.][.]"
         "-- Found Tpl1_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/cmake/Tpl1'"
         "-- Generating Tpl1::all_libs and Tpl1Config.cmake"
+        "-- Found Tpl2_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl2/lib/cmake/Tpl2'"
+        "-- Generating Tpl2::all_libs and Tpl2Config.cmake"
+        "-- Found Tpl3_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl3/lib/cmake/Tpl3'"
+        "-- Generating Tpl3::all_libs and Tpl3Config.cmake"
+        "-- Found Tpl4_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl4/lib/cmake/Tpl4'"
+        "-- Generating Tpl4::all_libs and Tpl4Config.cmake"
         "-- Configuring done"
         "-- Generating done"
 
     TEST_1
-      MESSAGE "Build Package1 and tests"
+      MESSAGE "Build Packages and tests"
       CMND make
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "package1-prg"
+        "package2-prg"
+        "package3-prg"
 
     TEST_2
-      MESSAGE "Run tests for Package1"
+      MESSAGE "Run tests"
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
-        "100% tests passed, 0 tests failed"
+        "Test.*Package2_Prg.*Passed"
+        "Test.*Package3_Prg.*Passed"
+        "100% tests passed, 0 tests failed out of 3"
 
     TEST_3
-      MESSAGE "Install Package1"
+      MESSAGE "Install"
       CMND make ARGS install
       PASS_REGULAR_EXPRESSION_ALL
         "Tpl1Config.cmake"
         "Tpl1ConfigVersion.cmake"
+        "Tpl2Config.cmake"
+        "Tpl2ConfigVersion.cmake"
+        "Tpl3Config.cmake"
+        "Tpl3ConfigVersion.cmake"
+        "Tpl4Config.cmake"
+        "Tpl4ConfigVersion.cmake"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
@@ -565,7 +594,7 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
   # NOTE: The above test ensures that find_package() works with manual
-  # building of the target .
+  # building of the target.
 
   if (${testNameBase}_NAME)
     set(${testNameBase}_NAME ${${testNameBase}_NAME} PARENT_SCOPE)
@@ -678,6 +707,9 @@ tribits_add_advanced_test( ${testNameBase}
   # searches install/ to simulate that scenario.  This test ensures that
   # find_package(Tpl1) will not find Tpl1Config.cmake just because
   # CMAKE_INSTALL_PREFIX is in the search path.
+  #
+  # This test also sets Tpl1_EXTRACT_INFO_AFTER_FIND_PACKAGE=ON so we can test
+  # that path through FindTPLTpl1.cmake.
   #
   # NOTE: Updated versions of TriBITS will not find TriBITS-generated files
   # like Tpl1Config.cmake because they are placed under a different subdir
