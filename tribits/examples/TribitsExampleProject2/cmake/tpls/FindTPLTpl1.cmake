@@ -1,5 +1,4 @@
 include(TribitsGetImportedLocationProperty)
-include(TribitsExternalPackageFindTplHelpers)
 
 set(REQUIRED_HEADERS  Tpl1.hpp)
 set(REQUIRED_LIBS_NAMES  tpl1)

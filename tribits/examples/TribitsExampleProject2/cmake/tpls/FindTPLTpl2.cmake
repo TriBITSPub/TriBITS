@@ -1,5 +1,3 @@
-include(TribitsExternalPackageFindTplHelpers)
-
 set(REQUIRED_HEADERS  Tpl2a.hpp) # Only look for one header file to find include dir
 set(REQUIRED_LIBS_NAMES  tpl2b tpl2a)
 set(IMPORTED_TARGETS_FOR_ALL_LIBS  tpl2::tpl2a tpl2::tpl2b)

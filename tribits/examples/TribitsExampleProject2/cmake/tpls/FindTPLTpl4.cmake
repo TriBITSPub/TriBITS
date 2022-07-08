@@ -1,5 +1,3 @@
-include(TribitsExternalPackageFindTplHelpers)
-
 set(REQUIRED_HEADERS  Tpl4.hpp)
 set(IMPORTED_TARGETS_FOR_ALL_LIBS  tpl4::tpl4)
 

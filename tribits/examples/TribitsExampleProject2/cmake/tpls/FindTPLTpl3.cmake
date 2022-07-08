@@ -1,5 +1,3 @@
-include(TribitsExternalPackageFindTplHelpers)
-
 set(REQUIRED_HEADERS  Tpl3.hpp)
 set(REQUIRED_LIBS_NAMES  tpl3)
 set(IMPORTED_TARGETS_FOR_ALL_LIBS  tpl3::tpl3)
