@@ -2,12 +2,12 @@ Background
 ==========
 
 In order to easily find the most appropriate documentation, see the `TriBITS
-Developer and User Roles`_ guide.  This guide describes the different roles 
+Developer and User Roles`_ guide.  This guide describes the different roles
 that users of TriBITS may play and offers links to relevant sections of the
-documentation.  Additionally, the reader may wish to review the `CMake Language 
-Overview and Gotchas`_ section which is meant for users that are new to both 
+documentation.  Additionally, the reader may wish to review the `CMake Language
+Overview and Gotchas`_ section which is meant for users that are new to both
 CMake and TriBITS. This section gives a brief overview of getting started with
-CMake and provides some warnings about non-obvious CMake behavior that often 
+CMake and provides some warnings about non-obvious CMake behavior that often
 trips up new users of TriBITS.
 
 
@@ -21,7 +21,7 @@ Project User`_, 2) `TriBITS Project Developer`_, 3) `TriBITS Project
 Architect`_, 4) `TriBITS System Developer`_, and 5) `TriBITS System
 Architect`_.  Each of these roles builds on the necessary knowledge of the
 lower-level roles.
- 
+
 .. _TriBITS Project User:
 .. _TriBITS Project Users:
 
@@ -119,12 +119,12 @@ project.  As a result, many people can come into a project that uses TriBITS
 and quickly start to contribute by adding new source files, adding new
 libraries, adding new tests, and even adding new TriBITS packages and TPLs;
 all without really having learned anything about CMake.  Often one can use existing
-example CMake code as a guide and be successful using basic functionality. As long 
-as nothing out of the ordinary happens, many people can get along just fine in this 
+example CMake code as a guide and be successful using basic functionality. As long
+as nothing out of the ordinary happens, many people can get along just fine in this
 mode for a time.
 
-However, we have observed that most mistakes and problems that people run into when 
-using TriBITS are due to lack of basic knowledge of the CMake language.  One can find 
+However, we have observed that most mistakes and problems that people run into when
+using TriBITS are due to lack of basic knowledge of the CMake language.  One can find
 basic tutorials and references on the CMake language in various locations online for free.
 One can also purchase the `official CMake reference book`_.  Also, documentation
 for any built-in CMake command is available locally by running::
@@ -143,15 +143,15 @@ greater understanding of how TriBITS works.
 .. _Official CMake reference book: http://www.cmake.org/cmake/help/book.html
 
 The CMake language is used to write CMake projects with TriBITS. In fact the
-core TriBITS functionality itself is implemented in the CMake language (see 
-`TriBITS System Project Dependencies`_). CMake is a fairly simple programming 
-language with relatively simple rules (for the most part).  However, compared 
-to other programming languages, there are a few peculiar aspects to the CMake 
-language that can make working with it difficult if you don't understand these 
-rules.  For example there are unexpected variable scoping rules and how arguments 
-are passed to macros and functions can be tricky. Also, CMake has some interesting 
-gotchas.  In order to effectively use TriBITS (or just raw CMake) to construct 
-and maintain a project's CMake files, one must know the basic rules of CMake 
+core TriBITS functionality itself is implemented in the CMake language (see
+`TriBITS System Project Dependencies`_). CMake is a fairly simple programming
+language with relatively simple rules (for the most part).  However, compared
+to other programming languages, there are a few peculiar aspects to the CMake
+language that can make working with it difficult if you don't understand these
+rules.  For example there are unexpected variable scoping rules and how arguments
+are passed to macros and functions can be tricky. Also, CMake has some interesting
+gotchas.  In order to effectively use TriBITS (or just raw CMake) to construct
+and maintain a project's CMake files, one must know the basic rules of CMake
 and be aware of these gotchas.
 
 The first thing to understand about the CMake language is that nearly every
@@ -217,9 +217,9 @@ control structures (i.e. see ``cmake --help-command if`` and ``cmake
 CMake offers a rich assortment of built-in commands for doing all sorts of
 things.  Two of these are the built-in ``macro()`` and the ``function()``
 commands which allow you to create user-defined macros and functions. TriBITS
-is actually built on CMake functions and macros.  All of the built-in and 
-user-defined macros, and some functions take an  array of string arguments.  
-Some functions take in positional arguments. In fact,  most functions take a 
+is actually built on CMake functions and macros.  All of the built-in and
+user-defined macros, and some functions take an  array of string arguments.
+Some functions take in positional arguments. In fact,  most functions take a
 combination of positional and keyword arguments.
 
 Variable names are translated into their stored values using
@@ -598,7 +598,7 @@ ${PROJECT_SOURCE_DIR}``) are::
      project-checkin-test-config.py # [Optional] checkin-test.py config
      cmake/
        NativeRepositoriesList.cmake    # [Optional] Rarely used
-       ExtraRepositoriesList.cmake     # [Optional] Lists repos and VC URLs 
+       ExtraRepositoriesList.cmake     # [Optional] Lists repos and VC URLs
        ProjectCiFileChangeLogic.py     # [Optional] CI global change/test logic
        ProjectCompilerPostConfig.cmake # [Optional] Override/tweak build flags
        ProjectDependenciesSetup.cmake  # [Optional] Project deps overrides
@@ -903,16 +903,16 @@ are set.  This file in Trilinos looked like::
     ...
 
     include(${Kokkos_GEN_DIR}/kokkos_generated_settings.cmake)
-  
+
     if (NOT KOKKOS_ARCH STREQUAL "None")
-    
+
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KOKKOS_CXX_FLAGS}")
-    
+
       message("-- " "Skip adding flags for OpenMP because Kokkos flags does that ...")
       set(OpenMP_CXX_FLAGS_OVERRIDE " ")
-    
+
     endif()
-  
+
   endif()
 
 The exact context where this file is processed (if it exists) is described in
@@ -1942,7 +1942,7 @@ A TriBITS Subpackage:
   ``${PARENT_PACKAGE_NAME}_ENABLE_TESTS=ON``.
 
 The contents of a TriBITS Subpackage are almost identical to those of a
-TriBITS Package.  The differences are described below and in `How is a TriBITS 
+TriBITS Package.  The differences are described below and in `How is a TriBITS
 Subpackage different from a TriBITS Package?`_.
 
 For more details on the definition of a TriBITS Package (or subpackage), see:
@@ -2337,7 +2337,7 @@ proceeds through the call to `tribits_project()`_.
 |   5)  ``include(`` `<projectDir>/Version.cmake`_ ``)``
 |   6)  Define primary TriBITS options and read in the list of extra repositories
 |       (calls ``tribits_define_global_options_and_define_extra_repos()``)
-|       * ``include(`` `<projectDir>/cmake/ExtraRepositoriesList.cmake`_ ``)``      
+|       * ``include(`` `<projectDir>/cmake/ExtraRepositoriesList.cmake`_ ``)``
 |   7)  For each ``<repoDir>`` in all defined TriBITS repositories:
 |       * ``include(`` `<repoDir>/cmake/CallbackSetupExtraOptions.cmake`_ ``)``
 |       * Call macro ``tribits_repository_setup_extra_options()``
@@ -2381,7 +2381,7 @@ project, repository, package, and subpackage files should be clear.  All of
 this information should also be clear when enabling `File Processing
 Tracing`_ and watching the output from the ``cmake`` configure STDOUT.
 
-Reduced Package Dependency Processing 
+Reduced Package Dependency Processing
 ++++++++++++++++++++++++++++++++++++++
 
 In addition to the full processing that occurs as part of the `Full TriBITS
@@ -2667,7 +2667,7 @@ without having to define its own ``QT`` TPL in its repository's
    TriBITS, it can be difficult to know where the right place is to set a given
    set of variables.  The primary considerations for where to set a variable
    depend on:
- 
+
 .. ToDo: Describe considerations on where to set variables ...
 
 
@@ -3176,7 +3176,7 @@ enable/disable cache variables (with the initial default values)::
 
   Trilinos_ENABLE_Teuchos=""
   Trilinos_ENABLE_RTOp""
-  Trilinos_ENABLE_Epetra=""      
+  Trilinos_ENABLE_Epetra=""
   Trilinos_ENABLE_Triutils=""
   Trilinos_ENABLE_EpetraExt=""
   Trilinos_ENABLE_ThyraCore=""
@@ -3443,7 +3443,7 @@ In more detail, these rules/behaviors are:
     variable `${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES`_:
 
     .. _${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON:
- 
+
     * If ``${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON``, then
       TriBITS will disable the explicit enable and continue on.  In the above
       example, TriBITS will override ``Trilinos_ENABLE_RTOp=ON`` and set
@@ -3475,7 +3475,7 @@ In more detail, these rules/behaviors are:
       Trilinos_ENABLE_ThyraGoodStuff=ON   # Only if enabling ST code!
       Trilinos_ENABLE_ThyraEpetra=ON
       Trilinos_ENABLE_ThyraEpetraExt=ON   # Only if enabling ST code!
-   
+
     (Note that ``Trilinos_ENABLE_ThyraCrazyStuff`` is **not** set to ``ON``
     because it is already set to ``OFF`` by default, see `EX SE packages
     disabled by default`_.)  Likewise, explicitly setting
@@ -3843,12 +3843,12 @@ tests/examples and TPLs can be clearly seen when processing the TPLs and
 top-level packages in the lines::
 
   Getting information for all enabled TPLs ...
-  
+
   -- Processing enabled TPL: BLAS
   -- Processing enabled TPL: LAPACK
-  
+
   Configuring individual enabled Trilinos packages ...
-  
+
   Processing enabled package: Teuchos (Libs)
   Processing enabled package: RTOp (Libs)
   Processing enabled package: Epetra (Libs)
@@ -4681,7 +4681,7 @@ the `checkin-test.py`_ tool in extended pre-push testing.
 
 .. _Performance Testing:
 
-**Performance Testing** 
+**Performance Testing**
 
 *Performance Testing* builds are a special class of builds that have tests
 that are specifically designed to test the run-time performance of a particular
@@ -5158,26 +5158,26 @@ the commands::
 
   $ git clone git@someurl.com:MetaProject
   $ cd MetaProject/
-  $ ./cmake/tribits/ci_support/clone_extra_repos.py 
+  $ ./cmake/tribits/ci_support/clone_extra_repos.py
 
 which produces the output like::
 
-  ...  
-  
+  ...
+
   ***
   *** Clone the selected extra repos:
   ***
-  
+
   Cloning repo ExtraRepo1 ...
-  
+
   Running: git clone git@someurl.com:ExtraRepo1 ExtraRepo1
-  
+
   Cloning repo ExtraRepo2 ...
-  
+
   Running: git clone git@someurl.com:ExtraRepo2 ExtraRepo1/ExtraRepo2
-  
+
   Cloning repo ExtraRepo3 ...
-  
+
   Running: git clone git@someurl.com:ExtraRepo3 ExtraRepo3
 
 See `clone_extra_repos.py --help`_ for more details.
@@ -5224,7 +5224,7 @@ Some of the aggregate commands that one would typically run under the base
 
 The tool ``gitdist`` is provided under TriBITS directory::
 
-  cmake/tribits/python_utils/gitidst   
+  cmake/tribits/python_utils/gitidst
 
 and can be installed by the `install_devtools.py`_ tool (see `TriBITS
 Development Toolset`_).  See `gitdist documentation`_ for more details.
@@ -5744,7 +5744,7 @@ as follows:
 
      #if HAVE_<PACKAGE_NAME_UC>_<OPTIONAL_DEP_PACKAGE_NAME_UC>
      #  include "<upstreamPackageName>_<fileName>"
-     #endif 
+     #endif
 
 4) **For an optional dependency, use CMake if() statements based on
    ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}:** When a package
@@ -5761,7 +5761,7 @@ as follows:
      endif()
 
   .. ToDo: Find an example to point to in TribitsExampleProject.
-  
+
 NOTE: TriBITS will automatically add the include directories for the upstream
 package to the compile lines for the downstream package source builds and will
 add the libraries for the upstream package to the link lines to the downstream
@@ -5824,7 +5824,7 @@ follows:
 
      #if HAVE_<PACKAGE_NAME_UC>_<OPTIONAL_DEP_TPL_NAME_UC>
      #  include "<upstreamPackageName>_<fileName>"
-     #endif 
+     #endif
 
 4) **For an optional dependency, use CMake if() statements based on
    ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}:** When a package
@@ -5841,7 +5841,7 @@ follows:
      endif()
 
   .. ToDo: Find an example to point to in TribitsExampleProject.
-  
+
 NOTE: TriBITS will automatically add the include directories for the upstream
 TPL to the compile lines for the downstream package source builds and will add
 the libraries for the upstream TPL to the link lines to the downstream package
@@ -6296,7 +6296,7 @@ The following steps describe how to submit results to a CDash site using the
     <baseDir>/TribitsExamplProject
 
   and then run ``make dashboard``.
-     
+
 4) Add custom CTest -S driver scripts.
 
   For driving different builds and tests, one needs to set up one or more
@@ -6355,7 +6355,7 @@ The following steps describe how to submit results to a CDash site using the
   submit to CDash in a variety of ways:
 
   * Cron jobs can be set up to run them at the same time every day.
- 
+
   * Jenkins jobs can be set up to run them based on various criteria.
 
   * Travis CI can run them to respond to GitHub pushes.
@@ -6404,10 +6404,10 @@ given below.
    <special_group>)`` in the CTest -S ``*.cmake`` driver script itself or can
    set it in the environment when running the ctest -S driver script.  For
    example::
- 
+
      $ env <Project>_TRACK=<special_group> ... \
        ctest -V -S <ctest_driver>.cmake
- 
+
    If the "build type" for the CDash group ``<special_group>`` was set to
    "Daily", then set `CTEST_TEST_TYPE`_ to ``Nightly``.  Otherwise,
    ``CTEST_TEST_TYPE`` can be set to ``Continuous`` or ``Experimental``.
@@ -6891,12 +6891,12 @@ rebase by default) as shown in the following Trilinos commit::
   commit 71ce56bd2d268922fda7b8eca74fad0ffbd7d807
   Author: Roscoe A. Bartlett <bartlettra@ornl.gov>
   Date:   Thu Feb 19 12:04:11 2015 -0500
-  
+
       Define HAVE_TEUCHOSCORE_CXX11 in TeuchosCore_config.h
-      
+
       This makes TeuchosCore a good example for how Trilinos (or any TriBITS)
       subpackages should put in an optional dependency on C++11.
-      
+
       Build/Test Cases Summary
       Enabled Packages: TeuchosCore
       Disabled Packages: [...]
@@ -7045,16 +7045,16 @@ the commands::
   $ cat ../git_bisect_log.log | grep "possible first bad commit" | \
       sed "s/possible first bad commit://g"  | sed "s/[a-z0-9]\{30\}\]/]/g"
   $ git bisect reset
-  
+
 This set of commands yield the output::
 
   Bisecting: 1128 revisions left to test after this (roughly 10 steps)
   [9634d462dba77704b598e89ba69ba3ffa5a71471] Revert "Trilinos: remove _def.hpp [...]"
-  
+
   real	1m22.961s
   user	0m57.157s
   sys	3m40.376s
-  
+
   #  [165067ce53] MueLu: SemiCoarsenPFactory. Use strided maps to properly transfer [...]
   #  [ada21a95a9] MueLu: refurbish LineDetectionFactory
   #  [83f05e8970] MueLu: stop semi-coarsening if no z-layers are left.
@@ -7068,7 +7068,7 @@ bounded in the set of commits ``8b79832..165067c``::
   165067c "MueLu: SemiCoarsenPFactory. Use strided maps to properly [...]."
   Author: Tobias Wiesner <tawiesn@sandia.gov>
   Date:   Thu Jul 2 12:11:24 2015 -0600
-  
+
   8b79832 "Ifpack2: RBILUK: adding additional ETI types"
   Author: Jonathan Hu <jhu@sandia.gov>
   Date:   Thu Jul 2 14:17:40 2015 -0700
@@ -7095,7 +7095,7 @@ intermediate commits are in Trilinos.  All that matters is the usage of the
 ``checkin-test.py`` tool (another motivation for the usage of the
 ``checkin-test.py`` tool, see `Pre-push Testing using checkin-test.py`_ for
 others as well).
- 
+
 Note that above, we grep the output from ``git bisect log`` for the set of
 possible "bad" commits instead of just looking at the output from the ``git
 bisect run <script>`` command (which also lists the set of possible "bad"
@@ -7321,7 +7321,7 @@ The sync driver script for this example should be called something like
 like::
 
   #!/bin/bash -e
-  
+
   # Set up the environment (i.e. PATH; needed for cron jobs)
   ...
 
@@ -7359,15 +7359,15 @@ A description of each option passed into this invocation of the
 details):
 
   ``--extra-pull-from=ExtraRepo1:public:master``
-  
+
     This option instructs the ``checkin-test.py`` tool to pull and merge in
     commits that define the integration.  One could do the pull(s) manually of
     doing so has the disadvantage that if they fail for some reason, they will
     not be seen by the ``checkin-test.py`` tool and no notification email
     would go out.
-  
+
   ``--abort-gracefully-if-no-changes-to-push``
-  
+
     The option ``--abort-gracefully-if-no-changes-to-push`` makes the
     ``checkin-test.py`` tool gracefully terminate without sending out any
     emails if after all the pulls, there are no local changes to push to the
@@ -7423,23 +7423,23 @@ details):
     email will still go out.  However, if one wants to never get the early
     build-case emails, one can turn this off by setting
     ``--send-build-case-email=never``.
- 
+
   ``--send-email-to=base-proj-integrators@url4.gov``
- 
+
     The results of the builds will be sent this email address.  If you only
     want an email sent when a push actually happens, you can set
     ``--send-email-to=''`` and rely on ``--send-email-to-on-push``.
-  
+
   ``--send-email-to-on-push=base-proj-integrators@url4.gov``
-  
+
     A confirmation and summary email will be sent to this address if the push
     happens.  This can be a different email address than set by the
     ``--send-email-to`` option.  It is highly recommended that a mail list be
     used for this email address since this will be the only more permanent
     logging of the ACI process.
-  
+
   ``--no-append-test-results --no-rebase``
-  
+
     These options are needed to stop the ``checkin-test.py`` tool from
     modifying the commits being tested and pushed from one public git repo to
     another.  The option ``--no-append-test-results`` is needed to instruct
@@ -7458,14 +7458,14 @@ details):
     not be a merge commit but just a fast-forward).  There are cases, however,
     where appending the test results in an ACI process might be acceptable but
     they are not discussed here.
-  
+
   ``--do-all --push -j16``
-  
+
     These are standard options that always get used when invoking the
     ``checkin-test.py`` tool and need no further explanation.
-  
+
   ``--wipe-clean``
-  
+
     This option is added if you want to make the sync server more robust to
     changes that might require a clean configure from script.  If you care
     more about using less computer resources and testing that rebuilds work
@@ -7507,12 +7507,12 @@ daily ACI process at 8pm local time every night::
   # |  |  |  |  |
   # *  *  *  *  *  command to be executed
    00 20  *  *  *  ~/sync_base_dir/sync_ExtraRepo1.sh &> ~/sync_base_dir/sync_ExtraRepo1.out
-  
+
 In the above crontab file (set with ``'crontab -e'`` or ``'crontab
 my-crontab-file.txt'``), the script::
 
   ~/sync_base_dir/sync_ExtraRepo1.sh
- 
+
 is assumed to be a soft symbolic link to some version controlled copy of the
 ACI sync script.  For example, it might make sense for this script to be
 version controlled in the ``BaseProj`` repo and therefore the symbolic link
@@ -7890,7 +7890,7 @@ like::
   set_and_inc_dirs(DIR ${CMAKE_CURRENT_SOURCE_DIR})
   append_glob(HEADERS ${DIR}/*.hpp)
   append_glob(SOURCES ${DIR}/*.cpp)
-  
+
   if (NOT ${PACKAGE_NAME}_HIDE_DEPRECATED_CODE)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deprecated)
     append_set(HEADERS
@@ -7954,7 +7954,7 @@ remove them from the version control repository and local directories
 ``CMakeLists.txt`` file.  For the example in `Hiding entire deprecated header
 and source files`_, one would just remove the files ``SomeOldStuff.hpp`` and
 ``SomeOldStuff.cpp`` from the ``CMakeLists.txt`` file leaving::
-  
+
   if (NOT ${PACKAGE_NAME}_HIDE_DEPRECATED_CODE)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/deprecated)
     append_set(HEADERS
@@ -8111,12 +8111,12 @@ This will create a git commit in the local ``<projectDir>/`` git repo that
 looks like::
 
     Automatic snapshot commit from tribits at f8c1682
-    
+
     Origin repo remote tracking branch: 'casl-dev-collab/tribits_reorg_26'
     Origin repo remote repo URL: 'casl-dev-collab = git@casl-dev:collaboration/TriBITS'
-    
+
     At commit:
-    
+
     f8c1682 Assert TriBITS min CMake version in TriBITS itself
     Author: Roscoe A. Bartlett <bartlettra@ornl.gov>
     Date: Fri Dec 5 05:40:49 2014 -0500
@@ -8187,7 +8187,7 @@ See `install_devtools.py --help`_ for more details.
 .. LocalWords:  TribitsCTestDriverCore
 .. LocalWords:  TribitsExampleProject TribitsExProj DTribitsExProj SimpleCXX MixedLang
 .. LocalWords:  MockTrilinos
-.. LocalWords:  WithSubpackages WithSubpackagesA WithSubpackagesB WithSubpackagesC 
+.. LocalWords:  WithSubpackages WithSubpackagesA WithSubpackagesB WithSubpackagesC
 
 .. General CMake words:
 
