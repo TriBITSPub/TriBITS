@@ -68,11 +68,11 @@ then discussed which is the backbone of the TriBITS system.  An overview of
 the foundations for `TriBITS Automated Testing`_ is then given.  The topic of
 TriBITS `Multi-Repository Support`_ is examined next.  `Development
 Workflows`_ using TriBITS is then explored.  This is followed by a set of
-detailed `Howtos`_.  Later some `Additional Topics`_ are presented that don't
-fit well into other sections.  Then the main bulk of the detailed reference
-material for TriBITS is given in the section `TriBITS Detailed Reference
-Documentation`_.  Finally, several bits of information are provided in the
-`Appendix`_.
+detailed `Howtos`_.  Later some `Miscellaneous Topics`_ are presented that
+don't fit well into other sections.  Then the main bulk of the detailed
+reference material for TriBITS is given in the section `TriBITS Detailed
+Reference Documentation`_.  Finally, several bits of information are provided
+in the `Appendix`_.
 
 
 .. include:: ../TribitsGuidesBody.rst

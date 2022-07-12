@@ -64,6 +64,9 @@
 # ``find_dependency(<externalPkg>)`` (with no other argument) and then, again,
 # defines the correct imported library dependency.
 #
+# For more details, see `Creating FindTPL*.cmake using find_package() with
+# IMPORTED targets`_.
+#
 function(tribits_external_package_create_imported_all_libs_target_and_config_file
     tplName
   )
