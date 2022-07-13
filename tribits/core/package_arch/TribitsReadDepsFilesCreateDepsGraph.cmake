@@ -179,7 +179,7 @@ endmacro()
 #
 macro(tribits_read_all_package_deps_files_create_deps_graph)
 
-  set(${PROJECT_NAME}_SE_PACKAGES) # Packages and subpackages
+  set(${PROJECT_NAME}_SE_PACKAGES "") # Packages and subpackages
 
   foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
     tribits_read_toplevel_package_deps_files_add_to_graph(${TRIBITS_PACKAGE}
@@ -476,7 +476,7 @@ function(tribits_set_dep_packages  PACKAGE_NAME   LIB_OR_TEST  REQUIRED_OR_OPTIO
   endif()
 
   set(LIST_TYPE  ${LIB_OR_TEST}_${REQUIRED_OR_OPTIONAL}_DEP_PACKAGES)
-  set(PACKAGE_DEPS_LIST)
+  set(PACKAGE_DEPS_LIST "")
   set(SE_PACKAGE_ENABLE_VAR  ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
 
   foreach(DEP_PKG ${${LIST_TYPE}})
