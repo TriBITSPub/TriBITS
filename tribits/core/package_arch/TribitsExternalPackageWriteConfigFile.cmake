@@ -37,7 +37,11 @@
 # ************************************************************************
 # @HEADER
 
+
+include_guard()
+
 include(TribitsGeneralMacros)
+include(TribitsPackageDependencies)
 
 include(MessageWrapper)
 
@@ -150,7 +154,7 @@ endfunction()
 #
 #   ``<tplConfigVersionFile>``: Full file path for the
 #   ``<tplName>ConfigVersion.cmake`` file that will be installed into the
-#   correct location.
+#   correct location ``${${PROJECT_NAME}_INSTALL_LIB_DIR}/external_packages/``
 #
 function(tribits_external_package_install_config_version_file  tplName
      tplConfigVersionFile
@@ -298,7 +302,7 @@ endfunction()
 #   tribits_external_package_add_find_upstream_dependencies_str(tplName
 #     configFileFragStrInOut)
 #
-# NOTE: This also requires that `<upstreamTplName>_DIR` be set for each
+# NOTE: This also requires that ``<upstreamTplName>_DIR`` be set for each
 # external package/TPL listed in ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
 function(tribits_external_package_add_find_upstream_dependencies_str
@@ -325,7 +329,7 @@ function(tribits_external_package_add_find_upstream_dependencies_str
       "\n"
      )
     foreach (upstreamTplDepEntry IN LISTS ${tplName}_LIB_ENABLED_DEPENDENCIES)
-      tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
+      tribits_external_package_get_dep_name_and_vis(
 	"${upstreamTplDepEntry}"  upstreamTplDepName  upstreamTplDepVis)
       if ("${${upstreamTplDepName}_DIR}" STREQUAL "")
         message(FATAL_ERROR "ERROR: ${upstreamTplDepName}_DIR is empty!")
@@ -694,7 +698,7 @@ function(tribits_external_package_append_upstream_target_link_libraries_str
     string(APPEND configFileStr
       "target_link_libraries(${prefix_libname}\n")
     foreach (upstreamTplDepEntry IN LISTS ${tplName}_LIB_ENABLED_DEPENDENCIES)
-      tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
+      tribits_external_package_get_dep_name_and_vis(
 	"${upstreamTplDepEntry}"  upstreamTplDepName  upstreamTplDepVis)
       if (upstreamTplDepVis STREQUAL "PUBLIC")
         string(APPEND configFileStr
@@ -722,53 +726,9 @@ endfunction()
 # libraries being listed on link lines for downstsream library and exec links.
 
 
-# @FUNCTION: tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis()
-#
-# Extract ``<PkgName>`` and ``<Vis>`` from ``<PkgName>[:<Vis>]`` input with
-# default ``<Vis>`` of `PRIVATE`.
-#
-# Usage::
-#
-#   tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-#     upstreamTplDepEntry  upstreamTplDepNameOut  upstreamTplDepVisOut)
-#
-function(tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis
-    upstreamTplDepEntry  upstreamTplDepNameOut  upstreamTplDepVisOut
-  )
-  # Split on ':' to get <PkgName>[:<Vis>]
-  string(REPLACE ":" ";" upstreamTplAndVisList  "${upstreamTplDepEntry}")
-  list(LENGTH upstreamTplAndVisList upstreamTplAndVisListLen)
-  # Validate one or two entries only
-  if (upstreamTplAndVisListLen GREATER 2)
-    math(EXPR numColons "${upstreamTplAndVisListLen}-1")
-    message_wrapper(FATAL_ERROR
-      "ERROR: '${upstreamTplDepEntry}' has ${numColons} ':' but only 1 is allowed!")
-  endif()
-  # Set <PkgName>
-  list(GET upstreamTplAndVisList 0 upstreamTplDepName)
-  # Set <Vis>
-  if (upstreamTplAndVisListLen EQUAL 2)
-    list(GET upstreamTplAndVisList 1 upstreamTplDepVis)
-  else()
-    set(upstreamTplDepVis PRIVATE)
-  endif()
-  # Assert valid <Vis>
-  set(validVisValues "PUBLIC" "PRIVATE")
-  if (NOT upstreamTplDepVis IN_LIST validVisValues)
-    message_wrapper(FATAL_ERROR
-      "ERROR: '${upstreamTplDepEntry}' has invalid visibility '${upstreamTplDepVis}'."
-      "  Only 'PUBLIC' or 'PRIVATE' allowed!")
-    return()  # Only executed in unit-test mode!
-  endif()
-  # Set outputs
-  set(${upstreamTplDepNameOut} ${upstreamTplDepName} PARENT_SCOPE)
-  set(${upstreamTplDepVisOut} ${upstreamTplDepVis} PARENT_SCOPE)
-endfunction()
-
-
 # @FUNCTION: tribits_external_package_create_all_libs_target()
 #
-# Creates the <tplName>::all_libs target command text using input info and
+# Creates the ``<tplName>::all_libs`` target command text using input info and
 # from ``TPL_<tplName>_INCLUDE_DIRS``.
 #
 # Usage::
@@ -782,16 +742,16 @@ endfunction()
 #
 # The arguments are:
 #
-#   ``<tplName>``: Name of the external package/TPL
+#   ``<tplName>``: [in] Name of the external package/TPL
 #
-#   ``<libTargetsList>``: List of targets created from processing
+#   ``<libTargetsList>``: [in] List of targets created from processing
 #   ``TPL_<tplName>_LIBRARIES``.
 #
-#   ``<libLinkFlagsList>``: List of of ``-L<dir>`` library directory paths
-#   entries found while processing ``TPL_<tplName>_LIBRARIES``.
+#   ``<libLinkFlagsList>``: [in] List of of ``-L<dir>`` library directory
+#   paths entries found while processing ``TPL_<tplName>_LIBRARIES``.
 #
-#   ``<configFileFragStrInOut>``: A string variable that will be appended with
-#   the ``<tplName>::all_libs`` target statements.
+#   ``<configFileFragStrInOut>``: [out] A string variable that will be
+#   appended with the ``<tplName>::all_libs`` target statements.
 #
 function(tribits_external_package_create_all_libs_target  tplName)
 

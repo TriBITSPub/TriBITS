@@ -20,7 +20,8 @@
 @FUNCTION: tribits_determine_if_current_package_needs_rebuilt() +
 @MACRO:    tribits_disable_package_on_platforms() +
 @MACRO:    tribits_exclude_files() +
-@FUNCTION: tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis() +
+@MACRO:    tribits_external_package_define_dependencies() +
+@FUNCTION: tribits_external_package_get_dep_name_and_vis() +
 @FUNCTION: tribits_external_package_create_imported_all_libs_target_and_config_file() +
 @FUNCTION: tribits_external_package_write_config_file() +
 @FUNCTION: tribits_external_package_write_config_file_str() +

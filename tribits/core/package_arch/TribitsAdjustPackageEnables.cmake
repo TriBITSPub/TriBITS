@@ -42,6 +42,7 @@ include(TribitsProcessPackagesAndDirsLists)
 include(TribitsAddOptionAndDefine)
 include(TribitsGeneralMacros)
 include(TribitsPrintEnabledPackagesLists)
+include(TribitsPackageDependencies)
 
 include(AdvancedOption)
 include(AdvancedSet)
@@ -588,7 +589,9 @@ endmacro()
 #    packages where only the shell of the parent package is enabled and not
 #    all of its required subpackages are enabled.
 #
-macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars packageName)
+macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars
+    packageName
+  )
 
   # LIB dependencies
 
@@ -1470,9 +1473,17 @@ macro(tribits_adjust_package_enables)
   tribits_set_up_enabled_lists_and_se_pkg_idx()
 
   #
-  # H) Set up flat list of direct package dependencies (even for non-enabled
-  # packages) and enabled package dependencies for enabled packages
+  # H) Set up flat list of direct external and inner package dependencies (even
+  # for non-enabled packages) and enabled package dependencies for enabled
+  # packages
   #
+
+  foreach(externalPkgName ${${PROJECT_NAME}_TPLS})
+    tribits_external_package_setup_enabled_dependencies(${externalPkgName})
+    # ToDo: Assert that all of the listed dependencies in
+    # ${externalPkgName}_LIB_ENABLED_DEPENDENCIES exist and are upstream from
+    # ${externalPkgName}
+  endforeach()
 
   foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
     tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars(

@@ -192,69 +192,6 @@ endfunction()
 
 
 #
-# Test for tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis()
-#
-
-
-function(unittest_tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis)
-
-  message("\n***")
-  message("*** Testing tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis")
-  message("***\n")
-
-  set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
-
-  message("\nTesting default visibility\n")
-  global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-    SomePackage  upstreamTplDepNameOut  upstreamTplDepVisOut)
-  unittest_compare_const( upstreamTplDepNameOut
-    "SomePackage" )
-  unittest_compare_const( upstreamTplDepVisOut
-    "PRIVATE" )
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
-
-  message("\nTesting PUBLIC\n")
-  global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-    SomePackage:PUBLIC  upstreamTplDepNameOut  upstreamTplDepVisOut)
-  unittest_compare_const( upstreamTplDepNameOut
-    SomePackage )
-  unittest_compare_const( upstreamTplDepVisOut
-    "PUBLIC" )
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
-
-  message("\nTesting PRIVATE\n")
-  global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-    SomePackage:PRIVATE  upstreamTplDepNameOut  upstreamTplDepVisOut)
-  unittest_compare_const( upstreamTplDepNameOut
-    SomePackage )
-  unittest_compare_const( upstreamTplDepVisOut
-    "PRIVATE" )
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
-
-  message("\nTesting invalid visibility\n")
-  global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-    SomePackage:SPELLEDWRONG  upstreamTplDepNameOut  upstreamTplDepVisOut)
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "FATAL_ERROR;ERROR: 'SomePackage:SPELLEDWRONG' has invalid visibility 'SPELLEDWRONG'.;  Only 'PUBLIC' or 'PRIVATE' allowed!")
-
-  message("\nTesting more than two elements splitting on ':'\n")
-  global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-    SomePackage:BadExtraEntry:PRIVATE  upstreamTplDepNameOut  upstreamTplDepVisOut)
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "FATAL_ERROR;ERROR: 'SomePackage:BadExtraEntry:PRIVATE' has 2 ':' but only 1 is allowed!")
-
-  # Reset global state
-  global_set(MESSAGE_WRAPPER_INPUT "")
-
-endfunction()
-
-
-#
 # Tests for tribits_external_package_process_libraries_list_incl()
 #
 
@@ -1277,8 +1214,6 @@ unittest_tribits_external_package_get_libname_from_full_lib_path_linux()
 unittest_tribits_external_package_get_libname_from_full_lib_path_win32()
 unittest_tribits_external_package_get_libname_from_full_lib_path_apple()
 
-unittest_tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis()
-
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_1()
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_2()
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_3()
@@ -1303,4 +1238,4 @@ unittest_tribits_external_package_write_config_file_str_incl_dirs_1_bad_lib_args
 unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2_deps_3()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(85)
+unittest_final_result(74)
