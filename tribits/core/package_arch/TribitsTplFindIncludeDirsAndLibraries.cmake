@@ -99,8 +99,8 @@ include(Split)
 # to disable the prefind call to ``find_package()`` even if it would be
 # allowed otherwise.
 #
-# See `Creating FindTPL*.cmake using find_package() without IMPORTED targets`_
-# for details in how to use this function to create a
+# See `Creating FindTPL<tplName>.cmake using find_package() without IMPORTED
+# targets`_ for details in how to use this function to create a
 # ``FindTPL<tplName>.cmake`` module file.
 #
 function(tribits_tpl_allow_pre_find_package  TPL_NAME  ALLOW_PACKAGE_PREFIND_OUT)

@@ -59,7 +59,7 @@ cmake_policy(SET CMP0057 NEW) # Support if ( ... IN_LIST ... )
 
 # @MACRO: tribits_external_package_define_dependencies()
 #
-# Macro called from inside of a ``FindTPL<tplName>Dependencies.cmake`` file to
+# Macro called from inside of a `FindTPL<tplName>Dependencies.cmake`_ file to
 # define the direct upstream dependencies an external package/TPL.
 #
 # Usage::
