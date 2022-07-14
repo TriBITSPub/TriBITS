@@ -679,7 +679,7 @@ endmacro()
 
 # Function to print the direct package dependency lists
 #
-function(tribits_print_direct_package_dependencies_lists packageName)
+function(tribits_print_direct_package_dependencies_lists  packageName)
   set(PRINTED_VAR "")
   message("")
   print_nonempty_var_with_spaces(${packageName}_LIB_ENABLED_DEPENDENCIES PRINTED_VAR)
@@ -1480,9 +1480,9 @@ macro(tribits_adjust_package_enables)
   endforeach()
 
   if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
-    message("\nDumping direct dependencies for each SE package ...")
-    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
-      tribits_print_direct_package_dependencies_lists(${TRIBITS_PACKAGE})
+    message("\nDumping direct dependencies for each package ...")
+    foreach(tribitsPkg  IN  LISTS  ${PROJECT_NAME}_DEFINED_TPLS  ${PROJECT_NAME}_SE_PACKAGES)
+      tribits_print_direct_package_dependencies_lists(${tribitsPkg})
     endforeach()
   endif()
 
