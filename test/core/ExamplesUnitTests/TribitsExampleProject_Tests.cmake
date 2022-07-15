@@ -176,7 +176,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "Setting TribitsExProj_ENABLE_WithSubpackages=ON"
         "Setting TPL_ENABLE_HeaderOnlyTpl=ON because it is required by the enabled package SimpleCxx"
         "Set cache entries for optional packages/TPLs and tests/examples for packages actually enabled ..."
-        "Dumping direct dependencies for each SE package ..."
+        "Dumping direct dependencies for each package ..."
         "-- SimpleCxx_LIB_ENABLED_DEPENDENCIES: HeaderOnlyTpl"
         "-- SimpleCxx_LIB_ALL_DEPENDENCIES: HeaderOnlyTpl SimpleTpl"
         "-- MixedLang_LIB_ALL_DEPENDENCIES: "

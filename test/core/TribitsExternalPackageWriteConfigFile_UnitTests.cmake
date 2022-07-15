@@ -61,45 +61,45 @@ include(GlobalNullSet)
 
 
 #
-# Tests for tribits_external_package_get_libname_from_full_lib_path()
+# Tests for tribits_extpkg_get_libname_from_full_lib_path()
 #
 
 
-function(unittest_tribits_external_package_get_libname_from_full_lib_path_linux)
+function(unittest_tribits_extpkg_get_libname_from_full_lib_path_linux)
 
   message("\n***")
-  message("*** Testing tribits_external_package_get_libname_from_full_lib_path() for Linux")
+  message("*** Testing tribits_extpkg_get_libname_from_full_lib_path() for Linux")
   message("***\n")
 
   set(tplName "SomeTpl")
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/libsomelib1.a" libname)
   unittest_compare_const( libname "somelib1" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/libsomelib2.so" libname)
   unittest_compare_const( libname "somelib2" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/libsomelib3.so.1.2.3" libname)
   unittest_compare_const( libname "somelib3" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/libsomelib4.any.extension" libname)
   unittest_compare_const( libname "somelib4" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/somelib5.any.extension" libname)
   unittest_compare_const( libname "" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
@@ -108,37 +108,37 @@ function(unittest_tribits_external_package_get_libname_from_full_lib_path_linux)
 endfunction()
 
 
-function(unittest_tribits_external_package_get_libname_from_full_lib_path_win32)
+function(unittest_tribits_extpkg_get_libname_from_full_lib_path_win32)
 
   message("\n***")
-  message("*** Testing tribits_external_package_get_libname_from_full_lib_path() for WIN32")
+  message("*** Testing tribits_extpkg_get_libname_from_full_lib_path() for WIN32")
   message("***\n")
 
   set(WIN32 TRUE)
 
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/somelib1.a" libname)
   unittest_compare_const( libname "somelib1" )
 
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/somelib2.dll" libname)
   unittest_compare_const( libname "somelib2" )
 
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/somelib3.any-extension" libname)
   unittest_compare_const( libname "somelib3" )
 
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/libsomelib4.any-extension" libname)
   unittest_compare_const( libname "libsomelib4" )
 
 endfunction()
 
 
-function(unittest_tribits_external_package_get_libname_from_full_lib_path_apple)
+function(unittest_tribits_extpkg_get_libname_from_full_lib_path_apple)
 
   message("\n***")
-  message("*** Testing tribits_external_package_get_libname_from_full_lib_path() for APPLE")
+  message("*** Testing tribits_extpkg_get_libname_from_full_lib_path() for APPLE")
   message("***\n")
 
   set(APPLE TRUE)
@@ -146,43 +146,43 @@ function(unittest_tribits_external_package_get_libname_from_full_lib_path_apple)
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/libsomelib1.a" libname)
   unittest_compare_const( libname "somelib1" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/libsomelib2.so" libname)
   unittest_compare_const( libname "somelib2" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/libsomelib3.tbd" libname)
   unittest_compare_const( libname "somelib3" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/libsomelib4.any-extension" libname)
   unittest_compare_const( libname "somelib4" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/Accelerate.framework" libname)
   unittest_compare_const( libname "Accelerate" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/someNameWithExtraDots.a.b.framework" libname)
   unittest_compare_const( libname "someNameWithExtraDots" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
 
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_libname_from_full_lib_path(
+  tribits_extpkg_get_libname_from_full_lib_path(
     "/some/base/path/SomeBase.any.extension" libname)
   unittest_compare_const( libname "" )
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
@@ -192,80 +192,17 @@ endfunction()
 
 
 #
-# Test for tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis()
-#
-
-
-function(unittest_tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis)
-
-  message("\n***")
-  message("*** Testing tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis")
-  message("***\n")
-
-  set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
-
-  message("\nTesting default visibility\n")
-  global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-    SomePackage  upstreamTplDepNameOut  upstreamTplDepVisOut)
-  unittest_compare_const( upstreamTplDepNameOut
-    "SomePackage" )
-  unittest_compare_const( upstreamTplDepVisOut
-    "PRIVATE" )
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
-
-  message("\nTesting PUBLIC\n")
-  global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-    SomePackage:PUBLIC  upstreamTplDepNameOut  upstreamTplDepVisOut)
-  unittest_compare_const( upstreamTplDepNameOut
-    SomePackage )
-  unittest_compare_const( upstreamTplDepVisOut
-    "PUBLIC" )
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
-
-  message("\nTesting PRIVATE\n")
-  global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-    SomePackage:PRIVATE  upstreamTplDepNameOut  upstreamTplDepVisOut)
-  unittest_compare_const( upstreamTplDepNameOut
-    SomePackage )
-  unittest_compare_const( upstreamTplDepVisOut
-    "PRIVATE" )
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
-
-  message("\nTesting invalid visibility\n")
-  global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-    SomePackage:SPELLEDWRONG  upstreamTplDepNameOut  upstreamTplDepVisOut)
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "FATAL_ERROR;ERROR: 'SomePackage:SPELLEDWRONG' has invalid visibility 'SPELLEDWRONG'.;  Only 'PUBLIC' or 'PRIVATE' allowed!")
-
-  message("\nTesting more than two elements splitting on ':'\n")
-  global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis(
-    SomePackage:BadExtraEntry:PRIVATE  upstreamTplDepNameOut  upstreamTplDepVisOut)
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "FATAL_ERROR;ERROR: 'SomePackage:BadExtraEntry:PRIVATE' has 2 ':' but only 1 is allowed!")
-
-  # Reset global state
-  global_set(MESSAGE_WRAPPER_INPUT "")
-
-endfunction()
-
-
-#
-# Tests for tribits_external_package_process_libraries_list_incl()
+# Tests for tribits_extpkg_process_libraries_list_incl()
 #
 
 
 # Testing with no upstream TPL dependencies
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_1)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_1)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib files 1")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, lib files 1")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -273,7 +210,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -301,10 +238,10 @@ set_target_properties(SomeTpl::somelib PROPERTIES
 endfunction()
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_2)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_2)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib files 2")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, lib files 2")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -313,7 +250,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -347,10 +284,10 @@ target_link_libraries(SomeTpl::somelib2
 endfunction()
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_3)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_3)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib files 3")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, lib files 3")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -361,7 +298,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -401,10 +338,10 @@ target_link_libraries(SomeTpl::somelib3
 endfunction()
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_1_1)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_1_1)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib opts 1, 1")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, lib opts 1, 1")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -414,7 +351,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -442,10 +379,10 @@ set_target_properties(SomeTpl::lib1 PROPERTIES
 endfunction()
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_2_2)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib opts 2, 2")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, lib opts 2, 2")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -456,7 +393,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -490,10 +427,10 @@ target_link_libraries(SomeTpl::lib2
 endfunction()
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_3_3)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_3_3)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib opts 3, 3")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, lib opts 3, 3")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -505,7 +442,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -545,10 +482,10 @@ target_link_libraries(SomeTpl::lib3
 endfunction()
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_link_opt_1)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_link_opt_1)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, link opt 1")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, link opt 1")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -559,7 +496,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
   global_null_set(MESSAGE_WRAPPER_INPUT)
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -587,10 +524,10 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 endfunction()
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_libname_2)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_libname_2)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, libname 2")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, libname 2")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -605,7 +542,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
   global_null_set(MESSAGE_WRAPPER_INPUT)
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -643,10 +580,10 @@ target_link_libraries(SomeTpl::some1_Longer2-Name3
 endfunction()
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2_lib_files_1)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_2_2_lib_files_1)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib opts 2, 2, lib files 1")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, lib opts 2, 2, lib files 1")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -658,7 +595,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -698,10 +635,10 @@ target_link_libraries(SomeTpl::lib3
 endfunction()
 
 
-function(unittest_tribits_external_package_process_libraries_list_duplicate_libs)
+function(unittest_tribits_extpkg_process_libraries_list_duplicate_libs)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): duplicate libs")
+  message("*** Testing tribits_extpkg_process_libraries_list(): duplicate libs")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -715,7 +652,7 @@ function(unittest_tribits_external_package_process_libraries_list_duplicate_libs
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -758,10 +695,10 @@ endfunction()
 # Testing with upstream TPL dependenices
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_1_deps_3)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_1_deps_3)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib files 1, deps 3")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, lib files 1, deps 3")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -770,7 +707,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -803,10 +740,10 @@ target_link_libraries(SomeTpl::somelib
 endfunction()
 
 
-function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_3_deps_3)
+function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_3_deps_3)
 
   message("\n***")
-  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib files 3, deps 3")
+  message("*** Testing tribits_extpkg_process_libraries_list(): incl dirs 0, lib files 3, deps 3")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -818,7 +755,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_external_package_process_libraries_list( ${tplName}
+  tribits_extpkg_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST_OUT libTargetsList
     LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
     CONFIG_FILE_STR_INOUT configFileFragStr
@@ -864,11 +801,11 @@ endfunction()
 
 
 #
-# Tests for tribits_external_package_write_config_file_str()
+# Tests for tribits_extpkg_write_config_file_str()
 #
 
 
-function(unittest_tribits_external_package_write_config_file_str_incl_dirs_0_lib_files_1)
+function(unittest_tribits_extpkg_write_config_file_str_incl_dirs_0_lib_files_1)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 0, lib files 1")
@@ -878,7 +815,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_0_lib
   set(TPL_${tplName}_INCLUDE_DIRS "")
   set(TPL_${tplName}_LIBRARIES "/some/explicit/path/libsomelib.so")
 
-  tribits_external_package_write_config_file_str(${tplName}
+  tribits_extpkg_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   unittest_string_block_compare( tplConfigFileStr
@@ -907,7 +844,7 @@ target_link_libraries(SomeTpl::all_libs
 endfunction()
 
 
-function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_0)
+function(unittest_tribits_extpkg_write_config_file_str_incl_dirs_2_lib_files_0)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 2, lib files 0")
@@ -917,7 +854,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib
   set(TPL_${tplName}_INCLUDE_DIRS "/some/path/to/include/d" "/some/other/path/to/include/e")
   set(TPL_${tplName}_LIBRARIES "")
 
-  tribits_external_package_write_config_file_str(${tplName}
+  tribits_extpkg_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   unittest_string_block_compare( tplConfigFileStr
@@ -943,7 +880,7 @@ target_include_directories(SomeTpl::all_libs SYSTEM
 endfunction()
 
 
-function(unittest_tribits_external_package_write_config_file_str_incl_dirs_1_lib_files_1)
+function(unittest_tribits_extpkg_write_config_file_str_incl_dirs_1_lib_files_1)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 1, lib files 1")
@@ -953,7 +890,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_1_lib
   set(TPL_${tplName}_INCLUDE_DIRS "/some/path/to/include/C")
   set(TPL_${tplName}_LIBRARIES "/some/explicit/path/libsomelib.so")
 
-  tribits_external_package_write_config_file_str(${tplName}
+  tribits_extpkg_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   unittest_string_block_compare( tplConfigFileStr
@@ -985,7 +922,7 @@ target_include_directories(SomeTpl::all_libs SYSTEM
 endfunction()
 
 
-function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_1)
+function(unittest_tribits_extpkg_write_config_file_str_incl_dirs_2_lib_files_1)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 2, lib files 1")
@@ -995,7 +932,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib
   set(TPL_${tplName}_INCLUDE_DIRS "/some/path/to/include/a" "/some/other/path/to/include/b")
   set(TPL_${tplName}_LIBRARIES "/some/explicit/path/libsomelib.so")
 
-  tribits_external_package_write_config_file_str(${tplName}
+  tribits_extpkg_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   unittest_string_block_compare( tplConfigFileStr
@@ -1028,7 +965,7 @@ target_include_directories(SomeTpl::all_libs SYSTEM
 endfunction()
 
 
-function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2)
+function(unittest_tribits_extpkg_write_config_file_str_incl_dirs_2_lib_opts_2_2)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 2, lib opts 2, 2")
@@ -1043,7 +980,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib
     -llib1 -L/some/explicit/path1
     )
 
-  tribits_external_package_write_config_file_str(${tplName}
+  tribits_extpkg_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   unittest_string_block_compare( tplConfigFileStr
@@ -1087,7 +1024,7 @@ target_link_options(SomeTpl::all_libs
 endfunction()
 
 
-function(unittest_tribits_external_package_write_config_file_str_incl_dirs_1_bad_lib_args)
+function(unittest_tribits_extpkg_write_config_file_str_incl_dirs_1_bad_lib_args)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 1, bad lib args")
@@ -1107,7 +1044,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_1_bad
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE ON)
   global_null_set(MESSAGE_WRAPPER_INPUT)
 
-  tribits_external_package_write_config_file_str(${tplName}
+  tribits_extpkg_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   unittest_compare_const( MESSAGE_WRAPPER_INPUT
@@ -1162,7 +1099,7 @@ target_link_options(SomeTpl::all_libs
 endfunction()
 
 
-function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2_deps_3)
+function(unittest_tribits_extpkg_write_config_file_str_incl_dirs_2_lib_opts_2_2_deps_3)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 2, lib opts 2, 2, deps 3")
@@ -1182,7 +1119,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib
   set(PrivateTpl_DIR "<private-tpl-dir>")
   set(DefaultVisTpl_DIR "<default-vis-tpl-dir>")
 
-  tribits_external_package_write_config_file_str(${tplName}
+  tribits_extpkg_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   unittest_string_block_compare( tplConfigFileStr
@@ -1273,34 +1210,32 @@ unittest_initialize_vars()
 # Run the unit tests
 #
 
-unittest_tribits_external_package_get_libname_from_full_lib_path_linux()
-unittest_tribits_external_package_get_libname_from_full_lib_path_win32()
-unittest_tribits_external_package_get_libname_from_full_lib_path_apple()
+unittest_tribits_extpkg_get_libname_from_full_lib_path_linux()
+unittest_tribits_extpkg_get_libname_from_full_lib_path_win32()
+unittest_tribits_extpkg_get_libname_from_full_lib_path_apple()
 
-unittest_tribits_external_package_append_upstream_target_link_libraries_get_name_and_vis()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_1()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_2()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_3()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_1_1()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_2_2()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_3_3()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_2_2_lib_files_1()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_link_opt_1()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_libname_2()
+unittest_tribits_extpkg_process_libraries_list_duplicate_libs()
 
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_1()
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_2()
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_3()
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_1_1()
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2()
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_3_3()
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2_lib_files_1()
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_link_opt_1()
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_libname_2()
-unittest_tribits_external_package_process_libraries_list_duplicate_libs()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_1_deps_3()
+unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_3_deps_3()
 
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_1_deps_3()
-unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_3_deps_3()
+unittest_tribits_extpkg_write_config_file_str_incl_dirs_0_lib_files_1()
+unittest_tribits_extpkg_write_config_file_str_incl_dirs_2_lib_files_0()
+unittest_tribits_extpkg_write_config_file_str_incl_dirs_1_lib_files_1()
+unittest_tribits_extpkg_write_config_file_str_incl_dirs_2_lib_files_1()
+unittest_tribits_extpkg_write_config_file_str_incl_dirs_2_lib_opts_2_2()
+unittest_tribits_extpkg_write_config_file_str_incl_dirs_1_bad_lib_args()
 
-unittest_tribits_external_package_write_config_file_str_incl_dirs_0_lib_files_1()
-unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_0()
-unittest_tribits_external_package_write_config_file_str_incl_dirs_1_lib_files_1()
-unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_1()
-unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2()
-unittest_tribits_external_package_write_config_file_str_incl_dirs_1_bad_lib_args()
-
-unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2_deps_3()
+unittest_tribits_extpkg_write_config_file_str_incl_dirs_2_lib_opts_2_2_deps_3()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(85)
+unittest_final_result(74)
