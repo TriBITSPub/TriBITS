@@ -2230,7 +2230,7 @@ call to ``find_package(<externalPkg>)`` which provides modern IMPORTED CMake
 targets looks like::
 
   find_package(<externalPkg> REQUIRED)
-  tribits_external_package_create_imported_all_libs_target_and_config_file(
+  tribits_extpkg_create_imported_all_libs_target_and_config_file(
     <tplName>
     INNER_FIND_PACKAGE_NAME <externalPkg>
     IMPORTED_TARGETS_FOR_ALL_LIBS <importedTarget0> <importedTarget1> ... )
@@ -2276,9 +2276,9 @@ about any upstream external packages/TPLs that it may depend on so it can add
 the dependencies between the created IMPORTED target libraries.
 
 The file ``FindTPL<tplName>Dependencies.cmake`` is typically just a single
-call to `tribits_external_package_define_dependencies()`_ and takes the form::
+call to `tribits_extpkg_define_dependencies()`_ and takes the form::
 
-  tribits_external_package_define_dependencies( <tplName>
+  tribits_extpkg_define_dependencies( <tplName>
     DEPENDENCIES <upstreamTpl_0> <upstreamTpl_1> ... )
 
 This defines all of the TPLs that ``<tplName>`` could directly depends on but
@@ -5671,19 +5671,19 @@ modern (namespaced) IMPORTED targets (but is missing the
 ``<tplName>::all_libs`` target or the name ``<tplName>`` and ``<externalPkg>``
 name are different), these ``FindTPL<tplName>.cmake`` modules can call the
 function
-`tribits_external_package_create_imported_all_libs_target_and_config_file()`_
+`tribits_extpkg_create_imported_all_libs_target_and_config_file()`_
 after calling ``find_package(<externalPkg>)`` to create a very thin wrapper
 ``FindTPL<tplName>.cmake`` module.  In these cases, such a
 ``FindTPL<tplName>.cmake`` module file is nothing more than::
 
   find_package(<externalPkg> REQUIRED)
-  tribits_external_package_create_imported_all_libs_target_and_config_file(
+  tribits_extpkg_create_imported_all_libs_target_and_config_file(
     <tplName>
     INNER_FIND_PACKAGE_NAME <externalPkg>
     IMPORTED_TARGETS_FOR_ALL_LIBS <importedTarget0> <importedTarget1> ... )
 
 The function
-`tribits_external_package_create_imported_all_libs_target_and_config_file()`_
+`tribits_extpkg_create_imported_all_libs_target_and_config_file()`_
 creates the target ``<tplName>::all_libs`` and the wrapper file
 ``<tplName>Config.cmake`` which is installed by TriBITS.  The only unique
 information required to create this glue module is the name of the external
@@ -5717,7 +5717,7 @@ system (such as when upgrading a existing ``FindTPL<tplName>.cmake`` file), a
     if (<externalPkg>_FOUND)
       message("-- Found <externalPkg>_DIR='${<externalPkg>_DIR}'")
       message("-- Generating <tplName>::all_libs and <tplName>Config.cmake")
-      tribits_external_package_create_imported_all_libs_target_and_config_file(<tplName>
+      tribits_extpkg_create_imported_all_libs_target_and_config_file(<tplName>
         INNER_FIND_PACKAGE_NAME  <externalPkg>
         IMPORTED_TARGETS_FOR_ALL_LIBS  ${IMPORTED_TARGETS_FOR_ALL_LIBS} )
     endif()
@@ -5742,7 +5742,7 @@ critical since ``find_package(<externalPkg>)`` defines IMPORTED targets that
 must be available each time configure is called.  Also, if
 ``find_package(<externalPkg>)`` is called and ``<externalPkg>_FOUND=TRUE``,
 then the function
-`tribits_external_package_create_imported_all_libs_target_and_config_file()`_
+`tribits_extpkg_create_imported_all_libs_target_and_config_file()`_
 is called which defines the targets ``<tplName>::all_libs`` which means that
 the function ``tribits_tpl_find_include_dirs_and_libraries()`` will **not** be
 called.

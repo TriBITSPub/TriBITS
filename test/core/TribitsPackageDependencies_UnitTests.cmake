@@ -61,21 +61,21 @@ include(GlobalNullSet)
 
 
 #
-# Tests for tribits_external_package_get_dep_name_and_vis()
+# Tests for tribits_extpkg_get_dep_name_and_vis()
 #
 
 
-function(unittest_tribits_external_package_get_dep_name_and_vis)
+function(unittest_tribits_extpkg_get_dep_name_and_vis)
 
   message("\n***")
-  message("*** Testing tribits_external_package_get_dep_name_and_vis()")
+  message("*** Testing tribits_extpkg_get_dep_name_and_vis()")
   message("***\n")
 
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
 
   message("\nTesting default visibility\n")
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_dep_name_and_vis(
+  tribits_extpkg_get_dep_name_and_vis(
     SomePackage  upstreamTplDepNameOut  upstreamTplDepVisOut)
   unittest_compare_const( upstreamTplDepNameOut
     "SomePackage" )
@@ -85,7 +85,7 @@ function(unittest_tribits_external_package_get_dep_name_and_vis)
 
   message("\nTesting PUBLIC\n")
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_dep_name_and_vis(
+  tribits_extpkg_get_dep_name_and_vis(
     SomePackage:PUBLIC  upstreamTplDepNameOut  upstreamTplDepVisOut)
   unittest_compare_const( upstreamTplDepNameOut
     SomePackage )
@@ -95,7 +95,7 @@ function(unittest_tribits_external_package_get_dep_name_and_vis)
 
   message("\nTesting PRIVATE\n")
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_dep_name_and_vis(
+  tribits_extpkg_get_dep_name_and_vis(
     SomePackage:PRIVATE  upstreamTplDepNameOut  upstreamTplDepVisOut)
   unittest_compare_const( upstreamTplDepNameOut
     SomePackage )
@@ -105,14 +105,14 @@ function(unittest_tribits_external_package_get_dep_name_and_vis)
 
   message("\nTesting invalid visibility\n")
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_dep_name_and_vis(
+  tribits_extpkg_get_dep_name_and_vis(
     SomePackage:SPELLEDWRONG  upstreamTplDepNameOut  upstreamTplDepVisOut)
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: 'SomePackage:SPELLEDWRONG' has invalid visibility 'SPELLEDWRONG'.;  Only 'PUBLIC' or 'PRIVATE' allowed!")
 
   message("\nTesting more than two elements splitting on ':'\n")
   global_set(MESSAGE_WRAPPER_INPUT "")
-  tribits_external_package_get_dep_name_and_vis(
+  tribits_extpkg_get_dep_name_and_vis(
     SomePackage:BadExtraEntry:PRIVATE  upstreamTplDepNameOut  upstreamTplDepVisOut)
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "FATAL_ERROR;ERROR: 'SomePackage:BadExtraEntry:PRIVATE' has 2 ':' but only 1 is allowed!")
@@ -124,17 +124,17 @@ endfunction()
 
 
 #
-# Tests for tribits_external_package_define_dependencies()
+# Tests for tribits_extpkg_define_dependencies()
 #
 
 
-function(unittest_tribits_external_package_define_dependencies_basic)
+function(unittest_tribits_extpkg_define_dependencies_basic)
 
   message("\n***")
   message("*** ${CMAKE_CURRENT_FUNCTION}()")
   message("***\n")
 
-  tribits_external_package_define_dependencies(someExtPkg
+  tribits_extpkg_define_dependencies(someExtPkg
     DEPENDENCIES  upPkg1  upPkg2:PUBLIC  upPkg3:PRIVATE  upPkg4)
   unittest_compare_const( someExtPkg_LIB_ALL_DEPENDENCIES
     "upPkg1;upPkg2:PUBLIC;upPkg3:PRIVATE;upPkg4" )
@@ -143,22 +143,22 @@ endfunction()
 
 
 #
-# Tests for tribits_external_package_setup_enabled_dependencies()
+# Tests for tribits_extpkg_setup_enabled_dependencies()
 #
 
 
-function(unittest_tribits_external_package_setup_enabled_dependencies)
+function(unittest_tribits_extpkg_setup_enabled_dependencies)
 
   message("\n***")
   message("*** ${CMAKE_CURRENT_FUNCTION}()")
   message("***\n")
 
-  tribits_external_package_define_dependencies(someExtPkg
+  tribits_extpkg_define_dependencies(someExtPkg
     DEPENDENCIES  upPkg1  upPkg2:PUBLIC  upPkg3:PRIVATE  upPkg4)
   set(TPL_ENABLE_someExtPkg  ON)
   set(TPL_ENABLE_upPkg1 ON)
   set(TPL_ENABLE_upPkg3 ON)
-  tribits_external_package_setup_enabled_dependencies(someExtPkg)
+  tribits_extpkg_setup_enabled_dependencies(someExtPkg)
   unittest_compare_const( someExtPkg_LIB_ENABLED_DEPENDENCIES
     "upPkg1;upPkg3:PRIVATE" )
 
@@ -177,11 +177,11 @@ unittest_initialize_vars()
 # Run the unit tests
 #
 
-unittest_tribits_external_package_get_dep_name_and_vis()
+unittest_tribits_extpkg_get_dep_name_and_vis()
 
-unittest_tribits_external_package_define_dependencies_basic()
+unittest_tribits_extpkg_define_dependencies_basic()
 
-unittest_tribits_external_package_setup_enabled_dependencies()
+unittest_tribits_extpkg_setup_enabled_dependencies()
 
 # Pass in the number of expected tests that must pass!
 unittest_final_result(13)

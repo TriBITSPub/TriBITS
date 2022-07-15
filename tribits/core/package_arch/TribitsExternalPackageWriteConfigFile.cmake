@@ -48,7 +48,7 @@ include(MessageWrapper)
 cmake_policy(SET CMP0057 NEW) # Support if ( ... IN_LIST ... )
 
 
-# @FUNCTION: tribits_external_package_write_config_file()
+# @FUNCTION: tribits_extpkg_write_config_file()
 #
 # Write out a ``<tplName>Config.cmake`` file given the list of include
 # directories and libraries for an external package/TPL.
@@ -65,17 +65,17 @@ cmake_policy(SET CMP0057 NEW) # Support if ( ... IN_LIST ... )
 #   ``<tplConfigFile>``: Full file path for the ``<tplName>Config.cmake``
 #   file that will be written out.
 #
-# This function just calls `tribits_external_package_write_config_file_str()`_
+# This function just calls `tribits_extpkg_write_config_file_str()`_
 # and writes that text to the file ``<tplConfigFile>`` so see that function
 # for more details.
 #
-function(tribits_external_package_write_config_file  tplName  tplConfigFile)
-  tribits_external_package_write_config_file_str(${tplName} tplConfigFileStr)
+function(tribits_extpkg_write_config_file  tplName  tplConfigFile)
+  tribits_extpkg_write_config_file_str(${tplName} tplConfigFileStr)
   file(WRITE "${tplConfigFile}" "${tplConfigFileStr}")
 endfunction()
 
 
-# @FUNCTION: tribits_external_package_write_config_version_file()
+# @FUNCTION: tribits_extpkg_write_config_version_file()
 #
 # Write out a ``<tplName>ConfigVersion.cmake`` file.
 #
@@ -93,7 +93,7 @@ endfunction()
 #   ``<tplConfigVersionFile>``: Full file path for the
 #   ``<tplName>ConfigVersion.cmake`` file that will be written out.
 #
-function(tribits_external_package_write_config_version_file  tplName  tplConfigVersionFile)
+function(tribits_extpkg_write_config_version_file  tplName  tplConfigVersionFile)
   set(tplConfigVersionFileStr "")
   string(APPEND tplConfigVersionFileStr
     "# Package config file for external package/TPL '${tplName}'\n"
@@ -115,7 +115,7 @@ function(tribits_external_package_write_config_version_file  tplName  tplConfigV
 endfunction()
 
 
-# @FUNCTION: tribits_external_package_install_config_file()
+# @FUNCTION: tribits_extpkg_install_config_file()
 #
 # Install an already-generated ``<tplName>Config.cmake`` file.
 #
@@ -131,7 +131,7 @@ endfunction()
 #   ``<tplConfigFile>``: Full file path for the ``<tplName>Config.cmake``
 #   file that will be installed into the correct location.
 #
-function(tribits_external_package_install_config_file  tplName  tplConfigFile)
+function(tribits_extpkg_install_config_file  tplName  tplConfigFile)
  install(
     FILES "${tplConfigFile}"
     DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/external_packages/${tplName}"
@@ -139,7 +139,7 @@ function(tribits_external_package_install_config_file  tplName  tplConfigFile)
 endfunction()
 
 
-# @FUNCTION: tribits_external_package_install_config_version_file()
+# @FUNCTION: tribits_extpkg_install_config_version_file()
 #
 # Install an already-generated ``<tplName>ConfigVersion.cmake`` file.
 #
@@ -156,7 +156,7 @@ endfunction()
 #   ``<tplName>ConfigVersion.cmake`` file that will be installed into the
 #   correct location ``${${PROJECT_NAME}_INSTALL_LIB_DIR}/external_packages/``
 #
-function(tribits_external_package_install_config_version_file  tplName
+function(tribits_extpkg_install_config_version_file  tplName
      tplConfigVersionFile
   )
  install(
@@ -166,14 +166,14 @@ function(tribits_external_package_install_config_version_file  tplName
 endfunction()
 
 
-# @FUNCTION: tribits_external_package_write_config_file_str()
+# @FUNCTION: tribits_extpkg_write_config_file_str()
 #
 # Create the text string for a ``<tplName>Config.cmake`` file given the list of
 # include directories and libraries for an external package/TPL.
 #
 # Usage::
 #
-#   tribits_external_package_write_config_file_str(
+#   tribits_extpkg_write_config_file_str(
 #     <tplName> <tplConfigFileStrOut> )
 #
 # The function arguments are:
@@ -250,7 +250,7 @@ endfunction()
 # ``<tplName>_LIB_ENABLED_DEPENDENCIES``, a link dependency is created using
 # ``target_link_library(<tplName>::all_libs INTERFACE <upstreamTplName>)``.
 #
-function(tribits_external_package_write_config_file_str  tplName  tplConfigFileStrOut)
+function(tribits_extpkg_write_config_file_str  tplName  tplConfigFileStrOut)
 
   # A) Set up beginning of config file text
   set(configFileStr "")
@@ -267,11 +267,11 @@ function(tribits_external_package_write_config_file_str  tplName  tplConfigFileS
     )
 
   # B) Call find_dependency() for all direct dependent upstream TPLs
-  tribits_external_package_add_find_upstream_dependencies_str(${tplName}
+  tribits_extpkg_add_find_upstream_dependencies_str(${tplName}
     configFileStr)
 
   # C) Create IMPORTED library targets from TPL_${tplName}_LIBRARIES
-  tribits_external_package_process_libraries_list(
+  tribits_extpkg_process_libraries_list(
     ${tplName}
     LIB_TARGETS_LIST_OUT  libTargets
     LIB_LINK_FLAGS_LIST_OUT  libLinkFlags
@@ -279,7 +279,7 @@ function(tribits_external_package_write_config_file_str  tplName  tplConfigFileS
     )
 
   # D) Create the <tplName>::all_libs target
-  tribits_external_package_create_all_libs_target(
+  tribits_extpkg_create_all_libs_target(
     ${tplName}
     LIB_TARGETS_LIST  ${libTargets}
     LIB_LINK_FLAGS_LIST  ${libLinkFlags}
@@ -292,20 +292,20 @@ function(tribits_external_package_write_config_file_str  tplName  tplConfigFileS
 endfunction()
 
 
-# @FUNCTION: tribits_external_package_add_find_upstream_dependencies_str()
+# @FUNCTION: tribits_extpkg_add_find_upstream_dependencies_str()
 #
 # Add code to call find_dependency() for all upstream external packages/TPLs
 # listed in ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
 # Usage::
 #
-#   tribits_external_package_add_find_upstream_dependencies_str(tplName
+#   tribits_extpkg_add_find_upstream_dependencies_str(tplName
 #     configFileFragStrInOut)
 #
 # NOTE: This also requires that ``<upstreamTplName>_DIR`` be set for each
 # external package/TPL listed in ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
-function(tribits_external_package_add_find_upstream_dependencies_str
+function(tribits_extpkg_add_find_upstream_dependencies_str
     tplName  configFileFragStrInOut
   )
   if (NOT "${${tplName}_LIB_ENABLED_DEPENDENCIES}" STREQUAL "")
@@ -329,7 +329,7 @@ function(tribits_external_package_add_find_upstream_dependencies_str
       "\n"
      )
     foreach (upstreamTplDepEntry IN LISTS ${tplName}_LIB_ENABLED_DEPENDENCIES)
-      tribits_external_package_get_dep_name_and_vis(
+      tribits_extpkg_get_dep_name_and_vis(
 	"${upstreamTplDepEntry}"  upstreamTplDepName  upstreamTplDepVis)
       if ("${${upstreamTplDepName}_DIR}" STREQUAL "")
         message(FATAL_ERROR "ERROR: ${upstreamTplDepName}_DIR is empty!")
@@ -367,7 +367,7 @@ endfunction()
 # search the directory <upstreamTplDepName>_DIR and no others.  That would make 
 
 
-# @FUNCTION: tribits_external_package_process_libraries_list()
+# @FUNCTION: tribits_extpkg_process_libraries_list()
 #
 # Read the ``TPL_<tplName>_LIBRARIES`` and
 # ``<tplName>_LIB_ENABLED_DEPENDENCIES`` list variables and produce the string
@@ -376,7 +376,7 @@ endfunction()
 #
 # Usage::
 #
-#   tribits_external_package_process_libraries_list(
+#   tribits_extpkg_process_libraries_list(
 #     <tplName>
 #     LIB_TARGETS_LIST_OUT <libTargetsListOut>
 #     LIB_LINK_FLAGS_LIST_OUT <libLinkFlagsListOut>
@@ -397,7 +397,7 @@ endfunction()
 #   appended with the IMPORTED library commands for the list of targets given
 #   in ``<libTargetsList>``.
 #
-function(tribits_external_package_process_libraries_list  tplName)
+function(tribits_extpkg_process_libraries_list  tplName)
 
   # A) Parse commandline arguments
 
@@ -440,7 +440,7 @@ function(tribits_external_package_process_libraries_list  tplName)
       message_wrapper("-- NOTE: Moving the general link argument '${libentry}' in TPL_${tplName}_LIBRARIES forward on the link line which may change the link and break the link!")
       list(APPEND libLinkFlagsList "${libentry}")
     else()
-      tribits_external_package_process_libraries_list_library_entry(
+      tribits_extpkg_process_libraries_list_library_entry(
         ${tplName}  "${libentry}"  ${libEntryType}  libTargets  lastLibProcessed
         configFileStr )
     endif()
@@ -512,12 +512,12 @@ endfunction()
 
 # Function to process a library inside of loop over
 # ``TPL_<tplName>_LIBRARIES`` in the function
-# tribits_external_package_process_libraries_list().
+# tribits_extpkg_process_libraries_list().
 #
 # This also puts in linkages to upstream TPLs ``<tplName>::all_libs`` listed
 # in ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
-function(tribits_external_package_process_libraries_list_library_entry
+function(tribits_extpkg_process_libraries_list_library_entry
     tplName  libentry  libEntryType
     libTargetsInOut  lastLibProcessedInOut  configFileStrInOut
   )
@@ -526,12 +526,12 @@ function(tribits_external_package_process_libraries_list_library_entry
   set(lastLibProcessed ${${lastLibProcessedInOut}})
   set(configFileStr ${${configFileStrInOut}})
   # Get libname
-  tribits_external_package_get_libname_and_path_from_libentry(
+  tribits_extpkg_get_libname_and_path_from_libentry(
     "${libentry}"  ${libEntryType}  libname  libpath)
   # Create IMPORTED library target
   set(prefixed_libname "${tplName}::${libname}")
   if (NOT (prefixed_libname IN_LIST libTargets))
-    tribits_external_package_append_add_library_str (${libname} ${prefixed_libname}
+    tribits_extpkg_append_add_library_str (${libname} ${prefixed_libname}
       ${libEntryType} "${libpath}" configFileStr)
     if (lastLibProcessed)
       string(APPEND configFileStr
@@ -539,7 +539,7 @@ function(tribits_external_package_process_libraries_list_library_entry
         "  INTERFACE ${tplName}::${lastLibProcessed})\n"
         )
     else()
-      tribits_external_package_append_upstream_target_link_libraries_str( ${tplName}
+      tribits_extpkg_append_upstream_target_link_libraries_str( ${tplName}
         ${prefixed_libname}  configFileStr )
     endif()
     string(APPEND configFileStr
@@ -559,14 +559,14 @@ endfunction()
 # <tplName>::<libname0> which has the needed dependencies.
 
 
-function(tribits_external_package_get_libname_and_path_from_libentry
+function(tribits_extpkg_get_libname_and_path_from_libentry
     libentry  libEntryType  libnameOut  libpathOut
   )
   if (libEntryType STREQUAL "FULL_LIB_PATH")
-    tribits_external_package_get_libname_from_full_lib_path("${libentry}" libname)
+    tribits_extpkg_get_libname_from_full_lib_path("${libentry}" libname)
     set(libpath "${libentry}")
   elseif (libEntryType STREQUAL "LIB_NAME_LINK_OPTION")
-    tribits_external_package_get_libname_from_lib_name_link_option("${libentry}" libname)
+    tribits_extpkg_get_libname_from_lib_name_link_option("${libentry}" libname)
     set(libpath "")
   elseif (libEntryType STREQUAL "LIB_NAME")
     set(libname "${libentry}")
@@ -579,7 +579,7 @@ function(tribits_external_package_get_libname_and_path_from_libentry
 endfunction()
 
 
-function(tribits_external_package_append_add_library_str
+function(tribits_extpkg_append_add_library_str
     libname  prefix_libname  libEntryType  libpath
     configFileStrInOut
   )
@@ -606,13 +606,13 @@ function(tribits_external_package_append_add_library_str
 endfunction()
 
 
-function(tribits_external_package_get_libname_from_full_lib_path  full_lib_path
+function(tribits_extpkg_get_libname_from_full_lib_path  full_lib_path
     libnameOut
   )
   # Should be an absolute library path
   get_filename_component(full_libname "${full_lib_path}" NAME_WE)
   # Begins with 'lib'?
-  tribits_external_package_libname_begins_with_lib("${full_libname}" beginsWithLib)
+  tribits_extpkg_libname_begins_with_lib("${full_libname}" beginsWithLib)
   # Assert is a valid lib name and get lib name
   set(libname "")
   string(LENGTH "${full_libname}" full_libname_len)
@@ -650,7 +650,7 @@ function(tribits_external_package_get_libname_from_full_lib_path  full_lib_path
 endfunction()
 
 
-function(tribits_external_package_libname_begins_with_lib  full_libname
+function(tribits_extpkg_libname_begins_with_lib  full_libname
     libnameBeginsWithLibOut
   )
   string(SUBSTRING "${full_libname}" 0 3 libPart)
@@ -663,7 +663,7 @@ function(tribits_external_package_libname_begins_with_lib  full_libname
 endfunction()
 
 
-function(tribits_external_package_get_libname_from_lib_name_link_option
+function(tribits_extpkg_get_libname_from_lib_name_link_option
     lib_name_link_option  libnameOut
   )
   # Assert begging part '-l'
@@ -690,7 +690,7 @@ function(tribits_print_invalid_lib_link_option  tplName  liblinkoption)
 endfunction()
 
 
-function(tribits_external_package_append_upstream_target_link_libraries_str
+function(tribits_extpkg_append_upstream_target_link_libraries_str
     tplName  prefix_libname  configFileStrInOut
   )
   set(configFileStr "${${configFileStrInOut}}")
@@ -698,7 +698,7 @@ function(tribits_external_package_append_upstream_target_link_libraries_str
     string(APPEND configFileStr
       "target_link_libraries(${prefix_libname}\n")
     foreach (upstreamTplDepEntry IN LISTS ${tplName}_LIB_ENABLED_DEPENDENCIES)
-      tribits_external_package_get_dep_name_and_vis(
+      tribits_extpkg_get_dep_name_and_vis(
 	"${upstreamTplDepEntry}"  upstreamTplDepName  upstreamTplDepVis)
       if (upstreamTplDepVis STREQUAL "PUBLIC")
         string(APPEND configFileStr
@@ -726,14 +726,14 @@ endfunction()
 # libraries being listed on link lines for downstsream library and exec links.
 
 
-# @FUNCTION: tribits_external_package_create_all_libs_target()
+# @FUNCTION: tribits_extpkg_create_all_libs_target()
 #
 # Creates the ``<tplName>::all_libs`` target command text using input info and
 # from ``TPL_<tplName>_INCLUDE_DIRS``.
 #
 # Usage::
 #
-#   tribits_external_package_create_all_libs_target(
+#   tribits_extpkg_create_all_libs_target(
 #     <tplName>
 #     LIB_TARGETS_LIST <libTargetsList>
 #     LIB_LINK_FLAGS_LIST <libLinkFlagsList>
@@ -753,7 +753,7 @@ endfunction()
 #   ``<configFileFragStrInOut>``: [out] A string variable that will be
 #   appended with the ``<tplName>::all_libs`` target statements.
 #
-function(tribits_external_package_create_all_libs_target  tplName)
+function(tribits_extpkg_create_all_libs_target  tplName)
 
   # Parse commandline arguments
 

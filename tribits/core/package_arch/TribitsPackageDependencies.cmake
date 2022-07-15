@@ -57,14 +57,14 @@ cmake_policy(SET CMP0011 NEW) # include() does policy push and pop
 cmake_policy(SET CMP0057 NEW) # Support if ( ... IN_LIST ... )
 
 
-# @MACRO: tribits_external_package_define_dependencies()
+# @MACRO: tribits_extpkg_define_dependencies()
 #
 # Macro called from inside of a `FindTPL<tplName>Dependencies.cmake`_ file to
 # define the direct upstream dependencies an external package/TPL.
 #
 # Usage::
 #
-#   tribits_external_package_define_dependencies( <tplName>
+#   tribits_extpkg_define_dependencies( <tplName>
 #     DEPENDENCIES <upstreamTpl_0> <upstreamTpl_1>:<vis_1> ... )
 #
 # The listed upstream dependencies ``<upstreamTpl_i>`` are other external
@@ -85,7 +85,7 @@ cmake_policy(SET CMP0057 NEW) # Support if ( ... IN_LIST ... )
 # it should list that external package/TPL as a direct dependency and not
 # expect to get include directories from indirect dependencies.)
 #
-macro(tribits_external_package_define_dependencies
+macro(tribits_extpkg_define_dependencies
     tplName
   )
 
@@ -110,11 +110,11 @@ macro(tribits_external_package_define_dependencies
 endmacro()
 
 
-# @MACRO: tribits_external_package_setup_enabled_dependencies()
+# @MACRO: tribits_extpkg_setup_enabled_dependencies()
 #
 # Usage::
 #
-#   tribits_external_package_setup_enabled_dependencies(<externalPkgName>)
+#   tribits_extpkg_setup_enabled_dependencies(<externalPkgName>)
 #
 # Macro that sets up the list of enabled external package/TPL dependencies
 #
@@ -130,13 +130,13 @@ endmacro()
 # ``<externalPkgName>_LIB_ENABLED_DEPENDENCIES`` but not in
 # ``<externalPkgName>_LIB_ENABLED_DEPENDENCIES``.
 #
-macro(tribits_external_package_setup_enabled_dependencies  externalPkgName)
+macro(tribits_extpkg_setup_enabled_dependencies  externalPkgName)
 
   set(libEnabledDependencies "")
 
   if (TPL_ENABLE_${externalPkgName})
     foreach(upstreamPkgEntry  IN  LISTS ${externalPkgName}_LIB_ALL_DEPENDENCIES)
-      tribits_external_package_get_dep_name_and_vis(${upstreamPkgEntry}
+      tribits_extpkg_get_dep_name_and_vis(${upstreamPkgEntry}
         upstreamPkgName  upstreamPkgVis)
       if (TPL_ENABLE_${upstreamPkgName})
         list(APPEND libEnabledDependencies ${upstreamPkgEntry})
@@ -152,7 +152,7 @@ macro(tribits_external_package_setup_enabled_dependencies  externalPkgName)
   endif()
 
   foreach(upstreamPkgEntry  IN  LISTS ${externalPkgName}_LIB_ENABLED_DEPENDENCIES)
-    tribits_external_package_get_dep_name_and_vis( ${upstreamPkgEntry}
+    tribits_extpkg_get_dep_name_and_vis( ${upstreamPkgEntry}
       upstreamPkgName  upstreamPkgVis)
     set(${externalPkgName}_ENABLE_${upstreamPkgName} ON)
   endforeach()
@@ -160,17 +160,17 @@ macro(tribits_external_package_setup_enabled_dependencies  externalPkgName)
 endmacro()
 
 
-# @FUNCTION: tribits_external_package_get_dep_name_and_vis()
+# @FUNCTION: tribits_extpkg_get_dep_name_and_vis()
 #
 # Extract ``<PkgName>`` and ``<Vis>`` from ``<PkgName>[:<Vis>]`` input with
 # default ``<Vis>`` of ``PRIVATE``.
 #
 # Usage::
 #
-#   tribits_external_package_get_dep_name_and_vis(
+#   tribits_extpkg_get_dep_name_and_vis(
 #     <upstreamTplDepEntry> <upstreamTplDepNameOut> <upstreamTplDepVisOut>)
 #
-function(tribits_external_package_get_dep_name_and_vis
+function(tribits_extpkg_get_dep_name_and_vis
     upstreamTplDepEntry  upstreamTplDepNameOut  upstreamTplDepVisOut
   )
   # Split on ':' to get <PkgName>[:<Vis>]
