@@ -733,25 +733,25 @@ tribits_add_advanced_test( TribitsHelloWorld_install_config_dummy_proj
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_2
-    MESSAGE "Create and configure a dummy project that includes"
-      " TribitsHelloWorkdConfig.cmake from the install tree"
+    MESSAGE "Create and configure a dummy project that calls"
+      " find_package(TribitsHelloWorld) and finds it in the the install tree"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
       -DDUMMY_PROJECT_DIR=dummy_client_of_TribitsHelloWorld
       -DEXPORT_VAR_PREFIX=TribitsHelloWorld
-      -DEXPORT_CONFIG_FILE=../install/lib/cmake/TribitsHelloWorld/TribitsHelloWorldConfig.cmake
+      -DFIND_PACKAGE_NAME=TribitsHelloWorld
+      -DCMAKE_PREFIX_PATH=../install
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "DUMMY_PROJECT_NAME = 'DummyProject'"
       "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsHelloWorld'"
-      "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsHelloWorld/TribitsHelloWorldConfig.cmake'"
       "EXPORT_VAR_PREFIX = 'TribitsHelloWorld'"
       "Configure the dummy project to print the variables in .*/TriBITS_TribitsHelloWorld_install_config_dummy_proj/dummy_client_of_TribitsHelloWorld ..."
       "DUMMY_PROJECT_NAME = 'DummyProject'"
-      "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsHelloWorld/TribitsHelloWorldConfig.cmake'"
       "EXPORT_VAR_PREFIX = 'TribitsHelloWorld'"
+      "Calling: find_package[(]TribitsHelloWorld REQUIRED COMPONENTS  OPTIONAL_COMPONENTS  [)]"
       "TribitsHelloWorld_CMAKE_BUILD_TYPE = 'RELEASE'"
       "TribitsHelloWorld_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
       "TribitsHelloWorld_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
@@ -782,7 +782,11 @@ tribits_add_advanced_test( TribitsHelloWorld_install_config_dummy_proj
       "TribitsHelloWorld_MPI_EXEC_NUMPROCS_FLAG = '-mynp"
       "TribitsHelloWorld_MPI_EXEC_POST_NUMPROCS_FLAGS = '--post-flags'"
       "TribitsHelloWorld_PACKAGE_LIST = 'HelloWorld'"
+      "TribitsHelloWorld_SELECTED_PACKAGE_LIST = 'HelloWorld'"
       "TribitsHelloWorld_TPL_LIST = ''"  # Must work for no MPI too
+      "TribitsHelloWorld_TPL_LIST = ''"
+      "TribitsHelloWorld::all_libs  INTERFACE_LINK_LIBRARIES: 'HelloWorld::all_libs'"
+      "TribitsHelloWorld::all_selected_libs  INTERFACE_LINK_LIBRARIES: 'HelloWorld::all_libs'"
       "-- Configuring done"
       "-- Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN

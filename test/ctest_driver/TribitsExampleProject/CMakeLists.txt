@@ -276,6 +276,9 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_PASS
   # non-zero return code is mandated.
 
 
+##############################################################################
+
+
 tribits_add_advanced_test( CTestDriver_PBP_GlobalConfigureFail
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -307,6 +310,9 @@ tribits_add_advanced_test( CTestDriver_PBP_GlobalConfigureFail
   )
   # NOTE: The above test ensures that a global configure failures breaks the
   # configure for all of the packages that are tried.
+
+
+##############################################################################
 
 
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
@@ -353,6 +359,9 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
   # downstream packages.
 
 
+##############################################################################
+
+
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -397,6 +406,9 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
   # NOTE: The above test ensures that the library build failure of an optional
   # upstream package does not break downstream packages.  It only disables the
   # optional upstream package in downstream packages.
+
+
+##############################################################################
 
 
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
@@ -447,6 +459,9 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
   # downstream packages in any way and does not disable the upstream package.
 
 
+##############################################################################
+
+
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakTestPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -494,6 +509,9 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakTestPkg
   )
   # NOTE: The above test ensures that a test failure in a package is caught
   # and reported correctly.
+
+
+##############################################################################
 
 
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
@@ -550,6 +568,9 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
   # through in package-by-package mode and GitHub PR TriBITSPub/TriBITS#394.
 
 
+##############################################################################
+
+
 tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibRequiredPkg
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -602,6 +623,9 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibRequiredPkg
   # package to be gracefully disabled.
 
 
+##############################################################################
+
+
 tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_COVERAGE
   OVERALL_WORKING_DIRECTORY TEST_NAME
   EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS
@@ -634,6 +658,9 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_COVERAGE
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
   # NOTE: The above test is the only coverage test for PBP.
+
+
+##############################################################################
 
 
 tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_MEMORY
@@ -672,6 +699,9 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_MEMORY
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
   # NOTE: The above test is the only memory test for PBP.
+
+
+##############################################################################
 
 
 tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_ALL_PASS
@@ -731,6 +761,9 @@ tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_ALL_PASS
   # The above test does a lot of checking to really pin down the behavior of
   # the tribits_ctest_driver() function run from the basic 'dashboard' target.
   # Follow-on tests will not check so much output.
+
+
+##############################################################################
 
 
 if ( ${PROJECT_NAME}_ENABLE_Fortran )
@@ -813,6 +846,9 @@ tribits_add_advanced_test( CTestDriver_AAO_Dashboard_ForwardArgs
   # TRIBITS_2ND_CTEST_DROP_LOCATION vars (see #370).
 
 
+##############################################################################
+
+
 tribits_add_advanced_test( CTestDriver_AAO_Dashboard_Then_NoConfigDashboard
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -859,6 +895,9 @@ tribits_add_advanced_test( CTestDriver_AAO_Dashboard_Then_NoConfigDashboard
   # target, then run 'env CTEST_DO_CONFIGURE=OFF make dashboard' again and
   # have it work correctly.  This was a use case that was broken when I tried
   # it with Trilinos.
+
+
+##############################################################################
 
 
 tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
@@ -919,6 +958,9 @@ tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
   # the basic 'dashboard' target only tests the explicitly enabled and tested
   # packages.  It also makes sure that when the project is reconfigured at the
   # end, that it gives the same set of package enables.
+
+
+##############################################################################
 
 
 #
@@ -1023,6 +1065,9 @@ tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_2
 # testing in two different ctest -S invocations.  The only big downside is
 # that you have to reconfigure for each package even if you are not asked to
 # configure.  But this very nicely submits to CDash.  Very nice!
+
+
+##############################################################################
 
 
 tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
@@ -1208,6 +1253,10 @@ function(generate_aao_tests)
   # ToDo: Just replace '${AAO_POSTFIX}' with 'P' once the function
   # generate_aao_tests() is removed!
 
+
+  ##############################################################################
+
+
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1263,6 +1312,9 @@ function(generate_aao_tests)
     # run and pass.  And a non-zero return code is mandated.  Also, the full
     # CONFIGURE_OPTIONS list is checked to make sure that it does not change
     # without being noticed.  Follow-on tests will not check all of that.
+
+
+  ##############################################################################
 
 
   set(cdash_build_url_expected_regex
@@ -1322,6 +1374,9 @@ function(generate_aao_tests)
     # We only know it is [8 digits]-[4 digits].
 
 
+  ##############################################################################
+
+
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_SKIP_CTEST_ADD_TEST
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1361,6 +1416,9 @@ function(generate_aao_tests)
     )
 
 
+  ##############################################################################
+
+
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_INNER_ENABLE_TESTS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1395,6 +1453,9 @@ function(generate_aao_tests)
      # NOTE: Above, ctest -S returns with the return code of 255 instead of
       # 0.  See comment above for SKIP_CTEST_ADD_TEST test.
     )
+
+
+  ##############################################################################
 
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_SimpleCxx_PASS
@@ -1463,6 +1524,9 @@ function(generate_aao_tests)
     # that here but this submits the data so we can inspect that on CDash.
 
 
+  ##############################################################################
+
+
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1513,6 +1577,9 @@ function(generate_aao_tests)
     # dependency testing in the file ../MockCTestDriver/CMakeLists.txt.
 
 
+  ##############################################################################
+
+
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_GlobalConfigureFail
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1554,6 +1621,9 @@ function(generate_aao_tests)
     # interpreted and processed.
 
 
+  ##############################################################################
+
+
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_GlobalConfigureFail
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1588,6 +1658,9 @@ function(generate_aao_tests)
     )
     # NOTE: The above test ensures that a configure failure is correctly
     # interpreted and processed.
+
+
+  ##############################################################################
 
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakWithSubpackagesALib
@@ -1651,6 +1724,9 @@ function(generate_aao_tests)
     # important for CI servers.
 
 
+  ##############################################################################
+
+
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_BreakWithSubpackagesALib
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1694,6 +1770,9 @@ function(generate_aao_tests)
     # NOTE: The above test ensures that the library build failure of an
     # upstream package is detected as a break in all downstream packages even
     # though that upstream package is not directly shown on CDash.
+
+
+  ##############################################################################
 
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestBuild
@@ -1741,6 +1820,9 @@ function(generate_aao_tests)
     # packages and tests.
 
 
+  ##############################################################################
+
+
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakSimpleCxxTestRun
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1785,6 +1867,9 @@ function(generate_aao_tests)
     # packages and tests.
 
 
+  ##############################################################################
+
+
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_COVERAGE
     OVERALL_WORKING_DIRECTORY TEST_NAME
     EXCLUDE_IF_NOT_TRUE  ${PACKAGE_NAME}_CTEST_DRIVER_COVERAGE_TESTS
@@ -1818,6 +1903,9 @@ function(generate_aao_tests)
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
     # NOTE: The above test is the only coverage test for AAO mode!
+
+
+  ##############################################################################x
 
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_MEMORY
@@ -1856,6 +1944,9 @@ function(generate_aao_tests)
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
     # NOTE: The above test is the only memory test for AAO mode!
+
+
+  ##############################################################################x
 
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_ALL_PASS
@@ -1901,6 +1992,10 @@ function(generate_aao_tests)
         "Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
+
+
+  ##############################################################################x
+
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_SimpleCxx_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -1949,6 +2044,10 @@ function(generate_aao_tests)
     # The above test should result in a single row on CDash for the build.
     # This local checking here can't determine that but it uploads the data on
     # CDash where it can be inspected.
+
+
+  ##############################################################################
+
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_Dashboard_ST_PackagesSubset_PASS
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -2002,6 +2101,9 @@ function(generate_aao_tests)
         "Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
+
+
+  ##############################################################################x
 
 
   #
@@ -2096,6 +2198,9 @@ function(generate_aao_tests)
   # the tests in the second ctest -S invocation.
 
 
+  ##############################################################################x
+
+
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_update_fail
 
     OVERALL_WORKING_DIRECTORY TEST_NAME
@@ -2149,6 +2254,9 @@ function(generate_aao_tests)
       ALWAYS_FAIL_ON_ZERO_RETURN
 
     )
+
+
+  ##############################################################################x
 
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_2_config_fail
@@ -2207,6 +2315,9 @@ function(generate_aao_tests)
       ALWAYS_FAIL_ON_ZERO_RETURN
 
     )
+
+
+  ##############################################################################x
 
 
   tribits_add_advanced_test( CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_PASS_CALLS_4
@@ -2329,6 +2440,9 @@ function(generate_aao_tests)
   # the tests in the second ctest -S invocation.
 
 
+  ##############################################################################x
+
+
   #
   # Test CTEST_DO_INSTALL
   #
@@ -2386,6 +2500,9 @@ function(generate_aao_tests)
         "SimpleCxx_HelloWorld.hpp"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
+
+
+  ##############################################################################x
 
 
   set(TEST_NAME_BODY
@@ -2463,37 +2580,27 @@ function(generate_aao_tests)
     # will call install in all of the packages.
 
   TEST_4
-    MESSAGE "Create and configure a dummy project that includes"
-      " TribitsExProjConfig.cmake from the install tree and ask for non-enabled package" 
+    MESSAGE "Create and configure a dummy project that calls"
+      " find_package(TribitsExProj) from the install tree and"
+      " request packages that was not even enabled" 
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
       -DDUMMY_PROJECT_DIR=dummy_client_of_TribitsExProj
       -DEXPORT_VAR_PREFIX=TribitsExProj
-      "-DDUMMY_PROJECT_FIND_COMPONENTS=SimpleCxx,WithSubpackagesA,WrapExternal"
-      -DEXPORT_CONFIG_FILE=../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake
+      -DFIND_PACKAGE_NAME=TribitsExProj
+      -DFIND_PACKAGE_COMPONENTS=SimpleCxx,WithSubpackagesA,WrapExternal
+      -DCMAKE_PREFIX_PATH=../BUILD/install
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
       -P ${TriBITS_SOURCE_DIR}/test/core/ExamplesUnitTests/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "DUMMY_PROJECT_NAME = 'DummyProject'"
       "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsExProj'"
-      "EXPORT_CONFIG_FILE = '../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
-      "TribitsExProj_FIND_COMPONENTS = 'SimpleCxx[;]WithSubpackagesA[;]WrapExternal'"
-      "TribitsExProj_LIBRARIES = 'WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "TribitsExProj_TPL_INCLUDE_DIRS = ''"
-      "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]MixedLang[;]SimpleCxx'"
-      "TribitsExProj_TPL_LIST = 'HeaderOnlyTpl'"
-      "TribitsExProj_WithSubpackages_FOUND = ''"
-      "TribitsExProj_WithSubpackagesC_FOUND = ''"
-      "TribitsExProj_WithSubpackagesB_FOUND = ''"
-      "TribitsExProj_WithSubpackagesA_FOUND = 'TRUE'"
-      "TribitsExProj_MixedLang_FOUND = ''"
-      "TribitsExProj_SimpleCxx_FOUND = 'TRUE'"
-      "TribitsExProj_FOUND = 'TRUE'"
-      "TribitsExProj_WrapExternal_FOUND = 'FALSE'"
-      "-- Configuring done"
-      "-- Generating done"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+      "Calling: find_package[(]TribitsExProj REQUIRED COMPONENTS SimpleCxx[;]WithSubpackagesA[;]WrapExternal OPTIONAL_COMPONENTS  [)]"
+      "Found package configuration file:"
+      "but it set TribitsExProj_FOUND to FALSE so package .TribitsExProj. is"
+      "ERROR: Could not find component 'WrapExternal'"
+      "-- Configuring incomplete, errors occurred"
 
     # ToDo: Add another dummy project for the case where components are
     # required and assure that TribitsExProj_FOUND = 'FALSE'.
@@ -2506,7 +2613,9 @@ function(generate_aao_tests)
     # * If an install failure occurs in one package, it will not impact
     #   installs in other packages due to the custom
     #   'install_package_by_package' target.
-    #
+
+
+  ##############################################################################x
 
 
   set(TEST_NAME_BODY
@@ -2581,33 +2690,30 @@ function(generate_aao_tests)
     # stuff since that library did not build.
 
   TEST_5
-    MESSAGE "Create and configure a dummy project that includes"
-      " TribitsExProjConfig.cmake where components are optional" 
+    MESSAGE "Create and configure a dummy project that calls"
+      " find_package(TribitsExProj) where components are optional" 
     CMND ${CMAKE_COMMAND}
     ARGS
       -DDUMMY_PROJECT_NAME=DummyProject
       -DDUMMY_PROJECT_DIR=dummy_client_of_TribitsExProj
       -DEXPORT_VAR_PREFIX=TribitsExProj
-      "-DDUMMY_PROJECT_FIND_COMPONENTS=SimpleCxx,WithSubpackagesA"
-      -DEXPORT_CONFIG_FILE=../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake
+      -DFIND_PACKAGE_NAME=TribitsExProj
+      -DFIND_PACKAGE_OPTIONAL_COMPONENTS=SimpleCxx,WithSubpackagesA,WithSubpackageC
+      -DCMAKE_PREFIX_PATH=../BUILD/install
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
       -P ${TriBITS_SOURCE_DIR}/test/core/ExamplesUnitTests/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "DUMMY_PROJECT_NAME = 'DummyProject'"
       "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsExProj'"
-      "EXPORT_CONFIG_FILE = '../BUILD/install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
-      "TribitsExProj_FIND_COMPONENTS = 'SimpleCxx[;]WithSubpackagesA'"
-      "TribitsExProj_LIBRARIES = 'WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "TribitsExProj_TPL_INCLUDE_DIRS = ''"
+      "Calling: find_package[(]TribitsExProj REQUIRED COMPONENTS  OPTIONAL_COMPONENTS SimpleCxx[;]WithSubpackagesA[;]WithSubpackageC [)]"
       "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]MixedLang[;]SimpleCxx'"
+      "TribitsExProj_SELECTED_PACKAGE_LIST = 'SimpleCxx[;]WithSubpackagesA'"
       "TribitsExProj_TPL_LIST = 'HeaderOnlyTpl'"
-      "TribitsExProj_WithSubpackages_FOUND = ''"
-      "TribitsExProj_WithSubpackagesC_FOUND = ''"
-      "TribitsExProj_WithSubpackagesB_FOUND = ''"
-      "TribitsExProj_WithSubpackagesA_FOUND = 'TRUE'"
-      "TribitsExProj_MixedLang_FOUND = ''"
       "TribitsExProj_SimpleCxx_FOUND = 'TRUE'"
-      "TribitsExProj_FOUND = 'TRUE'"
+      "TribitsExProj_WithSubpackagesA_FOUND = 'TRUE'"
+      "TribitsExProj_WithSubpackageC_FOUND = 'FALSE'"
+      "TribitsExProj_FOUND = '1'"
+      "TribitsExProj::all_selected_libs  INTERFACE_LINK_LIBRARIES: 'SimpleCxx::all_libs[;]WithSubpackagesA::all_libs'"
       "-- Configuring done"
       "-- Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN

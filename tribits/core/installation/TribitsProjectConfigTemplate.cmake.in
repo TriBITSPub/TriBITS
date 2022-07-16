@@ -103,26 +103,25 @@ endif()
 set(${PROJECT_NAME}_FOUND TRUE)
 set(${PROJECT_NAME}_NOT_FOUND_MESSAGE "")
 foreach (comp IN ITEMS ${PDOLLAR}{COMPONENTS_LIST})
-  set(
-    INCLUDE_FILE
+  set(compPkgConfigFile
     ${PDOLLAR}{CMAKE_CURRENT_LIST_DIR}/../${PDOLLAR}{comp}/${PDOLLAR}{comp}Config.cmake
     )
- if (EXISTS ${PDOLLAR}{INCLUDE_FILE})
-   # Set ${PROJECT_NAME}_<component>_FOUND.
-   set(${PROJECT_NAME}_${PDOLLAR}{comp}_FOUND TRUE)
-   # Include the package file.
-   include(${PDOLLAR}{INCLUDE_FILE})
-   # Add variables to lists.
-   list(APPEND ${PROJECT_NAME}_LIBRARIES ${PDOLLAR}{${PDOLLAR}{comp}_LIBRARIES})
-   list(APPEND ${PROJECT_NAME}_TPL_LIBRARIES ${PDOLLAR}{${PDOLLAR}{comp}_TPL_LIBRARIES})
- else()
-   set(${PROJECT_NAME}_${PDOLLAR}{comp}_FOUND FALSE)
-   if(${PROJECT_NAME}_FIND_REQUIRED_${PDOLLAR}{comp})
-     string(APPEND ${PROJECT_NAME}_NOT_FOUND_MESSAGE
-       "ERROR: Could not find component '${PDOLLAR}{comp}'!\n")
-     set(${PROJECT_NAME}_FOUND FALSE)
-   endif()
- endif()
+  if (EXISTS ${PDOLLAR}{compPkgConfigFile})
+    # Set ${PROJECT_NAME}_<component>_FOUND.
+    set(${PROJECT_NAME}_${PDOLLAR}{comp}_FOUND TRUE)
+    # Include the package file.
+    include(${PDOLLAR}{compPkgConfigFile})
+    # Add variables to lists.
+    list(APPEND ${PROJECT_NAME}_LIBRARIES ${PDOLLAR}{${PDOLLAR}{comp}_LIBRARIES})
+    list(APPEND ${PROJECT_NAME}_TPL_LIBRARIES ${PDOLLAR}{${PDOLLAR}{comp}_TPL_LIBRARIES})
+  else()
+    set(${PROJECT_NAME}_${PDOLLAR}{comp}_FOUND FALSE)
+    if(${PROJECT_NAME}_FIND_REQUIRED_${PDOLLAR}{comp})
+      string(APPEND ${PROJECT_NAME}_NOT_FOUND_MESSAGE
+        "ERROR: Could not find component '${PDOLLAR}{comp}'!\n")
+      set(${PROJECT_NAME}_FOUND FALSE)
+    endif()
+  endif()
 endforeach()
 
 # Deprecated (see #299)!

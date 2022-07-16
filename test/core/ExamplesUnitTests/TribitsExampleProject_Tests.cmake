@@ -1,3 +1,4 @@
+
 ########################################################################
 #
 # TribitsExampleProject Tests
@@ -259,17 +260,19 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_4
-      MESSAGE "Create and configure a dummy project that includes"
-        " WithSubpackagesConfig.cmake from the build tree"
+      MESSAGE "Create and configure a dummy project that calls"
+        " find_package(WithSubpackages) from the build tree"
       CMND ${CMAKE_COMMAND}
       ARGS
         -DDUMMY_PROJECT_NAME=DummyProject
         -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
         -DEXPORT_VAR_PREFIX=WithSubpackages
-        -DEXPORT_CONFIG_FILE=../cmake_packages/WithSubpackages/WithSubpackagesConfig.cmake
+        -DFIND_PACKAGE_NAME=WithSubpackages
+        -DCMAKE_PREFIX_PATH=../cmake_packages
         -DCMAKE_COMMAND=${CMAKE_COMMAND}
         -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
       PASS_REGULAR_EXPRESSION_ALL
+        "Calling: find_package[(]WithSubpackages REQUIRED COMPONENTS  OPTIONAL_COMPONENTS  [)]"
         "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
         "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
         "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
@@ -297,7 +300,10 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
         "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
         "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
+        "WithSubpackages_SELECTED_PACKAGE_LIST = ''"
         "WithSubpackages_TPL_LIST = '${WithSubpackages_TPL_LIST}'"
+        "WithSubpackages_FOUND = '1'"
+	"WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
         "-- Configuring done"
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -337,17 +343,19 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_6
-      MESSAGE "Create and configure a dummy project that includes"
-        " WithSubpackagesConfig.cmake from the install tree"
+      MESSAGE "Create and configure a dummy project that calls"
+        " find_package(WithSubpackages) from the install tree"
       CMND ${CMAKE_COMMAND}
       ARGS
         -DDUMMY_PROJECT_NAME=DummyProject
         -DDUMMY_PROJECT_DIR=dummy_client_of_WithSubpackages
         -DEXPORT_VAR_PREFIX=WithSubpackages
-        -DEXPORT_CONFIG_FILE=../install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake
+        -DFIND_PACKAGE_NAME=WithSubpackages
+        -DCMAKE_PREFIX_PATH=../install
         -DCMAKE_COMMAND=${CMAKE_COMMAND}
         -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
       PASS_REGULAR_EXPRESSION_ALL
+        "Calling: find_package[(]WithSubpackages REQUIRED COMPONENTS  OPTIONAL_COMPONENTS  [)]"
         "WithSubpackages_CMAKE_BUILD_TYPE = 'RELEASE'"
         "WithSubpackages_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
         "WithSubpackages_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
@@ -375,33 +383,35 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
         "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
         "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
+        "WithSubpackages_SELECTED_PACKAGE_LIST = ''"
         "WithSubpackages_TPL_LIST = '${WithSubpackages_TPL_LIST}'"
+        "WithSubpackages_FOUND = '1'"
+	"WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_7
-      MESSAGE "Create and configure a dummy project that includes"
-        " TribitsExProjConfig.cmake from the install tree"
+      MESSAGE "Create and configure a dummy project that calls"
+        " find_package(TribitsExProj) with no components"
       CMND ${CMAKE_COMMAND}
       ARGS
         -DDUMMY_PROJECT_NAME=DummyProject
         -DDUMMY_PROJECT_DIR=dummy_client_of_TribitsExProj
         -DEXPORT_VAR_PREFIX=TribitsExProj
-        -DEXPORT_CONFIG_FILE=../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake
+        -DFIND_PACKAGE_NAME=TribitsExProj
+        -DCMAKE_PREFIX_PATH=../install
         -DCMAKE_COMMAND=${CMAKE_COMMAND}
         -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
       PASS_REGULAR_EXPRESSION_ALL
         "DUMMY_PROJECT_NAME = 'DummyProject'"
         "DUMMY_PROJECT_DIR = 'dummy_client_of_TribitsExProj'"
-        "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
         "EXPORT_VAR_PREFIX = 'TribitsExProj'"
         "CMAKE_COMMAND = '${CMAKE_COMMAND}"
         "Create the dummy client directory ..."
         "Create dummy dummy_client_of_TribitsExProj/CMakeLists.txt file ..."
         "Configure the dummy project to print the variables in .*/${testName}/dummy_client_of_TribitsExProj ..."
         "DUMMY_PROJECT_NAME = 'DummyProject'"
-        "EXPORT_CONFIG_FILE = '../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
         "EXPORT_VAR_PREFIX = 'TribitsExProj'"
-        "Including file '.*/${testName}/dummy_client_of_TribitsExProj/../install/lib/cmake/TribitsExProj/TribitsExProjConfig.cmake'"
+        "Calling: find_package[(]TribitsExProj REQUIRED COMPONENTS  OPTIONAL_COMPONENTS  [)]"
         "TribitsExProj_CMAKE_BUILD_TYPE = 'RELEASE'"
         "TribitsExProj_CXX_COMPILER = '${CMAKE_CXX_COMPILER_FOR_REGEX}'"
         "TribitsExProj_C_COMPILER = '${CMAKE_C_COMPILER_FOR_REGEX}'"
@@ -429,17 +439,45 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "TribitsExProj_MPI_EXEC_MAX_NUMPROCS = '[1-9]*'"  # Is null for an MPI build
         "TribitsExProj_MPI_EXEC_NUMPROCS_FLAG = '.*'"
         "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]SimpleCxx'"
+        "TribitsExProj_SELECTED_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]SimpleCxx'"
+        "TribitsExProj::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackages::all_libs[;]WithSubpackagesC::all_libs[;]WithSubpackagesB::all_libs[;]WithSubpackagesA::all_libs[;]SimpleCxx::all_libs'"
+        "TribitsExProj::all_selected_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackages::all_libs[;]WithSubpackagesC::all_libs[;]WithSubpackagesB::all_libs[;]WithSubpackagesA::all_libs[;]SimpleCxx::all_libs'"
         "TribitsExProj_TPL_LIST = '${TribitsExProj_TPL_LIST}'"
         "-- Configuring done"
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    # ToDo: Add test for the components parts of <Project>Config.cmake ...
-
-    # ToDo: Add test that actually builds a C++ project and links to these libs
-    # to make sure this works!
-
     TEST_8
+      MESSAGE "Create and configure a dummy project that calls find_package(TribitsExProj)"
+        " with required and optional components"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -DDUMMY_PROJECT_NAME=DummyProject
+        -DDUMMY_PROJECT_DIR=dummy_client_of_TribitsExProj_with_components
+        -DEXPORT_VAR_PREFIX=TribitsExProj
+        -DFIND_PACKAGE_NAME=TribitsExProj
+        -DFIND_PACKAGE_COMPONENTS=SimpleCxx,WithSubpackagesB
+        -DFIND_PACKAGE_OPTIONAL_COMPONENTS=WithSubpackagesC,DoesNotExist,WithSubpackagesA
+        -DCMAKE_PREFIX_PATH=../install
+        -DCMAKE_COMMAND=${CMAKE_COMMAND}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
+      PASS_REGULAR_EXPRESSION_ALL
+        "Calling: find_package[(]TribitsExProj REQUIRED COMPONENTS SimpleCxx[;]WithSubpackagesB OPTIONAL_COMPONENTS WithSubpackagesC[;]DoesNotExist[;]WithSubpackagesA [)]"
+        "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]SimpleCxx'"
+        "TribitsExProj_SELECTED_PACKAGE_LIST = 'SimpleCxx[;]WithSubpackagesB[;]WithSubpackagesC[;]WithSubpackagesA'"
+        "TribitsExProj_SimpleCxx_FOUND = 'TRUE'"
+        "TribitsExProj_WithSubpackagesB_FOUND = 'TRUE'"
+        "TribitsExProj_WithSubpackagesC_FOUND = 'TRUE'"
+        "TribitsExProj_DoesNotExist_FOUND = 'FALSE'"
+        "TribitsExProj_WithSubpackagesA_FOUND = 'TRUE'"
+        "TribitsExProj_FOUND = '1'"
+        "TribitsExProj::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackages::all_libs[;]WithSubpackagesC::all_libs[;]WithSubpackagesB::all_libs[;]WithSubpackagesA::all_libs[;]SimpleCxx::all_libs'"
+        "TribitsExProj::all_selected_libs  INTERFACE_LINK_LIBRARIES: 'SimpleCxx::all_libs[;]WithSubpackagesB::all_libs[;]WithSubpackagesC::all_libs[;]WithSubpackagesA::all_libs'"
+        "-- Configuring done"
+        "-- Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_9
       MESSAGE "Create the tarball"
       CMND make ARGS package_source
       PASS_REGULAR_EXPRESSION_ALL
@@ -456,13 +494,13 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "CPack: - package: .*/ExamplesUnitTests/${testName}/tribitsexproj-1.1-Source.tar.bz2 generated."
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_9
+    TEST_10
       MESSAGE "Untar the tarball"
       CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_10
-      MESSAGE "Make sure right directoires are excluced"
+    TEST_11
+      MESSAGE "Make sure right directories are excluded"
       CMND diff
       ARGS -qr
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
@@ -479,6 +517,41 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
     )
 
 endfunction()
+#
+# The above tests a *lot* of TriBITS functionality that may not be tested in
+# any other system-level test.  Here is a list of things tested that may not
+# be tested in any other such system-level test for TriBITS:
+#
+# * Tests TribitsExProj_TRACE_FILE_PROCESSING=ON and the output it produces
+#
+# * Tests TribitsExProj_ENABLE_CPACK_PACKAGING=ON and the output it produces
+#
+# * Tests TribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON and the output it produces
+#
+# * Tests TribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON and the output it
+#   produces
+#
+# * Tests usage of <Package>Config.cmake files in the build tree (but just
+#   that they load, does not link anything)
+#
+# * Tests installing with <Package>Config.cmake and <Project>Config.cmake
+#   files
+#
+# * Tests calling find_package() with <Package>Config.cmake and
+#   <Project>Config.cmake from the install tree and checks all of the data
+#   provided by these.
+#
+# * Tests find_package(<Project> COMPONENTS ... OPTIONAL_COMPONENTS ...) with
+#   missing optional components and verifies that they are excluded from the
+#   <Project>::all_selected_libs target and the
+#   <Project>_SELECTED_PACKAGE_LIST variable.
+#
+# * Creates source tarball, untars it, and checks its contents removed
+#
+# * ???
+#
+#
+
 
 TribitsExampleProject_ALL_ST_NoFortran(STATIC  SERIAL)
 TribitsExampleProject_ALL_ST_NoFortran(SHARED  MPI)
@@ -1079,21 +1152,20 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       "100% tests passed, 0 tests failed out of 6"
 
   TEST_5
-    MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
-      " from the build tree"
-    CMND ${CMAKE_COMMAND}
-    ARGS
-      -DDUMMY_PROJECT_NAME=DummyProject
-      -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
-      -DEXPORT_VAR_PREFIX=WithSubpackages
-      -DEXPORT_CONFIG_FILE=../cmake_packages/WithSubpackages/WithSubpackagesConfig.cmake
-      -DCMAKE_COMMAND=${CMAKE_COMMAND}
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
+      MESSAGE "Create and configure a dummy project that calls"
+        " find_package(WithSubpackages) from the build tree"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -DDUMMY_PROJECT_NAME=DummyProject
+        -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
+        -DEXPORT_VAR_PREFIX=WithSubpackages
+        -DFIND_PACKAGE_NAME=WithSubpackages
+        -DCMAKE_PREFIX_PATH=../cmake_packages
+        -DCMAKE_COMMAND=${CMAKE_COMMAND}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja/install'"
-      "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = ''"
-      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
+	"WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
@@ -1104,24 +1176,22 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_7
-    MESSAGE "Configure dummy project pointing to install tree"
-    CMND ${CMAKE_COMMAND}
-    ARGS
-      -DDUMMY_PROJECT_NAME=DummyProject
-      -DDUMMY_PROJECT_DIR=dummy_client_of_WithSubpackages
-      -DEXPORT_VAR_PREFIX=WithSubpackages
-      -DEXPORT_CONFIG_FILE=../install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake
-      -DCMAKE_COMMAND=${CMAKE_COMMAND}
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
-    MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
-    PASS_REGULAR_EXPRESSION_ALL
-      "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja/install'"
-      "WithSubpackages_LIBRARY_DIRS = ''"
-      "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = ''"
-      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
-      "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
+      MESSAGE "Create and configure a dummy project that calls"
+        " find_package(WithSubpackages) from the install tree"
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -DDUMMY_PROJECT_NAME=DummyProject
+        -DDUMMY_PROJECT_DIR=dummy_client_of_WithSubpackages
+        -DEXPORT_VAR_PREFIX=WithSubpackages
+        -DFIND_PACKAGE_NAME=WithSubpackages
+        -DCMAKE_PREFIX_PATH=../install
+        -DCMAKE_COMMAND=${CMAKE_COMMAND}
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
+      PASS_REGULAR_EXPRESSION_ALL
+        "Calling: find_package[(]WithSubpackages REQUIRED COMPONENTS  OPTIONAL_COMPONENTS  [)]"
+        "WithSubpackages_FOUND = '1'"
+	"WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_8 CMND ninja ARGS -j1 package_source
     MESSAGE "Create the tarball"
@@ -1202,76 +1272,6 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
       "WithSubpackagesC_test_of_c .* Passed"
       "WithSubpackagesC_test_of_c_util.* Passed"
       "100% tests passed, 0 tests failed out of 6"
-
-  TEST_3
-    MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
-      " from the build tree"
-    CMND ${CMAKE_COMMAND}
-    ARGS
-      -DDUMMY_PROJECT_NAME=DummyProject
-      -DDUMMY_PROJECT_DIR=dummy_client_of_build_WithSubpackages
-      -DEXPORT_VAR_PREFIX=WithSubpackages
-      -DEXPORT_CONFIG_FILE=../cmake_packages/WithSubpackages/WithSubpackagesConfig.cmake
-      -DCMAKE_COMMAND=${CMAKE_COMMAND}
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
-    PASS_REGULAR_EXPRESSION_ALL
-      "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles/install'"
-      "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = ''"
-      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
-      "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
-
-  TEST_4 CMND make ARGS ${MAKE_PARALLEL_ARG} install ${CTEST_BUILD_FLAGS}
-    MESSAGE "Build 'install' target using raw 'make'"
-    PASS_REGULAR_EXPRESSION_ALL
-      "Installing: .+/install/include/TribitsExProj_version.h"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
-
-  TEST_5
-    MESSAGE "Configure dummy project pointing to install tree"
-    CMND ${CMAKE_COMMAND}
-    ARGS
-      -DDUMMY_PROJECT_NAME=DummyProject
-      -DDUMMY_PROJECT_DIR=dummy_client_of_WithSubpackages
-      -DEXPORT_VAR_PREFIX=WithSubpackages
-      -DEXPORT_CONFIG_FILE=../install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake
-      -DCMAKE_COMMAND=${CMAKE_COMMAND}
-      -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
-    MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
-    PASS_REGULAR_EXPRESSION_ALL
-      "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles/install'"
-      "WithSubpackages_LIBRARY_DIRS = ''"
-      "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_TPL_INCLUDE_DIRS = ''"
-      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
-      "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
-    ALWAYS_FAIL_ON_NONZERO_RETURN
-
-  TEST_6 CMND make ARGS ${MAKE_PARALLEL_ARG} package_source
-    MESSAGE "Create the tarball"
-    PASS_REGULAR_EXPRESSION_ALL
-      "Run CPack packaging tool for source..."
-      "CPack: - package: .*/ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefiles/tribitsexproj-1.1-Source.tar.gz generated."
-    ALWAYS_FAIL_ON_NONZERO_RETURN
-    # Above should be 'make package_soruce' but the dummy makefiles don't
-    # support that yet!
-
-  TEST_7 CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
-    MESSAGE "Untar the tarball"
-
-  TEST_8 CMND diff
-     ARGS -qr
-       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
-       tribitsexproj-1.1-Source
-    MESSAGE "Make sure right directoires are excluced"
-    PASS_REGULAR_EXPRESSION_ALL
-      "Only in .*/TribitsExampleProject/cmake: ctest"
-      ${REGEX_FOR_GITIGNORE}
-      "Only in .*/TribitsExampleProject/packages: mixed_lang"
-      "Only in .*/TribitsExampleProject/packages: wrap_external"
-    # NOTE: We don't check the the return code form diff because it will
-    # return nonzero if there are any differences
 
   )
 
@@ -1406,16 +1406,17 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran
       -DDUMMY_PROJECT_NAME=DummyProject
       -DDUMMY_PROJECT_DIR=dummy_client_of_WithSubpackages
       -DEXPORT_VAR_PREFIX=WithSubpackages
-      -DEXPORT_CONFIG_FILE=../install/lib/cmake/WithSubpackages/WithSubpackagesConfig.cmake
+      -DFIND_PACKAGE_NAME=WithSubpackages
+      -DCMAKE_PREFIX_PATH=../install
       -DCMAKE_COMMAND=${CMAKE_COMMAND}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
-    MESSAGE "Create and configure a dummy project that includes WithSubpackagesConfig.cmake"
-    PASS_REGULAR_EXPRESSION_ALL
-      "WithSubpackages_INSTALL_DIR = '.+/install'"
-      "WithSubpackages_INCLUDE_DIRS = ''"
-      "WithSubpackages_LIBRARY_DIRS = ''"
-      "WithSubpackages_LIBRARIES = 'WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-      "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesA.SimpleCxx'"
+    MESSAGE "Create and configure a dummy project that calls find_package(WithSubpackagesConfig)"
+     "Calling: find_package[(]WithSubpackages REQUIRED COMPONENTS  OPTIONAL_COMPONENTS  [)]"
+      "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
+      "-- Configuring done"
+      "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
   )
 
 
