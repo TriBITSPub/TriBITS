@@ -50,11 +50,10 @@
 
 include_guard()
 
+include(TribitsCMakePolicies  NO_POLICY_SCOPE)
+
 include(TribitsParseArgumentsHelpers)
 include(MessageWrapper)
-
-cmake_policy(SET CMP0011 NEW) # include() does policy push and pop
-cmake_policy(SET CMP0057 NEW) # Support if ( ... IN_LIST ... )
 
 
 # @MACRO: tribits_extpkg_define_dependencies()

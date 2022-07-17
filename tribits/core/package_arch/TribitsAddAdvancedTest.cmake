@@ -37,6 +37,7 @@
 # ************************************************************************
 # @HEADER
 
+include(TribitsCMakePolicies  NO_POLICY_SCOPE)
 
 include(TribitsAddAdvancedTestHelpers)
 include(TribitsConstants)
@@ -44,13 +45,6 @@ include(TribitsConstants)
 include(TribitsPrintList)
 include(AppendStringVar)
 include(PrintVar)
-
-
-# Avoid quoted strings lookup variables
-cmake_policy(SET CMP0054 NEW)
-# NOTE: For some reason, setting this policy at the top level with TriBITS
-# in TribitsCMakePolices.cmake does not affect this function.  Therefore, I
-# have to set it again here.
 
 
 # @FUNCTION: tribits_add_advanced_test()

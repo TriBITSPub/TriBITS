@@ -37,13 +37,13 @@
 # ************************************************************************
 # @HEADER
 
+cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
 
 #
 # The tests defined here are used to test the dynamic behavior of the
 # CMake/CTest functions tribits_add_test(...) and
 # tribits_add_advanced_test(...).
 #
-
 
 assert_defined(${PACKAGE_NAME}_ENABLE_MPI)
 if (${PACKAGE_NAME}_ENABLE_MPI)

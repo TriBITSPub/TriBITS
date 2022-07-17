@@ -37,6 +37,8 @@
 # ************************************************************************
 # @HEADER
 
+cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+
 # Echo input arguments
 message("PROJECT_NAME = '${PROJECT_NAME}'")
 message("${PROJECT_NAME}_TRIBITS_DIR = '${${PROJECT_NAME}_TRIBITS_DIR}'")

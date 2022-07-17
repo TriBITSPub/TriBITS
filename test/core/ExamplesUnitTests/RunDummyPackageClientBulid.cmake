@@ -37,6 +37,8 @@
 # ************************************************************************
 # @HEADER
 
+cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+
 #
 # This file is run as a cmake -P script to create a new dummy project
 # to test the generated <Package>Config.cmake export file
