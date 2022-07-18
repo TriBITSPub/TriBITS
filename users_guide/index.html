@@ -372,10 +372,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-07-17</p>
+<dd class="field-even"><p>2022-07-18</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2967-gfde77d14</p>
+<dd class="field-odd"><p>tribits_start-2971-g6d8b9592</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -10843,8 +10843,8 @@ This as the result of directly passing in <code class="docutils literal notransl
 <strong>any</strong> of the given regular expressions.  This will be applied and take
 precedence over other above pass criteria.  For example, if even if
 <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code> or <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION_ALL</span></code> match,
-then the test will be marked as failed if this fail regex matches the
-output.</p>
+then the test will be marked as failed if any of the fail regexes match
+the output.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">ALWAYS_FAIL_ON_NONZERO_RETURN</span></code></p>
 <blockquote>
@@ -10921,7 +10921,7 @@ created (including several directory levels deep if needed).</p>
 <p>The logic given below can be used to determine pass/fail criteria for a test
 case both based on what is printed in the test output <strong>and</strong> the return
 code for the test block command.  Raw CTest, as of version 3.23, does not
-allow that.  With raw CTest, one can only set determine pass/fail based the
+allow that.  With raw CTest, one can only set pass/fail criteria based the
 test output <strong>or</strong> the return code, but not both.  This make
 <a class="reference internal" href="#tribits-add-advanced-test">tribits_add_advanced_test()</a> more attractive to use than
 <a class="reference internal" href="#tribits-add-test">tribits_add_test()</a> or raw <code class="docutils literal notranslate"><span class="pre">add_test()</span></code> in cases where it is important
@@ -10993,9 +10993,8 @@ like <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_E
 <div><p><code class="docutils literal notranslate"><span class="pre">FINAL_PASS_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>
 <div><p>If specified, the test will be assumed to pass if the output matches
-<strong>any</strong> of the provided regular expressions <code class="docutils literal notranslate"><span class="pre">&lt;regexi&gt;</span></code>.  Otherwise, it
-will be assumed to fail.  (Sets the CTest property
-<code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code> for the overall test.)</p>
+<strong>any</strong> of the provided regular expressions <code class="docutils literal notranslate"><span class="pre">&lt;regexi&gt;</span></code>.  (Sets the
+CTest property <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code> for the overall test.)</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">FINAL_FAIL_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>

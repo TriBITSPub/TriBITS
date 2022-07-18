@@ -428,10 +428,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-07-17</p>
+<dd class="field-even"><p>2022-07-18</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2967-gfde77d14</p>
+<dd class="field-odd"><p>tribits_start-2971-g6d8b9592</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -10926,8 +10926,8 @@ This as the result of directly passing in <code class="docutils literal notransl
 <strong>any</strong> of the given regular expressions.  This will be applied and take
 precedence over other above pass criteria.  For example, if even if
 <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code> or <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION_ALL</span></code> match,
-then the test will be marked as failed if this fail regex matches the
-output.</p>
+then the test will be marked as failed if any of the fail regexes match
+the output.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">ALWAYS_FAIL_ON_NONZERO_RETURN</span></code></p>
 <blockquote>
@@ -11004,7 +11004,7 @@ created (including several directory levels deep if needed).</p>
 <p>The logic given below can be used to determine pass/fail criteria for a test
 case both based on what is printed in the test output <strong>and</strong> the return
 code for the test block command.  Raw CTest, as of version 3.23, does not
-allow that.  With raw CTest, one can only set determine pass/fail based the
+allow that.  With raw CTest, one can only set pass/fail criteria based the
 test output <strong>or</strong> the return code, but not both.  This make
 <a class="reference internal" href="#tribits-add-advanced-test">tribits_add_advanced_test()</a> more attractive to use than
 <a class="reference internal" href="#tribits-add-test">tribits_add_test()</a> or raw <code class="docutils literal notranslate"><span class="pre">add_test()</span></code> in cases where it is important
@@ -11076,9 +11076,8 @@ like <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_E
 <div><p><code class="docutils literal notranslate"><span class="pre">FINAL_PASS_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>
 <div><p>If specified, the test will be assumed to pass if the output matches
-<strong>any</strong> of the provided regular expressions <code class="docutils literal notranslate"><span class="pre">&lt;regexi&gt;</span></code>.  Otherwise, it
-will be assumed to fail.  (Sets the CTest property
-<code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code> for the overall test.)</p>
+<strong>any</strong> of the provided regular expressions <code class="docutils literal notranslate"><span class="pre">&lt;regexi&gt;</span></code>.  (Sets the
+CTest property <code class="docutils literal notranslate"><span class="pre">PASS_REGULAR_EXPRESSION</span></code> for the overall test.)</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">FINAL_FAIL_REGULAR_EXPRESSION</span> <span class="pre">&quot;&lt;regex0&gt;&quot;</span> <span class="pre">&quot;&lt;regex1&gt;&quot;</span> <span class="pre">...</span></code></p>
 <blockquote>
@@ -11240,7 +11239,7 @@ tribits_add_advanced_test(
   )
 </pre></div>
 </div>
-<p>In: core/package_arch/TribitsAddAdvancedTest.cmake:56</p>
+<p>In: core/package_arch/TribitsAddAdvancedTest.cmake:50</p>
 </section>
 <section id="tribits-add-debug-option">
 <h3><a class="toc-backref" href="#id127">tribits_add_debug_option()</a><a class="headerlink" href="#tribits-add-debug-option" title="Permalink to this heading"></a></h3>
@@ -12576,7 +12575,7 @@ GTest executable such as with:</p>
 </div>
 <p>For example, this would be an alternative to disabling an entire unit
 testing executable using <code class="docutils literal notranslate"><span class="pre">-D&lt;fullTestName&gt;_DISABLE=ON</span></code> as described above.</p>
-<p>In: core/package_arch/TribitsAddTest.cmake:45</p>
+<p>In: core/package_arch/TribitsAddTest.cmake:44</p>
 </section>
 <section id="tribits-add-test-directories">
 <h3><a class="toc-backref" href="#id135">tribits_add_test_directories()</a><a class="headerlink" href="#tribits-add-test-directories" title="Permalink to this heading"></a></h3>
@@ -14134,7 +14133,7 @@ of <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;<
 package needs the include directories from some external package/TPL, then
 it should list that external package/TPL as a direct dependency and not
 expect to get include directories from indirect dependencies.)</p>
-<p>In: core/package_arch/TribitsPackageDependencies.cmake:60</p>
+<p>In: core/package_arch/TribitsPackageDependencies.cmake:59</p>
 </section>
 <section id="tribits-extpkg-get-dep-name-and-vis">
 <h3><a class="toc-backref" href="#id144">tribits_extpkg_get_dep_name_and_vis()</a><a class="headerlink" href="#tribits-extpkg-get-dep-name-and-vis" title="Permalink to this heading"></a></h3>
@@ -14145,7 +14144,7 @@ default <code class="docutils literal notranslate"><span class="pre">&lt;Vis&gt;
   <span class="o">&lt;</span><span class="n">upstreamTplDepEntry</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">upstreamTplDepNameOut</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">upstreamTplDepVisOut</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In: core/package_arch/TribitsPackageDependencies.cmake:163</p>
+<p>In: core/package_arch/TribitsPackageDependencies.cmake:171</p>
 </section>
 <section id="tribits-extpkg-create-imported-all-libs-target-and-config-file">
 <h3><a class="toc-backref" href="#id145">tribits_extpkg_create_imported_all_libs_target_and_config_file()</a><a class="headerlink" href="#tribits-extpkg-create-imported-all-libs-target-and-config-file" title="Permalink to this heading"></a></h3>
@@ -14193,7 +14192,7 @@ file that will be written out.</p>
 <p>This function just calls <a class="reference internal" href="#tribits-extpkg-write-config-file-str">tribits_extpkg_write_config_file_str()</a>
 and writes that text to the file <code class="docutils literal notranslate"><span class="pre">&lt;tplConfigFile&gt;</span></code> so see that function
 for more details.</p>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:51</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:49</p>
 </section>
 <section id="tribits-extpkg-write-config-file-str">
 <h3><a class="toc-backref" href="#id147">tribits_extpkg_write_config_file_str()</a><a class="headerlink" href="#tribits-extpkg-write-config-file-str" title="Permalink to this heading"></a></h3>
@@ -14276,7 +14275,7 @@ the <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;
 <p>Finally, for every <code class="docutils literal notranslate"><span class="pre">&lt;upstreamTplName&gt;</span></code> listed in
 <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIB_ENABLED_DEPENDENCIES</span></code>, a link dependency is created using
 <code class="docutils literal notranslate"><span class="pre">target_link_library(&lt;tplName&gt;::all_libs</span> <span class="pre">INTERFACE</span> <span class="pre">&lt;upstreamTplName&gt;)</span></code>.</p>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:169</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:167</p>
 </section>
 <section id="tribits-find-most-recent-binary-file-timestamp">
 <h3><a class="toc-backref" href="#id148">tribits_find_most_recent_binary_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-binary-file-timestamp" title="Permalink to this heading"></a></h3>
@@ -15329,7 +15328,7 @@ to <code class="docutils literal notranslate"><span class="pre">OFF</span></code
 <li><p><code class="docutils literal notranslate"><span class="pre">UNSUPPORTED_LIB_ENTRY</span></code>: An unsupported lib option</p></li>
 </ul>
 </div></blockquote>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:460</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:458</p>
 </section>
 <section id="tribits-tpl-tentatively-enable">
 <h3><a class="toc-backref" href="#id171">tribits_tpl_tentatively_enable()</a><a class="headerlink" href="#tribits-tpl-tentatively-enable" title="Permalink to this heading"></a></h3>
@@ -16080,7 +16079,7 @@ fails.  This prints the variable name and values and shows the test result.</p>
 <p>This updates the global variables <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMRUN</span></code>,
 <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMPASSED</span></code>, and <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_PASS</span></code> which are used
 by the unit test harness system to assess overall pass/fail.</p>
-<p>In: core/utils/UnitTestHelpers.cmake:62</p>
+<p>In: core/utils/UnitTestHelpers.cmake:64</p>
 </section>
 <section id="unittest-has-substr-const">
 <h3><a class="toc-backref" href="#id213">unittest_has_substr_const()</a><a class="headerlink" href="#unittest-has-substr-const" title="Permalink to this heading"></a></h3>
@@ -16096,7 +16095,7 @@ shows the test result.</p>
 <p>This updates the global variables <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMRUN</span></code>,
 <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMPASSED</span></code>, and <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_PASS</span></code> which are used
 by the unit test harness system to assess overall pass/fail.</p>
-<p>In: core/utils/UnitTestHelpers.cmake:346</p>
+<p>In: core/utils/UnitTestHelpers.cmake:348</p>
 </section>
 <section id="unittest-not-has-substr-const">
 <h3><a class="toc-backref" href="#id214">unittest_not_has_substr_const()</a><a class="headerlink" href="#unittest-not-has-substr-const" title="Permalink to this heading"></a></h3>
@@ -16112,7 +16111,7 @@ shows the test result.</p>
 <p>This updates the global variables <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMRUN</span></code>,
 <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMPASSED</span></code>, and <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_PASS</span></code> which are used
 by the unit test harness system to assess overall pass/fail.</p>
-<p>In: core/utils/UnitTestHelpers.cmake:392</p>
+<p>In: core/utils/UnitTestHelpers.cmake:394</p>
 </section>
 <section id="unittest-string-regex">
 <h3><a class="toc-backref" href="#id215">unittest_string_regex()</a><a class="headerlink" href="#unittest-string-regex" title="Permalink to this heading"></a></h3>
@@ -16130,7 +16129,7 @@ statistics.</p>
 <p>This updates the global variables <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMRUN</span></code>,
 <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMPASSED</span></code>, and <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_PASS</span></code> which are used
 by the unit test harness system to assess overall pass/fail.</p>
-<p>In: core/utils/UnitTestHelpers.cmake:236</p>
+<p>In: core/utils/UnitTestHelpers.cmake:238</p>
 </section>
 <section id="unittest-string-var-regex">
 <h3><a class="toc-backref" href="#id216">unittest_string_var_regex()</a><a class="headerlink" href="#unittest-string-var-regex" title="Permalink to this heading"></a></h3>
@@ -16148,7 +16147,7 @@ test statistics.</p>
 <p>This updates the global variables <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMRUN</span></code>,
 <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_NUMPASSED</span></code>, and <code class="docutils literal notranslate"><span class="pre">UNITTEST_OVERALL_PASS</span></code> which are used
 by the unit test harness system to assess overall pass/fail.</p>
-<p>In: core/utils/UnitTestHelpers.cmake:295</p>
+<p>In: core/utils/UnitTestHelpers.cmake:297</p>
 </section>
 <section id="unittest-file-regex">
 <h3><a class="toc-backref" href="#id217">unittest_file_regex()</a><a class="headerlink" href="#unittest-file-regex" title="Permalink to this heading"></a></h3>
@@ -16162,7 +16161,7 @@ by the unit test harness system to assess overall pass/fail.</p>
 </div>
 <p>The contents of <code class="docutils literal notranslate"><span class="pre">&lt;inputFileName&gt;</span></code> are read into a string and then passed
 to <a class="reference internal" href="#unittest-string-regex">unittest_string_regex()</a> to assess pass/fail.</p>
-<p>In: core/utils/UnitTestHelpers.cmake:438</p>
+<p>In: core/utils/UnitTestHelpers.cmake:440</p>
 </section>
 <section id="unittest-final-result">
 <h3><a class="toc-backref" href="#id218">unittest_final_result()</a><a class="headerlink" href="#unittest-final-result" title="Permalink to this heading"></a></h3>
@@ -16187,7 +16186,7 @@ failed, the string:</p>
 as an extra precaution to make sure that important unit tests are not left
 out.  CMake is a very loosely typed language and it pays to be a little
 paranoid.</p>
-<p>In: core/utils/UnitTestHelpers.cmake:459</p>
+<p>In: core/utils/UnitTestHelpers.cmake:461</p>
 </section>
 </section>
 </section>
@@ -16825,7 +16824,7 @@ listed in <code class="docutils literal notranslate"><span class="pre">&lt;tplNa
 </div>
 <p>NOTE: This also requires that <code class="docutils literal notranslate"><span class="pre">&lt;upstreamTplName&gt;_DIR</span></code> be set for each
 external package/TPL listed in <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIB_ENABLED_DEPENDENCIES</span></code>.</p>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:295</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:293</p>
 </section>
 <section id="tribits-extpkg-create-all-libs-target">
 <h3><a class="toc-backref" href="#id238">tribits_extpkg_create_all_libs_target()</a><a class="headerlink" href="#tribits-extpkg-create-all-libs-target" title="Permalink to this heading"></a></h3>
@@ -16850,7 +16849,7 @@ paths entries found while processing <code class="docutils literal notranslate">
 <p><code class="docutils literal notranslate"><span class="pre">&lt;configFileFragStrInOut&gt;</span></code>: [out] A string variable that will be
 appended with the <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::all_libs</span></code> target statements.</p>
 </div></blockquote>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:729</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:727</p>
 </section>
 <section id="tribits-extpkg-install-config-file">
 <h3><a class="toc-backref" href="#id239">tribits_extpkg_install_config_file()</a><a class="headerlink" href="#tribits-extpkg-install-config-file" title="Permalink to this heading"></a></h3>
@@ -16866,7 +16865,7 @@ appended with the <code class="docutils literal notranslate"><span class="pre">&
 <p><code class="docutils literal notranslate"><span class="pre">&lt;tplConfigFile&gt;</span></code>: Full file path for the <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;Config.cmake</span></code>
 file that will be installed into the correct location.</p>
 </div></blockquote>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:118</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:116</p>
 </section>
 <section id="tribits-extpkg-install-config-version-file">
 <h3><a class="toc-backref" href="#id240">tribits_extpkg_install_config_version_file()</a><a class="headerlink" href="#tribits-extpkg-install-config-version-file" title="Permalink to this heading"></a></h3>
@@ -16883,7 +16882,7 @@ file that will be installed into the correct location.</p>
 <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;ConfigVersion.cmake</span></code> file that will be installed into the
 correct location <code class="docutils literal notranslate"><span class="pre">${${PROJECT_NAME}_INSTALL_LIB_DIR}/external_packages/</span></code></p>
 </div></blockquote>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:142</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:140</p>
 </section>
 <section id="tribits-extpkg-process-libraries-list">
 <h3><a class="toc-backref" href="#id241">tribits_extpkg_process_libraries_list()</a><a class="headerlink" href="#tribits-extpkg-process-libraries-list" title="Permalink to this heading"></a></h3>
@@ -16911,7 +16910,7 @@ with the list of <code class="docutils literal notranslate"><span class="pre">-L
 appended with the IMPORTED library commands for the list of targets given
 in <code class="docutils literal notranslate"><span class="pre">&lt;libTargetsList&gt;</span></code>.</p>
 </div></blockquote>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:370</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:368</p>
 </section>
 <section id="tribits-extpkg-setup-enabled-dependencies">
 <h3><a class="toc-backref" href="#id242">tribits_extpkg_setup_enabled_dependencies()</a><a class="headerlink" href="#tribits-extpkg-setup-enabled-dependencies" title="Permalink to this heading"></a></h3>
@@ -16931,7 +16930,7 @@ enabled package listed in <code class="docutils literal notranslate"><span class
 to <code class="docutils literal notranslate"><span class="pre">OFF</span></code> for each <code class="docutils literal notranslate"><span class="pre">&lt;upstsreamPkgName&gt;</span></code> listed in
 <code class="docutils literal notranslate"><span class="pre">&lt;externalPkgName&gt;_LIB_ENABLED_DEPENDENCIES</span></code> but not in
 <code class="docutils literal notranslate"><span class="pre">&lt;externalPkgName&gt;_LIB_ENABLED_DEPENDENCIES</span></code>.</p>
-<p>In: core/package_arch/TribitsPackageDependencies.cmake:113</p>
+<p>In: core/package_arch/TribitsPackageDependencies.cmake:115</p>
 </section>
 <section id="tribits-extpkg-write-config-version-file">
 <h3><a class="toc-backref" href="#id243">tribits_extpkg_write_config_version_file()</a><a class="headerlink" href="#tribits-extpkg-write-config-version-file" title="Permalink to this heading"></a></h3>
@@ -16948,7 +16947,7 @@ to <code class="docutils literal notranslate"><span class="pre">OFF</span></code
 <p><code class="docutils literal notranslate"><span class="pre">&lt;tplConfigVersionFile&gt;</span></code>: Full file path for the
 <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;ConfigVersion.cmake</span></code> file that will be written out.</p>
 </div></blockquote>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:78</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:76</p>
 </section>
 <section id="tribits-dump-package-dependencies-info">
 <h3><a class="toc-backref" href="#id244">tribits_dump_package_dependencies_info()</a><a class="headerlink" href="#tribits-dump-package-dependencies-info" title="Permalink to this heading"></a></h3>
