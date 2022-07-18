@@ -11,9 +11,9 @@
 # and it read and print these env vars up to 10
 #
 
-set(maxNumEnvVars 10)
+cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
 
-cmake_policy(SET CMP0054 NEW)
+set(maxNumEnvVars 10)
 
 foreach(idx RANGE ${maxNumEnvVars})
   set(envVarCacheVarName_idx "ENV_VAR_${idx}")

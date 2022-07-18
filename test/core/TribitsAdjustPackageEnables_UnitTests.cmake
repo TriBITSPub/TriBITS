@@ -37,9 +37,9 @@
 # ************************************************************************
 # @HEADER
 
+cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
 
 include(${CMAKE_CURRENT_LIST_DIR}/TribitsAdjustPackageEnablesHelpers.cmake)
-
 
 
 #####################################################################
