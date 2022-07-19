@@ -63,7 +63,8 @@ include(TimingUtils)
 # and more specifically the sections:
 #
 # * `Lists of external and internal packages`_
-# * `List variables defining the package dependencies graph`_
+# * `Variables defining the package dependencies graph`_
+#   (`Legacy list variables defining the package dependencies graph`_)
 # * `TriBITS Package Top-Level Local Variables`_
 # * `TriBITS Subpackage Top-Level Local Variables`_
 # * `TriBITS Package Cache Variables`_

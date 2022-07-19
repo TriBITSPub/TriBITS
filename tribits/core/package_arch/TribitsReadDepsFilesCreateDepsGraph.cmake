@@ -64,7 +64,7 @@ include(DualScopeSet)
 #
 #   ${PROJECT_NAME}_SE_PACKAGES (old)
 #
-# as well creates the package dependency variables described in `List
+# as well creates the package dependency variables described in `Legacy list
 # variables defining the package dependencies graph`_ that defines the
 # directed acyclic dependency (DAG) package dependency graph (with navigation
 # up and down the graph).
@@ -170,7 +170,7 @@ endmacro()
 #
 #   ${PROJECT_NAME}_SE_PACKAGES (old)
 #
-# as well creates the package dependency variables described in `List
+# as well creates the package dependency variables described in `Legacy list
 # variables defining the package dependencies graph`_ that defines the
 # directed acyclic dependency (DAG) package dependency graph (with navigation
 # up and down the graph).
@@ -339,8 +339,8 @@ endmacro()
 #
 #    <packageName>_FORWARD_<listType>
 #
-# for each of the forward/downstream in `List variables defining the package
-# dependencies graph`_.
+# for each of the forward/downstream in `Legacy list variables defining the
+# package dependencies graph`_.
 #
 # See `Function call tree for constructing package dependency graph`_
 #
@@ -451,10 +451,10 @@ endmacro()
 #   tribits_process_package_dependencies_lists(<packageName>)
 #
 # Sets up the upstream and downstream/forward package dependency list
-# variables for ``<packageName>`` described in `List variables defining the
-# package dependencies graph`_.  Note that the downstream/forward dependencies
-# of upstream packages on this package ``<packageName>`` are built up
-# incrementally.
+# variables for ``<packageName>`` described in `Legacy list variables defining
+# the package dependencies graph`_.  Note that the downstream/forward
+# dependencies of upstream packages on this package ``<packageName>`` are
+# built up incrementally.
 #
 # See `Function call tree for constructing package dependency graph`_
 # 
@@ -488,8 +488,8 @@ endmacro()
 # package given the vars read in from the macro
 # `tribits_package_define_dependencies()`_.
 #
-# Sets the upstream/backward dependency variables defined in the section `List
-# variables defining the package dependencies graph`_.
+# Sets the upstream/backward dependency variables defined in the section
+# `Legacy list variables defining the package dependencies graph`_.
 #
 # This also handles the several types of issues:
 #
@@ -582,7 +582,7 @@ endfunction()
 #
 #    <packageName>_FORWARD_<listType>
 #
-# for one of the vars listed in `List variables defining the package
+# for one of the vars listed in `Legacy list variables defining the package
 # dependencies graph`_.
 #
 # This function is called multiple times to build up the forward package

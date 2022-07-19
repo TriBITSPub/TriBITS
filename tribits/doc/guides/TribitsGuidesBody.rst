@@ -401,8 +401,6 @@ engineering books out there (see https://bartlettroscoe.github.io/reading-list/#
 TriBITS Project Structure
 =========================
 
-.. jfrye: What does the "F" in framework mean?
-
 TriBITS is a Framework, implemented in CMake, to create CMake projects.  As a
 `Software Framework`_, TriBITS defines the overall structure of a CMake build
 system for a project and it processes the various project-, repository-, and
@@ -1813,7 +1811,8 @@ defined before a (SE) Package's ``CMakeLists.txt`` file is processed:
 
     **NOTE:** This variable will also be set for required dependencies as well
     to allow for uniform processing such as when looping over the items in
-    `${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES`_.
+    `${PACKAGE_NAME}_LIB_DEFINED_DEPENDENCIES`_ or
+    `${PACKAGE_NAME}_TEST_DEFINED_DEPENDENCIES`_.
 
   .. _${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL_NAME}:
 
@@ -2339,7 +2338,7 @@ defined TPL ``TPL_NAME`` is assigned the following global non-cache variables:
     TPL if desired by setting ``${TPL_NAME}_TESTGROUP`` before the first
     `<repoDir>/TPLsList.cmake`_ file gets processed.
 
-  .. _+${TPL_NAME}_TPLS_LIST_FILE:
+  .. _${TPL_NAME}_TPLS_LIST_FILE:
 
   ``${TPL_NAME}_TPLS_LIST_FILE``
 
