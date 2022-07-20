@@ -1117,7 +1117,7 @@ function(unittest_tribits_extpkg_write_config_file_str_incl_dirs_2_lib_opts_2_2_
     )
   set(${tplName}_LIB_ENABLED_DEPENDENCIES
     PublicTpl:PUBLIC PrivateTpl:PRIVATE DefaultVisTpl)
-  set(PublicTpl_DIR "<public-tpl-dir>")
+  set(PublicTpl_DIR "<public-tpl-dir>") # Needed to avoid assert check ...
   set(PrivateTpl_DIR "<private-tpl-dir>")
   set(DefaultVisTpl_DIR "<default-vis-tpl-dir>")
 
@@ -1151,15 +1151,15 @@ set(SomeTpl_SearchNoOtherPathsArgs
   NO_CMAKE_FIND_ROOT_PATH
   )
 
-set(PublicTpl_DIR "<public-tpl-dir>")
+set(PublicTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../PublicTpl")
 find_dependency(PublicTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
 unset(PublicTpl_DIR)
 
-set(PrivateTpl_DIR "<private-tpl-dir>")
+set(PrivateTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../PrivateTpl")
 find_dependency(PrivateTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
 unset(PrivateTpl_DIR)
 
-set(DefaultVisTpl_DIR "<default-vis-tpl-dir>")
+set(DefaultVisTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../DefaultVisTpl")
 find_dependency(DefaultVisTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
 unset(DefaultVisTpl_DIR)
 
