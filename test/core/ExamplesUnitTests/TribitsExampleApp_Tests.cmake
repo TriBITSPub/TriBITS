@@ -333,8 +333,7 @@ function(TribitsExampleApp_NoFortran fullOrComponents sharedOrStatic)
 
     TEST_3
       MESSAGE "Delete source and build directory for TribitsExampleProject"
-      #CMND ${CMAKE_COMMAND} ARGS -E rm -rf TribitsExampleProject BUILD
-      CMND ${CMAKE_COMMAND} ARGS -E echo "pass"
+      CMND ${CMAKE_COMMAND} ARGS -E rm -rf TribitsExampleProject BUILD
 
     TEST_4
       MESSAGE "Configure TribitsExampleApp locally"

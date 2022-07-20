@@ -146,6 +146,15 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
       "Error, findingTplsMethod='${findingTplsMethod}' is invalid!")
   endif()
 
+  # Allow skipping delete of src and build dirs to aid in debugging
+  if (TribitsExampleProject2_Tests_SKIP_DELETE_SRC_AND_BUILD)
+    set(deleteSrcAndBuildDirsCmndArgs
+      CMND ${CMAKE_COMMAND} ARGS -E echo "Skip deleting src and build dirs!")
+  else()
+    set(deleteSrcAndBuildDirsCmndArgs
+      CMND ${CMAKE_COMMAND} ARGS -E rm -rf TribitsExampleProject2 BUILD)
+  endif()
+
   set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}${testNameSuffix})
   set(testName ${PACKAGE_NAME}_${testNameBase})
   set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
@@ -159,7 +168,13 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
     ${cmakePrefixPathEnvArg}
 
     TEST_0
+      MESSAGE "Copy TribitsExampleProject2 so we can delete it after the install"
+      CMND cp
+      ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2 .
+
+    TEST_1
       MESSAGE "Configure TribitsExampleProject2 against pre-installed Tpl1"
+      WORKING_DIRECTORY  BUILD
       CMND ${CMAKE_COMMAND}
       ARGS
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
@@ -172,10 +187,9 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
         ${tplLibAndIncDirsArgs}
         ${cmakePrefixPathCacheArg}
         -DTribitsExProj2_ENABLE_TESTS=ON
-        -DCMAKE_INSTALL_PREFIX=install
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
-        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
-      ALWAYS_FAIL_ON_NONZERO_RETURN
+        ../TribitsExampleProject2
       PASS_REGULAR_EXPRESSION_ALL
         "Final set of enabled packages:  Package1 Package2 Package3"
         "Final set of enabled TPLs:  Tpl1 Tpl2 Tpl3 Tpl4 4"
@@ -207,38 +221,45 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
 
         "-- Configuring done"
         "-- Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_1
+    TEST_2
       MESSAGE "Check Package3Config.cmake for build tree"
-      CMND cat ARGS cmake_packages/Package3/Package3Config.cmake
+      CMND cat ARGS BUILD/cmake_packages/Package3/Package3Config.cmake
       PASS_REGULAR_EXPRESSION_ALL
         "set[(]Package3_ENABLE_Package1 ON[)]"
         "set[(]Package3_ENABLE_Package2 ON[)]"
         "set[(]Package3_ENABLE_Tpl2 ON[)]"
         "set[(]Package3_ENABLE_Tpl4 ON[)]"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_2
+    TEST_3
       MESSAGE "Build verbose to check the link lines"
+      WORKING_DIRECTORY  BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_COMMAND} ARGS --build . -v
       PASS_REGULAR_EXPRESSION_ALL
         "[-]o packages/package1/src/package1-prg .* ${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
         "[-]o packages/package2/src/package2-prg .* ${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex} +${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
         "[-]o packages/package3/src/package3-prg .* ${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex} +${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex} +${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}"
 
-    TEST_3
+    TEST_4
       MESSAGE "Run tests"
+      WORKING_DIRECTORY  BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
-      ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
         "100% tests passed, 0 tests failed out of 3"
-
-    TEST_4
-      MESSAGE "Install"
-      CMND ${CMAKE_COMMAND} ARGS --build . --target install
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_5
+      MESSAGE "Install"
+      WORKING_DIRECTORY BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_COMMAND} ARGS --build . --target install
       PASS_REGULAR_EXPRESSION_ALL
         "Tpl1Config.cmake"
         "Tpl2Config.cmake"
@@ -250,8 +271,9 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
         "Package2Targets.cmake"
         "Package3Config.cmake"
         "Package3Targets.cmake"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_5
+    TEST_6
       MESSAGE "Check Package3Config.cmake in install tree"
       CMND cat ARGS install/lib/cmake/Package3/Package3Config.cmake
       PASS_REGULAR_EXPRESSION_ALL
@@ -259,6 +281,11 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
         "set[(]Package3_ENABLE_Package2 ON[)]"
         "set[(]Package3_ENABLE_Tpl2 ON[)]"
         "set[(]Package3_ENABLE_Tpl4 ON[)]"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_7
+      MESSAGE "Delete source and build directory for TribitsExampleProject2"
+      ${deleteSrcAndBuildDirsCmndArgs}
 
     ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
 
@@ -328,7 +355,6 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls  shared
         -DCMAKE_INSTALL_PREFIX=install
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
-      ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "NOTE: Package3_ENABLE_Package2=OFF is already set so not enabling even though TribitsExProj2_ENABLE_Package2=ON is set"
         "Final set of enabled packages:  Package1 Package2 Package3"
@@ -343,6 +369,7 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls  shared
 
         "-- Configuring done"
         "-- Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_1
       MESSAGE "Check Package3Config.cmake for build tree"
@@ -364,12 +391,12 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls  shared
     TEST_3
       MESSAGE "Run tests"
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
-      ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
         "100% tests passed, 0 tests failed out of 3"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_4
       MESSAGE "Install"
@@ -444,7 +471,6 @@ function(TribitsExampleProject2_explicit_tpl_vars  sharedOrStatic)
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DCMAKE_INSTALL_PREFIX=install
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
-      ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "TPL_Tpl1_LIBRARIES='${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
         "TPL_Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"
@@ -455,6 +481,7 @@ function(TribitsExampleProject2_explicit_tpl_vars  sharedOrStatic)
 	"TPL_Tpl4_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl4/include'"
         "-- Configuring done"
         "-- Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_1
       MESSAGE "Build verbose to check the link line of Package3"
@@ -467,17 +494,16 @@ function(TribitsExampleProject2_explicit_tpl_vars  sharedOrStatic)
     TEST_2
       MESSAGE "Run tests"
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
-      ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
         "100% tests passed, 0 tests failed out of 3"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_3
       MESSAGE "Install"
       CMND make ARGS install
-      ALWAYS_FAIL_ON_NONZERO_RETURN
       PASS_REGULAR_EXPRESSION_ALL
         "Tpl1Config.cmake"
         "Tpl2Config.cmake"
@@ -489,6 +515,7 @@ function(TribitsExampleProject2_explicit_tpl_vars  sharedOrStatic)
         "Package2Targets.cmake"
         "Package3Config.cmake"
         "Package3Targets.cmake"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
     ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
 
@@ -518,6 +545,15 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
 
   TribitsExampleProject2_test_setup_header()
 
+  # Allow skipping delete of src and build dirs to aid in debugging
+  if (TribitsExampleProject2_Tests_SKIP_DELETE_SRC_AND_BUILD)
+    set(deleteSrcAndBuildDirsCmndArgs
+      CMND ${CMAKE_COMMAND} ARGS -E echo "Skip deleting src and build dirs!")
+  else()
+    set(deleteSrcAndBuildDirsCmndArgs
+      CMND ${CMAKE_COMMAND} ARGS -E rm -rf TribitsExampleProject2 BUILD)
+  endif()
+
   set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic})
   set(testName ${PACKAGE_NAME}_${testNameBase})
   set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
@@ -530,7 +566,13 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
     LIST_SEPARATOR "<semicolon>"
 
     TEST_0
+      MESSAGE "Copy TribitsExampleProject2 so we can delete it after the install"
+      CMND cp
+      ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2 .
+
+    TEST_1
       MESSAGE "Configure TribitsExampleProject2 against pre-installed TPLs"
+      WORKING_DIRECTORY  BUILD
       CMND ${CMAKE_COMMAND}
       ARGS
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
@@ -539,10 +581,9 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
         -DTPL_ENABLE_Tpl4=ON
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj2_ENABLE_TESTS=ON
-        -DCMAKE_INSTALL_PREFIX=install
+        -DCMAKE_INSTALL_PREFIX=${testDir}/install
         -D CMAKE_PREFIX_PATH="${tplInstallBaseDir}/install_tpl1<semicolon>${tplInstallBaseDir}/install_tpl2<semicolon>${tplInstallBaseDir}/install_tpl3<semicolon>${tplInstallBaseDir}/install_tpl4"
-        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
-      ALWAYS_FAIL_ON_NONZERO_RETURN
+        ../TribitsExampleProject2
       PASS_REGULAR_EXPRESSION_ALL
         "-- Using find_package[(]Tpl1 [.][.][.][)] [.][.][.]"
         "-- Found Tpl1_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl1/lib/cmake/Tpl1'"
@@ -555,28 +596,35 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
         "-- Generating Tpl4::all_libs and Tpl4Config.cmake"
         "-- Configuring done"
         "-- Generating done"
-
-    TEST_1
-      MESSAGE "Build Packages and tests"
-      CMND make
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_2
+      MESSAGE "Build Packages and tests"
+      WORKING_DIRECTORY  BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_COMMAND} ARGS --build .
       PASS_REGULAR_EXPRESSION_ALL
         "package1-prg"
         "package2-prg"
         "package3-prg"
-
-    TEST_2
-      MESSAGE "Run tests"
-      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_3
+      MESSAGE "Run tests"
+      WORKING_DIRECTORY  BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
         "100% tests passed, 0 tests failed out of 3"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_3
+    TEST_4
       MESSAGE "Install"
+      WORKING_DIRECTORY  BUILD
+      SKIP_CLEAN_WORKING_DIRECTORY
       CMND make ARGS install
       PASS_REGULAR_EXPRESSION_ALL
         "Tpl1Config.cmake"
@@ -588,6 +636,10 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
         "Tpl4Config.cmake"
         "Tpl4ConfigVersion.cmake"
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_5
+      MESSAGE "Delete source and build directory for TribitsExampleProject2"
+      ${deleteSrcAndBuildDirsCmndArgs}
 
     ${ENV_PATH_HACK_FOR_TPL1_${sharedOrStatic}_ARG}
 
@@ -635,35 +687,35 @@ tribits_add_advanced_test( ${testNameBase}
       -DCMAKE_INSTALL_PREFIX=install
       -DTribitsExProj2_ENABLE_Package1=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
-    ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "Using find_package[(]Tpl1 [.][.][.][)] [.][.][.]"
       "Found Tpl1_DIR='.*TribitsExampleProject2_Tpls_install_STATIC/install_tpl1/lib/cmake/Tpl1'"
       "Extracting include dirs and libraries from target tpl1::tpl1"
       "-- Configuring done"
       "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_1
     MESSAGE "Build Package1 and tests"
     CMND make
-    ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "package1-prg"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_2
     MESSAGE "Run tests for Package1"
     CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
-    ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "Test.*Package1_Prg.*Passed"
       "100% tests passed, 0 tests failed"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_3
     MESSAGE "Install Package1"
     CMND make ARGS install
-    ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "Tpl1Config.cmake"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_4
     MESSAGE "Remove configuration files for TribitsExampleProject2"
@@ -681,12 +733,12 @@ tribits_add_advanced_test( ${testNameBase}
       -DCMAKE_INSTALL_PREFIX=install
       -DTribitsExProj2_ENABLE_Package1=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
-    ALWAYS_FAIL_ON_NONZERO_RETURN
     PASS_REGULAR_EXPRESSION_ALL
       "Using find_package[(]Tpl1 [.][.][.][)] [.][.][.]"
       "Found Tpl1_DIR='.*TribitsExampleProject2_Tpls_install_STATIC/install_tpl1/lib/cmake/Tpl1'"
       "-- Configuring done"
       "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   ADDED_TEST_NAME_OUT ${testNameBase}_NAME
   )
