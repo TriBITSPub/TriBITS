@@ -619,7 +619,7 @@ add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib IMPORTED STATIC GLOBAL)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/other/path/to/libsomelib.a")
 target_link_libraries(SomeTpl::somelib
@@ -676,7 +676,7 @@ add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib IMPORTED STATIC GLOBAL)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/other/path/to/libsomelib.a")
 target_link_libraries(SomeTpl::somelib
