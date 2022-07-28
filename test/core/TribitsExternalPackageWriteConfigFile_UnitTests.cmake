@@ -230,7 +230,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_1)
 [=[
 #beginning
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
 
@@ -270,11 +270,11 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_2)
 [=[
 #beginning
 
-add_library(SomeTpl::somelib1 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib1 IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib1 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib1.so")
 
-add_library(SomeTpl::somelib2 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib2 IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib2 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib2.so")
 target_link_libraries(SomeTpl::somelib2
@@ -318,17 +318,17 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_3)
 [=[
 #beginning
 
-add_library(SomeTpl::somelib1 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib1 IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib1 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib1.so")
 
-add_library(SomeTpl::somelib2 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib2 IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib2 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib2.so")
 target_link_libraries(SomeTpl::somelib2
   INTERFACE SomeTpl::somelib1)
 
-add_library(SomeTpl::somelib3 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib3 IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib3 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib3.so")
 target_link_libraries(SomeTpl::somelib3
@@ -371,7 +371,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_1_1
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
@@ -413,11 +413,11 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_2_2
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::lib2 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib2 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
 target_link_libraries(SomeTpl::lib2
@@ -462,17 +462,17 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_3_3
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::lib2 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib2 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
 target_link_libraries(SomeTpl::lib2
   INTERFACE SomeTpl::lib1)
 
-add_library(SomeTpl::lib3 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib3 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib3 PROPERTIES
   IMPORTED_LIBNAME "lib3")
 target_link_libraries(SomeTpl::lib3
@@ -566,11 +566,11 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_libname_2)
 [=[
 #beginning
 
-add_library(SomeTpl::c IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::c IMPORTED INTERFACE)
 set_target_properties(SomeTpl::c PROPERTIES
   IMPORTED_LIBNAME "c")
 
-add_library(SomeTpl::some1_Longer2-Name3 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::some1_Longer2-Name3 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::some1_Longer2-Name3 PROPERTIES
   IMPORTED_LIBNAME "some1_Longer2-Name3")
 target_link_libraries(SomeTpl::some1_Longer2-Name3
@@ -615,17 +615,17 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_2_2
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::somelib IMPORTED STATIC GLOBAL)
+add_library(SomeTpl::somelib IMPORTED STATIC)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/other/path/to/libsomelib.a")
 target_link_libraries(SomeTpl::somelib
   INTERFACE SomeTpl::lib1)
 
-add_library(SomeTpl::lib3 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib3 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib3 PROPERTIES
   IMPORTED_LIBNAME "lib3")
 target_link_libraries(SomeTpl::lib3
@@ -672,17 +672,17 @@ function(unittest_tribits_extpkg_process_libraries_list_duplicate_libs)
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::somelib IMPORTED STATIC GLOBAL)
+add_library(SomeTpl::somelib IMPORTED STATIC)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/other/path/to/libsomelib.a")
 target_link_libraries(SomeTpl::somelib
   INTERFACE SomeTpl::lib1)
 
-add_library(SomeTpl::lib3 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib3 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib3 PROPERTIES
   IMPORTED_LIBNAME "lib3")
 target_link_libraries(SomeTpl::lib3
@@ -727,7 +727,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_1_
 [=[
 #beginning
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
 target_link_libraries(SomeTpl::somelib
@@ -775,7 +775,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_3_
 [=[
 #beginning
 
-add_library(SomeTpl::somelib1 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib1 IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib1 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib1.so")
 target_link_libraries(SomeTpl::somelib1
@@ -784,13 +784,13 @@ target_link_libraries(SomeTpl::somelib1
   INTERFACE $<LINK_ONLY:DefaultVisTpl::all_libs>  # i.e. PRIVATE
   )
 
-add_library(SomeTpl::somelib2 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib2 IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib2 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib2.so")
 target_link_libraries(SomeTpl::somelib2
   INTERFACE SomeTpl::somelib1)
 
-add_library(SomeTpl::somelib3 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib3 IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib3 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib3.so")
 target_link_libraries(SomeTpl::somelib3
@@ -831,11 +831,11 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
 
-add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
+add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::somelib
   )
@@ -870,7 +870,7 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
+add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/d"
   INTERFACE "/some/other/path/to/include/e"
@@ -906,11 +906,11 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
 
-add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
+add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::somelib
   )
@@ -948,11 +948,11 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::somelib IMPORTED UNKNOWN)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
 
-add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
+add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::somelib
   )
@@ -996,17 +996,17 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::lib2 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib2 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
 target_link_libraries(SomeTpl::lib2
   INTERFACE SomeTpl::lib1)
 
-add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
+add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::lib1
   INTERFACE SomeTpl::lib2
@@ -1064,23 +1064,23 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::some-other-option IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::some-other-option IMPORTED INTERFACE)
 set_target_properties(SomeTpl::some-other-option PROPERTIES
   IMPORTED_LIBNAME "some-other-option")
 target_link_libraries(SomeTpl::some-other-option
   INTERFACE SomeTpl::lib1)
 
-add_library(SomeTpl::lib2 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib2 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
 target_link_libraries(SomeTpl::lib2
   INTERFACE SomeTpl::some-other-option)
 
-add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
+add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::lib1
   INTERFACE SomeTpl::some-other-option
@@ -1151,21 +1151,27 @@ set(SomeTpl_SearchNoOtherPathsArgs
   NO_CMAKE_FIND_ROOT_PATH
   )
 
-set(PublicTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../PublicTpl")
-find_dependency(PublicTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
-unset(PublicTpl_DIR)
+if (NOT TARGET PublicTpl::all_libs)
+  set(PublicTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../PublicTpl")
+  find_dependency(PublicTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
+  unset(PublicTpl_DIR)
+endif()
 
-set(PrivateTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../PrivateTpl")
-find_dependency(PrivateTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
-unset(PrivateTpl_DIR)
+if (NOT TARGET PrivateTpl::all_libs)
+  set(PrivateTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../PrivateTpl")
+  find_dependency(PrivateTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
+  unset(PrivateTpl_DIR)
+endif()
 
-set(DefaultVisTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../DefaultVisTpl")
-find_dependency(DefaultVisTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
-unset(DefaultVisTpl_DIR)
+if (NOT TARGET DefaultVisTpl::all_libs)
+  set(DefaultVisTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../DefaultVisTpl")
+  find_dependency(DefaultVisTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
+  unset(DefaultVisTpl_DIR)
+endif()
 
 unset(SomeTpl_SearchNoOtherPathsArgs)
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 target_link_libraries(SomeTpl::lib1
@@ -1174,13 +1180,13 @@ target_link_libraries(SomeTpl::lib1
   INTERFACE $<LINK_ONLY:DefaultVisTpl::all_libs>  # i.e. PRIVATE
   )
 
-add_library(SomeTpl::lib2 IMPORTED INTERFACE GLOBAL)
+add_library(SomeTpl::lib2 IMPORTED INTERFACE)
 set_target_properties(SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
 target_link_libraries(SomeTpl::lib2
   INTERFACE SomeTpl::lib1)
 
-add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
+add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::lib1
   INTERFACE SomeTpl::lib2
