@@ -71,6 +71,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
 
   set(testBaseName ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}_${serialOrMpi})
   set(testName ${PACKAGE_NAME}_${testBaseName})
+  set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
 
   if (sharedOrStatic STREQUAL "SHARED")
     set(BUILD_SHARED_LIBS_VAL ON)
@@ -478,6 +479,20 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_9
+      MESSAGE "Run find_package() from two different subdirs with related packages"
+      WORKING_DIRECTORY find_package_two_dirs
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        -DCMAKE_PREFIX_PATH=${testDir}/install
+        ${CMAKE_CURRENT_SOURCE_DIR}/find_package_two_dirs
+      PASS_REGULAR_EXPRESSION_ALL
+        "WithSubpackagesA_FOUND = '1'"
+        "WithSubpackagesB_FOUND = '1'"
+        "-- Configuring done"
+        "-- Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_10
       MESSAGE "Create the tarball"
       CMND make ARGS package_source
       PASS_REGULAR_EXPRESSION_ALL
@@ -494,12 +509,12 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "CPack: - package: .*/ExamplesUnitTests/${testName}/tribitsexproj-1.1-Source.tar.bz2 generated."
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_10
+    TEST_11
       MESSAGE "Untar the tarball"
       CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_11
+    TEST_12
       MESSAGE "Make sure right directories are excluded"
       CMND diff
       ARGS -qr
@@ -545,6 +560,9 @@ endfunction()
 #   missing optional components and verifies that they are excluded from the
 #   <Project>::all_selected_libs target and the
 #   <Project>_SELECTED_PACKAGE_LIST variable.
+#
+# * Test calling find_package(<Package>) from different subdirs for related
+#   packages works (see TriBiTS GitHub issue #505).
 #
 # * Creates source tarball, untars it, and checks its contents removed
 #
