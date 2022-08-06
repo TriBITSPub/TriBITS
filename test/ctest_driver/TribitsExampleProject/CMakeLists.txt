@@ -1340,6 +1340,7 @@ function(generate_aao_tests)
         CTEST_PARALLEL_LEVEL=3
         CTEST_DO_SUBMIT=OFF  # Never submit this (see below note)
         CTEST_SITE="My Site"
+	CTEST_DROP_METHOD="http"
         CTEST_DROP_SITE="cdash.site.com"
         CTEST_PROJECT_NAME="CustomTribitsExProj"
         CTEST_DROP_LOCATION="/cdash/submit.php?project=CustomTribitsExProj"
