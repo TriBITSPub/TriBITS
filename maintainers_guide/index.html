@@ -428,10 +428,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-08-02</p>
+<dd class="field-even"><p>2022-08-06</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2991-g1f2024fe</p>
+<dd class="field-odd"><p>tribits_start-2993-g813a6447</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1533,10 +1533,10 @@ This file is also required to use the TriBITS-generated <code class="docutils li
 <span class="nb">set</span><span class="p">(</span><span class="n">CTEST_NIGHTLY_START_TIME</span> <span class="s2">&quot;04:00:00 UTC&quot;</span><span class="p">)</span> <span class="c1"># 10 PM MDT or 9 PM MST</span>
 
 <span class="k">if</span> <span class="p">(</span><span class="n">NOT</span> <span class="n">DEFINED</span> <span class="n">CTEST_DROP_METHOD</span><span class="p">)</span>
-  <span class="n">set_default_and_from_env</span><span class="p">(</span><span class="n">CTEST_DROP_METHOD</span> <span class="s2">&quot;http&quot;</span><span class="p">)</span>
+  <span class="n">set_default_and_from_env</span><span class="p">(</span><span class="n">CTEST_DROP_METHOD</span> <span class="s2">&quot;https&quot;</span><span class="p">)</span>
 <span class="n">endif</span><span class="p">()</span>
 
-<span class="k">if</span> <span class="p">(</span><span class="n">CTEST_DROP_METHOD</span> <span class="n">STREQUAL</span> <span class="s2">&quot;http&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">CTEST_DROP_METHOD</span> <span class="n">STREQUAL</span> <span class="s2">&quot;http&quot;</span> <span class="n">OR</span> <span class="n">CTEST_DROP_METHOD</span> <span class="n">STREQUAL</span> <span class="s2">&quot;https&quot;</span><span class="p">)</span>
   <span class="n">set_default_and_from_env</span><span class="p">(</span><span class="n">CTEST_DROP_SITE</span> <span class="s2">&quot;my.cdash.org&quot;</span><span class="p">)</span>
   <span class="n">set_default_and_from_env</span><span class="p">(</span><span class="n">CTEST_PROJECT_NAME</span> <span class="s2">&quot;TribitsExampleProject&quot;</span><span class="p">)</span>
   <span class="n">set_default_and_from_env</span><span class="p">(</span><span class="n">CTEST_DROP_LOCATION</span> <span class="s2">&quot;/submit.php?project=TribitsExampleProject&quot;</span><span class="p">)</span>
