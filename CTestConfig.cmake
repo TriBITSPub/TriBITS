@@ -11,7 +11,7 @@ set(CTEST_NIGHTLY_START_TIME "04:00:00 UTC")  # Midnight EST
 # 00:00:00 EST.
 
 if (NOT DEFINED CTEST_DROP_METHOD)
-  set_default_and_from_env(CTEST_DROP_METHOD "http")
+  set_default_and_from_env(CTEST_DROP_METHOD "https")
 endif()
 
 if (CTEST_DROP_METHOD STREQUAL "http" OR CTEST_DROP_METHOD STREQUAL "https")
