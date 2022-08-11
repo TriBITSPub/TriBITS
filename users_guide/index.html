@@ -375,7 +375,7 @@
 <dd class="field-even"><p>2022-08-11</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-2997-g4691160a</p>
+<dd class="field-odd"><p>tribits_start-3003-gd807b172</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -4345,6 +4345,7 @@ management system are:</p>
 <li><p><a class="reference internal" href="#tpl-disable-triggers-auto-disables-of-downstream-dependencies">TPL disable triggers auto-disables of downstream dependencies</a></p></li>
 <li><p><a class="reference internal" href="#disables-trump-enables-where-there-is-a-conflict">Disables trump enables where there is a conflict</a></p></li>
 <li><p><a class="reference internal" href="#enable-disable-of-parent-package-is-enable-disable-for-subpackages">Enable/disable of parent package is enable/disable for subpackages</a></p></li>
+<li><p><a class="reference internal" href="#enable-of-parent-package-tests-examples-is-enable-for-subpackages-tests-examples">Enable of parent package tests/examples is enable for subpackages tests/examples</a></p></li>
 <li><p><a class="reference internal" href="#subpackage-enable-does-not-auto-enable-the-parent-package">Subpackage enable does not auto-enable the parent package</a></p></li>
 <li><p><a class="reference internal" href="#support-for-optional-se-package-tpl-is-enabled-by-default">Support for optional SE package/TPL is enabled by default</a></p></li>
 <li><p><a class="reference internal" href="#support-for-optional-se-package-tpl-can-be-explicitly-disabled">Support for optional SE package/TPL can be explicitly disabled</a></p></li>
@@ -4540,7 +4541,18 @@ see <a class="reference internal" href="#explicit-enable-of-a-package-its-tests-
 enabled</a>.</p>
 </li>
 </ol>
-<ol class="arabic simple" id="subpackage-enable-does-not-auto-enable-the-parent-package" start="12">
+<ol class="arabic simple" id="enable-of-parent-package-tests-examples-is-enable-for-subpackages-tests-examples" start="12">
+<li><p><strong>Enable of parent package tests/examples is enable for subpackages
+tests/examples</strong>: Setting <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_TESTS=ON</span></code> is
+equivalent to setting the default for
+<code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;&lt;SP&gt;_ENABLE_TESTS=ON</span></code> for each subpackage <code class="docutils literal notranslate"><span class="pre">&lt;SP&gt;</span></code> of
+the parent package <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> (if <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> has
+subpackages).  Same is true for <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_EXAMPLES=ON</span></code>
+setting the default for <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;&lt;SP&gt;_ENABLE_EXAMPLES=ON</span></code>.  In
+addition, setting <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_TESTS=ON</span></code> will set
+<code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_EXAMPLES=ON</span></code> by default as well.</p></li>
+</ol>
+<ol class="arabic simple" id="subpackage-enable-does-not-auto-enable-the-parent-package" start="13">
 <li><p><strong>Subpackage enable does not auto-enable the parent package</strong>: Enabling an
 SE package that is a subpackage does <strong>not</strong> automatically enable the
 parent package (except for at the very end, mostly just for show).  For
@@ -4562,7 +4574,7 @@ subpackages is enabled for some reason, the final value of
 does imply that all of the required subpackages will be enabled, only that
 the parent package will be processed.)</p></li>
 </ol>
-<ol class="arabic simple" id="support-for-optional-se-package-tpl-is-enabled-by-default" start="13">
+<ol class="arabic simple" id="support-for-optional-se-package-tpl-is-enabled-by-default" start="14">
 <li><p><strong>Support for optional SE package/TPL is enabled by default</strong>: For an SE
 package <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> with an optional dependency on an
 <a class="reference internal" href="#upstream">upstream</a> SE package or TPL <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_DEP_PACKAGE_OR_TPL&gt;</span></code>, TriBITS
@@ -4578,7 +4590,7 @@ TPL <code class="docutils literal notranslate"><span class="pre">Boost</span></c
 behavior.  See the full context for these examples in <a class="reference internal" href="#explicit-enable-of-a-package-its-tests-an-optional-tpl-with-st-enabled">Explicit enable of
 a package, its tests, an optional TPL, with ST enabled</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="support-for-optional-se-package-tpl-can-be-explicitly-disabled" start="14">
+<ol class="arabic simple" id="support-for-optional-se-package-tpl-can-be-explicitly-disabled" start="15">
 <li><p><strong>Support for optional SE package/TPL can be explicitly disabled:</strong> Even
 though TriBITS will automatically set
 <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_&lt;TRIBITS_DEP_PACKAGE_OR_TPL&gt;=ON</span></code> by default if
@@ -4597,7 +4609,7 @@ can enable <code class="docutils literal notranslate"><span class="pre">Teuchos<
 an optional package dependency</a> and <a class="reference internal" href="#explicit-disable-of-an-optional-tpl-dependency">Explicit disable of an optional TPL
 dependency</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="explicit-enable-of-optional-se-package-tpl-support-auto-enables-se-package-tpl" start="15">
+<ol class="arabic simple" id="explicit-enable-of-optional-se-package-tpl-support-auto-enables-se-package-tpl" start="16">
 <li><p><strong>Explicit enable of optional SE package/TPL support auto-enables SE
 package/TPL</strong>: If the user explicitly enables the TriBITS SE package
 <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> and explicitly sets
@@ -4616,7 +4628,7 @@ SE package or TPL is <code class="docutils literal notranslate"><span class="pre
 <a class="reference internal" href="#disables-trump-enables-where-there-is-a-conflict">Disables trump enables where there is a conflict</a>.  For example, see
 <a class="reference internal" href="#explicit-enable-of-an-optional-package-dependency">Explicit enable of an optional package dependency</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="st-se-packages-only-auto-enabled-if-st-code-is-enabled" start="16">
+<ol class="arabic simple" id="st-se-packages-only-auto-enabled-if-st-code-is-enabled" start="17">
 <li><p><strong>ST SE packages only auto-enabled if ST code is enabled</strong>: TriBITS will
 only enable an optional <code class="docutils literal notranslate"><span class="pre">ST</span></code> SE package when
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES=ON</span></code> if
@@ -4634,7 +4646,7 @@ with ST enabled</a>).  The TriBITS default is
 problems when users try to set a permutation of enables/disables which is
 not regularly tested.</p></li>
 </ol>
-<ol class="arabic simple" id="project-enable-all-forward-dep-packages-enables-downstream-packages-tests" start="17">
+<ol class="arabic simple" id="project-enable-all-forward-dep-packages-enables-downstream-packages-tests" start="18">
 <li><p><strong>&lt;Project&gt;_ENABLE_ALL_FORWARD_DEP_PACKAGES enables downstream packages/tests</strong>:
 Setting the user cache-variable
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_ALL_FORWARD_PACKAGES=ON</span></code> will result in the
@@ -4649,7 +4661,7 @@ enables (and test and example enables) for the SE packages <code class="docutils
 example, see <a class="reference internal" href="#explicit-enable-of-a-package-and-downstream-packages-and-tests">Explicit enable of a package and downstream packages and
 tests</a>.</p></li>
 </ol>
-<span id="project-name-enable-all-packages"></span><ol class="arabic" id="project-enable-all-packages-enables-all-pt-cond-st-se-packages" start="18">
+<span id="project-name-enable-all-packages"></span><ol class="arabic" id="project-enable-all-packages-enables-all-pt-cond-st-se-packages" start="19">
 <li><p><strong>&lt;Project&gt;_ENABLE_ALL_PACKAGES enables all PT (cond. ST) SE packages</strong>:
 Setting the user cache-variable <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON</span></code>
 will result in the enable of all <code class="docutils literal notranslate"><span class="pre">PT</span></code> SE packages when
@@ -4668,7 +4680,7 @@ not have <a class="reference internal" href="#repository-name-no-primary-meta-pr
 in <a class="reference internal" href="#repository-name-no-primary-meta-project-packages-except">${REPOSITORY_NAME}_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT</a>.</p>
 </li>
 </ol>
-<ol class="arabic simple" id="project-enable-tests-only-enables-explicitly-enabled-se-package-tests" start="19">
+<ol class="arabic simple" id="project-enable-tests-only-enables-explicitly-enabled-se-package-tests" start="20">
 <li><p><strong>&lt;Project&gt;_ENABLE_TESTS only enables explicitly enabled SE package
 tests</strong>: Setting <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_TESTS=ON</span></code> will <strong>only enable
 tests for explicitly enabled SE packages</strong> on input.  For example,
@@ -4682,7 +4694,7 @@ meta-project packages (PMPP).  The uses the same logic as for
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_ALL_PACKAGES</span></code>, see
 <a class="reference internal" href="#project-enable-all-packages-enables-all-pt-cond-st-se-packages">&lt;Project&gt;_ENABLE_ALL_PACKAGES enables all PT (cond. ST) SE packages</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="if-no-se-packages-are-enabled-nothing-will-get-built" start="20">
+<ol class="arabic simple" id="if-no-se-packages-are-enabled-nothing-will-get-built" start="21">
 <li><p><strong>If no SE packages are enabled, nothing will get built</strong>: Most TriBITS
 projects are set up such that if the user does not explicitly enable at
 least one SE package in some way, then nothing will be enabled or built.
@@ -4695,7 +4707,7 @@ enabled and tested in order to accept the results of the test and allow a
 push.  For an example, see <a class="reference internal" href="#default-configure-with-no-packages-enabled-on-input">Default configure with no packages enabled on
 input</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="tribits-prints-all-enables-and-disables-to-stdout" start="21">
+<ol class="arabic simple" id="tribits-prints-all-enables-and-disables-to-stdout" start="22">
 <li><p><strong>TriBITS prints all enables and disables to stdout</strong>: TriBITS prints out
 (to <code class="docutils literal notranslate"><span class="pre">cmake</span></code> stdout) the initial set of enables/disables on input, prints
 a line whenever it sets (or overrides) an enable or disable, and prints
@@ -4707,7 +4719,7 @@ optional SE packages and TPLs is enabled or not.  Examples of this output
 is given in all of the below examples but a detailed description of this
 output is given in <a class="reference internal" href="#explicit-enable-of-a-package-and-its-tests">Explicit enable of a package and its tests</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="tribits-auto-enables-disables-done-using-non-cache-local-variables" start="22">
+<ol class="arabic simple" id="tribits-auto-enables-disables-done-using-non-cache-local-variables" start="23">
 <li><p><strong>TriBITS auto-enables/disables done using non-cache local variables</strong>:
 TriBITS setting (or overrides) of enable/disable cache variables are done
 by setting local non-cache variables at the top project-level scope
@@ -12508,10 +12520,7 @@ for which all subdirectories are all “tests”.</p>
 <p>This macro can be called several times within a package and it will have the
 right effect.</p>
 <p>Currently, all this macro does macro is to call <code class="docutils literal notranslate"><span class="pre">add_subdirectory(&lt;diri&gt;)</span></code>
-if <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_TESTS</span></code> or
-<code class="docutils literal notranslate"><span class="pre">${PARENT_PACKAGE_NAME}_ENABLE_TESTS</span></code> are <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>. However, this macro
-may be extended in the future in order to modify behavior related to adding
-tests and examples in a uniform way.</p>
+if <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_TESTS</span></code> is <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>.</p>
 </section>
 <section id="tribits-allow-missing-external-packages">
 <h3><a class="toc-backref" href="#id135">tribits_allow_missing_external_packages()</a><a class="headerlink" href="#tribits-allow-missing-external-packages" title="Permalink to this heading"></a></h3>
