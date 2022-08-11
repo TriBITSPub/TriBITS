@@ -411,6 +411,8 @@ Both of these variables are automatically enabled when
 Enable a set of packages
 ++++++++++++++++++++++++
 
+.. _<Project>_ENABLE_ALL_OPTIONAL_PACKAGES:
+
 .. _<Project>_ENABLE_TESTS:
 
 To enable an SE package ``<TRIBITS_PACKAGE>`` (and optionally also its tests
@@ -447,6 +449,9 @@ not enforce this if you set the value on the command line or in a set()
 statement in an input ```*.cmake`` options files.  However, setting
 ``-DXXX_ENABLE_YYY=TRUE`` and ``-DXXX_ENABLE_YYY=FALSE`` is allowed and will
 be interpreted correctly..
+
+NOTE: Setting ``<Project>_ENABLE_TESTS=ON`` also causes
+``<Project>_ENABLE_EXAMPLES=ON`` to be set by default as well.
 
 
 Enable or disable tests for specific packages
@@ -501,6 +506,11 @@ all packages that depend on ``<TRIBITS_PACKAGE>`` to be enabled and have all
 of their tests turned on.  Tests will not be enabled in packages that do not
 depend on ``<TRIBITS_PACKAGE>`` in this case.  This speeds up and robustifies
 pre-push testing.
+
+NOTE: setting ``<Project>_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON`` also
+automatically sets and overrides `<Project>_ENABLE_ALL_OPTIONAL_PACKAGES`_ to
+be ``ON`` as well.  (It makes no sense to want to enable forward dependent
+packages for testing purposes unless you are enabling all optional packages.)
 
 
 Enable all packages (and optionally all tests)
