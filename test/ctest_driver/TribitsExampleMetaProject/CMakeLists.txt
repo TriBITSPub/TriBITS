@@ -99,16 +99,16 @@ set(TribitsExampleMetaProject_COMMON_CONFIG_ARGS
 
 
 set(cdash_build_url_expected_regex
-    "/index[.]php[?]project=TribitsExampleMetaProject&filtercount=3&showfilters=1&filtercombine=and&field1=site&compare1=61&value1=CustomSite&field2=buildname&compare2=61&value2=CTestDriver_TribitsExMetaProj_clone_default_branch_remote&field3=buildstamp&compare3=61&value3=[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-Continuous" )
+    "https://testing[.]sandia[.]gov/cdash/index[.]php[?]project=TribitsExampleMetaProject&filtercount=3&showfilters=1&filtercombine=and&field1=site&compare1=61&value1=CustomSite&field2=buildname&compare2=61&value2=CTestDriver_TribitsExMetaProj_clone_default_branch_remote&field3=buildstamp&compare3=61&value3=[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]-Continuous" )
   # NOTE: Above, we have to repeat [0-9] 8 times and 4 times for the regex for
   # the number of digits in the buildstarttime.  CMake regex does not support
   # \d{8}-\d{4} :-(
 
 set(cdash_revisions_builds_url_expected_regex
-     "/index.php[?]project=TribitsExampleMetaProject&filtercount=1&showfilters=1&field1=revision&compare1=61&value1=863461e3035d24c632e175c087761e83db28bdc3")
+     "https://testing[.]sandia[.]gov/cdash/index.php[?]project=TribitsExampleMetaProject&filtercount=1&showfilters=1&field1=revision&compare1=61&value1=863461e3035d24c632e175c087761e83db28bdc3")
 
 set(cdash_revisions_nonpassing_tests_expected_regex
-    "/queryTests.php[?]project=TribitsExampleMetaProject&filtercount=2&showfilters=1&filtercombine=and&field1=revision&compare1=61&value1=863461e3035d24c632e175c087761e83db28bdc3&field2=status&compare2=62&value2=passed" )
+    "https://testing[.]sandia[.]gov/cdash/queryTests.php[?]project=TribitsExampleMetaProject&filtercount=2&showfilters=1&filtercombine=and&field1=revision&compare1=61&value1=863461e3035d24c632e175c087761e83db28bdc3&field2=status&compare2=62&value2=passed" )
 
 
 tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_remote
