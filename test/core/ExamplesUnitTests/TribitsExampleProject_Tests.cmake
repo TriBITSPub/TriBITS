@@ -2124,6 +2124,148 @@ tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Bla
 ########################################################################
 
 
+tribits_add_advanced_test( TribitsExampleProject_EnableWithSubpackagesB_EnableWithsubpackagesTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+  XHOSTTYPE "Darwin"
+
+  TEST_0
+    MESSAGE "Configure enabling a subpackage and parent package tests"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_WithSubpackagesB=ON
+      -DWithSubpackages_ENABLE_TESTS=ON
+       -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Enabling subpackage tests/examples based on parent package tests/examples enables"
+      "-- Setting WithSubpackages_ENABLE_EXAMPLES=ON because WithSubpackages_ENABLE_TESTS=ON"
+      "-- Setting WithSubpackagesB_ENABLE_TESTS=ON because parent package WithSubpackages_ENABLE_TESTS=ON"
+      "-- Setting WithSubpackagesB_ENABLE_EXAMPLES=ON because parent package WithSubpackages_ENABLE_EXAMPLES=ON"
+      "-- WithSubpackagesB_TEST_ENABLED_DEPENDENCIES: MixedLang"
+      "-- WithSubpackagesB_TEST_ALL_DEPENDENCIES: MixedLang"
+      "Processing enabled package: WithSubpackages [(]A, B, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND}
+    PASS_REGULAR_EXPRESSION_ALL
+      "WithSubpackagesB_test_of_b [.]* *Passed"
+      "WithSubpackagesB_test_of_b_mixed_lang_MPI_1 [.]* *Passed"
+      "100% tests passed, 0 tests failed out of 2"
+
+  )
+# NOTE: The above test covers one of the use cases for the the defect
+# described in TriBITSPub/TriBITS#510.  This shows that only the tests for
+# WithSubpackagesB are enabled and run and not for any of the other
+# subpackages of of the parent package WithSubpackages
+
+
+########################################################################
+
+
+tribits_add_advanced_test( TribitsExampleProject_EnableWithSubpackagesB_EnableWithsubpackagesExamples
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+  XHOSTTYPE "Darwin"
+
+  TEST_0
+    MESSAGE "Configure enabling a subpackage and parent package examples"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_WithSubpackagesB=ON
+      -DWithSubpackages_ENABLE_EXAMPLES=ON
+       -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Enabling subpackage tests/examples based on parent package tests/examples enables"
+      "-- Setting WithSubpackagesB_ENABLE_EXAMPLES=ON because parent package WithSubpackages_ENABLE_EXAMPLES=ON"
+      "-- WithSubpackagesB_TEST_ENABLED_DEPENDENCIES: MixedLang"
+      "-- WithSubpackagesB_TEST_ALL_DEPENDENCIES: MixedLang"
+      "Processing enabled package: WithSubpackages [(]A, B, Examples[)]"
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND}
+    PASS_REGULAR_EXPRESSION_ALL
+      "No tests were found"
+
+  )
+# NOTE: The above test ensures that
+# WithSubpackagesB_TEST_ENABLED_DEPENDENCIES=MixedLang gets set but that the
+# tests are not actually run because only examples where enabled.  This was
+# not a use case for the Trilinos failures reported in TriBITSPub/TriBITS#510
+# but this is a valid use case that needs to be supported and tested.
+
+
+########################################################################
+
+
+tribits_add_advanced_test( TribitsExampleProject_ST_EnableMixedLang_EnableAllForwardDepPackages
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+  XHOSTTYPE "Darwin"
+
+  TEST_0
+    MESSAGE "Configure enabling an upstream package and enableee forward dep packages"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_MixedLang=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON
+      -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
+      -DTribitsExProj_DUMP_FORWARD_PACKAGE_DEPENDENCIES=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Sweep backward enabling all forward test dependent packages because TribitsExProj_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON"
+      "-- Setting TribitsExProj_ENABLE_WithSubpackagesB=ON because TribitsExProj_ENABLE_MixedLang=ON"
+      "Enabling all tests and/or examples that have not been explicitly disabled because TribitsExProj_ENABLE_.TESTS,EXAMPLES.=ON"
+      "-- Setting MixedLang_ENABLE_TESTS=ON"
+      "-- Setting MixedLang_ENABLE_EXAMPLES=ON"
+      "-- Setting WithSubpackagesB_ENABLE_TESTS=ON"
+      "-- Setting WithSubpackagesB_ENABLE_EXAMPLES=ON"
+      "-- WithSubpackagesB_TEST_ENABLED_DEPENDENCIES: MixedLang"
+      "-- WithSubpackagesB_TEST_ALL_DEPENDENCIES: MixedLang"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackages 5"
+      "Processing enabled package: MixedLang [(]Libs, Tests, Examples[)]"
+      "Processing enabled package: WithSubpackages [(]A, B, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND}
+    PASS_REGULAR_EXPRESSION_ALL
+      "MixedLang_RayTracerTests_MPI_1 [.]* *Passed"
+      "WithSubpackagesB_test_of_b [.]* *Passed"
+      "WithSubpackagesB_test_of_b_mixed_lang_MPI_1 [.]* *Passed"
+      "100% tests passed, 0 tests failed out of 3"
+  )
+# NOTE: The above test covers one of the failure modes reported in
+# TriBITSPub/TriBITS#510 that resulted in missing test dependencies.
+
+
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_WrapExternal
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
