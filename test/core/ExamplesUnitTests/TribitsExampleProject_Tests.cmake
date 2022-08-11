@@ -2123,7 +2123,6 @@ tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Bla
 
 ########################################################################
 
-
 tribits_add_advanced_test( TribitsExampleProject_EnableWithSubpackagesB_EnableWithsubpackagesTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -2157,7 +2156,7 @@ tribits_add_advanced_test( TribitsExampleProject_EnableWithSubpackagesB_EnableWi
   TEST_2 CMND ${CMAKE_CTEST_COMMAND}
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackagesB_test_of_b [.]* *Passed"
-      "WithSubpackagesB_test_of_b_mixed_lang_MPI_1 [.]* *Passed"
+      "WithSubpackagesB_test_of_b_mixed_lang.* [.]* *Passed"
       "100% tests passed, 0 tests failed out of 2"
 
   )
@@ -2254,9 +2253,9 @@ tribits_add_advanced_test( TribitsExampleProject_ST_EnableMixedLang_EnableAllFor
 
   TEST_2 CMND ${CMAKE_CTEST_COMMAND}
     PASS_REGULAR_EXPRESSION_ALL
-      "MixedLang_RayTracerTests_MPI_1 [.]* *Passed"
+      "MixedLang_RayTracerTests.* [.]* *Passed"
       "WithSubpackagesB_test_of_b [.]* *Passed"
-      "WithSubpackagesB_test_of_b_mixed_lang_MPI_1 [.]* *Passed"
+      "WithSubpackagesB_test_of_b_mixed_lang.* [.]* *Passed"
       "100% tests passed, 0 tests failed out of 3"
   )
 # NOTE: The above test covers one of the failure modes reported in
