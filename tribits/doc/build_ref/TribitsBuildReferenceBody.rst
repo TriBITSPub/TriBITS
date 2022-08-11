@@ -472,8 +472,8 @@ packages.
 .. _<TRIBITS_PACKAGE>_ENABLE_TESTS:
 
 If one wants to enable a package along with the enable of other packages, but
-not the test suite for that package, then when can disable the tests for that
-package by configuring with::
+not the test suite for that package, then one can use a "exclude-list"
+appraoch to disable the tests for that package by configuring with::
 
   -D <Project>_ENABLE_<TRIBITS_PACKAGE_1>=ON \
   -D <Project>_ENABLE_<TRIBITS_PACKAGE_2>=ON \
@@ -487,12 +487,32 @@ packages that might get implicitly enabled).  One might use this if one wants
 to build and install package ``<TRIBITS_PACKAGE_2>`` but does not want to
 build and run the test suite for that package.
 
+Alternatively, one can use an "include-list" appraoch to enable packages and
+only enable tests for specific packages.  For example, configuring with::
+
+  -D <Project>_ENABLE_<TRIBITS_PACKAGE_1>=ON \
+    -D <TRIBITS_PACKAGE_1>_ENABLE_TESTS=ON \
+  -D <Project>_ENABLE_<TRIBITS_PACKAGE_2>=ON \
+  -D <Project>_ENABLE_<TRIBITS_PACKAGE_3>=ON \
+    -D <TRIBITS_PACKAGE_3>_ENABLE_TESTS=ON \
+
+That will have the same result as using the "exclude-list" approach above.
+
+**NOTE:** Setting ``<TRIBITS_PACKAGE>_ENABLE_TESTS=ON`` will set
+``<TRIBITS_PACKAGE>_ENABLE_EXAMPLES=ON`` by default.  Also, setting
+``<TRIBITS_PACKAGE>_ENABLE_TESTS=ON`` will result in setting
+``<TRIBITS_PACKAGE><SP>_ENABLE_TESTS=ON`` for all subpackages in a parent
+package that are explicitly enabled or are enabled in the forward sweep as a
+result of `<Project>_ENABLE_ALL_FORWARD_DEP_PACKAGES`_ being set to ``ON``.
+
 These and other options give the user complete control of what packages get
 enabled or disabled and what package test suites are enabled or disabled.
 
 
 Enable to test all effects of changing a given package(s)
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+.. _<Project>_ENABLE_ALL_FORWARD_DEP_PACKAGES:
 
 To enable an SE package ``<TRIBITS_PACKAGE>`` to test it and all of its
 down-stream packages, configure with::

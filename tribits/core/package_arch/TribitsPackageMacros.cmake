@@ -401,17 +401,14 @@ endmacro()
 # right effect.
 #
 # Currently, all this macro does macro is to call ``add_subdirectory(<diri>)``
-# if ``${PACKAGE_NAME}_ENABLE_TESTS`` or
-# ``${PARENT_PACKAGE_NAME}_ENABLE_TESTS`` are ``TRUE``. However, this macro
-# may be extended in the future in order to modify behavior related to adding
-# tests and examples in a uniform way.
+# if ``${PACKAGE_NAME}_ENABLE_TESTS`` is ``TRUE``.
 #
 macro(tribits_add_test_directories)
 
   tribits_add_test_example_directories_assert_call_context(
     tribits_add_test_directories)
 
-  if(${PACKAGE_NAME}_ENABLE_TESTS OR ${PARENT_PACKAGE_NAME}_ENABLE_TESTS)
+  if(${PACKAGE_NAME}_ENABLE_TESTS)
     foreach(TEST_DIR ${ARGN})
       tribits_trace_file_processing(PACKAGE  ADD_SUBDIR
         "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}/CMakeLists.txt")
@@ -534,7 +531,7 @@ macro(tribits_add_example_directories)
   tribits_add_test_example_directories_assert_call_context(
     tribits_add_example_directories)
 
-  if(${PACKAGE_NAME}_ENABLE_EXAMPLES  OR ${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES)
+  if(${PACKAGE_NAME}_ENABLE_EXAMPLES)
     foreach(EXAMPLE_DIR ${ARGN})
       tribits_trace_file_processing(PACKAGE  ADD_SUBDIR
         "${CMAKE_CURRENT_SOURCE_DIR}/${EXAMPLE_DIR}/CMakeLists.txt")
