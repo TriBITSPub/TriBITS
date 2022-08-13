@@ -313,7 +313,7 @@ function(TribitsExampleApp_NoFortran fullOrComponents sharedOrStatic)
         ${TribitsExampleProject_COMMON_CONFIG_ARGS}
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DCMAKE_BUILD_TYPE=Release
-	-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
+        -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
         -DTribitsExProj_ENABLE_Fortran=OFF
         -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
@@ -448,7 +448,7 @@ function(TribitsExampleApp_EnableSingleSubpackage fullOrComponents sharedOrStati
         ${TribitsExampleProject_COMMON_CONFIG_ARGS}
         -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DCMAKE_BUILD_TYPE=Release
-	-DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
+        -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
         -DTribitsExProj_ENABLE_Fortran=OFF
         -DTribitsExProj_ENABLE_WithSubpackagesB=ON
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON

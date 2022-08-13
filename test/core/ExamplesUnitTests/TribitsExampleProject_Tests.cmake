@@ -304,7 +304,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "WithSubpackages_SELECTED_PACKAGE_LIST = ''"
         "WithSubpackages_TPL_LIST = '${WithSubpackages_TPL_LIST}'"
         "WithSubpackages_FOUND = '1'"
-	"WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
+        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
         "-- Configuring done"
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -387,7 +387,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "WithSubpackages_SELECTED_PACKAGE_LIST = ''"
         "WithSubpackages_TPL_LIST = '${WithSubpackages_TPL_LIST}'"
         "WithSubpackages_FOUND = '1'"
-	"WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
+        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_7
@@ -1183,7 +1183,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
         -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja/install'"
-	"WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
+        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
       "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
@@ -1208,7 +1208,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       PASS_REGULAR_EXPRESSION_ALL
         "Calling: find_package[(]WithSubpackages REQUIRED COMPONENTS  OPTIONAL_COMPONENTS  [)]"
         "WithSubpackages_FOUND = '1'"
-	"WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
+        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_8 CMND ninja ARGS -j1 package_source

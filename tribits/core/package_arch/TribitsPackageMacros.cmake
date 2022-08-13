@@ -737,7 +737,7 @@ macro(tribits_package_postprocess)
        NOT ${PACKAGE_NAME}_TRIBITS_PROCESS_SUBPACKAGES_CALLED )
 
       tribits_report_invalid_tribits_usage(
-	"Must call tribits_package_decl(), tribits_process_subpackages()"
+        "Must call tribits_package_decl(), tribits_process_subpackages()"
         " and tribits_package_def() before tribits_package_postprocess()."
         "  Because this package has subpackages you cannot use tribits_package()"
         " you must call these in the following order:"
@@ -755,16 +755,16 @@ macro(tribits_package_postprocess)
     # This is a package without subpackages
 
     if (
-	(NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_CALLED)
-	AND
-	(NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_DEF_CALLED)
+        (NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_CALLED)
+        AND
+        (NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_DEF_CALLED)
       )
       tribits_report_invalid_tribits_usage(
         "Must call tribits_package() or tribits_package_def() before"
-	" tribits_package_postprocess()"
-	" at the top of the file:\n"
-	"  ${TRIBITS_PACKAGE_CMAKELIST_FILE}"
-	)
+        " tribits_package_postprocess()"
+        " at the top of the file:\n"
+        "  ${TRIBITS_PACKAGE_CMAKELIST_FILE}"
+        )
     endif()
 
   endif()

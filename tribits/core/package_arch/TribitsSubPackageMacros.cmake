@@ -123,16 +123,16 @@ function(tribits_subpackage_assert_call_context)
     if(${SUBPACKAGE_FULLNAME}_TRIBITS_SUBPACKAGE_CALLED)
       tribits_report_invalid_tribits_usage(
         "Already called tribits_subpackge() for the"
-	" ${PARENT_PACKAGE_NAME} subpackage ${TRIBITS_SUBPACKAGE}")
+        " ${PARENT_PACKAGE_NAME} subpackage ${TRIBITS_SUBPACKAGE}")
     endif()
 
     # make sure the name in the macro call matches the name in the packages cmake file
     if (NOT ${SUBPACKAGE_NAME_IN} STREQUAL ${SUBPACKAGE_NAME})
       tribits_report_invalid_tribits_usage(
         "Error, the package-defined subpackage name"
-	" '${SUBPACKAGE_NAME_IN}' is not the same as the subpackage name"
-	" '${SUBPACKAGE_NAME}' defined in the parent packages's"
-	" Dependencies.cmake file")
+        " '${SUBPACKAGE_NAME_IN}' is not the same as the subpackage name"
+        " '${SUBPACKAGE_NAME}' defined in the parent packages's"
+        " Dependencies.cmake file")
     endif()
   endif()
 

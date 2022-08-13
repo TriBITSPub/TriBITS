@@ -260,13 +260,13 @@ function(test_tribitsexampleproject_w_tribits_get_tribits_packages_from_files_li
       CMND cp
       ARGS -r
         "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject"
-	TribitsExampleProject
+        TribitsExampleProject
 
     TEST_1
       CMND cp
       ARGS -r
         "${${PROJECT_NAME}_TRIBITS_DIR}"
-	TribitsExampleProject/cmake/tribits
+        TribitsExampleProject/cmake/tribits
 
     TEST_2
       CMND cp
