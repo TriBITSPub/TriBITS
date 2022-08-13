@@ -1019,20 +1019,20 @@ macro(tribits_apply_subpackage_tests_examples_enables  PARENT_PACKAGE_NAME)
       if (${PARENT_PACKAGE_NAME}_ENABLE_TESTS)
         if ("${${fullSpkgName}_ENABLE_TESTS}" STREQUAL "")
           message("-- " "Setting"
-	    " ${fullSpkgName}_ENABLE_TESTS=${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}"
-	    " because parent package"
-	    " ${PARENT_PACKAGE_NAME}_ENABLE_TESTS"
-	    "=${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}")
+            " ${fullSpkgName}_ENABLE_TESTS=${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}"
+            " because parent package"
+            " ${PARENT_PACKAGE_NAME}_ENABLE_TESTS"
+            "=${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}")
           set(${fullSpkgName}_ENABLE_TESTS ${${PARENT_PACKAGE_NAME}_ENABLE_TESTS})
         endif()
       endif()
       if (${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES)
         if ("${${fullSpkgName}_ENABLE_EXAMPLES}" STREQUAL "")
           message("-- " "Setting"
-	    " ${fullSpkgName}_ENABLE_EXAMPLES=${${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES}"
-	    " because parent package"
-	    " ${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES"
-	    "=${${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES}")
+            " ${fullSpkgName}_ENABLE_EXAMPLES=${${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES}"
+            " because parent package"
+            " ${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES"
+            "=${${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES}")
           set(${fullSpkgName}_ENABLE_EXAMPLES ${${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES})
         endif()
       endif()
