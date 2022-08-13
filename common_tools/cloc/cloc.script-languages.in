@@ -1,3 +1,10 @@
+GenConfig INI
+    filter remove_matches ^\s*#
+    filter remove_inline #.*$
+    extension ini
+    script_exe sh
+    3rd_gen_scale 3.81
+    end_of_line_continuation \\$
 Bourne Again Shell
     filter remove_matches ^\s*#
     filter remove_inline #.*$
