@@ -2212,6 +2212,56 @@ tribits_add_advanced_test( TribitsExampleProject_EnableWithSubpackagesB_EnableWi
 ########################################################################
 
 
+tribits_add_advanced_test( TribitsExampleProject_ST_EnableSimpleCxx_EnableWithSubpackagesB_EnableTests_DisableWithsubpackagesTests
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
+  XHOSTTYPE "Darwin"
+
+  TEST_0
+    MESSAGE "Configure while disabling WithSubPackages tests and examples"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_SimpleCxx=ON
+      -DTribitsExProj_ENABLE_WithSubpackagesB=ON
+      -DWithSubpackages_ENABLE_TESTS=OFF
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Disabling subpackage tests/examples based on parent package tests/examples disables ..."
+      "-- Setting WithSubpackages_ENABLE_EXAMPLES=OFF because WithSubpackages_ENABLE_TESTS=OFF"
+      "-- Setting WithSubpackagesB_ENABLE_TESTS=OFF because parent package WithSubpackages_ENABLE_TESTS=OFF"
+      "-- Setting WithSubpackagesB_ENABLE_EXAMPLES=OFF because parent package WithSubpackages_ENABLE_EXAMPLES=OFF"
+      "Enabling all tests and/or examples that have not been explicitly disabled because TribitsExProj_ENABLE_.TESTS,EXAMPLES.=ON ..."
+      "-- Setting SimpleCxx_ENABLE_TESTS=ON"
+      "-- Setting SimpleCxx_ENABLE_EXAMPLES=ON"
+      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "-- Performing Test HAVE_SIMPLECXX___INT64"
+      "-- Performing Test HAVE_SIMPLECXX___INT64 - Failed"
+      "Processing enabled package: MixedLang [(]Libs[)]"
+      "Processing enabled package: WithSubpackages [(]A, B[)]"
+      "Configuring done"
+      "Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND}
+    PASS_REGULAR_EXPRESSION_ALL
+      "SimpleCxx_HelloWorldTests.* [.]+ +Passed"
+      "SimpleCxx_HelloWorldProg.* [.]+ +Passed"
+      "100% tests passed, 0 tests failed out of 2"
+
+  )
+
+
+########################################################################
+
+
 tribits_add_advanced_test( TribitsExampleProject_ST_EnableMixedLang_EnableAllForwardDepPackages
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
