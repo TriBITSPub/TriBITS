@@ -375,7 +375,7 @@
 <dd class="field-even"><p>2022-08-19</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-3010-g36415de9</p>
+<dd class="field-odd"><p>tribits_start-3013-g3559a185</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -4345,7 +4345,7 @@ management system are:</p>
 <li><p><a class="reference internal" href="#tpl-disable-triggers-auto-disables-of-downstream-dependencies">TPL disable triggers auto-disables of downstream dependencies</a></p></li>
 <li><p><a class="reference internal" href="#disables-trump-enables-where-there-is-a-conflict">Disables trump enables where there is a conflict</a></p></li>
 <li><p><a class="reference internal" href="#enable-disable-of-parent-package-is-enable-disable-for-subpackages">Enable/disable of parent package is enable/disable for subpackages</a></p></li>
-<li><p><a class="reference internal" href="#enable-of-parent-package-tests-examples-is-enable-for-subpackages-tests-examples">Enable of parent package tests/examples is enable for subpackages tests/examples</a></p></li>
+<li><p><a class="reference internal" href="#enable-disable-of-parent-package-tests-examples-is-enable-disable-for-subpackages-tests-examples">Enable/disable of parent package tests/examples is enable/disable for subpackages tests/examples</a></p></li>
 <li><p><a class="reference internal" href="#subpackage-enable-does-not-auto-enable-the-parent-package">Subpackage enable does not auto-enable the parent package</a></p></li>
 <li><p><a class="reference internal" href="#support-for-optional-se-package-tpl-is-enabled-by-default">Support for optional SE package/TPL is enabled by default</a></p></li>
 <li><p><a class="reference internal" href="#support-for-optional-se-package-tpl-can-be-explicitly-disabled">Support for optional SE package/TPL can be explicitly disabled</a></p></li>
@@ -4541,16 +4541,18 @@ see <a class="reference internal" href="#explicit-enable-of-a-package-its-tests-
 enabled</a>.</p>
 </li>
 </ol>
-<ol class="arabic simple" id="enable-of-parent-package-tests-examples-is-enable-for-subpackages-tests-examples" start="12">
-<li><p><strong>Enable of parent package tests/examples is enable for subpackages
-tests/examples</strong>: Setting <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_TESTS=ON</span></code> is
-equivalent to setting the default for
-<code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;&lt;SP&gt;_ENABLE_TESTS=ON</span></code> for each subpackage <code class="docutils literal notranslate"><span class="pre">&lt;SP&gt;</span></code> of
-the parent package <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> (if <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> has
-subpackages).  Same is true for <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_EXAMPLES=ON</span></code>
-setting the default for <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;&lt;SP&gt;_ENABLE_EXAMPLES=ON</span></code>.  In
-addition, setting <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_TESTS=ON</span></code> will set
-<code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_EXAMPLES=ON</span></code> by default as well.</p></li>
+<ol class="arabic simple" id="enable-disable-of-parent-package-tests-examples-is-enable-disable-for-subpackages-tests-examples" start="12">
+<li><p><strong>Enable/disable of parent package tests/examples is enable/disable for
+subpackages tests/examples</strong>: Setting
+<code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_TESTS=[ON|OFF]</span></code> is equivalent to setting the
+default for <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;&lt;SP&gt;_ENABLE_TESTS=[ON|OFF]</span></code> for each
+subpackage <code class="docutils literal notranslate"><span class="pre">&lt;SP&gt;</span></code> of the parent package <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> (if
+<code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> has subpackages).  Same is true for
+<code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_EXAMPLES=[ON|OFF]</span></code> setting the default for
+<code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;&lt;SP&gt;_ENABLE_EXAMPLES=[ON|OFF]</span></code>.  In addition, setting
+<code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_TESTS=[ON|OFF]</span></code> will set
+<code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_EXAMPLES=[ON|OFF]</span></code> by default as well (but not
+vice versa).</p></li>
 </ol>
 <ol class="arabic simple" id="subpackage-enable-does-not-auto-enable-the-parent-package" start="13">
 <li><p><strong>Subpackage enable does not auto-enable the parent package</strong>: Enabling an
