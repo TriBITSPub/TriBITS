@@ -603,6 +603,88 @@ create_dependency_handling_test_case(
 
 
 create_dependency_handling_test_case(
+  EnableEpetra_EnableThyraTpetra_EnableTests_DisableThyraTests
+  ARGS -DTrilinos_ENABLE_Epetra=ON -DTrilinos_ENABLE_ThyraTpetra=ON    
+    -DTrilinos_ENABLE_TESTS=ON -DThyra_ENABLE_TESTS=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "Disabling subpackage tests/examples based on parent package tests/examples disables ..."
+    "-- Setting Thyra_ENABLE_EXAMPLES=OFF because Thyra_ENABLE_TESTS=OFF"
+    "-- Setting ThyraTpetra_ENABLE_TESTS=OFF because parent package Thyra_ENABLE_TESTS=OFF"
+    "-- Setting ThyraTpetra_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "Enabling all tests and/or examples that have not been explicitly disabled because Trilinos_ENABLE_.TESTS,EXAMPLES.=ON ..."
+    "-- Setting Epetra_ENABLE_TESTS=ON"
+    "-- Setting Epetra_ENABLE_EXAMPLES=ON"
+    "Final set of enabled packages:  Teuchos RTOp Epetra Triutils Tpetra Thyra 6"
+    "Final set of enabled SE packages:  Teuchos RTOp Epetra Triutils Tpetra ThyraCoreLibs ThyraTpetra Thyra 8"
+  )
+
+
+create_dependency_handling_test_case(
+  EnableEpetra_EnableThyraTpetra_EnableTests_DisableThyraExamples
+  ARGS -DTrilinos_ENABLE_Epetra=ON -DTrilinos_ENABLE_ThyraTpetra=ON    
+    -DTrilinos_ENABLE_TESTS=ON -DThyra_ENABLE_EXAMPLES=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "Disabling subpackage tests/examples based on parent package tests/examples disables ..."
+    "-- Setting ThyraTpetra_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "Enabling all tests and/or examples that have not been explicitly disabled because Trilinos_ENABLE_.TESTS,EXAMPLES.=ON ..."
+    "-- Setting Epetra_ENABLE_TESTS=ON"
+    "-- Setting Epetra_ENABLE_EXAMPLES=ON"
+    "-- Setting ThyraTpetra_ENABLE_TESTS=ON"
+  )
+
+
+create_dependency_handling_test_case(
+  EnableEpetra_EnableThyraTpetra_EnableThyraTests_DisableThyraExamples
+  ARGS -DTrilinos_ENABLE_Epetra=ON -DTrilinos_ENABLE_ThyraTpetra=ON    
+    -DThyra_ENABLE_TESTS=ON -DThyra_ENABLE_EXAMPLES=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "Disabling subpackage tests/examples based on parent package tests/examples disables ..."
+    "-- Setting ThyraTpetra_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "Enabling subpackage tests/examples based on parent package tests/examples enables ..."
+    "-- Setting ThyraTpetra_ENABLE_TESTS=ON because parent package Thyra_ENABLE_TESTS=ON"
+  )
+
+
+create_dependency_handling_test_case(
+  EnableEpetra_EnableThyraTpetra_EnableTests_DisableThyraTests_DisableThyraExamples
+  ARGS -DTrilinos_ENABLE_Epetra=ON -DTrilinos_ENABLE_ThyraTpetra=ON    
+    -DTrilinos_ENABLE_TESTS=ON -DThyra_ENABLE_TESTS=OFF -DThyra_ENABLE_EXAMPLES=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "Disabling subpackage tests/examples based on parent package tests/examples disables ..."
+    "-- Setting ThyraTpetra_ENABLE_TESTS=OFF because parent package Thyra_ENABLE_TESTS=OFF"
+    "-- Setting ThyraTpetra_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "Enabling all tests and/or examples that have not been explicitly disabled because Trilinos_ENABLE_.TESTS,EXAMPLES.=ON ..."
+    ""
+    "-- Setting Epetra_ENABLE_TESTS=ON"
+    "-- Setting Epetra_ENABLE_EXAMPLES=ON"
+  FAIL_REGULAR_EXPRESSION
+    "-- Setting Thyra_ENABLE_EXAMPLES=OFF because Thyra_ENABLE_TESTS=OFF"
+  )
+
+
+create_dependency_handling_test_case(
+  EnableEpetra_EnableThyra_EnableTests_DisableThyraTests_EnableThyraTpetraTests_EnableThyraTpetraExamples
+  ARGS -DTrilinos_ENABLE_Epetra=ON -DTrilinos_ENABLE_Thyra=ON    
+    -DTrilinos_ENABLE_TESTS=ON -DThyra_ENABLE_TESTS=OFF -DThyraTpetra_ENABLE_TESTS=ON -DThyraTpetra_ENABLE_EXAMPLES=ON 
+  PASS_REGULAR_EXPRESSION_ALL
+    "Disabling subpackage tests/examples based on parent package tests/examples disables ..."
+    "-- Setting Thyra_ENABLE_EXAMPLES=OFF because Thyra_ENABLE_TESTS=OFF"
+    "-- Setting ThyraCoreLibs_ENABLE_TESTS=OFF because parent package Thyra_ENABLE_TESTS=OFF"
+    "-- Setting ThyraEpetra_ENABLE_TESTS=OFF because parent package Thyra_ENABLE_TESTS=OFF"
+    "-- Setting ThyraEpetraExt_ENABLE_TESTS=OFF because parent package Thyra_ENABLE_TESTS=OFF"
+    "-- Setting ThyraCoreLibs_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "-- Setting ThyraEpetra_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "-- Setting ThyraEpetraExt_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "Enabling all tests and/or examples that have not been explicitly disabled because Trilinos_ENABLE_.TESTS,EXAMPLES.=ON ..."
+    "-- Setting Epetra_ENABLE_TESTS=ON"
+    "-- Setting Epetra_ENABLE_EXAMPLES=ON"
+  FAIL_REGULAR_EXPRESSION
+    "-- Setting ThyraTpetra_ENABLE_TESTS=OFF because parent package Thyra_ENABLE_TESTS=OFF"
+    "-- Setting ThyraTpetra_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+  )
+
+
+create_dependency_handling_test_case(
   TestTrueFalse
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES=TRUE -DTrilinos_ENABLE_Zoltan=TRUE
     -DTrilinos_ENABLE_TEST=TRUE -DTPL_ENABLE_BLAS=FALSE
