@@ -180,25 +180,7 @@ macro(tribits_package_decl PACKAGE_NAME_IN)
     message("\nTRIBITS_PACKAGE_DECL: ${PACKAGE_NAME_IN}")
   endif()
 
-  if (CURRENTLY_PROCESSING_SUBPACKAGE)
-    tribits_report_invalid_tribits_usage(
-      "Cannot call tribits_package_decl() in a subpackage."
-      " Use tribits_subpackage() instead"
-      " error in ${CURRENT_SUBPACKAGE_CMAKELIST_FILE}")
-  endif()
-
-  if(${PACKAGE_NAME}_TRIBITS_PACKAGE_DECL_CALLED)
-    tribits_report_invalid_tribits_usage(
-      "tribits_package_decl() called more than once in Package ${PACKAGE_NAME}"
-      " This may be because tribits_package_decl() was explicitly called more than once or"
-      " TRIBITS_PACKAGE_DECL was called after TRIBITS_PACKAGE. You do not need both."
-      " If your package has subpackages then do not call tribits_package() instead call:"
-      " tribits_pacakge_decl() then tribits_process_subpackages() then tribits package_def()"
-    )
-  endif()
-
-  # Set flag to check that macros are called in the correct order
-  set(${PACKAGE_NAME}_TRIBITS_PACKAGE_DECL_CALLED TRUE)
+  tribits_package_decl_assert_call_context()
 
   #
   # A) Parse the input arguments
@@ -268,6 +250,31 @@ macro(tribits_package_decl PACKAGE_NAME_IN)
 endmacro()
 
 
+macro(tribits_package_decl_assert_call_context)
+
+  if (CURRENTLY_PROCESSING_SUBPACKAGE)
+    tribits_report_invalid_tribits_usage(
+      "Cannot call tribits_package_decl() in a subpackage."
+      " Use tribits_subpackage() instead"
+      " error in ${CURRENT_SUBPACKAGE_CMAKELIST_FILE}")
+  endif()
+
+  if(${PACKAGE_NAME}_TRIBITS_PACKAGE_DECL_CALLED)
+    tribits_report_invalid_tribits_usage(
+      "tribits_package_decl() called more than once in Package ${PACKAGE_NAME}"
+      " This may be because tribits_package_decl() was explicitly called more than once or"
+      " TRIBITS_PACKAGE_DECL was called after TRIBITS_PACKAGE. You do not need both."
+      " If your package has subpackages then do not call tribits_package() instead call:"
+      " tribits_pacakge_decl() then tribits_process_subpackages() then tribits package_def()"
+    )
+  endif()
+
+  # Set flag to check that macros are called in the correct order
+  set(${PACKAGE_NAME}_TRIBITS_PACKAGE_DECL_CALLED TRUE)
+
+endmacro()
+
+
 # @MACRO: tribits_package_def()
 #
 # Macro called in `<packageDir>/CMakeLists.txt`_ after subpackages are
@@ -291,6 +298,30 @@ endmacro()
 #
 macro(tribits_package_def)
 
+  if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+    message("\nTRIBITS_PACKAGE_DEF: ${PACKAGE_NAME}")
+  endif()
+
+  tribits_package_def_assert_call_context()
+
+  if (NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+    if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+      message("\n${PACKAGE_NAME} not enabled so exiting package processing")
+    endif()
+    return()
+  endif()
+
+  # Reset in case were changed by subpackages
+  tribits_set_common_vars(${PACKAGE_NAME})
+
+  # Define package linkage variables
+  tribits_define_linkage_vars(${PACKAGE_NAME})
+
+endmacro()
+
+
+macro(tribits_package_def_assert_call_context)
+
   # check that this is not being called from a subpackage
   if(NOT ${SUBPACKAGE_FULLNAME}_TRIBITS_SUBPACKAGE_POSTPROCESS_CALLED)
     if (CURRENTLY_PROCESSING_SUBPACKAGE)
@@ -310,23 +341,6 @@ macro(tribits_package_def)
       "tribits_package_def() was called more than once in"
       "${CURRENT_SUBPACKAGE_CMAKELIST_FILE}")
   endif()
-
-  if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    message("\nTRIBITS_PACKAGE_DEF: ${PACKAGE_NAME}")
-  endif()
-
-  if (NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-    if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      message("\n${PACKAGE_NAME} not enabled so exiting package processing")
-    endif()
-    return()
-  endif()
-
-  # Reset in case were changed by subpackages
-  tribits_set_common_vars(${PACKAGE_NAME})
-
-  # Define package linkage variables
-  tribits_define_linkage_vars(${PACKAGE_NAME})
 
   set(${PACKAGE_NAME}_TRIBITS_PACKAGE_DEF_CALLED TRUE)
 
@@ -353,6 +367,13 @@ endmacro()
 # side-effects (and variables set) after calling this macro.
 #
 macro(tribits_package PACKAGE_NAME_IN)
+  tribits_package_assert_call_context()
+  tribits_package_decl(${PACKAGE_NAME_IN} ${ARGN})
+  tribits_package_def()
+endmacro()
+
+
+macro(tribits_package_assert_call_context)
 
   if (CURRENTLY_PROCESSING_SUBPACKAGE)
     if (NOT ${SUBPACKAGE_FULLNAME}_TRIBITS_SUBPACKAGE_POSTPROCESS_CALLED)
@@ -381,8 +402,6 @@ macro(tribits_package PACKAGE_NAME_IN)
 
   set(${PACKAGE_NAME}_TRIBITS_PACKAGE_CALLED TRUE)
 
-  tribits_package_decl(${PACKAGE_NAME_IN} ${ARGN})
-  tribits_package_def()
 endmacro()
 
 
