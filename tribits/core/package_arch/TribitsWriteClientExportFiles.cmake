@@ -577,6 +577,20 @@ function(tribits_append_dependent_package_config_file_includes_and_enables packa
       "set(${EXPORT_FILE_VAR_PREFIX}_ENABLE_${depPkg} ${enableVal})\n")
   endforeach()
 
+  # Put in set() statements for exported cache vars
+  string(APPEND configFileStr
+    "\n# Exported cache variables\n")
+  if (NOT "${${packageName}_PARENT_PACKAGE}" STREQUAL "")
+    foreach(exportedCacheVar IN LISTS ${${packageName}_PARENT_PACKAGE}_PKG_VARS_TO_EXPORT)
+      string(APPEND configFileStr
+        "set(${exportedCacheVar} \"${${exportedCacheVar}}\")\n")
+    endforeach()
+  endif()
+  foreach(exportedCacheVar IN LISTS ${packageName}_PKG_VARS_TO_EXPORT)
+    string(APPEND configFileStr
+      "set(${exportedCacheVar} \"${${exportedCacheVar}}\")\n")
+  endforeach()
+
   # Include configurations of dependent packages
   string(APPEND configFileStr
     "\n# Include configuration of dependent packages\n")

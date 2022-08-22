@@ -11,6 +11,9 @@ namespace WithSubpackages {
   // return a string describing the dependencies of "A", recursively
   std::string depsA();
 
+  // return speical value
+  int specialValue();
+
 }
 
 

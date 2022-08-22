@@ -78,6 +78,47 @@ macro(tribits_define_linkage_vars PACKAGE_NAME_IN)
 endmacro()
 
 
+# Macro that sets up data-structures for variables to be exported
+#
+macro(tribits_pkg_init_exported_vars  PACKAGE_NAME_IN)
+  global_set(${PACKAGE_NAME_IN}_PKG_VARS_TO_EXPORT "")
+endmacro()
+
+
+# @MACRO: tribits_pkg_export_cache_var()
+#
+# Macro that registers a package-level cache var to be exported in the
+# ``<Package>Config.cmake`` file
+#
+# Usage::
+#
+#   tribits_pkg_export_cache_var(<cacheVarName>)
+#
+# where ``<cacheVarName>`` must be the name of a cache variable (or an error
+# will occur).
+#
+# NOTE: This will also export this variable to the
+# ``<Package><Spkg>Config.cmake`` file for every enabled subpackage (if this
+# is called from a ``CMakeLists.txt`` file of a top-level package that has
+# subpackages).  That way, any top-level package cache vars are provided by
+# any of the subpackages' ``<Package><Spkg>Config.cmake`` files.
+#
+macro(tribits_pkg_export_cache_var  cacheVarName)
+  if (DEFINED ${PACKAGE_NAME}_PKG_VARS_TO_EXPORT)
+    # Assert this is a cache var
+    get_property(cacheVarIsCacheVar  CACHE ${cacheVarName} PROPERTY  VALUE  SET)
+    if (NOT cacheVarIsCacheVar)
+      message(SEND_ERROR
+        "ERROR: The variable ${cacheVarName} is NOT a cache var and cannot"
+        " be exported!")
+    endif()
+    # Add to the list of package cache vars to export
+    append_global_set(${PACKAGE_NAME}_PKG_VARS_TO_EXPORT
+      ${cacheVarName})
+  endif()
+endmacro()
+
+
 # Macro that defines variables that create global targets
 #
 macro(tribits_define_target_vars PARENT_PACKAGE_NAME_IN)
@@ -218,6 +259,7 @@ macro(tribits_package_decl PACKAGE_NAME_IN)
   #
 
   tribits_set_common_vars(${PACKAGE_NAME_IN})
+  tribits_pkg_init_exported_vars(${PACKAGE_NAME_IN})
 
   set(${PACKAGE_NAME_IN}_DISABLE_STRONG_WARNINGS OFF
      CACHE BOOL
@@ -458,6 +500,9 @@ endmacro()
 # header file `<packageDir>/cmake/<packageName>_config.h.in`_).  This macro is
 # typically called in the package's `<packageDir>/CMakeLists.txt`_ file (see
 # the example ``SimpleCxx/CMakeLists.txt``).
+#
+# NOTE: This also calls `tribits_pkg_export_cache_var()`_ to export the
+# variable ``${PACKAGE_NAME}_ENABLE_DEBUG``.
 #
 macro(tribits_add_debug_option)
   tribits_add_option_and_define(

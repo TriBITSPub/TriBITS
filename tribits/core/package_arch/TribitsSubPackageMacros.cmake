@@ -88,6 +88,7 @@ macro(tribits_subpackage SUBPACKAGE_NAME_IN)
   # Now override the package-like variables
   tribits_set_common_vars(${SUBPACKAGE_FULLNAME})
   tribits_define_linkage_vars(${SUBPACKAGE_FULLNAME})
+  tribits_pkg_init_exported_vars(${SUBPACKAGE_FULLNAME})
 
   tribits_append_package_specific_compiler_flags()
   if(${PROJECT_NAME}_VERBOSE_CONFIGURE)

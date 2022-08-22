@@ -30,6 +30,7 @@
 @FUNCTION: tribits_find_most_recent_source_file_timestamp() +
 @FUNCTION: tribits_install_headers() +
 @MACRO:    tribits_include_directories() +
+@MACRO:    tribits_pkg_export_cache_var() +
 @MACRO:    tribits_package() +
 @MACRO:    tribits_package_decl() +
 @MACRO:    tribits_package_def() +
