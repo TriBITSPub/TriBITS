@@ -545,8 +545,7 @@ function(tribits_append_dependent_package_config_file_includes_and_enables packa
   # Parse input
 
   cmake_parse_arguments(
-     PARSE  #prefix
-     ""  #options
+     PARSE ""  # prefix, options
      #one_value_keywords
      "EXPORT_FILE_VAR_PREFIX;EXT_PKG_CONFIG_FILE_BASE_DIR;PKG_CONFIG_FILE_BASE_DIR;CONFIG_FILE_STR_INOUT"
      "" #multi_value_keywords
