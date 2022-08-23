@@ -58,6 +58,7 @@ include(TribitsETISupport)
 include(TribitsFindPythonInterp)
 include(TribitsStripQuotesFromStr)
 include(TribitsStandardizePaths)
+include(TribitsAddOptionAndDefine)
 include(TribitsFilepathHelpers)
 include(TribitsGetVersionDate)
 include(TribitsTplFindIncludeDirsAndLibraries)
@@ -405,6 +406,34 @@ function(unittest_tribits_strip_quotes_from_str)
   message("Testing tribits_strip_quotes_from_str() with str with quote only on back")
   tribits_strip_quotes_from_str("some string in quotes\"" STR_OUT)
   unittest_compare_const(STR_OUT "some string in quotes\"")
+
+endfunction()
+
+
+function(unittest_tribits_add_option_and_define)
+
+  message("\n***")
+  message("*** Testing tribits_add_option_and_define()")
+  message("***\n")
+
+  message("\nPass both option and define var, default YES")
+  tribits_add_option_and_define(optName1  macroOptName1 "doc" YES)
+  unittest_compare_const(optName1 "YES")
+  unittest_compare_const(macroOptName1 "ON")
+  unset(optName1 CACHE)
+  unset(macroOptName1 CACHE)
+
+  message("\nPass both option and define var, default FALSE")
+  tribits_add_option_and_define(optName2  macroOptName2 "doc" FALSE)
+  unittest_compare_const(optName2 "FALSE")
+  unittest_compare_const(macroOptName2 "OFF")
+  unset(optName2 CACHE)
+  unset(macroOptName2 CACHE)
+
+  message("\nPass only option var, not define var, default YES")
+  tribits_add_option_and_define(optName3 "" "doc" YES)
+  unittest_compare_const(optName3 "YES")
+  unset(optName3 CACHE)
 
 endfunction()
 
@@ -4587,6 +4616,7 @@ unittest_tribits_dir_is_basedir()
 unittest_tribits_get_dir_array_below_base_dir()
 unittest_tribits_misc()
 unittest_tribits_strip_quotes_from_str()
+unittest_tribits_add_option_and_define()
 unittest_tribits_get_version_date_from_raw_git_commit_utc_time()
 unittest_tribits_get_raw_git_commit_utc_time()
 unittest_tribits_git_repo_sha1()
@@ -4646,4 +4676,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(703)
+unittest_final_result(708)
