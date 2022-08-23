@@ -75,7 +75,46 @@ endmacro()
 
 
 #
-# A) Test basic package processing and reading dependencies
+# A) Misc unit tests
+#
+
+function(unittest_tribits_assert_cache_and_local_vars_same_value)
+
+  message("\n***")
+  message("*** tribits_assert_cache_and_local_vars_same_value()")
+  message("***\n")
+
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
+
+  message("\nOnly cache var exists")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(cacheVar1 "1st value" CACHE STRING "")
+  tribits_assert_cache_and_local_vars_same_value(cacheVar1)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+  unset(cacheVar1 CACHE)
+
+  message("\nCache var and local var with same values exist")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(cacheVar2 "2nd value" CACHE STRING "")
+  set(cacheVar2 "2nd value")
+  tribits_assert_cache_and_local_vars_same_value(cacheVar2)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT "")
+  unset(cacheVar2 CACHE)
+
+  message("\nCache var and local var with different values exist")
+  global_set(MESSAGE_WRAPPER_INPUT)
+  set(cacheVar3 "3rd value" CACHE STRING "")
+  set(cacheVar3 "3rd value diff")
+  tribits_assert_cache_and_local_vars_same_value(cacheVar3)
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
+    "SEND_ERROR;ERROR: The cache variable cacheVar3 with the; cache var value '3rd value' is not the same value as the local; variable cacheVar3 with value '3rd value diff'!")
+  unset(cacheVar3 CACHE)
+
+endfunction()
+
+
+#
+# B) Test basic package processing and reading dependencies
 #
 
 
@@ -255,8 +294,10 @@ unittest_initialize_vars()
 # Run the unit tests
 #
 
+unittest_tribits_assert_cache_and_local_vars_same_value()
+
 unittest_write_specialized_package_export_makefile_rtop_before_libs()
 unittest_write_specialized_package_export_makefile_rtop_after_libs()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(30)
+unittest_final_result(33)

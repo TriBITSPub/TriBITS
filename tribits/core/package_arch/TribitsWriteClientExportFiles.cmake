@@ -545,8 +545,7 @@ function(tribits_append_dependent_package_config_file_includes_and_enables packa
   # Parse input
 
   cmake_parse_arguments(
-     PARSE  #prefix
-     ""  #options
+     PARSE ""  # prefix, options
      #one_value_keywords
      "EXPORT_FILE_VAR_PREFIX;EXT_PKG_CONFIG_FILE_BASE_DIR;PKG_CONFIG_FILE_BASE_DIR;CONFIG_FILE_STR_INOUT"
      "" #multi_value_keywords
@@ -575,6 +574,22 @@ function(tribits_append_dependent_package_config_file_includes_and_enables packa
     endif()
     string(APPEND configFileStr
       "set(${EXPORT_FILE_VAR_PREFIX}_ENABLE_${depPkg} ${enableVal})\n")
+  endforeach()
+
+  # Put in set() statements for exported cache vars
+  string(APPEND configFileStr
+    "\n# Exported cache variables\n")
+  if (NOT "${${packageName}_PARENT_PACKAGE}" STREQUAL "")
+    foreach(exportedCacheVar IN LISTS ${${packageName}_PARENT_PACKAGE}_PKG_VARS_TO_EXPORT)
+      tribits_assert_cache_and_local_vars_same_value(${exportedCacheVar})
+      string(APPEND configFileStr
+        "set(${exportedCacheVar} \"${${exportedCacheVar}}\")\n")
+    endforeach()
+  endif()
+  foreach(exportedCacheVar IN LISTS ${packageName}_PKG_VARS_TO_EXPORT)
+    tribits_assert_cache_and_local_vars_same_value(${exportedCacheVar})
+    string(APPEND configFileStr
+      "set(${exportedCacheVar} \"${${exportedCacheVar}}\")\n")
   endforeach()
 
   # Include configurations of dependent packages

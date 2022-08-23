@@ -426,3 +426,27 @@ function(tribits_trace_file_processing  TYPE_IN  PROCESSING_TYPE_IN  FILE_PATH)
   endif()
 
 endfunction()
+
+
+# @MACRO: tribits_assert_cache_and_local_vars_same_value()
+#
+# Asset that a cache variable and a possible local variable (if it exists)
+# have the same value.
+#
+# Usage::
+#
+#   tribits_assert_cache_and_local_vars_same_value(<cacheVarName>)
+#
+# If the local var ``<cacheVarName>`` and the cache var ``<cacheVarName>``
+# both exist but have different values, then ``message(SEND_ERROR ...)`` is
+# called with an informative error message.
+#
+macro(tribits_assert_cache_and_local_vars_same_value  cacheVarName)
+  set(cacheVarValue "$CACHE{${cacheVarName}}")
+  set(localValue "${${cacheVarName}}")
+  if (NOT localValue STREQUAL cacheVarValue)
+    message_wrapper(SEND_ERROR "ERROR: The cache variable ${cacheVarName} with the"
+      " cache var value '${cacheVarValue}' is not the same value as the local"
+      " variable ${cacheVarName} with value '${localValue}'!")
+  endif()
+endmacro()

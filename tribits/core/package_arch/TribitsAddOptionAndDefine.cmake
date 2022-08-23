@@ -58,6 +58,9 @@ include(GlobalSet)
 #
 #   #cmakedefine <macroDefineName>
 #
+# NOTE: This also calls `tribits_pkg_export_cache_var()`_ to export the
+# variables ``<userOptionName>`` and ``<macroDefineName>``.
+#
 macro(tribits_add_option_and_define  USER_OPTION_NAME  MACRO_DEFINE_NAME
   DOCSTRING  DEFAULT_VALUE
   )
@@ -69,6 +72,10 @@ macro(tribits_add_option_and_define  USER_OPTION_NAME  MACRO_DEFINE_NAME
     else()
       global_set(${MACRO_DEFINE_NAME} OFF)
     endif()
+  endif()
+  if (COMMAND tribits_pkg_export_cache_var)
+    tribits_pkg_export_cache_var(${USER_OPTION_NAME})
+    tribits_pkg_export_cache_var(${MACRO_DEFINE_NAME})
   endif()
 endmacro()
 

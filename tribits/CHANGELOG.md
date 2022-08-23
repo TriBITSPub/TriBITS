@@ -2,6 +2,12 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-08-22:
+
+* **Added:** Added support for exporting cache variables for packages in their
+    `<Package>Config.cmake` files using the new function
+    `tribits_pkg_export_cache_var()`.
+
 ## 2022-08-18:
 
 * **Changed:** Made setting parent package tests/examples enable/disable

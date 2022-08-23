@@ -136,6 +136,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
         -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
         -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+	-DWithSubpackagesA_SPECIAL_VALUE=5
         -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
         -DCMAKE_INSTALL_PREFIX=install
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
@@ -310,6 +311,17 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_5
+      MESSAGE "Grep the contents of the WithSubpackagesAConfig.cmake file in build dir"
+      CMND cat ARGS cmake_packages/WithSubpackagesA/WithSubpackagesAConfig.cmake
+      PASS_REGULAR_EXPRESSION_ALL
+        "# Enables/Disables for upstream package dependencies"
+        "set[(]WithSubpackagesA_ENABLE_SimpleCxx ON[)]"
+        "# Exported cache variables"
+        "set[(]WithSubpackages_ENABLE_DEBUG .OFF.[)]"
+        "set[(]HAVE_WITHSUBPACKAGES_DEBUG .OFF.[)]"
+        "set[(]WithSubpackagesA_SPECIAL_VALUE .5.[)]"
+
+    TEST_6
       MESSAGE "Build 'install' target using raw 'make'"
       CMND make ARGS install ${CTEST_BUILD_FLAGS}
       PASS_REGULAR_EXPRESSION_ALL
@@ -343,7 +355,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "Installing: .+/install/lib/cmake/WithSubpackagesC/WithSubpackagesCTargets-release.cmake"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_6
+    TEST_7
       MESSAGE "Create and configure a dummy project that calls"
         " find_package(WithSubpackages) from the install tree"
       CMND ${CMAKE_COMMAND}
@@ -390,7 +402,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_7
+    TEST_8
       MESSAGE "Create and configure a dummy project that calls"
         " find_package(TribitsExProj) with no components"
       CMND ${CMAKE_COMMAND}
@@ -448,7 +460,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_8
+    TEST_9
       MESSAGE "Create and configure a dummy project that calls find_package(TribitsExProj)"
         " with required and optional components"
       CMND ${CMAKE_COMMAND}
@@ -478,7 +490,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_9
+    TEST_10
       MESSAGE "Run find_package() from two different subdirs with related packages"
       WORKING_DIRECTORY find_package_two_dirs
       CMND ${CMAKE_COMMAND}
@@ -492,7 +504,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_10
+    TEST_11
       MESSAGE "Create the tarball"
       CMND make ARGS package_source
       PASS_REGULAR_EXPRESSION_ALL
@@ -509,12 +521,12 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "CPack: - package: .*/ExamplesUnitTests/${testName}/tribitsexproj-1.1-Source.tar.bz2 generated."
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_11
+    TEST_12
       MESSAGE "Untar the tarball"
       CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_12
+    TEST_13
       MESSAGE "Make sure right directories are excluded"
       CMND diff
       ARGS -qr
