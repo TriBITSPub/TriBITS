@@ -344,6 +344,7 @@ function(TribitsExampleApp_NoFortran fullOrComponents sharedOrStatic)
         ${tribitsExProjUseComponentsArg}
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
       PASS_REGULAR_EXPRESSION_ALL
+        "WithSubpackagesA_SPECIAL_VALUE = '3'"
         "-- Configuring done"
         "-- Generating done"
         "-- Build files have been written to: .*/${testName}/app_build"
