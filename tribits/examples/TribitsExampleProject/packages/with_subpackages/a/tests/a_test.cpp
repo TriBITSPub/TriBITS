@@ -8,6 +8,6 @@ int main() {
   std::string deps_A  = WithSubpackages::depsA();
   std::cout << "A label is: " << label_A << std::endl;
   std::cout << "A deps are: " << deps_A << std::endl;
-  std::cout << "A speical value: " << WithSubpackages::specialValue() << std::endl;
+  std::cout << "A special value: " << WithSubpackages::specialValue() << std::endl;
   return 0;
 }

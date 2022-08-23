@@ -173,7 +173,7 @@ macro(tribits_subpackage_postprocess_assert_call_context)
       " Use tribits_package_postprocess() instead"
       " ${CURRENT_PACKAGE_CMAKELIST_FILE}")
   else()
-    # This is being caleld from a subpackage
+    # This is being called from a subpackage
     # check to make sure this has not already been called
     if (${SUBPACKAGE_FULLNAME}_TRIBITS_SUBPACKAGE_POSTPROCESS_CALLED)
       tribits_report_invalid_tribits_usage(
