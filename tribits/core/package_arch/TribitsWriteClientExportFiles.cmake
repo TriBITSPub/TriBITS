@@ -581,11 +581,13 @@ function(tribits_append_dependent_package_config_file_includes_and_enables packa
     "\n# Exported cache variables\n")
   if (NOT "${${packageName}_PARENT_PACKAGE}" STREQUAL "")
     foreach(exportedCacheVar IN LISTS ${${packageName}_PARENT_PACKAGE}_PKG_VARS_TO_EXPORT)
+      tribits_assert_cache_and_local_vars_same_value(${exportedCacheVar})
       string(APPEND configFileStr
         "set(${exportedCacheVar} \"${${exportedCacheVar}}\")\n")
     endforeach()
   endif()
   foreach(exportedCacheVar IN LISTS ${packageName}_PKG_VARS_TO_EXPORT)
+    tribits_assert_cache_and_local_vars_same_value(${exportedCacheVar})
     string(APPEND configFileStr
       "set(${exportedCacheVar} \"${${exportedCacheVar}}\")\n")
   endforeach()

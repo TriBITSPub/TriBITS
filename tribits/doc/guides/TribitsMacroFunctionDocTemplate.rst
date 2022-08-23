@@ -14,6 +14,7 @@
 @FUNCTION: tribits_add_test() +
 @MACRO:    tribits_add_test_directories() +
 @FUNCTION: tribits_allow_missing_external_packages() +
+@MACRO:    tribits_assert_cache_and_local_vars_same_value() +
 @FUNCTION: tribits_configure_file() +
 @FUNCTION: tribits_copy_files_to_binary_dir() +
 @FUNCTION: tribits_ctest_driver() +
