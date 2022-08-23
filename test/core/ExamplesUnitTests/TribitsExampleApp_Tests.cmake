@@ -302,8 +302,8 @@ function(TribitsExampleApp_NoFortran fullOrComponents sharedOrStatic)
       MESSAGE "Copy source for TribitsExampleProject"
       CMND ${CMAKE_COMMAND}
       ARGS -E copy_directory
-        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
-      WORKING_DIRECTORY TribitsExampleProject
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+        TribitsExampleProject
 
     TEST_1
       MESSAGE "Do the configure of TribitsExampleProject"
@@ -428,8 +428,8 @@ function(TribitsExampleApp_EnableSingleSubpackage fullOrComponents sharedOrStati
       MESSAGE "Copy source for TribitsExampleProject"
       CMND ${CMAKE_COMMAND}
       ARGS -E copy_directory
-        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
-      WORKING_DIRECTORY TribitsExampleProject
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+        TribitsExampleProject
 
     TEST_1
       MESSAGE "Make Withsubpackages OPTIONAL subpackages REQUIRED"
@@ -567,8 +567,8 @@ function(TribitsExampleApp_ALL_ST  byProjectOrPackage  sharedOrStatic  serialOrM
       MESSAGE "Copy source for TribitsExampleProject"
       CMND ${CMAKE_COMMAND}
       ARGS -E copy_directory
-        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
-      WORKING_DIRECTORY TribitsExampleProject
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+        TribitsExampleProject
 
     TEST_1
       MESSAGE "Do the configure of TribitsExampleProject"
@@ -963,8 +963,8 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options byProjectOrPackage sharedOrSt
       MESSAGE "Copy source for TribitsExampleProject"
       CMND ${CMAKE_COMMAND}
       ARGS -E copy_directory
-        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
-      WORKING_DIRECTORY TribitsExampleProject
+        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+        TribitsExampleProject
 
     TEST_1
       MESSAGE "Write configuration fragment file to deal with semi-colon problem"
