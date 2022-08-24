@@ -52,6 +52,7 @@ include(RemoveGlobalDuplicates)
 include(TribitsGatherBuildTargets)
 
 include(TribitsAddOptionAndDefine)
+include(TribitsPkgExportCacheVars)
 include(TribitsLibraryMacros)
 include(TribitsAddExecutable)
 include(TribitsAddExecutableAndTest)
@@ -75,47 +76,6 @@ include(TribitsReportInvalidTribitsUsage)
 macro(tribits_define_linkage_vars PACKAGE_NAME_IN)
   global_null_set(${PACKAGE_NAME_IN}_LIBRARIES "")
   global_set(${PACKAGE_NAME_IN}_HAS_NATIVE_LIBRARIES_TO_INSTALL FALSE)
-endmacro()
-
-
-# Macro that sets up data-structures for variables to be exported
-#
-macro(tribits_pkg_init_exported_vars  PACKAGE_NAME_IN)
-  global_set(${PACKAGE_NAME_IN}_PKG_VARS_TO_EXPORT "")
-endmacro()
-
-
-# @MACRO: tribits_pkg_export_cache_var()
-#
-# Macro that registers a package-level cache var to be exported in the
-# ``<Package>Config.cmake`` file
-#
-# Usage::
-#
-#   tribits_pkg_export_cache_var(<cacheVarName>)
-#
-# where ``<cacheVarName>`` must be the name of a cache variable (or an error
-# will occur).
-#
-# NOTE: This will also export this variable to the
-# ``<Package><Spkg>Config.cmake`` file for every enabled subpackage (if this
-# is called from a ``CMakeLists.txt`` file of a top-level package that has
-# subpackages).  That way, any top-level package cache vars are provided by
-# any of the subpackages' ``<Package><Spkg>Config.cmake`` files.
-#
-macro(tribits_pkg_export_cache_var  cacheVarName)
-  if (DEFINED ${PACKAGE_NAME}_PKG_VARS_TO_EXPORT)
-    # Assert this is a cache var
-    get_property(cacheVarIsCacheVar  CACHE ${cacheVarName} PROPERTY  VALUE  SET)
-    if (NOT cacheVarIsCacheVar)
-      message(SEND_ERROR
-        "ERROR: The variable ${cacheVarName} is NOT a cache var and cannot"
-        " be exported!")
-    endif()
-    # Add to the list of package cache vars to export
-    append_global_set(${PACKAGE_NAME}_PKG_VARS_TO_EXPORT
-      ${cacheVarName})
-  endif()
 endmacro()
 
 
