@@ -165,6 +165,12 @@ Basic configuration
 
 A few different approaches for configuring are given below.
 
+* `Create a do-configure script [Recommended]`_
+* `Create a *.cmake file and point to it [Most Recommended]`_
+* `Using the QT CMake configuration GUI`_
+
+.. _Create a do-configure script [Recommended]:
+
 a) Create a 'do-configure' script such as [Recommended]::
 
     #!/bin/bash
@@ -192,6 +198,8 @@ a) Create a 'do-configure' script such as [Recommended]::
   `Reconfiguring completely from scratch`_).
 
 .. _<Project>_CONFIGURE_OPTIONS_FILE:
+
+.. _Create a *.cmake file and point to it [Most Recommended]:
 
 b) Create a ``*.cmake`` file and point to it [Most Recommended].
 
@@ -270,12 +278,12 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   ``make``).  That means that if options change in those included ``*.cmake``
   files from the initial configure, then those updated options will get
   automatically picked up in a reconfigure.  But when processing ``*.cmake``
-  files using the built-in ``-C <file-name>.cmake`` argument, updated options
-  will not get set.  Therefore, if one wants to have the ``*.cmake`` files
+  files using the built-in ``-C <frag>.cmake`` argument, updated options will
+  not get set.  Therefore, if one wants to have the ``*.cmake`` files
   automatically be reprocessed, then one should use
   ``<Project>_CONFIGURE_OPTIONS_FILE``.  But if one does not want to have the
-  contents of the ``*.cmake`` file reread on reconfigures, then one would want
-  to use ``-C``.
+  contents of the ``<frag>.cmake`` file reread on reconfigures, then one would
+  want to use ``-C <frag>.cmake``.
 
   3) One can create and use parameterized ``*.cmake`` files that can be used
   with multiple TriBITS projects.  For example, one can have set statements
@@ -286,9 +294,22 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
 
   4) Non-cache project-level variables can be set in a ``*.cmake`` file that
   will impact the configuration.  When using the ``-C`` option, only variables
-  set with ``set(<varName> CACHE <TYPE> ...)`` will impact the configuration.
+  set with ``set(<varName> <val> CACHE <TYPE> ...)`` will impact the
+  configuration.
 
-  5) However, the ``*.cmake`` files specified by
+  5) Cache variables force set with ``set(<varName> <val> CACHE <TYPE> "<doc>"
+  FORCE)`` in a ``<frag>.cmake`` file pulled in with ``-C <frag>.cmake`` will
+  **NOT** override a cache variable ``-D <varName>=<val2>`` passed in on the
+  command-line.  But such statements **WILL** override other cache vars set
+  with non-force statements ``set(<varName> <val1> CACHE <TYPE> "<doc>")`` in
+  the same or previously read ``-C <frag2>.cmake`` files included before the
+  file ``-C <frag>.cmake`` on the CMake command-line.  Alternatively, if the
+  file is pulled in with ``-D <Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake``,
+  then a ``set(<varName> <val> CACHE <TYPE> "<doc>" FORCE)`` statement in a
+  ``<frag>.cmake`` **WILL** override a cache variable passed in on the
+  command-line ``-D <varName>=<val2>``.
+
+  6) However, the ``*.cmake`` files specified by
   ``<Project>_CONFIGURE_OPTIONS_FILE`` will only get read in **after** the
   project's ``ProjectName.cmake`` and other ``set()`` statements are called at
   the top of the project's top-level ``CMakeLists.txt`` file.  So any CMake
@@ -306,7 +327,11 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   In other words, the context and impact of what get be set from a ``*.cmake``
   file read in through the ``-C`` argument is more limited while the code
   listed in the ``*.cmake`` file behaves just like regular CMake statements
-  executed in the project's top-level ``CMakeLists.txt`` file.
+  executed in the project's top-level ``CMakeLists.txt`` file.  In addition,
+  any force set statements in a ``*.cmake`` file pulled in with ``-C`` will
+  **not** override cache vars sets on the command-line.
+
+.. _Using the QT CMake configuration GUI:
 
 c) Using the QT CMake configuration GUI:
 
