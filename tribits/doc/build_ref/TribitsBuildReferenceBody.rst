@@ -230,10 +230,12 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   time stamp, unlike when using ``-C <file-name>.cmake``, see below).
 
   One can use the ``FORCE`` option in the ``set()`` commands shown above and
-  that will override any value of the options that might already be set.
-  However, that will not allow the user to override the options on the CMake
-  command-line using ``-D<VAR>=<value>`` so it is generally **not** desired to
-  use ``FORCE``.
+  that will override any value of the options that might already be set (but
+  when using ``-C`` to include this forced ``set(<var> ... FORCE)`` will only
+  override the value if the file with the set() is listed after the
+  ``-D<var>=<val>`` command-line option).  However, that will not allow the
+  user to override the options on the CMake command-line using
+  ``-D<VAR>=<value>`` so it is generally **not** desired to use ``FORCE``.
 
   One can also pass in a list of configuration fragment files separated by
   commas ``','`` which will be read in the order they are given as::
@@ -297,17 +299,27 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   set with ``set(<varName> <val> CACHE <TYPE> ...)`` will impact the
   configuration.
 
-  5) Cache variables force set with ``set(<varName> <val> CACHE <TYPE> "<doc>"
-  FORCE)`` in a ``<frag>.cmake`` file pulled in with ``-C <frag>.cmake`` will
-  **NOT** override a cache variable ``-D <varName>=<val2>`` passed in on the
-  command-line.  But such statements **WILL** override other cache vars set
-  with non-force statements ``set(<varName> <val1> CACHE <TYPE> "<doc>")`` in
-  the same or previously read ``-C <frag2>.cmake`` files included before the
-  file ``-C <frag>.cmake`` on the CMake command-line.  Alternatively, if the
-  file is pulled in with ``-D <Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake``,
-  then a ``set(<varName> <val> CACHE <TYPE> "<doc>" FORCE)`` statement in a
-  ``<frag>.cmake`` **WILL** override a cache variable passed in on the
-  command-line ``-D <varName>=<val2>``.
+  5) Cache variables forced set with ``set(<varName> <val> CACHE <TYPE>
+  "<doc>" FORCE)`` in a ``<frag>.cmake`` file pulled in with ``-C
+  <frag>.cmake`` will only override a cache variable ``-D<varName>=<val2>``
+  passed on the command-line if the ``-C <frag>.cmake`` argument comes
+  **after** the ``-D<varName>=<val2>`` argument (i.e. ``cmake
+  -D<varName>=<val2> -C <frag>.cmake``).  Otherwise, if the order of the
+  ``-D`` and ``-C`` arguments is reversed (i.e. ``cmake -C <frag>.cmake
+  -D<varName>=<val2>``) then the forced set() statement **WILL NOT** override
+  the cache var set on the command-line with ``-D<varName>=<val2>``.  However,
+  note that a forced set() statement **WILL** override other cache vars set
+  with non-forced set() statements ``set(<varName> <val1> CACHE <TYPE>
+  "<doc>")`` in the same ``*.cmake`` file or in previously read ``-C
+  <frag2>.cmake`` files included on the command-line before the file ``-C
+  <frag>.cmake``.  Alternatively, if the file is pulled in with
+  ``-D<Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake``, then a ``set(<varName>
+  <val> CACHE <TYPE> "<doc>" FORCE)`` statement in a ``<frag>.cmake`` **WILL**
+  override a cache variable passed in on the command-line
+  ``-D<varName>=<val2>`` no matter the order of the arguments ``-D
+  <Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake`` and ``-D<varName>=<val2>``.
+  (This is because the file ``<frag>.cmake`` is included as part of the
+  processing of the project's top-level ``CMakeLists.txt`` file.)
 
   6) However, the ``*.cmake`` files specified by
   ``<Project>_CONFIGURE_OPTIONS_FILE`` will only get read in **after** the
@@ -325,11 +337,16 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   ``CMakeCache.txt`` file.
 
   In other words, the context and impact of what get be set from a ``*.cmake``
-  file read in through the ``-C`` argument is more limited while the code
-  listed in the ``*.cmake`` file behaves just like regular CMake statements
-  executed in the project's top-level ``CMakeLists.txt`` file.  In addition,
-  any force set statements in a ``*.cmake`` file pulled in with ``-C`` will
-  **not** override cache vars sets on the command-line.
+  file read in through the built-in CMake ``-C`` argument is more limited
+  while the code listed in the ``*.cmake`` file pulled in with
+  ``-D<Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake`` behaves just like
+  regular CMake statements executed in the project's top-level
+  ``CMakeLists.txt`` file.  In addition, any forced set statements in a
+  ``*.cmake`` file pulled in with ``-C`` **may or may not** override cache
+  vars sets on the command-line with ``-D<varName>=<val>`` depending on the
+  order of the ``-C`` and ``-D`` options.  (There is no order dependency for
+  ``*.cmake`` files passed in through
+  ``-D<Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake``.)
 
 .. _Using the QT CMake configuration GUI:
 
