@@ -275,7 +275,7 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   project source directory location may not be known or easy to get).
 
   2) When configuration files are read in using
-  ``<Project>_CONFIGURE_OPTIONS_FILE``, the will get reprocessed on every
+  ``<Project>_CONFIGURE_OPTIONS_FILE``, they will get reprocessed on every
   reconfigure (such as when reconfigure happens automatically when running
   ``make``).  That means that if options change in those included ``*.cmake``
   files from the initial configure, then those updated options will get
@@ -287,17 +287,18 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   contents of the ``<frag>.cmake`` file reread on reconfigures, then one would
   want to use ``-C <frag>.cmake``.
 
-  3) One can create and use parameterized ``*.cmake`` files that can be used
-  with multiple TriBITS projects.  For example, one can have set statements
-  like ``set(${PROJECT_NAME}_ENABLE_Fortran OFF ...)`` since ``PROJECT_NAME``
-  is known before the file is included.  One can't do that with ``cmake -C``
-  and instead would have to the full variables names specific for a given
-  project.
+  3) When using ``<Project>_CONFIGURE_OPTIONS_FILE``, one can create and use
+  parameterized ``*.cmake`` files that can be used with multiple TriBITS
+  projects.  For example, one can have set statements like
+  ``set(${PROJECT_NAME}_ENABLE_Fortran OFF ...)`` since ``PROJECT_NAME`` is
+  known before the file is included.  One cannot do that with ``-C`` and
+  instead would have to provide the full variables names specific for a given
+  TriBITS project.
 
-  4) Non-cache project-level variables can be set in a ``*.cmake`` file that
-  will impact the configuration.  When using the ``-C`` option, only variables
-  set with ``set(<varName> <val> CACHE <TYPE> ...)`` will impact the
-  configuration.
+  4) When using ``<Project>_CONFIGURE_OPTIONS_FILE``, non-cache project-level
+  variables can be set in a ``*.cmake`` file that will impact the
+  configuration.  When using the ``-C`` option, only variables set with
+  ``set(<varName> <val> CACHE <TYPE> ...)`` will impact the configuration.
 
   5) Cache variables forced set with ``set(<varName> <val> CACHE <TYPE>
   "<doc>" FORCE)`` in a ``<frag>.cmake`` file pulled in with ``-C
@@ -316,10 +317,11 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   ``-D<Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake``, then a ``set(<varName>
   <val> CACHE <TYPE> "<doc>" FORCE)`` statement in a ``<frag>.cmake`` **WILL**
   override a cache variable passed in on the command-line
-  ``-D<varName>=<val2>`` no matter the order of the arguments ``-D
-  <Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake`` and ``-D<varName>=<val2>``.
-  (This is because the file ``<frag>.cmake`` is included as part of the
-  processing of the project's top-level ``CMakeLists.txt`` file.)
+  ``-D<varName>=<val2>`` no matter the order of the arguments
+  ``-D<Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake`` and
+  ``-D<varName>=<val2>``.  (This is because the file ``<frag>.cmake`` is
+  included as part of the processing of the project's top-level
+  ``CMakeLists.txt`` file.)
 
   6) However, the ``*.cmake`` files specified by
   ``<Project>_CONFIGURE_OPTIONS_FILE`` will only get read in **after** the
