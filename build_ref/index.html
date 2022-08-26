@@ -212,10 +212,10 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date</dt>
-<dd class="field-odd"><p>2022-08-25</p>
+<dd class="field-odd"><p>2022-08-26</p>
 </dd>
 <dt class="field-even">Version</dt>
-<dd class="field-even"><p>tribits_start-3027-gaa9a4256</p>
+<dd class="field-even"><p>tribits_start-3031-g21602303</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -516,7 +516,12 @@ as shown above.</p>
 <section id="basic-configuration">
 <h2><a class="toc-backref" href="#id11"><span class="sectnum">4.2</span> Basic configuration</a><a class="headerlink" href="#basic-configuration" title="Permalink to this heading"></a></h2>
 <p>A few different approaches for configuring are given below.</p>
-<ol class="loweralpha">
+<ul class="simple">
+<li><p><a class="reference internal" href="#create-a-do-configure-script-recommended">Create a do-configure script [Recommended]</a></p></li>
+<li><p><a class="reference internal" href="#create-a-cmake-file-and-point-to-it-most-recommended">Create a *.cmake file and point to it [Most Recommended]</a></p></li>
+<li><p><a class="reference internal" href="#using-the-qt-cmake-configuration-gui">Using the QT CMake configuration GUI</a></p></li>
+</ul>
+<ol class="loweralpha" id="create-a-do-configure-script-recommended">
 <li><p>Create a ‘do-configure’ script such as [Recommended]:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>#!/bin/bash
 cmake \
@@ -544,7 +549,7 @@ compilers, other types of changes) then one will want to delete the local
 CMakeCache.txt and other CMake-generated files before configuring again (see
 <a class="reference internal" href="#reconfiguring-completely-from-scratch">Reconfiguring completely from scratch</a>).</p>
 </div></blockquote>
-<ol class="loweralpha simple" id="project-configure-options-file" start="2">
+<span id="project-configure-options-file"></span><ol class="loweralpha simple" id="create-a-cmake-file-and-point-to-it-most-recommended" start="2">
 <li><p>Create a <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> file and point to it [Most Recommended].</p></li>
 </ol>
 <blockquote>
@@ -574,10 +579,12 @@ when looking an the generated <code class="docutils literal notranslate"><span c
 reconfigure during a make (because it knows about the file and will check its
 time stamp, unlike when using <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">&lt;file-name&gt;.cmake</span></code>, see below).</p>
 <p>One can use the <code class="docutils literal notranslate"><span class="pre">FORCE</span></code> option in the <code class="docutils literal notranslate"><span class="pre">set()</span></code> commands shown above and
-that will override any value of the options that might already be set.
-However, that will not allow the user to override the options on the CMake
-command-line using <code class="docutils literal notranslate"><span class="pre">-D&lt;VAR&gt;=&lt;value&gt;</span></code> so it is generally <strong>not</strong> desired to
-use <code class="docutils literal notranslate"><span class="pre">FORCE</span></code>.</p>
+that will override any value of the options that might already be set (but
+when using <code class="docutils literal notranslate"><span class="pre">-C</span></code> to include this forced <code class="docutils literal notranslate"><span class="pre">set(&lt;var&gt;</span> <span class="pre">...</span> <span class="pre">FORCE)</span></code> will only
+override the value if the file with the <code class="docutils literal notranslate"><span class="pre">set()</span></code> is listed after the
+<code class="docutils literal notranslate"><span class="pre">-D&lt;var&gt;=&lt;val&gt;</span></code> command-line option).  However, that will not allow the
+user to override the options on the CMake command-line using
+<code class="docutils literal notranslate"><span class="pre">-D&lt;VAR&gt;=&lt;value&gt;</span></code> so it is generally <strong>not</strong> desired to use <code class="docutils literal notranslate"><span class="pre">FORCE</span></code>.</p>
 <p>One can also pass in a list of configuration fragment files separated by
 commas <code class="docutils literal notranslate"><span class="pre">','</span></code> which will be read in the order they are given as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_CONFIGURE_OPTIONS_FILE</span><span class="o">=&lt;</span><span class="n">file0</span><span class="o">&gt;.</span><span class="n">cmake</span><span class="p">,</span><span class="o">&lt;</span><span class="n">file1</span><span class="o">&gt;.</span><span class="n">cmake</span><span class="p">,</span><span class="o">...</span>
@@ -618,12 +625,12 @@ reconfigure (such as when reconfigure happens automatically when running
 <code class="docutils literal notranslate"><span class="pre">make</span></code>).  That means that if options change in those included <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code>
 files from the initial configure, then those updated options will get
 automatically picked up in a reconfigure.  But when processing <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code>
-files using the built-in <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">&lt;file-name&gt;.cmake</span></code> argument, updated options
-will not get set.  Therefore, if one wants to have the <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files
+files using the built-in <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">&lt;frag&gt;.cmake</span></code> argument, updated options will
+not get set.  Therefore, if one wants to have the <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files
 automatically be reprocessed, then one should use
 <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE</span></code>.  But if one does not want to have the
-contents of the <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> file reread on reconfigures, then one would want
-to use <code class="docutils literal notranslate"><span class="pre">-C</span></code>.</p>
+contents of the <code class="docutils literal notranslate"><span class="pre">&lt;frag&gt;.cmake</span></code> file reread on reconfigures, then one would
+want to use <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">&lt;frag&gt;.cmake</span></code>.</p>
 <p>3) One can create and use parameterized <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files that can be used
 with multiple TriBITS projects.  For example, one can have set statements
 like <code class="docutils literal notranslate"><span class="pre">set(${PROJECT_NAME}_ENABLE_Fortran</span> <span class="pre">OFF</span> <span class="pre">...)</span></code> since <code class="docutils literal notranslate"><span class="pre">PROJECT_NAME</span></code>
@@ -632,8 +639,30 @@ and instead would have to the full variables names specific for a given
 project.</p>
 <p>4) Non-cache project-level variables can be set in a <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> file that
 will impact the configuration.  When using the <code class="docutils literal notranslate"><span class="pre">-C</span></code> option, only variables
-set with <code class="docutils literal notranslate"><span class="pre">set(&lt;varName&gt;</span> <span class="pre">CACHE</span> <span class="pre">&lt;TYPE&gt;</span> <span class="pre">...)</span></code> will impact the configuration.</p>
-<p>5) However, the <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files specified by
+set with <code class="docutils literal notranslate"><span class="pre">set(&lt;varName&gt;</span> <span class="pre">&lt;val&gt;</span> <span class="pre">CACHE</span> <span class="pre">&lt;TYPE&gt;</span> <span class="pre">...)</span></code> will impact the
+configuration.</p>
+<p>5) Cache variables forced set with <code class="docutils literal notranslate"><span class="pre">set(&lt;varName&gt;</span> <span class="pre">&lt;val&gt;</span> <span class="pre">CACHE</span> <span class="pre">&lt;TYPE&gt;</span>
+<span class="pre">&quot;&lt;doc&gt;&quot;</span> <span class="pre">FORCE)</span></code> in a <code class="docutils literal notranslate"><span class="pre">&lt;frag&gt;.cmake</span></code> file pulled in with <code class="docutils literal notranslate"><span class="pre">-C</span>
+<span class="pre">&lt;frag&gt;.cmake</span></code> will only override a cache variable <code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code>
+passed on the command-line if the <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">&lt;frag&gt;.cmake</span></code> argument comes
+<strong>after</strong> the <code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code> argument (i.e. <code class="docutils literal notranslate"><span class="pre">cmake</span>
+<span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span> <span class="pre">-C</span> <span class="pre">&lt;frag&gt;.cmake</span></code>).  Otherwise, if the order of the
+<code class="docutils literal notranslate"><span class="pre">-D</span></code> and <code class="docutils literal notranslate"><span class="pre">-C</span></code> arguments is reversed (i.e. <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">-C</span> <span class="pre">&lt;frag&gt;.cmake</span>
+<span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code>) then the forced <code class="docutils literal notranslate"><span class="pre">set()</span></code> statement <strong>WILL NOT</strong>
+override the cache var set on the command-line with <code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code>.
+However, note that a forced <code class="docutils literal notranslate"><span class="pre">set()</span></code> statement <strong>WILL</strong> override other
+cache vars set with non-forced <code class="docutils literal notranslate"><span class="pre">set()</span></code> statements <code class="docutils literal notranslate"><span class="pre">set(&lt;varName&gt;</span> <span class="pre">&lt;val1&gt;</span>
+<span class="pre">CACHE</span> <span class="pre">&lt;TYPE&gt;</span> <span class="pre">&quot;&lt;doc&gt;&quot;)</span></code> in the same <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> file or in previously read
+<code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">&lt;frag2&gt;.cmake</span></code> files included on the command-line before the file <code class="docutils literal notranslate"><span class="pre">-C</span>
+<span class="pre">&lt;frag&gt;.cmake</span></code>.  Alternatively, if the file is pulled in with
+<code class="docutils literal notranslate"><span class="pre">-D&lt;Project&gt;_CONFIGURE_OPTIONS_FILE=&lt;frag&gt;.cmake</span></code>, then a <code class="docutils literal notranslate"><span class="pre">set(&lt;varName&gt;</span>
+<span class="pre">&lt;val&gt;</span> <span class="pre">CACHE</span> <span class="pre">&lt;TYPE&gt;</span> <span class="pre">&quot;&lt;doc&gt;&quot;</span> <span class="pre">FORCE)</span></code> statement in a <code class="docutils literal notranslate"><span class="pre">&lt;frag&gt;.cmake</span></code> <strong>WILL</strong>
+override a cache variable passed in on the command-line
+<code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code> no matter the order of the arguments <code class="docutils literal notranslate"><span class="pre">-D</span>
+<span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE=&lt;frag&gt;.cmake</span></code> and <code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code>.
+(This is because the file <code class="docutils literal notranslate"><span class="pre">&lt;frag&gt;.cmake</span></code> is included as part of the
+processing of the project’s top-level <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file.)</p>
+<p>6) However, the <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files specified by
 <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE</span></code> will only get read in <strong>after</strong> the
 project’s <code class="docutils literal notranslate"><span class="pre">ProjectName.cmake</span></code> and other <code class="docutils literal notranslate"><span class="pre">set()</span></code> statements are called at
 the top of the project’s top-level <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file.  So any CMake
@@ -648,11 +677,18 @@ those files will get processed before any in the project’s
 and carefully watch cache variable values actually set in the generated
 <code class="docutils literal notranslate"><span class="pre">CMakeCache.txt</span></code> file.</p>
 <p>In other words, the context and impact of what get be set from a <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code>
-file read in through the <code class="docutils literal notranslate"><span class="pre">-C</span></code> argument is more limited while the code
-listed in the <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> file behaves just like regular CMake statements
-executed in the project’s top-level <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file.</p>
+file read in through the built-in CMake <code class="docutils literal notranslate"><span class="pre">-C</span></code> argument is more limited
+while the code listed in the <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> file pulled in with
+<code class="docutils literal notranslate"><span class="pre">-D&lt;Project&gt;_CONFIGURE_OPTIONS_FILE=&lt;frag&gt;.cmake</span></code> behaves just like
+regular CMake statements executed in the project’s top-level
+<code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file.  In addition, any forced set statements in a
+<code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> file pulled in with <code class="docutils literal notranslate"><span class="pre">-C</span></code> <strong>may or may not</strong> override cache
+vars sets on the command-line with <code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val&gt;</span></code> depending on the
+order of the <code class="docutils literal notranslate"><span class="pre">-C</span></code> and <code class="docutils literal notranslate"><span class="pre">-D</span></code> options.  (There is no order dependency for
+<code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files passed in through
+<code class="docutils literal notranslate"><span class="pre">-D&lt;Project&gt;_CONFIGURE_OPTIONS_FILE=&lt;frag&gt;.cmake</span></code>.)</p>
 </div></blockquote>
-<ol class="loweralpha simple" start="3">
+<ol class="loweralpha simple" id="using-the-qt-cmake-configuration-gui" start="3">
 <li><p>Using the QT CMake configuration GUI:</p></li>
 </ol>
 <blockquote>
@@ -772,7 +808,7 @@ take on the string enum values of <code class="docutils literal notranslate"><sp
 empty enable means that the TriBITS dependency system is allowed to decide if
 an enable should be turned on or off based on various logic.  The CMake GUI
 will enforce the values of <code class="docutils literal notranslate"><span class="pre">&quot;ON&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;OFF&quot;</span></code>, and empty <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> but it will
-not enforce this if you set the value on the command line or in a set()
+not enforce this if you set the value on the command line or in a <code class="docutils literal notranslate"><span class="pre">set()</span></code>
 statement in an input <code class="docutils literal notranslate"><span class="pre">`*.cmake</span></code> options files.  However, setting
 <code class="docutils literal notranslate"><span class="pre">-DXXX_ENABLE_YYY=TRUE</span></code> and <code class="docutils literal notranslate"><span class="pre">-DXXX_ENABLE_YYY=FALSE</span></code> is allowed and will
 be interpreted correctly..</p>

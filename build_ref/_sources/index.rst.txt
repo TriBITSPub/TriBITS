@@ -200,6 +200,12 @@ Basic configuration
 
 A few different approaches for configuring are given below.
 
+* `Create a do-configure script [Recommended]`_
+* `Create a *.cmake file and point to it [Most Recommended]`_
+* `Using the QT CMake configuration GUI`_
+
+.. _Create a do-configure script [Recommended]:
+
 a) Create a 'do-configure' script such as [Recommended]::
 
     #!/bin/bash
@@ -227,6 +233,8 @@ a) Create a 'do-configure' script such as [Recommended]::
   `Reconfiguring completely from scratch`_).
 
 .. _<Project>_CONFIGURE_OPTIONS_FILE:
+
+.. _Create a *.cmake file and point to it [Most Recommended]:
 
 b) Create a ``*.cmake`` file and point to it [Most Recommended].
 
@@ -257,10 +265,12 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   time stamp, unlike when using ``-C <file-name>.cmake``, see below).
 
   One can use the ``FORCE`` option in the ``set()`` commands shown above and
-  that will override any value of the options that might already be set.
-  However, that will not allow the user to override the options on the CMake
-  command-line using ``-D<VAR>=<value>`` so it is generally **not** desired to
-  use ``FORCE``.
+  that will override any value of the options that might already be set (but
+  when using ``-C`` to include this forced ``set(<var> ... FORCE)`` will only
+  override the value if the file with the ``set()`` is listed after the
+  ``-D<var>=<val>`` command-line option).  However, that will not allow the
+  user to override the options on the CMake command-line using
+  ``-D<VAR>=<value>`` so it is generally **not** desired to use ``FORCE``.
 
   One can also pass in a list of configuration fragment files separated by
   commas ``','`` which will be read in the order they are given as::
@@ -305,12 +315,12 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   ``make``).  That means that if options change in those included ``*.cmake``
   files from the initial configure, then those updated options will get
   automatically picked up in a reconfigure.  But when processing ``*.cmake``
-  files using the built-in ``-C <file-name>.cmake`` argument, updated options
-  will not get set.  Therefore, if one wants to have the ``*.cmake`` files
+  files using the built-in ``-C <frag>.cmake`` argument, updated options will
+  not get set.  Therefore, if one wants to have the ``*.cmake`` files
   automatically be reprocessed, then one should use
   ``<Project>_CONFIGURE_OPTIONS_FILE``.  But if one does not want to have the
-  contents of the ``*.cmake`` file reread on reconfigures, then one would want
-  to use ``-C``.
+  contents of the ``<frag>.cmake`` file reread on reconfigures, then one would
+  want to use ``-C <frag>.cmake``.
 
   3) One can create and use parameterized ``*.cmake`` files that can be used
   with multiple TriBITS projects.  For example, one can have set statements
@@ -321,9 +331,32 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
 
   4) Non-cache project-level variables can be set in a ``*.cmake`` file that
   will impact the configuration.  When using the ``-C`` option, only variables
-  set with ``set(<varName> CACHE <TYPE> ...)`` will impact the configuration.
+  set with ``set(<varName> <val> CACHE <TYPE> ...)`` will impact the
+  configuration.
 
-  5) However, the ``*.cmake`` files specified by
+  5) Cache variables forced set with ``set(<varName> <val> CACHE <TYPE>
+  "<doc>" FORCE)`` in a ``<frag>.cmake`` file pulled in with ``-C
+  <frag>.cmake`` will only override a cache variable ``-D<varName>=<val2>``
+  passed on the command-line if the ``-C <frag>.cmake`` argument comes
+  **after** the ``-D<varName>=<val2>`` argument (i.e. ``cmake
+  -D<varName>=<val2> -C <frag>.cmake``).  Otherwise, if the order of the
+  ``-D`` and ``-C`` arguments is reversed (i.e. ``cmake -C <frag>.cmake
+  -D<varName>=<val2>``) then the forced ``set()`` statement **WILL NOT**
+  override the cache var set on the command-line with ``-D<varName>=<val2>``.
+  However, note that a forced ``set()`` statement **WILL** override other
+  cache vars set with non-forced ``set()`` statements ``set(<varName> <val1>
+  CACHE <TYPE> "<doc>")`` in the same ``*.cmake`` file or in previously read
+  ``-C <frag2>.cmake`` files included on the command-line before the file ``-C
+  <frag>.cmake``.  Alternatively, if the file is pulled in with
+  ``-D<Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake``, then a ``set(<varName>
+  <val> CACHE <TYPE> "<doc>" FORCE)`` statement in a ``<frag>.cmake`` **WILL**
+  override a cache variable passed in on the command-line
+  ``-D<varName>=<val2>`` no matter the order of the arguments ``-D
+  <Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake`` and ``-D<varName>=<val2>``.
+  (This is because the file ``<frag>.cmake`` is included as part of the
+  processing of the project's top-level ``CMakeLists.txt`` file.)
+
+  6) However, the ``*.cmake`` files specified by
   ``<Project>_CONFIGURE_OPTIONS_FILE`` will only get read in **after** the
   project's ``ProjectName.cmake`` and other ``set()`` statements are called at
   the top of the project's top-level ``CMakeLists.txt`` file.  So any CMake
@@ -339,9 +372,18 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   ``CMakeCache.txt`` file.
 
   In other words, the context and impact of what get be set from a ``*.cmake``
-  file read in through the ``-C`` argument is more limited while the code
-  listed in the ``*.cmake`` file behaves just like regular CMake statements
-  executed in the project's top-level ``CMakeLists.txt`` file.
+  file read in through the built-in CMake ``-C`` argument is more limited
+  while the code listed in the ``*.cmake`` file pulled in with
+  ``-D<Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake`` behaves just like
+  regular CMake statements executed in the project's top-level
+  ``CMakeLists.txt`` file.  In addition, any forced set statements in a
+  ``*.cmake`` file pulled in with ``-C`` **may or may not** override cache
+  vars sets on the command-line with ``-D<varName>=<val>`` depending on the
+  order of the ``-C`` and ``-D`` options.  (There is no order dependency for
+  ``*.cmake`` files passed in through
+  ``-D<Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake``.)
+
+.. _Using the QT CMake configuration GUI:
 
 c) Using the QT CMake configuration GUI:
 
@@ -480,7 +522,7 @@ take on the string enum values of ``"ON"``, ``"OFF"``, end empty ``""``.  An
 empty enable means that the TriBITS dependency system is allowed to decide if
 an enable should be turned on or off based on various logic.  The CMake GUI
 will enforce the values of ``"ON"``, ``"OFF"``, and empty ``""`` but it will
-not enforce this if you set the value on the command line or in a set()
+not enforce this if you set the value on the command line or in a ``set()``
 statement in an input ```*.cmake`` options files.  However, setting
 ``-DXXX_ENABLE_YYY=TRUE`` and ``-DXXX_ENABLE_YYY=FALSE`` is allowed and will
 be interpreted correctly..
