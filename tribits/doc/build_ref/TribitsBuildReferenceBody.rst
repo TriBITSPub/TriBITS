@@ -232,7 +232,7 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   One can use the ``FORCE`` option in the ``set()`` commands shown above and
   that will override any value of the options that might already be set (but
   when using ``-C`` to include this forced ``set(<var> ... FORCE)`` will only
-  override the value if the file with the set() is listed after the
+  override the value if the file with the ``set()`` is listed after the
   ``-D<var>=<val>`` command-line option).  However, that will not allow the
   user to override the options on the CMake command-line using
   ``-D<VAR>=<value>`` so it is generally **not** desired to use ``FORCE``.
@@ -306,12 +306,12 @@ b) Create a ``*.cmake`` file and point to it [Most Recommended].
   **after** the ``-D<varName>=<val2>`` argument (i.e. ``cmake
   -D<varName>=<val2> -C <frag>.cmake``).  Otherwise, if the order of the
   ``-D`` and ``-C`` arguments is reversed (i.e. ``cmake -C <frag>.cmake
-  -D<varName>=<val2>``) then the forced set() statement **WILL NOT** override
-  the cache var set on the command-line with ``-D<varName>=<val2>``.  However,
-  note that a forced set() statement **WILL** override other cache vars set
-  with non-forced set() statements ``set(<varName> <val1> CACHE <TYPE>
-  "<doc>")`` in the same ``*.cmake`` file or in previously read ``-C
-  <frag2>.cmake`` files included on the command-line before the file ``-C
+  -D<varName>=<val2>``) then the forced ``set()`` statement **WILL NOT**
+  override the cache var set on the command-line with ``-D<varName>=<val2>``.
+  However, note that a forced ``set()`` statement **WILL** override other
+  cache vars set with non-forced ``set()`` statements ``set(<varName> <val1>
+  CACHE <TYPE> "<doc>")`` in the same ``*.cmake`` file or in previously read
+  ``-C <frag2>.cmake`` files included on the command-line before the file ``-C
   <frag>.cmake``.  Alternatively, if the file is pulled in with
   ``-D<Project>_CONFIGURE_OPTIONS_FILE=<frag>.cmake``, then a ``set(<varName>
   <val> CACHE <TYPE> "<doc>" FORCE)`` statement in a ``<frag>.cmake`` **WILL**
@@ -487,7 +487,7 @@ take on the string enum values of ``"ON"``, ``"OFF"``, end empty ``""``.  An
 empty enable means that the TriBITS dependency system is allowed to decide if
 an enable should be turned on or off based on various logic.  The CMake GUI
 will enforce the values of ``"ON"``, ``"OFF"``, and empty ``""`` but it will
-not enforce this if you set the value on the command line or in a set()
+not enforce this if you set the value on the command line or in a ``set()``
 statement in an input ```*.cmake`` options files.  However, setting
 ``-DXXX_ENABLE_YYY=TRUE`` and ``-DXXX_ENABLE_YYY=FALSE`` is allowed and will
 be interpreted correctly..
