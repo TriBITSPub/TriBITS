@@ -215,7 +215,7 @@
 <dd class="field-odd"><p>2022-08-26</p>
 </dd>
 <dt class="field-even">Version</dt>
-<dd class="field-even"><p>tribits_start-3032-gc5805daa</p>
+<dd class="field-even"><p>tribits_start-3033-gb33a6d8a</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -620,7 +620,7 @@ to the source directory.  Having to give the absolute path to files in the
 source tree complicates configure scripts in some cases (i.e. where the
 project source directory location may not be known or easy to get).</p>
 <p>2) When configuration files are read in using
-<code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE</span></code>, the will get reprocessed on every
+<code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE</span></code>, they will get reprocessed on every
 reconfigure (such as when reconfigure happens automatically when running
 <code class="docutils literal notranslate"><span class="pre">make</span></code>).  That means that if options change in those included <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code>
 files from the initial configure, then those updated options will get
@@ -631,16 +631,17 @@ automatically be reprocessed, then one should use
 <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE</span></code>.  But if one does not want to have the
 contents of the <code class="docutils literal notranslate"><span class="pre">&lt;frag&gt;.cmake</span></code> file reread on reconfigures, then one would
 want to use <code class="docutils literal notranslate"><span class="pre">-C</span> <span class="pre">&lt;frag&gt;.cmake</span></code>.</p>
-<p>3) One can create and use parameterized <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files that can be used
-with multiple TriBITS projects.  For example, one can have set statements
-like <code class="docutils literal notranslate"><span class="pre">set(${PROJECT_NAME}_ENABLE_Fortran</span> <span class="pre">OFF</span> <span class="pre">...)</span></code> since <code class="docutils literal notranslate"><span class="pre">PROJECT_NAME</span></code>
-is known before the file is included.  One can’t do that with <code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">-C</span></code>
-and instead would have to the full variables names specific for a given
-project.</p>
-<p>4) Non-cache project-level variables can be set in a <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> file that
-will impact the configuration.  When using the <code class="docutils literal notranslate"><span class="pre">-C</span></code> option, only variables
-set with <code class="docutils literal notranslate"><span class="pre">set(&lt;varName&gt;</span> <span class="pre">&lt;val&gt;</span> <span class="pre">CACHE</span> <span class="pre">&lt;TYPE&gt;</span> <span class="pre">...)</span></code> will impact the
-configuration.</p>
+<p>3) When using <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE</span></code>, one can create and use
+parameterized <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files that can be used with multiple TriBITS
+projects.  For example, one can have set statements like
+<code class="docutils literal notranslate"><span class="pre">set(${PROJECT_NAME}_ENABLE_Fortran</span> <span class="pre">OFF</span> <span class="pre">...)</span></code> since <code class="docutils literal notranslate"><span class="pre">PROJECT_NAME</span></code> is
+known before the file is included.  One cannot do that with <code class="docutils literal notranslate"><span class="pre">-C</span></code> and
+instead would have to provide the full variables names specific for a given
+TriBITS project.</p>
+<p>4) When using <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE</span></code>, non-cache project-level
+variables can be set in a <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> file that will impact the
+configuration.  When using the <code class="docutils literal notranslate"><span class="pre">-C</span></code> option, only variables set with
+<code class="docutils literal notranslate"><span class="pre">set(&lt;varName&gt;</span> <span class="pre">&lt;val&gt;</span> <span class="pre">CACHE</span> <span class="pre">&lt;TYPE&gt;</span> <span class="pre">...)</span></code> will impact the configuration.</p>
 <p>5) Cache variables forced set with <code class="docutils literal notranslate"><span class="pre">set(&lt;varName&gt;</span> <span class="pre">&lt;val&gt;</span> <span class="pre">CACHE</span> <span class="pre">&lt;TYPE&gt;</span>
 <span class="pre">&quot;&lt;doc&gt;&quot;</span> <span class="pre">FORCE)</span></code> in a <code class="docutils literal notranslate"><span class="pre">&lt;frag&gt;.cmake</span></code> file pulled in with <code class="docutils literal notranslate"><span class="pre">-C</span>
 <span class="pre">&lt;frag&gt;.cmake</span></code> will only override a cache variable <code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code>
@@ -658,10 +659,11 @@ cache vars set with non-forced <code class="docutils literal notranslate"><span 
 <code class="docutils literal notranslate"><span class="pre">-D&lt;Project&gt;_CONFIGURE_OPTIONS_FILE=&lt;frag&gt;.cmake</span></code>, then a <code class="docutils literal notranslate"><span class="pre">set(&lt;varName&gt;</span>
 <span class="pre">&lt;val&gt;</span> <span class="pre">CACHE</span> <span class="pre">&lt;TYPE&gt;</span> <span class="pre">&quot;&lt;doc&gt;&quot;</span> <span class="pre">FORCE)</span></code> statement in a <code class="docutils literal notranslate"><span class="pre">&lt;frag&gt;.cmake</span></code> <strong>WILL</strong>
 override a cache variable passed in on the command-line
-<code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code> no matter the order of the arguments <code class="docutils literal notranslate"><span class="pre">-D</span>
-<span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE=&lt;frag&gt;.cmake</span></code> and <code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code>.
-(This is because the file <code class="docutils literal notranslate"><span class="pre">&lt;frag&gt;.cmake</span></code> is included as part of the
-processing of the project’s top-level <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file.)</p>
+<code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code> no matter the order of the arguments
+<code class="docutils literal notranslate"><span class="pre">-D&lt;Project&gt;_CONFIGURE_OPTIONS_FILE=&lt;frag&gt;.cmake</span></code> and
+<code class="docutils literal notranslate"><span class="pre">-D&lt;varName&gt;=&lt;val2&gt;</span></code>.  (This is because the file <code class="docutils literal notranslate"><span class="pre">&lt;frag&gt;.cmake</span></code> is
+included as part of the processing of the project’s top-level
+<code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file.)</p>
 <p>6) However, the <code class="docutils literal notranslate"><span class="pre">*.cmake</span></code> files specified by
 <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_CONFIGURE_OPTIONS_FILE</span></code> will only get read in <strong>after</strong> the
 project’s <code class="docutils literal notranslate"><span class="pre">ProjectName.cmake</span></code> and other <code class="docutils literal notranslate"><span class="pre">set()</span></code> statements are called at
