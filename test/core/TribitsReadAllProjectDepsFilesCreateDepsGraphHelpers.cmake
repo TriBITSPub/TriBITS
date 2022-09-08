@@ -106,7 +106,7 @@ set(${EXTRA_REPO_NAME}_TPLS_FINDMODS_CLASSIFICATIONS)
 
 set(${PROJECT_NAME}_ALL_REPOSITORIES "." "${EXTRA_REPO_NAME}")
 
-set( ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES ON )
+set(${PROJECT_NAME}_ASSERT_MISSING_PACKAGES ON)
 
 
 #####################################################################
@@ -118,7 +118,7 @@ set( ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES ON )
 
 macro(unittest_helper_read_packages_and_dependencies)
 
-  set(${PROJECT_NAME}_ALL_REPOSITORIES)
+  set(${PROJECT_NAME}_ALL_REPOSITORIES "")
   tribits_read_all_project_deps_files_create_deps_graph()
 
 endmacro()
