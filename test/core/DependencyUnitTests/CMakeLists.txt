@@ -571,12 +571,6 @@ create_dependency_handling_test_case(
   )
 
 
-read_expected_output_file_into_regex_array(
-  "${CMAKE_CURRENT_LIST_DIR}/DepTests_EnableAllPackages_EnableTests_DumpDependencies.txt"
-  EnableAllPackages_EnableTests_DumpDependencies_REGEX_ARRAY
-  )
-#print_var(EnableAllPackages_DumpDependencies_REGEX_ARRAY)
-
 create_dependency_handling_test_case(
   EnableAllPackages_EnableTests_DumpDependencies
   ARGS
