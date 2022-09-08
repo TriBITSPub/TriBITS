@@ -621,11 +621,9 @@ macro(tribits_process_packages_and_dirs_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
   endif()
 
-  if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    print_var(${REPOSITORY_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
-  endif()
-
-  print_var(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
+  message("-- After reading above PackagesList.cmake file: "
+    "${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES"
+    "='${${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES}'")
 
   # Print the final set of packages in debug mode
 

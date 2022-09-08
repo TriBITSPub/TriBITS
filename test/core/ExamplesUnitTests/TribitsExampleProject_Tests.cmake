@@ -152,7 +152,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
 
         "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because TribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES='ON'"
         "NOTE: Setting TribitsExProj_ENABLE_MixedLang=OFF because TribitsExProj_ENABLE_Fortran"
-        "Printing package dependencies ..."
+        "Package dependencies information:"
         "-- TribitsExProj_DEFINED_INTERNAL_TOPLEVEL_PACKAGES: SimpleCxx MixedLang WithSubpackages WrapExternal"
         "-- TribitsExProj_DEFINED_INTERNAL_PACKAGES: SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
 

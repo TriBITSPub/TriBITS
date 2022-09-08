@@ -102,7 +102,7 @@ tribits_add_advanced_test( TribitsReadAllProjectDepsFilesCreateDepsGraph_UnitTes
       -DCMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_SOURCE_DIR}
       -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraph_UnitTests.cmake"
     PASS_REGULAR_EXPRESSION_ALL
-      "Final UnitTests Result: num_run = 127"
+      "Final UnitTests Result: num_run = 125"
       "Final UnitTests Result: PASSED"
   )
 

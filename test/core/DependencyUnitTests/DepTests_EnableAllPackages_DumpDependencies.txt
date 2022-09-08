@@ -1,8 +1,19 @@
-Printing package dependencies ...
+Package dependencies information:
+
+-- Trilinos_DEFINED_TPLS: MPI BLAS LAPACK Boost Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS DUMMY
+-- Trilinos_NUM_DEFINED_TPLS='19'
 
 -- Trilinos_DEFINED_INTERNAL_TOPLEVEL_PACKAGES: TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer
+-- Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='24'
+
+-- Trilinos_DEFINED_TOPLEVEL_PACKAGES: MPI BLAS LAPACK Boost Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS DUMMY TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer
+-- Trilinos_NUM_DEFINED_TOPLEVEL_PACKAGES='43'
 
 -- Trilinos_DEFINED_INTERNAL_PACKAGES: TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado ThyraCoreLibs ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer
+-- Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='30'
+
+-- Trilinos_DEFINED_PACKAGES: MPI BLAS LAPACK Boost Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS DUMMY TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado ThyraCoreLibs ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer
+-- Trilinos_NUM_DEFINED_PACKAGES='49'
 
 -- TrilinosFramework_TEST_OPTIONAL_DEP_TPLS: MPI
 

@@ -79,6 +79,13 @@ macro(tribits_read_all_project_deps_files_create_deps_graph)
 
   tribits_read_deps_files_create_deps_graph()
 
+  # ${PROJECT_NAME}_DEFINED_PACKAGES
+  set(${PROJECT_NAME}_DEFINED_PACKAGES
+    ${${PROJECT_NAME}_DEFINED_TPLS}
+    ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
+  list(LENGTH ${PROJECT_NAME}_DEFINED_PACKAGES
+    ${PROJECT_NAME}_NUM_DEFINED_PACKAGES)
+
   tribits_config_code_stop_timer(SET_UP_DEPENDENCIES_TIME_START_SECONDS
     "\nTotal time to read in all dependencies files and build dependencies graph")
 
@@ -140,14 +147,16 @@ macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
   set(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES "")
 
   #
-  # A) Read list of packages and TPLs from 'PRE' extra repos
+  # A) Read list of external packages/TPLs and top-level internal packages
+  # from 'PRE' extra repos
   #
 
   set(READ_PRE_OR_POST_EXRAREPOS  PRE)
   tribits_read_extra_repositories_lists()
 
   #
-  # B) Read list of packages and TPLs from native repos
+  # B) Read list of external packages/TPLs and top-level internal packages
+  # from the native repos
   #
 
   foreach(NATIVE_REPO ${${PROJECT_NAME}_NATIVE_REPOSITORIES})
@@ -224,16 +233,29 @@ macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
   endforeach()
 
   #
-  # C) Read list of packages and TPLs from 'POST' extra repos
+  # C) Read list of external packages/TPLs and top-level internal packages
+  # from 'POST' extra repos
   #
 
   set(READ_PRE_OR_POST_EXRAREPOS  POST)
   tribits_read_extra_repositories_lists()
 
   #
-  # D) Combined set of all to-level packages
+  # D) Compute lengths and other combined quantities
   #
 
+  # ${PROJECT_NAME}_NUM_DEFINED_TPLS
+  list(LENGTH ${PROJECT_NAME}_DEFINED_TPLS ${PROJECT_NAME}_NUM_DEFINED_TPLS)
+
+  # ${PROJECT_NAME}_REVERSE_DEFINED_TPLS (ToDo: Remove the need for this #63)
+  if (${PROJECT_NAME}_DEFINED_TPLS)
+    set(${PROJECT_NAME}_REVERSE_DEFINED_TPLS ${${PROJECT_NAME}_DEFINED_TPLS})
+    list(REVERSE ${PROJECT_NAME}_REVERSE_DEFINED_TPLS)
+  else()
+    set(${PROJECT_NAME}_REVERSE_DEFINED_TPLS)
+  endif()
+
+  # ${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES
   set(${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES
     ${${PROJECT_NAME}_DEFINED_TPLS}
     ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})

@@ -313,19 +313,9 @@ macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
     print_var(${PROJECT_NAME}_DEFINED_TPLS)
   endif()
 
-  # Get the final length
-
+  # Get and print length
   list(LENGTH ${PROJECT_NAME}_DEFINED_TPLS ${PROJECT_NAME}_NUM_DEFINED_TPLS)
-  print_var(${PROJECT_NAME}_NUM_DEFINED_TPLS)
-
-  # Create a reverse list for later use (ToDo: Remove the need for this #63)
-
-  if (${PROJECT_NAME}_DEFINED_TPLS)
-    set(${PROJECT_NAME}_REVERSE_DEFINED_TPLS ${${PROJECT_NAME}_DEFINED_TPLS})
-    list(REVERSE ${PROJECT_NAME}_REVERSE_DEFINED_TPLS)
-  else()
-    set(${PROJECT_NAME}_REVERSE_DEFINED_TPLS)
-  endif()
-  # ToDo: Get rid of the usage of ${PROJECT_NAME}_REVERSE_DEFINED_TPLS (#299, #63)
+  message("-- After reading above TPLsList.cmake file: "
+    "${PROJECT_NAME}_NUM_DEFINED_TPLS='${${PROJECT_NAME}_NUM_DEFINED_TPLS}'")
 
 endmacro()

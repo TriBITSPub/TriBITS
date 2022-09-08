@@ -55,14 +55,14 @@ include(DualScopeSet)
 # `<packageDir>/<spkgDir>/cmake/Dependencies.cmake`_ files and builds the
 # package dependency graph variables.
 #
-# This macro reads from the variables::
+# This macro reads from the variables:
 #
-#   ${PROJECT_NAME}_ALL_REPOSITORIES (old)
-#   ${PROJECT_NAME}_PACKAGES (old)
+#   * `${PROJECT_NAME}_ALL_REPOSITORIES`_
+#   * `${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES`_
 #
-# and writes to the variable::
+# and writes to the variables:
 #
-#   ${PROJECT_NAME}_SE_PACKAGES (old)
+#   * `${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES`_
 #
 # as well creates the package dependency variables described in `Legacy list
 # variables defining the package dependencies graph`_ that defines the
@@ -201,13 +201,15 @@ macro(tribits_read_all_package_deps_files_create_deps_graph)
       ${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
   endforeach()
 
-  # Create a reverse SE packages list for later use
-  set(${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_PACKAGES  ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
+  # Create a reverse packages list for later use
+  set(${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_PACKAGES
+    ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
   if (${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_PACKAGES)
     list(REVERSE  ${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_PACKAGES)
   endif()
 
-  list(LENGTH ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES)
+  list(LENGTH ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
+    ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES)
   print_var(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES)
 
 endmacro()
