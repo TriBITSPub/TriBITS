@@ -62,8 +62,7 @@ TriBITS variable, macro, and function names:
   ``${PARENT_PACKAGE_NAME}${SUBPACKAGE}``).
 
 * **PACKAGE**: Variable or function that could pertain to an external
-  package/TPL, or a top-level package, or a subpackage. (The old name was
-  ``SE_PACKAGE`` in legacy TriBITS.)
+  package/TPL, or a top-level package, or a subpackage.
 
 TriBITS uses the follow general case naming conventions for variables, macros,
 functions and module files:
@@ -523,82 +522,16 @@ information about a given internal package:
     variable defined for them.
 
 
-Legacy lists of TPLs and packages
-+++++++++++++++++++++++++++++++++
-
-ToDo: Deal with old data-structures below after the refactoring for #63 is
-complete!
-
-The full list of defined top-level parent packages is stored in the
-project-level non-cache list variable::
-
-  ${PROJECT_NAME}_PACKAGES
-
-This list does **not** include any subpackages.  This gets created from the
-`<repoDir>/PackagesList.cmake`_ file from each processed TriBITS repository.
-
-The full list of all of the defined packages and subpackages is stored in the
-project-level non-cache list variable::
-
-  ${PROJECT_NAME}_SE_PACKAGES
-
-That list is created from the information in the
-`<repoDir>/PackagesList.cmake`_ and `<packageDir>/cmake/Dependencies.cmake`_
-files for the top-level packages read and processed in the macro
-`tribits_read_deps_files_create_deps_graph()`_ using macros in the file::
-
-  TribitsAdjustPackageEnables.cmake
-
-One can determine if a package in this list is a top-level parent package or a
-sub-subpackage based on the value of the variable
-`${PACKAGE_NAME}_PARENT_PACKAGE`_.  If the value is non empty, then
-``${PACKAGE_NAME}`` is a subpackage.  If the value is empty "", then
-``${PACKAGE_NAME}`` is a parent package.
-
-This full number of defined top-level parent packages (i.e. the number of
-items in the array ``${PROJECT_NAME}_PACKAGES``) is given in the variable::
-
-  ${PROJECT_NAME}_NUM_PACKAGES
-
-and the 0-based index of the last package in the array
-``${PROJECT_NAME}_PACKAGES`` (i.e. ``${PROJECT_NAME}_NUM_PACKAGES - 1``) is
-given in::
-
-  ${PROJECT_NAME}_LAST_PACKAGE_IDX
-
-This data gets set in functions in the file::
-
-  TribitsProcessPackagesAndDirsLists.cmake
-
-The full list of defined TPLs is stored in the variable::
-
-  ${PROJECT_NAME}_TPLS
-
-This list is created from the `<repoDir>/TPLsList.cmake`_ files from each
-defined TriBITS Repository.  Along with this, the following variables for each
-of these TriBITS TPLs are defined::
-* `${TPL_NAME}_FINDMOD`_
-* `${TPL_NAME}_TESTGROUP`_
-
-This data gets set in functions in the file::
-
-  TribitsProcessTplsLists.cmake  
-
-NOTE: The same external package (TPL) can be duplicated in multiple
-``TPLsList.cmake`` files.  This has the affect of allowing overrides of the
-``FindTPL<TPLName>.cmake`` module.  See the discussion in `TriBITS TPL`_ for
-more details.
-
-
 Legacy list variables defining the package dependencies graph
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The following top-level non-cache variables are defined after reading in each
 top-level package and subpackage ``Dependencies.cmake`` files and they are
 used to define the basic dependencies that exist between packages in a project
-to support the enable and disable logic described in section ???.  These
-variables taken together constitute a bidirectional acyclic graph (DAG)
-data-structure for package dependencies.
+to support the enable and disable logic described in section `Package
+Dependencies and Enable/Disable Logic`_.  These variables taken together
+constitute a bidirectional acyclic graph (DAG) data-structure for package
+dependencies.
 
 The following lists variables define the **direct** dependencies from a
 package ``${PACKAGE_NAME}`` to its upstream packages which are directly set in
