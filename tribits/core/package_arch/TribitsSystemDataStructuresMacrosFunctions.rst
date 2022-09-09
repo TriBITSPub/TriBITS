@@ -520,52 +520,5 @@ lists and dependency data-structures described above.
 |             `tribits_append_forward_dep_packages()`_
 |               `tribits_abort_on_missing_package()`_
 
-
-Notes on dependency logic
--------------------------
-
-The logic used to define the intra-package linkage variables is complex due to
-a number of factors:
-
-1) Packages can have libraries or no libraries.  
-
-2) In installation-testing mode, the libraries for a package are read from a
-   file instead of generated in source.
-
-3) A library can be a regular package library, or a test-only library, in
-   which case it will not be listed in ``${PACKAGE_NAME}_LIBRARIES``.  The
-   above description does not even talk about how test-only libraries are
-   handed within the system except to say that they are excluded from the
-   package's exported library dependencies.
-
-The management and usage of the intra-package linkage variables is spread
-across a number of TriBITS ``*.cmake`` files but the primary ones are::
-
-  TribitsPackageMacros.cmake
-  TribitsSubPackageMacros.cmake
-  TribitsLibraryMacros.cmake
-  TribitsAddExecutable.cmake
-
-There are other TriBITS cmake files that also access these variables but these
-are the key files.  The CMake code in these files all work together in
-coordination to set up and use these variables in a way that allows for smooth
-compiling and linking of source code for users of the TriBITS system.
-
-Another file with complex dependency logic related to these variables is::
-
-   TribitsWriteClientExportFiles.cmake
-
-The TriBITS cmake code in this file servers a very similar role for external
-clients and therefore needs to be considered in this setting.
-
-All of these variations and features makes this a bit of a complex system to
-say the least.  Also, currently, there is essentially no unit or regression
-testing in place for the CMake code in these files that manipulate these
-intra-package dependency variables.  Because this logic is tied in with
-actually building and linking code, there has not been a way set up yet to
-allow it to be efficiently tested outside of the actual build.  But there are
-a number of example projects that are part of the automated TriBITS test suite
-that do test much of the logic used in these variables.
-
 ..  LocalWords:  acyclic TriBITS SUBPACKAGES CTEST subpackages buildable TPLs TPLS
 ..  LocalWords:  Subpackage CMake CMakeLists
