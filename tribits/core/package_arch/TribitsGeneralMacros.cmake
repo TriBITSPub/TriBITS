@@ -263,7 +263,7 @@ function(tribits_get_nonenabled_list  LISTVAR  ENABLED_PREFIX
 endfunction()
 
 
-# Macro that sets up the basic lists of enabled packages and SE packages.
+# Macro that sets up the basic lists of enabled packages and packages.
 #
 macro(tribits_set_up_enabled_lists_and_pkg_idx)
 

@@ -82,7 +82,7 @@ include(Split)
 #    ``FindTPL<tplName>.cmake``.  (See `Creating the FindTPL<tplName>.cmake
 #    file`_.)
 #
-# 2. **CLASSIFICATION** (``<pkgi_classif>``): Gives the `SE Package Test
+# 2. **CLASSIFICATION** (``<pkgi_classif>``): Gives the `Package Test
 #    Group`_ `PT`_, `ST`_, or `EX`_ and the maturity level ``EP``, ``RS``,
 #    ``PG``, ``PM``, ``GRS``, ``GPG``, ``GPM``, ``UM``.  These are separated
 #    by a coma with no space in between such as ``"RS,PT"`` for a "Research

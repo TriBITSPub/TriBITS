@@ -184,7 +184,7 @@ a) Create a 'do-configure' script such as [Recommended]::
 
     ./do-configure [OTHER OPTIONS] -D<Project>_ENABLE_<TRIBITS_PACKAGE>=ON
 
-  where ``<TRIBITS_PACKAGE>`` is a valid SE Package name (see above), etc. and
+  where ``<TRIBITS_PACKAGE>`` is a valid Package name (see above), etc. and
   ``SOURCE_BASE`` is set to the <Project> source base directory (or your can
   just give it explicitly in the script).
 
@@ -388,22 +388,22 @@ See the following use cases:
 Determine the list of packages that can be enabled
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In order to see the list of available <Project> SE Packages to enable, just
+In order to see the list of available <Project> Packages to enable, just
 run a basic CMake configure, enabling nothing, and then grep the output to see
 what packages are available to enable.  The full set of defined packages is
-contained the lines starting with ``'Final set of enabled SE packages'`` and
-``'Final set of non-enabled SE packages'``.  If no SE packages are enabled by
+contained the lines starting with ``'Final set of enabled packages'`` and
+``'Final set of non-enabled packages'``.  If no packages are enabled by
 default (which is base behavior), the full list of packages will be listed on
-the line ``'Final set of non-enabled SE packages'``.  Therefore, to see the
+the line ``'Final set of non-enabled packages'``.  Therefore, to see the
 full list of defined packages, run::
 
-  ./do-configure 2>&1 | grep "Final set of .*enabled SE packages"
+  ./do-configure 2>&1 | grep "Final set of .*enabled packages"
 
 Any of the packages shown on those lines can potentially be enabled using ``-D
 <Project>_ENABLE_<TRIBITS_PACKAGE>=ON`` (unless they are set to disabled
 for some reason, see the CMake output for package disable warnings).
 
-Another way to see the full list of SE packages that can be enabled is to
+Another way to see the full list of packages that can be enabled is to
 configure with `<Project>_DUMP_PACKAGE_DEPENDENCIES`_ = ``ON`` and then grep
 for ``<Project>_INTERNAL_PACKAGES`` using, for example::
 
@@ -420,12 +420,12 @@ setting the configure option::
 
   -D <Project>_DUMP_PACKAGE_DEPENDENCIES=ON
 
-This will print the basic forward/upstream dependencies for each SE package.
+This will print the basic forward/upstream dependencies for each package.
 To find this output, look for the line::
 
   Printing package dependencies ...
 
-and the dependencies are listed below this for each SE package in the form::
+and the dependencies are listed below this for each package in the form::
 
   -- <PKG>_LIB_REQUIRED_DEP_TPLS: <TPL0> <TPL1> ...
   -- <PKG>_LIB_OPTIONAL_DEP_TPLS: <TPL2> <TPL3> ...
@@ -440,7 +440,7 @@ and the dependencies are listed below this for each SE package in the form::
 there are no ``<PKG>_LIB_OPTIONAL_DEP_PACKAGES`` dependencies, then that line
 is not printed.)
 
-To also see the direct forward/downstream dependencies for each SE package,
+To also see the direct forward/downstream dependencies for each package,
 also include::
 
   -D <Project>_DUMP_FORWARD_PACKAGE_DEPENDENCIES=ON
@@ -459,7 +459,7 @@ Enable a set of packages
 
 .. _<Project>_ENABLE_TESTS:
 
-To enable an SE package ``<TRIBITS_PACKAGE>`` (and optionally also its tests
+To enable an package ``<TRIBITS_PACKAGE>`` (and optionally also its tests
 and examples), configure with::
 
   -D <Project>_ENABLE_<TRIBITS_PACKAGE>=ON \
@@ -558,7 +558,7 @@ Enable to test all effects of changing a given package(s)
 
 .. _<Project>_ENABLE_ALL_FORWARD_DEP_PACKAGES:
 
-To enable an SE package ``<TRIBITS_PACKAGE>`` to test it and all of its
+To enable an package ``<TRIBITS_PACKAGE>`` to test it and all of its
 down-stream packages, configure with::
 
   -D <Project>_ENABLE_<TRIBITS_PACKAGE>=ON \
@@ -604,7 +604,7 @@ tested (PT) packages and code.  To have this also enable all secondary tested
   -D <Project>_ENABLE_SECONDARY_TESTED_CODE=ON \
 
 NOTE: If this project is a "meta-project", then
-``<Project>_ENABLE_ALL_PACKAGES=ON`` may not enable *all* the SE packages but
+``<Project>_ENABLE_ALL_PACKAGES=ON`` may not enable *all* the packages but
 only the project's primary meta-project packages.  See `Package Dependencies
 and Enable/Disable Logic`_ and `TriBITS Dependency Handling Behaviors`_ for
 details.
@@ -613,7 +613,7 @@ details.
 Disable a package and all its dependencies
 ++++++++++++++++++++++++++++++++++++++++++
 
-To disable an SE package and all of the packages that depend on it, add the
+To disable an package and all of the packages that depend on it, add the
 configure options::
 
   -D <Project>_ENABLE_<TRIBITS_PACKAGE>=OFF
@@ -1606,8 +1606,8 @@ where ``<TPLNAME>`` = ``BLAS``, ``LAPACK`` ``Boost``, ``Netcdf``, etc.
 
 The full list of TPLs that is defined and can be enabled is shown by doing a
 configure with CMake and then grepping the configure output for ``Final set of
-.* TPLs``.  The set of TPL names listed in ``'Final set of enabled TPLs'`` and
-``'Final set of non-enabled TPLs'`` gives the full list of TPLs that can be
+.* TPLs``.  The set of TPL names listed in ``'Final set of enabled external packages/TPLs'`` and
+``'Final set of non-enabled external packages/TPLs'`` gives the full list of TPLs that can be
 enabled (or disabled).
 
 Some TPLs require only libraries (e.g. Fortran libraries like BLAS or LAPACK),

@@ -172,9 +172,9 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "-- WithSubpackagesB_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesA SimpleCxx"
         "-- WithSubpackagesC_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesB WithSubpackagesA SimpleCxx"
         "-- WithSubpackages_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesC WithSubpackagesB WithSubpackagesA SimpleCxx"
-        "Explicitly enabled packages on input .by user.:  0"
-        "Explicitly disabled packages on input .by user or by default.:  MixedLang WrapExternal 2"
-        "Enabling all SE packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
+        "Explicitly enabled top-level packages on input .by user.:  0"
+        "Explicitly disabled top-level packages on input .by user or by default.:  MixedLang WrapExternal 2"
+        "Enabling all packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
         "Setting TribitsExProj_ENABLE_SimpleCxx=ON"
         "Setting TribitsExProj_ENABLE_WithSubpackages=ON"
         "Setting TPL_ENABLE_HeaderOnlyTpl=ON because it is required by the enabled package SimpleCxx"
@@ -193,11 +193,11 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "-- WithSubpackages_LIB_ENABLED_DEPENDENCIES: WithSubpackagesA WithSubpackagesB WithSubpackagesC"
         "-- WithSubpackages_LIB_ALL_DEPENDENCIES: WithSubpackagesA WithSubpackagesB WithSubpackagesC"
         "-- WrapExternal_LIB_ALL_DEPENDENCIES: WithSubpackagesA MixedLang"
-        "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
-        "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 5"
-        "Final set of enabled TPLs:  ${FINAL_ENABLED_TPLS}"
-        "Final set of non-enabled packages:  MixedLang WrapExternal 2"
-        "Processing enabled TPL: HeaderOnlyTpl"
+        "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+        "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 5"
+        "Final set of enabled external packages/TPLs:  ${FINAL_ENABLED_TPLS}"
+        "Final set of non-enabled top-level packages:  MixedLang WrapExternal 2"
+        "Processing enabled external package/TPL: HeaderOnlyTpl"
         "-- File Trace: TPL        INCLUDE    .+/TribitsExampleProject/cmake/tpls/FindTPLHeaderOnlyTpl.cmake"
         "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
         "Performing Test HAVE_SIMPLECXX___INT64"
@@ -1331,12 +1331,12 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         "Total time to read in all dependencies files and build dependencies graph: "
         "Total time to adjust package and TPL enables: "
         "Total time to probe and setup the environment: "
-        "Total time to configure enabled TPLs: "
+        "Total time to configure enabled external packages/TPLs: "
         "Total time to configure enabled packages: "
         "Total time to set up for CPack packaging: "
         "Total time to configure TribitsExProj: "
-        "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
-        "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
+        "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+        "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
 
     TEST_1 CMND ${CMAKE_COMMAND}
       MESSAGE "Reconfigure to test out timing of all packages"
@@ -1347,9 +1347,9 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         "Total time to read in all dependencies files and build dependencies graph: "
         "Total time to adjust package and TPL enables: "
         "Total time to probe and setup the environment: "
-        "Total time to configure enabled TPLs: "
-        "-- Total time to configure package SimpleCxx: "
-        "-- Total time to configure package WithSubpackages: "
+        "Total time to configure enabled external packages/TPLs: "
+        "-- Total time to configure top-level package SimpleCxx: "
+        "-- Total time to configure top-level package WithSubpackages: "
         "Total time to configure enabled packages: "
         "Total time to set up for CPack packaging: "
         "Total time to configure TribitsExProj: "
@@ -1364,8 +1364,8 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         "Total time to read in all dependencies files and build dependencies graph: "
         "Total time to adjust package and TPL enables: "
         "Total time to probe and setup the environment: "
-        "Total time to configure enabled TPLs: "
-        "-- Total time to configure package SimpleCxx: "
+        "Total time to configure enabled external packages/TPLs: "
+        "-- Total time to configure top-level package SimpleCxx: "
         "Total time to configure enabled packages: "
         "Total time to set up for CPack packaging: "
         "Total time to configure TribitsExProj: "
@@ -1400,12 +1400,12 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran
       "-- SimpleCxx: No library dependencies!"
       "-- WithSubpackagesA_FULL_ENABLED_DEP_PACKAGES: SimpleCxx"
       "-- WithSubpackages_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesA SimpleCxx"
-      "Explicitly enabled packages on input .by user.:  0"
-      "Explicitly disabled packages on input .by user or by default.:  MixedLang WrapExternal 2"
-      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
-      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
-      "Final set of non-enabled packages:  MixedLang WrapExternal 2"
-      "Final set of non-enabled SE packages:  MixedLang WithSubpackagesB WithSubpackagesC WrapExternal 4"
+      "Explicitly enabled top-level packages on input .by user.:  0"
+      "Explicitly disabled top-level packages on input .by user or by default.:  MixedLang WrapExternal 2"
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
+      "Final set of non-enabled top-level packages:  MixedLang WrapExternal 2"
+      "Final set of non-enabled packages:  MixedLang WithSubpackagesB WithSubpackagesC WrapExternal 4"
   # NOTES: In the above test, we do a configure with
   # SIMPLECXX_SHOW_DEPRECATED_WARNINGS=1 and
   # TribitsExProj_SHOW_DEPRECATED_WARNINGS=OFF so that deprecated functions
@@ -1470,15 +1470,15 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
-      "Explicitly enabled packages on input .by user.:  0"
-      "Explicitly disabled packages on input .by user or by default.:  WrapExternal 1"
-      "Enabling all SE packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
+      "Explicitly enabled top-level packages on input .by user.:  0"
+      "Explicitly disabled top-level packages on input .by user or by default.:  WrapExternal 1"
+      "Enabling all packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
       "Setting TribitsExProj_ENABLE_SimpleCxx=ON"
       "Setting TribitsExProj_ENABLE_MixedLang=ON"
       "Setting TribitsExProj_ENABLE_WithSubpackages=ON"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
-      "Final set of non-enabled packages:  WrapExternal 1"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
+      "Final set of non-enabled top-level packages:  WrapExternal 1"
       "Configuring done"
       "Generating done"
       "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST"
@@ -1527,15 +1527,15 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibPrefix
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because "
-      "Explicitly enabled packages on input .by user.:  0"
-      "Explicitly disabled packages on input .by user or by default.:  WrapExternal 1"
-      "Enabling all SE packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
+      "Explicitly enabled top-level packages on input .by user.:  0"
+      "Explicitly disabled top-level packages on input .by user or by default.:  WrapExternal 1"
+      "Enabling all packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
       "Setting TribitsExProj_ENABLE_SimpleCxx=ON"
       "Setting TribitsExProj_ENABLE_MixedLang=ON"
       "Setting TribitsExProj_ENABLE_WithSubpackages=ON"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
-      "Final set of non-enabled packages:  WrapExternal 1"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
+      "Final set of non-enabled top-level packages:  WrapExternal 1"
       "Configuring done"
       "Generating done"
       "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST_LibPrefix"
@@ -1587,8 +1587,8 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because PYTHON_EXECUTABLE=''"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
       "Configuring done"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -1704,7 +1704,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this SE package"
+      "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this package"
       "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
@@ -1771,8 +1771,8 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DTribitsExProj_LIBRARY_NAME_PREFIX=tep_
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
       "Configuring done"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
@@ -1888,7 +1888,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DSPKB_SHOW_NON_TESTONLY_LIB_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this SE package"
+      "ERROR: Lib 'pws_b' in IMPORTEDLIBS is in this package"
       "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Configuring incomplete, errors occurred!"
 
@@ -1937,7 +1937,7 @@ tribits_add_advanced_test( TribitsExampleProject_SimpleCxx_DEBUG_int64
       -DHAVE_SIMPLECXX___INT64=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx 1"
+      "Final set of enabled top-level packages:  SimpleCxx 1"
       "Configuring done"
       "Generating done"
   TEST_1 CMND make
@@ -2031,8 +2031,8 @@ tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
       -DTribitsExProj_SKIP_CTEST_ADD_TEST=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
-      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
       "SimpleCxx_HelloWorldTests: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
       "SimpleCxx_HelloWorldProg: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
       "WithSubpackagesA_test_of_a: NOT added test because WithSubpackages_SKIP_CTEST_ADD_TEST='ON'[!]"
@@ -2070,8 +2070,8 @@ tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whi
       -DSimpleCxx_SKIP_CTEST_ADD_TEST=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
-      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
       "SimpleCxx_HelloWorldTests: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
       "SimpleCxx_HelloWorldProg: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
       "WithSubpackagesA_test_of_a: Added test [(]BASIC, .*PROCESSORS=1[)][!]"
@@ -2111,8 +2111,8 @@ tribits_add_advanced_test( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Bla
       -DSimpleCxx_SKIP_CTEST_ADD_TEST=OFF
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
-      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
       "SimpleCxx_HelloWorldTests.*: Added test [(]BASIC, .*PROCESSORS=1[)][!]"
       "SimpleCxx_HelloWorldProg.*: Added test [(]BASIC, .*PROCESSORS=1[)][!]"
       "WithSubpackagesA_test_of_a: NOT added test because WithSubpackages_SKIP_CTEST_ADD_TEST='ON'[!]"
@@ -2158,7 +2158,7 @@ tribits_add_advanced_test( TribitsExampleProject_EnableWithSubpackagesB_EnableWi
       "-- Setting WithSubpackagesB_ENABLE_EXAMPLES=ON because parent package WithSubpackages_ENABLE_EXAMPLES=ON"
       "-- WithSubpackagesB_TEST_ENABLED_DEPENDENCIES: MixedLang"
       "-- WithSubpackagesB_TEST_ALL_DEPENDENCIES: MixedLang"
-      "Processing enabled package: WithSubpackages [(]A, B, Tests, Examples[)]"
+      "Processing enabled top-level package: WithSubpackages [(]A, B, Tests, Examples[)]"
       "Configuring done"
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -2202,7 +2202,7 @@ tribits_add_advanced_test( TribitsExampleProject_EnableWithSubpackagesB_EnableWi
       "-- Setting WithSubpackagesB_ENABLE_EXAMPLES=ON because parent package WithSubpackages_ENABLE_EXAMPLES=ON"
       "-- WithSubpackagesB_TEST_ENABLED_DEPENDENCIES: MixedLang"
       "-- WithSubpackagesB_TEST_ALL_DEPENDENCIES: MixedLang"
-      "Processing enabled package: WithSubpackages [(]A, B, Examples[)]"
+      "Processing enabled top-level package: WithSubpackages [(]A, B, Examples[)]"
       "Configuring done"
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -2251,11 +2251,11 @@ tribits_add_advanced_test( TribitsExampleProject_ST_EnableSimpleCxx_EnableWithSu
       "Enabling all tests and/or examples that have not been explicitly disabled because TribitsExProj_ENABLE_.TESTS,EXAMPLES.=ON ..."
       "-- Setting SimpleCxx_ENABLE_TESTS=ON"
       "-- Setting SimpleCxx_ENABLE_EXAMPLES=ON"
-      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
       "-- Performing Test HAVE_SIMPLECXX___INT64"
       "-- Performing Test HAVE_SIMPLECXX___INT64 - Failed"
-      "Processing enabled package: MixedLang [(]Libs[)]"
-      "Processing enabled package: WithSubpackages [(]A, B[)]"
+      "Processing enabled top-level package: MixedLang [(]Libs[)]"
+      "Processing enabled top-level package: WithSubpackages [(]A, B[)]"
       "Configuring done"
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -2303,10 +2303,10 @@ tribits_add_advanced_test( TribitsExampleProject_ST_EnableMixedLang_EnableAllFor
       "-- Setting WithSubpackagesB_ENABLE_EXAMPLES=ON"
       "-- WithSubpackagesB_TEST_ENABLED_DEPENDENCIES: MixedLang"
       "-- WithSubpackagesB_TEST_ALL_DEPENDENCIES: MixedLang"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackages 5"
-      "Processing enabled package: MixedLang [(]Libs, Tests, Examples[)]"
-      "Processing enabled package: WithSubpackages [(]A, B, Tests, Examples[)]"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackages 5"
+      "Processing enabled top-level package: MixedLang [(]Libs, Tests, Examples[)]"
+      "Processing enabled top-level package: WithSubpackages [(]A, B, Tests, Examples[)]"
       "Configuring done"
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -2348,15 +2348,15 @@ tribits_add_advanced_test( TribitsExampleProject_WrapExternal
       -DTribitsExProj_ENABLE_TESTS=ON
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Explicitly enabled packages on input .by user.:  WrapExternal 1"
-      "Explicitly disabled packages on input .by user or by default.:  0"
+      "Explicitly enabled top-level packages on input .by user.:  WrapExternal 1"
+      "Explicitly disabled top-level packages on input .by user or by default.:  0"
       "Setting TribitsExProj_ENABLE_WithSubpackagesA=ON because WrapExternal has a required dependence on WithSubpackagesA"
       "Setting TribitsExProj_ENABLE_MixedLang=ON because WrapExternal has an optional dependence on MixedLang"
       "Setting TribitsExProj_ENABLE_SimpleCxx=ON because WithSubpackagesA has a required dependence on SimpleCxx"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
-      "Final set of non-enabled packages:  0"
-      "Final set of non-enabled SE packages:  WithSubpackagesB WithSubpackagesC 2"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+      "Final set of non-enabled top-level packages:  0"
+      "Final set of non-enabled packages:  WithSubpackagesB WithSubpackagesC 2"
       "This package has no unfiltered binary files so consider out of date"
       "Configuring done"
       "Generating done"
@@ -2380,7 +2380,7 @@ tribits_add_advanced_test( TribitsExampleProject_WrapExternal
     PASS_REGULAR_EXPRESSION_ALL
       "Most recent file in ./packages/with_subpackages/ is ./a/A.cpp"
       "Overall most recent modified file is in ./packages/with_subpackages/ and is ./a/A.cpp"
-      "The upstream SE package source file ./a/A.cpp is more recent than this package's binary file ./WrapExternal_run_external_func.exe"
+      "The upstream package source file ./a/A.cpp is more recent than this package's binary file ./WrapExternal_run_external_func.exe"
       "Blowing away WrapExternal build dir external_func/ so it will build from scratch"
   TEST_7 CMND make ARGS ${CTEST_BUILD_FLAGS}
     MESSAGE "Rebuild only exteranl_func"
@@ -2398,7 +2398,7 @@ tribits_add_advanced_test( TribitsExampleProject_WrapExternal
        TribitsExampleProject
      MESSAGE "Recofigure changing the debug mode to trigger rebuild"
     PASS_REGULAR_EXPRESSION_ALL
-      "The upstream SE package binary file ./src/SimpleCxx_config.h is more recent than this package's binary file ./WrapExternal_run_external_func.exe"
+      "The upstream package binary file ./src/SimpleCxx_config.h is more recent than this package's binary file ./WrapExternal_run_external_func.exe"
       "Blowing away WrapExternal build dir external_func/ so it will build from scratch"
   TEST_10 CMND make ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
@@ -2423,7 +2423,7 @@ tribits_add_advanced_test( TribitsExampleProject_WrapExternal
   TEST_15 CMND ${CMAKE_COMMAND} ARGS TribitsExampleProject
      MESSAGE "Recofigure with no changes that will not do anything"
     PASS_REGULAR_EXPRESSION_ALL
-      "This package's most recent binary file (./WrapExternal_run_external_func.exe|./external_func/libexternal_func.a) is more recent than its upstream SE package source or binary files or this package's source files"
+      "This package's most recent binary file (./WrapExternal_run_external_func.exe|./external_func/libexternal_func.a) is more recent than its upstream package source or binary files or this package's source files"
   TEST_16 CMND make ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
       "Built target build_external_func"
@@ -2454,8 +2454,8 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_WrapExternal_Verb
       -DTribitsExProj_VERBOSE_CONFIGURE=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx WithSubpackages WrapExternal 3"
-      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages WrapExternal 3"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
 
       "HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
       "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
@@ -2520,8 +2520,8 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_NoFortran_OverridePackageSo
       -DWithSubpackages_SOURCE_DIR_OVERRIDE=with_subpackages
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx WithSubpackages WrapExternal 3"
-      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages WrapExternal 3"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
       "-- NOTE: WithSubpackages_SOURCE_DIR_OVERRIDE='with_subpackages' is overriding default path 'packages/with_subpackages'"
       "-- File Trace: PACKAGE    INCLUDE    .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/cmake/Dependencies[.]cmake"
       "-- File Trace: PACKAGE    INCLUDE    .*/TriBITS_TribitsExampleProject_ALL_NoFortran_OverridePackageSourceDir/TribitsExampleProject/with_subpackages/a/cmake/Dependencies[.]cmake"
@@ -2572,7 +2572,7 @@ tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
       -DHeaderOnlyTpl_INCLUDE_DIRS=/path_does_not_exist
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Processing enabled TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+      "Processing enabled external package/TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
       "-- Searching for headers in HeaderOnlyTpl_INCLUDE_DIRS='/path_does_not_exist'"
       "-- TIP: If the TPL 'HeaderOnlyTpl' is on your system then you can set:"
       "-DHeaderOnlyTpl_INCLUDE_DIRS='<dir0>[;]<dir1>[;]...'"
@@ -2604,7 +2604,7 @@ tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
       #-DTribitsExProj_VERBOSE_CONFIGURE=ON
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Processing enabled TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+      "Processing enabled external package/TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
       "-- Searching for headers in HeaderOnlyTpl_INCLUDE_DIRS='.*/tribits/examples/tpls/HeaderOnlyTpl'"
       "Found header '.*/tribits/examples/tpls/HeaderOnlyTpl/HeaderOnlyTpl_stuff.hpp'"
       "Found TPL 'HeaderOnlyTpl' include dirs '.*/tribits/examples/tpls/HeaderOnlyTpl'"
@@ -2636,7 +2636,7 @@ tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
       -DHeaderOnlyTpl_INCLUDE_DIRS=/path_does_not_exist
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+      "Processing enabled external package/TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
       "TIP: Even though the TPL 'HeaderOnlyTpl' was explicitly enabled in input,"
       "it can be disabled with:"
       "  -DTPL_ENABLE_HeaderOnlyTpl=OFF"
@@ -2707,8 +2707,8 @@ tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
      .
     PASS_REGULAR_EXPRESSION_ALL
       "Setting TribitsExProj_ENABLE_InsertedPkg=ON"
+      "Final set of enabled top-level packages:  SimpleCxx InsertedPkg .+"
       "Final set of enabled packages:  SimpleCxx InsertedPkg .+"
-      "Final set of enabled SE packages:  SimpleCxx InsertedPkg .+"
       "Configuring done"
       "Generating done"
 
@@ -2754,9 +2754,9 @@ tribits_add_advanced_test( TribitsExampleProject_SimpleTpl
       -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_STATIC_DIR}/install/lib
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
-      "Final set of enabled TPLs:  HeaderOnlyTpl SimpleTpl 2"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "Final set of enabled external packages/TPLs:  HeaderOnlyTpl SimpleTpl 2"
       "TPL_SimpleTpl_LIBRARIES='.*/TriBITS_SimpleTpl_install_STATIC/install/lib/libsimpletpl.a'"
       "TPL_SimpleTpl_INCLUDE_DIRS='.*/TriBITS_SimpleTpl_install_STATIC/install/include'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -2820,8 +2820,8 @@ tribits_add_advanced_test( TribitsExampleProject_TargetDefinesPkg
      .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Passing extra defines through 'DEFINES'"
+      "Final set of enabled top-level packages:  TargetDefinesPkg 1"
       "Final set of enabled packages:  TargetDefinesPkg 1"
-      "Final set of enabled SE packages:  TargetDefinesPkg 1"
       "Configuring done"
       "Generating done"
 
@@ -2886,8 +2886,8 @@ tribits_add_advanced_test( TribitsExampleProject_MixedSharedStaticLibs_shared
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx MixedSharedStaticLibs 2"
-      "Final set of enabled SE packages:  SimpleCxx MixedSharedStaticLibsSharedOnly MixedSharedStaticLibsStaticOnly MixedSharedStaticLibsStaticExec MixedSharedStaticLibs 5"
+      "Final set of enabled top-level packages:  SimpleCxx MixedSharedStaticLibs 2"
+      "Final set of enabled packages:  SimpleCxx MixedSharedStaticLibsSharedOnly MixedSharedStaticLibsStaticOnly MixedSharedStaticLibsStaticExec MixedSharedStaticLibs 5"
       "Configuring done"
       "Generating done"
 
@@ -2977,8 +2977,8 @@ tribits_add_advanced_test( TribitsExampleProject_MixedSharedStaticLibs_static
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled packages:  SimpleCxx MixedSharedStaticLibs 2"
-      "Final set of enabled SE packages:  SimpleCxx MixedSharedStaticLibsSharedOnly MixedSharedStaticLibsStaticOnly MixedSharedStaticLibsStaticExec MixedSharedStaticLibs 5"
+      "Final set of enabled top-level packages:  SimpleCxx MixedSharedStaticLibs 2"
+      "Final set of enabled packages:  SimpleCxx MixedSharedStaticLibsSharedOnly MixedSharedStaticLibsStaticOnly MixedSharedStaticLibsStaticExec MixedSharedStaticLibs 5"
       "Configuring done"
       "Generating done"
 
@@ -3024,14 +3024,14 @@ tribits_add_advanced_test( TribitsExampleProject_DisableWithSubpackagesB_EnableW
       -DTribitsExProj_ENABLE_WithSubpackagesB=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Explicitly enabled SE packages on input .by user.:  WithSubpackagesB 1"
+      "Explicitly enabled packages on input .by user.:  WithSubpackagesB 1"
       "-- Setting TribitsExProj_ENABLE_WrapExternal=OFF because WrapExternal has a required library dependence on disabled package WithSubpackagesA"
       "Enabling all optional intra-package enables <TRIBITS_PACKAGE>_ENABLE_<DEPPACKAGE> that are not currently disabled if both sets of packages are enabled [.][.][.]"
       "-- NOT setting WithSubpackagesB_ENABLE_MixedLang=ON since MixedLang is NOT enabled at this point!"
       "Enabling the shell of non-enabled parent packages [(]mostly for show[)] that have at least one subpackage enabled [.][.][.]"
       "-- Setting TribitsExProj_ENABLE_WithSubpackages=ON because TribitsExProj_ENABLE_WithSubpackagesB=ON"
-      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
-      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesB WithSubpackages 3"
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesB WithSubpackages 3"
 
   )
 # NOTE: The above test is the *only* test that we have that checks that a
@@ -3199,7 +3199,7 @@ tribits_add_advanced_test( TribitsExampleProject_extra_link_flags
       -DTribitsExProj_EXTRA_LINK_FLAGS="-lgfortran -ldl"
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Processing enabled TPL: TribitsExProjTribitsLastLib"
+      "Processing enabled external package/TPL: TribitsExProjTribitsLastLib"
       "TPL_TribitsExProjTribitsLastLib_LIBRARIES='-lgfortran[;]-ldl'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   # NOTE: Above, we use two libraries to ensure that the logic in TriBITS can

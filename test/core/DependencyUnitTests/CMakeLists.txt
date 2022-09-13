@@ -368,10 +368,10 @@ create_reduced_dependency_handling_test_case(
   PASS_REGULAR_EXPRESSION_ALL
     ${REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY}
     ${REDUCED_EnableAllPackages_REGEX_ARRAY}
-    "Final set of enabled packages:  Teuchos RTOp Epetra Thyra 4"
-    "Final set of enabled SE packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraEpetra Thyra 6"
-    "Final set of non-enabled packages:  Triutils EpetraExt 2"
-    "Final set of non-enabled SE packages:  Triutils EpetraExt ThyraGoodStuff ThyraCrazyStuff ThyraEpetraExt 5"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Thyra 4"
+    "Final set of enabled packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraEpetra Thyra 6"
+    "Final set of non-enabled top-level packages:  Triutils EpetraExt 2"
+    "Final set of non-enabled packages:  Triutils EpetraExt ThyraGoodStuff ThyraCrazyStuff ThyraEpetraExt 5"
   )
 
 create_reduced_dependency_handling_test_case(
@@ -403,10 +403,10 @@ create_reduced_dependency_handling_test_case(
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
     -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  Teuchos RTOp Epetra Thyra 4"
-    "Final set of enabled SE packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraEpetra Thyra 6"
-    "Final set of non-enabled packages:  Triutils EpetraExt 2"
-    "Final set of non-enabled SE packages:  Triutils EpetraExt ThyraGoodStuff ThyraCrazyStuff ThyraEpetraExt "
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Thyra 4"
+    "Final set of enabled packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraEpetra Thyra 6"
+    "Final set of non-enabled top-level packages:  Triutils EpetraExt 2"
+    "Final set of non-enabled packages:  Triutils EpetraExt ThyraGoodStuff ThyraCrazyStuff ThyraEpetraExt "
   )
 
 
@@ -422,8 +422,8 @@ create_reduced_dependency_handling_test_case(
     "-- Setting EpetraExt_ENABLE_TESTS=OFF because EpetraExt has a required test/example dependence on disabled TPL AMD"
     "-- Setting EpetraExt_ENABLE_EXAMPLES=OFF because EpetraExt has a required test/example dependence on disabled TPL AMD"
     "-- Setting Trilinos_ENABLE_ThyraEpetraExt=ON"
-    "Processing enabled package: Triutils [(]Libs, Tests, Examples[)]"
-    "Processing enabled package: EpetraExt [(]Libs[)]"
+    "Processing enabled top-level package: Triutils [(]Libs, Tests, Examples[)]"
+    "Processing enabled top-level package: EpetraExt [(]Libs[)]"
     "Finished configuring Trilinos!"
     "Configuring done"
   )
@@ -441,9 +441,9 @@ create_reduced_dependency_handling_test_case(
     "-- Setting EpetraExt_ENABLE_TESTS=OFF because EpetraExt has a required test/example dependence on disabled package Triutils"
     "-- Setting EpetraExt_ENABLE_EXAMPLES=OFF because EpetraExt has a required test/example dependence on disabled package Triutils"
     "-- Setting Trilinos_ENABLE_ThyraEpetraExt=ON"
-    "Final set of non-enabled packages:  Triutils 1"
-    "Processing enabled package: Epetra [(]Libs, Tests, Examples[)]"
-    "Processing enabled package: EpetraExt [(]Libs[)]"
+    "Final set of non-enabled top-level packages:  Triutils 1"
+    "Processing enabled top-level package: Epetra [(]Libs, Tests, Examples[)]"
+    "Processing enabled top-level package: EpetraExt [(]Libs[)]"
     "Finished configuring Trilinos!"
     "Configuring done"
   )
@@ -531,7 +531,7 @@ create_dependency_handling_test_case(
   EnableAllPackages
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
     "NOTE: MissingPackage is being ignored since its directory is missing and MissingPackage_ALLOW_MISSING_EXTERNAL_PACKAGE = TRUE"
   )
 
@@ -550,7 +550,7 @@ create_dependency_handling_test_case(
 -DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
     "${EnableAllPackages_DumpDependencies_REGEX_ARRAY}"
-    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
     "NOTE: MissingPackage is being ignored since its directory is missing and MissingPackage_ALLOW_MISSING_EXTERNAL_PACKAGE = TRUE"
   )
 
@@ -561,7 +561,7 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
      -DTrilinos_ENABLE_TESTS:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
     "Setting Teuchos_ENABLE_TESTS=ON"
     "Setting RTOp_ENABLE_TESTS=ON"
     "Setting Epetra_ENABLE_TESTS=ON"
@@ -578,7 +578,7 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_TESTS:BOOL=ON
     -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
+    "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
     "Setting Teuchos_ENABLE_TESTS=ON"
     "Setting RTOp_ENABLE_TESTS=ON"
     "Setting Epetra_ENABLE_TESTS=ON"
@@ -592,7 +592,7 @@ create_dependency_handling_test_case(
   DisableEpetra_EnableAllPackages
   ARGS -DTrilinos_ENABLE_Epetra:BOOL=OFF -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Zoltan Shards Tpetra Thyra Intrepid ML RBGen 10"
+    "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Zoltan Shards Tpetra Thyra Intrepid ML RBGen 10"
   )
 
 
@@ -608,8 +608,8 @@ create_dependency_handling_test_case(
     "Enabling all tests and/or examples that have not been explicitly disabled because Trilinos_ENABLE_.TESTS,EXAMPLES.=ON ..."
     "-- Setting Epetra_ENABLE_TESTS=ON"
     "-- Setting Epetra_ENABLE_EXAMPLES=ON"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Triutils Tpetra Thyra 6"
-    "Final set of enabled SE packages:  Teuchos RTOp Epetra Triutils Tpetra ThyraCoreLibs ThyraTpetra Thyra 8"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Triutils Tpetra Thyra 6"
+    "Final set of enabled packages:  Teuchos RTOp Epetra Triutils Tpetra ThyraCoreLibs ThyraTpetra Thyra 8"
   )
 
 
@@ -684,15 +684,15 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_TEST=TRUE -DTPL_ENABLE_BLAS=FALSE
 #    -DTrilinos_VERBOSE_CONFIGURE=TRUE
   PASS_REGULAR_EXPRESSION_ALL
-    "Explicitly enabled packages on input .by user.:  Zoltan 1"
-    "Explicitly disabled packages on input .by user or by default.:  Stokhos 1"
-    "Explicitly disabled TPLs on input .by user or by default.:  MPI BLAS 2"
+    "Explicitly enabled top-level packages on input .by user.:  Zoltan 1"
+    "Explicitly disabled top-level packages on input .by user or by default.:  Stokhos 1"
+    "Explicitly disabled external packages/TPLs on input .by user or by default.:  MPI BLAS 2"
     "Setting Trilinos_ENABLE_Teuchos=OFF because Teuchos has a required library dependence on disabled TPL BLAS"
     "Setting Trilinos_ENABLE_TrilinosFramework=ON"
+    "Final set of enabled top-level packages:  TrilinosFramework Zoltan Shards 3"
     "Final set of enabled packages:  TrilinosFramework Zoltan Shards 3"
-    "Final set of enabled SE packages:  TrilinosFramework Zoltan Shards 3"
-    "Final set of non-enabled packages:  Teuchos RTOp Epetra Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 21"
-    "Final set of non-enabled SE packages:  Teuchos RTOp Epetra Triutils Tpetra EpetraExt Stokhos Sacado ThyraCoreLibs ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 27"
+    "Final set of non-enabled top-level packages:  Teuchos RTOp Epetra Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 21"
+    "Final set of non-enabled packages:  Teuchos RTOp Epetra Triutils Tpetra EpetraExt Stokhos Sacado ThyraCoreLibs ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 27"
   )
 # Above test makes sure that TRUE/FALSE also processed correctly for enable
 # vars.
@@ -704,7 +704,7 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Setting Trilinos_ENABLE_RTOp=OFF because RTOp has a required library dependence on disabled package Teuchos"
-    "Final set of enabled packages:  Epetra Zoltan Triutils AztecOO ML 5"
+    "Final set of enabled top-level packages:  Epetra Zoltan Triutils AztecOO ML 5"
   )
 
 
@@ -712,7 +712,7 @@ create_dependency_handling_test_case(
   DisableEpetra_DisableTeuchos_EnableAllPackages
   ARGS -DTrilinos_ENABLE_Epetra:BOOL=OFF -DTrilinos_ENABLE_Teuchos:BOOL=OFF -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  TrilinosFramework Zoltan Shards ML 4"
+    "Final set of enabled top-level packages:  TrilinosFramework Zoltan Shards ML 4"
   )
 
 
@@ -720,7 +720,7 @@ create_dependency_handling_test_case(
   EnableTeuchos_EnableAllForwardPackages
   ARGS -DTrilinos_ENABLE_Teuchos:BOOL=ON -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 18"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 18"
   )
 
 
@@ -728,7 +728,7 @@ create_dependency_handling_test_case(
   EnableEpetraExt_EnableAllForwardPackages
   ARGS -DTrilinos_ENABLE_EpetraExt:BOOL=ON -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 18"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 18"
   )
 
 
@@ -736,7 +736,7 @@ create_dependency_handling_test_case(
   EnableEpetraExt
   ARGS -DTrilinos_ENABLE_EpetraExt:BOOL=ON -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  Teuchos Epetra EpetraExt 3"
+    "Final set of enabled top-level packages:  Teuchos Epetra EpetraExt 3"
   )
 
 
@@ -744,7 +744,7 @@ create_dependency_handling_test_case(
   EnableEpetraExt_EnableAllOptionalPackages
   ARGS -DTrilinos_ENABLE_EpetraExt:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  Teuchos Epetra Zoltan Triutils EpetraExt 5"
+    "Final set of enabled top-level packages:  Teuchos Epetra Zoltan Triutils EpetraExt 5"
   )
 
 
@@ -755,7 +755,7 @@ create_dependency_handling_test_case(
   PASS_REGULAR_EXPRESSION_ALL
     "NOTE: Not Setting Trilinos_ENABLE_Belos=ON even though Stratimikos has an optional dependence on Belos because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
     "NOTE: Not Setting Trilinos_ENABLE_Sacado=ON even though Intrepid has an optional dependence on Sacado because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 17"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 17"
   )
 
 
@@ -764,7 +764,7 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_ENABLE_Amesos:BOOL=ON -DTrilinos_ENABLE_Zoltan:BOOL=OFF
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  Teuchos RTOp Epetra Shards Triutils EpetraExt Thyra AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos 14"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Shards Triutils EpetraExt Thyra AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos 14"
   )
 
 
@@ -775,8 +775,8 @@ create_dependency_handling_test_case(
     "Setting Trilinos_ENABLE_Thyra=ON because Trilinos_ENABLE_ThyraCoreLibs=ON"
     "Setting Thyra_ENABLE_TESTS=ON because ThyraCoreLibs_ENABLE_TESTS=ON"
     "Setting Thyra_ENABLE_EXAMPLES=ON because ThyraCoreLibs_ENABLE_EXAMPLES=ON"
-    "Final set of enabled packages:  Teuchos RTOp Thyra 3"
-    "Final set of enabled SE packages:  Teuchos RTOp ThyraCoreLibs Thyra 4"
+    "Final set of enabled top-level packages:  Teuchos RTOp Thyra 3"
+    "Final set of enabled packages:  Teuchos RTOp ThyraCoreLibs Thyra 4"
   )
 
 
@@ -784,7 +784,7 @@ create_dependency_handling_test_case(
   EnableThyra_EnableAllForwardPackages
   ARGS -DTrilinos_ENABLE_Thyra:BOOL=ON -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Explicitly enabled packages on input .by user.:  Thyra 1"
+    "Explicitly enabled top-level packages on input .by user.:  Thyra 1"
     "Enabling subpackages for hard enables of parent packages due to Trilinos_ENABLE_<PARENT_PACKAGE>=ON ..."
     "Setting subpackage enable Trilinos_ENABLE_ThyraCoreLibs=ON because parent package Trilinos_ENABLE_Thyra=ON"
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetra=ON because parent package Trilinos_ENABLE_Thyra=ON"
@@ -792,8 +792,8 @@ create_dependency_handling_test_case(
     "Setting subpackage enable Trilinos_ENABLE_ThyraTpetra=ON because parent package Trilinos_ENABLE_Thyra=ON"
     "Sweep forward enabling all forward library dependent packages because Trilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON ..."
     "Setting Trilinos_ENABLE_Stratimikos=ON because Trilinos_ENABLE_ThyraCoreLibs=ON"
-    "Final set of enabled packages:  .+ Thyra .+ Stratimikos"
-    "Final set of non-enabled SE packages:  .+ ThyraGoodStuff ThyraCrazyStuff"
+    "Final set of enabled top-level packages:  .+ Thyra .+ Stratimikos"
+    "Final set of non-enabled packages:  .+ ThyraGoodStuff ThyraCrazyStuff"
   )
 
 
@@ -807,10 +807,10 @@ create_dependency_handling_test_case(
     "Setting Thyra_ENABLE_ThyraCrazyStuff=OFF because Thyra has an optional library dependence on disabled package ThyraCrazyStuff"
     "Setting Trilinos_ENABLE_Stratimikos=OFF because Stratimikos has a required library dependence on disabled package ThyraEpetraExt"
     "Setting Thyra_ENABLE_ThyraEpetraExt=OFF because Thyra has an optional library dependence on disabled package ThyraEpetraExt"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Triutils Tpetra Thyra 6"
-    "Final set of enabled SE packages:  Teuchos RTOp Epetra Triutils Tpetra ThyraCoreLibs ThyraEpetra ThyraTpetra Thyra 9"
-    "Final set of non-enabled packages:  TrilinosFramework Zoltan Shards EpetraExt Stokhos Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 18"
-    "Final set of non-enabled SE packages:  TrilinosFramework Zoltan Shards EpetraExt Stokhos Sacado ThyraGoodStuff ThyraCrazyStuff ThyraEpetraExt Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 21"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Triutils Tpetra Thyra 6"
+    "Final set of enabled packages:  Teuchos RTOp Epetra Triutils Tpetra ThyraCoreLibs ThyraEpetra ThyraTpetra Thyra 9"
+    "Final set of non-enabled top-level packages:  TrilinosFramework Zoltan Shards EpetraExt Stokhos Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 18"
+    "Final set of non-enabled packages:  TrilinosFramework Zoltan Shards EpetraExt Stokhos Sacado ThyraGoodStuff ThyraCrazyStuff ThyraEpetraExt Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 21"
   )
 
 
@@ -818,14 +818,14 @@ create_dependency_handling_test_case(
   EnableThyraEpetraExt
   ARGS -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Explicitly enabled packages on input .by user.:  0"
-    "Explicitly enabled SE packages on input .by user.:  ThyraEpetraExt 1"
+    "Explicitly enabled top-level packages on input .by user.:  0"
+    "Explicitly enabled packages on input .by user.:  ThyraEpetraExt 1"
     "Setting Trilinos_ENABLE_ThyraEpetra=ON because ThyraEpetraExt has a required dependence on ThyraEpetra"
     "Setting Trilinos_ENABLE_ThyraCoreLibs=ON because ThyraEpetra has a required dependence on ThyraCoreLibs"
     "Setting Trilinos_ENABLE_Teuchos=ON because ThyraCoreLibs has a required dependence on Teuchos"
     "Setting Trilinos_ENABLE_Thyra=ON because Trilinos_ENABLE_ThyraCoreLibs=ON"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra 7"
-    "Final set of non-enabled SE packages:  .+ ThyraGoodStuff ThyraCrazyStuff ThyraTpetra .+"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra 7"
+    "Final set of non-enabled packages:  .+ ThyraGoodStuff ThyraCrazyStuff ThyraTpetra .+"
   )
 
 
@@ -834,8 +834,8 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_ENABLE_Thyra:BOOL=OFF -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetraExt=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
+    "Final set of enabled top-level packages:  0"
     "Final set of enabled packages:  0"
-    "Final set of enabled SE packages:  0"
   )
 
 
@@ -845,13 +845,13 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Explicitly enabled packages on input .by user.:  Thyra 1"
-    "Explicitly enabled SE packages on input .by user.:  ThyraEpetraExt Thyra 2"
-    "Explicitly disabled SE packages on input .by user or by default.:  .+ ThyraEpetra"
+    "Explicitly enabled top-level packages on input .by user.:  Thyra 1"
+    "Explicitly enabled packages on input .by user.:  ThyraEpetraExt Thyra 2"
+    "Explicitly disabled packages on input .by user or by default.:  .+ ThyraEpetra"
     "NOTE: Setting Trilinos_ENABLE_ThyraEpetraExt=OFF which was 'ON' because ThyraEpetraExt has a required library dependence on disabled package ThyraEpetra but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
     "Setting Thyra_ENABLE_ThyraEpetra=OFF because Thyra has an optional library dependence on disabled package ThyraEpetra"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Triutils Tpetra Thyra 6"
-    "Final set of enabled SE packages:  Teuchos RTOp Epetra Triutils Tpetra ThyraCoreLibs ThyraTpetra Thyra 8"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Triutils Tpetra Thyra 6"
+    "Final set of enabled packages:  Teuchos RTOp Epetra Triutils Tpetra ThyraCoreLibs ThyraTpetra Thyra 8"
   )
 
 
@@ -861,13 +861,13 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON 
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Explicitly enabled packages on input .by user.:  Thyra 1"
-    "Explicitly enabled SE packages on input .by user.:  ThyraEpetraExt Thyra 2"
-    "Explicitly disabled packages on input .by user or by default.:  Epetra"
+    "Explicitly enabled top-level packages on input .by user.:  Thyra 1"
+    "Explicitly enabled packages on input .by user.:  ThyraEpetraExt Thyra 2"
+    "Explicitly disabled top-level packages on input .by user or by default.:  Epetra"
     "Setting Trilinos_ENABLE_ThyraEpetra=OFF because ThyraEpetra has a required library dependence on disabled package Epetra"
     "NOTE: Setting Trilinos_ENABLE_ThyraEpetraExt=OFF which was 'ON' because ThyraEpetraExt has a required library dependence on disabled package EpetraExt but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
-    "Final set of enabled packages:  Teuchos RTOp Tpetra Thyra 4"
-    "Final set of enabled SE packages:  Teuchos RTOp Tpetra ThyraCoreLibs ThyraTpetra Thyra 6"
+    "Final set of enabled top-level packages:  Teuchos RTOp Tpetra Thyra 4"
+    "Final set of enabled packages:  Teuchos RTOp Tpetra ThyraCoreLibs ThyraTpetra Thyra 6"
   )
 
 
@@ -895,8 +895,8 @@ create_dependency_handling_test_case(
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetraExt=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraTpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "NOTE: Setting Trilinos_ENABLE_Stratimikos=OFF which was 'ON' because Stratimikos has a required library dependence on disabled package ThyraCoreLibs but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON"
-    "Final set of enabled packages:  0"
-    "Final set of non-enabled packages:  .+ Teuchos .+ Thyra .+ Stratimikos .+"
+    "Final set of enabled top-level packages:  0"
+    "Final set of non-enabled top-level packages:  .+ Teuchos .+ Thyra .+ Stratimikos .+"
   )
 
 
@@ -905,7 +905,7 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_ENABLE_Epetra:BOOL=ON -DTrilinos_ENABLE_ThyraCoreLibs:BOOL=OFF
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  Teuchos Epetra Zoltan Shards Triutils Tpetra EpetraExt Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML RBGen 15"
+    "Final set of enabled top-level packages:  Teuchos Epetra Zoltan Shards Triutils Tpetra EpetraExt Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML RBGen 15"
   )
 
 
@@ -913,8 +913,8 @@ create_dependency_handling_test_case(
   EnableAllPackages_DefaultTPLs
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled TPLs:  BLAS LAPACK DUMMY 3"
-    "Final set of non-enabled TPLs:  MPI Boost Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS 16"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK DUMMY 3"
+    "Final set of non-enabled external packages/TPLs:  MPI Boost Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS 16"
   )
 
 
@@ -922,7 +922,7 @@ create_dependency_handling_test_case(
   EnableAllPackages_EnableBoost
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled TPLs:  BLAS LAPACK Boost DUMMY 4"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Boost DUMMY 4"
   )
 
 
@@ -931,7 +931,7 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
     -DTPL_ENABLE_ParMETIS:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled TPLs:  BLAS LAPACK Boost ParMETIS DUMMY 5"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Boost ParMETIS DUMMY 5"
   )
 
 
@@ -959,7 +959,7 @@ create_dependency_handling_test_case(
   ARGS  -DTrilinos_ENABLE_Zoltan=ON -DZoltan_ENABLE_ParMETIS=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Setting TPL_ENABLE_ParMETIS=ON because Zoltan_ENABLE_ParMETIS=ON"
-    "Final set of enabled TPLs:  ParMETIS 1"
+    "Final set of enabled external packages/TPLs:  ParMETIS 1"
   )
 
 
@@ -968,7 +968,7 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_ENABLE_Zoltan=ON -DZoltan_ENABLE_ParMETIS=ON -DTPL_ENABLE_ParMETIS=OFF
   PASS_REGULAR_EXPRESSION_ALL
     "NOTE: Setting Zoltan_ENABLE_ParMETIS=OFF which was ON since TPL_ENABLE_ParMETIS=OFF"
-    "Final set of enabled TPLs:  0"
+    "Final set of enabled external packages/TPLs:  0"
   )
 
 
@@ -987,7 +987,7 @@ create_dependency_handling_test_case(
     -DTPL_ENABLE_MPI:BOOL=ON
     -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  .*Panzer"
+    "Final set of enabled top-level packages:  .*Panzer"
   )
 
 
@@ -1010,8 +1010,8 @@ create_dependency_handling_test_case(
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
     "NOTE: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled TPL MPI but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON"
-    "Final set of enabled packages:  0"
-    "Final set of non-enabled packages:  .+ Panzer .+"
+    "Final set of enabled top-level packages:  0"
+    "Final set of non-enabled top-level packages:  .+ Panzer .+"
   )
 
 
@@ -1026,8 +1026,8 @@ create_dependency_handling_test_case(
     "-- Setting Thyra_ENABLE_ThyraCoreLibs=ON because Trilinos_ENABLE_ThyraCoreLibs=ON"
     "-- Setting Thyra_ENABLE_ThyraGoodStuff=ON because Trilinos_ENABLE_ThyraGoodStuff=ON"
     "-- Setting Thyra_ENABLE_ThyraEpetra=ON because Trilinos_ENABLE_ThyraEpetra=ON"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Thyra 4"
-    "Final set of enabled SE packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraGoodStuff ThyraEpetra Thyra 7"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Thyra 4"
+    "Final set of enabled packages:  Teuchos RTOp Epetra ThyraCoreLibs ThyraGoodStuff ThyraEpetra Thyra 7"
   )
 
 
@@ -1036,8 +1036,8 @@ create_dependency_handling_test_case(
   ARGS  -DTrilinos_ENABLE_Tpetra=ON
     -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra 8"
-    "Final set of enabled SE packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt ThyraCoreLibs ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra 12"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra 8"
+    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt ThyraCoreLibs ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra 12"
   )
 
 
@@ -1045,8 +1045,8 @@ create_dependency_handling_test_case(
   EnableAllPackages_EnableSecondaryTestedCode_EnableAllOptionalPackges
   ARGS  -DTrilinos_ENABLE_ALL_PACKAGES=ON -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx 22"
-    "Final set of enabled TPLs:  BLAS LAPACK Boost DUMMY 4"
+    "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx 22"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Boost DUMMY 4"
   )
 
 
@@ -1055,11 +1055,11 @@ create_dependency_handling_test_case(
   ARGS  -DTrilinos_ENABLE_Stratimikos=ON
     -DTrilinos_HOSTTYPE:STRING=BadSystem1
   PASS_REGULAR_EXPRESSION_ALL
-    "Explicitly disabled packages on input .+:  Stokhos Ifpack ML 3"
+    "Explicitly disabled top-level packages on input .+:  Stokhos Ifpack ML 3"
     "Setting Stratimikos_ENABLE_Ifpack=OFF because Stratimikos has an optional library dependence on disabled package Ifpack"
     "Setting Stratimikos_ENABLE_ML=OFF because Stratimikos has an optional library dependence on disabled package ML"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra AztecOO Galeri Amesos Stratimikos 11"
-    "Final set of non-enabled packages:  TrilinosFramework Shards Tpetra Stokhos Sacado Isorropia Intrepid Ifpack ML Belos RBGen Phalanx Panzer 13"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra AztecOO Galeri Amesos Stratimikos 11"
+    "Final set of non-enabled top-level packages:  TrilinosFramework Shards Tpetra Stokhos Sacado Isorropia Intrepid Ifpack ML Belos RBGen Phalanx Panzer 13"
   )
 
 
@@ -1068,12 +1068,12 @@ create_dependency_handling_test_case(
   ARGS  -DTrilinos_ENABLE_Stratimikos=ON
     -DTrilinos_HOSTTYPE:STRING=BadSystem2
   PASS_REGULAR_EXPRESSION_ALL
-    "Explicitly disabled packages on input .+:  Stokhos Ifpack 2"
+    "Explicitly disabled top-level packages on input .+:  Stokhos Ifpack 2"
     "Setting Stratimikos_ENABLE_Ifpack=OFF because Stratimikos has an optional library dependence on disabled package Ifpack"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra Isorropia AztecOO Galeri Amesos ML Stratimikos 13"
-    "Final set of enabled SE packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt ThyraCoreLibs ThyraEpetra ThyraEpetraExt Thyra Isorropia AztecOO Galeri Amesos ML Stratimikos 16"
-    "Final set of non-enabled packages:  TrilinosFramework Shards Tpetra Stokhos Sacado Intrepid Ifpack Belos RBGen Phalanx Panzer 11"
-    "Final set of non-enabled SE packages:  TrilinosFramework Shards Tpetra Stokhos Sacado ThyraGoodStuff ThyraCrazyStuff ThyraTpetra Intrepid Ifpack Belos RBGen Phalanx Panzer 14"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra Isorropia AztecOO Galeri Amesos ML Stratimikos 13"
+    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt ThyraCoreLibs ThyraEpetra ThyraEpetraExt Thyra Isorropia AztecOO Galeri Amesos ML Stratimikos 16"
+    "Final set of non-enabled top-level packages:  TrilinosFramework Shards Tpetra Stokhos Sacado Intrepid Ifpack Belos RBGen Phalanx Panzer 11"
+    "Final set of non-enabled packages:  TrilinosFramework Shards Tpetra Stokhos Sacado ThyraGoodStuff ThyraCrazyStuff ThyraTpetra Intrepid Ifpack Belos RBGen Phalanx Panzer 14"
   )
 
 
@@ -1084,8 +1084,8 @@ create_dependency_handling_test_case(
   PASS_REGULAR_EXPRESSION_ALL
     "NOTE: User has set Trilinos_ENABLE_Ifpack=ON but the" 
     "package Ifpack is not supported on this platform type 'BadSystem2'"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 14"
-    "Final set of enabled SE packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt ThyraCoreLibs ThyraEpetra ThyraEpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 17"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 14"
+    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt ThyraCoreLibs ThyraEpetra ThyraEpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 17"
   )
 
 
@@ -1096,14 +1096,14 @@ create_dependency_handling_test_case(
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='26'"
     "Trilinos_NUM_DEFINED_TPLS='20'"
-    "Explicitly enabled packages on input .* Teko 1"
-    "Explicitly disabled packages on input .* Stokhos Stalix 2"
+    "Explicitly enabled top-level packages on input .* Teko 1"
+    "Explicitly disabled top-level packages on input .* Stokhos Stalix 2"
     "Setting Trilinos_ENABLE_Teuchos=ON because Teko has a required dependence on Teuchos"
     "Setting Trilinos_ENABLE_Epetra=ON because Teko has a required dependence on Epetra"
     "Setting Trilinos_ENABLE_Thyra=ON because Teko has a required dependence on Thyra"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos Teko 16"
-    "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Sacado Intrepid Belos RBGen Phalanx Panzer Stalix 10"
-    "Final set of enabled TPLs:  BLAS LAPACK TekoDepTPL 3"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos Teko 16"
+    "Final set of non-enabled top-level packages:  TrilinosFramework Shards Stokhos Sacado Intrepid Belos RBGen Phalanx Panzer Stalix 10"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK TekoDepTPL 3"
   )
 
 
@@ -1119,7 +1119,7 @@ create_dependency_handling_test_case(
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='26'"
     "Trilinos_NUM_DEFINED_TPLS='20'"
-    "Explicitly enabled packages on input .* Teko 1"
+    "Explicitly enabled top-level packages on input .* Teko 1"
   )
 
 
@@ -1173,7 +1173,7 @@ create_dependency_handling_test_case(
     "NOTE: Ignoring missing extra repo 'Dakota' as requested since .*/examples/MockTrilinos/packages/TriKota/Dakota does not exist"
     "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
     "Reading list of PRE extra TPLs from .*/MockTrilinos/preRepoOnePackage/TPLsList.cmake"
-    "Final set of enabled SE packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko ExtraPack [0-9][0-9]"
+    "Final set of enabled packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko ExtraPack [0-9][0-9]"
   )
 # NOTE: The above test shows that PRE extra repos are processed correctly and
 # their packages are listed before packages in the native project.
@@ -1195,7 +1195,7 @@ create_dependency_handling_test_case(
     "NOTE: Ignoring missing extra repo 'Dakota' as requested since .*/examples/MockTrilinos/packages/TriKota/Dakota does not exist"
     "Reading list of PRE extra packages from .*/MockTrilinos/preRepoOnePackage/PackagesList.cmake"
     "Reading list of PRE extra TPLs from .*/MockTrilinos/preRepoOnePackage/TPLsList.cmake"
-    "Final set of enabled SE packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko [0-9][0-9]"
+    "Final set of enabled packages:  preRepoOnePackage TrilinosFramework Teuchos .* Stratimikos RBGen Phalanx Teko [0-9][0-9]"
   )
 # NOTE: The above test shows that Nightly repos are not processed but are
 # printed out as not being processed!
@@ -1227,13 +1227,13 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DTrilinos_ENABLE_Stalix=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Explicitly enabled packages on input .* Stalix 1"
-    "Explicitly disabled packages on input .* Stokhos 1"
+    "Explicitly enabled top-level packages on input .* Stalix 1"
+    "Explicitly disabled top-level packages on input .* Stokhos 1"
     "NOTE: Not Setting Trilinos_ENABLE_ThyraGoodStuff=ON even though Thyra has an optional dependence on ThyraGoodStuff because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
     "Setting Trilinos_ENABLE_Tpetra=ON because Stalix has a required dependence on Tpetra"
     "Setting Trilinos_ENABLE_Thyra=ON because Stalix has a required dependence on Thyra"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Sacado Thyra Stalix 10"
-    "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 16"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Sacado Thyra Stalix 10"
+    "Final set of non-enabled top-level packages:  TrilinosFramework Shards Stokhos Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko 16"
   )
 
 
@@ -1310,7 +1310,7 @@ create_dependency_handling_test_case(
     "Reading list of native packages from .*/MockTrilinos/PackagesList.cmake"
     "Reading list of native packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
     "Reading list of native packages from .*/MockTrilinos/extraTrilinosRepo/PackagesList.cmake"
-    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Teko ExtraPack 24"
+    "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Teko ExtraPack 24"
     "Configuring done"
     "Generating done"
   )
@@ -1322,14 +1322,14 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_ExtraPack=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_DEFINED_TPLS='22'"
-    "Explicitly enabled packages on input .* ExtraPack 1"
-    "Explicitly disabled packages on input .* Stokhos Stalix 2"
+    "Explicitly enabled top-level packages on input .* ExtraPack 1"
+    "Explicitly disabled top-level packages on input .* Stokhos Stalix 2"
     "Setting Trilinos_ENABLE_Teuchos=ON because ExtraPack has a required dependence on Teuchos"
     "Setting Trilinos_ENABLE_Teko=ON because ExtraPack has a required dependence on Teko"
     "NOTE: Not Setting Trilinos_ENABLE_Sacado=ON even though ExtraPack has an optional dependence on Sacado because Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos Teko ExtraPack 17"
-    "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Sacado Intrepid Belos RBGen Phalanx Panzer Stalix 10"
-    "Final set of enabled TPLs:  BLAS LAPACK TekoDepTPL ExtraTPL2 4"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos Teko ExtraPack 17"
+    "Final set of non-enabled top-level packages:  TrilinosFramework Shards Stokhos Sacado Intrepid Belos RBGen Phalanx Panzer Stalix 10"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK TekoDepTPL ExtraTPL2 4"
   )
 
 
@@ -1339,8 +1339,8 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_ExtraPack=ON -DTPL_ENABLE_ExtraTPL1=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_DEFINED_TPLS='22'"
-    "Explicitly enabled packages on input .* ExtraPack 1"
-    "Final set of enabled TPLs:  BLAS LAPACK TekoDepTPL ExtraTPL1 ExtraTPL2 5"
+    "Explicitly enabled top-level packages on input .* ExtraPack 1"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK TekoDepTPL ExtraTPL1 ExtraTPL2 5"
   )
 
 
@@ -1351,7 +1351,7 @@ create_dependency_handling_test_case(
   PASS_REGULAR_EXPRESSION_ALL
     "Reading list of POST extra packages from .*/MockTrilinos/cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake"
     "Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='24'"
-    "Final set of non-enabled SE packages:  .* Phalanx Panzer Stalix 31"
+    "Final set of non-enabled packages:  .* Phalanx Panzer Stalix 31"
   )
 
 
@@ -1361,13 +1361,13 @@ create_dependency_handling_test_case(
    -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=ON
    -DTrilinos_ENABLE_Teko=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Explicitly enabled packages on input .* Teko 1"
-    "Explicitly disabled packages on input .* Stokhos Stalix 2"
+    "Explicitly enabled top-level packages on input .* Teko 1"
+    "Explicitly disabled top-level packages on input .* Stokhos Stalix 2"
     "Setting Trilinos_ENABLE_Teuchos=ON because Teko has a required dependence on Teuchos"
     "Setting Trilinos_ENABLE_Epetra=ON because Teko has a required dependence on Epetra"
     "Setting Trilinos_ENABLE_Thyra=ON because Teko has a required dependence on Thyra"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos Teko 16"
-    "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Sacado Intrepid Belos RBGen Phalanx Panzer Stalix 10"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos Teko 16"
+    "Final set of non-enabled top-level packages:  TrilinosFramework Shards Stokhos Sacado Intrepid Belos RBGen Phalanx Panzer Stalix 10"
   )
 
 
@@ -1377,10 +1377,10 @@ create_dependency_handling_test_case(
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=ON
     -DTrilinos_ENABLE_ExtraPack=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Explicitly enabled packages on input .* ExtraPack 1"
-    "Explicitly disabled packages on input .* Stokhos Stalix 2"
+    "Explicitly enabled top-level packages on input .* ExtraPack 1"
+    "Explicitly disabled top-level packages on input .* Stokhos Stalix 2"
     "Setting Trilinos_ENABLE_Teuchos=ON because ExtraPack has a required dependence on Teuchos"
     "Setting Trilinos_ENABLE_Teko=ON because ExtraPack has a required dependence on Teko"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos Teko ExtraPack 17"
-    "Final set of non-enabled packages:  TrilinosFramework Shards Stokhos Sacado Intrepid Belos RBGen Phalanx Panzer Stalix 10"
+    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos Teko ExtraPack 17"
+    "Final set of non-enabled top-level packages:  TrilinosFramework Shards Stokhos Sacado Intrepid Belos RBGen Phalanx Panzer Stalix 10"
   )

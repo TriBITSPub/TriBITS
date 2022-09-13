@@ -91,7 +91,7 @@ include(TribitsListHelpers)
 #    packages are modified and need to be retested (along with downstream
 #    packages).  For details, see `checkin-test.py`_.
 #
-# 2. **CLASSIFICATION** (``<pkgi_classif>``): Gives the `SE Package Test
+# 2. **CLASSIFICATION** (``<pkgi_classif>``): Gives the `Package Test
 #    Group`_ `PT`_, `ST`_, or `EX`_ and the maturity level ``EP``, ``RS``,
 #    ``PG``, ``PM``, ``GRS``, ``GPG``, ``GPM``, ``UM``.  These are separated
 #    by a coma with no space in between such as ``"RS,PT"`` for a "Research
@@ -149,18 +149,18 @@ endmacro()
 #
 #   tribits_allow_missing_external_packages(<pkg0> <plg1> ...)
 #
-# If the missing upstream SE package ``<pkgi>`` is optional, then the effect
+# If the missing upstream package ``<pkgi>`` is optional, then the effect
 # will be to simply ignore the missing package (i.e. it will never be added to
 # package's list and not added to dependency data-structures) and remove it
-# from the dependency lists for downstream SE packages that have an optional
-# dependency on the missing upstream SE package ``<pkgi>``.  However, all
-# downstream SE packages that have a required dependency on the missing
-# upstream SE package ``<pkgi>`` will be hard disabled,
+# from the dependency lists for downstream packages that have an optional
+# dependency on the missing upstream package ``<pkgi>``.  However, all
+# downstream packages that have a required dependency on the missing
+# upstream package ``<pkgi>`` will be hard disabled,
 # i.e. ``${PROJECT_NAME}_ENABLE_{CURRENT_PACKAGE}=OFF`` and a note on the
 # disable will be printed.
 # 
 # **WARNING**: This macro just sets the cache variable
-# ``<pkgi>_ALLOW_MISSING_EXTERNAL_PACKAGE=TRUE`` for each SE package
+# ``<pkgi>_ALLOW_MISSING_EXTERNAL_PACKAGE=TRUE`` for each package
 # ``<pkgi>``.  Therefore, using this function effectively turns off error
 # checking for misspelled package names so it is important to only use it when
 # it absolutely is needed (use cases mentioned below).  Also note that missing

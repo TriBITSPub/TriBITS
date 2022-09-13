@@ -629,7 +629,7 @@ macro(tribits_define_global_options_and_define_extra_repos)
   advanced_set( ${PROJECT_NAME}_ELEVATE_ST_TO_PT
     ${${PROJECT_NAME}_ELEVATE_ST_TO_PT_DEFAULT}
     CACHE BOOL
-    "Elevate all defined ST SE packages to PT packages." )
+    "Elevate all defined ST packages to PT packages." )
 
   if ("${${PROJECT_NAME}_ENABLE_CPACK_PACKAGING_DEFAULT}" STREQUAL "")
     set(${PROJECT_NAME}_ENABLE_CPACK_PACKAGING_DEFAULT OFF)
@@ -1447,7 +1447,7 @@ macro(tribits_process_enabled_tpls)
   endforeach()
 
   tribits_config_code_stop_timer(CONFIGURE_TPLS_TIME_START_SECONDS
-    "\nTotal time to configure enabled TPLs")
+    "\nTotal time to configure enabled external packages/TPLs")
 
 endmacro()
 
@@ -2113,7 +2113,7 @@ macro(tribits_configure_enabled_packages)
 
     if (PROCESS_PACKAGE)
 
-      message("Processing enabled package: ${TRIBITS_PACKAGE} (${PACKAGE_ENABLE_STR})")
+      message("Processing enabled top-level package: ${TRIBITS_PACKAGE} (${PACKAGE_ENABLE_STR})")
 
       if (NOT ${PROJECT_NAME}_TRACE_DEPENDENCY_HANDLING_ONLY)
 
@@ -2152,7 +2152,7 @@ macro(tribits_configure_enabled_packages)
         list(APPEND ${PROJECT_NAME}_LIBRARIES ${${TRIBITS_PACKAGE}_LIBRARIES})
 
         tribits_package_config_code_stop_timer(PROCESS_THIS_PACKAGE_TIME_START_SECONDS
-          "-- Total time to configure package ${TRIBITS_PACKAGE}")
+          "-- Total time to configure top-level package ${TRIBITS_PACKAGE}")
 
       endif()
 
@@ -2276,7 +2276,7 @@ macro(tribits_setup_packaging_and_distribution)
   # The above must define the basic project settings for CPACK that are
   # specific to the project and should not be provided by the user.
 
-  # K.2) Removing any packages or SE packages not enabled from the tarball
+  # K.2) Removing any packages or packages not enabled from the tarball
 
   if (${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION)
     set(tribitsPackage ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})

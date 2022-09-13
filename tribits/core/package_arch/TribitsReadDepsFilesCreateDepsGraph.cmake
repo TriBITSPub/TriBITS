@@ -71,17 +71,6 @@ include(DualScopeSet)
 #
 # See `Function call tree for constructing package dependency graph`_
 #
-# **__Legacy Variables #63:__**
-#
-# This macro reads from the variables::
-#
-#   ${PROJECT_NAME}_ALL_REPOSITORIES (old)
-#   ${PROJECT_NAME}_PACKAGES (old)
-#
-# and writes to the variable::
-#
-#   ${PROJECT_NAME}_SE_PACKAGES (old)
-#
 macro(tribits_read_deps_files_create_deps_graph)
 
   message("")
@@ -172,14 +161,14 @@ endmacro()
 # packages and subpackages, respectively, and builds the package dependency
 # graph variables.
 #
-# This macro reads from the variables::
+# This macro reads from the variables:
 #
-#   ${PROJECT_NAME}_ALL_REPOSITORIES
-#   ${PROJECT_NAME}_PACKAGES (old)
+#   * `${PROJECT_NAME}_ALL_REPOSITORIES`_
+#   * `${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES`_
 #
-# And writes to the variable::
+# And writes to the variable:
 #
-#   ${PROJECT_NAME}_SE_PACKAGES (old)
+#   * `${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES`_
 #
 # as well creates the package dependency variables described in `Legacy list
 # variables defining the package dependencies graph`_ that defines the
@@ -261,18 +250,21 @@ endmacro()
 #   ${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES
 #   ${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES
 #   ${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES
-#   ${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES
-#   ${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES
-#   ${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES
-#   ${PACKAGE_NAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES
+#   <depPkg>_FORWARD_LIB_REQUIRED_DEP_PACKAGES
+#   <depPkg>_FORWARD_LIB_OPTIONAL_DEP_PACKAGES
+#   <depPkg>_FORWARD_TEST_REQUIRED_DEP_PACKAGES
+#   <depPkg>_FORWARD_TEST_OPTIONAL_DEP_PACKAGES
 #
-# It also appends the list variable::
+# (where ``<depPkg>`` are upstream dependencies of this package
+# ``${PACKAGE_NAME}``).
 #
-#   ${PROJECT_NAME}_SE_PACKAGES (old)
+# It also appends the list variable:
 #
-# as for the subpackage dependencies under this top-level package are read in
+#   * `${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES`_
+#
+# Also, the subpackage dependencies under this top-level package are read in
 # order and then this top-level package is appended and dependencies are
-# dependencies are created for them.
+# created for them.
 #
 # See `Function call tree for constructing package dependency graph`_
 #
@@ -304,7 +296,7 @@ macro(tribits_read_toplevel_package_deps_files_add_to_graph  PACKAGE_NAME)
 
   # B.2) Process this package's subpackages first *before* finishing this packages!
 
-  tribits_parse_subpackages_append_se_packages_add_options(${PACKAGE_NAME})
+  tribits_parse_subpackages_append_packages_add_options(${PACKAGE_NAME})
 
   tribits_read_package_subpackage_deps_files_add_to_graph(${PACKAGE_NAME})
 
@@ -324,7 +316,7 @@ macro(tribits_read_toplevel_package_deps_files_add_to_graph  PACKAGE_NAME)
     math(EXPR SUBPACKAGE_IDX "${SUBPACKAGE_IDX}+1")
   endforeach()
 
-  # Append this package to list of SE packages *after* subpackages are added!
+  # Append this package to list of packages *after* subpackages are added!
   list(APPEND ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES ${PACKAGE_NAME})
 
   # Process this parent package's dependency lists!
@@ -751,16 +743,16 @@ endfunction()
 ################################################################################
 
 
-# @MACRO: tribits_parse_subpackages_append_se_packages_add_options()
+# @MACRO: tribits_parse_subpackages_append_packages_add_options()
 #
 # Usage::
 #
-#   tribits_parse_subpackages_append_se_packages_add_options(<toplevelPackageName>)
+#   tribits_parse_subpackages_append_packages_add_options(<toplevelPackageName>)
 #
 # Macro that parses the read-in variable
 # ``SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS`` set by the macro
-# `tribits_package_define_dependencies()`_ , add subpackages to the list of
-# defined packages, and define user cache var options for those subpackages.
+# `tribits_package_define_dependencies()`_ , adds subpackages to the list of
+# defined packages, and defines user cache var options for those subpackages.
 #
 # This sets the list variables for the parent package ``<toplevelPackageName>``::
 #
@@ -775,13 +767,13 @@ endfunction()
 #   <subpackageFullName>_PARENT_PACKAGE
 #   <subpackageFullName>_PARENT_REPOSITORY
 #
-# And it appends for each subpackage to variable::
+# And it appends for each subpackage to variable:
 #
-#   ${PROJECT_NAME}_SE_PACKAGES (old)
+#   * `${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES`_
 #
 # See `Function call tree for constructing package dependency graph`_
 #
-macro(tribits_parse_subpackages_append_se_packages_add_options
+macro(tribits_parse_subpackages_append_packages_add_options
   PACKAGE_NAME
   )
 

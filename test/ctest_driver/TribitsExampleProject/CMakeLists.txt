@@ -244,8 +244,8 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_ALL_PASS
     PASS_REGULAR_EXPRESSION_ALL
       "NONE does not exist, skipping extra repositories"
       "Setting TribitsExProj_ENABLE_ALL_PACKAGES=ON since TribitsExProj_PACKAGES_USER_SELECTED=''"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
       "SimpleCxx: Configure passed"
       "SimpleCxx: Libs build passed"
       "SimpleCxx: All build passed"
@@ -339,7 +339,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureOptionalPkg
       CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakConfigureOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "SimpleCxx: Configure passed"
       "SimpleCxx_HelloWorldProg [.]+ +Passed"
       "MixedLang FAILED to configure"
@@ -387,7 +387,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
       CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildLibOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "SimpleCxx: Configure passed"
       "SimpleCxx_HelloWorldProg [.]+ +Passed"
       "MixedLang: Configure passed"
@@ -436,7 +436,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
       CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildAllOptionalPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "SimpleCxx: Configure passed"
       "SimpleCxx_HelloWorldProg [.]+ +Passed"
       "MixedLang: Configure passed"
@@ -487,7 +487,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakTestPkg
       CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakTestPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "SimpleCxx: Configure passed"
       "SimpleCxx_HelloWorldTests [.]+ +Passed"
       "SimpleCxx_HelloWorldProg [.]+[*][*][*]Failed  Required regular expression not found.*Regex=.Hellos World"
@@ -538,7 +538,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakConfigureRequiredPkg
       CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakConfigureRequiredPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "SimpleCxx FAILED to configure"
       "CONFIGURE_OPTIONS = '.*[;]-DTribitsExProj_ENABLE_SimpleCxx:BOOL=OFF[;].*[;]-DTribitsExProj_ENABLE_MixedLang:BOOL=ON'"
       "MixedLang: Configure passed"
@@ -595,7 +595,7 @@ tribits_add_advanced_test( CTestDriver_PBP_ST_BreakBuildLibRequiredPkg
       CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_PBP_ST_BreakBuildLibRequiredPkg
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "SimpleCxx: Configure passed"
       "FAILED library build for package 'SimpleCxx'"
       "SimpleCxx: Skipping tests since library build failed"
@@ -719,7 +719,7 @@ tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_ALL_PASS
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
       "Finished configuring TribitsExProj"
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -753,8 +753,8 @@ tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_ALL_PASS
     MESSAGE "Verify that the right set of packages are set"
     CMND ${CMAKE_COMMAND} ARGS .
     PASS_REGULAR_EXPRESSION_ALL
-      "Enabling all required .and optional since TribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=ON. upstream SE packages for current set of enabled packages .TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON."
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Enabling all required .and optional since TribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=ON. upstream packages for current set of enabled packages .TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON."
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
@@ -918,11 +918,11 @@ tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
     PASS_REGULAR_EXPRESSION_ALL
       "Setting SimpleCxx_ENABLE_TESTS=ON"
       "Setting WrapExternal_ENABLE_TESTS=ON"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
-      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
-      "Processing enabled package: MixedLang [(]Libs[)]"
-      "Processing enabled package: WithSubpackages [(]A[)]"
-      "Processing enabled package: WrapExternal [(]Libs, Tests, Examples[)]"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+      "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled top-level package: MixedLang [(]Libs[)]"
+      "Processing enabled top-level package: WithSubpackages [(]A[)]"
+      "Processing enabled top-level package: WrapExternal [(]Libs, Tests, Examples[)]"
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   TEST_1
@@ -945,11 +945,11 @@ tribits_add_advanced_test( CTestDriver_PBP_Dashboard_ST_PackagesSubset_PASS
     MESSAGE "Verify that the right set of packages are set"
     CMND ${CMAKE_COMMAND} ARGS .
     PASS_REGULAR_EXPRESSION_ALL
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
-      "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
-      "Processing enabled package: MixedLang [(]Libs[)]"
-      "Processing enabled package: WithSubpackages [(]A[)]"
-      "Processing enabled package: WrapExternal [(]Libs, Tests, Examples[)]"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+      "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled top-level package: MixedLang [(]Libs[)]"
+      "Processing enabled top-level package: WithSubpackages [(]A[)]"
+      "Processing enabled top-level package: WrapExternal [(]Libs, Tests, Examples[)]"
       "Generating done"
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1001,8 +1001,8 @@ tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_2
       "-- CTEST_DO_COVERAGE_TESTING='OFF'"
       "-- CTEST_DO_MEMORY_TESTING='FALSE'"
       "Start up a new dashboard calling ctest_start[(][.][.][.][)]"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
       "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages 3"
       "Calling ctest_start[(]Continuous[)]"
       "Run dashboard with model Continuous"
@@ -1040,8 +1040,8 @@ tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_2
       "-- CTEST_DO_BUILD='OFF'"
       "-- CTEST_DO_TEST='TRUE'"
       "Start up a new dashboard calling ctest_start[(][.][.][.][)]"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
       "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages 3"
       "Use previous dashboard calling ctest_start[(][.][.][.] APPEND[)] due to CTEST_DO_NEW_START='OFF'"
       "Calling ctest_start[(]Continuous[;]APPEND[)]"
@@ -1102,8 +1102,8 @@ tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
       "-- CTEST_DO_COVERAGE_TESTING='OFF'"
       "-- CTEST_DO_MEMORY_TESTING='FALSE'"
       "Start up a new dashboard calling ctest_start[(][.][.][.][)]"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
       "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages 3"
       "Calling ctest_start[(]Continuous[)]"
       "Run dashboard with model Continuous"
@@ -1131,8 +1131,8 @@ tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
       "-- CTEST_DO_BUILD='OFF'"
       "-- CTEST_DO_TEST='OFF'"
       "Start up a new dashboard calling ctest_start[(][.][.][.][)]"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
       "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages 3"
       "Use previous dashboard calling ctest_start[(][.][.][.] APPEND[)] due to CTEST_DO_NEW_START='OFF'"
       "Calling ctest_start[(]Continuous[;]APPEND[)]"
@@ -1169,8 +1169,8 @@ tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
       "-- CTEST_DO_BUILD='ON'"
       "-- CTEST_DO_TEST='OFF'"
       "Start up a new dashboard calling ctest_start[(][.][.][.][)]"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
       "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages 3"
       "Use previous dashboard calling ctest_start[(][.][.][.] APPEND[)] due to CTEST_DO_NEW_START='OFF'"
       "Calling ctest_start[(]Continuous[;]APPEND[)]"
@@ -1209,8 +1209,8 @@ tribits_add_advanced_test( CTestDriver_PBP_PT_ALL_PASS_CALLS_4
       "-- CTEST_DO_BUILD='OFF'"
       "-- CTEST_DO_TEST='TRUE'"
       "Start up a new dashboard calling ctest_start[(][.][.][.][)]"
-      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
-      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
+      "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages"
       "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages 3"
       "Use previous dashboard calling ctest_start[(][.][.][.] APPEND[)] due to CTEST_DO_NEW_START='OFF'"
       "Calling ctest_start[(]Continuous[;]APPEND[)]"
@@ -1279,8 +1279,8 @@ function(generate_aao_tests)
       PASS_REGULAR_EXPRESSION_ALL
         "NONE does not exist, skipping extra repositories"
         "Setting TribitsExProj_ENABLE_ALL_PACKAGES=ON since TribitsExProj_PACKAGES_USER_SELECTED=''"
-        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
-        "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
+        "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
         "Configure, build, test and submit results all-at-once for all enabled packages"
         "CTEST_LABELS_FOR_SUBPROJECTS='SimpleCxx[;]MixedLang[;]WithSubpackages[;]WrapExternal'"
@@ -1351,8 +1351,8 @@ function(generate_aao_tests)
         ${CTEST_S_SCRIPT_ARGS}
       PASS_REGULAR_EXPRESSION_ALL
         "NONE does not exist, skipping extra repositories"
+        "Final set of enabled top-level packages:  SimpleCxx 1"
         "Final set of enabled packages:  SimpleCxx 1"
-        "Final set of enabled SE packages:  SimpleCxx 1"
         "Results will be submitted on CDash at the following links:"
         "Link to this build's results on CDash:"
         "${cdash_build_url_expected_regex}"
@@ -1482,9 +1482,9 @@ function(generate_aao_tests)
       PASS_REGULAR_EXPRESSION_ALL
         "NONE does not exist, skipping extra repositories"
         "Setting SimpleCxx_ENABLE_TESTS=ON"
+        "Final set of enabled top-level packages:  SimpleCxx 1"
         "Final set of enabled packages:  SimpleCxx 1"
-        "Final set of enabled SE packages:  SimpleCxx 1"
-        "Final set of non-enabled SE packages:  MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
+        "Final set of non-enabled packages:  MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx 1"
         "Configure, build, test and submit results all-at-once for all enabled packages"
         "CTEST_LABELS_FOR_SUBPROJECTS='SimpleCxx'"
@@ -1552,9 +1552,9 @@ function(generate_aao_tests)
         "NONE does not exist, skipping extra repositories"
         "Setting SimpleCxx_ENABLE_TESTS=ON"
         "Setting WrapExternal_ENABLE_TESTS=ON"
-        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
-        "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
-        "Final set of non-enabled SE packages:  WithSubpackagesB WithSubpackagesC 2"
+        "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+        "Final set of non-enabled packages:  WithSubpackagesB WithSubpackagesC 2"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx WrapExternal 2"
         "Configure, build, test and submit results all-at-once for all enabled packages"
         "CTEST_LABELS_FOR_SUBPROJECTS='SimpleCxx[;]WrapExternal'"
@@ -1689,7 +1689,7 @@ function(generate_aao_tests)
         CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_ALL_BreakWithSubpackagesALib
         ${CTEST_S_SCRIPT_ARGS}
       PASS_REGULAR_EXPRESSION_ALL
-        "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
         "Configure PASSED"
         "Build output: BUILD_ALL_NUM_ERRORS='[1-2]',BUILD_ALL_RETURN_VAL='[0-2]'"
@@ -1755,7 +1755,7 @@ function(generate_aao_tests)
         CTEST_BUILD_NAME=${PACKAGE_NAME}_CTestDriver_AAO${AAO_POSTFIX}_ST_PackagesSubset_BreakWithSubpackagesALib
         ${CTEST_S_SCRIPT_ARGS}
       PASS_REGULAR_EXPRESSION_ALL
-        "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
         "Final set of packages to be explicitly processed by CTest/CDash:  SimpleCxx WrapExternal 2"
         "Configure PASSED"
         "Build output: BUILD_ALL_NUM_ERRORS='[1-2]',BUILD_ALL_RETURN_VAL='[0-2]'"
@@ -1965,8 +1965,8 @@ function(generate_aao_tests)
         -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
-        "Enabling all required .and optional since TribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=ON. upstream SE packages for current set of enabled packages .TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON."
-        "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
+        "Enabling all required .and optional since TribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=ON. upstream packages for current set of enabled packages .TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON."
+        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 7"
         "Finished configuring TribitsExProj"
         "Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1988,8 +1988,8 @@ function(generate_aao_tests)
       MESSAGE "Verify that the right set of packages are set"
       CMND ${CMAKE_COMMAND} ARGS .
       PASS_REGULAR_EXPRESSION_ALL
-        "Enabling all required .and optional since TribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=ON. upstream SE packages for current set of enabled packages .TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON."
-        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+        "Enabling all required .and optional since TribitsExProj_ENABLE_ALL_OPTIONAL_PACKAGES=ON. upstream packages for current set of enabled packages .TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON."
+        "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
         "Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     )
@@ -2014,8 +2014,8 @@ function(generate_aao_tests)
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
         "Setting SimpleCxx_ENABLE_TESTS=ON"
-        "Final set of enabled SE packages:  SimpleCxx 1"
-        "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+        "Final set of enabled packages:  SimpleCxx 1"
+        "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
         "Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     TEST_1
@@ -2036,8 +2036,8 @@ function(generate_aao_tests)
       MESSAGE "Verify that the right set of packages are set"
       CMND ${CMAKE_COMMAND} ARGS .
       PASS_REGULAR_EXPRESSION_ALL
-        "Final set of enabled SE packages:  SimpleCxx 1"
-        "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
+        "Final set of enabled packages:  SimpleCxx 1"
+        "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
         "Generating done"
         "Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -2068,11 +2068,11 @@ function(generate_aao_tests)
       PASS_REGULAR_EXPRESSION_ALL
         "Setting SimpleCxx_ENABLE_TESTS=ON"
         "Setting WrapExternal_ENABLE_TESTS=ON"
-        "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
-        "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
-        "Processing enabled package: MixedLang [(]Libs[)]"
-        "Processing enabled package: WithSubpackages [(]A[)]"
-        "Processing enabled package: WrapExternal [(]Libs, Tests, Examples[)]"
+        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+        "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
+        "Processing enabled top-level package: MixedLang [(]Libs[)]"
+        "Processing enabled top-level package: WithSubpackages [(]A[)]"
+        "Processing enabled top-level package: WrapExternal [(]Libs, Tests, Examples[)]"
         "Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
     TEST_1
@@ -2093,11 +2093,11 @@ function(generate_aao_tests)
       MESSAGE "Verify that the right set of packages are set"
       CMND ${CMAKE_COMMAND} ARGS .
       PASS_REGULAR_EXPRESSION_ALL
-        "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
-        "Processing enabled package: SimpleCxx [(]Libs, Tests, Examples[)]"
-        "Processing enabled package: MixedLang [(]Libs[)]"
-        "Processing enabled package: WithSubpackages [(]A[)]"
-        "Processing enabled package: WrapExternal [(]Libs, Tests, Examples[)]"
+        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackages WrapExternal 5"
+        "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
+        "Processing enabled top-level package: MixedLang [(]Libs[)]"
+        "Processing enabled top-level package: WithSubpackages [(]A[)]"
+        "Processing enabled top-level package: WrapExternal [(]Libs, Tests, Examples[)]"
         "Generating done"
         "Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -2476,7 +2476,7 @@ function(generate_aao_tests)
       PASS_REGULAR_EXPRESSION_ALL
         "ENV_CTEST_DO_INSTALL='ON'"
         "CTEST_DO_INSTALL='ON'"
-        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
+        "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
         "Installing [(]i.e. building target 'install_package_by_package'[)] [.][.][.]"
         "Build install output: BUILD_INSTALL_NUM_ERRORS='0',BUILD_INSTALL_RETURN_VAL='0'"
         "Install PASSED!"
@@ -2546,7 +2546,7 @@ function(generate_aao_tests)
       PASS_REGULAR_EXPRESSION_ALL
         "ENV_CTEST_DO_INSTALL='ON'"
         "CTEST_DO_INSTALL='ON'"
-        "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages 3"
+        "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
         "CONFIGURE_OPTIONS = '.*[;]-DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON[;].*[;]-DCMAKE_INSTALL_PREFIX=install[;]-DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON'"
         "Build PASSED!"
         "Installing [(]i.e. building target 'install_package_by_package'[)] [.][.][.]"

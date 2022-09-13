@@ -568,7 +568,7 @@ already handles these automatically.)
 
     List of *direct* package dependencies that are optional for the
     tests/examples built by ``${PACKAGE_NAME}``.  This list should **not**
-    contain any of the SE packages listed in
+    contain any of the packages listed in
     ``${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES``,
     ``${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES``, or
     ``${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES``.
@@ -630,7 +630,7 @@ lists and dependency data-structures described above.
 |           ``include(`` `<packageDir>/cmake/Dependencies.cmake`_ ``)``
 |           `tribits_assert_read_dependency_vars()`_
 |           `tribits_save_off_dependency_vars()`_
-|           `tribits_parse_subpackages_append_se_packages_add_options()`_
+|           `tribits_parse_subpackages_append_packages_add_options()`_
 |           `tribits_read_package_subpackage_deps_files_add_to_graph()`_
 |             Foreach ``SUBPACKAGE``:
 |               `tribits_read_subpackage_deps_file_add_to_graph()`_
