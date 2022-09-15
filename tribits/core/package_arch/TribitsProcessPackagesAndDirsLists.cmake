@@ -398,16 +398,6 @@ endfunction()
 #
 # See `Function call tree for constructing package dependency graph`_.
 #
-# **__Legacy Variables #63:__**
-#
-# The following legacy vars were set before #63:
-#
-#   ${PROJECT_NAME}_PACKAGES
-#   ${PROJECT_NAME}_NUM_PACKAGES
-#   ${PROJECT_NAME}_LAST_PACKAGE_IDX
-#   ${PROJECT_NAME}_REVERSE_PACKAGES
-# 
-#
 macro(tribits_process_packages_and_dirs_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)

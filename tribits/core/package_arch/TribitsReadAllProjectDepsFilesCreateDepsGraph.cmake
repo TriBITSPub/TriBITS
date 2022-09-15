@@ -129,15 +129,6 @@ endmacro()
 #
 # See `Function call tree for constructing package dependency graph`_
 #
-# **__Legacy Variables #63:__**
-#
-# On output, this produces the list variables::
-#
-#   ${PROJECT_NAME}_PACKAGES (old)
-#   ${PROJECT_NAME}_TPLS (old)
-#
-# and related variables.
-#
 macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
 
   tribits_set_all_extra_repositories()

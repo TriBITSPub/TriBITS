@@ -141,14 +141,6 @@ endmacro()
 #
 # See `Function call tree for constructing package dependency graph`_
 #
-# **__Legacy Variables (#63)__**
-#
-# This updates the project-level variables::
-#
-#   ${PROJECT_NAME}_TPLS
-#   ${PROJECT_NAME}_NUM_TPLS
-#   ${PROJECT_NAME}_REVERSE_TPLS
-#
 macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)

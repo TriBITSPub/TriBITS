@@ -777,8 +777,6 @@ macro(tribits_parse_subpackages_append_packages_add_options
   PACKAGE_NAME
   )
 
-  #message("TRIBITS_PARSE_SUBPACKAGES_APPEND_SE_PACKAGES_ADD_OPTIONS: ${PACKAGE_NAME}")
-
   # Structure of SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS
   set(SPDC_SP_NAME_OFFSET 0)
   set(SPDC_SP_DIR_OFFSET 1)
