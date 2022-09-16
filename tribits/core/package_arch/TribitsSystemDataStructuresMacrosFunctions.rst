@@ -177,8 +177,8 @@ defined external package/TPL will have a non-empty `${PACKAGE_NAME}_FINDMOD`_
 .. _${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES:
 
 The full list of defined external packages/TPLs and top-level internal
-packages (TriBITS top-level packages) is stored in the project-level non-cache
-list variable::
+packages (i.e. TriBITS top-level packages) (**not** including subpackages) is
+stored in the project-level non-cache list variable::
 
   ${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES
 

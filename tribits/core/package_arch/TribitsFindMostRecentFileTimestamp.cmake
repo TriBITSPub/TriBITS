@@ -572,11 +572,11 @@ function(tribits_determine_if_current_package_needs_rebuilt)
   # Only search parent packages to cut down on dirs searched
   set(ENABLED_UPSTREAM_PACKAGES)
   set(CURRENT_PARENT_PACKAGE)
-  foreach(UPSTREAM_SE_PACKAGE ${${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES})
+  foreach(upstreamPackage ${${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES})
     # Assume we will append
-    set(APPEND_PACKAGE ${UPSTREAM_SE_PACKAGE})
+    set(APPEND_PACKAGE ${upstreamPackage})
     # If is a subpackage we only append the parent packages
-    set(PARENT_PACKAGE ${${UPSTREAM_SE_PACKAGE}_PARENT_PACKAGE})
+    set(PARENT_PACKAGE ${${upstreamPackage}_PARENT_PACKAGE})
     if (PARENT_PACKAGE)
       set(APPEND_PACKAGE ${PARENT_PACKAGE})
     endif()

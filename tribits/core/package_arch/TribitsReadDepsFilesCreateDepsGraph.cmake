@@ -71,6 +71,17 @@ include(DualScopeSet)
 #
 # See `Function call tree for constructing package dependency graph`_
 #
+# **__Legacy Variables #63:__**
+#
+# This macro reads from the variables::
+#
+#   ${PROJECT_NAME}_ALL_REPOSITORIES (old)
+#   ${PROJECT_NAME}_PACKAGES (old)
+#
+# and writes to the variable::
+#
+#   ${PROJECT_NAME}_SE_PACKAGES (old)
+#
 macro(tribits_read_deps_files_create_deps_graph)
 
   message("")
@@ -183,21 +194,21 @@ macro(tribits_read_all_package_deps_files_create_deps_graph)
     tribits_read_external_package_deps_files_add_to_graph(${tribitsExternalPkg})
   endforeach()
 
-  set(${PROJECT_NAME}_SE_PACKAGES "") # Packages and subpackages
+  set(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES "") # Packages and subpackages
 
-  foreach(TRIBITS_PACKAGE  IN  LISTS ${PROJECT_NAME}_PACKAGES)
+  foreach(TRIBITS_PACKAGE  IN  LISTS ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
     tribits_read_toplevel_package_deps_files_add_to_graph(${TRIBITS_PACKAGE}
       ${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
   endforeach()
 
   # Create a reverse SE packages list for later use
-  set(${PROJECT_NAME}_REVERSE_SE_PACKAGES  ${${PROJECT_NAME}_SE_PACKAGES})
-  if (${PROJECT_NAME}_REVERSE_SE_PACKAGES)
-    list(REVERSE  ${PROJECT_NAME}_REVERSE_SE_PACKAGES)
+  set(${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_PACKAGES  ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
+  if (${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_PACKAGES)
+    list(REVERSE  ${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_PACKAGES)
   endif()
 
-  list(LENGTH ${PROJECT_NAME}_SE_PACKAGES ${PROJECT_NAME}_NUM_SE_PACKAGES)
-  print_var(${PROJECT_NAME}_NUM_SE_PACKAGES)
+  list(LENGTH ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES)
+  print_var(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES)
 
 endmacro()
 
@@ -312,7 +323,7 @@ macro(tribits_read_toplevel_package_deps_files_add_to_graph  PACKAGE_NAME)
   endforeach()
 
   # Append this package to list of SE packages *after* subpackages are added!
-  list(APPEND ${PROJECT_NAME}_SE_PACKAGES ${PACKAGE_NAME})
+  list(APPEND ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES ${PACKAGE_NAME})
 
   # Process this parent package's dependency lists!
   tribits_process_package_dependencies_lists(${PACKAGE_NAME})
@@ -335,16 +346,28 @@ endmacro()
 # Macro that sets to undefined all of the variables that must be set by the
 # `tribits_package_define_dependencies()`_ macro.
 #
-# It also sets to empty the forward dependency list vars::
+# It also sets to empty the forward dependency list vars:
+#
+#  * `${PACKAGE_NAME}_FORWARD_LIB_DEP_PACKAGES`_
+#  * `${PACKAGE_NAME}_FORWARD_TEST_DEP_PACKAGES`_
+#
+# for each of the forward/downstream in `Variables defining the package
+# dependencies graph`_.
+#
+# See `Function call tree for constructing package dependency graph`_
+#
+# **__Legacy variables:__**
+#
+# It also sets to empty the forward dependency list vars:
 #
 #    <packageName>_FORWARD_<listType>
 #
 # for each of the forward/downstream in `Legacy list variables defining the
 # package dependencies graph`_.
 #
-# See `Function call tree for constructing package dependency graph`_
-#
 macro(tribits_prep_to_read_dependencies  PACKAGE_NAME_IN)
+
+  # Initial vars that must be set in the Dependencies.cmake file
 
   tribits_declare_undefined(LIB_REQUIRED_DEP_PACKAGES)
   tribits_declare_undefined(LIB_OPTIONAL_DEP_PACKAGES)
@@ -358,6 +381,12 @@ macro(tribits_prep_to_read_dependencies  PACKAGE_NAME_IN)
 
   set(REGRESSION_EMAIL_LIST "") # Allow to be empty
 
+  # Initialize other vars
+
+  set(${PACKAGE_NAME_IN}_FORWARD_LIB_DEP_PACKAGES "")
+  set(${PACKAGE_NAME_IN}_FORWARD_TEST_DEP_PACKAGES "")
+
+  # Legacy vars #63
   set(${PACKAGE_NAME_IN}_FORWARD_LIB_REQUIRED_DEP_PACKAGES "")
   set(${PACKAGE_NAME_IN}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES "")
   set(${PACKAGE_NAME_IN}_FORWARD_TEST_REQUIRED_DEP_PACKAGES "")
@@ -510,7 +539,7 @@ function(tribits_set_dep_packages  PACKAGE_NAME   LIB_OR_TEST  REQUIRED_OR_OPTIO
 
   set(LIST_TYPE  ${LIB_OR_TEST}_${REQUIRED_OR_OPTIONAL}_DEP_PACKAGES)
   set(PACKAGE_DEPS_LIST "")
-  set(SE_PACKAGE_ENABLE_VAR  ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+  set(PACKAGE_ENABLE_VAR  ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
 
   foreach(DEP_PKG ${${LIST_TYPE}})
     if (TRIBITS_SET_DEP_PACKAGES_DEBUG_DUMP)
@@ -534,7 +563,7 @@ function(tribits_set_dep_packages  PACKAGE_NAME   LIB_OR_TEST  REQUIRED_OR_OPTIO
           AND NOT ${DEP_PKG}_ALLOW_MISSING_EXTERNAL_PACKAGE
         )
         tribits_abort_on_missing_package(
-          "${DEP_PKG}" "${PACKAGE_NAME}" "${PROJECT_NAME}_SE_PACKAGES")
+          "${DEP_PKG}" "${PACKAGE_NAME}" "${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES")
       else()
         if (${DEP_PKG}_ALLOW_MISSING_EXTERNAL_PACKAGE)
           if (${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES)
@@ -543,10 +572,10 @@ function(tribits_set_dep_packages  PACKAGE_NAME   LIB_OR_TEST  REQUIRED_OR_OPTIO
               " ${${DEP_PKG}_ALLOW_MISSING_EXTERNAL_PACKAGE}!")
           endif()
           if (REQUIRED_OR_OPTIONAL STREQUAL "REQUIRED")
-            message_wrapper("NOTE: Setting ${SE_PACKAGE_ENABLE_VAR}=OFF because"
+            message_wrapper("NOTE: Setting ${PACKAGE_ENABLE_VAR}=OFF because"
               " package ${PACKAGE_NAME} has a required dependency on missing"
               " package ${DEP_PKG}!")
-            dual_scope_set(${SE_PACKAGE_ENABLE_VAR} OFF)
+            dual_scope_set(${PACKAGE_ENABLE_VAR} OFF)
           endif()
         endif()
         if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
@@ -830,7 +859,7 @@ macro(tribits_parse_subpackages_append_se_packages_add_options
         list(APPEND ${PACKAGE_NAME}_SUBPACKAGES ${SUBPACKAGE_NAME})
         list(APPEND ${PACKAGE_NAME}_SUBPACKAGE_DIRS ${SUBPACKAGE_DIR})
         list(APPEND ${PACKAGE_NAME}_SUBPACKAGE_OPTREQ ${SUBPACKAGE_OPTREQ})
-        list(APPEND ${PROJECT_NAME}_SE_PACKAGES ${SUBPACKAGE_FULLNAME})
+        list(APPEND ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES ${SUBPACKAGE_FULLNAME})
         set(${SUBPACKAGE_FULLNAME}_SOURCE_DIR "${SUBPACKAGE_FULL_SOURCE_DIR}")
         set(${SUBPACKAGE_FULLNAME}_REL_SOURCE_DIR
           "${${PACKAGE_NAME}_REL_SOURCE_DIR}/${SUBPACKAGE_DIR}")
@@ -876,7 +905,7 @@ macro(tribits_read_package_subpackage_deps_files_add_to_graph  PACKAGE_NAME)
 
   #message("TRIBITS_READ_PACKAGE_SUBPACKAGE_DEPS_FILES_ADD_TO_GRAPH: ${PACKAGE_NAME}")
 
-  #print_var(${PROJECT_NAME}_SE_PACKAGES)
+  #print_var(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES)
 
   set(SUBPACKAGE_IDX 0)
   foreach(TRIBITS_SUBPACKAGE ${${PACKAGE_NAME}_SUBPACKAGES})

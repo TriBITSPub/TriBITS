@@ -116,7 +116,7 @@ tribits_add_advanced_test( TribitsAdjustPackageEnables_UnitTests
       -DCMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_SOURCE_DIR}
       -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsAdjustPackageEnables_UnitTests.cmake"
     PASS_REGULAR_EXPRESSION_ALL
-      "Final UnitTests Result: num_run = 176"
+      "Final UnitTests Result: num_run = 182"
       "Final UnitTests Result: PASSED"
   )
 

@@ -405,9 +405,9 @@ for some reason, see the CMake output for package disable warnings).
 
 Another way to see the full list of SE packages that can be enabled is to
 configure with `<Project>_DUMP_PACKAGE_DEPENDENCIES`_ = ``ON`` and then grep
-for ``<Project>_SE_PACKAGES`` using, for example::
+for ``<Project>_INTERNAL_PACKAGES`` using, for example::
 
-  ./do-configure 2>&1 | grep "<Project>_SE_PACKAGES: "
+  ./do-configure 2>&1 | grep "<Project>_INTERNAL_PACKAGES: "
 
 
 Print package dependencies
@@ -2766,7 +2766,7 @@ In addition, this will install versions of these files into the install tree.
 The list of export files generated can be reduced by specifying the exact list
 of packages the files are requested for with::
 
-  -D <Project>_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES="<pkg0>;<pkg1>"
+  -D <Project>_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES="<pkg0>;<pkg1>"
 
 NOTES:
 

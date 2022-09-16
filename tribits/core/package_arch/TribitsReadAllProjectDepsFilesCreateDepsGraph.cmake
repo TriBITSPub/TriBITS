@@ -96,20 +96,17 @@ endmacro()
 # to get the list of defined external packages (TPLs) and internal top-level
 # (TriBITS) packages.
 #
-# On output, this produces the list variables::
+# On output, this produces the local variables:
 #
-#   ${PROJECT_NAME}_DEFINED_TPLS
-#   ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
-#   ${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
+#   * `${PROJECT_NAME}_DEFINED_TPLS`_
+#   * `${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES`_
+#   * `${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES`_
 #
-#   ${PROJECT_NAME}_NUM_DEFINED_TPLS
-#   ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES
-#   ${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES
+# and the length vars for these:
 #
-#   ${PROJECT_NAME}_PACKAGES (old)
-#   ${PROJECT_NAME}_TPLS (old)
-#
-# and related variables.
+#   * `${PROJECT_NAME}_NUM_DEFINED_TPLS`_
+#   * `${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES`_
+#   * `${PROJECT_NAME}_NUM_DEFINED_TOPLEVEL_PACKAGES`_
 #
 # This includes the files:
 #
@@ -125,13 +122,22 @@ endmacro()
 #
 # See `Function call tree for constructing package dependency graph`_
 #
+# **__Legacy Variables #63:__**
+#
+# On output, this produces the list variables::
+#
+#   ${PROJECT_NAME}_PACKAGES (old)
+#   ${PROJECT_NAME}_TPLS (old)
+#
+# and related variables.
+#
 macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
 
   tribits_set_all_extra_repositories()
 
-  # Set to empty
-  set(${PROJECT_NAME}_PACKAGES)
-  set(${PROJECT_NAME}_TPLS)
+  # Set package list vars to empty
+  set(${PROJECT_NAME}_DEFINED_TPLS "")
+  set(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES "")
 
   #
   # A) Read list of packages and TPLs from 'PRE' extra repos
@@ -225,17 +231,14 @@ macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
   tribits_read_extra_repositories_lists()
 
   #
-  # D) Set names of new vars (#63)
+  # D) Combined set of all to-level packages
   #
-  set(${PROJECT_NAME}_DEFINED_TPLS ${${PROJECT_NAME}_TPLS})
-  list(LENGTH ${PROJECT_NAME}_DEFINED_TPLS ${PROJECT_NAME}_NUM_DEFINED_TPLS)
-  set(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES ${${PROJECT_NAME}_PACKAGES})
-  list(LENGTH ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
-    ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES)
-  set(${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
-    ${${PROJECT_NAME}_DEFINED_TPLS} ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
-  list(LENGTH ${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
-    ${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES)
+
+  set(${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES
+    ${${PROJECT_NAME}_DEFINED_TPLS}
+    ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
+  list(LENGTH ${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES
+    ${PROJECT_NAME}_NUM_DEFINED_TOPLEVEL_PACKAGES)
 
 endmacro()
 

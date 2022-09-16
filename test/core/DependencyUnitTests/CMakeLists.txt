@@ -1094,8 +1094,8 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DTrilinos_ENABLE_Teko=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Trilinos_NUM_PACKAGES='26'"
-    "Trilinos_NUM_TPLS='20'"
+    "Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='26'"
+    "Trilinos_NUM_DEFINED_TPLS='20'"
     "Explicitly enabled packages on input .* Teko 1"
     "Explicitly disabled packages on input .* Stokhos Stalix 2"
     "Setting Trilinos_ENABLE_Teuchos=ON because Teko has a required dependence on Teuchos"
@@ -1117,8 +1117,8 @@ create_dependency_handling_test_case(
     #-DTRIBITS_PROCESS_EXTRAREPOS_LISTS_DEBUG=ON
     -DTrilinos_ENABLE_Teko=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Trilinos_NUM_PACKAGES='26'"
-    "Trilinos_NUM_TPLS='20'"
+    "Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='26'"
+    "Trilinos_NUM_DEFINED_TPLS='20'"
     "Explicitly enabled packages on input .* Teko 1"
   )
 
@@ -1245,11 +1245,11 @@ create_dependency_handling_test_case(
   PASS_REGULAR_EXPRESSION_ALL
     "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
     "Error, the package 'Anasazi' is listed as a dependency of the package"
-    "'Teko' is in the list 'Trilinos_SE_PACKAGES' but the package 'Anasazi' is"
-    "either not defined or is listed later in the package order[.]  This may also"
-    "be an attempt to create a circular dependency between the packages"
-    "'Anasazi' and 'Teko' [(]which is not allowed[)][.]  Check the spelling of"
-    "'Anasazi' or see how it is listed in a call to"
+    "'Teko' is in the list 'Trilinos_DEFINED_INTERNAL_PACKAGES' but the package"
+    "'Anasazi' is either not defined or is listed later in the package order[.]"
+    "This may also be an attempt to create a circular dependency between the"
+    "packages 'Anasazi' and 'Teko' [(]which is not allowed[)][.]  Check the spelling"
+    "of 'Anasazi' or see how it is listed in a call to"
     "tribits_repository_define_packages[(][)] in relation to 'Teko'[.]"
   )
 
@@ -1321,7 +1321,7 @@ create_dependency_handling_test_case(
   ARGS "-DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo"
     -DTrilinos_ENABLE_ExtraPack=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Trilinos_NUM_TPLS='22'"
+    "Trilinos_NUM_DEFINED_TPLS='22'"
     "Explicitly enabled packages on input .* ExtraPack 1"
     "Explicitly disabled packages on input .* Stokhos Stalix 2"
     "Setting Trilinos_ENABLE_Teuchos=ON because ExtraPack has a required dependence on Teuchos"
@@ -1338,7 +1338,7 @@ create_dependency_handling_test_case(
   ARGS "-DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo"
     -DTrilinos_ENABLE_ExtraPack=ON -DTPL_ENABLE_ExtraTPL1=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Trilinos_NUM_TPLS='22'"
+    "Trilinos_NUM_DEFINED_TPLS='22'"
     "Explicitly enabled packages on input .* ExtraPack 1"
     "Final set of enabled TPLs:  BLAS LAPACK TekoDepTPL ExtraTPL1 ExtraTPL2 5"
   )
@@ -1350,7 +1350,7 @@ create_dependency_handling_test_case(
     -DpreCopyrightTrilinos_PACKAGES_LIST_FILE=cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake
   PASS_REGULAR_EXPRESSION_ALL
     "Reading list of POST extra packages from .*/MockTrilinos/cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake"
-    "Trilinos_NUM_PACKAGES='24'"
+    "Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='24'"
     "Final set of non-enabled SE packages:  .* Phalanx Panzer Stalix 31"
   )
 

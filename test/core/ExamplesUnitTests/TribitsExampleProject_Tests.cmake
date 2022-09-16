@@ -153,8 +153,8 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because TribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES='ON'"
         "NOTE: Setting TribitsExProj_ENABLE_MixedLang=OFF because TribitsExProj_ENABLE_Fortran"
         "Printing package dependencies ..."
-        "-- TribitsExProj_PACKAGES: SimpleCxx MixedLang WithSubpackages WrapExternal"
-        "-- TribitsExProj_SE_PACKAGES: SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
+        "-- TribitsExProj_DEFINED_INTERNAL_TOPLEVEL_PACKAGES: SimpleCxx MixedLang WithSubpackages WrapExternal"
+        "-- TribitsExProj_DEFINED_INTERNAL_PACKAGES: SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
 
         "-- SimpleCxx_LIB_REQUIRED_DEP_TPLS: HeaderOnlyTpl"
         "-- MixedLang: No dependencies!"
@@ -1611,7 +1611,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
   TEST_2
     MESSAGE "Show deprecated warning when passing a lib from this package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
-    ARGS -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
+    ARGS -DSPKB_SHOW_PKG_LIB_IMPORTEDLIBS_ERROR=ON
       -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
@@ -1624,8 +1624,8 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
     MESSAGE "Show deprecated warning when passing a lib from upstream"
       " package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
-    ARGS -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
-      -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
+    ARGS -DSPKB_SHOW_UPSTREAM_PKG_LIB_IMPORTEDLIBS_ERROR=ON
+      -DSPKB_SHOW_PKG_LIB_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
@@ -1638,7 +1638,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
     MESSAGE "Show deprecated warning when passing a TESTONLY lib through DEPLBIS."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKC_SHOW_TESTONLY_DEPLBIS_ERROR=ON
-      -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
+      -DSPKB_SHOW_UPSTREAM_PKG_LIB_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
@@ -1795,7 +1795,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
   TEST_2
     MESSAGE "Show deprecated warning when passing a lib from this package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
-    ARGS -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
+    ARGS -DSPKB_SHOW_PKG_LIB_IMPORTEDLIBS_ERROR=ON
       -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
@@ -1808,8 +1808,8 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
     MESSAGE "Show deprecated warning when passing a lib from upstream"
       " package through IMPORTEDLIBS."
     CMND ${CMAKE_COMMAND}
-    ARGS -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=ON
-      -DSPKB_SHOW_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
+    ARGS -DSPKB_SHOW_UPSTREAM_PKG_LIB_IMPORTEDLIBS_ERROR=ON
+      -DSPKB_SHOW_PKG_LIB_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
@@ -1822,7 +1822,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
     MESSAGE "Show deprecated warning when passing a TESTONLY lib through DEPLBIS."
     CMND ${CMAKE_COMMAND}
     ARGS -DSPKC_SHOW_TESTONLY_DEPLBIS_ERROR=ON
-      -DSPKB_SHOW_UPSTREAM_SE_PKG_LIB_IMPORTEDLIBS_ERROR=
+      -DSPKB_SHOW_UPSTREAM_PKG_LIB_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
       "WARNING: 'b_mixed_lang' in DEPLIBS is a TESTONLY lib "

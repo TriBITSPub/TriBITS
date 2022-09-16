@@ -76,11 +76,11 @@ function(unittest_basic_package_list_read)
 
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
 
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Package0;Package1;Package2")
-  unittest_compare_const( ${PROJECT_NAME}_NUM_PACKAGES 3 )
-  unittest_compare_const( ${PROJECT_NAME}_LAST_PACKAGE_IDX 2 )
-  unittest_compare_const( ${PROJECT_NAME}_REVERSE_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 3 )
+  unittest_compare_const( ${PROJECT_NAME}_LAST_DEFINED_INTERNAL_TOPLEVEL_PACKAGE_IDX 2 )
+  unittest_compare_const( ${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Package2;Package1;Package0")
   unittest_compare_const( Package0_SOURCE_DIR ${PROJECT_SOURCE_DIR}/packages/package0 )
   unittest_compare_const( Package1_SOURCE_DIR ${PROJECT_SOURCE_DIR}/packages/package1 )
@@ -117,13 +117,13 @@ function(unittest_basic_package_list_read_abs_pacakge_dir)
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
 
   unittest_compare_const( MESSAGE_WRAPPER_INPUT
-    "-- ;PROJECT_SOURCE_DIR_BASE_MATCH='/home/me/DummyProject';FATAL_ERROR;Error: The package 'Package2' was given an absolute directory '/home/me/Package2' which is *not* under the project's source directory '/home/me/DummyProject/'!;-- ;DummyProject_NUM_PACKAGES='3'"
+    "-- ;PROJECT_SOURCE_DIR_BASE_MATCH='/home/me/DummyProject';FATAL_ERROR;Error: The package 'Package2' was given an absolute directory '/home/me/Package2' which is *not* under the project's source directory '/home/me/DummyProject/'!;-- ;DummyProject_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='3'"
     )
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Package0;Package1;Package2")
-  unittest_compare_const( ${PROJECT_NAME}_NUM_PACKAGES 3 )
-  unittest_compare_const( ${PROJECT_NAME}_LAST_PACKAGE_IDX 2 )
-  unittest_compare_const( ${PROJECT_NAME}_REVERSE_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 3 )
+  unittest_compare_const( ${PROJECT_NAME}_LAST_DEFINED_INTERNAL_TOPLEVEL_PACKAGE_IDX 2 )
+  unittest_compare_const( ${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Package2;Package1;Package0")
   unittest_compare_const( Package0_TESTGROUP PT)
   unittest_compare_const( Package1_TESTGROUP ST)
@@ -149,11 +149,11 @@ function(unittest_basic_package_list_read_ps_ss_backward_compatible)
 
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
 
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Package0;Package1;Package2")
-  unittest_compare_const( ${PROJECT_NAME}_NUM_PACKAGES 3 )
-  unittest_compare_const( ${PROJECT_NAME}_LAST_PACKAGE_IDX 2 )
-  unittest_compare_const( ${PROJECT_NAME}_REVERSE_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 3 )
+  unittest_compare_const( ${PROJECT_NAME}_LAST_DEFINED_INTERNAL_TOPLEVEL_PACKAGE_IDX 2 )
+  unittest_compare_const( ${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Package2;Package1;Package0")
   unittest_compare_const( Package0_TESTGROUP PT)
   unittest_compare_const( Package1_TESTGROUP ST)

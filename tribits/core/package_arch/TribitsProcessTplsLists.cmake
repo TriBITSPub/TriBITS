@@ -47,10 +47,10 @@ include(Split)
 
 # @MACRO: tribits_repository_define_tpls()
 #
-# Define the list of `TriBITS TPLs`_ for a given `TriBITS Repository`_ which
-# includes the TPL name, find module, and classification .  This macro is
-# typically called from inside of the repository's `<repoDir>/TPLsList.cmake`_
-# file.
+# Define the list of `TriBITS TPLs`_ (external packages) for a given `TriBITS
+# Repository`_ which includes the TPL name, find module, and classification .
+# This macro is typically called from inside of the repository's
+# `<repoDir>/TPLsList.cmake`_ file.
 #
 # Usage::
 #
@@ -127,20 +127,27 @@ endmacro()
 #
 #   ${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS
 #
-# and updates the project-level variables::
+# This updates the project-level variables:
+#
+#   * `${PROJECT_NAME}_DEFINED_TPLS`_
+#   * `${PROJECT_NAME}_NUM_DEFINED_TPLS`_
+#
+# For each TPL, it also sets the variables:
+#
+#   * `${TPL_NAME}_FINDMOD`_
+#   * `${TPL_NAME}_TESTGROUP`_
+#   * `${TPL_NAME}_DEPENDENCIES_FILE`_
+#   * `${TPL_NAME}_TPLS_LIST_FILE`_
+#
+# See `Function call tree for constructing package dependency graph`_
+#
+# **__Legacy Variables (#63)__**
+#
+# This updates the project-level variables::
 #
 #   ${PROJECT_NAME}_TPLS
 #   ${PROJECT_NAME}_NUM_TPLS
 #   ${PROJECT_NAME}_REVERSE_TPLS
-#
-# For each TPL, it also sets the variables::
-#
-#   ${TPL_NAME}_FINDMOD
-#   ${TPL_NAME}_TESTGROUP
-#   ${TPL_NAME}_DEPENDENCIES_FILE
-#   ${TPL_NAME}_TPLS_LIST_FILE
-#
-# See `Function call tree for constructing package dependency graph`_
 #
 macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
@@ -214,7 +221,7 @@ macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
             " in the same location and not adding it again!")
         endif()
       else()
-        list(APPEND ${PROJECT_NAME}_TPLS ${TPL_NAME})
+        list(APPEND ${PROJECT_NAME}_DEFINED_TPLS ${TPL_NAME})
       endif()
 
       # Set ${TPL_NAME}_PACKAGE_BUILD_STATUS
@@ -303,21 +310,22 @@ macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
   endif()
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    print_var(${PROJECT_NAME}_TPLS)
+    print_var(${PROJECT_NAME}_DEFINED_TPLS)
   endif()
 
   # Get the final length
 
-  list(LENGTH ${PROJECT_NAME}_TPLS ${PROJECT_NAME}_NUM_TPLS)
-  print_var(${PROJECT_NAME}_NUM_TPLS)
+  list(LENGTH ${PROJECT_NAME}_DEFINED_TPLS ${PROJECT_NAME}_NUM_DEFINED_TPLS)
+  print_var(${PROJECT_NAME}_NUM_DEFINED_TPLS)
 
-  # Create a reverse list for later use
+  # Create a reverse list for later use (ToDo: Remove the need for this #63)
 
-  if (${PROJECT_NAME}_TPLS)
-    set(${PROJECT_NAME}_REVERSE_TPLS ${${PROJECT_NAME}_TPLS})
-    list(REVERSE ${PROJECT_NAME}_REVERSE_TPLS)
+  if (${PROJECT_NAME}_DEFINED_TPLS)
+    set(${PROJECT_NAME}_REVERSE_DEFINED_TPLS ${${PROJECT_NAME}_DEFINED_TPLS})
+    list(REVERSE ${PROJECT_NAME}_REVERSE_DEFINED_TPLS)
   else()
-    set(${PROJECT_NAME}_REVERSE_TPLS)
+    set(${PROJECT_NAME}_REVERSE_DEFINED_TPLS)
   endif()
+  # ToDo: Get rid of the usage of ${PROJECT_NAME}_REVERSE_DEFINED_TPLS (#299, #63)
 
 endmacro()

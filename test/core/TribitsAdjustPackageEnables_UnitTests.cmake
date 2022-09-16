@@ -65,10 +65,10 @@ function(unittest_enable_no_packages)
 
   unittest_helper_read_and_process_packages()
 
-  unittest_compare_const(${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost")
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
-  unittest_compare_const(${PROJECT_NAME}_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
 
 #  unittest_compare_const(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
 #  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
@@ -124,8 +124,8 @@ function(unittest_enable_all_packages)
 
   unittest_helper_read_and_process_packages()
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(TPL_ENABLE_MPI "")
   unittest_compare_const(TPL_ENABLE_BLAS ON)
   unittest_compare_const(TPL_ENABLE_LAPACK ON)
@@ -165,8 +165,8 @@ function(unittest_enable_all_packages_st)
 
   unittest_helper_read_and_process_packages()
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(TPL_ENABLE_MPI "")
   unittest_compare_const(TPL_ENABLE_BLAS ON)
   unittest_compare_const(TPL_ENABLE_LAPACK ON)
@@ -224,8 +224,8 @@ function(unittest_enable_all_packages_st_extra_test_deps)
 
   unittest_helper_read_and_process_packages()
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(TPL_ENABLE_MPI TRUE)
   unittest_compare_const(TPL_ENABLE_BLAS ON)
   unittest_compare_const(TPL_ENABLE_LAPACK ON)
@@ -276,8 +276,8 @@ function(unittest_enable_all_packages_st_enable_tests_extra_test_deps)
 
   unittest_helper_read_and_process_packages()
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(TPL_ENABLE_MPI TRUE)
   unittest_compare_const(TPL_ENABLE_BLAS ON)
   unittest_compare_const(TPL_ENABLE_LAPACK ON)
@@ -337,8 +337,8 @@ function(unittest_enable_all_generate_export_deps)
 
   unittest_helper_read_and_process_packages()
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
   unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
   unittest_compare_const(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "Teuchos")
@@ -363,12 +363,40 @@ function(unittest_enable_all_st_generate_export_deps)
 
   unittest_helper_read_and_process_packages()
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
   unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
   unittest_compare_const(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "Teuchos")
   unittest_compare_const(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "Ex2Package1;Teuchos")
+
+endfunction()
+
+
+function(unittest_enable_all_st_generate_export_deps_only_ex2package1_se_pkgs)
+
+  message("\n***")
+  message("*** Test generation of export dependencies only up to Ex2Package1 with deprecated var <Projecdt>_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES")
+  message("***\n")
+
+  # Debugging
+  #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
+  #set(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
+
+  set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
+  set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
+    Ex2Package1 RTOp)
+
+  unittest_helper_read_and_process_packages()
+
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
+  unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
+  unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
+  unittest_compare_const(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "Teuchos")
+  unittest_compare_const(Ex2Package2_FULL_ENABLED_DEP_PACKAGES "")
 
 endfunction()
 
@@ -386,13 +414,13 @@ function(unittest_enable_all_st_generate_export_deps_only_ex2package1)
   set(${PROJECT_NAME}_ENABLE_ALL_PACKAGES ON)
   set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
   set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
-  set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES
     Ex2Package1 RTOp)
 
   unittest_helper_read_and_process_packages()
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
   unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
   unittest_compare_const(Ex2Package1_FULL_ENABLED_DEP_PACKAGES "Teuchos")
@@ -414,13 +442,13 @@ function(unittest_enable_rtop_generate_export_deps_only_ex2package1)
   set(${PROJECT_NAME}_ENABLE_RTOp ON)
   set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
   set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
-  set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES
     Ex2Package1 RTOp)
 
   unittest_helper_read_and_process_packages()
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp "ON")
   unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
   unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "Teuchos")
@@ -443,13 +471,13 @@ function(unittest_enable_teuchos_generate_export_deps_only_ex2package1)
   set(${PROJECT_NAME}_ENABLE_Teuchos ON)
   set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
   set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
-  set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
+  set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES
     Ex2Package1 RTOp)
 
   unittest_helper_read_and_process_packages()
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos "ON")
   unittest_compare_const(Teuchos_FULL_ENABLED_DEP_PACKAGES "")
   unittest_compare_const(RTOp_FULL_ENABLED_DEP_PACKAGES "")
@@ -492,8 +520,8 @@ function(unittest_enable_tribits_is_primary_meta_project_package)
   tribits_is_primary_meta_project_package(Ex2Package2  Ex2Package2_is_PMP)
   unittest_compare_const(Ex2Package2_is_PMP  TRUE)
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp "")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
@@ -531,8 +559,8 @@ function(unittest_enable_tribits_is_primary_meta_project_package_exclude_rtop_st
   tribits_is_primary_meta_project_package(Ex2Package2  Ex2Package2_is_PMP)
   unittest_compare_const(Ex2Package2_is_PMP  TRUE)
 
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Teuchos ON)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_RTOp ON)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 ON)
@@ -627,6 +655,7 @@ unittest_enable_all_packages_st_extra_test_deps()
 # B) Test generation of export file information
 unittest_enable_all_generate_export_deps()
 unittest_enable_all_st_generate_export_deps()
+unittest_enable_all_st_generate_export_deps_only_ex2package1_se_pkgs()
 unittest_enable_all_st_generate_export_deps_only_ex2package1()
 unittest_enable_rtop_generate_export_deps_only_ex2package1()
 unittest_enable_teuchos_generate_export_deps_only_ex2package1()
@@ -638,4 +667,4 @@ unittest_enable_tribits_is_primary_meta_project_package_enable_teuchos_forward()
 unittest_enable_tribits_is_primary_meta_project_package_enable_teuchos_tests_rtop_forward()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(176)
+unittest_final_result(182)
