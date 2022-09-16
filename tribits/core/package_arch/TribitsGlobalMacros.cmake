@@ -1409,7 +1409,7 @@ macro(tribits_handle_project_extra_link_flags_as_a_tpl)
     # Tack on ${PROJECT_NAME}TribitsLastLib as a dependency to all enabled
     # external packages/TPLs
     foreach(TPL_NAME ${${PROJECT_NAME}_DEFINED_TPLS})
-      list(APPEND ${TPL_NAME}_LIB_ALL_DEPENDENCIES ${lastLibTplName})
+      list(APPEND ${TPL_NAME}_LIB_DEFINED_DEPENDENCIES ${lastLibTplName})
       if (TPL_ENABLE_${TPL_NAME})
         list(APPEND ${TPL_NAME}_LIB_ENABLED_DEPENDENCIES ${lastLibTplName})
       endif()
@@ -1423,7 +1423,7 @@ macro(tribits_handle_project_extra_link_flags_as_a_tpl)
     # Tack on ${PROJECT_NAME}TribitsLastLib as a dependency to all enabled
     # internal packages
     foreach(PACKAGE_NAME ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
-      list(APPEND ${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES ${lastLibTplName})
+      list(APPEND ${PACKAGE_NAME}_LIB_DEFINED_DEPENDENCIES ${lastLibTplName})
       if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
         list(APPEND ${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES ${lastLibTplName})
       endif()

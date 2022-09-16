@@ -567,7 +567,7 @@ function(tribits_append_dependent_package_config_file_includes_and_enables packa
   # Add set of enables/disables for all upstream dependencies
   string(APPEND configFileStr
     "# Enables/Disables for upstream package dependencies\n")
-  foreach(depPkg IN LISTS ${packageName}_LIB_ALL_DEPENDENCIES)
+  foreach(depPkg IN LISTS ${packageName}_LIB_DEFINED_DEPENDENCIES)
     if (${packageName}_ENABLE_${depPkg})
       set(enableVal ON)
     else()

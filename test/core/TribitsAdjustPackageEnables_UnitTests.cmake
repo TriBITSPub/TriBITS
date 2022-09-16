@@ -93,19 +93,19 @@ function(unittest_enable_no_packages)
 
   unittest_compare_const(Teuchos_PACKAGE_BUILD_STATUS "INTERNAL")
   unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+  unittest_compare_const(Teuchos_LIB_DEFINED_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
 
   unittest_compare_const(RTOp_PACKAGE_BUILD_STATUS "INTERNAL")
   unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_LIB_DEFINED_DEPENDENCIES "Teuchos")
 
   unittest_compare_const(Ex2Package1_PACKAGE_BUILD_STATUS "INTERNAL")
   unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_LIB_DEFINED_DEPENDENCIES "Teuchos;Boost")
 
   unittest_compare_const(Ex2Package2_PACKAGE_BUILD_STATUS "INTERNAL")
   unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_LIB_DEFINED_DEPENDENCIES "Teuchos;Ex2Package1")
 
 endfunction()
 
@@ -137,16 +137,16 @@ function(unittest_enable_all_packages)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 "")
 
   unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "BLAS;LAPACK;Boost")
-  unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+  unittest_compare_const(Teuchos_LIB_DEFINED_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
 
   unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "Teuchos")
-  unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_LIB_DEFINED_DEPENDENCIES "Teuchos")
 
   unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "Teuchos;Boost")
-  unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_LIB_DEFINED_DEPENDENCIES "Teuchos;Boost")
 
   unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_LIB_DEFINED_DEPENDENCIES "Teuchos;Ex2Package1")
 
 endfunction()
 
@@ -181,29 +181,29 @@ function(unittest_enable_all_packages_st)
   unittest_compare_const(Teuchos_ENABLE_Boost ON)
   unittest_compare_const(Teuchos_ENABLE_MPI "")
   unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "BLAS;LAPACK;Boost")
-  unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+  unittest_compare_const(Teuchos_LIB_DEFINED_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
   unittest_compare_const(Teuchos_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Teuchos_TEST_ALL_DEPENDENCIES "")
+  unittest_compare_const(Teuchos_TEST_DEFINED_DEPENDENCIES "")
 
   unittest_compare_const(RTOp_ENABLE_Teuchos ON)
   unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "Teuchos")
-  unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_LIB_DEFINED_DEPENDENCIES "Teuchos")
   unittest_compare_const(RTOp_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(RTOp_TEST_ALL_DEPENDENCIES "")
+  unittest_compare_const(RTOp_TEST_DEFINED_DEPENDENCIES "")
 
   unittest_compare_const(Ex2Package1_ENABLE_Teuchos ON)
   unittest_compare_const(Ex2Package1_ENABLE_Boost ON)
   unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "Teuchos;Boost")
-  unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_LIB_DEFINED_DEPENDENCIES "Teuchos;Boost")
   unittest_compare_const(Ex2Package1_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Ex2Package1_TEST_ALL_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package1_TEST_DEFINED_DEPENDENCIES "")
 
   unittest_compare_const(Ex2Package2_ENABLE_Teuchos ON)
   unittest_compare_const(Ex2Package2_ENABLE_Ex2Package1 ON)
   unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "Teuchos;Ex2Package1")
-  unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_LIB_DEFINED_DEPENDENCIES "Teuchos;Ex2Package1")
   unittest_compare_const(Ex2Package2_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Ex2Package2_TEST_ALL_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package2_TEST_DEFINED_DEPENDENCIES "")
 
 endfunction()
 
@@ -236,24 +236,24 @@ function(unittest_enable_all_packages_st_extra_test_deps)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 ON)
 
   unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
-  unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+  unittest_compare_const(Teuchos_LIB_DEFINED_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
   unittest_compare_const(Teuchos_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Teuchos_TEST_ALL_DEPENDENCIES "")
+  unittest_compare_const(Teuchos_TEST_DEFINED_DEPENDENCIES "")
 
   unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "Teuchos")
-  unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_LIB_DEFINED_DEPENDENCIES "Teuchos")
   unittest_compare_const(RTOp_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(RTOp_TEST_ALL_DEPENDENCIES "")
+  unittest_compare_const(RTOp_TEST_DEFINED_DEPENDENCIES "")
 
   unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "Teuchos;Boost")
-  unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_LIB_DEFINED_DEPENDENCIES "Teuchos;Boost")
   unittest_compare_const(Ex2Package1_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Ex2Package1_TEST_ALL_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package1_TEST_DEFINED_DEPENDENCIES "")
 
   unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "Teuchos;Ex2Package1")
-  unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_LIB_DEFINED_DEPENDENCIES "Teuchos;Ex2Package1")
   unittest_compare_const(Ex2Package2_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Ex2Package2_TEST_ALL_DEPENDENCIES
+  unittest_compare_const(Ex2Package2_TEST_DEFINED_DEPENDENCIES
     "Teuchos;RTOp;Ex2Package1;Boost;MPI;Boost")
 
 endfunction()
@@ -288,19 +288,19 @@ function(unittest_enable_all_packages_st_enable_tests_extra_test_deps)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package2 ON)
 
   unittest_compare_const(Teuchos_LIB_ENABLED_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
-  unittest_compare_const(Teuchos_LIB_ALL_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
+  unittest_compare_const(Teuchos_LIB_DEFINED_DEPENDENCIES "BLAS;LAPACK;Boost;MPI")
   unittest_compare_const(Teuchos_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Teuchos_TEST_ALL_DEPENDENCIES "")
+  unittest_compare_const(Teuchos_TEST_DEFINED_DEPENDENCIES "")
 
   unittest_compare_const(RTOp_LIB_ENABLED_DEPENDENCIES "Teuchos")
-  unittest_compare_const(RTOp_LIB_ALL_DEPENDENCIES "Teuchos")
+  unittest_compare_const(RTOp_LIB_DEFINED_DEPENDENCIES "Teuchos")
   unittest_compare_const(RTOp_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(RTOp_TEST_ALL_DEPENDENCIES "")
+  unittest_compare_const(RTOp_TEST_DEFINED_DEPENDENCIES "")
 
   unittest_compare_const(Ex2Package1_LIB_ENABLED_DEPENDENCIES "Teuchos;Boost")
-  unittest_compare_const(Ex2Package1_LIB_ALL_DEPENDENCIES "Teuchos;Boost")
+  unittest_compare_const(Ex2Package1_LIB_DEFINED_DEPENDENCIES "Teuchos;Boost")
   unittest_compare_const(Ex2Package1_TEST_ENABLED_DEPENDENCIES "")
-  unittest_compare_const(Ex2Package1_TEST_ALL_DEPENDENCIES "")
+  unittest_compare_const(Ex2Package1_TEST_DEFINED_DEPENDENCIES "")
 
   unittest_compare_const(Ex2Package2_ENABLE_Teuchos ON)
   unittest_compare_const(Ex2Package2_ENABLE_Ex2Package1 ON)
@@ -308,10 +308,10 @@ function(unittest_enable_all_packages_st_enable_tests_extra_test_deps)
   unittest_compare_const(Ex2Package2_ENABLE_Boost "") # ""
   unittest_compare_const(Ex2Package2_ENABLE_MPI "") # ""
   unittest_compare_const(Ex2Package2_LIB_ENABLED_DEPENDENCIES "Teuchos;Ex2Package1")
-  unittest_compare_const(Ex2Package2_LIB_ALL_DEPENDENCIES "Teuchos;Ex2Package1")
+  unittest_compare_const(Ex2Package2_LIB_DEFINED_DEPENDENCIES "Teuchos;Ex2Package1")
   unittest_compare_const(Ex2Package2_TEST_ENABLED_DEPENDENCIES
     "Teuchos;RTOp;Ex2Package1;Boost;MPI;Boost")
-  unittest_compare_const(Ex2Package2_TEST_ALL_DEPENDENCIES
+  unittest_compare_const(Ex2Package2_TEST_DEFINED_DEPENDENCIES
     "Teuchos;RTOp;Ex2Package1;Boost;MPI;Boost")
 
 endfunction()

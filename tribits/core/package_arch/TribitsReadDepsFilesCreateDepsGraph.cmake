@@ -216,7 +216,7 @@ endmacro()
 # This reads in the file ``${<tplName>_DEPENDENCIES_FILE}`` and sets the
 # varaible::
 #
-#   <tplName>_LIB_ALL_DEPENDENCIES
+#   <tplName>_LIB_DEFINED_DEPENDENCIES
 #
 # See `Function call tree for constructing package dependency graph`_
 #

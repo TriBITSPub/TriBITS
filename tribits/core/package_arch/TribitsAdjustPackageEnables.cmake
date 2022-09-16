@@ -565,7 +565,7 @@ endmacro()
 #
 # NOTES:
 #
-#  * ${packageName}_LIB_ALL_DEPENDENCIES will be set regardless if
+#  * ${packageName}_LIB_DEFINED_DEPENDENCIES will be set regardless if
 #    ${packageName} is enabled or not.
 #
 #  * ${packageName}_LIB_ENABLED_DEPENDENCIES is only set if ${packageName} is
@@ -573,7 +573,7 @@ endmacro()
 #    internal and external packages ${depPkg} that are required or are
 #    optional and ${packageName}_ENABLE_${depPkg} is set to ON.
 #
-#  * ${packageName}_TEST_ALL_DEPENDENCIES will be set regardless if
+#  * ${packageName}_TEST_DEFINED_DEPENDENCIES will be set regardless if
 #    ${packageName} is enabled or not.
 #
 #  * ${packageName}_TEST_ENABLED_DEPENDENCIES is only set if ${packageName} is
@@ -583,7 +583,7 @@ endmacro()
 #
 #  * Sets ${packageName}_ENABLE_${depPkg}=ON for every required dep package
 #    for LIB dependencies (but not TEST dependencies).  This allows looping
-#    over just ${packageName}_LIB_ALL_DEPENDENCIES looking at
+#    over just ${packageName}_LIB_DEFINED_DEPENDENCIES looking at
 #    ${packageName}_ENABLE_${depPkg} to see if the package is enable or not.
 #    This also includes special logic for required subpackages for parent
 #    packages where only the shell of the parent package is enabled and not
@@ -595,11 +595,11 @@ macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_va
 
   # LIB dependencies
 
-  set(${packageName}_LIB_ALL_DEPENDENCIES "")
+  set(${packageName}_LIB_DEFINED_DEPENDENCIES "")
   set(${packageName}_LIB_ENABLED_DEPENDENCIES "")
 
   foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_PACKAGES})
-    list(APPEND ${packageName}_LIB_ALL_DEPENDENCIES ${depPkg})
+    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
     if (${PROJECT_NAME}_ENABLE_${packageName} AND ${PROJECT_NAME}_ENABLE_${depPkg})
       set(${packageName}_ENABLE_${depPkg} ON)
       list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
@@ -609,14 +609,14 @@ macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_va
   # some cases!
 
   foreach(depPkg ${${packageName}_LIB_OPTIONAL_DEP_PACKAGES})
-    list(APPEND ${packageName}_LIB_ALL_DEPENDENCIES ${depPkg})
+    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
     if (${PROJECT_NAME}_ENABLE_${packageName} AND ${packageName}_ENABLE_${depPkg})
       list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
     endif()
   endforeach()
 
   foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_TPLS})
-    list(APPEND ${packageName}_LIB_ALL_DEPENDENCIES ${depPkg})
+    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
     if (${PROJECT_NAME}_ENABLE_${packageName})
       set(${packageName}_ENABLE_${depPkg} ON)
       list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
@@ -624,7 +624,7 @@ macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_va
   endforeach()
 
   foreach(depPkg ${${packageName}_LIB_OPTIONAL_DEP_TPLS})
-    list(APPEND ${packageName}_LIB_ALL_DEPENDENCIES ${depPkg})
+    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
     if (${PROJECT_NAME}_ENABLE_${packageName} AND ${packageName}_ENABLE_${depPkg})
       list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
     endif()
@@ -632,7 +632,7 @@ macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_va
 
   # TEST dependencies
 
-  set(${packageName}_TEST_ALL_DEPENDENCIES "")
+  set(${packageName}_TEST_DEFINED_DEPENDENCIES "")
   set(${packageName}_TEST_ENABLED_DEPENDENCIES "")
 
   if (${PROJECT_NAME}_ENABLE_${packageName}
@@ -645,28 +645,28 @@ macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_va
   endif()
 
   foreach(depPkg ${${packageName}_TEST_REQUIRED_DEP_PACKAGES})
-    list(APPEND ${packageName}_TEST_ALL_DEPENDENCIES ${depPkg})
+    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
     if (enablePkgAndTestsOrExamples)
       list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
     endif()
   endforeach()
 
   foreach(depPkg ${${packageName}_TEST_OPTIONAL_DEP_PACKAGES})
-    list(APPEND ${packageName}_TEST_ALL_DEPENDENCIES ${depPkg})
+    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
     if (enablePkgAndTestsOrExamples AND ${packageName}_ENABLE_${depPkg})
       list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
     endif()
   endforeach()
 
   foreach(depPkg ${${packageName}_TEST_REQUIRED_DEP_TPLS})
-    list(APPEND ${packageName}_TEST_ALL_DEPENDENCIES ${depPkg})
+    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
     if (enablePkgAndTestsOrExamples)
       list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
     endif()
   endforeach()
 
   foreach(depPkg ${${packageName}_TEST_OPTIONAL_DEP_TPLS})
-    list(APPEND ${packageName}_TEST_ALL_DEPENDENCIES ${depPkg})
+    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
     if (enablePkgAndTestsOrExamples AND ${packageName}_ENABLE_${depPkg})
       list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
     endif()
@@ -686,9 +686,9 @@ function(tribits_print_direct_package_dependencies_lists  packageName)
   set(PRINTED_VAR "")
   message("")
   print_nonempty_var_with_spaces(${packageName}_LIB_ENABLED_DEPENDENCIES PRINTED_VAR)
-  print_var_with_spaces(${packageName}_LIB_ALL_DEPENDENCIES PRINTED_VAR)
+  print_var_with_spaces(${packageName}_LIB_DEFINED_DEPENDENCIES PRINTED_VAR)
   print_nonempty_var_with_spaces(${packageName}_TEST_ENABLED_DEPENDENCIES PRINTED_VAR)
-  print_nonempty_var_with_spaces(${packageName}_TEST_ALL_DEPENDENCIES PRINTED_VAR)
+  print_nonempty_var_with_spaces(${packageName}_TEST_DEFINED_DEPENDENCIES PRINTED_VAR)
 endfunction()
 
 

@@ -1852,7 +1852,7 @@ dependencies may need to be tweaked to match how these TPLs were actually
 installed on some systems.  To redefine what dependencies a TPL can have (if
 the upstream TPLs are enabled), set::
 
-  -D <TPLNAME>_LIB_ALL_DEPENDENCIES="<tpl_1>;<tpl_2>;..."
+  -D <TPLNAME>_LIB_DEFINED_DEPENDENCIES="<tpl_1>;<tpl_2>;..."
 
 A dependency on an upstream TPL ``<tpl_i>`` will be set if the an upstream TPL
 ``<tpl_i>`` is actually enabled.
