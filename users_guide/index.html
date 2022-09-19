@@ -374,10 +374,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-08-26</p>
+<dd class="field-even"><p>2022-09-19</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-3033-gb33a6d8a</p>
+<dd class="field-odd"><p>tribits_start-3039-gd11fc026</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -7815,13 +7815,16 @@ submit to CDash in a variety of ways:</p>
 <ul class="simple">
 <li><p>Cron jobs can be set up to run them at the same time every day.</p></li>
 <li><p>Jenkins jobs can be set up to run them based on various criteria.</p></li>
-<li><p>Travis CI can run them to respond to GitHub pushes.</p></li>
+<li><p>GitHub Actions can run them to respond to GitHub pushes or to test pull
+requests.</p></li>
+<li><p>GitLab CI can run them to respond to GitLab pushes or the test merge
+requests.</p></li>
 <li><p>Use the legacy <a class="reference internal" href="#tribits-dashboard-driver">TriBITS Dashboard Driver</a> system (not recommended).</p></li>
 </ul>
-<p>The setup of Jenkins, Travis CI and other more sophisticated automated
-testing systems will not be described here.  What will be briefly outlined
-below is the setup using cron jobs on a Linux machine.  That is sufficient
-for most smaller projects and provides tremendous value.</p>
+<p>The setup of Jenkins, GitHub Actions, GitLab CI and other more sophisticated
+automated testing systems will not be described here.  What will be briefly
+outlined below is the setup using cron jobs on a Linux machine.  That is
+sufficient for most smaller projects and provides tremendous value.</p>
 <p>To set up an automated build using a cron job, one will typically create a
 shell driver script that sets the env and then calls the <code class="docutils literal notranslate"><span class="pre">ctest</span> <span class="pre">-S</span>
 <span class="pre">&lt;script&gt;</span></code> command.  Then one just adds a call to that shell driver script
@@ -15778,19 +15781,20 @@ it empty initially use <a class="reference internal" href="#global-null-set">glo
 </section>
 <section id="print-nonempty-var-with-spaces">
 <h3><a class="toc-backref" href="#id200">print_nonempty_var_with_spaces()</a><a class="headerlink" href="#print-nonempty-var-with-spaces" title="Permalink to this heading"></a></h3>
-<p>Print a defined variable giving its name then value printed with spaces
-instead of <code class="docutils literal notranslate"><span class="pre">';'</span></code> but only if it is not empty.</p>
+<p>Print a list variable giving its name then value printed with spaces instead
+of <code class="docutils literal notranslate"><span class="pre">';'</span></code>, but only if the list is non-empty.</p>
 <p>Usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">print_nonempty_var_with_spaces</span><span class="p">(</span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span>  <span class="o">&lt;</span><span class="n">printedVarInOut</span><span class="o">&gt;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">print_nonempty_var_with_spaces</span><span class="p">(</span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span>  <span class="o">&lt;</span><span class="n">printedVarOut</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Prints the variable as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">ele0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">ele1</span><span class="o">&gt;</span> <span class="o">...</span>
 </pre></div>
 </div>
-<p>If <code class="docutils literal notranslate"><span class="pre">$&lt;printedVarInOut&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on input, then the variable is not
-touched. If however, the variable <code class="docutils literal notranslate"><span class="pre">$&lt;printedVarInOut&gt;</span></code> is not <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on
-input, then it is set to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on output.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">&lt;printedVarOut&gt;</span></code> is <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on input, then the variable is not
+touched. If however, the variable <code class="docutils literal notranslate"><span class="pre">&lt;printedVarOut&gt;</span></code> is not <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> and
+the list <code class="docutils literal notranslate"><span class="pre">&lt;varName&gt;</span></code> in non-empty, then <code class="docutils literal notranslate"><span class="pre">&lt;printedVarOut&gt;</span></code> is set to
+<code class="docutils literal notranslate"><span class="pre">TRUE</span></code> on output.</p>
 </section>
 <section id="print-var">
 <h3><a class="toc-backref" href="#id201">print_var()</a><a class="headerlink" href="#print-var" title="Permalink to this heading"></a></h3>
