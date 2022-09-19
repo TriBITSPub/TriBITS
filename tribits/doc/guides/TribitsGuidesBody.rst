@@ -6668,14 +6668,18 @@ The following steps describe how to submit results to a CDash site using the
 
   * Jenkins jobs can be set up to run them based on various criteria.
 
-  * Travis CI can run them to respond to GitHub pushes.
+  * GitHub Actions can run them to respond to GitHub pushes or to test pull
+    requests.
+
+  * GitLab CI can run them to respond to GitLab pushes or the test merge
+    requests.
 
   * Use the legacy `TriBITS Dashboard Driver`_ system (not recommended).
 
-  The setup of Jenkins, Travis CI and other more sophisticated automated
-  testing systems will not be described here.  What will be briefly outlined
-  below is the setup using cron jobs on a Linux machine.  That is sufficient
-  for most smaller projects and provides tremendous value.
+  The setup of Jenkins, GitHub Actions, GitLab CI and other more sophisticated
+  automated testing systems will not be described here.  What will be briefly
+  outlined below is the setup using cron jobs on a Linux machine.  That is
+  sufficient for most smaller projects and provides tremendous value.
 
   To set up an automated build using a cron job, one will typically create a
   shell driver script that sets the env and then calls the ``ctest -S
