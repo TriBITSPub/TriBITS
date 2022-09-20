@@ -75,7 +75,7 @@ functions and module files:
 * ``camelCaseVariableName`` or ``lower_case_variable_name`` is generally used
   for local variable names.
 
-* ``tribits_lower_case_name()`` in generally used for TriBITS functions and
+* ``tribits_lower_case_name()`` is generally used for TriBITS functions and
   macros. (E.g. ``trilinos_package_define_dependencies()``)
 
 * ``TribitsModuleName.cmake`` is generally used for TriBITS CMake module file
