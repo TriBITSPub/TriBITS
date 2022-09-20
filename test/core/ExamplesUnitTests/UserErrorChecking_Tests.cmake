@@ -30,9 +30,9 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PASS
       -DTribitsExProj_ENABLE_TESTS=ON
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Explicitly enabled packages on input [(]by user[)]:  PkgWithUserErrors 1"
-      "Final set of enabled packages:  PkgWithUserErrors 1"
-      "Processing enabled package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
+      "Explicitly enabled top-level packages on input [(]by user[)]:  PkgWithUserErrors 1"
+      "Final set of enabled top-level packages:  PkgWithUserErrors 1"
+      "Processing enabled top-level package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
       "Configuring done"
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -80,7 +80,7 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_
       -DPkgWithUserErrors_no_POSTPROCESS_call=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Processing enabled package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
+      "Processing enabled top-level package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
       "ERROR: Forgot to call tribits_package_postprocess[(][)] .*/TribitsExampleProject/PkgWithUserErrors/CMakeLists.txt"
     ALWAYS_FAIL_ON_ZERO_RETURN
   )
@@ -379,9 +379,9 @@ tribits_add_advanced_test( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       -DTribitsExProj_ENABLE_TESTS=ON
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Explicitly enabled packages on input [(]by user[)]:  PkgWithSubpkgsWithUserErrors 1"
-      "Final set of enabled packages:  PkgWithSubpkgsWithUserErrors 1"
-      "Processing enabled package: PkgWithSubpkgsWithUserErrors [(]A, B, Tests, Examples[)]"
+      "Explicitly enabled top-level packages on input [(]by user[)]:  PkgWithSubpkgsWithUserErrors 1"
+      "Final set of enabled top-level packages:  PkgWithSubpkgsWithUserErrors 1"
+      "Processing enabled top-level package: PkgWithSubpkgsWithUserErrors [(]A, B, Tests, Examples[)]"
       "Configuring done"
       "Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN

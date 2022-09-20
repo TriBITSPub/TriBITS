@@ -88,7 +88,7 @@ tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_default
       -DCMAKE_INSTALL_PREFIX=${RPATH_CURRENT_TEST_DIR}/install
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "Processing enabled package: SimpleCxx .Libs, Tests, Examples."
+      "Processing enabled top-level package: SimpleCxx .Libs, Tests, Examples."
       "Configuring done"
       "Generating done"
   # Above tests the standard install lib location

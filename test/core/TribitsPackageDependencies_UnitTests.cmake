@@ -138,7 +138,7 @@ function(unittest_tribits_extpkg_define_dependencies_basic)
 
   tribits_extpkg_define_dependencies(someExtPkg
     DEPENDENCIES  upPkg1  upPkg2:PUBLIC  upPkg3:PRIVATE  upPkg4)
-  unittest_compare_const( someExtPkg_LIB_ALL_DEPENDENCIES
+  unittest_compare_const( someExtPkg_LIB_DEFINED_DEPENDENCIES
     "upPkg1;upPkg2:PUBLIC;upPkg3:PRIVATE;upPkg4" )
 
 endfunction()

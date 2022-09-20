@@ -145,7 +145,7 @@ tribits_add_advanced_test( get_tribits_packages_only_toplevel_packages
       "^TrilinosFramework,Teuchos,.*,Sacado,Thyra,Isorropia,.*,Phalanx,Panzer\n"
   )
 
-tribits_add_advanced_test( get_tribits_packages_all_se_packages
+tribits_add_advanced_test( get_tribits_packages_all_packages
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0

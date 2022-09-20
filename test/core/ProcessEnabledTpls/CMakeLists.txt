@@ -143,7 +143,7 @@ create_process_enabled_tpls_test_case(
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
   INCLUDE_DIRS  ${HeaderOnlyTpl_BASE_DIR}
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+    "Processing enabled external package/TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "-- Must find at least one header in each of the header sets .HeaderOnlyTpl_stuff.hpp."
     "-- Searching for headers in HeaderOnlyTpl_INCLUDE_DIRS='.+/HeaderOnlyTpl'"
     "-- Searching for a header file in the set .HeaderOnlyTpl_stuff.hpp.:"
@@ -165,7 +165,7 @@ create_process_enabled_tpls_test_case(
   INCLUDE_DIRS  ${HeaderOnlyTpl_BASE_DIR}
   EXTRA_ARGS  -DTPL_TENTATIVE_ENABLE_HeaderOnlyTpl=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+    "Processing enabled external package/TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "-- Attempting to tentatively enable TPL 'HeaderOnlyTpl' [.][.][.]"
     "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.+/examples/tpls/HeaderOnlyTpl'"
     "-- Attempt to tentatively enable TPL 'HeaderOnlyTpl' passed!"
@@ -181,7 +181,7 @@ create_process_enabled_tpls_test_case(
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
   EXTR_ARGS  -DTPL_HeaderOnlyTpl_INCLUDE_DIRS=/some/dir/somewhere
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+    "Processing enabled external package/TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='/some/dir/somewhere'"
     "Exported TPL_HeaderOnlyTpl_NOT_FOUND='FALSE'"
     "Exported TPL_HeaderOnlyTpl_INCLUDE_DIRS='/some/dir/somewhere'"
@@ -196,7 +196,7 @@ create_process_enabled_tpls_test_case(
   INCLUDE_DIRS  "/path_does_not_exist"
   EXTR_ARGS  -DTPL_HeaderOnlyTpl_ENABLING_PKG=SimpleCxx
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+    "Processing enabled external package/TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "-- Must find at least one header in each of the header sets .HeaderOnlyTpl_stuff.hpp."
     "-- Searching for headers in HeaderOnlyTpl_INCLUDE_DIRS='/path_does_not_exist'"
     "-- Searching for a header file in the set .HeaderOnlyTpl_stuff.hpp.:"
@@ -234,7 +234,7 @@ create_process_enabled_tpls_test_case(
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
   INCLUDE_DIRS  "/path_does_not_exist"
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+    "Processing enabled external package/TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "TIP: Even though the TPL 'HeaderOnlyTpl' was explicitly enabled in input,"
     "it can be disabled with:"
     "  -DTPL_ENABLE_HeaderOnlyTpl=OFF"
@@ -256,7 +256,7 @@ create_process_enabled_tpls_test_case(
   INCLUDE_DIRS  "/path_does_not_exist"
   EXTRA_ARGS  -DTPL_TENTATIVE_ENABLE_HeaderOnlyTpl=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+    "Processing enabled external package/TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "-- Attempting to tentatively enable TPL 'HeaderOnlyTpl' ..."
     "-- Must find at least one header in each of the header sets .HeaderOnlyTpl_stuff.hpp."
     "-- Searching for headers in HeaderOnlyTpl_INCLUDE_DIRS='/path_does_not_exist'"
@@ -283,14 +283,14 @@ create_process_enabled_tpls_test_case(
 
   INCLUDE_DIRS  "/path_does_not_exist"
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+    "Processing enabled external package/TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "-- ERROR: Could not find the include directories for TPL 'HeaderOnlyTpl'!"
     "ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
     "Configuring incomplete, errors occurred!"
 
   RC_INCLUDE_DIRS  ${HeaderOnlyTpl_BASE_DIR}
   RC_PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
+    "Processing enabled external package/TPL: HeaderOnlyTpl .enabled explicitly, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "Found TPL 'HeaderOnlyTpl' include dirs '.*/examples/tpls/HeaderOnlyTpl'"
     "Exported TPL_ENABLE_HeaderOnlyTpl='ON'"
     "Exported TPL_HeaderOnlyTpl_NOT_FOUND='FALSE'"
@@ -318,7 +318,7 @@ create_process_enabled_tpls_test_case(
   LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
   TPL_FIND_SHARED_LIBS
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF." 
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF." 
     "-- Must find at least one lib in each of the lib sets .haltpl1[;]haltpl2."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .haltpl1.:"
@@ -353,7 +353,7 @@ create_process_enabled_tpls_test_case(
   TPL_FIND_SHARED_LIBS
   EXTRA_ARGS -DFIND_ONE_IN_SET_OF_HEADERS_1=ON -DFIND_ONE_IN_SET_OF_LIBS_1=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Must find at least one lib in each of the lib sets .missinglib1 haltpl1[;]missinglib2 haltpl2."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .missinglib1 haltpl1.:"
@@ -390,7 +390,7 @@ create_process_enabled_tpls_test_case(
   INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
   LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Must find at least one lib in each of the lib sets .haltpl1[;]haltpl2."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .haltpl1.:"
@@ -452,7 +452,7 @@ create_process_enabled_tpls_test_case(
   LIBRARY_DIRS  /path/does/not/exist
   EXTR_ARGS  -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Must find at least one lib in each of the lib sets .haltpl1[;]haltpl2."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='/path/does/not/exist'"
     "-- Searching for a lib in the set .haltpl1.:"
@@ -495,7 +495,7 @@ create_process_enabled_tpls_test_case(
   EXTR_ARGS  -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
     -DNOT_MUST_FIND_ALL_LIBS=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='/path/does/not/exist'"
     "-- Searching for a lib in the set .haltpl1.:"
     "-- NOTE: Did not find a lib in the lib set .haltpl1. for the TPL 'HeadersAndLibsTpl'!"
@@ -517,7 +517,7 @@ create_process_enabled_tpls_test_case(
   EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="badlibname"
     -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Must find at least one lib in each of the lib sets .badlibname."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .badlibname.:"
@@ -541,7 +541,7 @@ create_process_enabled_tpls_test_case(
     -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
     -DNOT_MUST_FIND_ALL_LIBS=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .badlibname.:"
     "-- NOTE: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
@@ -559,7 +559,7 @@ create_process_enabled_tpls_test_case(
   EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="haltpl2,badlibname"
     -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .badlibname.:"
     "-- ERROR: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
@@ -578,7 +578,7 @@ create_process_enabled_tpls_test_case(
     -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
     -DNOT_MUST_FIND_ALL_LIBS=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .badlibname.:"
     "-- NOTE: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
@@ -599,7 +599,7 @@ create_process_enabled_tpls_test_case(
     -DNOT_MUST_FIND_ALL_LIBS=ON
     -D${MOCK_PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .badlibname.:"
     "-- ERROR: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
@@ -617,7 +617,7 @@ create_process_enabled_tpls_test_case(
   TPL_FIND_SHARED_LIBS
   EXTR_ARGS  -DNOT_MUST_FIND_ALL_HEADERS=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- TPL_HeadersAndLibsTpl_LIBRARIES='.+/HeadersAndLibsTpl/lib/libhaltpl1.so[;].+/HeadersAndLibsTpl/lib/libhaltpl2.so'"
     "-- Searching for headers in HeadersAndLibsTpl_INCLUDE_DIRS='/include/path/does/not/exist'"
     "-- ERROR: Could not find a header file in the set .HeadersAndLibsTpl_header1.hpp."
@@ -641,7 +641,7 @@ create_process_enabled_tpls_test_case(
   LIBRARY_DIRS  /path/does/not/exist
   EXTR_ARGS
   PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='/path/does/not/exist'"
     "-- ERROR: Could not find the libraries for the TPL 'HeadersAndLibsTpl'!"
     "-- ERROR: Failed finding all of the parts of TPL 'HeadersAndLibsTpl' .see above., Aborting!"
@@ -652,7 +652,7 @@ create_process_enabled_tpls_test_case(
   RC_LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
   RC_EXTR_ARGS  -DNOT_MUST_FIND_ALL_HEADERS=ON
   RC_PASS_REGULAR_EXPRESSION_ALL
-    "Processing enabled TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+    "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "Exported TPL_HeadersAndLibsTpl_NOT_FOUND='FALSE'"
     "Exported TPL_HeadersAndLibsTpl_LIBRARIES='.*/ProcessEnabledTpls/tpls/HeadersAndLibsTpl/lib/libhaltpl1.so[;].*/ProcessEnabledTpls/tpls/HeadersAndLibsTpl/lib/libhaltpl2.so'"
     "Exported TPL_HeadersAndLibsTpl_INCLUDE_DIRS='.*/ProcessEnabledTpls/tpls/HeadersAndLibsTpl/include'"

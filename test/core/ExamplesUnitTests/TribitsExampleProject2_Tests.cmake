@@ -191,8 +191,8 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         ../TribitsExampleProject2
       PASS_REGULAR_EXPRESSION_ALL
-        "Final set of enabled packages:  Package1 Package2 Package3"
-        "Final set of enabled TPLs:  Tpl1 Tpl2 Tpl3 Tpl4 4"
+        "Final set of enabled top-level packages:  Package1 Package2 Package3"
+        "Final set of enabled external packages/TPLs:  Tpl1 Tpl2 Tpl3 Tpl4 4"
 
         "Tpl1_LIBRARY_NAMES='tpl1'"
         "Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
@@ -357,9 +357,9 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls  shared
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
       PASS_REGULAR_EXPRESSION_ALL
         "NOTE: Package3_ENABLE_Package2=OFF is already set so not enabling even though TribitsExProj2_ENABLE_Package2=ON is set"
-        "Final set of enabled packages:  Package1 Package2 Package3"
-        "Final set of enabled TPLs:  Tpl1 Tpl2 2"
-	"Final set of non-enabled TPLs:  Tpl3 Tpl4 2"
+        "Final set of enabled top-level packages:  Package1 Package2 Package3"
+        "Final set of enabled external packages/TPLs:  Tpl1 Tpl2 2"
+	"Final set of non-enabled external packages/TPLs:  Tpl3 Tpl4 2"
 
         "TPL_Tpl1_LIBRARIES='${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
         "TPL_Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"

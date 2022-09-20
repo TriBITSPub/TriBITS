@@ -40,7 +40,7 @@
 ################################################################################
 #
 # This file contains unit tests for macros and functions in the file
-# TribitsReadDepsFilesCreateDepsGraph.cmake and related files.
+# TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake and related files.
 #
 ################################################################################
 
@@ -353,9 +353,9 @@ function(unittest_read_packages_list_with_extra_repo)
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
   tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  unittest_compare_const( ${PROJECT_NAME}_NUM_PACKAGES 4 )
+  unittest_compare_const( ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4 )
 
 endfunction()
 
@@ -381,9 +381,8 @@ function(unittest_read_tpls_lists_wtih_duplicate_tpls)
   tribits_process_tpls_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
   # The TPL is not added again
-  unittest_compare_const( ${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost;EXTPL2")
-  unittest_compare_const( ${PROJECT_NAME}_NUM_TPLS "5" )
-  unittest_compare_const( ${PROJECT_NAME}_REVERSE_TPLS "EXTPL2;Boost;LAPACK;BLAS;MPI" )
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost;EXTPL2")
+  unittest_compare_const( ${PROJECT_NAME}_NUM_DEFINED_TPLS "5" )
   unittest_compare_const( MPI_FINDMOD "cmake/TPLs/FindTPLMPI.cmake" )
   unittest_compare_const( MPI_TESTGROUP "PT" )
   unittest_compare_const( BLAS_FINDMOD "cmake/TPLs/FindTPLBLAS.cmake" )
@@ -408,18 +407,18 @@ function(unittest_read_packages_and_dependencies)
   #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
   unittest_helper_read_packages_and_dependencies()
-
-  unittest_compare_const(${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost")
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
-  unittest_compare_const(${PROJECT_NAME}_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
-
   unittest_compare_const(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
   unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
-  unittest_compare_const(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES "MPI;BLAS;LAPACK;Boost;Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  unittest_compare_const(${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES 8)
+  unittest_compare_const(${PROJECT_NAME}_REVERSE_DEFINED_TPLS "Boost;LAPACK;BLAS;MPI")
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
+    "Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES
+    "MPI;BLAS;LAPACK;Boost;Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TOPLEVEL_PACKAGES 8)
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_PACKAGES
+    "MPI;BLAS;LAPACK;Boost;Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_PACKAGES 8)
 
   # ToDo: Add checks for ${PACKAGE_NAME}_REL_SOURCE_DIR,,
   # ${PACKAGE_NAME}_SOURCE_DIR, ${PACKAGE_NAME}_TESTGROUP and other vars set
@@ -593,8 +592,8 @@ function(unittest_extra_repo_missing_optional_package)
   tribits_read_deps_files_create_deps_graph()
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+    "-- ;Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='4'")
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
 
@@ -623,8 +622,8 @@ function(unittest_extra_repo_missing_optional_package_verbose)
   tribits_read_deps_files_create_deps_graph()
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+    "NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;-- ;Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='4'")
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
@@ -652,8 +651,8 @@ function(unittest_extra_repo_missing_required_package)
   tribits_read_deps_files_create_deps_graph()
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+    "NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='4'")
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
@@ -684,8 +683,8 @@ function(unittest_extra_repo_missing_required_package_verbose)
   tribits_read_deps_files_create_deps_graph()
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+    "NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='4'")
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
@@ -719,7 +718,7 @@ function(unittest_elevate_subpackages_st_to_pt)
 
   tribits_read_deps_files_create_deps_graph()
 
-  unittest_compare_const( ${PROJECT_NAME}_SE_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
     "Teuchos;RTOp;extraRepoOnePackageThreeSubpackagesSP1;extraRepoOnePackageThreeSubpackagesSP2;extraRepoOnePackageThreeSubpackagesSP3;extraRepoOnePackageThreeSubpackages")
   unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP1_SOURCE_DIR ${PROJECT_SOURCE_DIR}/extraRepoOnePackageThreeSubpackages/sp1)
   unittest_compare_const(extraRepoOnePackageThreeSubpackagesSP2_SOURCE_DIR ${PROJECT_SOURCE_DIR}/extraRepoOnePackageThreeSubpackages/sp2)
@@ -773,4 +772,4 @@ unittest_extra_repo_missing_required_package_verbose()
 unittest_elevate_subpackages_st_to_pt()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(127)
+unittest_final_result(125)

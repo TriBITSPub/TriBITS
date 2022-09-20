@@ -461,10 +461,10 @@ function(TribitsExampleApp_EnableSingleSubpackage fullOrComponents sharedOrStati
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
         ${testDir}/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
-        "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
-        "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
-        "Final set of non-enabled packages:  MixedLang WrapExternal 2"
-        "Final set of non-enabled SE packages:  MixedLang WithSubpackagesC WrapExternal 3"
+        "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+        "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
+        "Final set of non-enabled top-level packages:  MixedLang WrapExternal 2"
+        "Final set of non-enabled packages:  MixedLang WithSubpackagesC WrapExternal 3"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_3
