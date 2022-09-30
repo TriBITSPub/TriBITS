@@ -49,7 +49,7 @@ If you have access to the <Project> git repositories (which which includes a
 snapshot of TriBITS), then install CMake with::
 
   $ cd <some-scratch-space>/
-  $ export TRIBITS_BASE_DIR=<project-base-dir>/cmake/tribits
+  $ TRIBITS_BASE_DIR=<project-base-dir>/cmake/tribits
   $ $TRIBITS_BASE_DIR/devtools_install/install-cmake.py \
      --install-dir-base=<INSTALL_BASE_DIR> --cmake-version=X.Y.Z \
      --do-all
@@ -2751,9 +2751,9 @@ NOTES:
 Generating export files
 -----------------------
 
-The project <Project> can generate export files for external CMake projects or
-external Makefile projects.  These export files provide the lists of
-libraries, include directories, compilers and compiler options, etc.
+The project <Project> can generate export files for external CMake projects.
+These export files provide the lists of libraries, include directories, compilers
+and compiler options, etc.
 
 To configure to generate CMake export files for the project, configure with::
 
