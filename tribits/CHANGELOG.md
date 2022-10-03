@@ -2,6 +2,16 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-10-02:
+
+* **Changed:** The TriBITS FindTPLCUDA.cmake module changed
+  `find_package(CUDA)` to `find_package(CUDAToolkit)` (the former is
+  deprecated as of CMake 3.17).  This avoids imported target namespace
+  conflicts with downstream CMake projects that call
+  `find_package(CUDAToolkit)` (see [Trilinos
+  #10954](https://github.com/trilinos/Trilinos/issues/10954)).
+
+
 ## 2022-09-16:
 
 * **Changed:** Changed nomenclature for packages and TPLs (see updated

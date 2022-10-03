@@ -4097,6 +4097,12 @@ and then watch that file in another terminal with::
 
   $ tail -f make.dashboard.out
 
+**NOTE:** To pass multiple arguments for ``CTEST_BUILD_FLAGS`` (like adding
+ ``-k 99999999`` to tell ninja to continue even if there are build errors),
+ one must quote the entire argument string as::
+
+  "-DCTEST_BUILD_FLAGS=-j4 -k 99999999"
+
 
 Setting options to change behavior of 'dashboard' target
 --------------------------------------------------------
