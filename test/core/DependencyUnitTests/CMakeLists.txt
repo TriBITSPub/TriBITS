@@ -679,6 +679,24 @@ create_dependency_handling_test_case(
 
 
 create_dependency_handling_test_case(
+  EnableThyra_EnableExamples_EnableTestsEmpty_DisableThyraExamples_EnableThyraTests
+  ARGS -DTrilinos_ENABLE_Thyra=ON
+    -DTrilinos_ENABLE_EXAMPLES=ON -DTrilinos_ENABLE_TESTS= -DThyra_ENABLE_EXAMPLES=OFF -DThyra_ENABLE_TESTS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Disabling subpackage tests/examples based on parent package tests/examples disables ..."
+    "-- Setting ThyraCoreLibs_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "-- Setting ThyraEpetra_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "-- Setting ThyraEpetraExt_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "-- Setting ThyraTpetra_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
+    "Enabling all tests and/or examples that have not been explicitly disabled because Trilinos_ENABLE_.TESTS,EXAMPLES.=ON ..."
+    "-- Setting ThyraCoreLibs_ENABLE_TESTS=ON"
+    "-- Setting ThyraEpetra_ENABLE_TESTS=ON"
+    "-- Setting ThyraEpetraExt_ENABLE_TESTS=ON"
+    "-- Setting ThyraTpetra_ENABLE_TESTS=ON"
+  )
+
+
+create_dependency_handling_test_case(
   TestTrueFalse
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES=TRUE -DTrilinos_ENABLE_Zoltan=TRUE
     -DTrilinos_ENABLE_TEST=TRUE -DTPL_ENABLE_BLAS=FALSE
