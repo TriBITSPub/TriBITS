@@ -688,11 +688,11 @@ create_dependency_handling_test_case(
     "-- Setting ThyraEpetra_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
     "-- Setting ThyraEpetraExt_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
     "-- Setting ThyraTpetra_ENABLE_EXAMPLES=OFF because parent package Thyra_ENABLE_EXAMPLES=OFF"
-    "Enabling all tests and/or examples that have not been explicitly disabled because Trilinos_ENABLE_.TESTS,EXAMPLES.=ON ..."
-    "-- Setting ThyraCoreLibs_ENABLE_TESTS=ON"
-    "-- Setting ThyraEpetra_ENABLE_TESTS=ON"
-    "-- Setting ThyraEpetraExt_ENABLE_TESTS=ON"
-    "-- Setting ThyraTpetra_ENABLE_TESTS=ON"
+    "Enabling subpackage tests/examples based on parent package tests/examples enables ..."
+    "-- Setting ThyraCoreLibs_ENABLE_TESTS=ON because parent package Thyra_ENABLE_TESTS=ON"
+    "-- Setting ThyraEpetra_ENABLE_TESTS=ON because parent package Thyra_ENABLE_TESTS=ON"
+    "-- Setting ThyraEpetraExt_ENABLE_TESTS=ON because parent package Thyra_ENABLE_TESTS=ON"
+    "-- Setting ThyraTpetra_ENABLE_TESTS=ON because parent package Thyra_ENABLE_TESTS=ON"
   )
 
 

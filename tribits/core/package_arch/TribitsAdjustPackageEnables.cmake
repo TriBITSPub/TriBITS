@@ -972,6 +972,20 @@ macro(tribits_set_package_enable_based_on_global_enable  projectEnableVar
 endmacro()
 
 
+# Set an individual package test or examples enable to on only if global enable var is on
+#
+macro(tribits_set_package_enable_based_on_global_enable_on  projectEnableVar
+    packageEnableVar
+  )
+  if ("${${packageEnableVar}}" STREQUAL "")
+    if (${projectEnableVar})
+      message("-- " "Setting ${packageEnableVar}=ON")
+      set(${packageEnableVar} ON)
+    endif()
+  endif()
+endmacro()
+
+
 # Macro used to set ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} based on
 # ${PROJECT_NAME}_ENABLE_ALL_PACKAGES
 #
@@ -993,9 +1007,9 @@ macro(tribits_apply_test_example_enables PACKAGE_NAME)
   if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
     tribits_is_primary_meta_project_package(${PACKAGE_NAME}  PACKAGE_IS_PMPP)
     if (PACKAGE_IS_PMPP)
-      tribits_set_package_enable_based_on_global_enable(
+      tribits_set_package_enable_based_on_global_enable_on(
         ${PROJECT_NAME}_ENABLE_TESTS ${PACKAGE_NAME}_ENABLE_TESTS )
-      tribits_set_package_enable_based_on_global_enable(
+      tribits_set_package_enable_based_on_global_enable_on(
         ${PROJECT_NAME}_ENABLE_EXAMPLES ${PACKAGE_NAME}_ENABLE_EXAMPLES )
     endif()
   endif()
