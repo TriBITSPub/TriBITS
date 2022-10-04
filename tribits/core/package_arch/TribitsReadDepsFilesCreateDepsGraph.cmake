@@ -342,17 +342,17 @@ endmacro()
 #
 # It also sets to empty the forward dependency list vars:
 #
-#  * `${PACKAGE_NAME}_FORWARD_LIB_DEP_PACKAGES`_
-#  * `${PACKAGE_NAME}_FORWARD_TEST_DEP_PACKAGES`_
+#  * `${PACKAGE_NAME}_FORWARD_LIB_DEFINED_DEPENDENCIES`_
+#  * `${PACKAGE_NAME}_FORWARD_TEST_DEFINED_DEPENDENCIES`_
 #
-# for each of the forward/downstream in `Variables defining the package
-# dependencies graph`_.
+# for each of the forward/downstream package/dependency in `Variables defining
+# the package dependencies graph`_.
 #
 # See `Function call tree for constructing package dependency graph`_
 #
-# **__Legacy variables:__**
+# **__Legacy variables #63:__**
 #
-# It also sets to empty the forward dependency list vars:
+# It also sets to empty the forward dependency list vars::
 #
 #    <packageName>_FORWARD_<listType>
 #
@@ -377,8 +377,8 @@ macro(tribits_prep_to_read_dependencies  PACKAGE_NAME_IN)
 
   # Initialize other vars
 
-  set(${PACKAGE_NAME_IN}_FORWARD_LIB_DEP_PACKAGES "")
-  set(${PACKAGE_NAME_IN}_FORWARD_TEST_DEP_PACKAGES "")
+  set(${PACKAGE_NAME_IN}_FORWARD_LIB_DEFINED_DEPENDENCIES "")
+  set(${PACKAGE_NAME_IN}_FORWARD_TEST_DEFINED_DEPENDENCIES "")
 
   # Legacy vars #63
   set(${PACKAGE_NAME_IN}_FORWARD_LIB_REQUIRED_DEP_PACKAGES "")
@@ -512,7 +512,7 @@ endmacro()
 # `tribits_package_define_dependencies()`_.
 #
 # Sets the upstream/backward dependency variables defined in the section
-# `Legacy list variables defining the package dependencies graph`_.
+# `Variables defining the package dependencies graph`_.
 #
 # This also handles the several types of issues:
 #
@@ -522,6 +522,12 @@ endmacro()
 # * A missing upstream dependent package (either error out with
 #   `tribits_abort_on_missing_package()`_ or allow to be missing and disable
 #   this package if this is a required dependency).
+#
+# **__ Legacy variables #63:__**
+#
+# Set the backward/upstream dependency variables defined `Legacy list
+# variables defining the package dependencies graph`_.
+
 #
 # See `Function call tree for constructing package dependency graph`_
 #
