@@ -362,16 +362,15 @@ endmacro()
 macro(tribits_prep_to_read_dependencies  PACKAGE_NAME_IN)
 
   # Initial vars that must be set in the Dependencies.cmake file
-
   tribits_declare_undefined(LIB_REQUIRED_DEP_PACKAGES)
   tribits_declare_undefined(LIB_OPTIONAL_DEP_PACKAGES)
   tribits_declare_undefined(TEST_REQUIRED_DEP_PACKAGES)
   tribits_declare_undefined(TEST_OPTIONAL_DEP_PACKAGES)
 
-  tribits_declare_undefined(LIB_REQUIRED_DEP_TPLS "")
-  tribits_declare_undefined(LIB_OPTIONAL_DEP_TPLS "")
-  tribits_declare_undefined(TEST_REQUIRED_DEP_TPLS "")
-  tribits_declare_undefined(TEST_OPTIONAL_DEP_TPLS "")
+  tribits_declare_undefined(LIB_REQUIRED_DEP_TPLS)
+  tribits_declare_undefined(LIB_OPTIONAL_DEP_TPLS)
+  tribits_declare_undefined(TEST_REQUIRED_DEP_TPLS)
+  tribits_declare_undefined(TEST_OPTIONAL_DEP_TPLS)
 
   set(REGRESSION_EMAIL_LIST "") # Allow to be empty
 
