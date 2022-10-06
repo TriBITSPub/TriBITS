@@ -489,14 +489,13 @@ endmacro()
 macro(tribits_process_package_dependencies_lists  packageName)
 
   tribits_set_dep_packages(${packageName} LIB  REQUIRED  PACKAGES)
+  tribits_set_dep_packages(${packageName} LIB  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} LIB  OPTIONAL  PACKAGES)
+  tribits_set_dep_packages(${packageName} LIB  OPTIONAL  TPLS)
   tribits_set_dep_packages(${packageName} TEST  REQUIRED  PACKAGES)
+  tribits_set_dep_packages(${packageName} TEST  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} TEST  OPTIONAL  PACKAGES)
-
-  set(${packageName}_LIB_REQUIRED_DEP_TPLS ${LIB_REQUIRED_DEP_TPLS})
-  set(${packageName}_LIB_OPTIONAL_DEP_TPLS ${LIB_OPTIONAL_DEP_TPLS})
-  set(${packageName}_TEST_REQUIRED_DEP_TPLS ${TEST_REQUIRED_DEP_TPLS})
-  set(${packageName}_TEST_OPTIONAL_DEP_TPLS ${TEST_OPTIONAL_DEP_TPLS})
+  tribits_set_dep_packages(${packageName} TEST  OPTIONAL  TPLS)
 
   # Legacy vars #63
   tribits_append_forward_dep_packages(${packageName} LIB_REQUIRED_DEP_PACKAGES)
@@ -557,8 +556,8 @@ function(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional  p
     if (depPkgIsDefined)
       list(APPEND  legacyPackageDepsList ${depPkg})
     else()
-      tribits_set_dep_packages__handle_missing_pkg(${packageName} ${depPkg}
-        ${requiredOrOptional} ${packageEnableVar})
+      tribits_set_dep_packages__handle_undefined_pkg(${packageName} ${depPkg}
+        ${requiredOrOptional} ${pkgsOrTpls} ${packageEnableVar})
     endif()
   endforeach()
 
@@ -595,12 +594,22 @@ endfunction()
 # don't assert packages that are not defined but instead just assume they are
 # TriBITS-compatible packages already installed.
 #
-macro(tribits_set_dep_packages__handle_missing_pkg  packageName  depPkg
-    requiredOrOptional  packageEnableVar
+macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
+    requiredOrOptional  pkgsOrTpls  packageEnableVar
   )
-  if (${PROJECT_NAME}_ASSERT_MISSING_PACKAGES
-      AND  NOT  ${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE
-    )
+  # Determine if it is allowed for this depPkg to not be defined
+  set(assertDepPkgBeDefined  TRUE)
+  if (NOT ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES)
+    set(assertDepPkgBeDefined  FALSE)
+  elseif (${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE)
+    set(assertDepPkgBeDefined  FALSE)
+  elseif (pkgsOrTpls STREQUAL "TPLS" AND
+      (NOT ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES)
+      )
+    set(assertDepPkgBeDefined  FALSE)
+  endif()
+  # Produce error or deal with allowed missing depPkg
+  if (assertDepPkgBeDefined)
     tribits_abort_on_missing_package(
       "${depPkg}" "${packageName}" "${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES")
   else()

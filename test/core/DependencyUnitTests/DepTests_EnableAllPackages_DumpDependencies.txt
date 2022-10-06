@@ -25,7 +25,7 @@ Package dependencies information:
 -- Epetra_LIB_REQUIRED_DEP_TPLS: BLAS LAPACK
 -- Epetra_LIB_OPTIONAL_DEP_TPLS: MPI
 
--- Zoltan_LIB_OPTIONAL_DEP_TPLS: MPI ParMETIS Scotch Zlib
+-- Zoltan_LIB_OPTIONAL_DEP_TPLS: MPI ParMETIS Scotch
 
 -- Shards_TEST_OPTIONAL_DEP_PACKAGES: Teuchos
 
@@ -161,7 +161,7 @@ Dumping direct dependencies for each package ...
 -- Epetra_LIB_ENABLED_DEPENDENCIES: BLAS LAPACK
 -- Epetra_LIB_DEFINED_DEPENDENCIES: BLAS LAPACK MPI
 
--- Zoltan_LIB_DEFINED_DEPENDENCIES: MPI ParMETIS Scotch Zlib
+-- Zoltan_LIB_DEFINED_DEPENDENCIES: MPI ParMETIS Scotch
 
 -- Shards_TEST_DEFINED_DEPENDENCIES: Teuchos
 
