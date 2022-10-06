@@ -553,39 +553,12 @@ function(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional  p
     if (${depPkg} STREQUAL ${packageName})
       tribits_abort_on_self_dep("${packageName}" "${inputListType}")
     endif()
-    if (${depPkg}_SOURCE_DIR)
-      set(depPkgDefinedAndExists  TRUE)
-    else()
-      set(depPkgDefinedAndExists  FALSE)
-    endif()
-    if (depPkgDefinedAndExists)
+    tribits_is_pkg_defined(${depPkg} ${pkgsOrTpls} depPkgIsDefined)
+    if (depPkgIsDefined)
       list(APPEND  legacyPackageDepsList ${depPkg})
     else()
-      if (${PROJECT_NAME}_ASSERT_MISSING_PACKAGES
-          AND  NOT  ${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE
-        )
-        tribits_abort_on_missing_package(
-          "${depPkg}" "${packageName}" "${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES")
-      else()
-        if (${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE)
-          if (${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES)
-            message_wrapper("NOTE: ${depPkg} is being ignored since its directory"
-              " is missing and ${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE ="
-              " ${${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE}!")
-          endif()
-          if (requiredOrOptional STREQUAL "REQUIRED")
-            message_wrapper("NOTE: Setting ${packageEnableVar}=OFF because"
-              " package ${packageName} has a required dependency on missing"
-              " package ${depPkg}!")
-            dual_scope_set(${packageEnableVar} OFF)
-          endif()
-        endif()
-        # Must set enable vars for missing package to off so that logic in
-        # existing downstream packages that key off of these vars will still
-        # work.
-        dual_scope_set(${PROJECT_NAME}_ENABLE_${depPkg} OFF)
-        dual_scope_set(${packageName}_ENABLE_${depPkg} OFF)
-      endif()
+      tribits_set_dep_packages__handle_missing_pkg(${packageName} ${depPkg}
+        ${requiredOrOptional} ${packageEnableVar})
     endif()
   endforeach()
 
@@ -593,6 +566,64 @@ function(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional  p
   global_set(${packageName}_${inputListType} ${legacyPackageDepsList})
 
 endfunction()
+
+
+# Determine if a (internal or external) package is defined or not
+#
+function(tribits_is_pkg_defined  depPkg  pkgsOrTpls  depPkgIsDefinedOut)
+  set(depPkgIsDefined  FALSE)
+  if (pkgsOrTpls STREQUAL "PACKAGES")
+    if (${depPkg}_SOURCE_DIR)
+      set(depPkgIsDefined  TRUE)
+    endif()
+  elseif(pkgsOrTpls STREQUAL "TPLS")
+    if (${depPkg}_FINDMOD)
+      set(depPkgIsDefined  TRUE)
+    endif()
+  else()
+    message(FATAL_ERROR "Invalid value for pkgsOrTpls = '${pkgsOrTpls}'")
+  endif()
+  set(${depPkgIsDefinedOut} ${depPkgIsDefined} PARENT_SCOPE)
+endfunction()
+
+
+# Implementation macro for tribits_set_dep_packages() to deal with a package
+# that is not defined by TriBITS.
+#
+# ToDo #63: This may need to be modified when dealing with TriBITS-compatible
+# packages already installed out on the system.  We may need a mode where we
+# don't assert packages that are not defined but instead just assume they are
+# TriBITS-compatible packages already installed.
+#
+macro(tribits_set_dep_packages__handle_missing_pkg  packageName  depPkg
+    requiredOrOptional  packageEnableVar
+  )
+  if (${PROJECT_NAME}_ASSERT_MISSING_PACKAGES
+      AND  NOT  ${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE
+    )
+    tribits_abort_on_missing_package(
+      "${depPkg}" "${packageName}" "${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES")
+  else()
+    if (${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE)
+      if (${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES)
+        message_wrapper("NOTE: ${depPkg} is being ignored since its directory"
+          " is missing and ${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE ="
+          " ${${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE}!")
+      endif()
+      if (requiredOrOptional STREQUAL "REQUIRED")
+        message_wrapper("NOTE: Setting ${packageEnableVar}=OFF because"
+          " package ${packageName} has a required dependency on missing"
+          " package ${depPkg}!")
+        dual_scope_set(${packageEnableVar} OFF)
+      endif()
+    endif()
+    # Must set enable vars for missing package to off so that logic in
+    # existing downstream packages that key off of these vars will still
+    # work.
+    dual_scope_set(${PROJECT_NAME}_ENABLE_${depPkg} OFF)
+    dual_scope_set(${packageName}_ENABLE_${depPkg} OFF)
+  endif()
+endmacro()
 
 
 # @FUNCTION: tribits_append_forward_dep_packages()
