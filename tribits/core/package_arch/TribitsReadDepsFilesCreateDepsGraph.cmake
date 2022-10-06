@@ -488,10 +488,10 @@ endmacro()
 # 
 macro(tribits_process_package_dependencies_lists  packageName)
 
-  tribits_set_dep_packages(${packageName} LIB  REQUIRED)
-  tribits_set_dep_packages(${packageName} LIB  OPTIONAL)
-  tribits_set_dep_packages(${packageName} TEST  REQUIRED)
-  tribits_set_dep_packages(${packageName} TEST  OPTIONAL)
+  tribits_set_dep_packages(${packageName} LIB  REQUIRED  PACKAGES)
+  tribits_set_dep_packages(${packageName} LIB  OPTIONAL  PACKAGES)
+  tribits_set_dep_packages(${packageName} TEST  REQUIRED  PACKAGES)
+  tribits_set_dep_packages(${packageName} TEST  OPTIONAL  PACKAGES)
 
   set(${packageName}_LIB_REQUIRED_DEP_TPLS ${LIB_REQUIRED_DEP_TPLS})
   set(${packageName}_LIB_OPTIONAL_DEP_TPLS ${LIB_OPTIONAL_DEP_TPLS})
@@ -511,7 +511,13 @@ endmacro()
 #
 # Usage::
 #
-#   tribits_set_dep_packages(<packageName>  LIB|TEST  REQUIRED|OPTIONAL)
+#   tribits_set_dep_packages(<packageName> <testOrLib> <requiredOrOptional> <pkgsOrTpls>)
+#
+# where:
+#
+# * ``<testOrLib>``: ``LIB`` or ``TEST``
+# * ``<requiredOrOptional>``: ``REQUIRED`` or ``OPTIONAL``
+# * ``<pkgsOrTpls>``: ``PACKAGES`` or ``TPLS``
 #
 # Function that helps to set up backward package dependency lists for a given
 # package given the vars read in from the macro
@@ -536,14 +542,14 @@ endmacro()
 #
 # See `Function call tree for constructing package dependency graph`_.
 #
-function(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional)
+function(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional  pkgsOrTpls)
 
-  set(inputListType  ${testOrLib}_${requiredOrOptional}_DEP_PACKAGES)
+  set(inputListType  ${testOrLib}_${requiredOrOptional}_DEP_${pkgsOrTpls})
   set(packageEnableVar  ${PROJECT_NAME}_ENABLE_${packageName})
 
   set(legacyPackageDepsList "") # Legacy var #63
 
-  foreach(depPkg ${${inputListType}})
+  foreach(depPkg  IN  LISTS  ${inputListType})
     if (${depPkg} STREQUAL ${packageName})
       tribits_abort_on_self_dep("${packageName}" "${inputListType}")
     endif()
