@@ -2,6 +2,21 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-10-07:
+
+* **Added:** Added option `<Project>_ASSERT_DEFINED_DEPENDENCIES` to determine
+  if listed external and internal package dependencies are defined within the
+  project or not.  The initial default is `OFF` to maintain backward
+  compatibility (since the TriBITS option
+  `<Project>_ASSERT_MISSING_PACKAGES=ON` did not previously assert that listed
+  TPL dependencies where the names of TPLs defined in a `TPLsList.cmake` file
+  in the project).
+
+* **Deprecated:* `<Project>_ASSERT_MISSING_PACKAGES` is deprecated and will be
+  removed in a future version of TriBITS.  Instead, use
+  `<Project>_ASSERT_DEFINED_DEPENDENCIES` (and make sure all of your project's
+  listed TPL dependencies are all defined within the project).
+
 ## 2022-09-16:
 
 * **Changed:** Changed nomenclature for packages and TPLs (see updated

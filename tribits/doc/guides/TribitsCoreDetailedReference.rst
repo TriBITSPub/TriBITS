@@ -61,6 +61,8 @@ The global project-level TriBITS options for which defaults can be provided by
 a given TriBITS project are:
 
 * `${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE`_
+* `${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES`_
+* `${PROJECT_NAME}_ASSERT_MISSING_PACKAGES`_
 * `${PROJECT_NAME}_C_Standard`_
 * `${PROJECT_NAME}_CHECK_FOR_UNPARSED_ARGUMENTS`_
 * `${PROJECT_NAME}_CONFIGURE_OPTIONS_FILE_APPEND`_
@@ -119,6 +121,35 @@ These options are described below.
     set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_DEFAULT WARNING)
 
   in the project's base `<projectDir>/ProjectName.cmake`_ file.
+
+
+.. _${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES:
+
+**${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES**
+
+  To set ``${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES`` on by default, set::
+
+    set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT ON)
+
+  in the project's base `<projectDir>/ProjectName.cmake`_ file.
+
+  Otherwise, the default is ``OFF``.  (The default may be changed to the value
+  of ``${${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE}`` in the future.)
+
+
+.. _${PROJECT_NAME}_ASSERT_MISSING_PACKAGES:
+
+**${PROJECT_NAME}_ASSERT_MISSING_PACKAGES**
+
+  To set ``${PROJECT_NAME}_ASSERT_MISSING_PACKAGES`` on by default, set::
+
+    set(${PROJECT_NAME}_ASSERT_MISSING_PACKAGES_DEFAULT ON)
+
+  in the project's base `<projectDir>/ProjectName.cmake`_ file.
+
+  Otherwise, the default is determined by the value of
+  ``${${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE}``.
+
 
 .. _${PROJECT_NAME}_C_Standard:
 

@@ -2888,12 +2888,18 @@ directory is usually a programming error (i.e. a miss-spelled package
 directory name).  But in a tarball release of the project, package directories
 may be purposefully missing (see `Creating a tarball of the source tree`_) and
 must be ignored.  When building from a reduced source tarball created from the
-development sources, set::
+development sources, set (**deprecated**)::
 
   -D <Project>_ASSERT_MISSING_PACKAGES=OFF
 
 Setting this ``OFF`` will cause the TriBITS CMake configure to simply ignore
-any missing packages and turn off all dependencies on these missing packages.
+any missing internal packages and turn off all dependencies on these missing
+packages.
+
+To assert that all external package/TPL and internal package dependencies are
+are defined within the project, set::
+
+  -D <Project>_ASSERT_DEFINED_DEPENDENCIES=ON
 
 Another type of checking is for optional inserted/external packages
 (e.g. packages who's source can optionally be included and is flagged with

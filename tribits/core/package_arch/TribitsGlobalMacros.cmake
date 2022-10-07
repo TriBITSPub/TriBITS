@@ -717,10 +717,29 @@ macro(tribits_define_global_options_and_define_extra_repos)
     "Determines if a variety of development mode checks are turned on by default or not."
     )
 
-  advanced_set( ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES
-    ${${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE}
+  if ("${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT}" STREQUAL "")
+    set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT   OFF)
+    # NOTE: Setting the above default to anything other than 'OFF' would break
+    # backward compatibility (and does so even for MockTrilinos!)
+  endif()
+  advanced_set( ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES
+    ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT}
     CACHE BOOL
-    "Determines if asserts are performed on missing packages or not." )
+    "Assert that all external and internal dependencies are defined in the project." )
+
+  if ("${${PROJECT_NAME}_ASSERT_MISSING_PACKAGES_DEFAULT}" STREQUAL "")
+    if (${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES)
+      set(${PROJECT_NAME}_ASSERT_MISSING_PACKAGES_DEFAULT
+        ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES})
+    else()
+      set(${PROJECT_NAME}_ASSERT_MISSING_PACKAGES_DEFAULT
+        ${${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE})
+    endif()
+  endif()
+  advanced_set( ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES
+    ${${PROJECT_NAME}_ASSERT_MISSING_PACKAGES_DEFAULT}
+    CACHE BOOL
+    "Assert that all listed internal package dependencies are defined in the project." )
 
   if ("${${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_DEFAULT}" STREQUAL "")
     if (${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE)
