@@ -1243,7 +1243,7 @@ create_dependency_handling_test_case(
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
     -DTrilinos_ASSERT_MISSING_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
+    "CMake Warning at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
     "Error, the package 'Anasazi' is listed as a dependency of the package"
     "'Teko' is in the list 'Trilinos_DEFINED_INTERNAL_PACKAGES' but the package"
     "'Anasazi' is either not defined or is listed later in the package order[.]"
@@ -1256,7 +1256,7 @@ create_dependency_handling_test_case(
 
 create_dependency_handling_test_case(
   ShowInvalidTplNameError
-  ARGS -DTrilinos_ASSERT_DEFINED_DEPENDENCIES=ON
+  ARGS -DTrilinos_ASSERT_DEFINED_DEPENDENCIES=FATAL_ERROR
   PASS_REGULAR_EXPRESSION_ALL
     "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
     "Error, the package 'Zlib' is listed as a dependency of the package 'Zoltan'"
@@ -1266,6 +1266,18 @@ create_dependency_handling_test_case(
     "'Zlib' and 'Zoltan' [(]which is not allowed[)][.]  Check the spelling of 'Zlib'"
     "or see how it is listed in a call to tribits_repository_define_packages[(][)]"
     "in relation to 'Zoltan'[.]"
+  )
+
+
+create_dependency_handling_test_case(
+  preCopyrightTrilinos_ShowInvalidPackageNameAndTplNameError
+  ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
+    -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
+    -DTrilinos_ASSERT_DEFINED_DEPENDENCIES=SEND_ERROR
+  PASS_REGULAR_EXPRESSION_ALL
+    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
+    "Error, the package 'Anasazi' is listed as a dependency of the package"
+    "Error, the package 'Zlib' is listed as a dependency of the package 'Zoltan'"
   )
 
 

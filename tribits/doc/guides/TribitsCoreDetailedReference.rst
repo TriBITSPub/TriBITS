@@ -127,14 +127,18 @@ These options are described below.
 
 **${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES**
 
-  To set ``${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES`` on by default, set::
+  To set ``${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES`` a different default,
+  set::
 
-    set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT ON)
+    set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT  <newDefault>)
 
-  in the project's base `<projectDir>/ProjectName.cmake`_ file.
+  in the project's base `<projectDir>/ProjectName.cmake`_ file, where
+  ``<newDefault>`` can be ``FATAL_ERROR``, ``SEND_ERROR``, ``WARNING``,
+  ``NOTICE`` or ``IGNORE``
 
-  Otherwise, the default is ``OFF``.  (The default may be changed to the value
-  of ``${${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE}`` in the future.)
+  Otherwise, the default is ``WARNING`` when
+  ``${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE`` is ``ON`` and if ``IGNORE`` if
+  ``${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE`` is ``OFF``.
 
 
 .. _${PROJECT_NAME}_ASSERT_MISSING_PACKAGES:

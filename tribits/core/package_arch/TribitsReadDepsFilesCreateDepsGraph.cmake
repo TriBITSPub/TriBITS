@@ -604,8 +604,9 @@ macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
   elseif (${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE)
     set(assertDepPkgBeDefined  FALSE)
   elseif (pkgsOrTpls STREQUAL "TPLS" AND
-      (NOT ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES)
-      )
+    (NOT  ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
+      ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST)
+    )
     set(assertDepPkgBeDefined  FALSE)
   endif()
   # Produce error or deal with allowed missing depPkg
@@ -764,7 +765,7 @@ function(tribits_abort_on_missing_package   DEP_PKG  PACKAGE_NAME  DEP_PKG_LIST_
     "  Check the spelling of '${DEP_PKG}' or see how it is listed in"
     " a call to tribits_repository_define_packages() in relation to"
     " '${PACKAGE_NAME}'.")
-  message(FATAL_ERROR ${ERRMSG})
+  message(${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES} "${ERRMSG}")
 endfunction()
 
 

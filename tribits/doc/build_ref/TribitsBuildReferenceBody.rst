@@ -2887,19 +2887,22 @@ package directories.  In development mode, the failure to find a package
 directory is usually a programming error (i.e. a miss-spelled package
 directory name).  But in a tarball release of the project, package directories
 may be purposefully missing (see `Creating a tarball of the source tree`_) and
-must be ignored.  When building from a reduced source tarball created from the
-development sources, set (**deprecated**)::
+must be ignored.
 
-  -D <Project>_ASSERT_MISSING_PACKAGES=OFF
+When building from a reduced source tarball created from the
+development sources, set::
+
+  -D <Project>_ASSERT_DEFINED_DEPENDENCIES=OFF
+
+or to ``IGNORE``.  (Other valid values include ``FATAL_ERROR``,
+``SEND_ERROR``, ``WARNING``, and ``NOTICE``)
 
 Setting this ``OFF`` will cause the TriBITS CMake configure to simply ignore
-any missing internal packages and turn off all dependencies on these missing
-packages.
+any undefined packages and turn off all dependencies on these missing
+packages.  This can also be accomplished by setting the **DEPRECATED:**
+variable::
 
-To assert that all external package/TPL and internal package dependencies are
-are defined within the project, set::
-
-  -D <Project>_ASSERT_DEFINED_DEPENDENCIES=ON
+  -D <Project>_ASSERT_MISSING_PACKAGES=OFF
 
 Another type of checking is for optional inserted/external packages
 (e.g. packages who's source can optionally be included and is flagged with
@@ -2910,27 +2913,28 @@ printed by configuring with::
 
   -D <Project>_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=TRUE
 
-These warnings (starting with 'NOTE', not 'WARNING' that would otherwise
-trigger warnings in CDash) about missing inserted/external packages will print
-regardless of the setting for ``<Project>_ASSERT_MISSING_PACKAGES``.
+These warnings starting with 'NOTE' (not starting with 'WARNING' that would
+otherwise trigger warnings in CDash) about missing inserted/external packages
+will print regardless of the setting for
+``<Project>_ASSERT_MISSING_PACKAGES``.
 
 Finally, ``<Project>_ENABLE_DEVELOPMENT_MODE=ON`` results in a number of
 checks for invalid usage of TriBITS in the project's ``CMakeLists.txt`` files
-and will abort configure with a fatal error on the first check failure. This
-is appropriate for development mode when a project is clean of all such
-invalid usage patterns but there are times when it makes sense to report these
-check failures in different ways (such as when upgrading TriBITS in a project
-that has some invalid usage patterns that just happen work but may be
+and will, by default, abort configure with a fatal error on the first failed
+check. This is appropriate for development mode when a project is clean of all
+such invalid usage patterns but there are times when it makes sense to report
+these check failures in different ways (such as when upgrading TriBITS in a
+project that has some invalid usage patterns that just happen work but may be
 disallowed in future versions of TriBITS).  To change how these invalid usage
 checks are handled, set::
 
   -D <Project>_ASSERT_CORRECT_TRIBITS_USAGE=<check-mode>
 
-where ``<check-mode>`` can be 'FATAL_ERROR', 'SEND_ERROR', 'WARNING', or
-'IGNORE'.
+where ``<check-mode>`` can be ``FATAL_ERROR``, ``SEND_ERROR``, ``WARNING``, or
+``IGNORE``.
 
 For ``<Project>_ENABLE_DEVELOPMENT_MODE=OFF``, the default for
-``<Project>_ASSERT_CORRECT_TRIBITS_USAGE`` is actually set to ``IGNORE``.
+``<Project>_ASSERT_CORRECT_TRIBITS_USAGE`` is set to ``IGNORE``.
 
 
 Building (Makefile generator)

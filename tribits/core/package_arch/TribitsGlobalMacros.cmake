@@ -718,19 +718,24 @@ macro(tribits_define_global_options_and_define_extra_repos)
     )
 
   if ("${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT}" STREQUAL "")
-    set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT   OFF)
-    # NOTE: Setting the above default to anything other than 'OFF' would break
-    # backward compatibility (and does so even for MockTrilinos!)
+    if (${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE)
+      set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT  WARNING)
+    else()
+      set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT  IGNORE)
+    endif()
   endif()
   advanced_set( ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES
     ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT}
-    CACHE BOOL
-    "Assert that all external and internal dependencies are defined in the project." )
+    CACHE  STRING
+    "Assert that all external and internal dependencies are defined in the project.  Valid values include 'FATAL_ERROR', 'SEND_ERROR', 'WARNING', 'NOTICE' and 'IGNORE' (or 'OFF')" )
+  set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
+    "FATAL_ERROR" "SEND_ERROR" )
 
   if ("${${PROJECT_NAME}_ASSERT_MISSING_PACKAGES_DEFAULT}" STREQUAL "")
-    if (${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES)
-      set(${PROJECT_NAME}_ASSERT_MISSING_PACKAGES_DEFAULT
-        ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES})
+    if (${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
+        ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
+      )
+      set(${PROJECT_NAME}_ASSERT_MISSING_PACKAGES_DEFAULT  ON)
     else()
       set(${PROJECT_NAME}_ASSERT_MISSING_PACKAGES_DEFAULT
         ${${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE})
