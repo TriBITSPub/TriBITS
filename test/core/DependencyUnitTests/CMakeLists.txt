@@ -1255,6 +1255,21 @@ create_dependency_handling_test_case(
 
 
 create_dependency_handling_test_case(
+  ShowInvalidTplNameError
+  ARGS -DTrilinos_ASSERT_DEFINED_DEPENDENCIES=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
+    "Error, the package 'Zlib' is listed as a dependency of the package 'Zoltan'"
+    "is in the list 'Trilinos_DEFINED_INTERNAL_PACKAGES' but the package 'Zlib'"
+    "is either not defined or is listed later in the package order[.]  This may"
+    "also be an attempt to create a circular dependency between the packages"
+    "'Zlib' and 'Zoltan' [(]which is not allowed[)][.]  Check the spelling of 'Zlib'"
+    "or see how it is listed in a call to tribits_repository_define_packages[(][)]"
+    "in relation to 'Zoltan'[.]"
+  )
+
+
+create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidPackageSelfDependency
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_SELF_PACKAGE_DEPENDENCY_ERROR=ON
