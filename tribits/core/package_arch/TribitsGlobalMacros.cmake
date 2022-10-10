@@ -54,6 +54,7 @@ include(TribitsGitRepoVersionInfo)
 
 # Standard TriBITS utilities includes
 include(TribitsAddOptionAndDefine)
+include(TribitsAddEnumCacheVar)
 include(AdvancedOption)
 include(AdvancedSet)
 include(AppendStringVar)
@@ -724,12 +725,18 @@ macro(tribits_define_global_options_and_define_extra_repos)
       set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT  IGNORE)
     endif()
   endif()
-  advanced_set( ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES
-    ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT}
-    CACHE  STRING
-    "Assert that all external and internal dependencies are defined in the project.  Valid values include 'FATAL_ERROR', 'SEND_ERROR', 'WARNING', 'NOTICE' and 'IGNORE' (or 'OFF')" )
   set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
     "FATAL_ERROR" "SEND_ERROR" )
+  set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_VALUES_LIST
+    ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST}
+    "WARNING" "NOTICE" "IGNORE" "OFF" )
+  tribits_add_enum_cache_var( ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES
+    DEFAULT_VAL ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT}
+    DOC_STRING
+      "Assert that all external and internal dependencies are defined in the project"
+    ALLOWED_STRINGS_LIST
+      ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_VALUES_LIST}
+    IS_ADVANCED )
 
   if ("${${PROJECT_NAME}_ASSERT_MISSING_PACKAGES_DEFAULT}" STREQUAL "")
     if (${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST

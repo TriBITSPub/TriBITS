@@ -1270,6 +1270,17 @@ create_dependency_handling_test_case(
 
 
 create_dependency_handling_test_case(
+  AssertDefinedDependenciesBadValue
+  ARGS -DTrilinos_ASSERT_DEFINED_DEPENDENCIES=BadValue
+  PASS_REGULAR_EXPRESSION_ALL
+    "CMake Error at .*/tribits/core/utils/TribitsAddEnumCacheVar.cmake:[0-9]+ [(]message[)]:"
+    "  Error, the cache var Trilinos_ASSERT_DEFINED_DEPENDENCIES with value"
+    "  'BadValue' is not in the list of allowed values: 'FATAL_ERROR',"
+    "  'SEND_ERROR', 'WARNING', 'NOTICE', 'IGNORE', 'OFF' [(]default 'WARNING'[)]"
+  )
+
+
+create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidPackageNameAndTplNameError
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
