@@ -2894,15 +2894,12 @@ development sources, set::
 
   -D <Project>_ASSERT_DEFINED_DEPENDENCIES=OFF
 
-or to ``IGNORE``.  (Other valid values include ``FATAL_ERROR``,
-``SEND_ERROR``, ``WARNING``, and ``NOTICE``)
+or to ``IGNORE``.  (valid values include ``FATAL_ERROR``, ``SEND_ERROR``,
+``WARNING``, ``NOTICE``, ``IGNORE`` and ``OFF``)
 
 Setting this ``OFF`` will cause the TriBITS CMake configure to simply ignore
 any undefined packages and turn off all dependencies on these missing
-packages.  This can also be accomplished by setting the **DEPRECATED:**
-variable::
-
-  -D <Project>_ASSERT_MISSING_PACKAGES=OFF
+packages.
 
 Another type of checking is for optional inserted/external packages
 (e.g. packages who's source can optionally be included and is flagged with
@@ -2916,7 +2913,7 @@ printed by configuring with::
 These warnings starting with 'NOTE' (not starting with 'WARNING' that would
 otherwise trigger warnings in CDash) about missing inserted/external packages
 will print regardless of the setting for
-``<Project>_ASSERT_MISSING_PACKAGES``.
+``<Project>_ASSERT_DEFINED_DEPENDENCIES``.
 
 Finally, ``<Project>_ENABLE_DEVELOPMENT_MODE=ON`` results in a number of
 checks for invalid usage of TriBITS in the project's ``CMakeLists.txt`` files
@@ -4058,10 +4055,10 @@ generators on your system).
 NOTE: When configuring from an untarred source tree that has missing packages,
 one must configure with::
 
-  -D <Project>_ASSERT_MISSING_PACKAGES=OFF
+  -D <Project>_ASSERT_DEFINED_DEPENDENCIES=OFF
 
 Otherwise, TriBITS will error out complaining about missing packages.  (Note
-that ``<Project>_ASSERT_MISSING_PACKAGES`` will default to ```OFF``` in
+that ``<Project>_ASSERT_DEFINED_DEPENDENCIES`` will default to ```OFF``` in
 release mode, i.e. ``<Project>_ENABLE_DEVELOPMENT_MODE==OFF``.)
 
 

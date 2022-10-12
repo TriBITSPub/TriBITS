@@ -598,19 +598,16 @@ macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
     requiredOrOptional  pkgsOrTpls  packageEnableVar
   )
   # Determine if it is allowed for this depPkg to not be defined
-  set(assertDepPkgBeDefined  TRUE)
-  if (NOT ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES)
-    set(assertDepPkgBeDefined  FALSE)
-  elseif (${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE)
-    set(assertDepPkgBeDefined  FALSE)
-  elseif (pkgsOrTpls STREQUAL "TPLS" AND
-    (NOT  ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
-      ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST)
+  set(errorOutForUndefinedDepPkg  TRUE)
+  if (${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE)
+    set(errorOutForUndefinedDepPkg  FALSE)
+  elseif (NOT  ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
+      ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
     )
-    set(assertDepPkgBeDefined  FALSE)
+    set(errorOutForUndefinedDepPkg  FALSE)
   endif()
-  # Produce error or deal with allowed missing depPkg
-  if (assertDepPkgBeDefined)
+  # Produce error or deal with allowed undefined ${depPkg}
+  if (errorOutForUndefinedDepPkg)
     tribits_abort_on_missing_package(
       "${depPkg}" "${packageName}" "${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES")
   else()
@@ -668,11 +665,12 @@ function(tribits_append_forward_dep_packages  packageName  inputListType)
 
   set(depPkgListName "${packageName}_${inputListType}")
 
-  assert_defined(${PROJECT_NAME}_ASSERT_MISSING_PACKAGES)
   foreach(depPkg ${${depPkgListName}})
     set(fwdDepPkgListName "${depPkg}_FORWARD_${inputListType}")
     if (NOT DEFINED ${fwdDepPkgListName})
-      if (${PROJECT_NAME}_ASSERT_MISSING_PACKAGES)
+      if (${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
+          ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
+        )
         tribits_abort_on_missing_package(${depPkg} ${packageName} ${depPkgListName})
       else()
         if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
@@ -884,7 +882,9 @@ macro(tribits_parse_subpackages_append_packages_add_options  parentPackageName)
          set(subpkgExists FALSE)
       endif()
 
-      if (NOT subpkgExists AND ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES)
+      if (NOT  subpkgExists  AND  ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
+          ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
+         )
          message(SEND_ERROR "ERROR: Subpackage dir '${subpkgFullSrcDir}' is missing!")
       endif()
 
@@ -998,7 +998,9 @@ macro(tribits_read_subpackage_deps_file_add_to_graph  PACKAGE_NAME
     set(SUBPACKAGE_EXISTS FALSE)
   endif()
 
-  if (SUBPACKAGE_EXISTS OR ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES)
+  if (SUBPACKAGE_EXISTS  OR  ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
+      ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
+    )
 
     tribits_trace_file_processing(PACKAGE  INCLUDE  "${SUBPAKCAGE_DEPENDENCIES_FILE}")
     include(${SUBPAKCAGE_DEPENDENCIES_FILE})

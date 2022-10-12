@@ -1241,9 +1241,9 @@ create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidPackageNameError
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
-    -DTrilinos_ASSERT_MISSING_PACKAGES=ON
+    -DTrilinos_ASSERT_DEFINED_DEPENDENDCIES=FATAL_ERROR
   PASS_REGULAR_EXPRESSION_ALL
-    "CMake Warning at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
+    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
     "Error, the package 'Anasazi' is listed as a dependency of the package"
     "'Teko' is in the list 'Trilinos_DEFINED_INTERNAL_PACKAGES' but the package"
     "'Anasazi' is either not defined or is listed later in the package order[.]"
@@ -1257,6 +1257,7 @@ create_dependency_handling_test_case(
 create_dependency_handling_test_case(
   ShowInvalidTplNameError
   ARGS -DTrilinos_ASSERT_DEFINED_DEPENDENCIES=FATAL_ERROR
+    -DSHOW_INVALID_TPL_NAME_ERROR=ON
   PASS_REGULAR_EXPRESSION_ALL
     "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
     "Error, the package 'Zlib' is listed as a dependency of the package 'Zoltan'"
@@ -1276,7 +1277,7 @@ create_dependency_handling_test_case(
     "CMake Error at .*/tribits/core/utils/TribitsAddEnumCacheVar.cmake:[0-9]+ [(]message[)]:"
     "  Error, the cache var Trilinos_ASSERT_DEFINED_DEPENDENCIES with value"
     "  'BadValue' is not in the list of allowed values: 'FATAL_ERROR',"
-    "  'SEND_ERROR', 'WARNING', 'NOTICE', 'IGNORE', 'OFF' [(]default 'WARNING'[)]"
+    "  'SEND_ERROR', 'WARNING', 'NOTICE', 'IGNORE', 'OFF' [(]default 'FATAL_ERROR'[)]"
   )
 
 
@@ -1284,6 +1285,7 @@ create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidPackageNameAndTplNameError
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
+    -DSHOW_INVALID_TPL_NAME_ERROR=ON
     -DTrilinos_ASSERT_DEFINED_DEPENDENCIES=SEND_ERROR
   PASS_REGULAR_EXPRESSION_ALL
     "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
@@ -1296,7 +1298,7 @@ create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidPackageSelfDependency
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_SELF_PACKAGE_DEPENDENCY_ERROR=ON
-    -DTrilinos_ASSERT_MISSING_PACKAGES=ON
+    -DTrilinos_ASSERT_DEFINED_DEPENDENDCIES=FATAL_ERROR
   PASS_REGULAR_EXPRESSION_ALL
     "Error, the package 'Teko' is listed as a dependency of itself in the list"
     " 'LIB_REQUIRED_DEP_PACKAGES'!"
@@ -1307,7 +1309,7 @@ create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidSubpackageSelfDependency
   ARGS
     -DSHOW_SELF_SUBPACKAGE_DEPENDENCY_ERROR=ON
-    -DTrilinos_ASSERT_MISSING_PACKAGES=ON
+    -DTrilinos_ASSERT_DEFINED_DEPENDENDCIES=FATAL_ERROR
   PASS_REGULAR_EXPRESSION_ALL
     "Error, the package 'ThyraTpetra' is listed as a dependency of itself in the"
      " list 'LIB_REQUIRED_DEP_PACKAGES'!"
