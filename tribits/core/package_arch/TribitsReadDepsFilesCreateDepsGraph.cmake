@@ -608,8 +608,7 @@ macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
   endif()
   # Produce error or deal with allowed undefined ${depPkg}
   if (errorOutForUndefinedDepPkg)
-    tribits_abort_on_missing_package(
-      "${depPkg}" "${packageName}" "${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES")
+    tribits_abort_on_missing_package("${depPkg}" "${packageName}")
   else()
     if (${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE)
       if (${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES)
@@ -671,7 +670,7 @@ function(tribits_append_forward_dep_packages  packageName  inputListType)
       if (${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
           ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
         )
-        tribits_abort_on_missing_package(${depPkg} ${packageName} ${depPkgListName})
+        tribits_abort_on_missing_package(${depPkg} ${packageName})
       else()
         if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
           message(
@@ -745,7 +744,7 @@ endmacro()
 #
 # Usage::
 #
-#   tribits_abort_on_missing_package(<depPkg>  <packageName> <depPkgListName>)
+#   tribits_abort_on_missing_package(<depPkg>  <packageName>)
 #
 # Function that creates error message about missing/misspelled package.  This
 # error message also suggests that the package might be defining an upstream
@@ -753,16 +752,19 @@ endmacro()
 #
 # See `Function call tree for constructing package dependency graph`_.
 #
-function(tribits_abort_on_missing_package   DEP_PKG  PACKAGE_NAME  DEP_PKG_LIST_NAME)
+function(tribits_abort_on_missing_package   depPkg  packageName)
   multiline_set(ERRMSG
-    "Error, the package '${DEP_PKG}' is listed as a dependency of the package"
-    " '${PACKAGE_NAME}' is in the list '${DEP_PKG_LIST_NAME}' but the package"
-    " '${DEP_PKG}' is either not defined or is listed later in the package order."
+    "Error, the package '${depPkg}' is listed as a dependency of the package"
+    " '${packageName}' but the package '${depPkg}' is either not defined or"
+    " is listed later in the package order."
     "  This may also be an attempt to create a circular dependency between"
-    " the packages '${DEP_PKG}' and '${PACKAGE_NAME}' (which is not allowed)."
-    "  Check the spelling of '${DEP_PKG}' or see how it is listed in"
+    " the packages '${depPkg}' and '${packageName}' (which is not allowed)."
+    "  Check the spelling of '${depPkg}' or see how it is listed in"
     " a call to tribits_repository_define_packages() in relation to"
-    " '${PACKAGE_NAME}'.")
+    " '${packageName}'."
+    "  To ignore/disable the undefined package '${depPkg}', set the cache"
+    " variable ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES=IGNORE."
+    )
   message(${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES} "${ERRMSG}")
 endfunction()
 
