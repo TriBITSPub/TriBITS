@@ -736,13 +736,6 @@ function(unittest_tribits_report_invalid_tribits_usage)
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "")
 
-  message("tribits_report_invalid_tribits_usage(): INVALID_ARGUMENT")
-  global_set(MESSAGE_WRAPPER_INPUT)
-  set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE INVALID_ARGUMENT)
-  tribits_report_invalid_tribits_usage("Something went very wrong I think 6!")
-  unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "FATAL_ERROR;Error, invalid value for; TRITU_PROJECT_ASSERT_CORRECT_TRIBITS_USAGE =; 'INVALID_ARGUMENT'!;  Value values include 'FATAL_ERROR', 'SEND_ERROR', 'WARNING', and 'IGNORE'!")
-
 endfunction()
 
 
@@ -4676,4 +4669,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(708)
+unittest_final_result(707)

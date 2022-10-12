@@ -2927,8 +2927,9 @@ checks are handled, set::
 
   -D <Project>_ASSERT_CORRECT_TRIBITS_USAGE=<check-mode>
 
-where ``<check-mode>`` can be ``FATAL_ERROR``, ``SEND_ERROR``, ``WARNING``, or
-``IGNORE``.
+where ``<check-mode>`` can be ``FATAL_ERROR``, ``SEND_ERROR``, ``WARNING``,
+``IGNORE`` or ``OFF`` (where ``IGNORE`` or ``OFF`` avoids any error reporting
+or warnings).
 
 For ``<Project>_ENABLE_DEVELOPMENT_MODE=OFF``, the default for
 ``<Project>_ASSERT_CORRECT_TRIBITS_USAGE`` is set to ``IGNORE``.
