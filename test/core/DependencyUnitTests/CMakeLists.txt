@@ -547,7 +547,8 @@ create_dependency_handling_test_case(
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
     -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
--DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=ON
+    -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
     "${EnableAllPackages_DumpDependencies_REGEX_ARRAY}"
     "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
