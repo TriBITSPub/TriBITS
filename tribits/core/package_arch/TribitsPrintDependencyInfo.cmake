@@ -132,4 +132,40 @@ function(tribits_print_project_list_var_and_num  listVarSuffix)
 endfunction()
 
 
+# Print out dependencies for a package
+#
+# Does not modify the global state.
+#
+function(tribits_print_package_dependencies PACKAGE_NAME)
+
+  set(PRINTED_VAR "")
+
+  print_nonempty_var_with_spaces(${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES PRINTED_VAR)
+  print_nonempty_var_with_spaces(${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES PRINTED_VAR)
+  print_nonempty_var_with_spaces(${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES PRINTED_VAR)
+  print_nonempty_var_with_spaces(${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES PRINTED_VAR)
+
+  if (${PROJECT_NAME}_DUMP_FORWARD_PACKAGE_DEPENDENCIES)
+    print_nonempty_var_with_spaces(${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES
+      PRINTED_VAR)
+    print_nonempty_var_with_spaces(${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES
+      PRINTED_VAR)
+    print_nonempty_var_with_spaces(${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES
+      PRINTED_VAR)
+    print_nonempty_var_with_spaces(${PACKAGE_NAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES
+      PRINTED_VAR)
+  endif()
+
+  print_nonempty_var_with_spaces(${PACKAGE_NAME}_LIB_REQUIRED_DEP_TPLS PRINTED_VAR)
+  print_nonempty_var_with_spaces(${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS PRINTED_VAR)
+  print_nonempty_var_with_spaces(${PACKAGE_NAME}_TEST_REQUIRED_DEP_TPLS PRINTED_VAR)
+  print_nonempty_var_with_spaces(${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS PRINTED_VAR)
+
+  if (NOT PRINTED_VAR)
+    message("-- ${PACKAGE_NAME}: No dependencies!")
+  endif()
+
+endfunction()
+
+
 #  LocalWords:  TRIBITS
