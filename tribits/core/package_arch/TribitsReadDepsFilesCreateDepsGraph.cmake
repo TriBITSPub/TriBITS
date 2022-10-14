@@ -94,7 +94,7 @@ endmacro()
 # See `Function call tree for constructing package dependency graph`_.
 #
 macro(tribits_process_all_repository_deps_setup_files)
-  foreach(TIBITS_REPO ${${PROJECT_NAME}_ALL_REPOSITORIES})
+  foreach(TIBITS_REPO  IN LISTS  ${PROJECT_NAME}_ALL_REPOSITORIES)
     tribits_get_repo_name_dir(${TIBITS_REPO}  REPO_NAME  REPO_DIR)
     tribits_set_base_repo_dir(${PROJECT_SOURCE_DIR}  ${REPO_DIR}  BASE_REPO_DIR)
     tribits_get_repo_name(${TIBITS_REPO} REPOSITORY_NAME)
@@ -179,13 +179,13 @@ endmacro()
 #
 macro(tribits_read_all_package_deps_files_create_deps_graph)
 
-  foreach(tribitsExternalPkg  IN  LISTS  ${PROJECT_NAME}_DEFINED_TPLS)
+  foreach(tribitsExternalPkg  IN LISTS  ${PROJECT_NAME}_DEFINED_TPLS)
     tribits_read_external_package_deps_files_add_to_graph(${tribitsExternalPkg})
   endforeach()
 
   set(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES "") # Packages and subpackages
 
-  foreach(TRIBITS_PACKAGE  IN  LISTS ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
+  foreach(TRIBITS_PACKAGE  IN LISTS ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
     tribits_read_toplevel_package_deps_files_add_to_graph(${TRIBITS_PACKAGE}
       ${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
   endforeach()
@@ -310,7 +310,7 @@ macro(tribits_read_toplevel_package_deps_files_add_to_graph  PACKAGE_NAME)
 
   # Append the subpackages to the dependencies list if this top-level package
   set(SUBPACKAGE_IDX 0)
-  foreach(TRIBITS_SUBPACKAGE ${${PACKAGE_NAME}_SUBPACKAGES})
+  foreach(TRIBITS_SUBPACKAGE   IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
     set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${TRIBITS_SUBPACKAGE})
     list(GET ${PACKAGE_NAME}_SUBPACKAGE_OPTREQ ${SUBPACKAGE_IDX} SUBPACKAGE_OPTREQ)
     list(APPEND LIB_${SUBPACKAGE_OPTREQ}_DEP_PACKAGES ${SUBPACKAGE_FULLNAME})
@@ -552,7 +552,7 @@ macro(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional  pkgs
 
   set(legacyPackageDepsList "") # Legacy var #63
 
-  foreach(depPkg  IN  LISTS  ${inputListType})
+  foreach(depPkg  IN LISTS  ${inputListType})
     if (${depPkg} STREQUAL ${packageName})
       tribits_abort_on_self_dep("${packageName}" "${inputListType}")
     endif()
@@ -682,7 +682,7 @@ macro(tribits_append_forward_dep_packages  packageName  libOrTest  requiredOrOpt
 
   set(legacyDepPkgListName "${packageName}_${legacyInputListType}")
 
-  foreach(depPkg ${${legacyDepPkgListName}})
+  foreach(depPkg  IN LISTS  ${legacyDepPkgListName})
     set(fwdDepPkgListName "${depPkg}_FORWARD_${libOrTest}_DEFINED_DEPENDENCIES")
     set(legacyFwdDepPkgListName "${depPkg}_FORWARD_${legacyInputListType}")
     if (DEFINED ${legacyFwdDepPkgListName})
@@ -862,7 +862,7 @@ macro(tribits_parse_subpackages_append_packages_add_options  parentPackageName)
     math(EXPR  numSubpackages  "${SPDC_TOTAL_LENGTH}/${SPDC_NUM_FIELDS}")
     math(EXPR  subpackagesLastIdx  "${numSubpackages}-1")
 
-    foreach(SUBPACKAGE_IDX RANGE ${subpackagesLastIdx})
+    foreach(SUBPACKAGE_IDX  RANGE  ${subpackagesLastIdx})
 
       # subpkgName
       math(EXPR  subpkgNameIdx
@@ -961,7 +961,7 @@ macro(tribits_read_package_subpackage_deps_files_add_to_graph  PACKAGE_NAME)
   #print_var(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES)
 
   set(SUBPACKAGE_IDX 0)
-  foreach(TRIBITS_SUBPACKAGE ${${PACKAGE_NAME}_SUBPACKAGES})
+  foreach(TRIBITS_SUBPACKAGE  IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
     list(GET ${PACKAGE_NAME}_SUBPACKAGE_DIRS ${SUBPACKAGE_IDX} SUBPACKAGE_DIR)
     tribits_read_subpackage_deps_file_add_to_graph(${TRIBITS_PACKAGE}
       ${TRIBITS_SUBPACKAGE}  ${SUBPACKAGE_DIR})
