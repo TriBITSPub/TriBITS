@@ -68,6 +68,7 @@ set(REDUCED_MOCK_TRILINOS_DIR
 set(REDUCED_MOCK_TRILINOS_OUTPUT_DIR
   "${${PROJECT_NAME}_TRIBITS_DIR}/doc/guides/ReducedMockTrilinosOutput")
 
+
 #
 # NOTE: These tests compare against expected output stored in files under the
 # in the guides/ReducedMockTrilinosOuptut/ directory and are used in the
@@ -106,11 +107,10 @@ function(create_reduced_dependency_handling_test_case TEST_NAME)
 endfunction()
 
 
-#
 # Read in an expected output file and create a REGEX array to be used in
-# checking test results.
+# checking test results (and replace all problematic chars as appropriate
+# regex).
 #
-
 function(read_expected_output_file_into_regex_array  EXPECTED_OUTPUT_FILE
   EXPECTED_OUTPUT_REGEX_ARRAY_OUT
   )
@@ -123,11 +123,11 @@ function(read_expected_output_file_into_regex_array  EXPECTED_OUTPUT_FILE
     #print_var(EXPECTED_RAW_STR)
     if (NOT "${EXPECTED_RAW_STR}" STREQUAL "")
       set(EXPECTED_REGEX_STR "${EXPECTED_RAW_STR}")
-      string(REPLACE "(" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      string(REPLACE ")" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      string(REPLACE "[" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      string(REPLACE "]" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      string(REPLACE "*" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
+      string(REPLACE "[" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}")
+      string(REPLACE "]" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}")
+      string(REPLACE "(" "[(]" EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}")
+      string(REPLACE ")" "[)]" EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}")
+      string(REPLACE "*" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}")
       list(APPEND EXPECTED_REGEX_ARRAY "${EXPECTED_REGEX_STR}")
       #print_var(EXPECTED_REGEX_ARRAY)
     endif()
