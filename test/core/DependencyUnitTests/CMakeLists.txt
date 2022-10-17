@@ -398,6 +398,22 @@ create_reduced_dependency_handling_test_case(
 
 
 create_reduced_dependency_handling_test_case(
+  EnableThyraCoreLibs_UnenabledEnabledPackages
+  ARGS
+    -DTrilinos_ENABLE_ThyraCoreLibs=ON
+    -DTrilinos_UNENABLE_ENABLED_PACKAGES=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Explicitly enabled top-level packages on input [(]by user[)]:  0"
+    "Explicitly enabled packages on input [(]by user[)]:  ThyraCoreLibs 1"
+    "Explicitly disabled packages on input [(]by user or by default[)]:  ThyraCrazyStuff 1"
+    "Setting to empty '' all enabled packages because Trilinos_UNENABLE_ENABLED_PACKAGES='ON'"
+    "-- Setting Trilinos_ENABLE_ThyraCoreLibs=''"
+    "Final set of enabled top-level packages:  0"
+    "Final set of enabled packages:  0"
+  )
+
+
+create_reduced_dependency_handling_test_case(
   EnableAllPackages_RequiredOnly
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON

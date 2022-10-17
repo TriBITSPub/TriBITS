@@ -61,6 +61,359 @@ include(DualScopeSet)
 include(CMakeParseArguments)
 
 
+# @MACRO: tribits_adjust_package_enables()
+#
+# Usage:
+#
+#   tribits_adjust_package_enables()
+#
+# Macro that adjusts all of the package enables from what the user input to
+# the final set that will be used to enable packages.
+#
+macro(tribits_adjust_package_enables)
+
+  tribits_unenable_enabled_packages()
+
+  tribits_sweep_forward_apply_disables()
+
+  tribits_sweep_forward_apply_enables()
+
+  tribits_disable_and_enable_tests_and_examples()
+
+  tribits_sweep_backward_enable_upstream_packages()
+
+  tribits_sweep_backward_enable_required_tpls()
+  # ToDo #63: Merge behavior of the above macro into
+  # tribits_sweep_backward_enable_upstream_packages() as part of #63.
+
+  tribits_set_cache_vars_for_current_enabled_packages()
+
+  tribits_enable_parent_package_for_subpackage_enable()
+
+  tribits_set_up_enabled_lists_and_pkg_idx()
+
+  tribits_setup_direct_packages_dependencies_lists_and_lib_required_enable_vars()
+
+  tribits_print_direct_packages_dependencies_lists()
+
+endmacro()
+
+
+################################################################################
+#
+# First-level macros called directly from ``tribits_adjust_package_enables()``
+#
+# NOTE: In the below macros, local variables are prefixed by 'tap1_' in all of
+# the macros() which will not clash because they are at the same level in the
+# call stack (and are initialized in each macro).
+# 
+################################################################################
+
+
+# @MACRO: tribits_unenable_enabled_packages()
+#
+# Macro to enable all unenabled packages if asked.
+#
+# See implementation for details.
+#
+macro(tribits_unenable_enabled_packages)
+  if (${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES)
+    message("\nSetting to empty '' all enabled packages because ${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES='${${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES}'\n")
+    foreach(tap1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES)
+      if (${PROJECT_NAME}_ENABLE_${tap1_tribitsPkg})
+        message("-- " "Setting ${PROJECT_NAME}_ENABLE_${tap1_tribitsPkg}=''")
+        set_cache_on_off_empty(${PROJECT_NAME}_ENABLE_${tap1_tribitsPkg} ""
+          "Forced to empty '' by ${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES=ON" FORCE)
+      endif()
+      # NOTE: Above, we don't want to set to empty those packages that have hard
+      # disables because this will mess up the logic in later invocations.
+    endforeach()
+    advanced_set(${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES OFF CACHE BOOL
+      "Forced to FALSE after use" FORCE)
+  endif()
+endmacro()
+
+
+# @MACRO: tribits_sweep_forward_apply_disables()
+#
+# Sweep forward and apply all disables in order first.
+#
+# Creates and updates the following variables in the local scope::
+#
+#   ${PROJECT_NAME}_NOTDISABLED_PACKAGES
+#   ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES
+#
+# See implementation for details.
+#
+macro(tribits_sweep_forward_apply_disables)
+
+  message("\nDisabling all packages that have a required dependency"
+    " on disabled TPLs and optional package TPL support based on TPL_ENABLE_<TPL>=OFF ...\n")
+  tribits_get_nondisabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
+    ${PROJECT_NAME}_NOTDISABLED_PACKAGES "")
+
+  foreach(tad1_tribitsPkg  IN LISTS ${PROJECT_NAME}_NOTDISABLED_PACKAGES)
+    tribits_disable_package_if_tpl_disabled(${tad1_tribitsPkg})
+  endforeach()
+
+  message("\nDisabling subpackages for hard disables of parent packages"
+    " due to ${PROJECT_NAME}_ENABLE_<PARENT_PACKAGE>=OFF ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES)
+    tribits_disable_parents_subpackages(${tad1_tribitsPkg})
+  endforeach()
+
+  message("\nDisabling forward required packages and optional intra-package"
+    " support that have a dependency on disabled packages"
+    " ${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>=OFF ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES)
+    tribits_disable_forward_required_dep_packages(${tad1_tribitsPkg})
+  endforeach()
+
+  tribits_get_nondisabled_list( ${PROJECT_NAME}_NOTDISABLED_PACKAGES  ${PROJECT_NAME}
+    ${PROJECT_NAME}_NOTDISABLED_PACKAGES "")
+
+  set(${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES
+    "${${PROJECT_NAME}_NOTDISABLED_PACKAGES}")
+  list(REVERSE ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES)
+
+endmacro()
+
+
+# @MACRO: tribits_sweep_forward_apply_enables()
+#
+# Reads and updates the following variables in the local scope:
+#
+#   * ``${PROJECT_NAME}_NOTDISABLED_PACKAGES``
+#   * `${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES`_
+#
+# See implementation for details.
+#
+macro(tribits_sweep_forward_apply_enables)
+
+  message("\nEnabling subpackages for hard enables of parent packages"
+    " due to ${PROJECT_NAME}_ENABLE_<PARENT_PACKAGE>=ON ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_NOTDISABLED_PACKAGES)
+    tribits_enable_parents_subpackages(${tad1_tribitsPkg})
+  endforeach()
+
+  if (${PROJECT_NAME}_ENABLE_ALL_PACKAGES)
+    message("\nEnabling all packages that are not currently disabled because of"
+      " ${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON"
+      " (${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE})"
+      " ...\n")
+    foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_NOTDISABLED_PACKAGES)
+      tribits_apply_all_package_enables(${tad1_tribitsPkg})
+    endforeach()
+  endif()
+
+  if (${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES)
+    message("\nSweep forward enabling all forward library dependent packages because"
+      " ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON ...\n")
+    foreach(tad1_tribitsPkg   IN LISTS  ${PROJECT_NAME}_NOTDISABLED_PACKAGES)
+      tribits_enable_forward_lib_package_enables(${tad1_tribitsPkg})
+    endforeach()
+
+    message("\nSweep backward enabling all forward test dependent packages because"
+      " ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON ...\n")
+    foreach(tad1_tribitsPkg   IN LISTS  ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES)
+      tribits_enable_forward_test_package_enables(${tad1_tribitsPkg})
+    endforeach()
+    # NOTE: Above, we want to sweep backward to enable test-dependent packages
+    # because we don't want to enable package Z just because package Y was enabled
+    # because it had a test-only dependency on package X.  Sweeping backwards through
+    # the packages makes sure this does not happen.
+    set(${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES ON)
+  endif()
+
+  tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_PACKAGES  ${PROJECT_NAME}
+    ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES  "")
+
+endmacro()
+
+
+# @MACRO: tribits_disable_and_enable_tests_and_examples()
+#
+# Adjust test and example enables based on different criteria.
+#
+# See implementation for details.
+#
+macro(tribits_disable_and_enable_tests_and_examples)
+
+  message("\nDisabling subpackage tests/examples based on parent package tests/examples disables ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS
+      ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
+    )
+    tribits_apply_package_examples_disable(${tad1_tribitsPkg} TESTS)
+    tribits_apply_subpackage_tests_or_examples_disables(${tad1_tribitsPkg} TESTS)
+    tribits_apply_subpackage_tests_or_examples_disables(${tad1_tribitsPkg} EXAMPLES)
+  endforeach()
+
+  if (${PROJECT_NAME}_ENABLE_TESTS OR ${PROJECT_NAME}_ENABLE_EXAMPLES)
+    message("\nEnabling all tests and/or examples that have not been"
+      " explicitly disabled because ${PROJECT_NAME}_ENABLE_[TESTS,EXAMPLES]=ON ...\n")
+    foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
+      tribits_apply_test_example_enables(${tad1_tribitsPkg})
+    endforeach()
+  endif()
+  # NOTE: Above, we enable tests and examples here, before the remaining required
+  # packages so that we don't enable tests that don't need to be enabled based
+  # on the use of the option ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES.
+
+  message("\nEnabling subpackage tests/examples based on parent package tests/examples enables ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS
+      ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
+    )
+    tribits_apply_subpackage_tests_examples_enables(${tad1_tribitsPkg})
+  endforeach()
+  # NOTE: We want to apply this logic here instead of later after the backward
+  # sweep of package enables because we don't want to enable the
+  # tests/examples for a subpackage if it is not needed based on set of
+  # requested subpackages and packages to be enabled and the optional forward
+  # sweep of downstream packages.
+
+endmacro()
+
+
+# @MACRO: tribits_sweep_backward_enable_upstream_packages()
+#
+# Sweep backwards and enable required and (optionally) optional upstream
+# packages.
+#
+# This sets the final value for:
+#
+# * `${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES`_
+#
+# See implementation for details.
+#
+macro(tribits_sweep_backward_enable_upstream_packages)
+
+  if (${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES)
+    set(tap1_extraMsgStr " (and optional since ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES=ON)")
+  else()
+    set(tap1_extraMsgStr "")
+  endif()
+
+  message("\nEnabling all required${tap1_extraMsgStr} upstream packages for current set of"
+    " enabled packages"
+    " (${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE})"
+    " ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES)
+    tribits_enable_upstream_packages(${tad1_tribitsPkg})
+  endforeach()
+  # NOTE: Above, we have to loop through the packages backward to enable all
+  # the packages that feed into these packages.  This has to include *all*
+  # upstream package enables including required packages, optional packages
+  # (when ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES), and packages
+
+  tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_PACKAGES  ${PROJECT_NAME}
+    ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES  "")
+
+  message("\nEnabling all optional intra-package enables <TRIBITS_PACKAGE>_ENABLE_<DEPPACKAGE>"
+    " that are not currently disabled if both sets of packages are enabled ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
+    tribits_postprocess_optional_package_enables(${tad1_tribitsPkg})
+  endforeach()
+
+endmacro()
+
+
+# @MACRO: tribits_sweep_backward_enable_required_tpls()
+#
+# Enable the TPLs required by the internal packages that are enabled
+#
+# See implementation for details.
+#
+macro(tribits_sweep_backward_enable_required_tpls)
+
+  message("\nEnabling all remaining required TPLs for current set of"
+    " enabled packages ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
+    tribits_enable_required_tpls(${tad1_tribitsPkg})
+  endforeach()
+
+  message("\nEnabling all optional package TPL support"
+    " <TRIBITS_PACKAGE>_ENABLE_<DEPTPL> not currently disabled for"
+    " enabled TPLs ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
+    tribits_postprocess_optional_tpl_enables(${tad1_tribitsPkg})
+  endforeach()
+
+  message("\nEnabling TPLs based on <TRIBITS_PACKAGE>_ENABLE_<TPL>=ON if TPL is not explicitly disabled ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
+    tribits_enable_optional_tpls(${tad1_tribitsPkg})
+  endforeach()
+  # NOTE: We need to do this after the above optional package TPL support
+  # logic so that the TPL will be turned on for this package only as requested
+  # in bug 4298.
+
+endmacro()
+
+
+# @MACRO: tribits_set_cache_vars_for_current_enabled_packages()
+#
+macro(tribits_set_cache_vars_for_current_enabled_packages)
+  message("\nSet cache entries for optional packages/TPLs and tests/examples for packages actually enabled ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
+    tribits_set_up_optional_package_enables_and_cache_vars(${tad1_tribitsPkg})
+  endforeach()
+endmacro()
+
+
+# @MACRO: tribits_enable_parent_package_for_subpackage_enable()
+#
+macro(tribits_enable_parent_package_for_subpackage_enable)
+
+  message("\nEnabling the shell of non-enabled parent packages (mostly for show) that have at least one subpackage enabled ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS
+      ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
+    )
+    tribits_postprocess_package_with_subpackages_enables(${tad1_tribitsPkg})
+  endforeach()
+  # NOTE: The above ensures that loops involving the parent package will
+  # process the parent package but doing this last ensures that no downstream
+  # dependencies will be enabled.
+
+endmacro()
+
+
+# @MACRO: tribits_setup_direct_packages_dependencies_lists_and_lib_required_enable_vars()
+#
+# Set up flat list of direct external and inner package dependencies (even for
+# non-enabled packages) and enabled package dependencies for enabled packages.
+#
+macro(tribits_setup_direct_packages_dependencies_lists_and_lib_required_enable_vars)
+
+  foreach(tad1_externalPkgName  IN LISTS  ${PROJECT_NAME}_DEFINED_TPLS)
+    tribits_extpkg_setup_enabled_dependencies(${tad1_externalPkgName})
+    # ToDo: Assert that all of the listed dependencies in
+    # ${tad1_externalPkgName}_LIB_ENABLED_DEPENDENCIES exist and are
+    # upstream from ${tad1_externalPkgName}
+  endforeach()
+
+  foreach(tad1_internalPkgName   IN LISTS
+      ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
+    )
+    tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars(
+      ${tad1_internalPkgName})
+  endforeach()
+
+endmacro()
+
+
+# @MACRO: tribits_print_direct_packages_dependencies_lists()
+#
+macro(tribits_print_direct_packages_dependencies_lists)
+  if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
+    message("\nDumping direct dependencies for each package ...")
+    foreach(tad1_tribitsPkg  IN  LISTS  ${PROJECT_NAME}_DEFINED_TPLS
+        ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
+      )
+      tribits_print_direct_package_dependencies_lists(${tad1_tribitsPkg})
+    endforeach()
+  endif()
+endmacro()
+
+
 #
 # Private helper macros
 #
@@ -257,7 +610,7 @@ macro(tribits_private_disable_optional_package_enables
 endmacro()
 
 
-# Macro that disabled a packages if its required upstream TPL is disabled..
+# Macro that disables a packages if its required upstream TPL is disabled.
 #
 macro(tribits_disable_package_if_tpl_disabled  TRIBITS_PACKAGE)
 
@@ -1265,19 +1618,19 @@ macro(tribits_enable_upstream_packages  PACKAGE_NAME)
 
   if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
 
-    foreach(DEP_PKG ${${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES})
+    foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES)
       tribits_private_enable_dep_package(${PACKAGE_NAME} ${DEP_PKG} REQUIRED)
     endforeach()
 
-    foreach(DEP_PKG ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES})
+    foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES)
       tribits_private_enable_dep_package(${PACKAGE_NAME} ${DEP_PKG} OPTIONAL)
     endforeach()
 
-    foreach(DEP_PKG ${${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES})
+    foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES)
       tribits_private_enable_dep_package(${PACKAGE_NAME} ${DEP_PKG} REQUIRED)
     endforeach()
 
-    foreach(DEP_PKG ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES})
+    foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES)
       tribits_private_enable_dep_package(${PACKAGE_NAME} ${DEP_PKG} OPTIONAL)
     endforeach()
 
@@ -1297,11 +1650,11 @@ macro(tribits_enable_required_tpls PACKAGE_NAME)
 
   if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
 
-    foreach(DEP_TPL ${${PACKAGE_NAME}_LIB_REQUIRED_DEP_TPLS})
+    foreach(DEP_TPL  IN LISTS  ${PACKAGE_NAME}_LIB_REQUIRED_DEP_TPLS)
       tribits_private_enable_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
     endforeach()
 
-    foreach(DEP_TPL ${${PACKAGE_NAME}_TEST_REQUIRED_DEP_TPLS})
+    foreach(DEP_TPL  IN LISTS  ${PACKAGE_NAME}_TEST_REQUIRED_DEP_TPLS)
       tribits_private_enable_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
     endforeach()
 
@@ -1310,279 +1663,4 @@ macro(tribits_enable_required_tpls PACKAGE_NAME)
 endmacro()
 
 
-# @MACRO: tribits_adjust_package_enables()
-#
-# Usage:
-#
-#   tribits_adjust_package_enables()
-#
-# Macro that adjusts all of the package enables from what the user input to
-# the final set that will be used to enable packages.
-#
-macro(tribits_adjust_package_enables)
-
-  if (${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES)
-    message("")
-    message("Setting to empty '' all enabled packages on request ...")
-    message("")
-    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
-      if (${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE})
-        set_cache_on_off_empty(${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE} ""
-          "Forced to empty '' by ${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES=ON" FORCE)
-        set(${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE} "")
-      endif()
-      #print_var(${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE})
-      # NOTE: Above, we don't want to set to empty those packages that have hard
-      # disables because this will mess up the logic in later invocations.
-    endforeach()
-    advanced_set(${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES OFF CACHE BOOL
-      "Forced to FALSE after use" FORCE)
-  endif()
-
-  #
-  # A) Sweep forward through and apply all disables first!
-  #
-
-  tribits_get_nondisabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
-    ${PROJECT_NAME}_NOTDISABLED_PACKAGES "")
-
-  message("")
-  message("Disabling all packages that have a required dependency"
-    " on disabled TPLs and optional package TPL support based on TPL_ENABLE_<TPL>=OFF ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_NOTDISABLED_PACKAGES})
-    tribits_disable_package_if_tpl_disabled(${TRIBITS_PACKAGE})
-  endforeach()
-
-  message("")
-  message("Disabling subpackages for hard disables of parent packages"
-    " due to ${PROJECT_NAME}_ENABLE_<PARENT_PACKAGE>=OFF ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
-    tribits_disable_parents_subpackages(${TRIBITS_PACKAGE})
-  endforeach()
-
-  message("")
-  message("Disabling forward required packages and optional intra-package"
-    " support that have a dependency on disabled packages"
-    " ${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>=OFF ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
-    tribits_disable_forward_required_dep_packages(${TRIBITS_PACKAGE})
-  endforeach()
-
-  tribits_get_nondisabled_list( ${PROJECT_NAME}_NOTDISABLED_PACKAGES  ${PROJECT_NAME}
-    ${PROJECT_NAME}_NOTDISABLED_PACKAGES "")
-
-  set(${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES
-    "${${PROJECT_NAME}_NOTDISABLED_PACKAGES}")
-  list(REVERSE ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES)
-
-  #
-  # B) Apply all forward enables
-  #
-
-  message("")
-  message("Enabling subpackages for hard enables of parent packages"
-    " due to ${PROJECT_NAME}_ENABLE_<PARENT_PACKAGE>=ON ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_NOTDISABLED_PACKAGES})
-    tribits_enable_parents_subpackages(${TRIBITS_PACKAGE})
-  endforeach()
-
-  if (${PROJECT_NAME}_ENABLE_ALL_PACKAGES)
-    message("")
-    message("Enabling all packages that are not currently disabled because of"
-      " ${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON"
-      " (${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE})"
-      " ...")
-    message("")
-    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_NOTDISABLED_PACKAGES})
-      tribits_apply_all_package_enables(${TRIBITS_PACKAGE})
-    endforeach()
-  endif()
-
-  if (${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES)
-    message("")
-    message("Sweep forward enabling all forward library dependent packages because"
-      " ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON ...")
-    message("")
-    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_NOTDISABLED_PACKAGES})
-      tribits_enable_forward_lib_package_enables(${TRIBITS_PACKAGE})
-    endforeach()
-    message("")
-    message("Sweep backward enabling all forward test dependent packages because"
-      " ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON ...")
-    message("")
-    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES})
-      tribits_enable_forward_test_package_enables(${TRIBITS_PACKAGE})
-    endforeach()
-    # NOTE: Above, we want to sweep backward to enable test-dependent packages
-    # because we don't want to enable package Z just because package Y was enabled
-    # because it had a test-only dependency on package X.  Sweeping backwards through
-    # the packages makes sure this does not happen.
-    set(${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES ON)
-  endif()
-
-  tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_PACKAGES  ${PROJECT_NAME}
-    ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES  "")
-
-  #
-  # C) Disable and enable tests for currently enabled packages
-  #
-
-  message("")
-  message("Disabling subpackage tests/examples based on parent package tests/examples disables ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
-    tribits_apply_package_examples_disable(${TRIBITS_PACKAGE} TESTS)
-    tribits_apply_subpackage_tests_or_examples_disables(${TRIBITS_PACKAGE} TESTS)
-    tribits_apply_subpackage_tests_or_examples_disables(${TRIBITS_PACKAGE} EXAMPLES)
-  endforeach()
-
-  if (${PROJECT_NAME}_ENABLE_TESTS OR ${PROJECT_NAME}_ENABLE_EXAMPLES)
-    message("")
-    message("Enabling all tests and/or examples that have not been"
-      " explicitly disabled because ${PROJECT_NAME}_ENABLE_[TESTS,EXAMPLES]=ON ...")
-    message("")
-    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
-      tribits_apply_test_example_enables(${TRIBITS_PACKAGE})
-    endforeach()
-  endif()
-  # NOTE: Above, we enable tests and examples here, before the remaining required
-  # packages so that we don't enable tests that don't need to be enabled based
-  # on the use of the option ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES.
-
-  message("")
-  message("Enabling subpackage tests/examples based on parent package tests/examples enables ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
-    tribits_apply_subpackage_tests_examples_enables(${TRIBITS_PACKAGE})
-  endforeach()
-  # NOTE: We want to apply this logic here instead of later after the backward
-  # sweep of package enables because we don't want to enable the
-  # tests/examples for a subpackage if it is not needed based on set of
-  # requested subpackages and packages to be enabled and the optional forward
-  # sweep of downstream packages.
-
-  #
-  # D) Sweep backwards and enable upstream required and optional packages
-  #
-
-  if (${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES)
-    set(EXTRA_MSG_STR " (and optional since ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES=ON)")
-  else()
-    set(EXTRA_MSG_STR "")
-  endif()
-
-  message("")
-  message("Enabling all required${EXTRA_MSG_STR} upstream packages for current set of"
-    " enabled packages"
-    " (${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE})"
-    " ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES})
-    tribits_enable_upstream_packages(${TRIBITS_PACKAGE})
-  endforeach()
-  # NOTE: Above, we have to loop through the packages backward to enable all
-  # the packages that feed into these packages.  This has to include *all*
-  # upstream package enables including required packages, optional packages
-  # (when ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES), and packages
-
-  tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_PACKAGES  ${PROJECT_NAME}
-    ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES  "")
-
-  message("")
-  message("Enabling all optional intra-package enables <TRIBITS_PACKAGE>_ENABLE_<DEPPACKAGE>"
-    " that are not currently disabled if both sets of packages are enabled ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
-    tribits_postprocess_optional_package_enables(${TRIBITS_PACKAGE})
-  endforeach()
-
-  #
-  # E) Enable TPLs
-  #
-
-  message("")
-  message("Enabling all remaining required TPLs for current set of"
-    " enabled packages ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
-    tribits_enable_required_tpls(${TRIBITS_PACKAGE})
-  endforeach()
-
-  message("")
-  message("Enabling all optional package TPL support"
-    " <TRIBITS_PACKAGE>_ENABLE_<DEPTPL> not currently disabled for"
-    " enabled TPLs ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
-    tribits_postprocess_optional_tpl_enables(${TRIBITS_PACKAGE})
-  endforeach()
-
-  message("")
-  message("Enabling TPLs based on <TRIBITS_PACKAGE>_ENABLE_<TPL>=ON if TPL is not explicitly disabled ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
-    tribits_enable_optional_tpls(${TRIBITS_PACKAGE})
-  endforeach()
-  # NOTE: We need to do this after the above optional package TPL support
-  # logic so that the TPL will be turned on for this package only as requested
-  # in bug 4298.
-
-  #
-  # F) Set user cache variables for current set of enabled packages
-  #
-
-  message("")
-  message("Set cache entries for optional packages/TPLs and tests/examples for packages actually enabled ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
-    tribits_set_up_optional_package_enables_and_cache_vars(${TRIBITS_PACKAGE})
-  endforeach()
-
-  #
-  # G) Turn on parent packages where at least one subpackage has been enabled
-  #
-
-  message("")
-  message("Enabling the shell of non-enabled parent packages (mostly for show) that have at least one subpackage enabled ...")
-  message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
-    tribits_postprocess_package_with_subpackages_enables(${TRIBITS_PACKAGE})
-  endforeach()
-  # NOTE: The above ensures that loops involving the parent package will
-  # process the parent package but doing this last ensures that no downstream
-  # dependencies will be enabled.
-
-  tribits_set_up_enabled_lists_and_pkg_idx()
-
-  #
-  # H) Set up flat list of direct external and inner package dependencies (even
-  # for non-enabled packages) and enabled package dependencies for enabled
-  # packages
-  #
-
-  foreach(externalPkgName ${${PROJECT_NAME}_DEFINED_TPLS})
-    tribits_extpkg_setup_enabled_dependencies(${externalPkgName})
-    # ToDo: Assert that all of the listed dependencies in
-    # ${externalPkgName}_LIB_ENABLED_DEPENDENCIES exist and are upstream from
-    # ${externalPkgName}
-  endforeach()
-
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
-    tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars(
-      ${TRIBITS_PACKAGE})
-  endforeach()
-
-  if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
-    message("\nDumping direct dependencies for each package ...")
-    foreach(tribitsPkg  IN  LISTS  ${PROJECT_NAME}_DEFINED_TPLS
-        ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
-      )
-      tribits_print_direct_package_dependencies_lists(${tribitsPkg})
-    endforeach()
-  endif()
-
-endmacro()
+# LocalWords: tribits TriBITS foreach endmacro endfunction
