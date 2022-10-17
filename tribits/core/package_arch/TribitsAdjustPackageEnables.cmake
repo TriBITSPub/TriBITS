@@ -1588,13 +1588,9 @@ macro(tribits_adjust_package_enables)
 endmacro()
 
 
-# Function that sets up the full package dependencies for each enabled package
-# including all of its indirect upstream package dependencies.
-#
-# This is needed in several different parts of the TriBITS implementation.
-#
-# ToDo: #63: Remove this function since we should not need a full list of
-# direct and indirect package dependencies!
+# Function that sets up the full package dependencies for the given internal
+# enabled package ``${PACKAGE_NAME}``, including all of its indirect upstream
+# internal package dependencies.
 #
 function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
 
@@ -1657,23 +1653,30 @@ function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
   global_set(${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES
     ${ORDERED_PACKAGE_FULL_DEPS_LIST})
 
-  if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    print_var(${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES)
-  endif()
-
 endfunction()
 
 
 # Function that creates enable-only dependency data-structures
 #
-# ToDo: #63: Remove this function since we should not need a full list of
-# direct and indirect package dependencies!
+# For each enabled package `<Package>`, this function sets up the global list
+# var::
+#
+#   <Package>_FULL_ENABLED_DEP_PACKAGES
+#
+# If ``${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES`` is
+# set, then ``<Package>_FULL_ENABLED_DEP_PACKAGES`` will only be sets for
+# those packages.  Otherwise, ``<Package>_FULL_ENABLED_DEP_PACKAGES`` will be
+# set for all packages listed in `${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES`_.
+#
+# NOTE: The modern TriBITS implementation does not need this full list of
+# dependencies for each package.  Only the function
+# `tribits_find_most_recent_file_timestamp()` needs this.  (Therefore, this
+# could not be striped out of TriBITS because there are still some projects
+# that use this function.)
 #
 function(tribits_set_up_enabled_only_dependencies)
 
   set(GENERATE_EXPORT_DEPENDENCIES ${${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES})
-  set(lastExportTribitsPackage)
-
   if ("${${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES}" STREQUAL ""
       AND NOT
       "${${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES}" STREQUAL ""
@@ -1689,6 +1692,9 @@ function(tribits_set_up_enabled_only_dependencies)
       ${${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES} )
   endif()
 
+  # Determine lastExportTribitsPackage if not to generate any of these full
+  # dependency lists
+  set(lastExportTribitsPackage "")
   if (GENERATE_EXPORT_DEPENDENCIES
       AND ${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES
     )
@@ -1719,6 +1725,7 @@ function(tribits_set_up_enabled_only_dependencies)
     endif()
 
   endif()
+
 
   if (GENERATE_EXPORT_DEPENDENCIES)
 
