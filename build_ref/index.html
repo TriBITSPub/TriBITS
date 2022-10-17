@@ -213,10 +213,10 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date</dt>
-<dd class="field-odd"><p>2022-10-04</p>
+<dd class="field-odd"><p>2022-10-17</p>
 </dd>
 <dt class="field-even">Version</dt>
-<dd class="field-even"><p>tribits_start-3058-gcd0ec252</p>
+<dd class="field-even"><p>tribits_start-3078-g63d71817</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -2914,13 +2914,17 @@ package directories.  In development mode, the failure to find a package
 directory is usually a programming error (i.e. a miss-spelled package
 directory name).  But in a tarball release of the project, package directories
 may be purposefully missing (see <a class="reference internal" href="#creating-a-tarball-of-the-source-tree">Creating a tarball of the source tree</a>) and
-must be ignored.  When building from a reduced source tarball created from the
+must be ignored.</p>
+<p>When building from a reduced source tarball created from the
 development sources, set:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ASSERT_MISSING_PACKAGES</span><span class="o">=</span><span class="n">OFF</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ASSERT_DEFINED_DEPENDENCIES</span><span class="o">=</span><span class="n">OFF</span>
 </pre></div>
 </div>
+<p>or to <code class="docutils literal notranslate"><span class="pre">IGNORE</span></code>.  (valid values include <code class="docutils literal notranslate"><span class="pre">FATAL_ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">SEND_ERROR</span></code>,
+<code class="docutils literal notranslate"><span class="pre">WARNING</span></code>, <code class="docutils literal notranslate"><span class="pre">NOTICE</span></code>, <code class="docutils literal notranslate"><span class="pre">IGNORE</span></code> and <code class="docutils literal notranslate"><span class="pre">OFF</span></code>)</p>
 <p>Setting this <code class="docutils literal notranslate"><span class="pre">OFF</span></code> will cause the TriBITS CMake configure to simply ignore
-any missing packages and turn off all dependencies on these missing packages.</p>
+any undefined packages and turn off all dependencies on these missing
+packages.</p>
 <p>Another type of checking is for optional inserted/external packages
 (e.g. packages who’s source can optionally be included and is flagged with
 <code class="docutils literal notranslate"><span class="pre">tribits_allow_missing_external_packages()</span></code>).  Any of these package
@@ -2930,25 +2934,27 @@ printed by configuring with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES</span><span class="o">=</span><span class="n">TRUE</span>
 </pre></div>
 </div>
-<p>These warnings (starting with ‘NOTE’, not ‘WARNING’ that would otherwise
-trigger warnings in CDash) about missing inserted/external packages will print
-regardless of the setting for <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ASSERT_MISSING_PACKAGES</span></code>.</p>
+<p>These warnings starting with ‘NOTE’ (not starting with ‘WARNING’ that would
+otherwise trigger warnings in CDash) about missing inserted/external packages
+will print regardless of the setting for
+<code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ASSERT_DEFINED_DEPENDENCIES</span></code>.</p>
 <p>Finally, <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ENABLE_DEVELOPMENT_MODE=ON</span></code> results in a number of
 checks for invalid usage of TriBITS in the project’s <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> files
-and will abort configure with a fatal error on the first check failure. This
-is appropriate for development mode when a project is clean of all such
-invalid usage patterns but there are times when it makes sense to report these
-check failures in different ways (such as when upgrading TriBITS in a project
-that has some invalid usage patterns that just happen work but may be
+and will, by default, abort configure with a fatal error on the first failed
+check. This is appropriate for development mode when a project is clean of all
+such invalid usage patterns but there are times when it makes sense to report
+these check failures in different ways (such as when upgrading TriBITS in a
+project that has some invalid usage patterns that just happen work but may be
 disallowed in future versions of TriBITS).  To change how these invalid usage
 checks are handled, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ASSERT_CORRECT_TRIBITS_USAGE</span><span class="o">=&lt;</span><span class="n">check</span><span class="o">-</span><span class="n">mode</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>where <code class="docutils literal notranslate"><span class="pre">&lt;check-mode&gt;</span></code> can be ‘FATAL_ERROR’, ‘SEND_ERROR’, ‘WARNING’, or
-‘IGNORE’.</p>
+<p>where <code class="docutils literal notranslate"><span class="pre">&lt;check-mode&gt;</span></code> can be <code class="docutils literal notranslate"><span class="pre">FATAL_ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">SEND_ERROR</span></code>, <code class="docutils literal notranslate"><span class="pre">WARNING</span></code>,
+<code class="docutils literal notranslate"><span class="pre">IGNORE</span></code> or <code class="docutils literal notranslate"><span class="pre">OFF</span></code> (where <code class="docutils literal notranslate"><span class="pre">IGNORE</span></code> or <code class="docutils literal notranslate"><span class="pre">OFF</span></code> avoids any error reporting
+or warnings).</p>
 <p>For <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ENABLE_DEVELOPMENT_MODE=OFF</span></code>, the default for
-<code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ASSERT_CORRECT_TRIBITS_USAGE</span></code> is actually set to <code class="docutils literal notranslate"><span class="pre">IGNORE</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ASSERT_CORRECT_TRIBITS_USAGE</span></code> is set to <code class="docutils literal notranslate"><span class="pre">IGNORE</span></code>.</p>
 </section>
 </section>
 <section id="building-makefile-generator">
@@ -3961,11 +3967,11 @@ example:</p>
 generators on your system).</p>
 <p>NOTE: When configuring from an untarred source tree that has missing packages,
 one must configure with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ASSERT_MISSING_PACKAGES</span><span class="o">=</span><span class="n">OFF</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ASSERT_DEFINED_DEPENDENCIES</span><span class="o">=</span><span class="n">OFF</span>
 </pre></div>
 </div>
 <p>Otherwise, TriBITS will error out complaining about missing packages.  (Note
-that <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ASSERT_MISSING_PACKAGES</span></code> will default to <code class="docutils literal notranslate"><span class="pre">`OFF`</span></code> in
+that <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ASSERT_DEFINED_DEPENDENCIES</span></code> will default to <code class="docutils literal notranslate"><span class="pre">`OFF`</span></code> in
 release mode, i.e. <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ENABLE_DEVELOPMENT_MODE==OFF</span></code>.)</p>
 </section>
 </section>
