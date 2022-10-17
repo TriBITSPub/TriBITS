@@ -409,7 +409,6 @@ function(unittest_read_packages_and_dependencies)
   unittest_helper_read_packages_and_dependencies()
   unittest_compare_const(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
   unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
-  unittest_compare_const(${PROJECT_NAME}_REVERSE_DEFINED_TPLS "Boost;LAPACK;BLAS;MPI")
   unittest_compare_const(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
@@ -772,4 +771,4 @@ unittest_extra_repo_missing_required_package_verbose()
 unittest_elevate_subpackages_st_to_pt()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(125)
+unittest_final_result(124)

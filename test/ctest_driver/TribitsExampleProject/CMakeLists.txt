@@ -2709,7 +2709,6 @@ function(generate_aao_tests)
       "Calling: find_package[(]TribitsExProj REQUIRED COMPONENTS  OPTIONAL_COMPONENTS SimpleCxx[;]WithSubpackagesA[;]WithSubpackageC [)]"
       "TribitsExProj_PACKAGE_LIST = 'WithSubpackages[;]WithSubpackagesC[;]WithSubpackagesB[;]WithSubpackagesA[;]MixedLang[;]SimpleCxx'"
       "TribitsExProj_SELECTED_PACKAGE_LIST = 'SimpleCxx[;]WithSubpackagesA'"
-      "TribitsExProj_TPL_LIST = 'HeaderOnlyTpl'"
       "TribitsExProj_SimpleCxx_FOUND = 'TRUE'"
       "TribitsExProj_WithSubpackagesA_FOUND = 'TRUE'"
       "TribitsExProj_WithSubpackageC_FOUND = 'FALSE'"

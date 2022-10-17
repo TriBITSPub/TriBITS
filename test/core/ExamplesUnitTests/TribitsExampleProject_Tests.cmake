@@ -89,10 +89,6 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
     set(TPL_MPI_FILE_TRACE "")
     set(FINAL_ENABLED_TPLS "HeaderOnlyTpl 1")
     set(TEST_MPI_1_SUFFIX "")
-    set(WithSubpackages_TPL_LIBRARIES HeaderOnlyTpl::all_libs)
-    set(WithSubpackages_TPL_LIST HeaderOnlyTpl)
-    set(TribitsExProj_TPL_LIBRARIES HeaderOnlyTpl::all_libs)
-    set(TribitsExProj_TPL_LIST HeaderOnlyTpl)
     set(TribitsExProj_SHARED_LIB_RPATH_COMMAND_REGEX "")
   elseif (serialOrMpi STREQUAL "MPI")
     set(tplEnableMpiArg -DTPL_ENABLE_MPI=ON)
@@ -101,10 +97,6 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
       "-- File Trace: TPL        INCLUDE    .*/core/std_tpls/FindTPLMPI.cmake")
     set(FINAL_ENABLED_TPLS "MPI HeaderOnlyTpl 2")
     set(TEST_MPI_1_SUFFIX "_MPI_1")
-    set(WithSubpackages_TPL_LIBRARIES "HeaderOnlyTpl::all_libs;MPI::all_libs")
-    set(WithSubpackages_TPL_LIST "HeaderOnlyTpl;MPI")
-    set(TribitsExProj_TPL_LIBRARIES "HeaderOnlyTpl::all_libs;MPI::all_libs")
-    set(TribitsExProj_TPL_LIST "HeaderOnlyTpl;MPI")
     set(TribitsExProj_SHARED_LIB_RPATH_COMMAND_REGEX
       "-Wl,-rpath,.*/${testName}/install/lib")
   else()
@@ -315,21 +307,13 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "WithSubpackages_LINKER = '.+'"
         "WithSubpackages_AR = '.+'"
         "WithSubpackages_INSTALL_DIR = .*/${testName}/install"
-        "WithSubpackages_INCLUDE_DIRS = ''"
-        "WithSubpackages_LIBRARY_DIRS = ''"
-        "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-        "WithSubpackages_TPL_INCLUDE_DIRS = ''"
-        "WithSubpackages_TPL_LIBRARY_DIRS = ''"
-        "WithSubpackages_TPL_LIBRARIES = '${WithSubpackages_TPL_LIBRARIES}'"
+        "WithSubpackages_LIBRARIES = 'WithSubpackages::all_libs'"
         "WithSubpackages_MPI_LIBRARIES = ''"
         "WithSubpackages_MPI_LIBRARY_DIRS = ''"
         "WithSubpackages_MPI_INCLUDE_DIRS = ''"
         "WithSubpackages_MPI_EXEC = '${MPI_EXEC}'"
         "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
         "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
-        "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
-        "WithSubpackages_SELECTED_PACKAGE_LIST = ''"
-        "WithSubpackages_TPL_LIST = '${WithSubpackages_TPL_LIST}'"
         "WithSubpackages_FOUND = '1'"
         "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
         "-- Configuring done"
@@ -409,21 +393,13 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "WithSubpackages_LINKER = '.+'"
         "WithSubpackages_AR = '.+'"
         "WithSubpackages_INSTALL_DIR = '.+/install'"
-        "WithSubpackages_INCLUDE_DIRS = ''"
-        "WithSubpackages_LIBRARY_DIRS = ''"
-        "WithSubpackages_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-        "WithSubpackages_TPL_INCLUDE_DIRS = ''"
-        "WithSubpackages_TPL_LIBRARY_DIRS = ''"
-        "WithSubpackages_TPL_LIBRARIES = '${WithSubpackages_TPL_LIBRARIES}'"
+        "WithSubpackages_LIBRARIES = 'WithSubpackages::all_libs'"
         "WithSubpackages_MPI_LIBRARIES = ''"
         "WithSubpackages_MPI_LIBRARY_DIRS = ''"
         "WithSubpackages_MPI_INCLUDE_DIRS = ''"
         "WithSubpackages_MPI_EXEC = '${MPI_EXEC}'"
         "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
         "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
-        "WithSubpackages_PACKAGE_LIST = 'WithSubpackagesC.WithSubpackagesB.WithSubpackagesA.SimpleCxx'"
-        "WithSubpackages_SELECTED_PACKAGE_LIST = ''"
-        "WithSubpackages_TPL_LIST = '${WithSubpackages_TPL_LIST}'"
         "WithSubpackages_FOUND = '1'"
         "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -466,11 +442,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "TribitsExProj_AR = '.*'"
         "TribitsExProj_INSTALL_DIR = '.*/${testName}/install'"
         "TribitsExProj_INCLUDE_DIRS = '.*/${testName}/install/include'"
-        "TribitsExProj_LIBRARY_DIRS = ''"
-        "TribitsExProj_LIBRARIES = 'WithSubpackagesC::pws_c[;]WithSubpackagesB::pws_b[;]WithSubpackagesA::pws_a[;]SimpleCxx::simplecxx'"
-        "TribitsExProj_TPL_INCLUDE_DIRS = ''"
-        "TribitsExProj_TPL_LIBRARY_DIRS = ''"
-        "TribitsExProj_TPL_LIBRARIES = '${TribitsExProj_TPL_LIBRARIES}'"
+        "TribitsExProj_LIBRARIES = 'WithSubpackages::all_libs;WithSubpackagesC::all_libs;WithSubpackagesB::all_libs;WithSubpackagesA::all_libs;SimpleCxx::all_libs'"
         "TribitsExProj_MPI_LIBRARIES = ''"
         "TribitsExProj_MPI_LIBRARY_DIRS = ''"
         "TribitsExProj_MPI_INCLUDE_DIRS = ''"
@@ -1221,8 +1193,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
         -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja/install'"
-        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
-      "WithSubpackages_TPL_LIST = 'HeaderOnlyTpl'"
+      "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_6 CMND ninja ARGS -j1 install ${CTEST_BUILD_FLAGS}

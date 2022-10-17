@@ -2,6 +2,29 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-10-16:
+
+* **Removed:** Removed the variables `<Project>_LIBRARY_DIRS`,
+  `<Project>_TPL_LIST` and `<Project>_TPL_LIBRARIES` from the installed
+  `<Project>Config.cmake` file.  These are not needed after the change to
+  modern CMake targets `<Package>::all_libs` (see `<Package>::all_libs`
+  below).  To determine if a TPL is enabled, check `if (TARGET
+  <tplName>::all_libs)`.  To get the libraries and include dirs for a TPL,
+  link against the IMPORTED target `<tplName>::all_libs` (see the updated
+  TriBITS example APP projects for details).
+
+* **Removed:** Removed the variables `<Package>_PACKAGE_LIST`,
+  `<Package>_TPL_LIST`, `<Package>_INCLUDE_DIR`, `<Package>_LIBRARY_DIRS`,
+  `<Package>_TPL_INCLUDE_DIRS`, `<Package>_TPL_LIBRARIES` and
+  `<Package>_TPL_LIBRARY_DIRS` from the generated `<Package>Config.cmake`
+  files.  These are not needed with the move to modern CMake targets (see
+  `<Package>::all_libs` below).
+
+* **Changed:** Changed `<Package>_LIBRARIES` in generated
+  `<Package>Config.cmake` files from the full list of the package's library
+  targets to just `<Package>::all_libs`.  (There is no need to list the
+  individual libraries after the move to modern CMake targets.)
+
 ## 2022-10-11:
 
 * **Changed:** Added option `<Project>_ASSERT_DEFINED_DEPENDENCIES` to
