@@ -51,6 +51,7 @@ include(TribitsReportInvalidTribitsUsage)
 include(TribitsReadAllProjectDepsFilesCreateDepsGraph)
 include(TribitsAdjustPackageEnables)
 include(TribitsGitRepoVersionInfo)
+include(TribitsSetUpEnabledOnlyDependencies)
 
 # Standard TriBITS utilities includes
 include(TribitsAddOptionAndDefine)

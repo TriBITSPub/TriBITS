@@ -39,6 +39,7 @@
 
 include("${CMAKE_CURRENT_LIST_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraphHelpers.cmake")
 include(TribitsAdjustPackageEnables)
+include(TribitsSetUpEnabledOnlyDependencies)
 
 
 #####################################################################
