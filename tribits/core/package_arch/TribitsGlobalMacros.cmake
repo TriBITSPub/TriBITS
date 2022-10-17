@@ -54,6 +54,7 @@ include(TribitsGitRepoVersionInfo)
 
 # Standard TriBITS utilities includes
 include(TribitsAddOptionAndDefine)
+include(TribitsAddEnumCacheVar)
 include(AdvancedOption)
 include(AdvancedSet)
 include(AppendStringVar)
@@ -717,22 +718,49 @@ macro(tribits_define_global_options_and_define_extra_repos)
     "Determines if a variety of development mode checks are turned on by default or not."
     )
 
-  advanced_set( ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES
-    ${${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE}
-    CACHE BOOL
-    "Determines if asserts are performed on missing packages or not." )
+  if ("${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT}" STREQUAL "")
+    if (${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE)
+      set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT  FATAL_ERROR)
+    else()
+      set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT  IGNORE)
+    endif()
+  endif()
+  set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
+    "FATAL_ERROR" "SEND_ERROR" )
+  set(${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_VALUES_LIST
+    ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST}
+    "WARNING" "NOTICE" "IGNORE" "OFF" )
+  tribits_add_enum_cache_var( ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES
+    DEFAULT_VAL ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_DEFAULT}
+    DOC_STRING
+      "Assert that all external and internal dependencies are defined in the project"
+    ALLOWED_STRINGS_LIST
+      ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_VALUES_LIST}
+    IS_ADVANCED )
+
+  if (NOT "${${PROJECT_NAME}_ASSERT_MISSING_PACKAGES}" STREQUAL "")
+    message(FATAL_ERROR "Error, ${PROJECT_NAME}_ASSERT_MISSING_PACKAGES="
+      " '${${PROJECT_NAME}_ASSERT_MISSING_PACKAGES}' is set and is no"
+      " longer supported!  Please set"
+      " ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES=FATAL_ERROR instead!" )
+  endif()
 
   if ("${${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_DEFAULT}" STREQUAL "")
     if (${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE)
-      set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_DEFAULT FATAL_ERROR)
+      set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_DEFAULT  FATAL_ERROR)
     else()
-      set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_DEFAULT IGNORE)
+      set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_DEFAULT  IGNORE)
     endif()
   endif()
-  advanced_set( ${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE
-    "${${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_DEFAULT}"
-    CACHE BOOL
-    "Assert correct usage of TriBITS.  Value values include 'FATAL_ERROR', 'SEND_ERROR', 'WARNING', and 'IGNORE'.  Default '${${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_DEFAULT}' " )
+  set(${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_VALUES_LIST
+      "FATAL_ERROR" "SEND_ERROR" "WARNING" "IGNORE" "OFF")
+  tribits_add_enum_cache_var( ${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE
+    DEFAULT_VAL "${${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_DEFAULT}"
+    DOC_STRING
+      "Assert correct usage of TriBITS"
+    ALLOWED_STRINGS_LIST
+      ${${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE_VALUES_LIST}
+    IS_ADVANCED )
 
   advanced_set( ${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES
     FALSE  CACHE  BOOL

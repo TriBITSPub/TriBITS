@@ -68,6 +68,7 @@ set(REDUCED_MOCK_TRILINOS_DIR
 set(REDUCED_MOCK_TRILINOS_OUTPUT_DIR
   "${${PROJECT_NAME}_TRIBITS_DIR}/doc/guides/ReducedMockTrilinosOutput")
 
+
 #
 # NOTE: These tests compare against expected output stored in files under the
 # in the guides/ReducedMockTrilinosOuptut/ directory and are used in the
@@ -106,11 +107,10 @@ function(create_reduced_dependency_handling_test_case TEST_NAME)
 endfunction()
 
 
-#
 # Read in an expected output file and create a REGEX array to be used in
-# checking test results.
+# checking test results (and replace all problematic chars as appropriate
+# regex).
 #
-
 function(read_expected_output_file_into_regex_array  EXPECTED_OUTPUT_FILE
   EXPECTED_OUTPUT_REGEX_ARRAY_OUT
   )
@@ -123,11 +123,11 @@ function(read_expected_output_file_into_regex_array  EXPECTED_OUTPUT_FILE
     #print_var(EXPECTED_RAW_STR)
     if (NOT "${EXPECTED_RAW_STR}" STREQUAL "")
       set(EXPECTED_REGEX_STR "${EXPECTED_RAW_STR}")
-      string(REPLACE "(" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      string(REPLACE ")" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      string(REPLACE "[" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      string(REPLACE "]" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
-      string(REPLACE "*" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}") 
+      string(REPLACE "[" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}")
+      string(REPLACE "]" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}")
+      string(REPLACE "(" "[(]" EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}")
+      string(REPLACE ")" "[)]" EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}")
+      string(REPLACE "*" "." EXPECTED_REGEX_STR "${EXPECTED_REGEX_STR}")
       list(APPEND EXPECTED_REGEX_ARRAY "${EXPECTED_REGEX_STR}")
       #print_var(EXPECTED_REGEX_ARRAY)
     endif()
@@ -529,7 +529,8 @@ endfunction()
 
 create_dependency_handling_test_case(
   EnableAllPackages
-  ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=ON
+  ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
+    -DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
     "NOTE: MissingPackage is being ignored since its directory is missing and MissingPackage_ALLOW_MISSING_EXTERNAL_PACKAGE = TRUE"
@@ -547,7 +548,8 @@ create_dependency_handling_test_case(
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
     -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
--DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=ON
+    -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
     "${EnableAllPackages_DumpDependencies_REGEX_ARRAY}"
     "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Stratimikos RBGen 19"
@@ -1259,16 +1261,55 @@ create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidPackageNameError
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
-    -DTrilinos_ASSERT_MISSING_PACKAGES=ON
+    -DTrilinos_ASSERT_DEFINED_DEPENDENDCIES=FATAL_ERROR
   PASS_REGULAR_EXPRESSION_ALL
     "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
     "Error, the package 'Anasazi' is listed as a dependency of the package"
-    "'Teko' is in the list 'Trilinos_DEFINED_INTERNAL_PACKAGES' but the package"
-    "'Anasazi' is either not defined or is listed later in the package order[.]"
-    "This may also be an attempt to create a circular dependency between the"
-    "packages 'Anasazi' and 'Teko' [(]which is not allowed[)][.]  Check the spelling"
-    "of 'Anasazi' or see how it is listed in a call to"
-    "tribits_repository_define_packages[(][)] in relation to 'Teko'[.]"
+    "'Teko' but the package 'Anasazi' is either not defined or is listed later"
+    "in the package order[.]  This may also be an attempt to create a circular"
+    "dependency between the packages 'Anasazi' and 'Teko' [(]which is not"
+    "allowed[)][.]  Check the spelling of 'Anasazi' or see how it is listed in a"
+    "call to tribits_repository_define_packages[(][)] in relation to 'Teko'[.]  To"
+    "ignore/disable the undefined package 'Anasazi', set the cache variable"
+    "Trilinos_ASSERT_DEFINED_DEPENDENCIES=IGNORE[.]"
+  )
+
+
+create_dependency_handling_test_case(
+  ShowInvalidTplNameError
+  ARGS -DTrilinos_ASSERT_DEFINED_DEPENDENCIES=FATAL_ERROR
+    -DSHOW_INVALID_TPL_NAME_ERROR=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
+    "Error, the package 'Zlib' is listed as a dependency of the package 'Zoltan'"
+    "but the package 'Zlib' is either not defined or is listed later in the"
+    "package order."
+  )
+  # NOTE: The reset of the error message is checked in the test
+  # preCopyrightTrilinos_ShowInvalidPackageNameError above.
+
+
+create_dependency_handling_test_case(
+  AssertDefinedDependenciesBadValue
+  ARGS -DTrilinos_ASSERT_DEFINED_DEPENDENCIES=BadValue
+  PASS_REGULAR_EXPRESSION_ALL
+    "CMake Error at .*/tribits/core/utils/TribitsAddEnumCacheVar.cmake:[0-9]+ [(]message[)]:"
+    "  Error, the cache var Trilinos_ASSERT_DEFINED_DEPENDENCIES with value"
+    "  'BadValue' is not in the list of allowed values: 'FATAL_ERROR',"
+    "  'SEND_ERROR', 'WARNING', 'NOTICE', 'IGNORE', 'OFF' [(]default 'FATAL_ERROR'[)]"
+  )
+
+
+create_dependency_handling_test_case(
+  preCopyrightTrilinos_ShowInvalidPackageNameAndTplNameError
+  ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
+    -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
+    -DSHOW_INVALID_TPL_NAME_ERROR=ON
+    -DTrilinos_ASSERT_DEFINED_DEPENDENCIES=SEND_ERROR
+  PASS_REGULAR_EXPRESSION_ALL
+    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
+    "Error, the package 'Anasazi' is listed as a dependency of the package"
+    "Error, the package 'Zlib' is listed as a dependency of the package 'Zoltan'"
   )
 
 
@@ -1276,7 +1317,7 @@ create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidPackageSelfDependency
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_SELF_PACKAGE_DEPENDENCY_ERROR=ON
-    -DTrilinos_ASSERT_MISSING_PACKAGES=ON
+    -DTrilinos_ASSERT_DEFINED_DEPENDENDCIES=FATAL_ERROR
   PASS_REGULAR_EXPRESSION_ALL
     "Error, the package 'Teko' is listed as a dependency of itself in the list"
     " 'LIB_REQUIRED_DEP_PACKAGES'!"
@@ -1287,7 +1328,7 @@ create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidSubpackageSelfDependency
   ARGS
     -DSHOW_SELF_SUBPACKAGE_DEPENDENCY_ERROR=ON
-    -DTrilinos_ASSERT_MISSING_PACKAGES=ON
+    -DTrilinos_ASSERT_DEFINED_DEPENDENDCIES=FATAL_ERROR
   PASS_REGULAR_EXPRESSION_ALL
     "Error, the package 'ThyraTpetra' is listed as a dependency of itself in the"
      " list 'LIB_REQUIRED_DEP_PACKAGES'!"

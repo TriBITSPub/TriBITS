@@ -135,6 +135,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
         -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
         -DTribitsExProj_DUMP_PACKAGE_DEPENDENCIES=ON
+        -DTribitsExProj_DUMP_FORWARD_PACKAGE_DEPENDENCIES=ON
         -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
 	-DWithSubpackagesA_SPECIAL_VALUE=5
         -DCMAKE_CXX_FLAGS=-DSIMPLECXX_SHOW_DEPRECATED_WARNINGS=1
@@ -152,26 +153,51 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
 
         "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because TribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES='ON'"
         "NOTE: Setting TribitsExProj_ENABLE_MixedLang=OFF because TribitsExProj_ENABLE_Fortran"
+
         "Package dependencies information:"
         "-- TribitsExProj_DEFINED_INTERNAL_TOPLEVEL_PACKAGES: SimpleCxx MixedLang WithSubpackages WrapExternal"
         "-- TribitsExProj_DEFINED_INTERNAL_PACKAGES: SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
 
+        "-- SimpleCxx_FORWARD_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesA WithSubpackagesB"
         "-- SimpleCxx_LIB_REQUIRED_DEP_TPLS: HeaderOnlyTpl"
-        "-- MixedLang: No dependencies!"
+        "-- SimpleCxx_LIB_OPTIONAL_DEP_TPLS: SimpleTpl MPI"
+        "-- SimpleCxx_LIB_DEFINED_DEPENDENCIES: HeaderOnlyTpl.R. SimpleTpl.O. MPI.O."
+        "-- SimpleCxx_FORWARD_LIB_DEFINED_DEPENDENCIES: WithSubpackagesA.R. WithSubpackagesB.R."
+        "-- MixedLang_FORWARD_LIB_OPTIONAL_DEP_PACKAGES: WrapExternal"
+        "-- MixedLang_FORWARD_TEST_OPTIONAL_DEP_PACKAGES: WithSubpackagesB"
+        "-- MixedLang_FORWARD_LIB_DEFINED_DEPENDENCIES: WrapExternal.O."
+        "-- MixedLang_FORWARD_TEST_DEFINED_DEPENDENCIES: WithSubpackagesB.O."
         "-- WithSubpackagesA_LIB_REQUIRED_DEP_PACKAGES: SimpleCxx"
+        "-- WithSubpackagesA_FORWARD_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesC WithSubpackages WrapExternal"
+        "-- WithSubpackagesA_FORWARD_LIB_OPTIONAL_DEP_PACKAGES: WithSubpackagesB"
+        "-- WithSubpackagesA_LIB_DEFINED_DEPENDENCIES: SimpleCxx.R."
+        "-- WithSubpackagesA_FORWARD_LIB_DEFINED_DEPENDENCIES: WithSubpackagesB.O. WithSubpackagesC.R. WithSubpackages.R. WrapExternal.R."
         "-- WithSubpackagesB_LIB_REQUIRED_DEP_PACKAGES: SimpleCxx"
         "-- WithSubpackagesB_LIB_OPTIONAL_DEP_PACKAGES: WithSubpackagesA"
         "-- WithSubpackagesB_TEST_OPTIONAL_DEP_PACKAGES: MixedLang"
+        "-- WithSubpackagesB_FORWARD_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesC"
+        "-- WithSubpackagesB_FORWARD_LIB_OPTIONAL_DEP_PACKAGES: WithSubpackages"
+        "-- WithSubpackagesB_LIB_DEFINED_DEPENDENCIES: SimpleCxx.R. WithSubpackagesA.O."
+        "-- WithSubpackagesB_TEST_DEFINED_DEPENDENCIES: MixedLang.O."
+        "-- WithSubpackagesB_FORWARD_LIB_DEFINED_DEPENDENCIES: WithSubpackagesC.R. WithSubpackages.O."
         "-- WithSubpackagesC_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesA WithSubpackagesB"
+        "-- WithSubpackagesC_FORWARD_LIB_OPTIONAL_DEP_PACKAGES: WithSubpackages"
+        "-- WithSubpackagesC_LIB_DEFINED_DEPENDENCIES: WithSubpackagesA.R. WithSubpackagesB.R."
+        "-- WithSubpackagesC_FORWARD_LIB_DEFINED_DEPENDENCIES: WithSubpackages.O."
         "-- WithSubpackages_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesA"
         "-- WithSubpackages_LIB_OPTIONAL_DEP_PACKAGES: WithSubpackagesB WithSubpackagesC"
+        "-- WithSubpackages_LIB_DEFINED_DEPENDENCIES: WithSubpackagesA.R. WithSubpackagesB.O. WithSubpackagesC.O."
         "-- WrapExternal_LIB_REQUIRED_DEP_PACKAGES: WithSubpackagesA"
         "-- WrapExternal_LIB_OPTIONAL_DEP_PACKAGES: MixedLang"
+        "-- WrapExternal_LIB_DEFINED_DEPENDENCIES: WithSubpackagesA.R. MixedLang.O."
+
+	"Setting up export dependencies for all enabled packages ..."
         "-- SimpleCxx: No library dependencies!"
         "-- WithSubpackagesA_FULL_ENABLED_DEP_PACKAGES: SimpleCxx"
         "-- WithSubpackagesB_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesA SimpleCxx"
         "-- WithSubpackagesC_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesB WithSubpackagesA SimpleCxx"
         "-- WithSubpackages_FULL_ENABLED_DEP_PACKAGES: WithSubpackagesC WithSubpackagesB WithSubpackagesA SimpleCxx"
+
         "Explicitly enabled top-level packages on input .by user.:  0"
         "Explicitly disabled top-level packages on input .by user or by default.:  MixedLang WrapExternal 2"
         "Enabling all packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "

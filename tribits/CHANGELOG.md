@@ -2,6 +2,21 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-10-11:
+
+* **Changed:** Added option `<Project>_ASSERT_DEFINED_DEPENDENCIES` to
+  determine if listed external package/TPL and internal package dependencies
+  are defined within the project or not.  The initial default is `FATAL_ERROR`
+  for development mode and `IGNORE` for release mode.  (Previously, undefined
+  external package/TPL dependencies where ignore.)  To set a different
+  default, set `<Project>_ASSERT_DEFINED_DEPENDENCIES_DEFAULT` to `WARNING`,
+  for example, in the project's `ProjectName.cmake` file.
+
+* **Removed:* `<Project>_ASSERT_MISSING_PACKAGES` has been removed and setting
+  it will result in a `FATAL_ERROR`.  Instead, use
+  `<Project>_ASSERT_DEFINED_DEPENDENCIES` (and make sure all of your project's
+  listed TPL dependencies are all defined within the project).
+
 ## 2022-10-02:
 
 * **Changed:** The TriBITS FindTPLCUDA.cmake module changed
@@ -10,7 +25,6 @@ ChangeLog for TriBITS
   conflicts with downstream CMake projects that call
   `find_package(CUDAToolkit)` (see [Trilinos
   #10954](https://github.com/trilinos/Trilinos/issues/10954)).
-
 
 ## 2022-09-16:
 

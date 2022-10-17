@@ -13,7 +13,7 @@ understand the internals of TriBITS.
 @FUNCTION: tribits_abort_on_missing_package() +
 @FUNCTION: tribits_abort_on_self_dep() +
 @MACRO:    tribits_adjust_package_enables() +
-@FUNCTION: tribits_append_forward_dep_packages() +
+@MACRO:    tribits_append_forward_dep_packages() +
 @MACRO:    tribits_assert_read_dependency_vars() +
 @FUNCTION: tribits_extpkg_add_find_upstream_dependencies_str() +
 @FUNCTION: tribits_extpkg_create_all_libs_target() +
@@ -42,7 +42,7 @@ understand the internals of TriBITS.
 @MACRO:    tribits_read_subpackage_deps_file_add_to_graph() +
 @MACRO:    tribits_read_toplevel_package_deps_files_add_to_graph() +
 @MACRO:    tribits_save_off_dependency_vars() +
-@FUNCTION: tribits_set_dep_packages() +
+@MACRO:    tribits_set_dep_packages() +
 @FUNCTION: tribits_trace_file_processing() +
 @FUNCTION: tribits_write_package_client_export_files_install_targets() +
 @MACRO:    tribits_write_xml_dependency_files() +

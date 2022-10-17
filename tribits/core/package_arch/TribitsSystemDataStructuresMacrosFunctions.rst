@@ -390,17 +390,17 @@ Given the above upstream dependency list variables, the following derived list
 variables are then constructed which provide navigation from a package to its
 downstream/forward dependent packages:
 
-  .. _${PACKAGE_NAME}_FORWARD_LIB_DEP_PACKAGES:
+  .. _${PACKAGE_NAME}_FORWARD_LIB_DEFINED_DEPENDENCIES:
 
-  ``${PACKAGE_NAME}_FORWARD_LIB_DEP_PACKAGES``
+  ``${PACKAGE_NAME}_FORWARD_LIB_DEFINED_DEPENDENCIES``
 
     For a given package ``${PACKAGE_NAME}``, lists the names of all of the
     forward packages ``<fwdDepPkg>`` that list this package in their
     ``<fwdDepPkg>_LIB_DEFINED_PACKAGES`` variables.
 
-  .. _${PACKAGE_NAME}_FORWARD_TEST_DEP_PACKAGES:
+  .. _${PACKAGE_NAME}_FORWARD_TEST_DEFINED_DEPENDENCIES:
 
-  ``${PACKAGE_NAME}_FORWARD_TEST_DEP_PACKAGES``
+  ``${PACKAGE_NAME}_FORWARD_TEST_DEFINED_DEPENDENCIES``
 
     For a given package ``${PACKAGE_NAME}``, lists the names of all of the
     forward packages ``<fwdDepPkg>`` that list this package in their
