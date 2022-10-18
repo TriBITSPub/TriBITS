@@ -61,6 +61,12 @@ include(DualScopeSet)
 include(CMakeParseArguments)
 
 
+# NOTE: A nice way to view and navigate the contents of this file is to use
+# the emacs 'occur' string:
+#
+#   "\(^##########\|^# .*-level\|^function\|^macro\)"
+
+
 # @MACRO: tribits_adjust_package_enables()
 #
 # Usage:
@@ -71,31 +77,19 @@ include(CMakeParseArguments)
 # the final set that will be used to enable packages.
 #
 macro(tribits_adjust_package_enables)
-
   tribits_unenable_enabled_packages()
-
   tribits_sweep_forward_apply_disables()
-
   tribits_sweep_forward_apply_enables()
-
   tribits_disable_and_enable_tests_and_examples()
-
   tribits_sweep_backward_enable_upstream_packages()
-
   tribits_sweep_backward_enable_required_tpls()
   # ToDo #63: Merge behavior of the above macro into
   # tribits_sweep_backward_enable_upstream_packages() as part of #63.
-
   tribits_set_cache_vars_for_current_enabled_packages()
-
   tribits_enable_parent_package_for_subpackage_enable()
-
   tribits_set_up_enabled_lists_and_pkg_idx()
-
   tribits_setup_direct_packages_dependencies_lists_and_lib_required_enable_vars()
-
   tribits_print_direct_packages_dependencies_lists()
-
 endmacro()
 
 
@@ -414,9 +408,523 @@ macro(tribits_print_direct_packages_dependencies_lists)
 endmacro()
 
 
+
+################################################################################
 #
-# Private helper macros
+# Second-level macros called indirectly from ``tribits_adjust_package_enables()``
 #
+################################################################################
+
+
+# Macro that disables a packages if its required upstream TPL is disabled.
+#
+macro(tribits_disable_package_if_tpl_disabled  TRIBITS_PACKAGE)
+
+  foreach(TPL_NAME ${${TRIBITS_PACKAGE}_LIB_REQUIRED_DEP_TPLS})
+    if ( (NOT TPL_ENABLE_${TPL_NAME}) AND
+      (NOT "${TPL_ENABLE_${TPL_NAME}}" STREQUAL "")
+      )
+      tribits_private_disable_tpl_required_package_enable(
+        ${TPL_NAME}  ${TRIBITS_PACKAGE}  TRUE )
+    endif()
+  endforeach()
+
+  foreach(TPL_NAME ${${TRIBITS_PACKAGE}_TEST_REQUIRED_DEP_TPLS})
+    if ( (NOT TPL_ENABLE_${TPL_NAME}) AND
+      (NOT "${TPL_ENABLE_${TPL_NAME}}" STREQUAL "")
+      )
+      tribits_private_disable_tpl_required_package_enable(
+        ${TPL_NAME}  ${TRIBITS_PACKAGE}  FALSE )
+    endif()
+  endforeach()
+
+endmacro()
+
+
+# Macro that disables all of the subpackages of a parent package.
+#
+macro(tribits_disable_parents_subpackages PARENT_PACKAGE_NAME)
+
+  #message("TRIBITS_DISABLE_PARENTS_SUBPACKAGES: ${PARENT_PACKAGE_NAME}")
+
+  #print_var(${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME})
+
+  if(NOT ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME}
+    AND NOT ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME} STREQUAL ""
+    )
+
+    set(SUBPACKAGE_IDX 0)
+    foreach(tap2_subPkg   IN LISTS  ${PARENT_PACKAGE_NAME}_SUBPACKAGES)
+
+      set(SUBPACKAGE_NAME ${tap2_subPkg})
+      set(SUBPACKAGE_FULLNAME ${PARENT_PACKAGE_NAME}${tap2_subPkg})
+
+      #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
+      if (NOT ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME} STREQUAL "OFF")
+        set(ENABLE_BEING_DISABLED_VAR_NAME ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
+        message("-- "
+          "Setting subpackage enable ${ENABLE_BEING_DISABLED_VAR_NAME}=OFF"
+          " because parent package ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME}=OFF")
+        set(${ENABLE_BEING_DISABLED_VAR_NAME} OFF)
+      endif()
+
+      math(EXPR SUBPACKAGE_IDX "${SUBPACKAGE_IDX}+1")
+
+    endforeach()
+
+  endif()
+
+endmacro()
+
+
+# Macro that disables all forward packages that depend on the given packages
+#
+macro(tribits_disable_forward_required_dep_packages PACKAGE_NAME)
+
+  #message("TRIBITS_DISABLE_FORWARD_REQUIRED_DEP_PACKAGES: ${PACKAGE_NAME}")
+
+  if (
+     (NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+     AND
+     (NOT "${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}" STREQUAL "")
+     )
+
+    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES})
+      tribits_private_disable_required_package_enables(${FWD_DEP_PKG} ${PACKAGE_NAME} TRUE)
+    endforeach()
+
+    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES})
+      tribits_private_disable_optional_package_enables(${FWD_DEP_PKG} ${PACKAGE_NAME})
+    endforeach()
+
+    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES})
+      tribits_private_disable_required_package_enables(${FWD_DEP_PKG} ${PACKAGE_NAME} FALSE)
+    endforeach()
+
+  endif()
+
+endmacro()
+
+
+# Macro that enables all of the subpackages of a parent package.
+#
+macro(tribits_enable_parents_subpackages PARENT_PACKAGE_NAME)
+
+  #message("TRIBITS_ENABLE_PARENTS_SUBPACKAGES: ${PARENT_PACKAGE_NAME}")
+
+  #print_var(${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME})
+
+  if(${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME})
+
+    set(SUBPACKAGE_IDX 0)
+    foreach(tap2_subPkg  IN LISTS  ${PARENT_PACKAGE_NAME}_SUBPACKAGES)
+
+      set(SUBPACKAGE_NAME ${tap2_subPkg})
+      set(SUBPACKAGE_FULLNAME ${PARENT_PACKAGE_NAME}${tap2_subPkg})
+
+      #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
+
+      if (NOT ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME} AND
+        NOT "${${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}}" STREQUAL ""
+        )
+        # The subpackage is already disabled and is not just empty!
+      elseif (${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
+        # The subpackage is already enabled so there is no reason to enable it!
+      else()
+        # The subpackage is not hard off or on so turn it on by default
+        tribits_implicit_package_enable_is_allowed( "" ${SUBPACKAGE_FULLNAME}
+          SUBPACKAGE_ALLOW_IMPLICIT_ENABLE)
+        if (SUBPACKAGE_ALLOW_IMPLICIT_ENABLE)
+          set(ENABLE_BEING_ENABLED_VAR_NAME ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
+          message("-- "
+            "Setting subpackage enable ${ENABLE_BEING_ENABLED_VAR_NAME}=ON"
+            " because parent package ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME}=ON")
+          set(${ENABLE_BEING_ENABLED_VAR_NAME} ON)
+        endif()
+      endif()
+
+      math(EXPR SUBPACKAGE_IDX "${SUBPACKAGE_IDX}+1")
+
+    endforeach()
+
+  endif()
+
+endmacro()
+
+
+# Macro used to set ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} based on
+# ${PROJECT_NAME}_ENABLE_ALL_PACKAGES
+#
+macro(tribits_apply_all_package_enables  PACKAGE_NAME)
+  tribits_is_primary_meta_project_package(${PACKAGE_NAME}  PACKAGE_IS_PMPP)
+  tribits_implicit_package_enable_is_allowed( "" ${PACKAGE_NAME}
+    PROCESS_PACKAGE_ENABLE )
+  if (PACKAGE_IS_PMPP  AND  PROCESS_PACKAGE_ENABLE)
+    tribits_set_package_enable_based_on_global_enable(
+      ${PROJECT_NAME}_ENABLE_ALL_PACKAGES ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} )
+  endif()
+endmacro()
+
+
+# Macro used to set ${PROJECT_NAME}_ENABLE_${FWD_PACKAGE_NAME)=ON for all
+#
+macro(tribits_enable_forward_lib_package_enables PACKAGE_NAME)
+
+  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+
+    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES})
+      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
+    endforeach()
+
+    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES})
+      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
+    endforeach()
+
+  endif()
+
+endmacro()
+
+
+# Macro used to set ${PROJECT_NAME}_ENABLE_${FWD_PACKAGE_NAME)=ON for all
+# optional and required forward test dependencies of the package
+# ${PACKAGE_NAME}
+#
+macro(tribits_enable_forward_test_package_enables PACKAGE_NAME)
+
+  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+
+    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES})
+      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
+    endforeach()
+
+    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES})
+      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
+    endforeach()
+
+  endif()
+
+endmacro()
+
+
+# Macro that sets the required TPLs for given package
+#
+macro(tribits_enable_required_tpls PACKAGE_NAME)
+
+  #message("PACKAGE_ARCH_ENABLE_REQUIRED_TPL_ENABLES: ${PACKAGE_NAME}")
+  #message("-- " "${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}")
+
+  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+
+  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+
+    foreach(DEP_TPL  IN LISTS  ${PACKAGE_NAME}_LIB_REQUIRED_DEP_TPLS)
+      tribits_private_enable_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
+    endforeach()
+
+    foreach(DEP_TPL  IN LISTS  ${PACKAGE_NAME}_TEST_REQUIRED_DEP_TPLS)
+      tribits_private_enable_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
+    endforeach()
+
+  endif()
+
+endmacro()
+
+
+# Post-processes optional package TPL based on if the TPL
+# has been enabled or not
+#
+macro(tribits_postprocess_optional_tpl_enables PACKAGE_NAME)
+
+  #message("\nPACKAGE_ARCH_ADD_OPTIONAL_TPL_ENABLES: ${PACKAGE_NAME}")
+
+  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+
+    foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS})
+      tribits_private_postprocess_optional_tpl_enable(
+        ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} )
+    endforeach()
+
+    foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS})
+      tribits_private_postprocess_optional_tpl_enable(
+        ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} )
+    endforeach()
+
+  endif()
+
+endmacro()
+
+
+# Macro that enables the optional TPLs for given package
+#
+macro(tribits_enable_optional_tpls PACKAGE_NAME)
+
+  #message("TRIBITS_ENABLE_OPTIONAL_TPLS: ${PACKAGE_NAME}")
+  #message("-- " "${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}")
+
+  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+
+  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+
+    foreach(DEP_TPL ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS})
+      tribits_private_enable_optional_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
+    endforeach()
+
+    foreach(DEP_TPL ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS})
+      tribits_private_enable_optional_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
+    endforeach()
+
+  endif()
+
+endmacro()
+
+
+# Macro that sets cache vars for optional package interdependencies
+#
+# This also will set ${PACKAGE_NAME}_ENABLE_TESTS and
+# ${PACKAGE_NAME}_ENABLE_EXAMPLES to empty non-cache vars
+#
+macro(tribits_set_up_optional_package_enables_and_cache_vars PACKAGE_NAME)
+
+  #message("\nPACKAGE_ARCH_ADD_OPTIONAL_PACKAGE_ENABLES: ${PACKAGE_NAME}")
+
+  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+  set(SET_AS_CACHE ${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}})
+
+  if (SET_AS_CACHE)
+
+    multiline_set(DOCSTR
+      "Build tests for the package ${PACKAGE_NAME}.  Set to 'ON', 'OFF', or leave empty ''"
+       " to allow for other logic to decide."
+       )
+    set_cache_on_off_empty( ${PACKAGE_NAME}_ENABLE_TESTS "" ${DOCSTR} )
+
+    multiline_set(DOCSTR
+      "Build examples for the package ${PACKAGE_NAME}.  Set to 'ON', 'OFF', or leave empty ''"
+       " to allow for other logic to decide."
+       )
+    set_cache_on_off_empty( ${PACKAGE_NAME}_ENABLE_EXAMPLES "" ${DOCSTR} )
+
+    multiline_set(DOCSTR
+      "Build examples for the package ${PACKAGE_NAME}.  Set to 'ON', 'OFF', or leave empty ''"
+       " to allow for other logic to decide."
+       )
+    set( ${PACKAGE_NAME}_SKIP_CTEST_ADD_TEST
+      "${${PROJECT_NAME}_SKIP_CTEST_ADD_TEST}" CACHE BOOL ${DOCSTR} )
+
+  else()
+
+    if (NOT DEFINED ${PACKAGE_NAME}_ENABLE_TESTS)
+      set( ${PACKAGE_NAME}_ENABLE_TESTS "" )
+    endif()
+    if (NOT DEFINED ${PACKAGE_NAME}_ENABLE_EXAMPLES)
+      set( ${PACKAGE_NAME}_ENABLE_EXAMPLES "" )
+    endif()
+
+  endif()
+
+  foreach(OPTIONAL_DEP_PACKAGE ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES})
+    tribits_private_add_optional_package_enable(
+      ${PACKAGE_NAME} ${OPTIONAL_DEP_PACKAGE} "library" "${SET_AS_CACHE}" )
+  endforeach()
+
+  foreach(OPTIONAL_DEP_PACKAGE ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES})
+    tribits_private_add_optional_package_enable(
+      ${PACKAGE_NAME} ${OPTIONAL_DEP_PACKAGE} "test" "${SET_AS_CACHE}" )
+  endforeach()
+
+  foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS})
+    tribits_private_add_optional_tpl_enable(
+      ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} "library" "${SET_AS_CACHE}" )
+  endforeach()
+
+  foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS})
+    tribits_private_add_optional_tpl_enable(
+      ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} "test" "${SET_AS_CACHE}" )
+  endforeach()
+
+endmacro()
+
+
+# Macro that post-processes final package enables for packages with subpackage
+# enables.
+#
+macro(tribits_postprocess_package_with_subpackages_enables  PACKAGE_NAME)
+  #message("TRIBITS_POSTPROCESS_PACKAGE_WITH_SUBPACKAGES_ENABLES  '${PACKAGE_NAME}'")
+  foreach(tap2_subPkg  IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
+    set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${tap2_subPkg})
+    #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
+    #print_var(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+    #print_var(${SUBPACKAGE_FULLNAME}_ENABLE_TESTS)
+    #print_var(${PACKAGE_NAME}_ENABLE_TESTS)
+    #print_var(${SUBPACKAGE_FULLNAME}_ENABLE_EXAMPLES)
+    #print_var(${PACKAGE_NAME}_ENABLE_EXAMPLES)
+    if (${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}
+        AND NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}
+      )
+      message("-- "
+        "Setting ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=ON"
+        " because ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}=ON")
+      set(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} ON)
+      tribits_postprocess_package_with_subpackages_optional_subpackage_enables(
+        ${PACKAGE_NAME})
+      tribits_postprocess_package_with_subpackages_test_example_enables(
+        ${PACKAGE_NAME}  TESTS)
+      tribits_postprocess_package_with_subpackages_test_example_enables(
+        ${PACKAGE_NAME}  EXAMPLES)
+      # NOTE: We need to enable the parent package even if it was disabled by
+      # some means before this because a subpackage is enabled.  But other
+      # logic should ensure that the parent package is never disabled and a
+      # subpackage is allowed to be enabled.
+    endif()
+  endforeach()
+endmacro()
+
+
+# Macro that sets up the flat list of direct package dependencies and enabled
+# package dependencies and sets ${packageName}_ENABLE_${depPkg} for LIB
+# dependencies
+#
+# This makes it easy to just loop over all of the direct upstream dependencies
+# for a package or just the enabled dependencies.
+#
+# NOTES:
+#
+#  * ${packageName}_LIB_DEFINED_DEPENDENCIES will be set regardless if
+#    ${packageName} is enabled or not.
+#
+#  * ${packageName}_LIB_ENABLED_DEPENDENCIES is only set if ${packageName} is
+#    enabled and will only contain the names of direct library upstream
+#    internal and external packages ${depPkg} that are required or are
+#    optional and ${packageName}_ENABLE_${depPkg} is set to ON.
+#
+#  * ${packageName}_TEST_DEFINED_DEPENDENCIES will be set regardless if
+#    ${packageName} is enabled or not.
+#
+#  * ${packageName}_TEST_ENABLED_DEPENDENCIES is only set if ${packageName} is
+#    enabled and will only contain the names of direct test/example upstream
+#    internal and external packages ${depPkg} that are required or are
+#    optional and ${packageName}_ENABLE_${depPkg} is set to ON.
+#
+#  * Sets ${packageName}_ENABLE_${depPkg}=ON for every required dep package
+#    for LIB dependencies (but not TEST dependencies).  This allows looping
+#    over just ${packageName}_LIB_DEFINED_DEPENDENCIES looking at
+#    ${packageName}_ENABLE_${depPkg} to see if the package is enable or not.
+#    This also includes special logic for required subpackages for parent
+#    packages where only the shell of the parent package is enabled and not
+#    all of its required subpackages are enabled.
+#
+macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars
+    packageName
+  )
+
+  # LIB dependencies
+
+  set(${packageName}_LIB_DEFINED_DEPENDENCIES "")
+  set(${packageName}_LIB_ENABLED_DEPENDENCIES "")
+
+  foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_PACKAGES})
+    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
+    if (${PROJECT_NAME}_ENABLE_${packageName} AND ${PROJECT_NAME}_ENABLE_${depPkg})
+      set(${packageName}_ENABLE_${depPkg} ON)
+      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+  # See below NOTE about required subpackage dependencies not being enabled in
+  # some cases!
+
+  foreach(depPkg ${${packageName}_LIB_OPTIONAL_DEP_PACKAGES})
+    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
+    if (${PROJECT_NAME}_ENABLE_${packageName} AND ${packageName}_ENABLE_${depPkg})
+      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_TPLS})
+    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
+    if (${PROJECT_NAME}_ENABLE_${packageName})
+      set(${packageName}_ENABLE_${depPkg} ON)
+      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  foreach(depPkg ${${packageName}_LIB_OPTIONAL_DEP_TPLS})
+    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
+    if (${PROJECT_NAME}_ENABLE_${packageName} AND ${packageName}_ENABLE_${depPkg})
+      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  # TEST dependencies
+
+  set(${packageName}_TEST_DEFINED_DEPENDENCIES "")
+  set(${packageName}_TEST_ENABLED_DEPENDENCIES "")
+
+  if (${PROJECT_NAME}_ENABLE_${packageName}
+      AND
+      (${packageName}_ENABLE_TESTS OR ${packageName}_ENABLE_EXAMPLES)
+    )
+    set(enablePkgAndTestsOrExamples ON)
+  else()
+    set(enablePkgAndTestsOrExamples OFF)
+  endif()
+
+  foreach(depPkg ${${packageName}_TEST_REQUIRED_DEP_PACKAGES})
+    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
+    if (enablePkgAndTestsOrExamples)
+      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  foreach(depPkg ${${packageName}_TEST_OPTIONAL_DEP_PACKAGES})
+    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
+    if (enablePkgAndTestsOrExamples AND ${packageName}_ENABLE_${depPkg})
+      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  foreach(depPkg ${${packageName}_TEST_REQUIRED_DEP_TPLS})
+    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
+    if (enablePkgAndTestsOrExamples)
+      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+  foreach(depPkg ${${packageName}_TEST_OPTIONAL_DEP_TPLS})
+    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
+    if (enablePkgAndTestsOrExamples AND ${packageName}_ENABLE_${depPkg})
+      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
+    endif()
+  endforeach()
+
+endmacro()
+# NOTE: Above, a required dependency of an enabled package may not actually be
+# enabled if it is a required subpackage of a parent package and the parent
+# package was not actually enabled due to a dependency but the shell of the
+# parent package was only enabled at the very end.  This is one of the more
+# confusing aspects of the TriBITS dependency system.
+
+
+# Function to print the direct package dependency lists
+#
+function(tribits_print_direct_package_dependencies_lists  packageName)
+  set(PRINTED_VAR "")
+  message("")
+  print_nonempty_var_with_spaces(${packageName}_LIB_ENABLED_DEPENDENCIES PRINTED_VAR)
+  print_var_with_spaces(${packageName}_LIB_DEFINED_DEPENDENCIES PRINTED_VAR)
+  print_nonempty_var_with_spaces(${packageName}_TEST_ENABLED_DEPENDENCIES PRINTED_VAR)
+  print_nonempty_var_with_spaces(${packageName}_TEST_DEFINED_DEPENDENCIES PRINTED_VAR)
+endfunction()
+
+
+
+################################################################################
+#
+# Third and lower-level macros called indirectly from
+# ``tribits_adjust_package_enables()``
+#
+################################################################################
 
 
 function(tribits_private_print_disable
@@ -610,147 +1118,6 @@ macro(tribits_private_disable_optional_package_enables
 endmacro()
 
 
-# Macro that disables a packages if its required upstream TPL is disabled.
-#
-macro(tribits_disable_package_if_tpl_disabled  TRIBITS_PACKAGE)
-
-  foreach(TPL_NAME ${${TRIBITS_PACKAGE}_LIB_REQUIRED_DEP_TPLS})
-    if ( (NOT TPL_ENABLE_${TPL_NAME}) AND
-      (NOT "${TPL_ENABLE_${TPL_NAME}}" STREQUAL "")
-      )
-      tribits_private_disable_tpl_required_package_enable(
-        ${TPL_NAME}  ${TRIBITS_PACKAGE}  TRUE )
-    endif()
-  endforeach()
-
-  foreach(TPL_NAME ${${TRIBITS_PACKAGE}_TEST_REQUIRED_DEP_TPLS})
-    if ( (NOT TPL_ENABLE_${TPL_NAME}) AND
-      (NOT "${TPL_ENABLE_${TPL_NAME}}" STREQUAL "")
-      )
-      tribits_private_disable_tpl_required_package_enable(
-        ${TPL_NAME}  ${TRIBITS_PACKAGE}  FALSE )
-    endif()
-  endforeach()
-
-endmacro()
-
-
-# Macro that disables all of the subpackages of a parent package.
-#
-macro(tribits_disable_parents_subpackages PARENT_PACKAGE_NAME)
-
-  #message("TRIBITS_DISABLE_PARENTS_SUBPACKAGES: ${PARENT_PACKAGE_NAME}")
-
-  #print_var(${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME})
-
-  if(NOT ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME}
-    AND NOT ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME} STREQUAL ""
-    )
-
-    set(SUBPACKAGE_IDX 0)
-    foreach(TRIBITS_SUBPACKAGE ${${PARENT_PACKAGE_NAME}_SUBPACKAGES})
-
-      set(SUBPACKAGE_NAME ${TRIBITS_SUBPACKAGE})
-      set(SUBPACKAGE_FULLNAME ${PARENT_PACKAGE_NAME}${TRIBITS_SUBPACKAGE})
-
-      #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
-      if (NOT ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME} STREQUAL "OFF")
-        set(ENABLE_BEING_DISABLED_VAR_NAME ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
-        message("-- "
-          "Setting subpackage enable ${ENABLE_BEING_DISABLED_VAR_NAME}=OFF"
-          " because parent package ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME}=OFF")
-        set(${ENABLE_BEING_DISABLED_VAR_NAME} OFF)
-      endif()
-
-      math(EXPR SUBPACKAGE_IDX "${SUBPACKAGE_IDX}+1")
-
-    endforeach()
-
-  endif()
-
-endmacro()
-
-
-# Macro that enables all of the subpackages of a parent package.
-#
-macro(tribits_enable_parents_subpackages PARENT_PACKAGE_NAME)
-
-  #message("TRIBITS_ENABLE_PARENTS_SUBPACKAGES: ${PARENT_PACKAGE_NAME}")
-
-  #print_var(${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME})
-
-  if(${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME})
-
-    set(SUBPACKAGE_IDX 0)
-    foreach(TRIBITS_SUBPACKAGE ${${PARENT_PACKAGE_NAME}_SUBPACKAGES})
-
-      set(SUBPACKAGE_NAME ${TRIBITS_SUBPACKAGE})
-      set(SUBPACKAGE_FULLNAME ${PARENT_PACKAGE_NAME}${TRIBITS_SUBPACKAGE})
-
-      #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
-
-      if (NOT ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME} AND
-        NOT "${${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}}" STREQUAL ""
-        )
-        # The subpackage is already disabled and is not just empty!
-      elseif (${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
-        # The subpackage is already enabled so there is no reason to enable it!
-      else()
-        # The subpackage is not hard off or on so turn it on by default
-        tribits_implicit_package_enable_is_allowed( "" ${SUBPACKAGE_FULLNAME}
-          SUBPACKAGE_ALLOW_IMPLICIT_ENABLE)
-        if (SUBPACKAGE_ALLOW_IMPLICIT_ENABLE)
-          set(ENABLE_BEING_ENABLED_VAR_NAME ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
-          message("-- "
-            "Setting subpackage enable ${ENABLE_BEING_ENABLED_VAR_NAME}=ON"
-            " because parent package ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME}=ON")
-          set(${ENABLE_BEING_ENABLED_VAR_NAME} ON)
-        endif()
-      endif()
-
-      math(EXPR SUBPACKAGE_IDX "${SUBPACKAGE_IDX}+1")
-
-    endforeach()
-
-  endif()
-
-endmacro()
-
-
-# Macro that disables all forward packages that depend on the given packages
-#
-macro(tribits_disable_forward_required_dep_packages PACKAGE_NAME)
-
-  #message("TRIBITS_DISABLE_FORWARD_REQUIRED_DEP_PACKAGES: ${PACKAGE_NAME}")
-
-  if (
-     (NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-     AND
-     (NOT "${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}" STREQUAL "")
-     )
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES})
-      tribits_private_disable_required_package_enables(${FWD_DEP_PKG} ${PACKAGE_NAME} TRUE)
-    endforeach()
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES})
-      tribits_private_disable_optional_package_enables(${FWD_DEP_PKG} ${PACKAGE_NAME})
-    endforeach()
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES})
-      tribits_private_disable_required_package_enables(${FWD_DEP_PKG} ${PACKAGE_NAME} FALSE)
-    endforeach()
-
-  endif()
-
-endmacro()
-
-
-#
-# Private helper macros
-#
-
-
 macro(tribits_private_add_optional_package_enable PACKAGE_NAME  OPTIONAL_DEP_PACKAGE
   TYPE  SET_AS_CACHE_IN
   )
@@ -804,214 +1171,6 @@ macro(tribits_private_add_optional_tpl_enable PACKAGE_NAME OPTIONAL_DEP_TPL
   endif()
 
 endmacro()
-
-
-# Macro that sets cache vars for optional package interdependencies
-#
-# This also will set ${PACKAGE_NAME}_ENABLE_TESTS and
-# ${PACKAGE_NAME}_ENABLE_EXAMPLES to empty non-cache vars
-#
-macro(tribits_set_up_optional_package_enables_and_cache_vars PACKAGE_NAME)
-
-  #message("\nPACKAGE_ARCH_ADD_OPTIONAL_PACKAGE_ENABLES: ${PACKAGE_NAME}")
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-  set(SET_AS_CACHE ${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}})
-
-  if (SET_AS_CACHE)
-
-    multiline_set(DOCSTR
-      "Build tests for the package ${PACKAGE_NAME}.  Set to 'ON', 'OFF', or leave empty ''"
-       " to allow for other logic to decide."
-       )
-    set_cache_on_off_empty( ${PACKAGE_NAME}_ENABLE_TESTS "" ${DOCSTR} )
-
-    multiline_set(DOCSTR
-      "Build examples for the package ${PACKAGE_NAME}.  Set to 'ON', 'OFF', or leave empty ''"
-       " to allow for other logic to decide."
-       )
-    set_cache_on_off_empty( ${PACKAGE_NAME}_ENABLE_EXAMPLES "" ${DOCSTR} )
-
-    multiline_set(DOCSTR
-      "Build examples for the package ${PACKAGE_NAME}.  Set to 'ON', 'OFF', or leave empty ''"
-       " to allow for other logic to decide."
-       )
-    set( ${PACKAGE_NAME}_SKIP_CTEST_ADD_TEST
-      "${${PROJECT_NAME}_SKIP_CTEST_ADD_TEST}" CACHE BOOL ${DOCSTR} )
-
-  else()
-
-    if (NOT DEFINED ${PACKAGE_NAME}_ENABLE_TESTS)
-      set( ${PACKAGE_NAME}_ENABLE_TESTS "" )
-    endif()
-    if (NOT DEFINED ${PACKAGE_NAME}_ENABLE_EXAMPLES)
-      set( ${PACKAGE_NAME}_ENABLE_EXAMPLES "" )
-    endif()
-
-  endif()
-
-  foreach(OPTIONAL_DEP_PACKAGE ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES})
-    tribits_private_add_optional_package_enable(
-      ${PACKAGE_NAME} ${OPTIONAL_DEP_PACKAGE} "library" "${SET_AS_CACHE}" )
-  endforeach()
-
-  foreach(OPTIONAL_DEP_PACKAGE ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES})
-    tribits_private_add_optional_package_enable(
-      ${PACKAGE_NAME} ${OPTIONAL_DEP_PACKAGE} "test" "${SET_AS_CACHE}" )
-  endforeach()
-
-  foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS})
-    tribits_private_add_optional_tpl_enable(
-      ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} "library" "${SET_AS_CACHE}" )
-  endforeach()
-
-  foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS})
-    tribits_private_add_optional_tpl_enable(
-      ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} "test" "${SET_AS_CACHE}" )
-  endforeach()
-
-endmacro()
-
-
-# Macro that sets up the flat list of direct package dependencies and enabled
-# package dependencies and sets ${packageName}_ENABLE_${depPkg} for LIB
-# dependencies
-#
-# This makes it easy to just loop over all of the direct upstream dependencies
-# for a package or just the enabled dependencies.
-#
-# NOTES:
-#
-#  * ${packageName}_LIB_DEFINED_DEPENDENCIES will be set regardless if
-#    ${packageName} is enabled or not.
-#
-#  * ${packageName}_LIB_ENABLED_DEPENDENCIES is only set if ${packageName} is
-#    enabled and will only contain the names of direct library upstream
-#    internal and external packages ${depPkg} that are required or are
-#    optional and ${packageName}_ENABLE_${depPkg} is set to ON.
-#
-#  * ${packageName}_TEST_DEFINED_DEPENDENCIES will be set regardless if
-#    ${packageName} is enabled or not.
-#
-#  * ${packageName}_TEST_ENABLED_DEPENDENCIES is only set if ${packageName} is
-#    enabled and will only contain the names of direct test/example upstream
-#    internal and external packages ${depPkg} that are required or are
-#    optional and ${packageName}_ENABLE_${depPkg} is set to ON.
-#
-#  * Sets ${packageName}_ENABLE_${depPkg}=ON for every required dep package
-#    for LIB dependencies (but not TEST dependencies).  This allows looping
-#    over just ${packageName}_LIB_DEFINED_DEPENDENCIES looking at
-#    ${packageName}_ENABLE_${depPkg} to see if the package is enable or not.
-#    This also includes special logic for required subpackages for parent
-#    packages where only the shell of the parent package is enabled and not
-#    all of its required subpackages are enabled.
-#
-macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars
-    packageName
-  )
-
-  # LIB dependencies
-
-  set(${packageName}_LIB_DEFINED_DEPENDENCIES "")
-  set(${packageName}_LIB_ENABLED_DEPENDENCIES "")
-
-  foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_PACKAGES})
-    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
-    if (${PROJECT_NAME}_ENABLE_${packageName} AND ${PROJECT_NAME}_ENABLE_${depPkg})
-      set(${packageName}_ENABLE_${depPkg} ON)
-      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
-    endif()
-  endforeach()
-  # See below NOTE about required subpackage dependencies not being enabled in
-  # some cases!
-
-  foreach(depPkg ${${packageName}_LIB_OPTIONAL_DEP_PACKAGES})
-    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
-    if (${PROJECT_NAME}_ENABLE_${packageName} AND ${packageName}_ENABLE_${depPkg})
-      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
-    endif()
-  endforeach()
-
-  foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_TPLS})
-    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
-    if (${PROJECT_NAME}_ENABLE_${packageName})
-      set(${packageName}_ENABLE_${depPkg} ON)
-      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
-    endif()
-  endforeach()
-
-  foreach(depPkg ${${packageName}_LIB_OPTIONAL_DEP_TPLS})
-    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
-    if (${PROJECT_NAME}_ENABLE_${packageName} AND ${packageName}_ENABLE_${depPkg})
-      list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
-    endif()
-  endforeach()
-
-  # TEST dependencies
-
-  set(${packageName}_TEST_DEFINED_DEPENDENCIES "")
-  set(${packageName}_TEST_ENABLED_DEPENDENCIES "")
-
-  if (${PROJECT_NAME}_ENABLE_${packageName}
-      AND
-      (${packageName}_ENABLE_TESTS OR ${packageName}_ENABLE_EXAMPLES)
-    )
-    set(enablePkgAndTestsOrExamples ON)
-  else()
-    set(enablePkgAndTestsOrExamples OFF)
-  endif()
-
-  foreach(depPkg ${${packageName}_TEST_REQUIRED_DEP_PACKAGES})
-    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
-    if (enablePkgAndTestsOrExamples)
-      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
-    endif()
-  endforeach()
-
-  foreach(depPkg ${${packageName}_TEST_OPTIONAL_DEP_PACKAGES})
-    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
-    if (enablePkgAndTestsOrExamples AND ${packageName}_ENABLE_${depPkg})
-      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
-    endif()
-  endforeach()
-
-  foreach(depPkg ${${packageName}_TEST_REQUIRED_DEP_TPLS})
-    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
-    if (enablePkgAndTestsOrExamples)
-      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
-    endif()
-  endforeach()
-
-  foreach(depPkg ${${packageName}_TEST_OPTIONAL_DEP_TPLS})
-    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
-    if (enablePkgAndTestsOrExamples AND ${packageName}_ENABLE_${depPkg})
-      list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
-    endif()
-  endforeach()
-
-endmacro()
-# NOTE: Above, a required dependency of an enabled package may not actually be
-# enabled if it is a required subpackage of a parent package and the parent
-# package was not actually enabled due to a dependency but the shell of the
-# parent package was only enabled at the very end.  This is one of the more
-# confusing aspects of the TriBITS dependency system.
-
-
-# Function to print the direct package dependency lists
-#
-function(tribits_print_direct_package_dependencies_lists  packageName)
-  set(PRINTED_VAR "")
-  message("")
-  print_nonempty_var_with_spaces(${packageName}_LIB_ENABLED_DEPENDENCIES PRINTED_VAR)
-  print_var_with_spaces(${packageName}_LIB_DEFINED_DEPENDENCIES PRINTED_VAR)
-  print_nonempty_var_with_spaces(${packageName}_TEST_ENABLED_DEPENDENCIES PRINTED_VAR)
-  print_nonempty_var_with_spaces(${packageName}_TEST_DEFINED_DEPENDENCIES PRINTED_VAR)
-endfunction()
-
-
-#
-# Private helper macros
-#
 
 
 # Enable optional intra-package support for enabled target package
@@ -1137,41 +1296,6 @@ macro(tribits_postprocess_optional_package_enables PACKAGE_NAME)
 endmacro()
 
 
-# Macro that post-processes final package enables for packages with subpackage
-# enables.
-#
-macro(tribits_postprocess_package_with_subpackages_enables  PACKAGE_NAME)
-  #message("TRIBITS_POSTPROCESS_PACKAGE_WITH_SUBPACKAGES_ENABLES  '${PACKAGE_NAME}'")
-  foreach(TRIBITS_SUBPACKAGE ${${PACKAGE_NAME}_SUBPACKAGES})
-    set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${TRIBITS_SUBPACKAGE})
-    #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
-    #print_var(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-    #print_var(${SUBPACKAGE_FULLNAME}_ENABLE_TESTS)
-    #print_var(${PACKAGE_NAME}_ENABLE_TESTS)
-    #print_var(${SUBPACKAGE_FULLNAME}_ENABLE_EXAMPLES)
-    #print_var(${PACKAGE_NAME}_ENABLE_EXAMPLES)
-    if (${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}
-        AND NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}
-      )
-      message("-- "
-        "Setting ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=ON"
-        " because ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}=ON")
-      set(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} ON)
-      tribits_postprocess_package_with_subpackages_optional_subpackage_enables(
-        ${PACKAGE_NAME})
-      tribits_postprocess_package_with_subpackages_test_example_enables(
-        ${PACKAGE_NAME}  TESTS)
-      tribits_postprocess_package_with_subpackages_test_example_enables(
-        ${PACKAGE_NAME}  EXAMPLES)
-      # NOTE: We need to enable the parent package even if it was disabled by
-      # some means before this because a subpackage is enabled.  But other
-      # logic should ensure that the parent package is never disabled and a
-      # subpackage is allowed to be enabled.
-    endif()
-  endforeach()
-endmacro()
-
-
 # Set <ParentPackage>_ENABLE_<SubPackage>=ON if not already enabled for all
 # subpackages of a parent package.
 #
@@ -1179,8 +1303,8 @@ macro(tribits_postprocess_package_with_subpackages_optional_subpackage_enables
     PACKAGE_NAME
   )
   #message("TRIBITS_POSTPROCESS_PACKAGE_WITH_SUBPACKAGES_TEST_EXAMPLE_ENABLES  '${PACKAGE_NAME}'")
-  foreach(TRIBITS_SUBPACKAGE ${${PACKAGE_NAME}_SUBPACKAGES})
-    set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${TRIBITS_SUBPACKAGE})
+  foreach(tap3_subPkg ${${PACKAGE_NAME}_SUBPACKAGES})
+    set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${tap3_subPkg})
     if (${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}
       AND "${${PACKAGE_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}}" STREQUAL ""
       )
@@ -1200,8 +1324,8 @@ macro(tribits_postprocess_package_with_subpackages_test_example_enables
     PACKAGE_NAME  TESTS_OR_EXAMPLES
   )
   #message("TRIBITS_POSTPROCESS_PACKAGE_WITH_SUBPACKAGES_TEST_EXAMPLE_ENABLES  '${PACKAGE_NAME}'")
-  foreach(TRIBITS_SUBPACKAGE ${${PACKAGE_NAME}_SUBPACKAGES})
-    set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${TRIBITS_SUBPACKAGE})
+  foreach(tap3_subPkg ${${PACKAGE_NAME}_SUBPACKAGES})
+    set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${tap3_subPkg})
     #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
     #print_var(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
     #print_var(${SUBPACKAGE_FULLNAME}_ENABLE_${TESTS_OR_EXAMPLES})
@@ -1217,30 +1341,6 @@ macro(tribits_postprocess_package_with_subpackages_test_example_enables
       set(${PACKAGE_NAME}_ENABLE_${TESTS_OR_EXAMPLES} ON)
     endif()
   endforeach()
-endmacro()
-
-
-# Post-processes optional package TPL based on if the TPL
-# has been enabled or not
-#
-macro(tribits_postprocess_optional_tpl_enables PACKAGE_NAME)
-
-  #message("\nPACKAGE_ARCH_ADD_OPTIONAL_TPL_ENABLES: ${PACKAGE_NAME}")
-  
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-    foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS})
-      tribits_private_postprocess_optional_tpl_enable(
-        ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} )
-    endforeach()
-
-    foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS})
-      tribits_private_postprocess_optional_tpl_enable(
-        ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} )
-    endforeach()
-
-  endif()
-
 endmacro()
 
 
@@ -1299,20 +1399,6 @@ macro(tribits_set_package_enable_based_on_global_enable_on  projectEnableVar
       message("-- " "Setting ${packageEnableVar}=ON")
       set(${packageEnableVar} ON)
     endif()
-  endif()
-endmacro()
-
-
-# Macro used to set ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} based on
-# ${PROJECT_NAME}_ENABLE_ALL_PACKAGES
-#
-macro(tribits_apply_all_package_enables  PACKAGE_NAME)
-  tribits_is_primary_meta_project_package(${PACKAGE_NAME}  PACKAGE_IS_PMPP)
-  tribits_implicit_package_enable_is_allowed( "" ${PACKAGE_NAME}
-    PROCESS_PACKAGE_ENABLE )
-  if (PACKAGE_IS_PMPP  AND  PROCESS_PACKAGE_ENABLE)
-    tribits_set_package_enable_based_on_global_enable(
-      ${PROJECT_NAME}_ENABLE_ALL_PACKAGES ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} )
   endif()
 endmacro()
 
@@ -1445,53 +1531,6 @@ macro(tribits_private_enable_forward_package  FORWARD_DEP_PACKAGE_NAME  PACKAGE_
 endmacro()
 
 
-# Macro used to set ${PROJECT_NAME}_ENABLE_${FWD_PACKAGE_NAME)=ON for all
-#
-macro(tribits_enable_forward_lib_package_enables PACKAGE_NAME)
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES})
-      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
-    endforeach()
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES})
-      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
-    endforeach()
-
-  endif()
-
-endmacro()
-
-
-# Macro used to set ${PROJECT_NAME}_ENABLE_${FWD_PACKAGE_NAME)=ON for all
-# optional and required forward test dependencies of the package
-# ${PACKAGE_NAME}
-#
-macro(tribits_enable_forward_test_package_enables PACKAGE_NAME)
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES})
-      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
-    endforeach()
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES})
-      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
-    endforeach()
-
-  endif()
-
-endmacro()
-
-
-#
-# Private helper macros
-#
-
-
 macro(tribits_private_enable_dep_package  PACKAGE_NAME  DEP_PACKAGE_NAME
   OPTREQ_IN
   )
@@ -1580,30 +1619,6 @@ macro(tribits_private_enable_optional_dep_tpl PACKAGE_NAME DEP_TPL_NAME)
 endmacro()
 
 
-# Macro that enables the optional TPLs for given package
-#
-macro(tribits_enable_optional_tpls PACKAGE_NAME)
-
-  #message("TRIBITS_ENABLE_OPTIONAL_TPLS: ${PACKAGE_NAME}")
-  #message("-- " "${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}")
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-    foreach(DEP_TPL ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS})
-      tribits_private_enable_optional_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
-    endforeach()
-
-    foreach(DEP_TPL ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS})
-      tribits_private_enable_optional_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
-    endforeach()
-
-  endif()
-
-endmacro()
-
-
 # Macro that enables upstream (required and optional) packages given package
 #
 # Here I have to enable the required packages too or the logic just does no
@@ -1632,30 +1647,6 @@ macro(tribits_enable_upstream_packages  PACKAGE_NAME)
 
     foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES)
       tribits_private_enable_dep_package(${PACKAGE_NAME} ${DEP_PKG} OPTIONAL)
-    endforeach()
-
-  endif()
-
-endmacro()
-
-
-# Macro that sets the required TPLs for given package
-#
-macro(tribits_enable_required_tpls PACKAGE_NAME)
-
-  #message("PACKAGE_ARCH_ENABLE_REQUIRED_TPL_ENABLES: ${PACKAGE_NAME}")
-  #message("-- " "${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}")
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-    foreach(DEP_TPL  IN LISTS  ${PACKAGE_NAME}_LIB_REQUIRED_DEP_TPLS)
-      tribits_private_enable_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
-    endforeach()
-
-    foreach(DEP_TPL  IN LISTS  ${PACKAGE_NAME}_TEST_REQUIRED_DEP_TPLS)
-      tribits_private_enable_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
     endforeach()
 
   endif()
