@@ -431,10 +431,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-10-17</p>
+<dd class="field-even"><p>2022-10-18</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-3078-g63d71817</p>
+<dd class="field-odd"><p>tribits_start-3083-geba76ffc</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -14180,7 +14180,7 @@ never get added to <code class="docutils literal notranslate"><span class="pre">
 and one must be very careful to understand how CPack will use these regexes
 to match files that get excluded from the tarball.  For more details, see
 <a class="reference internal" href="#creating-source-distributions">Creating Source Distributions</a>.</p>
-<p>In: core/package_arch/TribitsGlobalMacros.cmake:2489</p>
+<p>In: core/package_arch/TribitsGlobalMacros.cmake:2490</p>
 </section>
 <section id="tribits-extpkg-define-dependencies">
 <h3><a class="toc-backref" href="#id145">tribits_extpkg_define_dependencies()</a><a class="headerlink" href="#tribits-extpkg-define-dependencies" title="Permalink to this heading"></a></h3>
@@ -16931,7 +16931,7 @@ understand the internals of TriBITS.</p>
 error message also suggests that the package might be defining an upstream
 dependency on a downstream dependency (i.e. a circular dependency).</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:762</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:755</p>
 </section>
 <section id="tribits-abort-on-self-dep">
 <h3><a class="toc-backref" href="#id236">tribits_abort_on_self_dep()</a><a class="headerlink" href="#tribits-abort-on-self-dep" title="Permalink to this heading"></a></h3>
@@ -16942,7 +16942,7 @@ dependency on a downstream dependency (i.e. a circular dependency).</p>
 <p>Prints a fatal error message for an attempt for a self dependency
 declaration and which list it comes from.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:791</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:784</p>
 </section>
 <section id="tribits-adjust-package-enables">
 <h3><a class="toc-backref" href="#id237">tribits_adjust_package_enables()</a><a class="headerlink" href="#tribits-adjust-package-enables" title="Permalink to this heading"></a></h3>
@@ -16979,7 +16979,7 @@ declare dependencies on it.</p>
 <p>for one of the FORWARD vars listed in <a class="reference internal" href="#legacy-list-variables-defining-the-package-dependencies-graph">Legacy list variables defining the
 package dependencies graph</a>.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:648</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:641</p>
 </section>
 <section id="tribits-assert-read-dependency-vars">
 <h3><a class="toc-backref" href="#id239">tribits_assert_read_dependency_vars()</a><a class="headerlink" href="#tribits-assert-read-dependency-vars" title="Permalink to this heading"></a></h3>
@@ -16991,7 +16991,7 @@ package dependencies graph</a>.</p>
 <a class="reference internal" href="#tribits-package-define-dependencies">tribits_package_define_dependencies()</a> in the file
 <a class="reference internal" href="#packagedir-cmake-dependencies-cmake">&lt;packageDir&gt;/cmake/Dependencies.cmake</a> have been set.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:391</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:384</p>
 </section>
 <section id="tribits-extpkg-add-find-upstream-dependencies-str">
 <h3><a class="toc-backref" href="#id240">tribits_extpkg_add_find_upstream_dependencies_str()</a><a class="headerlink" href="#tribits-extpkg-add-find-upstream-dependencies-str" title="Permalink to this heading"></a></h3>
@@ -17198,7 +17198,7 @@ defined packages, and defines user cache var options for those subpackages.</p>
 </ul>
 </div></blockquote>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:815</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:808</p>
 </section>
 <section id="tribits-prep-to-read-dependencies">
 <h3><a class="toc-backref" href="#id251">tribits_prep_to_read_dependencies()</a><a class="headerlink" href="#tribits-prep-to-read-dependencies" title="Permalink to this heading"></a></h3>
@@ -17225,7 +17225,7 @@ the package dependencies graph</a>.</p>
 </div>
 <p>for each of the forward/downstream in <a class="reference internal" href="#legacy-list-variables-defining-the-package-dependencies-graph">Legacy list variables defining the
 package dependencies graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:335</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:328</p>
 </section>
 <section id="tribits-process-all-repository-deps-setup-files">
 <h3><a class="toc-backref" href="#id252">tribits_process_all_repository_deps_setup_files()</a><a class="headerlink" href="#tribits-process-all-repository-deps-setup-files" title="Permalink to this heading"></a></h3>
@@ -17249,7 +17249,7 @@ in <a class="reference internal" href="#tribits-prep-to-read-dependencies">tribi
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
 <p><strong>__Legacy varibles #63__</strong></p>
 <p>Sets <a class="reference internal" href="#legacy-list-variables-defining-the-package-dependencies-graph">Legacy list variables defining the package dependencies graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:469</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:462</p>
 </section>
 <section id="tribits-process-packages-and-dirs-lists">
 <h3><a class="toc-backref" href="#id254">tribits_process_packages_and_dirs_lists()</a><a class="headerlink" href="#tribits-process-packages-and-dirs-lists" title="Permalink to this heading"></a></h3>
@@ -17382,7 +17382,7 @@ and more specifically the sections:</p>
 <p>Read back the local package dependency vars from the saved-off vars with
 suffix <code class="docutils literal notranslate"><span class="pre">_&lt;postfix&gt;</span></code>.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:443</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:436</p>
 </section>
 <section id="tribits-read-defined-external-and-internal-toplevel-packages-lists">
 <h3><a class="toc-backref" href="#id260">tribits_read_defined_external_and_internal_toplevel_packages_lists()</a><a class="headerlink" href="#tribits-read-defined-external-and-internal-toplevel-packages-lists" title="Permalink to this heading"></a></h3>
@@ -17475,7 +17475,7 @@ varaible:</p>
 </pre></div>
 </div>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:207</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:200</p>
 </section>
 <section id="tribits-read-package-subpackage-deps-files-add-to-graph">
 <h3><a class="toc-backref" href="#id263">tribits_read_package_subpackage_deps_files_add_to_graph()</a><a class="headerlink" href="#tribits-read-package-subpackage-deps-files-add-to-graph" title="Permalink to this heading"></a></h3>
@@ -17486,7 +17486,7 @@ varaible:</p>
 <p>Read in subpackages dependencies files and add to dependencies graph
 variables.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:946</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:939</p>
 </section>
 <section id="tribits-read-subpackage-deps-file-add-to-graph">
 <h3><a class="toc-backref" href="#id264">tribits_read_subpackage_deps_file_add_to_graph()</a><a class="headerlink" href="#tribits-read-subpackage-deps-file-add-to-graph" title="Permalink to this heading"></a></h3>
@@ -17499,7 +17499,7 @@ variables.</p>
 <a class="reference internal" href="#packagedir-spkgdir-cmake-dependencies-cmake">&lt;packageDir&gt;/&lt;spkgDir&gt;/cmake/Dependencies.cmake</a> and sets up the
 dependency structure for it.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:974</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:967</p>
 </section>
 <section id="tribits-read-toplevel-package-deps-files-add-to-graph">
 <h3><a class="toc-backref" href="#id265">tribits_read_toplevel_package_deps_files_add_to_graph()</a><a class="headerlink" href="#tribits-read-toplevel-package-deps-files-add-to-graph" title="Permalink to this heading"></a></h3>
@@ -17534,7 +17534,7 @@ ${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES
 order and then this top-level package is appended and dependencies are
 created for them.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:236</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:229</p>
 </section>
 <section id="tribits-save-off-dependency-vars">
 <h3><a class="toc-backref" href="#id266">tribits_save_off_dependency_vars()</a><a class="headerlink" href="#tribits-save-off-dependency-vars" title="Permalink to this heading"></a></h3>
@@ -17544,7 +17544,7 @@ created for them.</p>
 </div>
 <p>Saves off package dependency variables with variable suffix <code class="docutils literal notranslate"><span class="pre">_&lt;postfix&gt;</span></code>.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:418</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:411</p>
 </section>
 <section id="tribits-set-dep-packages">
 <h3><a class="toc-backref" href="#id267">tribits_set_dep_packages()</a><a class="headerlink" href="#tribits-set-dep-packages" title="Permalink to this heading"></a></h3>
@@ -17574,7 +17574,7 @@ this package if this is a required dependency).</p></li>
 <p>Set the backward/upstream dependency variables defined <a class="reference internal" href="#legacy-list-variables-defining-the-package-dependencies-graph">Legacy list
 variables defining the package dependencies graph</a>.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:513</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:506</p>
 </section>
 <section id="tribits-trace-file-processing">
 <h3><a class="toc-backref" href="#id268">tribits_trace_file_processing()</a><a class="headerlink" href="#tribits-trace-file-processing" title="Permalink to this heading"></a></h3>
@@ -17609,7 +17609,7 @@ install() target for the previously generated
 </div>
 <p>The install() commands must be in a different subroutine or CMake will not
 allow you to call the routine, even if you if() it out!</p>
-<p>In: core/package_arch/TribitsWriteClientExportFiles.cmake:612</p>
+<p>In: core/package_arch/TribitsWriteClientExportFiles.cmake:498</p>
 </section>
 <section id="tribits-write-xml-dependency-files">
 <h3><a class="toc-backref" href="#id270">tribits_write_xml_dependency_files()</a><a class="headerlink" href="#tribits-write-xml-dependency-files" title="Permalink to this heading"></a></h3>
@@ -17630,7 +17630,7 @@ package dependency graph previously constructed..</p>
 <p>Function that writes XML dependency files if support for that exists in this
 instance of TriBITs.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a></p>
-<p>In: core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake:259</p>
+<p>In: core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake:251</p>
 </section>
 </section>
 </section>
