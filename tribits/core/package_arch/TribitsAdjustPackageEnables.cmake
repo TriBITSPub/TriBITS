@@ -445,10 +445,6 @@ endmacro()
 #
 macro(tribits_disable_parents_subpackages PARENT_PACKAGE_NAME)
 
-  #message("TRIBITS_DISABLE_PARENTS_SUBPACKAGES: ${PARENT_PACKAGE_NAME}")
-
-  #print_var(${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME})
-
   if(NOT ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME}
     AND NOT ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME} STREQUAL ""
     )
@@ -459,7 +455,6 @@ macro(tribits_disable_parents_subpackages PARENT_PACKAGE_NAME)
       set(SUBPACKAGE_NAME ${tap2_subPkg})
       set(SUBPACKAGE_FULLNAME ${PARENT_PACKAGE_NAME}${tap2_subPkg})
 
-      #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
       if (NOT ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME} STREQUAL "OFF")
         set(ENABLE_BEING_DISABLED_VAR_NAME ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
         message("-- "
@@ -481,12 +476,8 @@ endmacro()
 #
 macro(tribits_disable_forward_required_dep_packages PACKAGE_NAME)
 
-  #message("TRIBITS_DISABLE_FORWARD_REQUIRED_DEP_PACKAGES: ${PACKAGE_NAME}")
-
-  if (
-     (NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-     AND
-     (NOT "${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}" STREQUAL "")
+  if ((NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+       AND (NOT "${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}" STREQUAL "")
      )
 
     foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES})
@@ -510,10 +501,6 @@ endmacro()
 #
 macro(tribits_enable_parents_subpackages PARENT_PACKAGE_NAME)
 
-  #message("TRIBITS_ENABLE_PARENTS_SUBPACKAGES: ${PARENT_PACKAGE_NAME}")
-
-  #print_var(${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME})
-
   if(${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME})
 
     set(SUBPACKAGE_IDX 0)
@@ -521,8 +508,6 @@ macro(tribits_enable_parents_subpackages PARENT_PACKAGE_NAME)
 
       set(SUBPACKAGE_NAME ${tap2_subPkg})
       set(SUBPACKAGE_FULLNAME ${PARENT_PACKAGE_NAME}${tap2_subPkg})
-
-      #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
 
       if (NOT ${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME} AND
         NOT "${${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}}" STREQUAL ""
@@ -612,9 +597,6 @@ endmacro()
 #
 macro(tribits_enable_required_tpls PACKAGE_NAME)
 
-  #message("PACKAGE_ARCH_ENABLE_REQUIRED_TPL_ENABLES: ${PACKAGE_NAME}")
-  #message("-- " "${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}")
-
   assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
 
   if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
@@ -637,8 +619,6 @@ endmacro()
 #
 macro(tribits_postprocess_optional_tpl_enables PACKAGE_NAME)
 
-  #message("\nPACKAGE_ARCH_ADD_OPTIONAL_TPL_ENABLES: ${PACKAGE_NAME}")
-
   if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
 
     foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS})
@@ -659,9 +639,6 @@ endmacro()
 # Macro that enables the optional TPLs for given package
 #
 macro(tribits_enable_optional_tpls PACKAGE_NAME)
-
-  #message("TRIBITS_ENABLE_OPTIONAL_TPLS: ${PACKAGE_NAME}")
-  #message("-- " "${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}")
 
   assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
 
@@ -686,8 +663,6 @@ endmacro()
 # ${PACKAGE_NAME}_ENABLE_EXAMPLES to empty non-cache vars
 #
 macro(tribits_set_up_optional_package_enables_and_cache_vars PACKAGE_NAME)
-
-  #message("\nPACKAGE_ARCH_ADD_OPTIONAL_PACKAGE_ENABLES: ${PACKAGE_NAME}")
 
   assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
   set(SET_AS_CACHE ${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}})
@@ -751,15 +726,8 @@ endmacro()
 # enables.
 #
 macro(tribits_postprocess_package_with_subpackages_enables  PACKAGE_NAME)
-  #message("TRIBITS_POSTPROCESS_PACKAGE_WITH_SUBPACKAGES_ENABLES  '${PACKAGE_NAME}'")
   foreach(tap2_subPkg  IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
     set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${tap2_subPkg})
-    #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
-    #print_var(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-    #print_var(${SUBPACKAGE_FULLNAME}_ENABLE_TESTS)
-    #print_var(${PACKAGE_NAME}_ENABLE_TESTS)
-    #print_var(${SUBPACKAGE_FULLNAME}_ENABLE_EXAMPLES)
-    #print_var(${PACKAGE_NAME}_ENABLE_EXAMPLES)
     if (${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}
         AND NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}
       )
@@ -931,7 +899,6 @@ function(tribits_private_print_disable
   ENABLE_BEING_DISABLED_VAR_NAME  PACKAGE_WITH_SOMETHING_BEING_DISABLED
   DEP_TYPE_STR  THING_DISALBED_TYPE  THING_DISABLED_NAME
   )
-  #print_var(${ENABLE_BEING_DISABLED_VAR_NAME})
   if (${ENABLE_BEING_DISABLED_VAR_NAME})
     if (${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES)
       message(
@@ -967,9 +934,6 @@ endfunction()
 macro(tribits_private_disable_tpl_required_package_enable
   TPL_NAME  PACKAGE_NAME  LIBRARY_DEP
   )
-
-  #message("TRIBITS_PRIVATE_DISABLE_TPL_REQUIRED_PACKAGE_ENABLE"
-  #  " ${TPL_NAME} ${PACKAGE_NAME} ${LIBRARY_DEP}")
 
   # Only turn off PACKAGE_NAME libraries and test/examples if it
   # is currently enabled or could be enabled.
@@ -1038,9 +1002,6 @@ macro(tribits_private_disable_required_package_enables
   FORWARD_DEP_PACKAGE_NAME PACKAGE_NAME LIBRARY_DEP
   )
 
-  #message("TRIBITS_PRIVATE_DISABLE_REQUIRED_PACKAGE_ENABLES"
-  #  " ${FORWARD_DEP_PACKAGE_NAME} ${LIBRARY_DEP}")
-
   # Only turn off FORWARD_DEP_PACKAGE libraries and test/examples if it
   # is currently enabled or could be enabled
 
@@ -1090,14 +1051,8 @@ macro(tribits_private_disable_optional_package_enables
   FORWARD_DEP_PACKAGE_NAME PACKAGE_NAME
   )
 
-  #message("TRIBITS_PRIVATE_DISABLE_OPTIONAL_PACKAGE_ENABLES"
-  #  " ${FORWARD_DEP_PACKAGE_NAME} ${PACKAGE_NAME}")
-  #message("-- " "${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME} = ${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}}")
-
-  #assert_defined(${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})
   if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME} OR "${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}}" STREQUAL "")
     # Always disable the conditional enable but only print the message if the package is enabled.
-    #message("--  Disable ${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME} ...")
     if (${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME})
       if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})  # is explicitly try already!
         message("-- "
@@ -1121,8 +1076,6 @@ endmacro()
 macro(tribits_private_add_optional_package_enable PACKAGE_NAME  OPTIONAL_DEP_PACKAGE
   TYPE  SET_AS_CACHE_IN
   )
-
-  #message("\nPACKAGE_ARCH_PRIVATE_ADD_OPTIONAL_PACKAGE_ENABLE: ${PACKAGE_NAME} ${OPTIONAL_DEP_PACKAGE}")
 
   if (SET_AS_CACHE_IN)
 
@@ -1179,10 +1132,6 @@ endmacro()
 #
 macro(tribits_private_postprocess_optional_package_enable PACKAGE_NAME OPTIONAL_DEP_PACKAGE)
 
-  #message("TRIBITS_PRIVATE_POSTPROCESS_OPTIONAL_PACKAGE_ENABLE: ${PACKAGE_NAME} ${OPTIONAL_DEP_PACKAGE}")
-  #print_var(${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE})
-  #print_var(${PROJECT_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE})
-
   if (${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE} AND ${PROJECT_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE})
     message("-- " "NOTE:"
       " ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE}=${${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE}}"
@@ -1223,8 +1172,6 @@ endmacro()
 # be TRUE before calling this macro.
 #
 macro(tribits_private_postprocess_optional_tpl_enable  PACKAGE_NAME  OPTIONAL_DEP_TPL)
-
-  #message("TRIBITS_PRIVATE_POSTPROCESS_OPTIONAL_TPL_ENABLE: ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL}")
 
   if (${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL} AND TPL_ENABLE_${OPTIONAL_DEP_TPL})
     message("-- " "NOTE:"
@@ -1276,8 +1223,6 @@ endmacro()
 #
 macro(tribits_postprocess_optional_package_enables PACKAGE_NAME)
 
-  #message("\nPACKAGE_ARCH_POSTPROCESS_OPTIONAL_PACKAGE_ENABLES: ${PACKAGE_NAME}")
-
   assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
   if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
 
@@ -1302,8 +1247,7 @@ endmacro()
 macro(tribits_postprocess_package_with_subpackages_optional_subpackage_enables
     PACKAGE_NAME
   )
-  #message("TRIBITS_POSTPROCESS_PACKAGE_WITH_SUBPACKAGES_TEST_EXAMPLE_ENABLES  '${PACKAGE_NAME}'")
-  foreach(tap3_subPkg ${${PACKAGE_NAME}_SUBPACKAGES})
+  foreach(tap3_subPkg   IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
     set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${tap3_subPkg})
     if (${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}
       AND "${${PACKAGE_NAME}_ENABLE_${SUBPACKAGE_FULLNAME}}" STREQUAL ""
@@ -1323,15 +1267,8 @@ endmacro()
 macro(tribits_postprocess_package_with_subpackages_test_example_enables
     PACKAGE_NAME  TESTS_OR_EXAMPLES
   )
-  #message("TRIBITS_POSTPROCESS_PACKAGE_WITH_SUBPACKAGES_TEST_EXAMPLE_ENABLES  '${PACKAGE_NAME}'")
-  foreach(tap3_subPkg ${${PACKAGE_NAME}_SUBPACKAGES})
+  foreach(tap3_subPkg  IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
     set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${tap3_subPkg})
-    #print_var(${PROJECT_NAME}_ENABLE_${SUBPACKAGE_FULLNAME})
-    #print_var(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-    #print_var(${SUBPACKAGE_FULLNAME}_ENABLE_${TESTS_OR_EXAMPLES})
-    #print_var(${PACKAGE_NAME}_ENABLE_${TESTS_OR_EXAMPLES})
-    #print_var(${SUBPACKAGE_FULLNAME}_ENABLE_EXAMPLES)
-    #print_var(${PACKAGE_NAME}_ENABLE_EXAMPLES)
     if (${SUBPACKAGE_FULLNAME}_ENABLE_${TESTS_OR_EXAMPLES}
       AND "${${PACKAGE_NAME}_ENABLE_${TESTS_OR_EXAMPLES}}" STREQUAL ""
       )
@@ -1535,10 +1472,7 @@ macro(tribits_private_enable_dep_package  PACKAGE_NAME  DEP_PACKAGE_NAME
   OPTREQ_IN
   )
 
-  #message("TRIBITS_PRIVATE_ENABLE_DEP_PACKAGE:  '${PACKAGE_NAME}'  '${DEP_PACKAGE_NAME}'  '${OPTREQ_IN}'")
-
   assert_defined(${PROJECT_NAME}_ENABLE_${DEP_PACKAGE_NAME})
-  #print_var(${PACKAGE_NAME}_ENABLE_${DEP_PACKAGE_NAME})
 
   if (${PROJECT_NAME}_ENABLE_${DEP_PACKAGE_NAME})
 
@@ -1549,8 +1483,6 @@ macro(tribits_private_enable_dep_package  PACKAGE_NAME  DEP_PACKAGE_NAME
     set(TRIBITS_PRIVATE_ENABLE_DEP_PACKAGES_ENABLE_PACKAGE "")
 
     if ("${OPTREQ_IN}" STREQUAL "REQUIRED")
-
-      #message("Always enable the upstream dependency if it is required")
 
       message("-- " "Setting ${PROJECT_NAME}_ENABLE_${DEP_PACKAGE_NAME}=ON"
         " because ${PACKAGE_NAME} has a required dependence on ${DEP_PACKAGE_NAME}")
@@ -1625,9 +1557,6 @@ endmacro()
 # work as expected.
 #
 macro(tribits_enable_upstream_packages  PACKAGE_NAME)
-
-  #message("TRIBITS_ENABLE_UPSTREAM_PACKAGES: ${PACKAGE_NAME}")
-  #message("-- " "${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}")
 
   assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
 
