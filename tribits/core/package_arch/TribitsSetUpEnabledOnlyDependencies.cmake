@@ -83,7 +83,9 @@ function(tribits_set_up_enabled_only_dependencies)
     # Find the last enabled package for which an export file is requested.
     set(LAST_PKG_IDX -1)
     set(LAST_PKG)
-    foreach(tribitsPkg ${${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES})
+    foreach(tribitsPkg  IN LISTS
+        ${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES
+      )
       #print_var(tribitsPkg)
       set(PKG_IDX ${${tribitsPkg}_PKG_IDX})
       #print_var(PKG_IDX)
@@ -117,7 +119,7 @@ function(tribits_set_up_enabled_only_dependencies)
       message("\nSetting up export dependencies for all enabled packages ...\n")
     endif()
 
-    foreach(tribitsPackage ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
+    foreach(tribitsPackage  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
       tribits_package_set_full_enabled_dep_packages(${tribitsPackage})
       if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
         set(PRINTED_VAR FALSE)
@@ -127,7 +129,7 @@ function(tribits_set_up_enabled_only_dependencies)
           message("-- ${tribitsPackage}: No library dependencies!")
         endif()
       endif()
-      if ("${lastExportTribitsPackage}" STREQUAL ${tribitsPackage})
+      if ("${lastExportTribitsPackage}" STREQUAL "${tribitsPackage}")
         break()
       endif()
     endforeach()
@@ -145,14 +147,14 @@ function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
 
   set(PACKAGE_FULL_DEPS_LIST "")
 
-  foreach(DEP_PKG ${${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES})
+  foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES)
     if (${PROJECT_NAME}_ENABLE_${DEP_PKG})
       list(APPEND  PACKAGE_FULL_DEPS_LIST  ${DEP_PKG})
     endif()
     # NOTE: This if() should not be needed but this is a safeguard
   endforeach()
 
-  foreach(DEP_PKG ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES})
+  foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES)
     if (${PACKAGE_NAME}_ENABLE_${DEP_PKG})
       list(APPEND  PACKAGE_FULL_DEPS_LIST  ${DEP_PKG})
     endif()
@@ -161,7 +163,7 @@ function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
   if(PACKAGE_FULL_DEPS_LIST)
     list(REMOVE_DUPLICATES  PACKAGE_FULL_DEPS_LIST)
 
-    foreach(DEP_PACKAGE  ${PACKAGE_FULL_DEPS_LIST})
+    foreach(DEP_PACKAGE  IN LISTS  PACKAGE_FULL_DEPS_LIST)
       list(APPEND PACKAGE_FULL_DEPS_LIST  ${${DEP_PACKAGE}_FULL_ENABLED_DEP_PACKAGES})
     endforeach()
 
@@ -170,7 +172,7 @@ function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
 
   set(ORDERED_PACKAGE_FULL_DEPS_LIST "")
 
-  foreach(DEP_PACKAGE  ${PACKAGE_FULL_DEPS_LIST})
+  foreach(DEP_PACKAGE  IN LISTS  PACKAGE_FULL_DEPS_LIST)
 
     #print_var(${DEP_PACKAGE}_PKG_IDX)
     set(DEP_PACKAGE_VALUE  ${${DEP_PACKAGE}_PKG_IDX})
@@ -178,7 +180,7 @@ function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
     set(SORTED_INDEX 0)
     set(INSERTED_DEP_PACKAGE FALSE)
 
-    foreach(SORTED_PACKAGE  ${ORDERED_PACKAGE_FULL_DEPS_LIST})
+    foreach(SORTED_PACKAGE  IN LISTS  ORDERED_PACKAGE_FULL_DEPS_LIST)
 
       #print_var(${SORTED_PACKAGE}_PKG_IDX)
       set(SORTED_PACKAGE_VALUE  ${${SORTED_PACKAGE}_PKG_IDX})
