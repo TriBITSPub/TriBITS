@@ -176,14 +176,7 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
   unittest_file_regex("${GENERATED_EXPORT_CONFIG_FOR_BUILD}"
     REGEX_STRINGS
       "set[(]RTOp1_CMAKE_BUILD_TYPE .DEBUG."
-      "set[(]RTOp1_INCLUDE_DIRS ..[)]"
-      "set[(]RTOp1_LIBRARY_DIRS ..[)]"
-      "set[(]RTOp1_LIBRARIES .teuchoscore.teuchosnumeric.[)]"
-      "set[(]RTOp1_TPL_INCLUDE_DIRS ..[)]"
-      "set[(]RTOp1_TPL_LIBRARY_DIRS ..[)]"
-      "set[(]RTOp1_TPL_LIBRARIES .LAPACK::all_libs[;]BLAS::all_libs.[)]"
-      "set[(]RTOp1_PACKAGE_LIST .Teuchos.[)]"
-      "set[(]RTOp1_TPL_LIST .LAPACK.BLAS.[)]"
+      "set[(]RTOp1_LIBRARIES RTOp::all_libs[)]"
       "set[(]RTOp1_ENABLE_Teuchos ON[)]"
 
     )
@@ -191,14 +184,7 @@ function(unittest_write_specialized_package_export_makefile_rtop_before_libs)
   unittest_file_regex("${GENERATED_EXPORT_CONFIG_FOR_INSTALL}"
     REGEX_STRINGS
       "set[(]RTOp1_CMAKE_BUILD_TYPE .DEBUG."
-      "set[(]RTOp1_INCLUDE_DIRS ..[)]"
-      "set[(]RTOp1_LIBRARY_DIRS ..[)]"
-      "set[(]RTOp1_LIBRARIES .teuchoscore.teuchosnumeric.[)]"
-      "set[(]RTOp1_TPL_INCLUDE_DIRS ..[)]"
-      "set[(]RTOp1_TPL_LIBRARY_DIRS ..[)]"
-      "set[(]RTOp1_TPL_LIBRARIES .LAPACK::all_libs[;]BLAS::all_libs.[)]"
-      "set[(]RTOp1_PACKAGE_LIST .Teuchos.[)]"
-      "set[(]RTOp1_TPL_LIST .LAPACK.BLAS.[)]"
+      "set[(]RTOp1_LIBRARIES RTOp::all_libs[)]"
       "set[(]RTOp1_ENABLE_Teuchos ON[)]"
     )
 
@@ -266,14 +252,7 @@ function(unittest_write_specialized_package_export_makefile_rtop_after_libs)
   unittest_file_regex("${GENERATED_EXPORT_CONFIG_FOR_BUILD}"
     REGEX_STRINGS
       "set[(]RTOp2_CMAKE_BUILD_TYPE .RELEASE."
-      "set[(]RTOp2_INCLUDE_DIRS ..[)]"
-      "set[(]RTOp2_LIBRARY_DIRS ..[)]"
-      "set[(]RTOp2_LIBRARIES .rtop.teuchoscore.teuchosnumeric.[)]"
-      "set[(]RTOp2_TPL_INCLUDE_DIRS ..[)]"
-      "set[(]RTOp2_TPL_LIBRARY_DIRS ..[)]"
-      "set[(]RTOp2_TPL_LIBRARIES .LAPACK::all_libs[;]BLAS::all_libs.[)]"
-      "set[(]RTOp2_PACKAGE_LIST .RTOp.Teuchos.[)]"
-      "set[(]RTOp2_TPL_LIST .LAPACK.BLAS.[)]"
+      "set[(]RTOp2_LIBRARIES RTOp::all_libs[)]"
       "set[(]RTOp2_ENABLE_Teuchos ON[)]"
     )
 
@@ -300,4 +279,4 @@ unittest_write_specialized_package_export_makefile_rtop_before_libs()
 unittest_write_specialized_package_export_makefile_rtop_after_libs()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(33)
+unittest_final_result(12)
