@@ -365,6 +365,7 @@ create_reduced_dependency_handling_test_case(
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
     -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
     ${REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY}
     ${REDUCED_EnableAllPackages_REGEX_ARRAY}
@@ -470,8 +471,8 @@ create_reduced_dependency_handling_test_case(
     -DTrilinos_ENABLE_TESTS=ON
     -DTPL_ENABLE_AMD=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "-- Setting EpetraExt_ENABLE_TESTS=OFF because EpetraExt has a required test/example dependence on disabled TPL AMD"
-    "-- Setting EpetraExt_ENABLE_EXAMPLES=OFF because EpetraExt has a required test/example dependence on disabled TPL AMD"
+    "-- Setting EpetraExt_ENABLE_TESTS=OFF because EpetraExt has a required test/example dependence on disabled package AMD"
+    "-- Setting EpetraExt_ENABLE_EXAMPLES=OFF because EpetraExt has a required test/example dependence on disabled package AMD"
     "-- Setting Trilinos_ENABLE_ThyraEpetraExt=ON"
     "Processing enabled top-level package: Triutils [(]Libs, Tests, Examples[)]"
     "Processing enabled top-level package: EpetraExt [(]Libs[)]"
@@ -753,13 +754,19 @@ create_dependency_handling_test_case(
   TestTrueFalse
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES=TRUE -DTrilinos_ENABLE_Zoltan=TRUE
     -DTrilinos_ENABLE_TEST=TRUE -DTPL_ENABLE_BLAS=FALSE
-#    -DTrilinos_VERBOSE_CONFIGURE=TRUE
+    #-DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+    #-DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+    #-DTrilinos_VERBOSE_CONFIGURE=TRUE
   PASS_REGULAR_EXPRESSION_ALL
     "Explicitly enabled top-level packages on input .by user.:  Zoltan 1"
     "Explicitly disabled top-level packages on input .by user or by default.:  Stokhos 1"
     "Explicitly disabled external packages/TPLs on input .by user or by default.:  MPI BLAS 2"
-    "Setting Trilinos_ENABLE_Teuchos=OFF because Teuchos has a required library dependence on disabled TPL BLAS"
-    "Setting Trilinos_ENABLE_TrilinosFramework=ON"
+    "-- Setting TPL_ENABLE_LAPACK=OFF because LAPACK has a required library dependence on disabled package BLAS"
+    "-- Setting TPL_ENABLE_SuperLUDist=OFF because SuperLUDist has a required library dependence on disabled package BLAS"
+    "-- Setting TPL_ENABLE_SuperLU=OFF because SuperLU has a required library dependence on disabled package BLAS"
+    "-- Setting Trilinos_ENABLE_Teuchos=OFF because Teuchos has a required library dependence on disabled package BLAS"
+    "-- Setting Trilinos_ENABLE_Epetra=OFF because Epetra has a required library dependence on disabled package BLAS"
+    "-- Setting Trilinos_ENABLE_TrilinosFramework=ON"
     "Final set of enabled top-level packages:  TrilinosFramework Zoltan Shards 3"
     "Final set of enabled packages:  TrilinosFramework Zoltan Shards 3"
     "Final set of non-enabled top-level packages:  Teuchos RTOp Epetra Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 21"
@@ -1038,7 +1045,9 @@ create_dependency_handling_test_case(
   EnableZoltan_ZoltanEnableParMETIS_TplDisableParMETIS
   ARGS -DTrilinos_ENABLE_Zoltan=ON -DZoltan_ENABLE_ParMETIS=ON -DTPL_ENABLE_ParMETIS=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "NOTE: Setting Zoltan_ENABLE_ParMETIS=OFF which was ON since TPL_ENABLE_ParMETIS=OFF"
+    "-- Setting TPL_ENABLE_SuperLUDist=OFF because SuperLUDist has a required library dependence on disabled package ParMETIS"
+    "-- Setting TPL_ENABLE_SuperLU=OFF because SuperLU has a required library dependence on disabled package ParMETIS"
+    "-- NOTE: Setting Zoltan_ENABLE_ParMETIS=OFF which was ON because Zoltan has an optional library dependence on disabled package ParMETIS"
     "Final set of enabled external packages/TPLs:  0"
   )
 
@@ -1048,7 +1057,7 @@ create_dependency_handling_test_case(
   ARGS  -DTrilinos_ENABLE_Panzer=ON
     -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled TPL MPI!"
+    "Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled package MPI!"
   )
 
 
@@ -1068,7 +1077,7 @@ create_dependency_handling_test_case(
     -DTPL_ENABLE_MPI:BOOL=OFF
     -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "ERROR: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled TPL MPI!"
+    "ERROR: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled package MPI!"
     "Configuring incomplete, errors occurred!"
   )
 
@@ -1080,7 +1089,7 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "NOTE: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled TPL MPI but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON"
+    "NOTE: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled package MPI but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON"
     "Final set of enabled top-level packages:  0"
     "Final set of non-enabled top-level packages:  .+ Panzer .+"
   )

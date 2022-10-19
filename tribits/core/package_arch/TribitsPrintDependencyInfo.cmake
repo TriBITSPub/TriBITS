@@ -211,7 +211,7 @@ function(tribits_print_nonempty_package_deps_list  packageName
       string(APPEND lineStr " ${depPkg}")
       if (${packageName}_${libOrTest}_DEP_REQUIRED_${depPkg})
         string(APPEND lineStr "[R]")
-       else()
+      else()
         string(APPEND lineStr "[O]")
       endif()
     endforeach()

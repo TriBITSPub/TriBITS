@@ -44,6 +44,7 @@ include(TribitsGeneralMacros)
 include(TribitsPrintEnabledPackagesLists)
 include(TribitsPrintDependencyInfo)
 include(TribitsPackageDependencies)
+include(TribitsGetPackageEnableStatus)
 
 include(AdvancedOption)
 include(AdvancedSet)
@@ -147,10 +148,6 @@ macro(tribits_sweep_forward_apply_disables)
   tribits_get_nondisabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
     ${PROJECT_NAME}_NOTDISABLED_PACKAGES "")
 
-  foreach(tad1_tribitsPkg  IN LISTS ${PROJECT_NAME}_NOTDISABLED_PACKAGES)
-    tribits_disable_package_if_tpl_disabled(${tad1_tribitsPkg})
-  endforeach()
-
   message("\nDisabling subpackages for hard disables of parent packages"
     " due to ${PROJECT_NAME}_ENABLE_<PARENT_PACKAGE>=OFF ...\n")
   foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES)
@@ -159,8 +156,9 @@ macro(tribits_sweep_forward_apply_disables)
 
   message("\nDisabling forward required packages and optional intra-package"
     " support that have a dependency on disabled packages"
-    " ${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>=OFF ...\n")
-  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES)
+    " ${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>=OFF (or"
+    " TPL_ENABLE_<TRIBITS_EXTERNAL_PACKAGE>=OFF) ...\n")
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_DEFINED_PACKAGES)
     tribits_disable_forward_required_dep_packages(${tad1_tribitsPkg})
   endforeach()
 
@@ -414,31 +412,6 @@ endmacro()
 ################################################################################
 
 
-# Macro that disables a packages if its required upstream TPL is disabled.
-#
-macro(tribits_disable_package_if_tpl_disabled  TRIBITS_PACKAGE)
-
-  foreach(TPL_NAME ${${TRIBITS_PACKAGE}_LIB_REQUIRED_DEP_TPLS})
-    if ( (NOT TPL_ENABLE_${TPL_NAME}) AND
-      (NOT "${TPL_ENABLE_${TPL_NAME}}" STREQUAL "")
-      )
-      tribits_private_disable_tpl_required_package_enable(
-        ${TPL_NAME}  ${TRIBITS_PACKAGE}  TRUE )
-    endif()
-  endforeach()
-
-  foreach(TPL_NAME ${${TRIBITS_PACKAGE}_TEST_REQUIRED_DEP_TPLS})
-    if ( (NOT TPL_ENABLE_${TPL_NAME}) AND
-      (NOT "${TPL_ENABLE_${TPL_NAME}}" STREQUAL "")
-      )
-      tribits_private_disable_tpl_required_package_enable(
-        ${TPL_NAME}  ${TRIBITS_PACKAGE}  FALSE )
-    endif()
-  endforeach()
-
-endmacro()
-
-
 # Macro that disables all of the subpackages of a parent package.
 #
 macro(tribits_disable_parents_subpackages PARENT_PACKAGE_NAME)
@@ -470,28 +443,27 @@ macro(tribits_disable_parents_subpackages PARENT_PACKAGE_NAME)
 endmacro()
 
 
-# Macro that disables all forward packages that depend on the given packages
+# Macro that disables forward package that depends on the passed-in package
 #
-macro(tribits_disable_forward_required_dep_packages PACKAGE_NAME)
-
-  if ((NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-       AND (NOT "${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}}" STREQUAL "")
-     )
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES})
-      tribits_private_disable_required_package_enables(${FWD_DEP_PKG} ${PACKAGE_NAME} TRUE)
+macro(tribits_disable_forward_required_dep_packages  packageName)
+  tribits_get_package_enable_status(${packageName}  packageEnable  "")
+  if ((NOT packageEnable) AND (NOT "${packageEnable}" STREQUAL ""))
+    foreach(fwdDepPkg  IN LISTS  ${packageName}_FORWARD_LIB_DEFINED_DEPENDENCIES)
+      if (${fwdDepPkg}_LIB_DEP_REQUIRED_${packageName})
+        tribits_private_disable_required_package_enables(${fwdDepPkg}
+          ${packageName} TRUE)
+      else()
+        tribits_private_disable_optional_package_enables(${fwdDepPkg}
+          ${packageName} TRUE)
+      endif()
     endforeach()
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES})
-      tribits_private_disable_optional_package_enables(${FWD_DEP_PKG} ${PACKAGE_NAME})
+    foreach(fwdDepPkg  IN LISTS  ${packageName}_FORWARD_TEST_DEFINED_DEPENDENCIES)
+      if (${fwdDepPkg}_TEST_DEP_REQUIRED_${packageName})
+        tribits_private_disable_required_package_enables(${fwdDepPkg}
+          ${packageName} FALSE)
+      endif()
     endforeach()
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES})
-      tribits_private_disable_required_package_enables(${FWD_DEP_PKG} ${PACKAGE_NAME} FALSE)
-    endforeach()
-
   endif()
-
 endmacro()
 
 
@@ -979,76 +951,64 @@ function(tribits_private_print_disable_required_package_enable
 endfunction()
 
 
+# Only turn off ${fwdDepPkgName} libraries or test/examples if it is currently
+# enabled or could be enabled
+#
 macro(tribits_private_disable_required_package_enables
-  FORWARD_DEP_PACKAGE_NAME PACKAGE_NAME LIBRARY_DEP
+    fwdDepPkgName  packageName  libraryDep
   )
-
-  # Only turn off FORWARD_DEP_PACKAGE libraries and test/examples if it
-  # is currently enabled or could be enabled
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME})
-  if (${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME}
-     OR ${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME} STREQUAL ""
-     )
-
-    if ("${LIBRARY_DEP}" STREQUAL "TRUE")
-
+  tribits_get_package_enable_status(${fwdDepPkgName}  ""  fwdDepPkgEnableVarName)
+  if (${fwdDepPkgEnableVarName} OR ${fwdDepPkgEnableVarName} STREQUAL "")
+    if ("${libraryDep}" STREQUAL "TRUE")
       tribits_private_print_disable_required_package_enable(
-        ${PACKAGE_NAME} ${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME}
-        ${FORWARD_DEP_PACKAGE_NAME} "library" )
-
-      set(${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME} OFF)
-
+        ${packageName}  ${fwdDepPkgEnableVarName}
+        ${fwdDepPkgName} "library" )
+      set(${fwdDepPkgEnableVarName}  OFF)
     else()
-
       set(DEP_TYPE_STR "test/example")
-
-      if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_TESTS
-        OR "${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_TESTS}" STREQUAL ""
+      if (${fwdDepPkgName}_ENABLE_TESTS
+        OR "${${fwdDepPkgName}_ENABLE_TESTS}" STREQUAL ""
         )
         tribits_private_print_disable_required_package_enable(
-          ${PACKAGE_NAME} ${FORWARD_DEP_PACKAGE_NAME}_ENABLE_TESTS
-          ${FORWARD_DEP_PACKAGE_NAME} "${DEP_TYPE_STR}" )
-        set(${FORWARD_DEP_PACKAGE_NAME}_ENABLE_TESTS OFF)
+          ${packageName} ${fwdDepPkgName}_ENABLE_TESTS
+          ${fwdDepPkgName} "${DEP_TYPE_STR}" )
+        set(${fwdDepPkgName}_ENABLE_TESTS OFF)
       endif()
 
-      if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_EXAMPLES
-        OR "${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_EXAMPLES}" STREQUAL ""
+      if (${fwdDepPkgName}_ENABLE_EXAMPLES
+        OR "${${fwdDepPkgName}_ENABLE_EXAMPLES}" STREQUAL ""
         )
         tribits_private_print_disable_required_package_enable(
-          ${PACKAGE_NAME} ${FORWARD_DEP_PACKAGE_NAME}_ENABLE_EXAMPLES
-          ${FORWARD_DEP_PACKAGE_NAME} "${DEP_TYPE_STR}" )
-        set(${FORWARD_DEP_PACKAGE_NAME}_ENABLE_EXAMPLES OFF)
+          ${packageName} ${fwdDepPkgName}_ENABLE_EXAMPLES
+          ${fwdDepPkgName} "${DEP_TYPE_STR}" )
+        set(${fwdDepPkgName}_ENABLE_EXAMPLES OFF)
       endif()
-
     endif()
-
   endif()
-
 endmacro()
 
 
 macro(tribits_private_disable_optional_package_enables
-  FORWARD_DEP_PACKAGE_NAME PACKAGE_NAME
+  fwdDepPkgName  packageName
   )
 
-  if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME} OR "${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}}" STREQUAL "")
+  if (${fwdDepPkgName}_ENABLE_${packageName} OR "${${fwdDepPkgName}_ENABLE_${packageName}}" STREQUAL "")
     # Always disable the conditional enable but only print the message if the package is enabled.
-    if (${PROJECT_NAME}_ENABLE_${FORWARD_DEP_PACKAGE_NAME})
-      if (${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME})  # is explicitly try already!
+    if (${PROJECT_NAME}_ENABLE_${fwdDepPkgName})
+      if (${fwdDepPkgName}_ENABLE_${packageName})  # is explicitly try already!
         message("-- "
-          "NOTE: Setting ${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}=OFF"
-          " which was ${${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}}"
-          " because ${FORWARD_DEP_PACKAGE_NAME} has an optional library dependence"
-          " on disabled package ${PACKAGE_NAME}")
+          "NOTE: Setting ${fwdDepPkgName}_ENABLE_${packageName}=OFF"
+          " which was ${${fwdDepPkgName}_ENABLE_${packageName}}"
+          " because ${fwdDepPkgName} has an optional library dependence"
+          " on disabled package ${packageName}")
       else()  # Not explicitly set
         message("-- "
-          "Setting ${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME}=OFF"
-          " because ${FORWARD_DEP_PACKAGE_NAME} has an optional library dependence"
-          " on disabled package ${PACKAGE_NAME}")
+          "Setting ${fwdDepPkgName}_ENABLE_${packageName}=OFF"
+          " because ${fwdDepPkgName} has an optional library dependence"
+          " on disabled package ${packageName}")
       endif()
     endif()
-    set(${FORWARD_DEP_PACKAGE_NAME}_ENABLE_${PACKAGE_NAME} OFF)
+    set(${fwdDepPkgName}_ENABLE_${packageName} OFF)
   endif()
 
 endmacro()

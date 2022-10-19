@@ -2,6 +2,18 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-10-20:
+
+* **Changed:** Disabling an external package/TPL will now disable any
+  downstream external packages/TPLs that list a dependency on that external
+  package/TPL through its
+  [`FindTPL<tplName>Dependencies.cmake`](https://tribitspub.github.io/TriBITS/users_guide/index.html#findtpl-tplname-dependencies-cmake)
+  file.  Prior to this, disabling an external package/TPL would not disable
+  dependent downstream external packages/TPLs (it would only disable
+  downstream dependent required internal packages).  To avoid this, simply
+  leave the enable status of the upstream external package/TPL empty "" and no
+  downstream propagation of disables will take place.
+
 ## 2022-10-16:
 
 * **Removed:** Removed the variables `<Project>_LIBRARY_DIRS`,
@@ -35,7 +47,7 @@ ChangeLog for TriBITS
   default, set `<Project>_ASSERT_DEFINED_DEPENDENCIES_DEFAULT` to `WARNING`,
   for example, in the project's `ProjectName.cmake` file.
 
-* **Removed:* `<Project>_ASSERT_MISSING_PACKAGES` has been removed and setting
+* **Removed:** `<Project>_ASSERT_MISSING_PACKAGES` has been removed and setting
   it will result in a `FATAL_ERROR`.  Instead, use
   `<Project>_ASSERT_DEFINED_DEPENDENCIES` (and make sure all of your project's
   listed TPL dependencies are all defined within the project).

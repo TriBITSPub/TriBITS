@@ -215,6 +215,10 @@ endmacro()
 # See `Function call tree for constructing package dependency graph`_.
 #
 macro(tribits_read_external_package_deps_files_add_to_graph  tplName)
+  # Set up empty lists for forward dependencies
+  set(${tplName}_FORWARD_LIB_DEFINED_DEPENDENCIES "")
+  set(${tplName}_FORWARD_TEST_DEFINED_DEPENDENCIES "")
+  # Read in and process the external package/TPL dependency file
   if (IS_ABSOLUTE "${${tplName}_DEPENDENCIES_FILE}")
     set(absTplDepsFile "${${tplName}_DEPENDENCIES_FILE}")
   else()
@@ -223,6 +227,10 @@ macro(tribits_read_external_package_deps_files_add_to_graph  tplName)
   if (EXISTS "${absTplDepsFile}")
     tribits_trace_file_processing(TPL  INCLUDE  "${absTplDepsFile}")
     include(${absTplDepsFile})
+    foreach(depPkg  IN LISTS  ${tplName}_LIB_DEFINED_DEPENDENCIES)
+      global_set(${tplName}_LIB_DEP_REQUIRED_${depPkg}  TRUE)
+    endforeach()
+    tribits_append_forward_dep_packages(${tplName}  LIB)
   endif()
 endmacro()
 
@@ -495,11 +503,15 @@ macro(tribits_process_package_dependencies_lists  packageName)
   tribits_set_dep_packages(${packageName} TEST  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} TEST  OPTIONAL  TPLS)
 
-  # Fill forward deps legacy vars #63
-  tribits_append_forward_dep_packages(${packageName}  LIB  REQUIRED)
-  tribits_append_forward_dep_packages(${packageName}  LIB  OPTIONAL)
-  tribits_append_forward_dep_packages(${packageName}  TEST  REQUIRED)
-  tribits_append_forward_dep_packages(${packageName}  TEST  OPTIONAL)
+  # Fill legacy forward deps lists #63
+  tribits_append_forward_dep_packages(${packageName}  LIB)
+  tribits_append_forward_dep_packages(${packageName}  TEST)
+
+  # Fill legacy forward deps lists #63
+  tribits_append_legacy_forward_dep_packages(${packageName}  LIB  REQUIRED)
+  tribits_append_legacy_forward_dep_packages(${packageName}  LIB  OPTIONAL)
+  tribits_append_legacy_forward_dep_packages(${packageName}  TEST  REQUIRED)
+  tribits_append_legacy_forward_dep_packages(${packageName}  TEST  OPTIONAL)
 
 endmacro()
 
@@ -639,6 +651,42 @@ macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
 endmacro()
 
 
+# @MACRO: tribits_append_legacy_forward_dep_packages()
+#
+# Appends legacy forward/downstream package dependency lists for the upstream
+# dependent package list provided. (Remove when finished with #63)
+#
+macro(tribits_append_legacy_forward_dep_packages  packageName  libOrTest  requiredOrOptional)
+
+  set(legacyInputListType ${libOrTest}_${requiredOrOptional}_DEP_PACKAGES)
+
+  set(legacyDepPkgListName "${packageName}_${legacyInputListType}")
+
+  foreach(depPkg  IN LISTS  ${legacyDepPkgListName})
+    set(legacyFwdDepPkgListName "${depPkg}_FORWARD_${legacyInputListType}")
+    if (DEFINED ${legacyFwdDepPkgListName})
+      list(APPEND ${legacyFwdDepPkgListName} ${packageName})
+    else()
+      if (${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
+          ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
+        )
+        tribits_abort_on_missing_package(${depPkg} ${packageName})
+      else()
+        if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+          message(
+            "\n***"
+            "\n*** NOTE: The package ${depPkg} has forward dependent package"
+              " ${packageName}, but that dependency is being ignored because the package"
+              " ${depPkg} is missing!"
+            "\n***\n" )
+        endif()
+      endif()
+    endif()
+  endforeach()
+
+endmacro()
+
+
 # @MACRO: tribits_append_forward_dep_packages()
 #
 # Appends forward/downstream package dependency lists for the upstream
@@ -659,29 +707,17 @@ endmacro()
 # dependencies for a given ``<packageName>`` by the downstream packages that
 # declare dependencies on it.
 #
-# **__Legacy variables #63:__**
-#
-# Appends the var::
-#
-#    <packageName>_FORWARD_<listType>
-#
-# for one of the FORWARD vars listed in `Legacy list variables defining the
-# package dependencies graph`_.
-#
 # See `Function call tree for constructing package dependency graph`_.
 #
-macro(tribits_append_forward_dep_packages  packageName  libOrTest  requiredOrOptional)
+macro(tribits_append_forward_dep_packages  packageName  libOrTest)
 
-  set(legacyInputListType ${libOrTest}_${requiredOrOptional}_DEP_PACKAGES)
+  #message("\ntribits_append_forward_dep_packages(${packageName}  ${libOrTest})")
 
-  set(legacyDepPkgListName "${packageName}_${legacyInputListType}")
-
-  foreach(depPkg  IN LISTS  ${legacyDepPkgListName})
-    set(fwdDepPkgListName "${depPkg}_FORWARD_${libOrTest}_DEFINED_DEPENDENCIES")
-    set(legacyFwdDepPkgListName "${depPkg}_FORWARD_${legacyInputListType}")
-    if (DEFINED ${legacyFwdDepPkgListName})
+  foreach(depPkg  IN LISTS  ${packageName}_${libOrTest}_DEFINED_DEPENDENCIES)
+    set(fwdDepPkgListName ${depPkg}_FORWARD_${libOrTest}_DEFINED_DEPENDENCIES)
+    #print_var(${fwdDepPkgListName})
+    if (DEFINED ${fwdDepPkgListName})
       list(APPEND ${fwdDepPkgListName} ${packageName})
-      list(APPEND ${legacyFwdDepPkgListName} ${packageName})
     else()
       if (${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
           ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
@@ -698,6 +734,7 @@ macro(tribits_append_forward_dep_packages  packageName  libOrTest  requiredOrOpt
         endif()
       endif()
     endif()
+    #print_var(${fwdDepPkgListName})
   endforeach()
 
 endmacro()
