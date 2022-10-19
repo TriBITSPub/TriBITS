@@ -1780,6 +1780,8 @@ defined:
     the package is in relation to other packages.  NOTE: This variable is
     **only** defined if the package is actually enabled!
 
+  .. _${PACKAGE_NAME}_PARENT_REPOSITORY:
+
   ``${PACKAGE_NAME}_PARENT_REPOSITORY``
 
     The name of the package's parent repository.  This can be used by a

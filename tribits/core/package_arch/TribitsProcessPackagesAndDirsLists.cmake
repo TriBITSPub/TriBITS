@@ -386,12 +386,15 @@ endfunction()
 #
 # * `${PACKAGE_NAME}_SOURCE_DIR`_
 # * `${PACKAGE_NAME}_REL_SOURCE_DIR`_
+# * `${PACKAGE_NAME}_PARENT_PACKAGE`_ (to empty "")
+# * `${PACKAGE_NAME}_PARENT_REPOSITORY`_ (to empty "")
 # * `${PACKAGE_NAME}_TESTGROUP`_
+# * `${PACKAGE_NAME}_PACKAGE_BUILD_STATUS`_ (to ``INTERNAL``)
 #
 # and sets up some standard enable/disable vars with default values as defined
-# in `TriBITS Package Cache Variables`_ like::
+# in `TriBITS Package Cache Variables`_ like:
 #
-#   ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}
+# * `${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}`_
 #
 # NOTE: Set ``TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE=TRUE`` to see
 # really verbose debug output from this macro.
@@ -559,15 +562,14 @@ macro(tribits_process_packages_and_dirs_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
       if (PACKAGE_EXISTS OR ${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK)
         list(APPEND ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES ${TRIBITS_PACKAGE})
-        tribits_insert_standard_package_options(${TRIBITS_PACKAGE}
-          ${PACKAGE_TESTGROUP})
-        set(${TRIBITS_PACKAGE}_PACKAGE_BUILD_STATUS INTERNAL)
         set(${TRIBITS_PACKAGE}_SOURCE_DIR
           "${PROJECT_SOURCE_DIR}/${REPOSITORY_AND_PACKAGE_DIR}")
         set(${TRIBITS_PACKAGE}_REL_SOURCE_DIR
           "${REPOSITORY_AND_PACKAGE_DIR}")
         set(${TRIBITS_PACKAGE}_PARENT_PACKAGE "")
         set(${TRIBITS_PACKAGE}_PARENT_REPOSITORY ${REPOSITORY_NAME})
+        tribits_insert_standard_package_options(${TRIBITS_PACKAGE}  ${PACKAGE_TESTGROUP})
+        set(${TRIBITS_PACKAGE}_PACKAGE_BUILD_STATUS INTERNAL)
       else()
         if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
           message(
@@ -581,10 +583,14 @@ macro(tribits_process_packages_and_dirs_lists  REPOSITORY_NAME  REPOSITORY_DIR)
       # gets set to TRUE for some unit tests.  Otherwise, in every legitimate
       # usage of this macro it is always FALSE.
 
-      if (TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE)
+      if (TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE
+          OR  ${PROJECT_NAME}_VERBOSE_CONFIGURE
+        )
         print_var(${TRIBITS_PACKAGE}_SOURCE_DIR)
+        print_var(${TRIBITS_PACKAGE}_REL_SOURCE_DIR)
         print_var(${TRIBITS_PACKAGE}_PARENT_PACKAGE)
         print_var(${TRIBITS_PACKAGE}_PARENT_REPOSITORY)
+        print_var(${TRIBITS_PACKAGE}_PACKAGE_BUILD_STATUS)
       endif()
 
       if (TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE)

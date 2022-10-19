@@ -452,6 +452,7 @@ or::
   -D <PackageTreatedAsExternal>_ROOT=<path>
 
 .. _${PACKAGE_NAME}_PACKAGE_BUILD_STATUS:
+.. _${TPL_NAME}_PACKAGE_BUILD_STATUS:
 
 The final status of whether a package is treated as an internal package or an
 external package is provided by the variable::
