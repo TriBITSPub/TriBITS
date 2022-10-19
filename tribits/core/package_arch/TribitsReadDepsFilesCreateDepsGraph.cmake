@@ -38,6 +38,7 @@
 # @HEADER
 
 include(TribitsPackageDefineDependencies)
+include(TribitsPackageDependencies)
 include(SetDefault)
 include(DualScopeSet)
 
@@ -486,12 +487,12 @@ macro(tribits_process_package_dependencies_lists  packageName)
 
   # Fill the backward dependency vars
   tribits_set_dep_packages(${packageName} LIB  REQUIRED  PACKAGES)
-  tribits_set_dep_packages(${packageName} LIB  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} LIB  OPTIONAL  PACKAGES)
+  tribits_set_dep_packages(${packageName} LIB  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} LIB  OPTIONAL  TPLS)
   tribits_set_dep_packages(${packageName} TEST  REQUIRED  PACKAGES)
-  tribits_set_dep_packages(${packageName} TEST  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} TEST  OPTIONAL  PACKAGES)
+  tribits_set_dep_packages(${packageName} TEST  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} TEST  OPTIONAL  TPLS)
 
   # Fill forward deps legacy vars #63

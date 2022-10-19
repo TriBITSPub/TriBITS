@@ -114,7 +114,7 @@ function(tribits_dump_package_dependencies_info)
 
   if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
     message("")
-    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
+    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_PACKAGES})
       tribits_print_package_dependencies(${TRIBITS_PACKAGE})
       message("")
     endforeach()
@@ -170,8 +170,8 @@ function(tribits_print_package_dependencies  packageName)
     message("")
   endif()
 
-  tribits_print_nonempty_package_defined_deps_list(${packageName}  LIB  printedVar)
-  tribits_print_nonempty_package_defined_deps_list(${packageName}  TEST  printedVar)
+  tribits_print_nonempty_package_deps_list(${packageName}  LIB  DEFINED  printedVar)
+  tribits_print_nonempty_package_deps_list(${packageName}  TEST  DEFINED  printedVar)
 
   if (${PROJECT_NAME}_DUMP_FORWARD_PACKAGE_DEPENDENCIES)
     tribits_print_nonempty_package_forward_defined_deps_list(${packageName}  LIB
@@ -180,9 +180,8 @@ function(tribits_print_package_dependencies  packageName)
       printedVar)
   endif()
 
-
   if (NOT printedVar)
-    message("-- ${packageName}: No dependencies!")
+    message("-- ${packageName}: No defined dependencies!")
   endif()
 
 endfunction()
@@ -193,7 +192,7 @@ endfunction()
 #
 # Usage::
 #
-#   tribits_print_nonempty_package_defined_deps_list(<packageName> <libOrTest>
+#   tribits_print_nonempty_package_deps_list(<packageName> <libOrTest>
 #     <printedListOut>)
 #
 # which prints out the list::
@@ -202,10 +201,10 @@ endfunction()
 #
 # if it is non-empty.
 #
-function(tribits_print_nonempty_package_defined_deps_list  packageName  libOrTest
-    printedListOut
+function(tribits_print_nonempty_package_deps_list  packageName
+    libOrTest  definedOrEnabled  printedListOut
   )
-  set(depsListName ${packageName}_${libOrTest}_DEFINED_DEPENDENCIES)
+  set(depsListName ${packageName}_${libOrTest}_${definedOrEnabled}_DEPENDENCIES)
   if (NOT "${${depsListName}}" STREQUAL "")
     set(lineStr "-- ${depsListName}:")
     foreach (depPkg IN LISTS ${depsListName})

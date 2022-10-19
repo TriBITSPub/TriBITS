@@ -42,46 +42,40 @@ Package dependencies information:
 -- Thyra_LIB_REQUIRED_DEP_PACKAGES: ThyraCoreLibs
 -- Thyra_LIB_OPTIONAL_DEP_PACKAGES: ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt
 
-Dumping direct dependencies for each package ...
+Dumping direct enabled dependencies for each package ...
 
--- MPI_LIB_DEFINED_DEPENDENCIES:
+-- MPI: No enabled dependencies!
 
--- BLAS_LIB_DEFINED_DEPENDENCIES:
+-- BLAS: No enabled dependencies!
 
--- LAPACK_LIB_DEFINED_DEPENDENCIES:
+-- LAPACK_LIB_ENABLED_DEPENDENCIES: BLAS[O]
 
--- Boost_LIB_DEFINED_DEPENDENCIES:
+-- Boost: No enabled dependencies!
 
--- UMFPACK_LIB_DEFINED_DEPENDENCIES:
+-- UMFPACK: No enabled dependencies!
 
--- AMD_LIB_DEFINED_DEPENDENCIES:
+-- AMD: No enabled dependencies!
 
--- PETSC_LIB_DEFINED_DEPENDENCIES:
+-- PETSC: No enabled dependencies!
 
--- Teuchos_LIB_ENABLED_DEPENDENCIES: BLAS LAPACK
--- Teuchos_LIB_DEFINED_DEPENDENCIES: BLAS LAPACK Boost MPI
+-- Teuchos_LIB_ENABLED_DEPENDENCIES: BLAS[R] LAPACK[R]
 
--- RTOp_LIB_ENABLED_DEPENDENCIES: Teuchos
--- RTOp_LIB_DEFINED_DEPENDENCIES: Teuchos
+-- RTOp_LIB_ENABLED_DEPENDENCIES: Teuchos[R]
 
--- Epetra_LIB_ENABLED_DEPENDENCIES: BLAS LAPACK
--- Epetra_LIB_DEFINED_DEPENDENCIES: BLAS LAPACK MPI
+-- Epetra_LIB_ENABLED_DEPENDENCIES: BLAS[R] LAPACK[R]
 
--- Triutils_LIB_DEFINED_DEPENDENCIES: Epetra
+-- Triutils: No enabled dependencies!
 
--- EpetraExt_LIB_DEFINED_DEPENDENCIES: Teuchos Epetra Triutils UMFPACK AMD PETSC
+-- EpetraExt: No enabled dependencies!
 
--- ThyraCoreLibs_LIB_ENABLED_DEPENDENCIES: Teuchos RTOp
--- ThyraCoreLibs_LIB_DEFINED_DEPENDENCIES: Teuchos RTOp
+-- ThyraCoreLibs_LIB_ENABLED_DEPENDENCIES: Teuchos[R] RTOp[R]
 
--- ThyraGoodStuff_LIB_DEFINED_DEPENDENCIES: ThyraCoreLibs
+-- ThyraGoodStuff: No enabled dependencies!
 
--- ThyraCrazyStuff_LIB_DEFINED_DEPENDENCIES: ThyraGoodStuff
+-- ThyraCrazyStuff: No enabled dependencies!
 
--- ThyraEpetra_LIB_ENABLED_DEPENDENCIES: Epetra ThyraCoreLibs
--- ThyraEpetra_LIB_DEFINED_DEPENDENCIES: Epetra ThyraCoreLibs
+-- ThyraEpetra_LIB_ENABLED_DEPENDENCIES: Epetra[R] ThyraCoreLibs[R]
 
--- ThyraEpetraExt_LIB_DEFINED_DEPENDENCIES: ThyraEpetra EpetraExt
+-- ThyraEpetraExt: No enabled dependencies!
 
--- Thyra_LIB_ENABLED_DEPENDENCIES: ThyraCoreLibs ThyraEpetra
--- Thyra_LIB_DEFINED_DEPENDENCIES: ThyraCoreLibs ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt
+-- Thyra_LIB_ENABLED_DEPENDENCIES: ThyraCoreLibs[R] ThyraEpetra[O]

@@ -15,6 +15,44 @@ Package dependencies information:
 -- Trilinos_DEFINED_PACKAGES: MPI BLAS LAPACK Boost Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS DUMMY TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado ThyraCoreLibs ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer
 -- Trilinos_NUM_DEFINED_PACKAGES='49'
 
+-- MPI: No defined dependencies!
+
+-- BLAS: No defined dependencies!
+
+-- LAPACK_LIB_DEFINED_DEPENDENCIES: BLAS[O]
+
+-- Boost: No defined dependencies!
+
+-- Scotch: No defined dependencies!
+
+-- METIS: No defined dependencies!
+
+-- ParMETIS_LIB_DEFINED_DEPENDENCIES: METIS[O]
+
+-- CppUnit: No defined dependencies!
+
+-- ADOLC: No defined dependencies!
+
+-- ADIC: No defined dependencies!
+
+-- TVMET: No defined dependencies!
+
+-- y12m: No defined dependencies!
+
+-- SuperLUDist_LIB_DEFINED_DEPENDENCIES: ParMETIS[O] BLAS[O]
+
+-- SuperLU_LIB_DEFINED_DEPENDENCIES: ParMETIS[O] BLAS[O]
+
+-- UMFPACK: No defined dependencies!
+
+-- AMD: No defined dependencies!
+
+-- PETSC: No defined dependencies!
+
+-- MUMPS: No defined dependencies!
+
+-- DUMMY: No defined dependencies!
+
 -- TrilinosFramework_TEST_OPTIONAL_DEP_TPLS: MPI
 
 -- TrilinosFramework_TEST_DEFINED_DEPENDENCIES: MPI[O]
@@ -213,7 +251,7 @@ Package dependencies information:
 -- ML_LIB_OPTIONAL_DEP_TPLS: MPI METIS ParMETIS PETSC
 -- ML_TEST_OPTIONAL_DEP_TPLS: METIS ParMETIS
 
--- ML_LIB_DEFINED_DEPENDENCIES: BLAS[R] LAPACK[R] Teuchos[O] Epetra[O] Zoltan[O] Galeri[O] Amesos[O] Ifpack[O] AztecOO[O] EpetraExt[O] Isorropia[O] MPI[O] METIS[O] ParMETIS[O] PETSC[O]
+-- ML_LIB_DEFINED_DEPENDENCIES: Teuchos[O] Epetra[O] Zoltan[O] Galeri[O] Amesos[O] Ifpack[O] AztecOO[O] EpetraExt[O] Isorropia[O] BLAS[R] LAPACK[R] MPI[O] METIS[O] ParMETIS[O] PETSC[O]
 -- ML_TEST_DEFINED_DEPENDENCIES: METIS[O] ParMETIS[O]
 -- ML_FORWARD_LIB_DEFINED_DEPENDENCIES: Stratimikos[O]
 -- ML_FORWARD_TEST_DEFINED_DEPENDENCIES: Belos[O]
@@ -242,7 +280,7 @@ Package dependencies information:
 -- RBGen_LIB_OPTIONAL_DEP_PACKAGES: Epetra EpetraExt
 -- RBGen_LIB_REQUIRED_DEP_TPLS: DUMMY
 
--- RBGen_LIB_DEFINED_DEPENDENCIES: Teuchos[R] DUMMY[R] Epetra[O] EpetraExt[O]
+-- RBGen_LIB_DEFINED_DEPENDENCIES: Teuchos[R] Epetra[O] EpetraExt[O] DUMMY[R]
 
 -- Phalanx_LIB_REQUIRED_DEP_PACKAGES: Teuchos Shards Sacado
 -- Phalanx_TEST_OPTIONAL_DEP_PACKAGES: Belos Epetra Ifpack Intrepid
@@ -259,136 +297,105 @@ Package dependencies information:
 -- Panzer_TEST_OPTIONAL_DEP_PACKAGES: Stratimikos
 -- Panzer_LIB_REQUIRED_DEP_TPLS: MPI Boost
 
--- Panzer_LIB_DEFINED_DEPENDENCIES: Teuchos[R] Sacado[R] Phalanx[R] Intrepid[R] Thyra[R] Tpetra[R] Epetra[R] EpetraExt[R] MPI[R] Boost[R] Stokhos[O]
+-- Panzer_LIB_DEFINED_DEPENDENCIES: Teuchos[R] Sacado[R] Phalanx[R] Intrepid[R] Thyra[R] Tpetra[R] Epetra[R] EpetraExt[R] Stokhos[O] MPI[R] Boost[R]
 -- Panzer_TEST_DEFINED_DEPENDENCIES: Stratimikos[O]
 
-Dumping direct dependencies for each package ...
+Dumping direct enabled dependencies for each package ...
 
--- MPI_LIB_DEFINED_DEPENDENCIES:
+-- MPI: No enabled dependencies!
 
--- BLAS_LIB_DEFINED_DEPENDENCIES:
+-- BLAS: No enabled dependencies!
 
--- LAPACK_LIB_DEFINED_DEPENDENCIES:
+-- LAPACK_LIB_ENABLED_DEPENDENCIES: BLAS[O]
 
--- Boost_LIB_DEFINED_DEPENDENCIES:
+-- Boost: No enabled dependencies!
 
--- Scotch_LIB_DEFINED_DEPENDENCIES:
+-- Scotch: No enabled dependencies!
 
--- METIS_LIB_DEFINED_DEPENDENCIES:
+-- METIS: No enabled dependencies!
 
--- ParMETIS_LIB_DEFINED_DEPENDENCIES:
+-- ParMETIS: No enabled dependencies!
 
--- CppUnit_LIB_DEFINED_DEPENDENCIES:
+-- CppUnit: No enabled dependencies!
 
--- ADOLC_LIB_DEFINED_DEPENDENCIES:
+-- ADOLC: No enabled dependencies!
 
--- ADIC_LIB_DEFINED_DEPENDENCIES:
+-- ADIC: No enabled dependencies!
 
--- TVMET_LIB_DEFINED_DEPENDENCIES:
+-- TVMET: No enabled dependencies!
 
--- y12m_LIB_DEFINED_DEPENDENCIES:
+-- y12m: No enabled dependencies!
 
--- SuperLUDist_LIB_DEFINED_DEPENDENCIES:
+-- SuperLUDist: No enabled dependencies!
 
--- SuperLU_LIB_DEFINED_DEPENDENCIES:
+-- SuperLU: No enabled dependencies!
 
--- UMFPACK_LIB_DEFINED_DEPENDENCIES:
+-- UMFPACK: No enabled dependencies!
 
--- AMD_LIB_DEFINED_DEPENDENCIES:
+-- AMD: No enabled dependencies!
 
--- PETSC_LIB_DEFINED_DEPENDENCIES:
+-- PETSC: No enabled dependencies!
 
--- MUMPS_LIB_DEFINED_DEPENDENCIES:
+-- MUMPS: No enabled dependencies!
 
--- DUMMY_LIB_DEFINED_DEPENDENCIES:
+-- DUMMY: No enabled dependencies!
 
--- TrilinosFramework_LIB_DEFINED_DEPENDENCIES:
--- TrilinosFramework_TEST_DEFINED_DEPENDENCIES: MPI
+-- TrilinosFramework: No enabled dependencies!
 
--- Teuchos_LIB_ENABLED_DEPENDENCIES: BLAS LAPACK
--- Teuchos_LIB_DEFINED_DEPENDENCIES: BLAS LAPACK Boost MPI
+-- Teuchos_LIB_ENABLED_DEPENDENCIES: BLAS[R] LAPACK[R]
 
--- RTOp_LIB_ENABLED_DEPENDENCIES: Teuchos
--- RTOp_LIB_DEFINED_DEPENDENCIES: Teuchos
+-- RTOp_LIB_ENABLED_DEPENDENCIES: Teuchos[R]
 
--- Epetra_LIB_ENABLED_DEPENDENCIES: BLAS LAPACK
--- Epetra_LIB_DEFINED_DEPENDENCIES: BLAS LAPACK MPI
+-- Epetra_LIB_ENABLED_DEPENDENCIES: BLAS[R] LAPACK[R]
 
--- Zoltan_LIB_DEFINED_DEPENDENCIES: MPI ParMETIS Scotch
+-- Zoltan: No enabled dependencies!
 
--- Shards_TEST_DEFINED_DEPENDENCIES: Teuchos
+-- Shards: No enabled dependencies!
 
--- Triutils_LIB_ENABLED_DEPENDENCIES: Epetra
--- Triutils_LIB_DEFINED_DEPENDENCIES: Epetra
+-- Triutils_LIB_ENABLED_DEPENDENCIES: Epetra[R]
 
--- Tpetra_LIB_ENABLED_DEPENDENCIES: Teuchos
--- Tpetra_LIB_DEFINED_DEPENDENCIES: Teuchos
--- Tpetra_TEST_DEFINED_DEPENDENCIES: Triutils
+-- Tpetra_LIB_ENABLED_DEPENDENCIES: Teuchos[R]
 
--- EpetraExt_LIB_ENABLED_DEPENDENCIES: Teuchos Epetra Triutils Zoltan
--- EpetraExt_LIB_DEFINED_DEPENDENCIES: Teuchos Epetra Triutils Zoltan UMFPACK AMD PETSC
+-- EpetraExt_LIB_ENABLED_DEPENDENCIES: Teuchos[R] Epetra[R] Triutils[O] Zoltan[O]
 
--- Stokhos_LIB_DEFINED_DEPENDENCIES: Teuchos
+-- Stokhos: No enabled dependencies!
 
--- Sacado_LIB_DEFINED_DEPENDENCIES: Teuchos Stokhos Epetra EpetraExt
--- Sacado_TEST_DEFINED_DEPENDENCIES: ADOLC CppUnit
+-- Sacado: No enabled dependencies!
 
--- ThyraCoreLibs_LIB_ENABLED_DEPENDENCIES: Teuchos RTOp
--- ThyraCoreLibs_LIB_DEFINED_DEPENDENCIES: Teuchos RTOp
+-- ThyraCoreLibs_LIB_ENABLED_DEPENDENCIES: Teuchos[R] RTOp[R]
 
--- ThyraGoodStuff_LIB_DEFINED_DEPENDENCIES: ThyraCoreLibs
+-- ThyraGoodStuff: No enabled dependencies!
 
--- ThyraCrazyStuff_LIB_DEFINED_DEPENDENCIES: ThyraGoodStuff
+-- ThyraCrazyStuff: No enabled dependencies!
 
--- ThyraEpetra_LIB_ENABLED_DEPENDENCIES: Epetra ThyraCoreLibs
--- ThyraEpetra_LIB_DEFINED_DEPENDENCIES: Epetra ThyraCoreLibs
+-- ThyraEpetra_LIB_ENABLED_DEPENDENCIES: Epetra[R] ThyraCoreLibs[R]
 
--- ThyraEpetraExt_LIB_ENABLED_DEPENDENCIES: ThyraEpetra EpetraExt
--- ThyraEpetraExt_LIB_DEFINED_DEPENDENCIES: ThyraEpetra EpetraExt
+-- ThyraEpetraExt_LIB_ENABLED_DEPENDENCIES: ThyraEpetra[R] EpetraExt[R]
 
--- ThyraTpetra_LIB_ENABLED_DEPENDENCIES: Tpetra ThyraCoreLibs
--- ThyraTpetra_LIB_DEFINED_DEPENDENCIES: Tpetra ThyraCoreLibs
+-- ThyraTpetra_LIB_ENABLED_DEPENDENCIES: Tpetra[R] ThyraCoreLibs[R]
 
--- Thyra_LIB_ENABLED_DEPENDENCIES: ThyraCoreLibs ThyraEpetra ThyraEpetraExt ThyraTpetra
--- Thyra_LIB_DEFINED_DEPENDENCIES: ThyraCoreLibs ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt ThyraTpetra
+-- Thyra_LIB_ENABLED_DEPENDENCIES: ThyraCoreLibs[R] ThyraEpetra[O] ThyraEpetraExt[O] ThyraTpetra[O]
 
--- Isorropia_LIB_ENABLED_DEPENDENCIES: Teuchos Epetra Zoltan EpetraExt
--- Isorropia_LIB_DEFINED_DEPENDENCIES: Teuchos Epetra Zoltan EpetraExt
+-- Isorropia_LIB_ENABLED_DEPENDENCIES: Teuchos[R] Epetra[R] Zoltan[R] EpetraExt[O]
 
--- AztecOO_LIB_ENABLED_DEPENDENCIES: Epetra Triutils Teuchos
--- AztecOO_LIB_DEFINED_DEPENDENCIES: Epetra Triutils Teuchos y12m
+-- AztecOO_LIB_ENABLED_DEPENDENCIES: Epetra[R] Triutils[R] Teuchos[O]
 
--- Galeri_LIB_ENABLED_DEPENDENCIES: Teuchos Epetra EpetraExt
--- Galeri_LIB_DEFINED_DEPENDENCIES: Teuchos Epetra EpetraExt
+-- Galeri_LIB_ENABLED_DEPENDENCIES: Teuchos[R] Epetra[R] EpetraExt[O]
 
--- Amesos_LIB_ENABLED_DEPENDENCIES: Teuchos Epetra EpetraExt
--- Amesos_LIB_DEFINED_DEPENDENCIES: Teuchos Epetra EpetraExt SuperLUDist ParMETIS UMFPACK SuperLU MUMPS
--- Amesos_TEST_DEFINED_DEPENDENCIES: Triutils Galeri
+-- Amesos_LIB_ENABLED_DEPENDENCIES: Teuchos[R] Epetra[R] EpetraExt[O]
 
--- Intrepid_LIB_ENABLED_DEPENDENCIES: Teuchos Shards
--- Intrepid_LIB_DEFINED_DEPENDENCIES: Teuchos Shards Sacado
--- Intrepid_TEST_DEFINED_DEPENDENCIES: Epetra EpetraExt Amesos
+-- Intrepid_LIB_ENABLED_DEPENDENCIES: Teuchos[R] Shards[R]
 
--- Ifpack_LIB_ENABLED_DEPENDENCIES: Teuchos Epetra Amesos AztecOO
--- Ifpack_LIB_DEFINED_DEPENDENCIES: Teuchos Epetra Amesos AztecOO
--- Ifpack_TEST_DEFINED_DEPENDENCIES: Galeri
+-- Ifpack_LIB_ENABLED_DEPENDENCIES: Teuchos[R] Epetra[R] Amesos[O] AztecOO[O]
 
--- ML_LIB_ENABLED_DEPENDENCIES: Teuchos Epetra Zoltan Galeri Amesos Ifpack AztecOO EpetraExt Isorropia BLAS LAPACK
--- ML_LIB_DEFINED_DEPENDENCIES: Teuchos Epetra Zoltan Galeri Amesos Ifpack AztecOO EpetraExt Isorropia BLAS LAPACK MPI METIS ParMETIS PETSC
--- ML_TEST_DEFINED_DEPENDENCIES: METIS ParMETIS
+-- ML_LIB_ENABLED_DEPENDENCIES: Teuchos[O] Epetra[O] Zoltan[O] Galeri[O] Amesos[O] Ifpack[O] AztecOO[O] EpetraExt[O] Isorropia[O] BLAS[R] LAPACK[R]
 
--- Belos_LIB_DEFINED_DEPENDENCIES: Teuchos Epetra Tpetra
--- Belos_TEST_DEFINED_DEPENDENCIES: Triutils EpetraExt Ifpack ML
+-- Belos: No enabled dependencies!
 
--- Stratimikos_LIB_ENABLED_DEPENDENCIES: ThyraEpetraExt ThyraCoreLibs Amesos AztecOO Ifpack ML
--- Stratimikos_LIB_DEFINED_DEPENDENCIES: ThyraEpetraExt ThyraCoreLibs Amesos AztecOO Belos Ifpack ML
--- Stratimikos_TEST_DEFINED_DEPENDENCIES: Triutils
+-- Stratimikos_LIB_ENABLED_DEPENDENCIES: ThyraEpetraExt[R] ThyraCoreLibs[R] Amesos[O] AztecOO[O] Ifpack[O] ML[O]
 
--- RBGen_LIB_ENABLED_DEPENDENCIES: Teuchos Epetra EpetraExt DUMMY
--- RBGen_LIB_DEFINED_DEPENDENCIES: Teuchos Epetra EpetraExt DUMMY
+-- RBGen_LIB_ENABLED_DEPENDENCIES: Teuchos[R] Epetra[O] EpetraExt[O] DUMMY[R]
 
--- Phalanx_LIB_DEFINED_DEPENDENCIES: Teuchos Shards Sacado Boost
--- Phalanx_TEST_DEFINED_DEPENDENCIES: Belos Epetra Ifpack Intrepid TVMET
+-- Phalanx: No enabled dependencies!
 
--- Panzer_LIB_DEFINED_DEPENDENCIES: Teuchos Sacado Phalanx Intrepid Thyra Tpetra Epetra EpetraExt Stokhos MPI Boost
--- Panzer_TEST_DEFINED_DEPENDENCIES: Stratimikos
+-- Panzer: No enabled dependencies!

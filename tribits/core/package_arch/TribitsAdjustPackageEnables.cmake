@@ -42,6 +42,7 @@ include(TribitsProcessPackagesAndDirsLists)
 include(TribitsAddOptionAndDefine)
 include(TribitsGeneralMacros)
 include(TribitsPrintEnabledPackagesLists)
+include(TribitsPrintDependencyInfo)
 include(TribitsPackageDependencies)
 
 include(AdvancedOption)
@@ -387,8 +388,7 @@ macro(tribits_setup_direct_packages_dependencies_lists_and_lib_required_enable_v
   foreach(tad1_internalPkgName   IN LISTS
       ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
     )
-    tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars(
-      ${tad1_internalPkgName})
+    tribits_setup_enabled_dependencies_lists_and_enable_vars(${tad1_internalPkgName})
   endforeach()
 
 endmacro()
@@ -398,10 +398,8 @@ endmacro()
 #
 macro(tribits_print_direct_packages_dependencies_lists)
   if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
-    message("\nDumping direct dependencies for each package ...")
-    foreach(tad1_tribitsPkg  IN  LISTS  ${PROJECT_NAME}_DEFINED_TPLS
-        ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
-      )
+    message("\nDumping direct enabled dependencies for each package ...")
+    foreach(tad1_tribitsPkg  IN  LISTS  ${PROJECT_NAME}_DEFINED_PACKAGES)
       tribits_print_direct_package_dependencies_lists(${tad1_tribitsPkg})
     endforeach()
   endif()
@@ -759,16 +757,10 @@ endmacro()
 #
 # NOTES:
 #
-#  * ${packageName}_LIB_DEFINED_DEPENDENCIES will be set regardless if
-#    ${packageName} is enabled or not.
-#
 #  * ${packageName}_LIB_ENABLED_DEPENDENCIES is only set if ${packageName} is
 #    enabled and will only contain the names of direct library upstream
 #    internal and external packages ${depPkg} that are required or are
 #    optional and ${packageName}_ENABLE_${depPkg} is set to ON.
-#
-#  * ${packageName}_TEST_DEFINED_DEPENDENCIES will be set regardless if
-#    ${packageName} is enabled or not.
 #
 #  * ${packageName}_TEST_ENABLED_DEPENDENCIES is only set if ${packageName} is
 #    enabled and will only contain the names of direct test/example upstream
@@ -783,17 +775,13 @@ endmacro()
 #    packages where only the shell of the parent package is enabled and not
 #    all of its required subpackages are enabled.
 #
-macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars
-    packageName
-  )
+macro(tribits_setup_enabled_dependencies_lists_and_enable_vars  packageName)
 
   # LIB dependencies
 
-  set(${packageName}_LIB_DEFINED_DEPENDENCIES "")
   set(${packageName}_LIB_ENABLED_DEPENDENCIES "")
 
   foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_PACKAGES})
-    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
     if (${PROJECT_NAME}_ENABLE_${packageName} AND ${PROJECT_NAME}_ENABLE_${depPkg})
       set(${packageName}_ENABLE_${depPkg} ON)
       list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
@@ -803,14 +791,12 @@ macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_va
   # some cases!
 
   foreach(depPkg ${${packageName}_LIB_OPTIONAL_DEP_PACKAGES})
-    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
     if (${PROJECT_NAME}_ENABLE_${packageName} AND ${packageName}_ENABLE_${depPkg})
       list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
     endif()
   endforeach()
 
   foreach(depPkg ${${packageName}_LIB_REQUIRED_DEP_TPLS})
-    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
     if (${PROJECT_NAME}_ENABLE_${packageName})
       set(${packageName}_ENABLE_${depPkg} ON)
       list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
@@ -818,7 +804,6 @@ macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_va
   endforeach()
 
   foreach(depPkg ${${packageName}_LIB_OPTIONAL_DEP_TPLS})
-    list(APPEND ${packageName}_LIB_DEFINED_DEPENDENCIES ${depPkg})
     if (${PROJECT_NAME}_ENABLE_${packageName} AND ${packageName}_ENABLE_${depPkg})
       list(APPEND ${packageName}_LIB_ENABLED_DEPENDENCIES ${depPkg})
     endif()
@@ -826,7 +811,6 @@ macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_va
 
   # TEST dependencies
 
-  set(${packageName}_TEST_DEFINED_DEPENDENCIES "")
   set(${packageName}_TEST_ENABLED_DEPENDENCIES "")
 
   if (${PROJECT_NAME}_ENABLE_${packageName}
@@ -839,28 +823,24 @@ macro(tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_va
   endif()
 
   foreach(depPkg ${${packageName}_TEST_REQUIRED_DEP_PACKAGES})
-    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
     if (enablePkgAndTestsOrExamples)
       list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
     endif()
   endforeach()
 
   foreach(depPkg ${${packageName}_TEST_OPTIONAL_DEP_PACKAGES})
-    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
     if (enablePkgAndTestsOrExamples AND ${packageName}_ENABLE_${depPkg})
       list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
     endif()
   endforeach()
 
   foreach(depPkg ${${packageName}_TEST_REQUIRED_DEP_TPLS})
-    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
     if (enablePkgAndTestsOrExamples)
       list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
     endif()
   endforeach()
 
   foreach(depPkg ${${packageName}_TEST_OPTIONAL_DEP_TPLS})
-    list(APPEND ${packageName}_TEST_DEFINED_DEPENDENCIES ${depPkg})
     if (enablePkgAndTestsOrExamples AND ${packageName}_ENABLE_${depPkg})
       list(APPEND ${packageName}_TEST_ENABLED_DEPENDENCIES ${depPkg})
     endif()
@@ -877,12 +857,13 @@ endmacro()
 # Function to print the direct package dependency lists
 #
 function(tribits_print_direct_package_dependencies_lists  packageName)
-  set(PRINTED_VAR "")
   message("")
-  print_nonempty_var_with_spaces(${packageName}_LIB_ENABLED_DEPENDENCIES PRINTED_VAR)
-  print_var_with_spaces(${packageName}_LIB_DEFINED_DEPENDENCIES PRINTED_VAR)
-  print_nonempty_var_with_spaces(${packageName}_TEST_ENABLED_DEPENDENCIES PRINTED_VAR)
-  print_nonempty_var_with_spaces(${packageName}_TEST_DEFINED_DEPENDENCIES PRINTED_VAR)
+  set(printedVar "")
+  tribits_print_nonempty_package_deps_list(${packageName}  LIB  ENABLED  printedVar)
+  tribits_print_nonempty_package_deps_list(${packageName}  TEST  ENABLED  printedVar)
+  if (NOT printedVar)
+    message("-- ${packageName}: No enabled dependencies!")
+  endif()
 endfunction()
 
 
