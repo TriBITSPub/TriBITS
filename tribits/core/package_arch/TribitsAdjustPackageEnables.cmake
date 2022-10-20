@@ -136,8 +136,8 @@ endmacro()
 #
 # Creates and updates the following variables in the local scope::
 #
-#   ${PROJECT_NAME}_NOTDISABLED_PACKAGES
-#   ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES
+#   ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES
+#   ${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES
 #
 # See implementation for details.
 #
@@ -145,8 +145,6 @@ macro(tribits_sweep_forward_apply_disables)
 
   message("\nDisabling all packages that have a required dependency"
     " on disabled TPLs and optional package TPL support based on TPL_ENABLE_<TPL>=OFF ...\n")
-  tribits_get_nondisabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
-    ${PROJECT_NAME}_NOTDISABLED_PACKAGES "")
 
   message("\nDisabling subpackages for hard disables of parent packages"
     " due to ${PROJECT_NAME}_ENABLE_<PARENT_PACKAGE>=OFF ...\n")
@@ -162,13 +160,6 @@ macro(tribits_sweep_forward_apply_disables)
     tribits_disable_forward_required_dep_packages(${tad1_tribitsPkg})
   endforeach()
 
-  tribits_get_nondisabled_list( ${PROJECT_NAME}_NOTDISABLED_PACKAGES  ${PROJECT_NAME}
-    ${PROJECT_NAME}_NOTDISABLED_PACKAGES "")
-
-  set(${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES
-    "${${PROJECT_NAME}_NOTDISABLED_PACKAGES}")
-  list(REVERSE ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES)
-
 endmacro()
 
 
@@ -176,16 +167,23 @@ endmacro()
 #
 # Reads and updates the following variables in the local scope:
 #
-#   * ``${PROJECT_NAME}_NOTDISABLED_PACKAGES``
+#   * ``${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES``
 #   * `${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES`_
 #
 # See implementation for details.
 #
 macro(tribits_sweep_forward_apply_enables)
 
+  tribits_get_nondisabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
+    ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES "")
+
+  set(${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES
+    "${${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES}")
+  list(REVERSE ${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES)
+
   message("\nEnabling subpackages for hard enables of parent packages"
     " due to ${PROJECT_NAME}_ENABLE_<PARENT_PACKAGE>=ON ...\n")
-  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_NOTDISABLED_PACKAGES)
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES)
     tribits_enable_parents_subpackages(${tad1_tribitsPkg})
   endforeach()
 
@@ -194,7 +192,7 @@ macro(tribits_sweep_forward_apply_enables)
       " ${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON"
       " (${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE})"
       " ...\n")
-    foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_NOTDISABLED_PACKAGES)
+    foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES)
       tribits_apply_all_package_enables(${tad1_tribitsPkg})
     endforeach()
   endif()
@@ -202,13 +200,13 @@ macro(tribits_sweep_forward_apply_enables)
   if (${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES)
     message("\nSweep forward enabling all forward library dependent packages because"
       " ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON ...\n")
-    foreach(tad1_tribitsPkg   IN LISTS  ${PROJECT_NAME}_NOTDISABLED_PACKAGES)
+    foreach(tad1_tribitsPkg   IN LISTS  ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES)
       tribits_enable_forward_lib_package_enables(${tad1_tribitsPkg})
     endforeach()
 
     message("\nSweep backward enabling all forward test dependent packages because"
       " ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON ...\n")
-    foreach(tad1_tribitsPkg   IN LISTS  ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES)
+    foreach(tad1_tribitsPkg   IN LISTS  ${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES)
       tribits_enable_forward_test_package_enables(${tad1_tribitsPkg})
     endforeach()
     # NOTE: Above, we want to sweep backward to enable test-dependent packages
@@ -218,7 +216,7 @@ macro(tribits_sweep_forward_apply_enables)
     set(${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES ON)
   endif()
 
-  tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_PACKAGES  ${PROJECT_NAME}
+  tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES  ${PROJECT_NAME}
     ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES  "")
 
 endmacro()
@@ -290,7 +288,7 @@ macro(tribits_sweep_backward_enable_upstream_packages)
     " enabled packages"
     " (${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE})"
     " ...\n")
-  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES)
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES)
     tribits_enable_upstream_packages(${tad1_tribitsPkg})
   endforeach()
   # NOTE: Above, we have to loop through the packages backward to enable all
@@ -298,7 +296,7 @@ macro(tribits_sweep_backward_enable_upstream_packages)
   # upstream package enables including required packages, optional packages
   # (when ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES), and packages
 
-  tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_PACKAGES  ${PROJECT_NAME}
+  tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES  ${PROJECT_NAME}
     ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES  "")
 
   message("\nEnabling all optional intra-package enables <TRIBITS_PACKAGE>_ENABLE_<DEPPACKAGE>"
