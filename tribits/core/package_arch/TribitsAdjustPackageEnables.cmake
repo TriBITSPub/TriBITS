@@ -245,7 +245,7 @@ macro(tribits_disable_and_enable_tests_and_examples)
     tribits_apply_subpackage_tests_or_examples_disables(${tad1_tribitsPkg} EXAMPLES)
   endforeach()
 
-  if (${PROJECT_NAME}_ENABLE_TESTS OR ${PROJECT_NAME}_ENABLE_EXAMPLES)
+  if (${PROJECT_NAME}_ENABLE_TESTS  OR  ${PROJECT_NAME}_ENABLE_EXAMPLES)
     message("\nEnabling all tests and/or examples that have not been"
       " explicitly disabled because ${PROJECT_NAME}_ENABLE_[TESTS,EXAMPLES]=ON ...\n")
     foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
@@ -1265,24 +1265,24 @@ macro(tribits_apply_test_example_enables  packageName)
 endmacro()
 
 
-# Macro to disable ${PARENT_PACKAGE_NAME)_ENABLE_ENABLES by default if
-# ${PARENT_PACKAGE_NAME)_ENABLE_TESTS is explicitly disabled.
+# Macro to disable ${parentPackageName)_ENABLE_ENABLES by default if
+# ${parentPackageName)_ENABLE_TESTS is explicitly disabled.
 #
-macro(tribits_apply_package_examples_disable  PARENT_PACKAGE_NAME)
-  if (NOT "${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}" STREQUAL ""
-    AND NOT ${PARENT_PACKAGE_NAME}_ENABLE_TESTS
-    AND "${${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES}" STREQUAL ""
+macro(tribits_apply_package_examples_disable  parentPackageName)
+  if ( (NOT ${parentPackageName}_ENABLE_TESTS)
+      AND (NOT "${${parentPackageName}_ENABLE_TESTS}" STREQUAL "")
+      AND ("${${parentPackageName}_ENABLE_EXAMPLES}" STREQUAL "")
     )
     message("-- " "Setting"
-      " ${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES"
-      "=${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}"
+      " ${parentPackageName}_ENABLE_EXAMPLES"
+      "=${${parentPackageName}_ENABLE_TESTS}"
       " because"
-      " ${PARENT_PACKAGE_NAME}_ENABLE_TESTS"
-      "=${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}" )
-     set(${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES ${${PARENT_PACKAGE_NAME}_ENABLE_TESTS})
+      " ${parentPackageName}_ENABLE_TESTS"
+      "=${${parentPackageName}_ENABLE_TESTS}" )
+     set(${parentPackageName}_ENABLE_EXAMPLES ${${parentPackageName}_ENABLE_TESTS})
   endif()
 endmacro()
-# NOTE: Above, the top-level package ${PARENT_PACKAGE_NAME} may not even be
+# NOTE: Above, the top-level package ${parentPackageName} may not even be
 # enabled yet when this gets called but its subpackages might and we need to
 # process this default disable in case their are any enabled subpackages.
 
@@ -1292,20 +1292,20 @@ endmacro()
 # ${TRIBITS_PARENTPACKAGE)_ENABLE_TESTS or
 # ${TRIBITS_PARENTPACKAGE)_ENABLE_EXAMPLES
 #
-macro(tribits_apply_subpackage_tests_or_examples_disables  PARENT_PACKAGE_NAME
-    TESTS_OR_EXAMPLES
+macro(tribits_apply_subpackage_tests_or_examples_disables  parentPackageName
+    testsOrExamples
   )
-  set(parentPkgEnableVar ${PARENT_PACKAGE_NAME}_ENABLE_${TESTS_OR_EXAMPLES})
-  if (NOT "${${parentPkgEnableVar}}" STREQUAL "" AND NOT ${parentPkgEnableVar})
-    foreach(spkg IN LISTS ${PARENT_PACKAGE_NAME}_SUBPACKAGES)
-      set(fullSpkgName ${PARENT_PACKAGE_NAME}${spkg})
-      if (${PROJECT_NAME}_ENABLE_${fullSpkgName} AND NOT ${parentPkgEnableVar})
-        if ("${${fullSpkgName}_ENABLE_${TESTS_OR_EXAMPLES}}" STREQUAL "")
+  set(parentPkgEnableVar ${parentPackageName}_ENABLE_${testsOrExamples})
+  if ((NOT ${parentPkgEnableVar}) AND (NOT "${${parentPkgEnableVar}}" STREQUAL ""))
+    foreach(subpkgName  IN LISTS  ${parentPackageName}_SUBPACKAGES)
+      set(fullSpkgName ${parentPackageName}${subpkgName})
+      if (${PROJECT_NAME}_ENABLE_${fullSpkgName})
+        if ("${${fullSpkgName}_ENABLE_${testsOrExamples}}" STREQUAL "")
           message("-- " "Setting"
-            " ${fullSpkgName}_ENABLE_${TESTS_OR_EXAMPLES}=${${parentPkgEnableVar}}"
+            " ${fullSpkgName}_ENABLE_${testsOrExamples}=${${parentPkgEnableVar}}"
             " because parent package"
             " ${parentPkgEnableVar}=${${parentPkgEnableVar}}")
-          set(${fullSpkgName}_ENABLE_${TESTS_OR_EXAMPLES} ${${parentPkgEnableVar}})
+          set(${fullSpkgName}_ENABLE_${testsOrExamples} ${${parentPkgEnableVar}})
         endif()
       endif()
     endforeach()
@@ -1313,53 +1313,48 @@ macro(tribits_apply_subpackage_tests_or_examples_disables  PARENT_PACKAGE_NAME
 endmacro()
 
 
-# Macro to enable ${TRIBITS_SUBPACKAGE)_ENABLE_TESTS and
-# ${TRIBITS_SUBPACKAGE)_ENABLE_EXAMPLES based on
-# ${TRIBITS_PARENTPACKAGE)_ENABLE_TESTS or
-# ${TRIBITS_PARENTPACKAGE)_ENABLE_EXAMPLES
+# Macro to enable subpackage tests and examples based on parent package tests
+# and examples enables
 #
-macro(tribits_apply_subpackage_tests_examples_enables  PARENT_PACKAGE_NAME)
-  if ("${${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES}" STREQUAL ""
-    AND ${PARENT_PACKAGE_NAME}_ENABLE_TESTS
+macro(tribits_apply_subpackage_tests_examples_enables  parentPackageName)
+  # Set default for ${parentPackageName}_ENABLE_EXAMPLES=OFF if tests disabled
+  if ( ("${${parentPackageName}_ENABLE_EXAMPLES}" STREQUAL "")
+      AND ${parentPackageName}_ENABLE_TESTS
     )
     message("-- " "Setting"
-      " ${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES=${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}"
+      " ${parentPackageName}_ENABLE_EXAMPLES=${${parentPackageName}_ENABLE_TESTS}"
       " because"
-      " ${PARENT_PACKAGE_NAME}_ENABLE_TESTS=${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}")
-    set(${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES ${${PARENT_PACKAGE_NAME}_ENABLE_TESTS})
+      " ${parentPackageName}_ENABLE_TESTS=${${parentPackageName}_ENABLE_TESTS}")
+    set(${parentPackageName}_ENABLE_EXAMPLES ${${parentPackageName}_ENABLE_TESTS})
   endif()
-  foreach(spkg IN LISTS ${PARENT_PACKAGE_NAME}_SUBPACKAGES)
-    set(fullSpkgName ${PARENT_PACKAGE_NAME}${spkg})
+  # Set defaults for <fullSubpackageName>_ENABLE_[TESTS|EXAMPLES]
+  set(parentEnableExamples ${${parentPackageName}_ENABLE_EXAMPLES})
+  set(parentEnableTests ${${parentPackageName}_ENABLE_TESTS})
+  foreach(subpkgName  IN LISTS  ${parentPackageName}_SUBPACKAGES)
+    set(fullSpkgName ${parentPackageName}${subpkgName})
     if (${PROJECT_NAME}_ENABLE_${fullSpkgName})
-      if (${PARENT_PACKAGE_NAME}_ENABLE_TESTS)
-        if ("${${fullSpkgName}_ENABLE_TESTS}" STREQUAL "")
-          message("-- " "Setting"
-            " ${fullSpkgName}_ENABLE_TESTS=${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}"
-            " because parent package"
-            " ${PARENT_PACKAGE_NAME}_ENABLE_TESTS"
-            "=${${PARENT_PACKAGE_NAME}_ENABLE_TESTS}")
-          set(${fullSpkgName}_ENABLE_TESTS ${${PARENT_PACKAGE_NAME}_ENABLE_TESTS})
-        endif()
+      if (parentEnableTests AND ("${${fullSpkgName}_ENABLE_TESTS}" STREQUAL ""))
+        message("-- " "Setting"
+          " ${fullSpkgName}_ENABLE_TESTS=${parentEnableTests}"
+          " because parent package"
+          " ${parentPackageName}_ENABLE_TESTS=${parentEnableTests}")
+        set(${fullSpkgName}_ENABLE_TESTS ${parentEnableTests})
       endif()
-      if (${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES)
-        if ("${${fullSpkgName}_ENABLE_EXAMPLES}" STREQUAL "")
-          message("-- " "Setting"
-            " ${fullSpkgName}_ENABLE_EXAMPLES=${${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES}"
-            " because parent package"
-            " ${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES"
-            "=${${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES}")
-          set(${fullSpkgName}_ENABLE_EXAMPLES ${${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES})
-        endif()
+      if (parentEnableExamples AND ("${${fullSpkgName}_ENABLE_EXAMPLES}" STREQUAL ""))
+        message("-- " "Setting"
+          " ${fullSpkgName}_ENABLE_EXAMPLES=${parentEnableExamples}"
+          " because parent package"
+          " ${parentPackageName}_ENABLE_EXAMPLES=${parentEnableExamples}")
+        set(${fullSpkgName}_ENABLE_EXAMPLES ${parentEnableExamples})
       endif()
     endif()
   endforeach()
 endmacro()
 # NOTE: Above, the parent package may not actually be enabled yet
-# (i.e. ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME} my not be TRUE) if only
+# (i.e. ${PROJECT_NAME}_ENABLE_${parentPackageName} my not be TRUE) if only
 # subpackages needed to be enabled in the forward sweep but we want the tests
-# and examples for subpackage to be enabled if
-# ${PARENT_PACKAGE_NAME}_ENABLE_TESTS=ON or just examples i
-# f${PARENT_PACKAGE_NAME}_ENABLE_EXAMPLES=ON
+# and examples for a subpackage to be enabled if the tests and examples for
+# the parent package, respectfully, are enabled.
 
 
 macro(tribits_private_enable_forward_package  FORWARD_DEP_PACKAGE_NAME  PACKAGE_NAME)
