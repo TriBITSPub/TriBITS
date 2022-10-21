@@ -61,6 +61,7 @@ include(SetDefault)
 include(MessageWrapper)
 include(DualScopeSet)
 include(CMakeParseArguments)
+include(TribitsCreateReverseList)
 
 
 # NOTE: A nice way to view and navigate the contents of this file is to use
@@ -173,9 +174,8 @@ macro(tribits_sweep_forward_apply_enables)
 
   tribits_get_nondisabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
     ${PROJECT_NAME}  ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES "")
-  set(${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES
-    "${${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES}")
-  list(REVERSE ${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES)
+  tribit_create_reverse_list(${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES
+    ${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES)
 
   message("\nEnabling subpackages for hard enables of parent packages"
     " due to ${PROJECT_NAME}_ENABLE_<PARENT_PACKAGE>=ON ...\n")
@@ -224,7 +224,7 @@ endmacro()
 # because these are TriBITS (or TriBITS compatible) packages so we should
 # assume that all of their downstream packages, whether internal or external,
 # should be enabled as well.  If we find this is not the desirable behavior,
-# then we can change this.
+# then we can change this later.
 
 
 # @MACRO: tribits_disable_and_enable_tests_and_examples()
@@ -525,44 +525,28 @@ endmacro()
 
 
 # Macro used to set ${PROJECT_NAME}_ENABLE_${FWD_PACKAGE_NAME)=ON for all
+# forward packages that have a required or optional dependency on
+# ${packageName}
 #
-macro(tribits_enable_forward_lib_package_enables PACKAGE_NAME)
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES})
-      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
+macro(tribits_enable_forward_lib_package_enables  packageName)
+  if (${PROJECT_NAME}_ENABLE_${packageName})
+    foreach(fwdDepPkgName  IN LISTS  ${packageName}_FORWARD_LIB_DEFINED_DEPENDENCIES)
+      tribits_private_enable_forward_package(${fwdDepPkgName} ${packageName})
     endforeach()
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES})
-      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
-    endforeach()
-
   endif()
-
 endmacro()
 
 
 # Macro used to set ${PROJECT_NAME}_ENABLE_${FWD_PACKAGE_NAME)=ON for all
 # optional and required forward test dependencies of the package
-# ${PACKAGE_NAME}
+# ${packageName}
 #
-macro(tribits_enable_forward_test_package_enables PACKAGE_NAME)
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES})
-      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
+macro(tribits_enable_forward_test_package_enables  packageName)
+  if (${PROJECT_NAME}_ENABLE_${packageName})
+    foreach(fwdDepPkgName  IN LISTS  ${packageName}_FORWARD_TEST_DEFINED_DEPENDENCIES)
+      tribits_private_enable_forward_package(${fwdDepPkgName} ${packageName})
     endforeach()
-
-    foreach(FWD_DEP_PKG ${${PACKAGE_NAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES})
-      tribits_private_enable_forward_package(${FWD_DEP_PKG} ${PACKAGE_NAME})
-    endforeach()
-
   endif()
-
 endmacro()
 
 
