@@ -2316,14 +2316,12 @@ macro(tribits_setup_packaging_and_distribution)
   # K.2) Removing any packages or packages not enabled from the tarball
 
   if (${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION)
-    set(tribitsPackage ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
+    set(tribitsPackageList ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
   else()
-    set(tribitsPackage ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
+    set(tribitsPackageList ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
   endif()
 
-  tribits_get_nonenabled_list(
-    tribitsPackage  ${PROJECT_NAME}
-    nonEnabledTribitsPackage  "")
+  tribits_get_nonenabled_list(tribitsPackageList  nonEnabledTribitsPackage  "")
 
   foreach(TRIBITS_PACKAGE ${nonEnabledTribitsPackage})
 
@@ -2383,7 +2381,7 @@ macro(tribits_setup_packaging_and_distribution)
   # K.3) Set up install component dependencies
 
   tribits_get_enabled_list(
-    ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES  ${PROJECT_NAME}
+    ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     ENABLED_PACKAGES  NUM_ENABLED)
   #message("ENABLED PACKAGES: ${ENABLED_PACKAGES} ${NUM_ENABLED}")
 

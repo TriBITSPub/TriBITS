@@ -787,6 +787,23 @@ create_dependency_handling_test_case(
 
 
 create_dependency_handling_test_case(
+  EnableEpetra_DisableTriutils_EnableAllForwardPackages
+  ARGS -DTrilinos_ENABLE_Epetra:BOOL=ON -DTrilinos_ENABLE_Triutils:BOOL=OFF
+    -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Disabling forward required packages and optional intra-package support that have a dependency on disabled packages Trilinos_ENABLE_<TRIBITS_PACKAGE>=OFF [(]or TPL_ENABLE_<TRIBITS_EXTERNAL_PACKAGE>=OFF[)] ..."
+    "-- Setting Trilinos_ENABLE_AztecOO=OFF because AztecOO has a required library dependence on disabled package Triutils"
+    "Sweep backward enabling all forward test dependent packages because Trilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON"
+    "-- Setting Trilinos_ENABLE_Intrepid=ON because Trilinos_ENABLE_Amesos=ON"
+  FAIL_REGULAR_EXPRESSION
+    "-- Setting Trilinos_ENABLE_Tpetra=ON because Trilinos_ENABLE_Triutils=ON"
+  )
+  # NOTE: The above test checks that a loop runs to enable needed test
+  # dependencies that was not being tested in any other test in TriBITS (as
+  # part of the refactoring for #63).
+
+
+create_dependency_handling_test_case(
   DisableEpetra_DisableTeuchos_EnableAllPackages
   ARGS -DTrilinos_ENABLE_Epetra:BOOL=OFF -DTrilinos_ENABLE_Teuchos:BOOL=OFF -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL

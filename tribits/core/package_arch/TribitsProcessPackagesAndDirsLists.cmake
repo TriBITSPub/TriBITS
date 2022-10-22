@@ -334,29 +334,32 @@ function(tribits_is_primary_meta_project_package  PACKAGE_NAME_IN
 endfunction()
 
 
-# Function that determines if it is okay to allow an implicit package enable
-# based on its classification.
+# Function that determines if it is okay to allow an implicit enable of an
+# upstream package given the disable of a downstream package that depends on
+# it.
 #
-function(tribits_implicit_package_enable_is_allowed  UPSTREAM_PACKAGE_NAME_IN
-  PACKAGE_NAME_IN  IMPLICIT_PACKAGE_ENABLE_ALLOWED_OUT
+function(tribits_implicit_package_enable_is_allowed  upstreamPackageName
+  packageName  implictPackageEnableAllowedOut
   )
 
-  if (${PACKAGE_NAME_IN}_TESTGROUP STREQUAL PT)
-    set(IMPLICIT_PACKAGE_ENABLE_ALLOWED TRUE)
-  elseif (${PACKAGE_NAME_IN}_TESTGROUP STREQUAL ST
-    AND ${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE
+  if (${packageName}_PACKAGE_BUILD_STATUS  STREQUAL  "EXTERNAL")
+    set(implicitPackageEnableAllowed  FALSE)
+  elseif (${packageName}_TESTGROUP  STREQUAL  "PT")
+    set(implicitPackageEnableAllowed TRUE)
+  elseif (${packageName}_TESTGROUP  STREQUAL  "ST"
+      AND ${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE
     )
-    set(IMPLICIT_PACKAGE_ENABLE_ALLOWED TRUE)
+    set(implicitPackageEnableAllowed  TRUE)
   else()
-    if (UPSTREAM_PACKAGE_NAME_IN)
-      message("-- " "NOTE: Not Setting ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME_IN}=ON"
-        " even though ${UPSTREAM_PACKAGE_NAME_IN} has an optional dependence on"
-        " ${PACKAGE_NAME_IN} because ${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=OFF" )
+    if (upstreamPackageName)
+      message("-- " "NOTE: Not Setting ${PROJECT_NAME}_ENABLE_${packageName}=ON"
+        " even though ${upstreamPackageName} has an optional dependence on"
+        " ${packageName} because ${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=OFF" )
     endif()
-    set(IMPLICIT_PACKAGE_ENABLE_ALLOWED FALSE)
+    set(implicitPackageEnableAllowed  FALSE)
   endif()
 
-  set(${IMPLICIT_PACKAGE_ENABLE_ALLOWED_OUT} ${IMPLICIT_PACKAGE_ENABLE_ALLOWED}
+  set(${implictPackageEnableAllowedOut} "${implicitPackageEnableAllowed}"
     PARENT_SCOPE )
 
 endfunction()
