@@ -812,7 +812,7 @@ function(unittest_tribits_add_test_basic)
   tribits_add_test( ${EXEN} ADDED_TESTS_NAMES_OUT ${EXEN}_TEST_NAMES )
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "-- PackageA_SomeExec: NOT added test because PackageA_ENABLE_TESTS='OFF'."
+    "-- PackageA_SomeExec: NOT added test because; PackageA_ENABLE_TESTS='OFF'."
     )
   unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
@@ -2672,7 +2672,7 @@ function(unittest_tribits_add_advanced_test_basic)
     )
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "-- PackageA_TAAT_tests_disabled: NOT added test because PackageA_ENABLE_TESTS='OFF'."
+    "-- PackageA_TAAT_tests_disabled: NOT added test because; PackageA_ENABLE_TESTS='OFF'."
     )
   unittest_compare_const(TAAT_tests_disabled_TEST_NAME "")
   unittest_compare_const(
