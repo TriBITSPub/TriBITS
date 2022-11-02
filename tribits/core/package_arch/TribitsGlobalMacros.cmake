@@ -71,6 +71,7 @@ include(Split)
 include(TimingUtils)
 include(SetDefaultAndFromEnv) # Used by some call-back files
 include(TribitsFilepathHelpers)
+include(TribitsDeprecatedHelpers)
 
 # Standard CMake includes
 include(CheckIncludeFileCXX)
@@ -957,6 +958,13 @@ macro(tribits_define_global_options_and_define_extra_repos)
     ${${PROJECT_NAME}_SHOW_MACHINE_LOAD_IN_TEST_DEFAULT}
     CACHE BOOL
     "Set to 'ON' to see the machine load for advanced tests." )
+
+  tribits_add_enum_cache_var(TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE
+    DEFAULT_VAL "DEPRECATION"
+    DOC_STRING "Mode for dealing with usage of TriBITS deprecated functionality"
+    ALLOWED_STRINGS_LIST ${TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE_ALL_VALID_VALUES}
+    IS_ADVANCED
+    )
 
   mark_as_advanced(BUILD_TESTING)
   mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
