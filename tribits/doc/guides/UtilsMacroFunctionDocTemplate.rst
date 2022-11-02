@@ -40,6 +40,8 @@
 @FUNCTION: timer_get_rel_seconds() +
 @FUNCTION: timer_print_rel_time() +
 @FUNCTION: tribits_add_enum_cache_var() +
+@FUNCTION: tribits_deprecated() +
+@FUNCTION: tribits_deprecated_command() +
 @FUNCTION: tribits_strip_quotes_from_str() +
 @FUNCTION: unittest_compare_const() +
 @FUNCTION: unittest_has_substr_const() +
