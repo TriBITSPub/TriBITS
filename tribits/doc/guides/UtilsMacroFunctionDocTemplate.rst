@@ -42,6 +42,7 @@
 @FUNCTION: tribits_add_enum_cache_var() +
 @FUNCTION: tribits_deprecated() +
 @FUNCTION: tribits_deprecated_command() +
+@MACRO:    tribit_create_reverse_list() +
 @FUNCTION: tribits_strip_quotes_from_str() +
 @FUNCTION: unittest_compare_const() +
 @FUNCTION: unittest_has_substr_const() +

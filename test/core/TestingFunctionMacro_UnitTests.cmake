@@ -65,6 +65,7 @@ include(TribitsTplFindIncludeDirsAndLibraries)
 include(TribitsReportInvalidTribitsUsage)
 include(TribitsGitRepoVersionInfo)
 include(TribitsDeprecatedHelpers)
+include(TribitsCreateReverseList)
 include(UnitTestHelpers)
 include(GlobalSet)
 include(GlobalNullSet)
@@ -128,6 +129,26 @@ function(unittest_append_string_var)
      "]\n" )
   unittest_compare_const(SOME_STRING_VAR
     "[\n{middle1 middile2 middle3}\n]\n")
+
+endfunction()
+
+
+function(unittest_tribit_create_reverse_list)
+
+  message("\n***")
+  message("*** Testing tribit_create_reverse_list()")
+  message("***\n")
+
+  message("tribit_create_reverse_list() with empty list")
+  set(someEmptyList "")
+  tribit_create_reverse_list(someEmptyList  someEmptyList_reversed)
+  unittest_compare_const(someEmptyList_reversed "")
+
+
+  message("tribit_create_reverse_list() with non-empty list")
+  set(someList a b c d)
+  tribit_create_reverse_list(someList  someList_reversed)
+  unittest_compare_const(someList_reversed "d;c;b;a")
 
 endfunction()
 
@@ -4740,6 +4761,7 @@ message("*** Testing misc TriBITS functions and macros")
 message("***\n")
 
 unittest_append_string_var()
+unittest_tribit_create_reverse_list()
 unittest_tribits_find_python_interp()
 unittest_tribits_standardize_abs_paths()
 unittest_tribits_dir_is_basedir()
@@ -4813,4 +4835,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(719)
+unittest_final_result(721)
