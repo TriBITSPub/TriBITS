@@ -433,10 +433,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-11-02</p>
+<dd class="field-even"><p>2022-11-03</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-3103-gf0430db8</p>
+<dd class="field-odd"><p>tribits_start-3106-g7e686376</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -11599,7 +11599,7 @@ CMake command <code class="docutils literal notranslate"><span class="pre">insta
 the built executable into the <code class="docutils literal notranslate"><span class="pre">${CMAKE_INSTALL_PREFIX}/bin/</span></code> directory
 (actual install directory path is determined by
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_INSTALL_RUNTIME_DIR</span></code>, see <a class="reference external" href="TribitsBuildReference.html#setting-the-install-prefix">Setting the install prefix</a>).</p>
-<p>In: core/package_arch/TribitsAddExecutable.cmake:53</p>
+<p>In: core/package_arch/TribitsAddExecutable.cmake:54</p>
 </section>
 <section id="tribits-add-executable-and-test">
 <h3><a class="toc-backref" href="#id131">tribits_add_executable_and_test()</a><a class="headerlink" href="#tribits-add-executable-and-test" title="Permalink to this heading"></a></h3>
@@ -11675,7 +11675,7 @@ adding the test (or example) executable when
 <code class="docutils literal notranslate"><span class="pre">test/</span></code> or <code class="docutils literal notranslate"><span class="pre">example/</span></code> and that subdir with
 <a class="reference internal" href="#tribits-add-test-directories">tribits_add_test_directories()</a> or <a class="reference internal" href="#tribits-add-example-directories">tribits_add_example_directories()</a>,
 respectively.</p>
-<p>In: core/package_arch/TribitsAddExecutableAndTest.cmake:82</p>
+<p>In: core/package_arch/TribitsAddExecutableAndTest.cmake:83</p>
 </section>
 <section id="tribits-add-library">
 <h3><a class="toc-backref" href="#id132">tribits_add_library()</a><a class="headerlink" href="#tribits-add-library" title="Permalink to this heading"></a></h3>
@@ -11929,7 +11929,7 @@ will <strong>NOT</strong> be set when code in peer directories (e.g. a downstrea
 packages) compiles that may include these header files.  To add defines that
 affect header files, please use a configured header file (see
 <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a>).</p>
-<p>In: core/package_arch/TribitsAddLibrary.cmake:54</p>
+<p>In: core/package_arch/TribitsAddLibrary.cmake:55</p>
 </section>
 <section id="tribits-add-option-and-define">
 <h3><a class="toc-backref" href="#id133">tribits_add_option_and_define()</a><a class="headerlink" href="#tribits-add-option-and-define" title="Permalink to this heading"></a></h3>
@@ -14187,7 +14187,7 @@ package in <a class="reference internal" href="#tribitsexampleproject">TribitsEx
 the package test group classification to <code class="docutils literal notranslate"><span class="pre">EX</span></code> results in the package being
 disabled by default (see <a class="reference internal" href="#ex-packages-disabled-by-default">EX packages disabled by default</a>).  However,
 an explicit enable can still enable the package.</p>
-<p>In: core/package_arch/TribitsListHelpers.cmake:84</p>
+<p>In: core/package_arch/TribitsListHelpers.cmake:85</p>
 </section>
 <section id="tribits-exclude-files">
 <h3><a class="toc-backref" href="#id144">tribits_exclude_files()</a><a class="headerlink" href="#tribits-exclude-files" title="Permalink to this heading"></a></h3>
@@ -14571,7 +14571,7 @@ should come from the installation we are building against.  There is an
 exception to this and that is when there are test only headers that are
 needed.  For that case <code class="docutils literal notranslate"><span class="pre">REQUIRED_DURING_INSTALLATION_TESTING</span></code> must be
 passed in to ensure the include paths are added for installation testing.</p>
-<p>In: core/package_arch/TribitsIncludeDirectories.cmake:43</p>
+<p>In: core/package_arch/TribitsIncludeDirectories.cmake:44</p>
 </section>
 <section id="tribits-pkg-export-cache-var">
 <h3><a class="toc-backref" href="#id155">tribits_pkg_export_cache_var()</a><a class="headerlink" href="#tribits-pkg-export-cache-var" title="Permalink to this heading"></a></h3>
@@ -15199,7 +15199,7 @@ is always set to <code class="docutils literal notranslate"><span class="pre">ON
 considered <code class="docutils literal notranslate"><span class="pre">ST</span></code> for development mode (thereby reducing testing time by not
 enabling the dependent features/tests), while still having important
 functionality available to users by default in a release of the package.</p>
-<p>In: core/package_arch/TribitsGeneralMacros.cmake:305</p>
+<p>In: core/package_arch/TribitsGeneralMacros.cmake:306</p>
 </section>
 <section id="id5">
 <h3><a class="toc-backref" href="#id169">tribits_subpackage()</a><a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
@@ -15683,7 +15683,7 @@ with just adding one string at a time, then use <a class="reference internal" hr
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">string</span><span class="p">(</span><span class="n">APPEND</span> <span class="o">&lt;</span><span class="n">stringVar</span><span class="o">&gt;</span> <span class="s2">&quot;&lt;string1&gt;&quot;</span> <span class="s2">&quot;&lt;string2&gt;&quot;</span> <span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In: core/utils/AppendStringVar.cmake:44</p>
+<p>In: core/utils/AppendStringVar.cmake:45</p>
 </section>
 <section id="append-string-var-ext">
 <h3><a class="toc-backref" href="#id186">append_string_var_ext()</a><a class="headerlink" href="#append-string-var-ext" title="Permalink to this heading"></a></h3>
@@ -15695,7 +15695,7 @@ boiler-place code and reduces mistakes).</p>
 </div>
 <p>Simply sets <code class="docutils literal notranslate"><span class="pre">&lt;stringVar&gt;</span> <span class="pre">=</span> <span class="pre">&quot;${&lt;stringVar&gt;}&lt;string&gt;&quot;</span></code> and leaves in <code class="docutils literal notranslate"><span class="pre">';'</span></code>
 without creating new array elements.</p>
-<p>In: core/utils/AppendStringVar.cmake:71</p>
+<p>In: core/utils/AppendStringVar.cmake:74</p>
 </section>
 <section id="append-string-var-with-sep">
 <h3><a class="toc-backref" href="#id187">append_string_var_with_sep()</a><a class="headerlink" href="#append-string-var-with-sep" title="Permalink to this heading"></a></h3>
@@ -16227,7 +16227,7 @@ be the first command called at the top of any deprecated function or macro.</p>
   <span class="p">)</span>
 </pre></div>
 </div>
-<p>In: core/utils/TribitsDeprecatedHelpers.cmake:86</p>
+<p>In: core/utils/TribitsDeprecatedHelpers.cmake:88</p>
 </section>
 <section id="tribits-strip-quotes-from-str">
 <h3><a class="toc-backref" href="#id217">tribits_strip_quotes_from_str()</a><a class="headerlink" href="#tribits-strip-quotes-from-str" title="Permalink to this heading"></a></h3>
