@@ -894,7 +894,7 @@ create_dependency_handling_test_case(
 create_dependency_handling_test_case(
   EnableThyra_DisableEpetra_EnableThyraEpetraExt_DisableEnabledDownstreamPackages
   ARGS -DTrilinos_ENABLE_Thyra:BOOL=ON -DTrilinos_ENABLE_Epetra:BOOL=OFF
-    -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON 
+    -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Explicitly enabled top-level packages on input .by user.:  Thyra 1"
@@ -912,7 +912,7 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_ENABLE_Stratimikos=ON -DTrilinos_ENABLE_Thyra=OFF
   PASS_REGULAR_EXPRESSION_ALL
     "Setting subpackage enable Trilinos_ENABLE_ThyraCoreLibs=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
-    "Setting subpackage enable Trilinos_ENABLE_ThyraGoodStuff=OFF because parent package Trilinos_ENABLE_Thyra=OFF" 
+    "Setting subpackage enable Trilinos_ENABLE_ThyraGoodStuff=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetraExt=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraTpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
@@ -926,7 +926,7 @@ create_dependency_handling_test_case(
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Setting subpackage enable Trilinos_ENABLE_ThyraCoreLibs=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
-    "Setting subpackage enable Trilinos_ENABLE_ThyraGoodStuff=OFF because parent package Trilinos_ENABLE_Thyra=OFF" 
+    "Setting subpackage enable Trilinos_ENABLE_ThyraGoodStuff=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetraExt=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraTpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
@@ -1118,7 +1118,7 @@ create_dependency_handling_test_case(
   ARGS  -DTrilinos_ENABLE_Stratimikos=ON -DTrilinos_ENABLE_Ifpack=ON
     -DTrilinos_HOSTTYPE:STRING=BadSystem2
   PASS_REGULAR_EXPRESSION_ALL
-    "NOTE: User has set Trilinos_ENABLE_Ifpack=ON but the" 
+    "NOTE: User has set Trilinos_ENABLE_Ifpack=ON but the"
     "package Ifpack is not supported on this platform type 'BadSystem2'"
     "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 14"
     "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt ThyraCoreLibs ThyraEpetra ThyraEpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 17"
@@ -1161,7 +1161,7 @@ create_dependency_handling_test_case(
 
 create_dependency_handling_test_case(
   DefaultExtraReposFile_EnableAllPackages_TraceFileProcessing
-  ARGS 
+  ARGS
     -DTrilinos_EXTRAREPOS_FILE=${MOCK_TRILINOS_DIR}/cmake/ExtraRepositoriesList.cmake
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE
@@ -1195,7 +1195,7 @@ create_dependency_handling_test_case(
 
 create_dependency_handling_test_case(
   PreAndExtraReposFile_Nightly_EnableAllPackages
-  ARGS 
+  ARGS
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
     -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON
@@ -1217,7 +1217,7 @@ create_dependency_handling_test_case(
 
 create_dependency_handling_test_case(
   PreAndExtraReposFile_Continuous_EnableAllPackages
-  ARGS 
+  ARGS
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
     -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON
@@ -1239,7 +1239,7 @@ create_dependency_handling_test_case(
 
 create_dependency_handling_test_case(
   PreAndExtraReposFile_Continuous_AssertMissing_EnableAllPackages
-  ARGS 
+  ARGS
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
     -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON
