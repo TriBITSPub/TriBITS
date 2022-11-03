@@ -70,13 +70,15 @@ set(TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE_ALL_VALID_VALUES
 #
 #   tribits_deprecated(<message>)
 #
-function(tribits_deprecated  message)
+function(tribits_deprecated)
+  cmake_parse_arguments(PARSE_ARGV 0 FWD "" "" "")
+
   if ("${TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE}" STREQUAL "")
     set(TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE DEPRECATION)
   endif()
 
   if ("${TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE}"  IN_LIST  TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE_VALUES_THAT_CALL_MESSAGE)
-    message_wrapper("${TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE}" "${message}")
+    message_wrapper("${TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE}" ${FWD_UNPARSED_ARGUMENTS})
   elseif (NOT "${TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE}"  IN_LIST  TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE_ALL_VALID_VALUES)
     message_wrapper(FATAL_ERROR "Invalid value for TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE: '${TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE}'")
   endif()
@@ -96,11 +98,11 @@ endfunction()
 #
 function(tribits_deprecated_command  name)
   # Parse input arguments
-  set(argOneValArgKeywords  MESSAGE)
+  set(argMultiValArgKeywords  MESSAGE)
   cmake_parse_arguments(PARSE_ARGV  1  PREFIX
     ""   # options
-    "${argOneValArgKeywords}"   # one_value_keywords
-    ""   # multi_value_keywords
+    ""   # one_value_keywords
+    "${argMultiValArgKeywords}"   # multi_value_keywords
     )
   tribits_check_for_unparsed_arguments(PREFIX)
 

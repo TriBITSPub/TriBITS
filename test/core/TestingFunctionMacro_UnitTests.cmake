@@ -346,7 +346,7 @@ function(unittest_tribits_misc)
   tribits_filter_and_assert_categories(CATEGORIES)
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "WARNING;Warning: The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.")
+    "DEPRECATION;The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.")
   unittest_compare_const(CATEGORIES "BASIC;HEAVY;NIGHTLY")
 
   message("Testing tribits_filter_and_assert_categories( ... HEAVY)")
@@ -1747,7 +1747,7 @@ function(unittest_tribits_add_test_categories)
   tribits_add_test( ${EXEN} CATEGORIES WEEKLY )
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "WARNING;Warning: The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.;-- PackageA_SomeExec: Added test (HEAVY, PROCESSORS=1)!"
+    "DEPRECATION;The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.;-- PackageA_SomeExec: Added test (HEAVY, PROCESSORS=1)!"
     )
   unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
@@ -4597,6 +4597,16 @@ function(unittest_tribits_deprecated)
     "DEPRECATION;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE unset"
     )
 
+  message("Testing tribits_deprecated() with multiple message arguments")
+  unset(TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE)
+  global_set(MESSAGE_WRAPPER_INPUT)
+  tribits_deprecated("This is a deprecation message with"
+    " multiple message arguments")
+  unittest_compare_const(
+    MESSAGE_WRAPPER_INPUT
+    "DEPRECATION;This is a deprecation message with; multiple message arguments"
+    )
+
   message("Testing tribits_deprecated() with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to empty string")
   set(TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE "")
   global_set(MESSAGE_WRAPPER_INPUT)
@@ -4689,6 +4699,18 @@ function(unittest_tribits_deprecated_command)
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
     "DEPRECATION;TriBITS command 'tribits_another_deprecated_command' is deprecated.\n\nUse tribits_some_new_command instead."
+    )
+
+  message("Testing tribits_deprecated_command() with multiple MESSAGE arguments")
+  unset(TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE)
+  global_set(MESSAGE_WRAPPER_INPUT)
+  tribits_deprecated_command(tribits_yet_another_deprecated_command
+    MESSAGE "This is a deprecation message with"
+      " multiple arguments."
+    )
+  unittest_compare_const(
+    MESSAGE_WRAPPER_INPUT
+    "DEPRECATION;TriBITS command 'tribits_yet_another_deprecated_command' is deprecated.\n\nThis is a deprecation message with; multiple arguments."
     )
 
 endfunction()
@@ -4791,4 +4813,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(717)
+unittest_final_result(719)

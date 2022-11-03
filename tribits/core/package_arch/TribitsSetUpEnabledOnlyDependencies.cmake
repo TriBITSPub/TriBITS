@@ -37,6 +37,8 @@
 # ************************************************************************
 # @HEADER
 
+include(TribitsDeprecatedHelpers)
+
 
 # Function that creates enable-only dependency data-structures
 #
@@ -63,8 +65,8 @@ function(tribits_set_up_enabled_only_dependencies)
       AND NOT
       "${${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES}" STREQUAL ""
     )
-    message(DEPRECATION
-      "WARNING! The cache var"
+    tribits_deprecated(
+      "The cache var"
       " ${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES"
       "='${${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES}'"
       " is deprecated!  Please instead set"
