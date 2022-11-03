@@ -40,6 +40,7 @@
 
 include(TribitsAddExecutable)
 include(TribitsAddTest)
+include(TribitsDeprecatedHelpers)
 
 
 #
@@ -206,6 +207,10 @@ function(tribits_add_executable_and_test EXE_NAME)
   #
   # C) tribits_add_executable(...)
   #
+
+  if (PARSE_DEPLIBS)
+    tribits_deprecated("DEPLIBS argument of tribits_add_executable_and_test() is deprecated.")
+  endif()
 
   set(CALL_ARGS "")
   tribits_fwd_parse_arg(CALL_ARGS SOURCES)

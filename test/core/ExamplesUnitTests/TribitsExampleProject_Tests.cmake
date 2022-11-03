@@ -1600,7 +1600,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
     ARGS -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=ON
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this package"
+      "'simplecxx' in DEPLIBS is not a lib in this package"
       "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -1612,7 +1612,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this package "
+      "Lib 'pws_b' in IMPORTEDLIBS is in this package "
       "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -1625,7 +1625,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DSPKB_SHOW_PKG_LIB_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
+      "Lib 'simplecxx' being passed through IMPORTEDLIBS"
       "TribitsExampleProject/packages/with_subpackages/b/cmake/Dependencies.cmake"
       "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
@@ -1638,7 +1638,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DSPKB_SHOW_UPSTREAM_PKG_LIB_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
+      "'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
       "TribitsExampleProject/packages/with_subpackages/c/cmake/Dependencies.cmake"
       "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
@@ -1651,7 +1651,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DSPKC_SHOW_TESTONLY_DEPLBIS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
+      "'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
       "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -1663,7 +1663,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DSPKC_SHOW_TESTONLY_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'm' in DEPLIBS is not a lib defined in the current cmake "
+      "'m' in DEPLIBS is not a lib defined in the current cmake "
       "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -1712,7 +1712,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Passing TESTONLY lib 'b_mixed_lang' through DEPLIBS is deprecated"
+      "Passing TESTONLY lib 'b_mixed_lang' through DEPLIBS is deprecated"
       "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -1724,7 +1724,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DSPKB_SHOW_TESTONLY_DEBLIBS_WARNING=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Passing non-TESTONLY lib 'pws_b' through DEPLIBS is deprecated"
+      "Passing non-TESTONLY lib 'pws_b' through DEPLIBS is deprecated"
       "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -1736,7 +1736,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DSPKB_SHOW_NONTESTONLY_DEBLIBS_WARNING=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Passing external lib 'm' through DEPLIBS is deprecated"
+      "Passing external lib 'm' through DEPLIBS is deprecated"
       "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage"
@@ -1784,7 +1784,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
     ARGS -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=ON
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'simplecxx' in DEPLIBS is not a lib in this package"
+      "'simplecxx' in DEPLIBS is not a lib in this package"
       "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
@@ -1796,7 +1796,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DSPKB_SHOW_UPSTREAM_DEPLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Lib 'pws_b' in IMPORTEDLIBS is in this package "
+      "Lib 'pws_b' in IMPORTEDLIBS is in this package "
       "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
@@ -1809,7 +1809,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DSPKB_SHOW_PKG_LIB_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Lib 'simplecxx' being passed through IMPORTEDLIBS"
+      "Lib 'simplecxx' being passed through IMPORTEDLIBS"
       "TribitsExampleProject/packages/with_subpackages/b/cmake/Dependencies.cmake"
       "packages/with_subpackages/b/tests/testlib/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
@@ -1822,7 +1822,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DSPKB_SHOW_UPSTREAM_PKG_LIB_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
+      "'b_mixed_lang' in DEPLIBS is a TESTONLY lib "
       "TribitsExampleProject/packages/with_subpackages/c/cmake/Dependencies.cmake"
       "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
@@ -1835,7 +1835,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DSPKC_SHOW_TESTONLY_DEPLBIS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
+      "'b_mixed_lang' in IMPORTEDLIBS is a TESTONLY lib"
       "packages/with_subpackages/c/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
@@ -1847,7 +1847,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DSPKC_SHOW_TESTONLY_IMPORTEDLIBS_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: 'm' in DEPLIBS is not a lib defined in the current cmake "
+      "'m' in DEPLIBS is not a lib defined in the current cmake "
       "packages/with_subpackages/b/src/CMakeLists.txt:.* [(]tribits_add_library[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
@@ -1896,7 +1896,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DSPKB_SHOW_IMPORTED_LIBS_THIS_PKG_ERROR=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Passing TESTONLY lib 'b_mixed_lang' through DEPLIBS is deprecated"
+      "Passing TESTONLY lib 'b_mixed_lang' through DEPLIBS is deprecated"
       "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
@@ -1908,7 +1908,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage_LibPrefix
       -DSPKB_SHOW_TESTONLY_DEBLIBS_WARNING=
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Passing non-TESTONLY lib 'pws_b' through DEPLIBS is deprecated"
+      "Passing non-TESTONLY lib 'pws_b' through DEPLIBS is deprecated"
       "packages/with_subpackages/b/tests/CMakeLists.txt:.* [(]tribits_add_executable_and_test[)]"
       "Generating done"
       "Build files have been written to: .*/TriBITS_TribitsExampleProject_ALL_ST_LibUsage_LibPrefix"
@@ -2816,7 +2816,7 @@ tribits_add_advanced_test( TribitsExampleProject_TargetDefinesPkg
       -DTribitsExProj_ENABLE_TESTS=ON
      .
     PASS_REGULAR_EXPRESSION_ALL
-      "WARNING: Passing extra defines through 'DEFINES'"
+      "Passing extra defines through 'DEFINES'"
       "Final set of enabled top-level packages:  TargetDefinesPkg 1"
       "Final set of enabled packages:  TargetDefinesPkg 1"
       "Configuring done"

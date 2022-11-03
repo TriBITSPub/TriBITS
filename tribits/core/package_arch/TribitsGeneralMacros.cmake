@@ -42,6 +42,7 @@ include(AssertDefined)
 include(MessageWrapper)
 include(TribitsParseArgumentsHelpers)
 include(TribitsSortListAccordingToMasterList)
+include(TribitsDeprecatedHelpers)
 
 
 # Optionally start CMake code configure timing
@@ -337,9 +338,8 @@ endfunction()
 
 # For backward compatibility
 macro(tribits_set_ss_for_dev_mode  OUTPUT_VAR)
-  message(WARNING
-    "WARNING: tribits_set_ss_for_dev_mode() is deprecated,"
-    " use tribits_set_st_for_dev_mode() instead!")
+  tribits_deprecated_command(tribits_set_ss_for_dev_mode
+    MESSAGE "Use tribits_set_st_for_dev_mode() instead.")
   tribits_set_st_for_dev_mode(${OUTPUT_VAR})
 endmacro()
 

@@ -346,7 +346,7 @@ function(unittest_tribits_misc)
   tribits_filter_and_assert_categories(CATEGORIES)
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "WARNING;Warning: The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.")
+    "DEPRECATION;The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.")
   unittest_compare_const(CATEGORIES "BASIC;HEAVY;NIGHTLY")
 
   message("Testing tribits_filter_and_assert_categories( ... HEAVY)")
@@ -1747,7 +1747,7 @@ function(unittest_tribits_add_test_categories)
   tribits_add_test( ${EXEN} CATEGORIES WEEKLY )
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "WARNING;Warning: The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.;-- PackageA_SomeExec: Added test (HEAVY, PROCESSORS=1)!"
+    "DEPRECATION;The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.;-- PackageA_SomeExec: Added test (HEAVY, PROCESSORS=1)!"
     )
   unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
