@@ -15,6 +15,7 @@ understand the internals of TriBITS.
 @MACRO:    tribits_adjust_package_enables() +
 @MACRO:    tribits_append_forward_dep_packages() +
 @MACRO:    tribits_assert_read_dependency_vars() +
+@FUNCTION: tribits_dump_package_dependencies_info() +
 @FUNCTION: tribits_extpkg_add_find_upstream_dependencies_str() +
 @FUNCTION: tribits_extpkg_create_all_libs_target() +
 @FUNCTION: tribits_extpkg_install_config_file() +
@@ -22,7 +23,10 @@ understand the internals of TriBITS.
 @FUNCTION: tribits_extpkg_process_libraries_list() +
 @MACRO:    tribits_extpkg_setup_enabled_dependencies() +
 @FUNCTION: tribits_extpkg_write_config_version_file() +
-@FUNCTION: tribits_dump_package_dependencies_info() +
+@FUNCTION: tribits_get_sublist_disabled() +
+@FUNCTION: tribits_get_sublist_enabled() +
+@FUNCTION: tribits_get_sublist_nondisabled() +
+@FUNCTION: tribits_get_sublist_nonenabled() +
 @FUNCTION: tribits_print_initial_dependency_info() +
 @FUNCTION: tribits_print_tentatively_enabled_tpls() +
 @MACRO:    tribits_parse_subpackages_append_packages_add_options() +

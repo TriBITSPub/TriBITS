@@ -37,6 +37,8 @@
 # ************************************************************************
 # @HEADER
 
+include(TribitsGetEnabledSublists)
+
 
 # @FUNCTION: tribits_print_enables_before_adjust_package_enables()
 #
