@@ -150,7 +150,7 @@ endfunction()
 # These is the list of entries in ${enableListName} for which evaluate to
 # TRUE.
 #
-function(tribits_get_enabled_list  enableListName
+function(tribits_get_sublist_enabled  enableListName
   enabledSublistNameOut  numEnabledVarOut
   )
   set(enabledSublist)
@@ -173,7 +173,7 @@ endfunction()
 # These are the entries in the list ``${enableListName}`` for which the enable
 # is TRUE or empty "".
 #
-function(tribits_get_nondisabled_list  enableListName
+function(tribits_get_sublist_nondisabled  enableListName
     nondisabledListNameOut  numNondisabledVarOut
   )
   set(nondisabledList "")
@@ -196,7 +196,7 @@ endfunction()
 # These are the entries in the list ``${enableListName}`` for which the enable
 # evaluates to FALSE and is not empty "".
 #
-function(tribits_get_disabled_list  enableListName
+function(tribits_get_sublist_disabled  enableListName
     disabledSublistNameOut  numDisabledVarOut
   )
   set(disabledSublist "")
@@ -219,7 +219,7 @@ endfunction()
 # These are the entries in the list ``${enableListName}`` for which the enable
 # is not TRUE.
 #
-function(tribits_get_nonenabled_list  enableListName
+function(tribits_get_sublist_nonenabled  enableListName
     nonenabledListNameOut  numNonenabledVarOut
   )
   set(nonenabledList "")
@@ -242,13 +242,13 @@ endfunction()
 macro(tribits_set_up_enabled_lists_and_pkg_idx)
 
   # ${PROJECT_NAME}_ENABLED_PACKAGES
-  tribits_get_enabled_list(
+  tribits_get_sublist_enabled(
     ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     ${PROJECT_NAME}_ENABLED_INTERNAL_TOPLEVEL_PACKAGES
     ${PROJECT_NAME}_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES)
 
   # ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES
-  tribits_get_enabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
+  tribits_get_sublist_enabled( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
     ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES
     ${PROJECT_NAME}_NUM_ENABLED_INTERNAL_PACKAGES)
 
@@ -265,7 +265,7 @@ macro(tribits_set_up_enabled_lists_and_pkg_idx)
   endforeach()
 
   # ${PROJECT_NAME}_ENABLED_TPLS
-  tribits_get_enabled_list( ${PROJECT_NAME}_DEFINED_TPLS
+  tribits_get_sublist_enabled( ${PROJECT_NAME}_DEFINED_TPLS
     ${PROJECT_NAME}_ENABLED_TPLS  ${PROJECT_NAME}_NUM_ENABLED_TPLS)
 
   # ${PROJECT_NAME}_REVERSE_ENABLED_TPLS

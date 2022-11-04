@@ -172,7 +172,7 @@ endmacro()
 #
 macro(tribits_sweep_forward_apply_enables)
 
-  tribits_get_nondisabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
+  tribits_get_sublist_nondisabled( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
     ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES "")
   tribit_create_reverse_list(${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES
     ${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES)
@@ -200,7 +200,7 @@ macro(tribits_sweep_forward_apply_enables)
       tribits_enable_forward_lib_package_enables(${tad1_tribitsPkg})
     endforeach()
 
-    tribits_get_enabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
+    tribits_get_sublist_enabled( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
       ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES "")
     tribit_create_reverse_list(${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES
       ${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES)
@@ -219,7 +219,7 @@ macro(tribits_sweep_forward_apply_enables)
     set(${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES ON)
   endif()
 
-  tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES
+  tribits_get_sublist_enabled( ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES
     ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES  "")
 
 endmacro()
@@ -306,7 +306,7 @@ macro(tribits_sweep_backward_enable_upstream_packages)
   # upstream package enables including required packages, and optional
   # packages (when ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES).
 
-  tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES
+  tribits_get_sublist_enabled( ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES
     ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES  "")
 
   message("\nEnabling all optional intra-package enables"
