@@ -638,7 +638,7 @@ subpackages::
   -D <Project>_ENABLE_<TRIBITS_PACKAGE><B>=OFF \
   ...
 
-The disable of the subpackages is this case will override any enables.
+The disable of the subpackages in this case will override any enables.
 
 .. _<Project>_DISABLE_ENABLED_FORWARD_DEP_PACKAGES:
 
