@@ -979,14 +979,15 @@ macro(tribits_private_disable_required_package_enables
 endmacro()
 
 
-macro(tribits_private_disable_optional_package_enables
-  fwdDepPkgName  packageName
-  )
+macro(tribits_private_disable_optional_package_enables  fwdDepPkgName  packageName)
 
-  if (${fwdDepPkgName}_ENABLE_${packageName} OR "${${fwdDepPkgName}_ENABLE_${packageName}}" STREQUAL "")
-    # Always disable the conditional enable but only print the message if the package is enabled.
+  if (${fwdDepPkgName}_ENABLE_${packageName}
+      OR "${${fwdDepPkgName}_ENABLE_${packageName}}" STREQUAL ""
+    )
+    # Always disable the conditional enable but only print the message if the
+    # package is enabled or if a disable overrides an enable
     if (${PROJECT_NAME}_ENABLE_${fwdDepPkgName})
-      if (${fwdDepPkgName}_ENABLE_${packageName})  # is explicitly try already!
+      if (${fwdDepPkgName}_ENABLE_${packageName})  # is explicitly enabled already!
         message("-- "
           "NOTE: Setting ${fwdDepPkgName}_ENABLE_${packageName}=OFF"
           " which was ${${fwdDepPkgName}_ENABLE_${packageName}}"
@@ -998,6 +999,16 @@ macro(tribits_private_disable_optional_package_enables
           " because ${fwdDepPkgName} has an optional library dependence"
           " on disabled package ${packageName}")
       endif()
+    endif()
+    if (${fwdDepPkgName}_ENABLE_${packageName}
+        AND (NOT ${PROJECT_NAME}_ENABLE_${packageName})
+        AND (NOT "${${PROJECT_NAME}_ENABLE_${packageName}}" STREQUAL "")
+      )
+      message("-- " "NOTE: ${fwdDepPkgName}_ENABLE_${packageName}="
+        "${${fwdDepPkgName}_ENABLE_${packageName}} but"
+        " ${PROJECT_NAME}_ENABLE_${packageName}="
+        "${${PROJECT_NAME}_ENABLE_${packageName}} is set.  Setting"
+        " ${fwdDepPkgName}_ENABLE_${packageName}=OFF!")
     endif()
     set(${fwdDepPkgName}_ENABLE_${packageName} OFF)
   endif()
@@ -1080,8 +1091,8 @@ macro(tribits_private_postprocess_optional_package_enable  packageName
       message("-- " "NOT setting ${packageName}_ENABLE_${optDepPkg}=ON"
        " since ${optDepPkg} is NOT enabled at this point!")
     endif()
-  elseif (NOT "${${packageName}_ENABLE_${optDepPkg}}" STREQUAL ""
-      AND NOT ${packageName}_ENABLE_${optDepPkg}
+  elseif ((NOT "${${packageName}_ENABLE_${optDepPkg}}" STREQUAL "")
+      AND (NOT ${packageName}_ENABLE_${optDepPkg})
       AND ${PROJECT_NAME}_ENABLE_${optDepPkg}
     )
     message("-- " "NOTE: ${packageName}_ENABLE_${optDepPkg}="

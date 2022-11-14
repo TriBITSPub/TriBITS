@@ -514,6 +514,19 @@ create_reduced_dependency_handling_test_case(
 
 
 create_reduced_dependency_handling_test_case(
+  EnableAllPackages_ST_EpetraExtEnableTriutilsOn_EnableTriutilsOff
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DEpetraExt_ENABLE_Triutils=ON
+    -DTrilinos_ENABLE_Triutils=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- NOTE: EpetraExt_ENABLE_Triutils=ON but Trilinos_ENABLE_Triutils=OFF is set[.]  Setting EpetraExt_ENABLE_Triutils=OFF"
+  )
+
+
+create_reduced_dependency_handling_test_case(
   EnableAllPackages_ST_EpetraExtEnableTriutilsOn
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES=ON
