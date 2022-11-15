@@ -1048,7 +1048,6 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
     -DTeuchos_ENABLE_Boost=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "Enabling all optional package TPL support <TRIBITS_PACKAGE>_ENABLE_<DEPTPL> not currently disabled for enabled TPLs"
     "-- NOTE: Teuchos_ENABLE_Boost=OFF is already set so not enabling even though TPL_ENABLE_Boost=ON is set!"
   )
 

@@ -195,7 +195,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "Enabling all packages that are not currently disabled because of TribitsExProj_ENABLE_ALL_PACKAGES=ON "
         "Setting TribitsExProj_ENABLE_SimpleCxx=ON"
         "Setting TribitsExProj_ENABLE_WithSubpackages=ON"
-        "Setting TPL_ENABLE_HeaderOnlyTpl=ON because it is required by the enabled package SimpleCxx"
+        "Setting TPL_ENABLE_HeaderOnlyTpl=ON because SimpleCxx has a required dependence on HeaderOnlyTpl"
         "Set cache entries for optional packages/TPLs and tests/examples for packages actually enabled ..."
 
         "Dumping direct enabled dependencies for each package ..."

@@ -295,14 +295,19 @@ macro(tribits_sweep_backward_enable_upstream_packages)
        " (and optional since ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES=ON)")
   endif()
 
+  tribits_get_sublist_nondisabled( ${PROJECT_NAME}_DEFINED_PACKAGES
+    ${PROJECT_NAME}_NOTDISABLED_PACKAGES "")
+  tribit_create_reverse_list(${PROJECT_NAME}_NOTDISABLED_PACKAGES
+    ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES)
+
   message("\nEnabling all required${tap1_extraMsgStr} upstream packages for current"
     " set of enabled packages (${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE="
     "${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE}) ...\n")
-  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES)
+  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES)
     tribits_enable_upstream_packages(${tad1_tribitsPkg})
   endforeach()
   # NOTE: Above, we have to loop through the packages backward to enable all
-  # the packages that feed into these packages.  This has to include *all*
+  # the packages that this package depends on.  This has to include *all*
   # upstream package enables including required packages, and optional
   # packages (when ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES).
 
@@ -1073,19 +1078,20 @@ endmacro()
 # ${PACKAGE_NAME} (i.e. ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} is assumed to
 # be TRUE before calling this macro.
 #
-macro(tribits_private_postprocess_optional_package_enable  packageName
-    optDepPkg
-  )
+macro(tribits_private_postprocess_optional_package_enable  packageName  optDepPkg)
 
-  if (${packageName}_ENABLE_${optDepPkg}  AND  ${PROJECT_NAME}_ENABLE_${optDepPkg})
+  tribits_get_package_enable_status(${optDepPkg}  optDepPkgEnable  optDepPkgEnableVar)
+  tribits_get_package_enable_status(${packageName} packageEnable  packageEnableVar)
+
+  if (${packageName}_ENABLE_${optDepPkg}  AND  optDepPkgEnable)
     message("-- " "NOTE:"
       " ${packageName}_ENABLE_${optDepPkg}=${${packageName}_ENABLE_${optDepPkg}}"
       " is already set!")
   elseif ("${${packageName}_ENABLE_${optDepPkg}}" STREQUAL "")
-    if (${PROJECT_NAME}_ENABLE_${optDepPkg})
+    if (optDepPkgEnable)
       message("-- " "Setting ${packageName}_ENABLE_${optDepPkg}=ON"
-       " since ${PROJECT_NAME}_ENABLE_${packageName}=ON AND"
-       " ${PROJECT_NAME}_ENABLE_${optDepPkg}=ON")
+       " since ${packageEnableVar}=ON AND"
+       " ${optDepPkgEnableVar}=ON")
       set(${packageName}_ENABLE_${optDepPkg}  ON)
     else()
       message("-- " "NOT setting ${packageName}_ENABLE_${optDepPkg}=ON"
@@ -1093,12 +1099,12 @@ macro(tribits_private_postprocess_optional_package_enable  packageName
     endif()
   elseif ((NOT "${${packageName}_ENABLE_${optDepPkg}}" STREQUAL "")
       AND (NOT ${packageName}_ENABLE_${optDepPkg})
-      AND ${PROJECT_NAME}_ENABLE_${optDepPkg}
+      AND optDepPkgEnable
     )
     message("-- " "NOTE: ${packageName}_ENABLE_${optDepPkg}="
       "${${packageName}_ENABLE_${optDepPkg}} is already set so not enabling even"
-      " though ${PROJECT_NAME}_ENABLE_${optDepPkg}="
-      "${${PROJECT_NAME}_ENABLE_${optDepPkg}} is set!")
+      " though ${optDepPkgEnableVar}="
+      "${optDepPkgEnable} is set!")
   endif()
 
   string(TOUPPER  ${packageName}  packageName_UPPER)
@@ -1389,18 +1395,19 @@ endmacro()
 
 
 macro(tribits_private_enable_dep_package  packageName  depPkgName  libOrTest)
-  if (${PROJECT_NAME}_ENABLE_${depPkgName})
+  tribits_get_package_enable_status(${depPkgName}  depPkgEnable  depPkgEnableVar)
+  if (depPkgEnable)
     #message("The package is already enabled so there is nothing to enable!")
-  elseif (${PROJECT_NAME}_ENABLE_${depPkgName}  STREQUAL  "")
+  elseif (${depPkgEnableVar}  STREQUAL  "")
     set(tpedp_enableDepPkg "")
     if (${packageName}_${libOrTest}_DEP_REQUIRED_${depPkgName})
-      message("-- " "Setting ${PROJECT_NAME}_ENABLE_${depPkgName}=ON"
+      message("-- " "Setting ${depPkgEnableVar}=ON"
         " because ${packageName} has a required dependence on ${depPkgName}")
       set(tpedp_enableDepPkg  ON)
     elseif (${packageName}_ENABLE_${depPkgName})
       # Enable the upstream package if the user directly specified the
       # optional package enable regardless if it is PT or ST or even EX.
-      message("-- " "Setting ${PROJECT_NAME}_ENABLE_${depPkgName}=ON"
+      message("-- " "Setting ${depPkgEnableVar}=ON"
         " because ${packageName}_ENABLE_${depPkgName}=ON")
       set(tpedp_enableDepPkg  ON)
     elseif (${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES)
@@ -1409,14 +1416,15 @@ macro(tribits_private_enable_dep_package  packageName  depPkgName  libOrTest)
       tribits_implicit_package_enable_is_allowed(${packageName}  ${depPkgName}
         allowImplicitEnable)
       if (allowImplicitEnable)
-        message("-- " "Setting ${PROJECT_NAME}_ENABLE_${depPkgName}=ON"
+        message("-- " "Setting ${depPkgEnableVar}=ON"
           " because ${packageName} has an optional dependence on ${depPkgName}")
         set(tpedp_enableDepPkg  ON)
       endif()
     endif()
     # Enable the upstream package
     if (tpedp_enableDepPkg)
-      set(${PROJECT_NAME}_ENABLE_${depPkgName}  ON)
+      set(${depPkgEnableVar}  ON)
+      set(${depPkgName}_ENABLING_PKG  ${packageName})
     endif()
   endif()
 endmacro()

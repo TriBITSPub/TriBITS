@@ -339,7 +339,7 @@ endfunction()
 # it.
 #
 function(tribits_implicit_package_enable_is_allowed  upstreamPackageName
-  packageName  implictPackageEnableAllowedOut
+    packageName  implictPackageEnableAllowedOut
   )
 
   if (${packageName}_PACKAGE_BUILD_STATUS  STREQUAL  "EXTERNAL")

@@ -88,16 +88,12 @@ function(tribits_set_up_enabled_only_dependencies)
     foreach(tribitsPkg  IN LISTS
         ${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES
       )
-      #print_var(tribitsPkg)
       set(PKG_IDX ${${tribitsPkg}_PKG_IDX})
-      #print_var(PKG_IDX)
-      if (PKG_IDX)
+      if (NOT "${PKG_IDX}" STREQUAL "")
         # The listed package is enabled so we will consider it
         if (PKG_IDX GREATER ${LAST_PKG_IDX})
           set(LAST_PKG_IDX ${PKG_IDX})
           set(LAST_PKG ${tribitsPkg})
-         #print_var(LAST_PKG_IDX)
-         #print_var(LAST_PKG)
         endif()
       endif()
     endforeach()
@@ -111,7 +107,6 @@ function(tribits_set_up_enabled_only_dependencies)
     endif()
 
   endif()
-
 
   if (GENERATE_EXPORT_DEPENDENCIES)
 
