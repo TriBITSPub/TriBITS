@@ -326,7 +326,7 @@ endmacro()
 macro(tribits_set_cache_vars_for_current_enabled_packages)
   message("\nSet cache entries for optional packages/TPLs and tests/examples for packages actually enabled ...\n")
   foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
-    tribits_set_up_optional_package_enables_and_cache_vars(${tad1_tribitsPkg})
+    tribits_setup_optional_package_enables_and_cache_vars(${tad1_tribitsPkg})
   endforeach()
 endmacro()
 
@@ -529,61 +529,51 @@ endmacro()
 # This also will set ${PACKAGE_NAME}_ENABLE_TESTS and
 # ${PACKAGE_NAME}_ENABLE_EXAMPLES to empty non-cache vars
 #
-macro(tribits_set_up_optional_package_enables_and_cache_vars PACKAGE_NAME)
+macro(tribits_setup_optional_package_enables_and_cache_vars  packageName)
 
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-  set(SET_AS_CACHE ${${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}})
+  assert_defined(${PROJECT_NAME}_ENABLE_${packageName})
+  set(SET_AS_CACHE ${${PROJECT_NAME}_ENABLE_${packageName}})
 
   if (SET_AS_CACHE)
 
     multiline_set(DOCSTR
-      "Build tests for the package ${PACKAGE_NAME}.  Set to 'ON', 'OFF', or leave empty ''"
+      "Build tests for the package ${packageName}.  Set to 'ON', 'OFF', or leave empty ''"
        " to allow for other logic to decide."
        )
-    set_cache_on_off_empty( ${PACKAGE_NAME}_ENABLE_TESTS "" ${DOCSTR} )
+    set_cache_on_off_empty( ${packageName}_ENABLE_TESTS "" ${DOCSTR} )
 
     multiline_set(DOCSTR
-      "Build examples for the package ${PACKAGE_NAME}.  Set to 'ON', 'OFF', or leave empty ''"
+      "Build examples for the package ${packageName}.  Set to 'ON', 'OFF', or leave empty ''"
        " to allow for other logic to decide."
        )
-    set_cache_on_off_empty( ${PACKAGE_NAME}_ENABLE_EXAMPLES "" ${DOCSTR} )
+    set_cache_on_off_empty( ${packageName}_ENABLE_EXAMPLES "" ${DOCSTR} )
 
     multiline_set(DOCSTR
-      "Build examples for the package ${PACKAGE_NAME}.  Set to 'ON', 'OFF', or leave empty ''"
+      "Build examples for the package ${packageName}.  Set to 'ON', 'OFF', or leave empty ''"
        " to allow for other logic to decide."
        )
-    set( ${PACKAGE_NAME}_SKIP_CTEST_ADD_TEST
+    set( ${packageName}_SKIP_CTEST_ADD_TEST
       "${${PROJECT_NAME}_SKIP_CTEST_ADD_TEST}" CACHE BOOL ${DOCSTR} )
 
   else()
 
-    if (NOT DEFINED ${PACKAGE_NAME}_ENABLE_TESTS)
-      set( ${PACKAGE_NAME}_ENABLE_TESTS "" )
+    if (NOT DEFINED ${packageName}_ENABLE_TESTS)
+      set( ${packageName}_ENABLE_TESTS "" )
     endif()
-    if (NOT DEFINED ${PACKAGE_NAME}_ENABLE_EXAMPLES)
-      set( ${PACKAGE_NAME}_ENABLE_EXAMPLES "" )
+    if (NOT DEFINED ${packageName}_ENABLE_EXAMPLES)
+      set( ${packageName}_ENABLE_EXAMPLES "" )
     endif()
 
   endif()
 
-  foreach(OPTIONAL_DEP_PACKAGE ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES})
+  foreach(optDepPkg ${${packageName}_LIB_DEFINED_DEPENDENCIES})
     tribits_private_add_optional_package_enable(
-      ${PACKAGE_NAME} ${OPTIONAL_DEP_PACKAGE} "library" "${SET_AS_CACHE}" )
+      ${packageName} ${optDepPkg} "library" "${SET_AS_CACHE}" )
   endforeach()
 
-  foreach(OPTIONAL_DEP_PACKAGE ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES})
+  foreach(optDepPkg ${${packageName}_TEST_DEFINED_DEPENDENCIES})
     tribits_private_add_optional_package_enable(
-      ${PACKAGE_NAME} ${OPTIONAL_DEP_PACKAGE} "test" "${SET_AS_CACHE}" )
-  endforeach()
-
-  foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS})
-    tribits_private_add_optional_tpl_enable(
-      ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} "library" "${SET_AS_CACHE}" )
-  endforeach()
-
-  foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS})
-    tribits_private_add_optional_tpl_enable(
-      ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} "test" "${SET_AS_CACHE}" )
+      ${packageName} ${optDepPkg} "test" "${SET_AS_CACHE}" )
   endforeach()
 
 endmacro()
@@ -885,32 +875,6 @@ macro(tribits_private_add_optional_package_enable PACKAGE_NAME  OPTIONAL_DEP_PAC
 
     if (NOT DEFINED ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE})
       set( ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE} "" )
-    endif()
-
-  endif()
-
-endmacro()
-
-
-macro(tribits_private_add_optional_tpl_enable PACKAGE_NAME OPTIONAL_DEP_TPL
-  TYPE  SET_AS_CACHE_IN )
-
-  if (SET_AS_CACHE_IN)
-
-    multiline_set(DOCSTR
-      "Enable optional ${TYPE} support in the package ${PACKAGE_NAME}"
-      " for the TPL ${OPTIONAL_DEP_TPL}."
-      "  Set to 'ON', 'OFF', or leave empty"
-      " to allow for other logic to decide."
-      )
-
-    set_cache_on_off_empty( ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL} ""
-      ${DOCSTR} )
-
-  else()
-
-    if (NOT DEFINED ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL})
-      set( ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL} "" )
     endif()
 
   endif()
