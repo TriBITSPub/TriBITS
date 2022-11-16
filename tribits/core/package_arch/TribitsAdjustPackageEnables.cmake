@@ -85,9 +85,6 @@ macro(tribits_adjust_package_enables)
   tribits_sweep_forward_apply_enables()
   tribits_disable_and_enable_tests_and_examples()
   tribits_sweep_backward_enable_upstream_packages()
-  tribits_sweep_backward_enable_required_tpls()
-  # ToDo #63: Merge behavior of the above macro into
-  # tribits_sweep_backward_enable_upstream_packages() as part of #63.
   tribits_set_cache_vars_for_current_enabled_packages()
   tribits_enable_parent_package_for_subpackage_enable()
   tribits_set_up_enabled_lists_and_pkg_idx()
@@ -324,38 +321,6 @@ macro(tribits_sweep_backward_enable_upstream_packages)
 endmacro()
 
 
-# @MACRO: tribits_sweep_backward_enable_required_tpls()
-#
-# Enable the TPLs required by the internal packages that are enabled
-#
-# See implementation for details.
-#
-macro(tribits_sweep_backward_enable_required_tpls)
-
-  message("\nEnabling all remaining required TPLs for current set of"
-    " enabled packages ...\n")
-  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
-    tribits_enable_required_tpls(${tad1_tribitsPkg})
-  endforeach()
-
-  message("\nEnabling all optional package TPL support"
-    " <TRIBITS_PACKAGE>_ENABLE_<DEPTPL> not currently disabled for"
-    " enabled TPLs ...\n")
-  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
-    tribits_postprocess_optional_tpl_enables(${tad1_tribitsPkg})
-  endforeach()
-
-  message("\nEnabling TPLs based on <TRIBITS_PACKAGE>_ENABLE_<TPL>=ON if TPL is not explicitly disabled ...\n")
-  foreach(tad1_tribitsPkg  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
-    tribits_enable_optional_tpls(${tad1_tribitsPkg})
-  endforeach()
-  # NOTE: We need to do this after the above optional package TPL support
-  # logic so that the TPL will be turned on for this package only as requested
-  # in bug 4298.
-
-endmacro()
-
-
 # @MACRO: tribits_set_cache_vars_for_current_enabled_packages()
 #
 macro(tribits_set_cache_vars_for_current_enabled_packages)
@@ -557,70 +522,6 @@ endmacro()
 # NOTE: The above macro does not need to check if ${packageName} is enabled
 # because it will only be called for packages that are enabled already.  This
 # not only improves performance but it also aids in testing.
-
-
-# Macro that sets the required TPLs for given package
-#
-macro(tribits_enable_required_tpls PACKAGE_NAME)
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-    foreach(DEP_TPL  IN LISTS  ${PACKAGE_NAME}_LIB_REQUIRED_DEP_TPLS)
-      tribits_private_enable_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
-    endforeach()
-
-    foreach(DEP_TPL  IN LISTS  ${PACKAGE_NAME}_TEST_REQUIRED_DEP_TPLS)
-      tribits_private_enable_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
-    endforeach()
-
-  endif()
-
-endmacro()
-
-
-# Post-processes optional package TPL based on if the TPL
-# has been enabled or not
-#
-macro(tribits_postprocess_optional_tpl_enables PACKAGE_NAME)
-
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-    foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS})
-      tribits_private_postprocess_optional_tpl_enable(
-        ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} )
-    endforeach()
-
-    foreach(OPTIONAL_DEP_TPL ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS})
-      tribits_private_postprocess_optional_tpl_enable(
-        ${PACKAGE_NAME} ${OPTIONAL_DEP_TPL} )
-    endforeach()
-
-  endif()
-
-endmacro()
-
-
-# Macro that enables the optional TPLs for given package
-#
-macro(tribits_enable_optional_tpls PACKAGE_NAME)
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-
-    foreach(DEP_TPL ${${PACKAGE_NAME}_LIB_OPTIONAL_DEP_TPLS})
-      tribits_private_enable_optional_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
-    endforeach()
-
-    foreach(DEP_TPL ${${PACKAGE_NAME}_TEST_OPTIONAL_DEP_TPLS})
-      tribits_private_enable_optional_dep_tpl(${PACKAGE_NAME} ${DEP_TPL})
-    endforeach()
-
-  endif()
-
-endmacro()
 
 
 # Macro that sets cache vars for optional package interdependencies
@@ -880,63 +781,6 @@ function(tribits_private_print_disable
 endfunction()
 
 
-macro(tribits_private_disable_tpl_required_package_enable
-  TPL_NAME  PACKAGE_NAME  LIBRARY_DEP
-  )
-
-  # Only turn off PACKAGE_NAME libraries and test/examples if it
-  # is currently enabled or could be enabled.
-
-  assert_defined(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}
-     OR ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} STREQUAL ""
-     )
-
-    if ("${LIBRARY_DEP}" STREQUAL "TRUE")
-
-      tribits_private_print_disable(
-        ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} ${PACKAGE_NAME} "library"
-        "TPL" ${TPL_NAME}
-        )
-
-      set(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} OFF)
-
-    else()
-
-      set(DEP_TYPE_STR "test/example")
-
-      if (${PACKAGE_NAME}_ENABLE_TESTS
-        OR "${${PACKAGE_NAME}_ENABLE_TESTS}" STREQUAL ""
-        )
-        tribits_private_print_disable(
-          ${PACKAGE_NAME}_ENABLE_TESTS ${PACKAGE_NAME} "${DEP_TYPE_STR}"
-          "TPL" ${TPL_NAME}
-          )
-        set(${PACKAGE_NAME}_ENABLE_TESTS OFF)
-      endif()
-
-      if (${PACKAGE_NAME}_ENABLE_EXAMPLES
-        OR "${${PACKAGE_NAME}_ENABLE_EXAMPLES}" STREQUAL ""
-        )
-        tribits_private_print_disable(
-          ${PACKAGE_NAME}_ENABLE_EXAMPLES ${PACKAGE_NAME} "${DEP_TYPE_STR}"
-          "TPL" ${TPL_NAME}
-          )
-        set(${PACKAGE_NAME}_ENABLE_EXAMPLES OFF)
-      endif()
-
-      # NOTE: We can't assert that ${PACKAGE_NAME}_ENABLE_TESTS or
-      # ${PACKAGE_NAME}_ENABLE_EXAMPLES exists yet because
-      # tribits_set_up_optional_package_enables_and_cache_vars() which defines
-      # them is not called until after the final package enables are set.
-
-    endif()
-
-  endif()
-
-endmacro()
-
-
 function(tribits_private_print_disable_required_package_enable
   PACKAGE_NAME  PACKAGE_ENABLE_SOMETHING_VAR_NAME  FORWARD_DEP_PACKAGE_NAME
   DEP_TYPE_STR
@@ -1115,57 +959,6 @@ macro(tribits_private_postprocess_optional_package_enable  packageName  optDepPk
     set(${MACRO_DEFINE_NAME}  ON)
   else()
     set(${MACRO_DEFINE_NAME}  OFF)
-  endif()
-
-endmacro()
-
-
-# Enable optional intra-package support for enabled target package
-# ${PACKAGE_NAME} (i.e. ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} is assumed to
-# be TRUE before calling this macro.
-#
-macro(tribits_private_postprocess_optional_tpl_enable  PACKAGE_NAME  OPTIONAL_DEP_TPL)
-
-  if (${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL} AND TPL_ENABLE_${OPTIONAL_DEP_TPL})
-    message("-- " "NOTE:"
-      " ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}=${${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}}"
-      " is already set!")
-  elseif (
-    (NOT TPL_ENABLE_${OPTIONAL_DEP_TPL})
-    AND
-    (NOT "${TPL_ENABLE_${OPTIONAL_DEP_TPL}}" STREQUAL "")
-    AND
-    ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}
-    )
-    message(
-      "\n***"
-      "\n*** NOTE: Setting ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}=OFF"
-      " which was ON since TPL_ENABLE_${OPTIONAL_DEP_TPL}=OFF"
-      "\n***\n"
-      )
-    set(${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL} OFF)
-  elseif ("${${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}}" STREQUAL ""
-    AND TPL_ENABLE_${OPTIONAL_DEP_TPL}
-    )
-    message("-- " "Setting ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}=ON"
-      " since TPL_ENABLE_${OPTIONAL_DEP_TPL}=ON")
-    set(${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL} ON)
-  elseif (NOT "${${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}}" STREQUAL ""
-    AND NOT ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}
-    AND TPL_ENABLE_${OPTIONAL_DEP_TPL}
-    )
-    message("-- " "NOTE: ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}=${${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL}}"
-      " is already set so not enabling even though TPL_ENABLE_${OPTIONAL_DEP_TPL}=${TPL_ENABLE_${OPTIONAL_DEP_TPL}} is set!")
-  endif()
-
-  string(TOUPPER ${PACKAGE_NAME} PACKAGE_NAME_UPPER)
-  string(TOUPPER ${OPTIONAL_DEP_TPL} OPTIONAL_DEP_TPL_UPPER)
-  set(MACRO_DEFINE_NAME HAVE_${PACKAGE_NAME_UPPER}_${OPTIONAL_DEP_TPL_UPPER})
-
-  if (${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_TPL})
-    set(${MACRO_DEFINE_NAME} ON)
-  else()
-    set(${MACRO_DEFINE_NAME} OFF)
   endif()
 
 endmacro()
@@ -1426,32 +1219,6 @@ macro(tribits_private_enable_dep_package  packageName  depPkgName  libOrTest)
       set(${depPkgEnableVar}  ON)
       set(${depPkgName}_ENABLING_PKG  ${packageName})
     endif()
-  endif()
-endmacro()
-
-
-macro(tribits_private_enable_dep_tpl  PACKAGE_NAME  DEP_TPL_NAME)
-  assert_defined(TPL_ENABLE_${DEP_TPL_NAME})
-  if(TPL_ENABLE_${DEP_TPL_NAME} STREQUAL "")
-    message("-- " "Setting TPL_ENABLE_${DEP_TPL_NAME}=ON because"
-      " it is required by the enabled package ${PACKAGE_NAME}")
-    assert_defined(TPL_ENABLE_${DEP_TPL_NAME})
-    set(TPL_ENABLE_${DEP_TPL_NAME} ON)
-    set(TPL_${DEP_TPL_NAME}_ENABLING_PKG  ${PACKAGE_NAME})
-  endif()
-endmacro()
-
-
-macro(tribits_private_enable_optional_dep_tpl PACKAGE_NAME DEP_TPL_NAME)
-  #assert_defined(${PACKAGE_NAME}_ENABLE_${DEP_TPL_NAME})
-  if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}
-    AND ${PACKAGE_NAME}_ENABLE_${DEP_TPL_NAME}
-    AND TPL_ENABLE_${DEP_TPL_NAME} STREQUAL ""
-    )
-    message("-- " "Setting TPL_ENABLE_${DEP_TPL_NAME}=ON because"
-      " ${PACKAGE_NAME}_ENABLE_${DEP_TPL_NAME}=ON")
-    assert_defined(TPL_ENABLE_${DEP_TPL_NAME})
-    set(TPL_ENABLE_${DEP_TPL_NAME} ON)
   endif()
 endmacro()
 
