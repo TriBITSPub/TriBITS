@@ -87,7 +87,7 @@ macro(tribits_adjust_package_enables)
   tribits_sweep_backward_enable_upstream_packages()
   tribits_set_cache_vars_for_current_enabled_packages()
   tribits_do_final_parent_packages_enables_for_subpackage_enables()
-  tribits_set_up_enabled_lists_and_pkg_idx()
+  tribits_setup_enabled_lists_and_pkg_idxs()
   tribits_setup_direct_packages_dependencies_lists_and_lib_required_enable_vars()
   tribits_print_direct_packages_dependencies_lists()
 endmacro()
@@ -1219,7 +1219,7 @@ endmacro()
 
 # Macro that sets up the basic lists of enabled packages and packages.
 #
-macro(tribits_set_up_enabled_lists_and_pkg_idx)
+macro(tribits_setup_enabled_lists_and_pkg_idxs)
 
   # ${PROJECT_NAME}_ENABLED_PACKAGES
   tribits_get_sublist_enabled(
@@ -1233,25 +1233,14 @@ macro(tribits_set_up_enabled_lists_and_pkg_idx)
     ${PROJECT_NAME}_NUM_ENABLED_INTERNAL_PACKAGES)
 
   # ${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES
-  set(${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES
-    "${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES}")
-  list(REVERSE ${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES)
+  unset(${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES) # Wipe out temp value
 
-  # ${PACKAGE_NAME}_PKG_IDX
-  set(PKG_IDX 0)
+  # Set ${PACKAGE_NAME}_PKG_IDX for each enabled package
+  set(pkgIdx 0)
   foreach(tribitsPackage ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
-    set(${tribitsPackage}_PKG_IDX ${PKG_IDX})
-    math(EXPR  PKG_IDX  "${PKG_IDX} + 1")
+    set(${tribitsPackage}_PKG_IDX ${pkgIdx})
+    math(EXPR  pkgIdx  "${pkgIdx} + 1")
   endforeach()
-
-  # ${PROJECT_NAME}_ENABLED_TPLS
-  tribits_get_sublist_enabled( ${PROJECT_NAME}_DEFINED_TPLS
-    ${PROJECT_NAME}_ENABLED_TPLS  ${PROJECT_NAME}_NUM_ENABLED_TPLS)
-
-  # ${PROJECT_NAME}_REVERSE_ENABLED_TPLS
-  set(${PROJECT_NAME}_REVERSE_ENABLED_TPLS
-    "${${PROJECT_NAME}_ENABLED_TPLS}")
-  list(REVERSE ${PROJECT_NAME}_REVERSE_ENABLED_TPLS)
 
 endmacro()
 
