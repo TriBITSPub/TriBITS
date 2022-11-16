@@ -145,45 +145,6 @@ function(tribits_set_base_repo_dir  BASE_DIR  REPO_DIR  BASE_REPO_DIR_OUT)
 endfunction()
 
 
-# Macro that sets up the basic lists of enabled packages and packages.
-#
-macro(tribits_set_up_enabled_lists_and_pkg_idx)
-
-  # ${PROJECT_NAME}_ENABLED_PACKAGES
-  tribits_get_sublist_enabled(
-    ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
-    ${PROJECT_NAME}_ENABLED_INTERNAL_TOPLEVEL_PACKAGES
-    ${PROJECT_NAME}_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES)
-
-  # ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES
-  tribits_get_sublist_enabled( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
-    ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES
-    ${PROJECT_NAME}_NUM_ENABLED_INTERNAL_PACKAGES)
-
-  # ${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES
-  set(${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES
-    "${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES}")
-  list(REVERSE ${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES)
-
-  # ${PACKAGE_NAME}_PKG_IDX
-  set(PKG_IDX 0)
-  foreach(tribitsPackage ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
-    set(${tribitsPackage}_PKG_IDX ${PKG_IDX})
-    math(EXPR  PKG_IDX  "${PKG_IDX} + 1")
-  endforeach()
-
-  # ${PROJECT_NAME}_ENABLED_TPLS
-  tribits_get_sublist_enabled( ${PROJECT_NAME}_DEFINED_TPLS
-    ${PROJECT_NAME}_ENABLED_TPLS  ${PROJECT_NAME}_NUM_ENABLED_TPLS)
-
-  # ${PROJECT_NAME}_REVERSE_ENABLED_TPLS
-  set(${PROJECT_NAME}_REVERSE_ENABLED_TPLS
-    "${${PROJECT_NAME}_ENABLED_TPLS}")
-  list(REVERSE ${PROJECT_NAME}_REVERSE_ENABLED_TPLS)
-
-endmacro()
-
-
 # @FUNCTION: tribits_set_st_for_dev_mode()
 #
 # Function that allows packages to easily make a feature ``ST`` for
