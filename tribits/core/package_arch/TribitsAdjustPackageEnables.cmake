@@ -86,7 +86,7 @@ macro(tribits_adjust_package_enables)
   tribits_disable_and_enable_tests_and_examples()
   tribits_sweep_backward_enable_upstream_packages()
   tribits_set_cache_vars_for_current_enabled_packages()
-  tribits_enable_parent_package_for_subpackage_enable()
+  tribits_do_final_parent_packages_enables_for_subpackage_enables()
   tribits_set_up_enabled_lists_and_pkg_idx()
   tribits_setup_direct_packages_dependencies_lists_and_lib_required_enable_vars()
   tribits_print_direct_packages_dependencies_lists()
@@ -331,19 +331,21 @@ macro(tribits_set_cache_vars_for_current_enabled_packages)
 endmacro()
 
 
-# @MACRO: tribits_enable_parent_package_for_subpackage_enable()
+# @MACRO: tribits_do_final_parent_packages_enables_for_subpackage_enables()
 #
-macro(tribits_enable_parent_package_for_subpackage_enable)
+macro(tribits_do_final_parent_packages_enables_for_subpackage_enables)
 
-  message("\nEnabling the shell of non-enabled parent packages (mostly for show) that have at least one subpackage enabled ...\n")
+  message("\nEnabling the shell of non-enabled parent packages (mostly for show)"
+    " that have at least one subpackage enabled ...\n")
   foreach(tad1_tribitsPkg  IN LISTS
       ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     )
-    tribits_postprocess_package_with_subpackages_enables(${tad1_tribitsPkg})
+    tribits_enable_parent_package_for_subpackage_enables(${tad1_tribitsPkg})
   endforeach()
   # NOTE: The above ensures that loops involving the parent package will
-  # process the parent package but doing this last ensures that no downstream
-  # dependencies will be enabled.
+  # process the parent package.  But this has to be done after all of the
+  # other enable/disable logic to ensure no downstream dependencies will be
+  # enabled based on this.
 
 endmacro()
 
@@ -579,29 +581,32 @@ macro(tribits_setup_optional_package_enables_and_cache_vars  packageName)
 endmacro()
 
 
-# Macro that post-processes final package enables for packages with subpackage
-# enables.
+# Macro that enables a the top-level parent package enable if any of its
+# subpackages are enabled.
 #
-macro(tribits_postprocess_package_with_subpackages_enables  PACKAGE_NAME)
-  foreach(tap2_subPkgName  IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
-    set(subpkgFullName ${PACKAGE_NAME}${tap2_subPkgName})
+macro(tribits_enable_parent_package_for_subpackage_enables  toplevelPackageName)
+  foreach(tap2_subPkgName  IN LISTS  ${toplevelPackageName}_SUBPACKAGES)
+    set(subpkgFullName ${toplevelPackageName}${tap2_subPkgName})
     if (${PROJECT_NAME}_ENABLE_${subpkgFullName}
-        AND NOT ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}
+        AND (NOT ${PROJECT_NAME}_ENABLE_${toplevelPackageName})
       )
       message("-- "
-        "Setting ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}=ON"
+        "Setting ${PROJECT_NAME}_ENABLE_${toplevelPackageName}=ON"
         " because ${PROJECT_NAME}_ENABLE_${subpkgFullName}=ON")
-      set(${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} ON)
-      tribits_postprocess_package_with_subpackages_optional_subpackage_enables(
-        ${PACKAGE_NAME})
-      tribits_postprocess_package_with_subpackages_test_example_enables(
-        ${PACKAGE_NAME}  TESTS)
-      tribits_postprocess_package_with_subpackages_test_example_enables(
-        ${PACKAGE_NAME}  EXAMPLES)
-      # NOTE: We need to enable the parent package even if it was disabled by
-      # some means before this because a subpackage is enabled.  But other
-      # logic should ensure that the parent package is never disabled and a
-      # subpackage is allowed to be enabled.
+      set(${PROJECT_NAME}_ENABLE_${toplevelPackageName} ON)
+      tribits_set_parent_package_subpackage_enable_for_enabled_subpackages(
+        ${toplevelPackageName})
+      tribits_set_parent_package_test_example_enable_for_enabled_subpackages(
+        ${toplevelPackageName}  TESTS)
+      tribits_set_parent_package_test_example_enable_for_enabled_subpackages(
+        ${toplevelPackageName}  EXAMPLES)
+      # NOTE: Above, we need to enable the parent package even if it was
+      # disabled by some means before this.  (There are use cases where the
+      # parent package my be disabled but that may not trigger the disable of
+      # subpackages of that package.)  Other logic should ensure that the
+      # parent package is never explicitly disabled and a subpackage is
+      # allowed to be enabled.
+      break() # We only need trigger above code for single enabled subpackage!
     endif()
   endforeach()
 endmacro()
@@ -953,41 +958,41 @@ endmacro()
 # ${packageName}_[LIB|TEST]_DEP_REQUIRED_${depPkg}.
 
 
-# Set <ParentPackage>_ENABLE_<SubPackage>=ON if not already enabled for all
-# subpackages of a parent package.
+# Macro that sets ``<ParentPackage>_ENABLE_<SubPackage>=ON`` if not already
+# enabled for all enabled subpackages of a parent package.
 #
-macro(tribits_postprocess_package_with_subpackages_optional_subpackage_enables
-    PACKAGE_NAME
+macro(tribits_set_parent_package_subpackage_enable_for_enabled_subpackages
+    toplevelPackageName
   )
-  foreach(tap3_subPkg   IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
-    set(subpkgFullName ${PACKAGE_NAME}${tap3_subPkg})
+  foreach(tap3_subPkg   IN LISTS  ${toplevelPackageName}_SUBPACKAGES)
+    set(subpkgFullName ${toplevelPackageName}${tap3_subPkg})
     if (${PROJECT_NAME}_ENABLE_${subpkgFullName}
-      AND "${${PACKAGE_NAME}_ENABLE_${subpkgFullName}}" STREQUAL ""
+      AND "${${toplevelPackageName}_ENABLE_${subpkgFullName}}" STREQUAL ""
       )
       message("-- "
-        "Setting ${PACKAGE_NAME}_ENABLE_${subpkgFullName}=ON"
+        "Setting ${toplevelPackageName}_ENABLE_${subpkgFullName}=ON"
         " because ${PROJECT_NAME}_ENABLE_${subpkgFullName}=ON")
-      set(${PACKAGE_NAME}_ENABLE_${subpkgFullName} ON)
+      set(${toplevelPackageName}_ENABLE_${subpkgFullName} ON)
     endif()
   endforeach()
 endmacro()
 
 
-# Set the parent package tests/examples enables if one subpackage is enabled
-# and has its tests/examples
+# Macro that sets ``<ParentPacakge>_ENABLE_[TESTS|EXAMPLES]=ON`` if subpackage
+# is enabled and has its tests/examples are enabled.
 #
-macro(tribits_postprocess_package_with_subpackages_test_example_enables
-    PACKAGE_NAME  TESTS_OR_EXAMPLES
+macro(tribits_set_parent_package_test_example_enable_for_enabled_subpackages
+    toplevelPackageName  testOrExamples
   )
-  foreach(tap3_subPkg  IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
-    set(subpkgFullName ${PACKAGE_NAME}${tap3_subPkg})
-    if (${subpkgFullName}_ENABLE_${TESTS_OR_EXAMPLES}
-      AND "${${PACKAGE_NAME}_ENABLE_${TESTS_OR_EXAMPLES}}" STREQUAL ""
+  foreach(tap3_subPkg  IN LISTS  ${toplevelPackageName}_SUBPACKAGES)
+    set(subpkgFullName ${toplevelPackageName}${tap3_subPkg})
+    if (${subpkgFullName}_ENABLE_${testOrExamples}
+      AND "${${toplevelPackageName}_ENABLE_${testOrExamples}}" STREQUAL ""
       )
       message("-- "
-        "Setting ${PACKAGE_NAME}_ENABLE_${TESTS_OR_EXAMPLES}=ON"
-        " because ${subpkgFullName}_ENABLE_${TESTS_OR_EXAMPLES}=ON")
-      set(${PACKAGE_NAME}_ENABLE_${TESTS_OR_EXAMPLES} ON)
+        "Setting ${toplevelPackageName}_ENABLE_${testOrExamples}=ON"
+        " because ${subpkgFullName}_ENABLE_${testOrExamples}=ON")
+      set(${toplevelPackageName}_ENABLE_${testOrExamples} ON)
     endif()
   endforeach()
 endmacro()
