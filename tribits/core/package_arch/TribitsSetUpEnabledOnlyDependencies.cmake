@@ -149,34 +149,8 @@ function(tribits_package_set_full_enabled_dep_packages  packageName)
   tribits_package_build_unsorted_full_enabled_dep_packages(${packageName}
     packageFullDepsList)
 
-  set(orderedPackageFullDepsList "")
-
-  foreach(depPkg  IN LISTS  packageFullDepsList)
-
-    set(depPkgIdx  ${${depPkg}_PKG_IDX})
-
-    set(sortedIndex 0)
-    set(insertedDepPkg FALSE)
-
-    foreach(sortedPackage  IN LISTS  orderedPackageFullDepsList)
-
-      set(sortedPackageIdx ${${sortedPackage}_PKG_IDX})
-
-      if (${depPkgIdx} GREATER ${sortedPackageIdx})
-        list(INSERT  orderedPackageFullDepsList  ${sortedIndex}  ${depPkg})
-        set(insertedDepPkg TRUE)
-        break()
-      endif()
-
-      math(EXPR sortedIndex ${sortedIndex}+1)
-
-    endforeach()
-
-    if(NOT insertedDepPkg)
-      list(APPEND  orderedPackageFullDepsList  ${depPkg})
-    endif()
-
-  endforeach()
+  tribits_package_sort_full_enabled_dep_packages(packageFullDepsList
+    orderedPackageFullDepsList)
 
   global_set(${packageName}_FULL_ENABLED_DEP_PACKAGES ${orderedPackageFullDepsList})
 
@@ -216,5 +190,46 @@ function(tribits_package_build_unsorted_full_enabled_dep_packages  packageName
   endif()
 
   set(${packageFullDepsListOut} ${packageFullDepsList} PARENT_SCOPE)
+
+endfunction()
+
+
+# Helper function to sort the full set of upstream dep packages for a given
+# internal package.
+#
+function(tribits_package_sort_full_enabled_dep_packages  packageFullDepsListName
+    orderedPackageFullDepsListOut
+  )
+
+  set(orderedPackageFullDepsList "")
+
+  foreach(depPkg  IN LISTS  ${packageFullDepsListName})
+
+    set(depPkgIdx ${${depPkg}_PKG_IDX})
+
+    set(sortedIndex 0)
+    set(insertedDepPkg FALSE)
+
+    foreach(sortedPackage  IN LISTS  orderedPackageFullDepsList)
+
+      set(sortedPackageIdx ${${sortedPackage}_PKG_IDX})
+
+      if (${depPkgIdx} GREATER ${sortedPackageIdx})
+        list(INSERT  orderedPackageFullDepsList  ${sortedIndex}  ${depPkg})
+        set(insertedDepPkg TRUE)
+        break()
+      endif()
+
+      math(EXPR sortedIndex ${sortedIndex}+1)
+
+    endforeach()
+
+    if(NOT insertedDepPkg)
+      list(APPEND  orderedPackageFullDepsList  ${depPkg})
+    endif()
+
+  endforeach()
+
+  set(${orderedPackageFullDepsListOut} ${orderedPackageFullDepsList} PARENT_SCOPE)
 
 endfunction()
