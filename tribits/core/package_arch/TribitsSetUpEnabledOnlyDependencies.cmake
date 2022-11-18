@@ -140,65 +140,62 @@ endfunction()
 # enabled package ``${PACKAGE_NAME}``, including all of its indirect upstream
 # internal package dependencies.
 #
-function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
+function(tribits_package_set_full_enabled_dep_packages  packageName)
 
-  set(PACKAGE_FULL_DEPS_LIST "")
+  set(packageFullDepsList "")
 
-  foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES)
-    if (${PROJECT_NAME}_ENABLE_${DEP_PKG})
-      list(APPEND  PACKAGE_FULL_DEPS_LIST  ${DEP_PKG})
+  foreach(depPkg  IN LISTS  ${packageName}_LIB_REQUIRED_DEP_PACKAGES)
+    if (${PROJECT_NAME}_ENABLE_${depPkg})
+      list(APPEND  packageFullDepsList  ${depPkg})
     endif()
     # NOTE: This if() should not be needed but this is a safeguard
   endforeach()
 
-  foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES)
-    if (${PACKAGE_NAME}_ENABLE_${DEP_PKG})
-      list(APPEND  PACKAGE_FULL_DEPS_LIST  ${DEP_PKG})
+  foreach(depPkg  IN LISTS  ${packageName}_LIB_OPTIONAL_DEP_PACKAGES)
+    if (${packageName}_ENABLE_${depPkg})
+      list(APPEND  packageFullDepsList  ${depPkg})
     endif()
   endforeach()
 
-  if(PACKAGE_FULL_DEPS_LIST)
-    list(REMOVE_DUPLICATES  PACKAGE_FULL_DEPS_LIST)
+  if(packageFullDepsList)
+    list(REMOVE_DUPLICATES  packageFullDepsList)
 
-    foreach(DEP_PACKAGE  IN LISTS  PACKAGE_FULL_DEPS_LIST)
-      list(APPEND PACKAGE_FULL_DEPS_LIST  ${${DEP_PACKAGE}_FULL_ENABLED_DEP_PACKAGES})
+    foreach(DEP_PACKAGE  IN LISTS  packageFullDepsList)
+      list(APPEND packageFullDepsList  ${${DEP_PACKAGE}_FULL_ENABLED_DEP_PACKAGES})
     endforeach()
 
-    list(REMOVE_DUPLICATES PACKAGE_FULL_DEPS_LIST)
+    list(REMOVE_DUPLICATES packageFullDepsList)
   endif()
 
-  set(ORDERED_PACKAGE_FULL_DEPS_LIST "")
+  set(orderedPackageFullDepsList "")
 
-  foreach(DEP_PACKAGE  IN LISTS  PACKAGE_FULL_DEPS_LIST)
+  foreach(depPkg  IN LISTS  packageFullDepsList)
 
-    #print_var(${DEP_PACKAGE}_PKG_IDX)
-    set(DEP_PACKAGE_VALUE  ${${DEP_PACKAGE}_PKG_IDX})
+    set(depPkgIdx  ${${depPkg}_PKG_IDX})
 
-    set(SORTED_INDEX 0)
-    set(INSERTED_DEP_PACKAGE FALSE)
+    set(sortedIndex 0)
+    set(insertedDepPkg FALSE)
 
-    foreach(SORTED_PACKAGE  IN LISTS  ORDERED_PACKAGE_FULL_DEPS_LIST)
+    foreach(sortedPackage  IN LISTS  orderedPackageFullDepsList)
 
-      #print_var(${SORTED_PACKAGE}_PKG_IDX)
-      set(SORTED_PACKAGE_VALUE  ${${SORTED_PACKAGE}_PKG_IDX})
+      set(sortedPackageIdx  ${${sortedPackage}_PKG_IDX})
 
-      if (${DEP_PACKAGE_VALUE} GREATER ${SORTED_PACKAGE_VALUE})
-        list(INSERT  ORDERED_PACKAGE_FULL_DEPS_LIST  ${SORTED_INDEX}  ${DEP_PACKAGE})
-        set(INSERTED_DEP_PACKAGE TRUE)
+      if (${depPkgIdx} GREATER ${sortedPackageIdx})
+        list(INSERT  orderedPackageFullDepsList  ${sortedIndex}  ${depPkg})
+        set(insertedDepPkg TRUE)
         break()
       endif()
 
-      math(EXPR SORTED_INDEX ${SORTED_INDEX}+1)
+      math(EXPR sortedIndex ${sortedIndex}+1)
 
     endforeach()
 
-    if(NOT INSERTED_DEP_PACKAGE)
-      list(APPEND  ORDERED_PACKAGE_FULL_DEPS_LIST  ${DEP_PACKAGE})
+    if(NOT insertedDepPkg)
+      list(APPEND  orderedPackageFullDepsList  ${depPkg})
     endif()
 
   endforeach()
 
-  global_set(${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES
-    ${ORDERED_PACKAGE_FULL_DEPS_LIST})
+  global_set(${packageName}_FULL_ENABLED_DEP_PACKAGES ${orderedPackageFullDepsList})
 
 endfunction()
