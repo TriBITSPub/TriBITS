@@ -140,7 +140,55 @@ endfunction()
 # enabled package ``${PACKAGE_NAME}``, including all of its indirect upstream
 # internal package dependencies.
 #
+# NOTE: The complexity of this function is O(<numPackages>^2).  That is why it
+# would be good to get rid of this function at some point (or refactor it to
+# have a better complexity).
+#
 function(tribits_package_set_full_enabled_dep_packages  packageName)
+
+  tribits_package_build_unsorted_full_enabled_dep_packages(${packageName}
+    packageFullDepsList)
+
+  set(orderedPackageFullDepsList "")
+
+  foreach(depPkg  IN LISTS  packageFullDepsList)
+
+    set(depPkgIdx  ${${depPkg}_PKG_IDX})
+
+    set(sortedIndex 0)
+    set(insertedDepPkg FALSE)
+
+    foreach(sortedPackage  IN LISTS  orderedPackageFullDepsList)
+
+      set(sortedPackageIdx ${${sortedPackage}_PKG_IDX})
+
+      if (${depPkgIdx} GREATER ${sortedPackageIdx})
+        list(INSERT  orderedPackageFullDepsList  ${sortedIndex}  ${depPkg})
+        set(insertedDepPkg TRUE)
+        break()
+      endif()
+
+      math(EXPR sortedIndex ${sortedIndex}+1)
+
+    endforeach()
+
+    if(NOT insertedDepPkg)
+      list(APPEND  orderedPackageFullDepsList  ${depPkg})
+    endif()
+
+  endforeach()
+
+  global_set(${packageName}_FULL_ENABLED_DEP_PACKAGES ${orderedPackageFullDepsList})
+
+endfunction()
+
+
+# Helper function that builds the full list of internal upstream dep packages
+# (with no duplicates) for a given internal package.
+#
+function(tribits_package_build_unsorted_full_enabled_dep_packages  packageName
+    packageFullDepsListOut
+  )
 
   set(packageFullDepsList "")
 
@@ -167,35 +215,6 @@ function(tribits_package_set_full_enabled_dep_packages  packageName)
     list(REMOVE_DUPLICATES packageFullDepsList)
   endif()
 
-  set(orderedPackageFullDepsList "")
-
-  foreach(depPkg  IN LISTS  packageFullDepsList)
-
-    set(depPkgIdx  ${${depPkg}_PKG_IDX})
-
-    set(sortedIndex 0)
-    set(insertedDepPkg FALSE)
-
-    foreach(sortedPackage  IN LISTS  orderedPackageFullDepsList)
-
-      set(sortedPackageIdx  ${${sortedPackage}_PKG_IDX})
-
-      if (${depPkgIdx} GREATER ${sortedPackageIdx})
-        list(INSERT  orderedPackageFullDepsList  ${sortedIndex}  ${depPkg})
-        set(insertedDepPkg TRUE)
-        break()
-      endif()
-
-      math(EXPR sortedIndex ${sortedIndex}+1)
-
-    endforeach()
-
-    if(NOT insertedDepPkg)
-      list(APPEND  orderedPackageFullDepsList  ${depPkg})
-    endif()
-
-  endforeach()
-
-  global_set(${packageName}_FULL_ENABLED_DEP_PACKAGES ${orderedPackageFullDepsList})
+  set(${packageFullDepsListOut} ${packageFullDepsList} PARENT_SCOPE)
 
 endfunction()
