@@ -186,40 +186,6 @@ macro(tribits_set_ss_for_dev_mode  OUTPUT_VAR)
 endmacro()
 
 
-# Function that extracts all of the required and optional
-# items for a given class of package lists
-#
-function( tribits_gather_enabled_items  PACKAGE_NAME  LISTTYPE_PREFIX
-  LISTTYPE_POSTFIX  GATHERED_ITEMS_LIST_OUT
-  )
-
-  #message("TRIBITS_GATHER_ENABLED_ITEMS:  '${PACKAGE_NAME}'  '${LISTTYPE_PREFIX}'"
-  #  "  '${LISTTYPE_POSTFIX}'  '${GATHERED_ITEMS_LIST_OUT}'")
-
-  set(GATHERED_ITEMS_LIST_TMP
-    ${${PACKAGE_NAME}_${LISTTYPE_PREFIX}_REQUIRED_DEP_${LISTTYPE_POSTFIX}}
-    )
-
-  #message("TRIBITS_GATHER_ENABLED_ITEMS:"
-  #  "  ${PACKAGE_NAME}_${LISTTYPE_PREFIX}_REQUIRED_DEP_${LISTTYPE_POSTFIX} = ${GATHERED_ITEMS_LIST_TMP}")
-
-  foreach(ITEM
-    ${${PACKAGE_NAME}_${LISTTYPE_PREFIX}_OPTIONAL_DEP_${LISTTYPE_POSTFIX}}
-    )
-    assert_defined(${PACKAGE_NAME}_ENABLE_${ITEM})
-    if (${PACKAGE_NAME}_ENABLE_${ITEM})
-      append_set(GATHERED_ITEMS_LIST_TMP ${ITEM})
-    endif()
-  endforeach()
-
-  #message("TRIBITS_GATHER_ENABLED_ITEMS:"
-  #  "  ${GATHERED_ITEMS_LIST_OUT} = ${GATHERED_ITEMS_LIST_TMP}")
-
-  set(${GATHERED_ITEMS_LIST_OUT} ${GATHERED_ITEMS_LIST_TMP} PARENT_SCOPE)
-
-endfunction()
-
-
 # @FUNCTION: tribits_trace_file_processing()
 #
 # Print trace of file processing when
