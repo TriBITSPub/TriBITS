@@ -58,49 +58,59 @@ macro(tribits_write_xml_dependency_files)
 
   tribits_config_code_start_timer(WRITE_DEPENDENCY_FILES_TIME_START_SECONDS)
 
-  #print_var(${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE)
   if (${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE)
     if (NOT IS_ABSOLUTE ${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE})
       set(${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE
         ${CMAKE_CURRENT_BINARY_DIR}/${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE})
     endif()
     message("" )
-    message("Dumping the XML dependencies file ${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE} ..." )
+    message("Dumping the XML dependencies file"
+      " ${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE} ..." )
     tribits_dump_deps_xml_file()
   endif()
 
-  #print_var(${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE)
   if (${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE AND ${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE)
     if (NOT IS_ABSOLUTE ${${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE})
       set(${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE
         ${CMAKE_CURRENT_BINARY_DIR}/${${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE})
     endif()
     message("" )
-    message("Dumping the HTML dependencies webpage file ${${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE} ..." )
+    message("Dumping the HTML dependencies webpage file"
+      " ${${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE} ..." )
+    set(tribitsCiSupportDir "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CI_SUPPORT_DIR}")
     execute_process(
       COMMAND ${PYTHON_EXECUTABLE}
-        ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CI_SUPPORT_DIR}/dump-package-dep-table.py
+        ${tribitsCiSupportDir}/dump-package-dep-table.py
         --input-xml-deps-file=${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE}
         --output-html-deps-file=${${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE} )
   endif()
 
-  #print_var(${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE)
   if (${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE AND ${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE)
     if (NOT IS_ABSOLUTE ${${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE})
-      set(${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE})
+      set(${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE
+	${CMAKE_CURRENT_BINARY_DIR}/${${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE})
     endif()
     message("" )
-    message("Dumping the CDash XML dependencies file ${${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE} ..." )
-    execute_process(
-      COMMAND ${PYTHON_EXECUTABLE}
-        ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CTEST_DRIVER_DIR}/dump-cdash-deps-xml-file.py
-        --input-xml-deps-file=${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE}
-        --output-cdash-deps-xml-file=${${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE} )
+    message("Dumping the CDash XML dependencies file"
+      " ${${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE} ..." )
+    set(tribitsCtestDriverDir
+      "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CTEST_DRIVER_DIR}")
+    if (EXISTS "${tribitsCtestDriverDir}")
+      execute_process(
+        COMMAND ${PYTHON_EXECUTABLE}
+          ${tribitsCtestDriverDir}/dump-cdash-deps-xml-file.py
+          --input-xml-deps-file=${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE}
+          --output-cdash-deps-xml-file=${${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE})
+    else()
+      message(FATAL_ERROR "\nERROR: Can't write"
+	" ${${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE}"
+	" because '${tribitsCtestDriverDir}' does not exist!")
+    endif()
   endif()
 
   if (${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE
-    OR ${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE
-    OR ${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE
+      OR ${PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE
+      OR ${PROJECT_NAME}_CDASH_DEPS_XML_OUTPUT_FILE
     )
     tribits_config_code_stop_timer(WRITE_DEPENDENCY_FILES_TIME_START_SECONDS
       "\nTotal time to write dependency files")
@@ -114,95 +124,76 @@ endmacro()
 #
 function(tribits_dump_deps_xml_file)
 
-  set(DEPS_XM)
+  set(depsXml "")
 
   get_filename_component(PROJECT_BASE_DIR_NAME  "${${PROJECT_NAME}_SOURCE_DIR}"  NAME)
 
-  list(APPEND DEPS_XML
+  list(APPEND depsXml
     "<PackageDependencies project=\"${PROJECT_NAME}\" baseDirName=\"${PROJECT_BASE_DIR_NAME}\">\n"
      )
 
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
+  foreach(tribitsPackage ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
 
-    #message("")
-    #print_var(TRIBITS_PACKAGE)
+    list(APPEND depsXml
+      "  <Package name=\"${tribitsPackage}\" dir=\"${${tribitsPackage}_REL_SOURCE_DIR}\" type=\"${${tribitsPackage}_TESTGROUP}\">\n")
 
-    list(APPEND DEPS_XML
-      "  <Package name=\"${TRIBITS_PACKAGE}\" dir=\"${${TRIBITS_PACKAGE}_REL_SOURCE_DIR}\" type=\"${${TRIBITS_PACKAGE}_TESTGROUP}\">\n")
+    tribits_write_deps_to_xml_string(${tribitsPackage} LIB_REQUIRED_DEP_PACKAGES depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} LIB_OPTIONAL_DEP_PACKAGES depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} TEST_REQUIRED_DEP_PACKAGES depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} TEST_OPTIONAL_DEP_PACKAGES depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} LIB_REQUIRED_DEP_TPLS depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} LIB_OPTIONAL_DEP_TPLS depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} TEST_REQUIRED_DEP_TPLS depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} TEST_OPTIONAL_DEP_TPLS depsXml)
 
-    tribits_write_deps_to_xml_string(${TRIBITS_PACKAGE} LIB_REQUIRED_DEP_PACKAGES DEPS_XML)
-    tribits_write_deps_to_xml_string(${TRIBITS_PACKAGE} LIB_OPTIONAL_DEP_PACKAGES DEPS_XML)
-    tribits_write_deps_to_xml_string(${TRIBITS_PACKAGE} TEST_REQUIRED_DEP_PACKAGES DEPS_XML)
-    tribits_write_deps_to_xml_string(${TRIBITS_PACKAGE} TEST_OPTIONAL_DEP_PACKAGES DEPS_XML)
-    tribits_write_deps_to_xml_string(${TRIBITS_PACKAGE} LIB_REQUIRED_DEP_TPLS DEPS_XML)
-    tribits_write_deps_to_xml_string(${TRIBITS_PACKAGE} LIB_OPTIONAL_DEP_TPLS DEPS_XML)
-    tribits_write_deps_to_xml_string(${TRIBITS_PACKAGE} TEST_REQUIRED_DEP_TPLS DEPS_XML)
-    tribits_write_deps_to_xml_string(${TRIBITS_PACKAGE} TEST_OPTIONAL_DEP_TPLS DEPS_XML)
-
-    list(APPEND DEPS_XML
+    list(APPEND depsXml
       "    <EmailAddresses>\n"
-      "      <Regression address=\"${${TRIBITS_PACKAGE}_REGRESSION_EMAIL_LIST}\"/>\n"
+      "      <Regression address=\"${${tribitsPackage}_REGRESSION_EMAIL_LIST}\"/>\n"
       "    </EmailAddresses>\n"
       )
 
-    list(APPEND DEPS_XML
-      "    <ParentPackage value=\"${${TRIBITS_PACKAGE}_PARENT_PACKAGE}\"/>\n"
+    list(APPEND depsXml
+      "    <ParentPackage value=\"${${tribitsPackage}_PARENT_PACKAGE}\"/>\n"
       )
 
-    list(APPEND DEPS_XML
+    list(APPEND depsXml
       "  </Package>\n" )
 
   endforeach()
 
-  list(APPEND DEPS_XML
+  list(APPEND depsXml
     "</PackageDependencies>\n" )
 
-  #print_var(DEPS_XML)
-  string(REPLACE "\n;" "\n" DEPS_XML "${DEPS_XML}")
-  file(WRITE ${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE} "${DEPS_XML}" )
+  string(REPLACE "\n;" "\n" depsXml "${depsXml}")
+  file(WRITE ${${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE} "${depsXml}" )
 
 endfunction()
 
 
-function(tribits_write_deps_to_xml_string  PACKAGE_NAME  LIST_TYPE
-  XML_VAR
-  )
+function(tribits_write_deps_to_xml_string  packageName  listType  xmlVarInOut)
 
-  set(LOC_XML "${${XML_VAR}}")
+  set(localXml "${${xmlVarInOut}}")
 
-  set(DEPS_VAR ${PACKAGE_NAME}_${LIST_TYPE})
-  assert_defined(DEPS_VAR)
-  set(DEPS ${${DEPS_VAR}})
+  set(packageDepsVar ${packageName}_${listType})
+  set(packageDeps ${${packageDepsVar}})
 
-  #print_var(PACKAGE_NAME)
-  #print_var(DEPS)
-
-  if (NOT DEPS)
-
-    list(APPEND LOC_XML
-      "    <${LIST_TYPE}/>\n" )
-
+  if (NOT packageDeps)
+    list(APPEND localXml
+      "    <${listType}/>\n" )
   else()
-
-    set(VALUE_STR "")
-
-    foreach(DEP ${DEPS})
-
-      if(VALUE_STR)
-        set(VALUE_STR "${VALUE_STR},")
+    set(depsListStr "")
+    foreach(depPkg  IN LISTS  packageDeps)
+      if(depsListStr)
+        string(APPEND depsListStr ",")
       endif()
-
-      set(VALUE_STR "${VALUE_STR}${DEP}")
-
+      string(APPEND depsListStr "${depPkg}")
     endforeach()
-
-    list(APPEND LOC_XML
-      "    <${LIST_TYPE} value=\"${VALUE_STR}\"/>\n" )
-
+    list(APPEND localXml
+      "    <${listType} value=\"${depsListStr}\"/>\n" )
   endif()
 
-  if (LOC_XML)
-    set(${XML_VAR} "${LOC_XML}" PARENT_SCOPE)
+  if (localXml)
+    set(${xmlVarInOut} "${localXml}" PARENT_SCOPE)
   endif()
 
 endfunction()
