@@ -138,3 +138,12 @@ Dumping direct enabled dependencies for each package ...
 -- ThyraEpetraExt: No enabled dependencies!
 
 -- Thyra_LIB_ENABLED_DEPENDENCIES: ThyraCoreLibs[R] ThyraEpetra[O]
+
+Setting up export dependencies for all enabled packages ...
+
+-- Teuchos: No library dependencies!
+-- RTOp_FULL_ENABLED_DEP_PACKAGES: Teuchos
+-- Epetra: No library dependencies!
+-- ThyraCoreLibs_FULL_ENABLED_DEP_PACKAGES: RTOp Teuchos
+-- ThyraEpetra_FULL_ENABLED_DEP_PACKAGES: ThyraCoreLibs Epetra RTOp Teuchos
+-- Thyra_FULL_ENABLED_DEP_PACKAGES: ThyraEpetra ThyraCoreLibs Epetra RTOp Teuchos

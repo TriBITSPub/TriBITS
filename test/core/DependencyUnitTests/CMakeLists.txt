@@ -366,6 +366,7 @@ create_reduced_dependency_handling_test_case(
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
     -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
     -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_GENERATE_EXPORT_FILE_DEPENDENCIES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
     ${REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY}
     ${REDUCED_EnableAllPackages_REGEX_ARRAY}
@@ -374,6 +375,9 @@ create_reduced_dependency_handling_test_case(
     "Final set of non-enabled top-level packages:  Triutils EpetraExt 2"
     "Final set of non-enabled packages:  Triutils EpetraExt ThyraGoodStuff ThyraCrazyStuff ThyraEpetraExt 5"
   )
+# NOTE: Above test may be the only test that generates and checks the full
+# list of upstream internal package dependencies
+# <Package>_FULL_ENABLED_DEP_PACKAGES.
 
 create_reduced_dependency_handling_test_case(
   EnableAllPackages_VerboseConfigure

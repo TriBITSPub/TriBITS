@@ -119,10 +119,10 @@ function(tribits_set_up_enabled_only_dependencies)
     foreach(tribitsPackage  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
       tribits_package_set_full_enabled_dep_packages(${tribitsPackage})
       if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
-        set(PRINTED_VAR FALSE)
+        set(printedVar FALSE)
         print_nonempty_var_with_spaces(${tribitsPackage}_FULL_ENABLED_DEP_PACKAGES
-          PRINTED_VAR)
-        if (NOT PRINTED_VAR)
+          printedVar)
+        if (NOT printedVar)
           message("-- ${tribitsPackage}: No library dependencies!")
         endif()
       endif()
@@ -136,13 +136,20 @@ function(tribits_set_up_enabled_only_dependencies)
 endfunction()
 
 
-# Function that sets up the full package dependencies for the given internal
-# enabled package ``${PACKAGE_NAME}``, including all of its indirect upstream
-# internal package dependencies.
+# Function that sets up the full package dependencies for the given *internal*
+# enabled package ``${packageName}``, including all of its indirect upstream
+# *internal* package dependencies.
 #
-# NOTE: The complexity of this function is O(<numPackages>^2).  That is why it
-# would be good to get rid of this function at some point (or refactor it to
-# have a better complexity).
+# After running, this function sets the internal cache var:
+#
+#  * ``${packageName}_FULL_ENABLED_DEP_PACKAGES``
+#
+# NOTE: This function must be called for all of the upstream internal packages
+# before calling it for this package.
+#
+# NOTE: The complexity of this function is O(<numPackages>^2) due to the
+# sorting algorithm.  That is why it would be good to get rid of this function
+# at some point (or refactor it to have a better complexity).
 #
 function(tribits_package_set_full_enabled_dep_packages  packageName)
 
@@ -165,16 +172,11 @@ function(tribits_package_build_unsorted_full_enabled_dep_packages  packageName
   )
 
   set(packageFullDepsList "")
-
-  foreach(depPkg  IN LISTS  ${packageName}_LIB_REQUIRED_DEP_PACKAGES)
-    if (${PROJECT_NAME}_ENABLE_${depPkg})
-      list(APPEND  packageFullDepsList  ${depPkg})
-    endif()
-    # NOTE: This if() should not be needed but this is a safeguard
-  endforeach()
-
-  foreach(depPkg  IN LISTS  ${packageName}_LIB_OPTIONAL_DEP_PACKAGES)
-    if (${packageName}_ENABLE_${depPkg})
+  foreach(depPkg  IN LISTS  ${packageName}_LIB_DEFINED_DEPENDENCIES)
+    if ((${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "INTERNAL")
+        AND ((${packageName}_LIB_DEP_REQUIRED AND ${PROJECT_NAME}_ENABLE_${depPkg})
+          OR ((NOT ${packageName}_LIB_DEP_REQUIRED) AND ${packageName}_ENABLE_${depPkg}))
+      )
       list(APPEND  packageFullDepsList  ${depPkg})
     endif()
   endforeach()
