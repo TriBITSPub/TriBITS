@@ -137,14 +137,14 @@ function(tribits_dump_deps_xml_file)
     list(APPEND depsXml
       "  <Package name=\"${tribitsPackage}\" dir=\"${${tribitsPackage}_REL_SOURCE_DIR}\" type=\"${${tribitsPackage}_TESTGROUP}\">\n")
 
-    tribits_write_deps_to_xml_string(${tribitsPackage} LIB_REQUIRED_DEP_PACKAGES depsXml)
-    tribits_write_deps_to_xml_string(${tribitsPackage} LIB_OPTIONAL_DEP_PACKAGES depsXml)
-    tribits_write_deps_to_xml_string(${tribitsPackage} TEST_REQUIRED_DEP_PACKAGES depsXml)
-    tribits_write_deps_to_xml_string(${tribitsPackage} TEST_OPTIONAL_DEP_PACKAGES depsXml)
-    tribits_write_deps_to_xml_string(${tribitsPackage} LIB_REQUIRED_DEP_TPLS depsXml)
-    tribits_write_deps_to_xml_string(${tribitsPackage} LIB_OPTIONAL_DEP_TPLS depsXml)
-    tribits_write_deps_to_xml_string(${tribitsPackage} TEST_REQUIRED_DEP_TPLS depsXml)
-    tribits_write_deps_to_xml_string(${tribitsPackage} TEST_OPTIONAL_DEP_TPLS depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} LIB REQUIRED PACKAGES depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} LIB OPTIONAL PACKAGES depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} TEST REQUIRED PACKAGES depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} TEST OPTIONAL PACKAGES depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} LIB REQUIRED TPLS depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} LIB OPTIONAL TPLS depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} TEST REQUIRED TPLS depsXml)
+    tribits_write_deps_to_xml_string(${tribitsPackage} TEST OPTIONAL TPLS depsXml)
 
     list(APPEND depsXml
       "    <EmailAddresses>\n"
@@ -170,23 +170,26 @@ function(tribits_dump_deps_xml_file)
 endfunction()
 
 
-function(tribits_write_deps_to_xml_string  packageName  listType  xmlVarInOut)
+function(tribits_write_deps_to_xml_string  packageName libOrTest  requiredOrOptional
+    packagesOrTpls  xmlVarInOut
+  )
 
   set(localXml "${${xmlVarInOut}}")
 
-  set(packageDepsVar ${packageName}_${listType})
-  set(packageDeps ${${packageDepsVar}})
+  set(listType ${libOrTest}_${requiredOrOptional}_DEP_${packagesOrTpls})
+  message("")
+  print_var(listType)
 
-  if (NOT packageDeps)
+  tribits_get_legacy_package_deps_sublist(${packageName} ${libOrTest}
+    ${requiredOrOptional} ${packagesOrTpls} legacyPackageDepsList)
+
+  if (NOT legacyPackageDepsList)
     list(APPEND localXml
       "    <${listType}/>\n" )
   else()
     set(depsListStr "")
-    foreach(depPkg  IN LISTS  packageDeps)
-      if(depsListStr)
-        string(APPEND depsListStr ",")
-      endif()
-      string(APPEND depsListStr "${depPkg}")
+    foreach(depPkg IN LISTS legacyPackageDepsList)
+      tribits_append_dep_to_xml_string(${depPkg} depsListStr)
     endforeach()
     list(APPEND localXml
       "    <${listType} value=\"${depsListStr}\"/>\n" )
@@ -197,3 +200,53 @@ function(tribits_write_deps_to_xml_string  packageName  listType  xmlVarInOut)
   endif()
 
 endfunction()
+
+
+function(tribits_get_legacy_package_deps_sublist  packageName  libOrTest
+    requiredOrOptional  packagesOrTpls  legacyPackageDepsListOut
+  )
+
+  set(legacyPackageDepsList "")
+
+  foreach(depPkg IN LISTS ${packageName}_${libOrTest}_DEFINED_DEPENDENCIES)
+
+    set(matchesRequriedOrOptional FALSE)
+    if (((requiredOrOptional STREQUAL "REQUIRED")
+        AND ${packageName}_${libOrTest}_DEP_REQUIRED_${depPkg})
+      OR
+        ((requiredOrOptional STREQUAL "OPTIONAL")
+        AND (NOT ${packageName}_${libOrTest}_DEP_REQUIRED_${depPkg}))
+      )
+      set(matchesRequriedOrOptional TRUE)
+    endif()
+
+    SET(matchesPackagesOrTpls FALSE)
+    if (((packagesOrTpls STREQUAL "PACKAGES")
+        AND (${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "INTERNAL"))
+      OR
+        ((packagesOrTpls STREQUAL "TPLS")
+        AND (${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL"))
+      )
+      SET(matchesPackagesOrTpls TRUE)
+    endif()
+
+    if (matchesRequriedOrOptional AND matchesPackagesOrTpls)
+      list(APPEND legacyPackageDepsList ${depPkg})
+    endif()
+
+  endforeach()
+
+  set(${legacyPackageDepsListOut} "${legacyPackageDepsList}" PARENT_SCOPE)
+
+endfunction()
+
+
+
+function(tribits_append_dep_to_xml_string  depPkg  depsListStrInOut)
+  set(depsListStr "${${depsListStrInOut}}")
+  if (depsListStr)
+    string(APPEND depsListStr ",")
+  endif()
+  string(APPEND depsListStr "${depPkg}")
+  set(${depsListStrInOut} "${depsListStr}" PARENT_SCOPE)
+endfunction() 
