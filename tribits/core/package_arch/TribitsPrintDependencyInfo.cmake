@@ -141,29 +141,6 @@ function(tribits_print_package_dependencies  packageName)
 
   set(printedVar "")
 
-  # Print legacy deps vars #63
-
-  print_nonempty_var_with_spaces(${packageName}_LIB_REQUIRED_DEP_PACKAGES  printedVar)
-  print_nonempty_var_with_spaces(${packageName}_LIB_OPTIONAL_DEP_PACKAGES  printedVar)
-  print_nonempty_var_with_spaces(${packageName}_TEST_REQUIRED_DEP_PACKAGES  printedVar)
-  print_nonempty_var_with_spaces(${packageName}_TEST_OPTIONAL_DEP_PACKAGES  printedVar)
-
-  if (${PROJECT_NAME}_DUMP_FORWARD_PACKAGE_DEPENDENCIES)
-    print_nonempty_var_with_spaces(${packageName}_FORWARD_LIB_REQUIRED_DEP_PACKAGES
-      printedVar)
-    print_nonempty_var_with_spaces(${packageName}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES
-      printedVar)
-    print_nonempty_var_with_spaces(${packageName}_FORWARD_TEST_REQUIRED_DEP_PACKAGES
-      printedVar)
-    print_nonempty_var_with_spaces(${packageName}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES
-      printedVar)
-  endif()
-
-  print_nonempty_var_with_spaces(${packageName}_LIB_REQUIRED_DEP_TPLS  printedVar)
-  print_nonempty_var_with_spaces(${packageName}_LIB_OPTIONAL_DEP_TPLS  printedVar)
-  print_nonempty_var_with_spaces(${packageName}_TEST_REQUIRED_DEP_TPLS  printedVar)
-  print_nonempty_var_with_spaces(${packageName}_TEST_OPTIONAL_DEP_TPLS  printedVar)
-
   # Print deps vars
 
   if (printedVar)
