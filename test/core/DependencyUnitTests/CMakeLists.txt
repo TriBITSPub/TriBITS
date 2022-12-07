@@ -555,6 +555,55 @@ create_reduced_dependency_handling_test_case(
   )
 
 
+#
+# Test implicit TPL dependencies
+#
+
+
+create_reduced_dependency_handling_test_case(
+  IndirectTplDependency_NoImplicitEnableBLAS
+  ARGS
+    -DTrilinos_EXTRA_REPOSITORIES=extraRepos/DependsOnLAPACK
+    -DTrilinos_ENABLE_DependsOnLAPACK=ON
+    -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- BLAS_FORWARD_LIB_DEFINED_DEPENDENCIES: LAPACK.R."
+    "-- LAPACK_LIB_DEFINED_DEPENDENCIES: BLAS.R."
+    "Explicitly enabled external packages/TPLs on input [(]by user[)]:  0"
+    "Explicitly disabled external packages/TPLs on input [(]by user or by default[)]:  0"
+    "-- Setting TPL_ENABLE_LAPACK=ON because DependsOnLAPACK has a required dependence on LAPACK"
+    "-- Setting DependsOnLAPACK_ENABLE_LAPACK=ON since Trilinos_ENABLE_DependsOnLAPACK=ON AND TPL_ENABLE_LAPACK=ON"
+    "Final set of enabled packages:  DependsOnLAPACK 1"
+    "Final set of enabled external packages/TPLs:  LAPACK 1"
+    "Final set of non-enabled external packages/TPLs:  .* BLAS .*"
+    "-- LAPACK: No enabled dependencies"
+    "-- DependsOnLAPACK_LIB_ENABLED_DEPENDENCIES: LAPACK.R."
+  )
+
+
+create_reduced_dependency_handling_test_case(
+  IndirectTplDependency_ExplicitEnableBLAS
+  ARGS
+    -DTrilinos_EXTRA_REPOSITORIES=extraRepos/DependsOnLAPACK
+    -DTrilinos_ENABLE_DependsOnLAPACK=ON
+    -DTPL_ENABLE_BLAS=ON
+    -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Explicitly enabled external packages/TPLs on input [(]by user[)]:  BLAS 1"
+    "Explicitly disabled external packages/TPLs on input [(]by user or by default[)]:  0"
+    "-- Setting TPL_ENABLE_LAPACK=ON because DependsOnLAPACK has a required dependence on LAPACK"
+    "-- Setting DependsOnLAPACK_ENABLE_LAPACK=ON since Trilinos_ENABLE_DependsOnLAPACK=ON AND TPL_ENABLE_LAPACK=ON"
+    "Final set of enabled packages:  DependsOnLAPACK 1"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK 2"
+    "Processing enabled external package/TPL: BLAS [(]enabled explicitly, disable with -DTPL_ENABLE_BLAS=OFF[)]"
+    "Processing enabled external package/TPL: LAPACK [(]enabled by DependsOnLAPACK, disable with -DTPL_ENABLE_LAPACK=OFF[)]"
+    "-- LAPACK_LIB_ENABLED_DEPENDENCIES: BLAS.R."
+    "-- DependsOnLAPACK_LIB_ENABLED_DEPENDENCIES: LAPACK.R."
+  )
+
+
 #####################################################################
 #
 # Unit tests for dependency handling for full set of packages
