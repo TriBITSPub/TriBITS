@@ -99,13 +99,8 @@ macro(tribits_process_all_repository_deps_setup_files)
     tribits_get_repo_name_dir(${TIBITS_REPO}  REPO_NAME  REPO_DIR)
     tribits_set_base_repo_dir(${PROJECT_SOURCE_DIR}  ${REPO_DIR}  BASE_REPO_DIR)
     tribits_get_repo_name(${TIBITS_REPO} REPOSITORY_NAME)
-    #print_var(TIBITS_REPO)
-    #print_var(REPO_NAME)
-    #print_var(REPO_DIR)
-    #print_var(REPOSITORY_NAME)
     set(REPO_DEPENDENCIES_SETUP_FILE
       "${BASE_REPO_DIR}/cmake/RepositoryDependenciesSetup.cmake")
-    #print_var(REPO_DEPENDENCIES_SETUP_FILE)
     if (EXISTS ${REPO_DEPENDENCIES_SETUP_FILE})
       tribits_trace_file_processing(REPOSITORY  INCLUDE
         "${REPO_DEPENDENCIES_SETUP_FILE}")
@@ -626,11 +621,8 @@ endmacro()
 #
 macro(tribits_append_forward_dep_packages  packageName  libOrTest)
 
-  #message("\ntribits_append_forward_dep_packages(${packageName}  ${libOrTest})")
-
   foreach(depPkg  IN LISTS  ${packageName}_${libOrTest}_DEFINED_DEPENDENCIES)
     set(fwdDepPkgListName ${depPkg}_FORWARD_${libOrTest}_DEFINED_DEPENDENCIES)
-    #print_var(${fwdDepPkgListName})
     if (DEFINED ${fwdDepPkgListName})
       list(APPEND ${fwdDepPkgListName} ${packageName})
     else()
@@ -649,7 +641,6 @@ macro(tribits_append_forward_dep_packages  packageName  libOrTest)
         endif()
       endif()
     endif()
-    #print_var(${fwdDepPkgListName})
   endforeach()
 
 endmacro()
@@ -675,7 +666,6 @@ macro(tribits_set_package_regression_email_list  PACKAGE_NAME)
   endif()
 
   tribits_get_repo_name(${${PACKAGE_NAME}_PARENT_REPOSITORY} REPOSITORY_NAME)
-  #print_var(REPOSITORY_NAME)
 
   if(${REPOSITORY_NAME}_REPOSITORY_OVERRIDE_PACKAGE_EMAIL_LIST)
     set(${PACKAGE_NAME}_REGRESSION_EMAIL_LIST
@@ -902,10 +892,6 @@ endmacro()
 #
 macro(tribits_read_package_subpackage_deps_files_add_to_graph  PACKAGE_NAME)
 
-  #message("TRIBITS_READ_PACKAGE_SUBPACKAGE_DEPS_FILES_ADD_TO_GRAPH: ${PACKAGE_NAME}")
-
-  #print_var(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES)
-
   set(SUBPACKAGE_IDX 0)
   foreach(TRIBITS_SUBPACKAGE  IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
     list(GET ${PACKAGE_NAME}_SUBPACKAGE_DIRS ${SUBPACKAGE_IDX} SUBPACKAGE_DIR)
@@ -933,8 +919,6 @@ endmacro()
 macro(tribits_read_subpackage_deps_file_add_to_graph  PACKAGE_NAME
   SUBPACKAGE_NAME  SUBPACKAGE_DIR
   )
-
-  #message("TRIBITS_READ_SUBPACKAGE_DEPS_FILE_ADD_TO_GRAPH: ${PACKAGE_NAME} ${SUBPACKAGE_NAME} ${SUBPACKAGE_DIR}")
 
   set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${SUBPACKAGE_NAME})
 
