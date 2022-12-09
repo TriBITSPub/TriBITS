@@ -93,6 +93,7 @@ macro(tribits_adjust_package_enables)
 endmacro()
 
 
+
 ################################################################################
 #
 # First-level macros called directly from ``tribits_adjust_package_enables()``
@@ -368,7 +369,7 @@ macro(tribits_setup_enabled_lists_and_pkg_idxs)
   # ${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES
   unset(${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES) # Wipe out temp value
 
-  # Set ${PACKAGE_NAME}_PKG_IDX for each enabled package
+  # Set ${tribitsPackage}_PKG_IDX for each enabled package
   set(pkgIdx 0)
   foreach(tribitsPackage ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
     set(${tribitsPackage}_PKG_IDX ${pkgIdx})
@@ -421,26 +422,23 @@ endmacro()
 
 # Macro that disables all of the subpackages of a parent package.
 #
-macro(tribits_disable_parents_subpackages PARENT_PACKAGE_NAME)
+macro(tribits_disable_parents_subpackages  parentPackageName)
 
-  if(NOT ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME}
-      AND (NOT ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME} STREQUAL "")
+  if(NOT ${PROJECT_NAME}_ENABLE_${parentPackageName}
+      AND (NOT ${PROJECT_NAME}_ENABLE_${parentPackageName} STREQUAL "")
     )
 
-    set(SUBPACKAGE_IDX 0)
-    foreach(tap2_subPkgName   IN LISTS  ${PARENT_PACKAGE_NAME}_SUBPACKAGES)
+    foreach(tap2_subPkgName   IN LISTS  ${parentPackageName}_SUBPACKAGES)
 
-      set(subpkgFullName ${PARENT_PACKAGE_NAME}${tap2_subPkgName})
+      set(subpkgFullName ${parentPackageName}${tap2_subPkgName})
 
       if (NOT ${PROJECT_NAME}_ENABLE_${subpkgFullName} STREQUAL "OFF")
-        set(ENABLE_BEING_DISABLED_VAR_NAME ${PROJECT_NAME}_ENABLE_${subpkgFullName})
+        set(packageBeingDisabledVarName ${PROJECT_NAME}_ENABLE_${subpkgFullName})
         message("-- "
-          "Setting subpackage enable ${ENABLE_BEING_DISABLED_VAR_NAME}=OFF"
-          " because parent package ${PROJECT_NAME}_ENABLE_${PARENT_PACKAGE_NAME}=OFF")
-        set(${ENABLE_BEING_DISABLED_VAR_NAME} OFF)
+          "Setting subpackage enable ${packageBeingDisabledVarName}=OFF"
+          " because parent package ${PROJECT_NAME}_ENABLE_${parentPackageName}=OFF")
+        set(${packageBeingDisabledVarName} OFF)
       endif()
-
-      math(EXPR SUBPACKAGE_IDX "${SUBPACKAGE_IDX}+1")
 
     endforeach()
 
@@ -513,7 +511,7 @@ macro(tribits_enable_parents_subpackages  parentPackageName)
 endmacro()
 
 
-# Macro used to set ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} based on
+# Macro used to set ${PROJECT_NAME}_ENABLE_<packageName> based on
 # ${PROJECT_NAME}_ENABLE_ALL_PACKAGES
 #
 macro(tribits_apply_all_package_enables  packageName)
@@ -574,10 +572,9 @@ endmacro()
 # process this default disable in case their are any enabled subpackages.
 
 
-# Macro to disable ${TRIBITS_SUBPACKAGE)_ENABLE_TESTS and
-# ${TRIBITS_SUBPACKAGE)_ENABLE_EXAMPLES based on
-# ${TRIBITS_PARENTPACKAGE)_ENABLE_TESTS or
-# ${TRIBITS_PARENTPACKAGE)_ENABLE_EXAMPLES
+# Macro to disable <tribitsSubPackage>_ENABLE_TESTS and
+# <tribitsSubPackage>_ENABLE_EXAMPLES based on
+# <parentPackageName>_ENABLE_TESTS or <parentPackageName>_ENABLE_EXAMPLES
 #
 macro(tribits_apply_subpackage_tests_or_examples_disables  parentPackageName
     testsOrExamples
@@ -600,8 +597,9 @@ macro(tribits_apply_subpackage_tests_or_examples_disables  parentPackageName
 endmacro()
 
 
-# Macro used to set ${TRIBITS_PACKAGE)_ENABLE_TESTS and ${TRIBITS_PACKAGE)_ENABLE_EXAMPLES
-# based on ${PROJECT_NAME}_ENABLE_TESTS and ${PROJECT_NAME}_ENABLE_EXAMPLES 
+# Macro used to set <packageName>_ENABLE_TESTS and
+# <packageName>_ENABLE_EXAMPLES based on ${PROJECT_NAME}_ENABLE_TESTS and
+# ${PROJECT_NAME}_ENABLE_EXAMPLES
 #
 macro(tribits_apply_test_example_enables  packageName)
   if (${PROJECT_NAME}_ENABLE_${packageName})
@@ -718,28 +716,28 @@ endmacro()
 macro(tribits_setup_optional_package_enables_and_cache_vars  packageName)
 
   assert_defined(${PROJECT_NAME}_ENABLE_${packageName})
-  set(SET_AS_CACHE ${${PROJECT_NAME}_ENABLE_${packageName}})
+  set(setAsCacheVar ${${PROJECT_NAME}_ENABLE_${packageName}})
 
-  if (SET_AS_CACHE)
+  if (setAsCacheVar)
 
-    multiline_set(DOCSTR
+    multiline_set(docStr
       "Build tests for the package ${packageName}.  Set to 'ON', 'OFF', or leave empty ''"
        " to allow for other logic to decide."
        )
-    set_cache_on_off_empty( ${packageName}_ENABLE_TESTS "" ${DOCSTR} )
+    set_cache_on_off_empty( ${packageName}_ENABLE_TESTS "" ${docStr} )
 
-    multiline_set(DOCSTR
+    multiline_set(docStr
       "Build examples for the package ${packageName}.  Set to 'ON', 'OFF', or leave empty ''"
        " to allow for other logic to decide."
        )
-    set_cache_on_off_empty( ${packageName}_ENABLE_EXAMPLES "" ${DOCSTR} )
+    set_cache_on_off_empty( ${packageName}_ENABLE_EXAMPLES "" ${docStr} )
 
-    multiline_set(DOCSTR
+    multiline_set(docStr
       "Build examples for the package ${packageName}.  Set to 'ON', 'OFF', or leave empty ''"
        " to allow for other logic to decide."
        )
     set( ${packageName}_SKIP_CTEST_ADD_TEST
-      "${${PROJECT_NAME}_SKIP_CTEST_ADD_TEST}" CACHE BOOL ${DOCSTR} )
+      "${${PROJECT_NAME}_SKIP_CTEST_ADD_TEST}" CACHE BOOL ${docStr} )
 
   else()
 
@@ -754,12 +752,12 @@ macro(tribits_setup_optional_package_enables_and_cache_vars  packageName)
 
   foreach(optDepPkg ${${packageName}_LIB_DEFINED_DEPENDENCIES})
     tribits_private_add_optional_package_enable(
-      ${packageName} ${optDepPkg} "library" "${SET_AS_CACHE}" )
+      ${packageName} ${optDepPkg} "library" "${setAsCacheVar}" )
   endforeach()
 
   foreach(optDepPkg ${${packageName}_TEST_DEFINED_DEPENDENCIES})
     tribits_private_add_optional_package_enable(
-      ${packageName} ${optDepPkg} "test" "${SET_AS_CACHE}" )
+      ${packageName} ${optDepPkg} "test" "${setAsCacheVar}" )
   endforeach()
 
 endmacro()
@@ -902,13 +900,13 @@ macro(tribits_private_disable_required_package_enables
         ${fwdDepPkgName} "library" )
       set(${fwdDepPkgEnableVarName}  OFF)
     else()
-      set(DEP_TYPE_STR "test/example")
+      set(depTypeStr "test/example")
       if (${fwdDepPkgName}_ENABLE_TESTS
         OR "${${fwdDepPkgName}_ENABLE_TESTS}" STREQUAL ""
         )
         tribits_private_print_disable_required_package_enable(
           ${packageName} ${fwdDepPkgName}_ENABLE_TESTS
-          ${fwdDepPkgName} "${DEP_TYPE_STR}" )
+          ${fwdDepPkgName} "${depTypeStr}" )
         set(${fwdDepPkgName}_ENABLE_TESTS OFF)
       endif()
 
@@ -917,7 +915,7 @@ macro(tribits_private_disable_required_package_enables
         )
         tribits_private_print_disable_required_package_enable(
           ${packageName} ${fwdDepPkgName}_ENABLE_EXAMPLES
-          ${fwdDepPkgName} "${DEP_TYPE_STR}" )
+          ${fwdDepPkgName} "${depTypeStr}" )
         set(${fwdDepPkgName}_ENABLE_EXAMPLES OFF)
       endif()
     endif()
@@ -926,47 +924,47 @@ endmacro()
 
 
 function(tribits_private_print_disable_required_package_enable
-  PACKAGE_NAME  PACKAGE_ENABLE_SOMETHING_VAR_NAME  FORWARD_DEP_PACKAGE_NAME
-  DEP_TYPE_STR
+    packageName  packageEnableSomethingVarName  fwdDepPkgName
+    depTypeStr
   )
   tribits_private_print_disable(
-    ${PACKAGE_ENABLE_SOMETHING_VAR_NAME} ${FORWARD_DEP_PACKAGE_NAME}
-    "${DEP_TYPE_STR}" "package" ${PACKAGE_NAME} )
+    ${packageEnableSomethingVarName} ${fwdDepPkgName}
+    "${depTypeStr}" "package" ${packageName} )
 endfunction()
 
 
 function(tribits_private_print_disable
-  ENABLE_BEING_DISABLED_VAR_NAME  PACKAGE_WITH_SOMETHING_BEING_DISABLED
-  DEP_TYPE_STR  THING_DISALBED_TYPE  THING_DISABLED_NAME
+  packageBeingDisabledVarName  packageWithSomethingBeingDisabledName
+  depTypeStr  thingBeingDisabledType  thingBeingDisabledName
   )
-  if (${ENABLE_BEING_DISABLED_VAR_NAME})
+  if (${packageBeingDisabledVarName})
     if (${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES)
       message(
         " ***\n"
-        " *** NOTE: Setting ${ENABLE_BEING_DISABLED_VAR_NAME}=OFF"
-        " which was '${${ENABLE_BEING_DISABLED_VAR_NAME}}' because"
-        " ${PACKAGE_WITH_SOMETHING_BEING_DISABLED} has"
-        " a required ${DEP_TYPE_STR} dependence on disabled"
-        " ${THING_DISALBED_TYPE} ${THING_DISABLED_NAME}"
+        " *** NOTE: Setting ${packageBeingDisabledVarName}=OFF"
+        " which was '${${packageBeingDisabledVarName}}' because"
+        " ${packageWithSomethingBeingDisabledName} has"
+        " a required ${depTypeStr} dependence on disabled"
+        " ${thingBeingDisabledType} ${thingBeingDisabledName}"
         " but ${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!\n"
         " ***\n"
         )
     else()
       message(FATAL_ERROR
         " ***\n"
-        " *** ERROR: Setting ${ENABLE_BEING_DISABLED_VAR_NAME}=OFF"
-        " which was '${${ENABLE_BEING_DISABLED_VAR_NAME}}' because"
-        " ${PACKAGE_WITH_SOMETHING_BEING_DISABLED} has"
-        " a required ${DEP_TYPE_STR} dependence on disabled"
-        " ${THING_DISALBED_TYPE} ${THING_DISABLED_NAME}!\n"
+        " *** ERROR: Setting ${packageBeingDisabledVarName}=OFF"
+        " which was '${${packageBeingDisabledVarName}}' because"
+        " ${packageWithSomethingBeingDisabledName} has"
+        " a required ${depTypeStr} dependence on disabled"
+        " ${thingBeingDisabledType} ${thingBeingDisabledName}!\n"
         " ***\n"
         )
     endif()
   else()
     message("-- "
-      "Setting ${ENABLE_BEING_DISABLED_VAR_NAME}=OFF"
-      " because ${PACKAGE_WITH_SOMETHING_BEING_DISABLED} has a required ${DEP_TYPE_STR}"
-      " dependence on disabled ${THING_DISALBED_TYPE} ${THING_DISABLED_NAME}")
+      "Setting ${packageBeingDisabledVarName}=OFF"
+      " because ${packageWithSomethingBeingDisabledName} has a required ${depTypeStr}"
+      " dependence on disabled ${thingBeingDisabledType} ${thingBeingDisabledName}")
   endif()
 endfunction()
 
@@ -1085,7 +1083,7 @@ endmacro()
 
 
 # Enable optional intra-package support for enabled target package
-# ${PACKAGE_NAME} (i.e. ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME} is assumed to
+# ${packageName} (i.e. ${PROJECT_NAME}_ENABLE_${packageName} is assumed to
 # be TRUE before calling this macro.
 #
 macro(tribits_private_postprocess_optional_package_enable  packageName  optDepPkg)
@@ -1119,12 +1117,12 @@ macro(tribits_private_postprocess_optional_package_enable  packageName  optDepPk
 
   string(TOUPPER  ${packageName}  packageName_UPPER)
   string(TOUPPER  ${optDepPkg}  optDepPkg_UPPER)
-  set(MACRO_DEFINE_NAME  HAVE_${packageName_UPPER}_${optDepPkg_UPPER})
+  set(macroDefineName  HAVE_${packageName_UPPER}_${optDepPkg_UPPER})
 
   if(${packageName}_ENABLE_${optDepPkg})
-    set(${MACRO_DEFINE_NAME}  ON)
+    set(${macroDefineName} ON)
   else()
-    set(${MACRO_DEFINE_NAME}  OFF)
+    set(${macroDefineName} OFF)
   endif()
 
 endmacro()
@@ -1140,26 +1138,26 @@ macro(tribits_private_enable_forward_package  fwdDepPkgName  packageName)
 endmacro()
 
 
-macro(tribits_private_add_optional_package_enable PACKAGE_NAME  OPTIONAL_DEP_PACKAGE
-  TYPE  SET_AS_CACHE_IN
+macro(tribits_private_add_optional_package_enable  packageName  optionalDepPkgName
+  libraryOrTest  setAsCacheVar
   )
 
-  if (SET_AS_CACHE_IN)
+  if (setAsCacheVar)
 
-    multiline_set(DOCSTR
-      "Enable optional ${TYPE} support in the package ${PACKAGE_NAME}"
-      " for the package ${OPTIONAL_DEP_PACKAGE}."
+    multiline_set(docStr
+      "Enable optional ${libraryOrTest} support in the package ${packageName}"
+      " for the package ${optionalDepPkgName}."
       "  Set to 'ON', 'OFF', or leave empty"
       " to allow for other logic to decide."
       )
 
-    set_cache_on_off_empty( ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE} ""
-      ${DOCSTR} )
+    set_cache_on_off_empty( ${packageName}_ENABLE_${optionalDepPkgName} ""
+      ${docStr} )
 
   else()
 
-    if (NOT DEFINED ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE})
-      set( ${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE} "" )
+    if (NOT DEFINED ${packageName}_ENABLE_${optionalDepPkgName})
+      set(${packageName}_ENABLE_${optionalDepPkgName} "" )
     endif()
 
   endif()
