@@ -38,15 +38,15 @@
 # @HEADER
 
 
-# @MACRO: tribit_create_reverse_list()
+# @MACRO: tribits_create_reverse_list()
 #
 # Create a reverse list var in one shot.
 #
 # Usage::
 #
-#   tribit_create_reverse_list(<oldListName> <newListName>)
+#   tribits_create_reverse_list(<oldListName> <newListName>)
 #
-macro(tribit_create_reverse_list  oldListName  newListName)
+macro(tribits_create_reverse_list  oldListName  newListName)
   set(${newListName} ${${oldListName}})
   list(REVERSE ${newListName})
 endmacro()
