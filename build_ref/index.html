@@ -217,10 +217,10 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date</dt>
-<dd class="field-odd"><p>2022-12-06</p>
+<dd class="field-odd"><p>2022-12-12</p>
 </dd>
 <dt class="field-even">Version</dt>
-<dd class="field-even"><p>tribits_start-3117-g559f1ecc</p>
+<dd class="field-even"><p>tribits_start-3153-gbcfeeb12</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -767,19 +767,13 @@ To find this output, look for the line:</p>
 </pre></div>
 </div>
 <p>and the dependencies are listed below this for each package in the form:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span> <span class="o">&lt;</span><span class="n">PKG</span><span class="o">&gt;</span><span class="n">_LIB_REQUIRED_DEP_TPLS</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">TPL1</span><span class="o">&gt;</span> <span class="o">...</span>
-<span class="o">--</span> <span class="o">&lt;</span><span class="n">PKG</span><span class="o">&gt;</span><span class="n">_LIB_OPTIONAL_DEP_TPLS</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL2</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">TPL3</span><span class="o">&gt;</span> <span class="o">...</span>
-<span class="o">--</span> <span class="o">&lt;</span><span class="n">PKG</span><span class="o">&gt;</span><span class="n">_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">PKG0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="p">[</span><span class="n">PKG1</span><span class="o">&gt;</span> <span class="o">...</span>
-<span class="o">--</span> <span class="o">&lt;</span><span class="n">PKG</span><span class="o">&gt;</span><span class="n">_LIB_OPTIONAL_DEP_PACKAGES</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">PKG2</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">PKG3</span><span class="o">&gt;</span> <span class="o">...</span>
-<span class="o">--</span> <span class="o">&lt;</span><span class="n">PKG</span><span class="o">&gt;</span><span class="n">_TEST_REQUIRED_DEP_TPLS</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL4</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">TPL5</span><span class="o">&gt;</span> <span class="o">...</span>
-<span class="o">--</span> <span class="o">&lt;</span><span class="n">PKG</span><span class="o">&gt;</span><span class="n">_TEST_OPTIONAL_DEP_TPLS</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL6</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">TPL7</span><span class="o">&gt;</span> <span class="o">...</span>
-<span class="o">--</span> <span class="o">&lt;</span><span class="n">PKG</span><span class="o">&gt;</span><span class="n">_TEST_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">PKG4</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="p">[</span><span class="n">PKG5</span><span class="o">&gt;</span> <span class="o">...</span>
-<span class="o">--</span> <span class="o">&lt;</span><span class="n">PKG</span><span class="o">&gt;</span><span class="n">_TEST_OPTIONAL_DEP_PACKAGES</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">PKG6</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">PKG7</span><span class="o">&gt;</span> <span class="o">...</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span> <span class="o">&lt;</span><span class="n">PKG</span><span class="o">&gt;</span><span class="n">_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">PKG0</span><span class="o">&gt;</span><span class="p">[</span><span class="n">O</span><span class="p">]</span> <span class="o">&lt;</span><span class="p">[</span><span class="n">PKG1</span><span class="o">&gt;</span><span class="p">[</span><span class="n">R</span><span class="p">]</span> <span class="o">...</span>
+<span class="o">--</span> <span class="o">&lt;</span><span class="n">PKG</span><span class="o">&gt;</span><span class="n">_TEST_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">PKG6</span><span class="o">&gt;</span><span class="p">[</span><span class="n">R</span><span class="p">]</span> <span class="o">&lt;</span><span class="p">[</span><span class="n">PKG8</span><span class="o">&gt;</span><span class="p">[</span><span class="n">R</span><span class="p">]</span> <span class="o">...</span>
 </pre></div>
 </div>
 <p>(Dependencies that don’t exist are left out of the output.  For example, if
-there are no <code class="docutils literal notranslate"><span class="pre">&lt;PKG&gt;_LIB_OPTIONAL_DEP_PACKAGES</span></code> dependencies, then that line
-is not printed.)</p>
+there are no extra test dependencies, then <code class="docutils literal notranslate"><span class="pre">&lt;PKG&gt;_TEST_DEFINED_DEPENDENCIES</span></code>
+will not be printed.)</p>
 <p>To also see the direct forward/downstream dependencies for each package,
 also include:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_DUMP_FORWARD_PACKAGE_DEPENDENCIES</span><span class="o">=</span><span class="n">ON</span>

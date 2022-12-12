@@ -304,6 +304,7 @@
 <li><a class="reference internal" href="#tribits-add-enum-cache-var">tribits_add_enum_cache_var()</a></li>
 <li><a class="reference internal" href="#tribits-deprecated">tribits_deprecated()</a></li>
 <li><a class="reference internal" href="#tribits-deprecated-command">tribits_deprecated_command()</a></li>
+<li><a class="reference internal" href="#tribit-create-reverse-list">tribit_create_reverse_list()</a></li>
 <li><a class="reference internal" href="#tribits-strip-quotes-from-str">tribits_strip_quotes_from_str()</a></li>
 <li><a class="reference internal" href="#unittest-compare-const">unittest_compare_const()</a></li>
 <li><a class="reference internal" href="#unittest-has-substr-const">unittest_has_substr_const()</a></li>
@@ -378,10 +379,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-12-06</p>
+<dd class="field-even"><p>2022-12-12</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-3117-g559f1ecc</p>
+<dd class="field-odd"><p>tribits_start-3153-gbcfeeb12</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -686,48 +687,49 @@
 <li><p><a class="reference internal" href="#tribits-add-enum-cache-var" id="id214">tribits_add_enum_cache_var()</a></p></li>
 <li><p><a class="reference internal" href="#tribits-deprecated" id="id215">tribits_deprecated()</a></p></li>
 <li><p><a class="reference internal" href="#tribits-deprecated-command" id="id216">tribits_deprecated_command()</a></p></li>
-<li><p><a class="reference internal" href="#tribits-strip-quotes-from-str" id="id217">tribits_strip_quotes_from_str()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-compare-const" id="id218">unittest_compare_const()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-has-substr-const" id="id219">unittest_has_substr_const()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-not-has-substr-const" id="id220">unittest_not_has_substr_const()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-string-regex" id="id221">unittest_string_regex()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-string-var-regex" id="id222">unittest_string_var_regex()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-file-regex" id="id223">unittest_file_regex()</a></p></li>
-<li><p><a class="reference internal" href="#unittest-final-result" id="id224">unittest_final_result()</a></p></li>
+<li><p><a class="reference internal" href="#tribit-create-reverse-list" id="id217">tribit_create_reverse_list()</a></p></li>
+<li><p><a class="reference internal" href="#tribits-strip-quotes-from-str" id="id218">tribits_strip_quotes_from_str()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-compare-const" id="id219">unittest_compare_const()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-has-substr-const" id="id220">unittest_has_substr_const()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-not-has-substr-const" id="id221">unittest_not_has_substr_const()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-string-regex" id="id222">unittest_string_regex()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-string-var-regex" id="id223">unittest_string_var_regex()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-file-regex" id="id224">unittest_file_regex()</a></p></li>
+<li><p><a class="reference internal" href="#unittest-final-result" id="id225">unittest_final_result()</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#references" id="id225"><span class="sectnum">12</span> References</a></p></li>
-<li><p><a class="reference internal" href="#faq" id="id226"><span class="sectnum">13</span> FAQ</a></p></li>
-<li><p><a class="reference internal" href="#appendix" id="id227"><span class="sectnum">14</span> Appendix</a></p>
+<li><p><a class="reference internal" href="#references" id="id226"><span class="sectnum">12</span> References</a></p></li>
+<li><p><a class="reference internal" href="#faq" id="id227"><span class="sectnum">13</span> FAQ</a></p></li>
+<li><p><a class="reference internal" href="#appendix" id="id228"><span class="sectnum">14</span> Appendix</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#history-of-tribits" id="id228"><span class="sectnum">14.1</span> History of TriBITS</a></p></li>
-<li><p><a class="reference internal" href="#why-a-tribits-package-is-not-a-cmake-package" id="id229"><span class="sectnum">14.2</span> Why a TriBITS Package is not a CMake Package</a></p></li>
-<li><p><a class="reference internal" href="#design-considerations-for-tribits" id="id230"><span class="sectnum">14.3</span> Design Considerations for TriBITS</a></p></li>
-<li><p><a class="reference internal" href="#clone-extra-repos-py-help" id="id231"><span class="sectnum">14.4</span> clone_extra_repos.py –help</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-documentation" id="id232"><span class="sectnum">14.5</span> gitdist documentation</a></p>
+<li><p><a class="reference internal" href="#history-of-tribits" id="id229"><span class="sectnum">14.1</span> History of TriBITS</a></p></li>
+<li><p><a class="reference internal" href="#why-a-tribits-package-is-not-a-cmake-package" id="id230"><span class="sectnum">14.2</span> Why a TriBITS Package is not a CMake Package</a></p></li>
+<li><p><a class="reference internal" href="#design-considerations-for-tribits" id="id231"><span class="sectnum">14.3</span> Design Considerations for TriBITS</a></p></li>
+<li><p><a class="reference internal" href="#clone-extra-repos-py-help" id="id232"><span class="sectnum">14.4</span> clone_extra_repos.py –help</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-documentation" id="id233"><span class="sectnum">14.5</span> gitdist documentation</a></p>
 <ul>
-<li><p><a class="reference internal" href="#gitdist-help" id="id233">gitdist –help</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-overview" id="id234">gitdist –dist-help=overview</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-repo-selection-and-setup" id="id235">gitdist –dist-help=repo-selection-and-setup</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-dist-repo-status" id="id236">gitdist –dist-help=dist-repo-status</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-repo-versions" id="id237">gitdist –dist-help=repo-versions</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-aliases" id="id238">gitdist –dist-help=aliases</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-default-branch" id="id239">gitdist –dist-help=default-branch</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-move-to-base-dir" id="id240">gitdist –dist-help=move-to-base-dir</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-usage-tips" id="id241">gitdist –dist-help=usage-tips</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-script-dependencies" id="id242">gitdist –dist-help=script-dependencies</a></p></li>
-<li><p><a class="reference internal" href="#gitdist-dist-help-all" id="id243">gitdist –dist-help=all</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-help" id="id234">gitdist –help</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-overview" id="id235">gitdist –dist-help=overview</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-repo-selection-and-setup" id="id236">gitdist –dist-help=repo-selection-and-setup</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-dist-repo-status" id="id237">gitdist –dist-help=dist-repo-status</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-repo-versions" id="id238">gitdist –dist-help=repo-versions</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-aliases" id="id239">gitdist –dist-help=aliases</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-default-branch" id="id240">gitdist –dist-help=default-branch</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-move-to-base-dir" id="id241">gitdist –dist-help=move-to-base-dir</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-usage-tips" id="id242">gitdist –dist-help=usage-tips</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-script-dependencies" id="id243">gitdist –dist-help=script-dependencies</a></p></li>
+<li><p><a class="reference internal" href="#gitdist-dist-help-all" id="id244">gitdist –dist-help=all</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#snapshot-dir-py-help" id="id244"><span class="sectnum">14.6</span> snapshot-dir.py –help</a></p></li>
-<li><p><a class="reference internal" href="#checkin-test-py-help" id="id245"><span class="sectnum">14.7</span> checkin-test.py –help</a></p></li>
-<li><p><a class="reference internal" href="#is-checkin-tested-commit-py-help" id="id246"><span class="sectnum">14.8</span> is_checkin_tested_commit.py –help</a></p></li>
-<li><p><a class="reference internal" href="#get-tribits-packages-from-files-list-py-help" id="id247"><span class="sectnum">14.9</span> get-tribits-packages-from-files-list.py –help</a></p></li>
-<li><p><a class="reference internal" href="#get-tribits-packages-from-last-tests-failed-py-help" id="id248"><span class="sectnum">14.10</span> get-tribits-packages-from-last-tests-failed.py –help</a></p></li>
-<li><p><a class="reference internal" href="#filter-packages-list-py-help" id="id249"><span class="sectnum">14.11</span> filter-packages-list.py –help</a></p></li>
-<li><p><a class="reference internal" href="#install-devtools-py-help" id="id250"><span class="sectnum">14.12</span> install_devtools.py –help</a></p></li>
+<li><p><a class="reference internal" href="#snapshot-dir-py-help" id="id245"><span class="sectnum">14.6</span> snapshot-dir.py –help</a></p></li>
+<li><p><a class="reference internal" href="#checkin-test-py-help" id="id246"><span class="sectnum">14.7</span> checkin-test.py –help</a></p></li>
+<li><p><a class="reference internal" href="#is-checkin-tested-commit-py-help" id="id247"><span class="sectnum">14.8</span> is_checkin_tested_commit.py –help</a></p></li>
+<li><p><a class="reference internal" href="#get-tribits-packages-from-files-list-py-help" id="id248"><span class="sectnum">14.9</span> get-tribits-packages-from-files-list.py –help</a></p></li>
+<li><p><a class="reference internal" href="#get-tribits-packages-from-last-tests-failed-py-help" id="id249"><span class="sectnum">14.10</span> get-tribits-packages-from-last-tests-failed.py –help</a></p></li>
+<li><p><a class="reference internal" href="#filter-packages-list-py-help" id="id250"><span class="sectnum">14.11</span> filter-packages-list.py –help</a></p></li>
+<li><p><a class="reference internal" href="#install-devtools-py-help" id="id251"><span class="sectnum">14.12</span> install_devtools.py –help</a></p></li>
 </ul>
 </li>
 </ul>
@@ -2034,10 +2036,10 @@ External Package/TPL</a>).  This file typically just calls the macro
 modules and other properties.  An example is
 <a class="reference internal" href="#reducedmocktrilinos">ReducedMockTrilinos</a>/<code class="docutils literal notranslate"><span class="pre">TPLsList.cmake</span></code> which shows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_repository_define_tpls</span><span class="p">(</span>
-  <span class="n">MPI</span>            <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/core/std_tpls/&quot;</span>    <span class="n">PT</span>
-  <span class="n">BLAS</span>           <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/core/std_tpls/&quot;</span>    <span class="n">PT</span>
-  <span class="n">LAPACK</span>         <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/core/std_tpls/&quot;</span>    <span class="n">PT</span>
-  <span class="n">Boost</span>          <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/core/std_tpls/&quot;</span>    <span class="n">ST</span>
+  <span class="n">MPI</span>            <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/core/std_tpls/&quot;</span>  <span class="n">PT</span>
+  <span class="n">BLAS</span>           <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/common_tpls/&quot;</span>    <span class="n">PT</span>
+  <span class="n">LAPACK</span>         <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/common_tpls/&quot;</span>    <span class="n">PT</span>
+  <span class="n">Boost</span>          <span class="n">cmake</span><span class="o">/</span><span class="n">TPLs</span><span class="o">/</span>    <span class="n">ST</span>
   <span class="n">UMFPACK</span>        <span class="n">cmake</span><span class="o">/</span><span class="n">TPLs</span><span class="o">/</span>    <span class="n">ST</span>
   <span class="n">AMD</span>            <span class="n">cmake</span><span class="o">/</span><span class="n">TPLs</span><span class="o">/</span>    <span class="n">EX</span>
   <span class="n">PETSC</span>          <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/common_tpls/&quot;</span>    <span class="n">ST</span>
@@ -2648,7 +2650,7 @@ example in other packages, refer to this by the raw name like
 the package is in relation to other packages.  NOTE: This variable is
 <strong>only</strong> defined if the package is actually enabled!</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_PARENT_REPOSITORY</span></code></p>
+<p id="package-name-parent-repository"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_PARENT_REPOSITORY</span></code></p>
 <blockquote>
 <div><p>The name of the package’s parent repository.  This can be used by a
 package to access information about its parent repository.  For example,
@@ -3025,8 +3027,8 @@ version will be used all of the downstream packages that uses it.  Also, by
 defining a TriBITS TPL, automatic enable/disable logic will be applied as
 described in <a class="reference internal" href="#package-dependencies-and-enable-disable-logic">Package Dependencies and Enable/Disable Logic</a>.  For example,
 if an external package/TPL is explicitly disabled, all of the downstream
-packages that depend on it will be automatically disabled as well (see <a class="reference internal" href="#tpl-disable-triggers-auto-disables-of-downstream-dependencies">TPL
-disable triggers auto-disables of downstream dependencies</a>).</p>
+packages that depend on it will be automatically disabled as well (see
+<a class="reference internal" href="#package-disable-triggers-auto-disables-of-downstream-dependencies">Package disable triggers auto-disables of downstream dependencies</a>).</p>
 <p id="globally-unique-tribits-tpl-names"><strong>WARNING:</strong> One must be very careful to pick <strong>Globally unique TriBITS
 External Package/TPL names</strong> <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;</span></code> across all TPLs in all TriBITS
 repositories that ever might be cobbled together into a single TriBITS (meta)
@@ -3585,6 +3587,7 @@ into a single meta-project.</p>
 <span class="n">FindTPLCGNSDependencies</span><span class="o">.</span><span class="n">cmake</span>
 <span class="n">FindTPLHDF5</span><span class="o">.</span><span class="n">cmake</span>
 <span class="n">FindTPLLAPACK</span><span class="o">.</span><span class="n">cmake</span>
+<span class="n">FindTPLLAPACKDependencies</span><span class="o">.</span><span class="n">cmake</span>
 <span class="n">FindTPLNetcdf</span><span class="o">.</span><span class="n">cmake</span>
 <span class="n">FindTPLNetcdfDependencies</span><span class="o">.</span><span class="n">cmake</span>
 <span class="n">FindTPLPETSC</span><span class="o">.</span><span class="n">cmake</span>
@@ -4128,10 +4131,10 @@ the <code class="docutils literal notranslate"><span class="pre">cmake</span></c
 in the file <code class="docutils literal notranslate"><span class="pre">ReducedMockTrilinos/TPLsList.cmake</span></code> (see
 <a class="reference internal" href="#repodir-tplslist-cmake">&lt;repoDir&gt;/TPLsList.cmake</a>) which is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_repository_define_tpls</span><span class="p">(</span>
-  <span class="n">MPI</span>            <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/core/std_tpls/&quot;</span>    <span class="n">PT</span>
-  <span class="n">BLAS</span>           <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/core/std_tpls/&quot;</span>    <span class="n">PT</span>
-  <span class="n">LAPACK</span>         <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/core/std_tpls/&quot;</span>    <span class="n">PT</span>
-  <span class="n">Boost</span>          <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/core/std_tpls/&quot;</span>    <span class="n">ST</span>
+  <span class="n">MPI</span>            <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/core/std_tpls/&quot;</span>  <span class="n">PT</span>
+  <span class="n">BLAS</span>           <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/common_tpls/&quot;</span>    <span class="n">PT</span>
+  <span class="n">LAPACK</span>         <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/common_tpls/&quot;</span>    <span class="n">PT</span>
+  <span class="n">Boost</span>          <span class="n">cmake</span><span class="o">/</span><span class="n">TPLs</span><span class="o">/</span>    <span class="n">ST</span>
   <span class="n">UMFPACK</span>        <span class="n">cmake</span><span class="o">/</span><span class="n">TPLs</span><span class="o">/</span>    <span class="n">ST</span>
   <span class="n">AMD</span>            <span class="n">cmake</span><span class="o">/</span><span class="n">TPLs</span><span class="o">/</span>    <span class="n">EX</span>
   <span class="n">PETSC</span>          <span class="s2">&quot;${$</span><span class="si">{PROJECT_NAME}</span><span class="s2">_TRIBITS_DIR}/common_tpls/&quot;</span>    <span class="n">ST</span>
@@ -4144,93 +4147,116 @@ system handles enables and disables.</p>
 <p>The dependency structure of this simple TriBITS project is shown below in
 <a class="reference internal" href="#reducedmocktrilinos-dependencies">ReducedMockTrilinos Dependencies</a>.</p>
 <p id="reducedmocktrilinos-dependencies"><strong>ReducedMockTrilinos Dependencies:</strong></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Package</span> <span class="n">dependencies</span> <span class="n">information</span><span class="p">:</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Package dependencies information:
 
-<span class="o">--</span> <span class="n">Trilinos_DEFINED_TPLS</span><span class="p">:</span> <span class="n">MPI</span> <span class="n">BLAS</span> <span class="n">LAPACK</span> <span class="n">Boost</span> <span class="n">UMFPACK</span> <span class="n">AMD</span> <span class="n">PETSC</span>
-<span class="o">--</span> <span class="n">Trilinos_NUM_DEFINED_TPLS</span><span class="o">=</span><span class="s1">&#39;7&#39;</span>
+-- Trilinos_DEFINED_TPLS: MPI BLAS LAPACK Boost UMFPACK AMD PETSC
+-- Trilinos_NUM_DEFINED_TPLS=&#39;7&#39;
 
-<span class="o">--</span> <span class="n">Trilinos_DEFINED_INTERNAL_TOPLEVEL_PACKAGES</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="n">RTOp</span> <span class="n">Epetra</span> <span class="n">Triutils</span> <span class="n">EpetraExt</span> <span class="n">Thyra</span>
-<span class="o">--</span> <span class="n">Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES</span><span class="o">=</span><span class="s1">&#39;6&#39;</span>
+-- Trilinos_DEFINED_INTERNAL_TOPLEVEL_PACKAGES: Teuchos RTOp Epetra Triutils EpetraExt Thyra
+-- Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES=&#39;6&#39;
 
-<span class="o">--</span> <span class="n">Trilinos_DEFINED_TOPLEVEL_PACKAGES</span><span class="p">:</span> <span class="n">MPI</span> <span class="n">BLAS</span> <span class="n">LAPACK</span> <span class="n">Boost</span> <span class="n">UMFPACK</span> <span class="n">AMD</span> <span class="n">PETSC</span> <span class="n">Teuchos</span> <span class="n">RTOp</span> <span class="n">Epetra</span> <span class="n">Triutils</span> <span class="n">EpetraExt</span> <span class="n">Thyra</span>
-<span class="o">--</span> <span class="n">Trilinos_NUM_DEFINED_TOPLEVEL_PACKAGES</span><span class="o">=</span><span class="s1">&#39;13&#39;</span>
+-- Trilinos_DEFINED_TOPLEVEL_PACKAGES: MPI BLAS LAPACK Boost UMFPACK AMD PETSC Teuchos RTOp Epetra Triutils EpetraExt Thyra
+-- Trilinos_NUM_DEFINED_TOPLEVEL_PACKAGES=&#39;13&#39;
 
-<span class="o">--</span> <span class="n">Trilinos_DEFINED_INTERNAL_PACKAGES</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="n">RTOp</span> <span class="n">Epetra</span> <span class="n">Triutils</span> <span class="n">EpetraExt</span> <span class="n">ThyraCoreLibs</span> <span class="n">ThyraGoodStuff</span> <span class="n">ThyraCrazyStuff</span> <span class="n">ThyraEpetra</span> <span class="n">ThyraEpetraExt</span> <span class="n">Thyra</span>
-<span class="o">--</span> <span class="n">Trilinos_NUM_DEFINED_INTERNAL_PACKAGES</span><span class="o">=</span><span class="s1">&#39;11&#39;</span>
+-- Trilinos_DEFINED_INTERNAL_PACKAGES: Teuchos RTOp Epetra Triutils EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt Thyra
+-- Trilinos_NUM_DEFINED_INTERNAL_PACKAGES=&#39;11&#39;
 
-<span class="o">--</span> <span class="n">Trilinos_DEFINED_PACKAGES</span><span class="p">:</span> <span class="n">MPI</span> <span class="n">BLAS</span> <span class="n">LAPACK</span> <span class="n">Boost</span> <span class="n">UMFPACK</span> <span class="n">AMD</span> <span class="n">PETSC</span> <span class="n">Teuchos</span> <span class="n">RTOp</span> <span class="n">Epetra</span> <span class="n">Triutils</span> <span class="n">EpetraExt</span> <span class="n">ThyraCoreLibs</span> <span class="n">ThyraGoodStuff</span> <span class="n">ThyraCrazyStuff</span> <span class="n">ThyraEpetra</span> <span class="n">ThyraEpetraExt</span> <span class="n">Thyra</span>
-<span class="o">--</span> <span class="n">Trilinos_NUM_DEFINED_PACKAGES</span><span class="o">=</span><span class="s1">&#39;18&#39;</span>
+-- Trilinos_DEFINED_PACKAGES: MPI BLAS LAPACK Boost UMFPACK AMD PETSC Teuchos RTOp Epetra Triutils EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt Thyra
+-- Trilinos_NUM_DEFINED_PACKAGES=&#39;18&#39;
 
-<span class="o">--</span> <span class="n">Teuchos_LIB_REQUIRED_DEP_TPLS</span><span class="p">:</span> <span class="n">BLAS</span> <span class="n">LAPACK</span>
-<span class="o">--</span> <span class="n">Teuchos_LIB_OPTIONAL_DEP_TPLS</span><span class="p">:</span> <span class="n">Boost</span> <span class="n">MPI</span>
+-- MPI_FORWARD_LIB_DEFINED_DEPENDENCIES: Teuchos[O] Epetra[O]
 
-<span class="o">--</span> <span class="n">RTOp_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="n">Teuchos</span>
+-- BLAS_FORWARD_LIB_DEFINED_DEPENDENCIES: LAPACK[R] Teuchos[R] Epetra[R]
 
-<span class="o">--</span> <span class="n">Epetra_LIB_REQUIRED_DEP_TPLS</span><span class="p">:</span> <span class="n">BLAS</span> <span class="n">LAPACK</span>
-<span class="o">--</span> <span class="n">Epetra_LIB_OPTIONAL_DEP_TPLS</span><span class="p">:</span> <span class="n">MPI</span>
+-- LAPACK_LIB_DEFINED_DEPENDENCIES: BLAS[R]
+-- LAPACK_FORWARD_LIB_DEFINED_DEPENDENCIES: Teuchos[R] Epetra[R]
 
-<span class="o">--</span> <span class="n">Triutils_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="n">Epetra</span>
+-- Boost_FORWARD_LIB_DEFINED_DEPENDENCIES: Teuchos[O]
 
-<span class="o">--</span> <span class="n">EpetraExt_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="n">Epetra</span>
-<span class="o">--</span> <span class="n">EpetraExt_LIB_OPTIONAL_DEP_PACKAGES</span><span class="p">:</span> <span class="n">Triutils</span>
-<span class="o">--</span> <span class="n">EpetraExt_LIB_OPTIONAL_DEP_TPLS</span><span class="p">:</span> <span class="n">UMFPACK</span> <span class="n">AMD</span> <span class="n">PETSC</span>
+-- UMFPACK_FORWARD_LIB_DEFINED_DEPENDENCIES: EpetraExt[O]
 
-<span class="o">--</span> <span class="n">ThyraCoreLibs_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="n">RTOp</span>
+-- AMD_FORWARD_LIB_DEFINED_DEPENDENCIES: EpetraExt[O]
 
-<span class="o">--</span> <span class="n">ThyraGoodStuff_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="n">ThyraCoreLibs</span>
+-- PETSC_FORWARD_LIB_DEFINED_DEPENDENCIES: EpetraExt[O]
 
-<span class="o">--</span> <span class="n">ThyraCrazyStuff_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="n">ThyraGoodStuff</span>
+-- Teuchos_LIB_DEFINED_DEPENDENCIES: BLAS[R] LAPACK[R] Boost[O] MPI[O]
+-- Teuchos_FORWARD_LIB_DEFINED_DEPENDENCIES: RTOp[R] EpetraExt[R] ThyraCoreLibs[R]
 
-<span class="o">--</span> <span class="n">ThyraEpetra_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="n">Epetra</span> <span class="n">ThyraCoreLibs</span>
+-- RTOp_LIB_DEFINED_DEPENDENCIES: Teuchos[R]
+-- RTOp_FORWARD_LIB_DEFINED_DEPENDENCIES: ThyraCoreLibs[R]
 
-<span class="o">--</span> <span class="n">ThyraEpetraExt_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="n">ThyraEpetra</span> <span class="n">EpetraExt</span>
+-- Epetra_LIB_DEFINED_DEPENDENCIES: BLAS[R] LAPACK[R] MPI[O]
+-- Epetra_FORWARD_LIB_DEFINED_DEPENDENCIES: Triutils[R] EpetraExt[R] ThyraEpetra[R]
 
-<span class="o">--</span> <span class="n">Thyra_LIB_REQUIRED_DEP_PACKAGES</span><span class="p">:</span> <span class="n">ThyraCoreLibs</span>
-<span class="o">--</span> <span class="n">Thyra_LIB_OPTIONAL_DEP_PACKAGES</span><span class="p">:</span> <span class="n">ThyraGoodStuff</span> <span class="n">ThyraCrazyStuff</span> <span class="n">ThyraEpetra</span> <span class="n">ThyraEpetraExt</span>
+-- Triutils_LIB_DEFINED_DEPENDENCIES: Epetra[R]
+-- Triutils_FORWARD_LIB_DEFINED_DEPENDENCIES: EpetraExt[O]
 
-<span class="n">Dumping</span> <span class="n">direct</span> <span class="n">dependencies</span> <span class="k">for</span> <span class="n">each</span> <span class="n">package</span> <span class="o">...</span>
+-- EpetraExt_LIB_DEFINED_DEPENDENCIES: Teuchos[R] Epetra[R] Triutils[O] UMFPACK[O] AMD[O] PETSC[O]
+-- EpetraExt_FORWARD_LIB_DEFINED_DEPENDENCIES: ThyraEpetraExt[R]
 
-<span class="o">--</span> <span class="n">MPI_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span>
+-- ThyraCoreLibs_LIB_DEFINED_DEPENDENCIES: Teuchos[R] RTOp[R]
+-- ThyraCoreLibs_FORWARD_LIB_DEFINED_DEPENDENCIES: ThyraGoodStuff[R] ThyraEpetra[R] Thyra[R]
 
-<span class="o">--</span> <span class="n">BLAS_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span>
+-- ThyraGoodStuff_LIB_DEFINED_DEPENDENCIES: ThyraCoreLibs[R]
+-- ThyraGoodStuff_FORWARD_LIB_DEFINED_DEPENDENCIES: ThyraCrazyStuff[R] Thyra[O]
 
-<span class="o">--</span> <span class="n">LAPACK_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span>
+-- ThyraCrazyStuff_LIB_DEFINED_DEPENDENCIES: ThyraGoodStuff[R]
+-- ThyraCrazyStuff_FORWARD_LIB_DEFINED_DEPENDENCIES: Thyra[O]
 
-<span class="o">--</span> <span class="n">Boost_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span>
+-- ThyraEpetra_LIB_DEFINED_DEPENDENCIES: Epetra[R] ThyraCoreLibs[R]
+-- ThyraEpetra_FORWARD_LIB_DEFINED_DEPENDENCIES: ThyraEpetraExt[R] Thyra[O]
 
-<span class="o">--</span> <span class="n">UMFPACK_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span>
+-- ThyraEpetraExt_LIB_DEFINED_DEPENDENCIES: ThyraEpetra[R] EpetraExt[R]
+-- ThyraEpetraExt_FORWARD_LIB_DEFINED_DEPENDENCIES: Thyra[O]
 
-<span class="o">--</span> <span class="n">AMD_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span>
+-- Thyra_LIB_DEFINED_DEPENDENCIES: ThyraCoreLibs[R] ThyraGoodStuff[O] ThyraCrazyStuff[O] ThyraEpetra[O] ThyraEpetraExt[O]
 
-<span class="o">--</span> <span class="n">PETSC_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span>
+Dumping direct enabled dependencies for each package ...
 
-<span class="o">--</span> <span class="n">Teuchos_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">BLAS</span> <span class="n">LAPACK</span>
-<span class="o">--</span> <span class="n">Teuchos_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">BLAS</span> <span class="n">LAPACK</span> <span class="n">Boost</span> <span class="n">MPI</span>
+-- MPI: No enabled dependencies!
 
-<span class="o">--</span> <span class="n">RTOp_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Teuchos</span>
-<span class="o">--</span> <span class="n">RTOp_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Teuchos</span>
+-- BLAS: No enabled dependencies!
 
-<span class="o">--</span> <span class="n">Epetra_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">BLAS</span> <span class="n">LAPACK</span>
-<span class="o">--</span> <span class="n">Epetra_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">BLAS</span> <span class="n">LAPACK</span> <span class="n">MPI</span>
+-- LAPACK_LIB_ENABLED_DEPENDENCIES: BLAS[R]
 
-<span class="o">--</span> <span class="n">Triutils_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Epetra</span>
+-- Boost: No enabled dependencies!
 
-<span class="o">--</span> <span class="n">EpetraExt_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="n">Epetra</span> <span class="n">Triutils</span> <span class="n">UMFPACK</span> <span class="n">AMD</span> <span class="n">PETSC</span>
+-- UMFPACK: No enabled dependencies!
 
-<span class="o">--</span> <span class="n">ThyraCoreLibs_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="n">RTOp</span>
-<span class="o">--</span> <span class="n">ThyraCoreLibs_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="n">RTOp</span>
+-- AMD: No enabled dependencies!
 
-<span class="o">--</span> <span class="n">ThyraGoodStuff_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">ThyraCoreLibs</span>
+-- PETSC: No enabled dependencies!
 
-<span class="o">--</span> <span class="n">ThyraCrazyStuff_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">ThyraGoodStuff</span>
+-- Teuchos_LIB_ENABLED_DEPENDENCIES: BLAS[R] LAPACK[R]
 
-<span class="o">--</span> <span class="n">ThyraEpetra_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Epetra</span> <span class="n">ThyraCoreLibs</span>
-<span class="o">--</span> <span class="n">ThyraEpetra_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">Epetra</span> <span class="n">ThyraCoreLibs</span>
+-- RTOp_LIB_ENABLED_DEPENDENCIES: Teuchos[R]
 
-<span class="o">--</span> <span class="n">ThyraEpetraExt_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">ThyraEpetra</span> <span class="n">EpetraExt</span>
+-- Epetra_LIB_ENABLED_DEPENDENCIES: BLAS[R] LAPACK[R]
 
-<span class="o">--</span> <span class="n">Thyra_LIB_ENABLED_DEPENDENCIES</span><span class="p">:</span> <span class="n">ThyraCoreLibs</span> <span class="n">ThyraEpetra</span>
-<span class="o">--</span> <span class="n">Thyra_LIB_DEFINED_DEPENDENCIES</span><span class="p">:</span> <span class="n">ThyraCoreLibs</span> <span class="n">ThyraGoodStuff</span> <span class="n">ThyraCrazyStuff</span> <span class="n">ThyraEpetra</span> <span class="n">ThyraEpetraExt</span>
+-- Triutils: No enabled dependencies!
+
+-- EpetraExt: No enabled dependencies!
+
+-- ThyraCoreLibs_LIB_ENABLED_DEPENDENCIES: Teuchos[R] RTOp[R]
+
+-- ThyraGoodStuff: No enabled dependencies!
+
+-- ThyraCrazyStuff: No enabled dependencies!
+
+-- ThyraEpetra_LIB_ENABLED_DEPENDENCIES: Epetra[R] ThyraCoreLibs[R]
+
+-- ThyraEpetraExt: No enabled dependencies!
+
+-- Thyra_LIB_ENABLED_DEPENDENCIES: ThyraCoreLibs[R] ThyraEpetra[O]
+
+Setting up export dependencies for all enabled packages ...
+
+-- Teuchos: No library dependencies!
+-- RTOp_FULL_ENABLED_DEP_PACKAGES: Teuchos
+-- Epetra: No library dependencies!
+-- ThyraCoreLibs_FULL_ENABLED_DEP_PACKAGES: RTOp Teuchos
+-- ThyraEpetra_FULL_ENABLED_DEP_PACKAGES: ThyraCoreLibs Epetra RTOp Teuchos
+-- Thyra_FULL_ENABLED_DEP_PACKAGES: ThyraEpetra ThyraCoreLibs Epetra RTOp Teuchos
 </pre></div>
 </div>
 <p>The above dependency structure printout is produced by configuring with
@@ -4347,7 +4373,6 @@ system are:</p>
 <li><p><a class="reference internal" href="#ex-tpls-given-default-unset-enable-disable-state">EX TPLs given default unset enable/disable state</a></p></li>
 <li><p><a class="reference internal" href="#required-tpls-are-auto-enabled-for-enabled-packages">Required TPLs are auto-enabled for enabled packages</a></p></li>
 <li><p><a class="reference internal" href="#optional-tpls-only-enabled-explicitly-by-the-user">Optional TPLs only enabled explicitly by the user</a></p></li>
-<li><p><a class="reference internal" href="#tpl-disable-triggers-auto-disables-of-downstream-dependencies">TPL disable triggers auto-disables of downstream dependencies</a></p></li>
 <li><p><a class="reference internal" href="#disables-trump-enables-where-there-is-a-conflict">Disables trump enables where there is a conflict</a></p></li>
 <li><p><a class="reference internal" href="#enable-disable-of-parent-package-is-enable-disable-for-subpackages">Enable/disable of parent package is enable/disable for subpackages</a></p></li>
 <li><p><a class="reference internal" href="#enable-disable-of-parent-package-tests-examples-is-enable-disable-for-subpackages-tests-examples">Enable/disable of parent package tests/examples is enable/disable for subpackages tests/examples</a></p></li>
@@ -4423,15 +4448,16 @@ optional upstream <a class="reference internal" href="#st">ST</a> packages if
 enabled</a>.</p></li>
 </ol>
 <ol class="arabic simple" id="package-disable-triggers-auto-disables-of-downstream-dependencies" start="4">
-<li><p><strong>Package disable triggers auto-disables of downstream dependencies</strong>:
-Any package <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> can be explicitly <strong>disabled</strong> by the
-user by setting the cache variable
-<code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_&lt;TRIBITS_PACKAGE&gt;=OFF</span></code>
-(e.g. <code class="docutils literal notranslate"><span class="pre">Trilinos_ENABLE_Teuchos=OFF</span></code>).  When an package is explicitly
-disabled, it will result in the disable of all <a class="reference internal" href="#downstream">downstream</a> packages
-that have required dependency on it.  It will also disable optional support
-for the disabled packages in downstream packages that list it as an
-optional dependency.  For an example, see <a class="reference internal" href="#explicit-disable-of-a-package">Explicit disable of a package</a>.</p></li>
+<li><p><strong>Package disable triggers auto-disables of downstream dependencies</strong>: Any
+package <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> can be explicitly <strong>disabled</strong> by the user by
+setting the cache variable <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_&lt;TRIBITS_PACKAGE&gt;=OFF</span></code>
+(or <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_&lt;TRIBITS_PACKAGE&gt;=OFF</span></code> for an external package/TPL)
+(e.g. <code class="docutils literal notranslate"><span class="pre">Trilinos_ENABLE_Teuchos=OFF</span></code>, <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_BLAS=OFF</span></code>).  When an
+package is explicitly disabled, it will result in the disable of all
+dependent <a class="reference internal" href="#downstream">downstream</a> external packages/TPLs and internal packages that
+have required dependency on it.  It will also disable optional support for
+the disabled packages in downstream packages that list it as an optional
+dependency.  For an example, see <a class="reference internal" href="#explicit-disable-of-a-package">Explicit disable of a package</a>.</p></li>
 </ol>
 <ol class="arabic simple" id="pt-st-tpls-given-default-unset-enable-disable-state" start="5">
 <li><p><strong>PT/ST TPLs given default unset enable/disable state</strong>: A TriBITS TPL
@@ -4481,21 +4507,7 @@ the <code class="docutils literal notranslate"><span class="pre">Teuchos</span><
 <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_Boost=ON</span></code>.  For an example, see <a class="reference internal" href="#explicit-enable-of-a-package-its-tests-an-optional-tpl-with-st-enabled">Explicit enable of a
 package, its tests, an optional TPL, with ST enabled</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="tpl-disable-triggers-auto-disables-of-downstream-dependencies" start="9">
-<li><p><strong>TPL disable triggers auto-disables of downstream dependencies</strong>: Any TPLs
-that are explicitly disabled (i.e. <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_&lt;TRIBITS_TPL&gt;=OFF</span></code>) will
-result in the disable of all <a class="reference internal" href="#downstream">downstream</a> dependent packages that have a
-required dependency on the TPL.  For example, if the user sets
-<code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_LAPACK=OFF</span></code>, then this will result in the disable of packages
-<code class="docutils literal notranslate"><span class="pre">Teuchos</span></code> and <code class="docutils literal notranslate"><span class="pre">Epetra</span></code>, and all of the required packages downstream
-from them.  Also, the explicitly disabled TPL will result in the disable of
-optional support in all downstream packages.  For example, if the user sets
-<code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_MPI=OFF</span></code>, then TriBITS will automatically set
-<code class="docutils literal notranslate"><span class="pre">Teuchos_ENABLE_MPI=OFF</span></code> and <code class="docutils literal notranslate"><span class="pre">Epetra_ENABLE_MPI=OFF</span></code>.  For examples,
-see <a class="reference internal" href="#explicit-disable-of-an-optional-tpl">Explicit disable of an optional TPL</a> and <a class="reference internal" href="#explicit-disable-of-a-required-tpl">Explicit disable of a
-required TPL</a>.</p></li>
-</ol>
-<ol class="arabic" id="disables-trump-enables-where-there-is-a-conflict" start="10">
+<ol class="arabic" id="disables-trump-enables-where-there-is-a-conflict" start="9">
 <li><p><strong>Disables trump enables where there is a conflict</strong> and TriBITS will
 never override a disable in order to satisfy some dependency.  For
 example, if the user sets <code class="docutils literal notranslate"><span class="pre">Trilinos_ENABLE_Teuchos=OFF</span></code> and
@@ -4523,7 +4535,7 @@ stop.</p></li>
 disable</a>.</p>
 </li>
 </ol>
-<ol class="arabic" id="enable-disable-of-parent-package-is-enable-disable-for-subpackages" start="11">
+<ol class="arabic" id="enable-disable-of-parent-package-is-enable-disable-for-subpackages" start="10">
 <li><p><strong>Enable/disable of parent package is enable/disable for subpackages</strong>: An
 explicit enable/disable of a top-level parent package with subpackages
 with <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_&lt;TRIBITS_PACKAGE&gt;=(ON|OFF)</span></code> is equivalent
@@ -4546,7 +4558,7 @@ see <a class="reference internal" href="#explicit-enable-of-a-package-its-tests-
 enabled</a>.</p>
 </li>
 </ol>
-<ol class="arabic simple" id="enable-disable-of-parent-package-tests-examples-is-enable-disable-for-subpackages-tests-examples" start="12">
+<ol class="arabic simple" id="enable-disable-of-parent-package-tests-examples-is-enable-disable-for-subpackages-tests-examples" start="11">
 <li><p><strong>Enable/disable of parent package tests/examples is enable/disable for
 subpackages tests/examples</strong>: Setting
 <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_TESTS=[ON|OFF]</span></code> is equivalent to setting the
@@ -4559,7 +4571,7 @@ subpackage <code class="docutils literal notranslate"><span class="pre">&lt;SP&g
 <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_EXAMPLES=[ON|OFF]</span></code> by default as well (but not
 vice versa).</p></li>
 </ol>
-<ol class="arabic simple" id="subpackage-enable-does-not-auto-enable-the-parent-package" start="13">
+<ol class="arabic simple" id="subpackage-enable-does-not-auto-enable-the-parent-package" start="12">
 <li><p><strong>Subpackage enable does not auto-enable the parent package</strong>: Enabling an
 package that is a subpackage does <strong>not</strong> automatically enable the
 parent package (except for at the very end, mostly just for show).  For
@@ -4581,7 +4593,7 @@ subpackages is enabled for some reason, the final value of
 does imply that all of the required subpackages will be enabled, only that
 the parent package will be processed.)</p></li>
 </ol>
-<ol class="arabic simple" id="support-for-optional-package-tpl-is-enabled-by-default" start="14">
+<ol class="arabic simple" id="support-for-optional-package-tpl-is-enabled-by-default" start="13">
 <li><p><strong>Support for optional package/TPL is enabled by default</strong>: For an package
 <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> with an optional dependency on an <a class="reference internal" href="#upstream">upstream</a>
 package or TPL <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_DEP_PACKAGE_OR_TPL&gt;</span></code>, TriBITS will
@@ -4597,7 +4609,7 @@ TPL <code class="docutils literal notranslate"><span class="pre">Boost</span></c
 behavior.  See the full context for these examples in <a class="reference internal" href="#explicit-enable-of-a-package-its-tests-an-optional-tpl-with-st-enabled">Explicit enable of
 a package, its tests, an optional TPL, with ST enabled</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="support-for-optional-package-can-be-explicitly-disabled" start="15">
+<ol class="arabic simple" id="support-for-optional-package-can-be-explicitly-disabled" start="14">
 <li><p><strong>Support for optional package can be explicitly disabled:</strong> Even
 though TriBITS will automatically set
 <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;_ENABLE_&lt;TRIBITS_DEP_PACKAGE_OR_TPL&gt;=ON</span></code> by default if
@@ -4616,7 +4628,7 @@ can enable <code class="docutils literal notranslate"><span class="pre">Teuchos<
 an optional package dependency</a> and <a class="reference internal" href="#explicit-disable-of-an-optional-tpl-dependency">Explicit disable of an optional TPL
 dependency</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="explicit-enable-of-optional-package-tpl-support-auto-enables-package-tpl" start="16">
+<ol class="arabic simple" id="explicit-enable-of-optional-package-tpl-support-auto-enables-package-tpl" start="15">
 <li><p><strong>Explicit enable of optional package/TPL support auto-enables
 package/TPL</strong>: If the user explicitly enables the TriBITS package
 <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code> and explicitly sets
@@ -4635,7 +4647,7 @@ package or TPL is <code class="docutils literal notranslate"><span class="pre">E
 <a class="reference internal" href="#disables-trump-enables-where-there-is-a-conflict">Disables trump enables where there is a conflict</a>.  For example, see
 <a class="reference internal" href="#explicit-enable-of-an-optional-package-dependency">Explicit enable of an optional package dependency</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="st-packages-only-auto-enabled-if-st-code-is-enabled" start="17">
+<ol class="arabic simple" id="st-packages-only-auto-enabled-if-st-code-is-enabled" start="16">
 <li><p><strong>ST packages only auto-enabled if ST code is enabled</strong>: TriBITS will
 only enable an optional <code class="docutils literal notranslate"><span class="pre">ST</span></code> package when
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES=ON</span></code> if
@@ -4653,7 +4665,7 @@ with ST enabled</a>).  The TriBITS default is
 problems when users try to set a permutation of enables/disables which is
 not regularly tested.</p></li>
 </ol>
-<ol class="arabic simple" id="project-enable-all-forward-dep-packages-enables-downstream-packages-tests" start="18">
+<ol class="arabic simple" id="project-enable-all-forward-dep-packages-enables-downstream-packages-tests" start="17">
 <li><p><strong>&lt;Project&gt;_ENABLE_ALL_FORWARD_DEP_PACKAGES enables downstream packages/tests</strong>:
 Setting the user cache-variable
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_ALL_FORWARD_PACKAGES=ON</span></code> will result in the
@@ -4668,7 +4680,7 @@ enables (and test and example enables) for the packages <code class="docutils li
 example, see <a class="reference internal" href="#explicit-enable-of-a-package-and-downstream-packages-and-tests">Explicit enable of a package and downstream packages and
 tests</a>.</p></li>
 </ol>
-<span id="project-name-enable-all-packages"></span><ol class="arabic" id="project-enable-all-packages-enables-all-pt-cond-st-packages" start="19">
+<span id="project-name-enable-all-packages"></span><ol class="arabic" id="project-enable-all-packages-enables-all-pt-cond-st-packages" start="18">
 <li><p><strong>&lt;Project&gt;_ENABLE_ALL_PACKAGES enables all PT (cond. ST) packages</strong>:
 Setting the user cache-variable <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON</span></code>
 will result in the enable of all <code class="docutils literal notranslate"><span class="pre">PT</span></code> packages when
@@ -4687,7 +4699,7 @@ not have <a class="reference internal" href="#repository-name-no-primary-meta-pr
 in <a class="reference internal" href="#repository-name-no-primary-meta-project-packages-except">${REPOSITORY_NAME}_NO_PRIMARY_META_PROJECT_PACKAGES_EXCEPT</a>.</p>
 </li>
 </ol>
-<ol class="arabic simple" id="project-enable-tests-only-enables-explicitly-enabled-package-tests" start="20">
+<ol class="arabic simple" id="project-enable-tests-only-enables-explicitly-enabled-package-tests" start="19">
 <li><p><strong>&lt;Project&gt;_ENABLE_TESTS only enables explicitly enabled package
 tests</strong>: Setting <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_TESTS=ON</span></code> will <strong>only enable
 tests for explicitly enabled packages</strong> on input.  For example,
@@ -4701,7 +4713,7 @@ meta-project packages (PMPP).  The uses the same logic as for
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_ALL_PACKAGES</span></code>, see
 <a class="reference internal" href="#project-enable-all-packages-enables-all-pt-cond-st-packages">&lt;Project&gt;_ENABLE_ALL_PACKAGES enables all PT (cond. ST) packages</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="if-no-packages-are-enabled-nothing-will-get-built" start="21">
+<ol class="arabic simple" id="if-no-packages-are-enabled-nothing-will-get-built" start="20">
 <li><p><strong>If no packages are enabled, nothing will get built</strong>: Most TriBITS
 projects are set up such that if the user does not explicitly enable at
 least one package in some way, then nothing will be enabled or built.
@@ -4714,7 +4726,7 @@ enabled and tested in order to accept the results of the test and allow a
 push.  For an example, see <a class="reference internal" href="#default-configure-with-no-packages-enabled-on-input">Default configure with no packages enabled on
 input</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="tribits-prints-all-enables-and-disables-to-stdout" start="22">
+<ol class="arabic simple" id="tribits-prints-all-enables-and-disables-to-stdout" start="21">
 <li><p><strong>TriBITS prints all enables and disables to stdout</strong>: TriBITS prints out
 (to <code class="docutils literal notranslate"><span class="pre">cmake</span></code> stdout) the initial set of enables/disables on input, prints
 a line whenever it sets (or overrides) an enable or disable, and prints
@@ -4726,7 +4738,7 @@ optional packages and TPLs is enabled or not.  Examples of this output
 is given in all of the below examples but a detailed description of this
 output is given in <a class="reference internal" href="#explicit-enable-of-a-package-and-its-tests">Explicit enable of a package and its tests</a>.</p></li>
 </ol>
-<ol class="arabic simple" id="tribits-auto-enables-disables-done-using-non-cache-local-variables" start="23">
+<ol class="arabic simple" id="tribits-auto-enables-disables-done-using-non-cache-local-variables" start="22">
 <li><p><strong>TriBITS auto-enables/disables done using non-cache local variables</strong>:
 TriBITS setting (or overrides) of enable/disable cache variables are done
 by setting local non-cache variables at the top project-level scope
@@ -4918,16 +4930,13 @@ top-level <code class="docutils literal notranslate"><span class="pre">Thyra</sp
 <span class="o">--</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_Epetra</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">ThyraEpetra</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">Epetra</span>
 <span class="o">--</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_Teuchos</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">ThyraCoreLibs</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">Teuchos</span>
 <span class="o">--</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_RTOp</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">ThyraCoreLibs</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">RTOp</span>
+<span class="o">--</span> <span class="n">Setting</span> <span class="n">TPL_ENABLE_BLAS</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">Epetra</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">BLAS</span>
+<span class="o">--</span> <span class="n">Setting</span> <span class="n">TPL_ENABLE_LAPACK</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">Epetra</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">LAPACK</span>
 
 <span class="n">Enabling</span> <span class="nb">all</span> <span class="n">optional</span> <span class="n">intra</span><span class="o">-</span><span class="n">package</span> <span class="n">enables</span> <span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE</span><span class="o">&gt;</span><span class="n">_ENABLE_</span><span class="o">&lt;</span><span class="n">DEPPACKAGE</span><span class="o">&gt;</span> <span class="n">that</span> <span class="n">are</span> 
  <span class="ow">not</span> <span class="n">currently</span> <span class="n">disabled</span> <span class="k">if</span> <span class="n">both</span> <span class="n">sets</span> <span class="n">of</span> <span class="n">packages</span> <span class="n">are</span> <span class="n">enabled</span> <span class="o">...</span>
 
 <span class="o">--</span> <span class="n">Setting</span> <span class="n">Thyra_ENABLE_ThyraEpetra</span><span class="o">=</span><span class="n">ON</span> <span class="n">since</span> <span class="n">Trilinos_ENABLE_Thyra</span><span class="o">=</span><span class="n">ON</span> <span class="n">AND</span> <span class="n">Trilinos_ENABLE_ThyraEpetra</span><span class="o">=</span><span class="n">ON</span>
-
-<span class="n">Enabling</span> <span class="nb">all</span> <span class="n">remaining</span> <span class="n">required</span> <span class="n">TPLs</span> <span class="k">for</span> <span class="n">current</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">packages</span> <span class="o">...</span>
-
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">TPL_ENABLE_BLAS</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">required</span> <span class="n">by</span> <span class="n">the</span> <span class="n">enabled</span> <span class="n">package</span> <span class="n">Teuchos</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">TPL_ENABLE_LAPACK</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">required</span> <span class="n">by</span> <span class="n">the</span> <span class="n">enabled</span> <span class="n">package</span> <span class="n">Teuchos</span>
 
 <span class="n">Final</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">packages</span><span class="p">:</span>  <span class="n">Teuchos</span> <span class="n">RTOp</span> <span class="n">Epetra</span> <span class="n">Thyra</span> <span class="mi">4</span>
 <span class="n">Final</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">packages</span><span class="p">:</span>  <span class="n">Teuchos</span> <span class="n">RTOp</span> <span class="n">Epetra</span> <span class="n">ThyraCoreLibs</span> <span class="n">ThyraEpetra</span> <span class="n">Thyra</span> <span class="mi">6</span>
@@ -5004,92 +5013,103 @@ a TriBITS package that involves modifying <code class="docutils literal notransl
 </pre></div>
 </div>
 <p>which produces the relevant dependency-related output:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Explicitly</span> <span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">packages</span> <span class="n">on</span> <span class="nb">input</span> <span class="p">(</span><span class="n">by</span> <span class="n">user</span><span class="p">):</span>  <span class="n">Thyra</span> <span class="mi">1</span>
-<span class="n">Explicitly</span> <span class="n">enabled</span> <span class="n">packages</span> <span class="n">on</span> <span class="nb">input</span> <span class="p">(</span><span class="n">by</span> <span class="n">user</span><span class="p">):</span>  <span class="n">Thyra</span> <span class="mi">1</span>
-<span class="n">Explicitly</span> <span class="n">disabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">packages</span> <span class="n">on</span> <span class="nb">input</span> <span class="p">(</span><span class="n">by</span> <span class="n">user</span> <span class="ow">or</span> <span class="n">by</span> <span class="n">default</span><span class="p">):</span>  <span class="mi">0</span>
-<span class="n">Explicitly</span> <span class="n">disabled</span> <span class="n">packages</span> <span class="n">on</span> <span class="nb">input</span> <span class="p">(</span><span class="n">by</span> <span class="n">user</span> <span class="ow">or</span> <span class="n">by</span> <span class="n">default</span><span class="p">):</span>  <span class="n">ThyraCrazyStuff</span> <span class="mi">1</span>
-<span class="n">Explicitly</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">packages</span><span class="o">/</span><span class="n">TPLs</span> <span class="n">on</span> <span class="nb">input</span> <span class="p">(</span><span class="n">by</span> <span class="n">user</span><span class="p">):</span>  <span class="n">Boost</span> <span class="mi">1</span>
-<span class="n">Explicitly</span> <span class="n">disabled</span> <span class="n">external</span> <span class="n">packages</span><span class="o">/</span><span class="n">TPLs</span> <span class="n">on</span> <span class="nb">input</span> <span class="p">(</span><span class="n">by</span> <span class="n">user</span> <span class="ow">or</span> <span class="n">by</span> <span class="n">default</span><span class="p">):</span>  <span class="mi">0</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Explicitly enabled top-level packages on input (by user):  Thyra 1
+Explicitly enabled packages on input (by user):  Thyra 1
+Explicitly disabled top-level packages on input (by user or by default):  0
+Explicitly disabled packages on input (by user or by default):  ThyraCrazyStuff 1
+Explicitly enabled external packages/TPLs on input (by user):  Boost 1
+Explicitly disabled external packages/TPLs on input (by user or by default):  0
 
-<span class="n">Enabling</span> <span class="n">subpackages</span> <span class="k">for</span> <span class="n">hard</span> <span class="n">enables</span> <span class="n">of</span> <span class="n">parent</span> <span class="n">packages</span> <span class="n">due</span> <span class="n">to</span> \
- <span class="n">Trilinos_ENABLE_</span><span class="o">&lt;</span><span class="n">PARENT_PACKAGE</span><span class="o">&gt;=</span><span class="n">ON</span> <span class="o">...</span>
+Enabling subpackages for hard enables of parent packages due to \
+ Trilinos_ENABLE_&lt;PARENT_PACKAGE&gt;=ON ...
 
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">subpackage</span> <span class="n">enable</span> <span class="n">Trilinos_ENABLE_ThyraCoreLibs</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">parent</span> <span class="n">package</span> \
- <span class="n">Trilinos_ENABLE_Thyra</span><span class="o">=</span><span class="n">ON</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">subpackage</span> <span class="n">enable</span> <span class="n">Trilinos_ENABLE_ThyraGoodStuff</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">parent</span> <span class="n">package</span> \
- <span class="n">Trilinos_ENABLE_Thyra</span><span class="o">=</span><span class="n">ON</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">subpackage</span> <span class="n">enable</span> <span class="n">Trilinos_ENABLE_ThyraEpetra</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">parent</span> <span class="n">package</span> \
- <span class="n">Trilinos_ENABLE_Thyra</span><span class="o">=</span><span class="n">ON</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">subpackage</span> <span class="n">enable</span> <span class="n">Trilinos_ENABLE_ThyraEpetraExt</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">parent</span> <span class="n">package</span> \
- <span class="n">Trilinos_ENABLE_Thyra</span><span class="o">=</span><span class="n">ON</span>
+-- Setting subpackage enable Trilinos_ENABLE_ThyraCoreLibs=ON because parent package \
+ Trilinos_ENABLE_Thyra=ON
+-- Setting subpackage enable Trilinos_ENABLE_ThyraGoodStuff=ON because parent package \
+ Trilinos_ENABLE_Thyra=ON
+-- Setting subpackage enable Trilinos_ENABLE_ThyraEpetra=ON because parent package \
+ Trilinos_ENABLE_Thyra=ON
+-- Setting subpackage enable Trilinos_ENABLE_ThyraEpetraExt=ON because parent package \
+ Trilinos_ENABLE_Thyra=ON
 
-<span class="n">Disabling</span> <span class="n">forward</span> <span class="n">required</span> <span class="n">packages</span> <span class="ow">and</span> <span class="n">optional</span> <span class="n">intra</span><span class="o">-</span><span class="n">package</span> <span class="n">support</span> <span class="n">that</span> <span class="n">have</span> <span class="n">a</span> \
- <span class="n">dependency</span> <span class="n">on</span> <span class="n">disabled</span> <span class="n">packages</span> <span class="n">Trilinos_ENABLE_</span><span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE</span><span class="o">&gt;=</span><span class="n">OFF</span> <span class="o">...</span>
+Disabling forward required packages and optional intra-package support that have a \
+ dependency on disabled packages Trilinos_ENABLE_&lt;TRIBITS_PACKAGE&gt;=OFF ...
 
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Thyra_ENABLE_ThyraCrazyStuff</span><span class="o">=</span><span class="n">OFF</span> <span class="n">because</span> <span class="n">Thyra</span> <span class="n">has</span> <span class="n">an</span> <span class="n">optional</span> <span class="n">library</span> \
- <span class="n">dependence</span> <span class="n">on</span> <span class="n">disabled</span> <span class="n">package</span> <span class="n">ThyraCrazyStuff</span>
+-- Setting Thyra_ENABLE_ThyraCrazyStuff=OFF because Thyra has an optional library \
+ dependence on disabled package ThyraCrazyStuff
 
-<span class="n">Enabling</span> <span class="nb">all</span> <span class="n">tests</span> <span class="ow">and</span><span class="o">/</span><span class="ow">or</span> <span class="n">examples</span> <span class="n">that</span> <span class="n">have</span> <span class="ow">not</span> <span class="n">been</span> <span class="n">explicitly</span> <span class="n">disabled</span> <span class="n">because</span> \
- <span class="n">Trilinos_ENABLE_</span><span class="p">[</span><span class="n">TESTS</span><span class="p">,</span><span class="n">EXAMPLES</span><span class="p">]</span><span class="o">=</span><span class="n">ON</span> <span class="o">...</span>
+Enabling all tests and/or examples that have not been explicitly disabled because \
+ Trilinos_ENABLE_[TESTS,EXAMPLES]=ON ...
 
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">ThyraCoreLibs_ENABLE_TESTS</span><span class="o">=</span><span class="n">ON</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">ThyraGoodStuff_ENABLE_TESTS</span><span class="o">=</span><span class="n">ON</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">ThyraEpetra_ENABLE_TESTS</span><span class="o">=</span><span class="n">ON</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">ThyraEpetraExt_ENABLE_TESTS</span><span class="o">=</span><span class="n">ON</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Thyra_ENABLE_TESTS</span><span class="o">=</span><span class="n">ON</span>
+-- Setting ThyraCoreLibs_ENABLE_TESTS=ON
+-- Setting ThyraGoodStuff_ENABLE_TESTS=ON
+-- Setting ThyraEpetra_ENABLE_TESTS=ON
+-- Setting ThyraEpetraExt_ENABLE_TESTS=ON
+-- Setting Thyra_ENABLE_TESTS=ON
 
-<span class="n">Enabling</span> <span class="nb">all</span> <span class="n">required</span> <span class="p">(</span><span class="ow">and</span> <span class="n">optional</span> <span class="n">since</span> <span class="n">Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES</span><span class="o">=</span><span class="n">ON</span><span class="p">)</span> \
- <span class="n">upstream</span> <span class="n">packages</span> <span class="k">for</span> <span class="n">current</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">packages</span> <span class="o">...</span>
+Enabling all required (and optional since Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES=ON) \
+ upstream packages for current set of enabled packages ...
 
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_EpetraExt</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">ThyraEpetraExt</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">EpetraExt</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_Epetra</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">ThyraEpetra</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">Epetra</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_Teuchos</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">ThyraCoreLibs</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">Teuchos</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_RTOp</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">ThyraCoreLibs</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">RTOp</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_Triutils</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">EpetraExt</span> <span class="n">has</span> <span class="n">an</span> <span class="n">optional</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">Triutils</span>
+-- Setting Trilinos_ENABLE_EpetraExt=ON because ThyraEpetraExt has a required dependence on EpetraExt
+-- Setting Trilinos_ENABLE_Epetra=ON because ThyraEpetra has a required dependence on Epetra
+-- Setting Trilinos_ENABLE_Teuchos=ON because ThyraCoreLibs has a required dependence on Teuchos
+-- Setting Trilinos_ENABLE_RTOp=ON because ThyraCoreLibs has a required dependence on RTOp
+-- Setting Trilinos_ENABLE_Triutils=ON because EpetraExt has an optional dependence on Triutils
+-- Setting TPL_ENABLE_BLAS=ON because Epetra has a required dependence on BLAS
+-- Setting TPL_ENABLE_LAPACK=ON because Epetra has a required dependence on LAPACK
 
-<span class="n">Enabling</span> <span class="nb">all</span> <span class="n">optional</span> <span class="n">intra</span><span class="o">-</span><span class="n">package</span> <span class="n">enables</span> <span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE</span><span class="o">&gt;</span><span class="n">_ENABLE_</span><span class="o">&lt;</span><span class="n">DEPPACKAGE</span><span class="o">&gt;</span> <span class="n">that</span> <span class="n">are</span> \
- <span class="ow">not</span> <span class="n">currently</span> <span class="n">disabled</span> <span class="k">if</span> <span class="n">both</span> <span class="n">sets</span> <span class="n">of</span> <span class="n">packages</span> <span class="n">are</span> <span class="n">enabled</span> <span class="o">...</span>
+Enabling all optional intra-package enables &lt;TRIBITS_PACKAGE&gt;_ENABLE_&lt;DEPPACKAGE&gt; that are \
+ not currently disabled if both sets of packages are enabled ...
 
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">EpetraExt_ENABLE_Triutils</span><span class="o">=</span><span class="n">ON</span> <span class="n">since</span> <span class="n">Trilinos_ENABLE_EpetraExt</span><span class="o">=</span><span class="n">ON</span> \
- <span class="n">AND</span> <span class="n">Trilinos_ENABLE_Triutils</span><span class="o">=</span><span class="n">ON</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Thyra_ENABLE_ThyraGoodStuff</span><span class="o">=</span><span class="n">ON</span> <span class="n">since</span> <span class="n">Trilinos_ENABLE_Thyra</span><span class="o">=</span><span class="n">ON</span> \
- <span class="n">AND</span> <span class="n">Trilinos_ENABLE_ThyraGoodStuff</span><span class="o">=</span><span class="n">ON</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Thyra_ENABLE_ThyraEpetra</span><span class="o">=</span><span class="n">ON</span> <span class="n">since</span> <span class="n">Trilinos_ENABLE_Thyra</span><span class="o">=</span><span class="n">ON</span> \
- <span class="n">AND</span> <span class="n">Trilinos_ENABLE_ThyraEpetra</span><span class="o">=</span><span class="n">ON</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Thyra_ENABLE_ThyraEpetraExt</span><span class="o">=</span><span class="n">ON</span> <span class="n">since</span> <span class="n">Trilinos_ENABLE_Thyra</span><span class="o">=</span><span class="n">ON</span> \
- <span class="n">AND</span> <span class="n">Trilinos_ENABLE_ThyraEpetraExt</span><span class="o">=</span><span class="n">ON</span>
+-- Setting Teuchos_ENABLE_BLAS=ON since Trilinos_ENABLE_Teuchos=ON AND TPL_ENABLE_BLAS=ON
+-- Setting Teuchos_ENABLE_LAPACK=ON since Trilinos_ENABLE_Teuchos=ON AND TPL_ENABLE_LAPACK=ON
+-- Setting Teuchos_ENABLE_Boost=ON since Trilinos_ENABLE_Teuchos=ON AND TPL_ENABLE_Boost=ON
+-- NOT setting Teuchos_ENABLE_MPI=ON since MPI is NOT enabled at this point!
+-- Setting RTOp_ENABLE_Teuchos=ON since Trilinos_ENABLE_RTOp=ON AND Trilinos_ENABLE_Teuchos=ON
+-- Setting Epetra_ENABLE_BLAS=ON since Trilinos_ENABLE_Epetra=ON AND TPL_ENABLE_BLAS=ON
+-- Setting Epetra_ENABLE_LAPACK=ON since Trilinos_ENABLE_Epetra=ON AND TPL_ENABLE_LAPACK=ON
+-- NOT setting Epetra_ENABLE_MPI=ON since MPI is NOT enabled at this point!
+-- Setting Triutils_ENABLE_Epetra=ON since Trilinos_ENABLE_Triutils=ON AND Trilinos_ENABLE_Epetra=ON
+-- Setting EpetraExt_ENABLE_Teuchos=ON since Trilinos_ENABLE_EpetraExt=ON AND Trilinos_ENABLE_Teuchos=ON
+-- Setting EpetraExt_ENABLE_Epetra=ON since Trilinos_ENABLE_EpetraExt=ON AND Trilinos_ENABLE_Epetra=ON
+-- Setting EpetraExt_ENABLE_Triutils=ON since Trilinos_ENABLE_EpetraExt=ON AND Trilinos_ENABLE_Triutils=ON
+-- NOT setting EpetraExt_ENABLE_UMFPACK=ON since UMFPACK is NOT enabled at this point!
+-- NOT setting EpetraExt_ENABLE_AMD=ON since AMD is NOT enabled at this point!
+-- NOT setting EpetraExt_ENABLE_PETSC=ON since PETSC is NOT enabled at this point!
+-- Setting ThyraCoreLibs_ENABLE_Teuchos=ON since Trilinos_ENABLE_ThyraCoreLibs=ON AND Trilinos_ENABLE_Teuchos=ON
+-- Setting ThyraCoreLibs_ENABLE_RTOp=ON since Trilinos_ENABLE_ThyraCoreLibs=ON AND Trilinos_ENABLE_RTOp=ON
+-- Setting ThyraGoodStuff_ENABLE_ThyraCoreLibs=ON since Trilinos_ENABLE_ThyraGoodStuff=ON AND Trilinos_ENABLE_ThyraCoreLibs=ON
+-- Setting ThyraEpetra_ENABLE_Epetra=ON since Trilinos_ENABLE_ThyraEpetra=ON AND Trilinos_ENABLE_Epetra=ON
+-- Setting ThyraEpetra_ENABLE_ThyraCoreLibs=ON since Trilinos_ENABLE_ThyraEpetra=ON AND Trilinos_ENABLE_ThyraCoreLibs=ON
+-- Setting ThyraEpetraExt_ENABLE_ThyraEpetra=ON since Trilinos_ENABLE_ThyraEpetraExt=ON AND Trilinos_ENABLE_ThyraEpetra=ON
+-- Setting ThyraEpetraExt_ENABLE_EpetraExt=ON since Trilinos_ENABLE_ThyraEpetraExt=ON AND Trilinos_ENABLE_EpetraExt=ON
+-- Setting Thyra_ENABLE_ThyraCoreLibs=ON since Trilinos_ENABLE_Thyra=ON AND Trilinos_ENABLE_ThyraCoreLibs=ON
+-- Setting Thyra_ENABLE_ThyraGoodStuff=ON since Trilinos_ENABLE_Thyra=ON AND Trilinos_ENABLE_ThyraGoodStuff=ON
+-- Setting Thyra_ENABLE_ThyraEpetra=ON since Trilinos_ENABLE_Thyra=ON AND Trilinos_ENABLE_ThyraEpetra=ON
+-- Setting Thyra_ENABLE_ThyraEpetraExt=ON since Trilinos_ENABLE_Thyra=ON AND Trilinos_ENABLE_ThyraEpetraExt=ON
 
-<span class="n">Enabling</span> <span class="nb">all</span> <span class="n">remaining</span> <span class="n">required</span> <span class="n">TPLs</span> <span class="k">for</span> <span class="n">current</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">packages</span> <span class="o">...</span>
+Final set of enabled top-level packages:  Teuchos RTOp Epetra Triutils EpetraExt Thyra 6
+Final set of enabled packages:  Teuchos RTOp Epetra Triutils EpetraExt ThyraCoreLibs \
+ ThyraGoodStuff ThyraEpetra ThyraEpetraExt Thyra 10
+Final set of non-enabled top-level packages:  0
+Final set of non-enabled packages:  ThyraCrazyStuff 1
+Final set of enabled external packages/TPLs:  BLAS LAPACK Boost 3
+Final set of non-enabled external packages/TPLs:  MPI UMFPACK AMD PETSC 4
 
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">TPL_ENABLE_BLAS</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">required</span> <span class="n">by</span> <span class="n">the</span> <span class="n">enabled</span> <span class="n">package</span> <span class="n">Teuchos</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">TPL_ENABLE_LAPACK</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">required</span> <span class="n">by</span> <span class="n">the</span> <span class="n">enabled</span> <span class="n">package</span> <span class="n">Teuchos</span>
+Getting information for all enabled external packages/TPLs ...
 
-<span class="n">Enabling</span> <span class="nb">all</span> <span class="n">optional</span> <span class="n">package</span> <span class="n">TPL</span> <span class="n">support</span> <span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE</span><span class="o">&gt;</span><span class="n">_ENABLE_</span><span class="o">&lt;</span><span class="n">DEPTPL</span><span class="o">&gt;</span> <span class="ow">not</span> <span class="n">currently</span> <span class="n">disabled</span> <span class="k">for</span> <span class="n">enabled</span> <span class="n">TPLs</span> <span class="o">...</span>
+Processing enabled external package/TPL: BLAS
+Processing enabled external package/TPL: LAPACK
+Processing enabled external package/TPL: Boost
 
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">Teuchos_ENABLE_Boost</span><span class="o">=</span><span class="n">ON</span> <span class="n">since</span> <span class="n">TPL_ENABLE_Boost</span><span class="o">=</span><span class="n">ON</span>
+Configuring individual enabled Trilinos packages ...
 
-<span class="n">Final</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">packages</span><span class="p">:</span>  <span class="n">Teuchos</span> <span class="n">RTOp</span> <span class="n">Epetra</span> <span class="n">Triutils</span> <span class="n">EpetraExt</span> <span class="n">Thyra</span> <span class="mi">6</span>
-<span class="n">Final</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">packages</span><span class="p">:</span>  <span class="n">Teuchos</span> <span class="n">RTOp</span> <span class="n">Epetra</span> <span class="n">Triutils</span> <span class="n">EpetraExt</span> <span class="n">ThyraCoreLibs</span> \
- <span class="n">ThyraGoodStuff</span> <span class="n">ThyraEpetra</span> <span class="n">ThyraEpetraExt</span> <span class="n">Thyra</span> <span class="mi">10</span>
-<span class="n">Final</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">non</span><span class="o">-</span><span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">packages</span><span class="p">:</span>  <span class="mi">0</span>
-<span class="n">Final</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">non</span><span class="o">-</span><span class="n">enabled</span> <span class="n">packages</span><span class="p">:</span>  <span class="n">ThyraCrazyStuff</span> <span class="mi">1</span>
-<span class="n">Final</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">packages</span><span class="o">/</span><span class="n">TPLs</span><span class="p">:</span>  <span class="n">BLAS</span> <span class="n">LAPACK</span> <span class="n">Boost</span> <span class="mi">3</span>
-<span class="n">Final</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">non</span><span class="o">-</span><span class="n">enabled</span> <span class="n">external</span> <span class="n">packages</span><span class="o">/</span><span class="n">TPLs</span><span class="p">:</span>  <span class="n">MPI</span> <span class="n">UMFPACK</span> <span class="n">AMD</span> <span class="n">PETSC</span> <span class="mi">4</span>
-
-<span class="n">Getting</span> <span class="n">information</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">packages</span><span class="o">/</span><span class="n">TPLs</span> <span class="o">...</span>
-
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span><span class="p">:</span> <span class="n">BLAS</span>
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span><span class="p">:</span> <span class="n">LAPACK</span>
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span><span class="p">:</span> <span class="n">Boost</span>
-
-<span class="n">Configuring</span> <span class="n">individual</span> <span class="n">enabled</span> <span class="n">Trilinos</span> <span class="n">packages</span> <span class="o">...</span>
-
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">package</span><span class="p">:</span> <span class="n">Teuchos</span> <span class="p">(</span><span class="n">Libs</span><span class="p">)</span>
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">package</span><span class="p">:</span> <span class="n">RTOp</span> <span class="p">(</span><span class="n">Libs</span><span class="p">)</span>
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">package</span><span class="p">:</span> <span class="n">Epetra</span> <span class="p">(</span><span class="n">Libs</span><span class="p">)</span>
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">package</span><span class="p">:</span> <span class="n">Triutils</span> <span class="p">(</span><span class="n">Libs</span><span class="p">)</span>
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">package</span><span class="p">:</span> <span class="n">EpetraExt</span> <span class="p">(</span><span class="n">Libs</span><span class="p">)</span>
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">package</span><span class="p">:</span> <span class="n">Thyra</span> <span class="p">(</span><span class="n">CoreLibs</span><span class="p">,</span> <span class="n">GoodStuff</span><span class="p">,</span> <span class="n">Epetra</span><span class="p">,</span> <span class="n">EpetraExt</span><span class="p">,</span> <span class="n">Tests</span><span class="p">,</span> <span class="n">Examples</span><span class="p">)</span>
+Processing enabled top-level package: Teuchos (Libs)
+Processing enabled top-level package: RTOp (Libs)
+Processing enabled top-level package: Epetra (Libs)
+Processing enabled top-level package: Triutils (Libs)
+Processing enabled top-level package: EpetraExt (Libs)
+Processing enabled top-level package: Thyra (CoreLibs, GoodStuff, Epetra, EpetraExt, Tests, Examples)
 </pre></div>
 </div>
 <p>A few more behaviors of the TriBITS system that this particular configuration
@@ -5301,10 +5321,13 @@ packages defined or to create a distribution of the project.</p>
 <span class="o">--</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_ThyraEpetra</span><span class="o">=</span><span class="n">ON</span>
 <span class="o">--</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_Thyra</span><span class="o">=</span><span class="n">ON</span>
 
-<span class="n">Enabling</span> <span class="nb">all</span> <span class="n">remaining</span> <span class="n">required</span> <span class="n">TPLs</span> <span class="k">for</span> <span class="n">current</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">packages</span> <span class="o">...</span>
+<span class="n">Enabling</span> <span class="nb">all</span> <span class="n">required</span> <span class="p">(</span><span class="ow">and</span> <span class="n">optional</span> <span class="n">since</span> <span class="n">Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES</span><span class="o">=</span><span class="n">ON</span><span class="p">)</span> <span class="n">upstream</span> <span class="n">packages</span> <span class="k">for</span> <span class="n">current</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">packages</span>
+<span class="p">(</span><span class="n">Trilinos_ENABLE_SECONDARY_TESTED_CODE</span><span class="o">=</span><span class="n">OFF</span><span class="p">)</span> <span class="o">...</span>
 
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">TPL_ENABLE_BLAS</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">required</span> <span class="n">by</span> <span class="n">the</span> <span class="n">enabled</span> <span class="n">package</span> <span class="n">Teuchos</span>
-<span class="o">--</span> <span class="n">Setting</span> <span class="n">TPL_ENABLE_LAPACK</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">required</span> <span class="n">by</span> <span class="n">the</span> <span class="n">enabled</span> <span class="n">package</span> <span class="n">Teuchos</span>
+<span class="o">--</span> <span class="n">NOTE</span><span class="p">:</span> <span class="n">Not</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_ThyraGoodStuff</span><span class="o">=</span><span class="n">ON</span> <span class="n">even</span> <span class="n">though</span> <span class="n">Thyra</span> <span class="n">has</span> <span class="n">an</span> <span class="n">optional</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">ThyraGoodStuff</span> <span class="n">because</span> <span class="n">Trilinos_ENABLE_SECONDARY_TESTED_CODE</span><span class="o">=</span><span class="n">OFF</span>
+<span class="o">--</span> <span class="n">NOTE</span><span class="p">:</span> <span class="n">Not</span> <span class="n">Setting</span> <span class="n">Trilinos_ENABLE_ThyraEpetraExt</span><span class="o">=</span><span class="n">ON</span> <span class="n">even</span> <span class="n">though</span> <span class="n">Thyra</span> <span class="n">has</span> <span class="n">an</span> <span class="n">optional</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">ThyraEpetraExt</span> <span class="n">because</span> <span class="n">Trilinos_ENABLE_SECONDARY_TESTED_CODE</span><span class="o">=</span><span class="n">OFF</span>
+<span class="o">--</span> <span class="n">Setting</span> <span class="n">TPL_ENABLE_BLAS</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">Epetra</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">BLAS</span>
+<span class="o">--</span> <span class="n">Setting</span> <span class="n">TPL_ENABLE_LAPACK</span><span class="o">=</span><span class="n">ON</span> <span class="n">because</span> <span class="n">Epetra</span> <span class="n">has</span> <span class="n">a</span> <span class="n">required</span> <span class="n">dependence</span> <span class="n">on</span> <span class="n">LAPACK</span>
 
 <span class="n">Final</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">packages</span><span class="p">:</span>  <span class="n">Teuchos</span> <span class="n">RTOp</span> <span class="n">Epetra</span> <span class="n">Thyra</span> <span class="mi">4</span>
 <span class="n">Final</span> <span class="nb">set</span> <span class="n">of</span> <span class="n">enabled</span> <span class="n">packages</span><span class="p">:</span>  <span class="n">Teuchos</span> <span class="n">RTOp</span> <span class="n">Epetra</span> <span class="n">ThyraCoreLibs</span> <span class="n">ThyraEpetra</span> <span class="n">Thyra</span> <span class="mi">6</span>
@@ -16059,8 +16082,16 @@ be the first command called at the top of any deprecated function or macro.</p>
 </pre></div>
 </div>
 </section>
+<section id="tribit-create-reverse-list">
+<h3><a class="toc-backref" href="#id217">tribit_create_reverse_list()</a><a class="headerlink" href="#tribit-create-reverse-list" title="Permalink to this heading"></a></h3>
+<p>Create a reverse list var in one shot.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribit_create_reverse_list</span><span class="p">(</span><span class="o">&lt;</span><span class="n">oldListName</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">newListName</span><span class="o">&gt;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="tribits-strip-quotes-from-str">
-<h3><a class="toc-backref" href="#id217">tribits_strip_quotes_from_str()</a><a class="headerlink" href="#tribits-strip-quotes-from-str" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id218">tribits_strip_quotes_from_str()</a><a class="headerlink" href="#tribits-strip-quotes-from-str" title="Permalink to this heading"></a></h3>
 <p>Remove one set of quotes from the outside of a string if they exist.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_strip_quotes_from_str</span><span class="p">(</span><span class="o">&lt;</span><span class="n">str_in</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">str_var_out</span><span class="o">&gt;</span><span class="p">)</span>
@@ -16070,7 +16101,7 @@ be the first command called at the top of any deprecated function or macro.</p>
 char, then the original <code class="docutils literal notranslate"><span class="pre">&lt;str_in&gt;</span></code> is returned in <code class="docutils literal notranslate"><span class="pre">&lt;str_var_out&gt;</span></code>.</p>
 </section>
 <section id="unittest-compare-const">
-<h3><a class="toc-backref" href="#id218">unittest_compare_const()</a><a class="headerlink" href="#unittest-compare-const" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id219">unittest_compare_const()</a><a class="headerlink" href="#unittest-compare-const" title="Permalink to this heading"></a></h3>
 <p>Perform a single unit test equality check and update overall test statistics</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unittest_compare_const</span><span class="p">(</span><span class="o">&lt;</span><span class="n">varName</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">expectedValue</span><span class="o">&gt;</span><span class="p">)</span>
@@ -16083,7 +16114,7 @@ fails.  This prints the variable name and values and shows the test result.</p>
 by the unit test harness system to assess overall pass/fail.</p>
 </section>
 <section id="unittest-has-substr-const">
-<h3><a class="toc-backref" href="#id219">unittest_has_substr_const()</a><a class="headerlink" href="#unittest-has-substr-const" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id220">unittest_has_substr_const()</a><a class="headerlink" href="#unittest-has-substr-const" title="Permalink to this heading"></a></h3>
 <p>Check that a given string var contains the given substring and update
 overall test statistics</p>
 <p>Usage:</p>
@@ -16098,7 +16129,7 @@ shows the test result.</p>
 by the unit test harness system to assess overall pass/fail.</p>
 </section>
 <section id="unittest-not-has-substr-const">
-<h3><a class="toc-backref" href="#id220">unittest_not_has_substr_const()</a><a class="headerlink" href="#unittest-not-has-substr-const" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id221">unittest_not_has_substr_const()</a><a class="headerlink" href="#unittest-not-has-substr-const" title="Permalink to this heading"></a></h3>
 <p>Check that a given string var does <strong>NOT</strong> contains the given substring and
 update overall test statistics</p>
 <p>Usage:</p>
@@ -16113,7 +16144,7 @@ shows the test result.</p>
 by the unit test harness system to assess overall pass/fail.</p>
 </section>
 <section id="unittest-string-regex">
-<h3><a class="toc-backref" href="#id221">unittest_string_regex()</a><a class="headerlink" href="#unittest-string-regex" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id222">unittest_string_regex()</a><a class="headerlink" href="#unittest-string-regex" title="Permalink to this heading"></a></h3>
 <p>Perform a series of regexes on a given string and update overall test
 statistics.</p>
 <p>Usage:</p>
@@ -16130,7 +16161,7 @@ statistics.</p>
 by the unit test harness system to assess overall pass/fail.</p>
 </section>
 <section id="unittest-string-var-regex">
-<h3><a class="toc-backref" href="#id222">unittest_string_var_regex()</a><a class="headerlink" href="#unittest-string-var-regex" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id223">unittest_string_var_regex()</a><a class="headerlink" href="#unittest-string-var-regex" title="Permalink to this heading"></a></h3>
 <p>Perform a series of regexes on a given string variable and update overall
 test statistics.</p>
 <p>Usage:</p>
@@ -16147,7 +16178,7 @@ test statistics.</p>
 by the unit test harness system to assess overall pass/fail.</p>
 </section>
 <section id="unittest-file-regex">
-<h3><a class="toc-backref" href="#id223">unittest_file_regex()</a><a class="headerlink" href="#unittest-file-regex" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id224">unittest_file_regex()</a><a class="headerlink" href="#unittest-file-regex" title="Permalink to this heading"></a></h3>
 <p>Perform a series regexes of given strings and update overall test statistics.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unittest_file_regex</span><span class="p">(</span>
@@ -16160,7 +16191,7 @@ by the unit test harness system to assess overall pass/fail.</p>
 to <a class="reference internal" href="#unittest-string-regex">unittest_string_regex()</a> to assess pass/fail.</p>
 </section>
 <section id="unittest-final-result">
-<h3><a class="toc-backref" href="#id224">unittest_final_result()</a><a class="headerlink" href="#unittest-final-result" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id225">unittest_final_result()</a><a class="headerlink" href="#unittest-final-result" title="Permalink to this heading"></a></h3>
 <p>Print final statistics from all tests and assert final pass/fail</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unittest_final_result</span><span class="p">(</span><span class="o">&lt;</span><span class="n">expectedNumPassed</span><span class="o">&gt;</span><span class="p">)</span>
@@ -16186,7 +16217,7 @@ paranoid.</p>
 </section>
 </section>
 <section id="references">
-<h1><a class="toc-backref" href="#id225"><span class="sectnum">12</span> References</a><a class="headerlink" href="#references" title="Permalink to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id226"><span class="sectnum">12</span> References</a><a class="headerlink" href="#references" title="Permalink to this heading"></a></h1>
 <p id="agile-software-development-2003">Martin, Robert. <em>Agile Software Development (Principles, Patterns, and
 Practices)</em>. Prentice Hall. 2003.</p>
 <p id="integration-strategies-for-cse-2009">Bartlett, Roscoe. <em>Integration Strategies for Computational Science &amp;
@@ -16197,7 +16228,7 @@ Engineering for Computational Science and Engineering, 2009.  <a class="referenc
 <p id="livev"><em>LiveV</em>  <a class="reference external" href="https://github.com/lifev/cmake">https://github.com/lifev/cmake</a></p>
 </section>
 <section id="faq">
-<h1><a class="toc-backref" href="#id226"><span class="sectnum">13</span> FAQ</a><a class="headerlink" href="#faq" title="Permalink to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id227"><span class="sectnum">13</span> FAQ</a><a class="headerlink" href="#faq" title="Permalink to this heading"></a></h1>
 <p><strong>Q:</strong> Why does not TriBITS just use the standard CMake <code class="docutils literal notranslate"><span class="pre">Find&lt;PACKAGE_NAME&gt;.cmake</span></code>
 modules and the standard <code class="docutils literal notranslate"><span class="pre">find_package()</span></code> function to find TPLs?</p>
 <p><strong>A:</strong> The different “standard” CMake <code class="docutils literal notranslate"><span class="pre">Find&lt;PACKAGE_NAME&gt;.cmake</span></code> modules do not
@@ -16205,9 +16236,9 @@ have a standard set of outputs and therefore, can’t be handled in a uniform
 way.  For example,</p>
 </section>
 <section id="appendix">
-<h1><a class="toc-backref" href="#id227"><span class="sectnum">14</span> Appendix</a><a class="headerlink" href="#appendix" title="Permalink to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id228"><span class="sectnum">14</span> Appendix</a><a class="headerlink" href="#appendix" title="Permalink to this heading"></a></h1>
 <section id="history-of-tribits">
-<h2><a class="toc-backref" href="#id228"><span class="sectnum">14.1</span> History of TriBITS</a><a class="headerlink" href="#history-of-tribits" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id229"><span class="sectnum">14.1</span> History of TriBITS</a><a class="headerlink" href="#history-of-tribits" title="Permalink to this heading"></a></h2>
 <p>TriBITS started development in November 2007 as a set of helper macros to
 provide a CMake build system for a small subset of packages in Trilinos.  The
 initial goal was to support a native Windows build (using Visual C++) to
@@ -16251,7 +16282,7 @@ project (see [<a class="reference internal" href="#livev">LiveV</a>]) which was 
 independently.</p>
 </section>
 <section id="why-a-tribits-package-is-not-a-cmake-package">
-<h2><a class="toc-backref" href="#id229"><span class="sectnum">14.2</span> Why a TriBITS Package is not a CMake Package</a><a class="headerlink" href="#why-a-tribits-package-is-not-a-cmake-package" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id230"><span class="sectnum">14.2</span> Why a TriBITS Package is not a CMake Package</a><a class="headerlink" href="#why-a-tribits-package-is-not-a-cmake-package" title="Permalink to this heading"></a></h2>
 <p>Note that a <a class="reference internal" href="#tribits-package">TriBITS Package</a> is not the same thing as a “Package” in raw
 CMake terminology.  In raw CMake, a “Package” is some externally provided bit
 of software or other utility for which the current CMake project has an
@@ -16272,7 +16303,7 @@ definition of a “Package” according to <a class="reference internal" href="#
 Principles</a>.</p>
 </section>
 <section id="design-considerations-for-tribits">
-<h2><a class="toc-backref" href="#id230"><span class="sectnum">14.3</span> Design Considerations for TriBITS</a><a class="headerlink" href="#design-considerations-for-tribits" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id231"><span class="sectnum">14.3</span> Design Considerations for TriBITS</a><a class="headerlink" href="#design-considerations-for-tribits" title="Permalink to this heading"></a></h2>
 <p>Some of the basic requirements and design goals for TriBITS are outlined in
 the <a class="reference external" href="../overview/TribitsOverview.pdf">TriBITS Overview</a> document.</p>
 <p>As stated in <a class="reference internal" href="#tribits-dependency-handling-behaviors">TriBITS Dependency Handling Behaviors</a>, <a class="reference internal" href="#no-circular-dependencies-of-any-kind-are-allowed">No circular
@@ -16292,7 +16323,7 @@ are proven and well established in the SE community (for example, see [<a class=
 Software Development, 2003</a>]).</p>
 </section>
 <section id="clone-extra-repos-py-help">
-<h2><a class="toc-backref" href="#id231"><span class="sectnum">14.4</span> clone_extra_repos.py –help</a><a class="headerlink" href="#clone-extra-repos-py-help" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id232"><span class="sectnum">14.4</span> clone_extra_repos.py –help</a><a class="headerlink" href="#clone-extra-repos-py-help" title="Permalink to this heading"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">clone_extra_repos.py</span> <span class="pre">--help</span></code>.  For
 more details on the usage of <code class="docutils literal notranslate"><span class="pre">clone_extra_repos.py</span></code>, see <a class="reference internal" href="#multi-repository-support">Multi-Repository
 Support</a> and <a class="reference internal" href="#multi-repository-development-workflow">Multi-Repository Development Workflow</a>.</p>
@@ -16410,7 +16441,7 @@ Options:
 </div>
 </section>
 <section id="gitdist-documentation">
-<h2><a class="toc-backref" href="#id232"><span class="sectnum">14.5</span> gitdist documentation</a><a class="headerlink" href="#gitdist-documentation" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id233"><span class="sectnum">14.5</span> gitdist documentation</a><a class="headerlink" href="#gitdist-documentation" title="Permalink to this heading"></a></h2>
 <p>The sections below show snapshots of the output from the <a class="reference internal" href="#gitdist">gitdist</a> tool from
 <a class="reference internal" href="#gitdist-help">gitdist –help</a> and <code class="docutils literal notranslate"><span class="pre">gitdist</span> <span class="pre">--dist-help=&lt;topic&gt;</span></code>:</p>
 <ul class="simple">
@@ -16429,7 +16460,7 @@ Options:
 <p>For more details on the usage of <code class="docutils literal notranslate"><span class="pre">gitdist</span></code>, see <a class="reference internal" href="#multi-repository-support">Multi-Repository Support</a>
 and <a class="reference internal" href="#multi-repository-development-workflow">Multi-Repository Development Workflow</a>.</p>
 <section id="gitdist-help">
-<h3><a class="toc-backref" href="#id233">gitdist –help</a><a class="headerlink" href="#gitdist-help" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id234">gitdist –help</a><a class="headerlink" href="#gitdist-help" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span> <span class="n">gitdist</span> <span class="p">[</span><span class="n">gitdist</span> <span class="n">arguments</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">raw</span><span class="o">-</span><span class="n">git</span><span class="o">-</span><span class="n">command</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">git</span> <span class="n">arguments</span><span class="p">]</span>
        <span class="n">gitdist</span> <span class="p">[</span><span class="n">gitdist</span> <span class="n">arguments</span><span class="p">]</span> <span class="n">dist</span><span class="o">-</span><span class="n">repo</span><span class="o">-</span><span class="n">status</span>
        <span class="n">gitdist</span> <span class="p">[</span><span class="n">gitdist</span> <span class="n">arguments</span><span class="p">]</span> <span class="n">dist</span><span class="o">-</span><span class="n">repo</span><span class="o">-</span><span class="n">versions</span><span class="o">-</span><span class="n">table</span>
@@ -16519,7 +16550,7 @@ and <a class="reference internal" href="#multi-repository-development-workflow">
 </div>
 </section>
 <section id="gitdist-dist-help-overview">
-<h3><a class="toc-backref" href="#id234">gitdist –dist-help=overview</a><a class="headerlink" href="#gitdist-dist-help-overview" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id235">gitdist –dist-help=overview</a><a class="headerlink" href="#gitdist-dist-help-overview" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 OVERVIEW:
 
@@ -16628,7 +16659,7 @@ python 2.6+ packages so it can be copied to anywhere and used.
 </div>
 </section>
 <section id="gitdist-dist-help-repo-selection-and-setup">
-<h3><a class="toc-backref" href="#id235">gitdist –dist-help=repo-selection-and-setup</a><a class="headerlink" href="#gitdist-dist-help-repo-selection-and-setup" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id236">gitdist –dist-help=repo-selection-and-setup</a><a class="headerlink" href="#gitdist-dist-help-repo-selection-and-setup" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 REPO SELECTION AND SETUP:
 
@@ -16761,7 +16792,7 @@ repos are processed at any time).
 </div>
 </section>
 <section id="gitdist-dist-help-dist-repo-status">
-<h3><a class="toc-backref" href="#id236">gitdist –dist-help=dist-repo-status</a><a class="headerlink" href="#gitdist-dist-help-dist-repo-status" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id237">gitdist –dist-help=dist-repo-status</a><a class="headerlink" href="#gitdist-dist-help-dist-repo-status" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 SUMMARY OF REPO STATUS:
 
@@ -16821,7 +16852,7 @@ repos with changes out of a large number of local repos (i.e. 10s and even
 </div>
 </section>
 <section id="gitdist-dist-help-repo-versions">
-<h3><a class="toc-backref" href="#id237">gitdist –dist-help=repo-versions</a><a class="headerlink" href="#gitdist-dist-help-repo-versions" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id238">gitdist –dist-help=repo-versions</a><a class="headerlink" href="#gitdist-dist-help-repo-versions" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 REPO VERSION FILES:
 
@@ -16913,7 +16944,7 @@ exclude them with:
 </div>
 </section>
 <section id="gitdist-dist-help-aliases">
-<h3><a class="toc-backref" href="#id238">gitdist –dist-help=aliases</a><a class="headerlink" href="#gitdist-dist-help-aliases" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id239">gitdist –dist-help=aliases</a><a class="headerlink" href="#gitdist-dist-help-aliases" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 USEFUL ALIASES:
 
@@ -16955,7 +16986,7 @@ or
 </div>
 </section>
 <section id="gitdist-dist-help-default-branch">
-<h3><a class="toc-backref" href="#id239">gitdist –dist-help=default-branch</a><a class="headerlink" href="#gitdist-dist-help-default-branch" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id240">gitdist –dist-help=default-branch</a><a class="headerlink" href="#gitdist-dist-help-default-branch" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 <span class="n">DEFAULT</span> <span class="n">BRANCH</span> <span class="n">SPECIFICATION</span><span class="p">:</span>
 
@@ -16998,7 +17029,7 @@ or
 </div>
 </section>
 <section id="gitdist-dist-help-move-to-base-dir">
-<h3><a class="toc-backref" href="#id240">gitdist –dist-help=move-to-base-dir</a><a class="headerlink" href="#gitdist-dist-help-move-to-base-dir" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id241">gitdist –dist-help=move-to-base-dir</a><a class="headerlink" href="#gitdist-dist-help-move-to-base-dir" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 <span class="n">MOVE</span> <span class="n">TO</span> <span class="n">BASE</span> <span class="n">DIRECTORY</span><span class="p">:</span>
 
@@ -17063,7 +17094,7 @@ or
 </div>
 </section>
 <section id="gitdist-dist-help-usage-tips">
-<h3><a class="toc-backref" href="#id241">gitdist –dist-help=usage-tips</a><a class="headerlink" href="#gitdist-dist-help-usage-tips" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id242">gitdist –dist-help=usage-tips</a><a class="headerlink" href="#gitdist-dist-help-usage-tips" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 USAGE TIPS:
 
@@ -17199,7 +17230,7 @@ Other usage tips:
 </div>
 </section>
 <section id="gitdist-dist-help-script-dependencies">
-<h3><a class="toc-backref" href="#id242">gitdist –dist-help=script-dependencies</a><a class="headerlink" href="#gitdist-dist-help-script-dependencies" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id243">gitdist –dist-help=script-dependencies</a><a class="headerlink" href="#gitdist-dist-help-script-dependencies" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 <span class="n">SCRIPT</span> <span class="n">DEPENDENCIES</span><span class="p">:</span>
 
@@ -17212,7 +17243,7 @@ Other usage tips:
 </div>
 </section>
 <section id="gitdist-dist-help-all">
-<h3><a class="toc-backref" href="#id243">gitdist –dist-help=all</a><a class="headerlink" href="#gitdist-dist-help-all" title="Permalink to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id244">gitdist –dist-help=all</a><a class="headerlink" href="#gitdist-dist-help-all" title="Permalink to this heading"></a></h3>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 OVERVIEW:
 
@@ -17883,7 +17914,7 @@ versions of git starting as far back as git 1.6+).
 </section>
 </section>
 <section id="snapshot-dir-py-help">
-<span id="snapshot-dir-py"></span><h2><a class="toc-backref" href="#id244"><span class="sectnum">14.6</span> snapshot-dir.py –help</a><a class="headerlink" href="#snapshot-dir-py-help" title="Permalink to this heading"></a></h2>
+<span id="snapshot-dir-py"></span><h2><a class="toc-backref" href="#id245"><span class="sectnum">14.6</span> snapshot-dir.py –help</a><a class="headerlink" href="#snapshot-dir-py-help" title="Permalink to this heading"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">snapshot-dir.py</span> <span class="pre">--help</span></code>.  For more
 details on the usage of <code class="docutils literal notranslate"><span class="pre">snapshot-dir.py</span></code>, specifically for snapshotting the
 <a class="reference internal" href="#projectdir-cmake-tribits">&lt;projectDir&gt;/cmake/tribits/</a> directory, see <a class="reference internal" href="#tribits-directory-snapshotting">TriBITS directory
@@ -18102,7 +18133,7 @@ optional arguments:
 </div>
 </section>
 <section id="checkin-test-py-help">
-<h2><a class="toc-backref" href="#id245"><span class="sectnum">14.7</span> checkin-test.py –help</a><a class="headerlink" href="#checkin-test-py-help" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id246"><span class="sectnum">14.7</span> checkin-test.py –help</a><a class="headerlink" href="#checkin-test-py-help" title="Permalink to this heading"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">checkin-test.py</span> <span class="pre">--help</span></code>.  This
 <code class="docutils literal notranslate"><span class="pre">--help</span></code> output contains a lot of information about the recommended
 development workflow (mostly related to pushing commits) and outlines a number
@@ -19072,7 +19103,7 @@ Options:
 </div>
 </section>
 <section id="is-checkin-tested-commit-py-help">
-<span id="is-checkin-tested-commit-py"></span><h2><a class="toc-backref" href="#id246"><span class="sectnum">14.8</span> is_checkin_tested_commit.py –help</a><a class="headerlink" href="#is-checkin-tested-commit-py-help" title="Permalink to this heading"></a></h2>
+<span id="is-checkin-tested-commit-py"></span><h2><a class="toc-backref" href="#id247"><span class="sectnum">14.8</span> is_checkin_tested_commit.py –help</a><a class="headerlink" href="#is-checkin-tested-commit-py-help" title="Permalink to this heading"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">is_checkin_tested_commit.py</span> <span class="pre">--help</span></code>.
 For more details see <a class="reference internal" href="#using-git-bisect-with-checkin-test-py-workflows">Using Git Bisect with checkin-test.py workflows</a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  File &quot;/home/runner/work/TriBITS/TriBITS/tribits/doc/guides/../../ci_support/is_checkin_tested_commit.py&quot;, line 57
@@ -19083,7 +19114,7 @@ SyntaxError: Missing parentheses in call to &#39;print&#39;. Did you mean print(
 </div>
 </section>
 <section id="get-tribits-packages-from-files-list-py-help">
-<span id="get-tribits-packages-from-files-list-py"></span><h2><a class="toc-backref" href="#id247"><span class="sectnum">14.9</span> get-tribits-packages-from-files-list.py –help</a><a class="headerlink" href="#get-tribits-packages-from-files-list-py-help" title="Permalink to this heading"></a></h2>
+<span id="get-tribits-packages-from-files-list-py"></span><h2><a class="toc-backref" href="#id248"><span class="sectnum">14.9</span> get-tribits-packages-from-files-list.py –help</a><a class="headerlink" href="#get-tribits-packages-from-files-list-py-help" title="Permalink to this heading"></a></h2>
 <p>Below is a snapshot of the output from
 <code class="docutils literal notranslate"><span class="pre">get-tribits-packages-from-files-list.py</span> <span class="pre">--help</span></code>.  For more details see
 <a class="reference internal" href="#tribits-project-dependencies-xml-file-and-tools">TriBITS Project Dependencies XML file and tools</a>.</p>
@@ -19131,7 +19162,7 @@ SyntaxError: Missing parentheses in call to &#39;print&#39;. Did you mean print(
 </div>
 </section>
 <section id="get-tribits-packages-from-last-tests-failed-py-help">
-<span id="get-tribits-packages-from-last-tests-failed-py"></span><h2><a class="toc-backref" href="#id248"><span class="sectnum">14.10</span> get-tribits-packages-from-last-tests-failed.py –help</a><a class="headerlink" href="#get-tribits-packages-from-last-tests-failed-py-help" title="Permalink to this heading"></a></h2>
+<span id="get-tribits-packages-from-last-tests-failed-py"></span><h2><a class="toc-backref" href="#id249"><span class="sectnum">14.10</span> get-tribits-packages-from-last-tests-failed.py –help</a><a class="headerlink" href="#get-tribits-packages-from-last-tests-failed-py-help" title="Permalink to this heading"></a></h2>
 <p>Below is a snapshot of the output from
 <code class="docutils literal notranslate"><span class="pre">get-tribits-packages-from-last-tests-failed.py</span> <span class="pre">--help</span></code>.  For more details
 see <a class="reference internal" href="#tribits-project-dependencies-xml-file-and-tools">TriBITS Project Dependencies XML file and tools</a>.</p>
@@ -19155,7 +19186,7 @@ see <a class="reference internal" href="#tribits-project-dependencies-xml-file-a
 </div>
 </section>
 <section id="filter-packages-list-py-help">
-<span id="filter-packages-list-py"></span><h2><a class="toc-backref" href="#id249"><span class="sectnum">14.11</span> filter-packages-list.py –help</a><a class="headerlink" href="#filter-packages-list-py-help" title="Permalink to this heading"></a></h2>
+<span id="filter-packages-list-py"></span><h2><a class="toc-backref" href="#id250"><span class="sectnum">14.11</span> filter-packages-list.py –help</a><a class="headerlink" href="#filter-packages-list-py-help" title="Permalink to this heading"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">filter-packages-list.py</span> <span class="pre">--help</span></code>.
 For more details see <a class="reference internal" href="#tribits-project-dependencies-xml-file-and-tools">TriBITS Project Dependencies XML file and tools</a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span> <span class="nb">filter</span><span class="o">-</span><span class="n">packages</span><span class="o">-</span><span class="nb">list</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">deps</span><span class="o">-</span><span class="n">xml</span><span class="o">-</span><span class="n">file</span><span class="o">=&lt;</span><span class="n">PROJECT_DEPS_FILE</span><span class="o">&gt;</span> \
@@ -19198,7 +19229,7 @@ For more details see <a class="reference internal" href="#tribits-project-depend
 </div>
 </section>
 <section id="install-devtools-py-help">
-<h2><a class="toc-backref" href="#id250"><span class="sectnum">14.12</span> install_devtools.py –help</a><a class="headerlink" href="#install-devtools-py-help" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id251"><span class="sectnum">14.12</span> install_devtools.py –help</a><a class="headerlink" href="#install-devtools-py-help" title="Permalink to this heading"></a></h2>
 <p>Below is a snapshot of the output from <code class="docutils literal notranslate"><span class="pre">install_devtools.py</span> <span class="pre">--help</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Usage: install-devtools.py [OPTIONS]
 
