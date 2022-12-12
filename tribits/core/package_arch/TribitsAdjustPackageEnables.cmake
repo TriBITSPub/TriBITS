@@ -172,7 +172,7 @@ macro(tribits_sweep_forward_apply_enables)
 
   tribits_get_sublist_nondisabled( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
     ${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES "")
-  tribit_create_reverse_list(${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES
+  tribits_create_reverse_list(${PROJECT_NAME}_NOTDISABLED_INTERNAL_PACKAGES
     ${PROJECT_NAME}_REVERSE_NOTDISABLED_INTERNAL_PACKAGES)
 
   message("\nEnabling subpackages for hard enables of parent packages"
@@ -200,7 +200,7 @@ macro(tribits_sweep_forward_apply_enables)
 
     tribits_get_sublist_enabled( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
       ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES "")
-    tribit_create_reverse_list(${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES
+    tribits_create_reverse_list(${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES
       ${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES)
 
     message("\nSweep backward enabling all forward test dependent packages because"
@@ -295,7 +295,7 @@ macro(tribits_sweep_backward_enable_upstream_packages)
 
   tribits_get_sublist_nondisabled( ${PROJECT_NAME}_DEFINED_PACKAGES
     ${PROJECT_NAME}_NOTDISABLED_PACKAGES "")
-  tribit_create_reverse_list(${PROJECT_NAME}_NOTDISABLED_PACKAGES
+  tribits_create_reverse_list(${PROJECT_NAME}_NOTDISABLED_PACKAGES
     ${PROJECT_NAME}_REVERSE_NOTDISABLED_PACKAGES)
 
   message("\nEnabling all required${tap1_extraMsgStr} upstream packages for current"
@@ -893,7 +893,7 @@ macro(tribits_private_disable_required_package_enables
     fwdDepPkgName  packageName  libraryDep
   )
   tribits_get_package_enable_status(${fwdDepPkgName}  ""  fwdDepPkgEnableVarName)
-  if (${fwdDepPkgEnableVarName} OR ${fwdDepPkgEnableVarName} STREQUAL "")
+  if (${fwdDepPkgEnableVarName} OR "${${fwdDepPkgEnableVarName}}" STREQUAL "")
     if ("${libraryDep}" STREQUAL "TRUE")
       tribits_private_print_disable_required_package_enable(
         ${packageName}  ${fwdDepPkgEnableVarName}
@@ -921,7 +921,6 @@ macro(tribits_private_disable_required_package_enables
     endif()
   endif()
 endmacro()
-
 
 function(tribits_private_print_disable_required_package_enable
     packageName  packageEnableSomethingVarName  fwdDepPkgName

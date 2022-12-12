@@ -220,14 +220,14 @@ function(tribits_get_legacy_package_deps_sublist  packageName  libOrTest
       set(matchesRequriedOrOptional TRUE)
     endif()
 
-    SET(matchesPackagesOrTpls FALSE)
+    set(matchesPackagesOrTpls FALSE)
     if (((packagesOrTpls STREQUAL "PACKAGES")
         AND (${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "INTERNAL"))
       OR
         ((packagesOrTpls STREQUAL "TPLS")
         AND (${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL"))
       )
-      SET(matchesPackagesOrTpls TRUE)
+      set(matchesPackagesOrTpls TRUE)
     endif()
 
     if (matchesRequriedOrOptional AND matchesPackagesOrTpls)
