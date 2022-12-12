@@ -88,16 +88,12 @@ function(tribits_set_up_enabled_only_dependencies)
     foreach(tribitsPkg  IN LISTS
         ${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES
       )
-      #print_var(tribitsPkg)
       set(PKG_IDX ${${tribitsPkg}_PKG_IDX})
-      #print_var(PKG_IDX)
-      if (PKG_IDX)
+      if (NOT "${PKG_IDX}" STREQUAL "")
         # The listed package is enabled so we will consider it
         if (PKG_IDX GREATER ${LAST_PKG_IDX})
           set(LAST_PKG_IDX ${PKG_IDX})
           set(LAST_PKG ${tribitsPkg})
-         #print_var(LAST_PKG_IDX)
-         #print_var(LAST_PKG)
         endif()
       endif()
     endforeach()
@@ -112,7 +108,6 @@ function(tribits_set_up_enabled_only_dependencies)
 
   endif()
 
-
   if (GENERATE_EXPORT_DEPENDENCIES)
 
     if (lastExportTribitsPackage)
@@ -124,10 +119,10 @@ function(tribits_set_up_enabled_only_dependencies)
     foreach(tribitsPackage  IN LISTS  ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
       tribits_package_set_full_enabled_dep_packages(${tribitsPackage})
       if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
-        set(PRINTED_VAR FALSE)
+        set(printedVar FALSE)
         print_nonempty_var_with_spaces(${tribitsPackage}_FULL_ENABLED_DEP_PACKAGES
-          PRINTED_VAR)
-        if (NOT PRINTED_VAR)
+          printedVar)
+        if (NOT printedVar)
           message("-- ${tribitsPackage}: No library dependencies!")
         endif()
       endif()
@@ -141,69 +136,102 @@ function(tribits_set_up_enabled_only_dependencies)
 endfunction()
 
 
-# Function that sets up the full package dependencies for the given internal
-# enabled package ``${PACKAGE_NAME}``, including all of its indirect upstream
-# internal package dependencies.
+# Function that sets up the full package dependencies for the given *internal*
+# enabled package ``${packageName}``, including all of its indirect upstream
+# *internal* package dependencies.
 #
-function(tribits_package_set_full_enabled_dep_packages  PACKAGE_NAME)
+# After running, this function sets the internal cache var:
+#
+#  * ``${packageName}_FULL_ENABLED_DEP_PACKAGES``
+#
+# NOTE: This function must be called for all of the upstream internal packages
+# before calling it for this package.
+#
+# NOTE: The complexity of this function is O(<numPackages>^2) due to the
+# sorting algorithm.  That is why it would be good to get rid of this function
+# at some point (or refactor it to have a better complexity).
+#
+function(tribits_package_set_full_enabled_dep_packages  packageName)
 
-  set(PACKAGE_FULL_DEPS_LIST "")
+  tribits_package_build_unsorted_full_enabled_dep_packages(${packageName}
+    packageFullDepsList)
 
-  foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES)
-    if (${PROJECT_NAME}_ENABLE_${DEP_PKG})
-      list(APPEND  PACKAGE_FULL_DEPS_LIST  ${DEP_PKG})
+  tribits_package_sort_full_enabled_dep_packages(packageFullDepsList
+    orderedPackageFullDepsList)
+
+  global_set(${packageName}_FULL_ENABLED_DEP_PACKAGES ${orderedPackageFullDepsList})
+
+endfunction()
+
+
+# Helper function that builds the full list of internal upstream dep packages
+# (with no duplicates) for a given internal package.
+#
+function(tribits_package_build_unsorted_full_enabled_dep_packages  packageName
+    packageFullDepsListOut
+  )
+
+  set(packageFullDepsList "")
+  foreach(depPkg  IN LISTS  ${packageName}_LIB_DEFINED_DEPENDENCIES)
+    if ((${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "INTERNAL")
+        AND ((${packageName}_LIB_DEP_REQUIRED AND ${PROJECT_NAME}_ENABLE_${depPkg})
+          OR ((NOT ${packageName}_LIB_DEP_REQUIRED) AND ${packageName}_ENABLE_${depPkg}))
+      )
+      list(APPEND  packageFullDepsList  ${depPkg})
     endif()
-    # NOTE: This if() should not be needed but this is a safeguard
   endforeach()
 
-  foreach(DEP_PKG  IN LISTS  ${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES)
-    if (${PACKAGE_NAME}_ENABLE_${DEP_PKG})
-      list(APPEND  PACKAGE_FULL_DEPS_LIST  ${DEP_PKG})
-    endif()
-  endforeach()
+  if(packageFullDepsList)
+    list(REMOVE_DUPLICATES  packageFullDepsList)
 
-  if(PACKAGE_FULL_DEPS_LIST)
-    list(REMOVE_DUPLICATES  PACKAGE_FULL_DEPS_LIST)
-
-    foreach(DEP_PACKAGE  IN LISTS  PACKAGE_FULL_DEPS_LIST)
-      list(APPEND PACKAGE_FULL_DEPS_LIST  ${${DEP_PACKAGE}_FULL_ENABLED_DEP_PACKAGES})
+    foreach(DEP_PACKAGE  IN LISTS  packageFullDepsList)
+      list(APPEND packageFullDepsList  ${${DEP_PACKAGE}_FULL_ENABLED_DEP_PACKAGES})
     endforeach()
 
-    list(REMOVE_DUPLICATES PACKAGE_FULL_DEPS_LIST)
+    list(REMOVE_DUPLICATES packageFullDepsList)
   endif()
 
-  set(ORDERED_PACKAGE_FULL_DEPS_LIST "")
+  set(${packageFullDepsListOut} ${packageFullDepsList} PARENT_SCOPE)
 
-  foreach(DEP_PACKAGE  IN LISTS  PACKAGE_FULL_DEPS_LIST)
+endfunction()
 
-    #print_var(${DEP_PACKAGE}_PKG_IDX)
-    set(DEP_PACKAGE_VALUE  ${${DEP_PACKAGE}_PKG_IDX})
 
-    set(SORTED_INDEX 0)
-    set(INSERTED_DEP_PACKAGE FALSE)
+# Helper function to sort the full set of upstream dep packages for a given
+# internal package.
+#
+function(tribits_package_sort_full_enabled_dep_packages  packageFullDepsListName
+    orderedPackageFullDepsListOut
+  )
 
-    foreach(SORTED_PACKAGE  IN LISTS  ORDERED_PACKAGE_FULL_DEPS_LIST)
+  set(orderedPackageFullDepsList "")
 
-      #print_var(${SORTED_PACKAGE}_PKG_IDX)
-      set(SORTED_PACKAGE_VALUE  ${${SORTED_PACKAGE}_PKG_IDX})
+  foreach(depPkg  IN LISTS  ${packageFullDepsListName})
 
-      if (${DEP_PACKAGE_VALUE} GREATER ${SORTED_PACKAGE_VALUE})
-        list(INSERT  ORDERED_PACKAGE_FULL_DEPS_LIST  ${SORTED_INDEX}  ${DEP_PACKAGE})
-        set(INSERTED_DEP_PACKAGE TRUE)
+    set(depPkgIdx ${${depPkg}_PKG_IDX})
+
+    set(sortedIndex 0)
+    set(insertedDepPkg FALSE)
+
+    foreach(sortedPackage  IN LISTS  orderedPackageFullDepsList)
+
+      set(sortedPackageIdx ${${sortedPackage}_PKG_IDX})
+
+      if (${depPkgIdx} GREATER ${sortedPackageIdx})
+        list(INSERT  orderedPackageFullDepsList  ${sortedIndex}  ${depPkg})
+        set(insertedDepPkg TRUE)
         break()
       endif()
 
-      math(EXPR SORTED_INDEX ${SORTED_INDEX}+1)
+      math(EXPR sortedIndex ${sortedIndex}+1)
 
     endforeach()
 
-    if(NOT INSERTED_DEP_PACKAGE)
-      list(APPEND  ORDERED_PACKAGE_FULL_DEPS_LIST  ${DEP_PACKAGE})
+    if(NOT insertedDepPkg)
+      list(APPEND  orderedPackageFullDepsList  ${depPkg})
     endif()
 
   endforeach()
 
-  global_set(${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES
-    ${ORDERED_PACKAGE_FULL_DEPS_LIST})
+  set(${orderedPackageFullDepsListOut} ${orderedPackageFullDepsList} PARENT_SCOPE)
 
 endfunction()

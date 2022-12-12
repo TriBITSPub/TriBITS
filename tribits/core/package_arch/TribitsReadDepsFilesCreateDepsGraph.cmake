@@ -38,6 +38,7 @@
 # @HEADER
 
 include(TribitsPackageDefineDependencies)
+include(TribitsPackageDependencies)
 include(SetDefault)
 include(DualScopeSet)
 
@@ -64,10 +65,10 @@ include(DualScopeSet)
 #
 #   * `${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES`_
 #
-# as well creates the package dependency variables described in `Legacy list
-# variables defining the package dependencies graph`_ that defines the
-# directed acyclic dependency (DAG) package dependency graph (with navigation
-# up and down the graph).
+# as well creates the package dependency variables described in `Variables
+# defining the package dependencies graph`_ that defines the directed acyclic
+# dependency (DAG) package dependency graph (with navigation up and down the
+# graph).
 #
 # See `Function call tree for constructing package dependency graph`_.
 #
@@ -98,13 +99,8 @@ macro(tribits_process_all_repository_deps_setup_files)
     tribits_get_repo_name_dir(${TIBITS_REPO}  REPO_NAME  REPO_DIR)
     tribits_set_base_repo_dir(${PROJECT_SOURCE_DIR}  ${REPO_DIR}  BASE_REPO_DIR)
     tribits_get_repo_name(${TIBITS_REPO} REPOSITORY_NAME)
-    #print_var(TIBITS_REPO)
-    #print_var(REPO_NAME)
-    #print_var(REPO_DIR)
-    #print_var(REPOSITORY_NAME)
     set(REPO_DEPENDENCIES_SETUP_FILE
       "${BASE_REPO_DIR}/cmake/RepositoryDependenciesSetup.cmake")
-    #print_var(REPO_DEPENDENCIES_SETUP_FILE)
     if (EXISTS ${REPO_DEPENDENCIES_SETUP_FILE})
       tribits_trace_file_processing(REPOSITORY  INCLUDE
         "${REPO_DEPENDENCIES_SETUP_FILE}")
@@ -170,10 +166,10 @@ endmacro()
 #
 #   * `${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES`_
 #
-# as well creates the package dependency variables described in `Legacy list
-# variables defining the package dependencies graph`_ that defines the
-# directed acyclic dependency (DAG) package dependency graph (with navigation
-# up and down the graph).
+# as well creates the package dependency variables described in `Variables
+# defining the package dependencies graph`_ that defines the directed acyclic
+# dependency (DAG) package dependency graph (with navigation up and down the
+# graph).
 #
 # See `Function call tree for constructing package dependency graph`_.
 #
@@ -214,6 +210,10 @@ endmacro()
 # See `Function call tree for constructing package dependency graph`_.
 #
 macro(tribits_read_external_package_deps_files_add_to_graph  tplName)
+  # Set up empty lists for forward dependencies
+  set(${tplName}_FORWARD_LIB_DEFINED_DEPENDENCIES "")
+  set(${tplName}_FORWARD_TEST_DEFINED_DEPENDENCIES "")
+  # Read in and process the external package/TPL dependency file
   if (IS_ABSOLUTE "${${tplName}_DEPENDENCIES_FILE}")
     set(absTplDepsFile "${${tplName}_DEPENDENCIES_FILE}")
   else()
@@ -222,6 +222,10 @@ macro(tribits_read_external_package_deps_files_add_to_graph  tplName)
   if (EXISTS "${absTplDepsFile}")
     tribits_trace_file_processing(TPL  INCLUDE  "${absTplDepsFile}")
     include(${absTplDepsFile})
+    foreach(depPkg  IN LISTS  ${tplName}_LIB_DEFINED_DEPENDENCIES)
+      global_set(${tplName}_LIB_DEP_REQUIRED_${depPkg}  TRUE)
+    endforeach()
+    tribits_append_forward_dep_packages(${tplName}  LIB)
   endif()
 endmacro()
 
@@ -235,21 +239,8 @@ endmacro()
 # Macro that reads in package dependencies for a top-level package from the
 # file `<packageDir>/cmake/Dependencies.cmake`_ and appends the forward
 # dependencies list vars for packages already read in for this package
-# ``<packageName>``.
-#
-# Modifies the global variables::
-#
-#   ${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES
-#   ${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES
-#   ${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES
-#   ${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES
-#   <depPkg>_FORWARD_LIB_REQUIRED_DEP_PACKAGES
-#   <depPkg>_FORWARD_LIB_OPTIONAL_DEP_PACKAGES
-#   <depPkg>_FORWARD_TEST_REQUIRED_DEP_PACKAGES
-#   <depPkg>_FORWARD_TEST_OPTIONAL_DEP_PACKAGES
-#
-# (where ``<depPkg>`` are upstream dependencies of this package
-# ``${PACKAGE_NAME}``).
+# ``<packageName>`` (see `Variables defining the package dependencies
+# graph`_).
 #
 # It also appends the list variable:
 #
@@ -344,15 +335,6 @@ endmacro()
 #
 # See `Function call tree for constructing package dependency graph`_.
 #
-# **__Legacy variables #63:__**
-#
-# It also sets to empty the forward dependency list vars::
-#
-#    <packageName>_FORWARD_<listType>
-#
-# for each of the forward/downstream in `Legacy list variables defining the
-# package dependencies graph`_.
-#
 macro(tribits_prep_to_read_dependencies  PACKAGE_NAME_IN)
 
   # Initial vars that must be set in the Dependencies.cmake file
@@ -371,12 +353,6 @@ macro(tribits_prep_to_read_dependencies  PACKAGE_NAME_IN)
   # Initialize other vars
   set(${PACKAGE_NAME_IN}_FORWARD_LIB_DEFINED_DEPENDENCIES "")
   set(${PACKAGE_NAME_IN}_FORWARD_TEST_DEFINED_DEPENDENCIES "")
-
-  # Initialize legacy vars #63
-  set(${PACKAGE_NAME_IN}_FORWARD_LIB_REQUIRED_DEP_PACKAGES "")
-  set(${PACKAGE_NAME_IN}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES "")
-  set(${PACKAGE_NAME_IN}_FORWARD_TEST_REQUIRED_DEP_PACKAGES "")
-  set(${PACKAGE_NAME_IN}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES "")
 
 endmacro()
 
@@ -473,10 +449,6 @@ endmacro()
 # in `tribits_prep_to_read_dependencies()`_.)
 #
 # See `Function call tree for constructing package dependency graph`_.
-#
-# **__Legacy varibles #63__**
-#
-# Sets `Legacy list variables defining the package dependencies graph`_.
 # 
 macro(tribits_process_package_dependencies_lists  packageName)
 
@@ -486,19 +458,17 @@ macro(tribits_process_package_dependencies_lists  packageName)
 
   # Fill the backward dependency vars
   tribits_set_dep_packages(${packageName} LIB  REQUIRED  PACKAGES)
-  tribits_set_dep_packages(${packageName} LIB  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} LIB  OPTIONAL  PACKAGES)
+  tribits_set_dep_packages(${packageName} LIB  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} LIB  OPTIONAL  TPLS)
   tribits_set_dep_packages(${packageName} TEST  REQUIRED  PACKAGES)
-  tribits_set_dep_packages(${packageName} TEST  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} TEST  OPTIONAL  PACKAGES)
+  tribits_set_dep_packages(${packageName} TEST  REQUIRED  TPLS)
   tribits_set_dep_packages(${packageName} TEST  OPTIONAL  TPLS)
 
-  # Fill forward deps legacy vars #63
-  tribits_append_forward_dep_packages(${packageName}  LIB  REQUIRED)
-  tribits_append_forward_dep_packages(${packageName}  LIB  OPTIONAL)
-  tribits_append_forward_dep_packages(${packageName}  TEST  REQUIRED)
-  tribits_append_forward_dep_packages(${packageName}  TEST  OPTIONAL)
+  # Fill forward deps lists #63
+  tribits_append_forward_dep_packages(${packageName}  LIB)
+  tribits_append_forward_dep_packages(${packageName}  TEST)
 
 endmacro()
 
@@ -531,19 +501,12 @@ endmacro()
 #   `tribits_abort_on_missing_package()`_ or allow to be missing and disable
 #   this package if this is a required dependency).
 #
-# **__ Legacy variables #63:__**
-#
-# Set the backward/upstream dependency variables defined `Legacy list
-# variables defining the package dependencies graph`_.
-#
 # See `Function call tree for constructing package dependency graph`_.
 #
 macro(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional  pkgsOrTpls)
 
   set(inputListType  ${testOrLib}_${requiredOrOptional}_DEP_${pkgsOrTpls})
   set(packageEnableVar  ${PROJECT_NAME}_ENABLE_${packageName})
-
-  set(legacyPackageDepsList "") # Legacy var #63
 
   foreach(depPkg  IN LISTS  ${inputListType})
     if (${depPkg} STREQUAL ${packageName})
@@ -560,15 +523,11 @@ macro(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional  pkgs
         message(FATAL_ERROR
           "Invalid value for requiredOrOptional='${requiredOrOptional}'!")
       endif()
-      list(APPEND  legacyPackageDepsList ${depPkg})
     else()
       tribits_set_dep_packages__handle_undefined_pkg(${packageName} ${depPkg}
         ${requiredOrOptional} ${pkgsOrTpls} ${packageEnableVar})
     endif()
   endforeach()
-
-  # legacy var #63
-  global_set(${packageName}_${inputListType} ${legacyPackageDepsList})
 
 endmacro()
 
@@ -658,29 +617,14 @@ endmacro()
 # dependencies for a given ``<packageName>`` by the downstream packages that
 # declare dependencies on it.
 #
-# **__Legacy variables #63:__**
-#
-# Appends the var::
-#
-#    <packageName>_FORWARD_<listType>
-#
-# for one of the FORWARD vars listed in `Legacy list variables defining the
-# package dependencies graph`_.
-#
 # See `Function call tree for constructing package dependency graph`_.
 #
-macro(tribits_append_forward_dep_packages  packageName  libOrTest  requiredOrOptional)
+macro(tribits_append_forward_dep_packages  packageName  libOrTest)
 
-  set(legacyInputListType ${libOrTest}_${requiredOrOptional}_DEP_PACKAGES)
-
-  set(legacyDepPkgListName "${packageName}_${legacyInputListType}")
-
-  foreach(depPkg  IN LISTS  ${legacyDepPkgListName})
-    set(fwdDepPkgListName "${depPkg}_FORWARD_${libOrTest}_DEFINED_DEPENDENCIES")
-    set(legacyFwdDepPkgListName "${depPkg}_FORWARD_${legacyInputListType}")
-    if (DEFINED ${legacyFwdDepPkgListName})
+  foreach(depPkg  IN LISTS  ${packageName}_${libOrTest}_DEFINED_DEPENDENCIES)
+    set(fwdDepPkgListName ${depPkg}_FORWARD_${libOrTest}_DEFINED_DEPENDENCIES)
+    if (DEFINED ${fwdDepPkgListName})
       list(APPEND ${fwdDepPkgListName} ${packageName})
-      list(APPEND ${legacyFwdDepPkgListName} ${packageName})
     else()
       if (${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
           ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
@@ -722,7 +666,6 @@ macro(tribits_set_package_regression_email_list  PACKAGE_NAME)
   endif()
 
   tribits_get_repo_name(${${PACKAGE_NAME}_PARENT_REPOSITORY} REPOSITORY_NAME)
-  #print_var(REPOSITORY_NAME)
 
   if(${REPOSITORY_NAME}_REPOSITORY_OVERRIDE_PACKAGE_EMAIL_LIST)
     set(${PACKAGE_NAME}_REGRESSION_EMAIL_LIST
@@ -949,10 +892,6 @@ endmacro()
 #
 macro(tribits_read_package_subpackage_deps_files_add_to_graph  PACKAGE_NAME)
 
-  #message("TRIBITS_READ_PACKAGE_SUBPACKAGE_DEPS_FILES_ADD_TO_GRAPH: ${PACKAGE_NAME}")
-
-  #print_var(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES)
-
   set(SUBPACKAGE_IDX 0)
   foreach(TRIBITS_SUBPACKAGE  IN LISTS  ${PACKAGE_NAME}_SUBPACKAGES)
     list(GET ${PACKAGE_NAME}_SUBPACKAGE_DIRS ${SUBPACKAGE_IDX} SUBPACKAGE_DIR)
@@ -980,8 +919,6 @@ endmacro()
 macro(tribits_read_subpackage_deps_file_add_to_graph  PACKAGE_NAME
   SUBPACKAGE_NAME  SUBPACKAGE_DIR
   )
-
-  #message("TRIBITS_READ_SUBPACKAGE_DEPS_FILE_ADD_TO_GRAPH: ${PACKAGE_NAME} ${SUBPACKAGE_NAME} ${SUBPACKAGE_DIR}")
 
   set(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${SUBPACKAGE_NAME})
 

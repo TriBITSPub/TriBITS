@@ -365,6 +365,8 @@ create_reduced_dependency_handling_test_case(
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON
     -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_GENERATE_EXPORT_FILE_DEPENDENCIES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
     ${REDUCED_EXPECTED_DEPENDENCIES_REGEX_ARRAY}
     ${REDUCED_EnableAllPackages_REGEX_ARRAY}
@@ -373,6 +375,9 @@ create_reduced_dependency_handling_test_case(
     "Final set of non-enabled top-level packages:  Triutils EpetraExt 2"
     "Final set of non-enabled packages:  Triutils EpetraExt ThyraGoodStuff ThyraCrazyStuff ThyraEpetraExt 5"
   )
+# NOTE: Above test may be the only test that generates and checks the full
+# list of upstream internal package dependencies
+# <Package>_FULL_ENABLED_DEP_PACKAGES.
 
 create_reduced_dependency_handling_test_case(
   EnableAllPackages_VerboseConfigure
@@ -383,13 +388,48 @@ create_reduced_dependency_handling_test_case(
     "MPI_FINDMOD='.*/ReducedMockTrilinos/../../core/std_tpls/FindTPLMPI.cmake'"
     "MPI_TESTGROUP='PT'"
     "MPI_TPLS_LIST_FILE='.*/ReducedMockTrilinos/TPLsList.cmake'"
+    "MPI_PACKAGE_BUILD_STATUS='EXTERNAL'"
     "AMD_FINDMOD='cmake/TPLs/FindTPLAMD.cmake'"
     "AMD_TESTGROUP='EX'"
     "AMD_TPLS_LIST_FILE='.*/ReducedMockTrilinos/TPLsList.cmake'"
+    "AMD_PACKAGE_BUILD_STATUS='EXTERNAL'"
     "PETSC_FINDMOD='.*/ReducedMockTrilinos/../../common_tpls/FindTPLPETSC.cmake'"
     "PETSC_TESTGROUP='ST'"
     "PETSC_TPLS_LIST_FILE='.*/ReducedMockTrilinos/TPLsList.cmake'"
+    "PETSC_PACKAGE_BUILD_STATUS='EXTERNAL'"
+    "-- Teuchos_SOURCE_DIR='.*/ReducedMockTrilinos/packages/teuchos'"
+    "-- Teuchos_REL_SOURCE_DIR='packages/teuchos'"
+    "-- Teuchos_PARENT_PACKAGE=''"
+    "-- Teuchos_PARENT_REPOSITORY='Trilinos'"
+    "-- Teuchos_PACKAGE_BUILD_STATUS='INTERNAL'"
+    "-- RTOp_SOURCE_DIR='.*/ReducedMockTrilinos/packages/rtop'"
+    "-- RTOp_REL_SOURCE_DIR='packages/rtop'"
+    "-- RTOp_PARENT_PACKAGE=''"
+    "-- RTOp_PARENT_REPOSITORY='Trilinos'"
+    "-- RTOp_PACKAGE_BUILD_STATUS='INTERNAL'"
+    "-- Epetra_SOURCE_DIR='.*/ReducedMockTrilinos/packages/epetra'"
+    "-- Epetra_REL_SOURCE_DIR='packages/epetra'"
+    "-- Epetra_PARENT_PACKAGE=''"
+    "-- Epetra_PARENT_REPOSITORY='Trilinos'"
+    "-- Epetra_PACKAGE_BUILD_STATUS='INTERNAL'"
+    "-- Triutils_SOURCE_DIR='.*/ReducedMockTrilinos/packages/triutils'"
+    "-- Triutils_REL_SOURCE_DIR='packages/triutils'"
+    "-- Triutils_PARENT_PACKAGE=''"
+    "-- Triutils_PARENT_REPOSITORY='Trilinos'"
+    "-- Triutils_PACKAGE_BUILD_STATUS='INTERNAL'"
+    "-- EpetraExt_SOURCE_DIR='.*/ReducedMockTrilinos/packages/epetraext'"
+    "-- EpetraExt_REL_SOURCE_DIR='packages/epetraext'"
+    "-- EpetraExt_PARENT_PACKAGE=''"
+    "-- EpetraExt_PARENT_REPOSITORY='Trilinos'"
+    "-- EpetraExt_PACKAGE_BUILD_STATUS='INTERNAL'"
+    "-- Thyra_SOURCE_DIR='.*/ReducedMockTrilinos/packages/thyra'"
+    "-- Thyra_REL_SOURCE_DIR='packages/thyra'"
+    "-- Thyra_PARENT_PACKAGE=''"
+    "-- Thyra_PARENT_REPOSITORY='Trilinos'"
+    "-- Thyra_PACKAGE_BUILD_STATUS='INTERNAL'"
   )
+  # NOTE: The above test directly checks some low-level variables that are not
+  # checked in other unit tests.
 
 
 #
@@ -435,8 +475,8 @@ create_reduced_dependency_handling_test_case(
     -DTrilinos_ENABLE_TESTS=ON
     -DTPL_ENABLE_AMD=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "-- Setting EpetraExt_ENABLE_TESTS=OFF because EpetraExt has a required test/example dependence on disabled TPL AMD"
-    "-- Setting EpetraExt_ENABLE_EXAMPLES=OFF because EpetraExt has a required test/example dependence on disabled TPL AMD"
+    "-- Setting EpetraExt_ENABLE_TESTS=OFF because EpetraExt has a required test/example dependence on disabled package AMD"
+    "-- Setting EpetraExt_ENABLE_EXAMPLES=OFF because EpetraExt has a required test/example dependence on disabled package AMD"
     "-- Setting Trilinos_ENABLE_ThyraEpetraExt=ON"
     "Processing enabled top-level package: Triutils [(]Libs, Tests, Examples[)]"
     "Processing enabled top-level package: EpetraExt [(]Libs[)]"
@@ -478,6 +518,19 @@ create_reduced_dependency_handling_test_case(
 
 
 create_reduced_dependency_handling_test_case(
+  EnableAllPackages_ST_EpetraExtEnableTriutilsOn_EnableTriutilsOff
+  ARGS
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DEpetraExt_ENABLE_Triutils=ON
+    -DTrilinos_ENABLE_Triutils=OFF
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- NOTE: EpetraExt_ENABLE_Triutils=ON but Trilinos_ENABLE_Triutils=OFF is set[.]  Setting EpetraExt_ENABLE_Triutils=OFF"
+  )
+
+
+create_reduced_dependency_handling_test_case(
   EnableAllPackages_ST_EpetraExtEnableTriutilsOn
   ARGS
     -DTrilinos_ENABLE_ALL_PACKAGES=ON
@@ -499,6 +552,55 @@ create_reduced_dependency_handling_test_case(
     -DEpetraExt_ENABLE_Triutils=ON
   PASS_REGULAR_EXPRESSION_ALL
     "-- NOTE: Setting EpetraExt_ENABLE_Triutils=OFF which was ON because EpetraExt has an optional library dependence on disabled package Triutils"
+  )
+
+
+#
+# Test implicit TPL dependencies
+#
+
+
+create_reduced_dependency_handling_test_case(
+  IndirectTplDependency_NoImplicitEnableBLAS
+  ARGS
+    -DTrilinos_EXTRA_REPOSITORIES=extraRepos/DependsOnLAPACK
+    -DTrilinos_ENABLE_DependsOnLAPACK=ON
+    -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- BLAS_FORWARD_LIB_DEFINED_DEPENDENCIES: LAPACK.R."
+    "-- LAPACK_LIB_DEFINED_DEPENDENCIES: BLAS.R."
+    "Explicitly enabled external packages/TPLs on input [(]by user[)]:  0"
+    "Explicitly disabled external packages/TPLs on input [(]by user or by default[)]:  0"
+    "-- Setting TPL_ENABLE_LAPACK=ON because DependsOnLAPACK has a required dependence on LAPACK"
+    "-- Setting DependsOnLAPACK_ENABLE_LAPACK=ON since Trilinos_ENABLE_DependsOnLAPACK=ON AND TPL_ENABLE_LAPACK=ON"
+    "Final set of enabled packages:  DependsOnLAPACK 1"
+    "Final set of enabled external packages/TPLs:  LAPACK 1"
+    "Final set of non-enabled external packages/TPLs:  .* BLAS .*"
+    "-- LAPACK: No enabled dependencies"
+    "-- DependsOnLAPACK_LIB_ENABLED_DEPENDENCIES: LAPACK.R."
+  )
+
+
+create_reduced_dependency_handling_test_case(
+  IndirectTplDependency_ExplicitEnableBLAS
+  ARGS
+    -DTrilinos_EXTRA_REPOSITORIES=extraRepos/DependsOnLAPACK
+    -DTrilinos_ENABLE_DependsOnLAPACK=ON
+    -DTPL_ENABLE_BLAS=ON
+    -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Explicitly enabled external packages/TPLs on input [(]by user[)]:  BLAS 1"
+    "Explicitly disabled external packages/TPLs on input [(]by user or by default[)]:  0"
+    "-- Setting TPL_ENABLE_LAPACK=ON because DependsOnLAPACK has a required dependence on LAPACK"
+    "-- Setting DependsOnLAPACK_ENABLE_LAPACK=ON since Trilinos_ENABLE_DependsOnLAPACK=ON AND TPL_ENABLE_LAPACK=ON"
+    "Final set of enabled packages:  DependsOnLAPACK 1"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK 2"
+    "Processing enabled external package/TPL: BLAS [(]enabled explicitly, disable with -DTPL_ENABLE_BLAS=OFF[)]"
+    "Processing enabled external package/TPL: LAPACK [(]enabled by DependsOnLAPACK, disable with -DTPL_ENABLE_LAPACK=OFF[)]"
+    "-- LAPACK_LIB_ENABLED_DEPENDENCIES: BLAS.R."
+    "-- DependsOnLAPACK_LIB_ENABLED_DEPENDENCIES: LAPACK.R."
   )
 
 
@@ -718,13 +820,19 @@ create_dependency_handling_test_case(
   TestTrueFalse
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES=TRUE -DTrilinos_ENABLE_Zoltan=TRUE
     -DTrilinos_ENABLE_TEST=TRUE -DTPL_ENABLE_BLAS=FALSE
-#    -DTrilinos_VERBOSE_CONFIGURE=TRUE
+    #-DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+    #-DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+    #-DTrilinos_VERBOSE_CONFIGURE=TRUE
   PASS_REGULAR_EXPRESSION_ALL
     "Explicitly enabled top-level packages on input .by user.:  Zoltan 1"
     "Explicitly disabled top-level packages on input .by user or by default.:  Stokhos 1"
     "Explicitly disabled external packages/TPLs on input .by user or by default.:  MPI BLAS 2"
-    "Setting Trilinos_ENABLE_Teuchos=OFF because Teuchos has a required library dependence on disabled TPL BLAS"
-    "Setting Trilinos_ENABLE_TrilinosFramework=ON"
+    "-- Setting TPL_ENABLE_LAPACK=OFF because LAPACK has a required library dependence on disabled package BLAS"
+    "-- Setting TPL_ENABLE_SuperLUDist=OFF because SuperLUDist has a required library dependence on disabled package BLAS"
+    "-- Setting TPL_ENABLE_SuperLU=OFF because SuperLU has a required library dependence on disabled package BLAS"
+    "-- Setting Trilinos_ENABLE_Teuchos=OFF because Teuchos has a required library dependence on disabled package BLAS"
+    "-- Setting Trilinos_ENABLE_Epetra=OFF because Epetra has a required library dependence on disabled package BLAS"
+    "-- Setting Trilinos_ENABLE_TrilinosFramework=ON"
     "Final set of enabled top-level packages:  TrilinosFramework Zoltan Shards 3"
     "Final set of enabled packages:  TrilinosFramework Zoltan Shards 3"
     "Final set of non-enabled top-level packages:  Teuchos RTOp Epetra Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 21"
@@ -742,6 +850,23 @@ create_dependency_handling_test_case(
     "Setting Trilinos_ENABLE_RTOp=OFF because RTOp has a required library dependence on disabled package Teuchos"
     "Final set of enabled top-level packages:  Epetra Zoltan Triutils AztecOO ML 5"
   )
+
+
+create_dependency_handling_test_case(
+  EnableEpetra_DisableTriutils_EnableAllForwardPackages
+  ARGS -DTrilinos_ENABLE_Epetra:BOOL=ON -DTrilinos_ENABLE_Triutils:BOOL=OFF
+    -DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Disabling forward required packages and optional intra-package support that have a dependency on disabled packages Trilinos_ENABLE_<TRIBITS_PACKAGE>=OFF [(]or TPL_ENABLE_<TRIBITS_EXTERNAL_PACKAGE>=OFF[)] ..."
+    "-- Setting Trilinos_ENABLE_AztecOO=OFF because AztecOO has a required library dependence on disabled package Triutils"
+    "Sweep backward enabling all forward test dependent packages because Trilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES=ON"
+    "-- Setting Trilinos_ENABLE_Intrepid=ON because Trilinos_ENABLE_Amesos=ON"
+  FAIL_REGULAR_EXPRESSION
+    "-- Setting Trilinos_ENABLE_Tpetra=ON because Trilinos_ENABLE_Triutils=ON"
+  )
+  # NOTE: The above test checks that a loop runs to enable needed test
+  # dependencies that was not being tested in any other test in TriBITS (as
+  # part of the refactoring for #63).
 
 
 create_dependency_handling_test_case(
@@ -894,7 +1019,7 @@ create_dependency_handling_test_case(
 create_dependency_handling_test_case(
   EnableThyra_DisableEpetra_EnableThyraEpetraExt_DisableEnabledDownstreamPackages
   ARGS -DTrilinos_ENABLE_Thyra:BOOL=ON -DTrilinos_ENABLE_Epetra:BOOL=OFF
-    -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON 
+    -DTrilinos_ENABLE_ThyraEpetraExt:BOOL=ON
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Explicitly enabled top-level packages on input .by user.:  Thyra 1"
@@ -912,7 +1037,7 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_ENABLE_Stratimikos=ON -DTrilinos_ENABLE_Thyra=OFF
   PASS_REGULAR_EXPRESSION_ALL
     "Setting subpackage enable Trilinos_ENABLE_ThyraCoreLibs=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
-    "Setting subpackage enable Trilinos_ENABLE_ThyraGoodStuff=OFF because parent package Trilinos_ENABLE_Thyra=OFF" 
+    "Setting subpackage enable Trilinos_ENABLE_ThyraGoodStuff=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetraExt=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraTpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
@@ -926,7 +1051,7 @@ create_dependency_handling_test_case(
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Setting subpackage enable Trilinos_ENABLE_ThyraCoreLibs=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
-    "Setting subpackage enable Trilinos_ENABLE_ThyraGoodStuff=OFF because parent package Trilinos_ENABLE_Thyra=OFF" 
+    "Setting subpackage enable Trilinos_ENABLE_ThyraGoodStuff=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraEpetraExt=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
     "Setting subpackage enable Trilinos_ENABLE_ThyraTpetra=OFF because parent package Trilinos_ENABLE_Thyra=OFF"
@@ -976,7 +1101,6 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON -DTPL_ENABLE_Boost:BOOL=ON
     -DTeuchos_ENABLE_Boost=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "Enabling all optional package TPL support <TRIBITS_PACKAGE>_ENABLE_<DEPTPL> not currently disabled for enabled TPLs"
     "-- NOTE: Teuchos_ENABLE_Boost=OFF is already set so not enabling even though TPL_ENABLE_Boost=ON is set!"
   )
 
@@ -1003,7 +1127,9 @@ create_dependency_handling_test_case(
   EnableZoltan_ZoltanEnableParMETIS_TplDisableParMETIS
   ARGS -DTrilinos_ENABLE_Zoltan=ON -DZoltan_ENABLE_ParMETIS=ON -DTPL_ENABLE_ParMETIS=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "NOTE: Setting Zoltan_ENABLE_ParMETIS=OFF which was ON since TPL_ENABLE_ParMETIS=OFF"
+    "-- Setting TPL_ENABLE_SuperLUDist=OFF because SuperLUDist has a required library dependence on disabled package ParMETIS"
+    "-- Setting TPL_ENABLE_SuperLU=OFF because SuperLU has a required library dependence on disabled package ParMETIS"
+    "-- NOTE: Setting Zoltan_ENABLE_ParMETIS=OFF which was ON because Zoltan has an optional library dependence on disabled package ParMETIS"
     "Final set of enabled external packages/TPLs:  0"
   )
 
@@ -1013,7 +1139,7 @@ create_dependency_handling_test_case(
   ARGS  -DTrilinos_ENABLE_Panzer=ON
     -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled TPL MPI!"
+    "Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled package MPI!"
   )
 
 
@@ -1033,7 +1159,7 @@ create_dependency_handling_test_case(
     -DTPL_ENABLE_MPI:BOOL=OFF
     -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "ERROR: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled TPL MPI!"
+    "ERROR: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled package MPI!"
     "Configuring incomplete, errors occurred!"
   )
 
@@ -1045,7 +1171,7 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=OFF
     -DTrilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "NOTE: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled TPL MPI but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON"
+    "NOTE: Setting Trilinos_ENABLE_Panzer=OFF which was 'ON' because Panzer has a required library dependence on disabled package MPI but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON"
     "Final set of enabled top-level packages:  0"
     "Final set of non-enabled top-level packages:  .+ Panzer .+"
   )
@@ -1118,7 +1244,7 @@ create_dependency_handling_test_case(
   ARGS  -DTrilinos_ENABLE_Stratimikos=ON -DTrilinos_ENABLE_Ifpack=ON
     -DTrilinos_HOSTTYPE:STRING=BadSystem2
   PASS_REGULAR_EXPRESSION_ALL
-    "NOTE: User has set Trilinos_ENABLE_Ifpack=ON but the" 
+    "NOTE: User has set Trilinos_ENABLE_Ifpack=ON but the"
     "package Ifpack is not supported on this platform type 'BadSystem2'"
     "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 14"
     "Final set of enabled packages:  Teuchos RTOp Epetra Zoltan Triutils EpetraExt ThyraCoreLibs ThyraEpetra ThyraEpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos 17"
@@ -1161,7 +1287,7 @@ create_dependency_handling_test_case(
 
 create_dependency_handling_test_case(
   DefaultExtraReposFile_EnableAllPackages_TraceFileProcessing
-  ARGS 
+  ARGS
     -DTrilinos_EXTRAREPOS_FILE=${MOCK_TRILINOS_DIR}/cmake/ExtraRepositoriesList.cmake
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
     -DTrilinos_IGNORE_MISSING_EXTRA_REPOSITORIES=TRUE
@@ -1195,7 +1321,7 @@ create_dependency_handling_test_case(
 
 create_dependency_handling_test_case(
   PreAndExtraReposFile_Nightly_EnableAllPackages
-  ARGS 
+  ARGS
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Nightly
     -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON
@@ -1217,7 +1343,7 @@ create_dependency_handling_test_case(
 
 create_dependency_handling_test_case(
   PreAndExtraReposFile_Continuous_EnableAllPackages
-  ARGS 
+  ARGS
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
     -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON
@@ -1239,7 +1365,7 @@ create_dependency_handling_test_case(
 
 create_dependency_handling_test_case(
   PreAndExtraReposFile_Continuous_AssertMissing_EnableAllPackages
-  ARGS 
+  ARGS
     -DTrilinos_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/PreAndExtraRepositoriesList.cmake
     -DTrilinos_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE=Continuous
     -DTrilinos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON

@@ -230,7 +230,7 @@ create_ctest_dependency_handling_test_case(
   PASS_REGULAR_EXPRESSION_ALL
     "Explicitly enabled top-level packages on input .by user.:  Teuchos 1"
     "Explicitly disabled external packages/TPLs on input .by user or by default.:  BLAS 1"
-    "NOTE: Setting Trilinos_ENABLE_Teuchos=OFF which was 'ON' because Teuchos has a required library dependence on disabled TPL BLAS but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
+    "NOTE: Setting Trilinos_ENABLE_Teuchos=OFF which was 'ON' because Teuchos has a required library dependence on disabled package BLAS but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
     "Final set of enabled top-level packages:  0"
     "Trilinos_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES=0:  Exiting the script!"
   )

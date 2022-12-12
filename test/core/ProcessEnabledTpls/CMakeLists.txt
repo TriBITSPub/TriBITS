@@ -194,7 +194,7 @@ create_process_enabled_tpls_test_case(
   TPL_NAME  HeaderOnlyTpl
   TPL_FINDMOD  ${HeaderOnlyTpl_FINDMOD}
   INCLUDE_DIRS  "/path_does_not_exist"
-  EXTR_ARGS  -DTPL_HeaderOnlyTpl_ENABLING_PKG=SimpleCxx
+  EXTR_ARGS  -DHeaderOnlyTpl_ENABLING_PKG=SimpleCxx
   PASS_REGULAR_EXPRESSION_ALL
     "Processing enabled external package/TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
     "-- Must find at least one header in each of the header sets .HeaderOnlyTpl_stuff.hpp."
@@ -450,7 +450,7 @@ create_process_enabled_tpls_test_case(
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
   INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
   LIBRARY_DIRS  /path/does/not/exist
-  EXTR_ARGS  -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+  EXTR_ARGS  -DHeadersAndLibsTpl_ENABLING_PKG=SomePackage
   PASS_REGULAR_EXPRESSION_ALL
     "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Must find at least one lib in each of the lib sets .haltpl1[;]haltpl2."
@@ -492,7 +492,7 @@ create_process_enabled_tpls_test_case(
   TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
   INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
   LIBRARY_DIRS  /path/does/not/exist
-  EXTR_ARGS  -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+  EXTR_ARGS  -DHeadersAndLibsTpl_ENABLING_PKG=SomePackage
     -DNOT_MUST_FIND_ALL_LIBS=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
@@ -515,7 +515,7 @@ create_process_enabled_tpls_test_case(
   INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
   LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
   EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="badlibname"
-    -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+    -DHeadersAndLibsTpl_ENABLING_PKG=SomePackage
   PASS_REGULAR_EXPRESSION_ALL
     "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Must find at least one lib in each of the lib sets .badlibname."
@@ -538,7 +538,7 @@ create_process_enabled_tpls_test_case(
   INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
   LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
   EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="badlibname,"
-    -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+    -DHeadersAndLibsTpl_ENABLING_PKG=SomePackage
     -DNOT_MUST_FIND_ALL_LIBS=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
@@ -557,7 +557,7 @@ create_process_enabled_tpls_test_case(
   INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
   LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
   EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="haltpl2,badlibname"
-    -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+    -DHeadersAndLibsTpl_ENABLING_PKG=SomePackage
   PASS_REGULAR_EXPRESSION_ALL
     "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
@@ -575,7 +575,7 @@ create_process_enabled_tpls_test_case(
   INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
   LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
   EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="haltpl2,badlibname"
-    -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+    -DHeadersAndLibsTpl_ENABLING_PKG=SomePackage
     -DNOT_MUST_FIND_ALL_LIBS=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled by SomePackage, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
@@ -595,7 +595,7 @@ create_process_enabled_tpls_test_case(
   INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
   LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
   EXTRA_ARGS  -DHeadersAndLibsTpl_LIBRARY_NAMES="haltpl2,badlibname"
-    -DTPL_HeadersAndLibsTpl_ENABLING_PKG=SomePackage
+    -DHeadersAndLibsTpl_ENABLING_PKG=SomePackage
     -DNOT_MUST_FIND_ALL_LIBS=ON
     -D${MOCK_PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS=ON
   PASS_REGULAR_EXPRESSION_ALL

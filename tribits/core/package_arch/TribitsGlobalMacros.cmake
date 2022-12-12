@@ -2316,14 +2316,12 @@ macro(tribits_setup_packaging_and_distribution)
   # K.2) Removing any packages or packages not enabled from the tarball
 
   if (${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION)
-    set(tribitsPackage ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
+    set(tribitsPackageList ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
   else()
-    set(tribitsPackage ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
+    set(tribitsPackageList ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
   endif()
 
-  tribits_get_nonenabled_list(
-    tribitsPackage  ${PROJECT_NAME}
-    nonEnabledTribitsPackage  "")
+  tribits_get_sublist_nonenabled(tribitsPackageList  nonEnabledTribitsPackage  "")
 
   foreach(TRIBITS_PACKAGE ${nonEnabledTribitsPackage})
 
@@ -2382,18 +2380,18 @@ macro(tribits_setup_packaging_and_distribution)
 
   # K.3) Set up install component dependencies
 
-  tribits_get_enabled_list(
-    ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES  ${PROJECT_NAME}
-    ENABLED_PACKAGES  NUM_ENABLED)
-  #message("ENABLED PACKAGES: ${ENABLED_PACKAGES} ${NUM_ENABLED}")
+  tribits_get_sublist_enabled(
+    ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
+    enabledInternalToplevelPackages  "")
 
-  foreach(PKG ${ENABLED_PACKAGES})
-    if(NOT "${${PKG}_LIB_REQUIRED_DEP_PACKAGES}" STREQUAL "")
-        string(TOUPPER ${PKG} UPPER_PKG)
-        #message("${UPPER_PKG} depends on : ${${PKG}_LIB_REQUIRED_DEP_PACKAGES}")
-        set(CPACK_COMPONENT_${UPPER_PKG}_DEPENDS ${${PKG}_LIB_REQUIRED_DEP_PACKAGES})
+  foreach(pkgName ${enabledInternalToplevelPackages})
+    if(NOT "${${pkgName}_LIB_ENABLED_DEPENDENCIES}" STREQUAL "")
+      string(TOUPPER ${pkgName} upperPkgName)
+      set(CPACK_COMPONENT_${upperPkgName}_DEPENDS ${${pkgName}_LIB_ENABLED_DEPENDENCIES})
+      # ToDo: The above needs to be changed to the list of *internal* enabled
+      # package dependencies!  (But there are no tests for this currently and
+      # I am not sure who is using this.)
     endif()
-    #message("${PKG} depends on : ${${PKG}_LIB_REQUIRED_DEP_PACKAGES}")
   endforeach()
 
   # K.4) Resetting the name to avoid overwriting registry keys when installing

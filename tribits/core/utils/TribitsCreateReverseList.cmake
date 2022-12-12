@@ -37,36 +37,16 @@
 # ************************************************************************
 # @HEADER
 
-include("${CMAKE_CURRENT_LIST_DIR}/TribitsReadAllProjectDepsFilesCreateDepsGraphHelpers.cmake")
-include(TribitsAdjustPackageEnables)
-include(TribitsSetUpEnabledOnlyDependencies)
 
-
-#####################################################################
+# @MACRO: tribit_create_reverse_list()
 #
-# Helper macros for unit tests
+# Create a reverse list var in one shot.
 #
-#####################################################################
-
-
-macro(unittest_helper_read_and_process_packages)
-  tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
-  set(${PROJECT_NAME}_TPLS_FILE "dummy")
-  tribits_process_tpls_lists(${PROJECT_NAME} ".")
-  tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  set(${EXTRA_REPO_NAME}_TPLS_FILE "dummy")
-  tribits_process_tpls_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
-  tribits_read_deps_files_create_deps_graph()
-  set_default(${PROJECT_NAME}_ENABLE_ALL_PACKAGES OFF)
-  set_default(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
-  set(DO_PROCESS_MPI_ENABLES ON) # Should not be needed but CMake is not working!
-  set(${PROJECT_NAME}_DEFINED_PACKAGES
-    ${${PROJECT_NAME}_DEFINED_TPLS} ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
-  foreach(tribitsPkg ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
-    global_set(${tribitsPkg}_FULL_ENABLED_DEP_PACKAGES "")
-  endforeach()
-  tribits_print_enables_before_adjust_package_enables()
-  tribits_adjust_package_enables(TRUE)
-  tribits_print_enables_after_adjust_package_enables()
-  tribits_set_up_enabled_only_dependencies()
+# Usage::
+#
+#   tribit_create_reverse_list(<oldListName> <newListName>)
+#
+macro(tribit_create_reverse_list  oldListName  newListName)
+  set(${newListName} ${${oldListName}})
+  list(REVERSE ${newListName})
 endmacro()
