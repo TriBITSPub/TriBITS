@@ -219,7 +219,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_1)
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::somelib"
+    "tribits::SomeTpl::somelib"
     )
 
   unittest_compare_const( libLinkFlagsList
@@ -230,8 +230,8 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_1)
 [=[
 #beginning
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib PROPERTIES
+add_library(tribits::SomeTpl::somelib IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
 
 ]=]
@@ -259,7 +259,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_2)
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::somelib1;SomeTpl::somelib2"
+    "tribits::SomeTpl::somelib1;tribits::SomeTpl::somelib2"
     )
 
   unittest_compare_const( libLinkFlagsList
@@ -270,15 +270,15 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_2)
 [=[
 #beginning
 
-add_library(SomeTpl::somelib1 IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib1 PROPERTIES
+add_library(tribits::SomeTpl::somelib1 IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib1 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib1.so")
 
-add_library(SomeTpl::somelib2 IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib2 PROPERTIES
+add_library(tribits::SomeTpl::somelib2 IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib2 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib2.so")
-target_link_libraries(SomeTpl::somelib2
-  INTERFACE SomeTpl::somelib1)
+target_link_libraries(tribits::SomeTpl::somelib2
+  INTERFACE tribits::SomeTpl::somelib1)
 
 ]=]
     )
@@ -307,7 +307,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_3)
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::somelib1;SomeTpl::somelib2;SomeTpl::somelib3"
+    "tribits::SomeTpl::somelib1;tribits::SomeTpl::somelib2;tribits::SomeTpl::somelib3"
     )
 
   unittest_compare_const( libLinkFlagsList
@@ -318,21 +318,21 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_3)
 [=[
 #beginning
 
-add_library(SomeTpl::somelib1 IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib1 PROPERTIES
+add_library(tribits::SomeTpl::somelib1 IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib1 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib1.so")
 
-add_library(SomeTpl::somelib2 IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib2 PROPERTIES
+add_library(tribits::SomeTpl::somelib2 IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib2 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib2.so")
-target_link_libraries(SomeTpl::somelib2
-  INTERFACE SomeTpl::somelib1)
+target_link_libraries(tribits::SomeTpl::somelib2
+  INTERFACE tribits::SomeTpl::somelib1)
 
-add_library(SomeTpl::somelib3 IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib3 PROPERTIES
+add_library(tribits::SomeTpl::somelib3 IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib3 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib3.so")
-target_link_libraries(SomeTpl::somelib3
-  INTERFACE SomeTpl::somelib2)
+target_link_libraries(tribits::SomeTpl::somelib3
+  INTERFACE tribits::SomeTpl::somelib2)
 
 ]=]
     )
@@ -360,7 +360,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_1_1
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::lib1"
+    "tribits::SomeTpl::lib1"
     )
 
   unittest_compare_const( libLinkFlagsList
@@ -371,8 +371,8 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_1_1
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib1 PROPERTIES
+add_library(tribits::SomeTpl::lib1 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
 ]=]
@@ -402,7 +402,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_2_2
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::lib1;SomeTpl::lib2"
+    "tribits::SomeTpl::lib1;tribits::SomeTpl::lib2"
     )
 
   unittest_compare_const( libLinkFlagsList
@@ -413,15 +413,15 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_2_2
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib1 PROPERTIES
+add_library(tribits::SomeTpl::lib1 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::lib2 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib2 PROPERTIES
+add_library(tribits::SomeTpl::lib2 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
-target_link_libraries(SomeTpl::lib2
-  INTERFACE SomeTpl::lib1)
+target_link_libraries(tribits::SomeTpl::lib2
+  INTERFACE tribits::SomeTpl::lib1)
 
 ]=]
     )
@@ -451,7 +451,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_3_3
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::lib1;SomeTpl::lib2;SomeTpl::lib3"
+    "tribits::SomeTpl::lib1;tribits::SomeTpl::lib2;tribits::SomeTpl::lib3"
     )
 
   unittest_compare_const( libLinkFlagsList
@@ -462,21 +462,21 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_3_3
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib1 PROPERTIES
+add_library(tribits::SomeTpl::lib1 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::lib2 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib2 PROPERTIES
+add_library(tribits::SomeTpl::lib2 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
-target_link_libraries(SomeTpl::lib2
-  INTERFACE SomeTpl::lib1)
+target_link_libraries(tribits::SomeTpl::lib2
+  INTERFACE tribits::SomeTpl::lib1)
 
-add_library(SomeTpl::lib3 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib3 PROPERTIES
+add_library(tribits::SomeTpl::lib3 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib3 PROPERTIES
   IMPORTED_LIBNAME "lib3")
-target_link_libraries(SomeTpl::lib3
-  INTERFACE SomeTpl::lib2)
+target_link_libraries(tribits::SomeTpl::lib3
+  INTERFACE tribits::SomeTpl::lib2)
 
 ]=]
     )
@@ -555,7 +555,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_libname_2)
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::c;SomeTpl::some1_Longer2-Name3"
+    "tribits::SomeTpl::c;tribits::SomeTpl::some1_Longer2-Name3"
     )
 
   unittest_compare_const( libLinkFlagsList "-" )
@@ -566,15 +566,15 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_libname_2)
 [=[
 #beginning
 
-add_library(SomeTpl::c IMPORTED INTERFACE)
-set_target_properties(SomeTpl::c PROPERTIES
+add_library(tribits::SomeTpl::c IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::c PROPERTIES
   IMPORTED_LIBNAME "c")
 
-add_library(SomeTpl::some1_Longer2-Name3 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::some1_Longer2-Name3 PROPERTIES
+add_library(tribits::SomeTpl::some1_Longer2-Name3 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::some1_Longer2-Name3 PROPERTIES
   IMPORTED_LIBNAME "some1_Longer2-Name3")
-target_link_libraries(SomeTpl::some1_Longer2-Name3
-  INTERFACE SomeTpl::c)
+target_link_libraries(tribits::SomeTpl::some1_Longer2-Name3
+  INTERFACE tribits::SomeTpl::c)
 
 ]=]
     )
@@ -604,7 +604,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_2_2
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::lib1;SomeTpl::somelib;SomeTpl::lib3"
+    "tribits::SomeTpl::lib1;tribits::SomeTpl::somelib;tribits::SomeTpl::lib3"
     )
 
   unittest_compare_const( libLinkFlagsList
@@ -615,21 +615,21 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_opts_2_2
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib1 PROPERTIES
+add_library(tribits::SomeTpl::lib1 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::somelib IMPORTED STATIC)
-set_target_properties(SomeTpl::somelib PROPERTIES
+add_library(tribits::SomeTpl::somelib IMPORTED STATIC)
+set_target_properties(tribits::SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/other/path/to/libsomelib.a")
-target_link_libraries(SomeTpl::somelib
-  INTERFACE SomeTpl::lib1)
+target_link_libraries(tribits::SomeTpl::somelib
+  INTERFACE tribits::SomeTpl::lib1)
 
-add_library(SomeTpl::lib3 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib3 PROPERTIES
+add_library(tribits::SomeTpl::lib3 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib3 PROPERTIES
   IMPORTED_LIBNAME "lib3")
-target_link_libraries(SomeTpl::lib3
-  INTERFACE SomeTpl::somelib)
+target_link_libraries(tribits::SomeTpl::lib3
+  INTERFACE tribits::SomeTpl::somelib)
 
 ]=]
     )
@@ -661,7 +661,7 @@ function(unittest_tribits_extpkg_process_libraries_list_duplicate_libs)
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::lib1;SomeTpl::somelib;SomeTpl::lib3"
+    "tribits::SomeTpl::lib1;tribits::SomeTpl::somelib;tribits::SomeTpl::lib3"
     )
 
   unittest_compare_const( libLinkFlagsList
@@ -672,21 +672,21 @@ function(unittest_tribits_extpkg_process_libraries_list_duplicate_libs)
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib1 PROPERTIES
+add_library(tribits::SomeTpl::lib1 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::somelib IMPORTED STATIC)
-set_target_properties(SomeTpl::somelib PROPERTIES
+add_library(tribits::SomeTpl::somelib IMPORTED STATIC)
+set_target_properties(tribits::SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/other/path/to/libsomelib.a")
-target_link_libraries(SomeTpl::somelib
-  INTERFACE SomeTpl::lib1)
+target_link_libraries(tribits::SomeTpl::somelib
+  INTERFACE tribits::SomeTpl::lib1)
 
-add_library(SomeTpl::lib3 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib3 PROPERTIES
+add_library(tribits::SomeTpl::lib3 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib3 PROPERTIES
   IMPORTED_LIBNAME "lib3")
-target_link_libraries(SomeTpl::lib3
-  INTERFACE SomeTpl::somelib)
+target_link_libraries(tribits::SomeTpl::lib3
+  INTERFACE tribits::SomeTpl::somelib)
 
 ]=]
     )
@@ -716,7 +716,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_1_
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::somelib"
+    "tribits::SomeTpl::somelib"
     )
 
   unittest_compare_const( libLinkFlagsList
@@ -727,10 +727,10 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_1_
 [=[
 #beginning
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib PROPERTIES
+add_library(tribits::SomeTpl::somelib IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
-target_link_libraries(SomeTpl::somelib
+target_link_libraries(tribits::SomeTpl::somelib
   INTERFACE PublicTpl::all_libs  # i.e. PUBLIC
   INTERFACE $<LINK_ONLY:PrivateTpl::all_libs>  # i.e. PRIVATE
   INTERFACE $<LINK_ONLY:DefaultVisTpl::all_libs>  # i.e. PRIVATE
@@ -764,7 +764,7 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_3_
     )
 
   unittest_compare_const( libTargetsList
-    "SomeTpl::somelib1;SomeTpl::somelib2;SomeTpl::somelib3"
+    "tribits::SomeTpl::somelib1;tribits::SomeTpl::somelib2;tribits::SomeTpl::somelib3"
     )
 
   unittest_compare_const( libLinkFlagsList
@@ -775,26 +775,26 @@ function(unittest_tribits_extpkg_process_libraries_list_incl_dirs_0_lib_files_3_
 [=[
 #beginning
 
-add_library(SomeTpl::somelib1 IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib1 PROPERTIES
+add_library(tribits::SomeTpl::somelib1 IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib1 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib1.so")
-target_link_libraries(SomeTpl::somelib1
+target_link_libraries(tribits::SomeTpl::somelib1
   INTERFACE PublicTpl::all_libs  # i.e. PUBLIC
   INTERFACE $<LINK_ONLY:PrivateTpl::all_libs>  # i.e. PRIVATE
   INTERFACE $<LINK_ONLY:DefaultVisTpl::all_libs>  # i.e. PRIVATE
   )
 
-add_library(SomeTpl::somelib2 IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib2 PROPERTIES
+add_library(tribits::SomeTpl::somelib2 IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib2 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib2.so")
-target_link_libraries(SomeTpl::somelib2
-  INTERFACE SomeTpl::somelib1)
+target_link_libraries(tribits::SomeTpl::somelib2
+  INTERFACE tribits::SomeTpl::somelib1)
 
-add_library(SomeTpl::somelib3 IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib3 PROPERTIES
+add_library(tribits::SomeTpl::somelib3 IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib3 PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib3.so")
-target_link_libraries(SomeTpl::somelib3
-  INTERFACE SomeTpl::somelib2)
+target_link_libraries(tribits::SomeTpl::somelib3
+  INTERFACE tribits::SomeTpl::somelib2)
 
 ]=]
     )
@@ -831,13 +831,13 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib PROPERTIES
+add_library(tribits::SomeTpl::somelib IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
 
 add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
-  INTERFACE SomeTpl::somelib
+  INTERFACE tribits::SomeTpl::somelib
   )
 
 ]=]
@@ -906,13 +906,13 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib PROPERTIES
+add_library(tribits::SomeTpl::somelib IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
 
 add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
-  INTERFACE SomeTpl::somelib
+  INTERFACE tribits::SomeTpl::somelib
   )
 target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/C"
@@ -948,13 +948,13 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::somelib IMPORTED UNKNOWN)
-set_target_properties(SomeTpl::somelib PROPERTIES
+add_library(tribits::SomeTpl::somelib IMPORTED UNKNOWN)
+set_target_properties(tribits::SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
 
 add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
-  INTERFACE SomeTpl::somelib
+  INTERFACE tribits::SomeTpl::somelib
   )
 target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/a"
@@ -996,20 +996,20 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib1 PROPERTIES
+add_library(tribits::SomeTpl::lib1 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::lib2 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib2 PROPERTIES
+add_library(tribits::SomeTpl::lib2 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
-target_link_libraries(SomeTpl::lib2
-  INTERFACE SomeTpl::lib1)
+target_link_libraries(tribits::SomeTpl::lib2
+  INTERFACE tribits::SomeTpl::lib1)
 
 add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
-  INTERFACE SomeTpl::lib1
-  INTERFACE SomeTpl::lib2
+  INTERFACE tribits::SomeTpl::lib1
+  INTERFACE tribits::SomeTpl::lib2
   )
 target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/a"
@@ -1064,27 +1064,27 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib1 PROPERTIES
+add_library(tribits::SomeTpl::lib1 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::some-other-option IMPORTED INTERFACE)
-set_target_properties(SomeTpl::some-other-option PROPERTIES
+add_library(tribits::SomeTpl::some-other-option IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::some-other-option PROPERTIES
   IMPORTED_LIBNAME "some-other-option")
-target_link_libraries(SomeTpl::some-other-option
-  INTERFACE SomeTpl::lib1)
+target_link_libraries(tribits::SomeTpl::some-other-option
+  INTERFACE tribits::SomeTpl::lib1)
 
-add_library(SomeTpl::lib2 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib2 PROPERTIES
+add_library(tribits::SomeTpl::lib2 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
-target_link_libraries(SomeTpl::lib2
-  INTERFACE SomeTpl::some-other-option)
+target_link_libraries(tribits::SomeTpl::lib2
+  INTERFACE tribits::SomeTpl::some-other-option)
 
 add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
-  INTERFACE SomeTpl::lib1
-  INTERFACE SomeTpl::some-other-option
-  INTERFACE SomeTpl::lib2
+  INTERFACE tribits::SomeTpl::lib1
+  INTERFACE tribits::SomeTpl::some-other-option
+  INTERFACE tribits::SomeTpl::lib2
   )
 target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/a"
@@ -1171,25 +1171,25 @@ endif()
 
 unset(SomeTpl_SearchNoOtherPathsArgs)
 
-add_library(SomeTpl::lib1 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib1 PROPERTIES
+add_library(tribits::SomeTpl::lib1 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
-target_link_libraries(SomeTpl::lib1
+target_link_libraries(tribits::SomeTpl::lib1
   INTERFACE PublicTpl::all_libs  # i.e. PUBLIC
   INTERFACE $<LINK_ONLY:PrivateTpl::all_libs>  # i.e. PRIVATE
   INTERFACE $<LINK_ONLY:DefaultVisTpl::all_libs>  # i.e. PRIVATE
   )
 
-add_library(SomeTpl::lib2 IMPORTED INTERFACE)
-set_target_properties(SomeTpl::lib2 PROPERTIES
+add_library(tribits::SomeTpl::lib2 IMPORTED INTERFACE)
+set_target_properties(tribits::SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
-target_link_libraries(SomeTpl::lib2
-  INTERFACE SomeTpl::lib1)
+target_link_libraries(tribits::SomeTpl::lib2
+  INTERFACE tribits::SomeTpl::lib1)
 
 add_library(SomeTpl::all_libs INTERFACE IMPORTED)
 target_link_libraries(SomeTpl::all_libs
-  INTERFACE SomeTpl::lib1
-  INTERFACE SomeTpl::lib2
+  INTERFACE tribits::SomeTpl::lib1
+  INTERFACE tribits::SomeTpl::lib2
   )
 target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/a"
