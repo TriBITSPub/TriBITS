@@ -440,7 +440,7 @@
 <dd class="field-even"><p>2022-12-12</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-3153-gbcfeeb12</p>
+<dd class="field-odd"><p>tribits_start-3155-g0dcb78da</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -14333,8 +14333,9 @@ for more details.</p>
 </section>
 <section id="tribits-extpkg-write-config-file-str">
 <h3><a class="toc-backref" href="#id149">tribits_extpkg_write_config_file_str()</a><a class="headerlink" href="#tribits-extpkg-write-config-file-str" title="Permalink to this heading"></a></h3>
-<p>Create the text string for a <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;Config.cmake</span></code> file given the list of
-include directories and libraries for an external package/TPL.</p>
+<p>Create the text string for a <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;Config.cmake</span></code> file given the list
+of include directories and libraries for an external package/TPL from the
+legacy TriBITS TPL specification.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_extpkg_write_config_file_str</span><span class="p">(</span>
   <span class="o">&lt;</span><span class="n">tplName</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">tplConfigFileStrOut</span><span class="o">&gt;</span> <span class="p">)</span>
@@ -14360,9 +14361,10 @@ variable that contains IMPORTED targets to represent these libraries and
 include directories as well as <code class="docutils literal notranslate"><span class="pre">find_dependency()</span></code> calls for upstream
 packages listed in <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIB_ENABLED_DEPENDENCIES</span></code>.</p>
 <p>The arguments in <code class="docutils literal notranslate"><span class="pre">TPL_&lt;tplName&gt;_LIBRARIES</span></code> are handled in special ways in
-order to create the namespaced IMPORTED targets <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::&lt;libname&gt;</span></code> and
-the <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::all_libs</span></code> target that depends on these.  The types of
-arguments that are handled and how the are interpreted:</p>
+order to create the namespaced IMPORTED targets
+<code class="docutils literal notranslate"><span class="pre">tribits::&lt;tplName&gt;::&lt;libname&gt;</span></code> and the <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::all_libs</span></code> target
+that depends on these.</p>
+<p>The types of arguments that are handled and how the are interpreted:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">&lt;abs-base-path&gt;/[lib]&lt;libname&gt;.&lt;longest-ext&gt;</span></code></p>
 <blockquote>
@@ -14370,13 +14372,13 @@ arguments that are handled and how the are interpreted:</p>
 imported target name <code class="docutils literal notranslate"><span class="pre">&lt;libname&gt;</span></code> is derived from the file name (of the
 form <code class="docutils literal notranslate"><span class="pre">lib&lt;libname&gt;.&lt;longest-ext&gt;</span></code> removing beginning <code class="docutils literal notranslate"><span class="pre">lib</span></code> and file
 extension <code class="docutils literal notranslate"><span class="pre">.&lt;longest-ext&gt;</span></code>).  The IMPORTED target
-<code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::&lt;libname&gt;</span></code> is created and the file path is set using the
-<code class="docutils literal notranslate"><span class="pre">IMPORTED_LOCATION</span></code> target property.</p>
+<code class="docutils literal notranslate"><span class="pre">tribits::&lt;tplName&gt;::&lt;libname&gt;</span></code> is created and the file path is set
+using the <code class="docutils literal notranslate"><span class="pre">IMPORTED_LOCATION</span></code> target property.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">-l&lt;libname&gt;</span></code></p>
 <blockquote>
 <div><p>Arguments of the form <code class="docutils literal notranslate"><span class="pre">-l&lt;libname&gt;</span></code> are used to create IMPORTED
-targets with the name <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::&lt;libname&gt;</span></code> using the
+targets with the name <code class="docutils literal notranslate"><span class="pre">tribits::&lt;tplName&gt;::&lt;libname&gt;</span></code> using the
 <code class="docutils literal notranslate"><span class="pre">IMPORTED_LIBNAME</span></code> target property.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">&lt;libname&gt;</span></code></p>
@@ -14412,6 +14414,19 @@ the <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;
 <p>Finally, for every <code class="docutils literal notranslate"><span class="pre">&lt;upstreamTplName&gt;</span></code> listed in
 <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIB_ENABLED_DEPENDENCIES</span></code>, a link dependency is created using
 <code class="docutils literal notranslate"><span class="pre">target_link_library(&lt;tplName&gt;::all_libs</span> <span class="pre">INTERFACE</span> <span class="pre">&lt;upstreamTplName&gt;)</span></code>.</p>
+<p>NOTE: The IMPORTED targets generated for each library argument
+<code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::&lt;libname&gt;</span></code> are prefixed with <code class="docutils literal notranslate"><span class="pre">tribits::</span></code> to give
+<code class="docutils literal notranslate"><span class="pre">tribits::&lt;tplName&gt;::&lt;libname&gt;</span></code>.  This is to avoid clashing with IMPORTED
+targets <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::&lt;libname&gt;</span></code> from other package config files
+<code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;Config.cmake</span></code> or find modules <code class="docutils literal notranslate"><span class="pre">Find&lt;tplName&gt;.cmake</span></code> that may
+clash (see TriBITSPub/TriBITS#548). But the generated INTERFACE IMPORTED
+target <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::all_libs</span></code> is <strong>not</strong> namespaced with <code class="docutils literal notranslate"><span class="pre">tribits::</span></code>
+since the <code class="docutils literal notranslate"><span class="pre">all_libs</span></code> target is unlikely to clash.  The targets
+<code class="docutils literal notranslate"><span class="pre">tribits::&lt;tplName&gt;::&lt;libname&gt;</span></code> are not directly used in downstream
+<code class="docutils literal notranslate"><span class="pre">target_link_library()</span></code> calls so the names of these targets are really
+just an implementation detail.  (The reason we give these a name based of
+the library name they represent <code class="docutils literal notranslate"><span class="pre">&lt;libname&gt;</span></code> is to make it more clear what
+the matching library is and to make the name unique.)</p>
 <p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:167</p>
 </section>
 <section id="tribits-find-most-recent-binary-file-timestamp">
@@ -15482,7 +15497,7 @@ to <code class="docutils literal notranslate"><span class="pre">OFF</span></code
 <li><p><code class="docutils literal notranslate"><span class="pre">UNSUPPORTED_LIB_ENTRY</span></code>: An unsupported lib option</p></li>
 </ul>
 </div></blockquote>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:460</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:477</p>
 </section>
 <section id="tribits-tpl-tentatively-enable">
 <h3><a class="toc-backref" href="#id174">tribits_tpl_tentatively_enable()</a><a class="headerlink" href="#tribits-tpl-tentatively-enable" title="Permalink to this heading"></a></h3>
@@ -17029,7 +17044,7 @@ listed in <code class="docutils literal notranslate"><span class="pre">&lt;tplNa
 </div>
 <p>NOTE: This also requires that <code class="docutils literal notranslate"><span class="pre">&lt;upstreamTplName&gt;_DIR</span></code> be set for each
 external package/TPL listed in <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIB_ENABLED_DEPENDENCIES</span></code>.</p>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:293</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:310</p>
 </section>
 <section id="tribits-extpkg-create-all-libs-target">
 <h3><a class="toc-backref" href="#id244">tribits_extpkg_create_all_libs_target()</a><a class="headerlink" href="#tribits-extpkg-create-all-libs-target" title="Permalink to this heading"></a></h3>
@@ -17054,7 +17069,7 @@ paths entries found while processing <code class="docutils literal notranslate">
 <p><code class="docutils literal notranslate"><span class="pre">&lt;configFileFragStrInOut&gt;</span></code>: [out] A string variable that will be
 appended with the <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::all_libs</span></code> target statements.</p>
 </div></blockquote>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:735</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:753</p>
 </section>
 <section id="tribits-extpkg-install-config-file">
 <h3><a class="toc-backref" href="#id245">tribits_extpkg_install_config_file()</a><a class="headerlink" href="#tribits-extpkg-install-config-file" title="Permalink to this heading"></a></h3>
@@ -17115,7 +17130,7 @@ with the list of <code class="docutils literal notranslate"><span class="pre">-L
 appended with the IMPORTED library commands for the list of targets given
 in <code class="docutils literal notranslate"><span class="pre">&lt;libTargetsList&gt;</span></code>.</p>
 </div></blockquote>
-<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:370</p>
+<p>In: core/package_arch/TribitsExternalPackageWriteConfigFile.cmake:387</p>
 </section>
 <section id="tribits-extpkg-setup-enabled-dependencies">
 <h3><a class="toc-backref" href="#id248">tribits_extpkg_setup_enabled_dependencies()</a><a class="headerlink" href="#tribits-extpkg-setup-enabled-dependencies" title="Permalink to this heading"></a></h3>
