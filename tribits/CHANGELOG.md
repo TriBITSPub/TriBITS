@@ -2,6 +2,25 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-11-03:
+
+* **Deprecated:** The long-deprecated TriBITS function override
+  `include_directories()` now emits a deprecated warning.  To replace all
+  usages of `include_directories()` that should be
+  `tribits_include_directories()`, use the script
+  `TriBITS/refactoring/replace_include_directories_r.sh` (see documentation in
+  that script).
+
+* **Deprecated:** Many previously deprecated TriBITS features now will trigger
+  a CMake DEPRECATION warning message by default (by calling
+  `message(DEPRECATION ...)`).  The message printed to the CMake output will
+  typically describe how to remove the usage of the deprecated feature.  To
+  remove deprecation warnings, change to use the non-deprecated features
+  mentioned in the deprecation warning message.  To temporarily disable
+  deprecation warnings, configure with `-D
+  TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE=IGNORE` (see build reference entry
+  for `TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE` for more details).
+
 ## 2022-10-20:
 
 * **Changed:** Disabling an external package/TPL will now disable any

@@ -367,7 +367,7 @@ function(unittest_tribits_misc)
   tribits_filter_and_assert_categories(CATEGORIES)
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE FALSE)
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "DEPRECATION;The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.")
+    "DEPRECATION;The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.;${TRIBITS_DEPRECATE_MSG_LAST_PART}")
   unittest_compare_const(CATEGORIES "BASIC;HEAVY;NIGHTLY")
 
   message("Testing tribits_filter_and_assert_categories( ... HEAVY)")
@@ -1768,7 +1768,7 @@ function(unittest_tribits_add_test_categories)
   tribits_add_test( ${EXEN} CATEGORIES WEEKLY )
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "DEPRECATION;The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.;-- PackageA_SomeExec: Added test (HEAVY, PROCESSORS=1)!"
+    "DEPRECATION;The test category 'WEEKLY' is deprecated; and is replaced with 'HEAVY'.  Please change to use 'HEAVY' instead.;${TRIBITS_DEPRECATE_MSG_LAST_PART};-- PackageA_SomeExec: Added test (HEAVY, PROCESSORS=1)!"
     )
   unittest_compare_const(
     TRIBITS_ADD_TEST_ADD_TEST_INPUT
@@ -4615,7 +4615,7 @@ function(unittest_tribits_deprecated)
   tribits_deprecated("This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE unset")
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "DEPRECATION;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE unset"
+    "DEPRECATION;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE unset;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
   message("Testing tribits_deprecated() with multiple message arguments")
@@ -4625,7 +4625,7 @@ function(unittest_tribits_deprecated)
     " multiple message arguments")
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "DEPRECATION;This is a deprecation message with; multiple message arguments"
+    "DEPRECATION;This is a deprecation message with; multiple message arguments;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
   message("Testing tribits_deprecated() with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to empty string")
@@ -4634,7 +4634,7 @@ function(unittest_tribits_deprecated)
   tribits_deprecated("This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to empty string")
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "DEPRECATION;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to empty string"
+    "DEPRECATION;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to empty string;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
   message("Testing tribits_deprecated() with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to DEPRECATION")
@@ -4643,7 +4643,7 @@ function(unittest_tribits_deprecated)
   tribits_deprecated("This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to DEPRECATION")
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "DEPRECATION;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to DEPRECATION"
+    "DEPRECATION;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to DEPRECATION;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
   message("Testing tribits_deprecated() with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to AUTHOR_WARNING")
@@ -4652,7 +4652,7 @@ function(unittest_tribits_deprecated)
   tribits_deprecated("This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to AUTHOR_WARNING")
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "AUTHOR_WARNING;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to AUTHOR_WARNING"
+    "AUTHOR_WARNING;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to AUTHOR_WARNING;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
   message("Testing tribits_deprecated() with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to SEND_ERROR")
@@ -4661,7 +4661,7 @@ function(unittest_tribits_deprecated)
   tribits_deprecated("This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to SEND_ERROR")
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "SEND_ERROR;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to SEND_ERROR"
+    "SEND_ERROR;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to SEND_ERROR;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
   message("Testing tribits_deprecated() with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to FATAL_ERROR")
@@ -4670,7 +4670,7 @@ function(unittest_tribits_deprecated)
   tribits_deprecated("This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to FATAL_ERROR")
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "FATAL_ERROR;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to FATAL_ERROR"
+    "FATAL_ERROR;This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to FATAL_ERROR;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
   message("Testing tribits_deprecated() with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to INVALID")
@@ -4679,7 +4679,7 @@ function(unittest_tribits_deprecated)
   tribits_deprecated("This is a deprecation message with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to INVALID")
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "FATAL_ERROR;Invalid value for TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE: 'INVALID'"
+    "FATAL_ERROR;Invalid value for; TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE=;'INVALID'"
     )
 
 endfunction()
@@ -4699,7 +4699,7 @@ function(unittest_tribits_deprecated_command)
   tribits_deprecated_command(tribits_some_deprecated_command)
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "DEPRECATION;TriBITS command 'tribits_some_deprecated_command' is deprecated."
+    "DEPRECATION;TriBITS command 'tribits_some_deprecated_command' is deprecated.;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
   message("Testing tribits_deprecated_command() with TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE set to AUTHOR_WARNING")
@@ -4708,7 +4708,7 @@ function(unittest_tribits_deprecated_command)
   tribits_deprecated_command(tribits_some_other_deprecated_command)
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "AUTHOR_WARNING;TriBITS command 'tribits_some_other_deprecated_command' is deprecated."
+    "AUTHOR_WARNING;TriBITS command 'tribits_some_other_deprecated_command' is deprecated.;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
   message("Testing tribits_deprecated_command() with a message")
@@ -4719,7 +4719,7 @@ function(unittest_tribits_deprecated_command)
     )
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "DEPRECATION;TriBITS command 'tribits_another_deprecated_command' is deprecated.\n\nUse tribits_some_new_command instead."
+    "DEPRECATION;TriBITS command 'tribits_another_deprecated_command' is deprecated.\n\nUse tribits_some_new_command instead.;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
   message("Testing tribits_deprecated_command() with multiple MESSAGE arguments")
@@ -4731,7 +4731,7 @@ function(unittest_tribits_deprecated_command)
     )
   unittest_compare_const(
     MESSAGE_WRAPPER_INPUT
-    "DEPRECATION;TriBITS command 'tribits_yet_another_deprecated_command' is deprecated.\n\nThis is a deprecation message with; multiple arguments."
+    "DEPRECATION;TriBITS command 'tribits_yet_another_deprecated_command' is deprecated.\n\nThis is a deprecation message with; multiple arguments.;${TRIBITS_DEPRECATE_MSG_LAST_PART}"
     )
 
 endfunction()
@@ -4755,6 +4755,11 @@ set( TRIBITS_ADD_TEST_ADD_TEST_UNITTEST TRUE )
 
 # Capture the add_test() arguments for tribits_add_test().
 set( TRIBITS_ADD_TEST_ADD_TEST_CAPTURE TRUE )
+
+# String for common part of tribits_deprecate() message
+set(TRIBITS_DEPRECATE_MSG_LAST_PART
+  "\n\nNOTE: To Make these warnings go away, set -D"
+  " TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE=IGNORE (see the build reference guide).")
 
 message("\n***")
 message("*** Testing misc TriBITS functions and macros")
