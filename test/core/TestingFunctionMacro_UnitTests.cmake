@@ -94,8 +94,11 @@ include(AppendStringVar)
 function(unittest_append_string_var)
 
   message("\n***")
-  message("*** Testing append_string_var()")
+  message("*** Testing append_string_var() (deprecated)")
   message("***\n")
+
+  # Suppress deprecation warnings
+  set(TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE IGNORE)
 
   message("append_string_var(): Testing simple concatenation")
   set(SOME_STRING_VAR "")

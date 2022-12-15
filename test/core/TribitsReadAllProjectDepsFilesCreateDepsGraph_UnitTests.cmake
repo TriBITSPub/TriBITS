@@ -195,6 +195,9 @@ function(unitest_tribits_set_ss_for_dev_mode_backward_compatible)
   message("*** Testing tribits_set_ss_for_dev_mode() backward compatibility")
   message("***\n")
 
+  # Suppress deprecation warnings
+  set(TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE IGNORE)
+
   message("\nTest in dev mode, ST off ...")
   set(${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE ON)
   set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
