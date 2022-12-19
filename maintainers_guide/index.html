@@ -437,10 +437,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date</dt>
-<dd class="field-even"><p>2022-12-13</p>
+<dd class="field-even"><p>2022-12-19</p>
 </dd>
 <dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>tribits_start-3162-g07aeef0f</p>
+<dd class="field-odd"><p>tribits_start-3173-g64309c90</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1480,6 +1480,8 @@ include(&quot;${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake&quot;)
 # CMake requires that you declare the CMake project in the top-level file and
 # not in an include file :-(
 project(${PROJECT_NAME} NONE)
+
+set(TRIBITS_HIDE_DEPRECATED_INCLUDE_DIRECTORIES_OVERRIDE  TRUE)
 
 #
 # B) Pull in the TriBITS system and execute
@@ -2997,9 +2999,9 @@ tribits_pkg_export_cache_var(${PACKAGE_NAME}_SPECIAL_VALUE)
 
 tribits_configure_file(${PACKAGE_NAME}_config.h)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+tribits_include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+tribits_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 tribits_add_library(pws_a
   SOURCES A.cpp
   HEADERS A.hpp ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_config.h
@@ -9894,6 +9896,7 @@ a given TriBITS project are:</p>
 <li><p><a class="reference internal" href="#cmake-install-rpath-use-link-path">CMAKE_INSTALL_RPATH_USE_LINK_PATH</a></p></li>
 <li><p><a class="reference internal" href="#mpi-exec-max-numprocs">MPI_EXEC_MAX_NUMPROCS</a></p></li>
 <li><p><a class="reference internal" href="#pythoninterp-find-version">PythonInterp_FIND_VERSION</a></p></li>
+<li><p><a class="reference internal" href="#tribits-handle-tribits-deprecated-code">TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE</a></p></li>
 </ul>
 <p>These options are described below.</p>
 <p id="project-name-assert-correct-tribits-usage"><strong>${PROJECT_NAME}_ASSERT_CORRECT_TRIBITS_USAGE</strong></p>
@@ -10561,6 +10564,17 @@ Python by configuring with, for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">PythonInterp_FIND_VERSION</span><span class="o">=</span><span class="s2">&quot;3.6.2&quot;</span>
 </pre></div>
 </div>
+</div></blockquote>
+<p id="tribits-handle-tribits-deprecated-code"><strong>TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE</strong></p>
+<blockquote>
+<div><p>Determines how the function <a class="reference internal" href="#tribits-deprecated">tribits_deprecated()</a> behaves.  To change the
+default behavor, such as call <code class="docutils literal notranslate"><span class="pre">message(FATAL_ERROR</span> <span class="pre">...)</span></code>, set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="n">TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE_DEFAULT</span>  <span class="n">FATAL_ERROR</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>in the project’s <a class="reference internal" href="#projectdir-projectname-cmake">&lt;projectDir&gt;/ProjectName.cmake</a> file, or
+<a class="reference internal" href="#projectdir-cmakelists-txt">&lt;projectDir&gt;/CMakeLists.txt</a> file, or on the individual package basis in
+its <a class="reference internal" href="#packagedir-cmakelists-txt">&lt;packageDir&gt;/CMakeLists.txt</a> file.</p>
 </div></blockquote>
 </section>
 <section id="tribits-macros-and-functions">
@@ -14243,7 +14257,7 @@ never get added to <code class="docutils literal notranslate"><span class="pre">
 and one must be very careful to understand how CPack will use these regexes
 to match files that get excluded from the tarball.  For more details, see
 <a class="reference internal" href="#creating-source-distributions">Creating Source Distributions</a>.</p>
-<p>In: core/package_arch/TribitsGlobalMacros.cmake:2496</p>
+<p>In: core/package_arch/TribitsGlobalMacros.cmake:2500</p>
 </section>
 <section id="tribits-extpkg-define-dependencies">
 <h3><a class="toc-backref" href="#id145">tribits_extpkg_define_dependencies()</a><a class="headerlink" href="#tribits-extpkg-define-dependencies" title="Permalink to this heading"></a></h3>
@@ -14594,12 +14608,12 @@ headers will not get installed.</p>
 </section>
 <section id="tribits-include-directories">
 <h3><a class="toc-backref" href="#id154">tribits_include_directories()</a><a class="headerlink" href="#tribits-include-directories" title="Permalink to this heading"></a></h3>
-<p>This function is to override the standard behavior of the built-in CMake
-<code class="docutils literal notranslate"><span class="pre">include_directories()</span></code> command.</p>
+<p>This function overrides the standard behavior of the built-in CMake
+<code class="docutils literal notranslate"><span class="pre">include_directories()</span></code> command for special behavior for installation
+testing.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_include_directories</span><span class="p">(</span>
-  <span class="p">[</span><span class="n">REQUIRED_DURING_INSTALLATION_TESTING</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">dir0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">dir1</span><span class="o">&gt;</span> <span class="o">...</span>
-  <span class="p">)</span>
+  <span class="p">[</span><span class="n">REQUIRED_DURING_INSTALLATION_TESTING</span><span class="p">]</span> <span class="o">&lt;</span><span class="n">dir0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">dir1</span><span class="o">&gt;</span> <span class="o">...</span> <span class="p">)</span>
 </pre></div>
 </div>
 <p>If specified, <code class="docutils literal notranslate"><span class="pre">REQUIRED_DURING_INSTALLATION_TESTING</span></code> can appear anywhere
@@ -14611,10 +14625,10 @@ during installation testing (see <a class="reference internal" href="#installati
 Testing</a>). Normally we want the include directories to be handled as cmake
 usually does.  However during TriBITS installation testing we do not want
 most of the include directories to be used as the majority of the files
-should come from the installation we are building against.  There is an
-exception to this and that is when there are test only headers that are
-needed.  For that case <code class="docutils literal notranslate"><span class="pre">REQUIRED_DURING_INSTALLATION_TESTING</span></code> must be
-passed in to ensure the include paths are added for installation testing.</p>
+should come from the installation we are building against.  The exception is
+when there are test only headers that are needed.  For that case
+<code class="docutils literal notranslate"><span class="pre">REQUIRED_DURING_INSTALLATION_TESTING</span></code> must be passed in to ensure the
+include paths are added for installation testing.</p>
 <p>In: core/package_arch/TribitsIncludeDirectories.cmake:44</p>
 </section>
 <section id="tribits-pkg-export-cache-var">
@@ -16244,22 +16258,26 @@ timer_print_rel_time(${REAL_EXPENSIVE_START} ${REAL_EXPENSIVE_END}
 </section>
 <section id="tribits-deprecated">
 <h3><a class="toc-backref" href="#id215">tribits_deprecated()</a><a class="headerlink" href="#tribits-deprecated" title="Permalink to this heading"></a></h3>
-<p>Notify the user that some TriBITS functionality is deprecated. Depending on
-the value of TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE, this can do one of
-several things:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">DEPRECATION</span></code> or empty string: issue a CMake <code class="docutils literal notranslate"><span class="pre">DEPRECATION</span></code> message and
-continue.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AUTHOR_WARNING</span></code>: issue a CMake <code class="docutils literal notranslate"><span class="pre">AUTHOR_WARNING</span></code> message and continue.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">SEND_ERROR</span></code>: issue a CMake <code class="docutils literal notranslate"><span class="pre">SEND_ERROR</span></code> message and continue.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">FATAL_ERROR</span></code>: issue a CMake <code class="docutils literal notranslate"><span class="pre">FATAL_ERROR</span></code> message and exit.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">IGNORE</span></code>: issue no message and continue.</p></li>
-</ul>
+<p>Notify the user that some TriBITS functionality is deprecated.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_deprecated</span><span class="p">(</span><span class="o">&lt;</span><span class="n">message</span><span class="o">&gt;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In: core/utils/TribitsDeprecatedHelpers.cmake:56</p>
+<p>Depending on the value of the cache variable
+<a class="reference internal" href="#tribits-handle-tribits-deprecated-code">TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE</a>, this can do one of several
+things:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">DEPRECATION</span></code> or empty string (or variable not defined): Issue a CMake</dt><dd><p><code class="docutils literal notranslate"><span class="pre">DEPRECATION</span></code> message and continue.</p>
+</dd>
+</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AUTHOR_WARNING</span></code>: Issue a CMake <code class="docutils literal notranslate"><span class="pre">AUTHOR_WARNING</span></code> message and continue.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SEND_ERROR</span></code>: Issue a CMake <code class="docutils literal notranslate"><span class="pre">SEND_ERROR</span></code> message and continue.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FATAL_ERROR</span></code>: Issue a CMake <code class="docutils literal notranslate"><span class="pre">FATAL_ERROR</span></code> message and exit.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IGNORE</span></code>: Issue no message and continue.</p></li>
+</ul>
+<p>In: core/utils/TribitsDeprecatedHelpers.cmake:53</p>
 </section>
 <section id="tribits-deprecated-command">
 <h3><a class="toc-backref" href="#id216">tribits_deprecated_command()</a><a class="headerlink" href="#tribits-deprecated-command" title="Permalink to this heading"></a></h3>
@@ -16271,7 +16289,7 @@ be the first command called at the top of any deprecated function or macro.</p>
   <span class="p">)</span>
 </pre></div>
 </div>
-<p>In: core/utils/TribitsDeprecatedHelpers.cmake:88</p>
+<p>In: core/utils/TribitsDeprecatedHelpers.cmake:94</p>
 </section>
 <section id="tribits-create-reverse-list">
 <h3><a class="toc-backref" href="#id217">tribits_create_reverse_list()</a><a class="headerlink" href="#tribits-create-reverse-list" title="Permalink to this heading"></a></h3>
