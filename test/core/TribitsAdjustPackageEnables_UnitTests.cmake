@@ -379,6 +379,9 @@ function(unittest_enable_all_st_generate_export_deps_only_ex2package1_se_pkgs)
   message("*** Test generation of export dependencies only up to Ex2Package1 with deprecated var <Projecdt>_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES")
   message("***\n")
 
+  # Suppress deprecation warnings
+  set(TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE IGNORE)
+
   # Debugging
   #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
   #set(${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES ON)
@@ -387,7 +390,7 @@ function(unittest_enable_all_st_generate_export_deps_only_ex2package1_se_pkgs)
   set(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE ON)
   set(${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES ON)
   set(${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
-    Ex2Package1 RTOp)
+    Ex2Package1 RTOp)  # Deprecated!
 
   unittest_helper_read_and_process_packages()
 

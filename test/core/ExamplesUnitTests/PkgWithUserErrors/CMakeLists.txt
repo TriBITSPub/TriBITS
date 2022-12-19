@@ -4,7 +4,7 @@
 ###############################################################
 if(NOT ${PACKAGE_NAME}_turn_off_passing_call_order)
   tribits_package(PkgWithUserErrors)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  tribits_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   tribits_add_library(
     pkgwithusererrors
     HEADERS PkgWithUserErrorsLib.hpp
@@ -21,7 +21,7 @@ endif()
 if(${PACKAGE_NAME}_no_POSTPROCESS_call)
   message("User forgets to call TRIBITS_PACKAGE_POSTPROCESS")
   tribits_package(PkgWithUserErrors)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  tribits_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   tribits_add_library(
     pkgwithusererrors
     HEADERS PkgWithUserErrorsLib.hpp
@@ -36,7 +36,7 @@ endif()
 ###############################################################
 if(${PACKAGE_NAME}_ADD_LIBRARY_with_no_package_init)
   message("")
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  tribits_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   tribits_add_library(
     pkgwithusererrors
     HEADERS PkgWithUserErrorsLib.hpp
@@ -52,7 +52,7 @@ endif()
 ###############################################################
 if(${PACKAGE_NAME}_ADD_EXECUTABLE_with_no_package_init)
   message("User forgets to call TRIBITS_PACKAGE before adding exe")
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  tribits_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   tribits_add_executable(
     usererrorexec
     SOURCES  PkgWithUserErrorsEX.cpp
@@ -88,7 +88,7 @@ endif()
 if(${PACKAGE_NAME}_ADD_LIBRARY_after_POSTPROCESS)
   message("adding a library after POSTPROCESS")
   tribits_package(PkgWithUserErrors)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  tribits_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   tribits_package_postprocess()
   tribits_add_library(
     pkgwithusererrors
@@ -104,7 +104,7 @@ endif()
 if(${PACKAGE_NAME}_ADD_EXECUTABLE_after_POSTPROCESS)
   message("adding an exe after POSTPROCESS")
   tribits_package(PkgWithUserErrors)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  tribits_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   tribits_package_postprocess()
   tribits_add_executable(
     usererrorexec
@@ -130,7 +130,7 @@ endif()
 if(${PACKAGE_NAME}_UNPARSED_ARGUMENTS_ADD_LIBRARY)
   message("unparsed arguments in ADD_LIBRARY")
   tribits_package(PkgWithUserErrors)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  tribits_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   message("building library")
   tribits_add_library(
     pkgwithusererrors
@@ -149,7 +149,7 @@ endif()
 if(${PACKAGE_NAME}_UNPARSED_ARGUMENTS_ADD_EXECUTABLE)
   message("unparsed arguments in ADD_EXECUTABLE")
   tribits_package(PkgWithUserErrors)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  tribits_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   message("building executable")
   tribits_add_executable(
     usererrorexec

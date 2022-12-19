@@ -19,7 +19,7 @@ if(NOT subpackageA_turn_off_passing_call_order)
   # C) Add the libraries, tests, and examples
   #
 
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  tribits_include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   tribits_add_library(pwswue_a
     SOURCES A.cpp
     HEADERS A.hpp
