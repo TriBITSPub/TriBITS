@@ -40,17 +40,17 @@
 
 # @MACRO: set_and_inc_dirs()
 #
-# Set a variable to an include directory and call ``include_directories()``
-# (removes boiler-plate code).
+# Set a variable to an include directory and call
+# `tribits_include_directories()`_ (removes boiler-plate code).
 #
 # Usage:
 #
 #   set_and_inc_dirs(<dirVarName> <includeDir>)
 #
 # On output, this sets ``<dirVarName>`` to ``<includeDir>`` in the local scope
-# and calls ``include_directories(<includeDir>)``.
+# and calls ``tribits_include_directories(<includeDir>)``.
 #
 macro(set_and_inc_dirs  DIR_VAR_NAME  INCLUDE_DIR)
   set(${DIR_VAR_NAME} ${INCLUDE_DIR})
-  include_directories(${${DIR_VAR_NAME}})
+  tribits_include_directories(${${DIR_VAR_NAME}})
 endmacro()
