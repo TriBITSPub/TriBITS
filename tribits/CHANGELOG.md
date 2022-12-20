@@ -2,6 +2,13 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-12-20:
+
+* **Deprecated:** The macro `set_and_inc_dirs()` is deprecated and replaced by
+  `tribits_set_and_inc_dirs()`.  Use the script
+  `TriBITS/refactoring/replace_set_and_inc_dirs_r.sh` to update
+  `CMakeLists.txt` files.
+
 ## 2022-11-03:
 
 * **Deprecated:** The long-deprecated TriBITS function override
