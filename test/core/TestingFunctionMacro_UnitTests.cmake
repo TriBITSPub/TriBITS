@@ -4189,6 +4189,7 @@ function(unittest_tribits_add_executable_and_test)
     KEYWORDS keyword1 keyword2
     DEFINES -DSOMEDEFINE2
     TARGET_DEFINES -DSOMEDEFINE1
+    RUN_SERIAL
     ADD_DIR_TO_NAME
     LINKER_LANGUAGE C
     NUM_MPI_PROCS numProcs
@@ -4216,7 +4217,7 @@ function(unittest_tribits_add_executable_and_test)
     )
   unittest_compare_const(
     TRIBITS_ADD_TEST_CAPTURE_ARGS
-    "execName;COMM;serial;mpi;CATEGORIES;category1;category2;HOST;host1;host2;XHOST;host1;host2;HOSTTYPE;hosttype1;hosttype2;XHOSTTYPE;hosttype1;hosttype2;EXCLUDE_IF_NOT_TRUE;var1;var2;NOEXEPREFIX;NOEXESUFFIX;NAME;testName;NAME_POSTFIX;testNamePostfix;DIRECTORY;dir;KEYWORDS;keyword1;keyword2;NUM_MPI_PROCS;numProcs;PASS_REGULAR_EXPRESSION;regex1;regex2;FAIL_REGULAR_EXPRESSION;regex1;regex2;ENVIRONMENT;env1=envval1;env2=envval2;DISABLED;Disable this test because I said;STANDARD_PASS_OUTPUT;WILL_FAIL;TIMEOUT;11.5;LIST_SEPARATOR;<semicolon>;ADD_DIR_TO_NAME;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES"
+    "execName;COMM;serial;mpi;CATEGORIES;category1;category2;HOST;host1;host2;XHOST;host1;host2;HOSTTYPE;hosttype1;hosttype2;XHOSTTYPE;hosttype1;hosttype2;EXCLUDE_IF_NOT_TRUE;var1;var2;NOEXEPREFIX;NOEXESUFFIX;NAME;testName;NAME_POSTFIX;testNamePostfix;DIRECTORY;dir;KEYWORDS;keyword1;keyword2;NUM_MPI_PROCS;numProcs;PASS_REGULAR_EXPRESSION;regex1;regex2;FAIL_REGULAR_EXPRESSION;regex1;regex2;ENVIRONMENT;env1=envval1;env2=envval2;DISABLED;Disable this test because I said;RUN_SERIAL;STANDARD_PASS_OUTPUT;WILL_FAIL;TIMEOUT;11.5;LIST_SEPARATOR;<semicolon>;ADD_DIR_TO_NAME;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES"
     )
   # NOTE: Above, we input the list in reverse order to prove that the
   # arguments are handled correctly internally.
