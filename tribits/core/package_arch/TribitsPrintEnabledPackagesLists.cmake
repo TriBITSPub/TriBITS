@@ -61,7 +61,10 @@ function(tribits_print_enables_before_adjust_package_enables)
   tribits_print_tpl_list_enable_status(
     "\nExplicitly enabled external packages/TPLs on input (by user)" ON FALSE)
   tribits_print_tpl_list_enable_status(
-    "\nExplicitly disabled external packages/TPLs on input (by user or by default)" OFF FALSE)
+    "\nExplicitly disabled external packages/TPLs on input (by user or by default)"
+    OFF FALSE)
+  tribits_print_package_build_status("\nInitial package build status:\n"
+    "-- Initial: " PRINT_ALL)
 endfunction()
 
 
@@ -89,6 +92,8 @@ function(tribits_print_enables_after_adjust_package_enables)
     "\nFinal set of enabled external packages/TPLs" ON FALSE)
   tribits_print_tpl_list_enable_status(
     "\nFinal set of non-enabled external packages/TPLs" OFF TRUE)
+  tribits_print_package_build_status("\nFinal package build status (enabled only):\n"
+    "-- Final: " PRINT_ONLY_ENABLED)
 endfunction()
 
 
@@ -181,5 +186,31 @@ function(tribits_print_prefix_string_and_list  DOCSTRING   LIST_TO_PRINT)
     message("${DOCSTRING}:  ${LIST_TO_PRINT_STR} ${NUM_ELEMENTS}")
   else()
     message("${DOCSTRING}:  ${NUM_ELEMENTS}")
+  endif()
+endfunction()
+
+
+# Print out the `<Package>_PACKAGE_BUILD_STATUS` vars
+function(tribits_print_package_build_status  summaryHeaderStr  prefixStr
+    printEnabledOpt
+  )
+  if (printEnabledOpt STREQUAL "PRINT_ALL")
+    set(printAll ON)
+  elseif (printEnabledOpt STREQUAL "PRINT_ONLY_ENABLED")
+    set(printAll OFF)
+  else()
+    message(FATAL_ERROR
+      "Error, invalid value for printEnabledOpt='${printEnabledOpt}'")
+  endif()
+
+  if (${PROJECT_NAME}_DUMP_PACKAGE_BUILD_STATUS)
+    message("${summaryHeaderStr}")
+    foreach(packageName  IN LISTS  ${PROJECT_NAME}_DEFINED_PACKAGES)
+    tribits_get_package_enable_status(${packageName}  packageEnable  "")
+      if (printAll OR packageEnable)
+        message("${prefixStr}${packageName}_PACKAGE_BUILD_STATUS="
+	  "${${packageName}_PACKAGE_BUILD_STATUS}")
+      endif()
+    endforeach()
   endif()
 endfunction()
