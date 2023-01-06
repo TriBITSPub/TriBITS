@@ -568,8 +568,8 @@ create_reduced_dependency_handling_test_case(
     -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
     -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "-- BLAS_FORWARD_LIB_DEFINED_DEPENDENCIES: LAPACK.R."
-    "-- LAPACK_LIB_DEFINED_DEPENDENCIES: BLAS.R."
+    "-- BLAS_FORWARD_LIB_DEFINED_DEPENDENCIES: LAPACK.O."
+    "-- LAPACK_LIB_DEFINED_DEPENDENCIES: BLAS.O."
     "Explicitly enabled external packages/TPLs on input [(]by user[)]:  0"
     "Explicitly disabled external packages/TPLs on input [(]by user or by default[)]:  0"
     "-- Setting TPL_ENABLE_LAPACK=ON because DependsOnLAPACK has a required dependence on LAPACK"
@@ -599,9 +599,36 @@ create_reduced_dependency_handling_test_case(
     "Final set of enabled external packages/TPLs:  BLAS LAPACK 2"
     "Processing enabled external package/TPL: BLAS [(]enabled explicitly, disable with -DTPL_ENABLE_BLAS=OFF[)]"
     "Processing enabled external package/TPL: LAPACK [(]enabled by DependsOnLAPACK, disable with -DTPL_ENABLE_LAPACK=OFF[)]"
-    "-- LAPACK_LIB_ENABLED_DEPENDENCIES: BLAS.R."
+    "-- LAPACK_LIB_ENABLED_DEPENDENCIES: BLAS.O."
     "-- DependsOnLAPACK_LIB_ENABLED_DEPENDENCIES: LAPACK.R."
   )
+
+
+create_reduced_dependency_handling_test_case(
+  IndirectTplDependency_ExplicitDisableBLAS
+  ARGS
+    -DTrilinos_EXTRA_REPOSITORIES=extraRepos/DependsOnLAPACK
+    -DTPL_ENABLE_BLAS=OFF
+    -DTrilinos_ENABLE_DependsOnLAPACK=ON
+    -DTrilinos_DUMP_PACKAGE_DEPENDENCIES:BOOL=ON
+    -DTrilinos_DUMP_FORWARD_PACKAGE_DEPENDENCIES:BOOL=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "-- BLAS_FORWARD_LIB_DEFINED_DEPENDENCIES: LAPACK.O."
+    "-- LAPACK_LIB_DEFINED_DEPENDENCIES: BLAS.O."
+    "Explicitly enabled external packages/TPLs on input [(]by user[)]:  0"
+    "Explicitly disabled external packages/TPLs on input [(]by user or by default[)]:  BLAS 1"
+    "-- Setting TPL_ENABLE_LAPACK=ON because DependsOnLAPACK has a required dependence on LAPACK"
+    "-- Setting DependsOnLAPACK_ENABLE_LAPACK=ON since Trilinos_ENABLE_DependsOnLAPACK=ON AND TPL_ENABLE_LAPACK=ON"
+    "Final set of enabled packages:  DependsOnLAPACK 1"
+    "Final set of enabled external packages/TPLs:  LAPACK 1"
+    "Final set of non-enabled external packages/TPLs:  .* BLAS .*"
+    "-- LAPACK: No enabled dependencies"
+    "-- DependsOnLAPACK_LIB_ENABLED_DEPENDENCIES: LAPACK.R."
+  )
+# NOTE: The above test ensures that the explicit disable of an upstream TPL
+# does not implicitly disable a downstream TPL (see TriBITSPub/TriBITS#557).
+# This was breaking use cases where people were enabling Netcdf but disabling
+# HDF5 (and that is a valid configuration when Netcdf is built without HDF5).
 
 
 #####################################################################
@@ -827,9 +854,6 @@ create_dependency_handling_test_case(
     "Explicitly enabled top-level packages on input .by user.:  Zoltan 1"
     "Explicitly disabled top-level packages on input .by user or by default.:  Stokhos 1"
     "Explicitly disabled external packages/TPLs on input .by user or by default.:  MPI BLAS 2"
-    "-- Setting TPL_ENABLE_LAPACK=OFF because LAPACK has a required library dependence on disabled package BLAS"
-    "-- Setting TPL_ENABLE_SuperLUDist=OFF because SuperLUDist has a required library dependence on disabled package BLAS"
-    "-- Setting TPL_ENABLE_SuperLU=OFF because SuperLU has a required library dependence on disabled package BLAS"
     "-- Setting Trilinos_ENABLE_Teuchos=OFF because Teuchos has a required library dependence on disabled package BLAS"
     "-- Setting Trilinos_ENABLE_Epetra=OFF because Epetra has a required library dependence on disabled package BLAS"
     "-- Setting Trilinos_ENABLE_TrilinosFramework=ON"
@@ -837,6 +861,7 @@ create_dependency_handling_test_case(
     "Final set of enabled packages:  TrilinosFramework Zoltan Shards 3"
     "Final set of non-enabled top-level packages:  Teuchos RTOp Epetra Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 21"
     "Final set of non-enabled packages:  Teuchos RTOp Epetra Triutils Tpetra EpetraExt Stokhos Sacado ThyraCoreLibs ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer 27"
+    "Final set of enabled external packages/TPLs:  0"
   )
 # Above test makes sure that TRUE/FALSE also processed correctly for enable
 # vars.
@@ -1127,8 +1152,6 @@ create_dependency_handling_test_case(
   EnableZoltan_ZoltanEnableParMETIS_TplDisableParMETIS
   ARGS -DTrilinos_ENABLE_Zoltan=ON -DZoltan_ENABLE_ParMETIS=ON -DTPL_ENABLE_ParMETIS=OFF
   PASS_REGULAR_EXPRESSION_ALL
-    "-- Setting TPL_ENABLE_SuperLUDist=OFF because SuperLUDist has a required library dependence on disabled package ParMETIS"
-    "-- Setting TPL_ENABLE_SuperLU=OFF because SuperLU has a required library dependence on disabled package ParMETIS"
     "-- NOTE: Setting Zoltan_ENABLE_ParMETIS=OFF which was ON because Zoltan has an optional library dependence on disabled package ParMETIS"
     "Final set of enabled external packages/TPLs:  0"
   )

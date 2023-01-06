@@ -2,6 +2,14 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2023-01-06:
+
+* **Changed:** Changed all TPL dependencies back to 'Optional' so that
+  disabling an external package/TPL will **not** disable any downstream
+  external packages/TPLs that list a dependency on that external package/TPL.
+  This undoes the change on [2022-10-20](#2022-10-20) and restores backward
+  compatibility to the behavior before that change.
+
 ## 2022-12-20:
 
 * **Deprecated:** The macro `set_and_inc_dirs()` is deprecated and replaced by
