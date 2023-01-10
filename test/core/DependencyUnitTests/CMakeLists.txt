@@ -1479,6 +1479,24 @@ create_dependency_handling_test_case(
 
 
 create_dependency_handling_test_case(
+  preCopyrightTrilinos_ShowInvalidPackageNameAndTplNameError_AssertMissingPackagesOn
+  ARGS
+    -DSHOW_INVALID_PACKAGE_NAME_ERROR=ON
+    -DSHOW_INVALID_TPL_NAME_ERROR=ON
+    -DTrilinos_ASSERT_MISSING_PACKAGES=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "CMake Deprecation Warning at .*/MessageWrapper.cmake:.+ [(]message[)]:"
+    "  Warning, Trilinos_ASSERT_MISSING_PACKAGES='ON' is set and is no longer"
+    "  supported! Please set Trilinos_ASSERT_DEFINED_DEPENDENCIES instead [(]see"
+    "  build ref[)]!"
+    "CMake Error at .*/TribitsReadDepsFilesCreateDepsGraph.cmake:.+ [(]message[)]:"
+    "Error, the package 'Zlib' is listed as a dependency of the package 'Zoltan'"
+    "ignore/disable the undefined package 'Zlib', set the cache variable"
+    "Trilinos_ASSERT_DEFINED_DEPENDENCIES=IGNORE[.]"
+  )
+
+
+create_dependency_handling_test_case(
   preCopyrightTrilinos_ShowInvalidPackageSelfDependency
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DSHOW_SELF_PACKAGE_DEPENDENCY_ERROR=ON
