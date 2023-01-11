@@ -2,6 +2,15 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2023-01-10:
+
+* **Added:** Added back support for deprecated variable
+  `<Project>_ASSERT_MISSING_PACKAGES` that was removed
+  [2022-10-11](#2022-10-11).  When `<Project>_ASSERT_MISSING_PACKAGES` is set
+  to a non-null value, it overrides the default value for
+  `<Project>_ASSERT_DEFINED_DEPENDENCIES` (but setting
+  `<Project>_ASSERT_DEFINED_DEPENDENCIES` in the cache takes precedence).
+
 ## 2023-01-06:
 
 * **Changed:** Changed all TPL dependencies back to 'Optional' so that
