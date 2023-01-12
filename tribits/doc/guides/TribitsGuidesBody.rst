@@ -1798,6 +1798,17 @@ defined:
     what contexts the package is enabled or not for testing-related purposes
     (see `Nested Layers of TriBITS Project Testing`_)
 
+  .. _${PACKAGE_NAME}_SUBPACKAGES:
+
+  ``${PACKAGE_NAME}_SUBPACKAGES``
+
+    Defines the list of subpackage names for a top-level parent package.  This
+    gives the unique subpackage name without the parent package prefix.  For
+    example, the `ReducedMockTrilinos`_ package ``Thyra`` has the subpackages
+    ``CoreLibs``, ``GoodStuff``, etc. (which forms the full package names
+    ``ThyraCoreLibs``, ``ThyraGoodStuff``, etc.).  If a top-level package is
+    not broken down into subpackages, then this list is empty.
+
 .. _TriBITS Package Cache Variables:
 
 In addition, the following user-settable **TriBITS Package Cache Variables**
