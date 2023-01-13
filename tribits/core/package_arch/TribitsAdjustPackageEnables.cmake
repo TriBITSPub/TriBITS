@@ -276,8 +276,7 @@ endmacro()
 
 # @MACRO: tribits_sweep_backward_enable_upstream_packages()
 #
-# Sweep backwards and enable required and (optionally) optional upstream
-# packages.
+# Sweep backwards and enable required (and optional) upstream packages.
 #
 # This sets the final value for:
 #
