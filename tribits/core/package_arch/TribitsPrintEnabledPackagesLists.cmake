@@ -80,10 +80,10 @@ endfunction()
 function(tribits_print_enables_after_adjust_package_enables)
   tribits_print_prefix_string_and_list(
     "\nFinal set of enabled top-level packages"
-    "${${PROJECT_NAME}_ENABLED_INTERNAL_TOPLEVEL_PACKAGES}")
+    ${PROJECT_NAME}_ENABLED_INTERNAL_TOPLEVEL_PACKAGES)
   tribits_print_prefix_string_and_list(
     "\nFinal set of enabled packages"
-    "${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES}")
+    ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
   tribits_print_internal_toplevel_package_list_enable_status(
     "\nFinal set of non-enabled top-level packages" OFF TRUE)
   tribits_print_internal_package_list_enable_status(
@@ -131,7 +131,7 @@ function(tribits_print_internal_package_list_enable_status
       internalPackagesEnableStatusList  "")
   endif()
   tribits_print_prefix_string_and_list("${DOCSTRING}"
-    "${internalPackagesEnableStatusList}")
+    internalPackagesEnableStatusList)
 endfunction()
 
 
@@ -151,7 +151,7 @@ function(tribits_print_tpl_list_enable_status  DOCSTRING  ENABLED_FLAG  INCLUDE_
     tribits_get_sublist_nonenabled( ${PROJECT_NAME}_DEFINED_TPLS
        tplsEnableStatusList  "")
   endif()
-  tribits_print_prefix_string_and_list("${DOCSTRING}"  "${tplsEnableStatusList}")
+  tribits_print_prefix_string_and_list("${DOCSTRING}"  tplsEnableStatusList)
 endfunction()
 
 
@@ -173,19 +173,19 @@ function(tribits_print_packages_list_enable_status_from_var  PACKAGES_LIST_VAR
     tribits_get_sublist_nonenabled(${PACKAGES_LIST_VAR}
       enableStatusList  "")
   endif()
-  tribits_print_prefix_string_and_list("${DOCSTRING}"  "${enableStatusList}")
+  tribits_print_prefix_string_and_list("${DOCSTRING}"  enableStatusList)
 endfunction()
 
 
 # Print out a list with white-space separators with an initial doc string
 #
-function(tribits_print_prefix_string_and_list  DOCSTRING   LIST_TO_PRINT)
-  string(REPLACE ";" " " LIST_TO_PRINT_STR "${LIST_TO_PRINT}")
-  list(LENGTH  LIST_TO_PRINT  NUM_ELEMENTS)
-  if (NUM_ELEMENTS GREATER "0")
-    message("${DOCSTRING}:  ${LIST_TO_PRINT_STR} ${NUM_ELEMENTS}")
+function(tribits_print_prefix_string_and_list  docString   listNameToPrint)
+  string(REPLACE ";" " " listToPrintStr "${${listNameToPrint}}")
+  list(LENGTH  ${listNameToPrint}  numElements)
+  if (numElements GREATER "0")
+    message("${docString}:  ${listToPrintStr} ${numElements}")
   else()
-    message("${DOCSTRING}:  ${NUM_ELEMENTS}")
+    message("${docString}:  ${numElements}")
   endif()
 endfunction()
 
