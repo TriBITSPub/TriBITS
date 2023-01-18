@@ -515,7 +515,7 @@ macro(enable_only_modified_packages)
   else()
     tribits_print_internal_package_list_enable_status(
       "\nDirectly modified or failing non-disabled packages that need to be tested"
-      ON FALSE )
+      ON NONEMPTY )
   endif()
 
 endmacro()

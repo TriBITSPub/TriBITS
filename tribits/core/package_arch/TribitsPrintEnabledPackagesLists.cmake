@@ -51,18 +51,18 @@ include(TribitsGetEnabledSublists)
 #
 function(tribits_print_enables_before_adjust_package_enables)
   tribits_print_internal_toplevel_package_list_enable_status(
-    "\nExplicitly enabled top-level packages on input (by user)" ON FALSE)
+    "\nExplicitly enabled top-level packages on input (by user)" ON NONEMPTY)
   tribits_print_internal_package_list_enable_status(
-    "\nExplicitly enabled packages on input (by user)" ON FALSE)
+    "\nExplicitly enabled packages on input (by user)" ON NONEMPTY)
   tribits_print_internal_toplevel_package_list_enable_status(
-    "\nExplicitly disabled top-level packages on input (by user or by default)" OFF FALSE)
+    "\nExplicitly disabled top-level packages on input (by user or by default)" OFF NONEMPTY)
   tribits_print_internal_package_list_enable_status(
-    "\nExplicitly disabled packages on input (by user or by default)" OFF FALSE)
+    "\nExplicitly disabled packages on input (by user or by default)" OFF NONEMPTY)
   tribits_print_tpl_list_enable_status(
-    "\nExplicitly enabled external packages/TPLs on input (by user)" ON FALSE)
+    "\nExplicitly enabled external packages/TPLs on input (by user)" ON NONEMPTY)
   tribits_print_tpl_list_enable_status(
     "\nExplicitly disabled external packages/TPLs on input (by user or by default)"
-    OFF FALSE)
+    OFF NONEMPTY)
   tribits_print_package_build_status("\nInitial package build status:\n"
     "-- Initial: " PRINT_ALL)
 endfunction()
@@ -78,20 +78,20 @@ endfunction()
 #   tribits_print_enables_after_adjust_package_enables()
 #
 function(tribits_print_enables_after_adjust_package_enables)
-  tribits_print_prefix_string_and_list(
-    "\nFinal set of enabled top-level packages"
-    ${PROJECT_NAME}_ENABLED_INTERNAL_TOPLEVEL_PACKAGES)
-  tribits_print_prefix_string_and_list(
-    "\nFinal set of enabled packages"
-    ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES)
+  tribits_print_packages_list_enable_status_from_var(
+   ${PROJECT_NAME}_ENABLED_INTERNAL_TOPLEVEL_PACKAGES
+   "\nFinal set of enabled top-level packages" ON NONEMPTY)
+  tribits_print_packages_list_enable_status_from_var(
+    ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES
+    "\nFinal set of enabled packages" ON NONEMPTY)
   tribits_print_internal_toplevel_package_list_enable_status(
-    "\nFinal set of non-enabled top-level packages" OFF TRUE)
+    "\nFinal set of non-enabled top-level packages" OFF INCLUDE_EMPTY)
   tribits_print_internal_package_list_enable_status(
-    "\nFinal set of non-enabled packages" OFF TRUE)
+    "\nFinal set of non-enabled packages" OFF INCLUDE_EMPTY)
   tribits_print_tpl_list_enable_status(
-    "\nFinal set of enabled external packages/TPLs" ON FALSE)
+    "\nFinal set of enabled external packages/TPLs" ON NONEMPTY)
   tribits_print_tpl_list_enable_status(
-    "\nFinal set of non-enabled external packages/TPLs" OFF TRUE)
+    "\nFinal set of non-enabled external packages/TPLs" OFF INCLUDE_EMPTY)
   tribits_print_package_build_status("\nFinal package build status (enabled only):\n"
     "-- Final: " PRINT_ONLY_ENABLED)
 endfunction()
@@ -100,35 +100,38 @@ endfunction()
 # Function that prints the current set of enabled internal top-level packages
 #
 function(tribits_print_internal_toplevel_package_list_enable_status
-    docString  enabledFlag  includeEmpty
+    docString  enabledFlag  enableEmptyStatus
   )
   tribits_print_packages_list_enable_status_from_var(
     ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
-    "${docString}" ${enabledFlag} ${includeEmpty} )
+    "${docString}" ${enabledFlag} ${enableEmptyStatus} )
 endfunction()
 
 
 # Prints the current set of enabled/disabled internal packages
 #
 function(tribits_print_internal_package_list_enable_status
-    docString  enabledFlag  includeEmpty
+    docString  enabledFlag  enableEmptyStatus
   )
-  if (enabledFlag  AND  NOT  includeEmpty)
+  tribits_assert_include_empty_param(${enableEmptyStatus})
+  if (enabledFlag  AND  (enableEmptyStatus STREQUAL "NONEMPTY"))
     tribits_get_sublist_enabled(
       ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
       internalPackagesEnableStatusList  "")
-  elseif (enabledFlag  AND  includeEmpty)
+  elseif (enabledFlag  AND  (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
     tribits_get_sublist_nondisabled(
       ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
       internalPackagesEnableStatusList  "")
-  elseif (NOT  enabledFlag  AND  NOT  includeEmpty)
+  elseif (NOT enabledFlag  AND  (enableEmptyStatus STREQUAL "NONEMPTY"))
     tribits_get_sublist_disabled(
       ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
       internalPackagesEnableStatusList  "")
-  else() # NOT  enabledFlag  AND  includeEmpty
+  elseif (NOT enabledFlag  AND  (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
     tribits_get_sublist_nonenabled(
       ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
       internalPackagesEnableStatusList  "")
+  else()
+    message(FATAL_ERROR "Should not get here!")
   endif()
   tribits_print_prefix_string_and_list("${docString}"
     internalPackagesEnableStatusList)
@@ -137,19 +140,24 @@ endfunction()
 
 # Print the current set of enabled/disabled TPLs
 #
-function(tribits_print_tpl_list_enable_status  docString  enabledFlag  includeEmpty)
-  if (enabledFlag AND NOT includeEmpty)
+function(tribits_print_tpl_list_enable_status  docString  enabledFlag
+    enableEmptyStatus
+  )
+  tribits_assert_include_empty_param(${enableEmptyStatus})
+  if (enabledFlag AND (enableEmptyStatus STREQUAL "NONEMPTY"))
     tribits_get_sublist_enabled( ${PROJECT_NAME}_DEFINED_TPLS
       tplsEnableStatusList  "")
-  elseif (enabledFlag AND includeEmpty)
+  elseif (enabledFlag AND (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
     tribits_get_sublist_nondisabled( ${PROJECT_NAME}_DEFINED_TPLS
       tplsEnableStatusList  "")
-  elseif (NOT enabledFlag AND NOT includeEmpty)
+  elseif (NOT enabledFlag AND (enableEmptyStatus STREQUAL "NONEMPTY"))
     tribits_get_sublist_disabled( ${PROJECT_NAME}_DEFINED_TPLS
       tplsEnableStatusList  "")
-  else() # NOT enabledFlag AND includeEmpty
+  elseif (NOT enabledFlag AND (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
     tribits_get_sublist_nonenabled( ${PROJECT_NAME}_DEFINED_TPLS
        tplsEnableStatusList  "")
+  else()
+    message(FATAL_ERROR "Should not get here!")
   endif()
   tribits_print_prefix_string_and_list("${docString}"  tplsEnableStatusList)
 endfunction()
@@ -159,21 +167,34 @@ endfunction()
 # packages
 #
 function(tribits_print_packages_list_enable_status_from_var  packageListVarName
-  docString  enabledFlag  includeEmpty
+    docString  enabledFlag  enableEmptyStatus
   )
-  if (enabledFlag  AND  NOT  includeEmpty)
+  tribits_assert_include_empty_param(${enableEmptyStatus})
+  if (enabledFlag  AND  (enableEmptyStatus STREQUAL "NONEMPTY"))
     tribits_get_sublist_enabled(${packageListVarName}
       enableStatusList  "")
-  elseif (enabledFlag  AND  includeEmpty)
+  elseif (enabledFlag  AND  (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
     tribits_get_sublist_nondisabled(${packageListVarName}  enableStatusList  "")
-  elseif (NOT  enabledFlag  AND  NOT  includeEmpty)
+  elseif (NOT enabledFlag  AND  (enableEmptyStatus STREQUAL "NONEMPTY"))
     tribits_get_sublist_disabled(${packageListVarName}
       enableStatusList  "")
-  else() # NOT  enabledFlag  AND  includeEmpty
+  elseif (NOT enabledFlag  AND  (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
     tribits_get_sublist_nonenabled(${packageListVarName}
       enableStatusList  "")
+  else()
+    message(FATAL_ERROR "Should never get here!")
   endif()
   tribits_print_prefix_string_and_list("${docString}"  enableStatusList)
+endfunction()
+
+
+function(tribits_assert_include_empty_param  enableEmptyStatus)
+  if ((NOT enableEmptyStatus STREQUAL "NONEMPTY") AND
+      (NOT enableEmptyStatus STREQUAL "INCLUDE_EMPTY")
+    )
+    message(FATAL_ERROR "Error, argument enableEmptyStatus='${enableEmptyStatus}'"
+      " is invalid!  Use 'NONEMPTY' or 'INCLUDE_EMPTY'.")
+  endif()
 endfunction()
 
 
