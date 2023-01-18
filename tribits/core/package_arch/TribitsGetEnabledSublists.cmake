@@ -47,13 +47,13 @@ include(TribitsGetPackageEnableStatus)
 # Usage::
 #
 #   tribits_get_sublist_enabled( <enableListName>
-#     <enabledSublistNameOut>  <numEnabledVarOut>)
+#     <enabledSublistNameOut>  [<numEnabledVarOut>] )
 #
 # On output, ``<enabledSublistNameOut>`` contains the sublist of entries in
 # ``<enableListName>`` which evaluate to ``TRUE`` in an ``if ()`` statement.
 #
 function(tribits_get_sublist_enabled  enableListName
-  enabledSublistNameOut  numEnabledVarOut
+    enabledSublistNameOut  numEnabledVarOut
   )
   set(enabledSublist)
   foreach(pkgName  IN LISTS  ${enableListName})
@@ -77,7 +77,7 @@ endfunction()
 # Usage::
 #
 #   tribits_get_sublist_nondisabled( <enableListName>
-#     <nondisabledListNameOut>  <numNondisabledVarOut> )
+#     <nondisabledListNameOut>  [<numNondisabledVarOut>] )
 #
 # On output, ``<nondisabledListNameOut>`` contains the sublist of entries from
 # ``<enableListName>`` for which evaluate to ``TRUE`` or empty ``""`` in an
@@ -108,7 +108,7 @@ endfunction()
 # Usage::
 #
 #   tribits_get_sublist_disabled( <enableListName>
-#     <disabledSublistNameOut>  <numDisabledVarOut>)
+#     <disabledSublistNameOut>  [<numDisabledVarOut>] )
 #
 # On output, ``<disabledSublistNameOut>`` contains the sublist of entries
 # ``<enableListName>`` which evaluate to ``FALSE`` and is not empty ``""`` in
@@ -139,7 +139,7 @@ endfunction()
 # Usage::
 #
 #   tribits_get_sublist_nonenabled( <enableListName>
-#     <nonenabledListNameOut>  <numNonenabledVarOut>)
+#     <nonenabledListNameOut>  [<numNonenabledVarOut>] )
 #
 # On output, ``<nonenabledListNameOut>`` contains the subset of entries in
 # ``<enableListName>`` that evaluate to ``FALSE`` (which can also be empty
