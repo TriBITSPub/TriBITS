@@ -80,10 +80,10 @@ endfunction()
 function(tribits_print_enables_after_adjust_package_enables)
   tribits_print_packages_list_enable_status_from_var(
    ${PROJECT_NAME}_ENABLED_INTERNAL_TOPLEVEL_PACKAGES
-   "\nFinal set of enabled top-level packages" ON NONEMPTY)
+   "\nFinal set of enabled top-level packages" "" ON NONEMPTY)
   tribits_print_packages_list_enable_status_from_var(
     ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES
-    "\nFinal set of enabled packages" ON NONEMPTY)
+    "\nFinal set of enabled packages" "" ON NONEMPTY)
   tribits_print_internal_toplevel_package_list_enable_status(
     "\nFinal set of non-enabled top-level packages" OFF INCLUDE_EMPTY)
   tribits_print_internal_package_list_enable_status(
@@ -104,7 +104,7 @@ function(tribits_print_internal_toplevel_package_list_enable_status
   )
   tribits_print_packages_list_enable_status_from_var(
     ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
-    "${docString}" ${enabledFlag} ${enableEmptyStatus} )
+    "${docString}" "" ${enabledFlag} ${enableEmptyStatus} )
 endfunction()
 
 
@@ -167,19 +167,21 @@ endfunction()
 # packages
 #
 function(tribits_print_packages_list_enable_status_from_var  packageListVarName
-    docString  enabledFlag  enableEmptyStatus
+    docString  internalOrExternal  enabledFlag  enableEmptyStatus
   )
   tribits_assert_include_empty_param(${enableEmptyStatus})
+  tribits_get_sublist_internal_external(${packageListVarName} "${internalOrExternal}"
+    packageListTmp "")
   if (enabledFlag  AND  (enableEmptyStatus STREQUAL "NONEMPTY"))
-    tribits_get_sublist_enabled(${packageListVarName}
+    tribits_get_sublist_enabled(packageListTmp
       enableStatusList  "")
   elseif (enabledFlag  AND  (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
-    tribits_get_sublist_nondisabled(${packageListVarName}  enableStatusList  "")
+    tribits_get_sublist_nondisabled(${packageListTmp}  enableStatusList  "")
   elseif (NOT enabledFlag  AND  (enableEmptyStatus STREQUAL "NONEMPTY"))
-    tribits_get_sublist_disabled(${packageListVarName}
+    tribits_get_sublist_disabled(packageListTmp
       enableStatusList  "")
   elseif (NOT enabledFlag  AND  (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
-    tribits_get_sublist_nonenabled(${packageListVarName}
+    tribits_get_sublist_nonenabled(packageListTmp
       enableStatusList  "")
   else()
     message(FATAL_ERROR "Should never get here!")

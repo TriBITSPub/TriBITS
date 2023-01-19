@@ -2276,7 +2276,7 @@ function(tribits_ctest_driver)
 
   tribits_print_packages_list_enable_status_from_var(
     ${PROJECT_NAME}_PACKAGES_TO_DIRECTLY_TEST
-    "\nFinal set of packages to be explicitly processed by CTest/CDash" ON NONEMPTY)
+    "\nFinal set of packages to be explicitly processed by CTest/CDash" "" ON NONEMPTY)
 
   message(
     "\n***"

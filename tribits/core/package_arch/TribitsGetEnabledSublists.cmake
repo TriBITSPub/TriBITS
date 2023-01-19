@@ -161,3 +161,53 @@ function(tribits_get_sublist_nonenabled  enableListName
     set(${numNonenabledVarOut} ${numNonenabled} PARENT_SCOPE)
   endif()
 endfunction()
+
+
+# @FUNCTION: tribits_get_sublist_internal_external()
+#
+# Get sub-list of packages that are INTERNAL, EXTERNAL, or either.
+#
+# Usage::
+#
+#   tribits_get_sublist_internal_external( <inputPackageListName>  <internalOrExternal>
+#     <sublistNameOut>  [<sizeSublistOut>] )
+#
+# where:
+#
+#   * `<internalOrExternal>` is either `INTERNAL`, `EXTERNAL` or empty "".
+#
+# On output, ``<sublistNameOut>`` contains the sublist of entries in
+# ``<inputPackageListName>`` which are either `INTERNAL` or `EXTERNAL` or both
+# (if `<internalOrExternal>` is "") based on `<Package>_PACKAGE_BUILD_STATUS`
+# for each element package name.
+#
+function(tribits_get_sublist_internal_external  inputPackageListName  internalOrExternal
+    sublistNameOut  sizeSublistOut
+  )
+  tribits_assert_internal_or_external_arg("${internalOrExternal}")
+  if (NOT internalOrExternal STREQUAL "")
+    set(sublist "")
+    foreach(pkgName  IN LISTS  ${inputPackageListName})
+      if (${pkgName}_PACKAGE_BUILD_STATUS STREQUAL internalOrExternal)
+        list(APPEND sublist ${pkgName})
+      endif()
+    endforeach()
+  else()
+    set(sublist ${${inputPackageListName}})
+  endif()
+  set(${sublistNameOut} ${sublist} PARENT_SCOPE)
+  if (numEnabledVarOut)
+    list(LENGTH  sublist  sizeSublist)
+    set(${sizeSublistOut} ${sizeSublist} PARENT_SCOPE)
+  endif()
+endfunction()
+
+
+function(tribits_assert_internal_or_external_arg  internalOrExternal)
+  set(allowedValuesList "INTERNAL" "EXTERNAL" "")
+  if (NOT internalOrExternal IN_LIST allowedValuesList)
+    message(FATAL_ERROR "ERROR, the argument internalOrExternal="
+      "'${internalOrExternal}' is not in the list of allowed values"
+      ${allowedValuesList} )
+  endif()
+endfunction()
