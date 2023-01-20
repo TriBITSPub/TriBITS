@@ -735,8 +735,12 @@ create_reduced_dependency_handling_test_case(
     "-- Final: ThyraEpetraExt_PACKAGE_BUILD_STATUS=EXTERNAL"
     "-- Final: Thyra_PACKAGE_BUILD_STATUS=EXTERNAL"
 
-    "Final set of enabled top-level packages:  Teuchos RTOp Epetra Triutils EpetraExt Thyra 6"
-    "Final set of enabled packages:  Teuchos RTOp Epetra Triutils EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt Thyra 10"
+    "Final set of enabled top-level packages:  0"
+    "Final set of enabled packages:  0"
+    "Final set of non-enabled top-level packages:  0"
+    "Final set of non-enabled packages:  0"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Teuchos RTOp Epetra Triutils EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt Thyra 12"
+    "Final set of non-enabled external packages/TPLs:  MPI Boost UMFPACK AMD PETSC ThyraCrazyStuff 6"
 
   )
 
@@ -770,9 +774,12 @@ create_reduced_dependency_handling_test_case(
     "-- Final: ThyraCoreLibs_PACKAGE_BUILD_STATUS=EXTERNAL"
     "-- Final: Thyra_PACKAGE_BUILD_STATUS=EXTERNAL"
 
-    "Final set of enabled top-level packages:  Teuchos RTOp Thyra 3"
-    "Final set of enabled packages:  Teuchos RTOp ThyraCoreLibs Thyra 4"
-    "Final set of enabled external packages/TPLs:  BLAS LAPACK 2"
+    "Final set of enabled top-level packages:  0"
+    "Final set of enabled packages:  0"
+    "Final set of non-enabled top-level packages:  Epetra Triutils EpetraExt 3"
+    "Final set of non-enabled packages:  Epetra Triutils EpetraExt 3"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Teuchos RTOp ThyraCoreLibs Thyra 6"
+    "Final set of non-enabled external packages/TPLs:  MPI Boost UMFPACK AMD PETSC ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt 9"
 
   )
 
@@ -1838,9 +1845,12 @@ create_dependency_handling_test_case(
     "-- Final: RBGen_PACKAGE_BUILD_STATUS=INTERNAL"
     "-- Final: Phalanx_PACKAGE_BUILD_STATUS=INTERNAL"
 
-    "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx 22"
-    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx 27"
-    "Final set of enabled external packages/TPLs:  BLAS LAPACK Boost DUMMY 4"
+    "Final set of enabled top-level packages:  TrilinosFramework Shards Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx 14"
+    "Final set of enabled packages:  TrilinosFramework Shards Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx 14"
+    "Final set of non-enabled top-level packages:  Stokhos Panzer 2"
+    "Final set of non-enabled packages:  Stokhos Panzer 2"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Boost DUMMY Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra 17"
+    "Final set of non-enabled external packages/TPLs:  MPI Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS ThyraCrazyStuff 16"
 
   )
 
@@ -1907,10 +1917,12 @@ create_dependency_handling_test_case(
     "-- Final: RBGen_PACKAGE_BUILD_STATUS=INTERNAL"
     "-- Final: Phalanx_PACKAGE_BUILD_STATUS=INTERNAL"
 
-    "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack Belos Stratimikos RBGen Phalanx 21"
-    "Final set of enabled packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack Belos Stratimikos RBGen Phalanx 26"
-    "Final set of non-enabled top-level packages:  Stokhos ML Panzer 3"
-    "Final set of enabled external packages/TPLs:  BLAS LAPACK Boost DUMMY 4"
+    "Final set of enabled top-level packages:  TrilinosFramework Shards Sacado Isorropia Galeri Intrepid RBGen Phalanx 8"
+    "Final set of enabled packages:  TrilinosFramework Shards Sacado Isorropia Galeri Intrepid RBGen Phalanx 8"
+    "Final set of non-enabled top-level packages:  Stokhos Panzer 2"
+    "Final set of non-enabled packages:  Stokhos Panzer 2"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Boost DUMMY Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra AztecOO Amesos Ifpack Belos Stratimikos 22"
+    "Final set of non-enabled external packages/TPLs:  MPI Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS ThyraCrazyStuff ML 17"
 
   )
 # NOTE: The above test implicitly makes ThyraCoreLibs and ThyraEpetraExt
