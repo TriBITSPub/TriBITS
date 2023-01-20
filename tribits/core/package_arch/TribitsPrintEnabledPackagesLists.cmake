@@ -89,8 +89,12 @@ function(tribits_print_enables_after_adjust_package_enables)
     "\nFinal set of non-enabled top-level packages" INTERNAL OFF INCLUDE_EMPTY)
   tribits_print_package_list_enable_status(
     "\nFinal set of non-enabled packages" INTERNAL OFF INCLUDE_EMPTY)
+  tribits_print_toplevel_package_list_enable_status(
+    "\nFinal set of enabled top-level external packages/TPLs" EXTERNAL ON NONEMPTY)
   tribits_print_package_list_enable_status(
     "\nFinal set of enabled external packages/TPLs" EXTERNAL ON NONEMPTY)
+  tribits_print_toplevel_package_list_enable_status(
+    "\nFinal set of non-enabled top-level external packages/TPLs" EXTERNAL OFF INCLUDE_EMPTY)
   tribits_print_package_list_enable_status(
     "\nFinal set of non-enabled external packages/TPLs" EXTERNAL OFF INCLUDE_EMPTY)
   tribits_print_package_build_status("\nFinal package build status (enabled only):\n"

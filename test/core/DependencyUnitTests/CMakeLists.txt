@@ -739,7 +739,9 @@ create_reduced_dependency_handling_test_case(
     "Final set of enabled packages:  0"
     "Final set of non-enabled top-level packages:  0"
     "Final set of non-enabled packages:  0"
+    "Final set of enabled top-level external packages/TPLs:  BLAS LAPACK Teuchos RTOp Epetra Triutils EpetraExt Thyra 8"
     "Final set of enabled external packages/TPLs:  BLAS LAPACK Teuchos RTOp Epetra Triutils EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt Thyra 12"
+    "Final set of non-enabled top-level external packages/TPLs:  MPI Boost UMFPACK AMD PETSC 5"
     "Final set of non-enabled external packages/TPLs:  MPI Boost UMFPACK AMD PETSC ThyraCrazyStuff 6"
 
   )
