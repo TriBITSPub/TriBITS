@@ -40,6 +40,53 @@
 include(TribitsGetPackageEnableStatus)
 
 
+# @FUNCTION: tribits_filter_package_list_from_var()
+#
+# Filter a list of packages based on several criteria including
+# internal/external, enable status (with empty or non-empty)
+#
+# Usage::
+#
+#  tribits_filter_package_list_from_var( <packageListVarName>
+#    <internalOrExternal>  <enabledFlag>  <enableEmptyStatus>
+#    <packageSublistOut> )
+#
+# Where:
+#
+# * ``<packageListVarName>``: Name of input list var of packages
+# * ``<internalOrExternal>``: ``INTERNAL``, ``EXTERNAL`` or "" (i.e.
+#   INTERNAL or EXTERNAL) (matches ``<Package>_PACKAGE_BUILD_STATUS``)
+# * ``<enabledFlag>``: ``ON`` for elements that match ``TRUE`` , ``OFF``
+#   for elements that match ``FALSE``
+# * ``<enableEmptyStatus>``: Determines if allowed enable status is ``NONEMPTY``
+#   or ``INCLUDE_EMPTY``.
+# * ``<packageSublistOut>``: The name of the var that will store the filtered
+#   sublist of packages.
+#
+function(tribits_filter_package_list_from_var  packageListVarName
+    internalOrExternal  enabledFlag  enableEmptyStatus  packageSublistOut
+  )
+  tribits_assert_include_empty_param(${enableEmptyStatus})
+  tribits_get_sublist_internal_external(${packageListVarName} "${internalOrExternal}"
+    packageListTmp "")
+  if (enabledFlag  AND  (enableEmptyStatus STREQUAL "NONEMPTY"))
+    tribits_get_sublist_enabled(packageListTmp
+      packageSublist  "")
+  elseif (enabledFlag  AND  (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
+    tribits_get_sublist_nondisabled(${packageListTmp}  packageSublist  "")
+  elseif (NOT enabledFlag  AND  (enableEmptyStatus STREQUAL "NONEMPTY"))
+    tribits_get_sublist_disabled(packageListTmp
+      packageSublist  "")
+  elseif (NOT enabledFlag  AND  (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
+    tribits_get_sublist_nonenabled(packageListTmp
+      packageSublist  "")
+  else()
+    message(FATAL_ERROR "Should never get here!")
+  endif()
+  set(${packageSublistOut} ${packageSublist} PARENT_SCOPE)
+endfunction()
+
+
 # @FUNCTION: tribits_get_sublist_enabled()
 #
 # Get sub-list of enabled packages
@@ -209,5 +256,15 @@ function(tribits_assert_internal_or_external_arg  internalOrExternal)
     message(FATAL_ERROR "ERROR, the argument internalOrExternal="
       "'${internalOrExternal}' is not in the list of allowed values"
       ${allowedValuesList} )
+  endif()
+endfunction()
+
+
+function(tribits_assert_include_empty_param  enableEmptyStatus)
+  if ((NOT enableEmptyStatus STREQUAL "NONEMPTY") AND
+      (NOT enableEmptyStatus STREQUAL "INCLUDE_EMPTY")
+    )
+    message(FATAL_ERROR "Error, argument enableEmptyStatus='${enableEmptyStatus}'"
+      " is invalid!  Use 'NONEMPTY' or 'INCLUDE_EMPTY'.")
   endif()
 endfunction()

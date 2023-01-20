@@ -131,34 +131,9 @@ endfunction()
 function(tribits_print_packages_list_enable_status_from_var  packageListVarName
     docString  internalOrExternal  enabledFlag  enableEmptyStatus
   )
-  tribits_assert_include_empty_param(${enableEmptyStatus})
-  tribits_get_sublist_internal_external(${packageListVarName} "${internalOrExternal}"
-    packageListTmp "")
-  if (enabledFlag  AND  (enableEmptyStatus STREQUAL "NONEMPTY"))
-    tribits_get_sublist_enabled(packageListTmp
-      enableStatusList  "")
-  elseif (enabledFlag  AND  (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
-    tribits_get_sublist_nondisabled(${packageListTmp}  enableStatusList  "")
-  elseif (NOT enabledFlag  AND  (enableEmptyStatus STREQUAL "NONEMPTY"))
-    tribits_get_sublist_disabled(packageListTmp
-      enableStatusList  "")
-  elseif (NOT enabledFlag  AND  (enableEmptyStatus STREQUAL "INCLUDE_EMPTY"))
-    tribits_get_sublist_nonenabled(packageListTmp
-      enableStatusList  "")
-  else()
-    message(FATAL_ERROR "Should never get here!")
-  endif()
-  tribits_print_prefix_string_and_list("${docString}"  enableStatusList)
-endfunction()
-
-
-function(tribits_assert_include_empty_param  enableEmptyStatus)
-  if ((NOT enableEmptyStatus STREQUAL "NONEMPTY") AND
-      (NOT enableEmptyStatus STREQUAL "INCLUDE_EMPTY")
-    )
-    message(FATAL_ERROR "Error, argument enableEmptyStatus='${enableEmptyStatus}'"
-      " is invalid!  Use 'NONEMPTY' or 'INCLUDE_EMPTY'.")
-  endif()
+  tribits_filter_package_list_from_var(${packageListVarName}
+    "${internalOrExternal}"  "${enabledFlag}"  ${enableEmptyStatus} packageSublist)
+  tribits_print_prefix_string_and_list("${docString}"  packageSublist)
 endfunction()
 
 
