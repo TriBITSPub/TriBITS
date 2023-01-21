@@ -687,9 +687,8 @@ create_reduced_dependency_handling_test_case(
     "Getting information for all enabled external packages/TPLs ..."
     "Processing enabled external package/TPL: BLAS [(]enabled by Epetra, disable with -DTPL_ENABLE_BLAS=OFF[)]"
     "Processing enabled external package/TPL: LAPACK [(]enabled by Epetra, disable with -DTPL_ENABLE_LAPACK=OFF[)]"
-#    "Processing enabled external package/TPL: Teuchos [(]enabled by RTOp, disable with -DTPL_ENABLE_Teuchos=OFF[)]"
-#    "Processing enabled external package/TPL: RTOp [(]enabled by TPL_ENABLE_RTOp=ON[)]"
-# ToDo: Get above to be printed out!
+    "Processing enabled external package/TPL: Teuchos [(]enabled explicitly, disable with -DTPL_ENABLE_Teuchos=OFF[)]"
+    "Processing enabled external package/TPL: RTOp [(]enabled explicitly, disable with -DTPL_ENABLE_RTOp=OFF[)]"
 
     "Configuring individual enabled Trilinos packages ..."
     "Processing enabled top-level package: Epetra [(]Libs, Tests, Examples[)]"
@@ -1789,6 +1788,7 @@ create_dependency_handling_test_case(
 # Test treating internal packages as TPLs with MockTrilinos
 #
 
+
 create_dependency_handling_test_case(
   ST_TplEnableThyraCoreLibsOn_EnableAllPackages_EnableTests
   ARGS
@@ -1854,6 +1854,80 @@ create_dependency_handling_test_case(
     "Final set of non-enabled external packages/TPLs:  MPI Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS ThyraCrazyStuff 16"
 
   )
+
+
+create_dependency_handling_test_case(
+  ST_EnableMPI_TplEnableStratimikosOn_EnablePanzerOn_EnableMLOff_EnableTests
+  ARGS
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTPL_ENABLE_MPI=ON
+    -DTPL_ENABLE_Stratimikos=ON
+    -DTrilinos_ENABLE_Panzer=ON
+    -DTrilinos_ENABLE_ML=OFF
+    -DTrilinos_ENABLE_TESTS=ON
+    -DTrilinos_DUMP_PACKAGE_BUILD_STATUS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Explicitly enabled top-level packages on input [(]by user[)]:  Stratimikos Panzer 2"
+    "Explicitly disabled top-level packages on input [(]by user or by default[)]:  Stokhos ML 2"
+
+    "Adjust the set of internal and external packages:"
+    "-- Treating internal package Stratimikos as EXTERNAL because TPL_ENABLE_Stratimikos=ON"
+    "-- Treating internal package ThyraEpetraExt as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package ThyraCoreLibs as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Amesos as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package AztecOO as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Belos as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Ifpack as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Teuchos as EXTERNAL because downstream package Belos being treated as EXTERNAL"
+    "-- Treating internal package Epetra as EXTERNAL because downstream package Belos being treated as EXTERNAL"
+    "-- Treating internal package Tpetra as EXTERNAL because downstream package Belos being treated as EXTERNAL"
+    "-- Treating internal package EpetraExt as EXTERNAL because downstream package Amesos being treated as EXTERNAL"
+    "-- Treating internal package Triutils as EXTERNAL because downstream package AztecOO being treated as EXTERNAL"
+    "-- Treating internal package Thyra as EXTERNAL because subpackage ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package ThyraGoodStuff as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraEpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraTpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package RTOp as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package Zoltan as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
+
+    "Final set of enabled packages:  Shards Sacado Galeri Intrepid Phalanx Panzer 6"
+    "Final set of non-enabled top-level packages:  TrilinosFramework Stokhos Isorropia RBGen 4"
+    "Final set of non-enabled packages:  TrilinosFramework Stokhos Isorropia RBGen 4"
+    "Final set of enabled top-level external packages/TPLs:  MPI BLAS LAPACK Boost Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra AztecOO Amesos Ifpack Belos Stratimikos 17"
+    "Final set of enabled external packages/TPLs:  MPI BLAS LAPACK Boost Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra AztecOO Amesos Ifpack Belos Stratimikos 22"
+    "Final set of non-enabled top-level external packages/TPLs:  Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS DUMMY ML 16"
+    "Final set of non-enabled external packages/TPLs:  Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS DUMMY ThyraCrazyStuff ML 17"
+
+    "Getting information for all enabled external packages/TPLs ..."
+    "Processing enabled external package/TPL: MPI [(]enabled explicitly, disable with -DTPL_ENABLE_MPI=OFF[)]"
+    "Processing enabled external package/TPL: BLAS [(]enabled by Epetra, disable with -DTPL_ENABLE_BLAS=OFF[)]"
+    "Processing enabled external package/TPL: LAPACK [(]enabled by Epetra, disable with -DTPL_ENABLE_LAPACK=OFF[)]"
+    "Processing enabled external package/TPL: Boost [(]enabled by Panzer, disable with -DTPL_ENABLE_Boost=OFF[)]"
+    "Processing enabled external package/TPL: Teuchos [(]enabled by Panzer, disable with -DTPL_ENABLE_Teuchos=OFF[)]"
+    "Processing enabled external package/TPL: RTOp [(]enabled by ThyraCoreLibs, disable with -DTPL_ENABLE_RTOp=OFF[)]"
+    "Processing enabled external package/TPL: Epetra [(]enabled by Panzer, disable with -DTPL_ENABLE_Epetra=OFF[)]"
+    "Processing enabled external package/TPL: Zoltan [(]enabled by EpetraExt, disable with -DTPL_ENABLE_Zoltan=OFF[)]"
+    "Processing enabled external package/TPL: Triutils [(]enabled by Stratimikos, disable with -DTPL_ENABLE_Triutils=OFF[)]"
+    "Processing enabled external package/TPL: Tpetra [(]enabled by Panzer, disable with -DTPL_ENABLE_Tpetra=OFF[)]"
+    "Processing enabled external package/TPL: EpetraExt [(]enabled by Panzer, disable with -DTPL_ENABLE_EpetraExt=OFF[)]"
+    "Processing enabled external package/TPL: Thyra [(]enabled by Panzer, disable with -DTPL_ENABLE_Thyra=OFF[)]"
+    "Processing enabled external package/TPL: AztecOO [(]enabled by Stratimikos, disable with -DTPL_ENABLE_AztecOO=OFF[)]"
+    "Processing enabled external package/TPL: Amesos [(]enabled by Stratimikos, disable with -DTPL_ENABLE_Amesos=OFF[)]"
+    "Processing enabled external package/TPL: Ifpack [(]enabled by Phalanx, disable with -DTPL_ENABLE_Ifpack=OFF[)]"
+    "Processing enabled external package/TPL: Belos [(]enabled by Phalanx, disable with -DTPL_ENABLE_Belos=OFF[)]"
+    "Processing enabled external package/TPL: Stratimikos [(]enabled explicitly, disable with -DTPL_ENABLE_Stratimikos=OFF[)]"
+
+    "Configuring individual enabled Trilinos packages ..."
+    "Processing enabled top-level package: Shards [(]Libs[)]"
+    "Processing enabled top-level package: Sacado [(]Libs[)]"
+    "Processing enabled top-level package: Galeri [(]Libs[)]"
+    "Processing enabled top-level package: Intrepid [(]Libs[)]"
+    "Processing enabled top-level package: Phalanx [(]Libs[)]"
+    "Processing enabled top-level package: Panzer [(]Libs, Tests, Examples[)]"
+
+  )
+# NOTE: The above test checks that internal packages that are treated as
+# external packages correctly express what enabled them.
 
 
 create_dependency_handling_test_case(
