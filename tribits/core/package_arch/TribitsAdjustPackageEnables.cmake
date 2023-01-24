@@ -1373,7 +1373,8 @@ macro(tribits_set_internal_package_to_external  packageName)
        "Treating internal package ${packageName} as EXTERNAL because"
        " " ${ARGN})
   endif()
-  set(${packageName}_PACKAGE_BUILD_STATUS EXTERNAL)
+  set(${packageName}_PACKAGE_BUILD_STATUS  EXTERNAL)
+  set(${packageName}_FINDMOD  TRIBITS_PKG)
 endmacro()
 
 

@@ -15,6 +15,8 @@ tribits_add_library(pws_c
   ${TAL_EXTRALIB_ARGS} # Used to show warnings and errors
   )
 
+include("${TribitsExampleProject_SOURCE_DIR}/cmake/ExpectedDepsStrings.cmake")
+
 tribits_add_test_directories(tests)
 
 tribits_subpackage_postprocess()

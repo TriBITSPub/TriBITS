@@ -44,5 +44,8 @@ set(HeaderOnlyTpl_INCLUDE_DIRS
   "${${PROJECT_NAME}_TRIBITS_DIR}/examples/tpls/HeaderOnlyTpl" 
   CACHE PATH "Default set by TriBITS/CMakeLists.txt" )
 
+# This does not get set by TriBITS when this is the TriBITS project :-(
+set(TribitsExampleProject_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+
 # Do all of the processing for this Tribits project
 tribits_project()

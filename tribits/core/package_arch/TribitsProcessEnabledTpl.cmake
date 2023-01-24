@@ -77,11 +77,10 @@ function(tribits_process_enabled_tpl  TPL_NAME)
       print_var(${TPL_NAME}_FINDMOD)
     endif()
     if (${TPL_NAME}_FINDMOD STREQUAL "TRIBITS_PKG")
+      message("-- Calling find_package(${TPL_NAME}) for TriBITS-compatible package ...")
       set(TPL_${TPL_NAME}_PARTS_ALREADY_SET FALSE)  # ToDo: Take out?
       if (NOT TPL_${TPL_NAME}_PARTS_ALREADY_SET)
         find_package(${TPL_NAME} CONFIG REQUIRED)
-        global_set(TPL_${TPL_NAME}_LIBRARIES
-          "${${TPL_NAME}_LIBRARIES}" "${${TPL_NAME}_TPL_LIBRARIES}")
         global_set(TPL_${TPL_NAME}_PARTS_ALREADY_SET TRUE)
       endif()
       return()

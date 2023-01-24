@@ -3209,3 +3209,141 @@ if (TribitsExampleProject_extra_link_flags_NAME)
   set_tests_properties(${TribitsExampleProject_extra_link_flags_NAME}
     PROPERTIES DEPENDS ${SimpleTpl_install_STATIC_NAME} )
 endif()
+
+
+###################################################################################
+
+
+tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
+  OVERALL_WORKING_DIRECTORY  TEST_NAME
+  OVERALL_NUM_MPI_PROCS  1
+  EXCLUDE_IF_NOT_TRUE  ${PROJECT_NAME}_ENABLE_Fortran  IS_REAL_LINUX_SYSTEM
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so we can change it"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+#    CMND ln
+#    ARGS -s ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Configure to just build and install just SimpleCxx"
+    CMND ${CMAKE_COMMAND}
+    WORKING_DIRECTORY Build_SimpleCxx
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_SimpleCxx=ON
+      -DCMAKE_INSTALL_PREFIX=../install/simple_cxx
+      # ToDo: Add option to stop install of TribitsExProjConfig.cmake ...
+      -DTPL_ENABLE_MPI=OFF
+      -DTPL_ENABLE_SimpleTpl=ON
+      -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_STATIC_DIR}/install/include
+      -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_STATIC_DIR}/install/lib
+      ../TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Build just SimpleCxx"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    WORKING_DIRECTORY Build_SimpleCxx
+    SKIP_CLEAN_WORKING_DIRECTORY
+
+  TEST_3
+    MESSAGE "Install just SimpleCxx"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    WORKING_DIRECTORY Build_SimpleCxx
+    SKIP_CLEAN_WORKING_DIRECTORY
+
+  TEST_4
+    MESSAGE "Remove the build directory for SimpleCxx"
+    CMND ${CMAKE_COMMAND} ARGS -E rm -R Build_SimpleCxx
+
+  TEST_5
+    MESSAGE "Remove the source directory for SimpleCxx"
+    CMND ${CMAKE_COMMAND} ARGS -E rm -R
+      TribitsExampleProject/packages/simple_cxx/CMakeLists.txt
+      TribitsExampleProject/packages/simple_cxx/src
+      TribitsExampleProject/packages/simple_cxx/test
+
+  TEST_6
+    MESSAGE "Configure rest of TribitsExampleProject against pre-installed SimpleCxx"
+    CMND ${CMAKE_COMMAND}
+    WORKING_DIRECTORY Build
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      #-DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF # Allow WrapExternal enable
+      -DTPL_ENABLE_SimpleCxx=ON
+      -DCMAKE_PREFIX_PATH=../install/simple_cxx
+      -DTPL_ENABLE_MPI=OFF
+      -DTPL_ENABLE_SimpleTpl=ON
+      -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_STATIC_DIR}/install/include
+      -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_STATIC_DIR}/install/lib
+      # ToDo: Remove how to find SimpleTpl because SimpleCxx should already
+      # have that found and we should just use what it found!
+      ../TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Adjust the set of internal and external packages:"
+      "-- Treating internal package SimpleCxx as EXTERNAL because TPL_ENABLE_SimpleCxx=ON"
+
+      "Final set of enabled top-level packages:  MixedLang WithSubpackages 2"
+      "Final set of enabled packages:  MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 5"
+      "Final set of non-enabled top-level packages:  WrapExternal 1"
+      "Final set of non-enabled packages:  WrapExternal 1"
+      "Final set of enabled top-level external packages/TPLs:  HeaderOnlyTpl SimpleTpl SimpleCxx 3"
+      "Final set of enabled external packages/TPLs:  HeaderOnlyTpl SimpleTpl SimpleCxx 3"
+      "Final set of non-enabled top-level external packages/TPLs:  MPI 1"
+      "Final set of non-enabled external packages/TPLs:  MPI 1"
+
+      "Getting information for all enabled external packages/TPLs ..."
+      "Processing enabled external package/TPL: HeaderOnlyTpl [(]enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF[)]"
+      "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.*/tribits/examples/tpls/HeaderOnlyTpl'"
+      "Processing enabled external package/TPL: SimpleTpl [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleTpl=OFF[)]"
+      "-- TPL_SimpleTpl_LIBRARIES='.*/TriBITS_SimpleTpl_install_STATIC/install/lib/libsimpletpl.a'"
+      "-- TPL_SimpleTpl_INCLUDE_DIRS='.*/TriBITS_SimpleTpl_install_STATIC/install/include'"
+      "Processing enabled external package/TPL: SimpleCxx [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleCxx=OFF[)]"
+      "-- Calling find_package[(]SimpleCxx[)] for TriBITS-compatible package ..."
+
+      "Configuring individual enabled TribitsExProj packages ..."
+      "Processing enabled top-level package: MixedLang [(]Libs, Tests, Examples[)]"
+      "Processing enabled top-level package: WithSubpackages [(]A, B, C, Tests, Examples[)]"
+
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_7
+    MESSAGE "Build TribitsExampleProject"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    WORKING_DIRECTORY Build
+    SKIP_CLEAN_WORKING_DIRECTORY
+
+  TEST_8
+    MESSAGE "Run all the tests with ctest"
+    WORKING_DIRECTORY Build
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND ${CMAKE_CTEST_COMMAND}
+    PASS_REGULAR_EXPRESSION_ALL
+      "100% tests passed, 0 tests failed out of 7"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  ADDED_TEST_NAME_OUT TribitsExampleProject_External_SimpleCxx_NAME
+  )
+# NOTE: The above test is a strong check that SimpleCxx is built and installed
+# first and then is used in the later build of the rest of
+# TribitsExampleProject.  If you comment out -DTPL_ENABLE_SimpleCxx=ON, then
+# it will not build!
+
+
+if (TribitsExampleProject_External_SimpleCxx_NAME)
+  set_tests_properties(${TribitsExampleProject_External_SimpleCxx_NAME}
+    PROPERTIES DEPENDS ${SimpleTpl_install_STATIC_NAME} )
+endif()
+
+
