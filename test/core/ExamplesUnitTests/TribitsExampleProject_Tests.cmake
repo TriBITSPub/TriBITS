@@ -3279,7 +3279,7 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      #-DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF # Allow WrapExternal enable
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF # Allow WrapExternal enable
       -DTPL_ENABLE_SimpleCxx=ON
       -DCMAKE_PREFIX_PATH=../install/simple_cxx
       -DTPL_ENABLE_MPI=OFF
@@ -3293,10 +3293,10 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
       "Adjust the set of internal and external packages:"
       "-- Treating internal package SimpleCxx as EXTERNAL because TPL_ENABLE_SimpleCxx=ON"
 
-      "Final set of enabled top-level packages:  MixedLang WithSubpackages 2"
-      "Final set of enabled packages:  MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 5"
-      "Final set of non-enabled top-level packages:  WrapExternal 1"
-      "Final set of non-enabled packages:  WrapExternal 1"
+      "Final set of enabled top-level packages:  MixedLang WithSubpackages WrapExternal 3"
+      "Final set of enabled packages:  MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
+      "Final set of non-enabled top-level packages:  0"
+      "Final set of non-enabled packages:  0"
       "Final set of enabled top-level external packages/TPLs:  HeaderOnlyTpl SimpleTpl SimpleCxx 3"
       "Final set of enabled external packages/TPLs:  HeaderOnlyTpl SimpleTpl SimpleCxx 3"
       "Final set of non-enabled top-level external packages/TPLs:  MPI 1"
@@ -3330,7 +3330,7 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
     SKIP_CLEAN_WORKING_DIRECTORY
     CMND ${CMAKE_CTEST_COMMAND}
     PASS_REGULAR_EXPRESSION_ALL
-      "100% tests passed, 0 tests failed out of 7"
+      "100% tests passed, 0 tests failed out of 8"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   ADDED_TEST_NAME_OUT TribitsExampleProject_External_SimpleCxx_NAME
