@@ -3236,7 +3236,7 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_SimpleCxx=ON
       -DCMAKE_INSTALL_PREFIX=../install/simple_cxx
-      # ToDo: Add option to stop install of TribitsExProjConfig.cmake ...
+      -DTribitsExProj_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES=TRUE
       -DTPL_ENABLE_MPI=OFF
       -DTPL_ENABLE_SimpleTpl=ON
       -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_STATIC_DIR}/install/include
@@ -3259,17 +3259,26 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
     SKIP_CLEAN_WORKING_DIRECTORY
 
   TEST_4
+    MESSAGE "Make sure only SimpleCxxConfig.cmake was installed"
+    CMND ls ARGS install/simple_cxx/lib/cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "SimpleCxx"
+    FAIL_REGULAR_EXPRESSION
+      "TribitsExProj"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_5
     MESSAGE "Remove the build directory for SimpleCxx"
     CMND ${CMAKE_COMMAND} ARGS -E rm -R Build_SimpleCxx
 
-  TEST_5
+  TEST_6
     MESSAGE "Remove the source directory for SimpleCxx"
     CMND ${CMAKE_COMMAND} ARGS -E rm -R
       TribitsExampleProject/packages/simple_cxx/CMakeLists.txt
       TribitsExampleProject/packages/simple_cxx/src
       TribitsExampleProject/packages/simple_cxx/test
 
-  TEST_6
+  TEST_7
     MESSAGE "Configure rest of TribitsExampleProject against pre-installed SimpleCxx"
     CMND ${CMAKE_COMMAND}
     WORKING_DIRECTORY Build
@@ -3318,13 +3327,13 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
       "Configuring done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_7
+  TEST_8
     MESSAGE "Build TribitsExampleProject"
     CMND make ARGS ${CTEST_BUILD_FLAGS}
     WORKING_DIRECTORY Build
     SKIP_CLEAN_WORKING_DIRECTORY
 
-  TEST_8
+  TEST_9
     MESSAGE "Run all the tests with ctest"
     WORKING_DIRECTORY Build
     SKIP_CLEAN_WORKING_DIRECTORY
@@ -3338,8 +3347,11 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
 # NOTE: The above test is a strong check that SimpleCxx is built and installed
 # first and then is used in the later build of the rest of
 # TribitsExampleProject.  If you comment out -DTPL_ENABLE_SimpleCxx=ON, then
-# it will not build!
-
+# it will not build!  This test also uniquely tests a few other TriBITS features:
+#
+# * <Project>_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES (ensures the directory
+# * install/simple_cxx/lib/cmake/TribitsExProj does not get created and
+# * therefore the file TribitsExProjConfig.cmake does not get installed).
 
 if (TribitsExampleProject_External_SimpleCxx_NAME)
   set_tests_properties(${TribitsExampleProject_External_SimpleCxx_NAME}

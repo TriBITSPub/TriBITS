@@ -2816,12 +2816,25 @@ of packages the files are requested for with::
 
   -D <Project>_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES="<pkg0>;<pkg1>"
 
+To only install the package ``<Package>Config.cmake`` files and **not** the
+project-level ``<Project>Config.cmake`` file, configure with::
+
+   -D <Project>_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON \
+   -D <Project>_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES=ON \
+
 NOTES:
 
 * Only enabled packages will have their export files generated.
 
 * One would only want to limit the export files generated for very large
   projects where the cost my be high for doing so.
+
+* One would want to skip the installation of the project-level
+  ``<Project>Config.cmake`` file in cases where the TriBITS project's packages
+  may be built in smaller subsets of packages in different individual CMake
+  project builds where there is no clear completion to the installation of the
+  packages for a given TriBITS project containing a larger collection of
+  packages.
 
 
 Generating a project repo version file

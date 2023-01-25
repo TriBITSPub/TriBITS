@@ -4,6 +4,11 @@ ChangeLog for TriBITS
 
 ## 2023-10-25:
 
+* **Added:** New option `<Project>_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES`
+  skips the install of the project-level `<Project>Config.cmake` file.  The
+  default value is ``FALSE`` so as to maintain backward compatibility.  (The
+  project can change the default.)
+
 * **Changed:** External packages/TPLs are now processed at the base project
   scope level.  This allows simple `set()` statements in package module files
   or config files included by `find_package()` to have project-level scope for
