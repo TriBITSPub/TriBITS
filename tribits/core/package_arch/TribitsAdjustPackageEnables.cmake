@@ -853,6 +853,11 @@ macro(tribits_set_package_and_related_upstream_packages_to_external  packageName
   tribits_set_upstream_dep_packages_as_external(${packageName}
     ${subpackageTriggeredParentPackageExternal})
 
+  if (${packageName}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL")
+    tribits_set_package_and_deps_as_processed_by_downstream_tribits_external_package(
+      ${packageName})
+  endif()
+
 endmacro()
 # NOTE: In the above macro, if ${packageName} is made EXTERNAL because it one
 # of its subpackages is considered EXTERNAL, then the loop over all of the
@@ -1315,6 +1320,48 @@ macro(tribits_set_upstream_dep_packages_as_external  packageName
 endmacro()
 
 
+# Macro that sets all of the direct upstream dependent packages as being
+# processed by a downstream fully TriBITS compliant external package.
+macro(tribits_set_package_and_deps_as_processed_by_downstream_tribits_external_package
+    packageName
+  )
+
+  if ("${${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE}"
+      STREQUAL ""
+    )
+    set(${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE FALSE)
+  endif()
+
+  tribits_get_package_enable_status(${packageName} packageEnable "")
+
+  if (${packageName}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL"
+      AND (${packageName}_IS_FULLY_TRIBITS_COMPLIANT
+        OR ${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
+    )
+
+    if (${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
+      set(directOrIndirectStr "indirectly")
+      set(downstreamPkgStr "")
+    else()
+      set(directOrIndirectStr "directly")
+      set(downstreamPkgStr " ${packageName}")
+    endif()
+
+    foreach(depPkg  IN LISTS  ${packageName}_LIB_DEFINED_DEPENDENCIES)
+     tribits_get_package_enable_status(${depPkg} depPkgEnable "")
+     if (depPkgEnable)
+        message("-- "
+          "NOTE: ${depPkg} is ${directOrIndirectStr} downstream from an fully"
+          " TriBITS-compatible external package${downstreamPkgStr}")
+      endif()
+      set(${depPkg}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE TRUE)
+    endforeach()
+
+  endif()
+
+endmacro()
+
+
 # Macro that sets ``<ParentPackage>_ENABLE_<SubPackage>=ON`` if not already
 # enabled for all enabled subpackages of a parent package.
 #
@@ -1360,21 +1407,28 @@ endmacro()
 #
 # Usage::
 #
-#   tribits_set_internal_package_to_external(<packageName> "<becauseMsg1>"
+#   tribits_set_internal_package_to_external(<depPkgName> "<becauseMsg1>"
 #     "<becauseMsg2>" ...)
 #
-# This always sets ``<packageName>_PACKAGE_BUILD_STATUS=EXTERNAL`` but only
-# prints the message if ``<packageName>`` is enabled.
+# This always sets ``<depPkgName>_PACKAGE_BUILD_STATUS=EXTERNAL`` but only
+# prints the message if ``<depPkgName>`` is enabled.
 #
-macro(tribits_set_internal_package_to_external  packageName)
-  tribits_get_package_enable_status(${packageName} packageEnable packageEnableVar)
-  if (packageEnable)
+macro(tribits_set_internal_package_to_external  depPkgName)
+  tribits_get_package_enable_status(${depPkgName} depPkgEnable "")
+  if (depPkgEnable)
     message("-- "
-       "Treating internal package ${packageName} as EXTERNAL because"
+       "Treating internal package ${depPkgName} as EXTERNAL because"
        " " ${ARGN})
   endif()
-  set(${packageName}_PACKAGE_BUILD_STATUS  EXTERNAL)
-  set(${packageName}_FINDMOD  TRIBITS_PKG)
+  set(${depPkgName}_PACKAGE_BUILD_STATUS  EXTERNAL)
+  set(${depPkgName}_FINDMOD  TRIBITS_PKG)
+endmacro()
+
+
+macro(tribits_set_as_processed_by_downstream_tribits_external_package   packageName
+    depPkgName
+  )
+
 endmacro()
 
 

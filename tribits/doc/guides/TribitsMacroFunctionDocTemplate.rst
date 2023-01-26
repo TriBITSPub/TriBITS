@@ -38,7 +38,7 @@
 @MACRO:    tribits_package_define_dependencies() +
 @MACRO:    tribits_package_postprocess() +
 @MACRO:    tribits_process_subpackages() +
-@MACRO:    tribits_process_enabled_tpl() +
+@MACRO:    tribits_process_enabled_standard_tpl() +
 @MACRO:    tribits_project() +
 @MACRO:    tribits_project_define_extra_repositories() +
 @MACRO:    tribits_project_enable_all() +

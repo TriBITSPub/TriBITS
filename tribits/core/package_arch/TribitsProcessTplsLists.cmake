@@ -275,6 +275,14 @@ macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
       set(${TPL_NAME}_PACKAGE_BUILD_STATUS  EXTERNAL)
 
+      # Set ${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT
+
+      if (${TPL_NAME}_FINDMOD STREQUAL "TRIBITS_PKG")
+        set(${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT TRUE)
+      else()
+        set(${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT FALSE)
+      endif()
+
       # Print variables/properties for the TPL
 
       if (${PROJECT_NAME}_VERBOSE_CONFIGURE  OR  TRIBITS_PROCESS_TPLS_LISTS_VERBOSE)
@@ -283,6 +291,7 @@ macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
         print_var(${TPL_NAME}_DEPENDENCIES_FILE)
         print_var(${TPL_NAME}_TPLS_LIST_FILE)
         print_var(${TPL_NAME}_PACKAGE_BUILD_STATUS)
+        print_var(${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT)
       endif()
 
       # Set cache var TPL_ENABLE_${TPL_NAME} with default ""

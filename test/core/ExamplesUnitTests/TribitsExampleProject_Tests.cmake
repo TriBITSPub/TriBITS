@@ -2569,7 +2569,7 @@ tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
       "When you reconfigure, just grep the cmake stdout for 'HeaderOnlyTpl'"
       "and then follow the disables that occur as a result to see what impact"
       "this TPL disable has on the configuration of TribitsExProj."
-      "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ [(]message[)]:"
+      "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
       "  ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
       "Call Stack .most recent call first.:"
       "-- Configuring incomplete, errors occurred!"
@@ -2624,7 +2624,7 @@ tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_HardEnable_Fail
       "and then follow the disables that occur as a result to see what impact"
       "this TPL disable has on the configuration of TribitsExProj."
       "-- ERROR: Failed finding all of the parts of TPL 'HeaderOnlyTpl' .see above., Aborting!"
-      "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ [(]message[)]:"
+      "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
       "  ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
       "Call Stack .most recent call first.:"
       "-- Configuring incomplete, errors occurred!"
@@ -3293,14 +3293,12 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
       -DCMAKE_PREFIX_PATH=../install/simple_cxx
       -DTPL_ENABLE_MPI=OFF
       -DTPL_ENABLE_SimpleTpl=ON
-      -DSimpleTpl_INCLUDE_DIRS=${SimpleTpl_install_STATIC_DIR}/install/include
-      -DSimpleTpl_LIBRARY_DIRS=${SimpleTpl_install_STATIC_DIR}/install/lib
-      # ToDo: Remove how to find SimpleTpl because SimpleCxx should already
-      # have that found and we should just use what it found!
       ../TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Adjust the set of internal and external packages:"
       "-- Treating internal package SimpleCxx as EXTERNAL because TPL_ENABLE_SimpleCxx=ON"
+      "-- NOTE: HeaderOnlyTpl is directly downstream from an fully TriBITS-compatible external package SimpleCxx"
+      "-- NOTE: SimpleTpl is directly downstream from an fully TriBITS-compatible external package SimpleCxx"
 
       "Final set of enabled top-level packages:  MixedLang WithSubpackages WrapExternal 3"
       "Final set of enabled packages:  MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
@@ -3311,18 +3309,20 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
       "Final set of non-enabled top-level external packages/TPLs:  MPI 1"
       "Final set of non-enabled external packages/TPLs:  MPI 1"
 
-      "Getting information for all enabled external packages/TPLs ..."
+      "Getting information for all enabled fully TriBITS-compatible or upstream external packages/TPLs ..."
       "Processing enabled external package/TPL: HeaderOnlyTpl [(]enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF[)]"
-      "-- TPL_HeaderOnlyTpl_INCLUDE_DIRS='.*/tribits/examples/tpls/HeaderOnlyTpl'"
+      "-- The external package/TPL HeaderOnlyTpl will be read in by a downstream fully TriBITS-compliant external package"
       "Processing enabled external package/TPL: SimpleTpl [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleTpl=OFF[)]"
-      "-- TPL_SimpleTpl_LIBRARIES='.*/TriBITS_SimpleTpl_install_STATIC/install/lib/libsimpletpl.a'"
-      "-- TPL_SimpleTpl_INCLUDE_DIRS='.*/TriBITS_SimpleTpl_install_STATIC/install/include'"
+      "-- The external package/TPL SimpleTpl will be read in by a downstream fully TriBITS-compliant external package"
       "Processing enabled external package/TPL: SimpleCxx [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleCxx=OFF[)]"
-      "-- Calling find_package[(]SimpleCxx[)] for TriBITS-compatible package ..."
+      "-- Calling find_package[(]SimpleCxx[)] for TriBITS-compatible package"
+
+      "Getting information for all enabled external packages/TPLs ..."
 
       "Configuring individual enabled TribitsExProj packages ..."
       "Processing enabled top-level package: MixedLang [(]Libs, Tests, Examples[)]"
       "Processing enabled top-level package: WithSubpackages [(]A, B, C, Tests, Examples[)]"
+      "Processing enabled top-level package: WrapExternal [(]Libs, Tests, Examples[)]"
 
       "Configuring done"
     ALWAYS_FAIL_ON_NONZERO_RETURN

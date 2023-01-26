@@ -49,11 +49,69 @@ include(AppendStringVar)
 include(TribitsStandardizePaths)
 
 
-# @MACRO: tribits_process_enabled_tpl()
+# Gather information from enabled TPLs
+#
+macro(tribits_process_enabled_tpls)
+
+  tribits_config_code_start_timer(CONFIGURE_TPLS_TIME_START_SECONDS)
+
+  tribits_filter_package_list_from_var(${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES
+    EXTERNAL  ON  NONEMPTY  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
+
+  message("")
+  message("Getting information for all enabled fully TriBITS-compatible"
+    " or upstream external packages/TPLs ...")
+  message("")
+
+  foreach(TPL_NAME  IN LISTS  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
+    if (${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT
+        OR ${TPL_NAME}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE
+      )
+      tribits_process_enabled_fully_tribits_compatible_or_upstream_tpl(${TPL_NAME})
+    endif()
+  endforeach()
+
+  message("")
+  message("Getting information for all enabled external packages/TPLs ...")
+  message("")
+
+  foreach(TPL_NAME  IN LISTS  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
+    if ((NOT ${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT)
+        AND (NOT ${TPL_NAME}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
+      )
+      tribits_process_enabled_standard_tpl(${TPL_NAME})
+    endif()
+  endforeach()
+
+  tribits_config_code_stop_timer(CONFIGURE_TPLS_TIME_START_SECONDS
+    "\nTotal time to configure enabled external packages/TPLs")
+
+endmacro()
+
+
+macro(tribits_process_enabled_fully_tribits_compatible_or_upstream_tpl  TPL_NAME)
+
+  tribits_get_enabled_tpl_processing_string(${TPL_NAME}  tplProcessingString)
+  message("${tplProcessingString}")
+
+  if (NOT ${PROJECT_NAME}_TRACE_DEPENDENCY_HANDLING_ONLY)
+    if (NOT ${TPL_NAME}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
+      tribits_process_enabled_tribits_compatible_tpl(${TPL_NAME})
+    else()
+      message("-- "
+        "The external package/TPL ${TPL_NAME} will be read in by a downstream"
+        " fully TriBITS-compliant external package")
+    endif()
+  endif()
+
+endmacro()
+
+
+# @MACRO: tribits_process_enabled_standard_tpl()
 #
 # Process an enabled TPL's FindTPL${TPL_NAME}.cmake module.
 #
-macro(tribits_process_enabled_tpl  TPL_NAME)
+macro(tribits_process_enabled_standard_tpl  TPL_NAME)
 
   tribits_get_enabled_tpl_processing_string(${TPL_NAME}  tplProcessingString)
   message("${tplProcessingString}")
@@ -65,14 +123,10 @@ macro(tribits_process_enabled_tpl  TPL_NAME)
       print_var(${TPL_NAME}_FINDMOD)
     endif()
 
-    if (${TPL_NAME}_FINDMOD STREQUAL "TRIBITS_PKG")
-      tribits_process_enabled_tribits_compatible_tpl(${TPL_NAME})
-    else()
-      tribits_process_enabled_tribits_find_tpl_mod_file(${TPL_NAME})
-      tribits_address_failed_tpl_find(${TPL_NAME})
-      tribits_generate_tpl_version_file_and_add_package_config_install_targets(
-	${TPL_NAME})
-    endif()
+    tribits_process_enabled_tribits_find_tpl_mod_file(${TPL_NAME})
+    tribits_address_failed_tpl_find(${TPL_NAME})
+    tribits_generate_tpl_version_file_and_add_package_config_install_targets(
+      ${TPL_NAME})
 
   endif()
 
@@ -98,7 +152,7 @@ endfunction()
 #
 macro(tribits_process_enabled_tribits_compatible_tpl  TPL_NAME)
   message("-- "
-    "Calling find_package(${TPL_NAME}) for TriBITS-compatible package ...")
+    "Calling find_package(${TPL_NAME}) for TriBITS-compatible package")
   set(TPL_${TPL_NAME}_PARTS_ALREADY_SET FALSE)  # ToDo: Take out?
   if (NOT TPL_${TPL_NAME}_PARTS_ALREADY_SET)
     find_package(${TPL_NAME} CONFIG REQUIRED)

@@ -2307,7 +2307,14 @@ defined TPL ``TPL_NAME`` is assigned the following global non-cache variables:
     ``Repo1/TPLsList.cmake`` and ``Repo2/TPLsList.cmake`` both list the TPL
     ``SomeTpl``, then if ``Repo2`` is processed after ``Repo1``, then
     ``SomeTpl_FINDMOD`` is determined by ``Repo2/TPLsList.cmake`` and the find
-    module listed in ``Repo1/TPLsList.cmake`` is ignored.
+    module listed in ``Repo1/TPLsList.cmake`` is ignored.  NOTE: The special
+    value ``TRIBITS_PKG`` is also recognized for external packages/TPLs that
+    are *fully TriBITS compliant* (i.e. defines a ``${TPL_NAME}Config.cmake``
+    file provides the ``${TPL_NAME}::all_libs`` target, calls
+    ``find_dependency(<UpstreamPkg>)`` on all of its upstream dependencies,
+    and each of those dependencies defines the ``<UpstreamPkg>::all_libs``
+    target.)  A pre-installed TriBITS package meets this definition,
+    obviously.
 
   .. _<tplName>_DEPENDENCIES_FILE:
   .. _${TPL_NAME}_DEPENDENCIES_FILE:

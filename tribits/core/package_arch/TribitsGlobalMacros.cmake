@@ -1482,25 +1482,6 @@ macro(tribits_handle_project_extra_link_flags_as_a_tpl)
 endmacro()
 
 
-# Gather information from enabled TPLs
-#
-macro(tribits_process_enabled_tpls)
-
-  tribits_config_code_start_timer(CONFIGURE_TPLS_TIME_START_SECONDS)
-
-  tribits_filter_package_list_from_var(${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES
-    EXTERNAL  ON  NONEMPTY  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
-
-  foreach(TPL_NAME  IN LISTS  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
-    tribits_process_enabled_tpl(${TPL_NAME})
-  endforeach()
-
-  tribits_config_code_stop_timer(CONFIGURE_TPLS_TIME_START_SECONDS
-    "\nTotal time to configure enabled external packages/TPLs")
-
-endmacro()
-
-
 #
 # Macros for setting up the standard environment
 #
