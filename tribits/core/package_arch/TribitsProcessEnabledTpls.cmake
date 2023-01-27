@@ -156,6 +156,9 @@ macro(tribits_process_enabled_tribits_compatible_tpl  TPL_NAME)
   set(TPL_${TPL_NAME}_PARTS_ALREADY_SET FALSE)  # ToDo: Take out?
   if (NOT TPL_${TPL_NAME}_PARTS_ALREADY_SET)
     find_package(${TPL_NAME} CONFIG REQUIRED)
+    tribits_write_tribits_compatible_external_package_config_file(${TPL_NAME})
+    tribits_generate_tpl_version_file_and_add_package_config_install_targets(
+      ${TPL_NAME})
     set(TPL_${TPL_NAME}_PARTS_ALREADY_SET TRUE)
   endif()
 endmacro()
@@ -252,4 +255,29 @@ function(tribits_generate_tpl_version_file_and_add_package_config_install_target
   tribits_extpkg_install_config_file(${TPL_NAME} "${tplConfigFile}")
   tribits_extpkg_install_config_version_file(${TPL_NAME}
     "${tplConfigVersionFile}")
+endfunction()
+
+
+# Generate a <Package>Config.cmake wrapper file for a fully TriBITS-compliant
+# external package and put it in the external_packages/ directory so it can be
+# included like any external package/TPL.
+#
+function(tribits_write_tribits_compatible_external_package_config_file  tplName)
+  # Create <tplName>Config.cmake file
+  set(configFileStr "")
+  string(APPEND configFileStr
+    "include(CMakeFindDependencyMacro)\n" )
+  if (${externalPkg}_DIR)
+    string(APPEND configFileStr
+      "set(${tplName}_DIR \"${${tplName}_DIR}\")\n" )
+  endif()
+  string(APPEND configFileStr
+    "find_dependency(${tplName} CONFIG REQUIRED)\n"
+    )
+  set(buildDirExternalPkgsDir
+    "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_EXTERNAL_PKGS_DIR}")
+  set(tplConfigFile
+    "${buildDirExternalPkgsDir}/${tplName}/${tplName}Config.cmake")
+  file(WRITE "${tplConfigFile}" "${configFileStr}")
+
 endfunction()
