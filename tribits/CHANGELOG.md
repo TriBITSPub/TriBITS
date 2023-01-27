@@ -2,6 +2,19 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2023-10-25:
+
+* **Changed:** External packages/TPLs are now processed at the base project
+  scope level.  This allows simple `set()` statements in package module files
+  or config files included by `find_package()` to have project-level scope for
+  the entire TriBITS project.  This is more similar to how a raw CMake project
+  would usually behave that calls `find_package()` in the base
+  `CMakeLists.txt` file.  Before, calls to `find_package()` were wrapped in a
+  CMake `function()` called from the base project directory scope.  So while
+  IMPORTED targets created from a `find_package()` command where visible at
+  the base directory project-level scope, local variables were not.  With this
+  change, now they are.
+
 ## 2023-01-10:
 
 * **Added:** Added back support for deprecated variable

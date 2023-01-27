@@ -49,26 +49,14 @@ include(AppendStringVar)
 include(TribitsStandardizePaths)
 
 
-# @FUNCTION: tribits_process_enabled_tpl()
+# @MACRO: tribits_process_enabled_tpl()
 #
 # Process an enabled TPL's FindTPL${TPL_NAME}.cmake module.
 #
-function(tribits_process_enabled_tpl  TPL_NAME)
+macro(tribits_process_enabled_tpl  TPL_NAME)
 
-  # Setup the processing string
-  set(PROCESSING_MSG_STRING "Processing enabled external package/TPL: ${TPL_NAME} (")
-  if (${TPL_NAME}_ENABLING_PKG)
-    string(APPEND PROCESSING_MSG_STRING
-      "enabled by ${${TPL_NAME}_ENABLING_PKG}," )
-  else()
-    string(APPEND PROCESSING_MSG_STRING
-      "enabled explicitly," )
-  endif()
-    string(APPEND PROCESSING_MSG_STRING 
-      " disable with -DTPL_ENABLE_${TPL_NAME}=OFF)" )
-
-  # Print the processing header
-  message("${PROCESSING_MSG_STRING}")
+  tribits_get_enabled_tpl_processing_string(${TPL_NAME}  tplProcessingString)
+  message("${tplProcessingString}")
 
   if (NOT ${PROJECT_NAME}_TRACE_DEPENDENCY_HANDLING_ONLY)
 
@@ -76,15 +64,54 @@ function(tribits_process_enabled_tpl  TPL_NAME)
     if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
       print_var(${TPL_NAME}_FINDMOD)
     endif()
+
     if (${TPL_NAME}_FINDMOD STREQUAL "TRIBITS_PKG")
-      message("-- Calling find_package(${TPL_NAME}) for TriBITS-compatible package ...")
-      set(TPL_${TPL_NAME}_PARTS_ALREADY_SET FALSE)  # ToDo: Take out?
-      if (NOT TPL_${TPL_NAME}_PARTS_ALREADY_SET)
-        find_package(${TPL_NAME} CONFIG REQUIRED)
-        global_set(TPL_${TPL_NAME}_PARTS_ALREADY_SET TRUE)
-      endif()
-      return()
-    elseif (IS_ABSOLUTE ${${TPL_NAME}_FINDMOD})
+      tribits_process_enabled_tribits_compatible_tpl(${TPL_NAME})
+    else()
+      tribits_process_enabled_tribits_find_tpl_mod_file(${TPL_NAME})
+      tribits_address_failed_tpl_find(${TPL_NAME})
+      tribits_generate_tpl_version_file_and_add_package_config_install_targets(
+	${TPL_NAME})
+    endif()
+
+  endif()
+
+endmacro()
+
+
+# Get external package/TPL processing string
+#
+function(tribits_get_enabled_tpl_processing_string  TPL_NAME  tplProcessingStringOut)
+  set(tplProcessingString "Processing enabled external package/TPL: ${TPL_NAME} (")
+  if (${TPL_NAME}_ENABLING_PKG)
+    string(APPEND tplProcessingString "enabled by ${${TPL_NAME}_ENABLING_PKG}," )
+  else()
+    string(APPEND tplProcessingString "enabled explicitly," )
+  endif()
+  string(APPEND tplProcessingString " disable with -DTPL_ENABLE_${TPL_NAME}=OFF)" )
+  set(${tplProcessingStringOut} "${tplProcessingString}" PARENT_SCOPE)
+endfunction()
+
+
+# Process an enabled TPL defined using a fully TriBITS-compatible
+# <tplName>Config.cmake file
+#
+macro(tribits_process_enabled_tribits_compatible_tpl  TPL_NAME)
+  message("-- "
+    "Calling find_package(${TPL_NAME}) for TriBITS-compatible package ...")
+  set(TPL_${TPL_NAME}_PARTS_ALREADY_SET FALSE)  # ToDo: Take out?
+  if (NOT TPL_${TPL_NAME}_PARTS_ALREADY_SET)
+    find_package(${TPL_NAME} CONFIG REQUIRED)
+    set(TPL_${TPL_NAME}_PARTS_ALREADY_SET TRUE)
+  endif()
+endmacro()
+
+
+# Process an enabled TPL defined using a FindTPL<tplName>.cmake module
+#
+macro(tribits_process_enabled_tribits_find_tpl_mod_file  TPL_NAME)
+
+    if (IS_ABSOLUTE ${${TPL_NAME}_FINDMOD})
       #message("${${TPL_NAME}_FINDMOD} is absolute!")
       set(CURRENT_TPL_PATH "${${TPL_NAME}_FINDMOD}")
     else()
@@ -112,56 +139,63 @@ function(tribits_process_enabled_tpl  TPL_NAME)
       print_var(TPL_${TPL_NAME}_NOT_FOUND)
     endif()
 
-    # Address failed find of the TPL
-    if (TPL_${TPL_NAME}_NOT_FOUND AND NOT TPL_TENTATIVE_ENABLE_${TPL_NAME})
+endmacro()
+
+
+function(tribits_address_failed_tpl_find  TPL_NAME)
+  # Address failed find of the TPL
+  if (TPL_${TPL_NAME}_NOT_FOUND AND NOT TPL_TENTATIVE_ENABLE_${TPL_NAME})
+    message(
+      "-- NOTE: The find module file for this failed TPL '${TPL_NAME}' is:\n"
+      "     ${CURRENT_TPL_PATH}\n"
+      "   which is pointed to in the file:\n"
+      "     ${${TPL_NAME}_TPLS_LIST_FILE}\n"
+      )
+    if (${TPL_NAME}_ENABLING_PKG)
       message(
-        "-- NOTE: The find module file for this failed TPL '${TPL_NAME}' is:\n"
-        "     ${CURRENT_TPL_PATH}\n"
-        "   which is pointed to in the file:\n"
-        "     ${${TPL_NAME}_TPLS_LIST_FILE}\n"
+        "TIP: One way to get past the configure failure for the\n"
+        "TPL '${TPL_NAME}' is to simply disable it with:\n"
+        "  -DTPL_ENABLE_${TPL_NAME}=OFF\n"
+        "which will disable it and will recursively disable all of the\n"
+        "downstream packages that have required dependencies on it, including\n"
+        "the package '${${TPL_NAME}_ENABLING_PKG}' which triggered its enable.\n"
+        "When you reconfigure, just grep the cmake stdout for '${TPL_NAME}'\n"
+        "and then follow the disables that occur as a result to see what impact\n"
+        "this TPL disable has on the configuration of ${PROJECT_NAME}.\n"
         )
-      if (${TPL_NAME}_ENABLING_PKG)
-        message(
-          "TIP: One way to get past the configure failure for the\n"
-          "TPL '${TPL_NAME}' is to simply disable it with:\n"
-          "  -DTPL_ENABLE_${TPL_NAME}=OFF\n"
-          "which will disable it and will recursively disable all of the\n"
-          "downstream packages that have required dependencies on it, including\n"
-          "the package '${${TPL_NAME}_ENABLING_PKG}' which triggered its enable.\n"
-          "When you reconfigure, just grep the cmake stdout for '${TPL_NAME}'\n"
-          "and then follow the disables that occur as a result to see what impact\n"
-          "this TPL disable has on the configuration of ${PROJECT_NAME}.\n"
-          )
-      else()
-        message(
-          "TIP: Even though the TPL '${TPL_NAME}' was explicitly enabled in input,\n"
-          "it can be disabled with:\n"
-          "  -DTPL_ENABLE_${TPL_NAME}=OFF\n"
-          "which will disable it and will recursively disable all of the\n"
-          "downstream packages that have required dependencies on it.\n"
-          "When you reconfigure, just grep the cmake stdout for '${TPL_NAME}'\n"
-          "and then follow the disables that occur as a result to see what impact\n"
-          "this TPL disable has on the configuration of ${PROJECT_NAME}.\n"
-          )
-      endif()
-      message(FATAL_ERROR
-        "ERROR: TPL_${TPL_NAME}_NOT_FOUND=${TPL_${TPL_NAME}_NOT_FOUND}, aborting!")
+    else()
+      message(
+        "TIP: Even though the TPL '${TPL_NAME}' was explicitly enabled in input,\n"
+        "it can be disabled with:\n"
+        "  -DTPL_ENABLE_${TPL_NAME}=OFF\n"
+        "which will disable it and will recursively disable all of the\n"
+        "downstream packages that have required dependencies on it.\n"
+        "When you reconfigure, just grep the cmake stdout for '${TPL_NAME}'\n"
+        "and then follow the disables that occur as a result to see what impact\n"
+        "this TPL disable has on the configuration of ${PROJECT_NAME}.\n"
+        )
     endif()
-
-    # Generate the <tplName>ConfigVersion.cmake file if it has not been
-    # created yet and add install targets for <tplName>Config[Version].cmake
-    set(buildDirExternalPkgsDir
-      "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_EXTERNAL_PKGS_DIR}")
-    set(tplConfigFile
-      "${buildDirExternalPkgsDir}/${TPL_NAME}/${TPL_NAME}Config.cmake")
-    set(tplConfigVersionFile
-      "${buildDirExternalPkgsDir}/${TPL_NAME}/${TPL_NAME}ConfigVersion.cmake")
-    tribits_extpkg_write_config_version_file(${TPL_NAME}
-      "${tplConfigVersionFile}")
-    tribits_extpkg_install_config_file(${TPL_NAME} "${tplConfigFile}")
-    tribits_extpkg_install_config_version_file(${TPL_NAME}
-      "${tplConfigVersionFile}")
-
+    message(FATAL_ERROR
+      "ERROR: TPL_${TPL_NAME}_NOT_FOUND=${TPL_${TPL_NAME}_NOT_FOUND}, aborting!")
   endif()
+endfunction()
 
+
+# Generate the <tplName>ConfigVersion.cmake file for a TriBITS TPL and install
+# the already generated <tplName>Config.cmake file
+#
+function(tribits_generate_tpl_version_file_and_add_package_config_install_targets
+    TPL_NAME
+  )
+  set(buildDirExternalPkgsDir
+    "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_EXTERNAL_PKGS_DIR}")
+  set(tplConfigFile
+    "${buildDirExternalPkgsDir}/${TPL_NAME}/${TPL_NAME}Config.cmake")
+  set(tplConfigVersionFile
+    "${buildDirExternalPkgsDir}/${TPL_NAME}/${TPL_NAME}ConfigVersion.cmake")
+  tribits_extpkg_write_config_version_file(${TPL_NAME}
+    "${tplConfigVersionFile}")
+  tribits_extpkg_install_config_file(${TPL_NAME} "${tplConfigFile}")
+  tribits_extpkg_install_config_version_file(${TPL_NAME}
+    "${tplConfigVersionFile}")
 endfunction()
