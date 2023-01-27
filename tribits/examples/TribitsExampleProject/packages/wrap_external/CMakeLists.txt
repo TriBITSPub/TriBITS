@@ -133,13 +133,13 @@ add_dependencies(external_func build_external_func)
 
 # E.2) Make sure before we build the external library, we first build the
 # libraries.
-add_dependencies(build_external_func pws_a)
+add_dependencies(build_external_func WithSubpackagesA::pws_a)
 # NOTE: You have to put the lib dependencies on build target, not the imported
 # library target!
 
 # E.3) Update the TriBITS variables
 append_set(${PACKAGE_NAME}_LIB_TARGETS external_func)
-global_set(${PACKAGE_NAME}_LIBRARIES external_func pws_a)
+global_set(${PACKAGE_NAME}_LIBRARIES external_func WithSubpackagesA::pws_a)
 global_set(${PACKAGE_NAME}_HAS_NATIVE_LIBRARIES ON)
 tribits_include_directories(${EXTERNAL_FUNC_SOURCE_DIR})
 # NOTE: Above, you have to add the upstream dependent libraries to the current
