@@ -39,6 +39,7 @@
 
 include(TribitsGeneralMacros)
 include(TribitsPkgExportCacheVars)
+include(TribitsWritePackageConfigFileHelpers)
 
 ###
 ### WARNING: See "NOTES TO DEVELOPERS" at the bottom of the file
@@ -280,8 +281,11 @@ function(tribits_generate_package_config_file_for_build_tree  packageName)
         "${PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}" packageConfigBuildDirTargetsFile )
       string(APPEND PACKAGE_CONFIG_CODE
         "\n# Import ${packageName} targets\n"
-        "include(\"${packageConfigBuildDirTargetsFile}\")")
+        "include(\"${packageConfigBuildDirTargetsFile}\")\n")
     endif()
+
+    tribits_append_tribits_compliant_package_config_vars(${packageName}
+      PACKAGE_CONFIG_CODE)
 
     tribits_set_compiler_vars_for_config_file(BUILD_DIR)
 
@@ -381,7 +385,10 @@ function(tribits_generate_package_config_file_for_install_tree  packageName)
   # Import install targets
   string(APPEND PACKAGE_CONFIG_CODE
     "\n# Import ${packageName} targets\n"
-    "include(\"\${CMAKE_CURRENT_LIST_DIR}/${packageName}Targets.cmake\")")
+    "include(\"\${CMAKE_CURRENT_LIST_DIR}/${packageName}Targets.cmake\")\n")
+
+  tribits_append_tribits_compliant_package_config_vars(${packageName}
+    PACKAGE_CONFIG_CODE)
 
   # Write the specification of the rpath if necessary. This is only needed if
   # we're building shared libraries.
@@ -474,11 +481,17 @@ function(tribits_append_dependent_package_config_file_includes_and_enables packa
   foreach(depPkg IN LISTS ${packageName}_LIB_ENABLED_DEPENDENCIES)
     set(packageConfigBaseDir "") # Initially, no add include()
     if (${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "INTERNAL")
-      set(packageConfigBaseDir "${pkgConfigFileBaseDir}/${depPkg}")
+      set(packageConfigBaseDir "\${CMAKE_CURRENT_LIST_DIR}/../${depPkg}")
     elseif (${depPkg}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL")
-      set(packageConfigBaseDir "${extPkgConfigFileBaseDir}/${depPkg}")
+      if (NOT "${${depPkg}_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR}" STREQUAL "")
+        set(packageConfigBaseDir "${${depPkg}_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR}")
+      else()
+        set(packageConfigBaseDir
+          "\${CMAKE_CURRENT_LIST_DIR}/../../${${PROJECT_NAME}_BUILD_DIR_EXTERNAL_PKGS_DIR}/${depPkg}")
+      endif()
     else()
-      message(FATAL_ERROR "ERROR: ${depPkg}_PACKAGE_BUILD_STATUS='${${depPkg}_PACKAGE_BUILD_STATUS}' invalid!")
+      message(FATAL_ERROR "ERROR:"
+        " ${depPkg}_PACKAGE_BUILD_STATUS='${${depPkg}_PACKAGE_BUILD_STATUS}' invalid!")
     endif()
     if (packageConfigBaseDir)
       string(APPEND configFileStr

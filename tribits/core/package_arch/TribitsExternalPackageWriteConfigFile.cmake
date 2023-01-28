@@ -42,6 +42,7 @@ include_guard()
 
 include(TribitsGeneralMacros)
 include(TribitsPackageDependencies)
+include(TribitsWritePackageConfigFileHelpers)
 
 include(MessageWrapper)
 
@@ -281,7 +282,7 @@ function(tribits_extpkg_write_config_file_str  tplName  tplConfigFileStrOut)
     "\n"
     )
 
-  # B) Call find_dependency() for all direct dependent upstream TPLs
+  # B) Pull in upstream packages
   tribits_extpkg_add_find_upstream_dependencies_str(${tplName}
     configFileStr)
 
@@ -301,7 +302,10 @@ function(tribits_extpkg_write_config_file_str  tplName  tplConfigFileStrOut)
     CONFIG_FILE_STR_INOUT  configFileStr
     )
 
-  # E) Set the output
+  # E) Add standard TriBITS-compliant external package vars
+  tribits_append_tribits_compliant_package_config_vars(${tplName}  configFileStr)
+
+  # F) Set the output
   set(${tplConfigFileStrOut} "${configFileStr}" PARENT_SCOPE)
 
 endfunction()
@@ -309,15 +313,16 @@ endfunction()
 
 # @FUNCTION: tribits_extpkg_add_find_upstream_dependencies_str()
 #
-# Add code to call find_dependency() for all upstream external packages/TPLs
-# listed in ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
+# Add includes for all upstream external packages/TPLs listed in
+# ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
 # Usage::
 #
 #   tribits_extpkg_add_find_upstream_dependencies_str(tplName
 #     configFileFragStrInOut)
 #
-# NOTE: This also requires that ``<upstreamTplName>_DIR`` be set for each
+# NOTE: This also requires that
+# ``<upstreamTplName>_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE`` be set for each
 # external package/TPL listed in ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
 function(tribits_extpkg_add_find_upstream_dependencies_str
@@ -325,63 +330,35 @@ function(tribits_extpkg_add_find_upstream_dependencies_str
   )
   if (NOT "${${tplName}_LIB_ENABLED_DEPENDENCIES}" STREQUAL "")
     set(configFileFragStr "${${configFileFragStrInOut}}")
-    string(APPEND configFileFragStr
-      "include(CMakeFindDependencyMacro)\n"
-      "\n"
-      "# Don't allow find_dependency() to search anything other than <upstreamTplName>_DIR\n"
-      "set(${tplName}_SearchNoOtherPathsArgs\n"
-      "  NO_DEFAULT_PATH\n"
-      "  NO_PACKAGE_ROOT_PATH NO_CMAKE_PATH\n"
-      "  NO_CMAKE_ENVIRONMENT_PATH\n"
-      "  NO_SYSTEM_ENVIRONMENT_PATH\n"
-      "  NO_CMAKE_PACKAGE_REGISTRY\n"
-      "  NO_CMAKE_SYSTEM_PATH\n"
-      "  NO_CMAKE_SYSTEM_PACKAGE_REGISTRY\n"
-      "  CMAKE_FIND_ROOT_PATH_BOTH\n"
-      "  ONLY_CMAKE_FIND_ROOT_PATH\n"
-      "  NO_CMAKE_FIND_ROOT_PATH\n"
-      "  )\n"
-      "\n"
-     )
     foreach (upstreamTplDepEntry IN LISTS ${tplName}_LIB_ENABLED_DEPENDENCIES)
       tribits_extpkg_get_dep_name_and_vis(
         "${upstreamTplDepEntry}"  upstreamTplDepName  upstreamTplDepVis)
-      if ("${${upstreamTplDepName}_DIR}" STREQUAL "")
-        message(FATAL_ERROR "ERROR: ${upstreamTplDepName}_DIR is empty!")
+      if (NOT "${${upstreamTplDepName}_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR}"
+          STREQUAL ""
+        )
+        set(upstreamTplPackageConfigFileDir
+          "${${upstreamTplDepName}_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR}")
+      else()
+        set(upstreamTplPackageConfigFileDir
+          "\${CMAKE_CURRENT_LIST_DIR}/../${upstreamTplDepName}")
       endif()
       string(APPEND configFileFragStr
         "if (NOT TARGET ${upstreamTplDepName}::all_libs)\n"
-        "  set(${upstreamTplDepName}_DIR \"\${CMAKE_CURRENT_LIST_DIR}/../${upstreamTplDepName}\")\n"
-        "  find_dependency(${upstreamTplDepName} REQUIRED CONFIG \${${tplName}_SearchNoOtherPathsArgs})\n"
-        "  unset(${upstreamTplDepName}_DIR)\n"
+        "  include(\"${upstreamTplPackageConfigFileDir}/${upstreamTplDepName}Config.cmake\")\n"
         "endif()\n"
         "\n"
         )
     endforeach()
-    string(APPEND configFileFragStr
-      "unset(${tplName}_SearchNoOtherPathsArgs)\n"
-      "\n"
-     )
     set(${configFileFragStrInOut} "${configFileFragStr}" PARENT_SCOPE)
   endif()
 endfunction()
 #
-# NOTE: Above, to be the most flexible, we have to set
-# `<upstreamTplDepName>_DIR` and then call `find_dependency()` instead of just
-# including the file:
-#
-#   include("${<upstreamTplDepName>_DIR}/<upstreamTplDepName>Config.cmake")
-#
-# This is to allow finding and depending on external packages/TPLs that may
-# have different names than <upstreamTplDepName>Config.cmake.  The CMake
-# command find_package() only returns <upstreamTplDepName>_DIR, not the full
-# path to the config file or even the config file name.  It is a little bit
-# dangerous to use find_dependency() in case the config fire is not found in
-# the directory `<upstreamTplDepName>_DIR` but I am not sure how else to do
-# this.
-#
-# ToDo: It would be great to make the above find_dependency() call **only **
-# search the directory <upstreamTplDepName>_DIR and no others.  That would make 
+# NOTE: Above, we include the upstream ${upstreamTplDepName}Config.cmake file
+# from either beside the current location (in the build tree or the install
+# tree) or we use the location set in
+# ${upstreamTplDepName}_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR which would
+# have been set by the ${upstreamTplDepName}Config.cmake file itself from an
+# upstream install as pulled in from a TriBITS-compliant external package.
 
 
 # @FUNCTION: tribits_extpkg_process_libraries_list()
@@ -446,7 +423,6 @@ function(tribits_extpkg_process_libraries_list  tplName)
   list(REVERSE reverseLibraries)
 
   foreach (libentry IN LISTS reverseLibraries)
-    #print_var(libentry)
     tribits_tpl_libraries_entry_type(${libentry} libEntryType)
     if (libEntryType STREQUAL "UNSUPPORTED_LIB_ENTRY")
       message_wrapper(SEND_ERROR
@@ -551,11 +527,14 @@ function(tribits_extpkg_process_libraries_list_library_entry
     tribits_extpkg_append_add_library_str (${libname} ${prefixed_libname}
       ${libEntryType} "${libpath}" configFileStr)
     if (lastLibProcessed)
+      # This is not the first lib so we only need to link to the previous lib
       string(APPEND configFileStr
         "target_link_libraries(${prefixed_libname}\n"
         "  INTERFACE tribits::${tplName}::${lastLibProcessed})\n"
         )
     else()
+      # Only on the first lib do we add dependencies on all of the
+      # `<UpstreamPkg>::all_libs` targets
       tribits_extpkg_append_upstream_target_link_libraries_str( ${tplName}
         ${prefixed_libname}  configFileStr )
     endif()
@@ -714,6 +693,13 @@ function(tribits_print_invalid_lib_link_option  tplName  liblinkoption)
 endfunction()
 
 
+# @FUNCTION: tribits_extpkg_append_upstream_target_link_libraries_str()
+#
+# Append text calling `target_link_libraries(<prefix_libname> ... )` against
+# the `<UpstreamPkg>::all_libs` targets for all of the direct enabled upstream
+# dependencies listed in '<tplName>_LIB_ENABLED_DEPENDENCIES` (taking into
+# account `PUBLIC` and `PRIVATE` dependencies).
+#
 function(tribits_extpkg_append_upstream_target_link_libraries_str
     tplName  prefix_libname  configFileStrInOut
   )
@@ -791,7 +777,7 @@ function(tribits_extpkg_create_all_libs_target  tplName)
   tribits_check_for_unparsed_arguments()
 
   # Set short-hand local vars
-  set(libTarget "${PARSE_LIB_TARGETS_LIST}")
+  set(libTargets "${PARSE_LIB_TARGETS_LIST}")
   set(libLinkFlags "${PARSE_LIB_LINK_FLAGS_LIST}")
 
   # Capture the initial input string in case the name of the var
@@ -845,4 +831,3 @@ function(tribits_extpkg_create_all_libs_target  tplName)
     PARENT_SCOPE)
 
 endfunction()
-
