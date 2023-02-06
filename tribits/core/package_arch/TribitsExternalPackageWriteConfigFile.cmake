@@ -49,8 +49,8 @@ include(MessageWrapper)
 
 # @FUNCTION: tribits_extpkg_write_config_file()
 #
-# Write out a ``<tplName>Config.cmake`` file given the list of include
-# directories and libraries for an external package/TPL.
+# Write out a ``<tplName>Config.cmake`` file for a TriBITS TPL given the list
+# of include directories and libraries for an external package/TPL.
 #
 # Usage::
 #
@@ -67,6 +67,9 @@ include(MessageWrapper)
 # This function just calls `tribits_extpkg_write_config_file_str()`_
 # and writes that text to the file ``<tplConfigFile>`` so see that function
 # for more details.
+#
+# NOTE: This is used for a classic TriBITS TPL that does **not** use
+# ``find_package(<externalPkg>)`` with modern IMPORTED targets.
 #
 function(tribits_extpkg_write_config_file  tplName  tplConfigFile)
   tribits_extpkg_write_config_file_str(${tplName} tplConfigFileStr)
