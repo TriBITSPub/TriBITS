@@ -38,11 +38,11 @@
 # @HEADER
 
 
-# @FUNCTION: tribits_append_tribits_compliant_package_config_vars()
+# @FUNCTION: tribits_extpkg_append_tribits_compliant_package_config_vars_str()
 #
 # Append the standard TriBITS-compliant external package variables
 #
-function(tribits_append_tribits_compliant_package_config_vars  packageName
+function(tribits_extpkg_append_tribits_compliant_package_config_vars_str  packageName
     packageConfigCodeStrVarInOut
   )
   set(packageConfigCodeStr "${${packageConfigCodeStrVarInOut}}")

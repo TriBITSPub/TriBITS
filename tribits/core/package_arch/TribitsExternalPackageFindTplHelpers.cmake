@@ -38,7 +38,22 @@
 # @HEADER
 
 
+################################################################################
+#
+# Module TribitsExternalPackageFindTplHelpers.cmake
+#
+# Contains functions for implementing FindTPL<tplName>.cmake files for
+# external packages using find_package(<externalPkg>) that producing modern
+# IMPORTED targets.
+#
+# NOTE: The acronym 'extpkgwit' stands for "External Package With Imported
+# Targets".
+# 
+################################################################################
+
+
 include(TribitsExternalPackageWriteConfigFile)
+
 
 
 # @FUNCTION: tribits_extpkg_create_imported_all_libs_target_and_config_file()
@@ -96,7 +111,7 @@ function(tribits_extpkg_create_imported_all_libs_target_and_config_file
   endforeach()
 
   # Create the TriBITS-compliant <tplName>Config.cmake wrapper file
-  tribits_extpkg_create_package_config_file_with_imported_targets(
+  tribits_extpkgwit_create_package_config_file(
     ${tplName}
     INNER_FIND_PACKAGE_NAME ${PARSE_INNER_FIND_PACKAGE_NAME}
     IMPORTED_TARGETS_FOR_ALL_LIBS ${PARSE_IMPORTED_TARGETS_FOR_ALL_LIBS} )
@@ -104,7 +119,7 @@ function(tribits_extpkg_create_imported_all_libs_target_and_config_file
 endfunction()
 
 
-# @FUNCTION: tribits_extpkg_create_package_config_file_with_imported_targets()
+# @FUNCTION: tribits_extpkgwit_create_package_config_file()
 #
 # Create the ``<tplName>Config.cmake`` file for a TriBITS external package/TPL
 # that is defined by a set of IMPORTED targets by call to
@@ -112,11 +127,11 @@ endfunction()
 #
 # Usage::
 #
-#   tribits_extpkg_create_package_config_file_with_imported_targets( <tplName>
+#   tribits_extpkgwit_create_package_config_file( <tplName>
 #     INNER_FIND_PACKAGE_NAME <externalPkg>
 #     IMPORTED_TARGETS_FOR_ALL_LIBS <importedTarget0> <importedTarget1> ... )
 #
-function(tribits_extpkg_create_package_config_file_with_imported_targets  tplName)
+function(tribits_extpkgwit_create_package_config_file  tplName)
   # Parse arguments
   cmake_parse_arguments(
      PARSE_ARGV 1
@@ -130,33 +145,34 @@ function(tribits_extpkg_create_package_config_file_with_imported_targets  tplNam
 
   # Create header for <tplName>Config.cmake file
   set(configFileStr "")
-  tribits_extpkg_append_package_config_file_header_with_imported_targets_str(
+  tribits_extpkgwit_append_package_config_file_header_str(
     ${tplName}  ${externalPkg}  configFileStr)
 
   # Get ${externalPkg} from where you found it before (see note below)
-  tribits_extpkg_append_find_dependency_external_package_with_imported_targets(
+  tribits_extpkgwit_append_find_dependency_external_package_str(
     ${tplName}  ${externalPkg}  configFileStr)
 
   # Pull in upstream <UpstreamPkg>Config.cmake files
-  tribits_extpkg_add_find_upstream_dependencies_str(${tplName} configFileStr)
+  tribits_extpkg_append_find_upstream_dependencies_str(${tplName} configFileStr)
 
   # Add the ${tplName}::all_libs target and link to this ${externalPkg}
   # package's native IMPORTED targets
-  tribits_extpkg_create_all_libs_target( ${tplName}
+  tribits_extpkg_append_create_all_libs_target_str( ${tplName}
     LIB_TARGETS_LIST  ${PARSE_IMPORTED_TARGETS_FOR_ALL_LIBS}
     CONFIG_FILE_STR_INOUT  configFileStr )
 
   # Also link against upstream package's `<UpstreamPkg>::all_libs` targets
-  tribits_extpkg_append_upstream_target_link_libraries_str(${tplName}
+  tribits_extpkg_append_target_link_libraries_to_upstream_all_libs_targets_str(${tplName}
     ${tplName}::all_libs  configFileStr)
 
-  tribits_append_tribits_compliant_package_config_vars(${tplName}  configFileStr)
+  tribits_extpkg_append_tribits_compliant_package_config_vars_str(${tplName}
+    configFileStr)
 
   tribits_extpkg_write_package_config_file_from_str(${tplName}  "${configFileStr}")
 endfunction()
 
 
-function(tribits_extpkg_append_find_dependency_external_package_with_imported_targets
+function(tribits_extpkgwit_append_find_dependency_external_package_str
     tplName  externalPkg  configFileStrVarInOut
   )
   set(configFileStr "${${configFileStrVarInOut}}")
@@ -176,7 +192,7 @@ endfunction()
 # ${externalPkg}_DIR in this file if it will not be used.
 
 
-function(tribits_extpkg_append_package_config_file_header_with_imported_targets_str
+function(tribits_extpkgwit_append_package_config_file_header_str
     tplName  externalPkg  configFileStrVarInOut
   )
   set(configFileStr "${${configFileStrVarInOut}}")

@@ -284,7 +284,7 @@ function(tribits_generate_package_config_file_for_build_tree  packageName)
         "include(\"${packageConfigBuildDirTargetsFile}\")\n")
     endif()
 
-    tribits_append_tribits_compliant_package_config_vars(${packageName}
+    tribits_extpkg_append_tribits_compliant_package_config_vars_str(${packageName}
       PACKAGE_CONFIG_CODE)
 
     tribits_set_compiler_vars_for_config_file(BUILD_DIR)
@@ -387,7 +387,7 @@ function(tribits_generate_package_config_file_for_install_tree  packageName)
     "\n# Import ${packageName} targets\n"
     "include(\"\${CMAKE_CURRENT_LIST_DIR}/${packageName}Targets.cmake\")\n")
 
-  tribits_append_tribits_compliant_package_config_vars(${packageName}
+  tribits_extpkg_append_tribits_compliant_package_config_vars_str(${packageName}
     PACKAGE_CONFIG_CODE)
 
   # Write the specification of the rpath if necessary. This is only needed if

@@ -243,7 +243,7 @@ endfunction()
 #     regarded as an error.
 #
 # For more details on the handling of individual ``TPL_<tplName>_LIBRARIES``
-# arguments, see `tribits_tpl_libraries_entry_type()`_.
+# arguments, see `tribits_extpkg_tpl_libraries_entry_type()`_.
 #
 # The list of directories given in ``TPL_<tplName>_INCLUDE_DIRS`` is added to
 # the ``<tplName>::all_libs`` target using ``target_include_directories()``.
@@ -283,7 +283,7 @@ function(tribits_extpkg_write_config_file_str  tplName  tplConfigFileStrOut)
     )
 
   # B) Pull in upstream packages
-  tribits_extpkg_add_find_upstream_dependencies_str(${tplName}
+  tribits_extpkg_append_find_upstream_dependencies_str(${tplName}
     configFileStr)
 
   # C) Create IMPORTED library targets from TPL_${tplName}_LIBRARIES
@@ -295,7 +295,7 @@ function(tribits_extpkg_write_config_file_str  tplName  tplConfigFileStrOut)
     )
 
   # D) Create the <tplName>::all_libs target
-  tribits_extpkg_create_all_libs_target(
+  tribits_extpkg_append_create_all_libs_target_str(
     ${tplName}
     LIB_TARGETS_LIST  ${libTargets}
     LIB_LINK_FLAGS_LIST  ${libLinkFlags}
@@ -303,7 +303,7 @@ function(tribits_extpkg_write_config_file_str  tplName  tplConfigFileStrOut)
     )
 
   # E) Add standard TriBITS-compliant external package vars
-  tribits_append_tribits_compliant_package_config_vars(${tplName}  configFileStr)
+  tribits_extpkg_append_tribits_compliant_package_config_vars_str(${tplName}  configFileStr)
 
   # F) Set the output
   set(${tplConfigFileStrOut} "${configFileStr}" PARENT_SCOPE)
@@ -311,21 +311,21 @@ function(tribits_extpkg_write_config_file_str  tplName  tplConfigFileStrOut)
 endfunction()
 
 
-# @FUNCTION: tribits_extpkg_add_find_upstream_dependencies_str()
+# @FUNCTION: tribits_extpkg_append_find_upstream_dependencies_str()
 #
 # Add includes for all upstream external packages/TPLs listed in
 # ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
 # Usage::
 #
-#   tribits_extpkg_add_find_upstream_dependencies_str(tplName
+#   tribits_extpkg_append_find_upstream_dependencies_str(tplName
 #     configFileFragStrInOut)
 #
 # NOTE: This also requires that
 # ``<upstreamTplName>_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE`` be set for each
 # external package/TPL listed in ``<tplName>_LIB_ENABLED_DEPENDENCIES``.
 #
-function(tribits_extpkg_add_find_upstream_dependencies_str
+function(tribits_extpkg_append_find_upstream_dependencies_str
     tplName  configFileFragStrInOut
   )
   if (NOT "${${tplName}_LIB_ENABLED_DEPENDENCIES}" STREQUAL "")
@@ -412,7 +412,7 @@ function(tribits_extpkg_process_libraries_list  tplName)
 
   set(configFileStr "")
   set(libTargets "")
-  set(lastLibProcessed "")
+  set(previousLibProcessed "")
 
   # Iterate through libs in reverse order setting dependencies on the libs
   # that came before them so CMake will put in right order on the link line.
@@ -423,7 +423,7 @@ function(tribits_extpkg_process_libraries_list  tplName)
   list(REVERSE reverseLibraries)
 
   foreach (libentry IN LISTS reverseLibraries)
-    tribits_tpl_libraries_entry_type(${libentry} libEntryType)
+    tribits_extpkg_tpl_libraries_entry_type(${libentry} libEntryType)
     if (libEntryType STREQUAL "UNSUPPORTED_LIB_ENTRY")
       message_wrapper(SEND_ERROR
         "ERROR: Can't handle argument '${libentry}' in list TPL_${tplName}_LIBRARIES")
@@ -434,7 +434,7 @@ function(tribits_extpkg_process_libraries_list  tplName)
       list(APPEND libLinkFlagsList "${libentry}")
     else()
       tribits_extpkg_process_libraries_list_library_entry(
-        ${tplName}  "${libentry}"  ${libEntryType}  libTargets  lastLibProcessed
+        ${tplName}  "${libentry}"  ${libEntryType}  libTargets  previousLibProcessed
         configFileStr )
     endif()
   endforeach()
@@ -450,13 +450,13 @@ function(tribits_extpkg_process_libraries_list  tplName)
 endfunction()
 
 
-# @FUNCTION: tribits_tpl_libraries_entry_type()
+# @FUNCTION: tribits_extpkg_tpl_libraries_entry_type()
 #
 # Returns the type of the library entry in the list TPL_<tplName>_LIBRARIES
 #
 # Usage::
 #
-#   tribits_tpl_libraries_entry_type(<libentry>  <libEntryTypeOut>)
+#   tribits_extpkg_tpl_libraries_entry_type(<libentry>  <libEntryTypeOut>)
 #
 # Arguments:
 #
@@ -481,7 +481,7 @@ endfunction()
 #
 #   * ``UNSUPPORTED_LIB_ENTRY``: An unsupported lib option
 #
-function(tribits_tpl_libraries_entry_type  libentry  libEntryTypeOut)
+function(tribits_extpkg_tpl_libraries_entry_type  libentry  libEntryTypeOut)
   string(SUBSTRING "${libentry}" 0 1 firstCharLibEntry)
   string(SUBSTRING "${libentry}" 0 2 firstTwoCharsLibEntry)
   if (firstTwoCharsLibEntry STREQUAL "-l")
@@ -512,11 +512,11 @@ endfunction()
 #
 function(tribits_extpkg_process_libraries_list_library_entry
     tplName  libentry  libEntryType
-    libTargetsInOut  lastLibProcessedInOut  configFileStrInOut
+    libTargetsInOut  previousLibProcessedInOut  configFileStrInOut
   )
   # Set local vars for inout vars
   set(libTargets ${${libTargetsInOut}})
-  set(lastLibProcessed ${${lastLibProcessedInOut}})
+  set(previousLibProcessed ${${previousLibProcessedInOut}})
   set(configFileStr ${${configFileStrInOut}})
   # Get libname
   tribits_extpkg_get_libname_and_path_from_libentry(
@@ -526,27 +526,27 @@ function(tribits_extpkg_process_libraries_list_library_entry
   if (NOT (prefixed_libname IN_LIST libTargets))
     tribits_extpkg_append_add_library_str (${libname} ${prefixed_libname}
       ${libEntryType} "${libpath}" configFileStr)
-    if (lastLibProcessed)
+    if (previousLibProcessed)
       # This is not the first lib so we only need to link to the previous lib
       string(APPEND configFileStr
         "target_link_libraries(${prefixed_libname}\n"
-        "  INTERFACE tribits::${tplName}::${lastLibProcessed})\n"
+        "  INTERFACE tribits::${tplName}::${previousLibProcessed})\n"
         )
     else()
       # Only on the first lib do we add dependencies on all of the
       # `<UpstreamPkg>::all_libs` targets
-      tribits_extpkg_append_upstream_target_link_libraries_str( ${tplName}
+      tribits_extpkg_append_target_link_libraries_to_upstream_all_libs_targets_str( ${tplName}
         ${prefixed_libname}  configFileStr )
     endif()
     string(APPEND configFileStr
       "\n")
     # Update for next loop
-    set(lastLibProcessed ${libname})
+    set(previousLibProcessed ${libname})
     list(APPEND libTargets ${prefixed_libname})
   endif()
   # Set output vars
   set(${libTargetsInOut} ${libTargets} PARENT_SCOPE)
-  set(${lastLibProcessedInOut} ${lastLibProcessed} PARENT_SCOPE)
+  set(${previousLibProcessedInOut} ${previousLibProcessed} PARENT_SCOPE)
   set(${configFileStrInOut} ${configFileStr} PARENT_SCOPE)
 endfunction()
 # NOTE: Above, we only need to link the first library
@@ -620,7 +620,7 @@ function(tribits_extpkg_get_libname_from_full_lib_path  full_lib_path
   set(libname "")
   string(LENGTH "${full_libname}" full_libname_len)
   if (full_libname_len LESS 0)
-    tribits_print_invalid_lib_name(${tplName} "${full_lib_path}")
+    tribits_extpkg_print_invalid_lib_name(${tplName} "${full_lib_path}")
   endif()
   if (WIN32)
     # Native windows compilers does not prepend library names with 'lib'
@@ -636,14 +636,14 @@ function(tribits_extpkg_get_libname_from_full_lib_path  full_lib_path
       if (last_ext  STREQUAL ".framework")
         set(libname "${full_libname}")
       else()
-        tribits_print_invalid_lib_name(${tplName} "${full_lib_path}")
+        tribits_extpkg_print_invalid_lib_name(${tplName} "${full_lib_path}")
       endif()
     endif()
   else() # I.e. Linux
     # Every other system (i.e. Linux) prepends the library name with 'lib' so
     # assert for that
     if (NOT beginsWithLib)
-      tribits_print_invalid_lib_name(${tplName} "${full_lib_path}")
+      tribits_extpkg_print_invalid_lib_name(${tplName} "${full_lib_path}")
     else()
       string(SUBSTRING "${full_libname}" 3 -1 libname)
     endif()
@@ -672,7 +672,7 @@ function(tribits_extpkg_get_libname_from_lib_name_link_option
   # Assert begging part '-l'
   string(SUBSTRING "${lib_name_link_option}" 0 2 firstTwoCharsLibEntry)
   if ( )
-    tribits_print_invalid_lib_link_option(${tplName} "${lib_name_link_option}")
+    tribits_extpkg_print_invalid_lib_link_option(${tplName} "${lib_name_link_option}")
   endif()
   # Get <libname> from -l<libname>
   string(SUBSTRING "${lib_name_link_option}" 2 -1 libname)
@@ -681,26 +681,26 @@ function(tribits_extpkg_get_libname_from_lib_name_link_option
 endfunction()
 
 
-function(tribits_print_invalid_lib_name  tplName  full_libname)
+function(tribits_extpkg_print_invalid_lib_name  tplName  full_libname)
   message_wrapper(SEND_ERROR
     "ERROR: TPL_${tplName}_LIBRARIES entry '${full_libname}' not a valid lib file name!")
 endfunction()
 
 
-function(tribits_print_invalid_lib_link_option  tplName  liblinkoption)
+function(tribits_extpkg_print_invalid_lib_link_option  tplName  liblinkoption)
   message(SEND_ERROR
     "ERROR: TPL_${tplName}_LIBRARIES entry '${liblinkoption}' not a valid lib name link option!")
 endfunction()
 
 
-# @FUNCTION: tribits_extpkg_append_upstream_target_link_libraries_str()
+# @FUNCTION: tribits_extpkg_append_target_link_libraries_to_upstream_all_libs_targets_str()
 #
 # Append text calling `target_link_libraries(<prefix_libname> ... )` against
 # the `<UpstreamPkg>::all_libs` targets for all of the direct enabled upstream
 # dependencies listed in '<tplName>_LIB_ENABLED_DEPENDENCIES` (taking into
 # account `PUBLIC` and `PRIVATE` dependencies).
 #
-function(tribits_extpkg_append_upstream_target_link_libraries_str
+function(tribits_extpkg_append_target_link_libraries_to_upstream_all_libs_targets_str
     tplName  prefix_libname  configFileStrInOut
   )
   set(configFileStr "${${configFileStrInOut}}")
@@ -736,14 +736,14 @@ endfunction()
 # libraries being listed on link lines for downstsream library and exec links.
 
 
-# @FUNCTION: tribits_extpkg_create_all_libs_target()
+# @FUNCTION: tribits_extpkg_append_create_all_libs_target_str()
 #
 # Creates the ``<tplName>::all_libs`` target command text using input info and
 # from ``TPL_<tplName>_INCLUDE_DIRS``.
 #
 # Usage::
 #
-#   tribits_extpkg_create_all_libs_target(
+#   tribits_extpkg_append_create_all_libs_target_str(
 #     <tplName>
 #     LIB_TARGETS_LIST <libTargetsList>
 #     LIB_LINK_FLAGS_LIST <libLinkFlagsList>
@@ -763,7 +763,7 @@ endfunction()
 #   ``<configFileFragStrInOut>``: [out] A string variable that will be
 #   appended with the ``<tplName>::all_libs`` target statements.
 #
-function(tribits_extpkg_create_all_libs_target  tplName)
+function(tribits_extpkg_append_create_all_libs_target_str  tplName)
 
   # Parse commandline arguments
 
