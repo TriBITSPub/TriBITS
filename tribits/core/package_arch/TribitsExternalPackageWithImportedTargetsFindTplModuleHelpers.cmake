@@ -40,7 +40,7 @@
 
 ################################################################################
 #
-# Module TribitsExternalPackageFindTplHelpers.cmake
+# Module TribitsExternalPackageWithImportedTargetsFindTplModuleHelpers.cmake
 #
 # Contains functions for implementing FindTPL<tplName>.cmake files for
 # external packages using find_package(<externalPkg>) that producing modern

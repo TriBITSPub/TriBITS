@@ -39,7 +39,7 @@
 
 
 # Standard TriBITS Includes
-include(TribitsExternalPackageFindTplHelpers)
+include(TribitsExternalPackageWithImportedTargetsFindTplModuleHelpers)
 include(TribitsExternalPackageWriteConfigFile)
 include(TribitsTplFindIncludeDirsAndLibraries)
 include(TribitsGeneralMacros)
