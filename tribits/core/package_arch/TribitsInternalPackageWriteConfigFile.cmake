@@ -198,7 +198,7 @@ function(tribits_generate_package_config_file_for_build_tree  packageName)
     # below)
     set(PACKAGE_CONFIG_CODE "")
 
-    tribits_append_dependent_package_config_file_includes_and_enables(${packageName}
+    tribits_append_dependent_package_config_file_includes_and_enables_str(${packageName}
       EXPORT_FILE_VAR_PREFIX ${EXPORT_FILE_VAR_PREFIX}
       EXT_PKG_CONFIG_FILE_BASE_DIR "${buildDirExtPkgsDir}"
       PKG_CONFIG_FILE_BASE_DIR "${buildDirCMakePkgsDir}"
@@ -312,7 +312,7 @@ function(tribits_generate_package_config_file_for_install_tree  packageName)
   # Custom code in configuration file.
   set(PACKAGE_CONFIG_CODE "")
 
-  tribits_append_dependent_package_config_file_includes_and_enables(${packageName}
+  tribits_append_dependent_package_config_file_includes_and_enables_str(${packageName}
     EXPORT_FILE_VAR_PREFIX ${EXPORT_FILE_VAR_PREFIX}
     EXT_PKG_CONFIG_FILE_BASE_DIR
       "\${CMAKE_CURRENT_LIST_DIR}/../../${${PROJECT_NAME}_BUILD_DIR_EXTERNAL_PKGS_DIR}"
@@ -481,43 +481,7 @@ function(tribits_write_flexible_package_client_export_files)
 endfunction()
 
 
-#  This function will take a list and turn it into a space separated string
-#  adding the prefix to the front of every entry.
-#
-function(tribits_list_to_string LIST PREFIX OUTPUT_STRING)
-  set(LIST_STRING "")
-
-  foreach(ITEM ${LIST})
-    set(LIST_STRING "${LIST_STRING} ${PREFIX}${ITEM}")
-  endforeach()
-
-  set(${OUTPUT_STRING} ${LIST_STRING} PARENT_SCOPE)
-endfunction()
-
-#  This function will take a list of libraries and turn it into a space
-#  separated string. In this case though the prefix is not always added
-#  to the front of each entry as libraries can be specified either as a
-#  name of a library to find or the absolute path to the library file
-#  with any decorations the system uses. When an absolute path is given
-#  the entry is used verbatim.
-#
-function(tribits_library_list_to_string LIST PREFIX OUTPUT_STRING)
-  set(LIST_STRING "")
-
-  foreach(ITEM ${LIST})
-    string(SUBSTRING ${ITEM} 0 1 OPTION_FLAG)
-    if(EXISTS ${ITEM} OR OPTION_FLAG STREQUAL "-")
-      set(LIST_STRING "${LIST_STRING} ${ITEM}")
-    else()
-      set(LIST_STRING "${LIST_STRING} ${PREFIX}${ITEM}")
-    endif()
-  endforeach()
-
-  set(${OUTPUT_STRING} ${LIST_STRING} PARENT_SCOPE)
-endfunction()
-
-
-# @FUNCTION: tribits_append_dependent_package_config_file_includes_and_enables()
+# @FUNCTION: tribits_append_dependent_package_config_file_includes_and_enables_str()
 #
 # Append the includes for upstream external packages (TPLs) and internal
 # packages as well as the enables/disables for upstream dependencies to an
@@ -525,7 +489,7 @@ endfunction()
 #
 # Usage::
 #
-#   tribits_append_dependent_package_config_file_includes_and_enables(
+#   tribits_append_dependent_package_config_file_includes_and_enables_str(
 #     <packageName>
 #     EXPORT_FILE_VAR_PREFIX <exportFileVarPrefix>
 #     EXT_PKG_CONFIG_FILE_BASE_DIR <extPkgconfigFileBaseDir>
@@ -533,10 +497,10 @@ endfunction()
 #     CONFIG_FILE_STR_INOUT <configFileStrInOut>
 #     )
 #
-function(tribits_append_dependent_package_config_file_includes_and_enables packageName)
+function(tribits_append_dependent_package_config_file_includes_and_enables_str packageName)
 
   if (TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES_DEBUG_DUMP)
-    message("tribits_append_dependent_package_config_file_includes_and_enables(${ARGV})")
+    message("tribits_append_dependent_package_config_file_includes_and_enables_str(${ARGV})")
   endif()
 
   # Parse input
