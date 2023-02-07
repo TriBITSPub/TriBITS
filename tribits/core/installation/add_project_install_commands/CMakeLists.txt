@@ -6,7 +6,7 @@ if ( ${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES
     AND (NOT ${PROJECT_NAME}_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES)
   )
 
-  include(TribitsInternalPackageWriteConfigFile)
+  include(TribitsProjectWriteConfigFile)
 
   tribits_write_project_client_export_files()
 
