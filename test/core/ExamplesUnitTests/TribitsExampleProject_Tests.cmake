@@ -3297,8 +3297,8 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
     PASS_REGULAR_EXPRESSION_ALL
       "Adjust the set of internal and external packages:"
       "-- Treating internal package SimpleCxx as EXTERNAL because TPL_ENABLE_SimpleCxx=ON"
-      "-- NOTE: HeaderOnlyTpl is directly downstream from an fully TriBITS-compatible external package SimpleCxx"
-      "-- NOTE: SimpleTpl is directly downstream from an fully TriBITS-compatible external package SimpleCxx"
+      "-- NOTE: HeaderOnlyTpl is directly downstream from an TriBITS-compliant external package SimpleCxx"
+      "-- NOTE: SimpleTpl is directly downstream from an TriBITS-compliant external package SimpleCxx"
 
       "Final set of enabled top-level packages:  MixedLang WithSubpackages WrapExternal 3"
       "Final set of enabled packages:  MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
@@ -3309,13 +3309,13 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
       "Final set of non-enabled top-level external packages/TPLs:  MPI 1"
       "Final set of non-enabled external packages/TPLs:  MPI 1"
 
-      "Getting information for all enabled fully TriBITS-compatible or upstream external packages/TPLs ..."
+      "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs ..."
       "Processing enabled external package/TPL: HeaderOnlyTpl [(]enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF[)]"
-      "-- The external package/TPL HeaderOnlyTpl will be read in by a downstream fully TriBITS-compliant external package"
+      "-- The external package/TPL HeaderOnlyTpl will be read in by a downstream TriBITS-compliant external package"
       "Processing enabled external package/TPL: SimpleTpl [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleTpl=OFF[)]"
-      "-- The external package/TPL SimpleTpl will be read in by a downstream fully TriBITS-compliant external package"
+      "-- The external package/TPL SimpleTpl will be read in by a downstream TriBITS-compliant external package"
       "Processing enabled external package/TPL: SimpleCxx [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleCxx=OFF[)]"
-      "-- Calling find_package[(]SimpleCxx[)] for TriBITS-compatible package"
+      "-- Calling find_package[(]SimpleCxx[)] for TriBITS-compliant package"
 
       "Getting information for all enabled external packages/TPLs ..."
 
@@ -3489,18 +3489,18 @@ tribits_add_advanced_test( TribitsExampleProject_External_Package_by_Package
       "-- Treating internal package WithSubpackagesA as EXTERNAL because downstream package WithSubpackages being treated as EXTERNAL"
       "-- Treating internal package WithSubpackagesB as EXTERNAL because downstream package WithSubpackages being treated as EXTERNAL"
       "-- Treating internal package WithSubpackagesC as EXTERNAL because downstream package WithSubpackages being treated as EXTERNAL"
-      "-- NOTE: WithSubpackagesA is directly downstream from an fully TriBITS-compatible external package WithSubpackages"
-      "-- NOTE: WithSubpackagesB is directly downstream from an fully TriBITS-compatible external package WithSubpackages"
-      "-- NOTE: WithSubpackagesC is directly downstream from an fully TriBITS-compatible external package WithSubpackages"
-      "-- NOTE: WithSubpackagesA is indirectly downstream from an fully TriBITS-compatible external package"
-      "-- NOTE: WithSubpackagesB is indirectly downstream from an fully TriBITS-compatible external package"
+      "-- NOTE: WithSubpackagesA is directly downstream from an TriBITS-compliant external package WithSubpackages"
+      "-- NOTE: WithSubpackagesB is directly downstream from an TriBITS-compliant external package WithSubpackages"
+      "-- NOTE: WithSubpackagesC is directly downstream from an TriBITS-compliant external package WithSubpackages"
+      "-- NOTE: WithSubpackagesA is indirectly downstream from an TriBITS-compliant external package"
+      "-- NOTE: WithSubpackagesB is indirectly downstream from an TriBITS-compliant external package"
       "-- Treating internal package SimpleCxx as EXTERNAL because downstream package WithSubpackagesB being treated as EXTERNAL"
-      "-- NOTE: SimpleCxx is indirectly downstream from an fully TriBITS-compatible external package"
-      "-- NOTE: WithSubpackagesA is indirectly downstream from an fully TriBITS-compatible external package"
-      "-- NOTE: SimpleCxx is indirectly downstream from an fully TriBITS-compatible external package"
+      "-- NOTE: SimpleCxx is indirectly downstream from an TriBITS-compliant external package"
+      "-- NOTE: WithSubpackagesA is indirectly downstream from an TriBITS-compliant external package"
+      "-- NOTE: SimpleCxx is indirectly downstream from an TriBITS-compliant external package"
       "-- Treating internal package MixedLang as EXTERNAL because TPL_ENABLE_MixedLang=ON"
-      "-- NOTE: HeaderOnlyTpl is indirectly downstream from an fully TriBITS-compatible external package"
-      "-- NOTE: SimpleTpl is indirectly downstream from an fully TriBITS-compatible external package"
+      "-- NOTE: HeaderOnlyTpl is indirectly downstream from an TriBITS-compliant external package"
+      "-- NOTE: SimpleTpl is indirectly downstream from an TriBITS-compliant external package"
 
       "Final set of enabled top-level packages:  WrapExternal 1"
       "Final set of enabled packages:  WrapExternal 1"
@@ -3511,17 +3511,17 @@ tribits_add_advanced_test( TribitsExampleProject_External_Package_by_Package
       "Final set of non-enabled top-level external packages/TPLs:  MPI 1"
       "Final set of non-enabled external packages/TPLs:  MPI 1"
 
-      "Getting information for all enabled fully TriBITS-compatible or upstream external packages/TPLs ..."
+      "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs ..."
       "Processing enabled external package/TPL: HeaderOnlyTpl [(]enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF[)]"
-      "-- The external package/TPL HeaderOnlyTpl will be read in by a downstream fully TriBITS-compliant external package"
+      "-- The external package/TPL HeaderOnlyTpl will be read in by a downstream TriBITS-compliant external package"
       "Processing enabled external package/TPL: SimpleTpl [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleTpl=OFF[)]"
-      "-- The external package/TPL SimpleTpl will be read in by a downstream fully TriBITS-compliant external package"
+      "-- The external package/TPL SimpleTpl will be read in by a downstream TriBITS-compliant external package"
       "Processing enabled external package/TPL: SimpleCxx [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleCxx=OFF[)]"
-      "-- The external package/TPL SimpleCxx will be read in by a downstream fully TriBITS-compliant external package"
+      "-- The external package/TPL SimpleCxx will be read in by a downstream TriBITS-compliant external package"
       "Processing enabled external package/TPL: MixedLang [(]enabled explicitly, disable with -DTPL_ENABLE_MixedLang=OFF[)]"
-      "-- Calling find_package[(]MixedLang[)] for TriBITS-compatible package"
+      "-- Calling find_package[(]MixedLang[)] for TriBITS-compliant package"
       "Processing enabled external package/TPL: WithSubpackages [(]enabled explicitly, disable with -DTPL_ENABLE_WithSubpackages=OFF[)]"
-      "-- Calling find_package[(]WithSubpackages[)] for TriBITS-compatible package"
+      "-- Calling find_package[(]WithSubpackages[)] for TriBITS-compliant package"
 
       "Getting information for all enabled external packages/TPLs ..."
 
@@ -3555,7 +3555,7 @@ tribits_add_advanced_test( TribitsExampleProject_External_Package_by_Package
   )
 # NOTE: The above test is a strong check that packages can be installed
 # individually in stages on top of each other and that we are correctly
-# writing wrapper <Package>Config.cmake files for fully TriBITS-compatible
+# writing wrapper <Package>Config.cmake files for TriBITS-compliant
 # external packages (in this case for WithSubpackagesAConfig.cmake to
 # include).
 

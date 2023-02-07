@@ -554,10 +554,10 @@ endfunction()
 # Implementation macro for tribits_set_dep_packages() to deal with a package
 # that is not defined by TriBITS.
 #
-# ToDo #63: This may need to be modified when dealing with TriBITS-compatible
+# ToDo #63: This may need to be modified when dealing with TriBITS-compliant
 # packages already installed out on the system.  We may need a mode where we
 # don't assert packages that are not defined but instead just assume they are
-# TriBITS-compatible packages already installed.
+# TriBITS-compliant packages already installed.
 #
 macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
     requiredOrOptional  pkgsOrTpls  packageEnableVar

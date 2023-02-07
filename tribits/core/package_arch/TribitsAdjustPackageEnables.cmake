@@ -225,7 +225,7 @@ endmacro()
 # NOTE: Above, we are sweeping over *all* of the not-disabled packages listed
 # in ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES, including those package that
 # might have <Package>_PACKAGE_BUILD_STATUS=EXTERNAL.  That makes sense
-# because these are TriBITS (or TriBITS compatible) packages so we should
+# because these are TriBITS (or TriBITS-compliant) packages so we should
 # assume that all of their downstream packages, whether internal or external,
 # should be enabled as well.  If we find this is not the desirable behavior,
 # then we can change this later.
@@ -1321,7 +1321,7 @@ endmacro()
 
 
 # Macro that sets all of the direct upstream dependent packages as being
-# processed by a downstream fully TriBITS compliant external package.
+# processed by a downstream TriBITS-compliant external package.
 macro(tribits_set_package_and_deps_as_processed_by_downstream_tribits_external_package
     packageName
   )
@@ -1335,7 +1335,7 @@ macro(tribits_set_package_and_deps_as_processed_by_downstream_tribits_external_p
   tribits_get_package_enable_status(${packageName} packageEnable "")
 
   if (${packageName}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL"
-      AND (${packageName}_IS_FULLY_TRIBITS_COMPLIANT
+      AND (${packageName}_IS_TRIBITS_COMPLIANT
         OR ${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
     )
 
@@ -1351,8 +1351,8 @@ macro(tribits_set_package_and_deps_as_processed_by_downstream_tribits_external_p
      tribits_get_package_enable_status(${depPkg} depPkgEnable "")
      if (depPkgEnable)
         message("-- "
-          "NOTE: ${depPkg} is ${directOrIndirectStr} downstream from an fully"
-          " TriBITS-compatible external package${downstreamPkgStr}")
+          "NOTE: ${depPkg} is ${directOrIndirectStr} downstream from an"
+          " TriBITS-compliant external package${downstreamPkgStr}")
       endif()
       set(${depPkg}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE TRUE)
     endforeach()

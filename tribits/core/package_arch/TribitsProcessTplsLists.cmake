@@ -95,7 +95,8 @@ include(Split)
 # This allows downstream repos to add additional requirements for a given TPL
 # (i.e. add more libraries, headers, etc.).  However, the downstream repo's
 # find module file must find the TPL components that are fully compatible with
-# the upstream's find module.
+# the upstream's find module in terms of what it provides for packages in
+# upstream repos.
 #
 # This macro just sets the variable::
 #
@@ -275,12 +276,12 @@ macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
       set(${TPL_NAME}_PACKAGE_BUILD_STATUS  EXTERNAL)
 
-      # Set ${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT
+      # Set ${TPL_NAME}_IS_TRIBITS_COMPLIANT
 
       if (${TPL_NAME}_FINDMOD STREQUAL "TRIBITS_PKG")
-        set(${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT TRUE)
+        set(${TPL_NAME}_IS_TRIBITS_COMPLIANT TRUE)
       else()
-        set(${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT FALSE)
+        set(${TPL_NAME}_IS_TRIBITS_COMPLIANT FALSE)
       endif()
 
       # Print variables/properties for the TPL
@@ -291,7 +292,7 @@ macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
         print_var(${TPL_NAME}_DEPENDENCIES_FILE)
         print_var(${TPL_NAME}_TPLS_LIST_FILE)
         print_var(${TPL_NAME}_PACKAGE_BUILD_STATUS)
-        print_var(${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT)
+        print_var(${TPL_NAME}_IS_TRIBITS_COMPLIANT)
       endif()
 
       # Set cache var TPL_ENABLE_${TPL_NAME} with default ""

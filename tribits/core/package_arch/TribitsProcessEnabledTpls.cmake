@@ -59,15 +59,15 @@ macro(tribits_process_enabled_tpls)
     EXTERNAL  ON  NONEMPTY  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
 
   message("")
-  message("Getting information for all enabled fully TriBITS-compatible"
+  message("Getting information for all enabled TriBITS-compliant"
     " or upstream external packages/TPLs ...")
   message("")
 
   foreach(TPL_NAME  IN LISTS  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
-    if (${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT
+    if (${TPL_NAME}_IS_TRIBITS_COMPLIANT
         OR ${TPL_NAME}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE
       )
-      tribits_process_enabled_fully_tribits_compatible_or_upstream_tpl(${TPL_NAME})
+      tribits_process_enabled_tribits_compliant_or_upstream_tpl(${TPL_NAME})
     endif()
   endforeach()
 
@@ -76,7 +76,7 @@ macro(tribits_process_enabled_tpls)
   message("")
 
   foreach(TPL_NAME  IN LISTS  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
-    if ((NOT ${TPL_NAME}_IS_FULLY_TRIBITS_COMPLIANT)
+    if ((NOT ${TPL_NAME}_IS_TRIBITS_COMPLIANT)
         AND (NOT ${TPL_NAME}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
       )
       tribits_process_enabled_standard_tpl(${TPL_NAME})
@@ -89,18 +89,18 @@ macro(tribits_process_enabled_tpls)
 endmacro()
 
 
-macro(tribits_process_enabled_fully_tribits_compatible_or_upstream_tpl  TPL_NAME)
+macro(tribits_process_enabled_tribits_compliant_or_upstream_tpl  TPL_NAME)
 
   tribits_get_enabled_tpl_processing_string(${TPL_NAME}  tplProcessingString)
   message("${tplProcessingString}")
 
   if (NOT ${PROJECT_NAME}_TRACE_DEPENDENCY_HANDLING_ONLY)
     if (NOT ${TPL_NAME}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
-      tribits_process_enabled_tribits_compatible_tpl(${TPL_NAME})
+      tribits_process_enabled_tribits_compliant_tpl(${TPL_NAME})
     else()
       message("-- "
         "The external package/TPL ${TPL_NAME} will be read in by a downstream"
-        " fully TriBITS-compliant external package")
+        " TriBITS-compliant external package")
     endif()
   endif()
 
@@ -147,12 +147,12 @@ function(tribits_get_enabled_tpl_processing_string  TPL_NAME  tplProcessingStrin
 endfunction()
 
 
-# Process an enabled TPL defined using a fully TriBITS-compatible external
+# Process an enabled TPL defined using a TriBITS-compliant external
 # packages <tplName>Config.cmake file
 #
-macro(tribits_process_enabled_tribits_compatible_tpl  TPL_NAME)
+macro(tribits_process_enabled_tribits_compliant_tpl  TPL_NAME)
   message("-- "
-    "Calling find_package(${TPL_NAME}) for TriBITS-compatible package")
+    "Calling find_package(${TPL_NAME}) for TriBITS-compliant package")
   find_package(${TPL_NAME} CONFIG REQUIRED)
 endmacro()
 

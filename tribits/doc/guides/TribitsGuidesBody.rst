@@ -2309,7 +2309,7 @@ defined TPL ``TPL_NAME`` is assigned the following global non-cache variables:
     ``SomeTpl_FINDMOD`` is determined by ``Repo2/TPLsList.cmake`` and the find
     module listed in ``Repo1/TPLsList.cmake`` is ignored.  NOTE: The special
     value ``TRIBITS_PKG`` is also recognized for external packages/TPLs that
-    are *fully TriBITS compliant* (i.e. defines a ``${TPL_NAME}Config.cmake``
+    are *TriBITS-compliant* (i.e. defines a ``${TPL_NAME}Config.cmake``
     file provides the ``${TPL_NAME}::all_libs`` target, calls
     ``find_dependency(<UpstreamPkg>)`` on all of its upstream dependencies,
     and each of those dependencies defines the ``<UpstreamPkg>::all_libs``
@@ -5675,16 +5675,16 @@ usage requirements (such as the target properties
 ``INTERFACE_INCLUDE_DIRECTORIES`` and ``INTERFACE_LINK_LIBRARIES``) and use
 ``find_dependency()`` to get all of their required external upstream package
 dependencies, many do not.  Also, many of these don't provide a complete
-``<tplName>::all_libs`` target which is required for a TriBITS-compatible
+``<tplName>::all_libs`` target which is required for a TriBITS-compliant
 external package/TPL.
 
 In this case, the ``FindTPL<tplName>.cmake`` file provides a thin "glue" layer
 to adapt the information and objects provided by the
 ``find_package(<externalPkg> ...)`` call into a complete
 ``<tplName>::all_libs`` target and a wrapper ``<tplName>Config.cmake`` file
-for consumption by downstream TriBITS-compatible packages.
+for consumption by downstream TriBITS-compliant packages.
 
-The following subsections will describe how to create these TriBITS-compatible
+The following subsections will describe how to create these TriBITS-compliant
 ``FindTPL<tplName>.cmake`` modules for all of the various cases using an
 internal call to ``find_package(<externalPkg> ...)``:
 
