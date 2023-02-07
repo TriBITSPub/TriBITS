@@ -37,6 +37,17 @@
 # ************************************************************************
 # @HEADER
 
+
+################################################################################
+#
+# Module TribitsInternalPackageWriteConfigFile.cmake
+#
+# This module contains code for generating <Package>Config.cmake files for
+# internal TriBITS packages.
+#
+################################################################################
+
+
 include(TribitsGeneralMacros)
 include(TribitsPkgExportCacheVars)
 include(TribitsWritePackageConfigFileHelpers)

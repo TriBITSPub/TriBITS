@@ -38,7 +38,7 @@
 # @HEADER
 
 include(TribitsPackageSetupCompilerFlags)
-include(TribitsWriteClientExportFiles)
+include(TribitsInternalPackageWriteConfigFile)
 include(TribitsGeneralMacros)
 include(TribitsLibIsTestOnly)
 
