@@ -669,6 +669,8 @@ create_reduced_dependency_handling_test_case(
     "Adjust the set of internal and external packages:"
     "-- Treating internal package RTOp as EXTERNAL because TPL_ENABLE_RTOp=ON"
     "-- Treating internal package Teuchos as EXTERNAL because downstream package RTOp being treated as EXTERNAL"
+    "-- NOTE: LAPACK is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: BLAS is indirectly downstream from a TriBITS-compliant external package"
 
     "Final package build status [(]enabled only[)]:"
     "-- Final: BLAS_PACKAGE_BUILD_STATUS=EXTERNAL"
@@ -719,6 +721,8 @@ create_reduced_dependency_handling_test_case(
     "-- Treating internal package Teuchos as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
     "-- Treating internal package RTOp as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
     "-- Treating internal package Triutils as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
+    "-- NOTE: LAPACK is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: BLAS is indirectly downstream from a TriBITS-compliant external package"
 
     "Final package build status [(]enabled only[)]:"
     "-- Final: BLAS_PACKAGE_BUILD_STATUS=EXTERNAL"
@@ -1812,6 +1816,9 @@ create_dependency_handling_test_case(
     "-- Treating internal package RTOp as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
     "-- Treating internal package Triutils as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
     "-- Treating internal package Zoltan as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
+    "-- NOTE: Boost is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: LAPACK is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: BLAS is indirectly downstream from a TriBITS-compliant external package"
 
     "Final package build status [(]enabled only[)]:"
     "-- Final: BLAS_PACKAGE_BUILD_STATUS=EXTERNAL"
@@ -1889,6 +1896,10 @@ create_dependency_handling_test_case(
     "-- Treating internal package ThyraTpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
     "-- Treating internal package RTOp as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
     "-- Treating internal package Zoltan as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
+    "-- NOTE: Boost is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: LAPACK is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: BLAS is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: MPI is indirectly downstream from a TriBITS-compliant external package"
 
     "Final set of enabled packages:  Shards Sacado Galeri Intrepid Phalanx Panzer 6"
     "Final set of non-enabled top-level packages:  TrilinosFramework Stokhos Isorropia RBGen 4"
@@ -1959,6 +1970,9 @@ create_dependency_handling_test_case(
     "-- Treating internal package ThyraTpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
     "-- Treating internal package RTOp as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
     "-- Treating internal package Zoltan as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
+    "-- NOTE: Boost is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: LAPACK is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: BLAS is indirectly downstream from a TriBITS-compliant external package"
 
     "Final package build status [(]enabled only[)]:"
     "-- Final: BLAS_PACKAGE_BUILD_STATUS=EXTERNAL"

@@ -935,7 +935,7 @@ function(TribitsExampleProject2_External_Package_by_Package
       PASS_REGULAR_EXPRESSION_ALL
         "Adjust the set of internal and external packages:"
         "-- Treating internal package Package1 as EXTERNAL because TPL_ENABLE_Package1=ON"
-        "-- NOTE: Tpl1 is directly downstream from an TriBITS-compliant external package Package1"
+        "-- NOTE: Tpl1 is directly downstream from a TriBITS-compliant external package Package1"
 
         "Final set of enabled top-level packages:  Package2 1"
         "Final set of non-enabled top-level packages:  Package3 1"
@@ -998,11 +998,9 @@ function(TribitsExampleProject2_External_Package_by_Package
         "Adjust the set of internal and external packages:"
         "-- Treating internal package Package2 as EXTERNAL because TPL_ENABLE_Package2=ON"
         "-- Treating internal package Package1 as EXTERNAL because downstream package Package2 being treated as EXTERNAL"
-        "-- NOTE: Package1 is directly downstream from an TriBITS-compliant external package Package2"
-        "-- NOTE: Tpl3 is directly downstream from an TriBITS-compliant external package Package2"
-        "-- NOTE: Tpl1 is indirectly downstream from an TriBITS-compliant external package"
-        "-- NOTE: Tpl2 is indirectly downstream from an TriBITS-compliant external package"
-        "-- NOTE: Tpl1 is indirectly downstream from an TriBITS-compliant external package"
+        "-- NOTE: Tpl3 is directly downstream from a TriBITS-compliant external package Package2"
+        "-- NOTE: Tpl2 is indirectly downstream from a TriBITS-compliant external package"
+        "-- NOTE: Tpl1 is indirectly downstream from a TriBITS-compliant external package"
 
         "Final set of enabled top-level packages:  Package3 1"
         "Final set of non-enabled top-level packages:  0"
@@ -1068,5 +1066,4 @@ TribitsExampleProject2_External_Package_by_Package(STATIC  CMAKE_PREFIX_PATH_CAC
 TribitsExampleProject2_External_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CACHE)
 
 # NOTE: The above tests check a few different use cases for building and
-# installing TriBITS packages from a single TriBITS project incrementally.  It also tests the case where
-
+# installing TriBITS packages from a single TriBITS project incrementally.

@@ -960,6 +960,8 @@ macro(tribits_read_subpackage_deps_file_add_to_graph  PACKAGE_NAME
 
     tribits_process_package_dependencies_lists(${SUBPACKAGE_FULLNAME})
 
+    set(${SUBPACKAGE_FULLNAME}_IS_TRIBITS_COMPLIANT TRUE)
+
     set(${SUBPACKAGE_FULLNAME}_REGRESSION_EMAIL_LIST
       ${${PACKAGE_NAME}_REGRESSION_EMAIL_LIST})
 

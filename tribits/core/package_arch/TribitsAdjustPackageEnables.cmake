@@ -853,10 +853,7 @@ macro(tribits_set_package_and_related_upstream_packages_to_external  packageName
   tribits_set_upstream_dep_packages_as_external(${packageName}
     ${subpackageTriggeredParentPackageExternal})
 
-  if (${packageName}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL")
-    tribits_set_package_and_deps_as_processed_by_downstream_tribits_external_package(
-      ${packageName})
-  endif()
+  tribits_set_package_as_processed_by_downstream_tribits_external_package(${packageName})
 
 endmacro()
 # NOTE: In the above macro, if ${packageName} is made EXTERNAL because it one
@@ -1320,41 +1317,40 @@ macro(tribits_set_upstream_dep_packages_as_external  packageName
 endmacro()
 
 
-# Macro that sets all of the direct upstream dependent packages as being
-# processed by a downstream TriBITS-compliant external package.
-macro(tribits_set_package_and_deps_as_processed_by_downstream_tribits_external_package
-    packageName
-  )
+# Mark a package as being processed by a downstream TriBITS-compliant external
+# package
+#
+macro(tribits_set_package_as_processed_by_downstream_tribits_external_package  packageName)
 
-  if ("${${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE}"
-      STREQUAL ""
-    )
-    set(${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE FALSE)
-  endif()
+  set_default(${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE FALSE)
 
   tribits_get_package_enable_status(${packageName} packageEnable "")
 
-  if (${packageName}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL"
-      AND (${packageName}_IS_TRIBITS_COMPLIANT
-        OR ${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
-    )
+  if (${packageName}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL")
 
-    if (${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
-      set(directOrIndirectStr "indirectly")
-      set(downstreamPkgStr "")
-    else()
-      set(directOrIndirectStr "directly")
-      set(downstreamPkgStr " ${packageName}")
-    endif()
+    foreach(fwdDepPkg  IN LISTS  ${packageName}_FORWARD_LIB_DEFINED_DEPENDENCIES)
 
-    foreach(depPkg  IN LISTS  ${packageName}_LIB_DEFINED_DEPENDENCIES)
-     tribits_get_package_enable_status(${depPkg} depPkgEnable "")
-     if (depPkgEnable)
-        message("-- "
-          "NOTE: ${depPkg} is ${directOrIndirectStr} downstream from an"
-          " TriBITS-compliant external package${downstreamPkgStr}")
+      if((${fwdDepPkg}_IS_TRIBITS_COMPLIANT
+            OR ${fwdDepPkg}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
+          AND (${fwdDepPkg}_PACKAGE_BUILD_STATUS STREQUAL "EXTERNAL")
+        )
+        tribits_get_package_enable_status(${fwdDepPkg} fwdDepPkgEnable "")
+        if (${fwdDepPkg}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE)
+          set(directOrIndirectStr "indirectly")
+          set(downstreamPkgStr "")
+        else()
+          set(directOrIndirectStr "directly")
+          set(downstreamPkgStr " ${fwdDepPkg}")
+        endif()
+        if (packageEnable AND (NOT ${packageName}_IS_TRIBITS_COMPLIANT))
+          message("-- "
+            "NOTE: ${packageName} is ${directOrIndirectStr} downstream from a"
+            " TriBITS-compliant external package${downstreamPkgStr}")
+        endif()
+        set(${packageName}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE TRUE)
+        break()
       endif()
-      set(${depPkg}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE TRUE)
+
     endforeach()
 
   endif()
@@ -1414,14 +1410,17 @@ endmacro()
 # prints the message if ``<depPkgName>`` is enabled.
 #
 macro(tribits_set_internal_package_to_external  depPkgName)
-  tribits_get_package_enable_status(${depPkgName} depPkgEnable "")
-  if (depPkgEnable)
-    message("-- "
-       "Treating internal package ${depPkgName} as EXTERNAL because"
-       " " ${ARGN})
+  if (NOT ${depPkgName}_INTERNAL_PACKAGE_ALREADY_SET_EXTERNAL)
+    tribits_get_package_enable_status(${depPkgName} depPkgEnable "")
+    if (depPkgEnable)
+      message("-- "
+         "Treating internal package ${depPkgName} as EXTERNAL because"
+         " " ${ARGN})
+    endif()
+    set(${depPkgName}_PACKAGE_BUILD_STATUS  EXTERNAL)
+    set(${depPkgName}_FINDMOD  TRIBITS_PKG)
+    set(${depPkgName}_INTERNAL_PACKAGE_ALREADY_SET_EXTERNAL TRUE)
   endif()
-  set(${depPkgName}_PACKAGE_BUILD_STATUS  EXTERNAL)
-  set(${depPkgName}_FINDMOD  TRIBITS_PKG)
 endmacro()
 
 
