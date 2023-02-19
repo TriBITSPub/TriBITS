@@ -58,21 +58,34 @@ macro(tribits_process_enabled_tpls)
   tribits_filter_package_list_from_var(${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES
     EXTERNAL  ON  NONEMPTY  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
 
-  message("")
-  message("Getting information for all enabled TriBITS-compliant"
-    " or upstream external packages/TPLs ...")
-  message("")
+  tribits_project_has_tribits_compliant_external_packages(
+    ${PROJECT_NAME}_enabledExternalTopLevelPackages
+    projectHasTribitsCompliantExternalPackages )
 
-  foreach(TPL_NAME  IN LISTS  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
-    if (${TPL_NAME}_IS_TRIBITS_COMPLIANT
-        OR ${TPL_NAME}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE
-      )
-      tribits_process_enabled_tribits_compliant_or_upstream_tpl(${TPL_NAME})
-    endif()
-  endforeach()
+  if (projectHasTribitsCompliantExternalPackages)
+    message("")
+    message("Getting information for all enabled TriBITS-compliant"
+      " or upstream external packages/TPLs ...")
+    message("")
+
+    foreach(TPL_NAME  IN LISTS  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
+      if (${TPL_NAME}_IS_TRIBITS_COMPLIANT
+          OR ${TPL_NAME}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE
+        )
+        tribits_process_enabled_tribits_compliant_or_upstream_tpl(${TPL_NAME})
+      endif()
+    endforeach()
+
+    set(remainingTplsTextStr " remaining")
+
+  else()
+
+    set(remainingTplsTextStr "")
+
+  endif()
 
   message("")
-  message("Getting information for all enabled external packages/TPLs ...")
+  message("Getting information for all${remainingTplsTextStr} enabled external packages/TPLs ...")
   message("")
 
   foreach(TPL_NAME  IN LISTS  ${PROJECT_NAME}_enabledExternalTopLevelPackages)
@@ -152,7 +165,7 @@ endfunction()
 #
 macro(tribits_process_enabled_tribits_compliant_tpl  TPL_NAME)
   message("-- "
-    "Calling find_package(${TPL_NAME}) for TriBITS-compliant package")
+    "Calling find_package(${TPL_NAME}) for TriBITS-compliant external package")
   find_package(${TPL_NAME} CONFIG REQUIRED)
 endmacro()
 
@@ -248,4 +261,26 @@ function(tribits_generate_tpl_version_file_and_add_package_config_install_target
   tribits_extpkg_install_config_file(${TPL_NAME} "${tplConfigFile}")
   tribits_extpkg_install_config_version_file(${TPL_NAME}
     "${tplConfigVersionFile}")
+endfunction()
+
+
+function(tribits_project_has_tribits_compliant_external_packages
+    enabledExternalTopLevelPackagesListName
+    projectHasTribitsCompliantExternalPackagesOut
+  )
+
+  set(projectHasTribitsCompliantExternalPackages FALSE)
+
+  foreach(TPL_NAME  IN LISTS  ${enabledExternalTopLevelPackagesListName})
+    if (${TPL_NAME}_IS_TRIBITS_COMPLIANT
+        OR ${TPL_NAME}_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE
+      )
+      set(projectHasTribitsCompliantExternalPackages TRUE)
+      break()
+    endif()
+  endforeach()
+
+  set(${projectHasTribitsCompliantExternalPackagesOut}
+    ${projectHasTribitsCompliantExternalPackages} PARENT_SCOPE)
+
 endfunction()

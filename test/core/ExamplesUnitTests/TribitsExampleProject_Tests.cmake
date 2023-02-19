@@ -3315,9 +3315,9 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
       "Processing enabled external package/TPL: SimpleTpl [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleTpl=OFF[)]"
       "-- The external package/TPL SimpleTpl will be read in by a downstream TriBITS-compliant external package"
       "Processing enabled external package/TPL: SimpleCxx [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleCxx=OFF[)]"
-      "-- Calling find_package[(]SimpleCxx[)] for TriBITS-compliant package"
+      "-- Calling find_package[(]SimpleCxx[)] for TriBITS-compliant external package"
 
-      "Getting information for all enabled external packages/TPLs ..."
+      "Getting information for all remaining enabled external packages/TPLs ..."
 
       "Configuring individual enabled TribitsExProj packages ..."
       "Processing enabled top-level package: MixedLang [(]Libs, Tests, Examples[)]"
@@ -3516,11 +3516,11 @@ tribits_add_advanced_test( TribitsExampleProject_External_Package_by_Package
       "Processing enabled external package/TPL: SimpleCxx [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleCxx=OFF[)]"
       "-- The external package/TPL SimpleCxx will be read in by a downstream TriBITS-compliant external package"
       "Processing enabled external package/TPL: MixedLang [(]enabled explicitly, disable with -DTPL_ENABLE_MixedLang=OFF[)]"
-      "-- Calling find_package[(]MixedLang[)] for TriBITS-compliant package"
+      "-- Calling find_package[(]MixedLang[)] for TriBITS-compliant external package"
       "Processing enabled external package/TPL: WithSubpackages [(]enabled explicitly, disable with -DTPL_ENABLE_WithSubpackages=OFF[)]"
-      "-- Calling find_package[(]WithSubpackages[)] for TriBITS-compliant package"
+      "-- Calling find_package[(]WithSubpackages[)] for TriBITS-compliant external package"
 
-      "Getting information for all enabled external packages/TPLs ..."
+      "Getting information for all remaining enabled external packages/TPLs ..."
 
       "Configuring individual enabled TribitsExProj packages ..."
       "Processing enabled top-level package: WrapExternal [(]Libs, Tests, Examples[)]"

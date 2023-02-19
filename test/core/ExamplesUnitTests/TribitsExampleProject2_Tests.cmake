@@ -946,9 +946,9 @@ function(TribitsExampleProject2_External_Package_by_Package
         "Processing enabled external package/TPL: Tpl1 [(]enabled by Package1, disable with -DTPL_ENABLE_Tpl1=OFF[)]"
         "-- The external package/TPL Tpl1 will be read in by a downstream TriBITS-compliant external package"
         "Processing enabled external package/TPL: Package1 [(]enabled explicitly, disable with -DTPL_ENABLE_Package1=OFF[)]"
-        "-- Calling find_package[(]Package1[)] for TriBITS-compliant package"
+        "-- Calling find_package[(]Package1[)] for TriBITS-compliant external package"
 
-        "Getting information for all enabled external packages/TPLs ..."
+        "Getting information for all remaining enabled external packages/TPLs ..."
         "Processing enabled external package/TPL: Tpl2 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl2=OFF[)]"
         ${tpl2FoundRegexes}
         "Processing enabled external package/TPL: Tpl3 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl3=OFF[)]"
@@ -1017,8 +1017,9 @@ function(TribitsExampleProject2_External_Package_by_Package
         "Processing enabled external package/TPL: Package1 [(]enabled explicitly, disable with -DTPL_ENABLE_Package1=OFF[)]"
         "-- The external package/TPL Package1 will be read in by a downstream TriBITS-compliant external package"
         "Processing enabled external package/TPL: Package2 [(]enabled explicitly, disable with -DTPL_ENABLE_Package2=OFF[)]"
-        "-- Calling find_package[(]Package2[)] for TriBITS-compliant package"
-        "Getting information for all enabled external packages/TPLs ..."
+        "-- Calling find_package[(]Package2[)] for TriBITS-compliant external package"
+
+        "Getting information for all remaining enabled external packages/TPLs ..."
 
         "Processing enabled external package/TPL: Tpl4 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl4=OFF[)]"
         ${tpl4FoundRegexes}

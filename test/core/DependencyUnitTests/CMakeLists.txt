@@ -686,11 +686,13 @@ create_reduced_dependency_handling_test_case(
     "-- Final: ThyraEpetraExt_PACKAGE_BUILD_STATUS=INTERNAL"
     "-- Final: Thyra_PACKAGE_BUILD_STATUS=INTERNAL"
 
-    "Getting information for all enabled external packages/TPLs ..."
+    "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs"
     "Processing enabled external package/TPL: BLAS [(]enabled by Epetra, disable with -DTPL_ENABLE_BLAS=OFF[)]"
     "Processing enabled external package/TPL: LAPACK [(]enabled by Epetra, disable with -DTPL_ENABLE_LAPACK=OFF[)]"
     "Processing enabled external package/TPL: Teuchos [(]enabled explicitly, disable with -DTPL_ENABLE_Teuchos=OFF[)]"
     "Processing enabled external package/TPL: RTOp [(]enabled explicitly, disable with -DTPL_ENABLE_RTOp=OFF[)]"
+
+    "Getting information for all remaining enabled external packages/TPLs"
 
     "Configuring individual enabled Trilinos packages ..."
     "Processing enabled top-level package: Epetra [(]Libs, Tests, Examples[)]"
@@ -1909,7 +1911,7 @@ create_dependency_handling_test_case(
     "Final set of non-enabled top-level external packages/TPLs:  Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS DUMMY ML 16"
     "Final set of non-enabled external packages/TPLs:  Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS DUMMY ThyraCrazyStuff ML 17"
 
-    "Getting information for all enabled external packages/TPLs ..."
+    "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs"
     "Processing enabled external package/TPL: MPI [(]enabled explicitly, disable with -DTPL_ENABLE_MPI=OFF[)]"
     "Processing enabled external package/TPL: BLAS [(]enabled by Epetra, disable with -DTPL_ENABLE_BLAS=OFF[)]"
     "Processing enabled external package/TPL: LAPACK [(]enabled by Epetra, disable with -DTPL_ENABLE_LAPACK=OFF[)]"
@@ -1927,6 +1929,8 @@ create_dependency_handling_test_case(
     "Processing enabled external package/TPL: Ifpack [(]enabled by Phalanx, disable with -DTPL_ENABLE_Ifpack=OFF[)]"
     "Processing enabled external package/TPL: Belos [(]enabled by Phalanx, disable with -DTPL_ENABLE_Belos=OFF[)]"
     "Processing enabled external package/TPL: Stratimikos [(]enabled explicitly, disable with -DTPL_ENABLE_Stratimikos=OFF[)]"
+
+    "Getting information for all remaining enabled external packages/TPLs"
 
     "Configuring individual enabled Trilinos packages ..."
     "Processing enabled top-level package: Shards [(]Libs[)]"
