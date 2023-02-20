@@ -5875,21 +5875,31 @@ header files and libraries that must be found.  A simple
 Requirements for FindTPL<tplName>.cmake modules
 +++++++++++++++++++++++++++++++++++++++++++++++
 
-It is possible to create a ``FindTPL<tplName>.cmake`` module without using any
-TriBITS functions.  The only firm requirements for a
-``FindTPL<tplName>.cmake`` file after it is included are:
+It is possible to create a ``FindTPL<tplName>.cmake`` find module without
+using any TriBITS functions.  The only firm requirements for a
+``FindTPL<tplName>.cmake`` file are:
 
 * The target ``<tplName>::all_libs`` must be created and it must contain all
   of the needed libraries, include directories, and other usage requirements
-  (including for all upstream external packages/TPLs).
+  (including for all upstream external packages/TPLs) to implement a
+  `TriBITS-compliant package`_ to be consumed by downstream TriBITS packages.
 
 * The file ``<buildDir>/external_packages/<tplName>/<tplName>Config.cmake``
-  must be created in the build directory and when including the file
-  ``<tplName>Config.cmake`` it must define the equivalent target
-  ``<tplName>::all_libs`` (and must call ``find_dependency()`` correctly on
-  all upstream external packages/TPLs).
+  must be created in the build directory, and when included, it must define
+  the equivalent IMPORTED target ``<tplName>::all_libs``, pull all of the
+  ``<UpstreamTpl>Config.cmake`` files for upstream external packages/TPLs, and
+  define the needed variables to provide a `TriBITS-compliant external
+  package`_.
 
-Some of issues to consider in this case are described in the section `Tricky
+TriBITS will set the remaining variables to provide a complete
+`TriBITS-Compliant Package`_ for the current CMake project and will add the
+install target to install the file
+``<buildDir>/external_packages/<tplName>/<tplName>Config.cmake`` to create a
+`TriBITS-compliant external package`_.  TriBITS will also automatically create
+an appropriate package version file ``<tplName>ConfigVersion.cmake``.
+
+Some of issues to consider in this case (and the role of the
+``<tplName>ConfigVersion.cmake`` file) are described in the section `Tricky
 considerations for TriBITS-generated <tplName>Config.cmake files`_.
 
 
@@ -6885,17 +6895,17 @@ files of the name ``<tplName>Config.cmake``.  These TriBITS-generated package
 config files ``<tplName>Config.cmake`` could potentially be found by calls to
 ``find_package(<externalPkg>)`` (i.e. when ``<tplName> == <externalPkg>`` like
 with HDF5).  These TriBITS-generated ``<tplName>Config.cmake`` files are
-primarily meant to provide the ``<tplName>::all_libs`` targets and pull in
-upstream dependencies for downstream TriBITS-compliant
-``<Package>Config.cmake`` files.  These TriBITS-generated
-``<tplName>Config.cmake`` files will usually not behave the same way existing
-``Find<tplName>.config`` find modules or native ``<tplName>Config.cmake``
-package config files would behave as expected by downstream projects when
-found by ``find_package(<tplName>)`` commands called in some arbitrary
-downstream raw CMake project.  Therefore, to avoid having an installed
-TriBITS-generated ``HDF5Config.cmake`` file, for example, being found by the
-inner call to ``find_package(HDF5 ...)`` in the file ``FindTPLHDF5.cmake``
-(which would be disastrous), TriBITS employs two safeguards.
+primarily meant to provide a `TriBITS-compliant external package`_ for
+downstream TriBITS-compliant ``<Package>Config.cmake`` files.  These
+TriBITS-generated ``<tplName>Config.cmake`` files will usually not behave the
+same way existing ``Find<tplName>.config`` find modules or native
+``<tplName>Config.cmake`` package config files would behave as expected by
+downstream projects when found by ``find_package(<tplName>)`` commands called
+in some arbitrary downstream raw CMake project.  Therefore, to avoid having an
+installed TriBITS-generated ``HDF5Config.cmake`` file, for example, being
+found by the inner call to ``find_package(HDF5 ...)`` in the file
+``FindTPLHDF5.cmake`` (which could be disastrous), TriBITS employs two
+safeguards.
 
 First, TriBITS-generated ``<tplName>Config.cmake`` package config files are
 placed into the build directory under::
