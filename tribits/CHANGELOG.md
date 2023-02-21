@@ -2,6 +2,20 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2022-12-07:
+
+* **Changed:** Setting `-D<Project>_ENABLE_<TplName>=ON` now triggers the
+  enable an external package/TPL `<TplName>` similar to the way that
+  `-DTPL_ENABLE_<TplName>` has always done.  This is technically a change in
+  backward compatibility because setting `<Project>_ENABLE_<TplName>=ON` for
+  an external package/TPL used to be ignored.  This change was done as part of
+  a general refactoring to unify the handling of internal and external
+  packages and is a side effect of that refactoring (see [TriBITS
+  #63](https://github.com/TriBITSPub/TriBITS/issues/63)).  (Initially, setting
+  `-D<Project>_ENABLE_<TplName>=ON` resulted in a failed configure because the
+  refactoring was not complete for the handling of external packages/TPL.  But
+  this was fixed in a latter update.)
+
 ## 2023-10-25:
 
 * **Added:** New option `<Project>_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES`
