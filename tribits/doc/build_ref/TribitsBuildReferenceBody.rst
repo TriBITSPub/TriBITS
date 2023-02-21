@@ -1965,6 +1965,81 @@ and module files.  Therefore, don't enable this if Fortran code in your
 project is pulling in module files from TPLs.
 
 
+Building against pre-installed packages
+---------------------------------------
+
+The <Project> project can build against any pre-installed packages defined in
+the project and ignore the internally defined packages.  To trigger the enable
+of a pre-installed internal package treated as an external package, configure
+with::
+
+  -D TPL_ENABLE_<TRIBITS_PACKAGE>=ON
+
+That will cause the <Project> CMake project to pull in the pre-installed
+package ``<TRIBITS_PACKAGE>`` as an external package using
+``find_package(<TRIBITS_PACKAGE>)`` instead of configuring and building the
+internally defined ``<TRIBITS_PACKAGE>`` package.
+
+Configuring and building against a pre-installed package treated as an
+external packages has several consequences:
+
+* Any internal packages that are upstream from ``<TRIBITS_PACKAGE>`` from an
+  enabled set of dependencies will also be treated as external packages (and
+  therefore must be pre-installed as well).
+
+* The TriBITS package ``Dependencies.cmake`` files for the
+  ``<TRIBITS_PACKAGE>`` package and all of its upstream packages must still
+  exist and will still be read in by the <Project> CMake project and the same
+  enable/disable logic will be performed as if the packages were being treated
+  internal.  (However, the base ``CMakeLists.txt`` and all of other files for
+  these internally defined packages being treated as external packages can be
+  missing and will be ignored.)
+
+* The same set of enabled and disabled upstream dependencies must be specified
+  to the <Project> CMake project that was used to pre-build and pre-install
+  these internally defined packages being treated as external packages.
+  (Otherwise, a configure error will result from the mismatch.)
+
+* The definition of any TriBITS external packages/TPLs that are enabled
+  upstream dependencies from any of these internally defined packages being
+  treated as external packages will be defined by the calls to
+  ``find_package(<TRIBITS_PACKAGE>)`` and will **not** be found again.
+
+The logic for treating internally defined packages as external packages will
+be printed in the CMake configure output in the section ``Adjust the set of
+internal and external packages`` with output like::
+
+  Adjust the set of internal and external packages ...
+
+  -- Treating internal package <PKG2> as EXTERNAL because TPL_ENABLE_<PKG2>=ON
+  -- Treating internal package <PKG1> as EXTERNAL because downstream package <PKG2> being treated as EXTERNAL
+  -- NOTE: <TPL2> is indirectly downstream from a TriBITS-compliant external package
+  -- NOTE: <TPL1> is indirectly downstream from a TriBITS-compliant external package
+
+All of these internally defined being treated as external (and all of their
+upstream dependencies) are processed in a loop over these just these
+TriBITS-compliant external packages and ``find_package()`` is only called on
+the terminal TriBITS-compliant external packages.  This is shown in the CMake
+output in the section ``Getting information for all enabled TriBITS-compliant
+or upstream external packages/TPLs`` and looks like::
+
+  Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs ...
+
+  Processing enabled external package/TPL: <TPL1> (...)
+  -- The external package/TPL <TPL1> will be read in by a downstream TriBITS-compliant external package
+  Processing enabled external package/TPL: <TPL2> (...)
+  -- The external package/TPL <TPL2> will be read in by a downstream TriBITS-compliant external package
+  Processing enabled external package/TPL: <PKG1> (...)
+  -- The external package/TPL <PKG1> will be read in by a downstream TriBITS-compliant external package
+  Processing enabled external package/TPL: <PKG2> (...)
+  -- Calling find_package(<PKG2> for TriBITS-compliant external package
+
+In the above example ``<TPL1>``, ``<TPL2>`` and ``<PKG1>`` are all direct or
+indirect dependencies of ``<PKG2>`` and therefore calling just
+``find_package(<PKG2>)`` fully defines those TriBITS-compliant external
+packages as well.
+
+
 xSDK Configuration Options
 --------------------------
 
