@@ -381,10 +381,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2023-02-13</p>
+<dd class="field-even"><p>2023-02-23</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3188-g5470aab7</p>
+<dd class="field-odd"><p>tribits_start-3190-g1a6335a8</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -11873,23 +11873,27 @@ affect header files, please use a configured header file (see
 <p>Add an option and an optional macro define variable in one shot.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_add_option_and_define</span><span class="p">(</span> <span class="o">&lt;</span><span class="n">userOptionName</span><span class="o">&gt;</span>  <span class="o">&lt;</span><span class="n">macroDefineName</span><span class="o">&gt;</span>
-  <span class="s2">&quot;&lt;docStr&gt;&quot;</span>  <span class="o">&lt;</span><span class="n">defaultValue</span><span class="o">&gt;</span> <span class="p">)</span>
+  <span class="s2">&quot;&lt;docStr&gt;&quot;</span>  <span class="o">&lt;</span><span class="n">defaultValue</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">NONCACHE</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>This macro sets the user cache <code class="docutils literal notranslate"><span class="pre">BOOL</span></code> variable <code class="docutils literal notranslate"><span class="pre">&lt;userOptionName&gt;</span></code> and if
 it is true, then sets the global (internal cache) macro define variable
-<code class="docutils literal notranslate"><span class="pre">&lt;macroDefineName&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">ON</span></code>, and otherwise sets it to <code class="docutils literal notranslate"><span class="pre">OFF</span></code>.  This is
-designed to make it easy to add a user-enabled option to a configured header
-file and have the define set in one shot.  This would require that the
-package’s configure file (see <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a>) have the line:</p>
+<code class="docutils literal notranslate"><span class="pre">&lt;macroDefineName&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">ON</span></code>, and otherwise sets it to <code class="docutils literal notranslate"><span class="pre">OFF</span></code>.  If
+<code class="docutils literal notranslate"><span class="pre">NONCACHE</span></code> is passed in, then <code class="docutils literal notranslate"><span class="pre">&lt;macroDefineName&gt;</span></code> is set as a non-cache
+local varaible instead of a cache variable.</p>
+<p>This is designed to make it easy to add a user-enabled option to a
+configured header file and have the define set in one shot.  This would
+require that the package’s configure file (see <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a>)
+have the line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#cmakedefine &lt;macroDefineName&gt;</span>
 </pre></div>
 </div>
 <p>NOTE: This also calls <a class="reference internal" href="#tribits-pkg-export-cache-var">tribits_pkg_export_cache_var()</a> to export the
-variables <code class="docutils literal notranslate"><span class="pre">&lt;userOptionName&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;macroDefineName&gt;</span></code>.  This also
-requires that local variables with the same names of these cache variables
-not be assigned with a different value from these cache variables.  If they
-are, then an error will occur later when these variables are read.</p>
+variables <code class="docutils literal notranslate"><span class="pre">&lt;userOptionName&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;macroDefineName&gt;</span></code> (when <code class="docutils literal notranslate"><span class="pre">NONCACHE</span></code>
+is <strong>not</strong> passed).  This also requires that local variables with the same
+names of these cache variables not be assigned with a different value from
+these cache variables.  If they are, then an error will occur later when
+these variables are read.</p>
 <p>NOTE: The define var name <code class="docutils literal notranslate"><span class="pre">&lt;macroDefineName&gt;</span></code> can be empty “” in which
 case all logic related to <code class="docutils literal notranslate"><span class="pre">&lt;macroDefineName&gt;</span></code> is skipped.  (But in this
 case, it would be better to just call:</p>
