@@ -381,10 +381,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2023-02-23</p>
+<dd class="field-even"><p>2023-02-25</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3190-g1a6335a8</p>
+<dd class="field-odd"><p>tribits_start-3192-gec4532bd</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1375,7 +1375,7 @@ be but it is not too bad.  A simple, but representative, example is
 
 # To be safe, define your minimum CMake version.  This may be newer than the
 # min required by TriBITS.
-cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.23.0 FATAL_ERROR)
 
 # Make CMake set WIN32 with CYGWIN for older CMake versions.  CMake requires
 # this to be in the top-level CMakeLists.txt file and not an include file :-(
@@ -1456,7 +1456,7 @@ CMake files.  The minimum CMake version required by TriBITS is defined in
 the variable <code class="docutils literal notranslate"><span class="pre">TRIBITS_CMAKE_MINIMUM_REQUIRED</span></code> (the current minimum version
 of CMake required by TriBITS is given at in <a class="reference external" href="TribitsBuildReference.html#getting-set-up-to-use-cmake">Getting set up to use CMake</a>) .
 For example, the <code class="docutils literal notranslate"><span class="pre">VERA/CMakeLists.txt</span></code> file lists as its first line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>set(VERA_TRIBITS_CMAKE_MINIMUM_REQUIRED 3.17.0)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>set(VERA_TRIBITS_CMAKE_MINIMUM_REQUIRED 3.23.0)
 cmake_minimum_required(VERSION ${VERA_TRIBITS_CMAKE_MINIMUM_REQUIRED}
   FATAL_ERROR)
 </pre></div>
@@ -2468,7 +2468,7 @@ deprecated code handling</a>.</p>
 the package can call this file anything it wants.  Also, a package can
 configure multiple header files in different directories for different
 purposes using <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a> or even calls to the raw CMake
-function <a class="reference external" href="https://cmake.org/cmake/help/v3.17/command/configure_file.html">configure_file()</a>.</p>
+function <a class="reference external" href="https://cmake.org/cmake/help/v3.23/command/configure_file.html">configure_file()</a>.</p>
 <p id="packagedir-cmakelists-txt"><strong>&lt;packageDir&gt;/CMakeLists.txt</strong>: [Required] The package’s top-level
 <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> file that defines the libraries, include directories, and
 contains the tests for the package.</p>
@@ -5783,7 +5783,7 @@ test-related classifications:</p>
 <p>Typically a TriBITS project will define a “standard development environment”
 which is comprised of a standard compiler (e.g. GCC 8.3.0), external
 package/TPL versions (e.g. OpenMPI 4.0.5, Boost 4.9, etc.), and other tools
-(e.g. cmake 3.17.0, git 2.10.1, etc.).  This standard development environment
+(e.g. cmake 3.23.0, git 2.10.1, etc.).  This standard development environment
 is expected to be used to test changes to the project’s code before any push.
 By using a standard development environment, if the code builds and all the
 tests pass for the “default” pre-push builds for one developer, then that
@@ -7383,7 +7383,7 @@ and otherwise does nothing for a raw CMake build.</p></li>
 </ol>
 <p>The top file <code class="docutils literal notranslate"><span class="pre">RawAndTribitsHelloWorld/CMakeLists.txt</span></code> file demonstrates the
 basic approach:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cmake_minimum_required(VERSION 3.23.0 FATAL_ERROR)
 include(${CMAKE_CURRENT_SOURCE_DIR}/ProjectName.cmake)
 
 # Called at the top of every CMakeLists.txt file
@@ -11236,7 +11236,7 @@ non-TriBITS projects.  To do so, one just needs to set the variables
 <code class="docutils literal notranslate"><span class="pre">PROJECT_NAME</span></code>), <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_TESTS=TRUE</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_TRIBITS_DIR</span></code> (pointing to the TriBITS location).  For example,
 a valid project can be a simple as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cmake_minimum_required(VERSION 3.17.0)
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>cmake_minimum_required(VERSION 3.23.0)
 set(PROJECT_NAME TAATDriver)
 project(${PROJECT_NAME} NONE)
 set(${PROJECT_NAME}_TRACE_ADD_TEST TRUE)
@@ -12711,7 +12711,7 @@ called <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NA
 </pre></div>
 </div>
 <p>which does basic substitution of CMake variables (see documentation for
-built-in CMake <a class="reference external" href="https://cmake.org/cmake/help/v3.17/command/configure_file.html">configure_file()</a> command for rules on how it performs
+built-in CMake <a class="reference external" href="https://cmake.org/cmake/help/v3.23/command/configure_file.html">configure_file()</a> command for rules on how it performs
 substitutions).  This command is typically used to configure the package’s
 main <a class="reference internal" href="#packagedir-cmake-packagename-config-h-in">&lt;packageDir&gt;/cmake/&lt;packageName&gt;_config.h.in</a> file.</p>
 <p>In addition to just calling <code class="docutils literal notranslate"><span class="pre">configure_file()</span></code>, this function also aids in
@@ -13803,9 +13803,9 @@ will disable packages with failing library builds when processing downstream
 packages, and therefore reduce the propagation of failures to downstream
 packages and therefore is more robust.  But the package-by-package mode is
 more expensive in several respects for many projects.</p>
-<p>For versions of CMake 3.17.0 and above and newer versions of CDash, the
-CDash server for the all-at-once mode will break down build and test results
-on a package-by-package basis on CDash together.</p>
+<p>For newer versions of CDash 3.1+, for the all-at-once mode, the CDash server
+will break down build and test results on a package-by-package basis on
+CDash together.</p>
 <p id="multiple-ctest-s-invocations-tribits-ctest-driver"><strong>Multiple ctest -S invocations (tribits_ctest_driver()):</strong></p>
 <p>By default, this function is meant to be used in a single invocation of the
 <code class="docutils literal notranslate"><span class="pre">ctest</span> <span class="pre">-S</span> <span class="pre">&lt;script&gt;.cmake</span></code> command in order to do everything from the
