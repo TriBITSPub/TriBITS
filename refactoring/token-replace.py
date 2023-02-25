@@ -52,9 +52,9 @@ if __name__ == '__main__':
   inOptions = getCmndLineOptions()
 
   beginLineTokenPattern = re.compile(
-    r'^' + inOptions.tokenToReplace + r'([^A-Za-z0-9_])' )
+    fr'^{inOptions.tokenToReplace}([^A-Za-z0-9_])' )
   midLineTokenPattern = re.compile(
-    r'([^A-Za-z0-9_])' + inOptions.tokenToReplace + r'([^A-Za-z0-9_])' )
+    fr'([^A-Za-z0-9_]){inOptions.tokenToReplace}([^A-Za-z0-9_])' )
 
   with open(inOptions.inputFile, 'r') as file:
     lines = file.readlines()
