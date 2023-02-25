@@ -75,19 +75,12 @@ back-end build system.  It also provides some other nice features like ``ninja
 -n -d explain`` to show why the build system decides to (re)build the targets
 that it decides to build.
 
-The Kitware fork of Ninja at:
-
-  https://github.com/Kitware/ninja/releases
-
-provides releases of Ninja that allows CMake 3.7.0+ to build Fortran code with
-Ninja.  For example, the Kitware Ninja release ``1.7.2.git.kitware.dyndep-1``
-works with Fortran.  As of Ninja 1.10+, Fortran support is part of the
-official Google-maintained version of Ninja as can be obtained from:
+As of Ninja 1.10+, Fortran support is part of the official GitHub version of
+Ninja as can be obtained from:
 
   https://github.com/ninja-build/ninja/releases
 
-and as of CMake 3.17+, cmake will recognize native Fortran support for Ninja
-1.10+ (see `CMake Ninja Fortran Support`_).
+(see `CMake Ninja Fortran Support`_).
 
 Ninja is easy to install from source on almost any machine.  On Unix/Linux
 systems it is as simple as ``configure --prefix=<dir>``, ``make`` and ``make
@@ -2557,11 +2550,6 @@ NOTES:
   ``ctest -S`` script driver).  (This allows using CMake 3.16+ since support
   for the ``CTEST_RESOURCE_SPEC_FILE`` cache variable was not added until
   CMake 3.18.)
-
-* CMake versions 3.18+ can be used to get built-in CMake/CTest support for the
-  ``CTEST_RESOURCE_SPEC_FILE`` cache variable.  This avoids needing to
-  explicitly pass the ctest resource file to ``ctest`` at runtime for
-  CMake/CTest versions 3.17.z.
 
 * **WARNING:** This currently only works for a single node, not multiple
   nodes.  (CTest needs to be extended to work correctly for multiple nodes

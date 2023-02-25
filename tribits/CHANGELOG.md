@@ -2,6 +2,12 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2023-02-24:
+
+* **Changed:** Upgrade minimum required CMake version from 3.17 to 3.23.
+  Existing TriBITS projects that have already upgraded to require CMake 3.23+
+  should not notice any major changes due to this change.
+
 ## 2023-01-10:
 
 * **Added:** Added back support for deprecated variable

@@ -11,7 +11,7 @@
 # and it read and print these env vars up to 10
 #
 
-cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.23.0 FATAL_ERROR)
 
 set(maxNumEnvVars 10)
 

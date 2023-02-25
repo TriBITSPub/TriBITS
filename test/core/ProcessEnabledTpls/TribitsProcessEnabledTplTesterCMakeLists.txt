@@ -43,7 +43,7 @@
 # TribitsTplFindIncludeDirsAndLibraries.cmake modules.
 #
 
-cmake_minimum_required(VERSION 3.17.0)
+cmake_minimum_required(VERSION 3.23.0)
 
 # Passed in on command-line
 message("${PROJECT_NAME} = ${PROJECT_NAME}")
