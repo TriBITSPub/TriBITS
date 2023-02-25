@@ -37,7 +37,7 @@
 # ************************************************************************
 # @HEADER
 
-cmake_minimum_required(VERSION 3.17.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.23.0 FATAL_ERROR)
 
 #
 # The tests defined here are used to test the dynamic behavior of the

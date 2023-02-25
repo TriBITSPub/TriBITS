@@ -2,16 +2,22 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2023-02-24:
+
+* **Changed:** Upgraded minimum required CMake version from 3.17 to 3.23.
+  Existing TriBITS projects that have already upgraded to require CMake 3.23+
+  should not notice any major changes due to this change.
+
 ## 2023-02-21:
 
-* Add support for pre-installed internal packages treated as external
-  packages.  Now, any set of internally defined TriBITS packages for a TriBITS
-  project can be pre-built and pre-installed and the remaining packages in the
-  TriBITS project can be configured to point to those by setting `-D
-  TPL_ENABLE_<Package>=ON`.  This allows great flexibility in how a TriBITS
-  project's packages can be and built, installed, and deployed.  This
-  technically implements "Use Case 3: Configure/build pointing to a subset of
-  already installed TriBITS packages in same repo" in [TriBITS
+* **Added:** Added support for pre-installed internal packages treated as
+  external packages.  Now, any set of internally defined TriBITS packages for
+  a TriBITS project can be pre-built and pre-installed and the remaining
+  packages in the TriBITS project can be configured to point to those by
+  setting `-D TPL_ENABLE_<Package>=ON`.  This allows great flexibility in how
+  a TriBITS project's packages can be and built, installed, and deployed.
+  This technically implements "Use Case 3: Configure/build pointing to a
+  subset of already installed TriBITS packages in same repo" in [TriBITS
   #63](https://github.com/TriBITSPub/TriBITS/issues/63).  See the section
   "Building against pre-installed packages" in the updated build reference
   documentation for details.

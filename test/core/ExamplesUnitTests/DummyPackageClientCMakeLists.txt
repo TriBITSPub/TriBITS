@@ -52,7 +52,7 @@ message("FIND_PACKAGE_OPTIONAL_COMPONENTS (input) = '${FIND_PACKAGE_OPTIONAL_COM
 message("CMAKE_PREFIX_PATH = '${CMAKE_PREFIX_PATH}'")
 message("EXPORT_VAR_PREFIX = '${EXPORT_VAR_PREFIX}'")
 
-cmake_minimum_required(VERSION 3.17.0)
+cmake_minimum_required(VERSION 3.23.0)
 project(${DUMMY_PROJECT_NAME} NONE)
 
 if (FIND_PACKAGE_COMPONENTS)
