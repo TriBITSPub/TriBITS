@@ -797,16 +797,6 @@ tribits_add_advanced_test( TribitsHelloWorld_install_config_dummy_proj
   #
 
 
-# NOTE: In the below tests, we are only testing TriBITS support for generating
-# the ctest_resources.json file, setting the RESOURCES_GROUP and ENVIRONMENT
-# test properties, and testing CMake support for recognizing the
-# RESOURCES_GROUP test property and putting it in the CTestTestfile.cmake
-# file.  We are not actually running ctest or looking for the var
-# CTEST_RESOURCE_SPEC_FILE set in the CTestTestfile.cmake file.  (Support for
-# CTEST_RESOURCE_SPEC_FILE was not added proper until 3.18 so we can't rely on
-# it in these tests that work with CMake 3.17.)
-
-
 tribits_add_advanced_test( TribitsHelloWorld_ctest_resources_file_autogen_2_3
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -841,6 +831,7 @@ tribits_add_advanced_test( TribitsHelloWorld_ctest_resources_file_autogen_2_3
       "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
       "PROCESSORS .1."
       "RESOURCE_GROUPS .1,gpus:1."
+      "CTEST_RESOURCE_SPEC_FILE .*/ctest_resources.json"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
