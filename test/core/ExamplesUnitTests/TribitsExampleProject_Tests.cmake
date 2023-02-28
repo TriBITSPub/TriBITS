@@ -2584,7 +2584,7 @@ tribits_add_advanced_test( TribitsExampleProject_HeaderOnlyTpl_FailThenPass
     PASS_REGULAR_EXPRESSION_ALL
       "Processing enabled external package/TPL: HeaderOnlyTpl .enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF."
       "-- Searching for headers in HeaderOnlyTpl_INCLUDE_DIRS='.*/tribits/examples/tpls/HeaderOnlyTpl'"
-      "Found header '.*/tribits/examples/tpls/HeaderOnlyTpl[/]*/HeaderOnlyTpl_stuff.hpp'"
+      "Found header '.*/tribits/examples/tpls/HeaderOnlyTpl/?/HeaderOnlyTpl_stuff.hpp'"
       "Found TPL 'HeaderOnlyTpl' include dirs '.*/tribits/examples/tpls/HeaderOnlyTpl'"
       "TPL_HeaderOnlyTpl_INCLUDE_DIRS='.*/tribits/examples/tpls/HeaderOnlyTpl'"
       "Configuring done"
