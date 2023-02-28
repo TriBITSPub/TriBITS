@@ -1583,7 +1583,7 @@ are defined before a Package's ``CMakeLists.txt`` file is processed:
 
     Set to ``ON`` if the package is enabled and is to be processed or will be
     set to ``ON`` or ``OFF`` automatically during enable/disable logic.  For a
-    parent package that is not directly enabled but were one of its
+    parent package that is not directly enabled but where one of its
     subpackages is enabled, this will get set to ``ON`` (but that is not the
     same as the parent package being directly enabled and therefore does not
     imply that all of the required subpackages will be enabled, only that the
@@ -1614,6 +1614,10 @@ are defined before a Package's ``CMakeLists.txt`` file is processed:
     to allow for uniform processing such as when looping over the items in
     `${PACKAGE_NAME}_LIB_DEFINED_DEPENDENCIES`_ or
     `${PACKAGE_NAME}_TEST_DEFINED_DEPENDENCIES`_.
+
+    **NOTE:** The value of this variable also determines the value of the
+    macro define variable name
+    `HAVE_<PACKAGE_NAME_UC>_<OPTIONAL_DEP_PACKAGE_NAME_UC>`_.
 
   .. _${PACKAGE_NAME}_ENABLE_TESTS:
 
@@ -1662,6 +1666,13 @@ are defined in the top-level project scope before a Package's
     the ``EpetraExt`` and ``Triutils`` example, this would be::
 
       #cmakedefine HAVE_EPETRAEXT_TRIUTILS
+
+    NOTE: TriBITS automatically sets this variable depending on the value of
+    `${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}`_ during the step
+    "Adjust package and TPLs enables and disables" in `Full Processing of
+    TriBITS Project Files`_.  And tweaking this variable after that must be
+    done carefully as described in `How to tweak downstream TriBITS "ENABLE"
+    variables during package configuration`_.
 
 Currently, a Package can refer to its containing Repository and refer to its
 source and binary directories.  This is so that it can refer to
@@ -3294,6 +3305,7 @@ dependency`_ for more discussion and examples.
 Before getting into specific `Example Enable/Disable Use Cases`_, some of the
 `TriBITS Dependency Handling Behaviors`_ are first defined below.
 
+
 TriBITS Dependency Handling Behaviors
 -------------------------------------
 
@@ -3714,15 +3726,20 @@ In more detail, these rules/behaviors are:
 22) **TriBITS auto-enables/disables done using non-cache local variables**:
     TriBITS setting (or overrides) of enable/disable cache variables are done
     by setting local non-cache variables at the top project-level scope
-    (i.e. the ``<projectDir>/CMakeLists.txt`` file scope).  This is done so
-    they don't get set in the cache and so that the same dependency
+    (i.e. the ``<projectDir>/CMakeLists.txt`` file scope) and does **not**
+    touch the value of the cache variables that may be set by the user on
+    input or the cache variables with documentation set by TriBITS.  This is
+    done so they don't get set in the cache and so that the same dependency
     enable/disable logic is redone, from scratch, with each re-configure.
     This results in the same enable/disable logic output as for the initial
     configure.  This is to avoid confusion by the user about why some packages
-    and TPLs are enabled and some are not on subsequent reconfigures.
-    However, this implementation choice must be understood when one wants to
-    go about tweaking these TriBITS enable/disable variables as described in
-    `How to check for and tweak TriBITS "ENABLE" cache variables`_ and `How to
+    and TPLs are enabled and some are not on subsequent reconfigures.  This is
+    also desirable behavior as it preserves the user's input values for these
+    variables to document what was set by the user.  However, this
+    implementation choice (and the tricky relationship between cache and
+    non-cache CMake variables) must be clearly understood when one wants to go
+    about tweaking these TriBITS enable/disable variables as described in `How
+    to check for and tweak TriBITS "ENABLE" cache variables`_ and `How to
     tweak downstream TriBITS "ENABLE" variables during package
     configuration`_.
 
@@ -6295,7 +6312,7 @@ enabling/disabling various entities that allow for a default "undefined" empty
 
 * ``${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>`` (Packages)
 * ``TPL_ENABLE_<tplName>`` (External Packages/TPLs)
-* ``<TRIBITS_PACKAGE>_ENABLE_<TRIBITS_DEP_PACKAGE>`` (Optional support for a
+* ``<TRIBITS_PACKAGE>_ENABLE_<TRIBITS_DEP_PACKAGE>`` (Support for a
   package ``<TRIBITS_DEP_PACKAGE>`` in a downstream package
   ``<TRIBITS_PACKAGE>``)
 * ``<TRIBITS_PACKAGE>_ENABLE_TESTS`` (Package tests)
@@ -6321,7 +6338,8 @@ following:
    default defined or not.
 
 2) To tweak the enable/disable of one or more of these variables after user
-   input but before auto-enable/disable logic:
+   input but **before** the step "Adjust package and TPLs enables and
+   disables" in `Full Processing of TriBITS Project Files`_:
 
   a) To tweak the enables/disables for a TriBITS Repository (i.e. affecting
      all TriBITS projects) add enable/disable code to the file
@@ -6353,10 +6371,12 @@ possible values of ``ON``, ``OFF`` and empty ``""`` (see the macro
 ``<XXX>_ENABLE_<YYY>`` variable is defined (e.g. ``if (DEFINED
 <XXX>_ENABLE_<YYY>) ... endif()``) does not mean that it has been set to
 ``ON`` or ``OFF`` yet (or any non-empty values that evaluates to true or false
-in CMake).  To see if an ``ENABLE`` variable is one of these variables, look
-in the CMakeCache.txt file for the type.  If the type is ``STRING``, then it
-is most likely this type of variable with a default value of empty ``""``.
-However, if the cache type is ``BOOL`` then it is likely a standard bool
+in CMake).  To see if an ``ENABLE`` variable is one of these types, look in
+the ``CMakeCache.txt``.  If the type of the variable ``<XXX>_ENABLE_<YYY>`` is
+``STRING`` and you see another variable set with the name
+``<XXX>_ENABLE_<YYY>_-STRINGS``, then it is most likely this special type of
+``ENABLE`` variable with a typical default value of empty ``""``.  However, if
+the cache variable is of type ``BOOL``, then it is likely a standard bool
 variable that is not allowed to have a value of empty ``""``.
 
 Second, note that the value of empty ``""`` evaluates to ``FALSE`` in CMake
@@ -6364,11 +6384,11 @@ Second, note that the value of empty ``""`` evaluates to ``FALSE`` in CMake
 variables evaluates to true, then just use ``if (<XXX>_ENABLE_<YYY>)
 ... endif()``.
 
-Third, note that TriBITS will not define these cache variables until TriBITS
-processes the ``Dependencies.cmake`` files on the first configure (see `Full
-TriBITS Project Configuration`_).  On future reconfigures, these variables are
-all defined (but most will have a default value of empty ``""`` stored in the
-cache).
+Third, note that TriBITS will not define cache variables for these ``ENABLE``
+variables until TriBITS processes the ``Dependencies.cmake`` files on the
+first configure (see `Full TriBITS Project Configuration`_).  On future
+reconfigures, these variables are all defined (but most will have a default
+value of empty ``""`` stored in the cache).
 
 The reason the files ``RepositoryDependenciesSetup.cmake`` and
 ``ProjectDependenciesSetup.cmake`` are the best places to put in these tweaks
@@ -6381,6 +6401,11 @@ Logic`_).  Also, these files get processed in `Reduced Package Dependency
 Processing`_ as well so they get processed in all contexts where
 enable/disable logic is applied.
 
+However, if one wants to tweak these variables once packages are starting to
+be processed (in step "For each ``<packageDir>`` in all enabled top-level
+packages" in `Full TriBITS Project Configuration`_), there are fewer
+situations where that can be done correctly as described in the next section.
+
 
 How to tweak downstream TriBITS "ENABLE" variables during package configuration
 -------------------------------------------------------------------------------
@@ -6389,44 +6414,64 @@ There are cases where one may need to enable or disable some feature that
 TriBITS may have enabled by default (such as in "Adjust package and TPLs
 enables and disables" in `Full Processing of TriBITS Project Files`_) and that
 decision can only be made while processing a package's
-`<packageDir>/CMakeLists.txt`_ file. (And therefore the logic for this disable
-cannot be performed in the ``ProjectDependenciesSetup.cmake`` or
-``RepositoryDependenciesSetup.cmake`` files as described in `How to check for
-and tweak TriBITS "ENABLE" cache variables`_ which are processed before the
-enabled packages are configured.)  Also, there are cases where it is necessary
-to make this change visible to downstream packages such as when
-``<DownstreamPackageB>`` support of some feature depends on
-``<DownstreamPackageA>`` support for that same feature.  Examples include
-optional support of an upstream package in a downstream package
-``<DownstreamPackage>_ENABLE_<UpstreamPackage>`` or for support for an
-optional TPL in a downstream package ``<DownstreamPackage>_ENABLE_<TPL>``.
-But other examples may include variables that are not optional TriBITS package
-and TPL enables (such as support for a given data-type that may impact
-multiple packages).
+`<packageDir>/CMakeLists.txt`_ file and not before. (And therefore the logic
+for this disable cannot be performed in the ``ProjectDependenciesSetup.cmake``
+or ``RepositoryDependenciesSetup.cmake`` files as described in `How to check
+for and tweak TriBITS "ENABLE" cache variables`_.)  Also, there are cases
+where it is necessary to make this change visible to downstream packages.  The
+main example is when optional support of an upstream package in a downstream
+package ``<DownstreamPackage>_ENABLE_<UpstreamPackage>`` must be changed in
+the package's `<packageDir>/CMakeLists.txt`_ file.  But there are other
+examples such as support for a given data-type that may impact multiple
+downstream packages.
 
 When the internal configuration of a package (i.e. while processing its
 ``<packageDir>/CMakeLists.txt`` file) determines that an optional feature
-``<XXX>_ENABLE_<YYY>`` must be enabled or disabled with and will change the
-value previously set (e.g. during the "Adjust package and TPLs enables and
-disables" stage), one cannot use a simple ``set()`` statement.  Changing the
-value of an ``<XXX>_ENABLE_<YYY>`` variable inside a package's
-``<packageDir>/CMakeLists.txt`` file using a raw ``set(<XXX>_ENABLE_<YYY>
+``<Package>_ENABLE_<YYY>`` must change the value previously set (e.g. that was
+set automatically by TriBITS during the "Adjust package and TPLs enables and
+disables" stage in `Full Processing of TriBITS Project Files`_), one cannot
+use a simple ``set()`` statement.  Changing the value of a
+``<Package>_ENABLE_<YYY>`` variable inside a package's
+``<packageDir>/CMakeLists.txt`` file using a raw ``set(<Package>_ENABLE_<YYY>
 <newValue>)`` statement only changes the variable's value inside the package's
 scope, but all other packages will see the old value of
-``<XXX>_ENABLE_<YYY>``.  To correctly change the value of one of these
+``<Package>_ENABLE_<YYY>``.  To correctly change the value of one of these
 variables, instead use `dual_scope_set()`_ from the top-level
-``<packageDir>/CMakeLists.txt`` file.  This sets the value in both the
-base-level (global) project scope and in the local scope of
-``<packageDir>/CMakeLists.txt``.  (But this does **not** change the value of a
-cache variable ``<XXX>_ENABLE_<YYY>`` that may have been set by the user or
-some other means; see `TriBITS auto-enables/disables done using non-cache
-local variables`_.)  Any downstream package (configured after processing
-``<packageDir>/CMakeLists.txt``) will see the new value ``<XXX>_ENABLE_<YYY>
-STREQUAL <val>``.  It is also strongly recommended that a message or warning
-be printed to CMake STDOUT using ``message(["NOTE: "|WARNING] "<message>")``
-when globally changing an ENABLE variable. The user may have set it
-explicitly, and they should know exactly why and where their choice is being
-overridden.
+``<packageDir>/CMakeLists.txt`` file.  To perform this disable more robustly
+than calling ``dual_scope_set()`` directly, use the provided macro
+`tribits_disable_optional_dependency()`_.  For example, to disable optional
+support for ``<UpstreamPackage>`` in ``<DownstreamPackage>`` in
+``<DownstreamPackage>`` package's ``<packageDir>/CMakeLists.txt`` file based
+on some criteria, add the CMake code::
+
+  if (<some-condition>)
+    tribits_disable_optional_dependency( <UpstreamPackage>
+      "NOTE: ${PACKAGE_NAME}_ENABLE_<UpstreamPackage> being set to OFF because of <reason>" )
+  endif()
+
+Calling ``dual_scope_set()`` in the package's top-level
+``<packageDir>/CMakeLists.txt`` file sets the value in both the local scope of
+``<packageDir>/CMakeLists.txt`` (and therefore propagated to all other
+``CMakeLists.txt`` files in that package) and in base-level (global) project
+scope.  (But this does **not** change the value of a cache variable
+``<Package>_ENABLE_<YYY>`` that may have been set by the user or some other
+means which is the desired behavior; see `TriBITS auto-enables/disables done
+using non-cache local variables`_.)  In this way, any downstream package
+(configured after processing ``<packageDir>/CMakeLists.txt``) will see the new
+value for ``<Package>_ENABLE_<YYY>``.
+
+It is also strongly recommended that a message be printed to CMake STDOUT
+using ``message("-- " "NOTE: <message>")`` when changing the value of one of
+these ``<Package>_ENABLE_<YYY>`` variables.  The user may have set it
+explicitly or TriBITS may have printed automatic logic for setting it by
+default, and user needs to know why and where the value is being overridden.
+
+**NOTE:** However, it is **not** allowed to try to change the value of a
+global enable of a upstream or downstream package by trying to change the
+value of ``<Project>_ENABLE_<Package>`` or ``TPL_ENABLE_<Package>`` in a
+``<packageDir>/CMakeLists.txt`` file.  Changing the value of these variables
+after the "Adjust package and TPLs enables and disables" stage in `Full
+Processing of TriBITS Project Files`_ will result in undefined behavior.
 
 
 How to set up multi-repository support
