@@ -1809,7 +1809,7 @@ are defined before a Package's ``CMakeLists.txt`` file is processed:
 
     Set to ``ON`` if the package is enabled and is to be processed or will be
     set to ``ON`` or ``OFF`` automatically during enable/disable logic.  For a
-    parent package that is not directly enabled but were one of its
+    parent package that is not directly enabled but where one of its
     subpackages is enabled, this will get set to ``ON`` (but that is not the
     same as the parent package being directly enabled and therefore does not
     imply that all of the required subpackages will be enabled, only that the
@@ -6478,7 +6478,7 @@ variables, instead use `dual_scope_set()`_ from the top-level
 ``<Package>_ENABLE_<UpstreamPackage>`` variable, one must also change the
 value of the associated
 `HAVE_<PACKAGE_NAME_UC>_<OPTIONAL_DEP_PACKAGE_NAME_UC>`_ variable using
-``deal_scope_set()`` as well.  For example, to disable optional support for
+``dual_scope_set()`` as well.  For example, to disable optional support for
 ``<UpstreamPackage>`` in ``<DownstreamPackage>`` in ``<DownstreamPackage>``
 package's ``<packageDir>/CMakeLists.txt`` file, add the CMake code::
 
@@ -6489,7 +6489,7 @@ package's ``<packageDir>/CMakeLists.txt`` file, add the CMake code::
     dual_scope_set(HAVE_${PACKAGE_NAME_UC}_<UPSTREAM_PACKAGE_UC> OFF)
   endif()
 
-Calling ``deal_scope_set()`` in the package's top-level
+Calling ``dual_scope_set()`` in the package's top-level
 ``<packageDir>/CMakeLists.txt`` file sets the value in both the local scope of
 ``<packageDir>/CMakeLists.txt`` (and therefore propagated to all other
 ``CMakeLists.txt`` files in that package) and in base-level (global) project
@@ -6499,7 +6499,7 @@ means which is the desired behavior; see `TriBITS auto-enables/disables done
 using non-cache local variables`_.)  In this way, any downstream package
 (configured after processing ``<packageDir>/CMakeLists.txt``) will see the new
 value for ``<Package>_ENABLE_<YYY>`` (and its associated
-``HAVE_<PACKAGE>_<YYY>`` variable).  As shown above, It is also strongly
+``HAVE_<PACKAGE>_<YYY>`` variable).  As shown above, it is also strongly
 recommended that a message or warning be printed to CMake STDOUT using
 ``message("-- " "NOTE: <message>")`` when changing the value of one of these
 ``<Package>_ENABLE_<YYY>`` variables.  The user may have set it explicitly or
