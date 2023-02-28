@@ -6474,19 +6474,16 @@ use a simple ``set()`` statement.  Changing the value of a
 scope, but all other packages will see the old value of
 ``<Package>_ENABLE_<YYY>``.  To correctly change the value of one of these
 variables, instead use `dual_scope_set()`_ from the top-level
-``<packageDir>/CMakeLists.txt`` file. And when changing the value of a
-``<Package>_ENABLE_<UpstreamPackage>`` variable, one must also change the
-value of the associated
-`HAVE_<PACKAGE_NAME_UC>_<OPTIONAL_DEP_PACKAGE_NAME_UC>`_ variable using
-``dual_scope_set()`` as well.  For example, to disable optional support for
-``<UpstreamPackage>`` in ``<DownstreamPackage>`` in ``<DownstreamPackage>``
-package's ``<packageDir>/CMakeLists.txt`` file, add the CMake code::
+``<packageDir>/CMakeLists.txt`` file.  To perform this disable more robustly
+than calling ``dual_scope_set()`` directly, use the provided macro
+`tribits_disable_optional_dependency()`_.  For example, to disable optional
+support for ``<UpstreamPackage>`` in ``<DownstreamPackage>`` in
+``<DownstreamPackage>`` package's ``<packageDir>/CMakeLists.txt`` file based
+on some criteria, add the CMake code::
 
   if (<some-condition>)
-    message("-- " "NOTE: ${PACKAGE_NAME}_ENABLE_<UpstreamPackage> being set to OFF"
-      " because of <reason>" )
-    dual_scope_set(${PACKAGE_NAME}_ENABLE_<UpstreamPackage> OFF)
-    dual_scope_set(HAVE_${PACKAGE_NAME_UC}_<UPSTREAM_PACKAGE_UC> OFF)
+    tribits_disable_optional_dependency( <UpstreamPackage>
+      "NOTE: ${PACKAGE_NAME}_ENABLE_<UpstreamPackage> being set to OFF because of <reason>" )
   endif()
 
 Calling ``dual_scope_set()`` in the package's top-level
@@ -6498,13 +6495,13 @@ scope.  (But this does **not** change the value of a cache variable
 means which is the desired behavior; see `TriBITS auto-enables/disables done
 using non-cache local variables`_.)  In this way, any downstream package
 (configured after processing ``<packageDir>/CMakeLists.txt``) will see the new
-value for ``<Package>_ENABLE_<YYY>`` (and its associated
-``HAVE_<PACKAGE>_<YYY>`` variable).  As shown above, it is also strongly
-recommended that a message or warning be printed to CMake STDOUT using
-``message("-- " "NOTE: <message>")`` when changing the value of one of these
-``<Package>_ENABLE_<YYY>`` variables.  The user may have set it explicitly or
-TriBITS may have printed automatic logic for setting it by default, and user
-needs to know why and where the value is being overridden.
+value for ``<Package>_ENABLE_<YYY>``.
+
+It is also strongly recommended that a message be printed to CMake STDOUT
+using ``message("-- " "NOTE: <message>")`` when changing the value of one of
+these ``<Package>_ENABLE_<YYY>`` variables.  The user may have set it
+explicitly or TriBITS may have printed automatic logic for setting it by
+default, and user needs to know why and where the value is being overridden.
 
 **NOTE:** However, it is **not** allowed to try to change the value of a
 global enable of a upstream or downstream package by trying to change the

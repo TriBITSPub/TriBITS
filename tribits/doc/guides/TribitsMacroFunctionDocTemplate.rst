@@ -19,6 +19,7 @@
 @FUNCTION: tribits_copy_files_to_binary_dir() +
 @FUNCTION: tribits_ctest_driver() +
 @FUNCTION: tribits_determine_if_current_package_needs_rebuilt() +
+@MACRO:    tribits_disable_optional_dependency() +
 @MACRO:    tribits_disable_package_on_platforms() +
 @MACRO:    tribits_exclude_files() +
 @MACRO:    tribits_extpkg_define_dependencies() +
