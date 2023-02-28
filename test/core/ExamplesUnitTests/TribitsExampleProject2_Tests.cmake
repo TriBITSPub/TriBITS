@@ -197,24 +197,24 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
         "Tpl1_LIBRARY_NAMES='tpl1'"
         "Found lib '${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
         "TPL_Tpl1_LIBRARIES='${tplInstallBaseDir}/install_tpl1/lib/libtpl1${libextregex}'"
-        "Found header '${tplInstallBaseDir}/install_tpl1/include[/]*/Tpl1.hpp'"
+        "Found header '${tplInstallBaseDir}/install_tpl1/include/?/Tpl1.hpp'"
         "TPL_Tpl1_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl1/include'"
 
         "Tpl2_LIBRARY_NAMES='tpl2b[;]tpl2a'"
         "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}'"
         "    Found lib '${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
         "TPL_Tpl2_LIBRARIES='${tplInstallBaseDir}/install_tpl2/lib/libtpl2b${libextregex}[;]${tplInstallBaseDir}/install_tpl2/lib/libtpl2a${libextregex}'"
-        "    Found header '${tplInstallBaseDir}/install_tpl2/include[/]*/Tpl2a.hpp'"
+        "    Found header '${tplInstallBaseDir}/install_tpl2/include/?/Tpl2a.hpp'"
         "Found TPL 'Tpl2' include dirs '${tplInstallBaseDir}/install_tpl2/include'"
         "TPL_Tpl2_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl2/include'"
 
 	"Tpl3_LIBRARY_NAMES='tpl3'"
         "    Found lib '${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
         "TPL_Tpl3_LIBRARIES='${tplInstallBaseDir}/install_tpl3/lib/libtpl3${libextregex}'"
-        "    Found header '${tplInstallBaseDir}/install_tpl3/include[/]*/Tpl3.hpp'"
+        "    Found header '${tplInstallBaseDir}/install_tpl3/include/?/Tpl3.hpp'"
 	"TPL_Tpl3_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl3/include'"
 
-	"    Found header '${tplInstallBaseDir}/install_tpl4/include[/]*/Tpl4.hpp'"
+	"    Found header '${tplInstallBaseDir}/install_tpl4/include/?/Tpl4.hpp'"
 	"TPL_Tpl4_INCLUDE_DIRS='${tplInstallBaseDir}/install_tpl4/include'"
 
         ${searchingTplLibAndINcDirsRegexes}
