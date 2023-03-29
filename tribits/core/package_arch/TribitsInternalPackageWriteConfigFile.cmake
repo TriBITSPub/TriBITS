@@ -289,26 +289,6 @@ function(tribits_generate_package_config_file_for_install_tree  packageName)
      set(EXPORT_FILE_VAR_PREFIX ${packageName})
    endif()
 
-  # Set the include and library directories relative to the location
-  # at which the ${PROJECT_NAME}Config.cmake file is going to be
-  # installed. Note the variable reference below is escaped so it
-  # won't be replaced until a client project attempts to locate
-  # directories using the installed config file. This is to deal with
-  # installers that allow relocation of the install tree at *install*
-  # time.
-  # The export files are typically installed in
-  #     <install-dir>/<lib-path>/cmake/<package-name>/.
-  # The relative path to the installation dir is hence k*(../) + ../../, where
-  # k is the number of components in <lib-path>. Extract those here.
-  # This doesn't work if ${${PROJECT_NAME}_INSTALL_LIB_DIR} contains "./" or
-  # "../" components, but really, it never did. All of this should actually be
-  # handled by CMake's configure_package_config_file().
-  string(REPLACE "/" ";" PATH_LIST ${${PROJECT_NAME}_INSTALL_LIB_DIR})
-  set(RELATIVE_PATH "../..")
-  foreach(PATH ${PATH_LIST})
-    set(RELATIVE_PATH "${RELATIVE_PATH}/..")
-  endforeach()
-
   # Custom code in configuration file.
   set(PACKAGE_CONFIG_CODE "")
 
