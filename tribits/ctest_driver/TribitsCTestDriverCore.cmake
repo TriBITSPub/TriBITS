@@ -2274,8 +2274,9 @@ function(tribits_ctest_driver)
   select_final_set_of_packages_to_directly_test()
   # Above sets ${PROJECT_NAME}_PACKAGES_TO_DIRECTLY_TEST
 
-  tribits_print_packages_list_enable_status_from_var( ${PROJECT_NAME}_PACKAGES_TO_DIRECTLY_TEST
-    "\nFinal set of packages to be explicitly processed by CTest/CDash" ON FALSE)
+  tribits_print_packages_list_enable_status_from_var(
+    ${PROJECT_NAME}_PACKAGES_TO_DIRECTLY_TEST
+    "\nFinal set of packages to be explicitly processed by CTest/CDash" "" ON NONEMPTY)
 
   message(
     "\n***"

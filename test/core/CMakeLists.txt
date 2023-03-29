@@ -121,7 +121,7 @@ tribits_add_advanced_test( TribitsAdjustPackageEnables_UnitTests
   )
 
 
-tribits_add_advanced_test( TribitsWriteClientExportFiles_UnitTests
+tribits_add_advanced_test( TribitsInternalPackageWriteConfigFile_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   TEST_0 CMND ${CMAKE_COMMAND}
     ARGS
@@ -129,7 +129,7 @@ tribits_add_advanced_test( TribitsWriteClientExportFiles_UnitTests
       -D${PROJECT_NAME}_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DCURRENT_TEST_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}
       -DCMAKE_CURRENT_LIST_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-      -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsWriteClientExportFiles_UnitTests.cmake"
+      -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsInternalPackageWriteConfigFile_UnitTests.cmake"
     PASS_REGULAR_EXPRESSION_ALL
       "Final UnitTests Result: num_run = 12"
       "Final UnitTests Result: PASSED"

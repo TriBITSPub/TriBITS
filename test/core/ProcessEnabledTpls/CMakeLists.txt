@@ -223,7 +223,7 @@ create_process_enabled_tpls_test_case(
     "When you reconfigure, just grep the cmake stdout for 'HeaderOnlyTpl'"
     "and then follow the disables that occur as a result to see what impact"
     "this TPL disable has on the configuration of DummyProj."
-    "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ [(]message[)]:"
+    "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
     "ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
   )
 
@@ -244,7 +244,7 @@ create_process_enabled_tpls_test_case(
     "and then follow the disables that occur as a result to see what impact" 
     "this TPL disable has on the configuration of ${MOCK_PROJECT_NAME}."
     "-- ERROR: Failed finding all of the parts of TPL 'HeaderOnlyTpl' .see above., Aborting!"
-    "CMake Error at .+/TribitsProcessEnabledTpl[.]cmake:[0-9]+ [(]message[)]:"
+    "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
     "ERROR: TPL_HeaderOnlyTpl_NOT_FOUND=TRUE, aborting!"
   )
 
@@ -481,7 +481,7 @@ create_process_enabled_tpls_test_case(
     "When you reconfigure, just grep the cmake stdout for 'HeadersAndLibsTpl'"
     "and then follow the disables that occur as a result to see what impact"
     "this TPL disable has on the configuration of DummyProj."
-   "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ [(]message[)]:"
+   "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
     "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
   )
 
@@ -503,7 +503,7 @@ create_process_enabled_tpls_test_case(
     "-- TIP: If the TPL 'HeadersAndLibsTpl' is on your system then you can set:"
     "-- ERROR: Failed finding all of the parts of TPL 'HeadersAndLibsTpl' .see above., Aborting!"
     "TIP: One way to get past the configure failure for the"
-    "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ [(]message[)]:"
+    "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
     "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
   )
 
@@ -526,7 +526,7 @@ create_process_enabled_tpls_test_case(
     "-- TIP: If the TPL 'HeadersAndLibsTpl' is on your system then you can set:"
     "-- ERROR: Failed finding all of the parts of TPL 'HeadersAndLibsTpl' .see above., Aborting!"
     "TIP: One way to get past the configure failure for the"
-    "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ [(]message[)]:"
+    "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
     "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
   )
 
@@ -545,7 +545,7 @@ create_process_enabled_tpls_test_case(
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .badlibname.:"
     "-- NOTE: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
-    "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ [(]message[)]:"
+    "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
     "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
   )
 
@@ -563,7 +563,7 @@ create_process_enabled_tpls_test_case(
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .badlibname.:"
     "-- ERROR: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
-    "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ [(]message[)]:"
+    "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
     "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
   )
 
@@ -603,7 +603,7 @@ create_process_enabled_tpls_test_case(
     "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
     "-- Searching for a lib in the set .badlibname.:"
     "-- ERROR: Did not find a lib in the lib set .badlibname. for the TPL 'HeadersAndLibsTpl'!"
-    "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ [(]message[)]:"
+    "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
     "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
   )
 
@@ -626,7 +626,7 @@ create_process_enabled_tpls_test_case(
     "-- TIP: If the TPL 'HeadersAndLibsTpl' is on your system then you can set:"
     "-- ERROR: Failed finding all of the parts of TPL 'HeadersAndLibsTpl' .see above., Aborting!"
     "TIP: Even though the TPL 'HeadersAndLibsTpl' was explicitly enabled in input,"
-    "CMake Error at .+/TribitsProcessEnabledTpl.cmake:[0-9]+ [(]message[)]:"
+    "CMake Error at .+/TribitsProcessEnabledTpls[.]cmake:[0-9]+ [(]message[)]:"
     "ERROR: TPL_HeadersAndLibsTpl_NOT_FOUND=TRUE, aborting!"
   )
 

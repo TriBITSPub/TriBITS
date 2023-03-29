@@ -43,12 +43,12 @@ message("CURRENT_TEST_DIRECTORY = ${CURRENT_TEST_DIRECTORY}")
 
 include(${CMAKE_CURRENT_LIST_DIR}/TribitsAdjustPackageEnablesHelpers.cmake)
 include(TribitsPackageMacros)
-include(TribitsWriteClientExportFiles)
+include(TribitsInternalPackageWriteConfigFile)
 
 
 #####################################################################
 #
-# Unit tests for code in TribitsWriteClientExportFiles.cmake
+# Unit tests for code in TribitsInternalPackageWriteConfigFile.cmake
 #
 #####################################################################
 

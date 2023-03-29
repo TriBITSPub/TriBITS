@@ -840,6 +840,11 @@ target_link_libraries(SomeTpl::all_libs
   INTERFACE tribits::SomeTpl::somelib
   )
 
+
+# Standard TriBITS-compliant external package variables
+set(SomeTpl_IS_TRIBITS_COMPLIANT TRUE)
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE "${CMAKE_CURRENT_LIST_FILE}")
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 ]=]
     )
 
@@ -876,6 +881,11 @@ target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/other/path/to/include/e"
   )
 
+
+# Standard TriBITS-compliant external package variables
+set(SomeTpl_IS_TRIBITS_COMPLIANT TRUE)
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE "${CMAKE_CURRENT_LIST_FILE}")
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 ]=]
     )
 
@@ -918,6 +928,11 @@ target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/C"
   )
 
+
+# Standard TriBITS-compliant external package variables
+set(SomeTpl_IS_TRIBITS_COMPLIANT TRUE)
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE "${CMAKE_CURRENT_LIST_FILE}")
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 ]=]
     )
 
@@ -961,6 +976,11 @@ target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/other/path/to/include/b"
   )
 
+
+# Standard TriBITS-compliant external package variables
+set(SomeTpl_IS_TRIBITS_COMPLIANT TRUE)
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE "${CMAKE_CURRENT_LIST_FILE}")
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 ]=]
     )
 
@@ -1020,6 +1040,11 @@ target_link_options(SomeTpl::all_libs
   INTERFACE "-L/some/explicit/path1"
   )
 
+
+# Standard TriBITS-compliant external package variables
+set(SomeTpl_IS_TRIBITS_COMPLIANT TRUE)
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE "${CMAKE_CURRENT_LIST_FILE}")
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 ]=]
     )
 
@@ -1095,6 +1120,11 @@ target_link_options(SomeTpl::all_libs
   INTERFACE "-L/some/explicit/path1"
   )
 
+
+# Standard TriBITS-compliant external package variables
+set(SomeTpl_IS_TRIBITS_COMPLIANT TRUE)
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE "${CMAKE_CURRENT_LIST_FILE}")
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 ]=]
     )
 
@@ -1135,41 +1165,17 @@ if (TARGET SomeTpl::all_libs)
   return()
 endif()
 
-include(CMakeFindDependencyMacro)
-
-# Don't allow find_dependency() to search anything other than <upstreamTplName>_DIR
-set(SomeTpl_SearchNoOtherPathsArgs
-  NO_DEFAULT_PATH
-  NO_PACKAGE_ROOT_PATH NO_CMAKE_PATH
-  NO_CMAKE_ENVIRONMENT_PATH
-  NO_SYSTEM_ENVIRONMENT_PATH
-  NO_CMAKE_PACKAGE_REGISTRY
-  NO_CMAKE_SYSTEM_PATH
-  NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
-  CMAKE_FIND_ROOT_PATH_BOTH
-  ONLY_CMAKE_FIND_ROOT_PATH
-  NO_CMAKE_FIND_ROOT_PATH
-  )
-
 if (NOT TARGET PublicTpl::all_libs)
-  set(PublicTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../PublicTpl")
-  find_dependency(PublicTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
-  unset(PublicTpl_DIR)
+  include("${CMAKE_CURRENT_LIST_DIR}/../PublicTpl/PublicTplConfig.cmake")
 endif()
 
 if (NOT TARGET PrivateTpl::all_libs)
-  set(PrivateTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../PrivateTpl")
-  find_dependency(PrivateTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
-  unset(PrivateTpl_DIR)
+  include("${CMAKE_CURRENT_LIST_DIR}/../PrivateTpl/PrivateTplConfig.cmake")
 endif()
 
 if (NOT TARGET DefaultVisTpl::all_libs)
-  set(DefaultVisTpl_DIR "${CMAKE_CURRENT_LIST_DIR}/../DefaultVisTpl")
-  find_dependency(DefaultVisTpl REQUIRED CONFIG ${SomeTpl_SearchNoOtherPathsArgs})
-  unset(DefaultVisTpl_DIR)
+  include("${CMAKE_CURRENT_LIST_DIR}/../DefaultVisTpl/DefaultVisTplConfig.cmake")
 endif()
-
-unset(SomeTpl_SearchNoOtherPathsArgs)
 
 add_library(tribits::SomeTpl::lib1 IMPORTED INTERFACE)
 set_target_properties(tribits::SomeTpl::lib1 PROPERTIES
@@ -1200,6 +1206,11 @@ target_link_options(SomeTpl::all_libs
   INTERFACE "-L/some/explicit/path1"
   )
 
+
+# Standard TriBITS-compliant external package variables
+set(SomeTpl_IS_TRIBITS_COMPLIANT TRUE)
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE "${CMAKE_CURRENT_LIST_FILE}")
+set(SomeTpl_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR "${CMAKE_CURRENT_LIST_DIR}")
 ]=]
     )
 

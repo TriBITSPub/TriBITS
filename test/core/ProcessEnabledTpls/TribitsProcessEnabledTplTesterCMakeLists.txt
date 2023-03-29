@@ -56,7 +56,7 @@ set( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
-include(TribitsProcessEnabledTpl)
+include(TribitsProcessEnabledTpls)
 
 # Passed in on command-line
 print_var("TPL_NAME")
@@ -72,7 +72,7 @@ endif()
 
 # Do the processing of the TPL
 message("")
-tribits_process_enabled_tpl(${TPL_NAME})
+tribits_process_enabled_standard_tpl(${TPL_NAME})
 message("")
 message("Exported TPL_ENABLE_${TPL_NAME}='${TPL_ENABLE_${TPL_NAME}}'")
 message("Exported TPL_${TPL_NAME}_NOT_FOUND='${TPL_${TPL_NAME}_NOT_FOUND}'")

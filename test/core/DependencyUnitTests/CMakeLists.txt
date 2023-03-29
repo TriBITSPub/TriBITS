@@ -631,6 +631,169 @@ create_reduced_dependency_handling_test_case(
 # HDF5 (and that is a valid configuration when Netcdf is built without HDF5).
 
 
+#
+# Test treating internal packages as TPLs with ReducedMockTrilinos
+#
+
+
+create_reduced_dependency_handling_test_case(
+  ST_TplEnableRTOpOn_EnableAllPackages_EnableTests
+  ARGS
+    -DTPL_ENABLE_RTOp=ON
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DTrilinos_DUMP_PACKAGE_BUILD_STATUS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+
+    "Initial package build status:"
+    "-- Initial: MPI_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Initial: BLAS_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Initial: LAPACK_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Initial: Boost_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Initial: UMFPACK_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Initial: AMD_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Initial: PETSC_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Initial: Teuchos_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Initial: RTOp_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Initial: Epetra_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Initial: Triutils_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Initial: EpetraExt_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Initial: ThyraCoreLibs_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Initial: ThyraGoodStuff_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Initial: ThyraCrazyStuff_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Initial: ThyraEpetra_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Initial: ThyraEpetraExt_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Initial: Thyra_PACKAGE_BUILD_STATUS=INTERNAL"
+
+    "Adjust the set of internal and external packages:"
+    "-- Treating internal package RTOp as EXTERNAL because TPL_ENABLE_RTOp=ON"
+    "-- Treating internal package Teuchos as EXTERNAL because downstream package RTOp being treated as EXTERNAL"
+    "-- NOTE: LAPACK is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: BLAS is indirectly downstream from a TriBITS-compliant external package"
+
+    "Final package build status [(]enabled only[)]:"
+    "-- Final: BLAS_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: LAPACK_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Teuchos_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: RTOp_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Epetra_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Triutils_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: EpetraExt_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: ThyraCoreLibs_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: ThyraGoodStuff_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: ThyraEpetra_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: ThyraEpetraExt_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Thyra_PACKAGE_BUILD_STATUS=INTERNAL"
+
+    "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs"
+    "Processing enabled external package/TPL: BLAS [(]enabled by Epetra, disable with -DTPL_ENABLE_BLAS=OFF[)]"
+    "Processing enabled external package/TPL: LAPACK [(]enabled by Epetra, disable with -DTPL_ENABLE_LAPACK=OFF[)]"
+    "Processing enabled external package/TPL: Teuchos [(]enabled explicitly, disable with -DTPL_ENABLE_Teuchos=OFF[)]"
+    "Processing enabled external package/TPL: RTOp [(]enabled explicitly, disable with -DTPL_ENABLE_RTOp=OFF[)]"
+
+    "Getting information for all remaining enabled external packages/TPLs"
+
+    "Configuring individual enabled Trilinos packages ..."
+    "Processing enabled top-level package: Epetra [(]Libs, Tests, Examples[)]"
+    "Processing enabled top-level package: Triutils [(]Libs, Tests, Examples[)]"
+    "Processing enabled top-level package: EpetraExt [(]Libs, Tests, Examples[)]"
+    "Processing enabled top-level package: Thyra [(]CoreLibs, GoodStuff, Epetra, EpetraExt, Tests, Examples[)]"
+
+  )
+
+
+create_reduced_dependency_handling_test_case(
+  ST_TplEnableThyraCoreLibsOn_EnableAllPackages_EnableTests
+  ARGS
+    -DTPL_ENABLE_ThyraCoreLibs=ON
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DTrilinos_DUMP_PACKAGE_BUILD_STATUS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Adjust the set of internal and external packages:"
+    "-- Treating internal package Thyra as EXTERNAL because subpackage ThyraCoreLibs being treated as EXTERNAL [(]TPL_ENABLE_ThyraCoreLibs=ON[)]"
+    "-- Treating internal package ThyraCoreLibs as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraGoodStuff as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraEpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraEpetraExt as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package EpetraExt as EXTERNAL because downstream package ThyraEpetraExt being treated as EXTERNAL"
+    "-- Treating internal package Epetra as EXTERNAL because downstream package ThyraEpetra being treated as EXTERNAL"
+    "-- Treating internal package Teuchos as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package RTOp as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package Triutils as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
+    "-- NOTE: LAPACK is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: BLAS is indirectly downstream from a TriBITS-compliant external package"
+
+    "Final package build status [(]enabled only[)]:"
+    "-- Final: BLAS_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: LAPACK_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Teuchos_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: RTOp_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Epetra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Triutils_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: EpetraExt_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraCoreLibs_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraGoodStuff_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraEpetra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraEpetraExt_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Thyra_PACKAGE_BUILD_STATUS=EXTERNAL"
+
+    "Final set of enabled top-level packages:  0"
+    "Final set of enabled packages:  0"
+    "Final set of non-enabled top-level packages:  0"
+    "Final set of non-enabled packages:  0"
+    "Final set of enabled top-level external packages/TPLs:  BLAS LAPACK Teuchos RTOp Epetra Triutils EpetraExt Thyra 8"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Teuchos RTOp Epetra Triutils EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt Thyra 12"
+    "Final set of non-enabled top-level external packages/TPLs:  MPI Boost UMFPACK AMD PETSC 5"
+    "Final set of non-enabled external packages/TPLs:  MPI Boost UMFPACK AMD PETSC ThyraCrazyStuff 6"
+
+  )
+
+
+create_reduced_dependency_handling_test_case(
+  TplEnableThyraCoreLibsOn
+  ARGS
+    -DTPL_ENABLE_ThyraCoreLibs=ON
+    -DTrilinos_DUMP_PACKAGE_BUILD_STATUS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Enabling all required [(]and optional since Trilinos_ENABLE_ALL_OPTIONAL_PACKAGES=ON[)] upstream packages for current set of enabled packages [(]Trilinos_ENABLE_SECONDARY_TESTED_CODE=OFF[)] ..."
+    "-- Setting Trilinos_ENABLE_Teuchos=ON because ThyraCoreLibs has a required dependence on Teuchos"
+    "-- Setting Trilinos_ENABLE_RTOp=ON because ThyraCoreLibs has a required dependence on RTOp"
+    "-- Setting TPL_ENABLE_BLAS=ON because Teuchos has a required dependence on BLAS"
+    "-- Setting TPL_ENABLE_LAPACK=ON because Teuchos has a required dependence on LAPACK"
+
+    "Enabling the shell of non-enabled parent packages [(]mostly for show[)] that have at least one subpackage enabled ..."
+    "-- Setting Trilinos_ENABLE_Thyra=ON because TPL_ENABLE_ThyraCoreLibs=ON"
+
+    "Adjust the set of internal and external packages:"
+    "-- Treating internal package Thyra as EXTERNAL because subpackage ThyraCoreLibs being treated as EXTERNAL [(]TPL_ENABLE_ThyraCoreLibs=ON[)]"
+    "-- Treating internal package ThyraCoreLibs as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package Teuchos as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package RTOp as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
+
+    "Final package build status [(]enabled only[)]:"
+    "-- Final: BLAS_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: LAPACK_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Teuchos_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: RTOp_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraCoreLibs_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Thyra_PACKAGE_BUILD_STATUS=EXTERNAL"
+
+    "Final set of enabled top-level packages:  0"
+    "Final set of enabled packages:  0"
+    "Final set of non-enabled top-level packages:  Epetra Triutils EpetraExt 3"
+    "Final set of non-enabled packages:  Epetra Triutils EpetraExt 3"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Teuchos RTOp ThyraCoreLibs Thyra 6"
+    "Final set of non-enabled external packages/TPLs:  MPI Boost UMFPACK AMD PETSC ThyraGoodStuff ThyraCrazyStuff ThyraEpetra ThyraEpetraExt 9"
+
+  )
+
+
+# ???
+
+
 #####################################################################
 #
 # Unit tests for dependency handling for full set of packages
@@ -658,7 +821,6 @@ function(create_dependency_handling_test_case TEST_NAME)
     TEST_0 CMND "${CMAKE_COMMAND}"
       ARGS
         -D${MOCK_PROJECT_NAME}_TRIBITS_DIR:FILEPATH=${${PROJECT_NAME}_TRIBITS_DIR}
-        -D${MOCK_PROJECT_NAME}_SHORTCIRCUIT_AFTER_DEPENDENCY_HANDLING:BOOL=ON
         -D${MOCK_PROJECT_NAME}_DEPS_XML_OUTPUT_FILE:STRING=
         -D${MOCK_PROJECT_NAME}_DEPS_HTML_OUTPUT_FILE:STRING=
         -D${MOCK_PROJECT_NAME}_ENABLE_C:BOOL=OFF
@@ -1626,3 +1788,240 @@ create_dependency_handling_test_case(
     "Final set of enabled top-level packages:  Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra Isorropia AztecOO Galeri Amesos Ifpack ML Stratimikos Teko ExtraPack 17"
     "Final set of non-enabled top-level packages:  TrilinosFramework Shards Stokhos Sacado Intrepid Belos RBGen Phalanx Panzer Stalix 10"
   )
+
+
+#
+# Test treating internal packages as TPLs with MockTrilinos
+#
+
+
+create_dependency_handling_test_case(
+  ST_TplEnableThyraCoreLibsOn_EnableAllPackages_EnableTests
+  ARGS
+    -DTPL_ENABLE_ThyraCoreLibs=ON
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DTrilinos_DUMP_PACKAGE_BUILD_STATUS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Adjust the set of internal and external packages:"
+    "-- Treating internal package Thyra as EXTERNAL because subpackage ThyraCoreLibs being treated as EXTERNAL [(]TPL_ENABLE_ThyraCoreLibs=ON[)]"
+    "-- Treating internal package ThyraCoreLibs as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraGoodStuff as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraEpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraEpetraExt as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraTpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package Tpetra as EXTERNAL because downstream package ThyraTpetra being treated as EXTERNAL"
+    "-- Treating internal package EpetraExt as EXTERNAL because downstream package ThyraEpetraExt being treated as EXTERNAL"
+    "-- Treating internal package Epetra as EXTERNAL because downstream package ThyraEpetra being treated as EXTERNAL"
+    "-- Treating internal package Teuchos as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package RTOp as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package Triutils as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
+    "-- Treating internal package Zoltan as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
+    "-- NOTE: Boost is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: LAPACK is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: BLAS is indirectly downstream from a TriBITS-compliant external package"
+
+    "Final package build status [(]enabled only[)]:"
+    "-- Final: BLAS_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: LAPACK_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Boost_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: DUMMY_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: TrilinosFramework_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Teuchos_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: RTOp_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Epetra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Zoltan_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Shards_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Triutils_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Tpetra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: EpetraExt_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Sacado_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: ThyraCoreLibs_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraGoodStuff_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraEpetra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraEpetraExt_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraTpetra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Thyra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Isorropia_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: AztecOO_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Galeri_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Amesos_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Intrepid_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Ifpack_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: ML_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Belos_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Stratimikos_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: RBGen_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Phalanx_PACKAGE_BUILD_STATUS=INTERNAL"
+
+    "Final set of enabled top-level packages:  TrilinosFramework Shards Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx 14"
+    "Final set of enabled packages:  TrilinosFramework Shards Sacado Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx 14"
+    "Final set of non-enabled top-level packages:  Stokhos Panzer 2"
+    "Final set of non-enabled packages:  Stokhos Panzer 2"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Boost DUMMY Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra 17"
+    "Final set of non-enabled external packages/TPLs:  MPI Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS ThyraCrazyStuff 16"
+
+  )
+
+
+create_dependency_handling_test_case(
+  ST_EnableMPI_TplEnableStratimikosOn_EnablePanzerOn_EnableMLOff_EnableTests
+  ARGS
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTPL_ENABLE_MPI=ON
+    -DTPL_ENABLE_Stratimikos=ON
+    -DTrilinos_ENABLE_Panzer=ON
+    -DTrilinos_ENABLE_ML=OFF
+    -DTrilinos_ENABLE_TESTS=ON
+    -DTrilinos_DUMP_PACKAGE_BUILD_STATUS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Explicitly enabled top-level packages on input [(]by user[)]:  Stratimikos Panzer 2"
+    "Explicitly disabled top-level packages on input [(]by user or by default[)]:  Stokhos ML 2"
+
+    "Adjust the set of internal and external packages:"
+    "-- Treating internal package Stratimikos as EXTERNAL because TPL_ENABLE_Stratimikos=ON"
+    "-- Treating internal package ThyraEpetraExt as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package ThyraCoreLibs as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Amesos as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package AztecOO as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Belos as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Ifpack as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Teuchos as EXTERNAL because downstream package Belos being treated as EXTERNAL"
+    "-- Treating internal package Epetra as EXTERNAL because downstream package Belos being treated as EXTERNAL"
+    "-- Treating internal package Tpetra as EXTERNAL because downstream package Belos being treated as EXTERNAL"
+    "-- Treating internal package EpetraExt as EXTERNAL because downstream package Amesos being treated as EXTERNAL"
+    "-- Treating internal package Triutils as EXTERNAL because downstream package AztecOO being treated as EXTERNAL"
+    "-- Treating internal package Thyra as EXTERNAL because subpackage ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package ThyraGoodStuff as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraEpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraTpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package RTOp as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package Zoltan as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
+    "-- NOTE: Boost is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: LAPACK is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: BLAS is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: MPI is indirectly downstream from a TriBITS-compliant external package"
+
+    "Final set of enabled packages:  Shards Sacado Galeri Intrepid Phalanx Panzer 6"
+    "Final set of non-enabled top-level packages:  TrilinosFramework Stokhos Isorropia RBGen 4"
+    "Final set of non-enabled packages:  TrilinosFramework Stokhos Isorropia RBGen 4"
+    "Final set of enabled top-level external packages/TPLs:  MPI BLAS LAPACK Boost Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt Thyra AztecOO Amesos Ifpack Belos Stratimikos 17"
+    "Final set of enabled external packages/TPLs:  MPI BLAS LAPACK Boost Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra AztecOO Amesos Ifpack Belos Stratimikos 22"
+    "Final set of non-enabled top-level external packages/TPLs:  Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS DUMMY ML 16"
+    "Final set of non-enabled external packages/TPLs:  Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS DUMMY ThyraCrazyStuff ML 17"
+
+    "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs"
+    "Processing enabled external package/TPL: MPI [(]enabled explicitly, disable with -DTPL_ENABLE_MPI=OFF[)]"
+    "Processing enabled external package/TPL: BLAS [(]enabled by Epetra, disable with -DTPL_ENABLE_BLAS=OFF[)]"
+    "Processing enabled external package/TPL: LAPACK [(]enabled by Epetra, disable with -DTPL_ENABLE_LAPACK=OFF[)]"
+    "Processing enabled external package/TPL: Boost [(]enabled by Panzer, disable with -DTPL_ENABLE_Boost=OFF[)]"
+    "Processing enabled external package/TPL: Teuchos [(]enabled by Panzer, disable with -DTPL_ENABLE_Teuchos=OFF[)]"
+    "Processing enabled external package/TPL: RTOp [(]enabled by ThyraCoreLibs, disable with -DTPL_ENABLE_RTOp=OFF[)]"
+    "Processing enabled external package/TPL: Epetra [(]enabled by Panzer, disable with -DTPL_ENABLE_Epetra=OFF[)]"
+    "Processing enabled external package/TPL: Zoltan [(]enabled by EpetraExt, disable with -DTPL_ENABLE_Zoltan=OFF[)]"
+    "Processing enabled external package/TPL: Triutils [(]enabled by Stratimikos, disable with -DTPL_ENABLE_Triutils=OFF[)]"
+    "Processing enabled external package/TPL: Tpetra [(]enabled by Panzer, disable with -DTPL_ENABLE_Tpetra=OFF[)]"
+    "Processing enabled external package/TPL: EpetraExt [(]enabled by Panzer, disable with -DTPL_ENABLE_EpetraExt=OFF[)]"
+    "Processing enabled external package/TPL: Thyra [(]enabled by Panzer, disable with -DTPL_ENABLE_Thyra=OFF[)]"
+    "Processing enabled external package/TPL: AztecOO [(]enabled by Stratimikos, disable with -DTPL_ENABLE_AztecOO=OFF[)]"
+    "Processing enabled external package/TPL: Amesos [(]enabled by Stratimikos, disable with -DTPL_ENABLE_Amesos=OFF[)]"
+    "Processing enabled external package/TPL: Ifpack [(]enabled by Phalanx, disable with -DTPL_ENABLE_Ifpack=OFF[)]"
+    "Processing enabled external package/TPL: Belos [(]enabled by Phalanx, disable with -DTPL_ENABLE_Belos=OFF[)]"
+    "Processing enabled external package/TPL: Stratimikos [(]enabled explicitly, disable with -DTPL_ENABLE_Stratimikos=OFF[)]"
+
+    "Getting information for all remaining enabled external packages/TPLs"
+
+    "Configuring individual enabled Trilinos packages ..."
+    "Processing enabled top-level package: Shards [(]Libs[)]"
+    "Processing enabled top-level package: Sacado [(]Libs[)]"
+    "Processing enabled top-level package: Galeri [(]Libs[)]"
+    "Processing enabled top-level package: Intrepid [(]Libs[)]"
+    "Processing enabled top-level package: Phalanx [(]Libs[)]"
+    "Processing enabled top-level package: Panzer [(]Libs, Tests, Examples[)]"
+
+  )
+# NOTE: The above test checks that internal packages that are treated as
+# external packages correctly express what enabled them.
+
+
+create_dependency_handling_test_case(
+  ST_TplEnableStratimikosOn_EnableMLOff_EnableAllPackages_EnableTests
+  ARGS
+    -DTPL_ENABLE_Stratimikos=ON
+    -DTrilinos_ENABLE_ML=OFF
+    -DTrilinos_ENABLE_ALL_PACKAGES=ON
+    -DTrilinos_ENABLE_SECONDARY_TESTED_CODE=ON
+    -DTrilinos_ENABLE_TESTS=ON
+    -DTrilinos_DUMP_PACKAGE_BUILD_STATUS=ON
+  PASS_REGULAR_EXPRESSION_ALL
+    "Adjust the set of internal and external packages:"
+    "-- Treating internal package Stratimikos as EXTERNAL because TPL_ENABLE_Stratimikos=ON"
+    "-- Treating internal package ThyraEpetraExt as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package ThyraCoreLibs as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Amesos as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package AztecOO as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Belos as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Ifpack as EXTERNAL because downstream package Stratimikos being treated as EXTERNAL"
+    "-- Treating internal package Teuchos as EXTERNAL because downstream package Belos being treated as EXTERNAL"
+    "-- Treating internal package Epetra as EXTERNAL because downstream package Belos being treated as EXTERNAL"
+    "-- Treating internal package Tpetra as EXTERNAL because downstream package Belos being treated as EXTERNAL"
+    "-- Treating internal package EpetraExt as EXTERNAL because downstream package Amesos being treated as EXTERNAL"
+    "-- Treating internal package Triutils as EXTERNAL because downstream package AztecOO being treated as EXTERNAL"
+    "-- Treating internal package Thyra as EXTERNAL because subpackage ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package ThyraGoodStuff as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraEpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package ThyraTpetra as EXTERNAL because downstream package Thyra being treated as EXTERNAL"
+    "-- Treating internal package RTOp as EXTERNAL because downstream package ThyraCoreLibs being treated as EXTERNAL"
+    "-- Treating internal package Zoltan as EXTERNAL because downstream package EpetraExt being treated as EXTERNAL"
+    "-- NOTE: Boost is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: LAPACK is indirectly downstream from a TriBITS-compliant external package"
+    "-- NOTE: BLAS is indirectly downstream from a TriBITS-compliant external package"
+
+    "Final package build status [(]enabled only[)]:"
+    "-- Final: BLAS_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: LAPACK_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Boost_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: DUMMY_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: TrilinosFramework_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Teuchos_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: RTOp_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Epetra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Zoltan_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Shards_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Triutils_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Tpetra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: EpetraExt_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Sacado_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: ThyraCoreLibs_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraGoodStuff_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraEpetra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraEpetraExt_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: ThyraTpetra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Thyra_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Isorropia_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: AztecOO_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Galeri_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Amesos_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Intrepid_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Ifpack_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Belos_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: Stratimikos_PACKAGE_BUILD_STATUS=EXTERNAL"
+    "-- Final: RBGen_PACKAGE_BUILD_STATUS=INTERNAL"
+    "-- Final: Phalanx_PACKAGE_BUILD_STATUS=INTERNAL"
+
+    "Final set of enabled top-level packages:  TrilinosFramework Shards Sacado Isorropia Galeri Intrepid RBGen Phalanx 8"
+    "Final set of enabled packages:  TrilinosFramework Shards Sacado Isorropia Galeri Intrepid RBGen Phalanx 8"
+    "Final set of non-enabled top-level packages:  Stokhos Panzer 2"
+    "Final set of non-enabled packages:  Stokhos Panzer 2"
+    "Final set of enabled external packages/TPLs:  BLAS LAPACK Boost DUMMY Teuchos RTOp Epetra Zoltan Triutils Tpetra EpetraExt ThyraCoreLibs ThyraGoodStuff ThyraEpetra ThyraEpetraExt ThyraTpetra Thyra AztecOO Amesos Ifpack Belos Stratimikos 22"
+    "Final set of non-enabled external packages/TPLs:  MPI Scotch METIS ParMETIS CppUnit ADOLC ADIC TVMET y12m SuperLUDist SuperLU UMFPACK AMD PETSC MUMPS ThyraCrazyStuff ML 17"
+
+  )
+# NOTE: The above test implicitly makes ThyraCoreLibs and ThyraEpetraExt
+# EXTERNAL due to Stratimikos being EXTERNAL and makes sure that all of the
+# Thyra subpackages get changed to EXTERNAL.  This above test also disables ML
+# to turn off the dependency between Stratimikos and Isorropia so that the
+# Isorropia package stays INTERNAL.  That is, we don't want to make more
+# packages EXTERNAL that we need to based on the final set of enables and
+# disables and the enabled optional dependencies between packages.
