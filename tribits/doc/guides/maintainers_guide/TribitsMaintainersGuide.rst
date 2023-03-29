@@ -71,7 +71,7 @@ Developers`_ and `TriBITS System Architects`_.
 Appendix
 ========
 
-.. include:: ../TribitsCMakeLangaugeOverviewAndGotchas.rst
+.. include:: ../TribitsCMakeLanguageOverviewAndGotchas.rst
 
 .. include:: ../TribitsHistory.rst
 

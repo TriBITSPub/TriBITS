@@ -90,7 +90,7 @@ in the `Appendix`_.
 Appendix
 ========
 
-.. include:: ../TribitsCMakeLangaugeOverviewAndGotchas.rst
+.. include:: ../TribitsCMakeLanguageOverviewAndGotchas.rst
 
 .. include:: ../TribitsHistory.rst
 
