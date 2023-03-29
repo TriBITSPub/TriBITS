@@ -233,9 +233,9 @@ units are:
 * `TriBITS External Package/TPL`_: The specification for a particular external
   dependency that is required or can be used in one or more `TriBITS
   Packages`_.  A modern TriBITS external package/TPL (Third Party Library) is
-  typically just a small file ``FindTTPL<tplName>.cmake`` that calls
+  typically just a small file ``FindTPL<tplName>.cmake`` that calls
   ``find_package(<externalPkg>)`` and defines the ``<tplName>::all_libs``
-  target.  More generally, an external package/TPL can be specificed as a list
+  target.  More generally, an external package/TPL can be specified as a list
   list of libraries and/or include directories for header files.  Examples of
   basic external packages/TPLs include ``BLAS``, ``LAPACK``, and ``Boost``.
 

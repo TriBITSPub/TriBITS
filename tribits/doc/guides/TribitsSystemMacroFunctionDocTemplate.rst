@@ -23,8 +23,10 @@ understand the internals of TriBITS.
 @FUNCTION: tribits_extpkg_process_libraries_list() +
 @MACRO:    tribits_extpkg_setup_enabled_dependencies() +
 @FUNCTION: tribits_extpkg_write_config_version_file() +
+@FUNCTION: tribits_filter_package_list_from_var() +
 @FUNCTION: tribits_get_sublist_disabled() +
 @FUNCTION: tribits_get_sublist_enabled() +
+@FUNCTION: tribits_get_sublist_internal_external() +
 @FUNCTION: tribits_get_sublist_nondisabled() +
 @FUNCTION: tribits_get_sublist_nonenabled() +
 @FUNCTION: tribits_print_initial_dependency_info() +

@@ -54,12 +54,14 @@ include(TribitsGetPackageEnableStatus)
 # Where:
 #
 # * ``<packageListVarName>``: Name of input list var of packages
-# * ``<internalOrExternal>``: ``INTERNAL``, ``EXTERNAL`` or "" (i.e.
-#   INTERNAL or EXTERNAL) (matches ``<Package>_PACKAGE_BUILD_STATUS``)
+# * ``<internalOrExternal>``: ``INTERNAL``, ``EXTERNAL`` or "" (i.e. both
+#   INTERNAL and EXTERNAL packages) (matches
+#   ``<Package>_PACKAGE_BUILD_STATUS``)
 # * ``<enabledFlag>``: ``ON`` for elements that match ``TRUE`` , ``OFF``
 #   for elements that match ``FALSE``
-# * ``<enableEmptyStatus>``: Determines if allowed enable status is ``NONEMPTY``
-#   or ``INCLUDE_EMPTY``.
+# * ``<enableEmptyStatus>``: Enable status is ``NONEMPTY`` (i.e. must have a
+#   value) or ``INCLUDE_EMPTY`` (matches those with a value and with empty
+#   "").
 # * ``<packageSublistOut>``: The name of the var that will store the filtered
 #   sublist of packages.
 #
