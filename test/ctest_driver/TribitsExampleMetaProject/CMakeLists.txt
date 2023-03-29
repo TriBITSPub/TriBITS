@@ -354,7 +354,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
-    MESSAGE "Run ctest driver with intial clone only of the repos on the default branch 'master' and remote 'origin'"
+    MESSAGE "Run ctest driver with initial clone only of the repos on the default branch 'master' and remote 'origin'"
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD

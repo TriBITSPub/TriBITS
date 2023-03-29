@@ -1080,7 +1080,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_enable_install
 # source files from the installation testing source tree which shows that
 # those files are not being built.  It also leaves the library header files
 # but it breaks them to ensure that they do not get selected therefore include
-# dirs from the soruce tree are not added.  Since the include directories from
+# dirs from the source tree are not added.  Since the include directories from
 # the installed project are pulled in with -isystem, the -I for the local
 # source tree would be searched first.  Therefore, this test shows that those
 # -I directories are not added to the compile lines.  This above test also
@@ -3200,7 +3200,7 @@ tribits_add_advanced_test( TribitsExampleProject_extra_link_flags
   # get sets even for packages without TPLs.  The package SimpleCxx that
   # depends on SimpleTPL proves that the extra libs get tacked on after the
   # TPL's libs.  Also, the fact that the extra libs are tacked on at the very
-  # end of the link lik for the 'c_util' exec shows that CMake is respecting
+  # end of the link like for the 'c_util' exec shows that CMake is respecting
   # the dependency of libmixedlang.a on these extra libs.  This test also
   # shows that TriBITS and CMake do a good job of not listing the same libs
   # more than once.

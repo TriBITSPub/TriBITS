@@ -494,7 +494,7 @@ external packages/TPLs are:
 
 * ``<Package>_PROCESSED_BY_DOWNSTREAM_TRIBITS_EXTERNAL_PACKAGE``: Set to
   ``TRUE`` if the external package/TPL will be processed by downstream TriBITS
-  complient package.  In this case, we just print that we are skipping the
+  compliant package.  In this case, we just print that we are skipping the
   find operation and explain why.
 
 An external package with ``<Package>_IS_TRIBITS_COMPLIANT=TRUE`` **AND**

@@ -1332,7 +1332,7 @@ function(generate_aao_tests)
       CMND ln
       ARGS -s ${TribitsExProj_DIR} .
     TEST_1
-      MESSAGE "Run ctest driver testing everyting but no push."
+      MESSAGE "Run ctest driver testing everything but no push."
       CMND env
       ARGS
         CTEST_DASHBOARD_ROOT=PWD
@@ -1371,7 +1371,7 @@ function(generate_aao_tests)
     # ${PACKAGE_NAME}_CTEST_DRIVER_SUBMIT_TO is set.  This is so we can
     # exactly control the CDash location vars and do a good test of the
     # construction of the CDash URL.  Note that we don't know the actual
-    # buildstamp because the buildstarttime changes everytime the test runs.
+    # buildstamp because the buildstarttime changes every time the test runs.
     # We only know it is [8 digits]-[4 digits].
 
 

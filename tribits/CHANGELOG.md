@@ -214,9 +214,9 @@ ChangeLog for TriBITS
   macro `tribits_extpkg_define_dependencies()` that sets
   `<tplName>_LIB_ALL_DEPENDENCIES`.  Now `<tplName>_LIB_ENABLED_DEPENDENCIES`
   is automatically set from `<tplName>_LIB_ALL_DEPENDENCIES` based on what
-  TPLs are actaully enabled.  This avoids the problem described below from
+  TPLs are actually enabled.  This avoids the problem described below from
   directly setting `<tplName>_LIB_ENABLED_DEPENDENCIES` without reguard to
-  what TPLs are actaully enabled.  This maintains backward compatibility for
+  what TPLs are actually enabled.  This maintains backward compatibility for
   existing configure scripts where an upstream TPL may not be enabled in some
   strange configure scripts (see
   [TriBITSPub/TriBITS#494](https://github.com/TriBITSPub/TriBITS/issues/494)).

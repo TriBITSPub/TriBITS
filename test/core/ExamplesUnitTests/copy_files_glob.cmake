@@ -1,4 +1,4 @@
-# Copy files from a list of directories given a glob experession
+# Copy files from a list of directories given a glob expression
 #
 # Usage::
 #
