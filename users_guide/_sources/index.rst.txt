@@ -89,6 +89,8 @@ in the `Appendix`_.
 Appendix
 ========
 
+.. include:: ../copied_files/tribits/doc/guides/TribitsCMakeLanguageOverviewAndGotchas.rst
+
 .. include:: ../copied_files/tribits/doc/guides/TribitsHistory.rst
 
 .. include:: ../copied_files/tribits/doc/guides/TribitsPackageNotCMakePackage.rst
