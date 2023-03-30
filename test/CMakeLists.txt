@@ -9,3 +9,5 @@ if (PYTHON_EXECUTABLE)
     doc
     )
 endif()
+
+add_subdirectory(codespell)
