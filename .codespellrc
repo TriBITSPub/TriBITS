@@ -3,5 +3,5 @@ check-filenames =
 check-hidden =
 # Disable warnings about binary files
 quiet-level = 2
-skip = */.git,*/common_tools/cloc,*/TriBITSDoc
-ignore-words-list = thur,inout,te,nd,lod,aci,nin,nnumber,wile,reall,somwhere
+skip = */.git,*/common_tools/cloc,*/TriBITSDoc,*/tribits/doc/guides/rst2latex.tex
+ignore-words-list = thur,inout,te,nd,lod,aci,nin,nnumber,wile,reall,bu,somewhere

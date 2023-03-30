@@ -3676,7 +3676,7 @@ function(unittest_tribits_add_advanced_test_properties)
   set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  message("Test setting default properites")
+  message("Test setting default properties")
   tribits_add_advanced_test_unittest_reset()
   tribits_add_advanced_test( TAAT_basic_cmnd_1_args_0
     TEST_0 CMND ${CMNDN}

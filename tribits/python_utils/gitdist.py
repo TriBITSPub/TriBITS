@@ -473,7 +473,7 @@ outputs a table like:
   |:-------------- |:-------:|:------------------- |:---------------------- |:---------------------------------------------- |
   | MockProjectDir | e2dc488 | 2019-10-23 10:16:07 | user@domain.com        | Merge Pull Request #1234 from user/repo/branch |
   | ExtraRepo1     | f671414 | 2019-10-22 11:18:47 | wile.e.coyote@acme.com | Fixed a Bug                                    |
-  | ExtraRepo2     | 50bbf3e | 2019-10-17 16:32:15 | someone@somwhere.com   | Did Some Work                                  |
+  | ExtraRepo2     | 50bbf3e | 2019-10-17 16:32:15 | someone@somewhere.com   | Did Some Work                                  |
 
 If the option --dist-short is also passed in, the output will be limited to:
 

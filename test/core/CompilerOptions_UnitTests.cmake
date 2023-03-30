@@ -700,7 +700,7 @@ endfunction()
 function(unitest_gcc_with_debug_symboles_options)
 
   message("\n***")
-  message("*** Testing GCC base compiler options with debut symboles")
+  message("*** Testing GCC base compiler options with debut symbols")
   message("***\n")
 
   tribits_set_all_compiler_id(GNU)
