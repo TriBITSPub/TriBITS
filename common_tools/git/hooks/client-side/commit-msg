@@ -1,0 +1,6 @@
+which codespell >> /dev/null
+which_codespell_rtn=$?
+
+if [[ "${which_codespell_rtn}" == "0" ]] ; then
+  codespell $1
+fi
