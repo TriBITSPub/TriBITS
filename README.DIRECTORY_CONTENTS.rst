@@ -18,7 +18,7 @@ functionality and assimilate into the TriBITS framework.  It also contains
 basic documentation and examples.  Files and directories from here are what
 get installed on the system or are snapshotted into
 ``<projectDir>/cmake/tribits/``.  Each TriBITS Project decides what parts of
-it wants to install or shapshot using the script
+it wants to install or snapshot using the script
 ``tribits/snapshot_tribits.py`` (which takes arguments for what dirs to
 snapshot, see below). This directory contains no tests at all. All of the
 tests for TriBITS are in the ``test/`` directory (see below). The breakdown of

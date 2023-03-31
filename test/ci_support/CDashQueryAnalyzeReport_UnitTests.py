@@ -179,8 +179,8 @@ class test_getFileNameStrFromText(unittest.TestCase):
 
   def test_harder(self):
     self.assertEqual(
-      getFileNameStrFromText("thi@ (something; other)"),
-      "thi___something__other_")
+      getFileNameStrFromText("this@ (something; other)"),
+      "this___something__other_")
 
 
 #############################################################################

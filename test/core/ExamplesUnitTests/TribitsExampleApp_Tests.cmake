@@ -93,7 +93,7 @@ set_ENV_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG(SHARED)
 #
 #   TribitsExampleApp_set_test_env_var([ALWAYS_SET_ENV_VARS])
 #
-# Must be alled after 'testDir' is defined!
+# Must be called after 'testDir' is defined!
 #
 macro(TribitsExampleApp_set_test_env_var)
 
@@ -145,7 +145,7 @@ function(convertCMakePathsToNativePaths  pathsListIn  pathsListVarOut)
 endfunction()
 
 
-# Macro to handle the 'sharedOrStatic' arguemnt
+# Macro to handle the 'sharedOrStatic' argument
 #
 macro(TribitsExampleApp_process_sharedOrStatic_arg)
 
@@ -1049,7 +1049,7 @@ function(TribitsExampleApp_ALL_ST_tpl_link_options byProjectOrPackage sharedOrSt
 
 endfunction()
 # NOTE: Above, it seems you always have to set LD_LIBRARY_PATH because CMake
-# does not put in RPATH if you only specifiy the TPL directory using -L<dir>.
+# does not put in RPATH if you only specify the TPL directory using -L<dir>.
 # If you use the entire library file, CMake will put in RPATH correctly.
 
 

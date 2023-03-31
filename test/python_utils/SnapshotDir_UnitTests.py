@@ -76,7 +76,7 @@ def getDummyDefaultOptions():
 
 
 # Run a snapshot-dir.py test case using mock commands all in memory without
-# actually doing anyting on the disk or the filesystem.
+# actually doing anything on the disk or the filesystem.
 #
 def runSnapshotDirTestCase(testObject, cmndLineArgsList, cmndInterceptList,
   passRegexExpressionsList, defaultOptions=None \

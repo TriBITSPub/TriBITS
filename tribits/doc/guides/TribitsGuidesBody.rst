@@ -2142,7 +2142,7 @@ defined TPL ``TPL_NAME`` is assigned the following global non-cache variables:
 
 Note, the ``<findmod>`` field path in the call to
 `tribits_repository_define_tpls()`_ is relative to the TriBITS repository dir
-``<repoDir>`` but a relative path in for the varaible `<tplName>_FINDMOD`_ is
+``<repoDir>`` but a relative path in for the variable `<tplName>_FINDMOD`_ is
 relative to the project dir ``<projectDir>``.  There is a translation of the
 ``<findmod>`` field to the variable ``<tplName>_FINDMOD`` that takes place
 when the `<repoDir>/TPLsList.cmake`_ file is processed to make this so.

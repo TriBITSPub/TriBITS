@@ -354,7 +354,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_Fortran
 
   TEST_0
-    MESSAGE "Run ctest driver with intial clone only of the repos on the default branch 'master' and remote 'origin'"
+    MESSAGE "Run ctest driver with initial clone only of the repos on the default branch 'master' and remote 'origin'"
     CMND env
     ARGS
       CTEST_DASHBOARD_ROOT=PWD
@@ -621,7 +621,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
 if (NOT GIT_VERSION_STRING VERSION_LESS "2.10.0")
   set(GIT_SUPPORTS_VERSION_DATE TRUE)
 else()
-  set(GIT_SUPPORTS_VERSION_DATE FASLE)
+  set(GIT_SUPPORTS_VERSION_DATE FALSE)
 endif()
 
 set(FULL_TEST_BINARY_DIR
@@ -710,7 +710,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_version_date
       BUILD/install/include/TribitsExMetaProj_version_date.h
 
   TEST_8
-    MESSAGE "Check just the version date macro in intalled TribitsExampleProject_version_date.h"
+    MESSAGE "Check just the version date macro in installed TribitsExampleProject_version_date.h"
     CMND cat
     ARGS BUILD/install/include/TribitsExampleProject_version_date.h
     PASS_REGULAR_EXPRESSION

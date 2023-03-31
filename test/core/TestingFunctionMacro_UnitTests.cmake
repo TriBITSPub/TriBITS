@@ -943,7 +943,7 @@ function(unittest_tribits_add_test_basic)
     "NAME;PackageA_SomeExec_test0;COMMAND;${PACKEXEN_PATH};has some;spaces;--and semi;colons too;NAME;PackageA_SomeExec_test1;COMMAND;${PACKEXEN_PATH};has2 some;spaces;--and2 semi;colons too"
     )
   unittest_compare_const( ${EXEN}_TEST_NAMES  "${PACKEXEN}_test0;${PACKEXEN}_test1" )
-  # NOTE: There is a test under CTestScriptsUnitTests/ that actaully runs an
+  # NOTE: There is a test under CTestScriptsUnitTests/ that actually runs an
   # real test and command that verifies the correct handling of semi-colons.
   # The mashing that CMake above is doing to these replaced semicolons does
   # not do them justice.
@@ -3676,7 +3676,7 @@ function(unittest_tribits_add_advanced_test_properties)
   set(${PROJECT_NAME}_TRACE_ADD_TEST ON)
   set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
 
-  message("Test setting default properites")
+  message("Test setting default properties")
   tribits_add_advanced_test_unittest_reset()
   tribits_add_advanced_test( TAAT_basic_cmnd_1_args_0
     TEST_0 CMND ${CMNDN}

@@ -516,7 +516,7 @@ example::
 
 The above will enable the package test suites for ``<TRIBITS_PACKGE_1>`` and
 ``<TRIBITS_PACKGE_3>`` but **not** for ``<TRIBITS_PACKAGE_2>`` (or any other
-packages that might get implicitly enabled).  One might use this approch if
+packages that might get implicitly enabled).  One might use this approach if
 one wants to build and install package ``<TRIBITS_PACKAGE_2>`` but does not
 want to build and run the test suite for that package.
 
