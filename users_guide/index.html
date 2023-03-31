@@ -388,10 +388,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2023-03-30</p>
+<dd class="field-even"><p>2023-03-31</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3252-gdf94654e</p>
+<dd class="field-odd"><p>tribits_start-3263-g2da746a8</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -3004,7 +3004,7 @@ this external package/TPL.</p>
 </div></blockquote>
 <p>Note, the <code class="docutils literal notranslate"><span class="pre">&lt;findmod&gt;</span></code> field path in the call to
 <a class="reference internal" href="#tribits-repository-define-tpls">tribits_repository_define_tpls()</a> is relative to the TriBITS repository dir
-<code class="docutils literal notranslate"><span class="pre">&lt;repoDir&gt;</span></code> but a relative path in for the varaible <a class="reference internal" href="#tplname-findmod">&lt;tplName&gt;_FINDMOD</a> is
+<code class="docutils literal notranslate"><span class="pre">&lt;repoDir&gt;</span></code> but a relative path in for the variable <a class="reference internal" href="#tplname-findmod">&lt;tplName&gt;_FINDMOD</a> is
 relative to the project dir <code class="docutils literal notranslate"><span class="pre">&lt;projectDir&gt;</span></code>.  There is a translation of the
 <code class="docutils literal notranslate"><span class="pre">&lt;findmod&gt;</span></code> field to the variable <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_FINDMOD</span></code> that takes place
 when the <a class="reference internal" href="#repodir-tplslist-cmake">&lt;repoDir&gt;/TPLsList.cmake</a> file is processed to make this so.</p>
@@ -7935,7 +7935,7 @@ functionality and assimilate into the TriBITS framework.  It also contains
 basic documentation and examples.  Files and directories from here are what
 get installed on the system or are snapshotted into
 <code class="docutils literal notranslate"><span class="pre">&lt;projectDir&gt;/cmake/tribits/</span></code>.  Each TriBITS Project decides what parts of
-it wants to install or shapshot using the script
+it wants to install or snapshot using the script
 <code class="docutils literal notranslate"><span class="pre">tribits/snapshot_tribits.py</span></code> (which takes arguments for what dirs to
 snapshot, see below). This directory contains no tests at all. All of the
 tests for TriBITS are in the <code class="docutils literal notranslate"><span class="pre">test/</span></code> directory (see below). The breakdown of
@@ -9952,7 +9952,7 @@ be changed in the <code class="docutils literal notranslate"><span class="pre">&
 <a class="reference internal" href="#projectdir-cmakelists-txt">&lt;projectDir&gt;/CMakeLists.txt</a> file because the latter is not directly
 processed in CTest -S driver scripts using <code class="docutils literal notranslate"><span class="pre">tribits_ctest_driver()</span></code>.)</p>
 <p>In general, a project should change the default to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> when using a
-newer CDash installation with CDash versions 3.0+ that can accomidate the
+newer CDash installation with CDash versions 3.0+ that can accommodate the
 results coming from ctest -S and display them package-by-package very
 nicely.  Otherwise, most projects are better off with package-by-package
 mode since it results in nicer display on CDash for older CDash versions.</p>
@@ -11889,7 +11889,7 @@ affect header files, please use a configured header file (see
 it is true, then sets the global (internal cache) macro define variable
 <code class="docutils literal notranslate"><span class="pre">&lt;macroDefineName&gt;</span></code> to <code class="docutils literal notranslate"><span class="pre">ON</span></code>, and otherwise sets it to <code class="docutils literal notranslate"><span class="pre">OFF</span></code>.  If
 <code class="docutils literal notranslate"><span class="pre">NONCACHE</span></code> is passed in, then <code class="docutils literal notranslate"><span class="pre">&lt;macroDefineName&gt;</span></code> is set as a non-cache
-local varaible instead of a cache variable.</p>
+local variable instead of a cache variable.</p>
 <p>This is designed to make it easy to add a user-enabled option to a
 configured header file and have the define set in one shot.  This would
 require that the package’s configure file (see <a class="reference internal" href="#tribits-configure-file">tribits_configure_file()</a>)
@@ -17906,7 +17906,7 @@ outputs a table like:
   |:-------------- |:-------:|:------------------- |:---------------------- |:---------------------------------------------- |
   | MockProjectDir | e2dc488 | 2019-10-23 10:16:07 | user@domain.com        | Merge Pull Request #1234 from user/repo/branch |
   | ExtraRepo1     | f671414 | 2019-10-22 11:18:47 | wile.e.coyote@acme.com | Fixed a Bug                                    |
-  | ExtraRepo2     | 50bbf3e | 2019-10-17 16:32:15 | someone@somwhere.com   | Did Some Work                                  |
+  | ExtraRepo2     | 50bbf3e | 2019-10-17 16:32:15 | someone@somewhere.com   | Did Some Work                                  |
 
 If the option --dist-short is also passed in, the output will be limited to:
 
@@ -19586,7 +19586,7 @@ The informational arguments to this function are:
   
       &lt;url_base&gt;&lt;tool_name&gt;-&lt;tool_version&gt;-base
   
-    This can also accomidate gitolite repos and other directory structures,
+    This can also accommodate gitolite repos and other directory structures,
     for example, with:
   
       git@&lt;host-name&gt;:prerequisites/
