@@ -388,10 +388,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2023-03-31</p>
+<dd class="field-even"><p>2023-04-03</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3263-g2da746a8</p>
+<dd class="field-odd"><p>tribits_start-3265-g7b066e9a</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -6881,10 +6881,9 @@ set(HDF5_INTERNAL_IS_MODERN FALSE)
 
 if (Netcdf_ALLOW_MODERN)
 
-  set(minimum_modern_HDF5_version 1.10.9)
   print_var(Netcdf_ALLOW_MODERN)
-  message(&quot;-- Using find_package(HDF5 ${minimum_modern_HDF5_version} CONFIG) ...&quot;)
-  find_package(HDF5  ${minimum_modern_HDF5_version}  CONFIG)
+  message(&quot;-- Using find_package(HDF5 CONFIG) ...&quot;)
+  find_package(HDF5 CONFIG)
   if (HDF5_FOUND)
     message(&quot;-- Found HDF5_CONFIG=${HDF5_CONFIG}&quot;)
     message(&quot;-- Generating Netcdf::all_libs and NetcdfConfig.cmake&quot;)
