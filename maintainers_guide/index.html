@@ -449,10 +449,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2023-04-03</p>
+<dd class="field-even"><p>2023-04-04</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3265-g7b066e9a</p>
+<dd class="field-odd"><p>tribits_start-3266-g46dff4f8</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -6767,7 +6767,7 @@ to modern CMake along with the proper usage of complete
 <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> files, this is the reasonable thing to do.</p>
 <p>However, to maintain backwards compatibility with the legacy TriBITS TPL
 system (such as when upgrading a existing <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file), a
-<code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file can be extended to use the
+<code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file can be extended to use the function
 <a class="reference internal" href="#tribits-tpl-allow-pre-find-package">tribits_tpl_allow_pre_find_package()</a> in combination with the functions
 <code class="docutils literal notranslate"><span class="pre">tribits_extpkg_create_imported_all_libs_target_and_config_file()</span></code> and
 <a class="reference internal" href="#tribits-tpl-find-include-dirs-and-libraries">tribits_tpl_find_include_dirs_and_libraries()</a> as follows:</p>
@@ -6802,7 +6802,7 @@ endif()
 the TPL.  See the documentation for <a class="reference internal" href="#tribits-tpl-allow-pre-find-package">tribits_tpl_allow_pre_find_package()</a>
 for conditions where <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_ALLOW_PREFIND</span></code> is set to <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> (and
 therefore <code class="docutils literal notranslate"><span class="pre">find_package(&lt;externalPkg&gt;)</span></code> is not called).</p>
-<p>Note that in the above <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file that
+<p>Note in the above <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file that
 <code class="docutils literal notranslate"><span class="pre">find_package(&lt;externalPkg&gt;)</span></code> will be called even on reconfigures.  That is
 critical since <code class="docutils literal notranslate"><span class="pre">find_package(&lt;externalPkg&gt;)</span></code> defines IMPORTED targets that
 must be available each time configure is called.  Also, if
