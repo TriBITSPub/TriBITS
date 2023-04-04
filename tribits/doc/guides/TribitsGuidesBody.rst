@@ -5681,7 +5681,7 @@ to modern CMake along with the proper usage of complete
 
 However, to maintain backwards compatibility with the legacy TriBITS TPL
 system (such as when upgrading a existing ``FindTPL<tplName>.cmake`` file), a
-``FindTPL<tplName>.cmake`` file can be extended to use the
+``FindTPL<tplName>.cmake`` file can be extended to use the function
 `tribits_tpl_allow_pre_find_package()`_ in combination with the functions
 ``tribits_extpkg_create_imported_all_libs_target_and_config_file()`` and
 `tribits_tpl_find_include_dirs_and_libraries()`_ as follows::
@@ -5717,7 +5717,7 @@ the TPL.  See the documentation for `tribits_tpl_allow_pre_find_package()`_
 for conditions where ``<tplName>_ALLOW_PREFIND`` is set to ``FALSE`` (and
 therefore ``find_package(<externalPkg>)`` is not called).
 
-Note that in the above ``FindTPL<tplName>.cmake`` file that
+Note in the above ``FindTPL<tplName>.cmake`` file that
 ``find_package(<externalPkg>)`` will be called even on reconfigures.  That is
 critical since ``find_package(<externalPkg>)`` defines IMPORTED targets that
 must be available each time configure is called.  Also, if
