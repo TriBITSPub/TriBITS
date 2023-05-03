@@ -942,19 +942,19 @@ function(TribitsExampleProject2_External_Package_by_Package
         "Final set of enabled top-level external packages/TPLs:  Tpl1 Tpl2 Tpl3 Package1 4"
         "Final set of non-enabled top-level external packages/TPLs:  Tpl4 1"
 
-        "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs ..."
-        "Processing enabled external package/TPL: Tpl1 [(]enabled by Package1, disable with -DTPL_ENABLE_Tpl1=OFF[)]"
-        "-- The external package/TPL Tpl1 will be read in by a downstream TriBITS-compliant external package"
+        "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs in reverse order [.][.][.]"
         "Processing enabled external package/TPL: Package1 [(]enabled explicitly, disable with -DTPL_ENABLE_Package1=OFF[)]"
         "-- Calling find_package[(]Package1[)] for TriBITS-compliant external package"
+        "Processing enabled external package/TPL: Tpl1 [(]enabled by Package1, disable with -DTPL_ENABLE_Tpl1=OFF[)]"
+        "-- The external package/TPL Tpl1 was defined by a downstream TriBITS-compliant external package already processed"
 
-        "Getting information for all remaining enabled external packages/TPLs ..."
+        "Getting information for all remaining enabled external packages/TPLs [.][.][.]"
         "Processing enabled external package/TPL: Tpl2 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl2=OFF[)]"
         ${tpl2FoundRegexes}
         "Processing enabled external package/TPL: Tpl3 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl3=OFF[)]"
         ${tpl3FoundRegexes}
 
-        "Configuring individual enabled TribitsExProj2 packages ..."
+        "Configuring individual enabled TribitsExProj2 packages [.][.][.]"
         "Processing enabled top-level package: Package2 [(]Libs[)]"
 
         "Configuring done"
@@ -1007,19 +1007,19 @@ function(TribitsExampleProject2_External_Package_by_Package
         "Final set of enabled top-level external packages/TPLs:  Tpl1 Tpl2 Tpl3 Tpl4 Package1 Package2 6"
         "Final set of non-enabled top-level external packages/TPLs:  0"
 
-        "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs ..."
-        "Processing enabled external package/TPL: Tpl1 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl1=OFF[)]"
-        "-- The external package/TPL Tpl1 will be read in by a downstream TriBITS-compliant external package"
-        "Processing enabled external package/TPL: Tpl2 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl2=OFF[)]"
-        "-- The external package/TPL Tpl2 will be read in by a downstream TriBITS-compliant external package"
-        "Processing enabled external package/TPL: Tpl3 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl3=OFF[)]"
-        "-- The external package/TPL Tpl3 will be read in by a downstream TriBITS-compliant external package"
-        "Processing enabled external package/TPL: Package1 [(]enabled explicitly, disable with -DTPL_ENABLE_Package1=OFF[)]"
-        "-- The external package/TPL Package1 will be read in by a downstream TriBITS-compliant external package"
+        "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs in reverse order [.][.][.]"
         "Processing enabled external package/TPL: Package2 [(]enabled explicitly, disable with -DTPL_ENABLE_Package2=OFF[)]"
         "-- Calling find_package[(]Package2[)] for TriBITS-compliant external package"
+        "Processing enabled external package/TPL: Package1 [(]enabled explicitly, disable with -DTPL_ENABLE_Package1=OFF[)]"
+        "-- The external package/TPL Package1 was defined by a downstream TriBITS-compliant external package already processed"
+        "Processing enabled external package/TPL: Tpl3 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl3=OFF[)]"
+        "-- The external package/TPL Tpl3 was defined by a downstream TriBITS-compliant external package already processed"
+        "Processing enabled external package/TPL: Tpl2 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl2=OFF[)]"
+        "-- The external package/TPL Tpl2 was defined by a downstream TriBITS-compliant external package already processed"
+        "Processing enabled external package/TPL: Tpl1 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl1=OFF[)]"
+        "-- The external package/TPL Tpl1 was defined by a downstream TriBITS-compliant external package already processed"
 
-        "Getting information for all remaining enabled external packages/TPLs ..."
+        "Getting information for all remaining enabled external packages/TPLs [.][.][.]"
 
         "Processing enabled external package/TPL: Tpl4 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl4=OFF[)]"
         ${tpl4FoundRegexes}

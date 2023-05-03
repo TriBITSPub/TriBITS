@@ -538,10 +538,10 @@ function(tribits_append_dependent_package_config_file_includes_and_enables_str p
         set(findDepPkgCode
           "  include(\"${${depPkg}_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR}/${depPkg}Config.cmake\")\n")
       elseif (${depPkg}_FINDMOD STREQUAL "TRIBITS_PKG")
-        assert_defined(${depPkg}_DIR)
+        assert_defined(${depPkg}_CONFIG)
         string(APPEND findDepPkgCode
-          "  include(\"${${depPkg}_DIR}/${depPkg}Config.cmake\")\n"
-	  "  set(${depPkg}_DIR \"${${depPkg}_DIR}\")\n")
+          "  include(\"${${depPkg}_CONFIG}\")\n"
+	  "  set(${depPkg}_CONFIG \"${${depPkg}_CONFIG}\")\n")
       else()
         set(findDepPkgCode
           "  include(\"${externalPkgsDir}/${depPkg}/${depPkg}Config.cmake\")\n")

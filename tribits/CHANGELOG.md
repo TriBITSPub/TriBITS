@@ -2,6 +2,17 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2023-5-03:
+
+* **Added:** Added support for non-fully TriBITS-compatible external packages.
+  Now, a `<Package>Config.cmake` file need not define
+  `<UpstreamPkg>::all_libs` targets for all of its upstream dependencies.  The
+  updated macro `tribits_process_enabled_tpls()` will find any missing
+  upstream external packages/TPLs as needed (see updated documentation in the
+  section "TriBITS-Compliant External Packages" in the "TriBITS Users Guide"
+  and the section "Processing of external packages/TPLs and TriBITS-compliant
+  external packages" in the "TriBITS Maintainers Guide").
+
 ## 2023-02-24:
 
 * **Changed:** Upgraded minimum required CMake version from 3.17 to 3.23.
