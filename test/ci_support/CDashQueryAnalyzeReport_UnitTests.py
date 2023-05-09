@@ -982,6 +982,14 @@ class test_CDashQueryAnalyzeReport_UrlFuncs(unittest.TestCase):
       "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
+  def test_getCDashIndexQueryUrl_project_name_ampersand(self):
+    cdashIndexQueryUrl = getCDashIndexQueryUrl(
+      "site.com/cdash", "project&name", "2015-12-21", "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/api/v1/index.php?project=project%26name&date=2015-12-21"+\
+      "&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
   def test_getCDashIndexBrowserUrl(self):
     cdashIndexQueryUrl = getCDashIndexBrowserUrl(
       "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
@@ -998,6 +1006,14 @@ class test_CDashQueryAnalyzeReport_UrlFuncs(unittest.TestCase):
       "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
+  def test_getCDashIndexBrowserUrl_project_name_ampersand(self):
+    cdashIndexQueryUrl = getCDashIndexBrowserUrl(
+      "site.com/cdash", "project&name", "2015-12-21", "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/index.php?project=project%26name&date=2015-12-21"+\
+      "&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
   def test_getCDashQueryTestsQueryUrl(self):
     cdashIndexQueryUrl = getCDashQueryTestsQueryUrl(
       "site.com/cdash", "project-name", "2015-12-21", "filtercount=1&morestuff" )
@@ -1011,6 +1027,14 @@ class test_CDashQueryAnalyzeReport_UrlFuncs(unittest.TestCase):
       "site.com/cdash", "project name", "2015-12-21", "filtercount=1&morestuff" )
     cdashIndexQueryUrl_expected = \
       "site.com/cdash/api/v1/queryTests.php?project=project%20name&date=2015-12-21"+\
+      "&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+  def test_getCDashQueryTestsQueryUrl_project_name_ampersand(self):
+    cdashIndexQueryUrl = getCDashQueryTestsQueryUrl(
+      "site.com/cdash", "project&name", "2015-12-21", "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/api/v1/queryTests.php?project=project%26name&date=2015-12-21"+\
       "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
@@ -1035,6 +1059,14 @@ class test_CDashQueryAnalyzeReport_UrlFuncs(unittest.TestCase):
       "site.com/cdash", "project-name", None, "filtercount=1&morestuff" )
     cdashIndexQueryUrl_expected = \
       "site.com/cdash/queryTests.php?project=project-name"+\
+      "&filtercount=1&morestuff"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
+  def test_getCDashQueryTestsBrowserUrl_project_name_ampersand(self):
+    cdashIndexQueryUrl = getCDashQueryTestsBrowserUrl(
+      "site.com/cdash", "project&name", "2015-12-21", "filtercount=1&morestuff" )
+    cdashIndexQueryUrl_expected = \
+      "site.com/cdash/queryTests.php?project=project%26name&date=2015-12-21"+\
       "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
@@ -3110,6 +3142,139 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
         " where:\n\n"+\
         "   testDict = "+sorted_dict_str(testDict)+"\n\n"+\
         "   top test history dict = "+sorted_dict_str(testHistoryLOD[0])+"\n\n" )
+
+  # Test of AddTestHistoryToTestDictFunctor with non-URL build names / filters
+  def test_funky_chars(self):
+    # we inherit most of the setup from test_nonpassingTest_downloadFromCDash, as we simply want to test
+    # the url creation
+
+    # Deep copy the test dict so we don't modify the original
+    funkyCharTestDict = copy.deepcopy(g_testDictFailed)
+    # ++ not allowed in urls
+    funkyCharTestDict[u('buildName')] = u('build++')
+    # spaces not allowed in urls
+    funkyCharTestDict[u('site')] = u('site name')
+
+    # note: %2B%2B = '++'
+    buildName_url = 'build%2B%2B'
+    # note: %20 = ' '
+    siteName_url = 'site%20name'
+
+    # Create the test history query URL
+    # specifically escaping the 'funky' URL characters (here, '+' and ' ')
+    testHistoryQueryUrl = \
+      u('site.com/cdash/api/v1/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61'
+        '&value1={buildName_url}'
+        '&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&'
+        'value3={siteName_url}'.format(
+            buildName_url=buildName_url,
+            siteName_url=siteName_url))
+
+    # Create a subdir for the created cache file
+    testCacheOutputDir = \
+      os.getcwd()+"/AddTestHistoryToTestDictFunctor/test_nonpassingTest_downloadFromCDash"
+    if os.path.exists(testCacheOutputDir): shutil.rmtree(testCacheOutputDir)
+    os.makedirs(testCacheOutputDir)
+
+    # Create dummy test history
+    testHistoryLOD = getTestHistoryLOD5(
+      [
+        'Failed',
+        'Failed',
+        'Passed',
+        'Passed',
+        'Not Run',
+        ]
+      )
+
+    # Construct arguments
+    cdashUrl = "site.com/cdash"
+    projectName = "projectName"
+    date = "2001-01-01"
+    testingDayStartTimeUtc = "00:00"
+    daysOfHistory = 5
+    useCachedCDashData = False
+    alwaysUseCacheFileIfExists = False
+    verbose = False
+    printDetails = False
+    requireMatchTestTopTestHistory = True
+    mockExtractCDashApiQueryDataFunctor = MockExtractCDashApiQueryDataFunctor(
+      testHistoryQueryUrl, {'builds':testHistoryLOD})
+
+    # Construct the functor
+    addTestHistoryFunctor = AddTestHistoryToTestDictFunctor(
+      cdashUrl, projectName, date, testingDayStartTimeUtc, daysOfHistory,
+      testCacheOutputDir, useCachedCDashData, alwaysUseCacheFileIfExists,
+      verbose, printDetails, requireMatchTestTopTestHistory,
+      mockExtractCDashApiQueryDataFunctor,
+      )
+
+    # Apply the functor to add the test history to the test dict
+    addTestHistoryFunctor(funkyCharTestDict)
+
+    # we must manually escape the testHistoryBrowserUrl for comparison
+    testHistoryBrowserUrl = u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&'
+                              'value1={buildName_url}'
+                              '&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&'
+                              'value3={siteName_url}'.format(
+                                buildName_url=buildName_url,
+                                siteName_url=siteName_url))
+
+    # Checkt the set fields out output
+    self.assertEqual(funkyCharTestDict['site'], 'site name')
+    self.assertEqual(funkyCharTestDict['buildName'], 'build++')
+    self.assertEqual(funkyCharTestDict['buildName_url'],
+      u('site.com/cdash/index.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=2&showfilters=1&filtercombine=and&field1=buildname&compare1=61&'
+        'value1={buildName_url}&field2=site&compare2=61&value2={siteName_url}'.format(
+          buildName_url=buildName_url,
+          siteName_url=siteName_url))
+      )
+    self.assertEqual(funkyCharTestDict['testname'], 'test_name')
+    self.assertEqual(funkyCharTestDict['testname_url'], u('site.com/cdash/testDetails.php?test=<testid>&build=<buildid>'))
+    self.assertEqual(funkyCharTestDict['status'], 'Failed')
+    self.assertEqual(funkyCharTestDict['details'], 'Completed (Failed)\n')
+    self.assertEqual(funkyCharTestDict['status_url'], u('site.com/cdash/testDetails.php?test=<testid>&build=<buildid>'))
+    self.assertEqual(funkyCharTestDict['status_color'], 'red')
+    self.assertEqual(funkyCharTestDict['test_history_num_days'], 5)
+    self.assertEqual(funkyCharTestDict['test_history_query_url'], testHistoryQueryUrl)
+    self.assertEqual(funkyCharTestDict['test_history_browser_url'], testHistoryBrowserUrl)
+    self.assertEqual(
+      funkyCharTestDict['test_history_list'][0]['buildstarttime'], '2001-01-01T05:54:03 UTC')
+    self.assertEqual(
+      funkyCharTestDict['test_history_list'][1]['buildstarttime'], '2000-12-31T05:54:03 UTC')
+    self.assertEqual(
+      funkyCharTestDict['test_history_list'][2]['buildstarttime'], '2000-12-30T05:54:03 UTC')
+    self.assertEqual(
+      funkyCharTestDict['test_history_list'][3]['buildstarttime'], '2000-12-29T05:54:03 UTC')
+    self.assertEqual(
+      funkyCharTestDict['test_history_list'][4]['buildstarttime'], '2000-12-28T05:54:03 UTC')
+    self.assertEqual(funkyCharTestDict['pass_last_x_days'], 2)
+    self.assertEqual(funkyCharTestDict['pass_last_x_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(funkyCharTestDict['pass_last_x_days_color'], 'green')
+    self.assertEqual(funkyCharTestDict['nopass_last_x_days'], 3)
+    self.assertEqual(funkyCharTestDict['nopass_last_x_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(funkyCharTestDict['nopass_last_x_days_color'], 'red')
+    self.assertEqual(funkyCharTestDict['missing_last_x_days'], 0)
+    self.assertEqual(funkyCharTestDict['missing_last_x_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(funkyCharTestDict['consec_pass_days'], 0)
+    self.assertEqual(funkyCharTestDict['consec_pass_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(funkyCharTestDict['consec_pass_days_color'], 'green')
+    self.assertEqual(funkyCharTestDict['consec_nopass_days'], 2)
+    self.assertEqual(funkyCharTestDict['consec_nopass_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(funkyCharTestDict['consec_nopass_days_color'], 'red')
+    self.assertEqual(funkyCharTestDict['consec_missing_days'], 0)
+    self.assertEqual(funkyCharTestDict['consec_missing_days_url'], testHistoryBrowserUrl)
+    self.assertEqual(funkyCharTestDict['consec_missing_days_color'], 'gray')
+    self.assertEqual(funkyCharTestDict['previous_nopass_date'], '2000-12-31')
+    self.assertEqual(funkyCharTestDict['issue_tracker'], '#1234')
+    self.assertEqual(funkyCharTestDict['issue_tracker_url'], 'some.com/site/issue/1234')
+
+    # Check for the existence of the created Cache file
+    cacheFile = \
+      testCacheOutputDir+"/2001-01-01-site_name-build_name-test_name-HIST-5.json"
+    self.assertEqual(os.path.exists(testCacheOutputDir), True)
+    # ToDo: Check the contents of the cache file!
+
 
 
 #############################################################################
