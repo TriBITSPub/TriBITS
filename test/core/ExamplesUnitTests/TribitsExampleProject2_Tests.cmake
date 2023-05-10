@@ -1068,3 +1068,297 @@ TribitsExampleProject2_External_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CAC
 
 # NOTE: The above tests check a few different use cases for building and
 # installing TriBITS packages from a single TriBITS project incrementally.
+
+
+################################################################################
+
+
+function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
+    sharedOrStatic  findingTplsMethod
+  )
+
+  TribitsExampleProject2_test_setup_header()
+
+  set(tplInstallBaseDir
+    "${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_DIR}")
+
+  set(allTplsNoPrefindArgs
+    "-DTpl1_ALLOW_PACKAGE_PREFIND=OFF"
+    "-DTpl2_ALLOW_PACKAGE_PREFIND=OFF"
+    "-DTpl3_ALLOW_PACKAGE_PREFIND=OFF"
+    "-DTpl4_ALLOW_PACKAGE_PREFIND=OFF"
+    )
+
+  if (sharedOrStatic STREQUAL "STATIC")
+    set(libExt "a")
+  elseif (sharedOrStatic STREQUAL "SHARED")
+    set(libExt "so")
+  else()
+    message(FATAL_ERROR "Error: Invalid value of"
+      " sharedOrStatic='${sharedOrStatic}'!")
+  endif()
+
+  if (findingTplsMethod STREQUAL "TPL_LIBRARY_AND_INCLUDE_DIRS")
+    set(tpl1LibAndIncDirsArgs
+      "-DTpl1_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl1/include"
+      "-DTpl1_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl1/lib"
+      "-DTpl1_ALLOW_PACKAGE_PREFIND=OFF")
+    set(tpl2LibAndIncDirsArgs
+      "-DTpl2_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl2/include"
+      "-DTpl2_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl2/lib"
+      "-DTpl2_ALLOW_PACKAGE_PREFIND=OFF")
+    set(tpl3LibAndIncDirsArgs
+      "-DTpl3_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl3/include"
+      "-DTpl3_LIBRARY_DIRS=${tplInstallBaseDir}/install_tpl3/lib"
+      "-DTpl3_ALLOW_PACKAGE_PREFIND=OFF")
+    set(tpl4LibAndIncDirsArgs
+      "-DTpl4_INCLUDE_DIRS=${tplInstallBaseDir}/install_tpl4/include"
+      "-DTpl4_ALLOW_PACKAGE_PREFIND=OFF")
+    set(tpl1CMakePrefixPath "")
+    set(tpl2CMakePrefixPath "")
+    set(tpl3CMakePrefixPath "")
+    set(tpl4CMakePrefixPath "")
+    set(tpl1FoundRegexes
+      "TPL_Tpl1_LIBRARIES='.*/install_tpl1/lib/libtpl1[.]${libExt}'"
+      "TPL_Tpl1_INCLUDE_DIRS='.*/install_tpl1/include'")
+    set(tpl2FoundRegexes
+      "TPL_Tpl2_LIBRARIES='.*/install_tpl2/lib/libtpl2b[.]${libExt}[;].*/install_tpl2/lib/libtpl2a[.]${libExt}'"
+      "TPL_Tpl2_INCLUDE_DIRS='.*/install_tpl2/include'")
+    set(tpl3FoundRegexes
+      "TPL_Tpl3_LIBRARIES='.*/install_tpl3/lib/libtpl3[.]${libExt}'"
+      "TPL_Tpl3_INCLUDE_DIRS='.*/install_tpl3/include'")
+    set(tpl4FoundRegexes
+      "-- TPL_Tpl4_INCLUDE_DIRS='.*/install_tpl4/include'")
+  elseif (findingTplsMethod STREQUAL "CMAKE_PREFIX_PATH_CACHE")
+    set(testNameSuffix "_CMAKE_PREFIX_PATH_CACHE")
+    set(tpl1LibAndIncDirsArgs "-DTpl1_ALLOW_PACKAGE_PREFIND=ON")
+    set(tpl2LibAndIncDirsArgs "-DTpl2_ALLOW_PACKAGE_PREFIND=ON")
+    set(tpl3LibAndIncDirsArgs "-DTpl3_ALLOW_PACKAGE_PREFIND=ON")
+    set(tpl4LibAndIncDirsArgs "-DTpl4_ALLOW_PACKAGE_PREFIND=ON")
+    set(tpl1CMakePrefixPath "${tplInstallBaseDir}/install_tpl1")
+    set(tpl2CMakePrefixPath "${tplInstallBaseDir}/install_tpl2")
+    set(tpl3CMakePrefixPath "${tplInstallBaseDir}/install_tpl3")
+    set(tpl4CMakePrefixPath "${tplInstallBaseDir}/install_tpl4")
+    set(tpl1FoundRegexes
+      "-- Using find_package[(]Tpl1 ...[)] ..."
+      "-- Found Tpl1_DIR='.*/install_tpl1/lib/cmake/Tpl1'"
+      "-- Generating Tpl1::all_libs and Tpl1Config.cmake")
+    set(tpl2FoundRegexes
+      "-- Using find_package[(]Tpl2 ...[)] ..."
+      "-- Found Tpl2_DIR='.*/install_tpl2/lib/cmake/Tpl2'"
+      "-- Generating Tpl2::all_libs and Tpl2Config.cmake")
+    set(tpl3FoundRegexes
+      "-- Using find_package[(]Tpl3 ...[)] ..."
+      "-- Found Tpl3_DIR='.*/install_tpl3/lib/cmake/Tpl3'"
+      "-- Generating Tpl3::all_libs and Tpl3Config.cmake")
+    set(tpl4FoundRegexes
+      "-- Using find_package[(]Tpl4 ...[)] ..."
+      "-- Found Tpl4_DIR='.*/install_tpl4/lib/cmake/Tpl4'"
+      "-- Generating Tpl4::all_libs and Tpl4Config.cmake")
+  else()
+    message(FATAL_ERROR
+      "Error, findingTplsMethod='${findingTplsMethod}' is invalid!")
+  endif()
+
+  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}${testNameSuffix})
+  set(testName ${PACKAGE_NAME}_${testNameBase})
+  set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
+
+  tribits_add_advanced_test( ${testNameBase}
+    OVERALL_WORKING_DIRECTORY  TEST_NAME
+    OVERALL_NUM_MPI_PROCS  1
+    EXCLUDE_IF_NOT_TRUE  ${PROJECT_NAME}_ENABLE_Fortran  IS_REAL_LINUX_SYSTEM
+    LIST_SEPARATOR <semicolon>
+
+    TEST_0
+      MESSAGE "Link TribitsExampleProject2 so it is easy to access"
+      CMND ln
+      ARGS -s ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2 .
+
+    TEST_1
+      MESSAGE "Configure to build and install just Package1 using raw CMake build system"
+      WORKING_DIRECTORY Build_Package1
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
+        -DCMAKE_PREFIX_PATH=${tplInstallBaseDir}/install_tpl1
+        -DCMAKE_INSTALL_PREFIX=../install_package1
+        ../TribitsExampleProject2/packages/package1
+      PASS_REGULAR_EXPRESSION_ALL
+        "Configuring raw CMake project Package1"
+        "-- Configuring done"
+	"-- Generating done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      # NOTE: Above, only the Package1Config.cmake file is created and nothing
+      # is done for Tpl1 that can be re-used by downstream TriBITS packages.
+
+    TEST_2
+      MESSAGE "Build and install just Package1"
+      WORKING_DIRECTORY Build_Package1
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_COMMAND} ARGS --build . --target install
+
+    TEST_3
+      MESSAGE "Configure to build, install, and test Package2"
+      WORKING_DIRECTORY Build_Package2
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
+        -DTribitsExProj2_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj2_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj2_ENABLE_TESTS=ON
+        -DTribitsExProj2_ENABLE_Package2=ON
+        -DCMAKE_INSTALL_PREFIX=../install_package2
+        -DTribitsExProj2_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES=TRUE
+        -DTPL_ENABLE_Package1=ON  # Pull in already installed Package1!
+        -DTPL_ENABLE_Tpl2=ON
+        -DTPL_ENABLE_Tpl3=ON
+        ${tpl1LibAndIncDirsArgs}
+        ${tpl2LibAndIncDirsArgs}
+        ${tpl3LibAndIncDirsArgs}
+        -DCMAKE_PREFIX_PATH=../install_package1<semicolon>${tpl1CMakePrefixPath}<semicolon>${tpl2CMakePrefixPath}<semicolon>${tpl3CMakePrefixPath}
+        ../TribitsExampleProject2
+      PASS_REGULAR_EXPRESSION_ALL
+        "Adjust the set of internal and external packages:"
+        "-- Treating internal package Package1 as EXTERNAL because TPL_ENABLE_Package1=ON"
+        "-- NOTE: Tpl1 is directly downstream from a TriBITS-compliant external package Package1"
+
+        "Final set of enabled top-level packages:  Package2 1"
+        "Final set of non-enabled top-level packages:  Package3 1"
+        "Final set of enabled top-level external packages/TPLs:  Tpl1 Tpl2 Tpl3 Package1 4"
+        "Final set of non-enabled top-level external packages/TPLs:  Tpl4 1"
+
+        "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs in reverse order [.][.][.]"
+        "Processing enabled external package/TPL: Package1 [(]enabled explicitly, disable with -DTPL_ENABLE_Package1=OFF[)]"
+        "-- Calling find_package[(]Package1[)] for TriBITS-compliant external package"
+        "Processing enabled external package/TPL: Tpl1 [(]enabled by Package1, disable with -DTPL_ENABLE_Tpl1=OFF[)]"
+        "-- The external package/TPL Tpl1 was [*]NOT[*] defined by a downstream TriBITS-compliant external package and must be found again in below loop"
+
+        "Getting information for all remaining enabled external packages/TPLs [.][.][.]"
+        "Processing enabled external package/TPL: Tpl1 [(]enabled by Package1, disable with -DTPL_ENABLE_Tpl1=OFF[)]"
+        ${tpl1FoundRegexes}
+        "Processing enabled external package/TPL: Tpl2 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl2=OFF[)]"
+        ${tpl2FoundRegexes}
+        "Processing enabled external package/TPL: Tpl3 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl3=OFF[)]"
+        ${tpl3FoundRegexes}
+
+        "Configuring individual enabled TribitsExProj2 packages [.][.][.]"
+        "Processing enabled top-level package: Package2 [(]Libs, Tests, Examples[)]"
+
+        "Configuring done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      # NOTE: Above shows how a non-fully TriBITS-compliant external package
+      # (i.e. Package1) can be used that does *not* define its upstream
+      # dependencies (i.e. Tpl1) as TriBITS-compliant external packages (which
+      # shows that the TriBITS project must find Tpl1 again from scratch).
+
+    TEST_4
+      MESSAGE "Build and install just Package2"
+      WORKING_DIRECTORY Build_Package2
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_COMMAND} ARGS --build . --target install
+
+    TEST_5
+      MESSAGE "Run tests for Package2"
+      WORKING_DIRECTORY Build_Package2
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND}
+      PASS_REGULAR_EXPRESSION_ALL
+        "1/1 Test [#]1: Package2_Prg [.]* *Passed"
+	"100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_6
+      MESSAGE "Configure to build, test, and install the rest of TribitsExampleProject2 (Package2)"
+      WORKING_DIRECTORY Build
+      CMND ${CMAKE_COMMAND}
+      ARGS
+        ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
+        -DTribitsExProj2_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+        -DTribitsExProj2_ENABLE_SECONDARY_TESTED_CODE=ON
+        -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
+        -DTribitsExProj2_ENABLE_TESTS=ON
+        -DCMAKE_INSTALL_PREFIX=../install
+        -DTribitsExProj2_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES=TRUE
+        -DTPL_ENABLE_Package2=ON  # Pull in already installed Package!
+        -DTPL_ENABLE_Tpl1=ON
+        -DTPL_ENABLE_Tpl2=ON
+        -DTPL_ENABLE_Tpl3=ON
+        -DTPL_ENABLE_Tpl4=ON
+        ${tpl4LibAndIncDirsArgs}
+        -DCMAKE_PREFIX_PATH=../install_package2<semicolon>${tpl4CMakePrefixPath}
+        ../TribitsExampleProject2
+      PASS_REGULAR_EXPRESSION_ALL
+        "Adjust the set of internal and external packages:"
+        "-- Treating internal package Package2 as EXTERNAL because TPL_ENABLE_Package2=ON"
+        "-- Treating internal package Package1 as EXTERNAL because downstream package Package2 being treated as EXTERNAL"
+        "-- NOTE: Tpl3 is directly downstream from a TriBITS-compliant external package Package2"
+        "-- NOTE: Tpl2 is indirectly downstream from a TriBITS-compliant external package"
+        "-- NOTE: Tpl1 is indirectly downstream from a TriBITS-compliant external package"
+
+        "Final set of enabled top-level packages:  Package3 1"
+        "Final set of non-enabled top-level packages:  0"
+        "Final set of enabled top-level external packages/TPLs:  Tpl1 Tpl2 Tpl3 Tpl4 Package1 Package2 6"
+        "Final set of non-enabled top-level external packages/TPLs:  0"
+
+        "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs in reverse order [.][.][.]"
+        "Processing enabled external package/TPL: Package2 [(]enabled explicitly, disable with -DTPL_ENABLE_Package2=OFF[)]"
+        "-- Calling find_package[(]Package2[)] for TriBITS-compliant external package"
+        "Processing enabled external package/TPL: Package1 [(]enabled explicitly, disable with -DTPL_ENABLE_Package1=OFF[)]"
+        "-- The external package/TPL Package1 was defined by a downstream TriBITS-compliant external package already processed"
+        "Processing enabled external package/TPL: Tpl3 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl3=OFF[)]"
+        "-- The external package/TPL Tpl3 was defined by a downstream TriBITS-compliant external package already processed"
+        "Processing enabled external package/TPL: Tpl2 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl2=OFF[)]"
+        "-- The external package/TPL Tpl2 was defined by a downstream TriBITS-compliant external package already processed"
+        "Processing enabled external package/TPL: Tpl1 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl1=OFF[)]"
+        "-- The external package/TPL Tpl1 was defined by a downstream TriBITS-compliant external package already processed"
+
+        "Getting information for all remaining enabled external packages/TPLs [.][.][.]"
+
+        "Processing enabled external package/TPL: Tpl4 [(]enabled explicitly, disable with -DTPL_ENABLE_Tpl4=OFF[)]"
+        ${tpl4FoundRegexes}
+
+        "Configuring done"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+      # NOTE: Above, only the newly enabled TPL Tpl4 is found and its
+      # Tpl4Config.cmake file is linked to the pre-installed
+      # Tpl1Config.comake, Tpl2Config.cmake and Tpl3Config.cmake files.  And
+      # the needed info from Tpl1, Tpl2, and Tpl3 is pulled in from
+      # find_package(Package2).
+
+    TEST_7
+      MESSAGE "Build and install the rest of TribitsExampleProject2 (Package3)"
+      WORKING_DIRECTORY Build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_COMMAND} ARGS --build . --target install
+
+    TEST_8
+      MESSAGE "Run remaining tests for TribitsExampleProject2 (Package3)"
+      WORKING_DIRECTORY Build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Package3_Prg [.]+ *Passed"
+	"100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ADDED_TEST_NAME_OUT ${testNameBase}_NAME
+    )
+
+  if (${testNameBase}_NAME)
+    set(${testNameBase}_NAME ${${testNameBase}_NAME} PARENT_SCOPE)
+    set(${testNameBase}_INSTALL_DIR "${testDir}/install" PARENT_SCOPE)
+    set_tests_properties(${${testNameBase}_NAME}
+      PROPERTIES DEPENDS ${TribitsExampleProject2_Tpls_install_${sharedOrStatic}_NAME} )
+  endif()
+
+endfunction()
+
+
+TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC  TPL_LIBRARY_AND_INCLUDE_DIRS)
+TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED  TPL_LIBRARY_AND_INCLUDE_DIRS)
+TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC  CMAKE_PREFIX_PATH_CACHE)
+TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CACHE)
+
+
+
