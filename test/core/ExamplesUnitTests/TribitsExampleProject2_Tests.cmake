@@ -935,7 +935,7 @@ function(TribitsExampleProject2_External_Package_by_Package
       PASS_REGULAR_EXPRESSION_ALL
         "Adjust the set of internal and external packages:"
         "-- Treating internal package Package1 as EXTERNAL because TPL_ENABLE_Package1=ON"
-        "-- NOTE: Tpl1 is directly downstream from a TriBITS-compliant external package Package1"
+        "-- NOTE: Tpl1 is directly upstream from a TriBITS-compliant external package Package1"
 
         "Final set of enabled top-level packages:  Package2 1"
         "Final set of non-enabled top-level packages:  Package3 1"
@@ -998,9 +998,9 @@ function(TribitsExampleProject2_External_Package_by_Package
         "Adjust the set of internal and external packages:"
         "-- Treating internal package Package2 as EXTERNAL because TPL_ENABLE_Package2=ON"
         "-- Treating internal package Package1 as EXTERNAL because downstream package Package2 being treated as EXTERNAL"
-        "-- NOTE: Tpl3 is directly downstream from a TriBITS-compliant external package Package2"
-        "-- NOTE: Tpl2 is indirectly downstream from a TriBITS-compliant external package"
-        "-- NOTE: Tpl1 is indirectly downstream from a TriBITS-compliant external package"
+        "-- NOTE: Tpl3 is directly upstream from a TriBITS-compliant external package Package2"
+        "-- NOTE: Tpl2 is indirectly upstream from a TriBITS-compliant external package"
+        "-- NOTE: Tpl1 is indirectly upstream from a TriBITS-compliant external package"
 
         "Final set of enabled top-level packages:  Package3 1"
         "Final set of non-enabled top-level packages:  0"
@@ -1221,7 +1221,7 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       PASS_REGULAR_EXPRESSION_ALL
         "Adjust the set of internal and external packages:"
         "-- Treating internal package Package1 as EXTERNAL because TPL_ENABLE_Package1=ON"
-        "-- NOTE: Tpl1 is directly downstream from a TriBITS-compliant external package Package1"
+        "-- NOTE: Tpl1 is directly upstream from a TriBITS-compliant external package Package1"
 
         "Final set of enabled top-level packages:  Package2 1"
         "Final set of non-enabled top-level packages:  Package3 1"
@@ -1292,9 +1292,9 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
         "Adjust the set of internal and external packages:"
         "-- Treating internal package Package2 as EXTERNAL because TPL_ENABLE_Package2=ON"
         "-- Treating internal package Package1 as EXTERNAL because downstream package Package2 being treated as EXTERNAL"
-        "-- NOTE: Tpl3 is directly downstream from a TriBITS-compliant external package Package2"
-        "-- NOTE: Tpl2 is indirectly downstream from a TriBITS-compliant external package"
-        "-- NOTE: Tpl1 is indirectly downstream from a TriBITS-compliant external package"
+        "-- NOTE: Tpl3 is directly upstream from a TriBITS-compliant external package Package2"
+        "-- NOTE: Tpl2 is indirectly upstream from a TriBITS-compliant external package"
+        "-- NOTE: Tpl1 is indirectly upstream from a TriBITS-compliant external package"
 
         "Final set of enabled top-level packages:  Package3 1"
         "Final set of non-enabled top-level packages:  0"

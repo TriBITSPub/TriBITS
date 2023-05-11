@@ -3297,8 +3297,8 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
     PASS_REGULAR_EXPRESSION_ALL
       "Adjust the set of internal and external packages:"
       "-- Treating internal package SimpleCxx as EXTERNAL because TPL_ENABLE_SimpleCxx=ON"
-      "-- NOTE: SimpleTpl is directly downstream from a TriBITS-compliant external package SimpleCxx"
-      "-- NOTE: HeaderOnlyTpl is directly downstream from a TriBITS-compliant external package SimpleCxx"
+      "-- NOTE: SimpleTpl is directly upstream from a TriBITS-compliant external package SimpleCxx"
+      "-- NOTE: HeaderOnlyTpl is directly upstream from a TriBITS-compliant external package SimpleCxx"
 
       "Final set of enabled top-level packages:  MixedLang WithSubpackages WrapExternal 3"
       "Final set of enabled packages:  MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal 6"
@@ -3445,8 +3445,8 @@ tribits_add_advanced_test( TribitsExampleProject_External_Package_by_Package
       "Adjust the set of internal and external packages:"
       "-- Treating internal package MixedLang as EXTERNAL because TPL_ENABLE_MixedLang=ON"
       "-- Treating internal package SimpleCxx as EXTERNAL because TPL_ENABLE_SimpleCxx=ON"
-      "-- NOTE: SimpleTpl is directly downstream from a TriBITS-compliant external package SimpleCxx"
-      "-- NOTE: HeaderOnlyTpl is directly downstream from a TriBITS-compliant external package SimpleCxx"
+      "-- NOTE: SimpleTpl is directly upstream from a TriBITS-compliant external package SimpleCxx"
+      "-- NOTE: HeaderOnlyTpl is directly upstream from a TriBITS-compliant external package SimpleCxx"
       "Configuring done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
@@ -3496,8 +3496,8 @@ tribits_add_advanced_test( TribitsExampleProject_External_Package_by_Package
       "-- Treating internal package WithSubpackagesC as EXTERNAL because downstream package WithSubpackages being treated as EXTERNAL"
       "-- Treating internal package SimpleCxx as EXTERNAL because downstream package WithSubpackagesB being treated as EXTERNAL"
       "-- Treating internal package MixedLang as EXTERNAL because TPL_ENABLE_MixedLang=ON"
-      "-- NOTE: SimpleTpl is indirectly downstream from a TriBITS-compliant external package"
-      "-- NOTE: HeaderOnlyTpl is indirectly downstream from a TriBITS-compliant external package"
+      "-- NOTE: SimpleTpl is indirectly upstream from a TriBITS-compliant external package"
+      "-- NOTE: HeaderOnlyTpl is indirectly upstream from a TriBITS-compliant external package"
 
       "Final set of enabled top-level packages:  WrapExternal 1"
       "Final set of enabled packages:  WrapExternal 1"
