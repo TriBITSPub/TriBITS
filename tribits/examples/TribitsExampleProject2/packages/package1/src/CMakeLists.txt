@@ -1,3 +1,5 @@
+include_raw_cmake_build()
+
 set(HEADERS "")
 set(SOURCES "")
 
