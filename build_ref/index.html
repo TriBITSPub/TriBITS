@@ -222,10 +222,10 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date<span class="colon">:</span></dt>
-<dd class="field-odd"><p>2023-05-09</p>
+<dd class="field-odd"><p>2023-05-13</p>
 </dd>
 <dt class="field-even">Version<span class="colon">:</span></dt>
-<dd class="field-even"><p>tribits_start-3268-g31a5eae1</p>
+<dd class="field-even"><p>tribits_start-3276-gb669da78</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -2151,9 +2151,10 @@ to the &lt;Project&gt; CMake project that was used to pre-build and pre-install
 these internally defined packages being treated as external packages.
 (Otherwise, a configure error will result from the mismatch.)</p></li>
 <li><p>The definition of any TriBITS external packages/TPLs that are enabled
-upstream dependencies from any of these internally defined packages being
-treated as external packages will be defined by the calls to
-<code class="docutils literal notranslate"><span class="pre">find_package(&lt;TRIBITS_PACKAGE&gt;)</span></code> and will <strong>not</strong> be found again.</p></li>
+upstream dependencies from any of these external packages should be defined
+automatically and will <strong>not</strong> be found again. (But there can be exceptions
+for non-fully TriBITS-compliant external packages; see the section
+“TriBITS-Compliant External Packages” in the “TriBITS Users Guide”.)</p></li>
 </ul>
 <p>The logic for treating internally defined packages as external packages will
 be printed in the CMake configure output in the section <code class="docutils literal notranslate"><span class="pre">Adjust</span> <span class="pre">the</span> <span class="pre">set</span> <span class="pre">of</span>
@@ -2172,22 +2173,34 @@ TriBITS-compliant external packages and <code class="docutils literal notranslat
 the terminal TriBITS-compliant external packages.  This is shown in the CMake
 output in the section <code class="docutils literal notranslate"><span class="pre">Getting</span> <span class="pre">information</span> <span class="pre">for</span> <span class="pre">all</span> <span class="pre">enabled</span> <span class="pre">TriBITS-compliant</span>
 <span class="pre">or</span> <span class="pre">upstream</span> <span class="pre">external</span> <span class="pre">packages/TPLs</span></code> and looks like:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Getting</span> <span class="n">information</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">enabled</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="ow">or</span> <span class="n">upstream</span> <span class="n">external</span> <span class="n">packages</span><span class="o">/</span><span class="n">TPLs</span> <span class="o">...</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Getting</span> <span class="n">information</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">enabled</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="ow">or</span> <span class="n">upstream</span> <span class="n">external</span> <span class="n">packages</span><span class="o">/</span><span class="n">TPLs</span> <span class="ow">in</span> <span class="n">reverse</span> <span class="n">order</span> <span class="o">...</span>
 
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL1</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="o">--</span> <span class="n">The</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span> <span class="o">&lt;</span><span class="n">TPL1</span><span class="o">&gt;</span> <span class="n">will</span> <span class="n">be</span> <span class="n">read</span> <span class="ow">in</span> <span class="n">by</span> <span class="n">a</span> <span class="n">downstream</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span>
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL2</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="o">--</span> <span class="n">The</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span> <span class="o">&lt;</span><span class="n">TPL2</span><span class="o">&gt;</span> <span class="n">will</span> <span class="n">be</span> <span class="n">read</span> <span class="ow">in</span> <span class="n">by</span> <span class="n">a</span> <span class="n">downstream</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span>
-<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">PKG1</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="o">--</span> <span class="n">The</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span> <span class="o">&lt;</span><span class="n">PKG1</span><span class="o">&gt;</span> <span class="n">will</span> <span class="n">be</span> <span class="n">read</span> <span class="ow">in</span> <span class="n">by</span> <span class="n">a</span> <span class="n">downstream</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span>
 <span class="n">Processing</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">PKG2</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="o">--</span> <span class="n">Calling</span> <span class="n">find_package</span><span class="p">(</span><span class="o">&lt;</span><span class="n">PKG2</span><span class="o">&gt;</span> <span class="k">for</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span>
+<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">PKG1</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="o">--</span> <span class="n">The</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span> <span class="o">&lt;</span><span class="n">PKG1</span><span class="o">&gt;</span> <span class="n">was</span> <span class="n">defined</span> <span class="n">by</span> <span class="n">a</span> <span class="n">downstream</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span> <span class="n">already</span> <span class="n">processed</span>
+<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL2</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="o">--</span> <span class="n">The</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span> <span class="o">&lt;</span><span class="n">TPL2</span><span class="o">&gt;</span> <span class="n">was</span> <span class="n">defined</span> <span class="n">by</span> <span class="n">a</span> <span class="n">downstream</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span> <span class="n">already</span> <span class="n">processed</span>
+<span class="n">Processing</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL1</span><span class="o">&gt;</span> <span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="o">--</span> <span class="n">The</span> <span class="n">external</span> <span class="n">package</span><span class="o">/</span><span class="n">TPL</span> <span class="o">&lt;</span><span class="n">TPL1</span><span class="o">&gt;</span> <span class="n">was</span> <span class="n">defined</span> <span class="n">by</span> <span class="n">a</span> <span class="n">downstream</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span> <span class="n">already</span> <span class="n">processed</span>
 </pre></div>
 </div>
 <p>In the above example <code class="docutils literal notranslate"><span class="pre">&lt;TPL1&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;TPL2&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;PKG1&gt;</span></code> are all direct or
 indirect dependencies of <code class="docutils literal notranslate"><span class="pre">&lt;PKG2&gt;</span></code> and therefore calling just
 <code class="docutils literal notranslate"><span class="pre">find_package(&lt;PKG2&gt;)</span></code> fully defines those TriBITS-compliant external
 packages as well.</p>
+<p>All remaining TPLs that are not defined in that first reverse loop are defined
+in a second forward loop over regular TPLs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Getting</span> <span class="n">information</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">remaining</span> <span class="n">enabled</span> <span class="n">external</span> <span class="n">packages</span><span class="o">/</span><span class="n">TPLs</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>NOTE: The case is also supported where a TriBITS-compliant external package
+like <code class="docutils literal notranslate"><span class="pre">&lt;PKG2&gt;</span></code> does not define all of it upstream dependencies (i.e. does not
+define the <code class="docutils literal notranslate"><span class="pre">&lt;TPL2&gt;::all_libs</span></code> target) and these external packages/TPLs will
+be found again.  This allows the possibility of finding different/inconsistent
+upstream dependencies but this is allowed to accommodate some packages with
+non-TriBITS CMake build systems that don’t create fully TriBITS-compliant
+external packages.</p>
 </section>
 <section id="xsdk-configuration-options">
 <h2><a class="toc-backref" href="#id52" role="doc-backlink"><span class="sectnum">4.18 </span>xSDK Configuration Options</a><a class="headerlink" href="#xsdk-configuration-options" title="Permalink to this heading"></a></h2>

@@ -388,10 +388,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2023-05-09</p>
+<dd class="field-even"><p>2023-05-13</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3268-g31a5eae1</p>
+<dd class="field-odd"><p>tribits_start-3276-gb669da78</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -3490,28 +3490,18 @@ package.</p></li>
 <li><p>[Optional] Provides any (namespaced by <code class="docutils literal notranslate"><span class="pre">&lt;package&gt;_</span></code> or <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_</span></code>)
 CMake macros or functions that downstream CMake packages may need to use the
 upstream package <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;</span></code>.</p></li>
-<li><p>All of the upstream dependencies (listed in the <code class="docutils literal notranslate"><span class="pre">INTERFACE_LINK_LIBRARIES</span></code>
-property recursively) are also <a class="reference internal" href="#tribits-compliant-packages">TriBITS-compliant packages</a></p></li>
+<li><p>[Optional] All of the upstream dependencies (listed in the
+<code class="docutils literal notranslate"><span class="pre">INTERFACE_LINK_LIBRARIES</span></code> property recursively) are also
+<a class="reference internal" href="#tribits-compliant-packages">TriBITS-compliant packages</a></p></li>
 </ul>
 <p>The TriBITS system will also set the variable:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_IS_TRIBITS_COMPLIANT</span></code>: Set to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code></p></li>
 </ul>
-<p>for all packages that are determined to be TriBITS-compliant packages.</p>
+<p>for all packages that are determined to be TriBITS-compliant packages and
+satisfy the above criteria.</p>
 <p>The above are all that is needed by downstream TriBITS packages to build and
 link against their upstream dependencies.</p>
-<p>If a TriBITS package provides any CTest tests/examples, then it must also
-satsify the following requirements:</p>
-<ul class="simple">
-<li><p>Test names must be prefixed with the package name <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_</span></code>.</p></li>
-<li><p>Tests should only be added if the variable <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_ENABLE_TESTS</span></code> is
-true.</p></li>
-<li><p>Examples (that run as CTest tests) should only be added if the variable
-<code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_ENABLE_EXAMPLES</span></code> is true.</p></li>
-<li><p>The test <code class="docutils literal notranslate"><span class="pre">PROCESSORS</span></code> and other test properties must be set in a way
-consistent with <a class="reference internal" href="#tribits-add-test">tribits_add_test()</a> so as to run in parallel with other
-tests and not overwhelm the computing resources on the machine.</p></li>
-</ul>
 <p>Additional requirements are placed on TriBITS-compliant packages depending on
 if they are defined as internal CMake packages (i.e. <a class="reference internal" href="#tribits-compliant-internal-packages">TriBITS-compliant
 internal packages</a>) or are pulled in as external pre-built/pre-installed
@@ -3533,15 +3523,34 @@ packages/projects.</p></li>
 file <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> and supporting files under the install
 directory <code class="docutils literal notranslate"><span class="pre">&lt;installDir&gt;/lib/cmake/&lt;Package&gt;/</span></code> allowing the installed
 package to be used by downstream CMake packages/projects.</p></li>
-<li><p>All of the upstream dependencies (recursively) are also <a class="reference internal" href="#tribits-compliant-packages">TriBITS-compliant
-packages</a></p></li>
+<li><p>[Optional] All of the upstream dependencies (recursively) are also
+<a class="reference internal" href="#tribits-compliant-packages">TriBITS-compliant packages</a>.</p></li>
+</ul>
+<p>If a TriBITS package provides any CTest tests/examples, then it must also
+satisfy the following requirements:</p>
+<ul class="simple">
+<li><p>Test names must be prefixed with the package name <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_</span></code>.</p></li>
+<li><p>Tests should only be added if the variable <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_ENABLE_TESTS</span></code> is
+true.</p></li>
+<li><p>Examples (that run as CTest tests) should only be added if the variable
+<code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_ENABLE_EXAMPLES</span></code> is true.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">PROCESSORS</span></code> test property and other test properties must be set in a
+way consistent with <a class="reference internal" href="#tribits-add-test">tribits_add_test()</a> so as to run in parallel with
+other tests and not overwhelm the computing resources on the machine.</p></li>
+<li><p>The test <code class="docutils literal notranslate"><span class="pre">&lt;fullTestName&gt;</span></code> must not be added if the cache variable
+<code class="docutils literal notranslate"><span class="pre">&lt;fullTestName&gt;_DISABLE</span></code> is set to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> or if the cache variable
+<code class="docutils literal notranslate"><span class="pre">&lt;fullTestName&gt;_SET_DISABLED_AND_MSG</span></code> is set to non-empty (and the message
+string should be printed to STDOUT).</p></li>
 </ul>
 <p>TriBITS internal packages that are defined using the TriBITS framework using
-the TriBITS-provided macros and functions such as <a class="reference internal" href="#tribits-add-library">tribits_add_library()</a> are
-automatically <a class="reference internal" href="#tribits-compliant-internal-packages">TriBITS-compliant internal packages</a> and when they are
-installed they automatically provide <a class="reference internal" href="#tribits-compliant-external-packages">TriBITS-compliant external packages</a>.
+the TriBITS-provided macros and functions such as <a class="reference internal" href="#tribits-add-library">tribits_add_library()</a> and
+have tests defined using the functions <a class="reference internal" href="#tribits-add-test">tribits_add_test()</a> and
+<a class="reference internal" href="#tribits-add-advanced-test">tribits_add_advanced_test()</a> are automatically <a class="reference internal" href="#tribits-compliant-internal-packages">TriBITS-compliant internal
+packages</a>.  And when these TriBITS-implemented internal packages are
+installed, they automatically provide <a class="reference internal" href="#tribits-compliant-external-packages">TriBITS-compliant external packages</a>.
 But it is possible for a CMake package to write its own raw CMake code to
-satisfy these basic requirements for both internal and external packages.</p>
+satisfy these basic requirements for both internal and (installed) external
+packages.</p>
 </section>
 <section id="tribits-compliant-external-packages">
 <span id="tribits-compliant-external-package"></span><h2><a class="toc-backref" href="#id39" role="doc-backlink"><span class="sectnum">4.2 </span>TriBITS-Compliant External Packages</a><a class="headerlink" href="#tribits-compliant-external-packages" title="Permalink to this heading"></a></h2>
@@ -3549,8 +3558,9 @@ satisfy these basic requirements for both internal and external packages.</p>
 CMake project, a streamlined type of <a class="reference internal" href="#tribits-external-package-tpl">TriBITS External Package/TPL</a> is a
 <em>TriBITS-compliant external package</em>.  These special types of external
 package’s don’t need to provide a <a class="reference internal" href="#findtpl-tplname-cmake">FindTPL&lt;tplName&gt;.cmake</a> find module.
-Instead, they are fully defined by calling <code class="docutils literal notranslate"><span class="pre">find_package(&lt;Package&gt;)</span></code> to
-locate and load their <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> package config file.</p>
+Instead, they are fully defined by calling <code class="docutils literal notranslate"><span class="pre">find_package(&lt;Package&gt;)</span></code> or
+<code class="docutils literal notranslate"><span class="pre">include(&lt;someBaseDir&gt;/&lt;Package&gt;Config.cmake)</span></code> to load their
+<code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> package config file.</p>
 <p>The requirements for <strong>TriBITS-compliant external packages</strong> are:</p>
 <ul class="simple">
 <li><p>All of the requirements for a <a class="reference internal" href="#tribits-compliant-package">TriBITS-Compliant Package</a>.</p></li>
@@ -3561,19 +3571,24 @@ IMPORTED targets and <code class="docutils literal notranslate"><span class="pre
 <li><p><code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_CONFIG</span></code> or
 <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE</span></code>: Points to the file
 <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> (i.e. <code class="docutils literal notranslate"><span class="pre">${CMAKE_CURRENT_LIST_FILE}</span></code>)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_DIR</span></code> or
-<code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;_TRIBITS_COMPLIANT_PACKAGE_CONFIG_FILE_DIR</span></code> Points to the base
-directory for <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code>
-(i.e. <code class="docutils literal notranslate"><span class="pre">${CMAKE_CURRENT_LIST_DIR}</span></code>)</p></li>
 </ul>
 </li>
-<li><p>All of the upstream dependencies (recursively) are also provided as
-<a class="reference internal" href="#tribits-compliant-external-packages">TriBITS-compliant external packages</a> with
+<li><p>[Optional] All of the upstream dependencies (recursively) are also provided
+as <a class="reference internal" href="#tribits-compliant-external-packages">TriBITS-compliant external packages</a> with
 <code class="docutils literal notranslate"><span class="pre">&lt;UpstreamPackage&gt;Config.cmake</span></code> files (see above) and all of the targets
 and variables for a TriBITS-compliant external package are defined when the
 <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> file is included (or pulled in with
 <code class="docutils literal notranslate"><span class="pre">find_package()</span></code> or <code class="docutils literal notranslate"><span class="pre">find_dependency()</span></code>).</p></li>
 </ul>
+<p>NOTE: TriBITS-compliant external packages that provide TriBITS-compliant
+external packages for all of their upstream dependencies are said to be <em>fully
+TriBITS-compliant external packages</em> while those that don’t are said to be
+<em>non-fully TriBITS-compliant external packages</em>.  The TriBITS external
+package/TPL system is robust enough to deal with non-fully TriBITS-compliant
+external packages.  Any TriBITS external packages/TPLs upstream from a
+non-fully TriBITS-compliant external package will be found again in the
+current TriBITS project.  (In these cases, it is up to the user to make sure
+that the same upstream packages are found.)</p>
 </section>
 </section>
 <section id="example-tribits-projects">
@@ -10808,7 +10823,7 @@ using MPI, use <code class="docutils literal notranslate"><span class="pre">EXEC
 instead.  <strong>WARNING:</strong> If you want to run such tests using valgrind, you
 have to use the raw executable as the <code class="docutils literal notranslate"><span class="pre">&lt;cmndExec&gt;</span></code> argument and <em>not</em>
 the script.  For example, if you have a python script
-<code class="docutils literal notranslate"><span class="pre">my_python_test.py</span></code> with <code class="docutils literal notranslate"><span class="pre">/usr/bin/env</span> <span class="pre">pyhton</span></code> at the top, you can’t
+<code class="docutils literal notranslate"><span class="pre">my_python_test.py</span></code> with <code class="docutils literal notranslate"><span class="pre">/usr/bin/env</span> <span class="pre">python</span></code> at the top, you can’t
 just use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CMND</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;/</span><span class="n">my_python_test</span><span class="o">.</span><span class="n">py</span> <span class="n">ARGS</span> <span class="s2">&quot;&lt;arg0&gt;&quot;</span> <span class="s2">&quot;&lt;arg1&gt;&quot;</span> <span class="o">...</span>
 </pre></div>
@@ -11832,7 +11847,7 @@ and will add this to the generated library target using
 <code class="docutils literal notranslate"><span class="pre">${CMAKE_INSTALL_PREFIX}/lib/</span></code> (actual install directory is given by
 <code class="docutils literal notranslate"><span class="pre">${PROJECT}_INSTALL_LIB_DIR</span></code>, see <a class="reference external" href="TribitsBuildReference.html#setting-the-install-prefix">Setting the install prefix</a>).
 However, this install target will not get created if
-<a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a> is <code class="docutils literal notranslate"><span class="pre">FASLE</span></code> and
+<a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a> is <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> and
 <code class="docutils literal notranslate"><span class="pre">BUILD_SHARD_LIBS=OFF</span></code>.  But when <code class="docutils literal notranslate"><span class="pre">BUILD_SHARD_LIBS=ON</span></code>, the install
 target will get added.  Also, this install target will <em>not</em> get added if
 <code class="docutils literal notranslate"><span class="pre">TESTONLY</span></code> or <code class="docutils literal notranslate"><span class="pre">NO_INSTALL_LIB_OR_HEADERS</span></code> are passed in.</p>
@@ -11840,7 +11855,7 @@ target will get added.  Also, this install target will <em>not</em> get added if
 added using <code class="docutils literal notranslate"><span class="pre">install(FILES</span> <span class="pre">&lt;h0&gt;</span> <span class="pre">&lt;h1&gt;</span> <span class="pre">...)</span></code>, but only if <code class="docutils literal notranslate"><span class="pre">TESTONLY</span></code> and
 <code class="docutils literal notranslate"><span class="pre">NO_INSTALL_LIB_OR_HEADERS</span></code> are not passed in as well.  Also, the install
 target for the headers will not get added if
-<a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a> is <code class="docutils literal notranslate"><span class="pre">FASLE</span></code>.  If this
+<a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a> is <code class="docutils literal notranslate"><span class="pre">FALSE</span></code>.  If this
 install target is added, then the headers get installed into the flat
 directory <code class="docutils literal notranslate"><span class="pre">${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}/</span></code> (default is
 <code class="docutils literal notranslate"><span class="pre">${CMAKE_INSTALL_PREFIX}/include/</span></code>, see <a class="reference external" href="TribitsBuildReference.html#setting-the-install-prefix">Setting the install prefix</a>).
@@ -14539,7 +14554,7 @@ be installed under <code class="docutils literal notranslate"><span class="pre">
 <code class="docutils literal notranslate"><span class="pre">install()</span></code>.  Otherwise, <code class="docutils literal notranslate"><span class="pre">COMPONENT</span> <span class="pre">${PROJECT_NAME}</span></code> will get used.</p>
 </div></blockquote>
 </div></blockquote>
-<p>If <a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a> is <code class="docutils literal notranslate"><span class="pre">FASLE</span></code>, then the
+<p>If <a class="reference internal" href="#project-name-install-libraries-and-headers">${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS</a> is <code class="docutils literal notranslate"><span class="pre">FALSE</span></code>, then the
 headers will not get installed.</p>
 </section>
 <section id="tribits-include-directories">
