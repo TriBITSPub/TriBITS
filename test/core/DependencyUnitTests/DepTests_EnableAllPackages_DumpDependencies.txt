@@ -144,7 +144,7 @@ Package dependencies information:
 -- Ifpack_FORWARD_LIB_DEFINED_DEPENDENCIES: ML[O] Stratimikos[O]
 -- Ifpack_FORWARD_TEST_DEFINED_DEPENDENCIES: Belos[O] Phalanx[O]
 
--- ML_LIB_DEFINED_DEPENDENCIES: Teuchos[O] Epetra[O] Zoltan[O] Galeri[O] Amesos[O] Ifpack[O] AztecOO[O] EpetraExt[O] Isorropia[O] BLAS[R] LAPACK[R] MPI[O] METIS[O] ParMETIS[O] PETSC[O]
+-- ML_LIB_DEFINED_DEPENDENCIES: BLAS[R] LAPACK[R] Teuchos[O] Epetra[O] Zoltan[O] Galeri[O] Amesos[O] Ifpack[O] AztecOO[O] EpetraExt[O] Isorropia[O] MPI[O] METIS[O] ParMETIS[O] PETSC[O]
 -- ML_TEST_DEFINED_DEPENDENCIES: METIS[O] ParMETIS[O]
 -- ML_FORWARD_LIB_DEFINED_DEPENDENCIES: Stratimikos[O]
 -- ML_FORWARD_TEST_DEFINED_DEPENDENCIES: Belos[O]
@@ -158,13 +158,13 @@ Package dependencies information:
 -- Stratimikos_TEST_DEFINED_DEPENDENCIES: Triutils[O]
 -- Stratimikos_FORWARD_TEST_DEFINED_DEPENDENCIES: Panzer[O]
 
--- RBGen_LIB_DEFINED_DEPENDENCIES: Teuchos[R] Epetra[O] EpetraExt[O] DUMMY[R]
+-- RBGen_LIB_DEFINED_DEPENDENCIES: Teuchos[R] DUMMY[R] Epetra[O] EpetraExt[O]
 
 -- Phalanx_LIB_DEFINED_DEPENDENCIES: Teuchos[R] Shards[R] Sacado[R] Boost[R]
 -- Phalanx_TEST_DEFINED_DEPENDENCIES: Belos[O] Epetra[O] Ifpack[O] Intrepid[O] TVMET[O]
 -- Phalanx_FORWARD_LIB_DEFINED_DEPENDENCIES: Panzer[R]
 
--- Panzer_LIB_DEFINED_DEPENDENCIES: Teuchos[R] Sacado[R] Phalanx[R] Intrepid[R] Thyra[R] Tpetra[R] Epetra[R] EpetraExt[R] Stokhos[O] MPI[R] Boost[R]
+-- Panzer_LIB_DEFINED_DEPENDENCIES: Teuchos[R] Sacado[R] Phalanx[R] Intrepid[R] Thyra[R] Tpetra[R] Epetra[R] EpetraExt[R] MPI[R] Boost[R] Stokhos[O]
 -- Panzer_TEST_DEFINED_DEPENDENCIES: Stratimikos[O]
 
 Dumping direct enabled dependencies for each package ...
@@ -255,13 +255,13 @@ Dumping direct enabled dependencies for each package ...
 
 -- Ifpack_LIB_ENABLED_DEPENDENCIES: Teuchos[R] Epetra[R] Amesos[O] AztecOO[O]
 
--- ML_LIB_ENABLED_DEPENDENCIES: Teuchos[O] Epetra[O] Zoltan[O] Galeri[O] Amesos[O] Ifpack[O] AztecOO[O] EpetraExt[O] Isorropia[O] BLAS[R] LAPACK[R]
+-- ML_LIB_ENABLED_DEPENDENCIES: BLAS[R] LAPACK[R] Teuchos[O] Epetra[O] Zoltan[O] Galeri[O] Amesos[O] Ifpack[O] AztecOO[O] EpetraExt[O] Isorropia[O]
 
 -- Belos: No enabled dependencies!
 
 -- Stratimikos_LIB_ENABLED_DEPENDENCIES: ThyraEpetraExt[R] ThyraCoreLibs[R] Amesos[O] AztecOO[O] Ifpack[O] ML[O]
 
--- RBGen_LIB_ENABLED_DEPENDENCIES: Teuchos[R] Epetra[O] EpetraExt[O] DUMMY[R]
+-- RBGen_LIB_ENABLED_DEPENDENCIES: Teuchos[R] DUMMY[R] Epetra[O] EpetraExt[O]
 
 -- Phalanx: No enabled dependencies!
 
