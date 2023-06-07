@@ -5973,7 +5973,7 @@ How to add a new TriBITS Package dependency
 -------------------------------------------
 
 It is often the case where one will want to add a new dependency for an
-existing `downstream`_ package to an existing `upstream`_ (intenral or
+existing `downstream`_ package to an existing `upstream`_ (internal or
 external) `TriBITS Package`_.  This can either be a required dependency or an
 optional dependency.  Here, we will refer to the downstream package as
 ``<packageName>`` with base directory ``<packageDir>`` and will refer to the
