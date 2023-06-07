@@ -254,7 +254,7 @@ function(unittest_enable_all_packages_st_extra_test_deps)
   unittest_compare_const(Ex2Package2_LIB_DEFINED_DEPENDENCIES "Teuchos;Ex2Package1")
   unittest_compare_const(Ex2Package2_TEST_ENABLED_DEPENDENCIES "")
   unittest_compare_const(Ex2Package2_TEST_DEFINED_DEPENDENCIES
-    "Teuchos;RTOp;Ex2Package1;Boost;MPI;Boost")
+    "Teuchos;Boost;RTOp;Ex2Package1;MPI;Boost")
 
 endfunction()
 

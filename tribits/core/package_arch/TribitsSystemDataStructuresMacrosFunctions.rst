@@ -334,7 +334,9 @@ the dependencies for each external package/TPL and internal package:
     This list of all **define direct** extra package test required and
     optional upstream external package/TPL and internal package dependencies.
     This list is set regardless if the package ``${PACKAGE_NAME}`` is enabled
-    or not.
+    or not.  NOTE: This list does **not** contain the items in the list
+    `${PACKAGE_NAME}_LIB_DEFINED_DEPENDENCIES`_ (but those are implicitly also
+    required/optional test dependencies as well).
 
   .. _${PACKAGE_NAME}_TEST_ENABLED_DEPENDENCIES:
 
