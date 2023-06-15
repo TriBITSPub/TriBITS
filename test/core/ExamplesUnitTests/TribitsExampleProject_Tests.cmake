@@ -660,6 +660,12 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
       -DTribitsExProj_ASSERT_DEFINED_DEPENDENCIES=OFF
       ../tribitsexproj-1.1-Source
     PASS_REGULAR_EXPRESSION_ALL
+      "CMake Warning at .*/tribits/core/package_arch/TribitsProcessPackagesAndDirsLists.cmake"
+      "MixedLang: Package base directory"
+      "'.*/tribitsexproj-1.1-Source/packages/mixed_lang'"
+      "exists but the dependencies file"
+      "'.*/tribitsexproj-1.1-Source/packages/mixed_lang/cmake/Dependencies.cmake'"
+      "does [*]NOT[*] exist. Package is being ignored anyway."
       "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
       "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
       "Final set of non-enabled top-level packages:  0"
@@ -2773,7 +2779,7 @@ tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
   XHOSTTYPE Darwin
 
   TEST_0
-    MESSAGE "Copy TribitsExampleProject so that we can copy in ExteranlPkg."
+    MESSAGE "Copy TribitsExampleProject so that we can copy in ExternalPkg."
     CMND cp
     ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
 
@@ -2797,7 +2803,7 @@ tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
       -DInsertedPkg_ALLOW_MISSING_EXTERNAL_PACKAGE=FALSE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Error, the package InsertedPkg directory .+/TribitsExampleProject/InsertedPkg does not exist!"
+      "Error, the package InsertedPkg dependencies file '.+/TribitsExampleProject/InsertedPkg/cmake/Dependencies.cmake' does [*]NOT[*] exist!"
       "CMake Error at .+/TribitsProcessPackagesAndDirsLists.cmake:[0-9]+ [(]message[)]:"
       "Configuring incomplete, errors occurred!"
 

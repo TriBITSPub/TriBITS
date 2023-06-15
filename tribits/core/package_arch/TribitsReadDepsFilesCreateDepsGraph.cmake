@@ -182,8 +182,7 @@ macro(tribits_read_all_package_deps_files_create_deps_graph)
   set(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES "") # Packages and subpackages
 
   foreach(TRIBITS_PACKAGE  IN LISTS ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
-    tribits_read_toplevel_package_deps_files_add_to_graph(${TRIBITS_PACKAGE}
-      ${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
+    tribits_read_toplevel_package_deps_files_add_to_graph(${TRIBITS_PACKAGE})
   endforeach()
 
   list(LENGTH ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
