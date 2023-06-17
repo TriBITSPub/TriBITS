@@ -569,6 +569,139 @@ TribitsExampleProject_ALL_ST_NoFortran(SHARED  MPI)
 ########################################################################
 
 
+tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Darwin
+
+  TEST_0
+    MESSAGE "Do the initial configure selecting the packages to go into the reduced tarball"
+    WORKING_DIRECTORY BUILD
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+      -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_WithSubpackagesB=ON
+      -DTribitsExProj_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION=ON
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+      -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
+      "Final set of non-enabled top-level packages:  MixedLang WrapExternal 2"
+      "Final set of non-enabled packages:  MixedLang WithSubpackagesC WrapExternal 3"
+      "-- Configuring done"
+      "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Create the tarball"
+    WORKING_DIRECTORY BUILD
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make ARGS package_source
+    PASS_REGULAR_EXPRESSION_ALL
+      "Run CPack packaging tool for source..."
+      "CPack: Create package using TGZ"
+      "CPack: Install projects"
+      "CPack: - Install directory: .*/examples/TribitsExampleProject"
+      "CPack: Create package"
+      "CPack: - package: .*/BUILD/tribitsexproj-1.1-Source.tar.gz generated."
+      "CPack: Create package using TBZ2"
+      "CPack: Install projects"
+      "CPack: - Install directory: .*/examples/TribitsExampleProject"
+      "CPack: Create package"
+      "CPack: - package: .*/BUILD/tribitsexproj-1.1-Source.tar.bz2 generated."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Untar the tarball"
+    CMND tar ARGS -xzvf BUILD/tribitsexproj-1.1-Source.tar.gz
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Make sure right directories are excluded"
+    CMND diff
+    ARGS -qr
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      tribitsexproj-1.1-Source
+    PASS_REGULAR_EXPRESSION_ALL
+      "Only in .*/TribitsExampleProject/cmake: ctest"
+      ${REGEX_FOR_GITIGNORE}
+      "Only in .*/TribitsExampleProject/packages: mixed_lang"
+      "Only in .*/TribitsExampleProject/packages: wrap_external"
+      "Only in .*/TribitsExampleProject/packages/with_subpackages/b: ExcludeFromRelease.txt"
+      "Only in .*/TribitsExampleProject/packages/with_subpackages/b/src: AlsoExcludeFromTarball.txt"
+      "Only in .*/TribitsExampleProject/packages/with_subpackages: c"
+    # NOTE: We don't check return code because diff returns nonzero
+
+  TEST_4
+    MESSAGE "Make empty base dir for packages/mixed_lang to trigger error"
+    CMND ${CMAKE_COMMAND}
+    ARGS -E make_directory tribitsexproj-1.1-Source/packages/mixed_lang
+
+  TEST_5
+    MESSAGE "Configure from the untarred reduced source tree"
+    WORKING_DIRECTORY BUILD2
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+      -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ASSERT_DEFINED_DEPENDENCIES=OFF
+      ../tribitsexproj-1.1-Source
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
+      "Final set of non-enabled top-level packages:  0"
+      "Final set of non-enabled packages:  0"
+      "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled top-level package: WithSubpackages [(]A, B, Tests, Examples[)]"
+      "-- Configuring done"
+      "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_6
+    MESSAGE "Build reduced project default 'all' target using raw 'make'"
+    WORKING_DIRECTORY BUILD2
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target simplecxx"
+      "Built target pws_a"
+      "Built target pws_b"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_7
+    MESSAGE "Run all the tests in reduced project with raw 'ctest'"
+    WORKING_DIRECTORY BUILD2
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND ${CMAKE_CTEST_COMMAND} ARGS
+    PASS_REGULAR_EXPRESSION_ALL
+      "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
+      "SimpleCxx_HelloWorldProg${TEST_MPI_1_SUFFIX} .* Passed"
+      "WithSubpackagesA_test_of_a .* Passed"
+      "WithSubpackagesB_test_of_b .* Passed"
+      "100% tests passed, 0 tests failed out of 4"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+# NOTE: The above test checks that a reduced source tarball can be created and
+# can be configured from the resourced source tree.
+
+
+########################################################################
+
+
 if (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
   execute_process(COMMAND whoami
