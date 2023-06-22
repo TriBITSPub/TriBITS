@@ -472,7 +472,7 @@ that satisfies the following properties:
 * Calls ``find_dependency()`` or the equivalent for all upstream packages that
   it depends on.
 * Every upstream dependent package ``<UpstreamTpl>`` has the target
-  ``<UpstreamTpl>::all_libs``.  (But a non-fully TriBITS-compliant external
+  ``<UpstreamTpl>::all_libs``.  (But a minimally TriBITS-compliant external
   package need not define this for all of its upstream dependencies.)
 
 That means that when calling ``find_package()`` for a fully TriBITS-compliant

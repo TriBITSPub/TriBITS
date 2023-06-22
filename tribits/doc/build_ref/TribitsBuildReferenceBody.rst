@@ -1996,7 +1996,7 @@ external packages has several consequences:
 * The definition of any TriBITS external packages/TPLs that are enabled
   upstream dependencies from any of these external packages should be defined
   automatically and will **not** be found again. (But there can be exceptions
-  for non-fully TriBITS-compliant external packages; see the section
+  for minimally TriBITS-compliant external packages; see the section
   "TriBITS-Compliant External Packages" in the "TriBITS Users Guide".)
 
 The logic for treating internally defined packages as external packages will
