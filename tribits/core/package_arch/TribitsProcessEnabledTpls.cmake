@@ -43,6 +43,7 @@ include(TribitsExternalPackageWithImportedTargetsFindTplModuleHelpers)
 include(TribitsExternalPackageWriteConfigFile)
 include(TribitsTplFindIncludeDirsAndLibraries)
 include(TribitsGeneralMacros)
+include(TribitsConfigureTiming)
 
 # Standard TriBITS utilities includes
 include(AppendStringVar)
