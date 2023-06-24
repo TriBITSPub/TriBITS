@@ -1391,6 +1391,8 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
 
 if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
 
+  set(minSecRegex "[0-9][0-9]*m[0-9][0-9]*[.][0-9][0-9]*s")
+
   tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran_ConfigTiming
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1408,13 +1410,13 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DTribitsExProj_ENABLE_CONFIGURE_TIMING=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
-        "Total time to read in all dependencies files and build dependencies graph: "
-        "Total time to adjust package and TPL enables: "
-        "Total time to probe and setup the environment: "
-        "Total time to configure enabled external packages/TPLs: "
-        "Total time to configure enabled packages: "
-        "Total time to set up for CPack packaging: "
-        "Total time to configure TribitsExProj: "
+        "Total time to read in all dependencies files and build dependencies graph: ${minSecRegex}"
+        "Total time to adjust package and TPL enables: ${minSecRegex}"
+        "Total time to probe and setup the environment: ${minSecRegex}"
+        "Total time to configure enabled external packages/TPLs: ${minSecRegex}"
+        "Total time to configure enabled packages: ${minSecRegex}"
+        "Total time to set up for CPack packaging: ${minSecRegex}"
+        "Total time to configure TribitsExProj: ${minSecRegex}"
         "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
         "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
 
@@ -1424,15 +1426,15 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DTribitsExProj_ENABLE_PACKAGE_CONFIGURE_TIMING=ON
         .
       PASS_REGULAR_EXPRESSION_ALL
-        "Total time to read in all dependencies files and build dependencies graph: "
-        "Total time to adjust package and TPL enables: "
-        "Total time to probe and setup the environment: "
-        "Total time to configure enabled external packages/TPLs: "
-        "-- Total time to configure top-level package SimpleCxx: "
-        "-- Total time to configure top-level package WithSubpackages: "
-        "Total time to configure enabled packages: "
-        "Total time to set up for CPack packaging: "
-        "Total time to configure TribitsExProj: "
+        "Total time to read in all dependencies files and build dependencies graph: ${minSecRegex}"
+        "Total time to adjust package and TPL enables: ${minSecRegex}"
+        "Total time to probe and setup the environment: ${minSecRegex}"
+        "Total time to configure enabled external packages/TPLs: ${minSecRegex}"
+        "-- Total time to configure top-level package SimpleCxx: ${minSecRegex}"
+        "-- Total time to configure top-level package WithSubpackages: ${minSecRegex}"
+        "Total time to configure enabled packages: ${minSecRegex}"
+        "Total time to set up for CPack packaging: ${minSecRegex}"
+        "Total time to configure TribitsExProj: ${minSecRegex}"
 
     TEST_2 CMND ${CMAKE_COMMAND}
       MESSAGE "Reconfigure to test out timing of just one package"
@@ -1441,14 +1443,14 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DSimpleCxx_PACKAGE_CONFIGURE_TIMING=ON
         .
       PASS_REGULAR_EXPRESSION_ALL
-        "Total time to read in all dependencies files and build dependencies graph: "
-        "Total time to adjust package and TPL enables: "
-        "Total time to probe and setup the environment: "
-        "Total time to configure enabled external packages/TPLs: "
-        "-- Total time to configure top-level package SimpleCxx: "
-        "Total time to configure enabled packages: "
-        "Total time to set up for CPack packaging: "
-        "Total time to configure TribitsExProj: "
+        "Total time to read in all dependencies files and build dependencies graph: ${minSecRegex}"
+        "Total time to adjust package and TPL enables: ${minSecRegex}"
+        "Total time to probe and setup the environment: ${minSecRegex}"
+        "Total time to configure enabled external packages/TPLs: ${minSecRegex}"
+        "-- Total time to configure top-level package SimpleCxx: ${minSecRegex}"
+        "Total time to configure enabled packages: ${minSecRegex}"
+        "Total time to set up for CPack packaging: ${minSecRegex}"
+        "Total time to configure TribitsExProj: ${minSecRegex}"
 
     )
 
