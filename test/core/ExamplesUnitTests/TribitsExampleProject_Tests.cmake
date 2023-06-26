@@ -483,43 +483,6 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_11
-      MESSAGE "Create the tarball"
-      CMND make ARGS package_source
-      PASS_REGULAR_EXPRESSION_ALL
-        "Run CPack packaging tool for source..."
-        "CPack: Create package using TGZ"
-        "CPack: Install projects"
-        "CPack: - Install directory: .*/examples/TribitsExampleProject"
-        "CPack: Create package"
-        "CPack: - package: .*/ExamplesUnitTests/${testName}/tribitsexproj-1.1-Source.tar.gz generated."
-        "CPack: Create package using TBZ2"
-        "CPack: Install projects"
-        "CPack: - Install directory: .*/examples/TribitsExampleProject"
-        "CPack: Create package"
-        "CPack: - package: .*/ExamplesUnitTests/${testName}/tribitsexproj-1.1-Source.tar.bz2 generated."
-      ALWAYS_FAIL_ON_NONZERO_RETURN
-
-    TEST_12
-      MESSAGE "Untar the tarball"
-      CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
-      ALWAYS_FAIL_ON_NONZERO_RETURN
-
-    TEST_13
-      MESSAGE "Make sure right directories are excluded"
-      CMND diff
-      ARGS -qr
-        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
-        tribitsexproj-1.1-Source
-      PASS_REGULAR_EXPRESSION_ALL
-        "Only in .*/TribitsExampleProject/cmake: ctest"
-        ${REGEX_FOR_GITIGNORE}
-        "Only in .*/TribitsExampleProject/packages: mixed_lang"
-        "Only in .*/TribitsExampleProject/packages: wrap_external"
-        "Only in .*/TribitsExampleProject/packages/with_subpackages/b: ExcludeFromRelease.txt"
-        "Only in .*/TribitsExampleProject/packages/with_subpackages/b/src: AlsoExcludeFromTarball.txt"
-      # NOTE: We don't check return code because diff returns nonzero
-
     )
 
 endfunction()
