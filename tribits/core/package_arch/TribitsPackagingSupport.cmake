@@ -163,9 +163,8 @@ macro(tribits_setup_packaging_and_distribution)
       string(REGEX MATCH "[.][.]/" RELATIVE_PATH_CHARS_MATCH
         ${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
       if ("${RELATIVE_PATH_CHARS_MATCH}" STREQUAL "")
-        set(CPACK_SOURCE_IGNORE_FILES
-          "${PROJECT_SOURCE_DIR}/${${TRIBITS_PACKAGE}_REL_SOURCE_DIR}/"
-          ${CPACK_SOURCE_IGNORE_FILES})
+        list(PREPEND CPACK_SOURCE_IGNORE_FILES
+          "${PROJECT_SOURCE_DIR}/${${TRIBITS_PACKAGE}_REL_SOURCE_DIR}/")
       else()
         find_path(ABSOLUTE_PATH  CMakeLists.txt  PATHS
           "${PROJECT_SOURCE_DIR}/${${TRIBITS_PACKAGE}_REL_SOURCE_DIR}"
@@ -175,15 +174,14 @@ macro(tribits_setup_packaging_and_distribution)
             " ${TRIBITS_PACKAGE} but package was missing a CMakeLists.txt file."
             " This disabled package will likely not be excluded from a source release")
         endif()
-        set(CPACK_SOURCE_IGNORE_FILES ${ABSOLUTE_PATH} ${CPACK_SOURCE_IGNORE_FILES})
+        list(PREPEND CPACK_SOURCE_IGNORE_FILES "${ABSOLUTE_PATH}")
       endif()
     endif()
 
   endforeach()
 
   # Add excludes for VC files/dirs
-  set(CPACK_SOURCE_IGNORE_FILES
-    ${CPACK_SOURCE_IGNORE_FILES}
+  list(APPEND CPACK_SOURCE_IGNORE_FILES
     /[.]git/
     [.]gitignore$
     )
