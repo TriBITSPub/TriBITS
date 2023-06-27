@@ -553,6 +553,7 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
       -DTribitsExProj_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
+      -DTribitsExProj_DUMP_CPACK_SOURCE_IGNORE_FILES=ON
       -DCPACK_SOURCE_IGNORE_FILES=LICENSE<semicolon>README.md
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
@@ -560,6 +561,10 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
       "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
       "Final set of non-enabled top-level packages:  MixedLang WrapExternal 2"
       "Final set of non-enabled packages:  MixedLang WithSubpackagesC WrapExternal 3"
+      "Exclude files when building source packages:"
+      "/...git/"  # /[.]git/
+      "...gitignore[$]"  # [.]gitignore$ 
+      ".*/tribits/examples/TribitsExampleProject/cmake/ctest/"
       "-- Configuring done"
       "-- Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -597,6 +602,7 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
     PASS_REGULAR_EXPRESSION_ALL
       "Only in .*/TribitsExampleProject/cmake: ctest"
       ${REGEX_FOR_GITIGNORE}
+      "Only in .*/TribitsExampleProject: .gitignore"
       "Only in .*/TribitsExampleProject: LICENSE"
       "Only in .*/TribitsExampleProject: README.md"
       "Only in .*/TribitsExampleProject/packages: mixed_lang"
@@ -624,7 +630,7 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DTribitsExProj_ASSERT_DEFINED_DEPENDENCIES=OFF
+      -DTribitsExProj_ASSERT_DEFINED_DEPENDENCIES=WARNING
       ../tribitsexproj-1.1-Source
     PASS_REGULAR_EXPRESSION_ALL
       "CMake Warning at .*/tribits/core/package_arch/TribitsProcessPackagesAndDirsLists.cmake"
