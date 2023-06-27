@@ -222,10 +222,10 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date<span class="colon">:</span></dt>
-<dd class="field-odd"><p>2023-06-07</p>
+<dd class="field-odd"><p>2023-06-27</p>
 </dd>
 <dt class="field-even">Version<span class="colon">:</span></dt>
-<dd class="field-even"><p>tribits_start-3279-ga0d42933</p>
+<dd class="field-even"><p>tribits_start-3289-g6d9eaef0</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -2153,7 +2153,7 @@ these internally defined packages being treated as external packages.
 <li><p>The definition of any TriBITS external packages/TPLs that are enabled
 upstream dependencies from any of these external packages should be defined
 automatically and will <strong>not</strong> be found again. (But there can be exceptions
-for non-fully TriBITS-compliant external packages; see the section
+for minimally TriBITS-compliant external packages; see the section
 “TriBITS-Compliant External Packages” in the “TriBITS Users Guide”.)</p></li>
 </ul>
 <p>The logic for treating internally defined packages as external packages will
@@ -4095,14 +4095,22 @@ match files to exclude, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_DUMP_CPACK_SOURCE_IGNORE_FILES</span><span class="o">=</span><span class="n">ON</span>
 </pre></div>
 </div>
+<p>Extra directories or files can be excluded from the reduced source tarball by
+adding the configure argument:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;-DCPACK_SOURCE_IGNORE_FILES=&lt;extra-exclude-regex-0&gt;;&lt;extra-exclude-regex-1&gt;;...&quot;</span>
+</pre></div>
+</div>
+<p>NOTE: The entries in <code class="docutils literal notranslate"><span class="pre">CPACK_SOURCE_IGNORE_FILES</span></code> are regexes and <strong>not</strong>
+file globs, so be careful when specifying these or more files and directories
+will be excluded from the reduced source tarball that intended/desired.</p>
 <p>While a set of default CPack source generator types is defined for this
 project (see the <code class="docutils literal notranslate"><span class="pre">CMakeCache.txt</span></code> file), it can be overridden using, for
 example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_CPACK_SOURCE_GENERATOR</span><span class="o">=</span><span class="s2">&quot;TGZ;TBZ2&quot;</span>
 </pre></div>
 </div>
-<p>(see CMake documentation to find out the types of supported CPack source
-generators on your system).</p>
+<p>(See CMake documentation to find out the types of CPack source generators
+supported on your system.)</p>
 <p>NOTE: When configuring from an untarred source tree that has missing packages,
 one must configure with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ASSERT_DEFINED_DEPENDENCIES</span><span class="o">=</span><span class="n">OFF</span>
@@ -4128,7 +4136,7 @@ package-by-package on CDash.</p></li>
 </ul>
 <p>For more details, see <a class="reference external" href="TribitsUsersGuide.html#tribits-ctest-driver">tribits_ctest_driver()</a>.</p>
 <p>To use the <code class="docutils literal notranslate"><span class="pre">dashboard</span></code> target, first, configure as normal but add cache vars
-for the the build and test parallel levels with:</p>
+for the build and test parallel levels with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DCTEST_BUILD_FLAGS</span><span class="o">=-</span><span class="n">j4</span> <span class="o">-</span><span class="n">DCTEST_PARALLEL_LEVEL</span><span class="o">=</span><span class="mi">4</span>
 </pre></div>
 </div>

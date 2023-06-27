@@ -449,10 +449,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2023-06-07</p>
+<dd class="field-even"><p>2023-06-27</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3279-ga0d42933</p>
+<dd class="field-odd"><p>tribits_start-3289-g6d9eaef0</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -3675,13 +3675,13 @@ and variables for a TriBITS-compliant external package are defined when the
 </ul>
 <p>NOTE: TriBITS-compliant external packages that provide TriBITS-compliant
 external packages for all of their upstream dependencies are said to be <em>fully
-TriBITS-compliant external packages</em> while those that don’t are said to be
-<em>non-fully TriBITS-compliant external packages</em>.  The TriBITS external
-package/TPL system is robust enough to deal with non-fully TriBITS-compliant
-external packages.  Any TriBITS external packages/TPLs upstream from a
-non-fully TriBITS-compliant external package will be found again in the
-current TriBITS project.  (In these cases, it is up to the user to make sure
-that the same upstream packages are found.)</p>
+TriBITS-compliant external packages</em> while those that support the minimal
+requirements are said to be <em>minimally TriBITS-compliant external packages</em>.
+The TriBITS external package/TPL system is robust enough to deal with
+minimally TriBITS-compliant external packages.  Any TriBITS external
+packages/TPLs upstream from a minimally TriBITS-compliant external package
+will be found again in the current TriBITS project.  (In these cases, it is up
+to the user to make sure that the same upstream packages are found.)</p>
 </section>
 </section>
 <section id="example-tribits-projects">
@@ -14157,7 +14157,7 @@ This will, however, result in changes in non-dependent subpackages being
 considered as well.</p>
 <p>See the demonstration of the usage of this function in the <code class="docutils literal notranslate"><span class="pre">WrapExternal</span></code>
 package in <a class="reference internal" href="#tribitsexampleproject">TribitsExampleProject</a>.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:471</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:474</p>
 </section>
 <section id="tribits-disable-optional-dependency">
 <h3><a class="toc-backref" href="#id145" role="doc-backlink">tribits_disable_optional_dependency()</a><a class="headerlink" href="#tribits-disable-optional-dependency" title="Permalink to this heading"></a></h3>
@@ -14218,7 +14218,7 @@ never get added to <code class="docutils literal notranslate"><span class="pre">
 and one must be very careful to understand how CPack will use these regexes
 to match files that get excluded from the tarball.  For more details, see
 <a class="reference internal" href="#creating-source-distributions">Creating Source Distributions</a>.</p>
-<p>In: core/package_arch/TribitsGlobalMacros.cmake:2492</p>
+<p>In: core/package_arch/TribitsPackagingSupport.cmake:49</p>
 </section>
 <section id="tribits-extpkg-define-dependencies">
 <h3><a class="toc-backref" href="#id148" role="doc-backlink">tribits_extpkg_define_dependencies()</a><a class="headerlink" href="#tribits-extpkg-define-dependencies" title="Permalink to this heading"></a></h3>
@@ -14459,7 +14459,7 @@ its timestamp.</p>
 passing in a set of basic exclude regexes like <code class="docutils literal notranslate"><span class="pre">CMakeFiles/</span></code>,
 <code class="docutils literal notranslate"><span class="pre">[.]cmake$</span></code>, and <code class="docutils literal notranslate"><span class="pre">/Makefile$</span></code>, etc.  These types of files usually don’t
 impact the build of downstream software in CMake projects.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:382</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:385</p>
 </section>
 <section id="tribits-find-most-recent-file-timestamp">
 <h3><a class="toc-backref" href="#id155" role="doc-backlink">tribits_find_most_recent_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-file-timestamp" title="Permalink to this heading"></a></h3>
@@ -14539,7 +14539,7 @@ all directories.</p>
 all of the directories and prints and returns in the variables
 <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentTimestamp&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentFilepathBaseDir&gt;</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">&lt;mostRecentRelativeFilePath&gt;</span></code>.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:43</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:46</p>
 </section>
 <section id="tribits-find-most-recent-source-file-timestamp">
 <h3><a class="toc-backref" href="#id156" role="doc-backlink">tribits_find_most_recent_source_file_timestamp()</a><a class="headerlink" href="#tribits-find-most-recent-source-file-timestamp" title="Permalink to this heading"></a></h3>
@@ -14561,7 +14561,7 @@ its timestamp.</p>
 passing in a set of basic exclude regexes like <code class="docutils literal notranslate"><span class="pre">[.]git/</span></code>, <code class="docutils literal notranslate"><span class="pre">[.]svn/</span></code>,
 etc.  These types of version control files can not possibly directly impact
 the source code.</p>
-<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:296</p>
+<p>In: core/package_arch/TribitsFindMostRecentFileTimestamp.cmake:299</p>
 </section>
 <section id="tribits-install-headers">
 <h3><a class="toc-backref" href="#id157" role="doc-backlink">tribits_install_headers()</a><a class="headerlink" href="#tribits-install-headers" title="Permalink to this heading"></a></h3>
@@ -14946,7 +14946,7 @@ called in the parent packages top-level <a class="reference internal" href="#pac
 <section id="tribits-process-enabled-standard-tpl">
 <h3><a class="toc-backref" href="#id166" role="doc-backlink">tribits_process_enabled_standard_tpl()</a><a class="headerlink" href="#tribits-process-enabled-standard-tpl" title="Permalink to this heading"></a></h3>
 <p>Process an enabled TPL’s FindTPL${TPL_NAME}.cmake module.</p>
-<p>In: core/package_arch/TribitsProcessEnabledTpls.cmake:153</p>
+<p>In: core/package_arch/TribitsProcessEnabledTpls.cmake:154</p>
 </section>
 <section id="id5">
 <h3><a class="toc-backref" href="#id167" role="doc-backlink">tribits_project()</a><a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
@@ -15076,7 +15076,7 @@ misspelled set variable is just ignored.</p></li>
 TriBITS projects that have just a single package or by default just want to
 enable all packages.  This is especially useful when you have a TriBITS
 project with just a single package.</p>
-<p>In: core/package_arch/TribitsProjectImpl.cmake:323</p>
+<p>In: core/package_arch/TribitsProjectImpl.cmake:327</p>
 </section>
 <section id="tribits-repository-define-packages">
 <h3><a class="toc-backref" href="#id170" role="doc-backlink">tribits_repository_define_packages()</a><a class="headerlink" href="#tribits-repository-define-packages" title="Permalink to this heading"></a></h3>
@@ -15250,7 +15250,7 @@ is always set to <code class="docutils literal notranslate"><span class="pre">ON
 considered <code class="docutils literal notranslate"><span class="pre">ST</span></code> for development mode (thereby reducing testing time by not
 enabling the dependent features/tests), while still having important
 functionality available to users by default in a release of the package.</p>
-<p>In: core/package_arch/TribitsGeneralMacros.cmake:148</p>
+<p>In: core/package_arch/TribitsGeneralMacros.cmake:92</p>
 </section>
 <section id="id6">
 <h3><a class="toc-backref" href="#id174" role="doc-backlink">tribits_subpackage()</a><a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
@@ -16798,7 +16798,7 @@ CMake target.</p></li>
 <li><p>Calls <code class="docutils literal notranslate"><span class="pre">find_dependency()</span></code> or the equivalent for all upstream packages that
 it depends on.</p></li>
 <li><p>Every upstream dependent package <code class="docutils literal notranslate"><span class="pre">&lt;UpstreamTpl&gt;</span></code> has the target
-<code class="docutils literal notranslate"><span class="pre">&lt;UpstreamTpl&gt;::all_libs</span></code>.  (But a non-fully TriBITS-compliant external
+<code class="docutils literal notranslate"><span class="pre">&lt;UpstreamTpl&gt;::all_libs</span></code>.  (But a minimally TriBITS-compliant external
 package need not define this for all of its upstream dependencies.)</p></li>
 </ul>
 <p>That means that when calling <code class="docutils literal notranslate"><span class="pre">find_package()</span></code> for a fully TriBITS-compliant
@@ -17021,7 +17021,7 @@ understand the internals of TriBITS.</p>
 error message also suggests that the package might be defining an upstream
 dependency on a downstream dependency (i.e. a circular dependency).</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:698</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:697</p>
 </section>
 <section id="tribits-abort-on-self-dep">
 <h3><a class="toc-backref" href="#id242" role="doc-backlink">tribits_abort_on_self_dep()</a><a class="headerlink" href="#tribits-abort-on-self-dep" title="Permalink to this heading"></a></h3>
@@ -17032,7 +17032,7 @@ dependency on a downstream dependency (i.e. a circular dependency).</p>
 <p>Prints a fatal error message for an attempt for a self dependency
 declaration and which list it comes from.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:727</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:726</p>
 </section>
 <section id="tribits-adjust-package-enables">
 <h3><a class="toc-backref" href="#id243" role="doc-backlink">tribits_adjust_package_enables()</a><a class="headerlink" href="#tribits-adjust-package-enables" title="Permalink to this heading"></a></h3>
@@ -17062,7 +17062,7 @@ graph</a>.</p>
 dependencies for a given <code class="docutils literal notranslate"><span class="pre">&lt;packageName&gt;</span></code> by the downstream packages that
 declare dependencies on it.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:600</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:599</p>
 </section>
 <section id="tribits-assert-read-dependency-vars">
 <h3><a class="toc-backref" href="#id245" role="doc-backlink">tribits_assert_read_dependency_vars()</a><a class="headerlink" href="#tribits-assert-read-dependency-vars" title="Permalink to this heading"></a></h3>
@@ -17074,7 +17074,7 @@ declare dependencies on it.</p>
 <a class="reference internal" href="#tribits-package-define-dependencies">tribits_package_define_dependencies()</a> in the file
 <a class="reference internal" href="#packagedir-cmake-dependencies-cmake">&lt;packageDir&gt;/cmake/Dependencies.cmake</a> have been set.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:360</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:359</p>
 </section>
 <section id="tribits-dump-package-dependencies-info">
 <h3><a class="toc-backref" href="#id246" role="doc-backlink">tribits_dump_package_dependencies_info()</a><a class="headerlink" href="#tribits-dump-package-dependencies-info" title="Permalink to this heading"></a></h3>
@@ -17380,7 +17380,7 @@ defined packages, and defines user cache var options for those subpackages.</p>
 </ul>
 </div></blockquote>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:751</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:750</p>
 </section>
 <section id="tribits-prep-to-read-dependencies">
 <h3><a class="toc-backref" href="#id263" role="doc-backlink">tribits_prep_to_read_dependencies()</a><a class="headerlink" href="#tribits-prep-to-read-dependencies" title="Permalink to this heading"></a></h3>
@@ -17400,7 +17400,7 @@ defined packages, and defines user cache var options for those subpackages.</p>
 <p>for each of the forward/downstream package/dependency in <a class="reference internal" href="#variables-defining-the-package-dependencies-graph">Variables defining
 the package dependencies graph</a>.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:319</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:318</p>
 </section>
 <section id="tribits-process-all-repository-deps-setup-files">
 <h3><a class="toc-backref" href="#id264" role="doc-backlink">tribits_process_all_repository_deps_setup_files()</a><a class="headerlink" href="#tribits-process-all-repository-deps-setup-files" title="Permalink to this heading"></a></h3>
@@ -17414,7 +17414,7 @@ the package dependencies graph</a>.</p>
 <p>Gather information and targets from enabled TPLs</p>
 <p>For more info, see <a class="reference internal" href="#processing-of-external-packages-tpls-and-tribits-compliant-external-packages">Processing of external packages/TPLs and
 TriBITS-compliant external packages</a>.</p>
-<p>In: core/package_arch/TribitsProcessEnabledTpls.cmake:53</p>
+<p>In: core/package_arch/TribitsProcessEnabledTpls.cmake:54</p>
 </section>
 <section id="tribits-process-package-dependencies-lists">
 <h3><a class="toc-backref" href="#id266" role="doc-backlink">tribits_process_package_dependencies_lists()</a><a class="headerlink" href="#tribits-process-package-dependencies-lists" title="Permalink to this heading"></a></h3>
@@ -17429,7 +17429,7 @@ upstream packages for this package <code class="docutils literal notranslate"><s
 incrementally.  (The forward dependency list vars are initialized to empty
 in <a class="reference internal" href="#tribits-prep-to-read-dependencies">tribits_prep_to_read_dependencies()</a>.)</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:438</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:437</p>
 </section>
 <section id="tribits-process-packages-and-dirs-lists">
 <h3><a class="toc-backref" href="#id267" role="doc-backlink">tribits_process_packages_and_dirs_lists()</a><a class="headerlink" href="#tribits-process-packages-and-dirs-lists" title="Permalink to this heading"></a></h3>
@@ -17553,7 +17553,7 @@ and more specifically the sections:</p>
 <li><p><a class="reference internal" href="#tribits-package-cache-variables">TriBITS Package Cache Variables</a></p></li>
 </ul>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake:52</p>
+<p>In: core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake:53</p>
 </section>
 <section id="tribits-read-back-dependencies-vars">
 <h3><a class="toc-backref" href="#id272" role="doc-backlink">tribits_read_back_dependencies_vars()</a><a class="headerlink" href="#tribits-read-back-dependencies-vars" title="Permalink to this heading"></a></h3>
@@ -17564,7 +17564,7 @@ and more specifically the sections:</p>
 <p>Read back the local package dependency vars from the saved-off vars with
 suffix <code class="docutils literal notranslate"><span class="pre">_&lt;postfix&gt;</span></code>.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:412</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:411</p>
 </section>
 <section id="tribits-read-defined-external-and-internal-toplevel-packages-lists">
 <h3><a class="toc-backref" href="#id273" role="doc-backlink">tribits_read_defined_external_and_internal_toplevel_packages_lists()</a><a class="headerlink" href="#tribits-read-defined-external-and-internal-toplevel-packages-lists" title="Permalink to this heading"></a></h3>
@@ -17608,7 +17608,7 @@ to get the list of defined external packages (TPLs) and internal top-level
 </div></blockquote>
 <p>which set their variables.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a></p>
-<p>In: core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake:94</p>
+<p>In: core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake:95</p>
 </section>
 <section id="tribits-read-deps-files-create-deps-graph">
 <h3><a class="toc-backref" href="#id274" role="doc-backlink">tribits_read_deps_files_create_deps_graph()</a><a class="headerlink" href="#tribits-read-deps-files-create-deps-graph" title="Permalink to this heading"></a></h3>
@@ -17657,7 +17657,7 @@ variable:</p>
 </pre></div>
 </div>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:196</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:195</p>
 </section>
 <section id="tribits-read-package-subpackage-deps-files-add-to-graph">
 <h3><a class="toc-backref" href="#id276" role="doc-backlink">tribits_read_package_subpackage_deps_files_add_to_graph()</a><a class="headerlink" href="#tribits-read-package-subpackage-deps-files-add-to-graph" title="Permalink to this heading"></a></h3>
@@ -17668,7 +17668,7 @@ variable:</p>
 <p>Read in subpackages dependencies files and add to dependencies graph
 variables.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:882</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:881</p>
 </section>
 <section id="tribits-read-subpackage-deps-file-add-to-graph">
 <h3><a class="toc-backref" href="#id277" role="doc-backlink">tribits_read_subpackage_deps_file_add_to_graph()</a><a class="headerlink" href="#tribits-read-subpackage-deps-file-add-to-graph" title="Permalink to this heading"></a></h3>
@@ -17681,7 +17681,7 @@ variables.</p>
 <a class="reference internal" href="#packagedir-spkgdir-cmake-dependencies-cmake">&lt;packageDir&gt;/&lt;spkgDir&gt;/cmake/Dependencies.cmake</a> and sets up the
 dependency structure for it.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:906</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:905</p>
 </section>
 <section id="tribits-read-toplevel-package-deps-files-add-to-graph">
 <h3><a class="toc-backref" href="#id278" role="doc-backlink">tribits_read_toplevel_package_deps_files_add_to_graph()</a><a class="headerlink" href="#tribits-read-toplevel-package-deps-files-add-to-graph" title="Permalink to this heading"></a></h3>
@@ -17704,7 +17704,7 @@ graph</a>).</p>
 order and then this top-level package is appended and dependencies are
 created for them.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:233</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:232</p>
 </section>
 <section id="tribits-save-off-dependency-vars">
 <h3><a class="toc-backref" href="#id279" role="doc-backlink">tribits_save_off_dependency_vars()</a><a class="headerlink" href="#tribits-save-off-dependency-vars" title="Permalink to this heading"></a></h3>
@@ -17714,7 +17714,7 @@ created for them.</p>
 </div>
 <p>Saves off package dependency variables with variable suffix <code class="docutils literal notranslate"><span class="pre">_&lt;postfix&gt;</span></code>.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:387</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:386</p>
 </section>
 <section id="tribits-set-dep-packages">
 <h3><a class="toc-backref" href="#id280" role="doc-backlink">tribits_set_dep_packages()</a><a class="headerlink" href="#tribits-set-dep-packages" title="Permalink to this heading"></a></h3>
@@ -17741,7 +17741,7 @@ vars read in from the macro <a class="reference internal" href="#tribits-package
 this package if this is a required dependency).</p></li>
 </ul>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a>.</p>
-<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:482</p>
+<p>In: core/package_arch/TribitsReadDepsFilesCreateDepsGraph.cmake:481</p>
 </section>
 <section id="tribits-trace-file-processing">
 <h3><a class="toc-backref" href="#id281" role="doc-backlink">tribits_trace_file_processing()</a><a class="headerlink" href="#tribits-trace-file-processing" title="Permalink to this heading"></a></h3>
@@ -17758,7 +17758,7 @@ this package if this is a required dependency).</p></li>
 “CONFIGURE”</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">&lt;filePath&gt;</span></code>: Path of the file being processed</p></li>
 </ul>
-<p>In: core/package_arch/TribitsGeneralMacros.cmake:189</p>
+<p>In: core/package_arch/TribitsGeneralMacros.cmake:133</p>
 </section>
 <section id="tribits-write-package-client-export-files-install-targets">
 <h3><a class="toc-backref" href="#id282" role="doc-backlink">tribits_write_package_client_export_files_install_targets()</a><a class="headerlink" href="#tribits-write-package-client-export-files-install-targets" title="Permalink to this heading"></a></h3>
@@ -17786,7 +17786,7 @@ allow you to call the routine, even if you if() it out!</p>
 </div>
 <p>Macro that outputs XML dependency files if asked based in the global project
 package dependency graph previously constructed.</p>
-<p>In: ci_support/TribitsWriteXmlDependenciesFiles.cmake:48</p>
+<p>In: ci_support/TribitsWriteXmlDependenciesFiles.cmake:51</p>
 </section>
 <section id="tribits-write-xml-dependency-files-if-supported">
 <h3><a class="toc-backref" href="#id284" role="doc-backlink">tribits_write_xml_dependency_files_if_supported()</a><a class="headerlink" href="#tribits-write-xml-dependency-files-if-supported" title="Permalink to this heading"></a></h3>
@@ -17797,7 +17797,7 @@ package dependency graph previously constructed.</p>
 <p>Function that writes XML dependency files if support for that exists in this
 instance of TriBITs.</p>
 <p>See <a class="reference internal" href="#function-call-tree-for-constructing-package-dependency-graph">Function call tree for constructing package dependency graph</a></p>
-<p>In: core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake:250</p>
+<p>In: core/package_arch/TribitsReadAllProjectDepsFilesCreateDepsGraph.cmake:251</p>
 </section>
 </section>
 </section>
