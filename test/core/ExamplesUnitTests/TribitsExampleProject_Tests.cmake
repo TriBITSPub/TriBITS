@@ -536,6 +536,7 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOSTTYPE Darwin
+  LIST_SEPARATOR <semicolon>
 
   TEST_0
     MESSAGE "Do the initial configure selecting the packages to go into the reduced tarball"
@@ -552,6 +553,7 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
       -DTribitsExProj_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
       -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
+      -DCPACK_SOURCE_IGNORE_FILES=LICENSE<semicolon>README.md
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
@@ -595,6 +597,8 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
     PASS_REGULAR_EXPRESSION_ALL
       "Only in .*/TribitsExampleProject/cmake: ctest"
       ${REGEX_FOR_GITIGNORE}
+      "Only in .*/TribitsExampleProject: LICENSE"
+      "Only in .*/TribitsExampleProject: README.md"
       "Only in .*/TribitsExampleProject/packages: mixed_lang"
       "Only in .*/TribitsExampleProject/packages: wrap_external"
       "Only in .*/TribitsExampleProject/packages/with_subpackages/b: ExcludeFromRelease.txt"
