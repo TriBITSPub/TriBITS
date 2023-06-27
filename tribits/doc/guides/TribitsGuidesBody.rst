@@ -2728,13 +2728,13 @@ The requirements for **TriBITS-compliant external packages** are:
 
 NOTE: TriBITS-compliant external packages that provide TriBITS-compliant
 external packages for all of their upstream dependencies are said to be *fully
-TriBITS-compliant external packages* while those that don't are said to be
-*non-fully TriBITS-compliant external packages*.  The TriBITS external
-package/TPL system is robust enough to deal with non-fully TriBITS-compliant
-external packages.  Any TriBITS external packages/TPLs upstream from a
-non-fully TriBITS-compliant external package will be found again in the
-current TriBITS project.  (In these cases, it is up to the user to make sure
-that the same upstream packages are found.)
+TriBITS-compliant external packages* while those that support the minimal
+requirements are said to be *minimally TriBITS-compliant external packages*.
+The TriBITS external package/TPL system is robust enough to deal with
+minimally TriBITS-compliant external packages.  Any TriBITS external
+packages/TPLs upstream from a minimally TriBITS-compliant external package
+will be found again in the current TriBITS project.  (In these cases, it is up
+to the user to make sure that the same upstream packages are found.)
 
 
 Example TriBITS Projects

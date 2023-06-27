@@ -483,43 +483,6 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_11
-      MESSAGE "Create the tarball"
-      CMND make ARGS package_source
-      PASS_REGULAR_EXPRESSION_ALL
-        "Run CPack packaging tool for source..."
-        "CPack: Create package using TGZ"
-        "CPack: Install projects"
-        "CPack: - Install directory: .*/examples/TribitsExampleProject"
-        "CPack: Create package"
-        "CPack: - package: .*/ExamplesUnitTests/${testName}/tribitsexproj-1.1-Source.tar.gz generated."
-        "CPack: Create package using TBZ2"
-        "CPack: Install projects"
-        "CPack: - Install directory: .*/examples/TribitsExampleProject"
-        "CPack: Create package"
-        "CPack: - package: .*/ExamplesUnitTests/${testName}/tribitsexproj-1.1-Source.tar.bz2 generated."
-      ALWAYS_FAIL_ON_NONZERO_RETURN
-
-    TEST_12
-      MESSAGE "Untar the tarball"
-      CMND tar ARGS -xzf tribitsexproj-1.1-Source.tar.gz
-      ALWAYS_FAIL_ON_NONZERO_RETURN
-
-    TEST_13
-      MESSAGE "Make sure right directories are excluded"
-      CMND diff
-      ARGS -qr
-        ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
-        tribitsexproj-1.1-Source
-      PASS_REGULAR_EXPRESSION_ALL
-        "Only in .*/TribitsExampleProject/cmake: ctest"
-        ${REGEX_FOR_GITIGNORE}
-        "Only in .*/TribitsExampleProject/packages: mixed_lang"
-        "Only in .*/TribitsExampleProject/packages: wrap_external"
-        "Only in .*/TribitsExampleProject/packages/with_subpackages/b: ExcludeFromRelease.txt"
-        "Only in .*/TribitsExampleProject/packages/with_subpackages/b/src: AlsoExcludeFromTarball.txt"
-      # NOTE: We don't check return code because diff returns nonzero
-
     )
 
 endfunction()
@@ -564,6 +527,149 @@ endfunction()
 
 TribitsExampleProject_ALL_ST_NoFortran(STATIC  SERIAL)
 TribitsExampleProject_ALL_ST_NoFortran(SHARED  MPI)
+
+
+########################################################################
+
+
+tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Darwin
+  LIST_SEPARATOR <semicolon>
+
+  TEST_0
+    MESSAGE "Do the initial configure selecting the packages to go into the reduced tarball"
+    WORKING_DIRECTORY BUILD
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+      -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_WithSubpackagesB=ON
+      -DTribitsExProj_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION=ON
+      -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON
+      -DTribitsExProj_ENABLE_CPACK_PACKAGING=ON
+      -DCPACK_SOURCE_IGNORE_FILES=LICENSE<semicolon>README.md
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
+      "Final set of non-enabled top-level packages:  MixedLang WrapExternal 2"
+      "Final set of non-enabled packages:  MixedLang WithSubpackagesC WrapExternal 3"
+      "-- Configuring done"
+      "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Create the tarball"
+    WORKING_DIRECTORY BUILD
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make ARGS package_source
+    PASS_REGULAR_EXPRESSION_ALL
+      "Run CPack packaging tool for source..."
+      "CPack: Create package using TGZ"
+      "CPack: Install projects"
+      "CPack: - Install directory: .*/examples/TribitsExampleProject"
+      "CPack: Create package"
+      "CPack: - package: .*/BUILD/tribitsexproj-1.1-Source.tar.gz generated."
+      "CPack: Create package using TBZ2"
+      "CPack: Install projects"
+      "CPack: - Install directory: .*/examples/TribitsExampleProject"
+      "CPack: Create package"
+      "CPack: - package: .*/BUILD/tribitsexproj-1.1-Source.tar.bz2 generated."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Untar the tarball"
+    CMND tar ARGS -xzvf BUILD/tribitsexproj-1.1-Source.tar.gz
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Make sure right directories are excluded"
+    CMND diff
+    ARGS -qr
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+      tribitsexproj-1.1-Source
+    PASS_REGULAR_EXPRESSION_ALL
+      "Only in .*/TribitsExampleProject/cmake: ctest"
+      ${REGEX_FOR_GITIGNORE}
+      "Only in .*/TribitsExampleProject: LICENSE"
+      "Only in .*/TribitsExampleProject: README.md"
+      "Only in .*/TribitsExampleProject/packages: mixed_lang"
+      "Only in .*/TribitsExampleProject/packages: wrap_external"
+      "Only in .*/TribitsExampleProject/packages/with_subpackages/b: ExcludeFromRelease.txt"
+      "Only in .*/TribitsExampleProject/packages/with_subpackages/b/src: AlsoExcludeFromTarball.txt"
+      "Only in .*/TribitsExampleProject/packages/with_subpackages: c"
+    # NOTE: We don't check return code because diff returns nonzero
+
+  TEST_4
+    MESSAGE "Make empty base dir for packages/mixed_lang to trigger error"
+    CMND ${CMAKE_COMMAND}
+    ARGS -E make_directory tribitsexproj-1.1-Source/packages/mixed_lang
+
+  TEST_5
+    MESSAGE "Configure from the untarred reduced source tree"
+    WORKING_DIRECTORY BUILD2
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+      -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ASSERT_DEFINED_DEPENDENCIES=OFF
+      ../tribitsexproj-1.1-Source
+    PASS_REGULAR_EXPRESSION_ALL
+      "CMake Warning at .*/tribits/core/package_arch/TribitsProcessPackagesAndDirsLists.cmake"
+      "MixedLang: Package base directory"
+      "'.*/tribitsexproj-1.1-Source/packages/mixed_lang'"
+      "exists but the dependencies file"
+      "'.*/tribitsexproj-1.1-Source/packages/mixed_lang/cmake/Dependencies.cmake'"
+      "does [*]NOT[*] exist. Package is being ignored anyway."
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
+      "Final set of non-enabled top-level packages:  0"
+      "Final set of non-enabled packages:  0"
+      "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled top-level package: WithSubpackages [(]A, B, Tests, Examples[)]"
+      "-- Configuring done"
+      "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_6
+    MESSAGE "Build reduced project default 'all' target using raw 'make'"
+    WORKING_DIRECTORY BUILD2
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    PASS_REGULAR_EXPRESSION_ALL
+      "Built target simplecxx"
+      "Built target pws_a"
+      "Built target pws_b"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_7
+    MESSAGE "Run all the tests in reduced project with raw 'ctest'"
+    WORKING_DIRECTORY BUILD2
+    SKIP_CLEAN_WORKING_DIRECTORY
+    CMND ${CMAKE_CTEST_COMMAND} ARGS
+    PASS_REGULAR_EXPRESSION_ALL
+      "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
+      "SimpleCxx_HelloWorldProg${TEST_MPI_1_SUFFIX} .* Passed"
+      "WithSubpackagesA_test_of_a .* Passed"
+      "WithSubpackagesB_test_of_b .* Passed"
+      "100% tests passed, 0 tests failed out of 4"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+# NOTE: The above test checks that a reduced source tarball can be created and
+# can be configured from the resourced source tree.
 
 
 ########################################################################
@@ -1289,6 +1395,8 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja_Makefile
 
 if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
 
+  set(minSecRegex "[0-9][0-9]*m[0-9][0-9]*[.][0-9][0-9]*s")
+
   tribits_add_advanced_test( TribitsExampleProject_ALL_PT_NoFortran_ConfigTiming
     OVERALL_WORKING_DIRECTORY TEST_NAME
     OVERALL_NUM_MPI_PROCS 1
@@ -1306,13 +1414,13 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DTribitsExProj_ENABLE_CONFIGURE_TIMING=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
       PASS_REGULAR_EXPRESSION_ALL
-        "Total time to read in all dependencies files and build dependencies graph: "
-        "Total time to adjust package and TPL enables: "
-        "Total time to probe and setup the environment: "
-        "Total time to configure enabled external packages/TPLs: "
-        "Total time to configure enabled packages: "
-        "Total time to set up for CPack packaging: "
-        "Total time to configure TribitsExProj: "
+        "Total time to read in all dependencies files and build dependencies graph: ${minSecRegex}"
+        "Total time to adjust package and TPL enables: ${minSecRegex}"
+        "Total time to probe and setup the environment: ${minSecRegex}"
+        "Total time to configure enabled external packages/TPLs: ${minSecRegex}"
+        "Total time to configure enabled packages: ${minSecRegex}"
+        "Total time to set up for CPack packaging: ${minSecRegex}"
+        "Total time to configure TribitsExProj: ${minSecRegex}"
         "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
         "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
 
@@ -1322,15 +1430,15 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DTribitsExProj_ENABLE_PACKAGE_CONFIGURE_TIMING=ON
         .
       PASS_REGULAR_EXPRESSION_ALL
-        "Total time to read in all dependencies files and build dependencies graph: "
-        "Total time to adjust package and TPL enables: "
-        "Total time to probe and setup the environment: "
-        "Total time to configure enabled external packages/TPLs: "
-        "-- Total time to configure top-level package SimpleCxx: "
-        "-- Total time to configure top-level package WithSubpackages: "
-        "Total time to configure enabled packages: "
-        "Total time to set up for CPack packaging: "
-        "Total time to configure TribitsExProj: "
+        "Total time to read in all dependencies files and build dependencies graph: ${minSecRegex}"
+        "Total time to adjust package and TPL enables: ${minSecRegex}"
+        "Total time to probe and setup the environment: ${minSecRegex}"
+        "Total time to configure enabled external packages/TPLs: ${minSecRegex}"
+        "-- Total time to configure top-level package SimpleCxx: ${minSecRegex}"
+        "-- Total time to configure top-level package WithSubpackages: ${minSecRegex}"
+        "Total time to configure enabled packages: ${minSecRegex}"
+        "Total time to set up for CPack packaging: ${minSecRegex}"
+        "Total time to configure TribitsExProj: ${minSecRegex}"
 
     TEST_2 CMND ${CMAKE_COMMAND}
       MESSAGE "Reconfigure to test out timing of just one package"
@@ -1339,14 +1447,14 @@ if (NOT ${PROJECT_NAME}_HOSTTYPE STREQUAL "Windows")
         -DSimpleCxx_PACKAGE_CONFIGURE_TIMING=ON
         .
       PASS_REGULAR_EXPRESSION_ALL
-        "Total time to read in all dependencies files and build dependencies graph: "
-        "Total time to adjust package and TPL enables: "
-        "Total time to probe and setup the environment: "
-        "Total time to configure enabled external packages/TPLs: "
-        "-- Total time to configure top-level package SimpleCxx: "
-        "Total time to configure enabled packages: "
-        "Total time to set up for CPack packaging: "
-        "Total time to configure TribitsExProj: "
+        "Total time to read in all dependencies files and build dependencies graph: ${minSecRegex}"
+        "Total time to adjust package and TPL enables: ${minSecRegex}"
+        "Total time to probe and setup the environment: ${minSecRegex}"
+        "Total time to configure enabled external packages/TPLs: ${minSecRegex}"
+        "-- Total time to configure top-level package SimpleCxx: ${minSecRegex}"
+        "Total time to configure enabled packages: ${minSecRegex}"
+        "Total time to set up for CPack packaging: ${minSecRegex}"
+        "Total time to configure TribitsExProj: ${minSecRegex}"
 
     )
 
@@ -2640,7 +2748,7 @@ tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
   XHOSTTYPE Darwin
 
   TEST_0
-    MESSAGE "Copy TribitsExampleProject so that we can copy in ExteranlPkg."
+    MESSAGE "Copy TribitsExampleProject so that we can copy in ExternalPkg."
     CMND cp
     ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
 
@@ -2664,7 +2772,7 @@ tribits_add_advanced_test( TribitsExampleProject_InsertedPkg
       -DInsertedPkg_ALLOW_MISSING_EXTERNAL_PACKAGE=FALSE
       .
     PASS_REGULAR_EXPRESSION_ALL
-      "Error, the package InsertedPkg directory .+/TribitsExampleProject/InsertedPkg does not exist!"
+      "Error, the package InsertedPkg dependencies file '.+/TribitsExampleProject/InsertedPkg/cmake/Dependencies.cmake' does [*]NOT[*] exist!"
       "CMake Error at .+/TribitsProcessPackagesAndDirsLists.cmake:[0-9]+ [(]message[)]:"
       "Configuring incomplete, errors occurred!"
 
@@ -3312,6 +3420,7 @@ tribits_add_advanced_test( TribitsExampleProject_External_SimpleCxx
       "Getting information for all enabled TriBITS-compliant or upstream external packages/TPLs in reverse order [.][.][.]"
       "Processing enabled external package/TPL: SimpleCxx [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleCxx=OFF[)]"
       "-- Calling find_package[(]SimpleCxx[)] for TriBITS-compliant external package"
+      "-- Found SimpleCxx_DIR='.*/TriBITS_TribitsExampleProject_External_SimpleCxx/install/simple_cxx/lib[0-9]*/cmake/SimpleCxx'"
       "Processing enabled external package/TPL: SimpleTpl [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleTpl=OFF[)]"
       "-- The external package/TPL SimpleTpl was defined by a downstream TriBITS-compliant external package already processed"
       "Processing enabled external package/TPL: HeaderOnlyTpl [(]enabled by SimpleCxx, disable with -DTPL_ENABLE_HeaderOnlyTpl=OFF[)]"
@@ -3512,7 +3621,9 @@ tribits_add_advanced_test( TribitsExampleProject_External_Package_by_Package
       "Processing enabled external package/TPL: WithSubpackages [(]enabled explicitly, disable with -DTPL_ENABLE_WithSubpackages=OFF[)]"
       "-- Calling find_package[(]WithSubpackages[)] for TriBITS-compliant external package"
       "Processing enabled external package/TPL: MixedLang [(]enabled explicitly, disable with -DTPL_ENABLE_MixedLang=OFF[)]"
+      "-- Found WithSubpackages_DIR='.*/TriBITS_TribitsExampleProject_External_Package_by_Package/install_withsubpackages/lib[0-9]*/cmake/WithSubpackages'"
       "-- Calling find_package[(]MixedLang[)] for TriBITS-compliant external package"
+      "-- Found MixedLang_DIR='.*/TriBITS_TribitsExampleProject_External_Package_by_Package/install_mixedlang/lib[0-9]*/cmake/MixedLang'"
       "Processing enabled external package/TPL: SimpleCxx [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleCxx=OFF[)]"
       "-- The external package/TPL SimpleCxx was defined by a downstream TriBITS-compliant external package already processed"
       "Processing enabled external package/TPL: SimpleTpl [(]enabled explicitly, disable with -DTPL_ENABLE_SimpleTpl=OFF[)]"
