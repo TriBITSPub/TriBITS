@@ -630,7 +630,7 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DTribitsExProj_ASSERT_DEFINED_DEPENDENCIES=OFF
+      -DTribitsExProj_ASSERT_DEFINED_DEPENDENCIES=WARNING
       ../tribitsexproj-1.1-Source
     PASS_REGULAR_EXPRESSION_ALL
       "CMake Warning at .*/tribits/core/package_arch/TribitsProcessPackagesAndDirsLists.cmake"
