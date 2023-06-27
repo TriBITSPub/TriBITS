@@ -186,16 +186,6 @@ macro(tribits_setup_packaging_and_distribution)
     [.]gitignore$
     )
 
-  # Print the set of excluded files
-  if(${PROJECT_NAME}_VERBOSE_CONFIGURE OR
-    ${PROJECT_NAME}_DUMP_CPACK_SOURCE_IGNORE_FILES
-    )
-    message("Exclude files when building source packages")
-    foreach(item ${CPACK_SOURCE_IGNORE_FILES})
-      message(${item})
-    endforeach()
-  endif()
-
   # K.3) Set up install component dependencies
 
   tribits_get_sublist_enabled(
@@ -251,6 +241,16 @@ macro(tribits_setup_packaging_and_distribution)
     foreach(SOURCE_GEN ${CPACK_SOURCE_GENERATOR})
       set(CPACK_INSTALL_COMMANDS ${CPACK_INSTALL_COMMANDS}
         "${CMAKE_COMMAND} -E copy '${PROJECT_REPO_VERSION_FILE}' '${CMAKE_CURRENT_BINARY_DIR}/_CPack_Packages/Linux-Source/${SOURCE_GEN}/${CPACK_PACKAGE_NAME}-${${PROJECT_NAME}_VERSION}-Source/${${PROJECT_NAME}_REPO_VERSION_FILE_NAME}'")
+    endforeach()
+  endif()
+
+  # Print the set of excluded files
+  if(${PROJECT_NAME}_VERBOSE_CONFIGURE OR
+    ${PROJECT_NAME}_DUMP_CPACK_SOURCE_IGNORE_FILES
+    )
+    message("Exclude files when building source packages:")
+    foreach(item IN LISTS CPACK_SOURCE_IGNORE_FILES)
+      message(${item})
     endforeach()
   endif()
 
