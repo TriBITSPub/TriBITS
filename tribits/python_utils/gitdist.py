@@ -1566,6 +1566,20 @@ def repoExistsAndNotExcluded(options, extraRepo, notReposList):
   return True
 
 
+# Get the identifier for the current commit in the repo
+def getRepoVersionIdentifier(options, getCmndOutputFunc, showMoreHeadDetails):
+  branch = getLocalBranch(options, getCmndOutputFunc)
+  if showMoreHeadDetails != "SHOW_MORE_HEAD_DETAILS":
+    return branch
+  if branch != "HEAD":
+    return branch
+  tagName = getCmndOutputFunc(options.useGit + " tag --points-at").strip()
+  if tagName != "":
+    return tagName
+  sha1 = getCmndOutputFunc(options.useGit + " log --pretty=%h -1").strip()
+  return sha1
+
+
 # Get the tracking branch for a repo
 def getLocalBranch(options, getCmndOutputFunc):
   (resp, rtnCode) = getCmndOutputFunc(
@@ -1655,7 +1669,9 @@ def getNumModifiedAndUntracked(options, getCmndOutputFunc):
 
 class RepoStatsStruct:
 
-  def __init__(self, branch, trackingBranch, numCommits, numModified, numUntracked):
+  def __init__(self, branch, trackingBranch, numCommits, numModified,
+      numUntracked \
+    ):
     self.branch = branch
     self.trackingBranch = trackingBranch
     self.numCommits = numCommits
@@ -1689,21 +1705,16 @@ class RepoStatsStruct:
     return False
 
 
-def getRepoStats(options, getCmndOutputFunc=None):
+def getRepoStats(options, getCmndOutputFunc=None, showMoreHeadDetails=""):
   if not getCmndOutputFunc:
     getCmndOutputFunc = getCmndOutput
-  branch         = getLocalBranch(options, getCmndOutputFunc)
+  branch = getRepoVersionIdentifier(options, getCmndOutputFunc, showMoreHeadDetails)
   trackingBranch = getTrackingBranch(options, getCmndOutputFunc)
-  numCommits     = getNumCommitsWrtTrackingBranch(options,
-                                                  trackingBranch,
-                                                  getCmndOutputFunc)
+  numCommits = getNumCommitsWrtTrackingBranch(options, trackingBranch, getCmndOutputFunc)
   (numModified, numUntracked) = getNumModifiedAndUntracked(options,
-                                                           getCmndOutputFunc)
-  return RepoStatsStruct(branch,
-                         trackingBranch,
-                         numCommits,
-                         numModified,
-                         numUntracked)
+    getCmndOutputFunc)
+  return RepoStatsStruct(branch, trackingBranch, numCommits,
+    numModified, numUntracked)
 
 
 class RepoVersionStruct:
