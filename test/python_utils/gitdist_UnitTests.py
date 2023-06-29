@@ -514,7 +514,7 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "MOCK_PROGRAM_OUTPUT: \n" \
         )
       options = GitDistOptions(mockGitPath)
-      repoStats = getRepoStats(options)
+      repoStats = getRepoStats(options, showMoreHeadDetails="")
       repoStats_expected = "{branch='local_branch'," \
         " trackingBranch='origin_repo/remote_branch', numCommits='0'," \
         " numModified='0', numUntracked='0'}" 
@@ -543,7 +543,7 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "?? file5\n" \
         )
       options = GitDistOptions(mockGitPath)
-      repoStats = getRepoStats(options)
+      repoStats = getRepoStats(options, showMoreHeadDetails="")
       repoStats_expected = "{branch='local_branch'," \
         " trackingBranch='', numCommits=''," \
         " numModified='3', numUntracked='2'}" 
@@ -581,7 +581,7 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "R  file8\n" \
         )
       options = GitDistOptions(mockGitPath)
-      repoStats = getRepoStats(options)
+      repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoStats_expected = "{branch='local_branch'," \
         " trackingBranch='', numCommits=''," \
         " numModified='11', numUntracked='3'}" 
@@ -590,13 +590,16 @@ class test_gitdist_getRepoStats(unittest.TestCase):
       os.chdir(testBaseDir)
 
 
-  def test_all_changed_detached_head(self):
+  def test_all_changed_detached_head_tag(self):
     try:
-      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_detached_head")
+      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_detached_head_tag")
       open(".mockprogram_inout.txt", "w").write(
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
         "MOCK_PROGRAM_RETURN: 0\n" \
         "MOCK_PROGRAM_OUTPUT: HEAD\n" \
+        "MOCK_PROGRAM_INPUT: tag --points-at\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: 1.2.3\n" \
         "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
         "MOCK_PROGRAM_RETURN: 128\n" \
         "MOCK_PROGRAM_OUTPUT: fatal: blah blahh blah\n" \
@@ -609,8 +612,42 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "?? file5\n" \
         )
       options = GitDistOptions(mockGitPath)
-      repoStats = getRepoStats(options)
-      repoStats_expected = "{branch='HEAD'," \
+      repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
+      repoStats_expected = "{branch='1.2.3'," \
+        " trackingBranch='', numCommits=''," \
+        " numModified='2', numUntracked='3'}"
+      self.assertEqual(str(repoStats), repoStats_expected)
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_all_changed_detached_head(self):
+    try:
+      testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_detached_head")
+      open(".mockprogram_inout.txt", "w").write(
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: HEAD\n" \
+        "MOCK_PROGRAM_INPUT: tag --points-at\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: \n" \
+        "MOCK_PROGRAM_INPUT: log --pretty=%h -1\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: 1235abcd\n" \
+        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+        "MOCK_PROGRAM_RETURN: 128\n" \
+        "MOCK_PROGRAM_OUTPUT: fatal: blah blahh blah\n" \
+        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+        "MOCK_PROGRAM_RETURN: 0\n" \
+        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+        " M file2\n" \
+        "?? file3\n" \
+        "?? file4\n" \
+        "?? file5\n" \
+        )
+      options = GitDistOptions(mockGitPath)
+      repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
+      repoStats_expected = "{branch='1235abcd'," \
         " trackingBranch='', numCommits=''," \
         " numModified='2', numUntracked='3'}" 
       self.assertEqual(str(repoStats), repoStats_expected)
@@ -641,7 +678,7 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "?? file5\n" \
         )
       options = GitDistOptions(mockGitPath)
-      repoStats = getRepoStats(options)
+      repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoStats_expected = "{branch='<AMBIGUOUS-HEAD>'," \
         " trackingBranch='remoterepo/trackingbranch', numCommits='7'," \
         " numModified='2', numUntracked='3'}" 
@@ -677,7 +714,7 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "?? file5\n" \
         )
       options = GitDistOptions(mockGitPath)
-      repoStats = getRepoStats(options)
+      repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoStats_expected = "{branch='local_branch'," \
         " trackingBranch='origin_repo/remote_branch', numCommits='1'," \
         " numModified='2', numUntracked='3'}" 
@@ -710,7 +747,7 @@ class test_gitdist_getRepoStats(unittest.TestCase):
         "?? file5\n" \
         )
       options = GitDistOptions(mockGitPath)
-      repoStats = getRepoStats(options)
+      repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoStats_expected = "{branch='local_branch'," \
         " trackingBranch='origin_repo/remote_branch', numCommits='6'," \
         " numModified='2', numUntracked='3'}" 
