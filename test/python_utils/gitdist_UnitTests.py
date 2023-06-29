@@ -499,20 +499,21 @@ class test_gitdist_getRepoStats(unittest.TestCase):
   def test_no_change(self):
     try:
       testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_no_change")
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo/remote_branch\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo/remote_branch\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          )
       options = GitDistOptions(mockGitPath)
       repoStats = getRepoStats(options, showMoreHeadDetails="")
       repoStats_expected = "{branch='local_branch'," \
@@ -527,21 +528,22 @@ class test_gitdist_getRepoStats(unittest.TestCase):
     try:
       testDir = createAndMoveIntoTestDir(
         "gitdist_getRepoStats_all_changed_no_tracking_branch")
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 55\n" \
-        "MOCK_PROGRAM_OUTPUT: error: blah blahh blah\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        " T file2\n" \
-        " D file3\n" \
-        "?? file4\n" \
-        "?? file5\n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 55\n" \
+          "MOCK_PROGRAM_OUTPUT: error: blah blahh blah\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+          " T file2\n" \
+          " D file3\n" \
+          "?? file4\n" \
+          "?? file5\n" \
+          )
       options = GitDistOptions(mockGitPath)
       repoStats = getRepoStats(options, showMoreHeadDetails="")
       repoStats_expected = "{branch='local_branch'," \
@@ -556,30 +558,31 @@ class test_gitdist_getRepoStats(unittest.TestCase):
     try:
       testDir = createAndMoveIntoTestDir(
         "gitdist_getRepoStats_all_changed_no_tracking_branch")
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 55\n" \
-        "MOCK_PROGRAM_OUTPUT: error: blah blahh blah\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        "MM file1b\n" \
-        " T file2\n" \
-        "MT file2b\n" \
-        " D file3\n" \
-        "MD file3\n" \
-        "?? file4\n" \
-        "?? file5\n" \
-        "?? file5b\n" \
-        " A file6\n" \
-        "A  file6b\n" \
-        " U file7\n" \
-        "U  file7b\n" \
-        "R  file8\n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 55\n" \
+          "MOCK_PROGRAM_OUTPUT: error: blah blahh blah\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+          "MM file1b\n" \
+          " T file2\n" \
+          "MT file2b\n" \
+          " D file3\n" \
+          "MD file3\n" \
+          "?? file4\n" \
+          "?? file5\n" \
+          "?? file5b\n" \
+          " A file6\n" \
+          "A  file6b\n" \
+          " U file7\n" \
+          "U  file7b\n" \
+          "R  file8\n" \
+          )
       options = GitDistOptions(mockGitPath)
       repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoStats_expected = "{branch='local_branch'," \
@@ -593,24 +596,25 @@ class test_gitdist_getRepoStats(unittest.TestCase):
   def test_all_changed_detached_head_tag(self):
     try:
       testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_detached_head_tag")
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: HEAD\n" \
-        "MOCK_PROGRAM_INPUT: tag --points-at\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 1.2.3\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 128\n" \
-        "MOCK_PROGRAM_OUTPUT: fatal: blah blahh blah\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        " M file2\n" \
-        "?? file3\n" \
-        "?? file4\n" \
-        "?? file5\n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: HEAD\n" \
+          "MOCK_PROGRAM_INPUT: tag --points-at\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: 1.2.3\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 128\n" \
+          "MOCK_PROGRAM_OUTPUT: fatal: blah blahh blah\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+          " M file2\n" \
+          "?? file3\n" \
+          "?? file4\n" \
+          "?? file5\n" \
+          )
       options = GitDistOptions(mockGitPath)
       repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoStats_expected = "{branch='1.2.3'," \
@@ -624,27 +628,28 @@ class test_gitdist_getRepoStats(unittest.TestCase):
   def test_all_changed_detached_head(self):
     try:
       testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_detached_head")
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: HEAD\n" \
-        "MOCK_PROGRAM_INPUT: tag --points-at\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: log --pretty=%h -1\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 1235abcd\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 128\n" \
-        "MOCK_PROGRAM_OUTPUT: fatal: blah blahh blah\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        " M file2\n" \
-        "?? file3\n" \
-        "?? file4\n" \
-        "?? file5\n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: HEAD\n" \
+          "MOCK_PROGRAM_INPUT: tag --points-at\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          "MOCK_PROGRAM_INPUT: log --pretty=%h -1\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: 1235abcd\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 128\n" \
+          "MOCK_PROGRAM_OUTPUT: fatal: blah blahh blah\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+          " M file2\n" \
+          "?? file3\n" \
+          "?? file4\n" \
+          "?? file5\n" \
+          )
       options = GitDistOptions(mockGitPath)
       repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoStats_expected = "{branch='1235abcd'," \
@@ -658,25 +663,26 @@ class test_gitdist_getRepoStats(unittest.TestCase):
   def test_all_ambiguous_head(self):
     try:
       testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_detached_head")
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: warning: refname 'HEAD' is ambiguous.\n" \
-        "error: refname 'HEAD' is ambiguous\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: remoterepo/trackingbranch\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^remoterepo/trackingbranch\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 7\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        " M file2\n" \
-        "?? file3\n" \
-        "?? file4\n" \
-        "?? file5\n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: warning: refname 'HEAD' is ambiguous.\n" \
+          "error: refname 'HEAD' is ambiguous\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: remoterepo/trackingbranch\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^remoterepo/trackingbranch\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: 7\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+          " M file2\n" \
+          "?? file3\n" \
+          "?? file4\n" \
+          "?? file5\n" \
+          )
       options = GitDistOptions(mockGitPath)
       repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoStats_expected = "{branch='<AMBIGUOUS-HEAD>'," \
@@ -695,24 +701,25 @@ class test_gitdist_getRepoStats(unittest.TestCase):
   def test_all_changed_1_author(self):
     try:
       testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_1_author")
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo/remote_branch\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 1\tsome author\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        " M file2\n" \
-        "?? file3\n" \
-        "?? file4\n" \
-        "?? file5\n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo/remote_branch\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: 1\tsome author\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+          " M file2\n" \
+          "?? file3\n" \
+          "?? file4\n" \
+          "?? file5\n" \
+          )
       options = GitDistOptions(mockGitPath)
       repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoStats_expected = "{branch='local_branch'," \
@@ -726,26 +733,27 @@ class test_gitdist_getRepoStats(unittest.TestCase):
   def test_all_changed_3_authors(self):
     try:
       testDir = createAndMoveIntoTestDir("gitdist_getRepoStats_all_changed_3_authors")
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo/remote_branch\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 1 some author1\n" \
-        "2 some author2\n" \
-        "3 some author2\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        " M file2\n" \
-        "?? file3\n" \
-        "?? file4\n" \
-        "?? file5\n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo/remote_branch\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo/remote_branch\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: 1 some author1\n" \
+          "2 some author2\n" \
+          "3 some author2\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+          " M file2\n" \
+          "?? file3\n" \
+          "?? file4\n" \
+          "?? file5\n" \
+          )
       options = GitDistOptions(mockGitPath)
       repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoStats_expected = "{branch='local_branch'," \
@@ -778,60 +786,63 @@ sha1_3 [Thu Dec 1 23:34:06 2011 -0500] <author_3@ornl.gov>
 
 def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
 
-  open(".mockprogram_inout.txt", "w").write(
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
-    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-    " M file2\n" \
-    "?? file2\n" \
-    "MOCK_PROGRAM_INPUT: status\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
-    "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
-    )
+  with open(".mockprogram_inout.txt", "w") as fileHandle:
+    fileHandle.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+      "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
+      "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+      " M file2\n" \
+      "?? file2\n" \
+      "MOCK_PROGRAM_INPUT: status\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
+      "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
+      )
 
-  open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
-    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: 22 some author\n" \
-    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: ?? file1\n" \
-    "MOCK_PROGRAM_INPUT: status\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
-    "Your branch is ahead of 'origin_repo1/remote_branch1' by 22 commits.\n" \
-    )
+  with open("ExtraRepo1/.mockprogram_inout.txt", "w") as fileHandle:
+    fileHandle.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
+      "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 22 some author\n" \
+      "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: ?? file1\n" \
+      "MOCK_PROGRAM_INPUT: status\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
+      "Your branch is ahead of 'origin_repo1/remote_branch1' by 22 commits.\n" \
+      )
 
-  open("ExtraRepo2/.mockprogram_inout.txt", "w").write(
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
-    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: \n" \
-    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: \n" \
-    )
+  with open("ExtraRepo2/.mockprogram_inout.txt", "w") as fileHandle:
+    fileHandle.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
+      "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: \n" \
+      "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: \n" \
+      )
 
 
 def writeGitMockProgram_dist_repo_versions_table():
@@ -950,62 +961,65 @@ def writeGitMockProgram_dist_repo_versions_table_1_change_base():
 
 def writeGitMockProgram_base_3_2_1_repo1_0_0_0_repo2_4_0_2():
 
-  open(".mockprogram_inout.txt", "w").write(
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
-    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-    " M file2\n" \
-    "?? file3\n" \
-    "MOCK_PROGRAM_INPUT: status\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
-    "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
-    )
+  with open(".mockprogram_inout.txt", "w") as fileHandle:
+    fileHandle.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+      "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
+      "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+      " M file2\n" \
+      "?? file3\n" \
+      "MOCK_PROGRAM_INPUT: status\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
+      "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
+      )
 
-  open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
-    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: \n" \
-    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: \n" \
-    )
+  with open("ExtraRepo1/.mockprogram_inout.txt", "w") as fileHandle:
+    fileHandle.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
+      "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: \n" \
+      "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: \n" \
+      )
 
-  open("ExtraRepo2/.mockprogram_inout.txt", "w").write(
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
-    "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
-    "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
-    "1 some other author\n" \
-    "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: ??  file1\n" \
-    "?? file3\n" \
-    "MOCK_PROGRAM_INPUT: status\n" \
-    "MOCK_PROGRAM_RETURN: 0\n" \
-    "MOCK_PROGRAM_OUTPUT: On branch local_branch2\n" \
-    "Your branch is ahead of 'origin_repo2/remote_branch2' by 4 commits.\n" \
-    )
+  with open("ExtraRepo2/.mockprogram_inout.txt", "w") as fileHandle:
+    fileHandle.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
+      "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
+      "1 some other author\n" \
+      "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: ??  file1\n" \
+      "?? file3\n" \
+      "MOCK_PROGRAM_INPUT: status\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: On branch local_branch2\n" \
+      "Your branch is ahead of 'origin_repo2/remote_branch2' by 4 commits.\n" \
+      )
 
 
 class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase):
@@ -1235,13 +1249,14 @@ class test_gitdist(unittest.TestCase):
       os.mkdir("ExtraRepo3")
 
       # Make sure .gitdist.default is found and read correctly
-      open(".gitdist.default", "w").write(
-        ".\n" \
-        "ExtraRepo1\n" \
-        "Path/To/ExtraRepo2\n" \
-        "MissingExtraRep\n" \
-        "ExtraRepo3\n"
-        )
+      with open(".gitdist.default", "w") as fileHandle:
+        fileHandle.write(
+          ".\n" \
+          "ExtraRepo1\n" \
+          "Path/To/ExtraRepo2\n" \
+          "MissingExtraRep\n" \
+          "ExtraRepo3\n"
+          )
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status",
         workingDir=testDir)
       cmndOut_expected = \
@@ -1258,14 +1273,15 @@ class test_gitdist(unittest.TestCase):
       # missing paths (MissingExtraRepo) are ignored.
 
       # Make sure that .gitdist overrides .gitdist.default
-      open(".gitdist", "w").write(
-        ".\n" \
-        "ExtraRepo1\n" \
-        "\n" \
-        "   \n" \
-        "ExtraRepo3\n" \
-        "\n"
-        )
+      with open(".gitdist", "w") as fileHandle:
+        fileHandle.write(
+          ".\n" \
+          "ExtraRepo1\n" \
+          "\n" \
+          "   \n" \
+          "ExtraRepo3\n" \
+          "\n"
+          )
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status",
         workingDir=testDir)
       cmndOut_expected = \
@@ -1359,54 +1375,57 @@ class test_gitdist(unittest.TestCase):
       os.mkdir("ExtraRepo1")
       os.mkdir("ExtraRepo2")
 
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        "MOCK_PROGRAM_INPUT: status\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
-        "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+          "MOCK_PROGRAM_INPUT: status\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
+          "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
+          )
 
-      open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        )
+      with open("ExtraRepo1/.mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          )
 
-      open("ExtraRepo2/.mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        )
+      with open("ExtraRepo2/.mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          )
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
@@ -1433,54 +1452,57 @@ class test_gitdist(unittest.TestCase):
       os.mkdir("ExtraRepo1")
       os.mkdir("ExtraRepo2")
 
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          )
 
-      open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 1 some author\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: status\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
-        "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n" \
-        )
+      with open("ExtraRepo1/.mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: 1 some author\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          "MOCK_PROGRAM_INPUT: status\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
+          "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n" \
+          )
 
-      open("ExtraRepo2/.mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        )
+      with open("ExtraRepo2/.mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch2\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          )
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
@@ -1505,36 +1527,38 @@ class test_gitdist(unittest.TestCase):
 
       os.mkdir("ExtraRepo1")
 
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        "MOCK_PROGRAM_INPUT: status\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
-        "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+          "MOCK_PROGRAM_INPUT: status\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
+          "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
+          )
 
-      open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 128\n" \
-        "MOCK_PROGRAM_OUTPUT: error: No upstream branch found for ''\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        )
+      with open("ExtraRepo1/.mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 128\n" \
+          "MOCK_PROGRAM_OUTPUT: error: No upstream branch found for ''\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          )
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
@@ -1560,36 +1584,38 @@ class test_gitdist(unittest.TestCase):
 
       os.mkdir("ExtraRepo1")
 
-      open(".mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: \n" \
-        )
+      with open(".mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+          "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: \n" \
+          )
 
-      open("ExtraRepo1/.mockprogram_inout.txt", "w").write(
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
-        "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
-        "MOCK_PROGRAM_RETURN: 128\n" \
-        "MOCK_PROGRAM_OUTPUT: error: No upstream branch found for ''\n" \
-        "MOCK_PROGRAM_INPUT: status --porcelain\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-        "MOCK_PROGRAM_INPUT: status\n" \
-        "MOCK_PROGRAM_RETURN: 0\n" \
-        "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
-        "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n" \
-        )
+      with open("ExtraRepo1/.mockprogram_inout.txt", "w") as fileHandle:
+        fileHandle.write(
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
+          "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+          "MOCK_PROGRAM_RETURN: 128\n" \
+          "MOCK_PROGRAM_OUTPUT: error: No upstream branch found for ''\n" \
+          "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+          "MOCK_PROGRAM_INPUT: status\n" \
+          "MOCK_PROGRAM_RETURN: 0\n" \
+          "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
+          "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n" \
+          )
 
       # Make sure that --dist-repos overrides all files
       cmndOut = GeneralScriptSupport.getCmndOutput(
@@ -2157,13 +2183,14 @@ class test_gitdist(unittest.TestCase):
       os.mkdir("ExtraRepo3")
 
       # Make sure .gitdist.default is found and read correctly
-      open(".gitdist.default", "w").write(
-        ". master\n" \
-        "ExtraRepo1 develop\n" \
-        "Path/To/ExtraRepo2 app-devel\n" \
-        "MissingExtraRepo\n" \
-        "ExtraRepo3\n"
-        )
+      with open(".gitdist.default", "w") as fileHandle:
+        fileHandle.write(
+          ". master\n" \
+          "ExtraRepo1 develop\n" \
+          "Path/To/ExtraRepo2 app-devel\n" \
+          "MissingExtraRepo\n" \
+          "ExtraRepo3\n"
+          )
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPathMock+" checkout _DEFAULT_BRANCH_", workingDir=testDir)
       cmndOut_expected = \
@@ -2180,11 +2207,12 @@ class test_gitdist(unittest.TestCase):
       # missing paths (MissingExtraRepo) are ignored.
 
       # Make sure that .gitdist overrides .gitdist.default
-      open(".gitdist", "w").write(
-        ". develop\n" \
-        "ExtraRepo1 develop\n" \
-        "ExtraRepo3 develop\n"
-        )
+      with open(".gitdist", "w") as fileHandle:
+        fileHandle.write(
+          ". develop\n" \
+          "ExtraRepo1 develop\n" \
+          "ExtraRepo3 develop\n"
+          )
       cmndOut = GeneralScriptSupport.getCmndOutput(
         gitdistPathMock+" checkout _DEFAULT_BRANCH_", workingDir=testDir)
       cmndOut_expected = \
@@ -2230,13 +2258,15 @@ class test_gitdist(unittest.TestCase):
       # Create a mock git meta-project.
       testDir = createAndMoveIntoTestDir("gitdist_move_to_base_dir")
       os.makedirs("ExtraRepo/path/to/somewhere")
-      open(".gitdist", "w").write(
-        ".\n" \
-        "ExtraRepo\n"
-        )
-      open("ExtraRepo/.gitdist", "w").write(
-        ".\n"
-        )
+      with open(".gitdist", "w") as fileHandle:
+        fileHandle.write(
+          ".\n" \
+          "ExtraRepo\n"
+          )
+      with open("ExtraRepo/.gitdist", "w") as fileHandle:
+        fileHandle.write(
+          ".\n"
+          )
       os.chdir("ExtraRepo/path/to/somewhere")
 
       # Test with the default setting.

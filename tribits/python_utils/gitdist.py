@@ -844,7 +844,8 @@ def createTable(tableData, utf8=False):
       if mockSttySize:
         sttySize = mockSttySize
       else:
-        sttySize = os.popen("stty size", "r").read()
+        with os.popen("stty size", "r") as subprocess:
+          sttySize = subprocess.read()
       rows, columns = sttySize.split()
     except:
       shrink = False
@@ -1071,7 +1072,7 @@ def getCmndOutput(cmnd, rtnCode=False):
   child = subprocess.Popen(cmnd, shell=True, stdout=subprocess.PIPE,
     stderr = subprocess.STDOUT)
   output = child.stdout.read()
-  child.wait()
+  child.communicate()
   if rtnCode:
     return (s(output), child.returncode)
   return s(output)
