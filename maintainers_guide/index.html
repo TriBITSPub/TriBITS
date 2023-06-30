@@ -449,10 +449,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2023-06-29</p>
+<dd class="field-even"><p>2023-06-30</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3295-ga72ca8e1</p>
+<dd class="field-odd"><p>tribits_start-3301-gf6e0838c</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -18617,7 +18617,7 @@ outputs a table like:
   |----|-----------------------|--------|-----------------|---|----|---|
   |  0 | BaseRepo (Base)       | dummy  |                 |   |    |   |
   |  1 | ExtraRepo1            | master | origin/master   | 1 |  2 |   |
-  |  2 | ExtraRepo1/ExtraRepo2 | HEAD   |                 |   | 25 | 4 |
+  |  2 | ExtraRepo1/ExtraRepo2 | abc123 |                 |   | 25 | 4 |
   |  3 | ExtraRepo3            | master | origin/master   |   |    |   |
   ----------------------------------------------------------------------
 
@@ -18626,11 +18626,18 @@ If the option --dist-legend is also passed in, the output will include:
 Legend:
 * ID: Repository ID, zero based (order git commands are run)
 * Repo Dir: Relative to base repo (base repo shown first with &#39;(Base)&#39;)
-* Branch: Current branch (or detached HEAD)
+* Branch: Current branch, or (if detached HEAD) tag name or SHA1
 * Tracking Branch: Tracking branch (or empty if no tracking branch exists)
 * C: Number local commits w.r.t. tracking branch (empty if zero or no TB)
 * M: Number of tracked modified (uncommitted) files (empty if zero)
 * ?: Number of untracked, non-ignored files (empty if zero)
+
+
+In the case of a detached head state, as shown above with the repo
+&#39;ExtraRepo3&#39;, the SHA1 (e.g. &#39;abc123&#39;) was printed instead of &#39;HEAD&#39;.
+However, if the repo is in the detached head state but a tag happens to point
+to the current commit (e.g. &#39;git tag --points-at&#39; returns non-empy), then the
+tag name (e.g. &#39;v1.2.3&#39;) is printed instead of the SHA1 of the commit.
 
 One can also show the status of only changed repos with the command:
 
@@ -18642,7 +18649,7 @@ which produces a table like:
   | ID | Repo Dir              | Branch | Tracking Branch | C | M  | ? |
   |----|-----------------------|--------|-----------------|---|----|---|
   |  1 | ExtraRepo1            | master | origin/master   | 1 |  2 |   |
-  |  2 | ExtraRepo1/ExtraRepo2 | HEAD   |                 |   | 25 | 4 |
+  |  2 | ExtraRepo1/ExtraRepo2 | abc123 |                 |   | 25 | 4 |
   ----------------------------------------------------------------------
 
 (see the alias &#39;gitdist-mod-status&#39; in --dist-help=aliases).
@@ -19298,7 +19305,7 @@ outputs a table like:
   |----|-----------------------|--------|-----------------|---|----|---|
   |  0 | BaseRepo (Base)       | dummy  |                 |   |    |   |
   |  1 | ExtraRepo1            | master | origin/master   | 1 |  2 |   |
-  |  2 | ExtraRepo1/ExtraRepo2 | HEAD   |                 |   | 25 | 4 |
+  |  2 | ExtraRepo1/ExtraRepo2 | abc123 |                 |   | 25 | 4 |
   |  3 | ExtraRepo3            | master | origin/master   |   |    |   |
   ----------------------------------------------------------------------
 
@@ -19307,11 +19314,18 @@ If the option --dist-legend is also passed in, the output will include:
 Legend:
 * ID: Repository ID, zero based (order git commands are run)
 * Repo Dir: Relative to base repo (base repo shown first with &#39;(Base)&#39;)
-* Branch: Current branch (or detached HEAD)
+* Branch: Current branch, or (if detached HEAD) tag name or SHA1
 * Tracking Branch: Tracking branch (or empty if no tracking branch exists)
 * C: Number local commits w.r.t. tracking branch (empty if zero or no TB)
 * M: Number of tracked modified (uncommitted) files (empty if zero)
 * ?: Number of untracked, non-ignored files (empty if zero)
+
+
+In the case of a detached head state, as shown above with the repo
+&#39;ExtraRepo3&#39;, the SHA1 (e.g. &#39;abc123&#39;) was printed instead of &#39;HEAD&#39;.
+However, if the repo is in the detached head state but a tag happens to point
+to the current commit (e.g. &#39;git tag --points-at&#39; returns non-empy), then the
+tag name (e.g. &#39;v1.2.3&#39;) is printed instead of the SHA1 of the commit.
 
 One can also show the status of only changed repos with the command:
 
@@ -19323,7 +19337,7 @@ which produces a table like:
   | ID | Repo Dir              | Branch | Tracking Branch | C | M  | ? |
   |----|-----------------------|--------|-----------------|---|----|---|
   |  1 | ExtraRepo1            | master | origin/master   | 1 |  2 |   |
-  |  2 | ExtraRepo1/ExtraRepo2 | HEAD   |                 |   | 25 | 4 |
+  |  2 | ExtraRepo1/ExtraRepo2 | abc123 |                 |   | 25 | 4 |
   ----------------------------------------------------------------------
 
 (see the alias &#39;gitdist-mod-status&#39; in --dist-help=aliases).
