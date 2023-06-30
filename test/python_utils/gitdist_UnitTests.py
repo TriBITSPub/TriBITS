@@ -784,6 +784,11 @@ sha1_3 [Thu Dec 1 23:34:06 2011 -0500] <author_3@ornl.gov>
 """
 
 
+# ToDo: Factor out functions to generate list of commands for a single repo
+# for a call to getRepoStats() with input arguments for different criteria to
+# make the below code more maintainable.
+
+
 def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
 
   with open(".mockprogram_inout.txt", "w") as fileHandle:
@@ -840,6 +845,77 @@ def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
       "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: origin_repo2/remote_branch2\n" \
+      "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: \n" \
+      "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: \n" \
+      )
+
+
+def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_sha1_0_0_0():
+
+  with open(".mockprogram_inout.txt", "w") as fileHandle:
+    fileHandle.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: local_branch0\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: origin_repo0/remote_branch0\n" \
+      "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo0/remote_branch0\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 3 some author\n" \
+      "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: M  file1\n" \
+      " M file2\n" \
+      "?? file2\n" \
+      "MOCK_PROGRAM_INPUT: -c color.status=never status\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
+      "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
+      )
+
+  os.mkdir("ExtraRepo1")
+
+  with open("ExtraRepo1/.mockprogram_inout.txt", "w") as fileHandle:
+    fileHandle.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: local_branch1\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: origin_repo1/remote_branch1\n" \
+      "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo1/remote_branch1\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 22 some author\n" \
+      "MOCK_PROGRAM_INPUT: status --porcelain\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: ?? file1\n" \
+      "MOCK_PROGRAM_INPUT: -c color.status=never status\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
+      "Your branch is ahead of 'origin_repo1/remote_branch1' by 22 commits.\n" \
+      )
+
+  os.mkdir("ExtraRepo2")
+
+  with open("ExtraRepo2/.mockprogram_inout.txt", "w") as fileHandle:
+    fileHandle.write(
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: HEAD\n" \
+      "MOCK_PROGRAM_INPUT: tag --points-at\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: \n" \
+      "MOCK_PROGRAM_INPUT: log --pretty=%h -1\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: 1235abcd\n" \
+      "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref --symbolic-full-name @{u}\n" \
+      "MOCK_PROGRAM_RETURN: 0\n" \
+      "MOCK_PROGRAM_OUTPUT: \n" \
       "MOCK_PROGRAM_INPUT: shortlog -s HEAD ^origin_repo2/remote_branch2\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: \n" \
@@ -1777,6 +1853,37 @@ class test_gitdist(unittest.TestCase):
         "-----------------------------------------------------------------------------------------\n" \
         "\n" \
         "(tip: to see a legend, pass in --dist-legend.)\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_dist_repo_status_all_with_sha1(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project
+
+      testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_all")
+
+      writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_sha1_0_0_0()
+
+      cmndOut = GeneralScriptSupport.getCmndOutput(
+        gitdistPath + " --dist-no-color --dist-use-git="+mockGitPath \
+          +" --dist-repos=.,ExtraRepo1,ExtraRepo2 dist-repo-status",
+        workingDir=testDir)
+      cmndOut_expected = \
+        "-----------------------------------------------------------------------------------------\n" \
+        "| ID | Repo Dir              | Branch        | Tracking Branch             | C  | M | ? |\n" \
+        "|----|-----------------------|---------------|-----------------------------|----|---|---|\n" \
+        "|  0 | MockProjectDir (Base) | local_branch0 | origin_repo0/remote_branch0 |  3 | 2 | 1 |\n" \
+        "|  1 | ExtraRepo1            | local_branch1 | origin_repo1/remote_branch1 | 22 |   | 1 |\n" \
+        "|  2 | ExtraRepo2            | 1235abcd      |                             |    |   |   |\n" \
+        "-----------------------------------------------------------------------------------------\n" \
+        "\n" \
+        "(tip: to see a legend, pass in --dist-legend.)\n"
+      self.maxDiff = None
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
     finally:
