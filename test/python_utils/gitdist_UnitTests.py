@@ -2098,11 +2098,12 @@ class test_gitdist(unittest.TestCase):
         "Legend:\n" \
         "* ID: Repository ID, zero based (order git commands are run)\n" \
         "* Repo Dir: Relative to base repo (base repo shown first with '(Base)')\n" \
-        "* Branch: Current branch (or detached HEAD)\n" \
+        "* Branch: Current branch, or if detached HEAD tag name (if at tag) or SHA1\n" \
         "* Tracking Branch: Tracking branch (or empty if no tracking branch exists)\n" \
         "* C: Number local commits w.r.t. tracking branch (empty if zero or no TB)\n" \
         "* M: Number of tracked modified (uncommitted) files (empty if zero)\n" \
         "* ?: Number of untracked, non-ignored files (empty if zero)\n\n"
+      self.maxDiff = None
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
     finally:
@@ -2141,11 +2142,12 @@ class test_gitdist(unittest.TestCase):
           "Legend:\n" \
           "* ID: Repository ID, zero based (order git commands are run)\n" \
           "* Repo Dir: Relative to base repo (base repo shown first with '(Base)')\n" \
-          "* Branch: Current branch (or detached HEAD)\n" \
+          "* Branch: Current branch, or if detached HEAD tag name (if at tag) or SHA1\n" \
           "* Tracking Branch: Tracking branch (or empty if no tracking branch exists)\n" \
           "* C: Number local commits w.r.t. tracking branch (empty if zero or no TB)\n" \
           "* M: Number of tracked modified (uncommitted) files (empty if zero)\n" \
           "* ?: Number of untracked, non-ignored files (empty if zero)\n\n"
+        self.maxDiff = None
         self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
       finally:

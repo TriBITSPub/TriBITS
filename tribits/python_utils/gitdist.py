@@ -36,7 +36,7 @@ else:
 distRepoStatusLegend = r"""Legend:
 * ID: Repository ID, zero based (order git commands are run)
 * Repo Dir: Relative to base repo (base repo shown first with '(Base)')
-* Branch: Current branch (or detached HEAD)
+* Branch: Current branch, or if detached HEAD tag name (if at tag) or SHA1
 * Tracking Branch: Tracking branch (or empty if no tracking branch exists)
 * C: Number local commits w.r.t. tracking branch (empty if zero or no TB)
 * M: Number of tracked modified (uncommitted) files (empty if zero)
@@ -333,7 +333,7 @@ outputs a table like:
   |----|-----------------------|--------|-----------------|---|----|---|
   |  0 | BaseRepo (Base)       | dummy  |                 |   |    |   |
   |  1 | ExtraRepo1            | master | origin/master   | 1 |  2 |   |
-  |  2 | ExtraRepo1/ExtraRepo2 | HEAD   |                 |   | 25 | 4 |
+  |  2 | ExtraRepo1/ExtraRepo2 | abc123 |                 |   | 25 | 4 |
   |  3 | ExtraRepo3            | master | origin/master   |   |    |   |
   ----------------------------------------------------------------------
 
@@ -341,6 +341,13 @@ If the option --dist-legend is also passed in, the output will include:
 
 """+distRepoStatusLegend+\
 r"""
+
+In the case of a detached head state, as shown above with the repo
+'ExtraRepo3', the SHA1 (e.g. 'abc123') was printed instead of 'HEAD'.
+However, if the repo is in the detached head state but a tag happens to point
+to the current commit (e.g. 'git tag --points-at' returns non-empy), then the
+tag name (e.g. 'v1.2.3') is printed instead of the SHA1 of the commit.
+
 One can also show the status of only changed repos with the command:
 
   $ gitdist dist-repo-status --dist-mod-only  # alias 'gitdist-mod-status'
@@ -351,7 +358,7 @@ which produces a table like:
   | ID | Repo Dir              | Branch | Tracking Branch | C | M  | ? |
   |----|-----------------------|--------|-----------------|---|----|---|
   |  1 | ExtraRepo1            | master | origin/master   | 1 |  2 |   |
-  |  2 | ExtraRepo1/ExtraRepo2 | HEAD   |                 |   | 25 | 4 |
+  |  2 | ExtraRepo1/ExtraRepo2 | abc123 |                 |   | 25 | 4 |
   ----------------------------------------------------------------------
 
 (see the alias 'gitdist-mod-status' in --dist-help=aliases).
