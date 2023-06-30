@@ -808,6 +808,8 @@ def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
       "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
       )
 
+  os.mkdir("ExtraRepo1")
+
   with open("ExtraRepo1/.mockprogram_inout.txt", "w") as fileHandle:
     fileHandle.write(
       "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
@@ -827,6 +829,8 @@ def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
       "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
       "Your branch is ahead of 'origin_repo1/remote_branch1' by 22 commits.\n" \
       )
+
+  os.mkdir("ExtraRepo2")
 
   with open("ExtraRepo2/.mockprogram_inout.txt", "w") as fileHandle:
     fileHandle.write(
@@ -863,6 +867,8 @@ def writeGitMockProgram_dist_repo_versions_table():
       "MOCK_PROGRAM_OUTPUT: Merge Pull Request #1234 from user/repo/branch\n" \
     )
 
+  os.mkdir("ExtraRepo1")
+
   with open("ExtraRepo1/.mockprogram_inout.txt", "w") as f:
     f.write(
       "MOCK_PROGRAM_INPUT: rev-parse --short HEAD\n" \
@@ -878,6 +884,8 @@ def writeGitMockProgram_dist_repo_versions_table():
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: Fixed a Bug\n" \
     )
+
+  os.mkdir("ExtraRepo2")
 
   with open("ExtraRepo2/.mockprogram_inout.txt", "w") as f:
     f.write(
@@ -926,6 +934,8 @@ def writeGitMockProgram_dist_repo_versions_table_1_change_base():
       "MOCK_PROGRAM_OUTPUT: Merge Pull Request #1234 from user/repo/branch\n" \
     )
 
+  os.mkdir("ExtraRepo1")
+
   with open("ExtraRepo1/.mockprogram_inout.txt", "w") as f:
     f.write(
       "MOCK_PROGRAM_INPUT: rev-parse --short HEAD\n" \
@@ -941,6 +951,8 @@ def writeGitMockProgram_dist_repo_versions_table_1_change_base():
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: Fixed a Bug\n" \
     )
+
+  os.mkdir("ExtraRepo2")
 
   with open("ExtraRepo2/.mockprogram_inout.txt", "w") as f:
     f.write(
@@ -983,6 +995,8 @@ def writeGitMockProgram_base_3_2_1_repo1_0_0_0_repo2_4_0_2():
       "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
       )
 
+  os.mkdir("ExtraRepo1")
+
   with open("ExtraRepo1/.mockprogram_inout.txt", "w") as fileHandle:
     fileHandle.write(
       "MOCK_PROGRAM_INPUT: rev-parse --abbrev-ref HEAD\n" \
@@ -998,6 +1012,8 @@ def writeGitMockProgram_base_3_2_1_repo1_0_0_0_repo2_4_0_2():
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: \n" \
       )
+
+  os.mkdir("ExtraRepo2")
 
   with open("ExtraRepo2/.mockprogram_inout.txt", "w") as fileHandle:
     fileHandle.write(
@@ -1744,9 +1760,6 @@ class test_gitdist(unittest.TestCase):
 
       testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_all")
 
-      os.mkdir("ExtraRepo1")
-      os.mkdir("ExtraRepo2")
-
       writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0()
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
@@ -1778,9 +1791,6 @@ class test_gitdist(unittest.TestCase):
 
       testDir = createAndMoveIntoTestDir("gitdist_dist_repo_versions_table")
 
-      os.mkdir("ExtraRepo1")
-      os.mkdir("ExtraRepo2")
-
       writeGitMockProgram_dist_repo_versions_table()
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
@@ -1809,9 +1819,6 @@ class test_gitdist(unittest.TestCase):
       testDir = createAndMoveIntoTestDir(
         "gitdist_dist_repo_versions_table_1_change_base")
 
-      os.mkdir("ExtraRepo1")
-      os.mkdir("ExtraRepo2")
-
       writeGitMockProgram_dist_repo_versions_table_1_change_base()
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
@@ -1837,9 +1844,6 @@ class test_gitdist(unittest.TestCase):
       # Create a mock git meta-project
 
       testDir = createAndMoveIntoTestDir("gitdist_dist_repo_versions_short_table")
-
-      os.mkdir("ExtraRepo1")
-      os.mkdir("ExtraRepo2")
 
       writeGitMockProgram_dist_repo_versions_table()
 
@@ -1872,9 +1876,6 @@ class test_gitdist(unittest.TestCase):
 
         testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_all")
 
-        os.mkdir("ExtraRepo1")
-        os.mkdir("ExtraRepo2")
-
         writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0()
 
         cmndOut = GeneralScriptSupport.getCmndOutput(
@@ -1906,9 +1907,6 @@ class test_gitdist(unittest.TestCase):
       # Create a mock git meta-project
 
       testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_first")
-
-      os.mkdir("ExtraRepo1")
-      os.mkdir("ExtraRepo2")
 
       writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0()
 
@@ -1943,9 +1941,6 @@ class test_gitdist(unittest.TestCase):
 
         testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_first")
 
-        os.mkdir("ExtraRepo1")
-        os.mkdir("ExtraRepo2")
-
         writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0()
 
         cmndOut = GeneralScriptSupport.getCmndOutput(
@@ -1976,9 +1971,6 @@ class test_gitdist(unittest.TestCase):
       # Create a mock git meta-project
 
       testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_first_legend")
-
-      os.mkdir("ExtraRepo1")
-      os.mkdir("ExtraRepo2")
 
       writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0()
 
@@ -2019,10 +2011,8 @@ class test_gitdist(unittest.TestCase):
 
         # Create a mock git meta-project
 
-        testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_first_legend")
-
-        os.mkdir("ExtraRepo1")
-        os.mkdir("ExtraRepo2")
+        testDir = \
+          createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_first_legend")
 
         writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0()
 
@@ -2063,9 +2053,6 @@ class test_gitdist(unittest.TestCase):
 
       testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_first_last")
 
-      os.mkdir("ExtraRepo1")
-      os.mkdir("ExtraRepo2")
-
       writeGitMockProgram_base_3_2_1_repo1_0_0_0_repo2_4_0_2()
 
       cmndOut = GeneralScriptSupport.getCmndOutput(
@@ -2098,9 +2085,6 @@ class test_gitdist(unittest.TestCase):
         # Create a mock git meta-project
 
         testDir = createAndMoveIntoTestDir("gitdist_dist_repo_status_mod_only_first_last")
-
-        os.mkdir("ExtraRepo1")
-        os.mkdir("ExtraRepo2")
 
         writeGitMockProgram_base_3_2_1_repo1_0_0_0_repo2_4_0_2()
 
