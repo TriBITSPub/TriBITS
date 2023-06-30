@@ -1906,7 +1906,7 @@ if __name__ == '__main__':
       # Get repo stats
       repoStats = None
       if options.modifiedOnly or distRepoStatus:
-        repoStats = getRepoStats(options)
+        repoStats = getRepoStats(options, showMoreHeadDetails="SHOW_MORE_HEAD_DETAILS")
       repoVersions = None
       if distRepoVersionTable:
         repoVersions = getRepoVersions(options)
