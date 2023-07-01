@@ -403,13 +403,13 @@ lines per repo in the file).  A compatible repo version file can be generated
 with this script listing three lines per repo (e.g. as shown above) using (for
 example):
 
-  $ gitdist --dist-no-color log -1 --pretty=format:"%h [%ad] <%ae>%n%s" \
+  $ gitdist --dist-no-color log --color=never -1 --pretty=format:"%h [%ad] <%ae>%n%s" \
     | grep -v "^$" &> RepoVersion.txt
 
 (which is defined as the alias 'gitdist-repo-versions' in the file
 'gitdist-setup.sh') or two lines per repo using (for example):
 
-  $ gitdist --dist-no-color log -1 --pretty=format:"%h [%ad] <%ae>" \
+  $ gitdist --dist-no-color log --color=never -1 --pretty=format:"%h [%ad] <%ae>" \
     | grep -v "^$" &> RepoVersion.txt
 
 This allows checking out consistent versions of the set git repos, diffing two
@@ -502,7 +502,7 @@ include:
   $ alias gitdist-status="gitdist dist-repo-status"
   $ alias gitdist-mod="gitdist --dist-mod-only"
   $ alias gitdist-mod-status="gitdist dist-repo-status --dist-mod-only"
-  $ alias gitdist-repo-versions="gitdist --dist-no-color log -1 \
+  $ alias gitdist-repo-versions="gitdist --dist-no-color log --color=never -1 \
     --pretty=format:\"%h [%ad] <%ae>%n%s\" | grep -v \"^$\""
 
 These are added by sourcing the provided file 'gitdist-setup.sh' (which should
@@ -1312,7 +1312,10 @@ def getCommandlineOps():
 
   clp.add_option(
     noColorArgName, dest="useColor", action="store_false",
-    help="If set, don't use color in the output for gitdist (better for output to a file).",
+    help="If set, don't use color in the output for gitdist and set"
+    +" '-c color.status=never' before the git command (like 'status')."
+    +"  NOTE: user should also pass in --color=never for git commands "
+    +" accept that argument.  (Better for output to a file).",
     default=True )
 
   clp.add_option(
@@ -1552,7 +1555,12 @@ def runRepoCmnd(options, cmndLineArgsArray, repoDirName, baseDir, \
     repoDirName, repoVersionDict, repoVersionDict2)
   cmndLineArgsArrayDefaultBranch = replaceDefaultBranchInCmndLineArgs( \
     cmndLineArgsArrayRepo, repoDirName, defaultBranchDict)
-  egCmndArray = [ options.useGit ] + cmndLineArgsArrayDefaultBranch
+  egCmndArray = [ options.useGit ]
+  if options.useColor:
+    egCmndArray.extend(['-c', 'color.status=always'])
+  else:
+    egCmndArray.extend(['-c', 'color.status=never'])
+  egCmndArray.extend(cmndLineArgsArrayDefaultBranch)
   runCmnd(options, egCmndArray)
 
 

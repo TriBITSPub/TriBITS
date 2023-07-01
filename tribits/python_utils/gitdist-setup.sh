@@ -44,7 +44,7 @@ if [[ "${existing_gitdist}" == "" ]] ; then
 fi
 
 function gitdist_repo_versions {
-  gitdist "$@" --dist-no-color log -1 --pretty=format:"%H [%cd] <%ae>%n%s" | grep -v "^$"
+  gitdist "$@" --dist-no-color log --color=never -1 --pretty=format:"%H [%cd] <%ae>%n%s" | grep -v "^$"
 }
 export -f gitdist_repo_versions
 
@@ -60,7 +60,7 @@ function gitdist_show_full_repo_state {
   echo
   echo "Repo remotes:"
   echo
-  gitdist --dist-no-color "$@" remote -v | grep "\(Git Repo\|push\)"
+  gitdist --dist-no-color "$@" remote -v | grep --color=never "\(Git Repo\|push\)"
 }
 export -f gitdist_show_full_repo_state
 

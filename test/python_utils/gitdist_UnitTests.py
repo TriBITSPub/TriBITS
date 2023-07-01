@@ -807,7 +807,7 @@ def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
       "MOCK_PROGRAM_OUTPUT: M  file1\n" \
       " M file2\n" \
       "?? file2\n" \
-      "MOCK_PROGRAM_INPUT: status\n" \
+      "MOCK_PROGRAM_INPUT: -c color.status=never status\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
       "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
@@ -829,7 +829,7 @@ def writeGitMockProgram_base_3_2_1_repo1_22_0_2_repo2_0_0_0():
       "MOCK_PROGRAM_INPUT: status --porcelain\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: ?? file1\n" \
-      "MOCK_PROGRAM_INPUT: status\n" \
+      "MOCK_PROGRAM_INPUT: -c color.status=never status\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
       "Your branch is ahead of 'origin_repo1/remote_branch1' by 22 commits.\n" \
@@ -1065,7 +1065,7 @@ def writeGitMockProgram_base_3_2_1_repo1_0_0_0_repo2_4_0_2():
       "MOCK_PROGRAM_OUTPUT: M  file1\n" \
       " M file2\n" \
       "?? file3\n" \
-      "MOCK_PROGRAM_INPUT: status\n" \
+      "MOCK_PROGRAM_INPUT: -c color.status=never status\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
       "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
@@ -1107,7 +1107,7 @@ def writeGitMockProgram_base_3_2_1_repo1_0_0_0_repo2_4_0_2():
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: ??  file1\n" \
       "?? file3\n" \
-      "MOCK_PROGRAM_INPUT: status\n" \
+      "MOCK_PROGRAM_INPUT: -c color.status=never status\n" \
       "MOCK_PROGRAM_RETURN: 0\n" \
       "MOCK_PROGRAM_OUTPUT: On branch local_branch2\n" \
       "Your branch is ahead of 'origin_repo2/remote_branch2' by 4 commits.\n" \
@@ -1324,7 +1324,7 @@ class test_gitdist(unittest.TestCase):
     cmndOut = getCmndOutputInMockProjectDir(gitdistPathMock+" log HEAD -1")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'HEAD', '-1']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'HEAD', '-1']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1353,13 +1353,13 @@ class test_gitdist(unittest.TestCase):
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
-        "['mockgit', 'status']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
         "*** Git Repo: ExtraRepo1\n" \
-        "['mockgit', 'status']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
         "*** Git Repo: Path/To/ExtraRepo2\n" \
-        "['mockgit', 'status']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
         "*** Git Repo: ExtraRepo3\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
       # NOTE: Above ensures that all of the paths are read correctly and that
       # missing paths (MissingExtraRepo) are ignored.
@@ -1378,11 +1378,11 @@ class test_gitdist(unittest.TestCase):
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
-        "['mockgit', 'status']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
         "*** Git Repo: ExtraRepo1\n" \
-        "['mockgit', 'status']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
         "*** Git Repo: ExtraRepo3\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
       # Make sure that --dist-repos overrides all files
@@ -1391,11 +1391,11 @@ class test_gitdist(unittest.TestCase):
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
-        "['mockgit', 'status']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
         "*** Git Repo: ExtraRepo1\n" \
-        "['mockgit', 'status']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
         "*** Git Repo: Path/To/ExtraRepo2\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
     finally:
@@ -1407,9 +1407,9 @@ class test_gitdist(unittest.TestCase):
       gitdistPathMock+" --dist-repos=.,extraTrilinosRepo log HEAD -1")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'HEAD', '-1']\n\n" \
+      "['mockgit', '-c', 'color.status=never', 'log', 'HEAD', '-1']\n\n" \
       "*** Git Repo: extraTrilinosRepo\n" \
-      "['mockgit', 'log', 'HEAD', '-1']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'HEAD', '-1']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1422,9 +1422,9 @@ class test_gitdist(unittest.TestCase):
       )
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'HEAD', '-1']\n\n" \
+      "['mockgit', '-c', 'color.status=never', 'log', 'HEAD', '-1']\n\n" \
       "*** Git Repo: extraRepoOnePackage\n" \
-      "['mockgit', 'log', 'HEAD', '-1']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'HEAD', '-1']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1437,9 +1437,9 @@ class test_gitdist(unittest.TestCase):
       )
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'HEAD', '-1']\n\n" \
+      "['mockgit', '-c', 'color.status=never', 'log', 'HEAD', '-1']\n\n" \
       "*** Git Repo: extraRepoOnePackage\n" \
-      "['mockgit', 'log', 'HEAD', '-1']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'HEAD', '-1']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1452,7 +1452,7 @@ class test_gitdist(unittest.TestCase):
       )
     cmndOut_expected = \
       "\n*** Git Repo: extraTrilinosRepo\n" \
-      "['mockgit', 'log', 'HEAD', '-1']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'HEAD', '-1']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1481,7 +1481,7 @@ class test_gitdist(unittest.TestCase):
           "MOCK_PROGRAM_INPUT: status --porcelain\n" \
           "MOCK_PROGRAM_RETURN: 0\n" \
           "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-          "MOCK_PROGRAM_INPUT: status\n" \
+          "MOCK_PROGRAM_INPUT: -c color.status=never status\n" \
           "MOCK_PROGRAM_RETURN: 0\n" \
           "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
           "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
@@ -1574,7 +1574,7 @@ class test_gitdist(unittest.TestCase):
           "MOCK_PROGRAM_INPUT: status --porcelain\n" \
           "MOCK_PROGRAM_RETURN: 0\n" \
           "MOCK_PROGRAM_OUTPUT: \n" \
-          "MOCK_PROGRAM_INPUT: status\n" \
+          "MOCK_PROGRAM_INPUT: -c color.status=never status\n" \
           "MOCK_PROGRAM_RETURN: 0\n" \
           "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
           "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n" \
@@ -1633,7 +1633,7 @@ class test_gitdist(unittest.TestCase):
           "MOCK_PROGRAM_INPUT: status --porcelain\n" \
           "MOCK_PROGRAM_RETURN: 0\n" \
           "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-          "MOCK_PROGRAM_INPUT: status\n" \
+          "MOCK_PROGRAM_INPUT: -c color.status=never status\n" \
           "MOCK_PROGRAM_RETURN: 0\n" \
           "MOCK_PROGRAM_OUTPUT: On branch local_branch0\n" \
           "Your branch is ahead of 'origin_repo0/remote_branch0' by 3 commits.\n" \
@@ -1703,7 +1703,7 @@ class test_gitdist(unittest.TestCase):
           "MOCK_PROGRAM_INPUT: status --porcelain\n" \
           "MOCK_PROGRAM_RETURN: 0\n" \
           "MOCK_PROGRAM_OUTPUT: M  file1\n" \
-          "MOCK_PROGRAM_INPUT: status\n" \
+          "MOCK_PROGRAM_INPUT: -c color.status=never status\n" \
           "MOCK_PROGRAM_RETURN: 0\n" \
           "MOCK_PROGRAM_OUTPUT: On branch local_branch1\n" \
           "Your branch is ahead of 'origin_repo1/remote_branch1' by 1 commits.\n" \
@@ -1731,7 +1731,7 @@ class test_gitdist(unittest.TestCase):
       " log _VERSION_ --some -other args")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'sha1_1', '--some', '-other', 'args']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'sha1_1', '--some', '-other', 'args']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1743,8 +1743,8 @@ class test_gitdist(unittest.TestCase):
       " log _VERSION_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'sha1_1']\n" \
-      "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'sha1_2']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'sha1_1']\n" \
+      "\n*** Git Repo: extraTrilinosRepo\n['mockgit', '-c', 'color.status=never', 'log', 'sha1_2']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1756,9 +1756,9 @@ class test_gitdist(unittest.TestCase):
       " log _VERSION_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'sha1_1']\n" \
-      "\n*** Git Repo: extraRepoOnePackage\n['mockgit', 'log', 'sha1_3']\n" \
-      "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'sha1_2']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'sha1_1']\n" \
+      "\n*** Git Repo: extraRepoOnePackage\n['mockgit', '-c', 'color.status=never', 'log', 'sha1_3']\n" \
+      "\n*** Git Repo: extraTrilinosRepo\n['mockgit', '-c', 'color.status=never', 'log', 'sha1_2']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1770,8 +1770,8 @@ class test_gitdist(unittest.TestCase):
       " log HEAD ^_VERSION_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'HEAD', '^sha1_1']\n" \
-      "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'HEAD', '^sha1_2']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'HEAD', '^sha1_1']\n" \
+      "\n*** Git Repo: extraTrilinosRepo\n['mockgit', '-c', 'color.status=never', 'log', 'HEAD', '^sha1_2']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1782,7 +1782,7 @@ class test_gitdist(unittest.TestCase):
       " --dist-repos=.,extraRepoTwoPackages"+ \
       " log _VERSION_")
     cmndOut_expected = \
-      "\n*** Base Git Repo: MockTrilinos\n['mockgit', 'log', 'sha1_1']\n" \
+      "\n*** Base Git Repo: MockTrilinos\n['mockgit', '-c', 'color.status=never', 'log', 'sha1_1']\n" \
       "\n*** Git Repo: extraRepoTwoPackages\nRepo 'extraRepoTwoPackages' is not in the list of repos ['.', 'extraRepoOnePackage', 'extraTrilinosRepo'] read in from the version file.\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
@@ -1795,7 +1795,7 @@ class test_gitdist(unittest.TestCase):
       " log _VERSION_ ^_VERSION2_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'sha1_1', '^sha1_1_2']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'sha1_1', '^sha1_1_2']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1808,8 +1808,8 @@ class test_gitdist(unittest.TestCase):
       " log _VERSION_ ^_VERSION2_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'sha1_1', '^sha1_1_2']\n" \
-      "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'sha1_2', '^sha1_2_2']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'sha1_1', '^sha1_1_2']\n" \
+      "\n*** Git Repo: extraTrilinosRepo\n['mockgit', '-c', 'color.status=never', 'log', 'sha1_2', '^sha1_2_2']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1822,8 +1822,8 @@ class test_gitdist(unittest.TestCase):
       " log _VERSION2_.._VERSION_")
     cmndOut_expected = \
       "\n*** Base Git Repo: MockTrilinos\n" \
-      "['mockgit', 'log', 'sha1_1_2..sha1_1']\n" \
-      "\n*** Git Repo: extraTrilinosRepo\n['mockgit', 'log', 'sha1_2_2..sha1_2']\n\n"
+      "['mockgit', '-c', 'color.status=never', 'log', 'sha1_1_2..sha1_1']\n" \
+      "\n*** Git Repo: extraTrilinosRepo\n['mockgit', '-c', 'color.status=never', 'log', 'sha1_2_2..sha1_2']\n\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
   # The above test ensures that it repalces the SHA1s for in the same cmndline args
 
@@ -2288,13 +2288,13 @@ class test_gitdist(unittest.TestCase):
         gitdistPathMock+" checkout _DEFAULT_BRANCH_", workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
-        "['mockgit', 'checkout', 'master']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'checkout', 'master']\n\n" \
         "*** Git Repo: ExtraRepo1\n" \
-        "['mockgit', 'checkout', 'develop']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'checkout', 'develop']\n\n" \
         "*** Git Repo: Path/To/ExtraRepo2\n" \
-        "['mockgit', 'checkout', 'app-devel']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'checkout', 'app-devel']\n\n" \
         "*** Git Repo: ExtraRepo3\n" \
-        "['mockgit', 'checkout', 'master']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'checkout', 'master']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
       # NOTE: Above ensures that all of the paths are read correctly and that
       # missing paths (MissingExtraRepo) are ignored.
@@ -2310,11 +2310,11 @@ class test_gitdist(unittest.TestCase):
         gitdistPathMock+" checkout _DEFAULT_BRANCH_", workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
-        "['mockgit', 'checkout', 'develop']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'checkout', 'develop']\n\n" \
         "*** Git Repo: ExtraRepo1\n" \
-        "['mockgit', 'checkout', 'develop']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'checkout', 'develop']\n\n" \
         "*** Git Repo: ExtraRepo3\n" \
-        "['mockgit', 'checkout', 'develop']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'checkout', 'develop']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
       # Make sure that --dist-repos overrides all files
@@ -2324,11 +2324,11 @@ class test_gitdist(unittest.TestCase):
         workingDir=testDir)
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
-        "['mockgit', 'checkout', 'master']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'checkout', 'master']\n\n" \
         "*** Git Repo: ExtraRepo1\n" \
-        "['mockgit', 'checkout', 'master']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'checkout', 'master']\n\n" \
         "*** Git Repo: Path/To/ExtraRepo2\n" \
-        "['mockgit', 'checkout', 'master']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'checkout', 'master']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
       
     finally:
@@ -2367,7 +2367,7 @@ class test_gitdist(unittest.TestCase):
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
       cmndOut_expected = \
         "\n*** Base Git Repo: somewhere\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
       # Test moving up the directory tree until we find a .gitdist file.
@@ -2375,7 +2375,7 @@ class test_gitdist(unittest.TestCase):
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
       cmndOut_expected = \
         "\n*** Base Git Repo: ExtraRepo\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
       # Test moving up the directory tree until we find the outer-most .gitdist
@@ -2384,9 +2384,9 @@ class test_gitdist(unittest.TestCase):
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
-        "['mockgit', 'status']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
         "*** Git Repo: ExtraRepo\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
       
       # Rename the .gitdist files .gitdist.default, and try the tests again.
@@ -2398,7 +2398,7 @@ class test_gitdist(unittest.TestCase):
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
       cmndOut_expected = \
         "\n*** Base Git Repo: somewhere\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
       # Test moving up the directory tree until we find a .gitdist file.
@@ -2406,7 +2406,7 @@ class test_gitdist(unittest.TestCase):
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
       cmndOut_expected = \
         "\n*** Base Git Repo: ExtraRepo\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
       # Test moving up the directory tree until we find the outer-most .gitdist
@@ -2415,9 +2415,9 @@ class test_gitdist(unittest.TestCase):
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
       cmndOut_expected = \
         "\n*** Base Git Repo: MockProjectDir\n" \
-        "['mockgit', 'status']\n\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
         "*** Git Repo: ExtraRepo\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
       
     finally:
@@ -2439,21 +2439,21 @@ class test_gitdist(unittest.TestCase):
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
       cmndOut_expected = \
         "\n*** Base Git Repo: somewhere\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
       os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "IMMEDIATE_BASE"
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
       cmndOut_expected = \
         "\n*** Base Git Repo: somewhere\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
       os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "EXTREME_BASE"
       cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
       cmndOut_expected = \
         "\n*** Base Git Repo: somewhere\n" \
-        "['mockgit', 'status']\n\n"
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
     finally:
