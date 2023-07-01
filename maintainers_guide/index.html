@@ -449,10 +449,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2023-06-30</p>
+<dd class="field-even"><p>2023-07-01</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3301-gf6e0838c</p>
+<dd class="field-odd"><p>tribits_start-3304-g9111399d</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -18345,8 +18345,11 @@ and <a class="reference internal" href="#multi-repository-development-workflow">
                         <span class="n">relative</span> <span class="n">directories</span> <span class="ow">and</span> <span class="n">git</span> <span class="n">versions</span> <span class="p">(</span><span class="n">replaces</span>
                         <span class="n">_VERSION2_</span><span class="p">)</span><span class="o">.</span> <span class="p">(</span><span class="n">See</span> <span class="o">--</span><span class="n">dist</span><span class="o">-</span><span class="n">help</span><span class="o">=</span><span class="n">repo</span><span class="o">-</span><span class="n">versions</span><span class="o">.</span><span class="p">)</span>
                         <span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-  <span class="o">--</span><span class="n">dist</span><span class="o">-</span><span class="n">no</span><span class="o">-</span><span class="n">color</span>       <span class="n">If</span> <span class="nb">set</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t use color in the output for gitdist</span>
-                        <span class="p">(</span><span class="n">better</span> <span class="k">for</span> <span class="n">output</span> <span class="n">to</span> <span class="n">a</span> <span class="n">file</span><span class="p">)</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">dist</span><span class="o">-</span><span class="n">no</span><span class="o">-</span><span class="n">color</span>       <span class="n">If</span> <span class="nb">set</span><span class="p">,</span> <span class="n">don</span><span class="s1">&#39;t use color in the output for gitdist and</span>
+                        <span class="nb">set</span> <span class="s1">&#39;-c color.status=never&#39;</span> <span class="n">before</span> <span class="n">the</span> <span class="n">git</span> <span class="n">command</span>
+                        <span class="p">(</span><span class="n">like</span> <span class="s1">&#39;status&#39;</span><span class="p">)</span><span class="o">.</span>  <span class="n">NOTE</span><span class="p">:</span> <span class="n">user</span> <span class="n">should</span> <span class="n">also</span> <span class="k">pass</span> <span class="ow">in</span>
+                        <span class="o">--</span><span class="n">color</span><span class="o">=</span><span class="n">never</span> <span class="k">for</span> <span class="n">git</span> <span class="n">commands</span>  <span class="n">accept</span> <span class="n">that</span> <span class="n">argument</span><span class="o">.</span>
+                        <span class="p">(</span><span class="n">Better</span> <span class="k">for</span> <span class="n">output</span> <span class="n">to</span> <span class="n">a</span> <span class="n">file</span><span class="p">)</span><span class="o">.</span>
   <span class="o">--</span><span class="n">dist</span><span class="o">-</span><span class="n">debug</span>          <span class="n">If</span> <span class="nb">set</span><span class="p">,</span> <span class="n">then</span> <span class="n">debugging</span> <span class="n">info</span> <span class="ow">is</span> <span class="n">printed</span><span class="o">.</span>
   <span class="o">--</span><span class="n">dist</span><span class="o">-</span><span class="n">no</span><span class="o">-</span><span class="n">opt</span>         <span class="n">If</span> <span class="nb">set</span><span class="p">,</span> <span class="n">then</span> <span class="n">no</span> <span class="n">git</span> <span class="n">commands</span> <span class="n">will</span> <span class="n">be</span> <span class="n">run</span> <span class="n">but</span> <span class="n">instead</span>
                         <span class="n">will</span> <span class="n">just</span> <span class="n">be</span> <span class="n">printed</span><span class="o">.</span>
@@ -18696,13 +18699,13 @@ lines per repo in the file).  A compatible repo version file can be generated
 with this script listing three lines per repo (e.g. as shown above) using (for
 example):
 
-  $ gitdist --dist-no-color log -1 --pretty=format:&quot;%h [%ad] &lt;%ae&gt;%n%s&quot; \
+  $ gitdist --dist-no-color log --color=never -1 --pretty=format:&quot;%h [%ad] &lt;%ae&gt;%n%s&quot; \
     | grep -v &quot;^$&quot; &amp;&gt; RepoVersion.txt
 
 (which is defined as the alias &#39;gitdist-repo-versions&#39; in the file
 &#39;gitdist-setup.sh&#39;) or two lines per repo using (for example):
 
-  $ gitdist --dist-no-color log -1 --pretty=format:&quot;%h [%ad] &lt;%ae&gt;&quot; \
+  $ gitdist --dist-no-color log --color=never -1 --pretty=format:&quot;%h [%ad] &lt;%ae&gt;&quot; \
     | grep -v &quot;^$&quot; &amp;&gt; RepoVersion.txt
 
 This allows checking out consistent versions of the set git repos, diffing two
@@ -18768,7 +18771,7 @@ include:
   $ alias gitdist-status=&quot;gitdist dist-repo-status&quot;
   $ alias gitdist-mod=&quot;gitdist --dist-mod-only&quot;
   $ alias gitdist-mod-status=&quot;gitdist dist-repo-status --dist-mod-only&quot;
-  $ alias gitdist-repo-versions=&quot;gitdist --dist-no-color log -1 \
+  $ alias gitdist-repo-versions=&quot;gitdist --dist-no-color log --color=never -1 \
     --pretty=format:\&quot;%h [%ad] &lt;%ae&gt;%n%s\&quot; | grep -v \&quot;^$\&quot;&quot;
 
 These are added by sourcing the provided file &#39;gitdist-setup.sh&#39; (which should
@@ -19378,13 +19381,13 @@ lines per repo in the file).  A compatible repo version file can be generated
 with this script listing three lines per repo (e.g. as shown above) using (for
 example):
 
-  $ gitdist --dist-no-color log -1 --pretty=format:&quot;%h [%ad] &lt;%ae&gt;%n%s&quot; \
+  $ gitdist --dist-no-color log --color=never -1 --pretty=format:&quot;%h [%ad] &lt;%ae&gt;%n%s&quot; \
     | grep -v &quot;^$&quot; &amp;&gt; RepoVersion.txt
 
 (which is defined as the alias &#39;gitdist-repo-versions&#39; in the file
 &#39;gitdist-setup.sh&#39;) or two lines per repo using (for example):
 
-  $ gitdist --dist-no-color log -1 --pretty=format:&quot;%h [%ad] &lt;%ae&gt;&quot; \
+  $ gitdist --dist-no-color log --color=never -1 --pretty=format:&quot;%h [%ad] &lt;%ae&gt;&quot; \
     | grep -v &quot;^$&quot; &amp;&gt; RepoVersion.txt
 
 This allows checking out consistent versions of the set git repos, diffing two
@@ -19469,7 +19472,7 @@ include:
   $ alias gitdist-status=&quot;gitdist dist-repo-status&quot;
   $ alias gitdist-mod=&quot;gitdist --dist-mod-only&quot;
   $ alias gitdist-mod-status=&quot;gitdist dist-repo-status --dist-mod-only&quot;
-  $ alias gitdist-repo-versions=&quot;gitdist --dist-no-color log -1 \
+  $ alias gitdist-repo-versions=&quot;gitdist --dist-no-color log --color=never -1 \
     --pretty=format:\&quot;%h [%ad] &lt;%ae&gt;%n%s\&quot; | grep -v \&quot;^$\&quot;&quot;
 
 These are added by sourcing the provided file &#39;gitdist-setup.sh&#39; (which should
