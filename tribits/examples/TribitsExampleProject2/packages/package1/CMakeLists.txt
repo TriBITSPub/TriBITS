@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.23.0 FATAL_ERROR)
 
 macro(include_raw_cmake_build)
-  if (NOT COMMAND tribits_project)
+  if ((NOT COMMAND tribits_project) OR Package1_USE_RAW_CMAKE)
     include("${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.raw.cmake"
        NO_POLICY_SCOPE)
     return()
   endif()
 endmacro()
 
-if (COMMAND tribits_package)
+if ((COMMAND tribits_package) AND (NOT Package1_USE_RAW_CMAKE))
 
   # Being processed as a TriBITS package
   tribits_package(Package1)
@@ -18,7 +18,11 @@ if (COMMAND tribits_package)
 
 else()
 
-  message("Configuring raw CMake project Package1")
+  if (COMMAND tribits_package)
+    message("Configuring raw CMake package Package1")
+  else()
+    message("Configuring raw CMake project Package1")
+  endif()
   project(Package1 LANGUAGES C CXX)
   include(GNUInstallDirs)
   find_package(Tpl1 CONFIG REQUIRED)

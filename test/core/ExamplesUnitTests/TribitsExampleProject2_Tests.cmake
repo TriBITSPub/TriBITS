@@ -541,9 +541,23 @@ TribitsExampleProject2_explicit_tpl_vars(SHARED)
 ########################################################################
 
 
-function(TribitsExampleProject2_find_package  sharedOrStatic)
+function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrRawCMake)
 
   TribitsExampleProject2_test_setup_header()
+
+  if ( (package1TribitsOrRawCMake STREQUAL "") OR
+      (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_TRIBITS")
+    )
+    set(package1UseRawCMakeArgs "")
+    set(testNameSuffix "")
+    set(package1ConfiRegex "Configuring package Package1 as full TriBITS package")
+  elseif (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_RAW_CMAKE")
+    set(package1UseRawCMakeArgs "-D Package1_USE_RAW_CMAKE=TRUE")
+    set(testNameSuffix "_${package1TribitsOrRawCMake}")
+    set(package1ConfiRegex "Configuring raw CMake package Package1")
+  else()
+    message(FATAL_ERROR "package1UseRawCMakeArgs='${package1UseRawCMakeArgs}' Invalid!")
+  endif()
 
   # Allow skipping delete of src and build dirs to aid in debugging
   if (TribitsExampleProject2_Tests_SKIP_DELETE_SRC_AND_BUILD)
@@ -554,7 +568,7 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
       CMND ${CMAKE_COMMAND} ARGS -E rm -rf TribitsExampleProject2 BUILD)
   endif()
 
-  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic})
+  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}${testNameSuffix})
   set(testName ${PACKAGE_NAME}_${testNameBase})
   set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
 
@@ -579,6 +593,7 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
         -DCMAKE_BUILD_TYPE=DEBUG
         -DTPL_ENABLE_Tpl3=ON
         -DTPL_ENABLE_Tpl4=ON
+        ${package1UseRawCMakeArgs}
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
@@ -594,6 +609,7 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
         "-- Generating Tpl3::all_libs and Tpl3Config.cmake"
         "-- Found Tpl4_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl4/lib/cmake/Tpl4'"
         "-- Generating Tpl4::all_libs and Tpl4Config.cmake"
+        "${package1ConfiRegex}"
         "-- Configuring done"
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -658,8 +674,10 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
 endfunction()
 
 
-TribitsExampleProject2_find_package(STATIC)
-TribitsExampleProject2_find_package(SHARED)
+TribitsExampleProject2_find_package(STATIC "")
+TribitsExampleProject2_find_package(SHARED "")
+TribitsExampleProject2_find_package(STATIC PACKAGE1_USE_RAW_CMAKE)
+TribitsExampleProject2_find_package(SHARED PACKAGE1_USE_RAW_CMAKE)
 
 
 ########################################################################
@@ -1359,6 +1377,3 @@ TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC  TPL_
 TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED  TPL_LIBRARY_AND_INCLUDE_DIRS)
 TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC  CMAKE_PREFIX_PATH_CACHE)
 TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CACHE)
-
-
-
