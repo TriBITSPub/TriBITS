@@ -2072,17 +2072,20 @@ macro(tribits_configure_enabled_packages)
         tribits_trace_file_processing(PACKAGE  ADD_SUBDIR
           "${TRIBITS_PACKAGE_CMAKELIST_FILE}")
         if (NOT ${TRIBITS_PACKAGE}_SOURCE_DIR STREQUAL ${PROJECT_NAME}_SOURCE_DIR)
-          add_subdirectory(${${TRIBITS_PACKAGE}_SOURCE_DIR} ${${TRIBITS_PACKAGE}_BINARY_DIR})
+          add_subdirectory(${${TRIBITS_PACKAGE}_SOURCE_DIR}
+            ${${TRIBITS_PACKAGE}_BINARY_DIR})
         else()
           include("${TRIBITS_PACKAGE_CMAKELIST_FILE}")
         endif()
-        if (NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_POSTPROCESS)
+        if ((NOT ${PACKAGE_NAME}_TRIBITS_PACKAGE_POSTPROCESS) AND
+	    (NOT TARGET ${PACKAGE_NAME}::all_libs)
+          )
           tribits_report_invalid_tribits_usage(
             "ERROR: Forgot to call tribits_package_postprocess() in"
             " ${TRIBITS_PACKAGE_CMAKELIST_FILE}")
         endif()
 
-        list(APPEND ENABLED_PACKAGE_LIBS_TARGETS ${TRIBITS_PACKAGE}_libs)
+        list(APPEND ENABLED_PACKAGE_LIBS_TARGETS ${TRIBITS_PACKAGE}::all_libs)
         list(APPEND ${PROJECT_NAME}_LIBRARIES ${${TRIBITS_PACKAGE}_LIBRARIES})
 
         tribits_package_config_code_stop_timer(PROCESS_THIS_PACKAGE_TIME_START_SECONDS

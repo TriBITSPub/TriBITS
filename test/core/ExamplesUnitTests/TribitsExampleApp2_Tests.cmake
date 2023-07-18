@@ -87,7 +87,7 @@ endif()
 
 
 function(TribitsExampleApp2  tribitsExProj2TestNameBaseBase
-    sharedOrStatic  fullOrComponents
+    sharedOrStatic  package1TribitsOrRawCMake  fullOrComponents
   )
 
   if (sharedOrStatic STREQUAL "SHARED")
@@ -95,8 +95,21 @@ function(TribitsExampleApp2  tribitsExProj2TestNameBaseBase
   elseif (sharedOrStatic STREQUAL "STATIC")
     set(buildSharedLibsArg -DBUILD_SHARED_LIBS=OFF)
   else()
-    message(FATAL_ERROR "Invalid value of buildSharedLibsArg='${buildSharedLibsArg}'!")
+    message(FATAL_ERROR "Invalid value of sharedOrStatic='${sharedOrStatic}'!")
   endif()
+  set(tribitsExProj2Suffix "${sharedOrStatic}")
+
+  if ( (package1TribitsOrRawCMake STREQUAL "") OR
+      (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_TRIBITS")
+    )
+    set(package1UseRawCMakeArgs "")
+  elseif (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_RAW_CMAKE")
+    set(package1UseRawCMakeArgs "-D Package1_USE_RAW_CMAKE=TRUE")
+    string(APPEND tribitsExProj2Suffix "_${package1TribitsOrRawCMake}")
+  else()
+    message(FATAL_ERROR "package1UseRawCMakeArgs='${package1UseRawCMakeArgs}' Invalid!")
+  endif()
+
 
   set(fullDepsRegex "Full Deps: Package3{Package2{Package1{tpl1}, Tpl3{Tpl2a{tpl1}, Tpl2b{no deps}}}, Package1{tpl1}, Tpl4{Tpl3{Tpl2a{tpl1}, Tpl2b{no deps}}, Tpl2a{tpl1}, Tpl2b{no deps}}, Tpl2a{tpl1}, Tpl2b{no deps}}")
 
@@ -113,7 +126,7 @@ function(TribitsExampleApp2  tribitsExProj2TestNameBaseBase
     set(fullDepsRegex "Full Deps: Package3{Package1{tpl1}, Tpl2a{tpl1}, Tpl2b{no deps}}")
   endif()
 
-  set(testSuffix ${sharedOrStatic}_${fullOrComponents})
+  set(testSuffix ${tribitsExProj2Suffix}_${fullOrComponents})
   set(testBaseName
     ${CMAKE_CURRENT_FUNCTION}_${tribitsExProj2TestNameBaseBase}_${testSuffix})
   set(testName ${PACKAGE_NAME}_${testBaseName})
@@ -129,7 +142,7 @@ function(TribitsExampleApp2  tribitsExProj2TestNameBaseBase
       MESSAGE "Configure TribitsExampleApp2 locally against already installed TribitsExProject2"
       WORKING_DIRECTORY app_build
       CMND ${CMAKE_COMMAND} ARGS
-        -DCMAKE_PREFIX_PATH=${${tribitsExProj2TestNameBaseBase}_${sharedOrStatic}_INSTALL_DIR}
+        -DCMAKE_PREFIX_PATH=${${tribitsExProj2TestNameBaseBase}_${tribitsExProj2Suffix}_INSTALL_DIR}
         ${tribitsExProjUseComponentsArg}
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp2
       PASS_REGULAR_EXPRESSION_ALL
@@ -169,20 +182,24 @@ function(TribitsExampleApp2  tribitsExProj2TestNameBaseBase
 
   if (${testNameBase}_NAME)
     set_tests_properties(${${testNameBase}_NAME}
-      PROPERTIES DEPENDS ${${tribitsExProj2TestNameBaseBase}_${sharedOrStatic}_NAME} )
+      PROPERTIES DEPENDS ${${tribitsExProj2TestNameBaseBase}_${tribitsExProj2Suffix}_NAME}
+      )
   endif()
 
 endfunction()
 
 
-TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts STATIC FULL)
+TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts STATIC "" FULL)
 # NOTE: We don't need to test the permutation SHARED FULL as well.  That does
 # not really test anything new given that shared is tested with COMPONENTS.
-TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts STATIC COMPONENTS)
-TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts SHARED COMPONENTS)
-TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls STATIC COMPONENTS)
-TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls SHARED COMPONENTS)
-TribitsExampleApp2(TribitsExampleProject2_explicit_tpl_vars STATIC COMPONENTS)
-TribitsExampleApp2(TribitsExampleProject2_explicit_tpl_vars SHARED COMPONENTS)
-TribitsExampleApp2(TribitsExampleProject2_find_package SHARED COMPONENTS)
-TribitsExampleApp2(TribitsExampleProject2_find_package STATIC COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts STATIC "" COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts SHARED "" COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls STATIC "" COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls SHARED "" COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_explicit_tpl_vars STATIC "" COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_explicit_tpl_vars SHARED "" COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_package SHARED "" COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_package STATIC "" COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_package SHARED PACKAGE1_USE_RAW_CMAKE COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_package STATIC PACKAGE1_USE_RAW_CMAKE COMPONENTS)
+TribitsExampleApp2(TribitsExampleProject2_find_package STATIC PACKAGE1_USE_RAW_CMAKE FULL)
