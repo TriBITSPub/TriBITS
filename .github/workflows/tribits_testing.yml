@@ -74,6 +74,12 @@ jobs:
           which ${{ matrix.config.cxx }}
           ${{ matrix.config.cxx }} --version
           if [ "${{ matrix.config.fc }}" = "" ]; then echo "No fortran compiler"; else echo "Checking gfortran path and version" && which ${{ matrix.config.fc }} && ${{ matrix.config.fc }} --version; fi
+      - name: Fetch repo tags
+        run: |
+          echo "Running: git fetch origin 'refs/tags/*:refs/tags/*'"
+          git fetch origin 'refs/tags/*:refs/tags/*'
+          echo "Running: git tag"
+          git tag
       - name: Run configure, build, test, and submit to CDash
         run: |
           cd ..
