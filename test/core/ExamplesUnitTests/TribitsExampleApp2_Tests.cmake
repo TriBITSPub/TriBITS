@@ -115,9 +115,12 @@ function(TribitsExampleApp2  tribitsExProj2TestNameBaseBase
 
   if (fullOrComponents STREQUAL "FULL")
     set(tribitsExProjUseComponentsArg "")
+    set(packageListRegex "TribitsExProj2_PACKAGE_LIST = Package3[;]Package2[;]Package1")
   elseif (fullOrComponents STREQUAL "COMPONENTS")
     set(tribitsExProjUseComponentsArg
+      -DTribitsExApp2_FIND_INDIVIDUAL_PACKAGES=ON
       -DTribitsExApp2_USE_COMPONENTS="Package1,Package2,Package3")
+    set(packageListRegex "Found Package1;Found Package2;Found Package3")
   else()
     message(FATAL_ERROR "Invalid value of fullOrComponents='${fullOrComponents}'!")
   endif()
@@ -146,7 +149,7 @@ function(TribitsExampleApp2  tribitsExProj2TestNameBaseBase
         ${tribitsExProjUseComponentsArg}
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp2
       PASS_REGULAR_EXPRESSION_ALL
-        "TribitsExProj2_PACKAGE_LIST = Package3[;]Package2[;]Package1"
+        "${packageListRegex}"
         "-- Configuring done"
         "-- Generating done"
         "-- Build files have been written to: .*/${testName}/app_build"

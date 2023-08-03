@@ -55,12 +55,7 @@ else()
     @ONLY )
 
   # Generate and install the Package1Config.cmake file for the install tree
-  if (COMMAND tribits_package)
-    set(pkgConfigInstallDir
-      "${${CMAKE_PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${PACKAGE_NAME}")
-  else()
-    set(pkgConfigInstallDir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
-  endif()
+  set(pkgConfigInstallDir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
   install(EXPORT ${PROJECT_NAME}
     DESTINATION "${pkgConfigInstallDir}"
     NAMESPACE ${PROJECT_NAME}::
@@ -75,11 +70,3 @@ else()
     DESTINATION "${pkgConfigInstallDir}" )
 
 endif()
-
-
-# NOTE: Above, the variable CMAKE_INSTALL_LIBDIR set by
-# include(GNUInstallDirs) is different that what is used by TriBITS by default
-# in at least some cases.  That is very irritating and this is something that
-# needs to be fixed (see TriBITSPub/TriBITS#411).  But note that the location
-# of the libraries does not have to be the same as the installed
-# `<Package>Config.cmake`.
