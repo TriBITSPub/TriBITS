@@ -187,7 +187,6 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
         ${tplLibAndIncDirsArgs}
         ${cmakePrefixPathCacheArg}
         -DTribitsExProj2_ENABLE_TESTS=ON
-        -DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         ../TribitsExampleProject2
@@ -353,7 +352,6 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls  shared
         -DTribitsExProj2_ENABLE_ALL_OPTIONAL_PACKAGES=OFF
         -DPackage3_ENABLE_Package2=OFF
         -DTribitsExProj2_ENABLE_TESTS=ON
-        -DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=install
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
@@ -471,7 +469,6 @@ function(TribitsExampleProject2_explicit_tpl_vars  sharedOrStatic)
         -DCMAKE_BUILD_TYPE=DEBUG
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj2_ENABLE_TESTS=ON
-        -DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=install
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
       PASS_REGULAR_EXPRESSION_ALL
@@ -599,6 +596,7 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
         ${package1UseRawCMakeArgs}
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj2_ENABLE_TESTS=ON
+        -DTribitsExProj2_USE_GNUINSTALLDIRS=ON
         -DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
         -D CMAKE_PREFIX_PATH="${tplInstallBaseDir}/install_tpl1<semicolon>${tplInstallBaseDir}/install_tpl2<semicolon>${tplInstallBaseDir}/install_tpl3<semicolon>${tplInstallBaseDir}/install_tpl4"
@@ -666,7 +664,18 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
   # NOTE: The above test ensures that find_package() works with manual
-  # building of the target.
+  # building of the target.  For the configure, we have to set
+  # -DTribitsExProj2_USE_GNUINSTALLDIRS=ON -DCMAKE_INSTALL_LIBDIR:STRING=lib
+  # so that the <Package>Config.cmake files get installed under the same
+  # location <prefix>/lib/ or the file Package2Config.cmake can't include the
+  # file Package1Config.cmake.  Just setting
+  # TribitsExProj2_USE_GNUINSTALLDIRS=ON without setting
+  # CMAKE_INSTALL_LIBDIR=lib results installing everything consistently under
+  # <prefix>/lib64/ on some machines and there is a defect in find_package()
+  # that can't find packages under <prefix>/lib64/ where it can under
+  # <prefix>/lib/ (see Kitware GitLab cmake/cmake#25157).  Therefore, the
+  # directory location has to be overridden with CMAKE_INSTALL_LIBDIR=lib to
+  # allow find_package() to work.
 
   if (${testNameBase}_NAME)
     set(${testNameBase}_NAME ${${testNameBase}_NAME} PARENT_SCOPE)
@@ -706,7 +715,6 @@ tribits_add_advanced_test( ${testNameBase}
       -DCMAKE_BUILD_TYPE=DEBUG
       -DTpl1_EXTRACT_INFO_AFTER_FIND_PACKAGE=ON
       -DTribitsExProj2_ENABLE_TESTS=ON
-      -DCMAKE_INSTALL_LIBDIR:STRING=lib
       -DCMAKE_INSTALL_PREFIX=install
       -DTribitsExProj2_ENABLE_Package1=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
@@ -753,7 +761,6 @@ tribits_add_advanced_test( ${testNameBase}
       -DTpl1_EXTRACT_INFO_AFTER_FIND_PACKAGE=ON
       -DTribitsExProj2_ENABLE_TESTS=ON
       -DCMAKE_PREFIX_PATH="${testDir}/install"
-      -DCMAKE_INSTALL_LIBDIR:STRING=lib
       -DCMAKE_INSTALL_PREFIX=install
       -DTribitsExProj2_ENABLE_Package1=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2
@@ -911,7 +918,6 @@ function(TribitsExampleProject2_External_Package_by_Package
         -DTribitsExProj2_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj2_ENABLE_SECONDARY_TESTED_CODE=ON
         -DTribitsExProj2_ENABLE_Package1=ON
-        -DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=../install_package1
         -DTribitsExProj2_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES=TRUE
         -DTPL_ENABLE_Tpl1=ON
@@ -948,7 +954,6 @@ function(TribitsExampleProject2_External_Package_by_Package
         -DTribitsExProj2_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
         -DTribitsExProj2_ENABLE_SECONDARY_TESTED_CODE=ON
         -DTribitsExProj2_ENABLE_Package2=ON
-        -DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=../install_package2
         -DTribitsExProj2_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES=TRUE
         -DTPL_ENABLE_Package1=ON  # Pull in already installed Package!
@@ -1010,7 +1015,6 @@ function(TribitsExampleProject2_External_Package_by_Package
         -DTribitsExProj2_ENABLE_SECONDARY_TESTED_CODE=ON
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj2_ENABLE_TESTS=ON
-        -DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=../install
         -DTribitsExProj2_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES=TRUE
         -DTPL_ENABLE_Package2=ON  # Pull in already installed Package!
@@ -1209,7 +1213,6 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       ARGS
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
         -DCMAKE_PREFIX_PATH=${tplInstallBaseDir}/install_tpl1
-        -DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=../install_package1
         ../TribitsExampleProject2/packages/package1
       PASS_REGULAR_EXPRESSION_ALL
@@ -1236,7 +1239,6 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
         -DTribitsExProj2_ENABLE_SECONDARY_TESTED_CODE=ON
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DTribitsExProj2_ENABLE_Package2=ON
-        -DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=../install_package2
         -DTribitsExProj2_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES=TRUE
         -DTPL_ENABLE_Package1=ON  # Pull in already installed Package1!
@@ -1307,7 +1309,6 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
         -DTribitsExProj2_ENABLE_SECONDARY_TESTED_CODE=ON
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj2_ENABLE_TESTS=ON
-        -DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=../install
         -DTribitsExProj2_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES=TRUE
         -DTPL_ENABLE_Package2=ON  # Pull in already installed Package!
