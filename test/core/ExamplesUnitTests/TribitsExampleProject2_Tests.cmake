@@ -597,7 +597,7 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj2_ENABLE_TESTS=ON
         -DTribitsExProj2_USE_GNUINSTALLDIRS=ON
-        -DCMAKE_INSTALL_LIBDIR:STRING=lib
+        #-DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
         -D CMAKE_PREFIX_PATH="${tplInstallBaseDir}/install_tpl1<semicolon>${tplInstallBaseDir}/install_tpl2<semicolon>${tplInstallBaseDir}/install_tpl3<semicolon>${tplInstallBaseDir}/install_tpl4"
         ../TribitsExampleProject2
