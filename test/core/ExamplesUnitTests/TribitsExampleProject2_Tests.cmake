@@ -1125,7 +1125,7 @@ TribitsExampleProject2_External_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CAC
 
 
 function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
-    sharedOrStatic  findingTplsMethod
+    sharedOrStatic  findingTplsMethod  package1UseTribitsTestFunctions
   )
 
   TribitsExampleProject2_test_setup_header()
@@ -1211,6 +1211,21 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       "Error, findingTplsMethod='${findingTplsMethod}' is invalid!")
   endif()
 
+  if (package1UseTribitsTestFunctions STREQUAL "PACKAGE1_USE_TRIBITS_TEST_FUNCTIONS")
+    set(package1UseTribitsTestFunctionsArgs
+      "-D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE" )
+    string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
+    set(package1ConfiRegex
+      "Using TriBITS Test Functions in a raw CMake Package1 build" )
+  elseif (package1UseTribitsTestFunctions STREQUAL "")
+    set(package1UseTribitsTestFunctionsArgs "")
+    set(package1ConfiRegex
+      "Using Raw CMake add_test[(][)] in a raw CMake Package1 build" )
+  else()
+    message(FATAL_ERROR
+      "Error, package1UseTribitsTestFunctions='${package1UseTribitsTestFunctions}' is invalid!")
+  endif()
+
   set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}${testNameSuffix})
   set(testName ${PACKAGE_NAME}_${testNameBase})
   set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
@@ -1232,12 +1247,14 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       CMND ${CMAKE_COMMAND}
       ARGS
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
+        ${package1UseTribitsTestFunctionsArgs}
         -DPackage1_ENABLE_TESTS=ON
         -DCMAKE_PREFIX_PATH=${tplInstallBaseDir}/install_tpl1
         -DCMAKE_INSTALL_PREFIX=../install_package1
         ../TribitsExampleProject2/packages/package1
       PASS_REGULAR_EXPRESSION_ALL
         "Configuring raw CMake project Package1"
+        "${package1ConfiRegex}"
         "-- Configuring done"
 	"-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1417,7 +1434,13 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
 endfunction()
 
 
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC  TPL_LIBRARY_AND_INCLUDE_DIRS)
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED  TPL_LIBRARY_AND_INCLUDE_DIRS)
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC  CMAKE_PREFIX_PATH_CACHE)
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CACHE)
+TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC
+  TPL_LIBRARY_AND_INCLUDE_DIRS "")
+TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED
+  TPL_LIBRARY_AND_INCLUDE_DIRS "")
+TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC
+  CMAKE_PREFIX_PATH_CACHE "")
+TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED
+  CMAKE_PREFIX_PATH_CACHE "")
+TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED
+  CMAKE_PREFIX_PATH_CACHE  PACKAGE1_USE_TRIBITS_TEST_FUNCTIONS)
