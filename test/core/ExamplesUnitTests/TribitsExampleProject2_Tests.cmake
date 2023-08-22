@@ -1227,11 +1227,12 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       ARGS -s ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2 .
 
     TEST_1
-      MESSAGE "Configure to build and install just Package1 using raw CMake build system"
+      MESSAGE "Configure to build, install, and test just Package1 using its raw CMake build system"
       WORKING_DIRECTORY Build_Package1
       CMND ${CMAKE_COMMAND}
       ARGS
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
+        -DPackage1_ENABLE_TESTS=ON
         -DCMAKE_PREFIX_PATH=${tplInstallBaseDir}/install_tpl1
         -DCMAKE_INSTALL_PREFIX=../install_package1
         ../TribitsExampleProject2/packages/package1
@@ -1250,6 +1251,16 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       CMND ${CMAKE_COMMAND} ARGS --build . --target install
 
     TEST_3
+      MESSAGE "Test just Package1"
+      WORKING_DIRECTORY Build_Package1
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND}
+      PASS_REGULAR_EXPRESSION_ALL
+        "1/1 Test [#]1: Package1_Prg [.]* *Passed"
+	"100% tests passed, 0 tests failed out of 1"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_4
       MESSAGE "Configure to build, install, and test Package2"
       WORKING_DIRECTORY Build_Package2
       CMND ${CMAKE_COMMAND}
@@ -1303,13 +1314,13 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       # dependencies (i.e. Tpl1) as TriBITS-compliant external packages (which
       # shows that the TriBITS project must find Tpl1 again from scratch).
 
-    TEST_4
+    TEST_5
       MESSAGE "Build and install just Package2"
       WORKING_DIRECTORY Build_Package2
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_COMMAND} ARGS --build . --target install
 
-    TEST_5
+    TEST_6
       MESSAGE "Run tests for Package2"
       WORKING_DIRECTORY Build_Package2
       SKIP_CLEAN_WORKING_DIRECTORY
@@ -1319,7 +1330,7 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
 	"100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_6
+    TEST_7
       MESSAGE "Configure to build, test, and install the rest of TribitsExampleProject2 (Package2)"
       WORKING_DIRECTORY Build
       CMND ${CMAKE_COMMAND}
@@ -1377,13 +1388,13 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       # the needed info from Tpl1, Tpl2, and Tpl3 is pulled in from
       # find_package(Package2).
 
-    TEST_7
+    TEST_8
       MESSAGE "Build and install the rest of TribitsExampleProject2 (Package3)"
       WORKING_DIRECTORY Build
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_COMMAND} ARGS --build . --target install
 
-    TEST_8
+    TEST_9
       MESSAGE "Run remaining tests for TribitsExampleProject2 (Package3)"
       WORKING_DIRECTORY Build
       SKIP_CLEAN_WORKING_DIRECTORY
