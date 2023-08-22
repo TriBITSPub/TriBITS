@@ -541,7 +541,9 @@ TribitsExampleProject2_explicit_tpl_vars(SHARED)
 ########################################################################
 
 
-function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrRawCMake)
+function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrRawCMake
+    package1UseTribitsTestFunctions
+  )
 
   TribitsExampleProject2_test_setup_header()
 
@@ -557,6 +559,22 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
     set(package1ConfiRegex "Configuring raw CMake package Package1")
   else()
     message(FATAL_ERROR "package1UseRawCMakeArgs='${package1UseRawCMakeArgs}' Invalid!")
+  endif()
+
+  if (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_RAW_CMAKE")
+    if (package1UseTribitsTestFunctions STREQUAL "PACKAGE1_USE_TRIBITS_TEST_FUNCTIONS")
+      list(APPEND package1UseRawCMakeArgs
+        "-D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE" )
+      string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
+      list(APPEND package1ConfiRegex
+        "Using TriBITS Test Functions in a raw CMake Package1 build" )
+    elseif (package1UseTribitsTestFunctions STREQUAL "")
+      list(APPEND package1ConfiRegex
+        "Using Raw CMake add_test[(][)] in a raw CMake Package1 build" )
+    else()
+      message(FATAL_ERROR
+        "Error, package1UseTribitsTestFunctions='${package1UseTribitsTestFunctions}' is invalid!")
+    endif()
   endif()
 
   # Allow skipping delete of src and build dirs to aid in debugging
@@ -687,10 +705,12 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
 endfunction()
 
 
-TribitsExampleProject2_find_package(STATIC "")
-TribitsExampleProject2_find_package(SHARED "")
-TribitsExampleProject2_find_package(STATIC PACKAGE1_USE_RAW_CMAKE)
-TribitsExampleProject2_find_package(SHARED PACKAGE1_USE_RAW_CMAKE)
+TribitsExampleProject2_find_package(STATIC "" "")
+TribitsExampleProject2_find_package(SHARED "" "")
+TribitsExampleProject2_find_package(STATIC PACKAGE1_USE_RAW_CMAKE "")
+TribitsExampleProject2_find_package(SHARED PACKAGE1_USE_RAW_CMAKE "")
+TribitsExampleProject2_find_package(SHARED PACKAGE1_USE_RAW_CMAKE
+  PACKAGE1_USE_TRIBITS_TEST_FUNCTIONS)
 
 
 ########################################################################
