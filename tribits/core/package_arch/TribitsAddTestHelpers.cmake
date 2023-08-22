@@ -39,6 +39,7 @@
 
 
 include(TribitsAddExecutableTestHelpers)
+include(TribitsSetTribitsPackageName)
 include(TribitsGeneralMacros)
 include(TribitsTestCategories)
 
