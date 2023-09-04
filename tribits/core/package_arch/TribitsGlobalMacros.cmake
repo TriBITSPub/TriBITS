@@ -464,13 +464,6 @@ macro(tribits_define_global_options_and_define_extra_repos)
     "Make the ${PROJECT_NAME} configure process verbose."
     )
 
-  if ("${${PROJECT_NAME}_TRACE_ADD_TEST_DEFAULT}" STREQUAL "")
-    set(${PROJECT_NAME}_TRACE_ADD_TEST_DEFAULT  ${${PROJECT_NAME}_VERBOSE_CONFIGURE})
-  endif()
-  advanced_set(${PROJECT_NAME}_TRACE_ADD_TEST ${${PROJECT_NAME}_TRACE_ADD_TEST_DEFAULT}
-    CACHE BOOL
-    "Show a configure time trace of every test added or not added any why (one line)." )
-
   advanced_option(${PROJECT_NAME}_DUMP_LINK_LIBS
     "Dump the link libraries for every library and executable created."
     "${${PROJECT_NAME}_VERBOSE_CONFIGURE}" )

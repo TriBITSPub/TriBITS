@@ -53,6 +53,11 @@ include(MessageWrapper)
 include(TribitsGetCategoriesString)
 
 
+tribits_advanced_set_cache_var_and_default(${PROJECT_NAME}_TRACE_ADD_TEST  BOOL
+  "${${PROJECT_NAME}_VERBOSE_CONFIGURE}"
+  "Show a configure-time trace of every test added or not added any why (one line).")
+
+
 # Do initialization for test helpers
 #
 # This must be run just before the packages define their tests and this macro
