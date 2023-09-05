@@ -829,7 +829,7 @@ endif()
 ################################################################################
 
 
-function(TribitsExampleProject2_External_Package_by_Package
+function(TribitsExampleProject2_External_PBP
     sharedOrStatic  findingTplsMethod
   )
 
@@ -1114,10 +1114,10 @@ function(TribitsExampleProject2_External_Package_by_Package
 endfunction()
 
 
-TribitsExampleProject2_External_Package_by_Package(STATIC  TPL_LIBRARY_AND_INCLUDE_DIRS)
-TribitsExampleProject2_External_Package_by_Package(SHARED  TPL_LIBRARY_AND_INCLUDE_DIRS)
-TribitsExampleProject2_External_Package_by_Package(STATIC  CMAKE_PREFIX_PATH_CACHE)
-TribitsExampleProject2_External_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CACHE)
+TribitsExampleProject2_External_PBP(STATIC  TPL_LIBRARY_AND_INCLUDE_DIRS)
+TribitsExampleProject2_External_PBP(SHARED  TPL_LIBRARY_AND_INCLUDE_DIRS)
+TribitsExampleProject2_External_PBP(STATIC  CMAKE_PREFIX_PATH_CACHE)
+TribitsExampleProject2_External_PBP(SHARED  CMAKE_PREFIX_PATH_CACHE)
 
 # NOTE: The above tests check a few different use cases for building and
 # installing TriBITS packages from a single TriBITS project incrementally.
@@ -1126,7 +1126,7 @@ TribitsExampleProject2_External_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CAC
 ################################################################################
 
 
-function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
+function(TribitsExampleProject2_External_RawPackage1_PBP
     sharedOrStatic  findingTplsMethod  package1UseTribitsTestFunctions
   )
 
@@ -1439,13 +1439,13 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
 endfunction()
 
 
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC
+TribitsExampleProject2_External_RawPackage1_PBP(STATIC
   TPL_LIBRARY_AND_INCLUDE_DIRS "")
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED
+TribitsExampleProject2_External_RawPackage1_PBP(SHARED
   TPL_LIBRARY_AND_INCLUDE_DIRS "")
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC
+TribitsExampleProject2_External_RawPackage1_PBP(STATIC
   CMAKE_PREFIX_PATH_CACHE "")
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED
+TribitsExampleProject2_External_RawPackage1_PBP(SHARED
   CMAKE_PREFIX_PATH_CACHE "")
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED
+TribitsExampleProject2_External_RawPackage1_PBP(SHARED
   CMAKE_PREFIX_PATH_CACHE  PACKAGE1_USE_TRIBITS_TEST_FUNCS)
