@@ -112,7 +112,7 @@ function tribits_extract_rst_cmake_doc {
     echo "Extracting TriBITS documentation from *.cmake files ..."
     echo
     ../../../python_utils/extract_rst_cmake_doc.py \
-      --extract-from=../../../core/package_arch/,../../../ci_support/,../../../core/utils/,../../../ctest_driver/ \
+      --extract-from=../../../ctest_driver/,../../../ci_support/,../../../core/package_arch/,../../../core/test_support/,../../../core/utils/ \
       --rst-file-pairs=../TribitsMacroFunctionDocTemplate.rst:TribitsMacroFunctionDoc.rst.tmp,../UtilsMacroFunctionDocTemplate.rst:UtilsMacroFunctionDoc.rst.tmp,../TribitsSystemMacroFunctionDocTemplate.rst:TribitsSystemMacroFunctionDoc.rst.tmp \
       ${extra_args} \
       --file-name-path-base-dir=../../.. \

@@ -49,9 +49,10 @@ set( CMAKE_MODULE_PATH
 
 set(TRIBITS_ADD_EXECUTABLE_UNIT_TESTING ON)
 
+include("${${PROJECT_NAME}_TRIBITS_DIR}/core/test_support/TribitsTestCategories.cmake")
+include("${${PROJECT_NAME}_TRIBITS_DIR}/core/test_support/TribitsAddTest.cmake")
+
 include(MessageWrapper)
-include(TribitsTestCategories)
-include(TribitsAddTest)
 include(TribitsAddAdvancedTest)
 include(TribitsAddExecutableAndTest)
 include(TribitsETISupport)

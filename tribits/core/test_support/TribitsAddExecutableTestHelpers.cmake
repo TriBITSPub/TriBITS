@@ -39,7 +39,7 @@
 
 include_guard()
 
-include("${CMAKE_CURRENT_LIST_DIR}/TribitsCMakePolicies.cmake"  NO_POLICY_SCOPE)
+include("${CMAKE_CURRENT_LIST_DIR}/../common/TribitsCMakePolicies.cmake"  NO_POLICY_SCOPE)
 
 include("${CMAKE_CURRENT_LIST_DIR}/../utils/AdvancedSet.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../utils/MessageWrapper.cmake")
