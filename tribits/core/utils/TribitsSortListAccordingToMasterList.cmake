@@ -37,8 +37,8 @@
 # ************************************************************************
 # @HEADER
 
-include(PrintVar)
-include(AppendSet)
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/PrintVar.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/AppendSet.cmake")
 
 
 # Do an in-place sort of a list of items according to the ordering in a master

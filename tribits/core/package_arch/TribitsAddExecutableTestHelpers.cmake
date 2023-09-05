@@ -37,10 +37,12 @@
 # ************************************************************************
 # @HEADER
 
-include(TribitsCMakePolicies  NO_POLICY_SCOPE)
+include_guard()
 
-include(AdvancedSet)
-include(MessageWrapper)
+include("${CMAKE_CURRENT_LIST_DIR}/TribitsCMakePolicies.cmake"  NO_POLICY_SCOPE)
+
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/AdvancedSet.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/MessageWrapper.cmake")
 
 advanced_set( ${PROJECT_NAME}_CMAKE_EXECUTABLE_SUFFIX ".exe"
   CACHE STRING

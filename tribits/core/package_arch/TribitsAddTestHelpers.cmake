@@ -37,20 +37,20 @@
 # ************************************************************************
 # @HEADER
 
+include_guard()
 
-include(TribitsAddExecutableTestHelpers)
-include(TribitsSetTribitsPackageName)
-include(TribitsGeneralMacros)
-include(TribitsTestCategories)
+include("${CMAKE_CURRENT_LIST_DIR}/TribitsAddExecutableTestHelpers.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/TribitsSetTribitsPackageName.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/TribitsTestCategories.cmake")
 
-include(CMakeParseArguments)
-include(GlobalSet)
-include(AppendGlobalSet)
-include(AppendStringVarWithSep)
-include(PrintVar)
-include(AdvancedSet)
-include(MessageWrapper)
-include(TribitsGetCategoriesString)
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/GlobalSet.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/AppendGlobalSet.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/AppendStringVarWithSep.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/PrintVar.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/AdvancedSet.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/MessageWrapper.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/TribitsGetCategoriesString.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/TribitsSetCacheVarAndDefault.cmake")
 
 
 tribits_advanced_set_cache_var_and_default(${PROJECT_NAME}_TRACE_ADD_TEST  BOOL

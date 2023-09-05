@@ -562,12 +562,14 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
   endif()
 
   if (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_RAW_CMAKE")
-    if (package1UseTribitsTestFunctions STREQUAL "PACKAGE1_USE_TRIBITS_TEST_FUNCTIONS")
+    if (package1UseTribitsTestFunctions STREQUAL "PACKAGE1_USE_TRIBITS_TEST_FUNCS")
       list(APPEND package1UseRawCMakeArgs
-        "-D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE" )
+        "-D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE"
+	"-D Package1_TRACE_ADD_TEST=TRUE" )
       string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
       list(APPEND package1ConfiRegex
-        "Using TriBITS Test Functions in a raw CMake Package1 build" )
+        "Using TriBITS Test Functions in a raw CMake Package1 build"
+        "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]" )
     elseif (package1UseTribitsTestFunctions STREQUAL "")
       list(APPEND package1ConfiRegex
         "Using Raw CMake add_test[(][)] in a raw CMake Package1 build" )
@@ -710,7 +712,7 @@ TribitsExampleProject2_find_package(SHARED "" "")
 TribitsExampleProject2_find_package(STATIC PACKAGE1_USE_RAW_CMAKE "")
 TribitsExampleProject2_find_package(SHARED PACKAGE1_USE_RAW_CMAKE "")
 TribitsExampleProject2_find_package(SHARED PACKAGE1_USE_RAW_CMAKE
-  PACKAGE1_USE_TRIBITS_TEST_FUNCTIONS)
+  PACKAGE1_USE_TRIBITS_TEST_FUNCS)
 
 
 ########################################################################
@@ -1211,12 +1213,15 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       "Error, findingTplsMethod='${findingTplsMethod}' is invalid!")
   endif()
 
-  if (package1UseTribitsTestFunctions STREQUAL "PACKAGE1_USE_TRIBITS_TEST_FUNCTIONS")
+  if (package1UseTribitsTestFunctions STREQUAL "PACKAGE1_USE_TRIBITS_TEST_FUNCS")
     set(package1UseTribitsTestFunctionsArgs
-      "-D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE" )
+      "-D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE"
+      "-D Package1_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}"
+      "-D Package1_TRACE_ADD_TEST=TRUE" )
     string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
     set(package1ConfiRegex
-      "Using TriBITS Test Functions in a raw CMake Package1 build" )
+      "Using TriBITS Test Functions in a raw CMake Package1 build"
+      "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]" )
   elseif (package1UseTribitsTestFunctions STREQUAL "")
     set(package1UseTribitsTestFunctionsArgs "")
     set(package1ConfiRegex
@@ -1443,4 +1448,4 @@ TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC
 TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED
   CMAKE_PREFIX_PATH_CACHE "")
 TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED
-  CMAKE_PREFIX_PATH_CACHE  PACKAGE1_USE_TRIBITS_TEST_FUNCTIONS)
+  CMAKE_PREFIX_PATH_CACHE  PACKAGE1_USE_TRIBITS_TEST_FUNCS)

@@ -37,8 +37,9 @@
 # ************************************************************************
 # @HEADER
 
-include(TribitsCMakePolicies  NO_POLICY_SCOPE)
-include(TribitsAddTestHelpers)
+
+include("${CMAKE_CURRENT_LIST_DIR}/TribitsCMakePolicies.cmake"  NO_POLICY_SCOPE)
+include("${CMAKE_CURRENT_LIST_DIR}/TribitsAddTestHelpers.cmake")
 
 
 # @FUNCTION: tribits_add_test()
