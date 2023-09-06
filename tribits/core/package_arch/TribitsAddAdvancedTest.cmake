@@ -40,11 +40,13 @@
 include("${CMAKE_CURRENT_LIST_DIR}/../common/TribitsCMakePolicies.cmake"  NO_POLICY_SCOPE)
 include("${CMAKE_CURRENT_LIST_DIR}/../common/TribitsConstants.cmake")
 
-include(TribitsAddAdvancedTestHelpers)
+set(tribitsAddAdvancedTestModuleDir "${CMAKE_CURRENT_LIST_DIR}")
 
-include(TribitsPrintList)
-include(AppendStringVar)
-include(PrintVar)
+include("${CMAKE_CURRENT_LIST_DIR}/TribitsAddAdvancedTestHelpers.cmake")
+
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/TribitsPrintList.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/AppendStringVar.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/PrintVar.cmake")
 
 
 # @FUNCTION: tribits_add_advanced_test()
@@ -886,16 +888,13 @@ function(tribits_add_advanced_test TEST_NAME_IN)
     message("\nPACKAGE_ADD_ADVANCED_TEST: ${TEST_NAME_IN}\n")
   endif()
 
+  tribits_set_tribits_package_name()
+
   global_set(TRIBITS_SET_TEST_PROPERTIES_INPUT)
   global_set(MESSAGE_WRAPPER_INPUT)
 
   # Set the full TEST_NAME
-  if (PACKAGE_NAME)
-    set(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_IN})
-  else()
-    set(TEST_NAME ${TEST_NAME_IN})
-  endif()
-
+  set(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_IN})
 
   #
   # A) Parse the overall arguments and figure out how many tests
@@ -1518,6 +1517,8 @@ function(tribits_add_advanced_test TEST_NAME_IN)
     # F.2) Write the cmake -P script
     #
   
+    set(coreUtilsDir "${tribitsAddAdvancedTestModuleDir}/../utils")
+    cmake_path(NORMAL_PATH coreUtilsDir) 
     string(APPEND  TEST_SCRIPT_STR
       "\n"
       "set(PROJECT_NAME ${PROJECT_NAME})\n"
@@ -1548,9 +1549,7 @@ function(tribits_add_advanced_test TEST_NAME_IN)
       "# Test invocation\n"
       "#\n"
       "\n"
-      "set(CMAKE_MODULE_PATH ${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_UTILS_DIR})\n"
-      "\n"
-      "include(DriveAdvancedTest)\n"
+      "include(\"${coreUtilsDir}/DriveAdvancedTest.cmake\")\n"
       "\n"
       "drive_advanced_test()\n"
       )

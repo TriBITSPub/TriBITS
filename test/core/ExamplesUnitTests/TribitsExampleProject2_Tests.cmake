@@ -250,9 +250,10 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
+        "Test.*Package1_Prg-advanced.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
-        "100% tests passed, 0 tests failed out of 3"
+        "100% tests passed, 0 tests failed out of 4"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_5
@@ -393,9 +394,10 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls  shared
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
+        "Test.*Package1_Prg-advanced.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
-        "100% tests passed, 0 tests failed out of 3"
+        "100% tests passed, 0 tests failed out of 4"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_4
@@ -496,9 +498,10 @@ function(TribitsExampleProject2_explicit_tpl_vars  sharedOrStatic)
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
+        "Test.*Package1_Prg-advanced.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
-        "100% tests passed, 0 tests failed out of 3"
+        "100% tests passed, 0 tests failed out of 4"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_3
@@ -569,7 +572,8 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
       string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
       list(APPEND package1ConfiRegex
         "Using TriBITS Test Functions in a raw CMake Package1 build"
-        "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]" )
+        "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]"
+        "Package1_Prg-advanced: Added test [(]BASIC, PROCESSORS=1[)]" )
     elseif (package1UseTribitsTestFunctions STREQUAL "")
       list(APPEND package1ConfiRegex
         "Using Raw CMake add_test[(][)] in a raw CMake Package1 build" )
@@ -654,9 +658,10 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
+        "Test.*Package1_Prg-advanced.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
-        "100% tests passed, 0 tests failed out of 3"
+        "100% tests passed, 0 tests failed out of 4"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_4
@@ -1221,7 +1226,8 @@ function(TribitsExampleProject2_External_RawPackage1_PBP
     string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
     set(package1ConfiRegex
       "Using TriBITS Test Functions in a raw CMake Package1 build"
-      "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]" )
+      "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]"
+      "Package1_Prg-advanced: Added test [(]BASIC, PROCESSORS=1[)]" )
   elseif (package1UseTribitsTestFunctions STREQUAL "")
     set(package1UseTribitsTestFunctionsArgs "")
     set(package1ConfiRegex
@@ -1278,8 +1284,9 @@ function(TribitsExampleProject2_External_RawPackage1_PBP
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND}
       PASS_REGULAR_EXPRESSION_ALL
-        "1/1 Test [#]1: Package1_Prg [.]* *Passed"
-	"100% tests passed, 0 tests failed out of 1"
+        "Test.*Package1_Prg [.]* *Passed"
+        "Test.*Package1_Prg-advanced [.]* *Passed"
+	"100% tests passed, 0 tests failed out of 2"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_4
@@ -1422,7 +1429,7 @@ function(TribitsExampleProject2_External_RawPackage1_PBP
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND}
       PASS_REGULAR_EXPRESSION_ALL
-        "Package3_Prg [.]+ *Passed"
+        "Test.*Package3_Prg [.]+ *Passed"
 	"100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
