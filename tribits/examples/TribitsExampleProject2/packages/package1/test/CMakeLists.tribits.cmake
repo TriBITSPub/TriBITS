@@ -3,8 +3,6 @@ tribits_add_test(package1-prg  NOEXEPREFIX  NOEXESUFFIX
   PASS_REGULAR_EXPRESSION "Package1 Deps: tpl1" )
 
 tribits_add_advanced_test(Prg-advanced
-  OVERALL_WORKING_DIRECTORY TEST_NAME
-  OVERALL_NUM_MPI_PROCS 1
   TEST_0
     EXEC package1-prg  DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/../src"
       NOEXEPREFIX  NOEXESUFFIX
