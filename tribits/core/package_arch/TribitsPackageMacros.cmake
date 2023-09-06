@@ -52,13 +52,13 @@ include(RemoveGlobalDuplicates)
 include(TribitsGatherBuildTargets)
 
 include("${CMAKE_CURRENT_LIST_DIR}/../test_support/TribitsAddTest.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../test_support/TribitsAddAdvancedTest.cmake")
 
 include(TribitsAddOptionAndDefine)
 include(TribitsPkgExportCacheVars)
 include(TribitsLibraryMacros)
 include(TribitsAddExecutable)
 include(TribitsAddExecutableAndTest)
-include(TribitsAddAdvancedTest)
 include(TribitsCopyFilesToBinaryDir)
 include(TribitsReportInvalidTribitsUsage)
 

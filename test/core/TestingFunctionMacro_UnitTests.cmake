@@ -51,9 +51,9 @@ set(TRIBITS_ADD_EXECUTABLE_UNIT_TESTING ON)
 
 include("${${PROJECT_NAME}_TRIBITS_DIR}/core/test_support/TribitsTestCategories.cmake")
 include("${${PROJECT_NAME}_TRIBITS_DIR}/core/test_support/TribitsAddTest.cmake")
+include("${${PROJECT_NAME}_TRIBITS_DIR}/core/test_support/TribitsAddAdvancedTest.cmake")
 
 include(MessageWrapper)
-include(TribitsAddAdvancedTest)
 include(TribitsAddExecutableAndTest)
 include(TribitsETISupport)
 include(TribitsFindPythonInterp)
