@@ -32,17 +32,19 @@ install(TARGETS Package1_all_libs
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} )
 add_library(Package1::all_libs ALIAS Package1_all_libs)
 
-# Generate Package1Config.cmake file for the build tree (for internal
-# TriBITS-compliant package)
-set(packageBuildDirCMakePackagesDir
-  "${${CMAKE_PROJECT_NAME}_BINARY_DIR}/cmake_packages/${PROJECT_NAME}")
-export(EXPORT ${PROJECT_NAME}
-  NAMESPACE ${PROJECT_NAME}::
-  FILE "${packageBuildDirCMakePackagesDir}/${PROJECT_NAME}ConfigTargets.cmake" )
-configure_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/raw/Package1Config.cmake.in"
-  "${packageBuildDirCMakePackagesDir}/${PROJECT_NAME}/Package1Config.cmake"
-  @ONLY )
+if (COMMAND tribits_package)
+  # Generate Package1Config.cmake file for the build tree (for internal
+  # TriBITS-compliant package)
+  set(packageBuildDirCMakePackagesDir
+    "${${CMAKE_PROJECT_NAME}_BINARY_DIR}/cmake_packages/${PROJECT_NAME}")
+  export(EXPORT ${PROJECT_NAME}
+    NAMESPACE ${PROJECT_NAME}::
+    FILE "${packageBuildDirCMakePackagesDir}/${PROJECT_NAME}ConfigTargets.cmake" )
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/raw/Package1Config.cmake.in"
+    "${packageBuildDirCMakePackagesDir}/${PROJECT_NAME}/Package1Config.cmake"
+    @ONLY )
+endif()
 
 # Generate and install the Package1Config.cmake file for the install tree
 # (needed for both internal and external TriBITS package)
