@@ -571,12 +571,12 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
 	"-D Package1_TRACE_ADD_TEST=TRUE" )
       string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
       list(APPEND package1ConfiRegex
-        "Using TriBITS Test Functions in a raw CMake Package1 build"
+        "Using TriBITS Test Functions in raw CMake Package1 build"
         "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]"
         "Package1_Prg-advanced: Added test [(]BASIC, PROCESSORS=1[)]" )
     elseif (package1UseTribitsTestFunctions STREQUAL "")
       list(APPEND package1ConfiRegex
-        "Using Raw CMake add_test[(][)] in a raw CMake Package1 build" )
+        "Using Raw CMake add_test[(][)] in raw CMake Package1 build" )
     else()
       message(FATAL_ERROR
         "Error, package1UseTribitsTestFunctions='${package1UseTribitsTestFunctions}' is invalid!")
@@ -1225,13 +1225,13 @@ function(TribitsExampleProject2_External_RawPackage1_PBP
       "-D Package1_TRACE_ADD_TEST=TRUE" )
     string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
     set(package1ConfiRegex
-      "Using TriBITS Test Functions in a raw CMake Package1 build"
+      "Using TriBITS Test Functions in raw CMake Package1 build"
       "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]"
       "Package1_Prg-advanced: Added test [(]BASIC, PROCESSORS=1[)]" )
   elseif (package1UseTribitsTestFunctions STREQUAL "")
     set(package1UseTribitsTestFunctionsArgs "")
     set(package1ConfiRegex
-      "Using Raw CMake add_test[(][)] in a raw CMake Package1 build" )
+      "Using Raw CMake add_test[(][)] in raw CMake Package1 build" )
   else()
     message(FATAL_ERROR
       "Error, package1UseTribitsTestFunctions='${package1UseTribitsTestFunctions}' is invalid!")
