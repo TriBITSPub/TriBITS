@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.23.0 FATAL_ERROR)
 
+set(Package1_USE_RAW_CMAKE  OFF  CACHE  BOOL
+  "Use raw CMake for package build, even if TriBITS could be used.")
+
 # Macro to select the TriBITS or the raw CMake build system
 macro(include_cmakelists_file)
   if ((NOT COMMAND tribits_project) OR Package1_USE_RAW_CMAKE)
