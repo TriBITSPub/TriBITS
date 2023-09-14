@@ -167,6 +167,15 @@ function tribits_extract_other_doc {
       &> TribitsExampleProject2_Package1_CMakeLists.raw.internal.cmake.tmp
     update_if_different TribitsExampleProject2_Package1_CMakeLists.raw.internal.cmake tmp
 
+    cat ../../examples/TribitsExampleProject2/packages/package1/CMakeLists.raw.cmake \
+      | grep -v "that TriBITS does automatically" \
+      | grep -v DefineAllLibsTarget \
+      | grep -v GeneratePackageConfigFileForBuildDir \
+      | grep -v GeneratePackageConfigFileForInstallDir \
+      &> TribitsExampleProject2_Package1_CMakeLists.raw.tribits_test.cmake.tmp
+    update_if_different \
+      TribitsExampleProject2_Package1_CMakeLists.raw.tribits_test.cmake tmp
+
     echo
     echo "Generating output for 'checkin-test.py --help' ..."
     echo
