@@ -153,6 +153,21 @@ function tribits_extract_other_doc {
     update_if_different  TribitsHelloWorldDirAndFiles.txt  tmp
 
     echo
+    echo "Generating TribitsExampleProject2/Package1 CMakeList file variants ..."
+    echo
+
+    cat ../../examples/TribitsExampleProject2/packages/package1/CMakeLists.raw.cmake \
+      | grep -v EnableTribitsTestSupport \
+      | grep -v GeneratePackageConfigFileForBuildDir \
+      &> TribitsExampleProject2_Package1_CMakeLists.raw.external.cmake.tmp
+    update_if_different TribitsExampleProject2_Package1_CMakeLists.raw.external.cmake tmp
+
+    cat ../../examples/TribitsExampleProject2/packages/package1/CMakeLists.raw.cmake \
+      | grep -v EnableTribitsTestSupport \
+      &> TribitsExampleProject2_Package1_CMakeLists.raw.internal.cmake.tmp
+    update_if_different TribitsExampleProject2_Package1_CMakeLists.raw.internal.cmake tmp
+
+    echo
     echo "Generating output for 'checkin-test.py --help' ..."
     echo
     ../../ci_support/checkin-test.py --help &> checkin-test-help.txt.tmp
@@ -246,8 +261,8 @@ function make_final_doc_in_subdir {
   if [[ "${skip_final_generation}" == "0" ]] ; then
     cd $dir_name
     echo $PWD
-    make
-    cd -
+    time make
+    cd - > /dev/null
   else
     echo
     echo "Skipping final generation of '${dir_name}' on request!"
