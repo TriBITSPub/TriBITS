@@ -6420,6 +6420,73 @@ differences are:
    compliant).
 
 
+How to use TriBITS testing support in non-TriBITS project
+---------------------------------------------------------
+
+The TriBITS test support functions `tribits_add_test()`_ and
+`tribits_add_advanced_test()`_ can be used from any raw (i.e. non-TriBITS)
+CMake project.  To do so, one just needs to include the TriBITS modules:
+
+* ``<tribitsDir>/core/test_support/TribitsAddTest.cmake``
+*  and ``<tribitsDir>/core/test_support/TribitsAddAdvancedTest.cmake``
+
+and set the variable ``${PROJECT_NAME}_ENABLE_TESTS`` to ``ON``.  For an
+MPI-enabled CMake project, one needs to define the following CMake variables
+``MPI_EXEC``, ``MPI_EXEC_PRE_NUMPROCS_FLAGS``, ``MPI_EXEC_NUMPROCS_FLAG`` and
+``MPI_EXEC_POST_NUMPROCS_FLAGS`` which define the MPI runtime program launcher
+command-line used in these TriBITS testing functions::
+
+  ${MPI_EXEC} ${MPI_EXEC_PRE_NUMPROCS_FLAGS}
+  ${MPI_EXEC_NUMPROCS_FLAG} <NP>
+  ${MPI_EXEC_POST_NUMPROCS_FLAGS}
+  <TEST_EXECUTABLE_PATH> <TEST_ARGS>
+
+(These are defined automatically in a TriBITS project.)
+
+This is demonstrated in the `TribitsExampleProject2`_ project ``Package1``
+package.  The base ``CMakeLists.txt`` file for building ``Package1`` with a
+raw CMake build system using TriBITS testing functions (called
+``CMakeLists.raw.cmake`` in that directory) looks like:
+
+.. include:: TribitsExampleProject2_Package1_CMakeLists.raw.tribits_test.cmake
+   :literal:
+
+The only difference between this base ``CMakeLists.txt`` file and one for a
+raw CMake project is the inclusion of the file
+``package1/cmake/raw/EnableTribitsTestSupport.cmake`` which has the contents:
+
+.. include:: ../../examples/TribitsExampleProject2/packages/package1/cmake/raw/EnableTribitsTestSupport.cmake
+   :literal:
+
+The key lines are::
+
+  include("${Package1_TRIBITS_DIR}/core/test_support/TribitsAddTest.cmake")
+  include("${Package1_TRIBITS_DIR}/core/test_support/TribitsAddAdvancedTest.cmake")
+
+This defines the CMake functions `tribits_add_test()`_ and
+`tribits_add_advanced_test()`_.
+
+The above code demonstrates that ``CMAKE_MODULE_PATH`` does **not** need to be
+updated to use these TriBITS ``test_support`` modules.  However, one is free
+to update ``CMAKE_MODULE_PATH`` and then include the modules by name only
+like::
+
+  list(PREPEND CMAKE_MODULE_PATH "${Package1_TRIBITS_DIR}/core/test_support")
+  include(TribitsAddTest)
+  include(TribitsAddAdvancedTest)
+
+Once these TriBITS modules are included, one can use the TriBITS functions as
+demonstrated in the ``package1/test/CMakeLists.tribits.cmake`` file (which is
+included from the file ``package1/test/CMakeLists.txt``) and has the contents:
+
+.. include:: ../../examples/TribitsExampleProject2/packages/package1/test/CMakeLists.tribits.cmake
+   :literal:
+
+Note that in this example, the executable ``package1-prg`` was already
+created.  If new test libraries and executables need to be created, then the
+raw CMake commands to create those will need to be added as well.
+
+
 How to check for and tweak TriBITS "ENABLE" cache variables
 -----------------------------------------------------------
 
