@@ -17,8 +17,7 @@ if (Package1_ENABLE_TESTS)
   add_subdirectory(test)
 endif()
 
+# Stuff that TriBITS does automatically
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/raw/DefineAllLibsTarget.cmake")
-
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/raw/GeneratePackageConfigFileForBuildDir.cmake")
-
 include("${CMAKE_CURRENT_LIST_DIR}/cmake/raw/GeneratePackageConfigFileForInstallDir.cmake")
