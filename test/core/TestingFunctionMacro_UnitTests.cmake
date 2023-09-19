@@ -49,10 +49,11 @@ set( CMAKE_MODULE_PATH
 
 set(TRIBITS_ADD_EXECUTABLE_UNIT_TESTING ON)
 
+include("${${PROJECT_NAME}_TRIBITS_DIR}/core/test_support/TribitsTestCategories.cmake")
+include("${${PROJECT_NAME}_TRIBITS_DIR}/core/test_support/TribitsAddTest.cmake")
+include("${${PROJECT_NAME}_TRIBITS_DIR}/core/test_support/TribitsAddAdvancedTest.cmake")
+
 include(MessageWrapper)
-include(TribitsTestCategories)
-include(TribitsAddTest)
-include(TribitsAddAdvancedTest)
 include(TribitsAddExecutableAndTest)
 include(TribitsETISupport)
 include(TribitsFindPythonInterp)
@@ -2566,11 +2567,10 @@ function(unittest_tribits_add_advanced_test_basic)
       "NUM_CMNDS 1"
       "set[(]OVERALL_WORKING_DIRECTORY .PackageA_TAAT_basic_cmnd_1_args_2.[)]"
       "set[(]SKIP_CLEAN_OVERALL_WORKING_DIRECTORY .TRUE.[)]"
-      "CMAKE_MODULE_PATH"
       "set[(]SHOW_START_END_DATE_TIME OFF[)]"
       "set[(] TEST_0_WORKING_DIRECTORY .someSubdir. [)]"
       "set[(] TEST_0_SKIP_CLEAN_WORKING_DIRECTORY TRUE [)]"
-      "DriveAdvancedTest"
+      "tribits/core/utils/DriveAdvancedTest"
       "drive_advanced_test"
     )
 
@@ -4844,4 +4844,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(721)
+unittest_final_result(720)

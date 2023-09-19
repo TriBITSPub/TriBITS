@@ -250,9 +250,10 @@ function(TribitsExampleProject2_find_tpl_parts  sharedOrStatic  findingTplsMetho
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
+        "Test.*Package1_Prg-advanced.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
-        "100% tests passed, 0 tests failed out of 3"
+        "100% tests passed, 0 tests failed out of 4"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_5
@@ -393,9 +394,10 @@ function(TribitsExampleProject2_find_tpl_parts_no_optional_packages_tpls  shared
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
+        "Test.*Package1_Prg-advanced.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
-        "100% tests passed, 0 tests failed out of 3"
+        "100% tests passed, 0 tests failed out of 4"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_4
@@ -496,9 +498,10 @@ function(TribitsExampleProject2_explicit_tpl_vars  sharedOrStatic)
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
+        "Test.*Package1_Prg-advanced.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
-        "100% tests passed, 0 tests failed out of 3"
+        "100% tests passed, 0 tests failed out of 4"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_3
@@ -541,9 +544,44 @@ TribitsExampleProject2_explicit_tpl_vars(SHARED)
 ########################################################################
 
 
-function(TribitsExampleProject2_find_package  sharedOrStatic)
+function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrRawCMake
+    package1UseTribitsTestFunctions
+  )
 
   TribitsExampleProject2_test_setup_header()
+
+  if ( (package1TribitsOrRawCMake STREQUAL "") OR
+      (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_TRIBITS")
+    )
+    set(package1UseRawCMakeArgs "")
+    set(testNameSuffix "")
+    set(package1ConfigRegex "Configuring package Package1 as full TriBITS package")
+  elseif (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_RAW_CMAKE")
+    set(package1UseRawCMakeArgs "-D Package1_USE_RAW_CMAKE=TRUE")
+    set(testNameSuffix "_${package1TribitsOrRawCMake}")
+    set(package1ConfigRegex "Configuring raw CMake package Package1")
+  else()
+    message(FATAL_ERROR "package1UseRawCMakeArgs='${package1UseRawCMakeArgs}' Invalid!")
+  endif()
+
+  if (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_RAW_CMAKE")
+    if (package1UseTribitsTestFunctions STREQUAL "PACKAGE1_USE_TRIBITS_TEST_FUNCS")
+      list(APPEND package1UseRawCMakeArgs
+        -D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE
+	-D Package1_TRACE_ADD_TEST=TRUE )
+      string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
+      list(APPEND package1ConfigRegex
+        "Using TriBITS Test Functions in raw CMake Package1 build"
+        "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]"
+        "Package1_Prg-advanced: Added test [(]BASIC, PROCESSORS=1[)]" )
+    elseif (package1UseTribitsTestFunctions STREQUAL "")
+      list(APPEND package1ConfigRegex
+        "Using Raw CMake add_test[(][)] in raw CMake Package1 build" )
+    else()
+      message(FATAL_ERROR
+        "Error, package1UseTribitsTestFunctions='${package1UseTribitsTestFunctions}' is invalid!")
+    endif()
+  endif()
 
   # Allow skipping delete of src and build dirs to aid in debugging
   if (TribitsExampleProject2_Tests_SKIP_DELETE_SRC_AND_BUILD)
@@ -554,7 +592,7 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
       CMND ${CMAKE_COMMAND} ARGS -E rm -rf TribitsExampleProject2 BUILD)
   endif()
 
-  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic})
+  set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}${testNameSuffix})
   set(testName ${PACKAGE_NAME}_${testNameBase})
   set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
 
@@ -579,8 +617,11 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
         -DCMAKE_BUILD_TYPE=DEBUG
         -DTPL_ENABLE_Tpl3=ON
         -DTPL_ENABLE_Tpl4=ON
+        ${package1UseRawCMakeArgs}
         -DTribitsExProj2_ENABLE_ALL_PACKAGES=ON
         -DTribitsExProj2_ENABLE_TESTS=ON
+        -DTribitsExProj2_USE_GNUINSTALLDIRS=ON
+        #-DCMAKE_INSTALL_LIBDIR:STRING=lib
         -DCMAKE_INSTALL_PREFIX=${testDir}/install
         -D CMAKE_PREFIX_PATH="${tplInstallBaseDir}/install_tpl1<semicolon>${tplInstallBaseDir}/install_tpl2<semicolon>${tplInstallBaseDir}/install_tpl3<semicolon>${tplInstallBaseDir}/install_tpl4"
         ../TribitsExampleProject2
@@ -594,6 +635,7 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
         "-- Generating Tpl3::all_libs and Tpl3Config.cmake"
         "-- Found Tpl4_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl4/lib/cmake/Tpl4'"
         "-- Generating Tpl4::all_libs and Tpl4Config.cmake"
+        "${package1ConfigRegex}"
         "-- Configuring done"
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -616,9 +658,10 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
       CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
       PASS_REGULAR_EXPRESSION_ALL
         "Test.*Package1_Prg.*Passed"
+        "Test.*Package1_Prg-advanced.*Passed"
         "Test.*Package2_Prg.*Passed"
         "Test.*Package3_Prg.*Passed"
-        "100% tests passed, 0 tests failed out of 3"
+        "100% tests passed, 0 tests failed out of 4"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_4
@@ -646,7 +689,18 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
   # NOTE: The above test ensures that find_package() works with manual
-  # building of the target.
+  # building of the target.  For the configure, we have to set
+  # -DTribitsExProj2_USE_GNUINSTALLDIRS=ON -DCMAKE_INSTALL_LIBDIR:STRING=lib
+  # so that the <Package>Config.cmake files get installed under the same
+  # location <prefix>/lib/ or the file Package2Config.cmake can't include the
+  # file Package1Config.cmake.  Just setting
+  # TribitsExProj2_USE_GNUINSTALLDIRS=ON without setting
+  # CMAKE_INSTALL_LIBDIR=lib results installing everything consistently under
+  # <prefix>/lib64/ on some machines and there is a defect in find_package()
+  # that can't find packages under <prefix>/lib64/ where it can under
+  # <prefix>/lib/ (see Kitware GitLab cmake/cmake#25157).  Therefore, the
+  # directory location has to be overridden with CMAKE_INSTALL_LIBDIR=lib to
+  # allow find_package() to work.
 
   if (${testNameBase}_NAME)
     set(${testNameBase}_NAME ${${testNameBase}_NAME} PARENT_SCOPE)
@@ -658,8 +712,12 @@ function(TribitsExampleProject2_find_package  sharedOrStatic)
 endfunction()
 
 
-TribitsExampleProject2_find_package(STATIC)
-TribitsExampleProject2_find_package(SHARED)
+TribitsExampleProject2_find_package(STATIC "" "")
+TribitsExampleProject2_find_package(SHARED "" "")
+TribitsExampleProject2_find_package(STATIC PACKAGE1_USE_RAW_CMAKE "")
+TribitsExampleProject2_find_package(SHARED PACKAGE1_USE_RAW_CMAKE "")
+TribitsExampleProject2_find_package(SHARED PACKAGE1_USE_RAW_CMAKE
+  PACKAGE1_USE_TRIBITS_TEST_FUNCS)
 
 
 ########################################################################
@@ -776,7 +834,7 @@ endif()
 ################################################################################
 
 
-function(TribitsExampleProject2_External_Package_by_Package
+function(TribitsExampleProject2_External_PBP
     sharedOrStatic  findingTplsMethod
   )
 
@@ -1061,10 +1119,10 @@ function(TribitsExampleProject2_External_Package_by_Package
 endfunction()
 
 
-TribitsExampleProject2_External_Package_by_Package(STATIC  TPL_LIBRARY_AND_INCLUDE_DIRS)
-TribitsExampleProject2_External_Package_by_Package(SHARED  TPL_LIBRARY_AND_INCLUDE_DIRS)
-TribitsExampleProject2_External_Package_by_Package(STATIC  CMAKE_PREFIX_PATH_CACHE)
-TribitsExampleProject2_External_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CACHE)
+TribitsExampleProject2_External_PBP(STATIC  TPL_LIBRARY_AND_INCLUDE_DIRS)
+TribitsExampleProject2_External_PBP(SHARED  TPL_LIBRARY_AND_INCLUDE_DIRS)
+TribitsExampleProject2_External_PBP(STATIC  CMAKE_PREFIX_PATH_CACHE)
+TribitsExampleProject2_External_PBP(SHARED  CMAKE_PREFIX_PATH_CACHE)
 
 # NOTE: The above tests check a few different use cases for building and
 # installing TriBITS packages from a single TriBITS project incrementally.
@@ -1073,8 +1131,8 @@ TribitsExampleProject2_External_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CAC
 ################################################################################
 
 
-function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
-    sharedOrStatic  findingTplsMethod
+function(TribitsExampleProject2_External_RawPackage1_PBP
+    sharedOrStatic  findingTplsMethod  package1UseTribitsTestFunctions
   )
 
   TribitsExampleProject2_test_setup_header()
@@ -1160,6 +1218,25 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       "Error, findingTplsMethod='${findingTplsMethod}' is invalid!")
   endif()
 
+  if (package1UseTribitsTestFunctions STREQUAL "PACKAGE1_USE_TRIBITS_TEST_FUNCS")
+    set(package1UseTribitsTestFunctionsArgs
+      -D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE
+      -D "Package1_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}"
+      -D Package1_TRACE_ADD_TEST=TRUE )
+    string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
+    set(package1ConfigRegex
+      "Using TriBITS Test Functions in raw CMake Package1 build"
+      "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]"
+      "Package1_Prg-advanced: Added test [(]BASIC, PROCESSORS=1[)]" )
+  elseif (package1UseTribitsTestFunctions STREQUAL "")
+    set(package1UseTribitsTestFunctionsArgs "")
+    set(package1ConfigRegex
+      "Using Raw CMake add_test[(][)] in raw CMake Package1 build" )
+  else()
+    message(FATAL_ERROR
+      "Error, package1UseTribitsTestFunctions='${package1UseTribitsTestFunctions}' is invalid!")
+  endif()
+
   set(testNameBase ${CMAKE_CURRENT_FUNCTION}_${sharedOrStatic}${testNameSuffix})
   set(testName ${PACKAGE_NAME}_${testNameBase})
   set(testDir "${CMAKE_CURRENT_BINARY_DIR}/${testName}")
@@ -1176,16 +1253,19 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       ARGS -s ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject2 .
 
     TEST_1
-      MESSAGE "Configure to build and install just Package1 using raw CMake build system"
+      MESSAGE "Configure to build, install, and test just Package1 using its raw CMake build system"
       WORKING_DIRECTORY Build_Package1
       CMND ${CMAKE_COMMAND}
       ARGS
         ${TribitsExampleProject2_COMMON_CONFIG_ARGS}
+        ${package1UseTribitsTestFunctionsArgs}
+        -DPackage1_ENABLE_TESTS=ON
         -DCMAKE_PREFIX_PATH=${tplInstallBaseDir}/install_tpl1
         -DCMAKE_INSTALL_PREFIX=../install_package1
         ../TribitsExampleProject2/packages/package1
       PASS_REGULAR_EXPRESSION_ALL
         "Configuring raw CMake project Package1"
+        "${package1ConfigRegex}"
         "-- Configuring done"
 	"-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1199,6 +1279,17 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       CMND ${CMAKE_COMMAND} ARGS --build . --target install
 
     TEST_3
+      MESSAGE "Test just Package1"
+      WORKING_DIRECTORY Build_Package1
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND ${CMAKE_CTEST_COMMAND}
+      PASS_REGULAR_EXPRESSION_ALL
+        "Test.*Package1_Prg [.]* *Passed"
+        "Test.*Package1_Prg-advanced [.]* *Passed"
+	"100% tests passed, 0 tests failed out of 2"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_4
       MESSAGE "Configure to build, install, and test Package2"
       WORKING_DIRECTORY Build_Package2
       CMND ${CMAKE_COMMAND}
@@ -1252,13 +1343,13 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       # dependencies (i.e. Tpl1) as TriBITS-compliant external packages (which
       # shows that the TriBITS project must find Tpl1 again from scratch).
 
-    TEST_4
+    TEST_5
       MESSAGE "Build and install just Package2"
       WORKING_DIRECTORY Build_Package2
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_COMMAND} ARGS --build . --target install
 
-    TEST_5
+    TEST_6
       MESSAGE "Run tests for Package2"
       WORKING_DIRECTORY Build_Package2
       SKIP_CLEAN_WORKING_DIRECTORY
@@ -1268,7 +1359,7 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
 	"100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_6
+    TEST_7
       MESSAGE "Configure to build, test, and install the rest of TribitsExampleProject2 (Package2)"
       WORKING_DIRECTORY Build
       CMND ${CMAKE_COMMAND}
@@ -1326,19 +1417,19 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
       # the needed info from Tpl1, Tpl2, and Tpl3 is pulled in from
       # find_package(Package2).
 
-    TEST_7
+    TEST_8
       MESSAGE "Build and install the rest of TribitsExampleProject2 (Package3)"
       WORKING_DIRECTORY Build
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_COMMAND} ARGS --build . --target install
 
-    TEST_8
+    TEST_9
       MESSAGE "Run remaining tests for TribitsExampleProject2 (Package3)"
       WORKING_DIRECTORY Build
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND ${CMAKE_CTEST_COMMAND}
       PASS_REGULAR_EXPRESSION_ALL
-        "Package3_Prg [.]+ *Passed"
+        "Test.*Package3_Prg [.]+ *Passed"
 	"100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
@@ -1355,10 +1446,13 @@ function(TribitsExampleProject2_External_RawPackage1_then_Package_by_Package
 endfunction()
 
 
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC  TPL_LIBRARY_AND_INCLUDE_DIRS)
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED  TPL_LIBRARY_AND_INCLUDE_DIRS)
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(STATIC  CMAKE_PREFIX_PATH_CACHE)
-TribitsExampleProject2_External_RawPackage1_then_Package_by_Package(SHARED  CMAKE_PREFIX_PATH_CACHE)
-
-
-
+TribitsExampleProject2_External_RawPackage1_PBP(STATIC
+  TPL_LIBRARY_AND_INCLUDE_DIRS "")
+TribitsExampleProject2_External_RawPackage1_PBP(SHARED
+  TPL_LIBRARY_AND_INCLUDE_DIRS "")
+TribitsExampleProject2_External_RawPackage1_PBP(STATIC
+  CMAKE_PREFIX_PATH_CACHE "")
+TribitsExampleProject2_External_RawPackage1_PBP(SHARED
+  CMAKE_PREFIX_PATH_CACHE "")
+TribitsExampleProject2_External_RawPackage1_PBP(SHARED
+  CMAKE_PREFIX_PATH_CACHE  PACKAGE1_USE_TRIBITS_TEST_FUNCS)
