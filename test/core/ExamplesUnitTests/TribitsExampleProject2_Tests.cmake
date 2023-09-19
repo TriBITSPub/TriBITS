@@ -567,8 +567,8 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
   if (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_RAW_CMAKE")
     if (package1UseTribitsTestFunctions STREQUAL "PACKAGE1_USE_TRIBITS_TEST_FUNCS")
       list(APPEND package1UseRawCMakeArgs
-        "-D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE"
-	"-D Package1_TRACE_ADD_TEST=TRUE" )
+        -D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE
+	-D Package1_TRACE_ADD_TEST=TRUE )
       string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
       list(APPEND package1ConfigRegex
         "Using TriBITS Test Functions in raw CMake Package1 build"
@@ -1220,9 +1220,9 @@ function(TribitsExampleProject2_External_RawPackage1_PBP
 
   if (package1UseTribitsTestFunctions STREQUAL "PACKAGE1_USE_TRIBITS_TEST_FUNCS")
     set(package1UseTribitsTestFunctionsArgs
-      "-D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE"
-      "-D Package1_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}"
-      "-D Package1_TRACE_ADD_TEST=TRUE" )
+      -D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE
+      -D "Package1_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}"
+      -D Package1_TRACE_ADD_TEST=TRUE )
     string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
     set(package1ConfigRegex
       "Using TriBITS Test Functions in raw CMake Package1 build"
