@@ -57,12 +57,8 @@ include_guard()
 macro(tribits_advanced_set_cache_var_and_default  cacheVarName  cacheVarType
     defaultDefaultVal  docString
   )
-  if ("${${cacheVarName}_DEFAULT}" STREQUAL "")
-    set(${cacheVarName}_DEFAULT "${defaultDefaultVal}")
-  endif()
-  set(${cacheVarName} "${${cacheVarName}_DEFAULT}"
-    CACHE ${cacheVarType}
-    "${docString}" )
+  tribits_set_cache_var_and_default("${cacheVarName}" "${cacheVarType}"
+    "${defaultDefaultVal}" "${docString}")
   mark_as_advanced(${cacheVarName})
 endmacro()
 
