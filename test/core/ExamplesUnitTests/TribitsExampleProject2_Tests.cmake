@@ -555,11 +555,11 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
     )
     set(package1UseRawCMakeArgs "")
     set(testNameSuffix "")
-    set(package1ConfiRegex "Configuring package Package1 as full TriBITS package")
+    set(package1ConfigRegex "Configuring package Package1 as full TriBITS package")
   elseif (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_RAW_CMAKE")
     set(package1UseRawCMakeArgs "-D Package1_USE_RAW_CMAKE=TRUE")
     set(testNameSuffix "_${package1TribitsOrRawCMake}")
-    set(package1ConfiRegex "Configuring raw CMake package Package1")
+    set(package1ConfigRegex "Configuring raw CMake package Package1")
   else()
     message(FATAL_ERROR "package1UseRawCMakeArgs='${package1UseRawCMakeArgs}' Invalid!")
   endif()
@@ -570,12 +570,12 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
         "-D Package1_USE_TRIBITS_TEST_FUNCTIONS=TRUE"
 	"-D Package1_TRACE_ADD_TEST=TRUE" )
       string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
-      list(APPEND package1ConfiRegex
+      list(APPEND package1ConfigRegex
         "Using TriBITS Test Functions in raw CMake Package1 build"
         "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]"
         "Package1_Prg-advanced: Added test [(]BASIC, PROCESSORS=1[)]" )
     elseif (package1UseTribitsTestFunctions STREQUAL "")
-      list(APPEND package1ConfiRegex
+      list(APPEND package1ConfigRegex
         "Using Raw CMake add_test[(][)] in raw CMake Package1 build" )
     else()
       message(FATAL_ERROR
@@ -635,7 +635,7 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
         "-- Generating Tpl3::all_libs and Tpl3Config.cmake"
         "-- Found Tpl4_DIR='.*TribitsExampleProject2_Tpls_install_${sharedOrStatic}/install_tpl4/lib/cmake/Tpl4'"
         "-- Generating Tpl4::all_libs and Tpl4Config.cmake"
-        "${package1ConfiRegex}"
+        "${package1ConfigRegex}"
         "-- Configuring done"
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -1224,13 +1224,13 @@ function(TribitsExampleProject2_External_RawPackage1_PBP
       "-D Package1_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}"
       "-D Package1_TRACE_ADD_TEST=TRUE" )
     string(APPEND testNameSuffix "_${package1UseTribitsTestFunctions}" )
-    set(package1ConfiRegex
+    set(package1ConfigRegex
       "Using TriBITS Test Functions in raw CMake Package1 build"
       "Package1_Prg: Added test [(]BASIC, PROCESSORS=1[)]"
       "Package1_Prg-advanced: Added test [(]BASIC, PROCESSORS=1[)]" )
   elseif (package1UseTribitsTestFunctions STREQUAL "")
     set(package1UseTribitsTestFunctionsArgs "")
-    set(package1ConfiRegex
+    set(package1ConfigRegex
       "Using Raw CMake add_test[(][)] in raw CMake Package1 build" )
   else()
     message(FATAL_ERROR
@@ -1265,7 +1265,7 @@ function(TribitsExampleProject2_External_RawPackage1_PBP
         ../TribitsExampleProject2/packages/package1
       PASS_REGULAR_EXPRESSION_ALL
         "Configuring raw CMake project Package1"
-        "${package1ConfiRegex}"
+        "${package1ConfigRegex}"
         "-- Configuring done"
 	"-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
