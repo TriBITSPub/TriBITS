@@ -1,6 +1,5 @@
-var DOCUMENTATION_OPTIONS = {
-    URL_ROOT: document.getElementById("documentation_options").getAttribute('data-url_root'),
-    VERSION: 'tribits_start-3308-g8c1874ca',
+const DOCUMENTATION_OPTIONS = {
+    VERSION: 'tribits_start-3340-g685c8d5f',
     LANGUAGE: 'en',
     COLLAPSE_INDEX: false,
     BUILDER: 'html',
