@@ -42,12 +42,14 @@ cmake_minimum_required(VERSION 3.23.0 FATAL_ERROR)
 message("PROJECT_NAME = ${PROJECT_NAME}")
 message("${PROJECT_NAME}_TRIBITS_DIR = ${${PROJECT_NAME}_TRIBITS_DIR}")
 
+include("${${PROJECT_NAME}_TRIBITS_DIR}/core/common/TribitsCMakePolicies.cmake"
+  NO_POLICY_SCOPE)
+
 set( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/utils"
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
-include(TribitsCMakePolicies  NO_POLICY_SCOPE)
 include(TribitsProcessExtraRepositoriesList)
 include(UnitTestHelpers)
 include(GlobalSet)
