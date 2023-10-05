@@ -631,6 +631,7 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ASSERT_DEFINED_DEPENDENCIES=WARNING
+      -DWithSubpackagesB_DISABLE_SUPPORT_FOR_MixedLang=ON
       ../tribitsexproj-1.1-Source
     PASS_REGULAR_EXPRESSION_ALL
       "CMake Warning at .*/tribits/core/package_arch/TribitsProcessPackagesAndDirsLists.cmake"
@@ -645,6 +646,7 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
       "Final set of non-enabled packages:  0"
       "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
       "Processing enabled top-level package: WithSubpackages [(]A, B, Tests, Examples[)]"
+      "-- WithSubpackagesB: Disabling support for MixedLang because WithSubpackagesB_DISABLE_SUPPORT_FOR_MixedLang='ON'"
       "-- Configuring done"
       "-- Generating done"
     ALWAYS_FAIL_ON_NONZERO_RETURN

@@ -45,6 +45,7 @@ include(TribitsPrintEnabledPackagesLists)
 include(TribitsPrintDependencyInfo)
 include(TribitsPackageDependencies)
 include(TribitsGetPackageEnableStatus)
+include(TribitsGetHavePackageDependencyMacroName)
 
 include(AdvancedOption)
 include(AdvancedSet)
@@ -1189,9 +1190,8 @@ macro(tribits_private_postprocess_optional_package_enable  packageName  optDepPk
       "${optDepPkgEnable} is set!")
   endif()
 
-  string(TOUPPER  ${packageName}  packageName_UPPER)
-  string(TOUPPER  ${optDepPkg}  optDepPkg_UPPER)
-  set(macroDefineName  HAVE_${packageName_UPPER}_${optDepPkg_UPPER})
+  tribits_get_have_package_dependency_macro_name(${packageName} ${optDepPkg}
+    macroDefineName)
 
   if(${packageName}_ENABLE_${optDepPkg})
     set(${macroDefineName} ON)

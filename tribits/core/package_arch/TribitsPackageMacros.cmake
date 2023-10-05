@@ -61,6 +61,7 @@ include(TribitsAddExecutable)
 include(TribitsAddExecutableAndTest)
 include(TribitsCopyFilesToBinaryDir)
 include(TribitsReportInvalidTribitsUsage)
+include(TribitsGetHavePackageDependencyMacroName)
 
 
 #
@@ -415,11 +416,19 @@ endmacro()
 #
 # Usage::
 #
-#   tribits_disable_optional_dependency(<upstreamPackageName>  "<reasonStr>")
+#   tribits_disable_optional_dependency(<upstreamPackageName>  "<reasonStr>"
+#     [PACKAGE_NAME <packageName>] )
 #
-# This macro can be called from a top-level package's
-# ``<packageDir>/CMakeLists.txt`` file to disable an optional dependency that
-# may have been enabled by the user or through automated enable/disable logic.
+# This will disable the dependency of the package ``<packageName>`` on the
+# upstream package ``<upstreamPackageName>``.  If the argument ``PACKAGE_NAME
+# <packageName>`` is missing, then ``<packageName>`` will be
+# ``${PACKAGE_NAME}``.
+#
+# This macro can be called from the top-level package's
+# ``<packageDir>/CMakeLists.txt`` file (or from a subpackages's parent
+# top-level ``<packageDir>/CMakeLists.txt`` if ``<packageName>`` is the name
+# of a subpackage) to disable an optional dependency that may have been
+# enabled by the user or through automated enable/disable logic.
 #
 # This is most useful in cases where multiple criteria must be considered
 # before support for some upstream dependency can really be supported.  In
@@ -427,7 +436,17 @@ endmacro()
 # telegraphed to all downstream packages.  See `How to tweak downstream
 # TriBITS "ENABLE" variables during package configuration`_ for more details.
 #
+# NOTE: The constraint that this must be called from a top-level package's
+# ``<packageDir>/CMakeLists.txt`` is because this macro sets non-cache
+# variables at the base project-level scope.)
+#
 macro(tribits_disable_optional_dependency  upstreamPackageName  reasonStr)
+  cmake_parse_arguments(TDOD_PARSE "" "PACKAGE_NAME" "" ${ARGN})
+  if (TDOD_PARSE_PACKAGE_NAME)
+    set(tdod_packageName ${TDOD_PARSE_PACKAGE_NAME})
+  else()
+    set(tdod_packageName ${PACKAGE_NAME})
+  endif()
   # Assert called in the correct context
   if (NOT "${${PACKAGE_NAME}_PARENT_PACKAGE}" STREQUAL "")
     message(FATAL_ERROR "ERROR: Calling tribits_disable_optional_dependency() from"
@@ -441,11 +460,10 @@ macro(tribits_disable_optional_dependency  upstreamPackageName  reasonStr)
       " '${${PACKAGE_NAME}_SOURCE_DIR}/CMakeLists.txt'" )
   endif()
   # Get the variable names that are going to be set assert they exist already
-  set(packageEnableVarName ${PACKAGE_NAME}_ENABLE_${upstreamPackageName})
+  set(packageEnableVarName ${tdod_packageName}_ENABLE_${upstreamPackageName})
   assert_defined(${packageEnableVarName})
-  string(TOUPPER  ${upstreamPackageName}  upstreamPackageName_UC)
-  set(havePackageUpstreamPackageMacroVarName
-    HAVE_${PACKAGE_NAME_UC}_${upstreamPackageName_UC})
+  tribits_get_have_package_dependency_macro_name(${tdod_packageName}
+    ${upstreamPackageName}  havePackageUpstreamPackageMacroVarName)
   assert_defined(${havePackageUpstreamPackageMacroVarName})
   # Set the variables to OFF in local and project-level scopes
   if (NOT "${reasonStr}" STREQUAL "")
