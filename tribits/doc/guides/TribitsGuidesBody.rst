@@ -1589,25 +1589,25 @@ are defined before a Package's ``CMakeLists.txt`` file is processed:
     imply that all of the required subpackages will be enabled, only that the
     parent package will be processed).
 
-  .. _${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}:
+  .. _${PACKAGE_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}:
 
-  ``${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}``
+  ``${PACKAGE_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}``
 
     Set to ``ON`` if support for the optional `upstream`_ dependent package
-    ``${OPTIONAL_DEP_PACKAGE_NAME}`` is enabled in package
-    ``${PACKAGE_NAME}``.  Here ``${OPTIONAL_DEP_PACKAGE_NAME}`` corresponds to
-    each optional upstream package listed in the ``LIB_OPTIONAL_PACKAGES``
-    and ``TEST_OPTIONAL_PACKAGES`` arguments to the
+    ``${UPSTREAM_PACKAGE_NAME}`` is enabled in package ``${PACKAGE_NAME}``.
+    Here ``${UPSTREAM_PACKAGE_NAME}`` corresponds to each optional upstream
+    package listed in the ``LIB_OPTIONAL_PACKAGES`` and
+    ``TEST_OPTIONAL_PACKAGES`` arguments to the
     `tribits_package_define_dependencies()`_ macro.
 
     **NOTE:** It is important that the CMake code in the package's
     ``CMakeLists.txt`` files key off of this variable and **not** the
     project-level variable
-    ``${PROJECT_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}`` because the
+    ``${PROJECT_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}`` because the
     package-level variable
-    ``${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}`` can be explicitly
+    ``${PACKAGE_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}`` can be explicitly
     turned off by the user even through the packages ``${PACKAGE_NAME}`` and
-    ``${OPTIONAL_DEP_PACKAGE_NAME}`` are both enabled at the project level!
+    ``${UPSTREAM_PACKAGE_NAME}`` are both enabled at the project level!
     See `Support for optional package can be explicitly disabled`_.
 
     **NOTE:** This variable will also be set for required dependencies as well
@@ -1617,7 +1617,8 @@ are defined before a Package's ``CMakeLists.txt`` file is processed:
 
     **NOTE:** The value of this variable also determines the value of the
     macro define variable name
-    `HAVE_<PACKAGE_NAME_UC>_<UPSTREAM_PACKAGE_NAME_UC>`_.
+    `HAVE_<PACKAGE_NAME_UC>_<UPSTREAM_PACKAGE_NAME_UC>`_ which is set
+    automatically by TriBITS before its usage in downstream TriBITS packages.
 
   .. _${PACKAGE_NAME}_ENABLE_TESTS:
 
@@ -1648,16 +1649,16 @@ are defined in the top-level project scope before a Package's
   ``HAVE_<PACKAGE_NAME_UC>_<UPSTREAM_PACKAGE_NAME_UC>``
 
     Set to ``ON`` if support for optional upstream package
-    ``${OPTIONAL_DEP_PACKAGE}`` is enabled in downstream package
+    ``${UPSTREAM_PACKAGE_NAME}`` is enabled in downstream package
     ``${PACKAGE_NAME}``
-    (i.e. `${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}`_ = ``ON``) and
-    is set to ``FALSE`` otherwise.  Here, ``<PACKAGE_NAME_UC>`` and
+    (i.e. `${PACKAGE_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}`_ = ``ON``) and is
+    set to ``FALSE`` otherwise.  Here, ``<PACKAGE_NAME_UC>`` and
     ``<UPSTREAM_PACKAGE_NAME_UC>`` are the upper-case names for the packages
-    ``${PACKAGE_NAME}`` and ``${OPTIONAL_DEP_PACKAGE_NAME}``, respectively.
-    For example, if optional support for upstream package ``Triutils`` is
-    enabled in downstream package ``EpetraExt`` in `ReducedMockTrilinos`_,
-    then ``EpetraExt_ENABLE_TriUtils=ON`` and ``HAVE_EPETRAEXT_TRIUTILS=ON``.
-    This variable is meant to be used in::
+    ``${PACKAGE_NAME}`` and ``${UPSTREAM_PACKAGE_NAME}``, respectively.  For
+    example, if optional support for upstream package ``Triutils`` is enabled
+    in downstream package ``EpetraExt`` in `ReducedMockTrilinos`_, then
+    ``EpetraExt_ENABLE_TriUtils=ON`` and ``HAVE_EPETRAEXT_TRIUTILS=ON``.  This
+    variable is meant to be used in::
 
       #cmakedefine HAVE_<PACKAGE_NAME_UC>_<UPSTREAM_PACKAGE_NAME_UC>
 
@@ -1668,7 +1669,7 @@ are defined in the top-level project scope before a Package's
       #cmakedefine HAVE_EPETRAEXT_TRIUTILS
 
     NOTE: TriBITS automatically sets this variable depending on the value of
-    `${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}`_ during the step
+    `${PACKAGE_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}`_ during the step
     "Adjust package and TPLs enables and disables" in `Full Processing of
     TriBITS Project Files`_.  And tweaking this variable after that must be
     done carefully as described in `How to tweak downstream TriBITS "ENABLE"
@@ -5609,10 +5610,14 @@ To add a new TriBITS TPL, do the following:
      #cmakedefine HAVE_<PACKAGE_NAME_UC>_<TPL_NAME_UC>
 
    so that the package's LIB code build knows if the TPL is defined or not
-   (see `<packageName>_config.h.in`_ and `tribits_configure_file()`_).  (NOTE:
-   Do **not** add this define for a optional test-only TPL dependency.  We
-   don't want all of the libraries in a package to have to be rebuild when we
-   enable or disable tests for the package.)
+   (see `<packageName>_config.h.in`_ and `tribits_configure_file()`_).  NOTE:
+   The CMake variable ``HAVE_<PACKAGE_NAME_UC>_<TPL_NAME_UC>`` is set
+   automatically by TriBITS before the package's
+   `<packageDir>/CMakeLists.txt`_ is processed (see
+   `HAVE_<PACKAGE_NAME_UC>_<UPSTREAM_PACKAGE_NAME_UC>`_).  (NOTE: Do **not**
+   add this define for a optional test-only TPL dependency.  We don't want all
+   of the libraries in a package to have to be rebuild when we enable or
+   disable tests for the package.)
 
 9) **Use the TPL functionality in the packages** that define the dependency on
    the new TPL, configure, test, etc.
@@ -6026,7 +6031,10 @@ as follows:
 
      #cmakedefine HAVE_<PACKAGE_NAME_UC>_<UPSTREAM_PACKAGE_NAME_UC>
 
-   (see `HAVE_<PACKAGE_NAME_UC>_<UPSTREAM_PACKAGE_NAME_UC>`_.)
+   NOTE: The CMake variable ``HAVE_<PACKAGE_NAME_UC>_<PACKAGE_NAME_UC>`` is
+   set automatically by TriBITS before the package's
+   `<packageDir>/CMakeLists.txt`_ is processed (see
+   `HAVE_<PACKAGE_NAME_UC>_<UPSTREAM_PACKAGE_NAME_UC>`_).
 
    .. _Warning, do not add optional defines for tests/examples to configured header files:
 
