@@ -92,9 +92,11 @@ set(${PROJECT_NAME}_EXTRA_REPOSITORIES extraRepoTwoPackages)
 # For running other lower-level functions
 
 set(REPOSITORY_NAME "Trilinos")
+set(${REPOSITORY_NAME}_TPLS_FILE
+  ${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/TPLsList.cmake)
+include(${${REPOSITORY_NAME}_TPLS_FILE})
 
 include(${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/PackagesList.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/MiniMockTrilinosFiles/TPLsList.cmake)
 
 set(EXTRA_REPO_NAME extraRepoTwoPackages)
 set(EXTRA_REPO_DIR extraRepoTwoPackages)
@@ -102,7 +104,7 @@ set(EXTRA_REPO_DIR extraRepoTwoPackages)
 set(REPOSITORY_NAME ${EXTRA_REPO_NAME})
 include(${PROJECT_SOURCE_DIR}/${EXTRA_REPO_NAME}/PackagesList.cmake)
 
-set(${EXTRA_REPO_NAME}_TPLS_FINDMODS_CLASSIFICATIONS)
+set(${EXTRA_REPO_NAME}_TPLS_FINDMODS_CLASSIFICATIONS "")
 
 set(${PROJECT_NAME}_ALL_REPOSITORIES "." "${EXTRA_REPO_NAME}")
 

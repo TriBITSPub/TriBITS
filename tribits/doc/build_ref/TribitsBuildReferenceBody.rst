@@ -3023,9 +3023,9 @@ One of the CMake configure-time debug-mode checks performed as part of
 ``<Project>_ENABLE_DEVELOPMENT_MODE=ON`` is to assert the existence of TriBITS
 package directories.  In development mode, the failure to find a package
 directory is usually a programming error (i.e. a miss-spelled package
-directory name).  But in a tarball release of the project, package directories
-may be purposefully missing (see `Creating a tarball of the source tree`_) and
-must be ignored.
+directory name).  But in a reduced tarball release of the project, package
+directories may be purposefully missing (see `Creating a tarball of the source
+tree`_) and must be ignored.
 
 When building from a reduced source tarball created from the
 development sources, set::
@@ -3043,15 +3043,17 @@ Another type of checking is for optional inserted/external packages
 (e.g. packages who's source can optionally be included and is flagged with
 ``tribits_allow_missing_external_packages()``).  Any of these package
 directories that are missing result in the packages being silently ignored by
-default.  However, notes on what missing packages are being ignored can
-printed by configuring with::
+default.  Also, when there are packages that are purposefully missing in a
+reduced tarball build (which are allowed by setting
+``<Project>_ASSERT_DEFINED_DEPENDENCIES=OFF``), these are also silently
+ignored.  However, notes on which of these packages are missing can be printed
+to the CMAKE STDOUT by setting::
 
   -D <Project>_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=TRUE
 
-These warnings starting with 'NOTE' (not starting with 'WARNING' that would
-otherwise trigger warnings in CDash) about missing inserted/external packages
-will print regardless of the setting for
-``<Project>_ASSERT_DEFINED_DEPENDENCIES``.
+These STDOUT lines starting with 'NOTE' (not starting with 'WARNING' that
+would otherwise trigger warnings in CDash) about missing packages will print
+regardless of the setting for ``<Project>_ASSERT_DEFINED_DEPENDENCIES``.
 
 Finally, ``<Project>_ENABLE_DEVELOPMENT_MODE=ON`` results in a number of
 checks for invalid usage of TriBITS in the project's ``CMakeLists.txt`` files

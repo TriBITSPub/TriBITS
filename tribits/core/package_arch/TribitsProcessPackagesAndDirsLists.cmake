@@ -367,11 +367,13 @@ endfunction()
 
 # @MACRO: tribits_process_packages_and_dirs_lists()
 #
+# Read in a list of packages and basic info info
+#
 # Usage::
 #
-#   tribits_process_packages_and_dirs_lists()
+#   tribits_process_packages_and_dirs_lists(<repoName> <repoDir>)
 #
-# Macro that processes the list variable::
+# This macro processes the list variable::
 #
 #    ${REPOSITORY_NAME}_PACKAGES_AND_DIRS_AND_CLASSIFICATIONS
 #

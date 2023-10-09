@@ -571,22 +571,19 @@ macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
   if (errorOutForUndefinedDepPkg)
     tribits_abort_on_missing_package("${depPkg}" "${packageName}")
   else()
-    if (${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE)
-      if (${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES)
-        message_wrapper("NOTE: ${depPkg} is being ignored since its directory"
-          " is missing and ${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE ="
-          " ${${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE}!")
-      endif()
-      if ("${requiredOrOptional}" STREQUAL "REQUIRED")
-        message_wrapper("NOTE: Setting ${packageEnableVar}=OFF because"
-          " package ${packageName} has a required dependency on missing"
-          " package ${depPkg}!")
-        set(${packageEnableVar} OFF)
-      endif()
+    tribits_warn_about_ignored_missing_pkg_dep("${packageName}" "${depPkg}"
+      "${requiredOrOptional}" "${packageEnableVar}" )
+    # Must set the package itself off if it is a required dependency
+    if ("${requiredOrOptional}" STREQUAL "REQUIRED")
+      message_wrapper("-- NOTE: Setting ${packageEnableVar}=OFF because"
+        " package ${packageName} has a required dependency on missing"
+        " package ${depPkg}!")
+      set(${packageEnableVar} OFF)
     endif()
     # Must set enable vars for missing package to off so that logic in
     # existing downstream packages that key off of these vars will still
-    # work.
+    # work. (NOTE: If this is a required dependency, it is also good to set
+    # these to off as well and not incorrect.)
     set(${PROJECT_NAME}_ENABLE_${depPkg} OFF)
     set(${packageName}_ENABLE_${depPkg} OFF)
     tribits_get_have_package_dependency_macro_name(${packageName} ${depPkg}
@@ -594,6 +591,26 @@ macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
     set(${havePackageDepPkgMacroName} OFF)
   endif()
 endmacro()
+
+
+function(tribits_warn_about_ignored_missing_pkg_dep  packageName  depPkg
+    requiredOrOptional  packageEnableVar
+  )
+#  message_wrapper("\ntribits_warn_about_ignored_missing_pkg_dep('${packageName}' '${depPkg}' '${requiredOrOptional}' '${packageEnableVar}')")
+  if (${PROJECT_NAME}_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES)
+    if (${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE)
+      message_wrapper("-- NOTE: ${depPkg} is being ignored since its directory"
+      " is missing and ${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE ="
+      " ${${depPkg}_ALLOW_MISSING_EXTERNAL_PACKAGE}!")
+    elseif (NOT  ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES  IN_LIST
+        ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES_ERROR_VALUES_LIST
+      )
+      message_wrapper("-- NOTE: ${depPkg} is being ignored since its directory"
+      " is missing and ${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES ="
+      " ${${PROJECT_NAME}_ASSERT_DEFINED_DEPENDENCIES}!")
+    endif()
+  endif()
+endfunction()
 
 
 # @MACRO: tribits_append_forward_dep_packages()

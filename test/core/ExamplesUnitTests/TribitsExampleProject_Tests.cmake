@@ -618,7 +618,7 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
     ARGS -E make_directory tribitsexproj-1.1-Source/packages/mixed_lang
 
   TEST_5
-    MESSAGE "Configure from the untarred reduced source tree"
+    MESSAGE "Configure from the untarred reduced source tree warning about missing packages and test tribits_disable_optional_dependency()"
     WORKING_DIRECTORY BUILD2
     CMND ${CMAKE_COMMAND}
     ARGS
@@ -652,6 +652,35 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_6
+    MESSAGE "Configure from the untarred reduced source tree only noting missing packages to test that"
+    WORKING_DIRECTORY BUILD2
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+      -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_ASSERT_DEFINED_DEPENDENCIES=OFF
+      -DTribitsExProj_WARN_ABOUT_MISSING_EXTERNAL_PACKAGES=ON
+      ../tribitsexproj-1.1-Source
+    PASS_REGULAR_EXPRESSION_ALL
+      "-- NOTE: InsertedPkg is being ignored since its directory is missing and InsertedPkg_ALLOW_MISSING_EXTERNAL_PACKAGE = TRUE"
+      "-- NOTE: MixedLang is being ignored since its directory is missing and TribitsExProj_ASSERT_DEFINED_DEPENDENCIES = OFF"
+      "Final set of enabled top-level packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled packages:  SimpleCxx WithSubpackagesA WithSubpackagesB WithSubpackages 4"
+      "Final set of non-enabled top-level packages:  0"
+      "Final set of non-enabled packages:  0"
+      "Processing enabled top-level package: SimpleCxx [(]Libs, Tests, Examples[)]"
+      "Processing enabled top-level package: WithSubpackages [(]A, B, Tests, Examples[)]"
+      "-- Configuring done"
+      "-- Generating done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_7
     MESSAGE "Build reduced project default 'all' target using raw 'make'"
     WORKING_DIRECTORY BUILD2
     SKIP_CLEAN_WORKING_DIRECTORY
@@ -662,7 +691,7 @@ tribits_add_advanced_test( TribitsExampleProject_NoFortran_reduced_tarball
       "Built target pws_b"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  TEST_7
+  TEST_8
     MESSAGE "Run all the tests in reduced project with raw 'ctest'"
     WORKING_DIRECTORY BUILD2
     SKIP_CLEAN_WORKING_DIRECTORY

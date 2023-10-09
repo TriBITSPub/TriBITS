@@ -118,16 +118,24 @@ endmacro()
 
 # @MACRO: tribits_process_tpls_lists()
 #
-# This macro that processes the project-level variable::
+# Reads in the list of external packages/TPLs and the location of there
+# definition files.
+#
+# Usage::
+#
+#   tribits_process_tpls_lists(<repoName> <repoDir>)
+#
+# This macro processes the project-level variable::
 #
 #   ${REPOSITORY_NAME}_TPLS_FINDMODS_CLASSIFICATIONS
 #
-# This updates the project-level variables:
+# from a `<repoDir>/TPLsList.cmake` file that just got read in and updates the
+# project-level non-cache variables:
 #
 #   * `${PROJECT_NAME}_DEFINED_TPLS`_
 #   * `${PROJECT_NAME}_NUM_DEFINED_TPLS`_
 #
-# For each TPL, it also sets the variables:
+# For each external package/TPL, it also sets the variables:
 #
 #   * `${TPL_NAME}_FINDMOD`_
 #   * `${TPL_NAME}_TESTGROUP`_

@@ -587,6 +587,7 @@ function(unittest_extra_repo_missing_optional_package)
   #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
   #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
+  tribits_process_tpls_lists(${PROJECT_NAME} ".")
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
   tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
@@ -617,14 +618,15 @@ function(unittest_extra_repo_missing_optional_package_verbose)
   #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
   #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
+  tribits_process_tpls_lists(${PROJECT_NAME} ".")
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
   tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
-  global_set(MESSAGE_WRAPPER_INPUT)  							
+  global_set(MESSAGE_WRAPPER_INPUT)
   tribits_read_deps_files_create_deps_graph()
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;-- ;Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='4'")
+    "-- NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;-- ;Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='4'")
   unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
@@ -646,14 +648,15 @@ function(unittest_extra_repo_missing_required_package)
   #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
   #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
+  tribits_process_tpls_lists(${PROJECT_NAME} ".")
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
   tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
-  global_set(MESSAGE_WRAPPER_INPUT)  							
+  global_set(MESSAGE_WRAPPER_INPUT)
   tribits_read_deps_files_create_deps_graph()
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='4'")
+    "-- NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='4'")
   unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
@@ -678,6 +681,7 @@ function(unittest_extra_repo_missing_required_package_verbose)
   #set(TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS ON)
   #set(${PROJECT_NAME}_VERBOSE_CONFIGURE ON)
 
+  tribits_process_tpls_lists(${PROJECT_NAME} ".")
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
   tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
@@ -685,7 +689,7 @@ function(unittest_extra_repo_missing_required_package_verbose)
   tribits_read_deps_files_create_deps_graph()
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='4'")
+    "-- NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;-- NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_DEFINED_INTERNAL_PACKAGES='4'")
   unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
