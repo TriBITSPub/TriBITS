@@ -39,6 +39,8 @@
 
 include(TribitsPackageDefineDependencies)
 include(TribitsPackageDependencies)
+include(TribitsGetHavePackageDependencyMacroName)
+
 include(SetDefault)
 include(DualScopeSet)
 
@@ -553,11 +555,6 @@ endfunction()
 # Implementation macro for tribits_set_dep_packages() to deal with a package
 # that is not defined by TriBITS.
 #
-# ToDo #63: This may need to be modified when dealing with TriBITS-compliant
-# packages already installed out on the system.  We may need a mode where we
-# don't assert packages that are not defined but instead just assume they are
-# TriBITS-compliant packages already installed.
-#
 macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
     requiredOrOptional  pkgsOrTpls  packageEnableVar
   )
@@ -592,6 +589,9 @@ macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
     # work.
     set(${PROJECT_NAME}_ENABLE_${depPkg} OFF)
     set(${packageName}_ENABLE_${depPkg} OFF)
+    tribits_get_have_package_dependency_macro_name(${packageName} ${depPkg}
+      havePackageDepPkgMacroName)
+    set(${havePackageDepPkgMacroName} OFF)
   endif()
 endmacro()
 
