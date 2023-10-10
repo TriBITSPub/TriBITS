@@ -468,10 +468,10 @@ macro(tribits_process_package_dependencies_lists  packageName)
   set(TEST_OPTIONAL_DEP_TPLS "")
 
   # Fill the backward dependency vars
-  tribits_set_dep_packages(${packageName} LIB  REQUIRED  PACKAGES)
-  tribits_set_dep_packages(${packageName} LIB  OPTIONAL  PACKAGES)
-  tribits_set_dep_packages(${packageName} TEST  REQUIRED  PACKAGES)
-  tribits_set_dep_packages(${packageName} TEST  OPTIONAL  PACKAGES)
+  tribits_set_dep_packages(${packageName} LIB  REQUIRED)
+  tribits_set_dep_packages(${packageName} LIB  OPTIONAL)
+  tribits_set_dep_packages(${packageName} TEST  REQUIRED)
+  tribits_set_dep_packages(${packageName} TEST  OPTIONAL)
 
   # Fill forward deps lists #63
   tribits_append_forward_dep_packages(${packageName}  LIB)
@@ -487,14 +487,12 @@ endmacro()
 #
 # Usage::
 #
-#   tribits_set_dep_packages(<packageName> <testOrLib> <requiredOrOptional> <pkgsOrTpls>)
+#   tribits_set_dep_packages(<packageName> <testOrLib> <requiredOrOptional>)
 #
 # where:
 #
 # * ``<testOrLib>``: ``LIB`` or ``TEST``
 # * ``<requiredOrOptional>``: ``REQUIRED`` or ``OPTIONAL``
-# * ``<pkgsOrTpls>``: ``PACKAGES`` or ``TPLS``
-#
 #
 # Sets the upstream/backward dependency variables defined in the section
 # `Variables defining the package dependencies graph`_.
@@ -510,14 +508,14 @@ endmacro()
 #
 # See `Function call tree for constructing package dependency graph`_.
 #
-macro(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional  pkgsOrTpls)
+macro(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional)
 
-  set(inputListType  ${testOrLib}_${requiredOrOptional}_DEP_${pkgsOrTpls})
+  set(packageDepsListName  ${testOrLib}_${requiredOrOptional}_DEP_PACKAGES)
   set(packageEnableVar  ${PROJECT_NAME}_ENABLE_${packageName})
 
-  foreach(depPkg  IN LISTS  ${inputListType})
+  foreach(depPkg  IN LISTS  ${packageDepsListName})
     if (${depPkg} STREQUAL ${packageName})
-      tribits_abort_on_self_dep("${packageName}" "${inputListType}")
+      tribits_abort_on_self_dep("${packageName}" "${packageDepsListName}")
     endif()
     tribits_is_pkg_defined(${depPkg} depPkgIsDefined)
     if (depPkgIsDefined)
@@ -532,7 +530,7 @@ macro(tribits_set_dep_packages  packageName  testOrLib  requiredOrOptional  pkgs
       endif()
     else()
       tribits_set_dep_packages__handle_undefined_pkg(${packageName} ${depPkg}
-        ${requiredOrOptional} ${pkgsOrTpls} ${packageEnableVar})
+        ${requiredOrOptional} ${packageEnableVar})
     endif()
   endforeach()
 
@@ -556,7 +554,7 @@ endfunction()
 # that is not defined by TriBITS.
 #
 macro(tribits_set_dep_packages__handle_undefined_pkg  packageName  depPkg
-    requiredOrOptional  pkgsOrTpls  packageEnableVar
+    requiredOrOptional  packageEnableVar
   )
   # Determine if it is allowed for this depPkg to not be defined
   set(errorOutForUndefinedDepPkg  TRUE)
