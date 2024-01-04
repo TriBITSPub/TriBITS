@@ -124,7 +124,7 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
 
   if (NOT gitCmndRtn STREQUAL 0)
     message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
-      " for repo ${gitRepoDir}!")
+      " with output '${gitCmndOutput}' for repo ${gitRepoDir}!")
     set(gitVersionLine "Error, could not get version info!")
   else()
     set(gitVersionLine "${gitCmndOutput}")
