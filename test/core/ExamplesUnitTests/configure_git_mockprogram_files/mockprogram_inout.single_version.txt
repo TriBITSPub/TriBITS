@@ -1,0 +1,6 @@
+MOCK_PROGRAM_INPUT: log -1 --pretty=format:%h [%ad] <%ae>
+MOCK_PROGRAM_RETURN: 0
+MOCK_PROGRAM_OUTPUT: a1234tgb [Thu Sep 21 19:19:18 2023 -0400] <someone@sandia.gov>
+MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s
+MOCK_PROGRAM_RETURN: 0
+MOCK_PROGRAM_OUTPUT: This is the git commit summary line

@@ -7,6 +7,7 @@ set(TribitsHelloWorld_COMMON_CONFIG_ARGS
   ${SERIAL_PASSTHROUGH_CONFIGURE_ARGS}
   )
 
+
 tribits_add_advanced_test( TribitsHelloWorld
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -34,6 +35,51 @@ tribits_add_advanced_test( TribitsHelloWorld
       ": HelloWorld_unit_tests .*  Passed"
       "100% tests passed, 0 tests failed out of 2"
   )
+
+
+tribits_add_advanced_test( TribitsHelloWorld_config_git_version
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy the project source so we can copy files into it."
+    CMND ${CMAKE_COMMAND}
+    ARGS -E copy_directory
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+      TribitsHelloWorld
+
+  TEST_1
+    MESSAGE "Create a dummy .git directory so it will run git commands"
+    CMND ${CMAKE_COMMAND} ARGS -E make_directory TribitsHelloWorld/.git
+
+  TEST_2
+    CMND ${CMAKE_COMMAND} ARGS -E  copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/configure_git_mockprogram_files/mockprogram_inout.single_version.txt
+      TribitsHelloWorld/.mockprogram_inout.txt
+
+  TEST_3
+    WORKING_DIRECTORY BUILD
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTribitsHelloWorld_GENERATE_REPO_VERSION_FILE=ON
+      -DGIT_EXECUTABLE=${${PROJECT_NAME}_TRIBITS_DIR}/python_utils/mockprogram.py
+      ../TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "a1234tgb .Thu Sep 21 19:19:18 2023 -0400. <someone@sandia.gov>"
+      "This is the git commit summary line"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+# The above directory structure is:
+#
+#  TribitsHelloWorld_config_git_version/
+#    TribitsHelloWorld/
+#      .git/
+#      .mockprogram_inout.txt
+#    BUILD/
 
 
 tribits_add_advanced_test( TribitsHelloWorld_EXE_DISABLE
