@@ -120,6 +120,7 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
     WORKING_DIRECTORY ${gitRepoDir}
     RESULT_VARIABLE gitCmndRtn
     OUTPUT_VARIABLE gitCmndOutput
+    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
     )
 
   if (NOT gitCmndRtn STREQUAL 0)
@@ -137,6 +138,7 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
     WORKING_DIRECTORY ${gitRepoDir}
     RESULT_VARIABLE gitCmndRtn
     OUTPUT_VARIABLE gitCmndOutput
+    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
     )
 
   if (NOT gitCmndRtn STREQUAL 0)
