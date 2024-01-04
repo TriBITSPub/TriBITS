@@ -40,6 +40,7 @@ tribits_add_advanced_test( TribitsHelloWorld
 tribits_add_advanced_test( TribitsHelloWorld_config_git_version
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
+  XHOST Windows   # We use the 'diff' command below :-(
 
   TEST_0
     MESSAGE "Copy the project source so we can copy files into it."
@@ -72,14 +73,25 @@ tribits_add_advanced_test( TribitsHelloWorld_config_git_version
       "This is the git commit summary line"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
+  TEST_4
+    CMND diff ARGS
+      ${CMAKE_CURRENT_SOURCE_DIR}/configure_git_mockprogram_files/TribitsHelloWorldRepoVersion.single_version.txt
+      BUILD/TribitsHelloWorldRepoVersion.txt
+
   )
-# The above directory structure is:
+# NOTES:
+#
+# * The above directory structure is:
 #
 #  TribitsHelloWorld_config_git_version/
 #    TribitsHelloWorld/
 #      .git/
 #      .mockprogram_inout.txt
 #    BUILD/
+#
+# * We don't use cmake -E compare_files because it does not print the diff,
+#   just gives a non-zero error code.
+
 
 
 tribits_add_advanced_test( TribitsHelloWorld_EXE_DISABLE
