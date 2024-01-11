@@ -37,7 +37,7 @@ tribits_add_advanced_test( TribitsHelloWorld
   )
 
 
-tribits_add_advanced_test( TribitsHelloWorld_config_git_version
+tribits_add_advanced_test( TribitsHelloWorld_config_git_version_single_repo_one_parent
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   XHOST Windows   # We use the 'diff' command below :-(
@@ -55,7 +55,7 @@ tribits_add_advanced_test( TribitsHelloWorld_config_git_version
 
   TEST_2
     CMND ${CMAKE_COMMAND} ARGS -E  copy
-      ${CMAKE_CURRENT_SOURCE_DIR}/configure_git_mockprogram_files/mockprogram_inout.single_version.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/configure_git_mockprogram_files/mockprogram_inout.single_repo_one_parent_version.txt
       TribitsHelloWorld/.mockprogram_inout.txt
 
   TEST_3
@@ -75,7 +75,7 @@ tribits_add_advanced_test( TribitsHelloWorld_config_git_version
 
   TEST_4
     CMND diff ARGS
-      ${CMAKE_CURRENT_SOURCE_DIR}/configure_git_mockprogram_files/TribitsHelloWorldRepoVersion.single_version.txt
+      ${CMAKE_CURRENT_SOURCE_DIR}/configure_git_mockprogram_files/TribitsHelloWorldRepoVersion.single_repo_one_parent_version.txt
       BUILD/TribitsHelloWorldRepoVersion.txt
 
   )
