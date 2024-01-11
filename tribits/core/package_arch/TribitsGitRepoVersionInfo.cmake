@@ -105,6 +105,56 @@ function(tribits_git_repo_sha1  gitRepoDir  gitRepoSha1Out)
 endfunction()
 
 
+# Run git log to generate a string containing commit sha1, author, date, email
+# and the commit summary
+
+function(tribits_generate_commit_info_string gitRepoDir 
+   commitInfoStringOut
+  ) 
+  
+  # A) Get commit hash, author, date, and email
+  
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%h [%ad] <%ae>"
+    WORKING_DIRECTORY ${gitRepoDir}
+    RESULT_VARIABLE gitCmndRtn
+    OUTPUT_VARIABLE gitCmndOut 
+    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
+    )
+  
+  if (NOT gitCmndRtn STREQUAL 0)
+    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
+      " for SHA1 of repo ${gitRepoDir}!")
+    set(gitVersionLine "Error, could not get version info!")
+  else()
+    set(gitVersionLine "${gitCmndOut}")
+  endif()
+
+  # B) Get the first 80 chars of the summary message for more info
+
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%s"
+    WORKING_DIRECTORY ${gitRepoDir}
+    RESULT_VARIABLE gitCmndRtn
+    OUTPUT_VARIABLE gitCmndOutput
+    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
+    )
+
+  if (NOT gitCmndRtn STREQUAL 0)
+    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
+      " for SHA1 of repo ${gitRepoDir}!")
+    set(gitSummaryStr "Error, could not get version summary!")
+  else()
+    set(maxSummaryLen 80)
+    string(SUBSTRING "${gitCmndOutput}" 0 ${maxSummaryLen} gitSummaryStr)
+  endif()
+
+  set(${commitInfoStringOut} 
+    "${gitVersionLine}\n${gitSummaryStr}" PARENT_SCOPE)
+endfunction()
+
+
+
 # Run the git log command to get the version info for a git repo
 #
 function(tribits_generate_single_repo_version_string  gitRepoDir
@@ -113,45 +163,13 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
 
   tribits_assert_git_executable()
 
-  # A) Get the basic version info.
+  # A) Get HEAD commit's info
+  
+  tribits_generate_commit_info_string(
+    ${gitRepoDir}
+    headCommitInfoString)
 
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%h [%ad] <%ae>"
-    WORKING_DIRECTORY ${gitRepoDir}
-    RESULT_VARIABLE gitCmndRtn
-    OUTPUT_VARIABLE gitCmndOutput
-    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
-    )
-
-  if (NOT gitCmndRtn STREQUAL 0)
-    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
-      " with output '${gitCmndOutput}' for repo ${gitRepoDir}!")
-    set(gitVersionLine "Error, could not get version info!")
-  else()
-    set(gitVersionLine "${gitCmndOutput}")
-  endif()
-
-  # B) Get the first 80 chars of the summary message for more info
-
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:%s
-    WORKING_DIRECTORY ${gitRepoDir}
-    RESULT_VARIABLE gitCmndRtn
-    OUTPUT_VARIABLE gitCmndOutput
-    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
-    )
-
-  if (NOT gitCmndRtn STREQUAL 0)
-    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
-      " for extra repo ${gitRepoDir}!")
-    set(gitSummaryStr "Error, could not get version summary!")
-  else()
-    set(maxSummaryLen 80)
-    string(SUBSTRING "${gitCmndOutput}" 0 ${maxSummaryLen} gitSummaryStr)
-  endif()
-
-  set(${repoVersionStringOut}
-    "${gitVersionLine}\n${gitSummaryStr}" PARENT_SCOPE)
+  set(${repoVersionStringOut} "${headCommitInfoString}" PARENT_SCOPE)
 
 endfunction()
 # NOTE: Above, it is fine if ${maxSummaryLen} > len(${gitCmndOutput}) as
