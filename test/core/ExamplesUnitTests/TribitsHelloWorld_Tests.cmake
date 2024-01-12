@@ -70,7 +70,7 @@ tribits_add_advanced_test( TribitsHelloWorld_config_git_version_single_repo_one_
       ../TribitsHelloWorld
     PASS_REGULAR_EXPRESSION_ALL
       "a1234tgb .Thu Sep 21 19:19:18 2023 -0400. <someone@sandia.gov>"
-      "This is the git commit summary line"
+      "This is the HEAD commit summary line"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_4
@@ -83,7 +83,7 @@ tribits_add_advanced_test( TribitsHelloWorld_config_git_version_single_repo_one_
 #
 # * The above directory structure is:
 #
-#  TribitsHelloWorld_config_git_version/
+#  TribitsHelloWorld_config_git_version_single_repo_one_parent/
 #    TribitsHelloWorld/
 #      .git/
 #      .mockprogram_inout.txt
