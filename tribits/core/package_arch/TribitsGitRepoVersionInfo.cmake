@@ -110,14 +110,14 @@ endfunction()
 # Run git log to generate a string containing commit sha1, author, date, email
 # and the commit summary
 
-function(tribits_generate_commit_info_string gitRepoDir 
+function(tribits_generate_commit_info_string gitRepoDir gitCommitSha1
    commitInfoStringOut
   ) 
   
   # A) Get commit hash, author, date, and email
   
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%h [%ad] <%ae>"
+    COMMAND ${GIT_EXECUTABLE} log -1 ${gitCommitSha1} "--pretty=format:%h [%ad] <%ae>"
     WORKING_DIRECTORY ${gitRepoDir}
     RESULT_VARIABLE gitCmndRtn
     OUTPUT_VARIABLE gitCmndOut 
@@ -126,7 +126,7 @@ function(tribits_generate_commit_info_string gitRepoDir
   
   if (NOT gitCmndRtn STREQUAL 0)
     message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
-      " for SHA1 of repo ${gitRepoDir}!")
+      " with output '${gitCmndOut}' for sha1 ${gitCommitSha1} of repo ${gitRepoDir}!")
     set(gitVersionLine "Error, could not get version info!")
   else()
     set(gitVersionLine "${gitCmndOut}")
@@ -135,7 +135,7 @@ function(tribits_generate_commit_info_string gitRepoDir
   # B) Get the first 80 chars of the summary message for more info
 
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%s"
+    COMMAND ${GIT_EXECUTABLE} log -1 ${gitCommitSha1} "--pretty=format:%s"
     WORKING_DIRECTORY ${gitRepoDir}
     RESULT_VARIABLE gitCmndRtn
     OUTPUT_VARIABLE gitCmndOutput
@@ -144,7 +144,7 @@ function(tribits_generate_commit_info_string gitRepoDir
 
   if (NOT gitCmndRtn STREQUAL 0)
     message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
-      " for SHA1 of repo ${gitRepoDir}!")
+      " with output '${gitCmndOut}' for sha1 ${gitCommitSha1} of repo ${gitRepoDir}!")
     set(gitSummaryStr "Error, could not get version summary!")
   else()
     set(maxSummaryLen 80)
@@ -167,8 +167,11 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
 
   # A) Get HEAD commit's info
   
+  tribits_git_repo_sha1(${gitRepoDir}
+    gitHeadSha1)
+
   tribits_generate_commit_info_string(
-    ${gitRepoDir}
+    ${gitRepoDir} ${gitHeadSha1}
     headCommitInfoString)
 
   set(${repoVersionStringOut} "${headCommitInfoString}" PARENT_SCOPE)
