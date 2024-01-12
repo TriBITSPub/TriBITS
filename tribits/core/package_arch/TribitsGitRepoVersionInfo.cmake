@@ -85,7 +85,9 @@ function(tribits_git_repo_sha1  gitRepoDir  gitRepoSha1Out)
     execute_process(
       COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%H"
       WORKING_DIRECTORY  ${gitRepoDir}
-      RESULT_VARIABLE  gitCmndRtn  OUTPUT_VARIABLE  gitCmndOutput
+      RESULT_VARIABLE  gitCmndRtn
+      OUTPUT_VARIABLE  gitCmndOutput
+      OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_STRIP_TRAILING_WHITESPACE
       )
 
     if (NOT gitCmndRtn STREQUAL 0)
