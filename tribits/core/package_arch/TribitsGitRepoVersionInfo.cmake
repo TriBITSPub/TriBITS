@@ -107,9 +107,18 @@ function(tribits_git_repo_sha1  gitRepoDir  gitRepoSha1Out)
 endfunction()
 
 
-# Run git log to generate a string containing commit sha1, author, date, email
-# and the commit summary
-
+# @FUNCTION: tribits_generate_commit_info_string()
+#
+# Get the formatted commit info containing commit's SHA1,
+# author, date, email, and 80 character summary.
+#
+# Usage:
+#   tribits_generate_commit_info_string(<gitRepoDir> <gitCommitSha1>
+#     commitInfoStringOut)
+#
+# NOTE: Below, it is fine if ${maxSummaryLen} > len(${gitCmndOutput}) as
+# string(SUBSTRING ...) will just shorten this to the length of the string.
+#
 function(tribits_generate_commit_info_string gitRepoDir gitCommitSha1
    commitInfoStringOut
   ) 
@@ -120,16 +129,16 @@ function(tribits_generate_commit_info_string gitRepoDir gitCommitSha1
     COMMAND ${GIT_EXECUTABLE} log -1 ${gitCommitSha1} "--pretty=format:%h [%ad] <%ae>"
     WORKING_DIRECTORY ${gitRepoDir}
     RESULT_VARIABLE gitCmndRtn
-    OUTPUT_VARIABLE gitCmndOut 
+    OUTPUT_VARIABLE gitCmndOutput
     OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
     )
   
   if (NOT gitCmndRtn STREQUAL 0)
     message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
-      " with output '${gitCmndOut}' for sha1 ${gitCommitSha1} of repo ${gitRepoDir}!")
+      " with output '${gitCmndOutput}' for sha1 ${gitCommitSha1} of repo ${gitRepoDir}!")
     set(gitVersionLine "Error, could not get version info!")
   else()
-    set(gitVersionLine "${gitCmndOut}")
+    set(gitVersionLine "${gitCmndOutput}")
   endif()
 
   # B) Get the first 80 chars of the summary message for more info
@@ -144,7 +153,7 @@ function(tribits_generate_commit_info_string gitRepoDir gitCommitSha1
 
   if (NOT gitCmndRtn STREQUAL 0)
     message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
-      " with output '${gitCmndOut}' for sha1 ${gitCommitSha1} of repo ${gitRepoDir}!")
+      " with output '${gitCmndOutput}' for sha1 ${gitCommitSha1} of repo ${gitRepoDir}!")
     set(gitSummaryStr "Error, could not get version summary!")
   else()
     set(maxSummaryLen 80)
@@ -153,11 +162,22 @@ function(tribits_generate_commit_info_string gitRepoDir gitCommitSha1
 
   set(${commitInfoStringOut} 
     "${gitVersionLine}\n${gitSummaryStr}" PARENT_SCOPE)
+
 endfunction()
 
 
-
-# Run the git log command to get the version info for a git repo
+# @FUNCTION: tribites_generate_single_repo_version_string
+#
+# Get the formatted string containing the current git repo version.
+#
+# Usage:
+#
+#   tribits_generate_single_repo_version_string(<gitRepoDir>
+#     <repoVersionStringOut>)
+#
+# If the latest commit contains more than one parent, this function
+# will also include formatted output of the commit info of those
+# parents.
 #
 function(tribits_generate_single_repo_version_string  gitRepoDir
    repoVersionStringOut
@@ -172,13 +192,62 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
 
   tribits_generate_commit_info_string(
     ${gitRepoDir} ${gitHeadSha1}
-    headCommitInfoString)
+    commitInfoString)
 
-  set(${repoVersionStringOut} "${headCommitInfoString}" PARENT_SCOPE)
+  set(outStringBuilder ${commitInfoString})
+
+  # B) Get all of HEAD commit's parents into a list
+
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} log -1 ${gitHeadSha1} "--pretty=format:%p"
+    WORKING_DIRECTORY ${gitRepoDir}
+    RESULT_VARIABLE gitCmndRtn
+    OUTPUT_VARIABLE gitCmndOutput
+    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
+  )
+
+  if (NOT gitCmndRtn STREQUAL 0)
+    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
+      " with output '${gitCmndOutput}' for sha1 ${gitHeadSha1} of repo ${gitRepoDir}!")
+    set(headParentList "Error, could not get commit's parents!")
+  else()
+    string(REPLACE " " ";" headParentList ${gitCmndOutput})
+  endif()
+
+  list(LENGTH headParentList headNumParents)
+
+  # C) Get each parent's commit info and format the output
+
+  if (headNumParents GREATER 1)
+
+    # Is there a better way??? Range is inclusive and does not accept expressions?!?
+    math(EXPR loopMax "${headNumParents}-1")
+
+    foreach(index RANGE ${loopMax})
+
+      # C.1) Get parent commit info string
+
+      list(GET headParentList ${index} parentSha1)
+      tribits_generate_commit_info_string(
+        ${gitRepoDir} ${parentSha1}
+        commitInfoString)
+
+      # C.2) Format parent string to be pretty in config output
+
+      string(APPEND outStringBuilder
+        "\n    *** Parent ${index}:")
+      string(REPLACE "\n" "\n    "
+        commitInfoString "${commitInfoString}")
+      string(CONCAT outStringBuilder
+        "${outStringBuilder}" "\n    ${commitInfoString}" )
+
+    endforeach()
+
+  endif()
+
+  set(${repoVersionStringOut} "${outStringBuilder}" PARENT_SCOPE)
 
 endfunction()
-# NOTE: Above, it is fine if ${maxSummaryLen} > len(${gitCmndOutput}) as
-# string(SUBSTRING ...) will just shorten this to the length of the string.
 
 
 function(tribits_assert_git_executable)
