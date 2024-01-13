@@ -166,7 +166,7 @@ function(tribits_generate_commit_info_string gitRepoDir gitCommitSha1
 endfunction()
 
 
-# @FUNCTION: tribites_generate_single_repo_version_string
+# @FUNCTION: tribits_generate_single_repo_version_string
 #
 # Get the formatted string containing the current git repo version.
 #
