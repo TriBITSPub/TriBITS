@@ -685,6 +685,14 @@ macro(tribits_define_global_options_and_define_extra_repos)
     CACHE BOOL
     "Generate the ${PROJECT_NAME}RepoVersion.txt file.")
 
+  if ("${${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS_DEFAULT}" STREQUAL "")
+    set(${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS_DEFAULT OFF)
+  endif()
+  advanced_set(${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS
+    ${${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS_DEFAULT}
+    CACHE BOOL
+    "Show parents' commit info in the repo version output.")
+
   if ("${${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES_DEFAULT}" STREQUAL "")
     set(${PROJECT_NAME}_GENERATE_VERSION_DATE_FILES_DEFAULT OFF)
   endif()

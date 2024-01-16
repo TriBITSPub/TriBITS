@@ -2934,6 +2934,20 @@ NOTE: If the base ``.git/`` directory is missing, then no
 printed to cmake STDOUT.
 
 
+Show parent(s) commit info in the repo version output
+----------------------------------------------------
+
+.. _<Project>_SHOW_GIT_COMMIT_PARENTS:
+
+When working with local git repos for the project sources, one can include
+the repo's head commit parent(s) info in the repo version output using::
+
+   -D <Project>_SHOW_GIT_COMMIT_PARENTS=ON
+
+For each parent commit, this will include their SHA1, author name, date, email
+and its 80 character summary message in the repo version output string.
+
+
 Generating git version date files
 ---------------------------------
 
