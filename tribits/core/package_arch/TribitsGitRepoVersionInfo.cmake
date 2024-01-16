@@ -184,19 +184,14 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
 
   # A) Get HEAD commit's info
   
-  tribits_git_repo_sha1(${gitRepoDir}
-    gitHeadSha1)
-
-  tribits_generate_commit_info_string(
-    ${gitRepoDir} ${gitHeadSha1}
-    commitInfoString)
+  tribits_generate_commit_info_string(${gitRepoDir} HEAD commitInfoString)
 
   set(outStringBuilder ${commitInfoString})
 
   # B) Get all of HEAD commit's parents into a list
 
   execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%p" ${gitHeadSha1}
+    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%p" HEAD
     WORKING_DIRECTORY ${gitRepoDir}
     RESULT_VARIABLE gitCmndRtn OUTPUT_VARIABLE gitCmndOutput
     OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
