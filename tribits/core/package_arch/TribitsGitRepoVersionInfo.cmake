@@ -202,7 +202,7 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
       " with output '${gitCmndOutput}' for sha1 ${gitHeadSha1} of repo ${gitRepoDir}!")
     set(headParentList "Error, could not get commit's parents!")
   else()
-    string(REPLACE " " ";" headParentList "${gitCmndOutput}")
+    string(REGEX REPLACE " +" ";" headParentList "${gitCmndOutput}")
   endif()
 
   list(LENGTH headParentList headNumParents)
