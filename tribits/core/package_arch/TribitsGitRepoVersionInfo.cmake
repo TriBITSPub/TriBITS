@@ -211,14 +211,11 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
 
   if (headNumParents GREATER 1)
 
-    # Is there a better way??? Range is inclusive and does not accept expressions?!?
-    math(EXPR loopMax "${headNumParents}-1")
+    set(parentIdx 1) # Parent commit indexes are 1-based by git
 
-    foreach(index RANGE ${loopMax})
+    foreach(parentSha1 IN LISTS headParentList)
 
       # C.1) Get parent commit info string
-
-      list(GET headParentList ${index} parentSha1)
       tribits_generate_commit_info_string(
         ${gitRepoDir} ${parentSha1}
         commitInfoString)
@@ -226,11 +223,13 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
       # C.2) Format parent string to be pretty in config output
 
       string(APPEND outStringBuilder
-        "\n    *** Parent ${index}:")
+        "\n    *** Parent ${parentIdx}:")
       string(REPLACE "\n" "\n    "
         commitInfoString "${commitInfoString}")
       string(CONCAT outStringBuilder
         "${outStringBuilder}" "\n    ${commitInfoString}" )
+
+      math(EXPR parentIdx "${parentIdx}+1")
 
     endforeach()
 

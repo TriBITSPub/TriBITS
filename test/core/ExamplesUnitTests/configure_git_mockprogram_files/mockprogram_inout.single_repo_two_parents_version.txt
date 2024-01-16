@@ -12,10 +12,10 @@ MOCK_PROGRAM_RETURN: 0
 MOCK_PROGRAM_OUTPUT: b5678aop [Thu Sep 20 19:19:18 2023 -0400] <someone@sandia.gov>
 MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s b5678aop
 MOCK_PROGRAM_RETURN: 0
-MOCK_PROGRAM_OUTPUT: This is parent 0 commit summary line
+MOCK_PROGRAM_OUTPUT: This is parent 1 commit summary line
 MOCK_PROGRAM_INPUT: log -1 --pretty=format:%h [%ad] <%ae> c9101hah
 MOCK_PROGRAM_RETURN: 0
 MOCK_PROGRAM_OUTPUT: c9101hah [Thu Sep 19 19:19:18 2023 -0400] <someone@sandia.gov>
 MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s c9101hah
 MOCK_PROGRAM_RETURN: 0
-MOCK_PROGRAM_OUTPUT: This is parent 1 commit summary line
+MOCK_PROGRAM_OUTPUT: This is parent 2 commit summary line

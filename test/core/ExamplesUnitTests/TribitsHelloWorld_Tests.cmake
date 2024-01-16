@@ -128,12 +128,12 @@ tribits_add_advanced_test( TribitsHelloWorld_config_git_version_single_repo_two_
     PASS_REGULAR_EXPRESSION_ALL
       "a1234tgb .Thu Sep 21 19:19:18 2023 -0400. <someone@sandia.gov>"
       "This is the HEAD commit summary line"
-      "Parent 0:"
-      "b5678aop .Thu Sep 20 19:19:18 2023 -0400. <someone@sandia.gov>"
-      "This is parent 0 commit summary line"
       "Parent 1:"
-      "c9101hah .Thu Sep 19 19:19:18 2023 -0400. <someone@sandia.gov>"
+      "b5678aop .Thu Sep 20 19:19:18 2023 -0400. <someone@sandia.gov>"
       "This is parent 1 commit summary line"
+      "Parent 2:"
+      "c9101hah .Thu Sep 19 19:19:18 2023 -0400. <someone@sandia.gov>"
+      "This is parent 2 commit summary line"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_4
