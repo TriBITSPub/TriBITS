@@ -93,7 +93,6 @@ tribits_add_advanced_test( TribitsHelloWorld_config_git_version_single_repo_one_
 #   just gives a non-zero error code.
 
 
-
 tribits_add_advanced_test( TribitsHelloWorld_config_git_version_single_repo_two_parents
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -143,8 +142,6 @@ tribits_add_advanced_test( TribitsHelloWorld_config_git_version_single_repo_two_
       BUILD/TribitsHelloWorldRepoVersion.txt
 
   )
-
-
 
 
 tribits_add_advanced_test( TribitsHelloWorld_EXE_DISABLE
