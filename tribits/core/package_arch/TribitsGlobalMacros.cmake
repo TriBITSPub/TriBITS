@@ -1215,48 +1215,41 @@ endmacro()
 
 # Get the versions of all the git repos
 #
-function(tribits_generate_repo_version_file_string  PROJECT_REPO_VERSION_FILE_STRING_OUT)
+function(tribits_generate_repo_version_file_string  projectRepoVersionFileStrOut)
 
-  set(REPO_VERSION_FILE_STR "")
+  set(projectRepoVersionFileStr "")
 
   tribits_generate_single_repo_version_string(
-    ${CMAKE_CURRENT_SOURCE_DIR} SINGLE_REPO_VERSION
+    ${CMAKE_CURRENT_SOURCE_DIR} singleRepoVersionStr
     INCLUDE_COMMIT_PARENTS ${${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS})
-  string(APPEND REPO_VERSION_FILE_STR
+  string(APPEND projectRepoVersionFileStr
     "*** Base Git Repo: ${PROJECT_NAME}\n"
-    "${SINGLE_REPO_VERSION}\n" )
+    "${singleRepoVersionStr}\n" )
 
-  set(EXTRAREPO_IDX 0)
-  foreach(EXTRA_REPO ${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES})
-
-    #print_var(EXTRA_REPO)
-    #print_var(EXTRAREPO_IDX)
-    #print_var(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIRS)
+  set(extraRepoIdx 0)
+  foreach(extraRepo ${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES})
 
     if (${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIRS)
       # Read from an extra repo file with potentially different dir.
-      list(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIRS ${EXTRAREPO_IDX}
-        EXTRAREPO_DIR )
+      list(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIRS ${extraRepoIdx}
+        extraRepoDir )
     else()
        # Not read from extra repo file so dir is same as name
-       set(EXTRAREPO_DIR ${EXTRA_REPO})
+       set(extraRepoDir ${extraRepo})
     endif()
-    #print_var(EXTRAREPO_DIR)
 
     tribits_generate_single_repo_version_string(
-       "${CMAKE_CURRENT_SOURCE_DIR}/${EXTRAREPO_DIR}" SINGLE_REPO_VERSION
+       "${CMAKE_CURRENT_SOURCE_DIR}/${extraRepoDir}" singleRepoVersionStr
        INCLUDE_COMMIT_PARENTS ${${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS})
-    string(APPEND REPO_VERSION_FILE_STR
-      "*** Git Repo: ${EXTRAREPO_DIR}\n"
-      "${SINGLE_REPO_VERSION}\n" )
+    string(APPEND projectRepoVersionFileStr
+      "*** Git Repo: ${extraRepoDir}\n"
+      "${singleRepoVersionStr}\n" )
 
-    #print_var(REPO_VERSION_FILE_STR)
-
-    math(EXPR EXTRAREPO_IDX "${EXTRAREPO_IDX}+1")
+    math(EXPR extraRepoIdx "${extraRepoIdx}+1")
 
   endforeach()
 
-  set(${PROJECT_REPO_VERSION_FILE_STRING_OUT} ${REPO_VERSION_FILE_STR} PARENT_SCOPE)
+  set(${projectRepoVersionFileStrOut} ${projectRepoVersionFileStr} PARENT_SCOPE)
 
 endfunction()
 
@@ -1268,17 +1261,17 @@ endfunction()
 #
 function(tribits_generate_repo_version_output_and_file)
   # Get the repos versions
-  tribits_generate_repo_version_file_string(PROJECT_REPO_VERSION_FILE_STRING)
+  tribits_generate_repo_version_file_string(projectRepoVersionFileStr)
   # Print the versions
   message("\n${PROJECT_NAME} repos versions:\n"
     "--------------------------------------------------------------------------------\n"
-    "${PROJECT_REPO_VERSION_FILE_STRING}"
+    "${projectRepoVersionFileStr}"
     " --------------------------------------------------------------------------------\n"
     )
   #) Write out the version file
   file(WRITE
     "${CMAKE_CURRENT_BINARY_DIR}/${${PROJECT_NAME}_REPO_VERSION_FILE_NAME}"
-    "${PROJECT_REPO_VERSION_FILE_STRING}")
+    "${projectRepoVersionFileStr}")
 endfunction()
 
 
