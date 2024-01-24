@@ -1070,6 +1070,20 @@ class test_CDashQueryAnalyzeReport_UrlFuncs(unittest.TestCase):
       "&filtercount=1&morestuff"
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
+  def test_getCDashBuildSummaryBrowserUrl(self):
+    cdashBuildSummaryBrowserUrl = getCDashBuildSummaryBrowserUrl(
+      "site.com/cdash", "somenumber" )
+    cdashBuildSummaryBrowserUrl_expected = \
+      "site.com/cdash/build/somenumber"
+    self.assertEqual(cdashBuildSummaryBrowserUrl, cdashBuildSummaryBrowserUrl_expected)
+
+  def test_getCDashBuildSummaryQueryUrl(self):
+    cdashBuildSummaryQueryUrl = getCDashBuildSummaryQueryUrl(
+      "site.com/cdash", "somenumber" )
+    cdashBuildSummaryQueryUrl_expected = \
+      "site.com/cdash/api/v1/buildSummary.php?buildid=somenumber"
+    self.assertEqual(cdashBuildSummaryQueryUrl, cdashBuildSummaryQueryUrl_expected)
+
 
 #############################################################################
 #
