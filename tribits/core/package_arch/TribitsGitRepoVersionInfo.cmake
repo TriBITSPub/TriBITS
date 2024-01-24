@@ -106,7 +106,7 @@ function(tribits_git_repo_sha1  gitRepoDir  gitRepoSha1Out)
 endfunction()
 
 
-# @FUNCTION: tribits_generate_single_repo_version_string
+# @FUNCTION: tribits_generate_single_repo_version_string()
 #
 # Get the formatted string containing the current git repo version.
 #
