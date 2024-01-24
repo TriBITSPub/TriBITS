@@ -1219,9 +1219,14 @@ function(tribits_generate_repo_version_file_string  PROJECT_REPO_VERSION_FILE_ST
 
   set(REPO_VERSION_FILE_STR "")
 
-  tribits_generate_single_repo_version_string(
-     ${CMAKE_CURRENT_SOURCE_DIR}
-     SINGLE_REPO_VERSION)
+  if (${${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS})
+    tribits_generate_single_repo_version_string(
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      SINGLE_REPO_VERSION INCLUDE_COMMIT_PARENTS)
+  else()
+    tribits_generate_single_repo_version_string(
+      ${CMAKE_CURRENT_SOURCE_DIR} SINGLE_REPO_VERSION)
+  endif()
   string(APPEND REPO_VERSION_FILE_STR
     "*** Base Git Repo: ${PROJECT_NAME}\n"
     "${SINGLE_REPO_VERSION}\n" )

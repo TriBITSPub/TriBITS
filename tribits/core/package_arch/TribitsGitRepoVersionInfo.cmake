@@ -170,15 +170,22 @@ endfunction()
 # Usage:
 #
 #   tribits_generate_single_repo_version_string(<gitRepoDir>
-#     <repoVersionStringOut>)
+#     <repoVersionStringOut> INCLUDE_PARENT_COMMITS [ON|OFF])
 #
-# If the latest commit contains more than one parent, this function
-# will also include formatted output of the commit info of those
-# parents.
+# If the optional argument ``INCLUDE_PARENT_COMMITS`` is passed,
+# then the head commit's parent(s) info will be be included in
+# the repo version output string formatted.
 #
 function(tribits_generate_single_repo_version_string  gitRepoDir
    repoVersionStringOut
   )
+
+  cmake_parse_arguments( PARSE_ARGV 2
+    PARSE "INCLUDE_COMMIT_PARENTS" # prefix, optional
+    "" "" # one_value_keywords, multi_value_keyword
+    )
+  tribits_check_for_unparsed_arguments()
+  tribits_assert_parse_arg_zero_or_one_value(PARSE INCLUDE_COMMIT_PARENTS)
 
   tribits_assert_git_executable()
 
@@ -209,13 +216,14 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
 
   # C) Get each parent's commit info and format the output
 
-  if (headNumParents GREATER 1)
+  if (PARSE_INCLUDE_COMMIT_PARENTS)
 
     set(parentIdx 1) # Parent commit indexes are 1-based by git
 
     foreach(parentSha1 IN LISTS headParentList)
 
       # C.1) Get parent commit info string
+
       tribits_generate_commit_info_string(
         ${gitRepoDir} ${parentSha1}
         commitInfoString)
@@ -226,8 +234,7 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
         "\n    *** Parent ${parentIdx}:")
       string(REPLACE "\n" "\n    "
         commitInfoString "${commitInfoString}")
-      string(CONCAT outStringBuilder
-        "${outStringBuilder}" "\n    ${commitInfoString}" )
+      string(APPEND outStringBuilder "\n    ${commitInfoString}" )
 
       math(EXPR parentIdx "${parentIdx}+1")
 

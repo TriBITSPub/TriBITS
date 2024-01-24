@@ -123,6 +123,7 @@ tribits_add_advanced_test( TribitsHelloWorld_config_git_version_single_repo_two_
       -DTribitsHelloWorld_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsHelloWorld_ENABLE_TESTS=ON
       -DTribitsHelloWorld_GENERATE_REPO_VERSION_FILE=ON
+      -DTribitsHelloWorld_SHOW_GIT_COMMIT_PARENTS=ON
       -DGIT_EXECUTABLE=${${PROJECT_NAME}_TRIBITS_DIR}/python_utils/mockprogram.py
       ../TribitsHelloWorld
     PASS_REGULAR_EXPRESSION_ALL
