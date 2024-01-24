@@ -39,6 +39,8 @@
 
 # Standard TriBITS system includes
 
+include("${CMAKE_CURRENT_LIST_DIR}/../utils/TribitsGitRepoVersionInfo.cmake")
+
 include("${CMAKE_CURRENT_LIST_DIR}/../common/TribitsConstants.cmake")
 
 include("${CMAKE_CURRENT_LIST_DIR}/../test_support/TribitsTestCategories.cmake")
@@ -53,7 +55,6 @@ include(TribitsGetVersionDate)
 include(TribitsReportInvalidTribitsUsage)
 include(TribitsReadAllProjectDepsFilesCreateDepsGraph)
 include(TribitsAdjustPackageEnables)
-include(TribitsGitRepoVersionInfo)
 include(TribitsSetUpEnabledOnlyDependencies)
 include(TribitsConfigureTiming)
 
