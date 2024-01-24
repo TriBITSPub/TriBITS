@@ -106,63 +106,6 @@ function(tribits_git_repo_sha1  gitRepoDir  gitRepoSha1Out)
 endfunction()
 
 
-# @FUNCTION: tribits_generate_commit_info_string()
-#
-# Get the formatted commit info containing commit's SHA1,
-# author, date, email, and 80 character summary.
-#
-# Usage:
-#   tribits_generate_commit_info_string(<gitRepoDir> <gitCommitSha1>
-#     commitInfoStringOut)
-#
-# NOTE: Below, it is fine if ${maxSummaryLen} > len(${gitCmndOutput}) as
-# string(SUBSTRING ...) will just shorten this to the length of the string.
-#
-function(tribits_generate_commit_info_string gitRepoDir gitCommitSha1
-   commitInfoStringOut
-  ) 
-  
-  # A) Get commit hash, author, date, and email
-  
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%h [%ad] <%ae>" ${gitCommitSha1}
-    WORKING_DIRECTORY ${gitRepoDir}
-    RESULT_VARIABLE gitCmndRtn OUTPUT_VARIABLE gitCmndOutput
-    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
-    )
-  
-  if (NOT gitCmndRtn STREQUAL 0)
-    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
-      " with output '${gitCmndOutput}' for sha1 ${gitCommitSha1} of repo ${gitRepoDir}!")
-    set(gitVersionLine "Error, could not get version info!")
-  else()
-    set(gitVersionLine "${gitCmndOutput}")
-  endif()
-
-  # B) Get the first 80 chars of the summary message for more info
-
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%s" ${gitCommitSha1}
-    WORKING_DIRECTORY ${gitRepoDir}
-    RESULT_VARIABLE gitCmndRtn OUTPUT_VARIABLE gitCmndOutput
-    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
-    )
-
-  if (NOT gitCmndRtn STREQUAL 0)
-    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
-      " with output '${gitCmndOutput}' for sha1 ${gitCommitSha1} of repo ${gitRepoDir}!")
-    set(gitSummaryStr "Error, could not get version summary!")
-  else()
-    set(maxSummaryLen 80)
-    string(SUBSTRING "${gitCmndOutput}" 0 ${maxSummaryLen} gitSummaryStr)
-  endif()
-
-  set(${commitInfoStringOut} 
-    "${gitVersionLine}\n${gitSummaryStr}" PARENT_SCOPE)
-
-endfunction()
-
-
 # @FUNCTION: tribits_generate_single_repo_version_string
 #
 # Get the formatted string containing the current git repo version.
@@ -243,6 +186,63 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
   endif()
 
   set(${repoVersionStringOut} "${outStringBuilder}" PARENT_SCOPE)
+
+endfunction()
+
+
+# @FUNCTION: tribits_generate_commit_info_string()
+#
+# Get the formatted commit info containing commit's SHA1,
+# author, date, email, and 80 character summary.
+#
+# Usage:
+#   tribits_generate_commit_info_string(<gitRepoDir> <gitCommitSha1>
+#     commitInfoStringOut)
+#
+# NOTE: Below, it is fine if ${maxSummaryLen} > len(${gitCmndOutput}) as
+# string(SUBSTRING ...) will just shorten this to the length of the string.
+#
+function(tribits_generate_commit_info_string gitRepoDir gitCommitSha1
+   commitInfoStringOut
+  )
+
+  # A) Get commit hash, author, date, and email
+
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%h [%ad] <%ae>" ${gitCommitSha1}
+    WORKING_DIRECTORY ${gitRepoDir}
+    RESULT_VARIABLE gitCmndRtn OUTPUT_VARIABLE gitCmndOutput
+    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
+    )
+
+  if (NOT gitCmndRtn STREQUAL 0)
+    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
+      " with output '${gitCmndOutput}' for sha1 ${gitCommitSha1} of repo ${gitRepoDir}!")
+    set(gitVersionLine "Error, could not get version info!")
+  else()
+    set(gitVersionLine "${gitCmndOutput}")
+  endif()
+
+  # B) Get the first 80 chars of the summary message for more info
+
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} log -1 "--pretty=format:%s" ${gitCommitSha1}
+    WORKING_DIRECTORY ${gitRepoDir}
+    RESULT_VARIABLE gitCmndRtn OUTPUT_VARIABLE gitCmndOutput
+    OUTPUT_STRIP_TRAILING_WHITESPACE  ERROR_STRIP_TRAILING_WHITESPACE
+    )
+
+  if (NOT gitCmndRtn STREQUAL 0)
+    message(FATAL_ERROR "ERROR, ${GIT_EXECUTABLE} command returned ${gitCmndRtn}!=0"
+      " with output '${gitCmndOutput}' for sha1 ${gitCommitSha1} of repo ${gitRepoDir}!")
+    set(gitSummaryStr "Error, could not get version summary!")
+  else()
+    set(maxSummaryLen 80)
+    string(SUBSTRING "${gitCmndOutput}" 0 ${maxSummaryLen} gitSummaryStr)
+  endif()
+
+  set(${commitInfoStringOut}
+    "${gitVersionLine}\n${gitSummaryStr}" PARENT_SCOPE)
 
 endfunction()
 
