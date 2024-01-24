@@ -161,9 +161,14 @@ def main():
       buildSummaryQueryUrl = CDQAR.getCDashBuildSummaryQueryUrl(cdashSiteUrl, buildId)
       buildConfigOutput = downloadBuildSummaryOffCDash(
         buildSummaryQueryUrl, verbose=printUrlMode=='all')['configure']['output']
-      # Do sha1 comparison here...
+      passingSha1Pair = getTopicTargetSha1s(buildConfigOutput)
 
-    
+      if checkIfTestUnstable(passingSha1Pair, nonpassingSha1Pairs):
+        print("\n  Found passing sha1 pair, " + str(passingSha1Pair)+\
+              " in set of nonpassing sha1 pairs: \n"+str(nonpassingSha1Pairs))
+      # Set up list of unstable tests for email here?
+
+
   print("\nNumber of failing tests from "+dateRangeStart+" to "+dateRangeEnd+": "
     +str(len(nonpassingTestsLOD)))
 
@@ -201,7 +206,7 @@ def downloadBuildSummaryOffCDash(
 
 # Check if passing test's SHA1 is in set of failed test SHA1s
 def checkIfTestUnstable(passingSha1Pair, nonpassingSha1Pairs):
-  pass
+  return passingSha1Pair in nonpassingSha1Pairs
 
 #
 # Execute main if this is being run as a script
