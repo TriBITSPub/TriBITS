@@ -97,8 +97,8 @@ def main():
       "  "+cdashNonpassingTestsQueryUrl+"\n")
 
   cdashNonpassingTestsQueryJsonCacheFile = \
-    cdashQueriesCacheDir+"/fullCDashNonpassingTests_"+dateRangeStart+"_"+dateRangeEnd+".json"
-  
+    cdashQueriesCacheDir+"/fullCDashNonPassingTests_"+dateRangeStart+"_"+dateRangeEnd+".json"
+
   # List of dictionaries containing the cdash results in rows
   nonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
     cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,\
@@ -150,9 +150,9 @@ def main():
     for test in nonpassingTestsInHistoryLOD:
       buildId = getBuildIdFromTest(test)
       buildSummaryQueryUrl = CDQAR.getCDashBuildSummaryQueryUrl(cdashSiteUrl, buildId)
+      cache = os.path.join(buildSummaryCacheDir, buildId)
       buildConfigOutput = downloadBuildSummaryOffCDash(
-        buildSummaryQueryUrl, verbose=printUrlMode=='all')['configure']['output']
-
+        buildSummaryQueryUrl, verbose=printUrlMode=='all', alwaysUseCacheFileIfExists=True, buildSummaryCacheFile=cache)['configure']['output']
       nonpassingSha1Pairs.add(getTopicTargetSha1s(buildConfigOutput))
 
     # C.2) Check if passing tests' sha1s exist in nonpassing sha1s set
