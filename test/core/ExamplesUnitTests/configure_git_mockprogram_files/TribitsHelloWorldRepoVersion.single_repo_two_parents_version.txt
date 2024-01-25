@@ -1,0 +1,9 @@
+*** Base Git Repo: TribitsHelloWorld
+a1234tgb [Thu Sep 21 19:19:18 2023 -0400] <someone@sandia.gov>
+This is the HEAD commit summary line
+    *** Parent 1:
+    b5678aop [Thu Sep 20 19:19:18 2023 -0400] <someone@sandia.gov>
+    This is parent 1 commit summary line
+    *** Parent 2:
+    c9101hah [Thu Sep 19 19:19:18 2023 -0400] <someone@sandia.gov>
+    This is parent 2 commit summary line

@@ -1,0 +1,9 @@
+MOCK_PROGRAM_INPUT: log -1 --pretty=format:%h [%ad] <%ae> HEAD
+MOCK_PROGRAM_RETURN: 0
+MOCK_PROGRAM_OUTPUT: a1234tgb [Thu Sep 21 19:19:18 2023 -0400] <someone@sandia.gov>
+MOCK_PROGRAM_INPUT: log -1 --pretty=format:%s HEAD
+MOCK_PROGRAM_RETURN: 0
+MOCK_PROGRAM_OUTPUT: This is the HEAD commit summary line
+MOCK_PROGRAM_INPUT: log -1 --pretty=format:%p HEAD
+MOCK_PROGRAM_RETURN: 0
+MOCK_PROGRAM_OUTPUT: b5678aop
