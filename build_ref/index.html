@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Generic TriBITS Project, Build, Test, and Install Reference Guide</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=b0c3bd3a"></script>
+        <script src="_static/documentation_options.js?v=338fc48d"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -222,10 +224,10 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date<span class="colon">:</span></dt>
-<dd class="field-odd"><p>2023-09-21</p>
+<dd class="field-odd"><p>2024-01-25</p>
 </dd>
 <dt class="field-even">Version<span class="colon">:</span></dt>
-<dd class="field-even"><p>tribits_start-3340-g685c8d5f</p>
+<dd class="field-even"><p>tribits_start-3342-gcc331f58</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1645,7 +1647,7 @@ these variables are interpreted as CMake arrays.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">OpenMP_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS_OVERRIDE</span><span class="o">=</span><span class="s2">&quot; &quot;</span>
 </pre></div>
 </div>
-<p>The single space ” ” will result in no flags getting added.  This is needed
+<p>The single space “ “ will result in no flags getting added.  This is needed
 since one can’t set the flags <code class="docutils literal notranslate"><span class="pre">OpenMP_&lt;LANG&gt;_FLAGS</span></code> to an empty string or
 the <code class="docutils literal notranslate"><span class="pre">find_package(OpenMP)</span></code> command will fail.  Setting the variable
 <code class="docutils literal notranslate"><span class="pre">-DOpenMP_&lt;LANG&gt;_FLAGS_OVERRIDE=</span> <span class="pre">&quot;</span> <span class="pre">&quot;</span></code> is the only way to enable OpenMP but
@@ -4355,7 +4357,7 @@ configure from scratch to get back to the original state before calling <code cl
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, Roscoe A. Bartlett.</p>
+    <p>&#169; Copyright 2024, Roscoe A. Bartlett.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
