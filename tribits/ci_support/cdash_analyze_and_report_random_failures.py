@@ -29,20 +29,10 @@ TEMPLATEs
 """
 
 
-parser = argparse.ArgumentParser("Arguments for cdash_analyze_and_report_random_failures.py")
-parser.add_argument("--cdash-site-url", default="", required=True)
-parser.add_argument("--cdash-project-name", default="", required=True)
-parser.add_argument("--reference-date", default="yesterday")
-parser.add_argument("--group-name", default="Pull%20Request")
-# parser.add_argument("--cdash-nonpassed-tests-filters", default="")
-parser.add_argument("--days-of-history", default=1, type=int)
-parser.add_argument("--print-url-mode", choices=['none','initial','all'], default='none')
-
-args = parser.parse_args()
-
-
 # The main function
 def main():
+
+  args = getCmndLineArgs()
 
   cdashProjectTestingDayStartTime = "00:00"
   cdashSiteUrl = args.cdash_site_url
@@ -172,6 +162,19 @@ def main():
   print("\nNumber of failing tests from "+dateRangeStart+" to "+dateRangeEnd+": "
     +str(len(nonpassingTestsLOD)))
 
+def getCmndLineArgs():
+  parser = argparse.ArgumentParser("Arguments for cdash_analyze_and_report_random_failures.py")
+  parser.add_argument("--cdash-site-url", default="", required=True)
+  parser.add_argument("--cdash-project-name", default="", required=True)
+  parser.add_argument("--reference-date", default="yesterday")
+  parser.add_argument("--group-name", default="Pull%20Request")
+  # parser.add_argument("--cdash-nonpassed-tests-filters", default="")
+  parser.add_argument("--days-of-history", default=1, type=int)
+  parser.add_argument("--print-url-mode", choices=['none','initial','all'], default='none')
+
+  return parser.parse_args()
+
+
 
 def getDateRangeTuple(referenceDateTime, dayTimeDelta):
   beginDateTime = referenceDateTime - datetime.timedelta(days=(dayTimeDelta-1))
@@ -189,7 +192,7 @@ def getTopicTargetSha1s(buildConfigOutput):
 
 
 def getBuildIdFromTest(test):
-  return test['buildSummaryLink'].split("/")[1]
+  return test['buildSummaryLink'].split("/")[-1]
 
 
 def downloadBuildSummaryOffCDash(
