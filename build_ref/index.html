@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=338fc48d"></script>
+        <script src="_static/documentation_options.js?v=cfa5894a"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -68,6 +68,7 @@
 <li><a class="reference internal" href="#enable-all-packages-and-optionally-all-tests"><span class="sectnum">4.3.6 </span>Enable all packages (and optionally all tests)</a></li>
 <li><a class="reference internal" href="#disable-a-package-and-all-its-dependencies"><span class="sectnum">4.3.7 </span>Disable a package and all its dependencies</a></li>
 <li><a class="reference internal" href="#remove-all-package-enables-in-the-cache"><span class="sectnum">4.3.8 </span>Remove all package enables in the cache</a></li>
+<li><a class="reference internal" href="#speed-up-debugging-dependency-handling"><span class="sectnum">4.3.9 </span>Speed up debugging dependency handling</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#selecting-compiler-and-linker-options"><span class="sectnum">4.4 </span>Selecting compiler and linker options</a><ul>
@@ -134,8 +135,9 @@
 <li><a class="reference internal" href="#adding-configure-timers"><span class="sectnum">4.32 </span>Adding configure timers</a></li>
 <li><a class="reference internal" href="#generating-export-files"><span class="sectnum">4.33 </span>Generating export files</a></li>
 <li><a class="reference internal" href="#generating-a-project-repo-version-file"><span class="sectnum">4.34 </span>Generating a project repo version file</a></li>
-<li><a class="reference internal" href="#generating-git-version-date-files"><span class="sectnum">4.35 </span>Generating git version date files</a></li>
-<li><a class="reference internal" href="#cmake-configure-time-development-mode-and-debug-checking"><span class="sectnum">4.36 </span>CMake configure-time development mode and debug checking</a></li>
+<li><a class="reference internal" href="#show-parent-s-commit-info-in-the-repo-version-output"><span class="sectnum">4.35 </span>Show parent(s) commit info in the repo version output</a></li>
+<li><a class="reference internal" href="#generating-git-version-date-files"><span class="sectnum">4.36 </span>Generating git version date files</a></li>
+<li><a class="reference internal" href="#cmake-configure-time-development-mode-and-debug-checking"><span class="sectnum">4.37 </span>CMake configure-time development mode and debug checking</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#building-makefile-generator"><span class="sectnum">5 </span>Building (Makefile generator)</a><ul>
@@ -227,7 +229,7 @@
 <dd class="field-odd"><p>2024-01-25</p>
 </dd>
 <dt class="field-even">Version<span class="colon">:</span></dt>
-<dd class="field-even"><p>tribits_start-3342-gcc331f58</p>
+<dd class="field-even"><p>tribits_start-3375-g9328b340</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -266,134 +268,136 @@
 <li><p><a class="reference internal" href="#enable-all-packages-and-optionally-all-tests" id="id18"><span class="sectnum">4.3.6 </span>Enable all packages (and optionally all tests)</a></p></li>
 <li><p><a class="reference internal" href="#disable-a-package-and-all-its-dependencies" id="id19"><span class="sectnum">4.3.7 </span>Disable a package and all its dependencies</a></p></li>
 <li><p><a class="reference internal" href="#remove-all-package-enables-in-the-cache" id="id20"><span class="sectnum">4.3.8 </span>Remove all package enables in the cache</a></p></li>
+<li><p><a class="reference internal" href="#speed-up-debugging-dependency-handling" id="id21"><span class="sectnum">4.3.9 </span>Speed up debugging dependency handling</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#selecting-compiler-and-linker-options" id="id21"><span class="sectnum">4.4 </span>Selecting compiler and linker options</a></p>
+<li><p><a class="reference internal" href="#selecting-compiler-and-linker-options" id="id22"><span class="sectnum">4.4 </span>Selecting compiler and linker options</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#configuring-to-build-with-default-debug-or-release-compiler-flags" id="id22"><span class="sectnum">4.4.1 </span>Configuring to build with default debug or release compiler flags</a></p></li>
-<li><p><a class="reference internal" href="#adding-arbitrary-compiler-flags-but-keeping-default-build-type-flags" id="id23"><span class="sectnum">4.4.2 </span>Adding arbitrary compiler flags but keeping default build-type flags</a></p></li>
-<li><p><a class="reference internal" href="#overriding-cmake-build-type-debug-release-compiler-options" id="id24"><span class="sectnum">4.4.3 </span>Overriding CMAKE_BUILD_TYPE debug/release compiler options</a></p></li>
-<li><p><a class="reference internal" href="#turning-off-strong-warnings-for-individual-packages" id="id25"><span class="sectnum">4.4.4 </span>Turning off strong warnings for individual packages</a></p></li>
-<li><p><a class="reference internal" href="#overriding-all-strong-warnings-and-debug-release-compiler-options" id="id26"><span class="sectnum">4.4.5 </span>Overriding all (strong warnings and debug/release) compiler options</a></p></li>
-<li><p><a class="reference internal" href="#enable-and-disable-shadowing-warnings-for-all-project-packages" id="id27"><span class="sectnum">4.4.6 </span>Enable and disable shadowing warnings for all &lt;Project&gt; packages</a></p></li>
-<li><p><a class="reference internal" href="#removing-warnings-as-errors-for-cleaned-packages" id="id28"><span class="sectnum">4.4.7 </span>Removing warnings as errors for CLEANED packages</a></p></li>
-<li><p><a class="reference internal" href="#adding-debug-symbols-to-the-build" id="id29"><span class="sectnum">4.4.8 </span>Adding debug symbols to the build</a></p></li>
-<li><p><a class="reference internal" href="#printing-out-compiler-flags-for-each-package" id="id30"><span class="sectnum">4.4.9 </span>Printing out compiler flags for each package</a></p></li>
-<li><p><a class="reference internal" href="#appending-arbitrary-libraries-and-link-flags-every-executable" id="id31"><span class="sectnum">4.4.10 </span>Appending arbitrary libraries and link flags every executable</a></p></li>
+<li><p><a class="reference internal" href="#configuring-to-build-with-default-debug-or-release-compiler-flags" id="id23"><span class="sectnum">4.4.1 </span>Configuring to build with default debug or release compiler flags</a></p></li>
+<li><p><a class="reference internal" href="#adding-arbitrary-compiler-flags-but-keeping-default-build-type-flags" id="id24"><span class="sectnum">4.4.2 </span>Adding arbitrary compiler flags but keeping default build-type flags</a></p></li>
+<li><p><a class="reference internal" href="#overriding-cmake-build-type-debug-release-compiler-options" id="id25"><span class="sectnum">4.4.3 </span>Overriding CMAKE_BUILD_TYPE debug/release compiler options</a></p></li>
+<li><p><a class="reference internal" href="#turning-off-strong-warnings-for-individual-packages" id="id26"><span class="sectnum">4.4.4 </span>Turning off strong warnings for individual packages</a></p></li>
+<li><p><a class="reference internal" href="#overriding-all-strong-warnings-and-debug-release-compiler-options" id="id27"><span class="sectnum">4.4.5 </span>Overriding all (strong warnings and debug/release) compiler options</a></p></li>
+<li><p><a class="reference internal" href="#enable-and-disable-shadowing-warnings-for-all-project-packages" id="id28"><span class="sectnum">4.4.6 </span>Enable and disable shadowing warnings for all &lt;Project&gt; packages</a></p></li>
+<li><p><a class="reference internal" href="#removing-warnings-as-errors-for-cleaned-packages" id="id29"><span class="sectnum">4.4.7 </span>Removing warnings as errors for CLEANED packages</a></p></li>
+<li><p><a class="reference internal" href="#adding-debug-symbols-to-the-build" id="id30"><span class="sectnum">4.4.8 </span>Adding debug symbols to the build</a></p></li>
+<li><p><a class="reference internal" href="#printing-out-compiler-flags-for-each-package" id="id31"><span class="sectnum">4.4.9 </span>Printing out compiler flags for each package</a></p></li>
+<li><p><a class="reference internal" href="#appending-arbitrary-libraries-and-link-flags-every-executable" id="id32"><span class="sectnum">4.4.10 </span>Appending arbitrary libraries and link flags every executable</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#enabling-support-for-ninja" id="id32"><span class="sectnum">4.5 </span>Enabling support for Ninja</a></p></li>
-<li><p><a class="reference internal" href="#limiting-parallel-compile-and-link-jobs-for-ninja-builds" id="id33"><span class="sectnum">4.6 </span>Limiting parallel compile and link jobs for Ninja builds</a></p></li>
-<li><p><a class="reference internal" href="#disabling-explicit-template-instantiation-for-c" id="id34"><span class="sectnum">4.7 </span>Disabling explicit template instantiation for C++</a></p></li>
-<li><p><a class="reference internal" href="#disabling-the-fortran-compiler-and-all-fortran-code" id="id35"><span class="sectnum">4.8 </span>Disabling the Fortran compiler and all Fortran code</a></p></li>
-<li><p><a class="reference internal" href="#enabling-runtime-debug-checking" id="id36"><span class="sectnum">4.9 </span>Enabling runtime debug checking</a></p></li>
-<li><p><a class="reference internal" href="#configuring-with-mpi-support" id="id37"><span class="sectnum">4.10 </span>Configuring with MPI support</a></p></li>
-<li><p><a class="reference internal" href="#configuring-for-openmp-support" id="id38"><span class="sectnum">4.11 </span>Configuring for OpenMP support</a></p></li>
-<li><p><a class="reference internal" href="#building-shared-libraries" id="id39"><span class="sectnum">4.12 </span>Building shared libraries</a></p></li>
-<li><p><a class="reference internal" href="#building-static-libraries-and-executables" id="id40"><span class="sectnum">4.13 </span>Building static libraries and executables</a></p></li>
-<li><p><a class="reference internal" href="#changing-include-directories-in-downstream-cmake-projects-to-non-system" id="id41"><span class="sectnum">4.14 </span>Changing include directories in downstream CMake projects to non-system</a></p></li>
-<li><p><a class="reference internal" href="#enabling-the-usage-of-resource-files-to-reduce-length-of-build-lines" id="id42"><span class="sectnum">4.15 </span>Enabling the usage of resource files to reduce length of build lines</a></p></li>
-<li><p><a class="reference internal" href="#external-packages-third-party-library-tpl-support" id="id43"><span class="sectnum">4.16 </span>External Packages/Third-Party Library (TPL) support</a></p>
+<li><p><a class="reference internal" href="#enabling-support-for-ninja" id="id33"><span class="sectnum">4.5 </span>Enabling support for Ninja</a></p></li>
+<li><p><a class="reference internal" href="#limiting-parallel-compile-and-link-jobs-for-ninja-builds" id="id34"><span class="sectnum">4.6 </span>Limiting parallel compile and link jobs for Ninja builds</a></p></li>
+<li><p><a class="reference internal" href="#disabling-explicit-template-instantiation-for-c" id="id35"><span class="sectnum">4.7 </span>Disabling explicit template instantiation for C++</a></p></li>
+<li><p><a class="reference internal" href="#disabling-the-fortran-compiler-and-all-fortran-code" id="id36"><span class="sectnum">4.8 </span>Disabling the Fortran compiler and all Fortran code</a></p></li>
+<li><p><a class="reference internal" href="#enabling-runtime-debug-checking" id="id37"><span class="sectnum">4.9 </span>Enabling runtime debug checking</a></p></li>
+<li><p><a class="reference internal" href="#configuring-with-mpi-support" id="id38"><span class="sectnum">4.10 </span>Configuring with MPI support</a></p></li>
+<li><p><a class="reference internal" href="#configuring-for-openmp-support" id="id39"><span class="sectnum">4.11 </span>Configuring for OpenMP support</a></p></li>
+<li><p><a class="reference internal" href="#building-shared-libraries" id="id40"><span class="sectnum">4.12 </span>Building shared libraries</a></p></li>
+<li><p><a class="reference internal" href="#building-static-libraries-and-executables" id="id41"><span class="sectnum">4.13 </span>Building static libraries and executables</a></p></li>
+<li><p><a class="reference internal" href="#changing-include-directories-in-downstream-cmake-projects-to-non-system" id="id42"><span class="sectnum">4.14 </span>Changing include directories in downstream CMake projects to non-system</a></p></li>
+<li><p><a class="reference internal" href="#enabling-the-usage-of-resource-files-to-reduce-length-of-build-lines" id="id43"><span class="sectnum">4.15 </span>Enabling the usage of resource files to reduce length of build lines</a></p></li>
+<li><p><a class="reference internal" href="#external-packages-third-party-library-tpl-support" id="id44"><span class="sectnum">4.16 </span>External Packages/Third-Party Library (TPL) support</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#enabling-support-for-an-optional-third-party-library-tpl" id="id44"><span class="sectnum">4.16.1 </span>Enabling support for an optional Third-Party Library (TPL)</a></p></li>
-<li><p><a class="reference internal" href="#specifying-the-location-of-the-parts-of-an-enabled-external-package-tpl" id="id45"><span class="sectnum">4.16.2 </span>Specifying the location of the parts of an enabled external package/TPL</a></p></li>
-<li><p><a class="reference internal" href="#adjusting-upstream-dependencies-for-a-third-party-library-tpl" id="id46"><span class="sectnum">4.16.3 </span>Adjusting upstream dependencies for a Third-Party Library (TPL)</a></p></li>
-<li><p><a class="reference internal" href="#disabling-support-for-a-third-party-library-tpl" id="id47"><span class="sectnum">4.16.4 </span>Disabling support for a Third-Party Library (TPL)</a></p></li>
-<li><p><a class="reference internal" href="#disabling-tentatively-enabled-tpls" id="id48"><span class="sectnum">4.16.5 </span>Disabling tentatively enabled TPLs</a></p></li>
-<li><p><a class="reference internal" href="#require-all-tpl-libraries-be-found" id="id49"><span class="sectnum">4.16.6 </span>Require all TPL libraries be found</a></p></li>
-<li><p><a class="reference internal" href="#disable-warnings-from-tpl-header-files" id="id50"><span class="sectnum">4.16.7 </span>Disable warnings from TPL header files</a></p></li>
+<li><p><a class="reference internal" href="#enabling-support-for-an-optional-third-party-library-tpl" id="id45"><span class="sectnum">4.16.1 </span>Enabling support for an optional Third-Party Library (TPL)</a></p></li>
+<li><p><a class="reference internal" href="#specifying-the-location-of-the-parts-of-an-enabled-external-package-tpl" id="id46"><span class="sectnum">4.16.2 </span>Specifying the location of the parts of an enabled external package/TPL</a></p></li>
+<li><p><a class="reference internal" href="#adjusting-upstream-dependencies-for-a-third-party-library-tpl" id="id47"><span class="sectnum">4.16.3 </span>Adjusting upstream dependencies for a Third-Party Library (TPL)</a></p></li>
+<li><p><a class="reference internal" href="#disabling-support-for-a-third-party-library-tpl" id="id48"><span class="sectnum">4.16.4 </span>Disabling support for a Third-Party Library (TPL)</a></p></li>
+<li><p><a class="reference internal" href="#disabling-tentatively-enabled-tpls" id="id49"><span class="sectnum">4.16.5 </span>Disabling tentatively enabled TPLs</a></p></li>
+<li><p><a class="reference internal" href="#require-all-tpl-libraries-be-found" id="id50"><span class="sectnum">4.16.6 </span>Require all TPL libraries be found</a></p></li>
+<li><p><a class="reference internal" href="#disable-warnings-from-tpl-header-files" id="id51"><span class="sectnum">4.16.7 </span>Disable warnings from TPL header files</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#building-against-pre-installed-packages" id="id51"><span class="sectnum">4.17 </span>Building against pre-installed packages</a></p></li>
-<li><p><a class="reference internal" href="#xsdk-configuration-options" id="id52"><span class="sectnum">4.18 </span>xSDK Configuration Options</a></p></li>
-<li><p><a class="reference internal" href="#generating-verbose-output" id="id53"><span class="sectnum">4.19 </span>Generating verbose output</a></p></li>
-<li><p><a class="reference internal" href="#enabling-disabling-deprecated-warnings" id="id54"><span class="sectnum">4.20 </span>Enabling/disabling deprecated warnings</a></p></li>
-<li><p><a class="reference internal" href="#adjusting-cmake-deprecation-warnings" id="id55"><span class="sectnum">4.21 </span>Adjusting CMake DEPRECATION warnings</a></p></li>
-<li><p><a class="reference internal" href="#disabling-deprecated-code" id="id56"><span class="sectnum">4.22 </span>Disabling deprecated code</a></p></li>
-<li><p><a class="reference internal" href="#outputting-package-dependency-information" id="id57"><span class="sectnum">4.23 </span>Outputting package dependency information</a></p></li>
-<li><p><a class="reference internal" href="#test-related-configuration-settings" id="id58"><span class="sectnum">4.24 </span>Test-related configuration settings</a></p>
+<li><p><a class="reference internal" href="#building-against-pre-installed-packages" id="id52"><span class="sectnum">4.17 </span>Building against pre-installed packages</a></p></li>
+<li><p><a class="reference internal" href="#xsdk-configuration-options" id="id53"><span class="sectnum">4.18 </span>xSDK Configuration Options</a></p></li>
+<li><p><a class="reference internal" href="#generating-verbose-output" id="id54"><span class="sectnum">4.19 </span>Generating verbose output</a></p></li>
+<li><p><a class="reference internal" href="#enabling-disabling-deprecated-warnings" id="id55"><span class="sectnum">4.20 </span>Enabling/disabling deprecated warnings</a></p></li>
+<li><p><a class="reference internal" href="#adjusting-cmake-deprecation-warnings" id="id56"><span class="sectnum">4.21 </span>Adjusting CMake DEPRECATION warnings</a></p></li>
+<li><p><a class="reference internal" href="#disabling-deprecated-code" id="id57"><span class="sectnum">4.22 </span>Disabling deprecated code</a></p></li>
+<li><p><a class="reference internal" href="#outputting-package-dependency-information" id="id58"><span class="sectnum">4.23 </span>Outputting package dependency information</a></p></li>
+<li><p><a class="reference internal" href="#test-related-configuration-settings" id="id59"><span class="sectnum">4.24 </span>Test-related configuration settings</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#enabling-different-test-categories" id="id59"><span class="sectnum">4.24.1 </span>Enabling different test categories</a></p></li>
-<li><p><a class="reference internal" href="#disabling-specific-tests" id="id60"><span class="sectnum">4.24.2 </span>Disabling specific tests</a></p></li>
-<li><p><a class="reference internal" href="#disabling-specific-test-executable-builds" id="id61"><span class="sectnum">4.24.3 </span>Disabling specific test executable builds</a></p></li>
-<li><p><a class="reference internal" href="#disabling-just-the-ctest-tests-but-not-the-test-executables" id="id62"><span class="sectnum">4.24.4 </span>Disabling just the ctest tests but not the test executables</a></p></li>
-<li><p><a class="reference internal" href="#set-specific-tests-to-run-in-serial" id="id63"><span class="sectnum">4.24.5 </span>Set specific tests to run in serial</a></p></li>
-<li><p><a class="reference internal" href="#trace-test-addition-or-exclusion" id="id64"><span class="sectnum">4.24.6 </span>Trace test addition or exclusion</a></p></li>
-<li><p><a class="reference internal" href="#enable-advanced-test-start-and-end-times-and-timing-blocks" id="id65"><span class="sectnum">4.24.7 </span>Enable advanced test start and end times and timing blocks</a></p></li>
-<li><p><a class="reference internal" href="#setting-test-timeouts-at-configure-time" id="id66"><span class="sectnum">4.24.8 </span>Setting test timeouts at configure time</a></p></li>
-<li><p><a class="reference internal" href="#scaling-test-timeouts-at-configure-time" id="id67"><span class="sectnum">4.24.9 </span>Scaling test timeouts at configure time</a></p></li>
-<li><p><a class="reference internal" href="#spreading-out-and-limiting-tests-running-on-gpus" id="id68"><span class="sectnum">4.24.10 </span>Spreading out and limiting tests running on GPUs</a></p></li>
+<li><p><a class="reference internal" href="#enabling-different-test-categories" id="id60"><span class="sectnum">4.24.1 </span>Enabling different test categories</a></p></li>
+<li><p><a class="reference internal" href="#disabling-specific-tests" id="id61"><span class="sectnum">4.24.2 </span>Disabling specific tests</a></p></li>
+<li><p><a class="reference internal" href="#disabling-specific-test-executable-builds" id="id62"><span class="sectnum">4.24.3 </span>Disabling specific test executable builds</a></p></li>
+<li><p><a class="reference internal" href="#disabling-just-the-ctest-tests-but-not-the-test-executables" id="id63"><span class="sectnum">4.24.4 </span>Disabling just the ctest tests but not the test executables</a></p></li>
+<li><p><a class="reference internal" href="#set-specific-tests-to-run-in-serial" id="id64"><span class="sectnum">4.24.5 </span>Set specific tests to run in serial</a></p></li>
+<li><p><a class="reference internal" href="#trace-test-addition-or-exclusion" id="id65"><span class="sectnum">4.24.6 </span>Trace test addition or exclusion</a></p></li>
+<li><p><a class="reference internal" href="#enable-advanced-test-start-and-end-times-and-timing-blocks" id="id66"><span class="sectnum">4.24.7 </span>Enable advanced test start and end times and timing blocks</a></p></li>
+<li><p><a class="reference internal" href="#setting-test-timeouts-at-configure-time" id="id67"><span class="sectnum">4.24.8 </span>Setting test timeouts at configure time</a></p></li>
+<li><p><a class="reference internal" href="#scaling-test-timeouts-at-configure-time" id="id68"><span class="sectnum">4.24.9 </span>Scaling test timeouts at configure time</a></p></li>
+<li><p><a class="reference internal" href="#spreading-out-and-limiting-tests-running-on-gpus" id="id69"><span class="sectnum">4.24.10 </span>Spreading out and limiting tests running on GPUs</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#enabling-support-for-coverage-testing" id="id69"><span class="sectnum">4.25 </span>Enabling support for coverage testing</a></p></li>
-<li><p><a class="reference internal" href="#viewing-configure-options-and-documentation" id="id70"><span class="sectnum">4.26 </span>Viewing configure options and documentation</a></p></li>
-<li><p><a class="reference internal" href="#enabling-extra-repositories-with-add-on-packages" id="id71"><span class="sectnum">4.27 </span>Enabling extra repositories with add-on packages:</a></p></li>
-<li><p><a class="reference internal" href="#enabling-extra-repositories-through-a-file" id="id72"><span class="sectnum">4.28 </span>Enabling extra repositories through a file</a></p></li>
-<li><p><a class="reference internal" href="#selecting-a-different-source-location-for-a-package" id="id73"><span class="sectnum">4.29 </span>Selecting a different source location for a package</a></p></li>
-<li><p><a class="reference internal" href="#reconfiguring-completely-from-scratch" id="id74"><span class="sectnum">4.30 </span>Reconfiguring completely from scratch</a></p></li>
-<li><p><a class="reference internal" href="#viewing-configure-errors" id="id75"><span class="sectnum">4.31 </span>Viewing configure errors</a></p></li>
-<li><p><a class="reference internal" href="#adding-configure-timers" id="id76"><span class="sectnum">4.32 </span>Adding configure timers</a></p></li>
-<li><p><a class="reference internal" href="#generating-export-files" id="id77"><span class="sectnum">4.33 </span>Generating export files</a></p></li>
-<li><p><a class="reference internal" href="#generating-a-project-repo-version-file" id="id78"><span class="sectnum">4.34 </span>Generating a project repo version file</a></p></li>
-<li><p><a class="reference internal" href="#generating-git-version-date-files" id="id79"><span class="sectnum">4.35 </span>Generating git version date files</a></p></li>
-<li><p><a class="reference internal" href="#cmake-configure-time-development-mode-and-debug-checking" id="id80"><span class="sectnum">4.36 </span>CMake configure-time development mode and debug checking</a></p></li>
+<li><p><a class="reference internal" href="#enabling-support-for-coverage-testing" id="id70"><span class="sectnum">4.25 </span>Enabling support for coverage testing</a></p></li>
+<li><p><a class="reference internal" href="#viewing-configure-options-and-documentation" id="id71"><span class="sectnum">4.26 </span>Viewing configure options and documentation</a></p></li>
+<li><p><a class="reference internal" href="#enabling-extra-repositories-with-add-on-packages" id="id72"><span class="sectnum">4.27 </span>Enabling extra repositories with add-on packages:</a></p></li>
+<li><p><a class="reference internal" href="#enabling-extra-repositories-through-a-file" id="id73"><span class="sectnum">4.28 </span>Enabling extra repositories through a file</a></p></li>
+<li><p><a class="reference internal" href="#selecting-a-different-source-location-for-a-package" id="id74"><span class="sectnum">4.29 </span>Selecting a different source location for a package</a></p></li>
+<li><p><a class="reference internal" href="#reconfiguring-completely-from-scratch" id="id75"><span class="sectnum">4.30 </span>Reconfiguring completely from scratch</a></p></li>
+<li><p><a class="reference internal" href="#viewing-configure-errors" id="id76"><span class="sectnum">4.31 </span>Viewing configure errors</a></p></li>
+<li><p><a class="reference internal" href="#adding-configure-timers" id="id77"><span class="sectnum">4.32 </span>Adding configure timers</a></p></li>
+<li><p><a class="reference internal" href="#generating-export-files" id="id78"><span class="sectnum">4.33 </span>Generating export files</a></p></li>
+<li><p><a class="reference internal" href="#generating-a-project-repo-version-file" id="id79"><span class="sectnum">4.34 </span>Generating a project repo version file</a></p></li>
+<li><p><a class="reference internal" href="#show-parent-s-commit-info-in-the-repo-version-output" id="id80"><span class="sectnum">4.35 </span>Show parent(s) commit info in the repo version output</a></p></li>
+<li><p><a class="reference internal" href="#generating-git-version-date-files" id="id81"><span class="sectnum">4.36 </span>Generating git version date files</a></p></li>
+<li><p><a class="reference internal" href="#cmake-configure-time-development-mode-and-debug-checking" id="id82"><span class="sectnum">4.37 </span>CMake configure-time development mode and debug checking</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#building-makefile-generator" id="id81"><span class="sectnum">5 </span>Building (Makefile generator)</a></p>
+<li><p><a class="reference internal" href="#building-makefile-generator" id="id83"><span class="sectnum">5 </span>Building (Makefile generator)</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#building-all-targets" id="id82"><span class="sectnum">5.1 </span>Building all targets</a></p></li>
-<li><p><a class="reference internal" href="#discovering-what-targets-are-available-to-build" id="id83"><span class="sectnum">5.2 </span>Discovering what targets are available to build</a></p></li>
-<li><p><a class="reference internal" href="#building-all-of-the-targets-for-a-package" id="id84"><span class="sectnum">5.3 </span>Building all of the targets for a package</a></p></li>
-<li><p><a class="reference internal" href="#building-all-of-the-libraries-for-a-package" id="id85"><span class="sectnum">5.4 </span>Building all of the libraries for a package</a></p></li>
-<li><p><a class="reference internal" href="#building-all-of-the-libraries-for-all-enabled-packages" id="id86"><span class="sectnum">5.5 </span>Building all of the libraries for all enabled packages</a></p></li>
-<li><p><a class="reference internal" href="#building-a-single-object-file" id="id87"><span class="sectnum">5.6 </span>Building a single object file</a></p></li>
-<li><p><a class="reference internal" href="#building-with-verbose-output-without-reconfiguring" id="id88"><span class="sectnum">5.7 </span>Building with verbose output without reconfiguring</a></p></li>
-<li><p><a class="reference internal" href="#relink-a-target-without-considering-dependencies" id="id89"><span class="sectnum">5.8 </span>Relink a target without considering dependencies</a></p></li>
+<li><p><a class="reference internal" href="#building-all-targets" id="id84"><span class="sectnum">5.1 </span>Building all targets</a></p></li>
+<li><p><a class="reference internal" href="#discovering-what-targets-are-available-to-build" id="id85"><span class="sectnum">5.2 </span>Discovering what targets are available to build</a></p></li>
+<li><p><a class="reference internal" href="#building-all-of-the-targets-for-a-package" id="id86"><span class="sectnum">5.3 </span>Building all of the targets for a package</a></p></li>
+<li><p><a class="reference internal" href="#building-all-of-the-libraries-for-a-package" id="id87"><span class="sectnum">5.4 </span>Building all of the libraries for a package</a></p></li>
+<li><p><a class="reference internal" href="#building-all-of-the-libraries-for-all-enabled-packages" id="id88"><span class="sectnum">5.5 </span>Building all of the libraries for all enabled packages</a></p></li>
+<li><p><a class="reference internal" href="#building-a-single-object-file" id="id89"><span class="sectnum">5.6 </span>Building a single object file</a></p></li>
+<li><p><a class="reference internal" href="#building-with-verbose-output-without-reconfiguring" id="id90"><span class="sectnum">5.7 </span>Building with verbose output without reconfiguring</a></p></li>
+<li><p><a class="reference internal" href="#relink-a-target-without-considering-dependencies" id="id91"><span class="sectnum">5.8 </span>Relink a target without considering dependencies</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#building-ninja-generator" id="id90"><span class="sectnum">6 </span>Building (Ninja generator)</a></p>
+<li><p><a class="reference internal" href="#building-ninja-generator" id="id92"><span class="sectnum">6 </span>Building (Ninja generator)</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#building-in-parallel-with-ninja" id="id91"><span class="sectnum">6.1 </span>Building in parallel with Ninja</a></p></li>
-<li><p><a class="reference internal" href="#building-in-a-subdirectory-with-ninja" id="id92"><span class="sectnum">6.2 </span>Building in a subdirectory with Ninja</a></p></li>
-<li><p><a class="reference internal" href="#building-verbose-without-reconfiguring-with-ninja" id="id93"><span class="sectnum">6.3 </span>Building verbose without reconfiguring with Ninja</a></p></li>
-<li><p><a class="reference internal" href="#discovering-what-targets-are-available-to-build-with-ninja" id="id94"><span class="sectnum">6.4 </span>Discovering what targets are available to build with Ninja</a></p></li>
-<li><p><a class="reference internal" href="#building-specific-targets-with-ninja" id="id95"><span class="sectnum">6.5 </span>Building specific targets with Ninja</a></p></li>
-<li><p><a class="reference internal" href="#building-single-object-files-with-ninja" id="id96"><span class="sectnum">6.6 </span>Building single object files with Ninja</a></p></li>
-<li><p><a class="reference internal" href="#cleaning-build-targets-with-ninja" id="id97"><span class="sectnum">6.7 </span>Cleaning build targets with Ninja</a></p></li>
+<li><p><a class="reference internal" href="#building-in-parallel-with-ninja" id="id93"><span class="sectnum">6.1 </span>Building in parallel with Ninja</a></p></li>
+<li><p><a class="reference internal" href="#building-in-a-subdirectory-with-ninja" id="id94"><span class="sectnum">6.2 </span>Building in a subdirectory with Ninja</a></p></li>
+<li><p><a class="reference internal" href="#building-verbose-without-reconfiguring-with-ninja" id="id95"><span class="sectnum">6.3 </span>Building verbose without reconfiguring with Ninja</a></p></li>
+<li><p><a class="reference internal" href="#discovering-what-targets-are-available-to-build-with-ninja" id="id96"><span class="sectnum">6.4 </span>Discovering what targets are available to build with Ninja</a></p></li>
+<li><p><a class="reference internal" href="#building-specific-targets-with-ninja" id="id97"><span class="sectnum">6.5 </span>Building specific targets with Ninja</a></p></li>
+<li><p><a class="reference internal" href="#building-single-object-files-with-ninja" id="id98"><span class="sectnum">6.6 </span>Building single object files with Ninja</a></p></li>
+<li><p><a class="reference internal" href="#cleaning-build-targets-with-ninja" id="id99"><span class="sectnum">6.7 </span>Cleaning build targets with Ninja</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#testing-with-ctest" id="id98"><span class="sectnum">7 </span>Testing with CTest</a></p>
+<li><p><a class="reference internal" href="#testing-with-ctest" id="id100"><span class="sectnum">7 </span>Testing with CTest</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#running-all-tests" id="id99"><span class="sectnum">7.1 </span>Running all tests</a></p></li>
-<li><p><a class="reference internal" href="#only-running-tests-for-a-single-package" id="id100"><span class="sectnum">7.2 </span>Only running tests for a single package</a></p></li>
-<li><p><a class="reference internal" href="#running-a-single-test-with-full-output-to-the-console" id="id101"><span class="sectnum">7.3 </span>Running a single test with full output to the console</a></p></li>
-<li><p><a class="reference internal" href="#overriding-test-timeouts" id="id102"><span class="sectnum">7.4 </span>Overriding test timeouts</a></p></li>
-<li><p><a class="reference internal" href="#running-memory-checking" id="id103"><span class="sectnum">7.5 </span>Running memory checking</a></p></li>
+<li><p><a class="reference internal" href="#running-all-tests" id="id101"><span class="sectnum">7.1 </span>Running all tests</a></p></li>
+<li><p><a class="reference internal" href="#only-running-tests-for-a-single-package" id="id102"><span class="sectnum">7.2 </span>Only running tests for a single package</a></p></li>
+<li><p><a class="reference internal" href="#running-a-single-test-with-full-output-to-the-console" id="id103"><span class="sectnum">7.3 </span>Running a single test with full output to the console</a></p></li>
+<li><p><a class="reference internal" href="#overriding-test-timeouts" id="id104"><span class="sectnum">7.4 </span>Overriding test timeouts</a></p></li>
+<li><p><a class="reference internal" href="#running-memory-checking" id="id105"><span class="sectnum">7.5 </span>Running memory checking</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#installing" id="id104"><span class="sectnum">8 </span>Installing</a></p>
+<li><p><a class="reference internal" href="#installing" id="id106"><span class="sectnum">8 </span>Installing</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#setting-the-install-prefix" id="id105"><span class="sectnum">8.1 </span>Setting the install prefix</a></p></li>
-<li><p><a class="reference internal" href="#setting-install-ownership-and-permissions" id="id106"><span class="sectnum">8.2 </span>Setting install ownership and permissions</a></p></li>
-<li><p><a class="reference internal" href="#setting-install-rpath" id="id107"><span class="sectnum">8.3 </span>Setting install RPATH</a></p></li>
-<li><p><a class="reference internal" href="#avoiding-installing-libraries-and-headers" id="id108"><span class="sectnum">8.4 </span>Avoiding installing libraries and headers</a></p></li>
-<li><p><a class="reference internal" href="#installing-the-software" id="id109"><span class="sectnum">8.5 </span>Installing the software</a></p></li>
-<li><p><a class="reference internal" href="#using-the-installed-software-in-downstream-cmake-projects" id="id110"><span class="sectnum">8.6 </span>Using the installed software in downstream CMake projects</a></p></li>
-<li><p><a class="reference internal" href="#using-packages-from-the-build-tree-in-downstream-cmake-projects" id="id111"><span class="sectnum">8.7 </span>Using packages from the build tree in downstream CMake projects</a></p></li>
+<li><p><a class="reference internal" href="#setting-the-install-prefix" id="id107"><span class="sectnum">8.1 </span>Setting the install prefix</a></p></li>
+<li><p><a class="reference internal" href="#setting-install-ownership-and-permissions" id="id108"><span class="sectnum">8.2 </span>Setting install ownership and permissions</a></p></li>
+<li><p><a class="reference internal" href="#setting-install-rpath" id="id109"><span class="sectnum">8.3 </span>Setting install RPATH</a></p></li>
+<li><p><a class="reference internal" href="#avoiding-installing-libraries-and-headers" id="id110"><span class="sectnum">8.4 </span>Avoiding installing libraries and headers</a></p></li>
+<li><p><a class="reference internal" href="#installing-the-software" id="id111"><span class="sectnum">8.5 </span>Installing the software</a></p></li>
+<li><p><a class="reference internal" href="#using-the-installed-software-in-downstream-cmake-projects" id="id112"><span class="sectnum">8.6 </span>Using the installed software in downstream CMake projects</a></p></li>
+<li><p><a class="reference internal" href="#using-packages-from-the-build-tree-in-downstream-cmake-projects" id="id113"><span class="sectnum">8.7 </span>Using packages from the build tree in downstream CMake projects</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#installation-testing" id="id112"><span class="sectnum">9 </span>Installation Testing</a></p></li>
-<li><p><a class="reference internal" href="#packaging" id="id113"><span class="sectnum">10 </span>Packaging</a></p>
+<li><p><a class="reference internal" href="#installation-testing" id="id114"><span class="sectnum">9 </span>Installation Testing</a></p></li>
+<li><p><a class="reference internal" href="#packaging" id="id115"><span class="sectnum">10 </span>Packaging</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#creating-a-tarball-of-the-source-tree" id="id114"><span class="sectnum">10.1 </span>Creating a tarball of the source tree</a></p></li>
+<li><p><a class="reference internal" href="#creating-a-tarball-of-the-source-tree" id="id116"><span class="sectnum">10.1 </span>Creating a tarball of the source tree</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#dashboard-submissions" id="id115"><span class="sectnum">11 </span>Dashboard submissions</a></p>
+<li><p><a class="reference internal" href="#dashboard-submissions" id="id117"><span class="sectnum">11 </span>Dashboard submissions</a></p>
 <ul class="auto-toc">
-<li><p><a class="reference internal" href="#setting-options-to-change-behavior-of-dashboard-target" id="id116"><span class="sectnum">11.1 </span>Setting options to change behavior of ‘dashboard’ target</a></p></li>
-<li><p><a class="reference internal" href="#common-options-and-use-cases-for-the-dashboard-target" id="id117"><span class="sectnum">11.2 </span>Common options and use cases for the ‘dashboard’ target</a></p></li>
-<li><p><a class="reference internal" href="#changing-the-cdash-sites-for-the-dashboard-target" id="id118"><span class="sectnum">11.3 </span>Changing the CDash sites for the ‘dashboard’ target</a></p></li>
-<li><p><a class="reference internal" href="#configuring-from-scratch-needed-if-dashboard-target-aborts-early" id="id119"><span class="sectnum">11.4 </span>Configuring from scratch needed if ‘dashboard’ target aborts early</a></p></li>
+<li><p><a class="reference internal" href="#setting-options-to-change-behavior-of-dashboard-target" id="id118"><span class="sectnum">11.1 </span>Setting options to change behavior of ‘dashboard’ target</a></p></li>
+<li><p><a class="reference internal" href="#common-options-and-use-cases-for-the-dashboard-target" id="id119"><span class="sectnum">11.2 </span>Common options and use cases for the ‘dashboard’ target</a></p></li>
+<li><p><a class="reference internal" href="#changing-the-cdash-sites-for-the-dashboard-target" id="id120"><span class="sectnum">11.3 </span>Changing the CDash sites for the ‘dashboard’ target</a></p></li>
+<li><p><a class="reference internal" href="#configuring-from-scratch-needed-if-dashboard-target-aborts-early" id="id121"><span class="sectnum">11.4 </span>Configuring from scratch needed if ‘dashboard’ target aborts early</a></p></li>
 </ul>
 </li>
 </ul>
@@ -732,6 +736,7 @@ Enable/Disable Logic</a> and <a class="reference external" href="TribitsUsersGui
 <li><p><a class="reference internal" href="#enable-all-packages-and-optionally-all-tests">Enable all packages (and optionally all tests)</a></p></li>
 <li><p><a class="reference internal" href="#disable-a-package-and-all-its-dependencies">Disable a package and all its dependencies</a></p></li>
 <li><p><a class="reference internal" href="#remove-all-package-enables-in-the-cache">Remove all package enables in the cache</a></p></li>
+<li><p><a class="reference internal" href="#speed-up-debugging-dependency-handling">Speed up debugging dependency handling</a></p></li>
 </ul>
 <section id="determine-the-list-of-packages-that-can-be-enabled">
 <h3><a class="toc-backref" href="#id13" role="doc-backlink"><span class="sectnum">4.3.1 </span>Determine the list of packages that can be enabled</a><a class="headerlink" href="#determine-the-list-of-packages-that-can-be-enabled" title="Link to this heading"></a></h3>
@@ -969,9 +974,23 @@ to preserve other cache variables that you have set and don’t want to loose.
 For example, one would want to do this to avoid more expensive compiler and
 TPL checks.</p>
 </section>
+<section id="speed-up-debugging-dependency-handling">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink"><span class="sectnum">4.3.9 </span>Speed up debugging dependency handling</a><a class="headerlink" href="#speed-up-debugging-dependency-handling" title="Link to this heading"></a></h3>
+<p>To speed up debugging the package enable/disable dependency handling, set the
+cache variable:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_TRACE_DEPENDENCY_HANDLING_ONLY</span><span class="o">=</span><span class="n">ON</span>
+</pre></div>
+</div>
+<p>This will result in only performing the package enable/disable dependency
+handling logic and tracing what would be done to configure the compilers and
+configure the various enabled packages but not actually do that work.  This
+can greatly speed up the time to complete the <code class="docutils literal notranslate"><span class="pre">cmake</span></code> configure command when
+debugging the dependency handling (or when creating tests that check that
+behavior).</p>
+</section>
 </section>
 <section id="selecting-compiler-and-linker-options">
-<h2><a class="toc-backref" href="#id21" role="doc-backlink"><span class="sectnum">4.4 </span>Selecting compiler and linker options</a><a class="headerlink" href="#selecting-compiler-and-linker-options" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id22" role="doc-backlink"><span class="sectnum">4.4 </span>Selecting compiler and linker options</a><a class="headerlink" href="#selecting-compiler-and-linker-options" title="Link to this heading"></a></h2>
 <p>The compilers for C, C++, and Fortran will be found by default by CMake if
 they are not otherwise specified as described below (see standard CMake
 documentation for how default compilers are found).  The most direct way to
@@ -1088,7 +1107,7 @@ these flags are not set.  These flags get set internally into the variables
 variable level) but the user can append flags that override these as described
 below.</p>
 <section id="configuring-to-build-with-default-debug-or-release-compiler-flags">
-<h3><a class="toc-backref" href="#id22" role="doc-backlink"><span class="sectnum">4.4.1 </span>Configuring to build with default debug or release compiler flags</a><a class="headerlink" href="#configuring-to-build-with-default-debug-or-release-compiler-flags" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id23" role="doc-backlink"><span class="sectnum">4.4.1 </span>Configuring to build with default debug or release compiler flags</a><a class="headerlink" href="#configuring-to-build-with-default-debug-or-release-compiler-flags" title="Link to this heading"></a></h3>
 <p id="cmake-build-type">To build a debug version, pass into ‘cmake’:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">DEBUG</span>
 </pre></div>
@@ -1106,7 +1125,7 @@ to what is in <code class="docutils literal notranslate"><span class="pre">CMAKE
 <code class="docutils literal notranslate"><span class="pre">CMAKE_BUILD_TYPE=DEBUG</span></code> as per the xSDK configure standard.</p>
 </section>
 <section id="adding-arbitrary-compiler-flags-but-keeping-default-build-type-flags">
-<h3><a class="toc-backref" href="#id23" role="doc-backlink"><span class="sectnum">4.4.2 </span>Adding arbitrary compiler flags but keeping default build-type flags</a><a class="headerlink" href="#adding-arbitrary-compiler-flags-but-keeping-default-build-type-flags" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id24" role="doc-backlink"><span class="sectnum">4.4.2 </span>Adding arbitrary compiler flags but keeping default build-type flags</a><a class="headerlink" href="#adding-arbitrary-compiler-flags-but-keeping-default-build-type-flags" title="Link to this heading"></a></h3>
 <p>To append arbitrary compiler flags to <code class="docutils literal notranslate"><span class="pre">CMAKE_&lt;LANG&gt;_FLAGS</span></code> (which may be
 set internally by TriBITS) that apply to all build types, configure with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">&quot;&lt;EXTRA_COMPILER_OPTIONS&gt;&quot;</span>
@@ -1182,7 +1201,7 @@ override those options, see
 <code class="docutils literal notranslate"><span class="pre">CMAKE_&lt;LANG&gt;_FLAGS_&lt;CMAKE_BUILD_TYPE&gt;_OVERRIDE</span></code> below.</p>
 </section>
 <section id="overriding-cmake-build-type-debug-release-compiler-options">
-<h3><a class="toc-backref" href="#id24" role="doc-backlink"><span class="sectnum">4.4.3 </span>Overriding CMAKE_BUILD_TYPE debug/release compiler options</a><a class="headerlink" href="#overriding-cmake-build-type-debug-release-compiler-options" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id25" role="doc-backlink"><span class="sectnum">4.4.3 </span>Overriding CMAKE_BUILD_TYPE debug/release compiler options</a><a class="headerlink" href="#overriding-cmake-build-type-debug-release-compiler-options" title="Link to this heading"></a></h3>
 <p>To override the default CMake-set options in
 <code class="docutils literal notranslate"><span class="pre">CMAKE_&lt;LANG&gt;_FLAGS_&lt;CMAKE_BUILD_TYPE&gt;</span></code>, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS_</span><span class="o">&lt;</span><span class="n">CMAKE_BUILD_TYPE</span><span class="o">&gt;</span><span class="n">_OVERRIDE</span><span class="o">=</span><span class="s2">&quot;&lt;OPTIONS_TO_OVERRIDE&gt;&quot;</span>
@@ -1207,7 +1226,7 @@ internally by CMake and the new variable is needed to make the override
 explicit.</p>
 </section>
 <section id="turning-off-strong-warnings-for-individual-packages">
-<h3><a class="toc-backref" href="#id25" role="doc-backlink"><span class="sectnum">4.4.4 </span>Turning off strong warnings for individual packages</a><a class="headerlink" href="#turning-off-strong-warnings-for-individual-packages" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id26" role="doc-backlink"><span class="sectnum">4.4.4 </span>Turning off strong warnings for individual packages</a><a class="headerlink" href="#turning-off-strong-warnings-for-individual-packages" title="Link to this heading"></a></h3>
 <p id="tribits-package-disable-strong-warnings">To turn off strong warnings (for all languages) for a given TriBITS package,
 set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE</span><span class="o">&gt;</span><span class="n">_DISABLE_STRONG_WARNINGS</span><span class="o">=</span><span class="n">ON</span>
@@ -1222,7 +1241,7 @@ downstream packages or client code.</p>
 therefore not have strong warning options enabled.</p>
 </section>
 <section id="overriding-all-strong-warnings-and-debug-release-compiler-options">
-<h3><a class="toc-backref" href="#id26" role="doc-backlink"><span class="sectnum">4.4.5 </span>Overriding all (strong warnings and debug/release) compiler options</a><a class="headerlink" href="#overriding-all-strong-warnings-and-debug-release-compiler-options" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id27" role="doc-backlink"><span class="sectnum">4.4.5 </span>Overriding all (strong warnings and debug/release) compiler options</a><a class="headerlink" href="#overriding-all-strong-warnings-and-debug-release-compiler-options" title="Link to this heading"></a></h3>
 <p>To override all compiler options, including both strong warning options
 and debug/release options, configure with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_C_FLAGS</span><span class="o">=</span><span class="s2">&quot;-O3 -funroll-loops&quot;</span> \
@@ -1244,7 +1263,7 @@ will be empty and therefore the options set in <code class="docutils literal not
 be all that is passed in.</p>
 </section>
 <section id="enable-and-disable-shadowing-warnings-for-all-project-packages">
-<h3><a class="toc-backref" href="#id27" role="doc-backlink"><span class="sectnum">4.4.6 </span>Enable and disable shadowing warnings for all &lt;Project&gt; packages</a><a class="headerlink" href="#enable-and-disable-shadowing-warnings-for-all-project-packages" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id28" role="doc-backlink"><span class="sectnum">4.4.6 </span>Enable and disable shadowing warnings for all &lt;Project&gt; packages</a><a class="headerlink" href="#enable-and-disable-shadowing-warnings-for-all-project-packages" title="Link to this heading"></a></h3>
 <p>To enable shadowing warnings for all &lt;Project&gt; packages (that don’t already
 have them turned on) then use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_SHADOW_WARNINGS</span><span class="o">=</span><span class="n">ON</span>
@@ -1260,7 +1279,7 @@ decide for itself if shadowing warnings will be turned on or off for that
 package.</p>
 </section>
 <section id="removing-warnings-as-errors-for-cleaned-packages">
-<h3><a class="toc-backref" href="#id28" role="doc-backlink"><span class="sectnum">4.4.7 </span>Removing warnings as errors for CLEANED packages</a><a class="headerlink" href="#removing-warnings-as-errors-for-cleaned-packages" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id29" role="doc-backlink"><span class="sectnum">4.4.7 </span>Removing warnings as errors for CLEANED packages</a><a class="headerlink" href="#removing-warnings-as-errors-for-cleaned-packages" title="Link to this heading"></a></h3>
 <p>To remove the <code class="docutils literal notranslate"><span class="pre">-Werror</span></code> flag (or some other flag that is set) from being
 applied to compile CLEANED packages (like the Trilinos package Teuchos), set
 the following when configuring:</p>
@@ -1269,7 +1288,7 @@ the following when configuring:</p>
 </div>
 </section>
 <section id="adding-debug-symbols-to-the-build">
-<h3><a class="toc-backref" href="#id29" role="doc-backlink"><span class="sectnum">4.4.8 </span>Adding debug symbols to the build</a><a class="headerlink" href="#adding-debug-symbols-to-the-build" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id30" role="doc-backlink"><span class="sectnum">4.4.8 </span>Adding debug symbols to the build</a><a class="headerlink" href="#adding-debug-symbols-to-the-build" title="Link to this heading"></a></h3>
 <p>To get the compiler to add debug symbols to the build, configure with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_DEBUG_SYMBOLS</span><span class="o">=</span><span class="n">ON</span>
 </pre></div>
@@ -1278,7 +1297,7 @@ the following when configuring:</p>
 to create a full debug build to get debug symbols on most compilers.</p>
 </section>
 <section id="printing-out-compiler-flags-for-each-package">
-<h3><a class="toc-backref" href="#id30" role="doc-backlink"><span class="sectnum">4.4.9 </span>Printing out compiler flags for each package</a><a class="headerlink" href="#printing-out-compiler-flags-for-each-package" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id31" role="doc-backlink"><span class="sectnum">4.4.9 </span>Printing out compiler flags for each package</a><a class="headerlink" href="#printing-out-compiler-flags-for-each-package" title="Link to this heading"></a></h3>
 <p>To print out the exact <code class="docutils literal notranslate"><span class="pre">CMAKE_&lt;LANG&gt;_FLAGS</span></code> that will be used for each
 package, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_PRINT_PACKAGE_COMPILER_FLAGS</span><span class="o">=</span><span class="n">ON</span>
@@ -1295,7 +1314,7 @@ being processed and will contain the flags in the exact order they are applied
 by CMake</p>
 </section>
 <section id="appending-arbitrary-libraries-and-link-flags-every-executable">
-<h3><a class="toc-backref" href="#id31" role="doc-backlink"><span class="sectnum">4.4.10 </span>Appending arbitrary libraries and link flags every executable</a><a class="headerlink" href="#appending-arbitrary-libraries-and-link-flags-every-executable" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id32" role="doc-backlink"><span class="sectnum">4.4.10 </span>Appending arbitrary libraries and link flags every executable</a><a class="headerlink" href="#appending-arbitrary-libraries-and-link-flags-every-executable" title="Link to this heading"></a></h3>
 <p>In order to append any set of arbitrary libraries and link flags to your
 executables use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_EXTRA_LINK_FLAGS</span><span class="o">=</span><span class="s2">&quot;&lt;EXTRA_LINK_LIBRARIES&gt;&quot;</span> \
@@ -1316,7 +1335,7 @@ requirements.</p>
 </section>
 </section>
 <section id="enabling-support-for-ninja">
-<h2><a class="toc-backref" href="#id32" role="doc-backlink"><span class="sectnum">4.5 </span>Enabling support for Ninja</a><a class="headerlink" href="#enabling-support-for-ninja" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id33" role="doc-backlink"><span class="sectnum">4.5 </span>Enabling support for Ninja</a><a class="headerlink" href="#enabling-support-for-ninja" title="Link to this heading"></a></h2>
 <p>The <a class="reference external" href="https://ninja-build.org">Ninja</a> build tool can be used as the back-end build tool instead of
 Makefiles by adding:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">GNinja</span>
@@ -1348,7 +1367,7 @@ parallel with Ninja</a>.</p>
 CMake project so there is usually little reason to not generate them.)</p>
 </section>
 <section id="limiting-parallel-compile-and-link-jobs-for-ninja-builds">
-<h2><a class="toc-backref" href="#id33" role="doc-backlink"><span class="sectnum">4.6 </span>Limiting parallel compile and link jobs for Ninja builds</a><a class="headerlink" href="#limiting-parallel-compile-and-link-jobs-for-ninja-builds" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id34" role="doc-backlink"><span class="sectnum">4.6 </span>Limiting parallel compile and link jobs for Ninja builds</a><a class="headerlink" href="#limiting-parallel-compile-and-link-jobs-for-ninja-builds" title="Link to this heading"></a></h2>
 <p>When the CMake generator Ninja is used (i.e. <code class="docutils literal notranslate"><span class="pre">-GNinja</span></code>), one can limit the
 number of parallel jobs that are used for compiling object files by setting:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_PARALLEL_COMPILE_JOBS_LIMIT</span><span class="o">=&lt;</span><span class="n">N</span><span class="o">&gt;</span>
@@ -1370,7 +1389,7 @@ of the RAM on a given system and crash the build.</p>
 generators.  They only work for the Ninja generator.</p>
 </section>
 <section id="disabling-explicit-template-instantiation-for-c">
-<h2><a class="toc-backref" href="#id34" role="doc-backlink"><span class="sectnum">4.7 </span>Disabling explicit template instantiation for C++</a><a class="headerlink" href="#disabling-explicit-template-instantiation-for-c" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id35" role="doc-backlink"><span class="sectnum">4.7 </span>Disabling explicit template instantiation for C++</a><a class="headerlink" href="#disabling-explicit-template-instantiation-for-c" title="Link to this heading"></a></h2>
 <p>By default, support for optional explicit template instantiation (ETI) for C++
 code is enabled.  To disable support for optional ETI, configure with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_EXPLICIT_INSTANTIATION</span><span class="o">=</span><span class="n">OFF</span>
@@ -1392,7 +1411,7 @@ instantiation, just search the CMakeCache.txt file for variables with
 <code class="docutils literal notranslate"><span class="pre">ENABLE_EXPLICIT_INSTANTIATION</span></code> in the name.</p>
 </section>
 <section id="disabling-the-fortran-compiler-and-all-fortran-code">
-<h2><a class="toc-backref" href="#id35" role="doc-backlink"><span class="sectnum">4.8 </span>Disabling the Fortran compiler and all Fortran code</a><a class="headerlink" href="#disabling-the-fortran-compiler-and-all-fortran-code" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id36" role="doc-backlink"><span class="sectnum">4.8 </span>Disabling the Fortran compiler and all Fortran code</a><a class="headerlink" href="#disabling-the-fortran-compiler-and-all-fortran-code" title="Link to this heading"></a></h2>
 <p>To disable the Fortran compiler and all &lt;Project&gt; code that depends on Fortran
 set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_Fortran</span><span class="o">=</span><span class="n">OFF</span>
@@ -1405,7 +1424,7 @@ default so you must turn off Fortran if you don’t have a compatible Fortran
 compiler.</p>
 </section>
 <section id="enabling-runtime-debug-checking">
-<h2><a class="toc-backref" href="#id36" role="doc-backlink"><span class="sectnum">4.9 </span>Enabling runtime debug checking</a><a class="headerlink" href="#enabling-runtime-debug-checking" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id37" role="doc-backlink"><span class="sectnum">4.9 </span>Enabling runtime debug checking</a><a class="headerlink" href="#enabling-runtime-debug-checking" title="Link to this heading"></a></h2>
 <ol class="loweralpha simple">
 <li><p>Enabling &lt;Project&gt; ifdefed runtime debug checking:</p></li>
 </ol>
@@ -1448,7 +1467,7 @@ without -D_GLIBCXX_DEBUG.</p></li>
 </div></blockquote>
 </section>
 <section id="configuring-with-mpi-support">
-<h2><a class="toc-backref" href="#id37" role="doc-backlink"><span class="sectnum">4.10 </span>Configuring with MPI support</a><a class="headerlink" href="#configuring-with-mpi-support" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id38" role="doc-backlink"><span class="sectnum">4.10 </span>Configuring with MPI support</a><a class="headerlink" href="#configuring-with-mpi-support" title="Link to this heading"></a></h2>
 <p>To enable MPI support you must minimally set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">TPL_ENABLE_MPI</span><span class="o">=</span><span class="n">ON</span>
 </pre></div>
@@ -1635,7 +1654,7 @@ these variables are interpreted as CMake arrays.</p>
 </div></blockquote>
 </section>
 <section id="configuring-for-openmp-support">
-<h2><a class="toc-backref" href="#id38" role="doc-backlink"><span class="sectnum">4.11 </span>Configuring for OpenMP support</a><a class="headerlink" href="#configuring-for-openmp-support" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id39" role="doc-backlink"><span class="sectnum">4.11 </span>Configuring for OpenMP support</a><a class="headerlink" href="#configuring-for-openmp-support" title="Link to this heading"></a></h2>
 <p>To enable OpenMP support, one must set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_OpenMP</span><span class="o">=</span><span class="n">ON</span>
 </pre></div>
@@ -1654,7 +1673,7 @@ the <code class="docutils literal notranslate"><span class="pre">find_package(Op
 skip adding the OpenMP flags provided by <code class="docutils literal notranslate"><span class="pre">find_package(OpenMP)</span></code>.</p>
 </section>
 <section id="building-shared-libraries">
-<h2><a class="toc-backref" href="#id39" role="doc-backlink"><span class="sectnum">4.12 </span>Building shared libraries</a><a class="headerlink" href="#building-shared-libraries" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id40" role="doc-backlink"><span class="sectnum">4.12 </span>Building shared libraries</a><a class="headerlink" href="#building-shared-libraries" title="Link to this heading"></a></h2>
 <p id="build-shared-libs">To configure to build shared libraries, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">BUILD_SHARED_LIBS</span><span class="o">=</span><span class="n">ON</span>
 </pre></div>
@@ -1678,7 +1697,7 @@ environment variables.  However, this can be disabled by setting:</p>
 <p>but it is hard to find a use case where that would be useful.</p>
 </section>
 <section id="building-static-libraries-and-executables">
-<h2><a class="toc-backref" href="#id40" role="doc-backlink"><span class="sectnum">4.13 </span>Building static libraries and executables</a><a class="headerlink" href="#building-static-libraries-and-executables" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id41" role="doc-backlink"><span class="sectnum">4.13 </span>Building static libraries and executables</a><a class="headerlink" href="#building-static-libraries-and-executables" title="Link to this heading"></a></h2>
 <p>To build static libraries, turn off the shared library support:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">BUILD_SHARED_LIBS</span><span class="o">=</span><span class="n">OFF</span>
 </pre></div>
@@ -1697,7 +1716,7 @@ search for extra required libraries (such as the mpi library and the gfortran
 library for gnu compilers) to locate static versions.</p>
 </section>
 <section id="changing-include-directories-in-downstream-cmake-projects-to-non-system">
-<h2><a class="toc-backref" href="#id41" role="doc-backlink"><span class="sectnum">4.14 </span>Changing include directories in downstream CMake projects to non-system</a><a class="headerlink" href="#changing-include-directories-in-downstream-cmake-projects-to-non-system" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id42" role="doc-backlink"><span class="sectnum">4.14 </span>Changing include directories in downstream CMake projects to non-system</a><a class="headerlink" href="#changing-include-directories-in-downstream-cmake-projects-to-non-system" title="Link to this heading"></a></h2>
 <p>By default, include directories from IMPORTED library targets from the
 &lt;Project&gt; project’s installed <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> files will be
 considered <code class="docutils literal notranslate"><span class="pre">SYSTEM</span></code> headers and therefore will be included on the compile
@@ -1738,7 +1757,7 @@ project!  It will only change how include directories from upstream package’s
 IMPORTED targets are handled in the &lt;Project&gt; CMake project build itself.</p>
 </section>
 <section id="enabling-the-usage-of-resource-files-to-reduce-length-of-build-lines">
-<h2><a class="toc-backref" href="#id42" role="doc-backlink"><span class="sectnum">4.15 </span>Enabling the usage of resource files to reduce length of build lines</a><a class="headerlink" href="#enabling-the-usage-of-resource-files-to-reduce-length-of-build-lines" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id43" role="doc-backlink"><span class="sectnum">4.15 </span>Enabling the usage of resource files to reduce length of build lines</a><a class="headerlink" href="#enabling-the-usage-of-resource-files-to-reduce-length-of-build-lines" title="Link to this heading"></a></h2>
 <p>When using the <code class="docutils literal notranslate"><span class="pre">Unix</span> <span class="pre">Makefile</span></code> generator and the <code class="docutils literal notranslate"><span class="pre">Ninja</span></code> generator, CMake
 supports some very useful (undocumented) options for reducing the length of
 the command-lines used to build object files, create libraries, and link
@@ -1803,12 +1822,12 @@ these options to enable.</p>
 need to be turned on so watch for that in looking at the build lines.</p>
 </section>
 <section id="external-packages-third-party-library-tpl-support">
-<h2><a class="toc-backref" href="#id43" role="doc-backlink"><span class="sectnum">4.16 </span>External Packages/Third-Party Library (TPL) support</a><a class="headerlink" href="#external-packages-third-party-library-tpl-support" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id44" role="doc-backlink"><span class="sectnum">4.16 </span>External Packages/Third-Party Library (TPL) support</a><a class="headerlink" href="#external-packages-third-party-library-tpl-support" title="Link to this heading"></a></h2>
 <p>A set of external packages/third-party libraries (TPL) can be enabled and
 disabled and the locations of those can be specified at configure time (if
 they are not found in the default path).</p>
 <section id="enabling-support-for-an-optional-third-party-library-tpl">
-<h3><a class="toc-backref" href="#id44" role="doc-backlink"><span class="sectnum">4.16.1 </span>Enabling support for an optional Third-Party Library (TPL)</a><a class="headerlink" href="#enabling-support-for-an-optional-third-party-library-tpl" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id45" role="doc-backlink"><span class="sectnum">4.16.1 </span>Enabling support for an optional Third-Party Library (TPL)</a><a class="headerlink" href="#enabling-support-for-an-optional-third-party-library-tpl" title="Link to this heading"></a></h3>
 <p>To enable a given external packages/TPL, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">TPL_ENABLE_</span><span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;=</span><span class="n">ON</span>
 </pre></div>
@@ -1836,7 +1855,7 @@ dependency on <code class="docutils literal notranslate"><span class="pre">&lt;T
 <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_&lt;TPLNAME&gt;=OFF</span></code> is not already set.</p>
 </section>
 <section id="specifying-the-location-of-the-parts-of-an-enabled-external-package-tpl">
-<h3><a class="toc-backref" href="#id45" role="doc-backlink"><span class="sectnum">4.16.2 </span>Specifying the location of the parts of an enabled external package/TPL</a><a class="headerlink" href="#specifying-the-location-of-the-parts-of-an-enabled-external-package-tpl" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id46" role="doc-backlink"><span class="sectnum">4.16.2 </span>Specifying the location of the parts of an enabled external package/TPL</a><a class="headerlink" href="#specifying-the-location-of-the-parts-of-an-enabled-external-package-tpl" title="Link to this heading"></a></h3>
 <p>Once an external package/TPL is enabled, the parts of that TPL must be found.
 For many external packages/TPLs, this will be done automatically by searching
 the environment paths.</p>
@@ -2038,7 +2057,7 @@ libraries in the right order by configuring with:</p>
 <p>(where <code class="docutils literal notranslate"><span class="pre">...</span></code> are the rest of the libraries found in order).</p>
 </section>
 <section id="adjusting-upstream-dependencies-for-a-third-party-library-tpl">
-<h3><a class="toc-backref" href="#id46" role="doc-backlink"><span class="sectnum">4.16.3 </span>Adjusting upstream dependencies for a Third-Party Library (TPL)</a><a class="headerlink" href="#adjusting-upstream-dependencies-for-a-third-party-library-tpl" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id47" role="doc-backlink"><span class="sectnum">4.16.3 </span>Adjusting upstream dependencies for a Third-Party Library (TPL)</a><a class="headerlink" href="#adjusting-upstream-dependencies-for-a-third-party-library-tpl" title="Link to this heading"></a></h3>
 <p>Some TPLs have dependencies on one or more upstream TPLs.  These dependencies
 must be specified correctly for the compile and links to work correctly.  The
 &lt;Project&gt; Project already defines these dependencies for the average situation
@@ -2062,7 +2081,7 @@ a configure-time error will occur.</p>
 then a configure-time error will occur.</p>
 </section>
 <section id="disabling-support-for-a-third-party-library-tpl">
-<h3><a class="toc-backref" href="#id47" role="doc-backlink"><span class="sectnum">4.16.4 </span>Disabling support for a Third-Party Library (TPL)</a><a class="headerlink" href="#disabling-support-for-a-third-party-library-tpl" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id48" role="doc-backlink"><span class="sectnum">4.16.4 </span>Disabling support for a Third-Party Library (TPL)</a><a class="headerlink" href="#disabling-support-for-a-third-party-library-tpl" title="Link to this heading"></a></h3>
 <p>Disabling a TPL explicitly can be done using:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">TPL_ENABLE_</span><span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;=</span><span class="n">OFF</span>
 </pre></div>
@@ -2077,7 +2096,7 @@ NOTE will be printed and the downstream package will be disabled and
 configuration will continue.</p>
 </section>
 <section id="disabling-tentatively-enabled-tpls">
-<h3><a class="toc-backref" href="#id48" role="doc-backlink"><span class="sectnum">4.16.5 </span>Disabling tentatively enabled TPLs</a><a class="headerlink" href="#disabling-tentatively-enabled-tpls" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id49" role="doc-backlink"><span class="sectnum">4.16.5 </span>Disabling tentatively enabled TPLs</a><a class="headerlink" href="#disabling-tentatively-enabled-tpls" title="Link to this heading"></a></h3>
 <p>To disable a tentatively enabled TPL, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">TPL_ENABLE_</span><span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;=</span><span class="n">OFF</span>
 </pre></div>
@@ -2098,7 +2117,7 @@ TPL may not work correctly on the given platform.  In this case, one would
 also want to explicitly disable the TPL as shown above.</p>
 </section>
 <section id="require-all-tpl-libraries-be-found">
-<h3><a class="toc-backref" href="#id49" role="doc-backlink"><span class="sectnum">4.16.6 </span>Require all TPL libraries be found</a><a class="headerlink" href="#require-all-tpl-libraries-be-found" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id50" role="doc-backlink"><span class="sectnum">4.16.6 </span>Require all TPL libraries be found</a><a class="headerlink" href="#require-all-tpl-libraries-be-found" title="Link to this heading"></a></h3>
 <p>By default, some TPLs don’t require that all of the libraries listed in
 <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_NAMES</span></code> be found.  To change this behavior so that all
 libraries for all enabled TPLs be found, one can set:</p>
@@ -2108,7 +2127,7 @@ libraries for all enabled TPLs be found, one can set:</p>
 <p>This makes the configure process catch more mistakes with the env.</p>
 </section>
 <section id="disable-warnings-from-tpl-header-files">
-<h3><a class="toc-backref" href="#id50" role="doc-backlink"><span class="sectnum">4.16.7 </span>Disable warnings from TPL header files</a><a class="headerlink" href="#disable-warnings-from-tpl-header-files" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id51" role="doc-backlink"><span class="sectnum">4.16.7 </span>Disable warnings from TPL header files</a><a class="headerlink" href="#disable-warnings-from-tpl-header-files" title="Link to this heading"></a></h3>
 <p>To disable warnings coming from included TPL header files for C and C++ code,
 set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_TPL_SYSTEM_INCLUDE_DIRS</span><span class="o">=</span><span class="n">TRUE</span>
@@ -2123,7 +2142,7 @@ project is pulling in module files from TPLs.</p>
 </section>
 </section>
 <section id="building-against-pre-installed-packages">
-<h2><a class="toc-backref" href="#id51" role="doc-backlink"><span class="sectnum">4.17 </span>Building against pre-installed packages</a><a class="headerlink" href="#building-against-pre-installed-packages" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id52" role="doc-backlink"><span class="sectnum">4.17 </span>Building against pre-installed packages</a><a class="headerlink" href="#building-against-pre-installed-packages" title="Link to this heading"></a></h2>
 <p>The &lt;Project&gt; project can build against any pre-installed packages defined in
 the project and ignore the internally defined packages.  To trigger the enable
 of a pre-installed internal package treated as an external package, configure
@@ -2205,7 +2224,7 @@ non-TriBITS CMake build systems that don’t create fully TriBITS-compliant
 external packages.</p>
 </section>
 <section id="xsdk-configuration-options">
-<h2><a class="toc-backref" href="#id52" role="doc-backlink"><span class="sectnum">4.18 </span>xSDK Configuration Options</a><a class="headerlink" href="#xsdk-configuration-options" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id53" role="doc-backlink"><span class="sectnum">4.18 </span>xSDK Configuration Options</a><a class="headerlink" href="#xsdk-configuration-options" title="Link to this heading"></a></h2>
 <p>The configure of &lt;Project&gt; will adhere to the <a class="reference external" href="https://doi.org/10.6084/m9.figshare.4495136">xSDK Community Package
 Policies</a> simply by setting the CMake cache variable:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">USE_XSDK_DEFAULTS</span><span class="o">=</span><span class="n">TRUE</span>
@@ -2234,7 +2253,7 @@ flags</a>).</p></li>
 every TriBITS CMake project, including the &lt;Project&gt; project.</p>
 </section>
 <section id="generating-verbose-output">
-<h2><a class="toc-backref" href="#id53" role="doc-backlink"><span class="sectnum">4.19 </span>Generating verbose output</a><a class="headerlink" href="#generating-verbose-output" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id54" role="doc-backlink"><span class="sectnum">4.19 </span>Generating verbose output</a><a class="headerlink" href="#generating-verbose-output" title="Link to this heading"></a></h2>
 <p>There are several different ways to generate verbose output to debug problems
 when they occur:</p>
 <ol class="loweralpha simple" id="project-trace-file-processing">
@@ -2300,7 +2319,7 @@ verbose output without reconfiguring</a>.</p>
 </div></blockquote>
 </section>
 <section id="enabling-disabling-deprecated-warnings">
-<h2><a class="toc-backref" href="#id54" role="doc-backlink"><span class="sectnum">4.20 </span>Enabling/disabling deprecated warnings</a><a class="headerlink" href="#enabling-disabling-deprecated-warnings" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id55" role="doc-backlink"><span class="sectnum">4.20 </span>Enabling/disabling deprecated warnings</a><a class="headerlink" href="#enabling-disabling-deprecated-warnings" title="Link to this heading"></a></h2>
 <p>To turn off all deprecated warnings, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_SHOW_DEPRECATED_WARNINGS</span><span class="o">=</span><span class="n">OFF</span>
 </pre></div>
@@ -2316,7 +2335,7 @@ verbose output without reconfiguring</a>.</p>
 <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code>.</p>
 </section>
 <section id="adjusting-cmake-deprecation-warnings">
-<h2><a class="toc-backref" href="#id55" role="doc-backlink"><span class="sectnum">4.21 </span>Adjusting CMake DEPRECATION warnings</a><a class="headerlink" href="#adjusting-cmake-deprecation-warnings" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id56" role="doc-backlink"><span class="sectnum">4.21 </span>Adjusting CMake DEPRECATION warnings</a><a class="headerlink" href="#adjusting-cmake-deprecation-warnings" title="Link to this heading"></a></h2>
 <p>By default, deprecated TriBITS features being used in the project’s CMake
 files will result in CMake deprecation warning messages (issued by calling
 <code class="docutils literal notranslate"><span class="pre">message(DEPRECATION</span> <span class="pre">...)</span></code> internally).  The handling of these deprecation
@@ -2335,7 +2354,7 @@ deprecation warnings, set:</p>
 </ul>
 </section>
 <section id="disabling-deprecated-code">
-<h2><a class="toc-backref" href="#id56" role="doc-backlink"><span class="sectnum">4.22 </span>Disabling deprecated code</a><a class="headerlink" href="#disabling-deprecated-code" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id57" role="doc-backlink"><span class="sectnum">4.22 </span>Disabling deprecated code</a><a class="headerlink" href="#disabling-deprecated-code" title="Link to this heading"></a></h2>
 <p>To actually disable and remove deprecated code from being included in
 compilation, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_HIDE_DEPRECATED_CODE</span><span class="o">=</span><span class="n">ON</span>
@@ -2354,7 +2373,7 @@ is free of calling deprecated code.</p>
 <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE&gt;</span></code>.</p>
 </section>
 <section id="outputting-package-dependency-information">
-<h2><a class="toc-backref" href="#id57" role="doc-backlink"><span class="sectnum">4.23 </span>Outputting package dependency information</a><a class="headerlink" href="#outputting-package-dependency-information" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id58" role="doc-backlink"><span class="sectnum">4.23 </span>Outputting package dependency information</a><a class="headerlink" href="#outputting-package-dependency-information" title="Link to this heading"></a></h2>
 <p id="project-deps-default-output-dir">To generate the various XML and HTML package dependency files, one can set the
 output directory when configuring using:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_DEPS_DEFAULT_OUTPUT_DIR</span><span class="p">:</span><span class="n">FILEPATH</span><span class="o">=&lt;</span><span class="n">SOME_PATH</span><span class="o">&gt;</span>
@@ -2389,12 +2408,12 @@ Python is enabled.</p></li>
 </ul>
 </section>
 <section id="test-related-configuration-settings">
-<h2><a class="toc-backref" href="#id58" role="doc-backlink"><span class="sectnum">4.24 </span>Test-related configuration settings</a><a class="headerlink" href="#test-related-configuration-settings" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id59" role="doc-backlink"><span class="sectnum">4.24 </span>Test-related configuration settings</a><a class="headerlink" href="#test-related-configuration-settings" title="Link to this heading"></a></h2>
 <p>Many options can be set at configure time to determine what tests are enabled
 and how they are run.  The following subsections described these various
 settings.</p>
 <section id="enabling-different-test-categories">
-<h3><a class="toc-backref" href="#id59" role="doc-backlink"><span class="sectnum">4.24.1 </span>Enabling different test categories</a><a class="headerlink" href="#enabling-different-test-categories" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id60" role="doc-backlink"><span class="sectnum">4.24.1 </span>Enabling different test categories</a><a class="headerlink" href="#enabling-different-test-categories" title="Link to this heading"></a></h3>
 <p>To turn on a set a given set of tests by test category, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_TEST_CATEGORIES</span><span class="o">=</span><span class="s2">&quot;&lt;CATEGORY0&gt;;&lt;CATEGORY1&gt;;...&quot;</span>
 </pre></div>
@@ -2411,7 +2430,7 @@ processes and longer run times.  These test categories are nested
 and don’t nest with the other categories.</p>
 </section>
 <section id="disabling-specific-tests">
-<h3><a class="toc-backref" href="#id60" role="doc-backlink"><span class="sectnum">4.24.2 </span>Disabling specific tests</a><a class="headerlink" href="#disabling-specific-tests" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id61" role="doc-backlink"><span class="sectnum">4.24.2 </span>Disabling specific tests</a><a class="headerlink" href="#disabling-specific-tests" title="Link to this heading"></a></h3>
 <p>Any TriBITS-added ctest test (i.e. listed in <code class="docutils literal notranslate"><span class="pre">ctest</span> <span class="pre">-N</span></code>) can be disabled at
 configure time by setting:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">fullTestName</span><span class="o">&gt;</span><span class="n">_DISABLE</span><span class="o">=</span><span class="n">ON</span>
@@ -2445,7 +2464,7 @@ configuring with:</p>
 <code class="docutils literal notranslate"><span class="pre">ctest</span> <span class="pre">-E</span></code> argument.</p>
 </section>
 <section id="disabling-specific-test-executable-builds">
-<h3><a class="toc-backref" href="#id61" role="doc-backlink"><span class="sectnum">4.24.3 </span>Disabling specific test executable builds</a><a class="headerlink" href="#disabling-specific-test-executable-builds" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id62" role="doc-backlink"><span class="sectnum">4.24.3 </span>Disabling specific test executable builds</a><a class="headerlink" href="#disabling-specific-test-executable-builds" title="Link to this heading"></a></h3>
 <p>Any TriBITS-added executable (i.e. listed in <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">help</span></code>) can be disabled
 from being built by setting:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">exeTargetName</span><span class="o">&gt;</span><span class="n">_EXE_DISABLE</span><span class="o">=</span><span class="n">ON</span>
@@ -2458,7 +2477,7 @@ will result in the printing of a line for the executable target being disabled
 at configure time to CMake STDOUT.</p>
 </section>
 <section id="disabling-just-the-ctest-tests-but-not-the-test-executables">
-<h3><a class="toc-backref" href="#id62" role="doc-backlink"><span class="sectnum">4.24.4 </span>Disabling just the ctest tests but not the test executables</a><a class="headerlink" href="#disabling-just-the-ctest-tests-but-not-the-test-executables" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id63" role="doc-backlink"><span class="sectnum">4.24.4 </span>Disabling just the ctest tests but not the test executables</a><a class="headerlink" href="#disabling-just-the-ctest-tests-but-not-the-test-executables" title="Link to this heading"></a></h3>
 <p>To allow the building of the tests and examples in a package (enabled either
 through setting <a class="reference internal" href="#project-enable-tests">&lt;Project&gt;_ENABLE_TESTS</a> <code class="docutils literal notranslate"><span class="pre">=</span> <span class="pre">ON</span></code> or
 <a class="reference internal" href="#tribits-package-enable-tests">&lt;TRIBITS_PACKAGE&gt;_ENABLE_TESTS</a> <code class="docutils literal notranslate"><span class="pre">=</span> <span class="pre">ON</span></code>) but not actually define the ctest
@@ -2513,7 +2532,7 @@ at configure time.  Therefore, all of the decisions about what test targets
 should be build and which tests should be run can be made at configure time.</p>
 </section>
 <section id="set-specific-tests-to-run-in-serial">
-<h3><a class="toc-backref" href="#id63" role="doc-backlink"><span class="sectnum">4.24.5 </span>Set specific tests to run in serial</a><a class="headerlink" href="#set-specific-tests-to-run-in-serial" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id64" role="doc-backlink"><span class="sectnum">4.24.5 </span>Set specific tests to run in serial</a><a class="headerlink" href="#set-specific-tests-to-run-in-serial" title="Link to this heading"></a></h3>
 <p>In order to cause a specific test to run by itself on the machine and not at
 the same time as other tests (such as when running multiple tests at the same
 time with something like <code class="docutils literal notranslate"><span class="pre">ctest</span> <span class="pre">-j16</span></code>), set at configure time:</p>
@@ -2534,7 +2553,7 @@ can have the <code class="docutils literal notranslate"><span class="pre">RUN_SE
 </div>
 </section>
 <section id="trace-test-addition-or-exclusion">
-<h3><a class="toc-backref" href="#id64" role="doc-backlink"><span class="sectnum">4.24.6 </span>Trace test addition or exclusion</a><a class="headerlink" href="#trace-test-addition-or-exclusion" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id65" role="doc-backlink"><span class="sectnum">4.24.6 </span>Trace test addition or exclusion</a><a class="headerlink" href="#trace-test-addition-or-exclusion" title="Link to this heading"></a></h3>
 <p>To see what tests get added and see those that don’t get added for various
 reasons, configure with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_TRACE_ADD_TEST</span><span class="o">=</span><span class="n">ON</span>
@@ -2548,7 +2567,7 @@ did not get added, then this line will show why the test was not added
 arguments).</p>
 </section>
 <section id="enable-advanced-test-start-and-end-times-and-timing-blocks">
-<h3><a class="toc-backref" href="#id65" role="doc-backlink"><span class="sectnum">4.24.7 </span>Enable advanced test start and end times and timing blocks</a><a class="headerlink" href="#enable-advanced-test-start-and-end-times-and-timing-blocks" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id66" role="doc-backlink"><span class="sectnum">4.24.7 </span>Enable advanced test start and end times and timing blocks</a><a class="headerlink" href="#enable-advanced-test-start-and-end-times-and-timing-blocks" title="Link to this heading"></a></h3>
 <p>For tests added using <code class="docutils literal notranslate"><span class="pre">tribits_add_advanced_test()</span></code>, one can see start and
 end times for the tests and the timing for each <code class="docutils literal notranslate"><span class="pre">TEST_&lt;IDX&gt;</span></code> block in the
 detailed test output by configuring with:</p>
@@ -2560,7 +2579,7 @@ and therefore will only work on many (but perhaps not all) Linux/Unix/Mac
 systems and not native Windows systems.</p>
 </section>
 <section id="setting-test-timeouts-at-configure-time">
-<h3><a class="toc-backref" href="#id66" role="doc-backlink"><span class="sectnum">4.24.8 </span>Setting test timeouts at configure time</a><a class="headerlink" href="#setting-test-timeouts-at-configure-time" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id67" role="doc-backlink"><span class="sectnum">4.24.8 </span>Setting test timeouts at configure time</a><a class="headerlink" href="#setting-test-timeouts-at-configure-time" title="Link to this heading"></a></h3>
 <p id="dart-testing-timeout">A maximum default time limit (timeout) for all the tests can be set at
 configure time using the cache variable:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">DART_TESTING_TIMEOUT</span><span class="o">=&lt;</span><span class="n">maxSeconds</span><span class="o">&gt;</span>
@@ -2599,7 +2618,7 @@ can be scaled up or down using the cache variable
 </ul>
 </section>
 <section id="scaling-test-timeouts-at-configure-time">
-<h3><a class="toc-backref" href="#id67" role="doc-backlink"><span class="sectnum">4.24.9 </span>Scaling test timeouts at configure time</a><a class="headerlink" href="#scaling-test-timeouts-at-configure-time" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id68" role="doc-backlink"><span class="sectnum">4.24.9 </span>Scaling test timeouts at configure time</a><a class="headerlink" href="#scaling-test-timeouts-at-configure-time" title="Link to this heading"></a></h3>
 <p id="project-scale-test-timeout">The global default test timeout <a class="reference internal" href="#dart-testing-timeout">DART_TESTING_TIMEOUT</a> as well as all of the
 timeouts for the individual tests that have their own timeout set (through the
 <code class="docutils literal notranslate"><span class="pre">TIMEOUT</span></code> argument for each individual test) can be scaled by a constant
@@ -2634,7 +2653,7 @@ increase <code class="docutils literal notranslate"><span class="pre">DART_TESTI
 </ul>
 </section>
 <section id="spreading-out-and-limiting-tests-running-on-gpus">
-<h3><a class="toc-backref" href="#id68" role="doc-backlink"><span class="sectnum">4.24.10 </span>Spreading out and limiting tests running on GPUs</a><a class="headerlink" href="#spreading-out-and-limiting-tests-running-on-gpus" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id69" role="doc-backlink"><span class="sectnum">4.24.10 </span>Spreading out and limiting tests running on GPUs</a><a class="headerlink" href="#spreading-out-and-limiting-tests-running-on-gpus" title="Link to this heading"></a></h3>
 <p>For CUDA builds (i.e. <code class="docutils literal notranslate"><span class="pre">TPL_ENABLE_CUDA=ON</span></code>) with tests that run on a single
 node which has multiple GPUs, there are settings that can help <code class="docutils literal notranslate"><span class="pre">ctest</span></code>
 spread out the testing load over all of the GPUs and limit the number of
@@ -2729,7 +2748,7 @@ therefore the input options and behavior of this may change in the future.</p></
 </section>
 </section>
 <section id="enabling-support-for-coverage-testing">
-<h2><a class="toc-backref" href="#id69" role="doc-backlink"><span class="sectnum">4.25 </span>Enabling support for coverage testing</a><a class="headerlink" href="#enabling-support-for-coverage-testing" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id70" role="doc-backlink"><span class="sectnum">4.25 </span>Enabling support for coverage testing</a><a class="headerlink" href="#enabling-support-for-coverage-testing" title="Link to this heading"></a></h2>
 <p>To turn on support for coverage testing set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_COVERAGE_TESTING</span><span class="o">=</span><span class="n">ON</span>
 </pre></div>
@@ -2738,7 +2757,7 @@ therefore the input options and behavior of this may change in the future.</p></
 Use ‘make dashboard’ (see below) to submit coverage results to CDash</p>
 </section>
 <section id="viewing-configure-options-and-documentation">
-<h2><a class="toc-backref" href="#id70" role="doc-backlink"><span class="sectnum">4.26 </span>Viewing configure options and documentation</a><a class="headerlink" href="#viewing-configure-options-and-documentation" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id71" role="doc-backlink"><span class="sectnum">4.26 </span>Viewing configure options and documentation</a><a class="headerlink" href="#viewing-configure-options-and-documentation" title="Link to this heading"></a></h2>
 <ol class="loweralpha simple">
 <li><p>Viewing available configure-time options with documentation:</p></li>
 </ol>
@@ -2774,7 +2793,7 @@ $ cmake -LA &lt;SAME_AS_ABOVE&gt; $SOURCE_BASE
 </div></blockquote>
 </section>
 <section id="enabling-extra-repositories-with-add-on-packages">
-<h2><a class="toc-backref" href="#id71" role="doc-backlink"><span class="sectnum">4.27 </span>Enabling extra repositories with add-on packages:</a><a class="headerlink" href="#enabling-extra-repositories-with-add-on-packages" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id72" role="doc-backlink"><span class="sectnum">4.27 </span>Enabling extra repositories with add-on packages:</a><a class="headerlink" href="#enabling-extra-repositories-with-add-on-packages" title="Link to this heading"></a></h2>
 <p id="project-extra-repositories">To configure &lt;Project&gt; with an post extra set of packages in extra TriBITS
 repositories, configure with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_EXTRA_REPOSITORIES</span><span class="o">=</span><span class="s2">&quot;&lt;REPO0&gt;,&lt;REPO1&gt;,...&quot;</span>
@@ -2805,7 +2824,7 @@ the same order as the list extra repos read in from the file specified by
 <a class="reference internal" href="#project-pre-repositories">&lt;Project&gt;_PRE_REPOSITORIES</a> as well.)</p>
 </section>
 <section id="enabling-extra-repositories-through-a-file">
-<h2><a class="toc-backref" href="#id72" role="doc-backlink"><span class="sectnum">4.28 </span>Enabling extra repositories through a file</a><a class="headerlink" href="#enabling-extra-repositories-through-a-file" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id73" role="doc-backlink"><span class="sectnum">4.28 </span>Enabling extra repositories through a file</a><a class="headerlink" href="#enabling-extra-repositories-through-a-file" title="Link to this heading"></a></h2>
 <p id="project-enable-known-external-repos-type"><span id="project-extrarepos-file"></span>In order to provide the list of extra TriBITS repositories containing add-on
 packages from a file, configure with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_EXTRAREPOS_FILE</span><span class="p">:</span><span class="n">FILEPATH</span><span class="o">=&lt;</span><span class="n">EXTRAREPOSFILE</span><span class="o">&gt;</span> \
@@ -2841,7 +2860,7 @@ the allowed values.</p>
 <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_EXTRA_REPOSITORIES</span></code> if POST extra repos are listed.</p>
 </section>
 <section id="selecting-a-different-source-location-for-a-package">
-<h2><a class="toc-backref" href="#id73" role="doc-backlink"><span class="sectnum">4.29 </span>Selecting a different source location for a package</a><a class="headerlink" href="#selecting-a-different-source-location-for-a-package" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id74" role="doc-backlink"><span class="sectnum">4.29 </span>Selecting a different source location for a package</a><a class="headerlink" href="#selecting-a-different-source-location-for-a-package" title="Link to this heading"></a></h2>
 <p>The source location for any package can be changed by configuring with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE</span><span class="o">&gt;</span><span class="n">_SOURCE_DIR_OVERRIDE</span><span class="p">:</span><span class="n">STRING</span><span class="o">=&lt;</span><span class="n">path</span><span class="o">&gt;</span>
 </pre></div>
@@ -2855,7 +2874,7 @@ implementation of a package that is otherwise snapshotted into the base
 project source repository (e.g. Kokkos in Trilinos).</p>
 </section>
 <section id="reconfiguring-completely-from-scratch">
-<h2><a class="toc-backref" href="#id74" role="doc-backlink"><span class="sectnum">4.30 </span>Reconfiguring completely from scratch</a><a class="headerlink" href="#reconfiguring-completely-from-scratch" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id75" role="doc-backlink"><span class="sectnum">4.30 </span>Reconfiguring completely from scratch</a><a class="headerlink" href="#reconfiguring-completely-from-scratch" title="Link to this heading"></a></h2>
 <p>To reconfigure from scratch, one needs to delete the the <code class="docutils literal notranslate"><span class="pre">CMakeCache.txt</span></code>
 and base-level <code class="docutils literal notranslate"><span class="pre">CMakeFiles/</span></code> directory, for example, as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ rm -rf CMakeCache.txt CMakeFiles/
@@ -2875,7 +2894,7 @@ $ ./do-configure [options]
 </div>
 </section>
 <section id="viewing-configure-errors">
-<h2><a class="toc-backref" href="#id75" role="doc-backlink"><span class="sectnum">4.31 </span>Viewing configure errors</a><a class="headerlink" href="#viewing-configure-errors" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id76" role="doc-backlink"><span class="sectnum">4.31 </span>Viewing configure errors</a><a class="headerlink" href="#viewing-configure-errors" title="Link to this heading"></a></h2>
 <p>To view various configure errors, read the file:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$BUILD_BASE_DIR/CMakeFiles/CMakeError.log
 </pre></div>
@@ -2884,7 +2903,7 @@ $ ./do-configure [options]
 mangling determination, and other CMake-specific information.</p>
 </section>
 <section id="adding-configure-timers">
-<h2><a class="toc-backref" href="#id76" role="doc-backlink"><span class="sectnum">4.32 </span>Adding configure timers</a><a class="headerlink" href="#adding-configure-timers" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id77" role="doc-backlink"><span class="sectnum">4.32 </span>Adding configure timers</a><a class="headerlink" href="#adding-configure-timers" title="Link to this heading"></a></h2>
 <p>To add timers to various configure steps, configure with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_CONFIGURE_TIMING</span><span class="o">=</span><span class="n">ON</span>
 </pre></div>
@@ -2924,7 +2943,7 @@ small) or for smaller projects for extra informational purposes.</p></li>
 </ul>
 </section>
 <section id="generating-export-files">
-<h2><a class="toc-backref" href="#id77" role="doc-backlink"><span class="sectnum">4.33 </span>Generating export files</a><a class="headerlink" href="#generating-export-files" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id78" role="doc-backlink"><span class="sectnum">4.33 </span>Generating export files</a><a class="headerlink" href="#generating-export-files" title="Link to this heading"></a></h2>
 <p>The project &lt;Project&gt; can generate export files for external CMake projects.
 These export files provide the lists of libraries, include directories, compilers
 and compiler options, etc.</p>
@@ -2960,7 +2979,7 @@ packages.</p></li>
 </ul>
 </section>
 <section id="generating-a-project-repo-version-file">
-<h2><a class="toc-backref" href="#id78" role="doc-backlink"><span class="sectnum">4.34 </span>Generating a project repo version file</a><a class="headerlink" href="#generating-a-project-repo-version-file" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id79" role="doc-backlink"><span class="sectnum">4.34 </span>Generating a project repo version file</a><a class="headerlink" href="#generating-a-project-repo-version-file" title="Link to this heading"></a></h2>
 <p id="project-generate-repo-version-file">When working with local git repos for the project sources, one can generate a
 <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;RepoVersion.txt</span></code> file which lists all of the repos and their
 current versions using:</p>
@@ -2974,8 +2993,18 @@ the source distribution tarball.</p>
 <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;RepoVersion.txt</span></code> file will get generated and a <code class="docutils literal notranslate"><span class="pre">NOTE</span></code> message is
 printed to cmake STDOUT.</p>
 </section>
+<section id="show-parent-s-commit-info-in-the-repo-version-output">
+<h2><a class="toc-backref" href="#id80" role="doc-backlink"><span class="sectnum">4.35 </span>Show parent(s) commit info in the repo version output</a><a class="headerlink" href="#show-parent-s-commit-info-in-the-repo-version-output" title="Link to this heading"></a></h2>
+<p id="project-show-git-commit-parents">When working with local git repos for the project sources, one can include
+the repo’s head commit parent(s) info in the repo version output using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_SHOW_GIT_COMMIT_PARENTS</span><span class="o">=</span><span class="n">ON</span>
+</pre></div>
+</div>
+<p>For each parent commit, this will include their SHA1, author name, date, email
+and its 80 character summary message in the repo version output string.</p>
+</section>
 <section id="generating-git-version-date-files">
-<h2><a class="toc-backref" href="#id79" role="doc-backlink"><span class="sectnum">4.35 </span>Generating git version date files</a><a class="headerlink" href="#generating-git-version-date-files" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id81" role="doc-backlink"><span class="sectnum">4.36 </span>Generating git version date files</a><a class="headerlink" href="#generating-git-version-date-files" title="Link to this heading"></a></h2>
 <p id="project-generate-version-date-files">When working with local git repos for the project sources, one can generate
 the files <code class="docutils literal notranslate"><span class="pre">VersionDate.cmake</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_version_date.h</span></code> in the build
 directory by setting:</p>
@@ -3036,7 +3065,7 @@ undefined macro <code class="docutils literal notranslate"><span class="pre">&lt
 be printed to cmake STDOUT.</p>
 </section>
 <section id="cmake-configure-time-development-mode-and-debug-checking">
-<h2><a class="toc-backref" href="#id80" role="doc-backlink"><span class="sectnum">4.36 </span>CMake configure-time development mode and debug checking</a><a class="headerlink" href="#cmake-configure-time-development-mode-and-debug-checking" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id82" role="doc-backlink"><span class="sectnum">4.37 </span>CMake configure-time development mode and debug checking</a><a class="headerlink" href="#cmake-configure-time-development-mode-and-debug-checking" title="Link to this heading"></a></h2>
 <p>To turn off CMake configure-time development-mode checking, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_DEVELOPMENT_MODE</span><span class="o">=</span><span class="n">OFF</span>
 </pre></div>
@@ -3098,7 +3127,7 @@ or warnings).</p>
 </section>
 </section>
 <section id="building-makefile-generator">
-<h1><a class="toc-backref" href="#id81" role="doc-backlink"><span class="sectnum">5 </span>Building (Makefile generator)</a><a class="headerlink" href="#building-makefile-generator" title="Link to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id83" role="doc-backlink"><span class="sectnum">5 </span>Building (Makefile generator)</a><a class="headerlink" href="#building-makefile-generator" title="Link to this heading"></a></h1>
 <p>This section described building using the default CMake Makefile generator.
 Building with the Ninja is described in section <a class="reference internal" href="#building-ninja-generator">Building (Ninja generator)</a>.
 But every other CMake generator is also supported such as Visual Studio on
@@ -3106,7 +3135,7 @@ Windows, XCode on Macs, and Eclipse project files but using those build
 systems are not documented here (consult standard CMake and concrete build
 tool documentation).</p>
 <section id="building-all-targets">
-<h2><a class="toc-backref" href="#id82" role="doc-backlink"><span class="sectnum">5.1 </span>Building all targets</a><a class="headerlink" href="#building-all-targets" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id84" role="doc-backlink"><span class="sectnum">5.1 </span>Building all targets</a><a class="headerlink" href="#building-all-targets" title="Link to this heading"></a></h2>
 <p>To build all targets use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make [-jN]
 </pre></div>
@@ -3114,7 +3143,7 @@ tool documentation).</p>
 <p>where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the number of processes to use (i.e. 2, 4, 16, etc.) .</p>
 </section>
 <section id="discovering-what-targets-are-available-to-build">
-<h2><a class="toc-backref" href="#id83" role="doc-backlink"><span class="sectnum">5.2 </span>Discovering what targets are available to build</a><a class="headerlink" href="#discovering-what-targets-are-available-to-build" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id85" role="doc-backlink"><span class="sectnum">5.2 </span>Discovering what targets are available to build</a><a class="headerlink" href="#discovering-what-targets-are-available-to-build" title="Link to this heading"></a></h2>
 <p>CMake generates Makefiles with a ‘help’ target!  To see the targets at the
 current directory level type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make help
@@ -3130,7 +3159,7 @@ be used as a target for <code class="docutils literal notranslate"><span class="
 building a single object file, for example.</p>
 </section>
 <section id="building-all-of-the-targets-for-a-package">
-<h2><a class="toc-backref" href="#id84" role="doc-backlink"><span class="sectnum">5.3 </span>Building all of the targets for a package</a><a class="headerlink" href="#building-all-of-the-targets-for-a-package" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id86" role="doc-backlink"><span class="sectnum">5.3 </span>Building all of the targets for a package</a><a class="headerlink" href="#building-all-of-the-targets-for-a-package" title="Link to this heading"></a></h2>
 <p>To build only the targets for a given TriBITS package, one can use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make &lt;TRIBITS_PACKAGE&gt;_all
 </pre></div>
@@ -3144,14 +3173,14 @@ $ make
 its required upstream targets.</p>
 </section>
 <section id="building-all-of-the-libraries-for-a-package">
-<h2><a class="toc-backref" href="#id85" role="doc-backlink"><span class="sectnum">5.4 </span>Building all of the libraries for a package</a><a class="headerlink" href="#building-all-of-the-libraries-for-a-package" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id87" role="doc-backlink"><span class="sectnum">5.4 </span>Building all of the libraries for a package</a><a class="headerlink" href="#building-all-of-the-libraries-for-a-package" title="Link to this heading"></a></h2>
 <p>To build only the libraries for given TriBITS package, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make &lt;TRIBITS_PACKAGE&gt;_libs
 </pre></div>
 </div>
 </section>
 <section id="building-all-of-the-libraries-for-all-enabled-packages">
-<h2><a class="toc-backref" href="#id86" role="doc-backlink"><span class="sectnum">5.5 </span>Building all of the libraries for all enabled packages</a><a class="headerlink" href="#building-all-of-the-libraries-for-all-enabled-packages" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id88" role="doc-backlink"><span class="sectnum">5.5 </span>Building all of the libraries for all enabled packages</a><a class="headerlink" href="#building-all-of-the-libraries-for-all-enabled-packages" title="Link to this heading"></a></h2>
 <p>To build only the libraries for all enabled TriBITS packages, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make libs
 </pre></div>
@@ -3161,7 +3190,7 @@ enabled <code class="docutils literal notranslate"><span class="pre">&lt;Project
 <code class="docutils literal notranslate"><span class="pre">'&lt;Project&gt;_libs</span></code>.</p>
 </section>
 <section id="building-a-single-object-file">
-<h2><a class="toc-backref" href="#id87" role="doc-backlink"><span class="sectnum">5.6 </span>Building a single object file</a><a class="headerlink" href="#building-a-single-object-file" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id89" role="doc-backlink"><span class="sectnum">5.6 </span>Building a single object file</a><a class="headerlink" href="#building-a-single-object-file" title="Link to this heading"></a></h2>
 <p>To build just a single object file (i.e. to debug a compile problem), first,
 look for the target name for the object file build based on the source file,
 for example for the source file <code class="docutils literal notranslate"><span class="pre">SomeSourceFile.cpp</span></code>, use:</p>
@@ -3205,7 +3234,7 @@ building object files as shown above so you need to always delete the object
 file first to make sure that it gets rebuilt correctly.</p>
 </section>
 <section id="building-with-verbose-output-without-reconfiguring">
-<h2><a class="toc-backref" href="#id88" role="doc-backlink"><span class="sectnum">5.7 </span>Building with verbose output without reconfiguring</a><a class="headerlink" href="#building-with-verbose-output-without-reconfiguring" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id90" role="doc-backlink"><span class="sectnum">5.7 </span>Building with verbose output without reconfiguring</a><a class="headerlink" href="#building-with-verbose-output-without-reconfiguring" title="Link to this heading"></a></h2>
 <p>One can get CMake to generate verbose make output at build time by just
 setting the Makefile variable <code class="docutils literal notranslate"><span class="pre">VERBOSE=1</span></code>, for example, as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make  VERBOSE=1 [&lt;SOME_TARGET&gt;]
@@ -3222,7 +3251,7 @@ the link lines as short as possible and therefore it often does this
 translation automatically (whether you want it to or not).</p>
 </section>
 <section id="relink-a-target-without-considering-dependencies">
-<h2><a class="toc-backref" href="#id89" role="doc-backlink"><span class="sectnum">5.8 </span>Relink a target without considering dependencies</a><a class="headerlink" href="#relink-a-target-without-considering-dependencies" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id91" role="doc-backlink"><span class="sectnum">5.8 </span>Relink a target without considering dependencies</a><a class="headerlink" href="#relink-a-target-without-considering-dependencies" title="Link to this heading"></a></h2>
 <p>CMake provides a way to rebuild a target without considering its dependencies
 using:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make &lt;SOME_TARGET&gt;/fast
@@ -3231,7 +3260,7 @@ using:</p>
 </section>
 </section>
 <section id="building-ninja-generator">
-<h1><a class="toc-backref" href="#id90" role="doc-backlink"><span class="sectnum">6 </span>Building (Ninja generator)</a><a class="headerlink" href="#building-ninja-generator" title="Link to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id92" role="doc-backlink"><span class="sectnum">6 </span>Building (Ninja generator)</a><a class="headerlink" href="#building-ninja-generator" title="Link to this heading"></a></h1>
 <p>When using the Ninja back-end (see <a class="reference internal" href="#enabling-support-for-ninja">Enabling support for Ninja</a>), one can
 build with simply:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ninja</span> <span class="o">-</span><span class="n">j</span><span class="o">&lt;</span><span class="n">N</span><span class="o">&gt;</span>
@@ -3252,7 +3281,7 @@ makefiles define many of the standard targets that are provided by the default
 CMake-generated makefiles like <code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">clean</span></code>, <code class="docutils literal notranslate"><span class="pre">install</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">package_source</span></code> (run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">help</span></code> to see all of the targets).</p>
 <section id="building-in-parallel-with-ninja">
-<h2><a class="toc-backref" href="#id91" role="doc-backlink"><span class="sectnum">6.1 </span>Building in parallel with Ninja</a><a class="headerlink" href="#building-in-parallel-with-ninja" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id93" role="doc-backlink"><span class="sectnum">6.1 </span>Building in parallel with Ninja</a><a class="headerlink" href="#building-in-parallel-with-ninja" title="Link to this heading"></a></h2>
 <p>By default, running the raw <code class="docutils literal notranslate"><span class="pre">ninja</span></code> command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ninja</span>
 </pre></div>
@@ -3289,7 +3318,7 @@ that is better than using only one core and will not overload the machine but
 still this is behavior the user must be aware.</p>
 </section>
 <section id="building-in-a-subdirectory-with-ninja">
-<h2><a class="toc-backref" href="#id92" role="doc-backlink"><span class="sectnum">6.2 </span>Building in a subdirectory with Ninja</a><a class="headerlink" href="#building-in-a-subdirectory-with-ninja" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id94" role="doc-backlink"><span class="sectnum">6.2 </span>Building in a subdirectory with Ninja</a><a class="headerlink" href="#building-in-a-subdirectory-with-ninja" title="Link to this heading"></a></h2>
 <p>To build from a binary subdirectory in the build tree with the
 TriBITS-generated Ninja makefiles, just <code class="docutils literal notranslate"><span class="pre">cd</span></code> into that directory and build
 with:</p>
@@ -3302,7 +3331,7 @@ the raw <code class="docutils literal notranslate"><span class="pre">ninja</span
 top.)</p>
 </section>
 <section id="building-verbose-without-reconfiguring-with-ninja">
-<h2><a class="toc-backref" href="#id93" role="doc-backlink"><span class="sectnum">6.3 </span>Building verbose without reconfiguring with Ninja</a><a class="headerlink" href="#building-verbose-without-reconfiguring-with-ninja" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id95" role="doc-backlink"><span class="sectnum">6.3 </span>Building verbose without reconfiguring with Ninja</a><a class="headerlink" href="#building-verbose-without-reconfiguring-with-ninja" title="Link to this heading"></a></h2>
 <p>To build targets and see the full build lines for each with the Ninja
 makefiles, build with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">NP</span><span class="o">=</span><span class="mi">10</span> <span class="n">VERBOSE</span><span class="o">=</span><span class="mi">1</span> <span class="o">&lt;</span><span class="n">target_name</span><span class="o">&gt;</span>
@@ -3314,7 +3343,7 @@ needed in the case were a build target is failing but is useful in other cases
 none the less.</p>
 </section>
 <section id="discovering-what-targets-are-available-to-build-with-ninja">
-<h2><a class="toc-backref" href="#id94" role="doc-backlink"><span class="sectnum">6.4 </span>Discovering what targets are available to build with Ninja</a><a class="headerlink" href="#discovering-what-targets-are-available-to-build-with-ninja" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id96" role="doc-backlink"><span class="sectnum">6.4 </span>Discovering what targets are available to build with Ninja</a><a class="headerlink" href="#discovering-what-targets-are-available-to-build-with-ninja" title="Link to this heading"></a></h2>
 <p>To determine the target names for library, executable (or any other general
 target except for object files) that can be built in any binary directory with
 the TriBITS-generated Ninja Makefiles, use:</p>
@@ -3360,7 +3389,7 @@ any directory with the TriBITS-generated Ninja Makefiles, use:</p>
 the targets that can be built in any given directory.</p>
 </section>
 <section id="building-specific-targets-with-ninja">
-<h2><a class="toc-backref" href="#id95" role="doc-backlink"><span class="sectnum">6.5 </span>Building specific targets with Ninja</a><a class="headerlink" href="#building-specific-targets-with-ninja" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id97" role="doc-backlink"><span class="sectnum">6.5 </span>Building specific targets with Ninja</a><a class="headerlink" href="#building-specific-targets-with-ninja" title="Link to this heading"></a></h2>
 <p>To build with any specific target, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">NP</span><span class="o">=</span><span class="mi">16</span> <span class="o">&lt;</span><span class="n">target</span><span class="o">&gt;</span>
 </pre></div>
@@ -3369,7 +3398,7 @@ the targets that can be built in any given directory.</p>
 a list of targets.</p>
 </section>
 <section id="building-single-object-files-with-ninja">
-<h2><a class="toc-backref" href="#id96" role="doc-backlink"><span class="sectnum">6.6 </span>Building single object files with Ninja</a><a class="headerlink" href="#building-single-object-files-with-ninja" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id98" role="doc-backlink"><span class="sectnum">6.6 </span>Building single object files with Ninja</a><a class="headerlink" href="#building-single-object-files-with-ninja" title="Link to this heading"></a></h2>
 <p>To build any object file, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">NP</span><span class="o">=</span><span class="mi">16</span> <span class="o">&lt;</span><span class="nb">object</span><span class="o">-</span><span class="n">target</span><span class="o">&gt;</span>
 </pre></div>
@@ -3397,7 +3426,7 @@ the object files that can be built and does not make it easy to build a single
 object file.</p>
 </section>
 <section id="cleaning-build-targets-with-ninja">
-<h2><a class="toc-backref" href="#id97" role="doc-backlink"><span class="sectnum">6.7 </span>Cleaning build targets with Ninja</a><a class="headerlink" href="#cleaning-build-targets-with-ninja" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id99" role="doc-backlink"><span class="sectnum">6.7 </span>Cleaning build targets with Ninja</a><a class="headerlink" href="#cleaning-build-targets-with-ninja" title="Link to this heading"></a></h2>
 <p>With the TriBITS-generated Ninja Makefiles, when one runs:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">clean</span>
 </pre></div>
@@ -3424,13 +3453,13 @@ executables in a subdirectory, one should just manually delete them with:</p>
 </section>
 </section>
 <section id="testing-with-ctest">
-<h1><a class="toc-backref" href="#id98" role="doc-backlink"><span class="sectnum">7 </span>Testing with CTest</a><a class="headerlink" href="#testing-with-ctest" title="Link to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id100" role="doc-backlink"><span class="sectnum">7 </span>Testing with CTest</a><a class="headerlink" href="#testing-with-ctest" title="Link to this heading"></a></h1>
 <p>This section assumes one is using the CMake Makefile generator described
 above.  Also, the <code class="docutils literal notranslate"><span class="pre">ctest</span></code> does not consider make dependencies when running
 so the software must be completely built before running <code class="docutils literal notranslate"><span class="pre">ctest</span></code> as described
 here.</p>
 <section id="running-all-tests">
-<h2><a class="toc-backref" href="#id99" role="doc-backlink"><span class="sectnum">7.1 </span>Running all tests</a><a class="headerlink" href="#running-all-tests" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id101" role="doc-backlink"><span class="sectnum">7.1 </span>Running all tests</a><a class="headerlink" href="#running-all-tests" title="Link to this heading"></a></h2>
 <p>To run all of the defined tests (i.e. created using <code class="docutils literal notranslate"><span class="pre">tribits_add_test()</span></code> or
 <code class="docutils literal notranslate"><span class="pre">tribits_add_advanced_test()</span></code>) use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ctest -j&lt;N&gt;
@@ -3455,7 +3484,7 @@ will still run the test but will not run any other tests while the limit of
 <a class="reference internal" href="#configuring-with-mpi-support">Configuring with MPI support</a>).</p>
 </section>
 <section id="only-running-tests-for-a-single-package">
-<h2><a class="toc-backref" href="#id100" role="doc-backlink"><span class="sectnum">7.2 </span>Only running tests for a single package</a><a class="headerlink" href="#only-running-tests-for-a-single-package" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id102" role="doc-backlink"><span class="sectnum">7.2 </span>Only running tests for a single package</a><a class="headerlink" href="#only-running-tests-for-a-single-package" title="Link to this heading"></a></h2>
 <p>Tests for just a single TriBITS package can be run with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ctest -j4 -L &lt;TRIBITS_PACKAGE&gt;
 </pre></div>
@@ -3473,7 +3502,7 @@ other approaches as well.  See <code class="docutils literal notranslate"><span 
 experiment for more details.</p>
 </section>
 <section id="running-a-single-test-with-full-output-to-the-console">
-<h2><a class="toc-backref" href="#id101" role="doc-backlink"><span class="sectnum">7.3 </span>Running a single test with full output to the console</a><a class="headerlink" href="#running-a-single-test-with-full-output-to-the-console" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id103" role="doc-backlink"><span class="sectnum">7.3 </span>Running a single test with full output to the console</a><a class="headerlink" href="#running-a-single-test-with-full-output-to-the-console" title="Link to this heading"></a></h2>
 <p>To run just a single test and send detailed output directly to the console,
 one can run:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ctest -R ^&lt;FULL_TEST_NAME&gt;$ -VV
@@ -3490,7 +3519,7 @@ working directory.  To run the test exactly as <code class="docutils literal not
 shown working directory and run the shown command.</p>
 </section>
 <section id="overriding-test-timeouts">
-<h2><a class="toc-backref" href="#id102" role="doc-backlink"><span class="sectnum">7.4 </span>Overriding test timeouts</a><a class="headerlink" href="#overriding-test-timeouts" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id104" role="doc-backlink"><span class="sectnum">7.4 </span>Overriding test timeouts</a><a class="headerlink" href="#overriding-test-timeouts" title="Link to this heading"></a></h2>
 <p>The configured global test timeout described in <code class="docutils literal notranslate"><span class="pre">Setting</span> <span class="pre">test</span> <span class="pre">timeouts</span> <span class="pre">at</span>
 <span class="pre">configure</span> <span class="pre">time</span></code> can be overridden on the CTest command-line as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ctest --timeout &lt;maxSeconds&gt;
@@ -3504,7 +3533,7 @@ time-outs set on individual tests on a test-by-test basis!</p>
 ignore the argument!</p>
 </section>
 <section id="running-memory-checking">
-<h2><a class="toc-backref" href="#id103" role="doc-backlink"><span class="sectnum">7.5 </span>Running memory checking</a><a class="headerlink" href="#running-memory-checking" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id105" role="doc-backlink"><span class="sectnum">7.5 </span>Running memory checking</a><a class="headerlink" href="#running-memory-checking" title="Link to this heading"></a></h2>
 <p>To configure for running memory testing with <code class="docutils literal notranslate"><span class="pre">valgrind</span></code>, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MEMORYCHECK_COMMAND</span><span class="o">=&lt;</span><span class="nb">abs</span><span class="o">-</span><span class="n">path</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">valgrind</span><span class="o">&gt;/</span><span class="n">valgrind</span> \
 <span class="o">-</span><span class="n">D</span> <span class="n">MEMORYCHECK_SUPPRESSIONS_FILE</span><span class="o">=&lt;</span><span class="nb">abs</span><span class="o">-</span><span class="n">path</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">supp</span><span class="o">-</span><span class="n">file0</span><span class="o">&gt;</span> \
@@ -3550,7 +3579,7 @@ Python, or other languages.</p>
 </section>
 </section>
 <section id="installing">
-<h1><a class="toc-backref" href="#id104" role="doc-backlink"><span class="sectnum">8 </span>Installing</a><a class="headerlink" href="#installing" title="Link to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id106" role="doc-backlink"><span class="sectnum">8 </span>Installing</a><a class="headerlink" href="#installing" title="Link to this heading"></a></h1>
 <p>After a build and test of the software is complete, the software can be
 installed.  Actually, to get ready for the install, the install directory must
 be specified at configure time by setting the variable
@@ -3575,7 +3604,7 @@ $ make -j&lt;N&gt; install
 <li><p><a class="reference internal" href="#using-packages-from-the-build-tree-in-downstream-cmake-projects">Using packages from the build tree in downstream CMake projects</a></p></li>
 </ul>
 <section id="setting-the-install-prefix">
-<h2><a class="toc-backref" href="#id105" role="doc-backlink"><span class="sectnum">8.1 </span>Setting the install prefix</a><a class="headerlink" href="#setting-the-install-prefix" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id107" role="doc-backlink"><span class="sectnum">8.1 </span>Setting the install prefix</a><a class="headerlink" href="#setting-the-install-prefix" title="Link to this heading"></a></h2>
 <p>In order to set up for the install, the install prefix should be set up at
 configure time by setting, for example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>-D CMAKE_INSTALL_PREFIX=$HOME/install/&lt;Project&gt;/mpi/opt
@@ -3610,7 +3639,7 @@ current binary directory for the base path.  Otherwise, if you want to specify
 absolute paths, use the data type <code class="docutils literal notranslate"><span class="pre">PATH</span></code> as shown above.</p>
 </section>
 <section id="setting-install-ownership-and-permissions">
-<h2><a class="toc-backref" href="#id106" role="doc-backlink"><span class="sectnum">8.2 </span>Setting install ownership and permissions</a><a class="headerlink" href="#setting-install-ownership-and-permissions" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id108" role="doc-backlink"><span class="sectnum">8.2 </span>Setting install ownership and permissions</a><a class="headerlink" href="#setting-install-ownership-and-permissions" title="Link to this heading"></a></h2>
 <p>By default, when installing with the <code class="docutils literal notranslate"><span class="pre">install</span></code> (or
 <code class="docutils literal notranslate"><span class="pre">install_package_by_package</span></code>) target, any files and directories created are
 given the default permissions for the user that runs the install command (just
@@ -3677,7 +3706,7 @@ install.)</p></li>
 </ul>
 </section>
 <section id="setting-install-rpath">
-<h2><a class="toc-backref" href="#id107" role="doc-backlink"><span class="sectnum">8.3 </span>Setting install RPATH</a><a class="headerlink" href="#setting-install-rpath" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id109" role="doc-backlink"><span class="sectnum">8.3 </span>Setting install RPATH</a><a class="headerlink" href="#setting-install-rpath" title="Link to this heading"></a></h2>
 <p>Setting RPATH for installed shared libraries and executables
 (i.e. <code class="docutils literal notranslate"><span class="pre">BUILD_SHARED_LIBS=ON</span></code>) can be a little tricky.  Some discussion of
 how raw CMake handles RPATH and installations can be found at:</p>
@@ -3870,7 +3899,7 @@ shared libraries then the behaviors of this &lt;Project&gt; CMake project descri
 above should hold on OSX systems as well.</p>
 </section>
 <section id="avoiding-installing-libraries-and-headers">
-<h2><a class="toc-backref" href="#id108" role="doc-backlink"><span class="sectnum">8.4 </span>Avoiding installing libraries and headers</a><a class="headerlink" href="#avoiding-installing-libraries-and-headers" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id110" role="doc-backlink"><span class="sectnum">8.4 </span>Avoiding installing libraries and headers</a><a class="headerlink" href="#avoiding-installing-libraries-and-headers" title="Link to this heading"></a></h2>
 <p>By default, any libraries and header files defined by in the TriBITS project
 &lt;Project&gt; will get installed into the installation directories specified by
 <code class="docutils literal notranslate"><span class="pre">CMAKE_INSTALL_PREFIX</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_INSTALL_INCLUDE_DIR</span></code> and
@@ -3888,7 +3917,7 @@ installed in <code class="docutils literal notranslate"><span class="pre">&lt;in
 executables can’t run without the shared libraries being installed.</p>
 </section>
 <section id="installing-the-software">
-<h2><a class="toc-backref" href="#id109" role="doc-backlink"><span class="sectnum">8.5 </span>Installing the software</a><a class="headerlink" href="#installing-the-software" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id111" role="doc-backlink"><span class="sectnum">8.5 </span>Installing the software</a><a class="headerlink" href="#installing-the-software" title="Link to this heading"></a></h2>
 <p>To install the software, type:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ make install
 </pre></div>
@@ -3916,7 +3945,7 @@ packages that do build correctly, then configure with:</p>
 (The default ‘install’ target aborts on the first file install failure.)</p>
 </section>
 <section id="using-the-installed-software-in-downstream-cmake-projects">
-<h2><a class="toc-backref" href="#id110" role="doc-backlink"><span class="sectnum">8.6 </span>Using the installed software in downstream CMake projects</a><a class="headerlink" href="#using-the-installed-software-in-downstream-cmake-projects" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id112" role="doc-backlink"><span class="sectnum">8.6 </span>Using the installed software in downstream CMake projects</a><a class="headerlink" href="#using-the-installed-software-in-downstream-cmake-projects" title="Link to this heading"></a></h2>
 <p>As described in <a class="reference internal" href="#generating-export-files">Generating export files</a>, when <code class="docutils literal notranslate"><span class="pre">-D</span>
 <span class="pre">&lt;Project&gt;_ENABLE_INSTALL_CMAKE_CONFIG_FILES=ON</span></code> is set at configure time, a
 <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;Config.cmake</span></code> file and a different <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> file
@@ -3974,7 +4003,7 @@ in the future.</p>
 <a class="reference external" href="https://github.com/TriBITSPub/TriBITS/tree/master/tribits/examples/TribitsExampleApp">TribitsExampleApp</a> and the <a class="reference external" href="https://github.com/TriBITSPub/TriBITS/blob/master/test/core/ExamplesUnitTests/TribitsExampleApp_Tests.cmake">TriBITS TribitsExampleApp Tests</a>.</p>
 </section>
 <section id="using-packages-from-the-build-tree-in-downstream-cmake-projects">
-<h2><a class="toc-backref" href="#id111" role="doc-backlink"><span class="sectnum">8.7 </span>Using packages from the build tree in downstream CMake projects</a><a class="headerlink" href="#using-packages-from-the-build-tree-in-downstream-cmake-projects" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id113" role="doc-backlink"><span class="sectnum">8.7 </span>Using packages from the build tree in downstream CMake projects</a><a class="headerlink" href="#using-packages-from-the-build-tree-in-downstream-cmake-projects" title="Link to this heading"></a></h2>
 <p>Note that libraries from enabled and built packages can also be used from the
 <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;</span></code> build tree without needing to install.  Being able to build
 against pre-built packages in the build tree can be very useful such as when
@@ -4012,7 +4041,7 @@ files are placed in a separate directory to avoid being found by accident.</p>
 </section>
 </section>
 <section id="installation-testing">
-<h1><a class="toc-backref" href="#id112" role="doc-backlink"><span class="sectnum">9 </span>Installation Testing</a><a class="headerlink" href="#installation-testing" title="Link to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id114" role="doc-backlink"><span class="sectnum">9 </span>Installation Testing</a><a class="headerlink" href="#installation-testing" title="Link to this heading"></a></h1>
 <p>The CMake project &lt;Project&gt; has built-in support for testing an installation
 of itself using its own tests and examples.  The way it works is to configure,
 build, and install just the libraries and header files using:</p>
@@ -4061,11 +4090,11 @@ project sources pointing to the installed header files and libraries from the
 newer version.</p>
 </section>
 <section id="packaging">
-<h1><a class="toc-backref" href="#id113" role="doc-backlink"><span class="sectnum">10 </span>Packaging</a><a class="headerlink" href="#packaging" title="Link to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id115" role="doc-backlink"><span class="sectnum">10 </span>Packaging</a><a class="headerlink" href="#packaging" title="Link to this heading"></a></h1>
 <p>Packaged source and binary distributions can also be created using CMake and
 CPack.</p>
 <section id="creating-a-tarball-of-the-source-tree">
-<h2><a class="toc-backref" href="#id114" role="doc-backlink"><span class="sectnum">10.1 </span>Creating a tarball of the source tree</a><a class="headerlink" href="#creating-a-tarball-of-the-source-tree" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id116" role="doc-backlink"><span class="sectnum">10.1 </span>Creating a tarball of the source tree</a><a class="headerlink" href="#creating-a-tarball-of-the-source-tree" title="Link to this heading"></a></h2>
 <p>To create a source tarball of the project, first configure with the list of
 desired packages (see <a class="reference internal" href="#selecting-the-list-of-packages-to-enable">Selecting the list of packages to enable</a>) and pass in</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_CPACK_PACKAGING</span><span class="o">=</span><span class="n">ON</span>
@@ -4124,7 +4153,7 @@ release mode, i.e. <code class="docutils literal notranslate"><span class="pre">
 </section>
 </section>
 <section id="dashboard-submissions">
-<h1><a class="toc-backref" href="#id115" role="doc-backlink"><span class="sectnum">11 </span>Dashboard submissions</a><a class="headerlink" href="#dashboard-submissions" title="Link to this heading"></a></h1>
+<h1><a class="toc-backref" href="#id117" role="doc-backlink"><span class="sectnum">11 </span>Dashboard submissions</a><a class="headerlink" href="#dashboard-submissions" title="Link to this heading"></a></h1>
 <p>All TriBITS projects have built-in support for submitting configure, build,
 and test results to CDash using the custom <code class="docutils literal notranslate"><span class="pre">dashboard</span></code> target.  This uses
 the <a class="reference external" href="TribitsUsersGuide.html#tribits-ctest-driver">tribits_ctest_driver()</a> function internally set up to work correctly
@@ -4170,7 +4199,7 @@ one must quote the entire argument string as:</p>
 </dd>
 </dl>
 <section id="setting-options-to-change-behavior-of-dashboard-target">
-<h2><a class="toc-backref" href="#id116" role="doc-backlink"><span class="sectnum">11.1 </span>Setting options to change behavior of ‘dashboard’ target</a><a class="headerlink" href="#setting-options-to-change-behavior-of-dashboard-target" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id118" role="doc-backlink"><span class="sectnum">11.1 </span>Setting options to change behavior of ‘dashboard’ target</a><a class="headerlink" href="#setting-options-to-change-behavior-of-dashboard-target" title="Link to this heading"></a></h2>
 <p>There are a number of options that you can set in the cache and/or in the
 environment to control what this script does.  Several options must be set in
 the cache in the CMake configure of the project such as the CDash sites where
@@ -4220,7 +4249,7 @@ for lines containing:</p>
 <p>That way, you will know the var was pick up and read correctly.</p>
 </section>
 <section id="common-options-and-use-cases-for-the-dashboard-target">
-<h2><a class="toc-backref" href="#id117" role="doc-backlink"><span class="sectnum">11.2 </span>Common options and use cases for the ‘dashboard’ target</a><a class="headerlink" href="#common-options-and-use-cases-for-the-dashboard-target" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id119" role="doc-backlink"><span class="sectnum">11.2 </span>Common options and use cases for the ‘dashboard’ target</a><a class="headerlink" href="#common-options-and-use-cases-for-the-dashboard-target" title="Link to this heading"></a></h2>
 <p>What follows are suggestions on how to use the <code class="docutils literal notranslate"><span class="pre">dashboard</span></code> target for
 different use cases.</p>
 <p>One option that is useful to set is the build name on CDash at configure time
@@ -4292,7 +4321,7 @@ test run.  (The default args are <code class="docutils literal notranslate"><spa
 not the test STDOUT.)</p>
 </section>
 <section id="changing-the-cdash-sites-for-the-dashboard-target">
-<h2><a class="toc-backref" href="#id118" role="doc-backlink"><span class="sectnum">11.3 </span>Changing the CDash sites for the ‘dashboard’ target</a><a class="headerlink" href="#changing-the-cdash-sites-for-the-dashboard-target" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id120" role="doc-backlink"><span class="sectnum">11.3 </span>Changing the CDash sites for the ‘dashboard’ target</a><a class="headerlink" href="#changing-the-cdash-sites-for-the-dashboard-target" title="Link to this heading"></a></h2>
 <p>As described above in <a class="reference internal" href="#setting-options-to-change-behavior-of-dashboard-target">Setting options to change behavior of ‘dashboard’
 target</a>, one can change the location where configure, build, and test results
 are submitted to one more two CDash sites.  For well-structured TriBITS CMake
@@ -4330,7 +4359,7 @@ and one wants to turn that off, one can configure with:</p>
 </div>
 </section>
 <section id="configuring-from-scratch-needed-if-dashboard-target-aborts-early">
-<h2><a class="toc-backref" href="#id119" role="doc-backlink"><span class="sectnum">11.4 </span>Configuring from scratch needed if ‘dashboard’ target aborts early</a><a class="headerlink" href="#configuring-from-scratch-needed-if-dashboard-target-aborts-early" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id121" role="doc-backlink"><span class="sectnum">11.4 </span>Configuring from scratch needed if ‘dashboard’ target aborts early</a><a class="headerlink" href="#configuring-from-scratch-needed-if-dashboard-target-aborts-early" title="Link to this heading"></a></h2>
 <p>Finally, note that in package-by-package mode
 (i.e. <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_CTEST_DO_ALL_AT_ONCE=FALSE</span></code>) that if one kills the <code class="docutils literal notranslate"><span class="pre">make</span>
 <span class="pre">dashboard</span></code> target before it completes, then one must reconfigure from scratch

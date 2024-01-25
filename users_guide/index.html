@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=338fc48d"></script>
+        <script src="_static/documentation_options.js?v=cfa5894a"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -401,7 +401,7 @@
 <dd class="field-even"><p>2024-01-25</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3342-gcc331f58</p>
+<dd class="field-odd"><p>tribits_start-3375-g9328b340</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -10159,6 +10159,7 @@ a given TriBITS project are:</p>
 <li><p><a class="reference internal" href="#project-name-must-find-all-tpl-libs">${PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS</a></p></li>
 <li><p><a class="reference internal" href="#project-name-requires-python">${PROJECT_NAME}_REQUIRES_PYTHON</a></p></li>
 <li><p><a class="reference internal" href="#project-name-set-install-rpath">${PROJECT_NAME}_SET_INSTALL_RPATH</a></p></li>
+<li><p><a class="reference internal" href="#project-name-show-git-commit-parents">${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS</a></p></li>
 <li><p><a class="reference internal" href="#project-name-show-test-start-end-date-time">${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME</a></p></li>
 <li><p><a class="reference internal" href="#project-name-skip-install-project-cmake-config-files">${PROJECT_NAME}_SKIP_INSTALL_PROJECT_CMAKE_CONFIG_FILES</a></p></li>
 <li><p><a class="reference internal" href="#project-name-test-categories">${PROJECT_NAME}_TEST_CATEGORIES</a></p></li>
@@ -10649,6 +10650,18 @@ TriBITS project can be set the default to <code class="docutils literal notransl
 </div>
 <p>in the project’s <a class="reference internal" href="#projectdir-projectname-cmake">&lt;projectDir&gt;/ProjectName.cmake</a> file (see <a class="reference internal" href="#rpath-handling">RPATH
 Handling</a>).</p>
+</div></blockquote>
+<p id="project-name-show-git-commit-parents"><strong>${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS</strong></p>
+<blockquote>
+<div><p>The cache variable <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS</span></code> results in
+the repo version file showing the parent commits for each repo commit.  By
+default, this variable is set to <code class="docutils literal notranslate"><span class="pre">OFF</span></code> but projects can set to to <code class="docutils literal notranslate"><span class="pre">ON</span></code>
+by default by setting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>set(${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS_DEFAULT ON)
+</pre></div>
+</div>
+<p>in the project’s <code class="docutils literal notranslate"><span class="pre">ProjectName.cmake</span></code> file.  (That way, it will also impact
+<code class="docutils literal notranslate"><span class="pre">cmake</span> <span class="pre">-P</span></code> scripts don’t configure the project itself to be built.)</p>
 </div></blockquote>
 <p id="project-name-show-test-start-end-date-time"><strong>${PROJECT_NAME}_SHOW_TEST_START_END_DATE_TIME</strong></p>
 <blockquote>
@@ -13653,11 +13666,11 @@ other variables as described above.</p>
 </div></blockquote>
 <p id="setting-variables-in-the-inner-cmake-configure-tribits-ctest-driver"><strong>Setting variables in the inner CMake configure:</strong></p>
 <p>It is important to understand that none of the CMake vars that get set in
-the other CTest -S program that calls <code class="docutils literal notranslate"><span class="pre">tribits_ctest_driver()</span></code>
+the outer CTest -S program that calls <code class="docutils literal notranslate"><span class="pre">tribits_ctest_driver()</span></code>
 automatically get passed into the inner configure of the TriBITS CMake
 project using the <code class="docutils literal notranslate"><span class="pre">ctest_configure()</span></code> command by CMake.  From the
 perspective of raw CTest and CMake, these are completely separate programs.
-However, the <code class="docutils literal notranslate"><span class="pre">tribits_ctest_driver()</span></code> function will forward subset of
+However, the <code class="docutils literal notranslate"><span class="pre">tribits_ctest_driver()</span></code> function will forward subset a of
 variables documented below into the inner CMake configure.  The following
 variables that are set in the outer CTest -S program will be passed into the
 inner CMake configure by default (but their values they can be overridden by
@@ -13668,7 +13681,7 @@ options listed in <code class="docutils literal notranslate"><span class="pre">E
 <blockquote>
 <div><p>Missing extra repos are always ignored in the inner CMake configure.
 This is because any problems reading an extra repo will be caught in the
-outer CTest -S drivers script.</p>
+outer CTest -S driver script.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">-D${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON</span></code></p>
 <blockquote>
@@ -13684,7 +13697,7 @@ may be disabled.  (This set may be removed in the future for the
 all-at-once mode.)</p>
 </div></blockquote>
 </div></blockquote>
-<p>The following variables set in the CTest -S driver script will be passed
+<p>The following variables set in the outer CTest -S driver script will be passed
 down into the inner CMake configure through the <code class="docutils literal notranslate"><span class="pre">OPTIONS</span></code> variable to the
 <code class="docutils literal notranslate"><span class="pre">ctest_configure()</span></code> command:</p>
 <ul class="simple">
@@ -13740,7 +13753,7 @@ not include any semicolons ‘;’ in these arguments (see below WARNING).</p>
 <p>These configure options are passed into the <code class="docutils literal notranslate"><span class="pre">ctest_configure()</span></code> command in
 the order:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;initial options&gt; ${EXTRA_SYSTEM_CONFIGURE_OPTIONS}} \
-   ${EXTRA_CONFIGURE_OPTIONS} ${${PROJECT_NAME}_EXTRA_CONFIGURE_OPTIONS}
+  ${EXTRA_CONFIGURE_OPTIONS} ${${PROJECT_NAME}_EXTRA_CONFIGURE_OPTIONS}
 </pre></div>
 </div>
 <p><strong>WARNING:</strong> The options listed in <code class="docutils literal notranslate"><span class="pre">EXTRA_SYSTEM_CONFIGURE_OPTIONS</span></code>,
