@@ -124,6 +124,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       ${COMMON_ENV_ARGS}
       TribitsExMetaProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
       CTEST_BUILD_NAME=CTestDriver_TribitsExMetaProj_clone_default_branch_remote
+      TribitsExMetaProj_EXTRA_CONFIGURE_OPTIONS=-DTribitsExMetaProj_SHOW_GIT_COMMIT_PARENTS=ON
       CTEST_SITE=CustomSite
       ${CTEST_S_SCRIPT_ARGS}
     PASS_REGULAR_EXPRESSION_ALL
@@ -262,7 +263,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   TEST_8
     MESSAGE "Make sure that the file TribitsExMetaProjRepoVersion.txt is correct"
     CMND diff ARGS 
-      "${CMAKE_CURRENT_LIST_DIR}/data/TribitsExMetaProjRepoVersion.for-testing.txt"
+      "${CMAKE_CURRENT_LIST_DIR}/data/TribitsExMetaProjRepoVersion.for-testing.with-parents.txt"
       BUILD/TribitsExMetaProjRepoVersion.txt 
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
@@ -320,7 +321,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
   TEST_12
     MESSAGE "Make sure that the file TribitsExMetaProjRepoVersion.txt is correct"
     CMND diff ARGS 
-      "${CMAKE_CURRENT_LIST_DIR}/data/TribitsExMetaProjRepoVersion.for-testing.txt"
+      "${CMAKE_CURRENT_LIST_DIR}/data/TribitsExMetaProjRepoVersion.for-testing.with-parents.txt"
       BUILD/TribitsExMetaProjRepoVersion.txt 
     ALWAYS_FAIL_ON_NONZERO_RETURN
 

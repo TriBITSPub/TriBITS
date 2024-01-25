@@ -376,6 +376,7 @@ See the following use cases:
 * `Enable all packages (and optionally all tests)`_
 * `Disable a package and all its dependencies`_
 * `Remove all package enables in the cache`_
+* `Speed up debugging dependency handling`_
 
 
 Determine the list of packages that can be enabled
@@ -654,6 +655,22 @@ expensive configure time checks (like the standard CMake compiler checks) and
 to preserve other cache variables that you have set and don't want to loose.
 For example, one would want to do this to avoid more expensive compiler and
 TPL checks.
+
+
+Speed up debugging dependency handling
++++++++++++++++++++++++++++++++++++++++
+
+To speed up debugging the package enable/disable dependency handling, set the
+cache variable::
+
+  -D <Project>_TRACE_DEPENDENCY_HANDLING_ONLY=ON
+
+This will result in only performing the package enable/disable dependency
+handling logic and tracing what would be done to configure the compilers and
+configure the various enabled packages but not actually do that work.  This
+can greatly speed up the time to complete the ``cmake`` configure command when
+debugging the dependency handling (or when creating tests that check that
+behavior).
 
 
 Selecting compiler and linker options

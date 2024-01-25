@@ -106,16 +106,16 @@ function(tribits_git_repo_sha1  gitRepoDir  gitRepoSha1Out)
 endfunction()
 
 
-# @FUNCTION: tribits_generate_single_repo_version_string
+# @FUNCTION: tribits_generate_single_repo_version_string()
 #
 # Get the formatted string containing the current git repo version.
 #
 # Usage:
 #
 #   tribits_generate_single_repo_version_string(<gitRepoDir>
-#     <repoVersionStringOut> INCLUDE_PARENT_COMMITS [ON|OFF])
+#     <repoVersionStringOut> [INCLUDE_PARENT_COMMITS ON|OFF])
 #
-# If the optional argument ``INCLUDE_PARENT_COMMITS`` is passed,
+# If the optional argument ``INCLUDE_PARENT_COMMITS <val>`` is passed,
 # then the head commit's parent(s) info will be be included in
 # the repo version output string formatted.
 #
@@ -124,8 +124,8 @@ function(tribits_generate_single_repo_version_string  gitRepoDir
   )
 
   cmake_parse_arguments( PARSE_ARGV 2
-    PARSE "INCLUDE_COMMIT_PARENTS" # prefix, optional
-    "" "" # one_value_keywords, multi_value_keyword
+    PARSE "" # prefix, optional
+    "INCLUDE_COMMIT_PARENTS" "" # one_value_keywords, multi_value_keyword
     )
   tribits_check_for_unparsed_arguments()
   tribits_assert_parse_arg_zero_or_one_value(PARSE INCLUDE_COMMIT_PARENTS)
