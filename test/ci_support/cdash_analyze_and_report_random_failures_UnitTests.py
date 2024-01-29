@@ -49,10 +49,10 @@ from cdash_analyze_and_report_random_failures import *
 from CDashQueryAnalyzeReportUnitTestHelpers import *
 
 # Base test directory in the build tree
-g_baseTestDir = "cdash_analyze_and_report"
+g_baseTestDir = "cdash_analyze_and_report_random_failures"
 
 
-def cdash_analyze_and_report_setup_test_dir(testCaseName):
+def cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName):
     testInputDir = testCiSupportDir + "/" + g_baseTestDir + "/" + testCaseName
     testOutputDir = os.getcwd()
     for f in os.listdir(testInputDir):
@@ -135,7 +135,7 @@ class test_getBuildIdFromTest(unittest.TestCase):
 
 
 class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
-    def cdash_analyze_and_report_run_case(
+    def cdash_analyze_and_report_random_failures_run_case(
         self,
         expectedRtnCode,
         stdoutRegexList,
@@ -189,10 +189,10 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
     def tearDown(self):
         self.test_dir.remove()
 
-    def test(self):
-        cdash_analyze_and_report_setup_test_dir("random")
+    def test_base(self):
+        cdash_analyze_and_report_random_failures_setup_test_dir("random")
 
-        self.cdash_analyze_and_report_run_case(
+        self.cdash_analyze_and_report_random_failures_run_case(
             expectedRtnCode=0,
             stdoutRegexList=[
                 "Number of failing tests from 2018-10-28 to 2018-10-28: 1"
