@@ -98,6 +98,8 @@ def main():
   for nonpassingTest in nonpassingTestsLOD:
     # Remove unique jenkins run ID from build name
     correctedBuildName = nonpassingTest['buildName'].rsplit('-', 1)[0]
+    buildNameMax = 80
+    shortenedBuildName = correctedBuildName[:buildNameMax]
 
     print("\n Getting history from "+dateRangeStart+" to "+dateRangeEnd+" for\n"+\
           "  test name: "+nonpassingTest['testname']+"\n"+\
@@ -110,7 +112,7 @@ def main():
       "&field3=buildname&compare3=63&value3="+correctedBuildName
     testHistoryQueryFilters = dateUrlField+"&"+cdashTestHistoryFilters
 
-    cdashTestHistoryCacheFile = testHistoryCacheDir+"/"+nonpassingTest['testname']+"_"+correctedBuildName+".json"
+    cdashTestHistoryCacheFile = testHistoryCacheDir+"/"+nonpassingTest['testname']+"_"+shortenedBuildName+".json"
     print("\n  Creating file to write test history:\n   "+cdashTestHistoryCacheFile)
 
     cdashTestHistoryQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
