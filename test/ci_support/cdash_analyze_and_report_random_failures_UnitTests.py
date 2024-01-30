@@ -223,6 +223,26 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
             ],
         )
 
+    def test_not_rand_3pass_2fail(self):
+
+        testCaseName = "not_rand_3pass_2fail"
+        cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName)
+
+        self.cdash_analyze_and_report_random_failures_run_case(
+            expectedRtnCode=0,
+            stdoutRegexList=
+            [
+                "\s+Test name: testname1",
+                "\s+Build name: buildname1",
+                "\s+Size of test history: 5",
+
+                "[*][*][*] CDash random failure analysis for ProjectName from 2018-10-28 to 2018-10-28",
+                "Total number of failing tests: 1",
+
+                "Found randomly failing tests: 0",
+            ],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
