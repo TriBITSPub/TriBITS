@@ -154,15 +154,18 @@ def main():
       buildSummaryQueryUrl = CDQAR.getCDashBuildSummaryQueryUrl(cdashSiteUrl, buildId)
       cache = os.path.join(buildSummaryCacheDir, buildId)
       buildConfigOutput = downloadBuildSummaryOffCDash(
-        buildSummaryQueryUrl, verbose=printUrlMode=='all', alwaysUseCacheFileIfExists=True, buildSummaryCacheFile=cache)['configure']['output']
+        buildSummaryQueryUrl, verbose=printUrlMode =='all',
+        alwaysUseCacheFileIfExists=True, buildSummaryCacheFile=cache)['configure']['output']
       nonpassingSha1Pairs.add(getTopicTargetSha1s(buildConfigOutput))
 
     # C.2) Check if passing tests' sha1s exist in nonpassing sha1s set
     for test in passingTestHistoryLOD:
       buildId = getBuildIdFromTest(test)
       buildSummaryQueryUrl = CDQAR.getCDashBuildSummaryQueryUrl(cdashSiteUrl, buildId)
+      cache = os.path.join(buildSummaryCacheDir, buildId)
       buildConfigOutput = downloadBuildSummaryOffCDash(
-        buildSummaryQueryUrl, verbose=printUrlMode=='all')['configure']['output']
+        buildSummaryQueryUrl, verbose=printUrlMode =='all',
+        alwaysUseCacheFileIfExists=True, buildSummaryCacheFile=cache)['configure']['output']
       passingSha1Pair = getTopicTargetSha1s(buildConfigOutput)
 
       if checkIfTestUnstable(passingSha1Pair, nonpassingSha1Pairs):
@@ -183,7 +186,7 @@ def main():
     print("Test name: "+summary.testName)
     print("Build name: "+summary.buildName)
     print("Identical sha1 pairs: "+str(summary.sha1Pair))
-    print("Test history browser URL: \n"+summary.testHistoryUrl)
+    print("Test history browser URL: \n  "+summary.testHistoryUrl)
 
 
 def getCmndLineArgs():
