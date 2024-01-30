@@ -43,28 +43,30 @@ def main():
   args = getCmndLineArgs()
 
   cdashProjectTestingDayStartTime = "00:00"
+  # TODO: This should be moved outside in a project specific
+  # driver script or command line input
   cdashSiteUrl = args.cdash_site_url
   cdashProjectName = args.cdash_project_name
   date = args.reference_date
   groupName = args.group_name
-  # cdashNonpassedTestsFilters = args.cdash_nonpassed_tests_filters
   daysOfHistory = args.days_of_history
   printUrlMode = args.print_url_mode
 
   randomFailureSummaries = []
 
-  cdashNonpassedTestsFilters = \
+  cdashInitialNonpassedTestsFilters = \
     "filtercount=2&showfilters=1&filtercombine=and"+\
     "&field1=status&compare1=63&value1=Failed"+\
     "&field2=groupname&compare2=63&value2=Pull%20Request"
+  # TODO: This cdashNonpassedTestsFilters should be moved outside
+  # and into a project-specific driver script or taken as a
+  # command line input.
 
-  # A) Setup directories and 
+  # A) Set up date range and directories
 
   # Construct date range for queryTests filter string
   referenceDateDT = CDQAR.convertInputDateArgToYYYYMMDD(
-    cdashProjectTestingDayStartTime, date
-  )
-  
+    cdashProjectTestingDayStartTime, date)
   dateRangeStart, dateRangeEnd = getDateRangeTuple(referenceDateDT, daysOfHistory)
   dateUrlField = "begin="+dateRangeStart+"&end="+dateRangeEnd
   
@@ -76,36 +78,41 @@ def main():
   createDirsFromPath(testHistoryCacheDir)
 
   # Construct queryTest.php filter for a date range
-  failingTestQueryFilters = \
-    dateUrlField+"&"+cdashNonpassedTestsFilters
+  initialNonpassingTestQueryFilters = \
+    dateUrlField+"&"+cdashInitialNonpassedTestsFilters
 
   # B.1) Get all failing test result for past daysOfHistory
 
   print("\nGetting list of nonpassing tests from CDash ...")
 
-  cdashNonpassingTestsQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
-    cdashSiteUrl, cdashProjectName, None, failingTestQueryFilters)
+  initialNonpassingTestsQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
+    cdashSiteUrl, cdashProjectName, None, initialNonpassingTestQueryFilters)
 
   if printUrlMode == 'initial' or printUrlMode == 'all':
-    cdashNonpassingTestBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
-      cdashSiteUrl, cdashProjectName, None, failingTestQueryFilters)
+    initialNonpassingTestBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
+      cdashSiteUrl, cdashProjectName, None, initialNonpassingTestQueryFilters)
     print("\nCDash nonpassing tests browser URL:\n\n"+\
-      "  "+cdashNonpassingTestBrowserUrl+"\n")
+      "  "+initialNonpassingTestBrowserUrl+"\n")
     print("\nCDash nonpassing tests query URL:\n\n"+\
-      "  "+cdashNonpassingTestsQueryUrl+"\n")
+      "  "+initialNonpassingTestsQueryUrl+"\n")
 
-  cdashNonpassingTestsQueryJsonCacheFile = \
-    cdashQueriesCacheDir+"/fullCDashNonPassingTests_"+dateRangeStart+"_"+dateRangeEnd+".json"
+  initialNonpassingTestsQueryCacheFile = \
+    cdashQueriesCacheDir+"/initialCDashNonPassingTests_"+dateRangeStart+"_"+dateRangeEnd+".json"
 
   # List of dictionaries containing the cdash results in rows
-  nonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
-    cdashNonpassingTestsQueryUrl, cdashNonpassingTestsQueryJsonCacheFile,\
+  initialNonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
+    initialNonpassingTestsQueryUrl, initialNonpassingTestsQueryCacheFile,\
     alwaysUseCacheFileIfExists=True)
 
   # B.2) Get each nonpassing test's testing history
-  for nonpassingTest in nonpassingTestsLOD:
+  for nonpassingTest in initialNonpassingTestsLOD:
+
     # Remove unique jenkins run ID from build name
     correctedBuildName = nonpassingTest['buildName'].rsplit('-', 1)[0]
+    # NOTE: This is project specific code. As Ross pointed out, buildName
+    # contains a lot of Trilinos specific prefix and suffix that should
+    # be processed by a Strategy class to be more project agnostic.
+
     buildNameMax = 80
     shortenedBuildName = correctedBuildName[:buildNameMax]
 
@@ -118,40 +125,44 @@ def main():
       "&field1=testname&compare1=63&value1="+nonpassingTest['testname']+\
       "&field2=groupname&compare2=63&value2="+groupName+\
       "&field3=buildname&compare3=63&value3="+correctedBuildName
+
     testHistoryQueryFilters = dateUrlField+"&"+cdashTestHistoryFilters
 
     cdashTestHistoryCacheFile = testHistoryCacheDir+"/"+nonpassingTest['testname']+"_"+shortenedBuildName+".json"
     print("\n  Creating file to write test history:\n   "+cdashTestHistoryCacheFile)
 
-    cdashTestHistoryQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
+    testHistoryQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
       cdashSiteUrl, cdashProjectName, None, testHistoryQueryFilters)
-    cdashTestHistoryBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
+    testHistoryBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
       cdashSiteUrl, cdashProjectName, None, testHistoryQueryFilters)
 
     testHistoryLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
-      cdashTestHistoryQueryUrl, cdashTestHistoryCacheFile, alwaysUseCacheFileIfExists=True)
+      testHistoryQueryUrl, cdashTestHistoryCacheFile, alwaysUseCacheFileIfExists=True)
 
     print("\n  Size of test history: "+str(len(testHistoryLOD)))
 
     if printUrlMode == 'all':
       print("\n  CDash test history browser URL for "+nonpassingTest['testname']+" "+\
-        correctedBuildName+":\n\n"+"   "+cdashTestHistoryBrowserUrl)
+        correctedBuildName+":\n\n"+"   "+testHistoryBrowserUrl)
       print("\n  CDash test history query URL for "+nonpassingTest['testname']+" "+\
-        correctedBuildName+":\n\n"+"   "+cdashTestHistoryQueryUrl)
+        correctedBuildName+":\n\n"+"   "+testHistoryQueryUrl)
 
     if len(testHistoryLOD) < 2:
+      print("\n  Size of test history too small for any comparisons, skipping ...\n")
       continue
 
-    # B.2a) Split full testing history to passed and nonpassed lists of dicts
+    # B.3) Split full testing history to passed and nonpassed lists of dicts
     passingTestHistoryLOD = [test for test in testHistoryLOD if test.get("status") == "Passed"]
     nonpassingTestHistoryLOD = [test for test in testHistoryLOD if test.get("status") == "Failed"]
     nonpassingSha1Pairs = set()
 
-    print("\n  Failed tests: "+str(len(nonpassingTestHistoryLOD)))
-    print("\n  Passing tests: "+str(len(passingTestHistoryLOD)))
+    print("\n  Num of passing tests in test history: "+str(len(passingTestHistoryLOD)))
+    print("\n  Num of nonpassing tests in test history: "+str(len(nonpassingTestHistoryLOD)))
 
     buildSummaryCacheDir = cdashQueriesCacheDir+"/build_summary_cache/"+nonpassingTest['testname']+"_"+shortenedBuildName
     createDirsFromPath(buildSummaryCacheDir)
+    # NOTE: There is an argumåent to be made that test histories should get their own directory
+    # instead of build summaries and that build summaries should live inside of there
 
     # C.1) Get all nonpassing tests' sha1s into a set
     for test in nonpassingTestHistoryLOD:
@@ -187,12 +198,12 @@ def main():
 
         randomFailureSummaries.append(
           RandomFailureSummary(test['buildName'], test['testname'],
-            cdashTestHistoryBrowserUrl, passingSha1Pair))
+            testHistoryBrowserUrl, passingSha1Pair))
 
 
   print("\n*** CDash random failure analysis for "+cdashProjectName+" from " +dateRangeStart+" to "+dateRangeEnd)
 
-  print("Total number of initial failing tests: "+str(len(nonpassingTestsLOD))+"\n")
+  print("Total number of initial failing tests: "+str(len(initialNonpassingTestsLOD))+"\n")
 
   print("Found randomly failing tests: "+str(len(randomFailureSummaries)))
   for summary in randomFailureSummaries:
@@ -208,7 +219,6 @@ def getCmndLineArgs():
   parser.add_argument("--cdash-project-name", default="", required=True)
   parser.add_argument("--reference-date", default="yesterday")
   parser.add_argument("--group-name", default="Pull%20Request")
-  # parser.add_argument("--cdash-nonpassed-tests-filters", default="")
   parser.add_argument("--days-of-history", default=1, type=int)
   parser.add_argument("--print-url-mode", choices=['none','initial','all'], default='none')
 

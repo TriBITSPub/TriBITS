@@ -198,7 +198,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
             expectedRtnCode=0,
             stdoutRegexList=[
                 "[*][*][*] CDash random failure analysis for ProjectName from 2018-10-28 to 2018-10-28",
-                "Total number of failing tests: 1"
+                "Total number of initial failing tests: 1"
             ],
         )
 
@@ -212,7 +212,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
             stdoutRegexList=
             [
                 "[*][*][*] CDash random failure analysis for ProjectName from 2018-10-28 to 2018-10-28",
-                "Total number of failing tests: 1",
+                "Total number of initial failing tests: 1",
 
                 "Found randomly failing tests: 1",
                 "Test name: testname1",
@@ -237,7 +237,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "\s+Size of test history: 5",
 
                 "[*][*][*] CDash random failure analysis for ProjectName from 2018-10-28 to 2018-10-28",
-                "Total number of failing tests: 1",
+                "Total number of initial failing tests: 1",
 
                 "Found randomly failing tests: 0",
             ],
