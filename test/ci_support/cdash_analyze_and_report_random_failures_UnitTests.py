@@ -195,7 +195,8 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         self.cdash_analyze_and_report_random_failures_run_case(
             expectedRtnCode=0,
             stdoutRegexList=[
-                "Number of failing tests from 2018-10-28 to 2018-10-28: 1"
+                "[*][*][*] CDash random failure analysis for ProjectName from 2018-10-28 to 2018-10-28",
+                "Total number of failing tests: 1"
             ],
         )
 

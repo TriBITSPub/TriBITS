@@ -28,6 +28,14 @@ TEMPLATEs
 
 """
 
+class RandomFailureSummary:
+
+  def __init__(self, buildName, testName, testHistoryUrl, sha1Pair):
+    self.buildName = buildName
+    self.testName = testName
+    self.testHistoryUrl = testHistoryUrl
+    self.sha1Pair = sha1Pair
+
 
 # The main function
 def main():
@@ -42,6 +50,8 @@ def main():
   # cdashNonpassedTestsFilters = args.cdash_nonpassed_tests_filters
   daysOfHistory = args.days_of_history
   printUrlMode = args.print_url_mode
+
+  randomFailureSummaries = []
 
   cdashNonpassedTestsFilters = \
     "filtercount=2&showfilters=1&filtercombine=and"+\
@@ -117,14 +127,14 @@ def main():
 
     cdashTestHistoryQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
       cdashSiteUrl, cdashProjectName, None, testHistoryQueryFilters)
+    cdashTestHistoryBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
+      cdashSiteUrl, cdashProjectName, None, testHistoryQueryFilters)
 
     testHistoryLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashTestHistoryQueryUrl, cdashTestHistoryCacheFile, alwaysUseCacheFileIfExists=True)
     print("\n  Size of test history: "+str(len(testHistoryLOD)))
 
     if printUrlMode == 'all':
-      cdashTestHistoryBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
-        cdashSiteUrl, cdashProjectName, None, testHistoryQueryFilters)
       print("\n  CDash test history browser URL for "+nonpassingTest['testname']+" "+\
         correctedBuildName+":\n\n"+"   "+cdashTestHistoryBrowserUrl)
       print("\n  CDash test history query URL for "+nonpassingTest['testname']+" "+\
@@ -134,12 +144,12 @@ def main():
       continue
 
     # B.2a) Split full testing history to passed and nonpassed lists of dicts
-    passingTestsInHistoryLOD = [test for test in testHistoryLOD if test.get("status") == "Passed"]
-    nonpassingTestsInHistoryLOD = [test for test in testHistoryLOD if test.get("status") == "Failed"]
+    passingTestHistoryLOD = [test for test in testHistoryLOD if test.get("status") == "Passed"]
+    nonpassingTestHistoryLOD = [test for test in testHistoryLOD if test.get("status") == "Failed"]
     nonpassingSha1Pairs = set()
 
     # C.1) Get all nonpassing tests' sha1s into a set
-    for test in nonpassingTestsInHistoryLOD:
+    for test in nonpassingTestHistoryLOD:
       buildId = getBuildIdFromTest(test)
       buildSummaryQueryUrl = CDQAR.getCDashBuildSummaryQueryUrl(cdashSiteUrl, buildId)
       cache = os.path.join(buildSummaryCacheDir, buildId)
@@ -148,7 +158,7 @@ def main():
       nonpassingSha1Pairs.add(getTopicTargetSha1s(buildConfigOutput))
 
     # C.2) Check if passing tests' sha1s exist in nonpassing sha1s set
-    for test in passingTestsInHistoryLOD:
+    for test in passingTestHistoryLOD:
       buildId = getBuildIdFromTest(test)
       buildSummaryQueryUrl = CDQAR.getCDashBuildSummaryQueryUrl(cdashSiteUrl, buildId)
       buildConfigOutput = downloadBuildSummaryOffCDash(
@@ -158,11 +168,23 @@ def main():
       if checkIfTestUnstable(passingSha1Pair, nonpassingSha1Pairs):
         print("\n  Found passing sha1 pair, " + str(passingSha1Pair)+\
               " in set of nonpassing sha1 pairs: \n"+str(nonpassingSha1Pairs))
-      # Set up list of unstable tests for email here?
+
+        randomFailureSummaries.append(
+          RandomFailureSummary(test['buildName'], test['testname'],
+            cdashTestHistoryBrowserUrl, passingSha1Pair))
 
 
-  print("\nNumber of failing tests from "+dateRangeStart+" to "+dateRangeEnd+": "
-    +str(len(nonpassingTestsLOD)))
+  print("\n*** CDash random failure analysis for "+cdashProjectName+" from " +dateRangeStart+" to "+dateRangeEnd)
+
+  print("Total number of failing tests: "+str(len(nonpassingTestsLOD))+"\n")
+
+  print("Found randomly failing tests: "+str(len(randomFailureSummaries)))
+  for summary in randomFailureSummaries:
+    print("Test name: "+summary.testName)
+    print("Build name: "+summary.buildName)
+    print("Identical sha1 pairs: "+str(summary.sha1Pair))
+    print("Test history browser URL: \n"+summary.testHistoryUrl)
+
 
 def getCmndLineArgs():
   parser = argparse.ArgumentParser("Arguments for cdash_analyze_and_report_random_failures.py")
