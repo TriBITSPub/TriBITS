@@ -200,6 +200,25 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
             ],
         )
 
+    def test_rand_1pass_1fail(self):
+        cdash_analyze_and_report_random_failures_setup_test_dir("rand_1pass_1fail")
+
+        self.cdash_analyze_and_report_random_failures_run_case(
+            expectedRtnCode=0,
+            stdoutRegexList=
+            [
+                "[*][*][*] CDash random failure analysis for ProjectName from 2018-10-28 to 2018-10-28",
+                "Total number of failing tests: 1",
+
+                "Found randomly failing tests: 1",
+                "Test name: testname1",
+                "Build name: build1",
+                "Identical sha1 pairs: \(\'592ea0d5\', \'b07e361c\'\)",
+                "Test history browser URL:",
+                "  https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-10-28&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Pull%20Request&field3=buildname&compare3=63&value3=buildname1"
+            ],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
