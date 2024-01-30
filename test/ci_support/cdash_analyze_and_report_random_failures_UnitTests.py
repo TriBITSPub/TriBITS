@@ -190,7 +190,9 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         self.test_dir.remove()
 
     def test_base(self):
-        cdash_analyze_and_report_random_failures_setup_test_dir("random")
+
+        testCaseName = "random"
+        cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName)
 
         self.cdash_analyze_and_report_random_failures_run_case(
             expectedRtnCode=0,
@@ -201,7 +203,9 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         )
 
     def test_rand_1pass_1fail(self):
-        cdash_analyze_and_report_random_failures_setup_test_dir("rand_1pass_1fail")
+
+        testCaseName = "rand_1pass_1fail"
+        cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName)
 
         self.cdash_analyze_and_report_random_failures_run_case(
             expectedRtnCode=0,

@@ -72,10 +72,8 @@ def main():
 
   cdashQueriesCacheDir = os.getcwd()+"/test_queries_cache"
   testHistoryCacheDir  = cdashQueriesCacheDir+"/test_history_cache"
-  buildSummaryCacheDir = cdashQueriesCacheDir+"/build_summary_cache"
   createDirsFromPath(cdashQueriesCacheDir)
   createDirsFromPath(testHistoryCacheDir)
-  createDirsFromPath(buildSummaryCacheDir)
 
   # Construct queryTest.php filter for a date range
   failingTestQueryFilters = \
@@ -132,6 +130,7 @@ def main():
 
     testHistoryLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
       cdashTestHistoryQueryUrl, cdashTestHistoryCacheFile, alwaysUseCacheFileIfExists=True)
+
     print("\n  Size of test history: "+str(len(testHistoryLOD)))
 
     if printUrlMode == 'all':
@@ -148,24 +147,38 @@ def main():
     nonpassingTestHistoryLOD = [test for test in testHistoryLOD if test.get("status") == "Failed"]
     nonpassingSha1Pairs = set()
 
+    print("\n  Failed tests: "+str(len(nonpassingTestHistoryLOD)))
+    print("\n  Passing tests: "+str(len(passingTestHistoryLOD)))
+
+    buildSummaryCacheDir = cdashQueriesCacheDir+"/build_summary_cache/"+nonpassingTest['testname']+"_"+shortenedBuildName
+    createDirsFromPath(buildSummaryCacheDir)
+
     # C.1) Get all nonpassing tests' sha1s into a set
     for test in nonpassingTestHistoryLOD:
+
       buildId = getBuildIdFromTest(test)
+
+      buildSummaryCacheFile = buildSummaryCacheDir+"/"+buildId
       buildSummaryQueryUrl = CDQAR.getCDashBuildSummaryQueryUrl(cdashSiteUrl, buildId)
-      cache = os.path.join(buildSummaryCacheDir, buildId)
       buildConfigOutput = downloadBuildSummaryOffCDash(
-        buildSummaryQueryUrl, verbose=printUrlMode =='all',
-        alwaysUseCacheFileIfExists=True, buildSummaryCacheFile=cache)['configure']['output']
+        buildSummaryQueryUrl, buildSummaryCacheFile, verbose=printUrlMode =='all',
+        alwaysUseCacheFileIfExists=True)['configure']['output']
+
       nonpassingSha1Pairs.add(getTopicTargetSha1s(buildConfigOutput))
+
+    print("\n  Test history failing sha1s: "+str(nonpassingSha1Pairs))
 
     # C.2) Check if passing tests' sha1s exist in nonpassing sha1s set
     for test in passingTestHistoryLOD:
+
       buildId = getBuildIdFromTest(test)
+
+      buildSummaryCacheFile = buildSummaryCacheDir+"/"+buildId
       buildSummaryQueryUrl = CDQAR.getCDashBuildSummaryQueryUrl(cdashSiteUrl, buildId)
-      cache = os.path.join(buildSummaryCacheDir, buildId)
       buildConfigOutput = downloadBuildSummaryOffCDash(
-        buildSummaryQueryUrl, verbose=printUrlMode =='all',
-        alwaysUseCacheFileIfExists=True, buildSummaryCacheFile=cache)['configure']['output']
+        buildSummaryQueryUrl, buildSummaryCacheFile, verbose=printUrlMode =='all',
+        alwaysUseCacheFileIfExists=True)['configure']['output']
+
       passingSha1Pair = getTopicTargetSha1s(buildConfigOutput)
 
       if checkIfTestUnstable(passingSha1Pair, nonpassingSha1Pairs):
