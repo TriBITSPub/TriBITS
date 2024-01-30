@@ -110,8 +110,8 @@ def main():
     shortenedBuildName = correctedBuildName[:buildNameMax]
 
     print("\n Getting history from "+dateRangeStart+" to "+dateRangeEnd+" for\n"+\
-          "  test name: "+nonpassingTest['testname']+"\n"+\
-          "  build name: "+correctedBuildName)
+          "  Test name: "+nonpassingTest['testname']+"\n"+\
+          "  Build name: "+correctedBuildName)
 
     cdashTestHistoryFilters = \
       "filtercount=3&showfilters=1&filtercombine=and"+\
@@ -192,14 +192,14 @@ def main():
 
   print("\n*** CDash random failure analysis for "+cdashProjectName+" from " +dateRangeStart+" to "+dateRangeEnd)
 
-  print("Total number of failing tests: "+str(len(nonpassingTestsLOD))+"\n")
+  print("Total number of initial failing tests: "+str(len(nonpassingTestsLOD))+"\n")
 
   print("Found randomly failing tests: "+str(len(randomFailureSummaries)))
   for summary in randomFailureSummaries:
     print("Test name: "+summary.testName)
     print("Build name: "+summary.buildName)
     print("Identical sha1 pairs: "+str(summary.sha1Pair))
-    print("Test history browser URL: \n  "+summary.testHistoryUrl)
+    print("Test history browser URL: \n  "+summary.testHistoryUrl+"\n")
 
 
 def getCmndLineArgs():
