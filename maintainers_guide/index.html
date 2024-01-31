@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=cfa5894a"></script>
+        <script src="_static/documentation_options.js?v=b3e595cf"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -460,10 +460,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2024-01-25</p>
+<dd class="field-even"><p>2024-01-31</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3375-g9328b340</p>
+<dd class="field-odd"><p>tribits_start-3378-g2ef9a11d</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -2599,22 +2599,22 @@ same as the parent package being directly enabled and therefore does not
 imply that all of the required subpackages will be enabled, only that the
 parent package will be processed).</p>
 </div></blockquote>
-<p id="package-name-enable-optional-dep-package-name"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}</span></code></p>
+<p id="package-name-enable-upstream-package-name"><code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}</span></code></p>
 <blockquote>
 <div><p>Set to <code class="docutils literal notranslate"><span class="pre">ON</span></code> if support for the optional <a class="reference internal" href="#upstream">upstream</a> dependent package
-<code class="docutils literal notranslate"><span class="pre">${OPTIONAL_DEP_PACKAGE_NAME}</span></code> is enabled in package
-<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code>.  Here <code class="docutils literal notranslate"><span class="pre">${OPTIONAL_DEP_PACKAGE_NAME}</span></code> corresponds to
+<code class="docutils literal notranslate"><span class="pre">${UPSTREAM_PACKAGE_NAME}</span></code> is enabled in package
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code>.  Here <code class="docutils literal notranslate"><span class="pre">${UPSTREAM_PACKAGE_NAME}</span></code> corresponds to
 each optional upstream package listed in the <code class="docutils literal notranslate"><span class="pre">LIB_OPTIONAL_PACKAGES</span></code>
 and <code class="docutils literal notranslate"><span class="pre">TEST_OPTIONAL_PACKAGES</span></code> arguments to the
 <a class="reference internal" href="#tribits-package-define-dependencies">tribits_package_define_dependencies()</a> macro.</p>
 <p><strong>NOTE:</strong> It is important that the CMake code in the package’s
 <code class="docutils literal notranslate"><span class="pre">CMakeLists.txt</span></code> files key off of this variable and <strong>not</strong> the
 project-level variable
-<code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}</span></code> because the
+<code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}</span></code> because the
 package-level variable
-<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}</span></code> can be explicitly
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}</span></code> can be explicitly
 turned off by the user even through the packages <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code> and
-<code class="docutils literal notranslate"><span class="pre">${OPTIONAL_DEP_PACKAGE_NAME}</span></code> are both enabled at the project level!
+<code class="docutils literal notranslate"><span class="pre">${UPSTREAM_PACKAGE_NAME}</span></code> are both enabled at the project level!
 See <a class="reference internal" href="#support-for-optional-package-can-be-explicitly-disabled">Support for optional package can be explicitly disabled</a>.</p>
 <p><strong>NOTE:</strong> This variable will also be set for required dependencies as well
 to allow for uniform processing such as when looping over the items in
@@ -2645,12 +2645,12 @@ are defined in the top-level project scope before a Package’s
 <div><p id="have-package-name-uc-upstream-package-name-uc"><code class="docutils literal notranslate"><span class="pre">HAVE_&lt;PACKAGE_NAME_UC&gt;_&lt;UPSTREAM_PACKAGE_NAME_UC&gt;</span></code></p>
 <blockquote>
 <div><p>Set to <code class="docutils literal notranslate"><span class="pre">ON</span></code> if support for optional upstream package
-<code class="docutils literal notranslate"><span class="pre">${OPTIONAL_DEP_PACKAGE}</span></code> is enabled in downstream package
+<code class="docutils literal notranslate"><span class="pre">${UPSTREAM_PACKAGE_NAME</span></code> is enabled in downstream package
 <code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code>
-(i.e. <a class="reference internal" href="#package-name-enable-optional-dep-package-name">${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}</a> = <code class="docutils literal notranslate"><span class="pre">ON</span></code>) and
-is set to <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> otherwise.  Here, <code class="docutils literal notranslate"><span class="pre">&lt;PACKAGE_NAME_UC&gt;</span></code> and
+(i.e. <a class="reference internal" href="#package-name-enable-upstream-package-name">${PACKAGE_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}</a> = <code class="docutils literal notranslate"><span class="pre">ON</span></code>) and is
+set to <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> otherwise.  Here, <code class="docutils literal notranslate"><span class="pre">&lt;PACKAGE_NAME_UC&gt;</span></code> and
 <code class="docutils literal notranslate"><span class="pre">&lt;UPSTREAM_PACKAGE_NAME_UC&gt;</span></code> are the upper-case names for the packages
-<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code> and <code class="docutils literal notranslate"><span class="pre">${OPTIONAL_DEP_PACKAGE_NAME}</span></code>, respectively.
+<code class="docutils literal notranslate"><span class="pre">${PACKAGE_NAME}</span></code> and <code class="docutils literal notranslate"><span class="pre">${UPSTREAM_PACKAGE_NAME}</span></code>, respectively.
 For example, if optional support for upstream package <code class="docutils literal notranslate"><span class="pre">Triutils</span></code> is
 enabled in downstream package <code class="docutils literal notranslate"><span class="pre">EpetraExt</span></code> in <a class="reference internal" href="#reducedmocktrilinos">ReducedMockTrilinos</a>,
 then <code class="docutils literal notranslate"><span class="pre">EpetraExt_ENABLE_TriUtils=ON</span></code> and <code class="docutils literal notranslate"><span class="pre">HAVE_EPETRAEXT_TRIUTILS=ON</span></code>.
@@ -2665,7 +2665,7 @@ the <code class="docutils literal notranslate"><span class="pre">EpetraExt</span
 </pre></div>
 </div>
 <p>NOTE: TriBITS automatically sets this variable depending on the value of
-<a class="reference internal" href="#package-name-enable-optional-dep-package-name">${PACKAGE_NAME}_ENABLE_${OPTIONAL_DEP_PACKAGE_NAME}</a> during the step
+<a class="reference internal" href="#package-name-enable-upstream-package-name">${PACKAGE_NAME}_ENABLE_${UPSTREAM_PACKAGE_NAME}</a> during the step
 “Adjust package and TPLs enables and disables” in <a class="reference internal" href="#full-processing-of-tribits-project-files">Full Processing of
 TriBITS Project Files</a>.  And tweaking this variable after that must be
 done carefully as described in <a class="reference internal" href="#how-to-tweak-downstream-tribits-enable-variables-during-package-configuration">How to tweak downstream TriBITS “ENABLE”
@@ -15300,9 +15300,9 @@ additional testing of some type.  (Add these to
 <code class="docutils literal notranslate"><span class="pre">TEST_OPTIONAL_PACKAGES</span></code> instead.)</p>
 </div></blockquote>
 </div></blockquote>
-<p>NOTE: The <code class="docutils literal notranslate"><span class="pre">XXX_TPLS</span></code> arguments/lists are <strong>deprecated</strong>.  At the package
-level, there is no distinction between upstream internal and external
-packages (i.e. TPLs) so all upstream package dependencies can (and should)
+<p>NOTE: The above <code class="docutils literal notranslate"><span class="pre">XXX_TPLS</span></code> arguments/lists are <strong>deprecated</strong>.  At the
+package level, there is no distinction between upstream internal and
+external packages/TPLs, so all upstream package dependencies can (and should)
 be listed in the <code class="docutils literal notranslate"><span class="pre">XXX_PACKAGES</span></code> arguments/lists.  (There is no change in
 behavior listing upstream packages in <code class="docutils literal notranslate"><span class="pre">XXX_PACKAGES</span></code> or the <code class="docutils literal notranslate"><span class="pre">XXX_TPLS</span></code>
 arguments/lists.)</p>
@@ -15323,8 +15323,8 @@ dependencies in <code class="docutils literal notranslate"><span class="pre">TES
 <code class="docutils literal notranslate"><span class="pre">LIB_OPTIONAL_PACKAGES</span></code> are implicitly also dependencies in
 <code class="docutils literal notranslate"><span class="pre">TEST_OPTIONAL_PACKAGES</span></code>.</p>
 <p>The upstream dependencies within a single list do not need to be listed in
-any order.  For example if <code class="docutils literal notranslate"><span class="pre">PKG2</span></code> depends on <code class="docutils literal notranslate"><span class="pre">PKG1</span></code>, and this given
-package depends on both, then one can list:</p>
+any particular order.  For example, if <code class="docutils literal notranslate"><span class="pre">PKG2</span></code> depends on <code class="docutils literal notranslate"><span class="pre">PKG1</span></code>, and
+this given package depends on both, then one can list the dependencies as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">LIB_REQUIRED_PACKAGES</span> <span class="n">PKG2</span> <span class="n">PKG1</span>
 </pre></div>
 </div>
