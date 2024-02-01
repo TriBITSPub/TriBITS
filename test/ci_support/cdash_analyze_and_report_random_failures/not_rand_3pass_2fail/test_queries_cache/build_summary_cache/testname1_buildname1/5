@@ -87,10 +87,10 @@
                            "'71d07d7370583c071c3e0fa98cb00b4794be6cb2' into "
                            'develop\n'
                            '    *** Parent 1:\n'
-                           '    592ea0d5 [Mon Jan 15 22:26:29 2024 -0700] <achauph@sandia.gov>\n'
+                           '    bs5_p1 [Mon Jan 15 22:26:29 2024 -0700] <achauph@sandia.gov>\n'
                            '    Cleaned up git log and cmake command argument formatting (#597)\n'
                            '    *** Parent 2:\n'
-                           '    b07e361c [Wed Jan 17 12:33:03 2024 -0700] <achauph@sandia.gov>\n'
+                           '    bs5_p2 [Wed Jan 17 12:33:03 2024 -0700] <achauph@sandia.gov>\n'
                            '    Cleaned up empty lines (#597)\n'
                            ' '
                            '--------------------------------------------------------------------------------\n'
