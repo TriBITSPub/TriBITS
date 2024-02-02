@@ -120,10 +120,12 @@ def main():
           "  Test name: "+nonpassingTest['testname']+"\n"+\
           "  Build name: "+correctedBuildName)
 
+    groupNameNormUrl, = CDQAR.normalizeUrlStrings(groupName)
+
     cdashTestHistoryFilters = \
       "filtercount=3&showfilters=1&filtercombine=and"+\
       "&field1=testname&compare1=63&value1="+nonpassingTest['testname']+\
-      "&field2=groupname&compare2=63&value2="+groupName+\
+      "&field2=groupname&compare2=63&value2="+groupNameNormUrl+\
       "&field3=buildname&compare3=63&value3="+correctedBuildName
 
     testHistoryQueryFilters = dateUrlField+"&"+cdashTestHistoryFilters
@@ -201,7 +203,8 @@ def main():
             testHistoryBrowserUrl, passingSha1Pair))
 
 
-  print("\n*** CDash random failure analysis for "+cdashProjectName+" from " +dateRangeStart+" to "+dateRangeEnd)
+  print("\n*** CDash random failure analysis for " +\
+    cdashProjectName+" "+groupName+" from " +dateRangeStr)
 
   print("Total number of initial failing tests: "+str(len(initialNonpassingTestsLOD))+"\n")
 
@@ -218,7 +221,7 @@ def getCmndLineArgs():
   parser.add_argument("--cdash-site-url", default="", required=True)
   parser.add_argument("--cdash-project-name", default="", required=True)
   parser.add_argument("--reference-date", default="yesterday")
-  parser.add_argument("--group-name", default="Pull%20Request")
+  parser.add_argument("--group-name", default="Pull Request")
   parser.add_argument("--days-of-history", default=1, type=int)
   parser.add_argument("--print-url-mode", choices=['none','initial','all'], default='none')
 
