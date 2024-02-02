@@ -149,7 +149,8 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         cmnd = (
             ciSupportDir
             + "/cdash_analyze_and_report_random_failures.py"
-            + " --cdash-project-name='ProjectName'"
+            + " --cdash-project-name='Project Name'"
+            + " --group-name='Group Name'"
             + " --cdash-site-url='https://something.com/cdash'"
             + " --reference-date=2018-10-28"
             + " "
@@ -197,7 +198,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         self.cdash_analyze_and_report_random_failures_run_case(
             expectedRtnCode=0,
             stdoutRegexList=[
-                "[*][*][*] CDash random failure analysis for ProjectName from 2018-10-28 to 2018-10-28",
+                "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-28 to 2018-10-28",
                 "Total number of initial failing tests: 1"
             ],
         )
@@ -211,7 +212,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
             expectedRtnCode=0,
             stdoutRegexList=
             [
-                "[*][*][*] CDash random failure analysis for ProjectName from 2018-10-28 to 2018-10-28",
+                "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-28 to 2018-10-28",
                 "Total number of initial failing tests: 1",
 
                 "Found randomly failing tests: 1",
@@ -219,7 +220,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "Build name: build1",
                 "Identical sha1 pairs: \(\'592ea0d5\', \'b07e361c\'\)",
                 "Test history browser URL:",
-                "  https://something[.]com/cdash/queryTests[.]php[?]project=ProjectName&begin=2018-10-28&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Pull%20Request&field3=buildname&compare3=63&value3=buildname1"
+                "  https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1",
             ],
         )
 
@@ -236,7 +237,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "\s+Build name: buildname1",
                 "\s+Size of test history: 5",
 
-                "[*][*][*] CDash random failure analysis for ProjectName from 2018-10-28 to 2018-10-28",
+                "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-28 to 2018-10-28",
                 "Total number of initial failing tests: 1",
 
                 "Found randomly failing tests: 0",
