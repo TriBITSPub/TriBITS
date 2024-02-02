@@ -28,13 +28,22 @@ TEMPLATEs
 
 """
 
-class RandomFailureSummary:
+
+class RandomFailureSummary(object):
 
   def __init__(self, buildName, testName, testHistoryUrl, sha1Pair):
     self.buildName = buildName
     self.testName = testName
     self.testHistoryUrl = testHistoryUrl
     self.sha1Pair = sha1Pair
+
+  def __str__(self):
+    myStr = "Test name: "+self.testName +\
+      "\nBuild name: "+self.buildName +\
+      "\nIdentical sha1 pairs: "+str(self.sha1Pair) +\
+      "\nTest history browser URL: " +\
+      "\n  "+self.testHistoryUrl+"\n"
+    return myStr
 
 
 # The main function
@@ -210,10 +219,8 @@ def main():
 
   print("Found randomly failing tests: "+str(len(randomFailureSummaries)))
   for summary in randomFailureSummaries:
-    print("Test name: "+summary.testName)
-    print("Build name: "+summary.buildName)
-    print("Identical sha1 pairs: "+str(summary.sha1Pair))
-    print("Test history browser URL: \n  "+summary.testHistoryUrl+"\n")
+    print(str(summary))
+
 
 
 def getCmndLineArgs():
