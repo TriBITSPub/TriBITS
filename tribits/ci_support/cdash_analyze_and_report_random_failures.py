@@ -237,12 +237,11 @@ def getDateRangeTuple(referenceDateTime, dayTimeDelta):
 
 
 def getTopicTargetSha1s(buildConfigOutput):
-    pattern = r"Parent [12]:\n\s+(\w+)"
-    matchedList = regex.findall(pattern, buildConfigOutput)
+  pattern = r"Parent [12]:\n\s+(\w+)"
+  matchedList = regex.findall(pattern, buildConfigOutput)
 
-    if len(matchedList) != 2: return None
-    return tuple(matchedList)
-
+  if len(matchedList) != 2: return None
+  return tuple(matchedList)
 
 def getBuildIdFromTest(test):
   return test['buildSummaryLink'].split("/")[-1]
