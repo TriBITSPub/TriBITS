@@ -45,6 +45,13 @@ class RandomFailureSummary(object):
       "\n  "+self.testHistoryUrl+"\n"
     return myStr
 
+  def singleSummaryReporter(self, cdashReportData):
+    cdashReportData.htmlEmailBodyTop += \
+      "\n<br>Build name: "+ self.buildName +\
+      "\n<br>Test name: "+ self.testName +\
+      "\n<br>Test history URL: "+ self.testHistoryUrl +\
+      "\n<br>Sha1 Pair : "+ str(self.sha1Pair)
+
 
 # The main function
 def main():
@@ -60,6 +67,9 @@ def main():
   groupName = args.group_name
   daysOfHistory = args.days_of_history
   printUrlMode = args.print_url_mode
+  writeEmailToFile = args.write_email_to_file
+  sendEmailFrom = args.send_email_from
+  sendEmailTo = args.send_email_to
 
   randomFailureSummaries = []
 
@@ -71,13 +81,14 @@ def main():
   # and into a project-specific driver script or taken as a
   # command line input.
 
-  # A) Set up date range and directories
+  # A.1) Set up date range and directories
 
   # Construct date range for queryTests filter string
   referenceDateDT = CDQAR.convertInputDateArgToYYYYMMDD(
     cdashProjectTestingDayStartTime, date)
   dateRangeStart, dateRangeEnd = getDateRangeTuple(referenceDateDT, daysOfHistory)
   dateUrlField = "begin="+dateRangeStart+"&end="+dateRangeEnd
+  dateRangeStr = dateRangeStart+" to "+dateRangeEnd
   
   print("\n dateRangeBeginStr: "+dateRangeStart+" dateRangeEndStr: "+dateRangeEnd)
 
@@ -90,16 +101,27 @@ def main():
   initialNonpassingTestQueryFilters = \
     dateUrlField+"&"+cdashInitialNonpassedTestsFilters
 
+  # A.2) Create starting email body and html string aggregation var
+
+  cdashReportData = CDQAR.CDashReportData()
+
+  cdashReportData.htmlEmailBodyTop += \
+    "<h2>Random test failure scan results for "+cdashProjectName\
+      +" from "+dateRangeStr+"</h2>\n\n"
+
   # B.1) Get all failing test result for past daysOfHistory
+
+  # Beginning of scanned details and links paragraph
+  cdashReportData.htmlEmailBodyTop +="<p>\n"
 
   print("\nGetting list of nonpassing tests from CDash ...")
 
   initialNonpassingTestsQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
     cdashSiteUrl, cdashProjectName, None, initialNonpassingTestQueryFilters)
+  initialNonpassingTestBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
+    cdashSiteUrl, cdashProjectName, None, initialNonpassingTestQueryFilters)
 
   if printUrlMode == 'initial' or printUrlMode == 'all':
-    initialNonpassingTestBrowserUrl = CDQAR.getCDashQueryTestsBrowserUrl(
-      cdashSiteUrl, cdashProjectName, None, initialNonpassingTestQueryFilters)
     print("\nCDash nonpassing tests browser URL:\n\n"+\
       "  "+initialNonpassingTestBrowserUrl+"\n")
     print("\nCDash nonpassing tests query URL:\n\n"+\
@@ -113,6 +135,15 @@ def main():
     initialNonpassingTestsQueryUrl, initialNonpassingTestsQueryCacheFile,\
     alwaysUseCacheFileIfExists=True)
 
+  cdashReportData.htmlEmailBodyTop += \
+    "<a href=\""+initialNonpassingTestBrowserUrl+"\">" +\
+    "Nonpassing tests scanned on CDash</a>=" +\
+    str(len(initialNonpassingTestsLOD))+"<br>\n"
+
+  # Ending of scanned details and links paragraph
+  # and start of scanning summaries and table
+  cdashReportData.htmlEmailBodyTop +="</p>\n\n<p>\n"
+
   # B.2) Get each nonpassing test's testing history
   for nonpassingTest in initialNonpassingTestsLOD:
 
@@ -125,7 +156,7 @@ def main():
     buildNameMax = 80
     shortenedBuildName = correctedBuildName[:buildNameMax]
 
-    print("\n Getting history from "+dateRangeStart+" to "+dateRangeEnd+" for\n"+\
+    print("\n Getting history from "+dateRangeStr+" for\n"+\
           "  Test name: "+nonpassingTest['testname']+"\n"+\
           "  Build name: "+correctedBuildName)
 
@@ -217,9 +248,47 @@ def main():
 
   print("Total number of initial failing tests: "+str(len(initialNonpassingTestsLOD))+"\n")
 
-  print("Found randomly failing tests: "+str(len(randomFailureSummaries)))
+  print("Found random failing tests: "+str(len(randomFailureSummaries))+"\n")
+
+  cdashReportData.htmlEmailBodyTop += \
+    "Found random failing tests: "+str(len(randomFailureSummaries))+"<br>\n"
+
+  if len(randomFailureSummaries) > 0:
+    cdashReportData.globalPass = False
+
+  cdashReportData.summaryLineDataNumbersList.append(
+    "rft="+str(len(randomFailureSummaries)))
+
   for summary in randomFailureSummaries:
     print(str(summary))
+    summary.singleSummaryReporter(cdashReportData)
+
+  summaryLine = CDQAR.getOverallCDashReportSummaryLine(
+    cdashReportData, cdashProjectName+" "+groupName, dateRangeStr)
+  print("\n"+summaryLine)
+
+  # Finish HTML body paragraph
+  cdashReportData.htmlEmailBodyTop += "\n</p>"
+
+  if writeEmailToFile:
+    print("\nWriting HTML to file: "+writeEmailToFile+" ...")
+    defaultPageStyle = CDQAR.getDefaultHtmlPageStyleStr()
+    htmlStr = CDQAR.getFullCDashHtmlReportPageStr(cdashReportData,
+      pageTitle=summaryLine, pageStyle=defaultPageStyle)
+    # print(htmlStr)
+    with open(writeEmailToFile, 'w') as outFile:
+      outFile.write(htmlStr)
+
+  if sendEmailTo:
+    htmlStr = CDQAR.getFullCDashHtmlReportPageStr(cdashReportData,
+    pageStyle=defaultPageStyle)
+    for emailAddress in sendEmailTo.split(','):
+      emailAddress = emailAddress.strip()
+      print("\nSending email to '"+emailAddress+"' ...")
+      msg=CDQAR.createHtmlMimeEmail(
+        sendEmailFrom, emailAddress, summaryLine, "",
+        htmlStr)
+      CDQAR.sendMineEmail(msg)
 
 
 
@@ -231,9 +300,11 @@ def getCmndLineArgs():
   parser.add_argument("--group-name", default="Pull Request")
   parser.add_argument("--days-of-history", default=1, type=int)
   parser.add_argument("--print-url-mode", choices=['none','initial','all'], default='none')
+  parser.add_argument("--write-email-to-file", default="")
+  parser.add_argument("--send-email-to", default="")
+  parser.add_argument("--send-email-from", default="random-failure-script@noreply.org")
 
   return parser.parse_args()
-
 
 
 def getDateRangeTuple(referenceDateTime, dayTimeDelta):
