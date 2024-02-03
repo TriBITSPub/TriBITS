@@ -139,12 +139,16 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         self,
         expectedRtnCode,
         stdoutRegexList,
+        htmlFileRegexList,
         extraCmndLineOptionsList=None,
         verbose=False,
         debugPrint=False,
     ):
         if not extraCmndLineOptionsList:
             extraCmndLineOptionsList = []
+
+        htmlFileName = "htmlFile.html"
+        htmlFileAbsPath = os.getcwd()+"/"+htmlFileName
 
         cmnd = (
             ciSupportDir
@@ -153,6 +157,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
             + " --group-name='Group Name'"
             + " --cdash-site-url='https://something.com/cdash'"
             + " --reference-date=2018-10-28"
+            + " --write-email-to-file="+htmlFileName
             + " "
             + " ".join(extraCmndLineOptionsList)
         )
@@ -175,13 +180,20 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
 
         self.assertEqual(rtnCode, expectedRtnCode, "Failed with stdout: " + stdout)
 
-        assertListOfRegexsFoundInListOfStrs(
-            self,
-            stdoutRegexList,
-            stdout.splitlines(),
-            stdoutFileAbsPath,
-            debugPrint=debugPrint,
-        )
+        # Grep stdout for expected list of strings
+        assertListOfRegexsFoundInListOfStrs(self, stdoutRegexList,
+            stdout.splitlines(), stdoutFileAbsPath, debugPrint=debugPrint)
+
+        # Grep written HTML file for expected strings
+        try:
+            with open(htmlFileName, 'r') as htmlFile:
+                htmlFileStrList = htmlFile.read().split("\n")
+        except Exception:
+            print("WARNING: HTML file not available for this test: "+htmlFileAbsPath)
+
+        assertListOfRegexsFoundInListOfStrs(self, htmlFileRegexList,
+            htmlFileStrList, htmlFileAbsPath, debugPrint=debugPrint)
+
 
     def setUp(self):
         self.test_dir = TemporaryDirectory()
@@ -199,10 +211,29 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
             expectedRtnCode=0,
             stdoutRegexList=[
                 "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-28 to 2018-10-28",
-                "Total number of initial failing tests: 1"
+                "Total number of initial failing tests: 1",
+
+                "PASSED \(rft=0\): Project Name Group Name on 2018-10-28 to 2018-10-28"
             ],
+            htmlFileRegexList=[
+                "<h2>PASSED \(rft=0\): Project Name Group Name on 2018-10-28 to 2018-10-28</h2>",
+
+                "<h2>Random test failure scan results for Project Name from 2018-10-28 to 2018-10-28</h2>",
+
+                "<p>",
+                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&value1=Failed&field2=groupname&compare2=63&value2=Pull%20Request\">Nonpassing tests scanned on CDash</a>=1<br>",
+                "</p>",
+
+                "<p>",
+                "Found random failing tests: 0<br>",
+                "</p>"
+            ]
         )
 
+
+    # Test the random failure case of a single initial test containing
+    # one passing and one failing test in its test history, both with the same SHA1 pairs
+    #
     def test_rand_1pass_1fail(self):
 
         testCaseName = "rand_1pass_1fail"
@@ -210,19 +241,40 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
 
         self.cdash_analyze_and_report_random_failures_run_case(
             expectedRtnCode=0,
-            stdoutRegexList=
-            [
+            stdoutRegexList=[
                 "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-28 to 2018-10-28",
                 "Total number of initial failing tests: 1",
 
-                "Found randomly failing tests: 1",
+                "Found random failing tests: 1",
                 "Test name: testname1",
                 "Build name: build1",
                 "Identical sha1 pairs: \(\'592ea0d5\', \'b07e361c\'\)",
                 "Test history browser URL:",
                 "  https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1",
+
+                "FAILED \(rft=1\): Project Name Group Name on 2018-10-28 to 2018-10-28"
             ],
+            htmlFileRegexList=[
+                "<h2>FAILED \(rft=1\): Project Name Group Name on 2018-10-28 to 2018-10-28</h2>",
+
+                "<h2>Random test failure scan results for Project Name from 2018-10-28 to 2018-10-28</h2>",
+
+                "<p>",
+                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&value1=Failed&field2=groupname&compare2=63&value2=Pull%20Request\">Nonpassing tests scanned on CDash</a>=1<br>",
+                "</p",
+
+                "<p>",
+                "Found random failing tests: 1<br>",
+                "<br>Build name: build1",
+                "<br>Test name: testname1",
+                "<br>Test history URL: https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1",
+                "<br>Sha1 Pair : \('592ea0d5', 'b07e361c'\)",
+                "</p>"
+            ],
+            extraCmndLineOptionsList=[
+            ]
         )
+    # TODO: Remove the current "random" test case as this should be the base case
 
     def test_not_rand_3pass_2fail(self):
 
@@ -231,8 +283,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
 
         self.cdash_analyze_and_report_random_failures_run_case(
             expectedRtnCode=0,
-            stdoutRegexList=
-            [
+            stdoutRegexList=[
                 "\s+Test name: testname1",
                 "\s+Build name: buildname1",
                 "\s+Size of test history: 5",
@@ -240,8 +291,23 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-28 to 2018-10-28",
                 "Total number of initial failing tests: 1",
 
-                "Found randomly failing tests: 0",
+                "Found random failing tests: 0",
+
+                "PASSED \(rft=0\): Project Name Group Name on 2018-10-28 to 2018-10-28"
             ],
+            htmlFileRegexList=[
+                "<h2>PASSED \(rft=0\): Project Name Group Name on 2018-10-28 to 2018-10-28</h2>",
+
+                "<h2>Random test failure scan results for Project Name from 2018-10-28 to 2018-10-28</h2>",
+
+                "<p>",
+                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&value1=Failed&field2=groupname&compare2=63&value2=Pull%20Request\">Nonpassing tests scanned on CDash</a>=1<br>",
+                "</p>",
+
+                "<p>",
+                "Found random failing tests: 0<br>",
+                "</p>"
+            ]
         )
 
 
