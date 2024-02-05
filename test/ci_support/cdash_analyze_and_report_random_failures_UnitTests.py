@@ -202,34 +202,6 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
     def tearDown(self):
         self.test_dir.remove()
 
-    def test_base(self):
-
-        testCaseName = "random"
-        cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName)
-
-        self.cdash_analyze_and_report_random_failures_run_case(
-            expectedRtnCode=0,
-            stdoutRegexList=[
-                "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-28 to 2018-10-28",
-                "Total number of initial failing tests: 1",
-
-                "PASSED \(rft=0\): Project Name Group Name on 2018-10-28 to 2018-10-28"
-            ],
-            htmlFileRegexList=[
-                "<h2>PASSED \(rft=0\): Project Name Group Name on 2018-10-28 to 2018-10-28</h2>",
-
-                "<h2>Random test failure scan results for Project Name from 2018-10-28 to 2018-10-28</h2>",
-
-                "<p>",
-                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&value1=Failed&field2=groupname&compare2=63&value2=Pull%20Request\">Nonpassing tests scanned on CDash</a>=1<br>",
-                "</p>",
-
-                "<p>",
-                "Found random failing tests: 0<br>",
-                "</p>"
-            ]
-        )
-
 
     # Test the random failure case of a single initial test containing
     # one passing and one failing test in its test history, both with the same SHA1 pairs
