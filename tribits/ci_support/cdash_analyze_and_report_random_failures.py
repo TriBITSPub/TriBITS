@@ -256,8 +256,14 @@ def main():
   if len(randomFailureSummaries) > 0:
     cdashReportData.globalPass = False
 
+  # Add number of random failing tests 'rft' found to summary data list
   cdashReportData.summaryLineDataNumbersList.append(
     "rft="+str(len(randomFailureSummaries)))
+
+  # Add number of initial failing tests 'ift' scanned to summary
+  # data list
+  cdashReportData.summaryLineDataNumbersList.append(
+    "ift="+str(len(initialNonpassingTestsLOD)))
 
   for summary in randomFailureSummaries:
     print(str(summary))
