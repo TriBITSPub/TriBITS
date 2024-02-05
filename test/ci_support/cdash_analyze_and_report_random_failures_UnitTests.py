@@ -248,9 +248,9 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         )
     # TODO: Remove the current "random" test case as this should be the base case
 
-    def test_rft_0_ift_1(self):
+    def test_rft_0_ift_2(self):
 
-        testCaseName = "rft_0_ift_1"
+        testCaseName = "rft_0_ift_2"
         cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName)
 
         self.cdash_analyze_and_report_random_failures_run_case(
@@ -260,25 +260,28 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "\s+Build name: buildname1",
                 "\s+Size of test history: 5",
 
-                "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-28 to 2018-10-28",
-                "Total number of initial failing tests: 1",
+                "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-26 to 2018-10-28",
+                "Total number of initial failing tests: 2",
 
                 "Found random failing tests: 0",
 
-                "PASSED \(rft=0, ift=1\): Project Name Group Name on 2018-10-28 to 2018-10-28"
+                "PASSED \(rft=0, ift=2\): Project Name Group Name on 2018-10-26 to 2018-10-28"
             ],
             htmlFileRegexList=[
-                "<h2>PASSED \(rft=0, ift=1\): Project Name Group Name on 2018-10-28 to 2018-10-28</h2>",
+                "<h2>PASSED \(rft=0, ift=2\): Project Name Group Name on 2018-10-26 to 2018-10-28</h2>",
 
-                "<h2>Random test failure scan results for Project Name from 2018-10-28 to 2018-10-28</h2>",
+                "<h2>Random test failure scan results for Project Name from 2018-10-26 to 2018-10-28</h2>",
 
                 "<p>",
-                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&value1=Failed&field2=groupname&compare2=63&value2=Pull%20Request\">Nonpassing tests scanned on CDash</a>=1<br>",
+                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&value1=Failed&field2=groupname&compare2=63&value2=Pull%20Request\">Nonpassing tests scanned on CDash</a>=2<br>",
                 "</p>",
 
                 "<p>",
                 "Found random failing tests: 0<br>",
                 "</p>"
+            ],
+            extraCmndLineOptionsList=[
+                "--days-of-history=3"
             ]
         )
 
