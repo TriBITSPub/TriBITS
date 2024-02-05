@@ -234,9 +234,9 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
     # Test the random failure case of a single initial test containing
     # one passing and one failing test in its test history, both with the same SHA1 pairs
     #
-    def test_rand_1pass_1fail(self):
+    def test_rft_1_ift_1(self):
 
-        testCaseName = "rand_1pass_1fail"
+        testCaseName = "rft_1_ift_1"
         cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName)
 
         self.cdash_analyze_and_report_random_failures_run_case(
@@ -252,10 +252,10 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "Test history browser URL:",
                 "  https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1",
 
-                "FAILED \(rft=1\): Project Name Group Name on 2018-10-28 to 2018-10-28"
+                "FAILED \(rft=1, ift=1\): Project Name Group Name on 2018-10-28 to 2018-10-28"
             ],
             htmlFileRegexList=[
-                "<h2>FAILED \(rft=1\): Project Name Group Name on 2018-10-28 to 2018-10-28</h2>",
+                "<h2>FAILED \(rft=1, ift=1\): Project Name Group Name on 2018-10-28 to 2018-10-28</h2>",
 
                 "<h2>Random test failure scan results for Project Name from 2018-10-28 to 2018-10-28</h2>",
 
@@ -276,9 +276,9 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         )
     # TODO: Remove the current "random" test case as this should be the base case
 
-    def test_not_rand_3pass_2fail(self):
+    def test_rft_0_ift_1(self):
 
-        testCaseName = "not_rand_3pass_2fail"
+        testCaseName = "rft_0_ift_1"
         cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName)
 
         self.cdash_analyze_and_report_random_failures_run_case(
@@ -293,10 +293,10 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
 
                 "Found random failing tests: 0",
 
-                "PASSED \(rft=0\): Project Name Group Name on 2018-10-28 to 2018-10-28"
+                "PASSED \(rft=0, ift=1\): Project Name Group Name on 2018-10-28 to 2018-10-28"
             ],
             htmlFileRegexList=[
-                "<h2>PASSED \(rft=0\): Project Name Group Name on 2018-10-28 to 2018-10-28</h2>",
+                "<h2>PASSED \(rft=0, ift=1\): Project Name Group Name on 2018-10-28 to 2018-10-28</h2>",
 
                 "<h2>Random test failure scan results for Project Name from 2018-10-28 to 2018-10-28</h2>",
 
