@@ -63,6 +63,7 @@ def main():
   # driver script or command line input
   cdashSiteUrl = args.cdash_site_url
   cdashProjectName = args.cdash_project_name
+  cdashInitialNonpassingTestFilters = args.initial_nonpassing_test_filters
   date = args.reference_date
   groupName = args.group_name
   daysOfHistory = args.days_of_history
@@ -72,14 +73,6 @@ def main():
   sendEmailTo = args.send_email_to
 
   randomFailureSummaries = []
-
-  cdashInitialNonpassedTestsFilters = \
-    "filtercount=2&showfilters=1&filtercombine=and"+\
-    "&field1=status&compare1=63&value1=Failed"+\
-    "&field2=groupname&compare2=63&value2=Pull%20Request"
-  # TODO: This cdashNonpassedTestsFilters should be moved outside
-  # and into a project-specific driver script or taken as a
-  # command line input.
 
   # A.1) Set up date range and directories
 
@@ -99,7 +92,7 @@ def main():
 
   # Construct queryTest.php filter for a date range
   initialNonpassingTestQueryFilters = \
-    dateUrlField+"&"+cdashInitialNonpassedTestsFilters
+    dateUrlField+"&"+cdashInitialNonpassingTestFilters
 
   # A.2) Create starting email body and html string aggregation var
 
@@ -302,6 +295,7 @@ def getCmndLineArgs():
   parser = argparse.ArgumentParser("Arguments for cdash_analyze_and_report_random_failures.py")
   parser.add_argument("--cdash-site-url", default="", required=True)
   parser.add_argument("--cdash-project-name", default="", required=True)
+  parser.add_argument("--initial-nonpassing-test-filters", default="", required=True)
   parser.add_argument("--reference-date", default="yesterday")
   parser.add_argument("--group-name", default="Pull Request")
   parser.add_argument("--days-of-history", default=1, type=int)
