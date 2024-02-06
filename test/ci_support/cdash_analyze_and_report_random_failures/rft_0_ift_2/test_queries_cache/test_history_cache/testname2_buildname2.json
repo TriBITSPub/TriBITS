@@ -1,5 +1,5 @@
 { u'bugtracker': u'https://github.com/trilinos/Trilinos/issues',
-  u'builds': [ { u'buildName': u'build1',
+  u'builds': [ { u'buildName': u'build2',
                  u'buildSummaryLink': u'build/1',
                  u'buildstarttime': u'2018-10-26T05:56:22 UTC',
                  u'details': u'Completed\n',
@@ -12,10 +12,10 @@
                  u'status': u'Passed',
                  u'statusclass': u'error',
                  u'testDetailsLink': u'testDetails.php?test=57860629&build=1',
-                 u'testname': u'testname1',
+                 u'testname': u'testname2',
                  u'time': 10.72
                  },
-                 { u'buildName': u'build1',
+                 { u'buildName': u'build2',
                  u'buildSummaryLink': u'build/2',
                  u'buildstarttime': u'2018-10-26T05:56:22 UTC',
                  u'details': u'Completed (Failed)\n',
@@ -28,10 +28,10 @@
                  u'status': u'Failed',
                  u'statusclass': u'error',
                  u'testDetailsLink': u'testDetails.php?test=57860629&build=2',
-                 u'testname': u'testname1',
+                 u'testname': u'testname2',
                  u'time': 10.72
                  },
-                 { u'buildName': u'build1',
+                 { u'buildName': u'build2',
                  u'buildSummaryLink': u'build/3',
                  u'buildstarttime': u'2018-10-26T05:56:22 UTC',
                  u'details': u'Completed (Failed)\n',
@@ -43,8 +43,8 @@
                  u'siteLink': u'viewSite.php?siteid=223',
                  u'status': u'Failed',
                  u'statusclass': u'error',
-                 u'testDetailsLink': u'testDetails.php?test=57860629&build=2',
-                 u'testname': u'testname1',
+                 u'testDetailsLink': u'testDetails.php?test=57860629&build=3',
+                 u'testname': u'testname2',
                  u'time': 10.72
                  }
                 ],

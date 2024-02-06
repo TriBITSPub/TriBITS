@@ -43,7 +43,7 @@
                  u'siteLink': u'viewSite.php?siteid=223',
                  u'status': u'Failed',
                  u'statusclass': u'error',
-                 u'testDetailsLink': u'testDetails.php?test=57860629&build=2',
+                 u'testDetailsLink': u'testDetails.php?test=57860629&build=3',
                  u'testname': u'testname1',
                  u'time': 10.72
                  },
@@ -59,7 +59,7 @@
                  u'siteLink': u'viewSite.php?siteid=223',
                  u'status': u'Passed',
                  u'statusclass': u'error',
-                 u'testDetailsLink': u'testDetails.php?test=57860629&build=2',
+                 u'testDetailsLink': u'testDetails.php?test=57860629&build=4',
                  u'testname': u'testname1',
                  u'time': 10.72
                  },
@@ -75,7 +75,7 @@
                  u'siteLink': u'viewSite.php?siteid=223',
                  u'status': u'Passed',
                  u'statusclass': u'error',
-                 u'testDetailsLink': u'testDetails.php?test=57860629&build=2',
+                 u'testDetailsLink': u'testDetails.php?test=57860629&build=5',
                  u'testname': u'testname1',
                  u'time': 10.72
                  }
