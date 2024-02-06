@@ -206,44 +206,45 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
     # Test the random failure case of a single initial test containing
     # one passing and one failing test in its test history, both with the same SHA1 pairs
     #
-    def test_rft_1_ift_1(self):
+    def test_rft_1_ift_2(self):
 
-        testCaseName = "rft_1_ift_1"
+        testCaseName = "rft_1_ift_2"
         cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName)
 
         self.cdash_analyze_and_report_random_failures_run_case(
             expectedRtnCode=0,
             stdoutRegexList=[
-                "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-28 to 2018-10-28",
-                "Total number of initial failing tests: 1",
+                "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-26 to 2018-10-28",
+                "Total number of initial failing tests: 2",
 
                 "Found random failing tests: 1",
                 "Test name: testname1",
                 "Build name: build1",
                 "Identical sha1 pairs: \(\'592ea0d5\', \'b07e361c\'\)",
                 "Test history browser URL:",
-                "  https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1",
+                "  https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1",
 
-                "FAILED \(rft=1, ift=1\): Project Name Group Name on 2018-10-28 to 2018-10-28"
+                "FAILED \(rft=1, ift=2\): Project Name Group Name on 2018-10-26 to 2018-10-28"
             ],
             htmlFileRegexList=[
-                "<h2>FAILED \(rft=1, ift=1\): Project Name Group Name on 2018-10-28 to 2018-10-28</h2>",
+                "<h2>FAILED \(rft=1, ift=2\): Project Name Group Name on 2018-10-26 to 2018-10-28</h2>",
 
-                "<h2>Random test failure scan results for Project Name from 2018-10-28 to 2018-10-28</h2>",
+                "<h2>Random test failure scan results for Project Name from 2018-10-26 to 2018-10-28</h2>",
 
                 "<p>",
-                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&value1=Failed&field2=groupname&compare2=63&value2=Pull%20Request\">Nonpassing tests scanned on CDash</a>=1<br>",
+                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&value1=Failed&field2=groupname&compare2=63&value2=Pull%20Request\">Nonpassing tests scanned on CDash</a>=2<br>",
                 "</p",
 
                 "<p>",
                 "Found random failing tests: 1<br>",
                 "<br>Build name: build1",
                 "<br>Test name: testname1",
-                "<br>Test history URL: https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-28&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1",
+                "<br>Test history URL: https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1",
                 "<br>Sha1 Pair : \('592ea0d5', 'b07e361c'\)",
                 "</p>"
             ],
             extraCmndLineOptionsList=[
+                "--days-of-history=3"
             ]
         )
     # TODO: Remove the current "random" test case as this should be the base case
