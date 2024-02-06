@@ -155,6 +155,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
             + "/cdash_analyze_and_report_random_failures.py"
             + " --cdash-project-name='Project Name'"
             + " --group-name='Group Name'"
+            + " --initial-nonpassing-test-filters='initial_nonpassing_test_filters'"
             + " --cdash-site-url='https://something.com/cdash'"
             + " --reference-date=2018-10-28"
             + " --write-email-to-file="+htmlFileName
@@ -232,7 +233,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "<h2>Random test failure scan results for Project Name from 2018-10-26 to 2018-10-28</h2>",
 
                 "<p>",
-                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&value1=Failed&field2=groupname&compare2=63&value2=Pull%20Request\">Nonpassing tests scanned on CDash</a>=2<br>",
+                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&initial_nonpassing_test_filters\">Nonpassing tests scanned on CDash</a>=2<br>",
                 "</p",
 
                 "<p>",
@@ -270,7 +271,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "<h2>Random test failure scan results for Project Name from 2018-10-26 to 2018-10-28</h2>",
 
                 "<p>",
-                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&value1=Failed&field2=groupname&compare2=63&value2=Pull%20Request\">Nonpassing tests scanned on CDash</a>=2<br>",
+                "<a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&initial_nonpassing_test_filters\">Nonpassing tests scanned on CDash</a>=2<br>",
                 "</p>",
 
                 "<p>",
