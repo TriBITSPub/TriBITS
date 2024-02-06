@@ -262,9 +262,10 @@ def main():
   # Finish HTML body paragraph
   cdashReportData.htmlEmailBodyTop += "\n</p>"
 
+  defaultPageStyle = CDQAR.getDefaultHtmlPageStyleStr()
+
   if writeEmailToFile:
     print("\nWriting HTML to file: "+writeEmailToFile+" ...")
-    defaultPageStyle = CDQAR.getDefaultHtmlPageStyleStr()
     htmlStr = CDQAR.getFullCDashHtmlReportPageStr(cdashReportData,
       pageTitle=summaryLine, pageStyle=defaultPageStyle)
     # print(htmlStr)
@@ -278,8 +279,7 @@ def main():
       emailAddress = emailAddress.strip()
       print("\nSending email to '"+emailAddress+"' ...")
       msg=CDQAR.createHtmlMimeEmail(
-        sendEmailFrom, emailAddress, summaryLine, "",
-        htmlStr)
+        sendEmailFrom, emailAddress, summaryLine, "", htmlStr)
       CDQAR.sendMineEmail(msg)
 
 
