@@ -82,8 +82,6 @@ def main():
   dateRangeStart, dateRangeEnd = getDateRangeTuple(referenceDateDT, daysOfHistory)
   dateUrlField = "begin="+dateRangeStart+"&end="+dateRangeEnd
   dateRangeStr = dateRangeStart+" to "+dateRangeEnd
-  
-  print("\n dateRangeBeginStr: "+dateRangeStart+" dateRangeEndStr: "+dateRangeEnd)
 
   cdashQueriesCacheDir = os.getcwd()+"/test_queries_cache"
   testHistoryCacheDir  = cdashQueriesCacheDir+"/test_history_cache"
@@ -107,7 +105,7 @@ def main():
   # Beginning of scanned details and links paragraph
   cdashReportData.htmlEmailBodyTop +="<p>\n"
 
-  print("\nGetting list of nonpassing tests from CDash ...")
+  print("\nGetting list of initial nonpassing tests from CDash from "+dateRangeStr)
 
   initialNonpassingTestsQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
     cdashSiteUrl, cdashProjectName, None, initialNonpassingTestQueryFilters)
@@ -288,7 +286,6 @@ def main():
         sendEmailFrom, emailAddress, summaryLine, "",
         htmlStr)
       CDQAR.sendMineEmail(msg)
-
 
 
 def getCmndLineArgs():
