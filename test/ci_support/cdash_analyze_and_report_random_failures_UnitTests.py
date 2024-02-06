@@ -207,7 +207,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
     # Test the random failure case of a single initial test containing
     # one passing and one failing test in its test history, both with the same SHA1 pairs
     #
-    def test_rft_1_ift_2(self):
+    def test_random_failure(self):
 
         testCaseName = "rft_1_ift_2"
         cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName)
@@ -248,9 +248,9 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "--days-of-history=3"
             ]
         )
-    # TODO: Remove the current "random" test case as this should be the base case
 
-    def test_rft_0_ift_2(self):
+
+    def test_no_random_failure(self):
 
         testCaseName = "rft_0_ift_2"
         cdash_analyze_and_report_random_failures_setup_test_dir(testCaseName)
