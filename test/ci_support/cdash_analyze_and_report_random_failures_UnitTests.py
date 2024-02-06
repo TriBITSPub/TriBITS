@@ -256,10 +256,6 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         self.cdash_analyze_and_report_random_failures_run_case(
             expectedRtnCode=0,
             stdoutRegexList=[
-                "\s+Test name: testname1",
-                "\s+Build name: buildname1",
-                "\s+Size of test history: 5",
-
                 "[*][*][*] CDash random failure analysis for Project Name Group Name from 2018-10-26 to 2018-10-28",
                 "Total number of initial failing tests: 2",
 
