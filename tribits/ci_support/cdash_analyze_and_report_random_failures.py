@@ -55,7 +55,7 @@ def main():
   # driver script or command line input
   cdashSiteUrl = args.cdash_site_url
   cdashProjectName = args.cdash_project_name
-  cdashInitialNonpassingTestFilters = args.initial_nonpassing_test_filters
+  initialNonpassingTestFilters = args.initial_nonpassing_test_filters
   date = args.reference_date
   groupName = args.group_name
   daysOfHistory = args.days_of_history
@@ -75,14 +75,14 @@ def main():
   dateUrlField = "begin="+dateRangeStart+"&end="+dateRangeEnd
   dateRangeStr = dateRangeStart+" to "+dateRangeEnd
 
-  cdashQueriesCacheDir = os.getcwd()+"/test_queries_cache"
-  testHistoryCacheDir  = cdashQueriesCacheDir+"/test_history_cache"
-  createDirsFromPath(cdashQueriesCacheDir)
+  testQueriesCacheDir = os.getcwd()+"/test_queries_cache"
+  testHistoryCacheDir  = testQueriesCacheDir+"/test_history_cache"
+  createDirsFromPath(testQueriesCacheDir)
   createDirsFromPath(testHistoryCacheDir)
 
   # Construct queryTest.php filter for a date range
   initialNonpassingTestQueryFilters = \
-    dateUrlField+"&"+cdashInitialNonpassingTestFilters
+    dateUrlField+"&"+initialNonpassingTestFilters
 
   # A.2) Create starting email body and html string aggregation var
 
@@ -110,8 +110,8 @@ def main():
     print("\nCDash nonpassing tests query URL:\n\n"+\
       "  "+initialNonpassingTestsQueryUrl+"\n")
 
-  initialNonpassingTestsQueryCacheFile = \
-    cdashQueriesCacheDir+"/initialCDashNonPassingTests_"+dateRangeStart+"_"+dateRangeEnd+".json"
+  initialNonpassingTestsQueryCacheFile = testQueriesCacheDir +\
+    "/initialCDashNonPassingTests_"+dateRangeStart+"_"+dateRangeEnd+".json"
 
   # List of dictionaries containing the cdash results in rows
   initialNonpassingTestsLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
@@ -145,16 +145,18 @@ def main():
 
     groupNameNormUrl, = CDQAR.normalizeUrlStrings(groupName)
 
-    cdashTestHistoryFilters = \
+    testHistoryFilters = \
       "filtercount=3&showfilters=1&filtercombine=and"+\
       "&field1=testname&compare1=63&value1="+nonpassingTest['testname']+\
       "&field2=groupname&compare2=63&value2="+groupNameNormUrl+\
       "&field3=buildname&compare3=63&value3="+correctedBuildName
 
-    testHistoryQueryFilters = dateUrlField+"&"+cdashTestHistoryFilters
+    testHistoryQueryFilters = dateUrlField+"&"+testHistoryFilters
 
-    cdashTestHistoryCacheFile = testHistoryCacheDir+"/"+nonpassingTest['testname']+"_"+shortenedBuildName+".json"
-    print("\n  Creating file to write test history:\n   "+cdashTestHistoryCacheFile)
+    testHistoryCacheFile = testHistoryCacheDir+"/" +\
+      nonpassingTest['testname']+"_"+shortenedBuildName+".json"
+
+    print("\n  Creating file to write test history:\n   "+testHistoryCacheFile)
 
     testHistoryQueryUrl = CDQAR.getCDashQueryTestsQueryUrl(
       cdashSiteUrl, cdashProjectName, None, testHistoryQueryFilters)
@@ -162,7 +164,7 @@ def main():
       cdashSiteUrl, cdashProjectName, None, testHistoryQueryFilters)
 
     testHistoryLOD = CDQAR.downloadTestsOffCDashQueryTestsAndFlatten(
-      testHistoryQueryUrl, cdashTestHistoryCacheFile, alwaysUseCacheFileIfExists=True)
+      testHistoryQueryUrl, testHistoryCacheFile, alwaysUseCacheFileIfExists=True)
 
     print("\n  Size of test history: "+str(len(testHistoryLOD)))
 
@@ -184,9 +186,10 @@ def main():
     print("\n  Num of passing tests in test history: "+str(len(passingTestHistoryLOD)))
     print("\n  Num of nonpassing tests in test history: "+str(len(nonpassingTestHistoryLOD)))
 
-    buildSummaryCacheDir = cdashQueriesCacheDir+"/build_summary_cache/"+nonpassingTest['testname']+"_"+shortenedBuildName
+    buildSummaryCacheDir = testQueriesCacheDir+"/build_summary_cache/" +\
+      nonpassingTest['testname']+"_"+shortenedBuildName
     createDirsFromPath(buildSummaryCacheDir)
-    # NOTE: There is an argumåent to be made that test histories should get their own directory
+    # NOTE: There is an argument to be made that test histories should get their own directory
     # instead of build summaries and that build summaries should live inside of there
 
     # C.1) Get all nonpassing tests' sha1s into a set
