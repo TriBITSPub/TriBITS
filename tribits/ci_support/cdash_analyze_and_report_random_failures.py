@@ -10,17 +10,9 @@ import re as regex
 # Implementation code
 #
 
-# Find the implementation
-tribitsDir = os.environ.get("TRIBITS_DIR", "")
-if tribitsDir:
-  sys.path = [os.path.join(tribitsDir, "ci_support")] + sys.path
-else:
-  raise Exception("ERROR, TRIBITS_DIR must be set in the env to 'tribits' base dir!")
-
-import CreateIssueTrackerFromCDashQuery as CITFCQ
+from FindGeneralScriptSupport import *
 import CDashQueryAnalyzeReport as CDQAR
 import cdash_build_testing_date as CBTD
-from FindGeneralScriptSupport import *
 
 usageHelp = \
 r"""
