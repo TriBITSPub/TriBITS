@@ -174,8 +174,7 @@ class CDashAnalyzeReportRandomFailuresDriver:
           alwaysUseCacheFileIfExists=True)['configure']['output']
 
         nonpassingSha1Pairs.add(
-          self.versionInfoStrategy.getTopicTargetSha1s(buildConfigOutput))
-        # nonpassingSha1Pairs.add(getTopicTargetSha1s(buildConfigOutput))
+          self.versionInfoStrategy.getTargetTopicSha1s(buildConfigOutput))
 
       print("\n  Test history failing sha1s: "+str(nonpassingSha1Pairs))
 
@@ -191,7 +190,7 @@ class CDashAnalyzeReportRandomFailuresDriver:
           alwaysUseCacheFileIfExists=True)['configure']['output']
 
         passingSha1Pair = \
-          self.versionInfoStrategy.getTopicTargetSha1s(buildConfigOutput)
+          self.versionInfoStrategy.getTargetTopicSha1s(buildConfigOutput)
 
         if self.versionInfoStrategy.checkTargetTopicRandomFailure(passingSha1Pair, nonpassingSha1Pairs):
           print("\n  Found passing sha1 pair, " + str(passingSha1Pair)+\

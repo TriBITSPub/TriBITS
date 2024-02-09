@@ -18,7 +18,7 @@ def main():
 
 class ExampleVersionInfoStrategy:
 
-  def getTopicTargetSha1s(self, buildData):
+  def getTargetTopicSha1s(self, buildData):
     pattern = r"Parent [12]:\n\s+(\w+)"
     matchedList = regex.findall(pattern, buildData)
 
