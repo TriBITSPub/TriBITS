@@ -4,6 +4,7 @@ import sys
 import argparse
 import re as regex
 
+from FindCISupportDir import *
 import CDashAnalyzeReportRandomFailures as CDARRF
 
 

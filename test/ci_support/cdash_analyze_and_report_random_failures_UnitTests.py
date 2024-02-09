@@ -151,7 +151,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         htmlFileAbsPath = os.getcwd()+"/"+htmlFileName
 
         cmnd = (
-            ciSupportDir
+            testCiSupportDir
             + "/example_cdash_analyze_and_report_random_failures.py"
             + " --cdash-project-name='Project Name'"
             + " --group-name='Group Name'"
