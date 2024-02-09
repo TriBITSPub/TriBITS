@@ -152,7 +152,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
 
         cmnd = (
             ciSupportDir
-            + "/cdash_analyze_and_report_random_failures.py"
+            + "/example_cdash_analyze_and_report_random_failures.py"
             + " --cdash-project-name='Project Name'"
             + " --group-name='Group Name'"
             + " --initial-nonpassing-test-filters='initial_nonpassing_test_filters'"
