@@ -18,11 +18,15 @@ def main():
 
 class ExampleVersionInfoStrategy:
 
-  def getTopicTargetSha1s(buildData):
-    pass
+  def getTopicTargetSha1s(self, buildData):
+    pattern = r"Parent [12]:\n\s+(\w+)"
+    matchedList = regex.findall(pattern, buildData)
 
-  def checkTargetTopicRandomFailure(targetTopic, knownTargetTopics):
-    pass
+    if len(matchedList) != 2: return None
+    return tuple(matchedList)
+
+  def checkTargetTopicRandomFailure(self, targetTopicPair, knownTargetTopicPairs):
+    return targetTopicPair in knownTargetTopicPairs
 
 class ExtractBuildNameStrategy:
   pass
