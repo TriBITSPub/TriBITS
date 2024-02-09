@@ -30,7 +30,12 @@ class ExampleVersionInfoStrategy:
     return targetTopicPair in knownTargetTopicPairs
 
 class ExampleExtractBuildNameStrategy:
-  pass
+
+  def getCoreBuildName(self, fullBuildName):
+    coreBuildName = fullBuildName.rsplit('-',1)[0]
+    return coreBuildName
+
+
 
 
 

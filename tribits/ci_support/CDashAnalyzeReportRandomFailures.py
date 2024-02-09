@@ -101,10 +101,7 @@ class CDashAnalyzeReportRandomFailuresDriver:
     for nonpassingTest in initialNonpassingTestsLOD:
 
       # Remove unique jenkins run ID from build name
-      correctedBuildName = nonpassingTest['buildName'].rsplit('-', 1)[0]
-      # NOTE: This is project specific code. As Ross pointed out, buildName
-      # contains a lot of Trilinos specific prefix and suffix that should
-      # be processed by a Strategy class to be more project agnostic.
+      correctedBuildName = self.extractBuildNameStrategy.getCoreBuildName(nonpassingTest['buildName'])
 
       buildNameMax = 80
       shortenedBuildName = correctedBuildName[:buildNameMax]
