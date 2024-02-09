@@ -13,7 +13,7 @@ def main():
   cdashAnalyzeAndReportRandomFailures = \
     CDARRF.CDashAnalyzeReportRandomFailuresDriver(
       ExampleVersionInfoStrategy(),
-      ExtractBuildNameStrategy())
+      ExampleExtractBuildNameStrategy())
 
   cdashAnalyzeAndReportRandomFailures.runDriver()
 
@@ -29,7 +29,7 @@ class ExampleVersionInfoStrategy:
   def checkTargetTopicRandomFailure(self, targetTopicPair, knownTargetTopicPairs):
     return targetTopicPair in knownTargetTopicPairs
 
-class ExtractBuildNameStrategy:
+class ExampleExtractBuildNameStrategy:
   pass
 
 
