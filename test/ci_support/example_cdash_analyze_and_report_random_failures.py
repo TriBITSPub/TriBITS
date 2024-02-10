@@ -17,6 +17,7 @@ def main():
 
   cdashAnalyzeAndReportRandomFailures.runDriver()
 
+
 class ExampleVersionInfoStrategy:
 
   def getTargetTopicSha1s(self, buildData):
@@ -29,14 +30,12 @@ class ExampleVersionInfoStrategy:
   def checkTargetTopicRandomFailure(self, targetTopicPair, knownTargetTopicPairs):
     return targetTopicPair in knownTargetTopicPairs
 
+
 class ExampleExtractBuildNameStrategy:
 
   def getCoreBuildName(self, fullBuildName):
     coreBuildName = fullBuildName.rsplit('-',1)[0]
     return coreBuildName
-
-
-
 
 
 if __name__ == '__main__':
