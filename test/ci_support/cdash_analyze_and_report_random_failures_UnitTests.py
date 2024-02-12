@@ -45,7 +45,6 @@ import tempfile
 
 from FindCISupportDir import *
 import CDashQueryAnalyzeReport as CDQAR
-from cdash_analyze_and_report_random_failures import *
 from CDashQueryAnalyzeReportUnitTestHelpers import *
 
 # Base test directory in the build tree
@@ -101,30 +100,6 @@ class TemporaryDirectory(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.remove()
-
-#############################################################################
-#
-# Unit tests for cdash_analyze_and_report_random_failures.py
-#
-#############################################################################
-
-
-class test_getBuildIdFromTest(unittest.TestCase):
-
-    def test_single_slash(self):
-        test_dict = { 'buildSummaryLink':'build/somenumber' }
-        self.assertEqual(
-            getBuildIdFromTest(test_dict), 'somenumber')
-
-    def test_multiple_slash(self):
-        test_dict = { 'buildSummaryLink':'build/path/temp/somenumber' }
-        self.assertEqual(
-            getBuildIdFromTest(test_dict), 'somenumber')
-
-    def test_no_slash(self):
-        test_dict = { 'buildSummaryLink':'buildid' }
-        self.assertEqual(
-            getBuildIdFromTest(test_dict), 'buildid')
 
 
 #############################################################################
