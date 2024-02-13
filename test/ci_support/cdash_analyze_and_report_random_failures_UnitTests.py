@@ -180,8 +180,9 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         self.test_dir.remove()
 
 
-    # Test the random failure case of a single initial test containing
-    # one passing and one failing test in its test history, both with the same SHA1 pairs
+    # Test the random failure case starting from two initial failing tests (ift)
+    # in which one of the initial failing test contains a history of two tests
+    # with the same sha1 pair, but one is a passing case and the other nonpassing.
     #
     def test_random_failure(self):
 
@@ -226,6 +227,10 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
         )
 
 
+    # Test to no random failure case starting from two initial failing tests (ift).
+    # Each ift has a test history containing multiple tests with passing and nonpassing results,
+    # but non share the same sha1 pair.
+    #
     def test_no_random_failure(self):
 
         testCaseName = "rft_0_ift_2"
