@@ -103,8 +103,8 @@ class CDashAnalyzeReportRandomFailuresDriver:
       # Remove unique jenkins run ID from build name
       correctedBuildName = self.extractBuildNameStrategy.getCoreBuildName(nonpassingTest['buildName'])
 
-      buildNameMax = 80
-      shortenedBuildName = correctedBuildName[:buildNameMax]
+      testNameBuildName = nonpassingTest['testname']+"_"+nonpassingTest['buildName']
+      testNameBuildName = CDQAR.getCompressedFileNameIfTooLong(testNameBuildName)
 
       print("\n Getting history from "+dateRangeStr+" for\n"+\
             "  Test name: "+nonpassingTest['testname']+"\n"+\
@@ -120,8 +120,8 @@ class CDashAnalyzeReportRandomFailuresDriver:
 
       testHistoryQueryFilters = dateUrlField+"&"+testHistoryFilters
 
-      testHistoryCacheFile = testHistoryCacheDir+"/" +\
-        nonpassingTest['testname']+"_"+shortenedBuildName+".json"
+      testHistoryCacheFile = testHistoryCacheDir+"/"+\
+        CDQAR.getCompressedFileNameIfTooLong(testNameBuildName+".json", ext=".json")
 
       print("\n  Creating file to write test history:\n   "+testHistoryCacheFile)
 
@@ -153,8 +153,7 @@ class CDashAnalyzeReportRandomFailuresDriver:
       print("\n  Num of passing tests in test history: "+str(len(passingTestHistoryLOD)))
       print("\n  Num of nonpassing tests in test history: "+str(len(nonpassingTestHistoryLOD)))
 
-      buildSummaryCacheDir = testQueriesCacheDir+"/build_summary_cache/" +\
-        nonpassingTest['testname']+"_"+shortenedBuildName
+      buildSummaryCacheDir = testQueriesCacheDir+"/build_summary_cache/"+testNameBuildName
       createDirsFromPath(buildSummaryCacheDir)
       # NOTE: There is an argument to be made that test histories should get their own directory
       # instead of build summaries and that build summaries should live inside of there
