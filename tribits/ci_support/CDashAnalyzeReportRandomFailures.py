@@ -10,10 +10,12 @@ import cdash_build_testing_date as CBTD
 
 class CDashAnalyzeReportRandomFailuresDriver:
 
-  def __init__(self, versionInfoStrategy, extractBuildNameStrategy):
+  def __init__(self, versionInfoStrategy, extractBuildNameStrategy,
+        usageHelp=""):
     self.versionInfoStrategy = versionInfoStrategy
     self.extractBuildNameStrategy = extractBuildNameStrategy
     self.args = None
+    self.usageHelp = usageHelp
 
   def runDriver(self):
 
@@ -251,7 +253,7 @@ class CDashAnalyzeReportRandomFailuresDriver:
         CDQAR.sendMineEmail(msg)
 
   def getCmndLineArgs(self):
-    parser = argparse.ArgumentParser("Arguments for cdash_analyze_and_report_random_failures.py")
+    parser = argparse.ArgumentParser(description=self.usageHelp)
 
     parser.add_argument("--cdash-site-url", default="", required=True)
     parser.add_argument("--cdash-project-name", default="", required=True)

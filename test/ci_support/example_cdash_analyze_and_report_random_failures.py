@@ -8,12 +8,19 @@ from FindCISupportDir import *
 import CDashAnalyzeReportRandomFailures as CDARRF
 
 
+usageHelp = \
+r"""
+Example usageHelp string
+"""
+
+
 def main():
 
   cdashAnalyzeAndReportRandomFailures = \
     CDARRF.CDashAnalyzeReportRandomFailuresDriver(
       ExampleVersionInfoStrategy(),
-      ExampleExtractBuildNameStrategy())
+      ExampleExtractBuildNameStrategy(),
+      usageHelp=usageHelp)
 
   cdashAnalyzeAndReportRandomFailures.runDriver()
 
