@@ -129,6 +129,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
             testCiSupportDir
             + "/example_cdash_analyze_and_report_random_failures.py"
             + " --cdash-project-name='Project Name'"
+            + " --cdash-testing-day-start-time='00:00'"
             + " --group-name='Group Name'"
             + " --initial-nonpassing-test-filters='initial_nonpassing_test_filters'"
             + " --cdash-site-url='https://something.com/cdash'"

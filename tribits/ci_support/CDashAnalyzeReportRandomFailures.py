@@ -21,9 +21,7 @@ class CDashAnalyzeReportRandomFailuresDriver:
 
     self.getCmndLineArgs()
 
-    cdashProjectTestingDayStartTime = "00:00"
-    # TODO: This should be moved outside in a project specific
-    # driver script or command line input
+    cdashProjectTestingDayStartTime = self.args.cdash_testing_day_start_time
     cdashSiteUrl = self.args.cdash_site_url
     cdashProjectName = self.args.cdash_project_name
     initialNonpassingTestFilters = self.args.initial_nonpassing_test_filters
@@ -259,6 +257,7 @@ class CDashAnalyzeReportRandomFailuresDriver:
     parser.add_argument("--cdash-project-name", default="", required=True)
     parser.add_argument("--initial-nonpassing-test-filters", default="", required=True)
     parser.add_argument("--group-name", default="", required=True)
+    parser.add_argument("--cdash-testing-day-start-time", default="00:00")
     parser.add_argument("--reference-date", default="yesterday")
     parser.add_argument("--days-of-history", default=1, type=int)
     parser.add_argument("--print-url-mode", choices=['none','initial','all'], default='none')
