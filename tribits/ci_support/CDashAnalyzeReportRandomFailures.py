@@ -253,17 +253,43 @@ class CDashAnalyzeReportRandomFailuresDriver:
   def getCmndLineArgs(self):
     parser = argparse.ArgumentParser(description=self.usageHelp)
 
-    parser.add_argument("--cdash-site-url", default="", required=True)
-    parser.add_argument("--cdash-project-name", default="", required=True)
-    parser.add_argument("--initial-nonpassing-test-filters", default="", required=True)
-    parser.add_argument("--group-name", default="", required=True)
-    parser.add_argument("--cdash-testing-day-start-time", default="00:00")
-    parser.add_argument("--reference-date", default="yesterday")
-    parser.add_argument("--days-of-history", default=1, type=int)
-    parser.add_argument("--print-url-mode", choices=['none','initial','all'], default='none')
-    parser.add_argument("--write-email-to-file", default="")
-    parser.add_argument("--send-email-to", default="")
-    parser.add_argument("--send-email-from", default="random-failure-script@noreply.org")
+    parser.add_argument("--cdash-site-url", default="", required=True,
+      help="Base CDash site (e.g. 'https://testing.sandia.gov/cdash')."+\
+        " [REQUIRED]")
+    parser.add_argument("--cdash-project-name", default="", required=True,
+      help="CDash project name (e.g. TriBITS)."+\
+        " [REQUIRED]")
+    parser.add_argument("--initial-nonpassing-test-filters", default="", required=True,
+      help="Partial URL fragment containing CDash filters for the initial set"+\
+        " of nonpassing tests (e.g. 'filtercount=2&showfilters=1&filtercombine=and&field1=status&compare1=63&"+\
+        "value1=Failed&field2=groupname&compare2=63&value2=Pull%%20Request')."+\
+        " [REQUIRED]")
+    parser.add_argument("--group-name", default="", required=True,
+      help="Name of the build group index for filtering a set of test (e.g. 'Pull Request')."+\
+        " [REQUIRED]")
+    parser.add_argument("--cdash-testing-day-start-time", default="00:00",
+      help="CDash project's testing day start time in UTC format '<hh>:<mm>'."+\
+        " [default='00:00']")
+    parser.add_argument("--reference-date", default="yesterday",
+      help="Starting reference date for querying failing tests as <YYYY-MM-DD> or"+\
+        " special values 'today' or 'yesterday.'"+\
+        " [default='yesterday']")
+    parser.add_argument("--days-of-history", default=1, type=int,
+      help="Number of days of testing history to query starting from the reference and going"+\
+        " backwards in time."+\
+        " [default=1]")
+    parser.add_argument("--print-url-mode", choices=['none','initial','all'], default='none',
+      help="Mode of url printing."+\
+        " [default=none]")
+    parser.add_argument("--write-email-to-file", default="",
+      help="Name of file to write built email HTML to."+\
+        " [default='']")
+    parser.add_argument("--send-email-to", default="",
+      help="Target email address to send script summary results to."+\
+        " [default='']")
+    parser.add_argument("--send-email-from", default="random-failure-script@noreply.org",
+      help="Addressed sender of the script summary results email."+\
+        " [default='random-failure-script@noreply.org']")
 
     self.args = parser.parse_args()
 
