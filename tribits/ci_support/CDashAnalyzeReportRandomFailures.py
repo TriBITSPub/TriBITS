@@ -307,7 +307,6 @@ class CDashAnalyzeReportRandomFailuresDriver:
     useCachedCDashData=False, alwaysUseCacheFileIfExists=False,
     verbose='False'
   ):
-    print("\n BUILD CACHE FILE "+buildSummaryCacheFile)
     verbose = verbose == 'all'
     buildSummaryJson = CDQAR.getAndCacheCDashQueryDataOrReadFromCache(
         cdashBuildSummaryQueryUrl, buildSummaryCacheFile, useCachedCDashData,
