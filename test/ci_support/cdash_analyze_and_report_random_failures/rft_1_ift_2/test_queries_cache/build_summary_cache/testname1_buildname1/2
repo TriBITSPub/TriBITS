@@ -1,0 +1,97 @@
+{ 'bugtracker': 'GitHub',
+  'build': { 'command': 'build command',
+             'compilername': '',
+             'compilerversion': '',
+             'endtime': '2023-12-20T16:59:05 MST',
+             'error': 0,
+             'errors': [],
+             'generator': 'ctest-3.24.3',
+             'id': 1323424,
+             'lastsubmitbuild': 0,
+             'lastsubmitdate': 0,
+             'name': 'PR-12620-test-rhel7_sems-gnu-8.3.0-openmpi-1.10.1-serial_debug_shared_no-kokkos-arch_no-asan_no-complex_no-fpic_mpi_no-pt_no-rdc_no-uvm_deprecated-on_no-package-enables-1957',
+             'nerrors': 0,
+             'note': 0,
+             'nwarnings': 0,
+             'osname': 'Linux',
+             'osplatform': 'x86_64',
+             'osrelease': '3.10.0-1062.1.2.el7.x86_64',
+             'osversion': '#1 SMP Mon Sep 16 14:19:51 EDT 2019',
+             'site': 'site1',
+             'siteid': 49,
+             'sitename_encoded': 'site1',
+             'stamp': '20231220-2248-Pull Request',
+             'starttime': '2023-12-20T15:48:14 MST',
+             'time': '2023-12-20T15:48:14 MST',
+             'type': 'Pull Request',
+             'warnings': []},
+  'configure': { 'command': 'configure command here',
+                 'endtime': '2023-12-20T15:50:06 MST',
+                 'nerrors': 0,
+                 'nwarnings': 0,
+                 'output': 'loading initial cache file \n'
+                           'Trilinos repos versions:\n'
+                           '--------------------------------------------------------------------------------\n'
+                           '*** Base Git Repo: Trilinos\n'
+                           'dc6cb45 [Thu Dec 21 07:49:49 2023 -0700] '
+                           '<trilinos@sandia.gov>\n'
+                           'Merge commit '
+                           "'71d07d7370583c071c3e0fa98cb00b4794be6cb2' into "
+                           'develop\n'
+                           '    *** Parent 1:\n'
+                           '    592ea0d5 [Mon Jan 15 22:26:29 2024 -0700] <achauph@sandia.gov>\n'
+                           '    Cleaned up git log and cmake command argument formatting (#597)\n'
+                           '    *** Parent 2:\n'
+                           '    b07e361c [Wed Jan 17 12:33:03 2024 -0700] <achauph@sandia.gov>\n'
+                           '    Cleaned up empty lines (#597)\n'
+                           ' '
+                           '--------------------------------------------------------------------------------\n'
+                           '\n'
+                           '\n',
+                 'starttime': '2023-12-20T15:48:14 MST',
+                 'status': 0},
+  'currentdate': '2024-01-23',
+  'date': '2023-12-20',
+  'datetime': 'Tuesday, January 23 2024 16:00:15',
+  'documentation': 'https://trilinos.github.io/documentation.html',
+  'generationtime': 0.05,
+  'googletracker': '',
+  'hasconfigure': True,
+  'hascoverage': False,
+  'hasrelationships': False,
+  'hasupdate': True,
+  'home': 'https://trilinos.github.io/',
+  'logoid': 1,
+  'menu': { 'back': 'index.php?project=Trilinos&parentid=1323325',
+            'current': '/build/0',
+            'next': False,
+            'previous': False},
+  'newissueurl': False,
+  'nextdate': '2023-12-21',
+  'nightlytime': '22:00 MST',
+  'notes': [],
+  'previousdate': '2023-12-19',
+  'projectid': 1,
+  'projectname': 'Trilinos',
+  'projectname_encoded': 'Trilinos',
+  'public': 1,
+  'relationships_from': [],
+  'relationships_to': [],
+  'startdate': 'Tuesday, December 19 2023 22:00:00',
+  'test': { 'nerrors': 0,
+            'nfailed': 0,
+            'nnotrun': 0,
+            'npassed': 178,
+            'nwarnings': 0},
+  'title': 'CDash : Trilinos',
+  'unixtimestamp': 1703048400,
+  'update': { 'command': '',
+              'endtime': '2023-12-20T15:48:14 MST',
+              'nerrors': 0,
+              'nupdates': 0,
+              'nwarnings': 0,
+              'starttime': '2023-12-20T15:48:14 MST',
+              'type': 'GIT'},
+  'user': {'id': None},
+  'vcs': 'https://github.com/trilinos/Trilinos/',
+  'version': 'v3.1.0'}
