@@ -334,6 +334,6 @@ class RandomFailureSummary(object):
     cdashReportData.htmlEmailBodyTop += \
       "\n<br>Build name: "+ self.buildName +\
       "\n<br>Test name: "+ self.testName +\
-      "\n<br>Test history URL: "+ self.testHistoryUrl +\
+      "\n<br>Test history URL: <a href=\""+self.testHistoryUrl+"\">Link</a>" +\
       "\n<br>Sha1 Pair : "+ str(self.sha1Pair)
 
