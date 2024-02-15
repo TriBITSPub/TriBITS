@@ -32,6 +32,7 @@ class CDashAnalyzeReportRandomFailuresDriver:
     writeEmailToFile = self.args.write_email_to_file
     sendEmailFrom = self.args.send_email_from
     sendEmailTo = self.args.send_email_to
+    emailSubjectPrefix = self.args.email_subject_prefix
 
     randomFailureSummaries = []
 
@@ -231,11 +232,12 @@ class CDashAnalyzeReportRandomFailuresDriver:
     cdashReportData.htmlEmailBodyTop += "\n</p>"
 
     defaultPageStyle = CDQAR.getDefaultHtmlPageStyleStr()
+    subjectLine = emailSubjectPrefix+summaryLine
 
     if writeEmailToFile:
       print("\nWriting HTML to file: "+writeEmailToFile+" ...")
       htmlStr = CDQAR.getFullCDashHtmlReportPageStr(cdashReportData,
-        pageTitle=summaryLine, pageStyle=defaultPageStyle)
+        pageTitle=subjectLine, pageStyle=defaultPageStyle)
       # print(htmlStr)
       with open(writeEmailToFile, 'w') as outFile:
         outFile.write(htmlStr)
@@ -247,7 +249,7 @@ class CDashAnalyzeReportRandomFailuresDriver:
         emailAddress = emailAddress.strip()
         print("\nSending email to '"+emailAddress+"' ...")
         msg=CDQAR.createHtmlMimeEmail(
-          sendEmailFrom, emailAddress, summaryLine, "", htmlStr)
+          sendEmailFrom, emailAddress, subjectLine, "", htmlStr)
         CDQAR.sendMineEmail(msg)
 
   def getCmndLineArgs(self):
@@ -290,6 +292,9 @@ class CDashAnalyzeReportRandomFailuresDriver:
     parser.add_argument("--send-email-from", default="random-failure-script@noreply.org",
       help="Addressed sender of the script summary results email."+\
         " [default='random-failure-script@noreply.org']")
+    parser.add_argument("--email-subject-prefix", default="",
+      help="Prefix string added to the email subject line."+\
+        " [default='']")
 
     self.args = parser.parse_args()
 
