@@ -217,7 +217,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "Found random failing tests: 1<br>",
                 "<br>Build name: build1",
                 "<br>Test name: testname1",
-                "<br>Test history URL: https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1",
+                "<br>Test history URL: <a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1\">Link</a>",
                 "<br>Sha1 Pair : \('592ea0d5', 'b07e361c'\)",
                 "</p>"
             ],
