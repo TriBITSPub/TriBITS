@@ -217,7 +217,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "Found random failing tests: 1<br>",
                 "<br>Build name: build1",
                 "<br>Test name: testname1",
-                "<br>Test history URL: https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1",
+                "<br>Test history URL: <a href=\"https://something[.]com/cdash/queryTests[.]php[?]project=Project%20Name&begin=2018-10-26&end=2018-10-28&filtercount=3&showfilters=1&filtercombine=and&field1=testname&compare1=63&value1=testname1&field2=groupname&compare2=63&value2=Group%20Name&field3=buildname&compare3=63&value3=buildname1\">Link</a>",
                 "<br>Sha1 Pair : \('592ea0d5', 'b07e361c'\)",
                 "</p>"
             ],
@@ -229,7 +229,9 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
 
     # Test to no random failure case starting from two initial failing tests (ift).
     # Each ift has a test history containing multiple tests with passing and nonpassing results,
-    # but non share the same sha1 pair.
+    # but non share the same sha1 pair. This also tests the --email-subject-prefix argument
+    # and checks if it's present in the html page title, which is also used in the email subject
+    # line.
     #
     def test_no_random_failure(self):
 
@@ -247,7 +249,7 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "PASSED \(rft=0, ift=2\): Project Name Group Name on 2018-10-26 to 2018-10-28"
             ],
             htmlFileRegexList=[
-                "<h2>PASSED \(rft=0, ift=2\): Project Name Group Name on 2018-10-26 to 2018-10-28</h2>",
+                "<h2>Subject Prefix PASSED \(rft=0, ift=2\): Project Name Group Name on 2018-10-26 to 2018-10-28</h2>",
 
                 "<h2>Random test failure scan results for Project Name from 2018-10-26 to 2018-10-28</h2>",
 
@@ -260,7 +262,8 @@ class test_cdash_analyze_and_report_random_failures(unittest.TestCase):
                 "</p>"
             ],
             extraCmndLineOptionsList=[
-                "--days-of-history=3"
+                "--days-of-history=3",
+                "--email-subject-prefix='Subject Prefix '"
             ]
         )
 
