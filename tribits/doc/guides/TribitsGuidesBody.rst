@@ -4233,7 +4233,8 @@ repositories if specified).  There are several python tools under
 ``tribits/ci_support/`` that read in this file and use the created
 data-structure for various tasks.  This file and these tools are used by
 `checkin-test.py`_ and `tribits_ctest_driver()`_.  But these tools can also be
-used to construct other workflows and tools.
+used to construct other workflows and tools.  These tools require a Python3
+installation and for the `python3` executable to be installed.
 
 .. _TribitsDumpDepsXmlScript.cmake:
 
