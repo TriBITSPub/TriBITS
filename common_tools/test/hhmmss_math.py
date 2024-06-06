@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # This simple set of python functions makes it easy to do simple math with
 # times formatted as <hr>h<min>m<sec>s.  This makes it easier to analyze
