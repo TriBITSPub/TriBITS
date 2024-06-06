@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 include_files_to_remove = [
   "AddSubdirectories",
