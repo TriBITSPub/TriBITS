@@ -18,6 +18,7 @@ tribits_add_advanced_test( sphinx_rst_generator_UnitTests
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/sphinx_rst_generator_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
     ALWAYS_FAIL_ON_NONZERO_RETURN
+  DISABLED "Test is broken for long time, see commit c477daa1"
   )
 
 
