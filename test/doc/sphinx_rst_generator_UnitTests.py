@@ -91,7 +91,8 @@ class test_change_paths_and_get_includes(unittest.TestCase):
     rst_dir = os.path.join(tribitsDir,'doc','sphinx','copied_files')
     (abs_path_str, include_file_list) = SRG.change_paths_and_get_includes(
       source_file=source_file, src_file_path=src_file_path,
-      start_path=start_path, rst_dir=rst_dir, copy_file=True)
+      start_path=start_path, rst_dir=rst_dir, tribits_base_dir=tribitsDir,
+      copy_file=True)
     #print("abs_path_str = "+str(abs_path_str))
     #print("include_file_list = "+str(include_file_list))
     self.maxDiff = None
