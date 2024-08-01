@@ -1,3 +1,10 @@
+if (PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
+  set(HAS_PYTHON3 TRUE)
+else()
+  set(HAS_PYTHON3 FALSE)
+endif()
+
+
 advanced_set( ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS OFF
   CACHE BOOL
   "Enable testing for the build of the documentation.  Requires docutils and will blow away and rebuild the existing documentation in the source tree since the documentation builds in place." )
@@ -81,11 +88,4 @@ if (build_docs_test_name AND build_sphinx_docs_test_name)
   # stomping on each other.  We also don't want to label these two tests with
   # RUN_SERIAL because they take a long time to run and we don't want to stop
   # other TriBITS tests from running at the same time as these two.
-endif()
-
-
-if (PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
-  set(HAS_PYTHON3 TRUE)
-else()
-  set(HAS_PYTHON3 FALSE)
 endif()
