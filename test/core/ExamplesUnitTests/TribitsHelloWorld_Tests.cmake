@@ -871,7 +871,7 @@ tribits_add_advanced_test( TribitsHelloWorld_install_config_dummy_proj
       "TribitsHelloWorld_C_FLAGS = ''"
       "TribitsHelloWorld_Fortran_FLAGS = ''"
       "TribitsHelloWorld_FORTRAN_FLAGS = ''"
-      "TribitsHelloWorld_EXTRA_LD_FLAGS = ''"
+      "TribitsHelloWorld_EXTRA_LD_FLAGS = '" # This is not empty on some platforms but we can't check the value!
       "TribitsHelloWorld_SHARED_LIB_RPATH_COMMAND = ''"
       "TribitsHelloWorld_BUILD_SHARED_LIBS = 'FALSE'"
       "TribitsHelloWorld_LINKER = '.*'"

@@ -10,7 +10,13 @@ fi
 if [ "$TRIBITS_BASE_DIR" == "" ] ; then
   _ABS_FILE_PATH=`readlink -f $0`
   _SCRIPT_DIR=`dirname $_ABS_FILE_PATH`
-  TRIBITS_BASE_DIR=$_SCRIPT_DIR/../../..
+  TRIBITS_BASE_DIR=$_SCRIPT_DIR/../..
+fi
+
+tribits_install_test_dir=/tmp/rabartl/tribits_install_tests
+if [ -d "${tribits_install_test_dir}" ] ; then
+  echo "Makedir ${tribits_install_test_dir}"
+  mkdir ${tribits_install_test_dir}
 fi
 
 ${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-mpi-debug \
@@ -20,7 +26,7 @@ ${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-mpi-debug \
 -DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE \
 -DTriBITS_ENABLE_CONFIGURE_TIMING=ON \
 -DTriBITS_ENABLE_PACKAGE_CONFIGURE_TIMING=ON \
--DTribitsExProj_INSTALL_BASE_DIR=/tmp/tribits_install_tests \
+-DTribitsExProj_INSTALL_BASE_DIR=${tribits_install_test_dir} \
 -DTribitsExProj_INSTALL_OWNING_GROUP=wg-sems-users-son \
 -DTriBITS_ENABLE_REAL_GIT_CLONE_TESTS=ON \
 -DTriBITS_SHOW_TEST_START_END_DATE_TIME=ON \

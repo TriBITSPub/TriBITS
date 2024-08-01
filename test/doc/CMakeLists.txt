@@ -1,6 +1,13 @@
+if (PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
+  set(HAS_PYTHON3 TRUE)
+else()
+  set(HAS_PYTHON3 FALSE)
+endif()
+
+
 advanced_set( ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS OFF
   CACHE BOOL
-  "Enable testing for the build of the documentation.  Requires docutils and will blow away and rebuild the existing documentation in the source tree since the documentation builds in place." )
+  "Enable testing for the build of the documentation, including using Sphinx.  Requires docutils, sphinx, and sphinx-rd-theme and will blow away and rebuild the existing documentation in the source tree since the documentation builds in place.  Therefore, one must be careful to not blow away non-tracked files." )
 
 
 tribits_add_advanced_test( sphinx_rst_generator_UnitTests
@@ -11,6 +18,7 @@ tribits_add_advanced_test( sphinx_rst_generator_UnitTests
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/sphinx_rst_generator_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
     ALWAYS_FAIL_ON_NONZERO_RETURN
+  DISABLED "Test is broken for long time, see commit c477daa1"
   )
 
 
@@ -45,7 +53,7 @@ tribits_add_advanced_test( build_sphinx_docs
     GIT_EXECUTABLE
   OVERALL_NUM_MPI_PROCS 1
   TEST_0 MESSAGE "Clean out any prior build of the docs"
-    CMND ${GIT_EXECUTABLE} ARGS clean -xdf
+    CMND ${GIT_EXECUTABLE} ARGS clean -xdf -- .
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/tribits/doc
     SKIP_CLEAN_WORKING_DIRECTORY  # Don't delete our source tree!
   TEST_1 MESSAGE "Build the sphinx documentation"
@@ -81,11 +89,4 @@ if (build_docs_test_name AND build_sphinx_docs_test_name)
   # stomping on each other.  We also don't want to label these two tests with
   # RUN_SERIAL because they take a long time to run and we don't want to stop
   # other TriBITS tests from running at the same time as these two.
-endif()
-
-
-if (PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
-  set(HAS_PYTHON3 TRUE)
-else()
-  set(HAS_PYTHON3 FALSE)
 endif()

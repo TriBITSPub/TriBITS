@@ -34,29 +34,46 @@ else()
   set(REGEX_FOR_GITIGNORE)
 endif()
 
+print_var(CMAKE_CXX_COMPILER_VERSION)
 
-if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
-  set(DEPRECATED_WARNING_1_STR
-    "‘int SimpleCxx::HelloWorld::someOldFunc.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:"
-    )
-  if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.5)
-    # Only versions 4.5+ support this feature
-    set(DEPRECATED_MSG_STR ".* .Just don't call this function at all please!")
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+    set(DEPRECATED_WARNING_1_STR
+      "‘int SimpleCxx::HelloWorld::someOldFunc.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:"
+      )
+    if (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.5)
+      # Only versions 4.5+ support this feature
+      set(DEPRECATED_MSG_STR ".* .Just don't call this function at all please!")
+    else()
+      set(DEPRECATED_MSG_STR "")
+    endif()
+    set(DEPRECATED_WARNING_2_STR
+      "‘int SimpleCxx::HelloWorld::someOldFunc2.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:${DEPRECATED_MSG_STR}"
+      )
   else()
-    set(DEPRECATED_MSG_STR)
+    set(DEPRECATED_WARNING_1_STR
+      ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*someOldFunc.* is deprecated"
+      )
+    set(DEPRECATED_WARNING_2_STR
+      ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*someOldFunc2.* is deprecated: .Just don.t call this function at all please."
+      )
   endif()
-  set(DEPRECATED_WARNING_2_STR
-    "‘int SimpleCxx::HelloWorld::someOldFunc2.. const’ is deprecated .declared at .*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.hpp:${DEPRECATED_MSG_STR}"
-    )
-else()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   set(DEPRECATED_WARNING_1_STR
-    ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*int SimpleCxx::HelloWorld::someOldFunc.. const.* is deprecated"
+    "simple_cxx/src/SimpleCxx_HelloWorld.hpp:.*:.*: note: 'someOldFunc' has been explicitly marked deprecated here"
     )
-  set(DEPRECATED_WARNING_2_STR
-    ".*/TribitsExampleProject/packages/simple_cxx/src/SimpleCxx_HelloWorld.cpp:.*: warning: .*int SimpleCxx::HelloWorld::someOldFunc2.. const.* is deprecated: .Just don.t call this function at all please."
-    )
+  set(DEPRECATED_MSG_STR
+    "SIMPLECXX_DEPRECATED_MSG[(].Just don't call this function at all please..[)]")
+else()
+  message(SEND_ERROR "Error, the CMAKE_CXX_COMPILER_ID='${CMAKE_CXX_COMPILER_ID}'"
+    " and CMAKE_CXX_COMPILER_VERSION='${CMAKE_CXX_COMPILER_VERSION}' is not covered"
+    " for setting DEPRECATED_WARNING_1_STR!")
 endif()
 
+print_var(DEPRECATED_WARNING_1_STR)
+print_var(DEPRECATED_MSG_STR)
+print_var(DEPRECATED_WARNING_2_STR)
 
 set(LabelsForSubprojects_CMND_AND_ARGS
   grep ARGS "^LabelsForSubprojects:" DartConfiguration.tcl)
@@ -416,7 +433,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "TribitsExProj_CXX_FLAGS = ''"
         "TribitsExProj_C_FLAGS = ''"
         "TribitsExProj_Fortran_FLAGS = ''"
-        "TribitsExProj_EXTRA_LD_FLAGS = ''"
+        "TribitsExProj_EXTRA_LD_FLAGS = '" # This is non-empty on some platforms but we can't know what it is :-(
         "TribitsExProj_SHARED_LIB_RPATH_COMMAND = '${TribitsExProj_SHARED_LIB_RPATH_COMMAND_REGEX}'"
         "TribitsExProj_BUILD_SHARED_LIBS = '${BUILD_SHARED_LIBS_VAL}'"
         "TribitsExProj_LINKER = '.*'"

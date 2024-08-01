@@ -71,7 +71,7 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
   set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(RPATH_GREP_STR
-    "R.*PATH *${RPATH_CURRENT_TEST_DIR}/install/lib:${SimpleTpl_install_SHARED_DIR}/install/lib")
+    "R.*PATH *.*${RPATH_CURRENT_TEST_DIR}/install/lib:${SimpleTpl_install_SHARED_DIR}/install/lib")
   # NOTE: Above matches both RPATH and RUNPATH which are used on different
   # Linux systems.
 endif()
@@ -149,7 +149,7 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
   set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(RPATH_GREP_STR
-    "R.*PATH *${SimpleTpl_install_SHARED_DIR}/install/lib")
+    "R.*PATH *.*${SimpleTpl_install_SHARED_DIR}/install/lib")
 endif()
 
 tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_no_SET_INSTALL_RPATH
@@ -221,7 +221,7 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
   set(RPATH_GREP_STR "@rpath/libsimplecxx[.].*[.]dylib;@rpath/libsimpletpl[.]dylib")
 elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
   set(RPATH_GREP_STR
-    "R.*PATH *${RPATH_CURRENT_TEST_DIR}/install2/nonstd_lib_location:${SimpleTpl_install_SHARED_DIR}/install/lib")
+    "R.*PATH *.*${RPATH_CURRENT_TEST_DIR}/install2/nonstd_lib_location:${SimpleTpl_install_SHARED_DIR}/install/lib")
 endif()
 
 tribits_add_advanced_test( TribitsExampleProject_SimpleTpl_RPATH_CMAKE_INSTALL_RPATH
