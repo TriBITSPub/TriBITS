@@ -7,7 +7,7 @@ endif()
 
 advanced_set( ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS OFF
   CACHE BOOL
-  "Enable testing for the build of the documentation.  Requires docutils and will blow away and rebuild the existing documentation in the source tree since the documentation builds in place." )
+  "Enable testing for the build of the documentation, including using Sphinx.  Requires docutils, sphinx, and sphinx-rd-theme and will blow away and rebuild the existing documentation in the source tree since the documentation builds in place.  Therefore, one must be careful to not blow away non-tracked files." )
 
 
 tribits_add_advanced_test( sphinx_rst_generator_UnitTests
