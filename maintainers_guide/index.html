@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=94a7a7d6"></script>
+        <script src="_static/documentation_options.js?v=eec60e24"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -460,10 +460,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2024-07-30</p>
+<dd class="field-even"><p>2024-08-01</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3444-gf6ca2a91</p>
+<dd class="field-odd"><p>tribits_start-3459-g6c9a7259</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -11264,7 +11264,7 @@ using MPI, use <code class="docutils literal notranslate"><span class="pre">EXEC
 instead.  <strong>WARNING:</strong> If you want to run such tests using valgrind, you
 have to use the raw executable as the <code class="docutils literal notranslate"><span class="pre">&lt;cmndExec&gt;</span></code> argument and <em>not</em>
 the script.  For example, if you have a python script
-<code class="docutils literal notranslate"><span class="pre">my_python_test.py</span></code> with <code class="docutils literal notranslate"><span class="pre">/usr/bin/env</span> <span class="pre">python</span></code> at the top, you can’t
+<code class="docutils literal notranslate"><span class="pre">my_python_test.py</span></code> with <code class="docutils literal notranslate"><span class="pre">/usr/bin/env</span> <span class="pre">python3</span></code> at the top, you can’t
 just use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CMND</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">&gt;/</span><span class="n">my_python_test</span><span class="o">.</span><span class="n">py</span> <span class="n">ARGS</span> <span class="s2">&quot;&lt;arg0&gt;&quot;</span> <span class="s2">&quot;&lt;arg1&gt;&quot;</span> <span class="o">...</span>
 </pre></div>
