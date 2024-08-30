@@ -454,7 +454,8 @@ endmacro()
 #
 macro(tribits_disable_forward_required_dep_packages  packageName)
   tribits_get_package_enable_status(${packageName}  packageEnable  "")
-  if ((NOT packageEnable) AND (NOT "${packageEnable}" STREQUAL ""))
+  tribits_package_is_explicitly_disabled(packageEnable  packageIsExplicitlyDisabled)
+  if (packageIsExplicitlyDisabled)
     foreach(fwdDepPkg  IN LISTS  ${packageName}_FORWARD_LIB_DEFINED_DEPENDENCIES)
       if (${fwdDepPkg}_LIB_DEP_REQUIRED_${packageName})
         tribits_private_disable_required_package_enables(${fwdDepPkg}
@@ -484,13 +485,13 @@ macro(tribits_enable_parents_subpackages  parentPackageName)
     foreach(tap2_subPkgName  IN LISTS  ${parentPackageName}_SUBPACKAGES)
 
       set(subpkgFullName ${parentPackageName}${tap2_subPkgName})
+      tribits_package_is_explicitly_disabled(${PROJECT_NAME}_ENABLE_${subpkgFullName}
+	subpkgIsExplicitlyDisabled)
 
-      if (NOT ${PROJECT_NAME}_ENABLE_${subpkgFullName} AND
-        NOT "${${PROJECT_NAME}_ENABLE_${subpkgFullName}}" STREQUAL ""
-        )
-        # The subpackage is already disabled and is not just empty!
+      if (subpkgIsExplicitlyDisabled)
+        # The subpackage is already explicitly disabled
       elseif (${PROJECT_NAME}_ENABLE_${subpkgFullName})
-        # The subpackage is already enabled so there is no reason to enable it!
+        # The subpackage is already enabled so there is no reason to enable it
       else()
         # The subpackage is not hard off or on so turn it on by default
         tribits_implicit_package_enable_is_allowed( "" ${subpkgFullName}
@@ -557,8 +558,9 @@ endmacro()
 # ${parentPackageName)_ENABLE_TESTS is explicitly disabled.
 #
 macro(tribits_apply_package_examples_disable  parentPackageName)
-  if ( (NOT ${parentPackageName}_ENABLE_TESTS)
-      AND (NOT "${${parentPackageName}_ENABLE_TESTS}" STREQUAL "")
+  tribits_package_is_explicitly_disabled(${parentPackageName}_ENABLE_TESTS
+    parentPackageTestsIsExplicitlyDisabled)
+  if (parentPackageTestsIsExplicitlyDisabled
       AND ("${${parentPackageName}_ENABLE_EXAMPLES}" STREQUAL "")
     )
     message("-- " "Setting"
@@ -583,7 +585,9 @@ macro(tribits_apply_subpackage_tests_or_examples_disables  parentPackageName
     testsOrExamples
   )
   set(parentPkgEnableVar ${parentPackageName}_ENABLE_${testsOrExamples})
-  if ((NOT ${parentPkgEnableVar}) AND (NOT "${${parentPkgEnableVar}}" STREQUAL ""))
+  tribits_package_is_explicitly_disabled(${parentPkgEnableVar}
+    parentPkgIsExplicitlyDisabled)
+  if (parentPkgIsExplicitlyDisabled)
     foreach(subpkgName  IN LISTS  ${parentPackageName}_SUBPACKAGES)
       set(fullSpkgName ${parentPackageName}${subpkgName})
       if (${PROJECT_NAME}_ENABLE_${fullSpkgName})
@@ -955,18 +959,18 @@ macro(tribits_private_disable_required_package_enables
       set(${fwdDepPkgEnableVarName}  OFF)
     else()
       set(depTypeStr "test/example")
-      if (${fwdDepPkgName}_ENABLE_TESTS
-        OR "${${fwdDepPkgName}_ENABLE_TESTS}" STREQUAL ""
-        )
+      tribits_package_is_enabled_or_unset(${fwdDepPkgName}_ENABLE_TESTS
+	fwdDepPkgEnableTestsIsEnabledOrUnset)
+      if (fwdDepPkgEnableTestsIsEnabledOrUnset)
         tribits_private_print_disable_required_package_enable(
           ${packageName} ${fwdDepPkgName}_ENABLE_TESTS
           ${fwdDepPkgName} "${depTypeStr}" )
         set(${fwdDepPkgName}_ENABLE_TESTS OFF)
       endif()
 
-      if (${fwdDepPkgName}_ENABLE_EXAMPLES
-        OR "${${fwdDepPkgName}_ENABLE_EXAMPLES}" STREQUAL ""
-        )
+      tribits_package_is_enabled_or_unset(${fwdDepPkgName}_ENABLE_EXAMPLES
+	fwdDepPkgEnableExamplesIsEnabledOrUnset)
+      if (fwdDepPkgEnableExamplesIsEnabledOrUnset)
         tribits_private_print_disable_required_package_enable(
           ${packageName} ${fwdDepPkgName}_ENABLE_EXAMPLES
           ${fwdDepPkgName} "${depTypeStr}" )
@@ -1024,9 +1028,9 @@ endfunction()
 
 macro(tribits_private_disable_optional_package_enables  fwdDepPkgName  packageName)
 
-  if (${fwdDepPkgName}_ENABLE_${packageName}
-      OR "${${fwdDepPkgName}_ENABLE_${packageName}}" STREQUAL ""
-    )
+  tribits_package_is_enabled_or_unset(${fwdDepPkgName}_ENABLE_${packageName}
+    fwdDepPkgEnablePackageIsEnabledOrUnset)
+  if (fwdDepPkgEnablePackageIsEnabledOrUnset)
     # Always disable the conditional enable but only print the message if the
     # package is enabled or if a disable overrides an enable
     if (${PROJECT_NAME}_ENABLE_${fwdDepPkgName})
@@ -1043,10 +1047,9 @@ macro(tribits_private_disable_optional_package_enables  fwdDepPkgName  packageNa
           " on disabled package ${packageName}")
       endif()
     endif()
-    if (${fwdDepPkgName}_ENABLE_${packageName}
-        AND (NOT ${PROJECT_NAME}_ENABLE_${packageName})
-        AND (NOT "${${PROJECT_NAME}_ENABLE_${packageName}}" STREQUAL "")
-      )
+    tribits_package_is_explicitly_disabled(${PROJECT_NAME}_ENABLE_${packageName}
+      packageIsExplicitlyDisabled)
+    if (${fwdDepPkgName}_ENABLE_${packageName} AND packageIsExplicitlyDisabled)
       message("-- " "NOTE: ${fwdDepPkgName}_ENABLE_${packageName}="
         "${${fwdDepPkgName}_ENABLE_${packageName}} but"
         " ${PROJECT_NAME}_ENABLE_${packageName}="
@@ -1117,7 +1120,9 @@ endmacro()
 macro(tribits_private_postprocess_optional_package_enable  packageName  optDepPkg)
 
   tribits_get_package_enable_status(${optDepPkg}  optDepPkgEnable  optDepPkgEnableVar)
-  tribits_get_package_enable_status(${packageName} packageEnable  packageEnableVar)
+  tribits_get_package_enable_status(${packageName}  packageEnable  packageEnableVar)
+  tribits_package_is_explicitly_disabled(${packageName}_ENABLE_${optDepPkg}
+    package_Enable_OptDeptPkg_IsExplicitlyDisabled)
 
   if (${packageName}_ENABLE_${optDepPkg}  AND  optDepPkgEnable)
     message("-- " "NOTE:"
@@ -1133,10 +1138,7 @@ macro(tribits_private_postprocess_optional_package_enable  packageName  optDepPk
       message("-- " "NOT setting ${packageName}_ENABLE_${optDepPkg}=ON"
        " since ${optDepPkg} is NOT enabled at this point!")
     endif()
-  elseif ((NOT "${${packageName}_ENABLE_${optDepPkg}}" STREQUAL "")
-      AND (NOT ${packageName}_ENABLE_${optDepPkg})
-      AND optDepPkgEnable
-    )
+  elseif (package_Enable_OptDeptPkg_IsExplicitlyDisabled  AND  optDepPkgEnable)
     message("-- " "NOTE: ${packageName}_ENABLE_${optDepPkg}="
       "${${packageName}_ENABLE_${optDepPkg}} is already set so not enabling even"
       " though ${optDepPkgEnableVar}="
