@@ -428,9 +428,9 @@ macro(tribits_disable_parents_subpackages  parentPackageName)
       set(subpkgFullName ${parentPackageName}${tap2_subPkgName})
 
       set(subpkgBeingDisabledVarName ${PROJECT_NAME}_ENABLE_${subpkgFullName})
-      tribits_package_is_not_explicitly_disabled(${subpkgBeingDisabledVarName}
-        subpkgIsNotExplicitlyDisabled)
-      if (subpkgIsNotExplicitlyDisabled)
+      tribits_package_is_explicitly_disabled(${subpkgBeingDisabledVarName}
+        subpkgIExplicitlyDisabled)
+      if (NOT subpkgIsExplicitlyDisabled)
         message("-- "
           "Setting subpackage enable ${subpkgBeingDisabledVarName}=OFF"
           " because parent package ${PROJECT_NAME}_ENABLE_${parentPackageName}=OFF")
