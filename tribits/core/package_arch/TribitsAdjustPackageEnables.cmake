@@ -522,7 +522,7 @@ macro(tribits_apply_all_package_enables  packageName)
   tribits_implicit_package_enable_is_allowed( "" ${packageName}
     processThisPackageEnable )
   if (packageIsPmpp  AND  processThisPackageEnable)
-    tribits_set_package_enable_based_on_project_enable(
+    tribits_enable_package_based_on_project_enable_on(
       ${PROJECT_NAME}_ENABLE_ALL_PACKAGES  ${PROJECT_NAME}_ENABLE_${packageName} )
   endif()
 endmacro()
@@ -608,9 +608,9 @@ macro(tribits_apply_test_example_enables  packageName)
   if (${PROJECT_NAME}_ENABLE_${packageName})
     tribits_is_primary_meta_project_package(${packageName}  packageIsPmmp)
     if (packageIsPmmp)
-      tribits_set_package_enable_based_on_project_enable_on(
+      tribits_enable_package_based_on_project_enable_on(
         ${PROJECT_NAME}_ENABLE_TESTS  ${packageName}_ENABLE_TESTS )
-      tribits_set_package_enable_based_on_project_enable_on(
+      tribits_enable_package_based_on_project_enable_on(
         ${PROJECT_NAME}_ENABLE_EXAMPLES  ${packageName}_ENABLE_EXAMPLES )
     endif()
   endif()
@@ -1059,37 +1059,10 @@ macro(tribits_private_disable_optional_package_enables  fwdDepPkgName  packageNa
 endmacro()
 
 
-# Set an individual package variable enable variable (to ON or OFF) based on a
-# global enable value
-#
-macro(tribits_set_package_enable_based_on_project_enable  projectEnableVar
-    packageEnableVar
-  )
-
-  if ("${${packageEnableVar}}" STREQUAL "")
-    if (${projectEnableVar})
-      message("-- " "Setting ${packageEnableVar}=ON")
-      set(${packageEnableVar} ON)
-    elseif ( (NOT ${projectEnableVar})
-        AND (NOT "${projectEnableVar}" STREQUAL "")
-      )
-      message("-- " "Setting ${packageEnableVar}=OFF")
-      set(${packageEnableVar} OFF)
-    else()
-      # Otherwise, we will leave it up the the individual package
-      # to decide?
-    endif()
-  else()
-    # "${packageEnableVar} not at the default empty ''
-  endif()
-
-endmacro()
-
-
 # Set an individual package test or examples enable to on only if global
 # enable var is on
 #
-macro(tribits_set_package_enable_based_on_project_enable_on  projectEnableVar
+macro(tribits_enable_package_based_on_project_enable_on  projectEnableVar
     packageEnableVar
   )
   if (("${${packageEnableVar}}" STREQUAL "") AND ${projectEnableVar})
