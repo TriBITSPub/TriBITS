@@ -61,6 +61,34 @@ function(tribits_get_package_enable_status  packageName  packageEnableOut
 endfunction()
 
 
+# @FUNCTION: tribits_package_is_explicitly_disabled()
+#
+# Function that determines if a package's enable variable is
+# explicitly disabled (i.e. evaluates to false but is not emapty).
+#
+# Usage::
+#
+#   tribits_package_is_explicitly_disabled((<packageEnableVarName>
+#     <packageIsExplicitlyDisabledOut>)
+#
+# On return, the value of ``<packageIsExplicitlyDisabledOut>`` will set to
+# ``TRUE`` if the variable ``<packageEnableVarName>`` evaluates to false and
+# is not empty "".  Otherwise, ``<packageIsExplicitlyDisabledOut>`` will set
+# to ``FALSE`` on return.
+#
+function(tribits_package_is_explicitly_disabled  packageEnableVarName
+    packageIsExplicitlyDisabledOut
+  )
+  if ((NOT ${packageEnableVarName}) AND (NOT "${${packageEnableVarName}}" STREQUAL ""))
+    set(packageIsExplicitlyDisabled TRUE)
+  else()
+    set(packageIsExplicitlyDisabled FALSE)
+  endif()
+  set(${packageIsExplicitlyDisabledOut} ${packageIsExplicitlyDisabled}
+    PARENT_SCOPE)
+endfunction()
+
+
 # @FUNCTION: tribits_package_is_not_explicitly_disabled()
 #
 # Function that determines if a package's enable variable is **not**

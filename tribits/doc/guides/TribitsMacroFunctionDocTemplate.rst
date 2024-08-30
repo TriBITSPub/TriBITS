@@ -40,6 +40,7 @@
 @MACRO:    tribits_package_def() +
 @MACRO:    tribits_package_define_dependencies() +
 @MACRO:    tribits_process_enabled_standard_tpl() +
+@FUNCTION: tribits_package_is_explicitly_disabled() +
 @FUNCTION: tribits_package_is_not_explicitly_disabled() +
 @MACRO:    tribits_package_postprocess() +
 @MACRO:    tribits_process_subpackages() +

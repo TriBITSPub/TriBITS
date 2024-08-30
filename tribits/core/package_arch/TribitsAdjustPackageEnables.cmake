@@ -418,9 +418,10 @@ endmacro()
 #
 macro(tribits_disable_parents_subpackages  parentPackageName)
 
-  if(NOT ${PROJECT_NAME}_ENABLE_${parentPackageName}
-      AND (NOT ${PROJECT_NAME}_ENABLE_${parentPackageName} STREQUAL "")
-    )
+  tribits_package_is_explicitly_disabled(${PROJECT_NAME}_ENABLE_${parentPackageName}
+    parentPackageIsExplicityDisabled)
+
+  if(parentPackageIsExplicityDisabled)
 
     foreach(tap2_subPkgName   IN LISTS  ${parentPackageName}_SUBPACKAGES)
 
