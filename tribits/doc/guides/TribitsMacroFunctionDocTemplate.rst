@@ -31,6 +31,7 @@
 @FUNCTION: tribits_find_most_recent_binary_file_timestamp() +
 @FUNCTION: tribits_find_most_recent_file_timestamp() +
 @FUNCTION: tribits_find_most_recent_source_file_timestamp() +
+@FUNCTION: tribits_get_package_enable_status() +
 @FUNCTION: tribits_install_headers() +
 @MACRO:    tribits_include_directories() +
 @MACRO:    tribits_pkg_export_cache_var() +

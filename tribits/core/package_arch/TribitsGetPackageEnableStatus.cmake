@@ -10,8 +10,8 @@
 
 # @FUNCTION: tribits_get_package_enable_status()
 #
-# Function that determines if a given external or internal package's enable
-# status (e.g. 'ON' or 'OFF')
+# Function that determines a given external or internal package's enable
+# status (e.g. 'ON' or 'OFF' or any valid CMake bool)
 #
 # Usage::
 #
@@ -21,8 +21,8 @@
 # On return, if non-empty, the variable ``<packageEnableOut>`` will contain
 # the actual value of ``${${PROJECT_NAME}_ENABLE_<packageName>}`` or
 # ``${TPL_ENABLE_<packageName>}`` or will return empty "".  If
-# ``${packageName}_PACKAGE_BUILD_STATUS == "INTERNAL", then only the value of
-# ``${PROJECT_NAME}_ENABLE_<packageName>`` will be considered.
+# ``${packageName}_PACKAGE_BUILD_STATUS == "INTERNAL"``, then only the value
+# of ``${PROJECT_NAME}_ENABLE_<packageName>`` will be considered.
 #
 # On return, if non-empty, the variable ``<packageEnableVarNameOut>`` will be
 # either ``${${PROJECT_NAME}_ENABLE_<packageName>}`` or
