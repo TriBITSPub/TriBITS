@@ -61,6 +61,34 @@ function(tribits_get_package_enable_status  packageName  packageEnableOut
 endfunction()
 
 
+# @FUNCTION: tribits_package_is_enabled_or_unset()
+#
+# Function that determines if a package's enable variable evaluates to true or
+# is unset.
+#
+# Usage::
+#
+#   tribits_package_is_enabled_or_unset((<packageEnableVarName>
+#     <packageIsEnabledOrUnsetOut>)
+#
+# On return, the value of ``<packageIsEnabledOrUnsetOut>`` will set to
+# ``TRUE`` if the variable ``<packageEnableVarName>`` evaluates to true and
+# or is empty "".  Otherwise, ``<packageIsEnabledOrUnsetOut>`` will set
+# to ``FALSE`` on return.
+#
+function(tribits_package_is_enabled_or_unset  packageEnableVarName
+    packageIsEnabledOrUnsetOut
+  )
+  if (${packageEnableVarName} OR ("${${packageEnableVarName}}" STREQUAL ""))
+    set(packageIsEnabledOrUnset TRUE)
+  else()
+    set(packageIsEnabledOrUnset FALSE)
+  endif()
+  set(${packageIsEnabledOrUnsetOut} ${packageIsEnabledOrUnset}
+    PARENT_SCOPE)
+endfunction()
+
+
 # @FUNCTION: tribits_package_is_explicitly_disabled()
 #
 # Function that determines if a package's enable variable is

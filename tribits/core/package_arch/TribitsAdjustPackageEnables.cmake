@@ -945,7 +945,9 @@ macro(tribits_private_disable_required_package_enables
     fwdDepPkgName  packageName  libraryDep
   )
   tribits_get_package_enable_status(${fwdDepPkgName}  ""  fwdDepPkgEnableVarName)
-  if (${fwdDepPkgEnableVarName} OR "${${fwdDepPkgEnableVarName}}" STREQUAL "")
+  tribits_package_is_enabled_or_unset(${fwdDepPkgEnableVarName}
+    fwdDepPkgIsEnabledOrUnset)
+  if (fwdDepPkgIsEnabledOrUnset)
     if ("${libraryDep}" STREQUAL "TRUE")
       tribits_private_print_disable_required_package_enable(
         ${packageName}  ${fwdDepPkgEnableVarName}
