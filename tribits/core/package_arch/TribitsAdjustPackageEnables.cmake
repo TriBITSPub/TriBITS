@@ -426,12 +426,14 @@ macro(tribits_disable_parents_subpackages  parentPackageName)
 
       set(subpkgFullName ${parentPackageName}${tap2_subPkgName})
 
-      if (NOT ${PROJECT_NAME}_ENABLE_${subpkgFullName} STREQUAL "OFF")
-        set(packageBeingDisabledVarName ${PROJECT_NAME}_ENABLE_${subpkgFullName})
+      set(subpkgBeingDisabledVarName ${PROJECT_NAME}_ENABLE_${subpkgFullName})
+      tribits_package_is_not_explicitly_disabled(${subpkgBeingDisabledVarName}
+        subpkgIsNotExplicitlyDisabled)
+      if (subpkgIsNotExplicitlyDisabled)
         message("-- "
-          "Setting subpackage enable ${packageBeingDisabledVarName}=OFF"
+          "Setting subpackage enable ${subpkgBeingDisabledVarName}=OFF"
           " because parent package ${PROJECT_NAME}_ENABLE_${parentPackageName}=OFF")
-        set(${packageBeingDisabledVarName} OFF)
+        set(${subpkgBeingDisabledVarName} OFF)
       endif()
 
     endforeach()
@@ -439,6 +441,12 @@ macro(tribits_disable_parents_subpackages  parentPackageName)
   endif()
 
 endmacro()
+#
+# NOTE: Above, we don't need to use the function
+# tribits_get_package_enable_status() because a subpackage in this context
+# will never be an external package and therefore the enable var name will
+# always be ${PROJECT_NAME}_ENABLE_${subpkgFullName}.  (At least I can't think
+# of a use case where that would occur.)
 
 
 # Macro that disables forward package that depends on the passed-in package

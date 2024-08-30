@@ -61,6 +61,34 @@ function(tribits_get_package_enable_status  packageName  packageEnableOut
 endfunction()
 
 
+# @FUNCTION: tribits_package_is_not_explicitly_disabled()
+#
+# Function that determines if a package's enable variable is **not**
+# explicitly disabled (i.e. is empty or evaluates to true).
+#
+# Usage::
+#
+#   tribits_package_is_not_explicitly_disabled((<packageEnableVarName>
+#     <packageIsNotExplicitlyDisabledOut>)
+#
+# On return, the value of ``<packageIsNotExplicitlyDisabledOut>`` will set to
+# ``TRUE`` if the variable ``<packageEnableVarName>`` is empty "" or if it
+# evaluates to true in CMake.  Otherwise,
+# ``<packageIsNotExplicitlyDisabledOut>`` will set to ``FALSE`` on return.
+#
+function(tribits_package_is_not_explicitly_disabled  packageEnableVarName
+    packageIsNotExplicitlyDisabledOut
+  )
+  if (("${${packageEnableVarName}}" STREQUAL "") OR ${packageEnableVarName})
+    set(packageIsNotExplicitlyDisabled TRUE)
+  else()
+    set(packageIsNotExplicitlyDisabled FALSE)
+  endif()
+  set(${packageIsNotExplicitlyDisabledOut} ${packageIsNotExplicitlyDisabled}
+    PARENT_SCOPE)
+endfunction()
+
+
 # @FUNCTION: tribits_assert_package_enable_status()
 #
 # Function that asserts that if both ``${PROJECT_NAME}_ENABLE_${packageName}``
