@@ -2667,6 +2667,9 @@ satisfy the following requirements:
 
 * Test names must be prefixed with the package name ``<Package>_``.
 
+* The package name ``<Package>`` must be appended to the ``LABELS`` test
+  property list.
+
 * Tests should only be added if the variable ``<Package>_ENABLE_TESTS`` is
   true.
 
