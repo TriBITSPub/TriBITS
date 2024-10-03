@@ -28,7 +28,7 @@ def getCmndLineOptions():
 
   clp.add_argument(
     "-o", dest="outputFile", default="",
-    help="Input file (and also output if -o <file> not specified)" )
+    help="Output file (optional)" )
 
   options = clp.parse_args(sys.argv[1:])
 
