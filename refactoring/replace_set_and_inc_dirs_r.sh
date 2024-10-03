@@ -17,10 +17,10 @@ echo
 echo "Replacing SET_AND_INC_DIRS with TRIBITS_SET_AND_INC_DIRS in all CMakeList.txt and *.cmake files ..."
 echo
 
-find . \( -name CMakeLists.txt -or -name "*.cmake" \) -exec ${_SCRIPT_DIR}/token-replace.py -t SET_AND_INC_DIRS -r TRIBITS_SET_AND_INC_DIRS -f {} \;
+find . \( -name CMakeLists.txt -or -name "*.cmake" \) -exec ${_SCRIPT_DIR}/../tribits/refactoring/token-replace.py -t SET_AND_INC_DIRS -r TRIBITS_SET_AND_INC_DIRS -f {} \;
 
 echo
 echo "Replacing set_and_inc_dirs with tribits_set_and_inc_dirs in all CMakeList.txt and *.cmake files ..."
 echo
 
-find . \( -name CMakeLists.txt -or -name "*.cmake" \) -exec ${_SCRIPT_DIR}/token-replace.py -t set_and_inc_dirs -r tribits_set_and_inc_dirs -f {} \;
+find . \( -name CMakeLists.txt -or -name "*.cmake" \) -exec ${_SCRIPT_DIR}/../tribits/refactoring/token-replace.py -t set_and_inc_dirs -r tribits_set_and_inc_dirs -f {} \;

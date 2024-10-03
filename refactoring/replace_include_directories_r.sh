@@ -17,10 +17,10 @@ echo
 echo "Replacing INCLUDE_DIRECTORIES with TRIBITS_INCLUDE_DIRECTORIES in all CMakeList.txt and *.cmake files ..."
 echo
 
-find . \( -name CMakeLists.txt -or -name "*.cmake" \) -exec ${_SCRIPT_DIR}/token-replace.py -t INCLUDE_DIRECTORIES -r TRIBITS_INCLUDE_DIRECTORIES -f {} \;
+find . \( -name CMakeLists.txt -or -name "*.cmake" \) -exec ${_SCRIPT_DIR}/../tribits/refactoring/token-replace.py -t INCLUDE_DIRECTORIES -r TRIBITS_INCLUDE_DIRECTORIES -f {} \;
 
 echo
 echo "Replacing include_directories with tribits_include_directories in all CMakeList.txt and *.cmake files ..."
 echo
 
-find . \( -name CMakeLists.txt -or -name "*.cmake" \) -exec ${_SCRIPT_DIR}/token-replace.py -t include_directories -r tribits_include_directories -f {} \;
+find . \( -name CMakeLists.txt -or -name "*.cmake" \) -exec ${_SCRIPT_DIR}/../tribits/refactoring/token-replace.py -t include_directories -r tribits_include_directories -f {} \;
