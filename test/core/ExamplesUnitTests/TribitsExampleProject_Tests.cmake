@@ -1695,7 +1695,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because PYTHON_EXECUTABLE=''"
+      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because Python3_EXECUTABLE=''"
       "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
       "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
       "Configuring done"

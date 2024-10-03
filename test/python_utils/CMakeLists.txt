@@ -40,7 +40,7 @@
 tribits_add_advanced_test( GeneralScriptSupport_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/GeneralScriptSupport_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
@@ -48,7 +48,7 @@ tribits_add_advanced_test( GeneralScriptSupport_UnitTests
 tribits_add_advanced_test( mockprogram_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/mockprogram_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   XHOST travis-ci-server-linux
@@ -57,7 +57,7 @@ tribits_add_advanced_test( mockprogram_UnitTests
 tribits_add_advanced_test( lower_case_cmake_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/lower_case_cmake_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   XHOST travis-ci-server-linux
@@ -66,7 +66,7 @@ tribits_add_advanced_test( lower_case_cmake_UnitTests
 tribits_add_advanced_test( gitdist_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/gitdist_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   XHOST travis-ci-server-linux
@@ -75,7 +75,7 @@ tribits_add_advanced_test( gitdist_UnitTests
 tribits_add_advanced_test( SnapshotDir_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/SnapshotDir_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
@@ -83,7 +83,7 @@ tribits_add_advanced_test( SnapshotDir_UnitTests
 tribits_add_advanced_test( extract_rst_cmake_doc_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/extract_rst_cmake_doc_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
@@ -97,7 +97,7 @@ set(EXTRACT_RST_CMAKE_DOC_DATA_DIR
 tribits_add_advanced_test( extract_rst_cmake_doc_help
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${EXTRACT_RST_CMAKE_DOC}
       --help
     PASS_REGULAR_EXPRESSION_ALL
@@ -108,7 +108,7 @@ tribits_add_advanced_test( extract_rst_cmake_doc_help
 tribits_add_advanced_test( extract_rst_cmake_doc_extract_1_block_1_file
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${EXTRACT_RST_CMAKE_DOC}
       --extract-from=${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/simpleDocText1.cmake
       --do-trace
@@ -127,7 +127,7 @@ tribits_add_advanced_test( extract_rst_cmake_doc_extract_1_block_1_file
 tribits_add_advanced_test( extract_rst_cmake_doc_extract_2_blocks_2_files
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${EXTRACT_RST_CMAKE_DOC}
       --extract-from=${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/simpleDocText1.cmake,${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/simpleDocText2.cmake
       --do-trace
@@ -139,7 +139,7 @@ tribits_add_advanced_test( extract_rst_cmake_doc_extract_2_blocks_2_files
 tribits_add_advanced_test( extract_rst_cmake_doc_extract_2_blocks_glob_dir
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${EXTRACT_RST_CMAKE_DOC}
       --extract-from=${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/
       --do-trace
@@ -151,7 +151,7 @@ tribits_add_advanced_test( extract_rst_cmake_doc_extract_2_blocks_glob_dir
 tribits_add_advanced_test( extract_rst_cmake_doc_extract_and_replace_2_blocks
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${EXTRACT_RST_CMAKE_DOC}
       --extract-from=${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/
       --rst-file-pairs=${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/simpleTemplate1.rst:simple.rst
@@ -169,7 +169,7 @@ tribits_add_advanced_test( extract_rst_cmake_doc_extract_and_replace_2_blocks
 tribits_add_advanced_test( extract_rst_cmake_doc_extract_and_replace_2_blocks_notrace
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${EXTRACT_RST_CMAKE_DOC}
       --extract-from=${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/
       --rst-file-pairs=${EXTRACT_RST_CMAKE_DOC_DATA_DIR}/simpleTemplate1.rst:simple.rst
