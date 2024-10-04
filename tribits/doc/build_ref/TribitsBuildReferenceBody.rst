@@ -2230,6 +2230,21 @@ This will override the global behavior set by
 ``<TRIBITS_PACKAGE>``.
 
 
+Setting or disabling Python
+----------------------------
+
+To set which Python interpreter is used, configure with::
+
+  -D Python3_EXECUTABLE=<python-path>
+
+Otherwise, Python will be found automatically by default using
+``find_python(Python3)`` internally.
+
+To disable the finding and usage of Python, configure with::
+
+  -D Python3_EXECUTABLE=<python-path>
+
+
 Outputting package dependency information
 -----------------------------------------
 
