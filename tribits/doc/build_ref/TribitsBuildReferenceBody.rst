@@ -2952,7 +2952,7 @@ printed to cmake STDOUT.
 
 
 Show parent(s) commit info in the repo version output
-----------------------------------------------------
+-----------------------------------------------------
 
 .. _<Project>_SHOW_GIT_COMMIT_PARENTS:
 
