@@ -7,7 +7,6 @@
 
 
 import sys
-import imp
 import shutil
 
 from unittest_helpers import *

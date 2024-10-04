@@ -43,7 +43,6 @@
 
 from unittest_helpers import *
 
-import imp
 import shutil
 
 #thisFilePath = __file__
