@@ -39,13 +39,9 @@ def generateFile(filePath, generateCmnd, outFile=None, workingDir="",
 
 def addCmndLineOptions(clp):
 
-  # Find the right default for the current system
-  rst2html = "rst2html"
-  rst2latex = "rst2latex"
-  rst2htmlWhich = getCmndOutput("which rst2html", True, False)
-  if rst2htmlWhich == "" or re.match(".+no rst2html.+", rst2htmlWhich):
-    rst2html = rst2html+".py"
-    rst2latex = rst2latex+".py"
+  # Assume standard install of docutils with Python3
+  rst2html = "rst2html.py"
+  rst2latex = "rst2latex.py"
 
   clp.add_option(
     "--file-base", dest="fileBase", type="string",
