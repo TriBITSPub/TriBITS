@@ -1688,7 +1688,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=ON
-      -DPYTHON_EXECUTABLE=
+      -DPython3_EXECUTABLE=
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
