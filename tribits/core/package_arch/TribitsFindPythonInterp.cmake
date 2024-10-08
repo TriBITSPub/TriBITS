@@ -8,6 +8,30 @@
 # @HEADER
 
 
+# TriBITS Wrapper for finding Python (or not) for a TriBITS project.
+macro(tribits_find_python_interp)
+  if (${PROJECT_NAME}_REQUIRES_PYTHON)
+    set(${PROJECT_NAME}_USES_PYTHON  TRUE)
+  endif()
+  if ("${${PROJECT_NAME}_USES_PYTHON}" STREQUAL "")
+    # Unless the project tells us they can use Python or not, let's go ahead
+    # and look for Python in case some packages want to use it.
+    set(${PROJECT_NAME}_USES_PYTHON  TRUE)
+  endif()
+  if (${PROJECT_NAME}_USES_PYTHON)
+    tribits_find_python()
+    print_var(Python3_EXECUTABLE)
+    if (${PROJECT_NAME}_REQUIRES_PYTHON  AND  Python3_EXECUTABLE  STREQUAL "")
+      message_wrapper(FATAL_ERROR "Error, Python3_EXECUTABLE='' but"
+        " ${PROJECT_NAME}_REQUIRES_PYTHON=${${PROJECT_NAME}_REQUIRES_PYTHON}!" )
+    endif()
+  else()
+    message_wrapper("-- " "NOTE: Skipping check for Python because"
+      " ${PROJECT_NAME}_USES_PYTHON='${${PROJECT_NAME}_USES_PYTHON}'")
+  endif()
+endmacro()
+
+
 # Find Python executable which is needed for dependency file building
 macro(tribits_find_python)
   # Get minimum version of Python to find
@@ -56,25 +80,3 @@ endmacro()
 
 
 
-# TriBITS Wrapper for finding Python (or not) for a TriBITS project.
-macro(tribits_find_python_interp)
-  if (${PROJECT_NAME}_REQUIRES_PYTHON)
-    set(${PROJECT_NAME}_USES_PYTHON  TRUE)
-  endif()
-  if ("${${PROJECT_NAME}_USES_PYTHON}" STREQUAL "")
-    # Unless the project tells us they can use Python or not, let's go ahead
-    # and look for Python in case some packages want to use it.
-    set(${PROJECT_NAME}_USES_PYTHON  TRUE)
-  endif()
-  if (${PROJECT_NAME}_USES_PYTHON)
-    tribits_find_python()
-    print_var(Python3_EXECUTABLE)
-    if (${PROJECT_NAME}_REQUIRES_PYTHON  AND  Python3_EXECUTABLE  STREQUAL "")
-      message_wrapper(FATAL_ERROR "Error, Python3_EXECUTABLE='' but"
-        " ${PROJECT_NAME}_REQUIRES_PYTHON=${${PROJECT_NAME}_REQUIRES_PYTHON}!" )
-    endif()
-  else()
-    message_wrapper("-- " "NOTE: Skipping check for Python because"
-      " ${PROJECT_NAME}_USES_PYTHON='${${PROJECT_NAME}_USES_PYTHON}'")
-  endif()
-endmacro()
