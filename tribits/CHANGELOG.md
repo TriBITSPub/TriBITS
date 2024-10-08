@@ -2,6 +2,28 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2024-10-08:
+
+* **Changed:** The internal TriBITS framework find operation for Python has
+  been changed from calling `find_package(PythonInterp)` (using the deprecated
+  `FindPythonInterp.cmake` module) to calling `find_package(Python3)`, which
+  will find `python3` in the path automatically.  The internal variable set by
+  this operation was changed from `PYTHON_EXECUTABLE` to `Python3_EXECUTABLE`
+  and TriBITS projects need make that change as well when upgrading TriBITS.
+  (This change can be made automatically in all of the project's CMake files
+  by running the script `tribits/refactoring/to-python3.sh <dir>`.)  However,
+  backward compatibility for users of TriBITS projects that set `-D
+  PYTHON_EXECUTABLE=<path>` is provided.  If a TriBITS project user sets `-D
+  PYTHON_EXECUTABLE=<path>` in the cache, TriBITS will set that value `<path>`
+  to `Python3_EXECUTABLE` and avoid the call to `find_package(Python3)`;
+  however, a deprecation warning we be issued by default.  TriBITS project
+  users should change to use `-D Python3_EXECUTABLE=<path>` instead, or just
+  remove setting `PYTHON_EXECUTABLE` or `Python3_EXECUTABLE` altogether and
+  just make sure that the desired `python3` executable is in the path.  See
+  issue
+  [TriBITSPub/TriBITS#610](https://github.com/TriBITSPub/TriBITS/issues/610)
+  for more details.
+
 ## 2023-06-22:
 
 * **Added:** Packages are now determined to be missing if their dependencies
