@@ -34,6 +34,13 @@ endmacro()
 
 # Find Python executable which is needed for dependency file building
 macro(tribits_find_python)
+  tribits_find_python_set_python3_find_version()
+  tribits_find_python_backward_compatible_python_executable()
+  tribits_find_python_find_python3()
+endmacro()
+
+
+macro(tribits_find_python_set_python3_find_version)
   # Get minimum version of Python to find
   set(${PROJECT_NAME}_Python3_FIND_VERSION_MIN "3.8")
   if ("${${PROJECT_NAME}_Python3_FIND_VERSION_DEFAULT}" STREQUAL "")
@@ -51,13 +58,21 @@ macro(tribits_find_python)
       " ${PROJECT_NAME}_Python3_FIND_VERSION=${${PROJECT_NAME}_Python3_FIND_VERSION} < ${${PROJECT_NAME}_Python3_FIND_VERSION_MIN}"
       " is not allowed!" )
   endif()
+endmacro()
+
+
+macro(tribits_find_python_backward_compatible_python_executable)
   # Provide backward compatibility for user setting PYTHON_EXECUTABLE
   if ((NOT "${PYTHON_EXECUTABLE}" STREQUAL "") AND ("${Python3_EXECUTABLE}" STREQUAL ""))
     tribits_deprecated("Python3_EXECUTABLE being set by default to PYTHON_EXECUTABLE = '${PYTHON_EXECUTABLE}' is deprecated!")
     set(Python3_EXECUTABLE "${PYTHON_EXECUTABLE}" CACHE FILEPATH
       "Set by default to PYTHON_EXECUTABLE!")
   endif()
-  # Find Python
+endmacro()
+
+
+macro(tribits_find_python_find_python3)
+  # Find Python3
   if (${PROJECT_NAME}_REQUIRES_PYTHON)
     set(Python3_REQUIRED_ARG "REQUIRED")
   else()
@@ -73,10 +88,6 @@ macro(tribits_find_python)
     find_package(${FIND_Python3_ARGS})
   endif()
 endmacro()
-
-
-# Select the minimum version of Python
-
 
 
 
