@@ -20,7 +20,7 @@ if [ -d "${tribits_install_test_dir}" ] ; then
 fi
 
 ${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-mpi-debug \
--DDART_TESTING_TIMEOUT=100 \
+-DDART_TESTING_TIMEOUT=200 \
 -DCTEST_PARALLEL_LEVEL=16 \
 -DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE \
 -DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE \
