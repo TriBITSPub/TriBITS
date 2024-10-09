@@ -195,10 +195,10 @@ function(tribits_find_python_interp_uses_python_empty)
   message("tribits_find_python_interp(): ${PROJECT_NAME}_USES_PYTHON=''")
   global_set(MESSAGE_WRAPPER_INPUT "")
   set(${PROJECT_NAME}_USES_PYTHON "")
-  set(Python3_EXECUTABLE_UNITTEST_VAL /path/to/python3.8)
+  set(Python3_EXECUTABLE_UNITTEST_VAL /path/to/python3.6)
   tribits_find_python_interp()
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "-- ;Python3_EXECUTABLE='/path/to/python3.8'")
+    "-- ;Python3_EXECUTABLE='/path/to/python3.6'")
 endfunction()
 
 
@@ -206,12 +206,12 @@ function(tribits_find_python_interp_uses_python_true)
   message("tribits_find_python_interp(): ${PROJECT_NAME}_USES_PYTHON=TRUE")
   global_set(MESSAGE_WRAPPER_INPUT)
   set(${PROJECT_NAME}_USES_PYTHON TRUE)
-  global_set(Python3_EXECUTABLE_UNITTEST_VAL /path/to/python3.8)
+  global_set(Python3_EXECUTABLE_UNITTEST_VAL /path/to/python3.6)
   tribits_find_python_interp()
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "-- ;Python3_EXECUTABLE='/path/to/python3.8'")
+    "-- ;Python3_EXECUTABLE='/path/to/python3.6'")
   unittest_compare_const(FIND_Python3_ARGS
-    "Python3;3.8")
+    "Python3;3.6")
 endfunction()
 
 
@@ -220,23 +220,23 @@ function(tribits_find_python_interp_requires_python_true)
   global_set(MESSAGE_WRAPPER_INPUT)
   set(${PROJECT_NAME}_USES_PYTHON FALSE)
   set(${PROJECT_NAME}_REQUIRES_PYTHON TRUE)
-  set(Python3_EXECUTABLE_UNITTEST_VAL /path/to/python3.8)
+  set(Python3_EXECUTABLE_UNITTEST_VAL /path/to/python3.6)
   tribits_find_python_interp()
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "-- ;Python3_EXECUTABLE='/path/to/python3.8'")
+    "-- ;Python3_EXECUTABLE='/path/to/python3.6'")
   unittest_compare_const(FIND_Python3_ARGS
-    "Python3;3.8;REQUIRED")
+    "Python3;3.6;REQUIRED")
 endfunction()
 
 
 function(tribits_find_python_interp_find_version_too_low)
-  message("tribits_find_python_interp(): ${PROJECT_NAME}_Python3_FIND_VERSION=3.7 (too low)")
+  message("tribits_find_python_interp(): ${PROJECT_NAME}_Python3_FIND_VERSION=3.5 (too low)")
   global_set(MESSAGE_WRAPPER_INPUT)
-  set(${PROJECT_NAME}_Python3_FIND_VERSION 3.7)
+  set(${PROJECT_NAME}_Python3_FIND_VERSION 3.5)
   set(Python3_EXECUTABLE_UNITTEST_VAL /dummy)
   tribits_find_python_interp()
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
-    "FATAL_ERROR;Error,; ${PROJECT_NAME}_Python3_FIND_VERSION=3.7 < 3.8; is not allowed!;-- ;Python3_EXECUTABLE='/dummy'")
+    "FATAL_ERROR;Error,; ${PROJECT_NAME}_Python3_FIND_VERSION=3.5 < 3.6; is not allowed!;-- ;Python3_EXECUTABLE='/dummy'")
 endfunction()
 
 
@@ -262,7 +262,7 @@ function(tribits_find_python_interp_python_executable_backward_compatible)
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "DEPRECATION;Python3_EXECUTABLE being set by default to PYTHON_EXECUTABLE = '/path/to/python3.10.2' is deprecated!;\n\nNOTE: To Make these warnings go away, set -D; TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE=IGNORE (see the build reference guide).;-- ;Python3_EXECUTABLE='/path/to/python3.10.2'")
   unittest_compare_const(FIND_Python3_ARGS
-    "Python3;3.8")
+    "Python3;3.6")
 endfunction()
 
 

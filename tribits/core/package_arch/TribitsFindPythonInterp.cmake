@@ -42,7 +42,7 @@ endmacro()
 
 macro(tribits_find_python_set_python3_find_version)
   # Get minimum version of Python to find
-  set(${PROJECT_NAME}_Python3_FIND_VERSION_MIN "3.8")
+  set(${PROJECT_NAME}_Python3_FIND_VERSION_MIN "3.6")
   if ("${${PROJECT_NAME}_Python3_FIND_VERSION_DEFAULT}" STREQUAL "")
     set(${PROJECT_NAME}_Python3_FIND_VERSION_DEFAULT
       "${${PROJECT_NAME}_Python3_FIND_VERSION_MIN}")

@@ -7003,9 +7003,9 @@ Python Support
 
 TriBITS Core does not require anything other than raw CMake.  However, Python
 Utils, TriBITS CI Support, and other extended TriBITS components require
-Python.  These extra TriBITS tools only require Python 3.8+.  By default, when
+Python.  These extra TriBITS tools only require Python 3.6+.  By default, when
 a TriBITS project starts to configure using CMake, it will try to find Python
-3.8+ on the system (see `Full Processing of TriBITS Project Files`_).  If
+3.6+ on the system (see `Full Processing of TriBITS Project Files`_).  If
 Python is found, it will set the global cache variable ``Python3_EXECUTABLE``.
 If it is not found, then it will print a warning and ``Python3_EXECUTABLE``
 will be empty.  With this default behavior, if Python is found, then the
@@ -7022,9 +7022,9 @@ many TriBITS projects, some TriBITS projects need different behavior such as:
    can't be found.  In this case, the TriBITS project would set
    `${PROJECT_NAME}_REQUIRES_PYTHON`_ to ``TRUE``.
 
-3. Some TriBITS projects may require a version of Python more recent than 3.8.
+3. Some TriBITS projects may require a version of Python more recent than 3.6.
    In this case, the TriBITS project would set
-   `${PROJECT_NAME}_Python3_FIND_VERSION`_ to some value higher than ``3.8``.
+   `${PROJECT_NAME}_Python3_FIND_VERSION`_ to some value higher than ``3.6``.
    For example, may newer systems have higher versions of Python installed by
    default, and projects developed on such a system typically require this
    version or higher.
