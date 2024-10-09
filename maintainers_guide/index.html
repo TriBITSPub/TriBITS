@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
@@ -6,18 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TriBITS Maintainers Guide and Reference</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=e2dfc28d"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=87b1c61f"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -463,10 +461,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2024-09-23</p>
+<dd class="field-even"><p>2024-10-09</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3474-gb17ed5bc</p>
+<dd class="field-odd"><p>tribits_start-3494-gbd5ce80c</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -2043,7 +2041,7 @@ can be used in the logic in these files.  Some of the variables that should
 already be defined (in addition to all of the basic user TriBITS cache
 variables set in <code class="docutils literal notranslate"><span class="pre">tribits_define_global_options_and_define_extra_repos()</span></code>)
 include <code class="docutils literal notranslate"><span class="pre">CMAKE_HOST_SYSTEM_NAME</span></code>, <code class="docutils literal notranslate"><span class="pre">${PROJECT_NAME}_HOSTNAME</span></code>, and
-<code class="docutils literal notranslate"><span class="pre">PYTHON_EXECUTABLE</span></code> (see <a class="reference internal" href="#python-support">Python Support</a>).  The types of commands and
+<code class="docutils literal notranslate"><span class="pre">Python3_EXECUTABLE</span></code> (see <a class="reference internal" href="#python-support">Python Support</a>).  The types of commands and
 logic to put in this file include:</p>
 <ul class="simple">
 <li><p>Setting additional user cache variable options that are used by multiple
@@ -2074,11 +2072,11 @@ them to be enabled.  For example, Trilinos disables the package
     set(${PROJECT_NAME}_ENABLE_WrapExternal OFF)
   endif()
 
-  if (&quot;${PYTHON_EXECUTABLE}&quot; STREQUAL &quot;&quot;)
+  if (&quot;${Python3_EXECUTABLE}&quot; STREQUAL &quot;&quot;)
     message(
       &quot;\n***&quot;
       &quot;\n*** NOTE: Setting ${PROJECT_NAME}_ENABLE_WrapExternal=OFF&quot;
-      &quot; because PYTHON_EXECUTABLE=&#39;&#39;!&quot;
+      &quot; because Python3_EXECUTABLE=&#39;&#39;!&quot;
       &quot;\n***\n&quot;
       )
     set(${PROJECT_NAME}_ENABLE_WrapExternal OFF)
@@ -3180,7 +3178,7 @@ proceeds through the call to <a class="reference internal" href="#id5">tribits_p
 </div>
 <div class="line">4)  Find some optional command-line tools:</div>
 <div class="line-block">
-<div class="line">a)  Find Python (sets <code class="docutils literal notranslate"><span class="pre">PYTHON_EXECUTABLE</span></code>, see <a class="reference internal" href="#python-support">Python Support</a>)</div>
+<div class="line">a)  Find Python (sets <code class="docutils literal notranslate"><span class="pre">Python3_EXECUTABLE</span></code>, see <a class="reference internal" href="#python-support">Python Support</a>)</div>
 <div class="line">b)  Find Git (sets <code class="docutils literal notranslate"><span class="pre">GIT_EXECUTABLE</span></code> and <code class="docutils literal notranslate"><span class="pre">GIT_VERSION_STRING</span></code>)</div>
 </div>
 <div class="line">5)  <code class="docutils literal notranslate"><span class="pre">include(</span></code> <a class="reference internal" href="#projectdir-version-cmake">&lt;projectDir&gt;/Version.cmake</a> <code class="docutils literal notranslate"><span class="pre">)</span></code></div>
@@ -8519,16 +8517,15 @@ basic building, testing, or installation of a project using TriBITS Core.</p>
 <h2><a class="toc-backref" href="#id95" role="doc-backlink"><span class="sectnum">11.3 </span>Python Support</a><a class="headerlink" href="#python-support" title="Link to this heading"></a></h2>
 <p>TriBITS Core does not require anything other than raw CMake.  However, Python
 Utils, TriBITS CI Support, and other extended TriBITS components require
-Python.  These extra TriBITS tools only require Python 2.7+ (and 3.x).  By
-default, when a TriBITS project starts to configure using CMake, it will try
-to find Python 2.7+ on the system (see <a class="reference internal" href="#full-processing-of-tribits-project-files">Full Processing of TriBITS Project
-Files</a>).  If Python is found, it will set the global cache variable
-<code class="docutils literal notranslate"><span class="pre">PYTHON_EXECUTABLE</span></code>.  If it is not found, then it will print a warning and
-<code class="docutils literal notranslate"><span class="pre">PYTHON_EXECUTABLE</span></code> will be empty.  With this default behavior, if Python is
-found, then the TriBITS project can use it.  Otherwise, it can do without it.</p>
+Python.  These extra TriBITS tools only require Python 3.6+.  By default, when
+a TriBITS project starts to configure using CMake, it will try to find Python
+3.6+ on the system (see <a class="reference internal" href="#full-processing-of-tribits-project-files">Full Processing of TriBITS Project Files</a>).  If
+Python is found, it will set the global cache variable <code class="docutils literal notranslate"><span class="pre">Python3_EXECUTABLE</span></code>.
+If it is not found, then it will print a warning and <code class="docutils literal notranslate"><span class="pre">Python3_EXECUTABLE</span></code>
+will be empty.  With this default behavior, if Python is found, then the
+TriBITS project can use it.  Otherwise, it can do without it.</p>
 <p>While the default behavior for finding Python described above is useful for
-many TriBITS project (such as Trilinos), some TriBITS projects need different
-behavior such as:</p>
+many TriBITS projects, some TriBITS projects need different behavior such as:</p>
 <ol class="arabic simple">
 <li><p>The TriBITS project may not ever use Python so there is no need to look for
 it at all.  In this case, the TriBITS project would set
@@ -8536,11 +8533,12 @@ it at all.  In this case, the TriBITS project would set
 <li><p>Some TriBITS projects require Python and should not even configure if it
 can’t be found.  In this case, the TriBITS project would set
 <a class="reference internal" href="#project-name-requires-python">${PROJECT_NAME}_REQUIRES_PYTHON</a> to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>.</p></li>
-<li><p>Some TriBITS projects may require a version of Python more recent than 2.7.
-In this case, the TriBITS project would set <a class="reference internal" href="#pythoninterp-find-version">PythonInterp_FIND_VERSION</a> to
-some value higher than <code class="docutils literal notranslate"><span class="pre">2.7</span></code>.  For example, may newer systems have only
-Python 3.5.2 or higher versions installed by default and projects developed
-on such a system typically requires this version or higher.</p></li>
+<li><p>Some TriBITS projects may require a version of Python more recent than 3.6.
+In this case, the TriBITS project would set
+<a href="#id322"><span class="problematic" id="id323">`${PROJECT_NAME}_Python3_FIND_VERSION`_</span></a> to some value higher than <code class="docutils literal notranslate"><span class="pre">3.6</span></code>.
+For example, may newer systems have higher versions of Python installed by
+default, and projects developed on such a system typically require this
+version or higher.</p></li>
 </ol>
 </section>
 <section id="project-specific-build-reference">
@@ -11279,7 +11277,7 @@ just use:</p>
 </div>
 <p>The same goes for Perl or any other scripting language.</p>
 <p>Instead, you have to use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>CMND ${PYTHON_EXECUTABLE} ARGS &lt;path&gt;/my_python_test.py &lt;arg0&gt; &lt;arg1&gt; ...
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>CMND ${Python3_EXECUTABLE} ARGS &lt;path&gt;/my_python_test.py &lt;arg0&gt; &lt;arg1&gt; ...
 </pre></div>
 </div>
 </div></blockquote>
