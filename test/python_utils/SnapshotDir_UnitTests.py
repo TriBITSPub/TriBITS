@@ -99,7 +99,7 @@ def runSnapshotDirTestCase(testObject, cmndLineArgsList, cmndInterceptList,
   #print("ostr =", ostr)
   for passRegexExpr in passRegexExpressionsList:
     try:
-      testObject.assert_(re.search(passRegexExpr, ostr))
+      testObject.assertTrue(re.search(passRegexExpr, ostr))
     except Exception as e:
       print("\n\nCould not find regex='" + passRegexExpr + "' in generated "
             "output:\n")

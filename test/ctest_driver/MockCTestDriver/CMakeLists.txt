@@ -645,7 +645,7 @@ create_ctest_dependency_handling_test_case(
 #
 
 
-if (PYTHON_EXECUTABLE)
+if (Python3_EXECUTABLE)
 
   create_ctest_dependency_handling_test_case(
     CI_EnableOnlyModified_ModifiedNone
@@ -1061,7 +1061,7 @@ if (PYTHON_EXECUTABLE)
 
   # ToDo: Test modified package not to be implicitly enabled to not be enabled!
 
-endif(PYTHON_EXECUTABLE)
+endif(Python3_EXECUTABLE)
 
 
 #

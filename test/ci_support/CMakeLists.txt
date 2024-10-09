@@ -93,7 +93,7 @@ tribits_add_advanced_test( XmlHtmlCDashOutputTest
 tribits_add_advanced_test( TribitsDependencies_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsDependencies_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
@@ -102,7 +102,7 @@ tribits_add_advanced_test( TribitsDependencies_UnitTests
 tribits_add_advanced_test( TribitsPackageFilePathUtils_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsPackageFilePathUtils_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
@@ -111,7 +111,7 @@ tribits_add_advanced_test( TribitsPackageFilePathUtils_UnitTests
 tribits_add_advanced_test( TribitsPackageTestNameUtils_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsPackageTestNameUtils_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
@@ -124,7 +124,7 @@ tribits_add_advanced_test( get_tribits_packages_default
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
-    CMND ${PYTHON_EXECUTABLE}
+    CMND ${Python3_EXECUTABLE}
     ARGS
       "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages.py"
       --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
@@ -136,7 +136,7 @@ tribits_add_advanced_test( get_tribits_packages_only_toplevel_packages
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
-    CMND ${PYTHON_EXECUTABLE}
+    CMND ${Python3_EXECUTABLE}
     ARGS
       "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages.py"
       --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
@@ -149,7 +149,7 @@ tribits_add_advanced_test( get_tribits_packages_all_packages
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
-    CMND ${PYTHON_EXECUTABLE}
+    CMND ${Python3_EXECUTABLE}
     ARGS
       "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages.py"
       --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
@@ -166,7 +166,7 @@ tribits_add_advanced_test( get_tribits_packages_from_last_tests_failed_1
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
-    CMND ${PYTHON_EXECUTABLE}
+    CMND ${Python3_EXECUTABLE}
     ARGS
       "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages-from-last-tests-failed.py"
       --deps-xml-file="${CMAKE_CURRENT_SOURCE_DIR}/TrilinosPackageDependencies.gold.xml"
@@ -182,7 +182,7 @@ tribits_add_advanced_test( get_tribits_packages_from_last_tests_failed_1
 tribits_add_advanced_test( TribitsExampleProject_ProjectCiFileChangeLogic_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/TribitsExampleProject_ProjectCiFileChangeLogic_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
@@ -216,7 +216,7 @@ function(test_tribitsexampleproject_get_tribits_packages_from_files_list
         -P "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/TribitsDumpDepsXmlScript.cmake"
 
     TEST_2
-      CMND ${PYTHON_EXECUTABLE}
+      CMND ${Python3_EXECUTABLE}
       ARGS
         "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support/get-tribits-packages-from-files-list.py"
         --deps-xml-file=TribitsExProjPackageDependencies.cmake
@@ -281,7 +281,7 @@ function(test_tribitsexampleproject_w_tribits_get_tribits_packages_from_files_li
         -P "TribitsExampleProject/cmake/tribits/ci_support/TribitsDumpDepsXmlScript.cmake"
 
     TEST_4
-      CMND ${PYTHON_EXECUTABLE}
+      CMND ${Python3_EXECUTABLE}
       ARGS
         "TribitsExampleProject/cmake/tribits/ci_support/get-tribits-packages-from-files-list.py"
         --deps-xml-file=TribitsExProjPackageDependencies.cmake
@@ -313,7 +313,7 @@ test_tribitsexampleproject_w_tribits_get_tribits_packages_from_files_list(
 tribits_add_advanced_test( clone_extra_repos_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/clone_extra_repos_UnitTests.py
       --with-cmake="${CMAKE_COMMAND}"
       -v
@@ -323,7 +323,7 @@ tribits_add_advanced_test( clone_extra_repos_UnitTests
 tribits_add_advanced_test( CheckinTest_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CheckinTest_UnitTests.py
       --with-cmake="${CMAKE_COMMAND}"
       -v
@@ -339,7 +339,7 @@ tribits_add_advanced_test( CheckinTest_UnitTests
 tribits_add_advanced_test( cdash_build_testing_date_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/cdash_build_testing_date_UnitTests.py
       -v
     PASS_REGULAR_EXPRESSION "OK"
@@ -383,7 +383,7 @@ tribits_add_advanced_test( TribitsStripCommentsFromCMakeCacheFile_large
 tribits_add_advanced_test( CDashQueryAnalyzeReport_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CDashQueryAnalyzeReport_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -392,7 +392,7 @@ tribits_add_advanced_test( CDashQueryAnalyzeReport_UnitTests
 tribits_add_advanced_test( cdash_analyze_and_report_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/cdash_analyze_and_report_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -401,7 +401,7 @@ tribits_add_advanced_test( cdash_analyze_and_report_UnitTests
 tribits_add_advanced_test( CDashAnalyzeReportRandomFailures_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
   ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CDashAnalyzeReportRandomFailures_UnitTests.py -v
   PASS_REGULAR_EXPRESSION "OK"
   ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -410,7 +410,7 @@ tribits_add_advanced_test( CDashAnalyzeReportRandomFailures_UnitTests
 tribits_add_advanced_test( cdash_analyze_and_report_random_failures_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
   ARGS ${CMAKE_CURRENT_SOURCE_DIR}/cdash_analyze_and_report_random_failures_UnitTests.py -v
   PASS_REGULAR_EXPRESSION "OK"
   ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -419,7 +419,7 @@ tribits_add_advanced_test( cdash_analyze_and_report_random_failures_UnitTests
 tribits_add_advanced_test( CreateIssueTrackerFromCDashQuery_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE}
+  TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/CreateIssueTrackerFromCDashQuery_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
     ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -452,7 +452,7 @@ tribits_add_advanced_test( TribitsExampleProject_checkin_test
 
   TEST_2
     MESSAGE "Run checkin-test.py script to make sure it finds base dir"
-    CMND ${PYTHON_EXECUTABLE}
+    CMND ${Python3_EXECUTABLE}
     ARGS -E TribitsExampleProject/cmake/tribits/ci_support/checkin-test.py
       --enable-all-packages=on --send-email-to= --send-email-to-on-push= --allow-no-pull
     PASS_REGULAR_EXPRESSION_ALL

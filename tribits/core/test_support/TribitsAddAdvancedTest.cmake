@@ -354,7 +354,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/../utils/PrintVar.cmake")
 #
 #     Instead, you have to use::
 #
-#       CMND ${PYTHON_EXECUTABLE} ARGS <path>/my_python_test.py <arg0> <arg1> ...
+#       CMND ${Python3_EXECUTABLE} ARGS <path>/my_python_test.py <arg0> <arg1> ...
 #
 #  ``ARGS "<arg0>" "<arg1>" ... "<argN>"``
 #

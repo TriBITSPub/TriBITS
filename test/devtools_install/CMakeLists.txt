@@ -41,7 +41,7 @@
 tribits_add_advanced_test( InstallProgramDriver_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/InstallProgramDriver_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )
@@ -50,7 +50,7 @@ tribits_add_advanced_test( InstallProgramDriver_UnitTests
 tribits_add_advanced_test( install_devtools_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  TEST_0 CMND ${PYTHON_EXECUTABLE} 
+  TEST_0 CMND ${Python3_EXECUTABLE} 
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/install_devtools_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
   )

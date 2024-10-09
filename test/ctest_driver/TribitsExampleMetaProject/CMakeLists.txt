@@ -152,7 +152,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "Configure PASSED!"
        "CTEST_NOTES_FILES='.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/BUILD/TribitsExMetaProjRepoVersion.txt[;].*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/BUILD/UpdateCommandsOutput.txt[;].*/TriBITS_CTestDriver_TribitsExMetaProj_clone_default_branch_remote/BUILD/CMakeCache.clean.txt'"
       "Build PASSED!"
-      "100% tests passed, 0 tests failed out of 11"
+      "100% tests passed, 0 tests failed out of 10"
       "Addon1 .*=.*.* sec[*]proc [(]1 test[)]"
       "MixedLang .* =.*.* sec[*]proc [(]1 test[)]"
       "SimpleCxx .*=*.* sec[*]proc [(]2 tests[)]"
@@ -232,7 +232,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "Configure PASSED!"
       "CTEST_NOTES_FILES='.*/BUILD/TribitsExMetaProjRepoVersion.txt[;].*/BUILD/Updates.txt[;].*/BUILD/UpdateCommandsOutput.txt[;].*/tribits/examples/TribitsExampleMetaProject/README[;].*/BUILD/CMakeCache.clean.txt'"
       "Build PASSED!"
-      "100% tests passed, 0 tests failed out of 11"
+      "100% tests passed, 0 tests failed out of 10"
       "Addon1 .*=.*.* sec[*]proc [(]1 test[)]"
       "MixedLang .* =.*.* sec[*]proc [(]1 test[)]"
       "SimpleCxx .*=*.* sec[*]proc [(]2 tests[)]"
@@ -315,7 +315,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "Configure PASSED!"
       "CTEST_NOTES_FILES='.*/BUILD/TribitsExMetaProjRepoVersion.txt[;].*/BUILD/Updates.txt[;].*/BUILD/UpdateCommandsOutput.txt[;].*/BUILD/CMakeCache.clean.txt'"
       "Build PASSED!"
-      "100% tests passed, 0 tests failed out of 11"
+      "100% tests passed, 0 tests failed out of 10"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_12
@@ -404,7 +404,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_default_branch_re
       "ctest_update[(][.][.][.][)] returned '0'"
       "Configure PASSED!"
       "Build PASSED!"
-      "100% tests passed, 0 tests failed out of 11"
+      "100% tests passed, 0 tests failed out of 10"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
@@ -454,7 +454,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
       "Configure PASSED!"
        "CTEST_NOTES_FILES='.*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/BUILD/TribitsExMetaProjRepoVersion.txt[;].*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/BUILD/UpdateCommandsOutput.txt[;].*/TriBITS_CTestDriver_TribitsExMetaProj_clone_custom_branch_remote/BUILD/CMakeCache.clean.txt'"
       "Build PASSED!"
-      "100% tests passed, 0 tests failed out of 11"
+      "100% tests passed, 0 tests failed out of 10"
       "Addon1 .*=.*.* sec[*]proc [(]1 test[)]"
       "MixedLang .* =.*.* sec[*]proc [(]1 test[)]"
       "SimpleCxx .*=*.* sec[*]proc [(]2 tests[)]"
@@ -568,7 +568,7 @@ tribits_add_advanced_test( CTestDriver_TribitsExMetaProj_clone_custom_branch_rem
       "Configure PASSED!"
       "CTEST_NOTES_FILES='.*/BUILD/TribitsExMetaProjRepoVersion.txt[;].*/BUILD/Updates.txt[;].*/BUILD/UpdateCommandsOutput.txt[;].*/BUILD/CMakeCache.clean.txt'"
       "Build PASSED!"
-      "100% tests passed, 0 tests failed out of 11"
+      "100% tests passed, 0 tests failed out of 10"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   # NOTE: The above use case requires the custom git commands used by
   # ctest_update().  The default git commits used inside of ctest_update()

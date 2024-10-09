@@ -1688,14 +1688,14 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_LibUsage
       ${TribitsExampleProject_COMMON_CONFIG_ARGS}
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_Fortran=ON
-      -DPYTHON_EXECUTABLE=
+      -DPython3_EXECUTABLE=
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_INSTALL_CMAKE_CONFIG_FILES=OFF
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
-      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because PYTHON_EXECUTABLE=''"
+      "NOTE: Setting TribitsExProj_ENABLE_WrapExternal=OFF because Python3_EXECUTABLE=''"
       "Final set of enabled top-level packages:  SimpleCxx MixedLang WithSubpackages 3"
       "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages 6"
       "Configuring done"
