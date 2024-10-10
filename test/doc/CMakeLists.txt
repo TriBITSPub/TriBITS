@@ -1,10 +1,3 @@
-if (PYTHON_VERSION_MAJOR GREATER_EQUAL 3)
-  set(HAS_PYTHON3 TRUE)
-else()
-  set(HAS_PYTHON3 FALSE)
-endif()
-
-
 advanced_set( ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS OFF
   CACHE BOOL
   "Enable testing for the build of the documentation, including using Sphinx.  Requires docutils, sphinx, and sphinx-rd-theme and will blow away and rebuild the existing documentation in the source tree since the documentation builds in place.  Therefore, one must be careful to not blow away non-tracked files." )
@@ -13,14 +6,13 @@ advanced_set( ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS OFF
 tribits_add_advanced_test( sphinx_rst_generator_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
-  EXCLUDE_IF_NOT_TRUE HAS_PYTHON3
+  EXCLUDE_IF_NOT_TRUE Python3_EXECUTABLE
   TEST_0 CMND ${Python3_EXECUTABLE}
     ARGS ${CMAKE_CURRENT_SOURCE_DIR}/sphinx_rst_generator_UnitTests.py -v
     PASS_REGULAR_EXPRESSION "OK"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   DISABLED "Test is broken for long time, see commit c477daa1"
   )
-
 
 tribits_add_advanced_test( build_docs
   EXCLUDE_IF_NOT_TRUE ${PROJECT_NAME}_ENABLE_DOC_GENERATION_TESTS
