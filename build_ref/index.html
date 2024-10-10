@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=87b1c61f"></script>
+      <script src="_static/documentation_options.js?v=0a49926a"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -225,10 +225,10 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date<span class="colon">:</span></dt>
-<dd class="field-odd"><p>2024-10-09</p>
+<dd class="field-odd"><p>2024-10-10</p>
 </dd>
 <dt class="field-even">Version<span class="colon">:</span></dt>
-<dd class="field-even"><p>tribits_start-3494-gbd5ce80c</p>
+<dd class="field-even"><p>tribits_start-3499-g807a598b</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -2379,9 +2379,9 @@ is free of calling deprecated code.</p>
 </pre></div>
 </div>
 <p>Otherwise, Python will be found automatically by default using
-<code class="docutils literal notranslate"><span class="pre">find_python(Python3)</span></code> internally.</p>
-<p>To disable the finding and usage of Python, configure with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">Python3_EXECUTABLE</span><span class="o">=&lt;</span><span class="n">python</span><span class="o">-</span><span class="n">path</span><span class="o">&gt;</span>
+<code class="docutils literal notranslate"><span class="pre">find_python(Python3)</span></code> internally (see <a class="reference external" href="https://cmake.org/cmake/help/latest/module/FindPython3.html">FindPython3.cmake</a>).</p>
+<p>To disable the finding and usage of Python, configure with (empty):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">Python3_EXECUTABLE</span><span class="o">=</span>
 </pre></div>
 </div>
 </section>
