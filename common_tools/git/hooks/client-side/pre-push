@@ -49,7 +49,27 @@ def getVersionInfoFromStdinStr(stdinStr):
     remoteCommit = None
   #
   return (localCommit, remoteCommit)
- 
+
+
+def getUpstreamRemoteBranch():
+  upstreamRemoteBranchPropName = "user.upstreamremotebranch"
+  upstreamRemoteBranch = getCmndOutput(["git", "config", "--get",
+    upstreamRemoteBranchPropName], allowToFail=True).strip()
+  if not upstreamRemoteBranch:
+    print("Error: The git repo config var '"+upstreamRemoteBranchPropName+"'"\
+      +" is not set!\n\n"\
+      +"Please set it in your local repo with:\n\n"\
+      +"  git config "+upstreamRemoteBranchPropName+" <remoteName>/<branchName>")
+    exit(1)
+  return upstreamRemoteBranch
+
+
+def getAdjustedReferenceVersion(remoteCommit):
+  if remoteCommit == "0000000000000000000000000000000000000000":
+    #print("Adjusted remote ref for remote commit: "+remoteCommit)
+    return getUpstreamRemoteBranch()
+  return remoteCommit
+
 
 #
 # Main
@@ -66,10 +86,12 @@ remoteURL = cmndLineArgs[1]
 # Read in data from STDIIN
 stdinStr = sys.stdin.read().strip()
 (localCommit, remoteCommit) = getVersionInfoFromStdinStr(stdinStr)
+remoteReferenceVersion = getAdjustedReferenceVersion(remoteCommit)
 
 # Get the commits
 if remoteCommit:
-  gitCommits = getCmndOutput(["git", "rev-list", remoteCommit+".."+localCommit]).strip()
+  gitCommits = getCmndOutput(["git", "rev-list",
+    remoteReferenceVersion+".."+localCommit]).strip()
   #print("gitCommits = '"+gitCommits+"'")
 else:
   gitCommits = None
