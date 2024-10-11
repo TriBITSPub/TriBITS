@@ -1,6 +1,8 @@
 #!/bin/sh
 #
-# Run from the base TriBITS git repo clone to install local git hooks
+# Run from a base git repo clone to install local git hooks
+#
+# For example:
 #
 #   $ cd TriBITS/
 #   $ ./commont_tools/git/client-side/copy_hooks_scripts.sh
@@ -14,13 +16,14 @@ fi
 _SCRIPT_DIR=`echo $0 | sed "s/\(.*\)\/copy_hooks_scripts.sh/\1/g"`
 
 function copy_hook_script {
-  orig_file="$_SCRIPT_DIR/$1"
-  dest_file=".git/hooks/$1"
+  hook_file_name=$1
+  orig_file="$_SCRIPT_DIR/${hook_file_name}"
+  dest_file=".git/hooks/${hook_file_name}"
   
   if diff ${orig_file} ${dest_file} &> /dev/null ; then
-    :
+    echo "NOTE: Local git hook script is same as installed: ${hook_file_name}"
   else
-    echo "Copy local git hook script: $1"
+    echo "Copy local git hook script: ${hook_file_name}"
     cp "${orig_file}" "${dest_file}"
   fi
 }
@@ -28,4 +31,4 @@ function copy_hook_script {
 #echo "_SCRIPT_DIR = '$_SCRIPT_DIR'"
 
 copy_hook_script commit-msg
-
+copy_hook_script pre-push
