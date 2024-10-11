@@ -1,0 +1,86 @@
+#!/usr/bin/env python3
+#
+# pre-push hook to check that commits are signed before pushing
+#
+
+import os
+import sys
+import subprocess
+
+
+# Functions
+
+
+def s(x):
+  try:
+    return x.decode("utf-8")
+  except AttributeError:
+    return x
+
+
+def getCmndOutput(cmnd):
+  result = subprocess.run(cmnd, stdout=subprocess.PIPE,
+    stderr = subprocess.STDOUT)
+  output = s(result.stdout)
+  if result.returncode != 0:
+    print("Error, the command "+str(cmnd)+" returned error code "+str(result.returncode)\
+      +" with the stderr message:\n\n"+str(result.stderr)\
+      +"\n\nReturned output was:\n\n"+output)
+    exit(1)
+  return output
+
+
+#
+# Main
+#
+
+
+# Read in command-line args
+cmndLineArgs = sys.argv[1:]
+remoteName = cmndLineArgs[0] 
+remoteURL = cmndLineArgs[1]
+#print("remoteName = "+str(remoteName))
+#print("remoteURL = "+str(remoteURL))
+
+# Read in data from STDIIN
+stdinStr = sys.stdin.read().strip()
+if stdinStr:
+  stdinArray = stdinStr.split(" ")
+  #print("stdinArray = "+str(stdinArray))
+  localRef = stdinArray[0]
+  localObjectName = stdinArray[1]
+  remoteRef = stdinArray[2]
+  remoteObjectName = stdinArray[3]
+  #print("localRef = "+localRef)
+  #print("localObjectName = "+localObjectName)
+  #print("remoteRef = "+remoteRef)
+  #print("remoteObjectName = "+remoteObjectName)
+
+# Get the commits
+if stdinStr:
+  gitCommits = getCmndOutput(["git", "rev-list",
+    remoteObjectName+".."+localObjectName]).strip()
+  #print("gitCommits = '"+gitCommits+"'")
+else:
+  gitCommits = None
+
+# Loop over commits and check for the proper usage
+if gitCommits:
+
+  gitCommitsArray = str(gitCommits).split("\n")
+  #print("gitCommitsArray = "+str(gitCommitsArray))
+
+  for commit in gitCommitsArray:
+    commitMsg = getCmndOutput(["git", "log", "-1", "--pretty=format:\"%B\"", commit])
+    if not "Signed-off-by:" in commitMsg:
+      print("Error: Commit "+commit+" does not have a Signed-off-by line!")
+      exit(1)
+
+# Abort if only doing testing
+prePushHookTesting = os.environ.get("PRE_PUSH_HOOK_TESTING", "0")
+if prePushHookTesting == "1":
+  print("Aborting pre-push because PRE_PUSH_HOOK_TESTING="+str(prePushHookTesting))
+  exit(1)
+
+# If you get here, it is okay to push!
+exit(0)
