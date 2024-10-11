@@ -81,6 +81,8 @@ def getVersionRangeInfoFromStdinStr(stdinStr):
 # Main
 #
 
+# Get the branch name at the top in case it is not set!
+upstreamRemoteBranch = getUpstreamRemoteBranch()
 
 # Read in command-line args
 cmndLineArgs = sys.argv[1:]
@@ -111,6 +113,9 @@ if gitCommits:
     if not "Signed-off-by:" in commitMsg:
       print("Error: Commit "+commit+" does not have a Signed-off-by line!")
       foundBadCommit = True
+if foundBadCommit:
+  print("\nNOTE: These commits can be signed off by running:\n\n"\
+    "  git rebase --signoff "+upstreamRemoteBranch+"\n")
 
 # Abort if only doing testing
 prePushHookTesting = os.environ.get("PRE_PUSH_HOOK_TESTING", "0")
