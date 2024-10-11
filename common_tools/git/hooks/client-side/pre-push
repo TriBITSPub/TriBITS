@@ -119,6 +119,14 @@ def checkCommitsAreOkay(gitCommitsList, upstreamRemoteBranch):
     return False
   return True
 
+
+def abortIfOnlyDoingTesting():
+  prePushHookTesting = os.environ.get("PRE_PUSH_HOOK_TESTING", "0")
+  if prePushHookTesting == "1":
+    print("Aborting pre-push because PRE_PUSH_HOOK_TESTING="+str(prePushHookTesting))
+    exit(1)
+
+
 #
 # Main
 #
@@ -134,13 +142,8 @@ gitCommitsList = getCommitsListToBeTested(localCommit, remoteReferenceVersion)
 
 allCommitsAreOkay = checkCommitsAreOkay(gitCommitsList, upstreamRemoteBranch)
 
-# Abort if only doing testing
-prePushHookTesting = os.environ.get("PRE_PUSH_HOOK_TESTING", "0")
-if prePushHookTesting == "1":
-  print("Aborting pre-push because PRE_PUSH_HOOK_TESTING="+str(prePushHookTesting))
-  exit(1)
+abortIfOnlyDoingTesting()
 
 # Final return pass/fail
-if not allCommitsAreOkay:
-  exit(1)
+if not allCommitsAreOkay: exit(1)
 exit(0)
