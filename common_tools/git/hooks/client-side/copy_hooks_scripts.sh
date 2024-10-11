@@ -31,4 +31,4 @@ function copy_hook_script {
 #echo "_SCRIPT_DIR = '$_SCRIPT_DIR'"
 
 copy_hook_script commit-msg
-
+copy_hook_script pre-push
