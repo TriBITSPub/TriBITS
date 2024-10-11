@@ -99,6 +99,14 @@ def getCommitsListToBeTested(localCommit, remoteReferenceVersion):
   return []
 
 
+def checkCommitOkay(commit):
+  commitMsg = getCmndOutput(["git", "log", "-1", "--pretty=format:\"%B\"", commit])
+  if not "Signed-off-by:" in commitMsg:
+    print("Error: Commit "+commit+" does not have a Signed-off-by line!")
+    return False
+  return True
+
+
 #
 # Main
 #
@@ -116,9 +124,7 @@ gitCommitsList = getCommitsListToBeTested(localCommit, remoteReferenceVersion)
 foundBadCommit = False
 if gitCommitsList:
   for commit in gitCommitsList:
-    commitMsg = getCmndOutput(["git", "log", "-1", "--pretty=format:\"%B\"", commit])
-    if not "Signed-off-by:" in commitMsg:
-      print("Error: Commit "+commit+" does not have a Signed-off-by line!")
+    if not checkCommitOkay(commit):
       foundBadCommit = True
 if foundBadCommit:
   print("\nNOTE: These commits can be signed off by running:\n\n"\
