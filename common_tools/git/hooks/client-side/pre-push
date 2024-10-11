@@ -30,6 +30,15 @@ def getCmndOutput(cmnd, allowToFail=False):
   return output
 
 
+def getCmndLineArgsFrmSysArgv(sysArgv):
+  cmndLineArgs = sysArgv[1:]
+  remoteName = cmndLineArgs[0]
+  remoteURL = cmndLineArgs[1]
+  #print("remoteName = "+str(remoteName))
+  #print("remoteURL = "+str(remoteURL))
+  return (remoteName, remoteURL)
+
+
 def getVersionInfoFromStdinStr(stdinStr):
   if stdinStr:
     stdinArray = stdinStr.split(" ")
@@ -97,13 +106,8 @@ def getCommitsListToBeTested(localCommit, remoteReferenceVersion):
 # Get the branch name at the top in case it is not set!
 upstreamRemoteBranch = getUpstreamRemoteBranch()
 
-# Read in command-line args
-cmndLineArgs = sys.argv[1:]
-remoteName = cmndLineArgs[0] 
-remoteURL = cmndLineArgs[1]
-#print("remoteName = "+str(remoteName))
-#print("remoteURL = "+str(remoteURL))
-
+# Get input and set of commits to check
+(remoteName, remoteURL) = getCmndLineArgsFrmSysArgv(sys.argv)
 stdinStr = sys.stdin.read().strip()
 (localCommit, remoteReferenceVersion) = getVersionRangeInfoFromStdinStr(stdinStr)
 gitCommitsList = getCommitsListToBeTested(localCommit, remoteReferenceVersion)
