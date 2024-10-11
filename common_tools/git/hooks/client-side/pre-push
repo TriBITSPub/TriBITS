@@ -107,6 +107,18 @@ def checkCommitOkay(commit):
   return True
 
 
+def checkCommitsAreOkay(gitCommitsList, upstreamRemoteBranch):
+  foundBadCommit = False
+  if gitCommitsList:
+    for commit in gitCommitsList:
+      if not checkCommitOkay(commit):
+        foundBadCommit = True
+  if foundBadCommit:
+    print("\nNOTE: These commits can be signed off by running:\n\n"\
+      "  git rebase --signoff "+upstreamRemoteBranch+"\n")
+    return False
+  return True
+
 #
 # Main
 #
@@ -114,21 +126,13 @@ def checkCommitOkay(commit):
 # Get the branch name at the top in case it is not set!
 upstreamRemoteBranch = getUpstreamRemoteBranch()
 
-# Get input and set of commits to check
 (remoteName, remoteURL) = getCmndLineArgsFrmSysArgv(sys.argv)
+
 stdinStr = sys.stdin.read().strip()
 (localCommit, remoteReferenceVersion) = getVersionRangeInfoFromStdinStr(stdinStr)
 gitCommitsList = getCommitsListToBeTested(localCommit, remoteReferenceVersion)
 
-# Loop over commits and check for the proper usage
-foundBadCommit = False
-if gitCommitsList:
-  for commit in gitCommitsList:
-    if not checkCommitOkay(commit):
-      foundBadCommit = True
-if foundBadCommit:
-  print("\nNOTE: These commits can be signed off by running:\n\n"\
-    "  git rebase --signoff "+upstreamRemoteBranch+"\n")
+allCommitsAreOkay = checkCommitsAreOkay(gitCommitsList, upstreamRemoteBranch)
 
 # Abort if only doing testing
 prePushHookTesting = os.environ.get("PRE_PUSH_HOOK_TESTING", "0")
@@ -137,6 +141,6 @@ if prePushHookTesting == "1":
   exit(1)
 
 # Final return pass/fail
-if foundBadCommit:
+if not allCommitsAreOkay:
   exit(1)
 exit(0)
