@@ -684,10 +684,10 @@ tribits_add_advanced_test( TribitsHelloWorld_install_perms
     CMND ls ARGS -ld
       install install/include install/lib install/bin
     PASS_REGULAR_EXPRESSION_ALL
-      "drwx------.* .* install"
-      "drwx------.* .* install/bin"
-      "drwx------.* .* install/include"
-      "drwx------.* .* install/lib"
+      "drwx--[-S]---.* .* install"
+      "drwx--[-S]---.* .* install/bin"
+      "drwx--[-S]---.* .* install/include"
+      "drwx--[-S]---.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )

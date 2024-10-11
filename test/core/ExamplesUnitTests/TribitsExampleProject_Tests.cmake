@@ -781,12 +781,12 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
       install_base/install/lib
       install_base/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/bin"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/include"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/lib"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesB/stuff"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/bin"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/include"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/lib"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesB/stuff"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_6
@@ -800,10 +800,10 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
       install_base/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
       "${mixedLangHeaderRegex}"
-      "[d]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* wsp_c"
+      "[d]rwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* wsp_c"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* C.hpp"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_c.a"
-      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
+      "[-]rwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
@@ -915,13 +915,13 @@ tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perm
       install_base/subdir/install/lib
       install_base/subdir/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/bin"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/include"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/lib"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/share/WithSubpackagesB/stuff"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/bin"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/include"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/lib"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/share/WithSubpackagesB/stuff"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_7
@@ -936,7 +936,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_package_by_package_perm
       "${mixedLangHeaderRegex}"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* B.hpp"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_b.a"
-      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
+      "[-]rwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
@@ -1060,13 +1060,13 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms_nonowning_base_di
       ${installPrefix}/lib
       ${installPrefix}/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_BASE_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installBaseDir}"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefixBaseDir}"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/bin"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/include"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/lib"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/share/WithSubpackagesB/stuff"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_BASE_OWNING_USER} *${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installBaseDir}"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefixBaseDir}"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/bin"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/include"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/lib"
+      "drwxrw[xs]r-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} +${TribitsExProj_INSTALL_OWNING_GROUP} .* ${installPrefix}/share/WithSubpackagesB/stuff"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
