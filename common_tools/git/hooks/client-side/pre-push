@@ -77,6 +77,19 @@ def getVersionRangeInfoFromStdinStr(stdinStr):
   return (localCommit, remoteReferenceVersion)
 
 
+def getCommitsListToBeTested(localCommit, remoteReferenceVersion):
+  if remoteReferenceVersion:
+    gitCommitsStr = getCmndOutput(["git", "rev-list",
+      remoteReferenceVersion+".."+localCommit]).strip()
+    #print("gitCommits = '"+gitCommits+"'")
+  else:
+    gitCommitsStr = None
+  # Return an array of the commits
+  if gitCommitsStr:
+    return str(gitCommitsStr).split("\n")
+  return []
+
+
 #
 # Main
 #
@@ -92,23 +105,13 @@ remoteURL = cmndLineArgs[1]
 #print("remoteURL = "+str(remoteURL))
 
 stdinStr = sys.stdin.read().strip()
-
 (localCommit, remoteReferenceVersion) = getVersionRangeInfoFromStdinStr(stdinStr)
-
-# Get the commits
-if remoteReferenceVersion:
-  gitCommits = getCmndOutput(["git", "rev-list",
-    remoteReferenceVersion+".."+localCommit]).strip()
-  #print("gitCommits = '"+gitCommits+"'")
-else:
-  gitCommits = None
+gitCommitsList = getCommitsListToBeTested(localCommit, remoteReferenceVersion)
 
 # Loop over commits and check for the proper usage
 foundBadCommit = False
-if gitCommits:
-  gitCommitsArray = str(gitCommits).split("\n")
-  #print("gitCommitsArray = "+str(gitCommitsArray))
-  for commit in gitCommitsArray:
+if gitCommitsList:
+  for commit in gitCommitsList:
     commitMsg = getCmndOutput(["git", "log", "-1", "--pretty=format:\"%B\"", commit])
     if not "Signed-off-by:" in commitMsg:
       print("Error: Commit "+commit+" does not have a Signed-off-by line!")
