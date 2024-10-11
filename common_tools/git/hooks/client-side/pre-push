@@ -30,6 +30,27 @@ def getCmndOutput(cmnd):
   return output
 
 
+def getVersionInfoFromStdinStr(stdinStr):
+  if stdinStr:
+    stdinArray = stdinStr.split(" ")
+    #print("stdinArray = "+str(stdinArray))
+    localRef = stdinArray[0]
+    localObjectName = stdinArray[1]
+    remoteRef = stdinArray[2]
+    remoteObjectName = stdinArray[3]
+    #print("localRef = "+localRef)
+    #print("localObjectName = "+localObjectName)
+    #print("remoteRef = "+remoteRef)
+    #print("remoteObjectName = "+remoteObjectName)
+    localCommit = localObjectName
+    remoteCommit = remoteObjectName
+  else:
+    localCommit = None
+    remoteCommit = None
+  #
+  return (localCommit, remoteCommit)
+ 
+
 #
 # Main
 #
@@ -44,22 +65,11 @@ remoteURL = cmndLineArgs[1]
 
 # Read in data from STDIIN
 stdinStr = sys.stdin.read().strip()
-if stdinStr:
-  stdinArray = stdinStr.split(" ")
-  #print("stdinArray = "+str(stdinArray))
-  localRef = stdinArray[0]
-  localObjectName = stdinArray[1]
-  remoteRef = stdinArray[2]
-  remoteObjectName = stdinArray[3]
-  #print("localRef = "+localRef)
-  #print("localObjectName = "+localObjectName)
-  #print("remoteRef = "+remoteRef)
-  #print("remoteObjectName = "+remoteObjectName)
+(localCommit, remoteCommit) = getVersionInfoFromStdinStr(stdinStr)
 
 # Get the commits
-if stdinStr:
-  gitCommits = getCmndOutput(["git", "rev-list",
-    remoteObjectName+".."+localObjectName]).strip()
+if remoteCommit:
+  gitCommits = getCmndOutput(["git", "rev-list", remoteCommit+".."+localCommit]).strip()
   #print("gitCommits = '"+gitCommits+"'")
 else:
   gitCommits = None
