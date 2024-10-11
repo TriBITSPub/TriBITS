@@ -97,16 +97,15 @@ else:
   gitCommits = None
 
 # Loop over commits and check for the proper usage
+foundBadCommit = False
 if gitCommits:
-
   gitCommitsArray = str(gitCommits).split("\n")
   #print("gitCommitsArray = "+str(gitCommitsArray))
-
   for commit in gitCommitsArray:
     commitMsg = getCmndOutput(["git", "log", "-1", "--pretty=format:\"%B\"", commit])
     if not "Signed-off-by:" in commitMsg:
       print("Error: Commit "+commit+" does not have a Signed-off-by line!")
-      exit(1)
+      foundBadCommit = True
 
 # Abort if only doing testing
 prePushHookTesting = os.environ.get("PRE_PUSH_HOOK_TESTING", "0")
@@ -114,5 +113,7 @@ if prePushHookTesting == "1":
   print("Aborting pre-push because PRE_PUSH_HOOK_TESTING="+str(prePushHookTesting))
   exit(1)
 
-# If you get here, it is okay to push!
+# Final return pass/fail
+if foundBadCommit:
+  exit(1)
 exit(0)
