@@ -71,6 +71,12 @@ def getAdjustedReferenceVersion(remoteCommit):
   return remoteCommit
 
 
+def getVersionRangeInfoFromStdinStr(stdinStr):
+  (localCommit, remoteCommit) = getVersionInfoFromStdinStr(stdinStr)
+  remoteReferenceVersion = getAdjustedReferenceVersion(remoteCommit)
+  return (localCommit, remoteReferenceVersion)
+
+
 #
 # Main
 #
@@ -83,13 +89,12 @@ remoteURL = cmndLineArgs[1]
 #print("remoteName = "+str(remoteName))
 #print("remoteURL = "+str(remoteURL))
 
-# Read in data from STDIIN
 stdinStr = sys.stdin.read().strip()
-(localCommit, remoteCommit) = getVersionInfoFromStdinStr(stdinStr)
-remoteReferenceVersion = getAdjustedReferenceVersion(remoteCommit)
+
+(localCommit, remoteReferenceVersion) = getVersionRangeInfoFromStdinStr(stdinStr)
 
 # Get the commits
-if remoteCommit:
+if remoteReferenceVersion:
   gitCommits = getCmndOutput(["git", "rev-list",
     remoteReferenceVersion+".."+localCommit]).strip()
   #print("gitCommits = '"+gitCommits+"'")
