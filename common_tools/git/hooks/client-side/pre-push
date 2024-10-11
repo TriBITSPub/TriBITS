@@ -18,11 +18,11 @@ def s(x):
     return x
 
 
-def getCmndOutput(cmnd):
+def getCmndOutput(cmnd, allowToFail=False):
   result = subprocess.run(cmnd, stdout=subprocess.PIPE,
     stderr = subprocess.STDOUT)
   output = s(result.stdout)
-  if result.returncode != 0:
+  if result.returncode != 0 and not allowToFail:
     print("Error, the command "+str(cmnd)+" returned error code "+str(result.returncode)\
       +" with the stderr message:\n\n"+str(result.stderr)\
       +"\n\nReturned output was:\n\n"+output)
