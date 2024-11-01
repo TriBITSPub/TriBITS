@@ -425,7 +425,7 @@ function(tribits_tpl_find_include_dirs_and_libraries TPL_NAME)
 
       message( "-- Searching for libs in ${TPL_NAME}_LIBRARY_DIRS='${${TPL_NAME}_LIBRARY_DIRS}'")
 
-      set(LIBRARIES_FOUND)
+      set(LIBRARIES_FOUND "")
 
       foreach(LIBNAME_SET ${REQUIRED_LIBS_NAMES})
 
@@ -438,7 +438,7 @@ function(tribits_tpl_find_include_dirs_and_libraries TPL_NAME)
         set(LIBNAME_LIST ${LIBNAME_SET})
         separate_arguments(LIBNAME_LIST)
 
-        set(LIBNAME_SET_LIB)
+        set(LIBNAME_SET_LIB "")
 
         foreach(LIBNAME ${LIBNAME_LIST})
 
