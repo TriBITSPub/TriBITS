@@ -5942,6 +5942,22 @@ header files and libraries that must be found.  A simple
     MUST_FIND_ALL_LIBS
     )
 
+Note that a set of alternate names for each library can be specified using
+quotes around the set of alternative library names using the syntax::
+
+  tribits_tpl_find_include_dirs_and_libraries( <tplName>
+    ...
+    REQUIRED_LIBS_NAMES "<libname0> <libname0alt0> <libname0alt1> ..." ...
+    ...
+    )
+
+This is most commonly used for simple single-library TPLs like BLAS that has
+different potential implementations like::
+
+  tribits_tpl_find_include_dirs_and_libraries( BLAS
+    REQUIRED_LIBS_NAMES "blas openblas atlas"
+    ...
+    )
 
 Requirements for FindTPL<tplName>.cmake modules
 +++++++++++++++++++++++++++++++++++++++++++++++
