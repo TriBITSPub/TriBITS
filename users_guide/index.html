@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=fcff24c9"></script>
+      <script src="_static/documentation_options.js?v=9c44402b"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -399,10 +399,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2024-10-12</p>
+<dd class="field-even"><p>2024-11-01</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3519-ga473101c</p>
+<dd class="field-odd"><p>tribits_start-3525-g860f3d01</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -2880,7 +2880,9 @@ requirements for a <code class="docutils literal notranslate"><span class="pre">
 FindTPL&lt;tplName&gt;.cmake modules</a>).</p>
 <p>The form of a simple <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file that uses an internal
 call to <code class="docutils literal notranslate"><span class="pre">find_package(&lt;externalPkg&gt;)</span></code> which provides modern IMPORTED CMake
-targets looks like:</p>
+targets can use the
+<a class="reference internal" href="#tribits-extpkg-create-imported-all-libs-target-and-config-file">tribits_extpkg_create_imported_all_libs_target_and_config_file()</a> function
+and looks like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">find_package</span><span class="p">(</span><span class="o">&lt;</span><span class="n">externalPkg</span><span class="o">&gt;</span> <span class="n">REQUIRED</span><span class="p">)</span>
 <span class="n">tribits_extpkg_create_imported_all_libs_target_and_config_file</span><span class="p">(</span>
   <span class="o">&lt;</span><span class="n">tplName</span><span class="o">&gt;</span>
@@ -2888,7 +2890,7 @@ targets looks like:</p>
   <span class="n">IMPORTED_TARGETS_FOR_ALL_LIBS</span> <span class="o">&lt;</span><span class="n">importedTarget0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">importedTarget1</span><span class="o">&gt;</span> <span class="o">...</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>In this case, the purpose for the <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file (as apposed
+<p>In this case, the purpose for the <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file (as opposed
 to a direct call to <code class="docutils literal notranslate"><span class="pre">find_package(&lt;externalPkg&gt;)</span></code>) is to ensure the
 definition of the complete target <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;::all_libs</span></code> which contains all
 usage requirements for the external package/TPL (i.e. all of the libraries,
@@ -2896,7 +2898,8 @@ include directories, etc.) and this also generates the wrapper package config
 file <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;Config.cmake</span></code>.</p>
 <p>The form of a simple <code class="docutils literal notranslate"><span class="pre">FindTPL&lt;tplName&gt;.cmake</span></code> file that just provides a list
 of required header files and libraries that does <strong>not</strong> use an internal call
-to <code class="docutils literal notranslate"><span class="pre">find_package()</span></code> looks like:</p>
+to <code class="docutils literal notranslate"><span class="pre">find_package()</span></code> and instead uses the function
+<a class="reference internal" href="#tribits-tpl-find-include-dirs-and-libraries">tribits_tpl_find_include_dirs_and_libraries()</a> looks like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_tpl_find_include_dirs_and_libraries</span><span class="p">(</span> <span class="o">&lt;</span><span class="n">tplName</span><span class="o">&gt;</span>
   <span class="n">REQUIRED_HEADERS</span> <span class="o">&lt;</span><span class="n">header0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">header1</span><span class="o">&gt;</span> <span class="o">...</span>
   <span class="n">REQUIRED_LIBS_NAMES</span> <span class="o">&lt;</span><span class="n">libname0</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">libname1</span><span class="o">&gt;</span> <span class="o">...</span>
@@ -7044,6 +7047,23 @@ header files and libraries that must be found.  A simple
   <span class="p">)</span>
 </pre></div>
 </div>
+<p>Note that a set of alternate names for each library can be specified using
+quotes around the set of alternative library names using the syntax:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_tpl_find_include_dirs_and_libraries</span><span class="p">(</span> <span class="o">&lt;</span><span class="n">tplName</span><span class="o">&gt;</span>
+  <span class="o">...</span>
+  <span class="n">REQUIRED_LIBS_NAMES</span> <span class="s2">&quot;&lt;libname0&gt; &lt;libname0alt0&gt; &lt;libname0alt1&gt; ...&quot;</span> <span class="o">...</span>
+  <span class="o">...</span>
+  <span class="p">)</span>
+</pre></div>
+</div>
+<p>This is most commonly used for simple single-library TPLs like BLAS that has
+different potential implementations like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tribits_tpl_find_include_dirs_and_libraries</span><span class="p">(</span> <span class="n">BLAS</span>
+  <span class="n">REQUIRED_LIBS_NAMES</span> <span class="s2">&quot;blas openblas atlas&quot;</span>
+  <span class="o">...</span>
+  <span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="requirements-for-findtpl-tplname-cmake-modules">
 <h3><a class="toc-backref" href="#id75" role="doc-backlink">Requirements for FindTPL&lt;tplName&gt;.cmake modules</a><a class="headerlink" href="#requirements-for-findtpl-tplname-cmake-modules" title="Link to this heading"></a></h3>
@@ -8441,7 +8461,7 @@ can’t be found.  In this case, the TriBITS project would set
 <a class="reference internal" href="#project-name-requires-python">${PROJECT_NAME}_REQUIRES_PYTHON</a> to <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>.</p></li>
 <li><p>Some TriBITS projects may require a version of Python more recent than 3.6.
 In this case, the TriBITS project would set
-<a href="#id266"><span class="problematic" id="id267">`${PROJECT_NAME}_Python3_FIND_VERSION`_</span></a> to some value higher than <code class="docutils literal notranslate"><span class="pre">3.6</span></code>.
+<a class="reference internal" href="#project-name-python3-find-version">${PROJECT_NAME}_Python3_FIND_VERSION</a> to some value higher than <code class="docutils literal notranslate"><span class="pre">3.6</span></code>.
 For example, may newer systems have higher versions of Python installed by
 default, and projects developed on such a system typically require this
 version or higher.</p></li>
@@ -10134,6 +10154,7 @@ a given TriBITS project are:</p>
 <li><p><a class="reference internal" href="#project-name-make-install-group-writable">${PROJECT_NAME}_MAKE_INSTALL_GROUP_WRITABLE</a></p></li>
 <li><p><a class="reference internal" href="#project-name-make-install-world-readable">${PROJECT_NAME}_MAKE_INSTALL_WORLD_READABLE</a></p></li>
 <li><p><a class="reference internal" href="#project-name-must-find-all-tpl-libs">${PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS</a></p></li>
+<li><p><a class="reference internal" href="#project-name-python3-find-version">${PROJECT_NAME}_Python3_FIND_VERSION</a></p></li>
 <li><p><a class="reference internal" href="#project-name-requires-python">${PROJECT_NAME}_REQUIRES_PYTHON</a></p></li>
 <li><p><a class="reference internal" href="#project-name-set-install-rpath">${PROJECT_NAME}_SET_INSTALL_RPATH</a></p></li>
 <li><p><a class="reference internal" href="#project-name-show-git-commit-parents">${PROJECT_NAME}_SHOW_GIT_COMMIT_PARENTS</a></p></li>
@@ -10147,7 +10168,6 @@ a given TriBITS project are:</p>
 <li><p><a class="reference internal" href="#dart-testing-timeout">DART_TESTING_TIMEOUT</a></p></li>
 <li><p><a class="reference internal" href="#cmake-install-rpath-use-link-path">CMAKE_INSTALL_RPATH_USE_LINK_PATH</a></p></li>
 <li><p><a class="reference internal" href="#mpi-exec-max-numprocs">MPI_EXEC_MAX_NUMPROCS</a></p></li>
-<li><p><a class="reference internal" href="#pythoninterp-find-version">PythonInterp_FIND_VERSION</a></p></li>
 <li><p><a class="reference internal" href="#tribits-handle-tribits-deprecated-code">TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE</a></p></li>
 </ul>
 <p>These options are described below.</p>
@@ -10607,6 +10627,21 @@ find module.  To change the default for this, set:</p>
 </div>
 <p>in the <a class="reference internal" href="#projectdir-projectname-cmake">&lt;projectDir&gt;/ProjectName.cmake</a> file.</p>
 </div></blockquote>
+<p id="project-name-python3-find-version"><strong>${PROJECT_NAME}_Python3_FIND_VERSION</strong></p>
+<blockquote>
+<div><p>Determines the version of Python that is looked for.  TriBITS requires at
+least version “3.6”.  A particular TriBITS project can require a higher
+version of TriBITS and this is set using, for example:</p>
+<blockquote>
+<div><p>set(${PROJECT_NAME}_Python3_FIND_VERSION_DEFAULT “3.8”)</p>
+</div></blockquote>
+<p>in the <a class="reference internal" href="#projectdir-projectname-cmake">&lt;projectDir&gt;/ProjectName.cmake</a> file (See <a class="reference internal" href="#python-support">Python Support</a>).  The
+user can force a more recent version of Python by configuring with, for
+example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_Python3_FIND_VERSION</span><span class="o">=</span><span class="s2">&quot;3.8&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
 <p id="project-name-requires-python"><strong>${PROJECT_NAME}_REQUIRES_PYTHON</strong></p>
 <blockquote>
 <div><p>If the TriBITS project requires Python, set:</p>
@@ -10824,21 +10859,6 @@ machine-by-machine basis to correspond to the load that can be accommodated
 by a given machine (or class of machines).  For example if a given machine
 has 64 cores, a reasonable number for <code class="docutils literal notranslate"><span class="pre">MPI_EXEC_MAX_NUMPROCS_DEFAULT</span></code> is
 64.</p>
-</div></blockquote>
-<p id="pythoninterp-find-version"><strong>PythonInterp_FIND_VERSION</strong></p>
-<blockquote>
-<div><p>Determines the version of Python that is looked for.  TriBITS requires at
-least version “2.7”.  A particular TriBITS project can require a higher
-version of TriBITS and this is set using, for example:</p>
-<blockquote>
-<div><p>set(PythonInterp_FIND_VERSION_DEFAULT “3.5.2”)</p>
-</div></blockquote>
-<p>in the <a class="reference internal" href="#projectdir-projectname-cmake">&lt;projectDir&gt;/ProjectName.cmake</a> file (See <a class="reference internal" href="#python-support">Python Support</a>).  The
-default is version “2.7”.  The user can force a more recent version of
-Python by configuring with, for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">PythonInterp_FIND_VERSION</span><span class="o">=</span><span class="s2">&quot;3.6.2&quot;</span>
-</pre></div>
-</div>
 </div></blockquote>
 <p id="tribits-handle-tribits-deprecated-code"><strong>TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE</strong></p>
 <blockquote>
@@ -15701,7 +15721,7 @@ module file (see <a class="reference internal" href="#tpl-name-findmod">${TPL_NA
   <span class="o">&lt;</span><span class="n">tplName</span><span class="o">&gt;</span>
   <span class="p">[</span><span class="n">REQUIRED_HEADERS</span> <span class="o">&lt;</span><span class="n">header1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">header2</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
   <span class="p">[</span><span class="n">MUST_FIND_ALL_HEADERS</span><span class="p">]</span>
-  <span class="p">[</span><span class="n">REQUIRED_LIBS_NAMES</span> <span class="o">&lt;</span><span class="n">libname1</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">libname2</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
+  <span class="p">[</span><span class="n">REQUIRED_LIBS_NAMES</span> <span class="s2">&quot;&lt;libname1&gt; &lt;libname1alt1&gt; ...&quot;</span> <span class="o">&lt;</span><span class="n">libname2</span><span class="o">&gt;</span> <span class="o">...</span><span class="p">]</span>
   <span class="p">[</span><span class="n">MUST_FIND_ALL_LIBS</span><span class="p">]</span>
   <span class="p">[</span><span class="n">NO_PRINT_ENABLE_SUCCESS_FAIL</span><span class="p">]</span>
   <span class="p">)</span>
@@ -15725,11 +15745,36 @@ include directories files using <code class="docutils literal notranslate"><span
 <div><p>If set, then all of the header files listed in <code class="docutils literal notranslate"><span class="pre">REQUIRED_HEADERS</span></code> must
 be found (unless <code class="docutils literal notranslate"><span class="pre">TPL_&lt;tplName&gt;_INCLUDE_DIRS</span></code> is already set).</p>
 </div></blockquote>
-<p><code class="docutils literal notranslate"><span class="pre">REQUIRED_LIBS_NAMES</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">REQUIRED_LIBS_NAMES</span> <span class="pre">&quot;&lt;libname1&gt;</span> <span class="pre">&lt;libname1alt1&gt;</span> <span class="pre">...&quot;</span> <span class="pre">&lt;libname2&gt;</span> <span class="pre">...</span></code></p>
 <blockquote>
 <div><p>List of libraries that are searched for when looking for the TPL’s
-libraries using <code class="docutils literal notranslate"><span class="pre">find_library()</span></code>.  This list can be overridden by the
-user by setting <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_NAMES</span></code> (see below).</p>
+libraries using <code class="docutils literal notranslate"><span class="pre">find_library()</span></code>. A single list of library names of
+the form:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">&lt;libname1&gt;</span> <span class="pre">&lt;libname2&gt;</span> <span class="pre">...</span></code></p>
+</div></blockquote>
+<p>are searched for and must all be found and will define the libraries for
+this TPL on the link line in that order.  However, a library name along
+with alternate library names can be provided using outer quotes with
+inner spaces:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">&quot;&lt;libname1&gt;</span> <span class="pre">&lt;libname1alt1&gt;</span> <span class="pre">&lt;libname1alt2&gt;</span> <span class="pre">...&quot;</span></code></p>
+</div></blockquote>
+<p>In this case, first, <code class="docutils literal notranslate"><span class="pre">&lt;libname1&gt;</span></code> is looked for and used if it is
+found.  If not found, then the next alternate library name
+<code class="docutils literal notranslate"><span class="pre">&lt;libname1alt1&gt;</span></code> is looked for and is used if found. This continues
+with each successive alternate library name in the set until one is
+found.  If none of the libraries in the set alternative names are found,
+then this is an error.  Providing a set of alternate library names (in
+order of preference) allows the default find operation to look for
+different library names for different situations and implementations.
+For example, the BLAS library can be called <code class="docutils literal notranslate"><span class="pre">blas</span></code>, <code class="docutils literal notranslate"><span class="pre">openblas</span></code> or
+<code class="docutils literal notranslate"><span class="pre">atlas</span></code> for different BLAS implementations and can be specified as:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">&quot;blas</span> <span class="pre">openblas</span> <span class="pre">atlas&quot;</span></code></p>
+</div></blockquote>
+<p>The list of required library names can be overridden by the user by
+setting <code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_NAMES</span></code> (see below).</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">MUST_FIND_ALL_LIBS</span></code></p>
 <blockquote>
@@ -15766,7 +15811,8 @@ will be searched.</p>
 <p><code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIBRARY_NAMES</span></code> (type <code class="docutils literal notranslate"><span class="pre">STRING</span></code>)</p>
 <blockquote>
 <div><p>List of library names to be looked for instead of what is specified in
-<code class="docutils literal notranslate"><span class="pre">REQUIRED_LIBS_NAMES</span> <span class="pre">&lt;libname1&gt;</span> <span class="pre">&lt;libname2&gt;</span> <span class="pre">...</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">REQUIRED_LIBS_NAMES</span> <span class="pre">&lt;libname1&gt;</span> <span class="pre">&lt;libname2&gt;</span> <span class="pre">...</span></code>.  If set, only a
+single set of libraries can be specified of which all need to be found.</p>
 </div></blockquote>
 <p><code class="docutils literal notranslate"><span class="pre">&lt;tplName&gt;_LIB_ENABLED_DEPENDENCIES</span></code></p>
 <blockquote>
