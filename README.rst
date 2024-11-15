@@ -6,12 +6,18 @@
 TriBITS: Tribal Build, Integrate, and Test System
 =================================================
 
-The Tribal Build, Integrate, and Test System (TriBITS) is a framework designed
-to handle large software development projects involving multiple independent
-development teams and multiple source repositories which is built on top of
-the open-source CMake set of tools.  TriBITS also defines a complete software
-development, testing, and deployment system supporting processes consistent
-with modern agile software development best practices.
+The Tribal Build, Integrate, and Test System (TriBITS) provides a set of tools
+and approaches designed to better handle large software development projects
+involving multiple independent development teams and multiple source
+repositories which are built on top of the open-source CMake set of tools.
+
+TriBITS provides the following core feature sets:
+
+* Package Architecture and Dependency Handling
+* Package CMake targets and export files
+* Uniform handling of external packages
+* Large-scale test suite management
+
 
 Documentation
 =============
