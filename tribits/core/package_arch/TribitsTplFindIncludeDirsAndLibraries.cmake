@@ -411,10 +411,15 @@ function(tribits_tpl_find_include_dirs_and_libraries TPL_NAME)
    #print_var(TPL_CMAKE_FIND_LIBRARY_SUFFIXES_DEFAULT)
   endif()
 
+  # Allow per-TPL shared lib find setting
+  if ("${${TPL_NAME}_FIND_SHARED_LIBS}" STREQUAL "")
+    set(${TPL_NAME}_FIND_SHARED_LIBS ${TPL_FIND_SHARED_LIBS})
+  endif()
+
   #print_var(TPL_FIND_SHARED_LIBS)
   #print_var(CMAKE_FIND_LIBRARY_SUFFIXES)
   # Set libraries to find
-  if (TPL_FIND_SHARED_LIBS)
+  if (${TPL_NAME}_FIND_SHARED_LIBS)
     # The default should be to find shared libs first
     set(TPL_CMAKE_FIND_LIBRARY_SUFFIXES ${TPL_CMAKE_FIND_LIBRARY_SUFFIXES_DEFAULT})
   else()

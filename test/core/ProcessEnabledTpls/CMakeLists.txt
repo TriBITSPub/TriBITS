@@ -344,6 +344,40 @@ create_process_enabled_tpls_test_case(
   )
 
 
+  create_process_enabled_tpls_test_case(
+    HeadersAndLibsTpl_Shared_PerLibrarySetting
+    TPL_NAME  HeadersAndLibsTpl
+    TPL_FINDMOD  ${HeadersAndLibsTpl_FINDMOD}
+    INCLUDE_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/include
+    LIBRARY_DIRS  ${HeadersAndLibsTpl_BASE_DIR}/lib
+    EXTRA_ARGS -DHeadersAndLibsTpl_FIND_SHARED_LIBS=ON
+    PASS_REGULAR_EXPRESSION_ALL
+      "Processing enabled external package/TPL: HeadersAndLibsTpl .enabled explicitly, disable with -DTPL_ENABLE_HeadersAndLibsTpl=OFF."
+      "-- Must find at least one lib in each of the lib sets .haltpl1[;]haltpl2."
+      "-- Searching for libs in HeadersAndLibsTpl_LIBRARY_DIRS='.+/HeadersAndLibsTpl/lib'"
+      "-- Searching for a lib in the set .haltpl1.:"
+      "--   Searching for lib 'haltpl1' [.][.][.]"
+      "--     Found lib '.+/HeadersAndLibsTpl/lib/libhaltpl1.so'"
+      "-- Searching for a lib in the set .haltpl2.:"
+      "--   Searching for lib 'haltpl2' [.][.][.]"
+      "--     Found lib '.+/HeadersAndLibsTpl/lib/libhaltpl2.so'"
+      "-- TPL_HeadersAndLibsTpl_LIBRARIES='.+/HeadersAndLibsTpl/lib/libhaltpl1.so[;].+/HeadersAndLibsTpl/lib/libhaltpl2.so'"
+      "-- Must find at least one header in each of the header sets .HeadersAndLibsTpl_header1.hpp[;]HeadersAndLibsTpl_header2.hpp."
+      "-- Searching for headers in HeadersAndLibsTpl_INCLUDE_DIRS='.+/HeadersAndLibsTpl/include'"
+      "-- Searching for a header file in the set .HeadersAndLibsTpl_header1.hpp.:"
+      "--   Searching for header 'HeadersAndLibsTpl_header1.hpp' [.][.][.]"
+      "--     Found header '.+/HeadersAndLibsTpl/include/?/HeadersAndLibsTpl_header1.hpp'"
+      "-- Searching for a header file in the set .HeadersAndLibsTpl_header2.hpp.:"
+      "--   Searching for header 'HeadersAndLibsTpl_header2.hpp' [.][.][.]"
+      "--     Found header '.+/HeadersAndLibsTpl/include/?/HeadersAndLibsTpl_header2.hpp'"
+      "-- Found TPL 'HeadersAndLibsTpl' include dirs '.+/HeadersAndLibsTpl/include'"
+      "-- TPL_HeadersAndLibsTpl_INCLUDE_DIRS='.+/HeadersAndLibsTpl/include'"
+      "Exported TPL_HeadersAndLibsTpl_NOT_FOUND='FALSE'"
+      "Exported TPL_HeadersAndLibsTpl_LIBRARIES='.+/HeadersAndLibsTpl/lib/libhaltpl1.so[;].+/HeadersAndLibsTpl/lib/libhaltpl2.so'"
+      "Exported TPL_HeadersAndLibsTpl_INCLUDE_DIRS='.+/HeadersAndLibsTpl/include'"
+    )
+
+
 create_process_enabled_tpls_test_case(
   HeadersAndLibsTpl_Shared_FindAll_sets1
   TPL_NAME  HeadersAndLibsTpl
