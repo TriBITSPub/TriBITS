@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=23fb9c4f"></script>
+      <script src="_static/documentation_options.js?v=a7591240"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -228,7 +228,7 @@
 <dd class="field-odd"><p>2025-02-19</p>
 </dd>
 <dt class="field-even">Version<span class="colon">:</span></dt>
-<dd class="field-even"><p>tribits_start-3530-g2d7ea1b8</p>
+<dd class="field-even"><p>tribits_start-3534-ga3ddcf69</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1714,6 +1714,13 @@ libraries.  The second flag tells cmake to locate static library versions of
 any required TPLs.  The third flag tells the auto-detection routines that
 search for extra required libraries (such as the mpi library and the gfortran
 library for gnu compilers) to locate static versions.</p>
+<p>The TPL_FIND_SHARED_LIBS setting can also be set per-TPL, in the case that
+the desire is to find shared libraries for one TPL, but static libraries for
+all others:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">TPL_FIND_SHARED_LIBS</span><span class="o">=</span><span class="n">OFF</span> \
+<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;</span><span class="n">_FIND_SHARED_LIBS</span><span class="o">=</span><span class="n">ON</span>
+</pre></div>
+</div>
 </section>
 <section id="changing-include-directories-in-downstream-cmake-projects-to-non-system">
 <h2><a class="toc-backref" href="#id42" role="doc-backlink"><span class="sectnum">4.14 </span>Changing include directories in downstream CMake projects to non-system</a><a class="headerlink" href="#changing-include-directories-in-downstream-cmake-projects-to-non-system" title="Link to this heading"></a></h2>

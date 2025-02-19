@@ -1523,6 +1523,13 @@ any required TPLs.  The third flag tells the auto-detection routines that
 search for extra required libraries (such as the mpi library and the gfortran
 library for gnu compilers) to locate static versions.
 
+The TPL_FIND_SHARED_LIBS setting can also be set per-TPL, in the case that
+the desire is to find shared libraries for one TPL, but static libraries for
+all others::
+
+ -D TPL_FIND_SHARED_LIBS=OFF \
+ -D <TPLNAME>_FIND_SHARED_LIBS=ON
+
 
 Changing include directories in downstream CMake projects to non-system
 -----------------------------------------------------------------------
