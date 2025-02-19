@@ -1300,7 +1300,7 @@ function(generate_aao_tests)
         "WithSubpackagesC_test_of_c_util [.]+ +Passed"
         "WithSubpackagesC_test_of_c_b_mixed_lang [.]+ +Passed"
         "WrapExternal_run_external_func [.]+ +Passed"
-        "Skipping converage tests because CTEST_DO_COVERAGE_TESTING='OFF'"
+        "Skipping coverage tests because CTEST_DO_COVERAGE_TESTING='OFF'"
         "Skipping memory testing because CTEST_DO_MEMORY_TESTING='FALSE'"
         "File '' does NOT exist so all tests passed"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
@@ -2151,7 +2151,7 @@ function(generate_aao_tests)
         "Building all targets"
         "Build PASSED"
         "Skipping tests because CTEST_DO_TEST='OFF'"
-        "Skipping converage tests because CTEST_DO_COVERAGE_TESTING='OFF'"
+        "Skipping coverage tests because CTEST_DO_COVERAGE_TESTING='OFF'"
         "Skipping memory testing because CTEST_DO_MEMORY_TESTING='FALSE'"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -2189,7 +2189,7 @@ function(generate_aao_tests)
         "-- CTEST_CUSTOM_MAXIMUM_PASSED_TEST_OUTPUT_SIZE='54321'"
         "-- CTEST_CUSTOM_MAXIMUM_FAILED_TEST_OUTPUT_SIZE='123456'"
         "File '' does NOT exist so all tests passed"
-        "Skipping converage tests because CTEST_DO_COVERAGE_TESTING='OFF'"
+        "Skipping coverage tests because CTEST_DO_COVERAGE_TESTING='OFF'"
         "Skipping memory testing because CTEST_DO_MEMORY_TESTING='FALSE'"
         "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
       ALWAYS_FAIL_ON_NONZERO_RETURN

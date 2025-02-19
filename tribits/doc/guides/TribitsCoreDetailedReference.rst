@@ -899,7 +899,7 @@ These options are described below.
 **TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE**
 
   Determines how the function `tribits_deprecated()`_ behaves.  To change the
-  default behavor, such as call ``message(FATAL_ERROR ...)``, set::
+  default behavior, such as call ``message(FATAL_ERROR ...)``, set::
 
     set(TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE_DEFAULT  FATAL_ERROR)
 

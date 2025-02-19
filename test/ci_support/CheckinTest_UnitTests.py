@@ -1628,7 +1628,7 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
       "--with-cmake=\""+g_withCmake+"\"",
       "--project-name=Trilinos",
       "--src-dir="+mockProjectBaseDir,
-      "--send-email-to=bogous@somewhere.com",
+      "--send-email-to=bogus@somewhere.com",
       "--project-configuration=%s" % os.path.join(g_testBaseDir,
         'CheckinTest_UnitTests_Config.py'),
       optionsStr,
@@ -1658,7 +1658,7 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
 
     if inPathGit:
       baseCmndInterceptsStr += \
-      "IT: git config --get user.email; 0; bogous@somewhere.com\n" \
+      "IT: git config --get user.email; 0; bogus@somewhere.com\n" \
       +"IT: which git; 0; /some/path/git\n"
 
     fullCmndInterceptsStr = baseCmndInterceptsStr + cmndInterceptsStr
@@ -2237,7 +2237,7 @@ class test_checkin_test(unittest.TestCase):
       +" --do-all --push" \
       ,
       \
-      "IT: git config --get user.email; 0; bogous@somewhere.com\n" \
+      "IT: git config --get user.email; 0; bogus@somewhere.com\n" \
       +"IT: which git; 1; '/usr/bin/which: no git in (path1:path2:path3)'\n" \
       ,
       \
@@ -5634,9 +5634,9 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedRegexBuildPasses \
       +g_expectedRegexTestPasses \
       +g_expectedCommonOptionsSummary \
-      +"Running: mailx -s .FAILED: Trilinos/MPI_DEBUG: configure failed. bogous@somewhere.com\n" \
+      +"Running: mailx -s .FAILED: Trilinos/MPI_DEBUG: configure failed. bogus@somewhere.com\n" \
       +"SERIAL_RELEASE: Skipping sending build/test case email because it passed and --send-email-only-on-failure was set!\n" \
-      +"Running: mailx -s .FAILED CONFIGURE/BUILD/TEST: Trilinos: .* bogous@somewhere.com\n" \
+      +"Running: mailx -s .FAILED CONFIGURE/BUILD/TEST: Trilinos: .* bogus@somewhere.com\n" \
       )
 
 

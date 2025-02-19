@@ -141,7 +141,7 @@ Number of build names = 2
 
 Writing out new issue tracker text to 'newGitHubIssue.md'
 
-Writing out list of test/biuld pairs for CSV file 'newTestsWithIssueTrackers.csv'
+Writing out list of test/build pairs for CSV file 'newTestsWithIssueTrackers.csv'
 """
 
 g_example_t2_b2_github_issue = r"""

@@ -44,7 +44,7 @@
 add_subdirectory(DumpXmlDepsTests)
 
 # In case the project has ${PROJECT_NAME}_TRIBITS_DIR pointing to a symlink,
-# use the TriBITS implenetation in these test (which should be the same)
+# use the TriBITS implementation in these test (which should be the same)
 set(THIS_TRIBITS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../tribits")
 
 
@@ -441,7 +441,7 @@ tribits_add_advanced_test( TribitsExampleProject_checkin_test
       TribitsExampleProject
     # NOTE: Had to use 'cp -r' instead of 'cmake -E copy_directory' because
     # the latter failed for a development version of CMake.  But since the
-    # checkin-test.py scrpt will really only run on Linux/Unix systems, using
+    # checkin-test.py script will really only run on Linux/Unix systems, using
     # 'cp -r' is not a testing portability problem.
 
   TEST_1

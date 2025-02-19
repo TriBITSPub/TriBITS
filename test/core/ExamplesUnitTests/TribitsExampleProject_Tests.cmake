@@ -826,7 +826,7 @@ tribits_add_advanced_test( TribitsExampleProject_install_perms
   #   ATDV-241).
   #
   # * Even with the source directory permissions being 'rwx------' (i.e. 700),
-  #   the files isntalled under share/WithSubpackagesB/stuff using
+  #   the files installed under share/WithSubpackagesB/stuff using
   #   install(DIRECTORY ... USE_SOURCE_PERMISSIONS) will actually have the
   #   correct group and other permissions set.
 
@@ -3122,7 +3122,7 @@ tribits_add_advanced_test( TribitsExampleProject_DisableWithSubpackagesB_EnableW
 
   TEST_0
     MESSAGE "Just do dependency analysis to test enabling of parent package"
-     " with eanbled subpackages even if is disabled"
+     " with enabled subpackages even if is disabled"
     CMND ${CMAKE_COMMAND}
     ARGS
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
