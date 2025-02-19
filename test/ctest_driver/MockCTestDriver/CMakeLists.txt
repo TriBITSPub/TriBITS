@@ -323,7 +323,7 @@ create_ctest_dependency_handling_test_case(
   EnableAll_EnableStokhos
   ARGS Trilinos_ADDITIONAL_PACKAGES=Stokhos
   PASS_REGULAR_EXPRESSION_ALL
-    "Enabling explicitly set package Stokhos which was default or otherwise disabed!"
+    "Enabling explicitly set package Stokhos which was default or otherwise disabled!"
     "Explicitly enabled top-level packages on input .*  Stokhos 1"
     "Explicitly disabled top-level packages on input .*  0"
     "Enabling all packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
@@ -906,7 +906,7 @@ if (Python3_EXECUTABLE)
       "Done with the all-at-once configure, build, test, and submit of Trilinos packages"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     )
-  # NOTE: The above test is for the all-at-once appraoch that checks for the
+  # NOTE: The above test is for the all-at-once approach that checks for the
   # ALL_PACKAGES value in failedPackages.txt.  That value can be returned from
   # a configure failure in a previous all-at-once CI build.  This test makes
   # sure that all packages will get enabled in the follow-up CI iteration in
@@ -936,7 +936,7 @@ if (Python3_EXECUTABLE)
       "Done with the all-at-once configure, build, test, and submit of Trilinos packages"
       "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSED"
     )
-  # NOTE: The above test is for the all-at-once appraoch where
+  # NOTE: The above test is for the all-at-once approach where
   # <Project>_ENABLE_ALL_PACKAGES=ON is set (implicitly) but some packages are
   # disabled through setting <Project>_EXCLUDE_PACKAGES.  This makes sure that
   # these disables are passed into the inner configure.

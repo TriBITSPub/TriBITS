@@ -49,7 +49,7 @@
 # about what exactly happens in all the different cases that are handled,
 # possibly at the expense of introducing redundant code.
 #
-# Unused config options (annoucements list) were removed.  And the output
+# Unused config options (announcements list) were removed.  And the output
 # is much less geeky (far fewer sha1s)
 
 # ---------------------------- Functions
