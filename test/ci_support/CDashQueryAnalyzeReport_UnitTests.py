@@ -663,7 +663,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
       self.assertEqual( str(errMsg),
         "Error, for CSV file '"+csvFileName+"' the data row 1"+\
         " ['val_10', 'val_11', 'val_12', 'extra'] has 4 entries"+\
-        " which does not macth the number of column headers 3!" )
+        " which does not match the number of column headers 3!" )
     if not threwException:
       self.assertFalse("ERROR: Did not throw an exception")
 
@@ -2474,7 +2474,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     testHistoryBrowserUrl = u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-28&end=2001-01-01&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
-    # Checkt the set fields out output
+    # Check the set fields out output
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
@@ -2586,7 +2586,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
     testHistoryBrowserUrl = u('site.com/cdash/queryTests.php?project=projectName&begin=2000-12-29&end=2001-01-02&filtercombine=and&filtercombine=&filtercount=3&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=build_name&field2=testname&compare2=61&value2=test_name&field3=site&compare3=61&value3=site_name')
 
-    # Checkt the set fields out output
+    # Check the set fields out output
     self.assertEqual(testDict['site'], 'site_name')
     self.assertEqual(testDict['buildName'], 'build_name')
     self.assertEqual(testDict['buildName_url'],
@@ -3234,7 +3234,7 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
                                 buildName_url=buildName_url,
                                 siteName_url=siteName_url))
 
-    # Checkt the set fields out output
+    # Check the set fields out output
     self.assertEqual(funkyCharTestDict['site'], 'site name')
     self.assertEqual(funkyCharTestDict['buildName'], 'build++')
     self.assertEqual(funkyCharTestDict['buildName_url'],
