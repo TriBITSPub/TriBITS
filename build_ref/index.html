@@ -7,13 +7,13 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Generic TriBITS Project, Build, Test, and Install Reference Guide</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=70c77c0c"></script>
+      <script src="_static/documentation_options.js?v=23fb9c4f"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -225,10 +225,10 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date<span class="colon">:</span></dt>
-<dd class="field-odd"><p>2024-11-15</p>
+<dd class="field-odd"><p>2025-02-19</p>
 </dd>
 <dt class="field-even">Version<span class="colon">:</span></dt>
-<dd class="field-even"><p>tribits_start-3526-gade2bbbb</p>
+<dd class="field-even"><p>tribits_start-3530-g2d7ea1b8</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -844,7 +844,7 @@ that may only be implicitly enabled in order to build the explicitly enabled
 packages.</p>
 <p id="tribits-package-enable-tests">If one wants to enable a package along with the enable of other packages, but
 not the test suite for that package, then one can use a “exclude-list”
-appraoch to disable the tests for that package by configuring with, for
+approach to disable the tests for that package by configuring with, for
 example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_</span><span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE_1</span><span class="o">&gt;=</span><span class="n">ON</span> \
 <span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_</span><span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE_2</span><span class="o">&gt;=</span><span class="n">ON</span> \
@@ -858,7 +858,7 @@ example:</p>
 packages that might get implicitly enabled).  One might use this approach if
 one wants to build and install package <code class="docutils literal notranslate"><span class="pre">&lt;TRIBITS_PACKAGE_2&gt;</span></code> but does not
 want to build and run the test suite for that package.</p>
-<p>Alternatively, one can use an “include-list” appraoch to enable packages and
+<p>Alternatively, one can use an “include-list” approach to enable packages and
 only enable tests for specific packages, for example, configuring with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_</span><span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE_1</span><span class="o">&gt;=</span><span class="n">ON</span> \
   <span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE_1</span><span class="o">&gt;</span><span class="n">_ENABLE_TESTS</span><span class="o">=</span><span class="n">ON</span> \
@@ -2184,8 +2184,8 @@ be printed in the CMake configure output in the section <code class="docutils li
 
 <span class="o">--</span> <span class="n">Treating</span> <span class="n">internal</span> <span class="n">package</span> <span class="o">&lt;</span><span class="n">PKG2</span><span class="o">&gt;</span> <span class="k">as</span> <span class="n">EXTERNAL</span> <span class="n">because</span> <span class="n">TPL_ENABLE_</span><span class="o">&lt;</span><span class="n">PKG2</span><span class="o">&gt;=</span><span class="n">ON</span>
 <span class="o">--</span> <span class="n">Treating</span> <span class="n">internal</span> <span class="n">package</span> <span class="o">&lt;</span><span class="n">PKG1</span><span class="o">&gt;</span> <span class="k">as</span> <span class="n">EXTERNAL</span> <span class="n">because</span> <span class="n">downstream</span> <span class="n">package</span> <span class="o">&lt;</span><span class="n">PKG2</span><span class="o">&gt;</span> <span class="n">being</span> <span class="n">treated</span> <span class="k">as</span> <span class="n">EXTERNAL</span>
-<span class="o">--</span> <span class="n">NOTE</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL2</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">indirectly</span> <span class="n">downstream</span> <span class="kn">from</span> <span class="nn">a</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span>
-<span class="o">--</span> <span class="n">NOTE</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL1</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">indirectly</span> <span class="n">downstream</span> <span class="kn">from</span> <span class="nn">a</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span>
+<span class="o">--</span> <span class="n">NOTE</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL2</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">indirectly</span> <span class="n">downstream</span> <span class="kn">from</span><span class="w"> </span><span class="nn">a</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span>
+<span class="o">--</span> <span class="n">NOTE</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">TPL1</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">indirectly</span> <span class="n">downstream</span> <span class="kn">from</span><span class="w"> </span><span class="nn">a</span> <span class="n">TriBITS</span><span class="o">-</span><span class="n">compliant</span> <span class="n">external</span> <span class="n">package</span>
 </pre></div>
 </div>
 <p>All of these internally defined being treated as external (and all of their
@@ -4399,7 +4399,7 @@ configure from scratch to get back to the original state before calling <code cl
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Roscoe A. Bartlett.</p>
+    <p>&#169; Copyright 2025, Roscoe A. Bartlett.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

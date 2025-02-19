@@ -541,7 +541,7 @@ packages.
 
 If one wants to enable a package along with the enable of other packages, but
 not the test suite for that package, then one can use a "exclude-list"
-appraoch to disable the tests for that package by configuring with, for
+approach to disable the tests for that package by configuring with, for
 example::
 
   -D <Project>_ENABLE_<TRIBITS_PACKAGE_1>=ON \
@@ -556,7 +556,7 @@ packages that might get implicitly enabled).  One might use this approach if
 one wants to build and install package ``<TRIBITS_PACKAGE_2>`` but does not
 want to build and run the test suite for that package.
 
-Alternatively, one can use an "include-list" appraoch to enable packages and
+Alternatively, one can use an "include-list" approach to enable packages and
 only enable tests for specific packages, for example, configuring with::
 
   -D <Project>_ENABLE_<TRIBITS_PACKAGE_1>=ON \

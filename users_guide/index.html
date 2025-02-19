@@ -7,13 +7,13 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TriBITS Users Guide and Reference</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=70c77c0c"></script>
+      <script src="_static/documentation_options.js?v=23fb9c4f"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -399,10 +399,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2024-11-15</p>
+<dd class="field-even"><p>2025-02-19</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3526-gade2bbbb</p>
+<dd class="field-odd"><p>tribits_start-3530-g2d7ea1b8</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -1474,9 +1474,9 @@ trigger a global rebuild of the project enabling all packages.</p>
 <span class="c1"># testing where testing should only occur package impacted by the change.</span>
 <span class="c1">#</span>
 
-<span class="k">class</span> <span class="nc">ProjectCiFileChangeLogic</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProjectCiFileChangeLogic</span><span class="p">:</span>
 
-  <span class="k">def</span> <span class="nf">isGlobalBuildFileRequiringGlobalRebuild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modifiedFileFullPath</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">isGlobalBuildFileRequiringGlobalRebuild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modifiedFileFullPath</span><span class="p">):</span>
     <span class="n">modifiedFileFullPathArray</span> <span class="o">=</span> <span class="n">modifiedFileFullPath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
     <span class="n">lenPathArray</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">modifiedFileFullPathArray</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">lenPathArray</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
@@ -10014,7 +10014,7 @@ $ &lt;some-base-dir&gt;/TriBITS/tribits/snapshot_tribits.py
 </div>
 <p>This will create a git commit in the local <code class="docutils literal notranslate"><span class="pre">&lt;projectDir&gt;/</span></code> git repo that
 looks like:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Automatic</span> <span class="n">snapshot</span> <span class="n">commit</span> <span class="kn">from</span> <span class="nn">tribits</span> <span class="n">at</span> <span class="n">f8c1682</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Automatic</span> <span class="n">snapshot</span> <span class="n">commit</span> <span class="kn">from</span><span class="w"> </span><span class="nn">tribits</span> <span class="n">at</span> <span class="n">f8c1682</span>
 
 <span class="n">Origin</span> <span class="n">repo</span> <span class="n">remote</span> <span class="n">tracking</span> <span class="n">branch</span><span class="p">:</span> <span class="s1">&#39;casl-dev-collab/tribits_reorg_26&#39;</span>
 <span class="n">Origin</span> <span class="n">repo</span> <span class="n">remote</span> <span class="n">repo</span> <span class="n">URL</span><span class="p">:</span> <span class="s1">&#39;casl-dev-collab = git@casl-dev:collaboration/TriBITS&#39;</span>
@@ -10863,7 +10863,7 @@ has 64 cores, a reasonable number for <code class="docutils literal notranslate"
 <p id="tribits-handle-tribits-deprecated-code"><strong>TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE</strong></p>
 <blockquote>
 <div><p>Determines how the function <a class="reference internal" href="#tribits-deprecated">tribits_deprecated()</a> behaves.  To change the
-default behavor, such as call <code class="docutils literal notranslate"><span class="pre">message(FATAL_ERROR</span> <span class="pre">...)</span></code>, set:</p>
+default behavior, such as call <code class="docutils literal notranslate"><span class="pre">message(FATAL_ERROR</span> <span class="pre">...)</span></code>, set:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="n">TRIBITS_HANDLE_TRIBITS_DEPRECATED_CODE_DEFAULT</span>  <span class="n">FATAL_ERROR</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -13133,7 +13133,7 @@ advantage of this, just add the line:</p>
 time.</p>
 <p>Then C/C++ code can use this macro to deprecate functions, variables,
 classes, etc., for example, using:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">PARENT_PACKAGE_NAME_UC</span><span class="o">&gt;</span><span class="n">_DEPRECATED</span> <span class="k">class</span> <span class="nc">SomeDepreatedClass</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span><span class="o">.</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">PARENT_PACKAGE_NAME_UC</span><span class="o">&gt;</span><span class="n">_DEPRECATED</span> <span class="k">class</span><span class="w"> </span><span class="nc">SomeDepreatedClass</span> <span class="p">{</span> <span class="o">...</span> <span class="p">}</span><span class="o">.</span>
 </pre></div>
 </div>
 <p>If the particular compiler does not support deprecated warnings, then this
@@ -15538,7 +15538,7 @@ a TriBITS Repository’s <a class="reference internal" href="#repodir-tplslist-c
 </div>
 <p>This macro sets up a 2D array of <code class="docutils literal notranslate"><span class="pre">NumTPLS</span></code> by <code class="docutils literal notranslate"><span class="pre">NumColumns</span></code> listing out
 the <a class="reference internal" href="#tribits-tpls">TriBITS TPLs</a> for a <a class="reference internal" href="#tribits-repository">TriBITS Repository</a>.  Each row (with 3 entries)
-specifies a different TriBITS exernal package/TPL which contains the columns
+specifies a different TriBITS external package/TPL which contains the columns
 (ordered 0-2):</p>
 <ol class="arabic simple" start="0">
 <li><p><strong>TPL</strong> (<code class="docutils literal notranslate"><span class="pre">&lt;tpli_name&gt;</span></code>): The name of the TriBITS external package/TPL
@@ -17266,7 +17266,7 @@ and <a class="reference internal" href="#multi-repository-development-workflow">
                         <span class="s1">&#39;&lt;repo0&gt;,&lt;repo1&gt;,...&#39;</span><span class="o">.</span> <span class="n">The</span> <span class="n">base</span> <span class="n">repo</span> <span class="ow">is</span> <span class="n">specified</span> <span class="k">with</span>
                         <span class="s1">&#39;.&#39;</span> <span class="ow">and</span> <span class="n">should</span> <span class="n">usually</span> <span class="n">be</span> <span class="n">listed</span> <span class="n">first</span><span class="o">.</span> <span class="n">If</span> <span class="n">left</span> <span class="n">empty</span>
                         <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">then</span> <span class="n">the</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">repos</span> <span class="n">to</span> <span class="n">process</span> <span class="ow">is</span> <span class="n">taken</span> <span class="kn">from</span>
-                        <span class="nn">the</span> <span class="n">file</span> <span class="o">./.</span><span class="n">gitdist</span> <span class="p">(</span><span class="n">which</span> <span class="n">lists</span> <span class="n">the</span> <span class="n">relative</span> <span class="n">path</span> <span class="n">of</span>
+<span class="w">                        </span><span class="nn">the</span> <span class="n">file</span> <span class="o">./.</span><span class="n">gitdist</span> <span class="p">(</span><span class="n">which</span> <span class="n">lists</span> <span class="n">the</span> <span class="n">relative</span> <span class="n">path</span> <span class="n">of</span>
                         <span class="n">each</span> <span class="n">git</span> <span class="n">repo</span> <span class="n">separated</span> <span class="n">by</span> <span class="n">newlines</span><span class="p">)</span><span class="o">.</span>  <span class="n">If</span> <span class="n">the</span> <span class="n">file</span>
                         <span class="o">./.</span><span class="n">gitdist</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">exist</span><span class="p">,</span> <span class="n">then</span> <span class="n">the</span> <span class="n">repos</span> <span class="n">listed</span> <span class="ow">in</span>
                         <span class="n">the</span> <span class="n">file</span> <span class="o">./.</span><span class="n">gitdist</span><span class="o">.</span><span class="n">default</span> <span class="n">are</span> <span class="n">processed</span><span class="o">.</span>  <span class="n">If</span> <span class="n">the</span>
@@ -17283,7 +17283,7 @@ and <a class="reference internal" href="#multi-repository-development-workflow">
                         <span class="n">only</span> <span class="n">repos</span> <span class="n">that</span> <span class="n">have</span> <span class="n">modified</span> <span class="ow">or</span> <span class="n">untracked</span> <span class="n">files</span> <span class="ow">or</span>
                         <span class="n">where</span> <span class="s1">&#39;git diff --name-only ^&lt;tracking-branch&gt;&#39;</span>
                         <span class="n">returns</span> <span class="n">non</span><span class="o">-</span><span class="n">empty</span> <span class="n">output</span> <span class="n">will</span> <span class="n">be</span> <span class="n">processed</span> <span class="p">(</span><span class="n">where</span>
-                        <span class="o">&lt;</span><span class="n">tracking</span><span class="o">-</span><span class="n">branch</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">returned</span> <span class="kn">from</span> <span class="s1">&#39;rev-parse</span>
+                        <span class="o">&lt;</span><span class="n">tracking</span><span class="o">-</span><span class="n">branch</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">returned</span> <span class="kn">from</span><span class="w"> </span><span class="s1">&#39;rev-parse</span>
                         <span class="o">--</span><span class="n">abbrev</span><span class="o">-</span><span class="n">ref</span> <span class="o">--</span><span class="n">symbolic</span><span class="o">-</span><span class="n">full</span><span class="o">-</span><span class="n">name</span> <span class="o">@</span><span class="p">{</span><span class="n">u</span><span class="p">})</span><span class="s1">&#39;.  If a local</span>
                         <span class="n">repo</span> <span class="n">does</span> <span class="ow">not</span> <span class="n">have</span> <span class="n">a</span> <span class="n">tracking</span> <span class="n">branch</span><span class="p">,</span> <span class="n">then</span> <span class="n">the</span> <span class="n">repo</span>
                         <span class="n">will</span> <span class="n">be</span> <span class="n">skipped</span> <span class="k">as</span> <span class="n">well</span><span class="o">.</span>  <span class="n">Therefore</span><span class="p">,</span> <span class="n">be</span> <span class="n">careful</span> <span class="n">to</span>
@@ -17852,7 +17852,7 @@ or
     <span class="n">finds</span> <span class="n">a</span> <span class="o">.</span><span class="n">gitdist</span><span class="p">[</span><span class="o">.</span><span class="n">default</span><span class="p">]</span> <span class="n">file</span><span class="p">,</span> <span class="ow">and</span> <span class="n">then</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">where</span> <span class="n">it</span>
     <span class="n">finds</span> <span class="n">it</span><span class="o">.</span>  <span class="n">In</span> <span class="n">the</span> <span class="n">above</span> <span class="n">example</span><span class="p">,</span> <span class="k">if</span> <span class="n">you</span> <span class="n">are</span> <span class="ow">in</span>
     <span class="n">BaseRepo</span><span class="o">/</span><span class="n">ExtraRepo</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">some</span><span class="o">/</span><span class="n">directory</span><span class="o">/</span> <span class="n">when</span> <span class="n">you</span> <span class="n">run</span> <span class="n">gitdist</span><span class="p">,</span> <span class="n">it</span> <span class="n">will</span>
-    <span class="n">move</span> <span class="n">up</span> <span class="n">to</span> <span class="n">ExtraRepo</span> <span class="n">to</span> <span class="n">execute</span> <span class="n">the</span> <span class="n">command</span> <span class="n">you</span> <span class="n">give</span> <span class="n">it</span> <span class="kn">from</span> <span class="nn">there.</span>
+    <span class="n">move</span> <span class="n">up</span> <span class="n">to</span> <span class="n">ExtraRepo</span> <span class="n">to</span> <span class="n">execute</span> <span class="n">the</span> <span class="n">command</span> <span class="n">you</span> <span class="n">give</span> <span class="n">it</span> <span class="kn">from</span><span class="w"> </span><span class="nn">there.</span>
 
   <span class="n">EXTREME_BASE</span><span class="p">:</span>
 
@@ -19925,7 +19925,7 @@ SyntaxError: Missing parentheses in call to &#39;print&#39;. Did you mean print(
   <span class="n">git</span> <span class="n">diff</span> <span class="o">--</span><span class="n">name</span><span class="o">-</span><span class="n">only</span> <span class="o">&lt;</span><span class="n">upstream</span><span class="o">&gt;..&lt;</span><span class="n">branch</span><span class="o">-</span><span class="n">tip</span><span class="o">&gt;</span>  <span class="o">&gt;</span>  <span class="n">changed</span><span class="o">-</span><span class="n">files</span><span class="o">.</span><span class="n">txt</span>
 
 <span class="n">where</span> <span class="o">&lt;</span><span class="n">upstream</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">origin</span><span class="o">/</span><span class="n">master</span><span class="p">)</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">commit</span> <span class="n">reference</span> <span class="n">that</span> <span class="n">the</span> <span class="n">local</span>
-<span class="n">branch</span> <span class="n">was</span> <span class="n">created</span> <span class="kn">from</span> <span class="nn">and</span> <span class="o">&lt;</span><span class="n">branch</span><span class="o">-</span><span class="n">tip</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">tip</span> <span class="n">of</span> <span class="n">the</span> <span class="n">topic</span> <span class="n">branch</span><span class="o">.</span>
+<span class="n">branch</span> <span class="n">was</span> <span class="n">created</span> <span class="kn">from</span><span class="w"> </span><span class="nn">and</span> <span class="o">&lt;</span><span class="n">branch</span><span class="o">-</span><span class="n">tip</span><span class="o">&gt;</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">tip</span> <span class="n">of</span> <span class="n">the</span> <span class="n">topic</span> <span class="n">branch</span><span class="o">.</span>
 
 
 <span class="n">Options</span><span class="p">:</span>
@@ -19942,7 +19942,7 @@ SyntaxError: Missing parentheses in call to &#39;print&#39;. Did you mean print(
                         <span class="o">&lt;</span><span class="n">DEPSXMLFILE</span><span class="o">&gt;.</span>  <span class="n">If</span> <span class="n">empty</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">then</span> <span class="n">it</span> <span class="n">will</span> <span class="n">be</span> <span class="nb">set</span>
                         <span class="n">automatically</span> <span class="k">if</span> <span class="n">TriBITS</span> <span class="ow">is</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">standard</span> <span class="n">location</span>
                         <span class="n">w</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">t</span><span class="o">.</span> <span class="n">the</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">relation</span> <span class="n">to</span> <span class="n">this</span> <span class="n">script</span> <span class="n">run</span> <span class="kn">from</span>
-                        <span class="nn">the</span> <span class="n">TriBITS</span> <span class="nb">dir</span><span class="o">.</span>
+<span class="w">                        </span><span class="nn">the</span> <span class="n">TriBITS</span> <span class="nb">dir</span><span class="o">.</span>
 </pre></div>
 </div>
 </section>
@@ -20253,7 +20253,7 @@ Options:
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Roscoe A. Bartlett.</p>
+    <p>&#169; Copyright 2025, Roscoe A. Bartlett.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
