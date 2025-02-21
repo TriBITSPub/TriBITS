@@ -2,6 +2,12 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2025-02-17:
+
+* **Added:** Added support for header-only libraries with
+  `tribits_add_library()` with new keyword `HEADERONLY`.  See
+  updated documentation.
+
 ## 2024-10-08:
 
 * **Changed:** The TriBITS framework find operation for
