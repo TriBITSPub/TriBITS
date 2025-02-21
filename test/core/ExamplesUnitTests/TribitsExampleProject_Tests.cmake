@@ -1591,7 +1591,12 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST
       "Configuring done"
       "Generating done"
       "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST"
-  TEST_1 CMND make
+  TEST_1
+    MESSAGE "Grep MixedLangTargets.cmake to ensure INTERFACE library mixedlang_vector in all_libs"
+    CMND grep ARGS -A 1 "set_target_properties.MixedLang::all_libs PROPERTIES" cmake_packages/MixedLang/MixedLangTargets.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "INTERFACE_LINK_LIBRARIES .MixedLang::mixedlang_vector[;]MixedLang::mixedlang."
+  TEST_2 CMND make
     MESSAGE "Build the default 'all' target using raw 'make'"
     ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
@@ -1600,7 +1605,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST
       "Built target pws_a"
       "Built target pws_b"
       "Built target pws_c"
-  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+  TEST_3 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
       "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"
