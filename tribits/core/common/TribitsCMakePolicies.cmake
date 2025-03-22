@@ -15,3 +15,4 @@ cmake_policy(SET CMP0053 NEW) # Make var references much faster
 cmake_policy(SET CMP0054 NEW) # Avoid quoted strings lookup variables
 cmake_policy(SET CMP0057 NEW) # Support if ( ... IN_LIST ... )
 cmake_policy(SET CMP0082 NEW) # Install rules follow order install() called in subdirs
+cmake_policy(SET CMP0144 NEW) # find_package() use <PACKAGENAME>_ROOT env var
