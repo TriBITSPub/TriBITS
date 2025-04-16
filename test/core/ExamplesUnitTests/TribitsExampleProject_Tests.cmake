@@ -313,7 +313,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
         "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
         "WithSubpackages_FOUND = '1'"
-        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
+        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesA::all_libs[;]WithSubpackagesB::pws_b[;]WithSubpackagesB::all_libs[;]WithSubpackagesC::pws_c[;]WithSubpackagesC::all_libs'"
         "-- Configuring done"
         "-- Generating done"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -399,7 +399,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "WithSubpackages_MPI_EXEC_MAX_NUMPROCS = '${MPI_EXEC_MAX_NUMPROCS}'"
         "WithSubpackages_MPI_EXEC_NUMPROCS_FLAG = '${MPI_EXEC_NUMPROCS_FLAG}'"
         "WithSubpackages_FOUND = '1'"
-        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
+        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesA::all_libs[;]WithSubpackagesB::pws_b[;]WithSubpackagesB::all_libs[;]WithSubpackagesC::pws_c[;]WithSubpackagesC::all_libs'"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_8
@@ -1303,7 +1303,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
         -P ${CMAKE_CURRENT_SOURCE_DIR}/RunDummyPackageClientBulid.cmake
     PASS_REGULAR_EXPRESSION_ALL
       "WithSubpackages_INSTALL_DIR = '.*/TriBITS_TribitsExampleProject_ALL_ST_NoFortran_Ninja/install'"
-      "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
+      "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesA::all_libs[;]WithSubpackagesB::pws_b[;]WithSubpackagesB::all_libs[;]WithSubpackagesC::pws_c[;]WithSubpackagesC::all_libs'"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_6 CMND ninja ARGS -j1 install ${CTEST_BUILD_FLAGS}
@@ -1327,7 +1327,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST_NoFortran_Ninja
       PASS_REGULAR_EXPRESSION_ALL
         "Calling: find_package[(]WithSubpackages REQUIRED COMPONENTS  OPTIONAL_COMPONENTS  [)]"
         "WithSubpackages_FOUND = '1'"
-        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesB::pws_b[;]WithSubpackagesC::pws_c'"
+        "WithSubpackages::all_libs  INTERFACE_LINK_LIBRARIES: 'WithSubpackagesA::pws_a[;]WithSubpackagesA::all_libs[;]WithSubpackagesB::pws_b[;]WithSubpackagesB::all_libs[;]WithSubpackagesC::pws_c[;]WithSubpackagesC::all_libs'"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_8 CMND ninja ARGS -j1 package_source
@@ -1591,7 +1591,12 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST
       "Configuring done"
       "Generating done"
       "Build files have been written to: .*ExamplesUnitTests/TriBITS_TribitsExampleProject_ALL_ST"
-  TEST_1 CMND make
+  TEST_1
+    MESSAGE "Grep MixedLangTargets.cmake to ensure INTERFACE library mixedlang_vector in all_libs"
+    CMND grep ARGS -A 1 "set_target_properties.MixedLang::all_libs PROPERTIES" cmake_packages/MixedLang/MixedLangTargets.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "INTERFACE_LINK_LIBRARIES .MixedLang::mixedlang_vector[;]MixedLang::mixedlang."
+  TEST_2 CMND make
     MESSAGE "Build the default 'all' target using raw 'make'"
     ARGS ${CTEST_BUILD_FLAGS}
     PASS_REGULAR_EXPRESSION_ALL
@@ -1600,7 +1605,7 @@ tribits_add_advanced_test( TribitsExampleProject_ALL_ST
       "Built target pws_a"
       "Built target pws_b"
       "Built target pws_c"
-  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+  TEST_3 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
       "SimpleCxx_HelloWorldTests${TEST_MPI_1_SUFFIX} .* Passed"

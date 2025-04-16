@@ -2,6 +2,21 @@
 ChangeLog for TriBITS
 ----------------------------------------
 
+## 2025-03-22:
+
+* **Changed:** Set CMake policy
+  [CMP0144](https://cmake.org/cmake/help/latest/policy/CMP0144.html) to `NEW`
+  (for versions of CMake 3.27+) so that `find_package(<PackageName> ...)` will
+  use upper case env var `<PACKAGENAME>_ROOT`.  Now, systems that are setting
+  uppercase env var names for standard packages will get picked in CMake
+  configures.
+
+## 2025-02-17:
+
+* **Added:** Added support for header-only libraries with
+  `tribits_add_library()` with new keyword `HEADERONLY`.  See
+  updated documentation.
+
 ## 2024-10-08:
 
 * **Changed:** The TriBITS framework find operation for

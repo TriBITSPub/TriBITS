@@ -22,7 +22,7 @@ jobs:
           - { os: ubuntu-latest, cmake: "3.23.1", generator: "makefiles", python: "3.8", cc: gcc-9, cxx: g++-9, fc: gfortran-9 }
           - { os: ubuntu-latest, cmake: "3.24.3", generator: "makefiles", python: "3.8", cc: gcc-10, cxx: g++-10 }
           - { os: ubuntu-latest, cmake: "3.24.3", generator: "makefiles", python: "3.8", cc: gcc-11,  cxx: g++-11, fc: gfortran-11, no_have_ninja: no-ninja }
-          - { os: ubuntu-latest, cmake: "3.25.2", generator: "makefiles", python: "3.8", cc: gcc-11,  cxx: g++-11,  fc: gfortran-11  }
+          - { os: ubuntu-latest, cmake: "4.0.0", generator: "makefiles", python: "3.8", cc: gcc-11,  cxx: g++-11,  fc: gfortran-11  }
 
     runs-on: ${{ matrix.config.os }}
 
