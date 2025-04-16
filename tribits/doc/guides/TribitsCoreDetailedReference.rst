@@ -289,15 +289,15 @@ These options are described below.
 
 **${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES**
 
-  If `${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON`_ (the TriBITS
-  default value), then any explicitly enabled packages that have disabled
-  `upstream`_ required packages or TPLs will be disabled.  If
-  `${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=OFF`_, then an
-  configure error will occur.  For more details also see
+  If `${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=OFF`_ (the TriBITS
+  default value), then a configure error will occur.  If
+  `${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON`_, then any
+  explicitly enabled packages that have disabled `upstream`_ required
+  packages or TPLs will be disabled.  For more details also see
   `TribitsBuildReference`_ and `Disables trump enables where there is a
   conflict`_.  A project can define a different default value by setting::
   
-    set(${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES_DEFAULT FALSE)
+    set(${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES_DEFAULT TRUE)
 
 .. _${PROJECT_NAME}_ELEVATE_ST_TO_PT:
 
