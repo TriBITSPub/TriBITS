@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=f9f72925"></script>
+      <script src="_static/documentation_options.js?v=6c42a33c"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -461,10 +461,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2025-03-28</p>
+<dd class="field-even"><p>2025-04-16</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3545-g06c8e1b8</p>
+<dd class="field-odd"><p>tribits_start-3549-g3e44c311</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -10429,14 +10429,16 @@ mode since it results in nicer display on CDash for older CDash versions.</p>
 </div></blockquote>
 <p id="project-name-disable-enabled-forward-dep-packages"><strong>${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES</strong></p>
 <blockquote>
-<div><p>If <a class="reference internal" href="#project-name-disable-enabled-forward-dep-packages-on">${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON</a> (the TriBITS
-default value), then any explicitly enabled packages that have disabled
-<a class="reference internal" href="#upstream">upstream</a> required packages or TPLs will be disabled.  If
-<a class="reference internal" href="#project-name-disable-enabled-forward-dep-packages-off">${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=OFF</a>, then an
-configure error will occur.  For more details also see
-<a class="reference external" href="TribitsBuildReference.html">TribitsBuildReference</a> and <a class="reference internal" href="#disables-trump-enables-where-there-is-a-conflict">Disables trump enables where there is a
-conflict</a>.  A project can define a different default value by setting:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>set(${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES_DEFAULT FALSE)
+<div><p>If <a class="reference internal" href="#project-name-disable-enabled-forward-dep-packages-off">${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=OFF</a> (the TriBITS
+default value), then if a downstream package is explicitly enabled but one
+of its <a class="reference internal" href="#upstream">upstream</a> required packages are disabled, then a configure error
+will occur.  Otherwise, if
+<a class="reference internal" href="#project-name-disable-enabled-forward-dep-packages-on">${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON</a>, then any
+explicitly enabled packages that have disabled upstream required packages
+will be disabled.  For more details, also see <a class="reference external" href="TribitsBuildReference.html">TribitsBuildReference</a> and
+<a class="reference internal" href="#disables-trump-enables-where-there-is-a-conflict">Disables trump enables where there is a conflict</a>.  A project can define a
+different default value by setting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>set(${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES_DEFAULT TRUE)
 </pre></div>
 </div>
 </div></blockquote>
