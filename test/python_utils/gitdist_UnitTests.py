@@ -1220,6 +1220,13 @@ class test_gitdist(unittest.TestCase):
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "")
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^REPO SELECTION AND SETUP:$"), "")
+  def test_short_help(self):
+    cmndOut = getCmndOutput(gitdistPath+" -h")
+    assertContainsGitdistHelpHeader(self, cmndOut)
+    self.assertEqual(
+      GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "")
+    self.assertEqual(
+      GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^REPO SELECTION AND SETUP:$"), "")
 
 
   # Make sure --dist-help= does not print OVERVIEW section
