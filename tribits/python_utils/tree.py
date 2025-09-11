@@ -22,6 +22,11 @@ def tree(dir, padding, options, depth, top_level=False):
     else:
       depth = depth - 1
 
+  dir_basename = basename(abspath(dir))
+
+  if options.exclude and options.exclude == dir_basename:
+    return
+
   print_files = options.printFiles
   print_compact = options.printCompact
 
@@ -31,12 +36,12 @@ def tree(dir, padding, options, depth, top_level=False):
   else:
     verticalLineChar = '|'
     fileDirPrefix = '+-'
-    
+
   init_prefix = padding[:-1]
   if top_level: init_prefix += '  '
   else: init_prefix += fileDirPrefix
 
-  print(init_prefix + basename(abspath(dir)) + '/')
+  print(init_prefix + dir_basename + '/')
 
   padding = padding + ' '
 
@@ -95,7 +100,11 @@ def main():
   clp.add_option(
     "--depth", dest="depth", type="int", default=None,
     help="Depth (integer) to recurse into.  Default = '' or unbounded.")
-  
+
+  clp.add_option(
+    "--exclude", dest="exclude", type="string", default=None,
+    help="Exclude matching directory or file (e.g. '.git').")
+
   (options, args) = clp.parse_args()
 
   if len(args) != 1:
