@@ -103,7 +103,7 @@ def main():
 
   clp.add_option(
     "--exclude", dest="exclude", type="string", default=None,
-    help="Exclude directories or files that match this exclude (e.g. '.git').")
+    help="Exclude matching directory or file (e.g. '.git').")
 
   (options, args) = clp.parse_args()
 
