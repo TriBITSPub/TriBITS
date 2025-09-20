@@ -107,7 +107,7 @@ def main():
       + " Matches exact basenames.")
 
   clp.add_option(
-    "--depth", dest="depth", type="int", default=None,
+    "--depth", "-d", dest="depth", type="int", default=None,
     help="Depth (integer) to recurse into.  Default = '' or unbounded.")
 
   (options, args) = clp.parse_args()
