@@ -80,6 +80,13 @@ tribits_add_advanced_test( SnapshotDir_UnitTests
     PASS_REGULAR_EXPRESSION "OK"
   )
 
+tribits_add_test( ${Python3_EXECUTABLE} NOEXEPREFIX NOEXESUFFIX
+  NAME tree_UnitTests
+  ARGS "${CMAKE_CURRENT_SOURCE_DIR}/tree_unittests.py -v"
+  NUM_MPI_PROCS 1
+  PASS_REGULAR_EXPRESSION "OK"
+  )
+
 tribits_add_advanced_test( extract_rst_cmake_doc_UnitTests
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
