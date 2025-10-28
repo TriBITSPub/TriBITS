@@ -22,7 +22,7 @@ TriBITS provides the following core feature sets:
 Documentation
 =============
 
-See `TriBITS Documentation on tribits.org <http://tribits.org>`_
+See `TriBITS Documentation on https://tribitspub.github.io/TriBITS <https://tribitspub.github.io/TriBITS>`_
 
 Developing on TriBITS
 =====================
@@ -99,4 +99,4 @@ see `Contributing to TriBITS`_).
 
 .. _Report them: https://github.com/TriBITSPub/TriBITS/issues
 
-.. _TriBITS System Developer: https://tribits.org/doc/TribitsMaintainersGuide.html#tribits-system-developer
+.. _TriBITS System Developer: https://tribitspub.github.io/TriBITS/maintainers_guide/index.html#tribits-system-developer

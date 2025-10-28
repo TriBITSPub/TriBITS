@@ -1,11 +1,12 @@
 # Contributing to TriBITS
 
 **Contents:**
-* [Requirements for every change to TriBITS](#requirements)
-* [Preferred process for suggesting and making changes to TriBITS](#process):
-  * [Process Outline](#process_outline)
-  * [Process Roles](#process_roles)
-  * [Process Details](#process_details)
+- [Contributing to TriBITS](#contributing-to-tribits)
+  - [Requirements for every change to TriBITS](#requirements-for-every-change-to-tribits)
+  - [Preferred process for suggesting and making changes to TriBITS](#preferred-process-for-suggesting-and-making-changes-to-tribits)
+    - [Process Outline](#process-outline)
+    - [Process roles](#process-roles)
+    - [Process Details](#process-details)
 
 Contributions to TriBITS are welcomed.  However, there are some [requirements](#requirements) that every contribution needs to follow before it can be integrated into the main development branch of TriBITS and there is a [recommended process](#process) for suggesting and submitted proposed changes.
 
@@ -51,7 +52,7 @@ The details are given [below](#process_details).
 The following roles are mentioned on the process descriptions:
 
 * **TriBITS Maintainer**: Individual with push rights to the main TriBITS repo (i.e. [@bartlettroscoe](https://github.com/bartlettroscoe)).  Must review all issues and suggested changes and accept pull-requests.
-* **TriBITS Developer**: Someone who knows how to build TriBITS as a CMake project with its tests, add tests, make acceptable changes, create pull-requests, etc. but may not be able to directly push to the main TriBITS development branch (see the role of [TriBITS System Developer](https://tribits.org/doc/TribitsMaintainersGuide.html#tribits-system-developer)).
+* **TriBITS Developer**: Someone who knows how to build TriBITS as a CMake project with its tests, add tests, make acceptable changes, create pull-requests, etc. but may not be able to directly push to the main TriBITS development branch (see the role of [TriBITS System Developer](https://tribitspub.github.io/TriBITS/maintainers_guide/index.html#tribits-system-developer)).
 * **TriBITS Reviewer**: A member of the TriBITS Collaborators who have permission to review and approve Pull Requests (and change other aspects of a Pull Request).
 * **Issue Reporter**: A person who first reports an issue with TriBITS and would like some type of change to happen (i.e. to fix a defect, implement a new feature, fix documentation, etc.).
 
