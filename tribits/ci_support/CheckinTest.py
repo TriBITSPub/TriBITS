@@ -165,7 +165,9 @@ def getHostname():
     pass
   if hostname == "":
     try:
-      hostname = getCmndOutput("cat /etc/hostname", True)
+      if os.path.exists("/etc/hostname"):
+        with open("/etc/hostname", "r") as f:
+          hostname = f.read().strip()
     except Exception:
       pass
   return hostname
