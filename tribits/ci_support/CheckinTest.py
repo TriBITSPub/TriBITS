@@ -158,7 +158,17 @@ def getExtraCommandOutputFileName():
 
 
 def getHostname():
-  return getCmndOutput("hostname", True)
+  hostname = ""
+  try:
+    hostname = getCmndOutput("hostname", True)
+  except Exception:
+    pass
+  if hostname == "":
+    try:
+      hostname = getCmndOutput("cat /etc/hostname", True)
+    except Exception:
+      pass
+  return hostname
 
 
 def getEmailAddressesSpaceString(emailAddressesCommasStr):
