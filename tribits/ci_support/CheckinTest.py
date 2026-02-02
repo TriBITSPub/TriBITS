@@ -1448,7 +1448,7 @@ def runBuildTestCase(inOptions, tribitsGitRepos, buildTestCase, timings):
     if inOptions.useNinja:
       cmakeBaseOptions.append("-GNinja")
     if inOptions.extraCmakeOptions:
-      cmakeBaseOptions.extend(commandLineOptionsToList(inOptions.extraCmakeOptions))
+      cmakeBaseOptions.extend(inOptions.extraCmakeOptions.split(','))
     cmakeBaseOptions.append(cmakeScopedDefine(projectName,
     "TRIBITS_DIR:PATH", inOptions.tribitsDir))
     cmakeBaseOptions.append(cmakeScopedDefine(projectName,
