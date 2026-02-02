@@ -1,5 +1,5 @@
 const DOCUMENTATION_OPTIONS = {
-    VERSION: 'tribits_start-3564-gcf6f9ece',
+    VERSION: 'tribits_start-3566-g4c20b86f',
     LANGUAGE: 'en',
     COLLAPSE_INDEX: false,
     BUILDER: 'html',
