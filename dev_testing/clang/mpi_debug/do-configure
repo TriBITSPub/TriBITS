@@ -1,0 +1,22 @@
+#!/bin/bash
+if [[ -e CMakeCache.txt ]] ; then
+  rm  CMakeCache.txt
+fi
+if [[ -d CMakeFiles ]] ; then
+  rm -r CMakeFiles
+fi  
+cmake \
+-G Ninja \
+-D CMAKE_EXPORT_COMPILE_COMMANDS=ON \
+-D CTEST_BUILD_NAME=clang-$(clang++ --version | head -1 | cut -d ' ' -f 3)-mpich-$(mpirun --version | head -1 | cut -d ' ' -f 4)-$(git branch --show-current) \
+-D TriBITS_ENABLE_Fortran=OFF \
+-D CMAKE_C_COMPILER=$(which mpicc) \
+-D CMAKE_CXX_COMPILER=$(which mpicxx) \
+-D CTEST_BUILD_FLAGS=-j$(nproc) \
+-D CTEST_PARALLEL_LEVEL=$(nproc) \
+"$@" \
+../..
+
+
+#-D CMAKE_Fortran_COMPILER=$(which mpif90) \
+#-D CMAKE_Fortran_FLAGS="-fPIE" \
