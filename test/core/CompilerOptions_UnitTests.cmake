@@ -374,6 +374,26 @@ function(unitest_gcc_with_coverage_options)
 endfunction()
 
 
+function(unitest_enable_coverage_and_llvm_coverage_error)
+
+  message("\n***")
+  message("*** Testing error for enabling GCov and LLVM coverage together")
+  message("***\n")
+
+  tribits_set_all_compiler_id(GNU)
+  set(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING ON)
+  set(${PROJECT_NAME}_ENABLE_LLVM_COVERAGE_TESTING ON)
+  set(MESSAGE_WRAPPER_UNIT_TEST_MODE TRUE)
+  global_set(MESSAGE_WRAPPER_INPUT)
+
+  tribits_setup_basic_compile_link_flags()
+
+  unittest_compare_const(MESSAGE_WRAPPER_INPUT
+    "FATAL_ERROR;Error, ${PROJECT_NAME}_ENABLE_COVERAGE_TESTING=ON and; ${PROJECT_NAME}_ENABLE_LLVM_COVERAGE_TESTING=ON are not allowed; at the same time.  Enable only one coverage testing mode.")
+
+endfunction()
+
+
 function(unitest_gcc_with_checked_stl_options)
 
   message("\n***")
@@ -821,6 +841,7 @@ set(${PROJECT_NAME}_ENABLE_STRONG_Fortran_COMPILE_WARNINGS TRUE)
 set(${PROJECT_NAME}_WARNINGS_AS_ERRORS_FLAGS "--warnings_as_errors_placeholder")
 set(${PROJECT_NAME}_ENABLE_SHADOW_WARNINGS "")
 set(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING OFF)
+set(${PROJECT_NAME}_ENABLE_LLVM_COVERAGE_TESTING OFF)
 set(${PROJECT_NAME}_ENABLE_CHECKED_STL OFF)
 set(${PROJECT_NAME}_ENABLE_DEBUG_SYMBOLS OFF)
 set(${PROJECT_NAME}_VERBOSE_CONFIGURE TRUE)
@@ -839,6 +860,7 @@ unitest_gcc_with_shadow_options()
 unitest_gcc_global_enable_shadow_options()
 unitest_gcc_global_disable_shadow_options()
 unitest_gcc_with_coverage_options()
+unitest_enable_coverage_and_llvm_coverage_error()
 unitest_gcc_with_checked_stl_options()
 unitest_gcc_with_cleaned_options()
 unitest_gcc_no_strong_warnings_options()
@@ -855,4 +877,4 @@ unitest_other_base_options()
 unitest_other_with_shadow_cleaned_checked_stl_coverage_options()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(207)
+unittest_final_result(208)
