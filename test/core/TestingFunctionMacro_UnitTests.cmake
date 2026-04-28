@@ -2482,6 +2482,13 @@ function(unittest_tribits_add_test_properties)
   unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_SomeExec;PROPERTY;ENVIRONMENT;var1=val1;var2=val2")
 
+  message("Test setting LLVM_PROFILE_FILE")
+  set(${PROJECT_NAME}_ENABLE_LLVM_COVERAGE_TESTING ON)
+  tribits_add_test(${EXEN})
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
+    "PackageA_SomeExec;APPEND;PROPERTY;ENVIRONMENT;LLVM_PROFILE_FILE=${CMAKE_CURRENT_BINARY_DIR}/PackageA_SomeExec_%p.profraw")
+  set(${PROJECT_NAME}_ENABLE_LLVM_COVERAGE_TESTING OFF)
+
   set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT OFF)
 
 endfunction()
@@ -3784,6 +3791,15 @@ function(unittest_tribits_add_advanced_test_properties)
   unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
     "PackageA_TAAT_basic_cmnd_1_args_0;PROPERTY;ENVIRONMENT;var1=val1;var2=val2")
 
+  message("Test setting LLVM_PROFILE_FILE")
+  set(${PROJECT_NAME}_ENABLE_LLVM_COVERAGE_TESTING ON)
+  tribits_add_advanced_test_unittest_reset()
+  tribits_add_advanced_test( TAAT_basic_cmnd_1_args_0
+    TEST_0 CMND ${CMNDN} )
+  unittest_has_substr_const(TRIBITS_SET_TEST_PROPERTIES_INPUT
+    "PackageA_TAAT_basic_cmnd_1_args_0;APPEND;PROPERTY;ENVIRONMENT;LLVM_PROFILE_FILE=${CMAKE_CURRENT_BINARY_DIR}/PackageA_TAAT_basic_cmnd_1_args_0_%p.profraw")
+  set(${PROJECT_NAME}_ENABLE_LLVM_COVERAGE_TESTING OFF)
+
   set(TRIBITS_SET_TEST_PROPERTIES_CAPTURE_INPUT OFF)
   set(TRIBITS_ADD_ADVANCED_TEST_SKIP_SCRIPT OFF)
 
@@ -4898,4 +4914,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(724)
+unittest_final_result(726)
