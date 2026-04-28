@@ -106,6 +106,7 @@ class test_createTable(unittest.TestCase):
   def setUp(self):
     self.gitdistMoveToBaseDir = os.environ.get("GITDIST_MOVE_TO_BASE_DIR", "")
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+    self.pwd = os.environ.get("PWD", "")
     self.gitdistUnitTestSttySize = os.environ.get(
       "GITDIST_UNIT_TEST_STTY_SIZE", ""
     )
@@ -113,6 +114,7 @@ class test_createTable(unittest.TestCase):
 
   def tearDown(self):
     os.environ["GITDIST_MOVE_TO_BASE_DIR"] = self.gitdistMoveToBaseDir
+    os.environ["PWD"] = self.pwd
     os.environ["GITDIST_UNIT_TEST_STTY_SIZE"] = self.gitdistUnitTestSttySize
 
 
@@ -2426,6 +2428,130 @@ class test_gitdist(unittest.TestCase):
         "['mockgit', '-c', 'color.status=never', 'status']\n\n"
       self.assertEqual(s(cmndOut), s(cmndOut_expected))
       
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_gitdist_move_to_base_dir_nested_subrepo(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git meta-project with a nested git repo that is listed
+      # by both the immediate and the outer-most .gitdist files.
+      testDir = createAndMoveIntoTestDir("gitdist_move_to_base_dir_nested_subrepo")
+      os.makedirs("ExtraRepo/NestedRepo/doc")
+      os.makedirs("ExtraRepo/NestedRepo/.git")
+      with open(".gitdist", "w") as fileHandle:
+        fileHandle.write(
+          ".\n" \
+          "ExtraRepo\n" \
+          "ExtraRepo/NestedRepo\n"
+          )
+      with open("ExtraRepo/.gitdist.default", "w") as fileHandle:
+        fileHandle.write(
+          ".\n" \
+          "NestedRepo\n"
+          )
+      os.chdir("ExtraRepo/NestedRepo/doc")
+
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "IMMEDIATE_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: ExtraRepo\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
+        "*** Git Repo: NestedRepo\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "EXTREME_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo/NestedRepo\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_gitdist_move_to_base_dir_nested_subrepo_logical_pwd(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock meta-project where the current subrepo is reached through
+      # a symlink.  This covers the case where os.getcwd() returns the physical
+      # path but PWD contains the logical path with the outer .gitdist file.
+      testDir = createAndMoveIntoTestDir(
+        "gitdist_move_to_base_dir_nested_subrepo_logical_pwd")
+      os.makedirs("../RealExtraRepo/NestedRepo/doc")
+      os.makedirs("../RealExtraRepo/NestedRepo/.git")
+      os.symlink("../RealExtraRepo", "ExtraRepo")
+      with open(".gitdist", "w") as fileHandle:
+        fileHandle.write(
+          ".\n" \
+          "ExtraRepo\n" \
+          "ExtraRepo/NestedRepo\n"
+          )
+      with open("ExtraRepo/.gitdist.default", "w") as fileHandle:
+        fileHandle.write(
+          ".\n" \
+          "NestedRepo\n"
+          )
+      logicalCwd = os.path.join(testDir, "ExtraRepo", "NestedRepo", "doc")
+      os.chdir(logicalCwd)
+      os.environ["PWD"] = logicalCwd
+
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "EXTREME_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo/NestedRepo\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
+    finally:
+      os.chdir(testBaseDir)
+
+
+  def test_gitdist_move_to_base_dir_inside_git_repo_below_nonbase_gitdist(self):
+    os.chdir(testBaseDir)
+    try:
+
+      # Create a mock git repo with an intermediate .gitdist that does not
+      # describe the current base repo.  IMMEDIATE_BASE should keep walking up
+      # to the git repo root and use the .gitdist file there.
+      testDir = createAndMoveIntoTestDir(
+        "gitdist_move_to_base_dir_inside_git_repo_below_nonbase_gitdist")
+      os.makedirs(".git")
+      os.makedirs("ExtraRepo")
+      os.makedirs("path/to/intermediate/working/dir")
+      with open(".gitdist", "w") as fileHandle:
+        fileHandle.write(
+          ".\n" \
+          "ExtraRepo\n"
+          )
+      with open("path/to/intermediate/.gitdist", "w") as fileHandle:
+        fileHandle.write(
+          "SomeOtherRepo\n"
+          )
+      os.chdir("path/to/intermediate/working/dir")
+
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = "IMMEDIATE_BASE"
+      cmndOut = GeneralScriptSupport.getCmndOutput(gitdistPathMock+" status")
+      cmndOut_expected = \
+        "\n*** Base Git Repo: MockProjectDir\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n" \
+        "*** Git Repo: ExtraRepo\n" \
+        "['mockgit', '-c', 'color.status=never', 'status']\n\n"
+      self.assertEqual(s(cmndOut), s(cmndOut_expected))
+
     finally:
       os.chdir(testBaseDir)
 
