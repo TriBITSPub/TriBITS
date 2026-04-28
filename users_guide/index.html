@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=c22915c6"></script>
+      <script src="_static/documentation_options.js?v=eb4777c5"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -399,10 +399,10 @@
 <dd class="field-odd"><p>Roscoe A. Bartlett (<a class="reference external" href="mailto:rabartl&#37;&#52;&#48;sandia&#46;gov">rabartl<span>&#64;</span>sandia<span>&#46;</span>gov</a>)</p>
 </dd>
 <dt class="field-even">Date<span class="colon">:</span></dt>
-<dd class="field-even"><p>2026-02-02</p>
+<dd class="field-even"><p>2026-04-28</p>
 </dd>
 <dt class="field-odd">Version<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tribits_start-3566-g4c20b86f</p>
+<dd class="field-odd"><p>tribits_start-3569-g0049312c</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -17813,25 +17813,28 @@ or
 <span class="n">usual</span><span class="o">.</span>  <span class="n">You</span> <span class="n">have</span> <span class="n">the</span> <span class="n">ability</span> <span class="n">to</span> <span class="n">change</span> <span class="n">this</span> <span class="n">behavior</span> <span class="n">by</span> <span class="n">setting</span> <span class="n">the</span>
 <span class="n">GITDIST_MOVE_TO_BASE_DIR</span> <span class="n">environment</span> <span class="n">variable</span><span class="o">.</span>
 
-<span class="n">To</span> <span class="n">describe</span> <span class="n">the</span> <span class="n">behavior</span> <span class="k">for</span> <span class="n">the</span> <span class="n">differ</span> <span class="n">net</span> <span class="n">options</span><span class="p">,</span> <span class="n">consider</span> <span class="n">the</span> <span class="n">following</span> <span class="nb">set</span>
+<span class="n">To</span> <span class="n">describe</span> <span class="n">the</span> <span class="n">behavior</span> <span class="k">for</span> <span class="n">the</span> <span class="n">different</span> <span class="n">options</span><span class="p">,</span> <span class="n">consider</span> <span class="n">the</span> <span class="n">following</span> <span class="nb">set</span>
 <span class="n">of</span> <span class="n">nested</span> <span class="n">git</span> <span class="n">repositories</span> <span class="ow">and</span> <span class="n">directories</span><span class="p">:</span>
 
     <span class="n">BaseRepo</span><span class="o">/</span>
       <span class="o">.</span><span class="n">git</span>
-      <span class="o">.</span><span class="n">gitdist</span>
+      <span class="o">.</span><span class="n">gitdist</span>   <span class="c1"># contains &quot;.&quot;, &quot;ExtraRepo&quot;, and &quot;ExtraRepo/NestedRepo&quot;</span>
       <span class="o">...</span>
       <span class="n">ExtraRepo</span><span class="o">/</span>
         <span class="o">.</span><span class="n">git</span>
-        <span class="o">.</span><span class="n">gitdist</span>
+        <span class="o">.</span><span class="n">gitdist</span> <span class="c1"># contains &quot;.&quot; and &quot;NestedRepo&quot;</span>
         <span class="o">...</span>
-        <span class="n">path</span><span class="o">/</span>
+        <span class="n">NestedRepo</span><span class="o">/</span>
+          <span class="o">.</span><span class="n">git</span>
           <span class="o">...</span>
-          <span class="n">to</span><span class="o">/</span>
+          <span class="n">path</span><span class="o">/</span>
             <span class="o">...</span>
-            <span class="n">some</span><span class="o">/</span>
+            <span class="n">to</span><span class="o">/</span>
               <span class="o">...</span>
-              <span class="n">directory</span><span class="o">/</span>
+              <span class="n">some</span><span class="o">/</span>
                 <span class="o">...</span>
+                <span class="n">directory</span><span class="o">/</span>
+                  <span class="o">...</span>
 
 
 <span class="n">The</span> <span class="n">valid</span> <span class="n">settings</span> <span class="k">for</span> <span class="n">GITDIST_MOVE_TO_BASE_DIR</span> <span class="n">include</span><span class="p">:</span>
@@ -17845,17 +17848,23 @@ or
 
     <span class="n">In</span> <span class="n">this</span> <span class="n">case</span><span class="p">,</span> <span class="n">gitdist</span> <span class="n">will</span> <span class="n">start</span> <span class="n">moving</span> <span class="n">up</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">tree</span> <span class="n">until</span> <span class="n">it</span>
     <span class="n">finds</span> <span class="n">a</span> <span class="o">.</span><span class="n">gitdist</span><span class="p">[</span><span class="o">.</span><span class="n">default</span><span class="p">]</span> <span class="n">file</span><span class="p">,</span> <span class="ow">and</span> <span class="n">then</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">where</span> <span class="n">it</span>
-    <span class="n">finds</span> <span class="n">it</span><span class="o">.</span>  <span class="n">In</span> <span class="n">the</span> <span class="n">above</span> <span class="n">example</span><span class="p">,</span> <span class="k">if</span> <span class="n">you</span> <span class="n">are</span> <span class="ow">in</span>
-    <span class="n">BaseRepo</span><span class="o">/</span><span class="n">ExtraRepo</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">some</span><span class="o">/</span><span class="n">directory</span><span class="o">/</span> <span class="n">when</span> <span class="n">you</span> <span class="n">run</span> <span class="n">gitdist</span><span class="p">,</span> <span class="n">it</span> <span class="n">will</span>
-    <span class="n">move</span> <span class="n">up</span> <span class="n">to</span> <span class="n">ExtraRepo</span> <span class="n">to</span> <span class="n">execute</span> <span class="n">the</span> <span class="n">command</span> <span class="n">you</span> <span class="n">give</span> <span class="n">it</span> <span class="kn">from</span><span class="w"> </span><span class="nn">there.</span>
+    <span class="n">finds</span> <span class="n">it</span><span class="o">.</span>  <span class="n">If</span> <span class="n">you</span> <span class="n">are</span> <span class="n">under</span> <span class="n">a</span> <span class="n">nested</span> <span class="n">git</span> <span class="n">repo</span> <span class="n">before</span> <span class="n">gitdist</span> <span class="n">finds</span> <span class="n">that</span>
+    <span class="n">file</span><span class="p">,</span> <span class="n">then</span> <span class="n">the</span> <span class="o">.</span><span class="n">gitdist</span><span class="p">[</span><span class="o">.</span><span class="n">default</span><span class="p">]</span> <span class="n">file</span> <span class="n">must</span> <span class="nb">list</span> <span class="n">that</span> <span class="n">nested</span> <span class="n">git</span> <span class="n">repo</span><span class="o">.</span>
+    <span class="n">In</span> <span class="n">the</span> <span class="n">above</span> <span class="n">example</span><span class="p">,</span> <span class="k">if</span> <span class="n">you</span> <span class="n">are</span> <span class="ow">in</span>
+    <span class="n">BaseRepo</span><span class="o">/</span><span class="n">ExtraRepo</span><span class="o">/</span><span class="n">NestedRepo</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">some</span><span class="o">/</span><span class="n">directory</span><span class="o">/</span> <span class="n">when</span> <span class="n">you</span> <span class="n">run</span>
+    <span class="n">gitdist</span><span class="p">,</span> <span class="n">it</span> <span class="n">will</span> <span class="n">move</span> <span class="n">up</span> <span class="n">to</span> <span class="n">ExtraRepo</span> <span class="n">to</span> <span class="n">execute</span> <span class="n">the</span> <span class="n">command</span> <span class="n">you</span> <span class="n">give</span> <span class="n">it</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">there</span> <span class="n">because</span> <span class="n">ExtraRepo</span><span class="o">/.</span><span class="n">gitdist</span> <span class="n">lists</span> <span class="s2">&quot;NestedRepo&quot;</span><span class="o">.</span>
 
   <span class="n">EXTREME_BASE</span><span class="p">:</span>
 
     <span class="n">In</span> <span class="n">this</span> <span class="n">case</span><span class="p">,</span> <span class="n">gitdist</span> <span class="n">will</span> <span class="k">continue</span> <span class="n">moving</span> <span class="n">up</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">tree</span> <span class="n">until</span> <span class="n">it</span>
-    <span class="n">finds</span> <span class="n">the</span> <span class="n">outer</span><span class="o">-</span><span class="n">most</span> <span class="n">repository</span> <span class="n">containing</span> <span class="n">a</span> <span class="o">.</span><span class="n">gitdist</span><span class="p">[</span><span class="o">.</span><span class="n">default</span><span class="p">]</span> <span class="n">file</span><span class="p">,</span> <span class="ow">and</span>
-    <span class="n">then</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">that</span> <span class="n">directory</span><span class="o">.</span>  <span class="n">Given</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">tree</span> <span class="n">above</span><span class="p">,</span> <span class="k">if</span> <span class="n">you</span> <span class="n">were</span>
-    <span class="ow">in</span> <span class="n">BaseRepo</span><span class="o">/</span><span class="n">ExtraRepo</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">some</span><span class="o">/</span><span class="n">directory</span><span class="p">,</span> <span class="n">it</span> <span class="n">will</span> <span class="n">move</span> <span class="n">up</span> <span class="n">to</span> <span class="n">BaseRepo</span>
-    <span class="n">to</span> <span class="n">execute</span> <span class="n">the</span> <span class="n">command</span> <span class="n">you</span> <span class="n">give</span> <span class="n">it</span><span class="o">.</span>
+    <span class="n">finds</span> <span class="n">the</span> <span class="n">upstream</span><span class="o">-</span><span class="n">most</span> <span class="o">.</span><span class="n">gitdist</span><span class="p">[</span><span class="o">.</span><span class="n">default</span><span class="p">]</span> <span class="n">file</span> <span class="n">that</span> <span class="n">lists</span> <span class="n">the</span> <span class="n">nested</span> <span class="n">git</span>
+    <span class="n">repo</span> <span class="n">you</span> <span class="n">are</span> <span class="n">currently</span> <span class="n">under</span><span class="o">.</span>  <span class="n">Given</span> <span class="n">the</span> <span class="n">directory</span> <span class="n">tree</span> <span class="n">above</span><span class="p">,</span> <span class="k">if</span> <span class="n">you</span> <span class="n">were</span>
+    <span class="ow">in</span> <span class="n">BaseRepo</span><span class="o">/</span><span class="n">ExtraRepo</span><span class="o">/</span><span class="n">NestedRepo</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">some</span><span class="o">/</span><span class="n">directory</span><span class="p">,</span> <span class="n">gitdist</span> <span class="n">would</span>
+    <span class="n">move</span> <span class="n">up</span> <span class="n">to</span> <span class="n">BaseRepo</span> <span class="n">because</span> <span class="n">BaseRepo</span><span class="o">/.</span><span class="n">gitdist</span> <span class="n">lists</span>
+    <span class="s2">&quot;ExtraRepo/NestedRepo&quot;</span><span class="o">.</span>  <span class="n">If</span> <span class="n">an</span> <span class="n">outer</span> <span class="n">directory</span> <span class="n">has</span> <span class="n">a</span> <span class="o">.</span><span class="n">gitdist</span><span class="p">[</span><span class="o">.</span><span class="n">default</span><span class="p">]</span>
+    <span class="n">file</span> <span class="n">but</span> <span class="n">that</span> <span class="n">file</span> <span class="n">does</span> <span class="ow">not</span> <span class="nb">list</span> <span class="n">the</span> <span class="n">nested</span> <span class="n">git</span> <span class="n">repo</span> <span class="n">path</span><span class="p">,</span> <span class="n">gitdist</span> <span class="n">ignores</span>
+    <span class="n">that</span> <span class="n">outer</span> <span class="n">file</span> <span class="n">instead</span> <span class="n">of</span> <span class="n">crossing</span> <span class="n">into</span> <span class="n">an</span> <span class="n">unrelated</span> <span class="n">outer</span> <span class="n">meta</span><span class="o">-</span><span class="n">project</span><span class="o">.</span>
 
 <span class="n">With</span> <span class="n">either</span> <span class="n">of</span> <span class="n">the</span> <span class="n">settings</span> <span class="n">above</span><span class="p">,</span> <span class="n">when</span> <span class="n">gitdist</span> <span class="ow">is</span> <span class="n">finished</span> <span class="n">running</span><span class="p">,</span> <span class="n">it</span> <span class="n">will</span>
 <span class="n">leave</span> <span class="n">you</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">same</span> <span class="n">directory</span> <span class="n">you</span> <span class="n">were</span> <span class="ow">in</span> <span class="n">when</span> <span class="n">you</span> <span class="n">executed</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">the</span>
@@ -18502,25 +18511,28 @@ treat the current directory as the base git repository (as if there was a
 usual.  You have the ability to change this behavior by setting the
 GITDIST_MOVE_TO_BASE_DIR environment variable.
 
-To describe the behavior for the differ net options, consider the following set
+To describe the behavior for the different options, consider the following set
 of nested git repositories and directories:
 
     BaseRepo/
       .git
-      .gitdist
+      .gitdist   # contains &quot;.&quot;, &quot;ExtraRepo&quot;, and &quot;ExtraRepo/NestedRepo&quot;
       ...
       ExtraRepo/
         .git
-        .gitdist
+        .gitdist # contains &quot;.&quot; and &quot;NestedRepo&quot;
         ...
-        path/
+        NestedRepo/
+          .git
           ...
-          to/
+          path/
             ...
-            some/
+            to/
               ...
-              directory/
+              some/
                 ...
+                directory/
+                  ...
 
 
 The valid settings for GITDIST_MOVE_TO_BASE_DIR include:
@@ -18534,17 +18546,23 @@ The valid settings for GITDIST_MOVE_TO_BASE_DIR include:
 
     In this case, gitdist will start moving up the directory tree until it
     finds a .gitdist[.default] file, and then run in the directory where it
-    finds it.  In the above example, if you are in
-    BaseRepo/ExtraRepo/path/to/some/directory/ when you run gitdist, it will
-    move up to ExtraRepo to execute the command you give it from there.
+    finds it.  If you are under a nested git repo before gitdist finds that
+    file, then the .gitdist[.default] file must list that nested git repo.
+    In the above example, if you are in
+    BaseRepo/ExtraRepo/NestedRepo/path/to/some/directory/ when you run
+    gitdist, it will move up to ExtraRepo to execute the command you give it
+    from there because ExtraRepo/.gitdist lists &quot;NestedRepo&quot;.
 
   EXTREME_BASE:
 
     In this case, gitdist will continue moving up the directory tree until it
-    finds the outer-most repository containing a .gitdist[.default] file, and
-    then run in that directory.  Given the directory tree above, if you were
-    in BaseRepo/ExtraRepo/path/to/some/directory, it will move up to BaseRepo
-    to execute the command you give it.
+    finds the upstream-most .gitdist[.default] file that lists the nested git
+    repo you are currently under.  Given the directory tree above, if you were
+    in BaseRepo/ExtraRepo/NestedRepo/path/to/some/directory, gitdist would
+    move up to BaseRepo because BaseRepo/.gitdist lists
+    &quot;ExtraRepo/NestedRepo&quot;.  If an outer directory has a .gitdist[.default]
+    file but that file does not list the nested git repo path, gitdist ignores
+    that outer file instead of crossing into an unrelated outer meta-project.
 
 With either of the settings above, when gitdist is finished running, it will
 leave you in the same directory you were in when you executed command in the
