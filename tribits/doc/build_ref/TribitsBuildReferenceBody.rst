@@ -36,10 +36,27 @@ that once CMake is installed that it will be in the default path with the name
 Installing a binary release of CMake [casual users]
 ---------------------------------------------------
 
-Download and install the binary (version <MinCMakeVer> or greater is
-recommended) from:
+Download and install the CMake binaries (version ``<MinCMakeVer>`` or greater
+is recommended) from:
 
-  http://www.cmake.org/cmake/resources/software.html
+  https://cmake.org/download/
+
+Use the following script to automate the download and install (on Linux) of
+any tagged version of CMake from the CMake GitHub repo::
+
+  $ cd <some-scratch-space>/
+  $ TRIBITS_BASE_DIR=<tribits-base-dir>/tribits
+  $ $TRIBITS_BASE_DIR/devtools_install/install-cmake-binary.sh \
+     <cmake-version> <install-base-dir>
+
+For example, to install CMake ``4.0.0-rc4`` under ``${HOME}/install``, run::
+
+  $ $TRIBITS_BASE_DIR/devtools_install/install-cmake-binary.sh \
+     4.0.0-rc4 ${HOME}/install
+
+That installs the CMake binaries under::
+
+  ${HOME}/install/cmake-4.0.0-rc4/bin/
 
 
 Installing CMake from source [developers and experienced users]
@@ -49,7 +66,7 @@ If you have access to the <Project> git repositories (which which includes a
 snapshot of TriBITS), then install CMake with::
 
   $ cd <some-scratch-space>/
-  $ TRIBITS_BASE_DIR=<project-base-dir>/cmake/tribits
+  $ TRIBITS_BASE_DIR=<tribits-base-dir>/tribits
   $ $TRIBITS_BASE_DIR/devtools_install/install-cmake.py \
      --install-dir-base=<INSTALL_BASE_DIR> --cmake-version=X.Y.Z \
      --do-all
