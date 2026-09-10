@@ -1,0 +1,8 @@
+#!/bin/bash
+./do-configure \
+-DCTEST_SITE=$(cat /etc/hostname) \
+-DCTEST_DROP_SITE="my.cdash.org" \
+-DCTEST_PROJECT_NAME="TriBITS" \
+-DCTEST_DROP_LOCATION="/submit.php?project=TriBITS" \
+-DTRIBITS_2ND_CTEST_DROP_SITE="" \
+"$@"

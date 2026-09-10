@@ -612,10 +612,10 @@ tribits_add_advanced_test( TribitsHelloWorld_install_perms
     CMND ls ARGS -ld
       install install/include install/lib install/bin
     PASS_REGULAR_EXPRESSION_ALL
-      "drwxr-xr-x.* .* install"
-      "drwxr-xr-x.* .* install/bin"
-      "drwxr-xr-x.* .* install/include"
-      "drwxr-xr-x.* .* install/lib"
+      "drwxr-[xs]r-x.* .* install"
+      "drwxr-[xs]r-x.* .* install/bin"
+      "drwxr-[xs]r-x.* .* install/include"
+      "drwxr-[xs]r-x.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_11
@@ -648,10 +648,10 @@ tribits_add_advanced_test( TribitsHelloWorld_install_perms
     CMND ls ARGS -ld
       install install/include install/lib install/bin
     PASS_REGULAR_EXPRESSION_ALL
-      "drwxr-x---.* .* install"
-      "drwxr-x---.* .* install/bin"
-      "drwxr-x---.* .* install/include"
-      "drwxr-x---.* .* install/lib"
+      "drwxr-[xs]---.* .* install"
+      "drwxr-[xs]---.* .* install/bin"
+      "drwxr-[xs]---.* .* install/include"
+      "drwxr-[xs]---.* .* install/lib"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_15
@@ -692,6 +692,8 @@ tribits_add_advanced_test( TribitsHelloWorld_install_perms
 
   )
   # NOTE: Above we are testing different directory install options.
+  # Directory permission checks allow an inherited setgid bit: ls shows 's'
+  # with group execute permission and 'S' without group execute permission.
 
 
 tribits_add_advanced_test( TribitsHelloWorld_install_package_by_package
