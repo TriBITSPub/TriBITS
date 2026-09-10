@@ -13,7 +13,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=cd28fe57"></script>
+      <script src="_static/documentation_options.js?v=dd199650"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -229,10 +229,10 @@
 <dd class="field-even"><p><a class="reference external" href="mailto:bartlett&#46;roscoe&#37;&#52;&#48;gmail&#46;com">bartlett<span>&#46;</span>roscoe<span>&#64;</span>gmail<span>&#46;</span>com</a></p>
 </dd>
 <dt class="field-odd">Date<span class="colon">:</span></dt>
-<dd class="field-odd"><p>2026-04-28</p>
+<dd class="field-odd"><p>2026-09-10</p>
 </dd>
 <dt class="field-even">Version<span class="colon">:</span></dt>
-<dd class="field-even"><p>tribits_start-3572-g40f3eae8</p>
+<dd class="field-even"><p>tribits_start-3576-g7525d003</p>
 </dd>
 </dl>
 <dl class="field-list simple">
@@ -416,7 +416,7 @@
 <p>This document is created using the script <code class="docutils literal notranslate"><span class="pre">create-build-ref.sh</span></code> in this
 directory which just runs:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ./create-project-build-ref.py \
-  --project-name=&quot;&lt;Project&gt;&quot; \
+  --project-name="&lt;Project&gt;" \
   --project-template-file=TribitsBuildReferenceTemplate.rst \
   --file-base=TribitsBuildReference
 </pre></div>
@@ -552,7 +552,7 @@ as shown above.</p>
 cmake \
   -D CMAKE_BUILD_TYPE=DEBUG \
   -D &lt;Project&gt;_ENABLE_TESTS=ON \
-  &quot;$@&quot; \
+  "$@" \
   ${SOURCE_BASE}
 </pre></div>
 </div>
@@ -583,15 +583,15 @@ CMakeCache.txt and other CMake-generated files before configuring again (see
 cmake \
   -D &lt;Project&gt;_CONFIGURE_OPTIONS_FILE=MyConfigureOptions.cmake \
   -D &lt;Project&gt;_ENABLE_TESTS=ON \
-  &quot;$@&quot; \
+  "$@" \
   ${SOURCE_BASE}
 </pre></div>
 </div>
 <p>where MyConfigureOptions.cmake (in the current working directory) might look
 like:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="n">CMAKE_BUILD_TYPE</span> <span class="n">DEBUG</span> <span class="n">CACHE</span> <span class="n">STRING</span> <span class="s2">&quot;Set in MyConfigureOptions.cmake&quot;</span><span class="p">)</span>
-<span class="nb">set</span><span class="p">(</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_CHECKED_STL</span> <span class="n">ON</span> <span class="n">CACHE</span> <span class="n">BOOL</span> <span class="s2">&quot;Set in MyConfigureOptions.cmake&quot;</span><span class="p">)</span>
-<span class="nb">set</span><span class="p">(</span><span class="n">BUILD_SHARED_LIBS</span> <span class="n">ON</span> <span class="n">CACHE</span> <span class="n">BOOL</span> <span class="s2">&quot;Set in MyConfigureOptions.cmake&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">set</span><span class="p">(</span><span class="n">CMAKE_BUILD_TYPE</span> <span class="n">DEBUG</span> <span class="n">CACHE</span> <span class="n">STRING</span> <span class="s2">"Set in MyConfigureOptions.cmake"</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_CHECKED_STL</span> <span class="n">ON</span> <span class="n">CACHE</span> <span class="n">BOOL</span> <span class="s2">"Set in MyConfigureOptions.cmake"</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span><span class="n">BUILD_SHARED_LIBS</span> <span class="n">ON</span> <span class="n">CACHE</span> <span class="n">BOOL</span> <span class="s2">"Set in MyConfigureOptions.cmake"</span><span class="p">)</span>
 <span class="o">...</span>
 </pre></div>
 </div>
@@ -757,7 +757,7 @@ contained the lines starting with <code class="docutils literal notranslate"><sp
 default (which is base behavior), the full list of packages will be listed on
 the line <code class="docutils literal notranslate"><span class="pre">'Final</span> <span class="pre">set</span> <span class="pre">of</span> <span class="pre">non-enabled</span> <span class="pre">packages'</span></code>.  Therefore, to see the
 full list of defined packages, run:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">do</span><span class="o">-</span><span class="n">configure</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span> <span class="o">|</span> <span class="n">grep</span> <span class="s2">&quot;Final set of .*enabled packages&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">do</span><span class="o">-</span><span class="n">configure</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span> <span class="o">|</span> <span class="n">grep</span> <span class="s2">"Final set of .*enabled packages"</span>
 </pre></div>
 </div>
 <p>Any of the packages shown on those lines can potentially be enabled using <code class="docutils literal notranslate"><span class="pre">-D</span>
@@ -766,7 +766,7 @@ for some reason, see the CMake output for package disable warnings).</p>
 <p>Another way to see the full list of packages that can be enabled is to
 configure with <a class="reference internal" href="#project-dump-package-dependencies">&lt;Project&gt;_DUMP_PACKAGE_DEPENDENCIES</a> = <code class="docutils literal notranslate"><span class="pre">ON</span></code> and then grep
 for <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_INTERNAL_PACKAGES</span></code> using, for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">do</span><span class="o">-</span><span class="n">configure</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span> <span class="o">|</span> <span class="n">grep</span> <span class="s2">&quot;&lt;Project&gt;_INTERNAL_PACKAGES: &quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">do</span><span class="o">-</span><span class="n">configure</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span> <span class="o">|</span> <span class="n">grep</span> <span class="s2">"&lt;Project&gt;_INTERNAL_PACKAGES: "</span>
 </pre></div>
 </div>
 </section>
@@ -1137,7 +1137,7 @@ to what is in <code class="docutils literal notranslate"><span class="pre">CMAKE
 <h3><a class="toc-backref" href="#id24" role="doc-backlink"><span class="sectnum">4.4.2 </span>Adding arbitrary compiler flags but keeping default build-type flags</a><a class="headerlink" href="#adding-arbitrary-compiler-flags-but-keeping-default-build-type-flags" title="Link to this heading"></a></h3>
 <p>To append arbitrary compiler flags to <code class="docutils literal notranslate"><span class="pre">CMAKE_&lt;LANG&gt;_FLAGS</span></code> (which may be
 set internally by TriBITS) that apply to all build types, configure with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">&quot;&lt;EXTRA_COMPILER_OPTIONS&gt;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">"&lt;EXTRA_COMPILER_OPTIONS&gt;"</span>
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">&lt;EXTRA_COMPILER_OPTIONS&gt;</span></code> are your extra compiler options like
@@ -1161,7 +1161,7 @@ in Fortran flags using the environment variable <code class="docutils literal no
 not recognize <code class="docutils literal notranslate"><span class="pre">FCFLAGS</span></code>).  But if <code class="docutils literal notranslate"><span class="pre">FFLAGS</span></code> and <code class="docutils literal notranslate"><span class="pre">FCFLAGS</span></code> are both set,
 then they must be the same or a configure error will occur.</p>
 <p>Options can also be targeted to a specific TriBITS package using:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">&quot;&lt;PACKAGE_EXTRA_COMPILER_OPTIONS&gt;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TRIBITS_PACKAGE</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">"&lt;PACKAGE_EXTRA_COMPILER_OPTIONS&gt;"</span>
 </pre></div>
 </div>
 <p>The package-specific options get appended <strong>after</strong> those already in
@@ -1170,13 +1170,13 @@ globally in <code class="docutils literal notranslate"><span class="pre">CMAKE_&
 files or by the user in the cache).</p>
 <p>In addition, flags can be targeted to a specific TriBITS subpackage using the
 same syntax:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TRIBITS_SUBPACKAGE</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">&quot;&lt;SUBPACKAGE_EXTRA_COMPILER_OPTIONS&gt;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TRIBITS_SUBPACKAGE</span><span class="o">&gt;</span><span class="n">_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">"&lt;SUBPACKAGE_EXTRA_COMPILER_OPTIONS&gt;"</span>
 </pre></div>
 </div>
 <p>If top-level package-specific flags and subpackage-specific flags are both set
 for the same parent package such as with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">SomePackage_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">&quot;&lt;Package-flags&gt;&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="n">SomePackageSpkgA_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">&quot;&lt;Subpackage-flags&gt;&quot;</span> \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">SomePackage_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">"&lt;Package-flags&gt;"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="n">SomePackageSpkgA_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">"&lt;Subpackage-flags&gt;"</span> \
 </pre></div>
 </div>
 <p>then the flags for the subpackage <code class="docutils literal notranslate"><span class="pre">SomePackageSpkgA</span></code> will be listed after
@@ -1213,19 +1213,19 @@ override those options, see
 <h3><a class="toc-backref" href="#id25" role="doc-backlink"><span class="sectnum">4.4.3 </span>Overriding CMAKE_BUILD_TYPE debug/release compiler options</a><a class="headerlink" href="#overriding-cmake-build-type-debug-release-compiler-options" title="Link to this heading"></a></h3>
 <p>To override the default CMake-set options in
 <code class="docutils literal notranslate"><span class="pre">CMAKE_&lt;LANG&gt;_FLAGS_&lt;CMAKE_BUILD_TYPE&gt;</span></code>, use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS_</span><span class="o">&lt;</span><span class="n">CMAKE_BUILD_TYPE</span><span class="o">&gt;</span><span class="n">_OVERRIDE</span><span class="o">=</span><span class="s2">&quot;&lt;OPTIONS_TO_OVERRIDE&gt;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS_</span><span class="o">&lt;</span><span class="n">CMAKE_BUILD_TYPE</span><span class="o">&gt;</span><span class="n">_OVERRIDE</span><span class="o">=</span><span class="s2">"&lt;OPTIONS_TO_OVERRIDE&gt;"</span>
 </pre></div>
 </div>
 <p>For example, to default debug options use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_C_FLAGS_DEBUG_OVERRIDE</span><span class="o">=</span><span class="s2">&quot;-g -O1&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_CXX_FLAGS_DEBUG_OVERRIDE</span><span class="o">=</span><span class="s2">&quot;-g -O1&quot;</span>
-<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_Fortran_FLAGS_DEBUG_OVERRIDE</span><span class="o">=</span><span class="s2">&quot;-g -O1&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_C_FLAGS_DEBUG_OVERRIDE</span><span class="o">=</span><span class="s2">"-g -O1"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_CXX_FLAGS_DEBUG_OVERRIDE</span><span class="o">=</span><span class="s2">"-g -O1"</span>
+<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_Fortran_FLAGS_DEBUG_OVERRIDE</span><span class="o">=</span><span class="s2">"-g -O1"</span>
 </pre></div>
 </div>
 <p>and to override default release options use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_C_FLAGS_RELEASE_OVERRIDE</span><span class="o">=</span><span class="s2">&quot;-O3 -funroll-loops&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_CXX_FLAGS_RELEASE_OVERRIDE</span><span class="o">=</span><span class="s2">&quot;-03 -funroll-loops&quot;</span>
-<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_Fortran_FLAGS_RELEASE_OVERRIDE</span><span class="o">=</span><span class="s2">&quot;-03 -funroll-loops&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_C_FLAGS_RELEASE_OVERRIDE</span><span class="o">=</span><span class="s2">"-O3 -funroll-loops"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_CXX_FLAGS_RELEASE_OVERRIDE</span><span class="o">=</span><span class="s2">"-03 -funroll-loops"</span>
+<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_Fortran_FLAGS_RELEASE_OVERRIDE</span><span class="o">=</span><span class="s2">"-03 -funroll-loops"</span>
 </pre></div>
 </div>
 <p>NOTES: The TriBITS CMake cache variable
@@ -1253,8 +1253,8 @@ therefore not have strong warning options enabled.</p>
 <h3><a class="toc-backref" href="#id27" role="doc-backlink"><span class="sectnum">4.4.5 </span>Overriding all (strong warnings and debug/release) compiler options</a><a class="headerlink" href="#overriding-all-strong-warnings-and-debug-release-compiler-options" title="Link to this heading"></a></h3>
 <p>To override all compiler options, including both strong warning options
 and debug/release options, configure with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_C_FLAGS</span><span class="o">=</span><span class="s2">&quot;-O3 -funroll-loops&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_CXX_FLAGS</span><span class="o">=</span><span class="s2">&quot;-03 -fexceptions&quot;</span> \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_C_FLAGS</span><span class="o">=</span><span class="s2">"-O3 -funroll-loops"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_CXX_FLAGS</span><span class="o">=</span><span class="s2">"-03 -fexceptions"</span> \
 <span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_BUILD_TYPE</span><span class="o">=</span><span class="n">NONE</span> \
 <span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_STRONG_C_COMPILE_WARNINGS</span><span class="o">=</span><span class="n">OFF</span> \
 <span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_STRONG_CXX_COMPILE_WARNINGS</span><span class="o">=</span><span class="n">OFF</span> \
@@ -1292,7 +1292,7 @@ package.</p>
 <p>To remove the <code class="docutils literal notranslate"><span class="pre">-Werror</span></code> flag (or some other flag that is set) from being
 applied to compile CLEANED packages (like the Trilinos package Teuchos), set
 the following when configuring:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_WARNINGS_AS_ERRORS_FLAGS</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_WARNINGS_AS_ERRORS_FLAGS</span><span class="o">=</span><span class="s2">""</span>
 </pre></div>
 </div>
 </section>
@@ -1313,8 +1313,8 @@ package, set:</p>
 </pre></div>
 </div>
 <p>That will print lines in STDOUT that are formatted as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">TRIBITS_SUBPACKAGE</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">CMAKE_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">&quot;&lt;exact-flags-usedy-by-package&gt;&quot;</span>
-<span class="o">&lt;</span><span class="n">TRIBITS_SUBPACKAGE</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">CMAKE_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS_</span><span class="o">&lt;</span><span class="n">BUILD_TYPE</span><span class="o">&gt;=</span><span class="s2">&quot;&lt;build-type-flags&gt;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">TRIBITS_SUBPACKAGE</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">CMAKE_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">"&lt;exact-flags-usedy-by-package&gt;"</span>
+<span class="o">&lt;</span><span class="n">TRIBITS_SUBPACKAGE</span><span class="o">&gt;</span><span class="p">:</span> <span class="n">CMAKE_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS_</span><span class="o">&lt;</span><span class="n">BUILD_TYPE</span><span class="o">&gt;=</span><span class="s2">"&lt;build-type-flags&gt;"</span>
 </pre></div>
 </div>
 <p>This will print the value of the <code class="docutils literal notranslate"><span class="pre">CMAKE_&lt;LANG&gt;_FLAGS</span></code> and
@@ -1326,8 +1326,8 @@ by CMake</p>
 <h3><a class="toc-backref" href="#id32" role="doc-backlink"><span class="sectnum">4.4.10 </span>Appending arbitrary libraries and link flags every executable</a><a class="headerlink" href="#appending-arbitrary-libraries-and-link-flags-every-executable" title="Link to this heading"></a></h3>
 <p>In order to append any set of arbitrary libraries and link flags to your
 executables use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_EXTRA_LINK_FLAGS</span><span class="o">=</span><span class="s2">&quot;&lt;EXTRA_LINK_LIBRARIES&gt;&quot;</span> \
-<span class="o">-</span><span class="n">DCMAKE_EXE_LINKER_FLAGS</span><span class="o">=</span><span class="s2">&quot;&lt;EXTRA_LINK_FLAGG&gt;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_EXTRA_LINK_FLAGS</span><span class="o">=</span><span class="s2">"&lt;EXTRA_LINK_LIBRARIES&gt;"</span> \
+<span class="o">-</span><span class="n">DCMAKE_EXE_LINKER_FLAGS</span><span class="o">=</span><span class="s2">"&lt;EXTRA_LINK_FLAGG&gt;"</span>
 </pre></div>
 </div>
 <p>Above, you can pass any type of library and they will always be the last
@@ -1483,13 +1483,13 @@ without -D_GLIBCXX_DEBUG.</p></li>
 </div>
 <p>There is built-in logic to try to find the various MPI components on your
 system but you can override (or make suggestions) with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MPI_BASE_DIR</span><span class="o">=</span><span class="s2">&quot;path&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MPI_BASE_DIR</span><span class="o">=</span><span class="s2">"path"</span>
 </pre></div>
 </div>
 <p>(Base path of a standard MPI installation which has the subdirs ‘bin’, ‘libs’,
 ‘include’ etc.)</p>
 <p>or:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MPI_BIN_DIR</span><span class="o">=</span><span class="s2">&quot;path1;path2;...;pathn&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MPI_BIN_DIR</span><span class="o">=</span><span class="s2">"path1;path2;...;pathn"</span>
 </pre></div>
 </div>
 <p>which sets the paths where the MPI executables (e.g. mpiCC, mpicc, mpirun,
@@ -1580,20 +1580,20 @@ link your code.</p>
 </div>
 <p>You will then need to manually pass in the compile and link lines needed to
 compile and link MPI programs.  The compile flags can be set through:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_</span><span class="p">[</span><span class="n">C</span><span class="p">,</span><span class="n">CXX</span><span class="p">,</span><span class="n">Fortran</span><span class="p">]</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">&quot;$EXTRA_COMPILE_FLAGS&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_</span><span class="p">[</span><span class="n">C</span><span class="p">,</span><span class="n">CXX</span><span class="p">,</span><span class="n">Fortran</span><span class="p">]</span><span class="n">_FLAGS</span><span class="o">=</span><span class="s2">"$EXTRA_COMPILE_FLAGS"</span>
 </pre></div>
 </div>
 <p>The link and library flags must be set through:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_EXTRA_LINK_FLAGS</span><span class="o">=</span><span class="s2">&quot;$EXTRA_LINK_FLAGS&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_EXTRA_LINK_FLAGS</span><span class="o">=</span><span class="s2">"$EXTRA_LINK_FLAGS"</span>
 </pre></div>
 </div>
 <p>Above, you can pass any type of library or other linker flags in and they
 will always be the last libraries listed, even after all of the TPLs.</p>
 <p>NOTE: A good way to determine the extra compile and link flags for MPI is to
 use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">EXTRA_COMPILE_FLAGS</span><span class="o">=</span><span class="s2">&quot;`$MPI_BIN_DIR/mpiCC --showme:compile`&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">EXTRA_COMPILE_FLAGS</span><span class="o">=</span><span class="s2">"`$MPI_BIN_DIR/mpiCC --showme:compile`"</span>
 
-<span class="n">export</span> <span class="n">EXTRA_LINK_FLAGS</span><span class="o">=</span><span class="s2">&quot;`$MPI_BIN_DIR/mpiCC --showme:link`&quot;</span>
+<span class="n">export</span> <span class="n">EXTRA_LINK_FLAGS</span><span class="o">=</span><span class="s2">"`$MPI_BIN_DIR/mpiCC --showme:link`"</span>
 </pre></div>
 </div>
 <p>where <code class="docutils literal notranslate"><span class="pre">MPI_BIN_DIR</span></code> is set to your MPI installations binary directory.</p>
@@ -1617,7 +1617,7 @@ cases.</p>
 <p>where <code class="docutils literal notranslate"><span class="pre">&lt;TEST_EXECUTABLE_PATH&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;TEST_ARGS&gt;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&lt;NP&gt;</span></code> are specific
 to the test being run.</p>
 <p>The test-independent MPI arguments are:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MPI_EXEC</span><span class="p">:</span><span class="n">FILEPATH</span><span class="o">=</span><span class="s2">&quot;exec_name&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MPI_EXEC</span><span class="p">:</span><span class="n">FILEPATH</span><span class="o">=</span><span class="s2">"exec_name"</span>
 </pre></div>
 </div>
 <p>(The name of the MPI run command (e.g. mpirun, mpiexec) that is used to run
@@ -1647,12 +1647,12 @@ the number of required cores for a given test is greater than this value.)</p>
 <p>(The command-line option just before the number of processes to use
 <code class="docutils literal notranslate"><span class="pre">&lt;NP&gt;</span></code>.  The default value is based on the name of <code class="docutils literal notranslate"><span class="pre">${MPI_EXEC}</span></code>, for
 example, which is <code class="docutils literal notranslate"><span class="pre">-np</span></code> for OpenMPI.)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MPI_EXEC_PRE_NUMPROCS_FLAGS</span><span class="o">=</span><span class="s2">&quot;arg1;arg2;...;argn&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MPI_EXEC_PRE_NUMPROCS_FLAGS</span><span class="o">=</span><span class="s2">"arg1;arg2;...;argn"</span>
 </pre></div>
 </div>
 <p>(Other command-line arguments that must come <em>before</em> the numprocs
 argument.  The default is empty “”.)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MPI_EXEC_POST_NUMPROCS_FLAGS</span><span class="o">=</span><span class="s2">&quot;arg1;arg2;...;argn&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MPI_EXEC_POST_NUMPROCS_FLAGS</span><span class="o">=</span><span class="s2">"arg1;arg2;...;argn"</span>
 </pre></div>
 </div>
 <p>(Other command-line arguments that must come <em>after</em> the numprocs
@@ -1672,7 +1672,7 @@ these variables are interpreted as CMake arrays.</p>
 <code class="docutils literal notranslate"><span class="pre">-fopenmp</span></code>), you will NOT enable OpenMP inside &lt;Project&gt; source code.</p>
 <p>To skip adding flags for OpenMP for <code class="docutils literal notranslate"><span class="pre">&lt;LANG&gt;</span></code> = <code class="docutils literal notranslate"><span class="pre">C</span></code>, <code class="docutils literal notranslate"><span class="pre">CXX</span></code>, or
 <code class="docutils literal notranslate"><span class="pre">Fortran</span></code>, use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">OpenMP_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS_OVERRIDE</span><span class="o">=</span><span class="s2">&quot; &quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">OpenMP_</span><span class="o">&lt;</span><span class="n">LANG</span><span class="o">&gt;</span><span class="n">_FLAGS_OVERRIDE</span><span class="o">=</span><span class="s2">" "</span>
 </pre></div>
 </div>
 <p>The single space “ “ will result in no flags getting added.  This is needed
@@ -1897,8 +1897,8 @@ ordered as they will be on the link line (of the TPL supplies libraries).</p></l
 <p>These variables are the only variables are used to create IMPORTED CMake
 targets for the TPL.  One can set these two variables as CMake cache
 variables, for <code class="docutils literal notranslate"><span class="pre">SomeTPL</span></code> for example, with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">TPL_SomeTPL_INCLUDE_DIRS</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{LIB_BASE}</span><span class="s2">/include/a;$</span><span class="si">{LIB_BASE}</span><span class="s2">/include/b&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="n">TPL_SomeTPL_LIBRARIES</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{LIB_BASE}</span><span class="s2">/lib/liblib1.so;$</span><span class="si">{LIB_BASE}</span><span class="s2">/lib/liblib2.so&quot;</span> \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">TPL_SomeTPL_INCLUDE_DIRS</span><span class="o">=</span><span class="s2">"$</span><span class="si">{LIB_BASE}</span><span class="s2">/include/a;$</span><span class="si">{LIB_BASE}</span><span class="s2">/include/b"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="n">TPL_SomeTPL_LIBRARIES</span><span class="o">=</span><span class="s2">"$</span><span class="si">{LIB_BASE}</span><span class="s2">/lib/liblib1.so;$</span><span class="si">{LIB_BASE}</span><span class="s2">/lib/liblib2.so"</span> \
 </pre></div>
 </div>
 <p>Using this approach, one can be guaranteed that these libraries and these
@@ -1913,7 +1913,7 @@ libraries and header files don’t actually get created until after the
 configure step is complete but before the build step.)</p>
 <p><strong>NOTE:</strong> It is generally <em>not recommended</em> to specify the TPLs libraries as
 just a set of link options as, for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TPL_SomeTPL_LIBRARIES</span><span class="o">=</span><span class="s2">&quot;-L/some/dir;-llib1;-llib2;...&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TPL_SomeTPL_LIBRARIES</span><span class="o">=</span><span class="s2">"-L/some/dir;-llib1;-llib2;..."</span>
 </pre></div>
 </div>
 <p>But this is supported as long as this link line contains only link library
@@ -1956,19 +1956,19 @@ libraries to look for and therefore <code class="docutils literal notranslate"><
 be left off.</p>
 <p>Therefore, to find the same set of libraries for <code class="docutils literal notranslate"><span class="pre">SimpleTPL</span></code> shown
 above, one would specify:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">SomeTPL_LIBRARY_DIRS</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{LIB_BASE}</span><span class="s2">/lib&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">SomeTPL_LIBRARY_DIRS</span><span class="o">=</span><span class="s2">"$</span><span class="si">{LIB_BASE}</span><span class="s2">/lib"</span>
 </pre></div>
 </div>
 <p>and if the set of libraries to be found is different than the default, one can
 override that using:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">SomeTPL_LIBRARY_NAMES</span><span class="o">=</span><span class="s2">&quot;lib1;lib2&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">SomeTPL_LIBRARY_NAMES</span><span class="o">=</span><span class="s2">"lib1;lib2"</span>
 </pre></div>
 </div>
 <p>Therefore, this is in fact the preferred way to specify the libraries for
 these legacy TriBITS TPLs.</p>
 <p>In order to allow a TPL that normally requires one or more libraries to ignore
 the libraries, one can set <code class="docutils literal notranslate"><span class="pre">&lt;TPLNAME&gt;_LIBRARY_NAMES</span></code> to empty, for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;</span><span class="n">_LIBRARY_NAMES</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;</span><span class="n">_LIBRARY_NAMES</span><span class="o">=</span><span class="s2">""</span>
 </pre></div>
 </div>
 <p>If all the parts of a TPL are not found on an initial configure, the configure
@@ -1995,7 +1995,7 @@ BLAS TPL by simply enabling BLAS with:</p>
 </div>
 <p>This will result in setting the CMake cache variable <code class="docutils literal notranslate"><span class="pre">TPL_BLAS_LIBRARIES</span></code> as
 shown in the CMake output:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span> <span class="n">TPL_BLAS_LIBRARIES</span><span class="o">=</span><span class="s1">&#39;/user/lib/libblas.so&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span> <span class="n">TPL_BLAS_LIBRARIES</span><span class="o">=</span><span class="s1">'/user/lib/libblas.so'</span>
 </pre></div>
 </div>
 <p>(NOTE: The CMake <code class="docutils literal notranslate"><span class="pre">find_library()</span></code> command that is used internally will
@@ -2014,7 +2014,7 @@ location, such as in:</p>
 </pre></div>
 </div>
 <p>That will result in finding the library shown in the CMake output:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span> <span class="n">TPL_BLAS_LIBRARIES</span><span class="o">=</span><span class="s1">&#39;/projects/something/tpls/libblas.so&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span> <span class="n">TPL_BLAS_LIBRARIES</span><span class="o">=</span><span class="s1">'/projects/something/tpls/libblas.so'</span>
 </pre></div>
 </div>
 <p>And if one wants to make sure that this BLAS library is used, then one can
@@ -2050,15 +2050,15 @@ INTEL_DIR=/usr/local/intel/Compiler/11.1/064
 
 cmake \
   -D TPL_ENABLE_BLAS=ON \
-  -D BLAS_LIBRARY_DIRS=&quot;${INTEL_DIR}/em64t;${INTEL_DIR}/intel64&quot; \
-  -D BLAS_LIBRARY_NAMES=&quot;mkl_intel_lp64;mkl_intel_thread;mkl_core;iomp5&quot; \
+  -D BLAS_LIBRARY_DIRS="${INTEL_DIR}/em64t;${INTEL_DIR}/intel64" \
+  -D BLAS_LIBRARY_NAMES="mkl_intel_lp64;mkl_intel_thread;mkl_core;iomp5" \
   ...
   ${PROJECT_SOURCE_DIR}
 </pre></div>
 </div>
 <p>This would call <code class="docutils literal notranslate"><span class="pre">find_library()</span></code> on each of the listed library names in
 these directories and would find them and list them in:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span> <span class="n">TPL_BLAS_LIBRARIES</span><span class="o">=</span><span class="s1">&#39;/usr/local/intel/Compiler/11.1/064/em64t/libmkl_intel_lp64.so;...&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--</span> <span class="n">TPL_BLAS_LIBRARIES</span><span class="o">=</span><span class="s1">'/usr/local/intel/Compiler/11.1/064/em64t/libmkl_intel_lp64.so;...'</span>
 </pre></div>
 </div>
 <p>(where <code class="docutils literal notranslate"><span class="pre">...</span></code> are the rest of the found libraries.)</p>
@@ -2067,7 +2067,7 @@ direct libraries, not the indirect libraries, as the shared libraries are
 linked to each other.</p>
 <p>In this example, one could also play it super safe and manually list out the
 libraries in the right order by configuring with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">TPL_BLAS_LIBRARIES</span><span class="o">=</span><span class="s2">&quot;$</span><span class="si">{INTEL_DIR}</span><span class="s2">/em64t/libmkl_intel_lp64.so;...&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">TPL_BLAS_LIBRARIES</span><span class="o">=</span><span class="s2">"$</span><span class="si">{INTEL_DIR}</span><span class="s2">/em64t/libmkl_intel_lp64.so;..."</span>
 </pre></div>
 </div>
 <p>(where <code class="docutils literal notranslate"><span class="pre">...</span></code> are the rest of the libraries found in order).</p>
@@ -2081,7 +2081,7 @@ for all of these TPLs.  However, there may be situations where the
 dependencies may need to be tweaked to match how these TPLs were actually
 installed on some systems.  To redefine what dependencies a TPL can have (if
 the upstream TPLs are enabled), set:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;</span><span class="n">_LIB_DEFINED_DEPENDENCIES</span><span class="o">=</span><span class="s2">&quot;&lt;tpl_1&gt;;&lt;tpl_2&gt;;...&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;</span><span class="n">_LIB_DEFINED_DEPENDENCIES</span><span class="o">=</span><span class="s2">"&lt;tpl_1&gt;;&lt;tpl_2&gt;;..."</span>
 </pre></div>
 </div>
 <p>A dependency on an upstream TPL <code class="docutils literal notranslate"><span class="pre">&lt;tpl_i&gt;</span></code> will be set if the an upstream TPL
@@ -2090,7 +2090,7 @@ the upstream TPLs are enabled), set:</p>
 <code class="docutils literal notranslate"><span class="pre">&lt;TPLNAME&gt;</span></code> in the <code class="docutils literal notranslate"><span class="pre">TPLsList.cmake</span></code> file (or are not listed at all), then
 a configure-time error will occur.</p>
 <p>To take complete control over what dependencies an TPL has, set:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;</span><span class="n">_LIB_ENABLED_DEPENDENCIES</span><span class="o">=</span><span class="s2">&quot;&lt;tpl_1&gt;;&lt;tpl_2&gt;;...&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">TPLNAME</span><span class="o">&gt;</span><span class="n">_LIB_ENABLED_DEPENDENCIES</span><span class="o">=</span><span class="s2">"&lt;tpl_1&gt;;&lt;tpl_2&gt;;..."</span>
 </pre></div>
 </div>
 <p>If the upstream TPLs listed here are not defined upstream and enabled TPLs,
@@ -2444,7 +2444,7 @@ settings.</p>
 <section id="enabling-different-test-categories">
 <h3><a class="toc-backref" href="#id61" role="doc-backlink"><span class="sectnum">4.25.1 </span>Enabling different test categories</a><a class="headerlink" href="#enabling-different-test-categories" title="Link to this heading"></a></h3>
 <p>To turn on a set a given set of tests by test category, set:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_TEST_CATEGORIES</span><span class="o">=</span><span class="s2">&quot;&lt;CATEGORY0&gt;;&lt;CATEGORY1&gt;;...&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_TEST_CATEGORIES</span><span class="o">=</span><span class="s2">"&lt;CATEGORY0&gt;;&lt;CATEGORY1&gt;;..."</span>
 </pre></div>
 </div>
 <p>Valid categories include <code class="docutils literal notranslate"><span class="pre">BASIC</span></code>, <code class="docutils literal notranslate"><span class="pre">CONTINUOUS</span></code>, <code class="docutils literal notranslate"><span class="pre">NIGHTLY</span></code>, <code class="docutils literal notranslate"><span class="pre">HEAVY</span></code> and
@@ -2472,7 +2472,7 @@ with <code class="docutils literal notranslate"><span class="pre">add_test()</sp
 disabled test.</p>
 <p>Another approach to disable a test is the set the ctest property <code class="docutils literal notranslate"><span class="pre">DISABLED</span></code>
 and print and a message at configure time by setting:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">fullTestName</span><span class="o">&gt;</span><span class="n">_SET_DISABLED_AND_MSG</span><span class="o">=</span><span class="s2">&quot;&lt;messageWhyDisabled&gt;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">fullTestName</span><span class="o">&gt;</span><span class="n">_SET_DISABLED_AND_MSG</span><span class="o">=</span><span class="s2">"&lt;messageWhyDisabled&gt;"</span>
 </pre></div>
 </div>
 <p>In this case, the test will still be added with <code class="docutils literal notranslate"><span class="pre">add_test()</span></code> and seen by
@@ -2803,14 +2803,14 @@ deprecated.</p>
 <p>For LLVM source-based coverage builds, the C and C++ code must be compiled
 with the LLVM instrumentation options <code class="docutils literal notranslate"><span class="pre">-fprofile-instr-generate</span></code> and
 <code class="docutils literal notranslate"><span class="pre">-fcoverage-mapping</span></code>.  For example, configure with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_C_FLAGS</span><span class="o">=</span><span class="s2">&quot;-fprofile-instr-generate -fcoverage-mapping&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_CXX_FLAGS</span><span class="o">=</span><span class="s2">&quot;-fprofile-instr-generate -fcoverage-mapping&quot;</span> \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_C_FLAGS</span><span class="o">=</span><span class="s2">"-fprofile-instr-generate -fcoverage-mapping"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_CXX_FLAGS</span><span class="o">=</span><span class="s2">"-fprofile-instr-generate -fcoverage-mapping"</span> \
 <span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_ENABLE_LLVM_COVERAGE_TESTING</span><span class="o">=</span><span class="n">ON</span>
 </pre></div>
 </div>
 <p>Some platforms may also need to link shared libraries with the LLVM linker by
 configuring with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_SHARED_LINKER_FLAGS</span><span class="o">=</span><span class="s2">&quot;-fuse-ld=lld&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">CMAKE_SHARED_LINKER_FLAGS</span><span class="o">=</span><span class="s2">"-fuse-ld=lld"</span>
 </pre></div>
 </div>
 <p>The option <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_ENABLE_LLVM_COVERAGE_TESTING</span></code> causes TriBITS to set a
@@ -2882,7 +2882,7 @@ $ cmake -LA &lt;SAME_AS_ABOVE&gt; $SOURCE_BASE
 <h2><a class="toc-backref" href="#id75" role="doc-backlink"><span class="sectnum">4.28 </span>Enabling extra repositories with add-on packages:</a><a class="headerlink" href="#enabling-extra-repositories-with-add-on-packages" title="Link to this heading"></a></h2>
 <p id="project-extra-repositories">To configure &lt;Project&gt; with an post extra set of packages in extra TriBITS
 repositories, configure with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_EXTRA_REPOSITORIES</span><span class="o">=</span><span class="s2">&quot;&lt;REPO0&gt;,&lt;REPO1&gt;,...&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_EXTRA_REPOSITORIES</span><span class="o">=</span><span class="s2">"&lt;REPO0&gt;,&lt;REPO1&gt;,..."</span>
 </pre></div>
 </div>
 <p>Here, <code class="docutils literal notranslate"><span class="pre">&lt;REPOi&gt;</span></code> is the name of an extra repository that typically has been
@@ -3042,7 +3042,7 @@ files <code class="docutils literal notranslate"><span class="pre">&lt;Package&g
 In addition, this will install versions of these files into the install tree.</p>
 <p>The list of export files generated can be reduced by specifying the exact list
 of packages the files are requested for with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES</span><span class="o">=</span><span class="s2">&quot;&lt;pkg0&gt;;&lt;pkg1&gt;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_PACKAGES</span><span class="o">=</span><span class="s2">"&lt;pkg0&gt;;&lt;pkg1&gt;"</span>
 </pre></div>
 </div>
 <p>To only install the package <code class="docutils literal notranslate"><span class="pre">&lt;Package&gt;Config.cmake</span></code> files and <strong>not</strong> the
@@ -3104,11 +3104,11 @@ also version-controlled repos, see <a class="reference internal" href="#project-
 <p>These files contain <code class="docutils literal notranslate"><span class="pre">&lt;PROJECT_NAME_UC&gt;_VERSION_DATE</span></code> which is a 10-digit
 date-time version integer.  This integer is created by first using git to
 extract the commit date for <code class="docutils literal notranslate"><span class="pre">HEAD</span></code> using the command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="n">TZ</span><span class="o">=</span><span class="n">GMT</span> <span class="n">git</span> <span class="n">log</span> <span class="o">--</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%c</span><span class="s2">d&quot;</span> <span class="o">--</span><span class="n">date</span><span class="o">=</span><span class="n">iso</span><span class="o">-</span><span class="n">local</span> <span class="o">-</span><span class="mi">1</span> <span class="n">HEAD</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="n">TZ</span><span class="o">=</span><span class="n">GMT</span> <span class="n">git</span> <span class="n">log</span> <span class="o">--</span><span class="nb">format</span><span class="o">=</span><span class="s2">"</span><span class="si">%c</span><span class="s2">d"</span> <span class="o">--</span><span class="n">date</span><span class="o">=</span><span class="n">iso</span><span class="o">-</span><span class="n">local</span> <span class="o">-</span><span class="mi">1</span> <span class="n">HEAD</span>
 </pre></div>
 </div>
 <p>which returns the date and time for the commit date of <code class="docutils literal notranslate"><span class="pre">HEAD</span></code> in the form:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;YYYY-MM-DD hh:mm:ss +0000&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"YYYY-MM-DD hh:mm:ss +0000"</span>
 </pre></div>
 </div>
 <p>This git commit date is then is used to create a 10-digit date/time integer of
@@ -3288,7 +3288,7 @@ for example for the source file <code class="docutils literal notranslate"><span
 </pre></div>
 </div>
 <p>To find the name of the actual object file, do:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ find . -name &quot;*SomeSourceFile*.o&quot;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ find . -name "*SomeSourceFile*.o"
 </pre></div>
 </div>
 <p>that will return something like:</p>
@@ -3455,7 +3455,7 @@ the TriBITS-generated Ninja Makefiles, use:</p>
   <span class="o">&lt;</span><span class="n">target1</span><span class="o">&gt;</span>
   <span class="o">...</span>
 
-<span class="n">Run</span> <span class="s1">&#39;make help-objects&#39;</span> <span class="n">to</span> <span class="nb">list</span> <span class="nb">object</span> <span class="n">files</span><span class="o">.</span>
+<span class="n">Run</span> <span class="s1">'make help-objects'</span> <span class="n">to</span> <span class="nb">list</span> <span class="nb">object</span> <span class="n">files</span><span class="o">.</span>
 </pre></div>
 </div>
 <p>To determine the target names for building any object files that can be run in
@@ -3526,10 +3526,10 @@ subdirectory will be removed and files for upstream dependencies.</p>
 <p>Therefore, if one then wants to clean only the object files, libraries, and
 executables in a subdirectory, one should just manually delete them with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">&lt;</span><span class="n">some</span><span class="o">-</span><span class="n">subdir</span><span class="o">&gt;/</span>
-<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s2">&quot;*.o&quot;</span> <span class="o">-</span><span class="n">exec</span> <span class="n">rm</span> <span class="p">{}</span> \<span class="p">;</span>
-<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s2">&quot;lib*.a&quot;</span> <span class="o">-</span><span class="n">exec</span> <span class="n">rm</span> <span class="p">{}</span> \<span class="p">;</span>
-<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s2">&quot;lib*.so*&quot;</span> <span class="o">-</span><span class="n">exec</span> <span class="n">rm</span> <span class="p">{}</span> \<span class="p">;</span>
-<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s2">&quot;*.exe&quot;</span> <span class="o">-</span><span class="n">exec</span> <span class="n">rm</span> <span class="p">{}</span> \<span class="p">;</span>
+<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s2">"*.o"</span> <span class="o">-</span><span class="n">exec</span> <span class="n">rm</span> <span class="p">{}</span> \<span class="p">;</span>
+<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s2">"lib*.a"</span> <span class="o">-</span><span class="n">exec</span> <span class="n">rm</span> <span class="p">{}</span> \<span class="p">;</span>
+<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s2">"lib*.so*"</span> <span class="o">-</span><span class="n">exec</span> <span class="n">rm</span> <span class="p">{}</span> \<span class="p">;</span>
+<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="s2">"*.exe"</span> <span class="o">-</span><span class="n">exec</span> <span class="n">rm</span> <span class="p">{}</span> \<span class="p">;</span>
 </pre></div>
 </div>
 <p>then one can rebuild just the targets in that subdirectory with:</p>
@@ -3623,10 +3623,10 @@ ignore the argument!</p>
 <p>To configure for running memory testing with <code class="docutils literal notranslate"><span class="pre">valgrind</span></code>, use:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="n">MEMORYCHECK_COMMAND</span><span class="o">=&lt;</span><span class="nb">abs</span><span class="o">-</span><span class="n">path</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">valgrind</span><span class="o">&gt;/</span><span class="n">valgrind</span> \
 <span class="o">-</span><span class="n">D</span> <span class="n">MEMORYCHECK_SUPPRESSIONS_FILE</span><span class="o">=&lt;</span><span class="nb">abs</span><span class="o">-</span><span class="n">path</span><span class="o">-</span><span class="n">to</span><span class="o">-</span><span class="n">supp</span><span class="o">-</span><span class="n">file0</span><span class="o">&gt;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="n">MEMORYCHECK_COMMAND_OPTIONS</span><span class="o">=</span><span class="s2">&quot;-q --trace-children=yes --tool=memcheck </span><span class="se">\</span>
+<span class="o">-</span><span class="n">D</span> <span class="n">MEMORYCHECK_COMMAND_OPTIONS</span><span class="o">=</span><span class="s2">"-q --trace-children=yes --tool=memcheck </span><span class="se">\</span>
 <span class="s2">  --leak-check=yes --workaround-gcc296-bugs=yes </span><span class="se">\</span>
 <span class="s2">  --num-callers=50 --suppressions=&lt;abs-path-to-supp-file1&gt; </span><span class="se">\</span>
-<span class="s2">  ... --suppressions=&lt;abs-path-to-supp-fileN&gt;&quot;</span>
+<span class="s2">  ... --suppressions=&lt;abs-path-to-supp-fileN&gt;"</span>
 </pre></div>
 </div>
 <p>Above, you have to set the absolute path to the valgrind executable to run
@@ -3698,10 +3698,10 @@ configure time by setting, for example:</p>
 </div>
 <p>The default location for the installation of libraries, headers, and
 executables is given by the variables (with defaults):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_INCLUDE_DIR</span><span class="o">=</span><span class="s2">&quot;include&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_LIB_DIR</span><span class="o">=</span><span class="s2">&quot;lib&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_RUNTIME_DIR</span><span class="o">=</span><span class="s2">&quot;bin&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_EXAMPLE_DIR</span><span class="o">=</span><span class="s2">&quot;example&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_INCLUDE_DIR</span><span class="o">=</span><span class="s2">"include"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_LIB_DIR</span><span class="o">=</span><span class="s2">"lib"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_RUNTIME_DIR</span><span class="o">=</span><span class="s2">"bin"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_EXAMPLE_DIR</span><span class="o">=</span><span class="s2">"example"</span>
 </pre></div>
 </div>
 <p>If these paths are relative (i.e. don’t start with “/” and use type
@@ -3709,10 +3709,10 @@ executables is given by the variables (with defaults):</p>
 the paths can be absolute (use type <code class="docutils literal notranslate"><span class="pre">PATH</span></code>) and don’t have to be under
 <code class="docutils literal notranslate"><span class="pre">${CMAKE_INSTALL_PREFIX}</span></code>.  For example, to install each part in any
 arbitrary location use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_INCLUDE_DIR</span><span class="o">=</span><span class="s2">&quot;/usr/&lt;Project&gt;_include&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_LIB_DIR</span><span class="o">=</span><span class="s2">&quot;/usr/&lt;Project&gt;_lib&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_RUNTIME_DIR</span><span class="o">=</span><span class="s2">&quot;/usr/&lt;Project&gt;_bin&quot;</span> \
-<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_EXAMPLE_DIR</span><span class="o">=</span><span class="s2">&quot;/usr/share/&lt;Project&gt;/examples&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_INCLUDE_DIR</span><span class="o">=</span><span class="s2">"/usr/&lt;Project&gt;_include"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_LIB_DIR</span><span class="o">=</span><span class="s2">"/usr/&lt;Project&gt;_lib"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_RUNTIME_DIR</span><span class="o">=</span><span class="s2">"/usr/&lt;Project&gt;_bin"</span> \
+<span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_INSTALL_EXAMPLE_DIR</span><span class="o">=</span><span class="s2">"/usr/share/&lt;Project&gt;/examples"</span>
 </pre></div>
 </div>
 <p>NOTE: The defaults for the above include paths will be set by the standard
@@ -3913,7 +3913,7 @@ libraries and executables will be used, then one can set those paths at
 configure time with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_SET_INSTALL_RPATH</span><span class="o">=</span><span class="n">FALSE</span> \
 <span class="o">-</span><span class="n">DCMAKE_INSTALL_RPATH_USE_LINK_PATH</span><span class="o">=</span><span class="n">FALSE</span> \
-<span class="o">-</span><span class="n">DCMAKE_INSTALL_RPATH</span><span class="o">=</span><span class="s2">&quot;&lt;path0&gt;;&lt;path1&gt;;...&quot;</span> \
+<span class="o">-</span><span class="n">DCMAKE_INSTALL_RPATH</span><span class="o">=</span><span class="s2">"&lt;path0&gt;;&lt;path1&gt;;..."</span> \
 </pre></div>
 </div>
 <p>In this case <code class="docutils literal notranslate"><span class="pre">CMAKE_INSTALL_RPATH</span></code> is explicitly set.  (The value of
@@ -3922,7 +3922,7 @@ may help to avoid confusion.)</p>
 <p>Once the install directories are moved to the final location, the
 executables can be run without any need to set environment variables.</p>
 <p>Note that TriBITS also accepts the directory separator “<code class="docutils literal notranslate"><span class="pre">:</span></code>” for:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DCMAKE_INSTALL_RPATH</span><span class="o">=</span><span class="s2">&quot;&lt;path0&gt;:&lt;path1&gt;:...&quot;</span> \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DCMAKE_INSTALL_RPATH</span><span class="o">=</span><span class="s2">"&lt;path0&gt;:&lt;path1&gt;:..."</span> \
 </pre></div>
 </div>
 <p>and replaces it internally with “<code class="docutils literal notranslate"><span class="pre">;</span></code>” which raw CMake requires. (This
@@ -4214,7 +4214,7 @@ match files to exclude, set:</p>
 </div>
 <p>Extra directories or files can be excluded from the reduced source tarball by
 adding the configure argument:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;-DCPACK_SOURCE_IGNORE_FILES=&lt;extra-exclude-regex-0&gt;;&lt;extra-exclude-regex-1&gt;;...&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"-DCPACK_SOURCE_IGNORE_FILES=&lt;extra-exclude-regex-0&gt;;&lt;extra-exclude-regex-1&gt;;..."</span>
 </pre></div>
 </div>
 <p>NOTE: The entries in <code class="docutils literal notranslate"><span class="pre">CPACK_SOURCE_IGNORE_FILES</span></code> are regexes and <strong>not</strong>
@@ -4223,7 +4223,7 @@ will be excluded from the reduced source tarball that intended/desired.</p>
 <p>While a set of default CPack source generator types is defined for this
 project (see the <code class="docutils literal notranslate"><span class="pre">CMakeCache.txt</span></code> file), it can be overridden using, for
 example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_CPACK_SOURCE_GENERATOR</span><span class="o">=</span><span class="s2">&quot;TGZ;TBZ2&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span> <span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_CPACK_SOURCE_GENERATOR</span><span class="o">=</span><span class="s2">"TGZ;TBZ2"</span>
 </pre></div>
 </div>
 <p>(See CMake documentation to find out the types of CPack source generators
@@ -4279,7 +4279,7 @@ pipe this to a file with:</p>
 <dl>
 <dt><strong>NOTE:</strong> To pass multiple arguments for <code class="docutils literal notranslate"><span class="pre">CTEST_BUILD_FLAGS</span></code> (like adding</dt><dd><p><code class="docutils literal notranslate"><span class="pre">-k</span> <span class="pre">99999999</span></code> to tell ninja to continue even if there are build errors),
 one must quote the entire argument string as:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;-DCTEST_BUILD_FLAGS=-j4 -k 99999999&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"-DCTEST_BUILD_FLAGS=-j4 -k 99999999"</span>
 </pre></div>
 </div>
 </dd>
@@ -4394,17 +4394,17 @@ the <code class="docutils literal notranslate"><span class="pre">dashboard</span
 with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ env CTEST_DO_MEMORY_TESTING=TRUE \
   CTEST_MEMORYCHECK_COMMAND=&lt;abs-path-to-valgrind&gt; \
-  CTEST_MEMORYCHECK_COMMAND_OPTIONS=&quot;-q --trace-children=yes --tool=memcheck \
+  CTEST_MEMORYCHECK_COMMAND_OPTIONS="-q --trace-children=yes --tool=memcheck \
    --leak-check=yes --workaround-gcc296-bugs=yes \
    --num-callers=50 --suppressions=&lt;abs-path-to-supp-file1&gt; \
-   ... --suppressions=&lt;abs-path-to-supp-fileN&gt;&quot; \
+   ... --suppressions=&lt;abs-path-to-supp-fileN&gt;" \
   make dashboard
 </pre></div>
 </div>
 <p>The CMake cache variable <code class="docutils literal notranslate"><span class="pre">&lt;Project&gt;_DASHBOARD_CTEST_ARGS</span></code> can be set on the
 cmake configure line in order to pass additional arguments to <code class="docutils literal notranslate"><span class="pre">ctest</span> <span class="pre">-S</span></code>
 when invoking the package-by-package CTest driver.  For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_DASHBOARD_CTEST_ARGS</span><span class="o">=</span><span class="s2">&quot;-VV&quot;</span> \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">D</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="n">_DASHBOARD_CTEST_ARGS</span><span class="o">=</span><span class="s2">"-VV"</span> \
 </pre></div>
 </div>
 <p>will set very verbose output with CTest that includes the STDOUT for every
@@ -4418,14 +4418,14 @@ target</a>, one can change the location where configure, build, and test results
 are submitted to one more two CDash sites.  For well-structured TriBITS CMake
 projects defining a flexible <code class="docutils literal notranslate"><span class="pre">CTestConfig.cmake</span></code> file, the location of the
 main CDash site can be changed by configuring with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DCTEST_DROP_SITE</span><span class="o">=</span><span class="s2">&quot;some-site.com&quot;</span> \
-<span class="o">-</span><span class="n">DCTEST_DROP_LOCATION</span><span class="o">=</span><span class="s2">&quot;/cdash/submit.php?project=&lt;Project&gt;&quot;</span> \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DCTEST_DROP_SITE</span><span class="o">=</span><span class="s2">"some-site.com"</span> \
+<span class="o">-</span><span class="n">DCTEST_DROP_LOCATION</span><span class="o">=</span><span class="s2">"/cdash/submit.php?project=&lt;Project&gt;"</span> \
 </pre></div>
 </div>
 <p id="tribits-2nd-ctest-drop-location"><span id="tribits-2nd-ctest-drop-site"></span>Also note that one can submit results to a second CDash site by configuring
 with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DTRIBITS_2ND_CTEST_DROP_SITE</span><span class="o">=</span><span class="s2">&quot;&lt;second-site&gt;&quot;</span> \
-<span class="o">-</span><span class="n">DTRIBITS_2ND_CTEST_DROP_LOCATION</span><span class="o">=</span><span class="s2">&quot;&lt;second-location&gt;&quot;</span> \
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DTRIBITS_2ND_CTEST_DROP_SITE</span><span class="o">=</span><span class="s2">"&lt;second-site&gt;"</span> \
+<span class="o">-</span><span class="n">DTRIBITS_2ND_CTEST_DROP_LOCATION</span><span class="o">=</span><span class="s2">"&lt;second-location&gt;"</span> \
 </pre></div>
 </div>
 <p>If left the same as <code class="docutils literal notranslate"><span class="pre">CTEST_DROP_SITE</span></code> or <code class="docutils literal notranslate"><span class="pre">CTEST_DROP_LOCATION</span></code>, then
@@ -4433,7 +4433,7 @@ with:</p>
 respectively, can be left empty “” and the defaults will be used.  For
 example, to submit to an experimental CDash site on the same machine, one
 would configure with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DTRIBITS_2ND_CTEST_DROP_LOCATION</span><span class="o">=</span><span class="s2">&quot;/testing/cdash/submit.php?project=&lt;Project&gt;&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="n">DTRIBITS_2ND_CTEST_DROP_LOCATION</span><span class="o">=</span><span class="s2">"/testing/cdash/submit.php?project=&lt;Project&gt;"</span>
 </pre></div>
 </div>
 <p>and <code class="docutils literal notranslate"><span class="pre">CTEST_DROP_SITE</span></code> would be used for <code class="docutils literal notranslate"><span class="pre">TRIBITS_2ND_CTEST_DROP_SITE</span></code>
