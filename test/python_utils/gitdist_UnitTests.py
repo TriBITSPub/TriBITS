@@ -45,6 +45,9 @@
 
 import sys
 import shutil
+import tempfile
+import json
+import shlex
 
 from unittest_helpers import *
 
@@ -1169,6 +1172,8 @@ def assertContainsGitdistHelpHeader(testObj, cmndOut):
 
 def assertContainsAllGitdistHelpSections(testObj, cmndOut):
   testObj.assertEqual(
+    GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^CLONE SUBREPOSITORIES:$"), "CLONE SUBREPOSITORIES:\n")
+  testObj.assertEqual(
     GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "OVERVIEW:\n")
   testObj.assertEqual(
     GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^REPO SELECTION AND SETUP:$"), "REPO SELECTION AND SETUP:\n")
@@ -1261,7 +1266,7 @@ class test_gitdist(unittest.TestCase):
   # Test that --dist-help --help prints nice error message
   def test_dist_help_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help --help")
-    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'dist-repo-versions-table', 'aliases', 'default-branch', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')\n"
+    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-clone-subrepos', 'dist-repo-status', 'repo-versions', 'dist-repo-versions-table', 'aliases', 'default-branch', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')\n"
     self.assertEqual(s(cmndOut), s(cmndOut_expected))
 
 
@@ -1269,7 +1274,7 @@ class test_gitdist(unittest.TestCase):
   def test_dist_help_invalid_pick_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help=invalid-pick --help")
     assertContainsGitdistHelpHeader(self, cmndOut)
-    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-versions', 'dist-repo-versions-table', 'aliases', 'default-branch', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')"
+    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-clone-subrepos', 'dist-repo-status', 'repo-versions', 'dist-repo-versions-table', 'aliases', 'default-branch', 'move-to-base-dir', 'usage-tips', 'script-dependencies', 'all')"
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingSubstr(cmndOut,errorToFind), errorToFind+"\n")
 
@@ -2590,6 +2595,504 @@ class test_gitdist(unittest.TestCase):
 
     finally:
       os.chdir(testBaseDir)
+
+
+class test_gitdist_clone_subrepos(unittest.TestCase):
+
+  def setUp(self):
+    self.savedCwd = os.getcwd()
+    self.savedEnv = dict(os.environ)
+    self.testDir = tempfile.mkdtemp(prefix="gitdist-clone-", dir=self.savedCwd)
+    self.base = os.path.join(self.testDir, "base")
+    os.makedirs(os.path.join(self.base, ".git"))
+    os.chdir(self.base)
+    os.environ["PWD"] = self.base
+    os.environ["GITDIST_MOVE_TO_BASE_DIR"] = ""
+    os.environ.pop("GITDIST_DEBUG_OVERRIDE", None)
+    self.log = os.path.join(self.testDir, "git-calls.jsonl")
+    self.fakeGit = os.path.join(self.testDir, "fake git")
+    self.config = {}
+    # This executable never delegates to Git. Unknown commands fail closed.
+    with open(self.fakeGit, "w") as script:
+      script.write("#!" + sys.executable + "\n" + r'''
+import json
+import os
+import sys
+args = sys.argv[1:]
+config = json.loads(os.environ['GITDIST_CLONE_TEST_CONFIG'])
+with open(os.environ['GITDIST_CLONE_TEST_LOG'], 'a') as log:
+  log.write(json.dumps([os.getcwd(), args]) + '\n')
+key = ' '.join(args)
+if key in config.get('responses', {}):
+  code, output = config['responses'][key]
+  sys.stdout.write(output)
+  sys.exit(code)
+if args == ['rev-parse', '--show-toplevel']:
+  root = os.getcwd()
+  while not os.path.exists(os.path.join(root, '.git')):
+    parent = os.path.dirname(root)
+    if parent == root:
+      sys.stderr.write('not a git repository\n')
+      sys.exit(128)
+    root = parent
+  print(root)
+elif args == ['remote']:
+  print(config.get('remotes', 'glex-ascdor'))
+elif args == ['symbolic-ref', '--quiet', '--short', 'HEAD']:
+  print(config.get('branch', 'main'))
+elif args[:2] == ['config', '--get']:
+  print(config.get('branchRemote', 'glex-ascdor'))
+elif args[:2] == ['config', '--get-all'] and args[2].endswith('.url'):
+  print(config.get('url', 'https://example.com/ascdor-open/ascdor-ai-tools.git'))
+elif args[:1] == ['clone']:
+  dest = args[-1]
+  if dest == config.get('failClone') or dest in config.get('failClones', []):
+    sys.stderr.write('simulated clone failure\n')
+    sys.exit(17)
+  os.makedirs(os.path.join(dest, '.git'))
+  for path, kind in config.get('effects', {}).get(dest, []):
+    if kind == 'directory':
+      os.makedirs(path)
+    elif kind == 'file':
+      with open(path, 'w') as handle:
+        handle.write('tracked file')
+    else:
+      os.symlink(kind, path)
+else:
+  sys.stderr.write('Unexpected fake Git command: ' + repr(args) + '\n')
+  sys.exit(90)
+''')
+    os.chmod(self.fakeGit, 0o755)
+
+  def tearDown(self):
+    os.chdir(self.savedCwd)
+    os.environ.clear()
+    os.environ.update(self.savedEnv)
+    shutil.rmtree(self.testDir)
+
+  def manifest(self, contents, name=".gitdist.default"):
+    with open(name, "w") as handle:
+      handle.write(contents)
+
+  def invoke(self, args=None, entryPoint="gitdist.py"):
+    os.environ["GITDIST_CLONE_TEST_CONFIG"] = json.dumps(self.config)
+    os.environ["GITDIST_CLONE_TEST_LOG"] = self.log
+    if os.path.exists(self.log):
+      os.remove(self.log)
+    child = subprocess.Popen([sys.executable, os.path.join(pythonUtilsDir, entryPoint),
+      "--dist-use-git=" + self.fakeGit, "--dist-no-color"] +
+      (args if args is not None else ["dist-clone-subrepos"]),
+      stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False)
+    out, err = child.communicate()
+    self.calls = []
+    if os.path.exists(self.log):
+      with open(self.log) as handle:
+        self.calls = [json.loads(line) for line in handle]
+    self.clones = [args for cwd, args in self.calls if args[0] == "clone"]
+    return child.returncode, s(out), s(err)
+
+  def test_four_repository_example(self):
+    destinations = ["ascdor-container-setup-utils", "cass-clang-metrics",
+      "cass-clang-metrics/ascdor-numerical-coverage-examples",
+      "cass-clang-metrics/filter-sort-list-of-dicts"]
+    self.manifest(". main\n" + "".join(path + " master\n" for path in destinations))
+    code, out, err = self.invoke()
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(self.clones, [["clone", "-o", "glex-ascdor", "-b", "master",
+      "https://example.com/ascdor-open/" + os.path.basename(path) + ".git", path]
+      for path in destinations])
+    self.assertTrue(all(cwd == self.base for cwd, args in self.calls))
+    self.assertTrue(all(os.path.isdir(path + "/.git") for path in destinations))
+
+  def test_four_repository_example_preserves_git_at_protocol(self):
+    self.config['url'] = "git@gitlab-ex.sandia.gov:ascdor-open/ascdor-ai-tools.git"
+    destinations = ["ascdor-container-setup-utils", "cass-clang-metrics",
+      "cass-clang-metrics/ascdor-numerical-coverage-examples",
+      "cass-clang-metrics/filter-sort-list-of-dicts"]
+    self.manifest(". main\n" + "".join(path + " master\n" for path in destinations))
+    expectedClones = [["clone", "-o", "glex-ascdor", "-b", "master",
+      "git@gitlab-ex.sandia.gov:ascdor-open/" + os.path.basename(path) + ".git", path]
+      for path in destinations]
+
+    code, preview, err = self.invoke(["dist-clone-subrepos", "--dist-no-opt"])
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(self.clones, [])
+    self.assertFalse(any(os.path.exists(path) for path in destinations))
+    self.assertEqual([shlex.split(line) for line in preview.splitlines()],
+      [[self.fakeGit] + args for args in expectedClones])
+
+    code, out, err = self.invoke()
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(self.clones, expectedClones)
+    self.assertEqual(out, preview)
+    self.assertTrue(all(cwd == self.base for cwd, args in self.calls))
+    self.assertTrue(all(os.path.isdir(path + "/.git") for path in destinations))
+
+  def test_explicit_and_remote_default_branches(self):
+    self.manifest("\n. main\nsubrepo1 dev\n\nsubrepo1/subrepo2\n")
+    code, out, err = self.invoke()
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(self.clones, [
+      ["clone", "-o", "glex-ascdor", "-b", "dev",
+        "https://example.com/ascdor-open/subrepo1.git", "subrepo1"],
+      ["clone", "-o", "glex-ascdor",
+        "https://example.com/ascdor-open/subrepo2.git", "subrepo1/subrepo2"]])
+
+  def test_clone_parser_preserves_existing_default(self):
+    self.manifest("repo\nexplicit master\nother dev\n")
+    repos, branches = parseGitdistFile(".gitdist.default")
+    self.assertEqual(branches, {"repo": "master", "explicit": "master", "other": "dev"})
+    repos, branches = parseGitdistFile(".gitdist.default", None)
+    self.assertEqual(branches, {"repo": None, "explicit": "master", "other": "dev"})
+
+
+  def test_peer_url_transports_and_suffixes(self):
+    cases = [
+      ("https://host/team/base.git", "https://host/team/extra.git"),
+      ("https://host/team/base", "https://host/team/extra.git"),
+      ("http://host/deep/team/base.git/", "http://host/deep/team/extra.git"),
+      ("user@host:team/base.git", "user@host:team/extra.git"),
+      ("user@host:team/base/", "user@host:team/extra.git"),
+      ("host:base", "host:extra.git"),
+      ("ssh://user@host:2222/deep/team/base", "ssh://user@host:2222/deep/team/extra.git"),
+      ("ssh://user@[::1]:2222/team/base.git", "ssh://user@[::1]:2222/team/extra.git"),
+      ("user@[::1]:team/base.git", "user@[::1]:team/extra.git"),
+      ("git://host/team/base.git", "git://host/team/extra.git"),
+      ("file:///tmp/team/base.git", "file:///tmp/team/extra.git"),
+      ("/tmp/team/base.git/", "/tmp/team/extra.git"),
+      ("../team/base", "../team/extra.git"),
+      ("base.git", "./extra.git"),
+      ("-team/base.git", "./-team/extra.git"),
+      ("https://host/team/$base;name.git", "https://host/team/extra.git")]
+    for baseUrl, expected in cases:
+      self.assertEqual(getClonePeerUrl(baseUrl, "different-checkout/extra"), expected)
+      self.assertEqual(getClonePeerUrl(baseUrl, "extra.git"), expected)
+
+  def test_malformed_peer_urls(self):
+    for url in ["", "/", "https://host", "https:///base.git", "ext::command",
+        "user@host:", "ftp://host/team/base", "https://host:bad/team/base",
+        "https://host/team/base?query", "https://host/team/base#fragment", "../.."]:
+      self.assertRaises(ValueError, getClonePeerUrl, url, "extra")
+
+  def test_multiple_remotes_use_branch_config_and_first_fetch_url(self):
+    self.manifest("extra\n")
+    self.config.update(remotes="origin\nteam/upstream", branch="feature/topic",
+      branchRemote="team/upstream", url="ssh://host:2222/team/base.git\nhttps://other/ignored.git")
+    code, out, err = self.invoke()
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(self.clones, [["clone", "-o", "team/upstream",
+      "ssh://host:2222/team/extra.git", "extra"]])
+    self.assertTrue(["config", "--get", "branch.feature/topic.remote"] in
+      [args for cwd, args in self.calls])
+    self.assertFalse(any("pushurl" in " ".join(args) for cwd, args in self.calls))
+
+  def test_sole_remote_does_not_query_branch_even_when_detached(self):
+    self.manifest("extra\n")
+    self.config['responses'] = {"symbolic-ref --quiet --short HEAD": [1, ""]}
+    code, out, err = self.invoke()
+    self.assertEqual((code, err), (0, ""))
+    self.assertFalse(any(args[0] == "symbolic-ref" for cwd, args in self.calls))
+
+  def test_remote_selection_errors(self):
+    self.manifest("extra\n")
+    cases = [
+      ({"remotes": ""}, "no configured remotes"),
+      ({"remotes": "origin\nother", "branchRemote": "stale"}, "configured remote"),
+      ({"remotes": "origin\nother", "branchRemote": "."}, "configured remote"),
+      ({"remotes": "origin\nother", "responses": {"config --get branch.main.remote": [1, ""]}}, "configured remote"),
+      ({"remotes": "origin\nother", "responses": {"symbolic-ref --quiet --short HEAD": [1, ""]}}, "Detached HEAD"),
+      ({"responses": {"config --get-all remote.glex-ascdor.url": [1, ""]}}, "no fetch URL"),
+      ({"url": "\nhttps://host/second.git"}, "no fetch URL"),
+      ({"responses": {"remote": [128, ""]}}, "Git discovery failed"),
+      ({"remotes": "origin\nother", "responses": {"config --get branch.main.remote": [128, ""]}}, "Git discovery failed"),
+      ({"responses": {"config --get-all remote.glex-ascdor.url": [128, ""]}}, "Git discovery failed")]
+    for config, diagnostic in cases:
+      self.config = config
+      code, out, err = self.invoke()
+      self.assertNotEqual(code, 0)
+      self.assertTrue(diagnostic in err, err)
+      self.assertEqual(self.clones, [])
+      self.assertFalse(os.path.exists("extra"))
+
+
+  def test_manifest_precedence_and_override(self):
+    self.manifest("default dev\n")
+    self.manifest("chosen topic\n", ".gitdist")
+    code, out, err = self.invoke(["dist-clone-subrepos", "--dist-no-opt"])
+    self.assertEqual((code, err), (0, ""))
+    self.assertTrue("-b topic" in out and "chosen.git" in out)
+    self.assertFalse("default.git" in out)
+    code, out, err = self.invoke(["dist-clone-subrepos", "--dist-repos=override"])
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(self.clones[0][-1], "override")
+    self.assertFalse("-b" in self.clones[0])
+
+  def test_empty_selections_do_not_resolve_remote(self):
+    self.config['remotes'] = ""
+    for manifest in [None, "", "\n", ". main\n./\n"]:
+      if manifest is not None:
+        self.manifest(manifest)
+      code, out, err = self.invoke()
+      self.assertEqual((code, err), (0, ""))
+      self.assertTrue("No selected subrepositories" in out)
+      self.assertEqual([args for cwd, args in self.calls], [["rev-parse", "--show-toplevel"]])
+
+  def test_explicit_empty_override_selects_nothing(self):
+    self.manifest("extra\n")
+    code, out, err = self.invoke(["dist-clone-subrepos", "--dist-repos="])
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(self.clones, [])
+
+  def test_normalized_exclusions_do_not_exclude_descendants(self):
+    self.manifest("./parent/ dev\nparent/child\nother\n")
+    code, out, err = self.invoke(["dist-clone-subrepos", "--dist-not-repos=parent/,./other/"])
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual([args[-1] for args in self.clones], ["parent/child"])
+    self.assertFalse(os.path.exists("parent/.git"))
+
+  def test_stable_parent_first_order(self):
+    self.manifest("parent/child\nunrelated\nparent\nlast\nparent/child/grandchild\n")
+    code, out, err = self.invoke()
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual([args[-1] for args in self.clones],
+      ["unrelated", "parent", "parent/child", "last", "parent/child/grandchild"])
+
+  def test_normalized_and_intermediate_directories(self):
+    self.manifest("./a//b/./extra/ dev\n")
+    code, out, err = self.invoke()
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(self.clones[0][-1], "a/b/extra")
+    self.assertFalse(os.path.exists("a/.git"))
+
+  def test_invalid_paths_fail_before_any_clone(self):
+    for path in ["/absolute", "../outside", "a/../outside", "extra\n./extra/", "extra\nextra"]:
+      self.manifest("valid\n" + path + "\n")
+      code, out, err = self.invoke()
+      self.assertNotEqual(code, 0)
+      self.assertTrue("path" in err or "Duplicate" in err, err)
+      self.assertEqual(self.clones, [])
+      self.assertFalse(os.path.exists("valid"))
+
+  def test_symlink_escape_fails_before_any_clone(self):
+    os.symlink(self.testDir, "escape")
+    self.manifest("valid\nescape/extra\n")
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertTrue("outside the base: escape/extra" in err)
+    self.assertEqual(self.clones, [])
+
+  def test_existing_repo_skipped_and_child_cloned_then_rerun_skips_all(self):
+    os.makedirs("parent/.git")
+    self.manifest("parent\nparent/child\n")
+    code, out, err = self.invoke()
+    self.assertEqual((code, err), (0, ""))
+    self.assertTrue("Skipping existing repository: parent" in out)
+    self.assertEqual([args[-1] for args in self.clones], ["parent/child"])
+    self.config['remotes'] = ""
+    code, out, err = self.invoke(entryPoint="gitdist")
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(out.count("Skipping existing repository:"), 2)
+    self.assertEqual([args for cwd, args in self.calls], [["rev-parse", "--show-toplevel"]])
+
+  def makeConflicts(self):
+    os.mkdir("empty")
+    os.mkdir("nonempty")
+    os.mkdir("worktree")
+    for path in ["nonempty/tracked", "worktree/.git", "file"]:
+      with open(path, "w") as handle:
+        handle.write("fixture content")
+    return ["empty", "nonempty", "worktree", "file"]
+
+  def test_conflicts_report_stderr_and_continue_in_execution_and_preview(self):
+    conflicts = self.makeConflicts()
+    self.manifest("\n".join(conflicts + ["empty/child", "valid"]) + "\n")
+    code, preview, err = self.invoke(["dist-clone-subrepos", "--dist-no-opt"])
+    self.assertNotEqual(code, 0)
+    self.assertEqual(self.clones, [])
+    for path in conflicts:
+      self.assertTrue("Destination '" + path + "'" in err, err)
+    self.assertFalse("Error:" in preview)
+    self.assertFalse(os.path.exists("empty/child"))
+    self.assertFalse(os.path.exists("valid"))
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertEqual([args[-1] for args in self.clones], ["empty/child", "valid"])
+    self.assertEqual(out, preview)
+    for path in conflicts:
+      self.assertTrue("Destination '" + path + "'" in err)
+
+  def test_conflicts_only_do_not_resolve_remote(self):
+    self.config['remotes'] = ""
+    self.manifest("\n".join(self.makeConflicts()) + "\n")
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertEqual(err.count("exists without a .git directory"), 4)
+    self.assertEqual([args for cwd, args in self.calls], [["rev-parse", "--show-toplevel"]])
+
+  def test_file_parent_conflict_continues(self):
+    self.makeConflicts()
+    self.manifest("file\nfile/child\nvalid\n")
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertTrue("Destination 'file/child'" in err)
+    self.assertEqual([args[-1] for args in self.clones], ["valid"])
+
+  def test_parent_clone_introduces_destination_conflicts(self):
+    self.manifest("parent\nparent/dir\nparent/file\nparent/dir/child\nvalid\n")
+    self.config['effects'] = {"parent": [["parent/dir", "directory"], ["parent/file", "file"]]}
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertTrue("Destination 'parent/dir'" in err)
+    self.assertTrue("Destination 'parent/file'" in err)
+    self.assertEqual([args[-1] for args in self.clones], ["parent", "parent/dir/child", "valid"])
+
+  def test_parent_clone_introduces_escaping_symlink(self):
+    self.manifest("parent\nparent/escape/child\nvalid\n")
+    self.config['effects'] = {"parent": [["parent/escape", self.testDir]]}
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertTrue("outside the base: parent/escape/child" in err)
+    self.assertEqual([args[-1] for args in self.clones], ["parent", "valid"])
+    self.assertFalse(os.path.exists(os.path.join(self.testDir, "child")))
+
+  def test_failed_first_clone_continues_and_returns_error(self):
+    self.manifest("first\nlater\n")
+    self.config['failClone'] = "first"
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertTrue("git clone failed for 'first'" in err)
+    self.assertTrue("exit status 17" in err)
+    self.assertFalse("git clone failed" in out)
+    self.assertEqual([args[-1] for args in self.clones], ["first", "later"])
+    self.assertTrue(os.path.isdir("later/.git"))
+
+  def test_failed_later_clone_continues_and_preserves_completed_clone(self):
+    self.manifest("first\nsecond\nlater\n")
+    self.config['failClone'] = "second"
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertTrue("git clone failed for 'second'" in err)
+    self.assertFalse("git clone failed" in out)
+    self.assertEqual([args[-1] for args in self.clones], ["first", "second", "later"])
+    self.assertTrue(os.path.isdir("first/.git"))
+    self.assertTrue(os.path.isdir("later/.git"))
+
+  def test_multiple_clone_failures_report_each_and_attempt_all_repos(self):
+    self.manifest("first\nsecond\nlast\n")
+    self.config['failClones'] = ["first", "last"]
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertEqual(err.count("git clone failed for"), 2)
+    self.assertTrue("git clone failed for 'first'" in err)
+    self.assertTrue("git clone failed for 'last'" in err)
+    self.assertFalse("git clone failed" in out)
+    self.assertEqual([args[-1] for args in self.clones], ["first", "second", "last"])
+    self.assertTrue(os.path.isdir("second/.git"))
+
+  def test_preview_is_shell_copyable_and_custom_git_used(self):
+    self.config['url'] = "https://host/team;$value/base.git"
+    destination = "a dir/repo;'$value"
+    code, preview, err = self.invoke(["dist-clone-subrepos", "--dist-no-opt",
+      "--dist-repos=" + destination])
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(self.clones, [])
+    self.assertFalse(os.path.exists("a dir"))
+    code, out, err = self.invoke(["dist-clone-subrepos", "--dist-repos=" + destination])
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(preview, out)
+    self.assertEqual(shlex.split(preview), [self.fakeGit] + self.clones[0])
+    self.assertEqual(self.clones[0][-2:],
+      ["https://host/team;$value/repo;'$value.git", destination])
+
+  def test_branch_shell_metacharacters_remain_one_argument(self):
+    self.manifest("extra topic;'$value\n")
+    code, out, err = self.invoke()
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual(self.clones[0][3:5], ["-b", "topic;'$value"])
+    self.assertEqual(shlex.split(out), [self.fakeGit] + self.clones[0])
+
+  def test_debug_does_not_collect_status(self):
+    self.manifest("extra\n")
+    code, out, err = self.invoke(["dist-clone-subrepos", "--dist-debug"])
+    self.assertEqual((code, err), (0, ""))
+    self.assertTrue("*** Querying Git:" in out)
+    self.assertFalse(any(args[0] in ["status", "diff", "log"] for cwd, args in self.calls))
+
+  def test_incompatible_flags_and_extra_args_fail_before_discovery(self):
+    self.manifest("extra\n")
+    for arg in ["gitdist", "status", "--raw-arg", "--dist-mod-only",
+        "--dist-version-file=missing", "--dist-version-file2=", "--dist-legend",
+        "--dist-short", "--dist-utf8-output", "dist-repo-status", "dist-repo-versions-table"]:
+      code, out, err = self.invoke(["dist-clone-subrepos", arg])
+      self.assertNotEqual(code, 0)
+      self.assertTrue("error:" in err.lower(), err)
+      self.assertFalse("Traceback" in err, err)
+      self.assertEqual(self.calls, [])
+
+  def test_non_repository_and_non_root_rejected(self):
+    self.config['responses'] = {"rev-parse --show-toplevel": [128, ""]}
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertTrue("Git discovery failed" in err)
+    self.config = {}
+    os.mkdir("subdir")
+    os.chdir("subdir")
+    code, out, err = self.invoke()
+    self.assertNotEqual(code, 0)
+    self.assertTrue("working-tree root" in err)
+    self.assertEqual(self.clones, [])
+
+  def test_worktree_base_accepted(self):
+    os.rmdir(".git")
+    with open(".git", "w") as handle:
+      handle.write("gitdir: /mock/worktree/admin")
+    self.manifest("extra\n")
+    code, out, err = self.invoke()
+    self.assertEqual((code, err), (0, ""))
+    self.assertEqual([args[-1] for args in self.clones], ["extra"])
+
+  def test_base_relocation_precedes_manifest_and_git_discovery(self):
+    self.manifest(".\nparent\nparent/nested\nouter-extra\n")
+    os.makedirs("parent/.git")
+    os.makedirs("parent/nested/.git")
+    with open("parent/.gitdist", "w") as handle:
+      handle.write(".\nnested\ninner-extra\n")
+    os.chdir("parent/nested")
+    self.manifest(".\nlocal-extra\n")
+    for mode, root, destinations in [
+        ("", os.path.join(self.base, "parent/nested"), ["local-extra"]),
+        ("IMMEDIATE_BASE", os.path.join(self.base, "parent"), ["inner-extra"]),
+        ("EXTREME_BASE", self.base, ["outer-extra"])]:
+      if mode == "IMMEDIATE_BASE":
+        os.remove(".gitdist.default")
+      os.environ["GITDIST_MOVE_TO_BASE_DIR"] = mode
+      os.environ["PWD"] = os.getcwd()
+      code, out, err = self.invoke()
+      self.assertEqual((code, err), (0, ""))
+      self.assertEqual([args[-1] for args in self.clones], destinations)
+      self.assertTrue(all(cwd == root for cwd, args in self.calls))
+
+
+  def test_clone_help_topic_and_sample(self):
+    for args in [["--dist-help=dist-clone-subrepos"],
+        ["--dist-help=dist-clone-subrepos", "--help"], ["--dist-help=all"]]:
+      code, out, err = self.invoke(args)
+      self.assertEqual((code, err), (0, ""))
+      self.assertTrue("CLONE SUBREPOSITORIES:" in out)
+      self.assertTrue("  . main\n  subrepo1 dev\n  subrepo1/subrepo2\n" in out)
+      commands = " ".join(out.replace("\\\n", "").split())
+      self.assertTrue("git clone -o gl-proj -b dev https://some-git-host.com/proj/subrepo1.git subrepo1" in commands)
+      self.assertTrue("git clone -o gl-proj https://some-git-host.com/proj/subrepo2.git subrepo1/subrepo2" in commands)
+      for guidance in ["remote's", "Parents", "STDERR", "--dist-no-opt", "local Git queries"]:
+        self.assertTrue(guidance in out)
+      self.assertEqual(self.calls, [])
+
+  def test_usage_header_exposes_clone_command(self):
+    code, out, err = self.invoke(["--help"])
+    self.assertEqual((code, err), (0, ""))
+    assertContainsGitdistHelpHeader(self, out)
+    self.assertTrue("gitdist [gitdist arguments] dist-clone-subrepos" in out)
+    self.assertTrue("read-only" in out)
 
 
 if __name__ == '__main__':

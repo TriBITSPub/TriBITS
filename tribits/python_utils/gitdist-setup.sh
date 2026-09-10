@@ -73,7 +73,7 @@ alias gitdist-show-full-repo-state=gitdist_show_full_repo_state
 
 # Setup for completions for git command and gitdist options commands
 complete -o default -o nospace -F _git \
-   -W "dist-repo-status --dist-help --dist-use-git --dist-repos --dist-not-repos --dist-version-file --dist-version-file2 --dist-no-color --dist-debug --dist-no-opt --dist-mod-only" \
+   -W "dist-clone-subrepos dist-repo-status --dist-help --dist-use-git --dist-repos --dist-not-repos --dist-version-file --dist-version-file2 --dist-no-color --dist-debug --dist-no-opt --dist-mod-only" \
    gitdist gitdist-mod
 complete -o default -o nospace \
    -W "--dist-use-git --dist-repos --dist-not-repos --dist-mod-only" \
