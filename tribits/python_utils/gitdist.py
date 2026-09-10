@@ -47,6 +47,7 @@ distRepoStatusLegend = r"""Legend:
 helpTopics = [
   'overview',
   'repo-selection-and-setup',
+  'dist-clone-subrepos',
   'dist-repo-status',
   'repo-versions',
   'dist-repo-versions-table',
@@ -73,6 +74,7 @@ helpTopicsDict = {}
 
 
 helpUsageHeader = r"""gitdist [gitdist arguments] <raw-git-command> [git arguments]
+       gitdist [gitdist arguments] dist-clone-subrepos
        gitdist [gitdist arguments] dist-repo-status
        gitdist [gitdist arguments] dist-repo-versions-table
 
@@ -312,8 +314,64 @@ have to manually do any extra setup for every new set of local clones of the
 repos.  But if the file .gitdist is present, then it will override the file
 .gitdist.default as described above (which allows customization of what git
 repos are processed at any time).
+
+To clone missing subrepos from the base remote's namespace into this layout,
+run 'gitdist dist-clone-subrepos' (see --dist-help=dist-clone-subrepos).
 """
 helpTopicsDict.update( { 'repo-selection-and-setup' : repoSelectionAndSetupHelp } )
+
+
+distCloneSubreposHelp = r"""
+CLONE SUBREPOSITORIES:
+
+Run from the base Git repository:
+
+  $ gitdist dist-clone-subrepos
+
+reads the list of subrepos to clone from ./.gitdist, or ./.gitdist.default
+(if .gitdist is absent) and clones any missing subrepos as peer repos
+to the base repo on the remote Git repo server (using the same https:// or git@
+protocol).
+
+For example, given the ./.gitdist.default file in the base repo:
+
+  . main
+  subrepo1 dev
+  subrepo1/subrepo2
+
+and if the base remote is named 'gl-proj' with fetch URL
+'https://some-git-host.com/proj/base.git', then running the dist-clone-subrepos
+command will result in the subrepo git clone commands:
+
+  git clone -o gl-proj -b dev \
+    https://some-git-host.com/proj/subrepo1.git \
+    subrepo1
+  git clone -o gl-proj \
+    https://some-git-host.com/proj/subrepo2.git \
+    subrepo1/subrepo2
+
+The '.' entry is skipped. Without a listed branch, Git uses the remote's default
+branch. This will select the sole remote, or the current branch's remote when
+several exist; ambiguous selection is an error. Peer URLs keep the remote
+namespace and always end in .git. Clones use the same remote name and remote
+protocol (e.g. https:// vs. git@).
+
+Parents are cloned before children. Existing targets with a .git directory are
+skipped; use 'gitdist pull' afterward to update (existing) repos. Existing
+subrepo paths without a .git directory produce errors on STDERR and processing
+continues. The command returns nonzero if any errors occur; a failed clone stops
+it. With no selected subrepos, the command does nothing. Paths must stay inside
+the base, must be relative without '..' components, and must be unique after
+normalization. Only this base repo manifest in './.gitdist[.gitdist]' is read;
+cloned manifests are not read.
+
+Use --dist-no-opt to preview commands (local Git queries still run).
+--dist-repos overrides the files and supplies no branch names; --dist-not-repos
+excludes entries. --dist-mod-only, version-file options, and table-only options
+are not supported. See also --dist-help=repo-selection-and-setup and
+--dist-help=move-to-base-dir.
+"""
+helpTopicsDict.update( { 'dist-clone-subrepos' : distCloneSubreposHelp } )
 
 
 distRepoStatusHelp = r"""
@@ -568,7 +626,9 @@ and not worry about this 'newFeatureBranch' being off of 'master' in the root
 repo, off of 'develop' in extraRepo1, and off of 'app-devel' in extraRepo2.
 
 If no branch name is specified for any given repository in the
-.gitdist[.default] file, then 'master' is assumed.
+.gitdist[.default] file, then 'master' is assumed for _DEFAULT_BRANCH_.
+For dist-clone-subrepos, an omitted branch instead uses the remote's default
+branch (see --dist-help=dist-clone-subrepos).
 """
 helpTopicsDict.update( { 'default-branch' : defaultBranchHelp } )
 
@@ -1136,7 +1196,7 @@ def addColorToErrorMsg(useColor, strIn):
 
 # Get the paths to all the repos gitdist will work on, along with any optional
 # default branches.
-def parseGitdistFile(gitdistfile):
+def parseGitdistFile(gitdistfile, missingBranch="master"):
   reposFullList = []
   defaultBranchDict = {}
   with open(gitdistfile, 'r') as file:
@@ -1148,7 +1208,7 @@ def parseGitdistFile(gitdistfile):
       if len(entries) > 1:
         defaultBranchDict[entries[0]] = entries[1]
       else:
-        defaultBranchDict[entries[0]] = "master"
+        defaultBranchDict[entries[0]] = missingBranch
   return (reposFullList, defaultBranchDict)
 
 
@@ -1263,7 +1323,7 @@ def getCommandlineOps():
 
   distRepoStatus = "dist-repo-status"
   distRepoVersionTable = "dist-repo-versions-table"
-  nativeCmndNames = [ distRepoStatus, distRepoVersionTable ]
+  nativeCmndNames = [ distRepoStatus, distRepoVersionTable, "dist-clone-subrepos" ]
 
   # Select a version of git (see above help documentation)
   defaultGit = "git" # Try system git
@@ -1304,6 +1364,9 @@ def getCommandlineOps():
   elif len(nativeCmnds) == 1:
     nativeCmnd = nativeCmnds[0]
   elif len(nativeCmnds) > 1:
+    if "dist-clone-subrepos" in nativeCmnds:
+      sys.stderr.write("gitdist: error: Cannot combine native commands: " + " ".join(nativeCmnds) + "\n")
+      sys.exit(2)
     raise Exception("Error: Can't have more than one dist-xxx command "+\
       " but was passed in "+str(nativeCmnds))
 
@@ -1344,7 +1407,7 @@ def getCommandlineOps():
     +" ./.gitdist.default are processed.  If the file"
     +" the file ./.gitdist.default is missing, then no extra repos are"
     +" processed and it is assumed that the base repo will be processed."
-    +" Also, any git repos listed that don't exist are ignored."
+    +" Missing repos are ignored except by dist-clone-subrepos."
     +" See --dist-help=repo-selection-and-setup."
     +" (default='')"
     )
@@ -1414,7 +1477,8 @@ def getCommandlineOps():
 
   clp.add_option(
     noOptName, dest="noOpt", action="store_true",
-    help="If set, then no git commands will be run but instead will just be printed.",
+    help="If set, print commands without running them. Local read-only Git"
+    +" queries may still run for discovery or status; cloning creates no directories.",
     default=False )
 
   clp.add_option(
@@ -1425,6 +1489,15 @@ def getCommandlineOps():
     default=False )
 
   (options, args) = clp.parse_args(nativeArgs)
+
+  if nativeCmnd == "dist-clone-subrepos":
+    if otherArgs:
+      clp.error("dist-clone-subrepos does not accept extra arguments: " + " ".join(otherArgs))
+    incompatible = [modifiedOnlyName, versionFileName, versionFile2Name,
+      legendName, shortName, "--dist-utf8-output"]
+    for arg in nativeArgs:
+      if arg.split("=", 1)[0] in incompatible:
+        clp.error(arg + " is not supported with dist-clone-subrepos")
 
   debugFromEnv = os.environ.get("GITDIST_DEBUG_OVERRIDE")
   if debugFromEnv:
@@ -1477,11 +1550,14 @@ def getCommandlineOps():
   # F) Get the list of extra repos
   #
 
-  if options.repos:
-    reposFullList = options.repos.split(",")
+  missingBranch = None if nativeCmnd == "dist-clone-subrepos" else "master"
+  cloneReposOverride = nativeCmnd == "dist-clone-subrepos" and any(
+    arg.split("=", 1)[0] == reposArgName for arg in nativeArgs)
+  if options.repos or cloneReposOverride:
+    reposFullList = options.repos.split(",") if options.repos else []
     defaultBranchDict = {}
     for repo in reposFullList:
-      defaultBranchDict[repo] = "master"
+      defaultBranchDict[repo] = missingBranch
   else:
     if os.path.exists(".gitdist"):
       gitdistfile = ".gitdist"
@@ -1490,10 +1566,10 @@ def getCommandlineOps():
     else:
       gitdistfile = None
     if gitdistfile:
-      (reposFullList, defaultBranchDict) = parseGitdistFile(gitdistfile)
+      (reposFullList, defaultBranchDict) = parseGitdistFile(gitdistfile, missingBranch)
     else:
       reposFullList = ["."] # The default is the base repo
-      defaultBranchDict = {".": "master"}
+      defaultBranchDict = {".": missingBranch}
 
   # Get list of not extra repos
 
@@ -1508,6 +1584,201 @@ def getCommandlineOps():
 
   return (options, nativeCmnd, otherArgs, reposFullList, defaultBranchDict,
     notReposFullList)
+
+
+# Clone discovery uses argument arrays and keeps diagnostics separate from output.
+def queryCloneGit(options, baseDir, args, absentCodes=()):
+  cmnd = [options.useGit] + args
+  if options.debug:
+    print("*** Querying Git: " + renderCloneCommand(cmnd))
+  child = subprocess.Popen(cmnd, cwd=baseDir, shell=False,
+    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  out, err = child.communicate()
+  if child.returncode in absentCodes:
+    return None
+  if child.returncode:
+    raise ValueError("Git discovery failed (%s): %s\n%s" %
+      (child.returncode, renderCloneCommand(cmnd), s(err).strip()))
+  return s(out).rstrip("\r\n")
+
+
+def getCloneRemote(options, baseDir):
+  remotes = queryCloneGit(options, baseDir, ["remote"]).splitlines()
+  if not remotes:
+    raise ValueError("Base repository has no configured remotes")
+  if len(remotes) == 1:
+    remote = remotes[0]
+  else:
+    branch = queryCloneGit(options, baseDir,
+      ["symbolic-ref", "--quiet", "--short", "HEAD"], (1,))
+    if not branch:
+      raise ValueError("Detached HEAD with multiple remotes; cannot select a remote")
+    remote = queryCloneGit(options, baseDir,
+      ["config", "--get", "branch." + branch + ".remote"], (1,))
+    if remote == "." or remote not in remotes:
+      raise ValueError("Multiple remotes require a configured remote for branch '" + branch + "'")
+  urls = queryCloneGit(options, baseDir,
+    ["config", "--get-all", "remote." + remote + ".url"], (1,))
+  if not urls or not urls.splitlines()[0]:
+    raise ValueError("Remote '" + remote + "' has no fetch URL")
+  return remote, urls.splitlines()[0]
+
+
+def getClonePeerUrl(baseUrl, destination):
+  url = baseUrl.rstrip("/")
+  name = os.path.basename(destination)
+  if not name.endswith(".git"):
+    name += ".git"
+  invalid = "Malformed or unsupported remote URL: " + baseUrl
+  if not url or "\n" in url or "\r" in url:
+    raise ValueError(invalid)
+  if "://" in url:
+    match = re.match(r"^(https?|ssh|git|file)://([^/]*)(/.*)$", url)
+    if not match or (match.group(1) != "file" and not match.group(2)):
+      raise ValueError(invalid)
+    if "?" in url or "#" in url:
+      raise ValueError(invalid)
+    authority = match.group(2)
+    if authority and not re.match(r"^(?:[^@/]+@)?(?:\[[^\]]+\]|[^:@\s]+)(?::[0-9]+)?$", authority):
+      raise ValueError(invalid)
+    path = match.group(3)
+    prefix = url[:len(url)-len(path)]
+  else:
+    # A colon before the first slash denotes Git's SCP-style transport.
+    match = re.match(r"^((?:[^/:]+@)?(?:\[[^\]]+\]|[^/:]+):)(.*)$", url)
+    if match:
+      prefix, path = match.groups()
+      if not path or path.startswith(":"):
+        raise ValueError(invalid)
+    else:
+      prefix, path = "", url
+  if path.rsplit("/", 1)[-1] in ("", ".", "..", ".git"):
+    raise ValueError(invalid)
+  parent = path[:path.rfind("/")+1]
+  peer = prefix + parent + name
+  # Disambiguate local paths from clone options and SCP-style URLs.
+  if not prefix and not parent:
+    peer = "./" + peer
+  elif not prefix and peer.startswith("-"):
+    peer = "./" + peer
+  return peer
+
+
+def normalizeClonePath(path):
+  if not path or os.path.isabs(path) or ".." in path.split(os.sep):
+    raise ValueError("Invalid subrepository path: " + repr(path))
+  return os.path.normpath(path)
+
+
+def checkCloneContainment(baseDir, path):
+  resolved = os.path.realpath(os.path.join(baseDir, path))
+  if not resolved.startswith(baseDir.rstrip(os.sep) + os.sep):
+    raise ValueError("Subrepository path resolves outside the base: " + path)
+
+
+def planCloneSubrepos(baseDir, repos, branches, notRepos):
+  excluded = [normalizeClonePath(path) for path in notRepos]
+  entries = []
+  seen = set()
+  for repo in repos:
+    path = normalizeClonePath(repo)
+    if path == "." or path in excluded:
+      continue
+    if path in seen:
+      raise ValueError("Duplicate subrepository destination: " + path)
+    seen.add(path)
+    checkCloneContainment(baseDir, path)
+    entries.append((path, branches.get(repo)))
+  # Stable topological ordering: take the first available entry each time.
+  ordered = []
+  while entries:
+    for entry in entries:
+      if not any(entry[0].startswith(other[0] + os.sep) for other in entries
+          if other != entry):
+        ordered.append(entry)
+        entries.remove(entry)
+        break
+  return ordered
+
+
+def renderCloneCommand(cmnd):
+  def quote(arg):
+    if arg and re.match(r"^[a-zA-Z0-9_@%+=:,./-]+$", arg):
+      return arg
+    return "'" + arg.replace("'", "'\"'\"'") + "'"
+  return " ".join(quote(arg) for arg in cmnd)
+
+
+def cloneDestinationExists(baseDir, path):
+  target = os.path.join(baseDir, path)
+  if not os.path.lexists(target):
+    return False
+  if os.path.isdir(target) and os.path.isdir(os.path.join(target, ".git")):
+    print("Skipping existing repository: " + path)
+    return True
+  raise ValueError("Destination '" + path + "' exists without a .git directory; skipping")
+
+
+def executeClonePlan(options, baseDir, entries):
+  remote = None
+  hadErrors = False
+  for path, branch in entries:
+    try:
+      # An earlier clone can introduce a destination or an escaping symlink.
+      checkCloneContainment(baseDir, path)
+      if cloneDestinationExists(baseDir, path):
+        continue
+      parent = os.path.dirname(os.path.join(baseDir, path))
+      ancestor = parent
+      while not os.path.lexists(ancestor):
+        ancestor = os.path.dirname(ancestor)
+      if not os.path.isdir(ancestor):
+        raise ValueError("Destination '" + path + "' has a parent that is not a directory; skipping")
+    except (ValueError, OSError) as err:
+      sys.stderr.write("Error: " + str(err) + "\n")
+      hadErrors = True
+      continue
+    if remote is None:
+      remote, baseUrl = getCloneRemote(options, baseDir)
+    cmnd = [options.useGit, "clone", "-o", remote]
+    if branch is not None:
+      cmnd.extend(["-b", branch])
+    destination = "./" + path if path.startswith("-") else path
+    cmnd.extend([getClonePeerUrl(baseUrl, path), destination])
+    print(renderCloneCommand(cmnd))
+    sys.stdout.flush()
+    if options.noOpt:
+      continue
+    try:
+      if not os.path.isdir(parent):
+        os.makedirs(parent)
+      child = subprocess.Popen(cmnd, cwd=baseDir, shell=False)
+      child.communicate()
+    except OSError as err:
+      sys.stderr.write("Error cloning '" + path + "': " + str(err) + "\n")
+      hadErrors = True
+      continue
+    if child.returncode:
+      sys.stderr.write("Error: git clone failed for '" + path +
+        "' (exit status " + str(child.returncode) + "); continuing\n")
+      hadErrors = True
+  return 1 if hadErrors else 0
+
+
+def cloneSubrepos(options, repos, branches, notRepos):
+  try:
+    baseDir = os.path.realpath(os.getcwd())
+    root = queryCloneGit(options, baseDir, ["rev-parse", "--show-toplevel"])
+    if not root or os.path.realpath(root) != baseDir:
+      raise ValueError("dist-clone-subrepos must run from the base repository's working-tree root")
+    entries = planCloneSubrepos(baseDir, repos, branches, notRepos)
+    if not entries:
+      print("No selected subrepositories to clone.")
+      return 0
+    return executeClonePlan(options, baseDir, entries)
+  except (ValueError, OSError) as err:
+    sys.stderr.write("Error: " + str(err) + "\n")
+    return 1
 
 
 # Requote commandline arguments into an array
@@ -1932,6 +2203,9 @@ if __name__ == '__main__':
 
   (options, nativeCmnd, otherArgs, reposFullList, defaultBranchDict, \
     notReposList) = getCommandlineOps()
+
+  if nativeCmnd == "dist-clone-subrepos":
+    sys.exit(cloneSubrepos(options, reposFullList, defaultBranchDict, notReposList))
 
   if nativeCmnd == "dist-repo-status":
     distRepoStatus = True
